@@ -37,7 +37,8 @@ LightAgent is an ultra‑lightweight, open‑source framework that now natively 
 
 ---
 ## News
-- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2026-04-26]** LightAgent v0.6.0 Released: Completely refactors the core system architecture and introduces native skill support, enabling more modular, extensible, and task-oriented agent capabilities.
+- <img src="https://img.alicdn.com/imgextra/i3/O1CN01SFL0Gu26nrQBFKXFR_!!6000000007707-2-tps-500-500.png" alt="new" width="30" height="30"/>**[2026-05-27]** LightAgent v0.6.4 Released: Improves runtime tool dispatch reliability, adds structured error codes and troubleshooting guidance, expands OpenAI-compatible provider documentation for OpenRouter and local models, and updates browser-use integration examples.
+- **[2026-04-26]** LightAgent v0.6.0 Released: Completely refactors the core system architecture and introduces native skill support, enabling more modular, extensible, and task-oriented agent capabilities.
 - **[2026-02-21]** LightAgent v0.5.0 Released: Adds session-level toolset constraints for granular control, fixes tool call history in multi-turn conversations, and improves LightSwarm stability.
 - **[2026-01-20]** LightAgent v0.4.8 Released: Introduces runtime toolset constraints for session-level control and enhanced debug settings.
 - **[2025-11-15]** LightAgent v0.4.7 Released: Improved debug configuration and fixes for LightSwarm-related bugs.
