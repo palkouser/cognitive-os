@@ -92,6 +92,8 @@ print(agent.run("Please check the weather in Shanghai."))
 
 Yes. `run(..., tools=[...])` registers runtime tools into the active tool registry and dispatcher before the model request, so tools advertised for that run can also be executed when the model calls them.
 
+For a complete guide to custom tool metadata, dynamic tool loading, async tools, runtime validation, and MCP tool registration, see [Tools](tools.md).
+
 ### How do I troubleshoot model or tool errors?
 
 LightAgent returns stable error codes such as `LA-401` for authentication errors, `LA-413` for oversized requests, `LA-429` for rate limits, `LA-JSON` for malformed tool arguments, and `LA-TOOL` for tool execution failures. See [Error Handling](error_handling.md) for the full taxonomy and troubleshooting guidance.
