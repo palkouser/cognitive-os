@@ -95,6 +95,7 @@
 ## 📋 文档
 
 - 常见安装、模型、工具、记忆、MCP、Skill、流式输出和 LightSwarm 问题，请查看 [FAQ](docs/FAQ.md)。
+- 自定义工具、运行时工具、ToolRegistry、ToolLoader、AsyncToolDispatcher 和 MCP 工具集成，请查看 [Tools Guide](docs/tools.md)。
 - v0.7.0 Trace 可观测能力，请查看 [Trace Observability](docs/tracing.md)。
 - 稳定错误码和排查建议，请查看 [Error Handling](docs/error_handling.md)。
 - 共享长期记忆或图记忆部署，请先查看 [Memory Security Guidance](docs/memory_security.md)。
