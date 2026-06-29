@@ -63,6 +63,7 @@
 - **Workflow-Orchestrierung** 🔁: LightFlow verkettet Agenten zu deterministischen Workflows mit expliziten Abhängigkeiten, Ausgabeübergabe, Wiederholungen, Checkpoints, Resume/Rerun, Freigaben, Fallback-Agenten und nachvollziehbarer Ausführung.
 - **Shared-Memory-Prototyp** 🧠: SharedMemoryPool bietet gemeinsam genutzten In-Memory-Speicher mit Herkunftsmetadaten, bereichsbezogener Suche und MemoryPolicy-kompatiblen Ergebnissen.
 - **Guardrails-Vorlagen** 🛡️: Wiederverwendbare Eingabe-, Werkzeug- und Ausgabe-Regeln blockieren private Daten, bestätigen sensible Tools, prüfen riskante Parameter und redigieren Ausgaben.
+- **Runtime Hooks** 🧩: Geordnetes `hooks=[...]`-Middleware-System zum Beobachten, Ersetzen oder Blockieren von Run-, Modell-, Tool-, Memory- und LightFlow-Schrittphasen.
 
 ## 🧭 Architektur auf einen Blick
 
@@ -75,6 +76,7 @@
 | Speichergrenze | `MemoryPolicy`, `MemoryScope` | Tenant-Isolation, Herkunft, Vertrauen, Ablauf und Schreibzulassung. |
 | Gemeinsamer Speicher | `SharedMemoryPool` | Experimente mit gemeinsamem Speicher zwischen Agenten. |
 | Sicherheit | `input_guardrails`, `tool_guardrails`, `output_guardrails` | Datenschutz, Tool-Bestätigung, riskante Parameter und Ausgaberedaktion. |
+| Runtime Hooks | `hooks`, `HookContext`, `HookDecision` | Policy, Audit, Redaktion, Routing und Payload-Mutation an Lifecycle-Grenzen. |
 | Beobachtbarkeit | `trace=True`, `agent.export_trace()` | Strukturierte Run-, Modell-, Tool-, Fehler- und Workflow-Ereignisse. |
 
 ## Zentrale Nutzungsmuster
@@ -90,6 +92,7 @@ LightAgent hält den Standardaufruf einfach und erlaubt Produktionskontrollen sc
 | Benutzerspeicher | `agent.run(query, user_id="alice")` | Nutzt konfigurierten Speicher und MemoryPolicy. |
 | Tools | `LightAgent(..., tools=[fn])` | Funktionen sollten `tool_info` bereitstellen. |
 | Guardrails | `LightAgent(..., input_guardrails=[...])` | Fügt Eingabe-, Tool- und Ausgabe-Policies hinzu. |
+| Runtime Hooks | `LightAgent(..., hooks=[fn])` | Beobachtet, ersetzt oder blockiert Lifecycle-Payloads. |
 | Workflow | `LightFlow().step(...).run(query)` | Für deterministische mehrstufige Ausführung. |
 
 ## 📋 Dokumentation
@@ -101,6 +104,7 @@ LightAgent hält den Standardaufruf einfach und erlaubt Produktionskontrollen sc
 - Für SharedMemoryPool siehe [SharedMemoryPool](docs/shared_memory_pool.md).
 - Für Speicher-Schreibzulassung und Ablaufregeln siehe [Memory Admission And Mutation Controls](docs/memory_admission.md).
 - Für Eingabe-, Werkzeug- und Ausgabesicherheit siehe [Guardrails](docs/guardrails.md).
+- Für Runtime-Middleware zum Beobachten, Ersetzen oder Blockieren von Payloads siehe [Runtime Hooks](docs/runtime_hooks.md).
 - Für OpenRouter, lokale Modelle und OpenAI-kompatible Anbieter siehe [Model Provider Configuration](docs/model_providers.md).
 - Für strukturierte Traces siehe [Trace Observability](docs/tracing.md).
 

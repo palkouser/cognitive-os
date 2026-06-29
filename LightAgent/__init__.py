@@ -20,6 +20,7 @@ from .errors import (
 )
 from .result import RunResult, StreamEvent
 from .tracing import TraceEvent, TraceRecorder
+from .hooks import HookContext, HookDecision, HookManager
 from .guardrails import (
     DEFAULT_PRIVACY_PATTERNS,
     GuardrailDecision,
@@ -63,6 +64,9 @@ __all__ = [
     "StreamEvent",
     "TraceEvent",
     "TraceRecorder",
+    "HookContext",
+    "HookDecision",
+    "HookManager",
     "DEFAULT_PRIVACY_PATTERNS",
     "GuardrailDecision",
     "GuardrailManager",

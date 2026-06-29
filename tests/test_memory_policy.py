@@ -31,6 +31,11 @@ class RecordingMemory:
         self.store_calls.append({"data": data, "user_id": user_id})
 
 
+class MetadataRecordingMemory(RecordingMemory):
+    def store(self, data, user_id, metadata=None):
+        self.store_calls.append({"data": data, "user_id": user_id, "metadata": metadata or {}})
+
+
 def make_agent(memory, memory_policy=None, memory_namespace=None):
     agent = LightAgent(
         model="gpt-4o-mini",
@@ -275,6 +280,44 @@ def test_memory_policy_blocks_low_quality_memory_writes():
     assert "min_write_length" in short.reason
     assert rejected.allowed is False
     assert "rejected by pattern" in rejected.reason
+
+
+def test_memory_write_hook_and_trace_hierarchy_metadata_are_stored():
+    def normalize_memory(ctx):
+        if ctx.phase == "before_memory_write":
+            return {
+                "payload": {
+                    **ctx.payload,
+                    "data": f"normalized::{ctx.payload['data']}",
+                }
+            }
+        return None
+
+    memory = MetadataRecordingMemory([])
+    agent = LightAgent(
+        model="gpt-4o-mini",
+        api_key="test-key",
+        base_url="http://127.0.0.1:9/v1",
+        memory=memory,
+        auto_discover_skills=False,
+        hooks=[normalize_memory],
+    )
+    agent.client = SimpleNamespace(chat=SimpleNamespace(completions=StaticCompletions()))
+
+    result = agent.run(
+        "hello",
+        user_id="alice",
+        result_format="object",
+        trace=True,
+        parent_trace_id="parent-trace",
+        run_group_id="group-1",
+    )
+
+    stored = memory.store_calls[0]
+    assert stored["data"] == "normalized::hello"
+    assert stored["metadata"]["trace_id"] == result.trace_id
+    assert stored["metadata"]["parent_trace_id"] == "parent-trace"
+    assert stored["metadata"]["run_group_id"] == "group-1"
 
 
 def test_tool_loader_rejects_unsafe_tool_names():

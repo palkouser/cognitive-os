@@ -47,6 +47,7 @@ Recommended fields:
 | `agent_name` | Agent that wrote or owns the memory |
 | `trace_id` | Run that produced the memory |
 | `parent_trace_id` | Parent user-facing run when this came from reflection/delegation |
+| `run_group_id` | Optional group for sibling traces belonging to one workflow or task |
 | `confidence` | Optional numeric confidence |
 | `trust_level` | Optional trust tier such as `verified`, `user`, or `system` |
 
@@ -86,12 +87,15 @@ should not inject unknown-origin records into the prompt.
 ### Trace Hierarchy
 
 Each `agent.run(..., trace=True)` call creates its own `trace_id`. If your
-application launches a reflection run or a delegated sub-agent run, treat it as
-a sibling trace by default.
+application launches a reflection run or a delegated sub-agent run, pass
+`parent_trace_id` and optionally `run_group_id` when you want an explicit
+hierarchy.
 
-If you need hierarchy, pass and store `parent_trace_id` in memory metadata or in
-your external trace backend. LightAgent does not currently fold delegated
-LightSwarm traces into the parent agent trace automatically.
+LightAgent stores `parent_trace_id` and `run_group_id` in trace events when they
+are provided, and memory writes include compatible metadata when the configured
+memory backend supports `store(..., metadata=...)`. LightFlow passes its flow
+trace as the parent trace for step agent runs. LightAgent does not currently
+fold delegated LightSwarm traces into the parent agent trace automatically.
 
 ### LightSwarm And Self-Learning Guidance
 

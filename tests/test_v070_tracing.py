@@ -1,7 +1,7 @@
 import json
 from types import SimpleNamespace
 
-from LightAgent import LightAgent, RunResult, TraceEvent, TraceRecorder
+from LightAgent import HookDecision, LightAgent, RunResult, TraceEvent, TraceRecorder
 
 
 def make_agent():
@@ -126,11 +126,110 @@ def test_model_error_is_recorded_in_trace():
 
 
 def test_trace_primitives_export_dicts():
-    recorder = TraceRecorder(enabled=True, trace_id="trace-1")
+    recorder = TraceRecorder(enabled=True, trace_id="trace-1", parent_trace_id="parent-1", run_group_id="group-1")
     recorder.record("run_start", {"query": "hello"})
 
     exported = recorder.to_list()
 
     assert isinstance(exported[0], dict)
     assert exported[0]["trace_id"] == "trace-1"
+    assert exported[0]["parent_trace_id"] == "parent-1"
+    assert exported[0]["run_group_id"] == "group-1"
     assert TraceEvent(type="custom", data={"ok": True}).to_dict()["type"] == "custom"
+
+
+def test_agent_trace_can_carry_parent_trace_and_run_group():
+    agent = make_agent()
+    attach_client(agent, StaticCompletions("hello"))
+
+    result = agent.run(
+        "hello",
+        result_format="object",
+        trace=True,
+        parent_trace_id="parent-run",
+        run_group_id="workflow-1",
+    )
+
+    assert result.trace_id
+    assert {event["parent_trace_id"] for event in result.trace} == {"parent-run"}
+    assert {event["run_group_id"] for event in result.trace} == {"workflow-1"}
+
+
+def test_before_model_request_hook_can_replace_payload():
+    def inject_context(ctx):
+        if ctx.phase != "before_model_request":
+            return None
+        params = dict(ctx.payload["params"])
+        messages = list(params["messages"])
+        messages[-1] = {**messages[-1], "content": "rewritten"}
+        params["messages"] = messages
+        return HookDecision.replace({"params": params})
+
+    agent = LightAgent(
+        model="gpt-4o-mini",
+        api_key="test-key",
+        base_url="http://127.0.0.1:9/v1",
+        auto_discover_skills=False,
+        hooks=[inject_context],
+    )
+    completions = attach_client(agent, StaticCompletions("hello"))
+
+    result = agent.run("hello", result_format="object", trace=True)
+
+    assert result.content == "hello"
+    assert completions.calls[0]["messages"][-1]["content"] == "rewritten"
+    assert any(event["type"] == "hook_decision" for event in result.trace)
+
+
+def test_hook_can_block_run_before_model_request():
+    def block_model(ctx):
+        if ctx.phase == "before_model_request":
+            return HookDecision.block("budget exceeded")
+        return None
+
+    agent = LightAgent(
+        model="gpt-4o-mini",
+        api_key="test-key",
+        base_url="http://127.0.0.1:9/v1",
+        auto_discover_skills=False,
+        hooks=[block_model],
+    )
+    completions = attach_client(agent, StaticCompletions("should not run"))
+
+    result = agent.run("hello", result_format="object", trace=True)
+
+    assert result.error.startswith("[LA-HOOK]")
+    assert "budget exceeded" in result.error
+    assert completions.calls == []
+    assert any(event["type"] == "hook_block" for event in result.trace)
+
+
+def test_tool_hooks_can_replace_arguments_and_outputs():
+    def adjust_tool(ctx):
+        if ctx.phase == "before_tool_call":
+            return HookDecision.replace({
+                "tool_name": ctx.payload["tool_name"],
+                "arguments": {"a": 40, "b": 2},
+            })
+        if ctx.phase == "after_tool_result":
+            return HookDecision.replace({
+                "tool_name": ctx.payload["tool_name"],
+                "output": "hooked output",
+            })
+        return None
+
+    agent = LightAgent(
+        model="gpt-4o-mini",
+        api_key="test-key",
+        base_url="http://127.0.0.1:9/v1",
+        auto_discover_skills=False,
+        hooks=[adjust_tool],
+    )
+    completions = attach_client(agent, ToolCallCompletions())
+
+    result = agent.run("add", tools=[runtime_add], result_format="object", trace=True)
+
+    assert result.content == "ok 42"
+    assert completions.calls[1]["messages"][-1]["content"] == "hooked output"
+    tool_result = next(event for event in result.trace if event["type"] == "tool_result")
+    assert tool_result["data"]["output"] == "hooked output"

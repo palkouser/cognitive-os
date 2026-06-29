@@ -31,6 +31,7 @@ from .tools import ToolRegistry, ToolLoader, AsyncToolDispatcher
 from .errors import format_error_code, format_lightagent_error
 from .result import RunResult, StreamEvent
 from .tracing import TraceRecorder
+from .hooks import HOOK_BLOCK, HookContext, HookDecision, HookManager
 from .guardrails import GuardrailManager
 from .mcp_client_manager import MCPClientManager
 from .skills import SkillManager
@@ -110,6 +111,7 @@ class LightAgent:
             input_guardrails: List[Callable[..., Any]] | None = None,  # 输入安全策略
             tool_guardrails: List[Callable[..., Any]] | None = None,  # 工具调用安全策略
             output_guardrails: List[Callable[..., Any]] | None = None,  # 输出安全策略
+            hooks: List[Callable[..., Any]] | None = None,  # 运行期 hook / middleware
             debug: bool = False,  # 是否启用调试模式
             log_level: str = "INFO",  # 日志级别（INFO, DEBUG, ERROR）
             log_file: Optional[str] = None,  # 日志文件路径
@@ -138,6 +140,7 @@ class LightAgent:
         :param input_guardrails: 输入安全策略列表，返回 False、原因字符串、dict 或 GuardrailDecision 可阻止运行。
         :param tool_guardrails: 工具调用安全策略列表，返回 False、原因字符串、dict 或 GuardrailDecision 可阻止工具执行。
         :param output_guardrails: 输出安全策略列表，返回 False、原因字符串、dict 或 GuardrailDecision 可阻止非流式输出。
+        :param hooks: 运行期 hook 列表，可观察、替换或阻断指定生命周期阶段。
         :param debug: 是否启用调试模式。
         :param log_level: 日志级别（INFO, DEBUG, ERROR）。
         :param log_file: 日志文件路径。
@@ -175,6 +178,7 @@ class LightAgent:
             tool_guardrails=tool_guardrails,
             output_guardrails=output_guardrails,
         )
+        self.hooks = HookManager(hooks)
         self.tree_of_thought = tree_of_thought
         self.self_learning = self_learning
         self.filter_tools = filter_tools
@@ -182,6 +186,11 @@ class LightAgent:
         self.debug = debug
         self.log_level = log_level.upper()
         self.traceid = ""  # 用于存储 traceid
+        self._current_run_id = ""
+        self._current_user_id = "default_user"
+        self._current_run_metadata: dict[str, Any] = {}
+        self._parent_trace_id: str | None = None
+        self._run_group_id: str | None = None
         # 确保 log 目录存在
         log_dir = 'logs'
         if not os.path.exists(log_dir):
@@ -378,6 +387,8 @@ class LightAgent:
             use_skills: bool = True,  # 是否使用技能
             result_format: str = "str",
             trace: bool = False,
+            parent_trace_id: str | None = None,
+            run_group_id: str | None = None,
     ) -> Union[Generator[str, None, None], str, RunResult]:
         """
         运行代理，处理用户输入。
@@ -393,6 +404,8 @@ class LightAgent:
         :param use_skills: 是否使用技能。
         :param result_format: 返回格式。默认 "str" 保持兼容；非流式可用 "object" 返回 RunResult；流式可用 "event" 返回 StreamEvent。
         :param trace: 是否收集结构化运行轨迹。默认 False 保持轻量；配合 result_format="object" 或 export_trace() 使用。
+        :param parent_trace_id: 可选父 trace，用于 LightFlow、LightSwarm 或应用层嵌套调用。
+        :param run_group_id: 可选运行组 ID，用于把多个 sibling traces 归到同一任务。
         :return: 代理的回复。
         """
         if result_format not in ("str", "object", "dict", "event"):
@@ -405,7 +418,17 @@ class LightAgent:
         # 设置跟踪ID
         traceid = uuid4().hex
         self.traceid = traceid
-        self._trace_recorder = TraceRecorder(enabled=trace, trace_id=traceid)
+        self._current_run_id = uuid4().hex
+        self._current_user_id = str(user_id)
+        self._current_run_metadata = dict(metadata or {})
+        self._parent_trace_id = parent_trace_id
+        self._run_group_id = run_group_id
+        self._trace_recorder = TraceRecorder(
+            enabled=trace,
+            trace_id=traceid,
+            parent_trace_id=parent_trace_id,
+            run_group_id=run_group_id,
+        )
         self._current_tool_calls = []
         self._current_usage = None
         self._current_reasoning_content = ""
@@ -419,7 +442,25 @@ class LightAgent:
             "user_id": user_id,
             "stream": stream,
             "result_format": result_format,
+            "run_id": self._current_run_id,
         })
+        before_run = self._run_hooks("before_run", {
+            "query": query,
+            "tools": tools,
+            "stream": stream,
+            "result_format": result_format,
+            "metadata": dict(metadata or {}),
+        })
+        if before_run.action == HOOK_BLOCK:
+            error_msg = self._format_hook_error("before_run", before_run.reason)
+            self._record_trace("run_end", {"success": False, "error": error_msg})
+            if stream:
+                stream_result = self._error_stream(error_msg)
+                if result_format == "event":
+                    return self._stream_as_events(stream_result, traceid)
+                return stream_result
+            return self._format_run_result(error_msg, result_format, traceid, error_msg)
+        query = before_run.payload.get("query", query) if before_run.payload else query
 
         input_decision = self.guardrails.check_input(query, {
             "agent_name": self.name,
@@ -521,7 +562,15 @@ class LightAgent:
 
         # 调用模型
         self.log("DEBUG", "first_request_params", {"params": self.chat_params})
-        self._record_trace("model_request", self._build_model_request_trace(self.chat_params))
+        hook_error = self._prepare_model_request()
+        if hook_error:
+            self._record_trace("run_end", {"success": False, "error": hook_error})
+            if stream:
+                stream_result = self._error_stream(hook_error)
+                if result_format == "event":
+                    return self._stream_as_events(stream_result, traceid)
+                return stream_result
+            return self._format_run_result(hook_error, result_format, traceid, hook_error)
         try:
             response = self.client.chat.completions.create(**self.chat_params)
         except Exception as e:
@@ -548,6 +597,53 @@ class LightAgent:
         recorder = getattr(self, "_trace_recorder", None)
         if recorder:
             return recorder.record(event_type, data)
+        return None
+
+    def _run_hooks(
+            self,
+            phase: str,
+            payload: Dict[str, Any] | None = None,
+            *,
+            step_name: str | None = None,
+            flow_id: str | None = None,
+    ) -> HookDecision:
+        """Run configured hooks and mirror decisions into trace events."""
+        context = HookContext(
+            phase=phase,
+            payload=payload or {},
+            trace_id=self.traceid or None,
+            parent_trace_id=getattr(self, "_parent_trace_id", None),
+            run_id=getattr(self, "_current_run_id", None),
+            run_group_id=getattr(self, "_run_group_id", None),
+            user_id=getattr(self, "_current_user_id", None),
+            agent_name=self.name,
+            flow_id=flow_id,
+            step_name=step_name,
+            metadata=deepcopy(getattr(self, "_current_run_metadata", {})),
+        )
+        decision = self.hooks.run(context)
+        for event in decision.metadata.get("hook_events", []) if decision.metadata else []:
+            self._record_trace("hook_decision", event)
+        if decision.action == HOOK_BLOCK:
+            self._record_trace("hook_block", {"phase": phase, "reason": decision.reason})
+        return decision
+
+    @staticmethod
+    def _format_hook_error(phase: str, reason: str | None = None) -> str:
+        details = {"phase": phase}
+        if reason:
+            details["reason"] = reason
+        return format_error_code("LA-HOOK", details)
+
+    def _prepare_model_request(self) -> str | None:
+        decision = self._run_hooks("before_model_request", {"params": deepcopy(self.chat_params)})
+        if decision.action == HOOK_BLOCK:
+            return self._format_hook_error("before_model_request", decision.reason)
+        if decision.payload:
+            params = decision.payload.get("params", decision.payload)
+            if isinstance(params, dict):
+                self.chat_params = params
+        self._record_trace("model_request", self._build_model_request_trace(self.chat_params))
         return None
 
     def export_trace(self) -> List[Dict[str, Any]]:
@@ -591,7 +687,40 @@ class LightAgent:
         })
         return error_msg
 
+    def _prepare_tool_call(self, tool_name: str, arguments: Dict[str, Any]) -> tuple[Dict[str, Any], str | None]:
+        guardrail_error = self._check_tool_guardrails(tool_name, arguments)
+        if guardrail_error:
+            return arguments, guardrail_error
+
+        decision = self._run_hooks("before_tool_call", {
+            "tool_name": tool_name,
+            "arguments": dict(arguments),
+        })
+        if decision.action == HOOK_BLOCK:
+            return arguments, self._format_hook_error("before_tool_call", decision.reason)
+        if decision.payload:
+            updated_arguments = decision.payload.get("arguments", arguments)
+            if isinstance(updated_arguments, dict):
+                return updated_arguments, None
+        return arguments, None
+
+    def _apply_after_tool_result(self, tool_name: str, output: Any) -> Any:
+        decision = self._run_hooks("after_tool_result", {
+            "tool_name": tool_name,
+            "output": output,
+        })
+        if decision.action == HOOK_BLOCK:
+            return self._format_hook_error("after_tool_result", decision.reason)
+        if decision.payload and "output" in decision.payload:
+            return decision.payload["output"]
+        return output
+
     def _apply_output_guardrails(self, output: str) -> str:
+        hook_decision = self._run_hooks("after_model_response", {"content": output})
+        if hook_decision.action == HOOK_BLOCK:
+            return self._format_hook_error("after_model_response", hook_decision.reason)
+        if hook_decision.payload and "content" in hook_decision.payload:
+            output = str(hook_decision.payload["content"])
         decision = self.guardrails.check_output(output, {
             "agent_name": self.name,
             "trace_id": self.traceid,
@@ -740,11 +869,31 @@ class LightAgent:
         context = {
             "agent_name": self.name,
             "trace_id": self.traceid,
+            "parent_trace_id": getattr(self, "_parent_trace_id", None),
+            "run_id": getattr(self, "_current_run_id", None),
+            "run_group_id": getattr(self, "_run_group_id", None),
             "user_id": str(original_user_id),
             "memory_user_id": str(memory_user_id),
             "source": source,
             "scope": scope,
         }
+        hook_decision = self._run_hooks("before_memory_write", {
+            "data": data,
+            "memory_user_id": str(memory_user_id),
+            "original_user_id": str(original_user_id),
+            "source": source,
+            "scope": scope,
+        })
+        if hook_decision.action == HOOK_BLOCK:
+            self._record_trace("memory_write_block", {
+                "reason": hook_decision.reason,
+                "source": source,
+                "scope": scope,
+                "user_id": str(original_user_id),
+            })
+            return False
+        if hook_decision.payload:
+            data = str(hook_decision.payload.get("data", data))
         decision = self.memory_policy.allows_write(
             data,
             context,
@@ -766,12 +915,23 @@ class LightAgent:
             scope=scope,
             agent_name=self.name,
             trace_id=self.traceid,
+            parent_trace_id=getattr(self, "_parent_trace_id", None),
             metadata={
                 "user_id": str(memory_user_id),
                 "original_user_id": str(original_user_id),
+                "run_id": getattr(self, "_current_run_id", None),
+                "run_group_id": getattr(self, "_run_group_id", None),
             },
         ).to_metadata()
         self._store_memory_record(stored_data, memory_user_id, metadata)
+        self._run_hooks("after_memory_write", {
+            "data": stored_data,
+            "metadata": metadata,
+            "memory_user_id": str(memory_user_id),
+            "original_user_id": str(original_user_id),
+            "source": source,
+            "scope": scope,
+        })
         self._memory_write_count = getattr(self, "_memory_write_count", 0) + 1
         fingerprints = getattr(self, "_memory_write_fingerprints", set())
         fingerprints.add(self.memory_policy.write_fingerprint(stored_data, context))
@@ -871,7 +1031,7 @@ class LightAgent:
                         tool_responses.append(single_tool_response)
                         continue
 
-                    guardrail_error = self._check_tool_guardrails(function_call.name, function_args)
+                    function_args, guardrail_error = self._prepare_tool_call(function_call.name, function_args)
                     if guardrail_error:
                         self._record_trace("error", {
                             "stage": "tool_guardrail",
@@ -941,6 +1101,7 @@ class LightAgent:
 
                     self.log("INFO", "non_stream single_tool_response",
                              {"single_tool_response": single_tool_response})
+                    single_tool_response = self._apply_after_tool_result(function_call.name, single_tool_response)
                     self._record_trace("tool_result", {
                         "name": function_call.name,
                         "output": single_tool_response,
@@ -976,7 +1137,10 @@ class LightAgent:
                 return  # 如果最后调用了finish工具，则结束生成器
             # print("params:",self.chat_params)
             self.log("DEBUG", "non_stream chat-completions params", {"params": self.chat_params})
-            self._record_trace("model_request", self._build_model_request_trace(self.chat_params))
+            hook_error = self._prepare_model_request()
+            if hook_error:
+                self._record_trace("run_end", {"success": False, "error": hook_error})
+                return hook_error
 
             try:
                 response = self.client.chat.completions.create(**self.chat_params)
@@ -1127,7 +1291,7 @@ class LightAgent:
                                         # self.log("DEBUG", "stream fixed_args", {"fixed_args": fixed_args})
                                         # function_args = json.loads(fixed_args)
                                         function_args = self._parse_tool_arguments(arguments)
-                                        guardrail_error = self._check_tool_guardrails(tool_name, function_args)
+                                        function_args, guardrail_error = self._prepare_tool_call(tool_name, function_args)
                                         if guardrail_error:
                                             self._record_trace("error", {
                                                 "stage": "tool_guardrail",
@@ -1179,11 +1343,11 @@ class LightAgent:
                                         else:
                                             # print(f"Non-streaming response from tool: {tool_response}")
                                             combined_response = str(tool_response)
-                                            single_tool_response = combined_response  # 处理单个工具的方法
+                                            single_tool_response = self._apply_after_tool_result(tool_name, combined_response)
                                             tool_output = {
                                                 "name": tool_name,
                                                 "title": tool_title,
-                                                "output": combined_response
+                                                "output": single_tool_response
                                             }
                                             self._record_trace("tool_result", deepcopy(tool_output))
                                             yield tool_output
@@ -1268,7 +1432,11 @@ class LightAgent:
 
                             # 创建新的响应流
                             self.log("DEBUG", "stream next_request_params", {"params": self.chat_params})
-                            self._record_trace("model_request", self._build_model_request_trace(self.chat_params))
+                            hook_error = self._prepare_model_request()
+                            if hook_error:
+                                self._record_trace("run_end", {"success": False, "error": hook_error})
+                                yield hook_error
+                                return
                             try:
                                 response = self.client.chat.completions.create(**self.chat_params)
                             except Exception as e:

@@ -64,6 +64,7 @@ Older release notes are available on [GitHub Releases](https://github.com/wanxin
 - **Multi-Model Support** 🔄: Compatible with OpenAI-style providers such as OpenAI, OpenRouter, Zhipu ChatGLM, Baichuan, StepFun, DeepSeek, Qwen, vLLM, llama.cpp, and other OpenAI-compatible endpoints.  
 - **Streaming API** 🌊: Supports OpenAI streaming format API service output, seamlessly integrates with mainstream chat frameworks, enhancing user experience.  
 - **Trace Observability** 🔎: Opt-in `trace=True` run traces record structured run lifecycle, model request summaries, tool calls, tool results, and errors without changing the default string return value.  
+- **Runtime Hooks** 🧩: Ordered `hooks=[...]` middleware can observe, replace, or block run, model, tool, memory, and LightFlow step phases while recording hook decisions in trace events.
 - **Guardrails Templates** 🛡️: Reusable input/tool/output guardrail templates help block private data, require confirmation for sensitive tools, validate high-risk parameters, and redact sensitive output.
 - **Tool Generator** 🚀: Just provide your API documentation to the [Tool Generator], which will automatically create exclusive tools for you, allowing you to quickly build hundreds of personalized custom tools in just 1 hour to improve efficiency and unleash your creative potential.
 - **Agent Self-Learning** 🧠️: Each agent has its own scene memory capabilities and the ability to self-learn from user conversations.
@@ -80,6 +81,7 @@ Older release notes are available on [GitHub Releases](https://github.com/wanxin
 | Memory boundary | `MemoryPolicy`, `MemoryScope` | Tenant isolation, provenance, trust, expiration, and write admission controls. |
 | Shared memory prototype | `SharedMemoryPool` | In-memory shared memory experiments across agents. |
 | Safety controls | `input_guardrails`, `tool_guardrails`, `output_guardrails` | Privacy blocking, sensitive tool confirmation, high-risk parameter checks, and output redaction. |
+| Runtime hooks | `hooks`, `HookContext`, `HookDecision` | Policy, audit, redaction, routing, and payload mutation at lifecycle boundaries. |
 | Observability | `trace=True`, `agent.export_trace()` | Structured run, model, tool, error, and workflow trace events. |
 
 ## Core Usage Patterns
@@ -95,6 +97,7 @@ LightAgent keeps the default call path simple while allowing production controls
 | User memory | `agent.run(query, user_id="alice")` | Uses the configured memory backend and memory policy. |
 | Tools | `LightAgent(..., tools=[fn])` | Functions should expose `tool_info` metadata. |
 | Guardrails | `LightAgent(..., input_guardrails=[...])` | Add input, tool, and output policies per agent. |
+| Runtime hooks | `LightAgent(..., hooks=[fn])` | Observe, replace, or block lifecycle payloads. |
 | Workflow | `LightFlow().step(...).run(query)` | Use for deterministic multi-step execution. |
 
 ## 🧩 Multi-agent troubleshooting (failure map)
@@ -120,6 +123,8 @@ For memory write admission, expiration-aware retrieval, and low-quality memory w
 For separating trace, user memory, self-reflection memory, and LightSwarm delegation state, see [Memory, Trace, And Swarm Boundaries](docs/memory_trace_swarm_boundaries.md).
 
 For input, tool, and output safety policies, see [Guardrails](docs/guardrails.md).
+
+For runtime middleware that can observe, replace, or block lifecycle payloads, see [Runtime Hooks](docs/runtime_hooks.md).
 
 For OpenRouter, local LLM, and OpenAI-compatible provider setup, see [Model Provider Configuration](docs/model_providers.md).
 
@@ -515,7 +520,48 @@ agent = LightAgent(
 
 Use default guardrail templates for privacy-sensitive input, sensitive tool confirmation, high-risk parameter validation, and output redaction. See [Guardrails](docs/guardrails.md).
 
-### 12. SharedMemoryPool
+### 12. Runtime Hooks
+Runtime hooks are ordered middleware for production policies that need to observe, replace, or block lifecycle payloads without changing the default `agent.run()` behavior.
+
+```python
+from LightAgent import HookDecision, LightAgent
+
+
+def redact_before_model(ctx):
+    if ctx.phase != "before_model_request":
+        return None
+
+    params = dict(ctx.payload["params"])
+    messages = list(params["messages"])
+    messages[-1] = {
+        **messages[-1],
+        "content": messages[-1]["content"].replace("secret-token", "[REDACTED]"),
+    }
+    params["messages"] = messages
+    return HookDecision.replace({"params": params})
+
+
+def block_dangerous_tool(ctx):
+    if ctx.phase == "before_tool_call" and ctx.payload["tool_name"] == "delete_file":
+        return HookDecision.block("delete_file requires manual approval")
+    return None
+
+
+agent = LightAgent(
+    model="gpt-4.1",
+    api_key="your_api_key",
+    base_url="your_base_url",
+    hooks=[redact_before_model, block_dangerous_tool],
+)
+
+result = agent.run("Summarize this secret-token safely.", result_format="object", trace=True)
+print(result.content)
+print(result.trace)
+```
+
+Hooks can target `before_run`, `before_model_request`, `after_model_response`, `before_tool_call`, `after_tool_result`, `before_memory_write`, and `after_memory_write`. `LightFlow(hooks=[...])` also supports step lifecycle hooks such as `before_flow_step`, `after_flow_step`, `on_approval_required`, `on_resume`, and `on_rerun`. See [Runtime Hooks](docs/runtime_hooks.md).
+
+### 13. SharedMemoryPool
 `SharedMemoryPool` is an in-memory shared memory prototype for multi-agent experiments. It is append-first and keeps provenance metadata, making it useful for testing how multiple agents share information before adopting a durable vector or graph memory backend.
 
 Use it with `MemoryPolicy` so each agent retrieves only memory that matches the expected namespace, source, scope, trust, confidence, or agent name.

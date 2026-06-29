@@ -1,6 +1,6 @@
 import time
 
-from LightAgent import JsonLightFlowStore, LightFlow, LightFlowResult, RunResult
+from LightAgent import HookDecision, JsonLightFlowStore, LightFlow, LightFlowResult, RunResult
 
 
 class FakeAgent:
@@ -30,6 +30,8 @@ def test_lightflow_runs_single_step_and_returns_object_result():
     assert result.steps[0].status == "success"
     assert agent.calls[0]["query"] == "draft this"
     assert [event["type"] for event in result.trace] == ["flow_start", "step_start", "step_end", "flow_end"]
+    assert agent.calls[0]["kwargs"]["parent_trace_id"] == result.trace_id
+    assert agent.calls[0]["kwargs"]["run_group_id"] == result.run_id
 
 
 def test_lightflow_passes_dependency_outputs_to_later_steps():
@@ -228,3 +230,19 @@ def test_lightflow_checkpoint_resume_and_rerun(tmp_path):
     assert rerun.content == "rerun fixed"
     assert record["run_id"] == "run-1"
     assert record["steps"][-1]["status"] == "success"
+
+
+def test_lightflow_hooks_can_replace_step_query_and_trace_decision():
+    def rewrite_step(ctx):
+        if ctx.phase == "before_flow_step":
+            return HookDecision.replace({"query": "rewritten by flow hook", "context": ctx.payload["context"]})
+        return None
+
+    agent = FakeAgent("writer", ["done"])
+    flow = LightFlow(hooks=[rewrite_step]).step("write", agent=agent)
+
+    result = flow.run("original", trace=True, run_id="flow-1")
+
+    assert result.success is True
+    assert agent.calls[0]["query"] == "rewritten by flow hook"
+    assert any(event["type"] == "hook_decision" for event in result.trace)

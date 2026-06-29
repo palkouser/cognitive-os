@@ -64,6 +64,7 @@ Las notas históricas están en [GitHub Releases](https://github.com/wanxingai/L
 - **Orquestación de workflows** 🔁: LightFlow encadena agentes en workflows deterministas con dependencias explícitas, paso de salidas, reintentos, checkpoints, resume/rerun, aprobaciones, agentes fallback y trazabilidad.
 - **Prototipo de memoria compartida** 🧠: SharedMemoryPool ofrece memoria compartida en memoria con metadatos de procedencia, recuperación por alcance y resultados compatibles con MemoryPolicy.
 - **Plantillas Guardrails** 🛡️: Políticas reutilizables de entrada, herramientas y salida para bloquear datos privados, confirmar herramientas sensibles, validar parámetros de alto riesgo y redactar salidas.
+- **Runtime Hooks** 🧩: Middleware ordenado `hooks=[...]` para observar, reemplazar o bloquear fases de ejecución, modelo, herramienta, memoria y pasos LightFlow.
 
 ## 🧭 Arquitectura de un vistazo
 
@@ -76,6 +77,7 @@ Las notas históricas están en [GitHub Releases](https://github.com/wanxingai/L
 | Límite de memoria | `MemoryPolicy`, `MemoryScope` | Aislamiento de tenants, procedencia, confianza, expiración y admisión de escritura. |
 | Memoria compartida | `SharedMemoryPool` | Experimentos de memoria compartida entre agentes. |
 | Seguridad | `input_guardrails`, `tool_guardrails`, `output_guardrails` | Privacidad, confirmación de herramientas, parámetros de riesgo y redacción de salida. |
+| Runtime hooks | `hooks`, `HookContext`, `HookDecision` | Políticas, auditoría, redacción, routing y mutación de payloads en límites del ciclo de vida. |
 | Observabilidad | `trace=True`, `agent.export_trace()` | Eventos estructurados de ejecución, modelo, herramienta, error y workflow. |
 
 ## Patrones principales de uso
@@ -91,6 +93,7 @@ LightAgent mantiene simple la llamada por defecto y permite añadir controles de
 | Memoria de usuario | `agent.run(query, user_id="alice")` | Usa el backend de memoria y MemoryPolicy configurados. |
 | Herramientas | `LightAgent(..., tools=[fn])` | Las funciones deben exponer `tool_info`. |
 | Guardrails | `LightAgent(..., input_guardrails=[...])` | Añade políticas de entrada, herramienta y salida. |
+| Runtime hooks | `LightAgent(..., hooks=[fn])` | Observa, reemplaza o bloquea payloads del ciclo de vida. |
 | Workflow | `LightFlow().step(...).run(query)` | Para ejecución determinista multi-etapa. |
 
 ## 📋 Documentación
@@ -102,6 +105,7 @@ LightAgent mantiene simple la llamada por defecto y permite añadir controles de
 - Para SharedMemoryPool, consulta [SharedMemoryPool](docs/shared_memory_pool.md).
 - Para admisión de escritura de memoria y expiración, consulta [Memory Admission And Mutation Controls](docs/memory_admission.md).
 - Para seguridad de entrada, herramientas y salida, consulta [Guardrails](docs/guardrails.md).
+- Para middleware runtime que observa, reemplaza o bloquea payloads, consulta [Runtime Hooks](docs/runtime_hooks.md).
 - Para OpenRouter, modelos locales y proveedores compatibles con OpenAI, consulta [Model Provider Configuration](docs/model_providers.md).
 - Para trazas estructuradas, consulta [Trace Observability](docs/tracing.md).
 
