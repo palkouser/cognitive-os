@@ -63,6 +63,7 @@
 - **워크플로 오케스트레이션** 🔁: LightFlow는 명시적 의존성, 출력 전달, 재시도, checkpoint, resume/rerun, 승인 노드, fallback agent, 추적 가능한 실행을 갖춘 결정적 workflow를 구성합니다.
 - **공유 메모리 프로토타입** 🧠: SharedMemoryPool은 출처 메타데이터, 범위 기반 검색, MemoryPolicy 호환 결과를 제공하는 인메모리 공유 기억입니다.
 - **Guardrails 템플릿** 🛡️: 입력, 도구, 출력에 대한 재사용 가능한 안전 정책으로 개인정보 차단, 민감 도구 확인, 고위험 인자 검증, 출력 마스킹을 수행합니다.
+- **Runtime Hooks** 🧩: 정렬된 `hooks=[...]` 미들웨어로 run, 모델, 도구, 메모리, LightFlow 단계 payload를 관찰, 교체, 차단할 수 있습니다.
 
 ## 🧭 아키텍처 한눈에 보기
 
@@ -75,6 +76,7 @@
 | 메모리 경계 | `MemoryPolicy`, `MemoryScope` | 테넌트 격리, 출처, 신뢰, 만료, 쓰기 승인. |
 | 공유 메모리 | `SharedMemoryPool` | Agent 간 공유 기억 실험. |
 | 안전 제어 | `input_guardrails`, `tool_guardrails`, `output_guardrails` | 개인정보, 도구 확인, 위험 인자, 출력 마스킹. |
+| Runtime hooks | `hooks`, `HookContext`, `HookDecision` | 생명주기 경계의 정책, 감사, 마스킹, 라우팅, payload 변경. |
 | 관측성 | `trace=True`, `agent.export_trace()` | 실행, 모델, 도구, 오류, workflow 구조화 이벤트. |
 
 ## 핵심 사용 패턴
@@ -90,6 +92,7 @@ LightAgent는 기본 호출 경로를 단순하게 유지하면서 운영 제어
 | 사용자 메모리 | `agent.run(query, user_id="alice")` | 설정된 메모리 backend와 MemoryPolicy를 사용합니다. |
 | 도구 | `LightAgent(..., tools=[fn])` | 함수는 `tool_info`를 제공해야 합니다. |
 | Guardrails | `LightAgent(..., input_guardrails=[...])` | 입력, 도구, 출력 정책을 추가합니다. |
+| Runtime hooks | `LightAgent(..., hooks=[fn])` | 생명주기 payload를 관찰, 교체, 차단합니다. |
 | Workflow | `LightFlow().step(...).run(query)` | 결정적 다단계 실행에 사용합니다. |
 
 ## 📋 문서
@@ -101,6 +104,7 @@ LightAgent는 기본 호출 경로를 단순하게 유지하면서 운영 제어
 - SharedMemoryPool은 [SharedMemoryPool](docs/shared_memory_pool.md)를 참고하세요.
 - 메모리 쓰기 승인과 만료 제어는 [Memory Admission And Mutation Controls](docs/memory_admission.md)를 참고하세요.
 - 입력, 도구, 출력 안전 정책은 [Guardrails](docs/guardrails.md)를 참고하세요.
+- payload를 관찰, 교체, 차단하는 runtime middleware는 [Runtime Hooks](docs/runtime_hooks.md)를 참고하세요.
 - OpenRouter, 로컬 모델, OpenAI 호환 공급자는 [Model Provider Configuration](docs/model_providers.md)를 참고하세요.
 - 구조화 trace는 [Trace Observability](docs/tracing.md)를 참고하세요.
 

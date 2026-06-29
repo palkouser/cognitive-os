@@ -60,6 +60,7 @@
 - **Оркестрация workflow** 🔁: LightFlow связывает агентов в детерминированные workflow с явными зависимостями, передачей результатов, повторами, checkpoint, resume/rerun, утверждениями, fallback-agent и трассировкой.
 - **Прототип общей памяти** 🧠: SharedMemoryPool предоставляет общую память в памяти процесса с метаданными происхождения, выборкой по области и результатами, совместимыми с MemoryPolicy.
 - **Шаблоны Guardrails** 🛡️: Переиспользуемые политики ввода, инструментов и вывода блокируют приватные данные, требуют подтверждения чувствительных инструментов, проверяют рискованные параметры и редактируют вывод.
+- **Runtime Hooks** 🧩: Упорядоченное middleware `hooks=[...]` для наблюдения, замены или блокировки фаз run, модели, инструментов, памяти и шагов LightFlow.
 
 ## 🧭 Архитектура кратко
 
@@ -72,6 +73,7 @@
 | Граница памяти | `MemoryPolicy`, `MemoryScope` | Изоляция tenants, происхождение, доверие, срок действия и допуск записи. |
 | Общая память | `SharedMemoryPool` | Эксперименты общей памяти между агентами. |
 | Безопасность | `input_guardrails`, `tool_guardrails`, `output_guardrails` | Приватность, подтверждение инструментов, рискованные параметры и редактирование вывода. |
+| Runtime hooks | `hooks`, `HookContext`, `HookDecision` | Политики, аудит, редактирование, routing и изменение payload на границах жизненного цикла. |
 | Наблюдаемость | `trace=True`, `agent.export_trace()` | Структурированные события run, модели, инструмента, ошибки и workflow. |
 
 ## Основные паттерны использования
@@ -87,6 +89,7 @@ LightAgent сохраняет простой путь вызова по умол
 | Память пользователя | `agent.run(query, user_id="alice")` | Использует настроенный backend памяти и MemoryPolicy. |
 | Инструменты | `LightAgent(..., tools=[fn])` | Функции должны иметь `tool_info`. |
 | Guardrails | `LightAgent(..., input_guardrails=[...])` | Добавляет политики ввода, инструментов и вывода. |
+| Runtime hooks | `LightAgent(..., hooks=[fn])` | Наблюдает, заменяет или блокирует payload жизненного цикла. |
 | Workflow | `LightFlow().step(...).run(query)` | Для детерминированного многошагового выполнения. |
 
 ## 📋 Документация
@@ -98,6 +101,7 @@ LightAgent сохраняет простой путь вызова по умол
 - По SharedMemoryPool см. [SharedMemoryPool](docs/shared_memory_pool.md).
 - По допуску записи памяти и срокам действия см. [Memory Admission And Mutation Controls](docs/memory_admission.md).
 - По безопасности ввода, инструментов и вывода см. [Guardrails](docs/guardrails.md).
+- По runtime middleware для наблюдения, замены или блокировки payload см. [Runtime Hooks](docs/runtime_hooks.md).
 - По OpenRouter, локальным моделям и OpenAI-совместимым провайдерам см. [Model Provider Configuration](docs/model_providers.md).
 - По структурированным trace см. [Trace Observability](docs/tracing.md).
 

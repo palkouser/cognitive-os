@@ -65,6 +65,7 @@
 - **ワークフロー編成** 🔁：LightFlow は明示的な依存関係、出力受け渡し、リトライ、checkpoint、resume/rerun、承認ノード、fallback agent、追跡可能な実行を備えた決定的 workflow を構成します。
 - **共有メモリプロトタイプ** 🧠：SharedMemoryPool は出所メタデータ、スコープ付き検索、MemoryPolicy 互換結果を備えたインメモリ共有メモリを提供します。
 - **Guardrails テンプレート** 🛡️：入力、ツール、出力の再利用可能な安全ポリシーにより、個人情報の遮断、機密ツールの確認、高リスク引数の検証、出力のマスキングを行えます。
+- **Runtime Hooks** 🧩：順序付き `hooks=[...]` ミドルウェアで、run、モデル、ツール、メモリ、LightFlow ステップの各フェーズを監視、置換、ブロックできます。
 
 ## 🧭 アーキテクチャ概要
 
@@ -77,6 +78,7 @@
 | メモリ境界 | `MemoryPolicy`、`MemoryScope` | テナント分離、出所、信頼、期限、書き込み許可。 |
 | 共有メモリ | `SharedMemoryPool` | Agent 間の共有メモリ実験。 |
 | 安全制御 | `input_guardrails`、`tool_guardrails`、`output_guardrails` | プライバシー、ツール確認、リスク引数、出力マスキング。 |
+| Runtime hooks | `hooks`、`HookContext`、`HookDecision` | ライフサイクル境界でのポリシー、監査、マスキング、ルーティング、payload 変更。 |
 | 可観測性 | `trace=True`、`agent.export_trace()` | 実行、モデル、ツール、エラー、workflow の構造化イベント。 |
 
 ## 主要な利用パターン
@@ -92,6 +94,7 @@ LightAgent はデフォルトの呼び出しを簡単に保ちつつ、本番向
 | ユーザーメモリ | `agent.run(query, user_id="alice")` | 設定済みメモリ backend と MemoryPolicy を使います。 |
 | ツール | `LightAgent(..., tools=[fn])` | 関数は `tool_info` を持つべきです。 |
 | Guardrails | `LightAgent(..., input_guardrails=[...])` | 入力、ツール、出力ポリシーを追加します。 |
+| Runtime hooks | `LightAgent(..., hooks=[fn])` | ライフサイクル payload を監視、置換、ブロックします。 |
 | Workflow | `LightFlow().step(...).run(query)` | 決定的な多段階実行に使います。 |
 
 ## 📋 ドキュメント
@@ -103,6 +106,7 @@ LightAgent はデフォルトの呼び出しを簡単に保ちつつ、本番向
 - SharedMemoryPool については [SharedMemoryPool](docs/shared_memory_pool.md) を参照してください。
 - メモリ書き込みの受け入れ制御と期限については [Memory Admission And Mutation Controls](docs/memory_admission.md) を参照してください。
 - 入力、ツール、出力の安全ポリシーについては [Guardrails](docs/guardrails.md) を参照してください。
+- payload を監視、置換、ブロックする runtime middleware については [Runtime Hooks](docs/runtime_hooks.md) を参照してください。
 - OpenRouter、ローカルモデル、OpenAI 互換プロバイダーについては [Model Provider Configuration](docs/model_providers.md) を参照してください。
 - 構造化 trace については [Trace Observability](docs/tracing.md) を参照してください。
 

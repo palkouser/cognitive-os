@@ -1,6 +1,6 @@
 # LightAgent Roadmap
 
-Last updated: 2026-06-24
+Last updated: 2026-06-29
 
 LightAgent should continue to evolve as a lightweight, low-dependency agent
 framework rather than a broad replacement for LangChain, LangGraph, CrewAI, or
@@ -119,7 +119,7 @@ P2 issues:
 ## Near-Term Version Plan
 
 This section records the planned direction for the next several LightAgent
-versions after `v0.8.2`. Exact scope can still change as issues, pull requests,
+versions after `v0.9.0`. Exact scope can still change as issues, pull requests,
 and user feedback evolve, but the intended product direction is:
 
 **safer memory + stronger LightFlow + better observability + stable APIs +
@@ -219,6 +219,129 @@ Users can experiment with safer shared memory in LightAgent, LightSwarm, or
 LightFlow prototypes while preserving explicit provenance boundaries and a
 lightweight core.
 
+### v0.9.1: Runtime Hooks And Middleware
+
+Status: first implementation slice completed.
+
+Goal: add a small, ordered hook layer that unifies today's specialized
+extension points without turning LightAgent into a heavy plugin framework.
+
+Why now:
+
+- v0.9.0 already has guardrails, trace events, memory write admission, LightFlow
+  approval handlers, checkpoint/resume, and shared-memory prototypes.
+- New production needs such as cost control, model routing, prompt enrichment,
+  tool auditing, PII redaction, evaluation, and approval policies should not
+  require new one-off constructor parameters each time.
+- Hook support gives LightAgent a stable extension spine while preserving the
+  existing lightweight, inspectable core.
+
+Implemented in the first slice:
+
+- Added `HookContext`, `HookDecision`, and `HookManager`.
+- Added ordered sync hooks with isolated hook failures.
+- Added `LightAgent(..., hooks=[...])` for `before_run`,
+  `before_model_request`, `after_model_response`, `before_tool_call`,
+  `after_tool_result`, `before_memory_write`, and `after_memory_write`.
+- Added `LightFlow(hooks=[...])` for `before_flow_step`, `after_flow_step`,
+  `on_approval_required`, `on_resume`, and `on_rerun`.
+- Added trace events for hook replacement, blocking, metadata, and hook
+  failures through `hook_decision` and `hook_block`.
+- Added `parent_trace_id` and `run_group_id` support to agent traces, flow
+  traces, LightFlow step calls, and memory write metadata.
+- Kept existing `agent.run("hello")` and
+  `agent.run(query, stream=True, user_id=user_id)` behavior compatible.
+
+Remaining work:
+
+- Add async hook execution without forcing async usage onto simple local
+  applications.
+- Add remaining agent hooks: `after_run`, `on_error`, and `on_handoff`.
+- Add memory retrieval hooks: `before_memory_retrieve` and
+  `after_memory_retrieve`.
+- Keep `input_guardrails`, `tool_guardrails`, `output_guardrails`, and
+  `memory_write_admission` backward compatible, either as adapters on top of
+  hooks or as parallel legacy APIs during the transition.
+- Provide built-in examples for metrics export, cost budget limits, PII
+  redaction, tool allow/deny policies, model routing, prompt enrichment, and
+  tool-call audit logging.
+- Add tests for hook ordering, no-op compatibility, payload replacement,
+  blocking, retry/fallback signaling, sync/async behavior, error isolation,
+  trace integration, and LightFlow step hook behavior.
+
+Draft usage model:
+
+```python
+from LightAgent import LightAgent, HookDecision
+
+
+def redact_before_model(ctx):
+    if ctx.phase == "before_model_request":
+        messages = ctx.payload["messages"]
+        redacted_messages = redact_private_data(messages)
+        return HookDecision.replace(payload={"messages": redacted_messages})
+
+    return HookDecision.continue_()
+
+
+agent = LightAgent(
+    name="assistant",
+    role="Answer safely.",
+    hooks=[redact_before_model],
+)
+```
+
+Tool policy example:
+
+```python
+def block_sensitive_tool(ctx):
+    if ctx.phase == "before_tool_call":
+        tool_name = ctx.payload["tool_name"]
+        if tool_name in {"transfer_money", "delete_file"}:
+            return HookDecision.block(reason="Sensitive tool requires approval")
+
+    return HookDecision.continue_()
+```
+
+Supported hook points:
+
+| Area | Hook point | Typical usage |
+| --- | --- | --- |
+| Run lifecycle | `before_run` | Input cleanup, permission checks, tenant context injection |
+| Run lifecycle | `after_run` | Audit logging, evaluation sampling, result persistence |
+| Model call | `before_model_request` | Prompt rewriting, PII redaction, model routing, budget checks |
+| Model call | `after_model_response` | Output inspection, schema repair, quality scoring |
+| Tool call | `before_tool_call` | Tool permission checks, argument validation, approval gating |
+| Tool call | `after_tool_result` | Result filtering, error classification, audit logging |
+| Memory read | `before_memory_retrieve` | Scope, tenant, user, agent, or trust-level constraints |
+| Memory read | `after_memory_retrieve` | Expiration filtering, confidence filtering, re-ranking |
+| Memory write | `before_memory_write` | Poisoning checks, deduplication, write-quality scoring |
+| Memory write | `after_memory_write` | Audit recording, synchronization to external memory stores |
+| Error handling | `on_error` | Fallback, retry classification, alerting |
+| Multi-agent | `on_handoff` | Handoff audit, target-agent policy, delegation limits |
+| LightFlow | `before_flow_step` | Step input validation, budget checks, cancellation policy |
+| LightFlow | `after_flow_step` | Step output validation, trace enrichment, checkpoint metadata |
+| LightFlow | `on_approval_required` | Integration with human approval systems |
+| LightFlow | `on_resume` | State verification and external context restoration |
+| LightFlow | `on_rerun` | Cleanup, historical result reuse, rerun policy checks |
+
+Hook decisions:
+
+| Decision | Semantics |
+| --- | --- |
+| `continue` | Continue without changing the current operation |
+| `replace` | Replace the current payload, such as messages, tool arguments, or memory content |
+| `block` | Stop the current operation with a structured reason |
+| `retry` | Request a retry for the current model, tool, or flow step |
+| `fallback` | Route to a fallback model, agent, tool, or flow branch |
+| `metadata` | Attach trace, audit, evaluation, or policy metadata |
+
+Expected outcome:
+
+Developers should be able to extend LightAgent execution in production without
+forking the runtime or adding new framework-level parameters for every policy,
+observability, evaluation, routing, or enterprise integration requirement.
+
 ### v0.9.5: Observability, Evaluation, And Human Review
 
 Goal: improve production debugging, measurement, and human control over
@@ -302,14 +425,17 @@ the core framework into a large platform.
 Current agent frameworks are converging around several production-oriented
 capabilities:
 
-- **LangGraph**: durable execution, checkpointing, human-in-the-loop workflows,
-  long-running stateful tasks.
+- **LangGraph / LangChain**: durable execution, checkpointing,
+  human-in-the-loop workflows, long-running stateful tasks, and middleware hooks
+  around agent/model/tool execution.
 - **CrewAI**: combining autonomous agent collaboration with deterministic
   workflow orchestration through Crews and Flows.
-- **OpenAI Agents SDK**: handoffs, guardrails, tracing, and production-oriented
-  agent execution primitives.
+- **OpenAI Agents SDK**: handoffs, guardrails, tracing, lifecycle hooks, and
+  production-oriented agent execution primitives.
 - **Microsoft AutoGen**: multi-agent conversations, collaboration protocols, and
   agent-to-agent coordination.
+- **Microsoft Semantic Kernel**: filter pipelines around prompt rendering,
+  function invocation, auto function invocation, and policy interception.
 - **Pydantic AI**: typed tools, structured output, schema validation, and
   type-safe agent interfaces.
 - **LlamaIndex**: data-oriented agents, workflows, RAG, document pipelines, and
@@ -429,6 +555,71 @@ lightweight shared-memory design without adding heavy storage dependencies.
 LightAgent users should be able to experiment with shared memory in LightSwarm
 or LightFlow while preserving explicit boundaries and inspectable behavior.
 
+### v0.9.1 Workstream: Runtime Hooks And Middleware
+
+Status: first implementation slice completed in v0.9.1. Remaining items should
+move into v0.9.2 unless user feedback reprioritizes observability or
+persistence work.
+
+Goal: introduce a minimal lifecycle hook system that lets applications observe,
+modify, block, retry, or route execution at well-defined points.
+
+### Completed First Slice
+
+- Add a `HookContext` data object that carries stable run metadata and the
+  phase-specific payload.
+- Add a `HookDecision` return object with explicit control decisions rather
+  than relying on exceptions or ad hoc booleans.
+- Implement a `HookManager` that runs hooks in deterministic order and isolates
+  hook failures.
+- Cover run start, model request/response, tool call/result, memory write, and
+  LightFlow step, approval, resume, and rerun phases.
+- Record hook activity through trace events so blocked operations and payload
+  changes are auditable.
+- Add trace hierarchy fields through `parent_trace_id` and `run_group_id`.
+
+### Remaining Work
+
+- Add run end, error, handoff, and memory retrieval hooks.
+- Convert or adapt existing guardrails and memory write admission into the new
+  lifecycle model without breaking current public APIs.
+- Document common hook recipes:
+  - PII redaction before model calls;
+  - budget enforcement before model/tool execution;
+  - tool allow/deny policy before execution;
+  - OpenTelemetry or Langfuse export;
+  - model routing and A/B experiments;
+  - prompt enrichment from application context;
+  - evaluation sampling after runs.
+- Add compatibility tests so `agent.run()`, streaming, structured results,
+  guardrails, memory policy, and LightFlow behavior remain unchanged when no
+  hooks are configured.
+
+### Draft API Contract
+
+- `hooks=[callable_or_hook_object]` should be accepted by `LightAgent` and
+  optionally by `LightFlow`.
+- A simple hook callable should receive one `HookContext` argument and return a
+  `HookDecision`, `HookResult`, `None`, or a compatible dictionary.
+- `None` should mean continue, so simple observability hooks can avoid boilerplate
+  return values.
+- Hook objects may expose named methods such as `before_model_request(ctx)` or
+  `after_tool_result(ctx)` when that is clearer than branching on `ctx.phase`.
+- Hook ordering should be deterministic and documented. Later versions can add
+  explicit priority, but the first version should preserve list order.
+- Hook failures should be recorded as trace events. The default behavior should
+  fail closed only for policy hooks that explicitly request blocking semantics;
+  observability hooks should not crash the agent by default.
+- Guardrails and `MemoryPolicy.memory_write_admission` should continue to work
+  with their current public APIs while the implementation starts routing them
+  through the same lifecycle concepts.
+
+### Expected Outcome
+
+LightAgent should gain an extension mechanism that is powerful enough for
+production policy and observability work, but small enough to keep the framework
+direct, Python-native, and easy to inspect.
+
 ### v0.9.5 Workstream: Human-In-The-Loop
 
 Goal: support high-risk tasks that need explicit human review before continuing.
@@ -524,21 +715,39 @@ building lightweight production agents.
   failures in chronological order.
 - Make traces shareable for issue reports and debugging.
 
+### Hook-Based Extensions
+
+- Keep hooks as a runtime extension contract, not a general plugin marketplace.
+- Prefer small Python callables and dataclass-style context objects over heavy
+  dependency injection.
+- Let hooks power optional integrations for observability, evaluation,
+  enterprise policy, model routing, rate limiting, and audit export.
+- Keep hook payloads explicit and redaction-friendly so trace output does not
+  accidentally expose private prompts, memory values, or tool parameters.
+- Provide compatibility adapters so current guardrail and memory policy users
+  can migrate gradually.
+
 ## Recommended Priority
 
 ### Immediate P0
 
-- No active P0 item as of 2026-06-24.
+- No active P0 item as of 2026-06-26.
 
 ### Next P1
+
+- v0.9.2 runtime hook completion and production recipes.
+- Remaining lifecycle hooks for run end, errors, handoff, and memory retrieval.
+- Backward-compatible adapters for guardrails and memory write admission on top
+  of hook lifecycle concepts.
+- Async-compatible hook execution and more examples for redaction, model
+  routing, audit logging, and cost budgets.
+
+### P2
 
 - Database-backed workflow and shared-memory adapters.
 - Stronger idempotency and distributed execution controls for persistent
   workflows.
 - Evaluation harness and richer production observability.
-
-### P2
-
 - Optional ClawMem adapter shape for #33.
 - Lightweight plugin/connector contract for #5.
 - Vector database and external API examples for #4 and #26.
@@ -551,23 +760,32 @@ building lightweight production agents.
 
 ## Next Development Recommendation
 
-After v0.9.0, the next development target should be **v0.9.5:
-Observability And Evaluation** or a smaller **v0.9.1 database-backed run store**
-if user feedback asks for stronger persistence first.
+After v0.9.1, the next development target should be **v0.9.2:
+Runtime Hook Completion And Recipes**. Database-backed run stores and richer
+observability should follow after the hook layer is complete, because hooks
+provide the cleanest integration point for policy, audit, metrics, evaluation,
+model routing, and human review.
 
 Reasoning:
 
 - v0.9.0 now covers checkpointed LightFlow runs, resume/rerun, approval nodes,
   memory-safety controls, guardrail templates, and the shared-memory prototype.
-- The next pressure points are production measurement and stronger persistence:
-  evaluations, richer traces, database-backed run stores, and idempotency.
+- The current code already has several specialized extension points:
+  guardrails, trace events, memory write admission, and LightFlow approval
+  handlers. A common hook model can unify these without breaking compatibility.
+- The next pressure points are production policy and measurement: evaluations,
+  richer traces, cost limits, redaction, approval decisions, model routing,
+  database-backed run stores, and idempotency.
 - Database-backed durability should stay optional so the core package remains
   lightweight.
 
 Suggested first implementation slice:
 
-1. Add an evaluation harness for task completion and tool-call success.
-2. Add richer trace fields for latency, retry count, and error categories.
-3. Add database-backed run-store adapters if persistence becomes the next user
-   priority.
-4. Add idempotency markers for external side-effect tools.
+1. Add remaining agent hooks for run end, error, and handoff.
+2. Add memory retrieval hooks for scope, tenant, confidence, and expiration
+   enforcement before prompt injection.
+3. Add async-compatible hook execution.
+4. Adapt guardrails and memory write admission into the hook lifecycle while
+   preserving current public constructor parameters.
+5. Add practical recipes for PII redaction, model routing, tool audit logging,
+   and cost-budget enforcement.

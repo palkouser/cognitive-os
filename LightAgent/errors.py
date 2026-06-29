@@ -103,6 +103,11 @@ ERROR_TAXONOMY = {
         "A configured guardrail blocked this operation.",
         "Review the configured input, tool, or output guardrail policy and adjust the request if appropriate.",
     ),
+    "LA-HOOK": LightAgentErrorInfo(
+        "LA-HOOK",
+        "A configured runtime hook blocked this operation.",
+        "Review the hook decision, configured phase, and application policy before retrying.",
+    ),
     "LA-UNKNOWN": LightAgentErrorInfo(
         "LA-UNKNOWN",
         "An unexpected LightAgent error occurred.",

@@ -37,6 +37,8 @@ for event in agent.export_trace():
 | `model_response` | The model produced a final response. |
 | `tool_call` | The model requested a tool call. |
 | `tool_result` | A tool returned output. |
+| `hook_decision` | A runtime hook replaced a payload, blocked a phase, attached metadata, or failed in isolation. |
+| `hook_block` | A runtime hook explicitly blocked a phase. |
 | `error` | A model, JSON, tool, retry, or max-retry error occurred. |
 | `run_end` | The run finished or failed. |
 
@@ -61,10 +63,22 @@ trace_events = agent.export_trace()
 
 ### Nested Runs And Delegation
 
-Each `agent.run(..., trace=True)` call creates its own root `trace_id`. A
-reflection run, LightSwarm delegated run, or LightFlow step should be treated as
-a sibling trace unless your application records a `parent_trace_id` externally
-or in memory metadata.
+Each `agent.run(..., trace=True)` call creates its own `trace_id`. Pass
+`parent_trace_id` and `run_group_id` when your application wants explicit trace
+hierarchy:
+
+```python
+child = agent.run(
+    "Summarize the approved step",
+    result_format="object",
+    trace=True,
+    parent_trace_id=parent_result.trace_id,
+    run_group_id="workflow-42",
+)
+```
+
+Trace events include those fields when provided. `LightFlow` automatically
+passes its flow trace as the parent trace for step agent runs.
 
 LightAgent does not currently fold delegated LightSwarm traces into the parent
 trace automatically. See

@@ -16,6 +16,7 @@ from typing import Any, Callable
 from uuid import uuid4
 
 from .result import RunResult
+from .hooks import HOOK_BLOCK, HookContext, HookDecision, HookManager
 from .tracing import TraceRecorder
 
 
@@ -120,9 +121,10 @@ class JsonLightFlowStore:
 class LightFlow:
     """Deterministic workflow runner for LightAgent instances."""
 
-    def __init__(self, *, store: JsonLightFlowStore | None = None):
+    def __init__(self, *, store: JsonLightFlowStore | None = None, hooks: list[Callable[..., Any] | Any] | None = None):
         self._steps: list[LightFlowStep] = []
         self.store = store
+        self.hooks = HookManager(hooks)
         self._records: dict[str, dict[str, Any]] = {}
         self._cancelled = False
 
@@ -226,6 +228,8 @@ class LightFlow:
             trace: bool = False,
             result_format: str = "object",
             run_id: str | None = None,
+            parent_trace_id: str | None = None,
+            run_group_id: str | None = None,
     ) -> LightFlowResult | str | dict[str, Any]:
         """Run all registered steps once their dependencies are satisfied."""
         if result_format not in ("object", "str", "dict"):
@@ -238,6 +242,8 @@ class LightFlow:
             trace=trace,
             result_format=result_format,
             run_id=run_id or uuid4().hex,
+            parent_trace_id=parent_trace_id,
+            run_group_id=run_group_id,
         )
 
     def resume(
@@ -247,11 +253,14 @@ class LightFlow:
             user_id: str = "default_user",
             trace: bool = False,
             result_format: str = "object",
+            parent_trace_id: str | None = None,
+            run_group_id: str | None = None,
     ) -> LightFlowResult | str | dict[str, Any]:
         """Resume a failed or incomplete run from the last checkpoint."""
         record = self.get_run(run_id)
         if not record:
             raise ValueError(f"run `{run_id}` not found")
+        self._run_flow_hook("on_resume", {"run_id": run_id, "record": record})
         completed = {
             step["name"]: self._step_result_from_dict(step)
             for step in record.get("steps", [])
@@ -266,6 +275,8 @@ class LightFlow:
             result_format=result_format,
             run_id=run_id,
             initial_completed=completed,
+            parent_trace_id=parent_trace_id,
+            run_group_id=run_group_id,
         )
 
     def rerun_step(
@@ -276,6 +287,8 @@ class LightFlow:
             user_id: str = "default_user",
             trace: bool = False,
             result_format: str = "object",
+            parent_trace_id: str | None = None,
+            run_group_id: str | None = None,
     ) -> LightFlowResult | str | dict[str, Any]:
         """Rerun one step and all downstream steps from a checkpoint."""
         record = self.get_run(run_id)
@@ -285,6 +298,7 @@ class LightFlow:
         if step_name not in steps_by_name:
             raise ValueError(f"step `{step_name}` not found")
 
+        self._run_flow_hook("on_rerun", {"run_id": run_id, "step_name": step_name, "record": record})
         downstream = self._downstream_steps(step_name)
         completed = {
             step["name"]: self._step_result_from_dict(step)
@@ -300,6 +314,8 @@ class LightFlow:
             result_format=result_format,
             run_id=run_id,
             initial_completed=completed,
+            parent_trace_id=parent_trace_id,
+            run_group_id=run_group_id,
         )
 
     def get_run(self, run_id: str) -> dict[str, Any] | None:
@@ -326,9 +342,12 @@ class LightFlow:
             result_format: str,
             run_id: str,
             initial_completed: dict[str, LightFlowStepResult] | None = None,
+            parent_trace_id: str | None = None,
+            run_group_id: str | None = None,
     ) -> LightFlowResult | str | dict[str, Any]:
         trace_id = uuid4().hex
-        recorder = TraceRecorder(enabled=trace, trace_id=trace_id)
+        run_group = run_group_id or run_id
+        recorder = TraceRecorder(enabled=trace, trace_id=trace_id, parent_trace_id=parent_trace_id, run_group_id=run_group)
         all_steps = self._ordered_steps()
         recorder.record("flow_start", {"query": query, "steps": [step.name for step in all_steps], "run_id": run_id})
 
@@ -356,8 +375,38 @@ class LightFlow:
                 continue
 
             step_query = self._build_step_query(step, query, context)
+            step_hook = self._run_flow_hook(
+                "before_flow_step",
+                {"query": step_query, "context": context, "run_id": run_id},
+                trace_id=trace_id,
+                parent_trace_id=parent_trace_id,
+                run_group_id=run_group,
+                user_id=user_id,
+                flow_id=run_id,
+                step_name=step.name,
+                recorder=recorder,
+            )
+            if step_hook.action == HOOK_BLOCK:
+                result = self._skipped_result(step, step_hook.reason or "blocked by before_flow_step hook")
+                step_results.append(result)
+                self._checkpoint(run_id, query, status=FLOW_SKIPPED, steps=step_results, error=result.error, all_steps=all_steps)
+                continue
+            if step_hook.payload and "query" in step_hook.payload:
+                step_query = str(step_hook.payload["query"])
+
             approved, approval_reason = self._check_approval(step, context)
             if not approved:
+                self._run_flow_hook(
+                    "on_approval_required",
+                    {"run_id": run_id, "step": step.name, "reason": approval_reason},
+                    trace_id=trace_id,
+                    parent_trace_id=parent_trace_id,
+                    run_group_id=run_group,
+                    user_id=user_id,
+                    flow_id=run_id,
+                    step_name=step.name,
+                    recorder=recorder,
+                )
                 result = self._skipped_result(step, approval_reason or "approval rejected", status=FLOW_WAITING_APPROVAL)
                 step_results.append(result)
                 self._checkpoint(
@@ -380,8 +429,26 @@ class LightFlow:
                 "input_summary": self._summarize(step_query),
             })
 
-            step_result = self._run_step(step, step_query, user_id=user_id, trace=trace)
+            step_result = self._run_step(
+                step,
+                step_query,
+                user_id=user_id,
+                trace=trace,
+                parent_trace_id=trace_id,
+                run_group_id=run_group,
+            )
             step_results.append(step_result)
+            self._run_flow_hook(
+                "after_flow_step",
+                {"run_id": run_id, "step_result": self._step_result_to_dict(step_result)},
+                trace_id=trace_id,
+                parent_trace_id=parent_trace_id,
+                run_group_id=run_group,
+                user_id=user_id,
+                flow_id=run_id,
+                step_name=step.name,
+                recorder=recorder,
+            )
             context["steps"][step.name] = step_result
             context["outputs"][step.name] = step_result.content
             final_content = step_result.content
@@ -440,11 +507,28 @@ class LightFlow:
             result_format,
         )
 
-    def _run_step(self, step: LightFlowStep, query: str, *, user_id: str, trace: bool) -> LightFlowStepResult:
+    def _run_step(
+            self,
+            step: LightFlowStep,
+            query: str,
+            *,
+            user_id: str,
+            trace: bool,
+            parent_trace_id: str | None,
+            run_group_id: str | None,
+    ) -> LightFlowStepResult:
         started = time.perf_counter()
         last_result: LightFlowStepResult | None = None
         for attempt in range(1, step.max_retry + 1):
-            raw_result, timed_out = self._call_agent(step.agent, step, query, user_id=user_id, trace=trace)
+            raw_result, timed_out = self._call_agent(
+                step.agent,
+                step,
+                query,
+                user_id=user_id,
+                trace=trace,
+                parent_trace_id=parent_trace_id,
+                run_group_id=run_group_id,
+            )
             content, error, step_trace = self._normalize_agent_result(raw_result)
             if timed_out:
                 error = f"step `{step.name}` timed out after {step.timeout} seconds"
@@ -468,7 +552,15 @@ class LightFlow:
                 return last_result
 
         if last_result and last_result.error and step.fallback_agent is not None:
-            fallback_result, timed_out = self._call_agent(step.fallback_agent, step, query, user_id=user_id, trace=trace)
+            fallback_result, timed_out = self._call_agent(
+                step.fallback_agent,
+                step,
+                query,
+                user_id=user_id,
+                trace=trace,
+                parent_trace_id=parent_trace_id,
+                run_group_id=run_group_id,
+            )
             content, error, step_trace = self._normalize_agent_result(fallback_result)
             if timed_out:
                 error = f"fallback for step `{step.name}` timed out after {step.timeout} seconds"
@@ -499,6 +591,8 @@ class LightFlow:
             *,
             user_id: str,
             trace: bool,
+            parent_trace_id: str | None,
+            run_group_id: str | None,
     ) -> tuple[Any, bool]:
         kwargs = {
             "tools": step.tools,
@@ -507,6 +601,8 @@ class LightFlow:
             "metadata": step.metadata,
             "result_format": "object",
             "trace": trace,
+            "parent_trace_id": parent_trace_id,
+            "run_group_id": run_group_id,
         }
         if step.timeout is None:
             return agent.run(query, **kwargs), False
@@ -517,6 +613,37 @@ class LightFlow:
             except TimeoutError:
                 future.cancel()
                 return None, True
+
+    def _run_flow_hook(
+            self,
+            phase: str,
+            payload: dict[str, Any],
+            *,
+            trace_id: str | None = None,
+            parent_trace_id: str | None = None,
+            run_group_id: str | None = None,
+            user_id: str | None = None,
+            flow_id: str | None = None,
+            step_name: str | None = None,
+            recorder: TraceRecorder | None = None,
+    ) -> HookDecision:
+        context = HookContext(
+            phase=phase,
+            payload=payload,
+            trace_id=trace_id,
+            parent_trace_id=parent_trace_id,
+            run_group_id=run_group_id,
+            user_id=user_id,
+            flow_id=flow_id,
+            step_name=step_name,
+        )
+        decision = self.hooks.run(context)
+        if recorder:
+            for event in decision.metadata.get("hook_events", []) if decision.metadata else []:
+                recorder.record("hook_decision", event)
+            if decision.action == HOOK_BLOCK:
+                recorder.record("hook_block", {"phase": phase, "reason": decision.reason, "step": step_name})
+        return decision
 
     def _ordered_steps(self) -> list[LightFlowStep]:
         validation = self.validate()

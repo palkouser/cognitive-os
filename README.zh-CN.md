@@ -79,6 +79,7 @@
 - **多模型支持** 🔄：兼容 OpenAI、智谱 ChatGLM、百川大模型、阶跃星辰、DeepSeek、Qwen 系列大模型。  
 - **流式 API输出** 🌊：支持 OpenAI 流格式 API 服务输出，无缝接入主流 Chat 框架，提升用户体验。  
 - **Trace 可观测性** 🔎：通过 `trace=True` 可选开启结构化运行轨迹，记录运行开始/结束、模型请求摘要、工具调用、工具结果和错误，同时保持默认字符串返回行为不变。  
+- **Runtime Hooks** 🧩：通过有序 `hooks=[...]` 中间件观察、替换或阻断运行、模型、工具、记忆和 LightFlow 步骤阶段，并将 hook 决策写入 trace。
 - **Tools工具生成器** 🚀：只需将您的API文档交给[[Tools工具生成器]](#3-tools工具生成器)，它将自动化地为您打造专属的tools，助您在短短1小时内快速构建数百个个性化的自定义工具，提升效率，释放您的创新潜能。
 - **agent自我学习** 🧠️：每个agent拥有自己的场景记忆能力，拥有从用户的对话中进行自我学习能力。
 - **自适应tools机制** 🛠️：支持添加无限量tools，在上万个工具中让大模型过滤无关工具后再发送给大模型，可大幅度降低Token消耗。
@@ -97,6 +98,7 @@
 | 记忆边界 | `MemoryPolicy`、`MemoryScope` | 租户隔离、来源、可信度、过期和写入准入控制。 |
 | 共享记忆原型 | `SharedMemoryPool` | 多 Agent 共享记忆实验。 |
 | 安全控制 | `input_guardrails`、`tool_guardrails`、`output_guardrails` | 隐私拦截、敏感工具确认、高风险参数校验和输出脱敏。 |
+| Runtime Hooks | `hooks`、`HookContext`、`HookDecision` | 在生命周期边界实现策略、审计、脱敏、路由和 payload 改写。 |
 | 可观测性 | `trace=True`、`agent.export_trace()` | 结构化运行、模型、工具、错误和工作流事件。 |
 
 ## 核心使用模式
@@ -112,6 +114,7 @@ LightAgent 保持默认调用路径简单，同时允许逐步加入生产级控
 | 用户记忆 | `agent.run(query, user_id="alice")` | 使用配置的记忆后端和 MemoryPolicy。 |
 | 工具 | `LightAgent(..., tools=[fn])` | 函数应提供 `tool_info` 元数据。 |
 | Guardrails | `LightAgent(..., input_guardrails=[...])` | 为 Agent 添加输入、工具和输出策略。 |
+| Runtime Hooks | `LightAgent(..., hooks=[fn])` | 观察、替换或阻断生命周期 payload。 |
 | 工作流 | `LightFlow().step(...).run(query)` | 用于确定性多步骤执行。 |
 
 ## 📋 文档
@@ -123,6 +126,7 @@ LightAgent 保持默认调用路径简单，同时允许逐步加入生产级控
 - SharedMemoryPool 原型请查看 [SharedMemoryPool](docs/shared_memory_pool.md)。
 - 记忆写入准入、过期检索和低质量写入拦截，请查看 [Memory Admission And Mutation Controls](docs/memory_admission.md)。
 - 输入、工具和输出安全策略，请查看 [Guardrails](docs/guardrails.md)。
+- 运行期中间件和生命周期 payload 改写，请查看 [Runtime Hooks](docs/runtime_hooks.md)。
 - OpenRouter、本地模型和 OpenAI 兼容配置，请查看 [Model Provider Configuration](docs/model_providers.md)。
 - Trace 可观测能力请查看 [Trace Observability](docs/tracing.md)。
 
