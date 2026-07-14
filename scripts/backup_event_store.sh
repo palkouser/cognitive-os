@@ -3,7 +3,13 @@ set -euo pipefail
 # shellcheck source=scripts/postgres_common.sh
 source "$(dirname "${BASH_SOURCE[0]}")/postgres_common.sh"
 load_postgres_environment
-for command in pg_dump sha256sum tar zstd psql; do require_command "$command"; done
+for command in sha256sum tar zstd psql; do require_command "$command"; done
+if [[ -n "${COGOS_POSTGRES_TOOL_CONTAINER:-}" ]]; then
+  require_command docker
+  require_value COGOS_CONTAINER_DATABASE_ADMIN_URL
+else
+  require_command pg_dump
+fi
 for name in COGOS_DATABASE_ADMIN_URL COGOS_POSTGRES_DATABASE COGOS_ARTIFACT_ROOT; do require_value "$name"; done
 backup_root="${COGOS_BACKUP_ROOT:-/home/palkouser/backup/cognitive-os-archive}"
 database_dir="$backup_root/database-backups"
@@ -14,7 +20,12 @@ dump="$database_dir/$timestamp-event-store.dump"
 archive="$artifact_dir/$timestamp-artifacts.tar.zst"
 manifest="$database_dir/$timestamp-backup-manifest.json"
 echo "Backing up database: $COGOS_POSTGRES_DATABASE"
-pg_dump --format=custom --file="$dump" "$COGOS_DATABASE_ADMIN_URL"
+if [[ -n "${COGOS_POSTGRES_TOOL_CONTAINER:-}" ]]; then
+  docker exec "$COGOS_POSTGRES_TOOL_CONTAINER" \
+    pg_dump --format=custom "$COGOS_CONTAINER_DATABASE_ADMIN_URL" > "$dump"
+else
+  pg_dump --format=custom --file="$dump" "$COGOS_DATABASE_ADMIN_URL"
+fi
 sha256sum "$dump" > "$dump.sha256"
 if [[ -d "$COGOS_ARTIFACT_ROOT" ]]; then
   tar --exclude='.tmp' -C "$COGOS_ARTIFACT_ROOT" -cf - . | zstd -q -T0 -o "$archive"

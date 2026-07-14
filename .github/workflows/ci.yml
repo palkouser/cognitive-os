@@ -149,6 +149,26 @@ jobs:
         run: uv run alembic -c infra/postgres/alembic.ini upgrade head
       - name: PostgreSQL integration tests
         run: uv run pytest tests/integration/postgres -m postgres -q
+      - name: Database and artifact backup restore test
+        run: |
+          container="$(docker ps --filter ancestor=postgres:18.4-bookworm --format '{{.ID}}' | head -n1)"
+          test -n "$container"
+          cat > .env.postgres.local <<EOF
+          COGOS_POSTGRES_DATABASE=cognitive_os_test
+          COGOS_POSTGRES_OWNER_USER=cogos_owner
+          COGOS_DATABASE_ADMIN_URL=$COGOS_DATABASE_ADMIN_URL
+          COGOS_DATABASE_BOOTSTRAP_URL=$COGOS_DATABASE_BOOTSTRAP_URL
+          COGOS_ARTIFACT_ROOT=$COGOS_ARTIFACT_ROOT
+          COGOS_BACKUP_ROOT=/tmp/cognitive-os-backup
+          COGOS_RESTORE_DATABASE_NAME=cognitive_os_restore_test
+          COGOS_RESTORE_DATABASE_URL=postgresql://cogos_owner:owner-ci@127.0.0.1:5432/cognitive_os_restore_test
+          COGOS_POSTGRES_TOOL_CONTAINER=$container
+          COGOS_CONTAINER_DATABASE_ADMIN_URL=postgresql://cogos_owner:owner-ci@127.0.0.1:5432/cognitive_os_test
+          COGOS_CONTAINER_RESTORE_DATABASE_URL=postgresql://cogos_owner:owner-ci@127.0.0.1:5432/cognitive_os_restore_test
+          EOF
+          chmod 0600 .env.postgres.local
+          ./scripts/backup_event_store.sh
+          ./scripts/restore_event_store.sh --test-restore
 
   migration:
     runs-on: ubuntu-latest
