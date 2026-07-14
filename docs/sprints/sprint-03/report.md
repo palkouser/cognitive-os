@@ -9,10 +9,11 @@ verified artifact storage, generic replay, and privacy-safe telemetry correlatio
 
 ## PostgreSQL environment
 
-The tracked Compose service pins PostgreSQL 18.4, binds to localhost, uses UTC and UTF-8,
-enables data checksums, and keeps credentials in an ignored local environment file. The
-current host lacks Docker and PostgreSQL client binaries, so local service execution is an
-explicit environmental limitation; GitHub Actions supplies the real integration database.
+The local Ubuntu 26.04 development host provides Docker Engine 29.6.1, Compose 5.3.1, and
+Buildx 0.35.0 in rootless mode. PostgreSQL 18.4 client tools are installed from the official
+PGDG repository. The tracked PostgreSQL 18.4 Compose service binds to localhost, uses UTC
+and UTF-8, enables data checksums, and keeps credentials in an ignored mode-0600 environment
+file. Local migrations, integration tests, backup, and isolated restore all pass.
 
 ## Database schema and migrations
 
@@ -76,8 +77,10 @@ backup and isolated restore test. Combined backups require a writer maintenance 
 - Full optional local suite without a configured database: 307 passed, 9 integration tests
   skipped.
 - PostgreSQL integration and concurrency tests: 9 passed against PostgreSQL 18.4.
+- Full local regression with MCP, PostgreSQL, and OpenTelemetry extras: 316 passed, including
+  all 9 PostgreSQL integration tests.
 - Migration upgrade, downgrade, re-upgrade, and drift check: passed.
-- Database and artifact backup plus isolated restore: passed in CI.
+- Database and artifact backup plus isolated restore: passed both locally and in CI.
 - Ruff, format, mypy, Bandit, ShellCheck, schema drift, language, build, security, and
   optional-boundary checks: passed.
 - GitHub PR CI: all seven jobs passed.
@@ -89,10 +92,12 @@ Credentials remain untracked. Telemetry and operational output exclude payloads,
 bytes, passwords, and complete URLs. The core dependency audit reports no known third-party
 vulnerabilities, and the reviewed secret scan found no credential.
 
+The local remediation audit identified `PYSEC-2026-1845` in pytest 8.4.2. The test dependency
+floor was raised to 9.0.3, the lock resolved pytest 9.1.1, all 316 tests remained green, and
+the repeated dependency audit found no known vulnerability.
+
 ## Known issues
 
-- The local host does not currently provide Docker, Compose, `psql`, `pg_dump`, or
-  `pg_restore`; local database and backup commands require those host prerequisites.
 - Filesystem blobs and PostgreSQL metadata cannot commit atomically; safe orphan detection is
   the documented recovery mechanism.
 - Projections, snapshots, subscriptions, partitioning, replication, and cloud artifacts are

@@ -8,13 +8,15 @@ if [[ ! -d "$COGOS_ARTIFACT_ROOT" ]]; then
   echo "Artifact root does not exist: $COGOS_ARTIFACT_ROOT" >&2
   exit 1
 fi
-find "$COGOS_ARTIFACT_ROOT/sha256" -type f ! -name '*.tmp' -print0 2>/dev/null \
-  | while IFS= read -r -d '' path; do
-      expected="$(basename "$path")"
-      actual="$(sha256sum "$path" | cut -d ' ' -f 1)"
-      [[ "$actual" == "$expected" ]] || {
-        echo "Artifact integrity failure: ${path#"$COGOS_ARTIFACT_ROOT/"}" >&2
-        exit 1
-      }
-    done
+if [[ -d "$COGOS_ARTIFACT_ROOT/sha256" ]]; then
+  find "$COGOS_ARTIFACT_ROOT/sha256" -type f ! -name '*.tmp' -print0 \
+    | while IFS= read -r -d '' path; do
+        expected="$(basename "$path")"
+        actual="$(sha256sum "$path" | cut -d ' ' -f 1)"
+        [[ "$actual" == "$expected" ]] || {
+          echo "Artifact integrity failure: ${path#"$COGOS_ARTIFACT_ROOT/"}" >&2
+          exit 1
+        }
+      done
+fi
 echo "Artifact filesystem verification passed."

@@ -10,3 +10,8 @@ Configure a dedicated restore database whose name ends in `_test`. The script ve
 checksums, recreates only that database, restores the custom dump and artifact archive into
 temporary targets, and validates revision and record counts. It refuses an unrestricted or
 development target.
+
+The local remediation run on 2026-07-14 restored the verified database dump into
+`cognitive_os_restore_test`, extracted artifacts into a temporary directory, and validated
+the Alembic revision and record counts without modifying `cognitive_os_dev` or the live
+artifact root.

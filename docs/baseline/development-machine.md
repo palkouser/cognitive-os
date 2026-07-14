@@ -72,6 +72,20 @@ Installed and verified on 2026-07-14:
 - tmux 3.6a
 - GitHub CLI 2.96.0
 
+Sprint 3 persistence prerequisites installed and verified on 2026-07-14:
+
+- Docker Engine 29.6.1 from Docker's official Apt repository
+- Docker Compose plugin 5.3.1
+- Docker Buildx 0.35.0
+- rootless Docker user service enabled and active, with the `rootless` context selected
+- PostgreSQL client tools 18.4 from the official PGDG repository
+
+The system-level Docker daemon and socket are disabled. The project does not use the
+root-equivalent `docker` group or depend on `/var/run/docker.sock`. No native PostgreSQL
+server or cluster is installed; the tracked PostgreSQL 18.4 Compose service binds only to
+`127.0.0.1:55432`. Exact package and final verification evidence is stored under
+`docs/baseline/generated/`.
+
 The exact manual installation and verification commands are in
 `docs/operations/sprint-0-host-remediation.md`. Codex did not run `sudo` or install host
 packages, in accordance with `AGENTS.md`. GitHub CLI is installed, its saved token was renewed

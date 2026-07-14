@@ -1,0 +1,5 @@
+Captured: 2026-07-14T11:56:01+02:00
+psql (PostgreSQL) 18.4 (Ubuntu 18.4-1.pgdg26.04+1)
+pg_isready (PostgreSQL) 18.4 (Ubuntu 18.4-1.pgdg26.04+1)
+pg_dump (PostgreSQL) 18.4 (Ubuntu 18.4-1.pgdg26.04+1)
+pg_restore (PostgreSQL) 18.4 (Ubuntu 18.4-1.pgdg26.04+1)

@@ -1,0 +1,9 @@
+containerd.io	2.2.6-1~ubuntu.26.04~resolute
+docker-buildx-plugin	0.35.0-1~ubuntu.26.04~resolute
+docker-ce	5:29.6.1-1~ubuntu.26.04~resolute
+docker-ce-cli	5:29.6.1-1~ubuntu.26.04~resolute
+docker-ce-rootless-extras	5:29.6.1-1~ubuntu.26.04~resolute
+docker-compose-plugin	5.3.1-1~ubuntu.26.04~resolute
+fuse-overlayfs	1.14-1build2
+slirp4netns	1.3.3-1
+uidmap	1:4.17.4-2ubuntu3
