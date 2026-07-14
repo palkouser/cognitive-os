@@ -7,7 +7,7 @@ must not invoke `sudo`, modify `/etc/fstab`, install drivers, or reboot the work
 
 ```text
 Installed: git-lfs fd-find tree shellcheck smartmontools nvme-cli tmux gh
-Authentication pending: gh
+Authenticated: gh (palkouser)
 ```
 
 Install and verify:
@@ -20,7 +20,7 @@ gh auth status
 
 The Ubuntu packages, Git LFS initialization, fd symlink, and GitHub CLI installation are
 complete. The saved GitHub token was invalid during the final automated check, so only
-interactive re-authentication remains.
+interactive re-authentication remained; it has since been completed and verified.
 
 `nvme list` successfully detects both NVMe drives. Complete the SMART health capture with:
 
@@ -29,6 +29,8 @@ sudo smartctl -H /dev/nvme0
 sudo smartctl -H /dev/nvme1
 sudo smartctl -H /dev/sda
 ```
+
+The machine owner reported all three health commands completed successfully.
 
 ## NVIDIA driver
 
@@ -73,4 +75,4 @@ loaded in the captured failure state. After any future recovery, run
 
 `/home/palkouser/backup` is already backed by `/dev/sda2` (exFAT, UUID `F65E-FC00`) and
 has an `/etc/fstab` entry. The archive hierarchy and source snapshot have been created.
-Reboot persistence still requires a manual reboot verification.
+Reboot persistence was verified by the machine owner.

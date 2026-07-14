@@ -1,6 +1,6 @@
 # Sprint 0 report
 
-Status: Locally complete – remote verification pending
+Status: Complete
 
 ## Sprint goal
 
@@ -14,7 +14,7 @@ operational. The 4 TB archive HDD is mounted persistently at `/home/palkouser/ba
 archive hierarchy, write test, source snapshot, and checksum validation are complete.
 All Sprint 0 host tools, including GitHub CLI, are installed. The host NVIDIA driver is
 healthy; the earlier NVML failure was isolated to the Codex sandbox. GitHub CLI
-re-authentication remains the only manual action before remote publication. See
+authentication, the initial remote publication, and the first GitHub Actions run succeeded. See
 `docs/baseline/development-machine.md`.
 
 ## LightAgent baseline
@@ -36,7 +36,9 @@ before cloning.
 - Persistent archive hierarchy and verified source snapshot
 - Audited translated README removals and immutable upstream links
 - Sprint 1 editable-install and dependency carry-over
-- Local `origin` configured for `palkouser/cognitive-os`; empty remote verified
+- Local `origin` configured for `palkouser/cognitive-os`; `main` published successfully
+- Sprint 0 labels, milestone, historical issues, and Sprint 1 carry-over issue
+- Successful GitHub Actions verification of the published baseline
 
 ## Test results
 
@@ -49,11 +51,9 @@ with regression-tested pins; four `mem0ai` advisories remain isolated as Sprint 
 
 ## Known issues
 
-- GitHub CLI token is invalid and requires interactive re-authentication before push
 - Upstream editable installation fails because its setuptools backend discovers multiple
   top-level flat-layout packages; the documented requirements fallback is in use
-- GitHub repository is reachable but empty; manual push, metadata bootstrap, CI, tag, and
-  release are pending
+- Four isolated `mem0ai` advisories remain documented for removal or isolation in Sprint 1
 
 ## Security status
 
@@ -76,4 +76,4 @@ registry are present.
 ## Restore point
 
 The immutable source baseline is LightAgent v0.9.1 at the pinned commit. The final
-`sprint-0-baseline` tag will be created only after all Definition of Done checks pass.
+Sprint 0 closure commit is marked by the `sprint-0-baseline` tag and GitHub release.

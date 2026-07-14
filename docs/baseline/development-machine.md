@@ -46,8 +46,7 @@ read-only/read-write project mount view, but direct repository writes and tests 
 - Read/write test: passed on 2026-07-14
 - Source snapshot: `source-snapshots/sprint0-remediation-test.tar.gz`, validated with
   `tar -tzf`; SHA-256 sidecar created
-- Reboot persistence: fstab entry exists, but post-remediation reboot verification remains
-  a manual closure check
+- Reboot persistence: verified by the machine owner after remediation
 
 Because exFAT applies mount-wide permission masks, the requested mode 0750 is represented
 by the mount's effective 0770 permissions (`umask=007`).
@@ -75,8 +74,8 @@ Installed and verified on 2026-07-14:
 
 The exact manual installation and verification commands are in
 `docs/operations/sprint-0-host-remediation.md`. Codex did not run `sudo` or install host
-packages, in accordance with `AGENTS.md`. GitHub CLI is installed, but its saved token was
-invalid at the final automated check; interactive re-authentication is required before push.
+packages, in accordance with `AGENTS.md`. GitHub CLI is installed, its saved token was renewed
+interactively, and `gh auth status` succeeds with the required repository and workflow scopes.
 
 ## NVIDIA baseline
 
@@ -99,15 +98,14 @@ upgrade, initramfs update, or reboot was necessary.
 
 - Expected repository: `https://github.com/palkouser/cognitive-os.git`
 - Local `origin`: configured to the expected URL
-- Remote reachability: verified; repository currently contains no refs (empty)
+- Remote publication: `main` pushed successfully and tracks `origin/main`
 - `upstream`: `https://github.com/wanxingai/LightAgent.git`
-- First push remains an explicitly manual operation in the closure plan
+- GitHub Actions: first published baseline run completed successfully
+- Sprint 0 milestone, labels, historical issues, and Sprint 1 carry-over issue: created
 
-## Remaining machine-level closure checks
+## Machine-level closure checks
 
-1. Complete `gh auth login -h github.com` interactively and verify `gh auth status`.
-2. Confirm both fstab mounts after a real reboot; the archive mount and read/write path are
-   already operational in the current boot.
-3. `nvme list` succeeds and detects both NVMe devices. `smartctl --scan` detects the disks
-   outside the sandbox, but reading SMART health requires administrator permission; run the
-   health queries manually with `sudo smartctl`.
+1. GitHub CLI authentication succeeds for account `palkouser`.
+2. Persistent mounts were confirmed by the machine owner after remediation.
+3. `nvme list` detects both NVMe devices, and the machine owner reported successful SMART
+   health checks for both NVMe devices and the archive HDD.
