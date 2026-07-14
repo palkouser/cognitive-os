@@ -11,6 +11,7 @@ else
   require_command pg_dump
 fi
 for name in COGOS_DATABASE_ADMIN_URL COGOS_POSTGRES_DATABASE COGOS_ARTIFACT_ROOT; do require_value "$name"; done
+database_cli_url="${COGOS_DATABASE_ADMIN_URL/postgresql+asyncpg/postgresql}"
 backup_root="${COGOS_BACKUP_ROOT:-/home/palkouser/backup/cognitive-os-archive}"
 database_dir="$backup_root/database-backups"
 artifact_dir="$backup_root/artifacts"
@@ -24,7 +25,7 @@ if [[ -n "${COGOS_POSTGRES_TOOL_CONTAINER:-}" ]]; then
   docker exec "$COGOS_POSTGRES_TOOL_CONTAINER" \
     pg_dump --format=custom "$COGOS_CONTAINER_DATABASE_ADMIN_URL" > "$dump"
 else
-  pg_dump --format=custom --file="$dump" "$COGOS_DATABASE_ADMIN_URL"
+  pg_dump --format=custom --file="$dump" "$database_cli_url"
 fi
 sha256sum "$dump" > "$dump.sha256"
 if [[ -d "$COGOS_ARTIFACT_ROOT" ]]; then
@@ -33,9 +34,9 @@ else
   tar -cf - --files-from /dev/null | zstd -q -T0 -o "$archive"
 fi
 sha256sum "$archive" > "$archive.sha256"
-event_count="$(psql "$COGOS_DATABASE_ADMIN_URL" -Atqc 'SELECT count(*) FROM cognitive_os.events')"
-artifact_count="$(psql "$COGOS_DATABASE_ADMIN_URL" -Atqc 'SELECT count(*) FROM cognitive_os.artifacts')"
-revision="$(psql "$COGOS_DATABASE_ADMIN_URL" -Atqc 'SELECT version_num FROM alembic_version LIMIT 1')"
+event_count="$(psql "$database_cli_url" -Atqc 'SELECT count(*) FROM cognitive_os.events')"
+artifact_count="$(psql "$database_cli_url" -Atqc 'SELECT count(*) FROM cognitive_os.artifacts')"
+revision="$(psql "$database_cli_url" -Atqc 'SELECT version_num FROM alembic_version LIMIT 1')"
 uv run python - "$manifest" "$timestamp" "$dump" "$archive" "$event_count" "$artifact_count" "$revision" "$COGOS_POSTGRES_DATABASE" <<'PY'
 import hashlib
 import json
