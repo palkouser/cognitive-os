@@ -28,5 +28,7 @@
 | `test` | testing | pytest, pytest-asyncio, pytest-cov, Hypothesis | Offline verification |
 | `security` | development security | Bandit, detect-secrets, pip-audit | Security gates |
 | `docs` | documentation | MkDocs, Material for MkDocs | Documentation build tooling |
+| `postgres` | optional runtime | SQLAlchemy, asyncpg, Alembic | Durable event and artifact metadata |
+| `observability-otel` | optional runtime | OpenTelemetry API, SDK, OTLP gRPC | Trace correlation |
 
 Every prior direct dependency has a final category and decision; none remains unknown.

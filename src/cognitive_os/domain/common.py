@@ -71,6 +71,8 @@ class ArtifactRef(ImmutableContractModel):
             raise ValueError("storage_key must be a logical relative key")
         if re.match(r"^[A-Za-z]:[\\/]", value):
             raise ValueError("storage_key must not be a host path")
+        if ".." in PurePosixPath(value).parts or ".." in PureWindowsPath(value).parts:
+            raise ValueError("storage_key must not traverse parent directories")
         return value
 
 

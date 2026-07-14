@@ -15,8 +15,16 @@ uv venv "$TMP_DIR/venv" --python 3.12
 uv pip install --python "$TMP_DIR/venv/bin/python" dist/*.whl
 "$TMP_DIR/venv/bin/python" - <<'PY'
 import cognitive_os
+import importlib.util
 
 print(f"Installed cognitive_os: {cognitive_os.__file__}")
+for optional_module in ("sqlalchemy", "asyncpg", "alembic", "opentelemetry.sdk"):
+    try:
+        installed = importlib.util.find_spec(optional_module) is not None
+    except ModuleNotFoundError:
+        installed = False
+    if installed:
+        raise SystemExit(f"Optional module unexpectedly installed: {optional_module}")
 PY
 
 if "$TMP_DIR/venv/bin/python" -m zipfile -l dist/*.whl \

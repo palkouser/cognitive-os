@@ -31,6 +31,16 @@ cloud-aws = ["boto3>=1.34,<2"]
 lightagent-legacy-memory = ["mem0ai==0.1.70"]
 mcp = ["mcp>=1.23,<2"]
 observability-langfuse = ["langfuse>=3,<4"]
+observability-otel = [
+    "opentelemetry-api>=1.35,<2",
+    "opentelemetry-exporter-otlp-proto-grpc>=1.35,<2",
+    "opentelemetry-sdk>=1.35,<2",
+]
+postgres = [
+    "alembic>=1.16,<2",
+    "asyncpg>=0.30,<1",
+    "sqlalchemy[asyncio]>=2.0,<2.2",
+]
 provider-litellm = ["litellm>=1.80,<1.87"]
 
 [dependency-groups]
@@ -53,6 +63,7 @@ test = [
     "pytest>=8,<9",
     "pytest-asyncio>=1,<2",
     "pytest-cov>=6,<7",
+    "pytest-timeout>=2,<3",
 ]
 
 [tool.setuptools]
@@ -73,4 +84,7 @@ package = true
 [tool.pytest.ini_options]
 markers = [
     "contract: offline compatibility tests for the LightAgent boundary",
+    "concurrency: tests that exercise simultaneous writers",
+    "integration: tests that require an external service",
+    "postgres: tests that require the isolated PostgreSQL test database",
 ]

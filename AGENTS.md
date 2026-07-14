@@ -5,29 +5,30 @@
 This repository develops Cognitive OS, a local, model-independent, self-improving
 agent harness based on LightAgent.
 
-## Sprint 2 scope
+## Sprint 3 scope
 
-The active scope is the Cognitive OS domain and event contract layer.
+The active scope is durable event and artifact persistence.
 
 Allowed work:
 
-- Pydantic domain models;
-- identifiers and timestamps;
-- task, execution, model-call, tool-call, and verifier records;
-- event payloads and envelopes;
-- deterministic JSON serialization and event hashing;
-- event catalog and migration interfaces;
-- JSON Schema generation;
-- contract and property-based tests.
+- persistence ports and storage records;
+- PostgreSQL event storage and optimistic concurrency;
+- Alembic migrations and database roles;
+- content-addressed local artifact storage and metadata;
+- event replay and state reconstruction;
+- OpenTelemetry correlation;
+- PostgreSQL integration tests;
+- backup and restore operations.
 
 Out of scope:
 
-- database persistence and event-store implementation;
+- Cognitive Controller;
+- automatic LightAgent event emission;
 - provider integrations and model routing;
 - tool execution, permissions, and sandboxing;
-- Cognitive Controller;
 - Memory Plane;
-- skills, strategies, and self-improvement.
+- projections and snapshots;
+- skills, strategies, routing, and self-improvement.
 
 Do not move or rewrite LightAgent runtime files unless the active issue explicitly
 authorizes it.
