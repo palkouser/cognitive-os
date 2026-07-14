@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 from collections.abc import AsyncIterator, Callable
 from pathlib import Path
-from uuid import UUID
+from uuid import UUID, uuid4
 
 import pytest
 import pytest_asyncio
@@ -65,7 +65,7 @@ def make_envelope() -> Callable[..., EventEnvelope]:
     ) -> EventEnvelope:
         values = template.model_dump()
         values.update(
-            event_id=event_id or UUID(int=version + 100),
+            event_id=event_id or uuid4(),
             stream_id=stream_id,
             stream_version=version,
             stream_type=stream_type,
