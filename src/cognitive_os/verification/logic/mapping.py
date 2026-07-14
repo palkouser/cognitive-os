@@ -8,7 +8,7 @@ from .ast import LogicExpression, LogicOperator, LogicSort
 
 
 def _z3() -> Any:
-    import z3  # type: ignore[import-untyped]
+    import z3
 
     return z3
 

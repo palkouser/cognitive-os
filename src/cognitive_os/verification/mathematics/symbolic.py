@@ -36,7 +36,7 @@ from .parsing import ExpressionLimits, UnsafeExpressionError, parse_expression
 
 
 def _sympy() -> Any:
-    import sympy  # type: ignore[import-untyped]
+    import sympy
 
     return sympy
 
