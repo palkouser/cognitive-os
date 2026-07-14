@@ -1,0 +1,258 @@
+{
+  "$defs": {
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "format": "uuid",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "media_type": {
+          "minLength": 1,
+          "title": "Media Type",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "storage_key": {
+          "minLength": 1,
+          "title": "Storage Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "media_type",
+        "content_hash",
+        "size_bytes",
+        "storage_key",
+        "created_at"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "ErrorInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "details": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Details",
+          "type": "object"
+        },
+        "error_type": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error Type"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "retryable": {
+          "default": false,
+          "title": "Retryable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "ErrorInfo",
+      "type": "object"
+    },
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "ToolExecutionStatus": {
+      "enum": [
+        "completed",
+        "failed",
+        "denied",
+        "timed_out",
+        "cancelled"
+      ],
+      "title": "ToolExecutionStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domain/tool-execution-result.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "errors": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ErrorInfo"
+      },
+      "title": "Errors",
+      "type": "array"
+    },
+    "exit_code": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Exit Code"
+    },
+    "finished_at": {
+      "format": "date-time",
+      "title": "Finished At",
+      "type": "string"
+    },
+    "result": {
+      "$ref": "#/$defs/JsonValue",
+      "default": null
+    },
+    "result_artifacts": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ArtifactRef"
+      },
+      "title": "Result Artifacts",
+      "type": "array"
+    },
+    "sandbox_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Sandbox Id"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/ToolExecutionStatus"
+    },
+    "stderr_artifact": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ArtifactRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "stdout_artifact": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ArtifactRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "tool_call_id": {
+      "format": "uuid",
+      "title": "Tool Call Id",
+      "type": "string"
+    },
+    "tool_id": {
+      "title": "Tool Id",
+      "type": "string"
+    },
+    "tool_version": {
+      "title": "Tool Version",
+      "type": "string"
+    },
+    "warnings": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "tool_call_id",
+    "tool_id",
+    "tool_version",
+    "status",
+    "started_at",
+    "finished_at"
+  ],
+  "title": "ToolExecutionResult",
+  "type": "object"
+}

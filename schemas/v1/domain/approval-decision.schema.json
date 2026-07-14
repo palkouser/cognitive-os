@@ -1,0 +1,89 @@
+{
+  "$defs": {
+    "ApprovalDecisionType": {
+      "enum": [
+        "allow_once",
+        "allow_for_task",
+        "deny",
+        "deny_and_block_rule"
+      ],
+      "title": "ApprovalDecisionType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domain/approval-decision.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "approval_id": {
+      "format": "uuid",
+      "title": "Approval Id",
+      "type": "string"
+    },
+    "argument_hash": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Argument Hash"
+    },
+    "decided_at": {
+      "format": "date-time",
+      "title": "Decided At",
+      "type": "string"
+    },
+    "decided_by": {
+      "title": "Decided By",
+      "type": "string"
+    },
+    "decision": {
+      "$ref": "#/$defs/ApprovalDecisionType"
+    },
+    "expires_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expires At"
+    },
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    },
+    "tool_id": {
+      "title": "Tool Id",
+      "type": "string"
+    },
+    "tool_version": {
+      "title": "Tool Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "approval_id",
+    "decision",
+    "decided_at",
+    "decided_by",
+    "reason",
+    "task_run_id",
+    "tool_id",
+    "tool_version"
+  ],
+  "title": "ApprovalDecision",
+  "type": "object"
+}

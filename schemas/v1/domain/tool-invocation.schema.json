@@ -1,0 +1,109 @@
+{
+  "$defs": {
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domain/tool-invocation.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "arguments": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Arguments",
+      "type": "object"
+    },
+    "correlation_id": {
+      "format": "uuid",
+      "title": "Correlation Id",
+      "type": "string"
+    },
+    "requested_at": {
+      "format": "date-time",
+      "title": "Requested At",
+      "type": "string"
+    },
+    "requested_by": {
+      "title": "Requested By",
+      "type": "string"
+    },
+    "step_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Step Id"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    },
+    "tool_call_id": {
+      "format": "uuid",
+      "title": "Tool Call Id",
+      "type": "string"
+    },
+    "tool_id": {
+      "title": "Tool Id",
+      "type": "string"
+    },
+    "tool_version": {
+      "title": "Tool Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "tool_call_id",
+    "task_run_id",
+    "correlation_id",
+    "tool_id",
+    "tool_version",
+    "requested_at",
+    "requested_by"
+  ],
+  "title": "ToolInvocation",
+  "type": "object"
+}

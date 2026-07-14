@@ -8,8 +8,8 @@
 | OpenAI | optional provider required by baseline runtime | Yes | `LightAgent.core` | Keep in core to preserve the pinned import and default provider |
 | PyYAML | core runtime | Yes | `LightAgent.skills` | Keep in core |
 | Pydantic | core runtime | Yes | Cognitive OS domain and event contracts | Validation, serialization, and JSON Schema generation |
-| jsonschema | core runtime | Yes | MiniMax normalized structured output | Local validation of provider output against request-owned schemas; MIT licensed |
-| MCP | MCP | No | `LightAgent.mcp_client_manager` | Move to `mcp` extra |
+| jsonschema | core runtime | Yes | MiniMax and Tool Plane schema validation | Bounded local validation of request-owned schemas; MIT licensed |
+| MCP | MCP | No | Cognitive OS local STDIO client and legacy manager | Retain stable `mcp>=1.23,<2` optional extra |
 | boto3 | cloud integration | No | `LightAgent.builtin_tools.nos` | Move to `cloud-aws` extra and lazy import |
 | Langfuse | observability | No | optional trace client in `LightAgent.core` | Move to `observability-langfuse` extra |
 | mem0ai | memory legacy | No | upstream examples and user-supplied memory adapter | Move to `lightagent-legacy-memory` extra |

@@ -1,0 +1,37 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/domain/sandbox-result.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "exit_code": {
+      "title": "Exit Code",
+      "type": "integer"
+    },
+    "sandbox_id": {
+      "title": "Sandbox Id",
+      "type": "string"
+    },
+    "stderr": {
+      "format": "binary",
+      "title": "Stderr",
+      "type": "string"
+    },
+    "stdout": {
+      "format": "binary",
+      "title": "Stdout",
+      "type": "string"
+    },
+    "timed_out": {
+      "default": false,
+      "title": "Timed Out",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "sandbox_id",
+    "exit_code",
+    "stdout",
+    "stderr"
+  ],
+  "title": "SandboxResult",
+  "type": "object"
+}

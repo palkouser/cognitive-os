@@ -9,6 +9,8 @@ LightAgent/__pycache__/la_core.cpython-311.pyc
 !.env.example
 !.env.postgres.example
 config/providers.local.yaml
+config/tools.local.yaml
+config/mcp.local.yaml
 
 # Codex local state
 .codex/local/

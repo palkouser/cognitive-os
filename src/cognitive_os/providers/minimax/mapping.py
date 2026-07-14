@@ -113,7 +113,7 @@ def map_response(
         if not isinstance(resolved_model, str) or not resolved_model:
             raise ValueError("response is missing model metadata")
         content_value = _field(message, "content")
-        content = content_value if isinstance(content_value, str) else None
+        content = _strip_reasoning_prefix(content_value) if isinstance(content_value, str) else None
         tool_calls = _map_tool_calls(_field(message, "tool_calls", ()))
         if request.tool_choice in {ToolChoiceMode.REQUIRED, ToolChoiceMode.SPECIFIC}:
             if not tool_calls:
@@ -174,6 +174,21 @@ def _map_tool_calls(value: object) -> tuple[NormalizedToolCall, ...]:
             )
         )
     return tuple(calls)
+
+
+def _strip_reasoning_prefix(content: str) -> str:
+    """Remove MiniMax reasoning tags from the normalized assistant content."""
+    stripped = content.lstrip()
+    if stripped.startswith("<think>"):
+        closing_tag = stripped.find("</think>")
+        if closing_tag < 0:
+            return content
+        stripped = stripped[closing_tag + len("</think>") :].lstrip()
+    if stripped.startswith("```json") and stripped.rstrip().endswith("```"):
+        return stripped[len("```json") :].rstrip()[: -len("```")].strip()
+    if stripped.startswith("```") and stripped.rstrip().endswith("```"):
+        return stripped[len("```") :].rstrip()[: -len("```")].strip()
+    return stripped
 
 
 def _map_usage(value: object) -> TokenUsage | None:

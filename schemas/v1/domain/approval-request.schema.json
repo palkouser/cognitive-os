@@ -1,0 +1,149 @@
+{
+  "$defs": {
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "ToolRiskLevel": {
+      "enum": [
+        "r0",
+        "r1",
+        "r2",
+        "r3"
+      ],
+      "title": "ToolRiskLevel",
+      "type": "string"
+    },
+    "ToolSideEffect": {
+      "enum": [
+        "none",
+        "local_read",
+        "local_write",
+        "network_read",
+        "network_write",
+        "external_write",
+        "destructive",
+        "privileged"
+      ],
+      "title": "ToolSideEffect",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domain/approval-request.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "approval_id": {
+      "format": "uuid",
+      "title": "Approval Id",
+      "type": "string"
+    },
+    "arguments_summary": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Arguments Summary",
+      "type": "object"
+    },
+    "filesystem_scope": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Filesystem Scope",
+      "type": "array"
+    },
+    "network_scope": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Network Scope",
+      "type": "array"
+    },
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    },
+    "requested_at": {
+      "format": "date-time",
+      "title": "Requested At",
+      "type": "string"
+    },
+    "risk_level": {
+      "$ref": "#/$defs/ToolRiskLevel"
+    },
+    "side_effects": {
+      "items": {
+        "$ref": "#/$defs/ToolSideEffect"
+      },
+      "title": "Side Effects",
+      "type": "array"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    },
+    "tool_call_id": {
+      "format": "uuid",
+      "title": "Tool Call Id",
+      "type": "string"
+    },
+    "tool_id": {
+      "title": "Tool Id",
+      "type": "string"
+    },
+    "tool_version": {
+      "title": "Tool Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "approval_id",
+    "tool_call_id",
+    "task_run_id",
+    "tool_id",
+    "tool_version",
+    "arguments_summary",
+    "risk_level",
+    "side_effects",
+    "reason",
+    "requested_at"
+  ],
+  "title": "ApprovalRequest",
+  "type": "object"
+}

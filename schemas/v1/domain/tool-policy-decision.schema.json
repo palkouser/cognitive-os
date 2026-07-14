@@ -1,0 +1,105 @@
+{
+  "$defs": {
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "PolicyAction": {
+      "enum": [
+        "allow",
+        "require_approval",
+        "deny"
+      ],
+      "title": "PolicyAction",
+      "type": "string"
+    },
+    "ToolRiskLevel": {
+      "enum": [
+        "r0",
+        "r1",
+        "r2",
+        "r3"
+      ],
+      "title": "ToolRiskLevel",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domain/tool-policy-decision.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "$ref": "#/$defs/PolicyAction"
+    },
+    "effective_limits": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Effective Limits",
+      "type": "object"
+    },
+    "evaluated_at": {
+      "format": "date-time",
+      "title": "Evaluated At",
+      "type": "string"
+    },
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    },
+    "required_approval": {
+      "default": false,
+      "title": "Required Approval",
+      "type": "boolean"
+    },
+    "risk_level": {
+      "$ref": "#/$defs/ToolRiskLevel"
+    },
+    "rule_id": {
+      "title": "Rule Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "action",
+    "rule_id",
+    "reason",
+    "risk_level",
+    "evaluated_at"
+  ],
+  "title": "ToolPolicyDecision",
+  "type": "object"
+}
