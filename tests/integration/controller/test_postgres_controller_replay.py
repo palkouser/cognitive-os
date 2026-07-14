@@ -2,9 +2,14 @@ import os
 from uuid import uuid4
 
 import pytest
+
+pytest.importorskip("sqlalchemy")
+
 from sqlalchemy.exc import SQLAlchemyError
 
-from cognitive_os.application.services.controller_recovery import ControllerRecoveryService
+from cognitive_os.application.services.controller_recovery import (
+    ControllerRecoveryService,
+)
 from cognitive_os.domain.common import utc_now
 from cognitive_os.domain.controller import ControllerState
 from cognitive_os.events.catalog import build_default_event_catalog
