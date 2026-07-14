@@ -1,0 +1,102 @@
+{
+  "$defs": {
+    "CriterionType": {
+      "enum": [
+        "schema",
+        "artifact_exists",
+        "step_completed",
+        "tool_succeeded",
+        "exact_match",
+        "manual",
+        "domain_verifier"
+      ],
+      "title": "CriterionType",
+      "type": "string"
+    },
+    "ProblemDomain": {
+      "enum": [
+        "generic",
+        "coding",
+        "mathematics",
+        "physics",
+        "logic"
+      ],
+      "title": "ProblemDomain",
+      "type": "string"
+    },
+    "VerificationSubjectType": {
+      "enum": [
+        "structured_value",
+        "artifact",
+        "workspace",
+        "execution_plan",
+        "execution_step",
+        "model_response",
+        "tool_result",
+        "mathematical_expression",
+        "logical_problem",
+        "physical_quantity"
+      ],
+      "title": "VerificationSubjectType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domain/verifier-capability.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "capability_id": {
+      "minLength": 1,
+      "title": "Capability Id",
+      "type": "string"
+    },
+    "criterion_types": {
+      "items": {
+        "$ref": "#/$defs/CriterionType"
+      },
+      "title": "Criterion Types",
+      "type": "array"
+    },
+    "problem_domains": {
+      "items": {
+        "$ref": "#/$defs/ProblemDomain"
+      },
+      "title": "Problem Domains",
+      "type": "array"
+    },
+    "requires_network": {
+      "default": false,
+      "title": "Requires Network",
+      "type": "boolean"
+    },
+    "requires_sandbox": {
+      "default": false,
+      "title": "Requires Sandbox",
+      "type": "boolean"
+    },
+    "subject_type": {
+      "$ref": "#/$defs/VerificationSubjectType"
+    },
+    "supported_media_types": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Supported Media Types",
+      "type": "array"
+    },
+    "supports_batch": {
+      "default": false,
+      "title": "Supports Batch",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "capability_id",
+    "subject_type",
+    "problem_domains",
+    "criterion_types"
+  ],
+  "title": "VerifierCapability",
+  "type": "object"
+}

@@ -1,0 +1,28 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/benchmark.run_completed.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "finished_at": {
+      "format": "date-time",
+      "title": "Finished At",
+      "type": "string"
+    },
+    "report_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Report Hash",
+      "type": "string"
+    },
+    "run_id": {
+      "format": "uuid",
+      "title": "Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "run_id",
+    "report_hash",
+    "finished_at"
+  ],
+  "title": "BenchmarkRunCompleted",
+  "type": "object"
+}

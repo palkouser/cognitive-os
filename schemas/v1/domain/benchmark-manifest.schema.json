@@ -1,0 +1,476 @@
+{
+  "$defs": {
+    "AcceptancePolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "allow_partial": {
+          "default": false,
+          "title": "Allow Partial",
+          "type": "boolean"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "maximum_unverifiable_required": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Maximum Unverifiable Required",
+          "type": "integer"
+        },
+        "maximum_verifier_errors": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Maximum Verifier Errors",
+          "type": "integer"
+        },
+        "minimum_optional_score": {
+          "default": 0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Minimum Optional Score",
+          "type": "number"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "policy_hash": {
+          "default": "",
+          "title": "Policy Hash",
+          "type": "string"
+        },
+        "policy_id": {
+          "format": "uuid",
+          "title": "Policy Id",
+          "type": "string"
+        },
+        "requirements": {
+          "items": {
+            "$ref": "#/$defs/VerifierRequirement"
+          },
+          "minItems": 1,
+          "title": "Requirements",
+          "type": "array"
+        },
+        "version": {
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "policy_id",
+        "version",
+        "name",
+        "description",
+        "requirements",
+        "created_at"
+      ],
+      "title": "AcceptancePolicy",
+      "type": "object"
+    },
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "format": "uuid",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "media_type": {
+          "minLength": 1,
+          "title": "Media Type",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "storage_key": {
+          "minLength": 1,
+          "title": "Storage Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "media_type",
+        "content_hash",
+        "size_bytes",
+        "storage_key",
+        "created_at"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "BenchmarkCase": {
+      "additionalProperties": false,
+      "properties": {
+        "acceptance_policy": {
+          "$ref": "#/$defs/AcceptancePolicy"
+        },
+        "case_hash": {
+          "default": "",
+          "title": "Case Hash",
+          "type": "string"
+        },
+        "case_id": {
+          "minLength": 1,
+          "title": "Case Id",
+          "type": "string"
+        },
+        "configuration": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Configuration",
+          "type": "object"
+        },
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "domain": {
+          "$ref": "#/$defs/BenchmarkDomain"
+        },
+        "expected_outputs": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Expected Outputs",
+          "type": "object"
+        },
+        "input_artifacts": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ArtifactRef"
+          },
+          "title": "Input Artifacts",
+          "type": "array"
+        },
+        "license": {
+          "minLength": 1,
+          "title": "License",
+          "type": "string"
+        },
+        "problem_request": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Problem Request",
+          "type": "object"
+        },
+        "resource_budget": {
+          "$ref": "#/$defs/BenchmarkResourceBudget"
+        },
+        "source": {
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        },
+        "tags": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "version": {
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "case_id",
+        "version",
+        "domain",
+        "title",
+        "description",
+        "problem_request",
+        "expected_outputs",
+        "acceptance_policy",
+        "resource_budget",
+        "source",
+        "license"
+      ],
+      "title": "BenchmarkCase",
+      "type": "object"
+    },
+    "BenchmarkDomain": {
+      "enum": [
+        "generic",
+        "controller",
+        "coding",
+        "mathematics",
+        "logic",
+        "physics"
+      ],
+      "title": "BenchmarkDomain",
+      "type": "string"
+    },
+    "BenchmarkResourceBudget": {
+      "additionalProperties": false,
+      "properties": {
+        "maximum_artifact_bytes": {
+          "exclusiveMinimum": 0,
+          "title": "Maximum Artifact Bytes",
+          "type": "integer"
+        },
+        "maximum_cost_units": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Maximum Cost Units",
+          "type": "number"
+        },
+        "maximum_elapsed_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "Maximum Elapsed Seconds",
+          "type": "number"
+        },
+        "maximum_input_tokens": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Maximum Input Tokens",
+          "type": "integer"
+        },
+        "maximum_output_tokens": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Maximum Output Tokens",
+          "type": "integer"
+        },
+        "maximum_provider_calls": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Maximum Provider Calls",
+          "type": "integer"
+        },
+        "maximum_tool_calls": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Maximum Tool Calls",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "maximum_elapsed_seconds",
+        "maximum_artifact_bytes"
+      ],
+      "title": "BenchmarkResourceBudget",
+      "type": "object"
+    },
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "VerifierRequirement": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_outcomes": {
+          "default": [
+            "passed"
+          ],
+          "items": {
+            "$ref": "#/$defs/VerifierStatus"
+          },
+          "title": "Allowed Outcomes",
+          "type": "array"
+        },
+        "criterion_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Criterion Ids",
+          "type": "array"
+        },
+        "minimum_score": {
+          "default": 1,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Minimum Score",
+          "type": "number"
+        },
+        "minimum_version": {
+          "minLength": 1,
+          "title": "Minimum Version",
+          "type": "string"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "requirement_id": {
+          "format": "uuid",
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "verifier_id": {
+          "minLength": 1,
+          "title": "Verifier Id",
+          "type": "string"
+        },
+        "weight": {
+          "default": 1,
+          "exclusiveMinimum": 0,
+          "title": "Weight",
+          "type": "number"
+        }
+      },
+      "required": [
+        "requirement_id",
+        "verifier_id",
+        "minimum_version",
+        "criterion_ids"
+      ],
+      "title": "VerifierRequirement",
+      "type": "object"
+    },
+    "VerifierStatus": {
+      "enum": [
+        "passed",
+        "failed",
+        "partial",
+        "unverifiable",
+        "error"
+      ],
+      "title": "VerifierStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domain/benchmark-manifest.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "benchmark_id": {
+      "minLength": 1,
+      "title": "Benchmark Id",
+      "type": "string"
+    },
+    "cases": {
+      "items": {
+        "$ref": "#/$defs/BenchmarkCase"
+      },
+      "minItems": 1,
+      "title": "Cases",
+      "type": "array"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "default_configuration": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Default Configuration",
+      "type": "object"
+    },
+    "description": {
+      "minLength": 1,
+      "title": "Description",
+      "type": "string"
+    },
+    "license": {
+      "minLength": 1,
+      "title": "License",
+      "type": "string"
+    },
+    "manifest_hash": {
+      "default": "",
+      "title": "Manifest Hash",
+      "type": "string"
+    },
+    "source": {
+      "minLength": 1,
+      "title": "Source",
+      "type": "string"
+    },
+    "title": {
+      "minLength": 1,
+      "title": "Title",
+      "type": "string"
+    },
+    "version": {
+      "minLength": 1,
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "benchmark_id",
+    "version",
+    "title",
+    "description",
+    "cases",
+    "source",
+    "license",
+    "created_at"
+  ],
+  "title": "BenchmarkManifest",
+  "type": "object"
+}

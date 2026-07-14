@@ -12,14 +12,22 @@
 | MCP | MCP | No | Cognitive OS local STDIO client and legacy manager | Retain stable `mcp>=1.23,<2` optional extra |
 | boto3 | cloud integration | No | `LightAgent.builtin_tools.nos` | Move to `cloud-aws` extra and lazy import |
 | Langfuse | observability | No | optional trace client in `LightAgent.core` | Move to `observability-langfuse` extra |
-| mem0ai | memory legacy | No | upstream examples and user-supplied memory adapter | Move to `lightagent-legacy-memory` extra |
-| LiteLLM | optional provider | No | `LightAgent.litellm_client` | Move to `provider-litellm` extra |
+| mem0ai | deferred legacy memory | No | upstream examples only | Keep extra empty; 0.1.70 has unresolved advisories and Memory Plane is out of scope |
+| LiteLLM | deferred provider router | No | upstream optional module | Keep extra empty; fixed versions require incompatible OpenAI 2.x |
 | browser-use | browser integration | No | documentation/examples only | Leave the `browser` extra empty until a supported adapter exists |
 | Requests | removable | No | upstream example tool only | Remove from project dependencies |
 | Loguru | removable | No | upstream examples only | Remove from project dependencies |
 | Colorama | removable | No | No runtime import found | Remove from project dependencies |
 | httpx-sse | removable | No | No direct runtime import; supplied transitively by MCP when needed | Remove direct declaration |
 | pydantic-settings | removable | No | No runtime import found | Remove from project dependencies |
+| SymPy | domain verification | No | Safe typed mathematics adapter | `verification-math` optional extra |
+| z3-solver | domain verification | No | Typed logic adapter | `verification-logic` optional extra |
+| Pint | domain verification | No | Sealed units and dimensions adapter | `verification-physics` optional extra |
+| Inspect AI | evaluation adapter | No | Explicit benchmark-format export only | Keep `benchmark-inspect` empty until upstream accepts a security-fixed Click |
+
+`inspect-ai==0.3.246` constrains Click below the security-fixed release. Cognitive OS therefore
+ships a dependency-free deterministic exporter and does not install the incompatible runtime.
+The runtime dependency may be restored after Inspect AI accepts a fixed Click version.
 
 ## Dependency groups
 

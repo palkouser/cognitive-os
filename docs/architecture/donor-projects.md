@@ -16,3 +16,14 @@ Plane, approval, artifact, telemetry, replay, and recovery boundaries.
 Imported donor source may retain its original-language comments and messages. New and
 modified Cognitive OS-owned content remains English-only, and donor exceptions stay within
 the registered upstream boundary.
+
+## Sprint 7 verification and evaluation references
+
+| Project | Reviewed release | License | Use | Imported files | Security and update policy |
+| --- | --- | --- | --- | --- | --- |
+| sympy/sympy | 1.14.0 | BSD-3-Clause | Optional direct dependency for typed symbolic verification | None | Only manually constructed AST objects enter SymPy; update within the constrained major version after adversarial tests |
+| Z3Prover/z3 | 4.16.0 | MIT | Optional direct dependency for typed logic verification | None | Raw SMT-LIB and arbitrary solver options are rejected; update after SAT/UNSAT/UNKNOWN regression |
+| hgrecco/pint | 0.25.3 | BSD-3-Clause | Optional direct dependency for units and dimensions | None | Packaged definitions only; update after offset-unit and registry-sealing tests |
+| UKGovernmentBEIS/inspect_ai | 0.3.246 | MIT | Export-format reference; runtime deferred | None | Never authoritative; current Click constraint is security-incompatible |
+| UKGovernmentBEIS/inspect_evals | reviewed 2026-07-14 | MIT | Evaluation pattern reference only | None | No runtime dependency or automatic registration |
+| swe-bench/SWE-bench | reviewed 2026-07-14 | MIT | Dataset metadata compatibility | None | No clone, download, execution, or gold-patch disclosure; revisions and dataset licenses are mandatory |

@@ -1,0 +1,79 @@
+{
+  "$defs": {
+    "VerifierStatus": {
+      "enum": [
+        "passed",
+        "failed",
+        "partial",
+        "unverifiable",
+        "error"
+      ],
+      "title": "VerifierStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domain/verifier-requirement.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "allowed_outcomes": {
+      "default": [
+        "passed"
+      ],
+      "items": {
+        "$ref": "#/$defs/VerifierStatus"
+      },
+      "title": "Allowed Outcomes",
+      "type": "array"
+    },
+    "criterion_ids": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Criterion Ids",
+      "type": "array"
+    },
+    "minimum_score": {
+      "default": 1,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Minimum Score",
+      "type": "number"
+    },
+    "minimum_version": {
+      "minLength": 1,
+      "title": "Minimum Version",
+      "type": "string"
+    },
+    "required": {
+      "default": true,
+      "title": "Required",
+      "type": "boolean"
+    },
+    "requirement_id": {
+      "format": "uuid",
+      "title": "Requirement Id",
+      "type": "string"
+    },
+    "verifier_id": {
+      "minLength": 1,
+      "title": "Verifier Id",
+      "type": "string"
+    },
+    "weight": {
+      "default": 1,
+      "exclusiveMinimum": 0,
+      "title": "Weight",
+      "type": "number"
+    }
+  },
+  "required": [
+    "requirement_id",
+    "verifier_id",
+    "minimum_version",
+    "criterion_ids"
+  ],
+  "title": "VerifierRequirement",
+  "type": "object"
+}

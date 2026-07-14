@@ -1,0 +1,28 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/benchmark.case_started.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "case_id": {
+      "minLength": 1,
+      "title": "Case Id",
+      "type": "string"
+    },
+    "run_id": {
+      "format": "uuid",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "run_id",
+    "case_id",
+    "started_at"
+  ],
+  "title": "BenchmarkCaseStarted",
+  "type": "object"
+}

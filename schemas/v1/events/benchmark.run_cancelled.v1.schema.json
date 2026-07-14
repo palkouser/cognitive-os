@@ -1,0 +1,28 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/benchmark.run_cancelled.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "finished_at": {
+      "format": "date-time",
+      "title": "Finished At",
+      "type": "string"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "run_id": {
+      "format": "uuid",
+      "title": "Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "run_id",
+    "reason",
+    "finished_at"
+  ],
+  "title": "BenchmarkRunCancelled",
+  "type": "object"
+}

@@ -70,6 +70,8 @@ class ControllerBudget(ImmutableContractModel):
     maximum_input_tokens: int | None = Field(default=None, gt=0)
     maximum_output_tokens: int | None = Field(default=None, gt=0)
     maximum_cost_units: float | None = Field(default=None, gt=0)
+    maximum_verifier_calls: int = Field(default=64, gt=0)
+    maximum_verification_seconds: float = Field(default=600, gt=0)
 
 
 class ControllerUsage(ImmutableContractModel):
@@ -82,6 +84,8 @@ class ControllerUsage(ImmutableContractModel):
     input_tokens: int = Field(default=0, ge=0)
     output_tokens: int = Field(default=0, ge=0)
     cost_units: float = Field(default=0, ge=0)
+    verifier_calls: int = Field(default=0, ge=0)
+    verification_seconds: float = Field(default=0, ge=0)
     started_at: UtcDatetime
     last_updated_at: UtcDatetime
 

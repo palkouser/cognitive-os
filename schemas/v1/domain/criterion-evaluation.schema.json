@@ -1,0 +1,73 @@
+{
+  "$defs": {
+    "VerifierStatus": {
+      "enum": [
+        "passed",
+        "failed",
+        "partial",
+        "unverifiable",
+        "error"
+      ],
+      "title": "VerifierStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domain/criterion-evaluation.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "criterion_id": {
+      "format": "uuid",
+      "title": "Criterion Id",
+      "type": "string"
+    },
+    "outcome": {
+      "$ref": "#/$defs/VerifierStatus"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "required": {
+      "title": "Required",
+      "type": "boolean"
+    },
+    "result_ids": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Result Ids",
+      "type": "array"
+    },
+    "score": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Score"
+    },
+    "verifier_requirement_id": {
+      "format": "uuid",
+      "title": "Verifier Requirement Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "criterion_id",
+    "verifier_requirement_id",
+    "outcome",
+    "required",
+    "reason"
+  ],
+  "title": "CriterionEvaluation",
+  "type": "object"
+}

@@ -66,6 +66,18 @@
           "minimum": 0,
           "title": "Tool Calls",
           "type": "integer"
+        },
+        "verification_seconds": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Verification Seconds",
+          "type": "number"
+        },
+        "verifier_calls": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Verifier Calls",
+          "type": "integer"
         }
       },
       "required": [

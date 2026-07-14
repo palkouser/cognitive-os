@@ -14,3 +14,7 @@ def test_core_metadata_excludes_optional_integrations() -> None:
     assert not any(item.startswith("mem0ai") for item in core)
     assert not any(item.startswith("boto3") for item in core)
     assert not any(item.startswith("langfuse") for item in core)
+    assert not any(item.startswith("sympy") for item in core)
+    assert not any(item.startswith("z3-solver") for item in core)
+    assert not any(item.startswith("pint") for item in core)
+    assert not any(item.startswith("inspect-ai") for item in core)

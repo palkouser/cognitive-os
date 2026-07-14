@@ -1,0 +1,167 @@
+{
+  "$defs": {
+    "AcceptanceDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "criterion_evaluations": {
+          "items": {
+            "$ref": "#/$defs/CriterionEvaluation"
+          },
+          "title": "Criterion Evaluations",
+          "type": "array"
+        },
+        "decision": {
+          "$ref": "#/$defs/AcceptanceDecisionType"
+        },
+        "decision_id": {
+          "format": "uuid",
+          "title": "Decision Id",
+          "type": "string"
+        },
+        "optional_score": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Optional Score",
+          "type": "number"
+        },
+        "policy_id": {
+          "format": "uuid",
+          "title": "Policy Id",
+          "type": "string"
+        },
+        "policy_version": {
+          "minLength": 1,
+          "title": "Policy Version",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "required_passed": {
+          "title": "Required Passed",
+          "type": "boolean"
+        },
+        "task_run_id": {
+          "format": "uuid",
+          "title": "Task Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "decision_id",
+        "task_run_id",
+        "policy_id",
+        "policy_version",
+        "decision",
+        "criterion_evaluations",
+        "required_passed",
+        "optional_score",
+        "reason",
+        "created_at"
+      ],
+      "title": "AcceptanceDecision",
+      "type": "object"
+    },
+    "AcceptanceDecisionType": {
+      "enum": [
+        "accepted",
+        "rejected",
+        "needs_repair",
+        "needs_clarification",
+        "unverifiable",
+        "verification_error"
+      ],
+      "title": "AcceptanceDecisionType",
+      "type": "string"
+    },
+    "CriterionEvaluation": {
+      "additionalProperties": false,
+      "properties": {
+        "criterion_id": {
+          "format": "uuid",
+          "title": "Criterion Id",
+          "type": "string"
+        },
+        "outcome": {
+          "$ref": "#/$defs/VerifierStatus"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        },
+        "result_ids": {
+          "default": [],
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Result Ids",
+          "type": "array"
+        },
+        "score": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Score"
+        },
+        "verifier_requirement_id": {
+          "format": "uuid",
+          "title": "Verifier Requirement Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "criterion_id",
+        "verifier_requirement_id",
+        "outcome",
+        "required",
+        "reason"
+      ],
+      "title": "CriterionEvaluation",
+      "type": "object"
+    },
+    "VerifierStatus": {
+      "enum": [
+        "passed",
+        "failed",
+        "partial",
+        "unverifiable",
+        "error"
+      ],
+      "title": "VerifierStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/controller.acceptance_decision_recorded.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "decision": {
+      "$ref": "#/$defs/AcceptanceDecision"
+    }
+  },
+  "required": [
+    "decision"
+  ],
+  "title": "AcceptanceDecisionRecorded",
+  "type": "object"
+}

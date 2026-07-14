@@ -1,0 +1,18 @@
+benchmark_id: sprint7-ci
+version: "1"
+title: Sprint 7 CI benchmark gate
+description: Minimal bounded subset for ordinary credential-free CI.
+default_configuration:
+  mode: verifier_only
+source: Cognitive OS Sprint 7 executable backlog
+license: Apache-2.0
+created_at: 2026-01-01T00:00:00Z
+case_matrix:
+  generic:
+    - {id: ci.generic-exact, verifier: generic.exact}
+  mathematics:
+    - {id: ci.mathematics-numeric, verifier: mathematics.numeric}
+  logic:
+    - {id: ci.logic-satisfiable, verifier: logic.satisfiable}
+  physics:
+    - {id: ci.physics-conversion, verifier: physics.unit_conversion}
