@@ -219,6 +219,36 @@
       "sha256": "c02250d33704f9ad80f97e8bb933cbf6a82d7a6510f0ed952086bd7eb9d7f19e"
     },
     {
+      "file": "v1/domain/model-capabilities.schema.json",
+      "model": "ModelCapabilities",
+      "sha256": "58d3ca1401b36479e42b811e5fd8ab5203a05126ef70b6a6efed1c8cf50aaa56"
+    },
+    {
+      "file": "v1/domain/model-provider-request.schema.json",
+      "model": "ModelProviderRequest",
+      "sha256": "3ee9aadd49c1f5b45b5a4636e963d98cc74410641c286640dc98748c350bf536"
+    },
+    {
+      "file": "v1/domain/model-provider-response.schema.json",
+      "model": "ModelProviderResponse",
+      "sha256": "7e65e4ec74c8b95add7bf32a0dd6be0778f26e286df3820570b1e6722c1cf7ba"
+    },
+    {
+      "file": "v1/domain/provider-health.schema.json",
+      "model": "ProviderHealth",
+      "sha256": "59429aaf48b6d6e2dd4dbd0357972417d560eaa6dac6b2d48f7bc542eebc9eb7"
+    },
+    {
+      "file": "v1/domain/provider-identity.schema.json",
+      "model": "ProviderIdentity",
+      "sha256": "029f91648481c5b0c18a7207ce5ffde8f20ea87929f5503f5138e89085118301"
+    },
+    {
+      "file": "v1/domain/provider-stream-event.schema.json",
+      "model": "ProviderStreamEvent",
+      "sha256": "35221d5b2a4b51367f15adb18b5f69503d79aa30d2c622a1e2868e919629b537"
+    },
+    {
       "file": "v1/domain/task-run.schema.json",
       "model": "TaskRun",
       "sha256": "fa19924ae19de29e21e6abbef4608b9e92f6a96109dd2cae52fd6574542bd0d9"

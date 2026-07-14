@@ -1,0 +1,24 @@
+default_provider_id: minimax
+providers:
+  minimax:
+    kind: network_api
+    enabled: true
+    base_url: https://api.minimax.io/v1
+    model: MiniMax-M3
+    api_key_environment_variable: COGOS_MINIMAX_API_KEY  # pragma: allowlist secret
+    key_type: subscription
+    timeout_seconds: 120
+    maximum_attempts: 3
+    maximum_context_tokens: 131072
+    default_max_output_tokens: 8192
+    supports_tool_calls: false
+    supports_structured_output: false
+  claude-code:
+    kind: cli_agent
+    enabled: false
+    executable: claude
+    working_directory: /home/palkouser/projekt/cognitive-os
+    timeout_seconds: 300
+    maximum_turns: 3
+    maximum_budget_usd: null
+    output_format: json

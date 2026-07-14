@@ -1,0 +1,31 @@
+{
+  "fixture_version": 1,
+  "request_fingerprint": "ff11ffe381620ab8a01e628d4000419d5a19227d674c64f1c7c0d77504738732",
+  "provider_id": "replay",
+  "source_provider": "sanitized-test",
+  "response": {
+    "model_call_id": "00000000-0000-0000-0000-000000000001",
+    "provider_id": "sanitized-test",
+    "requested_model": "replay-model",
+    "resolved_model": "replay-model-v1",
+    "content": "ready",
+    "structured_output": null,
+    "tool_calls": [],
+    "finish_reason": "completed",
+    "usage": {
+      "input_tokens": 6,
+      "output_tokens": 1,
+      "total_tokens": 7,
+      "cached_input_tokens": null,
+      "reasoning_tokens": null
+    },
+    "latency_ms": 1.0,
+    "provider_request_id": null,
+    "warnings": []
+  },
+  "stream_events": [
+    {"sequence": 1, "event_type": "response_started"},
+    {"sequence": 2, "event_type": "text_delta", "text_delta": "ready"},
+    {"sequence": 3, "event_type": "response_completed"}
+  ]
+}

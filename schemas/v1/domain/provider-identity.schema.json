@@ -1,0 +1,45 @@
+{
+  "$defs": {
+    "ProviderKind": {
+      "enum": [
+        "network_api",
+        "local_api",
+        "cli_agent",
+        "mock",
+        "replay"
+      ],
+      "title": "ProviderKind",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domain/provider-identity.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "adapter_version": {
+      "minLength": 1,
+      "title": "Adapter Version",
+      "type": "string"
+    },
+    "display_name": {
+      "minLength": 1,
+      "title": "Display Name",
+      "type": "string"
+    },
+    "provider_id": {
+      "minLength": 1,
+      "title": "Provider Id",
+      "type": "string"
+    },
+    "provider_kind": {
+      "$ref": "#/$defs/ProviderKind"
+    }
+  },
+  "required": [
+    "provider_id",
+    "display_name",
+    "provider_kind",
+    "adapter_version"
+  ],
+  "title": "ProviderIdentity",
+  "type": "object"
+}
