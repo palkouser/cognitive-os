@@ -1,0 +1,146 @@
+{
+  "$defs": {
+    "ControllerDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "causation_event_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Causation Event Id"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "current_state": {
+          "$ref": "#/$defs/ControllerState"
+        },
+        "decision_id": {
+          "format": "uuid",
+          "title": "Decision Id",
+          "type": "string"
+        },
+        "decision_type": {
+          "$ref": "#/$defs/ControllerDecisionType"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "selected_provider_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Selected Provider Id"
+        },
+        "selected_step_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Selected Step Id"
+        },
+        "selected_tool_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Selected Tool Id"
+        },
+        "task_run_id": {
+          "format": "uuid",
+          "title": "Task Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "decision_id",
+        "task_run_id",
+        "current_state",
+        "decision_type",
+        "reason",
+        "created_at"
+      ],
+      "title": "ControllerDecision",
+      "type": "object"
+    },
+    "ControllerDecisionType": {
+      "enum": [
+        "represent_problem",
+        "request_clarification",
+        "generate_plan",
+        "execute_provider",
+        "execute_tool",
+        "verify",
+        "repair",
+        "pause",
+        "complete",
+        "fail",
+        "cancel",
+        "exhaust_budget"
+      ],
+      "title": "ControllerDecisionType",
+      "type": "string"
+    },
+    "ControllerState": {
+      "enum": [
+        "received",
+        "representing_problem",
+        "waiting_for_clarification",
+        "ready",
+        "planning",
+        "executing",
+        "verifying",
+        "repairing",
+        "paused",
+        "completed",
+        "failed",
+        "cancelled",
+        "budget_exhausted"
+      ],
+      "title": "ControllerState",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/controller.decision_recorded.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "decision": {
+      "$ref": "#/$defs/ControllerDecision"
+    }
+  },
+  "required": [
+    "decision"
+  ],
+  "title": "ControllerDecisionRecorded",
+  "type": "object"
+}

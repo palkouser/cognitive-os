@@ -1,0 +1,57 @@
+{
+  "$defs": {
+    "ControllerState": {
+      "enum": [
+        "received",
+        "representing_problem",
+        "waiting_for_clarification",
+        "ready",
+        "planning",
+        "executing",
+        "verifying",
+        "repairing",
+        "paused",
+        "completed",
+        "failed",
+        "cancelled",
+        "budget_exhausted"
+      ],
+      "title": "ControllerState",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/controller.state_changed.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "changed_at": {
+      "format": "date-time",
+      "title": "Changed At",
+      "type": "string"
+    },
+    "current_state": {
+      "$ref": "#/$defs/ControllerState"
+    },
+    "decision_id": {
+      "format": "uuid",
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "previous_state": {
+      "$ref": "#/$defs/ControllerState"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "previous_state",
+    "current_state",
+    "reason",
+    "decision_id",
+    "changed_at"
+  ],
+  "title": "ControllerStateChanged",
+  "type": "object"
+}

@@ -1,0 +1,63 @@
+{
+  "$defs": {
+    "ClarificationAnswer": {
+      "additionalProperties": false,
+      "properties": {
+        "answer": {
+          "title": "Answer"
+        },
+        "question_id": {
+          "format": "uuid",
+          "title": "Question Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "question_id",
+        "answer"
+      ],
+      "title": "ClarificationAnswer",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domain/clarification-response.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "answers": {
+      "items": {
+        "$ref": "#/$defs/ClarificationAnswer"
+      },
+      "title": "Answers",
+      "type": "array"
+    },
+    "clarification_id": {
+      "format": "uuid",
+      "title": "Clarification Id",
+      "type": "string"
+    },
+    "provided_at": {
+      "format": "date-time",
+      "title": "Provided At",
+      "type": "string"
+    },
+    "provided_by": {
+      "minLength": 1,
+      "title": "Provided By",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "clarification_id",
+    "task_run_id",
+    "answers",
+    "provided_at",
+    "provided_by"
+  ],
+  "title": "ClarificationResponse",
+  "type": "object"
+}
