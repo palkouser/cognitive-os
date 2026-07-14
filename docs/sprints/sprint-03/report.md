@@ -1,6 +1,6 @@
 # Sprint 3 report
 
-Status: Implementation complete - PostgreSQL CI and release pending
+Status: Complete
 
 ## Sprint goal
 
@@ -65,21 +65,29 @@ separate database metadata from application correlation IDs.
 
 Operational scripts create checksummed custom database dumps, compressed artifact archives,
 and credential-free manifests. Restore is restricted to an isolated `_test` database and a
-temporary artifact directory. Combined backups require a writer maintenance window.
+temporary artifact directory. The PostgreSQL 18.4 CI environment completed the combined
+backup and isolated restore test. Combined backups require a writer maintenance window.
 
 ## Test results
 
-- Cognitive OS unit tests: pending final count.
-- Offline contract tests: pending core-only synchronization.
-- PostgreSQL integration and concurrency tests: pending GitHub Actions.
-- Full repository regression: pending.
-- Quality, security, build, migration, and optional-boundary gates: pending final run.
+- Cognitive OS unit tests with PostgreSQL and telemetry extras: 206 passed.
+- Core-only Cognitive OS and contract suite: 234 passed, 3 optional tests skipped.
+- Full core repository regression: 300 passed, 3 optional tests skipped.
+- Full optional local suite without a configured database: 307 passed, 9 integration tests
+  skipped.
+- PostgreSQL integration and concurrency tests: 9 passed against PostgreSQL 18.4.
+- Migration upgrade, downgrade, re-upgrade, and drift check: passed.
+- Database and artifact backup plus isolated restore: passed in CI.
+- Ruff, format, mypy, Bandit, ShellCheck, schema drift, language, build, security, and
+  optional-boundary checks: passed.
+- GitHub PR CI: all seven jobs passed.
 
 ## Security status
 
 Runtime database permissions prohibit event update, deletion, truncation, and schema changes.
 Credentials remain untracked. Telemetry and operational output exclude payloads, artifact
-bytes, passwords, and complete URLs. Final dependency and secret audits are pending.
+bytes, passwords, and complete URLs. The core dependency audit reports no known third-party
+vulnerabilities, and the reviewed secret scan found no credential.
 
 ## Known issues
 
