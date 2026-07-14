@@ -1,0 +1,22 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/controller.continuation_consumed.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "consumed_at": {
+      "format": "date-time",
+      "title": "Consumed At",
+      "type": "string"
+    },
+    "continuation_id": {
+      "format": "uuid",
+      "title": "Continuation Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "continuation_id",
+    "consumed_at"
+  ],
+  "title": "ControllerContinuationConsumed",
+  "type": "object"
+}

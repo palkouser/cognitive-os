@@ -1,0 +1,79 @@
+{
+  "$defs": {
+    "ContinuationTokenRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "checkpoint_id": {
+          "format": "uuid",
+          "title": "Checkpoint Id",
+          "type": "string"
+        },
+        "consumed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Consumed At"
+        },
+        "continuation_id": {
+          "format": "uuid",
+          "title": "Continuation Id",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "event_stream_version": {
+          "title": "Event Stream Version",
+          "type": "integer"
+        },
+        "expires_at": {
+          "format": "date-time",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "task_run_id": {
+          "format": "uuid",
+          "title": "Task Run Id",
+          "type": "string"
+        },
+        "token_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Token Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "continuation_id",
+        "task_run_id",
+        "checkpoint_id",
+        "token_hash",
+        "event_stream_version",
+        "created_at",
+        "expires_at"
+      ],
+      "title": "ContinuationTokenRecord",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/controller.continuation_issued.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "record": {
+      "$ref": "#/$defs/ContinuationTokenRecord"
+    }
+  },
+  "required": [
+    "record"
+  ],
+  "title": "ControllerContinuationIssued",
+  "type": "object"
+}

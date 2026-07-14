@@ -2,7 +2,22 @@
 
 from .approvals import ApprovalDecision, ApprovalRequest, ToolPolicyDecision
 from .base import ContractModel, ImmutableContractModel
+from .clarifications import (
+    ClarificationAnswer,
+    ClarificationRequest,
+    ClarificationResponse,
+    ContinuationTokenRecord,
+)
 from .common import ActorRef, ArtifactRef, ErrorInfo, TokenUsage, UtcDatetime, utc_now
+from .controller import (
+    ControllerActionType,
+    ControllerBudget,
+    ControllerDecision,
+    ControllerDecisionType,
+    ControllerState,
+    ControllerStateSnapshot,
+    ControllerUsage,
+)
 from .enums import (
     ActorType,
     CallStatus,
@@ -28,6 +43,21 @@ from .model_requests import (
     ProviderMessageRole,
     ProviderToolDefinition,
 )
+from .planning import ControllerExecutionPlan, ControllerStepAction
+from .problems import (
+    AcceptanceCriterion,
+    ClarificationQuestion,
+    ConstraintCategory,
+    CriterionType,
+    InformationStatus,
+    ProblemAssumption,
+    ProblemConstraint,
+    ProblemDomain,
+    ProblemGoal,
+    ProblemInputReference,
+    ProblemOutputRequirement,
+    ProblemRepresentation,
+)
 from .provider import (
     ModelCapabilities,
     ModelFinishReason,
@@ -52,18 +82,36 @@ from .transitions import (
 from .verification import VerificationSubjectRef, VerifierFinding, VerifierResult
 
 __all__ = [
+    "AcceptanceCriterion",
     "ActorRef",
     "ActorType",
     "ApprovalDecision",
     "ApprovalRequest",
     "ArtifactRef",
     "CallStatus",
+    "ClarificationAnswer",
+    "ClarificationQuestion",
+    "ClarificationRequest",
+    "ClarificationResponse",
+    "ConstraintCategory",
+    "ContinuationTokenRecord",
     "ContractModel",
+    "ControllerActionType",
+    "ControllerBudget",
+    "ControllerDecision",
+    "ControllerDecisionType",
+    "ControllerExecutionPlan",
+    "ControllerState",
+    "ControllerStateSnapshot",
+    "ControllerStepAction",
+    "ControllerUsage",
+    "CriterionType",
     "ErrorInfo",
     "ExecutionPlan",
     "ExecutionStep",
     "FindingSeverity",
     "ImmutableContractModel",
+    "InformationStatus",
     "ModelCallRequestRecord",
     "ModelCallResultRecord",
     "ModelCapabilities",
@@ -75,6 +123,13 @@ __all__ = [
     "PermissionDecision",
     "PlanStepDefinition",
     "PrivacyClass",
+    "ProblemAssumption",
+    "ProblemConstraint",
+    "ProblemDomain",
+    "ProblemGoal",
+    "ProblemInputReference",
+    "ProblemOutputRequirement",
+    "ProblemRepresentation",
     "ProviderHealth",
     "ProviderIdentity",
     "ProviderKind",

@@ -1,0 +1,124 @@
+{
+  "$defs": {
+    "ClarificationQuestion": {
+      "additionalProperties": false,
+      "properties": {
+        "answer_schema": {
+          "additionalProperties": true,
+          "title": "Answer Schema",
+          "type": "object"
+        },
+        "question": {
+          "minLength": 1,
+          "title": "Question",
+          "type": "string"
+        },
+        "question_id": {
+          "format": "uuid",
+          "title": "Question Id",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "related_constraint_ids": {
+          "default": [],
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Related Constraint Ids",
+          "type": "array"
+        },
+        "related_goal_ids": {
+          "default": [],
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Related Goal Ids",
+          "type": "array"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "question_id",
+        "question",
+        "reason",
+        "answer_schema"
+      ],
+      "title": "ClarificationQuestion",
+      "type": "object"
+    },
+    "ClarificationRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "clarification_id": {
+          "format": "uuid",
+          "title": "Clarification Id",
+          "type": "string"
+        },
+        "expires_at": {
+          "format": "date-time",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "problem_id": {
+          "format": "uuid",
+          "title": "Problem Id",
+          "type": "string"
+        },
+        "problem_revision": {
+          "title": "Problem Revision",
+          "type": "integer"
+        },
+        "questions": {
+          "items": {
+            "$ref": "#/$defs/ClarificationQuestion"
+          },
+          "title": "Questions",
+          "type": "array"
+        },
+        "requested_at": {
+          "format": "date-time",
+          "title": "Requested At",
+          "type": "string"
+        },
+        "task_run_id": {
+          "format": "uuid",
+          "title": "Task Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "clarification_id",
+        "task_run_id",
+        "problem_id",
+        "problem_revision",
+        "questions",
+        "requested_at",
+        "expires_at"
+      ],
+      "title": "ClarificationRequest",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/controller.clarification_requested.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "request": {
+      "$ref": "#/$defs/ClarificationRequest"
+    }
+  },
+  "required": [
+    "request"
+  ],
+  "title": "ControllerClarificationRequested",
+  "type": "object"
+}

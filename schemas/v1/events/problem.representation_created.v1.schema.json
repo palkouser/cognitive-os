@@ -1,0 +1,599 @@
+{
+  "$defs": {
+    "AcceptanceCriterion": {
+      "additionalProperties": false,
+      "properties": {
+        "configuration": {
+          "additionalProperties": true,
+          "title": "Configuration",
+          "type": "object"
+        },
+        "criterion_id": {
+          "format": "uuid",
+          "title": "Criterion Id",
+          "type": "string"
+        },
+        "criterion_type": {
+          "$ref": "#/$defs/CriterionType"
+        },
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "verifier_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Verifier Id"
+        },
+        "weight": {
+          "exclusiveMinimum": 0,
+          "title": "Weight",
+          "type": "number"
+        }
+      },
+      "required": [
+        "criterion_id",
+        "description",
+        "criterion_type",
+        "weight"
+      ],
+      "title": "AcceptanceCriterion",
+      "type": "object"
+    },
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "format": "uuid",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "media_type": {
+          "minLength": 1,
+          "title": "Media Type",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "storage_key": {
+          "minLength": 1,
+          "title": "Storage Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "media_type",
+        "content_hash",
+        "size_bytes",
+        "storage_key",
+        "created_at"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "ClarificationQuestion": {
+      "additionalProperties": false,
+      "properties": {
+        "answer_schema": {
+          "additionalProperties": true,
+          "title": "Answer Schema",
+          "type": "object"
+        },
+        "question": {
+          "minLength": 1,
+          "title": "Question",
+          "type": "string"
+        },
+        "question_id": {
+          "format": "uuid",
+          "title": "Question Id",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "related_constraint_ids": {
+          "default": [],
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Related Constraint Ids",
+          "type": "array"
+        },
+        "related_goal_ids": {
+          "default": [],
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Related Goal Ids",
+          "type": "array"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "question_id",
+        "question",
+        "reason",
+        "answer_schema"
+      ],
+      "title": "ClarificationQuestion",
+      "type": "object"
+    },
+    "ConstraintCategory": {
+      "enum": [
+        "functional",
+        "security",
+        "resource",
+        "time",
+        "format",
+        "environment",
+        "policy",
+        "domain"
+      ],
+      "title": "ConstraintCategory",
+      "type": "string"
+    },
+    "ConstraintSource": {
+      "enum": [
+        "user",
+        "system",
+        "project_policy",
+        "tool_policy",
+        "inferred"
+      ],
+      "title": "ConstraintSource",
+      "type": "string"
+    },
+    "CriterionType": {
+      "enum": [
+        "schema",
+        "artifact_exists",
+        "step_completed",
+        "tool_succeeded",
+        "exact_match",
+        "manual",
+        "domain_verifier"
+      ],
+      "title": "CriterionType",
+      "type": "string"
+    },
+    "InformationStatus": {
+      "enum": [
+        "known",
+        "assumed",
+        "missing",
+        "conflicting"
+      ],
+      "title": "InformationStatus",
+      "type": "string"
+    },
+    "ProblemAssumption": {
+      "additionalProperties": false,
+      "properties": {
+        "assumption_id": {
+          "format": "uuid",
+          "title": "Assumption Id",
+          "type": "string"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "requires_validation": {
+          "default": true,
+          "title": "Requires Validation",
+          "type": "boolean"
+        },
+        "source": {
+          "$ref": "#/$defs/ConstraintSource",
+          "default": "inferred"
+        },
+        "status": {
+          "$ref": "#/$defs/InformationStatus",
+          "default": "assumed"
+        }
+      },
+      "required": [
+        "assumption_id",
+        "description",
+        "confidence"
+      ],
+      "title": "ProblemAssumption",
+      "type": "object"
+    },
+    "ProblemConstraint": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "$ref": "#/$defs/ConstraintCategory"
+        },
+        "constraint_id": {
+          "format": "uuid",
+          "title": "Constraint Id",
+          "type": "string"
+        },
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "hard": {
+          "title": "Hard",
+          "type": "boolean"
+        },
+        "source": {
+          "$ref": "#/$defs/ConstraintSource"
+        },
+        "status": {
+          "$ref": "#/$defs/InformationStatus",
+          "default": "known"
+        }
+      },
+      "required": [
+        "constraint_id",
+        "category",
+        "description",
+        "hard",
+        "source"
+      ],
+      "title": "ProblemConstraint",
+      "type": "object"
+    },
+    "ProblemDomain": {
+      "enum": [
+        "generic",
+        "coding",
+        "mathematics",
+        "physics",
+        "logic"
+      ],
+      "title": "ProblemDomain",
+      "type": "string"
+    },
+    "ProblemGoal": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "goal_id": {
+          "format": "uuid",
+          "title": "Goal Id",
+          "type": "string"
+        },
+        "priority": {
+          "exclusiveMinimum": 0,
+          "title": "Priority",
+          "type": "integer"
+        },
+        "success_evidence": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Success Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "goal_id",
+        "description",
+        "priority"
+      ],
+      "title": "ProblemGoal",
+      "type": "object"
+    },
+    "ProblemInputReference": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "format": "uuid",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "media_type": {
+          "minLength": 1,
+          "title": "Media Type",
+          "type": "string"
+        },
+        "reference_id": {
+          "format": "uuid",
+          "title": "Reference Id",
+          "type": "string"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "reference_id",
+        "artifact_id",
+        "description",
+        "media_type"
+      ],
+      "title": "ProblemInputReference",
+      "type": "object"
+    },
+    "ProblemOutputRequirement": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "maximum_size_bytes": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum Size Bytes"
+        },
+        "output_type": {
+          "minLength": 1,
+          "title": "Output Type",
+          "type": "string"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "requirement_id": {
+          "format": "uuid",
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "schema": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schema"
+        }
+      },
+      "required": [
+        "requirement_id",
+        "output_type",
+        "description"
+      ],
+      "title": "ProblemOutputRequirement",
+      "type": "object"
+    },
+    "ProblemRepresentation": {
+      "additionalProperties": false,
+      "properties": {
+        "acceptance_criteria": {
+          "items": {
+            "$ref": "#/$defs/AcceptanceCriterion"
+          },
+          "minItems": 1,
+          "title": "Acceptance Criteria",
+          "type": "array"
+        },
+        "assumptions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ProblemAssumption"
+          },
+          "title": "Assumptions",
+          "type": "array"
+        },
+        "clarification_questions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ClarificationQuestion"
+          },
+          "title": "Clarification Questions",
+          "type": "array"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "constraints": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ProblemConstraint"
+          },
+          "title": "Constraints",
+          "type": "array"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "domain": {
+          "$ref": "#/$defs/ProblemDomain"
+        },
+        "goals": {
+          "items": {
+            "$ref": "#/$defs/ProblemGoal"
+          },
+          "minItems": 1,
+          "title": "Goals",
+          "type": "array"
+        },
+        "inputs": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ProblemInputReference"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "output_requirements": {
+          "items": {
+            "$ref": "#/$defs/ProblemOutputRequirement"
+          },
+          "minItems": 1,
+          "title": "Output Requirements",
+          "type": "array"
+        },
+        "problem_id": {
+          "format": "uuid",
+          "title": "Problem Id",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "risk_level": {
+          "$ref": "#/$defs/RiskLevel"
+        },
+        "source_request_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Request Hash",
+          "type": "string"
+        },
+        "summary": {
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        },
+        "task_id": {
+          "format": "uuid",
+          "title": "Task Id",
+          "type": "string"
+        },
+        "task_run_id": {
+          "format": "uuid",
+          "title": "Task Run Id",
+          "type": "string"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "problem_id",
+        "task_id",
+        "task_run_id",
+        "domain",
+        "title",
+        "summary",
+        "goals",
+        "output_requirements",
+        "acceptance_criteria",
+        "risk_level",
+        "confidence",
+        "created_at",
+        "revision",
+        "source_request_hash"
+      ],
+      "title": "ProblemRepresentation",
+      "type": "object"
+    },
+    "RiskLevel": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "title": "RiskLevel",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/problem.representation_created.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "representation": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProblemRepresentation"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "representation_artifact": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ArtifactRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "title": "ProblemRepresentationCreated",
+  "type": "object"
+}

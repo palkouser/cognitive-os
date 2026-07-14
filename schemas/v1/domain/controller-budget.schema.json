@@ -1,0 +1,85 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/domain/controller-budget.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "maximum_clarification_cycles": {
+      "exclusiveMinimum": 0,
+      "title": "Maximum Clarification Cycles",
+      "type": "integer"
+    },
+    "maximum_cost_units": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Maximum Cost Units"
+    },
+    "maximum_elapsed_seconds": {
+      "exclusiveMinimum": 0,
+      "title": "Maximum Elapsed Seconds",
+      "type": "number"
+    },
+    "maximum_input_tokens": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Maximum Input Tokens"
+    },
+    "maximum_output_tokens": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Maximum Output Tokens"
+    },
+    "maximum_plan_steps": {
+      "exclusiveMinimum": 0,
+      "title": "Maximum Plan Steps",
+      "type": "integer"
+    },
+    "maximum_provider_calls": {
+      "exclusiveMinimum": 0,
+      "title": "Maximum Provider Calls",
+      "type": "integer"
+    },
+    "maximum_repair_cycles": {
+      "exclusiveMinimum": 0,
+      "title": "Maximum Repair Cycles",
+      "type": "integer"
+    },
+    "maximum_tool_calls": {
+      "exclusiveMinimum": 0,
+      "title": "Maximum Tool Calls",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "maximum_provider_calls",
+    "maximum_tool_calls",
+    "maximum_plan_steps",
+    "maximum_repair_cycles",
+    "maximum_clarification_cycles",
+    "maximum_elapsed_seconds"
+  ],
+  "title": "ControllerBudget",
+  "type": "object"
+}

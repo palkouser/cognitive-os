@@ -1,0 +1,24 @@
+controller:
+  default_provider_id: minimax
+  problem_representation_provider_id: minimax
+  planning_provider_id: minimax
+  confidence_threshold: 0.75
+  budgets:
+    maximum_provider_calls: 8
+    maximum_tool_calls: 32
+    maximum_plan_steps: 16
+    maximum_repair_cycles: 3
+    maximum_clarification_cycles: 3
+    maximum_elapsed_seconds: 1800
+    maximum_input_tokens: 262144
+    maximum_output_tokens: 65536
+    maximum_cost_units: null
+  checkpoint:
+    create_after_each_step: true
+    create_before_wait: true
+    continuation_ttl_seconds: 86400
+  execution:
+    sequential_only: true
+    stop_on_required_step_failure: true
+    maximum_inline_result_bytes: 1048576
+  maximum_controller_iterations: 256

@@ -5,6 +5,20 @@ from __future__ import annotations
 from cognitive_os.domain.common import JsonValue
 
 from .base import EventEnvelope, EventPayload
+from .controller_events import (
+    ControllerBudgetExhaustedEvent,
+    ControllerCancelled,
+    ControllerCheckpointCreated,
+    ControllerClarificationProvided,
+    ControllerClarificationRequested,
+    ControllerContinuationConsumed,
+    ControllerContinuationIssued,
+    ControllerDecisionRecorded,
+    ControllerPaused,
+    ControllerStateChanged,
+    ProblemRepresentationCreated,
+    ProblemRepresentationRevised,
+)
 from .execution_events import (
     CheckpointCreated,
     ExecutionStepCancelled,
@@ -100,6 +114,18 @@ class EventCatalog:
 
 
 DEFAULT_EVENT_MODELS: tuple[type[EventPayload], ...] = (
+    ProblemRepresentationCreated,
+    ProblemRepresentationRevised,
+    ControllerStateChanged,
+    ControllerDecisionRecorded,
+    ControllerClarificationRequested,
+    ControllerClarificationProvided,
+    ControllerCheckpointCreated,
+    ControllerContinuationIssued,
+    ControllerContinuationConsumed,
+    ControllerBudgetExhaustedEvent,
+    ControllerPaused,
+    ControllerCancelled,
     TaskCreated,
     TaskUpdated,
     TaskCancelled,

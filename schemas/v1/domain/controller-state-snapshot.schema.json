@@ -1,0 +1,253 @@
+{
+  "$defs": {
+    "ControllerState": {
+      "enum": [
+        "received",
+        "representing_problem",
+        "waiting_for_clarification",
+        "ready",
+        "planning",
+        "executing",
+        "verifying",
+        "repairing",
+        "paused",
+        "completed",
+        "failed",
+        "cancelled",
+        "budget_exhausted"
+      ],
+      "title": "ControllerState",
+      "type": "string"
+    },
+    "ControllerUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "clarification_cycles": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Clarification Cycles",
+          "type": "integer"
+        },
+        "cost_units": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Cost Units",
+          "type": "number"
+        },
+        "input_tokens": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Input Tokens",
+          "type": "integer"
+        },
+        "last_updated_at": {
+          "format": "date-time",
+          "title": "Last Updated At",
+          "type": "string"
+        },
+        "output_tokens": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Output Tokens",
+          "type": "integer"
+        },
+        "plan_steps_completed": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Plan Steps Completed",
+          "type": "integer"
+        },
+        "plan_steps_started": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Plan Steps Started",
+          "type": "integer"
+        },
+        "provider_calls": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Provider Calls",
+          "type": "integer"
+        },
+        "repair_cycles": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Repair Cycles",
+          "type": "integer"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "tool_calls": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Tool Calls",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "started_at",
+        "last_updated_at"
+      ],
+      "title": "ControllerUsage",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domain/controller-state-snapshot.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "clarification_cycle": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Clarification Cycle",
+      "type": "integer"
+    },
+    "completed_step_ids": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Completed Step Ids",
+      "type": "array"
+    },
+    "current_step_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Current Step Id"
+    },
+    "failed_step_ids": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Failed Step Ids",
+      "type": "array"
+    },
+    "last_event_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Last Event Id"
+    },
+    "last_stream_version": {
+      "minimum": 0,
+      "title": "Last Stream Version",
+      "type": "integer"
+    },
+    "plan_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Plan Id"
+    },
+    "plan_version": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Plan Version"
+    },
+    "problem_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Problem Id"
+    },
+    "problem_revision": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Problem Revision"
+    },
+    "repair_cycle": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Repair Cycle",
+      "type": "integer"
+    },
+    "state": {
+      "$ref": "#/$defs/ControllerState"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    },
+    "terminal_reason": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Terminal Reason"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    },
+    "usage": {
+      "$ref": "#/$defs/ControllerUsage"
+    }
+  },
+  "required": [
+    "task_run_id",
+    "state",
+    "usage",
+    "last_stream_version",
+    "updated_at"
+  ],
+  "title": "ControllerStateSnapshot",
+  "type": "object"
+}

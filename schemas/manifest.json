@@ -6,6 +6,56 @@
       "schema_version": 1
     },
     {
+      "event_type": "controller.budget_exhausted",
+      "file": "v1/events/controller.budget_exhausted.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "controller.cancelled",
+      "file": "v1/events/controller.cancelled.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "controller.checkpoint_created",
+      "file": "v1/events/controller.checkpoint_created.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "controller.clarification_provided",
+      "file": "v1/events/controller.clarification_provided.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "controller.clarification_requested",
+      "file": "v1/events/controller.clarification_requested.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "controller.continuation_consumed",
+      "file": "v1/events/controller.continuation_consumed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "controller.continuation_issued",
+      "file": "v1/events/controller.continuation_issued.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "controller.decision_recorded",
+      "file": "v1/events/controller.decision_recorded.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "controller.paused",
+      "file": "v1/events/controller.paused.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "controller.state_changed",
+      "file": "v1/events/controller.state_changed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
       "event_type": "execution_step.cancelled",
       "file": "v1/events/execution_step.cancelled.v1.schema.json",
       "schema_version": 1
@@ -78,6 +128,16 @@
     {
       "event_type": "plan.revised",
       "file": "v1/events/plan.revised.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "problem.representation_created",
+      "file": "v1/events/problem.representation_created.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "problem.representation_revised",
+      "file": "v1/events/problem.representation_revised.v1.schema.json",
       "schema_version": 1
     },
     {
@@ -209,6 +269,46 @@
       "sha256": "c78149f7543bdb8a134a083b4bad1a46a59317af08b0dec66c9634d0143e5992"
     },
     {
+      "file": "v1/domain/clarification-request.schema.json",
+      "model": "ClarificationRequest",
+      "sha256": "c95e6cd73b8f9aa2d2d7763e274f344e63b24da67b47c05f262fea7eeb771c44"
+    },
+    {
+      "file": "v1/domain/clarification-response.schema.json",
+      "model": "ClarificationResponse",
+      "sha256": "e0034e10199e91fe220e6124a5eb663e745879397528d420b7b124bca41e6c9a"
+    },
+    {
+      "file": "v1/domain/continuation-token-record.schema.json",
+      "model": "ContinuationTokenRecord",
+      "sha256": "87354bbcd7d840b3ab9b81bd1d50d99f733a478eb9480ba00db4134e1cf2529c"
+    },
+    {
+      "file": "v1/domain/controller-budget.schema.json",
+      "model": "ControllerBudget",
+      "sha256": "91718c282e1a5667ecc437cfc21196b2a0aff118ba402fa1e35fbaa0af8f4417"
+    },
+    {
+      "file": "v1/domain/controller-decision.schema.json",
+      "model": "ControllerDecision",
+      "sha256": "cabd960dbc4f60909b69d57faf64f086cc500dc73c9f0690de36e5bbb41569ec"
+    },
+    {
+      "file": "v1/domain/controller-execution-plan.schema.json",
+      "model": "ControllerExecutionPlan",
+      "sha256": "c63b590b9d02311d9c84e2ae631a8d6410d12badc74fde535ab22943f1a0fe04"
+    },
+    {
+      "file": "v1/domain/controller-state-snapshot.schema.json",
+      "model": "ControllerStateSnapshot",
+      "sha256": "c2e02bea0e96037f2980d63777c5ac21031f5f5d284d8b1f79b749dbf69ed169"
+    },
+    {
+      "file": "v1/domain/controller-usage.schema.json",
+      "model": "ControllerUsage",
+      "sha256": "a779194eac2ede56c803fe2fe2bb958db3d7a55c519c884aeb7072428bc4d54b"
+    },
+    {
       "file": "v1/domain/execution-plan.schema.json",
       "model": "ExecutionPlan",
       "sha256": "44e6508f4eff43e648c1b78b51794bdde7bad2963a06c270e33cc45f52ea81de"
@@ -242,6 +342,11 @@
       "file": "v1/domain/model-provider-response.schema.json",
       "model": "ModelProviderResponse",
       "sha256": "7e65e4ec74c8b95add7bf32a0dd6be0778f26e286df3820570b1e6722c1cf7ba"
+    },
+    {
+      "file": "v1/domain/problem-representation.schema.json",
+      "model": "ProblemRepresentation",
+      "sha256": "0475854e7226c441a4e031ef965f8d7c4d79046e570a0222e775938db8cb7869"
     },
     {
       "file": "v1/domain/provider-health.schema.json",
@@ -329,6 +434,56 @@
       "sha256": "1c900c995edd00c7a97cf2b673a0ff2516c3b1c2c1aa6b69189a745a90170ada"
     },
     {
+      "file": "v1/events/controller.budget_exhausted.v1.schema.json",
+      "model": "ControllerBudgetExhaustedEvent",
+      "sha256": "23bd2924c840f8c8a47905dc102b44be97776c732fb364c1986351ab30b3bb6d"
+    },
+    {
+      "file": "v1/events/controller.cancelled.v1.schema.json",
+      "model": "ControllerCancelled",
+      "sha256": "44ffe5a6c1980fdff852e336d1e919196e8b594afeb690514acda1ad70d33dc0"
+    },
+    {
+      "file": "v1/events/controller.checkpoint_created.v1.schema.json",
+      "model": "ControllerCheckpointCreated",
+      "sha256": "b1e80c7459af1f0162166f99ae75aa6fb46b751d58a613b9a107888ae016141b"
+    },
+    {
+      "file": "v1/events/controller.clarification_provided.v1.schema.json",
+      "model": "ControllerClarificationProvided",
+      "sha256": "b6ef3260e9dba10596ab707097df444a11988a76f8e239dbd8ea562b0caf01de"
+    },
+    {
+      "file": "v1/events/controller.clarification_requested.v1.schema.json",
+      "model": "ControllerClarificationRequested",
+      "sha256": "9f42de7a5eea0c1a702db4e0fa1eb97c071b3f2467ac39e1a4a9956297c37c9f"
+    },
+    {
+      "file": "v1/events/controller.continuation_consumed.v1.schema.json",
+      "model": "ControllerContinuationConsumed",
+      "sha256": "778b0756f85905b266abf324b0d368e28455c52bcfe5446a4ed05fca8e3a366d"
+    },
+    {
+      "file": "v1/events/controller.continuation_issued.v1.schema.json",
+      "model": "ControllerContinuationIssued",
+      "sha256": "77de9501d978da44d3043a1ac147ff6cf2a893b516915382d52e65f049ebcf53"
+    },
+    {
+      "file": "v1/events/controller.decision_recorded.v1.schema.json",
+      "model": "ControllerDecisionRecorded",
+      "sha256": "5fc9befbb5a99b711f705d83017ee29f9686100b48ced0e8d1ab7f85e379ad65"
+    },
+    {
+      "file": "v1/events/controller.paused.v1.schema.json",
+      "model": "ControllerPaused",
+      "sha256": "930bc16565f760b13d706ddf3df18fd6db556406e19170ad5986b887bc93637f"
+    },
+    {
+      "file": "v1/events/controller.state_changed.v1.schema.json",
+      "model": "ControllerStateChanged",
+      "sha256": "7834a1e12b001852ef20a95868f7c25ff2fec6787e3db19fc9c4fc1b25a01634"
+    },
+    {
       "file": "v1/events/event-envelope.schema.json",
       "model": "EventEnvelope",
       "sha256": "6ce645a514fd6d824165a70bf8c1f92c6412d331acdca8909db6b0a6c6ce5f65"
@@ -407,6 +562,16 @@
       "file": "v1/events/plan.revised.v1.schema.json",
       "model": "PlanRevised",
       "sha256": "ca0f69c6d5d78ed88deda7dc47d35fea1931bc82ba485903456a8e3a66cd5620"
+    },
+    {
+      "file": "v1/events/problem.representation_created.v1.schema.json",
+      "model": "ProblemRepresentationCreated",
+      "sha256": "952376ecf60f3ef61dfa68f9014d47e238b08acfaee2ed65d5ebb7384624ed4b"
+    },
+    {
+      "file": "v1/events/problem.representation_revised.v1.schema.json",
+      "model": "ProblemRepresentationRevised",
+      "sha256": "57ff583f595602089bbae75e83127e6c24ad769ab576abf434320cdd356db130"
     },
     {
       "file": "v1/events/run.resumed.v1.schema.json",

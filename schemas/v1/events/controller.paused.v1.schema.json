@@ -1,0 +1,28 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/controller.paused.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "paused_at": {
+      "format": "date-time",
+      "title": "Paused At",
+      "type": "string"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_run_id",
+    "reason",
+    "paused_at"
+  ],
+  "title": "ControllerPaused",
+  "type": "object"
+}
