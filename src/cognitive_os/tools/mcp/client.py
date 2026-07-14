@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from contextlib import AsyncExitStack
+from importlib import import_module
 from typing import Any
 
 from cognitive_os.tools.errors import McpClientError
@@ -19,9 +20,11 @@ class McpStdioClient:
 
     async def start(self) -> None:
         try:
-            from mcp.client.stdio import stdio_client
-
-            from mcp import ClientSession, StdioServerParameters
+            mcp_module = import_module("mcp")
+            stdio_module = import_module("mcp.client.stdio")
+            client_session = mcp_module.ClientSession
+            server_parameters = mcp_module.StdioServerParameters
+            stdio_client = stdio_module.stdio_client
         except ImportError as error:
             raise McpClientError("MCP optional dependency is unavailable") from error
         environment = {
@@ -29,7 +32,7 @@ class McpStdioClient:
             for name in self._config.environment_allowlist
             if name in os.environ
         }
-        parameters = StdioServerParameters(
+        parameters = server_parameters(
             command=str(self._config.command),
             args=list(self._config.arguments),
             env=environment,
@@ -37,7 +40,7 @@ class McpStdioClient:
         )
         stack = AsyncExitStack()
         read, write = await stack.enter_async_context(stdio_client(parameters))
-        session = await stack.enter_async_context(ClientSession(read, write))
+        session = await stack.enter_async_context(client_session(read, write))
         await session.initialize()
         self._stack, self._session = stack, session
 
