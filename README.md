@@ -27,6 +27,11 @@ schema-versioning rules are documented in [domain contracts](docs/architecture/d
 and the [event model](docs/architecture/event-model.md). Tracked JSON Schemas are checked with
 `./scripts/export_contract_schemas.sh --check`.
 
+Sprint 3 durable persistence is available through the optional `postgres` extra, with
+OpenTelemetry support in the separate `observability-otel` extra. The default installation
+remains database- and telemetry-SDK-independent. See the
+[PostgreSQL development guide](docs/operations/postgres-development.md).
+
 ![LightAgent Banner](docs/images/lightagent-banner.jpg)
 <div align="center">
   <p>

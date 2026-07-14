@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+# shellcheck source=scripts/postgres_common.sh
+source "$(dirname "${BASH_SOURCE[0]}")/postgres_common.sh"
+load_postgres_environment
+require_value COGOS_TEST_DATABASE_URL
+export COGOS_DATABASE_URL="$COGOS_TEST_DATABASE_URL"
+export COGOS_ARTIFACT_ROOT="${COGOS_TEST_ARTIFACT_ROOT:-/tmp/cognitive-os-artifacts-test}"
+cd "$ROOT"
+uv run pytest tests/integration/postgres -m postgres -q

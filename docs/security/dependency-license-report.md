@@ -25,5 +25,9 @@ Reviewed on 2026-07-14 from locked package metadata and upstream package metadat
 | MCP | 1.28.1 | `mcp` | MIT | Yes | Optional protocol integration |
 | Langfuse | 3.15.0 | `observability-langfuse` | MIT | Yes | Optional observability |
 | LiteLLM | 1.80.0 | `provider-litellm` | MIT | Yes | Optional provider routing |
+| SQLAlchemy | 2.0.51 | `postgres` | MIT | Yes | Async Core database access |
+| asyncpg | 0.31.0 | `postgres` | Apache-2.0 | Yes | PostgreSQL async driver |
+| Alembic | 1.18.5 | `postgres` | MIT | Yes | Database migrations |
+| OpenTelemetry SDK/exporter | 1.43.0 | `observability-otel` | Apache-2.0 | Yes | Optional traces |
 
 The empty `browser` extra has no accepted direct dependency.

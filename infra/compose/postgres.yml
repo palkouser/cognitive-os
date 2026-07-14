@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:18.4-bookworm
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${COGOS_POSTGRES_PORT:-55432}:5432"
+    environment:
+      POSTGRES_DB: "${COGOS_POSTGRES_DATABASE}"
+      POSTGRES_USER: "${COGOS_POSTGRES_OWNER_USER}"
+      POSTGRES_PASSWORD: "${COGOS_POSTGRES_OWNER_PASSWORD}"
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --data-checksums"
+      PGTZ: UTC
+    command: ["postgres", "-c", "timezone=UTC"]
+    volumes:
+      - "${COGOS_POSTGRES_DATA}:/var/lib/postgresql/18/docker"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${COGOS_POSTGRES_OWNER_USER} -d ${COGOS_POSTGRES_DATABASE}"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    security_opt:
+      - no-new-privileges:true
