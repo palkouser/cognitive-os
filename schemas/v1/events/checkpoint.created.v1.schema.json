@@ -1,0 +1,41 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/checkpoint.created.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "active_step_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Active Step Id"
+    },
+    "checkpoint_id": {
+      "format": "uuid",
+      "title": "Checkpoint Id",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_run_id",
+    "checkpoint_id",
+    "created_at"
+  ],
+  "title": "CheckpointCreated",
+  "type": "object"
+}

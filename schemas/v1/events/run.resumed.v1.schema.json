@@ -1,0 +1,28 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/run.resumed.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "checkpoint_id": {
+      "format": "uuid",
+      "title": "Checkpoint Id",
+      "type": "string"
+    },
+    "resumed_at": {
+      "format": "date-time",
+      "title": "Resumed At",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_run_id",
+    "checkpoint_id",
+    "resumed_at"
+  ],
+  "title": "RunResumed",
+  "type": "object"
+}

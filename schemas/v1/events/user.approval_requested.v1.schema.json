@@ -1,0 +1,46 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/user.approval_requested.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "approval_id": {
+      "format": "uuid",
+      "title": "Approval Id",
+      "type": "string"
+    },
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    },
+    "requested_at": {
+      "format": "date-time",
+      "title": "Requested At",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    },
+    "tool_call_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tool Call Id"
+    }
+  },
+  "required": [
+    "approval_id",
+    "task_run_id",
+    "requested_at",
+    "reason"
+  ],
+  "title": "UserApprovalRequested",
+  "type": "object"
+}

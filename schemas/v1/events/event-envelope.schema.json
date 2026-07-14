@@ -1,0 +1,207 @@
+{
+  "$defs": {
+    "ActorRef": {
+      "additionalProperties": false,
+      "properties": {
+        "actor_id": {
+          "minLength": 1,
+          "title": "Actor Id",
+          "type": "string"
+        },
+        "actor_type": {
+          "$ref": "#/$defs/ActorType"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        }
+      },
+      "required": [
+        "actor_type",
+        "actor_id"
+      ],
+      "title": "ActorRef",
+      "type": "object"
+    },
+    "ActorType": {
+      "enum": [
+        "user",
+        "agent",
+        "model",
+        "tool",
+        "verifier",
+        "system"
+      ],
+      "title": "ActorType",
+      "type": "string"
+    },
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "PrivacyClass": {
+      "enum": [
+        "public",
+        "internal",
+        "sensitive",
+        "secret"
+      ],
+      "title": "PrivacyClass",
+      "type": "string"
+    },
+    "StreamType": {
+      "enum": [
+        "task",
+        "task_run",
+        "model_call",
+        "tool_call",
+        "verifier",
+        "system"
+      ],
+      "title": "StreamType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/event-envelope.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "actor": {
+      "$ref": "#/$defs/ActorRef"
+    },
+    "causation_event_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Causation Event Id"
+    },
+    "correlation_id": {
+      "format": "uuid",
+      "title": "Correlation Id",
+      "type": "string"
+    },
+    "event_id": {
+      "format": "uuid",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "event_type": {
+      "title": "Event Type",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "payload": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Payload",
+      "type": "object"
+    },
+    "payload_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Payload Hash",
+      "type": "string"
+    },
+    "privacy_class": {
+      "$ref": "#/$defs/PrivacyClass"
+    },
+    "recorded_at": {
+      "format": "date-time",
+      "title": "Recorded At",
+      "type": "string"
+    },
+    "schema_version": {
+      "minimum": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "source_component": {
+      "title": "Source Component",
+      "type": "string"
+    },
+    "stream_id": {
+      "format": "uuid",
+      "title": "Stream Id",
+      "type": "string"
+    },
+    "stream_type": {
+      "$ref": "#/$defs/StreamType"
+    },
+    "stream_version": {
+      "minimum": 1,
+      "title": "Stream Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "event_id",
+    "event_type",
+    "schema_version",
+    "occurred_at",
+    "recorded_at",
+    "stream_id",
+    "stream_type",
+    "stream_version",
+    "correlation_id",
+    "actor",
+    "source_component",
+    "payload",
+    "payload_hash",
+    "privacy_class"
+  ],
+  "title": "EventEnvelope",
+  "type": "object"
+}

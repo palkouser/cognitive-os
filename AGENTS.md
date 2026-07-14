@@ -5,30 +5,29 @@
 This repository develops Cognitive OS, a local, model-independent, self-improving
 agent harness based on LightAgent.
 
-## Sprint 1 scope
+## Sprint 2 scope
 
-The active development scope is package normalization and runtime minimization.
+The active scope is the Cognitive OS domain and event contract layer.
 
 Allowed work:
 
-- move Cognitive OS-owned code into `src/cognitive_os`;
-- normalize `pyproject.toml`;
-- create dependency groups and optional extras;
-- restore editable installation;
-- isolate `mem0ai`, Langfuse, boto3, and other optional dependencies;
-- add package, build, and runtime contract tests;
-- update CI and English documentation.
+- Pydantic domain models;
+- identifiers and timestamps;
+- task, execution, model-call, tool-call, and verifier records;
+- event payloads and envelopes;
+- deterministic JSON serialization and event hashing;
+- event catalog and migration interfaces;
+- JSON Schema generation;
+- contract and property-based tests.
 
 Out of scope:
 
-- Memory Plane;
-- Event Store;
-- provider routing;
-- tool sandbox;
+- database persistence and event-store implementation;
+- provider integrations and model routing;
+- tool execution, permissions, and sandboxing;
 - Cognitive Controller;
-- self-improvement;
-- multi-agent behavior;
-- model training.
+- Memory Plane;
+- skills, strategies, and self-improvement.
 
 Do not move or rewrite LightAgent runtime files unless the active issue explicitly
 authorizes it.

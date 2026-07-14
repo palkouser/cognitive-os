@@ -1,0 +1,34 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/task.cancelled.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "cancelled_at": {
+      "format": "date-time",
+      "title": "Cancelled At",
+      "type": "string"
+    },
+    "reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reason"
+    },
+    "task_id": {
+      "format": "uuid",
+      "title": "Task Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_id",
+    "cancelled_at"
+  ],
+  "title": "TaskCancelled",
+  "type": "object"
+}

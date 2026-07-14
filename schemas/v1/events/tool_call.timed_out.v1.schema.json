@@ -1,0 +1,27 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/tool_call.timed_out.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "timed_out_at": {
+      "format": "date-time",
+      "title": "Timed Out At",
+      "type": "string"
+    },
+    "timeout_seconds": {
+      "title": "Timeout Seconds",
+      "type": "number"
+    },
+    "tool_call_id": {
+      "format": "uuid",
+      "title": "Tool Call Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "tool_call_id",
+    "timed_out_at",
+    "timeout_seconds"
+  ],
+  "title": "ToolCallTimedOut",
+  "type": "object"
+}

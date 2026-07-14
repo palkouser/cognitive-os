@@ -1,0 +1,24 @@
+{
+  "plan_id": "55555555-5555-4555-8555-555555555555",
+  "task_run_id": "22222222-2222-4222-8222-222222222222",
+  "version": 1,
+  "created_at": "2026-07-14T10:02:00Z",
+  "created_by": {
+    "actor_type": "agent",
+    "actor_id": "planner-1",
+    "display_name": "Planner"
+  },
+  "steps": [
+    {
+      "step_id": "66666666-6666-4666-8666-666666666666",
+      "sequence": 1,
+      "step_type": "analysis",
+      "title": "Analyze the request",
+      "description": null,
+      "depends_on": [],
+      "expected_output": "A concise analysis",
+      "required_tool_ids": [],
+      "required_verifier_ids": []
+    }
+  ]
+}

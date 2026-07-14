@@ -1,0 +1,34 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/execution_step.cancelled.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "cancelled_at": {
+      "format": "date-time",
+      "title": "Cancelled At",
+      "type": "string"
+    },
+    "reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reason"
+    },
+    "step_id": {
+      "format": "uuid",
+      "title": "Step Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "step_id",
+    "cancelled_at"
+  ],
+  "title": "ExecutionStepCancelled",
+  "type": "object"
+}

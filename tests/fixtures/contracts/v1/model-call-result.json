@@ -1,0 +1,21 @@
+{
+  "model_call_id": "77777777-7777-4777-8777-777777777777",
+  "resolved_model": "offline-model",
+  "status": "completed",
+  "started_at": "2026-07-14T10:03:00Z",
+  "finished_at": "2026-07-14T10:03:01Z",
+  "content_artifact": null,
+  "raw_response_artifact": null,
+  "tool_call_ids": [],
+  "usage": {
+    "input_tokens": 3,
+    "output_tokens": 2,
+    "total_tokens": 5,
+    "cached_input_tokens": null,
+    "reasoning_tokens": null
+  },
+  "finish_reason": "stop",
+  "latency_ms": 1000,
+  "error": null,
+  "warnings": []
+}

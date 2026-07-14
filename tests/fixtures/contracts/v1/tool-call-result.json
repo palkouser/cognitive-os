@@ -1,0 +1,14 @@
+{
+  "tool_call_id": "88888888-8888-4888-8888-888888888888",
+  "status": "completed",
+  "started_at": "2026-07-14T10:04:00Z",
+  "finished_at": "2026-07-14T10:04:01Z",
+  "exit_code": null,
+  "stdout_artifact": null,
+  "stderr_artifact": null,
+  "result_artifacts": [],
+  "sandbox_id": null,
+  "duration_ms": 1000,
+  "error": null,
+  "warnings": []
+}

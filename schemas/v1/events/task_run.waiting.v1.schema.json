@@ -1,0 +1,27 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/task_run.waiting.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    },
+    "waiting_since": {
+      "format": "date-time",
+      "title": "Waiting Since",
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_run_id",
+    "waiting_since",
+    "reason"
+  ],
+  "title": "TaskRunWaiting",
+  "type": "object"
+}

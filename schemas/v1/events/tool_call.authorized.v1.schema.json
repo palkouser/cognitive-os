@@ -1,0 +1,27 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/tool_call.authorized.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "authorized_at": {
+      "format": "date-time",
+      "title": "Authorized At",
+      "type": "string"
+    },
+    "authorized_by": {
+      "title": "Authorized By",
+      "type": "string"
+    },
+    "tool_call_id": {
+      "format": "uuid",
+      "title": "Tool Call Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "tool_call_id",
+    "authorized_at",
+    "authorized_by"
+  ],
+  "title": "ToolCallAuthorized",
+  "type": "object"
+}

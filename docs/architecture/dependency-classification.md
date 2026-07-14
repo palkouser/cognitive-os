@@ -7,6 +7,7 @@
 | HTTPX | core runtime | Yes | `LightAgent.core` | Keep in core |
 | OpenAI | optional provider required by baseline runtime | Yes | `LightAgent.core` | Keep in core to preserve the pinned import and default provider |
 | PyYAML | core runtime | Yes | `LightAgent.skills` | Keep in core |
+| Pydantic | core runtime | Yes | Cognitive OS domain and event contracts | Validation, serialization, and JSON Schema generation |
 | MCP | MCP | No | `LightAgent.mcp_client_manager` | Move to `mcp` extra |
 | boto3 | cloud integration | No | `LightAgent.builtin_tools.nos` | Move to `cloud-aws` extra and lazy import |
 | Langfuse | observability | No | optional trace client in `LightAgent.core` | Move to `observability-langfuse` extra |

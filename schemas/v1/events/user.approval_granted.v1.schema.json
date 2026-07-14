@@ -1,0 +1,72 @@
+{
+  "$defs": {
+    "ActorRef": {
+      "additionalProperties": false,
+      "properties": {
+        "actor_id": {
+          "minLength": 1,
+          "title": "Actor Id",
+          "type": "string"
+        },
+        "actor_type": {
+          "$ref": "#/$defs/ActorType"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        }
+      },
+      "required": [
+        "actor_type",
+        "actor_id"
+      ],
+      "title": "ActorRef",
+      "type": "object"
+    },
+    "ActorType": {
+      "enum": [
+        "user",
+        "agent",
+        "model",
+        "tool",
+        "verifier",
+        "system"
+      ],
+      "title": "ActorType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/user.approval_granted.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "approval_id": {
+      "format": "uuid",
+      "title": "Approval Id",
+      "type": "string"
+    },
+    "granted_at": {
+      "format": "date-time",
+      "title": "Granted At",
+      "type": "string"
+    },
+    "granted_by": {
+      "$ref": "#/$defs/ActorRef"
+    }
+  },
+  "required": [
+    "approval_id",
+    "granted_by",
+    "granted_at"
+  ],
+  "title": "UserApprovalGranted",
+  "type": "object"
+}

@@ -7,6 +7,7 @@ Reviewed on 2026-07-14 from locked package metadata and upstream package metadat
 | HTTPX | 0.28.1 | core | BSD-3-Clause | Yes | Core HTTP client |
 | OpenAI | 1.109.1 | core | Apache-2.0 | Yes | Baseline provider compatibility |
 | PyYAML | 6.0.3 | core | MIT | Yes | Skill metadata parsing |
+| Pydantic | 2.13.4 | core | MIT | Yes | Contract validation and schema generation |
 | mypy | 1.20.2 | dev | MIT | Yes | Static analysis |
 | pre-commit | 4.6.0 | dev | MIT | Yes | Local hooks |
 | Ruff | 0.15.21 | dev | MIT | Yes | Lint and format gate |

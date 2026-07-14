@@ -16,3 +16,8 @@ LightAgent private implementation details; adapters belong in `cognitive_os.runt
 Upstream synchronization starts from the pinned donor commit, is recorded in the provenance
 registry, and must rerun the contract suite. The Cognitive OS wheel intentionally excludes
 LightAgent during Sprint 1.
+
+The `cognitive_os.domain` and `cognitive_os.events` packages are persistence-neutral public
+contract layers. They must not import ORM, database, provider SDK, OpenTelemetry, or
+LightAgent types. Persistence and runtime adapters depend on these contracts, never the
+reverse.

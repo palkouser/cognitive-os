@@ -1,0 +1,195 @@
+{
+  "$defs": {
+    "ActorRef": {
+      "additionalProperties": false,
+      "properties": {
+        "actor_id": {
+          "minLength": 1,
+          "title": "Actor Id",
+          "type": "string"
+        },
+        "actor_type": {
+          "$ref": "#/$defs/ActorType"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        }
+      },
+      "required": [
+        "actor_type",
+        "actor_id"
+      ],
+      "title": "ActorRef",
+      "type": "object"
+    },
+    "ActorType": {
+      "enum": [
+        "user",
+        "agent",
+        "model",
+        "tool",
+        "verifier",
+        "system"
+      ],
+      "title": "ActorType",
+      "type": "string"
+    },
+    "ExecutionPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "created_by": {
+          "$ref": "#/$defs/ActorRef"
+        },
+        "plan_id": {
+          "format": "uuid",
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/PlanStepDefinition"
+          },
+          "minItems": 1,
+          "title": "Steps",
+          "type": "array"
+        },
+        "task_run_id": {
+          "format": "uuid",
+          "title": "Task Run Id",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "plan_id",
+        "task_run_id",
+        "version",
+        "created_at",
+        "created_by",
+        "steps"
+      ],
+      "title": "ExecutionPlan",
+      "type": "object"
+    },
+    "PlanStepDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "depends_on": {
+          "default": [],
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Depends On",
+          "type": "array"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "expected_output": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Output"
+        },
+        "required_tool_ids": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Required Tool Ids",
+          "type": "array"
+        },
+        "required_verifier_ids": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Required Verifier Ids",
+          "type": "array"
+        },
+        "sequence": {
+          "minimum": 1,
+          "title": "Sequence",
+          "type": "integer"
+        },
+        "step_id": {
+          "format": "uuid",
+          "title": "Step Id",
+          "type": "string"
+        },
+        "step_type": {
+          "minLength": 1,
+          "title": "Step Type",
+          "type": "string"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "step_id",
+        "sequence",
+        "step_type",
+        "title"
+      ],
+      "title": "PlanStepDefinition",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/plan.revised.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "plan": {
+      "$ref": "#/$defs/ExecutionPlan"
+    },
+    "previous_version": {
+      "title": "Previous Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "plan",
+    "previous_version"
+  ],
+  "title": "PlanRevised",
+  "type": "object"
+}

@@ -1,0 +1,26 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/execution_step.retried.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "next_attempt": {
+      "title": "Next Attempt",
+      "type": "integer"
+    },
+    "previous_attempt": {
+      "title": "Previous Attempt",
+      "type": "integer"
+    },
+    "step_id": {
+      "format": "uuid",
+      "title": "Step Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "step_id",
+    "previous_attempt",
+    "next_attempt"
+  ],
+  "title": "ExecutionStepRetried",
+  "type": "object"
+}
