@@ -1,0 +1,40 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/domain/tool-execution-context.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "maximum_artifact_bytes": {
+      "exclusiveMinimum": 0,
+      "title": "Maximum Artifact Bytes",
+      "type": "integer"
+    },
+    "maximum_stderr_bytes": {
+      "exclusiveMinimum": 0,
+      "title": "Maximum Stderr Bytes",
+      "type": "integer"
+    },
+    "maximum_stdout_bytes": {
+      "exclusiveMinimum": 0,
+      "title": "Maximum Stdout Bytes",
+      "type": "integer"
+    },
+    "timeout_seconds": {
+      "exclusiveMinimum": 0,
+      "maximum": 3600,
+      "title": "Timeout Seconds",
+      "type": "number"
+    },
+    "workspace": {
+      "title": "Workspace",
+      "type": "string"
+    }
+  },
+  "required": [
+    "workspace",
+    "timeout_seconds",
+    "maximum_stdout_bytes",
+    "maximum_stderr_bytes",
+    "maximum_artifact_bytes"
+  ],
+  "title": "ToolExecutionContext",
+  "type": "object"
+}

@@ -1,0 +1,30 @@
+workspace_roots:
+  - /home/palkouser/projekt/cognitive-os
+default_policy:
+  r0: allow
+  r1: require_approval
+  r2: require_approval
+  r3: deny
+sandbox:
+  image: cognitive-os-sandbox:sprint-5
+  limits:
+    timeout_seconds: 120
+    memory_bytes: 8589934592
+    cpu_count: 4
+    pid_limit: 256
+    maximum_stdout_bytes: 1048576
+    maximum_stderr_bytes: 1048576
+    maximum_artifact_bytes: 67108864
+    network_enabled: false
+tools:
+  filesystem.list: true
+  filesystem.read: true
+  filesystem.stat: true
+  git.status: true
+  git.diff: true
+  git.log: true
+  system.info: true
+  sandbox.python: true
+  sandbox.pytest: true
+  sandbox.ruff: true
+  sandbox.mypy: true

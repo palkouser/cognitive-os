@@ -1,0 +1,64 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/domain/sandbox-limits.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "cpu_count": {
+      "exclusiveMinimum": 0,
+      "maximum": 32,
+      "title": "Cpu Count",
+      "type": "number"
+    },
+    "maximum_artifact_bytes": {
+      "exclusiveMinimum": 0,
+      "maximum": 1073741824,
+      "title": "Maximum Artifact Bytes",
+      "type": "integer"
+    },
+    "maximum_stderr_bytes": {
+      "exclusiveMinimum": 0,
+      "maximum": 16777216,
+      "title": "Maximum Stderr Bytes",
+      "type": "integer"
+    },
+    "maximum_stdout_bytes": {
+      "exclusiveMinimum": 0,
+      "maximum": 16777216,
+      "title": "Maximum Stdout Bytes",
+      "type": "integer"
+    },
+    "memory_bytes": {
+      "maximum": 68719476736,
+      "minimum": 134217728,
+      "title": "Memory Bytes",
+      "type": "integer"
+    },
+    "network_enabled": {
+      "default": false,
+      "title": "Network Enabled",
+      "type": "boolean"
+    },
+    "pid_limit": {
+      "maximum": 4096,
+      "minimum": 16,
+      "title": "Pid Limit",
+      "type": "integer"
+    },
+    "timeout_seconds": {
+      "exclusiveMinimum": 0,
+      "maximum": 3600,
+      "title": "Timeout Seconds",
+      "type": "number"
+    }
+  },
+  "required": [
+    "timeout_seconds",
+    "memory_bytes",
+    "cpu_count",
+    "pid_limit",
+    "maximum_stdout_bytes",
+    "maximum_stderr_bytes",
+    "maximum_artifact_bytes"
+  ],
+  "title": "SandboxLimits",
+  "type": "object"
+}

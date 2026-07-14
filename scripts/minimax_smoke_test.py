@@ -41,7 +41,7 @@ async def run(path: Path) -> None:
             ),
         ),
         response_format=ResponseFormat.JSON_OBJECT,
-        max_output_tokens=32,
+        max_output_tokens=512,
         context_budget=1024,
         timeout_seconds=min(config.timeout_seconds, 120),
     )

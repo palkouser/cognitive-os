@@ -22,7 +22,7 @@ Reviewed on 2026-07-14 from locked package metadata and upstream package metadat
 | Material for MkDocs | 9.7.6 | docs | MIT | Yes | Documentation theme |
 | boto3 | 1.43.47 | `cloud-aws` | Apache-2.0 | Yes | Optional AWS integration |
 | mem0ai | 0.1.70 | `lightagent-legacy-memory` | Apache-2.0 | Conditional | Experimental; known advisories |
-| MCP | 1.28.1 | `mcp` | MIT | Yes | Optional protocol integration |
+| MCP | 1.28.1 | `mcp` | MIT | Yes | Optional stable-v1 local STDIO Tool Plane integration |
 | Langfuse | 3.15.0 | `observability-langfuse` | MIT | Yes | Optional observability |
 | LiteLLM | 1.80.0 | `provider-litellm` | MIT | Yes | Optional provider routing |
 | SQLAlchemy | 2.0.51 | `postgres` | MIT | Yes | Async Core database access |

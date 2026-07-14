@@ -5,33 +5,33 @@
 This repository develops Cognitive OS, a local, model-independent, self-improving
 agent harness based on LightAgent.
 
-## Sprint 4 scope
+## Sprint 5 scope
 
-The active scope is provider-neutral model execution.
+The active scope is the typed Tool Plane.
 
 Allowed work:
 
-- provider contracts and ports;
-- static provider registry;
-- mock and replay providers;
-- MiniMax OpenAI-compatible integration;
-- provider retry and timeout policies;
-- provider health checks;
-- provider-call event persistence;
-- provider request and response artifacts;
-- Claude Code read-only advisory integration;
-- provider tests and operational scripts.
+- Tool Registry and descriptors;
+- tool argument and result validation;
+- tool risk and side-effect classification;
+- policy and approval enforcement;
+- read-only host tools;
+- rootless Docker sandbox execution;
+- tool event and artifact persistence;
+- provider-to-tool mapping;
+- local STDIO MCP client integration;
+- MiniMax live tool-call validation;
+- Tool Plane security and integration tests.
 
 Out of scope:
 
-- adaptive model routing;
-- multi-model orchestration;
-- provider tool execution;
-- Claude Code repository modification;
+- unrestricted shell execution;
+- remote MCP and OAuth;
+- automatic MCP installation;
+- autonomous model/tool loops;
 - Cognitive Controller;
 - Memory Plane;
-- context retrieval;
-- skills, strategies, or self-improvement.
+- skills, strategies, routing, or self-improvement.
 
 Do not move or rewrite LightAgent runtime files unless the active issue explicitly
 authorizes it.

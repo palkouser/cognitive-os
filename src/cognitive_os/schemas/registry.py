@@ -7,6 +7,8 @@ from dataclasses import dataclass
 from pydantic import BaseModel
 
 from cognitive_os.domain import (
+    ApprovalDecision,
+    ApprovalRequest,
     ExecutionPlan,
     ExecutionStep,
     ModelCallRequestRecord,
@@ -17,10 +19,18 @@ from cognitive_os.domain import (
     ProviderHealth,
     ProviderIdentity,
     ProviderStreamEvent,
+    SandboxLimits,
+    SandboxRequest,
+    SandboxResult,
     Task,
     TaskRun,
     ToolCallRequestRecord,
     ToolCallResultRecord,
+    ToolDescriptor,
+    ToolExecutionContext,
+    ToolExecutionResult,
+    ToolInvocation,
+    ToolPolicyDecision,
     VerifierResult,
 )
 from cognitive_os.events.base import EventEnvelope
@@ -36,6 +46,8 @@ class SchemaEntry:
 
 
 DOMAIN_SCHEMAS: tuple[tuple[type[BaseModel], str], ...] = (
+    (ApprovalDecision, "v1/domain/approval-decision.schema.json"),
+    (ApprovalRequest, "v1/domain/approval-request.schema.json"),
     (Task, "v1/domain/task.schema.json"),
     (TaskRun, "v1/domain/task-run.schema.json"),
     (ExecutionPlan, "v1/domain/execution-plan.schema.json"),
@@ -50,6 +62,14 @@ DOMAIN_SCHEMAS: tuple[tuple[type[BaseModel], str], ...] = (
     (ProviderStreamEvent, "v1/domain/provider-stream-event.schema.json"),
     (ToolCallRequestRecord, "v1/domain/tool-call-request.schema.json"),
     (ToolCallResultRecord, "v1/domain/tool-call-result.schema.json"),
+    (ToolDescriptor, "v1/domain/tool-descriptor.schema.json"),
+    (ToolExecutionContext, "v1/domain/tool-execution-context.schema.json"),
+    (ToolExecutionResult, "v1/domain/tool-execution-result.schema.json"),
+    (ToolInvocation, "v1/domain/tool-invocation.schema.json"),
+    (ToolPolicyDecision, "v1/domain/tool-policy-decision.schema.json"),
+    (SandboxLimits, "v1/domain/sandbox-limits.schema.json"),
+    (SandboxRequest, "v1/domain/sandbox-request.schema.json"),
+    (SandboxResult, "v1/domain/sandbox-result.schema.json"),
     (VerifierResult, "v1/domain/verifier-result.schema.json"),
     (EventEnvelope, "v1/events/event-envelope.schema.json"),
 )

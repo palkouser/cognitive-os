@@ -1,0 +1,199 @@
+{
+  "$defs": {
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "ToolExecutionMode": {
+      "enum": [
+        "host_read_only",
+        "sandbox",
+        "mcp"
+      ],
+      "title": "ToolExecutionMode",
+      "type": "string"
+    },
+    "ToolRiskLevel": {
+      "enum": [
+        "r0",
+        "r1",
+        "r2",
+        "r3"
+      ],
+      "title": "ToolRiskLevel",
+      "type": "string"
+    },
+    "ToolSideEffect": {
+      "enum": [
+        "none",
+        "local_read",
+        "local_write",
+        "network_read",
+        "network_write",
+        "external_write",
+        "destructive",
+        "privileged"
+      ],
+      "title": "ToolSideEffect",
+      "type": "string"
+    },
+    "ToolSource": {
+      "enum": [
+        "built_in",
+        "mcp"
+      ],
+      "title": "ToolSource",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domain/tool-descriptor.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "default_timeout_seconds": {
+      "exclusiveMinimum": 0,
+      "maximum": 3600,
+      "title": "Default Timeout Seconds",
+      "type": "number"
+    },
+    "description": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Description",
+      "type": "string"
+    },
+    "descriptor_hash": {
+      "default": "",
+      "title": "Descriptor Hash",
+      "type": "string"
+    },
+    "deterministic": {
+      "default": false,
+      "title": "Deterministic",
+      "type": "boolean"
+    },
+    "display_name": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Display Name",
+      "type": "string"
+    },
+    "execution_mode": {
+      "$ref": "#/$defs/ToolExecutionMode"
+    },
+    "idempotent": {
+      "default": false,
+      "title": "Idempotent",
+      "type": "boolean"
+    },
+    "input_schema": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Input Schema",
+      "type": "object"
+    },
+    "output_schema": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Output Schema",
+      "type": "object"
+    },
+    "provider_visible": {
+      "default": false,
+      "title": "Provider Visible",
+      "type": "boolean"
+    },
+    "required_permissions": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Permissions",
+      "type": "array"
+    },
+    "risk_level": {
+      "$ref": "#/$defs/ToolRiskLevel"
+    },
+    "side_effects": {
+      "default": [
+        "none"
+      ],
+      "items": {
+        "$ref": "#/$defs/ToolSideEffect"
+      },
+      "title": "Side Effects",
+      "type": "array"
+    },
+    "source": {
+      "$ref": "#/$defs/ToolSource"
+    },
+    "tags": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Tags",
+      "type": "array"
+    },
+    "tool_id": {
+      "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)+$",
+      "title": "Tool Id",
+      "type": "string"
+    },
+    "version": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "tool_id",
+    "version",
+    "display_name",
+    "description",
+    "source",
+    "input_schema",
+    "output_schema",
+    "risk_level",
+    "execution_mode",
+    "default_timeout_seconds"
+  ],
+  "title": "ToolDescriptor",
+  "type": "object"
+}

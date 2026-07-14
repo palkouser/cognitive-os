@@ -99,6 +99,45 @@ def test_structured_response_is_validated_locally() -> None:
         map_response(raw, value, provider_id="minimax", latency_ms=1)
 
 
+def test_structured_response_strips_minimax_reasoning_prefix() -> None:
+    value = request(response_format=ResponseFormat.JSON_OBJECT)
+    response = map_response(
+        {
+            "model": "MiniMax-M3",
+            "choices": [
+                {
+                    "finish_reason": "stop",
+                    "message": {"content": '<think>Internal reasoning.</think>\n{"status":"ok"}'},
+                }
+            ],
+        },
+        value,
+        provider_id="minimax",
+        latency_ms=1,
+    )
+    assert response.content == '{"status":"ok"}'
+    assert response.structured_output == {"status": "ok"}
+
+
+def test_structured_response_strips_markdown_json_fence() -> None:
+    value = request(response_format=ResponseFormat.JSON_OBJECT)
+    response = map_response(
+        {
+            "model": "MiniMax-M3",
+            "choices": [
+                {
+                    "finish_reason": "stop",
+                    "message": {"content": '```json\n{"status":"ok"}\n```'},
+                }
+            ],
+        },
+        value,
+        provider_id="minimax",
+        latency_ms=1,
+    )
+    assert response.structured_output == {"status": "ok"}
+
+
 def test_empty_choices_and_malformed_tool_arguments_fail() -> None:
     with pytest.raises(ProviderInvalidResponseError):
         map_response(

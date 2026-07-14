@@ -199,6 +199,16 @@
   "generated_by": "cognitive_os.schemas.export",
   "models": [
     {
+      "file": "v1/domain/approval-decision.schema.json",
+      "model": "ApprovalDecision",
+      "sha256": "b2fcb99c0e5d54eba3d751c1609243a482e38bd73589381b5ff19d15d726fd9a"
+    },
+    {
+      "file": "v1/domain/approval-request.schema.json",
+      "model": "ApprovalRequest",
+      "sha256": "c78149f7543bdb8a134a083b4bad1a46a59317af08b0dec66c9634d0143e5992"
+    },
+    {
       "file": "v1/domain/execution-plan.schema.json",
       "model": "ExecutionPlan",
       "sha256": "44e6508f4eff43e648c1b78b51794bdde7bad2963a06c270e33cc45f52ea81de"
@@ -249,6 +259,21 @@
       "sha256": "35221d5b2a4b51367f15adb18b5f69503d79aa30d2c622a1e2868e919629b537"
     },
     {
+      "file": "v1/domain/sandbox-limits.schema.json",
+      "model": "SandboxLimits",
+      "sha256": "87bd14719b906447cd6cd7dc92fd52919f905cbb8175b1cf214f61c1a07c2328"
+    },
+    {
+      "file": "v1/domain/sandbox-request.schema.json",
+      "model": "SandboxRequest",
+      "sha256": "5dfc9c3617f52c5da6b344172bd4ea7ce66761bb6b51bcdc861e1272fc51450d"
+    },
+    {
+      "file": "v1/domain/sandbox-result.schema.json",
+      "model": "SandboxResult",
+      "sha256": "9a9aa8c816e03403d75303202582925c9fff38bc68cfa164188796538deb795f"
+    },
+    {
       "file": "v1/domain/task-run.schema.json",
       "model": "TaskRun",
       "sha256": "fa19924ae19de29e21e6abbef4608b9e92f6a96109dd2cae52fd6574542bd0d9"
@@ -267,6 +292,31 @@
       "file": "v1/domain/tool-call-result.schema.json",
       "model": "ToolCallResultRecord",
       "sha256": "4aa72edabb9f58bf30c269fb3f044d4feaf9f2b579d249115a0797ff952087cd"
+    },
+    {
+      "file": "v1/domain/tool-descriptor.schema.json",
+      "model": "ToolDescriptor",
+      "sha256": "383b9d7ef0edeb098a3e48c816119919dd0911bd46f1badbf625044fc1de1777"
+    },
+    {
+      "file": "v1/domain/tool-execution-context.schema.json",
+      "model": "ToolExecutionContext",
+      "sha256": "ed0c631f6cc53b3df01ff21d93212a1d78411acacbcf049d0ed8dc2c68795d53"
+    },
+    {
+      "file": "v1/domain/tool-execution-result.schema.json",
+      "model": "ToolExecutionResult",
+      "sha256": "9710d33422aa1332c9bc4fe3e7a2f29ed181a0538815c67271fd9999c48e9690"
+    },
+    {
+      "file": "v1/domain/tool-invocation.schema.json",
+      "model": "ToolInvocation",
+      "sha256": "69b5a5b2fb52df3fc15bb1cd2883d9903702d7942f74ece0737c1011d8ae2e62"
+    },
+    {
+      "file": "v1/domain/tool-policy-decision.schema.json",
+      "model": "ToolPolicyDecision",
+      "sha256": "89a0a65e5467a1226c74288df69cdf3c02a359f96a97cd9c927ce2d561eaedb7"
     },
     {
       "file": "v1/domain/verifier-result.schema.json",

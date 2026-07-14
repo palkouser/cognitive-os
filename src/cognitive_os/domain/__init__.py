@@ -1,5 +1,6 @@
 """Public Cognitive OS domain contracts."""
 
+from .approvals import ApprovalDecision, ApprovalRequest, ToolPolicyDecision
 from .base import ContractModel, ImmutableContractModel
 from .common import ActorRef, ArtifactRef, ErrorInfo, TokenUsage, UtcDatetime, utc_now
 from .enums import (
@@ -39,8 +40,10 @@ from .provider import (
     ResponseFormat,
     ToolChoiceMode,
 )
+from .sandbox import SandboxLimits, SandboxRequest, SandboxResult
 from .tasks import Task, TaskRun
 from .tool_calls import ToolCallRequestRecord, ToolCallResultRecord
+from .tools import ToolDescriptor, ToolExecutionContext, ToolExecutionResult, ToolInvocation
 from .transitions import (
     can_transition_step,
     can_transition_task,
@@ -51,6 +54,8 @@ from .verification import VerificationSubjectRef, VerifierFinding, VerifierResul
 __all__ = [
     "ActorRef",
     "ActorType",
+    "ApprovalDecision",
+    "ApprovalRequest",
     "ArtifactRef",
     "CallStatus",
     "ContractModel",
@@ -81,6 +86,9 @@ __all__ = [
     "ProviderToolDefinition",
     "ResponseFormat",
     "RiskLevel",
+    "SandboxLimits",
+    "SandboxRequest",
+    "SandboxResult",
     "StepStatus",
     "StreamType",
     "Task",
@@ -92,6 +100,11 @@ __all__ = [
     "ToolCallRequestRecord",
     "ToolCallResultRecord",
     "ToolChoiceMode",
+    "ToolDescriptor",
+    "ToolExecutionContext",
+    "ToolExecutionResult",
+    "ToolInvocation",
+    "ToolPolicyDecision",
     "UtcDatetime",
     "VerificationSubjectRef",
     "VerifierFinding",
