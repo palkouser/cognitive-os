@@ -1,6 +1,6 @@
 # Sprint 2 report
 
-Status: Implementation complete - remote CI and release pending
+Status: Complete
 
 ## Sprint goal
 
@@ -106,7 +106,7 @@ serialization, and hashing.
 - ShellCheck and Bash syntax validation: passed.
 - Repository language policy and schema drift check: passed.
 - Distribution build, isolated wheel installation, and editable installation: passed.
-- GitHub PR CI: pending.
+- GitHub PR CI: quality, test, build, and security jobs passed.
 
 ## Security status
 
