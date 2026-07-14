@@ -1,0 +1,27 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/execution_step.skipped.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    },
+    "skipped_at": {
+      "format": "date-time",
+      "title": "Skipped At",
+      "type": "string"
+    },
+    "step_id": {
+      "format": "uuid",
+      "title": "Step Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "step_id",
+    "skipped_at",
+    "reason"
+  ],
+  "title": "ExecutionStepSkipped",
+  "type": "object"
+}

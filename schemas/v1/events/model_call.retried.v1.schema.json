@@ -1,0 +1,26 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/model_call.retried.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "model_call_id": {
+      "format": "uuid",
+      "title": "Model Call Id",
+      "type": "string"
+    },
+    "next_attempt": {
+      "title": "Next Attempt",
+      "type": "integer"
+    },
+    "previous_attempt": {
+      "title": "Previous Attempt",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "model_call_id",
+    "previous_attempt",
+    "next_attempt"
+  ],
+  "title": "ModelCallRetried",
+  "type": "object"
+}

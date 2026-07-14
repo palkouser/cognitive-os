@@ -1,0 +1,40 @@
+{
+  "event_id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+  "event_type": "task.created",
+  "schema_version": 1,
+  "occurred_at": "2026-07-14T10:00:00Z",
+  "recorded_at": "2026-07-14T10:00:01Z",
+  "stream_id": "11111111-1111-4111-8111-111111111111",
+  "stream_type": "task",
+  "stream_version": 1,
+  "correlation_id": "44444444-4444-4444-8444-444444444444",
+  "causation_event_id": null,
+  "actor": {
+    "actor_type": "user",
+    "actor_id": "user-1",
+    "display_name": "Owner"
+  },
+  "source_component": "cognitive-os.fixture",
+  "payload": {
+    "task": {
+      "task_id": "11111111-1111-4111-8111-111111111111",
+      "title": "Create a contract report",
+      "raw_request": "Create an offline contract report.",
+      "normalized_request": null,
+      "created_at": "2026-07-14T10:00:00Z",
+      "updated_at": "2026-07-14T10:00:00Z",
+      "priority": "normal",
+      "risk_level": "low",
+      "status": "created",
+      "tags": ["contract"],
+      "requested_by": {
+        "actor_type": "user",
+        "actor_id": "user-1",
+        "display_name": "Owner"
+      },
+      "privacy_class": "internal"
+    }
+  },
+  "payload_hash": "8600f78709388bc05644d61143cb23cae1eb9b4dbaef62b2e088ca8c8b1adc0a",
+  "privacy_class": "internal"
+}

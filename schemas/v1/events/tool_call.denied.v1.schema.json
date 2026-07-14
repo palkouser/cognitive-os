@@ -1,0 +1,32 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/tool_call.denied.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "denied_at": {
+      "format": "date-time",
+      "title": "Denied At",
+      "type": "string"
+    },
+    "denied_by": {
+      "title": "Denied By",
+      "type": "string"
+    },
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    },
+    "tool_call_id": {
+      "format": "uuid",
+      "title": "Tool Call Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "tool_call_id",
+    "denied_at",
+    "denied_by",
+    "reason"
+  ],
+  "title": "ToolCallDenied",
+  "type": "object"
+}

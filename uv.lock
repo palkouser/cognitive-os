@@ -309,6 +309,7 @@ source = { editable = "." }
 dependencies = [
     { name = "httpx" },
     { name = "openai" },
+    { name = "pydantic" },
     { name = "pyyaml" },
 ]
 
@@ -360,6 +361,7 @@ requires-dist = [
     { name = "mcp", marker = "extra == 'mcp'", specifier = ">=1.23,<2" },
     { name = "mem0ai", marker = "extra == 'lightagent-legacy-memory'", specifier = "==0.1.70" },
     { name = "openai", specifier = ">=1.60,<2" },
+    { name = "pydantic", specifier = ">=2.11,<3" },
     { name = "pyyaml", specifier = ">=6,<7" },
 ]
 provides-extras = ["browser", "cloud-aws", "lightagent-legacy-memory", "mcp", "observability-langfuse", "provider-litellm"]

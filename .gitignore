@@ -15,7 +15,7 @@ LightAgent/__pycache__/la_core.cpython-311.pyc
 # Runtime data (normally stored outside the repository)
 cognitive-os-data/
 artifacts/
-events/
+/events/
 traces/
 sandboxes/
 worktrees/

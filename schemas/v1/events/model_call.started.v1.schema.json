@@ -1,0 +1,22 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/model_call.started.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "model_call_id": {
+      "format": "uuid",
+      "title": "Model Call Id",
+      "type": "string"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "model_call_id",
+    "started_at"
+  ],
+  "title": "ModelCallStarted",
+  "type": "object"
+}

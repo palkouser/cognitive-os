@@ -1,0 +1,448 @@
+{
+  "event_types": [
+    {
+      "event_type": "checkpoint.created",
+      "file": "v1/events/checkpoint.created.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "execution_step.cancelled",
+      "file": "v1/events/execution_step.cancelled.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "execution_step.completed",
+      "file": "v1/events/execution_step.completed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "execution_step.created",
+      "file": "v1/events/execution_step.created.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "execution_step.failed",
+      "file": "v1/events/execution_step.failed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "execution_step.retried",
+      "file": "v1/events/execution_step.retried.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "execution_step.skipped",
+      "file": "v1/events/execution_step.skipped.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "execution_step.started",
+      "file": "v1/events/execution_step.started.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "model_call.completed",
+      "file": "v1/events/model_call.completed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "model_call.failed",
+      "file": "v1/events/model_call.failed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "model_call.requested",
+      "file": "v1/events/model_call.requested.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "model_call.retried",
+      "file": "v1/events/model_call.retried.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "model_call.started",
+      "file": "v1/events/model_call.started.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "model_call.timed_out",
+      "file": "v1/events/model_call.timed_out.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "plan.created",
+      "file": "v1/events/plan.created.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "plan.revised",
+      "file": "v1/events/plan.revised.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "run.resumed",
+      "file": "v1/events/run.resumed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "task.cancelled",
+      "file": "v1/events/task.cancelled.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "task.created",
+      "file": "v1/events/task.created.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "task.updated",
+      "file": "v1/events/task.updated.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "task_run.cancelled",
+      "file": "v1/events/task_run.cancelled.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "task_run.completed",
+      "file": "v1/events/task_run.completed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "task_run.failed",
+      "file": "v1/events/task_run.failed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "task_run.started",
+      "file": "v1/events/task_run.started.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "task_run.waiting",
+      "file": "v1/events/task_run.waiting.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "tool_call.authorized",
+      "file": "v1/events/tool_call.authorized.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "tool_call.completed",
+      "file": "v1/events/tool_call.completed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "tool_call.denied",
+      "file": "v1/events/tool_call.denied.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "tool_call.failed",
+      "file": "v1/events/tool_call.failed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "tool_call.requested",
+      "file": "v1/events/tool_call.requested.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "tool_call.started",
+      "file": "v1/events/tool_call.started.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "tool_call.timed_out",
+      "file": "v1/events/tool_call.timed_out.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "user.approval_denied",
+      "file": "v1/events/user.approval_denied.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "user.approval_granted",
+      "file": "v1/events/user.approval_granted.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "user.approval_requested",
+      "file": "v1/events/user.approval_requested.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "user.correction_received",
+      "file": "v1/events/user.correction_received.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "verifier.completed",
+      "file": "v1/events/verifier.completed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "verifier.failed",
+      "file": "v1/events/verifier.failed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "verifier.started",
+      "file": "v1/events/verifier.started.v1.schema.json",
+      "schema_version": 1
+    }
+  ],
+  "generated_by": "cognitive_os.schemas.export",
+  "models": [
+    {
+      "file": "v1/domain/execution-plan.schema.json",
+      "model": "ExecutionPlan",
+      "sha256": "44e6508f4eff43e648c1b78b51794bdde7bad2963a06c270e33cc45f52ea81de"
+    },
+    {
+      "file": "v1/domain/execution-step.schema.json",
+      "model": "ExecutionStep",
+      "sha256": "a31fc96184e01ef235bd29946d7643530a05af628cfc1c3e26699d73abc90dfd"
+    },
+    {
+      "file": "v1/domain/model-call-request.schema.json",
+      "model": "ModelCallRequestRecord",
+      "sha256": "e2d4492c39f3ca527432cd9e00f349c293c9a43b5d955ab0cd21c0f537299547"
+    },
+    {
+      "file": "v1/domain/model-call-result.schema.json",
+      "model": "ModelCallResultRecord",
+      "sha256": "c02250d33704f9ad80f97e8bb933cbf6a82d7a6510f0ed952086bd7eb9d7f19e"
+    },
+    {
+      "file": "v1/domain/task-run.schema.json",
+      "model": "TaskRun",
+      "sha256": "fa19924ae19de29e21e6abbef4608b9e92f6a96109dd2cae52fd6574542bd0d9"
+    },
+    {
+      "file": "v1/domain/task.schema.json",
+      "model": "Task",
+      "sha256": "8cbde6089953b5684da9ed63c2e5e80edd17509c3e42534ede4f4d6118f7defa"
+    },
+    {
+      "file": "v1/domain/tool-call-request.schema.json",
+      "model": "ToolCallRequestRecord",
+      "sha256": "38174158c77cd9de6f92cd2b4baee24a6839e6b5c6b264033e1a614eb9d18954"
+    },
+    {
+      "file": "v1/domain/tool-call-result.schema.json",
+      "model": "ToolCallResultRecord",
+      "sha256": "4aa72edabb9f58bf30c269fb3f044d4feaf9f2b579d249115a0797ff952087cd"
+    },
+    {
+      "file": "v1/domain/verifier-result.schema.json",
+      "model": "VerifierResult",
+      "sha256": "ff3a2a66fb9b53be1b244ea04b9c32458673c0d11b47cda0f70757efed7b46e6"
+    },
+    {
+      "file": "v1/events/checkpoint.created.v1.schema.json",
+      "model": "CheckpointCreated",
+      "sha256": "1c900c995edd00c7a97cf2b673a0ff2516c3b1c2c1aa6b69189a745a90170ada"
+    },
+    {
+      "file": "v1/events/event-envelope.schema.json",
+      "model": "EventEnvelope",
+      "sha256": "6ce645a514fd6d824165a70bf8c1f92c6412d331acdca8909db6b0a6c6ce5f65"
+    },
+    {
+      "file": "v1/events/execution_step.cancelled.v1.schema.json",
+      "model": "ExecutionStepCancelled",
+      "sha256": "50b0d8cd9224ad1db226b1af232c0bbc0bb6cbdf0612005b1da54d24374431ee"
+    },
+    {
+      "file": "v1/events/execution_step.completed.v1.schema.json",
+      "model": "ExecutionStepCompleted",
+      "sha256": "596f39d483be728689baac824bc32841491050cf5f3f1c75f6fac3033da138f1"
+    },
+    {
+      "file": "v1/events/execution_step.created.v1.schema.json",
+      "model": "ExecutionStepCreated",
+      "sha256": "2346746ab88bb64b9344a8551ca95c4ad41e1555f47050eee945c65ba9849e09"
+    },
+    {
+      "file": "v1/events/execution_step.failed.v1.schema.json",
+      "model": "ExecutionStepFailed",
+      "sha256": "0c1e5a1d5b67b6deb0c2f54bd8bbc8ab1c3ab9ec0c9762d9f6f695c3c34dc772"
+    },
+    {
+      "file": "v1/events/execution_step.retried.v1.schema.json",
+      "model": "ExecutionStepRetried",
+      "sha256": "4fcccf7fb5e28897c6f69ae8ce83094423977a1b6adbc28fa27e152cf4fe877b"
+    },
+    {
+      "file": "v1/events/execution_step.skipped.v1.schema.json",
+      "model": "ExecutionStepSkipped",
+      "sha256": "4b3647a6fd7400a2d1983ee16f15505a07bb1b31227b37137c6e7d5f0397121a"
+    },
+    {
+      "file": "v1/events/execution_step.started.v1.schema.json",
+      "model": "ExecutionStepStarted",
+      "sha256": "b8baef5ef34c9d354947f0ac6babe7fcdde0528d203965a1cb55796bbe6314b1"
+    },
+    {
+      "file": "v1/events/model_call.completed.v1.schema.json",
+      "model": "ModelCallCompleted",
+      "sha256": "7d2ee2c2e6325abb2803ba8705d85a795640b541fd931d4a0c413075085d79a8"
+    },
+    {
+      "file": "v1/events/model_call.failed.v1.schema.json",
+      "model": "ModelCallFailed",
+      "sha256": "4a7afd448b42ae1b35bb4126452beec401c585182a7e88cc819cf625a350f8e8"
+    },
+    {
+      "file": "v1/events/model_call.requested.v1.schema.json",
+      "model": "ModelCallRequested",
+      "sha256": "a7f0089a69dfe30223ed57c01f0be1c12dd448a60d3b796cb17cd717d06901e2"
+    },
+    {
+      "file": "v1/events/model_call.retried.v1.schema.json",
+      "model": "ModelCallRetried",
+      "sha256": "301679ef3108975d2d282d3e60722b5f1728f0a33693cf51e309dda72c97a391"
+    },
+    {
+      "file": "v1/events/model_call.started.v1.schema.json",
+      "model": "ModelCallStarted",
+      "sha256": "c185d0503bb8c0bbd3d2abfb6eaf14487eadd7529b0bf9588bb8a75f0c8a4d51"
+    },
+    {
+      "file": "v1/events/model_call.timed_out.v1.schema.json",
+      "model": "ModelCallTimedOut",
+      "sha256": "2406443acef0a8bfb5a2ce2bdb8413dab63e0f7040d56857c8e06ea20a324ba2"
+    },
+    {
+      "file": "v1/events/plan.created.v1.schema.json",
+      "model": "PlanCreated",
+      "sha256": "5bcd63453e759593dda1f63a48cdc88a40af095c06d7fc16e5a74e4f5fdfb50e"
+    },
+    {
+      "file": "v1/events/plan.revised.v1.schema.json",
+      "model": "PlanRevised",
+      "sha256": "ca0f69c6d5d78ed88deda7dc47d35fea1931bc82ba485903456a8e3a66cd5620"
+    },
+    {
+      "file": "v1/events/run.resumed.v1.schema.json",
+      "model": "RunResumed",
+      "sha256": "46953f1401bf09add4f29d4fdd524f75c92897804254146b56b6714f281821f8"
+    },
+    {
+      "file": "v1/events/task.cancelled.v1.schema.json",
+      "model": "TaskCancelled",
+      "sha256": "7bc395016a95ffb65b60212530a4845327cf9c9acab19da919065a59d33fcb79"
+    },
+    {
+      "file": "v1/events/task.created.v1.schema.json",
+      "model": "TaskCreated",
+      "sha256": "e382852a2bf80911abc59a96553a783bdeffe7a22581aa012392f8badc5bb1e1"
+    },
+    {
+      "file": "v1/events/task.updated.v1.schema.json",
+      "model": "TaskUpdated",
+      "sha256": "f0f6862cc9a897ba7651d64df030119bbbffe0110d17c89ed315dfdd5c50576b"
+    },
+    {
+      "file": "v1/events/task_run.cancelled.v1.schema.json",
+      "model": "TaskRunCancelled",
+      "sha256": "898660e627601532f2d64f446525eefa7f8d399bfebfa15611dd0202e8045f2a"
+    },
+    {
+      "file": "v1/events/task_run.completed.v1.schema.json",
+      "model": "TaskRunCompleted",
+      "sha256": "836813a024a2908b77696372e94d58ca9393cb9676a629711482c79753ed53d5"
+    },
+    {
+      "file": "v1/events/task_run.failed.v1.schema.json",
+      "model": "TaskRunFailed",
+      "sha256": "9ce11e0973f622487b48aba95545af1a4db7eb00d72a16421efc1a78d5ca4689"
+    },
+    {
+      "file": "v1/events/task_run.started.v1.schema.json",
+      "model": "TaskRunStarted",
+      "sha256": "2ef9bfd2f4cea21a63e5afb869ed2055839d0286a7f7bfdf73a1c9c9e978d768"
+    },
+    {
+      "file": "v1/events/task_run.waiting.v1.schema.json",
+      "model": "TaskRunWaiting",
+      "sha256": "180862dcfa00884fbd3cc9491d51152df4fe4443e7daab28fe43721ab8e5bfaa"
+    },
+    {
+      "file": "v1/events/tool_call.authorized.v1.schema.json",
+      "model": "ToolCallAuthorized",
+      "sha256": "3474582730f00c26fb28e6a2a3fee2ac1a141630c9727713d2856c26c4f9a68f"
+    },
+    {
+      "file": "v1/events/tool_call.completed.v1.schema.json",
+      "model": "ToolCallCompleted",
+      "sha256": "0264224f93e6b6a58360ab7974886e8ada90b764c56bff028f0382595156868d"
+    },
+    {
+      "file": "v1/events/tool_call.denied.v1.schema.json",
+      "model": "ToolCallDenied",
+      "sha256": "c4587c4f07e8dfd24775e005391bd33421707f2abd39ed9905c27926a2d0c0e4"
+    },
+    {
+      "file": "v1/events/tool_call.failed.v1.schema.json",
+      "model": "ToolCallFailed",
+      "sha256": "ae0201b5323f45b9b00a68475ec566b0b5ad0a4e56921d6382b9808f8caefc77"
+    },
+    {
+      "file": "v1/events/tool_call.requested.v1.schema.json",
+      "model": "ToolCallRequested",
+      "sha256": "adb7840c25c79b8f55430daea748347a35a61ec503f24549e559b1d533727fb1"
+    },
+    {
+      "file": "v1/events/tool_call.started.v1.schema.json",
+      "model": "ToolCallStarted",
+      "sha256": "a28c7f5d19de193debd47e534a0ef4316d160333682d403f90d0c73ee5deafe8"
+    },
+    {
+      "file": "v1/events/tool_call.timed_out.v1.schema.json",
+      "model": "ToolCallTimedOut",
+      "sha256": "6b54f16b13fbd85df510cb32258369341352c569830f6b975ae9fc1a60a3112b"
+    },
+    {
+      "file": "v1/events/user.approval_denied.v1.schema.json",
+      "model": "UserApprovalDenied",
+      "sha256": "a00201074d3b6f43acf4114a085b742cd4e11f0cb91bbfd0a6033a743818b131"
+    },
+    {
+      "file": "v1/events/user.approval_granted.v1.schema.json",
+      "model": "UserApprovalGranted",
+      "sha256": "7975f8fdcd1f1be4264c2a7e1105013417cd6d043342e9151605102d5dfd862f"
+    },
+    {
+      "file": "v1/events/user.approval_requested.v1.schema.json",
+      "model": "UserApprovalRequested",
+      "sha256": "d87951965245d7276ca694f14f328f615b106e5490f485505e15f71d7fdb9de5"
+    },
+    {
+      "file": "v1/events/user.correction_received.v1.schema.json",
+      "model": "UserCorrectionReceived",
+      "sha256": "2aaf5c64fc72c1c1bd3b783b95d3a59ab3472d325f37645befa23c538693298d"
+    },
+    {
+      "file": "v1/events/verifier.completed.v1.schema.json",
+      "model": "VerifierCompleted",
+      "sha256": "17533e4f05cb387245ca72f988b41844342272f61a36f62aa6b0264abc03a241"
+    },
+    {
+      "file": "v1/events/verifier.failed.v1.schema.json",
+      "model": "VerifierFailed",
+      "sha256": "0bdcb26d7e598ee35b0c533d63b2d71df6772fa57568913199523ab4abeaa3c1"
+    },
+    {
+      "file": "v1/events/verifier.started.v1.schema.json",
+      "model": "VerifierStarted",
+      "sha256": "6c83b04711e42afbd80b7893f2ba164623386219cbff72d9fc85b43d2204ad20"
+    }
+  ],
+  "schema_set_version": 1
+}

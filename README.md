@@ -21,6 +21,12 @@ provider integrations. See [optional features](docs/architecture/optional-featur
 opt-in extras. The pinned LightAgent source remains repository-local and is protected by
 offline [contract tests](tests/contract/lightagent/).
 
+Sprint 2 public contracts are available from `cognitive_os.domain` and
+`cognitive_os.events`. Their identifier, UTC timestamp, lifecycle, event-envelope, and
+schema-versioning rules are documented in [domain contracts](docs/architecture/domain-contracts.md)
+and the [event model](docs/architecture/event-model.md). Tracked JSON Schemas are checked with
+`./scripts/export_contract_schemas.sh --check`.
+
 ![LightAgent Banner](docs/images/lightagent-banner.jpg)
 <div align="center">
   <p>
