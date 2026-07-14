@@ -1,0 +1,13 @@
+Sprint 1 optional legacy-memory audit
+Date: 2026-07-14
+Command: uv sync --locked --extra lightagent-legacy-memory --group security && uv run pip-audit
+Expected result: non-zero; the feature is disabled by default and remains experimental.
+
+Name   Version  Advisory         Fixed version reported
+mem0ai 0.1.70   PYSEC-2026-2635  none
+mem0ai 0.1.70   PYSEC-2026-2634  none
+mem0ai 0.1.70   PYSEC-2026-2633  none
+mem0ai 0.1.70   PYSEC-2026-2636  2.0.0b2
+
+The beta major version is not adopted without a dedicated compatibility migration. The
+default locked synchronization does not install mem0ai.

@@ -1,0 +1,8 @@
+Sprint 1 default environment audit
+Date: 2026-07-14
+Command: uv sync --locked --group security && uv run pip-audit
+
+No known vulnerabilities found.
+
+cognitive-os 0.1.0.dev1 was skipped because it is a local package and is not published on
+PyPI. All third-party packages in the default environment were audited successfully.

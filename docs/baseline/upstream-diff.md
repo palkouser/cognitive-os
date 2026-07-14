@@ -21,3 +21,17 @@ editable setuptools build fails package discovery at this baseline.
 The dependency changes are narrow security remediations. The remaining `mem0ai`
 advisories have no stable, in-place upgrade at this baseline and are carried into Sprint 1
 dependency minimization.
+
+## Sprint 1 changes to upstream-owned files
+
+| File | Reason | Runtime impact |
+| --- | --- | --- |
+| `LightAgent/__init__.py` | Defer the public MCP manager import until requested | Default import no longer requires MCP; installed MCP behavior is preserved |
+| `LightAgent/core.py` | Defer MCP client loading until `setup_mcp()` is invoked | Missing MCP now raises an actionable optional-extra error |
+| `LightAgent/builtin_tools/nos.py` | Defer boto3 loading until the OSS tool is invoked | Default import no longer requires AWS SDK; installed boto3 behavior is preserved |
+| `LightAgent/litellm_client.py` | Align the missing-package guidance with the Sprint 1 extra | Standalone upstream installation guidance remains available |
+| `pyproject.toml` | Define the Cognitive OS distribution, explicit discovery, groups, and extras | Editable installation and locked uv workflow restored |
+| `requirements.txt` | Remove the obsolete mandatory-dependency fallback | Mem0, boto3, Langfuse, and MCP leave the default installation path |
+
+No LightAgent file is moved. Offline contract tests protect import, tool registration,
+runtime hooks, trace export, and LightFlow behavior at the pinned baseline.

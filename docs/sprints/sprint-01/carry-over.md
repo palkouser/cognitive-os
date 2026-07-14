@@ -1,5 +1,7 @@
 # Sprint 1 carry-over
 
+Status: Resolved in Sprint 1
+
 ## Restore editable installation
 
 The upstream LightAgent packaging configuration fails editable installation because
@@ -22,3 +24,6 @@ setuptools detects multiple top-level packages in a flat-layout repository. Both
 - Preserve upstream contract-test compatibility.
 - Review and reduce mandatory upstream dependencies, especially `mem0ai`, Langfuse, and boto3.
 - Resolve or isolate the remaining `mem0ai` security advisories.
+
+The implemented result is documented in `docs/sprints/sprint-01/report.md`, the package
+inventory, and the Sprint 1 dependency audit records.

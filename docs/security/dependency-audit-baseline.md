@@ -14,7 +14,7 @@
 PYSEC-2026-1617 is a high-severity DNS-rebinding issue affecting unauthenticated local
 HTTP MCP servers. MCP 1.23.0 enables the relevant protection by default for localhost.
 
-## Remaining upstream findings
+## Sprint 0 remaining upstream findings
 
 The final audit reports four advisories in one mandatory upstream dependency:
 
@@ -31,3 +31,10 @@ Legacy memory is not enabled as a Cognitive OS baseline capability. Sprint 1 mus
 `mem0ai` from the mandatory core dependency set, isolate it behind an opt-in feature, and
 re-audit before any use. Installing a beta major version during Sprint 0 would be an
 unreviewed runtime migration and is therefore rejected.
+
+## Sprint 1 disposition
+
+Sprint 1 removes Mem0, MCP, boto3, Langfuse, and LiteLLM from the default environment and
+maps each retained integration to an explicit extra. The core audit evidence is stored in
+`docs/security/dependency-audit-sprint-1-core.txt`. The legacy-memory audit remains separate
+because the opt-in Mem0 version still carries the documented upstream advisories.

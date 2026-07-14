@@ -10,7 +10,7 @@ Upstream updates must remain reviewable while Cognitive OS develops its own beha
 
 ## Decision
 
-Keep upstream files in place, put owned code in `cognitive_os/`, integrate through
+Keep upstream files in place, put owned code in `src/cognitive_os/`, integrate through
 adapters and hooks, and perform upstream syncs only on `upstream-sync/*` branches.
 
 ## Alternatives considered

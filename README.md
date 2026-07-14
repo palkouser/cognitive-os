@@ -1,8 +1,25 @@
 
 > **Cognitive OS baseline:** This repository is a thin fork of LightAgent v0.9.1.
-> Cognitive OS-owned development lives under `cognitive_os/`. Architecture decisions are
+> Cognitive OS-owned development lives under `src/cognitive_os/`. Architecture decisions are
 > recorded in [`docs/adr/`](docs/adr/), and provenance is recorded in
 > [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+
+## Cognitive OS development setup
+
+The Cognitive OS distribution uses an explicit Python 3.12 `src` layout and a committed uv
+lockfile. From a clean checkout:
+
+```bash
+uv sync --locked --all-groups
+uv run python -c "import cognitive_os"
+./scripts/verify_editable_install.sh
+./scripts/verify_distribution.sh
+```
+
+The default environment excludes legacy memory, AWS, Langfuse, MCP, browser, and alternate
+provider integrations. See [optional features](docs/architecture/optional-features.md) for
+opt-in extras. The pinned LightAgent source remains repository-local and is protected by
+offline [contract tests](tests/contract/lightagent/).
 
 ![LightAgent Banner](docs/images/lightagent-banner.jpg)
 <div align="center">

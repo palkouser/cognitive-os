@@ -33,7 +33,6 @@ from .result import RunResult, StreamEvent
 from .tracing import TraceRecorder
 from .hooks import HOOK_BLOCK, HookContext, HookDecision, HookManager
 from .guardrails import GuardrailManager
-from .mcp_client_manager import MCPClientManager
 from .skills import SkillManager
 from .skill_tools import create_skill_tools
 # 新增：导入内置工具
@@ -290,7 +289,13 @@ class LightAgent:
                     base_url=tot_base_url if tot_base_url and tot_base_url != "https://api.openai.com/v1" else None,
                 )
         elif tracetools:
-            from langfuse.openai import openai as la_openai
+            try:
+                from langfuse.openai import openai as la_openai
+            except ImportError as exc:
+                raise ImportError(
+                    "Langfuse observability is not installed. Install the Cognitive OS "
+                    "'observability-langfuse' optional extra to enable it."
+                ) from exc
             la_openai.langfuse_public_key = tracetools['TraceToolConfig']['langfuse_public_key']
             la_openai.langfuse_secret_key = tracetools['TraceToolConfig']['langfuse_secret_key']
             la_openai.langfuse_enabled = tracetools['TraceToolConfig']['langfuse_enabled']
@@ -362,6 +367,13 @@ class LightAgent:
             self.mcp_setting = mcp_setting
         """单独初始化 MCP 模块"""
         if self.mcp_setting and not self.mcp_client:
+            try:
+                from .mcp_client_manager import MCPClientManager
+            except ImportError as exc:
+                raise ImportError(
+                    "LightAgent MCP support is not installed. "
+                    "Install the Cognitive OS 'mcp' optional extra to enable it."
+                ) from exc
             self.mcp_client = MCPClientManager(self.mcp_setting, self.tool_registry)
             await self.mcp_client.register_mcp_tool()
             self.log("INFO", "setup_mcp", "MCP 模块初始化成功")

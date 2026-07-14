@@ -33,7 +33,6 @@ from .guardrails import (
 from .flow import JsonLightFlowStore, LightFlow, LightFlowResult, LightFlowStep, LightFlowStepResult
 from .shared_memory import SharedMemoryPool, SharedMemoryRecord
 from .logger import LoggerManager
-from .mcp_client_manager import MCPClientManager
 from .skills import SkillManager, Skill
 from .skill_tools import create_skill_tools
 from .builtin_tools.python_executor import (
@@ -42,6 +41,20 @@ from .builtin_tools.python_executor import (
     execute_python_code_stream
 )
 from .builtin_tools.nos import upload_file_to_oss
+
+
+def __getattr__(name):
+    """Load optional public integrations only when requested."""
+    if name == "MCPClientManager":
+        try:
+            from .mcp_client_manager import MCPClientManager
+        except ImportError as exc:
+            raise ImportError(
+                "LightAgent MCP support is not installed. "
+                "Install the Cognitive OS 'mcp' optional extra to enable it."
+            ) from exc
+        return MCPClientManager
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 __all__ = [
     "__version__",
