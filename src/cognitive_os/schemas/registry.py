@@ -42,6 +42,27 @@ from cognitive_os.domain import (
     ToolPolicyDecision,
     VerifierResult,
 )
+from cognitive_os.domain.acceptance import (
+    AcceptanceDecision,
+    AcceptancePolicy,
+    CriterionEvaluation,
+    VerifierRequirement,
+)
+from cognitive_os.domain.benchmarks import (
+    BenchmarkCase,
+    BenchmarkCaseResult,
+    BenchmarkManifest,
+    BenchmarkResourceBudget,
+    BenchmarkRun,
+)
+from cognitive_os.domain.verifiers import (
+    VerificationBundle,
+    VerificationExecution,
+    VerificationRequest,
+    VerificationSubject,
+    VerifierCapability,
+    VerifierDescriptor,
+)
 from cognitive_os.events.base import EventEnvelope
 from cognitive_os.events.catalog import DEFAULT_EVENT_MODELS
 
@@ -55,6 +76,21 @@ class SchemaEntry:
 
 
 DOMAIN_SCHEMAS: tuple[tuple[type[BaseModel], str], ...] = (
+    (VerifierCapability, "v1/domain/verifier-capability.schema.json"),
+    (VerifierDescriptor, "v1/domain/verifier-descriptor.schema.json"),
+    (VerificationSubject, "v1/domain/verification-subject.schema.json"),
+    (VerificationRequest, "v1/domain/verification-request.schema.json"),
+    (VerificationExecution, "v1/domain/verification-execution.schema.json"),
+    (VerificationBundle, "v1/domain/verification-bundle.schema.json"),
+    (VerifierRequirement, "v1/domain/verifier-requirement.schema.json"),
+    (AcceptancePolicy, "v1/domain/acceptance-policy.schema.json"),
+    (CriterionEvaluation, "v1/domain/criterion-evaluation.schema.json"),
+    (AcceptanceDecision, "v1/domain/acceptance-decision.schema.json"),
+    (BenchmarkResourceBudget, "v1/domain/benchmark-resource-budget.schema.json"),
+    (BenchmarkCase, "v1/domain/benchmark-case.schema.json"),
+    (BenchmarkManifest, "v1/domain/benchmark-manifest.schema.json"),
+    (BenchmarkCaseResult, "v1/domain/benchmark-case-result.schema.json"),
+    (BenchmarkRun, "v1/domain/benchmark-run.schema.json"),
     (ApprovalDecision, "v1/domain/approval-decision.schema.json"),
     (ApprovalRequest, "v1/domain/approval-request.schema.json"),
     (ProblemRepresentation, "v1/domain/problem-representation.schema.json"),

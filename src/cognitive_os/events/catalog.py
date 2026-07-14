@@ -5,7 +5,17 @@ from __future__ import annotations
 from cognitive_os.domain.common import JsonValue
 
 from .base import EventEnvelope, EventPayload
+from .benchmark_events import (
+    BenchmarkCaseCompleted,
+    BenchmarkCaseFailed,
+    BenchmarkCaseStarted,
+    BenchmarkRunCancelled,
+    BenchmarkRunCompleted,
+    BenchmarkRunFailed,
+    BenchmarkRunStarted,
+)
 from .controller_events import (
+    AcceptanceDecisionRecorded,
     ControllerBudgetExhaustedEvent,
     ControllerCancelled,
     ControllerCheckpointCreated,
@@ -114,10 +124,18 @@ class EventCatalog:
 
 
 DEFAULT_EVENT_MODELS: tuple[type[EventPayload], ...] = (
+    BenchmarkRunStarted,
+    BenchmarkCaseStarted,
+    BenchmarkCaseCompleted,
+    BenchmarkCaseFailed,
+    BenchmarkRunCompleted,
+    BenchmarkRunFailed,
+    BenchmarkRunCancelled,
     ProblemRepresentationCreated,
     ProblemRepresentationRevised,
     ControllerStateChanged,
     ControllerDecisionRecorded,
+    AcceptanceDecisionRecorded,
     ControllerClarificationRequested,
     ControllerClarificationProvided,
     ControllerCheckpointCreated,

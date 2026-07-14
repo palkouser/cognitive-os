@@ -7,13 +7,16 @@ from cognitive_os.application.ports.controller import (
     ContinueControllerRequest,
     StartControllerRequest,
 )
+from cognitive_os.application.services.acceptance_service import AcceptancePolicyService
 from cognitive_os.application.services.clarification_service import ClarificationService
 from cognitive_os.application.services.cognitive_controller import (
     ActionOutcome,
     BoundedCognitiveController,
 )
 from cognitive_os.application.services.controller_recovery import ControllerRecoveryService
+from cognitive_os.application.services.controller_verification import ControllerVerificationService
 from cognitive_os.application.services.minimal_acceptance import MinimalAcceptanceService
+from cognitive_os.application.services.verification_service import VerificationService
 from cognitive_os.config.controller_config import ControllerConfiguration
 from cognitive_os.domain.common import ActorRef, ArtifactRef, utc_now
 from cognitive_os.domain.controller import ControllerActionType, ControllerBudget, ControllerState
@@ -31,6 +34,8 @@ from cognitive_os.domain.problems import (
 )
 from cognitive_os.events.controller_event_service import ControllerEventService
 from cognitive_os.events.storage import AppendResult, StoredEvent
+from cognitive_os.events.verifier_event_service import VerifierEventService
+from cognitive_os.verification.factory import build_builtin_registry
 
 
 class MemoryEventStore:
@@ -64,6 +69,10 @@ class MemoryEventStore:
         if to_version is not None:
             values = [item for item in values if item.envelope.stream_version <= to_version]
         return tuple(values[:limit] if limit else values)
+
+    async def get_stream_version(self, stream_id):
+        values = [item for item in self.events if item.envelope.stream_id == stream_id]
+        return values[-1].envelope.stream_version if values else None
 
 
 class MemoryArtifactStore:
@@ -228,6 +237,42 @@ async def test_bounded_controller_completes_and_replays() -> None:
         )
     )
     assert result.state is ControllerState.COMPLETED
+
+
+@pytest.mark.asyncio
+async def test_controller_uses_registered_verifier_and_persists_acceptance() -> None:
+    task_id, task_run_id, step_id = uuid4(), uuid4(), uuid4()
+    store = MemoryEventStore()
+    registry = build_builtin_registry()
+    verification = ControllerVerificationService(
+        VerificationService(registry, VerifierEventService(store)),
+        AcceptancePolicyService(),
+    )
+    controller = BoundedCognitiveController(
+        problem_engine=ProblemEngine(step_id),
+        planning=Planner(task_run_id, step_id),
+        action_executor=Executor(),
+        acceptance=MinimalAcceptanceService(),
+        verification=verification,
+        events=ControllerEventService(store),
+        recovery=ControllerRecoveryService(store),
+        configuration=config(),
+        provider_ids=("replay",),
+    )
+    result = await controller.start(
+        StartControllerRequest(
+            task_id=task_id,
+            task_run_id=task_run_id,
+            correlation_id=uuid4(),
+            title="Verified offline task",
+            raw_request="Complete one deterministic verified step.",
+        )
+    )
+    event_types = [item.envelope.event_type for item in store.events]
+    assert result.state is ControllerState.COMPLETED
+    assert "verifier.started" in event_types
+    assert "verifier.completed" in event_types
+    assert "controller.acceptance_decision_recorded" in event_types
     assert result.acceptance_decision and result.acceptance_decision.accepted
     assert (await controller.replay(task_run_id)).state is ControllerState.COMPLETED
     event_types = [item.envelope.event_type for item in store.events]

@@ -21,13 +21,23 @@ Reviewed on 2026-07-14 from locked package metadata and upstream package metadat
 | MkDocs | 1.6.1 | docs | BSD-2-Clause | Yes | Documentation build |
 | Material for MkDocs | 9.7.6 | docs | MIT | Yes | Documentation theme |
 | boto3 | 1.43.47 | `cloud-aws` | Apache-2.0 | Yes | Optional AWS integration |
-| mem0ai | 0.1.70 | `lightagent-legacy-memory` | Apache-2.0 | Conditional | Experimental; known advisories |
 | MCP | 1.28.1 | `mcp` | MIT | Yes | Optional stable-v1 local STDIO Tool Plane integration |
 | Langfuse | 3.15.0 | `observability-langfuse` | MIT | Yes | Optional observability |
-| LiteLLM | 1.80.0 | `provider-litellm` | MIT | Yes | Optional provider routing |
 | SQLAlchemy | 2.0.51 | `postgres` | MIT | Yes | Async Core database access |
 | asyncpg | 0.31.0 | `postgres` | Apache-2.0 | Yes | PostgreSQL async driver |
 | Alembic | 1.18.5 | `postgres` | MIT | Yes | Database migrations |
 | OpenTelemetry SDK/exporter | 1.43.0 | `observability-otel` | Apache-2.0 | Yes | Optional traces |
+| SymPy | 1.14.0 | `verification-math` | BSD-3-Clause | Yes | Optional typed symbolic verification |
+| z3-solver | 4.16.0.0 | `verification-logic` | MIT | Yes | Optional typed logic verification |
+| Pint | 0.25.3 | `verification-physics` | BSD-3-Clause | Yes | Optional units and dimensions |
 
 The empty `browser` extra has no accepted direct dependency.
+
+The 2026 Click advisory was remediated by resolving Click 8.4.2. Inspect AI 0.3.246 has a
+stale upper bound that conflicts with the fixed version, so its runtime dependency is deferred.
+The dependency-free exporter remains available and the locked environment reports no known
+vulnerabilities with `pip-audit`.
+
+The vulnerable mem0ai 0.1.70 and LiteLLM 1.80.0 runtimes were removed from the universal
+lock. Their extra names remain reserved but empty. Memory and adaptive provider routing are
+outside Sprint 7 scope and can return only after compatible, advisory-free releases exist.

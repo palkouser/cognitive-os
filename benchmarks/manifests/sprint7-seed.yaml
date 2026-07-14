@@ -1,0 +1,72 @@
+benchmark_id: sprint7-seed
+version: "1"
+title: Sprint 7 deterministic seed suite
+description: Bounded credential-free cases covering every Sprint 7 verification domain.
+default_configuration:
+  mode: verifier_only
+source: Cognitive OS Sprint 7 executable backlog
+license: Apache-2.0
+created_at: 2026-01-01T00:00:00Z
+case_matrix:
+  generic:
+    - {id: generic.artifact-corrupted, expected: failed, verifier: generic.artifact_integrity}
+    - {id: generic.artifact-present, verifier: generic.artifact_integrity}
+    - {id: generic.exact-match, verifier: generic.exact}
+    - {id: generic.exact-mismatch, expected: failed, verifier: generic.exact}
+    - {id: generic.json-invalid, expected: failed, verifier: generic.json_schema}
+    - {id: generic.json-valid, verifier: generic.json_schema}
+    - {id: generic.plan-complete, verifier: generic.plan_consistency}
+    - {id: generic.plan-inconsistent, expected: failed, verifier: generic.plan_consistency}
+  coding:
+    - {id: coding.all-pass, verifier: coding.pytest}
+    - {id: coding.binary-added, expected: failed, verifier: coding.file_policy}
+    - {id: coding.dependency-added, expected: failed, verifier: coding.dependency_policy}
+    - {id: coding.diff-oversized, expected: failed, verifier: coding.diff_policy}
+    - {id: coding.forbidden-path, expected: failed, verifier: coding.file_policy}
+    - {id: coding.import-failure, expected: failed, verifier: coding.import}
+    - {id: coding.mypy-failure, expected: failed, verifier: coding.mypy}
+    - {id: coding.pytest-failure, expected: failed, verifier: coding.pytest}
+    - {id: coding.ruff-failure, expected: failed, verifier: coding.ruff}
+    - {id: coding.symlink-escape, expected: failed, verifier: coding.file_policy}
+  mathematics:
+    - {id: mathematics.domain-restriction, expected: failed, verifier: mathematics.equation_solution}
+    - {id: mathematics.exact-numeric, verifier: mathematics.numeric}
+    - {id: mathematics.extraneous-root, expected: failed, verifier: mathematics.equation_solution}
+    - {id: mathematics.rational-equality, verifier: mathematics.symbolic_equivalence}
+    - {id: mathematics.root, verifier: mathematics.equation_solution}
+    - {id: mathematics.symbolic-equivalence, verifier: mathematics.symbolic_equivalence}
+    - {id: mathematics.symbolic-non-equivalence, expected: failed, verifier: mathematics.symbolic_equivalence}
+    - {id: mathematics.symbolic-timeout, expected: unverifiable, verifier: mathematics.symbolic_equivalence}
+    - {id: mathematics.tolerance, verifier: mathematics.numeric}
+    - {id: mathematics.unsafe-expression, expected: error, verifier: mathematics.symbolic_equivalence}
+  logic:
+    - {id: logic.contradiction, verifier: logic.contradiction}
+    - {id: logic.equivalence, verifier: logic.equivalence}
+    - {id: logic.implication-invalid, expected: failed, verifier: logic.implication}
+    - {id: logic.implication-valid, verifier: logic.implication}
+    - {id: logic.non-equivalence, expected: failed, verifier: logic.equivalence}
+    - {id: logic.oversized-ast, expected: error, verifier: logic.satisfiable}
+    - {id: logic.raw-smtlib, expected: error, verifier: logic.satisfiable}
+    - {id: logic.satisfiable, verifier: logic.satisfiable}
+    - {id: logic.timeout, expected: unverifiable, verifier: logic.satisfiable}
+    - {id: logic.type-mismatch, expected: error, verifier: logic.satisfiable}
+  physics:
+    - {id: physics.custom-definition, expected: error, verifier: physics.quantity}
+    - {id: physics.dimension-match, verifier: physics.dimension}
+    - {id: physics.dimension-mismatch, expected: failed, verifier: physics.dimension}
+    - {id: physics.energy-dimension, verifier: physics.dimension}
+    - {id: physics.force-dimension, verifier: physics.dimension}
+    - {id: physics.non-finite, expected: error, verifier: physics.quantity}
+    - {id: physics.offset-unit, verifier: physics.unit_conversion}
+    - {id: physics.tolerance, verifier: physics.quantity}
+    - {id: physics.unit-conversion, verifier: physics.unit_conversion}
+    - {id: physics.unknown-unit, expected: error, verifier: physics.quantity}
+  controller:
+    - {id: controller.accepted-generic}
+    - {id: controller.budget-exhaustion, expected: failed}
+    - {id: controller.clarification, expected: unverifiable}
+    - {id: controller.repairable-failure, expected: failed}
+    - {id: controller.replay-reconstruction}
+    - {id: controller.terminal-failure, expected: failed}
+    - {id: controller.verifier-timeout, expected: error}
+    - {id: controller.verifier-unavailable, expected: unverifiable}

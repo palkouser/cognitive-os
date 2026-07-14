@@ -1,8 +1,48 @@
 {
   "event_types": [
     {
+      "event_type": "benchmark.case_completed",
+      "file": "v1/events/benchmark.case_completed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "benchmark.case_failed",
+      "file": "v1/events/benchmark.case_failed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "benchmark.case_started",
+      "file": "v1/events/benchmark.case_started.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "benchmark.run_cancelled",
+      "file": "v1/events/benchmark.run_cancelled.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "benchmark.run_completed",
+      "file": "v1/events/benchmark.run_completed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "benchmark.run_failed",
+      "file": "v1/events/benchmark.run_failed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "benchmark.run_started",
+      "file": "v1/events/benchmark.run_started.v1.schema.json",
+      "schema_version": 1
+    },
+    {
       "event_type": "checkpoint.created",
       "file": "v1/events/checkpoint.created.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "controller.acceptance_decision_recorded",
+      "file": "v1/events/controller.acceptance_decision_recorded.v1.schema.json",
       "schema_version": 1
     },
     {
@@ -259,6 +299,16 @@
   "generated_by": "cognitive_os.schemas.export",
   "models": [
     {
+      "file": "v1/domain/acceptance-decision.schema.json",
+      "model": "AcceptanceDecision",
+      "sha256": "e6c3591448a9247dfb15d814655dddf45c7f91cde091648ee400356ff1cd45de"
+    },
+    {
+      "file": "v1/domain/acceptance-policy.schema.json",
+      "model": "AcceptancePolicy",
+      "sha256": "3d31cc640d787631f504dd78edfb37c20b4c1c41fb3d876d9b665584276672b6"
+    },
+    {
       "file": "v1/domain/approval-decision.schema.json",
       "model": "ApprovalDecision",
       "sha256": "b2fcb99c0e5d54eba3d751c1609243a482e38bd73589381b5ff19d15d726fd9a"
@@ -267,6 +317,31 @@
       "file": "v1/domain/approval-request.schema.json",
       "model": "ApprovalRequest",
       "sha256": "c78149f7543bdb8a134a083b4bad1a46a59317af08b0dec66c9634d0143e5992"
+    },
+    {
+      "file": "v1/domain/benchmark-case-result.schema.json",
+      "model": "BenchmarkCaseResult",
+      "sha256": "7c47b1bed8aa3d188c9a6f3742463fe0839d95698f7199d9bb93bb18f47b45e0"
+    },
+    {
+      "file": "v1/domain/benchmark-case.schema.json",
+      "model": "BenchmarkCase",
+      "sha256": "facb87f9e81c7c4ef42301c82e4e3b840ffe25740b3780f6cd5a4846df0d043a"
+    },
+    {
+      "file": "v1/domain/benchmark-manifest.schema.json",
+      "model": "BenchmarkManifest",
+      "sha256": "b13e747ee4437b7f4b1aa6b9221388a169e29ef388e3786dd4e073d373fe9801"
+    },
+    {
+      "file": "v1/domain/benchmark-resource-budget.schema.json",
+      "model": "BenchmarkResourceBudget",
+      "sha256": "4680989284d59f596f335ebb5ff6af8e7cffec817edcd6c6b023cb402db90c04"
+    },
+    {
+      "file": "v1/domain/benchmark-run.schema.json",
+      "model": "BenchmarkRun",
+      "sha256": "346c17ba4ead9cb49f5b41ba6f3ec9695aca9abb23e2949bca7b9428a00044f3"
     },
     {
       "file": "v1/domain/clarification-request.schema.json",
@@ -286,7 +361,7 @@
     {
       "file": "v1/domain/controller-budget.schema.json",
       "model": "ControllerBudget",
-      "sha256": "91718c282e1a5667ecc437cfc21196b2a0aff118ba402fa1e35fbaa0af8f4417"
+      "sha256": "28c5fb132e6e6a8da2fdd3252717012006692eaeed1e01a5f7c5cedef605f06a"
     },
     {
       "file": "v1/domain/controller-decision.schema.json",
@@ -301,12 +376,17 @@
     {
       "file": "v1/domain/controller-state-snapshot.schema.json",
       "model": "ControllerStateSnapshot",
-      "sha256": "c2e02bea0e96037f2980d63777c5ac21031f5f5d284d8b1f79b749dbf69ed169"
+      "sha256": "ecb5f4d1404452b758433b5a18222cc2532079ce3b9391e3ab7a574993c42750"
     },
     {
       "file": "v1/domain/controller-usage.schema.json",
       "model": "ControllerUsage",
-      "sha256": "a779194eac2ede56c803fe2fe2bb958db3d7a55c519c884aeb7072428bc4d54b"
+      "sha256": "8beba0abb4bef9d5912ff18b36124484021ba38448a2d961de3e890f1cdd5e1d"
+    },
+    {
+      "file": "v1/domain/criterion-evaluation.schema.json",
+      "model": "CriterionEvaluation",
+      "sha256": "96e6dcfdbfb5a5924ea9a5de4d022c9f3f9eb9a3c40753712490b12e96a527d3"
     },
     {
       "file": "v1/domain/execution-plan.schema.json",
@@ -424,9 +504,79 @@
       "sha256": "89a0a65e5467a1226c74288df69cdf3c02a359f96a97cd9c927ce2d561eaedb7"
     },
     {
+      "file": "v1/domain/verification-bundle.schema.json",
+      "model": "VerificationBundle",
+      "sha256": "759f067774a47ee377e0c57886c32c3f4b1d577464cb370c32e4833925bae066"
+    },
+    {
+      "file": "v1/domain/verification-execution.schema.json",
+      "model": "VerificationExecution",
+      "sha256": "9951f2a4dbe8850de92d563c48eea132aabb099bd5013edd39af6ee8f3291dbf"
+    },
+    {
+      "file": "v1/domain/verification-request.schema.json",
+      "model": "VerificationRequest",
+      "sha256": "af0584dc322ba2abe30b0d774772d98b659300cd66711de0b91335480e5e3274"
+    },
+    {
+      "file": "v1/domain/verification-subject.schema.json",
+      "model": "VerificationSubject",
+      "sha256": "4a894bc2e190d0a529b45890744ae1a59b13b072832266ac7bd3cb43f4f7c880"
+    },
+    {
+      "file": "v1/domain/verifier-capability.schema.json",
+      "model": "VerifierCapability",
+      "sha256": "49301b2a171d52a152bdd7a577d7fc4015df9a40044dbdbc516dc411c2d66776"
+    },
+    {
+      "file": "v1/domain/verifier-descriptor.schema.json",
+      "model": "VerifierDescriptor",
+      "sha256": "14384e732cf694a808b4c41c6dba8d9b22e9d2f759b7c1ccfabe4bfab1539a7f"
+    },
+    {
+      "file": "v1/domain/verifier-requirement.schema.json",
+      "model": "VerifierRequirement",
+      "sha256": "4ea98839c0309bb50f3c142414e709b8ebe192675f3154f4d555912b015f538b"
+    },
+    {
       "file": "v1/domain/verifier-result.schema.json",
       "model": "VerifierResult",
       "sha256": "ff3a2a66fb9b53be1b244ea04b9c32458673c0d11b47cda0f70757efed7b46e6"
+    },
+    {
+      "file": "v1/events/benchmark.case_completed.v1.schema.json",
+      "model": "BenchmarkCaseCompleted",
+      "sha256": "77d6697902936fbe85ef3b359a48c753412101024749cf1b52b5aaef69cf158f"
+    },
+    {
+      "file": "v1/events/benchmark.case_failed.v1.schema.json",
+      "model": "BenchmarkCaseFailed",
+      "sha256": "9026f2a3c5d7e8b8c754ae5c354aad1bfaa4c2654c044d64fe5fc5c16ffa434e"
+    },
+    {
+      "file": "v1/events/benchmark.case_started.v1.schema.json",
+      "model": "BenchmarkCaseStarted",
+      "sha256": "da5ae5ba899a9c81713b1dc2c6b20422ac098739915a5883a11051bfb72910c8"
+    },
+    {
+      "file": "v1/events/benchmark.run_cancelled.v1.schema.json",
+      "model": "BenchmarkRunCancelled",
+      "sha256": "8d87d278697c2e0bc49a08c9acfc5b4b3526245ee894f2de9e6faaada6dcf557"
+    },
+    {
+      "file": "v1/events/benchmark.run_completed.v1.schema.json",
+      "model": "BenchmarkRunCompleted",
+      "sha256": "b31ffe2e061a0068584f9cec526d1f3154d655942cbf004ff0fecb8e53bea54c"
+    },
+    {
+      "file": "v1/events/benchmark.run_failed.v1.schema.json",
+      "model": "BenchmarkRunFailed",
+      "sha256": "dffbc640460f7c5cdc89c7cb58463cb40de8b9c5edda0c1acc785c7da9e4d82e"
+    },
+    {
+      "file": "v1/events/benchmark.run_started.v1.schema.json",
+      "model": "BenchmarkRunStarted",
+      "sha256": "e0ff1ded11eaa2b526a248ea4483cdbc4451f8ec3cc14599d8cb322bb03b3623"
     },
     {
       "file": "v1/events/checkpoint.created.v1.schema.json",
@@ -434,9 +584,14 @@
       "sha256": "1c900c995edd00c7a97cf2b673a0ff2516c3b1c2c1aa6b69189a745a90170ada"
     },
     {
+      "file": "v1/events/controller.acceptance_decision_recorded.v1.schema.json",
+      "model": "AcceptanceDecisionRecorded",
+      "sha256": "f51ecea7915fada6a2c8a9dc640958cd24a238fdc4875d70bbf75e8795f3fa2e"
+    },
+    {
       "file": "v1/events/controller.budget_exhausted.v1.schema.json",
       "model": "ControllerBudgetExhaustedEvent",
-      "sha256": "23bd2924c840f8c8a47905dc102b44be97776c732fb364c1986351ab30b3bb6d"
+      "sha256": "eadd006537591923f96017f436225bd6edb34ef40c66cf08556145b7c121dd15"
     },
     {
       "file": "v1/events/controller.cancelled.v1.schema.json",
@@ -686,7 +841,7 @@
     {
       "file": "v1/events/verifier.started.v1.schema.json",
       "model": "VerifierStarted",
-      "sha256": "6c83b04711e42afbd80b7893f2ba164623386219cbff72d9fc85b43d2204ad20"
+      "sha256": "c3768ca5b235ef1fe2321c1cb21ee2a41dd3f3956c578d824a169022243e0139"
     }
   ],
   "schema_set_version": 1

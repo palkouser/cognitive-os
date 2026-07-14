@@ -10,7 +10,7 @@ from cognitive_os.events.task_events import TaskCreated
 
 def test_default_catalog_is_explicit_and_complete() -> None:
     catalog = build_default_event_catalog()
-    assert len(catalog.list_event_types()) == 51
+    assert len(catalog.list_event_types()) == 59
     assert catalog.get_payload_model("task.created", 1) is TaskCreated
 
 

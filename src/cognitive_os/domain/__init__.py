@@ -1,7 +1,22 @@
 """Public Cognitive OS domain contracts."""
 
+from .acceptance import (
+    AcceptanceDecision,
+    AcceptanceDecisionType,
+    AcceptancePolicy,
+    CriterionEvaluation,
+    VerifierRequirement,
+)
 from .approvals import ApprovalDecision, ApprovalRequest, ToolPolicyDecision
 from .base import ContractModel, ImmutableContractModel
+from .benchmarks import (
+    BenchmarkCase,
+    BenchmarkCaseResult,
+    BenchmarkDomain,
+    BenchmarkManifest,
+    BenchmarkResourceBudget,
+    BenchmarkRun,
+)
 from .clarifications import (
     ClarificationAnswer,
     ClarificationRequest,
@@ -80,14 +95,33 @@ from .transitions import (
     can_transition_task_run,
 )
 from .verification import VerificationSubjectRef, VerifierFinding, VerifierResult
+from .verifiers import (
+    VerificationBundle,
+    VerificationExecution,
+    VerificationRequest,
+    VerificationSubject,
+    VerificationSubjectType,
+    VerifierCapability,
+    VerifierDescriptor,
+    VerifierKind,
+)
 
 __all__ = [
     "AcceptanceCriterion",
+    "AcceptanceDecision",
+    "AcceptanceDecisionType",
+    "AcceptancePolicy",
     "ActorRef",
     "ActorType",
     "ApprovalDecision",
     "ApprovalRequest",
     "ArtifactRef",
+    "BenchmarkCase",
+    "BenchmarkCaseResult",
+    "BenchmarkDomain",
+    "BenchmarkManifest",
+    "BenchmarkResourceBudget",
+    "BenchmarkRun",
     "CallStatus",
     "ClarificationAnswer",
     "ClarificationQuestion",
@@ -105,6 +139,7 @@ __all__ = [
     "ControllerStateSnapshot",
     "ControllerStepAction",
     "ControllerUsage",
+    "CriterionEvaluation",
     "CriterionType",
     "ErrorInfo",
     "ExecutionPlan",
@@ -161,8 +196,17 @@ __all__ = [
     "ToolInvocation",
     "ToolPolicyDecision",
     "UtcDatetime",
+    "VerificationBundle",
+    "VerificationExecution",
+    "VerificationRequest",
+    "VerificationSubject",
     "VerificationSubjectRef",
+    "VerificationSubjectType",
+    "VerifierCapability",
+    "VerifierDescriptor",
     "VerifierFinding",
+    "VerifierKind",
+    "VerifierRequirement",
     "VerifierResult",
     "VerifierStatus",
     "can_transition_step",

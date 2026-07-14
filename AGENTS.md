@@ -5,34 +5,37 @@
 This repository develops Cognitive OS, a local, model-independent, self-improving
 agent harness based on LightAgent.
 
-## Sprint 6 scope
+## Sprint 7 scope
 
-The active scope is typed problem representation and the bounded Cognitive Controller.
+The active scope is deterministic verification, acceptance policy, and reproducible
+benchmark execution.
 
 Allowed work:
 
-- problem representation contracts and services;
-- controller states, decisions, and transition rules;
-- controller budgets and usage accounting;
-- clarification requests and responses;
-- continuation tokens and checkpoints;
-- typed plan actions;
-- sequential provider and tool execution;
-- minimal deterministic acceptance checks;
-- bounded repair;
-- controller event persistence;
-- replay and crash recovery;
-- controller operational commands and tests.
+- verifier contracts, registry, and capability matching;
+- verifier lifecycle persistence;
+- generic structural verifiers;
+- sandboxed coding verifiers;
+- safe SymPy mathematical verifiers;
+- typed Z3 logic verifiers;
+- Pint unit and dimensional verifiers;
+- acceptance-policy evaluation;
+- Cognitive Controller verification integration;
+- benchmark contracts, runners, metrics, and reports;
+- optional Inspect AI export;
+- SWE-bench manifest import.
 
 Out of scope:
 
-- full Verifier Registry;
-- autonomous parallel execution;
-- multi-agent delegation;
-- long-term Memory Plane and context retrieval;
-- skills, strategies, routing, and self-improvement;
-- unrestricted shell execution;
-- direct provider or tool SDK access.
+- the full Coding Agent;
+- autonomous patch generation;
+- LLM-only acceptance;
+- parallel verifier execution;
+- arbitrary symbolic evaluation;
+- raw SMT-LIB execution;
+- custom provider unit definitions;
+- automatic external benchmark downloads;
+- Memory Plane, skills, strategies, routing, and self-improvement.
 
 Do not move or rewrite LightAgent runtime files unless the active issue explicitly
 authorizes it.

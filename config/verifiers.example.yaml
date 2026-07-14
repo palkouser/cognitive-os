@@ -1,0 +1,25 @@
+verifiers:
+  generic.json_schema:
+    enabled: true
+    timeout_seconds: 10
+  coding.pytest:
+    enabled: true
+    timeout_seconds: 300
+    maximum_output_bytes: 1048576
+  mathematics.symbolic_equivalence:
+    enabled: true
+    timeout_seconds: 10
+    maximum_expression_nodes: 512
+    maximum_symbol_count: 32
+  logic.satisfiable:
+    enabled: true
+    timeout_seconds: 10
+    maximum_ast_nodes: 1024
+  physics.dimension:
+    enabled: true
+    timeout_seconds: 10
+verification:
+  maximum_evidence_artifacts: 32
+  maximum_inline_subject_bytes: 1048576
+  maximum_finding_count: 256
+  parallel_execution: false

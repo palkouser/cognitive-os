@@ -1,0 +1,5 @@
+continue_on_case_error: true
+parallel_execution: false
+maximum_cases: 1000
+maximum_elapsed_seconds: 3600
+random_seed: 7

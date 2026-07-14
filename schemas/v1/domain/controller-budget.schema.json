@@ -70,6 +70,18 @@
       "exclusiveMinimum": 0,
       "title": "Maximum Tool Calls",
       "type": "integer"
+    },
+    "maximum_verification_seconds": {
+      "default": 600,
+      "exclusiveMinimum": 0,
+      "title": "Maximum Verification Seconds",
+      "type": "number"
+    },
+    "maximum_verifier_calls": {
+      "default": 64,
+      "exclusiveMinimum": 0,
+      "title": "Maximum Verifier Calls",
+      "type": "integer"
     }
   },
   "required": [

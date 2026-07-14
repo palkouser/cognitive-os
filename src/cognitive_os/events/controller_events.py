@@ -2,6 +2,7 @@
 
 from uuid import UUID
 
+from cognitive_os.domain.acceptance import AcceptanceDecision
 from cognitive_os.domain.clarifications import (
     ClarificationRequest,
     ClarificationResponse,
@@ -41,6 +42,11 @@ class ControllerStateChanged(EventPayload):
 class ControllerDecisionRecorded(EventPayload):
     event_type = "controller.decision_recorded"
     decision: ControllerDecision
+
+
+class AcceptanceDecisionRecorded(EventPayload):
+    event_type = "controller.acceptance_decision_recorded"
+    decision: AcceptanceDecision
 
 
 class ControllerClarificationRequested(EventPayload):

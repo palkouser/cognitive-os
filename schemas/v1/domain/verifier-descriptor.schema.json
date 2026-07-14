@@ -1,0 +1,261 @@
+{
+  "$defs": {
+    "CriterionType": {
+      "enum": [
+        "schema",
+        "artifact_exists",
+        "step_completed",
+        "tool_succeeded",
+        "exact_match",
+        "manual",
+        "domain_verifier"
+      ],
+      "title": "CriterionType",
+      "type": "string"
+    },
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "ProblemDomain": {
+      "enum": [
+        "generic",
+        "coding",
+        "mathematics",
+        "physics",
+        "logic"
+      ],
+      "title": "ProblemDomain",
+      "type": "string"
+    },
+    "RiskLevel": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "title": "RiskLevel",
+      "type": "string"
+    },
+    "VerificationSubjectType": {
+      "enum": [
+        "structured_value",
+        "artifact",
+        "workspace",
+        "execution_plan",
+        "execution_step",
+        "model_response",
+        "tool_result",
+        "mathematical_expression",
+        "logical_problem",
+        "physical_quantity"
+      ],
+      "title": "VerificationSubjectType",
+      "type": "string"
+    },
+    "VerifierCapability": {
+      "additionalProperties": false,
+      "properties": {
+        "capability_id": {
+          "minLength": 1,
+          "title": "Capability Id",
+          "type": "string"
+        },
+        "criterion_types": {
+          "items": {
+            "$ref": "#/$defs/CriterionType"
+          },
+          "title": "Criterion Types",
+          "type": "array"
+        },
+        "problem_domains": {
+          "items": {
+            "$ref": "#/$defs/ProblemDomain"
+          },
+          "title": "Problem Domains",
+          "type": "array"
+        },
+        "requires_network": {
+          "default": false,
+          "title": "Requires Network",
+          "type": "boolean"
+        },
+        "requires_sandbox": {
+          "default": false,
+          "title": "Requires Sandbox",
+          "type": "boolean"
+        },
+        "subject_type": {
+          "$ref": "#/$defs/VerificationSubjectType"
+        },
+        "supported_media_types": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Supported Media Types",
+          "type": "array"
+        },
+        "supports_batch": {
+          "default": false,
+          "title": "Supports Batch",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "capability_id",
+        "subject_type",
+        "problem_domains",
+        "criterion_types"
+      ],
+      "title": "VerifierCapability",
+      "type": "object"
+    },
+    "VerifierDeterminism": {
+      "enum": [
+        "deterministic",
+        "seeded",
+        "non_deterministic"
+      ],
+      "title": "VerifierDeterminism",
+      "type": "string"
+    },
+    "VerifierKind": {
+      "enum": [
+        "generic",
+        "coding",
+        "mathematics",
+        "logic",
+        "physics",
+        "policy",
+        "advisory"
+      ],
+      "title": "VerifierKind",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domain/verifier-descriptor.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "capabilities": {
+      "items": {
+        "$ref": "#/$defs/VerifierCapability"
+      },
+      "minItems": 1,
+      "title": "Capabilities",
+      "type": "array"
+    },
+    "configuration_schema": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Configuration Schema",
+      "type": "object"
+    },
+    "default_timeout_seconds": {
+      "exclusiveMinimum": 0,
+      "maximum": 3600,
+      "title": "Default Timeout Seconds",
+      "type": "number"
+    },
+    "description": {
+      "minLength": 1,
+      "title": "Description",
+      "type": "string"
+    },
+    "descriptor_hash": {
+      "default": "",
+      "title": "Descriptor Hash",
+      "type": "string"
+    },
+    "determinism": {
+      "$ref": "#/$defs/VerifierDeterminism"
+    },
+    "display_name": {
+      "minLength": 1,
+      "title": "Display Name",
+      "type": "string"
+    },
+    "kind": {
+      "$ref": "#/$defs/VerifierKind"
+    },
+    "maximum_input_bytes": {
+      "exclusiveMinimum": 0,
+      "title": "Maximum Input Bytes",
+      "type": "integer"
+    },
+    "requires_network": {
+      "default": false,
+      "title": "Requires Network",
+      "type": "boolean"
+    },
+    "requires_sandbox": {
+      "default": false,
+      "title": "Requires Sandbox",
+      "type": "boolean"
+    },
+    "risk_level": {
+      "$ref": "#/$defs/RiskLevel",
+      "default": "low"
+    },
+    "verifier_id": {
+      "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)+$",
+      "title": "Verifier Id",
+      "type": "string"
+    },
+    "version": {
+      "minLength": 1,
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "verifier_id",
+    "version",
+    "display_name",
+    "description",
+    "kind",
+    "capabilities",
+    "determinism",
+    "default_timeout_seconds",
+    "maximum_input_bytes"
+  ],
+  "title": "VerifierDescriptor",
+  "type": "object"
+}

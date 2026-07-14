@@ -13,6 +13,8 @@ controller:
     maximum_input_tokens: 262144
     maximum_output_tokens: 65536
     maximum_cost_units: null
+    maximum_verifier_calls: 64
+    maximum_verification_seconds: 600
   checkpoint:
     create_after_each_step: true
     create_before_wait: true

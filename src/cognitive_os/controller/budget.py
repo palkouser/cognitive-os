@@ -20,6 +20,8 @@ class BudgetDecision(ImmutableContractModel):
     remaining_input_tokens: int | None = Field(default=None, ge=0)
     remaining_output_tokens: int | None = Field(default=None, ge=0)
     remaining_cost_units: float | None = Field(default=None, ge=0)
+    remaining_verifier_calls: int = Field(ge=0)
+    remaining_verification_seconds: float = Field(ge=0)
 
 
 class BudgetLedger:
@@ -51,6 +53,11 @@ class BudgetLedger:
             if self.budget.maximum_cost_units is None
             else max(0.0, self.budget.maximum_cost_units - self.usage.cost_units)
         )
+        verifier_calls = max(0, self.budget.maximum_verifier_calls - self.usage.verifier_calls)
+        verification_seconds = max(
+            0.0,
+            self.budget.maximum_verification_seconds - self.usage.verification_seconds,
+        )
         candidates: tuple[tuple[str, int | float | None], ...] = (
             ("provider", provider),
             ("tool", tool),
@@ -61,6 +68,8 @@ class BudgetLedger:
             ("input", input_tokens),
             ("output", output_tokens),
             ("cost", cost),
+            ("verifier", verifier_calls),
+            ("verification_seconds", verification_seconds),
         )
         exhausted = next(
             (name for name, value in candidates if value is not None and value <= 0), None
@@ -77,6 +86,8 @@ class BudgetLedger:
             remaining_input_tokens=input_tokens,
             remaining_output_tokens=output_tokens,
             remaining_cost_units=cost,
+            remaining_verifier_calls=verifier_calls,
+            remaining_verification_seconds=verification_seconds,
         )
 
     def record(self, **increments: int | float) -> ControllerUsage:

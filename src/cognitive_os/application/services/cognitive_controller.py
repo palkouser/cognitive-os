@@ -17,6 +17,7 @@ from cognitive_os.application.ports.planning import PlanningPort
 from cognitive_os.application.ports.problem_representation import ProblemRepresentationPort
 from cognitive_os.application.services.clarification_service import ClarificationService
 from cognitive_os.application.services.controller_recovery import ControllerRecoveryService
+from cognitive_os.application.services.controller_verification import ControllerVerificationService
 from cognitive_os.application.services.minimal_acceptance import MinimalAcceptanceService
 from cognitive_os.config.controller_config import ControllerConfiguration
 from cognitive_os.controller.actions import select_next_action
@@ -40,6 +41,7 @@ from cognitive_os.domain.tools import ToolDescriptor
 from cognitive_os.events.base import EventPayload
 from cognitive_os.events.controller_event_service import ControllerEventService
 from cognitive_os.events.controller_events import (
+    AcceptanceDecisionRecorded,
     ControllerCancelled,
     ControllerCheckpointCreated,
     ControllerClarificationProvided,
@@ -85,6 +87,7 @@ class BoundedCognitiveController:
         planning: PlanningPort,
         action_executor: ControllerActionExecutor,
         acceptance: MinimalAcceptanceService,
+        verification: ControllerVerificationService | None = None,
         events: ControllerEventService,
         recovery: ControllerRecoveryService,
         configuration: ControllerConfiguration,
@@ -97,6 +100,7 @@ class BoundedCognitiveController:
         self._planning = planning
         self._executor = action_executor
         self._acceptance = acceptance
+        self._verification = verification
         self._events = events
         self._recovery = recovery
         self._configuration = configuration
@@ -521,12 +525,39 @@ class BoundedCognitiveController:
             if outcome.warning:
                 warnings.append(outcome.warning)
         await transition(ControllerState.VERIFYING, "run deterministic minimal acceptance")
-        acceptance = self._acceptance.evaluate(
-            problem.acceptance_criteria,
-            completed_step_ids=frozenset(str(item) for item in completed),
-            successful_tool_call_ids=frozenset(successful_tools),
-            outputs=outputs,
-        )
+        if self._verification is not None:
+            verification_outcome = await self._verification.verify(
+                problem,
+                completed_step_ids=frozenset(str(item) for item in completed),
+                successful_tool_call_ids=frozenset(successful_tools),
+                outputs=outputs,
+                repair_budget_remaining=ledger.usage.repair_cycles
+                < self._configuration.budgets.maximum_repair_cycles,
+                maximum_calls=max(
+                    0,
+                    self._configuration.budgets.maximum_verifier_calls
+                    - ledger.usage.verifier_calls,
+                ),
+            )
+            ledger.record(
+                verifier_calls=verification_outcome.verifier_calls,
+                verification_seconds=verification_outcome.elapsed_seconds,
+            )
+            result = await self._events.append(
+                task_run_id=request.task_run_id,
+                payload=AcceptanceDecisionRecorded(decision=verification_outcome.decision),
+                expected_version=version,
+                correlation_id=request.correlation_id,
+            )
+            version = result.current_stream_version
+            acceptance = verification_outcome.minimal
+        else:
+            acceptance = self._acceptance.evaluate(
+                problem.acceptance_criteria,
+                completed_step_ids=frozenset(str(item) for item in completed),
+                successful_tool_call_ids=frozenset(successful_tools),
+                outputs=outputs,
+            )
         if acceptance.accepted:
             await transition(ControllerState.COMPLETED, acceptance.decision_reason)
         else:
@@ -581,12 +612,39 @@ class BoundedCognitiveController:
                     ControllerState.VERIFYING,
                     "verify repaired structural evidence",
                 )
-                acceptance = self._acceptance.evaluate(
-                    problem.acceptance_criteria,
-                    completed_step_ids=frozenset(str(item) for item in completed),
-                    successful_tool_call_ids=frozenset(successful_tools),
-                    outputs=outputs,
-                )
+                if self._verification is not None:
+                    verification_outcome = await self._verification.verify(
+                        problem,
+                        completed_step_ids=frozenset(str(item) for item in completed),
+                        successful_tool_call_ids=frozenset(successful_tools),
+                        outputs=outputs,
+                        repair_budget_remaining=ledger.usage.repair_cycles
+                        < self._configuration.budgets.maximum_repair_cycles,
+                        maximum_calls=max(
+                            0,
+                            self._configuration.budgets.maximum_verifier_calls
+                            - ledger.usage.verifier_calls,
+                        ),
+                    )
+                    ledger.record(
+                        verifier_calls=verification_outcome.verifier_calls,
+                        verification_seconds=verification_outcome.elapsed_seconds,
+                    )
+                    result = await self._events.append(
+                        task_run_id=request.task_run_id,
+                        payload=AcceptanceDecisionRecorded(decision=verification_outcome.decision),
+                        expected_version=version,
+                        correlation_id=request.correlation_id,
+                    )
+                    version = result.current_stream_version
+                    acceptance = verification_outcome.minimal
+                else:
+                    acceptance = self._acceptance.evaluate(
+                        problem.acceptance_criteria,
+                        completed_step_ids=frozenset(str(item) for item in completed),
+                        successful_tool_call_ids=frozenset(successful_tools),
+                        outputs=outputs,
+                    )
                 if acceptance.accepted:
                     await transition(ControllerState.COMPLETED, acceptance.decision_reason)
                     break

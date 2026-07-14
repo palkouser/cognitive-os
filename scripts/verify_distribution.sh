@@ -18,7 +18,16 @@ import cognitive_os
 import importlib.util
 
 print(f"Installed cognitive_os: {cognitive_os.__file__}")
-for optional_module in ("sqlalchemy", "asyncpg", "alembic", "opentelemetry.sdk"):
+for optional_module in (
+    "sqlalchemy",
+    "asyncpg",
+    "alembic",
+    "opentelemetry.sdk",
+    "sympy",
+    "z3",
+    "pint",
+    "inspect_ai",
+):
     try:
         installed = importlib.util.find_spec(optional_module) is not None
     except ModuleNotFoundError:

@@ -1,0 +1,52 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/domain/benchmark-resource-budget.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "maximum_artifact_bytes": {
+      "exclusiveMinimum": 0,
+      "title": "Maximum Artifact Bytes",
+      "type": "integer"
+    },
+    "maximum_cost_units": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Maximum Cost Units",
+      "type": "number"
+    },
+    "maximum_elapsed_seconds": {
+      "exclusiveMinimum": 0,
+      "title": "Maximum Elapsed Seconds",
+      "type": "number"
+    },
+    "maximum_input_tokens": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Maximum Input Tokens",
+      "type": "integer"
+    },
+    "maximum_output_tokens": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Maximum Output Tokens",
+      "type": "integer"
+    },
+    "maximum_provider_calls": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Maximum Provider Calls",
+      "type": "integer"
+    },
+    "maximum_tool_calls": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Maximum Tool Calls",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "maximum_elapsed_seconds",
+    "maximum_artifact_bytes"
+  ],
+  "title": "BenchmarkResourceBudget",
+  "type": "object"
+}

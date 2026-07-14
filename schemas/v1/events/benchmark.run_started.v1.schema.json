@@ -1,0 +1,39 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/benchmark.run_started.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "benchmark_id": {
+      "minLength": 1,
+      "title": "Benchmark Id",
+      "type": "string"
+    },
+    "manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Manifest Hash",
+      "type": "string"
+    },
+    "random_seed": {
+      "title": "Random Seed",
+      "type": "integer"
+    },
+    "run_id": {
+      "format": "uuid",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "run_id",
+    "benchmark_id",
+    "manifest_hash",
+    "random_seed",
+    "started_at"
+  ],
+  "title": "BenchmarkRunStarted",
+  "type": "object"
+}
