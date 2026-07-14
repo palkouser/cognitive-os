@@ -1,0 +1,12 @@
+Using Python 3.12.13 environment at: .tmp-s1-audit/venv
+Failed to build `lightagent @ file:///home/palkouser/projekt/cognitive-os`.
+
+The setuptools build backend reported:
+
+error: Multiple top-level packages discovered in a flat-layout:
+['mcp', 'logs', 'infra', 'skills', 'LightAgent', 'cognitive_os'].
+
+Setuptools refused automatic discovery and recommended explicit discovery or a src layout.
+The command was reproduced with:
+
+uv pip install --python .tmp-s1-audit/venv/bin/python --no-deps --editable .

@@ -1,0 +1,19 @@
+cognitive-os v0.1.0.dev1
+├── httpx v0.28.1
+│   ├── anyio v4.14.2
+│   ├── certifi v2026.6.17
+│   ├── httpcore v1.0.9
+│   └── idna v3.18
+├── openai v1.109.1
+│   ├── anyio v4.14.2
+│   ├── distro v1.9.0
+│   ├── httpx v0.28.1
+│   ├── jiter v0.16.0
+│   ├── pydantic v2.13.4
+│   ├── sniffio v1.3.1
+│   ├── tqdm v4.68.4
+│   └── typing-extensions v4.16.0
+└── pyyaml v6.0.3
+
+Generated from the default locked environment with `uv pip tree` on 2026-07-14.
+Development-group packages are intentionally omitted from this core snapshot.

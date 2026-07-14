@@ -8,6 +8,9 @@ on:
 permissions:
   contents: read
 
+env:
+  UV_PYTHON: "3.12"
+
 jobs:
   quality:
     runs-on: ubuntu-latest
@@ -21,21 +24,78 @@ jobs:
           enable-cache: true
       - name: Install Python
         run: uv python install 3.12
-      - name: Create environment
-        run: uv venv .venv --python 3.12
-      - name: Install project
-        run: |
-          uv pip install -r requirements.txt
-          uv pip install pytest pytest-asyncio pytest-cov hypothesis ruff mypy bandit detect-secrets
-      - name: Smoke tests
-        run: uv run pytest tests/cognitive_os/smoke -q
+      - name: Sync environment
+        run: uv sync --locked --all-groups
       - name: Ruff check
-        run: uv run ruff check --config ruff.cognitive-os.toml cognitive_os tests/cognitive_os scripts
+        run: uv run ruff check --config ruff.cognitive-os.toml src/cognitive_os tests/cognitive_os tests/contract scripts
       - name: Ruff format check
-        run: uv run ruff format --check --config ruff.cognitive-os.toml cognitive_os tests/cognitive_os scripts
+        run: uv run ruff format --check --config ruff.cognitive-os.toml src/cognitive_os tests/cognitive_os tests/contract scripts
       - name: Mypy
-        run: uv run mypy cognitive_os
+        run: uv run mypy src/cognitive_os
       - name: Bandit
-        run: uv run bandit -r cognitive_os
+        run: uv run bandit -r src/cognitive_os
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          version: "0.11.28"
+          enable-cache: true
+      - name: Install Python
+        run: uv python install 3.12
+      - name: Sync environment
+        run: uv sync --locked --all-groups --extra mcp
+      - name: Cognitive OS tests
+        run: uv run pytest tests/cognitive_os -q
+      - name: LightAgent contract tests
+        run: uv run pytest tests/contract -q
+      - name: Full repository tests
+        run: uv run pytest -q
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          version: "0.11.28"
+          enable-cache: true
+      - name: Install Python
+        run: uv python install 3.12
+      - name: Sync environment
+        run: uv sync --locked --all-groups
+      - name: Build distributions
+        run: uv build
+      - name: Verify wheel installation
+        run: ./scripts/verify_distribution.sh
+      - name: Verify editable installation
+        run: ./scripts/verify_editable_install.sh
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          version: "0.11.28"
+          enable-cache: true
+      - name: Install Python
+        run: uv python install 3.12
+      - name: Sync default and security tools
+        run: uv sync --locked --group security
+      - name: Core dependency audit
+        run: uv run pip-audit
       - name: Secret scan
         run: git ls-files -z | xargs -0 uv run detect-secrets-hook --baseline .secrets.baseline
+      - name: Repository language policy
+        run: ./scripts/check_repository_language.sh
+      - name: Dependency metadata report
+        run: uv pip tree

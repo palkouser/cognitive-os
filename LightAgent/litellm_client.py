@@ -17,7 +17,8 @@ class _LiteLLMCompletions:
             except ImportError as exc:
                 raise ImportError(
                     "LiteLLM provider requires the optional `litellm` dependency. "
-                    "Install it with `pip install LightAgent[litellm]`."
+                    "Install the Cognitive OS 'provider-litellm' optional extra, or use "
+                    "`pip install LightAgent[litellm]` with standalone upstream LightAgent."
                 ) from exc
         self._litellm = litellm_module
 

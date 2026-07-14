@@ -10,7 +10,7 @@ replaceable reasoning and execution providers.
 
 LightAgent v0.9.1 at commit `8ea4db3c9d8791e0977eea2a4481824441b4ba82`
 provides the initial agent runtime. Cognitive OS uses a thin-fork strategy: owned code
-lives in `cognitive_os/`, integrations use adapters and hooks, and upstream changes are
+lives in `src/cognitive_os/`, integrations use adapters and hooks, and upstream changes are
 exceptional, isolated, tested, and documented.
 
 ## Sprint 0 boundary

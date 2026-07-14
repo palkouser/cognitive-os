@@ -17,14 +17,14 @@
     {
       "label": "CogOS: Ruff check",
       "type": "shell",
-      "command": "uv run ruff check --config ruff.cognitive-os.toml cognitive_os tests/cognitive_os scripts",
+      "command": "uv run ruff check --config ruff.cognitive-os.toml src/cognitive_os tests/cognitive_os tests/contract scripts",
       "group": "test",
       "problemMatcher": []
     },
     {
       "label": "CogOS: Ruff format check",
       "type": "shell",
-      "command": "uv run ruff format --check --config ruff.cognitive-os.toml cognitive_os tests/cognitive_os scripts",
+      "command": "uv run ruff format --check --config ruff.cognitive-os.toml src/cognitive_os tests/cognitive_os tests/contract scripts",
       "group": "test",
       "problemMatcher": []
     }

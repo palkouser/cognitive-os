@@ -1,4 +1,4 @@
-# Contributing to LightAgent
+# Contributing to Cognitive OS
 
 Thanks for helping improve LightAgent. The project values small, focused changes
 that preserve the lightweight core and keep existing APIs compatible.
@@ -6,11 +6,7 @@ that preserve the lightweight core and keep existing APIs compatible.
 ## Development Setup
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-python -m pip install pytest
+uv sync --locked --all-groups --extra mcp
 ```
 
 ## Before Opening a Pull Request
@@ -18,8 +14,10 @@ python -m pip install pytest
 Run the focused regression suite:
 
 ```bash
-python -m compileall -q LightAgent
-PYTHONPATH=. python -m pytest -q tests/test_v065_core.py tests/test_v070_tracing.py tests/test_memory_policy.py
+uv run pytest -q
+uv run pytest tests/contract -q
+./scripts/verify_distribution.sh
+./scripts/verify_editable_install.sh
 ```
 
 ## Contribution Guidelines

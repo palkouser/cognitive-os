@@ -5,16 +5,38 @@
 This repository develops Cognitive OS, a local, model-independent, self-improving
 agent harness based on LightAgent.
 
-## Current scope
+## Sprint 1 scope
 
-The active development phase is Sprint 0: project foundation only. Do not implement
-Memory Plane, Strategy Graph, self-improvement, multi-agent orchestration, or model
-routing unless the active issue explicitly requests it.
+The active development scope is package normalization and runtime minimization.
+
+Allowed work:
+
+- move Cognitive OS-owned code into `src/cognitive_os`;
+- normalize `pyproject.toml`;
+- create dependency groups and optional extras;
+- restore editable installation;
+- isolate `mem0ai`, Langfuse, boto3, and other optional dependencies;
+- add package, build, and runtime contract tests;
+- update CI and English documentation.
+
+Out of scope:
+
+- Memory Plane;
+- Event Store;
+- provider routing;
+- tool sandbox;
+- Cognitive Controller;
+- self-improvement;
+- multi-agent behavior;
+- model training.
+
+Do not move or rewrite LightAgent runtime files unless the active issue explicitly
+authorizes it.
 
 ## Repository boundaries
 
 - `LightAgent/` and existing upstream files are upstream-derived code.
-- New Cognitive OS code belongs under `cognitive_os/`.
+- New Cognitive OS code belongs under `src/cognitive_os/`.
 - Do not modify upstream LightAgent code unless the active issue explicitly authorizes it.
 - Keep upstream changes minimal and separately documented.
 
@@ -29,12 +51,20 @@ routing unless the active issue explicitly requests it.
 - Document the purpose, license, and alternatives before adding a dependency.
 - Preserve Apache-2.0 notices and donor-project attribution.
 
+## Repository language
+
+All new or changed repository content must be written in English. This includes source
+code, comments, docstrings, tests, documentation, configuration comments, issue text,
+commit messages, and release notes. Imported upstream donor content is retained verbatim
+and is tracked as an explicit provenance exception. Hungarian may be used only in external
+planning and discussion with the project owner.
+
 ## Required checks
 
 Before declaring a task complete, run:
 
-- `uv run ruff check --config ruff.cognitive-os.toml cognitive_os tests/cognitive_os scripts`
-- `uv run ruff format --check --config ruff.cognitive-os.toml cognitive_os tests/cognitive_os scripts`
+- `uv run ruff check --config ruff.cognitive-os.toml src/cognitive_os tests/cognitive_os tests/contract scripts`
+- `uv run ruff format --check --config ruff.cognitive-os.toml src/cognitive_os tests/cognitive_os tests/contract scripts`
 - `uv run pytest tests/cognitive_os -q`
 
 Report any check that cannot run and explain why.

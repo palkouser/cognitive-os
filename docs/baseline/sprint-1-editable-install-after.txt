@@ -1,0 +1,5 @@
+Using CPython 3.12.13
+Created an isolated temporary virtual environment.
+Built cognitive-os 0.1.0.dev1 from the repository.
+Installed the wheel dependencies and editable Cognitive OS package.
+Editable import OK: /home/palkouser/projekt/cognitive-os/src/cognitive_os/__init__.py

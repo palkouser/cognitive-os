@@ -3,8 +3,6 @@ import json
 import os
 import traceback
 from typing import Optional
-import boto3
-from botocore.client import Config
 
 # 阿里云OSS配置（建议从环境变量读取，避免硬编码）
 # 您可以在环境变量中设置以下值，或在创建Agent时传入
@@ -28,6 +26,10 @@ def _get_oss_client(access_key_id: str = None, access_key_secret: str = None, en
     Returns:
         boto3 S3客户端实例
     """
+    # Keep the AWS SDK optional until the OSS integration is invoked.
+    import boto3
+    from botocore.client import Config
+
     # 使用传入的参数或环境变量中的默认值
     ak = access_key_id or ALIYUN_OSS_CONFIG["access_key_id"]
     sk = access_key_secret or ALIYUN_OSS_CONFIG["access_key_secret"]
@@ -157,7 +159,10 @@ def upload_file_to_oss(
         return json.dumps(result, ensure_ascii=False, indent=2)
 
     except ImportError as e:
-        return f"错误：缺少必要的依赖库，请安装：pip install boto3\n详细信息：{str(e)}"
+        return (
+            "AWS upload support is not installed. Install the Cognitive OS "
+            f"'cloud-aws' optional extra to enable it. Details: {e}"
+        )
     except Exception as e:
         return f"上传文件到OSS失败：{str(e)}\n{traceback.format_exc()}"
 
