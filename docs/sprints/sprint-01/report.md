@@ -1,6 +1,6 @@
 # Sprint 1 report
 
-Status: Implementation complete - remote CI and release pending
+Status: Complete
 
 ## Sprint goal
 
@@ -65,6 +65,7 @@ environment files, traces, and unrelated top-level directories.
 - Bandit: no findings.
 - ShellCheck and Bash syntax validation: passed.
 - Repository language policy: passed.
+- GitHub PR CI: quality, test, build, and security jobs passed.
 
 ## Security status
 
