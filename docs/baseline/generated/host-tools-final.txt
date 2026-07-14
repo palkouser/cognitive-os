@@ -1,0 +1,28 @@
+2026-07-14T09:08:16+02:00
+git-lfs/3.7.1 (GitHub; linux amd64; go 1.25.0)
+fdfind 10.3.0
+tree v2.3.1 © 1996 - 2026 by Steve Baker, Thomas Moore, Francesc Rocher, Florian Sesser, Kyosuke Tokoro
+ShellCheck - shell script analysis tool
+version: 0.11.0
+license: GNU General Public License, version 3
+website: https://www.shellcheck.net
+smartctl 7.5 2025-04-30 r5714 [x86_64-linux-7.0.0-27-generic] (local build)
+Copyright (C) 2002-25, Bruce Allen, Christian Franke, www.smartmontools.org
+
+smartctl comes with ABSOLUTELY NO WARRANTY. This is free
+software, and you are welcome to redistribute it under
+the terms of the GNU General Public License; either
+version 2, or (at your option) any later version.
+See https://www.gnu.org for further details.
+
+smartmontools release 7.5 dated 2025-04-30 at 07:42:55 UTC
+smartmontools SVN rev 5714 dated 2025-04-30 at 07:43:44
+smartmontools build host: x86_64-pc-linux-gnu
+smartmontools build with: C++11, GCC 15.2.0
+smartmontools configure arguments: [hidden in reproducible builds]
+reproducible build SOURCE_DATE_EPOCH: 1760862095 (2025-10-19 10:21:35)
+nvme version 2.16 (git 2.16)
+libnvme version 1.16.1 (git 1.16.1)
+tmux 3.6
+gh version 2.96.0 (2026-07-02)
+https://github.com/cli/cli/releases/tag/v2.96.0

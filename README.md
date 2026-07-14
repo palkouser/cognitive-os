@@ -1,4 +1,9 @@
 
+> **Cognitive OS baseline:** This repository is a thin fork of LightAgent v0.9.1.
+> Cognitive OS-owned development lives under `cognitive_os/`. Architecture decisions are
+> recorded in [`docs/adr/`](docs/adr/), and provenance is recorded in
+> [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+
 ![LightAgent Banner](docs/images/lightagent-banner.jpg)
 <div align="center">
   <p>
@@ -17,16 +22,16 @@
 </div>
 <div align="center">
   <p>
-    English | 
-    <a href="README.zh-CN.md">简体中文</a> | 
-    <a href="README.zh-TW.md">繁體中文</a> | 
-    <a href="README.es.md">Español</a> | 
-    <a href="README.fr.md">Français</a> | 
-    <a href="README.de.md">Deutsch</a> | 
-    <a href="README.ja.md">日本語</a> | 
-    <a href="README.ko.md">한국어</a> | 
-    <a href="README.pt.md">Português</a> | 
-    <a href="README.ru.md">Русский</a> 
+    English |
+    <a href="https://github.com/wanxingai/LightAgent/blob/8ea4db3c9d8791e0977eea2a4481824441b4ba82/README.zh-CN.md">简体中文</a> |
+    <a href="https://github.com/wanxingai/LightAgent/blob/8ea4db3c9d8791e0977eea2a4481824441b4ba82/README.zh-TW.md">繁體中文</a> |
+    <a href="https://github.com/wanxingai/LightAgent/blob/8ea4db3c9d8791e0977eea2a4481824441b4ba82/README.es.md">Español</a> |
+    <a href="https://github.com/wanxingai/LightAgent/blob/8ea4db3c9d8791e0977eea2a4481824441b4ba82/README.fr.md">Français</a> |
+    <a href="https://github.com/wanxingai/LightAgent/blob/8ea4db3c9d8791e0977eea2a4481824441b4ba82/README.de.md">Deutsch</a> |
+    <a href="https://github.com/wanxingai/LightAgent/blob/8ea4db3c9d8791e0977eea2a4481824441b4ba82/README.ja.md">日本語</a> |
+    <a href="https://github.com/wanxingai/LightAgent/blob/8ea4db3c9d8791e0977eea2a4481824441b4ba82/README.ko.md">한국어</a> |
+    <a href="https://github.com/wanxingai/LightAgent/blob/8ea4db3c9d8791e0977eea2a4481824441b4ba82/README.pt.md">Português</a> |
+    <a href="https://github.com/wanxingai/LightAgent/blob/8ea4db3c9d8791e0977eea2a4481824441b4ba82/README.ru.md">Русский</a>
   </p>
 </div>
 <div align="center">

@@ -1,0 +1,32 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "CogOS: Python version",
+      "type": "shell",
+      "command": "uv run python --version",
+      "problemMatcher": []
+    },
+    {
+      "label": "CogOS: Smoke tests",
+      "type": "shell",
+      "command": "uv run pytest tests/cognitive_os/smoke -q",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "CogOS: Ruff check",
+      "type": "shell",
+      "command": "uv run ruff check --config ruff.cognitive-os.toml cognitive_os tests/cognitive_os scripts",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "CogOS: Ruff format check",
+      "type": "shell",
+      "command": "uv run ruff format --check --config ruff.cognitive-os.toml cognitive_os tests/cognitive_os scripts",
+      "group": "test",
+      "problemMatcher": []
+    }
+  ]
+}

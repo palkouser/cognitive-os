@@ -1,0 +1,106 @@
+2026-07-14T08:29:45+02:00
+=== PCI ===
+2b:00.0 VGA compatible controller [0300]: NVIDIA Corporation GB203 [GeForce RTX 5070 Ti] [10de:2c05] (rev a1)
+	Subsystem: Palit Microsystems Inc. Device [1569:f332]
+	Kernel driver in use: nvidia
+	Kernel modules: nvidiafb, nouveau, nvidia_drm, nvidia
+2b:00.1 Audio device [0403]: NVIDIA Corporation GB203 High Definition Audio Controller [10de:22e9] (rev a1)
+	Subsystem: NVIDIA Corporation Device [10de:0000]
+	Kernel driver in use: snd_hda_intel
+	Kernel modules: snd_hda_intel
+2c:00.0 Non-Essential Instrumentation [1300]: Advanced Micro Devices, Inc. [AMD] Starship/Matisse PCIe Dummy Function [1022:148a]
+	Subsystem: Micro-Star International Co., Ltd. [MSI] Device [1462:7c56]
+
+=== nvidia-smi ===
+NVIDIA-SMI has failed because it couldn't communicate with the NVIDIA driver. Make sure that the latest NVIDIA driver is installed and running.
+
+
+=== modules ===
+nvidia_uvm           2088960  0
+nvidia_drm            147456  31
+nvidia_modeset       1744896  10 nvidia_drm
+nvidia              14811136  178 nvidia_uvm,nvidia_modeset
+drm_ttm_helper         20480  1 nvidia_drm
+video                  77824  1 nvidia_modeset
+
+=== DKMS ===
+
+=== Secure Boot ===
+SecureBoot disabled
+
+=== installed NVIDIA packages ===
+ii  libnvidia-cfg1-595:amd64                        595.71.05-0ubuntu0.26.04.1                 amd64        NVIDIA binary OpenGL/GLX configuration library
+ii  libnvidia-common-595                            595.71.05-0ubuntu0.26.04.1                 amd64        Shared files used by the NVIDIA libraries
+ii  libnvidia-compute-595:amd64                     595.71.05-0ubuntu0.26.04.1                 amd64        NVIDIA libcompute package
+ii  libnvidia-compute-595:i386                      595.71.05-0ubuntu0.26.04.1                 i386         NVIDIA libcompute package
+ii  libnvidia-decode-595:amd64                      595.71.05-0ubuntu0.26.04.1                 amd64        NVIDIA Video Decoding runtime libraries
+ii  libnvidia-decode-595:i386                       595.71.05-0ubuntu0.26.04.1                 i386         NVIDIA Video Decoding runtime libraries
+ii  libnvidia-egl-wayland1:amd64                    1:1.1.21-1                                 amd64        Wayland EGL External Platform library -- shared library
+ii  libnvidia-encode-595:amd64                      595.71.05-0ubuntu0.26.04.1                 amd64        NVENC Video Encoding runtime library
+ii  libnvidia-encode-595:i386                       595.71.05-0ubuntu0.26.04.1                 i386         NVENC Video Encoding runtime library
+ii  libnvidia-extra-595:amd64                       595.71.05-0ubuntu0.26.04.1                 amd64        Extra libraries for the NVIDIA driver
+ii  libnvidia-fbc1-595:amd64                        595.71.05-0ubuntu0.26.04.1                 amd64        NVIDIA OpenGL-based Framebuffer Capture runtime library
+ii  libnvidia-fbc1-595:i386                         595.71.05-0ubuntu0.26.04.1                 i386         NVIDIA OpenGL-based Framebuffer Capture runtime library
+ii  libnvidia-gl-595:amd64                          595.71.05-0ubuntu0.26.04.1                 amd64        NVIDIA OpenGL/GLX/EGL/GLES GLVND libraries and Vulkan ICD
+ii  libnvidia-ml-dev:amd64                          12.4.127~12.4.1-8                          amd64        NVIDIA Management Library (NVML) development files
+ii  linux-firmware-nvidia-graphics                  20260319.git217ca6e4-0ubuntu1.1            all          Firmware for Nvidia graphics
+ii  linux-modules-nvidia-595-open-7.0.0-27-generic  7.0.0-27.27                                amd64        Linux kernel nvidia modules for version 7.0.0-27
+ii  linux-modules-nvidia-595-open-generic-hwe-26.04 7.0.0-27.27                                amd64        Extra drivers for nvidia-595-open for the generic-hwe-26.04 flavour
+ii  nvidia-compute-utils-595                        595.71.05-0ubuntu0.26.04.1                 amd64        NVIDIA compute utilities
+ii  nvidia-cuda-dev:amd64                           12.4.127~12.4.1-8                          amd64        NVIDIA CUDA development files
+ii  nvidia-cuda-gdb                                 12.4.127~12.4.1-8                          amd64        NVIDIA CUDA Debugger (GDB)
+ii  nvidia-cuda-toolkit                             12.4.131~12.4.1-8                          amd64        NVIDIA CUDA development toolkit
+ii  nvidia-cuda-toolkit-doc                         12.4.1-8                                   all          NVIDIA CUDA and OpenCL documentation
+ii  nvidia-driver-595-open                          595.71.05-0ubuntu0.26.04.1                 amd64        NVIDIA driver (open kernel) metapackage
+ii  nvidia-firmware-595-595.71.05                   595.71.05-0ubuntu0.26.04.1                 amd64        Firmware files used by the kernel module
+ii  nvidia-kernel-common-595                        595.71.05-0ubuntu0.26.04.1                 amd64        Shared files used with the kernel module
+ii  nvidia-kernel-source-595-open                   595.71.05-0ubuntu0.26.04.1                 amd64        NVIDIA kernel source package
+ii  nvidia-opencl-dev:amd64                         12.4.127~12.4.1-8                          amd64        NVIDIA OpenCL development files
+ii  nvidia-prime                                    0.8.17.2build1                             all          Tools to enable NVIDIA's Prime
+ii  nvidia-profiler                                 12.4.127~12.4.1-8                          amd64        NVIDIA Profiler for CUDA and OpenCL
+ii  nvidia-settings                                 510.47.03-0ubuntu7                         amd64        Tool for configuring the NVIDIA graphics driver
+ii  nvidia-utils-595                                595.71.05-0ubuntu0.26.04.1                 amd64        NVIDIA driver support binaries
+ii  screen-resolution-extra                         0.18.5build1                               all          Extension for the nvidia-settings control panel
+ii  xserver-xorg-video-nvidia-595                   595.71.05-0ubuntu0.26.04.1                 amd64        NVIDIA binary Xorg driver
+
+=== recommended drivers ===
+== /sys/devices/pci0000:00/0000:00:03.1/0000:2b:00.0 ==
+modalias : pci:v000010DEd00002C05sv00001569sd0000F332bc03sc00i00
+vendor   : NVIDIA Corporation
+model    : GB203 [GeForce RTX 5070 Ti]
+driver   : nvidia-driver-595-open - distro non-free recommended
+driver   : nvidia-driver-595-server - distro non-free
+driver   : nvidia-driver-580-open - distro non-free
+driver   : nvidia-driver-580 - distro non-free
+driver   : nvidia-driver-580-server-open - distro non-free
+driver   : nvidia-driver-580-server - distro non-free
+driver   : nvidia-driver-595 - distro non-free
+driver   : nvidia-driver-595-server-open - distro non-free
+driver   : xserver-xorg-video-nouveau - distro free builtin
+
+
+=== kernel messages ===
+Jul 14 08:23:55 palkouser-AI kernel: secureboot: Secure boot disabled
+Jul 14 08:23:55 palkouser-AI kernel: secureboot: Secure boot disabled
+Jul 14 08:23:55 palkouser-AI kernel: Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing: 61482aa2830d0ab2ad5af10b7250da9033ddcef0'
+Jul 14 08:23:55 palkouser-AI kernel: Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (2017): 242ade75ac4a15e50d50c84b0d45ff3eae707a03'
+Jul 14 08:23:55 palkouser-AI kernel: Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (ESM 2018): 365188c1d374d6b07c3c8f240f8ef722433d6a8b'
+Jul 14 08:23:55 palkouser-AI kernel: Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (2019): c0746fd6c5da3ae827864651ad66ae47fe24b3e8'
+Jul 14 08:23:55 palkouser-AI kernel: Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (2021 v1): a8d54bbb3825cfb94fa13c9f8a594a195c107b8d'
+Jul 14 08:23:55 palkouser-AI kernel: Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (2021 v2): 4cf046892d6fd3c9a5b03f98d845f90851dc6a8c'
+Jul 14 08:23:55 palkouser-AI kernel: Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (2021 v3): 100437bb6de6e469b581e61cd66bce3ef4ed53af'
+Jul 14 08:23:55 palkouser-AI kernel: Loaded X.509 cert 'Canonical Ltd. Secure Boot Signing (Ubuntu Core 2019): c1d57b8f6b743f23ee41f4f7ee292f06eecadfb9'
+Jul 14 08:24:00 palkouser-AI kernel: nvidia: loading out-of-tree module taints kernel.
+Jul 14 08:24:00 palkouser-AI kernel: nvidia-nvlink: Nvlink Core is being initialized, major device number 235
+Jul 14 08:24:00 palkouser-AI kernel: nvidia 0000:2b:00.0: vgaarb: VGA decodes changed: olddecodes=io+mem,decodes=none:owns=none
+Jul 14 08:24:00 palkouser-AI kernel: NVRM: loading NVIDIA UNIX Open Kernel Module for x86_64  595.71.05  Release Build  (dvs-builder@U22-I3-G08-03-1)  Fri Apr 24 06:42:30 UTC 2026
+Jul 14 08:24:00 palkouser-AI kernel: nvidia-modeset: Loading NVIDIA UNIX Open Kernel Mode Setting Driver for x86_64  595.71.05  Release Build  (dvs-builder@U22-I3-G08-03-1)  Fri Apr 24 06:28:59 UTC 2026
+Jul 14 08:24:00 palkouser-AI kernel: [drm] [nvidia-drm] [GPU ID 0x00002b00] Loading driver
+Jul 14 08:24:00 palkouser-AI kernel: input: HDA NVidia HDMI/DP,pcm=3 as /devices/pci0000:00/0000:00:03.1/0000:2b:00.1/sound/card0/input9
+Jul 14 08:24:00 palkouser-AI kernel: input: HDA NVidia HDMI/DP,pcm=7 as /devices/pci0000:00/0000:00:03.1/0000:2b:00.1/sound/card0/input10
+Jul 14 08:24:00 palkouser-AI kernel: input: HDA NVidia HDMI/DP,pcm=8 as /devices/pci0000:00/0000:00:03.1/0000:2b:00.1/sound/card0/input11
+Jul 14 08:24:00 palkouser-AI kernel: input: HDA NVidia HDMI/DP,pcm=9 as /devices/pci0000:00/0000:00:03.1/0000:2b:00.1/sound/card0/input12
+Jul 14 08:24:02 palkouser-AI kernel: [drm] Initialized nvidia-drm 0.0.0 for 0000:2b:00.0 on minor 1
+Jul 14 08:24:02 palkouser-AI kernel: nvidia 0000:2b:00.0: vgaarb: deactivate vga console
+Jul 14 08:24:02 palkouser-AI kernel: fbcon: nvidia-drmdrmfb (fb0) is primary device
+Jul 14 08:24:02 palkouser-AI kernel: nvidia 0000:2b:00.0: [drm] fb0: nvidia-drmdrmfb frame buffer device

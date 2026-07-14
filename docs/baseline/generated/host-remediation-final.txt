@@ -1,0 +1,60 @@
+=== DATE ===
+2026-07-14T09:08:25+02:00
+
+=== HOST TOOLS ===
+git-lfs/3.7.1 (GitHub; linux amd64; go 1.25.0)
+fdfind 10.3.0
+tree v2.3.1 © 1996 - 2026 by Steve Baker, Thomas Moore, Francesc Rocher, Florian Sesser, Kyosuke Tokoro
+ShellCheck - shell script analysis tool
+version: 0.11.0
+license: GNU General Public License, version 3
+website: https://www.shellcheck.net
+smartctl 7.5 2025-04-30 r5714 [x86_64-linux-7.0.0-27-generic] (local build)
+nvme version 2.16 (git 2.16)
+libnvme version 1.16.1 (git 1.16.1)
+tmux 3.6
+gh version 2.96.0 (2026-07-02)
+https://github.com/cli/cli/releases/tag/v2.96.0
+
+=== NVIDIA ===
+7.0.0-27-generic
+2b:00.0 VGA compatible controller [0300]: NVIDIA Corporation GB203 [GeForce RTX 5070 Ti] [10de:2c05] (rev a1)
+	Subsystem: Palit Microsystems Inc. Device [1569:f332]
+	Kernel driver in use: nvidia
+	Kernel modules: nvidiafb, nouveau, nvidia_drm, nvidia
+2b:00.1 Audio device [0403]: NVIDIA Corporation GB203 High Definition Audio Controller [10de:22e9] (rev a1)
+	Subsystem: NVIDIA Corporation Device [10de:0000]
+	Kernel driver in use: snd_hda_intel
+	Kernel modules: snd_hda_intel
+nvidia_uvm           2088960  0
+nvidia_drm            147456  66
+nvidia_modeset       1744896  16 nvidia_drm
+nvidia              14811136  554 nvidia_uvm,nvidia_modeset
+595.71.05
+Tue Jul 14 09:08:25 2026
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 595.71.05              Driver Version: 595.71.05      CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GeForce RTX 5070 Ti     Off |   00000000:2B:00.0  On |                  N/A |
+|  0%   54C    P8             30W /  300W |     509MiB /  16303MiB |      6%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A            2516      G   /usr/bin/gnome-shell                    105MiB |
+|    0   N/A  N/A            4111      G   /usr/bin/Xwayland                         4MiB |
+|    0   N/A  N/A            4161      G   ...rack-uuid=3190708988185955192         70MiB |
+|    0   N/A  N/A           15223    C+G   ...rack-uuid=3190708988185955192         83MiB |
+|    0   N/A  N/A           15498    C+G   /usr/bin/nautilus                        32MiB |
+|    0   N/A  N/A           15543    C+G   ptyxis                                   24MiB |
+|    0   N/A  N/A           16000    C+G   /usr/bin/gnome-text-editor               48MiB |
++-----------------------------------------------------------------------------------------+
+nvidia-smi exit code: 0

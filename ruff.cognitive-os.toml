@@ -1,0 +1,12 @@
+target-version = "py312"
+line-length = 100
+extend-exclude = ["LightAgent", ".venv"]
+
+[lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+ignore = []
+
+[format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"

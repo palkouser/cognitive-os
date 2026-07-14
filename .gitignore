@@ -1,3 +1,38 @@
 .DS_Store
 LightAgent/__pycache__/__init__.cpython-311.pyc
 LightAgent/__pycache__/la_core.cpython-311.pyc
+
+# Local Python environments and configuration
+.venv/
+.env
+.env.*
+!.env.example
+
+# Codex local state
+.codex/local/
+.codex/*.local.toml
+
+# Runtime data (normally stored outside the repository)
+cognitive-os-data/
+artifacts/
+events/
+traces/
+sandboxes/
+worktrees/
+
+# Python tooling
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local IDE settings
+.vscode/*.local.json
+
+# Secrets and credentials
+*.key
+*.pem
+secrets.*

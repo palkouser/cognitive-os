@@ -1,0 +1,9 @@
+Missing Sprint 0 host tools:
+  git-lfs
+  fd-find
+  tree
+  shellcheck
+  smartmontools
+  nvme-cli
+  tmux
+  gh

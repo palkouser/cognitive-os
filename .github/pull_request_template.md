@@ -1,17 +1,33 @@
-## Summary
+## Related issue
 
-- 
+Closes #
 
-## Compatibility
+## Scope
 
-- [ ] Existing `agent.run("hello")` behavior is unchanged, or the change is documented.
-- [ ] Existing `stream=True` behavior is unchanged, or the change is documented.
+What was changed?
 
-## Tests
+## Out of scope
 
-- [ ] `python -m compileall -q LightAgent`
-- [ ] `PYTHONPATH=. python -m pytest -q tests/test_v065_core.py tests/test_v070_tracing.py tests/test_memory_policy.py`
+What was intentionally not changed?
 
-## Notes
+## Validation
 
-Mention any migration, security, or documentation impact.
+- [ ] Smoke tests
+- [ ] Ruff
+- [ ] Mypy
+- [ ] Security checks
+- [ ] Documentation updated
+
+## Upstream impact
+
+- [ ] No upstream LightAgent file changed
+- [ ] Upstream file changed and documented
+
+## Dependencies
+
+- [ ] No dependency added
+- [ ] Dependency documented and license reviewed
+
+## Secrets and runtime data
+
+- [ ] No secrets or runtime artifacts included

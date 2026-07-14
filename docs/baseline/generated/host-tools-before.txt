@@ -1,0 +1,9 @@
+2026-07-14T08:54:10+02:00
+OK	git-lfs	3.7.1-1
+OK	fd-find	10.3.0-2ubuntu1
+OK	tree	2.3.1-1
+OK	shellcheck	0.11.0-2
+OK	smartmontools	7.5-2
+OK	nvme-cli	2.16-1
+OK	tmux	3.6a-2ubuntu0.1
+MISSING	gh

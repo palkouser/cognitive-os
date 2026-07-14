@@ -1,0 +1,5 @@
+Python: 3.12.13
+Environment: .venv
+Package count checked by uv: 123
+Exact freeze: requirements-baseline.lock.txt
+uv pip check: All installed packages are compatible after MCP and Requests remediation.

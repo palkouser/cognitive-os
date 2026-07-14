@@ -1,0 +1,20 @@
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: Ruff check
+        entry: uv run ruff check --config ruff.cognitive-os.toml
+        language: system
+        types: [python]
+        files: ^(cognitive_os|tests/cognitive_os|scripts)/
+      - id: ruff-format
+        name: Ruff format check
+        entry: uv run ruff format --check --config ruff.cognitive-os.toml
+        language: system
+        types: [python]
+        files: ^(cognitive_os|tests/cognitive_os|scripts)/
+      - id: detect-secrets
+        name: Detect secrets
+        entry: uv run detect-secrets-hook --baseline .secrets.baseline
+        language: system
+        types: [text]

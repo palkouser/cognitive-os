@@ -1,0 +1,10 @@
+Cognitive OS
+Copyright 2026 Viktor Palkovics
+
+This project is based in part on LightAgent:
+https://github.com/wanxingai/LightAgent
+
+LightAgent is licensed under the Apache License, Version 2.0. Modifications and
+additional Cognitive OS components are maintained in this repository. Detailed
+third-party provenance is recorded in THIRD_PARTY_NOTICES.md and
+docs/architecture/donor-projects.md.

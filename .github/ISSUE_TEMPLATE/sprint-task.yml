@@ -1,0 +1,39 @@
+name: Sprint task
+description: A scoped Cognitive OS sprint work item
+title: "[Sprint] "
+labels: []
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+    validations:
+      required: true
+  - type: textarea
+    id: prerequisites
+    attributes:
+      label: Prerequisites and dependencies
+  - type: textarea
+    id: steps
+    attributes:
+      label: Execution steps and files
+    validations:
+      required: true
+  - type: textarea
+    id: tests
+    attributes:
+      label: Tests and acceptance criteria
+    validations:
+      required: true
+  - type: textarea
+    id: documentation
+    attributes:
+      label: Documentation
+  - type: textarea
+    id: security
+    attributes:
+      label: Security impact
+  - type: textarea
+    id: donor
+    attributes:
+      label: Donor project or dependency impact
