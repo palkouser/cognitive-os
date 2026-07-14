@@ -6,5 +6,7 @@ load_postgres_environment
 require_command docker
 require_value COGOS_POSTGRES_DATA
 mkdir -p "$COGOS_POSTGRES_DATA"
-chmod 0750 "$COGOS_POSTGRES_DATA"
+if [[ -O "$COGOS_POSTGRES_DATA" ]]; then
+  chmod 0750 "$COGOS_POSTGRES_DATA"
+fi
 docker compose --env-file "$POSTGRES_ENV_FILE" -f "$ROOT/infra/compose/postgres.yml" up -d

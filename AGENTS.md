@@ -5,30 +5,33 @@
 This repository develops Cognitive OS, a local, model-independent, self-improving
 agent harness based on LightAgent.
 
-## Sprint 3 scope
+## Sprint 4 scope
 
-The active scope is durable event and artifact persistence.
+The active scope is provider-neutral model execution.
 
 Allowed work:
 
-- persistence ports and storage records;
-- PostgreSQL event storage and optimistic concurrency;
-- Alembic migrations and database roles;
-- content-addressed local artifact storage and metadata;
-- event replay and state reconstruction;
-- OpenTelemetry correlation;
-- PostgreSQL integration tests;
-- backup and restore operations.
+- provider contracts and ports;
+- static provider registry;
+- mock and replay providers;
+- MiniMax OpenAI-compatible integration;
+- provider retry and timeout policies;
+- provider health checks;
+- provider-call event persistence;
+- provider request and response artifacts;
+- Claude Code read-only advisory integration;
+- provider tests and operational scripts.
 
 Out of scope:
 
+- adaptive model routing;
+- multi-model orchestration;
+- provider tool execution;
+- Claude Code repository modification;
 - Cognitive Controller;
-- automatic LightAgent event emission;
-- provider integrations and model routing;
-- tool execution, permissions, and sandboxing;
 - Memory Plane;
-- projections and snapshots;
-- skills, strategies, routing, and self-improvement.
+- context retrieval;
+- skills, strategies, or self-improvement.
 
 Do not move or rewrite LightAgent runtime files unless the active issue explicitly
 authorizes it.

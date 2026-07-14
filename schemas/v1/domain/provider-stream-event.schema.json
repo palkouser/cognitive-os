@@ -1,0 +1,206 @@
+{
+  "$defs": {
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "ModelFinishReason": {
+      "enum": [
+        "completed",
+        "tool_call",
+        "length",
+        "content_filter",
+        "cancelled",
+        "error",
+        "unknown"
+      ],
+      "title": "ModelFinishReason",
+      "type": "string"
+    },
+    "ProviderStreamEventType": {
+      "enum": [
+        "response_started",
+        "text_delta",
+        "tool_call_delta",
+        "usage",
+        "response_completed",
+        "response_failed"
+      ],
+      "title": "ProviderStreamEventType",
+      "type": "string"
+    },
+    "TokenUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "cached_input_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cached Input Tokens"
+        },
+        "input_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input Tokens"
+        },
+        "output_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Tokens"
+        },
+        "reasoning_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reasoning Tokens"
+        },
+        "total_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Tokens"
+        }
+      },
+      "title": "TokenUsage",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domain/provider-stream-event.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "event_type": {
+      "$ref": "#/$defs/ProviderStreamEventType"
+    },
+    "finish_reason": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ModelFinishReason"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "sequence": {
+      "exclusiveMinimum": 0,
+      "title": "Sequence",
+      "type": "integer"
+    },
+    "text_delta": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Text Delta"
+    },
+    "tool_call_delta": {
+      "anyOf": [
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tool Call Delta"
+    },
+    "usage": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TokenUsage"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "sequence",
+    "event_type"
+  ],
+  "title": "ProviderStreamEvent",
+  "type": "object"
+}

@@ -8,6 +8,7 @@
 | OpenAI | optional provider required by baseline runtime | Yes | `LightAgent.core` | Keep in core to preserve the pinned import and default provider |
 | PyYAML | core runtime | Yes | `LightAgent.skills` | Keep in core |
 | Pydantic | core runtime | Yes | Cognitive OS domain and event contracts | Validation, serialization, and JSON Schema generation |
+| jsonschema | core runtime | Yes | MiniMax normalized structured output | Local validation of provider output against request-owned schemas; MIT licensed |
 | MCP | MCP | No | `LightAgent.mcp_client_manager` | Move to `mcp` extra |
 | boto3 | cloud integration | No | `LightAgent.builtin_tools.nos` | Move to `cloud-aws` extra and lazy import |
 | Langfuse | observability | No | optional trace client in `LightAgent.core` | Move to `observability-langfuse` extra |
@@ -24,7 +25,7 @@
 
 | Group | Category | Packages | Purpose |
 | --- | --- | --- | --- |
-| `dev` | development | pre-commit, Ruff, mypy | Local quality workflow |
+| `dev` | development | pre-commit, Ruff, mypy, types-PyYAML, types-jsonschema | Local quality workflow |
 | `test` | testing | pytest, pytest-asyncio, pytest-cov, Hypothesis | Offline verification |
 | `security` | development security | Bandit, detect-secrets, pip-audit | Security gates |
 | `docs` | documentation | MkDocs, Material for MkDocs | Documentation build tooling |

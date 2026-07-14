@@ -1,0 +1,100 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/domain/model-capabilities.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "maximum_context_tokens": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Maximum Context Tokens"
+    },
+    "maximum_output_tokens": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Maximum Output Tokens"
+    },
+    "model_id": {
+      "minLength": 1,
+      "title": "Model Id",
+      "type": "string"
+    },
+    "provider_id": {
+      "minLength": 1,
+      "title": "Provider Id",
+      "type": "string"
+    },
+    "supported_input_modalities": {
+      "default": [
+        "text"
+      ],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Supported Input Modalities",
+      "type": "array"
+    },
+    "supported_output_modalities": {
+      "default": [
+        "text"
+      ],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Supported Output Modalities",
+      "type": "array"
+    },
+    "supports_parallel_tool_calls": {
+      "default": false,
+      "title": "Supports Parallel Tool Calls",
+      "type": "boolean"
+    },
+    "supports_seed": {
+      "default": false,
+      "title": "Supports Seed",
+      "type": "boolean"
+    },
+    "supports_streaming": {
+      "default": false,
+      "title": "Supports Streaming",
+      "type": "boolean"
+    },
+    "supports_structured_output": {
+      "default": false,
+      "title": "Supports Structured Output",
+      "type": "boolean"
+    },
+    "supports_system_messages": {
+      "default": true,
+      "title": "Supports System Messages",
+      "type": "boolean"
+    },
+    "supports_tool_calls": {
+      "default": false,
+      "title": "Supports Tool Calls",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "model_id",
+    "provider_id"
+  ],
+  "title": "ModelCapabilities",
+  "type": "object"
+}

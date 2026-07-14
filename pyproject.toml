@@ -20,6 +20,7 @@ classifiers = [
 ]
 dependencies = [
     "httpx>=0.28,<1",
+    "jsonschema>=4.25,<5",
     "openai>=1.60,<2",
     "pydantic>=2.11,<3",
     "PyYAML>=6,<7",
@@ -48,6 +49,8 @@ dev = [
     "mypy>=1.16,<2",
     "pre-commit>=4,<5",
     "ruff>=0.12,<1",
+    "types-PyYAML>=6.0.12,<7",
+    "types-jsonschema>=4.25,<5",
 ]
 docs = [
     "mkdocs>=1.6,<2",
@@ -83,8 +86,10 @@ package = true
 
 [tool.pytest.ini_options]
 markers = [
+    "claude_code_live: opt-in test against the locally authenticated Claude Code CLI",
     "contract: offline compatibility tests for the LightAgent boundary",
     "concurrency: tests that exercise simultaneous writers",
     "integration: tests that require an external service",
+    "minimax_live: opt-in test against the configured MiniMax API",
     "postgres: tests that require the isolated PostgreSQL test database",
 ]

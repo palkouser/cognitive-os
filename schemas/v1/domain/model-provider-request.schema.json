@@ -1,0 +1,300 @@
+{
+  "$defs": {
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "ProviderMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "content": {
+          "title": "Content",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "role": {
+          "$ref": "#/$defs/ProviderMessageRole"
+        },
+        "tool_call_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tool Call Id"
+        }
+      },
+      "required": [
+        "role",
+        "content"
+      ],
+      "title": "ProviderMessage",
+      "type": "object"
+    },
+    "ProviderMessageRole": {
+      "enum": [
+        "system",
+        "user",
+        "assistant",
+        "tool"
+      ],
+      "title": "ProviderMessageRole",
+      "type": "string"
+    },
+    "ProviderToolDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "input_schema": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Input Schema",
+          "type": "object"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "description",
+        "input_schema"
+      ],
+      "title": "ProviderToolDefinition",
+      "type": "object"
+    },
+    "ResponseFormat": {
+      "enum": [
+        "text",
+        "json_object",
+        "json_schema"
+      ],
+      "title": "ResponseFormat",
+      "type": "string"
+    },
+    "ToolChoiceMode": {
+      "enum": [
+        "none",
+        "auto",
+        "required",
+        "specific"
+      ],
+      "title": "ToolChoiceMode",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domain/model-provider-request.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "context_budget": {
+      "default": 32768,
+      "exclusiveMinimum": 0,
+      "maximum": 131072,
+      "title": "Context Budget",
+      "type": "integer"
+    },
+    "correlation_id": {
+      "format": "uuid",
+      "title": "Correlation Id",
+      "type": "string"
+    },
+    "max_output_tokens": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Max Output Tokens"
+    },
+    "messages": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ProviderMessage"
+      },
+      "title": "Messages",
+      "type": "array"
+    },
+    "metadata": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Metadata",
+      "type": "object"
+    },
+    "model_call_id": {
+      "format": "uuid",
+      "title": "Model Call Id",
+      "type": "string"
+    },
+    "requested_model": {
+      "minLength": 1,
+      "title": "Requested Model",
+      "type": "string"
+    },
+    "response_format": {
+      "$ref": "#/$defs/ResponseFormat",
+      "default": "text"
+    },
+    "response_schema": {
+      "anyOf": [
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Response Schema"
+    },
+    "selected_tool_name": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Selected Tool Name"
+    },
+    "step_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Step Id"
+    },
+    "system_instructions": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "System Instructions"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    },
+    "temperature": {
+      "anyOf": [
+        {
+          "maximum": 2,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Temperature"
+    },
+    "timeout_seconds": {
+      "default": 120,
+      "exclusiveMinimum": 0,
+      "title": "Timeout Seconds",
+      "type": "number"
+    },
+    "tool_choice": {
+      "$ref": "#/$defs/ToolChoiceMode",
+      "default": "none"
+    },
+    "tools": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ProviderToolDefinition"
+      },
+      "title": "Tools",
+      "type": "array"
+    }
+  },
+  "required": [
+    "model_call_id",
+    "task_run_id",
+    "correlation_id",
+    "requested_model"
+  ],
+  "title": "ModelProviderRequest",
+  "type": "object"
+}
