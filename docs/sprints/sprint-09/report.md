@@ -1,6 +1,6 @@
 # Sprint 9 report
 
-Status: Implementation complete; remote CI and baseline tag pending
+Status: Complete
 
 ## Baseline
 
@@ -66,6 +66,12 @@ Sprint 9 branches from the validated `sprint-8-baseline` commit
   expected non-PyPI skip.
 - Isolated wheel/sdist installation and editable-install verification both passed on Python 3.12.
 
+## Remote validation
+
+GitHub Actions run `29433839024` passed all 16 required jobs, including quality, security, full
+tests, build/install verification, migration round-trip and drift detection, Memory Plane core,
+PostgreSQL 18 integration, health, smoke, and checksummed database/artifact backup restore.
+
 ## Security status
 
 The runtime role has SELECT/INSERT only on immutable memory history and cannot update or delete it.
@@ -88,9 +94,9 @@ rank, score, scope, sensitivity, and hashes, never memory content.
 
 ## Restore point and hand-off
 
-The Sprint 9 tag will be `sprint-9-baseline` and is created only after the remote pull-request CI is
-green. Before publication, restore Sprint 8 with `git switch --detach sprint-8-baseline`. After
-publication, restore Sprint 9 with `git switch --detach sprint-9-baseline`.
+The Sprint 9 restore tag is `sprint-9-baseline`, created from the merge commit after the remote
+pull-request CI is green. Restore Sprint 8 with `git switch --detach sprint-8-baseline`. Restore
+Sprint 9 with `git switch --detach sprint-9-baseline`.
 
 Sprint 10 can consume typed observations and corrections, verified episode/task/verification
 summaries, exact source lookup, immutable revision history, and access audit without replacing the
