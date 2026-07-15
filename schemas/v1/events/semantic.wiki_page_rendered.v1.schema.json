@@ -1,0 +1,33 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/semantic.wiki_page_rendered.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "page_id": {
+      "format": "uuid",
+      "title": "Page Id",
+      "type": "string"
+    },
+    "revision": {
+      "title": "Revision",
+      "type": "integer"
+    },
+    "snapshot_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Snapshot Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "page_id",
+    "revision",
+    "content_hash",
+    "snapshot_hash"
+  ],
+  "title": "SemanticWikiPageRendered",
+  "type": "object"
+}

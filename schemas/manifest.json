@@ -281,6 +281,56 @@
       "schema_version": 1
     },
     {
+      "event_type": "semantic.claim_belief_changed",
+      "file": "v1/events/semantic.claim_belief_changed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "semantic.claim_created",
+      "file": "v1/events/semantic.claim_created.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "semantic.claim_revision_appended",
+      "file": "v1/events/semantic.claim_revision_appended.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "semantic.contradiction_opened",
+      "file": "v1/events/semantic.contradiction_opened.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "semantic.contradiction_resolved",
+      "file": "v1/events/semantic.contradiction_resolved.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "semantic.extraction_completed",
+      "file": "v1/events/semantic.extraction_completed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "semantic.extraction_rejected",
+      "file": "v1/events/semantic.extraction_rejected.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "semantic.observation_recorded",
+      "file": "v1/events/semantic.observation_recorded.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "semantic.wiki_page_regenerated",
+      "file": "v1/events/semantic.wiki_page_regenerated.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "semantic.wiki_page_rendered",
+      "file": "v1/events/semantic.wiki_page_rendered.v1.schema.json",
+      "schema_version": 1
+    },
+    {
       "event_type": "task.cancelled",
       "file": "v1/events/task.cancelled.v1.schema.json",
       "schema_version": 1
@@ -404,6 +454,11 @@
       "sha256": "65bfef7c923ea727af8f2397e15de57c4831518c9bd709aa8f487ed27905d8d8"
     },
     {
+      "file": "v1/config/semantic-memory-configuration.schema.json",
+      "model": "SemanticMemoryConfiguration",
+      "sha256": "0bb345c1d690cf71868845f7ec033af6c2af3c0df4600d04d33b24d771a1081a"
+    },
+    {
       "file": "v1/domain/acceptance-decision.schema.json",
       "model": "AcceptanceDecision",
       "sha256": "e6c3591448a9247dfb15d814655dddf45c7f91cde091648ee400356ff1cd45de"
@@ -431,12 +486,12 @@
     {
       "file": "v1/domain/benchmark-case.schema.json",
       "model": "BenchmarkCase",
-      "sha256": "f8dcd9284e9abd43c1cbe25a137c4333f783b88b1b947b0a3a65a1917e667c25"
+      "sha256": "4ed04e02af4d6aacb5edf1b3a7d7289e8078d9f5961837ca9a2d0e9ca8c13658"
     },
     {
       "file": "v1/domain/benchmark-manifest.schema.json",
       "model": "BenchmarkManifest",
-      "sha256": "c9d888144fee95fdee19ff08ddab69e577d91def637711b5e957c5016e9d3ab6"
+      "sha256": "355607140b610361863d73076ab2f2c539a757a830e473d290540fa1e8a77fcd"
     },
     {
       "file": "v1/domain/benchmark-resource-budget.schema.json",
@@ -601,7 +656,7 @@
     {
       "file": "v1/domain/problem-representation.schema.json",
       "model": "ProblemRepresentation",
-      "sha256": "0475854e7226c441a4e031ef965f8d7c4d79046e570a0222e775938db8cb7869"
+      "sha256": "f3f3a6c8af6c759f082a8d701849ba7072e52cf45cf87082f02a348a84ec0e4f"
     },
     {
       "file": "v1/domain/provider-health.schema.json",
@@ -731,22 +786,22 @@
     {
       "file": "v1/domain/verification-request.schema.json",
       "model": "VerificationRequest",
-      "sha256": "af0584dc322ba2abe30b0d774772d98b659300cd66711de0b91335480e5e3274"
+      "sha256": "d3387481b01f2cb27d1077c845dc99c8809895af09cca7ea7db1a6d4c94cee56"
     },
     {
       "file": "v1/domain/verification-subject.schema.json",
       "model": "VerificationSubject",
-      "sha256": "4a894bc2e190d0a529b45890744ae1a59b13b072832266ac7bd3cb43f4f7c880"
+      "sha256": "f5368658f4386952cdfc1f536a2b6a47d9d7beb4963b98beef70d3ef02dcea61"
     },
     {
       "file": "v1/domain/verifier-capability.schema.json",
       "model": "VerifierCapability",
-      "sha256": "49301b2a171d52a152bdd7a577d7fc4015df9a40044dbdbc516dc411c2d66776"
+      "sha256": "6ad4bc6c49ee8ed1c6a7fa51acd79af34be0c9273bcaaf9132f75bbca2668acf"
     },
     {
       "file": "v1/domain/verifier-descriptor.schema.json",
       "model": "VerifierDescriptor",
-      "sha256": "14384e732cf694a808b4c41c6dba8d9b22e9d2f759b7c1ccfabe4bfab1539a7f"
+      "sha256": "a33283a7453471f6eeffefb832c3c5416ab016c4ba02adbaa2082adad51fadd5"
     },
     {
       "file": "v1/domain/verifier-requirement.schema.json",
@@ -926,7 +981,7 @@
     {
       "file": "v1/events/event-envelope.schema.json",
       "model": "EventEnvelope",
-      "sha256": "144f00606fbb36e995c04b39ae90be8b683581ca75d1ea0408f6840de5e93a27"
+      "sha256": "77e5fdb6aabaf5b8af726db54fd6f456cbb16bcefa58e824abdb1421b07c857e"
     },
     {
       "file": "v1/events/execution_step.cancelled.v1.schema.json",
@@ -1051,17 +1106,67 @@
     {
       "file": "v1/events/problem.representation_created.v1.schema.json",
       "model": "ProblemRepresentationCreated",
-      "sha256": "952376ecf60f3ef61dfa68f9014d47e238b08acfaee2ed65d5ebb7384624ed4b"
+      "sha256": "3a48652e4ecb6127476735c30466b121aa1abb235f91fbcbb590710a8d813c18"
     },
     {
       "file": "v1/events/problem.representation_revised.v1.schema.json",
       "model": "ProblemRepresentationRevised",
-      "sha256": "57ff583f595602089bbae75e83127e6c24ad769ab576abf434320cdd356db130"
+      "sha256": "5f038204d640fe9910313df687d059ef7170e1c9c93c7459f0762635a6aac151"
     },
     {
       "file": "v1/events/run.resumed.v1.schema.json",
       "model": "RunResumed",
       "sha256": "46953f1401bf09add4f29d4fdd524f75c92897804254146b56b6714f281821f8"
+    },
+    {
+      "file": "v1/events/semantic.claim_belief_changed.v1.schema.json",
+      "model": "SemanticClaimBeliefChanged",
+      "sha256": "283cf35504540f2be8a614efcf9c02d7db8a358a00d42fe36a680924428d5a34"
+    },
+    {
+      "file": "v1/events/semantic.claim_created.v1.schema.json",
+      "model": "SemanticClaimCreated",
+      "sha256": "f50e045b3189e9c69f500fb3d95f057629458f990dff0ce727f5f54430abecaf"
+    },
+    {
+      "file": "v1/events/semantic.claim_revision_appended.v1.schema.json",
+      "model": "SemanticClaimRevisionAppended",
+      "sha256": "69a0c7ef5853b7323783fae2b616094beeecbbc19a0b7a405b9bf5dceb168864"
+    },
+    {
+      "file": "v1/events/semantic.contradiction_opened.v1.schema.json",
+      "model": "SemanticContradictionOpened",
+      "sha256": "764d429acacae7aa5c975511fcb7857da7d303f11af7a053ca75eb0b355e65ea"
+    },
+    {
+      "file": "v1/events/semantic.contradiction_resolved.v1.schema.json",
+      "model": "SemanticContradictionResolved",
+      "sha256": "850ae135f04230b826e2ccb7d92bbb6f0dc3a62ed356589f0a7a574e9f49dd02"
+    },
+    {
+      "file": "v1/events/semantic.extraction_completed.v1.schema.json",
+      "model": "SemanticExtractionCompleted",
+      "sha256": "74b2d48361f00b52b3b4af5e96941702eca981551b25b85d6a526cf7ea764000"
+    },
+    {
+      "file": "v1/events/semantic.extraction_rejected.v1.schema.json",
+      "model": "SemanticExtractionRejected",
+      "sha256": "9bcd9a6566ad586002729e218c9f2b659b8d4534e3797315b4e9c3557417bdae"
+    },
+    {
+      "file": "v1/events/semantic.observation_recorded.v1.schema.json",
+      "model": "SemanticObservationRecorded",
+      "sha256": "c846928fa49fcefa2285342873c488e33c1efaef99408e4aac877202ea70bcbc"
+    },
+    {
+      "file": "v1/events/semantic.wiki_page_regenerated.v1.schema.json",
+      "model": "SemanticWikiPageRegenerated",
+      "sha256": "ee0384b29a61df947d51357247774cde78ffe912a744881f4e9ca904e0d416a4"
+    },
+    {
+      "file": "v1/events/semantic.wiki_page_rendered.v1.schema.json",
+      "model": "SemanticWikiPageRendered",
+      "sha256": "4275c14d63c1d73db2cf65f5cf9d5187485e27779721c41f9c4cbecad0e72d7d"
     },
     {
       "file": "v1/events/task.cancelled.v1.schema.json",
@@ -1347,6 +1452,206 @@
       "file": "v1/memory/verification-summary-memory-content.schema.json",
       "model": "VerificationSummaryMemoryContent",
       "sha256": "0a8b3f034037a980af0f3b834d79bbe8be57f48f501c42721c0c920d03478b12"
+    },
+    {
+      "file": "v1/semantic-memory/claim-identity.schema.json",
+      "model": "ClaimIdentity",
+      "sha256": "f7f5bcf7cf4f4402a21a7a413829085d4081248164f56fe5ed8ad80d103e6d0b"
+    },
+    {
+      "file": "v1/semantic-memory/claim-promotion-decision.schema.json",
+      "model": "ClaimPromotionDecision",
+      "sha256": "db68638b11a67dd53aa969f1bc326fd5f70091dff9fd225d5da73bd3bc19b9ce"
+    },
+    {
+      "file": "v1/semantic-memory/claim-proposal.schema.json",
+      "model": "ClaimProposal",
+      "sha256": "76f6f427527dbcb5a2ef32773b5c58a37dda50ea894785f33f16cbcb44c5c402"
+    },
+    {
+      "file": "v1/semantic-memory/claim-reference.schema.json",
+      "model": "ClaimReference",
+      "sha256": "391c47638fce8f573179747cd03659471640b864323effdbee0c1a050fba5236"
+    },
+    {
+      "file": "v1/semantic-memory/claim-relation.schema.json",
+      "model": "ClaimRelation",
+      "sha256": "932ada1856031bc6d29be4bbd271a538f4fdde6e3d01914bf72f850292ab0cfb"
+    },
+    {
+      "file": "v1/semantic-memory/claim-revision-reference.schema.json",
+      "model": "ClaimRevisionReference",
+      "sha256": "32b5ed727acee01e65e4a77864434963006873cc8412ca56070380080401b173"
+    },
+    {
+      "file": "v1/semantic-memory/claim-revision.schema.json",
+      "model": "ClaimRevision",
+      "sha256": "69f7454d610bf41b60ca72708144f9de20fddca21a0523bff1c21e061055d0e9"
+    },
+    {
+      "file": "v1/semantic-memory/claim-temporal-interval.schema.json",
+      "model": "ClaimTemporalInterval",
+      "sha256": "cec6c18c44a66644a73f515e452cfad2cea7c7f180c31432b1c915764cff0167"
+    },
+    {
+      "file": "v1/semantic-memory/claim.schema.json",
+      "model": "Claim",
+      "sha256": "37f68334e643702ebc553fb87369d864f7f9a0578b78f5daadc9910eee69c38c"
+    },
+    {
+      "file": "v1/semantic-memory/confidence-dimensions.schema.json",
+      "model": "ConfidenceDimensions",
+      "sha256": "b8c24621cac7fe263f95a28f988499232e3a90c7f27bed46c23d24510811e949"
+    },
+    {
+      "file": "v1/semantic-memory/contradiction-candidate.schema.json",
+      "model": "ContradictionCandidate",
+      "sha256": "8a3ab179d35ff69c643645300828020231b31fab38186c4dcdcb61421c208a73"
+    },
+    {
+      "file": "v1/semantic-memory/contradiction-proposal.schema.json",
+      "model": "ContradictionProposal",
+      "sha256": "ba883a93b9311578d45d6a45cbfb04d7ab2d75c7880f678f4365c45f211fe9bf"
+    },
+    {
+      "file": "v1/semantic-memory/contradiction-record.schema.json",
+      "model": "ContradictionRecord",
+      "sha256": "1b6901ed00c884cfb049b42431b7b1480c35dd8af895543327e1df81e6a3cd01"
+    },
+    {
+      "file": "v1/semantic-memory/contradiction-revision.schema.json",
+      "model": "ContradictionRevision",
+      "sha256": "3876ff456ed8b59ddcd10447dc79ed7b1266f0610730e6af842faca2d3149cce"
+    },
+    {
+      "file": "v1/semantic-memory/evidence-bundle.schema.json",
+      "model": "EvidenceBundle",
+      "sha256": "58b6547e13c29ba9097c4de3a7f6651687a47b799e1a68f58ce4d9174d8a7c98"
+    },
+    {
+      "file": "v1/semantic-memory/evidence-link.schema.json",
+      "model": "EvidenceLink",
+      "sha256": "98a6a6350d6262607d857164b14ae057ee7a9234351a8ad61304dda18c2c382c"
+    },
+    {
+      "file": "v1/semantic-memory/evidence-proposal.schema.json",
+      "model": "EvidenceProposal",
+      "sha256": "429323fc91b438bb9e8524608f0f18c45864055ac518322f247230ec10e0a02d"
+    },
+    {
+      "file": "v1/semantic-memory/evidence-validation-result.schema.json",
+      "model": "EvidenceValidationResult",
+      "sha256": "c00f210f4394fbf14eaebeaea0459ef85a28e1cecc385490473a36269fa904c2"
+    },
+    {
+      "file": "v1/semantic-memory/extraction-budget.schema.json",
+      "model": "ExtractionBudget",
+      "sha256": "0bfe1972b3af05fa0c2beba7717354a569d48fa402d85479cefb58cda31ab291"
+    },
+    {
+      "file": "v1/semantic-memory/extraction-decision.schema.json",
+      "model": "ExtractionDecision",
+      "sha256": "e59665f50177036ca8d99778f4e3d84e8a2e8f3c1c37b256de8e7228efc53b8c"
+    },
+    {
+      "file": "v1/semantic-memory/grounded-source-span.schema.json",
+      "model": "GroundedSourceSpan",
+      "sha256": "6c6318085662c009962ccc4fedf7b1152d398b429f487389b7197e7699539bfa"
+    },
+    {
+      "file": "v1/semantic-memory/observation-proposal.schema.json",
+      "model": "ObservationProposal",
+      "sha256": "59dd7ffb0002983024be5f183f7fb828a860ee8fcea2fc1de4e6ef698e100979"
+    },
+    {
+      "file": "v1/semantic-memory/predicate-descriptor.schema.json",
+      "model": "PredicateDescriptor",
+      "sha256": "559c38c172b84ea63c892d3578196e85e35bb60903b3e0e2b4daf15ab3484732"
+    },
+    {
+      "file": "v1/semantic-memory/relation-proposal.schema.json",
+      "model": "RelationProposal",
+      "sha256": "a54e3a6a538d7ea094a8643e9cb492024eacefdbcb09af78f97ba028fa364fab"
+    },
+    {
+      "file": "v1/semantic-memory/semantic-access-record.schema.json",
+      "model": "SemanticAccessRecord",
+      "sha256": "f772be731f0e38b74a5f82809e52df96d975fbeb1c7d6030518389ea50c8b23e"
+    },
+    {
+      "file": "v1/semantic-memory/semantic-actor.schema.json",
+      "model": "SemanticActor",
+      "sha256": "4abdb000f31d4495908c1dbd748ae10ee625dba254b83332253a4982b3e446bb"
+    },
+    {
+      "file": "v1/semantic-memory/semantic-entity-ref.schema.json",
+      "model": "SemanticEntityRef",
+      "sha256": "e524d61a9821778630e1862dc984c5efdb446770aa02ae3d6b4e9a9bb3d44214"
+    },
+    {
+      "file": "v1/semantic-memory/semantic-extraction-manifest.schema.json",
+      "model": "SemanticExtractionManifest",
+      "sha256": "e5abae9d38e9e611d1fba5c24ed666e0c1c52cb31469e5c000fe4e8adb18e534"
+    },
+    {
+      "file": "v1/semantic-memory/semantic-extraction-proposal.schema.json",
+      "model": "SemanticExtractionProposal",
+      "sha256": "9a5bf958f187c6059fa5fb5d83e4f896fd0eee18d205c3c0eb37dce6599446b0"
+    },
+    {
+      "file": "v1/semantic-memory/semantic-extraction-request.schema.json",
+      "model": "SemanticExtractionRequest",
+      "sha256": "9891a3ce0c006ea8dfe6db89d03ac6dd99d3af0a0697666a070a8e66213245e7"
+    },
+    {
+      "file": "v1/semantic-memory/semantic-literal.schema.json",
+      "model": "SemanticLiteral",
+      "sha256": "83c313d7d8a2bcb001dc84aeb3e8cc16f0a6e6a4f87476220336a8f765236a59"
+    },
+    {
+      "file": "v1/semantic-memory/semantic-observation.schema.json",
+      "model": "SemanticObservation",
+      "sha256": "52ad076d83e6cbb5597133b994baaebcff9887f4e805921b70dd4bc676eadfbb"
+    },
+    {
+      "file": "v1/semantic-memory/semantic-query-budget.schema.json",
+      "model": "SemanticQueryBudget",
+      "sha256": "930653d9c9a202723b63b83f282b3bb207ce611809ec691c62f12dd6945b6aff"
+    },
+    {
+      "file": "v1/semantic-memory/semantic-query-result.schema.json",
+      "model": "SemanticQueryResult",
+      "sha256": "683e1e914b3dc0e3d611cf1a0d66fda9acc92c135a8aa7b1c7064c526b84a207"
+    },
+    {
+      "file": "v1/semantic-memory/semantic-reference.schema.json",
+      "model": "SemanticReference",
+      "sha256": "354cd8e0dd19857d2cabaef09b3f7612509a78678921c3fc505109c6e8999935"
+    },
+    {
+      "file": "v1/semantic-memory/semantic-source-ref.schema.json",
+      "model": "SemanticSourceRef",
+      "sha256": "f134187128bded29752e66553f92072b4b877e73012bce15975ba15f5716ab33"
+    },
+    {
+      "file": "v1/semantic-memory/temporal-claim-query.schema.json",
+      "model": "TemporalClaimQuery",
+      "sha256": "4e1d8e4906c6d5c2d921686aa3f28b12b3f7aa3fb150d266f40db95a4f2ae3a6"
+    },
+    {
+      "file": "v1/semantic-memory/wiki-claim-reference.schema.json",
+      "model": "WikiClaimReference",
+      "sha256": "da21d41df3561a23e2394f0f929fa5c947ba605dbb4eff9419fa3e53504cc74f"
+    },
+    {
+      "file": "v1/semantic-memory/wiki-page-revision.schema.json",
+      "model": "WikiPageRevision",
+      "sha256": "4b204805bcd0682910d565a5093c6e605b068ce787b7c92df5671aa29c24988d"
+    },
+    {
+      "file": "v1/semantic-memory/wiki-page.schema.json",
+      "model": "WikiPage",
+      "sha256": "676a3873df9fdc7b92899bcbfdd9e9c6eca25d53ca7466042e694c205a6613e4"
     }
   ],
   "schema_set_version": 1

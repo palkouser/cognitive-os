@@ -1,0 +1,154 @@
+{
+  "$defs": {
+    "Cardinality": {
+      "enum": [
+        "functional",
+        "multi"
+      ],
+      "title": "Cardinality",
+      "type": "string"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "SemanticLiteralKind": {
+      "enum": [
+        "string",
+        "boolean",
+        "integer",
+        "decimal",
+        "date",
+        "datetime",
+        "version",
+        "uri",
+        "quantity"
+      ],
+      "title": "SemanticLiteralKind",
+      "type": "string"
+    },
+    "SemanticValueType": {
+      "enum": [
+        "entity",
+        "literal",
+        "reference"
+      ],
+      "title": "SemanticValueType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/predicate-descriptor.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "allowed_object_types": {
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/SemanticLiteralKind"
+          },
+          {
+            "$ref": "#/$defs/SemanticValueType"
+          }
+        ]
+      },
+      "minItems": 1,
+      "title": "Allowed Object Types",
+      "type": "array"
+    },
+    "allowed_subject_types": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Allowed Subject Types",
+      "type": "array"
+    },
+    "cardinality": {
+      "$ref": "#/$defs/Cardinality"
+    },
+    "contradiction_rule": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Contradiction Rule"
+    },
+    "default_sensitivity": {
+      "$ref": "#/$defs/MemorySensitivity",
+      "default": "internal"
+    },
+    "description": {
+      "minLength": 1,
+      "title": "Description",
+      "type": "string"
+    },
+    "display_name": {
+      "minLength": 1,
+      "title": "Display Name",
+      "type": "string"
+    },
+    "exclusive_value_group": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Exclusive Value Group"
+    },
+    "negatable": {
+      "default": false,
+      "title": "Negatable",
+      "type": "boolean"
+    },
+    "predicate_id": {
+      "pattern": "^[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)+$",
+      "title": "Predicate Id",
+      "type": "string"
+    },
+    "rendering_label": {
+      "minLength": 1,
+      "title": "Rendering Label",
+      "type": "string"
+    },
+    "temporal_behavior": {
+      "minLength": 1,
+      "title": "Temporal Behavior",
+      "type": "string"
+    },
+    "version": {
+      "maxLength": 32,
+      "minLength": 1,
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "predicate_id",
+    "version",
+    "display_name",
+    "description",
+    "allowed_subject_types",
+    "allowed_object_types",
+    "cardinality",
+    "temporal_behavior",
+    "rendering_label"
+  ],
+  "title": "PredicateDescriptor",
+  "type": "object"
+}

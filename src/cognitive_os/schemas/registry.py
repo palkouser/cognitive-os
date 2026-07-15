@@ -8,6 +8,7 @@ from pydantic import BaseModel
 
 from cognitive_os.config.coding_config import CodingConfiguration
 from cognitive_os.config.memory_config import MemoryConfiguration
+from cognitive_os.config.semantic_memory_config import SemanticMemoryConfiguration
 from cognitive_os.domain import (
     ApprovalDecision,
     ApprovalRequest,
@@ -86,6 +87,7 @@ from cognitive_os.domain.coding import (
     WorkspaceRequest,
 )
 from cognitive_os.domain.memory import PUBLIC_MEMORY_CONTRACTS
+from cognitive_os.domain.semantic_memory import PUBLIC_SEMANTIC_CONTRACTS
 from cognitive_os.domain.verifiers import (
     VerificationBundle,
     VerificationExecution,
@@ -109,6 +111,7 @@ class SchemaEntry:
 DOMAIN_SCHEMAS: tuple[tuple[type[BaseModel], str], ...] = (
     (CodingConfiguration, "v1/config/coding-configuration.schema.json"),
     (MemoryConfiguration, "v1/config/memory-configuration.schema.json"),
+    (SemanticMemoryConfiguration, "v1/config/semantic-memory-configuration.schema.json"),
     *tuple(
         (
             model,
@@ -120,6 +123,18 @@ DOMAIN_SCHEMAS: tuple[tuple[type[BaseModel], str], ...] = (
             + ".schema.json",
         )
         for model in PUBLIC_MEMORY_CONTRACTS
+    ),
+    *tuple(
+        (
+            model,
+            "v1/semantic-memory/"
+            + "".join(
+                ("-" + character.lower()) if character.isupper() else character
+                for character in model.__name__
+            ).lstrip("-")
+            + ".schema.json",
+        )
+        for model in PUBLIC_SEMANTIC_CONTRACTS
     ),
     (CodingLimits, "v1/domain/coding-limits.schema.json"),
     (CodingCommandPolicy, "v1/domain/coding-command-policy.schema.json"),

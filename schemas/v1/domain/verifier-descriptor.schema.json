@@ -57,7 +57,8 @@
         "coding",
         "mathematics",
         "physics",
-        "logic"
+        "logic",
+        "semantic"
       ],
       "title": "ProblemDomain",
       "type": "string"
@@ -83,7 +84,8 @@
         "tool_result",
         "mathematical_expression",
         "logical_problem",
-        "physical_quantity"
+        "physical_quantity",
+        "semantic_snapshot"
       ],
       "title": "VerificationSubjectType",
       "type": "string"
@@ -164,7 +166,8 @@
         "logic",
         "physics",
         "policy",
-        "advisory"
+        "advisory",
+        "semantic"
       ],
       "title": "VerifierKind",
       "type": "string"

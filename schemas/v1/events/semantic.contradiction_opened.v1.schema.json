@@ -1,0 +1,36 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/semantic.contradiction_opened.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "claim_ids": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Claim Ids",
+      "type": "array"
+    },
+    "content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "contradiction_id": {
+      "format": "uuid",
+      "title": "Contradiction Id",
+      "type": "string"
+    },
+    "revision": {
+      "title": "Revision",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "contradiction_id",
+    "revision",
+    "claim_ids",
+    "content_hash"
+  ],
+  "title": "SemanticContradictionOpened",
+  "type": "object"
+}

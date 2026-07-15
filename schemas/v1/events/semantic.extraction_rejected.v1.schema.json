@@ -1,0 +1,34 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/semantic.extraction_rejected.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "extraction_id": {
+      "format": "uuid",
+      "title": "Extraction Id",
+      "type": "string"
+    },
+    "proposal_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Proposal Hash",
+      "type": "string"
+    },
+    "reason_code": {
+      "minLength": 1,
+      "title": "Reason Code",
+      "type": "string"
+    },
+    "rejected_at": {
+      "format": "date-time",
+      "title": "Rejected At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "extraction_id",
+    "reason_code",
+    "proposal_hash",
+    "rejected_at"
+  ],
+  "title": "SemanticExtractionRejected",
+  "type": "object"
+}

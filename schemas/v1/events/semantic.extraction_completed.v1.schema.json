@@ -1,0 +1,46 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/semantic.extraction_completed.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "claim_ids": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Claim Ids",
+      "type": "array"
+    },
+    "completed_at": {
+      "format": "date-time",
+      "title": "Completed At",
+      "type": "string"
+    },
+    "extraction_id": {
+      "format": "uuid",
+      "title": "Extraction Id",
+      "type": "string"
+    },
+    "manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Manifest Hash",
+      "type": "string"
+    },
+    "observation_ids": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Observation Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "extraction_id",
+    "manifest_hash",
+    "observation_ids",
+    "claim_ids",
+    "completed_at"
+  ],
+  "title": "SemanticExtractionCompleted",
+  "type": "object"
+}

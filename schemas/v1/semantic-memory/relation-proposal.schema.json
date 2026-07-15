@@ -1,0 +1,80 @@
+{
+  "$defs": {
+    "ClaimRelationType": {
+      "enum": [
+        "supports",
+        "contradicts",
+        "qualifies",
+        "supersedes",
+        "derived_from",
+        "specializes",
+        "generalizes",
+        "related_to"
+      ],
+      "title": "ClaimRelationType",
+      "type": "string"
+    },
+    "ClaimTemporalInterval": {
+      "additionalProperties": false,
+      "properties": {
+        "valid_from": {
+          "format": "date-time",
+          "title": "Valid From",
+          "type": "string"
+        },
+        "valid_to": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Valid To"
+        }
+      },
+      "required": [
+        "valid_from"
+      ],
+      "title": "ClaimTemporalInterval",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/relation-proposal.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "proposal_id": {
+      "format": "uuid",
+      "title": "Proposal Id",
+      "type": "string"
+    },
+    "relation_type": {
+      "$ref": "#/$defs/ClaimRelationType"
+    },
+    "source_claim_proposal_id": {
+      "format": "uuid",
+      "title": "Source Claim Proposal Id",
+      "type": "string"
+    },
+    "target_claim_proposal_id": {
+      "format": "uuid",
+      "title": "Target Claim Proposal Id",
+      "type": "string"
+    },
+    "valid_interval": {
+      "$ref": "#/$defs/ClaimTemporalInterval"
+    }
+  },
+  "required": [
+    "proposal_id",
+    "source_claim_proposal_id",
+    "target_claim_proposal_id",
+    "relation_type",
+    "valid_interval"
+  ],
+  "title": "RelationProposal",
+  "type": "object"
+}

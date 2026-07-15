@@ -1,0 +1,43 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/semantic-entity-ref.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "display_label": {
+      "anyOf": [
+        {
+          "maxLength": 1024,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Display Label"
+    },
+    "entity_id": {
+      "maxLength": 1024,
+      "minLength": 1,
+      "title": "Entity Id",
+      "type": "string"
+    },
+    "entity_type": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Entity Type",
+      "type": "string"
+    },
+    "value_type": {
+      "const": "entity",
+      "default": "entity",
+      "title": "Value Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "entity_id",
+    "entity_type"
+  ],
+  "title": "SemanticEntityRef",
+  "type": "object"
+}

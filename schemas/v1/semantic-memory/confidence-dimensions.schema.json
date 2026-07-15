@@ -1,0 +1,100 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/confidence-dimensions.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "aggregation_policy_version": {
+      "const": "1",
+      "default": "1",
+      "title": "Aggregation Policy Version",
+      "type": "string"
+    },
+    "consistency_confidence": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Consistency Confidence"
+    },
+    "evidence_confidence": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Evidence Confidence"
+    },
+    "extraction_confidence": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Extraction Confidence",
+      "type": "number"
+    },
+    "grounding_confidence": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Grounding Confidence"
+    },
+    "overall_confidence": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Overall Confidence",
+      "type": "number"
+    },
+    "source_reliability": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Reliability"
+    },
+    "verification_confidence": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Verification Confidence"
+    }
+  },
+  "required": [
+    "extraction_confidence",
+    "overall_confidence"
+  ],
+  "title": "ConfidenceDimensions",
+  "type": "object"
+}

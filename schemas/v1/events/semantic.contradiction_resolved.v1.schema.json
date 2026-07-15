@@ -1,0 +1,48 @@
+{
+  "$defs": {
+    "ContradictionStatus": {
+      "enum": [
+        "candidate",
+        "open",
+        "resolved",
+        "dismissed"
+      ],
+      "title": "ContradictionStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/semantic.contradiction_resolved.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "contradiction_id": {
+      "format": "uuid",
+      "title": "Contradiction Id",
+      "type": "string"
+    },
+    "expected_revision": {
+      "title": "Expected Revision",
+      "type": "integer"
+    },
+    "revision": {
+      "title": "Revision",
+      "type": "integer"
+    },
+    "status": {
+      "$ref": "#/$defs/ContradictionStatus"
+    }
+  },
+  "required": [
+    "contradiction_id",
+    "expected_revision",
+    "revision",
+    "status",
+    "content_hash"
+  ],
+  "title": "SemanticContradictionResolved",
+  "type": "object"
+}

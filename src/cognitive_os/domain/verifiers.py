@@ -25,6 +25,7 @@ class VerifierKind(StrEnum):
     PHYSICS = "physics"
     POLICY = "policy"
     ADVISORY = "advisory"
+    SEMANTIC = "semantic"
 
 
 class VerifierDeterminism(StrEnum):
@@ -55,6 +56,7 @@ class VerificationSubjectType(StrEnum):
     MATHEMATICAL_EXPRESSION = "mathematical_expression"
     LOGICAL_PROBLEM = "logical_problem"
     PHYSICAL_QUANTITY = "physical_quantity"
+    SEMANTIC_SNAPSHOT = "semantic_snapshot"
 
 
 class VerifierHealthStatus(StrEnum):

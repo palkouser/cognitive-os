@@ -1,0 +1,273 @@
+{
+  "$defs": {
+    "ClaimTemporalInterval": {
+      "additionalProperties": false,
+      "properties": {
+        "valid_from": {
+          "format": "date-time",
+          "title": "Valid From",
+          "type": "string"
+        },
+        "valid_to": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Valid To"
+        }
+      },
+      "required": [
+        "valid_from"
+      ],
+      "title": "ClaimTemporalInterval",
+      "type": "object"
+    },
+    "SemanticEntityRef": {
+      "additionalProperties": false,
+      "properties": {
+        "display_label": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Label"
+        },
+        "entity_id": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Entity Id",
+          "type": "string"
+        },
+        "entity_type": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Entity Type",
+          "type": "string"
+        },
+        "value_type": {
+          "const": "entity",
+          "default": "entity",
+          "title": "Value Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entity_id",
+        "entity_type"
+      ],
+      "title": "SemanticEntityRef",
+      "type": "object"
+    },
+    "SemanticLiteral": {
+      "additionalProperties": false,
+      "properties": {
+        "literal_kind": {
+          "$ref": "#/$defs/SemanticLiteralKind"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Value"
+        },
+        "value_type": {
+          "const": "literal",
+          "default": "literal",
+          "title": "Value Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "literal_kind",
+        "value"
+      ],
+      "title": "SemanticLiteral",
+      "type": "object"
+    },
+    "SemanticLiteralKind": {
+      "enum": [
+        "string",
+        "boolean",
+        "integer",
+        "decimal",
+        "date",
+        "datetime",
+        "version",
+        "uri",
+        "quantity"
+      ],
+      "title": "SemanticLiteralKind",
+      "type": "string"
+    },
+    "SemanticReference": {
+      "additionalProperties": false,
+      "properties": {
+        "display_label": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Label"
+        },
+        "identifier": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        },
+        "namespace": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Namespace",
+          "type": "string"
+        },
+        "value_type": {
+          "const": "reference",
+          "default": "reference",
+          "title": "Value Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "namespace",
+        "identifier"
+      ],
+      "title": "SemanticReference",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/claim-proposal.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "existing_observation_ids": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Existing Observation Ids",
+      "type": "array"
+    },
+    "object": {
+      "discriminator": {
+        "mapping": {
+          "entity": "#/$defs/SemanticEntityRef",
+          "literal": "#/$defs/SemanticLiteral",
+          "reference": "#/$defs/SemanticReference"
+        },
+        "propertyName": "value_type"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SemanticEntityRef"
+        },
+        {
+          "$ref": "#/$defs/SemanticLiteral"
+        },
+        {
+          "$ref": "#/$defs/SemanticReference"
+        }
+      ],
+      "title": "Object"
+    },
+    "observation_proposal_ids": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Observation Proposal Ids",
+      "type": "array"
+    },
+    "predicate_id": {
+      "minLength": 1,
+      "title": "Predicate Id",
+      "type": "string"
+    },
+    "proposal_id": {
+      "format": "uuid",
+      "title": "Proposal Id",
+      "type": "string"
+    },
+    "provider_confidence": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Provider Confidence"
+    },
+    "subject": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SemanticEntityRef"
+        },
+        {
+          "$ref": "#/$defs/SemanticReference"
+        }
+      ],
+      "title": "Subject"
+    },
+    "valid_interval": {
+      "$ref": "#/$defs/ClaimTemporalInterval"
+    }
+  },
+  "required": [
+    "proposal_id",
+    "subject",
+    "predicate_id",
+    "object",
+    "valid_interval"
+  ],
+  "title": "ClaimProposal",
+  "type": "object"
+}

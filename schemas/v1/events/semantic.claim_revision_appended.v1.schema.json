@@ -1,0 +1,32 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/semantic.claim_revision_appended.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "claim_id": {
+      "format": "uuid",
+      "title": "Claim Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "expected_revision": {
+      "title": "Expected Revision",
+      "type": "integer"
+    },
+    "revision": {
+      "title": "Revision",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "claim_id",
+    "expected_revision",
+    "revision",
+    "content_hash"
+  ],
+  "title": "SemanticClaimRevisionAppended",
+  "type": "object"
+}

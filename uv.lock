@@ -287,6 +287,9 @@ postgres = [
     { name = "asyncpg" },
     { name = "sqlalchemy", extra = ["asyncio"] },
 ]
+semantic-graph = [
+    { name = "networkx" },
+]
 verification-logic = [
     { name = "z3-solver" },
 ]
@@ -333,6 +336,7 @@ requires-dist = [
     { name = "jsonschema", specifier = ">=4.25,<5" },
     { name = "langfuse", marker = "extra == 'observability-langfuse'", specifier = ">=3,<4" },
     { name = "mcp", marker = "extra == 'mcp'", specifier = ">=1.23,<2" },
+    { name = "networkx", marker = "extra == 'semantic-graph'", specifier = ">=3.6,<4" },
     { name = "openai", specifier = ">=1.60,<2" },
     { name = "opentelemetry-api", marker = "extra == 'observability-otel'", specifier = ">=1.35,<2" },
     { name = "opentelemetry-exporter-otlp-proto-grpc", marker = "extra == 'observability-otel'", specifier = ">=1.35,<2" },
@@ -347,7 +351,7 @@ requires-dist = [
     { name = "sympy", marker = "extra == 'verification-math'", specifier = ">=1.14,<2" },
     { name = "z3-solver", marker = "extra == 'verification-logic'", specifier = ">=4.16,<5" },
 ]
-provides-extras = ["benchmark-inspect", "browser", "cloud-aws", "lightagent-legacy-memory", "mcp", "memory-benchmarks", "memory-postgres", "local-embeddings", "observability-langfuse", "observability-otel", "postgres", "provider-litellm", "verification-logic", "verification-math", "verification-physics"]
+provides-extras = ["benchmark-inspect", "browser", "cloud-aws", "lightagent-legacy-memory", "mcp", "memory-benchmarks", "memory-postgres", "semantic-graph", "local-embeddings", "observability-langfuse", "observability-otel", "postgres", "provider-litellm", "verification-logic", "verification-math", "verification-physics"]
 
 [package.metadata.requires-dev]
 dev = [

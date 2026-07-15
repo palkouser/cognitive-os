@@ -1,0 +1,157 @@
+{
+  "$defs": {
+    "GroundedSourceSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "end": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End"
+        },
+        "excerpt_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Excerpt Hash",
+          "type": "string"
+        },
+        "mode": {
+          "$ref": "#/$defs/GroundingMode"
+        },
+        "path": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path"
+        },
+        "source": {
+          "$ref": "#/$defs/SemanticSourceRef"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start"
+        }
+      },
+      "required": [
+        "source",
+        "mode",
+        "excerpt_hash"
+      ],
+      "title": "GroundedSourceSpan",
+      "type": "object"
+    },
+    "GroundingMode": {
+      "enum": [
+        "typed_field",
+        "artifact_bytes",
+        "line_range",
+        "event_field",
+        "memory_field"
+      ],
+      "title": "GroundingMode",
+      "type": "string"
+    },
+    "SemanticSourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision"
+        },
+        "source_id": {
+          "format": "uuid",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/SemanticSourceType"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_id",
+        "content_hash"
+      ],
+      "title": "SemanticSourceRef",
+      "type": "object"
+    },
+    "SemanticSourceType": {
+      "enum": [
+        "event",
+        "artifact",
+        "memory_revision",
+        "task_run",
+        "trajectory"
+      ],
+      "title": "SemanticSourceType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/observation-proposal.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content": {
+      "maxLength": 16384,
+      "minLength": 1,
+      "title": "Content",
+      "type": "string"
+    },
+    "proposal_id": {
+      "format": "uuid",
+      "title": "Proposal Id",
+      "type": "string"
+    },
+    "source_spans": {
+      "items": {
+        "$ref": "#/$defs/GroundedSourceSpan"
+      },
+      "maxItems": 16,
+      "minItems": 1,
+      "title": "Source Spans",
+      "type": "array"
+    }
+  },
+  "required": [
+    "proposal_id",
+    "content",
+    "source_spans"
+  ],
+  "title": "ObservationProposal",
+  "type": "object"
+}

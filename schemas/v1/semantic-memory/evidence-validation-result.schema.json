@@ -1,0 +1,36 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/evidence-validation-result.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "evidence_id": {
+      "format": "uuid",
+      "title": "Evidence Id",
+      "type": "string"
+    },
+    "reason_codes": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Reason Codes",
+      "type": "array"
+    },
+    "valid": {
+      "title": "Valid",
+      "type": "boolean"
+    },
+    "validated_at": {
+      "format": "date-time",
+      "title": "Validated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "evidence_id",
+    "valid",
+    "reason_codes",
+    "validated_at"
+  ],
+  "title": "EvidenceValidationResult",
+  "type": "object"
+}

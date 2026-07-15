@@ -1,0 +1,16 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/claim-reference.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "claim_id": {
+      "format": "uuid",
+      "title": "Claim Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "claim_id"
+  ],
+  "title": "ClaimReference",
+  "type": "object"
+}

@@ -38,3 +38,12 @@ the registered upstream boundary.
 | Graphiti | reviewed 2026-07-15 | Apache-2.0 | Temporal-memory reference only | Deferred; not a runtime dependency or store |
 | LangMem | reviewed 2026-07-15 | MIT | Governance reference only | No autonomous extraction or persistence |
 | agentmemory | reviewed 2026-07-15 | MIT | Adapter-pattern reference only | Not a backend or authority |
+
+## Sprint 10 semantic-memory references
+
+| Project | Reviewed release | License | Use | Authority status |
+| --- | --- | --- | --- | --- |
+| LLM Wiki | Sprint 10 concept specification | Project specification | Deterministic page layout and lineage concept | Derived projection only |
+| Graphiti | reviewed 2026-07-15 | Apache-2.0 | Temporal graph algorithm and reference donor | No runtime dependency or store |
+| Cognee | reviewed 2026-07-15 | Apache-2.0 | Ingestion and graph architecture reference | No runtime dependency or store |
+| NetworkX | 3.6.1 | BSD-3-Clause | Optional bounded in-process graph analysis | Non-authoritative `semantic-graph` extra; removable |

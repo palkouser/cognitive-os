@@ -1,0 +1,58 @@
+{
+  "$defs": {
+    "ContradictionSeverity": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "title": "ContradictionSeverity",
+      "type": "string"
+    },
+    "ContradictionStatus": {
+      "enum": [
+        "candidate",
+        "open",
+        "resolved",
+        "dismissed"
+      ],
+      "title": "ContradictionStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/contradiction-record.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "contradiction_id": {
+      "format": "uuid",
+      "title": "Contradiction Id",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "current_revision": {
+      "minimum": 1,
+      "title": "Current Revision",
+      "type": "integer"
+    },
+    "current_status": {
+      "$ref": "#/$defs/ContradictionStatus"
+    },
+    "severity": {
+      "$ref": "#/$defs/ContradictionSeverity"
+    }
+  },
+  "required": [
+    "contradiction_id",
+    "current_revision",
+    "current_status",
+    "severity",
+    "created_at"
+  ],
+  "title": "ContradictionRecord",
+  "type": "object"
+}

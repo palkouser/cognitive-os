@@ -1,0 +1,90 @@
+{
+  "$defs": {
+    "MemoryScope": {
+      "additionalProperties": false,
+      "properties": {
+        "scope_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "scope_type": {
+          "$ref": "#/$defs/MemoryScopeType"
+        }
+      },
+      "required": [
+        "scope_type",
+        "scope_id"
+      ],
+      "title": "MemoryScope",
+      "type": "object"
+    },
+    "MemoryScopeType": {
+      "enum": [
+        "global",
+        "project",
+        "repository",
+        "task",
+        "session",
+        "domain"
+      ],
+      "title": "MemoryScopeType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/wiki-page.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "canonical_subject_key": {
+      "minLength": 1,
+      "title": "Canonical Subject Key",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "current_revision": {
+      "minimum": 0,
+      "title": "Current Revision",
+      "type": "integer"
+    },
+    "domain": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Domain"
+    },
+    "page_id": {
+      "format": "uuid",
+      "title": "Page Id",
+      "type": "string"
+    },
+    "page_type": {
+      "minLength": 1,
+      "title": "Page Type",
+      "type": "string"
+    },
+    "scope": {
+      "$ref": "#/$defs/MemoryScope"
+    }
+  },
+  "required": [
+    "page_id",
+    "scope",
+    "canonical_subject_key",
+    "page_type",
+    "current_revision",
+    "created_at"
+  ],
+  "title": "WikiPage",
+  "type": "object"
+}

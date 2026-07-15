@@ -1,0 +1,68 @@
+{
+  "$defs": {
+    "ClaimRevisionReference": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "format": "uuid",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "claim_id",
+        "revision"
+      ],
+      "title": "ClaimRevisionReference",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/semantic-extraction-manifest.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "claims": {
+      "items": {
+        "$ref": "#/$defs/ClaimRevisionReference"
+      },
+      "title": "Claims",
+      "type": "array"
+    },
+    "extraction_id": {
+      "format": "uuid",
+      "title": "Extraction Id",
+      "type": "string"
+    },
+    "manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Manifest Hash",
+      "type": "string"
+    },
+    "observation_ids": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Observation Ids",
+      "type": "array"
+    },
+    "registry_snapshot_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Registry Snapshot Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "extraction_id",
+    "registry_snapshot_hash",
+    "observation_ids",
+    "claims",
+    "manifest_hash"
+  ],
+  "title": "SemanticExtractionManifest",
+  "type": "object"
+}

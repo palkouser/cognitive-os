@@ -1,0 +1,22 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/claim-revision-reference.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "claim_id": {
+      "format": "uuid",
+      "title": "Claim Id",
+      "type": "string"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "claim_id",
+    "revision"
+  ],
+  "title": "ClaimRevisionReference",
+  "type": "object"
+}
