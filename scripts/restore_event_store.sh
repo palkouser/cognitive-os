@@ -38,5 +38,7 @@ zstd -q -dc "$archive" | tar -xf - -C "$restore_root"
 revision="$(psql "$COGOS_RESTORE_DATABASE_URL" -Atqc 'SELECT version_num FROM alembic_version LIMIT 1')"
 event_count="$(psql "$COGOS_RESTORE_DATABASE_URL" -Atqc 'SELECT count(*) FROM cognitive_os.events')"
 artifact_count="$(psql "$COGOS_RESTORE_DATABASE_URL" -Atqc 'SELECT count(*) FROM cognitive_os.artifacts')"
-[[ -n "$revision" && "$event_count" =~ ^[0-9]+$ && "$artifact_count" =~ ^[0-9]+$ ]]
+memory_count="$(psql "$COGOS_RESTORE_DATABASE_URL" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.memory_items') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.memory_items) END")"
+memory_integrity="$(psql "$COGOS_RESTORE_DATABASE_URL" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.memory_revisions') IS NULL THEN true ELSE NOT EXISTS (SELECT 1 FROM cognitive_os.memory_items i LEFT JOIN cognitive_os.memory_revisions r ON r.memory_id=i.memory_id AND r.revision=i.current_revision WHERE r.memory_id IS NULL OR r.status<>i.status) AND NOT EXISTS (SELECT 1 FROM cognitive_os.memory_revisions r WHERE r.content_hash !~ '^[0-9a-f]{64}$' OR (r.revision=1 AND r.previous_revision IS NOT NULL) OR (r.revision>1 AND r.previous_revision<>r.revision-1)) END")"
+[[ -n "$revision" && "$event_count" =~ ^[0-9]+$ && "$artifact_count" =~ ^[0-9]+$ && "$memory_count" =~ ^[0-9]+$ && "$memory_integrity" == "t" ]]
 echo "Isolated restore verification passed."

@@ -1,0 +1,26 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/memory/memory-text-query.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "language": {
+      "default": "english",
+      "enum": [
+        "simple",
+        "english"
+      ],
+      "title": "Language",
+      "type": "string"
+    },
+    "text": {
+      "maxLength": 512,
+      "minLength": 1,
+      "title": "Text",
+      "type": "string"
+    }
+  },
+  "required": [
+    "text"
+  ],
+  "title": "MemoryTextQuery",
+  "type": "object"
+}

@@ -1,0 +1,97 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/memory/code-context-memory-content.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "base_commit": {
+      "pattern": "^[0-9a-f]{40}$",
+      "title": "Base Commit",
+      "type": "string"
+    },
+    "bounded_excerpt": {
+      "anyOf": [
+        {
+          "maxLength": 16384,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Bounded Excerpt"
+    },
+    "changed_paths": {
+      "default": [],
+      "items": {
+        "maxLength": 512,
+        "type": "string"
+      },
+      "title": "Changed Paths",
+      "type": "array"
+    },
+    "context_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Context Hash",
+      "type": "string"
+    },
+    "diff_artifact_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Diff Artifact Id"
+    },
+    "excerpt_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Excerpt Hash"
+    },
+    "memory_type": {
+      "const": "code_context",
+      "default": "code_context",
+      "title": "Memory Type",
+      "type": "string"
+    },
+    "repository_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Repository Identity",
+      "type": "string"
+    },
+    "repository_profile": {
+      "maxLength": 4096,
+      "title": "Repository Profile",
+      "type": "string"
+    },
+    "symbol_references": {
+      "default": [],
+      "items": {
+        "maxLength": 512,
+        "type": "string"
+      },
+      "title": "Symbol References",
+      "type": "array"
+    }
+  },
+  "required": [
+    "repository_identity",
+    "base_commit",
+    "repository_profile",
+    "context_hash"
+  ],
+  "title": "CodeContextMemoryContent",
+  "type": "object"
+}

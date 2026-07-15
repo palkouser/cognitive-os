@@ -32,6 +32,14 @@ OpenTelemetry support in the separate `observability-otel` extra. The default in
 remains database- and telemetry-SDK-independent. See the
 [PostgreSQL development guide](docs/operations/postgres-development.md).
 
+Sprint 9 adds Governed Memory Plane v1 through the optional `memory-postgres` extra. PostgreSQL
+owns current and historical memory state, large content remains in the artifact store, and the
+existing event store records lifecycle evidence. Writes require typed provenance and host policy;
+providers and legacy LightAgent memory have no direct persistence or promotion authority. Search
+supports metadata, PostgreSQL full text, and exact pgvector cosine similarity only. See the
+[Memory Plane architecture](docs/architecture/governed-memory-plane.md) and
+[operations guide](docs/operations/memory-plane.md).
+
 ![LightAgent Banner](docs/images/lightagent-banner.jpg)
 <div align="center">
   <p>

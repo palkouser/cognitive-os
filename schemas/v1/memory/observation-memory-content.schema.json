@@ -1,0 +1,28 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/memory/observation-memory-content.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "evidence_summary": {
+      "maxLength": 8192,
+      "title": "Evidence Summary",
+      "type": "string"
+    },
+    "memory_type": {
+      "const": "observation",
+      "default": "observation",
+      "title": "Memory Type",
+      "type": "string"
+    },
+    "observation": {
+      "maxLength": 16384,
+      "title": "Observation",
+      "type": "string"
+    }
+  },
+  "required": [
+    "observation",
+    "evidence_summary"
+  ],
+  "title": "ObservationMemoryContent",
+  "type": "object"
+}

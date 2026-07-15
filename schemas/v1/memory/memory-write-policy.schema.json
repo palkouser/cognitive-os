@@ -1,0 +1,86 @@
+{
+  "$defs": {
+    "MemoryScopeType": {
+      "enum": [
+        "global",
+        "project",
+        "repository",
+        "task",
+        "session",
+        "domain"
+      ],
+      "title": "MemoryScopeType",
+      "type": "string"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "MemoryType": {
+      "enum": [
+        "episode",
+        "observation",
+        "decision",
+        "correction",
+        "task_summary",
+        "code_context",
+        "verification_summary",
+        "failure_pattern",
+        "user_instruction"
+      ],
+      "title": "MemoryType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/memory/memory-write-policy.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "allow_automatic_request": {
+      "default": false,
+      "title": "Allow Automatic Request",
+      "type": "boolean"
+    },
+    "allow_provider_creator": {
+      "default": false,
+      "title": "Allow Provider Creator",
+      "type": "boolean"
+    },
+    "allow_verified_creation": {
+      "default": false,
+      "title": "Allow Verified Creation",
+      "type": "boolean"
+    },
+    "allowed_scopes": {
+      "items": {
+        "$ref": "#/$defs/MemoryScopeType"
+      },
+      "title": "Allowed Scopes",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "allowed_types": {
+      "items": {
+        "$ref": "#/$defs/MemoryType"
+      },
+      "title": "Allowed Types",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "maximum_sensitivity": {
+      "$ref": "#/$defs/MemorySensitivity"
+    }
+  },
+  "required": [
+    "allowed_types",
+    "allowed_scopes",
+    "maximum_sensitivity"
+  ],
+  "title": "MemoryWritePolicy",
+  "type": "object"
+}

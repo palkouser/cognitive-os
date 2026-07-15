@@ -1,0 +1,214 @@
+{
+  "$defs": {
+    "MemoryCreator": {
+      "additionalProperties": false,
+      "properties": {
+        "creator_id": {
+          "minLength": 1,
+          "title": "Creator Id",
+          "type": "string"
+        },
+        "creator_type": {
+          "$ref": "#/$defs/MemoryCreatorType"
+        }
+      },
+      "required": [
+        "creator_type",
+        "creator_id"
+      ],
+      "title": "MemoryCreator",
+      "type": "object"
+    },
+    "MemoryCreatorType": {
+      "enum": [
+        "user",
+        "operator",
+        "controller",
+        "ingestion_service",
+        "approved_internal_service",
+        "provider"
+      ],
+      "title": "MemoryCreatorType",
+      "type": "string"
+    },
+    "MemoryProvenanceBundle": {
+      "additionalProperties": false,
+      "properties": {
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/MemorySourceRef"
+          },
+          "maxItems": 64,
+          "minItems": 1,
+          "title": "Sources",
+          "type": "array"
+        }
+      },
+      "required": [
+        "sources"
+      ],
+      "title": "MemoryProvenanceBundle",
+      "type": "object"
+    },
+    "MemorySourceIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Hash"
+        },
+        "memory_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Memory Id"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Id"
+        },
+        "source_type": {
+          "$ref": "#/$defs/MemorySourceType"
+        }
+      },
+      "required": [
+        "source_type"
+      ],
+      "title": "MemorySourceIdentity",
+      "type": "object"
+    },
+    "MemorySourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "identity": {
+          "$ref": "#/$defs/MemorySourceIdentity"
+        },
+        "relationship": {
+          "default": "derived_from",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Relationship",
+          "type": "string"
+        },
+        "source_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "identity",
+        "source_hash"
+      ],
+      "title": "MemorySourceRef",
+      "type": "object"
+    },
+    "MemorySourceType": {
+      "enum": [
+        "event",
+        "artifact",
+        "task_run",
+        "acceptance_decision",
+        "verifier_result",
+        "coding_trajectory",
+        "user_correction",
+        "memory_revision",
+        "selected_decision"
+      ],
+      "title": "MemorySourceType",
+      "type": "string"
+    },
+    "MemoryTransitionReason": {
+      "enum": [
+        "created",
+        "content_revised",
+        "metadata_revised",
+        "authoritative_evidence_verified",
+        "superseded_by_successor",
+        "user_correction",
+        "source_retracted",
+        "policy_retraction",
+        "retention_expired",
+        "explicit_expiry"
+      ],
+      "title": "MemoryTransitionReason",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/memory/memory-promotion-request.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "actor": {
+      "$ref": "#/$defs/MemoryCreator"
+    },
+    "evidence": {
+      "$ref": "#/$defs/MemoryProvenanceBundle"
+    },
+    "expected_revision": {
+      "minimum": 1,
+      "title": "Expected Revision",
+      "type": "integer"
+    },
+    "memory_id": {
+      "format": "uuid",
+      "title": "Memory Id",
+      "type": "string"
+    },
+    "reason": {
+      "$ref": "#/$defs/MemoryTransitionReason",
+      "default": "authoritative_evidence_verified"
+    },
+    "request_id": {
+      "format": "uuid",
+      "title": "Request Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "request_id",
+    "memory_id",
+    "expected_revision",
+    "evidence",
+    "actor"
+  ],
+  "title": "MemoryPromotionRequest",
+  "type": "object"
+}

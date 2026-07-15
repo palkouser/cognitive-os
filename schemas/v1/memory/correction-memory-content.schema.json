@@ -1,0 +1,48 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/memory/correction-memory-content.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "corrected_memory_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Corrected Memory Id"
+    },
+    "corrected_revision": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Corrected Revision"
+    },
+    "correction": {
+      "maxLength": 16384,
+      "title": "Correction",
+      "type": "string"
+    },
+    "memory_type": {
+      "const": "correction",
+      "default": "correction",
+      "title": "Memory Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "correction"
+  ],
+  "title": "CorrectionMemoryContent",
+  "type": "object"
+}

@@ -1,0 +1,154 @@
+{
+  "$defs": {
+    "MemoryAccessKind": {
+      "enum": [
+        "retrieved",
+        "used_in_context"
+      ],
+      "title": "MemoryAccessKind",
+      "type": "string"
+    },
+    "MemoryRetrievalMode": {
+      "enum": [
+        "metadata",
+        "text",
+        "vector"
+      ],
+      "title": "MemoryRetrievalMode",
+      "type": "string"
+    },
+    "MemoryScope": {
+      "additionalProperties": false,
+      "properties": {
+        "scope_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "scope_type": {
+          "$ref": "#/$defs/MemoryScopeType"
+        }
+      },
+      "required": [
+        "scope_type",
+        "scope_id"
+      ],
+      "title": "MemoryScope",
+      "type": "object"
+    },
+    "MemoryScopeType": {
+      "enum": [
+        "global",
+        "project",
+        "repository",
+        "task",
+        "session",
+        "domain"
+      ],
+      "title": "MemoryScopeType",
+      "type": "string"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/memory/memory-access-record.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "access_id": {
+      "format": "uuid",
+      "title": "Access Id",
+      "type": "string"
+    },
+    "access_kind": {
+      "$ref": "#/$defs/MemoryAccessKind",
+      "default": "retrieved"
+    },
+    "accessed_at": {
+      "format": "date-time",
+      "title": "Accessed At",
+      "type": "string"
+    },
+    "filter_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Filter Hash",
+      "type": "string"
+    },
+    "memory_id": {
+      "format": "uuid",
+      "title": "Memory Id",
+      "type": "string"
+    },
+    "query_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Query Hash",
+      "type": "string"
+    },
+    "query_id": {
+      "format": "uuid",
+      "title": "Query Id",
+      "type": "string"
+    },
+    "retrieval_mode": {
+      "$ref": "#/$defs/MemoryRetrievalMode"
+    },
+    "retrieval_rank": {
+      "minimum": 1,
+      "title": "Retrieval Rank",
+      "type": "integer"
+    },
+    "retrieval_score": {
+      "minimum": 0.0,
+      "title": "Retrieval Score",
+      "type": "number"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "scope": {
+      "$ref": "#/$defs/MemoryScope"
+    },
+    "sensitivity": {
+      "$ref": "#/$defs/MemorySensitivity"
+    },
+    "task_run_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Task Run Id"
+    }
+  },
+  "required": [
+    "access_id",
+    "query_id",
+    "memory_id",
+    "revision",
+    "retrieval_mode",
+    "retrieval_rank",
+    "retrieval_score",
+    "accessed_at",
+    "scope",
+    "sensitivity",
+    "query_hash",
+    "filter_hash"
+  ],
+  "title": "MemoryAccessRecord",
+  "type": "object"
+}

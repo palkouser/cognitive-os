@@ -10,7 +10,10 @@ from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
+from cognitive_os.infrastructure.memory.postgres.tables import memory_items
 from cognitive_os.infrastructure.postgres.tables import metadata
+
+_ = memory_items  # Register optional Memory Plane tables in shared migration metadata.
 
 config = context.config
 if config.config_file_name is not None:

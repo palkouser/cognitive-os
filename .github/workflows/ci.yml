@@ -25,7 +25,7 @@ jobs:
       - name: Install Python
         run: uv python install 3.12
       - name: Sync environment
-        run: uv sync --locked --all-groups
+        run: uv sync --locked --all-groups --extra memory-postgres
       - name: Ruff check
         run: uv run ruff check --config ruff.cognitive-os.toml src/cognitive_os tests/cognitive_os tests/contract scripts
       - name: Ruff format check
@@ -263,6 +263,29 @@ jobs:
           --manifest benchmarks/manifests/sprint8-coding-ci.yaml
           --mode coding-replay --report-directory /tmp/sprint8-coding-benchmark
 
+  memory-plane-core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          version: "0.11.28"
+          enable-cache: true
+      - name: Install Python and core dependencies
+        run: uv python install 3.12 && uv sync --locked --all-groups
+      - name: Memory contracts, governance, ingestion, retrieval, and adapter tests
+        run: uv run pytest tests/cognitive_os/memory -q
+      - name: Memory contract schema drift
+        run: uv run python -m cognitive_os.schemas.export --check
+      - name: Four-case credential-free memory benchmark
+        run: >-
+          uv run python scripts/benchmark_run.py
+          --manifest benchmarks/manifests/sprint9-memory-ci.yaml
+          --mode memory-replay --report-directory /tmp/sprint9-memory-benchmark
+
   security:
     runs-on: ubuntu-latest
     steps:
@@ -290,7 +313,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:18.4-bookworm
+        image: pgvector/pgvector:0.8.2-pg18-bookworm
         env:
           POSTGRES_DB: cognitive_os_test
           POSTGRES_USER: postgres
@@ -305,7 +328,7 @@ jobs:
           --health-retries 30
     env:
       COGOS_DATABASE_BOOTSTRAP_URL: postgresql://postgres:postgres@127.0.0.1:5432/cognitive_os_test
-      COGOS_DATABASE_ADMIN_URL: postgresql+asyncpg://cogos_owner:owner-ci@127.0.0.1:5432/cognitive_os_test
+      COGOS_DATABASE_ADMIN_URL: postgresql+asyncpg://postgres:postgres@127.0.0.1:5432/cognitive_os_test
       COGOS_DATABASE_URL: postgresql+asyncpg://cogos_app:app-ci@127.0.0.1:5432/cognitive_os_test
       COGOS_ARTIFACT_ROOT: /tmp/cognitive-os-artifacts-test
     steps:
@@ -318,8 +341,10 @@ jobs:
           enable-cache: true
       - name: Install Python
         run: uv python install 3.12
-      - name: Sync PostgreSQL and telemetry extras
-        run: uv sync --locked --all-groups --extra postgres --extra observability-otel
+      - name: Sync PostgreSQL, Memory Plane, and telemetry extras
+        run: >-
+          uv sync --locked --all-groups --extra postgres --extra memory-postgres
+          --extra observability-otel
       - name: Bootstrap isolated roles
         env:
           PGPASSWORD: postgres
@@ -333,9 +358,13 @@ jobs:
         run: uv run alembic -c infra/postgres/alembic.ini upgrade head
       - name: PostgreSQL integration tests
         run: uv run pytest tests/integration/postgres tests/integration/controller -m postgres -q
+      - name: Memory Plane health
+        run: uv run python scripts/memory_health.py
+      - name: Credential-free Sprint 9 memory smoke
+        run: uv run python scripts/memory_smoke_test.py
       - name: Database and artifact backup restore test
         run: |
-          container="$(docker ps --filter ancestor=postgres:18.4-bookworm --format '{{.ID}}' | head -n1)"
+          container="$(docker ps --filter ancestor=pgvector/pgvector:0.8.2-pg18-bookworm --format '{{.ID}}' | head -n1)"
           test -n "$container"
           cat > .env.postgres.local <<EOF
           COGOS_POSTGRES_DATABASE=cognitive_os_test
@@ -348,7 +377,7 @@ jobs:
           COGOS_RESTORE_DATABASE_URL=postgresql://cogos_owner:owner-ci@127.0.0.1:5432/cognitive_os_restore_test
           COGOS_POSTGRES_TOOL_CONTAINER=$container
           COGOS_CONTAINER_DATABASE_ADMIN_URL=postgresql://cogos_owner:owner-ci@127.0.0.1:5432/cognitive_os_test
-          COGOS_CONTAINER_RESTORE_DATABASE_URL=postgresql://cogos_owner:owner-ci@127.0.0.1:5432/cognitive_os_restore_test
+          COGOS_CONTAINER_RESTORE_DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/cognitive_os_restore_test
           EOF
           chmod 0600 .env.postgres.local
           ./scripts/backup_event_store.sh
@@ -358,7 +387,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:18.4-bookworm
+        image: pgvector/pgvector:0.8.2-pg18-bookworm
         env:
           POSTGRES_DB: cognitive_os_test
           POSTGRES_USER: postgres
@@ -371,7 +400,7 @@ jobs:
           --health-timeout 3s
           --health-retries 30
     env:
-      COGOS_DATABASE_ADMIN_URL: postgresql+asyncpg://cogos_owner:owner-ci@127.0.0.1:5432/cognitive_os_test
+      COGOS_DATABASE_ADMIN_URL: postgresql+asyncpg://postgres:postgres@127.0.0.1:5432/cognitive_os_test
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -380,7 +409,9 @@ jobs:
         with:
           version: "0.11.28"
       - name: Install Python and dependencies
-        run: uv python install 3.12 && uv sync --locked --extra postgres
+        run: >-
+          uv python install 3.12 && uv sync --locked --extra postgres
+          --extra memory-postgres
       - name: Bootstrap isolated roles
         env:
           PGPASSWORD: postgres

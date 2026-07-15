@@ -1,0 +1,48 @@
+{
+  "$defs": {
+    "MemoryWriteOutcome": {
+      "enum": [
+        "allow_candidate",
+        "allow_verified",
+        "require_manual_selection",
+        "deny"
+      ],
+      "title": "MemoryWriteOutcome",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/memory/memory-write-decision.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "decision": {
+      "$ref": "#/$defs/MemoryWriteOutcome"
+    },
+    "evaluated_at": {
+      "format": "date-time",
+      "title": "Evaluated At",
+      "type": "string"
+    },
+    "policy_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Policy Hash",
+      "type": "string"
+    },
+    "reason_codes": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Reason Codes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "decision",
+    "reason_codes",
+    "policy_hash",
+    "evaluated_at"
+  ],
+  "title": "MemoryWriteDecision",
+  "type": "object"
+}

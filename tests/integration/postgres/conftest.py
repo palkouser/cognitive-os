@@ -39,7 +39,9 @@ async def engines(database_urls) -> AsyncIterator[tuple[object, object]]:
     async with admin.begin() as connection:
         await connection.execute(
             text(
-                "TRUNCATE cognitive_os.artifacts, cognitive_os.artifact_blobs, "
+                "TRUNCATE cognitive_os.memory_accesses, cognitive_os.memory_embeddings, "
+                "cognitive_os.memory_sources, cognitive_os.memory_revisions, "
+                "cognitive_os.memory_items, cognitive_os.artifacts, cognitive_os.artifact_blobs, "
                 "cognitive_os.events, cognitive_os.event_streams RESTART IDENTITY CASCADE"
             )
         )

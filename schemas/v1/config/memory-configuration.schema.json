@@ -1,0 +1,244 @@
+{
+  "$defs": {
+    "EmbeddingProviderConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "dimension": {
+          "maximum": 4096,
+          "minimum": 1,
+          "title": "Dimension",
+          "type": "integer"
+        },
+        "enabled": {
+          "default": true,
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "local_model_digest": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Local Model Digest"
+        },
+        "local_model_path": {
+          "anyOf": [
+            {
+              "format": "path",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Local Model Path"
+        },
+        "model_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Model Id",
+          "type": "string"
+        },
+        "provider_type": {
+          "pattern": "^(deterministic|sentence_transformers)$",
+          "title": "Provider Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider_type",
+        "model_id",
+        "dimension"
+      ],
+      "title": "EmbeddingProviderConfiguration",
+      "type": "object"
+    },
+    "MemoryBenchmarkConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "maximum_duration_seconds": {
+          "default": 600,
+          "maximum": 86400,
+          "minimum": 1,
+          "title": "Maximum Duration Seconds",
+          "type": "integer"
+        },
+        "maximum_records": {
+          "default": 10000,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Maximum Records",
+          "type": "integer"
+        }
+      },
+      "title": "MemoryBenchmarkConfiguration",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/config/memory-configuration.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "allow_approximate_vector_indexes": {
+      "default": false,
+      "title": "Allow Approximate Vector Indexes",
+      "type": "boolean"
+    },
+    "allow_automatic_promotion": {
+      "default": false,
+      "title": "Allow Automatic Promotion",
+      "type": "boolean"
+    },
+    "allow_automatic_task_ingestion": {
+      "default": false,
+      "title": "Allow Automatic Task Ingestion",
+      "type": "boolean"
+    },
+    "allow_network_model_download": {
+      "default": false,
+      "title": "Allow Network Model Download",
+      "type": "boolean"
+    },
+    "allow_provider_direct_write": {
+      "default": false,
+      "title": "Allow Provider Direct Write",
+      "type": "boolean"
+    },
+    "allowed_memory_types": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Allowed Memory Types",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "allowed_scope_types": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Allowed Scope Types",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "benchmark": {
+      "$ref": "#/$defs/MemoryBenchmarkConfiguration",
+      "default": {
+        "maximum_duration_seconds": 600,
+        "maximum_records": 10000
+      }
+    },
+    "default_query_limit": {
+      "default": 20,
+      "maximum": 100,
+      "minimum": 1,
+      "title": "Default Query Limit",
+      "type": "integer"
+    },
+    "embedding_providers": {
+      "additionalProperties": {
+        "$ref": "#/$defs/EmbeddingProviderConfiguration"
+      },
+      "title": "Embedding Providers",
+      "type": "object"
+    },
+    "export_root": {
+      "format": "path",
+      "title": "Export Root",
+      "type": "string"
+    },
+    "fail_closed_on_access_audit_error": {
+      "default": true,
+      "title": "Fail Closed On Access Audit Error",
+      "type": "boolean"
+    },
+    "maximum_embedding_batch_size": {
+      "default": 64,
+      "maximum": 64,
+      "minimum": 1,
+      "title": "Maximum Embedding Batch Size",
+      "type": "integer"
+    },
+    "maximum_full_text_query_length": {
+      "default": 512,
+      "maximum": 512,
+      "minimum": 1,
+      "title": "Maximum Full Text Query Length",
+      "type": "integer"
+    },
+    "maximum_inline_content_bytes": {
+      "default": 65536,
+      "minimum": 1,
+      "title": "Maximum Inline Content Bytes",
+      "type": "integer"
+    },
+    "maximum_parallel_retrieval_workers": {
+      "default": 4,
+      "maximum": 4,
+      "minimum": 1,
+      "title": "Maximum Parallel Retrieval Workers",
+      "type": "integer"
+    },
+    "maximum_provider_sensitivity": {
+      "pattern": "^(public|internal|confidential)$",
+      "title": "Maximum Provider Sensitivity",
+      "type": "string"
+    },
+    "maximum_query_candidates": {
+      "default": 1000,
+      "maximum": 1000,
+      "minimum": 1,
+      "title": "Maximum Query Candidates",
+      "type": "integer"
+    },
+    "maximum_query_results": {
+      "default": 100,
+      "maximum": 100,
+      "minimum": 1,
+      "title": "Maximum Query Results",
+      "type": "integer"
+    },
+    "maximum_revision_depth": {
+      "default": 1000,
+      "maximum": 1000,
+      "minimum": 1,
+      "title": "Maximum Revision Depth",
+      "type": "integer"
+    },
+    "maximum_search_text_bytes": {
+      "default": 32768,
+      "minimum": 1,
+      "title": "Maximum Search Text Bytes",
+      "type": "integer"
+    },
+    "maximum_sources_per_revision": {
+      "default": 64,
+      "maximum": 64,
+      "minimum": 1,
+      "title": "Maximum Sources Per Revision",
+      "type": "integer"
+    },
+    "maximum_vector_query_dimension": {
+      "default": 4096,
+      "maximum": 4096,
+      "minimum": 1,
+      "title": "Maximum Vector Query Dimension",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "allowed_memory_types",
+    "allowed_scope_types",
+    "maximum_provider_sensitivity",
+    "export_root"
+  ],
+  "title": "MemoryConfiguration",
+  "type": "object"
+}

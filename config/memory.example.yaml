@@ -1,0 +1,40 @@
+memory:
+  maximum_inline_content_bytes: 65536
+  maximum_search_text_bytes: 32768
+  maximum_sources_per_revision: 64
+  maximum_revision_depth: 1000
+  maximum_query_results: 100
+  maximum_query_candidates: 1000
+  maximum_full_text_query_length: 512
+  maximum_vector_query_dimension: 4096
+  maximum_embedding_batch_size: 64
+  maximum_parallel_retrieval_workers: 4
+  default_query_limit: 20
+  allowed_memory_types:
+    - episode
+    - observation
+    - decision
+    - correction
+    - task_summary
+    - code_context
+    - verification_summary
+    - failure_pattern
+    - user_instruction
+  allowed_scope_types: [global, project, repository, task, session, domain]
+  maximum_provider_sensitivity: internal
+  allow_provider_direct_write: false
+  allow_automatic_task_ingestion: false
+  allow_automatic_promotion: false
+  allow_network_model_download: false
+  allow_approximate_vector_indexes: false
+  fail_closed_on_access_audit_error: true
+  embedding_providers:
+    deterministic-test:
+      provider_type: deterministic
+      model_id: deterministic-v1
+      dimension: 64
+      enabled: true
+  export_root: /srv/cognitive-os/archives/memory
+  benchmark:
+    maximum_records: 10000
+    maximum_duration_seconds: 600

@@ -14,12 +14,12 @@ from cognitive_os.infrastructure.postgres.tables import (
 
 def test_core_metadata_uses_explicit_schema_and_tables() -> None:
     assert SCHEMA_NAME == "cognitive_os"
-    assert set(metadata.tables) == {
+    assert {
         "cognitive_os.event_streams",
         "cognitive_os.events",
         "cognitive_os.artifact_blobs",
         "cognitive_os.artifacts",
-    }
+    } <= set(metadata.tables)
     assert event_streams.primary_key.columns.keys() == ["stream_id"]
     assert events.primary_key.columns.keys() == ["global_position"]
     assert artifact_blobs.primary_key.columns.keys() == ["content_hash"]

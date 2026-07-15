@@ -1,0 +1,195 @@
+{
+  "$defs": {
+    "MemoryScope": {
+      "additionalProperties": false,
+      "properties": {
+        "scope_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "scope_type": {
+          "$ref": "#/$defs/MemoryScopeType"
+        }
+      },
+      "required": [
+        "scope_type",
+        "scope_id"
+      ],
+      "title": "MemoryScope",
+      "type": "object"
+    },
+    "MemoryScopeType": {
+      "enum": [
+        "global",
+        "project",
+        "repository",
+        "task",
+        "session",
+        "domain"
+      ],
+      "title": "MemoryScopeType",
+      "type": "string"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "MemorySourceIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Hash"
+        },
+        "memory_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Memory Id"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Id"
+        },
+        "source_type": {
+          "$ref": "#/$defs/MemorySourceType"
+        }
+      },
+      "required": [
+        "source_type"
+      ],
+      "title": "MemorySourceIdentity",
+      "type": "object"
+    },
+    "MemorySourceType": {
+      "enum": [
+        "event",
+        "artifact",
+        "task_run",
+        "acceptance_decision",
+        "verifier_result",
+        "coding_trajectory",
+        "user_correction",
+        "memory_revision",
+        "selected_decision"
+      ],
+      "title": "MemorySourceType",
+      "type": "string"
+    },
+    "MemoryStatus": {
+      "enum": [
+        "candidate",
+        "verified",
+        "superseded",
+        "retracted",
+        "expired"
+      ],
+      "title": "MemoryStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/memory/memory-query-result.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "memory_id": {
+      "format": "uuid",
+      "title": "Memory Id",
+      "type": "string"
+    },
+    "provenance_summary": {
+      "items": {
+        "$ref": "#/$defs/MemorySourceIdentity"
+      },
+      "title": "Provenance Summary",
+      "type": "array"
+    },
+    "rank": {
+      "minimum": 1,
+      "title": "Rank",
+      "type": "integer"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "scope": {
+      "$ref": "#/$defs/MemoryScope"
+    },
+    "score": {
+      "minimum": 0.0,
+      "title": "Score",
+      "type": "number"
+    },
+    "sensitivity": {
+      "$ref": "#/$defs/MemorySensitivity"
+    },
+    "status": {
+      "$ref": "#/$defs/MemoryStatus"
+    },
+    "title": {
+      "minLength": 1,
+      "title": "Title",
+      "type": "string"
+    }
+  },
+  "required": [
+    "memory_id",
+    "revision",
+    "title",
+    "score",
+    "rank",
+    "scope",
+    "status",
+    "sensitivity",
+    "provenance_summary"
+  ],
+  "title": "MemoryQueryResult",
+  "type": "object"
+}

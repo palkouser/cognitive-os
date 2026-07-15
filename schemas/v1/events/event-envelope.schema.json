@@ -99,6 +99,7 @@
         "model_call",
         "tool_call",
         "verifier",
+        "memory",
         "system"
       ],
       "title": "StreamType",

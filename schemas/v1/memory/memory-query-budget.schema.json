@@ -1,0 +1,49 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/memory/memory-query-budget.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "maximum_candidates": {
+      "default": 1000,
+      "maximum": 1000,
+      "minimum": 1,
+      "title": "Maximum Candidates",
+      "type": "integer"
+    },
+    "maximum_elapsed": {
+      "default": "PT5S",
+      "format": "duration",
+      "title": "Maximum Elapsed",
+      "type": "string"
+    },
+    "maximum_embedding_calls": {
+      "default": 1,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Maximum Embedding Calls",
+      "type": "integer"
+    },
+    "maximum_results": {
+      "default": 20,
+      "maximum": 100,
+      "minimum": 1,
+      "title": "Maximum Results",
+      "type": "integer"
+    },
+    "maximum_scopes": {
+      "default": 16,
+      "maximum": 64,
+      "minimum": 1,
+      "title": "Maximum Scopes",
+      "type": "integer"
+    },
+    "maximum_source_filters": {
+      "default": 16,
+      "maximum": 64,
+      "minimum": 0,
+      "title": "Maximum Source Filters",
+      "type": "integer"
+    }
+  },
+  "title": "MemoryQueryBudget",
+  "type": "object"
+}

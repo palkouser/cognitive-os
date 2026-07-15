@@ -43,6 +43,7 @@ from .execution_events import (
     PlanRevised,
     RunResumed,
 )
+from .memory_events import MEMORY_EVENT_MODELS
 from .model_events import (
     ModelCallCompleted,
     ModelCallFailed,
@@ -126,6 +127,7 @@ class EventCatalog:
 
 DEFAULT_EVENT_MODELS: tuple[type[EventPayload], ...] = (
     *CODING_EVENT_MODELS,
+    *MEMORY_EVENT_MODELS,
     BenchmarkRunStarted,
     BenchmarkCaseStarted,
     BenchmarkCaseCompleted,

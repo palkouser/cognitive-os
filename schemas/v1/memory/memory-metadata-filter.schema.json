@@ -1,0 +1,186 @@
+{
+  "$defs": {
+    "MemoryCreatorType": {
+      "enum": [
+        "user",
+        "operator",
+        "controller",
+        "ingestion_service",
+        "approved_internal_service",
+        "provider"
+      ],
+      "title": "MemoryCreatorType",
+      "type": "string"
+    },
+    "MemoryScope": {
+      "additionalProperties": false,
+      "properties": {
+        "scope_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "scope_type": {
+          "$ref": "#/$defs/MemoryScopeType"
+        }
+      },
+      "required": [
+        "scope_type",
+        "scope_id"
+      ],
+      "title": "MemoryScope",
+      "type": "object"
+    },
+    "MemoryScopeType": {
+      "enum": [
+        "global",
+        "project",
+        "repository",
+        "task",
+        "session",
+        "domain"
+      ],
+      "title": "MemoryScopeType",
+      "type": "string"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "MemorySourceType": {
+      "enum": [
+        "event",
+        "artifact",
+        "task_run",
+        "acceptance_decision",
+        "verifier_result",
+        "coding_trajectory",
+        "user_correction",
+        "memory_revision",
+        "selected_decision"
+      ],
+      "title": "MemorySourceType",
+      "type": "string"
+    },
+    "MemoryStatus": {
+      "enum": [
+        "candidate",
+        "verified",
+        "superseded",
+        "retracted",
+        "expired"
+      ],
+      "title": "MemoryStatus",
+      "type": "string"
+    },
+    "MemoryType": {
+      "enum": [
+        "episode",
+        "observation",
+        "decision",
+        "correction",
+        "task_summary",
+        "code_context",
+        "verification_summary",
+        "failure_pattern",
+        "user_instruction"
+      ],
+      "title": "MemoryType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/memory/memory-metadata-filter.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "creator_types": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/MemoryCreatorType"
+      },
+      "title": "Creator Types",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "include_historical": {
+      "default": false,
+      "title": "Include Historical",
+      "type": "boolean"
+    },
+    "memory_types": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/MemoryType"
+      },
+      "title": "Memory Types",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "repository_identity": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Repository Identity"
+    },
+    "scopes": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/MemoryScope"
+      },
+      "title": "Scopes",
+      "type": "array"
+    },
+    "sensitivity_ceiling": {
+      "$ref": "#/$defs/MemorySensitivity",
+      "default": "internal"
+    },
+    "source_types": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/MemorySourceType"
+      },
+      "title": "Source Types",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "statuses": {
+      "default": [
+        "candidate",
+        "verified"
+      ],
+      "items": {
+        "$ref": "#/$defs/MemoryStatus"
+      },
+      "title": "Statuses",
+      "type": "array"
+    },
+    "task_run_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Task Run Id"
+    }
+  },
+  "title": "MemoryMetadataFilter",
+  "type": "object"
+}
