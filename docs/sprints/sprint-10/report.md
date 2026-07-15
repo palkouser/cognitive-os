@@ -29,6 +29,8 @@ Sprint 10 branches from the validated `sprint-9-baseline` commit
 - Deterministic extractors map code-context, accepted episode, task-summary,
   verification-summary, correction, and user-instruction Memory Plane revisions to proposed claims.
   Every claim is grounded through its own exact source field; repeated extraction is idempotent.
+  Pre-write validation and an explicit append-only resumable transaction policy prevent rejected
+  validation from leaving projections and prevent partial claim/evidence bundles.
 - Explicit provider extraction sends only host-selected exact excerpts, fixed predicates, scope,
   sensitivity, schema, and budgets through `ModelExecutionService`; normalized requests and
   responses are persisted as artifacts. Host validation rejects extra fields, fabricated spans,
@@ -36,7 +38,8 @@ Sprint 10 branches from the validated `sprint-9-baseline` commit
   separate CLI operations.
 - Claim creation, support, dispute, supersession, retraction, contradiction resolution and reopen,
   evidence re-evaluation, relation-cycle checks, and expected-revision concurrency preserve all
-  prior history. Initial and later claim revision/evidence writes are transactional.
+  prior history. Initial and later claim revision/evidence writes are transactional, and every
+  evidence re-evaluation persists its typed result as an audit event.
 - Sixteen registered semantic verifiers cover grounding, provenance, temporal integrity,
   relations, evidence, contradiction state, confidence, promotion, and Wiki integrity. Supported
   promotion requires all twelve mandatory verifier results, a decision persisted before the state
@@ -65,19 +68,19 @@ Sprint 10 branches from the validated `sprint-9-baseline` commit
 
 ## Local validation
 
-- Required Cognitive OS checks: Ruff passed; Ruff format passed for **442 files**; Cognitive OS
-  tests: **549 passed, 5 opt-in tests skipped**.
-- Full repository credential-free regression: **690 passed, 27 opt-in tests skipped**.
-- Focused temporal semantic-memory and benchmark-adapter suite: **38 passed**.
+- Required Cognitive OS checks: Ruff passed; Ruff format passed for **443 files**; Cognitive OS
+  tests: **551 passed, 5 opt-in tests skipped**.
+- Full repository credential-free regression: **692 passed, 28 opt-in tests skipped**.
+- Focused temporal semantic-memory and benchmark-adapter suite: **40 passed**.
 - Strict MyPy: **290 source files**, no issues. Bandit, schema drift, repository-language policy,
   and `git diff --check` passed.
 - Dependency audit reported **no known vulnerabilities**; the local development package is the
   expected non-PyPI skip.
 - Migration `0003`: downgrade to `0002`, re-upgrade to head, current-head validation, and Alembic
   drift check passed with no new upgrade operations.
-- PostgreSQL repository, runtime-grant, append-only-history, and concurrency integration:
-  **15 passed** against the dedicated test database. Concurrent claim revision writers produced
-  exactly one winner.
+- PostgreSQL repository, runtime-grant, append-only-history, benchmark-adapter, and concurrency
+  integration: **16 passed** against the dedicated test database. Concurrent claim revision
+  writers produced exactly one winner.
 - Credential-free Memory Plane smoke retained **4 memories**, a **64-dimensional** deterministic
   embedding, one text match, one exact-vector match, and **2 access records**.
 - Credential-free semantic smoke produced **3 claims**, **1 relation**, **1 contradiction**,
@@ -89,16 +92,19 @@ Sprint 10 branches from the validated `sprint-9-baseline` commit
   event/projection-version findings.
 - Semantic benchmarks: **4/4 CI** and **20/20 seed** cases matched expected outcomes. Metrics report
   zero unsupported promotions, scope leaks, sensitivity leaks, and future-revision leaks, with
-  complete deterministic provenance and Wiki lineage.
+  complete deterministic provenance and Wiki lineage. Each case declares and compares exact
+  observation, claim, revision, contradiction, and Wiki-page counts; the four-case PostgreSQL gate
+  uses the same adapter and persists benchmark events and its report artifact.
 - The local scale baseline populated **10,000 claims, 30,000 claim revisions, 50,000 evidence
   links, 10,000 relations, 1,000 contradictions, and 1,000 Wiki pages**. All seven captured query
   plans used indexes. P95 ranged from **0.225 ms** for Wiki inputs to **1.393 ms** for the bounded
   SQL plus NetworkX projection; database size was **73,692,863 bytes**. Exact plans and environment
   metadata are published in `docs/benchmarks/sprint-10-scale-baseline.json`.
 - Checksummed isolated restore retained **4 memory items, 6 memory revisions, 1 embedding,
-  1 observation, 3 claims, 4 claim revisions, 4 evidence links, 1 relation, 1 contradiction,
-  2 Wiki pages, and 2 Wiki revisions**. Restored Wiki content and lineage hashes regenerated
-  exactly.
+  5 observations, 7 claims, 8 claim revisions, 4 evidence links, 1 relation, 2 contradictions,
+  3 Wiki pages, and 3 Wiki revisions** after smoke and the PostgreSQL benchmark. The canonical
+  historical semantic digest matched before and after restore; the report artifact file matched
+  its metadata size and hash; restored Wiki content and lineage hashes regenerated exactly.
 - Core wheel, semantic-extra wheel, source distribution, and editable installation passed in
   isolated Python 3.12 environments. The core wheel excluded optional dependencies; the semantic
   extra installed NetworkX 3.6.1.

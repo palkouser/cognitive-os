@@ -49,8 +49,9 @@ semantic_relation_count="$(psql "$COGOS_RESTORE_DATABASE_URL" -Atqc "SELECT CASE
 semantic_contradiction_count="$(psql "$COGOS_RESTORE_DATABASE_URL" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.semantic_contradictions') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.semantic_contradictions) END")"
 wiki_page_count="$(psql "$COGOS_RESTORE_DATABASE_URL" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.wiki_pages') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.wiki_pages) END")"
 wiki_revision_count="$(psql "$COGOS_RESTORE_DATABASE_URL" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.wiki_page_revisions') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.wiki_page_revisions) END")"
+semantic_history_sha256="$(psql "$COGOS_RESTORE_DATABASE_URL" -Atqc "SELECT row_to_json(history)::text FROM (SELECT claim_id, revision, previous_revision, object_json, belief_status, valid_from, valid_to, recorded_at, content_hash FROM cognitive_os.semantic_claim_revisions ORDER BY claim_id, revision) history" | sha256sum | awk '{print $1}')"
 semantic_lineage_integrity="$(psql "$COGOS_RESTORE_DATABASE_URL" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.wiki_page_claims') IS NULL THEN true ELSE NOT EXISTS (SELECT 1 FROM cognitive_os.semantic_contradictions c LEFT JOIN cognitive_os.semantic_contradiction_revisions r ON r.contradiction_id=c.contradiction_id AND r.revision=c.current_revision WHERE r.contradiction_id IS NULL OR r.status<>c.current_status) AND NOT EXISTS (SELECT 1 FROM cognitive_os.wiki_pages p LEFT JOIN cognitive_os.wiki_page_revisions r ON r.page_id=p.page_id AND r.revision=p.current_revision WHERE p.current_revision>0 AND r.page_id IS NULL) AND NOT EXISTS (SELECT 1 FROM cognitive_os.wiki_page_claims w LEFT JOIN cognitive_os.semantic_claim_revisions r ON r.claim_id=w.claim_id AND r.revision=w.claim_revision WHERE r.claim_id IS NULL) END")"
-uv run python - "$manifest" "$semantic_observation_count" "$semantic_claim_count" "$semantic_revision_count" "$semantic_evidence_count" "$semantic_relation_count" "$semantic_contradiction_count" "$wiki_page_count" "$wiki_revision_count" <<'PY'
+uv run python - "$manifest" "$semantic_observation_count" "$semantic_claim_count" "$semantic_revision_count" "$semantic_evidence_count" "$semantic_relation_count" "$semantic_contradiction_count" "$wiki_page_count" "$wiki_revision_count" "$semantic_history_sha256" <<'PY'
 import json
 import sys
 from pathlib import Path
@@ -66,10 +67,14 @@ keys = (
     "wiki_page_count",
     "wiki_revision_count",
 )
-actual = dict(zip(keys, map(int, sys.argv[2:]), strict=True))
+history_hash = sys.argv[-1]
+actual = dict(zip(keys, map(int, sys.argv[2:-1]), strict=True))
 if any(manifest.get(key, 0) != value for key, value in actual.items()):
     raise SystemExit("restored semantic counts do not match the backup manifest")
+if manifest.get("semantic_history_sha256") != history_hash:
+    raise SystemExit("restored historical semantic query differs from the backup manifest")
 PY
 [[ -n "$revision" && "$event_count" =~ ^[0-9]+$ && "$artifact_count" =~ ^[0-9]+$ && "$memory_count" =~ ^[0-9]+$ && "$memory_integrity" == "t" && "$semantic_integrity" == "t" && "$semantic_lineage_integrity" == "t" ]]
+psql "$COGOS_RESTORE_DATABASE_URL" -Atqc "SELECT json_build_object('content_hash', b.content_hash, 'size_bytes', b.size_bytes, 'storage_key', b.storage_key)::text FROM cognitive_os.artifact_blobs b JOIN cognitive_os.artifacts a ON a.content_hash=b.content_hash GROUP BY b.content_hash, b.size_bytes, b.storage_key ORDER BY b.storage_key" | uv run python scripts/artifact_restore_verify.py "$restore_root"
 psql "$COGOS_RESTORE_DATABASE_URL" -Atqc "SELECT json_build_object('content_hash', w.content_hash, 'markdown_base64', replace(encode(convert_to(w.markdown, 'UTF8'), 'base64'), E'\\n', ''), 'snapshot_hash', w.snapshot_hash, 'claim_refs', COALESCE((SELECT json_agg(json_build_object('claim', json_build_object('claim_id', c.claim_id, 'revision', c.claim_revision), 'section', c.section, 'display_order', c.display_order) ORDER BY c.section, c.display_order) FROM cognitive_os.wiki_page_claims c WHERE c.page_id=w.page_id AND c.page_revision=w.revision), '[]'::json))::text FROM cognitive_os.wiki_page_revisions w ORDER BY w.page_id, w.revision" | uv run python scripts/wiki_restore_verify.py
 echo "Isolated restore verification passed."
