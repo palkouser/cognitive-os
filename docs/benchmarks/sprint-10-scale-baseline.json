@@ -1,0 +1,416 @@
+{
+  "architecture": {
+    "ann_index": false,
+    "graph_database": false,
+    "networkx_projection_bounded_rows": 500,
+    "postgresql_authoritative": true
+  },
+  "environment": {
+    "database_size_bytes": 73692863,
+    "machine": "x86_64",
+    "platform": "Linux-7.0.0-27-generic-x86_64-with-glibc2.43",
+    "postgresql": "18.4 (Debian 18.4-1.pgdg12+1)",
+    "processor": "unknown",
+    "python": "3.12.13"
+  },
+  "fixture": {
+    "claim_revisions": 30000,
+    "claims": 10000,
+    "contradictions": 1000,
+    "evidence": 50000,
+    "relations": 10000,
+    "wiki_pages": 1000
+  },
+  "measurements": {
+    "bounded_graph_projection": {
+      "iterations": 30,
+      "maximum_ms": 15.267,
+      "p50_ms": 1.068,
+      "p95_ms": 1.393
+    },
+    "contradiction_lookup": {
+      "iterations": 30,
+      "maximum_ms": 0.348,
+      "p50_ms": 0.302,
+      "p95_ms": 0.342
+    },
+    "current_claim": {
+      "iterations": 30,
+      "maximum_ms": 0.243,
+      "p50_ms": 0.219,
+      "p95_ms": 0.236
+    },
+    "evidence_lookup": {
+      "iterations": 30,
+      "maximum_ms": 0.23,
+      "p50_ms": 0.213,
+      "p95_ms": 0.226
+    },
+    "known_at": {
+      "iterations": 30,
+      "maximum_ms": 0.262,
+      "p50_ms": 0.224,
+      "p95_ms": 0.258
+    },
+    "valid_at": {
+      "iterations": 30,
+      "maximum_ms": 0.253,
+      "p50_ms": 0.211,
+      "p95_ms": 0.248
+    },
+    "wiki_regeneration_inputs": {
+      "iterations": 30,
+      "maximum_ms": 0.227,
+      "p50_ms": 0.21,
+      "p95_ms": 0.225
+    }
+  },
+  "plans": {
+    "bounded_graph_projection": [
+      {
+        "Plan": {
+          "Async Capable": false,
+          "Disabled": false,
+          "Node Type": "Limit",
+          "Parallel Aware": false,
+          "Plan Rows": 301,
+          "Plan Width": 51,
+          "Plans": [
+            {
+              "Alias": "semantic_claim_relations",
+              "Async Capable": false,
+              "Disabled": false,
+              "Index Cond": "((source_claim_id >= '00000000-0000-0000-0001-000000004900'::uuid) AND (source_claim_id <= '00000000-0000-0000-0001-000000005100'::uuid))",
+              "Index Name": "ix_semantic_relation_source",
+              "Node Type": "Index Scan",
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Plan Rows": 301,
+              "Plan Width": 51,
+              "Relation Name": "semantic_claim_relations",
+              "Scan Direction": "Forward",
+              "Startup Cost": 0.29,
+              "Total Cost": 406.56
+            }
+          ],
+          "Startup Cost": 0.29,
+          "Total Cost": 406.56
+        }
+      }
+    ],
+    "contradiction_lookup": [
+      {
+        "Plan": {
+          "Async Capable": false,
+          "Disabled": false,
+          "Inner Unique": true,
+          "Join Type": "Inner",
+          "Node Type": "Nested Loop",
+          "Parallel Aware": false,
+          "Plan Rows": 1,
+          "Plan Width": 16,
+          "Plans": [
+            {
+              "Alias": "cc",
+              "Async Capable": false,
+              "Disabled": false,
+              "Filter": "(claim_id = '00000000-0000-0000-0001-000000000500'::uuid)",
+              "Node Type": "Seq Scan",
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Plan Rows": 1,
+              "Plan Width": 20,
+              "Relation Name": "semantic_contradiction_claims",
+              "Startup Cost": 0.0,
+              "Total Cost": 42.0
+            },
+            {
+              "Alias": "c",
+              "Async Capable": false,
+              "Disabled": false,
+              "Filter": "((current_status = 'open'::text) AND (cc.contradiction_revision = current_revision))",
+              "Index Cond": "(contradiction_id = cc.contradiction_id)",
+              "Index Name": "semantic_contradictions_pkey",
+              "Node Type": "Index Scan",
+              "Parallel Aware": false,
+              "Parent Relationship": "Inner",
+              "Plan Rows": 1,
+              "Plan Width": 20,
+              "Relation Name": "semantic_contradictions",
+              "Scan Direction": "Forward",
+              "Startup Cost": 0.28,
+              "Total Cost": 8.3
+            }
+          ],
+          "Startup Cost": 0.28,
+          "Total Cost": 50.31
+        }
+      }
+    ],
+    "current_claim": [
+      {
+        "Plan": {
+          "Async Capable": false,
+          "Disabled": false,
+          "Inner Unique": true,
+          "Join Type": "Inner",
+          "Node Type": "Nested Loop",
+          "Parallel Aware": false,
+          "Plan Rows": 1,
+          "Plan Width": 65,
+          "Plans": [
+            {
+              "Alias": "c",
+              "Async Capable": false,
+              "Disabled": false,
+              "Filter": "((scope_type = 'project'::text) AND (scope_id = 'scale'::text))",
+              "Index Cond": "(((canonical_subject_key)::text = 'project:0000005000'::text) AND ((predicate_id)::text = 'project.python_version'::text))",
+              "Index Name": "ix_semantic_claim_subject_predicate",
+              "Node Type": "Index Scan",
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Plan Rows": 1,
+              "Plan Width": 20,
+              "Relation Name": "semantic_claims",
+              "Scan Direction": "Forward",
+              "Startup Cost": 0.29,
+              "Total Cost": 8.31
+            },
+            {
+              "Alias": "r",
+              "Async Capable": false,
+              "Disabled": false,
+              "Index Cond": "((claim_id = c.claim_id) AND (revision = c.current_revision))",
+              "Index Name": "semantic_claim_revisions_pkey",
+              "Node Type": "Index Scan",
+              "Parallel Aware": false,
+              "Parent Relationship": "Inner",
+              "Plan Rows": 1,
+              "Plan Width": 85,
+              "Relation Name": "semantic_claim_revisions",
+              "Scan Direction": "Forward",
+              "Startup Cost": 0.29,
+              "Total Cost": 8.31
+            }
+          ],
+          "Startup Cost": 0.57,
+          "Total Cost": 16.62
+        }
+      }
+    ],
+    "evidence_lookup": [
+      {
+        "Plan": {
+          "Async Capable": false,
+          "Disabled": false,
+          "Node Type": "Sort",
+          "Parallel Aware": false,
+          "Plan Rows": 5,
+          "Plan Width": 16,
+          "Plans": [
+            {
+              "Alias": "semantic_claim_evidence",
+              "Async Capable": false,
+              "Disabled": false,
+              "Node Type": "Bitmap Heap Scan",
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Plan Rows": 5,
+              "Plan Width": 16,
+              "Plans": [
+                {
+                  "Async Capable": false,
+                  "Disabled": false,
+                  "Index Cond": "((claim_id = '00000000-0000-0000-0001-000000005000'::uuid) AND (claim_revision = 3))",
+                  "Index Name": "uq_semantic_evidence_identity",
+                  "Node Type": "Bitmap Index Scan",
+                  "Parallel Aware": false,
+                  "Parent Relationship": "Outer",
+                  "Plan Rows": 5,
+                  "Plan Width": 0,
+                  "Startup Cost": 0.0,
+                  "Total Cost": 4.46
+                }
+              ],
+              "Recheck Cond": "((claim_id = '00000000-0000-0000-0001-000000005000'::uuid) AND (claim_revision = 3))",
+              "Relation Name": "semantic_claim_evidence",
+              "Startup Cost": 4.47,
+              "Total Cost": 23.78
+            }
+          ],
+          "Sort Key": [
+            "evidence_id"
+          ],
+          "Startup Cost": 23.83,
+          "Total Cost": 23.85
+        }
+      }
+    ],
+    "known_at": [
+      {
+        "Plan": {
+          "Async Capable": false,
+          "Disabled": false,
+          "Node Type": "Limit",
+          "Parallel Aware": false,
+          "Plan Rows": 1,
+          "Plan Width": 77,
+          "Plans": [
+            {
+              "Async Capable": false,
+              "Disabled": false,
+              "Node Type": "Sort",
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Plan Rows": 3,
+              "Plan Width": 77,
+              "Plans": [
+                {
+                  "Alias": "r",
+                  "Async Capable": false,
+                  "Disabled": false,
+                  "Filter": "(recorded_at <= '2026-07-16 00:00:00+00'::timestamp with time zone)",
+                  "Index Cond": "(claim_id = '00000000-0000-0000-0001-000000005000'::uuid)",
+                  "Index Name": "semantic_claim_revisions_pkey",
+                  "Node Type": "Index Scan",
+                  "Parallel Aware": false,
+                  "Parent Relationship": "Outer",
+                  "Plan Rows": 3,
+                  "Plan Width": 77,
+                  "Relation Name": "semantic_claim_revisions",
+                  "Scan Direction": "Forward",
+                  "Startup Cost": 0.29,
+                  "Total Cost": 15.85
+                }
+              ],
+              "Sort Key": [
+                "recorded_at DESC",
+                "revision DESC"
+              ],
+              "Startup Cost": 15.86,
+              "Total Cost": 15.87
+            }
+          ],
+          "Startup Cost": 15.86,
+          "Total Cost": 15.86
+        }
+      }
+    ],
+    "valid_at": [
+      {
+        "Plan": {
+          "Async Capable": false,
+          "Disabled": false,
+          "Node Type": "Limit",
+          "Parallel Aware": false,
+          "Plan Rows": 1,
+          "Plan Width": 69,
+          "Plans": [
+            {
+              "Alias": "r",
+              "Async Capable": false,
+              "Disabled": false,
+              "Filter": "((valid_from <= '2026-07-15 00:00:00+00'::timestamp with time zone) AND ((valid_to IS NULL) OR (valid_to > '2026-07-15 00:00:00+00'::timestamp with time zone)))",
+              "Index Cond": "(claim_id = '00000000-0000-0000-0001-000000005000'::uuid)",
+              "Index Name": "semantic_claim_revisions_pkey",
+              "Node Type": "Index Scan",
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Plan Rows": 3,
+              "Plan Width": 69,
+              "Relation Name": "semantic_claim_revisions",
+              "Scan Direction": "Backward",
+              "Startup Cost": 0.29,
+              "Total Cost": 15.85
+            }
+          ],
+          "Startup Cost": 0.29,
+          "Total Cost": 5.48
+        }
+      }
+    ],
+    "wiki_regeneration_inputs": [
+      {
+        "Plan": {
+          "Async Capable": false,
+          "Disabled": false,
+          "Inner Unique": false,
+          "Join Filter": "(r.revision = wc.page_revision)",
+          "Join Type": "Inner",
+          "Node Type": "Nested Loop",
+          "Parallel Aware": false,
+          "Plan Rows": 1,
+          "Plan Width": 101,
+          "Plans": [
+            {
+              "Async Capable": false,
+              "Disabled": false,
+              "Inner Unique": true,
+              "Join Filter": "(r.revision = p.current_revision)",
+              "Join Type": "Inner",
+              "Node Type": "Nested Loop",
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Plan Rows": 1,
+              "Plan Width": 89,
+              "Plans": [
+                {
+                  "Alias": "r",
+                  "Async Capable": false,
+                  "Disabled": false,
+                  "Index Cond": "(page_id = '00000000-0000-0000-0006-000000000500'::uuid)",
+                  "Index Name": "wiki_page_revisions_pkey",
+                  "Node Type": "Index Scan",
+                  "Parallel Aware": false,
+                  "Parent Relationship": "Outer",
+                  "Plan Rows": 1,
+                  "Plan Width": 85,
+                  "Relation Name": "wiki_page_revisions",
+                  "Scan Direction": "Forward",
+                  "Startup Cost": 0.28,
+                  "Total Cost": 8.29
+                },
+                {
+                  "Alias": "p",
+                  "Async Capable": false,
+                  "Disabled": false,
+                  "Index Cond": "(page_id = '00000000-0000-0000-0006-000000000500'::uuid)",
+                  "Index Name": "wiki_pages_pkey",
+                  "Node Type": "Index Scan",
+                  "Parallel Aware": false,
+                  "Parent Relationship": "Inner",
+                  "Plan Rows": 1,
+                  "Plan Width": 20,
+                  "Relation Name": "wiki_pages",
+                  "Scan Direction": "Forward",
+                  "Startup Cost": 0.28,
+                  "Total Cost": 8.29
+                }
+              ],
+              "Startup Cost": 0.55,
+              "Total Cost": 16.6
+            },
+            {
+              "Alias": "wc",
+              "Async Capable": false,
+              "Disabled": false,
+              "Index Cond": "(page_id = '00000000-0000-0000-0006-000000000500'::uuid)",
+              "Index Name": "uq_wiki_display_order",
+              "Node Type": "Index Scan",
+              "Parallel Aware": false,
+              "Parent Relationship": "Inner",
+              "Plan Rows": 1,
+              "Plan Width": 40,
+              "Relation Name": "wiki_page_claims",
+              "Scan Direction": "Forward",
+              "Startup Cost": 0.28,
+              "Total Cost": 8.29
+            }
+          ],
+          "Startup Cost": 0.83,
+          "Total Cost": 24.9
+        }
+      }
+    ]
+  }
+}

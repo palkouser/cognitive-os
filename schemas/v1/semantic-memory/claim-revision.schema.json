@@ -1,0 +1,443 @@
+{
+  "$defs": {
+    "BeliefStatus": {
+      "enum": [
+        "proposed",
+        "supported",
+        "disputed",
+        "superseded",
+        "retracted",
+        "unknown"
+      ],
+      "title": "BeliefStatus",
+      "type": "string"
+    },
+    "ClaimTemporalInterval": {
+      "additionalProperties": false,
+      "properties": {
+        "valid_from": {
+          "format": "date-time",
+          "title": "Valid From",
+          "type": "string"
+        },
+        "valid_to": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Valid To"
+        }
+      },
+      "required": [
+        "valid_from"
+      ],
+      "title": "ClaimTemporalInterval",
+      "type": "object"
+    },
+    "ConfidenceDimensions": {
+      "additionalProperties": false,
+      "properties": {
+        "aggregation_policy_version": {
+          "const": "1",
+          "default": "1",
+          "title": "Aggregation Policy Version",
+          "type": "string"
+        },
+        "consistency_confidence": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Consistency Confidence"
+        },
+        "evidence_confidence": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence Confidence"
+        },
+        "extraction_confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Extraction Confidence",
+          "type": "number"
+        },
+        "grounding_confidence": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Grounding Confidence"
+        },
+        "overall_confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Overall Confidence",
+          "type": "number"
+        },
+        "source_reliability": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Reliability"
+        },
+        "verification_confidence": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Verification Confidence"
+        }
+      },
+      "required": [
+        "extraction_confidence",
+        "overall_confidence"
+      ],
+      "title": "ConfidenceDimensions",
+      "type": "object"
+    },
+    "SemanticActor": {
+      "additionalProperties": false,
+      "properties": {
+        "actor_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Actor Id",
+          "type": "string"
+        },
+        "actor_type": {
+          "$ref": "#/$defs/SemanticActorType"
+        }
+      },
+      "required": [
+        "actor_type",
+        "actor_id"
+      ],
+      "title": "SemanticActor",
+      "type": "object"
+    },
+    "SemanticActorType": {
+      "enum": [
+        "user",
+        "operator",
+        "controller",
+        "semantic_service",
+        "approved_internal_service",
+        "provider"
+      ],
+      "title": "SemanticActorType",
+      "type": "string"
+    },
+    "SemanticEntityRef": {
+      "additionalProperties": false,
+      "properties": {
+        "display_label": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Label"
+        },
+        "entity_id": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Entity Id",
+          "type": "string"
+        },
+        "entity_type": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Entity Type",
+          "type": "string"
+        },
+        "value_type": {
+          "const": "entity",
+          "default": "entity",
+          "title": "Value Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entity_id",
+        "entity_type"
+      ],
+      "title": "SemanticEntityRef",
+      "type": "object"
+    },
+    "SemanticLiteral": {
+      "additionalProperties": false,
+      "properties": {
+        "literal_kind": {
+          "$ref": "#/$defs/SemanticLiteralKind"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Value"
+        },
+        "value_type": {
+          "const": "literal",
+          "default": "literal",
+          "title": "Value Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "literal_kind",
+        "value"
+      ],
+      "title": "SemanticLiteral",
+      "type": "object"
+    },
+    "SemanticLiteralKind": {
+      "enum": [
+        "string",
+        "boolean",
+        "integer",
+        "decimal",
+        "date",
+        "datetime",
+        "version",
+        "uri",
+        "quantity"
+      ],
+      "title": "SemanticLiteralKind",
+      "type": "string"
+    },
+    "SemanticReference": {
+      "additionalProperties": false,
+      "properties": {
+        "display_label": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Label"
+        },
+        "identifier": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        },
+        "namespace": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Namespace",
+          "type": "string"
+        },
+        "value_type": {
+          "const": "reference",
+          "default": "reference",
+          "title": "Value Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "namespace",
+        "identifier"
+      ],
+      "title": "SemanticReference",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/claim-revision.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "belief_status": {
+      "$ref": "#/$defs/BeliefStatus"
+    },
+    "claim_id": {
+      "format": "uuid",
+      "title": "Claim Id",
+      "type": "string"
+    },
+    "confidence": {
+      "$ref": "#/$defs/ConfidenceDimensions"
+    },
+    "content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_by": {
+      "$ref": "#/$defs/SemanticActor"
+    },
+    "evidence_snapshot_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Evidence Snapshot Hash",
+      "type": "string"
+    },
+    "object": {
+      "discriminator": {
+        "mapping": {
+          "entity": "#/$defs/SemanticEntityRef",
+          "literal": "#/$defs/SemanticLiteral",
+          "reference": "#/$defs/SemanticReference"
+        },
+        "propertyName": "value_type"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SemanticEntityRef"
+        },
+        {
+          "$ref": "#/$defs/SemanticLiteral"
+        },
+        {
+          "$ref": "#/$defs/SemanticReference"
+        }
+      ],
+      "title": "Object"
+    },
+    "previous_revision": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Revision"
+    },
+    "promotion_decision_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Promotion Decision Id"
+    },
+    "reason": {
+      "maxLength": 2048,
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "recorded_at": {
+      "format": "date-time",
+      "title": "Recorded At",
+      "type": "string"
+    },
+    "revision": {
+      "maximum": 10000,
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "statement": {
+      "maxLength": 8192,
+      "minLength": 1,
+      "title": "Statement",
+      "type": "string"
+    },
+    "valid_interval": {
+      "$ref": "#/$defs/ClaimTemporalInterval"
+    }
+  },
+  "required": [
+    "claim_id",
+    "revision",
+    "object",
+    "statement",
+    "belief_status",
+    "confidence",
+    "valid_interval",
+    "reason",
+    "recorded_at",
+    "created_by",
+    "evidence_snapshot_hash",
+    "content_hash"
+  ],
+  "title": "ClaimRevision",
+  "type": "object"
+}

@@ -1,0 +1,134 @@
+{
+  "$defs": {
+    "ClaimRevisionReference": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "format": "uuid",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "claim_id",
+        "revision"
+      ],
+      "title": "ClaimRevisionReference",
+      "type": "object"
+    },
+    "ContradictionResolutionOutcome": {
+      "enum": [
+        "claim_superseded",
+        "claim_retracted",
+        "non_overlapping_intervals",
+        "distinct_scopes",
+        "evidence_invalidated",
+        "unresolved_plurality"
+      ],
+      "title": "ContradictionResolutionOutcome",
+      "type": "string"
+    },
+    "SemanticActor": {
+      "additionalProperties": false,
+      "properties": {
+        "actor_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Actor Id",
+          "type": "string"
+        },
+        "actor_type": {
+          "$ref": "#/$defs/SemanticActorType"
+        }
+      },
+      "required": [
+        "actor_type",
+        "actor_id"
+      ],
+      "title": "SemanticActor",
+      "type": "object"
+    },
+    "SemanticActorType": {
+      "enum": [
+        "user",
+        "operator",
+        "controller",
+        "semantic_service",
+        "approved_internal_service",
+        "provider"
+      ],
+      "title": "SemanticActorType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/contradiction-resolution.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "affected_claims": {
+      "items": {
+        "$ref": "#/$defs/ClaimRevisionReference"
+      },
+      "maxItems": 32,
+      "minItems": 1,
+      "title": "Affected Claims",
+      "type": "array"
+    },
+    "contradiction_id": {
+      "format": "uuid",
+      "title": "Contradiction Id",
+      "type": "string"
+    },
+    "decided_at": {
+      "format": "date-time",
+      "title": "Decided At",
+      "type": "string"
+    },
+    "decided_by": {
+      "$ref": "#/$defs/SemanticActor"
+    },
+    "evidence_ids": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Evidence Ids",
+      "type": "array"
+    },
+    "expected_revision": {
+      "minimum": 1,
+      "title": "Expected Revision",
+      "type": "integer"
+    },
+    "outcome": {
+      "$ref": "#/$defs/ContradictionResolutionOutcome"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "resolution_id": {
+      "format": "uuid",
+      "title": "Resolution Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "resolution_id",
+    "contradiction_id",
+    "expected_revision",
+    "outcome",
+    "affected_claims",
+    "reason",
+    "decided_at",
+    "decided_by"
+  ],
+  "title": "ContradictionResolution",
+  "type": "object"
+}

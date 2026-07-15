@@ -1,0 +1,59 @@
+{
+  "$defs": {
+    "ClaimRevisionReference": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "format": "uuid",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "claim_id",
+        "revision"
+      ],
+      "title": "ClaimRevisionReference",
+      "type": "object"
+    },
+    "WikiSectionType": {
+      "enum": [
+        "current_supported",
+        "disputed",
+        "open_contradictions",
+        "superseded_history",
+        "evidence_index",
+        "revision_metadata"
+      ],
+      "title": "WikiSectionType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/wiki-claim-reference.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "claim": {
+      "$ref": "#/$defs/ClaimRevisionReference"
+    },
+    "display_order": {
+      "minimum": 0,
+      "title": "Display Order",
+      "type": "integer"
+    },
+    "section": {
+      "$ref": "#/$defs/WikiSectionType"
+    }
+  },
+  "required": [
+    "claim",
+    "section",
+    "display_order"
+  ],
+  "title": "WikiClaimReference",
+  "type": "object"
+}

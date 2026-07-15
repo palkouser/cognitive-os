@@ -20,6 +20,7 @@ class ProblemDomain(StrEnum):
     MATHEMATICS = "mathematics"
     PHYSICS = "physics"
     LOGIC = "logic"
+    SEMANTIC = "semantic"
 
 
 class ConstraintCategory(StrEnum):

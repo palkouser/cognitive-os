@@ -20,6 +20,7 @@ class BenchmarkDomain(StrEnum):
     CONTROLLER = "controller"
     CODING = "coding"
     MEMORY = "memory"
+    SEMANTIC = "semantic"
     MATHEMATICS = "mathematics"
     LOGIC = "logic"
     PHYSICS = "physics"

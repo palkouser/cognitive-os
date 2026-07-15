@@ -1,0 +1,184 @@
+{
+  "$defs": {
+    "MemoryScope": {
+      "additionalProperties": false,
+      "properties": {
+        "scope_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "scope_type": {
+          "$ref": "#/$defs/MemoryScopeType"
+        }
+      },
+      "required": [
+        "scope_type",
+        "scope_id"
+      ],
+      "title": "MemoryScope",
+      "type": "object"
+    },
+    "MemoryScopeType": {
+      "enum": [
+        "global",
+        "project",
+        "repository",
+        "task",
+        "session",
+        "domain"
+      ],
+      "title": "MemoryScopeType",
+      "type": "string"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "SemanticActor": {
+      "additionalProperties": false,
+      "properties": {
+        "actor_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Actor Id",
+          "type": "string"
+        },
+        "actor_type": {
+          "$ref": "#/$defs/SemanticActorType"
+        }
+      },
+      "required": [
+        "actor_type",
+        "actor_id"
+      ],
+      "title": "SemanticActor",
+      "type": "object"
+    },
+    "SemanticActorType": {
+      "enum": [
+        "user",
+        "operator",
+        "controller",
+        "semantic_service",
+        "approved_internal_service",
+        "provider"
+      ],
+      "title": "SemanticActorType",
+      "type": "string"
+    },
+    "SemanticSourceType": {
+      "enum": [
+        "event",
+        "artifact",
+        "memory_revision",
+        "task_run",
+        "trajectory"
+      ],
+      "title": "SemanticSourceType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/observation-query.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "maximum_results": {
+      "default": 100,
+      "maximum": 500,
+      "minimum": 1,
+      "title": "Maximum Results",
+      "type": "integer"
+    },
+    "query_id": {
+      "format": "uuid",
+      "title": "Query Id",
+      "type": "string"
+    },
+    "requested_at": {
+      "format": "date-time",
+      "title": "Requested At",
+      "type": "string"
+    },
+    "requested_by": {
+      "$ref": "#/$defs/SemanticActor"
+    },
+    "scopes": {
+      "items": {
+        "$ref": "#/$defs/MemoryScope"
+      },
+      "maxItems": 16,
+      "minItems": 1,
+      "title": "Scopes",
+      "type": "array"
+    },
+    "sensitivity_ceiling": {
+      "$ref": "#/$defs/MemorySensitivity",
+      "default": "internal"
+    },
+    "source_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Id"
+    },
+    "source_revision": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Revision"
+    },
+    "source_type": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SemanticSourceType"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "task_run_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Task Run Id"
+    }
+  },
+  "required": [
+    "query_id",
+    "scopes",
+    "requested_at",
+    "requested_by"
+  ],
+  "title": "ObservationQuery",
+  "type": "object"
+}

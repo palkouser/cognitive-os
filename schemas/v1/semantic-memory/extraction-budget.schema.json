@@ -1,0 +1,38 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/extraction-budget.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "maximum_claims": {
+      "maximum": 100,
+      "minimum": 1,
+      "title": "Maximum Claims",
+      "type": "integer"
+    },
+    "maximum_evidence_links": {
+      "maximum": 3200,
+      "minimum": 1,
+      "title": "Maximum Evidence Links",
+      "type": "integer"
+    },
+    "maximum_observations": {
+      "maximum": 100,
+      "minimum": 1,
+      "title": "Maximum Observations",
+      "type": "integer"
+    },
+    "maximum_relations": {
+      "maximum": 200,
+      "minimum": 0,
+      "title": "Maximum Relations",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "maximum_observations",
+    "maximum_claims",
+    "maximum_evidence_links",
+    "maximum_relations"
+  ],
+  "title": "ExtractionBudget",
+  "type": "object"
+}

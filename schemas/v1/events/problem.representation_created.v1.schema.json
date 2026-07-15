@@ -288,7 +288,8 @@
         "coding",
         "mathematics",
         "physics",
-        "logic"
+        "logic",
+        "semantic"
       ],
       "title": "ProblemDomain",
       "type": "string"

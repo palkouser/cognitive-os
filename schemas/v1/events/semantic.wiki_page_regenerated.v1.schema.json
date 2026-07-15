@@ -1,0 +1,32 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/semantic.wiki_page_regenerated.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "identical": {
+      "title": "Identical",
+      "type": "boolean"
+    },
+    "page_id": {
+      "format": "uuid",
+      "title": "Page Id",
+      "type": "string"
+    },
+    "revision": {
+      "title": "Revision",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "page_id",
+    "revision",
+    "content_hash",
+    "identical"
+  ],
+  "title": "SemanticWikiPageRegenerated",
+  "type": "object"
+}

@@ -1,0 +1,1 @@
+"""Semantic-memory infrastructure adapters."""

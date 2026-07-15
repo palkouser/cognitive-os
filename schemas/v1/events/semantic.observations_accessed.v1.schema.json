@@ -1,0 +1,37 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/semantic.observations_accessed.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "accessed_at": {
+      "format": "date-time",
+      "title": "Accessed At",
+      "type": "string"
+    },
+    "observation_ids": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Observation Ids",
+      "type": "array"
+    },
+    "query_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Query Hash",
+      "type": "string"
+    },
+    "query_id": {
+      "format": "uuid",
+      "title": "Query Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "query_id",
+    "observation_ids",
+    "query_hash",
+    "accessed_at"
+  ],
+  "title": "SemanticObservationsAccessed",
+  "type": "object"
+}

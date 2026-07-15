@@ -1,0 +1,188 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/config/semantic-memory-configuration.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "allow_automatic_extraction": {
+      "default": false,
+      "title": "Allow Automatic Extraction",
+      "type": "boolean"
+    },
+    "allow_automatic_supported_promotion": {
+      "default": false,
+      "title": "Allow Automatic Supported Promotion",
+      "type": "boolean"
+    },
+    "allow_generated_wiki_narrative": {
+      "default": false,
+      "title": "Allow Generated Wiki Narrative",
+      "type": "boolean"
+    },
+    "allow_graph_database": {
+      "default": false,
+      "title": "Allow Graph Database",
+      "type": "boolean"
+    },
+    "allow_hybrid_retrieval": {
+      "default": false,
+      "title": "Allow Hybrid Retrieval",
+      "type": "boolean"
+    },
+    "allow_provider_direct_commit": {
+      "default": false,
+      "title": "Allow Provider Direct Commit",
+      "type": "boolean"
+    },
+    "allow_unknown_predicates": {
+      "default": false,
+      "title": "Allow Unknown Predicates",
+      "type": "boolean"
+    },
+    "disputed_confidence_threshold": {
+      "default": 0.4,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Disputed Confidence Threshold",
+      "type": "number"
+    },
+    "fail_closed_on_access_audit_error": {
+      "default": true,
+      "title": "Fail Closed On Access Audit Error",
+      "type": "boolean"
+    },
+    "maximum_claims_per_request": {
+      "default": 100,
+      "maximum": 1000,
+      "minimum": 1,
+      "title": "Maximum Claims Per Request",
+      "type": "integer"
+    },
+    "maximum_contradiction_candidates": {
+      "default": 200,
+      "maximum": 2000,
+      "minimum": 1,
+      "title": "Maximum Contradiction Candidates",
+      "type": "integer"
+    },
+    "maximum_evidence_links_per_claim": {
+      "default": 32,
+      "maximum": 128,
+      "minimum": 1,
+      "title": "Maximum Evidence Links Per Claim",
+      "type": "integer"
+    },
+    "maximum_extraction_elapsed_seconds": {
+      "default": 300,
+      "maximum": 3600,
+      "minimum": 1,
+      "title": "Maximum Extraction Elapsed Seconds",
+      "type": "integer"
+    },
+    "maximum_graph_depth": {
+      "default": 5,
+      "maximum": 32,
+      "minimum": 1,
+      "title": "Maximum Graph Depth",
+      "type": "integer"
+    },
+    "maximum_graph_edges": {
+      "default": 10000,
+      "maximum": 200000,
+      "minimum": 1,
+      "title": "Maximum Graph Edges",
+      "type": "integer"
+    },
+    "maximum_graph_nodes": {
+      "default": 5000,
+      "maximum": 100000,
+      "minimum": 1,
+      "title": "Maximum Graph Nodes",
+      "type": "integer"
+    },
+    "maximum_object_bytes": {
+      "default": 4096,
+      "maximum": 65536,
+      "minimum": 1,
+      "title": "Maximum Object Bytes",
+      "type": "integer"
+    },
+    "maximum_observations_per_request": {
+      "default": 100,
+      "maximum": 1000,
+      "minimum": 1,
+      "title": "Maximum Observations Per Request",
+      "type": "integer"
+    },
+    "maximum_provider_extraction_calls": {
+      "default": 2,
+      "maximum": 10,
+      "minimum": 0,
+      "title": "Maximum Provider Extraction Calls",
+      "type": "integer"
+    },
+    "maximum_relations_per_request": {
+      "default": 200,
+      "maximum": 2000,
+      "minimum": 1,
+      "title": "Maximum Relations Per Request",
+      "type": "integer"
+    },
+    "maximum_source_excerpt_bytes": {
+      "default": 16384,
+      "maximum": 65536,
+      "minimum": 1,
+      "title": "Maximum Source Excerpt Bytes",
+      "type": "integer"
+    },
+    "maximum_source_spans_per_observation": {
+      "default": 16,
+      "maximum": 64,
+      "minimum": 1,
+      "title": "Maximum Source Spans Per Observation",
+      "type": "integer"
+    },
+    "maximum_statement_bytes": {
+      "default": 8192,
+      "maximum": 65536,
+      "minimum": 1,
+      "title": "Maximum Statement Bytes",
+      "type": "integer"
+    },
+    "maximum_subject_bytes": {
+      "default": 1024,
+      "maximum": 8192,
+      "minimum": 1,
+      "title": "Maximum Subject Bytes",
+      "type": "integer"
+    },
+    "maximum_temporal_query_results": {
+      "default": 500,
+      "maximum": 5000,
+      "minimum": 1,
+      "title": "Maximum Temporal Query Results",
+      "type": "integer"
+    },
+    "maximum_wiki_claims_per_page": {
+      "default": 500,
+      "maximum": 5000,
+      "minimum": 1,
+      "title": "Maximum Wiki Claims Per Page",
+      "type": "integer"
+    },
+    "maximum_wiki_page_bytes": {
+      "default": 262144,
+      "maximum": 1048576,
+      "minimum": 1,
+      "title": "Maximum Wiki Page Bytes",
+      "type": "integer"
+    },
+    "supported_confidence_threshold": {
+      "default": 0.8,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Supported Confidence Threshold",
+      "type": "number"
+    }
+  },
+  "title": "SemanticMemoryConfiguration",
+  "type": "object"
+}

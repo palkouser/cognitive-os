@@ -1,0 +1,15 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/semantic-query-budget.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "maximum_results": {
+      "default": 100,
+      "maximum": 500,
+      "minimum": 1,
+      "title": "Maximum Results",
+      "type": "integer"
+    }
+  },
+  "title": "SemanticQueryBudget",
+  "type": "object"
+}

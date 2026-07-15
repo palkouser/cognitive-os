@@ -1,0 +1,237 @@
+{
+  "$defs": {
+    "ClaimRevisionReference": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "format": "uuid",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "claim_id",
+        "revision"
+      ],
+      "title": "ClaimRevisionReference",
+      "type": "object"
+    },
+    "EvidenceRelation": {
+      "enum": [
+        "supports",
+        "contradicts",
+        "qualifies",
+        "supersedes",
+        "derived_from"
+      ],
+      "title": "EvidenceRelation",
+      "type": "string"
+    },
+    "GroundedSourceSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "end": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End"
+        },
+        "excerpt_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Excerpt Hash",
+          "type": "string"
+        },
+        "mode": {
+          "$ref": "#/$defs/GroundingMode"
+        },
+        "path": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path"
+        },
+        "source": {
+          "$ref": "#/$defs/SemanticSourceRef"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start"
+        }
+      },
+      "required": [
+        "source",
+        "mode",
+        "excerpt_hash"
+      ],
+      "title": "GroundedSourceSpan",
+      "type": "object"
+    },
+    "GroundingMode": {
+      "enum": [
+        "typed_field",
+        "artifact_bytes",
+        "line_range",
+        "event_field",
+        "memory_field"
+      ],
+      "title": "GroundingMode",
+      "type": "string"
+    },
+    "SemanticActor": {
+      "additionalProperties": false,
+      "properties": {
+        "actor_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Actor Id",
+          "type": "string"
+        },
+        "actor_type": {
+          "$ref": "#/$defs/SemanticActorType"
+        }
+      },
+      "required": [
+        "actor_type",
+        "actor_id"
+      ],
+      "title": "SemanticActor",
+      "type": "object"
+    },
+    "SemanticActorType": {
+      "enum": [
+        "user",
+        "operator",
+        "controller",
+        "semantic_service",
+        "approved_internal_service",
+        "provider"
+      ],
+      "title": "SemanticActorType",
+      "type": "string"
+    },
+    "SemanticSourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision"
+        },
+        "source_id": {
+          "format": "uuid",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/SemanticSourceType"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_id",
+        "content_hash"
+      ],
+      "title": "SemanticSourceRef",
+      "type": "object"
+    },
+    "SemanticSourceType": {
+      "enum": [
+        "event",
+        "artifact",
+        "memory_revision",
+        "task_run",
+        "trajectory"
+      ],
+      "title": "SemanticSourceType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/evidence-link.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "claim": {
+      "$ref": "#/$defs/ClaimRevisionReference"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "created_by": {
+      "$ref": "#/$defs/SemanticActor"
+    },
+    "evidence_id": {
+      "format": "uuid",
+      "title": "Evidence Id",
+      "type": "string"
+    },
+    "relation": {
+      "$ref": "#/$defs/EvidenceRelation"
+    },
+    "source": {
+      "$ref": "#/$defs/SemanticSourceRef"
+    },
+    "source_span": {
+      "$ref": "#/$defs/GroundedSourceSpan"
+    },
+    "strength": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Strength",
+      "type": "number"
+    }
+  },
+  "required": [
+    "evidence_id",
+    "claim",
+    "source",
+    "source_span",
+    "relation",
+    "strength",
+    "created_at",
+    "created_by"
+  ],
+  "title": "EvidenceLink",
+  "type": "object"
+}

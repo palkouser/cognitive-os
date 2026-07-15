@@ -140,7 +140,8 @@
         "tool_result",
         "mathematical_expression",
         "logical_problem",
-        "physical_quantity"
+        "physical_quantity",
+        "semantic_snapshot"
       ],
       "title": "VerificationSubjectType",
       "type": "string"

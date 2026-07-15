@@ -1,0 +1,164 @@
+{
+  "$defs": {
+    "BeliefStatus": {
+      "enum": [
+        "proposed",
+        "supported",
+        "disputed",
+        "superseded",
+        "retracted",
+        "unknown"
+      ],
+      "title": "BeliefStatus",
+      "type": "string"
+    },
+    "ClaimIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_subject_key": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Canonical Subject Key",
+          "type": "string"
+        },
+        "claim_id": {
+          "format": "uuid",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "predicate_id": {
+          "pattern": "^[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)+$",
+          "title": "Predicate Id",
+          "type": "string"
+        },
+        "scope": {
+          "$ref": "#/$defs/MemoryScope"
+        }
+      },
+      "required": [
+        "claim_id",
+        "scope",
+        "canonical_subject_key",
+        "predicate_id"
+      ],
+      "title": "ClaimIdentity",
+      "type": "object"
+    },
+    "MemoryScope": {
+      "additionalProperties": false,
+      "properties": {
+        "scope_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "scope_type": {
+          "$ref": "#/$defs/MemoryScopeType"
+        }
+      },
+      "required": [
+        "scope_type",
+        "scope_id"
+      ],
+      "title": "MemoryScope",
+      "type": "object"
+    },
+    "MemoryScopeType": {
+      "enum": [
+        "global",
+        "project",
+        "repository",
+        "task",
+        "session",
+        "domain"
+      ],
+      "title": "MemoryScopeType",
+      "type": "string"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "SemanticActor": {
+      "additionalProperties": false,
+      "properties": {
+        "actor_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Actor Id",
+          "type": "string"
+        },
+        "actor_type": {
+          "$ref": "#/$defs/SemanticActorType"
+        }
+      },
+      "required": [
+        "actor_type",
+        "actor_id"
+      ],
+      "title": "SemanticActor",
+      "type": "object"
+    },
+    "SemanticActorType": {
+      "enum": [
+        "user",
+        "operator",
+        "controller",
+        "semantic_service",
+        "approved_internal_service",
+        "provider"
+      ],
+      "title": "SemanticActorType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/claim.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "created_by": {
+      "$ref": "#/$defs/SemanticActor"
+    },
+    "current_belief_status": {
+      "$ref": "#/$defs/BeliefStatus"
+    },
+    "current_revision": {
+      "minimum": 1,
+      "title": "Current Revision",
+      "type": "integer"
+    },
+    "idempotency_key": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Idempotency Key",
+      "type": "string"
+    },
+    "identity": {
+      "$ref": "#/$defs/ClaimIdentity"
+    },
+    "sensitivity": {
+      "$ref": "#/$defs/MemorySensitivity"
+    }
+  },
+  "required": [
+    "identity",
+    "current_revision",
+    "current_belief_status",
+    "sensitivity",
+    "created_at",
+    "created_by",
+    "idempotency_key"
+  ],
+  "title": "Claim",
+  "type": "object"
+}

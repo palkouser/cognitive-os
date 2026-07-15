@@ -1,0 +1,123 @@
+{
+  "$defs": {
+    "ClaimPromotionOutcome": {
+      "enum": [
+        "supported",
+        "disputed",
+        "remain_proposed",
+        "requires_review",
+        "rejected",
+        "verification_error"
+      ],
+      "title": "ClaimPromotionOutcome",
+      "type": "string"
+    },
+    "ClaimRevisionReference": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "format": "uuid",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "claim_id",
+        "revision"
+      ],
+      "title": "ClaimRevisionReference",
+      "type": "object"
+    },
+    "SemanticActor": {
+      "additionalProperties": false,
+      "properties": {
+        "actor_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Actor Id",
+          "type": "string"
+        },
+        "actor_type": {
+          "$ref": "#/$defs/SemanticActorType"
+        }
+      },
+      "required": [
+        "actor_type",
+        "actor_id"
+      ],
+      "title": "SemanticActor",
+      "type": "object"
+    },
+    "SemanticActorType": {
+      "enum": [
+        "user",
+        "operator",
+        "controller",
+        "semantic_service",
+        "approved_internal_service",
+        "provider"
+      ],
+      "title": "SemanticActorType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/claim-promotion-decision.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "claim": {
+      "$ref": "#/$defs/ClaimRevisionReference"
+    },
+    "decided_at": {
+      "format": "date-time",
+      "title": "Decided At",
+      "type": "string"
+    },
+    "decided_by": {
+      "$ref": "#/$defs/SemanticActor"
+    },
+    "decision_id": {
+      "format": "uuid",
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "outcome": {
+      "$ref": "#/$defs/ClaimPromotionOutcome"
+    },
+    "reason_codes": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Reason Codes",
+      "type": "array"
+    },
+    "registry_snapshot_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Registry Snapshot Hash",
+      "type": "string"
+    },
+    "verifier_bundle_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Verifier Bundle Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "decision_id",
+    "claim",
+    "outcome",
+    "verifier_bundle_hash",
+    "registry_snapshot_hash",
+    "reason_codes",
+    "decided_at",
+    "decided_by"
+  ],
+  "title": "ClaimPromotionDecision",
+  "type": "object"
+}

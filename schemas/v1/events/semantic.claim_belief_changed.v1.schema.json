@@ -1,0 +1,61 @@
+{
+  "$defs": {
+    "BeliefStatus": {
+      "enum": [
+        "proposed",
+        "supported",
+        "disputed",
+        "superseded",
+        "retracted",
+        "unknown"
+      ],
+      "title": "BeliefStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/semantic.claim_belief_changed.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "claim_id": {
+      "format": "uuid",
+      "title": "Claim Id",
+      "type": "string"
+    },
+    "decision_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Decision Id"
+    },
+    "expected_revision": {
+      "title": "Expected Revision",
+      "type": "integer"
+    },
+    "previous_status": {
+      "$ref": "#/$defs/BeliefStatus"
+    },
+    "revision": {
+      "title": "Revision",
+      "type": "integer"
+    },
+    "status": {
+      "$ref": "#/$defs/BeliefStatus"
+    }
+  },
+  "required": [
+    "claim_id",
+    "expected_revision",
+    "revision",
+    "previous_status",
+    "status"
+  ],
+  "title": "SemanticClaimBeliefChanged",
+  "type": "object"
+}

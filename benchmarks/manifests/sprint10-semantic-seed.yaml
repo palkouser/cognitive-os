@@ -1,0 +1,30 @@
+benchmark_id: sprint10-semantic-seed
+version: "1"
+title: Sprint 10 temporal semantic deterministic seed suite
+description: Twenty credential-free semantic governance and projection cases.
+default_configuration: {mode: semantic-replay}
+source: Cognitive OS Sprint 10 executable backlog
+license: Apache-2.0
+created_at: 2026-01-01T00:00:00Z
+case_matrix:
+  semantic:
+    - {id: semantic.grounding-1, scenario: memory_field_grounding, expected: passed, entities: {observations: 1, claims: 0, revisions: 0, contradictions: 0, pages: 0}}
+    - {id: semantic.grounding-2, scenario: artifact_range_grounding, expected: passed, entities: {observations: 1, claims: 0, revisions: 0, contradictions: 0, pages: 0}}
+    - {id: semantic.reject-1, scenario: fabricated_source_rejection, expected: passed, entities: {observations: 0, claims: 0, revisions: 0, contradictions: 0, pages: 0}}
+    - {id: semantic.reject-2, scenario: stale_hash_rejection, expected: passed, entities: {observations: 0, claims: 0, revisions: 0, contradictions: 0, pages: 0}}
+    - {id: semantic.duplicate, scenario: exact_duplicate, expected: passed, entities: {observations: 1, claims: 1, revisions: 1, contradictions: 0, pages: 0}}
+    - {id: semantic.support-1, scenario: supported_grounded_claim, expected: passed, entities: {observations: 1, claims: 1, revisions: 2, contradictions: 0, pages: 0}}
+    - {id: semantic.support-2, scenario: complete_verifier_bundle, expected: passed, entities: {observations: 1, claims: 1, revisions: 2, contradictions: 0, pages: 0}}
+    - {id: semantic.policy, scenario: provider_commit_rejection, expected: passed, entities: {observations: 0, claims: 0, revisions: 0, contradictions: 0, pages: 0}}
+    - {id: semantic.successor-1, scenario: temporal_successor, expected: passed, entities: {observations: 2, claims: 2, revisions: 2, contradictions: 0, pages: 0}}
+    - {id: semantic.provider-proposal, scenario: provider_proposal_rejection, expected: passed, entities: {observations: 0, claims: 0, revisions: 0, contradictions: 0, pages: 0}}
+    - {id: semantic.conflict-1, scenario: overlap_contradiction, expected: passed, entities: {observations: 2, claims: 2, revisions: 2, contradictions: 1, pages: 0}}
+    - {id: semantic.conflict-2, scenario: boolean_contradiction, expected: passed, entities: {observations: 2, claims: 2, revisions: 2, contradictions: 1, pages: 0}}
+    - {id: semantic.valid-1, scenario: valid_at, expected: passed, entities: {observations: 1, claims: 1, revisions: 2, contradictions: 0, pages: 0}}
+    - {id: semantic.critical-wiki, scenario: critical_contradiction_wiki, expected: passed, entities: {observations: 2, claims: 2, revisions: 2, contradictions: 1, pages: 1}}
+    - {id: semantic.known-1, scenario: known_at, expected: passed, entities: {observations: 1, claims: 1, revisions: 2, contradictions: 0, pages: 0}}
+    - {id: semantic.known-2, scenario: future_leak_guard, expected: passed, entities: {observations: 1, claims: 1, revisions: 2, contradictions: 0, pages: 0}}
+    - {id: semantic.retraction, scenario: historical_retraction, expected: passed, entities: {observations: 1, claims: 1, revisions: 2, contradictions: 0, pages: 0}}
+    - {id: semantic.relation, scenario: relation_integrity, expected: passed, entities: {observations: 2, claims: 2, revisions: 2, contradictions: 0, pages: 0}}
+    - {id: semantic.wiki-1, scenario: current_wiki_lineage, expected: passed, entities: {observations: 1, claims: 1, revisions: 1, contradictions: 0, pages: 1}}
+    - {id: semantic.wiki-2, scenario: historical_wiki_lineage, expected: passed, entities: {observations: 1, claims: 1, revisions: 1, contradictions: 0, pages: 1}}

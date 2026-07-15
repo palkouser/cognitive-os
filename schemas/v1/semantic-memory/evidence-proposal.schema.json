@@ -1,0 +1,52 @@
+{
+  "$defs": {
+    "EvidenceRelation": {
+      "enum": [
+        "supports",
+        "contradicts",
+        "qualifies",
+        "supersedes",
+        "derived_from"
+      ],
+      "title": "EvidenceRelation",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/evidence-proposal.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "claim_proposal_id": {
+      "format": "uuid",
+      "title": "Claim Proposal Id",
+      "type": "string"
+    },
+    "observation_id": {
+      "format": "uuid",
+      "title": "Observation Id",
+      "type": "string"
+    },
+    "proposal_id": {
+      "format": "uuid",
+      "title": "Proposal Id",
+      "type": "string"
+    },
+    "relation": {
+      "$ref": "#/$defs/EvidenceRelation"
+    },
+    "strength": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Strength",
+      "type": "number"
+    }
+  },
+  "required": [
+    "proposal_id",
+    "claim_proposal_id",
+    "observation_id",
+    "relation",
+    "strength"
+  ],
+  "title": "EvidenceProposal",
+  "type": "object"
+}

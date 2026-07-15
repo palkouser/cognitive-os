@@ -19,6 +19,7 @@ from cognitive_os.domain.provider import (
     ResponseFormat,
 )
 from cognitive_os.events.provider_event_service import (
+    ProviderArtifactPolicy,
     ProviderArtifactService,
     ProviderEventService,
 )
@@ -51,6 +52,13 @@ class ModelExecutionService:
         self._events = event_service
         self._artifacts = artifact_service
         self._monotonic = monotonic_clock
+
+    @property
+    def artifact_persistence_enabled(self) -> bool:
+        return (
+            self._artifacts is not None
+            and self._artifacts.policy is not ProviderArtifactPolicy.NONE
+        )
 
     async def execute(
         self,

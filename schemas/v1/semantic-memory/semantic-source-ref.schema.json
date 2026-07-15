@@ -1,0 +1,52 @@
+{
+  "$defs": {
+    "SemanticSourceType": {
+      "enum": [
+        "event",
+        "artifact",
+        "memory_revision",
+        "task_run",
+        "trajectory"
+      ],
+      "title": "SemanticSourceType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/semantic-source-ref.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "revision": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Revision"
+    },
+    "source_id": {
+      "format": "uuid",
+      "title": "Source Id",
+      "type": "string"
+    },
+    "source_type": {
+      "$ref": "#/$defs/SemanticSourceType"
+    }
+  },
+  "required": [
+    "source_type",
+    "source_id",
+    "content_hash"
+  ],
+  "title": "SemanticSourceRef",
+  "type": "object"
+}

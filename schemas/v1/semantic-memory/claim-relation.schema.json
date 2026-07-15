@@ -1,0 +1,156 @@
+{
+  "$defs": {
+    "ClaimRelationType": {
+      "enum": [
+        "supports",
+        "contradicts",
+        "qualifies",
+        "supersedes",
+        "derived_from",
+        "specializes",
+        "generalizes",
+        "related_to"
+      ],
+      "title": "ClaimRelationType",
+      "type": "string"
+    },
+    "ClaimRevisionReference": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "format": "uuid",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "claim_id",
+        "revision"
+      ],
+      "title": "ClaimRevisionReference",
+      "type": "object"
+    },
+    "ClaimTemporalInterval": {
+      "additionalProperties": false,
+      "properties": {
+        "valid_from": {
+          "format": "date-time",
+          "title": "Valid From",
+          "type": "string"
+        },
+        "valid_to": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Valid To"
+        }
+      },
+      "required": [
+        "valid_from"
+      ],
+      "title": "ClaimTemporalInterval",
+      "type": "object"
+    },
+    "SemanticSourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision"
+        },
+        "source_id": {
+          "format": "uuid",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/SemanticSourceType"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_id",
+        "content_hash"
+      ],
+      "title": "SemanticSourceRef",
+      "type": "object"
+    },
+    "SemanticSourceType": {
+      "enum": [
+        "event",
+        "artifact",
+        "memory_revision",
+        "task_run",
+        "trajectory"
+      ],
+      "title": "SemanticSourceType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/claim-relation.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "provenance": {
+      "$ref": "#/$defs/SemanticSourceRef"
+    },
+    "relation_id": {
+      "format": "uuid",
+      "title": "Relation Id",
+      "type": "string"
+    },
+    "relation_type": {
+      "$ref": "#/$defs/ClaimRelationType"
+    },
+    "source": {
+      "$ref": "#/$defs/ClaimRevisionReference"
+    },
+    "target": {
+      "$ref": "#/$defs/ClaimRevisionReference"
+    },
+    "valid_interval": {
+      "$ref": "#/$defs/ClaimTemporalInterval"
+    }
+  },
+  "required": [
+    "relation_id",
+    "source",
+    "target",
+    "relation_type",
+    "valid_interval",
+    "provenance",
+    "created_at"
+  ],
+  "title": "ClaimRelation",
+  "type": "object"
+}

@@ -1,0 +1,43 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/semantic-reference.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "display_label": {
+      "anyOf": [
+        {
+          "maxLength": 1024,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Display Label"
+    },
+    "identifier": {
+      "maxLength": 1024,
+      "minLength": 1,
+      "title": "Identifier",
+      "type": "string"
+    },
+    "namespace": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Namespace",
+      "type": "string"
+    },
+    "value_type": {
+      "const": "reference",
+      "default": "reference",
+      "title": "Value Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "namespace",
+    "identifier"
+  ],
+  "title": "SemanticReference",
+  "type": "object"
+}

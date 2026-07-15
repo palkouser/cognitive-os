@@ -1,0 +1,693 @@
+{
+  "$defs": {
+    "ClaimProposal": {
+      "additionalProperties": false,
+      "properties": {
+        "existing_observation_ids": {
+          "default": [],
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Existing Observation Ids",
+          "type": "array"
+        },
+        "object": {
+          "discriminator": {
+            "mapping": {
+              "entity": "#/$defs/SemanticEntityRef",
+              "literal": "#/$defs/SemanticLiteral",
+              "reference": "#/$defs/SemanticReference"
+            },
+            "propertyName": "value_type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/SemanticEntityRef"
+            },
+            {
+              "$ref": "#/$defs/SemanticLiteral"
+            },
+            {
+              "$ref": "#/$defs/SemanticReference"
+            }
+          ],
+          "title": "Object"
+        },
+        "observation_proposal_ids": {
+          "default": [],
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Observation Proposal Ids",
+          "type": "array"
+        },
+        "predicate_id": {
+          "minLength": 1,
+          "title": "Predicate Id",
+          "type": "string"
+        },
+        "proposal_id": {
+          "format": "uuid",
+          "title": "Proposal Id",
+          "type": "string"
+        },
+        "provider_confidence": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider Confidence"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SemanticEntityRef"
+            },
+            {
+              "$ref": "#/$defs/SemanticReference"
+            }
+          ],
+          "title": "Subject"
+        },
+        "valid_interval": {
+          "$ref": "#/$defs/ClaimTemporalInterval"
+        }
+      },
+      "required": [
+        "proposal_id",
+        "subject",
+        "predicate_id",
+        "object",
+        "valid_interval"
+      ],
+      "title": "ClaimProposal",
+      "type": "object"
+    },
+    "ClaimRelationType": {
+      "enum": [
+        "supports",
+        "contradicts",
+        "qualifies",
+        "supersedes",
+        "derived_from",
+        "specializes",
+        "generalizes",
+        "related_to"
+      ],
+      "title": "ClaimRelationType",
+      "type": "string"
+    },
+    "ClaimTemporalInterval": {
+      "additionalProperties": false,
+      "properties": {
+        "valid_from": {
+          "format": "date-time",
+          "title": "Valid From",
+          "type": "string"
+        },
+        "valid_to": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Valid To"
+        }
+      },
+      "required": [
+        "valid_from"
+      ],
+      "title": "ClaimTemporalInterval",
+      "type": "object"
+    },
+    "ContradictionProposal": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_proposal_ids": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "format": "uuid",
+              "type": "string"
+            }
+          ],
+          "title": "Claim Proposal Ids",
+          "type": "array"
+        },
+        "proposal_id": {
+          "format": "uuid",
+          "title": "Proposal Id",
+          "type": "string"
+        },
+        "provider_confidence": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider Confidence"
+        },
+        "rule_id": {
+          "minLength": 1,
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/$defs/ContradictionSeverity"
+        }
+      },
+      "required": [
+        "proposal_id",
+        "claim_proposal_ids",
+        "rule_id",
+        "severity"
+      ],
+      "title": "ContradictionProposal",
+      "type": "object"
+    },
+    "ContradictionSeverity": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "title": "ContradictionSeverity",
+      "type": "string"
+    },
+    "EvidenceProposal": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_proposal_id": {
+          "format": "uuid",
+          "title": "Claim Proposal Id",
+          "type": "string"
+        },
+        "observation_id": {
+          "format": "uuid",
+          "title": "Observation Id",
+          "type": "string"
+        },
+        "proposal_id": {
+          "format": "uuid",
+          "title": "Proposal Id",
+          "type": "string"
+        },
+        "relation": {
+          "$ref": "#/$defs/EvidenceRelation"
+        },
+        "strength": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Strength",
+          "type": "number"
+        }
+      },
+      "required": [
+        "proposal_id",
+        "claim_proposal_id",
+        "observation_id",
+        "relation",
+        "strength"
+      ],
+      "title": "EvidenceProposal",
+      "type": "object"
+    },
+    "EvidenceRelation": {
+      "enum": [
+        "supports",
+        "contradicts",
+        "qualifies",
+        "supersedes",
+        "derived_from"
+      ],
+      "title": "EvidenceRelation",
+      "type": "string"
+    },
+    "ExtractionBudget": {
+      "additionalProperties": false,
+      "properties": {
+        "maximum_claims": {
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Maximum Claims",
+          "type": "integer"
+        },
+        "maximum_evidence_links": {
+          "maximum": 3200,
+          "minimum": 1,
+          "title": "Maximum Evidence Links",
+          "type": "integer"
+        },
+        "maximum_observations": {
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Maximum Observations",
+          "type": "integer"
+        },
+        "maximum_relations": {
+          "maximum": 200,
+          "minimum": 0,
+          "title": "Maximum Relations",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "maximum_observations",
+        "maximum_claims",
+        "maximum_evidence_links",
+        "maximum_relations"
+      ],
+      "title": "ExtractionBudget",
+      "type": "object"
+    },
+    "GroundedSourceSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "end": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End"
+        },
+        "excerpt_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Excerpt Hash",
+          "type": "string"
+        },
+        "mode": {
+          "$ref": "#/$defs/GroundingMode"
+        },
+        "path": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path"
+        },
+        "source": {
+          "$ref": "#/$defs/SemanticSourceRef"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start"
+        }
+      },
+      "required": [
+        "source",
+        "mode",
+        "excerpt_hash"
+      ],
+      "title": "GroundedSourceSpan",
+      "type": "object"
+    },
+    "GroundingMode": {
+      "enum": [
+        "typed_field",
+        "artifact_bytes",
+        "line_range",
+        "event_field",
+        "memory_field"
+      ],
+      "title": "GroundingMode",
+      "type": "string"
+    },
+    "ObservationProposal": {
+      "additionalProperties": false,
+      "properties": {
+        "content": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "proposal_id": {
+          "format": "uuid",
+          "title": "Proposal Id",
+          "type": "string"
+        },
+        "source_spans": {
+          "items": {
+            "$ref": "#/$defs/GroundedSourceSpan"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Source Spans",
+          "type": "array"
+        }
+      },
+      "required": [
+        "proposal_id",
+        "content",
+        "source_spans"
+      ],
+      "title": "ObservationProposal",
+      "type": "object"
+    },
+    "RelationProposal": {
+      "additionalProperties": false,
+      "properties": {
+        "proposal_id": {
+          "format": "uuid",
+          "title": "Proposal Id",
+          "type": "string"
+        },
+        "relation_type": {
+          "$ref": "#/$defs/ClaimRelationType"
+        },
+        "source_claim_proposal_id": {
+          "format": "uuid",
+          "title": "Source Claim Proposal Id",
+          "type": "string"
+        },
+        "target_claim_proposal_id": {
+          "format": "uuid",
+          "title": "Target Claim Proposal Id",
+          "type": "string"
+        },
+        "valid_interval": {
+          "$ref": "#/$defs/ClaimTemporalInterval"
+        }
+      },
+      "required": [
+        "proposal_id",
+        "source_claim_proposal_id",
+        "target_claim_proposal_id",
+        "relation_type",
+        "valid_interval"
+      ],
+      "title": "RelationProposal",
+      "type": "object"
+    },
+    "SemanticEntityRef": {
+      "additionalProperties": false,
+      "properties": {
+        "display_label": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Label"
+        },
+        "entity_id": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Entity Id",
+          "type": "string"
+        },
+        "entity_type": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Entity Type",
+          "type": "string"
+        },
+        "value_type": {
+          "const": "entity",
+          "default": "entity",
+          "title": "Value Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entity_id",
+        "entity_type"
+      ],
+      "title": "SemanticEntityRef",
+      "type": "object"
+    },
+    "SemanticLiteral": {
+      "additionalProperties": false,
+      "properties": {
+        "literal_kind": {
+          "$ref": "#/$defs/SemanticLiteralKind"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Value"
+        },
+        "value_type": {
+          "const": "literal",
+          "default": "literal",
+          "title": "Value Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "literal_kind",
+        "value"
+      ],
+      "title": "SemanticLiteral",
+      "type": "object"
+    },
+    "SemanticLiteralKind": {
+      "enum": [
+        "string",
+        "boolean",
+        "integer",
+        "decimal",
+        "date",
+        "datetime",
+        "version",
+        "uri",
+        "quantity"
+      ],
+      "title": "SemanticLiteralKind",
+      "type": "string"
+    },
+    "SemanticReference": {
+      "additionalProperties": false,
+      "properties": {
+        "display_label": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Label"
+        },
+        "identifier": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        },
+        "namespace": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Namespace",
+          "type": "string"
+        },
+        "value_type": {
+          "const": "reference",
+          "default": "reference",
+          "title": "Value Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "namespace",
+        "identifier"
+      ],
+      "title": "SemanticReference",
+      "type": "object"
+    },
+    "SemanticSourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision"
+        },
+        "source_id": {
+          "format": "uuid",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/SemanticSourceType"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_id",
+        "content_hash"
+      ],
+      "title": "SemanticSourceRef",
+      "type": "object"
+    },
+    "SemanticSourceType": {
+      "enum": [
+        "event",
+        "artifact",
+        "memory_revision",
+        "task_run",
+        "trajectory"
+      ],
+      "title": "SemanticSourceType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/semantic-extraction-proposal.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "budget": {
+      "$ref": "#/$defs/ExtractionBudget"
+    },
+    "claims": {
+      "items": {
+        "$ref": "#/$defs/ClaimProposal"
+      },
+      "title": "Claims",
+      "type": "array"
+    },
+    "contradictions": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ContradictionProposal"
+      },
+      "title": "Contradictions",
+      "type": "array"
+    },
+    "evidence": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/EvidenceProposal"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "extraction_id": {
+      "format": "uuid",
+      "title": "Extraction Id",
+      "type": "string"
+    },
+    "observations": {
+      "items": {
+        "$ref": "#/$defs/ObservationProposal"
+      },
+      "title": "Observations",
+      "type": "array"
+    },
+    "registry_snapshot_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Registry Snapshot Hash",
+      "type": "string"
+    },
+    "relations": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/RelationProposal"
+      },
+      "title": "Relations",
+      "type": "array"
+    }
+  },
+  "required": [
+    "extraction_id",
+    "registry_snapshot_hash",
+    "observations",
+    "claims",
+    "budget"
+  ],
+  "title": "SemanticExtractionProposal",
+  "type": "object"
+}

@@ -286,6 +286,31 @@ jobs:
           --manifest benchmarks/manifests/sprint9-memory-ci.yaml
           --mode memory-replay --report-directory /tmp/sprint9-memory-benchmark
 
+  semantic-memory-core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          version: "0.11.28"
+          enable-cache: true
+      - name: Install Python and semantic graph dependencies
+        run: uv python install 3.12 && uv sync --locked --all-groups --extra semantic-graph
+      - name: Temporal semantic memory and adversarial tests
+        run: uv run pytest tests/cognitive_os/semantic_memory -q
+      - name: Semantic benchmark adapter tests
+        run: uv run pytest tests/cognitive_os/benchmarks/test_semantic_adapter.py -q
+      - name: Semantic contract schema drift
+        run: uv run python -m cognitive_os.schemas.export --check
+      - name: Four-case credential-free semantic benchmark
+        run: >-
+          uv run python scripts/benchmark_run.py
+          --manifest benchmarks/manifests/sprint10-semantic-ci.yaml
+          --mode semantic-replay --report-directory /tmp/sprint10-semantic-benchmark
+
   security:
     runs-on: ubuntu-latest
     steps:
@@ -358,10 +383,23 @@ jobs:
         run: uv run alembic -c infra/postgres/alembic.ini upgrade head
       - name: PostgreSQL integration tests
         run: uv run pytest tests/integration/postgres tests/integration/controller -m postgres -q
+      - name: Reset semantic smoke projections after repository-level tests
+        run: |
+          uv run alembic -c infra/postgres/alembic.ini downgrade 0002
+          uv run alembic -c infra/postgres/alembic.ini upgrade head
       - name: Memory Plane health
         run: uv run python scripts/memory_health.py
       - name: Credential-free Sprint 9 memory smoke
         run: uv run python scripts/memory_smoke_test.py
+      - name: Credential-free Sprint 10 semantic smoke
+        run: uv run python scripts/semantic_smoke_test.py
+      - name: Temporal semantic-memory health
+        run: uv run python scripts/semantic_health.py
+      - name: Four-case semantic benchmark gate with PostgreSQL service
+        run: >-
+          uv run python scripts/benchmark_run.py
+          --manifest benchmarks/manifests/sprint10-semantic-ci.yaml
+          --mode semantic-replay --report-directory /tmp/sprint10-semantic-postgres-benchmark
       - name: Database and artifact backup restore test
         run: |
           container="$(docker ps --filter ancestor=pgvector/pgvector:0.8.2-pg18-bookworm --format '{{.ID}}' | head -n1)"

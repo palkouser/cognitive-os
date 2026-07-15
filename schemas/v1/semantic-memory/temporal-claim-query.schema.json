@@ -1,0 +1,183 @@
+{
+  "$defs": {
+    "BeliefStatus": {
+      "enum": [
+        "proposed",
+        "supported",
+        "disputed",
+        "superseded",
+        "retracted",
+        "unknown"
+      ],
+      "title": "BeliefStatus",
+      "type": "string"
+    },
+    "MemoryScope": {
+      "additionalProperties": false,
+      "properties": {
+        "scope_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "scope_type": {
+          "$ref": "#/$defs/MemoryScopeType"
+        }
+      },
+      "required": [
+        "scope_type",
+        "scope_id"
+      ],
+      "title": "MemoryScope",
+      "type": "object"
+    },
+    "MemoryScopeType": {
+      "enum": [
+        "global",
+        "project",
+        "repository",
+        "task",
+        "session",
+        "domain"
+      ],
+      "title": "MemoryScopeType",
+      "type": "string"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "SemanticQueryBudget": {
+      "additionalProperties": false,
+      "properties": {
+        "maximum_results": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Maximum Results",
+          "type": "integer"
+        }
+      },
+      "title": "SemanticQueryBudget",
+      "type": "object"
+    },
+    "TemporalQueryMode": {
+      "enum": [
+        "current",
+        "valid_at",
+        "known_at",
+        "bitemporal"
+      ],
+      "title": "TemporalQueryMode",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/temporal-claim-query.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "belief_statuses": {
+      "default": [
+        "proposed",
+        "supported",
+        "disputed",
+        "unknown"
+      ],
+      "items": {
+        "$ref": "#/$defs/BeliefStatus"
+      },
+      "title": "Belief Statuses",
+      "type": "array"
+    },
+    "budget": {
+      "$ref": "#/$defs/SemanticQueryBudget",
+      "default": {
+        "maximum_results": 100
+      }
+    },
+    "known_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Known At"
+    },
+    "mode": {
+      "$ref": "#/$defs/TemporalQueryMode",
+      "default": "current"
+    },
+    "predicate_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Predicate Id"
+    },
+    "query_id": {
+      "format": "uuid",
+      "title": "Query Id",
+      "type": "string"
+    },
+    "scopes": {
+      "items": {
+        "$ref": "#/$defs/MemoryScope"
+      },
+      "maxItems": 16,
+      "minItems": 1,
+      "title": "Scopes",
+      "type": "array"
+    },
+    "sensitivity_ceiling": {
+      "$ref": "#/$defs/MemorySensitivity",
+      "default": "internal"
+    },
+    "subject_key": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Subject Key"
+    },
+    "valid_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Valid At"
+    }
+  },
+  "required": [
+    "query_id",
+    "scopes"
+  ],
+  "title": "TemporalClaimQuery",
+  "type": "object"
+}

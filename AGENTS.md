@@ -5,35 +5,39 @@
 This repository develops Cognitive OS, a local, model-independent, self-improving
 agent harness based on LightAgent.
 
-## Sprint 9 scope
+## Sprint 10 scope
 
-The active scope is Governed Memory Plane v1 built on the existing controller, Coding
-Agent, event, artifact, verifier, acceptance, and PostgreSQL boundaries.
+The active scope is Temporal Semantic Memory and deterministic Wiki v3 built on the
+Sprint 9 Governed Memory Plane and the existing event, artifact, verifier, acceptance,
+and PostgreSQL boundaries.
 
 Allowed work:
 
-- host-governed creation of typed episodic and semantic-foundation memory;
-- append-only revisions, provenance, explicit lifecycle transitions, and access audit;
-- deterministic ingestion of explicitly selected authoritative Sprint 8 trajectories;
-- PostgreSQL metadata and full-text retrieval plus exact pgvector similarity;
-- deterministic test embeddings and optional preconfigured local embedding models;
-- narrow Cognitive OS and LightAgent adapters that preserve governance;
-- credential-free memory benchmarks, reports, recovery, and operations.
+- immutable, exactly grounded semantic observations;
+- frozen predicate registries and typed semantic values;
+- evidence-backed claims with append-only bitemporal revisions and belief transitions;
+- deterministic duplicate and bounded contradiction analysis;
+- PostgreSQL relational claim graphs and optional bounded in-process analysis;
+- deterministic, revisioned Markdown Wiki projections with exact claim lineage;
+- semantic lifecycle events, access audit, health, recovery, and credential-free benchmarks.
 
 Out of scope:
 
 - automatic provider-authored long-term memory or direct provider database access;
-- semantic claims, belief state, contradiction inference, knowledge graphs, or Wiki rendering;
-- automatic skill, strategy, experience, conversation-summary, or memory promotion creation;
-- hybrid lexical/vector retrieval, reranking, Context Builder, HNSW, or IVFFlat;
+- provider-authored authoritative claims or autonomous extraction and promotion by default;
+- unrestricted entity resolution, ontology induction, or natural-language contradiction authority;
+- hybrid lexical/vector/graph retrieval, reranking, Context Builder, HNSW, or IVFFlat;
+- graph databases or Wiki pages used as independent evidence;
+- automatic skill, strategy, experience, or conversation-summary creation;
 - network model downloads or GPU requirements;
 - Cognee, Graphiti, LangMem, agentmemory, or legacy LightAgent memory as an authority;
-- unrestricted LightAgent persistence and Sprint 10--14 semantic or procedural features.
+- unrestricted LightAgent persistence and Sprint 11--14 context or procedural features.
 
-PostgreSQL is authoritative for Memory Plane state, the event store for lifecycle evidence,
-and the artifact store for referenced large content. Providers and LightAgent cannot bypass
-the Memory Service or its host-controlled policy. Memory revisions and access records are
-append-only. Provider prose is non-authoritative and cannot satisfy verified promotion.
+PostgreSQL is authoritative for Memory Plane and semantic projection state, the event store
+for lifecycle evidence, and the artifact store for referenced large content. Providers and
+LightAgent cannot bypass host-controlled services or policy. Memory, claim, contradiction,
+Wiki, and access history is append-only. Provider prose is proposal-only and cannot satisfy
+supported promotion.
 
 Do not move or rewrite LightAgent runtime files unless the active issue explicitly
 authorizes it.

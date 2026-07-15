@@ -1,0 +1,69 @@
+{
+  "$defs": {
+    "SemanticLiteralKind": {
+      "enum": [
+        "string",
+        "boolean",
+        "integer",
+        "decimal",
+        "date",
+        "datetime",
+        "version",
+        "uri",
+        "quantity"
+      ],
+      "title": "SemanticLiteralKind",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/semantic-literal.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "literal_kind": {
+      "$ref": "#/$defs/SemanticLiteralKind"
+    },
+    "unit": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Unit"
+    },
+    "value": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        }
+      ],
+      "title": "Value"
+    },
+    "value_type": {
+      "const": "literal",
+      "default": "literal",
+      "title": "Value Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "literal_kind",
+    "value"
+  ],
+  "title": "SemanticLiteral",
+  "type": "object"
+}

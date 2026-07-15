@@ -101,4 +101,5 @@ class StreamType(str, Enum):
     TOOL_CALL = "tool_call"
     VERIFIER = "verifier"
     MEMORY = "memory"
+    SEMANTIC = "semantic"
     SYSTEM = "system"
