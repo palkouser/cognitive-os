@@ -1,0 +1,49 @@
+{
+  "$defs": {
+    "RepositoryReference": {
+      "additionalProperties": false,
+      "properties": {
+        "base_commit": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Base Commit",
+          "type": "string"
+        },
+        "repository_identity": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Repository Identity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "base_commit",
+        "repository_identity"
+      ],
+      "title": "RepositoryReference",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domain/workspace-request.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "idempotency_key": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Idempotency Key",
+      "type": "string"
+    },
+    "repository": {
+      "$ref": "#/$defs/RepositoryReference"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_run_id",
+    "repository",
+    "idempotency_key"
+  ],
+  "title": "WorkspaceRequest",
+  "type": "object"
+}

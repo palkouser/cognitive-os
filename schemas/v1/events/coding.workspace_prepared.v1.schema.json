@@ -1,0 +1,94 @@
+{
+  "$defs": {
+    "WorkspaceDescriptor": {
+      "additionalProperties": false,
+      "properties": {
+        "base_commit": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Base Commit",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "logical_name": {
+          "minLength": 1,
+          "title": "Logical Name",
+          "type": "string"
+        },
+        "mount_descriptor_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mount Descriptor Hash"
+        },
+        "state": {
+          "$ref": "#/$defs/WorkspaceState"
+        },
+        "task_run_id": {
+          "format": "uuid",
+          "title": "Task Run Id",
+          "type": "string"
+        },
+        "workspace_id": {
+          "format": "uuid",
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "workspace_revision": {
+          "minimum": 0,
+          "title": "Workspace Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "task_run_id",
+        "base_commit",
+        "workspace_revision",
+        "state",
+        "logical_name",
+        "created_at"
+      ],
+      "title": "WorkspaceDescriptor",
+      "type": "object"
+    },
+    "WorkspaceState": {
+      "enum": [
+        "requested",
+        "validating",
+        "prepared",
+        "mounted",
+        "active",
+        "collecting",
+        "archived",
+        "removed",
+        "failed",
+        "recovery_required"
+      ],
+      "title": "WorkspaceState",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/coding.workspace_prepared.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "descriptor": {
+      "$ref": "#/$defs/WorkspaceDescriptor"
+    }
+  },
+  "required": [
+    "descriptor"
+  ],
+  "title": "CodingWorkspacePrepared",
+  "type": "object"
+}

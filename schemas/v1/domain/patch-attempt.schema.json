@@ -1,0 +1,221 @@
+{
+  "$defs": {
+    "ChangeType": {
+      "enum": [
+        "added",
+        "modified",
+        "deleted",
+        "renamed"
+      ],
+      "title": "ChangeType",
+      "type": "string"
+    },
+    "ChangedFile": {
+      "additionalProperties": false,
+      "properties": {
+        "added_lines": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Added Lines",
+          "type": "integer"
+        },
+        "after_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After Hash"
+        },
+        "before_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before Hash"
+        },
+        "change_type": {
+          "$ref": "#/$defs/ChangeType"
+        },
+        "deleted_lines": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Deleted Lines",
+          "type": "integer"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "change_type"
+      ],
+      "title": "ChangedFile",
+      "type": "object"
+    },
+    "ChangedFileManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "base_commit": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Base Commit",
+          "type": "string"
+        },
+        "files": {
+          "items": {
+            "$ref": "#/$defs/ChangedFile"
+          },
+          "title": "Files",
+          "type": "array"
+        },
+        "total_diff_lines": {
+          "minimum": 0,
+          "title": "Total Diff Lines",
+          "type": "integer"
+        },
+        "workspace_revision": {
+          "minimum": 0,
+          "title": "Workspace Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "base_commit",
+        "workspace_revision",
+        "files",
+        "total_diff_lines"
+      ],
+      "title": "ChangedFileManifest",
+      "type": "object"
+    },
+    "PatchApplicationResult": {
+      "additionalProperties": false,
+      "properties": {
+        "applied": {
+          "title": "Applied",
+          "type": "boolean"
+        },
+        "diff_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Diff Hash"
+        },
+        "manifest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ChangedFileManifest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "reason_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason Code"
+        },
+        "workspace_revision": {
+          "minimum": 0,
+          "title": "Workspace Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "applied",
+        "workspace_revision"
+      ],
+      "title": "PatchApplicationResult",
+      "type": "object"
+    },
+    "PatchAttemptStatus": {
+      "enum": [
+        "proposed",
+        "applied",
+        "rejected",
+        "rolled_back",
+        "failed"
+      ],
+      "title": "PatchAttemptStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domain/patch-attempt.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "application_result": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PatchApplicationResult"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "attempt_number": {
+      "maximum": 3,
+      "minimum": 1,
+      "title": "Attempt Number",
+      "type": "integer"
+    },
+    "proposal_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Proposal Hash",
+      "type": "string"
+    },
+    "recorded_at": {
+      "format": "date-time",
+      "title": "Recorded At",
+      "type": "string"
+    },
+    "repair_cycle": {
+      "maximum": 3,
+      "minimum": 0,
+      "title": "Repair Cycle",
+      "type": "integer"
+    },
+    "status": {
+      "$ref": "#/$defs/PatchAttemptStatus"
+    }
+  },
+  "required": [
+    "attempt_number",
+    "repair_cycle",
+    "proposal_hash",
+    "status",
+    "recorded_at"
+  ],
+  "title": "PatchAttempt",
+  "type": "object"
+}

@@ -1,0 +1,45 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/domain/patch-proposal.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "expected_workspace_revision": {
+      "minimum": 0,
+      "title": "Expected Workspace Revision",
+      "type": "integer"
+    },
+    "plan_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Plan Hash",
+      "type": "string"
+    },
+    "rationale": {
+      "minLength": 1,
+      "title": "Rationale",
+      "type": "string"
+    },
+    "target_files": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 20,
+      "minItems": 1,
+      "title": "Target Files",
+      "type": "array"
+    },
+    "unified_diff": {
+      "maxLength": 2000000,
+      "minLength": 1,
+      "title": "Unified Diff",
+      "type": "string"
+    }
+  },
+  "required": [
+    "expected_workspace_revision",
+    "plan_hash",
+    "unified_diff",
+    "target_files",
+    "rationale"
+  ],
+  "title": "PatchProposal",
+  "type": "object"
+}

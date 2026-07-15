@@ -16,3 +16,7 @@ git status --short
 
 The runner never uses `--dangerously-skip-permissions`. A repository status change is a
 policy violation; inspect it manually because the adapter does not delete user files.
+
+For Coding Agent runs, advisory output is untrusted review context only. It cannot call
+workspace mutation tools, approve a patch, satisfy an acceptance criterion, or override a
+verifier result. Live advisory execution remains opt-in and is excluded from credential-free CI.

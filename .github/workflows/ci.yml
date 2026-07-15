@@ -237,6 +237,32 @@ jobs:
       - name: Inspect sandbox image
         run: ./scripts/sandbox_inspect.sh
 
+  coding-agent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          version: "0.11.28"
+          enable-cache: true
+      - name: Install Python and dependencies
+        run: uv python install 3.12 && uv sync --locked --all-groups
+      - name: Coding Agent unit, contract, and worktree tests
+        run: >-
+          uv run pytest tests/cognitive_os/coding tests/integration/coding -q
+      - name: Coding contract schema drift
+        run: uv run python -m cognitive_os.schemas.export --check
+      - name: Credential-free Coding Agent smoke
+        run: uv run python scripts/sprint8_smoke_test.py
+      - name: Four-case credential-free coding benchmark
+        run: >-
+          uv run python scripts/benchmark_run.py
+          --manifest benchmarks/manifests/sprint8-coding-ci.yaml
+          --mode coding-replay --report-directory /tmp/sprint8-coding-benchmark
+
   security:
     runs-on: ubuntu-latest
     steps:

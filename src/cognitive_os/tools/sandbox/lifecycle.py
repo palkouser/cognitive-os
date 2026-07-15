@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 from cognitive_os.domain.sandbox import SandboxRequest, SandboxResult
@@ -46,9 +47,9 @@ class DockerSandbox:
             "--tmpfs",
             "/tmp:rw,noexec,nosuid,nodev,size=64m",  # nosec B108
             "--user",
-            "10001:10001",
+            f"{os.getuid()}:{os.getgid()}",
             "--mount",
-            f"type=bind,src={workspace},dst=/workspace,rw",
+            f"type=bind,src={workspace},dst=/workspace",
             "--workdir",
             "/workspace",
             self._image,

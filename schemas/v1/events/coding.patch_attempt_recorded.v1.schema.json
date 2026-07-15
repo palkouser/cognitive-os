@@ -1,0 +1,33 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/coding.patch_attempt_recorded.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "attempt_number": {
+      "title": "Attempt Number",
+      "type": "integer"
+    },
+    "proposal_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Proposal Hash",
+      "type": "string"
+    },
+    "recorded_at": {
+      "format": "date-time",
+      "title": "Recorded At",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_run_id",
+    "attempt_number",
+    "proposal_hash",
+    "recorded_at"
+  ],
+  "title": "CodingPatchAttemptRecorded",
+  "type": "object"
+}

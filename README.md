@@ -657,6 +657,15 @@ Shanghai Wanxing AI and Professor Zhang Liwen's research group from the School o
 
 LightAgent is licensed under the [Apache 2.0 License](LICENSE). You can freely use, modify, and distribute this project, but please adhere to the terms of the license.
 
+## Python Coding Agent (Sprint 8)
+
+Cognitive OS includes a bounded Python 3.12 Coding Agent MVP. It inspects an exact local Git
+commit without executing repository code, edits only a detached worktree through controlled
+tools, verifies changes in a rootless network-free sandbox, and packages a reviewable outcome.
+It never commits, pushes, or merges. See the
+[architecture](docs/architecture/python-coding-agent.md) and
+[operations guide](docs/operations/python-coding-agent.md).
+
 ---
 
 ## 📬 Contact Us

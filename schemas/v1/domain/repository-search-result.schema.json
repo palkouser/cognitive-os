@@ -1,0 +1,27 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/domain/repository-search-result.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "line": {
+      "minimum": 1,
+      "title": "Line",
+      "type": "integer"
+    },
+    "path": {
+      "title": "Path",
+      "type": "string"
+    },
+    "text": {
+      "maxLength": 2000,
+      "title": "Text",
+      "type": "string"
+    }
+  },
+  "required": [
+    "path",
+    "line",
+    "text"
+  ],
+  "title": "RepositorySearchResult",
+  "type": "object"
+}

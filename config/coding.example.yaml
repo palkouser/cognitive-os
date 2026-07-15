@@ -1,0 +1,39 @@
+coding:
+  worktree_root: /srv/cognitive-os/worktrees
+  archive_root: /srv/cognitive-os/archives
+  allowed_repository_roots:
+    - /srv/cognitive-os/repositories
+  supported_python_version: "3.12"
+  limits:
+    maximum_patch_attempts: 3
+    maximum_repair_cycles: 3
+    maximum_changed_files: 20
+    maximum_diff_lines: 1000
+    maximum_repository_files: 10000
+    maximum_indexed_file_bytes: 1000000
+    maximum_total_index_bytes: 50000000
+    maximum_recent_commits: 50
+    maximum_search_results: 200
+    maximum_file_read_bytes: 262144
+    sandbox_cpu_limit: 4
+    sandbox_memory_mb: 8192
+    allow_network: false
+    allow_dependency_changes: false
+    allow_commit: false
+    allow_push: false
+    allow_merge: false
+  commands:
+    allowed_executables: [pytest, ruff, mypy, controlled-import]
+    project_commands: {}
+  paths:
+    allowed_paths: [src, tests]
+    forbidden_paths: [.git, .env, .venv]
+    allow_delete_baseline_files: false
+  cleanup:
+    success: archive
+    failure: preserve_after_failure
+    cancellation: archive
+  artifacts:
+    retention_days: 30
+    maximum_archive_bytes: 50000000
+    include_command_output: true

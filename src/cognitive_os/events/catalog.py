@@ -14,6 +14,7 @@ from .benchmark_events import (
     BenchmarkRunFailed,
     BenchmarkRunStarted,
 )
+from .coding_events import CODING_EVENT_MODELS
 from .controller_events import (
     AcceptanceDecisionRecorded,
     ControllerBudgetExhaustedEvent,
@@ -124,6 +125,7 @@ class EventCatalog:
 
 
 DEFAULT_EVENT_MODELS: tuple[type[EventPayload], ...] = (
+    *CODING_EVENT_MODELS,
     BenchmarkRunStarted,
     BenchmarkCaseStarted,
     BenchmarkCaseCompleted,

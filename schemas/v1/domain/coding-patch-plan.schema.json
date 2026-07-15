@@ -1,0 +1,62 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/domain/coding-patch-plan.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "dependency_changes_requested": {
+      "default": false,
+      "title": "Dependency Changes Requested",
+      "type": "boolean"
+    },
+    "intended_changes": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Intended Changes",
+      "type": "array"
+    },
+    "risks": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Risks",
+      "type": "array"
+    },
+    "summary": {
+      "minLength": 1,
+      "title": "Summary",
+      "type": "string"
+    },
+    "target_files": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 20,
+      "minItems": 1,
+      "title": "Target Files",
+      "type": "array"
+    },
+    "tests_to_run": {
+      "default": [],
+      "items": {
+        "items": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "title": "Tests To Run",
+      "type": "array"
+    }
+  },
+  "required": [
+    "summary",
+    "target_files",
+    "intended_changes"
+  ],
+  "title": "CodingPatchPlan",
+  "type": "object"
+}

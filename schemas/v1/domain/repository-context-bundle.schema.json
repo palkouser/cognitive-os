@@ -1,0 +1,135 @@
+{
+  "$defs": {
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "RepositorySearchResult": {
+      "additionalProperties": false,
+      "properties": {
+        "line": {
+          "minimum": 1,
+          "title": "Line",
+          "type": "integer"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 2000,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "line",
+        "text"
+      ],
+      "title": "RepositorySearchResult",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domain/repository-context-bundle.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "base_commit": {
+      "pattern": "^[0-9a-f]{40}$",
+      "title": "Base Commit",
+      "type": "string"
+    },
+    "excerpts": {
+      "default": [],
+      "items": {
+        "additionalProperties": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "type": "object"
+      },
+      "title": "Excerpts",
+      "type": "array"
+    },
+    "exclusions": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Exclusions",
+      "type": "array"
+    },
+    "index_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Index Hash",
+      "type": "string"
+    },
+    "profile_summary": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Profile Summary",
+      "type": "object"
+    },
+    "search_results": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/RepositorySearchResult"
+      },
+      "title": "Search Results",
+      "type": "array"
+    },
+    "truncated": {
+      "default": false,
+      "title": "Truncated",
+      "type": "boolean"
+    },
+    "workspace_revision": {
+      "minimum": 0,
+      "title": "Workspace Revision",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "base_commit",
+    "workspace_revision",
+    "index_hash",
+    "profile_summary"
+  ],
+  "title": "RepositoryContextBundle",
+  "type": "object"
+}

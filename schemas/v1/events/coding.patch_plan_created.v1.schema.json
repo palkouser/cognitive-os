@@ -1,0 +1,89 @@
+{
+  "$defs": {
+    "CodingPatchPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "dependency_changes_requested": {
+          "default": false,
+          "title": "Dependency Changes Requested",
+          "type": "boolean"
+        },
+        "intended_changes": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Intended Changes",
+          "type": "array"
+        },
+        "risks": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Risks",
+          "type": "array"
+        },
+        "summary": {
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        },
+        "target_files": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "title": "Target Files",
+          "type": "array"
+        },
+        "tests_to_run": {
+          "default": [],
+          "items": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Tests To Run",
+          "type": "array"
+        }
+      },
+      "required": [
+        "summary",
+        "target_files",
+        "intended_changes"
+      ],
+      "title": "CodingPatchPlan",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/coding.patch_plan_created.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "plan": {
+      "$ref": "#/$defs/CodingPatchPlan"
+    },
+    "plan_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Plan Hash",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_run_id",
+    "plan",
+    "plan_hash"
+  ],
+  "title": "CodingPatchPlanCreated",
+  "type": "object"
+}

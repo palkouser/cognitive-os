@@ -1,0 +1,25 @@
+benchmark_id: sprint8-coding-seed
+version: "1"
+title: Sprint 8 deterministic Coding Agent seed suite
+description: Local Python coding cases with accepted, repair, rejection, and bounded outcomes.
+default_configuration:
+  mode: coding-replay
+source: Cognitive OS Sprint 8 executable backlog
+license: Apache-2.0
+created_at: 2026-01-01T00:00:00Z
+case_matrix:
+  coding:
+    - {id: coding.simple-bug-1, scenario: simple_bug, expected: accepted}
+    - {id: coding.simple-bug-2, scenario: simple_bug, expected: accepted}
+    - {id: coding.simple-bug-3, scenario: simple_bug, expected: accepted}
+    - {id: coding.missing-implementation-1, scenario: missing_implementation, expected: accepted}
+    - {id: coding.missing-implementation-2, scenario: missing_implementation, expected: accepted}
+    - {id: coding.boundary-condition, scenario: boundary, expected: accepted}
+    - {id: coding.refactor, scenario: refactor, expected: accepted}
+    - {id: coding.mypy-correction-1, scenario: mypy, expected: accepted}
+    - {id: coding.mypy-correction-2, scenario: mypy, expected: accepted}
+    - {id: coding.test-addition, scenario: test_addition, expected: accepted}
+    - {id: coding.forbidden-path, scenario: forbidden_path, expected: rejected}
+    - {id: coding.forbidden-dependency, scenario: forbidden_dependency, expected: rejected}
+    - {id: coding.repair-cycle, scenario: repair, expected: accepted}
+    - {id: coding.no-progress, scenario: no_progress, expected: budget_exhausted}

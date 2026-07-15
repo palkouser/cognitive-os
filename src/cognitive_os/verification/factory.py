@@ -23,6 +23,7 @@ from cognitive_os.verification.coding import (
     MypyVerifier,
     PytestVerifier,
     RuffVerifier,
+    WorkspaceIntegrityVerifier,
 )
 from cognitive_os.verification.generic import (
     ArtifactIntegrityVerifier,
@@ -82,6 +83,7 @@ def build_builtin_registry(
             FilePolicyVerifier(),
             DiffPolicyVerifier(),
             DependencyPolicyVerifier(),
+            WorkspaceIntegrityVerifier(),
         )
     )
     if artifacts is not None:

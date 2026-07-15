@@ -64,7 +64,7 @@ def _expand_case_matrix(value: dict[str, Any]) -> dict[str, Any]:
                     version="1",
                     domain=domain,
                     title=case_id.replace(".", " ").title(),
-                    description="Bounded deterministic Sprint 7 seed benchmark case.",
+                    description=f"Bounded deterministic {value.get('benchmark_id')} case.",
                     problem_request={"scenario": str(entry.get("scenario", case_id))},
                     expected_outputs={"status": str(entry.get("expected", "passed"))},
                     acceptance_policy=policy,
@@ -74,8 +74,8 @@ def _expand_case_matrix(value: dict[str, Any]) -> dict[str, Any]:
                         maximum_artifact_bytes=1_048_576,
                     ),
                     configuration={"fixture": str(entry.get("fixture", "local"))},
-                    tags=("sprint7-seed", domain.value),
-                    source="Cognitive OS Sprint 7 local seed suite",
+                    tags=(str(value.get("benchmark_id")), domain.value),
+                    source=str(value.get("source", "Cognitive OS local benchmark suite")),
                     license="Apache-2.0",
                 ).model_dump(mode="json")
             )

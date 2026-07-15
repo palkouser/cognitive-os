@@ -1,0 +1,89 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/domain/repository-file-entry.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "binary": {
+      "default": false,
+      "title": "Binary",
+      "type": "boolean"
+    },
+    "configuration": {
+      "default": false,
+      "title": "Configuration",
+      "type": "boolean"
+    },
+    "content_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Content Hash"
+    },
+    "file_type": {
+      "minLength": 1,
+      "title": "File Type",
+      "type": "string"
+    },
+    "generated": {
+      "default": false,
+      "title": "Generated",
+      "type": "boolean"
+    },
+    "ignored_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ignored Reason"
+    },
+    "language": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Language"
+    },
+    "path": {
+      "title": "Path",
+      "type": "string"
+    },
+    "size_bytes": {
+      "minimum": 0,
+      "title": "Size Bytes",
+      "type": "integer"
+    },
+    "symlink": {
+      "default": false,
+      "title": "Symlink",
+      "type": "boolean"
+    },
+    "test_file": {
+      "default": false,
+      "title": "Test File",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "path",
+    "size_bytes",
+    "file_type"
+  ],
+  "title": "RepositoryFileEntry",
+  "type": "object"
+}

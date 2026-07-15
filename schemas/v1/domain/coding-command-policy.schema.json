@@ -1,0 +1,33 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/domain/coding-command-policy.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "allowed_executables": {
+      "default": [
+        "pytest",
+        "ruff",
+        "mypy",
+        "controlled-import"
+      ],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Allowed Executables",
+      "type": "array"
+    },
+    "project_commands": {
+      "additionalProperties": {
+        "items": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "title": "Project Commands",
+      "type": "object"
+    }
+  },
+  "title": "CodingCommandPolicy",
+  "type": "object"
+}

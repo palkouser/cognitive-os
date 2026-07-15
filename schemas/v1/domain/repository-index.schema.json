@@ -1,0 +1,288 @@
+{
+  "$defs": {
+    "ImportEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "line": {
+          "minimum": 1,
+          "title": "Line",
+          "type": "integer"
+        },
+        "module": {
+          "minLength": 1,
+          "title": "Module",
+          "type": "string"
+        },
+        "names": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Names",
+          "type": "array"
+        }
+      },
+      "required": [
+        "module",
+        "line"
+      ],
+      "title": "ImportEntry",
+      "type": "object"
+    },
+    "PythonModuleEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "exported_names": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Exported Names",
+          "type": "array"
+        },
+        "imports": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ImportEntry"
+          },
+          "title": "Imports",
+          "type": "array"
+        },
+        "module": {
+          "minLength": 1,
+          "title": "Module",
+          "type": "string"
+        },
+        "parse_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parse Error"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "symbols": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/PythonSymbolEntry"
+          },
+          "title": "Symbols",
+          "type": "array"
+        }
+      },
+      "required": [
+        "path",
+        "module"
+      ],
+      "title": "PythonModuleEntry",
+      "type": "object"
+    },
+    "PythonSymbolEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "decorators": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Decorators",
+          "type": "array"
+        },
+        "end_line": {
+          "minimum": 1,
+          "title": "End Line",
+          "type": "integer"
+        },
+        "has_docstring": {
+          "default": false,
+          "title": "Has Docstring",
+          "type": "boolean"
+        },
+        "kind": {
+          "minLength": 1,
+          "title": "Kind",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "start_line": {
+          "minimum": 1,
+          "title": "Start Line",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "kind",
+        "start_line",
+        "end_line"
+      ],
+      "title": "PythonSymbolEntry",
+      "type": "object"
+    },
+    "RepositoryFileEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "binary": {
+          "default": false,
+          "title": "Binary",
+          "type": "boolean"
+        },
+        "configuration": {
+          "default": false,
+          "title": "Configuration",
+          "type": "boolean"
+        },
+        "content_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Hash"
+        },
+        "file_type": {
+          "minLength": 1,
+          "title": "File Type",
+          "type": "string"
+        },
+        "generated": {
+          "default": false,
+          "title": "Generated",
+          "type": "boolean"
+        },
+        "ignored_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ignored Reason"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "symlink": {
+          "default": false,
+          "title": "Symlink",
+          "type": "boolean"
+        },
+        "test_file": {
+          "default": false,
+          "title": "Test File",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "path",
+        "size_bytes",
+        "file_type"
+      ],
+      "title": "RepositoryFileEntry",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domain/repository-index.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "base_commit": {
+      "pattern": "^[0-9a-f]{40}$",
+      "title": "Base Commit",
+      "type": "string"
+    },
+    "files": {
+      "items": {
+        "$ref": "#/$defs/RepositoryFileEntry"
+      },
+      "title": "Files",
+      "type": "array"
+    },
+    "modules": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/PythonModuleEntry"
+      },
+      "title": "Modules",
+      "type": "array"
+    },
+    "total_bytes_indexed": {
+      "minimum": 0,
+      "title": "Total Bytes Indexed",
+      "type": "integer"
+    },
+    "total_files_seen": {
+      "minimum": 0,
+      "title": "Total Files Seen",
+      "type": "integer"
+    },
+    "truncated": {
+      "default": false,
+      "title": "Truncated",
+      "type": "boolean"
+    },
+    "warnings": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    },
+    "workspace_revision": {
+      "minimum": 0,
+      "title": "Workspace Revision",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "base_commit",
+    "workspace_revision",
+    "files",
+    "total_files_seen",
+    "total_bytes_indexed"
+  ],
+  "title": "RepositoryIndex",
+  "type": "object"
+}
