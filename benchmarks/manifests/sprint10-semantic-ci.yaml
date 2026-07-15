@@ -1,0 +1,14 @@
+benchmark_id: sprint10-semantic-ci
+version: "1"
+title: Sprint 10 temporal semantic CI gate
+description: Four credential-free grounding, temporal, contradiction, and Wiki cases.
+default_configuration: {mode: semantic-replay}
+source: Cognitive OS Sprint 10 executable backlog
+license: Apache-2.0
+created_at: 2026-01-01T00:00:00Z
+case_matrix:
+  semantic:
+    - {id: semantic-ci.supported, scenario: supported_grounded_claim, expected: passed}
+    - {id: semantic-ci.forgery, scenario: fabricated_source_rejection, expected: passed}
+    - {id: semantic-ci.temporal, scenario: temporal_historical_query, expected: passed}
+    - {id: semantic-ci.wiki, scenario: contradiction_wiki_lineage, expected: passed}

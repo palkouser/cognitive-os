@@ -40,6 +40,12 @@ supports metadata, PostgreSQL full text, and exact pgvector cosine similarity on
 [Memory Plane architecture](docs/architecture/governed-memory-plane.md) and
 [operations guide](docs/operations/memory-plane.md).
 
+Sprint 10 adds evidence-backed, append-only bitemporal semantic claims and deterministic LLM Wiki
+v3 projections. Providers remain proposal-only, PostgreSQL relations remain authoritative, and
+Wiki pages are rebuildable views with exact claim-revision lineage. See the
+[temporal semantic-memory architecture](docs/architecture/temporal-semantic-memory.md) and
+[semantic operations guide](docs/operations/semantic-memory.md).
+
 ![LightAgent Banner](docs/images/lightagent-banner.jpg)
 <div align="center">
   <p>

@@ -1,0 +1,30 @@
+benchmark_id: sprint10-semantic-seed
+version: "1"
+title: Sprint 10 temporal semantic deterministic seed suite
+description: Twenty credential-free semantic governance and projection cases.
+default_configuration: {mode: semantic-replay}
+source: Cognitive OS Sprint 10 executable backlog
+license: Apache-2.0
+created_at: 2026-01-01T00:00:00Z
+case_matrix:
+  semantic:
+    - {id: semantic.grounding-1, scenario: memory_field_grounding, expected: passed}
+    - {id: semantic.grounding-2, scenario: artifact_range_grounding, expected: passed}
+    - {id: semantic.reject-1, scenario: fabricated_source_rejection, expected: passed}
+    - {id: semantic.reject-2, scenario: stale_hash_rejection, expected: passed}
+    - {id: semantic.duplicate, scenario: exact_duplicate, expected: passed}
+    - {id: semantic.support-1, scenario: supported_grounded_claim, expected: passed}
+    - {id: semantic.support-2, scenario: complete_verifier_bundle, expected: passed}
+    - {id: semantic.policy, scenario: provider_commit_rejection, expected: passed}
+    - {id: semantic.successor-1, scenario: temporal_successor, expected: passed}
+    - {id: semantic.successor-2, scenario: non_overlap, expected: passed}
+    - {id: semantic.conflict-1, scenario: overlap_contradiction, expected: passed}
+    - {id: semantic.conflict-2, scenario: boolean_contradiction, expected: passed}
+    - {id: semantic.valid-1, scenario: valid_at, expected: passed}
+    - {id: semantic.valid-2, scenario: open_interval, expected: passed}
+    - {id: semantic.known-1, scenario: known_at, expected: passed}
+    - {id: semantic.known-2, scenario: future_leak_guard, expected: passed}
+    - {id: semantic.retraction, scenario: historical_retraction, expected: passed}
+    - {id: semantic.relation, scenario: relation_integrity, expected: passed}
+    - {id: semantic.wiki-1, scenario: current_wiki_lineage, expected: passed}
+    - {id: semantic.wiki-2, scenario: historical_wiki_lineage, expected: passed}

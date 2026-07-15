@@ -7,6 +7,7 @@ from pathlib import Path
 from cognitive_os.benchmarks.cases import load_manifest
 from cognitive_os.benchmarks.reporting import render_json, render_markdown
 from cognitive_os.benchmarks.runner import BenchmarkRunner
+from cognitive_os.benchmarks.semantic_adapter import semantic_benchmark_case
 from cognitive_os.domain.benchmarks import BenchmarkCase, BenchmarkCaseResult, BenchmarkCaseStatus
 from cognitive_os.domain.common import utc_now
 
@@ -80,6 +81,8 @@ async def _run(manifest_path: Path, output: Path, seed: int, mode: str) -> int:
         executor = coding_replay_case
     elif mode == "memory-replay":
         executor = memory_replay_case
+    elif mode == "semantic-replay":
+        executor = semantic_benchmark_case
     else:
         executor = replay_case
     run = await BenchmarkRunner(executor, git_commit="local").run_manifest(
@@ -103,6 +106,7 @@ def main() -> int:
             "controller_mock",
             "coding-replay",
             "memory-replay",
+            "semantic-replay",
         ),
         default="verifier_only",
     )
