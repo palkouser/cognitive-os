@@ -27,6 +27,7 @@ from cognitive_os.domain.memory import (
 from cognitive_os.domain.semantic_memory import SemanticActor, SemanticActorType
 from cognitive_os.memory.repository import InMemoryMemoryRepository
 from cognitive_os.semantic_memory.compilation import SemanticExtractionService
+from cognitive_os.semantic_memory.errors import SemanticIntegrityError
 from cognitive_os.semantic_memory.extraction import extract_typed_memory
 from cognitive_os.semantic_memory.grounding import TrustedSourceResolver
 from cognitive_os.semantic_memory.predicates import build_default_predicate_registry
@@ -193,6 +194,34 @@ async def test_typed_extraction_commit_is_grounded_proposed_and_idempotent() -> 
         actor_type=SemanticActorType.APPROVED_INTERNAL_SERVICE,
         actor_id="deterministic-extractor",
     )
+    original_observation = proposal.observations[0]
+    original_span = original_observation.source_spans[0]
+    invalid_span = original_span.model_copy(
+        update={"source": original_span.source.model_copy(update={"source_id": UUID(int=999)})}
+    )
+    rejected = proposal.model_copy(
+        update={
+            "extraction_id": UUID(int=998),
+            "observations": (
+                original_observation,
+                original_observation.model_copy(
+                    update={"proposal_id": UUID(int=997), "source_spans": (invalid_span,)}
+                ),
+            ),
+            "budget": proposal.budget.model_copy(update={"maximum_observations": 2}),
+        }
+    )
+    with pytest.raises(SemanticIntegrityError):
+        await compiler.commit(
+            rejected,
+            scope=record.scope,
+            sensitivity=MemorySensitivity.INTERNAL,
+            actor=actor,
+            recorded_at=NOW,
+        )
+    assert not repository.observations
+    assert not repository.claims
+
     first = await compiler.commit(
         proposal,
         scope=record.scope,

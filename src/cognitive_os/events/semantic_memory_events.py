@@ -7,6 +7,7 @@ from cognitive_os.domain.semantic_memory import (
     BeliefStatus,
     ClaimPromotionDecision,
     ContradictionStatus,
+    EvidenceValidationResult,
 )
 
 from .base import EventPayload
@@ -74,6 +75,14 @@ class SemanticClaimPromotionDecided(EventPayload):
     decision: ClaimPromotionDecision
 
 
+class SemanticEvidenceReevaluated(EventPayload):
+    event_type = "semantic.evidence_reevaluated"
+    validation_id: UUID
+    claim_id: UUID
+    revision: int
+    results: tuple[EvidenceValidationResult, ...]
+
+
 class SemanticContradictionOpened(EventPayload):
     event_type = "semantic.contradiction_opened"
     contradiction_id: UUID
@@ -125,6 +134,7 @@ SEMANTIC_EVENT_MODELS: tuple[type[EventPayload], ...] = (
     SemanticClaimRevisionAppended,
     SemanticClaimBeliefChanged,
     SemanticClaimPromotionDecided,
+    SemanticEvidenceReevaluated,
     SemanticContradictionCandidateRecorded,
     SemanticContradictionOpened,
     SemanticContradictionResolved,

@@ -316,6 +316,11 @@
       "schema_version": 1
     },
     {
+      "event_type": "semantic.evidence_reevaluated",
+      "file": "v1/events/semantic.evidence_reevaluated.v1.schema.json",
+      "schema_version": 1
+    },
+    {
       "event_type": "semantic.extraction_completed",
       "file": "v1/events/semantic.extraction_completed.v1.schema.json",
       "schema_version": 1
@@ -1167,6 +1172,11 @@
       "file": "v1/events/semantic.contradiction_resolved.v1.schema.json",
       "model": "SemanticContradictionResolved",
       "sha256": "aaddbe717cad96830b8d2d8ea6211966734f457ea37f8271f7d4e231e24d96de"
+    },
+    {
+      "file": "v1/events/semantic.evidence_reevaluated.v1.schema.json",
+      "model": "SemanticEvidenceReevaluated",
+      "sha256": "4e5412624959faf21504d1e36bb501587e25d2b7089e50a7c5fb5bf30845e2a2"
     },
     {
       "file": "v1/events/semantic.extraction_completed.v1.schema.json",

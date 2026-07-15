@@ -30,3 +30,15 @@ memory fields to these host-owned predicates. Each emitted claim uses its own ex
 Initial claim revision and evidence rows commit in one PostgreSQL transaction. Later claim revisions
 and their evidence use the same atomic boundary. Lifecycle events remain a separate append-only
 audit write; health diagnostics expose any projection/event divergence without destructive repair.
+
+Extraction uses an explicit append-only, resumable transaction policy. The host validates every
+source, observation, claim, evidence link, relation, cycle, scope, sensitivity, and registry bound
+before the first write. Each observation write is idempotent, and each claim, initial revision, and
+evidence bundle is one transaction. Relations and contradiction candidates follow only after their
+claim endpoints exist. A rejected validation writes no projection; an infrastructure failure may
+leave only earlier complete append-only units, never a partial claim bundle. The stable extraction
+and entity idempotency keys make a retry resume safely and emit a completion manifest only after all
+units exist. No rollback deletes previously committed semantic history.
+
+Evidence re-evaluation emits a typed `semantic.evidence_reevaluated` event containing the exact
+claim revision and validation results. This preserves auditability without rewriting evidence.

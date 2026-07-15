@@ -45,6 +45,7 @@ from cognitive_os.events.semantic_memory_events import (
     SemanticContradictionCandidateRecorded,
     SemanticContradictionOpened,
     SemanticContradictionResolved,
+    SemanticEvidenceReevaluated,
     SemanticObservationRecorded,
     SemanticObservationsAccessed,
     SemanticWikiPageRegenerated,
@@ -613,7 +614,21 @@ class SemanticMemoryService:
                     validated_at=self._clock(),
                 )
             )
-        return tuple(results)
+        validated = tuple(results)
+        if self._event_service is not None:
+            validation_id = self._id_factory()
+            await self._event_service.append(
+                aggregate_id=validation_id,
+                payload=SemanticEvidenceReevaluated(
+                    validation_id=validation_id,
+                    claim_id=claim_id,
+                    revision=target_revision,
+                    results=validated,
+                ),
+                expected_version=0,
+                correlation_id=claim_id,
+            )
+        return validated
 
     async def open_contradiction(
         self,

@@ -418,6 +418,26 @@ async def test_initial_claim_and_evidence_reject_atomically() -> None:
 
 
 @pytest.mark.asyncio
+async def test_evidence_reevaluation_is_typed_and_audited() -> None:
+    semantic_service, _, _, store = eventful_service()
+    claim_id = UUID(int=36)
+    await semantic_service.create_claim(
+        claim(claim_id), revision(claim_id, 1, "3.12"), (evidence(claim_id),)
+    )
+
+    results = await semantic_service.reevaluate_evidence(claim_id)
+
+    assert len(results) == 1
+    assert results[0].valid
+    audit = next(
+        item for item in store.events if item.envelope.event_type == "semantic.evidence_reevaluated"
+    )
+    assert audit.envelope.payload["claim_id"] == str(claim_id)
+    assert audit.envelope.payload["revision"] == 1
+    assert audit.envelope.payload["results"][0]["reason_codes"] == ["valid"]
+
+
+@pytest.mark.asyncio
 async def test_bitemporal_queries_do_not_leak_future_revisions_and_are_audited() -> None:
     semantic_service, repository = service()
     claim_id = UUID(int=40)
