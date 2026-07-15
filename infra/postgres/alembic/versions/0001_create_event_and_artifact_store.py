@@ -30,6 +30,12 @@ def upgrade() -> None:
         table.create(connection)
     op.execute("REVOKE ALL ON SCHEMA cognitive_os FROM PUBLIC")
     op.execute("REVOKE ALL ON ALL TABLES IN SCHEMA cognitive_os FROM PUBLIC")
+    op.execute("GRANT SELECT ON public.alembic_version TO cogos_owner")
+    op.execute(
+        "GRANT ALL PRIVILEGES ON cognitive_os.events, cognitive_os.event_streams, "
+        "cognitive_os.artifact_blobs, cognitive_os.artifacts TO cogos_owner"
+    )
+    op.execute("GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA cognitive_os TO cogos_owner")
     op.execute("GRANT USAGE ON SCHEMA cognitive_os TO cogos_app")
     op.execute("GRANT SELECT ON public.alembic_version TO cogos_app")
     op.execute("GRANT SELECT, INSERT ON cognitive_os.events TO cogos_app")
