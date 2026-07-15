@@ -5,8 +5,6 @@ import asyncio
 import os
 from pathlib import Path
 
-from sqlalchemy import text
-
 from cognitive_os.benchmarks.cases import load_manifest
 from cognitive_os.benchmarks.reporting import render_json, render_markdown
 from cognitive_os.benchmarks.runner import BenchmarkRunner, CaseExecutor
@@ -16,16 +14,6 @@ from cognitive_os.benchmarks.semantic_adapter import (
 )
 from cognitive_os.domain.benchmarks import BenchmarkCase, BenchmarkCaseResult, BenchmarkCaseStatus
 from cognitive_os.domain.common import utc_now
-from cognitive_os.events.benchmark_event_service import BenchmarkEventService
-from cognitive_os.events.catalog import build_default_event_catalog
-from cognitive_os.infrastructure.artifacts.filesystem import ContentAddressedFilesystem
-from cognitive_os.infrastructure.artifacts.service import ArtifactService
-from cognitive_os.infrastructure.postgres.artifact_repository import PostgresArtifactRepository
-from cognitive_os.infrastructure.postgres.engine import create_postgres_engine
-from cognitive_os.infrastructure.postgres.event_store import PostgresEventStore
-from cognitive_os.infrastructure.semantic_memory.postgres.repository import (
-    PostgresSemanticMemoryRepository,
-)
 
 
 async def replay_case(case: BenchmarkCase) -> BenchmarkCaseResult:
@@ -104,6 +92,23 @@ async def _run(manifest_path: Path, output: Path, seed: int, mode: str) -> int:
     elif mode == "semantic-replay":
         database_url = os.environ.get("COGOS_DATABASE_URL")
         if database_url:
+            from sqlalchemy import text
+
+            from cognitive_os.events.benchmark_event_service import BenchmarkEventService
+            from cognitive_os.events.catalog import build_default_event_catalog
+            from cognitive_os.infrastructure.artifacts.filesystem import (
+                ContentAddressedFilesystem,
+            )
+            from cognitive_os.infrastructure.artifacts.service import ArtifactService
+            from cognitive_os.infrastructure.postgres.artifact_repository import (
+                PostgresArtifactRepository,
+            )
+            from cognitive_os.infrastructure.postgres.engine import create_postgres_engine
+            from cognitive_os.infrastructure.postgres.event_store import PostgresEventStore
+            from cognitive_os.infrastructure.semantic_memory.postgres.repository import (
+                PostgresSemanticMemoryRepository,
+            )
+
             engine = create_postgres_engine(database_url)
             async with engine.connect() as connection:
                 database_name = str(await connection.scalar(text("SELECT current_database()")))
