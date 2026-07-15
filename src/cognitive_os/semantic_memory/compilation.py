@@ -12,6 +12,9 @@ from cognitive_os.domain.semantic_memory import (
     ClaimRevision,
     ClaimRevisionReference,
     ConfidenceDimensions,
+    ContradictionRecord,
+    ContradictionRevision,
+    ContradictionStatus,
     EvidenceLink,
     EvidenceRelation,
     SemanticActor,
@@ -323,6 +326,42 @@ class SemanticExtractionService:
                     provenance=resolved_observations[source_observation_id].source_refs[0],
                     created_at=recorded_at,
                 )
+            )
+        for contradiction_proposal in proposal.contradictions:
+            contradiction_claims = tuple(
+                references_by_proposal[item] for item in contradiction_proposal.claim_proposal_ids
+            )
+            values = {
+                "contradiction_id": contradiction_proposal.proposal_id,
+                "revision": 1,
+                "previous_revision": None,
+                "status": ContradictionStatus.CANDIDATE,
+                "severity": contradiction_proposal.severity,
+                "claims": contradiction_claims,
+                "evidence_ids": (),
+                "reason": contradiction_proposal.rule_id,
+                "resolver": None,
+                "recorded_at": recorded_at,
+            }
+            contradiction_revision = ContradictionRevision.model_validate(
+                {
+                    **values,
+                    "content_hash": semantic_hash(
+                        ContradictionRevision.model_construct(
+                            **values  # type: ignore[arg-type]
+                        ).model_dump(mode="json")
+                    ),
+                }
+            )
+            await self._semantic_memory.record_contradiction_candidate(
+                ContradictionRecord(
+                    contradiction_id=contradiction_proposal.proposal_id,
+                    current_revision=1,
+                    current_status=ContradictionStatus.CANDIDATE,
+                    severity=contradiction_proposal.severity,
+                    created_at=recorded_at,
+                ),
+                contradiction_revision,
             )
         manifest_payload = {
             "extraction_id": str(proposal.extraction_id),

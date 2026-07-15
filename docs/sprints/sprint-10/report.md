@@ -18,23 +18,30 @@ Sprint 10 branches from the validated `sprint-9-baseline` commit
   contradictions, temporal queries, graph projections, Wiki pages, and sensitivity. Provider
   direct commits, autonomous extraction or promotion, hybrid retrieval, and graph databases remain
   disabled.
-- Immutable contracts cover typed semantic values, observations, claims and revisions,
+- Immutable contracts cover typed semantic values, observations and audited observation queries,
+  claims and revisions,
   multidimensional confidence, evidence, relations, contradictions, extraction proposals and
   decisions, temporal queries, access records, Wiki pages and lineage, and promotion decisions.
-  Public contracts and eleven lifecycle event payloads are exported as deterministic schemas.
+  Public contracts and lifecycle event payloads are exported as deterministic schemas.
 - A frozen host-owned predicate registry, canonical identities and values, exact duplicate search,
   half-open temporal intervals, source-span validation, and deterministic functional, Boolean,
   exclusive-value, and evidence-conflict rules provide bounded semantic decisions.
 - Deterministic extractors map code-context, accepted episode, task-summary,
   verification-summary, correction, and user-instruction Memory Plane revisions to proposed claims.
   Every claim is grounded through its own exact source field; repeated extraction is idempotent.
+- Explicit provider extraction sends only host-selected exact excerpts, fixed predicates, scope,
+  sensitivity, schema, and budgets through `ModelExecutionService`; normalized requests and
+  responses are persisted as artifacts. Host validation rejects extra fields, fabricated spans,
+  unknown predicates, tool calls, changed budgets, and direct writes. Proposal and commit remain
+  separate CLI operations.
 - Claim creation, support, dispute, supersession, retraction, contradiction resolution and reopen,
   evidence re-evaluation, relation-cycle checks, and expected-revision concurrency preserve all
   prior history. Initial and later claim revision/evidence writes are transactional.
 - Sixteen registered semantic verifiers cover grounding, provenance, temporal integrity,
   relations, evidence, contradiction state, confidence, promotion, and Wiki integrity. Supported
-  promotion requires a complete host verifier decision and exact evidence; provider confidence is
-  never authoritative.
+  promotion requires all twelve mandatory verifier results, a decision persisted before the state
+  transition, and exact evidence. Four Wiki capabilities are explicitly optional; provider
+  confidence is never authoritative.
 - Alembic revision `0003` creates twelve semantic and Wiki tables with append-only triggers,
   expected-revision projection functions, temporal and lookup indexes, and least-privilege runtime
   grants. There is no HNSW or IVFFlat index.
@@ -58,11 +65,11 @@ Sprint 10 branches from the validated `sprint-9-baseline` commit
 
 ## Local validation
 
-- Required Cognitive OS checks: Ruff passed; Ruff format passed for **438 files**; Cognitive OS
-  tests: **540 passed, 5 opt-in tests skipped**.
-- Full repository credential-free regression: **681 passed, 27 opt-in tests skipped**.
-- Focused temporal semantic-memory and benchmark-adapter suite: **29 passed**.
-- Strict MyPy: **288 source files**, no issues. Bandit, schema drift, repository-language policy,
+- Required Cognitive OS checks: Ruff passed; Ruff format passed for **442 files**; Cognitive OS
+  tests: **549 passed, 5 opt-in tests skipped**.
+- Full repository credential-free regression: **690 passed, 27 opt-in tests skipped**.
+- Focused temporal semantic-memory and benchmark-adapter suite: **38 passed**.
+- Strict MyPy: **290 source files**, no issues. Bandit, schema drift, repository-language policy,
   and `git diff --check` passed.
 - Dependency audit reported **no known vulnerabilities**; the local development package is the
   expected non-PyPI skip.
@@ -74,14 +81,20 @@ Sprint 10 branches from the validated `sprint-9-baseline` commit
 - Credential-free Memory Plane smoke retained **4 memories**, a **64-dimensional** deterministic
   embedding, one text match, one exact-vector match, and **2 access records**.
 - Credential-free semantic smoke produced **3 claims**, **1 relation**, **1 contradiction**,
-  **8 semantic access records**, **4 Wiki access records**, **16/16 verifier results**, current and
-  historical Wiki lineage, and a historical temporal result.
+  **8 semantic access records**, **4 Wiki access records**, **12/12 required verifier results**
+  from the 16-verifier registry, current and historical Wiki lineage, and a historical temporal
+  result.
 - Semantic health reported Alembic `0003`, all twelve tables, and zero projection, interval,
   evidence, lineage, revision, graph-limit, ANN-index, missing-event, orphan-event, or
   event/projection-version findings.
 - Semantic benchmarks: **4/4 CI** and **20/20 seed** cases matched expected outcomes. Metrics report
   zero unsupported promotions, scope leaks, sensitivity leaks, and future-revision leaks, with
   complete deterministic provenance and Wiki lineage.
+- The local scale baseline populated **10,000 claims, 30,000 claim revisions, 50,000 evidence
+  links, 10,000 relations, 1,000 contradictions, and 1,000 Wiki pages**. All seven captured query
+  plans used indexes. P95 ranged from **0.225 ms** for Wiki inputs to **1.393 ms** for the bounded
+  SQL plus NetworkX projection; database size was **73,692,863 bytes**. Exact plans and environment
+  metadata are published in `docs/benchmarks/sprint-10-scale-baseline.json`.
 - Checksummed isolated restore retained **4 memory items, 6 memory revisions, 1 embedding,
   1 observation, 3 claims, 4 claim revisions, 4 evidence links, 1 relation, 1 contradiction,
   2 Wiki pages, and 2 Wiki revisions**. Restored Wiki content and lineage hashes regenerated
@@ -114,12 +127,9 @@ credential, or secret is introduced.
 
 ## Known limitations and deferred work
 
-- Structured provider extraction execution through `ModelExecutionService` and persisted bounded
-  request/response artifacts is a P1 follow-up. Contracts and validation are present, but the CLI
-  fails closed instead of calling a provider.
-- The optional 10,000-claim scale workload is a P1 local measurement. No scale result is claimed;
-  publication requires identified hardware, exact counts, p50/p95 latency, query plans, and
-  database size.
+- Provider extraction is explicit opt-in and requires a preconfigured structured-output provider,
+  durable artifact storage, a host-owned schema, and a separate approved commit step. It never
+  runs automatically and provider availability is not part of credential-free CI.
 - NetworkX is optional and analytical only. The standard-library bounded traversal is the core
   path; neither path changes PostgreSQL authority.
 - Projection writes and lifecycle event appends use separate authoritative/audit transactions.

@@ -6,6 +6,8 @@ from time import perf_counter
 from typing import cast
 from uuid import UUID
 
+from pydantic import ValidationError
+
 from cognitive_os.application.ports.artifact_store import ArtifactStorePort
 from cognitive_os.config.semantic_memory_config import SemanticMemoryConfiguration
 from cognitive_os.domain.benchmarks import BenchmarkCase, BenchmarkCaseResult, BenchmarkCaseStatus
@@ -29,22 +31,31 @@ from cognitive_os.domain.semantic_memory import (
     Cardinality,
     Claim,
     ClaimIdentity,
+    ClaimProposal,
     ClaimRelation,
     ClaimRelationType,
     ClaimRevision,
     ClaimRevisionReference,
     ClaimTemporalInterval,
+    ContradictionRevision,
+    ContradictionSeverity,
+    ContradictionStatus,
+    ExtractionBudget,
     GroundedSourceSpan,
     GroundingMode,
+    ObservationProposal,
     PredicateDescriptor,
     SemanticActor,
     SemanticActorType,
+    SemanticEntityRef,
+    SemanticExtractionProposal,
     SemanticLiteral,
     SemanticLiteralKind,
     SemanticSourceRef,
     SemanticSourceType,
     WikiPage,
     claim_revision_hash,
+    semantic_hash,
 )
 from cognitive_os.memory.repository import InMemoryMemoryRepository
 from cognitive_os.semantic_memory.beliefs import aggregate_confidence, assert_legal_transition
@@ -273,6 +284,62 @@ async def evaluate_semantic_scenario(scenario: str) -> bool:
         except ValueError:
             return True
         return False
+    if scenario == "provider_proposal_rejection":
+        source = SemanticSourceRef(
+            source_type=SemanticSourceType.ARTIFACT,
+            source_id=UUID(int=20),
+            content_hash="a" * 64,
+        )
+        span = GroundedSourceSpan(
+            source=source,
+            mode=GroundingMode.ARTIFACT_BYTES,
+            path=None,
+            start=0,
+            end=1,
+            excerpt_hash="b" * 64,
+        )
+        observation_id = UUID(int=21)
+        proposal = SemanticExtractionProposal(
+            extraction_id=UUID(int=22),
+            registry_snapshot_hash=registry.snapshot_hash(),
+            observations=(
+                ObservationProposal(
+                    proposal_id=observation_id,
+                    content="Python 3.12",
+                    source_spans=(span,),
+                ),
+            ),
+            claims=(
+                ClaimProposal(
+                    proposal_id=UUID(int=23),
+                    subject=SemanticEntityRef(
+                        entity_id="project:cognitive-os",
+                        entity_type="project",
+                        display_label=None,
+                    ),
+                    predicate_id="project.python_version",
+                    object=SemanticLiteral(
+                        literal_kind=SemanticLiteralKind.VERSION,
+                        value="3.12",
+                        unit=None,
+                    ),
+                    valid_interval=ClaimTemporalInterval(valid_from=NOW),
+                    observation_proposal_ids=(observation_id,),
+                ),
+            ),
+            budget=ExtractionBudget(
+                maximum_observations=1,
+                maximum_claims=1,
+                maximum_evidence_links=1,
+                maximum_relations=0,
+            ),
+        ).model_dump(mode="json")
+        proposal["provider_write_authority"] = True
+        try:
+            SemanticExtractionProposal.model_validate(proposal)
+        except ValidationError:
+            return True
+        return False
     if scenario in {"temporal_successor", "non_overlap", "temporal_historical_query"}:
         return not first.valid_interval.overlaps(successor.valid_interval)
     if scenario == "overlap_contradiction":
@@ -338,8 +405,46 @@ async def evaluate_semantic_scenario(scenario: str) -> bool:
         "current_wiki_lineage",
         "historical_wiki_lineage",
         "contradiction_wiki_lineage",
+        "critical_contradiction_wiki",
     }:
         supported = _revision(first_id, "3.12", status=BeliefStatus.SUPPORTED)
+        contradictions: tuple[ContradictionRevision, ...] = ()
+        if scenario in {"contradiction_wiki_lineage", "critical_contradiction_wiki"}:
+            values = {
+                "contradiction_id": UUID(int=24),
+                "revision": 1,
+                "previous_revision": None,
+                "status": ContradictionStatus.OPEN,
+                "severity": ContradictionSeverity.CRITICAL,
+                "claims": (
+                    ClaimRevisionReference(claim_id=first_id, revision=1),
+                    ClaimRevisionReference(claim_id=second_id, revision=1),
+                ),
+                "evidence_ids": (),
+                "reason": "critical benchmark conflict",
+                "resolver": None,
+                "recorded_at": NOW,
+            }
+            draft = ContradictionRevision.model_construct(
+                contradiction_id=values["contradiction_id"],
+                revision=values["revision"],
+                previous_revision=values["previous_revision"],
+                status=values["status"],
+                severity=values["severity"],
+                claims=values["claims"],
+                evidence_ids=values["evidence_ids"],
+                reason=values["reason"],
+                resolver=values["resolver"],
+                recorded_at=values["recorded_at"],
+            )
+            contradictions = (
+                ContradictionRevision.model_validate(
+                    {
+                        **values,
+                        "content_hash": semantic_hash(draft.model_dump(mode="json")),
+                    }
+                ),
+            )
         rendered = render_wiki_revision(
             page=WikiPage(
                 page_id=UUID(int=5),
@@ -350,11 +455,13 @@ async def evaluate_semantic_scenario(scenario: str) -> bool:
                 created_at=NOW,
             ),
             claims=((_claim(first_id), supported),),
+            contradictions=contradictions,
             revision=1,
             rendered_at=NOW,
             valid_at=NOW if "historical" in scenario else None,
         )
-        return len(rendered.claim_refs) == 1 and rendered.claim_refs[0].claim.revision == 1
+        lineage_valid = len(rendered.claim_refs) == 1 and rendered.claim_refs[0].claim.revision == 1
+        return lineage_valid and (not contradictions or "severity critical" in rendered.markdown)
     return False
 
 

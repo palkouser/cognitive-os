@@ -17,11 +17,11 @@ case_matrix:
     - {id: semantic.support-2, scenario: complete_verifier_bundle, expected: passed}
     - {id: semantic.policy, scenario: provider_commit_rejection, expected: passed}
     - {id: semantic.successor-1, scenario: temporal_successor, expected: passed}
-    - {id: semantic.successor-2, scenario: non_overlap, expected: passed}
+    - {id: semantic.provider-proposal, scenario: provider_proposal_rejection, expected: passed}
     - {id: semantic.conflict-1, scenario: overlap_contradiction, expected: passed}
     - {id: semantic.conflict-2, scenario: boolean_contradiction, expected: passed}
     - {id: semantic.valid-1, scenario: valid_at, expected: passed}
-    - {id: semantic.valid-2, scenario: open_interval, expected: passed}
+    - {id: semantic.critical-wiki, scenario: critical_contradiction_wiki, expected: passed}
     - {id: semantic.known-1, scenario: known_at, expected: passed}
     - {id: semantic.known-2, scenario: future_leak_guard, expected: passed}
     - {id: semantic.retraction, scenario: historical_retraction, expected: passed}

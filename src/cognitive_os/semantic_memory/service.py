@@ -654,6 +654,13 @@ class SemanticMemoryService:
         ):
             raise SemanticPolicyError("provider contradiction proposals must remain candidates")
         await self._validate_contradiction_references(revision)
+        existing = await self._repository.get_contradiction(contradiction.contradiction_id)
+        if existing == contradiction:
+            stored_revision = await self._repository.get_contradiction_revision(
+                contradiction.contradiction_id, 1
+            )
+            if stored_revision == revision:
+                return existing, stored_revision
         created = await self._repository.create_contradiction(contradiction, revision)
         if self._event_service is not None:
             await self._event_service.append(

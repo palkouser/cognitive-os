@@ -2,9 +2,9 @@
 
 The four-case CI and twenty-case seed manifests execute credential-free semantic domain checks
 through the existing benchmark runner. Cases cover grounding and rejection, duplicate identity,
-promotion prerequisites, provider-policy rejection, temporal succession and overlap, valid and
-system time, retraction, relation integrity, contradiction handling, and current or historical Wiki
-lineage.
+promotion prerequisites, provider proposal and commit rejection, temporal succession and overlap,
+valid and system time, retraction, relation integrity, critical contradiction handling, and current
+or historical Wiki lineage.
 
 ```bash
 uv run python scripts/benchmark_run.py \
@@ -21,6 +21,18 @@ Safety counters are mandatory. PostgreSQL migration, projection, audit, concurre
 lineage behavior are covered by the adjacent PostgreSQL integration and smoke gates; benchmark
 cases need no external model or dataset.
 
-The optional 10,000-claim scale workload remains a local P1 measurement, not a merge gate. Any
-published scale result must include p50/p95 latency, database size, query plans, and exact workload
-counts; no result is claimed until that workload is run on identified hardware.
+The local P1 scale baseline is published in
+[`sprint-10-scale-baseline.json`](sprint-10-scale-baseline.json). The deterministic isolated
+PostgreSQL fixture contains 10,000 claims, 30,000 claim revisions, 50,000 evidence links, 10,000
+relations, 1,000 contradictions, and 1,000 Wiki pages. On the recorded x86_64 Linux environment
+with PostgreSQL 18.4 and Python 3.12.13, p95 latency was 0.236 ms for current lookup, 0.248 ms for
+valid-at, 0.258 ms for known-at, 0.226 ms for evidence, 0.342 ms for contradictions, 0.225 ms for
+Wiki regeneration inputs, and 1.393 ms for the bounded SQL plus NetworkX projection. The database
+size was 73,692,863 bytes. All captured `EXPLAIN (FORMAT JSON)` plans used an index; no ANN index
+or graph database was present.
+
+Reproduce the measurement only against an isolated database whose name ends in `_test`:
+
+```bash
+uv run python scripts/semantic_scale_baseline.py --iterations 30
+```
