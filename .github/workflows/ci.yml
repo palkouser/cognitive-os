@@ -25,7 +25,7 @@ jobs:
       - name: Install Python
         run: uv python install 3.12
       - name: Sync environment
-        run: uv sync --locked --all-groups
+        run: uv sync --locked --all-groups --extra memory-postgres
       - name: Ruff check
         run: uv run ruff check --config ruff.cognitive-os.toml src/cognitive_os tests/cognitive_os tests/contract scripts
       - name: Ruff format check
