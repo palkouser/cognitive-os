@@ -9,4 +9,4 @@ async def test_health_reports_database_and_migration_without_url(engines) -> Non
     health = await check_postgres_health(app)
     assert health.healthy
     assert health.database_version
-    assert health.migration_revision == "0001"
+    assert health.migration_revision == "0002"
