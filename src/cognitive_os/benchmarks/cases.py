@@ -66,7 +66,14 @@ def _expand_case_matrix(value: dict[str, Any]) -> dict[str, Any]:
                     title=case_id.replace(".", " ").title(),
                     description=f"Bounded deterministic {value.get('benchmark_id')} case.",
                     problem_request={"scenario": str(entry.get("scenario", case_id))},
-                    expected_outputs={"status": str(entry.get("expected", "passed"))},
+                    expected_outputs={
+                        "status": str(entry.get("expected", "passed")),
+                        **(
+                            {"entities": entry["entities"]}
+                            if isinstance(entry.get("entities"), dict)
+                            else {}
+                        ),
+                    },
                     acceptance_policy=policy,
                     resource_budget=BenchmarkResourceBudget(
                         maximum_elapsed_seconds=30,

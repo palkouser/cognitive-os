@@ -1,11 +1,15 @@
 import asyncio
 from datetime import UTC, datetime
+from pathlib import Path
 from uuid import UUID
 
 import pytest
 from sqlalchemy import text
 from sqlalchemy.exc import DBAPIError
 
+from cognitive_os.benchmarks.cases import load_manifest
+from cognitive_os.benchmarks.runner import BenchmarkRunner
+from cognitive_os.benchmarks.semantic_adapter import SemanticBenchmarkAdapter
 from cognitive_os.domain.memory import MemoryScope, MemoryScopeType, MemorySensitivity
 from cognitive_os.domain.semantic_memory import (
     BeliefStatus,
@@ -32,6 +36,20 @@ NOW = datetime(2026, 7, 15, tzinfo=UTC)
 FUTURE = datetime(2027, 1, 10, tzinfo=UTC)
 ACTOR = SemanticActor(actor_type=SemanticActorType.OPERATOR, actor_id="integration")
 SCOPE = MemoryScope(scope_type=MemoryScopeType.PROJECT, scope_id="cognitive-os")
+
+
+@pytest.mark.asyncio
+async def test_postgres_semantic_benchmark_adapter_compares_isolated_entities(engines) -> None:
+    app, _admin = engines
+    manifest = load_manifest(Path("benchmarks/manifests/sprint10-semantic-ci.yaml"))
+    adapter = SemanticBenchmarkAdapter(PostgresSemanticMemoryRepository(app))
+
+    run = await BenchmarkRunner(adapter, git_commit="postgres-semantic-test").run_manifest(
+        manifest, random_seed=10
+    )
+
+    assert len(run.case_results) == 4
+    assert all(result.metrics["expected_entities_matched"] == 1 for result in run.case_results)
 
 
 def make_revision(
@@ -113,10 +131,7 @@ async def test_postgres_semantic_bitemporal_history_and_runtime_grants(engines) 
     with pytest.raises(DBAPIError):
         async with app.begin() as connection:
             await connection.execute(
-                text(
-                    "UPDATE cognitive_os.semantic_claim_revisions "
-                    "SET statement='rewritten'"
-                )
+                text("UPDATE cognitive_os.semantic_claim_revisions SET statement='rewritten'")
             )
 
 
@@ -139,9 +154,7 @@ async def test_postgres_semantic_revision_concurrency_has_one_winner(engines) ->
         created_by=ACTOR,
         idempotency_key="c" * 64,
     )
-    await repository.create_claim(
-        claim, make_revision(1, "3.12", NOW, NOW, claim_id=claim_id)
-    )
+    await repository.create_claim(claim, make_revision(1, "3.12", NOW, NOW, claim_id=claim_id))
     candidates = (
         make_revision(2, "3.13", FUTURE, FUTURE, claim_id=claim_id),
         make_revision(2, "3.14", FUTURE, FUTURE, claim_id=claim_id),

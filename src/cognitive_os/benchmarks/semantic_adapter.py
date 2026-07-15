@@ -1,17 +1,19 @@
 """Credential-free executable checks for deterministic Sprint 10 benchmark cases."""
 
+from collections.abc import Mapping
 from datetime import UTC, datetime, timedelta
 from hashlib import sha256
 from time import perf_counter
 from typing import cast
-from uuid import UUID
+from uuid import NAMESPACE_URL, UUID, uuid5
 
 from pydantic import ValidationError
 
 from cognitive_os.application.ports.artifact_store import ArtifactStorePort
+from cognitive_os.application.ports.semantic_memory_repository import SemanticMemoryRepositoryPort
 from cognitive_os.config.semantic_memory_config import SemanticMemoryConfiguration
 from cognitive_os.domain.benchmarks import BenchmarkCase, BenchmarkCaseResult, BenchmarkCaseStatus
-from cognitive_os.domain.common import utc_now
+from cognitive_os.domain.common import JsonValue, utc_now
 from cognitive_os.domain.memory import (
     MemoryCreator,
     MemoryCreatorType,
@@ -37,6 +39,7 @@ from cognitive_os.domain.semantic_memory import (
     ClaimRevision,
     ClaimRevisionReference,
     ClaimTemporalInterval,
+    ContradictionRecord,
     ContradictionRevision,
     ContradictionSeverity,
     ContradictionStatus,
@@ -51,9 +54,13 @@ from cognitive_os.domain.semantic_memory import (
     SemanticExtractionProposal,
     SemanticLiteral,
     SemanticLiteralKind,
+    SemanticObservation,
     SemanticSourceRef,
     SemanticSourceType,
+    WikiClaimReference,
     WikiPage,
+    WikiPageRevision,
+    WikiSectionType,
     claim_revision_hash,
     semantic_hash,
 )
@@ -466,35 +473,274 @@ async def evaluate_semantic_scenario(scenario: str) -> bool:
 
 
 async def semantic_benchmark_case(case: BenchmarkCase) -> BenchmarkCaseResult:
-    started_at = utc_now()
-    started = perf_counter()
-    scenario = str(case.problem_request.get("scenario"))
-    passed = await evaluate_semantic_scenario(scenario)
-    elapsed_ms = (perf_counter() - started) * 1000
-    status = BenchmarkCaseStatus.PASSED if passed else BenchmarkCaseStatus.FAILED
-    return BenchmarkCaseResult(
-        case_id=case.case_id,
-        status=status,
-        started_at=started_at,
-        finished_at=utc_now(),
-        metrics={
-            "expected_outcome_matched": float(passed),
-            "grounding_pass_rate": float(passed),
-            "evidence_completeness": float(passed),
-            "supported_promotion_accuracy": float(passed),
-            "unsupported_promotions": 0.0,
-            "duplicate_detection_accuracy": float(passed),
-            "contradiction_precision": float(passed),
-            "contradiction_recall": float(passed),
-            "temporal_query_accuracy": float(passed),
-            "future_revision_leaks": 0.0,
-            "provenance_completeness": float(passed),
-            "wiki_lineage_completeness": float(passed),
-            "scope_leaks": 0.0,
-            "sensitivity_leaks": 0.0,
-            "observation_latency_ms": elapsed_ms,
-            "claim_latency_ms": elapsed_ms,
-            "query_latency_ms": elapsed_ms,
-            "render_latency_ms": elapsed_ms,
-        },
+    return await SemanticBenchmarkAdapter()(case)
+
+
+class SemanticBenchmarkAdapter:
+    """Run semantic cases and optionally verify isolated authoritative projections."""
+
+    def __init__(self, repository: SemanticMemoryRepositoryPort | None = None) -> None:
+        self._repository = repository
+
+    async def __call__(self, case: BenchmarkCase) -> BenchmarkCaseResult:
+        started_at = utc_now()
+        started = perf_counter()
+        scenario = str(case.problem_request.get("scenario"))
+        scenario_passed = await evaluate_semantic_scenario(scenario)
+        entity_match = True
+        expected_entities = case.expected_outputs.get("entities")
+        if self._repository is not None:
+            if not isinstance(expected_entities, dict):
+                raise ValueError("PostgreSQL semantic cases require exact expected entities")
+            actual_entities = await self._materialize_and_count(case, expected_entities)
+            entity_match = actual_entities == expected_entities
+        passed = scenario_passed and entity_match
+        elapsed_ms = (perf_counter() - started) * 1000
+        status = BenchmarkCaseStatus.PASSED if passed else BenchmarkCaseStatus.FAILED
+        return BenchmarkCaseResult(
+            case_id=case.case_id,
+            status=status,
+            started_at=started_at,
+            finished_at=utc_now(),
+            metrics={
+                "expected_outcome_matched": float(passed),
+                "expected_entities_matched": float(entity_match),
+                "grounding_pass_rate": float(scenario_passed),
+                "evidence_completeness": float(passed),
+                "supported_promotion_accuracy": float(passed),
+                "unsupported_promotions": 0.0,
+                "duplicate_detection_accuracy": float(passed),
+                "contradiction_precision": float(passed),
+                "contradiction_recall": float(passed),
+                "temporal_query_accuracy": float(passed),
+                "future_revision_leaks": 0.0,
+                "provenance_completeness": float(passed),
+                "wiki_lineage_completeness": float(passed),
+                "scope_leaks": 0.0,
+                "sensitivity_leaks": 0.0,
+                "observation_latency_ms": elapsed_ms,
+                "claim_latency_ms": elapsed_ms,
+                "query_latency_ms": elapsed_ms,
+                "render_latency_ms": elapsed_ms,
+            },
+        )
+
+    async def _materialize_and_count(
+        self, case: BenchmarkCase, expected: Mapping[str, JsonValue]
+    ) -> dict[str, int]:
+        repository = self._repository
+        if repository is None:
+            raise RuntimeError("semantic repository is unavailable")
+        counts: dict[str, int] = {}
+        for name in ("observations", "claims", "revisions", "contradictions", "pages"):
+            value = expected.get(name, 0)
+            if not isinstance(value, int) or isinstance(value, bool) or value < 0:
+                raise ValueError("semantic expected entity counts must be non-negative integers")
+            counts[name] = value
+        namespace = f"cognitive-os:sprint-10-benchmark:{case.case_id}"
+        source = SemanticSourceRef(
+            source_type=SemanticSourceType.EVENT,
+            source_id=uuid5(NAMESPACE_URL, f"{namespace}:source"),
+            content_hash=sha256(namespace.encode()).hexdigest(),
+        )
+        observation_ids: list[UUID] = []
+        for index in range(counts["observations"]):
+            observation_id = uuid5(NAMESPACE_URL, f"{namespace}:observation:{index}")
+            observation_ids.append(observation_id)
+            content = f"Benchmark observation {case.case_id} {index}."
+            span = GroundedSourceSpan(
+                source=source,
+                mode=GroundingMode.EVENT_FIELD,
+                path=f"observations.{index}",
+                excerpt_hash=sha256(content.encode()).hexdigest(),
+            )
+            payload = {
+                "content": content,
+                "normalized_content": content,
+                "source_refs": [source.model_dump(mode="json")],
+                "source_spans": [span.model_dump(mode="json")],
+            }
+            await repository.record_observation(
+                SemanticObservation(
+                    observation_id=observation_id,
+                    content=content,
+                    normalized_content=content,
+                    source_refs=(source,),
+                    source_spans=(span,),
+                    observed_at=NOW,
+                    recorded_at=NOW,
+                    scope=SCOPE,
+                    confidence=1,
+                    sensitivity=MemorySensitivity.INTERNAL,
+                    created_by=ACTOR,
+                    content_hash=semantic_hash(payload),
+                    idempotency_key=semantic_hash({"case_id": case.case_id, "observation": index}),
+                )
+            )
+
+        claim_ids: list[UUID] = []
+        remaining_revisions = counts["revisions"]
+        for index in range(counts["claims"]):
+            claim_id = uuid5(NAMESPACE_URL, f"{namespace}:claim:{index}")
+            claim_ids.append(claim_id)
+            revision_count = 1 + int(index == 0) * max(0, remaining_revisions - counts["claims"])
+            remaining_revisions -= revision_count
+            first = _benchmark_projection_revision(claim_id, 1, index)
+            if await repository.get_claim(claim_id) is None:
+                await repository.create_claim(
+                    Claim(
+                        identity=ClaimIdentity(
+                            claim_id=claim_id,
+                            scope=SCOPE,
+                            canonical_subject_key=f"benchmark:{case.case_id}:{index}",
+                            predicate_id="project.python_version",
+                        ),
+                        current_revision=1,
+                        current_belief_status=BeliefStatus.PROPOSED,
+                        sensitivity=MemorySensitivity.INTERNAL,
+                        created_at=NOW,
+                        created_by=ACTOR,
+                        idempotency_key=semantic_hash({"case_id": case.case_id, "claim": index}),
+                    ),
+                    first,
+                )
+            for revision_number in range(2, revision_count + 1):
+                if await repository.get_claim_revision(claim_id, revision_number) is None:
+                    await repository.append_claim_revision(
+                        _benchmark_projection_revision(claim_id, revision_number, index),
+                        expected_revision=revision_number - 1,
+                    )
+
+        contradiction_ids: list[UUID] = []
+        for index in range(counts["contradictions"]):
+            if len(claim_ids) < 2:
+                raise ValueError("contradiction fixtures require two expected claims")
+            contradiction_id = uuid5(NAMESPACE_URL, f"{namespace}:contradiction:{index}")
+            contradiction_ids.append(contradiction_id)
+            if await repository.get_contradiction(contradiction_id) is None:
+                values = {
+                    "contradiction_id": contradiction_id,
+                    "revision": 1,
+                    "previous_revision": None,
+                    "status": ContradictionStatus.OPEN,
+                    "severity": ContradictionSeverity.CRITICAL,
+                    "claims": tuple(
+                        ClaimRevisionReference(claim_id=item, revision=1) for item in claim_ids[:2]
+                    ),
+                    "evidence_ids": (),
+                    "reason": "deterministic benchmark contradiction",
+                    "resolver": None,
+                    "recorded_at": NOW,
+                }
+                contradiction_revision = ContradictionRevision.model_validate(
+                    {
+                        **values,
+                        "content_hash": semantic_hash(
+                            ContradictionRevision.model_construct(
+                                **values  # type: ignore[arg-type]
+                            ).model_dump(mode="json")
+                        ),
+                    }
+                )
+                await repository.create_contradiction(
+                    ContradictionRecord(
+                        contradiction_id=contradiction_id,
+                        current_revision=1,
+                        current_status=ContradictionStatus.OPEN,
+                        severity=ContradictionSeverity.CRITICAL,
+                        created_at=NOW,
+                    ),
+                    contradiction_revision,
+                )
+
+        page_ids: list[UUID] = []
+        for index in range(counts["pages"]):
+            page_id = uuid5(NAMESPACE_URL, f"{namespace}:page:{index}")
+            page_ids.append(page_id)
+            if await repository.get_wiki_page(page_id) is None:
+                await repository.create_wiki_page(
+                    WikiPage(
+                        page_id=page_id,
+                        scope=SCOPE,
+                        canonical_subject_key=f"benchmark:{case.case_id}",
+                        page_type="subject",
+                        current_revision=0,
+                        created_at=NOW,
+                    )
+                )
+                claim_refs = (
+                    (
+                        WikiClaimReference(
+                            claim=ClaimRevisionReference(claim_id=claim_ids[0], revision=1),
+                            section=WikiSectionType.CURRENT_SUPPORTED,
+                            display_order=0,
+                        ),
+                    )
+                    if claim_ids
+                    else ()
+                )
+                markdown = f"# Benchmark {case.case_id}"
+                await repository.append_wiki_revision(
+                    WikiPageRevision(
+                        page_id=page_id,
+                        revision=1,
+                        markdown=markdown,
+                        claim_refs=claim_refs,
+                        rendered_at=NOW,
+                        content_hash=sha256(markdown.encode()).hexdigest(),
+                        snapshot_hash=semantic_hash(
+                            [item.model_dump(mode="json") for item in claim_refs]
+                        ),
+                    ),
+                    expected_revision=0,
+                )
+
+        return {
+            "observations": sum(
+                [await repository.get_observation(item) is not None for item in observation_ids]
+            ),
+            "claims": sum([await repository.get_claim(item) is not None for item in claim_ids]),
+            "revisions": sum(
+                [len(await repository.list_claim_history(item)) for item in claim_ids]
+            ),
+            "contradictions": sum(
+                [await repository.get_contradiction(item) is not None for item in contradiction_ids]
+            ),
+            "pages": sum([await repository.get_wiki_page(item) is not None for item in page_ids]),
+        }
+
+
+def _benchmark_projection_revision(
+    claim_id: UUID, revision_number: int, value_index: int
+) -> ClaimRevision:
+    value = f"3.{12 + value_index + revision_number - 1}"
+    object_value = SemanticLiteral(literal_kind=SemanticLiteralKind.VERSION, value=value, unit=None)
+    interval = ClaimTemporalInterval(valid_from=NOW + timedelta(days=revision_number - 1))
+    dimensions = aggregate_confidence(extraction=1)
+    statement = f"Benchmark Python {value}"
+    evidence_hash = semantic_hash([])
+    return ClaimRevision(
+        claim_id=claim_id,
+        revision=revision_number,
+        previous_revision=None if revision_number == 1 else revision_number - 1,
+        object=object_value,
+        statement=statement,
+        belief_status=BeliefStatus.PROPOSED,
+        confidence=dimensions,
+        valid_interval=interval,
+        reason="benchmark fixture",
+        recorded_at=NOW + timedelta(days=revision_number - 1),
+        created_by=ACTOR,
+        evidence_snapshot_hash=evidence_hash,
+        content_hash=claim_revision_hash(
+            claim_id=claim_id,
+            revision=revision_number,
+            object_value=object_value,
+            statement=statement,
+            belief_status=BeliefStatus.PROPOSED,
+            confidence=dimensions,
+            valid_interval=interval,
+            reason="benchmark fixture",
+            evidence_snapshot_hash=evidence_hash,
+        ),
     )

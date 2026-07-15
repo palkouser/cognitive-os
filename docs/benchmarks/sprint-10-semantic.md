@@ -17,9 +17,14 @@ uv run python scripts/benchmark_run.py \
 
 Every case emits grounding, evidence, promotion, duplicate, contradiction precision/recall,
 temporal, provenance, Wiki lineage, scope, sensitivity, future-leak, and operation-latency metrics.
-Safety counters are mandatory. PostgreSQL migration, projection, audit, concurrency, health, and
-lineage behavior are covered by the adjacent PostgreSQL integration and smoke gates; benchmark
-cases need no external model or dataset.
+Safety counters are mandatory. Every manifest case declares exact expected observation, claim,
+revision, contradiction, and Wiki-page counts. Without a database URL the adapter runs the
+credential-free deterministic domain checks. With `COGOS_DATABASE_URL` and
+`COGOS_ARTIFACT_ROOT`, the same runner materializes stable case-isolated fixtures through the
+PostgreSQL repository, compares the exact projections, records benchmark lifecycle events, and
+stores the report as an artifact. Stable namespaced IDs make retries deterministic; the dedicated
+test-database lifecycle owns cleanup. PostgreSQL integration also verifies this adapter against the
+real repository. No case needs an external model or dataset.
 
 The local P1 scale baseline is published in
 [`sprint-10-scale-baseline.json`](sprint-10-scale-baseline.json). The deterministic isolated
