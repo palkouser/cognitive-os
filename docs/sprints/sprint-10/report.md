@@ -1,13 +1,13 @@
 # Sprint 10 report
 
-Status: Local implementation and validation complete; remote CI, merge, and baseline tag pending
+Status: Complete; remote CI green, merged to `main`, and baseline published
 
 ## Baseline
 
 Sprint 10 branches from the validated `sprint-9-baseline` commit
 `df317c4cae44f205641d94bb281537af611be6e6`. The pre-change credential-free regression was
-658 passed and 20 skipped. The active branch is
-`feature/sprint-10-temporal-semantic-memory`.
+658 passed and 20 skipped. Implementation used
+`feature/sprint-10-temporal-semantic-memory` and merged through pull request 193.
 
 ## Delivered scope
 
@@ -111,14 +111,15 @@ Sprint 10 branches from the validated `sprint-9-baseline` commit
 
 ## Remote validation and release status
 
-Remote pull-request CI has not run for this unmerged branch. The `sprint-10-baseline` tag therefore
-does not exist and must not be created yet. After all required remote jobs are green, merge the
-branch, record the merge commit and CI run here, run the restore smoke against that commit, and
-create `sprint-10-baseline` from the merge commit.
+Pull request 193 passed all 17 required jobs in CI run
+[`29445260234`](https://github.com/palkouser/cognitive-os/actions/runs/29445260234) and merged to
+`main` as `ea38d5148a4dfc3446e775a8d853964004e1c38a`. The merged commit then passed all 17 jobs,
+including PostgreSQL smoke, benchmark, and isolated backup/restore, in main CI run
+[`29445335821`](https://github.com/palkouser/cognitive-os/actions/runs/29445335821). The final
+release-report merge passed the same required main gate before `sprint-10-baseline` was published.
 
-Local Gate C implementation is complete: Sprint 9 supplies the governed Memory Plane and Sprint 10
-supplies the governed temporal semantic substrate. Gate C release status remains pending until the
-remote CI and merge/tag conditions above are satisfied.
+Gate C is complete: Sprint 9 supplies the governed Memory Plane and Sprint 10 supplies the governed
+temporal semantic substrate.
 
 ## Security status
 
@@ -146,9 +147,8 @@ credential, or secret is introduced.
 
 ## Restore point and Sprint 11 hand-off
 
-Until remote CI and merge are green, restore the validated predecessor with
-`git switch --detach sprint-9-baseline`. After the release gate, restore Sprint 10 with
-`git switch --detach sprint-10-baseline`.
+Restore the released Sprint 10 baseline with `git switch --detach sprint-10-baseline`. The validated
+predecessor remains available as `sprint-9-baseline`.
 
 Sprint 11 can consume stable read contracts for current supported, proposed and disputed claims;
 valid-at and known-at results; claim history; evidence bundles; open contradictions; exact claim
