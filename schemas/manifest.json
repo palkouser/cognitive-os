@@ -291,6 +291,11 @@
       "schema_version": 1
     },
     {
+      "event_type": "semantic.claim_promotion_decided",
+      "file": "v1/events/semantic.claim_promotion_decided.v1.schema.json",
+      "schema_version": 1
+    },
+    {
       "event_type": "semantic.claim_revision_appended",
       "file": "v1/events/semantic.claim_revision_appended.v1.schema.json",
       "schema_version": 1
@@ -323,6 +328,11 @@
     {
       "event_type": "semantic.observation_recorded",
       "file": "v1/events/semantic.observation_recorded.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "semantic.observations_accessed",
+      "file": "v1/events/semantic.observations_accessed.v1.schema.json",
       "schema_version": 1
     },
     {
@@ -1134,6 +1144,11 @@
       "sha256": "f50e045b3189e9c69f500fb3d95f057629458f990dff0ce727f5f54430abecaf"
     },
     {
+      "file": "v1/events/semantic.claim_promotion_decided.v1.schema.json",
+      "model": "SemanticClaimPromotionDecided",
+      "sha256": "f412e0d934ba7fbedd3fcae5eed3c7dfa5575a63733967a9029022f149adba4f"
+    },
+    {
       "file": "v1/events/semantic.claim_revision_appended.v1.schema.json",
       "model": "SemanticClaimRevisionAppended",
       "sha256": "69a0c7ef5853b7323783fae2b616094beeecbbc19a0b7a405b9bf5dceb168864"
@@ -1167,6 +1182,11 @@
       "file": "v1/events/semantic.observation_recorded.v1.schema.json",
       "model": "SemanticObservationRecorded",
       "sha256": "c846928fa49fcefa2285342873c488e33c1efaef99408e4aac877202ea70bcbc"
+    },
+    {
+      "file": "v1/events/semantic.observations_accessed.v1.schema.json",
+      "model": "SemanticObservationsAccessed",
+      "sha256": "6bc935e91af48ad1a6389ad4fadf6bc8bddf552f55fea74e6bfbed591d53e188"
     },
     {
       "file": "v1/events/semantic.wiki_page_regenerated.v1.schema.json",
@@ -1577,6 +1597,16 @@
       "file": "v1/semantic-memory/observation-proposal.schema.json",
       "model": "ObservationProposal",
       "sha256": "59dd7ffb0002983024be5f183f7fb828a860ee8fcea2fc1de4e6ef698e100979"
+    },
+    {
+      "file": "v1/semantic-memory/observation-query-result.schema.json",
+      "model": "ObservationQueryResult",
+      "sha256": "75e4e81a906411af5d6e7f605a5370bfaa23240e38098caf953c659ae9459444"
+    },
+    {
+      "file": "v1/semantic-memory/observation-query.schema.json",
+      "model": "ObservationQuery",
+      "sha256": "7456f8b5f6c8ee4e80ca4283958c9348ef1c85ec5a6396ccd4ae14312d80913d"
     },
     {
       "file": "v1/semantic-memory/predicate-descriptor.schema.json",

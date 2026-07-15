@@ -5,7 +5,7 @@ from __future__ import annotations
 from hashlib import sha256
 from uuid import UUID
 
-from cognitive_os.domain.memory import MemorySensitivity
+from cognitive_os.domain.memory import MemoryScope, MemorySensitivity
 from cognitive_os.domain.semantic_memory import (
     Claim,
     ClaimRelation,
@@ -16,6 +16,7 @@ from cognitive_os.domain.semantic_memory import (
     SemanticAccessRecord,
     SemanticObservation,
     SemanticQueryResult,
+    SemanticSourceType,
     TemporalClaimQuery,
     WikiPage,
     WikiPageRevision,
@@ -63,15 +64,28 @@ class InMemorySemanticMemoryRepository:
         return self.observations.get(observation_id)
 
     async def list_observations(
-        self, *, source_id: UUID | None = None, limit: int = 100
+        self,
+        *,
+        source_type: SemanticSourceType | None = None,
+        source_id: UUID | None = None,
+        source_revision: int | None = None,
+        scopes: tuple[MemoryScope, ...] = (),
+        sensitivity_ceiling: MemorySensitivity = MemorySensitivity.INTERNAL,
+        limit: int = 100,
     ) -> tuple[SemanticObservation, ...]:
         if limit < 1 or limit > 500:
             raise ValueError("observation limit must be between 1 and 500")
         matches = [
             item
             for item in self.observations.values()
-            if source_id is None
-            or any(source.source_id == source_id for source in item.source_refs)
+            if (not scopes or item.scope in scopes)
+            and _SENSITIVITY_ORDER[item.sensitivity] <= _SENSITIVITY_ORDER[sensitivity_ceiling]
+            and any(
+                (source_type is None or source.source_type is source_type)
+                and (source_id is None or source.source_id == source_id)
+                and (source_revision is None or source.revision == source_revision)
+                for source in item.source_refs
+            )
         ]
         return tuple(
             sorted(matches, key=lambda item: (item.recorded_at, str(item.observation_id)))

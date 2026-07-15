@@ -33,6 +33,9 @@ SEMANTIC_CAPABILITIES = (
     "wiki_sensitivity",
 )
 
+REQUIRED_SEMANTIC_PROMOTION_CAPABILITIES = SEMANTIC_CAPABILITIES[:12]
+OPTIONAL_SEMANTIC_WIKI_CAPABILITIES = SEMANTIC_CAPABILITIES[12:]
+
 
 class SemanticInvariantVerifier(BaseVerifier):
     def __init__(self, capability: str) -> None:

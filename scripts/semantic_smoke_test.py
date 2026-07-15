@@ -11,8 +11,8 @@ from uuid import NAMESPACE_URL, UUID, uuid5
 from sqlalchemy import text
 
 from cognitive_os.application.services.memory_service import MemoryService
+from cognitive_os.application.services.verification_service import VerificationService
 from cognitive_os.config.semantic_memory_config import SemanticMemoryConfiguration
-from cognitive_os.domain.enums import VerifierStatus
 from cognitive_os.domain.memory import (
     MemoryScopeType,
     MemorySensitivity,
@@ -23,8 +23,6 @@ from cognitive_os.domain.semantic_memory import (
     BeliefStatus,
     Claim,
     ClaimIdentity,
-    ClaimPromotionDecision,
-    ClaimPromotionOutcome,
     ClaimRelation,
     ClaimRelationType,
     ClaimRevision,
@@ -46,14 +44,10 @@ from cognitive_os.domain.semantic_memory import (
     claim_revision_hash,
     semantic_hash,
 )
-from cognitive_os.domain.verifiers import (
-    VerificationRequest,
-    VerificationSubject,
-    VerificationSubjectType,
-)
 from cognitive_os.events.catalog import build_default_event_catalog
 from cognitive_os.events.memory_event_service import MemoryEventService
 from cognitive_os.events.semantic_memory_event_service import SemanticMemoryEventService
+from cognitive_os.events.verifier_event_service import VerifierEventService
 from cognitive_os.infrastructure.memory.postgres.repository import PostgresMemoryRepository
 from cognitive_os.infrastructure.postgres.engine import create_postgres_engine
 from cognitive_os.infrastructure.postgres.event_store import PostgresEventStore
@@ -67,9 +61,10 @@ from cognitive_os.semantic_memory.compilation import SemanticExtractionService
 from cognitive_os.semantic_memory.fixtures import project_version_proposal
 from cognitive_os.semantic_memory.grounding import TrustedSourceResolver
 from cognitive_os.semantic_memory.predicates import build_default_predicate_registry
+from cognitive_os.semantic_memory.promotion import SemanticPromotionGate
 from cognitive_os.semantic_memory.service import SemanticMemoryService
 from cognitive_os.verification.factory import build_builtin_registry
-from cognitive_os.verification.semantic import SEMANTIC_CAPABILITIES
+from cognitive_os.verification.semantic import REQUIRED_SEMANTIC_PROMOTION_CAPABILITIES
 
 ACTOR = SemanticActor(
     actor_type=SemanticActorType.APPROVED_INTERNAL_SERVICE,
@@ -132,33 +127,6 @@ def claim_revision(
             evidence_snapshot_hash=evidence_hash,
         ),
     )
-
-
-async def verifier_bundle(recorded_at) -> tuple[str, str, int]:
-    registry = build_builtin_registry()
-    snapshot = {capability: True for capability in SEMANTIC_CAPABILITIES}
-    results = []
-    for capability in SEMANTIC_CAPABILITIES:
-        verifier_id = f"semantic.{capability}"
-        result = await registry.require(verifier_id, "1").verify(
-            VerificationRequest(
-                verification_id=stable_id(f"verification:{capability}"),
-                task_run_id=stable_id("task-run"),
-                criterion_id=stable_id(f"criterion:{capability}"),
-                verifier_id=verifier_id,
-                verifier_version="1",
-                subject=VerificationSubject(
-                    subject_type=VerificationSubjectType.SEMANTIC_SNAPSHOT,
-                    inline_value=snapshot,
-                ),
-                requested_at=recorded_at,
-                correlation_id=stable_id("verification-bundle"),
-            )
-        )
-        if result.status is not VerifierStatus.PASSED:
-            raise RuntimeError(f"semantic verifier failed: {verifier_id}")
-        results.append(result.model_dump(mode="json"))
-    return semantic_hash(results), registry.snapshot(), len(results)
 
 
 def contradiction_revision(
@@ -250,17 +218,6 @@ async def run() -> int:
             raise RuntimeError("proposed project-version claim is incomplete")
         successor_time = source[1].created_at + timedelta(days=180)
         promoted_evidence = (revised_evidence(first_evidence[0], first_ref.claim_id, 2),)
-        bundle_hash, verifier_snapshot, verifier_count = await verifier_bundle(source[1].created_at)
-        decision = ClaimPromotionDecision(
-            decision_id=stable_id("promotion-decision"),
-            claim=first_ref,
-            outcome=ClaimPromotionOutcome.SUPPORTED,
-            verifier_bundle_hash=bundle_hash,
-            registry_snapshot_hash=verifier_snapshot,
-            reason_codes=("registered_semantic_bundle_passed",),
-            decided_at=source[1].created_at,
-            decided_by=ACTOR,
-        )
         promoted = claim_revision(
             claim_id=first_ref.claim_id,
             revision=2,
@@ -280,8 +237,24 @@ async def run() -> int:
                 consistency=1,
             ),
             reason="registered semantic verifier bundle passed",
-            decision_id=decision.decision_id,
         )
+        verifier_registry = build_builtin_registry()
+        gate_ids = iter(stable_id(f"promotion-gate:{index}") for index in range(100))
+        decision = await SemanticPromotionGate(
+            semantic,
+            VerificationService(verifier_registry, VerifierEventService(event_store)),
+            verifier_registry,
+            semantic_events,
+            clock=lambda: source[1].created_at,
+            id_factory=lambda: next(gate_ids),
+        ).decide(
+            promoted,
+            promoted_evidence,
+            task_run_id=stable_id("task-run"),
+            actor=ACTOR,
+        )
+        promoted = promoted.model_copy(update={"promotion_decision_id": decision.decision_id})
+        verifier_count = len(REQUIRED_SEMANTIC_PROMOTION_CAPABILITIES)
         await semantic.transition_claim(
             promoted,
             expected_revision=1,
@@ -440,7 +413,7 @@ async def run() -> int:
             and result["historical_claims"] == 1
             and result["historical_wiki_lineage"] == 1
             and result["relations"] == 1
-            and result["verifiers"] == len(SEMANTIC_CAPABILITIES)
+            and result["verifiers"] == len(REQUIRED_SEMANTIC_PROMOTION_CAPABILITIES)
             and result["wiki_access_records"] == 4
             and result["wiki_lineage"] == 1
             and result["access_records"] == 8

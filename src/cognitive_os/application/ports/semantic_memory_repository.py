@@ -3,6 +3,7 @@
 from typing import Protocol
 from uuid import UUID
 
+from cognitive_os.domain.memory import MemoryScope, MemorySensitivity
 from cognitive_os.domain.semantic_memory import (
     Claim,
     ClaimRelation,
@@ -13,6 +14,7 @@ from cognitive_os.domain.semantic_memory import (
     SemanticAccessRecord,
     SemanticObservation,
     SemanticQueryResult,
+    SemanticSourceType,
     TemporalClaimQuery,
     WikiPage,
     WikiPageRevision,
@@ -23,7 +25,14 @@ class SemanticMemoryRepositoryPort(Protocol):
     async def record_observation(self, observation: SemanticObservation) -> SemanticObservation: ...
     async def get_observation(self, observation_id: UUID) -> SemanticObservation | None: ...
     async def list_observations(
-        self, *, source_id: UUID | None = None, limit: int = 100
+        self,
+        *,
+        source_type: SemanticSourceType | None = None,
+        source_id: UUID | None = None,
+        source_revision: int | None = None,
+        scopes: tuple[MemoryScope, ...] = (),
+        sensitivity_ceiling: MemorySensitivity = MemorySensitivity.INTERNAL,
+        limit: int = 100,
     ) -> tuple[SemanticObservation, ...]: ...
     async def create_claim(
         self, claim: Claim, revision: ClaimRevision

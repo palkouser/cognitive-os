@@ -5,7 +5,9 @@ from uuid import UUID
 import pytest
 from pydantic import ValidationError
 
+from cognitive_os.application.services.verification_service import VerificationService
 from cognitive_os.config.semantic_memory_config import SemanticMemoryConfiguration
+from cognitive_os.domain.common import utc_now
 from cognitive_os.domain.memory import MemoryScope, MemoryScopeType, MemorySensitivity
 from cognitive_os.domain.semantic_memory import (
     BeliefStatus,
@@ -27,6 +29,7 @@ from cognitive_os.domain.semantic_memory import (
     EvidenceRelation,
     GroundedSourceSpan,
     GroundingMode,
+    ObservationQuery,
     SemanticActor,
     SemanticActorType,
     SemanticLiteral,
@@ -40,13 +43,24 @@ from cognitive_os.domain.semantic_memory import (
     claim_revision_hash,
     semantic_hash,
 )
+from cognitive_os.events.semantic_memory_event_service import SemanticMemoryEventService
+from cognitive_os.events.storage import AppendResult, StoredEvent
+from cognitive_os.events.verifier_event_service import VerifierEventService
 from cognitive_os.semantic_memory.beliefs import aggregate_confidence
 from cognitive_os.semantic_memory.canonicalization import canonical_identifier
 from cognitive_os.semantic_memory.errors import SemanticIntegrityError, SemanticPolicyError
 from cognitive_os.semantic_memory.predicates import build_default_predicate_registry
+from cognitive_os.semantic_memory.promotion import SemanticPromotionGate
 from cognitive_os.semantic_memory.rendering import escape_markdown
 from cognitive_os.semantic_memory.repository import InMemorySemanticMemoryRepository
 from cognitive_os.semantic_memory.service import SemanticMemoryService
+from cognitive_os.verification.errors import VerifierNotFoundError
+from cognitive_os.verification.factory import build_builtin_registry
+from cognitive_os.verification.registry import VerifierRegistry
+from cognitive_os.verification.semantic import (
+    REQUIRED_SEMANTIC_PROMOTION_CAPABILITIES,
+    SemanticInvariantVerifier,
+)
 
 NOW = datetime(2026, 7, 15, tzinfo=UTC)
 FUTURE = datetime(2027, 1, 10, tzinfo=UTC)
@@ -65,6 +79,45 @@ SPAN = GroundedSourceSpan(
     path="content.repository_profile",
     excerpt_hash="b" * 64,
 )
+
+
+class MemoryEventStore:
+    def __init__(self) -> None:
+        self.events: list[StoredEvent] = []
+
+    async def append(self, events, *, expected_version):
+        event = events[0]
+        current = len([item for item in self.events if item.envelope.stream_id == event.stream_id])
+        if current != expected_version:
+            raise RuntimeError("expected-version conflict")
+        stored = StoredEvent(
+            global_position=len(self.events) + 1,
+            stored_at=utc_now(),
+            envelope=event,
+        )
+        self.events.append(stored)
+        return AppendResult(
+            stream_id=event.stream_id,
+            previous_stream_version=current,
+            current_stream_version=event.stream_version,
+            event_ids=(event.event_id,),
+            global_positions=(stored.global_position,),
+            stored_at=stored.stored_at,
+        )
+
+    async def read_stream(self, stream_id, *, from_version=1, to_version=None, limit=None):
+        values = [
+            item
+            for item in self.events
+            if item.envelope.stream_id == stream_id and item.envelope.stream_version >= from_version
+        ]
+        if to_version is not None:
+            values = [item for item in values if item.envelope.stream_version <= to_version]
+        return tuple(values[:limit] if limit else values)
+
+    async def get_stream_version(self, stream_id):
+        values = [item for item in self.events if item.envelope.stream_id == stream_id]
+        return values[-1].envelope.stream_version if values else None
 
 
 def confidence(*, complete: bool = False) -> ConfidenceDimensions:
@@ -174,6 +227,35 @@ def service() -> tuple[SemanticMemoryService, InMemorySemanticMemoryRepository]:
     )
 
 
+def eventful_service() -> tuple[
+    SemanticMemoryService,
+    InMemorySemanticMemoryRepository,
+    SemanticMemoryEventService,
+    MemoryEventStore,
+]:
+    class Resolver:
+        async def validate_span(self, _span, **_policy) -> None:
+            return None
+
+    store = MemoryEventStore()
+    events = SemanticMemoryEventService(store)  # type: ignore[arg-type]
+    repository = InMemorySemanticMemoryRepository()
+    return (
+        SemanticMemoryService(
+            repository,
+            build_default_predicate_registry(),
+            SemanticMemoryConfiguration(),
+            clock=lambda: NOW,
+            id_factory=lambda: UUID(int=999),
+            event_service=events,
+            source_resolver=Resolver(),  # type: ignore[arg-type]
+        ),
+        repository,
+        events,
+        store,
+    )
+
+
 def test_configuration_registry_and_canonicalization_fail_closed() -> None:
     with pytest.raises(ValidationError):
         SemanticMemoryConfiguration(allow_provider_direct_commit=True)
@@ -226,8 +308,52 @@ async def test_observation_is_exactly_grounded_immutable_and_provider_denied() -
 
 
 @pytest.mark.asyncio
+async def test_observation_query_filters_exact_source_scope_and_audits() -> None:
+    semantic_service, _, _, store = eventful_service()
+    payload = {
+        "content": "Python 3.12",
+        "normalized_content": "Python 3.12",
+        "source_refs": [SOURCE.model_dump(mode="json")],
+        "source_spans": [SPAN.model_dump(mode="json")],
+    }
+    observation = SemanticObservation(
+        observation_id=UUID(int=22),
+        content="Python 3.12",
+        normalized_content="Python 3.12",
+        source_refs=(SOURCE,),
+        source_spans=(SPAN,),
+        observed_at=NOW,
+        recorded_at=NOW,
+        scope=SCOPE,
+        confidence=1,
+        sensitivity=MemorySensitivity.INTERNAL,
+        created_by=ACTOR,
+        content_hash=semantic_hash(payload),
+        idempotency_key="e" * 64,
+    )
+    await semantic_service.record_observation(observation)
+    query = ObservationQuery(
+        query_id=UUID(int=23),
+        source_type=SemanticSourceType.MEMORY_REVISION,
+        source_id=SOURCE.source_id,
+        source_revision=1,
+        scopes=(SCOPE,),
+        sensitivity_ceiling=MemorySensitivity.INTERNAL,
+        requested_at=NOW,
+        requested_by=ACTOR,
+    )
+    result = await semantic_service.query_observations(query)
+    assert result.observations == (observation,)
+    assert any(
+        item.envelope.event_type == "semantic.observations_accessed"
+        and item.envelope.stream_id == query.query_id
+        for item in store.events
+    )
+
+
+@pytest.mark.asyncio
 async def test_claim_promotion_requires_complete_verified_host_decision() -> None:
-    semantic_service, repository = service()
+    semantic_service, repository, events, _ = eventful_service()
     claim_id = UUID(int=30)
     await semantic_service.create_claim(
         claim(claim_id), revision(claim_id, 1, "3.12"), (evidence(claim_id),)
@@ -249,10 +375,19 @@ async def test_claim_promotion_requires_complete_verified_host_decision() -> Non
         decided_at=NOW,
         decided_by=ACTOR,
     )
+    promoted = promoted.model_copy(update={"promotion_decision_id": decision.decision_id})
     with pytest.raises(SemanticPolicyError, match="decision"):
         await semantic_service.transition_claim(
             promoted, expected_revision=1, evidence=(evidence(claim_id, 2),)
         )
+    with pytest.raises(SemanticPolicyError, match="not persisted"):
+        await semantic_service.transition_claim(
+            promoted,
+            expected_revision=1,
+            decision=decision,
+            evidence=(evidence(claim_id, 2),),
+        )
+    await events.record_promotion_decision(decision)
     assert (
         await semantic_service.transition_claim(
             promoted,
@@ -487,7 +622,7 @@ async def test_wiki_is_deterministic_escaped_and_has_exact_lineage() -> None:
 
 @pytest.mark.asyncio
 async def test_supported_wiki_lineage_and_identical_regeneration_are_idempotent() -> None:
-    semantic_service, repository = service()
+    semantic_service, repository, events, store = eventful_service()
     claim_id = UUID(int=80)
     await semantic_service.create_claim(
         claim(claim_id), revision(claim_id, 1, "3.12"), (evidence(claim_id),)
@@ -509,6 +644,8 @@ async def test_supported_wiki_lineage_and_identical_regeneration_are_idempotent(
         decided_at=NOW,
         decided_by=ACTOR,
     )
+    await events.record_promotion_decision(decision)
+    promoted = promoted.model_copy(update={"promotion_decision_id": decision.decision_id})
     await semantic_service.transition_claim(
         promoted,
         expected_revision=1,
@@ -529,3 +666,133 @@ async def test_supported_wiki_lineage_and_identical_regeneration_are_idempotent(
     assert first == second
     assert first.claim_refs[0].claim == ClaimRevisionReference(claim_id=claim_id, revision=2)
     assert len(repository.wiki_revisions[page.page_id]) == 1
+    assert await semantic_service.verify_wiki_revision(page.page_id, 1)
+    assert any(
+        item.envelope.event_type == "semantic.wiki_page_regenerated" for item in store.events
+    )
+
+
+@pytest.mark.asyncio
+async def test_promotion_gate_derives_snapshot_and_persists_before_transition() -> None:
+    semantic_service, repository, events, store = eventful_service()
+    claim_id = UUID(int=90)
+    await semantic_service.create_claim(
+        claim(claim_id), revision(claim_id, 1, "3.12"), (evidence(claim_id),)
+    )
+    promoted = revision(
+        claim_id,
+        2,
+        "3.12",
+        status=BeliefStatus.SUPPORTED,
+        complete_confidence=True,
+    )
+    promoted_evidence = (evidence(claim_id, 2),)
+    verifier_registry = build_builtin_registry()
+    identifiers = iter(UUID(int=value) for value in range(1000, 1100))
+    gate = SemanticPromotionGate(
+        semantic_service,
+        VerificationService(
+            verifier_registry,
+            VerifierEventService(store),  # type: ignore[arg-type]
+        ),
+        verifier_registry,
+        events,
+        clock=lambda: NOW,
+        id_factory=lambda: next(identifiers),
+    )
+    decision = await gate.decide(
+        promoted,
+        promoted_evidence,
+        task_run_id=UUID(int=91),
+        actor=ACTOR,
+    )
+    assert decision.outcome is ClaimPromotionOutcome.SUPPORTED
+    assert await events.promotion_decision_is_persisted(decision)
+    promoted = promoted.model_copy(update={"promotion_decision_id": decision.decision_id})
+    await semantic_service.transition_claim(
+        promoted,
+        expected_revision=1,
+        decision=decision,
+        evidence=promoted_evidence,
+    )
+    decision_position = next(
+        item.global_position
+        for item in store.events
+        if item.envelope.event_type == "semantic.claim_promotion_decided"
+    )
+    transition_position = next(
+        item.global_position
+        for item in store.events
+        if item.envelope.event_type == "semantic.claim_belief_changed"
+    )
+    assert decision_position < transition_position
+    assert repository.claims[claim_id].current_belief_status is BeliefStatus.SUPPORTED
+
+
+@pytest.mark.asyncio
+async def test_promotion_gate_rejects_failed_or_missing_required_verifiers() -> None:
+    semantic_service, _, events, store = eventful_service()
+    claim_id = UUID(int=92)
+    await semantic_service.create_claim(
+        claim(claim_id), revision(claim_id, 1, "3.12"), (evidence(claim_id),)
+    )
+    promoted = revision(
+        claim_id,
+        2,
+        "3.12",
+        status=BeliefStatus.SUPPORTED,
+        complete_confidence=True,
+    )
+    registry = build_builtin_registry()
+    identifiers = iter(UUID(int=value) for value in range(1200, 1300))
+    gate = SemanticPromotionGate(
+        semantic_service,
+        VerificationService(
+            registry,
+            VerifierEventService(store),  # type: ignore[arg-type]
+        ),
+        registry,
+        events,
+        clock=lambda: NOW,
+        id_factory=lambda: next(identifiers),
+    )
+    rejected = await gate.decide(
+        promoted,
+        (),
+        task_run_id=UUID(int=93),
+        actor=ACTOR,
+    )
+    assert rejected.outcome is ClaimPromotionOutcome.REJECTED
+    assert "semantic.evidence_minimum" in rejected.reason_codes
+
+    incomplete_registry = VerifierRegistry()
+    incomplete_registry.register_many(
+        tuple(
+            SemanticInvariantVerifier(capability)
+            for capability in REQUIRED_SEMANTIC_PROMOTION_CAPABILITIES[:-1]
+        )
+    )
+    identifiers = iter(UUID(int=value) for value in range(1300, 1400))
+    incomplete_gate = SemanticPromotionGate(
+        semantic_service,
+        VerificationService(
+            incomplete_registry,
+            VerifierEventService(store),  # type: ignore[arg-type]
+        ),
+        incomplete_registry,
+        events,
+        clock=lambda: NOW,
+        id_factory=lambda: next(identifiers),
+    )
+    with pytest.raises(VerifierNotFoundError, match="not registered"):
+        await incomplete_gate.decide(
+            promoted,
+            (evidence(claim_id, 2),),
+            task_run_id=UUID(int=94),
+            actor=ACTOR,
+        )
+    assert not any(
+        item.envelope.event_type == "semantic.claim_promotion_decided"
+        and item.envelope.correlation_id == UUID(int=1300)
+        for item in store.events
+    )

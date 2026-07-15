@@ -282,6 +282,34 @@ class SemanticObservation(SemanticContract):
         return self
 
 
+class ObservationQuery(SemanticContract):
+    query_id: UUID
+    source_type: SemanticSourceType | None = None
+    source_id: UUID | None = None
+    source_revision: int | None = Field(default=None, ge=1)
+    scopes: Annotated[tuple[MemoryScope, ...], Field(min_length=1, max_length=16)]
+    sensitivity_ceiling: MemorySensitivity = MemorySensitivity.INTERNAL
+    maximum_results: int = Field(default=100, ge=1, le=500)
+    task_run_id: UUID | None = None
+    requested_at: UtcDatetime
+    requested_by: SemanticActor
+
+    @model_validator(mode="after")
+    def exact_revision_requires_memory_source(self) -> ObservationQuery:
+        if self.source_revision is not None and self.source_type not in {
+            None,
+            SemanticSourceType.MEMORY_REVISION,
+        }:
+            raise ValueError("source revision is valid only for memory-revision queries")
+        return self
+
+
+class ObservationQueryResult(SemanticContract):
+    query_id: UUID
+    observations: tuple[SemanticObservation, ...]
+    snapshot_hash: Sha256Hex
+
+
 class ClaimTemporalInterval(SemanticContract):
     valid_from: UtcDatetime
     valid_to: UtcDatetime | None = None
@@ -585,6 +613,15 @@ class ClaimPromotionDecision(SemanticContract):
     decided_at: UtcDatetime
     decided_by: SemanticActor
 
+    @model_validator(mode="after")
+    def trusted_decision(self) -> ClaimPromotionDecision:
+        if self.decided_by.actor_type in {
+            SemanticActorType.PROVIDER,
+            SemanticActorType.CONTROLLER,
+        }:
+            raise ValueError("provider and controller actors cannot decide claim promotion")
+        return self
+
 
 class Cardinality(StrEnum):
     FUNCTIONAL = "functional"
@@ -855,6 +892,8 @@ PUBLIC_SEMANTIC_CONTRACTS: tuple[type[ImmutableContractModel], ...] = (
     SemanticSourceRef,
     GroundedSourceSpan,
     SemanticObservation,
+    ObservationQuery,
+    ObservationQueryResult,
     ClaimTemporalInterval,
     ConfidenceDimensions,
     ClaimIdentity,

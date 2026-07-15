@@ -5,8 +5,10 @@ from uuid import UUID
 from cognitive_os.application.ports.event_store import EventStorePort
 from cognitive_os.domain.common import ActorRef
 from cognitive_os.domain.enums import ActorType, PrivacyClass, StreamType
+from cognitive_os.domain.semantic_memory import ClaimPromotionDecision
 
 from .base import EventPayload, create_event_envelope
+from .semantic_memory_events import SemanticClaimPromotionDecided
 from .storage import AppendResult
 
 
@@ -39,3 +41,20 @@ class SemanticMemoryEventService:
             privacy_class=PrivacyClass.SENSITIVE,
         )
         return await self._store.append((envelope,), expected_version=expected_version)
+
+    async def record_promotion_decision(self, decision: ClaimPromotionDecision) -> AppendResult:
+        return await self.append(
+            aggregate_id=decision.decision_id,
+            payload=SemanticClaimPromotionDecided(decision=decision),
+            expected_version=0,
+            correlation_id=decision.decision_id,
+        )
+
+    async def promotion_decision_is_persisted(self, decision: ClaimPromotionDecision) -> bool:
+        events = await self._store.read_stream(decision.decision_id)
+        expected = decision.model_dump(mode="json")
+        return any(
+            item.envelope.event_type == SemanticClaimPromotionDecided.event_type
+            and item.envelope.payload.get("decision") == expected
+            for item in events
+        )

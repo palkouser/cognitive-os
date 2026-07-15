@@ -1,0 +1,320 @@
+{
+  "$defs": {
+    "GroundedSourceSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "end": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End"
+        },
+        "excerpt_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Excerpt Hash",
+          "type": "string"
+        },
+        "mode": {
+          "$ref": "#/$defs/GroundingMode"
+        },
+        "path": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path"
+        },
+        "source": {
+          "$ref": "#/$defs/SemanticSourceRef"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start"
+        }
+      },
+      "required": [
+        "source",
+        "mode",
+        "excerpt_hash"
+      ],
+      "title": "GroundedSourceSpan",
+      "type": "object"
+    },
+    "GroundingMode": {
+      "enum": [
+        "typed_field",
+        "artifact_bytes",
+        "line_range",
+        "event_field",
+        "memory_field"
+      ],
+      "title": "GroundingMode",
+      "type": "string"
+    },
+    "MemoryScope": {
+      "additionalProperties": false,
+      "properties": {
+        "scope_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "scope_type": {
+          "$ref": "#/$defs/MemoryScopeType"
+        }
+      },
+      "required": [
+        "scope_type",
+        "scope_id"
+      ],
+      "title": "MemoryScope",
+      "type": "object"
+    },
+    "MemoryScopeType": {
+      "enum": [
+        "global",
+        "project",
+        "repository",
+        "task",
+        "session",
+        "domain"
+      ],
+      "title": "MemoryScopeType",
+      "type": "string"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "SemanticActor": {
+      "additionalProperties": false,
+      "properties": {
+        "actor_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Actor Id",
+          "type": "string"
+        },
+        "actor_type": {
+          "$ref": "#/$defs/SemanticActorType"
+        }
+      },
+      "required": [
+        "actor_type",
+        "actor_id"
+      ],
+      "title": "SemanticActor",
+      "type": "object"
+    },
+    "SemanticActorType": {
+      "enum": [
+        "user",
+        "operator",
+        "controller",
+        "semantic_service",
+        "approved_internal_service",
+        "provider"
+      ],
+      "title": "SemanticActorType",
+      "type": "string"
+    },
+    "SemanticObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "content": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_by": {
+          "$ref": "#/$defs/SemanticActor"
+        },
+        "idempotency_key": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Idempotency Key",
+          "type": "string"
+        },
+        "normalized_content": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "title": "Normalized Content",
+          "type": "string"
+        },
+        "observation_id": {
+          "format": "uuid",
+          "title": "Observation Id",
+          "type": "string"
+        },
+        "observed_at": {
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "recorded_at": {
+          "format": "date-time",
+          "title": "Recorded At",
+          "type": "string"
+        },
+        "scope": {
+          "$ref": "#/$defs/MemoryScope"
+        },
+        "sensitivity": {
+          "$ref": "#/$defs/MemorySensitivity"
+        },
+        "source_refs": {
+          "items": {
+            "$ref": "#/$defs/SemanticSourceRef"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "source_spans": {
+          "items": {
+            "$ref": "#/$defs/GroundedSourceSpan"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Source Spans",
+          "type": "array"
+        }
+      },
+      "required": [
+        "observation_id",
+        "content",
+        "normalized_content",
+        "source_refs",
+        "source_spans",
+        "observed_at",
+        "recorded_at",
+        "scope",
+        "confidence",
+        "sensitivity",
+        "created_by",
+        "content_hash",
+        "idempotency_key"
+      ],
+      "title": "SemanticObservation",
+      "type": "object"
+    },
+    "SemanticSourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision"
+        },
+        "source_id": {
+          "format": "uuid",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/SemanticSourceType"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_id",
+        "content_hash"
+      ],
+      "title": "SemanticSourceRef",
+      "type": "object"
+    },
+    "SemanticSourceType": {
+      "enum": [
+        "event",
+        "artifact",
+        "memory_revision",
+        "task_run",
+        "trajectory"
+      ],
+      "title": "SemanticSourceType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/semantic-memory/observation-query-result.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "observations": {
+      "items": {
+        "$ref": "#/$defs/SemanticObservation"
+      },
+      "title": "Observations",
+      "type": "array"
+    },
+    "query_id": {
+      "format": "uuid",
+      "title": "Query Id",
+      "type": "string"
+    },
+    "snapshot_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Snapshot Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "query_id",
+    "observations",
+    "snapshot_hash"
+  ],
+  "title": "ObservationQueryResult",
+  "type": "object"
+}

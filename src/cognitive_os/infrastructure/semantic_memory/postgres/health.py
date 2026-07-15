@@ -183,7 +183,8 @@ class PostgresSemanticHealthService:
                         "(e.event_type='semantic.observation_recorded' AND NOT EXISTS "
                         "(SELECT 1 FROM cognitive_os.semantic_observations o "
                         "WHERE o.observation_id=e.stream_id)) OR "
-                        "(e.event_type LIKE 'semantic.claim_%' AND NOT EXISTS "
+                        "(e.event_type LIKE 'semantic.claim_%' AND "
+                        "e.event_type<>'semantic.claim_promotion_decided' AND NOT EXISTS "
                         "(SELECT 1 FROM cognitive_os.semantic_claims c "
                         "WHERE c.claim_id=e.stream_id)) OR "
                         "(e.event_type LIKE 'semantic.contradiction_%' AND NOT EXISTS "
@@ -206,10 +207,11 @@ class PostgresSemanticHealthService:
                         "cognitive_os.event_streams s ON s.stream_id=c.contradiction_id "
                         "WHERE s.stream_type='semantic' AND "
                         "s.current_version<>c.current_revision UNION ALL "
-                        "SELECT p.page_id FROM cognitive_os.wiki_pages p JOIN "
-                        "cognitive_os.event_streams s ON s.stream_id=p.page_id "
-                        "WHERE s.stream_type='semantic' AND "
-                        "s.current_version<>p.current_revision) mismatches"
+                        "SELECT p.page_id FROM cognitive_os.wiki_pages p WHERE "
+                        "(SELECT count(*) FROM cognitive_os.events e WHERE "
+                        "e.stream_id=p.page_id AND "
+                        "e.event_type='semantic.wiki_page_rendered')<>p.current_revision"
+                        ") mismatches"
                     )
                 ),
             }

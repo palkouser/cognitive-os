@@ -4,11 +4,12 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from datetime import datetime
+from hashlib import sha256
 from uuid import UUID, uuid4
 
 from cognitive_os.application.ports.semantic_memory_repository import SemanticMemoryRepositoryPort
 from cognitive_os.config.semantic_memory_config import SemanticMemoryConfiguration
-from cognitive_os.domain.common import utc_now
+from cognitive_os.domain.common import JsonValue, utc_now
 from cognitive_os.domain.semantic_memory import (
     BeliefStatus,
     Claim,
@@ -25,6 +26,8 @@ from cognitive_os.domain.semantic_memory import (
     ContradictionStatus,
     EvidenceLink,
     EvidenceValidationResult,
+    ObservationQuery,
+    ObservationQueryResult,
     SemanticAccessRecord,
     SemanticActorType,
     SemanticLiteral,
@@ -43,6 +46,8 @@ from cognitive_os.events.semantic_memory_events import (
     SemanticContradictionOpened,
     SemanticContradictionResolved,
     SemanticObservationRecorded,
+    SemanticObservationsAccessed,
+    SemanticWikiPageRegenerated,
     SemanticWikiPageRendered,
 )
 
@@ -84,8 +89,157 @@ class SemanticMemoryService:
     def configuration(self) -> SemanticMemoryConfiguration:
         return self._configuration
 
+    async def build_promotion_snapshot(
+        self,
+        revision: ClaimRevision,
+        evidence: tuple[EvidenceLink, ...],
+    ) -> dict[str, JsonValue]:
+        """Derive verifier inputs from authoritative host state."""
+        claim = await self._repository.get_claim(revision.claim_id)
+        current_revision = (
+            await self._repository.get_claim_revision(revision.claim_id, claim.current_revision)
+            if claim is not None
+            else None
+        )
+        source_resolver = self._source_resolver
+        source_integrity = False
+        if evidence and source_resolver is not None and claim is not None:
+            source_integrity = True
+            try:
+                for link in evidence:
+                    await source_resolver.validate_span(
+                        link.source_span,
+                        scope=claim.identity.scope,
+                        sensitivity=claim.sensitivity,
+                    )
+            except Exception:
+                source_integrity = False
+        evidence_integrity = (
+            bool(evidence)
+            and len({item.evidence_id for item in evidence}) == len(evidence)
+            and all(
+                item.claim.claim_id == revision.claim_id
+                and item.claim.revision == revision.revision
+                for item in evidence
+            )
+            and revision.evidence_snapshot_hash
+            == semantic_hash([item.model_dump(mode="json") for item in evidence])
+        )
+        predicate_schema = False
+        if claim is not None:
+            try:
+                descriptor = self._registry.require(claim.identity.predicate_id)
+                predicate_schema = (
+                    not isinstance(revision.object, SemanticLiteral)
+                    or revision.object.literal_kind in descriptor.allowed_object_types
+                )
+            except ValueError:
+                pass
+        relations = (
+            await self._repository.list_claim_relations(revision.claim_id)
+            if claim is not None
+            else ()
+        )
+        relation_integrity = True
+        for relation in relations:
+            if (
+                await self._repository.get_claim_revision(
+                    relation.source.claim_id, relation.source.revision
+                )
+                is None
+                or await self._repository.get_claim_revision(
+                    relation.target.claim_id, relation.target.revision
+                )
+                is None
+            ):
+                relation_integrity = False
+                break
+        has_open_critical = False
+        for contradiction in await self._repository.list_contradictions():
+            if (
+                contradiction.current_status is not ContradictionStatus.OPEN
+                or contradiction.severity is not ContradictionSeverity.CRITICAL
+            ):
+                continue
+            current = await self._repository.get_contradiction_revision(
+                contradiction.contradiction_id, contradiction.current_revision
+            )
+            if current is not None and any(
+                item.claim_id == revision.claim_id for item in current.claims
+            ):
+                has_open_critical = True
+                break
+        contradiction_free = not has_open_critical and not await self.detect_contradictions(
+            revision.claim_id
+        )
+        trusted_actor = revision.created_by.actor_type not in {
+            SemanticActorType.PROVIDER,
+            SemanticActorType.CONTROLLER,
+        }
+        return {
+            "claim_id": str(revision.claim_id),
+            "revision": revision.revision,
+            "source_integrity": source_integrity,
+            "source_grounding": source_integrity,
+            "observation_schema": bool(evidence),
+            "predicate_schema": predicate_schema,
+            "valid_interval": (
+                revision.valid_interval.valid_to is None
+                or revision.valid_interval.valid_from < revision.valid_interval.valid_to
+            ),
+            "revision_continuity": (
+                claim is not None
+                and current_revision is not None
+                and revision.revision == claim.current_revision + 1
+                and revision.previous_revision == claim.current_revision
+            ),
+            "relation_integrity": relation_integrity,
+            "supersession_acyclic": not has_restricted_cycle(relations),
+            "evidence_minimum": bool(evidence),
+            "evidence_integrity": evidence_integrity,
+            "critical_contradiction": contradiction_free,
+            "belief_policy": (
+                revision.belief_status is BeliefStatus.SUPPORTED
+                and revision.confidence.complete_for_support()
+                and revision.confidence.overall_confidence
+                >= self._configuration.supported_confidence_threshold
+                and trusted_actor
+            ),
+        }
+
     async def get_observation(self, observation_id: UUID) -> SemanticObservation | None:
         return await self._repository.get_observation(observation_id)
+
+    async def query_observations(self, query: ObservationQuery) -> ObservationQueryResult:
+        observations = await self._repository.list_observations(
+            source_type=query.source_type,
+            source_id=query.source_id,
+            source_revision=query.source_revision,
+            scopes=query.scopes,
+            sensitivity_ceiling=query.sensitivity_ceiling,
+            limit=query.maximum_results,
+        )
+        result = ObservationQueryResult(
+            query_id=query.query_id,
+            observations=observations,
+            snapshot_hash=semantic_hash([item.model_dump(mode="json") for item in observations]),
+        )
+        if self._event_service is None:
+            if self._configuration.fail_closed_on_access_audit_error:
+                raise SemanticPolicyError("observation query access audit is unavailable")
+            return result
+        await self._event_service.append(
+            aggregate_id=query.query_id,
+            payload=SemanticObservationsAccessed(
+                query_id=query.query_id,
+                observation_ids=tuple(item.observation_id for item in observations),
+                query_hash=query.canonical_hash(),
+                accessed_at=self._clock(),
+            ),
+            expected_version=0,
+            correlation_id=query.query_id,
+        )
+        return result
 
     async def validate_observation(self, observation: SemanticObservation) -> None:
         if observation.created_by.actor_type is SemanticActorType.PROVIDER:
@@ -237,6 +391,12 @@ class SemanticMemoryService:
                 raise SemanticPolicyError(
                     "supported promotion requires a supported verifier decision"
                 )
+            if revision.promotion_decision_id != decision.decision_id:
+                raise SemanticPolicyError("supported revision does not reference its decision")
+            if self._event_service is None or not (
+                await self._event_service.promotion_decision_is_persisted(decision)
+            ):
+                raise SemanticPolicyError("promotion decision was not persisted before transition")
             if (
                 decision.claim.claim_id != revision.claim_id
                 or decision.claim.revision != expected_revision
@@ -669,11 +829,25 @@ class SemanticMemoryService:
                 and previous.valid_at == rendered.valid_at
                 and previous.known_at == rendered.known_at
             ):
+                if self._event_service is not None:
+                    event_version = await self._event_service.current_version(page.page_id)
+                    await self._event_service.append(
+                        aggregate_id=page.page_id,
+                        payload=SemanticWikiPageRegenerated(
+                            page_id=page.page_id,
+                            revision=previous.revision,
+                            content_hash=previous.content_hash,
+                            identical=True,
+                        ),
+                        expected_version=event_version,
+                        correlation_id=query.query_id,
+                    )
                 return previous
         persisted = await self._repository.append_wiki_revision(
             rendered, expected_revision=expected_revision
         )
         if self._event_service is not None and persisted.revision == rendered.revision:
+            event_version = await self._event_service.current_version(page.page_id)
             await self._event_service.append(
                 aggregate_id=page.page_id,
                 payload=SemanticWikiPageRendered(
@@ -682,7 +856,27 @@ class SemanticMemoryService:
                     content_hash=persisted.content_hash,
                     snapshot_hash=persisted.snapshot_hash,
                 ),
-                expected_version=expected_revision,
+                expected_version=event_version,
                 correlation_id=query.query_id,
             )
         return persisted
+
+    async def verify_wiki_revision(self, page_id: UUID, revision: int) -> bool:
+        stored = await self._repository.get_wiki_revision(page_id, revision)
+        if stored is None:
+            return False
+        if stored.content_hash != sha256(stored.markdown.encode()).hexdigest():
+            return False
+        if stored.snapshot_hash != semantic_hash(
+            [item.model_dump(mode="json") for item in stored.claim_refs]
+        ):
+            return False
+        for reference in stored.claim_refs:
+            if (
+                await self._repository.get_claim_revision(
+                    reference.claim.claim_id, reference.claim.revision
+                )
+                is None
+            ):
+                return False
+        return True

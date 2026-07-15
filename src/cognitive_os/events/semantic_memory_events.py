@@ -5,6 +5,7 @@ from uuid import UUID
 from cognitive_os.domain.common import NonEmptyStr, Sha256Hex, UtcDatetime
 from cognitive_os.domain.semantic_memory import (
     BeliefStatus,
+    ClaimPromotionDecision,
     ContradictionStatus,
 )
 
@@ -16,6 +17,14 @@ class SemanticObservationRecorded(EventPayload):
     observation_id: UUID
     content_hash: Sha256Hex
     recorded_at: UtcDatetime
+
+
+class SemanticObservationsAccessed(EventPayload):
+    event_type = "semantic.observations_accessed"
+    query_id: UUID
+    observation_ids: tuple[UUID, ...]
+    query_hash: Sha256Hex
+    accessed_at: UtcDatetime
 
 
 class SemanticExtractionCompleted(EventPayload):
@@ -58,6 +67,11 @@ class SemanticClaimBeliefChanged(EventPayload):
     previous_status: BeliefStatus
     status: BeliefStatus
     decision_id: UUID | None = None
+
+
+class SemanticClaimPromotionDecided(EventPayload):
+    event_type = "semantic.claim_promotion_decided"
+    decision: ClaimPromotionDecision
 
 
 class SemanticContradictionOpened(EventPayload):
@@ -104,11 +118,13 @@ class SemanticWikiPageRegenerated(EventPayload):
 
 SEMANTIC_EVENT_MODELS: tuple[type[EventPayload], ...] = (
     SemanticObservationRecorded,
+    SemanticObservationsAccessed,
     SemanticExtractionCompleted,
     SemanticExtractionRejected,
     SemanticClaimCreated,
     SemanticClaimRevisionAppended,
     SemanticClaimBeliefChanged,
+    SemanticClaimPromotionDecided,
     SemanticContradictionCandidateRecorded,
     SemanticContradictionOpened,
     SemanticContradictionResolved,

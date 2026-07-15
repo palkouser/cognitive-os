@@ -10,7 +10,7 @@ from sqlalchemy.engine import RowMapping
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine
 
-from cognitive_os.domain.memory import MemoryScope
+from cognitive_os.domain.memory import MemoryScope, MemorySensitivity
 from cognitive_os.domain.semantic_memory import (
     Claim,
     ClaimIdentity,
@@ -24,6 +24,7 @@ from cognitive_os.domain.semantic_memory import (
     SemanticObservation,
     SemanticQueryResult,
     SemanticSourceRef,
+    SemanticSourceType,
     SemanticValue,
     TemporalClaimQuery,
     WikiPage,
@@ -268,17 +269,52 @@ class PostgresSemanticMemoryRepository:
         return _observation_from_row(row)
 
     async def list_observations(
-        self, *, source_id: UUID | None = None, limit: int = 100
+        self,
+        *,
+        source_type: SemanticSourceType | None = None,
+        source_id: UUID | None = None,
+        source_revision: int | None = None,
+        scopes: tuple[MemoryScope, ...] = (),
+        sensitivity_ceiling: MemorySensitivity = MemorySensitivity.INTERNAL,
+        limit: int = 100,
     ) -> tuple[SemanticObservation, ...]:
         if limit < 1 or limit > 500:
             raise ValueError("observation limit must be between 1 and 500")
         statement = select(semantic_observations).order_by(
             semantic_observations.c.recorded_at, semantic_observations.c.observation_id
         )
-        if source_id is not None:
+        source_filter = {
+            key: value
+            for key, value in {
+                "source_type": source_type.value if source_type is not None else None,
+                "source_id": str(source_id) if source_id is not None else None,
+                "revision": source_revision,
+            }.items()
+            if value is not None
+        }
+        if source_filter:
             statement = statement.where(
-                semantic_observations.c.source_refs_json.contains([{"source_id": str(source_id)}])
+                semantic_observations.c.source_refs_json.contains([source_filter])
             )
+        if scopes:
+            statement = statement.where(
+                or_(
+                    *(
+                        and_(
+                            semantic_observations.c.scope_type == scope.scope_type.value,
+                            semantic_observations.c.scope_id == scope.scope_id,
+                        )
+                        for scope in scopes
+                    )
+                )
+            )
+        sensitivity_order = tuple(MemorySensitivity)
+        statement = statement.where(
+            semantic_observations.c.sensitivity.in_(
+                item.value
+                for item in sensitivity_order[: sensitivity_order.index(sensitivity_ceiling) + 1]
+            )
+        )
         async with self._engine.connect() as connection:
             rows = (await connection.execute(statement.limit(limit))).mappings().all()
         return tuple(_observation_from_row(row) for row in rows)
