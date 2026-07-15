@@ -37,7 +37,10 @@ sha256sum "$archive" > "$archive.sha256"
 event_count="$(psql "$database_cli_url" -Atqc 'SELECT count(*) FROM cognitive_os.events')"
 artifact_count="$(psql "$database_cli_url" -Atqc 'SELECT count(*) FROM cognitive_os.artifacts')"
 revision="$(psql "$database_cli_url" -Atqc 'SELECT version_num FROM alembic_version LIMIT 1')"
-uv run python - "$manifest" "$timestamp" "$dump" "$archive" "$event_count" "$artifact_count" "$revision" "$COGOS_POSTGRES_DATABASE" <<'PY'
+memory_count="$(psql "$database_cli_url" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.memory_items') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.memory_items) END")"
+memory_revision_count="$(psql "$database_cli_url" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.memory_revisions') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.memory_revisions) END")"
+embedding_count="$(psql "$database_cli_url" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.memory_embeddings') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.memory_embeddings) END")"
+uv run python - "$manifest" "$timestamp" "$dump" "$archive" "$event_count" "$artifact_count" "$revision" "$COGOS_POSTGRES_DATABASE" "$memory_count" "$memory_revision_count" "$embedding_count" <<'PY'
 import hashlib
 import json
 import subprocess
@@ -45,12 +48,24 @@ import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
-manifest, timestamp, dump, archive, event_count, artifact_count, revision, database_name = sys.argv[1:]
+(
+    manifest,
+    timestamp,
+    dump,
+    archive,
+    event_count,
+    artifact_count,
+    revision,
+    database_name,
+    memory_count,
+    memory_revision_count,
+    embedding_count,
+) = sys.argv[1:]
 digest = lambda path: hashlib.sha256(Path(path).read_bytes()).hexdigest()
 data = {
     "created_at": datetime.now(UTC).isoformat(),
     "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
-    "sprint_baseline": "sprint-3-baseline",
+    "sprint_parent_baseline": "sprint-8-baseline",
     "database_name": database_name,
     "alembic_revision": revision,
     "database_dump": Path(dump).name,
@@ -59,6 +74,9 @@ data = {
     "artifact_sha256": digest(archive),
     "event_count": int(event_count),
     "artifact_count": int(artifact_count),
+    "memory_count": int(memory_count),
+    "memory_revision_count": int(memory_revision_count),
+    "embedding_count": int(embedding_count),
 }
 Path(manifest).write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
 PY

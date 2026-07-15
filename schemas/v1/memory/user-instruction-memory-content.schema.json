@@ -1,0 +1,28 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/memory/user-instruction-memory-content.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "instruction": {
+      "maxLength": 16384,
+      "title": "Instruction",
+      "type": "string"
+    },
+    "instruction_scope": {
+      "minLength": 1,
+      "title": "Instruction Scope",
+      "type": "string"
+    },
+    "memory_type": {
+      "const": "user_instruction",
+      "default": "user_instruction",
+      "title": "Memory Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "instruction",
+    "instruction_scope"
+  ],
+  "title": "UserInstructionMemoryContent",
+  "type": "object"
+}

@@ -1,0 +1,85 @@
+{
+  "$defs": {
+    "MemoryCreator": {
+      "additionalProperties": false,
+      "properties": {
+        "creator_id": {
+          "minLength": 1,
+          "title": "Creator Id",
+          "type": "string"
+        },
+        "creator_type": {
+          "$ref": "#/$defs/MemoryCreatorType"
+        }
+      },
+      "required": [
+        "creator_type",
+        "creator_id"
+      ],
+      "title": "MemoryCreator",
+      "type": "object"
+    },
+    "MemoryCreatorType": {
+      "enum": [
+        "user",
+        "operator",
+        "controller",
+        "ingestion_service",
+        "approved_internal_service",
+        "provider"
+      ],
+      "title": "MemoryCreatorType",
+      "type": "string"
+    },
+    "MemoryTransitionReason": {
+      "enum": [
+        "created",
+        "content_revised",
+        "metadata_revised",
+        "authoritative_evidence_verified",
+        "superseded_by_successor",
+        "user_correction",
+        "source_retracted",
+        "policy_retraction",
+        "retention_expired",
+        "explicit_expiry"
+      ],
+      "title": "MemoryTransitionReason",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/memory/memory-retraction-request.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "actor": {
+      "$ref": "#/$defs/MemoryCreator"
+    },
+    "expected_revision": {
+      "minimum": 1,
+      "title": "Expected Revision",
+      "type": "integer"
+    },
+    "memory_id": {
+      "format": "uuid",
+      "title": "Memory Id",
+      "type": "string"
+    },
+    "reason": {
+      "$ref": "#/$defs/MemoryTransitionReason"
+    },
+    "request_id": {
+      "format": "uuid",
+      "title": "Request Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "request_id",
+    "memory_id",
+    "expected_revision",
+    "actor",
+    "reason"
+  ],
+  "title": "MemoryRetractionRequest",
+  "type": "object"
+}

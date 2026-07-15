@@ -1,0 +1,37 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/memory/memory-vector-query.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "dimension": {
+      "maximum": 4096,
+      "minimum": 1,
+      "title": "Dimension",
+      "type": "integer"
+    },
+    "model_id": {
+      "minLength": 1,
+      "title": "Model Id",
+      "type": "string"
+    },
+    "provider_id": {
+      "minLength": 1,
+      "title": "Provider Id",
+      "type": "string"
+    },
+    "vector": {
+      "items": {
+        "type": "number"
+      },
+      "title": "Vector",
+      "type": "array"
+    }
+  },
+  "required": [
+    "provider_id",
+    "model_id",
+    "dimension",
+    "vector"
+  ],
+  "title": "MemoryVectorQuery",
+  "type": "object"
+}

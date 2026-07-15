@@ -1,0 +1,787 @@
+{
+  "$defs": {
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "format": "uuid",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "media_type": {
+          "minLength": 1,
+          "title": "Media Type",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "storage_key": {
+          "minLength": 1,
+          "title": "Storage Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "media_type",
+        "content_hash",
+        "size_bytes",
+        "storage_key",
+        "created_at"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "CodeContextMemoryContent": {
+      "additionalProperties": false,
+      "properties": {
+        "base_commit": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Base Commit",
+          "type": "string"
+        },
+        "bounded_excerpt": {
+          "anyOf": [
+            {
+              "maxLength": 16384,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bounded Excerpt"
+        },
+        "changed_paths": {
+          "default": [],
+          "items": {
+            "maxLength": 512,
+            "type": "string"
+          },
+          "title": "Changed Paths",
+          "type": "array"
+        },
+        "context_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Context Hash",
+          "type": "string"
+        },
+        "diff_artifact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Diff Artifact Id"
+        },
+        "excerpt_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Excerpt Hash"
+        },
+        "memory_type": {
+          "const": "code_context",
+          "default": "code_context",
+          "title": "Memory Type",
+          "type": "string"
+        },
+        "repository_identity": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Repository Identity",
+          "type": "string"
+        },
+        "repository_profile": {
+          "maxLength": 4096,
+          "title": "Repository Profile",
+          "type": "string"
+        },
+        "symbol_references": {
+          "default": [],
+          "items": {
+            "maxLength": 512,
+            "type": "string"
+          },
+          "title": "Symbol References",
+          "type": "array"
+        }
+      },
+      "required": [
+        "repository_identity",
+        "base_commit",
+        "repository_profile",
+        "context_hash"
+      ],
+      "title": "CodeContextMemoryContent",
+      "type": "object"
+    },
+    "CorrectionMemoryContent": {
+      "additionalProperties": false,
+      "properties": {
+        "corrected_memory_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Corrected Memory Id"
+        },
+        "corrected_revision": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Corrected Revision"
+        },
+        "correction": {
+          "maxLength": 16384,
+          "title": "Correction",
+          "type": "string"
+        },
+        "memory_type": {
+          "const": "correction",
+          "default": "correction",
+          "title": "Memory Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "correction"
+      ],
+      "title": "CorrectionMemoryContent",
+      "type": "object"
+    },
+    "DecisionMemoryContent": {
+      "additionalProperties": false,
+      "properties": {
+        "decision": {
+          "maxLength": 16384,
+          "title": "Decision",
+          "type": "string"
+        },
+        "memory_type": {
+          "const": "decision",
+          "default": "decision",
+          "title": "Memory Type",
+          "type": "string"
+        },
+        "rationale": {
+          "maxLength": 16384,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "selected_by": {
+          "minLength": 1,
+          "title": "Selected By",
+          "type": "string"
+        }
+      },
+      "required": [
+        "decision",
+        "rationale",
+        "selected_by"
+      ],
+      "title": "DecisionMemoryContent",
+      "type": "object"
+    },
+    "EpisodeMemoryContent": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_ids": {
+          "default": [],
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Artifact Ids",
+          "type": "array"
+        },
+        "base_commit": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Base Commit",
+          "type": "string"
+        },
+        "memory_type": {
+          "const": "episode",
+          "default": "episode",
+          "title": "Memory Type",
+          "type": "string"
+        },
+        "outcome": {
+          "minLength": 1,
+          "title": "Outcome",
+          "type": "string"
+        },
+        "patch_attempt_count": {
+          "minimum": 0,
+          "title": "Patch Attempt Count",
+          "type": "integer"
+        },
+        "problem_summary": {
+          "maxLength": 8192,
+          "title": "Problem Summary",
+          "type": "string"
+        },
+        "remaining_risks": {
+          "default": [],
+          "items": {
+            "maxLength": 2048,
+            "type": "string"
+          },
+          "title": "Remaining Risks",
+          "type": "array"
+        },
+        "repair_count": {
+          "minimum": 0,
+          "title": "Repair Count",
+          "type": "integer"
+        },
+        "repository_identity": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Repository Identity",
+          "type": "string"
+        },
+        "task_run_id": {
+          "format": "uuid",
+          "title": "Task Run Id",
+          "type": "string"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "trajectory_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Trajectory Hash",
+          "type": "string"
+        },
+        "verifier_summary": {
+          "maxLength": 8192,
+          "title": "Verifier Summary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_run_id",
+        "title",
+        "problem_summary",
+        "repository_identity",
+        "base_commit",
+        "outcome",
+        "patch_attempt_count",
+        "repair_count",
+        "verifier_summary",
+        "trajectory_hash"
+      ],
+      "title": "EpisodeMemoryContent",
+      "type": "object"
+    },
+    "FailurePatternMemoryContent": {
+      "additionalProperties": false,
+      "properties": {
+        "failed_evidence": {
+          "maxLength": 8192,
+          "title": "Failed Evidence",
+          "type": "string"
+        },
+        "memory_type": {
+          "const": "failure_pattern",
+          "default": "failure_pattern",
+          "title": "Memory Type",
+          "type": "string"
+        },
+        "successful_correction": {
+          "maxLength": 8192,
+          "title": "Successful Correction",
+          "type": "string"
+        },
+        "task_run_id": {
+          "format": "uuid",
+          "title": "Task Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "failed_evidence",
+        "successful_correction",
+        "task_run_id"
+      ],
+      "title": "FailurePatternMemoryContent",
+      "type": "object"
+    },
+    "MemoryCreator": {
+      "additionalProperties": false,
+      "properties": {
+        "creator_id": {
+          "minLength": 1,
+          "title": "Creator Id",
+          "type": "string"
+        },
+        "creator_type": {
+          "$ref": "#/$defs/MemoryCreatorType"
+        }
+      },
+      "required": [
+        "creator_type",
+        "creator_id"
+      ],
+      "title": "MemoryCreator",
+      "type": "object"
+    },
+    "MemoryCreatorType": {
+      "enum": [
+        "user",
+        "operator",
+        "controller",
+        "ingestion_service",
+        "approved_internal_service",
+        "provider"
+      ],
+      "title": "MemoryCreatorType",
+      "type": "string"
+    },
+    "MemoryRevision": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "content": {
+          "discriminator": {
+            "mapping": {
+              "code_context": "#/$defs/CodeContextMemoryContent",
+              "correction": "#/$defs/CorrectionMemoryContent",
+              "decision": "#/$defs/DecisionMemoryContent",
+              "episode": "#/$defs/EpisodeMemoryContent",
+              "failure_pattern": "#/$defs/FailurePatternMemoryContent",
+              "observation": "#/$defs/ObservationMemoryContent",
+              "task_summary": "#/$defs/TaskSummaryMemoryContent",
+              "user_instruction": "#/$defs/UserInstructionMemoryContent",
+              "verification_summary": "#/$defs/VerificationSummaryMemoryContent"
+            },
+            "propertyName": "memory_type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/EpisodeMemoryContent"
+            },
+            {
+              "$ref": "#/$defs/TaskSummaryMemoryContent"
+            },
+            {
+              "$ref": "#/$defs/VerificationSummaryMemoryContent"
+            },
+            {
+              "$ref": "#/$defs/CodeContextMemoryContent"
+            },
+            {
+              "$ref": "#/$defs/CorrectionMemoryContent"
+            },
+            {
+              "$ref": "#/$defs/DecisionMemoryContent"
+            },
+            {
+              "$ref": "#/$defs/ObservationMemoryContent"
+            },
+            {
+              "$ref": "#/$defs/FailurePatternMemoryContent"
+            },
+            {
+              "$ref": "#/$defs/UserInstructionMemoryContent"
+            }
+          ],
+          "title": "Content"
+        },
+        "content_artifact": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ArtifactRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "created_by": {
+          "$ref": "#/$defs/MemoryCreator"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires At"
+        },
+        "memory_id": {
+          "format": "uuid",
+          "title": "Memory Id",
+          "type": "string"
+        },
+        "previous_revision": {
+          "anyOf": [
+            {
+              "maximum": 999,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Previous Revision"
+        },
+        "reason": {
+          "$ref": "#/$defs/MemoryTransitionReason"
+        },
+        "revision": {
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "salience": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Salience",
+          "type": "number"
+        },
+        "sensitivity": {
+          "$ref": "#/$defs/MemorySensitivity"
+        },
+        "status": {
+          "$ref": "#/$defs/MemoryStatus"
+        },
+        "successor_memory_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Successor Memory Id"
+        }
+      },
+      "required": [
+        "memory_id",
+        "revision",
+        "content",
+        "content_hash",
+        "status",
+        "confidence",
+        "salience",
+        "sensitivity",
+        "reason",
+        "created_at",
+        "created_by"
+      ],
+      "title": "MemoryRevision",
+      "type": "object"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "MemoryStatus": {
+      "enum": [
+        "candidate",
+        "verified",
+        "superseded",
+        "retracted",
+        "expired"
+      ],
+      "title": "MemoryStatus",
+      "type": "string"
+    },
+    "MemoryTransitionReason": {
+      "enum": [
+        "created",
+        "content_revised",
+        "metadata_revised",
+        "authoritative_evidence_verified",
+        "superseded_by_successor",
+        "user_correction",
+        "source_retracted",
+        "policy_retraction",
+        "retention_expired",
+        "explicit_expiry"
+      ],
+      "title": "MemoryTransitionReason",
+      "type": "string"
+    },
+    "ObservationMemoryContent": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_summary": {
+          "maxLength": 8192,
+          "title": "Evidence Summary",
+          "type": "string"
+        },
+        "memory_type": {
+          "const": "observation",
+          "default": "observation",
+          "title": "Memory Type",
+          "type": "string"
+        },
+        "observation": {
+          "maxLength": 16384,
+          "title": "Observation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "observation",
+        "evidence_summary"
+      ],
+      "title": "ObservationMemoryContent",
+      "type": "object"
+    },
+    "TaskSummaryMemoryContent": {
+      "additionalProperties": false,
+      "properties": {
+        "constraints": {
+          "default": [],
+          "items": {
+            "maxLength": 2048,
+            "type": "string"
+          },
+          "title": "Constraints",
+          "type": "array"
+        },
+        "goal": {
+          "maxLength": 8192,
+          "title": "Goal",
+          "type": "string"
+        },
+        "memory_type": {
+          "const": "task_summary",
+          "default": "task_summary",
+          "title": "Memory Type",
+          "type": "string"
+        },
+        "result": {
+          "maxLength": 8192,
+          "title": "Result",
+          "type": "string"
+        },
+        "review_status": {
+          "minLength": 1,
+          "title": "Review Status",
+          "type": "string"
+        },
+        "task_run_id": {
+          "format": "uuid",
+          "title": "Task Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_run_id",
+        "goal",
+        "result",
+        "review_status"
+      ],
+      "title": "TaskSummaryMemoryContent",
+      "type": "object"
+    },
+    "UserInstructionMemoryContent": {
+      "additionalProperties": false,
+      "properties": {
+        "instruction": {
+          "maxLength": 16384,
+          "title": "Instruction",
+          "type": "string"
+        },
+        "instruction_scope": {
+          "minLength": 1,
+          "title": "Instruction Scope",
+          "type": "string"
+        },
+        "memory_type": {
+          "const": "user_instruction",
+          "default": "user_instruction",
+          "title": "Memory Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "instruction",
+        "instruction_scope"
+      ],
+      "title": "UserInstructionMemoryContent",
+      "type": "object"
+    },
+    "VerificationSummaryMemoryContent": {
+      "additionalProperties": false,
+      "properties": {
+        "acceptance_decision_id": {
+          "format": "uuid",
+          "title": "Acceptance Decision Id",
+          "type": "string"
+        },
+        "memory_type": {
+          "const": "verification_summary",
+          "default": "verification_summary",
+          "title": "Memory Type",
+          "type": "string"
+        },
+        "optional_results": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Optional Results",
+          "type": "array"
+        },
+        "registry_snapshot_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Registry Snapshot Hash",
+          "type": "string"
+        },
+        "required_failed": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Required Failed",
+          "type": "array"
+        },
+        "required_passed": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Required Passed",
+          "type": "array"
+        },
+        "task_run_id": {
+          "format": "uuid",
+          "title": "Task Run Id",
+          "type": "string"
+        },
+        "verifier_errors": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Verifier Errors",
+          "type": "array"
+        }
+      },
+      "required": [
+        "task_run_id",
+        "acceptance_decision_id",
+        "registry_snapshot_hash"
+      ],
+      "title": "VerificationSummaryMemoryContent",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/memory.expired.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "expected_revision": {
+      "title": "Expected Revision",
+      "type": "integer"
+    },
+    "memory_id": {
+      "format": "uuid",
+      "title": "Memory Id",
+      "type": "string"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "revision": {
+      "$ref": "#/$defs/MemoryRevision"
+    },
+    "transitioned_at": {
+      "format": "date-time",
+      "title": "Transitioned At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "memory_id",
+    "expected_revision",
+    "revision",
+    "reason",
+    "transitioned_at"
+  ],
+  "title": "MemoryExpired",
+  "type": "object"
+}

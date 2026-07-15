@@ -1,0 +1,37 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/memory.ingestion_completed.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "completed_at": {
+      "format": "date-time",
+      "title": "Completed At",
+      "type": "string"
+    },
+    "ingestion_id": {
+      "format": "uuid",
+      "title": "Ingestion Id",
+      "type": "string"
+    },
+    "memory_ids": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Memory Ids",
+      "type": "array"
+    },
+    "source_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "ingestion_id",
+    "source_hash",
+    "memory_ids",
+    "completed_at"
+  ],
+  "title": "MemoryIngestionCompleted",
+  "type": "object"
+}

@@ -1,0 +1,143 @@
+{
+  "$defs": {
+    "MemoryCreator": {
+      "additionalProperties": false,
+      "properties": {
+        "creator_id": {
+          "minLength": 1,
+          "title": "Creator Id",
+          "type": "string"
+        },
+        "creator_type": {
+          "$ref": "#/$defs/MemoryCreatorType"
+        }
+      },
+      "required": [
+        "creator_type",
+        "creator_id"
+      ],
+      "title": "MemoryCreator",
+      "type": "object"
+    },
+    "MemoryCreatorType": {
+      "enum": [
+        "user",
+        "operator",
+        "controller",
+        "ingestion_service",
+        "approved_internal_service",
+        "provider"
+      ],
+      "title": "MemoryCreatorType",
+      "type": "string"
+    },
+    "MemoryScope": {
+      "additionalProperties": false,
+      "properties": {
+        "scope_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "scope_type": {
+          "$ref": "#/$defs/MemoryScopeType"
+        }
+      },
+      "required": [
+        "scope_type",
+        "scope_id"
+      ],
+      "title": "MemoryScope",
+      "type": "object"
+    },
+    "MemoryScopeType": {
+      "enum": [
+        "global",
+        "project",
+        "repository",
+        "task",
+        "session",
+        "domain"
+      ],
+      "title": "MemoryScopeType",
+      "type": "string"
+    },
+    "MemoryStatus": {
+      "enum": [
+        "candidate",
+        "verified",
+        "superseded",
+        "retracted",
+        "expired"
+      ],
+      "title": "MemoryStatus",
+      "type": "string"
+    },
+    "MemoryType": {
+      "enum": [
+        "episode",
+        "observation",
+        "decision",
+        "correction",
+        "task_summary",
+        "code_context",
+        "verification_summary",
+        "failure_pattern",
+        "user_instruction"
+      ],
+      "title": "MemoryType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/memory/memory-record.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "created_by": {
+      "$ref": "#/$defs/MemoryCreator"
+    },
+    "current_revision": {
+      "maximum": 1000,
+      "minimum": 1,
+      "title": "Current Revision",
+      "type": "integer"
+    },
+    "memory_id": {
+      "format": "uuid",
+      "title": "Memory Id",
+      "type": "string"
+    },
+    "memory_type": {
+      "$ref": "#/$defs/MemoryType"
+    },
+    "scope": {
+      "$ref": "#/$defs/MemoryScope"
+    },
+    "status": {
+      "$ref": "#/$defs/MemoryStatus"
+    },
+    "title": {
+      "maxLength": 1024,
+      "minLength": 1,
+      "title": "Title",
+      "type": "string"
+    }
+  },
+  "required": [
+    "memory_id",
+    "memory_type",
+    "scope",
+    "status",
+    "current_revision",
+    "title",
+    "created_at",
+    "created_by"
+  ],
+  "title": "MemoryRecord",
+  "type": "object"
+}

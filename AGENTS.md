@@ -5,34 +5,35 @@
 This repository develops Cognitive OS, a local, model-independent, self-improving
 agent harness based on LightAgent.
 
-## Sprint 8 scope
+## Sprint 9 scope
 
-The active scope is the Python-first Coding Agent MVP built on the existing controller,
-Tool Plane, verifier, acceptance, event, artifact, and sandbox boundaries.
+The active scope is Governed Memory Plane v1 built on the existing controller, Coding
+Agent, event, artifact, verifier, acceptance, and PostgreSQL boundaries.
 
 Allowed work:
 
-- Python 3.12 repository profile detection and read-only preflight;
-- trusted host Git repository and detached-worktree services;
-- bounded repository inventory, Python AST indexing, search, and context;
-- policy-controlled workspace mutation through the existing Tool Plane;
-- typed patch planning, proposals, application, rollback, and repair;
-- Coding Agent orchestration through the existing Cognitive Controller;
-- coding verifier bundles and authoritative acceptance decisions;
-- credential-free coding benchmarks, reports, replay, recovery, and operations.
+- host-governed creation of typed episodic and semantic-foundation memory;
+- append-only revisions, provenance, explicit lifecycle transitions, and access audit;
+- deterministic ingestion of explicitly selected authoritative Sprint 8 trajectories;
+- PostgreSQL metadata and full-text retrieval plus exact pgvector similarity;
+- deterministic test embeddings and optional preconfigured local embedding models;
+- narrow Cognitive OS and LightAgent adapters that preserve governance;
+- credential-free memory benchmarks, reports, recovery, and operations.
 
 Out of scope:
 
-- non-Python or multi-language repository profiles;
-- parallel or multi-agent coding tasks;
-- automatic dependency installation, clone, fetch, commit, push, merge, or pull request;
-- provider-controlled permissions, budgets, Git, shell, or workspace paths;
-- Inspect AI runtime, full SWE-bench execution, Memory Plane, and self-improvement.
+- automatic provider-authored long-term memory or direct provider database access;
+- semantic claims, belief state, contradiction inference, knowledge graphs, or Wiki rendering;
+- automatic skill, strategy, experience, conversation-summary, or memory promotion creation;
+- hybrid lexical/vector retrieval, reranking, Context Builder, HNSW, or IVFFlat;
+- network model downloads or GPU requirements;
+- Cognee, Graphiti, LangMem, agentmemory, or legacy LightAgent memory as an authority;
+- unrestricted LightAgent persistence and Sprint 10--14 semantic or procedural features.
 
-The main working tree is immutable during Coding Agent execution. All writes occur only in
-a host-prepared detached worktree. The Patch Service is the sole coding write authority,
-and every provider-visible operation passes through the existing Tool Plane. Claude Code is
-advisory-only and never receives workspace write, execution, acceptance, or merge authority.
+PostgreSQL is authoritative for Memory Plane state, the event store for lifecycle evidence,
+and the artifact store for referenced large content. Providers and LightAgent cannot bypass
+the Memory Service or its host-controlled policy. Memory revisions and access records are
+append-only. Provider prose is non-authoritative and cannot satisfy verified promotion.
 
 Do not move or rewrite LightAgent runtime files unless the active issue explicitly
 authorizes it.

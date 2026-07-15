@@ -1,0 +1,49 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/memory/task-summary-memory-content.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "constraints": {
+      "default": [],
+      "items": {
+        "maxLength": 2048,
+        "type": "string"
+      },
+      "title": "Constraints",
+      "type": "array"
+    },
+    "goal": {
+      "maxLength": 8192,
+      "title": "Goal",
+      "type": "string"
+    },
+    "memory_type": {
+      "const": "task_summary",
+      "default": "task_summary",
+      "title": "Memory Type",
+      "type": "string"
+    },
+    "result": {
+      "maxLength": 8192,
+      "title": "Result",
+      "type": "string"
+    },
+    "review_status": {
+      "minLength": 1,
+      "title": "Review Status",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_run_id",
+    "goal",
+    "result",
+    "review_status"
+  ],
+  "title": "TaskSummaryMemoryContent",
+  "type": "object"
+}

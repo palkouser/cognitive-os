@@ -1,0 +1,50 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/memory.embedding_recorded.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "dimension": {
+      "title": "Dimension",
+      "type": "integer"
+    },
+    "memory_id": {
+      "format": "uuid",
+      "title": "Memory Id",
+      "type": "string"
+    },
+    "model_id": {
+      "minLength": 1,
+      "title": "Model Id",
+      "type": "string"
+    },
+    "provider_id": {
+      "minLength": 1,
+      "title": "Provider Id",
+      "type": "string"
+    },
+    "recorded_at": {
+      "format": "date-time",
+      "title": "Recorded At",
+      "type": "string"
+    },
+    "revision": {
+      "title": "Revision",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "memory_id",
+    "revision",
+    "provider_id",
+    "model_id",
+    "dimension",
+    "content_hash",
+    "recorded_at"
+  ],
+  "title": "MemoryEmbeddingRecorded",
+  "type": "object"
+}

@@ -1,0 +1,34 @@
+{
+  "$defs": {
+    "MemoryCreatorType": {
+      "enum": [
+        "user",
+        "operator",
+        "controller",
+        "ingestion_service",
+        "approved_internal_service",
+        "provider"
+      ],
+      "title": "MemoryCreatorType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/memory/memory-creator.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "creator_id": {
+      "minLength": 1,
+      "title": "Creator Id",
+      "type": "string"
+    },
+    "creator_type": {
+      "$ref": "#/$defs/MemoryCreatorType"
+    }
+  },
+  "required": [
+    "creator_type",
+    "creator_id"
+  ],
+  "title": "MemoryCreator",
+  "type": "object"
+}

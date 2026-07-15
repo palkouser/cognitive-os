@@ -1,0 +1,386 @@
+{
+  "$defs": {
+    "MemoryCreatorType": {
+      "enum": [
+        "user",
+        "operator",
+        "controller",
+        "ingestion_service",
+        "approved_internal_service",
+        "provider"
+      ],
+      "title": "MemoryCreatorType",
+      "type": "string"
+    },
+    "MemoryMetadataFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "creator_types": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/MemoryCreatorType"
+          },
+          "title": "Creator Types",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "include_historical": {
+          "default": false,
+          "title": "Include Historical",
+          "type": "boolean"
+        },
+        "memory_types": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/MemoryType"
+          },
+          "title": "Memory Types",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "repository_identity": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Repository Identity"
+        },
+        "scopes": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/MemoryScope"
+          },
+          "title": "Scopes",
+          "type": "array"
+        },
+        "sensitivity_ceiling": {
+          "$ref": "#/$defs/MemorySensitivity",
+          "default": "internal"
+        },
+        "source_types": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/MemorySourceType"
+          },
+          "title": "Source Types",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "statuses": {
+          "default": [
+            "candidate",
+            "verified"
+          ],
+          "items": {
+            "$ref": "#/$defs/MemoryStatus"
+          },
+          "title": "Statuses",
+          "type": "array"
+        },
+        "task_run_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Run Id"
+        }
+      },
+      "title": "MemoryMetadataFilter",
+      "type": "object"
+    },
+    "MemoryQueryBudget": {
+      "additionalProperties": false,
+      "properties": {
+        "maximum_candidates": {
+          "default": 1000,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Maximum Candidates",
+          "type": "integer"
+        },
+        "maximum_elapsed": {
+          "default": "PT5S",
+          "format": "duration",
+          "title": "Maximum Elapsed",
+          "type": "string"
+        },
+        "maximum_embedding_calls": {
+          "default": 1,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Maximum Embedding Calls",
+          "type": "integer"
+        },
+        "maximum_results": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Maximum Results",
+          "type": "integer"
+        },
+        "maximum_scopes": {
+          "default": 16,
+          "maximum": 64,
+          "minimum": 1,
+          "title": "Maximum Scopes",
+          "type": "integer"
+        },
+        "maximum_source_filters": {
+          "default": 16,
+          "maximum": 64,
+          "minimum": 0,
+          "title": "Maximum Source Filters",
+          "type": "integer"
+        }
+      },
+      "title": "MemoryQueryBudget",
+      "type": "object"
+    },
+    "MemoryRetrievalMode": {
+      "enum": [
+        "metadata",
+        "text",
+        "vector"
+      ],
+      "title": "MemoryRetrievalMode",
+      "type": "string"
+    },
+    "MemoryScope": {
+      "additionalProperties": false,
+      "properties": {
+        "scope_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "scope_type": {
+          "$ref": "#/$defs/MemoryScopeType"
+        }
+      },
+      "required": [
+        "scope_type",
+        "scope_id"
+      ],
+      "title": "MemoryScope",
+      "type": "object"
+    },
+    "MemoryScopeType": {
+      "enum": [
+        "global",
+        "project",
+        "repository",
+        "task",
+        "session",
+        "domain"
+      ],
+      "title": "MemoryScopeType",
+      "type": "string"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "MemorySourceType": {
+      "enum": [
+        "event",
+        "artifact",
+        "task_run",
+        "acceptance_decision",
+        "verifier_result",
+        "coding_trajectory",
+        "user_correction",
+        "memory_revision",
+        "selected_decision"
+      ],
+      "title": "MemorySourceType",
+      "type": "string"
+    },
+    "MemoryStatus": {
+      "enum": [
+        "candidate",
+        "verified",
+        "superseded",
+        "retracted",
+        "expired"
+      ],
+      "title": "MemoryStatus",
+      "type": "string"
+    },
+    "MemoryTextQuery": {
+      "additionalProperties": false,
+      "properties": {
+        "language": {
+          "default": "english",
+          "enum": [
+            "simple",
+            "english"
+          ],
+          "title": "Language",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "MemoryTextQuery",
+      "type": "object"
+    },
+    "MemoryType": {
+      "enum": [
+        "episode",
+        "observation",
+        "decision",
+        "correction",
+        "task_summary",
+        "code_context",
+        "verification_summary",
+        "failure_pattern",
+        "user_instruction"
+      ],
+      "title": "MemoryType",
+      "type": "string"
+    },
+    "MemoryVectorQuery": {
+      "additionalProperties": false,
+      "properties": {
+        "dimension": {
+          "maximum": 4096,
+          "minimum": 1,
+          "title": "Dimension",
+          "type": "integer"
+        },
+        "model_id": {
+          "minLength": 1,
+          "title": "Model Id",
+          "type": "string"
+        },
+        "provider_id": {
+          "minLength": 1,
+          "title": "Provider Id",
+          "type": "string"
+        },
+        "vector": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Vector",
+          "type": "array"
+        }
+      },
+      "required": [
+        "provider_id",
+        "model_id",
+        "dimension",
+        "vector"
+      ],
+      "title": "MemoryVectorQuery",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/memory/memory-query.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "budget": {
+      "$ref": "#/$defs/MemoryQueryBudget",
+      "default": {
+        "maximum_candidates": 1000,
+        "maximum_elapsed": "PT5S",
+        "maximum_embedding_calls": 1,
+        "maximum_results": 20,
+        "maximum_scopes": 16,
+        "maximum_source_filters": 16
+      }
+    },
+    "cursor": {
+      "anyOf": [
+        {
+          "maxLength": 4096,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cursor"
+    },
+    "filters": {
+      "$ref": "#/$defs/MemoryMetadataFilter",
+      "default": {
+        "creator_types": [],
+        "include_historical": false,
+        "memory_types": [],
+        "repository_identity": null,
+        "scopes": [],
+        "sensitivity_ceiling": "internal",
+        "source_types": [],
+        "statuses": [
+          "candidate",
+          "verified"
+        ],
+        "task_run_id": null
+      }
+    },
+    "mode": {
+      "$ref": "#/$defs/MemoryRetrievalMode"
+    },
+    "query_id": {
+      "format": "uuid",
+      "title": "Query Id",
+      "type": "string"
+    },
+    "text": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MemoryTextQuery"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "vector": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MemoryVectorQuery"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "query_id",
+    "mode"
+  ],
+  "title": "MemoryQuery",
+  "type": "object"
+}

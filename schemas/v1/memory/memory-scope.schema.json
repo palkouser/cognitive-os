@@ -1,0 +1,35 @@
+{
+  "$defs": {
+    "MemoryScopeType": {
+      "enum": [
+        "global",
+        "project",
+        "repository",
+        "task",
+        "session",
+        "domain"
+      ],
+      "title": "MemoryScopeType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/memory/memory-scope.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "scope_id": {
+      "maxLength": 512,
+      "minLength": 1,
+      "title": "Scope Id",
+      "type": "string"
+    },
+    "scope_type": {
+      "$ref": "#/$defs/MemoryScopeType"
+    }
+  },
+  "required": [
+    "scope_type",
+    "scope_id"
+  ],
+  "title": "MemoryScope",
+  "type": "object"
+}

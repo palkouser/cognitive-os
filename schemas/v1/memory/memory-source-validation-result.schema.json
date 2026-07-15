@@ -1,0 +1,120 @@
+{
+  "$defs": {
+    "MemorySourceIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Hash"
+        },
+        "memory_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Memory Id"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Id"
+        },
+        "source_type": {
+          "$ref": "#/$defs/MemorySourceType"
+        }
+      },
+      "required": [
+        "source_type"
+      ],
+      "title": "MemorySourceIdentity",
+      "type": "object"
+    },
+    "MemorySourceType": {
+      "enum": [
+        "event",
+        "artifact",
+        "task_run",
+        "acceptance_decision",
+        "verifier_result",
+        "coding_trajectory",
+        "user_correction",
+        "memory_revision",
+        "selected_decision"
+      ],
+      "title": "MemorySourceType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/memory/memory-source-validation-result.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "authoritative_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Authoritative Hash"
+    },
+    "identity": {
+      "$ref": "#/$defs/MemorySourceIdentity"
+    },
+    "reason_code": {
+      "minLength": 1,
+      "title": "Reason Code",
+      "type": "string"
+    },
+    "valid": {
+      "title": "Valid",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "identity",
+    "valid",
+    "reason_code"
+  ],
+  "title": "MemorySourceValidationResult",
+  "type": "object"
+}

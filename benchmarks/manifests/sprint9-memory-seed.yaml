@@ -1,0 +1,27 @@
+benchmark_id: sprint9-memory-seed
+version: "1"
+title: Sprint 9 governed memory deterministic seed suite
+description: Sixteen credential-free governance, revision, retrieval, and audit cases.
+default_configuration:
+  mode: memory-replay
+source: Cognitive OS Sprint 9 executable backlog
+license: Apache-2.0
+created_at: 2026-01-01T00:00:00Z
+case_matrix:
+  memory:
+    - {id: memory.ingestion-1, scenario: verified_ingestion, expected: passed}
+    - {id: memory.ingestion-2, scenario: verified_ingestion, expected: passed}
+    - {id: memory.candidate-only, scenario: candidate_only, expected: passed}
+    - {id: memory.provider-rejection, scenario: provider_rejection, expected: passed}
+    - {id: memory.revision-1, scenario: revision_history, expected: passed}
+    - {id: memory.revision-2, scenario: stale_revision_rejection, expected: passed}
+    - {id: memory.supersession, scenario: supersession, expected: passed}
+    - {id: memory.retraction, scenario: retraction_audit, expected: passed}
+    - {id: memory.scope-project, scenario: project_scope, expected: passed}
+    - {id: memory.scope-repository, scenario: repository_scope, expected: passed}
+    - {id: memory.text-1, scenario: full_text_retrieval, expected: passed}
+    - {id: memory.text-2, scenario: full_text_isolation, expected: passed}
+    - {id: memory.vector-1, scenario: exact_retrieval, expected: passed}
+    - {id: memory.vector-2, scenario: exact_ranking, expected: passed}
+    - {id: memory.dimension-mismatch, scenario: dimension_mismatch_rejection, expected: passed}
+    - {id: memory.access-audit, scenario: access_audit, expected: passed}

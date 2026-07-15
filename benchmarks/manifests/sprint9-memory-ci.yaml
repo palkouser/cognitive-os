@@ -1,0 +1,15 @@
+benchmark_id: sprint9-memory-ci
+version: "1"
+title: Sprint 9 governed memory CI gate
+description: Four credential-free memory governance and retrieval cases.
+default_configuration:
+  mode: memory-replay
+source: Cognitive OS Sprint 9 executable backlog
+license: Apache-2.0
+created_at: 2026-01-01T00:00:00Z
+case_matrix:
+  memory:
+    - {id: memory-ci.verified-ingestion, scenario: verified_ingestion, expected: passed}
+    - {id: memory-ci.provider-rejection, scenario: provider_rejection, expected: passed}
+    - {id: memory-ci.exact-retrieval, scenario: exact_retrieval, expected: passed}
+    - {id: memory-ci.retraction-audit, scenario: retraction_audit, expected: passed}

@@ -27,3 +27,14 @@ the registered upstream boundary.
 | UKGovernmentBEIS/inspect_ai | 0.3.246 | MIT | Export-format reference; runtime deferred | None | Never authoritative; current Click constraint is security-incompatible |
 | UKGovernmentBEIS/inspect_evals | reviewed 2026-07-14 | MIT | Evaluation pattern reference only | None | No runtime dependency or automatic registration |
 | swe-bench/SWE-bench | reviewed 2026-07-14 | MIT | Dataset metadata compatibility | None | No clone, download, execution, or gold-patch disclosure; revisions and dataset licenses are mandatory |
+
+## Sprint 9 memory references
+
+| Project | Reviewed release | License | Use | Authority status |
+| --- | --- | --- | --- | --- |
+| pgvector/pgvector | 0.8.2 | PostgreSQL | Direct PostgreSQL vector type and exact cosine operator | Infrastructure dependency; PostgreSQL remains authoritative |
+| sentence-transformers | 5.x | Apache-2.0 | Optional preconfigured local embedding adapter | Non-authoritative; model output is revision-specific derived data |
+| Cognee | reviewed 2026-07-15 | Apache-2.0 | Architecture reference only | Not a runtime dependency or store |
+| Graphiti | reviewed 2026-07-15 | Apache-2.0 | Temporal-memory reference only | Deferred; not a runtime dependency or store |
+| LangMem | reviewed 2026-07-15 | MIT | Governance reference only | No autonomous extraction or persistence |
+| agentmemory | reviewed 2026-07-15 | MIT | Adapter-pattern reference only | Not a backend or authority |

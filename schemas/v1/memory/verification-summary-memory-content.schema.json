@@ -1,0 +1,70 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/memory/verification-summary-memory-content.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "acceptance_decision_id": {
+      "format": "uuid",
+      "title": "Acceptance Decision Id",
+      "type": "string"
+    },
+    "memory_type": {
+      "const": "verification_summary",
+      "default": "verification_summary",
+      "title": "Memory Type",
+      "type": "string"
+    },
+    "optional_results": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Optional Results",
+      "type": "array"
+    },
+    "registry_snapshot_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Registry Snapshot Hash",
+      "type": "string"
+    },
+    "required_failed": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Required Failed",
+      "type": "array"
+    },
+    "required_passed": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Required Passed",
+      "type": "array"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    },
+    "verifier_errors": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Verifier Errors",
+      "type": "array"
+    }
+  },
+  "required": [
+    "task_run_id",
+    "acceptance_decision_id",
+    "registry_snapshot_hash"
+  ],
+  "title": "VerificationSummaryMemoryContent",
+  "type": "object"
+}

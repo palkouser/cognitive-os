@@ -181,6 +181,51 @@
       "schema_version": 1
     },
     {
+      "event_type": "memory.embedding_recorded",
+      "file": "v1/events/memory.embedding_recorded.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "memory.expired",
+      "file": "v1/events/memory.expired.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "memory.ingestion_completed",
+      "file": "v1/events/memory.ingestion_completed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "memory.ingestion_rejected",
+      "file": "v1/events/memory.ingestion_rejected.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "memory.item_created",
+      "file": "v1/events/memory.item_created.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "memory.promoted",
+      "file": "v1/events/memory.promoted.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "memory.retracted",
+      "file": "v1/events/memory.retracted.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "memory.revision_appended",
+      "file": "v1/events/memory.revision_appended.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "memory.superseded",
+      "file": "v1/events/memory.superseded.v1.schema.json",
+      "schema_version": 1
+    },
+    {
       "event_type": "model_call.completed",
       "file": "v1/events/model_call.completed.v1.schema.json",
       "schema_version": 1
@@ -354,6 +399,11 @@
       "sha256": "4d19475e4a5af59006a015530da0fd027bac7faa06e2112c411c2642bcbd7c84"
     },
     {
+      "file": "v1/config/memory-configuration.schema.json",
+      "model": "MemoryConfiguration",
+      "sha256": "65bfef7c923ea727af8f2397e15de57c4831518c9bd709aa8f487ed27905d8d8"
+    },
+    {
       "file": "v1/domain/acceptance-decision.schema.json",
       "model": "AcceptanceDecision",
       "sha256": "e6c3591448a9247dfb15d814655dddf45c7f91cde091648ee400356ff1cd45de"
@@ -381,12 +431,12 @@
     {
       "file": "v1/domain/benchmark-case.schema.json",
       "model": "BenchmarkCase",
-      "sha256": "facb87f9e81c7c4ef42301c82e4e3b840ffe25740b3780f6cd5a4846df0d043a"
+      "sha256": "f8dcd9284e9abd43c1cbe25a137c4333f783b88b1b947b0a3a65a1917e667c25"
     },
     {
       "file": "v1/domain/benchmark-manifest.schema.json",
       "model": "BenchmarkManifest",
-      "sha256": "b13e747ee4437b7f4b1aa6b9221388a169e29ef388e3786dd4e073d373fe9801"
+      "sha256": "c9d888144fee95fdee19ff08ddab69e577d91def637711b5e957c5016e9d3ab6"
     },
     {
       "file": "v1/domain/benchmark-resource-budget.schema.json",
@@ -876,7 +926,7 @@
     {
       "file": "v1/events/event-envelope.schema.json",
       "model": "EventEnvelope",
-      "sha256": "6ce645a514fd6d824165a70bf8c1f92c6412d331acdca8909db6b0a6c6ce5f65"
+      "sha256": "144f00606fbb36e995c04b39ae90be8b683581ca75d1ea0408f6840de5e93a27"
     },
     {
       "file": "v1/events/execution_step.cancelled.v1.schema.json",
@@ -912,6 +962,51 @@
       "file": "v1/events/execution_step.started.v1.schema.json",
       "model": "ExecutionStepStarted",
       "sha256": "b8baef5ef34c9d354947f0ac6babe7fcdde0528d203965a1cb55796bbe6314b1"
+    },
+    {
+      "file": "v1/events/memory.embedding_recorded.v1.schema.json",
+      "model": "MemoryEmbeddingRecorded",
+      "sha256": "dd570a8709426efc9b2ea097a378fb656c62216fe4e49079340e08344afc000e"
+    },
+    {
+      "file": "v1/events/memory.expired.v1.schema.json",
+      "model": "MemoryExpired",
+      "sha256": "f1498b8759a34f26d17fce4b2c2dfd500ac576fe297bedd1e778ba00b3b2bf8d"
+    },
+    {
+      "file": "v1/events/memory.ingestion_completed.v1.schema.json",
+      "model": "MemoryIngestionCompleted",
+      "sha256": "267d0b930dd890968e5758383777f8c8b20a44c75d0649d1d2395b61dfbd7785"
+    },
+    {
+      "file": "v1/events/memory.ingestion_rejected.v1.schema.json",
+      "model": "MemoryIngestionRejected",
+      "sha256": "d70e750b4b03a8602ba70f77f673e2472a25db26af065a20fae3214c7ee76108"
+    },
+    {
+      "file": "v1/events/memory.item_created.v1.schema.json",
+      "model": "MemoryItemCreated",
+      "sha256": "ad37caf79a70997cdba92f84d43f9db57eed0c15e93665cb839331b4685596cb"
+    },
+    {
+      "file": "v1/events/memory.promoted.v1.schema.json",
+      "model": "MemoryPromoted",
+      "sha256": "99813466aa4fc1af533a4928c6e963fa02b62815b28db2001c1ce54c173d0a13"
+    },
+    {
+      "file": "v1/events/memory.retracted.v1.schema.json",
+      "model": "MemoryRetracted",
+      "sha256": "a06b27eddd4c1aedf22dd9602b94d1263d08f862512cb94da0547a2281a2ed25"
+    },
+    {
+      "file": "v1/events/memory.revision_appended.v1.schema.json",
+      "model": "MemoryRevisionAppended",
+      "sha256": "c758d5cfa8d1636c7873551428fdf97f5371ffbbe7e4a11d939ab95f1f60a445"
+    },
+    {
+      "file": "v1/events/memory.superseded.v1.schema.json",
+      "model": "MemorySuperseded",
+      "sha256": "7666a30a96719613f1d115447dae6169d870d72e36af47f09027eeb325d5c03d"
     },
     {
       "file": "v1/events/model_call.completed.v1.schema.json",
@@ -1077,6 +1172,181 @@
       "file": "v1/events/verifier.started.v1.schema.json",
       "model": "VerifierStarted",
       "sha256": "c3768ca5b235ef1fe2321c1cb21ee2a41dd3f3956c578d824a169022243e0139"
+    },
+    {
+      "file": "v1/memory/code-context-memory-content.schema.json",
+      "model": "CodeContextMemoryContent",
+      "sha256": "12d6a1bf1c1e6c3b6d2ae12b8cc52bb6d41e62ba3a7bb4afb8cd7e869eca592e"
+    },
+    {
+      "file": "v1/memory/correction-memory-content.schema.json",
+      "model": "CorrectionMemoryContent",
+      "sha256": "2b4acf4312d7b7801c12fa8ea64873341c3d5d02079ae1ac365bcdb39f3db4a5"
+    },
+    {
+      "file": "v1/memory/decision-memory-content.schema.json",
+      "model": "DecisionMemoryContent",
+      "sha256": "afe4d8f54c6527e35b8e466d154c90ef5a80c4af9e4d1f2b2bef42ec0875dffa"
+    },
+    {
+      "file": "v1/memory/episode-memory-content.schema.json",
+      "model": "EpisodeMemoryContent",
+      "sha256": "075a608e3ab13a2faf91068967b07310b45473ecb6d2352a97c82cd825a025fc"
+    },
+    {
+      "file": "v1/memory/failure-pattern-memory-content.schema.json",
+      "model": "FailurePatternMemoryContent",
+      "sha256": "7f86ed6a915819598b22aeba70c407436b8470c2f871d4704e5246492cc809a8"
+    },
+    {
+      "file": "v1/memory/memory-access-record.schema.json",
+      "model": "MemoryAccessRecord",
+      "sha256": "b6eaf4535d04fff7bbf14130950ab8e4f5237ff48d448f1c4eacfd315cf2bead"
+    },
+    {
+      "file": "v1/memory/memory-creator.schema.json",
+      "model": "MemoryCreator",
+      "sha256": "e495345873d5177ab032689f422982015e949da8d749b9e7969aa7c621cbe875"
+    },
+    {
+      "file": "v1/memory/memory-embedding-record.schema.json",
+      "model": "MemoryEmbeddingRecord",
+      "sha256": "a8a24854d44af512d3fcd6bbeda56e29bd1733f08bac2c4b81df7999f917a5f2"
+    },
+    {
+      "file": "v1/memory/memory-expiry-request.schema.json",
+      "model": "MemoryExpiryRequest",
+      "sha256": "3f2b1d26a566943afa683e90737d46bc72dbc230100dc000b1c64bf2f4a8a81f"
+    },
+    {
+      "file": "v1/memory/memory-metadata-filter.schema.json",
+      "model": "MemoryMetadataFilter",
+      "sha256": "b07a562efafeb48c72a1cd95c1dad0f43cb95ee8d7755b7401f5391967e7353d"
+    },
+    {
+      "file": "v1/memory/memory-promotion-request.schema.json",
+      "model": "MemoryPromotionRequest",
+      "sha256": "2563b053034f545d68637aadd3c237df02ab35e533ce63697148d3200e48c052"
+    },
+    {
+      "file": "v1/memory/memory-provenance-bundle.schema.json",
+      "model": "MemoryProvenanceBundle",
+      "sha256": "a028bcb23a51a90f158aa2a10fad1bc1d94166ee4de394923350b669a0b95b4a"
+    },
+    {
+      "file": "v1/memory/memory-query-budget.schema.json",
+      "model": "MemoryQueryBudget",
+      "sha256": "a71e38ab9a019e0930df96096f50caea0d35a4a3b17775e5e20e89241bb9751d"
+    },
+    {
+      "file": "v1/memory/memory-query-page.schema.json",
+      "model": "MemoryQueryPage",
+      "sha256": "018e26823dd92b2ab4fc2748e72ea9538bd91af5e2253ec8e191569a564944ce"
+    },
+    {
+      "file": "v1/memory/memory-query-result.schema.json",
+      "model": "MemoryQueryResult",
+      "sha256": "5b99f72eb6caaf5f30525e423eca944bee92a0e36580ba228b3325dfbcc44c4f"
+    },
+    {
+      "file": "v1/memory/memory-query.schema.json",
+      "model": "MemoryQuery",
+      "sha256": "7c508f0e345fc315849e43a8fbb1b7c3b6d11a6b58c8e67b812453e8cdebe1bf"
+    },
+    {
+      "file": "v1/memory/memory-record.schema.json",
+      "model": "MemoryRecord",
+      "sha256": "77a23d0475cef1e3019cf061cbba6f875cbe24775a29028b34db7be20f17b341"
+    },
+    {
+      "file": "v1/memory/memory-retraction-request.schema.json",
+      "model": "MemoryRetractionRequest",
+      "sha256": "f262d39fa23cbf4cb235d48f29ce341fd5efd3d450d7845ef06d8f3e5b5002cd"
+    },
+    {
+      "file": "v1/memory/memory-retrieval-trace.schema.json",
+      "model": "MemoryRetrievalTrace",
+      "sha256": "c9adc75fad71037b38cbecb416924f5af3b9854ffc8272f128dabe9ba470cad6"
+    },
+    {
+      "file": "v1/memory/memory-revision-request.schema.json",
+      "model": "MemoryRevisionRequest",
+      "sha256": "41dbfd37130d9d147db37c88fb74d2e0f5a6d27377c41600ed070ecfd3fde224"
+    },
+    {
+      "file": "v1/memory/memory-revision.schema.json",
+      "model": "MemoryRevision",
+      "sha256": "8ace0e7b04cc04a69f8f54fd3892af16856a76c2b277b16fb8a83a0a3a630d6a"
+    },
+    {
+      "file": "v1/memory/memory-scope.schema.json",
+      "model": "MemoryScope",
+      "sha256": "e350afe1427ac578ae89880b99a9f7b18301bf80869d8caaf6d60885fe3bdae9"
+    },
+    {
+      "file": "v1/memory/memory-source-identity.schema.json",
+      "model": "MemorySourceIdentity",
+      "sha256": "af135ff98c12f67cea4fa86f4dbe84a8ca921c3e6055adfe2d60a134b7e5f025"
+    },
+    {
+      "file": "v1/memory/memory-source-ref.schema.json",
+      "model": "MemorySourceRef",
+      "sha256": "9a7e8a252748d254ccd2826a0a3efbecbb712d405c4643548bbbbe7720564e8d"
+    },
+    {
+      "file": "v1/memory/memory-source-validation-result.schema.json",
+      "model": "MemorySourceValidationResult",
+      "sha256": "8bac5a52ed88b9bc4ca891d2229c4e8fe305b1deb7b88835e941ad857316b55f"
+    },
+    {
+      "file": "v1/memory/memory-supersession-request.schema.json",
+      "model": "MemorySupersessionRequest",
+      "sha256": "8418ace983e94de5ce2c24056d686b829e23553e0fc68f13f1631868c486bbef"
+    },
+    {
+      "file": "v1/memory/memory-text-query.schema.json",
+      "model": "MemoryTextQuery",
+      "sha256": "370640b11fc2fcd534bf551b1b48ed20713764918b470bb7ba7e7d1c0bc8b8ed"
+    },
+    {
+      "file": "v1/memory/memory-vector-query.schema.json",
+      "model": "MemoryVectorQuery",
+      "sha256": "e512ac438b9f4aec559645aad86d96d3c8ccd33885bbf861ce76b4ea999669a5"
+    },
+    {
+      "file": "v1/memory/memory-write-decision.schema.json",
+      "model": "MemoryWriteDecision",
+      "sha256": "8dc1e5d71d82eea3bafe152f42602bbae2bb98ad923d6ce2d9ff1e9607e9d8a1"
+    },
+    {
+      "file": "v1/memory/memory-write-policy.schema.json",
+      "model": "MemoryWritePolicy",
+      "sha256": "bde560569c5cf6231860144cc10fe379624528629e446ca2a691063af9a2717c"
+    },
+    {
+      "file": "v1/memory/memory-write-request.schema.json",
+      "model": "MemoryWriteRequest",
+      "sha256": "96e0890eb25becf9b428c86de6e38ebc73ee76b544131cccfee2a6cf6fca0248"
+    },
+    {
+      "file": "v1/memory/observation-memory-content.schema.json",
+      "model": "ObservationMemoryContent",
+      "sha256": "342f25384257e507940e8d374a9623bfb75886128f9a3e73b0ea0b45b09cb73c"
+    },
+    {
+      "file": "v1/memory/task-summary-memory-content.schema.json",
+      "model": "TaskSummaryMemoryContent",
+      "sha256": "181f478119b0bf75161d6818735bbbed4ec0bab39b9b065745cb89ff48eb9355"
+    },
+    {
+      "file": "v1/memory/user-instruction-memory-content.schema.json",
+      "model": "UserInstructionMemoryContent",
+      "sha256": "2ad42f4e1b775f0aa6549775daa15f5d21d65f290d94d89f2803cd7e6718d84d"
+    },
+    {
+      "file": "v1/memory/verification-summary-memory-content.schema.json",
+      "model": "VerificationSummaryMemoryContent",
+      "sha256": "0a8b3f034037a980af0f3b834d79bbe8be57f48f501c42721c0c920d03478b12"
     }
   ],
   "schema_set_version": 1

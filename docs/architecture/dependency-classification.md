@@ -24,6 +24,8 @@
 | z3-solver | domain verification | No | Typed logic adapter | `verification-logic` optional extra |
 | Pint | domain verification | No | Sealed units and dimensions adapter | `verification-physics` optional extra |
 | Inspect AI | evaluation adapter | No | Explicit benchmark-format export only | Keep `benchmark-inspect` empty until upstream accepts a security-fixed Click |
+| pgvector | memory persistence | No | PostgreSQL exact-vector type and operators | `memory-postgres`; 0.8.2 server image, Apache-2.0, no ANN indexes |
+| Sentence Transformers | local embeddings | No | Optional preconfigured local CPU model | `local-embeddings`; no download or GPU requirement in core |
 
 `inspect-ai==0.3.246` constrains Click below the security-fixed release. Cognitive OS therefore
 ships a dependency-free deterministic exporter and does not install the incompatible runtime.
@@ -39,5 +41,8 @@ The runtime dependency may be restored after Inspect AI accepts a fixed Click ve
 | `docs` | documentation | MkDocs, Material for MkDocs | Documentation build tooling |
 | `postgres` | optional runtime | SQLAlchemy, asyncpg, Alembic | Durable event and artifact metadata |
 | `observability-otel` | optional runtime | OpenTelemetry API, SDK, OTLP gRPC | Trace correlation |
+| `memory-postgres` | optional runtime | SQLAlchemy, asyncpg, Alembic, pgvector | Governed memory persistence and exact vectors |
+| `local-embeddings` | optional runtime | sentence-transformers and isolated transitive ML stack | Preconfigured local embedding models only |
+| `memory-benchmarks` | optional benchmark | none | Credential-free deterministic memory fixtures |
 
 Every prior direct dependency has a final category and decision; none remains unknown.

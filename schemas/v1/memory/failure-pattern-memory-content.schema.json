@@ -1,0 +1,34 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/memory/failure-pattern-memory-content.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "failed_evidence": {
+      "maxLength": 8192,
+      "title": "Failed Evidence",
+      "type": "string"
+    },
+    "memory_type": {
+      "const": "failure_pattern",
+      "default": "failure_pattern",
+      "title": "Memory Type",
+      "type": "string"
+    },
+    "successful_correction": {
+      "maxLength": 8192,
+      "title": "Successful Correction",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "failed_evidence",
+    "successful_correction",
+    "task_run_id"
+  ],
+  "title": "FailurePatternMemoryContent",
+  "type": "object"
+}

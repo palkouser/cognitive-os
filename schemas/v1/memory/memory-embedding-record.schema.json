@@ -1,0 +1,67 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/memory/memory-embedding-record.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "dimension": {
+      "maximum": 4096,
+      "minimum": 1,
+      "title": "Dimension",
+      "type": "integer"
+    },
+    "embedding_id": {
+      "format": "uuid",
+      "title": "Embedding Id",
+      "type": "string"
+    },
+    "memory_id": {
+      "format": "uuid",
+      "title": "Memory Id",
+      "type": "string"
+    },
+    "model_id": {
+      "minLength": 1,
+      "title": "Model Id",
+      "type": "string"
+    },
+    "provider_id": {
+      "minLength": 1,
+      "title": "Provider Id",
+      "type": "string"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "vector": {
+      "items": {
+        "type": "number"
+      },
+      "title": "Vector",
+      "type": "array"
+    }
+  },
+  "required": [
+    "embedding_id",
+    "memory_id",
+    "revision",
+    "provider_id",
+    "model_id",
+    "dimension",
+    "content_hash",
+    "vector",
+    "created_at"
+  ],
+  "title": "MemoryEmbeddingRecord",
+  "type": "object"
+}

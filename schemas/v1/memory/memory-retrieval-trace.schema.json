@@ -1,0 +1,111 @@
+{
+  "$defs": {
+    "MemoryRetrievalMode": {
+      "enum": [
+        "metadata",
+        "text",
+        "vector"
+      ],
+      "title": "MemoryRetrievalMode",
+      "type": "string"
+    },
+    "MemoryScope": {
+      "additionalProperties": false,
+      "properties": {
+        "scope_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "scope_type": {
+          "$ref": "#/$defs/MemoryScopeType"
+        }
+      },
+      "required": [
+        "scope_type",
+        "scope_id"
+      ],
+      "title": "MemoryScope",
+      "type": "object"
+    },
+    "MemoryScopeType": {
+      "enum": [
+        "global",
+        "project",
+        "repository",
+        "task",
+        "session",
+        "domain"
+      ],
+      "title": "MemoryScopeType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/memory/memory-retrieval-trace.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "access_audit_attempted": {
+      "title": "Access Audit Attempted",
+      "type": "boolean"
+    },
+    "access_audit_succeeded": {
+      "title": "Access Audit Succeeded",
+      "type": "boolean"
+    },
+    "candidate_count": {
+      "minimum": 0,
+      "title": "Candidate Count",
+      "type": "integer"
+    },
+    "elapsed_ms": {
+      "minimum": 0.0,
+      "title": "Elapsed Ms",
+      "type": "number"
+    },
+    "filter_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Filter Hash",
+      "type": "string"
+    },
+    "query_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Query Hash",
+      "type": "string"
+    },
+    "query_id": {
+      "format": "uuid",
+      "title": "Query Id",
+      "type": "string"
+    },
+    "resolved_scopes": {
+      "items": {
+        "$ref": "#/$defs/MemoryScope"
+      },
+      "title": "Resolved Scopes",
+      "type": "array"
+    },
+    "retrieval_mode": {
+      "$ref": "#/$defs/MemoryRetrievalMode"
+    },
+    "returned_count": {
+      "minimum": 0,
+      "title": "Returned Count",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "query_id",
+    "retrieval_mode",
+    "resolved_scopes",
+    "query_hash",
+    "filter_hash",
+    "candidate_count",
+    "returned_count",
+    "access_audit_attempted",
+    "access_audit_succeeded",
+    "elapsed_ms"
+  ],
+  "title": "MemoryRetrievalTrace",
+  "type": "object"
+}

@@ -1,0 +1,34 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/memory/decision-memory-content.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "decision": {
+      "maxLength": 16384,
+      "title": "Decision",
+      "type": "string"
+    },
+    "memory_type": {
+      "const": "decision",
+      "default": "decision",
+      "title": "Memory Type",
+      "type": "string"
+    },
+    "rationale": {
+      "maxLength": 16384,
+      "title": "Rationale",
+      "type": "string"
+    },
+    "selected_by": {
+      "minLength": 1,
+      "title": "Selected By",
+      "type": "string"
+    }
+  },
+  "required": [
+    "decision",
+    "rationale",
+    "selected_by"
+  ],
+  "title": "DecisionMemoryContent",
+  "type": "object"
+}

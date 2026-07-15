@@ -1,0 +1,94 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/memory/episode-memory-content.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifact_ids": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Artifact Ids",
+      "type": "array"
+    },
+    "base_commit": {
+      "pattern": "^[0-9a-f]{40}$",
+      "title": "Base Commit",
+      "type": "string"
+    },
+    "memory_type": {
+      "const": "episode",
+      "default": "episode",
+      "title": "Memory Type",
+      "type": "string"
+    },
+    "outcome": {
+      "minLength": 1,
+      "title": "Outcome",
+      "type": "string"
+    },
+    "patch_attempt_count": {
+      "minimum": 0,
+      "title": "Patch Attempt Count",
+      "type": "integer"
+    },
+    "problem_summary": {
+      "maxLength": 8192,
+      "title": "Problem Summary",
+      "type": "string"
+    },
+    "remaining_risks": {
+      "default": [],
+      "items": {
+        "maxLength": 2048,
+        "type": "string"
+      },
+      "title": "Remaining Risks",
+      "type": "array"
+    },
+    "repair_count": {
+      "minimum": 0,
+      "title": "Repair Count",
+      "type": "integer"
+    },
+    "repository_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Repository Identity",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    },
+    "title": {
+      "minLength": 1,
+      "title": "Title",
+      "type": "string"
+    },
+    "trajectory_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Trajectory Hash",
+      "type": "string"
+    },
+    "verifier_summary": {
+      "maxLength": 8192,
+      "title": "Verifier Summary",
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_run_id",
+    "title",
+    "problem_summary",
+    "repository_identity",
+    "base_commit",
+    "outcome",
+    "patch_attempt_count",
+    "repair_count",
+    "verifier_summary",
+    "trajectory_hash"
+  ],
+  "title": "EpisodeMemoryContent",
+  "type": "object"
+}
