@@ -6,6 +6,7 @@ from dataclasses import dataclass
 
 from pydantic import BaseModel
 
+from cognitive_os.config.coding_config import CodingConfiguration
 from cognitive_os.domain import (
     ApprovalDecision,
     ApprovalRequest,
@@ -55,6 +56,34 @@ from cognitive_os.domain.benchmarks import (
     BenchmarkResourceBudget,
     BenchmarkRun,
 )
+from cognitive_os.domain.coding import (
+    ChangedFileManifest,
+    CodingCommandPolicy,
+    CodingCommandReport,
+    CodingLimits,
+    CodingOutcome,
+    CodingPatchPlan,
+    CodingProblemExtension,
+    CodingTrajectoryPackage,
+    CodingVerificationSummary,
+    DependencyChangePolicy,
+    PatchApplicationResult,
+    PatchAttempt,
+    PatchProposal,
+    PathPolicy,
+    RepositoryContextBundle,
+    RepositoryFileEntry,
+    RepositoryIndex,
+    RepositoryProfile,
+    RepositoryProfileMismatch,
+    RepositorySearchRequest,
+    RepositorySearchResult,
+    UnifiedDiffArtifact,
+    WorkspaceCleanupResult,
+    WorkspaceDescriptor,
+    WorkspaceIntegritySnapshot,
+    WorkspaceRequest,
+)
 from cognitive_os.domain.verifiers import (
     VerificationBundle,
     VerificationExecution,
@@ -76,6 +105,33 @@ class SchemaEntry:
 
 
 DOMAIN_SCHEMAS: tuple[tuple[type[BaseModel], str], ...] = (
+    (CodingConfiguration, "v1/config/coding-configuration.schema.json"),
+    (CodingLimits, "v1/domain/coding-limits.schema.json"),
+    (CodingCommandPolicy, "v1/domain/coding-command-policy.schema.json"),
+    (PathPolicy, "v1/domain/path-policy.schema.json"),
+    (DependencyChangePolicy, "v1/domain/dependency-change-policy.schema.json"),
+    (CodingProblemExtension, "v1/domain/coding-problem-extension.schema.json"),
+    (RepositoryProfileMismatch, "v1/domain/repository-profile-mismatch.schema.json"),
+    (RepositoryProfile, "v1/domain/repository-profile.schema.json"),
+    (WorkspaceRequest, "v1/domain/workspace-request.schema.json"),
+    (WorkspaceDescriptor, "v1/domain/workspace-descriptor.schema.json"),
+    (WorkspaceIntegritySnapshot, "v1/domain/workspace-integrity-snapshot.schema.json"),
+    (WorkspaceCleanupResult, "v1/domain/workspace-cleanup-result.schema.json"),
+    (RepositoryFileEntry, "v1/domain/repository-file-entry.schema.json"),
+    (RepositoryIndex, "v1/domain/repository-index.schema.json"),
+    (RepositorySearchRequest, "v1/domain/repository-search-request.schema.json"),
+    (RepositorySearchResult, "v1/domain/repository-search-result.schema.json"),
+    (RepositoryContextBundle, "v1/domain/repository-context-bundle.schema.json"),
+    (CodingPatchPlan, "v1/domain/coding-patch-plan.schema.json"),
+    (PatchProposal, "v1/domain/patch-proposal.schema.json"),
+    (PatchApplicationResult, "v1/domain/patch-application-result.schema.json"),
+    (PatchAttempt, "v1/domain/patch-attempt.schema.json"),
+    (ChangedFileManifest, "v1/domain/changed-file-manifest.schema.json"),
+    (UnifiedDiffArtifact, "v1/domain/unified-diff-artifact.schema.json"),
+    (CodingCommandReport, "v1/domain/coding-command-report.schema.json"),
+    (CodingVerificationSummary, "v1/domain/coding-verification-summary.schema.json"),
+    (CodingOutcome, "v1/domain/coding-outcome.schema.json"),
+    (CodingTrajectoryPackage, "v1/domain/coding-trajectory-package.schema.json"),
     (VerifierCapability, "v1/domain/verifier-capability.schema.json"),
     (VerifierDescriptor, "v1/domain/verifier-descriptor.schema.json"),
     (VerificationSubject, "v1/domain/verification-subject.schema.json"),

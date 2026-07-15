@@ -1,0 +1,308 @@
+{
+  "$defs": {
+    "CodingArtifactPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "include_command_output": {
+          "default": true,
+          "title": "Include Command Output",
+          "type": "boolean"
+        },
+        "maximum_archive_bytes": {
+          "default": 50000000,
+          "minimum": 1,
+          "title": "Maximum Archive Bytes",
+          "type": "integer"
+        },
+        "retention_days": {
+          "default": 30,
+          "maximum": 3650,
+          "minimum": 1,
+          "title": "Retention Days",
+          "type": "integer"
+        }
+      },
+      "title": "CodingArtifactPolicy",
+      "type": "object"
+    },
+    "CodingCleanupPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "cancellation": {
+          "default": "archive",
+          "title": "Cancellation",
+          "type": "string"
+        },
+        "failure": {
+          "default": "preserve_after_failure",
+          "title": "Failure",
+          "type": "string"
+        },
+        "success": {
+          "default": "archive",
+          "title": "Success",
+          "type": "string"
+        }
+      },
+      "title": "CodingCleanupPolicy",
+      "type": "object"
+    },
+    "CodingCommandPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_executables": {
+          "default": [
+            "pytest",
+            "ruff",
+            "mypy",
+            "controlled-import"
+          ],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Allowed Executables",
+          "type": "array"
+        },
+        "project_commands": {
+          "additionalProperties": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Project Commands",
+          "type": "object"
+        }
+      },
+      "title": "CodingCommandPolicy",
+      "type": "object"
+    },
+    "CodingLimits": {
+      "additionalProperties": false,
+      "properties": {
+        "allow_commit": {
+          "default": false,
+          "title": "Allow Commit",
+          "type": "boolean"
+        },
+        "allow_dependency_changes": {
+          "default": false,
+          "title": "Allow Dependency Changes",
+          "type": "boolean"
+        },
+        "allow_merge": {
+          "default": false,
+          "title": "Allow Merge",
+          "type": "boolean"
+        },
+        "allow_network": {
+          "default": false,
+          "title": "Allow Network",
+          "type": "boolean"
+        },
+        "allow_push": {
+          "default": false,
+          "title": "Allow Push",
+          "type": "boolean"
+        },
+        "maximum_changed_files": {
+          "default": 20,
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Maximum Changed Files",
+          "type": "integer"
+        },
+        "maximum_diff_lines": {
+          "default": 1000,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Maximum Diff Lines",
+          "type": "integer"
+        },
+        "maximum_file_read_bytes": {
+          "default": 262144,
+          "maximum": 262144,
+          "minimum": 1,
+          "title": "Maximum File Read Bytes",
+          "type": "integer"
+        },
+        "maximum_indexed_file_bytes": {
+          "default": 1000000,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Maximum Indexed File Bytes",
+          "type": "integer"
+        },
+        "maximum_patch_attempts": {
+          "default": 3,
+          "maximum": 3,
+          "minimum": 1,
+          "title": "Maximum Patch Attempts",
+          "type": "integer"
+        },
+        "maximum_recent_commits": {
+          "default": 50,
+          "maximum": 50,
+          "minimum": 0,
+          "title": "Maximum Recent Commits",
+          "type": "integer"
+        },
+        "maximum_repair_cycles": {
+          "default": 3,
+          "maximum": 3,
+          "minimum": 0,
+          "title": "Maximum Repair Cycles",
+          "type": "integer"
+        },
+        "maximum_repository_files": {
+          "default": 10000,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Maximum Repository Files",
+          "type": "integer"
+        },
+        "maximum_search_results": {
+          "default": 200,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Maximum Search Results",
+          "type": "integer"
+        },
+        "maximum_total_index_bytes": {
+          "default": 50000000,
+          "maximum": 50000000,
+          "minimum": 1,
+          "title": "Maximum Total Index Bytes",
+          "type": "integer"
+        },
+        "sandbox_cpu_limit": {
+          "default": 4,
+          "maximum": 4,
+          "minimum": 1,
+          "title": "Sandbox Cpu Limit",
+          "type": "integer"
+        },
+        "sandbox_memory_mb": {
+          "default": 8192,
+          "maximum": 8192,
+          "minimum": 128,
+          "title": "Sandbox Memory Mb",
+          "type": "integer"
+        }
+      },
+      "title": "CodingLimits",
+      "type": "object"
+    },
+    "PathPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "allow_delete_baseline_files": {
+          "default": false,
+          "title": "Allow Delete Baseline Files",
+          "type": "boolean"
+        },
+        "allowed_paths": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Allowed Paths",
+          "type": "array"
+        },
+        "forbidden_paths": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Forbidden Paths",
+          "type": "array"
+        }
+      },
+      "title": "PathPolicy",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/config/coding-configuration.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "allowed_repository_roots": {
+      "items": {
+        "format": "path",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Allowed Repository Roots",
+      "type": "array"
+    },
+    "archive_root": {
+      "format": "path",
+      "title": "Archive Root",
+      "type": "string"
+    },
+    "artifacts": {
+      "$ref": "#/$defs/CodingArtifactPolicy",
+      "default": {
+        "include_command_output": true,
+        "maximum_archive_bytes": 50000000,
+        "retention_days": 30
+      }
+    },
+    "cleanup": {
+      "$ref": "#/$defs/CodingCleanupPolicy",
+      "default": {
+        "cancellation": "archive",
+        "failure": "preserve_after_failure",
+        "success": "archive"
+      }
+    },
+    "commands": {
+      "$ref": "#/$defs/CodingCommandPolicy"
+    },
+    "limits": {
+      "$ref": "#/$defs/CodingLimits",
+      "default": {
+        "allow_commit": false,
+        "allow_dependency_changes": false,
+        "allow_merge": false,
+        "allow_network": false,
+        "allow_push": false,
+        "maximum_changed_files": 20,
+        "maximum_diff_lines": 1000,
+        "maximum_file_read_bytes": 262144,
+        "maximum_indexed_file_bytes": 1000000,
+        "maximum_patch_attempts": 3,
+        "maximum_recent_commits": 50,
+        "maximum_repair_cycles": 3,
+        "maximum_repository_files": 10000,
+        "maximum_search_results": 200,
+        "maximum_total_index_bytes": 50000000,
+        "sandbox_cpu_limit": 4,
+        "sandbox_memory_mb": 8192
+      }
+    },
+    "paths": {
+      "$ref": "#/$defs/PathPolicy"
+    },
+    "supported_python_version": {
+      "default": "3.12",
+      "title": "Supported Python Version",
+      "type": "string"
+    },
+    "worktree_root": {
+      "format": "path",
+      "title": "Worktree Root",
+      "type": "string"
+    }
+  },
+  "required": [
+    "worktree_root",
+    "archive_root",
+    "allowed_repository_roots",
+    "commands",
+    "paths"
+  ],
+  "title": "CodingConfiguration",
+  "type": "object"
+}

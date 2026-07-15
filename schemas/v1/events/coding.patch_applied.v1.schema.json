@@ -1,0 +1,134 @@
+{
+  "$defs": {
+    "ChangeType": {
+      "enum": [
+        "added",
+        "modified",
+        "deleted",
+        "renamed"
+      ],
+      "title": "ChangeType",
+      "type": "string"
+    },
+    "ChangedFile": {
+      "additionalProperties": false,
+      "properties": {
+        "added_lines": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Added Lines",
+          "type": "integer"
+        },
+        "after_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After Hash"
+        },
+        "before_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before Hash"
+        },
+        "change_type": {
+          "$ref": "#/$defs/ChangeType"
+        },
+        "deleted_lines": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Deleted Lines",
+          "type": "integer"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "change_type"
+      ],
+      "title": "ChangedFile",
+      "type": "object"
+    },
+    "ChangedFileManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "base_commit": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Base Commit",
+          "type": "string"
+        },
+        "files": {
+          "items": {
+            "$ref": "#/$defs/ChangedFile"
+          },
+          "title": "Files",
+          "type": "array"
+        },
+        "total_diff_lines": {
+          "minimum": 0,
+          "title": "Total Diff Lines",
+          "type": "integer"
+        },
+        "workspace_revision": {
+          "minimum": 0,
+          "title": "Workspace Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "base_commit",
+        "workspace_revision",
+        "files",
+        "total_diff_lines"
+      ],
+      "title": "ChangedFileManifest",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/coding.patch_applied.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "manifest": {
+      "$ref": "#/$defs/ChangedFileManifest"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    },
+    "workspace_id": {
+      "format": "uuid",
+      "title": "Workspace Id",
+      "type": "string"
+    },
+    "workspace_revision": {
+      "title": "Workspace Revision",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "task_run_id",
+    "workspace_id",
+    "workspace_revision",
+    "manifest"
+  ],
+  "title": "CodingPatchApplied",
+  "type": "object"
+}

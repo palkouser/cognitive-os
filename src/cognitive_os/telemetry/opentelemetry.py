@@ -38,7 +38,7 @@ class OpenTelemetryAdapter:
             yield self.get_current_context()
 
     def get_current_context(self) -> TelemetryContext:
-        from opentelemetry import trace
+        import opentelemetry.trace as trace
 
         context = trace.get_current_span().get_span_context()
         if not context.is_valid:
@@ -49,7 +49,7 @@ class OpenTelemetryAdapter:
         )
 
     def record_exception(self, error: BaseException) -> None:
-        from opentelemetry import trace
+        import opentelemetry.trace as trace
 
         trace.get_current_span().record_exception(error)
 
@@ -57,6 +57,6 @@ class OpenTelemetryAdapter:
         if name not in ALLOWED_ATTRIBUTES:
             raise ValueError(f"telemetry attribute is not allowed: {name}")
         if value is not None:
-            from opentelemetry import trace
+            import opentelemetry.trace as trace
 
             trace.get_current_span().set_attribute(name, value)

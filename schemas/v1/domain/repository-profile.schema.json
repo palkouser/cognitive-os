@@ -1,0 +1,153 @@
+{
+  "$defs": {
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "RepositoryProfileMismatch": {
+      "additionalProperties": false,
+      "properties": {
+        "details": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Details",
+          "type": "object"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "reason_code": {
+          "minLength": 1,
+          "title": "Reason Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reason_code",
+        "message"
+      ],
+      "title": "RepositoryProfileMismatch",
+      "type": "object"
+    },
+    "RepositoryProfileStatus": {
+      "enum": [
+        "supported",
+        "profile_mismatch"
+      ],
+      "title": "RepositoryProfileStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domain/repository-profile.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "git_repository": {
+      "title": "Git Repository",
+      "type": "boolean"
+    },
+    "has_mypy": {
+      "default": false,
+      "title": "Has Mypy",
+      "type": "boolean"
+    },
+    "has_pyproject": {
+      "title": "Has Pyproject",
+      "type": "boolean"
+    },
+    "has_pytest": {
+      "default": false,
+      "title": "Has Pytest",
+      "type": "boolean"
+    },
+    "has_ruff": {
+      "default": false,
+      "title": "Has Ruff",
+      "type": "boolean"
+    },
+    "mismatches": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/RepositoryProfileMismatch"
+      },
+      "title": "Mismatches",
+      "type": "array"
+    },
+    "package_layout": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Package Layout"
+    },
+    "python_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Python Version"
+    },
+    "rootless_docker": {
+      "default": false,
+      "title": "Rootless Docker",
+      "type": "boolean"
+    },
+    "status": {
+      "$ref": "#/$defs/RepositoryProfileStatus"
+    }
+  },
+  "required": [
+    "status",
+    "git_repository",
+    "has_pyproject"
+  ],
+  "title": "RepositoryProfile",
+  "type": "object"
+}

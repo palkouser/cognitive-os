@@ -1,0 +1,46 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/domain/workspace-integrity-snapshot.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "captured_at": {
+      "format": "date-time",
+      "title": "Captured At",
+      "type": "string"
+    },
+    "file_manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "File Manifest Hash",
+      "type": "string"
+    },
+    "git_head": {
+      "pattern": "^[0-9a-f]{40}$",
+      "title": "Git Head",
+      "type": "string"
+    },
+    "status_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Status Hash",
+      "type": "string"
+    },
+    "workspace_id": {
+      "format": "uuid",
+      "title": "Workspace Id",
+      "type": "string"
+    },
+    "workspace_revision": {
+      "minimum": 0,
+      "title": "Workspace Revision",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "workspace_id",
+    "workspace_revision",
+    "git_head",
+    "status_hash",
+    "file_manifest_hash",
+    "captured_at"
+  ],
+  "title": "WorkspaceIntegritySnapshot",
+  "type": "object"
+}

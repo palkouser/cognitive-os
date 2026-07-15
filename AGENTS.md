@@ -5,37 +5,34 @@
 This repository develops Cognitive OS, a local, model-independent, self-improving
 agent harness based on LightAgent.
 
-## Sprint 7 scope
+## Sprint 8 scope
 
-The active scope is deterministic verification, acceptance policy, and reproducible
-benchmark execution.
+The active scope is the Python-first Coding Agent MVP built on the existing controller,
+Tool Plane, verifier, acceptance, event, artifact, and sandbox boundaries.
 
 Allowed work:
 
-- verifier contracts, registry, and capability matching;
-- verifier lifecycle persistence;
-- generic structural verifiers;
-- sandboxed coding verifiers;
-- safe SymPy mathematical verifiers;
-- typed Z3 logic verifiers;
-- Pint unit and dimensional verifiers;
-- acceptance-policy evaluation;
-- Cognitive Controller verification integration;
-- benchmark contracts, runners, metrics, and reports;
-- optional Inspect AI export;
-- SWE-bench manifest import.
+- Python 3.12 repository profile detection and read-only preflight;
+- trusted host Git repository and detached-worktree services;
+- bounded repository inventory, Python AST indexing, search, and context;
+- policy-controlled workspace mutation through the existing Tool Plane;
+- typed patch planning, proposals, application, rollback, and repair;
+- Coding Agent orchestration through the existing Cognitive Controller;
+- coding verifier bundles and authoritative acceptance decisions;
+- credential-free coding benchmarks, reports, replay, recovery, and operations.
 
 Out of scope:
 
-- the full Coding Agent;
-- autonomous patch generation;
-- LLM-only acceptance;
-- parallel verifier execution;
-- arbitrary symbolic evaluation;
-- raw SMT-LIB execution;
-- custom provider unit definitions;
-- automatic external benchmark downloads;
-- Memory Plane, skills, strategies, routing, and self-improvement.
+- non-Python or multi-language repository profiles;
+- parallel or multi-agent coding tasks;
+- automatic dependency installation, clone, fetch, commit, push, merge, or pull request;
+- provider-controlled permissions, budgets, Git, shell, or workspace paths;
+- Inspect AI runtime, full SWE-bench execution, Memory Plane, and self-improvement.
+
+The main working tree is immutable during Coding Agent execution. All writes occur only in
+a host-prepared detached worktree. The Patch Service is the sole coding write authority,
+and every provider-visible operation passes through the existing Tool Plane. Claude Code is
+advisory-only and never receives workspace write, execution, acceptance, or merge authority.
 
 Do not move or rewrite LightAgent runtime files unless the active issue explicitly
 authorizes it.

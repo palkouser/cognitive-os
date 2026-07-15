@@ -1,0 +1,33 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/coding.patch_rejected.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "attempt_number": {
+      "title": "Attempt Number",
+      "type": "integer"
+    },
+    "reason_code": {
+      "minLength": 1,
+      "title": "Reason Code",
+      "type": "string"
+    },
+    "rejected_at": {
+      "format": "date-time",
+      "title": "Rejected At",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_run_id",
+    "attempt_number",
+    "reason_code",
+    "rejected_at"
+  ],
+  "title": "CodingPatchRejected",
+  "type": "object"
+}

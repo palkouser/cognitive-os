@@ -1,0 +1,89 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/domain/coding-problem-extension.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "allow_dependency_changes": {
+      "default": false,
+      "title": "Allow Dependency Changes",
+      "type": "boolean"
+    },
+    "allowed_paths": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Allowed Paths",
+      "type": "array"
+    },
+    "base_commit": {
+      "pattern": "^[0-9a-f]{40}$",
+      "title": "Base Commit",
+      "type": "string"
+    },
+    "expected_behavior": {
+      "minLength": 1,
+      "title": "Expected Behavior",
+      "type": "string"
+    },
+    "forbidden_paths": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Forbidden Paths",
+      "type": "array"
+    },
+    "issue_description": {
+      "minLength": 1,
+      "title": "Issue Description",
+      "type": "string"
+    },
+    "maximum_diff_lines": {
+      "default": 1000,
+      "maximum": 1000,
+      "minimum": 1,
+      "title": "Maximum Diff Lines",
+      "type": "integer"
+    },
+    "quality_commands": {
+      "default": [],
+      "items": {
+        "items": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "title": "Quality Commands",
+      "type": "array"
+    },
+    "reproduction_steps": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Reproduction Steps",
+      "type": "array"
+    },
+    "test_commands": {
+      "default": [],
+      "items": {
+        "items": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "title": "Test Commands",
+      "type": "array"
+    }
+  },
+  "required": [
+    "base_commit",
+    "issue_description",
+    "expected_behavior"
+  ],
+  "title": "CodingProblemExtension",
+  "type": "object"
+}

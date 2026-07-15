@@ -1,0 +1,34 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/domain/dependency-change-policy.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "allow_dependency_changes": {
+      "default": false,
+      "title": "Allow Dependency Changes",
+      "type": "boolean"
+    },
+    "allow_installation": {
+      "default": false,
+      "title": "Allow Installation",
+      "type": "boolean"
+    },
+    "protected_patterns": {
+      "default": [
+        "pyproject.toml",
+        "uv.lock",
+        "requirements*.txt",
+        "poetry.lock",
+        "Pipfile*",
+        "setup.py",
+        "setup.cfg"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "title": "Protected Patterns",
+      "type": "array"
+    }
+  },
+  "title": "DependencyChangePolicy",
+  "type": "object"
+}

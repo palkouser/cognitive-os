@@ -1,0 +1,117 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/domain/coding-limits.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "allow_commit": {
+      "default": false,
+      "title": "Allow Commit",
+      "type": "boolean"
+    },
+    "allow_dependency_changes": {
+      "default": false,
+      "title": "Allow Dependency Changes",
+      "type": "boolean"
+    },
+    "allow_merge": {
+      "default": false,
+      "title": "Allow Merge",
+      "type": "boolean"
+    },
+    "allow_network": {
+      "default": false,
+      "title": "Allow Network",
+      "type": "boolean"
+    },
+    "allow_push": {
+      "default": false,
+      "title": "Allow Push",
+      "type": "boolean"
+    },
+    "maximum_changed_files": {
+      "default": 20,
+      "maximum": 20,
+      "minimum": 1,
+      "title": "Maximum Changed Files",
+      "type": "integer"
+    },
+    "maximum_diff_lines": {
+      "default": 1000,
+      "maximum": 1000,
+      "minimum": 1,
+      "title": "Maximum Diff Lines",
+      "type": "integer"
+    },
+    "maximum_file_read_bytes": {
+      "default": 262144,
+      "maximum": 262144,
+      "minimum": 1,
+      "title": "Maximum File Read Bytes",
+      "type": "integer"
+    },
+    "maximum_indexed_file_bytes": {
+      "default": 1000000,
+      "maximum": 1000000,
+      "minimum": 1,
+      "title": "Maximum Indexed File Bytes",
+      "type": "integer"
+    },
+    "maximum_patch_attempts": {
+      "default": 3,
+      "maximum": 3,
+      "minimum": 1,
+      "title": "Maximum Patch Attempts",
+      "type": "integer"
+    },
+    "maximum_recent_commits": {
+      "default": 50,
+      "maximum": 50,
+      "minimum": 0,
+      "title": "Maximum Recent Commits",
+      "type": "integer"
+    },
+    "maximum_repair_cycles": {
+      "default": 3,
+      "maximum": 3,
+      "minimum": 0,
+      "title": "Maximum Repair Cycles",
+      "type": "integer"
+    },
+    "maximum_repository_files": {
+      "default": 10000,
+      "maximum": 10000,
+      "minimum": 1,
+      "title": "Maximum Repository Files",
+      "type": "integer"
+    },
+    "maximum_search_results": {
+      "default": 200,
+      "maximum": 200,
+      "minimum": 1,
+      "title": "Maximum Search Results",
+      "type": "integer"
+    },
+    "maximum_total_index_bytes": {
+      "default": 50000000,
+      "maximum": 50000000,
+      "minimum": 1,
+      "title": "Maximum Total Index Bytes",
+      "type": "integer"
+    },
+    "sandbox_cpu_limit": {
+      "default": 4,
+      "maximum": 4,
+      "minimum": 1,
+      "title": "Sandbox Cpu Limit",
+      "type": "integer"
+    },
+    "sandbox_memory_mb": {
+      "default": 8192,
+      "maximum": 8192,
+      "minimum": 128,
+      "title": "Sandbox Memory Mb",
+      "type": "integer"
+    }
+  },
+  "title": "CodingLimits",
+  "type": "object"
+}

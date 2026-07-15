@@ -1,0 +1,32 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/coding.repository_index_created.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "file_count": {
+      "title": "File Count",
+      "type": "integer"
+    },
+    "index_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Index Hash",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    },
+    "truncated": {
+      "title": "Truncated",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "task_run_id",
+    "index_hash",
+    "file_count",
+    "truncated"
+  ],
+  "title": "CodingRepositoryIndexCreated",
+  "type": "object"
+}

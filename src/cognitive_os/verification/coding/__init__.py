@@ -4,6 +4,7 @@ from .commands import ImportVerifier, MypyVerifier, PytestVerifier, RuffVerifier
 from .dependency_policy import DependencyPolicyVerifier
 from .diff_policy import DiffPolicyVerifier
 from .file_policy import FilePolicyVerifier
+from .workspace_integrity import WorkspaceIntegrityVerifier
 
 __all__ = [
     "DependencyPolicyVerifier",
@@ -13,4 +14,5 @@ __all__ = [
     "MypyVerifier",
     "PytestVerifier",
     "RuffVerifier",
+    "WorkspaceIntegrityVerifier",
 ]

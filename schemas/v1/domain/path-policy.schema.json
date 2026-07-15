@@ -1,0 +1,29 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/domain/path-policy.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "allow_delete_baseline_files": {
+      "default": false,
+      "title": "Allow Delete Baseline Files",
+      "type": "boolean"
+    },
+    "allowed_paths": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Allowed Paths",
+      "type": "array"
+    },
+    "forbidden_paths": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Forbidden Paths",
+      "type": "array"
+    }
+  },
+  "title": "PathPolicy",
+  "type": "object"
+}

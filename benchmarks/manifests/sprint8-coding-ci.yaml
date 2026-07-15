@@ -1,0 +1,15 @@
+benchmark_id: sprint8-coding-ci
+version: "1"
+title: Sprint 8 Coding Agent CI gate
+description: Four credential-free coding trajectories for ordinary CI.
+default_configuration:
+  mode: coding-replay
+source: Cognitive OS Sprint 8 executable backlog
+license: Apache-2.0
+created_at: 2026-01-01T00:00:00Z
+case_matrix:
+  coding:
+    - {id: coding-ci.accepted, scenario: simple_bug, expected: accepted}
+    - {id: coding-ci.repair, scenario: repair, expected: accepted}
+    - {id: coding-ci.policy-rejection, scenario: forbidden_path, expected: rejected}
+    - {id: coding-ci.profile-mismatch, scenario: profile_mismatch, expected: rejected}

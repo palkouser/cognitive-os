@@ -1,0 +1,1068 @@
+{
+  "$defs": {
+    "AcceptanceDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "criterion_evaluations": {
+          "items": {
+            "$ref": "#/$defs/CriterionEvaluation"
+          },
+          "title": "Criterion Evaluations",
+          "type": "array"
+        },
+        "decision": {
+          "$ref": "#/$defs/AcceptanceDecisionType"
+        },
+        "decision_id": {
+          "format": "uuid",
+          "title": "Decision Id",
+          "type": "string"
+        },
+        "optional_score": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Optional Score",
+          "type": "number"
+        },
+        "policy_id": {
+          "format": "uuid",
+          "title": "Policy Id",
+          "type": "string"
+        },
+        "policy_version": {
+          "minLength": 1,
+          "title": "Policy Version",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "required_passed": {
+          "title": "Required Passed",
+          "type": "boolean"
+        },
+        "task_run_id": {
+          "format": "uuid",
+          "title": "Task Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "decision_id",
+        "task_run_id",
+        "policy_id",
+        "policy_version",
+        "decision",
+        "criterion_evaluations",
+        "required_passed",
+        "optional_score",
+        "reason",
+        "created_at"
+      ],
+      "title": "AcceptanceDecision",
+      "type": "object"
+    },
+    "AcceptanceDecisionType": {
+      "enum": [
+        "accepted",
+        "rejected",
+        "needs_repair",
+        "needs_clarification",
+        "unverifiable",
+        "verification_error"
+      ],
+      "title": "AcceptanceDecisionType",
+      "type": "string"
+    },
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "format": "uuid",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "media_type": {
+          "minLength": 1,
+          "title": "Media Type",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "storage_key": {
+          "minLength": 1,
+          "title": "Storage Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "media_type",
+        "content_hash",
+        "size_bytes",
+        "storage_key",
+        "created_at"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "ChangeType": {
+      "enum": [
+        "added",
+        "modified",
+        "deleted",
+        "renamed"
+      ],
+      "title": "ChangeType",
+      "type": "string"
+    },
+    "ChangedFile": {
+      "additionalProperties": false,
+      "properties": {
+        "added_lines": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Added Lines",
+          "type": "integer"
+        },
+        "after_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After Hash"
+        },
+        "before_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before Hash"
+        },
+        "change_type": {
+          "$ref": "#/$defs/ChangeType"
+        },
+        "deleted_lines": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Deleted Lines",
+          "type": "integer"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "change_type"
+      ],
+      "title": "ChangedFile",
+      "type": "object"
+    },
+    "ChangedFileManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "base_commit": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Base Commit",
+          "type": "string"
+        },
+        "files": {
+          "items": {
+            "$ref": "#/$defs/ChangedFile"
+          },
+          "title": "Files",
+          "type": "array"
+        },
+        "total_diff_lines": {
+          "minimum": 0,
+          "title": "Total Diff Lines",
+          "type": "integer"
+        },
+        "workspace_revision": {
+          "minimum": 0,
+          "title": "Workspace Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "base_commit",
+        "workspace_revision",
+        "files",
+        "total_diff_lines"
+      ],
+      "title": "ChangedFileManifest",
+      "type": "object"
+    },
+    "CodingCommandReport": {
+      "additionalProperties": false,
+      "properties": {
+        "argv_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Argv Hash",
+          "type": "string"
+        },
+        "baseline_status": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CodingCommandStatus"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "command_identity": {
+          "minLength": 1,
+          "title": "Command Identity",
+          "type": "string"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ErrorInfo"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "exit_code": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exit Code"
+        },
+        "finished_at": {
+          "format": "date-time",
+          "title": "Finished At",
+          "type": "string"
+        },
+        "resource_usage": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Resource Usage",
+          "type": "object"
+        },
+        "sandbox_digest": {
+          "minLength": 1,
+          "title": "Sandbox Digest",
+          "type": "string"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/CodingCommandStatus"
+        },
+        "stderr_artifact": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ArtifactRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "stdout_artifact": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ArtifactRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "timed_out": {
+          "default": false,
+          "title": "Timed Out",
+          "type": "boolean"
+        },
+        "truncated": {
+          "default": false,
+          "title": "Truncated",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "command_identity",
+        "argv_hash",
+        "sandbox_digest",
+        "started_at",
+        "finished_at",
+        "status"
+      ],
+      "title": "CodingCommandReport",
+      "type": "object"
+    },
+    "CodingCommandStatus": {
+      "enum": [
+        "passed",
+        "subject_failed",
+        "execution_error",
+        "timed_out",
+        "unavailable"
+      ],
+      "title": "CodingCommandStatus",
+      "type": "string"
+    },
+    "CodingPatchPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "dependency_changes_requested": {
+          "default": false,
+          "title": "Dependency Changes Requested",
+          "type": "boolean"
+        },
+        "intended_changes": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Intended Changes",
+          "type": "array"
+        },
+        "risks": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Risks",
+          "type": "array"
+        },
+        "summary": {
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        },
+        "target_files": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "title": "Target Files",
+          "type": "array"
+        },
+        "tests_to_run": {
+          "default": [],
+          "items": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Tests To Run",
+          "type": "array"
+        }
+      },
+      "required": [
+        "summary",
+        "target_files",
+        "intended_changes"
+      ],
+      "title": "CodingPatchPlan",
+      "type": "object"
+    },
+    "CodingProblemExtension": {
+      "additionalProperties": false,
+      "properties": {
+        "allow_dependency_changes": {
+          "default": false,
+          "title": "Allow Dependency Changes",
+          "type": "boolean"
+        },
+        "allowed_paths": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Allowed Paths",
+          "type": "array"
+        },
+        "base_commit": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Base Commit",
+          "type": "string"
+        },
+        "expected_behavior": {
+          "minLength": 1,
+          "title": "Expected Behavior",
+          "type": "string"
+        },
+        "forbidden_paths": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Forbidden Paths",
+          "type": "array"
+        },
+        "issue_description": {
+          "minLength": 1,
+          "title": "Issue Description",
+          "type": "string"
+        },
+        "maximum_diff_lines": {
+          "default": 1000,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Maximum Diff Lines",
+          "type": "integer"
+        },
+        "quality_commands": {
+          "default": [],
+          "items": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Quality Commands",
+          "type": "array"
+        },
+        "reproduction_steps": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Reproduction Steps",
+          "type": "array"
+        },
+        "test_commands": {
+          "default": [],
+          "items": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Test Commands",
+          "type": "array"
+        }
+      },
+      "required": [
+        "base_commit",
+        "issue_description",
+        "expected_behavior"
+      ],
+      "title": "CodingProblemExtension",
+      "type": "object"
+    },
+    "CriterionEvaluation": {
+      "additionalProperties": false,
+      "properties": {
+        "criterion_id": {
+          "format": "uuid",
+          "title": "Criterion Id",
+          "type": "string"
+        },
+        "outcome": {
+          "$ref": "#/$defs/VerifierStatus"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        },
+        "result_ids": {
+          "default": [],
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Result Ids",
+          "type": "array"
+        },
+        "score": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Score"
+        },
+        "verifier_requirement_id": {
+          "format": "uuid",
+          "title": "Verifier Requirement Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "criterion_id",
+        "verifier_requirement_id",
+        "outcome",
+        "required",
+        "reason"
+      ],
+      "title": "CriterionEvaluation",
+      "type": "object"
+    },
+    "ErrorInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "details": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Details",
+          "type": "object"
+        },
+        "error_type": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error Type"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "retryable": {
+          "default": false,
+          "title": "Retryable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "ErrorInfo",
+      "type": "object"
+    },
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "PatchApplicationResult": {
+      "additionalProperties": false,
+      "properties": {
+        "applied": {
+          "title": "Applied",
+          "type": "boolean"
+        },
+        "diff_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Diff Hash"
+        },
+        "manifest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ChangedFileManifest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "reason_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason Code"
+        },
+        "workspace_revision": {
+          "minimum": 0,
+          "title": "Workspace Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "applied",
+        "workspace_revision"
+      ],
+      "title": "PatchApplicationResult",
+      "type": "object"
+    },
+    "PatchAttempt": {
+      "additionalProperties": false,
+      "properties": {
+        "application_result": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PatchApplicationResult"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "attempt_number": {
+          "maximum": 3,
+          "minimum": 1,
+          "title": "Attempt Number",
+          "type": "integer"
+        },
+        "proposal_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Proposal Hash",
+          "type": "string"
+        },
+        "recorded_at": {
+          "format": "date-time",
+          "title": "Recorded At",
+          "type": "string"
+        },
+        "repair_cycle": {
+          "maximum": 3,
+          "minimum": 0,
+          "title": "Repair Cycle",
+          "type": "integer"
+        },
+        "status": {
+          "$ref": "#/$defs/PatchAttemptStatus"
+        }
+      },
+      "required": [
+        "attempt_number",
+        "repair_cycle",
+        "proposal_hash",
+        "status",
+        "recorded_at"
+      ],
+      "title": "PatchAttempt",
+      "type": "object"
+    },
+    "PatchAttemptStatus": {
+      "enum": [
+        "proposed",
+        "applied",
+        "rejected",
+        "rolled_back",
+        "failed"
+      ],
+      "title": "PatchAttemptStatus",
+      "type": "string"
+    },
+    "RepositoryProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "git_repository": {
+          "title": "Git Repository",
+          "type": "boolean"
+        },
+        "has_mypy": {
+          "default": false,
+          "title": "Has Mypy",
+          "type": "boolean"
+        },
+        "has_pyproject": {
+          "title": "Has Pyproject",
+          "type": "boolean"
+        },
+        "has_pytest": {
+          "default": false,
+          "title": "Has Pytest",
+          "type": "boolean"
+        },
+        "has_ruff": {
+          "default": false,
+          "title": "Has Ruff",
+          "type": "boolean"
+        },
+        "mismatches": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/RepositoryProfileMismatch"
+          },
+          "title": "Mismatches",
+          "type": "array"
+        },
+        "package_layout": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Package Layout"
+        },
+        "python_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Python Version"
+        },
+        "rootless_docker": {
+          "default": false,
+          "title": "Rootless Docker",
+          "type": "boolean"
+        },
+        "status": {
+          "$ref": "#/$defs/RepositoryProfileStatus"
+        }
+      },
+      "required": [
+        "status",
+        "git_repository",
+        "has_pyproject"
+      ],
+      "title": "RepositoryProfile",
+      "type": "object"
+    },
+    "RepositoryProfileMismatch": {
+      "additionalProperties": false,
+      "properties": {
+        "details": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Details",
+          "type": "object"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "reason_code": {
+          "minLength": 1,
+          "title": "Reason Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reason_code",
+        "message"
+      ],
+      "title": "RepositoryProfileMismatch",
+      "type": "object"
+    },
+    "RepositoryProfileStatus": {
+      "enum": [
+        "supported",
+        "profile_mismatch"
+      ],
+      "title": "RepositoryProfileStatus",
+      "type": "string"
+    },
+    "RiskRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "mitigated": {
+          "default": false,
+          "title": "Mitigated",
+          "type": "boolean"
+        },
+        "severity": {
+          "minLength": 1,
+          "title": "Severity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "severity"
+      ],
+      "title": "RiskRecord",
+      "type": "object"
+    },
+    "UnifiedDiffArtifact": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact": {
+          "$ref": "#/$defs/ArtifactRef"
+        },
+        "base_commit": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Base Commit",
+          "type": "string"
+        },
+        "diff_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Diff Hash",
+          "type": "string"
+        },
+        "truncated": {
+          "default": false,
+          "title": "Truncated",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "base_commit",
+        "diff_hash",
+        "artifact"
+      ],
+      "title": "UnifiedDiffArtifact",
+      "type": "object"
+    },
+    "VerifierStatus": {
+      "enum": [
+        "passed",
+        "failed",
+        "partial",
+        "unverifiable",
+        "error"
+      ],
+      "title": "VerifierStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domain/coding-trajectory-package.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "acceptance_decision": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AcceptanceDecision"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "command_reports": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/CodingCommandReport"
+      },
+      "title": "Command Reports",
+      "type": "array"
+    },
+    "context_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Context Hash",
+      "type": "string"
+    },
+    "final_diff": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/UnifiedDiffArtifact"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "patch_attempts": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/PatchAttempt"
+      },
+      "title": "Patch Attempts",
+      "type": "array"
+    },
+    "patch_plan": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CodingPatchPlan"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "problem": {
+      "$ref": "#/$defs/CodingProblemExtension"
+    },
+    "provenance": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Provenance",
+      "type": "object"
+    },
+    "repair_decisions": {
+      "default": [],
+      "items": {
+        "additionalProperties": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "type": "object"
+      },
+      "title": "Repair Decisions",
+      "type": "array"
+    },
+    "repository_profile": {
+      "$ref": "#/$defs/RepositoryProfile"
+    },
+    "risks": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/RiskRecord"
+      },
+      "title": "Risks",
+      "type": "array"
+    },
+    "usage_metrics": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "title": "Usage Metrics",
+      "type": "object"
+    },
+    "verifier_failures": {
+      "default": [],
+      "items": {
+        "additionalProperties": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "type": "object"
+      },
+      "title": "Verifier Failures",
+      "type": "array"
+    }
+  },
+  "required": [
+    "problem",
+    "repository_profile",
+    "context_hash",
+    "provenance"
+  ],
+  "title": "CodingTrajectoryPackage",
+  "type": "object"
+}

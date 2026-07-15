@@ -1,0 +1,37 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/domain/repository-search-request.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "maximum_results": {
+      "default": 200,
+      "maximum": 200,
+      "minimum": 1,
+      "title": "Maximum Results",
+      "type": "integer"
+    },
+    "path_filters": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Path Filters",
+      "type": "array"
+    },
+    "query": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Query",
+      "type": "string"
+    },
+    "regex": {
+      "default": false,
+      "title": "Regex",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "query"
+  ],
+  "title": "RepositorySearchRequest",
+  "type": "object"
+}

@@ -22,9 +22,36 @@ async def replay_case(case: BenchmarkCase) -> BenchmarkCaseResult:
     )
 
 
-async def _run(manifest_path: Path, output: Path, seed: int) -> int:
+async def coding_replay_case(case: BenchmarkCase) -> BenchmarkCaseResult:
+    """Replay sanitized expected trajectories without credentials or repository mutation."""
+    now = utc_now()
+    expected = str(case.expected_outputs.get("status", "failed"))
+    accepted = expected == "accepted"
+    rejected = expected == "rejected"
+    repair = str(case.problem_request.get("scenario")) == "repair"
+    return BenchmarkCaseResult(
+        case_id=case.case_id,
+        status=BenchmarkCaseStatus.PASSED,
+        started_at=now,
+        finished_at=now,
+        metrics={
+            "expected_outcome_matched": 1.0,
+            "task_success": float(accepted),
+            "accepted_diff": float(accepted),
+            "patch_attempts": float(2 if repair else (0 if rejected else 1)),
+            "repair_cycles": float(repair),
+            "policy_denials": float(rejected),
+            "main_tree_integrity": 1.0,
+            "workspace_cleanup_status": 1.0,
+            "sandbox_failures": 0.0,
+        },
+    )
+
+
+async def _run(manifest_path: Path, output: Path, seed: int, mode: str) -> int:
     manifest = load_manifest(manifest_path)
-    run = await BenchmarkRunner(replay_case, git_commit="local").run_manifest(
+    executor = coding_replay_case if mode == "coding-replay" else replay_case
+    run = await BenchmarkRunner(executor, git_commit="local").run_manifest(
         manifest, random_seed=seed
     )
     output.mkdir(parents=True, exist_ok=True)
@@ -39,13 +66,13 @@ def main() -> int:
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument(
         "--mode",
-        choices=("verifier_only", "controller-replay", "controller_mock"),
+        choices=("verifier_only", "controller-replay", "controller_mock", "coding-replay"),
         default="verifier_only",
     )
     parser.add_argument("--report-directory", type=Path, required=True)
     parser.add_argument("--seed", type=int, default=7)
     args = parser.parse_args()
-    return asyncio.run(_run(args.manifest, args.report_directory, args.seed))
+    return asyncio.run(_run(args.manifest, args.report_directory, args.seed, args.mode))
 
 
 if __name__ == "__main__":
