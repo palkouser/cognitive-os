@@ -40,7 +40,15 @@ revision="$(psql "$database_cli_url" -Atqc 'SELECT version_num FROM alembic_vers
 memory_count="$(psql "$database_cli_url" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.memory_items') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.memory_items) END")"
 memory_revision_count="$(psql "$database_cli_url" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.memory_revisions') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.memory_revisions) END")"
 embedding_count="$(psql "$database_cli_url" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.memory_embeddings') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.memory_embeddings) END")"
-uv run python - "$manifest" "$timestamp" "$dump" "$archive" "$event_count" "$artifact_count" "$revision" "$COGOS_POSTGRES_DATABASE" "$memory_count" "$memory_revision_count" "$embedding_count" <<'PY'
+semantic_claim_count="$(psql "$database_cli_url" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.semantic_claims') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.semantic_claims) END")"
+semantic_revision_count="$(psql "$database_cli_url" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.semantic_claim_revisions') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.semantic_claim_revisions) END")"
+semantic_observation_count="$(psql "$database_cli_url" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.semantic_observations') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.semantic_observations) END")"
+semantic_evidence_count="$(psql "$database_cli_url" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.semantic_claim_evidence') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.semantic_claim_evidence) END")"
+semantic_relation_count="$(psql "$database_cli_url" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.semantic_claim_relations') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.semantic_claim_relations) END")"
+semantic_contradiction_count="$(psql "$database_cli_url" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.semantic_contradictions') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.semantic_contradictions) END")"
+wiki_page_count="$(psql "$database_cli_url" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.wiki_pages') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.wiki_pages) END")"
+wiki_revision_count="$(psql "$database_cli_url" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.wiki_page_revisions') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.wiki_page_revisions) END")"
+uv run python - "$manifest" "$timestamp" "$dump" "$archive" "$event_count" "$artifact_count" "$revision" "$COGOS_POSTGRES_DATABASE" "$memory_count" "$memory_revision_count" "$embedding_count" "$semantic_claim_count" "$semantic_revision_count" "$semantic_observation_count" "$semantic_evidence_count" "$semantic_relation_count" "$semantic_contradiction_count" "$wiki_page_count" "$wiki_revision_count" <<'PY'
 import hashlib
 import json
 import subprocess
@@ -60,12 +68,20 @@ from pathlib import Path
     memory_count,
     memory_revision_count,
     embedding_count,
+    semantic_claim_count,
+    semantic_revision_count,
+    semantic_observation_count,
+    semantic_evidence_count,
+    semantic_relation_count,
+    semantic_contradiction_count,
+    wiki_page_count,
+    wiki_revision_count,
 ) = sys.argv[1:]
 digest = lambda path: hashlib.sha256(Path(path).read_bytes()).hexdigest()
 data = {
     "created_at": datetime.now(UTC).isoformat(),
     "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
-    "sprint_parent_baseline": "sprint-8-baseline",
+    "sprint_parent_baseline": "sprint-9-baseline",
     "database_name": database_name,
     "alembic_revision": revision,
     "database_dump": Path(dump).name,
@@ -77,6 +93,14 @@ data = {
     "memory_count": int(memory_count),
     "memory_revision_count": int(memory_revision_count),
     "embedding_count": int(embedding_count),
+    "semantic_claim_count": int(semantic_claim_count),
+    "semantic_revision_count": int(semantic_revision_count),
+    "semantic_observation_count": int(semantic_observation_count),
+    "semantic_evidence_count": int(semantic_evidence_count),
+    "semantic_relation_count": int(semantic_relation_count),
+    "semantic_contradiction_count": int(semantic_contradiction_count),
+    "wiki_page_count": int(wiki_page_count),
+    "wiki_revision_count": int(wiki_revision_count),
 }
 Path(manifest).write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
 PY

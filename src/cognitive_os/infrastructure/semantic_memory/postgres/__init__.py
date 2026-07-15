@@ -1,0 +1,1 @@
+"""PostgreSQL semantic-memory adapter."""
