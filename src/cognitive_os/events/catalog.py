@@ -52,6 +52,7 @@ from .model_events import (
     ModelCallStarted,
     ModelCallTimedOut,
 )
+from .semantic_memory_events import SEMANTIC_EVENT_MODELS
 from .task_events import (
     TaskCancelled,
     TaskCreated,
@@ -128,6 +129,7 @@ class EventCatalog:
 DEFAULT_EVENT_MODELS: tuple[type[EventPayload], ...] = (
     *CODING_EVENT_MODELS,
     *MEMORY_EVENT_MODELS,
+    *SEMANTIC_EVENT_MODELS,
     BenchmarkRunStarted,
     BenchmarkCaseStarted,
     BenchmarkCaseCompleted,
