@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from datetime import datetime
-from hashlib import sha256
 from uuid import UUID, uuid4
 
 from cognitive_os.application.ports.semantic_memory_repository import SemanticMemoryRepositoryPort
@@ -20,6 +19,7 @@ from cognitive_os.domain.semantic_memory import (
     ClaimRevision,
     ContradictionCandidate,
     ContradictionRecord,
+    ContradictionResolution,
     ContradictionRevision,
     ContradictionSeverity,
     ContradictionStatus,
@@ -39,6 +39,7 @@ from cognitive_os.events.semantic_memory_event_service import SemanticMemoryEven
 from cognitive_os.events.semantic_memory_events import (
     SemanticClaimBeliefChanged,
     SemanticClaimCreated,
+    SemanticContradictionCandidateRecorded,
     SemanticContradictionOpened,
     SemanticContradictionResolved,
     SemanticObservationRecorded,
@@ -203,6 +204,12 @@ class SemanticMemoryService:
         claim = await self._repository.get_claim(revision.claim_id)
         if claim is None:
             raise SemanticPolicyError("claim does not exist")
+        if claim.current_revision == revision.revision:
+            current_revision = await self._repository.get_claim_revision(
+                revision.claim_id, revision.revision
+            )
+            if current_revision == revision:
+                return current_revision
         assert_legal_transition(claim.current_belief_status, revision.belief_status)
         if (
             revision.belief_status is BeliefStatus.DISPUTED
@@ -459,12 +466,7 @@ class SemanticMemoryService:
             or revision.revision != 1
         ):
             raise SemanticPolicyError("confirmed contradiction creation must open revision one")
-        for reference in revision.claims:
-            stored = await self._repository.get_claim_revision(
-                reference.claim_id, reference.revision
-            )
-            if stored is None:
-                raise SemanticPolicyError("contradiction references a missing claim revision")
+        await self._validate_contradiction_references(revision)
         created = await self._repository.create_contradiction(contradiction, revision)
         if self._event_service is not None:
             await self._event_service.append(
@@ -480,15 +482,49 @@ class SemanticMemoryService:
             )
         return created
 
+    async def record_contradiction_candidate(
+        self,
+        contradiction: ContradictionRecord,
+        revision: ContradictionRevision,
+    ) -> tuple[ContradictionRecord, ContradictionRevision]:
+        if (
+            contradiction.current_status is not ContradictionStatus.CANDIDATE
+            or revision.status is not ContradictionStatus.CANDIDATE
+            or revision.revision != 1
+        ):
+            raise SemanticPolicyError("provider contradiction proposals must remain candidates")
+        await self._validate_contradiction_references(revision)
+        created = await self._repository.create_contradiction(contradiction, revision)
+        if self._event_service is not None:
+            await self._event_service.append(
+                aggregate_id=contradiction.contradiction_id,
+                payload=SemanticContradictionCandidateRecorded(
+                    contradiction_id=contradiction.contradiction_id,
+                    revision=1,
+                    claim_ids=tuple(item.claim_id for item in revision.claims),
+                    content_hash=revision.content_hash,
+                ),
+                expected_version=0,
+                correlation_id=contradiction.contradiction_id,
+            )
+        return created
+
     async def transition_contradiction(
         self,
         revision: ContradictionRevision,
         *,
         expected_revision: int,
+        resolution: ContradictionResolution | None = None,
     ) -> ContradictionRevision:
         current = await self._repository.get_contradiction(revision.contradiction_id)
         if current is None:
             raise SemanticPolicyError("contradiction does not exist")
+        if current.current_revision == revision.revision:
+            stored = await self._repository.get_contradiction_revision(
+                revision.contradiction_id, revision.revision
+            )
+            if stored == revision:
+                return stored
         legal = {
             ContradictionStatus.OPEN: {
                 ContradictionStatus.RESOLVED,
@@ -500,9 +536,34 @@ class SemanticMemoryService:
         }
         if revision.status not in legal[current.current_status]:
             raise SemanticPolicyError("illegal contradiction status transition")
+        await self._validate_contradiction_references(revision)
+        terminal = revision.status in {
+            ContradictionStatus.RESOLVED,
+            ContradictionStatus.DISMISSED,
+        }
+        if terminal:
+            if (
+                resolution is None
+                or resolution.contradiction_id != revision.contradiction_id
+                or resolution.expected_revision != expected_revision
+                or revision.resolver != resolution.decided_by
+                or not set(resolution.affected_claims) <= set(revision.claims)
+                or not set(resolution.evidence_ids) <= set(revision.evidence_ids)
+            ):
+                raise SemanticPolicyError("contradiction resolution decision is missing or invalid")
+            resolved = resolution
+        elif current.current_status is ContradictionStatus.CANDIDATE and (
+            revision.resolver is None
+            or revision.resolver.actor_type
+            in {SemanticActorType.PROVIDER, SemanticActorType.CONTROLLER}
+        ):
+            raise SemanticPolicyError("candidate confirmation requires a trusted decision actor")
         appended = await self._repository.append_contradiction_revision(
             revision, expected_revision=expected_revision
         )
+        if terminal:
+            for reference in revision.claims:
+                await self.reevaluate_evidence(reference.claim_id, revision=reference.revision)
         if self._event_service is not None:
             payload = (
                 SemanticContradictionOpened(
@@ -518,6 +579,7 @@ class SemanticMemoryService:
                     revision=revision.revision,
                     status=revision.status,
                     content_hash=revision.content_hash,
+                    resolution_id=resolved.resolution_id,
                 )
             )
             await self._event_service.append(
@@ -527,6 +589,23 @@ class SemanticMemoryService:
                 correlation_id=revision.contradiction_id,
             )
         return appended
+
+    async def _validate_contradiction_references(self, revision: ContradictionRevision) -> None:
+        for reference in revision.claims:
+            if (
+                await self._repository.get_claim_revision(reference.claim_id, reference.revision)
+                is None
+            ):
+                raise SemanticPolicyError("contradiction references a missing claim revision")
+        known_evidence = {
+            item.evidence_id
+            for reference in revision.claims
+            for item in await self._repository.list_evidence(
+                reference.claim_id, revision=reference.revision
+            )
+        }
+        if not set(revision.evidence_ids) <= known_evidence:
+            raise SemanticPolicyError("contradiction references missing evidence")
 
     async def render_wiki(
         self,
@@ -607,7 +686,3 @@ class SemanticMemoryService:
                 correlation_id=query.query_id,
             )
         return persisted
-
-
-def contradiction_revision_hash(payload: dict[str, object]) -> str:
-    return sha256(str(sorted(payload.items())).encode()).hexdigest()

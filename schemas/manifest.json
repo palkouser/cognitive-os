@@ -296,6 +296,11 @@
       "schema_version": 1
     },
     {
+      "event_type": "semantic.contradiction_candidate_recorded",
+      "file": "v1/events/semantic.contradiction_candidate_recorded.v1.schema.json",
+      "schema_version": 1
+    },
+    {
       "event_type": "semantic.contradiction_opened",
       "file": "v1/events/semantic.contradiction_opened.v1.schema.json",
       "schema_version": 1
@@ -1134,6 +1139,11 @@
       "sha256": "69a0c7ef5853b7323783fae2b616094beeecbbc19a0b7a405b9bf5dceb168864"
     },
     {
+      "file": "v1/events/semantic.contradiction_candidate_recorded.v1.schema.json",
+      "model": "SemanticContradictionCandidateRecorded",
+      "sha256": "7edce4ae16ea592506e57a6889ee6c9bf17625d69c8e54056f3d6e2f5aa406c5"
+    },
+    {
       "file": "v1/events/semantic.contradiction_opened.v1.schema.json",
       "model": "SemanticContradictionOpened",
       "sha256": "764d429acacae7aa5c975511fcb7857da7d303f11af7a053ca75eb0b355e65ea"
@@ -1141,7 +1151,7 @@
     {
       "file": "v1/events/semantic.contradiction_resolved.v1.schema.json",
       "model": "SemanticContradictionResolved",
-      "sha256": "850ae135f04230b826e2ccb7d92bbb6f0dc3a62ed356589f0a7a574e9f49dd02"
+      "sha256": "aaddbe717cad96830b8d2d8ea6211966734f457ea37f8271f7d4e231e24d96de"
     },
     {
       "file": "v1/events/semantic.extraction_completed.v1.schema.json",
@@ -1517,6 +1527,11 @@
       "file": "v1/semantic-memory/contradiction-record.schema.json",
       "model": "ContradictionRecord",
       "sha256": "1b6901ed00c884cfb049b42431b7b1480c35dd8af895543327e1df81e6a3cd01"
+    },
+    {
+      "file": "v1/semantic-memory/contradiction-resolution.schema.json",
+      "model": "ContradictionResolution",
+      "sha256": "2bb3f351130844209b639a40a95c10465e0d6697608517319cbd52c163510608"
     },
     {
       "file": "v1/semantic-memory/contradiction-revision.schema.json",

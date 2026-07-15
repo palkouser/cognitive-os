@@ -3,11 +3,16 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from cognitive_os.domain.semantic_memory import BeliefStatus
+from cognitive_os.domain.semantic_memory import BeliefStatus, ContradictionStatus
 from cognitive_os.events.semantic_memory_events import (
     SemanticClaimBeliefChanged,
     SemanticClaimCreated,
     SemanticClaimRevisionAppended,
+    SemanticContradictionCandidateRecorded,
+    SemanticContradictionOpened,
+    SemanticContradictionResolved,
+    SemanticWikiPageRegenerated,
+    SemanticWikiPageRendered,
 )
 
 from .beliefs import assert_legal_transition
@@ -64,4 +69,109 @@ class SemanticClaimStreamReducer:
                     state.belief_status,
                     (*state.revision_hashes, event.content_hash),
                 )
+        return state
+
+
+@dataclass(frozen=True)
+class SemanticContradictionReplayState:
+    contradiction_id: UUID
+    current_revision: int
+    status: ContradictionStatus
+    content_hash: str
+
+
+class SemanticContradictionStreamReducer:
+    def reduce(
+        self,
+        events: tuple[
+            SemanticContradictionCandidateRecorded
+            | SemanticContradictionOpened
+            | SemanticContradictionResolved,
+            ...,
+        ],
+    ) -> SemanticContradictionReplayState:
+        if not events or not isinstance(
+            events[0], (SemanticContradictionCandidateRecorded, SemanticContradictionOpened)
+        ):
+            raise ValueError("contradiction resolution requires prior creation")
+        created = events[0]
+        if created.revision != 1:
+            raise ValueError("contradiction stream creation must contain revision one")
+        state = SemanticContradictionReplayState(
+            created.contradiction_id,
+            1,
+            (
+                ContradictionStatus.CANDIDATE
+                if isinstance(created, SemanticContradictionCandidateRecorded)
+                else ContradictionStatus.OPEN
+            ),
+            created.content_hash,
+        )
+        for event in events[1:]:
+            if isinstance(event, SemanticContradictionCandidateRecorded):
+                raise ValueError("duplicate contradiction creation")
+            if event.contradiction_id != state.contradiction_id:
+                raise ValueError("contradiction stream identity changed")
+            expected_revision = getattr(event, "expected_revision", event.revision - 1)
+            if (
+                expected_revision != state.current_revision
+                or event.revision != state.current_revision + 1
+            ):
+                raise ValueError("contradiction revision gap")
+            if isinstance(event, SemanticContradictionOpened):
+                if state.status not in {
+                    ContradictionStatus.CANDIDATE,
+                    ContradictionStatus.RESOLVED,
+                    ContradictionStatus.DISMISSED,
+                }:
+                    raise ValueError("illegal contradiction open transition")
+                status = ContradictionStatus.OPEN
+            else:
+                if state.status is not ContradictionStatus.OPEN:
+                    raise ValueError("contradiction resolution requires an open contradiction")
+                status = event.status
+            state = SemanticContradictionReplayState(
+                state.contradiction_id,
+                event.revision,
+                status,
+                event.content_hash,
+            )
+        return state
+
+
+@dataclass(frozen=True)
+class SemanticWikiReplayState:
+    page_id: UUID
+    current_revision: int
+    content_hash: str
+    snapshot_hash: str
+
+
+class SemanticWikiStreamReducer:
+    def reduce(
+        self,
+        events: tuple[SemanticWikiPageRendered | SemanticWikiPageRegenerated, ...],
+    ) -> SemanticWikiReplayState:
+        if not events or not isinstance(events[0], SemanticWikiPageRendered):
+            raise ValueError("Wiki stream must begin with a rendered page")
+        first = events[0]
+        if first.revision != 1:
+            raise ValueError("Wiki stream creation must contain revision one")
+        state = SemanticWikiReplayState(
+            first.page_id, first.revision, first.content_hash, first.snapshot_hash
+        )
+        for event in events[1:]:
+            if event.page_id != state.page_id:
+                raise ValueError("Wiki stream identity changed")
+            if isinstance(event, SemanticWikiPageRendered):
+                if event.revision != state.current_revision + 1:
+                    raise ValueError("Wiki revision gap")
+                state = SemanticWikiReplayState(
+                    state.page_id,
+                    event.revision,
+                    event.content_hash,
+                    event.snapshot_hash,
+                )
+            elif event.revision != state.current_revision or not event.identical:
+                raise ValueError("Wiki regeneration does not match the current revision")
         return state

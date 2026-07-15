@@ -18,6 +18,8 @@ from cognitive_os.domain.semantic_memory import (
     ClaimTemporalInterval,
     ConfidenceDimensions,
     ContradictionRecord,
+    ContradictionResolution,
+    ContradictionResolutionOutcome,
     ContradictionRevision,
     ContradictionSeverity,
     ContradictionStatus,
@@ -352,7 +354,12 @@ def contradiction_revision(
         ),
         "evidence_ids": (),
         "reason": "deterministic overlap",
-        "resolver": ACTOR if status is ContradictionStatus.RESOLVED else None,
+        "resolver": (
+            ACTOR
+            if status is ContradictionStatus.RESOLVED
+            or (number > 1 and status is ContradictionStatus.OPEN)
+            else None
+        ),
         "recorded_at": NOW,
     }
     return ContradictionRevision.model_validate(
@@ -386,7 +393,27 @@ async def test_contradiction_resolution_is_append_only_and_reopenable() -> None:
         opened,
     )
     resolved = contradiction_revision(contradiction_id, 2, ContradictionStatus.RESOLVED, claim_ids)
-    await semantic_service.transition_contradiction(resolved, expected_revision=1)
+    resolution = ContradictionResolution(
+        resolution_id=UUID(int=73),
+        contradiction_id=contradiction_id,
+        expected_revision=1,
+        outcome=ContradictionResolutionOutcome.UNRESOLVED_PLURALITY,
+        affected_claims=tuple(
+            ClaimRevisionReference(claim_id=claim_id, revision=1) for claim_id in claim_ids
+        ),
+        reason="operator retained both grounded claims",
+        decided_at=NOW,
+        decided_by=ACTOR,
+    )
+    await semantic_service.transition_contradiction(
+        resolved, expected_revision=1, resolution=resolution
+    )
+    assert (
+        await semantic_service.transition_contradiction(
+            resolved, expected_revision=1, resolution=resolution
+        )
+        == resolved
+    )
     reopened = contradiction_revision(contradiction_id, 3, ContradictionStatus.OPEN, claim_ids)
     await semantic_service.transition_contradiction(reopened, expected_revision=2)
     assert [item.status for item in repository.contradiction_revisions[contradiction_id]] == [
@@ -394,6 +421,38 @@ async def test_contradiction_resolution_is_append_only_and_reopenable() -> None:
         ContradictionStatus.RESOLVED,
         ContradictionStatus.OPEN,
     ]
+
+
+@pytest.mark.asyncio
+async def test_provider_contradiction_candidate_requires_trusted_confirmation() -> None:
+    semantic_service, repository = service()
+    claim_ids = (UUID(int=74), UUID(int=75))
+    for claim_id, value in zip(claim_ids, ("3.12", "3.13"), strict=True):
+        await semantic_service.create_claim(
+            claim(claim_id), revision(claim_id, 1, value), (evidence(claim_id),)
+        )
+    contradiction_id = UUID(int=76)
+    candidate = contradiction_revision(
+        contradiction_id, 1, ContradictionStatus.CANDIDATE, claim_ids
+    )
+    await semantic_service.record_contradiction_candidate(
+        ContradictionRecord(
+            contradiction_id=contradiction_id,
+            current_revision=1,
+            current_status=ContradictionStatus.CANDIDATE,
+            severity=ContradictionSeverity.HIGH,
+            created_at=NOW,
+        ),
+        candidate,
+    )
+    unconfirmed = contradiction_revision(
+        contradiction_id, 2, ContradictionStatus.OPEN, claim_ids
+    ).model_copy(update={"resolver": None})
+    with pytest.raises(SemanticPolicyError, match="trusted decision actor"):
+        await semantic_service.transition_contradiction(unconfirmed, expected_revision=1)
+    confirmed = contradiction_revision(contradiction_id, 2, ContradictionStatus.OPEN, claim_ids)
+    await semantic_service.transition_contradiction(confirmed, expected_revision=1)
+    assert repository.contradictions[contradiction_id].current_status is ContradictionStatus.OPEN
 
 
 @pytest.mark.asyncio

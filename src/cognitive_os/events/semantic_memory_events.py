@@ -68,6 +68,14 @@ class SemanticContradictionOpened(EventPayload):
     content_hash: Sha256Hex
 
 
+class SemanticContradictionCandidateRecorded(EventPayload):
+    event_type = "semantic.contradiction_candidate_recorded"
+    contradiction_id: UUID
+    revision: int
+    claim_ids: tuple[UUID, ...]
+    content_hash: Sha256Hex
+
+
 class SemanticContradictionResolved(EventPayload):
     event_type = "semantic.contradiction_resolved"
     contradiction_id: UUID
@@ -75,6 +83,7 @@ class SemanticContradictionResolved(EventPayload):
     revision: int
     status: ContradictionStatus
     content_hash: Sha256Hex
+    resolution_id: UUID
 
 
 class SemanticWikiPageRendered(EventPayload):
@@ -100,6 +109,7 @@ SEMANTIC_EVENT_MODELS: tuple[type[EventPayload], ...] = (
     SemanticClaimCreated,
     SemanticClaimRevisionAppended,
     SemanticClaimBeliefChanged,
+    SemanticContradictionCandidateRecorded,
     SemanticContradictionOpened,
     SemanticContradictionResolved,
     SemanticWikiPageRendered,

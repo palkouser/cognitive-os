@@ -28,6 +28,11 @@
       "title": "Expected Revision",
       "type": "integer"
     },
+    "resolution_id": {
+      "format": "uuid",
+      "title": "Resolution Id",
+      "type": "string"
+    },
     "revision": {
       "title": "Revision",
       "type": "integer"
@@ -41,7 +46,8 @@
     "expected_revision",
     "revision",
     "status",
-    "content_hash"
+    "content_hash",
+    "resolution_id"
   ],
   "title": "SemanticContradictionResolved",
   "type": "object"

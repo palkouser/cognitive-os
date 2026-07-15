@@ -38,6 +38,15 @@ class TrustedSourceResolver:
         scope: MemoryScope | None = None,
         sensitivity: MemorySensitivity | None = None,
     ) -> None:
+        await self.resolve_span(span, scope=scope, sensitivity=sensitivity)
+
+    async def resolve_span(
+        self,
+        span: GroundedSourceSpan,
+        *,
+        scope: MemoryScope | None = None,
+        sensitivity: MemorySensitivity | None = None,
+    ) -> bytes:
         source = span.source
         if source.source_type is SemanticSourceType.MEMORY_REVISION:
             if source.revision is None:
@@ -55,27 +64,24 @@ class TrustedSourceResolver:
                 and _SENSITIVITY_ORDER[revision.sensitivity] > _SENSITIVITY_ORDER[sensitivity]
             ):
                 raise SemanticIntegrityError("semantic source sensitivity exceeds the target")
-            self._validate_field(span, revision.model_dump(mode="json"))
-            return
+            return self._resolve_field(span, revision.model_dump(mode="json"))
         if source.source_type is SemanticSourceType.ARTIFACT:
             if self._artifacts is None or not await self._artifacts.verify(source.source_id):
                 raise SemanticIntegrityError("artifact source is unavailable or corrupt")
             data = await self._artifacts.get_bytes(source.source_id)
             if sha256(data).hexdigest() != source.content_hash:
                 raise SemanticIntegrityError("artifact source hash mismatch")
-            self._validate_bytes(span, data)
-            return
+            return self._resolve_bytes(span, data)
         if source.source_type is SemanticSourceType.EVENT:
             if self._events is None:
                 raise SemanticIntegrityError("event source resolver is unavailable")
             stored = await self._events.get_event(source.source_id)
             if stored is None or stored.envelope.payload_hash != source.content_hash:
                 raise SemanticIntegrityError("event source hash mismatch")
-            self._validate_field(span, stored.envelope.payload)
-            return
+            return self._resolve_field(span, stored.envelope.payload)
         raise SemanticIntegrityError("source type has no authoritative resolver")
 
-    def _validate_field(self, span: GroundedSourceSpan, value: Any) -> None:
+    def _resolve_field(self, span: GroundedSourceSpan, value: Any) -> bytes:
         if (
             span.mode
             not in {
@@ -97,8 +103,9 @@ class TrustedSourceResolver:
             else json.dumps(current, sort_keys=True, separators=(",", ":")).encode()
         )
         self._check_excerpt(span, encoded)
+        return encoded
 
-    def _validate_bytes(self, span: GroundedSourceSpan, data: bytes) -> None:
+    def _resolve_bytes(self, span: GroundedSourceSpan, data: bytes) -> bytes:
         if span.start is None or span.end is None:
             raise SemanticIntegrityError("artifact grounding requires an exact range")
         if span.mode is GroundingMode.ARTIFACT_BYTES:
@@ -113,6 +120,7 @@ class TrustedSourceResolver:
         else:
             raise SemanticIntegrityError("artifact source requires byte or line grounding")
         self._check_excerpt(span, excerpt)
+        return excerpt
 
     def _check_excerpt(self, span: GroundedSourceSpan, excerpt: bytes) -> None:
         if len(excerpt) > self._maximum_excerpt_bytes:

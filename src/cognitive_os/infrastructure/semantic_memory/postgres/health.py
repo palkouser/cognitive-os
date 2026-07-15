@@ -164,7 +164,8 @@ class PostgresSemanticHealthService:
                     text(
                         "SELECT count(*) FROM cognitive_os.semantic_contradictions c WHERE "
                         "NOT EXISTS (SELECT 1 FROM cognitive_os.events e WHERE "
-                        "e.event_type='semantic.contradiction_opened' "
+                        "e.event_type IN ('semantic.contradiction_opened', "
+                        "'semantic.contradiction_candidate_recorded') "
                         "AND e.stream_id=c.contradiction_id)"
                     )
                 ),

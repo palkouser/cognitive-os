@@ -70,6 +70,15 @@ class ContradictionSeverity(StrEnum):
     CRITICAL = "critical"
 
 
+class ContradictionResolutionOutcome(StrEnum):
+    CLAIM_SUPERSEDED = "claim_superseded"
+    CLAIM_RETRACTED = "claim_retracted"
+    NON_OVERLAPPING_INTERVALS = "non_overlapping_intervals"
+    DISTINCT_SCOPES = "distinct_scopes"
+    EVIDENCE_INVALIDATED = "evidence_invalidated"
+    UNRESOLVED_PLURALITY = "unresolved_plurality"
+
+
 class SemanticValueType(StrEnum):
     ENTITY = "entity"
     LITERAL = "literal"
@@ -534,6 +543,29 @@ class ContradictionRevision(SemanticContract):
         return self
 
 
+class ContradictionResolution(SemanticContract):
+    resolution_id: UUID
+    contradiction_id: UUID
+    expected_revision: int = Field(ge=1)
+    outcome: ContradictionResolutionOutcome
+    affected_claims: Annotated[
+        tuple[ClaimRevisionReference, ...], Field(min_length=1, max_length=32)
+    ]
+    evidence_ids: tuple[UUID, ...] = ()
+    reason: NonEmptyStr
+    decided_at: UtcDatetime
+    decided_by: SemanticActor
+
+    @model_validator(mode="after")
+    def trusted_decision(self) -> ContradictionResolution:
+        if self.decided_by.actor_type in {
+            SemanticActorType.PROVIDER,
+            SemanticActorType.CONTROLLER,
+        }:
+            raise ValueError("provider and controller actors cannot resolve contradictions")
+        return self
+
+
 class ClaimPromotionOutcome(StrEnum):
     SUPPORTED = "supported"
     DISPUTED = "disputed"
@@ -837,6 +869,7 @@ PUBLIC_SEMANTIC_CONTRACTS: tuple[type[ImmutableContractModel], ...] = (
     ContradictionCandidate,
     ContradictionRecord,
     ContradictionRevision,
+    ContradictionResolution,
     ClaimPromotionDecision,
     PredicateDescriptor,
     ExtractionBudget,
