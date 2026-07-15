@@ -1,0 +1,61 @@
+{
+  "extraction_id": "00000000-0000-0000-0000-000000000004",
+  "registry_snapshot_hash": "a4733e851552544aa3f5b229449ce8ea38f530c52d974e118a1232359ee84ea0",
+  "observations": [
+    {
+      "proposal_id": "00000000-0000-0000-0000-000000000001",
+      "content": "Python 3.12; pytest=True",
+      "source_spans": [
+        {
+          "source": {
+            "source_type": "memory_revision",
+            "source_id": "00000000-0000-0000-0000-000000000003",
+            "revision": 1,
+            "content_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "mode": "memory_field",
+          "path": "content.repository_profile",
+          "start": null,
+          "end": null,
+          "excerpt_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "proposal_id": "00000000-0000-0000-0000-000000000002",
+      "subject": {
+        "value_type": "entity",
+        "entity_id": "project:cognitive-os",
+        "entity_type": "project",
+        "display_label": "Cognitive OS"
+      },
+      "predicate_id": "project.python_version",
+      "object": {
+        "value_type": "literal",
+        "literal_kind": "version",
+        "value": "3.12",
+        "unit": null
+      },
+      "valid_interval": {
+        "valid_from": "2026-07-15T00:00:00Z",
+        "valid_to": null
+      },
+      "observation_proposal_ids": [
+        "00000000-0000-0000-0000-000000000001"
+      ],
+      "existing_observation_ids": [],
+      "provider_confidence": null
+    }
+  ],
+  "evidence": [],
+  "relations": [],
+  "contradictions": [],
+  "budget": {
+    "maximum_observations": 1,
+    "maximum_claims": 1,
+    "maximum_evidence_links": 1,
+    "maximum_relations": 0
+  }
+}

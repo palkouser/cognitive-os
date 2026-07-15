@@ -24,7 +24,8 @@ Back up with `scripts/backup_event_store.sh`. The manifest records semantic obse
 revisions, evidence, relations, contradictions, Wiki pages, and Wiki revisions. Restore only with
 `scripts/restore_event_store.sh --test-restore`; it verifies checksums, counts, current projections,
 temporal intervals, the canonical historical semantic digest, contradiction history, every
-metadata-referenced artifact file, and Wiki content and lineage hashes in an isolated test
+as-of query's selected revisions, every metadata-referenced artifact file, and Wiki content and
+lineage hashes in an isolated test
 database. Backup also fails before publishing its manifest if artifact metadata references a
 missing, size-mismatched, or hash-mismatched file. Preserve the source database and investigate any
 health warning rather than repairing history destructively.

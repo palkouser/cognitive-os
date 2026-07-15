@@ -69,9 +69,9 @@ Sprint 10 branches from the validated `sprint-9-baseline` commit
 ## Local validation
 
 - Required Cognitive OS checks: Ruff passed; Ruff format passed for **443 files**; Cognitive OS
-  tests: **551 passed, 5 opt-in tests skipped**.
-- Full repository credential-free regression: **692 passed, 28 opt-in tests skipped**.
-- Focused temporal semantic-memory and benchmark-adapter suite: **40 passed**.
+  tests: **552 passed, 5 opt-in tests skipped**.
+- Full repository credential-free regression: **693 passed, 28 opt-in tests skipped**.
+- Focused temporal semantic-memory and benchmark-adapter suite: **41 passed**.
 - Strict MyPy: **290 source files**, no issues. Bandit, schema drift, repository-language policy,
   and `git diff --check` passed.
 - Dependency audit reported **no known vulnerabilities**; the local development package is the
@@ -103,8 +103,8 @@ Sprint 10 branches from the validated `sprint-9-baseline` commit
 - Checksummed isolated restore retained **4 memory items, 6 memory revisions, 1 embedding,
   5 observations, 7 claims, 8 claim revisions, 4 evidence links, 1 relation, 2 contradictions,
   3 Wiki pages, and 3 Wiki revisions** after smoke and the PostgreSQL benchmark. The canonical
-  historical semantic digest matched before and after restore; the report artifact file matched
-  its metadata size and hash; restored Wiki content and lineage hashes regenerated exactly.
+  history and as-of query result digests matched before and after restore; the report artifact file
+  matched its metadata size and hash; restored Wiki content and lineage hashes regenerated exactly.
 - Core wheel, semantic-extra wheel, source distribution, and editable installation passed in
   isolated Python 3.12 environments. The core wheel excluded optional dependencies; the semantic
   extra installed NetworkX 3.6.1.
