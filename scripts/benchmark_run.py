@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 
 from cognitive_os.benchmarks.cases import load_manifest
+from cognitive_os.benchmarks.context_adapter import context_benchmark_case
 from cognitive_os.benchmarks.reporting import render_json, render_markdown
 from cognitive_os.benchmarks.runner import BenchmarkRunner, CaseExecutor
 from cognitive_os.benchmarks.semantic_adapter import (
@@ -87,6 +88,8 @@ async def _run(manifest_path: Path, output: Path, seed: int, mode: str) -> int:
     artifacts = None
     if mode == "coding-replay":
         executor = coding_replay_case
+    elif mode == "context-replay":
+        executor = context_benchmark_case
     elif mode == "memory-replay":
         executor = memory_replay_case
     elif mode == "semantic-replay":
@@ -162,6 +165,7 @@ def main() -> int:
             "coding-replay",
             "memory-replay",
             "semantic-replay",
+            "context-replay",
         ),
         default="verifier_only",
     )

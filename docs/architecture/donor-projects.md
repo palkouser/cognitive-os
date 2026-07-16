@@ -47,3 +47,17 @@ the registered upstream boundary.
 | Graphiti | reviewed 2026-07-15 | Apache-2.0 | Temporal graph algorithm and reference donor | No runtime dependency or store |
 | Cognee | reviewed 2026-07-15 | Apache-2.0 | Ingestion and graph architecture reference | No runtime dependency or store |
 | NetworkX | 3.6.1 | BSD-3-Clause | Optional bounded in-process graph analysis | Non-authoritative `semantic-graph` extra; removable |
+
+## Sprint 11 context-retrieval references
+
+| Project | License | Use | Security, maintenance, and removal decision |
+| --- | --- | --- | --- |
+| Haystack | Apache-2.0 | Pipeline-pattern donor only | No runtime dependency; host services replace it completely |
+| LlamaIndex | MIT | Retriever-pattern donor only | No runtime dependency; host ports replace it completely |
+| Sentence Transformers CrossEncoder | Apache-2.0 | Optional local reranker experiment | Preconfigured local model only; removable extra if promoted |
+| RAGatouille | Apache-2.0 | Rejected experimental reranker candidate | No core dependency; transitive and model risks exceed unmeasured value |
+| pgvector | PostgreSQL | Existing exact cosine retrieval | Existing `memory-postgres` extra; no ANN index by default |
+| NetworkX | BSD-3-Clause | Existing optional bounded graph projection | PostgreSQL remains authoritative; removable without core changes |
+
+No donor becomes the central Context Builder runtime. Optional rerankers require measured relevance,
+latency, provenance, scope, and sensitivity results before promotion.

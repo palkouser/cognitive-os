@@ -46,6 +46,11 @@ Wiki pages are rebuildable views with exact claim-revision lineage. See the
 [temporal semantic-memory architecture](docs/architecture/temporal-semantic-memory.md) and
 [semantic operations guide](docs/operations/semantic-memory.md).
 
+Sprint 11 adds a deterministic Context Builder that fuses exact lexical, vector, graph, recency,
+artifact, and coding retrieval into immutable, provenance-complete Context Bundles. Retrieved text
+remains data, trust classes stay separated, and a verified bundle reference gates provider calls.
+See the [Context Builder architecture](docs/architecture/context-builder.md).
+
 ![LightAgent Banner](docs/images/lightagent-banner.jpg)
 <div align="center">
   <p>

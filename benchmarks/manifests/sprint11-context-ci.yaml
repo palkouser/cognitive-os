@@ -1,0 +1,16 @@
+benchmark_id: sprint11-context-ci
+version: "1"
+title: Sprint 11 Context Builder CI gate
+description: Six credential-free deterministic ranking, safety, and attachment cases.
+default_configuration: {mode: context-replay}
+source: Cognitive OS Sprint 11 executable backlog
+license: Apache-2.0
+created_at: 2026-01-01T00:00:00Z
+case_matrix:
+  context:
+    - {id: context-ci.hybrid, scenario: hybrid_rrf, expected: passed}
+    - {id: context-ci.dedup, scenario: exact_deduplication, expected: passed}
+    - {id: context-ci.budget, scenario: token_budget_packing, expected: passed}
+    - {id: context-ci.contradiction, scenario: contradiction_visibility, expected: passed}
+    - {id: context-ci.injection, scenario: prompt_injection_rejection, expected: passed}
+    - {id: context-ci.controller, scenario: controller_attachment, expected: passed}

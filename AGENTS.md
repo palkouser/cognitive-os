@@ -5,39 +5,45 @@
 This repository develops Cognitive OS, a local, model-independent, self-improving
 agent harness based on LightAgent.
 
-## Sprint 10 scope
+## Sprint 11 scope
 
-The active scope is Temporal Semantic Memory and deterministic Wiki v3 built on the
-Sprint 9 Governed Memory Plane and the existing event, artifact, verifier, acceptance,
-and PostgreSQL boundaries.
+The active scope is deterministic Context Builder and hybrid retrieval built on the Sprint 9
+Governed Memory Plane, Sprint 10 Temporal Semantic Memory, and the existing Controller, provider,
+event, artifact, verifier, acceptance, repository-index, workspace, and PostgreSQL boundaries.
 
 Allowed work:
 
-- immutable, exactly grounded semantic observations;
-- frozen predicate registries and typed semantic values;
-- evidence-backed claims with append-only bitemporal revisions and belief transitions;
-- deterministic duplicate and bounded contradiction analysis;
-- PostgreSQL relational claim graphs and optional bounded in-process analysis;
-- deterministic, revisioned Markdown Wiki projections with exact claim lineage;
-- semantic lifecycle events, access audit, health, recovery, and credential-free benchmarks.
+- immutable Context Requests, retrieval traces, Context Bundle revisions, and rendered projections;
+- deterministic query decomposition, exact retrieval, weighted reciprocal-rank fusion, score
+  modifiers, deduplication, diversity selection, progressive hydration, and token-budget packing;
+- task, plan, event, artifact, Memory Plane, semantic, Wiki, repository-index, and active-workspace
+  retrievers with exact revision provenance and existing access audits;
+- trust-separated rendering, prompt-injection signals, sensitivity enforcement, secret rejection,
+  source-snapshot revalidation, Context verification, replay, health, and credential-free benchmarks;
+- optional local reranker experiments and retrieval-index measurements that preserve the exact,
+  dependency-light baseline.
 
 Out of scope:
 
 - automatic provider-authored long-term memory or direct provider database access;
 - provider-authored authoritative claims or autonomous extraction and promotion by default;
 - unrestricted entity resolution, ontology induction, or natural-language contradiction authority;
-- hybrid lexical/vector/graph retrieval, reranking, Context Builder, HNSW, or IVFFlat;
-- graph databases or Wiki pages used as independent evidence;
+- provider-authoritative retrieval, query expansion, ranking, permissions, or budget changes;
+- learned ranking, adaptive weights, mandatory neural reranking, HNSW, or IVFFlat by default;
+- graph databases, a Context Builder state database, or Wiki pages used as independent evidence;
 - automatic skill, strategy, experience, or conversation-summary creation;
+- Skill Engine, procedural memory, SKILL.md loading, or skill execution;
 - network model downloads or GPU requirements;
 - Cognee, Graphiti, LangMem, agentmemory, or legacy LightAgent memory as an authority;
-- unrestricted LightAgent persistence and Sprint 11--14 context or procedural features.
+- automatic context ingestion, autonomous memory or claim promotion, unrestricted external or web
+  retrieval, multi-agent context sharing, and Sprint 12--14 procedural or adaptive features.
 
 PostgreSQL is authoritative for Memory Plane and semantic projection state, the event store
 for lifecycle evidence, and the artifact store for referenced large content. Providers and
-LightAgent cannot bypass host-controlled services or policy. Memory, claim, contradiction,
-Wiki, and access history is append-only. Provider prose is proposal-only and cannot satisfy
-supported promotion.
+LightAgent cannot bypass host-controlled services or policy. Memory, claim, contradiction, Wiki,
+access, and Context lifecycle history is append-only. Context Bundles are derived,
+non-authoritative projections; provider prose is proposal-only and cannot satisfy supported
+promotion.
 
 Do not move or rewrite LightAgent runtime files unless the active issue explicitly
 authorizes it.
