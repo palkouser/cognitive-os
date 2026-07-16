@@ -1,0 +1,34 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/context/graph-query-seed.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "maximum_depth": {
+      "default": 3,
+      "maximum": 3,
+      "minimum": 1,
+      "title": "Maximum Depth",
+      "type": "integer"
+    },
+    "maximum_nodes": {
+      "default": 500,
+      "maximum": 500,
+      "minimum": 1,
+      "title": "Maximum Nodes",
+      "type": "integer"
+    },
+    "node_ids": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Node Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "node_ids"
+  ],
+  "title": "GraphQuerySeed",
+  "type": "object"
+}

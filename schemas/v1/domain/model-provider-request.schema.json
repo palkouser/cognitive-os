@@ -1,5 +1,50 @@
 {
   "$defs": {
+    "ContextBundleReference": {
+      "additionalProperties": false,
+      "properties": {
+        "bundle_artifact_id": {
+          "format": "uuid",
+          "title": "Bundle Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "context_bundle_id": {
+          "format": "uuid",
+          "title": "Context Bundle Id",
+          "type": "string"
+        },
+        "context_bundle_revision": {
+          "minimum": 1,
+          "title": "Context Bundle Revision",
+          "type": "integer"
+        },
+        "rendered_context_artifact_id": {
+          "format": "uuid",
+          "title": "Rendered Context Artifact Id",
+          "type": "string"
+        },
+        "source_snapshot_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Snapshot Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "context_bundle_id",
+        "context_bundle_revision",
+        "bundle_artifact_id",
+        "rendered_context_artifact_id",
+        "content_hash",
+        "source_snapshot_hash"
+      ],
+      "title": "ContextBundleReference",
+      "type": "object"
+    },
     "JsonPrimitive": {
       "anyOf": [
         {
@@ -150,6 +195,17 @@
       "maximum": 131072,
       "title": "Context Budget",
       "type": "integer"
+    },
+    "context_bundle_reference": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ContextBundleReference"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "correlation_id": {
       "format": "uuid",

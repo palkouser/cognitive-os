@@ -24,6 +24,18 @@ from .clarifications import (
     ContinuationTokenRecord,
 )
 from .common import ActorRef, ArtifactRef, ErrorInfo, TokenUsage, UtcDatetime, utc_now
+from .context import (
+    ContextBudget,
+    ContextBuildResult,
+    ContextBundleReference,
+    ContextBundleRevision,
+    ContextCandidate,
+    ContextPurpose,
+    ContextRequest,
+    ContextRetrievalTrace,
+    ContextSourceType,
+    ContextTrustClass,
+)
 from .controller import (
     ControllerActionType,
     ControllerBudget,
@@ -128,6 +140,16 @@ __all__ = [
     "ClarificationRequest",
     "ClarificationResponse",
     "ConstraintCategory",
+    "ContextBudget",
+    "ContextBuildResult",
+    "ContextBundleReference",
+    "ContextBundleRevision",
+    "ContextCandidate",
+    "ContextPurpose",
+    "ContextRequest",
+    "ContextRetrievalTrace",
+    "ContextSourceType",
+    "ContextTrustClass",
     "ContinuationTokenRecord",
     "ContractModel",
     "ControllerActionType",

@@ -1,0 +1,40 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/context.build_requested.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "context_request_id": {
+      "format": "uuid",
+      "title": "Context Request Id",
+      "type": "string"
+    },
+    "query_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Query Hash",
+      "type": "string"
+    },
+    "requested_at": {
+      "format": "date-time",
+      "title": "Requested At",
+      "type": "string"
+    },
+    "step_id": {
+      "format": "uuid",
+      "title": "Step Id",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "context_request_id",
+    "task_run_id",
+    "step_id",
+    "query_hash",
+    "requested_at"
+  ],
+  "title": "ContextBuildRequested",
+  "type": "object"
+}

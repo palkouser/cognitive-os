@@ -1,0 +1,90 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/context/context-budget.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "maximum_candidates": {
+      "exclusiveMinimum": 0,
+      "maximum": 1000,
+      "title": "Maximum Candidates",
+      "type": "integer"
+    },
+    "maximum_elapsed_seconds": {
+      "exclusiveMinimum": 0,
+      "maximum": 300,
+      "title": "Maximum Elapsed Seconds",
+      "type": "number"
+    },
+    "maximum_items": {
+      "exclusiveMinimum": 0,
+      "maximum": 64,
+      "title": "Maximum Items",
+      "type": "integer"
+    },
+    "maximum_items_per_source": {
+      "exclusiveMinimum": 0,
+      "maximum": 64,
+      "title": "Maximum Items Per Source",
+      "type": "integer"
+    },
+    "maximum_retriever_calls": {
+      "exclusiveMinimum": 0,
+      "maximum": 24,
+      "title": "Maximum Retriever Calls",
+      "type": "integer"
+    },
+    "minimum_evidence_items": {
+      "maximum": 64,
+      "minimum": 0,
+      "title": "Minimum Evidence Items",
+      "type": "integer"
+    },
+    "minimum_recent_items": {
+      "maximum": 64,
+      "minimum": 0,
+      "title": "Minimum Recent Items",
+      "type": "integer"
+    },
+    "provider_context_limit": {
+      "exclusiveMinimum": 0,
+      "maximum": 1000000,
+      "title": "Provider Context Limit",
+      "type": "integer"
+    },
+    "reserved_output_tokens": {
+      "minimum": 0,
+      "title": "Reserved Output Tokens",
+      "type": "integer"
+    },
+    "safety_margin_tokens": {
+      "minimum": 0,
+      "title": "Safety Margin Tokens",
+      "type": "integer"
+    },
+    "system_instruction_tokens": {
+      "minimum": 0,
+      "title": "System Instruction Tokens",
+      "type": "integer"
+    },
+    "task_and_plan_tokens": {
+      "minimum": 0,
+      "title": "Task And Plan Tokens",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "provider_context_limit",
+    "reserved_output_tokens",
+    "system_instruction_tokens",
+    "task_and_plan_tokens",
+    "safety_margin_tokens",
+    "maximum_retriever_calls",
+    "maximum_candidates",
+    "maximum_items",
+    "maximum_items_per_source",
+    "minimum_recent_items",
+    "minimum_evidence_items",
+    "maximum_elapsed_seconds"
+  ],
+  "title": "ContextBudget",
+  "type": "object"
+}

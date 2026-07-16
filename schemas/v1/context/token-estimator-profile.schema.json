@@ -1,0 +1,55 @@
+{
+  "$defs": {
+    "TokenEstimatorType": {
+      "enum": [
+        "conservative_utf8",
+        "provider"
+      ],
+      "title": "TokenEstimatorType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/context/token-estimator-profile.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "bytes_per_token": {
+      "default": 3,
+      "maximum": 16,
+      "minimum": 1,
+      "title": "Bytes Per Token",
+      "type": "integer"
+    },
+    "estimator_id": {
+      "minLength": 1,
+      "title": "Estimator Id",
+      "type": "string"
+    },
+    "estimator_type": {
+      "$ref": "#/$defs/TokenEstimatorType"
+    },
+    "per_message_overhead": {
+      "default": 4,
+      "maximum": 1000,
+      "minimum": 0,
+      "title": "Per Message Overhead",
+      "type": "integer"
+    },
+    "profile_hash": {
+      "default": "",
+      "title": "Profile Hash",
+      "type": "string"
+    },
+    "version": {
+      "minLength": 1,
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "estimator_type",
+    "estimator_id",
+    "version"
+  ],
+  "title": "TokenEstimatorProfile",
+  "type": "object"
+}

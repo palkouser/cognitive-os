@@ -1,0 +1,49 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/context/ranking-profile-reference.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "profile_hash": {
+      "default": "",
+      "title": "Profile Hash",
+      "type": "string"
+    },
+    "profile_id": {
+      "minLength": 1,
+      "title": "Profile Id",
+      "type": "string"
+    },
+    "rrf_k": {
+      "minimum": 1,
+      "title": "Rrf K",
+      "type": "integer"
+    },
+    "score_precision": {
+      "maximum": 18,
+      "minimum": 1,
+      "title": "Score Precision",
+      "type": "integer"
+    },
+    "version": {
+      "minLength": 1,
+      "title": "Version",
+      "type": "string"
+    },
+    "weights": {
+      "additionalProperties": {
+        "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+        "type": "string"
+      },
+      "title": "Weights",
+      "type": "object"
+    }
+  },
+  "required": [
+    "profile_id",
+    "version",
+    "weights",
+    "rrf_k",
+    "score_precision"
+  ],
+  "title": "RankingProfileReference",
+  "type": "object"
+}

@@ -1,0 +1,59 @@
+{
+  "$defs": {
+    "ContextExclusionReason": {
+      "enum": [
+        "scope_mismatch",
+        "sensitivity_exceeded",
+        "status_not_allowed",
+        "duplicate",
+        "lower_rank",
+        "source_limit",
+        "token_budget",
+        "secret_detected",
+        "stale_source",
+        "invalid_provenance",
+        "unavailable_retriever",
+        "unsafe_content"
+      ],
+      "title": "ContextExclusionReason",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/context/context-exclusion.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "candidate_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Candidate Id"
+    },
+    "detail_code": {
+      "minLength": 1,
+      "title": "Detail Code",
+      "type": "string"
+    },
+    "reason": {
+      "$ref": "#/$defs/ContextExclusionReason"
+    },
+    "source_identity_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Identity Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "source_identity_hash",
+    "reason",
+    "detail_code"
+  ],
+  "title": "ContextExclusion",
+  "type": "object"
+}

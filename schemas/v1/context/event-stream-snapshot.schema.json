@@ -1,0 +1,22 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/context/event-stream-snapshot.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "stream_id": {
+      "format": "uuid",
+      "title": "Stream Id",
+      "type": "string"
+    },
+    "upper_version": {
+      "minimum": 0,
+      "title": "Upper Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "stream_id",
+    "upper_version"
+  ],
+  "title": "EventStreamSnapshot",
+  "type": "object"
+}

@@ -481,6 +481,12 @@ class SemanticMemoryService:
     async def query_claims(
         self, query: TemporalClaimQuery, *, used_in_wiki: bool = False
     ) -> SemanticQueryResult:
+        result, _ = await self.query_claims_with_access(query, used_in_wiki=used_in_wiki)
+        return result
+
+    async def query_claims_with_access(
+        self, query: TemporalClaimQuery, *, used_in_wiki: bool = False
+    ) -> tuple[SemanticQueryResult, tuple[SemanticAccessRecord, ...]]:
         if query.budget.maximum_results > self._configuration.maximum_temporal_query_results:
             raise SemanticPolicyError("semantic query result limit exceeds host policy")
         result = await self._repository.query_claims(query)
@@ -512,7 +518,7 @@ class SemanticMemoryService:
         except Exception:
             if self._configuration.fail_closed_on_access_audit_error:
                 raise
-        return result
+        return result, tuple(records)
 
     async def detect_contradictions(self, claim_id: UUID) -> tuple[ContradictionCandidate, ...]:
         claim = await self._repository.get_claim(claim_id)

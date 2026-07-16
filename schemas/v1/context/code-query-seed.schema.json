@@ -1,0 +1,30 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/context/code-query-seed.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "paths": {
+      "items": {
+        "maxLength": 512,
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Paths",
+      "type": "array"
+    },
+    "symbols": {
+      "items": {
+        "maxLength": 512,
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Symbols",
+      "type": "array"
+    }
+  },
+  "required": [
+    "paths",
+    "symbols"
+  ],
+  "title": "CodeQuerySeed",
+  "type": "object"
+}

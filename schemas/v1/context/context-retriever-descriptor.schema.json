@@ -1,0 +1,122 @@
+{
+  "$defs": {
+    "ContextSourceType": {
+      "enum": [
+        "task_state",
+        "execution_plan",
+        "event",
+        "provider_result",
+        "tool_result",
+        "artifact",
+        "memory",
+        "semantic_claim",
+        "semantic_graph",
+        "wiki",
+        "repository_index",
+        "workspace",
+        "user_correction"
+      ],
+      "title": "ContextSourceType",
+      "type": "string"
+    },
+    "ContextTrustClass": {
+      "enum": [
+        "system",
+        "verified",
+        "user_provided",
+        "unverified",
+        "external",
+        "disputed"
+      ],
+      "title": "ContextTrustClass",
+      "type": "string"
+    },
+    "RetrievalMode": {
+      "enum": [
+        "metadata",
+        "lexical",
+        "exact_vector",
+        "graph",
+        "recent",
+        "source_lookup",
+        "code"
+      ],
+      "title": "RetrievalMode",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/context/context-retriever-descriptor.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "default_trust_class": {
+      "$ref": "#/$defs/ContextTrustClass"
+    },
+    "deterministic": {
+      "default": true,
+      "title": "Deterministic",
+      "type": "boolean"
+    },
+    "maximum_candidates": {
+      "maximum": 200,
+      "minimum": 1,
+      "title": "Maximum Candidates",
+      "type": "integer"
+    },
+    "requires_artifact_store": {
+      "default": false,
+      "title": "Requires Artifact Store",
+      "type": "boolean"
+    },
+    "requires_network": {
+      "default": false,
+      "title": "Requires Network",
+      "type": "boolean"
+    },
+    "requires_postgres": {
+      "default": false,
+      "title": "Requires Postgres",
+      "type": "boolean"
+    },
+    "requires_workspace": {
+      "default": false,
+      "title": "Requires Workspace",
+      "type": "boolean"
+    },
+    "retriever_id": {
+      "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)+$",
+      "title": "Retriever Id",
+      "type": "string"
+    },
+    "source_types": {
+      "items": {
+        "$ref": "#/$defs/ContextSourceType"
+      },
+      "minItems": 1,
+      "title": "Source Types",
+      "type": "array"
+    },
+    "supported_modes": {
+      "items": {
+        "$ref": "#/$defs/RetrievalMode"
+      },
+      "minItems": 1,
+      "title": "Supported Modes",
+      "type": "array"
+    },
+    "version": {
+      "minLength": 1,
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "retriever_id",
+    "version",
+    "source_types",
+    "supported_modes",
+    "default_trust_class",
+    "maximum_candidates"
+  ],
+  "title": "ContextRetrieverDescriptor",
+  "type": "object"
+}

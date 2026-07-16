@@ -1,0 +1,59 @@
+{
+  "$defs": {
+    "RerankerType": {
+      "enum": [
+        "none",
+        "local_cross_encoder"
+      ],
+      "title": "RerankerType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/context/context-reranker-descriptor.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "deterministic": {
+      "title": "Deterministic",
+      "type": "boolean"
+    },
+    "model_digest": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Model Digest"
+    },
+    "requires_network": {
+      "default": false,
+      "title": "Requires Network",
+      "type": "boolean"
+    },
+    "reranker_id": {
+      "minLength": 1,
+      "title": "Reranker Id",
+      "type": "string"
+    },
+    "reranker_type": {
+      "$ref": "#/$defs/RerankerType"
+    },
+    "version": {
+      "minLength": 1,
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "reranker_id",
+    "version",
+    "reranker_type",
+    "deterministic"
+  ],
+  "title": "ContextRerankerDescriptor",
+  "type": "object"
+}

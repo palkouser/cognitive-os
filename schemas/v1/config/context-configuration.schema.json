@@ -1,0 +1,279 @@
+{
+  "$defs": {
+    "ContextRankingConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "contradiction_weight": {
+          "default": 0.2,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Contradiction Weight",
+          "type": "number"
+        },
+        "graph_weight": {
+          "default": 0.05,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Graph Weight",
+          "type": "number"
+        },
+        "recency_weight": {
+          "default": 0.1,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Recency Weight",
+          "type": "number"
+        },
+        "rrf_k": {
+          "default": 60,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Rrf K",
+          "type": "integer"
+        },
+        "salience_weight": {
+          "default": 0.1,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Salience Weight",
+          "type": "number"
+        },
+        "scope_weight": {
+          "default": 0.1,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Scope Weight",
+          "type": "number"
+        },
+        "score_precision": {
+          "default": 9,
+          "maximum": 18,
+          "minimum": 1,
+          "title": "Score Precision",
+          "type": "integer"
+        },
+        "trust_weight": {
+          "default": 0.2,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Trust Weight",
+          "type": "number"
+        },
+        "verification_weight": {
+          "default": 0.15,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Verification Weight",
+          "type": "number"
+        }
+      },
+      "title": "ContextRankingConfiguration",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/config/context-configuration.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "allow_approximate_vector_search": {
+      "default": false,
+      "title": "Allow Approximate Vector Search",
+      "type": "boolean"
+    },
+    "allow_automatic_memory_write": {
+      "default": false,
+      "title": "Allow Automatic Memory Write",
+      "type": "boolean"
+    },
+    "allow_disputed_sources": {
+      "default": true,
+      "title": "Allow Disputed Sources",
+      "type": "boolean"
+    },
+    "allow_external_sources": {
+      "default": false,
+      "title": "Allow External Sources",
+      "type": "boolean"
+    },
+    "allow_learned_ranking": {
+      "default": false,
+      "title": "Allow Learned Ranking",
+      "type": "boolean"
+    },
+    "allow_network_retrieval": {
+      "default": false,
+      "title": "Allow Network Retrieval",
+      "type": "boolean"
+    },
+    "allow_provider_query_expansion": {
+      "default": false,
+      "title": "Allow Provider Query Expansion",
+      "type": "boolean"
+    },
+    "allow_provider_retriever_selection": {
+      "default": false,
+      "title": "Allow Provider Retriever Selection",
+      "type": "boolean"
+    },
+    "allow_unverified_sources": {
+      "default": true,
+      "title": "Allow Unverified Sources",
+      "type": "boolean"
+    },
+    "default_context_limit": {
+      "default": 32768,
+      "maximum": 131072,
+      "minimum": 1,
+      "title": "Default Context Limit",
+      "type": "integer"
+    },
+    "default_reserved_output_tokens": {
+      "default": 4096,
+      "maximum": 131072,
+      "minimum": 1,
+      "title": "Default Reserved Output Tokens",
+      "type": "integer"
+    },
+    "maximum_build_seconds": {
+      "default": 30,
+      "maximum": 30,
+      "minimum": 1,
+      "title": "Maximum Build Seconds",
+      "type": "integer"
+    },
+    "maximum_candidates": {
+      "default": 1000,
+      "maximum": 1000,
+      "minimum": 1,
+      "title": "Maximum Candidates",
+      "type": "integer"
+    },
+    "maximum_candidates_per_retriever": {
+      "default": 200,
+      "maximum": 200,
+      "minimum": 1,
+      "title": "Maximum Candidates Per Retriever",
+      "type": "integer"
+    },
+    "maximum_context_builds_per_task": {
+      "default": 16,
+      "maximum": 16,
+      "minimum": 1,
+      "title": "Maximum Context Builds Per Task",
+      "type": "integer"
+    },
+    "maximum_graph_depth": {
+      "default": 3,
+      "maximum": 3,
+      "minimum": 1,
+      "title": "Maximum Graph Depth",
+      "type": "integer"
+    },
+    "maximum_graph_nodes": {
+      "default": 500,
+      "maximum": 500,
+      "minimum": 1,
+      "title": "Maximum Graph Nodes",
+      "type": "integer"
+    },
+    "maximum_hydrated_candidates": {
+      "default": 128,
+      "maximum": 128,
+      "minimum": 1,
+      "title": "Maximum Hydrated Candidates",
+      "type": "integer"
+    },
+    "maximum_items_per_source_type": {
+      "default": 12,
+      "maximum": 12,
+      "minimum": 1,
+      "title": "Maximum Items Per Source Type",
+      "type": "integer"
+    },
+    "maximum_parallel_retrievers": {
+      "default": 4,
+      "maximum": 4,
+      "minimum": 1,
+      "title": "Maximum Parallel Retrievers",
+      "type": "integer"
+    },
+    "maximum_retriever_calls_per_build": {
+      "default": 24,
+      "maximum": 24,
+      "minimum": 1,
+      "title": "Maximum Retriever Calls Per Build",
+      "type": "integer"
+    },
+    "maximum_selected_items": {
+      "default": 64,
+      "maximum": 64,
+      "minimum": 1,
+      "title": "Maximum Selected Items",
+      "type": "integer"
+    },
+    "maximum_source_excerpt_bytes": {
+      "default": 32768,
+      "maximum": 32768,
+      "minimum": 1,
+      "title": "Maximum Source Excerpt Bytes",
+      "type": "integer"
+    },
+    "maximum_total_hydrated_bytes": {
+      "default": 1048576,
+      "maximum": 1048576,
+      "minimum": 1,
+      "title": "Maximum Total Hydrated Bytes",
+      "type": "integer"
+    },
+    "maximum_trace_bytes": {
+      "default": 1048576,
+      "maximum": 1048576,
+      "minimum": 1,
+      "title": "Maximum Trace Bytes",
+      "type": "integer"
+    },
+    "minimum_evidence_items": {
+      "default": 2,
+      "maximum": 64,
+      "minimum": 0,
+      "title": "Minimum Evidence Items",
+      "type": "integer"
+    },
+    "minimum_recent_items": {
+      "default": 2,
+      "maximum": 64,
+      "minimum": 0,
+      "title": "Minimum Recent Items",
+      "type": "integer"
+    },
+    "minimum_safety_margin_tokens": {
+      "default": 1024,
+      "maximum": 32768,
+      "minimum": 1,
+      "title": "Minimum Safety Margin Tokens",
+      "type": "integer"
+    },
+    "minimum_source_types": {
+      "default": 2,
+      "maximum": 16,
+      "minimum": 1,
+      "title": "Minimum Source Types",
+      "type": "integer"
+    },
+    "ranking": {
+      "$ref": "#/$defs/ContextRankingConfiguration",
+      "default": {
+        "contradiction_weight": 0.2,
+        "graph_weight": 0.05,
+        "recency_weight": 0.1,
+        "rrf_k": 60,
+        "salience_weight": 0.1,
+        "scope_weight": 0.1,
+        "score_precision": 9,
+        "trust_weight": 0.2,
+        "verification_weight": 0.15
+      }
+    }
+  },
+  "title": "ContextConfiguration",
+  "type": "object"
+}

@@ -1,0 +1,45 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/context.bundle_attached.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "attached_at": {
+      "format": "date-time",
+      "title": "Attached At",
+      "type": "string"
+    },
+    "content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "context_bundle_id": {
+      "format": "uuid",
+      "title": "Context Bundle Id",
+      "type": "string"
+    },
+    "context_request_id": {
+      "format": "uuid",
+      "title": "Context Request Id",
+      "type": "string"
+    },
+    "model_call_id": {
+      "format": "uuid",
+      "title": "Model Call Id",
+      "type": "string"
+    },
+    "revision": {
+      "title": "Revision",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "context_request_id",
+    "context_bundle_id",
+    "revision",
+    "model_call_id",
+    "content_hash",
+    "attached_at"
+  ],
+  "title": "ContextBundleAttached",
+  "type": "object"
+}

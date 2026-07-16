@@ -1,0 +1,114 @@
+{
+  "$defs": {
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "TokenEstimatorProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "bytes_per_token": {
+          "default": 3,
+          "maximum": 16,
+          "minimum": 1,
+          "title": "Bytes Per Token",
+          "type": "integer"
+        },
+        "estimator_id": {
+          "minLength": 1,
+          "title": "Estimator Id",
+          "type": "string"
+        },
+        "estimator_type": {
+          "$ref": "#/$defs/TokenEstimatorType"
+        },
+        "per_message_overhead": {
+          "default": 4,
+          "maximum": 1000,
+          "minimum": 0,
+          "title": "Per Message Overhead",
+          "type": "integer"
+        },
+        "profile_hash": {
+          "default": "",
+          "title": "Profile Hash",
+          "type": "string"
+        },
+        "version": {
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "estimator_type",
+        "estimator_id",
+        "version"
+      ],
+      "title": "TokenEstimatorProfile",
+      "type": "object"
+    },
+    "TokenEstimatorType": {
+      "enum": [
+        "conservative_utf8",
+        "provider"
+      ],
+      "title": "TokenEstimatorType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/context/provider-context-profile.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "estimator": {
+      "$ref": "#/$defs/TokenEstimatorProfile"
+    },
+    "maximum_context_tokens": {
+      "exclusiveMinimum": 0,
+      "maximum": 1000000,
+      "title": "Maximum Context Tokens",
+      "type": "integer"
+    },
+    "maximum_output_tokens": {
+      "exclusiveMinimum": 0,
+      "maximum": 1000000,
+      "title": "Maximum Output Tokens",
+      "type": "integer"
+    },
+    "profile_id": {
+      "minLength": 1,
+      "title": "Profile Id",
+      "type": "string"
+    },
+    "safety_margin_tokens": {
+      "minimum": 0,
+      "title": "Safety Margin Tokens",
+      "type": "integer"
+    },
+    "section_policy_version": {
+      "default": "1",
+      "minLength": 1,
+      "title": "Section Policy Version",
+      "type": "string"
+    },
+    "sensitivity_ceiling": {
+      "$ref": "#/$defs/MemorySensitivity"
+    }
+  },
+  "required": [
+    "profile_id",
+    "maximum_context_tokens",
+    "maximum_output_tokens",
+    "safety_margin_tokens",
+    "estimator",
+    "sensitivity_ceiling"
+  ],
+  "title": "ProviderContextProfile",
+  "type": "object"
+}

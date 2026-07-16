@@ -1,0 +1,227 @@
+{
+  "$defs": {
+    "ArtifactSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "format": "uuid",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "content_hash"
+      ],
+      "title": "ArtifactSnapshot",
+      "type": "object"
+    },
+    "EventStreamSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "stream_id": {
+          "format": "uuid",
+          "title": "Stream Id",
+          "type": "string"
+        },
+        "upper_version": {
+          "minimum": 0,
+          "title": "Upper Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "stream_id",
+        "upper_version"
+      ],
+      "title": "EventStreamSnapshot",
+      "type": "object"
+    },
+    "MemoryRevisionSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "memory_id": {
+          "format": "uuid",
+          "title": "Memory Id",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "memory_id",
+        "revision",
+        "content_hash"
+      ],
+      "title": "MemoryRevisionSnapshot",
+      "type": "object"
+    },
+    "RepositorySnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "commit_hash": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Commit Hash",
+          "type": "string"
+        },
+        "index_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Index Hash",
+          "type": "string"
+        },
+        "repository_identity": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Repository Identity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "repository_identity",
+        "commit_hash",
+        "index_hash"
+      ],
+      "title": "RepositorySnapshot",
+      "type": "object"
+    },
+    "SemanticRevisionSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "format": "uuid",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "claim_id",
+        "revision",
+        "content_hash"
+      ],
+      "title": "SemanticRevisionSnapshot",
+      "type": "object"
+    },
+    "WorkspaceSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "diff_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Diff Hash",
+          "type": "string"
+        },
+        "workspace_id": {
+          "format": "uuid",
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "workspace_revision": {
+          "minimum": 0,
+          "title": "Workspace Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "workspace_revision",
+        "diff_hash"
+      ],
+      "title": "WorkspaceSnapshot",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/context/context-source-snapshot.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifacts": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ArtifactSnapshot"
+      },
+      "title": "Artifacts",
+      "type": "array"
+    },
+    "captured_at": {
+      "format": "date-time",
+      "title": "Captured At",
+      "type": "string"
+    },
+    "event_streams": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/EventStreamSnapshot"
+      },
+      "title": "Event Streams",
+      "type": "array"
+    },
+    "memory_revisions": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/MemoryRevisionSnapshot"
+      },
+      "title": "Memory Revisions",
+      "type": "array"
+    },
+    "repository": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RepositorySnapshot"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "semantic_revisions": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/SemanticRevisionSnapshot"
+      },
+      "title": "Semantic Revisions",
+      "type": "array"
+    },
+    "snapshot_hash": {
+      "default": "",
+      "title": "Snapshot Hash",
+      "type": "string"
+    },
+    "workspace": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WorkspaceSnapshot"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "captured_at"
+  ],
+  "title": "ContextSourceSnapshot",
+  "type": "object"
+}

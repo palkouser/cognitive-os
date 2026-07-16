@@ -10,6 +10,7 @@ from pydantic import Field, field_validator, model_validator
 
 from .base import ImmutableContractModel
 from .common import JsonValue, NonEmptyStr, TokenUsage
+from .context import ContextBundleReference
 from .identifiers import ModelCallId, StepId, TaskRunId
 from .provider import ModelFinishReason, ResponseFormat, ToolChoiceMode
 
@@ -81,6 +82,7 @@ class ModelProviderRequest(ImmutableContractModel):
     max_output_tokens: int | None = Field(default=None, gt=0)
     context_budget: int = Field(default=32768, gt=0, le=131072)
     timeout_seconds: float = Field(default=120, gt=0)
+    context_bundle_reference: ContextBundleReference | None = None
     metadata: dict[str, JsonValue] = Field(default_factory=dict)
 
     @field_validator("metadata", mode="before")

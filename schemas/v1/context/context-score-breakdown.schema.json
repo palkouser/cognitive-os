@@ -1,0 +1,74 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/context/context-score-breakdown.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "contradiction_penalty": {
+      "default": "0",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Contradiction Penalty",
+      "type": "string"
+    },
+    "final_score": {
+      "default": "0",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Final Score",
+      "type": "string"
+    },
+    "graph_proximity": {
+      "default": "0",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Graph Proximity",
+      "type": "string"
+    },
+    "lexical": {
+      "default": "0",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Lexical",
+      "type": "string"
+    },
+    "recency": {
+      "default": "0",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Recency",
+      "type": "string"
+    },
+    "rrf_contribution": {
+      "default": "0",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Rrf Contribution",
+      "type": "string"
+    },
+    "salience": {
+      "default": "0",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Salience",
+      "type": "string"
+    },
+    "scope": {
+      "default": "0",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Scope",
+      "type": "string"
+    },
+    "trust": {
+      "default": "0",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Trust",
+      "type": "string"
+    },
+    "vector": {
+      "default": "0",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Vector",
+      "type": "string"
+    },
+    "verification": {
+      "default": "0",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Verification",
+      "type": "string"
+    }
+  },
+  "title": "ContextScoreBreakdown",
+  "type": "object"
+}

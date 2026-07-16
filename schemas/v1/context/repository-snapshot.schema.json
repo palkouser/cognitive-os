@@ -1,0 +1,28 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/context/repository-snapshot.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "commit_hash": {
+      "pattern": "^[0-9a-f]{40}$",
+      "title": "Commit Hash",
+      "type": "string"
+    },
+    "index_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Index Hash",
+      "type": "string"
+    },
+    "repository_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Repository Identity",
+      "type": "string"
+    }
+  },
+  "required": [
+    "repository_identity",
+    "commit_hash",
+    "index_hash"
+  ],
+  "title": "RepositorySnapshot",
+  "type": "object"
+}

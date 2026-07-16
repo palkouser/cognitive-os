@@ -1,0 +1,27 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/context/safety-signal.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "detected": {
+      "title": "Detected",
+      "type": "boolean"
+    },
+    "signal_type": {
+      "minLength": 1,
+      "title": "Signal Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "signal_type",
+    "detected",
+    "content_hash"
+  ],
+  "title": "SafetySignal",
+  "type": "object"
+}

@@ -111,6 +111,10 @@ class ProviderContentPolicyError(ProviderError):
     default_code = "provider_content_policy"
 
 
+class ProviderContextValidationError(ProviderError):
+    default_code = "provider_context_validation"
+
+
 class ProviderCancelledError(ProviderError):
     default_code = "provider_cancelled"
 

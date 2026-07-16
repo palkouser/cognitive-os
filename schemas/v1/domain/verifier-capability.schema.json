@@ -37,7 +37,8 @@
         "mathematical_expression",
         "logical_problem",
         "physical_quantity",
-        "semantic_snapshot"
+        "semantic_snapshot",
+        "context_bundle"
       ],
       "title": "VerificationSubjectType",
       "type": "string"

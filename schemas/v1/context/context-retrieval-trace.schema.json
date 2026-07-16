@@ -1,0 +1,704 @@
+{
+  "$defs": {
+    "ArtifactSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "format": "uuid",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "content_hash"
+      ],
+      "title": "ArtifactSnapshot",
+      "type": "object"
+    },
+    "ContextExclusion": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Candidate Id"
+        },
+        "detail_code": {
+          "minLength": 1,
+          "title": "Detail Code",
+          "type": "string"
+        },
+        "reason": {
+          "$ref": "#/$defs/ContextExclusionReason"
+        },
+        "source_identity_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Identity Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_identity_hash",
+        "reason",
+        "detail_code"
+      ],
+      "title": "ContextExclusion",
+      "type": "object"
+    },
+    "ContextExclusionReason": {
+      "enum": [
+        "scope_mismatch",
+        "sensitivity_exceeded",
+        "status_not_allowed",
+        "duplicate",
+        "lower_rank",
+        "source_limit",
+        "token_budget",
+        "secret_detected",
+        "stale_source",
+        "invalid_provenance",
+        "unavailable_retriever",
+        "unsafe_content"
+      ],
+      "title": "ContextExclusionReason",
+      "type": "string"
+    },
+    "ContextScoreBreakdown": {
+      "additionalProperties": false,
+      "properties": {
+        "contradiction_penalty": {
+          "default": "0",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Contradiction Penalty",
+          "type": "string"
+        },
+        "final_score": {
+          "default": "0",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Final Score",
+          "type": "string"
+        },
+        "graph_proximity": {
+          "default": "0",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Graph Proximity",
+          "type": "string"
+        },
+        "lexical": {
+          "default": "0",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Lexical",
+          "type": "string"
+        },
+        "recency": {
+          "default": "0",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Recency",
+          "type": "string"
+        },
+        "rrf_contribution": {
+          "default": "0",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Rrf Contribution",
+          "type": "string"
+        },
+        "salience": {
+          "default": "0",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Salience",
+          "type": "string"
+        },
+        "scope": {
+          "default": "0",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Scope",
+          "type": "string"
+        },
+        "trust": {
+          "default": "0",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Trust",
+          "type": "string"
+        },
+        "vector": {
+          "default": "0",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Vector",
+          "type": "string"
+        },
+        "verification": {
+          "default": "0",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Verification",
+          "type": "string"
+        }
+      },
+      "title": "ContextScoreBreakdown",
+      "type": "object"
+    },
+    "ContextSourceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artifact Id"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End"
+        },
+        "source_identity": {
+          "minLength": 1,
+          "title": "Source Identity",
+          "type": "string"
+        },
+        "source_revision": {
+          "minLength": 1,
+          "title": "Source Revision",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/ContextSourceType"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_identity",
+        "source_revision",
+        "content_hash"
+      ],
+      "title": "ContextSourceReference",
+      "type": "object"
+    },
+    "ContextSourceSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "artifacts": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ArtifactSnapshot"
+          },
+          "title": "Artifacts",
+          "type": "array"
+        },
+        "captured_at": {
+          "format": "date-time",
+          "title": "Captured At",
+          "type": "string"
+        },
+        "event_streams": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EventStreamSnapshot"
+          },
+          "title": "Event Streams",
+          "type": "array"
+        },
+        "memory_revisions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/MemoryRevisionSnapshot"
+          },
+          "title": "Memory Revisions",
+          "type": "array"
+        },
+        "repository": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RepositorySnapshot"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "semantic_revisions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/SemanticRevisionSnapshot"
+          },
+          "title": "Semantic Revisions",
+          "type": "array"
+        },
+        "snapshot_hash": {
+          "default": "",
+          "title": "Snapshot Hash",
+          "type": "string"
+        },
+        "workspace": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WorkspaceSnapshot"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "captured_at"
+      ],
+      "title": "ContextSourceSnapshot",
+      "type": "object"
+    },
+    "ContextSourceType": {
+      "enum": [
+        "task_state",
+        "execution_plan",
+        "event",
+        "provider_result",
+        "tool_result",
+        "artifact",
+        "memory",
+        "semantic_claim",
+        "semantic_graph",
+        "wiki",
+        "repository_index",
+        "workspace",
+        "user_correction"
+      ],
+      "title": "ContextSourceType",
+      "type": "string"
+    },
+    "ContextWarning": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Candidate Id"
+        },
+        "code": {
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "source_references": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ContextSourceReference"
+          },
+          "title": "Source References",
+          "type": "array"
+        },
+        "warning_type": {
+          "$ref": "#/$defs/ContextWarningType"
+        }
+      },
+      "required": [
+        "warning_type",
+        "code",
+        "message"
+      ],
+      "title": "ContextWarning",
+      "type": "object"
+    },
+    "ContextWarningType": {
+      "enum": [
+        "suspicious_instruction",
+        "contradiction",
+        "optional_source_unavailable",
+        "quota_unmet",
+        "content_truncated",
+        "stale_optional_source"
+      ],
+      "title": "ContextWarningType",
+      "type": "string"
+    },
+    "DeduplicationDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "kept_candidate_id": {
+          "format": "uuid",
+          "title": "Kept Candidate Id",
+          "type": "string"
+        },
+        "reason": {
+          "$ref": "#/$defs/ContextExclusionReason",
+          "default": "duplicate"
+        },
+        "removed_candidate_id": {
+          "format": "uuid",
+          "title": "Removed Candidate Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kept_candidate_id",
+        "removed_candidate_id"
+      ],
+      "title": "DeduplicationDecision",
+      "type": "object"
+    },
+    "EventStreamSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "stream_id": {
+          "format": "uuid",
+          "title": "Stream Id",
+          "type": "string"
+        },
+        "upper_version": {
+          "minimum": 0,
+          "title": "Upper Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "stream_id",
+        "upper_version"
+      ],
+      "title": "EventStreamSnapshot",
+      "type": "object"
+    },
+    "MemoryRevisionSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "memory_id": {
+          "format": "uuid",
+          "title": "Memory Id",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "memory_id",
+        "revision",
+        "content_hash"
+      ],
+      "title": "MemoryRevisionSnapshot",
+      "type": "object"
+    },
+    "RepositorySnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "commit_hash": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Commit Hash",
+          "type": "string"
+        },
+        "index_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Index Hash",
+          "type": "string"
+        },
+        "repository_identity": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Repository Identity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "repository_identity",
+        "commit_hash",
+        "index_hash"
+      ],
+      "title": "RepositorySnapshot",
+      "type": "object"
+    },
+    "RetrieverCallTrace": {
+      "additionalProperties": false,
+      "properties": {
+        "access_audit_ids": {
+          "default": [],
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Access Audit Ids",
+          "type": "array"
+        },
+        "available": {
+          "default": true,
+          "title": "Available",
+          "type": "boolean"
+        },
+        "elapsed_ms": {
+          "minimum": 0,
+          "title": "Elapsed Ms",
+          "type": "number"
+        },
+        "retriever_id": {
+          "minLength": 1,
+          "title": "Retriever Id",
+          "type": "string"
+        },
+        "returned_count": {
+          "minimum": 0,
+          "title": "Returned Count",
+          "type": "integer"
+        },
+        "subquery_id": {
+          "format": "uuid",
+          "title": "Subquery Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "retriever_id",
+        "subquery_id",
+        "returned_count",
+        "elapsed_ms"
+      ],
+      "title": "RetrieverCallTrace",
+      "type": "object"
+    },
+    "SemanticRevisionSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "format": "uuid",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "claim_id",
+        "revision",
+        "content_hash"
+      ],
+      "title": "SemanticRevisionSnapshot",
+      "type": "object"
+    },
+    "WorkspaceSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "diff_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Diff Hash",
+          "type": "string"
+        },
+        "workspace_id": {
+          "format": "uuid",
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "workspace_revision": {
+          "minimum": 0,
+          "title": "Workspace Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "workspace_revision",
+        "diff_hash"
+      ],
+      "title": "WorkspaceSnapshot",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/context/context-retrieval-trace.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "candidate_count": {
+      "minimum": 0,
+      "title": "Candidate Count",
+      "type": "integer"
+    },
+    "context_request_id": {
+      "format": "uuid",
+      "title": "Context Request Id",
+      "type": "string"
+    },
+    "deduplication_decisions": {
+      "items": {
+        "$ref": "#/$defs/DeduplicationDecision"
+      },
+      "title": "Deduplication Decisions",
+      "type": "array"
+    },
+    "elapsed_ms": {
+      "minimum": 0,
+      "title": "Elapsed Ms",
+      "type": "number"
+    },
+    "exclusions": {
+      "items": {
+        "$ref": "#/$defs/ContextExclusion"
+      },
+      "title": "Exclusions",
+      "type": "array"
+    },
+    "query_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Query Hash",
+      "type": "string"
+    },
+    "ranked_candidate_ids": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Ranked Candidate Ids",
+      "type": "array"
+    },
+    "registry_snapshot_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Registry Snapshot Hash",
+      "type": "string"
+    },
+    "retriever_calls": {
+      "items": {
+        "$ref": "#/$defs/RetrieverCallTrace"
+      },
+      "title": "Retriever Calls",
+      "type": "array"
+    },
+    "safety_warnings": {
+      "items": {
+        "$ref": "#/$defs/ContextWarning"
+      },
+      "title": "Safety Warnings",
+      "type": "array"
+    },
+    "score_breakdowns": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ContextScoreBreakdown"
+      },
+      "title": "Score Breakdowns",
+      "type": "object"
+    },
+    "selected_access_audit_ids": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Selected Access Audit Ids",
+      "type": "array"
+    },
+    "selected_candidate_ids": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Selected Candidate Ids",
+      "type": "array"
+    },
+    "source_snapshot": {
+      "$ref": "#/$defs/ContextSourceSnapshot"
+    },
+    "token_estimates": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Token Estimates",
+      "type": "object"
+    },
+    "trace_hash": {
+      "default": "",
+      "title": "Trace Hash",
+      "type": "string"
+    },
+    "trace_id": {
+      "format": "uuid",
+      "title": "Trace Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "trace_id",
+    "context_request_id",
+    "query_hash",
+    "registry_snapshot_hash",
+    "retriever_calls",
+    "candidate_count",
+    "ranked_candidate_ids",
+    "score_breakdowns",
+    "deduplication_decisions",
+    "selected_candidate_ids",
+    "exclusions",
+    "token_estimates",
+    "safety_warnings",
+    "source_snapshot",
+    "elapsed_ms"
+  ],
+  "title": "ContextRetrievalTrace",
+  "type": "object"
+}

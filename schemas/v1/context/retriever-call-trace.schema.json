@@ -1,0 +1,48 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/context/retriever-call-trace.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "access_audit_ids": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Access Audit Ids",
+      "type": "array"
+    },
+    "available": {
+      "default": true,
+      "title": "Available",
+      "type": "boolean"
+    },
+    "elapsed_ms": {
+      "minimum": 0,
+      "title": "Elapsed Ms",
+      "type": "number"
+    },
+    "retriever_id": {
+      "minLength": 1,
+      "title": "Retriever Id",
+      "type": "string"
+    },
+    "returned_count": {
+      "minimum": 0,
+      "title": "Returned Count",
+      "type": "integer"
+    },
+    "subquery_id": {
+      "format": "uuid",
+      "title": "Subquery Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "retriever_id",
+    "subquery_id",
+    "returned_count",
+    "elapsed_ms"
+  ],
+  "title": "RetrieverCallTrace",
+  "type": "object"
+}

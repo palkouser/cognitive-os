@@ -1,0 +1,46 @@
+{
+  "$defs": {
+    "ContextExclusionReason": {
+      "enum": [
+        "scope_mismatch",
+        "sensitivity_exceeded",
+        "status_not_allowed",
+        "duplicate",
+        "lower_rank",
+        "source_limit",
+        "token_budget",
+        "secret_detected",
+        "stale_source",
+        "invalid_provenance",
+        "unavailable_retriever",
+        "unsafe_content"
+      ],
+      "title": "ContextExclusionReason",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/context/deduplication-decision.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "kept_candidate_id": {
+      "format": "uuid",
+      "title": "Kept Candidate Id",
+      "type": "string"
+    },
+    "reason": {
+      "$ref": "#/$defs/ContextExclusionReason",
+      "default": "duplicate"
+    },
+    "removed_candidate_id": {
+      "format": "uuid",
+      "title": "Removed Candidate Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "kept_candidate_id",
+    "removed_candidate_id"
+  ],
+  "title": "DeduplicationDecision",
+  "type": "object"
+}

@@ -1,0 +1,22 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/context/artifact-snapshot.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifact_id": {
+      "format": "uuid",
+      "title": "Artifact Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "artifact_id",
+    "content_hash"
+  ],
+  "title": "ArtifactSnapshot",
+  "type": "object"
+}

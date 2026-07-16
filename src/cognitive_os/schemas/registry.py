@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from pydantic import BaseModel
 
 from cognitive_os.config.coding_config import CodingConfiguration
+from cognitive_os.config.context_config import ContextConfiguration
 from cognitive_os.config.memory_config import MemoryConfiguration
 from cognitive_os.config.semantic_memory_config import SemanticMemoryConfiguration
 from cognitive_os.domain import (
@@ -86,6 +87,7 @@ from cognitive_os.domain.coding import (
     WorkspaceIntegritySnapshot,
     WorkspaceRequest,
 )
+from cognitive_os.domain.context import PUBLIC_CONTEXT_CONTRACTS
 from cognitive_os.domain.memory import PUBLIC_MEMORY_CONTRACTS
 from cognitive_os.domain.semantic_memory import PUBLIC_SEMANTIC_CONTRACTS
 from cognitive_os.domain.verifiers import (
@@ -110,8 +112,21 @@ class SchemaEntry:
 
 DOMAIN_SCHEMAS: tuple[tuple[type[BaseModel], str], ...] = (
     (CodingConfiguration, "v1/config/coding-configuration.schema.json"),
+    (ContextConfiguration, "v1/config/context-configuration.schema.json"),
     (MemoryConfiguration, "v1/config/memory-configuration.schema.json"),
     (SemanticMemoryConfiguration, "v1/config/semantic-memory-configuration.schema.json"),
+    *tuple(
+        (
+            model,
+            "v1/context/"
+            + "".join(
+                ("-" + character.lower()) if character.isupper() else character
+                for character in model.__name__
+            ).lstrip("-")
+            + ".schema.json",
+        )
+        for model in PUBLIC_CONTEXT_CONTRACTS
+    ),
     *tuple(
         (
             model,

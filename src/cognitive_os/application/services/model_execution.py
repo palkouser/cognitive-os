@@ -5,9 +5,10 @@ from __future__ import annotations
 import asyncio
 import secrets
 import time
-from collections.abc import AsyncIterator, Callable
+from collections.abc import AsyncIterator, Awaitable, Callable
 
 from cognitive_os.domain.common import TokenUsage, UtcDatetime, utc_now
+from cognitive_os.domain.context import ContextBundleReference
 from cognitive_os.domain.model_requests import (
     ModelProviderRequest,
     ModelProviderResponse,
@@ -25,6 +26,7 @@ from cognitive_os.events.provider_event_service import (
 )
 from cognitive_os.providers.errors import (
     ProviderCancelledError,
+    ProviderContextValidationError,
     ProviderError,
     ProviderTimeoutError,
     ProviderUnsupportedCapabilityError,
@@ -33,6 +35,7 @@ from cognitive_os.providers.registry import ProviderRegistry, select_provider
 from cognitive_os.providers.retry import RetryPolicy, execute_with_retry
 
 type MonotonicClock = Callable[[], float]
+type ContextReferenceValidator = Callable[[ContextBundleReference], Awaitable[bool]]
 
 
 class ModelExecutionService:
@@ -44,6 +47,7 @@ class ModelExecutionService:
         retry_policy: RetryPolicy | None = None,
         event_service: ProviderEventService | None = None,
         artifact_service: ProviderArtifactService | None = None,
+        context_reference_validator: ContextReferenceValidator | None = None,
         monotonic_clock: MonotonicClock = time.monotonic,
     ) -> None:
         self._registry = registry
@@ -51,6 +55,7 @@ class ModelExecutionService:
         self._retry_policy = retry_policy or RetryPolicy()
         self._events = event_service
         self._artifacts = artifact_service
+        self._context_reference_validator = context_reference_validator
         self._monotonic = monotonic_clock
 
     @property
@@ -66,6 +71,7 @@ class ModelExecutionService:
         *,
         provider_id: str | None = None,
     ) -> ModelProviderResponse:
+        await self._validate_context_reference(request)
         provider = select_provider(self._registry, provider_id, self._default_provider_id)
         capabilities = await provider.get_model_capabilities(request.requested_model)
         self._validate_capabilities(request, capabilities)
@@ -145,6 +151,7 @@ class ModelExecutionService:
         *,
         provider_id: str | None = None,
     ) -> AsyncIterator[ProviderStreamEvent]:
+        await self._validate_context_reference(request)
         provider = select_provider(self._registry, provider_id, self._default_provider_id)
         capabilities = await provider.get_model_capabilities(request.requested_model)
         self._validate_capabilities(request, capabilities)
@@ -280,4 +287,26 @@ class ModelExecutionService:
                 provider_id=capabilities.provider_id,
                 message=f"provider does not support requested {unsupported}",
                 details={"capability": unsupported},
+            )
+
+    async def _validate_context_reference(self, request: ModelProviderRequest) -> None:
+        reference = request.context_bundle_reference
+        if reference is None:
+            return
+        if self._context_reference_validator is None:
+            raise ProviderContextValidationError(
+                provider_id="context-builder",
+                message="Context Bundle validation is unavailable",
+            )
+        try:
+            valid = await self._context_reference_validator(reference)
+        except Exception as error:
+            raise ProviderContextValidationError(
+                provider_id="context-builder",
+                message="Context Bundle validation failed",
+            ) from error
+        if not valid:
+            raise ProviderContextValidationError(
+                provider_id="context-builder",
+                message="Context Bundle is invalid or stale",
             )

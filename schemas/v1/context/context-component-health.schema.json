@@ -1,0 +1,38 @@
+{
+  "$defs": {
+    "ContextComponentStatus": {
+      "enum": [
+        "available",
+        "unavailable",
+        "degraded"
+      ],
+      "title": "ContextComponentStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/context/context-component-health.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "reason": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reason"
+    },
+    "status": {
+      "$ref": "#/$defs/ContextComponentStatus"
+    }
+  },
+  "required": [
+    "status"
+  ],
+  "title": "ContextComponentHealth",
+  "type": "object"
+}

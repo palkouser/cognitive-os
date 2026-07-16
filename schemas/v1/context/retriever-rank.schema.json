@@ -1,0 +1,53 @@
+{
+  "$defs": {
+    "RetrievalMode": {
+      "enum": [
+        "metadata",
+        "lexical",
+        "exact_vector",
+        "graph",
+        "recent",
+        "source_lookup",
+        "code"
+      ],
+      "title": "RetrievalMode",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/context/retriever-rank.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "mode": {
+      "$ref": "#/$defs/RetrievalMode"
+    },
+    "rank": {
+      "minimum": 1,
+      "title": "Rank",
+      "type": "integer"
+    },
+    "raw_score": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Raw Score",
+      "type": "string"
+    },
+    "retriever_id": {
+      "minLength": 1,
+      "title": "Retriever Id",
+      "type": "string"
+    },
+    "weight": {
+      "default": "1",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Weight",
+      "type": "string"
+    }
+  },
+  "required": [
+    "retriever_id",
+    "mode",
+    "rank",
+    "raw_score"
+  ],
+  "title": "RetrieverRank",
+  "type": "object"
+}

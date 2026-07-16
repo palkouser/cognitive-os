@@ -1,0 +1,1532 @@
+{
+  "$defs": {
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "format": "uuid",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "media_type": {
+          "minLength": 1,
+          "title": "Media Type",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "storage_key": {
+          "minLength": 1,
+          "title": "Storage Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "media_type",
+        "content_hash",
+        "size_bytes",
+        "storage_key",
+        "created_at"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "ArtifactSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "format": "uuid",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "content_hash"
+      ],
+      "title": "ArtifactSnapshot",
+      "type": "object"
+    },
+    "ContextBudget": {
+      "additionalProperties": false,
+      "properties": {
+        "maximum_candidates": {
+          "exclusiveMinimum": 0,
+          "maximum": 1000,
+          "title": "Maximum Candidates",
+          "type": "integer"
+        },
+        "maximum_elapsed_seconds": {
+          "exclusiveMinimum": 0,
+          "maximum": 300,
+          "title": "Maximum Elapsed Seconds",
+          "type": "number"
+        },
+        "maximum_items": {
+          "exclusiveMinimum": 0,
+          "maximum": 64,
+          "title": "Maximum Items",
+          "type": "integer"
+        },
+        "maximum_items_per_source": {
+          "exclusiveMinimum": 0,
+          "maximum": 64,
+          "title": "Maximum Items Per Source",
+          "type": "integer"
+        },
+        "maximum_retriever_calls": {
+          "exclusiveMinimum": 0,
+          "maximum": 24,
+          "title": "Maximum Retriever Calls",
+          "type": "integer"
+        },
+        "minimum_evidence_items": {
+          "maximum": 64,
+          "minimum": 0,
+          "title": "Minimum Evidence Items",
+          "type": "integer"
+        },
+        "minimum_recent_items": {
+          "maximum": 64,
+          "minimum": 0,
+          "title": "Minimum Recent Items",
+          "type": "integer"
+        },
+        "provider_context_limit": {
+          "exclusiveMinimum": 0,
+          "maximum": 1000000,
+          "title": "Provider Context Limit",
+          "type": "integer"
+        },
+        "reserved_output_tokens": {
+          "minimum": 0,
+          "title": "Reserved Output Tokens",
+          "type": "integer"
+        },
+        "safety_margin_tokens": {
+          "minimum": 0,
+          "title": "Safety Margin Tokens",
+          "type": "integer"
+        },
+        "system_instruction_tokens": {
+          "minimum": 0,
+          "title": "System Instruction Tokens",
+          "type": "integer"
+        },
+        "task_and_plan_tokens": {
+          "minimum": 0,
+          "title": "Task And Plan Tokens",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "provider_context_limit",
+        "reserved_output_tokens",
+        "system_instruction_tokens",
+        "task_and_plan_tokens",
+        "safety_margin_tokens",
+        "maximum_retriever_calls",
+        "maximum_candidates",
+        "maximum_items",
+        "maximum_items_per_source",
+        "minimum_recent_items",
+        "minimum_evidence_items",
+        "maximum_elapsed_seconds"
+      ],
+      "title": "ContextBudget",
+      "type": "object"
+    },
+    "ContextBuildFailure": {
+      "enum": [
+        "retry_safe",
+        "needs_clarification",
+        "budget_exhausted",
+        "required_source_missing",
+        "safety_rejected",
+        "retriever_unavailable",
+        "failed"
+      ],
+      "title": "ContextBuildFailure",
+      "type": "string"
+    },
+    "ContextBuildStatus": {
+      "enum": [
+        "requested",
+        "building",
+        "created",
+        "failed",
+        "cancelled"
+      ],
+      "title": "ContextBuildStatus",
+      "type": "string"
+    },
+    "ContextBundleReference": {
+      "additionalProperties": false,
+      "properties": {
+        "bundle_artifact_id": {
+          "format": "uuid",
+          "title": "Bundle Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "context_bundle_id": {
+          "format": "uuid",
+          "title": "Context Bundle Id",
+          "type": "string"
+        },
+        "context_bundle_revision": {
+          "minimum": 1,
+          "title": "Context Bundle Revision",
+          "type": "integer"
+        },
+        "rendered_context_artifact_id": {
+          "format": "uuid",
+          "title": "Rendered Context Artifact Id",
+          "type": "string"
+        },
+        "source_snapshot_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Snapshot Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "context_bundle_id",
+        "context_bundle_revision",
+        "bundle_artifact_id",
+        "rendered_context_artifact_id",
+        "content_hash",
+        "source_snapshot_hash"
+      ],
+      "title": "ContextBundleReference",
+      "type": "object"
+    },
+    "ContextBundleRevision": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "context_bundle_id": {
+          "format": "uuid",
+          "title": "Context Bundle Id",
+          "type": "string"
+        },
+        "context_request_id": {
+          "format": "uuid",
+          "title": "Context Request Id",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "excluded_candidates": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ContextExclusion"
+          },
+          "title": "Excluded Candidates",
+          "type": "array"
+        },
+        "previous_revision": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Previous Revision"
+        },
+        "provider_profile": {
+          "$ref": "#/$defs/ProviderContextProfile"
+        },
+        "ranking_profile": {
+          "$ref": "#/$defs/RankingProfileReference"
+        },
+        "rendered_context_reference": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ArtifactRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "retrieval_trace_reference": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ArtifactRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "sections": {
+          "items": {
+            "$ref": "#/$defs/ContextSection"
+          },
+          "title": "Sections",
+          "type": "array"
+        },
+        "source_snapshot": {
+          "$ref": "#/$defs/ContextSourceSnapshot"
+        },
+        "token_estimator_profile": {
+          "$ref": "#/$defs/TokenEstimatorProfile"
+        },
+        "total_token_estimate": {
+          "minimum": 0,
+          "title": "Total Token Estimate",
+          "type": "integer"
+        },
+        "warnings": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ContextWarning"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "context_bundle_id",
+        "revision",
+        "context_request_id",
+        "sections",
+        "total_token_estimate",
+        "provider_profile",
+        "source_snapshot",
+        "ranking_profile",
+        "token_estimator_profile",
+        "created_at"
+      ],
+      "title": "ContextBundleRevision",
+      "type": "object"
+    },
+    "ContextExclusion": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Candidate Id"
+        },
+        "detail_code": {
+          "minLength": 1,
+          "title": "Detail Code",
+          "type": "string"
+        },
+        "reason": {
+          "$ref": "#/$defs/ContextExclusionReason"
+        },
+        "source_identity_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Identity Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_identity_hash",
+        "reason",
+        "detail_code"
+      ],
+      "title": "ContextExclusion",
+      "type": "object"
+    },
+    "ContextExclusionReason": {
+      "enum": [
+        "scope_mismatch",
+        "sensitivity_exceeded",
+        "status_not_allowed",
+        "duplicate",
+        "lower_rank",
+        "source_limit",
+        "token_budget",
+        "secret_detected",
+        "stale_source",
+        "invalid_provenance",
+        "unavailable_retriever",
+        "unsafe_content"
+      ],
+      "title": "ContextExclusionReason",
+      "type": "string"
+    },
+    "ContextPurpose": {
+      "enum": [
+        "planning",
+        "execution",
+        "repair",
+        "coding",
+        "advisory",
+        "semantic_extraction"
+      ],
+      "title": "ContextPurpose",
+      "type": "string"
+    },
+    "ContextRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_memory_types": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/MemoryType"
+          },
+          "title": "Allowed Memory Types",
+          "type": "array"
+        },
+        "allowed_source_types": {
+          "items": {
+            "$ref": "#/$defs/ContextSourceType"
+          },
+          "maxItems": 13,
+          "minItems": 1,
+          "title": "Allowed Source Types",
+          "type": "array"
+        },
+        "budget": {
+          "$ref": "#/$defs/ContextBudget"
+        },
+        "context_purpose": {
+          "$ref": "#/$defs/ContextPurpose"
+        },
+        "context_request_id": {
+          "format": "uuid",
+          "title": "Context Request Id",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "current_step_reference": {
+          "minLength": 1,
+          "title": "Current Step Reference",
+          "type": "string"
+        },
+        "known_at": {
+          "format": "date-time",
+          "title": "Known At",
+          "type": "string"
+        },
+        "plan_reference": {
+          "minLength": 1,
+          "title": "Plan Reference",
+          "type": "string"
+        },
+        "problem_reference": {
+          "minLength": 1,
+          "title": "Problem Reference",
+          "type": "string"
+        },
+        "provider_profile": {
+          "minLength": 1,
+          "title": "Provider Profile",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "required_scopes": {
+          "items": {
+            "$ref": "#/$defs/MemoryScope"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Required Scopes",
+          "type": "array"
+        },
+        "sensitivity_limit": {
+          "$ref": "#/$defs/MemorySensitivity"
+        },
+        "source_snapshot": {
+          "$ref": "#/$defs/ContextSourceSnapshot"
+        },
+        "step_id": {
+          "format": "uuid",
+          "title": "Step Id",
+          "type": "string"
+        },
+        "task_run_id": {
+          "format": "uuid",
+          "title": "Task Run Id",
+          "type": "string"
+        },
+        "valid_at": {
+          "format": "date-time",
+          "title": "Valid At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "context_request_id",
+        "task_run_id",
+        "step_id",
+        "context_purpose",
+        "problem_reference",
+        "plan_reference",
+        "current_step_reference",
+        "query",
+        "required_scopes",
+        "allowed_source_types",
+        "valid_at",
+        "known_at",
+        "sensitivity_limit",
+        "provider_profile",
+        "budget",
+        "source_snapshot",
+        "created_at"
+      ],
+      "title": "ContextRequest",
+      "type": "object"
+    },
+    "ContextRetrievalTrace": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_count": {
+          "minimum": 0,
+          "title": "Candidate Count",
+          "type": "integer"
+        },
+        "context_request_id": {
+          "format": "uuid",
+          "title": "Context Request Id",
+          "type": "string"
+        },
+        "deduplication_decisions": {
+          "items": {
+            "$ref": "#/$defs/DeduplicationDecision"
+          },
+          "title": "Deduplication Decisions",
+          "type": "array"
+        },
+        "elapsed_ms": {
+          "minimum": 0,
+          "title": "Elapsed Ms",
+          "type": "number"
+        },
+        "exclusions": {
+          "items": {
+            "$ref": "#/$defs/ContextExclusion"
+          },
+          "title": "Exclusions",
+          "type": "array"
+        },
+        "query_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Query Hash",
+          "type": "string"
+        },
+        "ranked_candidate_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Ranked Candidate Ids",
+          "type": "array"
+        },
+        "registry_snapshot_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Registry Snapshot Hash",
+          "type": "string"
+        },
+        "retriever_calls": {
+          "items": {
+            "$ref": "#/$defs/RetrieverCallTrace"
+          },
+          "title": "Retriever Calls",
+          "type": "array"
+        },
+        "safety_warnings": {
+          "items": {
+            "$ref": "#/$defs/ContextWarning"
+          },
+          "title": "Safety Warnings",
+          "type": "array"
+        },
+        "score_breakdowns": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ContextScoreBreakdown"
+          },
+          "title": "Score Breakdowns",
+          "type": "object"
+        },
+        "selected_access_audit_ids": {
+          "default": [],
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Selected Access Audit Ids",
+          "type": "array"
+        },
+        "selected_candidate_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Selected Candidate Ids",
+          "type": "array"
+        },
+        "source_snapshot": {
+          "$ref": "#/$defs/ContextSourceSnapshot"
+        },
+        "token_estimates": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Token Estimates",
+          "type": "object"
+        },
+        "trace_hash": {
+          "default": "",
+          "title": "Trace Hash",
+          "type": "string"
+        },
+        "trace_id": {
+          "format": "uuid",
+          "title": "Trace Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "trace_id",
+        "context_request_id",
+        "query_hash",
+        "registry_snapshot_hash",
+        "retriever_calls",
+        "candidate_count",
+        "ranked_candidate_ids",
+        "score_breakdowns",
+        "deduplication_decisions",
+        "selected_candidate_ids",
+        "exclusions",
+        "token_estimates",
+        "safety_warnings",
+        "source_snapshot",
+        "elapsed_ms"
+      ],
+      "title": "ContextRetrievalTrace",
+      "type": "object"
+    },
+    "ContextScoreBreakdown": {
+      "additionalProperties": false,
+      "properties": {
+        "contradiction_penalty": {
+          "default": "0",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Contradiction Penalty",
+          "type": "string"
+        },
+        "final_score": {
+          "default": "0",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Final Score",
+          "type": "string"
+        },
+        "graph_proximity": {
+          "default": "0",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Graph Proximity",
+          "type": "string"
+        },
+        "lexical": {
+          "default": "0",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Lexical",
+          "type": "string"
+        },
+        "recency": {
+          "default": "0",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Recency",
+          "type": "string"
+        },
+        "rrf_contribution": {
+          "default": "0",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Rrf Contribution",
+          "type": "string"
+        },
+        "salience": {
+          "default": "0",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Salience",
+          "type": "string"
+        },
+        "scope": {
+          "default": "0",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Scope",
+          "type": "string"
+        },
+        "trust": {
+          "default": "0",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Trust",
+          "type": "string"
+        },
+        "vector": {
+          "default": "0",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Vector",
+          "type": "string"
+        },
+        "verification": {
+          "default": "0",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Verification",
+          "type": "string"
+        }
+      },
+      "title": "ContextScoreBreakdown",
+      "type": "object"
+    },
+    "ContextSection": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_references": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Candidate References",
+          "type": "array"
+        },
+        "content": {
+          "title": "Content",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "section_id": {
+          "format": "uuid",
+          "title": "Section Id",
+          "type": "string"
+        },
+        "section_type": {
+          "minLength": 1,
+          "title": "Section Type",
+          "type": "string"
+        },
+        "source_references": {
+          "items": {
+            "$ref": "#/$defs/ContextSourceReference"
+          },
+          "minItems": 1,
+          "title": "Source References",
+          "type": "array"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "token_estimate": {
+          "minimum": 0,
+          "title": "Token Estimate",
+          "type": "integer"
+        },
+        "trust_class": {
+          "$ref": "#/$defs/ContextTrustClass"
+        },
+        "warnings": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ContextWarning"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "section_id",
+        "section_type",
+        "title",
+        "trust_class",
+        "content",
+        "source_references",
+        "candidate_references",
+        "token_estimate",
+        "content_hash"
+      ],
+      "title": "ContextSection",
+      "type": "object"
+    },
+    "ContextSourceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artifact Id"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End"
+        },
+        "source_identity": {
+          "minLength": 1,
+          "title": "Source Identity",
+          "type": "string"
+        },
+        "source_revision": {
+          "minLength": 1,
+          "title": "Source Revision",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/ContextSourceType"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_identity",
+        "source_revision",
+        "content_hash"
+      ],
+      "title": "ContextSourceReference",
+      "type": "object"
+    },
+    "ContextSourceSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "artifacts": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ArtifactSnapshot"
+          },
+          "title": "Artifacts",
+          "type": "array"
+        },
+        "captured_at": {
+          "format": "date-time",
+          "title": "Captured At",
+          "type": "string"
+        },
+        "event_streams": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EventStreamSnapshot"
+          },
+          "title": "Event Streams",
+          "type": "array"
+        },
+        "memory_revisions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/MemoryRevisionSnapshot"
+          },
+          "title": "Memory Revisions",
+          "type": "array"
+        },
+        "repository": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RepositorySnapshot"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "semantic_revisions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/SemanticRevisionSnapshot"
+          },
+          "title": "Semantic Revisions",
+          "type": "array"
+        },
+        "snapshot_hash": {
+          "default": "",
+          "title": "Snapshot Hash",
+          "type": "string"
+        },
+        "workspace": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WorkspaceSnapshot"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "captured_at"
+      ],
+      "title": "ContextSourceSnapshot",
+      "type": "object"
+    },
+    "ContextSourceType": {
+      "enum": [
+        "task_state",
+        "execution_plan",
+        "event",
+        "provider_result",
+        "tool_result",
+        "artifact",
+        "memory",
+        "semantic_claim",
+        "semantic_graph",
+        "wiki",
+        "repository_index",
+        "workspace",
+        "user_correction"
+      ],
+      "title": "ContextSourceType",
+      "type": "string"
+    },
+    "ContextTrustClass": {
+      "enum": [
+        "system",
+        "verified",
+        "user_provided",
+        "unverified",
+        "external",
+        "disputed"
+      ],
+      "title": "ContextTrustClass",
+      "type": "string"
+    },
+    "ContextWarning": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Candidate Id"
+        },
+        "code": {
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "source_references": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ContextSourceReference"
+          },
+          "title": "Source References",
+          "type": "array"
+        },
+        "warning_type": {
+          "$ref": "#/$defs/ContextWarningType"
+        }
+      },
+      "required": [
+        "warning_type",
+        "code",
+        "message"
+      ],
+      "title": "ContextWarning",
+      "type": "object"
+    },
+    "ContextWarningType": {
+      "enum": [
+        "suspicious_instruction",
+        "contradiction",
+        "optional_source_unavailable",
+        "quota_unmet",
+        "content_truncated",
+        "stale_optional_source"
+      ],
+      "title": "ContextWarningType",
+      "type": "string"
+    },
+    "DeduplicationDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "kept_candidate_id": {
+          "format": "uuid",
+          "title": "Kept Candidate Id",
+          "type": "string"
+        },
+        "reason": {
+          "$ref": "#/$defs/ContextExclusionReason",
+          "default": "duplicate"
+        },
+        "removed_candidate_id": {
+          "format": "uuid",
+          "title": "Removed Candidate Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kept_candidate_id",
+        "removed_candidate_id"
+      ],
+      "title": "DeduplicationDecision",
+      "type": "object"
+    },
+    "EventStreamSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "stream_id": {
+          "format": "uuid",
+          "title": "Stream Id",
+          "type": "string"
+        },
+        "upper_version": {
+          "minimum": 0,
+          "title": "Upper Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "stream_id",
+        "upper_version"
+      ],
+      "title": "EventStreamSnapshot",
+      "type": "object"
+    },
+    "MemoryRevisionSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "memory_id": {
+          "format": "uuid",
+          "title": "Memory Id",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "memory_id",
+        "revision",
+        "content_hash"
+      ],
+      "title": "MemoryRevisionSnapshot",
+      "type": "object"
+    },
+    "MemoryScope": {
+      "additionalProperties": false,
+      "properties": {
+        "scope_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "scope_type": {
+          "$ref": "#/$defs/MemoryScopeType"
+        }
+      },
+      "required": [
+        "scope_type",
+        "scope_id"
+      ],
+      "title": "MemoryScope",
+      "type": "object"
+    },
+    "MemoryScopeType": {
+      "enum": [
+        "global",
+        "project",
+        "repository",
+        "task",
+        "session",
+        "domain"
+      ],
+      "title": "MemoryScopeType",
+      "type": "string"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "MemoryType": {
+      "enum": [
+        "episode",
+        "observation",
+        "decision",
+        "correction",
+        "task_summary",
+        "code_context",
+        "verification_summary",
+        "failure_pattern",
+        "user_instruction"
+      ],
+      "title": "MemoryType",
+      "type": "string"
+    },
+    "ProviderContextProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "estimator": {
+          "$ref": "#/$defs/TokenEstimatorProfile"
+        },
+        "maximum_context_tokens": {
+          "exclusiveMinimum": 0,
+          "maximum": 1000000,
+          "title": "Maximum Context Tokens",
+          "type": "integer"
+        },
+        "maximum_output_tokens": {
+          "exclusiveMinimum": 0,
+          "maximum": 1000000,
+          "title": "Maximum Output Tokens",
+          "type": "integer"
+        },
+        "profile_id": {
+          "minLength": 1,
+          "title": "Profile Id",
+          "type": "string"
+        },
+        "safety_margin_tokens": {
+          "minimum": 0,
+          "title": "Safety Margin Tokens",
+          "type": "integer"
+        },
+        "section_policy_version": {
+          "default": "1",
+          "minLength": 1,
+          "title": "Section Policy Version",
+          "type": "string"
+        },
+        "sensitivity_ceiling": {
+          "$ref": "#/$defs/MemorySensitivity"
+        }
+      },
+      "required": [
+        "profile_id",
+        "maximum_context_tokens",
+        "maximum_output_tokens",
+        "safety_margin_tokens",
+        "estimator",
+        "sensitivity_ceiling"
+      ],
+      "title": "ProviderContextProfile",
+      "type": "object"
+    },
+    "RankingProfileReference": {
+      "additionalProperties": false,
+      "properties": {
+        "profile_hash": {
+          "default": "",
+          "title": "Profile Hash",
+          "type": "string"
+        },
+        "profile_id": {
+          "minLength": 1,
+          "title": "Profile Id",
+          "type": "string"
+        },
+        "rrf_k": {
+          "minimum": 1,
+          "title": "Rrf K",
+          "type": "integer"
+        },
+        "score_precision": {
+          "maximum": 18,
+          "minimum": 1,
+          "title": "Score Precision",
+          "type": "integer"
+        },
+        "version": {
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        },
+        "weights": {
+          "additionalProperties": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "type": "string"
+          },
+          "title": "Weights",
+          "type": "object"
+        }
+      },
+      "required": [
+        "profile_id",
+        "version",
+        "weights",
+        "rrf_k",
+        "score_precision"
+      ],
+      "title": "RankingProfileReference",
+      "type": "object"
+    },
+    "RepositorySnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "commit_hash": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Commit Hash",
+          "type": "string"
+        },
+        "index_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Index Hash",
+          "type": "string"
+        },
+        "repository_identity": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Repository Identity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "repository_identity",
+        "commit_hash",
+        "index_hash"
+      ],
+      "title": "RepositorySnapshot",
+      "type": "object"
+    },
+    "RetrieverCallTrace": {
+      "additionalProperties": false,
+      "properties": {
+        "access_audit_ids": {
+          "default": [],
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Access Audit Ids",
+          "type": "array"
+        },
+        "available": {
+          "default": true,
+          "title": "Available",
+          "type": "boolean"
+        },
+        "elapsed_ms": {
+          "minimum": 0,
+          "title": "Elapsed Ms",
+          "type": "number"
+        },
+        "retriever_id": {
+          "minLength": 1,
+          "title": "Retriever Id",
+          "type": "string"
+        },
+        "returned_count": {
+          "minimum": 0,
+          "title": "Returned Count",
+          "type": "integer"
+        },
+        "subquery_id": {
+          "format": "uuid",
+          "title": "Subquery Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "retriever_id",
+        "subquery_id",
+        "returned_count",
+        "elapsed_ms"
+      ],
+      "title": "RetrieverCallTrace",
+      "type": "object"
+    },
+    "SemanticRevisionSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "format": "uuid",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "claim_id",
+        "revision",
+        "content_hash"
+      ],
+      "title": "SemanticRevisionSnapshot",
+      "type": "object"
+    },
+    "TokenEstimatorProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "bytes_per_token": {
+          "default": 3,
+          "maximum": 16,
+          "minimum": 1,
+          "title": "Bytes Per Token",
+          "type": "integer"
+        },
+        "estimator_id": {
+          "minLength": 1,
+          "title": "Estimator Id",
+          "type": "string"
+        },
+        "estimator_type": {
+          "$ref": "#/$defs/TokenEstimatorType"
+        },
+        "per_message_overhead": {
+          "default": 4,
+          "maximum": 1000,
+          "minimum": 0,
+          "title": "Per Message Overhead",
+          "type": "integer"
+        },
+        "profile_hash": {
+          "default": "",
+          "title": "Profile Hash",
+          "type": "string"
+        },
+        "version": {
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "estimator_type",
+        "estimator_id",
+        "version"
+      ],
+      "title": "TokenEstimatorProfile",
+      "type": "object"
+    },
+    "TokenEstimatorType": {
+      "enum": [
+        "conservative_utf8",
+        "provider"
+      ],
+      "title": "TokenEstimatorType",
+      "type": "string"
+    },
+    "WorkspaceSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "diff_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Diff Hash",
+          "type": "string"
+        },
+        "workspace_id": {
+          "format": "uuid",
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "workspace_revision": {
+          "minimum": 0,
+          "title": "Workspace Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "workspace_revision",
+        "diff_hash"
+      ],
+      "title": "WorkspaceSnapshot",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/context/context-build-result.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "bundle": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ContextBundleRevision"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "bundle_reference": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ContextBundleReference"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "failure": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ContextBuildFailure"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "rendered_context": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rendered Context"
+    },
+    "request": {
+      "$ref": "#/$defs/ContextRequest"
+    },
+    "status": {
+      "$ref": "#/$defs/ContextBuildStatus"
+    },
+    "trace": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ContextRetrievalTrace"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "warnings": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ContextWarning"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "status",
+    "request"
+  ],
+  "title": "ContextBuildResult",
+  "type": "object"
+}

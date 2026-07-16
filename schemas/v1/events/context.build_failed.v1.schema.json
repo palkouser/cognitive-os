@@ -1,0 +1,47 @@
+{
+  "$defs": {
+    "ContextBuildFailure": {
+      "enum": [
+        "retry_safe",
+        "needs_clarification",
+        "budget_exhausted",
+        "required_source_missing",
+        "safety_rejected",
+        "retriever_unavailable",
+        "failed"
+      ],
+      "title": "ContextBuildFailure",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/context.build_failed.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "context_request_id": {
+      "format": "uuid",
+      "title": "Context Request Id",
+      "type": "string"
+    },
+    "failed_at": {
+      "format": "date-time",
+      "title": "Failed At",
+      "type": "string"
+    },
+    "failure": {
+      "$ref": "#/$defs/ContextBuildFailure"
+    },
+    "reason_code": {
+      "minLength": 1,
+      "title": "Reason Code",
+      "type": "string"
+    }
+  },
+  "required": [
+    "context_request_id",
+    "failure",
+    "reason_code",
+    "failed_at"
+  ],
+  "title": "ContextBuildFailed",
+  "type": "object"
+}

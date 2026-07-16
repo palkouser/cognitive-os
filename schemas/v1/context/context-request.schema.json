@@ -1,0 +1,524 @@
+{
+  "$defs": {
+    "ArtifactSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "format": "uuid",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "content_hash"
+      ],
+      "title": "ArtifactSnapshot",
+      "type": "object"
+    },
+    "ContextBudget": {
+      "additionalProperties": false,
+      "properties": {
+        "maximum_candidates": {
+          "exclusiveMinimum": 0,
+          "maximum": 1000,
+          "title": "Maximum Candidates",
+          "type": "integer"
+        },
+        "maximum_elapsed_seconds": {
+          "exclusiveMinimum": 0,
+          "maximum": 300,
+          "title": "Maximum Elapsed Seconds",
+          "type": "number"
+        },
+        "maximum_items": {
+          "exclusiveMinimum": 0,
+          "maximum": 64,
+          "title": "Maximum Items",
+          "type": "integer"
+        },
+        "maximum_items_per_source": {
+          "exclusiveMinimum": 0,
+          "maximum": 64,
+          "title": "Maximum Items Per Source",
+          "type": "integer"
+        },
+        "maximum_retriever_calls": {
+          "exclusiveMinimum": 0,
+          "maximum": 24,
+          "title": "Maximum Retriever Calls",
+          "type": "integer"
+        },
+        "minimum_evidence_items": {
+          "maximum": 64,
+          "minimum": 0,
+          "title": "Minimum Evidence Items",
+          "type": "integer"
+        },
+        "minimum_recent_items": {
+          "maximum": 64,
+          "minimum": 0,
+          "title": "Minimum Recent Items",
+          "type": "integer"
+        },
+        "provider_context_limit": {
+          "exclusiveMinimum": 0,
+          "maximum": 1000000,
+          "title": "Provider Context Limit",
+          "type": "integer"
+        },
+        "reserved_output_tokens": {
+          "minimum": 0,
+          "title": "Reserved Output Tokens",
+          "type": "integer"
+        },
+        "safety_margin_tokens": {
+          "minimum": 0,
+          "title": "Safety Margin Tokens",
+          "type": "integer"
+        },
+        "system_instruction_tokens": {
+          "minimum": 0,
+          "title": "System Instruction Tokens",
+          "type": "integer"
+        },
+        "task_and_plan_tokens": {
+          "minimum": 0,
+          "title": "Task And Plan Tokens",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "provider_context_limit",
+        "reserved_output_tokens",
+        "system_instruction_tokens",
+        "task_and_plan_tokens",
+        "safety_margin_tokens",
+        "maximum_retriever_calls",
+        "maximum_candidates",
+        "maximum_items",
+        "maximum_items_per_source",
+        "minimum_recent_items",
+        "minimum_evidence_items",
+        "maximum_elapsed_seconds"
+      ],
+      "title": "ContextBudget",
+      "type": "object"
+    },
+    "ContextPurpose": {
+      "enum": [
+        "planning",
+        "execution",
+        "repair",
+        "coding",
+        "advisory",
+        "semantic_extraction"
+      ],
+      "title": "ContextPurpose",
+      "type": "string"
+    },
+    "ContextSourceSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "artifacts": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ArtifactSnapshot"
+          },
+          "title": "Artifacts",
+          "type": "array"
+        },
+        "captured_at": {
+          "format": "date-time",
+          "title": "Captured At",
+          "type": "string"
+        },
+        "event_streams": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EventStreamSnapshot"
+          },
+          "title": "Event Streams",
+          "type": "array"
+        },
+        "memory_revisions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/MemoryRevisionSnapshot"
+          },
+          "title": "Memory Revisions",
+          "type": "array"
+        },
+        "repository": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RepositorySnapshot"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "semantic_revisions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/SemanticRevisionSnapshot"
+          },
+          "title": "Semantic Revisions",
+          "type": "array"
+        },
+        "snapshot_hash": {
+          "default": "",
+          "title": "Snapshot Hash",
+          "type": "string"
+        },
+        "workspace": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WorkspaceSnapshot"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "captured_at"
+      ],
+      "title": "ContextSourceSnapshot",
+      "type": "object"
+    },
+    "ContextSourceType": {
+      "enum": [
+        "task_state",
+        "execution_plan",
+        "event",
+        "provider_result",
+        "tool_result",
+        "artifact",
+        "memory",
+        "semantic_claim",
+        "semantic_graph",
+        "wiki",
+        "repository_index",
+        "workspace",
+        "user_correction"
+      ],
+      "title": "ContextSourceType",
+      "type": "string"
+    },
+    "EventStreamSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "stream_id": {
+          "format": "uuid",
+          "title": "Stream Id",
+          "type": "string"
+        },
+        "upper_version": {
+          "minimum": 0,
+          "title": "Upper Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "stream_id",
+        "upper_version"
+      ],
+      "title": "EventStreamSnapshot",
+      "type": "object"
+    },
+    "MemoryRevisionSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "memory_id": {
+          "format": "uuid",
+          "title": "Memory Id",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "memory_id",
+        "revision",
+        "content_hash"
+      ],
+      "title": "MemoryRevisionSnapshot",
+      "type": "object"
+    },
+    "MemoryScope": {
+      "additionalProperties": false,
+      "properties": {
+        "scope_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "scope_type": {
+          "$ref": "#/$defs/MemoryScopeType"
+        }
+      },
+      "required": [
+        "scope_type",
+        "scope_id"
+      ],
+      "title": "MemoryScope",
+      "type": "object"
+    },
+    "MemoryScopeType": {
+      "enum": [
+        "global",
+        "project",
+        "repository",
+        "task",
+        "session",
+        "domain"
+      ],
+      "title": "MemoryScopeType",
+      "type": "string"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "MemoryType": {
+      "enum": [
+        "episode",
+        "observation",
+        "decision",
+        "correction",
+        "task_summary",
+        "code_context",
+        "verification_summary",
+        "failure_pattern",
+        "user_instruction"
+      ],
+      "title": "MemoryType",
+      "type": "string"
+    },
+    "RepositorySnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "commit_hash": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Commit Hash",
+          "type": "string"
+        },
+        "index_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Index Hash",
+          "type": "string"
+        },
+        "repository_identity": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Repository Identity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "repository_identity",
+        "commit_hash",
+        "index_hash"
+      ],
+      "title": "RepositorySnapshot",
+      "type": "object"
+    },
+    "SemanticRevisionSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "format": "uuid",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "claim_id",
+        "revision",
+        "content_hash"
+      ],
+      "title": "SemanticRevisionSnapshot",
+      "type": "object"
+    },
+    "WorkspaceSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "diff_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Diff Hash",
+          "type": "string"
+        },
+        "workspace_id": {
+          "format": "uuid",
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "workspace_revision": {
+          "minimum": 0,
+          "title": "Workspace Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "workspace_revision",
+        "diff_hash"
+      ],
+      "title": "WorkspaceSnapshot",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/context/context-request.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "allowed_memory_types": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/MemoryType"
+      },
+      "title": "Allowed Memory Types",
+      "type": "array"
+    },
+    "allowed_source_types": {
+      "items": {
+        "$ref": "#/$defs/ContextSourceType"
+      },
+      "maxItems": 13,
+      "minItems": 1,
+      "title": "Allowed Source Types",
+      "type": "array"
+    },
+    "budget": {
+      "$ref": "#/$defs/ContextBudget"
+    },
+    "context_purpose": {
+      "$ref": "#/$defs/ContextPurpose"
+    },
+    "context_request_id": {
+      "format": "uuid",
+      "title": "Context Request Id",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "current_step_reference": {
+      "minLength": 1,
+      "title": "Current Step Reference",
+      "type": "string"
+    },
+    "known_at": {
+      "format": "date-time",
+      "title": "Known At",
+      "type": "string"
+    },
+    "plan_reference": {
+      "minLength": 1,
+      "title": "Plan Reference",
+      "type": "string"
+    },
+    "problem_reference": {
+      "minLength": 1,
+      "title": "Problem Reference",
+      "type": "string"
+    },
+    "provider_profile": {
+      "minLength": 1,
+      "title": "Provider Profile",
+      "type": "string"
+    },
+    "query": {
+      "maxLength": 8192,
+      "minLength": 1,
+      "title": "Query",
+      "type": "string"
+    },
+    "required_scopes": {
+      "items": {
+        "$ref": "#/$defs/MemoryScope"
+      },
+      "maxItems": 16,
+      "minItems": 1,
+      "title": "Required Scopes",
+      "type": "array"
+    },
+    "sensitivity_limit": {
+      "$ref": "#/$defs/MemorySensitivity"
+    },
+    "source_snapshot": {
+      "$ref": "#/$defs/ContextSourceSnapshot"
+    },
+    "step_id": {
+      "format": "uuid",
+      "title": "Step Id",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    },
+    "valid_at": {
+      "format": "date-time",
+      "title": "Valid At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "context_request_id",
+    "task_run_id",
+    "step_id",
+    "context_purpose",
+    "problem_reference",
+    "plan_reference",
+    "current_step_reference",
+    "query",
+    "required_scopes",
+    "allowed_source_types",
+    "valid_at",
+    "known_at",
+    "sensitivity_limit",
+    "provider_profile",
+    "budget",
+    "source_snapshot",
+    "created_at"
+  ],
+  "title": "ContextRequest",
+  "type": "object"
+}

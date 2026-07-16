@@ -85,7 +85,8 @@
         "mathematical_expression",
         "logical_problem",
         "physical_quantity",
-        "semantic_snapshot"
+        "semantic_snapshot",
+        "context_bundle"
       ],
       "title": "VerificationSubjectType",
       "type": "string"
@@ -167,7 +168,8 @@
         "physics",
         "policy",
         "advisory",
-        "semantic"
+        "semantic",
+        "context"
       ],
       "title": "VerifierKind",
       "type": "string"

@@ -1,0 +1,261 @@
+{
+  "$defs": {
+    "CodeQuerySeed": {
+      "additionalProperties": false,
+      "properties": {
+        "paths": {
+          "items": {
+            "maxLength": 512,
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Paths",
+          "type": "array"
+        },
+        "symbols": {
+          "items": {
+            "maxLength": 512,
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Symbols",
+          "type": "array"
+        }
+      },
+      "required": [
+        "paths",
+        "symbols"
+      ],
+      "title": "CodeQuerySeed",
+      "type": "object"
+    },
+    "ContextSourceType": {
+      "enum": [
+        "task_state",
+        "execution_plan",
+        "event",
+        "provider_result",
+        "tool_result",
+        "artifact",
+        "memory",
+        "semantic_claim",
+        "semantic_graph",
+        "wiki",
+        "repository_index",
+        "workspace",
+        "user_correction"
+      ],
+      "title": "ContextSourceType",
+      "type": "string"
+    },
+    "GraphQuerySeed": {
+      "additionalProperties": false,
+      "properties": {
+        "maximum_depth": {
+          "default": 3,
+          "maximum": 3,
+          "minimum": 1,
+          "title": "Maximum Depth",
+          "type": "integer"
+        },
+        "maximum_nodes": {
+          "default": 500,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Maximum Nodes",
+          "type": "integer"
+        },
+        "node_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Node Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "node_ids"
+      ],
+      "title": "GraphQuerySeed",
+      "type": "object"
+    },
+    "QueryTerm": {
+      "additionalProperties": false,
+      "properties": {
+        "normalized": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Normalized",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "normalized"
+      ],
+      "title": "QueryTerm",
+      "type": "object"
+    },
+    "RetrievalMode": {
+      "enum": [
+        "metadata",
+        "lexical",
+        "exact_vector",
+        "graph",
+        "recent",
+        "source_lookup",
+        "code"
+      ],
+      "title": "RetrievalMode",
+      "type": "string"
+    },
+    "SemanticQuerySeed": {
+      "additionalProperties": false,
+      "properties": {
+        "predicate_ids": {
+          "items": {
+            "maxLength": 512,
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Predicate Ids",
+          "type": "array"
+        },
+        "subject_keys": {
+          "items": {
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Subject Keys",
+          "type": "array"
+        }
+      },
+      "required": [
+        "subject_keys",
+        "predicate_ids"
+      ],
+      "title": "SemanticQuerySeed",
+      "type": "object"
+    },
+    "TemporalQuerySelector": {
+      "additionalProperties": false,
+      "properties": {
+        "known_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Known At"
+        },
+        "valid_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Valid At"
+        }
+      },
+      "title": "TemporalQuerySelector",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/context/retrieval-subquery.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "code": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CodeQuerySeed"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "graph": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GraphQuerySeed"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "maximum_results": {
+      "default": 100,
+      "maximum": 200,
+      "minimum": 1,
+      "title": "Maximum Results",
+      "type": "integer"
+    },
+    "mode": {
+      "$ref": "#/$defs/RetrievalMode"
+    },
+    "semantic": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SemanticQuerySeed"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "source_type": {
+      "$ref": "#/$defs/ContextSourceType"
+    },
+    "subquery_id": {
+      "format": "uuid",
+      "title": "Subquery Id",
+      "type": "string"
+    },
+    "temporal": {
+      "$ref": "#/$defs/TemporalQuerySelector",
+      "default": {
+        "known_at": null,
+        "valid_at": null
+      }
+    },
+    "terms": {
+      "items": {
+        "$ref": "#/$defs/QueryTerm"
+      },
+      "maxItems": 64,
+      "title": "Terms",
+      "type": "array"
+    }
+  },
+  "required": [
+    "subquery_id",
+    "source_type",
+    "mode",
+    "terms"
+  ],
+  "title": "RetrievalSubquery",
+  "type": "object"
+}
