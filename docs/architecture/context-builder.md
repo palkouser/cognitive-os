@@ -33,4 +33,3 @@ prevents the provider call.
 
 See [ADR 0038](../adr/0038-context-builder-authority.md),
 [hybrid retrieval](hybrid-retrieval.md), and [Context Bundle](context-bundle.md).
-

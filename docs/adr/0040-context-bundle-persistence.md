@@ -29,4 +29,3 @@ policy; traces contain metadata only. No bundle is ingested into memory automati
 artifact backup and event restore preserve audit evidence. Database migration `0004` remains
 unnecessary until captured query plans demonstrate a missing index; it must never add context
 content tables.
-

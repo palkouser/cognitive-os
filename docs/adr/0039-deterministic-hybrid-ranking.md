@@ -36,4 +36,3 @@ implemented.
 - Raw score blending is not comparable across source-specific retrievers.
 - Floating-point accumulation without quantization is not replay-stable.
 - Provider or learned ranking is not an authority boundary and lacks a deterministic baseline.
-

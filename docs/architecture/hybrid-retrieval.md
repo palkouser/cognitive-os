@@ -32,4 +32,3 @@ recall, database size, and plans showing a measured failure. No performance clai
 credential-free fixture.
 
 See [ADR 0039](../adr/0039-deterministic-hybrid-ranking.md).
-

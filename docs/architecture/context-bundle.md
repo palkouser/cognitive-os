@@ -22,4 +22,3 @@ Bundle artifacts are append-only, replayable, sensitivity-retained, and included
 backup. They are never ingested into memory automatically.
 
 See [ADR 0040](../adr/0040-context-bundle-persistence.md).
-

@@ -16,4 +16,3 @@ local-only, digest-recorded, and not part of core installation.
 
 Schema snapshots are exported under `schemas/v1/config/context-configuration.schema.json` using the
 repository-wide schema exporter.
-

@@ -19,4 +19,3 @@ Required context that is secret-bearing, over-sensitive, stale, forged, unproven
 otherwise invalid blocks provider execution. Optional invalid context is excluded with an explicit
 reason. The required verifier bundle covers provenance, token budget, trust, sensitivity, required
 coverage, trace, safety, and source snapshots.
-

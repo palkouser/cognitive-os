@@ -30,4 +30,3 @@ failure; the command never repairs or overwrites history.
 Back up and restore Context artifacts through the existing content-addressed artifact backup and
 event-store procedures. After restore, run `verify`, then `regenerate`; workspace snapshots may be
 reported stale and must produce a new bundle revision.
-

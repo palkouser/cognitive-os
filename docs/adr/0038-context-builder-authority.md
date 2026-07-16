@@ -48,4 +48,3 @@ when mutable snapshots changed.
 - Provider-selected retrieval would turn untrusted output into policy.
 - Automatic bundle-to-memory ingestion would create circular, ungrounded authority.
 - Treating Wiki pages as evidence would break claim-revision lineage.
-
