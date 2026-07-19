@@ -1,6 +1,6 @@
 # Sprint 13 report
 
-Status: Implemented and locally validated; remote CI, merge, and release publication pending
+Status: Released on `main`; remote CI passed and `sprint-13-baseline` published
 
 ## Baseline and authority
 
@@ -10,6 +10,10 @@ identity, revisions, edges, selections, outcomes, statistics, and access records
 retains lifecycle evidence, the artifact store retains verifier and regression evidence, and the
 existing Controller remains the only execution authority. No upstream LightAgent runtime file is
 changed.
+
+The implementation was merged through PR `#196` at
+`ffa8b07496dc5c673970b45f184b1a4931db5728` after every required remote check passed. The
+`sprint-13-baseline` annotated tag identifies the final CI-validated release-report merge commit.
 
 ## Delivered scope
 
@@ -72,8 +76,7 @@ Execution, resume, cancellation, and outcome commands require the running applic
 adapter; the standalone CLI does not invoke tools or providers. NetworkX remains optional analysis,
 not authority. Automatic strategy generation or promotion, learned ranking, adaptive routing,
 dynamic capability registration, external graph databases, provider authority, and permission or
-budget expansion remain disabled. Remote CI evidence, the merge commit, and the
-`sprint-13-baseline` tag are intentionally pending the separate release workflow.
+budget expansion remain disabled.
 
 ## Gate F and Sprint 14 hand-off
 
