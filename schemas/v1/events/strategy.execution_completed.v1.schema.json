@@ -1,0 +1,82 @@
+{
+  "$defs": {
+    "StrategyExecutionStatus": {
+      "enum": [
+        "preparing",
+        "running",
+        "waiting",
+        "accepted",
+        "rejected",
+        "unverifiable",
+        "failed",
+        "cancelled",
+        "policy_denied"
+      ],
+      "title": "StrategyExecutionStatus",
+      "type": "string"
+    },
+    "StrategyOutcomeStatus": {
+      "enum": [
+        "accepted",
+        "rejected",
+        "unverifiable",
+        "cancelled",
+        "policy_denied",
+        "infrastructure_failure"
+      ],
+      "title": "StrategyOutcomeStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/strategy.execution_completed.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "execution_id": {
+      "format": "uuid",
+      "title": "Execution Id",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "outcome_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Outcome Hash",
+      "type": "string"
+    },
+    "outcome_status": {
+      "$ref": "#/$defs/StrategyOutcomeStatus"
+    },
+    "revision": {
+      "title": "Revision",
+      "type": "integer"
+    },
+    "status": {
+      "$ref": "#/$defs/StrategyExecutionStatus"
+    },
+    "strategy_id": {
+      "format": "uuid",
+      "title": "Strategy Id",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "execution_id",
+    "strategy_id",
+    "revision",
+    "task_run_id",
+    "status",
+    "outcome_status",
+    "outcome_hash",
+    "occurred_at"
+  ],
+  "title": "StrategyExecutionCompleted",
+  "type": "object"
+}

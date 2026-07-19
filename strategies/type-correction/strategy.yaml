@@ -1,0 +1,9 @@
+format_version: "1"
+canonical_name: type-correction
+display_name: Type Correction
+problem_class_id: coding.type-correction
+description: Apply a minimal type correction with typed and runtime evidence.
+skills: [repository-inspection, focused-test-execution, safe-diff-preparation, evidence-collection]
+phases: [repository-inspection, type-reproduction, bounded-repair, typed-verification, runtime-verification, safe-diff-review]
+maximum_repairs: 2
+regression_profile: type-correction-v1

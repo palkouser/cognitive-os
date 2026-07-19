@@ -15,7 +15,8 @@
         "repository_index",
         "workspace",
         "user_correction",
-        "procedural_skill"
+        "procedural_skill",
+        "strategy"
       ],
       "title": "ContextSourceType",
       "type": "string"

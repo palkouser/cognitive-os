@@ -1,0 +1,321 @@
+{
+  "$defs": {
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "StrategyBranchCondition": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_value": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "signal": {
+          "$ref": "#/$defs/StrategyBranchSignal"
+        }
+      },
+      "required": [
+        "signal",
+        "expected_value"
+      ],
+      "title": "StrategyBranchCondition",
+      "type": "object"
+    },
+    "StrategyBranchSignal": {
+      "enum": [
+        "verifier_outcome",
+        "acceptance_status",
+        "tool_status",
+        "provider_status",
+        "clarification_status",
+        "repair_count",
+        "budget_state",
+        "artifact_property"
+      ],
+      "title": "StrategyBranchSignal",
+      "type": "string"
+    },
+    "StrategyBudgetProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "maximum_context_builds": {
+          "default": 8,
+          "maximum": 8,
+          "minimum": 0,
+          "title": "Maximum Context Builds",
+          "type": "integer"
+        },
+        "maximum_context_tokens": {
+          "default": 32768,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Maximum Context Tokens",
+          "type": "integer"
+        },
+        "maximum_execution_seconds": {
+          "default": 3600,
+          "maximum": 3600,
+          "minimum": 1,
+          "title": "Maximum Execution Seconds",
+          "type": "integer"
+        },
+        "maximum_provider_calls": {
+          "default": 8,
+          "maximum": 8,
+          "minimum": 0,
+          "title": "Maximum Provider Calls",
+          "type": "integer"
+        },
+        "maximum_repairs": {
+          "default": 3,
+          "maximum": 3,
+          "minimum": 0,
+          "title": "Maximum Repairs",
+          "type": "integer"
+        },
+        "maximum_steps": {
+          "default": 128,
+          "maximum": 128,
+          "minimum": 1,
+          "title": "Maximum Steps",
+          "type": "integer"
+        },
+        "maximum_tool_calls": {
+          "default": 32,
+          "maximum": 32,
+          "minimum": 0,
+          "title": "Maximum Tool Calls",
+          "type": "integer"
+        }
+      },
+      "title": "StrategyBudgetProfile",
+      "type": "object"
+    },
+    "StrategyPhaseType": {
+      "enum": [
+        "context",
+        "skill",
+        "provider",
+        "tool",
+        "verification",
+        "approval",
+        "clarification",
+        "acceptance",
+        "repair",
+        "terminal"
+      ],
+      "title": "StrategyPhaseType",
+      "type": "string"
+    },
+    "StrategyRequirement": {
+      "additionalProperties": false,
+      "properties": {
+        "capability_id": {
+          "minLength": 1,
+          "title": "Capability Id",
+          "type": "string"
+        },
+        "permission": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Permission"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "requirement_id": {
+          "minLength": 1,
+          "title": "Requirement Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "requirement_id",
+        "capability_id"
+      ],
+      "title": "StrategyRequirement",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/strategy-phase.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "approval_requirement": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Approval Requirement"
+    },
+    "budget": {
+      "$ref": "#/$defs/StrategyBudgetProfile"
+    },
+    "completion_signals": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/StrategyBranchCondition"
+      },
+      "maxItems": 16,
+      "title": "Completion Signals",
+      "type": "array"
+    },
+    "context_profile_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Context Profile Id"
+    },
+    "dependencies": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 64,
+      "title": "Dependencies",
+      "type": "array"
+    },
+    "display_name": {
+      "minLength": 1,
+      "title": "Display Name",
+      "type": "string"
+    },
+    "failure_target_phase_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Failure Target Phase Id"
+    },
+    "model_role_ids": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 16,
+      "title": "Model Role Ids",
+      "type": "array"
+    },
+    "phase_id": {
+      "minLength": 1,
+      "title": "Phase Id",
+      "type": "string"
+    },
+    "phase_type": {
+      "$ref": "#/$defs/StrategyPhaseType"
+    },
+    "purpose": {
+      "minLength": 1,
+      "title": "Purpose",
+      "type": "string"
+    },
+    "sequence": {
+      "maximum": 128,
+      "minimum": 1,
+      "title": "Sequence",
+      "type": "integer"
+    },
+    "skill_binding_ids": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 32,
+      "title": "Skill Binding Ids",
+      "type": "array"
+    },
+    "tool_requirements": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/StrategyRequirement"
+      },
+      "maxItems": 32,
+      "title": "Tool Requirements",
+      "type": "array"
+    },
+    "verifier_requirements": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/StrategyRequirement"
+      },
+      "maxItems": 32,
+      "title": "Verifier Requirements",
+      "type": "array"
+    }
+  },
+  "required": [
+    "phase_id",
+    "sequence",
+    "phase_type",
+    "display_name",
+    "purpose",
+    "budget"
+  ],
+  "title": "StrategyPhase",
+  "type": "object"
+}

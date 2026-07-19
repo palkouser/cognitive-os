@@ -1,0 +1,53 @@
+{
+  "$defs": {
+    "StrategyExclusionReason": {
+      "enum": [
+        "status",
+        "scope",
+        "sensitivity",
+        "applicability",
+        "missing_skill",
+        "missing_tool",
+        "missing_verifier",
+        "missing_model_role",
+        "missing_context_profile",
+        "approval_required",
+        "operator_restriction",
+        "invalid_graph",
+        "unsafe_history"
+      ],
+      "title": "StrategyExclusionReason",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/strategy-selection-exclusion.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "detail_code": {
+      "minLength": 1,
+      "title": "Detail Code",
+      "type": "string"
+    },
+    "reason": {
+      "$ref": "#/$defs/StrategyExclusionReason"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "strategy_id": {
+      "format": "uuid",
+      "title": "Strategy Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "strategy_id",
+    "revision",
+    "reason",
+    "detail_code"
+  ],
+  "title": "StrategySelectionExclusion",
+  "type": "object"
+}

@@ -1,0 +1,227 @@
+{
+  "$defs": {
+    "SkillProblemSignature": {
+      "additionalProperties": false,
+      "properties": {
+        "problem_domain": {
+          "minLength": 1,
+          "title": "Problem Domain",
+          "type": "string"
+        },
+        "relevant_artifact_types": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Relevant Artifact Types",
+          "type": "array"
+        },
+        "repository_language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Repository Language"
+        },
+        "repository_profile": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Repository Profile"
+        },
+        "requested_output_type": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Requested Output Type"
+        },
+        "required_tool_capabilities": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Required Tool Capabilities",
+          "type": "array"
+        },
+        "required_verifier_capabilities": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Required Verifier Capabilities",
+          "type": "array"
+        },
+        "risk_level": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Risk Level"
+        },
+        "task_type": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Type"
+        }
+      },
+      "required": [
+        "problem_domain"
+      ],
+      "title": "SkillProblemSignature",
+      "type": "object"
+    },
+    "StrategyBindingType": {
+      "enum": [
+        "exact_skill_revision",
+        "current_verified_skill",
+        "skill_selection_query",
+        "preferred_skill_with_fallbacks"
+      ],
+      "title": "StrategyBindingType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/strategy-skill-binding.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "binding_id": {
+      "minLength": 1,
+      "title": "Binding Id",
+      "type": "string"
+    },
+    "binding_type": {
+      "$ref": "#/$defs/StrategyBindingType"
+    },
+    "fallback_references": {
+      "default": [],
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "format": "uuid",
+            "type": "string"
+          },
+          {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        ],
+        "type": "array"
+      },
+      "maxItems": 16,
+      "title": "Fallback References",
+      "type": "array"
+    },
+    "input_mapping": {
+      "additionalProperties": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Input Mapping",
+      "type": "object"
+    },
+    "output_mapping": {
+      "additionalProperties": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Output Mapping",
+      "type": "object"
+    },
+    "required": {
+      "default": true,
+      "title": "Required",
+      "type": "boolean"
+    },
+    "revision": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Revision"
+    },
+    "selection_signature": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SkillProblemSignature"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "skill_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Skill Id"
+    }
+  },
+  "required": [
+    "binding_id",
+    "binding_type"
+  ],
+  "title": "StrategySkillBinding",
+  "type": "object"
+}

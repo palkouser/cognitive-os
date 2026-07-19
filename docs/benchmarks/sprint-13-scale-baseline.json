@@ -1,0 +1,625 @@
+{
+  "architecture": {
+    "cpu_only": true,
+    "graph_database": false,
+    "learned_ranking": false,
+    "network_required": false,
+    "postgresql_authoritative": true
+  },
+  "environment": {
+    "database_size_bytes": 160741055,
+    "machine": "x86_64",
+    "maximum_rss_kib": 67780,
+    "platform": "Linux-7.0.0-28-generic-x86_64-with-glibc2.43",
+    "postgresql": "18.4 (Debian 18.4-1.pgdg12+1)",
+    "processor": "unknown",
+    "python": "3.12.13",
+    "strategy_relation_size_bytes": 149258240
+  },
+  "fixture": {
+    "accesses": 250000,
+    "graph_edges": 100000,
+    "outcomes": 25000,
+    "selections": 25000,
+    "strategy_identities": 1000,
+    "strategy_revisions": 5000
+  },
+  "measurements": {
+    "applicability": {
+      "iterations": 30,
+      "maximum_ms": 0.704,
+      "p50_ms": 0.438,
+      "p95_ms": 0.473
+    },
+    "candidate_query": {
+      "iterations": 30,
+      "maximum_ms": 1.664,
+      "p50_ms": 1.224,
+      "p95_ms": 1.273
+    },
+    "core_graph_projection_10000_edges": {
+      "iterations": 30,
+      "maximum_ms": 1.608,
+      "p50_ms": 0.998,
+      "p95_ms": 1.007
+    },
+    "graph_snapshot": {
+      "iterations": 30,
+      "maximum_ms": 0.693,
+      "p50_ms": 0.29,
+      "p95_ms": 0.313
+    },
+    "lineage_query": {
+      "iterations": 30,
+      "maximum_ms": 0.754,
+      "p50_ms": 0.272,
+      "p95_ms": 0.366
+    },
+    "neighbourhood_query": {
+      "iterations": 30,
+      "maximum_ms": 0.825,
+      "p50_ms": 0.236,
+      "p95_ms": 0.299
+    },
+    "networkx_graph_projection_10000_edges": {
+      "iterations": 30,
+      "maximum_ms": 4.5,
+      "p50_ms": 4.015,
+      "p95_ms": 4.06
+    },
+    "registry_load": {
+      "iterations": 30,
+      "maximum_ms": 12.96,
+      "p50_ms": 1.206,
+      "p95_ms": 2.992
+    },
+    "selection": {
+      "iterations": 30,
+      "maximum_ms": 12.813,
+      "p50_ms": 9.0,
+      "p95_ms": 11.206
+    },
+    "statistics_rebuild": {
+      "iterations": 30,
+      "maximum_ms": 5.754,
+      "p50_ms": 4.779,
+      "p95_ms": 5.658
+    }
+  },
+  "plans": {
+    "applicability": [
+      {
+        "Plan": {
+          "Async Capable": false,
+          "Disabled": false,
+          "Node Type": "Limit",
+          "Parallel Aware": false,
+          "Plan Rows": 1,
+          "Plan Width": 166,
+          "Plans": [
+            {
+              "Async Capable": false,
+              "Disabled": false,
+              "Node Type": "Sort",
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Plan Rows": 1,
+              "Plan Width": 166,
+              "Plans": [
+                {
+                  "Alias": "strategy_revisions",
+                  "Async Capable": false,
+                  "Disabled": false,
+                  "Index Cond": "((problem_class_id = 'coding.scale'::text) AND (status = 'verified'::text))",
+                  "Index Name": "ix_strategy_revisions_problem",
+                  "Node Type": "Index Scan",
+                  "Parallel Aware": false,
+                  "Parent Relationship": "Outer",
+                  "Plan Rows": 1,
+                  "Plan Width": 166,
+                  "Relation Name": "strategy_revisions",
+                  "Scan Direction": "Forward",
+                  "Startup Cost": 0.28,
+                  "Total Cost": 8.3
+                }
+              ],
+              "Sort Key": [
+                "strategy_id"
+              ],
+              "Startup Cost": 8.31,
+              "Total Cost": 8.31
+            }
+          ],
+          "Startup Cost": 8.31,
+          "Total Cost": 8.31
+        }
+      }
+    ],
+    "candidate_query": [
+      {
+        "Plan": {
+          "Async Capable": false,
+          "Disabled": false,
+          "Node Type": "Limit",
+          "Parallel Aware": false,
+          "Plan Rows": 1,
+          "Plan Width": 536,
+          "Plans": [
+            {
+              "Async Capable": false,
+              "Disabled": false,
+              "Node Type": "Sort",
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Plan Rows": 1,
+              "Plan Width": 536,
+              "Plans": [
+                {
+                  "Alias": "strategy_items",
+                  "Async Capable": false,
+                  "Disabled": false,
+                  "Filter": "((scope_type = 'project'::text) AND (scope_id = 'scale'::text))",
+                  "Index Cond": "(current_status = 'verified'::text)",
+                  "Index Name": "ix_strategy_items_problem_status",
+                  "Node Type": "Index Scan",
+                  "Parallel Aware": false,
+                  "Parent Relationship": "Outer",
+                  "Plan Rows": 1,
+                  "Plan Width": 536,
+                  "Relation Name": "strategy_items",
+                  "Scan Direction": "Forward",
+                  "Startup Cost": 0.14,
+                  "Total Cost": 13.98
+                }
+              ],
+              "Sort Key": [
+                "canonical_name"
+              ],
+              "Startup Cost": 13.99,
+              "Total Cost": 14.0
+            }
+          ],
+          "Startup Cost": 13.99,
+          "Total Cost": 14.0
+        }
+      }
+    ],
+    "graph_snapshot": [
+      {
+        "Plan": {
+          "Async Capable": false,
+          "Disabled": false,
+          "Node Type": "Aggregate",
+          "Parallel Aware": false,
+          "Partial Mode": "Simple",
+          "Plan Rows": 1,
+          "Plan Width": 52,
+          "Plans": [
+            {
+              "Alias": "e",
+              "Async Capable": false,
+              "Disabled": false,
+              "Index Cond": "((strategy_id = '00000000-0000-0013-0001-000000000500'::uuid) AND (revision = 5))",
+              "Index Name": "uq_strategy_edge_hash",
+              "Node Type": "Index Scan",
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Plan Rows": 2,
+              "Plan Width": 294,
+              "Relation Name": "strategy_edges",
+              "Scan Direction": "Forward",
+              "Startup Cost": 0.41,
+              "Total Cost": 12.45
+            }
+          ],
+          "Startup Cost": 0.41,
+          "Strategy": "Sorted",
+          "Total Cost": 12.48
+        }
+      }
+    ],
+    "lineage_query": [
+      {
+        "Plan": {
+          "Async Capable": false,
+          "Disabled": false,
+          "Node Type": "Sort",
+          "Parallel Aware": false,
+          "Plan Rows": 11,
+          "Plan Width": 24,
+          "Plans": [
+            {
+              "Async Capable": false,
+              "Disabled": false,
+              "Node Type": "Recursive Union",
+              "Parallel Aware": false,
+              "Parent Relationship": "InitPlan",
+              "Plan Rows": 11,
+              "Plan Width": 24,
+              "Plans": [
+                {
+                  "Async Capable": false,
+                  "Disabled": false,
+                  "Node Type": "Result",
+                  "Parallel Aware": false,
+                  "Parent Relationship": "Outer",
+                  "Plan Rows": 1,
+                  "Plan Width": 24,
+                  "Startup Cost": 0.0,
+                  "Total Cost": 0.01
+                },
+                {
+                  "Async Capable": false,
+                  "Disabled": false,
+                  "Inner Unique": false,
+                  "Join Type": "Inner",
+                  "Node Type": "Nested Loop",
+                  "Parallel Aware": false,
+                  "Parent Relationship": "Inner",
+                  "Plan Rows": 1,
+                  "Plan Width": 24,
+                  "Plans": [
+                    {
+                      "Alias": "l",
+                      "Async Capable": false,
+                      "CTE Name": "lineage",
+                      "Disabled": false,
+                      "Filter": "(depth < 16)",
+                      "Node Type": "WorkTable Scan",
+                      "Parallel Aware": false,
+                      "Parent Relationship": "Outer",
+                      "Plan Rows": 3,
+                      "Plan Width": 24,
+                      "Startup Cost": 0.0,
+                      "Total Cost": 0.22
+                    },
+                    {
+                      "Alias": "e",
+                      "Async Capable": false,
+                      "Disabled": false,
+                      "Filter": "(target_type = 'strategy_revision'::text)",
+                      "Index Cond": "((strategy_id = l.strategy_id) AND (revision = l.revision) AND (edge_type = 'derived_from'::text))",
+                      "Index Name": "ix_strategy_edges_source",
+                      "Node Type": "Index Scan",
+                      "Parallel Aware": false,
+                      "Parent Relationship": "Inner",
+                      "Plan Rows": 1,
+                      "Plan Width": 84,
+                      "Relation Name": "strategy_edges",
+                      "Scan Direction": "Forward",
+                      "Startup Cost": 0.29,
+                      "Total Cost": 8.31
+                    }
+                  ],
+                  "Startup Cost": 0.29,
+                  "Total Cost": 25.21
+                }
+              ],
+              "Startup Cost": 0.0,
+              "Subplan Name": "CTE lineage",
+              "Total Cost": 252.24
+            },
+            {
+              "Alias": "lineage",
+              "Async Capable": false,
+              "CTE Name": "lineage",
+              "Disabled": false,
+              "Node Type": "CTE Scan",
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Plan Rows": 11,
+              "Plan Width": 24,
+              "Startup Cost": 0.0,
+              "Total Cost": 0.22
+            }
+          ],
+          "Sort Key": [
+            "lineage.depth"
+          ],
+          "Startup Cost": 252.66,
+          "Total Cost": 252.68
+        }
+      }
+    ],
+    "neighbourhood_query": [
+      {
+        "Plan": {
+          "Async Capable": false,
+          "Disabled": false,
+          "Node Type": "Limit",
+          "Parallel Aware": false,
+          "Plan Rows": 2,
+          "Plan Width": 274,
+          "Plans": [
+            {
+              "Alias": "strategy_edges",
+              "Async Capable": false,
+              "Disabled": false,
+              "Index Cond": "((strategy_id = '00000000-0000-0013-0001-000000000500'::uuid) AND (revision = 5))",
+              "Index Name": "uq_strategy_edge_hash",
+              "Node Type": "Index Scan",
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Plan Rows": 2,
+              "Plan Width": 274,
+              "Relation Name": "strategy_edges",
+              "Scan Direction": "Forward",
+              "Startup Cost": 0.41,
+              "Total Cost": 12.45
+            }
+          ],
+          "Startup Cost": 0.41,
+          "Total Cost": 12.45
+        }
+      }
+    ],
+    "registry_load": [
+      {
+        "Plan": {
+          "Async Capable": false,
+          "Disabled": false,
+          "Node Type": "Limit",
+          "Parallel Aware": false,
+          "Plan Rows": 16,
+          "Plan Width": 198,
+          "Plans": [
+            {
+              "Async Capable": false,
+              "Disabled": false,
+              "Node Type": "Sort",
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Plan Rows": 16,
+              "Plan Width": 198,
+              "Plans": [
+                {
+                  "Async Capable": false,
+                  "Disabled": false,
+                  "Hash Cond": "((r.strategy_id = i.strategy_id) AND (r.revision = i.current_revision))",
+                  "Inner Unique": true,
+                  "Join Type": "Inner",
+                  "Node Type": "Hash Join",
+                  "Parallel Aware": false,
+                  "Parent Relationship": "Outer",
+                  "Plan Rows": 16,
+                  "Plan Width": 198,
+                  "Plans": [
+                    {
+                      "Alias": "r",
+                      "Async Capable": false,
+                      "Disabled": false,
+                      "Node Type": "Seq Scan",
+                      "Parallel Aware": false,
+                      "Parent Relationship": "Outer",
+                      "Plan Rows": 3192,
+                      "Plan Width": 166,
+                      "Relation Name": "strategy_revisions",
+                      "Startup Cost": 0.0,
+                      "Total Cost": 164.92
+                    },
+                    {
+                      "Async Capable": false,
+                      "Disabled": false,
+                      "Node Type": "Hash",
+                      "Parallel Aware": false,
+                      "Parent Relationship": "Inner",
+                      "Plan Rows": 243,
+                      "Plan Width": 52,
+                      "Plans": [
+                        {
+                          "Alias": "i",
+                          "Async Capable": false,
+                          "Disabled": false,
+                          "Node Type": "Seq Scan",
+                          "Parallel Aware": false,
+                          "Parent Relationship": "Outer",
+                          "Plan Rows": 243,
+                          "Plan Width": 52,
+                          "Relation Name": "strategy_items",
+                          "Startup Cost": 0.0,
+                          "Total Cost": 29.43
+                        }
+                      ],
+                      "Startup Cost": 29.43,
+                      "Total Cost": 29.43
+                    }
+                  ],
+                  "Startup Cost": 33.08,
+                  "Total Cost": 214.75
+                }
+              ],
+              "Sort Key": [
+                "i.strategy_id"
+              ],
+              "Startup Cost": 215.07,
+              "Total Cost": 215.11
+            }
+          ],
+          "Startup Cost": 215.07,
+          "Total Cost": 215.11
+        }
+      }
+    ],
+    "selection": [
+      {
+        "Plan": {
+          "Async Capable": false,
+          "Disabled": false,
+          "Node Type": "Limit",
+          "Parallel Aware": false,
+          "Plan Rows": 1,
+          "Plan Width": 36,
+          "Plans": [
+            {
+              "Async Capable": false,
+              "Disabled": false,
+              "Node Type": "Sort",
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Plan Rows": 1,
+              "Plan Width": 36,
+              "Plans": [
+                {
+                  "Async Capable": false,
+                  "Disabled": false,
+                  "Group Key": [
+                    "i.strategy_id"
+                  ],
+                  "Node Type": "Aggregate",
+                  "Parallel Aware": false,
+                  "Parent Relationship": "Outer",
+                  "Partial Mode": "Simple",
+                  "Plan Rows": 1,
+                  "Plan Width": 36,
+                  "Plans": [
+                    {
+                      "Async Capable": false,
+                      "Disabled": false,
+                      "Node Type": "Sort",
+                      "Parallel Aware": false,
+                      "Parent Relationship": "Outer",
+                      "Plan Rows": 1,
+                      "Plan Width": 68,
+                      "Plans": [
+                        {
+                          "Async Capable": false,
+                          "Disabled": false,
+                          "Inner Unique": false,
+                          "Join Type": "Left",
+                          "Node Type": "Nested Loop",
+                          "Parallel Aware": false,
+                          "Parent Relationship": "Outer",
+                          "Plan Rows": 1,
+                          "Plan Width": 68,
+                          "Plans": [
+                            {
+                              "Alias": "i",
+                              "Async Capable": false,
+                              "Disabled": false,
+                              "Index Cond": "((problem_class_id = 'coding.scale'::text) AND (current_status = 'verified'::text))",
+                              "Index Name": "ix_strategy_items_problem_status",
+                              "Node Type": "Index Scan",
+                              "Parallel Aware": false,
+                              "Parent Relationship": "Outer",
+                              "Plan Rows": 1,
+                              "Plan Width": 20,
+                              "Relation Name": "strategy_items",
+                              "Scan Direction": "Forward",
+                              "Startup Cost": 0.14,
+                              "Total Cost": 8.16
+                            },
+                            {
+                              "Alias": "o",
+                              "Async Capable": false,
+                              "Disabled": false,
+                              "Index Cond": "((strategy_id = i.strategy_id) AND (revision = i.current_revision))",
+                              "Index Name": "ix_strategy_outcomes_cohort",
+                              "Node Type": "Index Scan",
+                              "Parallel Aware": false,
+                              "Parent Relationship": "Inner",
+                              "Plan Rows": 1,
+                              "Plan Width": 68,
+                              "Relation Name": "strategy_outcomes",
+                              "Scan Direction": "Forward",
+                              "Startup Cost": 0.29,
+                              "Total Cost": 8.3
+                            }
+                          ],
+                          "Startup Cost": 0.43,
+                          "Total Cost": 16.48
+                        }
+                      ],
+                      "Sort Key": [
+                        "i.strategy_id"
+                      ],
+                      "Startup Cost": 16.49,
+                      "Total Cost": 16.5
+                    }
+                  ],
+                  "Startup Cost": 16.49,
+                  "Strategy": "Sorted",
+                  "Total Cost": 16.52
+                }
+              ],
+              "Sort Key": [
+                "(count(o.outcome_id) FILTER (WHERE (o.status = 'accepted'::text))) DESC",
+                "i.strategy_id"
+              ],
+              "Startup Cost": 16.53,
+              "Total Cost": 16.53
+            }
+          ],
+          "Startup Cost": 16.53,
+          "Total Cost": 16.53
+        }
+      }
+    ],
+    "statistics_rebuild": [
+      {
+        "Plan": {
+          "Async Capable": false,
+          "Disabled": false,
+          "Node Type": "Limit",
+          "Parallel Aware": false,
+          "Plan Rows": 1000,
+          "Plan Width": 68,
+          "Plans": [
+            {
+              "Async Capable": false,
+              "Disabled": false,
+              "Node Type": "Sort",
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Plan Rows": 1573,
+              "Plan Width": 68,
+              "Plans": [
+                {
+                  "Async Capable": false,
+                  "Disabled": false,
+                  "Group Key": [
+                    "strategy_id",
+                    "revision",
+                    "cohort_id"
+                  ],
+                  "Node Type": "Aggregate",
+                  "Parallel Aware": false,
+                  "Parent Relationship": "Outer",
+                  "Partial Mode": "Simple",
+                  "Plan Rows": 1573,
+                  "Plan Width": 68,
+                  "Planned Partitions": 0,
+                  "Plans": [
+                    {
+                      "Alias": "strategy_outcomes",
+                      "Async Capable": false,
+                      "Disabled": false,
+                      "Node Type": "Seq Scan",
+                      "Parallel Aware": false,
+                      "Parent Relationship": "Outer",
+                      "Plan Rows": 15730,
+                      "Plan Width": 84,
+                      "Relation Name": "strategy_outcomes",
+                      "Startup Cost": 0.0,
+                      "Total Cost": 872.3
+                    }
+                  ],
+                  "Startup Cost": 1108.25,
+                  "Strategy": "Hashed",
+                  "Total Cost": 1123.98
+                }
+              ],
+              "Sort Key": [
+                "strategy_id",
+                "revision"
+              ],
+              "Startup Cost": 1207.5,
+              "Total Cost": 1211.43
+            }
+          ],
+          "Startup Cost": 1207.5,
+          "Total Cost": 1210.0
+        }
+      }
+    ]
+  }
+}

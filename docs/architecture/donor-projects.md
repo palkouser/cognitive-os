@@ -61,3 +61,15 @@ the registered upstream boundary.
 
 No donor becomes the central Context Builder runtime. Optional rerankers require measured relevance,
 latency, provenance, scope, and sensitivity results before promotion.
+
+## Sprint 13 strategic-memory references
+
+| Project | License | Use | Authority and dependency decision |
+| --- | --- | --- | --- |
+| NetworkX | BSD-3-Clause | Optional disposable strategy-graph comparison | Existing `semantic-graph` extra only; PostgreSQL and the core traversal remain authoritative |
+| LangGraph | MIT | Strategy/workflow architecture reference only | No runtime dependency, state ownership, planner, or execution authority |
+| Graphiti | Apache-2.0 | Evolution-graph terminology reference only | No graph database, ingestion path, or authority |
+
+Sprint 13 adds no dependency. The Strategy Evolution Graph reuses the standard library,
+SQLAlchemy Core, PostgreSQL, Pydantic, existing Controller contracts, and the Sprint 12 Skill
+Registry.

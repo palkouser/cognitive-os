@@ -29,11 +29,12 @@ _AUTHORITY_ORDER = {
     ContextSourceType.EXECUTION_PLAN: 1,
     ContextSourceType.SEMANTIC_CLAIM: 2,
     ContextSourceType.PROCEDURAL_SKILL: 3,
-    ContextSourceType.MEMORY: 4,
-    ContextSourceType.ARTIFACT: 5,
-    ContextSourceType.REPOSITORY_INDEX: 6,
-    ContextSourceType.WORKSPACE: 7,
-    ContextSourceType.WIKI: 8,
+    ContextSourceType.STRATEGY: 4,
+    ContextSourceType.MEMORY: 5,
+    ContextSourceType.ARTIFACT: 6,
+    ContextSourceType.REPOSITORY_INDEX: 7,
+    ContextSourceType.WORKSPACE: 8,
+    ContextSourceType.WIKI: 9,
 }
 _TRUST_SCORE = {
     ContextTrustClass.SYSTEM: Decimal("1.0"),

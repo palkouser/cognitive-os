@@ -62,6 +62,7 @@ _SOURCE_TRUST = {
     ContextSourceType.WORKSPACE: ContextTrustClass.SYSTEM,
     ContextSourceType.USER_CORRECTION: ContextTrustClass.USER_PROVIDED,
     ContextSourceType.PROCEDURAL_SKILL: ContextTrustClass.VERIFIED,
+    ContextSourceType.STRATEGY: ContextTrustClass.VERIFIED,
 }
 
 
@@ -140,6 +141,12 @@ def host_context_retriever(
             RetrievalMode.METADATA,
             RetrievalMode.LEXICAL,
             RetrievalMode.SOURCE_LOOKUP,
+        ),
+        ContextSourceType.STRATEGY: (
+            RetrievalMode.METADATA,
+            RetrievalMode.LEXICAL,
+            RetrievalMode.SOURCE_LOOKUP,
+            RetrievalMode.GRAPH,
         ),
     }.get(source_type, (RetrievalMode.METADATA, RetrievalMode.SOURCE_LOOKUP))
     return CallbackContextRetriever(

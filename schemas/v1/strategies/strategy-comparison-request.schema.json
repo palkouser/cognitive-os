@@ -1,0 +1,52 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/strategy-comparison-request.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "cohort_id": {
+      "minLength": 1,
+      "title": "Cohort Id",
+      "type": "string"
+    },
+    "comparison_id": {
+      "format": "uuid",
+      "title": "Comparison Id",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "left_revision": {
+      "minimum": 1,
+      "title": "Left Revision",
+      "type": "integer"
+    },
+    "left_strategy_id": {
+      "format": "uuid",
+      "title": "Left Strategy Id",
+      "type": "string"
+    },
+    "right_revision": {
+      "minimum": 1,
+      "title": "Right Revision",
+      "type": "integer"
+    },
+    "right_strategy_id": {
+      "format": "uuid",
+      "title": "Right Strategy Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "comparison_id",
+    "left_strategy_id",
+    "left_revision",
+    "right_strategy_id",
+    "right_revision",
+    "cohort_id",
+    "created_at"
+  ],
+  "title": "StrategyComparisonRequest",
+  "type": "object"
+}

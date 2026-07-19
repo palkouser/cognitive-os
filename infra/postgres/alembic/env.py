@@ -14,10 +14,12 @@ from cognitive_os.infrastructure.memory.postgres.tables import memory_items
 from cognitive_os.infrastructure.postgres.tables import metadata
 from cognitive_os.infrastructure.semantic_memory.postgres.tables import semantic_claims
 from cognitive_os.infrastructure.skills.postgres.tables import skill_items
+from cognitive_os.infrastructure.strategies.postgres.tables import strategy_items
 
 _ = memory_items  # Register optional Memory Plane tables in shared migration metadata.
 _ = semantic_claims  # Register optional temporal semantic-memory tables.
 _ = skill_items  # Register governed procedural Skill Engine tables.
+_ = strategy_items  # Register governed Strategy Evolution Graph tables.
 
 config = context.config
 if config.config_file_name is not None:

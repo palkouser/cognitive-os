@@ -1,0 +1,144 @@
+{
+  "$defs": {
+    "StrategyActor": {
+      "additionalProperties": false,
+      "properties": {
+        "creator_id": {
+          "minLength": 1,
+          "title": "Creator Id",
+          "type": "string"
+        },
+        "creator_type": {
+          "$ref": "#/$defs/StrategyCreatorType"
+        }
+      },
+      "required": [
+        "creator_type",
+        "creator_id"
+      ],
+      "title": "StrategyActor",
+      "type": "object"
+    },
+    "StrategyCreatorType": {
+      "enum": [
+        "operator",
+        "user",
+        "import_service",
+        "system",
+        "provider"
+      ],
+      "title": "StrategyCreatorType",
+      "type": "string"
+    },
+    "StrategyIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_name": {
+          "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+          "title": "Canonical Name",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "created_by": {
+          "$ref": "#/$defs/StrategyActor"
+        },
+        "problem_class_id": {
+          "minLength": 1,
+          "title": "Problem Class Id",
+          "type": "string"
+        },
+        "scope": {
+          "$ref": "#/$defs/StrategyScope"
+        },
+        "strategy_id": {
+          "format": "uuid",
+          "title": "Strategy Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "strategy_id",
+        "canonical_name",
+        "scope",
+        "problem_class_id",
+        "created_at",
+        "created_by"
+      ],
+      "title": "StrategyIdentity",
+      "type": "object"
+    },
+    "StrategyScope": {
+      "additionalProperties": false,
+      "properties": {
+        "scope_id": {
+          "minLength": 1,
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "scope_type": {
+          "$ref": "#/$defs/StrategyScopeType"
+        }
+      },
+      "required": [
+        "scope_type",
+        "scope_id"
+      ],
+      "title": "StrategyScope",
+      "type": "object"
+    },
+    "StrategyScopeType": {
+      "enum": [
+        "global",
+        "project",
+        "repository",
+        "domain"
+      ],
+      "title": "StrategyScopeType",
+      "type": "string"
+    },
+    "StrategyStatus": {
+      "enum": [
+        "draft",
+        "staged",
+        "verified",
+        "deprecated",
+        "superseded",
+        "retracted"
+      ],
+      "title": "StrategyStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/strategy-item.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "current_revision": {
+      "minimum": 1,
+      "title": "Current Revision",
+      "type": "integer"
+    },
+    "current_status": {
+      "$ref": "#/$defs/StrategyStatus"
+    },
+    "idempotency_key": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Idempotency Key",
+      "type": "string"
+    },
+    "identity": {
+      "$ref": "#/$defs/StrategyIdentity"
+    }
+  },
+  "required": [
+    "identity",
+    "current_revision",
+    "current_status",
+    "idempotency_key"
+  ],
+  "title": "StrategyItem",
+  "type": "object"
+}

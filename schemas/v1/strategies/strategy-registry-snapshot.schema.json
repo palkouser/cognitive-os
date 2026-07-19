@@ -1,0 +1,103 @@
+{
+  "$defs": {
+    "SkillRegistrySnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "context_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Context Registry Hash",
+          "type": "string"
+        },
+        "precondition_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Precondition Registry Hash",
+          "type": "string"
+        },
+        "provider_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Provider Registry Hash",
+          "type": "string"
+        },
+        "registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Registry Hash",
+          "type": "string"
+        },
+        "tool_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Tool Registry Hash",
+          "type": "string"
+        },
+        "verifier_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Verifier Registry Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "registry_hash",
+        "precondition_registry_hash",
+        "context_registry_hash",
+        "tool_registry_hash",
+        "verifier_registry_hash",
+        "provider_registry_hash"
+      ],
+      "title": "SkillRegistrySnapshot",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/strategy-registry-snapshot.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "context_registry_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Context Registry Hash",
+      "type": "string"
+    },
+    "problem_class_registry_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Problem Class Registry Hash",
+      "type": "string"
+    },
+    "provider_registry_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Provider Registry Hash",
+      "type": "string"
+    },
+    "skill_registry": {
+      "$ref": "#/$defs/SkillRegistrySnapshot"
+    },
+    "strategy_registry_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Strategy Registry Hash",
+      "type": "string"
+    },
+    "target_resolver_registry_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Target Resolver Registry Hash",
+      "type": "string"
+    },
+    "tool_registry_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Tool Registry Hash",
+      "type": "string"
+    },
+    "verifier_registry_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Verifier Registry Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "strategy_registry_hash",
+    "problem_class_registry_hash",
+    "target_resolver_registry_hash",
+    "skill_registry",
+    "tool_registry_hash",
+    "verifier_registry_hash",
+    "provider_registry_hash",
+    "context_registry_hash"
+  ],
+  "title": "StrategyRegistrySnapshot",
+  "type": "object"
+}

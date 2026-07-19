@@ -276,6 +276,14 @@
           "title": "Snapshot Hash",
           "type": "string"
         },
+        "strategy_revisions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/StrategyRevisionSnapshot"
+          },
+          "title": "Strategy Revisions",
+          "type": "array"
+        },
         "workspace": {
           "anyOf": [
             {
@@ -309,7 +317,8 @@
         "repository_index",
         "workspace",
         "user_correction",
-        "procedural_skill"
+        "procedural_skill",
+        "strategy"
       ],
       "title": "ContextSourceType",
       "type": "string"
@@ -544,6 +553,33 @@
         "content_hash"
       ],
       "title": "SemanticRevisionSnapshot",
+      "type": "object"
+    },
+    "StrategyRevisionSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "strategy_id": {
+          "format": "uuid",
+          "title": "Strategy Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "strategy_id",
+        "revision",
+        "content_hash"
+      ],
+      "title": "StrategyRevisionSnapshot",
       "type": "object"
     },
     "WorkspaceSnapshot": {

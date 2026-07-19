@@ -40,7 +40,9 @@ from .retrieval import InMemoryContextRetriever
 FIXTURE_TIME = datetime(2026, 7, 16, tzinfo=UTC)
 FIXTURE_SCOPE = MemoryScope(scope_type=MemoryScopeType.PROJECT, scope_id="cognitive-os")
 SPRINT11_SOURCE_TYPES = tuple(
-    item for item in ContextSourceType if item is not ContextSourceType.PROCEDURAL_SKILL
+    item
+    for item in ContextSourceType
+    if item not in {ContextSourceType.PROCEDURAL_SKILL, ContextSourceType.STRATEGY}
 )
 
 

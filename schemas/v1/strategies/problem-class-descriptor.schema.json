@@ -1,0 +1,243 @@
+{
+  "$defs": {
+    "SkillProblemSignature": {
+      "additionalProperties": false,
+      "properties": {
+        "problem_domain": {
+          "minLength": 1,
+          "title": "Problem Domain",
+          "type": "string"
+        },
+        "relevant_artifact_types": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Relevant Artifact Types",
+          "type": "array"
+        },
+        "repository_language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Repository Language"
+        },
+        "repository_profile": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Repository Profile"
+        },
+        "requested_output_type": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Requested Output Type"
+        },
+        "required_tool_capabilities": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Required Tool Capabilities",
+          "type": "array"
+        },
+        "required_verifier_capabilities": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Required Verifier Capabilities",
+          "type": "array"
+        },
+        "risk_level": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Risk Level"
+        },
+        "task_type": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Type"
+        }
+      },
+      "required": [
+        "problem_domain"
+      ],
+      "title": "SkillProblemSignature",
+      "type": "object"
+    },
+    "StrategyActor": {
+      "additionalProperties": false,
+      "properties": {
+        "creator_id": {
+          "minLength": 1,
+          "title": "Creator Id",
+          "type": "string"
+        },
+        "creator_type": {
+          "$ref": "#/$defs/StrategyCreatorType"
+        }
+      },
+      "required": [
+        "creator_type",
+        "creator_id"
+      ],
+      "title": "StrategyActor",
+      "type": "object"
+    },
+    "StrategyCreatorType": {
+      "enum": [
+        "operator",
+        "user",
+        "import_service",
+        "system",
+        "provider"
+      ],
+      "title": "StrategyCreatorType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/problem-class-descriptor.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "created_by": {
+      "$ref": "#/$defs/StrategyActor"
+    },
+    "description": {
+      "minLength": 1,
+      "title": "Description",
+      "type": "string"
+    },
+    "display_name": {
+      "minLength": 1,
+      "title": "Display Name",
+      "type": "string"
+    },
+    "maximum_risk": {
+      "default": "high",
+      "minLength": 1,
+      "title": "Maximum Risk",
+      "type": "string"
+    },
+    "minimum_risk": {
+      "default": "low",
+      "minLength": 1,
+      "title": "Minimum Risk",
+      "type": "string"
+    },
+    "problem_class_id": {
+      "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)+$",
+      "title": "Problem Class Id",
+      "type": "string"
+    },
+    "problem_domains": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 16,
+      "minItems": 1,
+      "title": "Problem Domains",
+      "type": "array"
+    },
+    "problem_signature_constraints": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/SkillProblemSignature"
+      },
+      "maxItems": 32,
+      "title": "Problem Signature Constraints",
+      "type": "array"
+    },
+    "repository_profile_constraints": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 16,
+      "title": "Repository Profile Constraints",
+      "type": "array"
+    },
+    "required_output_types": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 16,
+      "title": "Required Output Types",
+      "type": "array"
+    },
+    "version": {
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "problem_class_id",
+    "version",
+    "display_name",
+    "description",
+    "problem_domains",
+    "created_at",
+    "created_by"
+  ],
+  "title": "ProblemClassDescriptor",
+  "type": "object"
+}

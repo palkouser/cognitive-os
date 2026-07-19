@@ -1,0 +1,110 @@
+{
+  "$defs": {
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "StrategyBranchCondition": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_value": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "signal": {
+          "$ref": "#/$defs/StrategyBranchSignal"
+        }
+      },
+      "required": [
+        "signal",
+        "expected_value"
+      ],
+      "title": "StrategyBranchCondition",
+      "type": "object"
+    },
+    "StrategyBranchSignal": {
+      "enum": [
+        "verifier_outcome",
+        "acceptance_status",
+        "tool_status",
+        "provider_status",
+        "clarification_status",
+        "repair_count",
+        "budget_state",
+        "artifact_property"
+      ],
+      "title": "StrategyBranchSignal",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/strategy-branch.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "branch_id": {
+      "minLength": 1,
+      "title": "Branch Id",
+      "type": "string"
+    },
+    "condition": {
+      "$ref": "#/$defs/StrategyBranchCondition"
+    },
+    "priority": {
+      "default": 0,
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Priority",
+      "type": "integer"
+    },
+    "source_phase_id": {
+      "minLength": 1,
+      "title": "Source Phase Id",
+      "type": "string"
+    },
+    "target_phase_id": {
+      "minLength": 1,
+      "title": "Target Phase Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "branch_id",
+    "source_phase_id",
+    "target_phase_id",
+    "condition"
+  ],
+  "title": "StrategyBranch",
+  "type": "object"
+}

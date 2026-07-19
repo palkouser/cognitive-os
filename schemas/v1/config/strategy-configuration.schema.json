@@ -1,0 +1,317 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/config/strategy-configuration.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "accepted_outcome_weight": {
+      "default": 1.0,
+      "maximum": 1,
+      "minimum": -1,
+      "title": "Accepted Outcome Weight",
+      "type": "number"
+    },
+    "allow_automatic_strategy_creation": {
+      "default": false,
+      "title": "Allow Automatic Strategy Creation",
+      "type": "boolean"
+    },
+    "allow_automatic_strategy_promotion": {
+      "default": false,
+      "title": "Allow Automatic Strategy Promotion",
+      "type": "boolean"
+    },
+    "allow_dynamic_skill_registration": {
+      "default": false,
+      "title": "Allow Dynamic Skill Registration",
+      "type": "boolean"
+    },
+    "allow_dynamic_tool_registration": {
+      "default": false,
+      "title": "Allow Dynamic Tool Registration",
+      "type": "boolean"
+    },
+    "allow_dynamic_verifier_registration": {
+      "default": false,
+      "title": "Allow Dynamic Verifier Registration",
+      "type": "boolean"
+    },
+    "allow_external_graph_database": {
+      "default": false,
+      "title": "Allow External Graph Database",
+      "type": "boolean"
+    },
+    "allow_learned_strategy_ranking": {
+      "default": false,
+      "title": "Allow Learned Strategy Ranking",
+      "type": "boolean"
+    },
+    "allow_provider_strategy_selection": {
+      "default": false,
+      "title": "Allow Provider Strategy Selection",
+      "type": "boolean"
+    },
+    "cold_start_allowed_without_alternative": {
+      "default": true,
+      "title": "Cold Start Allowed Without Alternative",
+      "type": "boolean"
+    },
+    "cold_start_requires_approval": {
+      "default": true,
+      "title": "Cold Start Requires Approval",
+      "type": "boolean"
+    },
+    "fallback_frequency_weight": {
+      "default": -0.2,
+      "maximum": 1,
+      "minimum": -1,
+      "title": "Fallback Frequency Weight",
+      "type": "number"
+    },
+    "latency_weight": {
+      "default": -0.1,
+      "maximum": 1,
+      "minimum": -1,
+      "title": "Latency Weight",
+      "type": "number"
+    },
+    "maximum_context_requirements": {
+      "default": 16,
+      "maximum": 16,
+      "minimum": 0,
+      "title": "Maximum Context Requirements",
+      "type": "integer"
+    },
+    "maximum_execution_seconds": {
+      "default": 3600,
+      "maximum": 3600,
+      "minimum": 1,
+      "title": "Maximum Execution Seconds",
+      "type": "integer"
+    },
+    "maximum_fallback_skills": {
+      "default": 16,
+      "maximum": 16,
+      "minimum": 0,
+      "title": "Maximum Fallback Skills",
+      "type": "integer"
+    },
+    "maximum_graph_edges_per_revision": {
+      "default": 256,
+      "maximum": 256,
+      "minimum": 0,
+      "title": "Maximum Graph Edges Per Revision",
+      "type": "integer"
+    },
+    "maximum_graph_query_depth": {
+      "default": 8,
+      "maximum": 8,
+      "minimum": 1,
+      "title": "Maximum Graph Query Depth",
+      "type": "integer"
+    },
+    "maximum_graph_query_edges": {
+      "default": 10000,
+      "maximum": 10000,
+      "minimum": 1,
+      "title": "Maximum Graph Query Edges",
+      "type": "integer"
+    },
+    "maximum_graph_query_nodes": {
+      "default": 5000,
+      "maximum": 5000,
+      "minimum": 1,
+      "title": "Maximum Graph Query Nodes",
+      "type": "integer"
+    },
+    "maximum_known_failure_modes": {
+      "default": 32,
+      "maximum": 32,
+      "minimum": 0,
+      "title": "Maximum Known Failure Modes",
+      "type": "integer"
+    },
+    "maximum_lineage_depth": {
+      "default": 128,
+      "maximum": 128,
+      "minimum": 1,
+      "title": "Maximum Lineage Depth",
+      "type": "integer"
+    },
+    "maximum_model_role_bindings": {
+      "default": 16,
+      "maximum": 16,
+      "minimum": 0,
+      "title": "Maximum Model Role Bindings",
+      "type": "integer"
+    },
+    "maximum_phase_branches": {
+      "default": 16,
+      "maximum": 16,
+      "minimum": 0,
+      "title": "Maximum Phase Branches",
+      "type": "integer"
+    },
+    "maximum_phase_dependencies": {
+      "default": 64,
+      "maximum": 64,
+      "minimum": 0,
+      "title": "Maximum Phase Dependencies",
+      "type": "integer"
+    },
+    "maximum_phases": {
+      "default": 32,
+      "maximum": 32,
+      "minimum": 1,
+      "title": "Maximum Phases",
+      "type": "integer"
+    },
+    "maximum_plan_branches": {
+      "default": 32,
+      "maximum": 32,
+      "minimum": 0,
+      "title": "Maximum Plan Branches",
+      "type": "integer"
+    },
+    "maximum_plan_steps": {
+      "default": 128,
+      "maximum": 128,
+      "minimum": 1,
+      "title": "Maximum Plan Steps",
+      "type": "integer"
+    },
+    "maximum_problem_classes": {
+      "default": 10000,
+      "maximum": 10000,
+      "minimum": 1,
+      "title": "Maximum Problem Classes",
+      "type": "integer"
+    },
+    "maximum_repairs_per_execution": {
+      "default": 3,
+      "maximum": 3,
+      "minimum": 0,
+      "title": "Maximum Repairs Per Execution",
+      "type": "integer"
+    },
+    "maximum_revisions_per_strategy": {
+      "default": 1000,
+      "maximum": 1000,
+      "minimum": 1,
+      "title": "Maximum Revisions Per Strategy",
+      "type": "integer"
+    },
+    "maximum_selection_candidates": {
+      "default": 256,
+      "maximum": 256,
+      "minimum": 1,
+      "title": "Maximum Selection Candidates",
+      "type": "integer"
+    },
+    "maximum_selection_trace_bytes": {
+      "default": 1048576,
+      "maximum": 1048576,
+      "minimum": 1,
+      "title": "Maximum Selection Trace Bytes",
+      "type": "integer"
+    },
+    "maximum_skill_bindings": {
+      "default": 32,
+      "maximum": 32,
+      "minimum": 0,
+      "title": "Maximum Skill Bindings",
+      "type": "integer"
+    },
+    "maximum_source_references": {
+      "default": 64,
+      "maximum": 64,
+      "minimum": 1,
+      "title": "Maximum Source References",
+      "type": "integer"
+    },
+    "maximum_stop_conditions": {
+      "default": 16,
+      "maximum": 16,
+      "minimum": 1,
+      "title": "Maximum Stop Conditions",
+      "type": "integer"
+    },
+    "maximum_strategy_executions_per_task": {
+      "default": 4,
+      "maximum": 4,
+      "minimum": 1,
+      "title": "Maximum Strategy Executions Per Task",
+      "type": "integer"
+    },
+    "maximum_strategy_fallback_depth": {
+      "default": 4,
+      "maximum": 4,
+      "minimum": 0,
+      "title": "Maximum Strategy Fallback Depth",
+      "type": "integer"
+    },
+    "maximum_tool_requirements": {
+      "default": 32,
+      "maximum": 32,
+      "minimum": 0,
+      "title": "Maximum Tool Requirements",
+      "type": "integer"
+    },
+    "maximum_verifier_requirements": {
+      "default": 32,
+      "maximum": 32,
+      "minimum": 0,
+      "title": "Maximum Verifier Requirements",
+      "type": "integer"
+    },
+    "minimum_comparative_sample": {
+      "default": 10,
+      "maximum": 1000,
+      "minimum": 1,
+      "title": "Minimum Comparative Sample",
+      "type": "integer"
+    },
+    "minimum_statistics_sample": {
+      "default": 5,
+      "maximum": 1000,
+      "minimum": 1,
+      "title": "Minimum Statistics Sample",
+      "type": "integer"
+    },
+    "repair_cost_weight": {
+      "default": -0.15,
+      "maximum": 1,
+      "minimum": -1,
+      "title": "Repair Cost Weight",
+      "type": "number"
+    },
+    "safety_failure_weight": {
+      "default": -1.0,
+      "maximum": 1,
+      "minimum": -1,
+      "title": "Safety Failure Weight",
+      "type": "number"
+    },
+    "specificity_weight": {
+      "default": 0.2,
+      "maximum": 1,
+      "minimum": -1,
+      "title": "Specificity Weight",
+      "type": "number"
+    },
+    "token_cost_weight": {
+      "default": -0.1,
+      "maximum": 1,
+      "minimum": -1,
+      "title": "Token Cost Weight",
+      "type": "number"
+    },
+    "verifier_quality_weight": {
+      "default": 0.25,
+      "maximum": 1,
+      "minimum": -1,
+      "title": "Verifier Quality Weight",
+      "type": "number"
+    }
+  },
+  "title": "StrategyConfiguration",
+  "type": "object"
+}

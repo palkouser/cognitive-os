@@ -1,0 +1,75 @@
+{
+  "$defs": {
+    "StrategySelectionStatus": {
+      "enum": [
+        "selected",
+        "no_applicable_strategy",
+        "requires_approval",
+        "invalid"
+      ],
+      "title": "StrategySelectionStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/strategy.selected.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "decision_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Decision Hash",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "revision": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Revision"
+    },
+    "selection_id": {
+      "format": "uuid",
+      "title": "Selection Id",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/StrategySelectionStatus"
+    },
+    "strategy_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Strategy Id"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "selection_id",
+    "task_run_id",
+    "strategy_id",
+    "revision",
+    "status",
+    "decision_hash",
+    "occurred_at"
+  ],
+  "title": "StrategySelected",
+  "type": "object"
+}

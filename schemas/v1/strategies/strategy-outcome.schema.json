@@ -1,0 +1,706 @@
+{
+  "$defs": {
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "format": "uuid",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "media_type": {
+          "minLength": 1,
+          "title": "Media Type",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "storage_key": {
+          "minLength": 1,
+          "title": "Storage Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "media_type",
+        "content_hash",
+        "size_bytes",
+        "storage_key",
+        "created_at"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "ContextBundleReference": {
+      "additionalProperties": false,
+      "properties": {
+        "bundle_artifact_id": {
+          "format": "uuid",
+          "title": "Bundle Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "context_bundle_id": {
+          "format": "uuid",
+          "title": "Context Bundle Id",
+          "type": "string"
+        },
+        "context_bundle_revision": {
+          "minimum": 1,
+          "title": "Context Bundle Revision",
+          "type": "integer"
+        },
+        "rendered_context_artifact_id": {
+          "format": "uuid",
+          "title": "Rendered Context Artifact Id",
+          "type": "string"
+        },
+        "source_snapshot_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Snapshot Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "context_bundle_id",
+        "context_bundle_revision",
+        "bundle_artifact_id",
+        "rendered_context_artifact_id",
+        "content_hash",
+        "source_snapshot_hash"
+      ],
+      "title": "ContextBundleReference",
+      "type": "object"
+    },
+    "ResolvedSkillBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "binding_id": {
+          "minLength": 1,
+          "title": "Binding Id",
+          "type": "string"
+        },
+        "fallback": {
+          "default": false,
+          "title": "Fallback",
+          "type": "boolean"
+        },
+        "package_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Package Hash",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "skill_id": {
+          "format": "uuid",
+          "title": "Skill Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "binding_id",
+        "skill_id",
+        "revision",
+        "package_hash"
+      ],
+      "title": "ResolvedSkillBinding",
+      "type": "object"
+    },
+    "SkillProblemSignature": {
+      "additionalProperties": false,
+      "properties": {
+        "problem_domain": {
+          "minLength": 1,
+          "title": "Problem Domain",
+          "type": "string"
+        },
+        "relevant_artifact_types": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Relevant Artifact Types",
+          "type": "array"
+        },
+        "repository_language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Repository Language"
+        },
+        "repository_profile": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Repository Profile"
+        },
+        "requested_output_type": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Requested Output Type"
+        },
+        "required_tool_capabilities": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Required Tool Capabilities",
+          "type": "array"
+        },
+        "required_verifier_capabilities": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Required Verifier Capabilities",
+          "type": "array"
+        },
+        "risk_level": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Risk Level"
+        },
+        "task_type": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Type"
+        }
+      },
+      "required": [
+        "problem_domain"
+      ],
+      "title": "SkillProblemSignature",
+      "type": "object"
+    },
+    "StrategyBranchDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "branch_id": {
+          "minLength": 1,
+          "title": "Branch Id",
+          "type": "string"
+        },
+        "decided_at": {
+          "format": "date-time",
+          "title": "Decided At",
+          "type": "string"
+        },
+        "evidence_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Evidence Hash",
+          "type": "string"
+        },
+        "signal": {
+          "$ref": "#/$defs/StrategyBranchSignal"
+        },
+        "source_phase_id": {
+          "minLength": 1,
+          "title": "Source Phase Id",
+          "type": "string"
+        },
+        "target_phase_id": {
+          "minLength": 1,
+          "title": "Target Phase Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "branch_id",
+        "source_phase_id",
+        "target_phase_id",
+        "signal",
+        "evidence_hash",
+        "decided_at"
+      ],
+      "title": "StrategyBranchDecision",
+      "type": "object"
+    },
+    "StrategyBranchSignal": {
+      "enum": [
+        "verifier_outcome",
+        "acceptance_status",
+        "tool_status",
+        "provider_status",
+        "clarification_status",
+        "repair_count",
+        "budget_state",
+        "artifact_property"
+      ],
+      "title": "StrategyBranchSignal",
+      "type": "string"
+    },
+    "StrategyExecutionStatus": {
+      "enum": [
+        "preparing",
+        "running",
+        "waiting",
+        "accepted",
+        "rejected",
+        "unverifiable",
+        "failed",
+        "cancelled",
+        "policy_denied"
+      ],
+      "title": "StrategyExecutionStatus",
+      "type": "string"
+    },
+    "StrategyOutcomeStatus": {
+      "enum": [
+        "accepted",
+        "rejected",
+        "unverifiable",
+        "cancelled",
+        "policy_denied",
+        "infrastructure_failure"
+      ],
+      "title": "StrategyOutcomeStatus",
+      "type": "string"
+    },
+    "StrategyPhaseExecution": {
+      "additionalProperties": false,
+      "properties": {
+        "branch_decision": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/StrategyBranchDecision"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "context_bundle_references": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ContextBundleReference"
+          },
+          "title": "Context Bundle References",
+          "type": "array"
+        },
+        "fallback_path": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Fallback Path",
+          "type": "array"
+        },
+        "latency_ms": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Latency Ms",
+          "type": "integer"
+        },
+        "phase_id": {
+          "minLength": 1,
+          "title": "Phase Id",
+          "type": "string"
+        },
+        "provider_call_ids": {
+          "default": [],
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Provider Call Ids",
+          "type": "array"
+        },
+        "skill_execution_ids": {
+          "default": [],
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Skill Execution Ids",
+          "type": "array"
+        },
+        "status": {
+          "$ref": "#/$defs/StrategyExecutionStatus"
+        },
+        "token_usage": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Token Usage",
+          "type": "integer"
+        },
+        "tool_call_ids": {
+          "default": [],
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Tool Call Ids",
+          "type": "array"
+        },
+        "verifier_result_ids": {
+          "default": [],
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Verifier Result Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "phase_id",
+        "status"
+      ],
+      "title": "StrategyPhaseExecution",
+      "type": "object"
+    },
+    "TokenUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "cached_input_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cached Input Tokens"
+        },
+        "input_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input Tokens"
+        },
+        "output_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Tokens"
+        },
+        "reasoning_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reasoning Tokens"
+        },
+        "total_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Tokens"
+        }
+      },
+      "title": "TokenUsage",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/strategy-outcome.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "acceptance_decision_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Acceptance Decision Id"
+    },
+    "context_bundle_references": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ContextBundleReference"
+      },
+      "title": "Context Bundle References",
+      "type": "array"
+    },
+    "elapsed_ms": {
+      "minimum": 0,
+      "title": "Elapsed Ms",
+      "type": "integer"
+    },
+    "execution_id": {
+      "format": "uuid",
+      "title": "Execution Id",
+      "type": "string"
+    },
+    "failure_mode_ids": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Failure Mode Ids",
+      "type": "array"
+    },
+    "fallback_count": {
+      "default": 0,
+      "maximum": 4,
+      "minimum": 0,
+      "title": "Fallback Count",
+      "type": "integer"
+    },
+    "finished_at": {
+      "format": "date-time",
+      "title": "Finished At",
+      "type": "string"
+    },
+    "outcome_hash": {
+      "default": "",
+      "title": "Outcome Hash",
+      "type": "string"
+    },
+    "outcome_id": {
+      "format": "uuid",
+      "title": "Outcome Id",
+      "type": "string"
+    },
+    "phase_executions": {
+      "items": {
+        "$ref": "#/$defs/StrategyPhaseExecution"
+      },
+      "title": "Phase Executions",
+      "type": "array"
+    },
+    "plan_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Plan Hash",
+      "type": "string"
+    },
+    "plan_instantiation_id": {
+      "format": "uuid",
+      "title": "Plan Instantiation Id",
+      "type": "string"
+    },
+    "policy_reasons": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Policy Reasons",
+      "type": "array"
+    },
+    "problem_signature": {
+      "$ref": "#/$defs/SkillProblemSignature"
+    },
+    "provider_call_ids": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Provider Call Ids",
+      "type": "array"
+    },
+    "provider_decision_ids": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Provider Decision Ids",
+      "type": "array"
+    },
+    "repair_count": {
+      "default": 0,
+      "maximum": 3,
+      "minimum": 0,
+      "title": "Repair Count",
+      "type": "integer"
+    },
+    "resolved_skills": {
+      "items": {
+        "$ref": "#/$defs/ResolvedSkillBinding"
+      },
+      "title": "Resolved Skills",
+      "type": "array"
+    },
+    "safety_decision_ids": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Safety Decision Ids",
+      "type": "array"
+    },
+    "selection_id": {
+      "format": "uuid",
+      "title": "Selection Id",
+      "type": "string"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/StrategyOutcomeStatus"
+    },
+    "strategy_id": {
+      "format": "uuid",
+      "title": "Strategy Id",
+      "type": "string"
+    },
+    "strategy_revision": {
+      "minimum": 1,
+      "title": "Strategy Revision",
+      "type": "integer"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    },
+    "tool_call_ids": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Tool Call Ids",
+      "type": "array"
+    },
+    "usage": {
+      "$ref": "#/$defs/TokenUsage",
+      "default": {
+        "cached_input_tokens": null,
+        "input_tokens": null,
+        "output_tokens": null,
+        "reasoning_tokens": null,
+        "total_tokens": null
+      }
+    },
+    "verifier_bundle": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ArtifactRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "outcome_id",
+    "execution_id",
+    "selection_id",
+    "task_run_id",
+    "problem_signature",
+    "strategy_id",
+    "strategy_revision",
+    "resolved_skills",
+    "plan_instantiation_id",
+    "plan_hash",
+    "phase_executions",
+    "status",
+    "elapsed_ms",
+    "started_at",
+    "finished_at"
+  ],
+  "title": "StrategyOutcome",
+  "type": "object"
+}

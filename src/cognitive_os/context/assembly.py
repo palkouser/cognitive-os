@@ -48,7 +48,10 @@ def _section_type(candidate: ContextCandidate) -> str:
         return "recent_task_trajectory"
     if candidate.source_type is ContextSourceType.USER_CORRECTION:
         return "user_corrections"
-    if candidate.source_type is ContextSourceType.PROCEDURAL_SKILL:
+    if candidate.source_type in {
+        ContextSourceType.PROCEDURAL_SKILL,
+        ContextSourceType.STRATEGY,
+    }:
         return (
             "verified_procedural_guidance"
             if candidate.trust_class is ContextTrustClass.VERIFIED

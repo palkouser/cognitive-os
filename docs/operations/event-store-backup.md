@@ -5,7 +5,9 @@ artifact archive, archive checksum, and JSON manifest under the configured backu
 default destination is `/home/palkouser/backup/cognitive-os-archive`.
 
 The manifest records creation time, Git commit, planned Sprint baseline, database name,
-Alembic revision, file names and hashes, and event and artifact counts. It contains no
+Alembic revision, file names and hashes, event and artifact counts, and governed memory, semantic,
+skill, strategy, edge, selection, outcome, and access counts. Canonical history digests cover
+semantic claims, skills, and strategies. It contains no
 password or database URL. A combined backup assumes no active Cognitive OS writer because
 database and filesystem snapshots cannot be atomic together.
 

@@ -1,0 +1,60 @@
+{
+  "$defs": {
+    "StrategyBranchSignal": {
+      "enum": [
+        "verifier_outcome",
+        "acceptance_status",
+        "tool_status",
+        "provider_status",
+        "clarification_status",
+        "repair_count",
+        "budget_state",
+        "artifact_property"
+      ],
+      "title": "StrategyBranchSignal",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/strategy-branch-decision.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "branch_id": {
+      "minLength": 1,
+      "title": "Branch Id",
+      "type": "string"
+    },
+    "decided_at": {
+      "format": "date-time",
+      "title": "Decided At",
+      "type": "string"
+    },
+    "evidence_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Evidence Hash",
+      "type": "string"
+    },
+    "signal": {
+      "$ref": "#/$defs/StrategyBranchSignal"
+    },
+    "source_phase_id": {
+      "minLength": 1,
+      "title": "Source Phase Id",
+      "type": "string"
+    },
+    "target_phase_id": {
+      "minLength": 1,
+      "title": "Target Phase Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "branch_id",
+    "source_phase_id",
+    "target_phase_id",
+    "signal",
+    "evidence_hash",
+    "decided_at"
+  ],
+  "title": "StrategyBranchDecision",
+  "type": "object"
+}

@@ -1,0 +1,9 @@
+format_version: "1"
+canonical_name: provider-fallback
+display_name: Static Provider Fallback
+problem_class_id: provider.static-fallback
+description: Apply a host-configured provider fallback chain without adaptive routing.
+skills: [evidence-collection]
+phases: [context-selection, primary-provider, failure-classification, fallback-provider, verification]
+maximum_repairs: 0
+regression_profile: provider-fallback-v1

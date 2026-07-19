@@ -1,0 +1,107 @@
+{
+  "$defs": {
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "StrategyApplicabilityCondition": {
+      "additionalProperties": false,
+      "properties": {
+        "condition_id": {
+          "minLength": 1,
+          "title": "Condition Id",
+          "type": "string"
+        },
+        "condition_type": {
+          "$ref": "#/$defs/StrategyApplicabilityConditionType"
+        },
+        "parameters": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Parameters",
+          "type": "object"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "condition_id",
+        "condition_type",
+        "parameters"
+      ],
+      "title": "StrategyApplicabilityCondition",
+      "type": "object"
+    },
+    "StrategyApplicabilityConditionType": {
+      "enum": [
+        "problem_class_match",
+        "problem_signature_match",
+        "repository_profile_match",
+        "risk_range",
+        "required_output",
+        "available_skill",
+        "available_tool",
+        "available_verifier",
+        "provider_role_available",
+        "context_profile_available",
+        "explicit_permission",
+        "feature_flag"
+      ],
+      "title": "StrategyApplicabilityConditionType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/strategy-applicability-profile.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "conditions": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/StrategyApplicabilityCondition"
+      },
+      "maxItems": 64,
+      "title": "Conditions",
+      "type": "array"
+    }
+  },
+  "title": "StrategyApplicabilityProfile",
+  "type": "object"
+}

@@ -1,0 +1,9 @@
+format_version: "1"
+canonical_name: python-bug-fix
+display_name: Python Bug Fix
+problem_class_id: coding.bug-fix
+description: Reproduce and repair an existing Python defect under bounded verification.
+skills: [repository-inspection, focused-test-execution, verification-driven-python-repair, safe-diff-preparation, evidence-collection]
+phases: [repository-inspection, reproduction, context-selection, bounded-repair, focused-verification, full-verification, safe-diff-review, packaging]
+maximum_repairs: 3
+regression_profile: python-bug-fix-v1

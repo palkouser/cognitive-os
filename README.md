@@ -56,6 +56,12 @@ Context hydration, execution, verification, statistics, and access audit remain 
 providers and package prose receive no authority. See the
 [Skill Engine architecture](docs/architecture/skill-engine.md).
 
+Sprint 13 adds a governed Strategy Evolution Graph for manually authored, immutable coordination
+revisions. Deterministic applicability, cold-start policy, exact skill binding, fixed ranking,
+Controller plan instantiation, outcomes, statistics, Context hydration, and access audit remain
+host-controlled. See the
+[Strategy Evolution Graph architecture](docs/architecture/strategy-evolution-graph.md).
+
 ![LightAgent Banner](docs/images/lightagent-banner.jpg)
 <div align="center">
   <p>

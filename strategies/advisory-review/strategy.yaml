@@ -1,0 +1,9 @@
+format_version: "1"
+canonical_name: advisory-review
+display_name: Advisory Review
+problem_class_id: review.advisory
+description: Prepare a redacted advisory request while preserving host verification authority.
+skills: [evidence-collection, claude-advisory-preparation, safe-diff-preparation]
+phases: [evidence-collection, context-selection, advisory-request, risk-review, host-verification]
+maximum_repairs: 0
+regression_profile: advisory-review-v1

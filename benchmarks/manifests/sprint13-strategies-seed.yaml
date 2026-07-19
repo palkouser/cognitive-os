@@ -1,0 +1,50 @@
+benchmark_id: sprint13-strategies-seed
+version: "1"
+title: Sprint 13 deterministic strategy seed suite
+description: Forty credential-free governance, graph, selection, plan and audit cases.
+default_configuration: {mode: strategy-replay}
+source: Cognitive OS Sprint 13 executable backlog
+license: Apache-2.0
+created_at: 2026-01-01T00:00:00Z
+case_matrix:
+  generic:
+    - {id: strategy.lifecycle-01, scenario: draft_creation, expected: passed}
+    - {id: strategy.lifecycle-02, scenario: staged_promotion, expected: passed}
+    - {id: strategy.lifecycle-03, scenario: verified_promotion, expected: passed}
+    - {id: strategy.lifecycle-04, scenario: deprecation, expected: passed}
+    - {id: strategy.lifecycle-05, scenario: retraction, expected: passed}
+    - {id: strategy.graph-01, scenario: exact_edge_target, expected: passed}
+    - {id: strategy.graph-02, scenario: invalid_edge_rejection, expected: passed}
+    - {id: strategy.graph-03, scenario: fallback_cycle_rejection, expected: passed}
+    - {id: strategy.graph-04, scenario: lineage_path, expected: passed}
+    - {id: strategy.graph-05, scenario: bounded_neighborhood, expected: passed}
+    - {id: strategy.graph-06, scenario: deterministic_dot, expected: passed}
+    - {id: strategy.graph-07, scenario: deterministic_snapshot, expected: passed}
+    - {id: strategy.applicability-01, scenario: python_bug_fix, expected: passed}
+    - {id: strategy.applicability-02, scenario: missing_implementation, expected: passed}
+    - {id: strategy.applicability-03, scenario: type_correction, expected: passed}
+    - {id: strategy.applicability-04, scenario: verification_repair, expected: passed}
+    - {id: strategy.applicability-05, scenario: advisory_review, expected: passed}
+    - {id: strategy.applicability-06, scenario: clarification_first, expected: passed}
+    - {id: strategy.selection-01, scenario: deterministic_selection, expected: passed}
+    - {id: strategy.selection-02, scenario: stable_tie_break, expected: passed}
+    - {id: strategy.selection-03, scenario: exact_exclusions, expected: passed}
+    - {id: strategy.selection-04, scenario: provider_suggestion_ignored, expected: passed}
+    - {id: strategy.selection-05, scenario: permission_filter, expected: passed}
+    - {id: strategy.selection-06, scenario: sensitivity_filter, expected: passed}
+    - {id: strategy.selection-07, scenario: static_provider_fallback, expected: passed}
+    - {id: strategy.cold-01, scenario: approval_required, expected: passed}
+    - {id: strategy.cold-02, scenario: approval_granted, expected: passed}
+    - {id: strategy.cold-03, scenario: measured_preferred, expected: passed}
+    - {id: strategy.plan-01, scenario: exact_skill_binding, expected: passed}
+    - {id: strategy.plan-02, scenario: phase_dag, expected: passed}
+    - {id: strategy.plan-03, scenario: budget_intersection, expected: passed}
+    - {id: strategy.plan-04, scenario: controller_reuse, expected: passed}
+    - {id: strategy.execute-01, scenario: deterministic_branch, expected: passed}
+    - {id: strategy.execute-02, scenario: bounded_repair, expected: passed}
+    - {id: strategy.execute-03, scenario: static_fallback, expected: passed}
+    - {id: strategy.execute-04, scenario: cancellation_resume, expected: passed}
+    - {id: strategy.outcome-01, scenario: accepted_lineage, expected: passed}
+    - {id: strategy.outcome-02, scenario: statistics_rebuild, expected: passed}
+    - {id: strategy.context-01, scenario: metadata_summary_full, expected: passed}
+    - {id: strategy.context-02, scenario: access_audit, expected: passed}

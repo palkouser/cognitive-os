@@ -1,0 +1,32 @@
+{
+  "$defs": {
+    "StrategyScopeType": {
+      "enum": [
+        "global",
+        "project",
+        "repository",
+        "domain"
+      ],
+      "title": "StrategyScopeType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/strategy-scope.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "scope_id": {
+      "minLength": 1,
+      "title": "Scope Id",
+      "type": "string"
+    },
+    "scope_type": {
+      "$ref": "#/$defs/StrategyScopeType"
+    }
+  },
+  "required": [
+    "scope_type",
+    "scope_id"
+  ],
+  "title": "StrategyScope",
+  "type": "object"
+}
