@@ -1,0 +1,1 @@
+"""Strategy persistence adapters."""

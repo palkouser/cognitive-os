@@ -1,0 +1,9 @@
+format_version: "1"
+canonical_name: clarification-first
+display_name: Clarification First
+problem_class_id: workflow.ambiguous-request
+description: Pause on deterministic ambiguity, validate continuation, and reselect a strategy.
+skills: [clarification-request, evidence-collection]
+phases: [ambiguity-evaluation, clarification, waiting, continuation-validation, strategy-reselection]
+maximum_repairs: 0
+regression_profile: clarification-first-v1

@@ -1,0 +1,9 @@
+format_version: "1"
+canonical_name: missing-implementation
+display_name: Missing Implementation
+problem_class_id: coding.missing-implementation
+description: Distinguish absent behavior from a defect and implement only the required contract.
+skills: [repository-inspection, focused-test-execution, safe-diff-preparation, evidence-collection]
+phases: [repository-inspection, contract-analysis, bounded-implementation, focused-verification, full-verification, safe-diff-review]
+maximum_repairs: 2
+regression_profile: missing-implementation-v1

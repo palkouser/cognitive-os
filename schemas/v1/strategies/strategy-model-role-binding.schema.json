@@ -1,0 +1,32 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/strategy-model-role-binding.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "provider_profile_id": {
+      "minLength": 1,
+      "title": "Provider Profile Id",
+      "type": "string"
+    },
+    "required_capabilities": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 16,
+      "title": "Required Capabilities",
+      "type": "array"
+    },
+    "role_id": {
+      "minLength": 1,
+      "title": "Role Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "role_id",
+    "provider_profile_id"
+  ],
+  "title": "StrategyModelRoleBinding",
+  "type": "object"
+}

@@ -1,0 +1,517 @@
+{
+  "$defs": {
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "SkillProblemSignature": {
+      "additionalProperties": false,
+      "properties": {
+        "problem_domain": {
+          "minLength": 1,
+          "title": "Problem Domain",
+          "type": "string"
+        },
+        "relevant_artifact_types": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Relevant Artifact Types",
+          "type": "array"
+        },
+        "repository_language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Repository Language"
+        },
+        "repository_profile": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Repository Profile"
+        },
+        "requested_output_type": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Requested Output Type"
+        },
+        "required_tool_capabilities": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Required Tool Capabilities",
+          "type": "array"
+        },
+        "required_verifier_capabilities": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Required Verifier Capabilities",
+          "type": "array"
+        },
+        "risk_level": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Risk Level"
+        },
+        "task_type": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Type"
+        }
+      },
+      "required": [
+        "problem_domain"
+      ],
+      "title": "SkillProblemSignature",
+      "type": "object"
+    },
+    "SkillRegistrySnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "context_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Context Registry Hash",
+          "type": "string"
+        },
+        "precondition_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Precondition Registry Hash",
+          "type": "string"
+        },
+        "provider_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Provider Registry Hash",
+          "type": "string"
+        },
+        "registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Registry Hash",
+          "type": "string"
+        },
+        "tool_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Tool Registry Hash",
+          "type": "string"
+        },
+        "verifier_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Verifier Registry Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "registry_hash",
+        "precondition_registry_hash",
+        "context_registry_hash",
+        "tool_registry_hash",
+        "verifier_registry_hash",
+        "provider_registry_hash"
+      ],
+      "title": "SkillRegistrySnapshot",
+      "type": "object"
+    },
+    "StrategyApplicabilityInput": {
+      "additionalProperties": false,
+      "properties": {
+        "available_context_profiles": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Available Context Profiles",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "available_model_roles": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Available Model Roles",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "available_skill_bindings": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Available Skill Bindings",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "available_tool_capabilities": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Available Tool Capabilities",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "available_verifier_capabilities": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Available Verifier Capabilities",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "feature_flags": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Feature Flags",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "permissions": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Permissions",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "problem_class_id": {
+          "minLength": 1,
+          "title": "Problem Class Id",
+          "type": "string"
+        },
+        "problem_signature": {
+          "$ref": "#/$defs/SkillProblemSignature"
+        },
+        "repository_profile": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Repository Profile"
+        },
+        "required_output_type": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Required Output Type"
+        },
+        "risk_level": {
+          "default": "low",
+          "minLength": 1,
+          "title": "Risk Level",
+          "type": "string"
+        },
+        "scope": {
+          "$ref": "#/$defs/StrategyScope"
+        },
+        "sensitivity_limit": {
+          "$ref": "#/$defs/MemorySensitivity"
+        }
+      },
+      "required": [
+        "problem_class_id",
+        "problem_signature",
+        "scope",
+        "sensitivity_limit"
+      ],
+      "title": "StrategyApplicabilityInput",
+      "type": "object"
+    },
+    "StrategyBudgetProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "maximum_context_builds": {
+          "default": 8,
+          "maximum": 8,
+          "minimum": 0,
+          "title": "Maximum Context Builds",
+          "type": "integer"
+        },
+        "maximum_context_tokens": {
+          "default": 32768,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Maximum Context Tokens",
+          "type": "integer"
+        },
+        "maximum_execution_seconds": {
+          "default": 3600,
+          "maximum": 3600,
+          "minimum": 1,
+          "title": "Maximum Execution Seconds",
+          "type": "integer"
+        },
+        "maximum_provider_calls": {
+          "default": 8,
+          "maximum": 8,
+          "minimum": 0,
+          "title": "Maximum Provider Calls",
+          "type": "integer"
+        },
+        "maximum_repairs": {
+          "default": 3,
+          "maximum": 3,
+          "minimum": 0,
+          "title": "Maximum Repairs",
+          "type": "integer"
+        },
+        "maximum_steps": {
+          "default": 128,
+          "maximum": 128,
+          "minimum": 1,
+          "title": "Maximum Steps",
+          "type": "integer"
+        },
+        "maximum_tool_calls": {
+          "default": 32,
+          "maximum": 32,
+          "minimum": 0,
+          "title": "Maximum Tool Calls",
+          "type": "integer"
+        }
+      },
+      "title": "StrategyBudgetProfile",
+      "type": "object"
+    },
+    "StrategyRegistrySnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "context_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Context Registry Hash",
+          "type": "string"
+        },
+        "problem_class_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Problem Class Registry Hash",
+          "type": "string"
+        },
+        "provider_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Provider Registry Hash",
+          "type": "string"
+        },
+        "skill_registry": {
+          "$ref": "#/$defs/SkillRegistrySnapshot"
+        },
+        "strategy_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Strategy Registry Hash",
+          "type": "string"
+        },
+        "target_resolver_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Target Resolver Registry Hash",
+          "type": "string"
+        },
+        "tool_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Tool Registry Hash",
+          "type": "string"
+        },
+        "verifier_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Verifier Registry Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "strategy_registry_hash",
+        "problem_class_registry_hash",
+        "target_resolver_registry_hash",
+        "skill_registry",
+        "tool_registry_hash",
+        "verifier_registry_hash",
+        "provider_registry_hash",
+        "context_registry_hash"
+      ],
+      "title": "StrategyRegistrySnapshot",
+      "type": "object"
+    },
+    "StrategyScope": {
+      "additionalProperties": false,
+      "properties": {
+        "scope_id": {
+          "minLength": 1,
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "scope_type": {
+          "$ref": "#/$defs/StrategyScopeType"
+        }
+      },
+      "required": [
+        "scope_type",
+        "scope_id"
+      ],
+      "title": "StrategyScope",
+      "type": "object"
+    },
+    "StrategyScopeType": {
+      "enum": [
+        "global",
+        "project",
+        "repository",
+        "domain"
+      ],
+      "title": "StrategyScopeType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/strategy-selection-request.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "applicability_input": {
+      "$ref": "#/$defs/StrategyApplicabilityInput"
+    },
+    "approval_granted": {
+      "default": false,
+      "title": "Approval Granted",
+      "type": "boolean"
+    },
+    "controller_budget": {
+      "$ref": "#/$defs/StrategyBudgetProfile"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "maximum_candidates": {
+      "default": 64,
+      "maximum": 256,
+      "minimum": 1,
+      "title": "Maximum Candidates",
+      "type": "integer"
+    },
+    "operator_restrictions": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 32,
+      "title": "Operator Restrictions",
+      "type": "array"
+    },
+    "problem_reference": {
+      "format": "uuid",
+      "title": "Problem Reference",
+      "type": "string"
+    },
+    "provider_suggestion": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Provider Suggestion"
+    },
+    "registry_snapshot": {
+      "$ref": "#/$defs/StrategyRegistrySnapshot"
+    },
+    "selection_id": {
+      "format": "uuid",
+      "title": "Selection Id",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "selection_id",
+    "task_run_id",
+    "problem_reference",
+    "applicability_input",
+    "registry_snapshot",
+    "controller_budget",
+    "created_at"
+  ],
+  "title": "StrategySelectionRequest",
+  "type": "object"
+}

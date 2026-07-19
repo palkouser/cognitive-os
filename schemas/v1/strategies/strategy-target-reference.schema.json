@@ -1,0 +1,97 @@
+{
+  "$defs": {
+    "StrategyScope": {
+      "additionalProperties": false,
+      "properties": {
+        "scope_id": {
+          "minLength": 1,
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "scope_type": {
+          "$ref": "#/$defs/StrategyScopeType"
+        }
+      },
+      "required": [
+        "scope_type",
+        "scope_id"
+      ],
+      "title": "StrategyScope",
+      "type": "object"
+    },
+    "StrategyScopeType": {
+      "enum": [
+        "global",
+        "project",
+        "repository",
+        "domain"
+      ],
+      "title": "StrategyScopeType",
+      "type": "string"
+    },
+    "StrategyTargetType": {
+      "enum": [
+        "strategy_revision",
+        "problem_class",
+        "failure_mode",
+        "phase",
+        "skill_revision",
+        "tool",
+        "model_role",
+        "verifier",
+        "context_profile",
+        "task_run",
+        "controller_plan",
+        "context_bundle",
+        "correction_event",
+        "acceptance_decision",
+        "outcome",
+        "artifact",
+        "semantic_claim_revision"
+      ],
+      "title": "StrategyTargetType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/strategy-target-reference.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "scope": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/StrategyScope"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "target_id": {
+      "minLength": 1,
+      "title": "Target Id",
+      "type": "string"
+    },
+    "target_revision": {
+      "minLength": 1,
+      "title": "Target Revision",
+      "type": "string"
+    },
+    "target_type": {
+      "$ref": "#/$defs/StrategyTargetType"
+    }
+  },
+  "required": [
+    "target_type",
+    "target_id",
+    "target_revision",
+    "content_hash"
+  ],
+  "title": "StrategyTargetReference",
+  "type": "object"
+}

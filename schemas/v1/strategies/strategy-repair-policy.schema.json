@@ -1,0 +1,27 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/strategy-repair-policy.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "maximum_repairs": {
+      "default": 0,
+      "maximum": 3,
+      "minimum": 0,
+      "title": "Maximum Repairs",
+      "type": "integer"
+    },
+    "no_progress_limit": {
+      "default": 1,
+      "maximum": 3,
+      "minimum": 1,
+      "title": "No Progress Limit",
+      "type": "integer"
+    },
+    "require_reverification": {
+      "default": true,
+      "title": "Require Reverification",
+      "type": "boolean"
+    }
+  },
+  "title": "StrategyRepairPolicy",
+  "type": "object"
+}

@@ -1,0 +1,66 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/failure-mode-descriptor.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "category": {
+      "minLength": 1,
+      "title": "Category",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "description": {
+      "minLength": 1,
+      "title": "Description",
+      "type": "string"
+    },
+    "detection_signals": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 16,
+      "title": "Detection Signals",
+      "type": "array"
+    },
+    "display_name": {
+      "minLength": 1,
+      "title": "Display Name",
+      "type": "string"
+    },
+    "failure_mode_id": {
+      "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)+$",
+      "title": "Failure Mode Id",
+      "type": "string"
+    },
+    "recoverable": {
+      "title": "Recoverable",
+      "type": "boolean"
+    },
+    "severity": {
+      "minLength": 1,
+      "title": "Severity",
+      "type": "string"
+    },
+    "version": {
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "failure_mode_id",
+    "version",
+    "display_name",
+    "category",
+    "description",
+    "severity",
+    "recoverable"
+  ],
+  "title": "FailureModeDescriptor",
+  "type": "object"
+}

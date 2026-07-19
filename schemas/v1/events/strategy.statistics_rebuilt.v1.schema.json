@@ -1,0 +1,44 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/strategy.statistics_rebuilt.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "cohort_id": {
+      "minLength": 1,
+      "title": "Cohort Id",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "projection_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Projection Hash",
+      "type": "string"
+    },
+    "projection_revision": {
+      "title": "Projection Revision",
+      "type": "integer"
+    },
+    "revision": {
+      "title": "Revision",
+      "type": "integer"
+    },
+    "strategy_id": {
+      "format": "uuid",
+      "title": "Strategy Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "strategy_id",
+    "revision",
+    "cohort_id",
+    "projection_revision",
+    "projection_hash",
+    "occurred_at"
+  ],
+  "title": "StrategyStatisticsRebuilt",
+  "type": "object"
+}

@@ -1,0 +1,20 @@
+benchmark_id: sprint13-strategies-ci
+version: "1"
+title: Sprint 13 Strategy Evolution Graph CI gate
+description: Ten credential-free lifecycle, graph, selection, plan, outcome and Context cases.
+default_configuration: {mode: strategy-replay}
+source: Cognitive OS Sprint 13 executable backlog
+license: Apache-2.0
+created_at: 2026-01-01T00:00:00Z
+case_matrix:
+  generic:
+    - {id: strategy-ci.lifecycle, scenario: valid_strategy_lifecycle, expected: passed}
+    - {id: strategy-ci.edge, scenario: invalid_edge_rejection, expected: passed}
+    - {id: strategy-ci.cycle, scenario: fallback_cycle_rejection, expected: passed}
+    - {id: strategy-ci.applicability, scenario: exact_applicability, expected: passed}
+    - {id: strategy-ci.selection, scenario: deterministic_selection, expected: passed}
+    - {id: strategy-ci.cold-start, scenario: cold_start_approval, expected: passed}
+    - {id: strategy-ci.skill, scenario: exact_skill_binding, expected: passed}
+    - {id: strategy-ci.plan, scenario: plan_instantiation, expected: passed}
+    - {id: strategy-ci.outcome, scenario: accepted_outcome_statistics, expected: passed}
+    - {id: strategy-ci.context, scenario: context_access_lineage, expected: passed}

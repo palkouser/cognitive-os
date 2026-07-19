@@ -1,0 +1,9 @@
+format_version: "1"
+canonical_name: verification-driven-repair
+display_name: Verification-Driven Repair
+problem_class_id: coding.verification-repair
+description: Branch from exact verifier failures and terminate after bounded no-progress.
+skills: [repository-inspection, focused-test-execution, verification-driven-python-repair, evidence-collection]
+phases: [failure-inspection, bounded-repair, focused-verification, full-verification, acceptance]
+maximum_repairs: 3
+regression_profile: verification-driven-repair-v1

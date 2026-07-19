@@ -1,0 +1,145 @@
+{
+  "$defs": {
+    "StrategyApplicabilityEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "condition_id": {
+          "minLength": 1,
+          "title": "Condition Id",
+          "type": "string"
+        },
+        "evidence_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Evidence Hash",
+          "type": "string"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        },
+        "reason_code": {
+          "minLength": 1,
+          "title": "Reason Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "condition_id",
+        "passed",
+        "reason_code",
+        "evidence_hash"
+      ],
+      "title": "StrategyApplicabilityEvidence",
+      "type": "object"
+    },
+    "StrategyApplicabilityResult": {
+      "additionalProperties": false,
+      "properties": {
+        "evaluation_hash": {
+          "default": "",
+          "title": "Evaluation Hash",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/StrategyApplicabilityEvidence"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "status": {
+          "$ref": "#/$defs/StrategyApplicabilityStatus"
+        },
+        "strategy_id": {
+          "format": "uuid",
+          "title": "Strategy Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "strategy_id",
+        "revision",
+        "status",
+        "evidence"
+      ],
+      "title": "StrategyApplicabilityResult",
+      "type": "object"
+    },
+    "StrategyApplicabilityStatus": {
+      "enum": [
+        "applicable",
+        "inapplicable",
+        "requires_approval",
+        "unavailable",
+        "insufficiently_measured",
+        "invalid"
+      ],
+      "title": "StrategyApplicabilityStatus",
+      "type": "string"
+    },
+    "StrategyColdStartStatus": {
+      "enum": [
+        "measured",
+        "insufficiently_measured",
+        "approved_cold_start",
+        "cold_start_denied"
+      ],
+      "title": "StrategyColdStartStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/strategy-selection-candidate.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "applicability": {
+      "$ref": "#/$defs/StrategyApplicabilityResult"
+    },
+    "canonical_name": {
+      "minLength": 1,
+      "title": "Canonical Name",
+      "type": "string"
+    },
+    "cold_start_status": {
+      "$ref": "#/$defs/StrategyColdStartStatus"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "score_breakdown": {
+      "additionalProperties": {
+        "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+        "type": "string"
+      },
+      "title": "Score Breakdown",
+      "type": "object"
+    },
+    "strategy_id": {
+      "format": "uuid",
+      "title": "Strategy Id",
+      "type": "string"
+    },
+    "total_score": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Total Score",
+      "type": "string"
+    }
+  },
+  "required": [
+    "strategy_id",
+    "revision",
+    "canonical_name",
+    "applicability",
+    "cold_start_status",
+    "score_breakdown",
+    "total_score"
+  ],
+  "title": "StrategySelectionCandidate",
+  "type": "object"
+}

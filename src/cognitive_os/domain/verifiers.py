@@ -28,6 +28,7 @@ class VerifierKind(StrEnum):
     SEMANTIC = "semantic"
     CONTEXT = "context"
     SKILL = "skill"
+    STRATEGY = "strategy"
 
 
 class VerifierDeterminism(StrEnum):
@@ -64,6 +65,11 @@ class VerificationSubjectType(StrEnum):
     SKILL_REVISION = "skill_revision"
     SKILL_EXECUTION = "skill_execution"
     SKILL_REGRESSION = "skill_regression"
+    STRATEGY_REVISION = "strategy_revision"
+    STRATEGY_GRAPH = "strategy_graph"
+    STRATEGY_PLAN = "strategy_plan"
+    STRATEGY_OUTCOME = "strategy_outcome"
+    STRATEGY_STATISTICS = "strategy_statistics"
 
 
 class VerifierHealthStatus(StrEnum):

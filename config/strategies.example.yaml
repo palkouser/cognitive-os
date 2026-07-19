@@ -1,0 +1,24 @@
+strategies:
+  maximum_problem_classes: 10000
+  maximum_revisions_per_strategy: 1000
+  maximum_phases: 32
+  maximum_graph_edges_per_revision: 256
+  maximum_graph_query_depth: 8
+  maximum_graph_query_nodes: 5000
+  maximum_selection_candidates: 256
+  maximum_strategy_fallback_depth: 4
+  maximum_plan_steps: 128
+  maximum_repairs_per_execution: 3
+  maximum_execution_seconds: 3600
+  minimum_statistics_sample: 5
+  minimum_comparative_sample: 10
+  cold_start_requires_approval: true
+  cold_start_allowed_without_alternative: true
+  allow_provider_strategy_selection: false
+  allow_automatic_strategy_creation: false
+  allow_automatic_strategy_promotion: false
+  allow_learned_strategy_ranking: false
+  allow_dynamic_skill_registration: false
+  allow_dynamic_tool_registration: false
+  allow_dynamic_verifier_registration: false
+  allow_external_graph_database: false

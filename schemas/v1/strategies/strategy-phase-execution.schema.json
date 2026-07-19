@@ -1,0 +1,215 @@
+{
+  "$defs": {
+    "ContextBundleReference": {
+      "additionalProperties": false,
+      "properties": {
+        "bundle_artifact_id": {
+          "format": "uuid",
+          "title": "Bundle Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "context_bundle_id": {
+          "format": "uuid",
+          "title": "Context Bundle Id",
+          "type": "string"
+        },
+        "context_bundle_revision": {
+          "minimum": 1,
+          "title": "Context Bundle Revision",
+          "type": "integer"
+        },
+        "rendered_context_artifact_id": {
+          "format": "uuid",
+          "title": "Rendered Context Artifact Id",
+          "type": "string"
+        },
+        "source_snapshot_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Snapshot Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "context_bundle_id",
+        "context_bundle_revision",
+        "bundle_artifact_id",
+        "rendered_context_artifact_id",
+        "content_hash",
+        "source_snapshot_hash"
+      ],
+      "title": "ContextBundleReference",
+      "type": "object"
+    },
+    "StrategyBranchDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "branch_id": {
+          "minLength": 1,
+          "title": "Branch Id",
+          "type": "string"
+        },
+        "decided_at": {
+          "format": "date-time",
+          "title": "Decided At",
+          "type": "string"
+        },
+        "evidence_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Evidence Hash",
+          "type": "string"
+        },
+        "signal": {
+          "$ref": "#/$defs/StrategyBranchSignal"
+        },
+        "source_phase_id": {
+          "minLength": 1,
+          "title": "Source Phase Id",
+          "type": "string"
+        },
+        "target_phase_id": {
+          "minLength": 1,
+          "title": "Target Phase Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "branch_id",
+        "source_phase_id",
+        "target_phase_id",
+        "signal",
+        "evidence_hash",
+        "decided_at"
+      ],
+      "title": "StrategyBranchDecision",
+      "type": "object"
+    },
+    "StrategyBranchSignal": {
+      "enum": [
+        "verifier_outcome",
+        "acceptance_status",
+        "tool_status",
+        "provider_status",
+        "clarification_status",
+        "repair_count",
+        "budget_state",
+        "artifact_property"
+      ],
+      "title": "StrategyBranchSignal",
+      "type": "string"
+    },
+    "StrategyExecutionStatus": {
+      "enum": [
+        "preparing",
+        "running",
+        "waiting",
+        "accepted",
+        "rejected",
+        "unverifiable",
+        "failed",
+        "cancelled",
+        "policy_denied"
+      ],
+      "title": "StrategyExecutionStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/strategy-phase-execution.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "branch_decision": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/StrategyBranchDecision"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "context_bundle_references": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ContextBundleReference"
+      },
+      "title": "Context Bundle References",
+      "type": "array"
+    },
+    "fallback_path": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Fallback Path",
+      "type": "array"
+    },
+    "latency_ms": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Latency Ms",
+      "type": "integer"
+    },
+    "phase_id": {
+      "minLength": 1,
+      "title": "Phase Id",
+      "type": "string"
+    },
+    "provider_call_ids": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Provider Call Ids",
+      "type": "array"
+    },
+    "skill_execution_ids": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Skill Execution Ids",
+      "type": "array"
+    },
+    "status": {
+      "$ref": "#/$defs/StrategyExecutionStatus"
+    },
+    "token_usage": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Token Usage",
+      "type": "integer"
+    },
+    "tool_call_ids": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Tool Call Ids",
+      "type": "array"
+    },
+    "verifier_result_ids": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Verifier Result Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "phase_id",
+    "status"
+  ],
+  "title": "StrategyPhaseExecution",
+  "type": "object"
+}

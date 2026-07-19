@@ -1,0 +1,591 @@
+{
+  "$defs": {
+    "ActorRef": {
+      "additionalProperties": false,
+      "properties": {
+        "actor_id": {
+          "minLength": 1,
+          "title": "Actor Id",
+          "type": "string"
+        },
+        "actor_type": {
+          "$ref": "#/$defs/ActorType"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        }
+      },
+      "required": [
+        "actor_type",
+        "actor_id"
+      ],
+      "title": "ActorRef",
+      "type": "object"
+    },
+    "ActorType": {
+      "enum": [
+        "user",
+        "agent",
+        "model",
+        "tool",
+        "verifier",
+        "system"
+      ],
+      "title": "ActorType",
+      "type": "string"
+    },
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "format": "uuid",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "media_type": {
+          "minLength": 1,
+          "title": "Media Type",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "storage_key": {
+          "minLength": 1,
+          "title": "Storage Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "media_type",
+        "content_hash",
+        "size_bytes",
+        "storage_key",
+        "created_at"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "ExecutionPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "created_by": {
+          "$ref": "#/$defs/ActorRef"
+        },
+        "plan_id": {
+          "format": "uuid",
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/PlanStepDefinition"
+          },
+          "minItems": 1,
+          "title": "Steps",
+          "type": "array"
+        },
+        "task_run_id": {
+          "format": "uuid",
+          "title": "Task Run Id",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "plan_id",
+        "task_run_id",
+        "version",
+        "created_at",
+        "created_by",
+        "steps"
+      ],
+      "title": "ExecutionPlan",
+      "type": "object"
+    },
+    "PlanStepDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "depends_on": {
+          "default": [],
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Depends On",
+          "type": "array"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "expected_output": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Output"
+        },
+        "required_tool_ids": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Required Tool Ids",
+          "type": "array"
+        },
+        "required_verifier_ids": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Required Verifier Ids",
+          "type": "array"
+        },
+        "sequence": {
+          "minimum": 1,
+          "title": "Sequence",
+          "type": "integer"
+        },
+        "step_id": {
+          "format": "uuid",
+          "title": "Step Id",
+          "type": "string"
+        },
+        "step_type": {
+          "minLength": 1,
+          "title": "Step Type",
+          "type": "string"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "step_id",
+        "sequence",
+        "step_type",
+        "title"
+      ],
+      "title": "PlanStepDefinition",
+      "type": "object"
+    },
+    "ResolvedSkillBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "binding_id": {
+          "minLength": 1,
+          "title": "Binding Id",
+          "type": "string"
+        },
+        "fallback": {
+          "default": false,
+          "title": "Fallback",
+          "type": "boolean"
+        },
+        "package_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Package Hash",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "skill_id": {
+          "format": "uuid",
+          "title": "Skill Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "binding_id",
+        "skill_id",
+        "revision",
+        "package_hash"
+      ],
+      "title": "ResolvedSkillBinding",
+      "type": "object"
+    },
+    "SkillRegistrySnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "context_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Context Registry Hash",
+          "type": "string"
+        },
+        "precondition_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Precondition Registry Hash",
+          "type": "string"
+        },
+        "provider_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Provider Registry Hash",
+          "type": "string"
+        },
+        "registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Registry Hash",
+          "type": "string"
+        },
+        "tool_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Tool Registry Hash",
+          "type": "string"
+        },
+        "verifier_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Verifier Registry Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "registry_hash",
+        "precondition_registry_hash",
+        "context_registry_hash",
+        "tool_registry_hash",
+        "verifier_registry_hash",
+        "provider_registry_hash"
+      ],
+      "title": "SkillRegistrySnapshot",
+      "type": "object"
+    },
+    "StrategyBudgetProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "maximum_context_builds": {
+          "default": 8,
+          "maximum": 8,
+          "minimum": 0,
+          "title": "Maximum Context Builds",
+          "type": "integer"
+        },
+        "maximum_context_tokens": {
+          "default": 32768,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Maximum Context Tokens",
+          "type": "integer"
+        },
+        "maximum_execution_seconds": {
+          "default": 3600,
+          "maximum": 3600,
+          "minimum": 1,
+          "title": "Maximum Execution Seconds",
+          "type": "integer"
+        },
+        "maximum_provider_calls": {
+          "default": 8,
+          "maximum": 8,
+          "minimum": 0,
+          "title": "Maximum Provider Calls",
+          "type": "integer"
+        },
+        "maximum_repairs": {
+          "default": 3,
+          "maximum": 3,
+          "minimum": 0,
+          "title": "Maximum Repairs",
+          "type": "integer"
+        },
+        "maximum_steps": {
+          "default": 128,
+          "maximum": 128,
+          "minimum": 1,
+          "title": "Maximum Steps",
+          "type": "integer"
+        },
+        "maximum_tool_calls": {
+          "default": 32,
+          "maximum": 32,
+          "minimum": 0,
+          "title": "Maximum Tool Calls",
+          "type": "integer"
+        }
+      },
+      "title": "StrategyBudgetProfile",
+      "type": "object"
+    },
+    "StrategyPlanStepBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "branch_ids": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Branch Ids",
+          "type": "array"
+        },
+        "context_profile_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context Profile Id"
+        },
+        "effective_budget": {
+          "$ref": "#/$defs/StrategyBudgetProfile"
+        },
+        "fallback_provenance": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Fallback Provenance",
+          "type": "array"
+        },
+        "model_role_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Role Id"
+        },
+        "phase_id": {
+          "minLength": 1,
+          "title": "Phase Id",
+          "type": "string"
+        },
+        "skill_binding": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResolvedSkillBinding"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "step_id": {
+          "format": "uuid",
+          "title": "Step Id",
+          "type": "string"
+        },
+        "tool_capabilities": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Tool Capabilities",
+          "type": "array"
+        },
+        "verifier_capabilities": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Verifier Capabilities",
+          "type": "array"
+        }
+      },
+      "required": [
+        "step_id",
+        "phase_id",
+        "effective_budget"
+      ],
+      "title": "StrategyPlanStepBinding",
+      "type": "object"
+    },
+    "StrategyRegistrySnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "context_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Context Registry Hash",
+          "type": "string"
+        },
+        "problem_class_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Problem Class Registry Hash",
+          "type": "string"
+        },
+        "provider_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Provider Registry Hash",
+          "type": "string"
+        },
+        "skill_registry": {
+          "$ref": "#/$defs/SkillRegistrySnapshot"
+        },
+        "strategy_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Strategy Registry Hash",
+          "type": "string"
+        },
+        "target_resolver_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Target Resolver Registry Hash",
+          "type": "string"
+        },
+        "tool_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Tool Registry Hash",
+          "type": "string"
+        },
+        "verifier_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Verifier Registry Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "strategy_registry_hash",
+        "problem_class_registry_hash",
+        "target_resolver_registry_hash",
+        "skill_registry",
+        "tool_registry_hash",
+        "verifier_registry_hash",
+        "provider_registry_hash",
+        "context_registry_hash"
+      ],
+      "title": "StrategyRegistrySnapshot",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/strategy-plan-instantiation.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "instantiation_id": {
+      "format": "uuid",
+      "title": "Instantiation Id",
+      "type": "string"
+    },
+    "plan": {
+      "$ref": "#/$defs/ExecutionPlan"
+    },
+    "plan_artifact": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ArtifactRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "plan_hash": {
+      "default": "",
+      "title": "Plan Hash",
+      "type": "string"
+    },
+    "registry_snapshot": {
+      "$ref": "#/$defs/StrategyRegistrySnapshot"
+    },
+    "selection_id": {
+      "format": "uuid",
+      "title": "Selection Id",
+      "type": "string"
+    },
+    "step_bindings": {
+      "items": {
+        "$ref": "#/$defs/StrategyPlanStepBinding"
+      },
+      "title": "Step Bindings",
+      "type": "array"
+    },
+    "strategy_id": {
+      "format": "uuid",
+      "title": "Strategy Id",
+      "type": "string"
+    },
+    "strategy_revision": {
+      "minimum": 1,
+      "title": "Strategy Revision",
+      "type": "integer"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "instantiation_id",
+    "selection_id",
+    "strategy_id",
+    "strategy_revision",
+    "task_run_id",
+    "plan",
+    "step_bindings",
+    "registry_snapshot",
+    "created_at"
+  ],
+  "title": "StrategyPlanInstantiation",
+  "type": "object"
+}

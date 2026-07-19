@@ -1,0 +1,51 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/strategy.execution_started.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "execution_id": {
+      "format": "uuid",
+      "title": "Execution Id",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "plan_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Plan Hash",
+      "type": "string"
+    },
+    "revision": {
+      "title": "Revision",
+      "type": "integer"
+    },
+    "selection_id": {
+      "format": "uuid",
+      "title": "Selection Id",
+      "type": "string"
+    },
+    "strategy_id": {
+      "format": "uuid",
+      "title": "Strategy Id",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "execution_id",
+    "selection_id",
+    "strategy_id",
+    "revision",
+    "task_run_id",
+    "plan_hash",
+    "occurred_at"
+  ],
+  "title": "StrategyExecutionStarted",
+  "type": "object"
+}

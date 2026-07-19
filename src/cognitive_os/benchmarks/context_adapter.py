@@ -9,10 +9,10 @@ from cognitive_os.domain.benchmarks import BenchmarkCase, BenchmarkCaseResult, B
 from cognitive_os.domain.common import utc_now
 
 EXPECTED_BUNDLE_HASH = (
-    "a0929e04d6b52a1eae284947e5abaf45f722ddfbbbdda96d55ac96adb2ee6b7d"  # pragma: allowlist secret
+    "1c66d9183bcb87d0f8971eda98af0992d1b4223ccf05c8250000942fbd8c2bab"  # pragma: allowlist secret
 )
 EXPECTED_TRACE_HASH = (
-    "7de285be4c9219ddb396b5e18ebebbd794df0468e8d54d00389466eefce8df66"  # pragma: allowlist secret
+    "d110c2f5a0c8cb755ffdb4f51921c969cfa3bbecd9bc56a0c94fc221cd2a4442"  # pragma: allowlist secret
 )
 EXPECTED_SELECTED = (
     "0cbc5678-31c2-5e1a-ac5b-ea9face728ab",

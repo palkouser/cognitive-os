@@ -1,0 +1,87 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/strategy-verification-snapshot.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "applicability_determinism": {
+      "title": "Applicability Determinism",
+      "type": "boolean"
+    },
+    "budget_conformance": {
+      "title": "Budget Conformance",
+      "type": "boolean"
+    },
+    "capability_integrity": {
+      "title": "Capability Integrity",
+      "type": "boolean"
+    },
+    "edge_targets": {
+      "title": "Edge Targets",
+      "type": "boolean"
+    },
+    "fallback_acyclic": {
+      "title": "Fallback Acyclic",
+      "type": "boolean"
+    },
+    "graph_integrity": {
+      "title": "Graph Integrity",
+      "type": "boolean"
+    },
+    "no_permission_expansion": {
+      "title": "No Permission Expansion",
+      "type": "boolean"
+    },
+    "outcome_lineage": {
+      "title": "Outcome Lineage",
+      "type": "boolean"
+    },
+    "phase_structure": {
+      "title": "Phase Structure",
+      "type": "boolean"
+    },
+    "plan_instantiation_conformance": {
+      "title": "Plan Instantiation Conformance",
+      "type": "boolean"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "schema_conformance": {
+      "title": "Schema Conformance",
+      "type": "boolean"
+    },
+    "skill_integrity": {
+      "title": "Skill Integrity",
+      "type": "boolean"
+    },
+    "statistics_reproducibility": {
+      "title": "Statistics Reproducibility",
+      "type": "boolean"
+    },
+    "strategy_id": {
+      "format": "uuid",
+      "title": "Strategy Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "strategy_id",
+    "revision",
+    "schema_conformance",
+    "phase_structure",
+    "graph_integrity",
+    "edge_targets",
+    "applicability_determinism",
+    "skill_integrity",
+    "capability_integrity",
+    "fallback_acyclic",
+    "budget_conformance",
+    "plan_instantiation_conformance",
+    "outcome_lineage",
+    "statistics_reproducibility",
+    "no_permission_expansion"
+  ],
+  "title": "StrategyVerificationSnapshot",
+  "type": "object"
+}

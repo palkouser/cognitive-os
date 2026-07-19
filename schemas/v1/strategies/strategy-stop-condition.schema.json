@@ -1,0 +1,97 @@
+{
+  "$defs": {
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "StrategyBranchSignal": {
+      "enum": [
+        "verifier_outcome",
+        "acceptance_status",
+        "tool_status",
+        "provider_status",
+        "clarification_status",
+        "repair_count",
+        "budget_state",
+        "artifact_property"
+      ],
+      "title": "StrategyBranchSignal",
+      "type": "string"
+    },
+    "StrategyExecutionStatus": {
+      "enum": [
+        "preparing",
+        "running",
+        "waiting",
+        "accepted",
+        "rejected",
+        "unverifiable",
+        "failed",
+        "cancelled",
+        "policy_denied"
+      ],
+      "title": "StrategyExecutionStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/strategy-stop-condition.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "condition_id": {
+      "minLength": 1,
+      "title": "Condition Id",
+      "type": "string"
+    },
+    "expected_value": {
+      "$ref": "#/$defs/JsonValue"
+    },
+    "signal": {
+      "$ref": "#/$defs/StrategyBranchSignal"
+    },
+    "terminal_status": {
+      "$ref": "#/$defs/StrategyExecutionStatus"
+    }
+  },
+  "required": [
+    "condition_id",
+    "signal",
+    "expected_value",
+    "terminal_status"
+  ],
+  "title": "StrategyStopCondition",
+  "type": "object"
+}

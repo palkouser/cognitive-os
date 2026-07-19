@@ -90,7 +90,12 @@
         "skill_package",
         "skill_revision",
         "skill_execution",
-        "skill_regression"
+        "skill_regression",
+        "strategy_revision",
+        "strategy_graph",
+        "strategy_plan",
+        "strategy_outcome",
+        "strategy_statistics"
       ],
       "title": "VerificationSubjectType",
       "type": "string"
@@ -174,7 +179,8 @@
         "advisory",
         "semantic",
         "context",
-        "skill"
+        "skill",
+        "strategy"
       ],
       "title": "VerifierKind",
       "type": "string"

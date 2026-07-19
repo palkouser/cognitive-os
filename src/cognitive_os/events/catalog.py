@@ -55,6 +55,7 @@ from .model_events import (
 )
 from .semantic_memory_events import SEMANTIC_EVENT_MODELS
 from .skill_events import SKILL_EVENT_MODELS
+from .strategy_events import STRATEGY_EVENT_MODELS
 from .task_events import (
     TaskCancelled,
     TaskCreated,
@@ -134,6 +135,7 @@ DEFAULT_EVENT_MODELS: tuple[type[EventPayload], ...] = (
     *MEMORY_EVENT_MODELS,
     *SEMANTIC_EVENT_MODELS,
     *SKILL_EVENT_MODELS,
+    *STRATEGY_EVENT_MODELS,
     BenchmarkRunStarted,
     BenchmarkCaseStarted,
     BenchmarkCaseCompleted,

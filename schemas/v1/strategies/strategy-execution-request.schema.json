@@ -1,0 +1,604 @@
+{
+  "$defs": {
+    "ResolvedSkillBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "binding_id": {
+          "minLength": 1,
+          "title": "Binding Id",
+          "type": "string"
+        },
+        "fallback": {
+          "default": false,
+          "title": "Fallback",
+          "type": "boolean"
+        },
+        "package_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Package Hash",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "skill_id": {
+          "format": "uuid",
+          "title": "Skill Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "binding_id",
+        "skill_id",
+        "revision",
+        "package_hash"
+      ],
+      "title": "ResolvedSkillBinding",
+      "type": "object"
+    },
+    "SkillRegistrySnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "context_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Context Registry Hash",
+          "type": "string"
+        },
+        "precondition_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Precondition Registry Hash",
+          "type": "string"
+        },
+        "provider_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Provider Registry Hash",
+          "type": "string"
+        },
+        "registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Registry Hash",
+          "type": "string"
+        },
+        "tool_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Tool Registry Hash",
+          "type": "string"
+        },
+        "verifier_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Verifier Registry Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "registry_hash",
+        "precondition_registry_hash",
+        "context_registry_hash",
+        "tool_registry_hash",
+        "verifier_registry_hash",
+        "provider_registry_hash"
+      ],
+      "title": "SkillRegistrySnapshot",
+      "type": "object"
+    },
+    "StrategyActor": {
+      "additionalProperties": false,
+      "properties": {
+        "creator_id": {
+          "minLength": 1,
+          "title": "Creator Id",
+          "type": "string"
+        },
+        "creator_type": {
+          "$ref": "#/$defs/StrategyCreatorType"
+        }
+      },
+      "required": [
+        "creator_type",
+        "creator_id"
+      ],
+      "title": "StrategyActor",
+      "type": "object"
+    },
+    "StrategyApplicabilityEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "condition_id": {
+          "minLength": 1,
+          "title": "Condition Id",
+          "type": "string"
+        },
+        "evidence_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Evidence Hash",
+          "type": "string"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        },
+        "reason_code": {
+          "minLength": 1,
+          "title": "Reason Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "condition_id",
+        "passed",
+        "reason_code",
+        "evidence_hash"
+      ],
+      "title": "StrategyApplicabilityEvidence",
+      "type": "object"
+    },
+    "StrategyApplicabilityResult": {
+      "additionalProperties": false,
+      "properties": {
+        "evaluation_hash": {
+          "default": "",
+          "title": "Evaluation Hash",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/StrategyApplicabilityEvidence"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "status": {
+          "$ref": "#/$defs/StrategyApplicabilityStatus"
+        },
+        "strategy_id": {
+          "format": "uuid",
+          "title": "Strategy Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "strategy_id",
+        "revision",
+        "status",
+        "evidence"
+      ],
+      "title": "StrategyApplicabilityResult",
+      "type": "object"
+    },
+    "StrategyApplicabilityStatus": {
+      "enum": [
+        "applicable",
+        "inapplicable",
+        "requires_approval",
+        "unavailable",
+        "insufficiently_measured",
+        "invalid"
+      ],
+      "title": "StrategyApplicabilityStatus",
+      "type": "string"
+    },
+    "StrategyBudgetProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "maximum_context_builds": {
+          "default": 8,
+          "maximum": 8,
+          "minimum": 0,
+          "title": "Maximum Context Builds",
+          "type": "integer"
+        },
+        "maximum_context_tokens": {
+          "default": 32768,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Maximum Context Tokens",
+          "type": "integer"
+        },
+        "maximum_execution_seconds": {
+          "default": 3600,
+          "maximum": 3600,
+          "minimum": 1,
+          "title": "Maximum Execution Seconds",
+          "type": "integer"
+        },
+        "maximum_provider_calls": {
+          "default": 8,
+          "maximum": 8,
+          "minimum": 0,
+          "title": "Maximum Provider Calls",
+          "type": "integer"
+        },
+        "maximum_repairs": {
+          "default": 3,
+          "maximum": 3,
+          "minimum": 0,
+          "title": "Maximum Repairs",
+          "type": "integer"
+        },
+        "maximum_steps": {
+          "default": 128,
+          "maximum": 128,
+          "minimum": 1,
+          "title": "Maximum Steps",
+          "type": "integer"
+        },
+        "maximum_tool_calls": {
+          "default": 32,
+          "maximum": 32,
+          "minimum": 0,
+          "title": "Maximum Tool Calls",
+          "type": "integer"
+        }
+      },
+      "title": "StrategyBudgetProfile",
+      "type": "object"
+    },
+    "StrategyColdStartStatus": {
+      "enum": [
+        "measured",
+        "insufficiently_measured",
+        "approved_cold_start",
+        "cold_start_denied"
+      ],
+      "title": "StrategyColdStartStatus",
+      "type": "string"
+    },
+    "StrategyCreatorType": {
+      "enum": [
+        "operator",
+        "user",
+        "import_service",
+        "system",
+        "provider"
+      ],
+      "title": "StrategyCreatorType",
+      "type": "string"
+    },
+    "StrategyExclusionReason": {
+      "enum": [
+        "status",
+        "scope",
+        "sensitivity",
+        "applicability",
+        "missing_skill",
+        "missing_tool",
+        "missing_verifier",
+        "missing_model_role",
+        "missing_context_profile",
+        "approval_required",
+        "operator_restriction",
+        "invalid_graph",
+        "unsafe_history"
+      ],
+      "title": "StrategyExclusionReason",
+      "type": "string"
+    },
+    "StrategyRegistrySnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "context_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Context Registry Hash",
+          "type": "string"
+        },
+        "problem_class_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Problem Class Registry Hash",
+          "type": "string"
+        },
+        "provider_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Provider Registry Hash",
+          "type": "string"
+        },
+        "skill_registry": {
+          "$ref": "#/$defs/SkillRegistrySnapshot"
+        },
+        "strategy_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Strategy Registry Hash",
+          "type": "string"
+        },
+        "target_resolver_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Target Resolver Registry Hash",
+          "type": "string"
+        },
+        "tool_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Tool Registry Hash",
+          "type": "string"
+        },
+        "verifier_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Verifier Registry Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "strategy_registry_hash",
+        "problem_class_registry_hash",
+        "target_resolver_registry_hash",
+        "skill_registry",
+        "tool_registry_hash",
+        "verifier_registry_hash",
+        "provider_registry_hash",
+        "context_registry_hash"
+      ],
+      "title": "StrategyRegistrySnapshot",
+      "type": "object"
+    },
+    "StrategySelectionCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "applicability": {
+          "$ref": "#/$defs/StrategyApplicabilityResult"
+        },
+        "canonical_name": {
+          "minLength": 1,
+          "title": "Canonical Name",
+          "type": "string"
+        },
+        "cold_start_status": {
+          "$ref": "#/$defs/StrategyColdStartStatus"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "score_breakdown": {
+          "additionalProperties": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "type": "string"
+          },
+          "title": "Score Breakdown",
+          "type": "object"
+        },
+        "strategy_id": {
+          "format": "uuid",
+          "title": "Strategy Id",
+          "type": "string"
+        },
+        "total_score": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Total Score",
+          "type": "string"
+        }
+      },
+      "required": [
+        "strategy_id",
+        "revision",
+        "canonical_name",
+        "applicability",
+        "cold_start_status",
+        "score_breakdown",
+        "total_score"
+      ],
+      "title": "StrategySelectionCandidate",
+      "type": "object"
+    },
+    "StrategySelectionDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "approval_required": {
+          "default": false,
+          "title": "Approval Required",
+          "type": "boolean"
+        },
+        "candidates": {
+          "items": {
+            "$ref": "#/$defs/StrategySelectionCandidate"
+          },
+          "title": "Candidates",
+          "type": "array"
+        },
+        "cold_start_status": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/StrategyColdStartStatus"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "decision_hash": {
+          "default": "",
+          "title": "Decision Hash",
+          "type": "string"
+        },
+        "exclusions": {
+          "items": {
+            "$ref": "#/$defs/StrategySelectionExclusion"
+          },
+          "title": "Exclusions",
+          "type": "array"
+        },
+        "ranking_profile_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Ranking Profile Hash",
+          "type": "string"
+        },
+        "ranking_profile_id": {
+          "minLength": 1,
+          "title": "Ranking Profile Id",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "registry_snapshot": {
+          "$ref": "#/$defs/StrategyRegistrySnapshot"
+        },
+        "selected_revision": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Selected Revision"
+        },
+        "selected_strategy_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Selected Strategy Id"
+        },
+        "selection_id": {
+          "format": "uuid",
+          "title": "Selection Id",
+          "type": "string"
+        },
+        "skill_resolution_preview": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ResolvedSkillBinding"
+          },
+          "title": "Skill Resolution Preview",
+          "type": "array"
+        },
+        "statistics_snapshot_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Statistics Snapshot Hash",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/StrategySelectionStatus"
+        },
+        "task_run_id": {
+          "format": "uuid",
+          "title": "Task Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "selection_id",
+        "task_run_id",
+        "status",
+        "candidates",
+        "exclusions",
+        "registry_snapshot",
+        "statistics_snapshot_hash",
+        "ranking_profile_id",
+        "ranking_profile_hash",
+        "reason",
+        "created_at"
+      ],
+      "title": "StrategySelectionDecision",
+      "type": "object"
+    },
+    "StrategySelectionExclusion": {
+      "additionalProperties": false,
+      "properties": {
+        "detail_code": {
+          "minLength": 1,
+          "title": "Detail Code",
+          "type": "string"
+        },
+        "reason": {
+          "$ref": "#/$defs/StrategyExclusionReason"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "strategy_id": {
+          "format": "uuid",
+          "title": "Strategy Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "strategy_id",
+        "revision",
+        "reason",
+        "detail_code"
+      ],
+      "title": "StrategySelectionExclusion",
+      "type": "object"
+    },
+    "StrategySelectionStatus": {
+      "enum": [
+        "selected",
+        "no_applicable_strategy",
+        "requires_approval",
+        "invalid"
+      ],
+      "title": "StrategySelectionStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/strategy-execution-request.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "controller_budget": {
+      "$ref": "#/$defs/StrategyBudgetProfile"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "execution_id": {
+      "format": "uuid",
+      "title": "Execution Id",
+      "type": "string"
+    },
+    "problem_reference": {
+      "format": "uuid",
+      "title": "Problem Reference",
+      "type": "string"
+    },
+    "requested_by": {
+      "$ref": "#/$defs/StrategyActor"
+    },
+    "selection": {
+      "$ref": "#/$defs/StrategySelectionDecision"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "execution_id",
+    "selection",
+    "task_run_id",
+    "problem_reference",
+    "controller_budget",
+    "requested_by",
+    "created_at"
+  ],
+  "title": "StrategyExecutionRequest",
+  "type": "object"
+}

@@ -1,0 +1,57 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/strategy-budget-profile.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "maximum_context_builds": {
+      "default": 8,
+      "maximum": 8,
+      "minimum": 0,
+      "title": "Maximum Context Builds",
+      "type": "integer"
+    },
+    "maximum_context_tokens": {
+      "default": 32768,
+      "maximum": 1000000,
+      "minimum": 1,
+      "title": "Maximum Context Tokens",
+      "type": "integer"
+    },
+    "maximum_execution_seconds": {
+      "default": 3600,
+      "maximum": 3600,
+      "minimum": 1,
+      "title": "Maximum Execution Seconds",
+      "type": "integer"
+    },
+    "maximum_provider_calls": {
+      "default": 8,
+      "maximum": 8,
+      "minimum": 0,
+      "title": "Maximum Provider Calls",
+      "type": "integer"
+    },
+    "maximum_repairs": {
+      "default": 3,
+      "maximum": 3,
+      "minimum": 0,
+      "title": "Maximum Repairs",
+      "type": "integer"
+    },
+    "maximum_steps": {
+      "default": 128,
+      "maximum": 128,
+      "minimum": 1,
+      "title": "Maximum Steps",
+      "type": "integer"
+    },
+    "maximum_tool_calls": {
+      "default": 32,
+      "maximum": 32,
+      "minimum": 0,
+      "title": "Maximum Tool Calls",
+      "type": "integer"
+    }
+  },
+  "title": "StrategyBudgetProfile",
+  "type": "object"
+}

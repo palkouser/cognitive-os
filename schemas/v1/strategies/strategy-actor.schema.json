@@ -1,0 +1,33 @@
+{
+  "$defs": {
+    "StrategyCreatorType": {
+      "enum": [
+        "operator",
+        "user",
+        "import_service",
+        "system",
+        "provider"
+      ],
+      "title": "StrategyCreatorType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/strategies/strategy-actor.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "creator_id": {
+      "minLength": 1,
+      "title": "Creator Id",
+      "type": "string"
+    },
+    "creator_type": {
+      "$ref": "#/$defs/StrategyCreatorType"
+    }
+  },
+  "required": [
+    "creator_type",
+    "creator_id"
+  ],
+  "title": "StrategyActor",
+  "type": "object"
+}

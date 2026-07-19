@@ -48,6 +48,7 @@ class ContextSourceType(StrEnum):
     WORKSPACE = "workspace"
     USER_CORRECTION = "user_correction"
     PROCEDURAL_SKILL = "procedural_skill"
+    STRATEGY = "strategy"
 
 
 class ContextTrustClass(StrEnum):
@@ -67,6 +68,7 @@ class ContextPurpose(StrEnum):
     ADVISORY = "advisory"
     SEMANTIC_EXTRACTION = "semantic_extraction"
     SKILL_EXECUTION = "skill_execution"
+    STRATEGY_EXECUTION = "strategy_execution"
 
 
 class ContextBuildStatus(StrEnum):
@@ -292,6 +294,12 @@ class SemanticRevisionSnapshot(ContextContract):
     content_hash: Sha256Hex
 
 
+class StrategyRevisionSnapshot(ContextContract):
+    strategy_id: UUID
+    revision: int = Field(ge=1)
+    content_hash: Sha256Hex
+
+
 class RepositorySnapshot(ContextContract):
     repository_identity: Sha256Hex
     commit_hash: Annotated[str, Field(pattern=r"^[0-9a-f]{40}$")]
@@ -309,6 +317,7 @@ class ContextSourceSnapshot(ContextContract):
     artifacts: tuple[ArtifactSnapshot, ...] = ()
     memory_revisions: tuple[MemoryRevisionSnapshot, ...] = ()
     semantic_revisions: tuple[SemanticRevisionSnapshot, ...] = ()
+    strategy_revisions: tuple[StrategyRevisionSnapshot, ...] = ()
     repository: RepositorySnapshot | None = None
     workspace: WorkspaceSnapshot | None = None
     captured_at: UtcDatetime
@@ -334,7 +343,7 @@ class ContextRequest(ContextContract):
     query: Annotated[str, Field(min_length=1, max_length=8_192)]
     required_scopes: Annotated[tuple[MemoryScope, ...], Field(min_length=1, max_length=16)]
     allowed_source_types: Annotated[
-        tuple[ContextSourceType, ...], Field(min_length=1, max_length=14)
+        tuple[ContextSourceType, ...], Field(min_length=1, max_length=15)
     ]
     allowed_memory_types: tuple[MemoryType, ...] = ()
     valid_at: UtcDatetime

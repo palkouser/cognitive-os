@@ -1,0 +1,55 @@
+{
+  "$defs": {
+    "StrategyStatus": {
+      "enum": [
+        "draft",
+        "staged",
+        "verified",
+        "deprecated",
+        "superseded",
+        "retracted"
+      ],
+      "title": "StrategyStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/strategy.retracted.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "previous_status": {
+      "$ref": "#/$defs/StrategyStatus"
+    },
+    "reason_code": {
+      "minLength": 1,
+      "title": "Reason Code",
+      "type": "string"
+    },
+    "revision": {
+      "title": "Revision",
+      "type": "integer"
+    },
+    "status": {
+      "$ref": "#/$defs/StrategyStatus"
+    },
+    "strategy_id": {
+      "format": "uuid",
+      "title": "Strategy Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "strategy_id",
+    "revision",
+    "previous_status",
+    "status",
+    "reason_code",
+    "occurred_at"
+  ],
+  "title": "StrategyRetracted",
+  "type": "object"
+}
