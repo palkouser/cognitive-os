@@ -19,11 +19,6 @@ from cognitive_os.domain.skills import (
     SkillStatus,
 )
 from cognitive_os.infrastructure.artifacts.filesystem import ContentAddressedFilesystem
-from cognitive_os.infrastructure.artifacts.service import ArtifactService
-from cognitive_os.infrastructure.postgres.artifact_repository import PostgresArtifactRepository
-from cognitive_os.infrastructure.postgres.engine import create_postgres_engine
-from cognitive_os.infrastructure.skills.postgres.health import PostgresSkillHealthService
-from cognitive_os.infrastructure.skills.postgres.repository import PostgresSkillRepository
 from cognitive_os.skills.packaging import (
     export_package,
     load_artifact_package,
@@ -64,6 +59,13 @@ def _artifact_root() -> Path:
 
 
 def _runtime():
+    from cognitive_os.infrastructure.artifacts.service import ArtifactService
+    from cognitive_os.infrastructure.postgres.artifact_repository import (
+        PostgresArtifactRepository,
+    )
+    from cognitive_os.infrastructure.postgres.engine import create_postgres_engine
+    from cognitive_os.infrastructure.skills.postgres.repository import PostgresSkillRepository
+
     engine = create_postgres_engine(_database_url())
     repository = PostgresSkillRepository(engine)
     artifacts = ArtifactService(
@@ -99,6 +101,9 @@ async def _run(args: argparse.Namespace) -> int:
     if args.action in {"execute", "resume", "cancel", "execution"}:
         raise RuntimeError("execution commands require the running application Controller adapter")
     if args.action == "health":
+        from cognitive_os.infrastructure.postgres.engine import create_postgres_engine
+        from cognitive_os.infrastructure.skills.postgres.health import PostgresSkillHealthService
+
         engine = create_postgres_engine(_database_url(), pool_size=1, max_overflow=0)
         try:
             report = await PostgresSkillHealthService(engine).check()

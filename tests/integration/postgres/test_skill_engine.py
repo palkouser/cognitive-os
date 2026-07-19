@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from uuid import NAMESPACE_URL, uuid5
 
@@ -25,12 +26,12 @@ from cognitive_os.skills.validation import build_skill_verification_snapshot
 
 @pytest.mark.asyncio
 async def test_postgres_skill_lifecycle_health_and_append_only_history(
-    engines, tmp_path: Path
+    engines,
 ) -> None:
     app, _admin = engines
     repository = PostgresSkillRepository(app)
     artifacts = ArtifactService(
-        ContentAddressedFilesystem(tmp_path / "skill-artifacts", fsync=False),
+        ContentAddressedFilesystem(Path(os.environ["COGOS_ARTIFACT_ROOT"]), fsync=False),
         PostgresArtifactRepository(app),
     )
     service = SkillService(repository, artifacts, SkillConfiguration())
