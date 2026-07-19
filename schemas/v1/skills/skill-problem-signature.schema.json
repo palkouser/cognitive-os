@@ -1,0 +1,111 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/skills/skill-problem-signature.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "problem_domain": {
+      "minLength": 1,
+      "title": "Problem Domain",
+      "type": "string"
+    },
+    "relevant_artifact_types": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 32,
+      "title": "Relevant Artifact Types",
+      "type": "array"
+    },
+    "repository_language": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Repository Language"
+    },
+    "repository_profile": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Repository Profile"
+    },
+    "requested_output_type": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Requested Output Type"
+    },
+    "required_tool_capabilities": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 32,
+      "title": "Required Tool Capabilities",
+      "type": "array"
+    },
+    "required_verifier_capabilities": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 32,
+      "title": "Required Verifier Capabilities",
+      "type": "array"
+    },
+    "risk_level": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Risk Level"
+    },
+    "task_type": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Task Type"
+    }
+  },
+  "required": [
+    "problem_domain"
+  ],
+  "title": "SkillProblemSignature",
+  "type": "object"
+}

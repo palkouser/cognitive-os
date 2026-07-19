@@ -338,6 +338,39 @@ jobs:
           --manifest benchmarks/manifests/sprint11-context-ci.yaml
           --mode context-replay --report-directory /tmp/sprint11-context-benchmark
 
+  skill-engine-core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          version: "0.11.28"
+          enable-cache: true
+      - name: Install Python and core dependencies
+        run: uv python install 3.12 && uv sync --locked --all-groups
+      - name: Package, lifecycle, and adversarial gate
+        run: uv run pytest tests/cognitive_os/skills/test_packages_and_lifecycle.py -q
+      - name: Selection, Context, and benchmark-adapter gate
+        run: uv run pytest tests/cognitive_os/skills/test_selection_context_and_benchmarks.py -q
+      - name: Existing-Controller execution and verifier gate
+        run: uv run pytest tests/cognitive_os/skills/test_execution_and_verifiers.py -q
+      - name: Skill contract schema gate
+        run: uv run python -m cognitive_os.schemas.export --check
+      - name: Skill package CLI dry-run gate
+        run: >-
+          uv run python scripts/skill.py inspect-package
+          procedural_skills/coding/repository-inspection
+      - name: Deterministic Skill Engine smoke gate
+        run: uv run python scripts/skill_smoke_test.py
+      - name: Eight-case credential-free skill benchmark gate
+        run: >-
+          uv run python scripts/benchmark_run.py
+          --manifest benchmarks/manifests/sprint12-skill-ci.yaml
+          --mode skill-replay --report-directory /tmp/sprint12-skill-benchmark
+
   security:
     runs-on: ubuntu-latest
     steps:
@@ -422,8 +455,12 @@ jobs:
         run: uv run python scripts/semantic_smoke_test.py
       - name: Credential-free Sprint 11 context smoke
         run: uv run python scripts/context_smoke_test.py
+      - name: Credential-free Sprint 12 skill smoke
+        run: uv run python scripts/skill_smoke_test.py
       - name: Temporal semantic-memory health
         run: uv run python scripts/semantic_health.py
+      - name: Procedural Skill Engine health
+        run: uv run python scripts/skill_health.py
       - name: Four-case semantic benchmark gate with PostgreSQL service
         run: >-
           uv run python scripts/benchmark_run.py
@@ -434,6 +471,11 @@ jobs:
           uv run python scripts/benchmark_run.py
           --manifest benchmarks/manifests/sprint11-context-ci.yaml
           --mode context-replay --report-directory /tmp/sprint11-context-postgres-benchmark
+      - name: Eight-case skill benchmark gate with PostgreSQL service
+        run: >-
+          uv run python scripts/benchmark_run.py
+          --manifest benchmarks/manifests/sprint12-skill-ci.yaml
+          --mode skill-replay --report-directory /tmp/sprint12-skill-postgres-benchmark
       - name: Database and artifact backup restore test
         run: |
           container="$(docker ps --filter ancestor=pgvector/pgvector:0.8.2-pg18-bookworm --format '{{.ID}}' | head -n1)"

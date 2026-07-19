@@ -1,0 +1,3 @@
+cases:
+  - name: provider-is-advisory
+    expected_capabilities: [context.advisory, artifact.redact, provider.claude.advisory]

@@ -13,6 +13,7 @@ from cognitive_os.benchmarks.semantic_adapter import (
     SemanticBenchmarkAdapter,
     semantic_benchmark_case,
 )
+from cognitive_os.benchmarks.skill_adapter import skill_benchmark_case
 from cognitive_os.domain.benchmarks import BenchmarkCase, BenchmarkCaseResult, BenchmarkCaseStatus
 from cognitive_os.domain.common import utc_now
 
@@ -90,6 +91,8 @@ async def _run(manifest_path: Path, output: Path, seed: int, mode: str) -> int:
         executor = coding_replay_case
     elif mode == "context-replay":
         executor = context_benchmark_case
+    elif mode == "skill-replay":
+        executor = skill_benchmark_case
     elif mode == "memory-replay":
         executor = memory_replay_case
     elif mode == "semantic-replay":
@@ -166,6 +169,7 @@ def main() -> int:
             "memory-replay",
             "semantic-replay",
             "context-replay",
+            "skill-replay",
         ),
         default="verifier_only",
     )

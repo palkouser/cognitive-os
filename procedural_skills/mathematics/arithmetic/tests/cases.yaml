@@ -1,0 +1,4 @@
+cases:
+  - name: exact-addition
+    input: "2 + 3"
+    expected: 5

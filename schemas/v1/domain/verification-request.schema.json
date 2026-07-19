@@ -142,7 +142,11 @@
         "logical_problem",
         "physical_quantity",
         "semantic_snapshot",
-        "context_bundle"
+        "context_bundle",
+        "skill_package",
+        "skill_revision",
+        "skill_execution",
+        "skill_regression"
       ],
       "title": "VerificationSubjectType",
       "type": "string"

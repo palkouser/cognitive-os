@@ -371,6 +371,56 @@
       "schema_version": 1
     },
     {
+      "event_type": "skill.created",
+      "file": "v1/events/skill.created.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "skill.deprecated",
+      "file": "v1/events/skill.deprecated.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "skill.execution_completed",
+      "file": "v1/events/skill.execution_completed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "skill.execution_failed",
+      "file": "v1/events/skill.execution_failed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "skill.execution_started",
+      "file": "v1/events/skill.execution_started.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "skill.retracted",
+      "file": "v1/events/skill.retracted.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "skill.revision_appended",
+      "file": "v1/events/skill.revision_appended.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "skill.staged",
+      "file": "v1/events/skill.staged.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "skill.superseded",
+      "file": "v1/events/skill.superseded.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "skill.verified",
+      "file": "v1/events/skill.verified.v1.schema.json",
+      "schema_version": 1
+    },
+    {
       "event_type": "task.cancelled",
       "file": "v1/events/task.cancelled.v1.schema.json",
       "schema_version": 1
@@ -504,6 +554,11 @@
       "sha256": "0bb345c1d690cf71868845f7ec033af6c2af3c0df4600d04d33b24d771a1081a"
     },
     {
+      "file": "v1/config/skill-configuration.schema.json",
+      "model": "SkillConfiguration",
+      "sha256": "3778cc02d9c8495770322fe847be456146d06029e75a04e25697f1ba5b72d5d9"
+    },
+    {
       "file": "v1/context/artifact-snapshot.schema.json",
       "model": "ArtifactSnapshot",
       "sha256": "dacf16969386537fd76dd56a0dd746d3de8fce32494e3e01140b5d71a90d9297"
@@ -521,7 +576,7 @@
     {
       "file": "v1/context/context-build-result.schema.json",
       "model": "ContextBuildResult",
-      "sha256": "a574cac83326dcadeebda2048693f94587ea9f1e939843209c777d6026feb0bf"
+      "sha256": "8c0b22d11fe2787d9e89158212e224e743963a312d612baeb8f7afa49b931cc8"
     },
     {
       "file": "v1/context/context-bundle-reference.schema.json",
@@ -531,12 +586,12 @@
     {
       "file": "v1/context/context-bundle-revision.schema.json",
       "model": "ContextBundleRevision",
-      "sha256": "90bd1cee0835395792e037e855917f134f12030b70935e0e4f10f567ce8c7c37"
+      "sha256": "bcac11f2d2847c309af334e2e7e653149db4954e3b19115a24acc7995f01ba1b"
     },
     {
       "file": "v1/context/context-candidate.schema.json",
       "model": "ContextCandidate",
-      "sha256": "2eceec0e89cad4bbab900010e346c482bc75cc6a2fb445283dd2526918c13dfe"
+      "sha256": "1fb97b62a40c5946acbb0553beb19c15406b6ab17a32ef13f8d6ebc0c3ecea20"
     },
     {
       "file": "v1/context/context-component-health.schema.json",
@@ -551,12 +606,12 @@
     {
       "file": "v1/context/context-query-plan.schema.json",
       "model": "ContextQueryPlan",
-      "sha256": "dd350d21474164ad23c0163ef5e08cc3111085683f6b20f3f32f36f85c8d4759"
+      "sha256": "6937b6088bbafd27333df5d933fe1459255084a2cd9e86cf20fb1247392adb6f"
     },
     {
       "file": "v1/context/context-request.schema.json",
       "model": "ContextRequest",
-      "sha256": "7dc29a0ce4eb3ffab3329be4db20957de8c23025f024d8a530897af4d4ceab46"
+      "sha256": "adcf465f6a532c5db343baa7bfab791939db329be0b960970b31ff5d7f953f2d"
     },
     {
       "file": "v1/context/context-reranker-descriptor.schema.json",
@@ -566,12 +621,12 @@
     {
       "file": "v1/context/context-retrieval-trace.schema.json",
       "model": "ContextRetrievalTrace",
-      "sha256": "1635429c77460a1bf952ee8c609566e54368d1f3f8f77b9c32d7c366966e3340"
+      "sha256": "ffe0661470cd727ffe988b785460b36d7e9b3160828723dc551ac8dfde3a5748"
     },
     {
       "file": "v1/context/context-retriever-descriptor.schema.json",
       "model": "ContextRetrieverDescriptor",
-      "sha256": "f41043c5963a840e4fe8cf84445a9e68995fb07ed0c3c73a94f195c6803c6c53"
+      "sha256": "19b7cd1aaac7a09c300958c438ac2b4eb9b4bf188854473aa97e7ba496eb4b5b"
     },
     {
       "file": "v1/context/context-score-breakdown.schema.json",
@@ -581,12 +636,12 @@
     {
       "file": "v1/context/context-section.schema.json",
       "model": "ContextSection",
-      "sha256": "57c2276341bc1495c768901c6c4b5956e0cd6f670419541ee87423a4e3068921"
+      "sha256": "2ee291a73d59e434a530cb6723207163a560124bd61232fb79df39ab3c83987a"
     },
     {
       "file": "v1/context/context-source-reference.schema.json",
       "model": "ContextSourceReference",
-      "sha256": "ace3e17afcc78bfaca55b0e6e8100e55fda175cd34ab76af5f8167021bbf582f"
+      "sha256": "56d4d4461e092dae965a7069bdc3f8b5e51773c93a78c89c87bbcfe96164eaf6"
     },
     {
       "file": "v1/context/context-source-snapshot.schema.json",
@@ -596,7 +651,7 @@
     {
       "file": "v1/context/context-warning.schema.json",
       "model": "ContextWarning",
-      "sha256": "7dbf983f8ba4b67acdc51c954f2c49397bb07383e4e46ebe0482558607fc7b8a"
+      "sha256": "5a99ba58a08574ecedaa85245b3b57f4e36e75200b983c5186c8d3390344be3b"
     },
     {
       "file": "v1/context/deduplication-decision.schema.json",
@@ -646,7 +701,7 @@
     {
       "file": "v1/context/retrieval-subquery.schema.json",
       "model": "RetrievalSubquery",
-      "sha256": "33517f5700bd4d7e9ae60759210d51a2d63a86d4f92edeca10361490141a3567"
+      "sha256": "e8ae66399930ed2192aade4312687ec14be8d33cc58aef92910793f0c9410b04"
     },
     {
       "file": "v1/context/retriever-call-trace.schema.json",
@@ -1021,22 +1076,22 @@
     {
       "file": "v1/domain/verification-request.schema.json",
       "model": "VerificationRequest",
-      "sha256": "335560adc3bcfd00a64c35a270baf63b0c3541218b6944f67cfc3010a700f02f"
+      "sha256": "e6296b9194e32c3fc29b25065baf66f0cb4e1936f4f4edd26ece0c5adfc1af56"
     },
     {
       "file": "v1/domain/verification-subject.schema.json",
       "model": "VerificationSubject",
-      "sha256": "ea78d63ad142b79e7db3cef16a985c65eabf8762eb3a743ecdf48d605f2d0130"
+      "sha256": "b33693fccae5906a1b8894eb6cfafb7243650891b3c6c11647897b18180f5f75"
     },
     {
       "file": "v1/domain/verifier-capability.schema.json",
       "model": "VerifierCapability",
-      "sha256": "25314f12726548ffc380593cdb911e5f5c4c25a4e0596995c317eea65f14466a"
+      "sha256": "7950cfa118bc5871e0eb3721cdca661d759c09eabd87c7d848686cac08dd6c2d"
     },
     {
       "file": "v1/domain/verifier-descriptor.schema.json",
       "model": "VerifierDescriptor",
-      "sha256": "d74b8a521783f6d98e939592dabc95c566094a0204621407b80d28e9ac526c2f"
+      "sha256": "bcd7d19a4169472ef336afb0073d6e27fe292bbf065ac51b3b8bebab0d95d834"
     },
     {
       "file": "v1/domain/verifier-requirement.schema.json",
@@ -1442,6 +1497,56 @@
       "file": "v1/events/semantic.wiki_page_rendered.v1.schema.json",
       "model": "SemanticWikiPageRendered",
       "sha256": "4275c14d63c1d73db2cf65f5cf9d5187485e27779721c41f9c4cbecad0e72d7d"
+    },
+    {
+      "file": "v1/events/skill.created.v1.schema.json",
+      "model": "SkillCreated",
+      "sha256": "6c00dea87a09132f3f2d1c162fc41a00347fac0ce7d63dc0c69a3024a77f5e59"
+    },
+    {
+      "file": "v1/events/skill.deprecated.v1.schema.json",
+      "model": "SkillDeprecated",
+      "sha256": "f0cadb15add23f466bf1cb38955f06f9c048419526cd69c08c455b5b5dccceee"
+    },
+    {
+      "file": "v1/events/skill.execution_completed.v1.schema.json",
+      "model": "SkillExecutionCompleted",
+      "sha256": "ed4f99f64be8972e64dbd3335d31e95e4d5e45420df9351cf91eb3fbe80b324f"
+    },
+    {
+      "file": "v1/events/skill.execution_failed.v1.schema.json",
+      "model": "SkillExecutionFailed",
+      "sha256": "91f7bacde8144bda2e91185570699b4570a86abf269d13c9bbf9447a56276b8e"
+    },
+    {
+      "file": "v1/events/skill.execution_started.v1.schema.json",
+      "model": "SkillExecutionStarted",
+      "sha256": "2ac7c52d56a9238a6dcadf75122227268b3cbbbe096051d03b2256917771c777"
+    },
+    {
+      "file": "v1/events/skill.retracted.v1.schema.json",
+      "model": "SkillRetracted",
+      "sha256": "3a27153a4c307a7a519f2dfd79aca80283b9378d820465407f07501858234758"
+    },
+    {
+      "file": "v1/events/skill.revision_appended.v1.schema.json",
+      "model": "SkillRevisionAppended",
+      "sha256": "f0cfbfc8d716879d4445baa2b9161131e2c54ef42e077d1d4fdff0ec0330f69b"
+    },
+    {
+      "file": "v1/events/skill.staged.v1.schema.json",
+      "model": "SkillStaged",
+      "sha256": "6158a4692faa8b0230c8bda5b033dfa6a310ef1c6eed56f1b471b3558d44d3e1"
+    },
+    {
+      "file": "v1/events/skill.superseded.v1.schema.json",
+      "model": "SkillSuperseded",
+      "sha256": "80b8ddd9d924fefc7833c42c65e05fb5a6cfe8c7d18d5f0915c73c820be5ecac"
+    },
+    {
+      "file": "v1/events/skill.verified.v1.schema.json",
+      "model": "SkillVerified",
+      "sha256": "f8b650e06d42bd944293ada676582afbc6d7e96241d37bd68386cd9e9e19a16a"
     },
     {
       "file": "v1/events/task.cancelled.v1.schema.json",
@@ -1942,6 +2047,211 @@
       "file": "v1/semantic-memory/wiki-page.schema.json",
       "model": "WikiPage",
       "sha256": "676a3873df9fdc7b92899bcbfdd9e9c6eca25d53ca7466042e694c205a6613e4"
+    },
+    {
+      "file": "v1/skills/skill-access-record.schema.json",
+      "model": "SkillAccessRecord",
+      "sha256": "d4d3a2aac69ff48e99ac6e51d101b45428fd57f602a18cf68962d51707784ea5"
+    },
+    {
+      "file": "v1/skills/skill-actor.schema.json",
+      "model": "SkillActor",
+      "sha256": "c8882cee270fdb6ff3510a71fc8eaca928867de16552283f247303c2bee3a5ce"
+    },
+    {
+      "file": "v1/skills/skill-applicability-input.schema.json",
+      "model": "SkillApplicabilityInput",
+      "sha256": "cd49999cd84e343205ad8193b6c10d7c26fdeea7473c0cf98d72055a0fb366f9"
+    },
+    {
+      "file": "v1/skills/skill-applicability-result.schema.json",
+      "model": "SkillApplicabilityResult",
+      "sha256": "98a558f4aaf27886463efdb11d0c8a39dd6e715d1404a684516783201cc713da"
+    },
+    {
+      "file": "v1/skills/skill-approval-requirement.schema.json",
+      "model": "SkillApprovalRequirement",
+      "sha256": "43361f2edd36fa4d5b12fc68d77369d5d74fba98f4df821e9fb99e94dab4da56"
+    },
+    {
+      "file": "v1/skills/skill-artifact-requirement.schema.json",
+      "model": "SkillArtifactRequirement",
+      "sha256": "ba89b288a5d4dad66c4900ccb73ad8eabda4330f8e7db2f70b54670cd73052b3"
+    },
+    {
+      "file": "v1/skills/skill-context-requirement.schema.json",
+      "model": "SkillContextRequirement",
+      "sha256": "7cd4511ff719cfc1e697a5d0d753a138aaa12bc185d7418cdb97bae3479c1b15"
+    },
+    {
+      "file": "v1/skills/skill-execution-request.schema.json",
+      "model": "SkillExecutionRequest",
+      "sha256": "5f4ae5174cbaf294923bb4ecf311f737ffcaa9e3f85f057c681453b078ffef16"
+    },
+    {
+      "file": "v1/skills/skill-execution-result.schema.json",
+      "model": "SkillExecutionResult",
+      "sha256": "a54cec1a7e2eccd35af1f77d6fdb445a21dc3b50a27f3a7be7d57b100fb783c2"
+    },
+    {
+      "file": "v1/skills/skill-execution-step-result.schema.json",
+      "model": "SkillExecutionStepResult",
+      "sha256": "049247b12e7d74e41b0d7e2d096f3d10fdfb0898980295ee177b98767127842e"
+    },
+    {
+      "file": "v1/skills/skill-failure-policy.schema.json",
+      "model": "SkillFailurePolicy",
+      "sha256": "0cd370dc176be27af06196da48cacf42672f0ed3c93e741387ed2daa643d2d94"
+    },
+    {
+      "file": "v1/skills/skill-fallback-reference.schema.json",
+      "model": "SkillFallbackReference",
+      "sha256": "71b90d6eccbb13541e3cc5bfc617ecb492e22822b7f3ee1f7decbed017ca2ffd"
+    },
+    {
+      "file": "v1/skills/skill-field-specification.schema.json",
+      "model": "SkillFieldSpecification",
+      "sha256": "9464a4668be8c9bb15333fdb3b36d61ad82c7fa7cce4b2e8ba4694606b02895d"
+    },
+    {
+      "file": "v1/skills/skill-identity.schema.json",
+      "model": "SkillIdentity",
+      "sha256": "ea5a08aeafd15a4cdddebc5387d0d17f8cfd9529eb55bd9bb1c428912b3e0160"
+    },
+    {
+      "file": "v1/skills/skill-input-binding.schema.json",
+      "model": "SkillInputBinding",
+      "sha256": "463d8896ff3e9ca35a1af64a33cca74614d824ec4a00c8547b59aa878b8a3417"
+    },
+    {
+      "file": "v1/skills/skill-input-specification.schema.json",
+      "model": "SkillInputSpecification",
+      "sha256": "8bbdd04c635a1bb7f46817b66b37d1ade4427d2ad14cb3691a3da06e4a1ad92a"
+    },
+    {
+      "file": "v1/skills/skill-item.schema.json",
+      "model": "SkillItem",
+      "sha256": "f1c2dba168e42d3d4ac1d16379b260385b7d91a643aadce62efa6b04f7940e21"
+    },
+    {
+      "file": "v1/skills/skill-output-binding.schema.json",
+      "model": "SkillOutputBinding",
+      "sha256": "c2f4436522575d46ab6fe05cc9557a1167b7ec06a840e75121ed7a884d1fdb51"
+    },
+    {
+      "file": "v1/skills/skill-output-specification.schema.json",
+      "model": "SkillOutputSpecification",
+      "sha256": "9a5c46d96b772c9dad315edb92f92f715cfa7c1d93d77838371d3563580ba5c2"
+    },
+    {
+      "file": "v1/skills/skill-package-file.schema.json",
+      "model": "SkillPackageFile",
+      "sha256": "7bdc447ab7fb940372fb60da67d5f37f28d3fe1ce0541857e36c483df92298ae"
+    },
+    {
+      "file": "v1/skills/skill-package-manifest.schema.json",
+      "model": "SkillPackageManifest",
+      "sha256": "1b382d09e017d156e3b2a2c7eb7e8218dab8552c00d95a08ad8e391ace301ec6"
+    },
+    {
+      "file": "v1/skills/skill-precondition-result.schema.json",
+      "model": "SkillPreconditionResult",
+      "sha256": "5744d25fad19ef39cc08311e96d96eeca69aeb4d9f44a836d618cb21836b851c"
+    },
+    {
+      "file": "v1/skills/skill-precondition.schema.json",
+      "model": "SkillPrecondition",
+      "sha256": "d7df7c878f5b2e74e6f7e0416aa9f63daf6eb4194f2df1ba7cb36a579fe63a83"
+    },
+    {
+      "file": "v1/skills/skill-problem-signature.schema.json",
+      "model": "SkillProblemSignature",
+      "sha256": "30bb82002e73fca6b37ff21dccd5cfb044438ba916e6a8bc1c32456e82344642"
+    },
+    {
+      "file": "v1/skills/skill-promotion-decision.schema.json",
+      "model": "SkillPromotionDecision",
+      "sha256": "a4098f2ce10df9eea853f0cb9c43e3bdbace99223064e7c8c4678a9cc5b28f1f"
+    },
+    {
+      "file": "v1/skills/skill-provider-requirement.schema.json",
+      "model": "SkillProviderRequirement",
+      "sha256": "595076af6a192dc16e00f95d1197b570533e56d3f3557ac83a69a2a409372601"
+    },
+    {
+      "file": "v1/skills/skill-registry-snapshot.schema.json",
+      "model": "SkillRegistrySnapshot",
+      "sha256": "e9b7135f70bf28123a496bf4132a605031a463bfd032b965a0cbba5b1fdab3dd"
+    },
+    {
+      "file": "v1/skills/skill-requirement.schema.json",
+      "model": "SkillRequirement",
+      "sha256": "26c215eb2283637861214a86bfcaddea0e3590d875c37fea5d56888cc747fae8"
+    },
+    {
+      "file": "v1/skills/skill-resource-budget.schema.json",
+      "model": "SkillResourceBudget",
+      "sha256": "213fffab4bab08fec57e9d0df83319d854358e83010848fd83a778373d7fa0cc"
+    },
+    {
+      "file": "v1/skills/skill-revision.schema.json",
+      "model": "SkillRevision",
+      "sha256": "4944e8845a0d2b4416c68386da8faf8beb1912c5cf25ee62a147b1445cf33ede"
+    },
+    {
+      "file": "v1/skills/skill-scope.schema.json",
+      "model": "SkillScope",
+      "sha256": "28731d1c4bb5688203b4f18510603e49fce87a65431f529ce116e55e41fcda4a"
+    },
+    {
+      "file": "v1/skills/skill-selection-candidate.schema.json",
+      "model": "SkillSelectionCandidate",
+      "sha256": "09e8346c5f04e29963a93bac9e94f568b65f11d7412d0261064235ba59757a14"
+    },
+    {
+      "file": "v1/skills/skill-selection-decision.schema.json",
+      "model": "SkillSelectionDecision",
+      "sha256": "2042f39faf363d9d04cf36550751f2f43ae8a91c95318b5a6fcef500521f0ec1"
+    },
+    {
+      "file": "v1/skills/skill-selection-exclusion.schema.json",
+      "model": "SkillSelectionExclusion",
+      "sha256": "cab14bd3ebbbb68474cd1068c49ea5189ccd33b3fa9b9fdb051c6918f2130369"
+    },
+    {
+      "file": "v1/skills/skill-selection-request.schema.json",
+      "model": "SkillSelectionRequest",
+      "sha256": "337df0715dbd41ebc9dfa2b4531ef0ed60897db5fe0f32d9939dbc45643e1763"
+    },
+    {
+      "file": "v1/skills/skill-source-ref.schema.json",
+      "model": "SkillSourceRef",
+      "sha256": "1aca10bf213e3a0b9ae617ad25a7226d6ac4f9d2aa3804abbe61be3e016c2cc8"
+    },
+    {
+      "file": "v1/skills/skill-statistics.schema.json",
+      "model": "SkillStatistics",
+      "sha256": "78d6e31598765169d05fc19017959705cd2b9a458c9bdeebadecb84638b428fd"
+    },
+    {
+      "file": "v1/skills/skill-step.schema.json",
+      "model": "SkillStep",
+      "sha256": "a4b61e6fccdff4a4c6aacd7753631dfd55d56f4c768a96090af1ac0eb307782c"
+    },
+    {
+      "file": "v1/skills/skill-tool-requirement.schema.json",
+      "model": "SkillToolRequirement",
+      "sha256": "c28ba849493ac723577e631af4128e3836904677ab234e1337f1a252be1c07a9"
+    },
+    {
+      "file": "v1/skills/skill-verification-snapshot.schema.json",
+      "model": "SkillVerificationSnapshot",
+      "sha256": "490e566bb63dbfe3f08cee2456ccb3df38455dbdefd90cd8535aad1ac927f090"
+    },
+    {
+      "file": "v1/skills/skill-verifier-requirement.schema.json",
+      "model": "SkillVerifierRequirement",
+      "sha256": "9295a0128c1bcd3a7181bc2cd2f72e0ba63b28b6d263557d179e57314be6f521"
     }
   ],
   "schema_set_version": 1

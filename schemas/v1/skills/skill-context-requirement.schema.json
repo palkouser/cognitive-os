@@ -1,0 +1,71 @@
+{
+  "$defs": {
+    "SkillRequirementType": {
+      "enum": [
+        "tool",
+        "verifier",
+        "provider",
+        "context",
+        "approval",
+        "artifact"
+      ],
+      "title": "SkillRequirementType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/skills/skill-context-requirement.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "capability_id": {
+      "minLength": 1,
+      "title": "Capability Id",
+      "type": "string"
+    },
+    "permission": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Permission"
+    },
+    "required": {
+      "default": true,
+      "title": "Required",
+      "type": "boolean"
+    },
+    "requirement_id": {
+      "minLength": 1,
+      "title": "Requirement Id",
+      "type": "string"
+    },
+    "requirement_type": {
+      "$ref": "#/$defs/SkillRequirementType",
+      "default": "context"
+    },
+    "version_constraint": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Version Constraint"
+    }
+  },
+  "required": [
+    "requirement_id",
+    "capability_id"
+  ],
+  "title": "SkillContextRequirement",
+  "type": "object"
+}

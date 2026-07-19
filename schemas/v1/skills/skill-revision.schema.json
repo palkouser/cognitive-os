@@ -1,0 +1,836 @@
+{
+  "$defs": {
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "format": "uuid",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "media_type": {
+          "minLength": 1,
+          "title": "Media Type",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "storage_key": {
+          "minLength": 1,
+          "title": "Storage Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "media_type",
+        "content_hash",
+        "size_bytes",
+        "storage_key",
+        "created_at"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "SkillActor": {
+      "additionalProperties": false,
+      "properties": {
+        "creator_id": {
+          "minLength": 1,
+          "title": "Creator Id",
+          "type": "string"
+        },
+        "creator_type": {
+          "$ref": "#/$defs/SkillCreatorType"
+        }
+      },
+      "required": [
+        "creator_type",
+        "creator_id"
+      ],
+      "title": "SkillActor",
+      "type": "object"
+    },
+    "SkillCreatorType": {
+      "enum": [
+        "operator",
+        "user",
+        "import_service",
+        "system",
+        "provider"
+      ],
+      "title": "SkillCreatorType",
+      "type": "string"
+    },
+    "SkillFailurePolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "fallback": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SkillFallbackReference"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "maximum_fallback_depth": {
+          "default": 0,
+          "maximum": 4,
+          "minimum": 0,
+          "title": "Maximum Fallback Depth",
+          "type": "integer"
+        },
+        "policy_type": {
+          "$ref": "#/$defs/SkillFailurePolicyType"
+        }
+      },
+      "required": [
+        "policy_type"
+      ],
+      "title": "SkillFailurePolicy",
+      "type": "object"
+    },
+    "SkillFailurePolicyType": {
+      "enum": [
+        "fail_immediately",
+        "return_to_controller_repair",
+        "request_clarification",
+        "request_manual_approval",
+        "invoke_fallback_skill",
+        "mark_unsuitable"
+      ],
+      "title": "SkillFailurePolicyType",
+      "type": "string"
+    },
+    "SkillFallbackReference": {
+      "additionalProperties": false,
+      "properties": {
+        "revision": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision"
+        },
+        "skill_id": {
+          "format": "uuid",
+          "title": "Skill Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "skill_id"
+      ],
+      "title": "SkillFallbackReference",
+      "type": "object"
+    },
+    "SkillFieldSpecification": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_media_types": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 16,
+          "title": "Artifact Media Types",
+          "type": "array"
+        },
+        "json_type": {
+          "pattern": "^(string|integer|number|boolean|object|array)$",
+          "title": "Json Type",
+          "type": "string"
+        },
+        "name": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "title": "Name",
+          "type": "string"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "requires_evidence": {
+          "default": false,
+          "title": "Requires Evidence",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "json_type"
+      ],
+      "title": "SkillFieldSpecification",
+      "type": "object"
+    },
+    "SkillInputSpecification": {
+      "additionalProperties": false,
+      "properties": {
+        "fields": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/SkillFieldSpecification"
+          },
+          "maxItems": 64,
+          "title": "Fields",
+          "type": "array"
+        }
+      },
+      "title": "SkillInputSpecification",
+      "type": "object"
+    },
+    "SkillOutputSpecification": {
+      "additionalProperties": false,
+      "properties": {
+        "fields": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/SkillFieldSpecification"
+          },
+          "maxItems": 64,
+          "title": "Fields",
+          "type": "array"
+        }
+      },
+      "title": "SkillOutputSpecification",
+      "type": "object"
+    },
+    "SkillPrecondition": {
+      "additionalProperties": false,
+      "properties": {
+        "parameters": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Parameters",
+          "type": "object"
+        },
+        "precondition_id": {
+          "minLength": 1,
+          "title": "Precondition Id",
+          "type": "string"
+        },
+        "precondition_type": {
+          "$ref": "#/$defs/SkillPreconditionType"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "precondition_id",
+        "precondition_type",
+        "parameters"
+      ],
+      "title": "SkillPrecondition",
+      "type": "object"
+    },
+    "SkillPreconditionType": {
+      "enum": [
+        "problem_domain_match",
+        "problem_signature_match",
+        "repository_profile_match",
+        "artifact_presence",
+        "tool_capability",
+        "verifier_capability",
+        "provider_capability",
+        "scope_match",
+        "risk_ceiling",
+        "explicit_permission",
+        "feature_flag"
+      ],
+      "title": "SkillPreconditionType",
+      "type": "string"
+    },
+    "SkillProblemSignature": {
+      "additionalProperties": false,
+      "properties": {
+        "problem_domain": {
+          "minLength": 1,
+          "title": "Problem Domain",
+          "type": "string"
+        },
+        "relevant_artifact_types": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Relevant Artifact Types",
+          "type": "array"
+        },
+        "repository_language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Repository Language"
+        },
+        "repository_profile": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Repository Profile"
+        },
+        "requested_output_type": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Requested Output Type"
+        },
+        "required_tool_capabilities": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Required Tool Capabilities",
+          "type": "array"
+        },
+        "required_verifier_capabilities": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 32,
+          "title": "Required Verifier Capabilities",
+          "type": "array"
+        },
+        "risk_level": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Risk Level"
+        },
+        "task_type": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Type"
+        }
+      },
+      "required": [
+        "problem_domain"
+      ],
+      "title": "SkillProblemSignature",
+      "type": "object"
+    },
+    "SkillRequirement": {
+      "additionalProperties": false,
+      "properties": {
+        "capability_id": {
+          "minLength": 1,
+          "title": "Capability Id",
+          "type": "string"
+        },
+        "permission": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Permission"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "requirement_id": {
+          "minLength": 1,
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "requirement_type": {
+          "$ref": "#/$defs/SkillRequirementType"
+        },
+        "version_constraint": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version Constraint"
+        }
+      },
+      "required": [
+        "requirement_id",
+        "requirement_type",
+        "capability_id"
+      ],
+      "title": "SkillRequirement",
+      "type": "object"
+    },
+    "SkillRequirementType": {
+      "enum": [
+        "tool",
+        "verifier",
+        "provider",
+        "context",
+        "approval",
+        "artifact"
+      ],
+      "title": "SkillRequirementType",
+      "type": "string"
+    },
+    "SkillResourceBudget": {
+      "additionalProperties": false,
+      "properties": {
+        "maximum_context_builds": {
+          "default": 8,
+          "maximum": 8,
+          "minimum": 0,
+          "title": "Maximum Context Builds",
+          "type": "integer"
+        },
+        "maximum_context_tokens": {
+          "default": 32768,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Maximum Context Tokens",
+          "type": "integer"
+        },
+        "maximum_execution_seconds": {
+          "default": 1800,
+          "maximum": 1800,
+          "minimum": 1,
+          "title": "Maximum Execution Seconds",
+          "type": "integer"
+        },
+        "maximum_provider_calls": {
+          "default": 8,
+          "maximum": 8,
+          "minimum": 0,
+          "title": "Maximum Provider Calls",
+          "type": "integer"
+        },
+        "maximum_repairs": {
+          "default": 3,
+          "maximum": 3,
+          "minimum": 0,
+          "title": "Maximum Repairs",
+          "type": "integer"
+        },
+        "maximum_steps": {
+          "default": 64,
+          "maximum": 64,
+          "minimum": 1,
+          "title": "Maximum Steps",
+          "type": "integer"
+        },
+        "maximum_tool_calls": {
+          "default": 32,
+          "maximum": 32,
+          "minimum": 0,
+          "title": "Maximum Tool Calls",
+          "type": "integer"
+        }
+      },
+      "title": "SkillResourceBudget",
+      "type": "object"
+    },
+    "SkillSourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "source_id": {
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_revision": {
+          "minLength": 1,
+          "title": "Source Revision",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/SkillSourceType"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_id",
+        "source_revision",
+        "content_hash"
+      ],
+      "title": "SkillSourceRef",
+      "type": "object"
+    },
+    "SkillSourceType": {
+      "enum": [
+        "manual",
+        "imported_package",
+        "repository",
+        "artifact"
+      ],
+      "title": "SkillSourceType",
+      "type": "string"
+    },
+    "SkillStatus": {
+      "enum": [
+        "draft",
+        "staged",
+        "verified",
+        "deprecated",
+        "superseded",
+        "retracted"
+      ],
+      "title": "SkillStatus",
+      "type": "string"
+    },
+    "SkillStep": {
+      "additionalProperties": false,
+      "properties": {
+        "capability_id": {
+          "minLength": 1,
+          "title": "Capability Id",
+          "type": "string"
+        },
+        "mandatory": {
+          "default": true,
+          "title": "Mandatory",
+          "type": "boolean"
+        },
+        "parameters": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Parameters",
+          "type": "object"
+        },
+        "step_id": {
+          "minLength": 1,
+          "title": "Step Id",
+          "type": "string"
+        },
+        "step_type": {
+          "$ref": "#/$defs/SkillStepType"
+        }
+      },
+      "required": [
+        "step_id",
+        "step_type",
+        "capability_id"
+      ],
+      "title": "SkillStep",
+      "type": "object"
+    },
+    "SkillStepType": {
+      "enum": [
+        "controller_step_template",
+        "provider_action_template",
+        "tool_action",
+        "verification_action",
+        "approval_point",
+        "clarification_action",
+        "context_build",
+        "artifact_transform",
+        "deterministic_branch"
+      ],
+      "title": "SkillStepType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/skills/skill-revision.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "created_by": {
+      "$ref": "#/$defs/SkillActor"
+    },
+    "description": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "title": "Description",
+      "type": "string"
+    },
+    "display_name": {
+      "maxLength": 256,
+      "minLength": 1,
+      "title": "Display Name",
+      "type": "string"
+    },
+    "domains": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 16,
+      "minItems": 1,
+      "title": "Domains",
+      "type": "array"
+    },
+    "failure_policy": {
+      "$ref": "#/$defs/SkillFailurePolicy"
+    },
+    "input_specification": {
+      "$ref": "#/$defs/SkillInputSpecification",
+      "default": {
+        "fields": []
+      }
+    },
+    "output_specification": {
+      "$ref": "#/$defs/SkillOutputSpecification",
+      "default": {
+        "fields": []
+      }
+    },
+    "package_artifact": {
+      "$ref": "#/$defs/ArtifactRef"
+    },
+    "package_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Package Hash",
+      "type": "string"
+    },
+    "preconditions": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/SkillPrecondition"
+      },
+      "maxItems": 32,
+      "title": "Preconditions",
+      "type": "array"
+    },
+    "previous_revision": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Revision"
+    },
+    "problem_signatures": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/SkillProblemSignature"
+      },
+      "maxItems": 32,
+      "title": "Problem Signatures",
+      "type": "array"
+    },
+    "purpose": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "title": "Purpose",
+      "type": "string"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "regression_profile": {
+      "minLength": 1,
+      "title": "Regression Profile",
+      "type": "string"
+    },
+    "requirements": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/SkillRequirement"
+      },
+      "maxItems": 96,
+      "title": "Requirements",
+      "type": "array"
+    },
+    "resource_budget": {
+      "$ref": "#/$defs/SkillResourceBudget"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "sensitivity": {
+      "$ref": "#/$defs/MemorySensitivity"
+    },
+    "skill_id": {
+      "format": "uuid",
+      "title": "Skill Id",
+      "type": "string"
+    },
+    "source_refs": {
+      "items": {
+        "$ref": "#/$defs/SkillSourceRef"
+      },
+      "maxItems": 64,
+      "minItems": 1,
+      "title": "Source Refs",
+      "type": "array"
+    },
+    "status": {
+      "$ref": "#/$defs/SkillStatus"
+    },
+    "steps": {
+      "items": {
+        "$ref": "#/$defs/SkillStep"
+      },
+      "maxItems": 64,
+      "minItems": 1,
+      "title": "Steps",
+      "type": "array"
+    }
+  },
+  "required": [
+    "skill_id",
+    "revision",
+    "status",
+    "display_name",
+    "description",
+    "purpose",
+    "domains",
+    "steps",
+    "failure_policy",
+    "resource_budget",
+    "package_artifact",
+    "package_hash",
+    "source_refs",
+    "sensitivity",
+    "regression_profile",
+    "created_at",
+    "created_by",
+    "reason"
+  ],
+  "title": "SkillRevision",
+  "type": "object"
+}

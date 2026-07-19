@@ -1,0 +1,452 @@
+{
+  "architecture": {
+    "context_builder_database": false,
+    "learned_ranking": false,
+    "network_required": false,
+    "postgresql_authoritative": true
+  },
+  "environment": {
+    "database_size_bytes": 66139839,
+    "machine": "x86_64",
+    "platform": "Linux-7.0.0-28-generic-x86_64-with-glibc2.43",
+    "postgresql": "18.4 (Debian 18.4-1.pgdg12+1)",
+    "processor": "unknown",
+    "python": "3.12.13",
+    "skill_relation_size_bytes": 55058432
+  },
+  "fixture": {
+    "accesses": 100000,
+    "execution_steps": 100000,
+    "executions": 10000,
+    "requirements": 20000,
+    "skill_identities": 1000,
+    "skill_revisions": 5000
+  },
+  "measurements": {
+    "candidate_query": {
+      "iterations": 30,
+      "maximum_ms": 0.692,
+      "p50_ms": 0.405,
+      "p95_ms": 0.515
+    },
+    "context_metadata_retrieval": {
+      "iterations": 30,
+      "maximum_ms": 1.439,
+      "p50_ms": 0.514,
+      "p95_ms": 0.55
+    },
+    "health_projection": {
+      "iterations": 30,
+      "maximum_ms": 1.15,
+      "p50_ms": 0.711,
+      "p95_ms": 0.748
+    },
+    "registry_load": {
+      "iterations": 30,
+      "maximum_ms": 11.818,
+      "p50_ms": 1.326,
+      "p95_ms": 2.655
+    },
+    "requirement_filter": {
+      "iterations": 30,
+      "maximum_ms": 3.614,
+      "p50_ms": 2.561,
+      "p95_ms": 2.643
+    },
+    "statistics_rebuild": {
+      "iterations": 30,
+      "maximum_ms": 2.908,
+      "p50_ms": 2.132,
+      "p95_ms": 2.682
+    }
+  },
+  "plans": {
+    "candidate_query": [
+      {
+        "Plan": {
+          "Async Capable": false,
+          "Disabled": false,
+          "Node Type": "Limit",
+          "Parallel Aware": false,
+          "Plan Rows": 1,
+          "Plan Width": 20,
+          "Plans": [
+            {
+              "Async Capable": false,
+              "Disabled": false,
+              "Node Type": "Sort",
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Plan Rows": 1,
+              "Plan Width": 20,
+              "Plans": [
+                {
+                  "Alias": "skill_items",
+                  "Async Capable": false,
+                  "Disabled": false,
+                  "Index Cond": "((scope_type = 'project'::text) AND (scope_id = 'scale'::text) AND (current_status = 'verified'::text))",
+                  "Index Name": "ix_skill_items_scope_status",
+                  "Node Type": "Index Scan",
+                  "Parallel Aware": false,
+                  "Parent Relationship": "Outer",
+                  "Plan Rows": 1,
+                  "Plan Width": 20,
+                  "Relation Name": "skill_items",
+                  "Scan Direction": "Forward",
+                  "Startup Cost": 0.14,
+                  "Total Cost": 8.17
+                }
+              ],
+              "Sort Key": [
+                "skill_id"
+              ],
+              "Startup Cost": 8.18,
+              "Total Cost": 8.18
+            }
+          ],
+          "Startup Cost": 8.18,
+          "Total Cost": 8.18
+        }
+      }
+    ],
+    "context_metadata_retrieval": [
+      {
+        "Plan": {
+          "Async Capable": false,
+          "Disabled": false,
+          "Node Type": "Limit",
+          "Parallel Aware": false,
+          "Plan Rows": 1,
+          "Plan Width": 166,
+          "Plans": [
+            {
+              "Async Capable": false,
+              "Disabled": false,
+              "Node Type": "Sort",
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Plan Rows": 1,
+              "Plan Width": 166,
+              "Plans": [
+                {
+                  "Alias": "skill_revisions",
+                  "Async Capable": false,
+                  "Disabled": false,
+                  "Filter": "(domains_json @> '[\"coding\"]'::jsonb)",
+                  "Node Type": "Bitmap Heap Scan",
+                  "Parallel Aware": false,
+                  "Parent Relationship": "Outer",
+                  "Plan Rows": 1,
+                  "Plan Width": 166,
+                  "Plans": [
+                    {
+                      "Async Capable": false,
+                      "Disabled": false,
+                      "Index Cond": "(status = 'verified'::text)",
+                      "Index Name": "ix_skill_revisions_status",
+                      "Node Type": "Bitmap Index Scan",
+                      "Parallel Aware": false,
+                      "Parent Relationship": "Outer",
+                      "Plan Rows": 15,
+                      "Plan Width": 0,
+                      "Startup Cost": 0.0,
+                      "Total Cost": 4.39
+                    }
+                  ],
+                  "Recheck Cond": "(status = 'verified'::text)",
+                  "Relation Name": "skill_revisions",
+                  "Startup Cost": 4.39,
+                  "Total Cost": 51.41
+                }
+              ],
+              "Sort Key": [
+                "skill_id",
+                "revision DESC"
+              ],
+              "Startup Cost": 51.42,
+              "Total Cost": 51.42
+            }
+          ],
+          "Startup Cost": 51.42,
+          "Total Cost": 51.42
+        }
+      }
+    ],
+    "health_projection": [
+      {
+        "Plan": {
+          "Async Capable": false,
+          "Disabled": false,
+          "Node Type": "Aggregate",
+          "Parallel Aware": false,
+          "Partial Mode": "Simple",
+          "Plan Rows": 1,
+          "Plan Width": 8,
+          "Plans": [
+            {
+              "Async Capable": false,
+              "Disabled": false,
+              "Filter": "((r.skill_id IS NULL) OR (r.status <> i.current_status))",
+              "Hash Cond": "((r.skill_id = i.skill_id) AND (r.revision = i.current_revision))",
+              "Inner Unique": true,
+              "Join Type": "Right",
+              "Node Type": "Hash Join",
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Plan Rows": 224,
+              "Plan Width": 0,
+              "Plans": [
+                {
+                  "Alias": "r",
+                  "Async Capable": false,
+                  "Disabled": false,
+                  "Node Type": "Seq Scan",
+                  "Parallel Aware": false,
+                  "Parent Relationship": "Outer",
+                  "Plan Rows": 2958,
+                  "Plan Width": 52,
+                  "Relation Name": "skill_revisions",
+                  "Startup Cost": 0.0,
+                  "Total Cost": 203.58
+                },
+                {
+                  "Async Capable": false,
+                  "Disabled": false,
+                  "Node Type": "Hash",
+                  "Parallel Aware": false,
+                  "Parent Relationship": "Inner",
+                  "Plan Rows": 225,
+                  "Plan Width": 52,
+                  "Plans": [
+                    {
+                      "Alias": "i",
+                      "Async Capable": false,
+                      "Disabled": false,
+                      "Node Type": "Seq Scan",
+                      "Parallel Aware": false,
+                      "Parent Relationship": "Outer",
+                      "Plan Rows": 225,
+                      "Plan Width": 52,
+                      "Relation Name": "skill_items",
+                      "Startup Cost": 0.0,
+                      "Total Cost": 27.25
+                    }
+                  ],
+                  "Startup Cost": 27.25,
+                  "Total Cost": 27.25
+                }
+              ],
+              "Startup Cost": 30.62,
+              "Total Cost": 249.73
+            }
+          ],
+          "Startup Cost": 250.29,
+          "Strategy": "Plain",
+          "Total Cost": 250.3
+        }
+      }
+    ],
+    "registry_load": [
+      {
+        "Plan": {
+          "Async Capable": false,
+          "Disabled": false,
+          "Node Type": "Limit",
+          "Parallel Aware": false,
+          "Plan Rows": 15,
+          "Plan Width": 198,
+          "Plans": [
+            {
+              "Async Capable": false,
+              "Disabled": false,
+              "Node Type": "Sort",
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Plan Rows": 15,
+              "Plan Width": 198,
+              "Plans": [
+                {
+                  "Async Capable": false,
+                  "Disabled": false,
+                  "Hash Cond": "((r.skill_id = i.skill_id) AND (r.revision = i.current_revision))",
+                  "Inner Unique": true,
+                  "Join Type": "Inner",
+                  "Node Type": "Hash Join",
+                  "Parallel Aware": false,
+                  "Parent Relationship": "Outer",
+                  "Plan Rows": 15,
+                  "Plan Width": 198,
+                  "Plans": [
+                    {
+                      "Alias": "r",
+                      "Async Capable": false,
+                      "Disabled": false,
+                      "Node Type": "Seq Scan",
+                      "Parallel Aware": false,
+                      "Parent Relationship": "Outer",
+                      "Plan Rows": 2958,
+                      "Plan Width": 166,
+                      "Relation Name": "skill_revisions",
+                      "Startup Cost": 0.0,
+                      "Total Cost": 203.58
+                    },
+                    {
+                      "Async Capable": false,
+                      "Disabled": false,
+                      "Node Type": "Hash",
+                      "Parallel Aware": false,
+                      "Parent Relationship": "Inner",
+                      "Plan Rows": 225,
+                      "Plan Width": 52,
+                      "Plans": [
+                        {
+                          "Alias": "i",
+                          "Async Capable": false,
+                          "Disabled": false,
+                          "Node Type": "Seq Scan",
+                          "Parallel Aware": false,
+                          "Parent Relationship": "Outer",
+                          "Plan Rows": 225,
+                          "Plan Width": 52,
+                          "Relation Name": "skill_items",
+                          "Startup Cost": 0.0,
+                          "Total Cost": 27.25
+                        }
+                      ],
+                      "Startup Cost": 27.25,
+                      "Total Cost": 27.25
+                    }
+                  ],
+                  "Startup Cost": 30.62,
+                  "Total Cost": 249.73
+                }
+              ],
+              "Sort Key": [
+                "i.skill_id"
+              ],
+              "Startup Cost": 250.03,
+              "Total Cost": 250.07
+            }
+          ],
+          "Startup Cost": 250.03,
+          "Total Cost": 250.07
+        }
+      }
+    ],
+    "requirement_filter": [
+      {
+        "Plan": {
+          "Async Capable": false,
+          "Disabled": false,
+          "Node Type": "Limit",
+          "Parallel Aware": false,
+          "Plan Rows": 1,
+          "Plan Width": 20,
+          "Plans": [
+            {
+              "Async Capable": false,
+              "Disabled": false,
+              "Node Type": "Sort",
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Plan Rows": 1,
+              "Plan Width": 20,
+              "Plans": [
+                {
+                  "Alias": "skill_requirements",
+                  "Async Capable": false,
+                  "Disabled": false,
+                  "Index Cond": "((requirement_type = 'tool'::text) AND (capability_id = 'repository.read'::text))",
+                  "Index Name": "ix_skill_requirements_capability",
+                  "Node Type": "Index Scan",
+                  "Parallel Aware": false,
+                  "Parent Relationship": "Outer",
+                  "Plan Rows": 1,
+                  "Plan Width": 20,
+                  "Relation Name": "skill_requirements",
+                  "Scan Direction": "Forward",
+                  "Startup Cost": 0.29,
+                  "Total Cost": 8.3
+                }
+              ],
+              "Sort Key": [
+                "skill_id",
+                "revision"
+              ],
+              "Startup Cost": 8.31,
+              "Total Cost": 8.32
+            }
+          ],
+          "Startup Cost": 8.31,
+          "Total Cost": 8.32
+        }
+      }
+    ],
+    "statistics_rebuild": [
+      {
+        "Plan": {
+          "Async Capable": false,
+          "Disabled": false,
+          "Node Type": "Limit",
+          "Parallel Aware": false,
+          "Plan Rows": 650,
+          "Plan Width": 36,
+          "Plans": [
+            {
+              "Async Capable": false,
+              "Disabled": false,
+              "Node Type": "Sort",
+              "Parallel Aware": false,
+              "Parent Relationship": "Outer",
+              "Plan Rows": 650,
+              "Plan Width": 36,
+              "Plans": [
+                {
+                  "Async Capable": false,
+                  "Disabled": false,
+                  "Group Key": [
+                    "skill_id",
+                    "revision"
+                  ],
+                  "Node Type": "Aggregate",
+                  "Parallel Aware": false,
+                  "Parent Relationship": "Outer",
+                  "Partial Mode": "Simple",
+                  "Plan Rows": 650,
+                  "Plan Width": 36,
+                  "Planned Partitions": 0,
+                  "Plans": [
+                    {
+                      "Alias": "skill_executions",
+                      "Async Capable": false,
+                      "Disabled": false,
+                      "Node Type": "Seq Scan",
+                      "Parallel Aware": false,
+                      "Parent Relationship": "Outer",
+                      "Plan Rows": 6500,
+                      "Plan Width": 52,
+                      "Relation Name": "skill_executions",
+                      "Startup Cost": 0.0,
+                      "Total Cost": 315.0
+                    }
+                  ],
+                  "Startup Cost": 396.25,
+                  "Strategy": "Hashed",
+                  "Total Cost": 402.75
+                }
+              ],
+              "Sort Key": [
+                "skill_id",
+                "revision"
+              ],
+              "Startup Cost": 433.12,
+              "Total Cost": 434.74
+            }
+          ],
+          "Startup Cost": 433.12,
+          "Total Cost": 434.74
+        }
+      }
+    ]
+  }
+}

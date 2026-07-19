@@ -1,0 +1,3 @@
+cases:
+  - name: preserve-failing-test
+    expected_capabilities: [coding.pytest, coding.minimal_repair, coding.required_checks]

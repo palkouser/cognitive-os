@@ -406,7 +406,8 @@
         "repair",
         "coding",
         "advisory",
-        "semantic_extraction"
+        "semantic_extraction",
+        "skill_execution"
       ],
       "title": "ContextPurpose",
       "type": "string"
@@ -426,7 +427,7 @@
           "items": {
             "$ref": "#/$defs/ContextSourceType"
           },
-          "maxItems": 13,
+          "maxItems": 14,
           "minItems": 1,
           "title": "Allowed Source Types",
           "type": "array"
@@ -966,7 +967,8 @@
         "wiki",
         "repository_index",
         "workspace",
-        "user_correction"
+        "user_correction",
+        "procedural_skill"
       ],
       "title": "ContextSourceType",
       "type": "string"

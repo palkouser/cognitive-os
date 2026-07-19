@@ -1,0 +1,25 @@
+format_version: "1"
+canonical_name: focused-test-execution
+display_name: Focused Test Execution
+description: Select and run the smallest relevant existing test target.
+purpose: Return reproducible test evidence with bounded cost.
+domains: [coding]
+scope_type: project
+scope_id: cognitive-os
+sensitivity: internal
+problem_signatures:
+  - {problem_domain: coding, task_type: test}
+preconditions:
+  - {precondition_id: tool, precondition_type: tool_capability, parameters: {capability: coding.pytest}}
+inputs:
+  - {name: changed_paths, json_type: array, required: true}
+outputs:
+  - {name: test_result, json_type: object, required: true, requires_evidence: true}
+steps:
+  - {step_id: select, step_type: deterministic_branch, capability_id: coding.test_selection}
+  - {step_id: run, step_type: tool_action, capability_id: coding.pytest}
+requirements:
+  - {requirement_id: pytest, requirement_type: tool, capability_id: coding.pytest}
+failure_policy: {policy_type: fail_immediately, maximum_fallback_depth: 0}
+resource_budget: {maximum_steps: 4, maximum_provider_calls: 0, maximum_tool_calls: 4, maximum_context_builds: 1, maximum_execution_seconds: 600, maximum_repairs: 0, maximum_context_tokens: 4096}
+regression_profile: focused-tests-v1

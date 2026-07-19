@@ -1,0 +1,26 @@
+format_version: "1"
+canonical_name: safe-diff-preparation
+display_name: Safe Diff Preparation
+description: Prepare a minimal repository patch under existing policy boundaries.
+purpose: Produce a reviewable diff and deterministic policy evidence.
+domains: [coding]
+scope_type: project
+scope_id: cognitive-os
+sensitivity: internal
+problem_signatures:
+  - {problem_domain: coding, task_type: implementation}
+preconditions:
+  - {precondition_id: permission, precondition_type: explicit_permission, parameters: {permission: workspace.write}}
+inputs:
+  - {name: requested_change, json_type: string, required: true}
+outputs:
+  - {name: diff_summary, json_type: object, required: true, requires_evidence: true}
+steps:
+  - {step_id: patch, step_type: tool_action, capability_id: workspace.patch}
+  - {step_id: policy, step_type: verification_action, capability_id: coding.diff_policy}
+requirements:
+  - {requirement_id: write, requirement_type: approval, capability_id: workspace.write}
+  - {requirement_id: patch, requirement_type: tool, capability_id: workspace.patch}
+failure_policy: {policy_type: request_manual_approval, maximum_fallback_depth: 0}
+resource_budget: {maximum_steps: 8, maximum_provider_calls: 2, maximum_tool_calls: 8, maximum_context_builds: 2, maximum_execution_seconds: 600, maximum_repairs: 2, maximum_context_tokens: 16384}
+regression_profile: safe-diff-v1

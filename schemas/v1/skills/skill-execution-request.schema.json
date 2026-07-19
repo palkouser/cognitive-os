@@ -1,0 +1,380 @@
+{
+  "$defs": {
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "format": "uuid",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "media_type": {
+          "minLength": 1,
+          "title": "Media Type",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "storage_key": {
+          "minLength": 1,
+          "title": "Storage Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "media_type",
+        "content_hash",
+        "size_bytes",
+        "storage_key",
+        "created_at"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "ContextBundleReference": {
+      "additionalProperties": false,
+      "properties": {
+        "bundle_artifact_id": {
+          "format": "uuid",
+          "title": "Bundle Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "context_bundle_id": {
+          "format": "uuid",
+          "title": "Context Bundle Id",
+          "type": "string"
+        },
+        "context_bundle_revision": {
+          "minimum": 1,
+          "title": "Context Bundle Revision",
+          "type": "integer"
+        },
+        "rendered_context_artifact_id": {
+          "format": "uuid",
+          "title": "Rendered Context Artifact Id",
+          "type": "string"
+        },
+        "source_snapshot_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Snapshot Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "context_bundle_id",
+        "context_bundle_revision",
+        "bundle_artifact_id",
+        "rendered_context_artifact_id",
+        "content_hash",
+        "source_snapshot_hash"
+      ],
+      "title": "ContextBundleReference",
+      "type": "object"
+    },
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "SkillActor": {
+      "additionalProperties": false,
+      "properties": {
+        "creator_id": {
+          "minLength": 1,
+          "title": "Creator Id",
+          "type": "string"
+        },
+        "creator_type": {
+          "$ref": "#/$defs/SkillCreatorType"
+        }
+      },
+      "required": [
+        "creator_type",
+        "creator_id"
+      ],
+      "title": "SkillActor",
+      "type": "object"
+    },
+    "SkillCreatorType": {
+      "enum": [
+        "operator",
+        "user",
+        "import_service",
+        "system",
+        "provider"
+      ],
+      "title": "SkillCreatorType",
+      "type": "string"
+    },
+    "SkillInputBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ArtifactRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/JsonValue",
+          "default": null
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "SkillInputBinding",
+      "type": "object"
+    },
+    "SkillRegistrySnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "context_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Context Registry Hash",
+          "type": "string"
+        },
+        "precondition_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Precondition Registry Hash",
+          "type": "string"
+        },
+        "provider_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Provider Registry Hash",
+          "type": "string"
+        },
+        "registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Registry Hash",
+          "type": "string"
+        },
+        "tool_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Tool Registry Hash",
+          "type": "string"
+        },
+        "verifier_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Verifier Registry Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "registry_hash",
+        "precondition_registry_hash",
+        "context_registry_hash",
+        "tool_registry_hash",
+        "verifier_registry_hash",
+        "provider_registry_hash"
+      ],
+      "title": "SkillRegistrySnapshot",
+      "type": "object"
+    },
+    "SkillResourceBudget": {
+      "additionalProperties": false,
+      "properties": {
+        "maximum_context_builds": {
+          "default": 8,
+          "maximum": 8,
+          "minimum": 0,
+          "title": "Maximum Context Builds",
+          "type": "integer"
+        },
+        "maximum_context_tokens": {
+          "default": 32768,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Maximum Context Tokens",
+          "type": "integer"
+        },
+        "maximum_execution_seconds": {
+          "default": 1800,
+          "maximum": 1800,
+          "minimum": 1,
+          "title": "Maximum Execution Seconds",
+          "type": "integer"
+        },
+        "maximum_provider_calls": {
+          "default": 8,
+          "maximum": 8,
+          "minimum": 0,
+          "title": "Maximum Provider Calls",
+          "type": "integer"
+        },
+        "maximum_repairs": {
+          "default": 3,
+          "maximum": 3,
+          "minimum": 0,
+          "title": "Maximum Repairs",
+          "type": "integer"
+        },
+        "maximum_steps": {
+          "default": 64,
+          "maximum": 64,
+          "minimum": 1,
+          "title": "Maximum Steps",
+          "type": "integer"
+        },
+        "maximum_tool_calls": {
+          "default": 32,
+          "maximum": 32,
+          "minimum": 0,
+          "title": "Maximum Tool Calls",
+          "type": "integer"
+        }
+      },
+      "title": "SkillResourceBudget",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/skills/skill-execution-request.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "context_bundle_reference": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ContextBundleReference"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "controller_budget": {
+      "$ref": "#/$defs/SkillResourceBudget"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "execution_id": {
+      "format": "uuid",
+      "title": "Execution Id",
+      "type": "string"
+    },
+    "expected_registry_snapshots": {
+      "$ref": "#/$defs/SkillRegistrySnapshot"
+    },
+    "input_bindings": {
+      "items": {
+        "$ref": "#/$defs/SkillInputBinding"
+      },
+      "title": "Input Bindings",
+      "type": "array"
+    },
+    "package_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Package Hash",
+      "type": "string"
+    },
+    "plan_reference": {
+      "format": "uuid",
+      "title": "Plan Reference",
+      "type": "string"
+    },
+    "problem_reference": {
+      "format": "uuid",
+      "title": "Problem Reference",
+      "type": "string"
+    },
+    "requested_by": {
+      "$ref": "#/$defs/SkillActor"
+    },
+    "skill_id": {
+      "format": "uuid",
+      "title": "Skill Id",
+      "type": "string"
+    },
+    "skill_revision": {
+      "minimum": 1,
+      "title": "Skill Revision",
+      "type": "integer"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "execution_id",
+    "skill_id",
+    "skill_revision",
+    "task_run_id",
+    "problem_reference",
+    "plan_reference",
+    "input_bindings",
+    "controller_budget",
+    "expected_registry_snapshots",
+    "requested_by",
+    "package_hash",
+    "created_at"
+  ],
+  "title": "SkillExecutionRequest",
+  "type": "object"
+}

@@ -1,0 +1,98 @@
+{
+  "$defs": {
+    "SkillActor": {
+      "additionalProperties": false,
+      "properties": {
+        "creator_id": {
+          "minLength": 1,
+          "title": "Creator Id",
+          "type": "string"
+        },
+        "creator_type": {
+          "$ref": "#/$defs/SkillCreatorType"
+        }
+      },
+      "required": [
+        "creator_type",
+        "creator_id"
+      ],
+      "title": "SkillActor",
+      "type": "object"
+    },
+    "SkillCreatorType": {
+      "enum": [
+        "operator",
+        "user",
+        "import_service",
+        "system",
+        "provider"
+      ],
+      "title": "SkillCreatorType",
+      "type": "string"
+    },
+    "SkillScope": {
+      "additionalProperties": false,
+      "properties": {
+        "scope_id": {
+          "minLength": 1,
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "scope_type": {
+          "$ref": "#/$defs/SkillScopeType"
+        }
+      },
+      "required": [
+        "scope_type",
+        "scope_id"
+      ],
+      "title": "SkillScope",
+      "type": "object"
+    },
+    "SkillScopeType": {
+      "enum": [
+        "global",
+        "project",
+        "repository",
+        "domain",
+        "provider"
+      ],
+      "title": "SkillScopeType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/skills/skill-identity.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "canonical_name": {
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+      "title": "Canonical Name",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "created_by": {
+      "$ref": "#/$defs/SkillActor"
+    },
+    "scope": {
+      "$ref": "#/$defs/SkillScope"
+    },
+    "skill_id": {
+      "format": "uuid",
+      "title": "Skill Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "skill_id",
+    "canonical_name",
+    "scope",
+    "created_at",
+    "created_by"
+  ],
+  "title": "SkillIdentity",
+  "type": "object"
+}

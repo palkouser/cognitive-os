@@ -27,6 +27,7 @@ class VerifierKind(StrEnum):
     ADVISORY = "advisory"
     SEMANTIC = "semantic"
     CONTEXT = "context"
+    SKILL = "skill"
 
 
 class VerifierDeterminism(StrEnum):
@@ -59,6 +60,10 @@ class VerificationSubjectType(StrEnum):
     PHYSICAL_QUANTITY = "physical_quantity"
     SEMANTIC_SNAPSHOT = "semantic_snapshot"
     CONTEXT_BUNDLE = "context_bundle"
+    SKILL_PACKAGE = "skill_package"
+    SKILL_REVISION = "skill_revision"
+    SKILL_EXECUTION = "skill_execution"
+    SKILL_REGRESSION = "skill_regression"
 
 
 class VerifierHealthStatus(StrEnum):

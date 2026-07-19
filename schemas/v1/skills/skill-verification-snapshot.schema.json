@@ -1,0 +1,93 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/skills/skill-verification-snapshot.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "context_requirements": {
+      "title": "Context Requirements",
+      "type": "boolean"
+    },
+    "execution_conformance": {
+      "title": "Execution Conformance",
+      "type": "boolean"
+    },
+    "no_permission_expansion": {
+      "title": "No Permission Expansion",
+      "type": "boolean"
+    },
+    "output_schema": {
+      "title": "Output Schema",
+      "type": "boolean"
+    },
+    "package_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Package Hash",
+      "type": "string"
+    },
+    "package_integrity": {
+      "title": "Package Integrity",
+      "type": "boolean"
+    },
+    "package_schema": {
+      "title": "Package Schema",
+      "type": "boolean"
+    },
+    "package_secrets": {
+      "title": "Package Secrets",
+      "type": "boolean"
+    },
+    "path_safety": {
+      "title": "Path Safety",
+      "type": "boolean"
+    },
+    "precondition_determinism": {
+      "title": "Precondition Determinism",
+      "type": "boolean"
+    },
+    "provider_requirements": {
+      "title": "Provider Requirements",
+      "type": "boolean"
+    },
+    "regression_suite": {
+      "title": "Regression Suite",
+      "type": "boolean"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "skill_id": {
+      "format": "uuid",
+      "title": "Skill Id",
+      "type": "string"
+    },
+    "tool_requirements": {
+      "title": "Tool Requirements",
+      "type": "boolean"
+    },
+    "verifier_requirements": {
+      "title": "Verifier Requirements",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "skill_id",
+    "revision",
+    "package_hash",
+    "package_integrity",
+    "package_schema",
+    "path_safety",
+    "package_secrets",
+    "precondition_determinism",
+    "tool_requirements",
+    "verifier_requirements",
+    "provider_requirements",
+    "context_requirements",
+    "execution_conformance",
+    "output_schema",
+    "regression_suite",
+    "no_permission_expansion"
+  ],
+  "title": "SkillVerificationSnapshot",
+  "type": "object"
+}

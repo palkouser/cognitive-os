@@ -1,0 +1,120 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/skills/skill-statistics.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "accepted": {
+      "minimum": 0,
+      "title": "Accepted",
+      "type": "integer"
+    },
+    "elapsed_ms": {
+      "minimum": 0,
+      "title": "Elapsed Ms",
+      "type": "integer"
+    },
+    "executions": {
+      "minimum": 0,
+      "title": "Executions",
+      "type": "integer"
+    },
+    "failed": {
+      "minimum": 0,
+      "title": "Failed",
+      "type": "integer"
+    },
+    "fallback_uses": {
+      "minimum": 0,
+      "title": "Fallback Uses",
+      "type": "integer"
+    },
+    "policy_denials": {
+      "minimum": 0,
+      "title": "Policy Denials",
+      "type": "integer"
+    },
+    "projection_hash": {
+      "default": "",
+      "title": "Projection Hash",
+      "type": "string"
+    },
+    "projection_revision": {
+      "minimum": 1,
+      "title": "Projection Revision",
+      "type": "integer"
+    },
+    "provider_calls": {
+      "minimum": 0,
+      "title": "Provider Calls",
+      "type": "integer"
+    },
+    "rejected": {
+      "minimum": 0,
+      "title": "Rejected",
+      "type": "integer"
+    },
+    "repairs": {
+      "minimum": 0,
+      "title": "Repairs",
+      "type": "integer"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "safety_failures": {
+      "minimum": 0,
+      "title": "Safety Failures",
+      "type": "integer"
+    },
+    "skill_id": {
+      "format": "uuid",
+      "title": "Skill Id",
+      "type": "string"
+    },
+    "source_execution_ids": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Source Execution Ids",
+      "type": "array"
+    },
+    "token_usage": {
+      "minimum": 0,
+      "title": "Token Usage",
+      "type": "integer"
+    },
+    "tool_calls": {
+      "minimum": 0,
+      "title": "Tool Calls",
+      "type": "integer"
+    },
+    "unverifiable": {
+      "minimum": 0,
+      "title": "Unverifiable",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "skill_id",
+    "revision",
+    "projection_revision",
+    "executions",
+    "accepted",
+    "rejected",
+    "unverifiable",
+    "failed",
+    "repairs",
+    "provider_calls",
+    "tool_calls",
+    "token_usage",
+    "policy_denials",
+    "safety_failures",
+    "fallback_uses",
+    "elapsed_ms",
+    "source_execution_ids"
+  ],
+  "title": "SkillStatistics",
+  "type": "object"
+}

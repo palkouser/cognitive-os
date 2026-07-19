@@ -1,0 +1,3 @@
+cases:
+  - name: provenance-required
+    expected_capabilities: [context.evidence, artifact.evidence_bundle, generic.artifact_integrity]

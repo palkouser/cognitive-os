@@ -1,0 +1,139 @@
+{
+  "$defs": {
+    "SkillActor": {
+      "additionalProperties": false,
+      "properties": {
+        "creator_id": {
+          "minLength": 1,
+          "title": "Creator Id",
+          "type": "string"
+        },
+        "creator_type": {
+          "$ref": "#/$defs/SkillCreatorType"
+        }
+      },
+      "required": [
+        "creator_type",
+        "creator_id"
+      ],
+      "title": "SkillActor",
+      "type": "object"
+    },
+    "SkillCreatorType": {
+      "enum": [
+        "operator",
+        "user",
+        "import_service",
+        "system",
+        "provider"
+      ],
+      "title": "SkillCreatorType",
+      "type": "string"
+    },
+    "SkillIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_name": {
+          "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+          "title": "Canonical Name",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "created_by": {
+          "$ref": "#/$defs/SkillActor"
+        },
+        "scope": {
+          "$ref": "#/$defs/SkillScope"
+        },
+        "skill_id": {
+          "format": "uuid",
+          "title": "Skill Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "skill_id",
+        "canonical_name",
+        "scope",
+        "created_at",
+        "created_by"
+      ],
+      "title": "SkillIdentity",
+      "type": "object"
+    },
+    "SkillScope": {
+      "additionalProperties": false,
+      "properties": {
+        "scope_id": {
+          "minLength": 1,
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "scope_type": {
+          "$ref": "#/$defs/SkillScopeType"
+        }
+      },
+      "required": [
+        "scope_type",
+        "scope_id"
+      ],
+      "title": "SkillScope",
+      "type": "object"
+    },
+    "SkillScopeType": {
+      "enum": [
+        "global",
+        "project",
+        "repository",
+        "domain",
+        "provider"
+      ],
+      "title": "SkillScopeType",
+      "type": "string"
+    },
+    "SkillStatus": {
+      "enum": [
+        "draft",
+        "staged",
+        "verified",
+        "deprecated",
+        "superseded",
+        "retracted"
+      ],
+      "title": "SkillStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/skills/skill-item.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "current_revision": {
+      "minimum": 1,
+      "title": "Current Revision",
+      "type": "integer"
+    },
+    "current_status": {
+      "$ref": "#/$defs/SkillStatus"
+    },
+    "idempotency_key": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Idempotency Key",
+      "type": "string"
+    },
+    "identity": {
+      "$ref": "#/$defs/SkillIdentity"
+    }
+  },
+  "required": [
+    "identity",
+    "current_revision",
+    "current_status",
+    "idempotency_key"
+  ],
+  "title": "SkillItem",
+  "type": "object"
+}

@@ -1,0 +1,60 @@
+{
+  "$defs": {
+    "SkillFieldSpecification": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_media_types": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 16,
+          "title": "Artifact Media Types",
+          "type": "array"
+        },
+        "json_type": {
+          "pattern": "^(string|integer|number|boolean|object|array)$",
+          "title": "Json Type",
+          "type": "string"
+        },
+        "name": {
+          "pattern": "^[a-z][a-z0-9_]{0,63}$",
+          "title": "Name",
+          "type": "string"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "requires_evidence": {
+          "default": false,
+          "title": "Requires Evidence",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "json_type"
+      ],
+      "title": "SkillFieldSpecification",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/skills/skill-input-specification.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "fields": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/SkillFieldSpecification"
+      },
+      "maxItems": 64,
+      "title": "Fields",
+      "type": "array"
+    }
+  },
+  "title": "SkillInputSpecification",
+  "type": "object"
+}

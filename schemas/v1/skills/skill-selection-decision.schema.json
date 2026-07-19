@@ -1,0 +1,322 @@
+{
+  "$defs": {
+    "SkillApplicabilityResult": {
+      "additionalProperties": false,
+      "properties": {
+        "evaluation_hash": {
+          "default": "",
+          "title": "Evaluation Hash",
+          "type": "string"
+        },
+        "results": {
+          "items": {
+            "$ref": "#/$defs/SkillPreconditionResult"
+          },
+          "title": "Results",
+          "type": "array"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "skill_id": {
+          "format": "uuid",
+          "title": "Skill Id",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/SkillApplicabilityStatus"
+        }
+      },
+      "required": [
+        "skill_id",
+        "revision",
+        "status",
+        "results"
+      ],
+      "title": "SkillApplicabilityResult",
+      "type": "object"
+    },
+    "SkillApplicabilityStatus": {
+      "enum": [
+        "applicable",
+        "inapplicable",
+        "requires_permission",
+        "unavailable",
+        "invalid"
+      ],
+      "title": "SkillApplicabilityStatus",
+      "type": "string"
+    },
+    "SkillExclusionReason": {
+      "enum": [
+        "status",
+        "scope",
+        "sensitivity",
+        "precondition",
+        "missing_requirement",
+        "permission_required",
+        "invalid_package",
+        "fallback_invalid"
+      ],
+      "title": "SkillExclusionReason",
+      "type": "string"
+    },
+    "SkillPreconditionResult": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Evidence Hash",
+          "type": "string"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        },
+        "precondition_id": {
+          "minLength": 1,
+          "title": "Precondition Id",
+          "type": "string"
+        },
+        "reason_code": {
+          "minLength": 1,
+          "title": "Reason Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "precondition_id",
+        "passed",
+        "reason_code",
+        "evidence_hash"
+      ],
+      "title": "SkillPreconditionResult",
+      "type": "object"
+    },
+    "SkillRegistrySnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "context_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Context Registry Hash",
+          "type": "string"
+        },
+        "precondition_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Precondition Registry Hash",
+          "type": "string"
+        },
+        "provider_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Provider Registry Hash",
+          "type": "string"
+        },
+        "registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Registry Hash",
+          "type": "string"
+        },
+        "tool_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Tool Registry Hash",
+          "type": "string"
+        },
+        "verifier_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Verifier Registry Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "registry_hash",
+        "precondition_registry_hash",
+        "context_registry_hash",
+        "tool_registry_hash",
+        "verifier_registry_hash",
+        "provider_registry_hash"
+      ],
+      "title": "SkillRegistrySnapshot",
+      "type": "object"
+    },
+    "SkillSelectionCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "applicability": {
+          "$ref": "#/$defs/SkillApplicabilityResult"
+        },
+        "estimated_context_tokens": {
+          "minimum": 0,
+          "title": "Estimated Context Tokens",
+          "type": "integer"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "safety_penalty": {
+          "minimum": 0,
+          "title": "Safety Penalty",
+          "type": "integer"
+        },
+        "scope_score": {
+          "minimum": 0,
+          "title": "Scope Score",
+          "type": "integer"
+        },
+        "skill_id": {
+          "format": "uuid",
+          "title": "Skill Id",
+          "type": "string"
+        },
+        "specificity_score": {
+          "minimum": 0,
+          "title": "Specificity Score",
+          "type": "integer"
+        },
+        "statistics_score": {
+          "minimum": 0,
+          "title": "Statistics Score",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "skill_id",
+        "revision",
+        "applicability",
+        "specificity_score",
+        "scope_score",
+        "statistics_score",
+        "safety_penalty",
+        "estimated_context_tokens"
+      ],
+      "title": "SkillSelectionCandidate",
+      "type": "object"
+    },
+    "SkillSelectionExclusion": {
+      "additionalProperties": false,
+      "properties": {
+        "detail_code": {
+          "minLength": 1,
+          "title": "Detail Code",
+          "type": "string"
+        },
+        "reason": {
+          "$ref": "#/$defs/SkillExclusionReason"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "skill_id": {
+          "format": "uuid",
+          "title": "Skill Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "skill_id",
+        "revision",
+        "reason",
+        "detail_code"
+      ],
+      "title": "SkillSelectionExclusion",
+      "type": "object"
+    },
+    "SkillSelectionReason": {
+      "enum": [
+        "exact_signature",
+        "scope_specificity",
+        "verified_statistics",
+        "canonical_tie_break"
+      ],
+      "title": "SkillSelectionReason",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/skills/skill-selection-decision.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "candidates": {
+      "items": {
+        "$ref": "#/$defs/SkillSelectionCandidate"
+      },
+      "title": "Candidates",
+      "type": "array"
+    },
+    "decision_hash": {
+      "default": "",
+      "title": "Decision Hash",
+      "type": "string"
+    },
+    "exclusions": {
+      "items": {
+        "$ref": "#/$defs/SkillSelectionExclusion"
+      },
+      "title": "Exclusions",
+      "type": "array"
+    },
+    "reason": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SkillSelectionReason"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "registry_snapshot": {
+      "$ref": "#/$defs/SkillRegistrySnapshot"
+    },
+    "request_id": {
+      "format": "uuid",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "selected_revision": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Selected Revision"
+    },
+    "selected_skill_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Selected Skill Id"
+    },
+    "selection_profile_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Selection Profile Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "request_id",
+    "candidates",
+    "exclusions",
+    "selection_profile_hash",
+    "registry_snapshot"
+  ],
+  "title": "SkillSelectionDecision",
+  "type": "object"
+}

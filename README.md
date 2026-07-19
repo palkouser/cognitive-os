@@ -51,6 +51,11 @@ artifact, and coding retrieval into immutable, provenance-complete Context Bundl
 remains data, trust classes stay separated, and a verified bundle reference gates provider calls.
 See the [Context Builder architecture](docs/architecture/context-builder.md).
 
+Sprint 12 adds governed procedural skills as immutable, verified package revisions. Selection,
+Context hydration, execution, verification, statistics, and access audit remain host-controlled;
+providers and package prose receive no authority. See the
+[Skill Engine architecture](docs/architecture/skill-engine.md).
+
 ![LightAgent Banner](docs/images/lightagent-banner.jpg)
 <div align="center">
   <p>

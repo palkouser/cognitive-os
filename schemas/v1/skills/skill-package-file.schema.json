@@ -1,0 +1,53 @@
+{
+  "$defs": {
+    "SkillPackageFileType": {
+      "enum": [
+        "instructions",
+        "metadata",
+        "resource",
+        "template",
+        "script",
+        "test"
+      ],
+      "title": "SkillPackageFileType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/skills/skill-package-file.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "file_type": {
+      "$ref": "#/$defs/SkillPackageFileType"
+    },
+    "media_type": {
+      "minLength": 1,
+      "title": "Media Type",
+      "type": "string"
+    },
+    "relative_path": {
+      "minLength": 1,
+      "title": "Relative Path",
+      "type": "string"
+    },
+    "size_bytes": {
+      "maximum": 2097152,
+      "minimum": 0,
+      "title": "Size Bytes",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "relative_path",
+    "file_type",
+    "media_type",
+    "size_bytes",
+    "content_hash"
+  ],
+  "title": "SkillPackageFile",
+  "type": "object"
+}

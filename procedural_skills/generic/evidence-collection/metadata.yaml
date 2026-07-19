@@ -1,0 +1,26 @@
+format_version: "1"
+canonical_name: evidence-collection
+display_name: Evidence Collection
+description: Collect bounded authoritative evidence references for a criterion.
+purpose: Produce a provenance-preserving evidence bundle without creating new authority.
+domains: [generic]
+scope_type: project
+scope_id: cognitive-os
+sensitivity: internal
+problem_signatures:
+  - {problem_domain: generic, task_type: evidence}
+preconditions:
+  - {precondition_id: domain, precondition_type: problem_domain_match, parameters: {allowed: [generic, coding, mathematics]}}
+inputs:
+  - {name: criterion, json_type: string, required: true}
+outputs:
+  - {name: evidence_bundle, json_type: object, required: true, requires_evidence: true}
+steps:
+  - {step_id: context, step_type: context_build, capability_id: context.evidence}
+  - {step_id: collect, step_type: artifact_transform, capability_id: artifact.evidence_bundle}
+  - {step_id: verify, step_type: verification_action, capability_id: generic.artifact_integrity}
+requirements:
+  - {requirement_id: context, requirement_type: context, capability_id: context.evidence}
+failure_policy: {policy_type: fail_immediately, maximum_fallback_depth: 0}
+resource_budget: {maximum_steps: 6, maximum_provider_calls: 0, maximum_tool_calls: 4, maximum_context_builds: 2, maximum_execution_seconds: 300, maximum_repairs: 0, maximum_context_tokens: 16384}
+regression_profile: evidence-collection-v1

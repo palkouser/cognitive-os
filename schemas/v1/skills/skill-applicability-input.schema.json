@@ -1,0 +1,194 @@
+{
+  "$defs": {
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "SkillScope": {
+      "additionalProperties": false,
+      "properties": {
+        "scope_id": {
+          "minLength": 1,
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "scope_type": {
+          "$ref": "#/$defs/SkillScopeType"
+        }
+      },
+      "required": [
+        "scope_type",
+        "scope_id"
+      ],
+      "title": "SkillScope",
+      "type": "object"
+    },
+    "SkillScopeType": {
+      "enum": [
+        "global",
+        "project",
+        "repository",
+        "domain",
+        "provider"
+      ],
+      "title": "SkillScopeType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/skills/skill-applicability-input.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "available_artifact_types": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Available Artifact Types",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "context_capabilities": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Context Capabilities",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "feature_flags": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Feature Flags",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "permissions": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Permissions",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "problem_domain": {
+      "minLength": 1,
+      "title": "Problem Domain",
+      "type": "string"
+    },
+    "provider_capabilities": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Provider Capabilities",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "repository_language": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Repository Language"
+    },
+    "repository_profile": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Repository Profile"
+    },
+    "requested_output_type": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Requested Output Type"
+    },
+    "risk_level": {
+      "default": "low",
+      "minLength": 1,
+      "title": "Risk Level",
+      "type": "string"
+    },
+    "scope": {
+      "$ref": "#/$defs/SkillScope"
+    },
+    "sensitivity_limit": {
+      "$ref": "#/$defs/MemorySensitivity"
+    },
+    "task_type": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Task Type"
+    },
+    "tool_capabilities": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Tool Capabilities",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "verifier_capabilities": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Verifier Capabilities",
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "problem_domain",
+    "scope",
+    "sensitivity_limit"
+  ],
+  "title": "SkillApplicabilityInput",
+  "type": "object"
+}

@@ -1,0 +1,55 @@
+{
+  "$defs": {
+    "SkillStatus": {
+      "enum": [
+        "draft",
+        "staged",
+        "verified",
+        "deprecated",
+        "superseded",
+        "retracted"
+      ],
+      "title": "SkillStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/skill.retracted.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "previous_status": {
+      "$ref": "#/$defs/SkillStatus"
+    },
+    "reason_code": {
+      "minLength": 1,
+      "title": "Reason Code",
+      "type": "string"
+    },
+    "revision": {
+      "title": "Revision",
+      "type": "integer"
+    },
+    "skill_id": {
+      "format": "uuid",
+      "title": "Skill Id",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/SkillStatus"
+    }
+  },
+  "required": [
+    "skill_id",
+    "revision",
+    "previous_status",
+    "status",
+    "reason_code",
+    "occurred_at"
+  ],
+  "title": "SkillRetracted",
+  "type": "object"
+}

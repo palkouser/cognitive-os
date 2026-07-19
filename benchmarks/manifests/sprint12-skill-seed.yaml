@@ -1,0 +1,42 @@
+benchmark_id: sprint12-skill-seed
+version: "1"
+title: Sprint 12 deterministic Skill Engine seed suite
+description: Thirty-two credential-free package, governance, retrieval and replay cases.
+default_configuration: {mode: skill-replay}
+source: Cognitive OS Sprint 12 executable backlog
+license: Apache-2.0
+created_at: 2026-01-01T00:00:00Z
+case_matrix:
+  generic:
+    - {id: skill.package-01, scenario: package_integrity, expected: passed}
+    - {id: skill.package-02, scenario: package_schema, expected: passed}
+    - {id: skill.package-03, scenario: path_safety, expected: passed}
+    - {id: skill.package-04, scenario: package_secrets, expected: passed}
+    - {id: skill.lifecycle-01, scenario: draft, expected: passed}
+    - {id: skill.lifecycle-02, scenario: staged, expected: passed}
+    - {id: skill.lifecycle-03, scenario: verified, expected: passed}
+    - {id: skill.lifecycle-04, scenario: revision_chain, expected: passed}
+    - {id: skill.select-01, scenario: deterministic_selection, expected: passed}
+    - {id: skill.select-02, scenario: repository_selection, expected: passed}
+    - {id: skill.select-03, scenario: repair_selection, expected: passed}
+    - {id: skill.select-04, scenario: arithmetic_selection, expected: passed}
+    - {id: skill.select-05, scenario: permission_filter, expected: passed}
+    - {id: skill.select-06, scenario: sensitivity_filter, expected: passed}
+    - {id: skill.select-07, scenario: stable_tie_break, expected: passed}
+    - {id: skill.select-08, scenario: provider_advisory_only, expected: passed}
+    - {id: skill.context-01, scenario: context_metadata, expected: passed}
+    - {id: skill.context-02, scenario: context_summary, expected: passed}
+    - {id: skill.context-03, scenario: context_full, expected: passed}
+    - {id: skill.context-04, scenario: trust_separation, expected: passed}
+    - {id: skill.execute-01, scenario: exact_execution, expected: passed}
+    - {id: skill.execute-02, scenario: controller_reuse, expected: passed}
+    - {id: skill.execute-03, scenario: budget_enforcement, expected: passed}
+    - {id: skill.execute-04, scenario: result_evidence, expected: passed}
+    - {id: skill.verify-01, scenario: verifier_bundle, expected: passed}
+    - {id: skill.verify-02, scenario: regression_suite, expected: passed}
+    - {id: skill.verify-03, scenario: output_schema, expected: passed}
+    - {id: skill.verify-04, scenario: no_permission_expansion, expected: passed}
+    - {id: skill.ops-01, scenario: statistics_rebuild, expected: passed}
+    - {id: skill.ops-02, scenario: access_audit, expected: passed}
+    - {id: skill.ops-03, scenario: backup_restore, expected: passed}
+    - {id: skill.ops-04, scenario: replay, expected: passed}
