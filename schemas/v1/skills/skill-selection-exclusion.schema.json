@@ -1,0 +1,48 @@
+{
+  "$defs": {
+    "SkillExclusionReason": {
+      "enum": [
+        "status",
+        "scope",
+        "sensitivity",
+        "precondition",
+        "missing_requirement",
+        "permission_required",
+        "invalid_package",
+        "fallback_invalid"
+      ],
+      "title": "SkillExclusionReason",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/skills/skill-selection-exclusion.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "detail_code": {
+      "minLength": 1,
+      "title": "Detail Code",
+      "type": "string"
+    },
+    "reason": {
+      "$ref": "#/$defs/SkillExclusionReason"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "skill_id": {
+      "format": "uuid",
+      "title": "Skill Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "skill_id",
+    "revision",
+    "reason",
+    "detail_code"
+  ],
+  "title": "SkillSelectionExclusion",
+  "type": "object"
+}

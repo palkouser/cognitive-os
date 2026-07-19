@@ -84,7 +84,8 @@
         "wiki",
         "repository_index",
         "workspace",
-        "user_correction"
+        "user_correction",
+        "procedural_skill"
       ],
       "title": "ContextSourceType",
       "type": "string"

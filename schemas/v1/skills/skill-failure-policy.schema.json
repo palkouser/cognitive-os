@@ -1,0 +1,74 @@
+{
+  "$defs": {
+    "SkillFailurePolicyType": {
+      "enum": [
+        "fail_immediately",
+        "return_to_controller_repair",
+        "request_clarification",
+        "request_manual_approval",
+        "invoke_fallback_skill",
+        "mark_unsuitable"
+      ],
+      "title": "SkillFailurePolicyType",
+      "type": "string"
+    },
+    "SkillFallbackReference": {
+      "additionalProperties": false,
+      "properties": {
+        "revision": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision"
+        },
+        "skill_id": {
+          "format": "uuid",
+          "title": "Skill Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "skill_id"
+      ],
+      "title": "SkillFallbackReference",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/skills/skill-failure-policy.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "fallback": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SkillFallbackReference"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "maximum_fallback_depth": {
+      "default": 0,
+      "maximum": 4,
+      "minimum": 0,
+      "title": "Maximum Fallback Depth",
+      "type": "integer"
+    },
+    "policy_type": {
+      "$ref": "#/$defs/SkillFailurePolicyType"
+    }
+  },
+  "required": [
+    "policy_type"
+  ],
+  "title": "SkillFailurePolicy",
+  "type": "object"
+}

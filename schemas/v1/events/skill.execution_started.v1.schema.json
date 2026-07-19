@@ -1,0 +1,45 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/skill.execution_started.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "execution_id": {
+      "format": "uuid",
+      "title": "Execution Id",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "package_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Package Hash",
+      "type": "string"
+    },
+    "revision": {
+      "title": "Revision",
+      "type": "integer"
+    },
+    "skill_id": {
+      "format": "uuid",
+      "title": "Skill Id",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "execution_id",
+    "skill_id",
+    "revision",
+    "task_run_id",
+    "package_hash",
+    "occurred_at"
+  ],
+  "title": "SkillExecutionStarted",
+  "type": "object"
+}

@@ -1,0 +1,18 @@
+benchmark_id: sprint12-skill-ci
+version: "1"
+title: Sprint 12 Skill Engine CI gate
+description: Eight credential-free package, lifecycle, selection, Context and execution cases.
+default_configuration: {mode: skill-replay}
+source: Cognitive OS Sprint 12 executable backlog
+license: Apache-2.0
+created_at: 2026-01-01T00:00:00Z
+case_matrix:
+  generic:
+    - {id: skill-ci.package, scenario: package_integrity, expected: passed}
+    - {id: skill-ci.lifecycle, scenario: lifecycle, expected: passed}
+    - {id: skill-ci.selection, scenario: deterministic_selection, expected: passed}
+    - {id: skill-ci.context, scenario: context_hydration, expected: passed}
+    - {id: skill-ci.execution, scenario: exact_execution, expected: passed}
+    - {id: skill-ci.policy, scenario: no_permission_expansion, expected: passed}
+    - {id: skill-ci.statistics, scenario: statistics_rebuild, expected: passed}
+    - {id: skill-ci.replay, scenario: replay, expected: passed}

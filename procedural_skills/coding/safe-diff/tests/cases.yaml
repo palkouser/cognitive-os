@@ -1,0 +1,3 @@
+cases:
+  - name: permission-required
+    expected_capabilities: [workspace.patch, coding.diff_policy]

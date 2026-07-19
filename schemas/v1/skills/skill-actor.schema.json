@@ -1,0 +1,33 @@
+{
+  "$defs": {
+    "SkillCreatorType": {
+      "enum": [
+        "operator",
+        "user",
+        "import_service",
+        "system",
+        "provider"
+      ],
+      "title": "SkillCreatorType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/skills/skill-actor.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "creator_id": {
+      "minLength": 1,
+      "title": "Creator Id",
+      "type": "string"
+    },
+    "creator_type": {
+      "$ref": "#/$defs/SkillCreatorType"
+    }
+  },
+  "required": [
+    "creator_type",
+    "creator_id"
+  ],
+  "title": "SkillActor",
+  "type": "object"
+}

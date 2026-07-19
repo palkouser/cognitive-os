@@ -1,0 +1,27 @@
+format_version: "1"
+canonical_name: claude-advisory-preparation
+display_name: Claude Advisory Preparation
+description: Prepare a redacted optional advisory request without granting provider authority.
+purpose: Produce a reviewable provider input artifact for host-authorized advisory use.
+domains: [generic]
+scope_type: project
+scope_id: cognitive-os
+sensitivity: internal
+problem_signatures:
+  - {problem_domain: generic, task_type: advisory}
+preconditions:
+  - {precondition_id: permission, precondition_type: explicit_permission, parameters: {permission: provider.advisory}}
+inputs:
+  - {name: advisory_question, json_type: string, required: true}
+outputs:
+  - {name: advisory_request, json_type: object, required: true}
+steps:
+  - {step_id: collect, step_type: context_build, capability_id: context.advisory}
+  - {step_id: redact, step_type: artifact_transform, capability_id: artifact.redact}
+  - {step_id: prepare, step_type: provider_action_template, capability_id: provider.claude.advisory}
+requirements:
+  - {requirement_id: permission, requirement_type: approval, capability_id: provider.advisory}
+  - {requirement_id: provider, requirement_type: provider, capability_id: provider.claude.advisory, required: false}
+failure_policy: {policy_type: request_manual_approval, maximum_fallback_depth: 0}
+resource_budget: {maximum_steps: 6, maximum_provider_calls: 1, maximum_tool_calls: 2, maximum_context_builds: 2, maximum_execution_seconds: 300, maximum_repairs: 0, maximum_context_tokens: 16384}
+regression_profile: claude-advisory-preparation-v1

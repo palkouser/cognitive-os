@@ -1,0 +1,29 @@
+format_version: "1"
+canonical_name: repository-inspection
+display_name: Repository Inspection
+description: Inspect a repository using bounded read-only host capabilities.
+purpose: Produce evidence-backed repository findings without workspace mutation.
+domains: [coding]
+scope_type: project
+scope_id: cognitive-os
+sensitivity: internal
+problem_signatures:
+  - problem_domain: coding
+    task_type: inspection
+preconditions:
+  - precondition_id: domain
+    precondition_type: problem_domain_match
+    parameters: {allowed: [coding]}
+inputs:
+  - {name: question, json_type: string, required: true}
+outputs:
+  - {name: findings, json_type: object, required: true, requires_evidence: true}
+steps:
+  - {step_id: build-context, step_type: context_build, capability_id: context.repository}
+  - {step_id: inspect, step_type: tool_action, capability_id: repository.read}
+  - {step_id: verify, step_type: verification_action, capability_id: generic.structural}
+requirements:
+  - {requirement_id: repository, requirement_type: context, capability_id: context.repository}
+failure_policy: {policy_type: return_to_controller_repair, maximum_fallback_depth: 0}
+resource_budget: {maximum_steps: 8, maximum_provider_calls: 1, maximum_tool_calls: 8, maximum_context_builds: 2, maximum_execution_seconds: 300, maximum_repairs: 1, maximum_context_tokens: 16384}
+regression_profile: repository-inspection-v1

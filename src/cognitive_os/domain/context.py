@@ -47,6 +47,7 @@ class ContextSourceType(StrEnum):
     REPOSITORY_INDEX = "repository_index"
     WORKSPACE = "workspace"
     USER_CORRECTION = "user_correction"
+    PROCEDURAL_SKILL = "procedural_skill"
 
 
 class ContextTrustClass(StrEnum):
@@ -65,6 +66,7 @@ class ContextPurpose(StrEnum):
     CODING = "coding"
     ADVISORY = "advisory"
     SEMANTIC_EXTRACTION = "semantic_extraction"
+    SKILL_EXECUTION = "skill_execution"
 
 
 class ContextBuildStatus(StrEnum):
@@ -332,7 +334,7 @@ class ContextRequest(ContextContract):
     query: Annotated[str, Field(min_length=1, max_length=8_192)]
     required_scopes: Annotated[tuple[MemoryScope, ...], Field(min_length=1, max_length=16)]
     allowed_source_types: Annotated[
-        tuple[ContextSourceType, ...], Field(min_length=1, max_length=13)
+        tuple[ContextSourceType, ...], Field(min_length=1, max_length=14)
     ]
     allowed_memory_types: tuple[MemoryType, ...] = ()
     valid_at: UtcDatetime

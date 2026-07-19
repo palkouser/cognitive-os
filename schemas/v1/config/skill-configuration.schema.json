@@ -1,0 +1,238 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/config/skill-configuration.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "allow_arbitrary_precondition_code": {
+      "default": false,
+      "title": "Allow Arbitrary Precondition Code",
+      "type": "boolean"
+    },
+    "allow_automatic_skill_generation": {
+      "default": false,
+      "title": "Allow Automatic Skill Generation",
+      "type": "boolean"
+    },
+    "allow_automatic_skill_promotion": {
+      "default": false,
+      "title": "Allow Automatic Skill Promotion",
+      "type": "boolean"
+    },
+    "allow_direct_script_execution": {
+      "default": false,
+      "title": "Allow Direct Script Execution",
+      "type": "boolean"
+    },
+    "allow_dynamic_tool_registration": {
+      "default": false,
+      "title": "Allow Dynamic Tool Registration",
+      "type": "boolean"
+    },
+    "allow_dynamic_verifier_registration": {
+      "default": false,
+      "title": "Allow Dynamic Verifier Registration",
+      "type": "boolean"
+    },
+    "allow_global_scope": {
+      "default": false,
+      "title": "Allow Global Scope",
+      "type": "boolean"
+    },
+    "allow_imported_verified_status": {
+      "default": false,
+      "title": "Allow Imported Verified Status",
+      "type": "boolean"
+    },
+    "allow_network_package_download": {
+      "default": false,
+      "title": "Allow Network Package Download",
+      "type": "boolean"
+    },
+    "allow_provider_skill_selection": {
+      "default": false,
+      "title": "Allow Provider Skill Selection",
+      "type": "boolean"
+    },
+    "allow_unverified_skill_execution": {
+      "default": false,
+      "title": "Allow Unverified Skill Execution",
+      "type": "boolean"
+    },
+    "maximum_archive_expansion_ratio": {
+      "default": 20,
+      "maximum": 20,
+      "minimum": 1,
+      "title": "Maximum Archive Expansion Ratio",
+      "type": "integer"
+    },
+    "maximum_context_builds_per_execution": {
+      "default": 8,
+      "maximum": 8,
+      "minimum": 0,
+      "title": "Maximum Context Builds Per Execution",
+      "type": "integer"
+    },
+    "maximum_context_requirements": {
+      "default": 16,
+      "maximum": 16,
+      "minimum": 0,
+      "title": "Maximum Context Requirements",
+      "type": "integer"
+    },
+    "maximum_directory_depth": {
+      "default": 12,
+      "maximum": 12,
+      "minimum": 1,
+      "title": "Maximum Directory Depth",
+      "type": "integer"
+    },
+    "maximum_execution_seconds": {
+      "default": 1800,
+      "maximum": 1800,
+      "minimum": 1,
+      "title": "Maximum Execution Seconds",
+      "type": "integer"
+    },
+    "maximum_executions_per_task": {
+      "default": 8,
+      "maximum": 8,
+      "minimum": 1,
+      "title": "Maximum Executions Per Task",
+      "type": "integer"
+    },
+    "maximum_fallback_depth": {
+      "default": 4,
+      "maximum": 4,
+      "minimum": 0,
+      "title": "Maximum Fallback Depth",
+      "type": "integer"
+    },
+    "maximum_instruction_bytes": {
+      "default": 262144,
+      "maximum": 262144,
+      "minimum": 1,
+      "title": "Maximum Instruction Bytes",
+      "type": "integer"
+    },
+    "maximum_metadata_bytes": {
+      "default": 131072,
+      "maximum": 131072,
+      "minimum": 1,
+      "title": "Maximum Metadata Bytes",
+      "type": "integer"
+    },
+    "maximum_package_bytes": {
+      "default": 16777216,
+      "maximum": 16777216,
+      "minimum": 1,
+      "title": "Maximum Package Bytes",
+      "type": "integer"
+    },
+    "maximum_package_files": {
+      "default": 256,
+      "maximum": 256,
+      "minimum": 2,
+      "title": "Maximum Package Files",
+      "type": "integer"
+    },
+    "maximum_preconditions": {
+      "default": 32,
+      "maximum": 32,
+      "minimum": 0,
+      "title": "Maximum Preconditions",
+      "type": "integer"
+    },
+    "maximum_provider_calls_per_execution": {
+      "default": 8,
+      "maximum": 8,
+      "minimum": 0,
+      "title": "Maximum Provider Calls Per Execution",
+      "type": "integer"
+    },
+    "maximum_provider_requirements": {
+      "default": 16,
+      "maximum": 16,
+      "minimum": 0,
+      "title": "Maximum Provider Requirements",
+      "type": "integer"
+    },
+    "maximum_repairs_per_execution": {
+      "default": 3,
+      "maximum": 3,
+      "minimum": 0,
+      "title": "Maximum Repairs Per Execution",
+      "type": "integer"
+    },
+    "maximum_resource_bytes": {
+      "default": 8388608,
+      "maximum": 8388608,
+      "minimum": 1,
+      "title": "Maximum Resource Bytes",
+      "type": "integer"
+    },
+    "maximum_single_file_bytes": {
+      "default": 2097152,
+      "maximum": 2097152,
+      "minimum": 1,
+      "title": "Maximum Single File Bytes",
+      "type": "integer"
+    },
+    "maximum_source_references": {
+      "default": 64,
+      "maximum": 64,
+      "minimum": 1,
+      "title": "Maximum Source References",
+      "type": "integer"
+    },
+    "maximum_steps": {
+      "default": 64,
+      "maximum": 64,
+      "minimum": 1,
+      "title": "Maximum Steps",
+      "type": "integer"
+    },
+    "maximum_tool_calls_per_execution": {
+      "default": 32,
+      "maximum": 32,
+      "minimum": 0,
+      "title": "Maximum Tool Calls Per Execution",
+      "type": "integer"
+    },
+    "maximum_tool_requirements": {
+      "default": 32,
+      "maximum": 32,
+      "minimum": 0,
+      "title": "Maximum Tool Requirements",
+      "type": "integer"
+    },
+    "maximum_verifier_requirements": {
+      "default": 32,
+      "maximum": 32,
+      "minimum": 0,
+      "title": "Maximum Verifier Requirements",
+      "type": "integer"
+    },
+    "minimum_regression_cases": {
+      "default": 1,
+      "maximum": 100,
+      "minimum": 1,
+      "title": "Minimum Regression Cases",
+      "type": "integer"
+    },
+    "minimum_statistics_sample_for_ranking": {
+      "default": 5,
+      "maximum": 100,
+      "minimum": 1,
+      "title": "Minimum Statistics Sample For Ranking",
+      "type": "integer"
+    },
+    "minimum_verified_executions_for_statistics": {
+      "default": 3,
+      "maximum": 100,
+      "minimum": 1,
+      "title": "Minimum Verified Executions For Statistics",
+      "type": "integer"
+    }
+  },
+  "title": "SkillConfiguration",
+  "type": "object"
+}

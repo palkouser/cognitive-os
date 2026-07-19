@@ -1,0 +1,24 @@
+format_version: "1"
+canonical_name: clarification-request
+display_name: Clarification Request
+description: Ask a bounded clarification when required input or permission is absent.
+purpose: Pause safely and obtain the minimum missing operator information.
+domains: [generic]
+scope_type: project
+scope_id: cognitive-os
+sensitivity: internal
+problem_signatures:
+  - {problem_domain: generic, task_type: clarification}
+preconditions:
+  - {precondition_id: flag, precondition_type: feature_flag, parameters: {flag: clarification.enabled}}
+inputs:
+  - {name: missing_information, json_type: array, required: true}
+outputs:
+  - {name: clarification, json_type: object, required: true}
+steps:
+  - {step_id: formulate, step_type: clarification_action, capability_id: controller.clarification}
+requirements:
+  - {requirement_id: clarification, requirement_type: context, capability_id: controller.clarification}
+failure_policy: {policy_type: request_clarification, maximum_fallback_depth: 0}
+resource_budget: {maximum_steps: 2, maximum_provider_calls: 0, maximum_tool_calls: 0, maximum_context_builds: 1, maximum_execution_seconds: 120, maximum_repairs: 0, maximum_context_tokens: 4096}
+regression_profile: clarification-request-v1

@@ -45,6 +45,8 @@ def _modes(source_type: ContextSourceType) -> tuple[RetrievalMode, ...]:
         return (RetrievalMode.CODE,)
     if source_type is ContextSourceType.SEMANTIC_CLAIM:
         return (RetrievalMode.SOURCE_LOOKUP,)
+    if source_type is ContextSourceType.PROCEDURAL_SKILL:
+        return (RetrievalMode.METADATA, RetrievalMode.LEXICAL, RetrievalMode.SOURCE_LOOKUP)
     return (RetrievalMode.METADATA,)
 
 

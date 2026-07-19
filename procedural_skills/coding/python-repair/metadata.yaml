@@ -1,0 +1,27 @@
+format_version: "1"
+canonical_name: verification-driven-python-repair
+display_name: Verification-Driven Python Repair
+description: Repair Python code using existing failure evidence and deterministic checks.
+purpose: Make the smallest verified repair without weakening repository policy.
+domains: [coding]
+scope_type: project
+scope_id: cognitive-os
+sensitivity: internal
+problem_signatures:
+  - {problem_domain: coding, task_type: repair, repository_language: python}
+preconditions:
+  - {precondition_id: domain, precondition_type: problem_domain_match, parameters: {allowed: [coding]}}
+inputs:
+  - {name: failure_evidence, json_type: object, required: true, requires_evidence: true}
+outputs:
+  - {name: repair_result, json_type: object, required: true, requires_evidence: true}
+steps:
+  - {step_id: reproduce, step_type: verification_action, capability_id: coding.pytest}
+  - {step_id: repair, step_type: controller_step_template, capability_id: coding.minimal_repair}
+  - {step_id: verify, step_type: verification_action, capability_id: coding.required_checks}
+requirements:
+  - {requirement_id: tests, requirement_type: verifier, capability_id: coding.pytest}
+  - {requirement_id: workspace, requirement_type: tool, capability_id: workspace.patch}
+failure_policy: {policy_type: return_to_controller_repair, maximum_fallback_depth: 0}
+resource_budget: {maximum_steps: 12, maximum_provider_calls: 3, maximum_tool_calls: 12, maximum_context_builds: 3, maximum_execution_seconds: 900, maximum_repairs: 3, maximum_context_tokens: 32768}
+regression_profile: python-repair-v1

@@ -1,0 +1,90 @@
+{
+  "$defs": {
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "SkillPreconditionType": {
+      "enum": [
+        "problem_domain_match",
+        "problem_signature_match",
+        "repository_profile_match",
+        "artifact_presence",
+        "tool_capability",
+        "verifier_capability",
+        "provider_capability",
+        "scope_match",
+        "risk_ceiling",
+        "explicit_permission",
+        "feature_flag"
+      ],
+      "title": "SkillPreconditionType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/skills/skill-precondition.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "parameters": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Parameters",
+      "type": "object"
+    },
+    "precondition_id": {
+      "minLength": 1,
+      "title": "Precondition Id",
+      "type": "string"
+    },
+    "precondition_type": {
+      "$ref": "#/$defs/SkillPreconditionType"
+    },
+    "required": {
+      "default": true,
+      "title": "Required",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "precondition_id",
+    "precondition_type",
+    "parameters"
+  ],
+  "title": "SkillPrecondition",
+  "type": "object"
+}

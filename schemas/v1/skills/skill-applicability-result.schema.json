@@ -1,0 +1,84 @@
+{
+  "$defs": {
+    "SkillApplicabilityStatus": {
+      "enum": [
+        "applicable",
+        "inapplicable",
+        "requires_permission",
+        "unavailable",
+        "invalid"
+      ],
+      "title": "SkillApplicabilityStatus",
+      "type": "string"
+    },
+    "SkillPreconditionResult": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Evidence Hash",
+          "type": "string"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        },
+        "precondition_id": {
+          "minLength": 1,
+          "title": "Precondition Id",
+          "type": "string"
+        },
+        "reason_code": {
+          "minLength": 1,
+          "title": "Reason Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "precondition_id",
+        "passed",
+        "reason_code",
+        "evidence_hash"
+      ],
+      "title": "SkillPreconditionResult",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/skills/skill-applicability-result.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "evaluation_hash": {
+      "default": "",
+      "title": "Evaluation Hash",
+      "type": "string"
+    },
+    "results": {
+      "items": {
+        "$ref": "#/$defs/SkillPreconditionResult"
+      },
+      "title": "Results",
+      "type": "array"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "skill_id": {
+      "format": "uuid",
+      "title": "Skill Id",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/SkillApplicabilityStatus"
+    }
+  },
+  "required": [
+    "skill_id",
+    "revision",
+    "status",
+    "results"
+  ],
+  "title": "SkillApplicabilityResult",
+  "type": "object"
+}

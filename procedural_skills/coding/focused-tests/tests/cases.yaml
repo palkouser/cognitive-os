@@ -1,0 +1,3 @@
+cases:
+  - name: exact-target
+    expected_capabilities: [coding.test_selection, coding.pytest]

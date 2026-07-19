@@ -1,0 +1,316 @@
+{
+  "$defs": {
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "SkillApplicabilityInput": {
+      "additionalProperties": false,
+      "properties": {
+        "available_artifact_types": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Available Artifact Types",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "context_capabilities": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Context Capabilities",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "feature_flags": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Feature Flags",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "permissions": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Permissions",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "problem_domain": {
+          "minLength": 1,
+          "title": "Problem Domain",
+          "type": "string"
+        },
+        "provider_capabilities": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Provider Capabilities",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "repository_language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Repository Language"
+        },
+        "repository_profile": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Repository Profile"
+        },
+        "requested_output_type": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Requested Output Type"
+        },
+        "risk_level": {
+          "default": "low",
+          "minLength": 1,
+          "title": "Risk Level",
+          "type": "string"
+        },
+        "scope": {
+          "$ref": "#/$defs/SkillScope"
+        },
+        "sensitivity_limit": {
+          "$ref": "#/$defs/MemorySensitivity"
+        },
+        "task_type": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Type"
+        },
+        "tool_capabilities": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Tool Capabilities",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "verifier_capabilities": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Verifier Capabilities",
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "problem_domain",
+        "scope",
+        "sensitivity_limit"
+      ],
+      "title": "SkillApplicabilityInput",
+      "type": "object"
+    },
+    "SkillRegistrySnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "context_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Context Registry Hash",
+          "type": "string"
+        },
+        "precondition_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Precondition Registry Hash",
+          "type": "string"
+        },
+        "provider_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Provider Registry Hash",
+          "type": "string"
+        },
+        "registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Registry Hash",
+          "type": "string"
+        },
+        "tool_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Tool Registry Hash",
+          "type": "string"
+        },
+        "verifier_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Verifier Registry Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "registry_hash",
+        "precondition_registry_hash",
+        "context_registry_hash",
+        "tool_registry_hash",
+        "verifier_registry_hash",
+        "provider_registry_hash"
+      ],
+      "title": "SkillRegistrySnapshot",
+      "type": "object"
+    },
+    "SkillScope": {
+      "additionalProperties": false,
+      "properties": {
+        "scope_id": {
+          "minLength": 1,
+          "title": "Scope Id",
+          "type": "string"
+        },
+        "scope_type": {
+          "$ref": "#/$defs/SkillScopeType"
+        }
+      },
+      "required": [
+        "scope_type",
+        "scope_id"
+      ],
+      "title": "SkillScope",
+      "type": "object"
+    },
+    "SkillScopeType": {
+      "enum": [
+        "global",
+        "project",
+        "repository",
+        "domain",
+        "provider"
+      ],
+      "title": "SkillScopeType",
+      "type": "string"
+    },
+    "SkillStatus": {
+      "enum": [
+        "draft",
+        "staged",
+        "verified",
+        "deprecated",
+        "superseded",
+        "retracted"
+      ],
+      "title": "SkillStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/skills/skill-selection-request.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "allowed_statuses": {
+      "default": [
+        "verified"
+      ],
+      "items": {
+        "$ref": "#/$defs/SkillStatus"
+      },
+      "title": "Allowed Statuses",
+      "type": "array"
+    },
+    "applicability_input": {
+      "$ref": "#/$defs/SkillApplicabilityInput"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "maximum_candidates": {
+      "default": 32,
+      "maximum": 200,
+      "minimum": 1,
+      "title": "Maximum Candidates",
+      "type": "integer"
+    },
+    "provider_suggestion": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Provider Suggestion"
+    },
+    "registry_snapshot": {
+      "$ref": "#/$defs/SkillRegistrySnapshot"
+    },
+    "request_id": {
+      "format": "uuid",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "request_id",
+    "task_run_id",
+    "applicability_input",
+    "registry_snapshot",
+    "created_at"
+  ],
+  "title": "SkillSelectionRequest",
+  "type": "object"
+}

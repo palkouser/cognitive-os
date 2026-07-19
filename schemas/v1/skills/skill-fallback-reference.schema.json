@@ -1,0 +1,29 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/skills/skill-fallback-reference.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "revision": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Revision"
+    },
+    "skill_id": {
+      "format": "uuid",
+      "title": "Skill Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "skill_id"
+  ],
+  "title": "SkillFallbackReference",
+  "type": "object"
+}

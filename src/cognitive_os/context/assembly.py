@@ -25,6 +25,7 @@ SECTION_ORDER = (
     "current_task_and_step",
     "hard_constraints_and_repository_instructions",
     "verified_evidence",
+    "verified_procedural_guidance",
     "relevant_code_context",
     "recent_task_trajectory",
     "user_corrections",
@@ -47,6 +48,12 @@ def _section_type(candidate: ContextCandidate) -> str:
         return "recent_task_trajectory"
     if candidate.source_type is ContextSourceType.USER_CORRECTION:
         return "user_corrections"
+    if candidate.source_type is ContextSourceType.PROCEDURAL_SKILL:
+        return (
+            "verified_procedural_guidance"
+            if candidate.trust_class is ContextTrustClass.VERIFIED
+            else "disputed_or_unverified_information"
+        )
     if candidate.source_type in {ContextSourceType.SEMANTIC_CLAIM, ContextSourceType.WIKI}:
         return (
             "supported_semantic_knowledge"

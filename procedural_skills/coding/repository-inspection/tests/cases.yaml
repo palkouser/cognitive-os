@@ -1,0 +1,3 @@
+cases:
+  - name: bounded-read-only
+    expected_capabilities: [context.repository, repository.read, generic.structural]

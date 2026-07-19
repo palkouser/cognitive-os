@@ -35,6 +35,7 @@ from cognitive_os.verification.generic import (
 )
 from cognitive_os.verification.mathematics import NumericVerifier
 from cognitive_os.verification.semantic import SEMANTIC_CAPABILITIES, SemanticInvariantVerifier
+from cognitive_os.verification.skills import build_skill_verifiers
 
 from .registry import VerifierRegistry
 
@@ -86,6 +87,7 @@ def build_builtin_registry(
             DependencyPolicyVerifier(),
             WorkspaceIntegrityVerifier(),
             *(SemanticInvariantVerifier(item) for item in SEMANTIC_CAPABILITIES),
+            *build_skill_verifiers(),
         )
     )
     if artifacts is not None:

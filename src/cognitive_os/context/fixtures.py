@@ -39,6 +39,9 @@ from .retrieval import InMemoryContextRetriever
 
 FIXTURE_TIME = datetime(2026, 7, 16, tzinfo=UTC)
 FIXTURE_SCOPE = MemoryScope(scope_type=MemoryScopeType.PROJECT, scope_id="cognitive-os")
+SPRINT11_SOURCE_TYPES = tuple(
+    item for item in ContextSourceType if item is not ContextSourceType.PROCEDURAL_SKILL
+)
 
 
 class FixtureArtifactStore:
@@ -266,7 +269,7 @@ def sprint11_fixture() -> tuple[
         current_step_reference="step:11",
         query="context builder exact retrieval ranking safety code",
         required_scopes=(FIXTURE_SCOPE,),
-        allowed_source_types=tuple(ContextSourceType),
+        allowed_source_types=SPRINT11_SOURCE_TYPES,
         allowed_memory_types=(MemoryType.OBSERVATION, MemoryType.CORRECTION),
         valid_at=FIXTURE_TIME,
         known_at=FIXTURE_TIME,
@@ -313,7 +316,7 @@ def sprint11_fixture_builder() -> tuple[ContextBuilderService, ContextRequest]:
     registry.register(
         InMemoryContextRetriever(
             retriever_id="context.fixture",
-            source_types=tuple(ContextSourceType),
+            source_types=SPRINT11_SOURCE_TYPES,
             candidates=candidates,
             bodies=bodies,
             trust_class=ContextTrustClass.UNVERIFIED,
