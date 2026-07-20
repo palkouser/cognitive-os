@@ -1,6 +1,6 @@
 # Sprint 14 report
 
-Status: Implemented and locally validated; remote CI, merge, and baseline tag pending
+Status: Released on `main`; remote CI passed and `sprint-14-baseline` published
 
 ## Baseline and authority
 
@@ -11,6 +11,10 @@ for memory, semantic, skill, strategy, Experience Compiler, candidate, decision,
 the event store retains lifecycle evidence; the artifact store owns referenced large content; and
 the existing Controller remains the only execution authority. No upstream LightAgent runtime file
 is changed.
+
+The implementation was merged through PR `#198` at
+`6a15f1ab11ed27a66f1ea13a6184b756c7232179` after all 21 required remote checks passed. The
+`sprint-14-baseline` annotated tag identifies the final CI-validated release-report merge commit.
 
 The compiler is post-execution and deterministic. Provider output may be analyzed only as untrusted
 proposal data and cannot create evidence, establish causality, promote a candidate, mutate a
