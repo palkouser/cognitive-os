@@ -44,6 +44,7 @@ from .execution_events import (
     PlanRevised,
     RunResumed,
 )
+from .experience_events import EXPERIENCE_EVENT_MODELS
 from .memory_events import MEMORY_EVENT_MODELS
 from .model_events import (
     ModelCallCompleted,
@@ -136,6 +137,7 @@ DEFAULT_EVENT_MODELS: tuple[type[EventPayload], ...] = (
     *SEMANTIC_EVENT_MODELS,
     *SKILL_EVENT_MODELS,
     *STRATEGY_EVENT_MODELS,
+    *EXPERIENCE_EVENT_MODELS,
     BenchmarkRunStarted,
     BenchmarkCaseStarted,
     BenchmarkCaseCompleted,

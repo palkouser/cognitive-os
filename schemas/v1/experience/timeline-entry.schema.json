@@ -1,0 +1,344 @@
+{
+  "$defs": {
+    "ExperienceStepStatus": {
+      "enum": [
+        "not_started",
+        "started",
+        "completed",
+        "failed",
+        "cancelled",
+        "skipped",
+        "denied",
+        "unknown"
+      ],
+      "title": "ExperienceStepStatus",
+      "type": "string"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "TimelineEntryType": {
+      "enum": [
+        "task",
+        "plan",
+        "controller",
+        "context",
+        "provider",
+        "tool",
+        "skill",
+        "strategy",
+        "verifier",
+        "acceptance",
+        "correction",
+        "approval",
+        "cancellation",
+        "unknown"
+      ],
+      "title": "TimelineEntryType",
+      "type": "string"
+    },
+    "TrajectorySourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artifact Id"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "event_stream_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Stream Id"
+        },
+        "event_stream_version": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Stream Version"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "scope": {
+          "minLength": 1,
+          "title": "Scope",
+          "type": "string"
+        },
+        "sensitivity": {
+          "$ref": "#/$defs/MemorySensitivity"
+        },
+        "source_content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Content Hash",
+          "type": "string"
+        },
+        "source_id": {
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_revision": {
+          "minLength": 1,
+          "title": "Source Revision",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/TrajectorySourceType"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_id",
+        "source_revision",
+        "source_content_hash",
+        "scope",
+        "sensitivity"
+      ],
+      "title": "TrajectorySourceRef",
+      "type": "object"
+    },
+    "TrajectorySourceType": {
+      "enum": [
+        "task",
+        "problem",
+        "plan",
+        "controller_event",
+        "context",
+        "provider_call",
+        "tool_call",
+        "verifier",
+        "acceptance",
+        "coding_trajectory",
+        "memory_revision",
+        "semantic_revision",
+        "skill_revision",
+        "strategy_revision",
+        "routing_decision",
+        "user_correction",
+        "artifact",
+        "benchmark_case"
+      ],
+      "title": "TrajectorySourceType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/experience/timeline-entry.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "actor_id": {
+      "minLength": 1,
+      "title": "Actor Id",
+      "type": "string"
+    },
+    "actor_type": {
+      "minLength": 1,
+      "title": "Actor Type",
+      "type": "string"
+    },
+    "causation_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Causation Id"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "correlation_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Correlation Id"
+    },
+    "entry_type": {
+      "$ref": "#/$defs/TimelineEntryType"
+    },
+    "event_type": {
+      "minLength": 1,
+      "title": "Event Type",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 64,
+      "minItems": 1,
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "finished_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Finished At"
+    },
+    "payload_summary": {
+      "minLength": 1,
+      "title": "Payload Summary",
+      "type": "string"
+    },
+    "phase_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Phase Id"
+    },
+    "plan_revision": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Plan Revision"
+    },
+    "sequence": {
+      "minimum": 1,
+      "title": "Sequence",
+      "type": "integer"
+    },
+    "skill_execution_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Skill Execution Id"
+    },
+    "source_ref": {
+      "$ref": "#/$defs/TrajectorySourceRef"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/ExperienceStepStatus",
+      "default": "unknown"
+    },
+    "step_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Step Id"
+    },
+    "strategy_execution_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Strategy Execution Id"
+    },
+    "timeline_entry_id": {
+      "format": "uuid",
+      "title": "Timeline Entry Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "timeline_entry_id",
+    "sequence",
+    "source_ref",
+    "entry_type",
+    "event_type",
+    "actor_type",
+    "actor_id",
+    "started_at",
+    "payload_summary",
+    "evidence_refs"
+  ],
+  "title": "TimelineEntry",
+  "type": "object"
+}

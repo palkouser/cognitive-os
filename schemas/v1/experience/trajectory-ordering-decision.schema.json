@@ -1,0 +1,33 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/experience/trajectory-ordering-decision.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "canonical_sequence": {
+      "minimum": 1,
+      "title": "Canonical Sequence",
+      "type": "integer"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "timeline_entry_id": {
+      "format": "uuid",
+      "title": "Timeline Entry Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "timeline_entry_id",
+    "canonical_sequence",
+    "reason"
+  ],
+  "title": "TrajectoryOrderingDecision",
+  "type": "object"
+}

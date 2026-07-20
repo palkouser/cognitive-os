@@ -1,0 +1,127 @@
+{
+  "$defs": {
+    "GeneralizabilityLevel": {
+      "enum": [
+        "task_specific",
+        "repository_specific",
+        "problem_class_specific",
+        "cross_repository_candidate",
+        "cross_provider_candidate",
+        "insufficient_evidence",
+        "not_generalizable"
+      ],
+      "title": "GeneralizabilityLevel",
+      "type": "string"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/experience/generalizability-assessment.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "contradiction_state": {
+      "minLength": 1,
+      "title": "Contradiction State",
+      "type": "string"
+    },
+    "data_sensitivity": {
+      "$ref": "#/$defs/MemorySensitivity"
+    },
+    "environmental_assumptions": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Environmental Assumptions",
+      "type": "array"
+    },
+    "level": {
+      "$ref": "#/$defs/GeneralizabilityLevel"
+    },
+    "limitations": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "problem_class_specificity": {
+      "minLength": 1,
+      "title": "Problem Class Specificity",
+      "type": "string"
+    },
+    "provider_specificity": {
+      "minLength": 1,
+      "title": "Provider Specificity",
+      "type": "string"
+    },
+    "repository_specificity": {
+      "minLength": 1,
+      "title": "Repository Specificity",
+      "type": "string"
+    },
+    "reproducibility_count": {
+      "minimum": 0,
+      "title": "Reproducibility Count",
+      "type": "integer"
+    },
+    "sample_count": {
+      "minimum": 1,
+      "title": "Sample Count",
+      "type": "integer"
+    },
+    "skill_specificity": {
+      "minLength": 1,
+      "title": "Skill Specificity",
+      "type": "string"
+    },
+    "strategy_specificity": {
+      "minLength": 1,
+      "title": "Strategy Specificity",
+      "type": "string"
+    },
+    "tool_specificity": {
+      "minLength": 1,
+      "title": "Tool Specificity",
+      "type": "string"
+    },
+    "verifier_coverage": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Verifier Coverage",
+      "type": "number"
+    }
+  },
+  "required": [
+    "level",
+    "problem_class_specificity",
+    "repository_specificity",
+    "provider_specificity",
+    "tool_specificity",
+    "skill_specificity",
+    "strategy_specificity",
+    "data_sensitivity",
+    "environmental_assumptions",
+    "sample_count",
+    "verifier_coverage",
+    "contradiction_state",
+    "reproducibility_count",
+    "limitations"
+  ],
+  "title": "GeneralizabilityAssessment",
+  "type": "object"
+}

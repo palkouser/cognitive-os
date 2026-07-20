@@ -62,6 +62,12 @@ Controller plan instantiation, outcomes, statistics, Context hydration, and acce
 host-controlled. See the
 [Strategy Evolution Graph architecture](docs/architecture/strategy-evolution-graph.md).
 
+Sprint 14 adds a credential-free Experience Compiler that freezes exact task-run sources,
+reconstructs deterministic timelines, preserves failed branches and corrections, assesses evidence
+conservatively, and produces verifier-gated proposed candidate packages without destination writes
+or automatic promotion. See the
+[Experience Compiler architecture](docs/architecture/experience-compiler.md).
+
 ![LightAgent Banner](docs/images/lightagent-banner.jpg)
 <div align="center">
   <p>

@@ -1,0 +1,81 @@
+{
+  "$defs": {
+    "ExperienceStepStatus": {
+      "enum": [
+        "not_started",
+        "started",
+        "completed",
+        "failed",
+        "cancelled",
+        "skipped",
+        "denied",
+        "unknown"
+      ],
+      "title": "ExperienceStepStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/experience/successful-path.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "acceptance_decision_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Acceptance Decision Id"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "path_id": {
+      "format": "uuid",
+      "title": "Path Id",
+      "type": "string"
+    },
+    "segment_ids": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Segment Ids",
+      "type": "array"
+    },
+    "terminal_status": {
+      "$ref": "#/$defs/ExperienceStepStatus"
+    },
+    "timeline_entry_ids": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Timeline Entry Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "path_id",
+    "timeline_entry_ids",
+    "segment_ids",
+    "terminal_status",
+    "evidence_refs"
+  ],
+  "title": "SuccessfulPath",
+  "type": "object"
+}

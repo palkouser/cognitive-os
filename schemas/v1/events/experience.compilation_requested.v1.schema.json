@@ -1,0 +1,60 @@
+{
+  "$defs": {
+    "CompilationStatus": {
+      "enum": [
+        "requested",
+        "snapshot_created",
+        "reconstructing",
+        "assessing",
+        "generating_candidates",
+        "completed",
+        "failed",
+        "cancelled"
+      ],
+      "title": "CompilationStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/experience.compilation_requested.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "compilation_id": {
+      "format": "uuid",
+      "title": "Compilation Id",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "profile_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Profile Hash",
+      "type": "string"
+    },
+    "request_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Request Hash",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/CompilationStatus",
+      "default": "requested"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "compilation_id",
+    "task_run_id",
+    "profile_hash",
+    "request_hash",
+    "occurred_at"
+  ],
+  "title": "ExperienceCompilationRequested",
+  "type": "object"
+}

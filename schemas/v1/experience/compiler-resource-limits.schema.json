@@ -1,0 +1,50 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/experience/compiler-resource-limits.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "maximum_candidates": {
+      "default": 256,
+      "maximum": 256,
+      "minimum": 1,
+      "title": "Maximum Candidates",
+      "type": "integer"
+    },
+    "maximum_events": {
+      "default": 100000,
+      "maximum": 100000,
+      "minimum": 1,
+      "title": "Maximum Events",
+      "type": "integer"
+    },
+    "maximum_provider_calls": {
+      "default": 0,
+      "maximum": 2,
+      "minimum": 0,
+      "title": "Maximum Provider Calls",
+      "type": "integer"
+    },
+    "maximum_seconds": {
+      "default": 1800,
+      "maximum": 1800,
+      "minimum": 1,
+      "title": "Maximum Seconds",
+      "type": "integer"
+    },
+    "maximum_sources": {
+      "default": 512,
+      "maximum": 512,
+      "minimum": 1,
+      "title": "Maximum Sources",
+      "type": "integer"
+    },
+    "maximum_steps": {
+      "default": 10000,
+      "maximum": 10000,
+      "minimum": 1,
+      "title": "Maximum Steps",
+      "type": "integer"
+    }
+  },
+  "title": "CompilerResourceLimits",
+  "type": "object"
+}

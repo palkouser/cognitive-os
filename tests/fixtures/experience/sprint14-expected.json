@@ -1,0 +1,134 @@
+{
+  "cancelled": {
+    "candidate_types": [
+      "benchmark_case",
+      "corpus_item",
+      "memory",
+      "semantic_observation"
+    ],
+    "decision": "completed",
+    "manifest_hash": "5196337b3ded5a8a5827a34fd98e1ad6dcd0fbcc2da786132b99e8ca43bd0616",
+    "reconstruction_hash": "f50d61b3e88d6cffc2436ea50f5253d5a4638cc40c0f0059c378072275015f5f",
+    "snapshot_hash": "ae79ed218f8c2931636112bf30e30e7831a840a0774cb240611ca466eae4e269"
+  },
+  "clarification-first": {
+    "candidate_types": [
+      "benchmark_case",
+      "corpus_item",
+      "memory",
+      "semantic_observation",
+      "skill"
+    ],
+    "decision": "completed",
+    "manifest_hash": "cf648d485299d8d2e7644c9834be7945f453321135c2275d9ec849ac944fd62d",
+    "reconstruction_hash": "b663b71f3d7af49ad0dafd136cdcc72589afd1602cdb271bd5064903764fe4ca",
+    "snapshot_hash": "d4cb560fb8351f80161714621dc3eaaf7698900e3063f9baa72cf47d28ba2117"
+  },
+  "conflicting-verifier": {
+    "candidate_types": [
+      "failure_pattern",
+      "negative_example"
+    ],
+    "decision": "unverifiable",
+    "manifest_hash": "a57e4d200cd03f77987a4735fb85d4b373dd5b9d21c93f449d837d5bfd2b8723",
+    "reconstruction_hash": "b59f0aff9fabbf5f7b2106c67e61595e70294f9a7e9ffcdc2a854303e0697a54",
+    "snapshot_hash": "f37efdc87c7f904fa1d6aa25a65bc89e03b7e775345e8c57fd6b239c6d11a698"
+  },
+  "context-retrieval-failure": {
+    "candidate_types": [
+      "benchmark_case",
+      "corpus_item",
+      "failure_pattern",
+      "memory",
+      "negative_example",
+      "semantic_observation"
+    ],
+    "decision": "completed",
+    "manifest_hash": "23d21b60066afd0790138fa2de33530588dc4731f7b428c8f98d53b04126f1c2",
+    "reconstruction_hash": "ff8058d9392a14a18042e05c5d31c6d5e1655238892d48a1382f648624fea5b0",
+    "snapshot_hash": "f95fe0fa3ab5d2d155947ea365e4f011d026558649a45a2d193a5a77d6404a93"
+  },
+  "direct-success": {
+    "candidate_types": [
+      "benchmark_case",
+      "corpus_item",
+      "memory",
+      "semantic_observation"
+    ],
+    "decision": "completed",
+    "manifest_hash": "1c185f584494a18a76ed50a618982c432ab994214dab64c6d857279e68df765f",
+    "reconstruction_hash": "310405edd0767b2b48fe315aba4ce27223454adc378d78b7d5784afe492a3612",
+    "snapshot_hash": "154f46ab528390a5280655c4a485d17451c41402f5b642d91cc93d81d4a0e0c3"
+  },
+  "failed-strategy": {
+    "candidate_types": [
+      "benchmark_case",
+      "corpus_item",
+      "failure_pattern",
+      "memory",
+      "negative_example",
+      "semantic_observation",
+      "strategy"
+    ],
+    "decision": "completed",
+    "manifest_hash": "b812d5da2fe7c13976c9bd70474739a5aef99bbf7d276dde84b0736bf563724c",
+    "reconstruction_hash": "784e550d3806b0274aac6ae61161d0693671620728044f83b8dc6a9a792893ca",
+    "snapshot_hash": "5f687c4fd652b4331c46ca0280b87e371d3455e0f9b819e486f8ce29ed782bbe"
+  },
+  "incomplete-history": {
+    "candidate_types": [
+      "failure_pattern",
+      "negative_example"
+    ],
+    "decision": "unverifiable",
+    "manifest_hash": "81b9d426cd6b7c35a94db4fe1fc6c50e9f2c6cee4debd8095d80ba745f6efec3",
+    "reconstruction_hash": "43584cadd178e69c995394bf671a1d45851b688116bcc1233d61bae810822a37",
+    "snapshot_hash": "dd183325f25bae0eda1092594ee7f53f423ab1a90b0bb1c833f5f37eca59b134"
+  },
+  "provider-fallback": {
+    "candidate_types": [
+      "benchmark_case",
+      "corpus_item",
+      "failure_pattern",
+      "memory",
+      "negative_example",
+      "routing_observation",
+      "semantic_observation",
+      "skill"
+    ],
+    "decision": "completed",
+    "manifest_hash": "87c503b57df798c40f689269a7ded72399dbe1991f9f3cf032e4a8b43c124ded",
+    "reconstruction_hash": "43ae195d3b8793946b4818fa771f9b2359d3f229152b10bf97f818eaabbe07e8",
+    "snapshot_hash": "b018eb39e2828db5a548d2357675b827b8a8af1ee3cb579addf1769e2a3f5cb6"
+  },
+  "repaired-bug-fix": {
+    "candidate_types": [
+      "benchmark_case",
+      "corpus_item",
+      "failure_pattern",
+      "memory",
+      "negative_example",
+      "routing_observation",
+      "semantic_observation",
+      "skill"
+    ],
+    "decision": "completed",
+    "manifest_hash": "f479e403806777b7b6bc69dcf447dd714359ef69b4abe2cd1cbb6e944b62e924",
+    "reconstruction_hash": "6e748684d376be6080dc9c3ed4dff522aa1b6ff6a7fd32b293a4cb788393786b",
+    "snapshot_hash": "94b74f63bd9c9ebddd3bcdc4162cfa1cdfcb50918cc75aa766640bdbbaf49a40"
+  },
+  "unsafe-tool-request": {
+    "candidate_types": [
+      "benchmark_case",
+      "corpus_item",
+      "failure_pattern",
+      "memory",
+      "negative_example",
+      "semantic_observation"
+    ],
+    "decision": "completed",
+    "manifest_hash": "1c4fc762362233b99a63ecddf1062e8c1592b0bb4a6df1ab1ed0580bddef1021",
+    "reconstruction_hash": "15492de0b4ffe193912b6cbd104923ea1edec5cd1b33a135b5e5e655a1868af8",
+    "snapshot_hash": "f5c3fd8e6d3bc8eec4f7a03ea6377d3cd4682ccbb5bfc3a6fe7e500f62e6a6f2"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/experience.snapshot_created.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "compilation_id": {
+      "format": "uuid",
+      "title": "Compilation Id",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "snapshot_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Snapshot Hash",
+      "type": "string"
+    },
+    "source_count": {
+      "title": "Source Count",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "compilation_id",
+    "snapshot_hash",
+    "source_count",
+    "occurred_at"
+  ],
+  "title": "ExperienceSnapshotCreated",
+  "type": "object"
+}

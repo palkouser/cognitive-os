@@ -73,3 +73,17 @@ latency, provenance, scope, and sensitivity results before promotion.
 Sprint 13 adds no dependency. The Strategy Evolution Graph reuses the standard library,
 SQLAlchemy Core, PostgreSQL, Pydantic, existing Controller contracts, and the Sprint 12 Skill
 Registry.
+
+## Sprint 14 experience-compilation references
+
+| Project | License | Use | Authority, maintenance, and removal decision |
+| --- | --- | --- | --- |
+| LangMem | MIT | Reflection and memory-candidate pattern donor | No dependency, persistence, extraction runtime, or promotion authority; concepts are replaced by deterministic host code |
+| agentmemory | MIT | Coding-session capture and trajectory-hook reference | No dependency or backend; existing event and artifact contracts replace it |
+| Cognee | Apache-2.0 | Ingest and semantic-extraction pipeline reference | No dependency, graph store, source resolver, or destination authority |
+| GEPA | Apache-2.0 | Trajectory reflection and feedback-pattern reference | No optimization runtime, provider authority, or automatic harness change; deferred to later proposal work |
+
+Sprint 14 adds no dependency. The compiler uses the standard library, Pydantic, existing SQLAlchemy
+Core and PostgreSQL extras, existing provider boundaries, and existing event, artifact, verifier,
+benchmark, skill, and strategy contracts. Every donor is pattern-only and can be removed without a
+runtime or schema change.

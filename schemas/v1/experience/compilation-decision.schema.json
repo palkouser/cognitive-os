@@ -1,0 +1,77 @@
+{
+  "$defs": {
+    "CompilationDecisionType": {
+      "enum": [
+        "completed",
+        "completed_with_warnings",
+        "insufficient_sources",
+        "invalid_sources",
+        "unverifiable",
+        "rejected",
+        "failed",
+        "cancelled"
+      ],
+      "title": "CompilationDecisionType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/experience/compilation-decision.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "compilation_id": {
+      "format": "uuid",
+      "title": "Compilation Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "decided_at": {
+      "format": "date-time",
+      "title": "Decided At",
+      "type": "string"
+    },
+    "decision": {
+      "$ref": "#/$defs/CompilationDecisionType"
+    },
+    "reason_codes": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Reason Codes",
+      "type": "array"
+    },
+    "verifier_bundle_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Verifier Bundle Hash",
+      "type": "string"
+    },
+    "verifier_bundle_id": {
+      "format": "uuid",
+      "title": "Verifier Bundle Id",
+      "type": "string"
+    },
+    "warnings": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "compilation_id",
+    "decision",
+    "verifier_bundle_id",
+    "verifier_bundle_hash",
+    "decided_at"
+  ],
+  "title": "CompilationDecision",
+  "type": "object"
+}

@@ -1,0 +1,88 @@
+{
+  "$defs": {
+    "ExperienceStepStatus": {
+      "enum": [
+        "not_started",
+        "started",
+        "completed",
+        "failed",
+        "cancelled",
+        "skipped",
+        "denied",
+        "unknown"
+      ],
+      "title": "ExperienceStepStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/experience/recovery-path.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "correction_ids": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Correction Ids",
+      "type": "array"
+    },
+    "evidence_refs": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "failed_branch_id": {
+      "format": "uuid",
+      "title": "Failed Branch Id",
+      "type": "string"
+    },
+    "path_id": {
+      "format": "uuid",
+      "title": "Path Id",
+      "type": "string"
+    },
+    "resolved": {
+      "title": "Resolved",
+      "type": "boolean"
+    },
+    "segment_ids": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Segment Ids",
+      "type": "array"
+    },
+    "terminal_status": {
+      "$ref": "#/$defs/ExperienceStepStatus"
+    },
+    "timeline_entry_ids": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Timeline Entry Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "path_id",
+    "timeline_entry_ids",
+    "segment_ids",
+    "terminal_status",
+    "evidence_refs",
+    "failed_branch_id",
+    "correction_ids",
+    "resolved"
+  ],
+  "title": "RecoveryPath",
+  "type": "object"
+}

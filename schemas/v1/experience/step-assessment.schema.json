@@ -1,0 +1,175 @@
+{
+  "$defs": {
+    "ExperienceStepStatus": {
+      "enum": [
+        "not_started",
+        "started",
+        "completed",
+        "failed",
+        "cancelled",
+        "skipped",
+        "denied",
+        "unknown"
+      ],
+      "title": "ExperienceStepStatus",
+      "type": "string"
+    },
+    "PolicyCompliance": {
+      "enum": [
+        "compliant",
+        "non_compliant",
+        "not_evaluated",
+        "unknown"
+      ],
+      "title": "PolicyCompliance",
+      "type": "string"
+    },
+    "StepCorrectness": {
+      "enum": [
+        "correct",
+        "incorrect",
+        "partially_correct",
+        "unverifiable",
+        "not_applicable",
+        "unknown"
+      ],
+      "title": "StepCorrectness",
+      "type": "string"
+    },
+    "StepEfficiency": {
+      "enum": [
+        "efficient",
+        "acceptable",
+        "inefficient",
+        "severely_inefficient",
+        "unknown"
+      ],
+      "title": "StepEfficiency",
+      "type": "string"
+    },
+    "StepNecessity": {
+      "enum": [
+        "necessary",
+        "useful",
+        "redundant",
+        "unnecessary",
+        "unknown"
+      ],
+      "title": "StepNecessity",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/experience/step-assessment.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "assessment_profile": {
+      "minLength": 1,
+      "title": "Assessment Profile",
+      "type": "string"
+    },
+    "authoritative_evidence": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 64,
+      "minItems": 1,
+      "title": "Authoritative Evidence",
+      "type": "array"
+    },
+    "confidence": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Confidence",
+      "type": "number"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "correctness": {
+      "$ref": "#/$defs/StepCorrectness"
+    },
+    "efficiency": {
+      "$ref": "#/$defs/StepEfficiency"
+    },
+    "first_incorrect_candidate": {
+      "default": false,
+      "title": "First Incorrect Candidate",
+      "type": "boolean"
+    },
+    "inputs": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Inputs",
+      "type": "array"
+    },
+    "intent": {
+      "minLength": 1,
+      "title": "Intent",
+      "type": "string"
+    },
+    "limitations": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "necessity": {
+      "$ref": "#/$defs/StepNecessity"
+    },
+    "outputs": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Outputs",
+      "type": "array"
+    },
+    "policy_compliance": {
+      "$ref": "#/$defs/PolicyCompliance"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "sequence": {
+      "minimum": 1,
+      "title": "Sequence",
+      "type": "integer"
+    },
+    "status": {
+      "$ref": "#/$defs/ExperienceStepStatus"
+    },
+    "step_id": {
+      "minLength": 1,
+      "title": "Step Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "step_id",
+    "sequence",
+    "intent",
+    "authoritative_evidence",
+    "status",
+    "correctness",
+    "necessity",
+    "efficiency",
+    "policy_compliance",
+    "confidence",
+    "reason",
+    "assessment_profile"
+  ],
+  "title": "StepAssessment",
+  "type": "object"
+}

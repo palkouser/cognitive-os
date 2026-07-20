@@ -1,0 +1,48 @@
+{
+  "$defs": {
+    "CompilationDecisionType": {
+      "enum": [
+        "completed",
+        "completed_with_warnings",
+        "insufficient_sources",
+        "invalid_sources",
+        "unverifiable",
+        "rejected",
+        "failed",
+        "cancelled"
+      ],
+      "title": "CompilationDecisionType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/experience.compilation_completed.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "compilation_id": {
+      "format": "uuid",
+      "title": "Compilation Id",
+      "type": "string"
+    },
+    "decision": {
+      "$ref": "#/$defs/CompilationDecisionType"
+    },
+    "manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Manifest Hash",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "compilation_id",
+    "manifest_hash",
+    "decision",
+    "occurred_at"
+  ],
+  "title": "ExperienceCompilationCompleted",
+  "type": "object"
+}

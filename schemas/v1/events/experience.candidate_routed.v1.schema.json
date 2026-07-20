@@ -1,0 +1,40 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/experience.candidate_routed.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "candidate_id": {
+      "format": "uuid",
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "compilation_id": {
+      "format": "uuid",
+      "title": "Compilation Id",
+      "type": "string"
+    },
+    "envelope_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Envelope Hash",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "target_subsystem": {
+      "minLength": 1,
+      "title": "Target Subsystem",
+      "type": "string"
+    }
+  },
+  "required": [
+    "compilation_id",
+    "candidate_id",
+    "envelope_hash",
+    "target_subsystem",
+    "occurred_at"
+  ],
+  "title": "ExperienceCandidateRouted",
+  "type": "object"
+}

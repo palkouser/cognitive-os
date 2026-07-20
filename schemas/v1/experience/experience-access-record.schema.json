@@ -1,0 +1,119 @@
+{
+  "$defs": {
+    "ExperienceAccessType": {
+      "enum": [
+        "source_resolution",
+        "snapshot_read",
+        "artifact_read",
+        "reconstruction_read",
+        "candidate_read",
+        "candidate_export",
+        "manifest_read"
+      ],
+      "title": "ExperienceAccessType",
+      "type": "string"
+    },
+    "TrajectorySourceType": {
+      "enum": [
+        "task",
+        "problem",
+        "plan",
+        "controller_event",
+        "context",
+        "provider_call",
+        "tool_call",
+        "verifier",
+        "acceptance",
+        "coding_trajectory",
+        "memory_revision",
+        "semantic_revision",
+        "skill_revision",
+        "strategy_revision",
+        "routing_decision",
+        "user_correction",
+        "artifact",
+        "benchmark_case"
+      ],
+      "title": "TrajectorySourceType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/experience/experience-access-record.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "access_id": {
+      "format": "uuid",
+      "title": "Access Id",
+      "type": "string"
+    },
+    "access_type": {
+      "$ref": "#/$defs/ExperienceAccessType"
+    },
+    "accessed_at": {
+      "format": "date-time",
+      "title": "Accessed At",
+      "type": "string"
+    },
+    "actor_id": {
+      "minLength": 1,
+      "title": "Actor Id",
+      "type": "string"
+    },
+    "candidate_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Candidate Id"
+    },
+    "compilation_id": {
+      "format": "uuid",
+      "title": "Compilation Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "source_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Id"
+    },
+    "source_type": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TrajectorySourceType"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "access_id",
+    "compilation_id",
+    "access_type",
+    "actor_id",
+    "accessed_at"
+  ],
+  "title": "ExperienceAccessRecord",
+  "type": "object"
+}

@@ -1,0 +1,79 @@
+{
+  "$defs": {
+    "ContributionType": {
+      "enum": [
+        "helpful",
+        "neutral",
+        "harmful",
+        "unknown"
+      ],
+      "title": "ContributionType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/experience/correction-record.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "after_evidence": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "After Evidence",
+      "type": "array"
+    },
+    "before_evidence": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Before Evidence",
+      "type": "array"
+    },
+    "changed_entry_ids": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Changed Entry Ids",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "correction_id": {
+      "format": "uuid",
+      "title": "Correction Id",
+      "type": "string"
+    },
+    "effect": {
+      "$ref": "#/$defs/ContributionType"
+    },
+    "limitations": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "source": {
+      "minLength": 1,
+      "title": "Source",
+      "type": "string"
+    }
+  },
+  "required": [
+    "correction_id",
+    "source",
+    "before_evidence",
+    "after_evidence",
+    "changed_entry_ids",
+    "effect"
+  ],
+  "title": "CorrectionRecord",
+  "type": "object"
+}
