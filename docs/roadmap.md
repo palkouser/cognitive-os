@@ -13,5 +13,7 @@ disclosure, safety, traces, and provider-specific Context Bundles. It consumes S
 10 read contracts without replacing persistence or granting provider write authority. Sprint 12
 implemented governed procedural skills. Sprint 13 implements manually authored strategic memory,
 deterministic selection, exact skill binding, Strategy-to-Controller plan instantiation, outcome
-statistics, and Context retrieval. Sprint 14 remains responsible for the Experience Compiler and
-cannot automatically generate or promote strategies through Sprint 13 paths.
+statistics, and Context retrieval. Sprint 14 implements deterministic trajectory reconstruction,
+evidence-linked assessment, conservative contribution and generalizability analysis, and nine
+verifier-gated proposed candidate types. Sprint 15 remains responsible for candidate normalization,
+deduplication, licensing, quality policy, staging, and governed destination routing.

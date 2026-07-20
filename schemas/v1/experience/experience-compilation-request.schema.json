@@ -1,0 +1,278 @@
+{
+  "$defs": {
+    "CompilerResourceLimits": {
+      "additionalProperties": false,
+      "properties": {
+        "maximum_candidates": {
+          "default": 256,
+          "maximum": 256,
+          "minimum": 1,
+          "title": "Maximum Candidates",
+          "type": "integer"
+        },
+        "maximum_events": {
+          "default": 100000,
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Maximum Events",
+          "type": "integer"
+        },
+        "maximum_provider_calls": {
+          "default": 0,
+          "maximum": 2,
+          "minimum": 0,
+          "title": "Maximum Provider Calls",
+          "type": "integer"
+        },
+        "maximum_seconds": {
+          "default": 1800,
+          "maximum": 1800,
+          "minimum": 1,
+          "title": "Maximum Seconds",
+          "type": "integer"
+        },
+        "maximum_sources": {
+          "default": 512,
+          "maximum": 512,
+          "minimum": 1,
+          "title": "Maximum Sources",
+          "type": "integer"
+        },
+        "maximum_steps": {
+          "default": 10000,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Maximum Steps",
+          "type": "integer"
+        }
+      },
+      "title": "CompilerResourceLimits",
+      "type": "object"
+    },
+    "ExperienceCandidateType": {
+      "enum": [
+        "memory",
+        "semantic_observation",
+        "skill",
+        "strategy",
+        "failure_pattern",
+        "routing_observation",
+        "benchmark_case",
+        "negative_example",
+        "corpus_item"
+      ],
+      "title": "ExperienceCandidateType",
+      "type": "string"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "TrajectorySourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artifact Id"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "event_stream_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Stream Id"
+        },
+        "event_stream_version": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Stream Version"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "scope": {
+          "minLength": 1,
+          "title": "Scope",
+          "type": "string"
+        },
+        "sensitivity": {
+          "$ref": "#/$defs/MemorySensitivity"
+        },
+        "source_content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Content Hash",
+          "type": "string"
+        },
+        "source_id": {
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_revision": {
+          "minLength": 1,
+          "title": "Source Revision",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/TrajectorySourceType"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_id",
+        "source_revision",
+        "source_content_hash",
+        "scope",
+        "sensitivity"
+      ],
+      "title": "TrajectorySourceRef",
+      "type": "object"
+    },
+    "TrajectorySourceType": {
+      "enum": [
+        "task",
+        "problem",
+        "plan",
+        "controller_event",
+        "context",
+        "provider_call",
+        "tool_call",
+        "verifier",
+        "acceptance",
+        "coding_trajectory",
+        "memory_revision",
+        "semantic_revision",
+        "skill_revision",
+        "strategy_revision",
+        "routing_decision",
+        "user_correction",
+        "artifact",
+        "benchmark_case"
+      ],
+      "title": "TrajectorySourceType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/experience/experience-compilation-request.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "budget": {
+      "$ref": "#/$defs/CompilerResourceLimits"
+    },
+    "candidate_types": {
+      "items": {
+        "$ref": "#/$defs/ExperienceCandidateType"
+      },
+      "maxItems": 9,
+      "minItems": 1,
+      "title": "Candidate Types",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "compilation_id": {
+      "format": "uuid",
+      "title": "Compilation Id",
+      "type": "string"
+    },
+    "compiler_profile_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Compiler Profile Hash",
+      "type": "string"
+    },
+    "compiler_profile_id": {
+      "minLength": 1,
+      "title": "Compiler Profile Id",
+      "type": "string"
+    },
+    "compiler_profile_version": {
+      "minimum": 1,
+      "title": "Compiler Profile Version",
+      "type": "integer"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "idempotency_key": {
+      "minLength": 1,
+      "title": "Idempotency Key",
+      "type": "string"
+    },
+    "requested_by": {
+      "minLength": 1,
+      "title": "Requested By",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    },
+    "trajectory_sources": {
+      "items": {
+        "$ref": "#/$defs/TrajectorySourceRef"
+      },
+      "maxItems": 512,
+      "minItems": 1,
+      "title": "Trajectory Sources",
+      "type": "array"
+    }
+  },
+  "required": [
+    "compilation_id",
+    "task_run_id",
+    "trajectory_sources",
+    "compiler_profile_id",
+    "compiler_profile_version",
+    "compiler_profile_hash",
+    "candidate_types",
+    "budget",
+    "requested_by",
+    "idempotency_key",
+    "created_at"
+  ],
+  "title": "ExperienceCompilationRequest",
+  "type": "object"
+}

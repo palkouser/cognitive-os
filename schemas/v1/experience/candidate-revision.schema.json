@@ -1,0 +1,66 @@
+{
+  "$defs": {
+    "ExperienceCandidateStatus": {
+      "enum": [
+        "proposed",
+        "validated",
+        "rejected",
+        "routed",
+        "superseded"
+      ],
+      "title": "ExperienceCandidateStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/experience/candidate-revision.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "actor_id": {
+      "minLength": 1,
+      "title": "Actor Id",
+      "type": "string"
+    },
+    "candidate_id": {
+      "format": "uuid",
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "previous_status": {
+      "$ref": "#/$defs/ExperienceCandidateStatus"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "status": {
+      "$ref": "#/$defs/ExperienceCandidateStatus"
+    }
+  },
+  "required": [
+    "candidate_id",
+    "revision",
+    "previous_status",
+    "status",
+    "actor_id",
+    "reason",
+    "created_at"
+  ],
+  "title": "CandidateRevision",
+  "type": "object"
+}

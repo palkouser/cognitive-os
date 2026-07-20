@@ -1,0 +1,97 @@
+{
+  "$defs": {
+    "CompilationDecisionType": {
+      "enum": [
+        "completed",
+        "completed_with_warnings",
+        "insufficient_sources",
+        "invalid_sources",
+        "unverifiable",
+        "rejected",
+        "failed",
+        "cancelled"
+      ],
+      "title": "CompilationDecisionType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/experience/compilation-manifest.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "analysis_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Analysis Hash",
+      "type": "string"
+    },
+    "candidate_hashes": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Candidate Hashes",
+      "type": "array"
+    },
+    "compilation_decision": {
+      "$ref": "#/$defs/CompilationDecisionType"
+    },
+    "compilation_id": {
+      "format": "uuid",
+      "title": "Compilation Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "reconstruction_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Reconstruction Hash",
+      "type": "string"
+    },
+    "source_snapshot_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Snapshot Hash",
+      "type": "string"
+    },
+    "usage": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Usage",
+      "type": "object"
+    },
+    "verifier_bundle_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Verifier Bundle Hash",
+      "type": "string"
+    },
+    "warnings": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "compilation_id",
+    "source_snapshot_hash",
+    "reconstruction_hash",
+    "analysis_hash",
+    "candidate_hashes",
+    "verifier_bundle_hash",
+    "compilation_decision",
+    "warnings",
+    "usage",
+    "created_at"
+  ],
+  "title": "CompilationManifest",
+  "type": "object"
+}

@@ -1,0 +1,36 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/experience/trajectory-reconstruction-verification-subject.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifact_hashes": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Artifact Hashes",
+      "type": "array"
+    },
+    "compilation_id": {
+      "format": "uuid",
+      "title": "Compilation Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "reconstruction_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Reconstruction Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "compilation_id",
+    "artifact_hashes",
+    "reconstruction_hash"
+  ],
+  "title": "TrajectoryReconstructionVerificationSubject",
+  "type": "object"
+}

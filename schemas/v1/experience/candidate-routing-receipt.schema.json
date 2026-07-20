@@ -1,0 +1,45 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/experience/candidate-routing-receipt.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "accepted_for_staging": {
+      "title": "Accepted For Staging",
+      "type": "boolean"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "destination_receipt_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Destination Receipt Id"
+    },
+    "envelope_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Envelope Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "envelope_hash",
+    "accepted_for_staging",
+    "created_at"
+  ],
+  "title": "CandidateRoutingReceipt",
+  "type": "object"
+}

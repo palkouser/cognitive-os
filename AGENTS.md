@@ -5,23 +5,22 @@
 This repository develops Cognitive OS, a local, model-independent, self-improving
 agent harness based on LightAgent.
 
-## Sprint 13 scope
+## Sprint 14 scope
 
-The active scope is governed strategic memory and a deterministic Strategy Evolution Graph built
-on the Sprint 12 Skill Engine and the existing Controller, Context Builder, provider, Tool Plane,
-verifier, acceptance, event, artifact, repository, workspace, and PostgreSQL boundaries.
+The active scope is a governed, deterministic Experience Compiler built on the Sprint 12 Skill
+Engine, Sprint 13 Strategy Evolution Graph, and the existing Controller, Context Builder, provider,
+Tool Plane, verifier, acceptance, event, artifact, repository, workspace, and PostgreSQL boundaries.
 
 Allowed work:
 
-- immutable problem-class, strategy, phase, binding, graph, selection, plan-instantiation, outcome,
-  statistics, comparison, access, verification, and promotion contracts;
-- manually authored append-only strategy revisions and graph edges with typed references to exact
-  externally owned records;
-- deterministic applicability, cold-start handling, strategy ranking, exact verified skill
-  resolution, bounded Controller plan instantiation, branch and fallback decisions;
-- strategy Context retrieval, progressive hydration, trust warnings, access audits, lifecycle
-  events, health, replay, backup, restore, graph snapshots, and credential-free benchmarks;
-- optional bounded NetworkX analysis that cannot mutate authoritative PostgreSQL state.
+- immutable compilation requests, source snapshots, normalized timelines, segments, assessments,
+  paths, corrections, contributions, generalizability records, candidates, decisions, manifests,
+  accesses, and verifier subjects;
+- read-only exact-revision source resolution across existing authoritative subsystems;
+- deterministic reconstruction, assessment, candidate generation, replay, idempotency, health,
+  backup, restore, smoke paths, and credential-free benchmarks;
+- optional bounded provider-assisted proposals after deterministic analysis, with no source,
+  causality, candidate-status, destination, execution, or promotion authority.
 
 Out of scope:
 
@@ -31,8 +30,9 @@ Out of scope:
 - provider-authoritative retrieval, query expansion, ranking, permissions, or budget changes;
 - learned ranking, adaptive weights, mandatory neural reranking, HNSW, or IVFFlat by default;
 - graph databases, a Context Builder state database, or Wiki pages used as independent evidence;
-- automatic strategy, experience, skill, or conversation-summary creation or promotion;
-- Experience Compiler candidates or trajectory-to-strategy compilation;
+- automatic authoritative memory, semantic, skill, strategy, or conversation-summary creation;
+- candidate promotion, destination writes, corpus routing, or training-corpus production;
+- learned contribution attribution, causal inference, counterfactual rollout, or branch simulation;
 - learned strategy ranking, adaptive provider routing, or measured model capability routing;
 - strategy-driven tool, verifier, provider, permission, approval, or budget mutation;
 - a second Controller, planner runtime, or provider-authoritative branch decision;
@@ -40,14 +40,14 @@ Out of scope:
 - network model downloads or GPU requirements;
 - Cognee, Graphiti, LangMem, agentmemory, or legacy LightAgent memory as an authority;
 - automatic context ingestion, autonomous memory or claim promotion, unrestricted external or web
-  retrieval, multi-agent strategy sharing, and Sprint 14--17 experience or adaptive features.
+  retrieval, multi-agent experience sharing, and Sprint 15--17 corpus or adaptive features.
 
 PostgreSQL is authoritative for Memory Plane, semantic projection, skill, strategy, graph,
-selection, outcome, and statistics state; the event store owns lifecycle evidence and the artifact
-store owns referenced large content. Providers and LightAgent cannot bypass host-controlled
-services or policy. Strategy revisions, graph edges, selections, outcomes, and accesses are
-append-only. Strategy text and provider prose are proposal or retrieved data only and cannot
-authorize promotion, execution, acceptance, policy changes, or graph mutation.
+experience compilation metadata, candidates, decisions, and access state; the event store owns
+lifecycle evidence and the artifact store owns referenced large content. Providers and LightAgent
+cannot bypass host-controlled services or policy. Source snapshots, assessments, candidate
+revisions, decisions, and accesses are append-only. Candidate and provider prose is proposal-only
+and cannot authorize destination writes, promotion, execution, acceptance, or policy changes.
 
 Do not move or rewrite LightAgent runtime files unless the active issue explicitly
 authorizes it.

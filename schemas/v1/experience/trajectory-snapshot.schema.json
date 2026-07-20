@@ -1,0 +1,320 @@
+{
+  "$defs": {
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "TrajectoryCompleteness": {
+      "enum": [
+        "complete",
+        "complete_with_warnings",
+        "incomplete",
+        "conflicted",
+        "invalid"
+      ],
+      "title": "TrajectoryCompleteness",
+      "type": "string"
+    },
+    "TrajectorySourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artifact Id"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "event_stream_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Stream Id"
+        },
+        "event_stream_version": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Stream Version"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "scope": {
+          "minLength": 1,
+          "title": "Scope",
+          "type": "string"
+        },
+        "sensitivity": {
+          "$ref": "#/$defs/MemorySensitivity"
+        },
+        "source_content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Content Hash",
+          "type": "string"
+        },
+        "source_id": {
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_revision": {
+          "minLength": 1,
+          "title": "Source Revision",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/TrajectorySourceType"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_id",
+        "source_revision",
+        "source_content_hash",
+        "scope",
+        "sensitivity"
+      ],
+      "title": "TrajectorySourceRef",
+      "type": "object"
+    },
+    "TrajectorySourceType": {
+      "enum": [
+        "task",
+        "problem",
+        "plan",
+        "controller_event",
+        "context",
+        "provider_call",
+        "tool_call",
+        "verifier",
+        "acceptance",
+        "coding_trajectory",
+        "memory_revision",
+        "semantic_revision",
+        "skill_revision",
+        "strategy_revision",
+        "routing_decision",
+        "user_correction",
+        "artifact",
+        "benchmark_case"
+      ],
+      "title": "TrajectorySourceType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/experience/trajectory-snapshot.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "acceptance_decision_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Acceptance Decision Id"
+    },
+    "artifact_hashes": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Artifact Hashes",
+      "type": "array"
+    },
+    "benchmark_cases": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Benchmark Cases",
+      "type": "array"
+    },
+    "completeness": {
+      "$ref": "#/$defs/TrajectoryCompleteness"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "context_bundle_revisions": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Context Bundle Revisions",
+      "type": "array"
+    },
+    "event_stream_versions": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Event Stream Versions",
+      "type": "object"
+    },
+    "memory_revision_refs": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Memory Revision Refs",
+      "type": "array"
+    },
+    "plan_revisions": {
+      "default": [],
+      "items": {
+        "type": "integer"
+      },
+      "title": "Plan Revisions",
+      "type": "array"
+    },
+    "provider_call_ids": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Provider Call Ids",
+      "type": "array"
+    },
+    "routing_decisions": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Routing Decisions",
+      "type": "array"
+    },
+    "semantic_revision_refs": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Semantic Revision Refs",
+      "type": "array"
+    },
+    "skill_revisions": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Skill Revisions",
+      "type": "array"
+    },
+    "snapshot_created_at": {
+      "format": "date-time",
+      "title": "Snapshot Created At",
+      "type": "string"
+    },
+    "source_refs": {
+      "items": {
+        "$ref": "#/$defs/TrajectorySourceRef"
+      },
+      "maxItems": 512,
+      "minItems": 1,
+      "title": "Source Refs",
+      "type": "array"
+    },
+    "strategy_revisions": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Strategy Revisions",
+      "type": "array"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    },
+    "terminal_state": {
+      "minLength": 1,
+      "title": "Terminal State",
+      "type": "string"
+    },
+    "tool_call_ids": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Tool Call Ids",
+      "type": "array"
+    },
+    "user_corrections": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "User Corrections",
+      "type": "array"
+    },
+    "verifier_bundle_ids": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Verifier Bundle Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "task_run_id",
+    "terminal_state",
+    "source_refs",
+    "completeness",
+    "snapshot_created_at"
+  ],
+  "title": "TrajectorySnapshot",
+  "type": "object"
+}

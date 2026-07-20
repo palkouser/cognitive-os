@@ -1,0 +1,710 @@
+{
+  "$defs": {
+    "CausalOriginAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "causal_claim_supported": {
+          "default": false,
+          "title": "Causal Claim Supported",
+          "type": "boolean"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "default": [],
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "origin_type": {
+          "$ref": "#/$defs/FirstIncorrectType"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "step_ids": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Step Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "origin_type",
+        "reason"
+      ],
+      "title": "CausalOriginAssessment",
+      "type": "object"
+    },
+    "ContributionRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "assessment": {
+          "$ref": "#/$defs/ContributionType"
+        },
+        "causal_strength": {
+          "default": "correlated",
+          "minLength": 1,
+          "title": "Causal Strength",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "contribution_id": {
+          "format": "uuid",
+          "title": "Contribution Id",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "maxItems": 64,
+          "minItems": 1,
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "limitations": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "subject_id": {
+          "minLength": 1,
+          "title": "Subject Id",
+          "type": "string"
+        },
+        "subject_type": {
+          "$ref": "#/$defs/ContributionSubjectType"
+        }
+      },
+      "required": [
+        "contribution_id",
+        "subject_type",
+        "subject_id",
+        "assessment",
+        "evidence_refs",
+        "reason"
+      ],
+      "title": "ContributionRecord",
+      "type": "object"
+    },
+    "ContributionSubjectType": {
+      "enum": [
+        "model_call",
+        "tool_call",
+        "skill_revision",
+        "strategy_revision",
+        "context_bundle",
+        "context_candidate",
+        "memory_revision",
+        "semantic_claim_revision",
+        "user_correction",
+        "verifier",
+        "artifact"
+      ],
+      "title": "ContributionSubjectType",
+      "type": "string"
+    },
+    "ContributionType": {
+      "enum": [
+        "helpful",
+        "neutral",
+        "harmful",
+        "unknown"
+      ],
+      "title": "ContributionType",
+      "type": "string"
+    },
+    "CorrectionRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "after_evidence": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "After Evidence",
+          "type": "array"
+        },
+        "before_evidence": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Before Evidence",
+          "type": "array"
+        },
+        "changed_entry_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Changed Entry Ids",
+          "type": "array"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "correction_id": {
+          "format": "uuid",
+          "title": "Correction Id",
+          "type": "string"
+        },
+        "effect": {
+          "$ref": "#/$defs/ContributionType"
+        },
+        "limitations": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "source": {
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "correction_id",
+        "source",
+        "before_evidence",
+        "after_evidence",
+        "changed_entry_ids",
+        "effect"
+      ],
+      "title": "CorrectionRecord",
+      "type": "object"
+    },
+    "ExperienceStepStatus": {
+      "enum": [
+        "not_started",
+        "started",
+        "completed",
+        "failed",
+        "cancelled",
+        "skipped",
+        "denied",
+        "unknown"
+      ],
+      "title": "ExperienceStepStatus",
+      "type": "string"
+    },
+    "FailedBranch": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "failure_signal": {
+          "minLength": 1,
+          "title": "Failure Signal",
+          "type": "string"
+        },
+        "path_id": {
+          "format": "uuid",
+          "title": "Path Id",
+          "type": "string"
+        },
+        "recovery_path_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recovery Path Id"
+        },
+        "segment_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Segment Ids",
+          "type": "array"
+        },
+        "terminal_status": {
+          "$ref": "#/$defs/ExperienceStepStatus"
+        },
+        "timeline_entry_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Timeline Entry Ids",
+          "type": "array"
+        },
+        "trigger_step_id": {
+          "minLength": 1,
+          "title": "Trigger Step Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_id",
+        "timeline_entry_ids",
+        "segment_ids",
+        "terminal_status",
+        "evidence_refs",
+        "trigger_step_id",
+        "failure_signal"
+      ],
+      "title": "FailedBranch",
+      "type": "object"
+    },
+    "FirstIncorrectAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "candidates": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Candidates",
+          "type": "array"
+        },
+        "causal_origin": {
+          "$ref": "#/$defs/CausalOriginAssessment"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "first_observed_failure_step_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Observed Failure Step Id"
+        }
+      },
+      "required": [
+        "causal_origin"
+      ],
+      "title": "FirstIncorrectAssessment",
+      "type": "object"
+    },
+    "FirstIncorrectType": {
+      "enum": [
+        "policy_violation",
+        "invalid_evidence",
+        "objective_verifier_failure",
+        "incorrect_tool_postcondition",
+        "corrected_provider_proposal",
+        "unnecessary_or_inefficient",
+        "unknown_causal_origin"
+      ],
+      "title": "FirstIncorrectType",
+      "type": "string"
+    },
+    "GeneralizabilityAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "contradiction_state": {
+          "minLength": 1,
+          "title": "Contradiction State",
+          "type": "string"
+        },
+        "data_sensitivity": {
+          "$ref": "#/$defs/MemorySensitivity"
+        },
+        "environmental_assumptions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Environmental Assumptions",
+          "type": "array"
+        },
+        "level": {
+          "$ref": "#/$defs/GeneralizabilityLevel"
+        },
+        "limitations": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "problem_class_specificity": {
+          "minLength": 1,
+          "title": "Problem Class Specificity",
+          "type": "string"
+        },
+        "provider_specificity": {
+          "minLength": 1,
+          "title": "Provider Specificity",
+          "type": "string"
+        },
+        "repository_specificity": {
+          "minLength": 1,
+          "title": "Repository Specificity",
+          "type": "string"
+        },
+        "reproducibility_count": {
+          "minimum": 0,
+          "title": "Reproducibility Count",
+          "type": "integer"
+        },
+        "sample_count": {
+          "minimum": 1,
+          "title": "Sample Count",
+          "type": "integer"
+        },
+        "skill_specificity": {
+          "minLength": 1,
+          "title": "Skill Specificity",
+          "type": "string"
+        },
+        "strategy_specificity": {
+          "minLength": 1,
+          "title": "Strategy Specificity",
+          "type": "string"
+        },
+        "tool_specificity": {
+          "minLength": 1,
+          "title": "Tool Specificity",
+          "type": "string"
+        },
+        "verifier_coverage": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Verifier Coverage",
+          "type": "number"
+        }
+      },
+      "required": [
+        "level",
+        "problem_class_specificity",
+        "repository_specificity",
+        "provider_specificity",
+        "tool_specificity",
+        "skill_specificity",
+        "strategy_specificity",
+        "data_sensitivity",
+        "environmental_assumptions",
+        "sample_count",
+        "verifier_coverage",
+        "contradiction_state",
+        "reproducibility_count",
+        "limitations"
+      ],
+      "title": "GeneralizabilityAssessment",
+      "type": "object"
+    },
+    "GeneralizabilityLevel": {
+      "enum": [
+        "task_specific",
+        "repository_specific",
+        "problem_class_specific",
+        "cross_repository_candidate",
+        "cross_provider_candidate",
+        "insufficient_evidence",
+        "not_generalizable"
+      ],
+      "title": "GeneralizabilityLevel",
+      "type": "string"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "RecoveryPath": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "correction_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Correction Ids",
+          "type": "array"
+        },
+        "evidence_refs": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "failed_branch_id": {
+          "format": "uuid",
+          "title": "Failed Branch Id",
+          "type": "string"
+        },
+        "path_id": {
+          "format": "uuid",
+          "title": "Path Id",
+          "type": "string"
+        },
+        "resolved": {
+          "title": "Resolved",
+          "type": "boolean"
+        },
+        "segment_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Segment Ids",
+          "type": "array"
+        },
+        "terminal_status": {
+          "$ref": "#/$defs/ExperienceStepStatus"
+        },
+        "timeline_entry_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Timeline Entry Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "path_id",
+        "timeline_entry_ids",
+        "segment_ids",
+        "terminal_status",
+        "evidence_refs",
+        "failed_branch_id",
+        "correction_ids",
+        "resolved"
+      ],
+      "title": "RecoveryPath",
+      "type": "object"
+    },
+    "SuccessfulPath": {
+      "additionalProperties": false,
+      "properties": {
+        "acceptance_decision_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Acceptance Decision Id"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "path_id": {
+          "format": "uuid",
+          "title": "Path Id",
+          "type": "string"
+        },
+        "segment_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Segment Ids",
+          "type": "array"
+        },
+        "terminal_status": {
+          "$ref": "#/$defs/ExperienceStepStatus"
+        },
+        "timeline_entry_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Timeline Entry Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "path_id",
+        "timeline_entry_ids",
+        "segment_ids",
+        "terminal_status",
+        "evidence_refs"
+      ],
+      "title": "SuccessfulPath",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/experience/experience-analysis.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "contributions": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ContributionRecord"
+      },
+      "title": "Contributions",
+      "type": "array"
+    },
+    "corrections": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/CorrectionRecord"
+      },
+      "title": "Corrections",
+      "type": "array"
+    },
+    "failed_branches": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/FailedBranch"
+      },
+      "title": "Failed Branches",
+      "type": "array"
+    },
+    "first_incorrect_step": {
+      "$ref": "#/$defs/FirstIncorrectAssessment"
+    },
+    "generalizability": {
+      "$ref": "#/$defs/GeneralizabilityAssessment"
+    },
+    "limitations": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "recovery_paths": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/RecoveryPath"
+      },
+      "title": "Recovery Paths",
+      "type": "array"
+    },
+    "resource_summary": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Resource Summary",
+      "type": "object"
+    },
+    "safety_summary": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Safety Summary",
+      "type": "array"
+    },
+    "successful_path": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SuccessfulPath"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "verification_evidence": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Verification Evidence",
+      "type": "array"
+    }
+  },
+  "required": [
+    "first_incorrect_step",
+    "generalizability"
+  ],
+  "title": "ExperienceAnalysis",
+  "type": "object"
+}

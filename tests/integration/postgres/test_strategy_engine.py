@@ -23,9 +23,7 @@ async def test_postgres_strategy_lifecycle_health_and_append_only_history(engine
     fixture_item = next(iter(fixture_repository.items.values()))
     history = fixture_repository.revisions[fixture_item.identity.strategy_id]
     draft, staged, verified = history
-    item = fixture_item.model_copy(
-        update={"current_revision": 1, "current_status": draft.status}
-    )
+    item = fixture_item.model_copy(update={"current_revision": 1, "current_status": draft.status})
     repository = PostgresStrategyRepository(app)
     service = StrategyService(
         repository,

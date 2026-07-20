@@ -1,0 +1,100 @@
+{
+  "$defs": {
+    "ExecutionSegmentType": {
+      "enum": [
+        "planning",
+        "context_build",
+        "provider_execution",
+        "tool_execution",
+        "skill_execution",
+        "strategy_phase",
+        "verification",
+        "repair",
+        "fallback",
+        "clarification",
+        "approval",
+        "acceptance",
+        "cancellation"
+      ],
+      "title": "ExecutionSegmentType",
+      "type": "string"
+    },
+    "ExperienceStepStatus": {
+      "enum": [
+        "not_started",
+        "started",
+        "completed",
+        "failed",
+        "cancelled",
+        "skipped",
+        "denied",
+        "unknown"
+      ],
+      "title": "ExperienceStepStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/experience/execution-segment.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "first_sequence": {
+      "minimum": 1,
+      "title": "First Sequence",
+      "type": "integer"
+    },
+    "last_sequence": {
+      "minimum": 1,
+      "title": "Last Sequence",
+      "type": "integer"
+    },
+    "parent_segment_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Parent Segment Id"
+    },
+    "segment_id": {
+      "format": "uuid",
+      "title": "Segment Id",
+      "type": "string"
+    },
+    "segment_type": {
+      "$ref": "#/$defs/ExecutionSegmentType"
+    },
+    "status": {
+      "$ref": "#/$defs/ExperienceStepStatus"
+    },
+    "timeline_entry_ids": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "maxItems": 10000,
+      "minItems": 1,
+      "title": "Timeline Entry Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "segment_id",
+    "segment_type",
+    "first_sequence",
+    "last_sequence",
+    "timeline_entry_ids",
+    "status"
+  ],
+  "title": "ExecutionSegment",
+  "type": "object"
+}

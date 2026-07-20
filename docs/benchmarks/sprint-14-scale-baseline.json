@@ -1,0 +1,15 @@
+{
+  "candidates": 52000,
+  "compilation_p50_ms": 3.8911869999083137,
+  "compilation_p95_ms": 5.936695550053628,
+  "compilations": 10000,
+  "cpu_only": true,
+  "destination_writes": 0,
+  "manifest_bytes": 10410000,
+  "peak_memory_kib": 46716,
+  "provider_calls": 0,
+  "source_references": 49000,
+  "step_assessments": 41000,
+  "timeline_entries": 41000,
+  "total_seconds": 48.202423932999864
+}

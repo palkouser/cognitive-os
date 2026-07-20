@@ -1,0 +1,190 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/config/experience-configuration.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "allow_automatic_candidate_routing": {
+      "default": false,
+      "title": "Allow Automatic Candidate Routing",
+      "type": "boolean"
+    },
+    "allow_automatic_destination_write": {
+      "default": false,
+      "title": "Allow Automatic Destination Write",
+      "type": "boolean"
+    },
+    "allow_automatic_promotion": {
+      "default": false,
+      "title": "Allow Automatic Promotion",
+      "type": "boolean"
+    },
+    "allow_external_network_sources": {
+      "default": false,
+      "title": "Allow External Network Sources",
+      "type": "boolean"
+    },
+    "allow_provider_assisted_analysis": {
+      "default": false,
+      "title": "Allow Provider Assisted Analysis",
+      "type": "boolean"
+    },
+    "allow_provider_causal_decision": {
+      "default": false,
+      "title": "Allow Provider Causal Decision",
+      "type": "boolean"
+    },
+    "allow_provider_source_creation": {
+      "default": false,
+      "title": "Allow Provider Source Creation",
+      "type": "boolean"
+    },
+    "maximum_analysis_artifact_bytes": {
+      "default": 16777216,
+      "maximum": 16777216,
+      "minimum": 1,
+      "title": "Maximum Analysis Artifact Bytes",
+      "type": "integer"
+    },
+    "maximum_artifacts_per_compilation": {
+      "default": 2048,
+      "maximum": 2048,
+      "minimum": 1,
+      "title": "Maximum Artifacts Per Compilation",
+      "type": "integer"
+    },
+    "maximum_candidate_artifact_bytes": {
+      "default": 8388608,
+      "maximum": 8388608,
+      "minimum": 1,
+      "title": "Maximum Candidate Artifact Bytes",
+      "type": "integer"
+    },
+    "maximum_candidate_sources": {
+      "default": 128,
+      "maximum": 128,
+      "minimum": 1,
+      "title": "Maximum Candidate Sources",
+      "type": "integer"
+    },
+    "maximum_candidates": {
+      "default": 256,
+      "maximum": 256,
+      "minimum": 1,
+      "title": "Maximum Candidates",
+      "type": "integer"
+    },
+    "maximum_compilation_seconds": {
+      "default": 1800,
+      "maximum": 1800,
+      "minimum": 1,
+      "title": "Maximum Compilation Seconds",
+      "type": "integer"
+    },
+    "maximum_contributions": {
+      "default": 4096,
+      "maximum": 4096,
+      "minimum": 0,
+      "title": "Maximum Contributions",
+      "type": "integer"
+    },
+    "maximum_corrections": {
+      "default": 256,
+      "maximum": 256,
+      "minimum": 0,
+      "title": "Maximum Corrections",
+      "type": "integer"
+    },
+    "maximum_events_per_compilation": {
+      "default": 100000,
+      "maximum": 100000,
+      "minimum": 1,
+      "title": "Maximum Events Per Compilation",
+      "type": "integer"
+    },
+    "maximum_failed_branches": {
+      "default": 512,
+      "maximum": 512,
+      "minimum": 0,
+      "title": "Maximum Failed Branches",
+      "type": "integer"
+    },
+    "maximum_inline_summary_bytes": {
+      "default": 65536,
+      "maximum": 65536,
+      "minimum": 1,
+      "title": "Maximum Inline Summary Bytes",
+      "type": "integer"
+    },
+    "maximum_manifest_bytes": {
+      "default": 2097152,
+      "maximum": 2097152,
+      "minimum": 1,
+      "title": "Maximum Manifest Bytes",
+      "type": "integer"
+    },
+    "maximum_provider_calls_per_compilation": {
+      "default": 2,
+      "maximum": 2,
+      "minimum": 0,
+      "title": "Maximum Provider Calls Per Compilation",
+      "type": "integer"
+    },
+    "maximum_provider_excerpt_bytes": {
+      "default": 131072,
+      "maximum": 131072,
+      "minimum": 1,
+      "title": "Maximum Provider Excerpt Bytes",
+      "type": "integer"
+    },
+    "maximum_provider_proposals": {
+      "default": 64,
+      "maximum": 64,
+      "minimum": 0,
+      "title": "Maximum Provider Proposals",
+      "type": "integer"
+    },
+    "maximum_segments": {
+      "default": 2048,
+      "maximum": 2048,
+      "minimum": 1,
+      "title": "Maximum Segments",
+      "type": "integer"
+    },
+    "maximum_sources_per_compilation": {
+      "default": 512,
+      "maximum": 512,
+      "minimum": 1,
+      "title": "Maximum Sources Per Compilation",
+      "type": "integer"
+    },
+    "maximum_steps": {
+      "default": 10000,
+      "maximum": 10000,
+      "minimum": 1,
+      "title": "Maximum Steps",
+      "type": "integer"
+    },
+    "minimum_candidate_evidence_sources": {
+      "default": 1,
+      "maximum": 128,
+      "minimum": 1,
+      "title": "Minimum Candidate Evidence Sources",
+      "type": "integer"
+    },
+    "minimum_generalizability_sample_count": {
+      "default": 2,
+      "maximum": 10000,
+      "minimum": 2,
+      "title": "Minimum Generalizability Sample Count",
+      "type": "integer"
+    },
+    "minimum_reproducibility_count": {
+      "default": 2,
+      "maximum": 10000,
+      "minimum": 2,
+      "title": "Minimum Reproducibility Count",
+      "type": "integer"
+    }
+  },
+  "title": "ExperienceConfiguration",
+  "type": "object"
+}

@@ -1,0 +1,22 @@
+benchmark_id: sprint14-experience-ci
+version: "1"
+title: Sprint 14 Experience Compiler CI gate
+description: Twelve credential-free source, reconstruction, assessment, candidate, and governance cases.
+default_configuration: {mode: experience-replay}
+source: Cognitive OS Sprint 14 executable backlog
+license: Apache-2.0
+created_at: 2026-01-01T00:00:00Z
+case_matrix:
+  generic:
+    - {id: experience-ci.source, scenario: direct-success, expected: passed}
+    - {id: experience-ci.reconstruction, scenario: repaired-bug-fix, expected: passed}
+    - {id: experience-ci.failed, scenario: failed-strategy, expected: passed}
+    - {id: experience-ci.cancelled, scenario: cancelled, expected: passed}
+    - {id: experience-ci.incomplete, scenario: incomplete-history, expected: passed}
+    - {id: experience-ci.stale-artifact, scenario: context-retrieval-failure, expected: passed}
+    - {id: experience-ci.conflicting-verifier, scenario: conflicting-verifier, expected: passed}
+    - {id: experience-ci.first-incorrect, scenario: unsafe-tool-request, expected: passed}
+    - {id: experience-ci.provider-evidence, scenario: provider-fallback, expected: passed}
+    - {id: experience-ci.candidate-authority, scenario: unsafe-tool-request, expected: passed}
+    - {id: experience-ci.idempotency, scenario: direct-success, expected: passed}
+    - {id: experience-ci.manifest-regeneration, scenario: clarification-first, expected: passed}

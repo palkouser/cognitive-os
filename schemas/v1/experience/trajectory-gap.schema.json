@@ -1,0 +1,33 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/experience/trajectory-gap.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "after_sequence": {
+      "minimum": 0,
+      "title": "After Sequence",
+      "type": "integer"
+    },
+    "before_sequence": {
+      "minimum": 1,
+      "title": "Before Sequence",
+      "type": "integer"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "after_sequence",
+    "before_sequence",
+    "reason"
+  ],
+  "title": "TrajectoryGap",
+  "type": "object"
+}

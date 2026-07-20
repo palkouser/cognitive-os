@@ -1,0 +1,439 @@
+{
+  "$defs": {
+    "ExperienceCandidateStatus": {
+      "enum": [
+        "proposed",
+        "validated",
+        "rejected",
+        "routed",
+        "superseded"
+      ],
+      "title": "ExperienceCandidateStatus",
+      "type": "string"
+    },
+    "ExperienceCandidateType": {
+      "enum": [
+        "memory",
+        "semantic_observation",
+        "skill",
+        "strategy",
+        "failure_pattern",
+        "routing_observation",
+        "benchmark_case",
+        "negative_example",
+        "corpus_item"
+      ],
+      "title": "ExperienceCandidateType",
+      "type": "string"
+    },
+    "GeneralizabilityAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "contradiction_state": {
+          "minLength": 1,
+          "title": "Contradiction State",
+          "type": "string"
+        },
+        "data_sensitivity": {
+          "$ref": "#/$defs/MemorySensitivity"
+        },
+        "environmental_assumptions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Environmental Assumptions",
+          "type": "array"
+        },
+        "level": {
+          "$ref": "#/$defs/GeneralizabilityLevel"
+        },
+        "limitations": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "problem_class_specificity": {
+          "minLength": 1,
+          "title": "Problem Class Specificity",
+          "type": "string"
+        },
+        "provider_specificity": {
+          "minLength": 1,
+          "title": "Provider Specificity",
+          "type": "string"
+        },
+        "repository_specificity": {
+          "minLength": 1,
+          "title": "Repository Specificity",
+          "type": "string"
+        },
+        "reproducibility_count": {
+          "minimum": 0,
+          "title": "Reproducibility Count",
+          "type": "integer"
+        },
+        "sample_count": {
+          "minimum": 1,
+          "title": "Sample Count",
+          "type": "integer"
+        },
+        "skill_specificity": {
+          "minLength": 1,
+          "title": "Skill Specificity",
+          "type": "string"
+        },
+        "strategy_specificity": {
+          "minLength": 1,
+          "title": "Strategy Specificity",
+          "type": "string"
+        },
+        "tool_specificity": {
+          "minLength": 1,
+          "title": "Tool Specificity",
+          "type": "string"
+        },
+        "verifier_coverage": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Verifier Coverage",
+          "type": "number"
+        }
+      },
+      "required": [
+        "level",
+        "problem_class_specificity",
+        "repository_specificity",
+        "provider_specificity",
+        "tool_specificity",
+        "skill_specificity",
+        "strategy_specificity",
+        "data_sensitivity",
+        "environmental_assumptions",
+        "sample_count",
+        "verifier_coverage",
+        "contradiction_state",
+        "reproducibility_count",
+        "limitations"
+      ],
+      "title": "GeneralizabilityAssessment",
+      "type": "object"
+    },
+    "GeneralizabilityLevel": {
+      "enum": [
+        "task_specific",
+        "repository_specific",
+        "problem_class_specific",
+        "cross_repository_candidate",
+        "cross_provider_candidate",
+        "insufficient_evidence",
+        "not_generalizable"
+      ],
+      "title": "GeneralizabilityLevel",
+      "type": "string"
+    },
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "TrajectorySourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artifact Id"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "event_stream_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Stream Id"
+        },
+        "event_stream_version": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Stream Version"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "scope": {
+          "minLength": 1,
+          "title": "Scope",
+          "type": "string"
+        },
+        "sensitivity": {
+          "$ref": "#/$defs/MemorySensitivity"
+        },
+        "source_content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Content Hash",
+          "type": "string"
+        },
+        "source_id": {
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_revision": {
+          "minLength": 1,
+          "title": "Source Revision",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/TrajectorySourceType"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_id",
+        "source_revision",
+        "source_content_hash",
+        "scope",
+        "sensitivity"
+      ],
+      "title": "TrajectorySourceRef",
+      "type": "object"
+    },
+    "TrajectorySourceType": {
+      "enum": [
+        "task",
+        "problem",
+        "plan",
+        "controller_event",
+        "context",
+        "provider_call",
+        "tool_call",
+        "verifier",
+        "acceptance",
+        "coding_trajectory",
+        "memory_revision",
+        "semantic_revision",
+        "skill_revision",
+        "strategy_revision",
+        "routing_decision",
+        "user_correction",
+        "artifact",
+        "benchmark_case"
+      ],
+      "title": "TrajectorySourceType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/experience/experience-candidate.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "candidate_id": {
+      "format": "uuid",
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "candidate_revision": {
+      "default": 1,
+      "minimum": 1,
+      "title": "Candidate Revision",
+      "type": "integer"
+    },
+    "candidate_type": {
+      "$ref": "#/$defs/ExperienceCandidateType"
+    },
+    "compilation_id": {
+      "format": "uuid",
+      "title": "Compilation Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "created_by": {
+      "default": "experience-compiler",
+      "minLength": 1,
+      "title": "Created By",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 128,
+      "minItems": 1,
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "generalizability": {
+      "$ref": "#/$defs/GeneralizabilityAssessment"
+    },
+    "generator_profile": {
+      "minLength": 1,
+      "title": "Generator Profile",
+      "type": "string"
+    },
+    "limitations": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "scope": {
+      "minLength": 1,
+      "title": "Scope",
+      "type": "string"
+    },
+    "sensitivity": {
+      "$ref": "#/$defs/MemorySensitivity"
+    },
+    "source_refs": {
+      "items": {
+        "$ref": "#/$defs/TrajectorySourceRef"
+      },
+      "maxItems": 128,
+      "minItems": 1,
+      "title": "Source Refs",
+      "type": "array"
+    },
+    "status": {
+      "$ref": "#/$defs/ExperienceCandidateStatus",
+      "default": "proposed"
+    },
+    "structured_body": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Structured Body",
+      "type": "object"
+    },
+    "summary": {
+      "minLength": 1,
+      "title": "Summary",
+      "type": "string"
+    },
+    "target_schema_version": {
+      "minLength": 1,
+      "title": "Target Schema Version",
+      "type": "string"
+    },
+    "target_subsystem": {
+      "minLength": 1,
+      "title": "Target Subsystem",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "candidate_id",
+    "candidate_type",
+    "compilation_id",
+    "task_run_id",
+    "scope",
+    "sensitivity",
+    "summary",
+    "structured_body",
+    "source_refs",
+    "evidence_refs",
+    "limitations",
+    "generalizability",
+    "target_subsystem",
+    "target_schema_version",
+    "generator_profile",
+    "created_at"
+  ],
+  "title": "ExperienceCandidate",
+  "type": "object"
+}

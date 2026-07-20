@@ -1,0 +1,184 @@
+{
+  "$defs": {
+    "CompilerResourceLimits": {
+      "additionalProperties": false,
+      "properties": {
+        "maximum_candidates": {
+          "default": 256,
+          "maximum": 256,
+          "minimum": 1,
+          "title": "Maximum Candidates",
+          "type": "integer"
+        },
+        "maximum_events": {
+          "default": 100000,
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Maximum Events",
+          "type": "integer"
+        },
+        "maximum_provider_calls": {
+          "default": 0,
+          "maximum": 2,
+          "minimum": 0,
+          "title": "Maximum Provider Calls",
+          "type": "integer"
+        },
+        "maximum_seconds": {
+          "default": 1800,
+          "maximum": 1800,
+          "minimum": 1,
+          "title": "Maximum Seconds",
+          "type": "integer"
+        },
+        "maximum_sources": {
+          "default": 512,
+          "maximum": 512,
+          "minimum": 1,
+          "title": "Maximum Sources",
+          "type": "integer"
+        },
+        "maximum_steps": {
+          "default": 10000,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Maximum Steps",
+          "type": "integer"
+        }
+      },
+      "title": "CompilerResourceLimits",
+      "type": "object"
+    },
+    "ExperienceCandidateType": {
+      "enum": [
+        "memory",
+        "semantic_observation",
+        "skill",
+        "strategy",
+        "failure_pattern",
+        "routing_observation",
+        "benchmark_case",
+        "negative_example",
+        "corpus_item"
+      ],
+      "title": "ExperienceCandidateType",
+      "type": "string"
+    },
+    "TrajectorySourceType": {
+      "enum": [
+        "task",
+        "problem",
+        "plan",
+        "controller_event",
+        "context",
+        "provider_call",
+        "tool_call",
+        "verifier",
+        "acceptance",
+        "coding_trajectory",
+        "memory_revision",
+        "semantic_revision",
+        "skill_revision",
+        "strategy_revision",
+        "routing_decision",
+        "user_correction",
+        "artifact",
+        "benchmark_case"
+      ],
+      "title": "TrajectorySourceType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/experience/compiler-profile.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "assessment_policy": {
+      "minLength": 1,
+      "title": "Assessment Policy",
+      "type": "string"
+    },
+    "candidate_types": {
+      "items": {
+        "$ref": "#/$defs/ExperienceCandidateType"
+      },
+      "title": "Candidate Types",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "contribution_policy": {
+      "minLength": 1,
+      "title": "Contribution Policy",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "enabled_source_types": {
+      "items": {
+        "$ref": "#/$defs/TrajectorySourceType"
+      },
+      "title": "Enabled Source Types",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "generalizability_policy": {
+      "minLength": 1,
+      "title": "Generalizability Policy",
+      "type": "string"
+    },
+    "profile_id": {
+      "minLength": 1,
+      "title": "Profile Id",
+      "type": "string"
+    },
+    "provider_assistance_enabled": {
+      "default": false,
+      "title": "Provider Assistance Enabled",
+      "type": "boolean"
+    },
+    "required_source_types": {
+      "items": {
+        "$ref": "#/$defs/TrajectorySourceType"
+      },
+      "title": "Required Source Types",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "resource_limits": {
+      "$ref": "#/$defs/CompilerResourceLimits",
+      "default": {
+        "maximum_candidates": 256,
+        "maximum_events": 100000,
+        "maximum_provider_calls": 0,
+        "maximum_seconds": 1800,
+        "maximum_sources": 512,
+        "maximum_steps": 10000
+      }
+    },
+    "version": {
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "profile_id",
+    "version",
+    "enabled_source_types",
+    "required_source_types",
+    "candidate_types",
+    "assessment_policy",
+    "contribution_policy",
+    "generalizability_policy",
+    "created_at"
+  ],
+  "title": "CompilerProfile",
+  "type": "object"
+}

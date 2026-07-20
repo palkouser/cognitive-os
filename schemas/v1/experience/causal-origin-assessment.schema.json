@@ -1,0 +1,63 @@
+{
+  "$defs": {
+    "FirstIncorrectType": {
+      "enum": [
+        "policy_violation",
+        "invalid_evidence",
+        "objective_verifier_failure",
+        "incorrect_tool_postcondition",
+        "corrected_provider_proposal",
+        "unnecessary_or_inefficient",
+        "unknown_causal_origin"
+      ],
+      "title": "FirstIncorrectType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/experience/causal-origin-assessment.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "causal_claim_supported": {
+      "default": false,
+      "title": "Causal Claim Supported",
+      "type": "boolean"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "origin_type": {
+      "$ref": "#/$defs/FirstIncorrectType"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "step_ids": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Step Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "origin_type",
+    "reason"
+  ],
+  "title": "CausalOriginAssessment",
+  "type": "object"
+}

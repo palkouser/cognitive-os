@@ -1,0 +1,41 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/experience/verification-capability-result.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "capability": {
+      "minLength": 1,
+      "title": "Capability",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "passed": {
+      "title": "Passed",
+      "type": "boolean"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "capability",
+    "passed",
+    "reason"
+  ],
+  "title": "VerificationCapabilityResult",
+  "type": "object"
+}

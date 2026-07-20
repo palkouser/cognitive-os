@@ -1,0 +1,58 @@
+benchmark_id: sprint14-experience-seed
+version: "1"
+title: Sprint 14 Experience Compiler seed suite
+description: Forty-eight credential-free deterministic Experience Compiler cases.
+default_configuration: {mode: experience-replay}
+source: Cognitive OS Sprint 14 executable backlog
+license: Apache-2.0
+created_at: 2026-01-01T00:00:00Z
+case_matrix:
+  generic:
+    - {id: experience-seed.source-01, scenario: direct-success, expected: passed}
+    - {id: experience-seed.reconstruction-02, scenario: repaired-bug-fix, expected: passed}
+    - {id: experience-seed.segmentation-03, scenario: failed-strategy, expected: passed}
+    - {id: experience-seed.assessment-04, scenario: cancelled, expected: passed}
+    - {id: experience-seed.paths-05, scenario: clarification-first, expected: passed}
+    - {id: experience-seed.contribution-06, scenario: provider-fallback, expected: passed}
+    - {id: experience-seed.generalizability-07, scenario: unsafe-tool-request, expected: passed}
+    - {id: experience-seed.candidates-08, scenario: context-retrieval-failure, expected: passed}
+    - {id: experience-seed.security-09, scenario: conflicting-verifier, expected: passed}
+    - {id: experience-seed.source-10, scenario: incomplete-history, expected: passed}
+    - {id: experience-seed.reconstruction-11, scenario: direct-success, expected: passed}
+    - {id: experience-seed.segmentation-12, scenario: repaired-bug-fix, expected: passed}
+    - {id: experience-seed.assessment-13, scenario: failed-strategy, expected: passed}
+    - {id: experience-seed.paths-14, scenario: cancelled, expected: passed}
+    - {id: experience-seed.contribution-15, scenario: clarification-first, expected: passed}
+    - {id: experience-seed.generalizability-16, scenario: provider-fallback, expected: passed}
+    - {id: experience-seed.candidates-17, scenario: unsafe-tool-request, expected: passed}
+    - {id: experience-seed.security-18, scenario: context-retrieval-failure, expected: passed}
+    - {id: experience-seed.source-19, scenario: conflicting-verifier, expected: passed}
+    - {id: experience-seed.reconstruction-20, scenario: incomplete-history, expected: passed}
+    - {id: experience-seed.segmentation-21, scenario: direct-success, expected: passed}
+    - {id: experience-seed.assessment-22, scenario: repaired-bug-fix, expected: passed}
+    - {id: experience-seed.paths-23, scenario: failed-strategy, expected: passed}
+    - {id: experience-seed.contribution-24, scenario: cancelled, expected: passed}
+    - {id: experience-seed.generalizability-25, scenario: clarification-first, expected: passed}
+    - {id: experience-seed.candidates-26, scenario: provider-fallback, expected: passed}
+    - {id: experience-seed.security-27, scenario: unsafe-tool-request, expected: passed}
+    - {id: experience-seed.source-28, scenario: context-retrieval-failure, expected: passed}
+    - {id: experience-seed.reconstruction-29, scenario: conflicting-verifier, expected: passed}
+    - {id: experience-seed.segmentation-30, scenario: incomplete-history, expected: passed}
+    - {id: experience-seed.assessment-31, scenario: direct-success, expected: passed}
+    - {id: experience-seed.paths-32, scenario: repaired-bug-fix, expected: passed}
+    - {id: experience-seed.contribution-33, scenario: failed-strategy, expected: passed}
+    - {id: experience-seed.generalizability-34, scenario: cancelled, expected: passed}
+    - {id: experience-seed.candidates-35, scenario: clarification-first, expected: passed}
+    - {id: experience-seed.security-36, scenario: provider-fallback, expected: passed}
+    - {id: experience-seed.source-37, scenario: unsafe-tool-request, expected: passed}
+    - {id: experience-seed.reconstruction-38, scenario: context-retrieval-failure, expected: passed}
+    - {id: experience-seed.segmentation-39, scenario: conflicting-verifier, expected: passed}
+    - {id: experience-seed.assessment-40, scenario: incomplete-history, expected: passed}
+    - {id: experience-seed.paths-41, scenario: direct-success, expected: passed}
+    - {id: experience-seed.contribution-42, scenario: repaired-bug-fix, expected: passed}
+    - {id: experience-seed.generalizability-43, scenario: failed-strategy, expected: passed}
+    - {id: experience-seed.candidates-44, scenario: cancelled, expected: passed}
+    - {id: experience-seed.security-45, scenario: clarification-first, expected: passed}
+    - {id: experience-seed.source-46, scenario: provider-fallback, expected: passed}
+    - {id: experience-seed.reconstruction-47, scenario: unsafe-tool-request, expected: passed}
+    - {id: experience-seed.segmentation-48, scenario: context-retrieval-failure, expected: passed}

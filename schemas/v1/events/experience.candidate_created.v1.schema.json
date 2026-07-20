@@ -1,0 +1,70 @@
+{
+  "$defs": {
+    "ExperienceCandidateStatus": {
+      "enum": [
+        "proposed",
+        "validated",
+        "rejected",
+        "routed",
+        "superseded"
+      ],
+      "title": "ExperienceCandidateStatus",
+      "type": "string"
+    },
+    "ExperienceCandidateType": {
+      "enum": [
+        "memory",
+        "semantic_observation",
+        "skill",
+        "strategy",
+        "failure_pattern",
+        "routing_observation",
+        "benchmark_case",
+        "negative_example",
+        "corpus_item"
+      ],
+      "title": "ExperienceCandidateType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/experience.candidate_created.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "candidate_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Candidate Hash",
+      "type": "string"
+    },
+    "candidate_id": {
+      "format": "uuid",
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "candidate_type": {
+      "$ref": "#/$defs/ExperienceCandidateType"
+    },
+    "compilation_id": {
+      "format": "uuid",
+      "title": "Compilation Id",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/ExperienceCandidateStatus"
+    }
+  },
+  "required": [
+    "compilation_id",
+    "candidate_id",
+    "candidate_type",
+    "status",
+    "candidate_hash",
+    "occurred_at"
+  ],
+  "title": "ExperienceCandidateCreated",
+  "type": "object"
+}
