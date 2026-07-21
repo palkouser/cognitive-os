@@ -1,6 +1,6 @@
 # Sprint 15 report
 
-Status: Implemented on `feature/sprint-15-corpus-to-memory-factory`; release validation pending
+Status: Released on `main`; remote CI passed and `sprint-15-baseline` published
 
 ## Baseline and authority
 
@@ -9,6 +9,11 @@ specification and preserves all Sprint 9–14 authority boundaries. PostgreSQL r
 for governed metadata, the event store retains lifecycle evidence, the artifact store owns large
 content, and destination subsystems retain validation and promotion authority. No upstream
 LightAgent runtime file is changed.
+
+The implementation was merged through PR `#200` at
+`1ab3591e385246a747c3b54660b833b3b30879ba` after all 22 required remote checks passed in GitHub
+Actions run `29848740564`. The `sprint-15-baseline` annotated tag identifies the final
+CI-validated release-report merge commit.
 
 The factory is deterministic and post-execution. Source and provider prose remain untrusted data.
 The factory cannot execute sources, acquire content over the network, write destination state,
