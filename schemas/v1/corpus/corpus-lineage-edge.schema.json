@@ -1,0 +1,57 @@
+{
+  "$defs": {
+    "CorpusLineageRelationship": {
+      "enum": [
+        "normalized_from",
+        "derived_from",
+        "duplicate_of",
+        "near_duplicate_of",
+        "merged_provenance_from",
+        "compiled_from",
+        "exported_from",
+        "supersedes",
+        "split_from"
+      ],
+      "title": "CorpusLineageRelationship",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-lineage-edge.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "relationship": {
+      "$ref": "#/$defs/CorpusLineageRelationship"
+    },
+    "source_identity": {
+      "minLength": 1,
+      "title": "Source Identity",
+      "type": "string"
+    },
+    "target_identity": {
+      "minLength": 1,
+      "title": "Target Identity",
+      "type": "string"
+    }
+  },
+  "required": [
+    "source_identity",
+    "target_identity",
+    "relationship",
+    "evidence_refs"
+  ],
+  "title": "CorpusLineageEdge",
+  "type": "object"
+}

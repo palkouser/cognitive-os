@@ -31,6 +31,7 @@ from .controller_events import (
     ProblemRepresentationCreated,
     ProblemRepresentationRevised,
 )
+from .corpus_events import CORPUS_EVENT_MODELS
 from .execution_events import (
     CheckpointCreated,
     ExecutionStepCancelled,
@@ -138,6 +139,7 @@ DEFAULT_EVENT_MODELS: tuple[type[EventPayload], ...] = (
     *SKILL_EVENT_MODELS,
     *STRATEGY_EVENT_MODELS,
     *EXPERIENCE_EVENT_MODELS,
+    *CORPUS_EVENT_MODELS,
     BenchmarkRunStarted,
     BenchmarkCaseStarted,
     BenchmarkCaseCompleted,

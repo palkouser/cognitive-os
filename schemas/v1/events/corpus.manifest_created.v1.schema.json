@@ -1,0 +1,33 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/corpus.manifest_created.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "corpus_id": {
+      "format": "uuid",
+      "title": "Corpus Id",
+      "type": "string"
+    },
+    "corpus_revision": {
+      "title": "Corpus Revision",
+      "type": "integer"
+    },
+    "manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Manifest Hash",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "corpus_id",
+    "corpus_revision",
+    "manifest_hash",
+    "occurred_at"
+  ],
+  "title": "CorpusManifestCreated",
+  "type": "object"
+}

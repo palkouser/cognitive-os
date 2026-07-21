@@ -1,0 +1,33 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-resource-limits.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "maximum_archive_depth": {
+      "minimum": 1,
+      "title": "Maximum Archive Depth",
+      "type": "integer"
+    },
+    "maximum_files": {
+      "minimum": 1,
+      "title": "Maximum Files",
+      "type": "integer"
+    },
+    "maximum_item_bytes": {
+      "minimum": 1,
+      "title": "Maximum Item Bytes",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "maximum_item_bytes",
+    "maximum_files",
+    "maximum_archive_depth"
+  ],
+  "title": "CorpusResourceLimits",
+  "type": "object"
+}

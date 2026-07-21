@@ -164,13 +164,13 @@ class PostgresMemoryHealthService:
                     message=message,
                 )
             )
-        if revision != "0006":
+        if revision != "0007":
             findings.append(
                 MemoryHealthFinding(
                     code="migration_head",
                     severity=MemoryHealthSeverity.ERROR,
                     count=1,
-                    message=f"Expected Alembic revision 0006, found {revision}",
+                    message=f"Expected Alembic revision 0007, found {revision}",
                 )
             )
         if vector_version != "0.8.2":

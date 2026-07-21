@@ -68,6 +68,12 @@ conservatively, and produces verifier-gated proposed candidate packages without 
 or automatic promotion. See the
 [Experience Compiler architecture](docs/architecture/experience-compiler.md).
 
+Sprint 15 adds a governed Corpus-to-Memory Factory that safely inspects local sources, preserves
+original artifacts and exact lineage, applies deterministic normalization and policy assessment,
+and emits versioned proposal-only destination packages without promotion, destination writes,
+uploads, or training actions. See the
+[Corpus-to-Memory Factory architecture](docs/architecture/corpus-to-memory-factory.md).
+
 ![LightAgent Banner](docs/images/lightagent-banner.jpg)
 <div align="center">
   <p>

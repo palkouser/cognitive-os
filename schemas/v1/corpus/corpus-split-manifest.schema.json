@@ -1,0 +1,99 @@
+{
+  "$defs": {
+    "CorpusManifestItem": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "corpus_item_id": {
+          "format": "uuid",
+          "title": "Corpus Item Id",
+          "type": "string"
+        },
+        "item_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Item Hash",
+          "type": "string"
+        },
+        "item_revision": {
+          "minimum": 1,
+          "title": "Item Revision",
+          "type": "integer"
+        },
+        "split": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CorpusSplit"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "corpus_item_id",
+        "item_revision",
+        "item_hash"
+      ],
+      "title": "CorpusManifestItem",
+      "type": "object"
+    },
+    "CorpusSplit": {
+      "enum": [
+        "train",
+        "validation",
+        "test",
+        "holdout"
+      ],
+      "title": "CorpusSplit",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-split-manifest.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "assignments": {
+      "items": {
+        "$ref": "#/$defs/CorpusManifestItem"
+      },
+      "title": "Assignments",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "lineage_group_hashes": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Lineage Group Hashes",
+      "type": "array"
+    },
+    "profile_id": {
+      "minLength": 1,
+      "title": "Profile Id",
+      "type": "string"
+    },
+    "seed": {
+      "minimum": 0,
+      "title": "Seed",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "profile_id",
+    "seed",
+    "assignments",
+    "lineage_group_hashes"
+  ],
+  "title": "CorpusSplitManifest",
+  "type": "object"
+}

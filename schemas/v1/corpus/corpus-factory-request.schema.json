@@ -1,0 +1,161 @@
+{
+  "$defs": {
+    "CorpusDestinationType": {
+      "enum": [
+        "governed_memory_candidate",
+        "semantic_observation_candidate",
+        "skill_candidate",
+        "strategy_candidate",
+        "routing_observation",
+        "weakness_signal",
+        "benchmark_case",
+        "replay_fixture",
+        "negative_example",
+        "training_corpus",
+        "reference_corpus",
+        "quarantine",
+        "reject"
+      ],
+      "title": "CorpusDestinationType",
+      "type": "string"
+    },
+    "CorpusSourceType": {
+      "enum": [
+        "experience_candidate",
+        "verified_trajectory",
+        "memory_export",
+        "semantic_export",
+        "skill_package",
+        "strategy_package",
+        "repository_snapshot",
+        "document",
+        "benchmark_dataset",
+        "operator_annotation",
+        "provider_generated_dataset",
+        "external_local_archive",
+        "cognitive_os_export"
+      ],
+      "title": "CorpusSourceType",
+      "type": "string"
+    },
+    "CorpusUsageRight": {
+      "enum": [
+        "internal_use",
+        "redistribution",
+        "modification",
+        "derivative_work",
+        "benchmark_use",
+        "model_training",
+        "commercial_use",
+        "public_release"
+      ],
+      "title": "CorpusUsageRight",
+      "type": "string"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-factory-request.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "created_by": {
+      "minLength": 1,
+      "title": "Created By",
+      "type": "string"
+    },
+    "license_identifiers": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "License Identifiers",
+      "type": "array"
+    },
+    "request_id": {
+      "format": "uuid",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "requested_destination": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CorpusDestinationType"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "scope": {
+      "minLength": 1,
+      "title": "Scope",
+      "type": "string"
+    },
+    "sensitivity": {
+      "$ref": "#/$defs/MemorySensitivity"
+    },
+    "source_identity": {
+      "minLength": 1,
+      "title": "Source Identity",
+      "type": "string"
+    },
+    "source_revision": {
+      "minLength": 1,
+      "title": "Source Revision",
+      "type": "string"
+    },
+    "source_type": {
+      "$ref": "#/$defs/CorpusSourceType"
+    },
+    "usage_rights": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/CorpusUsageRight"
+      },
+      "title": "Usage Rights",
+      "type": "object"
+    }
+  },
+  "required": [
+    "request_id",
+    "source_type",
+    "source_identity",
+    "source_revision",
+    "scope",
+    "sensitivity",
+    "usage_rights",
+    "created_at",
+    "created_by"
+  ],
+  "title": "CorpusFactoryRequest",
+  "type": "object"
+}

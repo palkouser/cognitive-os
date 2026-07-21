@@ -1,0 +1,56 @@
+{
+  "$defs": {
+    "CorpusSplit": {
+      "enum": [
+        "train",
+        "validation",
+        "test",
+        "holdout"
+      ],
+      "title": "CorpusSplit",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-manifest-item.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "corpus_item_id": {
+      "format": "uuid",
+      "title": "Corpus Item Id",
+      "type": "string"
+    },
+    "item_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Item Hash",
+      "type": "string"
+    },
+    "item_revision": {
+      "minimum": 1,
+      "title": "Item Revision",
+      "type": "integer"
+    },
+    "split": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CorpusSplit"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "corpus_item_id",
+    "item_revision",
+    "item_hash"
+  ],
+  "title": "CorpusManifestItem",
+  "type": "object"
+}

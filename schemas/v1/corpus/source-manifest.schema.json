@@ -1,0 +1,313 @@
+{
+  "$defs": {
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "format": "uuid",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "media_type": {
+          "minLength": 1,
+          "title": "Media Type",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "storage_key": {
+          "minLength": 1,
+          "title": "Storage Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "media_type",
+        "content_hash",
+        "size_bytes",
+        "storage_key",
+        "created_at"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "CorpusLicenseStatus": {
+      "enum": [
+        "approved",
+        "internal",
+        "unknown",
+        "conflicting",
+        "restricted"
+      ],
+      "title": "CorpusLicenseStatus",
+      "type": "string"
+    },
+    "CorpusSourceType": {
+      "enum": [
+        "experience_candidate",
+        "verified_trajectory",
+        "memory_export",
+        "semantic_export",
+        "skill_package",
+        "strategy_package",
+        "repository_snapshot",
+        "document",
+        "benchmark_dataset",
+        "operator_annotation",
+        "provider_generated_dataset",
+        "external_local_archive",
+        "cognitive_os_export"
+      ],
+      "title": "CorpusSourceType",
+      "type": "string"
+    },
+    "CorpusUsageRight": {
+      "enum": [
+        "internal_use",
+        "redistribution",
+        "modification",
+        "derivative_work",
+        "benchmark_use",
+        "model_training",
+        "commercial_use",
+        "public_release"
+      ],
+      "title": "CorpusUsageRight",
+      "type": "string"
+    },
+    "LicenseDeclaration": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "declared_by": {
+          "minLength": 1,
+          "title": "Declared By",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "identifier": {
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/CorpusLicenseStatus"
+        }
+      },
+      "required": [
+        "identifier",
+        "status",
+        "declared_by",
+        "evidence_refs"
+      ],
+      "title": "LicenseDeclaration",
+      "type": "object"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "UsageRightAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Allowed"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "right": {
+          "$ref": "#/$defs/CorpusUsageRight"
+        }
+      },
+      "required": [
+        "right",
+        "allowed",
+        "evidence_refs",
+        "reason"
+      ],
+      "title": "UsageRightAssessment",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/source-manifest.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_artifacts": {
+      "items": {
+        "$ref": "#/$defs/ArtifactRef"
+      },
+      "maxItems": 10000,
+      "minItems": 1,
+      "title": "Content Artifacts",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "created_by": {
+      "minLength": 1,
+      "title": "Created By",
+      "type": "string"
+    },
+    "encoding": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Encoding"
+    },
+    "language": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Language"
+    },
+    "license_declarations": {
+      "items": {
+        "$ref": "#/$defs/LicenseDeclaration"
+      },
+      "title": "License Declarations",
+      "type": "array"
+    },
+    "origin": {
+      "minLength": 1,
+      "title": "Origin",
+      "type": "string"
+    },
+    "scope": {
+      "minLength": 1,
+      "title": "Scope",
+      "type": "string"
+    },
+    "sensitivity": {
+      "$ref": "#/$defs/MemorySensitivity"
+    },
+    "source_hashes": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 10000,
+      "minItems": 1,
+      "title": "Source Hashes",
+      "type": "array"
+    },
+    "source_identity": {
+      "minLength": 1,
+      "title": "Source Identity",
+      "type": "string"
+    },
+    "source_manifest_id": {
+      "format": "uuid",
+      "title": "Source Manifest Id",
+      "type": "string"
+    },
+    "source_revision": {
+      "minLength": 1,
+      "title": "Source Revision",
+      "type": "string"
+    },
+    "source_type": {
+      "$ref": "#/$defs/CorpusSourceType"
+    },
+    "usage_right_declarations": {
+      "items": {
+        "$ref": "#/$defs/UsageRightAssessment"
+      },
+      "title": "Usage Right Declarations",
+      "type": "array"
+    }
+  },
+  "required": [
+    "source_manifest_id",
+    "source_type",
+    "source_identity",
+    "source_revision",
+    "content_artifacts",
+    "source_hashes",
+    "origin",
+    "license_declarations",
+    "usage_right_declarations",
+    "scope",
+    "sensitivity",
+    "created_at",
+    "created_by"
+  ],
+  "title": "SourceManifest",
+  "type": "object"
+}

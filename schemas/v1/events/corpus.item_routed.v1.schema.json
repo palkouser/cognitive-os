@@ -1,0 +1,58 @@
+{
+  "$defs": {
+    "CorpusDestinationType": {
+      "enum": [
+        "governed_memory_candidate",
+        "semantic_observation_candidate",
+        "skill_candidate",
+        "strategy_candidate",
+        "routing_observation",
+        "weakness_signal",
+        "benchmark_case",
+        "replay_fixture",
+        "negative_example",
+        "training_corpus",
+        "reference_corpus",
+        "quarantine",
+        "reject"
+      ],
+      "title": "CorpusDestinationType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/corpus.item_routed.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "corpus_item_id": {
+      "format": "uuid",
+      "title": "Corpus Item Id",
+      "type": "string"
+    },
+    "destination": {
+      "$ref": "#/$defs/CorpusDestinationType"
+    },
+    "item_revision": {
+      "title": "Item Revision",
+      "type": "integer"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "package_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Package Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "corpus_item_id",
+    "item_revision",
+    "destination",
+    "package_hash",
+    "occurred_at"
+  ],
+  "title": "CorpusItemRouted",
+  "type": "object"
+}

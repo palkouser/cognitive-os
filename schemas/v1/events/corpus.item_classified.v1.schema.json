@@ -1,0 +1,33 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/corpus.item_classified.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "classification_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Classification Hash",
+      "type": "string"
+    },
+    "corpus_item_id": {
+      "format": "uuid",
+      "title": "Corpus Item Id",
+      "type": "string"
+    },
+    "item_revision": {
+      "title": "Item Revision",
+      "type": "integer"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "corpus_item_id",
+    "item_revision",
+    "classification_hash",
+    "occurred_at"
+  ],
+  "title": "CorpusItemClassified",
+  "type": "object"
+}

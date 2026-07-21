@@ -1,0 +1,81 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/source-archive-entry.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "archive_origin": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Archive Origin"
+    },
+    "compressed_size_bytes": {
+      "minimum": 0,
+      "title": "Compressed Size Bytes",
+      "type": "integer"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "encoding": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Encoding"
+    },
+    "file_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "File Hash",
+      "type": "string"
+    },
+    "is_hard_link": {
+      "default": false,
+      "title": "Is Hard Link",
+      "type": "boolean"
+    },
+    "is_symlink": {
+      "default": false,
+      "title": "Is Symlink",
+      "type": "boolean"
+    },
+    "media_type": {
+      "minLength": 1,
+      "title": "Media Type",
+      "type": "string"
+    },
+    "relative_path": {
+      "minLength": 1,
+      "title": "Relative Path",
+      "type": "string"
+    },
+    "size_bytes": {
+      "minimum": 0,
+      "title": "Size Bytes",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "relative_path",
+    "size_bytes",
+    "media_type",
+    "file_hash",
+    "compressed_size_bytes"
+  ],
+  "title": "SourceArchiveEntry",
+  "type": "object"
+}

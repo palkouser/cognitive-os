@@ -1,0 +1,187 @@
+{
+  "$defs": {
+    "CorpusContentType": {
+      "enum": [
+        "trajectory",
+        "memory",
+        "semantic_observation",
+        "skill",
+        "strategy",
+        "failure_pattern",
+        "routing_observation",
+        "benchmark_case",
+        "negative_example",
+        "source_code",
+        "diff",
+        "documentation",
+        "annotation",
+        "dataset",
+        "unknown"
+      ],
+      "title": "CorpusContentType",
+      "type": "string"
+    },
+    "CorpusDestinationType": {
+      "enum": [
+        "governed_memory_candidate",
+        "semantic_observation_candidate",
+        "skill_candidate",
+        "strategy_candidate",
+        "routing_observation",
+        "weakness_signal",
+        "benchmark_case",
+        "replay_fixture",
+        "negative_example",
+        "training_corpus",
+        "reference_corpus",
+        "quarantine",
+        "reject"
+      ],
+      "title": "CorpusDestinationType",
+      "type": "string"
+    },
+    "CorpusKnowledgeType": {
+      "enum": [
+        "episodic",
+        "semantic",
+        "procedural",
+        "strategic",
+        "routing_evidence",
+        "failure_evidence",
+        "benchmark_evidence",
+        "negative_example",
+        "reference_material",
+        "training_material",
+        "unknown"
+      ],
+      "title": "CorpusKnowledgeType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-classification.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "benchmark_suitability": {
+      "title": "Benchmark Suitability",
+      "type": "boolean"
+    },
+    "candidate_destinations": {
+      "items": {
+        "$ref": "#/$defs/CorpusDestinationType"
+      },
+      "maxItems": 13,
+      "minItems": 1,
+      "title": "Candidate Destinations",
+      "type": "array"
+    },
+    "classification_id": {
+      "format": "uuid",
+      "title": "Classification Id",
+      "type": "string"
+    },
+    "classifier_profile": {
+      "minLength": 1,
+      "title": "Classifier Profile",
+      "type": "string"
+    },
+    "confidence": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Confidence",
+      "type": "number"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "content_type": {
+      "$ref": "#/$defs/CorpusContentType"
+    },
+    "corpus_item_id": {
+      "format": "uuid",
+      "title": "Corpus Item Id",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "domain": {
+      "minLength": 1,
+      "title": "Domain",
+      "type": "string"
+    },
+    "evidence": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "item_revision": {
+      "minimum": 1,
+      "title": "Item Revision",
+      "type": "integer"
+    },
+    "knowledge_type": {
+      "$ref": "#/$defs/CorpusKnowledgeType"
+    },
+    "limitations": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "negative_example_type": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Negative Example Type"
+    },
+    "problem_class": {
+      "minLength": 1,
+      "title": "Problem Class",
+      "type": "string"
+    },
+    "reference_suitability": {
+      "title": "Reference Suitability",
+      "type": "boolean"
+    },
+    "training_suitability": {
+      "title": "Training Suitability",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "classification_id",
+    "corpus_item_id",
+    "item_revision",
+    "content_type",
+    "domain",
+    "problem_class",
+    "knowledge_type",
+    "candidate_destinations",
+    "training_suitability",
+    "benchmark_suitability",
+    "reference_suitability",
+    "confidence",
+    "classifier_profile",
+    "evidence",
+    "created_at"
+  ],
+  "title": "CorpusClassification",
+  "type": "object"
+}

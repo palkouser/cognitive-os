@@ -1,0 +1,38 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/source-integrity-result.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifact_hashes": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Artifact Hashes",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "passed": {
+      "title": "Passed",
+      "type": "boolean"
+    },
+    "reason_codes": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Reason Codes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "passed",
+    "artifact_hashes"
+  ],
+  "title": "SourceIntegrityResult",
+  "type": "object"
+}

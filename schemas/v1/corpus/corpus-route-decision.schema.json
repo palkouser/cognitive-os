@@ -1,0 +1,106 @@
+{
+  "$defs": {
+    "CorpusDestinationType": {
+      "enum": [
+        "governed_memory_candidate",
+        "semantic_observation_candidate",
+        "skill_candidate",
+        "strategy_candidate",
+        "routing_observation",
+        "weakness_signal",
+        "benchmark_case",
+        "replay_fixture",
+        "negative_example",
+        "training_corpus",
+        "reference_corpus",
+        "quarantine",
+        "reject"
+      ],
+      "title": "CorpusDestinationType",
+      "type": "string"
+    },
+    "CorpusRouteStatus": {
+      "enum": [
+        "allowed",
+        "denied",
+        "quarantined"
+      ],
+      "title": "CorpusRouteStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-route-decision.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "corpus_item_id": {
+      "format": "uuid",
+      "title": "Corpus Item Id",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "destination": {
+      "$ref": "#/$defs/CorpusDestinationType"
+    },
+    "destination_policy_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Destination Policy Hash",
+      "type": "string"
+    },
+    "item_revision": {
+      "minimum": 1,
+      "title": "Item Revision",
+      "type": "integer"
+    },
+    "reason_codes": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Reason Codes",
+      "type": "array"
+    },
+    "required_review": {
+      "title": "Required Review",
+      "type": "boolean"
+    },
+    "required_verifiers": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Required Verifiers",
+      "type": "array"
+    },
+    "route_decision_id": {
+      "format": "uuid",
+      "title": "Route Decision Id",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/CorpusRouteStatus"
+    }
+  },
+  "required": [
+    "route_decision_id",
+    "corpus_item_id",
+    "item_revision",
+    "destination",
+    "destination_policy_hash",
+    "status",
+    "reason_codes",
+    "required_verifiers",
+    "required_review",
+    "created_at"
+  ],
+  "title": "CorpusRouteDecision",
+  "type": "object"
+}

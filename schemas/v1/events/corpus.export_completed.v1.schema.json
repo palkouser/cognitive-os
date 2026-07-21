@@ -1,0 +1,39 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/corpus.export_completed.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "corpus_id": {
+      "format": "uuid",
+      "title": "Corpus Id",
+      "type": "string"
+    },
+    "corpus_revision": {
+      "title": "Corpus Revision",
+      "type": "integer"
+    },
+    "export_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Export Hash",
+      "type": "string"
+    },
+    "export_id": {
+      "format": "uuid",
+      "title": "Export Id",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "export_id",
+    "corpus_id",
+    "corpus_revision",
+    "export_hash",
+    "occurred_at"
+  ],
+  "title": "CorpusExportCompleted",
+  "type": "object"
+}

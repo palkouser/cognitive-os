@@ -1,0 +1,96 @@
+{
+  "$defs": {
+    "CorpusVerifierResult": {
+      "additionalProperties": false,
+      "properties": {
+        "capability": {
+          "minLength": 1,
+          "title": "Capability",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "capability",
+        "passed",
+        "evidence_refs",
+        "reason"
+      ],
+      "title": "CorpusVerifierResult",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-verifier-bundle.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "bundle_id": {
+      "format": "uuid",
+      "title": "Bundle Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "corpus_item_id": {
+      "format": "uuid",
+      "title": "Corpus Item Id",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "item_revision": {
+      "minimum": 1,
+      "title": "Item Revision",
+      "type": "integer"
+    },
+    "registry_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Registry Hash",
+      "type": "string"
+    },
+    "results": {
+      "items": {
+        "$ref": "#/$defs/CorpusVerifierResult"
+      },
+      "minItems": 20,
+      "title": "Results",
+      "type": "array"
+    }
+  },
+  "required": [
+    "bundle_id",
+    "corpus_item_id",
+    "item_revision",
+    "registry_hash",
+    "results",
+    "created_at"
+  ],
+  "title": "CorpusVerifierBundle",
+  "type": "object"
+}

@@ -1,0 +1,32 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-privacy-finding.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "finding_type": {
+      "minLength": 1,
+      "title": "Finding Type",
+      "type": "string"
+    },
+    "relative_path": {
+      "minLength": 1,
+      "title": "Relative Path",
+      "type": "string"
+    },
+    "review_required": {
+      "default": true,
+      "title": "Review Required",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "finding_type",
+    "relative_path"
+  ],
+  "title": "CorpusPrivacyFinding",
+  "type": "object"
+}

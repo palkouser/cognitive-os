@@ -1,0 +1,215 @@
+{
+  "$defs": {
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "format": "uuid",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "media_type": {
+          "minLength": 1,
+          "title": "Media Type",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "storage_key": {
+          "minLength": 1,
+          "title": "Storage Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "media_type",
+        "content_hash",
+        "size_bytes",
+        "storage_key",
+        "created_at"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "CorpusItemStatus": {
+      "enum": [
+        "received",
+        "normalized",
+        "classified",
+        "staged",
+        "routed",
+        "quarantined",
+        "rejected",
+        "exported",
+        "superseded"
+      ],
+      "title": "CorpusItemStatus",
+      "type": "string"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-item.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "canonical_content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Canonical Content Hash",
+      "type": "string"
+    },
+    "classification_ref": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Classification Ref"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "corpus_item_id": {
+      "format": "uuid",
+      "title": "Corpus Item Id",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "created_by": {
+      "minLength": 1,
+      "title": "Created By",
+      "type": "string"
+    },
+    "current_revision": {
+      "default": 1,
+      "minimum": 1,
+      "title": "Current Revision",
+      "type": "integer"
+    },
+    "current_status": {
+      "$ref": "#/$defs/CorpusItemStatus"
+    },
+    "duplicate_ref": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Duplicate Ref"
+    },
+    "license_ref": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "License Ref"
+    },
+    "lineage_ref": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Lineage Ref",
+      "type": "string"
+    },
+    "normalized_content_artifact": {
+      "$ref": "#/$defs/ArtifactRef"
+    },
+    "quality_ref": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Quality Ref"
+    },
+    "scope": {
+      "minLength": 1,
+      "title": "Scope",
+      "type": "string"
+    },
+    "sensitivity": {
+      "$ref": "#/$defs/MemorySensitivity"
+    },
+    "source_manifest_refs": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "maxItems": 1024,
+      "minItems": 1,
+      "title": "Source Manifest Refs",
+      "type": "array"
+    },
+    "source_refs": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 1024,
+      "minItems": 1,
+      "title": "Source Refs",
+      "type": "array"
+    }
+  },
+  "required": [
+    "corpus_item_id",
+    "current_status",
+    "canonical_content_hash",
+    "normalized_content_artifact",
+    "source_manifest_refs",
+    "source_refs",
+    "scope",
+    "sensitivity",
+    "lineage_ref",
+    "created_at",
+    "created_by"
+  ],
+  "title": "CorpusItem",
+  "type": "object"
+}

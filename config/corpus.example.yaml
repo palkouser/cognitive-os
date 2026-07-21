@@ -1,0 +1,35 @@
+corpus:
+  maximum_sources_per_request: 1000
+  maximum_items_per_request: 10000
+  maximum_source_files: 10000
+  maximum_source_bytes: 1073741824
+  maximum_single_file_bytes: 67108864
+  maximum_normalized_item_bytes: 16777216
+  maximum_archive_bytes: 1073741824
+  maximum_archive_files: 10000
+  maximum_archive_depth: 16
+  maximum_archive_expansion_ratio: 20
+  maximum_directory_depth: 32
+  maximum_manifest_items: 1000000
+  maximum_lineage_sources: 1024
+  maximum_route_decisions_per_item: 32
+  maximum_export_bytes: 10737418240
+  near_duplicate_threshold: 0.95
+  minimum_training_quality_score: 0.80
+  minimum_benchmark_quality_score: 0.85
+  minimum_reference_quality_score: 0.60
+  unknown_license_action: quarantine
+  conflicting_license_action: quarantine
+  restricted_license_action: reject
+  detected_secret_action: quarantine  # pragma: allowlist secret
+  integrity_failure_action: reject
+  ambiguous_route_action: quarantine
+  allow_network_sources: false
+  allow_remote_download: false
+  allow_source_execution: false
+  allow_automatic_destination_write: false
+  allow_automatic_promotion: false
+  allow_automatic_duplicate_merge: false
+  allow_provider_license_authority: false
+  allow_provider_route_authority: false
+  allow_model_training: false

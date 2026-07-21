@@ -1,0 +1,69 @@
+{
+  "$defs": {
+    "CorpusExportType": {
+      "enum": [
+        "jsonl",
+        "cognitive_os_package"
+      ],
+      "title": "CorpusExportType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-export-request.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "corpus_id": {
+      "format": "uuid",
+      "title": "Corpus Id",
+      "type": "string"
+    },
+    "corpus_revision": {
+      "minimum": 1,
+      "title": "Corpus Revision",
+      "type": "integer"
+    },
+    "export_id": {
+      "format": "uuid",
+      "title": "Export Id",
+      "type": "string"
+    },
+    "export_type": {
+      "$ref": "#/$defs/CorpusExportType"
+    },
+    "requested_at": {
+      "format": "date-time",
+      "title": "Requested At",
+      "type": "string"
+    },
+    "requested_by": {
+      "minLength": 1,
+      "title": "Requested By",
+      "type": "string"
+    },
+    "train": {
+      "default": false,
+      "title": "Train",
+      "type": "boolean"
+    },
+    "upload": {
+      "default": false,
+      "title": "Upload",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "export_id",
+    "corpus_id",
+    "corpus_revision",
+    "export_type",
+    "requested_at",
+    "requested_by"
+  ],
+  "title": "CorpusExportRequest",
+  "type": "object"
+}

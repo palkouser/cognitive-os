@@ -1,0 +1,33 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/corpus.item_rejected.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "corpus_item_id": {
+      "format": "uuid",
+      "title": "Corpus Item Id",
+      "type": "string"
+    },
+    "item_revision": {
+      "title": "Item Revision",
+      "type": "integer"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "reason_code": {
+      "minLength": 1,
+      "title": "Reason Code",
+      "type": "string"
+    }
+  },
+  "required": [
+    "corpus_item_id",
+    "item_revision",
+    "reason_code",
+    "occurred_at"
+  ],
+  "title": "CorpusItemRejected",
+  "type": "object"
+}

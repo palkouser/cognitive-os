@@ -1,0 +1,33 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/corpus.item_superseded.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "corpus_item_id": {
+      "format": "uuid",
+      "title": "Corpus Item Id",
+      "type": "string"
+    },
+    "item_revision": {
+      "title": "Item Revision",
+      "type": "integer"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "successor_item_id": {
+      "format": "uuid",
+      "title": "Successor Item Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "corpus_item_id",
+    "item_revision",
+    "successor_item_id",
+    "occurred_at"
+  ],
+  "title": "CorpusItemSuperseded",
+  "type": "object"
+}

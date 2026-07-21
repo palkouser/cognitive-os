@@ -13,6 +13,9 @@
 | `verification-physics` | pint | Units and dimensional verification | Off | Sealed packaged registry | `uv sync --extra verification-physics` |
 | `benchmark-inspect` | none | Explicit Inspect-compatible file export | Off | Runtime deferred because Inspect AI pins vulnerable Click | `uv sync --extra benchmark-inspect` |
 | `semantic-graph` | NetworkX | Bounded exact revision graph analysis | Off | No execution of graph payloads; PostgreSQL remains authoritative | `uv sync --extra semantic-graph` |
+| `corpus-dvc` | none | Evaluated content-versioning integration | Off | Rejected for Sprint 15; manifests and the artifact store already provide exact revisions without remote execution | N/A |
+| `corpus-datatrove` | none | Evaluated large-scale corpus transformation | Off | Deferred; bounded deterministic standard-library transforms meet the current scale gate | N/A |
+| `corpus-distilabel` | none | Evaluated provider-assisted dataset proposals | Off | Deferred; provider-authored labels cannot be authoritative and are unnecessary for the deterministic core | N/A |
 
 Optional imports must fail with an actionable extra name. None of these packages is installed
 by the default `uv sync --locked` workflow.

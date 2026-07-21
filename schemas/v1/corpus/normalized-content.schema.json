@@ -1,0 +1,247 @@
+{
+  "$defs": {
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "format": "uuid",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "media_type": {
+          "minLength": 1,
+          "title": "Media Type",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "storage_key": {
+          "minLength": 1,
+          "title": "Storage Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "media_type",
+        "content_hash",
+        "size_bytes",
+        "storage_key",
+        "created_at"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "CorpusContentType": {
+      "enum": [
+        "trajectory",
+        "memory",
+        "semantic_observation",
+        "skill",
+        "strategy",
+        "failure_pattern",
+        "routing_observation",
+        "benchmark_case",
+        "negative_example",
+        "source_code",
+        "diff",
+        "documentation",
+        "annotation",
+        "dataset",
+        "unknown"
+      ],
+      "title": "CorpusContentType",
+      "type": "string"
+    },
+    "SourceFileEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "archive_origin": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Archive Origin"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "encoding": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Encoding"
+        },
+        "file_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "File Hash",
+          "type": "string"
+        },
+        "is_hard_link": {
+          "default": false,
+          "title": "Is Hard Link",
+          "type": "boolean"
+        },
+        "is_symlink": {
+          "default": false,
+          "title": "Is Symlink",
+          "type": "boolean"
+        },
+        "media_type": {
+          "minLength": 1,
+          "title": "Media Type",
+          "type": "string"
+        },
+        "relative_path": {
+          "minLength": 1,
+          "title": "Relative Path",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "relative_path",
+        "size_bytes",
+        "media_type",
+        "file_hash"
+      ],
+      "title": "SourceFileEntry",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/normalized-content.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "canonical_content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Canonical Content Hash",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "content_type": {
+      "$ref": "#/$defs/CorpusContentType"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "encoding": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Encoding"
+    },
+    "language": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Language"
+    },
+    "normalization_profile": {
+      "minLength": 1,
+      "title": "Normalization Profile",
+      "type": "string"
+    },
+    "normalized_artifact_ref": {
+      "$ref": "#/$defs/ArtifactRef"
+    },
+    "normalized_content_id": {
+      "format": "uuid",
+      "title": "Normalized Content Id",
+      "type": "string"
+    },
+    "original_artifact_refs": {
+      "items": {
+        "$ref": "#/$defs/ArtifactRef"
+      },
+      "minItems": 1,
+      "title": "Original Artifact Refs",
+      "type": "array"
+    },
+    "source_file_refs": {
+      "items": {
+        "$ref": "#/$defs/SourceFileEntry"
+      },
+      "title": "Source File Refs",
+      "type": "array"
+    },
+    "source_manifest_id": {
+      "format": "uuid",
+      "title": "Source Manifest Id",
+      "type": "string"
+    },
+    "warnings": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "normalized_content_id",
+    "source_manifest_id",
+    "source_file_refs",
+    "content_type",
+    "original_artifact_refs",
+    "normalized_artifact_ref",
+    "canonical_content_hash",
+    "normalization_profile",
+    "created_at"
+  ],
+  "title": "NormalizedContent",
+  "type": "object"
+}

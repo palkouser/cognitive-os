@@ -1,0 +1,293 @@
+{
+  "$defs": {
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "format": "uuid",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "media_type": {
+          "minLength": 1,
+          "title": "Media Type",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "storage_key": {
+          "minLength": 1,
+          "title": "Storage Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "media_type",
+        "content_hash",
+        "size_bytes",
+        "storage_key",
+        "created_at"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "CorpusDestinationType": {
+      "enum": [
+        "governed_memory_candidate",
+        "semantic_observation_candidate",
+        "skill_candidate",
+        "strategy_candidate",
+        "routing_observation",
+        "weakness_signal",
+        "benchmark_case",
+        "replay_fixture",
+        "negative_example",
+        "training_corpus",
+        "reference_corpus",
+        "quarantine",
+        "reject"
+      ],
+      "title": "CorpusDestinationType",
+      "type": "string"
+    },
+    "CorpusManifestItem": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "corpus_item_id": {
+          "format": "uuid",
+          "title": "Corpus Item Id",
+          "type": "string"
+        },
+        "item_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Item Hash",
+          "type": "string"
+        },
+        "item_revision": {
+          "minimum": 1,
+          "title": "Item Revision",
+          "type": "integer"
+        },
+        "split": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CorpusSplit"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "corpus_item_id",
+        "item_revision",
+        "item_hash"
+      ],
+      "title": "CorpusManifestItem",
+      "type": "object"
+    },
+    "CorpusSplit": {
+      "enum": [
+        "train",
+        "validation",
+        "test",
+        "holdout"
+      ],
+      "title": "CorpusSplit",
+      "type": "string"
+    },
+    "CorpusSplitManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "assignments": {
+          "items": {
+            "$ref": "#/$defs/CorpusManifestItem"
+          },
+          "title": "Assignments",
+          "type": "array"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "lineage_group_hashes": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Lineage Group Hashes",
+          "type": "array"
+        },
+        "profile_id": {
+          "minLength": 1,
+          "title": "Profile Id",
+          "type": "string"
+        },
+        "seed": {
+          "minimum": 0,
+          "title": "Seed",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "profile_id",
+        "seed",
+        "assignments",
+        "lineage_group_hashes"
+      ],
+      "title": "CorpusSplitManifest",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-manifest.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifact_reference": {
+      "$ref": "#/$defs/ArtifactRef"
+    },
+    "classification_profile": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Classification Profile",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "corpus_id": {
+      "format": "uuid",
+      "title": "Corpus Id",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "created_by": {
+      "minLength": 1,
+      "title": "Created By",
+      "type": "string"
+    },
+    "deduplication_profile": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Deduplication Profile",
+      "type": "string"
+    },
+    "items": {
+      "items": {
+        "$ref": "#/$defs/CorpusManifestItem"
+      },
+      "title": "Items",
+      "type": "array"
+    },
+    "license_summary": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "License Summary",
+      "type": "object"
+    },
+    "lineage_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Lineage Hash",
+      "type": "string"
+    },
+    "normalization_profile": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Normalization Profile",
+      "type": "string"
+    },
+    "previous_revision": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Revision"
+    },
+    "purpose": {
+      "$ref": "#/$defs/CorpusDestinationType"
+    },
+    "quality_profile": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Quality Profile",
+      "type": "string"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "selection_policy": {
+      "minLength": 1,
+      "title": "Selection Policy",
+      "type": "string"
+    },
+    "sensitivity_summary": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Sensitivity Summary",
+      "type": "object"
+    },
+    "split_manifest": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CorpusSplitManifest"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "corpus_id",
+    "revision",
+    "purpose",
+    "items",
+    "selection_policy",
+    "normalization_profile",
+    "deduplication_profile",
+    "classification_profile",
+    "quality_profile",
+    "license_summary",
+    "sensitivity_summary",
+    "lineage_hash",
+    "artifact_reference",
+    "created_at",
+    "created_by"
+  ],
+  "title": "CorpusManifest",
+  "type": "object"
+}

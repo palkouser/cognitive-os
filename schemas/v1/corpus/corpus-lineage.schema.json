@@ -1,0 +1,129 @@
+{
+  "$defs": {
+    "CorpusLineageEdge": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "relationship": {
+          "$ref": "#/$defs/CorpusLineageRelationship"
+        },
+        "source_identity": {
+          "minLength": 1,
+          "title": "Source Identity",
+          "type": "string"
+        },
+        "target_identity": {
+          "minLength": 1,
+          "title": "Target Identity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_identity",
+        "target_identity",
+        "relationship",
+        "evidence_refs"
+      ],
+      "title": "CorpusLineageEdge",
+      "type": "object"
+    },
+    "CorpusLineageRelationship": {
+      "enum": [
+        "normalized_from",
+        "derived_from",
+        "duplicate_of",
+        "near_duplicate_of",
+        "merged_provenance_from",
+        "compiled_from",
+        "exported_from",
+        "supersedes",
+        "split_from"
+      ],
+      "title": "CorpusLineageRelationship",
+      "type": "string"
+    },
+    "CorpusSourceContribution": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "contribution": {
+          "minLength": 1,
+          "title": "Contribution",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "source_manifest_id": {
+          "format": "uuid",
+          "title": "Source Manifest Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_manifest_id",
+        "contribution",
+        "evidence_refs"
+      ],
+      "title": "CorpusSourceContribution",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-lineage.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "contributions": {
+      "items": {
+        "$ref": "#/$defs/CorpusSourceContribution"
+      },
+      "minItems": 1,
+      "title": "Contributions",
+      "type": "array"
+    },
+    "edges": {
+      "items": {
+        "$ref": "#/$defs/CorpusLineageEdge"
+      },
+      "title": "Edges",
+      "type": "array"
+    },
+    "lineage_id": {
+      "format": "uuid",
+      "title": "Lineage Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "lineage_id",
+    "edges",
+    "contributions"
+  ],
+  "title": "CorpusLineage",
+  "type": "object"
+}

@@ -1,0 +1,133 @@
+{
+  "$defs": {
+    "CorpusAccessType": {
+      "enum": [
+        "source_registration",
+        "source_read",
+        "normalization",
+        "deduplication",
+        "classification",
+        "license_review",
+        "quality_scoring",
+        "routing",
+        "manifest_read",
+        "export"
+      ],
+      "title": "CorpusAccessType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-access-record.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "access_id": {
+      "format": "uuid",
+      "title": "Access Id",
+      "type": "string"
+    },
+    "access_type": {
+      "$ref": "#/$defs/CorpusAccessType"
+    },
+    "accessed_at": {
+      "format": "date-time",
+      "title": "Accessed At",
+      "type": "string"
+    },
+    "actor_id": {
+      "minLength": 1,
+      "title": "Actor Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "corpus_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Corpus Id"
+    },
+    "corpus_item_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Corpus Item Id"
+    },
+    "corpus_revision": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Corpus Revision"
+    },
+    "export_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Export Id"
+    },
+    "item_revision": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Item Revision"
+    },
+    "source_manifest_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Manifest Id"
+    }
+  },
+  "required": [
+    "access_id",
+    "access_type",
+    "actor_id",
+    "accessed_at"
+  ],
+  "title": "CorpusAccessRecord",
+  "type": "object"
+}

@@ -71,7 +71,15 @@ experience_decision_count="$(psql "$COGOS_RESTORE_DATABASE_URL" -Atqc "SELECT CA
 experience_access_count="$(psql "$COGOS_RESTORE_DATABASE_URL" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.experience_accesses') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.experience_accesses) END")"
 experience_integrity="$(psql "$COGOS_RESTORE_DATABASE_URL" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.experience_snapshots') IS NULL THEN true ELSE NOT EXISTS (SELECT 1 FROM cognitive_os.experience_compilations c LEFT JOIN cognitive_os.experience_snapshots s USING (compilation_id) WHERE c.current_status='completed' AND s.compilation_id IS NULL) AND NOT EXISTS (SELECT 1 FROM cognitive_os.experience_candidates c LEFT JOIN cognitive_os.experience_candidate_revisions r ON r.candidate_id=c.candidate_id AND r.revision=c.current_revision WHERE r.candidate_id IS NULL OR r.status<>c.current_status) END")"
 experience_history_sha256="$(psql "$COGOS_RESTORE_DATABASE_URL" -Atqc "SELECT row_to_json(history)::text FROM (SELECT compilation_id, snapshot_hash, terminal_state, completeness FROM cognitive_os.experience_snapshots ORDER BY compilation_id) history" | sha256sum | awk '{print $1}')"
-uv run python - "$manifest" "$semantic_observation_count" "$semantic_claim_count" "$semantic_revision_count" "$semantic_evidence_count" "$semantic_relation_count" "$semantic_contradiction_count" "$wiki_page_count" "$wiki_revision_count" "$semantic_history_sha256" "$semantic_as_of_sha256" "$skill_count" "$skill_revision_count" "$skill_history_sha256" "$strategy_count" "$strategy_revision_count" "$strategy_edge_count" "$strategy_selection_count" "$strategy_outcome_count" "$strategy_access_count" "$strategy_history_sha256" "$experience_compilation_count" "$experience_source_count" "$experience_candidate_count" "$experience_decision_count" "$experience_access_count" "$experience_history_sha256" <<'PY'
+corpus_source_count="$(psql "$COGOS_RESTORE_DATABASE_URL" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.corpus_sources') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.corpus_sources) END")"
+corpus_item_count="$(psql "$COGOS_RESTORE_DATABASE_URL" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.corpus_items') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.corpus_items) END")"
+corpus_route_count="$(psql "$COGOS_RESTORE_DATABASE_URL" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.corpus_route_decisions') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.corpus_route_decisions) END")"
+corpus_manifest_count="$(psql "$COGOS_RESTORE_DATABASE_URL" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.corpus_manifests') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.corpus_manifests) END")"
+corpus_export_count="$(psql "$COGOS_RESTORE_DATABASE_URL" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.corpus_exports') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.corpus_exports) END")"
+corpus_access_count="$(psql "$COGOS_RESTORE_DATABASE_URL" -Atqc "SELECT CASE WHEN to_regclass('cognitive_os.corpus_accesses') IS NULL THEN 0 ELSE (SELECT count(*) FROM cognitive_os.corpus_accesses) END")"
+corpus_integrity="$(psql "$COGOS_RESTORE_DATABASE_URL" -Atqc "SELECT NOT EXISTS (SELECT 1 FROM cognitive_os.corpus_item_sources s LEFT JOIN cognitive_os.corpus_items i USING (corpus_item_id) LEFT JOIN cognitive_os.corpus_sources c USING (source_manifest_id) WHERE i.corpus_item_id IS NULL OR c.source_manifest_id IS NULL) AND NOT EXISTS (SELECT 1 FROM cognitive_os.corpus_exports e LEFT JOIN cognitive_os.corpus_manifests m ON m.corpus_id=e.corpus_id AND m.revision=e.corpus_revision WHERE m.corpus_id IS NULL)")"
+corpus_history_sha256="$(psql "$COGOS_RESTORE_DATABASE_URL" -Atqc "SELECT row_to_json(history)::text FROM (SELECT corpus_item_id, current_revision, current_status, canonical_content_hash, item_hash FROM cognitive_os.corpus_items ORDER BY corpus_item_id) history" | sha256sum | awk '{print $1}')"
+uv run python - "$manifest" "$semantic_observation_count" "$semantic_claim_count" "$semantic_revision_count" "$semantic_evidence_count" "$semantic_relation_count" "$semantic_contradiction_count" "$wiki_page_count" "$wiki_revision_count" "$semantic_history_sha256" "$semantic_as_of_sha256" "$skill_count" "$skill_revision_count" "$skill_history_sha256" "$strategy_count" "$strategy_revision_count" "$strategy_edge_count" "$strategy_selection_count" "$strategy_outcome_count" "$strategy_access_count" "$strategy_history_sha256" "$experience_compilation_count" "$experience_source_count" "$experience_candidate_count" "$experience_decision_count" "$experience_access_count" "$experience_history_sha256" "$corpus_source_count" "$corpus_item_count" "$corpus_route_count" "$corpus_manifest_count" "$corpus_export_count" "$corpus_access_count" "$corpus_history_sha256" <<'PY'
 import json
 import sys
 from pathlib import Path
@@ -93,6 +101,8 @@ strategy_values = tuple(map(int, sys.argv[15:21]))
 strategy_history_hash = sys.argv[21]
 experience_values = tuple(map(int, sys.argv[22:27]))
 experience_history_hash = sys.argv[27]
+corpus_values = tuple(map(int, sys.argv[28:34]))
+corpus_history_hash = sys.argv[34]
 actual = dict(zip(keys, map(int, sys.argv[2:10]), strict=True))
 if any(manifest.get(key, 0) != value for key, value in actual.items()):
     raise SystemExit("restored semantic counts do not match the backup manifest")
@@ -129,8 +139,20 @@ if any(manifest.get(key, 0) != value for key, value in zip(experience_keys, expe
     raise SystemExit("restored experience counts do not match the backup manifest")
 if manifest.get("experience_history_sha256") != experience_history_hash:
     raise SystemExit("restored experience snapshot history differs from the backup manifest")
+corpus_keys = (
+    "corpus_source_count",
+    "corpus_item_count",
+    "corpus_route_count",
+    "corpus_manifest_count",
+    "corpus_export_count",
+    "corpus_access_count",
+)
+if any(manifest.get(key, 0) != value for key, value in zip(corpus_keys, corpus_values, strict=True)):
+    raise SystemExit("restored corpus counts do not match the backup manifest")
+if manifest.get("corpus_history_sha256") != corpus_history_hash:
+    raise SystemExit("restored corpus item history differs from the backup manifest")
 PY
-[[ -n "$revision" && "$event_count" =~ ^[0-9]+$ && "$artifact_count" =~ ^[0-9]+$ && "$memory_count" =~ ^[0-9]+$ && "$memory_integrity" == "t" && "$semantic_integrity" == "t" && "$semantic_lineage_integrity" == "t" && "$skill_integrity" == "t" && "$strategy_integrity" == "t" && "$experience_integrity" == "t" ]]
+[[ -n "$revision" && "$event_count" =~ ^[0-9]+$ && "$artifact_count" =~ ^[0-9]+$ && "$memory_count" =~ ^[0-9]+$ && "$memory_integrity" == "t" && "$semantic_integrity" == "t" && "$semantic_lineage_integrity" == "t" && "$skill_integrity" == "t" && "$strategy_integrity" == "t" && "$experience_integrity" == "t" && "$corpus_integrity" == "t" ]]
 psql "$COGOS_RESTORE_DATABASE_URL" -Atqc "SELECT json_build_object('content_hash', b.content_hash, 'size_bytes', b.size_bytes, 'storage_key', b.storage_key)::text FROM cognitive_os.artifact_blobs b JOIN cognitive_os.artifacts a ON a.content_hash=b.content_hash GROUP BY b.content_hash, b.size_bytes, b.storage_key ORDER BY b.storage_key" | uv run python scripts/artifact_restore_verify.py "$restore_root"
 psql "$COGOS_RESTORE_DATABASE_URL" -Atqc "SELECT json_build_object('content_hash', w.content_hash, 'markdown_base64', replace(encode(convert_to(w.markdown, 'UTF8'), 'base64'), E'\\n', ''), 'snapshot_hash', w.snapshot_hash, 'claim_refs', COALESCE((SELECT json_agg(json_build_object('claim', json_build_object('claim_id', c.claim_id, 'revision', c.claim_revision), 'section', c.section, 'display_order', c.display_order) ORDER BY c.section, c.display_order) FROM cognitive_os.wiki_page_claims c WHERE c.page_id=w.page_id AND c.page_revision=w.revision), '[]'::json))::text FROM cognitive_os.wiki_page_revisions w ORDER BY w.page_id, w.revision" | uv run python scripts/wiki_restore_verify.py
 echo "Isolated restore verification passed."
