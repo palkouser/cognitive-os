@@ -1,6 +1,6 @@
 # Sprint 16 report
 
-Status: Implementation complete; local release gates passed; remote release validation pending
+Status: Released; local and remote release gates passed
 
 ## Baseline and authority
 
@@ -86,6 +86,22 @@ The developer database predates the final Sprint 14 numeric confidence type, so 
 autogenerate reports that historical `0006` database-state mismatch (`TEXT` versus `NUMERIC(5,4)`).
 It is not introduced by migration `0008`; the clean PostgreSQL CI migration job remains the release
 authority for the drift gate.
+
+## Remote release validation
+
+- Pull request [#202](https://github.com/palkouser/cognitive-os/pull/202) merged the Sprint 16
+  implementation into `main` as `ef0ab73ad390207d0a08fd2b3f462ddebb664503`.
+- The implementation commit is `74bc59d`; the compatibility correction commit is
+  `73c385d213a6d800d7759ac03eb3286d7c027e1b`. The correction preserves the existing offline replay
+  fingerprint when no routing reference is attached while binding the fingerprint to a present
+  routing reference.
+- Pull-request CI run
+  [29855075979](https://github.com/palkouser/cognitive-os/actions/runs/29855075979) passed all 23 jobs,
+  including model routing, provider offline replay, migration, PostgreSQL integration, security,
+  quality, build, and full-repository tests.
+- Post-merge `main` CI run
+  [29855237569](https://github.com/palkouser/cognitive-os/actions/runs/29855237569) passed all 23 jobs
+  against the merge commit. This is the authoritative remote release gate for the implementation.
 
 ## Restore instructions
 
