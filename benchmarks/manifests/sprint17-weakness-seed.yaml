@@ -1,0 +1,82 @@
+benchmark_id: sprint17-weakness-seed
+version: "1"
+title: Sprint 17 weakness mining seed suite
+description: Seventy-two credential-free deterministic weakness mining cases.
+default_configuration: {mode: weakness-replay}
+source: Cognitive OS Sprint 17 executable backlog
+license: Apache-2.0
+created_at: 2026-01-01T00:00:00Z
+case_matrix:
+  generic:
+    - {id: weakness-seed.01, scenario: source, expected: passed}
+    - {id: weakness-seed.02, scenario: signal, expected: passed}
+    - {id: weakness-seed.03, scenario: signature, expected: passed}
+    - {id: weakness-seed.04, scenario: group, expected: passed}
+    - {id: weakness-seed.05, scenario: cluster, expected: passed}
+    - {id: weakness-seed.06, scenario: impact, expected: passed}
+    - {id: weakness-seed.07, scenario: evidence, expected: passed}
+    - {id: weakness-seed.08, scenario: queue, expected: passed}
+    - {id: weakness-seed.09, scenario: source, expected: passed}
+    - {id: weakness-seed.10, scenario: signal, expected: passed}
+    - {id: weakness-seed.11, scenario: signature, expected: passed}
+    - {id: weakness-seed.12, scenario: group, expected: passed}
+    - {id: weakness-seed.13, scenario: cluster, expected: passed}
+    - {id: weakness-seed.14, scenario: impact, expected: passed}
+    - {id: weakness-seed.15, scenario: evidence, expected: passed}
+    - {id: weakness-seed.16, scenario: queue, expected: passed}
+    - {id: weakness-seed.17, scenario: source, expected: passed}
+    - {id: weakness-seed.18, scenario: signal, expected: passed}
+    - {id: weakness-seed.19, scenario: signature, expected: passed}
+    - {id: weakness-seed.20, scenario: group, expected: passed}
+    - {id: weakness-seed.21, scenario: cluster, expected: passed}
+    - {id: weakness-seed.22, scenario: impact, expected: passed}
+    - {id: weakness-seed.23, scenario: evidence, expected: passed}
+    - {id: weakness-seed.24, scenario: queue, expected: passed}
+    - {id: weakness-seed.25, scenario: source, expected: passed}
+    - {id: weakness-seed.26, scenario: signal, expected: passed}
+    - {id: weakness-seed.27, scenario: signature, expected: passed}
+    - {id: weakness-seed.28, scenario: group, expected: passed}
+    - {id: weakness-seed.29, scenario: cluster, expected: passed}
+    - {id: weakness-seed.30, scenario: impact, expected: passed}
+    - {id: weakness-seed.31, scenario: evidence, expected: passed}
+    - {id: weakness-seed.32, scenario: queue, expected: passed}
+    - {id: weakness-seed.33, scenario: source, expected: passed}
+    - {id: weakness-seed.34, scenario: signal, expected: passed}
+    - {id: weakness-seed.35, scenario: signature, expected: passed}
+    - {id: weakness-seed.36, scenario: group, expected: passed}
+    - {id: weakness-seed.37, scenario: cluster, expected: passed}
+    - {id: weakness-seed.38, scenario: impact, expected: passed}
+    - {id: weakness-seed.39, scenario: evidence, expected: passed}
+    - {id: weakness-seed.40, scenario: queue, expected: passed}
+    - {id: weakness-seed.41, scenario: source, expected: passed}
+    - {id: weakness-seed.42, scenario: signal, expected: passed}
+    - {id: weakness-seed.43, scenario: signature, expected: passed}
+    - {id: weakness-seed.44, scenario: group, expected: passed}
+    - {id: weakness-seed.45, scenario: cluster, expected: passed}
+    - {id: weakness-seed.46, scenario: impact, expected: passed}
+    - {id: weakness-seed.47, scenario: evidence, expected: passed}
+    - {id: weakness-seed.48, scenario: queue, expected: passed}
+    - {id: weakness-seed.49, scenario: source, expected: passed}
+    - {id: weakness-seed.50, scenario: signal, expected: passed}
+    - {id: weakness-seed.51, scenario: signature, expected: passed}
+    - {id: weakness-seed.52, scenario: group, expected: passed}
+    - {id: weakness-seed.53, scenario: cluster, expected: passed}
+    - {id: weakness-seed.54, scenario: impact, expected: passed}
+    - {id: weakness-seed.55, scenario: evidence, expected: passed}
+    - {id: weakness-seed.56, scenario: queue, expected: passed}
+    - {id: weakness-seed.57, scenario: source, expected: passed}
+    - {id: weakness-seed.58, scenario: signal, expected: passed}
+    - {id: weakness-seed.59, scenario: signature, expected: passed}
+    - {id: weakness-seed.60, scenario: group, expected: passed}
+    - {id: weakness-seed.61, scenario: cluster, expected: passed}
+    - {id: weakness-seed.62, scenario: impact, expected: passed}
+    - {id: weakness-seed.63, scenario: evidence, expected: passed}
+    - {id: weakness-seed.64, scenario: queue, expected: passed}
+    - {id: weakness-seed.65, scenario: source, expected: passed}
+    - {id: weakness-seed.66, scenario: signal, expected: passed}
+    - {id: weakness-seed.67, scenario: signature, expected: passed}
+    - {id: weakness-seed.68, scenario: group, expected: passed}
+    - {id: weakness-seed.69, scenario: cluster, expected: passed}
+    - {id: weakness-seed.70, scenario: impact, expected: passed}
+    - {id: weakness-seed.71, scenario: evidence, expected: passed}
+    - {id: weakness-seed.72, scenario: queue, expected: passed}

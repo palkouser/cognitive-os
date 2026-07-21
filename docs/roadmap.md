@@ -20,4 +20,6 @@ deduplication, licensing, quality policy, staging, and destination packaging. To
 and Sprint 15 complete Gate G. Sprint 16 begins Gate H with credential-free model capability
 profiles, deterministic task signatures, static control routing, non-interfering shadow decisions,
 bounded promotion, fallback, and Controller-owned multi-model patterns. Sprint 17 completes Gate H
-with evidence-backed weakness mining.
+with evidence-backed, deterministic, diagnostic-only weakness mining and completes Sprint Group 3.
+Sprint 18 may consume proposal-only replay and benchmark candidates, but receives no automatic
+promotion or source-write authority from Sprint 17.

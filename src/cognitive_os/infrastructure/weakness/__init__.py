@@ -1,0 +1,1 @@
+"""Weakness-mining infrastructure adapters."""

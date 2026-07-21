@@ -1,0 +1,313 @@
+{
+  "$defs": {
+    "ImpactDimension": {
+      "enum": [
+        "frequency",
+        "affected_task_count",
+        "severity",
+        "safety_impact",
+        "correctness_impact",
+        "user_correction_count",
+        "cost_impact",
+        "latency_impact",
+        "repair_iteration_impact",
+        "recency",
+        "reproducibility",
+        "evidence_confidence",
+        "strategic_reach"
+      ],
+      "title": "ImpactDimension",
+      "type": "string"
+    },
+    "ImpactDimensionResult": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "dimension": {
+          "$ref": "#/$defs/ImpactDimension"
+        },
+        "normalized_value": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Normalized Value",
+          "type": "string"
+        },
+        "profile_version": {
+          "exclusiveMinimum": 0,
+          "title": "Profile Version",
+          "type": "integer"
+        },
+        "raw_value": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Raw Value",
+          "type": "string"
+        },
+        "sample_count": {
+          "minimum": 0,
+          "title": "Sample Count",
+          "type": "integer"
+        },
+        "source_refs": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "uncertainty": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Uncertainty",
+          "type": "string"
+        },
+        "weight": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Weight",
+          "type": "string"
+        },
+        "weighted_value": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Weighted Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dimension",
+        "raw_value",
+        "normalized_value",
+        "weight",
+        "weighted_value",
+        "source_refs",
+        "sample_count",
+        "uncertainty",
+        "profile_version"
+      ],
+      "title": "ImpactDimensionResult",
+      "type": "object"
+    },
+    "ImpactProfileReference": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "critical_safety_priority_floor": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Critical Safety Priority Floor",
+          "type": "string"
+        },
+        "high_correctness_priority_floor": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "High Correctness Priority Floor",
+          "type": "string"
+        },
+        "profile_id": {
+          "minLength": 1,
+          "title": "Profile Id",
+          "type": "string"
+        },
+        "score_precision": {
+          "default": 4,
+          "maximum": 8,
+          "minimum": 0,
+          "title": "Score Precision",
+          "type": "integer"
+        },
+        "version": {
+          "exclusiveMinimum": 0,
+          "title": "Version",
+          "type": "integer"
+        },
+        "weights": {
+          "additionalProperties": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "type": "string"
+          },
+          "propertyNames": {
+            "$ref": "#/$defs/ImpactDimension"
+          },
+          "title": "Weights",
+          "type": "object"
+        }
+      },
+      "required": [
+        "profile_id",
+        "version",
+        "weights",
+        "critical_safety_priority_floor",
+        "high_correctness_priority_floor"
+      ],
+      "title": "ImpactProfileReference",
+      "type": "object"
+    },
+    "ImpactUncertainty": {
+      "additionalProperties": false,
+      "properties": {
+        "conflict_count": {
+          "minimum": 0,
+          "title": "Conflict Count",
+          "type": "integer"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "counterexample_count": {
+          "minimum": 0,
+          "title": "Counterexample Count",
+          "type": "integer"
+        },
+        "limitations": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "missing_source_count": {
+          "minimum": 0,
+          "title": "Missing Source Count",
+          "type": "integer"
+        },
+        "value": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "missing_source_count",
+        "conflict_count",
+        "counterexample_count"
+      ],
+      "title": "ImpactUncertainty",
+      "type": "object"
+    },
+    "WeaknessPriority": {
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low",
+        "informational"
+      ],
+      "title": "WeaknessPriority",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/weakness/impact-score.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "base_score": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Base Score",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "dimensions": {
+      "items": {
+        "$ref": "#/$defs/ImpactDimensionResult"
+      },
+      "maxItems": 13,
+      "minItems": 13,
+      "title": "Dimensions",
+      "type": "array"
+    },
+    "final_score": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Final Score",
+      "type": "string"
+    },
+    "group_snapshot_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Group Snapshot Hash",
+      "type": "string"
+    },
+    "impact_score_id": {
+      "format": "uuid",
+      "title": "Impact Score Id",
+      "type": "string"
+    },
+    "limitations": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "priority": {
+      "$ref": "#/$defs/WeaknessPriority"
+    },
+    "priority_floor": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Priority Floor",
+      "type": "string"
+    },
+    "profile": {
+      "$ref": "#/$defs/ImpactProfileReference"
+    },
+    "uncertainty": {
+      "$ref": "#/$defs/ImpactUncertainty"
+    },
+    "weakness_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Weakness Id"
+    },
+    "weakness_revision": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Weakness Revision"
+    }
+  },
+  "required": [
+    "impact_score_id",
+    "group_snapshot_hash",
+    "dimensions",
+    "base_score",
+    "priority_floor",
+    "final_score",
+    "priority",
+    "uncertainty",
+    "profile",
+    "created_at"
+  ],
+  "title": "ImpactScore",
+  "type": "object"
+}

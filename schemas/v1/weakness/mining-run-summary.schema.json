@@ -1,0 +1,75 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/weakness/mining-run-summary.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "exclusions": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Exclusions",
+      "type": "array"
+    },
+    "group_count": {
+      "minimum": 0,
+      "title": "Group Count",
+      "type": "integer"
+    },
+    "mining_run_id": {
+      "format": "uuid",
+      "title": "Mining Run Id",
+      "type": "string"
+    },
+    "queue_entry_count": {
+      "minimum": 0,
+      "title": "Queue Entry Count",
+      "type": "integer"
+    },
+    "signal_count": {
+      "minimum": 0,
+      "title": "Signal Count",
+      "type": "integer"
+    },
+    "signature_count": {
+      "minimum": 0,
+      "title": "Signature Count",
+      "type": "integer"
+    },
+    "source_count": {
+      "minimum": 0,
+      "title": "Source Count",
+      "type": "integer"
+    },
+    "warnings": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    },
+    "weakness_count": {
+      "minimum": 0,
+      "title": "Weakness Count",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "mining_run_id",
+    "source_count",
+    "signal_count",
+    "signature_count",
+    "group_count",
+    "weakness_count",
+    "queue_entry_count",
+    "warnings",
+    "exclusions"
+  ],
+  "title": "MiningRunSummary",
+  "type": "object"
+}

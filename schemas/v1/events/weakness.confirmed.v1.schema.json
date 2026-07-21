@@ -1,0 +1,40 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/weakness.confirmed.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "approval_reference": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Approval Reference"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "revision": {
+      "title": "Revision",
+      "type": "integer"
+    },
+    "weakness_id": {
+      "format": "uuid",
+      "title": "Weakness Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "weakness_id",
+    "revision",
+    "occurred_at"
+  ],
+  "title": "WeaknessConfirmed",
+  "type": "object"
+}

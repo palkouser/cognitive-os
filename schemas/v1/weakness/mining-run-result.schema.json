@@ -1,0 +1,262 @@
+{
+  "$defs": {
+    "MiningRunManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "cluster_snapshot_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cluster Snapshot Hash"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "group_snapshot_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Group Snapshot Hash",
+          "type": "string"
+        },
+        "impact_hashes": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Impact Hashes",
+          "type": "array"
+        },
+        "mining_run_id": {
+          "format": "uuid",
+          "title": "Mining Run Id",
+          "type": "string"
+        },
+        "queue_snapshot_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Queue Snapshot Hash",
+          "type": "string"
+        },
+        "registry_snapshot_hashes": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Registry Snapshot Hashes",
+          "type": "array"
+        },
+        "request_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Request Hash",
+          "type": "string"
+        },
+        "signal_hashes": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Signal Hashes",
+          "type": "array"
+        },
+        "source_snapshot_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Snapshot Hash",
+          "type": "string"
+        },
+        "stage_hashes": {
+          "additionalProperties": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "propertyNames": {
+            "minLength": 1
+          },
+          "title": "Stage Hashes",
+          "type": "object"
+        },
+        "summary": {
+          "$ref": "#/$defs/MiningRunSummary"
+        },
+        "verifier_bundle_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Verifier Bundle Hash",
+          "type": "string"
+        },
+        "weakness_revision_hashes": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Weakness Revision Hashes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "mining_run_id",
+        "request_hash",
+        "source_snapshot_hash",
+        "registry_snapshot_hashes",
+        "signal_hashes",
+        "group_snapshot_hash",
+        "impact_hashes",
+        "weakness_revision_hashes",
+        "queue_snapshot_hash",
+        "verifier_bundle_hash",
+        "stage_hashes",
+        "summary",
+        "created_at"
+      ],
+      "title": "MiningRunManifest",
+      "type": "object"
+    },
+    "MiningRunStatus": {
+      "enum": [
+        "requested",
+        "snapshot_created",
+        "extracting_signals",
+        "grouping",
+        "scoring",
+        "packaging",
+        "completed",
+        "completed_with_warnings",
+        "failed",
+        "cancelled"
+      ],
+      "title": "MiningRunStatus",
+      "type": "string"
+    },
+    "MiningRunSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "exclusions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Exclusions",
+          "type": "array"
+        },
+        "group_count": {
+          "minimum": 0,
+          "title": "Group Count",
+          "type": "integer"
+        },
+        "mining_run_id": {
+          "format": "uuid",
+          "title": "Mining Run Id",
+          "type": "string"
+        },
+        "queue_entry_count": {
+          "minimum": 0,
+          "title": "Queue Entry Count",
+          "type": "integer"
+        },
+        "signal_count": {
+          "minimum": 0,
+          "title": "Signal Count",
+          "type": "integer"
+        },
+        "signature_count": {
+          "minimum": 0,
+          "title": "Signature Count",
+          "type": "integer"
+        },
+        "source_count": {
+          "minimum": 0,
+          "title": "Source Count",
+          "type": "integer"
+        },
+        "warnings": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        },
+        "weakness_count": {
+          "minimum": 0,
+          "title": "Weakness Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "mining_run_id",
+        "source_count",
+        "signal_count",
+        "signature_count",
+        "group_count",
+        "weakness_count",
+        "queue_entry_count",
+        "warnings",
+        "exclusions"
+      ],
+      "title": "MiningRunSummary",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/weakness/mining-run-result.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "completed_at": {
+      "format": "date-time",
+      "title": "Completed At",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "failure_code": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Failure Code"
+    },
+    "manifest": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MiningRunManifest"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "status": {
+      "$ref": "#/$defs/MiningRunStatus"
+    }
+  },
+  "required": [
+    "status",
+    "completed_at"
+  ],
+  "title": "MiningRunResult",
+  "type": "object"
+}

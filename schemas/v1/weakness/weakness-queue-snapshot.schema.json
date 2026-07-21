@@ -1,0 +1,244 @@
+{
+  "$defs": {
+    "NextAnalysisType": {
+      "enum": [
+        "collect_more_evidence",
+        "run_bounded_replay",
+        "create_benchmark_candidate",
+        "inspect_context_trace",
+        "inspect_retrieval",
+        "inspect_verifier",
+        "inspect_routing",
+        "inspect_skill",
+        "inspect_strategy",
+        "inspect_provider_or_tool",
+        "operator_review",
+        "monitor",
+        "none"
+      ],
+      "title": "NextAnalysisType",
+      "type": "string"
+    },
+    "QueueBlockerType": {
+      "enum": [
+        "requires_more_evidence",
+        "requires_reproduction",
+        "depends_on_other_weakness",
+        "requires_operator_review",
+        "source_unavailable",
+        "sensitivity_restriction"
+      ],
+      "title": "QueueBlockerType",
+      "type": "string"
+    },
+    "WeaknessPriority": {
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low",
+        "informational"
+      ],
+      "title": "WeaknessPriority",
+      "type": "string"
+    },
+    "WeaknessQueueDependency": {
+      "additionalProperties": false,
+      "properties": {
+        "blocked_by_weakness_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Blocked By Weakness Id"
+        },
+        "blocker_type": {
+          "$ref": "#/$defs/QueueBlockerType"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "evidence_reference": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Evidence Reference",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "blocker_type",
+        "evidence_reference",
+        "reason"
+      ],
+      "title": "WeaknessQueueDependency",
+      "type": "object"
+    },
+    "WeaknessQueueEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "blocked_by": {
+          "items": {
+            "$ref": "#/$defs/WeaknessQueueDependency"
+          },
+          "title": "Blocked By",
+          "type": "array"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "priority": {
+          "$ref": "#/$defs/WeaknessPriority"
+        },
+        "priority_reason": {
+          "minLength": 1,
+          "title": "Priority Reason",
+          "type": "string"
+        },
+        "queue_entry_id": {
+          "format": "uuid",
+          "title": "Queue Entry Id",
+          "type": "string"
+        },
+        "queue_policy_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Queue Policy Hash",
+          "type": "string"
+        },
+        "recommended_next_analysis": {
+          "$ref": "#/$defs/NextAnalysisType"
+        },
+        "status": {
+          "$ref": "#/$defs/WeaknessQueueStatus"
+        },
+        "weakness_id": {
+          "format": "uuid",
+          "title": "Weakness Id",
+          "type": "string"
+        },
+        "weakness_revision": {
+          "exclusiveMinimum": 0,
+          "title": "Weakness Revision",
+          "type": "integer"
+        },
+        "weakness_revision_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Weakness Revision Hash",
+          "type": "string"
+        },
+        "weakness_status": {
+          "$ref": "#/$defs/WeaknessStatus"
+        }
+      },
+      "required": [
+        "queue_entry_id",
+        "weakness_id",
+        "weakness_revision",
+        "weakness_revision_hash",
+        "weakness_status",
+        "priority",
+        "priority_reason",
+        "blocked_by",
+        "recommended_next_analysis",
+        "status",
+        "queue_policy_hash",
+        "created_at"
+      ],
+      "title": "WeaknessQueueEntry",
+      "type": "object"
+    },
+    "WeaknessQueueStatus": {
+      "enum": [
+        "queued",
+        "blocked",
+        "deferred",
+        "monitoring",
+        "removed",
+        "superseded"
+      ],
+      "title": "WeaknessQueueStatus",
+      "type": "string"
+    },
+    "WeaknessStatus": {
+      "enum": [
+        "candidate",
+        "confirmed",
+        "monitoring",
+        "resolved",
+        "superseded",
+        "retracted"
+      ],
+      "title": "WeaknessStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/weakness/weakness-queue-snapshot.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "entries": {
+      "items": {
+        "$ref": "#/$defs/WeaknessQueueEntry"
+      },
+      "title": "Entries",
+      "type": "array"
+    },
+    "exclusions": {
+      "additionalProperties": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "propertyNames": {
+        "minLength": 1
+      },
+      "title": "Exclusions",
+      "type": "object"
+    },
+    "queue_policy_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Queue Policy Hash",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "format": "uuid",
+      "title": "Snapshot Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "snapshot_id",
+    "queue_policy_hash",
+    "entries",
+    "exclusions",
+    "created_at"
+  ],
+  "title": "WeaknessQueueSnapshot",
+  "type": "object"
+}

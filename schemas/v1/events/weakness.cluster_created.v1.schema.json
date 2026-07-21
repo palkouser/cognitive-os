@@ -1,0 +1,28 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/weakness.cluster_created.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "cluster_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Cluster Hash",
+      "type": "string"
+    },
+    "cluster_id": {
+      "format": "uuid",
+      "title": "Cluster Id",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "cluster_id",
+    "cluster_hash",
+    "occurred_at"
+  ],
+  "title": "WeaknessClusterCreated",
+  "type": "object"
+}

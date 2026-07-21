@@ -1,0 +1,578 @@
+{
+  "$defs": {
+    "CausalRelationshipType": {
+      "enum": [
+        "observed_failure",
+        "contributing_condition",
+        "correlated_condition",
+        "unknown_causal_relationship"
+      ],
+      "title": "CausalRelationshipType",
+      "type": "string"
+    },
+    "ContextSizeClass": {
+      "enum": [
+        "small",
+        "medium",
+        "large",
+        "long",
+        "unknown"
+      ],
+      "title": "ContextSizeClass",
+      "type": "string"
+    },
+    "CostClass": {
+      "enum": [
+        "low",
+        "standard",
+        "premium",
+        "unknown"
+      ],
+      "title": "CostClass",
+      "type": "string"
+    },
+    "ExecutionRole": {
+      "enum": [
+        "primary",
+        "fallback",
+        "planner",
+        "executor",
+        "generator",
+        "critic",
+        "proposer"
+      ],
+      "title": "ExecutionRole",
+      "type": "string"
+    },
+    "LatencyClass": {
+      "enum": [
+        "low",
+        "standard",
+        "relaxed",
+        "unknown"
+      ],
+      "title": "LatencyClass",
+      "type": "string"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "MiningSourceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artifact Id"
+        },
+        "authoritative": {
+          "default": true,
+          "title": "Authoritative",
+          "type": "boolean"
+        },
+        "contains_secret": {
+          "default": false,
+          "title": "Contains Secret",
+          "type": "boolean"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "event_stream_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Stream Id"
+        },
+        "event_stream_version": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Stream Version"
+        },
+        "outcome_authority": {
+          "default": false,
+          "title": "Outcome Authority",
+          "type": "boolean"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "scope": {
+          "minLength": 1,
+          "title": "Scope",
+          "type": "string"
+        },
+        "sensitivity": {
+          "$ref": "#/$defs/MemorySensitivity"
+        },
+        "shadow": {
+          "default": false,
+          "title": "Shadow",
+          "type": "boolean"
+        },
+        "source_content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Content Hash",
+          "type": "string"
+        },
+        "source_id": {
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_revision": {
+          "minLength": 1,
+          "title": "Source Revision",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/SignalSourceType"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_id",
+        "source_revision",
+        "source_content_hash",
+        "scope",
+        "sensitivity"
+      ],
+      "title": "MiningSourceReference",
+      "type": "object"
+    },
+    "SignalSourceType": {
+      "enum": [
+        "controller",
+        "acceptance",
+        "verifier",
+        "user_correction",
+        "context",
+        "retrieval",
+        "provider_request",
+        "provider_result",
+        "tool",
+        "memory",
+        "semantic",
+        "skill",
+        "strategy",
+        "experience",
+        "corpus",
+        "routing_decision",
+        "routing_outcome",
+        "routing_shadow",
+        "benchmark",
+        "artifact"
+      ],
+      "title": "SignalSourceType",
+      "type": "string"
+    },
+    "TaskComplexityClass": {
+      "enum": [
+        "trivial",
+        "small",
+        "medium",
+        "large",
+        "long_horizon",
+        "unknown"
+      ],
+      "title": "TaskComplexityClass",
+      "type": "string"
+    },
+    "TaskSignature": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "context_size_class": {
+          "$ref": "#/$defs/ContextSizeClass",
+          "default": "unknown"
+        },
+        "cost_class": {
+          "$ref": "#/$defs/CostClass",
+          "default": "unknown"
+        },
+        "estimated_complexity": {
+          "$ref": "#/$defs/TaskComplexityClass",
+          "default": "unknown"
+        },
+        "execution_role": {
+          "$ref": "#/$defs/ExecutionRole",
+          "default": "primary"
+        },
+        "latency_class": {
+          "$ref": "#/$defs/LatencyClass",
+          "default": "unknown"
+        },
+        "output_type": {
+          "minLength": 1,
+          "title": "Output Type",
+          "type": "string"
+        },
+        "problem_class": {
+          "minLength": 1,
+          "title": "Problem Class",
+          "type": "string"
+        },
+        "problem_domain": {
+          "minLength": 1,
+          "title": "Problem Domain",
+          "type": "string"
+        },
+        "profile_version": {
+          "default": "task-signature-v1",
+          "minLength": 1,
+          "title": "Profile Version",
+          "type": "string"
+        },
+        "repository_profile": {
+          "default": "unknown",
+          "minLength": 1,
+          "title": "Repository Profile",
+          "type": "string"
+        },
+        "required_structured_output": {
+          "default": false,
+          "title": "Required Structured Output",
+          "type": "boolean"
+        },
+        "required_tool_capabilities": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Required Tool Capabilities",
+          "type": "array"
+        },
+        "risk_level": {
+          "default": "standard",
+          "minLength": 1,
+          "title": "Risk Level",
+          "type": "string"
+        },
+        "skill_revisions": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Skill Revisions",
+          "type": "array"
+        },
+        "strategy_revisions": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Strategy Revisions",
+          "type": "array"
+        },
+        "verifier_profile": {
+          "default": "default",
+          "minLength": 1,
+          "title": "Verifier Profile",
+          "type": "string"
+        }
+      },
+      "required": [
+        "problem_domain",
+        "problem_class",
+        "output_type"
+      ],
+      "title": "TaskSignature",
+      "type": "object"
+    },
+    "WeaknessComponentType": {
+      "enum": [
+        "controller",
+        "context",
+        "retrieval",
+        "provider",
+        "model",
+        "tool",
+        "verifier",
+        "memory",
+        "semantic_memory",
+        "skill",
+        "strategy",
+        "experience",
+        "corpus",
+        "routing",
+        "sandbox",
+        "unknown"
+      ],
+      "title": "WeaknessComponentType",
+      "type": "string"
+    },
+    "WeaknessConfidenceLevel": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "verified"
+      ],
+      "title": "WeaknessConfidenceLevel",
+      "type": "string"
+    },
+    "WeaknessSeverity": {
+      "enum": [
+        "informational",
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "title": "WeaknessSeverity",
+      "type": "string"
+    },
+    "WeaknessSignalStatus": {
+      "enum": [
+        "observed",
+        "conflicted",
+        "invalid"
+      ],
+      "title": "WeaknessSignalStatus",
+      "type": "string"
+    },
+    "WeaknessType": {
+      "enum": [
+        "model_routing_failure",
+        "tool_routing_failure",
+        "provider_structured_output_failure",
+        "provider_availability_failure",
+        "context_required_item_missing",
+        "context_irrelevant_content",
+        "context_budget_failure",
+        "retrieval_recall_failure",
+        "retrieval_scope_or_sensitivity_denial",
+        "missing_skill",
+        "skill_precondition_failure",
+        "skill_execution_failure",
+        "strategy_mismatch",
+        "strategy_fallback_overuse",
+        "verifier_gap",
+        "verifier_instability",
+        "memory_retrieval_failure",
+        "semantic_contradiction_block",
+        "corpus_coverage_gap",
+        "excessive_repair",
+        "excessive_iteration",
+        "unnecessary_provider_call",
+        "unnecessary_tool_call",
+        "cost_regression",
+        "latency_regression",
+        "policy_denial_pattern",
+        "sandbox_failure",
+        "user_correction_pattern",
+        "unknown"
+      ],
+      "title": "WeaknessType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/weakness/weakness-signal.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "causal_relationship": {
+      "$ref": "#/$defs/CausalRelationshipType"
+    },
+    "component_identity": {
+      "minLength": 1,
+      "title": "Component Identity",
+      "type": "string"
+    },
+    "component_type": {
+      "$ref": "#/$defs/WeaknessComponentType"
+    },
+    "confidence": {
+      "$ref": "#/$defs/WeaknessConfidenceLevel"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "context_reference": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Context Reference"
+    },
+    "extractor_profile": {
+      "minLength": 1,
+      "title": "Extractor Profile",
+      "type": "string"
+    },
+    "failure_code": {
+      "minLength": 1,
+      "title": "Failure Code",
+      "type": "string"
+    },
+    "limitations": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "mining_run_id": {
+      "format": "uuid",
+      "title": "Mining Run Id",
+      "type": "string"
+    },
+    "observed_at": {
+      "format": "date-time",
+      "title": "Observed At",
+      "type": "string"
+    },
+    "routing_decision": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Routing Decision"
+    },
+    "severity": {
+      "$ref": "#/$defs/WeaknessSeverity"
+    },
+    "signal_id": {
+      "format": "uuid",
+      "title": "Signal Id",
+      "type": "string"
+    },
+    "skill_revision": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Skill Revision"
+    },
+    "source_refs": {
+      "items": {
+        "$ref": "#/$defs/MiningSourceReference"
+      },
+      "maxItems": 64,
+      "minItems": 1,
+      "title": "Source Refs",
+      "type": "array"
+    },
+    "status": {
+      "$ref": "#/$defs/WeaknessSignalStatus",
+      "default": "observed"
+    },
+    "strategy_revision": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Strategy Revision"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    },
+    "task_signature": {
+      "$ref": "#/$defs/TaskSignature"
+    },
+    "verifier_reference": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Verifier Reference"
+    },
+    "weakness_type": {
+      "$ref": "#/$defs/WeaknessType"
+    }
+  },
+  "required": [
+    "signal_id",
+    "mining_run_id",
+    "weakness_type",
+    "task_run_id",
+    "source_refs",
+    "task_signature",
+    "failure_code",
+    "component_type",
+    "component_identity",
+    "severity",
+    "confidence",
+    "causal_relationship",
+    "observed_at",
+    "extractor_profile"
+  ],
+  "title": "WeaknessSignal",
+  "type": "object"
+}

@@ -90,8 +90,8 @@ class PostgresRoutingHealthService:
                 or 0
             )
         messages = []
-        if revision != "0008":
-            messages.append(f"Expected Alembic revision 0008, found {revision}")
+        if revision != "0009":
+            messages.append(f"Expected Alembic revision 0009, found {revision}")
         if table_count != 10:
             messages.append(f"Expected 10 routing tables, found {table_count}")
         if triggers < 8:

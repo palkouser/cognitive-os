@@ -1,0 +1,249 @@
+{
+  "$defs": {
+    "WeaknessReproductionStatus": {
+      "enum": [
+        "not_attempted",
+        "reproducible",
+        "partially_reproducible",
+        "not_reproduced",
+        "blocked",
+        "unsafe_to_reproduce",
+        "insufficient_evidence"
+      ],
+      "title": "WeaknessReproductionStatus",
+      "type": "string"
+    },
+    "WeaknessStatus": {
+      "enum": [
+        "candidate",
+        "confirmed",
+        "monitoring",
+        "resolved",
+        "superseded",
+        "retracted"
+      ],
+      "title": "WeaknessStatus",
+      "type": "string"
+    },
+    "WeaknessType": {
+      "enum": [
+        "model_routing_failure",
+        "tool_routing_failure",
+        "provider_structured_output_failure",
+        "provider_availability_failure",
+        "context_required_item_missing",
+        "context_irrelevant_content",
+        "context_budget_failure",
+        "retrieval_recall_failure",
+        "retrieval_scope_or_sensitivity_denial",
+        "missing_skill",
+        "skill_precondition_failure",
+        "skill_execution_failure",
+        "strategy_mismatch",
+        "strategy_fallback_overuse",
+        "verifier_gap",
+        "verifier_instability",
+        "memory_retrieval_failure",
+        "semantic_contradiction_block",
+        "corpus_coverage_gap",
+        "excessive_repair",
+        "excessive_iteration",
+        "unnecessary_provider_call",
+        "unnecessary_tool_call",
+        "cost_regression",
+        "latency_regression",
+        "policy_denial_pattern",
+        "sandbox_failure",
+        "user_correction_pattern",
+        "unknown"
+      ],
+      "title": "WeaknessType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/weakness/weakness-revision.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "affected_components": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Affected Components",
+      "type": "array"
+    },
+    "cluster_refs": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Cluster Refs",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "counterexample_refs": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Counterexample Refs",
+      "type": "array"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "created_by": {
+      "minLength": 1,
+      "title": "Created By",
+      "type": "string"
+    },
+    "description": {
+      "minLength": 1,
+      "title": "Description",
+      "type": "string"
+    },
+    "evidence_package_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Evidence Package Hash",
+      "type": "string"
+    },
+    "group_snapshot_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Group Snapshot Hash",
+      "type": "string"
+    },
+    "impact_score_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Impact Score Hash",
+      "type": "string"
+    },
+    "monitoring_policy": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Monitoring Policy"
+    },
+    "operator_approval_reference": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Operator Approval Reference"
+    },
+    "previous_revision": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Revision"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "reproduction_status": {
+      "$ref": "#/$defs/WeaknessReproductionStatus"
+    },
+    "revision": {
+      "exclusiveMinimum": 0,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "signature_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Signature Hash",
+      "type": "string"
+    },
+    "source_refs": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Source Refs",
+      "type": "array"
+    },
+    "status": {
+      "$ref": "#/$defs/WeaknessStatus"
+    },
+    "successor_weakness_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Successor Weakness Id"
+    },
+    "title": {
+      "minLength": 1,
+      "title": "Title",
+      "type": "string"
+    },
+    "verifier_bundle_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Verifier Bundle Hash",
+      "type": "string"
+    },
+    "weakness_id": {
+      "format": "uuid",
+      "title": "Weakness Id",
+      "type": "string"
+    },
+    "weakness_type": {
+      "$ref": "#/$defs/WeaknessType"
+    }
+  },
+  "required": [
+    "weakness_id",
+    "revision",
+    "status",
+    "title",
+    "description",
+    "weakness_type",
+    "signature_hash",
+    "group_snapshot_hash",
+    "cluster_refs",
+    "impact_score_hash",
+    "evidence_package_hash",
+    "reproduction_status",
+    "affected_components",
+    "source_refs",
+    "counterexample_refs",
+    "verifier_bundle_hash",
+    "created_at",
+    "created_by",
+    "reason"
+  ],
+  "title": "WeaknessRevision",
+  "type": "object"
+}

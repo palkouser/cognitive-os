@@ -1,0 +1,28 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/weakness.mining_failed.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "failure_code": {
+      "minLength": 1,
+      "title": "Failure Code",
+      "type": "string"
+    },
+    "mining_run_id": {
+      "format": "uuid",
+      "title": "Mining Run Id",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "mining_run_id",
+    "failure_code",
+    "occurred_at"
+  ],
+  "title": "WeaknessMiningFailed",
+  "type": "object"
+}

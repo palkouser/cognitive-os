@@ -85,6 +85,7 @@ from .user_events import (
     UserCorrectionReceived,
 )
 from .verification_events import VerifierCompleted, VerifierFailed, VerifierStarted
+from .weakness_events import WEAKNESS_EVENT_MODELS
 
 
 class EventCatalogError(LookupError):
@@ -142,6 +143,7 @@ DEFAULT_EVENT_MODELS: tuple[type[EventPayload], ...] = (
     *EXPERIENCE_EVENT_MODELS,
     *CORPUS_EVENT_MODELS,
     *ROUTING_EVENT_MODELS,
+    *WEAKNESS_EVENT_MODELS,
     BenchmarkRunStarted,
     BenchmarkCaseStarted,
     BenchmarkCaseCompleted,

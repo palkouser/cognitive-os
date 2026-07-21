@@ -1,0 +1,34 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/weakness.signal_recorded.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "mining_run_id": {
+      "format": "uuid",
+      "title": "Mining Run Id",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "signal_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Signal Hash",
+      "type": "string"
+    },
+    "signal_id": {
+      "format": "uuid",
+      "title": "Signal Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "mining_run_id",
+    "signal_id",
+    "signal_hash",
+    "occurred_at"
+  ],
+  "title": "WeaknessSignalRecorded",
+  "type": "object"
+}

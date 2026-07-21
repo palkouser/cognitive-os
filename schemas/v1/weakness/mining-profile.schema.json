@@ -1,0 +1,127 @@
+{
+  "$defs": {
+    "SignalSourceType": {
+      "enum": [
+        "controller",
+        "acceptance",
+        "verifier",
+        "user_correction",
+        "context",
+        "retrieval",
+        "provider_request",
+        "provider_result",
+        "tool",
+        "memory",
+        "semantic",
+        "skill",
+        "strategy",
+        "experience",
+        "corpus",
+        "routing_decision",
+        "routing_outcome",
+        "routing_shadow",
+        "benchmark",
+        "artifact"
+      ],
+      "title": "SignalSourceType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/weakness/mining-profile.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "clustering_profile": {
+      "minLength": 1,
+      "title": "Clustering Profile",
+      "type": "string"
+    },
+    "confirmation_policy": {
+      "minLength": 1,
+      "title": "Confirmation Policy",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "enabled_extractors": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Enabled Extractors",
+      "type": "array"
+    },
+    "enabled_source_types": {
+      "items": {
+        "$ref": "#/$defs/SignalSourceType"
+      },
+      "minItems": 1,
+      "title": "Enabled Source Types",
+      "type": "array"
+    },
+    "grouping_profile": {
+      "minLength": 1,
+      "title": "Grouping Profile",
+      "type": "string"
+    },
+    "impact_profile": {
+      "minLength": 1,
+      "title": "Impact Profile",
+      "type": "string"
+    },
+    "profile_id": {
+      "minLength": 1,
+      "title": "Profile Id",
+      "type": "string"
+    },
+    "queue_policy": {
+      "minLength": 1,
+      "title": "Queue Policy",
+      "type": "string"
+    },
+    "resource_limits": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "propertyNames": {
+        "minLength": 1
+      },
+      "title": "Resource Limits",
+      "type": "object"
+    },
+    "signature_profile": {
+      "minLength": 1,
+      "title": "Signature Profile",
+      "type": "string"
+    },
+    "version": {
+      "exclusiveMinimum": 0,
+      "title": "Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "profile_id",
+    "version",
+    "enabled_source_types",
+    "enabled_extractors",
+    "signature_profile",
+    "grouping_profile",
+    "clustering_profile",
+    "impact_profile",
+    "confirmation_policy",
+    "queue_policy",
+    "resource_limits",
+    "created_at"
+  ],
+  "title": "MiningProfile",
+  "type": "object"
+}

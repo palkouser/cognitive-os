@@ -1,0 +1,79 @@
+{
+  "$defs": {
+    "ImpactDimension": {
+      "enum": [
+        "frequency",
+        "affected_task_count",
+        "severity",
+        "safety_impact",
+        "correctness_impact",
+        "user_correction_count",
+        "cost_impact",
+        "latency_impact",
+        "repair_iteration_impact",
+        "recency",
+        "reproducibility",
+        "evidence_confidence",
+        "strategic_reach"
+      ],
+      "title": "ImpactDimension",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/weakness/impact-profile-reference.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "critical_safety_priority_floor": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Critical Safety Priority Floor",
+      "type": "string"
+    },
+    "high_correctness_priority_floor": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "High Correctness Priority Floor",
+      "type": "string"
+    },
+    "profile_id": {
+      "minLength": 1,
+      "title": "Profile Id",
+      "type": "string"
+    },
+    "score_precision": {
+      "default": 4,
+      "maximum": 8,
+      "minimum": 0,
+      "title": "Score Precision",
+      "type": "integer"
+    },
+    "version": {
+      "exclusiveMinimum": 0,
+      "title": "Version",
+      "type": "integer"
+    },
+    "weights": {
+      "additionalProperties": {
+        "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+        "type": "string"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/ImpactDimension"
+      },
+      "title": "Weights",
+      "type": "object"
+    }
+  },
+  "required": [
+    "profile_id",
+    "version",
+    "weights",
+    "critical_safety_priority_floor",
+    "high_correctness_priority_floor"
+  ],
+  "title": "ImpactProfileReference",
+  "type": "object"
+}

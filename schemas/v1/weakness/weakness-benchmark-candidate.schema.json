@@ -1,0 +1,78 @@
+{
+  "$defs": {
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/weakness/weakness-benchmark-candidate.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "candidate_id": {
+      "format": "uuid",
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "expected_outcome_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Expected Outcome Hash",
+      "type": "string"
+    },
+    "forbidden_operations": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Forbidden Operations",
+      "type": "array"
+    },
+    "proposal_only": {
+      "default": true,
+      "title": "Proposal Only",
+      "type": "boolean"
+    },
+    "required_verifiers": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Required Verifiers",
+      "type": "array"
+    },
+    "sensitivity": {
+      "$ref": "#/$defs/MemorySensitivity"
+    },
+    "task_fixture_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Task Fixture Hash",
+      "type": "string"
+    },
+    "weakness_revision_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Weakness Revision Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "candidate_id",
+    "weakness_revision_hash",
+    "task_fixture_hash",
+    "expected_outcome_hash",
+    "required_verifiers",
+    "forbidden_operations",
+    "sensitivity"
+  ],
+  "title": "WeaknessBenchmarkCandidate",
+  "type": "object"
+}

@@ -1,0 +1,123 @@
+{
+  "$defs": {
+    "WeaknessReproductionAttempt": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_id": {
+          "format": "uuid",
+          "title": "Attempt Id",
+          "type": "string"
+        },
+        "attempted_at": {
+          "format": "date-time",
+          "title": "Attempted At",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "environment_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Environment Hash",
+          "type": "string"
+        },
+        "limitations": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "result": {
+          "$ref": "#/$defs/WeaknessReproductionStatus"
+        },
+        "source_snapshot_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Snapshot Hash",
+          "type": "string"
+        },
+        "verifier_bundle_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Verifier Bundle Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "attempt_id",
+        "source_snapshot_hash",
+        "environment_hash",
+        "result",
+        "verifier_bundle_hash",
+        "attempted_at"
+      ],
+      "title": "WeaknessReproductionAttempt",
+      "type": "object"
+    },
+    "WeaknessReproductionStatus": {
+      "enum": [
+        "not_attempted",
+        "reproducible",
+        "partially_reproducible",
+        "not_reproduced",
+        "blocked",
+        "unsafe_to_reproduce",
+        "insufficient_evidence"
+      ],
+      "title": "WeaknessReproductionStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/weakness/weakness-reproduction-assessment.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "assessed_at": {
+      "format": "date-time",
+      "title": "Assessed At",
+      "type": "string"
+    },
+    "attempts": {
+      "items": {
+        "$ref": "#/$defs/WeaknessReproductionAttempt"
+      },
+      "title": "Attempts",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "limitations": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "required_safety_restrictions": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Required Safety Restrictions",
+      "type": "array"
+    },
+    "status": {
+      "$ref": "#/$defs/WeaknessReproductionStatus"
+    }
+  },
+  "required": [
+    "status",
+    "attempts",
+    "required_safety_restrictions",
+    "limitations",
+    "assessed_at"
+  ],
+  "title": "WeaknessReproductionAssessment",
+  "type": "object"
+}
