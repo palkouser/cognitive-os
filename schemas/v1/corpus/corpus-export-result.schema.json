@@ -1,0 +1,154 @@
+{
+  "$defs": {
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "format": "uuid",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "media_type": {
+          "minLength": 1,
+          "title": "Media Type",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "storage_key": {
+          "minLength": 1,
+          "title": "Storage Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "media_type",
+        "content_hash",
+        "size_bytes",
+        "storage_key",
+        "created_at"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "CorpusExportManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact": {
+          "$ref": "#/$defs/ArtifactRef"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "corpus_id": {
+          "format": "uuid",
+          "title": "Corpus Id",
+          "type": "string"
+        },
+        "corpus_revision": {
+          "minimum": 1,
+          "title": "Corpus Revision",
+          "type": "integer"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "export_id": {
+          "format": "uuid",
+          "title": "Export Id",
+          "type": "string"
+        },
+        "export_type": {
+          "$ref": "#/$defs/CorpusExportType"
+        },
+        "item_hashes": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Item Hashes",
+          "type": "array"
+        },
+        "manifest_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Manifest Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "export_id",
+        "corpus_id",
+        "corpus_revision",
+        "export_type",
+        "artifact",
+        "item_hashes",
+        "manifest_hash",
+        "created_at"
+      ],
+      "title": "CorpusExportManifest",
+      "type": "object"
+    },
+    "CorpusExportType": {
+      "enum": [
+        "jsonl",
+        "cognitive_os_package"
+      ],
+      "title": "CorpusExportType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-export-result.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "export_manifest": {
+      "$ref": "#/$defs/CorpusExportManifest"
+    },
+    "network_writes": {
+      "default": 0,
+      "maximum": 0,
+      "minimum": 0,
+      "title": "Network Writes",
+      "type": "integer"
+    },
+    "reproduced": {
+      "title": "Reproduced",
+      "type": "boolean"
+    },
+    "training_actions": {
+      "default": 0,
+      "maximum": 0,
+      "minimum": 0,
+      "title": "Training Actions",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "export_manifest",
+    "reproduced"
+  ],
+  "title": "CorpusExportResult",
+  "type": "object"
+}

@@ -1,0 +1,33 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/corpus.item_normalized.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "corpus_item_id": {
+      "format": "uuid",
+      "title": "Corpus Item Id",
+      "type": "string"
+    },
+    "item_revision": {
+      "title": "Item Revision",
+      "type": "integer"
+    },
+    "normalized_content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Normalized Content Hash",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "corpus_item_id",
+    "item_revision",
+    "normalized_content_hash",
+    "occurred_at"
+  ],
+  "title": "CorpusItemNormalized",
+  "type": "object"
+}

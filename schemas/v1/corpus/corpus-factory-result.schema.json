@@ -1,0 +1,2176 @@
+{
+  "$defs": {
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "format": "uuid",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "media_type": {
+          "minLength": 1,
+          "title": "Media Type",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "storage_key": {
+          "minLength": 1,
+          "title": "Storage Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "media_type",
+        "content_hash",
+        "size_bytes",
+        "storage_key",
+        "created_at"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "CorpusAccessRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "access_id": {
+          "format": "uuid",
+          "title": "Access Id",
+          "type": "string"
+        },
+        "access_type": {
+          "$ref": "#/$defs/CorpusAccessType"
+        },
+        "accessed_at": {
+          "format": "date-time",
+          "title": "Accessed At",
+          "type": "string"
+        },
+        "actor_id": {
+          "minLength": 1,
+          "title": "Actor Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "corpus_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Corpus Id"
+        },
+        "corpus_item_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Corpus Item Id"
+        },
+        "corpus_revision": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Corpus Revision"
+        },
+        "export_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Export Id"
+        },
+        "item_revision": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Item Revision"
+        },
+        "source_manifest_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Manifest Id"
+        }
+      },
+      "required": [
+        "access_id",
+        "access_type",
+        "actor_id",
+        "accessed_at"
+      ],
+      "title": "CorpusAccessRecord",
+      "type": "object"
+    },
+    "CorpusAccessType": {
+      "enum": [
+        "source_registration",
+        "source_read",
+        "normalization",
+        "deduplication",
+        "classification",
+        "license_review",
+        "quality_scoring",
+        "routing",
+        "manifest_read",
+        "export"
+      ],
+      "title": "CorpusAccessType",
+      "type": "string"
+    },
+    "CorpusClassification": {
+      "additionalProperties": false,
+      "properties": {
+        "benchmark_suitability": {
+          "title": "Benchmark Suitability",
+          "type": "boolean"
+        },
+        "candidate_destinations": {
+          "items": {
+            "$ref": "#/$defs/CorpusDestinationType"
+          },
+          "maxItems": 13,
+          "minItems": 1,
+          "title": "Candidate Destinations",
+          "type": "array"
+        },
+        "classification_id": {
+          "format": "uuid",
+          "title": "Classification Id",
+          "type": "string"
+        },
+        "classifier_profile": {
+          "minLength": 1,
+          "title": "Classifier Profile",
+          "type": "string"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "content_type": {
+          "$ref": "#/$defs/CorpusContentType"
+        },
+        "corpus_item_id": {
+          "format": "uuid",
+          "title": "Corpus Item Id",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "domain": {
+          "minLength": 1,
+          "title": "Domain",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "item_revision": {
+          "minimum": 1,
+          "title": "Item Revision",
+          "type": "integer"
+        },
+        "knowledge_type": {
+          "$ref": "#/$defs/CorpusKnowledgeType"
+        },
+        "limitations": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "negative_example_type": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Negative Example Type"
+        },
+        "problem_class": {
+          "minLength": 1,
+          "title": "Problem Class",
+          "type": "string"
+        },
+        "reference_suitability": {
+          "title": "Reference Suitability",
+          "type": "boolean"
+        },
+        "training_suitability": {
+          "title": "Training Suitability",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "classification_id",
+        "corpus_item_id",
+        "item_revision",
+        "content_type",
+        "domain",
+        "problem_class",
+        "knowledge_type",
+        "candidate_destinations",
+        "training_suitability",
+        "benchmark_suitability",
+        "reference_suitability",
+        "confidence",
+        "classifier_profile",
+        "evidence",
+        "created_at"
+      ],
+      "title": "CorpusClassification",
+      "type": "object"
+    },
+    "CorpusContentType": {
+      "enum": [
+        "trajectory",
+        "memory",
+        "semantic_observation",
+        "skill",
+        "strategy",
+        "failure_pattern",
+        "routing_observation",
+        "benchmark_case",
+        "negative_example",
+        "source_code",
+        "diff",
+        "documentation",
+        "annotation",
+        "dataset",
+        "unknown"
+      ],
+      "title": "CorpusContentType",
+      "type": "string"
+    },
+    "CorpusDestinationType": {
+      "enum": [
+        "governed_memory_candidate",
+        "semantic_observation_candidate",
+        "skill_candidate",
+        "strategy_candidate",
+        "routing_observation",
+        "weakness_signal",
+        "benchmark_case",
+        "replay_fixture",
+        "negative_example",
+        "training_corpus",
+        "reference_corpus",
+        "quarantine",
+        "reject"
+      ],
+      "title": "CorpusDestinationType",
+      "type": "string"
+    },
+    "CorpusDuplicateType": {
+      "enum": [
+        "unique",
+        "exact_duplicate",
+        "same_source_revision",
+        "same_lineage",
+        "destination_duplicate",
+        "near_duplicate_candidate",
+        "conflicting_duplicate"
+      ],
+      "title": "CorpusDuplicateType",
+      "type": "string"
+    },
+    "CorpusExportManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact": {
+          "$ref": "#/$defs/ArtifactRef"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "corpus_id": {
+          "format": "uuid",
+          "title": "Corpus Id",
+          "type": "string"
+        },
+        "corpus_revision": {
+          "minimum": 1,
+          "title": "Corpus Revision",
+          "type": "integer"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "export_id": {
+          "format": "uuid",
+          "title": "Export Id",
+          "type": "string"
+        },
+        "export_type": {
+          "$ref": "#/$defs/CorpusExportType"
+        },
+        "item_hashes": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Item Hashes",
+          "type": "array"
+        },
+        "manifest_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Manifest Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "export_id",
+        "corpus_id",
+        "corpus_revision",
+        "export_type",
+        "artifact",
+        "item_hashes",
+        "manifest_hash",
+        "created_at"
+      ],
+      "title": "CorpusExportManifest",
+      "type": "object"
+    },
+    "CorpusExportResult": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "export_manifest": {
+          "$ref": "#/$defs/CorpusExportManifest"
+        },
+        "network_writes": {
+          "default": 0,
+          "maximum": 0,
+          "minimum": 0,
+          "title": "Network Writes",
+          "type": "integer"
+        },
+        "reproduced": {
+          "title": "Reproduced",
+          "type": "boolean"
+        },
+        "training_actions": {
+          "default": 0,
+          "maximum": 0,
+          "minimum": 0,
+          "title": "Training Actions",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "export_manifest",
+        "reproduced"
+      ],
+      "title": "CorpusExportResult",
+      "type": "object"
+    },
+    "CorpusExportType": {
+      "enum": [
+        "jsonl",
+        "cognitive_os_package"
+      ],
+      "title": "CorpusExportType",
+      "type": "string"
+    },
+    "CorpusItem": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Canonical Content Hash",
+          "type": "string"
+        },
+        "classification_ref": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Classification Ref"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "corpus_item_id": {
+          "format": "uuid",
+          "title": "Corpus Item Id",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "created_by": {
+          "minLength": 1,
+          "title": "Created By",
+          "type": "string"
+        },
+        "current_revision": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Current Revision",
+          "type": "integer"
+        },
+        "current_status": {
+          "$ref": "#/$defs/CorpusItemStatus"
+        },
+        "duplicate_ref": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duplicate Ref"
+        },
+        "license_ref": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "License Ref"
+        },
+        "lineage_ref": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Lineage Ref",
+          "type": "string"
+        },
+        "normalized_content_artifact": {
+          "$ref": "#/$defs/ArtifactRef"
+        },
+        "quality_ref": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quality Ref"
+        },
+        "scope": {
+          "minLength": 1,
+          "title": "Scope",
+          "type": "string"
+        },
+        "sensitivity": {
+          "$ref": "#/$defs/MemorySensitivity"
+        },
+        "source_manifest_refs": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "maxItems": 1024,
+          "minItems": 1,
+          "title": "Source Manifest Refs",
+          "type": "array"
+        },
+        "source_refs": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "maxItems": 1024,
+          "minItems": 1,
+          "title": "Source Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "corpus_item_id",
+        "current_status",
+        "canonical_content_hash",
+        "normalized_content_artifact",
+        "source_manifest_refs",
+        "source_refs",
+        "scope",
+        "sensitivity",
+        "lineage_ref",
+        "created_at",
+        "created_by"
+      ],
+      "title": "CorpusItem",
+      "type": "object"
+    },
+    "CorpusItemStatus": {
+      "enum": [
+        "received",
+        "normalized",
+        "classified",
+        "staged",
+        "routed",
+        "quarantined",
+        "rejected",
+        "exported",
+        "superseded"
+      ],
+      "title": "CorpusItemStatus",
+      "type": "string"
+    },
+    "CorpusKnowledgeType": {
+      "enum": [
+        "episodic",
+        "semantic",
+        "procedural",
+        "strategic",
+        "routing_evidence",
+        "failure_evidence",
+        "benchmark_evidence",
+        "negative_example",
+        "reference_material",
+        "training_material",
+        "unknown"
+      ],
+      "title": "CorpusKnowledgeType",
+      "type": "string"
+    },
+    "CorpusLicenseStatus": {
+      "enum": [
+        "approved",
+        "internal",
+        "unknown",
+        "conflicting",
+        "restricted"
+      ],
+      "title": "CorpusLicenseStatus",
+      "type": "string"
+    },
+    "CorpusManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_reference": {
+          "$ref": "#/$defs/ArtifactRef"
+        },
+        "classification_profile": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Classification Profile",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "corpus_id": {
+          "format": "uuid",
+          "title": "Corpus Id",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "created_by": {
+          "minLength": 1,
+          "title": "Created By",
+          "type": "string"
+        },
+        "deduplication_profile": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Deduplication Profile",
+          "type": "string"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/CorpusManifestItem"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "license_summary": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "License Summary",
+          "type": "object"
+        },
+        "lineage_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Lineage Hash",
+          "type": "string"
+        },
+        "normalization_profile": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Normalization Profile",
+          "type": "string"
+        },
+        "previous_revision": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Previous Revision"
+        },
+        "purpose": {
+          "$ref": "#/$defs/CorpusDestinationType"
+        },
+        "quality_profile": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Quality Profile",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "selection_policy": {
+          "minLength": 1,
+          "title": "Selection Policy",
+          "type": "string"
+        },
+        "sensitivity_summary": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Sensitivity Summary",
+          "type": "object"
+        },
+        "split_manifest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CorpusSplitManifest"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "corpus_id",
+        "revision",
+        "purpose",
+        "items",
+        "selection_policy",
+        "normalization_profile",
+        "deduplication_profile",
+        "classification_profile",
+        "quality_profile",
+        "license_summary",
+        "sensitivity_summary",
+        "lineage_hash",
+        "artifact_reference",
+        "created_at",
+        "created_by"
+      ],
+      "title": "CorpusManifest",
+      "type": "object"
+    },
+    "CorpusManifestItem": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "corpus_item_id": {
+          "format": "uuid",
+          "title": "Corpus Item Id",
+          "type": "string"
+        },
+        "item_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Item Hash",
+          "type": "string"
+        },
+        "item_revision": {
+          "minimum": 1,
+          "title": "Item Revision",
+          "type": "integer"
+        },
+        "split": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CorpusSplit"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "corpus_item_id",
+        "item_revision",
+        "item_hash"
+      ],
+      "title": "CorpusManifestItem",
+      "type": "object"
+    },
+    "CorpusPrivacyFinding": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "finding_type": {
+          "minLength": 1,
+          "title": "Finding Type",
+          "type": "string"
+        },
+        "relative_path": {
+          "minLength": 1,
+          "title": "Relative Path",
+          "type": "string"
+        },
+        "review_required": {
+          "default": true,
+          "title": "Review Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "finding_type",
+        "relative_path"
+      ],
+      "title": "CorpusPrivacyFinding",
+      "type": "object"
+    },
+    "CorpusQualityAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "assessment_id": {
+          "format": "uuid",
+          "title": "Assessment Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "corpus_item_id": {
+          "format": "uuid",
+          "title": "Corpus Item Id",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "dimensions": {
+          "items": {
+            "$ref": "#/$defs/CorpusQualityDimension"
+          },
+          "maxItems": 12,
+          "minItems": 12,
+          "title": "Dimensions",
+          "type": "array"
+        },
+        "hard_blockers": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Hard Blockers",
+          "type": "array"
+        },
+        "item_revision": {
+          "minimum": 1,
+          "title": "Item Revision",
+          "type": "integer"
+        },
+        "limitations": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "profile_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Profile Hash",
+          "type": "string"
+        },
+        "score": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Score",
+          "type": "number"
+        },
+        "tier": {
+          "$ref": "#/$defs/CorpusQualityTier"
+        }
+      },
+      "required": [
+        "assessment_id",
+        "corpus_item_id",
+        "item_revision",
+        "dimensions",
+        "score",
+        "tier",
+        "hard_blockers",
+        "limitations",
+        "profile_hash",
+        "created_at"
+      ],
+      "title": "CorpusQualityAssessment",
+      "type": "object"
+    },
+    "CorpusQualityDimension": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "dimension": {
+          "$ref": "#/$defs/CorpusQualityDimensionName"
+        },
+        "evidence": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "limitations": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "profile_version": {
+          "minimum": 1,
+          "title": "Profile Version",
+          "type": "integer"
+        },
+        "score": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Score",
+          "type": "number"
+        },
+        "status": {
+          "minLength": 1,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dimension",
+        "score",
+        "status",
+        "evidence",
+        "profile_version"
+      ],
+      "title": "CorpusQualityDimension",
+      "type": "object"
+    },
+    "CorpusQualityDimensionName": {
+      "enum": [
+        "source_authority",
+        "verifier_coverage",
+        "acceptance_status",
+        "provenance_completeness",
+        "reproducibility",
+        "consistency",
+        "sensitivity_risk",
+        "licensing_clarity",
+        "formatting_integrity",
+        "generalizability",
+        "duplicate_status",
+        "contradiction_status"
+      ],
+      "title": "CorpusQualityDimensionName",
+      "type": "string"
+    },
+    "CorpusQualityTier": {
+      "enum": [
+        "high",
+        "medium",
+        "low",
+        "blocked"
+      ],
+      "title": "CorpusQualityTier",
+      "type": "string"
+    },
+    "CorpusRouteDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "corpus_item_id": {
+          "format": "uuid",
+          "title": "Corpus Item Id",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "destination": {
+          "$ref": "#/$defs/CorpusDestinationType"
+        },
+        "destination_policy_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Destination Policy Hash",
+          "type": "string"
+        },
+        "item_revision": {
+          "minimum": 1,
+          "title": "Item Revision",
+          "type": "integer"
+        },
+        "reason_codes": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Reason Codes",
+          "type": "array"
+        },
+        "required_review": {
+          "title": "Required Review",
+          "type": "boolean"
+        },
+        "required_verifiers": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Required Verifiers",
+          "type": "array"
+        },
+        "route_decision_id": {
+          "format": "uuid",
+          "title": "Route Decision Id",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/CorpusRouteStatus"
+        }
+      },
+      "required": [
+        "route_decision_id",
+        "corpus_item_id",
+        "item_revision",
+        "destination",
+        "destination_policy_hash",
+        "status",
+        "reason_codes",
+        "required_verifiers",
+        "required_review",
+        "created_at"
+      ],
+      "title": "CorpusRouteDecision",
+      "type": "object"
+    },
+    "CorpusRouteStatus": {
+      "enum": [
+        "allowed",
+        "denied",
+        "quarantined"
+      ],
+      "title": "CorpusRouteStatus",
+      "type": "string"
+    },
+    "CorpusRoutingReceipt": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "package": {
+          "$ref": "#/$defs/DestinationPackageReference"
+        },
+        "promoted": {
+          "default": false,
+          "title": "Promoted",
+          "type": "boolean"
+        },
+        "receipt_id": {
+          "format": "uuid",
+          "title": "Receipt Id",
+          "type": "string"
+        },
+        "route_decision_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Route Decision Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "receipt_id",
+        "route_decision_hash",
+        "package",
+        "created_at"
+      ],
+      "title": "CorpusRoutingReceipt",
+      "type": "object"
+    },
+    "CorpusSecretFinding": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "finding_type": {
+          "minLength": 1,
+          "title": "Finding Type",
+          "type": "string"
+        },
+        "fingerprint": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Fingerprint",
+          "type": "string"
+        },
+        "line_number": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line Number"
+        },
+        "relative_path": {
+          "minLength": 1,
+          "title": "Relative Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "finding_type",
+        "relative_path",
+        "fingerprint"
+      ],
+      "title": "CorpusSecretFinding",
+      "type": "object"
+    },
+    "CorpusSensitivityAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "assessment_id": {
+          "format": "uuid",
+          "title": "Assessment Id",
+          "type": "string"
+        },
+        "compatible_destinations": {
+          "items": {
+            "$ref": "#/$defs/CorpusDestinationType"
+          },
+          "title": "Compatible Destinations",
+          "type": "array"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "corpus_item_id": {
+          "format": "uuid",
+          "title": "Corpus Item Id",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "effective_sensitivity": {
+          "$ref": "#/$defs/MemorySensitivity"
+        },
+        "inherited_sensitivity": {
+          "$ref": "#/$defs/MemorySensitivity"
+        },
+        "item_revision": {
+          "minimum": 1,
+          "title": "Item Revision",
+          "type": "integer"
+        },
+        "privacy_findings": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/CorpusPrivacyFinding"
+          },
+          "title": "Privacy Findings",
+          "type": "array"
+        },
+        "reason_codes": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Reason Codes",
+          "type": "array"
+        },
+        "secret_findings": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/CorpusSecretFinding"
+          },
+          "title": "Secret Findings",
+          "type": "array"
+        },
+        "status": {
+          "$ref": "#/$defs/CorpusSensitivityStatus"
+        }
+      },
+      "required": [
+        "assessment_id",
+        "corpus_item_id",
+        "item_revision",
+        "inherited_sensitivity",
+        "effective_sensitivity",
+        "status",
+        "compatible_destinations",
+        "reason_codes",
+        "created_at"
+      ],
+      "title": "CorpusSensitivityAssessment",
+      "type": "object"
+    },
+    "CorpusSensitivityStatus": {
+      "enum": [
+        "allowed",
+        "requires_review",
+        "quarantined",
+        "rejected"
+      ],
+      "title": "CorpusSensitivityStatus",
+      "type": "string"
+    },
+    "CorpusSourceType": {
+      "enum": [
+        "experience_candidate",
+        "verified_trajectory",
+        "memory_export",
+        "semantic_export",
+        "skill_package",
+        "strategy_package",
+        "repository_snapshot",
+        "document",
+        "benchmark_dataset",
+        "operator_annotation",
+        "provider_generated_dataset",
+        "external_local_archive",
+        "cognitive_os_export"
+      ],
+      "title": "CorpusSourceType",
+      "type": "string"
+    },
+    "CorpusSplit": {
+      "enum": [
+        "train",
+        "validation",
+        "test",
+        "holdout"
+      ],
+      "title": "CorpusSplit",
+      "type": "string"
+    },
+    "CorpusSplitManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "assignments": {
+          "items": {
+            "$ref": "#/$defs/CorpusManifestItem"
+          },
+          "title": "Assignments",
+          "type": "array"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "lineage_group_hashes": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Lineage Group Hashes",
+          "type": "array"
+        },
+        "profile_id": {
+          "minLength": 1,
+          "title": "Profile Id",
+          "type": "string"
+        },
+        "seed": {
+          "minimum": 0,
+          "title": "Seed",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "profile_id",
+        "seed",
+        "assignments",
+        "lineage_group_hashes"
+      ],
+      "title": "CorpusSplitManifest",
+      "type": "object"
+    },
+    "CorpusUsageRight": {
+      "enum": [
+        "internal_use",
+        "redistribution",
+        "modification",
+        "derivative_work",
+        "benchmark_use",
+        "model_training",
+        "commercial_use",
+        "public_release"
+      ],
+      "title": "CorpusUsageRight",
+      "type": "string"
+    },
+    "DestinationPackageReference": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact": {
+          "$ref": "#/$defs/ArtifactRef"
+        },
+        "authority_claims": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Authority Claims",
+          "type": "array"
+        },
+        "checksums": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Checksums",
+          "type": "array"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "corpus_item_id": {
+          "format": "uuid",
+          "title": "Corpus Item Id",
+          "type": "string"
+        },
+        "destination": {
+          "$ref": "#/$defs/CorpusDestinationType"
+        },
+        "item_revision": {
+          "minimum": 1,
+          "title": "Item Revision",
+          "type": "integer"
+        },
+        "package_id": {
+          "format": "uuid",
+          "title": "Package Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "minLength": 1,
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "package_id",
+        "corpus_item_id",
+        "item_revision",
+        "destination",
+        "schema_version",
+        "artifact",
+        "checksums"
+      ],
+      "title": "DestinationPackageReference",
+      "type": "object"
+    },
+    "DuplicateDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "automatic_merge": {
+          "default": false,
+          "title": "Automatic Merge",
+          "type": "boolean"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "corpus_item_id": {
+          "format": "uuid",
+          "title": "Corpus Item Id",
+          "type": "string"
+        },
+        "duplicate_type": {
+          "$ref": "#/$defs/CorpusDuplicateType"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/DuplicateEvidence"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "provenance_action": {
+          "minLength": 1,
+          "title": "Provenance Action",
+          "type": "string"
+        }
+      },
+      "required": [
+        "corpus_item_id",
+        "duplicate_type",
+        "evidence",
+        "provenance_action"
+      ],
+      "title": "DuplicateDecision",
+      "type": "object"
+    },
+    "DuplicateEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "key_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Key Hash",
+          "type": "string"
+        },
+        "key_type": {
+          "minLength": 1,
+          "title": "Key Type",
+          "type": "string"
+        },
+        "matched_item_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Matched Item Id"
+        },
+        "similarity": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Similarity"
+        }
+      },
+      "required": [
+        "key_type",
+        "key_hash"
+      ],
+      "title": "DuplicateEvidence",
+      "type": "object"
+    },
+    "LicenseClassification": {
+      "additionalProperties": false,
+      "properties": {
+        "classification_id": {
+          "format": "uuid",
+          "title": "Classification Id",
+          "type": "string"
+        },
+        "conflicts": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/LicenseConflict"
+          },
+          "title": "Conflicts",
+          "type": "array"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "corpus_item_id": {
+          "format": "uuid",
+          "title": "Corpus Item Id",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "declarations": {
+          "items": {
+            "$ref": "#/$defs/LicenseDeclaration"
+          },
+          "title": "Declarations",
+          "type": "array"
+        },
+        "item_revision": {
+          "minimum": 1,
+          "title": "Item Revision",
+          "type": "integer"
+        },
+        "profile": {
+          "minLength": 1,
+          "title": "Profile",
+          "type": "string"
+        },
+        "rights": {
+          "items": {
+            "$ref": "#/$defs/UsageRightAssessment"
+          },
+          "maxItems": 8,
+          "minItems": 8,
+          "title": "Rights",
+          "type": "array"
+        },
+        "status": {
+          "$ref": "#/$defs/CorpusLicenseStatus"
+        }
+      },
+      "required": [
+        "classification_id",
+        "corpus_item_id",
+        "item_revision",
+        "status",
+        "declarations",
+        "rights",
+        "profile",
+        "created_at"
+      ],
+      "title": "LicenseClassification",
+      "type": "object"
+    },
+    "LicenseConflict": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "identifiers": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 2,
+          "title": "Identifiers",
+          "type": "array"
+        }
+      },
+      "required": [
+        "identifiers",
+        "evidence_refs"
+      ],
+      "title": "LicenseConflict",
+      "type": "object"
+    },
+    "LicenseDeclaration": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "declared_by": {
+          "minLength": 1,
+          "title": "Declared By",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "identifier": {
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/CorpusLicenseStatus"
+        }
+      },
+      "required": [
+        "identifier",
+        "status",
+        "declared_by",
+        "evidence_refs"
+      ],
+      "title": "LicenseDeclaration",
+      "type": "object"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "NormalizedContent": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Canonical Content Hash",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "content_type": {
+          "$ref": "#/$defs/CorpusContentType"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "encoding": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Encoding"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "normalization_profile": {
+          "minLength": 1,
+          "title": "Normalization Profile",
+          "type": "string"
+        },
+        "normalized_artifact_ref": {
+          "$ref": "#/$defs/ArtifactRef"
+        },
+        "normalized_content_id": {
+          "format": "uuid",
+          "title": "Normalized Content Id",
+          "type": "string"
+        },
+        "original_artifact_refs": {
+          "items": {
+            "$ref": "#/$defs/ArtifactRef"
+          },
+          "minItems": 1,
+          "title": "Original Artifact Refs",
+          "type": "array"
+        },
+        "source_file_refs": {
+          "items": {
+            "$ref": "#/$defs/SourceFileEntry"
+          },
+          "title": "Source File Refs",
+          "type": "array"
+        },
+        "source_manifest_id": {
+          "format": "uuid",
+          "title": "Source Manifest Id",
+          "type": "string"
+        },
+        "warnings": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "normalized_content_id",
+        "source_manifest_id",
+        "source_file_refs",
+        "content_type",
+        "original_artifact_refs",
+        "normalized_artifact_ref",
+        "canonical_content_hash",
+        "normalization_profile",
+        "created_at"
+      ],
+      "title": "NormalizedContent",
+      "type": "object"
+    },
+    "SourceFileEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "archive_origin": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Archive Origin"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "encoding": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Encoding"
+        },
+        "file_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "File Hash",
+          "type": "string"
+        },
+        "is_hard_link": {
+          "default": false,
+          "title": "Is Hard Link",
+          "type": "boolean"
+        },
+        "is_symlink": {
+          "default": false,
+          "title": "Is Symlink",
+          "type": "boolean"
+        },
+        "media_type": {
+          "minLength": 1,
+          "title": "Media Type",
+          "type": "string"
+        },
+        "relative_path": {
+          "minLength": 1,
+          "title": "Relative Path",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "relative_path",
+        "size_bytes",
+        "media_type",
+        "file_hash"
+      ],
+      "title": "SourceFileEntry",
+      "type": "object"
+    },
+    "SourceManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "content_artifacts": {
+          "items": {
+            "$ref": "#/$defs/ArtifactRef"
+          },
+          "maxItems": 10000,
+          "minItems": 1,
+          "title": "Content Artifacts",
+          "type": "array"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "created_by": {
+          "minLength": 1,
+          "title": "Created By",
+          "type": "string"
+        },
+        "encoding": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Encoding"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "license_declarations": {
+          "items": {
+            "$ref": "#/$defs/LicenseDeclaration"
+          },
+          "title": "License Declarations",
+          "type": "array"
+        },
+        "origin": {
+          "minLength": 1,
+          "title": "Origin",
+          "type": "string"
+        },
+        "scope": {
+          "minLength": 1,
+          "title": "Scope",
+          "type": "string"
+        },
+        "sensitivity": {
+          "$ref": "#/$defs/MemorySensitivity"
+        },
+        "source_hashes": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "maxItems": 10000,
+          "minItems": 1,
+          "title": "Source Hashes",
+          "type": "array"
+        },
+        "source_identity": {
+          "minLength": 1,
+          "title": "Source Identity",
+          "type": "string"
+        },
+        "source_manifest_id": {
+          "format": "uuid",
+          "title": "Source Manifest Id",
+          "type": "string"
+        },
+        "source_revision": {
+          "minLength": 1,
+          "title": "Source Revision",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/CorpusSourceType"
+        },
+        "usage_right_declarations": {
+          "items": {
+            "$ref": "#/$defs/UsageRightAssessment"
+          },
+          "title": "Usage Right Declarations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "source_manifest_id",
+        "source_type",
+        "source_identity",
+        "source_revision",
+        "content_artifacts",
+        "source_hashes",
+        "origin",
+        "license_declarations",
+        "usage_right_declarations",
+        "scope",
+        "sensitivity",
+        "created_at",
+        "created_by"
+      ],
+      "title": "SourceManifest",
+      "type": "object"
+    },
+    "UsageRightAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Allowed"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "right": {
+          "$ref": "#/$defs/CorpusUsageRight"
+        }
+      },
+      "required": [
+        "right",
+        "allowed",
+        "evidence_refs",
+        "reason"
+      ],
+      "title": "UsageRightAssessment",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-factory-result.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "access_records": {
+      "items": {
+        "$ref": "#/$defs/CorpusAccessRecord"
+      },
+      "title": "Access Records",
+      "type": "array"
+    },
+    "classifications": {
+      "items": {
+        "$ref": "#/$defs/CorpusClassification"
+      },
+      "title": "Classifications",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "duplicates": {
+      "items": {
+        "$ref": "#/$defs/DuplicateDecision"
+      },
+      "title": "Duplicates",
+      "type": "array"
+    },
+    "export": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CorpusExportResult"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "items": {
+      "items": {
+        "$ref": "#/$defs/CorpusItem"
+      },
+      "title": "Items",
+      "type": "array"
+    },
+    "licenses": {
+      "items": {
+        "$ref": "#/$defs/LicenseClassification"
+      },
+      "title": "Licenses",
+      "type": "array"
+    },
+    "manifest": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CorpusManifest"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "normalized": {
+      "items": {
+        "$ref": "#/$defs/NormalizedContent"
+      },
+      "title": "Normalized",
+      "type": "array"
+    },
+    "quality": {
+      "items": {
+        "$ref": "#/$defs/CorpusQualityAssessment"
+      },
+      "title": "Quality",
+      "type": "array"
+    },
+    "receipts": {
+      "items": {
+        "$ref": "#/$defs/CorpusRoutingReceipt"
+      },
+      "title": "Receipts",
+      "type": "array"
+    },
+    "request_id": {
+      "format": "uuid",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "route_decisions": {
+      "items": {
+        "$ref": "#/$defs/CorpusRouteDecision"
+      },
+      "title": "Route Decisions",
+      "type": "array"
+    },
+    "sensitivity": {
+      "items": {
+        "$ref": "#/$defs/CorpusSensitivityAssessment"
+      },
+      "title": "Sensitivity",
+      "type": "array"
+    },
+    "source_manifest": {
+      "$ref": "#/$defs/SourceManifest"
+    },
+    "usage": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Usage",
+      "type": "object"
+    },
+    "warnings": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "request_id",
+    "source_manifest",
+    "normalized",
+    "items",
+    "duplicates",
+    "classifications",
+    "licenses",
+    "sensitivity",
+    "quality",
+    "route_decisions",
+    "receipts",
+    "access_records"
+  ],
+  "title": "CorpusFactoryResult",
+  "type": "object"
+}

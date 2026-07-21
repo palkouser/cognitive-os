@@ -1,0 +1,36 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-normalization-verification-subject.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifact_hashes": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Artifact Hashes",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "normalization_profile_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Normalization Profile Hash",
+      "type": "string"
+    },
+    "normalized_content_id": {
+      "format": "uuid",
+      "title": "Normalized Content Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "artifact_hashes",
+    "normalized_content_id",
+    "normalization_profile_hash"
+  ],
+  "title": "CorpusNormalizationVerificationSubject",
+  "type": "object"
+}

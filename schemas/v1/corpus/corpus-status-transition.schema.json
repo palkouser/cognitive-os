@@ -1,0 +1,88 @@
+{
+  "$defs": {
+    "CorpusItemStatus": {
+      "enum": [
+        "received",
+        "normalized",
+        "classified",
+        "staged",
+        "routed",
+        "quarantined",
+        "rejected",
+        "exported",
+        "superseded"
+      ],
+      "title": "CorpusItemStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-status-transition.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "actor_id": {
+      "minLength": 1,
+      "title": "Actor Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "corpus_item_id": {
+      "format": "uuid",
+      "title": "Corpus Item Id",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "expected_revision": {
+      "minimum": 1,
+      "title": "Expected Revision",
+      "type": "integer"
+    },
+    "expected_status": {
+      "$ref": "#/$defs/CorpusItemStatus"
+    },
+    "next_revision": {
+      "minimum": 2,
+      "title": "Next Revision",
+      "type": "integer"
+    },
+    "next_status": {
+      "$ref": "#/$defs/CorpusItemStatus"
+    },
+    "policy_decision_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Policy Decision Hash",
+      "type": "string"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "verifier_bundle_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Verifier Bundle Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "corpus_item_id",
+    "expected_revision",
+    "expected_status",
+    "next_revision",
+    "next_status",
+    "actor_id",
+    "reason",
+    "verifier_bundle_hash",
+    "policy_decision_hash",
+    "created_at"
+  ],
+  "title": "CorpusStatusTransition",
+  "type": "object"
+}

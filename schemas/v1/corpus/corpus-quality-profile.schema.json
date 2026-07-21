@@ -1,0 +1,98 @@
+{
+  "$defs": {
+    "CorpusDestinationType": {
+      "enum": [
+        "governed_memory_candidate",
+        "semantic_observation_candidate",
+        "skill_candidate",
+        "strategy_candidate",
+        "routing_observation",
+        "weakness_signal",
+        "benchmark_case",
+        "replay_fixture",
+        "negative_example",
+        "training_corpus",
+        "reference_corpus",
+        "quarantine",
+        "reject"
+      ],
+      "title": "CorpusDestinationType",
+      "type": "string"
+    },
+    "CorpusQualityDimensionName": {
+      "enum": [
+        "source_authority",
+        "verifier_coverage",
+        "acceptance_status",
+        "provenance_completeness",
+        "reproducibility",
+        "consistency",
+        "sensitivity_risk",
+        "licensing_clarity",
+        "formatting_integrity",
+        "generalizability",
+        "duplicate_status",
+        "contradiction_status"
+      ],
+      "title": "CorpusQualityDimensionName",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-quality-profile.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "destination_thresholds": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/CorpusDestinationType"
+      },
+      "title": "Destination Thresholds",
+      "type": "object"
+    },
+    "hard_blockers": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Hard Blockers",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "profile_id": {
+      "minLength": 1,
+      "title": "Profile Id",
+      "type": "string"
+    },
+    "version": {
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "weights": {
+      "additionalProperties": {
+        "type": "number"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/CorpusQualityDimensionName"
+      },
+      "title": "Weights",
+      "type": "object"
+    }
+  },
+  "required": [
+    "profile_id",
+    "version",
+    "weights",
+    "hard_blockers",
+    "destination_thresholds"
+  ],
+  "title": "CorpusQualityProfile",
+  "type": "object"
+}

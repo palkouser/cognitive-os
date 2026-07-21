@@ -1,0 +1,201 @@
+{
+  "$defs": {
+    "CorpusDestinationType": {
+      "enum": [
+        "governed_memory_candidate",
+        "semantic_observation_candidate",
+        "skill_candidate",
+        "strategy_candidate",
+        "routing_observation",
+        "weakness_signal",
+        "benchmark_case",
+        "replay_fixture",
+        "negative_example",
+        "training_corpus",
+        "reference_corpus",
+        "quarantine",
+        "reject"
+      ],
+      "title": "CorpusDestinationType",
+      "type": "string"
+    },
+    "CorpusPrivacyFinding": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "finding_type": {
+          "minLength": 1,
+          "title": "Finding Type",
+          "type": "string"
+        },
+        "relative_path": {
+          "minLength": 1,
+          "title": "Relative Path",
+          "type": "string"
+        },
+        "review_required": {
+          "default": true,
+          "title": "Review Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "finding_type",
+        "relative_path"
+      ],
+      "title": "CorpusPrivacyFinding",
+      "type": "object"
+    },
+    "CorpusSecretFinding": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "finding_type": {
+          "minLength": 1,
+          "title": "Finding Type",
+          "type": "string"
+        },
+        "fingerprint": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Fingerprint",
+          "type": "string"
+        },
+        "line_number": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line Number"
+        },
+        "relative_path": {
+          "minLength": 1,
+          "title": "Relative Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "finding_type",
+        "relative_path",
+        "fingerprint"
+      ],
+      "title": "CorpusSecretFinding",
+      "type": "object"
+    },
+    "CorpusSensitivityStatus": {
+      "enum": [
+        "allowed",
+        "requires_review",
+        "quarantined",
+        "rejected"
+      ],
+      "title": "CorpusSensitivityStatus",
+      "type": "string"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-sensitivity-assessment.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "assessment_id": {
+      "format": "uuid",
+      "title": "Assessment Id",
+      "type": "string"
+    },
+    "compatible_destinations": {
+      "items": {
+        "$ref": "#/$defs/CorpusDestinationType"
+      },
+      "title": "Compatible Destinations",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "corpus_item_id": {
+      "format": "uuid",
+      "title": "Corpus Item Id",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "effective_sensitivity": {
+      "$ref": "#/$defs/MemorySensitivity"
+    },
+    "inherited_sensitivity": {
+      "$ref": "#/$defs/MemorySensitivity"
+    },
+    "item_revision": {
+      "minimum": 1,
+      "title": "Item Revision",
+      "type": "integer"
+    },
+    "privacy_findings": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/CorpusPrivacyFinding"
+      },
+      "title": "Privacy Findings",
+      "type": "array"
+    },
+    "reason_codes": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Reason Codes",
+      "type": "array"
+    },
+    "secret_findings": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/CorpusSecretFinding"
+      },
+      "title": "Secret Findings",
+      "type": "array"
+    },
+    "status": {
+      "$ref": "#/$defs/CorpusSensitivityStatus"
+    }
+  },
+  "required": [
+    "assessment_id",
+    "corpus_item_id",
+    "item_revision",
+    "inherited_sensitivity",
+    "effective_sensitivity",
+    "status",
+    "compatible_destinations",
+    "reason_codes",
+    "created_at"
+  ],
+  "title": "CorpusSensitivityAssessment",
+  "type": "object"
+}

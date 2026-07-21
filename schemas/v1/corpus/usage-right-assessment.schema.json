@@ -1,0 +1,62 @@
+{
+  "$defs": {
+    "CorpusUsageRight": {
+      "enum": [
+        "internal_use",
+        "redistribution",
+        "modification",
+        "derivative_work",
+        "benchmark_use",
+        "model_training",
+        "commercial_use",
+        "public_release"
+      ],
+      "title": "CorpusUsageRight",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/usage-right-assessment.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "allowed": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Allowed"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "right": {
+      "$ref": "#/$defs/CorpusUsageRight"
+    }
+  },
+  "required": [
+    "right",
+    "allowed",
+    "evidence_refs",
+    "reason"
+  ],
+  "title": "UsageRightAssessment",
+  "type": "object"
+}

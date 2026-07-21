@@ -1,0 +1,147 @@
+{
+  "$defs": {
+    "CorpusContentType": {
+      "enum": [
+        "trajectory",
+        "memory",
+        "semantic_observation",
+        "skill",
+        "strategy",
+        "failure_pattern",
+        "routing_observation",
+        "benchmark_case",
+        "negative_example",
+        "source_code",
+        "diff",
+        "documentation",
+        "annotation",
+        "dataset",
+        "unknown"
+      ],
+      "title": "CorpusContentType",
+      "type": "string"
+    },
+    "CorpusDestinationType": {
+      "enum": [
+        "governed_memory_candidate",
+        "semantic_observation_candidate",
+        "skill_candidate",
+        "strategy_candidate",
+        "routing_observation",
+        "weakness_signal",
+        "benchmark_case",
+        "replay_fixture",
+        "negative_example",
+        "training_corpus",
+        "reference_corpus",
+        "quarantine",
+        "reject"
+      ],
+      "title": "CorpusDestinationType",
+      "type": "string"
+    },
+    "CorpusUsageRight": {
+      "enum": [
+        "internal_use",
+        "redistribution",
+        "modification",
+        "derivative_work",
+        "benchmark_use",
+        "model_training",
+        "commercial_use",
+        "public_release"
+      ],
+      "title": "CorpusUsageRight",
+      "type": "string"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/destination-policy-reference.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "destination": {
+      "$ref": "#/$defs/CorpusDestinationType"
+    },
+    "destination_available": {
+      "title": "Destination Available",
+      "type": "boolean"
+    },
+    "maximum_sensitivity": {
+      "$ref": "#/$defs/MemorySensitivity"
+    },
+    "package_schema": {
+      "minLength": 1,
+      "title": "Package Schema",
+      "type": "string"
+    },
+    "policy_id": {
+      "minLength": 1,
+      "title": "Policy Id",
+      "type": "string"
+    },
+    "required_content_types": {
+      "items": {
+        "$ref": "#/$defs/CorpusContentType"
+      },
+      "title": "Required Content Types",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "required_quality": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Required Quality",
+      "type": "number"
+    },
+    "required_rights": {
+      "items": {
+        "$ref": "#/$defs/CorpusUsageRight"
+      },
+      "title": "Required Rights",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "required_verifiers": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Required Verifiers",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "version": {
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "destination",
+    "policy_id",
+    "version",
+    "required_content_types",
+    "required_quality",
+    "required_rights",
+    "maximum_sensitivity",
+    "required_verifiers",
+    "package_schema",
+    "destination_available"
+  ],
+  "title": "DestinationPolicyReference",
+  "type": "object"
+}

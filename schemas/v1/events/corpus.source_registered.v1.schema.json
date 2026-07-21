@@ -1,0 +1,28 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/corpus.source_registered.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "source_manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Manifest Hash",
+      "type": "string"
+    },
+    "source_manifest_id": {
+      "format": "uuid",
+      "title": "Source Manifest Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "source_manifest_id",
+    "source_manifest_hash",
+    "occurred_at"
+  ],
+  "title": "CorpusSourceRegistered",
+  "type": "object"
+}

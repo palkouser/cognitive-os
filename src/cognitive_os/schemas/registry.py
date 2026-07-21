@@ -8,6 +8,7 @@ from pydantic import BaseModel
 
 from cognitive_os.config.coding_config import CodingConfiguration
 from cognitive_os.config.context_config import ContextConfiguration
+from cognitive_os.config.corpus_config import CorpusConfiguration
 from cognitive_os.config.experience_config import ExperienceConfiguration
 from cognitive_os.config.memory_config import MemoryConfiguration
 from cognitive_os.config.semantic_memory_config import SemanticMemoryConfiguration
@@ -91,6 +92,7 @@ from cognitive_os.domain.coding import (
     WorkspaceRequest,
 )
 from cognitive_os.domain.context import PUBLIC_CONTEXT_CONTRACTS
+from cognitive_os.domain.corpus import PUBLIC_CORPUS_CONTRACTS
 from cognitive_os.domain.experience import PUBLIC_EXPERIENCE_CONTRACTS
 from cognitive_os.domain.memory import PUBLIC_MEMORY_CONTRACTS
 from cognitive_os.domain.semantic_memory import PUBLIC_SEMANTIC_CONTRACTS
@@ -119,11 +121,24 @@ class SchemaEntry:
 DOMAIN_SCHEMAS: tuple[tuple[type[BaseModel], str], ...] = (
     (CodingConfiguration, "v1/config/coding-configuration.schema.json"),
     (ContextConfiguration, "v1/config/context-configuration.schema.json"),
+    (CorpusConfiguration, "v1/config/corpus-configuration.schema.json"),
     (ExperienceConfiguration, "v1/config/experience-configuration.schema.json"),
     (MemoryConfiguration, "v1/config/memory-configuration.schema.json"),
     (SemanticMemoryConfiguration, "v1/config/semantic-memory-configuration.schema.json"),
     (SkillConfiguration, "v1/config/skill-configuration.schema.json"),
     (StrategyConfiguration, "v1/config/strategy-configuration.schema.json"),
+    *tuple(
+        (
+            model,
+            "v1/corpus/"
+            + "".join(
+                ("-" + character.lower()) if character.isupper() else character
+                for character in model.__name__
+            ).lstrip("-")
+            + ".schema.json",
+        )
+        for model in PUBLIC_CORPUS_CONTRACTS
+    ),
     *tuple(
         (
             model,

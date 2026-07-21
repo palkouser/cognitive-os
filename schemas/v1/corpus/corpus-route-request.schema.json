@@ -1,0 +1,76 @@
+{
+  "$defs": {
+    "CorpusDestinationType": {
+      "enum": [
+        "governed_memory_candidate",
+        "semantic_observation_candidate",
+        "skill_candidate",
+        "strategy_candidate",
+        "routing_observation",
+        "weakness_signal",
+        "benchmark_case",
+        "replay_fixture",
+        "negative_example",
+        "training_corpus",
+        "reference_corpus",
+        "quarantine",
+        "reject"
+      ],
+      "title": "CorpusDestinationType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-route-request.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "corpus_item_id": {
+      "format": "uuid",
+      "title": "Corpus Item Id",
+      "type": "string"
+    },
+    "destination": {
+      "$ref": "#/$defs/CorpusDestinationType"
+    },
+    "destination_policy_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Destination Policy Hash",
+      "type": "string"
+    },
+    "item_revision": {
+      "minimum": 1,
+      "title": "Item Revision",
+      "type": "integer"
+    },
+    "requested_at": {
+      "format": "date-time",
+      "title": "Requested At",
+      "type": "string"
+    },
+    "requested_by": {
+      "minLength": 1,
+      "title": "Requested By",
+      "type": "string"
+    },
+    "route_request_id": {
+      "format": "uuid",
+      "title": "Route Request Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "route_request_id",
+    "corpus_item_id",
+    "item_revision",
+    "destination",
+    "destination_policy_hash",
+    "requested_at",
+    "requested_by"
+  ],
+  "title": "CorpusRouteRequest",
+  "type": "object"
+}

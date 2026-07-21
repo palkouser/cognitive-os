@@ -1,0 +1,48 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/deduplication-profile.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "exact_keys": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Exact Keys",
+      "type": "array"
+    },
+    "near_duplicate_advisory": {
+      "default": false,
+      "title": "Near Duplicate Advisory",
+      "type": "boolean"
+    },
+    "near_duplicate_threshold": {
+      "default": 0.95,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Near Duplicate Threshold",
+      "type": "number"
+    },
+    "profile_id": {
+      "minLength": 1,
+      "title": "Profile Id",
+      "type": "string"
+    },
+    "version": {
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "profile_id",
+    "version",
+    "exact_keys"
+  ],
+  "title": "DeduplicationProfile",
+  "type": "object"
+}

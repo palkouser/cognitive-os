@@ -1,0 +1,53 @@
+{
+  "$defs": {
+    "CorpusLicenseStatus": {
+      "enum": [
+        "approved",
+        "internal",
+        "unknown",
+        "conflicting",
+        "restricted"
+      ],
+      "title": "CorpusLicenseStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/license-declaration.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "declared_by": {
+      "minLength": 1,
+      "title": "Declared By",
+      "type": "string"
+    },
+    "evidence_refs": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Evidence Refs",
+      "type": "array"
+    },
+    "identifier": {
+      "minLength": 1,
+      "title": "Identifier",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/CorpusLicenseStatus"
+    }
+  },
+  "required": [
+    "identifier",
+    "status",
+    "declared_by",
+    "evidence_refs"
+  ],
+  "title": "LicenseDeclaration",
+  "type": "object"
+}

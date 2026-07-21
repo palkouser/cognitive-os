@@ -1,0 +1,112 @@
+{
+  "$defs": {
+    "CorpusDuplicateType": {
+      "enum": [
+        "unique",
+        "exact_duplicate",
+        "same_source_revision",
+        "same_lineage",
+        "destination_duplicate",
+        "near_duplicate_candidate",
+        "conflicting_duplicate"
+      ],
+      "title": "CorpusDuplicateType",
+      "type": "string"
+    },
+    "DuplicateEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "key_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Key Hash",
+          "type": "string"
+        },
+        "key_type": {
+          "minLength": 1,
+          "title": "Key Type",
+          "type": "string"
+        },
+        "matched_item_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Matched Item Id"
+        },
+        "similarity": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Similarity"
+        }
+      },
+      "required": [
+        "key_type",
+        "key_hash"
+      ],
+      "title": "DuplicateEvidence",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/duplicate-decision.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "automatic_merge": {
+      "default": false,
+      "title": "Automatic Merge",
+      "type": "boolean"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "corpus_item_id": {
+      "format": "uuid",
+      "title": "Corpus Item Id",
+      "type": "string"
+    },
+    "duplicate_type": {
+      "$ref": "#/$defs/CorpusDuplicateType"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/DuplicateEvidence"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "provenance_action": {
+      "minLength": 1,
+      "title": "Provenance Action",
+      "type": "string"
+    }
+  },
+  "required": [
+    "corpus_item_id",
+    "duplicate_type",
+    "evidence",
+    "provenance_action"
+  ],
+  "title": "DuplicateDecision",
+  "type": "object"
+}

@@ -1,0 +1,36 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-source-verification-subject.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifact_hashes": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Artifact Hashes",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "source_manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Manifest Hash",
+      "type": "string"
+    },
+    "source_manifest_id": {
+      "format": "uuid",
+      "title": "Source Manifest Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "artifact_hashes",
+    "source_manifest_id",
+    "source_manifest_hash"
+  ],
+  "title": "CorpusSourceVerificationSubject",
+  "type": "object"
+}

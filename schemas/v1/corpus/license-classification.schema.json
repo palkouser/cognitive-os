@@ -1,0 +1,219 @@
+{
+  "$defs": {
+    "CorpusLicenseStatus": {
+      "enum": [
+        "approved",
+        "internal",
+        "unknown",
+        "conflicting",
+        "restricted"
+      ],
+      "title": "CorpusLicenseStatus",
+      "type": "string"
+    },
+    "CorpusUsageRight": {
+      "enum": [
+        "internal_use",
+        "redistribution",
+        "modification",
+        "derivative_work",
+        "benchmark_use",
+        "model_training",
+        "commercial_use",
+        "public_release"
+      ],
+      "title": "CorpusUsageRight",
+      "type": "string"
+    },
+    "LicenseConflict": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "identifiers": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 2,
+          "title": "Identifiers",
+          "type": "array"
+        }
+      },
+      "required": [
+        "identifiers",
+        "evidence_refs"
+      ],
+      "title": "LicenseConflict",
+      "type": "object"
+    },
+    "LicenseDeclaration": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "declared_by": {
+          "minLength": 1,
+          "title": "Declared By",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "identifier": {
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/CorpusLicenseStatus"
+        }
+      },
+      "required": [
+        "identifier",
+        "status",
+        "declared_by",
+        "evidence_refs"
+      ],
+      "title": "LicenseDeclaration",
+      "type": "object"
+    },
+    "UsageRightAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Allowed"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "evidence_refs": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Evidence Refs",
+          "type": "array"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "right": {
+          "$ref": "#/$defs/CorpusUsageRight"
+        }
+      },
+      "required": [
+        "right",
+        "allowed",
+        "evidence_refs",
+        "reason"
+      ],
+      "title": "UsageRightAssessment",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/license-classification.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "classification_id": {
+      "format": "uuid",
+      "title": "Classification Id",
+      "type": "string"
+    },
+    "conflicts": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/LicenseConflict"
+      },
+      "title": "Conflicts",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "corpus_item_id": {
+      "format": "uuid",
+      "title": "Corpus Item Id",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "declarations": {
+      "items": {
+        "$ref": "#/$defs/LicenseDeclaration"
+      },
+      "title": "Declarations",
+      "type": "array"
+    },
+    "item_revision": {
+      "minimum": 1,
+      "title": "Item Revision",
+      "type": "integer"
+    },
+    "profile": {
+      "minLength": 1,
+      "title": "Profile",
+      "type": "string"
+    },
+    "rights": {
+      "items": {
+        "$ref": "#/$defs/UsageRightAssessment"
+      },
+      "maxItems": 8,
+      "minItems": 8,
+      "title": "Rights",
+      "type": "array"
+    },
+    "status": {
+      "$ref": "#/$defs/CorpusLicenseStatus"
+    }
+  },
+  "required": [
+    "classification_id",
+    "corpus_item_id",
+    "item_revision",
+    "status",
+    "declarations",
+    "rights",
+    "profile",
+    "created_at"
+  ],
+  "title": "LicenseClassification",
+  "type": "object"
+}

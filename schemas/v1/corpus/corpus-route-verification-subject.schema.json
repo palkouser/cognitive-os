@@ -1,0 +1,42 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-route-verification-subject.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifact_hashes": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Artifact Hashes",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "corpus_item_id": {
+      "format": "uuid",
+      "title": "Corpus Item Id",
+      "type": "string"
+    },
+    "item_revision": {
+      "minimum": 1,
+      "title": "Item Revision",
+      "type": "integer"
+    },
+    "route_decision_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Route Decision Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "artifact_hashes",
+    "corpus_item_id",
+    "item_revision",
+    "route_decision_hash"
+  ],
+  "title": "CorpusRouteVerificationSubject",
+  "type": "object"
+}

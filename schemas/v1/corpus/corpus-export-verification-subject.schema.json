@@ -1,0 +1,48 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-export-verification-subject.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifact_hashes": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Artifact Hashes",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "corpus_id": {
+      "format": "uuid",
+      "title": "Corpus Id",
+      "type": "string"
+    },
+    "corpus_revision": {
+      "minimum": 1,
+      "title": "Corpus Revision",
+      "type": "integer"
+    },
+    "export_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Export Hash",
+      "type": "string"
+    },
+    "export_id": {
+      "format": "uuid",
+      "title": "Export Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "artifact_hashes",
+    "corpus_id",
+    "corpus_revision",
+    "export_id",
+    "export_hash"
+  ],
+  "title": "CorpusExportVerificationSubject",
+  "type": "object"
+}

@@ -1,0 +1,117 @@
+{
+  "$defs": {
+    "CorpusResourceLimits": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "maximum_archive_depth": {
+          "minimum": 1,
+          "title": "Maximum Archive Depth",
+          "type": "integer"
+        },
+        "maximum_files": {
+          "minimum": 1,
+          "title": "Maximum Files",
+          "type": "integer"
+        },
+        "maximum_item_bytes": {
+          "minimum": 1,
+          "title": "Maximum Item Bytes",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "maximum_item_bytes",
+        "maximum_files",
+        "maximum_archive_depth"
+      ],
+      "title": "CorpusResourceLimits",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/normalization-profile.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "binary_policy": {
+      "default": "reject",
+      "minLength": 1,
+      "title": "Binary Policy",
+      "type": "string"
+    },
+    "code_policy": {
+      "default": "parse-without-execution",
+      "minLength": 1,
+      "title": "Code Policy",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "diff_policy": {
+      "default": "validate-without-application",
+      "minLength": 1,
+      "title": "Diff Policy",
+      "type": "string"
+    },
+    "metadata_policy": {
+      "default": "separate",
+      "minLength": 1,
+      "title": "Metadata Policy",
+      "type": "string"
+    },
+    "newline_policy": {
+      "default": "lf",
+      "minLength": 1,
+      "title": "Newline Policy",
+      "type": "string"
+    },
+    "profile_id": {
+      "minLength": 1,
+      "title": "Profile Id",
+      "type": "string"
+    },
+    "resource_limits": {
+      "$ref": "#/$defs/CorpusResourceLimits"
+    },
+    "supported_formats": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Supported Formats",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "unicode_policy": {
+      "default": "nfc",
+      "minLength": 1,
+      "title": "Unicode Policy",
+      "type": "string"
+    },
+    "version": {
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "whitespace_policy": {
+      "default": "trim-trailing",
+      "minLength": 1,
+      "title": "Whitespace Policy",
+      "type": "string"
+    }
+  },
+  "required": [
+    "profile_id",
+    "version",
+    "supported_formats",
+    "resource_limits"
+  ],
+  "title": "NormalizationProfile",
+  "type": "object"
+}

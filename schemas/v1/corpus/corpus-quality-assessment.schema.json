@@ -1,0 +1,169 @@
+{
+  "$defs": {
+    "CorpusQualityDimension": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "dimension": {
+          "$ref": "#/$defs/CorpusQualityDimensionName"
+        },
+        "evidence": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "limitations": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "profile_version": {
+          "minimum": 1,
+          "title": "Profile Version",
+          "type": "integer"
+        },
+        "score": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Score",
+          "type": "number"
+        },
+        "status": {
+          "minLength": 1,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dimension",
+        "score",
+        "status",
+        "evidence",
+        "profile_version"
+      ],
+      "title": "CorpusQualityDimension",
+      "type": "object"
+    },
+    "CorpusQualityDimensionName": {
+      "enum": [
+        "source_authority",
+        "verifier_coverage",
+        "acceptance_status",
+        "provenance_completeness",
+        "reproducibility",
+        "consistency",
+        "sensitivity_risk",
+        "licensing_clarity",
+        "formatting_integrity",
+        "generalizability",
+        "duplicate_status",
+        "contradiction_status"
+      ],
+      "title": "CorpusQualityDimensionName",
+      "type": "string"
+    },
+    "CorpusQualityTier": {
+      "enum": [
+        "high",
+        "medium",
+        "low",
+        "blocked"
+      ],
+      "title": "CorpusQualityTier",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-quality-assessment.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "assessment_id": {
+      "format": "uuid",
+      "title": "Assessment Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "corpus_item_id": {
+      "format": "uuid",
+      "title": "Corpus Item Id",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "dimensions": {
+      "items": {
+        "$ref": "#/$defs/CorpusQualityDimension"
+      },
+      "maxItems": 12,
+      "minItems": 12,
+      "title": "Dimensions",
+      "type": "array"
+    },
+    "hard_blockers": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Hard Blockers",
+      "type": "array"
+    },
+    "item_revision": {
+      "minimum": 1,
+      "title": "Item Revision",
+      "type": "integer"
+    },
+    "limitations": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "profile_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Profile Hash",
+      "type": "string"
+    },
+    "score": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Score",
+      "type": "number"
+    },
+    "tier": {
+      "$ref": "#/$defs/CorpusQualityTier"
+    }
+  },
+  "required": [
+    "assessment_id",
+    "corpus_item_id",
+    "item_revision",
+    "dimensions",
+    "score",
+    "tier",
+    "hard_blockers",
+    "limitations",
+    "profile_hash",
+    "created_at"
+  ],
+  "title": "CorpusQualityAssessment",
+  "type": "object"
+}

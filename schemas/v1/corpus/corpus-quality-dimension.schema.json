@@ -1,0 +1,76 @@
+{
+  "$defs": {
+    "CorpusQualityDimensionName": {
+      "enum": [
+        "source_authority",
+        "verifier_coverage",
+        "acceptance_status",
+        "provenance_completeness",
+        "reproducibility",
+        "consistency",
+        "sensitivity_risk",
+        "licensing_clarity",
+        "formatting_integrity",
+        "generalizability",
+        "duplicate_status",
+        "contradiction_status"
+      ],
+      "title": "CorpusQualityDimensionName",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-quality-dimension.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "dimension": {
+      "$ref": "#/$defs/CorpusQualityDimensionName"
+    },
+    "evidence": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "limitations": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "profile_version": {
+      "minimum": 1,
+      "title": "Profile Version",
+      "type": "integer"
+    },
+    "score": {
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Score",
+      "type": "number"
+    },
+    "status": {
+      "minLength": 1,
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "dimension",
+    "score",
+    "status",
+    "evidence",
+    "profile_version"
+  ],
+  "title": "CorpusQualityDimension",
+  "type": "object"
+}
