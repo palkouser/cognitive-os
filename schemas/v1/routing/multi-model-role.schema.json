@@ -1,0 +1,58 @@
+{
+  "$defs": {
+    "ExecutionRole": {
+      "enum": [
+        "primary",
+        "fallback",
+        "planner",
+        "executor",
+        "generator",
+        "critic",
+        "proposer"
+      ],
+      "title": "ExecutionRole",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/routing/multi-model-role.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "context_bundle_reference": {
+      "minLength": 1,
+      "title": "Context Bundle Reference",
+      "type": "string"
+    },
+    "role": {
+      "$ref": "#/$defs/ExecutionRole"
+    },
+    "routing_decision_id": {
+      "format": "uuid",
+      "title": "Routing Decision Id",
+      "type": "string"
+    },
+    "routing_request_id": {
+      "format": "uuid",
+      "title": "Routing Request Id",
+      "type": "string"
+    },
+    "token_reservation": {
+      "minimum": 0,
+      "title": "Token Reservation",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "role",
+    "routing_request_id",
+    "routing_decision_id",
+    "context_bundle_reference",
+    "token_reservation"
+  ],
+  "title": "MultiModelRole",
+  "type": "object"
+}

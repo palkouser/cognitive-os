@@ -1,0 +1,74 @@
+benchmark_id: sprint16-routing-seed
+version: "1"
+title: Sprint 16 model routing seed suite
+description: Sixty-four credential-free deterministic model routing cases.
+default_configuration: {mode: routing-replay}
+source: Cognitive OS Sprint 16 executable backlog
+license: Apache-2.0
+created_at: 2026-01-01T00:00:00Z
+case_matrix:
+  generic:
+    - {id: routing-seed.profile-01, scenario: profile, expected: passed}
+    - {id: routing-seed.profile-02, scenario: profile, expected: passed}
+    - {id: routing-seed.profile-03, scenario: profile, expected: passed}
+    - {id: routing-seed.profile-04, scenario: profile, expected: passed}
+    - {id: routing-seed.profile-05, scenario: profile, expected: passed}
+    - {id: routing-seed.profile-06, scenario: profile, expected: passed}
+    - {id: routing-seed.profile-07, scenario: profile, expected: passed}
+    - {id: routing-seed.signature-08, scenario: signature, expected: passed}
+    - {id: routing-seed.signature-09, scenario: signature, expected: passed}
+    - {id: routing-seed.signature-10, scenario: signature, expected: passed}
+    - {id: routing-seed.signature-11, scenario: signature, expected: passed}
+    - {id: routing-seed.signature-12, scenario: signature, expected: passed}
+    - {id: routing-seed.signature-13, scenario: signature, expected: passed}
+    - {id: routing-seed.signature-14, scenario: signature, expected: passed}
+    - {id: routing-seed.observation-15, scenario: observation, expected: passed}
+    - {id: routing-seed.observation-16, scenario: observation, expected: passed}
+    - {id: routing-seed.observation-17, scenario: observation, expected: passed}
+    - {id: routing-seed.observation-18, scenario: observation, expected: passed}
+    - {id: routing-seed.observation-19, scenario: observation, expected: passed}
+    - {id: routing-seed.observation-20, scenario: observation, expected: passed}
+    - {id: routing-seed.observation-21, scenario: observation, expected: passed}
+    - {id: routing-seed.statistics-22, scenario: statistics, expected: passed}
+    - {id: routing-seed.statistics-23, scenario: statistics, expected: passed}
+    - {id: routing-seed.statistics-24, scenario: statistics, expected: passed}
+    - {id: routing-seed.statistics-25, scenario: statistics, expected: passed}
+    - {id: routing-seed.statistics-26, scenario: statistics, expected: passed}
+    - {id: routing-seed.statistics-27, scenario: statistics, expected: passed}
+    - {id: routing-seed.statistics-28, scenario: statistics, expected: passed}
+    - {id: routing-seed.statistics-29, scenario: statistics, expected: passed}
+    - {id: routing-seed.static-30, scenario: static, expected: passed}
+    - {id: routing-seed.static-31, scenario: static, expected: passed}
+    - {id: routing-seed.static-32, scenario: static, expected: passed}
+    - {id: routing-seed.static-33, scenario: static, expected: passed}
+    - {id: routing-seed.static-34, scenario: static, expected: passed}
+    - {id: routing-seed.static-35, scenario: static, expected: passed}
+    - {id: routing-seed.static-36, scenario: static, expected: passed}
+    - {id: routing-seed.static-37, scenario: static, expected: passed}
+    - {id: routing-seed.shadow-38, scenario: shadow, expected: passed}
+    - {id: routing-seed.shadow-39, scenario: shadow, expected: passed}
+    - {id: routing-seed.shadow-40, scenario: shadow, expected: passed}
+    - {id: routing-seed.shadow-41, scenario: shadow, expected: passed}
+    - {id: routing-seed.shadow-42, scenario: shadow, expected: passed}
+    - {id: routing-seed.shadow-43, scenario: shadow, expected: passed}
+    - {id: routing-seed.shadow-44, scenario: shadow, expected: passed}
+    - {id: routing-seed.promotion-45, scenario: promotion, expected: passed}
+    - {id: routing-seed.promotion-46, scenario: promotion, expected: passed}
+    - {id: routing-seed.promotion-47, scenario: promotion, expected: passed}
+    - {id: routing-seed.promotion-48, scenario: promotion, expected: passed}
+    - {id: routing-seed.promotion-49, scenario: promotion, expected: passed}
+    - {id: routing-seed.promotion-50, scenario: promotion, expected: passed}
+    - {id: routing-seed.promotion-51, scenario: promotion, expected: passed}
+    - {id: routing-seed.fallback-52, scenario: fallback, expected: passed}
+    - {id: routing-seed.fallback-53, scenario: fallback, expected: passed}
+    - {id: routing-seed.fallback-54, scenario: fallback, expected: passed}
+    - {id: routing-seed.fallback-55, scenario: fallback, expected: passed}
+    - {id: routing-seed.fallback-56, scenario: fallback, expected: passed}
+    - {id: routing-seed.multi-model-57, scenario: multi-model, expected: passed}
+    - {id: routing-seed.multi-model-58, scenario: multi-model, expected: passed}
+    - {id: routing-seed.multi-model-59, scenario: multi-model, expected: passed}
+    - {id: routing-seed.multi-model-60, scenario: multi-model, expected: passed}
+    - {id: routing-seed.multi-model-61, scenario: multi-model, expected: passed}
+    - {id: routing-seed.security-62, scenario: security, expected: passed}
+    - {id: routing-seed.security-63, scenario: security, expected: passed}
+    - {id: routing-seed.security-64, scenario: security, expected: passed}

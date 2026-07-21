@@ -5,51 +5,42 @@
 This repository develops Cognitive OS, a local, model-independent, self-improving
 agent harness based on LightAgent.
 
-## Sprint 15 scope
+## Sprint 16 scope
 
-The active scope is a governed, deterministic Corpus-to-Memory Factory built on the Sprint 14
-Experience Compiler and the existing memory, semantic, skill, strategy, Controller, Context Builder,
-provider, Tool Plane, verifier, event, artifact, repository, workspace, and PostgreSQL boundaries.
+The active scope is a governed Model Capability Registry and deterministic adaptive-routing layer
+built on the Sprint 15 Corpus Factory and the existing provider, Controller, Context Builder, Tool
+Plane, verifier, event, artifact, repository, workspace, and PostgreSQL boundaries.
 
 Allowed work:
 
-- immutable source, normalization, corpus item, lineage, duplicate, classification, license, rights,
-  sensitivity, quality, routing, manifest, export, access, and verifier contracts;
-- local-only, operator-controlled source ingestion with original-artifact preservation and archive,
-  path, size, symlink, hard-link, encoding, binary, and integrity safeguards;
-- deterministic normalization, exact deduplication, provenance preservation, classification,
-  quality scoring, staging, quarantine, destination-package routing, manifests, splits, and exports;
-- optional advisory near-duplicate, provider-annotation, DVC, DataTrove, and Distilabel integrations
-  that remain disabled and non-authoritative by default.
+- immutable model identity, capability profile, TaskSignature, observation, policy, decision,
+  outcome, statistics, experiment, promotion, multi-model, access, and verifier contracts;
+- operator-declared and measured capability evidence with deterministic cohort statistics,
+  uncertainty, static routing, bounded fallback, shadow routing, and explicit promotion gates;
+- provider-specific Context validation and bounded multi-model patterns compiled into ordinary
+  Controller steps with final acceptance retained by registered verifiers;
+- credential-free replay fixtures, deterministic benchmarks, health, backup, restore, and
+  PostgreSQL migration `0008`.
 
 Out of scope:
 
-- automatic provider-authored long-term memory or direct provider database access;
-- provider-authored authoritative claims or autonomous extraction and promotion by default;
-- unrestricted entity resolution, ontology induction, or natural-language contradiction authority;
-- provider-authoritative retrieval, query expansion, ranking, permissions, or budget changes;
-- learned ranking, adaptive weights, mandatory neural reranking, HNSW, or IVFFlat by default;
-- graph databases, a Context Builder state database, or Wiki pages used as independent evidence;
-- automatic authoritative memory, semantic, skill, strategy, or conversation-summary creation;
-- destination promotion, destination database writes, remote corpus upload, or model training;
-- automatic web ingestion, remote download, Git clone, unrestricted binary parsing, OCR, or media
-  transcription;
-- learned strategy ranking, adaptive provider routing, or measured model capability routing;
-- strategy-driven tool, verifier, provider, permission, approval, or budget mutation;
-- a second Controller, planner runtime, or provider-authoritative branch decision;
-- external graph databases, Apache AGE, Neo4j, or authoritative NetworkX state;
-- network model downloads or GPU requirements;
-- Cognee, Graphiti, LangMem, agentmemory, or legacy LightAgent memory as an authority;
+- learned routing, reinforcement learning, live bandit exploration, model training, autonomous
+  provider onboarding, pricing-web scraping, or network model downloads;
+- provider configuration, credential, base-URL, enablement, transport, retry, or timeout changes;
+- automatic adaptive-policy or benchmark promotion and unbounded exploration;
+- provider-authored routing policies, measured evidence, self-promotion, or acceptance authority;
+- strategy, skill, prompt, verifier, workflow, Tool Plane, permission, or budget mutation;
+- a second Controller, independent orchestration loop, autonomous agent team, or model ensemble;
+- external routing gateways used as the primary runtime or provider execution path;
 - automatic context ingestion, autonomous memory or claim promotion, unrestricted external or web
-  retrieval, multi-agent corpus sharing, and Sprint 16--17 adaptive or weakness-mining features.
+  retrieval, multi-agent execution authority, and Sprint 17 weakness-mining features.
 
-PostgreSQL is authoritative for Memory Plane, semantic projection, skill, strategy, graph,
-experience compilation, corpus metadata, classifications, route decisions, manifests, exports, and
-access state; the event store owns lifecycle evidence and the artifact store owns original,
-normalized, package, and export content. Providers and LightAgent cannot bypass host-controlled
-services or policy. Corpus history, decisions, manifests, exports, and accesses are append-only.
-Source content is never executed. Candidate and provider prose is proposal-only and cannot authorize
-destination writes, promotion, execution, training, upload, acceptance, or policy changes.
+PostgreSQL is authoritative for capability profiles, policy revisions, routing observations,
+decisions, outcomes, statistics, experiments, and access state; the event store owns lifecycle
+evidence and the artifact store owns large benchmark and experiment content. The existing provider
+layer remains authoritative for adapters, credentials, configuration, health, and execution. Static
+routing is the control baseline. Shadow decisions cannot execute, and bounded adaptive execution
+requires evidence, explicit operator approval, and a task-signature-scoped enabled policy.
 
 Do not move or rewrite LightAgent runtime files unless the active issue explicitly
 authorizes it.

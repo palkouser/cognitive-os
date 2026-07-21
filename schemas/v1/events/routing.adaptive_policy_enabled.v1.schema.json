@@ -1,0 +1,33 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/routing.adaptive_policy_enabled.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "approval_reference": {
+      "minLength": 1,
+      "title": "Approval Reference",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "policy_id": {
+      "minLength": 1,
+      "title": "Policy Id",
+      "type": "string"
+    },
+    "policy_revision": {
+      "title": "Policy Revision",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "policy_id",
+    "policy_revision",
+    "approval_reference",
+    "occurred_at"
+  ],
+  "title": "AdaptivePolicyEnabled",
+  "type": "object"
+}

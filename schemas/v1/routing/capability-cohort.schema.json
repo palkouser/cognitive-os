@@ -1,0 +1,40 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/routing/capability-cohort.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "cohort_level": {
+      "minLength": 1,
+      "title": "Cohort Level",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "parent_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Parent Hash"
+    },
+    "task_signature_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Task Signature Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_signature_hash",
+    "cohort_level"
+  ],
+  "title": "CapabilityCohort",
+  "type": "object"
+}

@@ -1,0 +1,209 @@
+{
+  "$defs": {
+    "CapabilityCohort": {
+      "additionalProperties": false,
+      "properties": {
+        "cohort_level": {
+          "minLength": 1,
+          "title": "Cohort Level",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "parent_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Hash"
+        },
+        "task_signature_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Task Signature Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_signature_hash",
+        "cohort_level"
+      ],
+      "title": "CapabilityCohort",
+      "type": "object"
+    },
+    "CapabilityDimension": {
+      "enum": [
+        "accepted_task_rate",
+        "verifier_quality",
+        "structured_output_validity",
+        "tool_call_validity",
+        "repair_count",
+        "provider_failure_rate",
+        "timeout_rate",
+        "latency",
+        "input_token_usage",
+        "output_token_usage",
+        "cost_units",
+        "context_fit",
+        "policy_denial_rate",
+        "safety_failure_rate",
+        "coding_benchmark_quality",
+        "task_signature_coverage"
+      ],
+      "title": "CapabilityDimension",
+      "type": "string"
+    },
+    "CapabilityEstimate": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "dimension": {
+          "$ref": "#/$defs/CapabilityDimension"
+        },
+        "effective_sample_count": {
+          "minimum": 0,
+          "title": "Effective Sample Count",
+          "type": "integer"
+        },
+        "estimate": {
+          "anyOf": [
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Estimate"
+        },
+        "lower_bound": {
+          "anyOf": [
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lower Bound"
+        },
+        "missing_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Missing Count",
+          "type": "integer"
+        },
+        "sample_count": {
+          "minimum": 0,
+          "title": "Sample Count",
+          "type": "integer"
+        },
+        "source_class_counts": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "propertyNames": {
+            "$ref": "#/$defs/CapabilityEvidenceType"
+          },
+          "title": "Source Class Counts",
+          "type": "object"
+        },
+        "uncertainty": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Uncertainty",
+          "type": "string"
+        },
+        "upper_bound": {
+          "anyOf": [
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Upper Bound"
+        }
+      },
+      "required": [
+        "dimension",
+        "sample_count",
+        "effective_sample_count",
+        "uncertainty"
+      ],
+      "title": "CapabilityEstimate",
+      "type": "object"
+    },
+    "CapabilityEvidenceType": {
+      "enum": [
+        "provider_self_description",
+        "provider_documentation",
+        "operator_declaration",
+        "replay_contract_evidence",
+        "deterministic_benchmark",
+        "opt_in_live_benchmark",
+        "verified_task_outcome"
+      ],
+      "title": "CapabilityEvidenceType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/routing/capability-estimate-set.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "cohort": {
+      "$ref": "#/$defs/CapabilityCohort"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "estimates": {
+      "items": {
+        "$ref": "#/$defs/CapabilityEstimate"
+      },
+      "title": "Estimates",
+      "type": "array"
+    },
+    "source_observation_ids": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Source Observation Ids",
+      "type": "array"
+    },
+    "statistics_profile": {
+      "minLength": 1,
+      "title": "Statistics Profile",
+      "type": "string"
+    }
+  },
+  "required": [
+    "cohort",
+    "estimates",
+    "statistics_profile",
+    "source_observation_ids"
+  ],
+  "title": "CapabilityEstimateSet",
+  "type": "object"
+}

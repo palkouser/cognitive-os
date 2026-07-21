@@ -1,0 +1,55 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/routing/routing-verification-subject.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "related_hashes": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Related Hashes",
+      "type": "array"
+    },
+    "subject_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Subject Hash",
+      "type": "string"
+    },
+    "subject_id": {
+      "minLength": 1,
+      "title": "Subject Id",
+      "type": "string"
+    },
+    "subject_revision": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Subject Revision"
+    },
+    "subject_type": {
+      "minLength": 1,
+      "title": "Subject Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "subject_type",
+    "subject_id",
+    "subject_hash"
+  ],
+  "title": "RoutingVerificationSubject",
+  "type": "object"
+}

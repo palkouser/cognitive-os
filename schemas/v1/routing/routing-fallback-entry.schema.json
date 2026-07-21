@@ -1,0 +1,50 @@
+{
+  "$defs": {
+    "RoutingFallbackReason": {
+      "enum": [
+        "provider_unavailable",
+        "timeout_before_side_effect",
+        "timeout_after_uncertain_side_effect",
+        "rate_limited",
+        "invalid_response",
+        "structured_output_failure",
+        "tool_call_failure",
+        "context_limit_failure",
+        "policy_denial",
+        "safety_denial",
+        "unknown"
+      ],
+      "title": "RoutingFallbackReason",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/routing/routing-fallback-entry.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "model_identity_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Model Identity Hash",
+      "type": "string"
+    },
+    "position": {
+      "exclusiveMinimum": 0,
+      "title": "Position",
+      "type": "integer"
+    },
+    "reason": {
+      "$ref": "#/$defs/RoutingFallbackReason",
+      "default": "provider_unavailable"
+    }
+  },
+  "required": [
+    "position",
+    "model_identity_hash"
+  ],
+  "title": "RoutingFallbackEntry",
+  "type": "object"
+}

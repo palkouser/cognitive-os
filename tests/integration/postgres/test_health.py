@@ -12,10 +12,10 @@ async def test_health_reports_database_and_migration_without_url(engines) -> Non
     health = await check_postgres_health(app)
     assert health.healthy
     assert health.database_version
-    assert health.migration_revision == "0007"
+    assert health.migration_revision == "0008"
     semantic = await PostgresSemanticHealthService(app).check()
     assert semantic.healthy
-    assert semantic.alembic_revision == "0007"
+    assert semantic.alembic_revision == "0008"
     assert not any(
         finding.count for finding in semantic.findings if finding.severity.value == "error"
     )

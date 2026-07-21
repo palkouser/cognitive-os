@@ -1,0 +1,26 @@
+benchmark_id: sprint16-routing-ci
+version: "1"
+title: Sprint 16 model routing CI gate
+description: Sixteen credential-free capability, routing, shadow, promotion, and budget cases.
+default_configuration: {mode: routing-replay}
+source: Cognitive OS Sprint 16 executable backlog
+license: Apache-2.0
+created_at: 2026-01-01T00:00:00Z
+case_matrix:
+  generic:
+    - {id: routing-ci.static, scenario: static-routing, expected: passed}
+    - {id: routing-ci.capability, scenario: missing-capability, expected: passed}
+    - {id: routing-ci.context, scenario: context-limit, expected: passed}
+    - {id: routing-ci.unavailable, scenario: unavailable-provider, expected: passed}
+    - {id: routing-ci.structured, scenario: structured-output, expected: passed}
+    - {id: routing-ci.tools, scenario: tool-calling, expected: passed}
+    - {id: routing-ci.unknown-cost, scenario: unknown-cost, expected: passed}
+    - {id: routing-ci.cost-latency, scenario: cost-latency, expected: passed}
+    - {id: routing-ci.low-sample, scenario: low-sample, expected: passed}
+    - {id: routing-ci.exact-cohort, scenario: exact-cohort, expected: passed}
+    - {id: routing-ci.parent-cohort, scenario: parent-cohort, expected: passed}
+    - {id: routing-ci.shadow-replay, scenario: shadow-replay, expected: passed}
+    - {id: routing-ci.shadow-safety, scenario: shadow-non-interference, expected: passed}
+    - {id: routing-ci.promotion-denial, scenario: promotion-denial, expected: passed}
+    - {id: routing-ci.adaptive-scope, scenario: bounded-adaptive, expected: passed}
+    - {id: routing-ci.multi-model, scenario: multi-model-budget, expected: passed}

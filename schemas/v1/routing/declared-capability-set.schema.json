@@ -1,0 +1,167 @@
+{
+  "$defs": {
+    "CapabilityEvidenceType": {
+      "enum": [
+        "provider_self_description",
+        "provider_documentation",
+        "operator_declaration",
+        "replay_contract_evidence",
+        "deterministic_benchmark",
+        "opt_in_live_benchmark",
+        "verified_task_outcome"
+      ],
+      "title": "CapabilityEvidenceType",
+      "type": "string"
+    },
+    "CapabilitySourceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "actor_id": {
+          "minLength": 1,
+          "title": "Actor Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "evidence_type": {
+          "$ref": "#/$defs/CapabilityEvidenceType"
+        },
+        "source_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Hash",
+          "type": "string"
+        },
+        "source_id": {
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_revision": {
+          "minLength": 1,
+          "title": "Source Revision",
+          "type": "string"
+        }
+      },
+      "required": [
+        "evidence_type",
+        "source_id",
+        "source_revision",
+        "source_hash",
+        "actor_id"
+      ],
+      "title": "CapabilitySourceReference",
+      "type": "object"
+    },
+    "CapabilitySupportStatus": {
+      "enum": [
+        "supported",
+        "unsupported",
+        "unknown",
+        "restricted"
+      ],
+      "title": "CapabilitySupportStatus",
+      "type": "string"
+    },
+    "DeclaredCapability": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "dimension": {
+          "minLength": 1,
+          "title": "Dimension",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/CapabilitySourceReference"
+        },
+        "support": {
+          "$ref": "#/$defs/CapabilitySupportStatus"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/JsonValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "dimension",
+        "support",
+        "source"
+      ],
+      "title": "DeclaredCapability",
+      "type": "object"
+    },
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/routing/declared-capability-set.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "capabilities": {
+      "items": {
+        "$ref": "#/$defs/DeclaredCapability"
+      },
+      "title": "Capabilities",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "capabilities"
+  ],
+  "title": "DeclaredCapabilitySet",
+  "type": "object"
+}

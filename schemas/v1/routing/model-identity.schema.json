@@ -1,0 +1,45 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/routing/model-identity.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "endpoint_profile": {
+      "minLength": 1,
+      "title": "Endpoint Profile",
+      "type": "string"
+    },
+    "execution_mode": {
+      "minLength": 1,
+      "title": "Execution Mode",
+      "type": "string"
+    },
+    "model_id": {
+      "minLength": 1,
+      "title": "Model Id",
+      "type": "string"
+    },
+    "model_revision": {
+      "minLength": 1,
+      "title": "Model Revision",
+      "type": "string"
+    },
+    "provider_id": {
+      "minLength": 1,
+      "title": "Provider Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "provider_id",
+    "model_id",
+    "model_revision",
+    "endpoint_profile",
+    "execution_mode"
+  ],
+  "title": "ModelIdentity",
+  "type": "object"
+}

@@ -1,0 +1,45 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/routing/uncertainty-assessment.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "cohort_generality": {
+      "minimum": 0,
+      "title": "Cohort Generality",
+      "type": "integer"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "interval_width": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Interval Width",
+      "type": "string"
+    },
+    "missing_dimensions": {
+      "minimum": 0,
+      "title": "Missing Dimensions",
+      "type": "integer"
+    },
+    "penalty": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Penalty",
+      "type": "string"
+    },
+    "sample_count": {
+      "minimum": 0,
+      "title": "Sample Count",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "sample_count",
+    "interval_width",
+    "cohort_generality",
+    "missing_dimensions",
+    "penalty"
+  ],
+  "title": "UncertaintyAssessment",
+  "type": "object"
+}

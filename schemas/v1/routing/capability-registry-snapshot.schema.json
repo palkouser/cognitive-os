@@ -1,0 +1,25 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/routing/capability-registry-snapshot.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "profile_hashes": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 256,
+      "title": "Profile Hashes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "profile_hashes"
+  ],
+  "title": "CapabilityRegistrySnapshot",
+  "type": "object"
+}

@@ -1,0 +1,62 @@
+{
+  "$defs": {
+    "CapabilitySupportStatus": {
+      "enum": [
+        "supported",
+        "unsupported",
+        "unknown",
+        "restricted"
+      ],
+      "title": "CapabilitySupportStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/routing/model-capability-requirement.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "dimension": {
+      "minLength": 1,
+      "title": "Dimension",
+      "type": "string"
+    },
+    "hard": {
+      "default": true,
+      "title": "Hard",
+      "type": "boolean"
+    },
+    "minimum_value": {
+      "anyOf": [
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Minimum Value"
+    },
+    "required_support": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CapabilitySupportStatus"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "dimension"
+  ],
+  "title": "ModelCapabilityRequirement",
+  "type": "object"
+}

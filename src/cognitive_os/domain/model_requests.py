@@ -13,6 +13,7 @@ from .common import JsonValue, NonEmptyStr, TokenUsage
 from .context import ContextBundleReference
 from .identifiers import ModelCallId, StepId, TaskRunId
 from .provider import ModelFinishReason, ResponseFormat, ToolChoiceMode
+from .routing import RoutingReference
 
 _SECRET_KEY = re.compile(
     r"(^|[_-])(api[_-]?key|authorization|credential|passwd|password|secret|token)([_-]|$)",
@@ -83,6 +84,7 @@ class ModelProviderRequest(ImmutableContractModel):
     context_budget: int = Field(default=32768, gt=0, le=131072)
     timeout_seconds: float = Field(default=120, gt=0)
     context_bundle_reference: ContextBundleReference | None = None
+    routing_reference: RoutingReference | None = None
     metadata: dict[str, JsonValue] = Field(default_factory=dict)
 
     @field_validator("metadata", mode="before")

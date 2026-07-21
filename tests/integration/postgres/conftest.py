@@ -39,7 +39,12 @@ async def engines(database_urls) -> AsyncIterator[tuple[object, object]]:
     async with admin.begin() as connection:
         await connection.execute(
             text(
-                "TRUNCATE cognitive_os.experience_accesses, "
+                "TRUNCATE cognitive_os.routing_accesses, cognitive_os.routing_experiments, "
+                "cognitive_os.routing_statistics, cognitive_os.routing_outcomes, "
+                "cognitive_os.routing_decisions, cognitive_os.routing_observations, "
+                "cognitive_os.routing_policy_revisions, cognitive_os.routing_policies, "
+                "cognitive_os.model_capability_revisions, "
+                "cognitive_os.model_capability_profiles, cognitive_os.experience_accesses, "
                 "cognitive_os.corpus_accesses, cognitive_os.corpus_exports, "
                 "cognitive_os.corpus_manifest_items, cognitive_os.corpus_manifests, "
                 "cognitive_os.corpus_route_decisions, cognitive_os.corpus_classifications, "

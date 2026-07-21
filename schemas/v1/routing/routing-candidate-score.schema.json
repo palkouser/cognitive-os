@@ -1,0 +1,80 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/routing/routing-candidate-score.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "dimensions": {
+      "additionalProperties": {
+        "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+        "type": "string"
+      },
+      "propertyNames": {
+        "minLength": 1
+      },
+      "title": "Dimensions",
+      "type": "object"
+    },
+    "eligible": {
+      "title": "Eligible",
+      "type": "boolean"
+    },
+    "model_identity_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Model Identity Hash",
+      "type": "string"
+    },
+    "source_cohort_level": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Cohort Level"
+    },
+    "source_statistics_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Statistics Hash"
+    },
+    "static_priority": {
+      "default": 0,
+      "title": "Static Priority",
+      "type": "integer"
+    },
+    "total": {
+      "default": "0",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Total",
+      "type": "string"
+    },
+    "uncertainty": {
+      "default": "1",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Uncertainty",
+      "type": "string"
+    }
+  },
+  "required": [
+    "model_identity_hash",
+    "eligible"
+  ],
+  "title": "RoutingCandidateScore",
+  "type": "object"
+}

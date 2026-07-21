@@ -1,0 +1,28 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/routing.experiment_completed.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "experiment_id": {
+      "format": "uuid",
+      "title": "Experiment Id",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "result_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Result Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "experiment_id",
+    "result_hash",
+    "occurred_at"
+  ],
+  "title": "RoutingExperimentCompleted",
+  "type": "object"
+}

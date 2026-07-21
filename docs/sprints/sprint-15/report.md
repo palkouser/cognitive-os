@@ -83,9 +83,11 @@ and automatic web ingestion are rejected. Provider-assisted annotations, DVC, Da
 Distilabel are deferred. A destination must independently consume and validate an emitted package;
 the factory never performs that write or promotion.
 
-## Gate H and Sprint 16 hand-off
+## Stage-gate correction and Sprint 16 hand-off
 
-Gate H — governed corpus transformation — is complete locally. Cognitive OS can safely transform
+The Sprint 15 closure originally labeled governed corpus transformation as Gate H. The corrected
+roadmap defines Gate G as Sprint 14 plus Sprint 15, and Gate H as Sprint 16 plus Sprint 17. Gate G
+is complete: Cognitive OS can safely transform
 exact local and internal source revisions into deterministic, provenance-complete, policy-assessed
 corpus packages and exports without granting source or provider content any authority. Sprint 16
 may consume versioned corpus manifests, packages, classifications, quality assessments, lineage,

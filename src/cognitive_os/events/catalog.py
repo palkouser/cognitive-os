@@ -55,6 +55,7 @@ from .model_events import (
     ModelCallStarted,
     ModelCallTimedOut,
 )
+from .routing_events import ROUTING_EVENT_MODELS
 from .semantic_memory_events import SEMANTIC_EVENT_MODELS
 from .skill_events import SKILL_EVENT_MODELS
 from .strategy_events import STRATEGY_EVENT_MODELS
@@ -140,6 +141,7 @@ DEFAULT_EVENT_MODELS: tuple[type[EventPayload], ...] = (
     *STRATEGY_EVENT_MODELS,
     *EXPERIENCE_EVENT_MODELS,
     *CORPUS_EVENT_MODELS,
+    *ROUTING_EVENT_MODELS,
     BenchmarkRunStarted,
     BenchmarkCaseStarted,
     BenchmarkCaseCompleted,

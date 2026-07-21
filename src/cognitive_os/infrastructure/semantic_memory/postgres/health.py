@@ -242,13 +242,13 @@ class PostgresSemanticHealthService:
                     message=code.replace("_", " "),
                 )
             )
-        if revision != "0007":
+        if revision != "0008":
             findings.append(
                 SemanticHealthFinding(
                     code="migration_head",
                     severity=SemanticHealthSeverity.ERROR,
                     count=1,
-                    message=f"Expected Alembic revision 0007, found {revision}",
+                    message=f"Expected Alembic revision 0008, found {revision}",
                 )
             )
         return SemanticHealthReport(

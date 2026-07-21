@@ -1,0 +1,167 @@
+{
+  "$defs": {
+    "ContextSizeClass": {
+      "enum": [
+        "small",
+        "medium",
+        "large",
+        "long",
+        "unknown"
+      ],
+      "title": "ContextSizeClass",
+      "type": "string"
+    },
+    "CostClass": {
+      "enum": [
+        "low",
+        "standard",
+        "premium",
+        "unknown"
+      ],
+      "title": "CostClass",
+      "type": "string"
+    },
+    "ExecutionRole": {
+      "enum": [
+        "primary",
+        "fallback",
+        "planner",
+        "executor",
+        "generator",
+        "critic",
+        "proposer"
+      ],
+      "title": "ExecutionRole",
+      "type": "string"
+    },
+    "LatencyClass": {
+      "enum": [
+        "low",
+        "standard",
+        "relaxed",
+        "unknown"
+      ],
+      "title": "LatencyClass",
+      "type": "string"
+    },
+    "TaskComplexityClass": {
+      "enum": [
+        "trivial",
+        "small",
+        "medium",
+        "large",
+        "long_horizon",
+        "unknown"
+      ],
+      "title": "TaskComplexityClass",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/routing/task-signature.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "context_size_class": {
+      "$ref": "#/$defs/ContextSizeClass",
+      "default": "unknown"
+    },
+    "cost_class": {
+      "$ref": "#/$defs/CostClass",
+      "default": "unknown"
+    },
+    "estimated_complexity": {
+      "$ref": "#/$defs/TaskComplexityClass",
+      "default": "unknown"
+    },
+    "execution_role": {
+      "$ref": "#/$defs/ExecutionRole",
+      "default": "primary"
+    },
+    "latency_class": {
+      "$ref": "#/$defs/LatencyClass",
+      "default": "unknown"
+    },
+    "output_type": {
+      "minLength": 1,
+      "title": "Output Type",
+      "type": "string"
+    },
+    "problem_class": {
+      "minLength": 1,
+      "title": "Problem Class",
+      "type": "string"
+    },
+    "problem_domain": {
+      "minLength": 1,
+      "title": "Problem Domain",
+      "type": "string"
+    },
+    "profile_version": {
+      "default": "task-signature-v1",
+      "minLength": 1,
+      "title": "Profile Version",
+      "type": "string"
+    },
+    "repository_profile": {
+      "default": "unknown",
+      "minLength": 1,
+      "title": "Repository Profile",
+      "type": "string"
+    },
+    "required_structured_output": {
+      "default": false,
+      "title": "Required Structured Output",
+      "type": "boolean"
+    },
+    "required_tool_capabilities": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Required Tool Capabilities",
+      "type": "array"
+    },
+    "risk_level": {
+      "default": "standard",
+      "minLength": 1,
+      "title": "Risk Level",
+      "type": "string"
+    },
+    "skill_revisions": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Skill Revisions",
+      "type": "array"
+    },
+    "strategy_revisions": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Strategy Revisions",
+      "type": "array"
+    },
+    "verifier_profile": {
+      "default": "default",
+      "minLength": 1,
+      "title": "Verifier Profile",
+      "type": "string"
+    }
+  },
+  "required": [
+    "problem_domain",
+    "problem_class",
+    "output_type"
+  ],
+  "title": "TaskSignature",
+  "type": "object"
+}

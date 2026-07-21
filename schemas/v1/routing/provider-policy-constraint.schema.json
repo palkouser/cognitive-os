@@ -1,0 +1,36 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/routing/provider-policy-constraint.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "allowed_provider_ids": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Allowed Provider Ids",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "denied_provider_ids": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Denied Provider Ids",
+      "type": "array"
+    },
+    "require_healthy": {
+      "default": true,
+      "title": "Require Healthy",
+      "type": "boolean"
+    }
+  },
+  "title": "ProviderPolicyConstraint",
+  "type": "object"
+}

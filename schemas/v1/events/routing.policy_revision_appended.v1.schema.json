@@ -1,0 +1,33 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/routing.policy_revision_appended.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "policy_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Policy Hash",
+      "type": "string"
+    },
+    "policy_id": {
+      "minLength": 1,
+      "title": "Policy Id",
+      "type": "string"
+    },
+    "policy_revision": {
+      "title": "Policy Revision",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "policy_id",
+    "policy_revision",
+    "policy_hash",
+    "occurred_at"
+  ],
+  "title": "RoutingPolicyRevisionAppended",
+  "type": "object"
+}

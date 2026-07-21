@@ -1,0 +1,55 @@
+{
+  "$defs": {
+    "ExecutionRole": {
+      "enum": [
+        "primary",
+        "fallback",
+        "planner",
+        "executor",
+        "generator",
+        "critic",
+        "proposer"
+      ],
+      "title": "ExecutionRole",
+      "type": "string"
+    },
+    "MultiModelPatternType": {
+      "enum": [
+        "single_model",
+        "primary_with_fallback",
+        "planner_executor",
+        "generator_critic",
+        "multiple_proposals_with_verifier_selection"
+      ],
+      "title": "MultiModelPatternType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/routing/multi-model-pattern.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "pattern_type": {
+      "$ref": "#/$defs/MultiModelPatternType"
+    },
+    "roles": {
+      "items": {
+        "$ref": "#/$defs/ExecutionRole"
+      },
+      "maxItems": 8,
+      "minItems": 1,
+      "title": "Roles",
+      "type": "array"
+    }
+  },
+  "required": [
+    "pattern_type",
+    "roles"
+  ],
+  "title": "MultiModelPattern",
+  "type": "object"
+}

@@ -74,6 +74,12 @@ and emits versioned proposal-only destination packages without promotion, destin
 uploads, or training actions. See the
 [Corpus-to-Memory Factory architecture](docs/architecture/corpus-to-memory-factory.md).
 
+Sprint 16 adds a credential-free Model Capability Registry and deterministic router. Static routing
+remains the execution control, shadow routing cannot call providers, and bounded adaptive policies
+require reproducible evidence plus explicit operator approval. Provider configuration and
+credentials remain outside routing state. See the
+[Model Capability Registry architecture](docs/architecture/model-capability-registry.md).
+
 ![LightAgent Banner](docs/images/lightagent-banner.jpg)
 <div align="center">
   <p>
