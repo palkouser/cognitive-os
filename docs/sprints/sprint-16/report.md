@@ -60,8 +60,8 @@ an enabled append-only policy revision, and an exact TaskSignature allowlist.
 - strict MyPy passed on 427 source files; Bandit passed with no findings.
 - Contract schema drift and repository English-language checks passed with 148 registered event
   types.
-- Cognitive OS tests passed with **634 passed and 5 opt-in tests skipped**; contract tests passed
-  **65/65**; the full repository passed with **775 passed and 36 opt-in tests skipped**.
+- Cognitive OS tests passed with **635 passed and 5 opt-in tests skipped**; contract tests passed
+  **65/65**; the full repository passed with **776 passed and 36 opt-in tests skipped**.
 - The isolated PostgreSQL and Controller integration set passed **25/25**. Migration `0008`
   upgrade, downgrade to `0007`, re-upgrade, single-head verification, runtime grants, controlled
   revision functions, append-only history, and routing health passed.

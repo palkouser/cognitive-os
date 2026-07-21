@@ -28,15 +28,18 @@ from .errors import ProviderInvalidResponseError
 
 
 def request_fingerprint(request: ModelProviderRequest) -> str:
+    excluded = {
+        "model_call_id",
+        "task_run_id",
+        "step_id",
+        "correlation_id",
+        "metadata",
+    }
+    if request.routing_reference is None:
+        excluded.add("routing_reference")
     semantic = request.model_dump(
         mode="json",
-        exclude={
-            "model_call_id",
-            "task_run_id",
-            "step_id",
-            "correlation_id",
-            "metadata",
-        },
+        exclude=excluded,
     )
     encoded = json.dumps(semantic, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
     return hashlib.sha256(encoded.encode()).hexdigest()

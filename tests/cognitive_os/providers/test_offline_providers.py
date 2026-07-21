@@ -14,6 +14,11 @@ from cognitive_os.domain.provider import (
     ProviderStreamEvent,
     ProviderStreamEventType,
 )
+from cognitive_os.domain.routing import (
+    ExecutionRole,
+    RoutingControlMode,
+    RoutingReference,
+)
 from cognitive_os.providers.errors import (
     ProviderAuthenticationError,
     ProviderInvalidResponseError,
@@ -90,6 +95,26 @@ async def test_replay_ignores_request_identity_but_requires_semantic_match() -> 
     assert response.model_call_id == second.model_call_id
     with pytest.raises(ProviderInvalidResponseError, match="no replay fixture"):
         await provider.complete(second.model_copy(update={"requested_model": "different"}))
+
+
+def test_replay_preserves_legacy_fingerprint_and_distinguishes_routing_reference() -> None:
+    request = make_request()
+    legacy = request_fingerprint(request)
+    round_trip = ModelProviderRequest.model_validate(request.model_dump(mode="python"))
+    assert request_fingerprint(round_trip) == legacy
+    routed = request.model_copy(
+        update={
+            "routing_reference": RoutingReference(
+                routing_decision_id=uuid4(),
+                routing_policy_id="static",
+                routing_policy_revision=1,
+                control_mode=RoutingControlMode.STATIC,
+                selected_model_identity_hash="0" * 64,
+                role_assignment=ExecutionRole.PRIMARY,
+            )
+        }
+    )
+    assert request_fingerprint(routed) != legacy
 
 
 @pytest.mark.asyncio
