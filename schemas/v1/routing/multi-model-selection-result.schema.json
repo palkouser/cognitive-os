@@ -1,0 +1,91 @@
+{
+  "$defs": {
+    "ExecutionRole": {
+      "enum": [
+        "primary",
+        "fallback",
+        "planner",
+        "executor",
+        "generator",
+        "critic",
+        "proposer"
+      ],
+      "title": "ExecutionRole",
+      "type": "string"
+    },
+    "MultiModelRoleResult": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "decision_id": {
+          "format": "uuid",
+          "title": "Decision Id",
+          "type": "string"
+        },
+        "provider_result_reference": {
+          "minLength": 1,
+          "title": "Provider Result Reference",
+          "type": "string"
+        },
+        "role": {
+          "$ref": "#/$defs/ExecutionRole"
+        }
+      },
+      "required": [
+        "role",
+        "decision_id",
+        "provider_result_reference"
+      ],
+      "title": "MultiModelRoleResult",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/routing/multi-model-selection-result.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "accepted_role": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ExecutionRole"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "plan_id": {
+      "format": "uuid",
+      "title": "Plan Id",
+      "type": "string"
+    },
+    "role_results": {
+      "items": {
+        "$ref": "#/$defs/MultiModelRoleResult"
+      },
+      "title": "Role Results",
+      "type": "array"
+    },
+    "verifier_result_reference": {
+      "minLength": 1,
+      "title": "Verifier Result Reference",
+      "type": "string"
+    }
+  },
+  "required": [
+    "plan_id",
+    "role_results",
+    "verifier_result_reference"
+  ],
+  "title": "MultiModelSelectionResult",
+  "type": "object"
+}

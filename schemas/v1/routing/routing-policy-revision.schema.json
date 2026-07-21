@@ -1,0 +1,303 @@
+{
+  "$defs": {
+    "CapabilitySupportStatus": {
+      "enum": [
+        "supported",
+        "unsupported",
+        "unknown",
+        "restricted"
+      ],
+      "title": "CapabilitySupportStatus",
+      "type": "string"
+    },
+    "ModelCapabilityRequirement": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "dimension": {
+          "minLength": 1,
+          "title": "Dimension",
+          "type": "string"
+        },
+        "hard": {
+          "default": true,
+          "title": "Hard",
+          "type": "boolean"
+        },
+        "minimum_value": {
+          "anyOf": [
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum Value"
+        },
+        "required_support": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CapabilitySupportStatus"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "dimension"
+      ],
+      "title": "ModelCapabilityRequirement",
+      "type": "object"
+    },
+    "MultiModelPatternType": {
+      "enum": [
+        "single_model",
+        "primary_with_fallback",
+        "planner_executor",
+        "generator_critic",
+        "multiple_proposals_with_verifier_selection"
+      ],
+      "title": "MultiModelPatternType",
+      "type": "string"
+    },
+    "RoutingBudget": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "maximum_calls": {
+          "default": 1,
+          "maximum": 8,
+          "minimum": 1,
+          "title": "Maximum Calls",
+          "type": "integer"
+        },
+        "maximum_cost_units": {
+          "anyOf": [
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum Cost Units"
+        },
+        "maximum_seconds": {
+          "default": "120",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Maximum Seconds",
+          "type": "string"
+        },
+        "maximum_tokens": {
+          "default": 131072,
+          "minimum": 1,
+          "title": "Maximum Tokens",
+          "type": "integer"
+        },
+        "maximum_tool_calls": {
+          "default": 32,
+          "minimum": 0,
+          "title": "Maximum Tool Calls",
+          "type": "integer"
+        }
+      },
+      "title": "RoutingBudget",
+      "type": "object"
+    },
+    "RoutingControlMode": {
+      "enum": [
+        "static",
+        "shadow",
+        "adaptive",
+        "explicit_override",
+        "legacy_static"
+      ],
+      "title": "RoutingControlMode",
+      "type": "string"
+    },
+    "RoutingPolicyStatus": {
+      "enum": [
+        "draft",
+        "staged",
+        "shadow",
+        "approved",
+        "enabled",
+        "disabled",
+        "deprecated",
+        "retracted"
+      ],
+      "title": "RoutingPolicyStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/routing/routing-policy-revision.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "allowed_task_signature_hashes": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Allowed Task Signature Hashes",
+      "type": "array"
+    },
+    "budget_constraints": {
+      "$ref": "#/$defs/RoutingBudget",
+      "default": {
+        "content_hash": "0437e6e807b27d086c769b547d29f76fff41875762cb752b868aa778ee81abab",
+        "maximum_calls": 1,
+        "maximum_cost_units": null,
+        "maximum_seconds": "120",
+        "maximum_tokens": 131072,
+        "maximum_tool_calls": 32
+      }
+    },
+    "candidate_filters": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ModelCapabilityRequirement"
+      },
+      "title": "Candidate Filters",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "control_mode": {
+      "$ref": "#/$defs/RoutingControlMode"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "created_by": {
+      "minLength": 1,
+      "title": "Created By",
+      "type": "string"
+    },
+    "maximum_fallback_models": {
+      "default": 8,
+      "maximum": 8,
+      "minimum": 0,
+      "title": "Maximum Fallback Models",
+      "type": "integer"
+    },
+    "minimum_samples": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Minimum Samples",
+      "type": "integer"
+    },
+    "operator_approval_reference": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Operator Approval Reference"
+    },
+    "policy_id": {
+      "minLength": 1,
+      "title": "Policy Id",
+      "type": "string"
+    },
+    "previous_revision": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Revision"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "revision": {
+      "exclusiveMinimum": 0,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "risk_constraints": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Risk Constraints",
+      "type": "array"
+    },
+    "role_patterns": {
+      "default": [
+        "single_model"
+      ],
+      "items": {
+        "$ref": "#/$defs/MultiModelPatternType"
+      },
+      "title": "Role Patterns",
+      "type": "array"
+    },
+    "score_weights": {
+      "additionalProperties": {
+        "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+        "type": "string"
+      },
+      "propertyNames": {
+        "minLength": 1
+      },
+      "title": "Score Weights",
+      "type": "object"
+    },
+    "status": {
+      "$ref": "#/$defs/RoutingPolicyStatus"
+    },
+    "uncertainty_penalty": {
+      "default": "0.25",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Uncertainty Penalty",
+      "type": "string"
+    }
+  },
+  "required": [
+    "policy_id",
+    "revision",
+    "status",
+    "control_mode",
+    "created_at",
+    "created_by",
+    "reason"
+  ],
+  "title": "RoutingPolicyRevision",
+  "type": "object"
+}

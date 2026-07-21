@@ -1,0 +1,51 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/routing/routing-budget.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "maximum_calls": {
+      "default": 1,
+      "maximum": 8,
+      "minimum": 1,
+      "title": "Maximum Calls",
+      "type": "integer"
+    },
+    "maximum_cost_units": {
+      "anyOf": [
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Maximum Cost Units"
+    },
+    "maximum_seconds": {
+      "default": "120",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Maximum Seconds",
+      "type": "string"
+    },
+    "maximum_tokens": {
+      "default": 131072,
+      "minimum": 1,
+      "title": "Maximum Tokens",
+      "type": "integer"
+    },
+    "maximum_tool_calls": {
+      "default": 32,
+      "minimum": 0,
+      "title": "Maximum Tool Calls",
+      "type": "integer"
+    }
+  },
+  "title": "RoutingBudget",
+  "type": "object"
+}

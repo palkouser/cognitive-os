@@ -15,5 +15,9 @@ implemented governed procedural skills. Sprint 13 implements manually authored s
 deterministic selection, exact skill binding, Strategy-to-Controller plan instantiation, outcome
 statistics, and Context retrieval. Sprint 14 implements deterministic trajectory reconstruction,
 evidence-linked assessment, conservative contribution and generalizability analysis, and nine
-verifier-gated proposed candidate types. Sprint 15 remains responsible for candidate normalization,
-deduplication, licensing, quality policy, staging, and governed destination routing.
+verifier-gated proposed candidate types. Sprint 15 completed governed candidate normalization,
+deduplication, licensing, quality policy, staging, and destination packaging. Together, Sprint 14
+and Sprint 15 complete Gate G. Sprint 16 begins Gate H with credential-free model capability
+profiles, deterministic task signatures, static control routing, non-interfering shadow decisions,
+bounded promotion, fallback, and Controller-owned multi-model patterns. Sprint 17 completes Gate H
+with evidence-backed weakness mining.

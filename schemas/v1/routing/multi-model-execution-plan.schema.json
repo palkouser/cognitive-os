@@ -1,0 +1,197 @@
+{
+  "$defs": {
+    "ExecutionRole": {
+      "enum": [
+        "primary",
+        "fallback",
+        "planner",
+        "executor",
+        "generator",
+        "critic",
+        "proposer"
+      ],
+      "title": "ExecutionRole",
+      "type": "string"
+    },
+    "MultiModelPattern": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "pattern_type": {
+          "$ref": "#/$defs/MultiModelPatternType"
+        },
+        "roles": {
+          "items": {
+            "$ref": "#/$defs/ExecutionRole"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Roles",
+          "type": "array"
+        }
+      },
+      "required": [
+        "pattern_type",
+        "roles"
+      ],
+      "title": "MultiModelPattern",
+      "type": "object"
+    },
+    "MultiModelPatternType": {
+      "enum": [
+        "single_model",
+        "primary_with_fallback",
+        "planner_executor",
+        "generator_critic",
+        "multiple_proposals_with_verifier_selection"
+      ],
+      "title": "MultiModelPatternType",
+      "type": "string"
+    },
+    "MultiModelRole": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "context_bundle_reference": {
+          "minLength": 1,
+          "title": "Context Bundle Reference",
+          "type": "string"
+        },
+        "role": {
+          "$ref": "#/$defs/ExecutionRole"
+        },
+        "routing_decision_id": {
+          "format": "uuid",
+          "title": "Routing Decision Id",
+          "type": "string"
+        },
+        "routing_request_id": {
+          "format": "uuid",
+          "title": "Routing Request Id",
+          "type": "string"
+        },
+        "token_reservation": {
+          "minimum": 0,
+          "title": "Token Reservation",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "role",
+        "routing_request_id",
+        "routing_decision_id",
+        "context_bundle_reference",
+        "token_reservation"
+      ],
+      "title": "MultiModelRole",
+      "type": "object"
+    },
+    "RoutingBudget": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "maximum_calls": {
+          "default": 1,
+          "maximum": 8,
+          "minimum": 1,
+          "title": "Maximum Calls",
+          "type": "integer"
+        },
+        "maximum_cost_units": {
+          "anyOf": [
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum Cost Units"
+        },
+        "maximum_seconds": {
+          "default": "120",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Maximum Seconds",
+          "type": "string"
+        },
+        "maximum_tokens": {
+          "default": 131072,
+          "minimum": 1,
+          "title": "Maximum Tokens",
+          "type": "integer"
+        },
+        "maximum_tool_calls": {
+          "default": 32,
+          "minimum": 0,
+          "title": "Maximum Tool Calls",
+          "type": "integer"
+        }
+      },
+      "title": "RoutingBudget",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/routing/multi-model-execution-plan.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "controller_plan_reference": {
+      "minLength": 1,
+      "title": "Controller Plan Reference",
+      "type": "string"
+    },
+    "effective_budget": {
+      "$ref": "#/$defs/RoutingBudget"
+    },
+    "pattern": {
+      "$ref": "#/$defs/MultiModelPattern"
+    },
+    "plan_id": {
+      "format": "uuid",
+      "title": "Plan Id",
+      "type": "string"
+    },
+    "roles": {
+      "items": {
+        "$ref": "#/$defs/MultiModelRole"
+      },
+      "maxItems": 8,
+      "minItems": 1,
+      "title": "Roles",
+      "type": "array"
+    },
+    "verifier_reference": {
+      "minLength": 1,
+      "title": "Verifier Reference",
+      "type": "string"
+    }
+  },
+  "required": [
+    "plan_id",
+    "pattern",
+    "roles",
+    "effective_budget",
+    "verifier_reference",
+    "controller_plan_reference"
+  ],
+  "title": "MultiModelExecutionPlan",
+  "type": "object"
+}

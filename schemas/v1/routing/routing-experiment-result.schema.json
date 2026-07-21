@@ -1,0 +1,126 @@
+{
+  "$defs": {
+    "ShadowRoutingResult": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "executed_outcome_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Executed Outcome Id"
+        },
+        "expected_score_delta": {
+          "anyOf": [
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Expected Score Delta"
+        },
+        "shadow_actual_outcome": {
+          "default": null,
+          "title": "Shadow Actual Outcome",
+          "type": "null"
+        },
+        "shadow_decision_id": {
+          "format": "uuid",
+          "title": "Shadow Decision Id",
+          "type": "string"
+        },
+        "shadow_model_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Shadow Model Hash"
+        },
+        "static_decision_id": {
+          "format": "uuid",
+          "title": "Static Decision Id",
+          "type": "string"
+        },
+        "static_model_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Static Model Hash"
+        }
+      },
+      "required": [
+        "static_decision_id",
+        "shadow_decision_id",
+        "static_model_hash",
+        "shadow_model_hash",
+        "expected_score_delta"
+      ],
+      "title": "ShadowRoutingResult",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/routing/routing-experiment-result.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "agreement_rate": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Agreement Rate",
+      "type": "string"
+    },
+    "completed_at": {
+      "format": "date-time",
+      "title": "Completed At",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "experiment_id": {
+      "format": "uuid",
+      "title": "Experiment Id",
+      "type": "string"
+    },
+    "results": {
+      "items": {
+        "$ref": "#/$defs/ShadowRoutingResult"
+      },
+      "title": "Results",
+      "type": "array"
+    }
+  },
+  "required": [
+    "experiment_id",
+    "results",
+    "agreement_rate",
+    "completed_at"
+  ],
+  "title": "RoutingExperimentResult",
+  "type": "object"
+}

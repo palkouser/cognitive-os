@@ -1,0 +1,490 @@
+{
+  "$defs": {
+    "CapabilityEvidenceType": {
+      "enum": [
+        "provider_self_description",
+        "provider_documentation",
+        "operator_declaration",
+        "replay_contract_evidence",
+        "deterministic_benchmark",
+        "opt_in_live_benchmark",
+        "verified_task_outcome"
+      ],
+      "title": "CapabilityEvidenceType",
+      "type": "string"
+    },
+    "ContextSizeClass": {
+      "enum": [
+        "small",
+        "medium",
+        "large",
+        "long",
+        "unknown"
+      ],
+      "title": "ContextSizeClass",
+      "type": "string"
+    },
+    "CostClass": {
+      "enum": [
+        "low",
+        "standard",
+        "premium",
+        "unknown"
+      ],
+      "title": "CostClass",
+      "type": "string"
+    },
+    "ExecutionRole": {
+      "enum": [
+        "primary",
+        "fallback",
+        "planner",
+        "executor",
+        "generator",
+        "critic",
+        "proposer"
+      ],
+      "title": "ExecutionRole",
+      "type": "string"
+    },
+    "LatencyClass": {
+      "enum": [
+        "low",
+        "standard",
+        "relaxed",
+        "unknown"
+      ],
+      "title": "LatencyClass",
+      "type": "string"
+    },
+    "ModelIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "endpoint_profile": {
+          "minLength": 1,
+          "title": "Endpoint Profile",
+          "type": "string"
+        },
+        "execution_mode": {
+          "minLength": 1,
+          "title": "Execution Mode",
+          "type": "string"
+        },
+        "model_id": {
+          "minLength": 1,
+          "title": "Model Id",
+          "type": "string"
+        },
+        "model_revision": {
+          "minLength": 1,
+          "title": "Model Revision",
+          "type": "string"
+        },
+        "provider_id": {
+          "minLength": 1,
+          "title": "Provider Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider_id",
+        "model_id",
+        "model_revision",
+        "endpoint_profile",
+        "execution_mode"
+      ],
+      "title": "ModelIdentity",
+      "type": "object"
+    },
+    "RoutingObservationStatus": {
+      "enum": [
+        "accepted",
+        "rejected",
+        "unverifiable"
+      ],
+      "title": "RoutingObservationStatus",
+      "type": "string"
+    },
+    "TaskComplexityClass": {
+      "enum": [
+        "trivial",
+        "small",
+        "medium",
+        "large",
+        "long_horizon",
+        "unknown"
+      ],
+      "title": "TaskComplexityClass",
+      "type": "string"
+    },
+    "TaskSignature": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "context_size_class": {
+          "$ref": "#/$defs/ContextSizeClass",
+          "default": "unknown"
+        },
+        "cost_class": {
+          "$ref": "#/$defs/CostClass",
+          "default": "unknown"
+        },
+        "estimated_complexity": {
+          "$ref": "#/$defs/TaskComplexityClass",
+          "default": "unknown"
+        },
+        "execution_role": {
+          "$ref": "#/$defs/ExecutionRole",
+          "default": "primary"
+        },
+        "latency_class": {
+          "$ref": "#/$defs/LatencyClass",
+          "default": "unknown"
+        },
+        "output_type": {
+          "minLength": 1,
+          "title": "Output Type",
+          "type": "string"
+        },
+        "problem_class": {
+          "minLength": 1,
+          "title": "Problem Class",
+          "type": "string"
+        },
+        "problem_domain": {
+          "minLength": 1,
+          "title": "Problem Domain",
+          "type": "string"
+        },
+        "profile_version": {
+          "default": "task-signature-v1",
+          "minLength": 1,
+          "title": "Profile Version",
+          "type": "string"
+        },
+        "repository_profile": {
+          "default": "unknown",
+          "minLength": 1,
+          "title": "Repository Profile",
+          "type": "string"
+        },
+        "required_structured_output": {
+          "default": false,
+          "title": "Required Structured Output",
+          "type": "boolean"
+        },
+        "required_tool_capabilities": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Required Tool Capabilities",
+          "type": "array"
+        },
+        "risk_level": {
+          "default": "standard",
+          "minLength": 1,
+          "title": "Risk Level",
+          "type": "string"
+        },
+        "skill_revisions": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Skill Revisions",
+          "type": "array"
+        },
+        "strategy_revisions": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Strategy Revisions",
+          "type": "array"
+        },
+        "verifier_profile": {
+          "default": "default",
+          "minLength": 1,
+          "title": "Verifier Profile",
+          "type": "string"
+        }
+      },
+      "required": [
+        "problem_domain",
+        "problem_class",
+        "output_type"
+      ],
+      "title": "TaskSignature",
+      "type": "object"
+    },
+    "TokenUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "cached_input_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cached Input Tokens"
+        },
+        "input_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input Tokens"
+        },
+        "output_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Tokens"
+        },
+        "reasoning_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reasoning Tokens"
+        },
+        "total_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Tokens"
+        }
+      },
+      "title": "TokenUsage",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/routing/routing-observation.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "acceptance_decision_reference": {
+      "minLength": 1,
+      "title": "Acceptance Decision Reference",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "context_bundle_reference": {
+      "minLength": 1,
+      "title": "Context Bundle Reference",
+      "type": "string"
+    },
+    "cost_units": {
+      "anyOf": [
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cost Units"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "evidence_type": {
+      "$ref": "#/$defs/CapabilityEvidenceType"
+    },
+    "execution_role": {
+      "$ref": "#/$defs/ExecutionRole"
+    },
+    "latency_ms": {
+      "anyOf": [
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Latency Ms"
+    },
+    "model_identity": {
+      "$ref": "#/$defs/ModelIdentity"
+    },
+    "observation_id": {
+      "format": "uuid",
+      "title": "Observation Id",
+      "type": "string"
+    },
+    "provider_call_reference": {
+      "minLength": 1,
+      "title": "Provider Call Reference",
+      "type": "string"
+    },
+    "routing_policy_reference": {
+      "minLength": 1,
+      "title": "Routing Policy Reference",
+      "type": "string"
+    },
+    "safety_passed": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Safety Passed"
+    },
+    "skill_revision": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Skill Revision"
+    },
+    "source_refs": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Source Refs",
+      "type": "array"
+    },
+    "status": {
+      "$ref": "#/$defs/RoutingObservationStatus"
+    },
+    "strategy_revision": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Strategy Revision"
+    },
+    "structured_output_valid": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Structured Output Valid"
+    },
+    "task_signature": {
+      "$ref": "#/$defs/TaskSignature"
+    },
+    "token_usage": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TokenUsage"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "tool_calls_valid": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tool Calls Valid"
+    },
+    "verifier_bundle_reference": {
+      "minLength": 1,
+      "title": "Verifier Bundle Reference",
+      "type": "string"
+    }
+  },
+  "required": [
+    "observation_id",
+    "model_identity",
+    "task_signature",
+    "routing_policy_reference",
+    "execution_role",
+    "provider_call_reference",
+    "context_bundle_reference",
+    "verifier_bundle_reference",
+    "acceptance_decision_reference",
+    "status",
+    "source_refs",
+    "evidence_type",
+    "created_at"
+  ],
+  "title": "RoutingObservation",
+  "type": "object"
+}

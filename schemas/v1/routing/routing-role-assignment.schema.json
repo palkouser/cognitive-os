@@ -1,0 +1,46 @@
+{
+  "$defs": {
+    "ExecutionRole": {
+      "enum": [
+        "primary",
+        "fallback",
+        "planner",
+        "executor",
+        "generator",
+        "critic",
+        "proposer"
+      ],
+      "title": "ExecutionRole",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/routing/routing-role-assignment.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "model_identity_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Model Identity Hash",
+      "type": "string"
+    },
+    "role": {
+      "$ref": "#/$defs/ExecutionRole"
+    },
+    "routing_decision_id": {
+      "format": "uuid",
+      "title": "Routing Decision Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "role",
+    "model_identity_hash",
+    "routing_decision_id"
+  ],
+  "title": "RoutingRoleAssignment",
+  "type": "object"
+}

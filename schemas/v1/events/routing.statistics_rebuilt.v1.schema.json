@@ -1,0 +1,28 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/routing.statistics_rebuilt.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "statistics_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Statistics Hash",
+      "type": "string"
+    },
+    "statistics_id": {
+      "format": "uuid",
+      "title": "Statistics Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "statistics_id",
+    "statistics_hash",
+    "occurred_at"
+  ],
+  "title": "RoutingStatisticsRebuilt",
+  "type": "object"
+}

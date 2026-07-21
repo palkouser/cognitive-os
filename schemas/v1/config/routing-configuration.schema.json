@@ -1,0 +1,232 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/config/routing-configuration.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "adaptive_execution_enabled": {
+      "default": false,
+      "title": "Adaptive Execution Enabled",
+      "type": "boolean"
+    },
+    "allow_automatic_policy_promotion": {
+      "default": false,
+      "title": "Allow Automatic Policy Promotion",
+      "type": "boolean"
+    },
+    "allow_automatic_provider_enablement": {
+      "default": false,
+      "title": "Allow Automatic Provider Enablement",
+      "type": "boolean"
+    },
+    "allow_credential_storage": {
+      "default": false,
+      "title": "Allow Credential Storage",
+      "type": "boolean"
+    },
+    "allow_external_routing_runtime": {
+      "default": false,
+      "title": "Allow External Routing Runtime",
+      "type": "boolean"
+    },
+    "allow_provider_declared_capabilities": {
+      "default": true,
+      "title": "Allow Provider Declared Capabilities",
+      "type": "boolean"
+    },
+    "allow_provider_self_reported_measurements": {
+      "default": false,
+      "title": "Allow Provider Self Reported Measurements",
+      "type": "boolean"
+    },
+    "allow_unbounded_multi_model_patterns": {
+      "default": false,
+      "title": "Allow Unbounded Multi Model Patterns",
+      "type": "boolean"
+    },
+    "allow_unknown_cost": {
+      "default": true,
+      "title": "Allow Unknown Cost",
+      "type": "boolean"
+    },
+    "allow_unknown_latency": {
+      "default": true,
+      "title": "Allow Unknown Latency",
+      "type": "boolean"
+    },
+    "exploration_enabled": {
+      "default": false,
+      "title": "Exploration Enabled",
+      "type": "boolean"
+    },
+    "learned_routing_enabled": {
+      "default": false,
+      "title": "Learned Routing Enabled",
+      "type": "boolean"
+    },
+    "maximum_allowed_policy_regression": {
+      "default": 0.0,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Maximum Allowed Policy Regression",
+      "type": "number"
+    },
+    "maximum_allowed_safety_regression": {
+      "default": 0.0,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Maximum Allowed Safety Regression",
+      "type": "number"
+    },
+    "maximum_candidate_models": {
+      "default": 32,
+      "maximum": 32,
+      "minimum": 1,
+      "title": "Maximum Candidate Models",
+      "type": "integer"
+    },
+    "maximum_decision_trace_bytes": {
+      "default": 1048576,
+      "maximum": 1048576,
+      "minimum": 1,
+      "title": "Maximum Decision Trace Bytes",
+      "type": "integer"
+    },
+    "maximum_experiment_cases": {
+      "default": 10000,
+      "maximum": 10000,
+      "minimum": 1,
+      "title": "Maximum Experiment Cases",
+      "type": "integer"
+    },
+    "maximum_fallback_depth": {
+      "default": 4,
+      "maximum": 4,
+      "minimum": 0,
+      "title": "Maximum Fallback Depth",
+      "type": "integer"
+    },
+    "maximum_fallback_models": {
+      "default": 8,
+      "maximum": 8,
+      "minimum": 0,
+      "title": "Maximum Fallback Models",
+      "type": "integer"
+    },
+    "maximum_models": {
+      "default": 256,
+      "maximum": 256,
+      "minimum": 1,
+      "title": "Maximum Models",
+      "type": "integer"
+    },
+    "maximum_multi_model_calls": {
+      "default": 8,
+      "maximum": 8,
+      "minimum": 1,
+      "title": "Maximum Multi Model Calls",
+      "type": "integer"
+    },
+    "maximum_observations_per_import": {
+      "default": 10000,
+      "maximum": 10000,
+      "minimum": 1,
+      "title": "Maximum Observations Per Import",
+      "type": "integer"
+    },
+    "maximum_policy_revisions": {
+      "default": 1000,
+      "maximum": 1000,
+      "minimum": 1,
+      "title": "Maximum Policy Revisions",
+      "type": "integer"
+    },
+    "maximum_profile_revisions": {
+      "default": 1000,
+      "maximum": 1000,
+      "minimum": 1,
+      "title": "Maximum Profile Revisions",
+      "type": "integer"
+    },
+    "maximum_role_assignments": {
+      "default": 8,
+      "maximum": 8,
+      "minimum": 1,
+      "title": "Maximum Role Assignments",
+      "type": "integer"
+    },
+    "maximum_routing_seconds": {
+      "default": 10,
+      "maximum": 10,
+      "minimum": 1,
+      "title": "Maximum Routing Seconds",
+      "type": "integer"
+    },
+    "maximum_statistics_cohorts": {
+      "default": 100000,
+      "maximum": 100000,
+      "minimum": 1,
+      "title": "Maximum Statistics Cohorts",
+      "type": "integer"
+    },
+    "maximum_task_signature_dimensions": {
+      "default": 32,
+      "maximum": 32,
+      "minimum": 1,
+      "title": "Maximum Task Signature Dimensions",
+      "type": "integer"
+    },
+    "minimum_adaptive_samples": {
+      "default": 30,
+      "minimum": 1,
+      "title": "Minimum Adaptive Samples",
+      "type": "integer"
+    },
+    "minimum_live_outcome_cases": {
+      "default": 10,
+      "minimum": 1,
+      "title": "Minimum Live Outcome Cases",
+      "type": "integer"
+    },
+    "minimum_measured_samples": {
+      "default": 5,
+      "minimum": 1,
+      "title": "Minimum Measured Samples",
+      "type": "integer"
+    },
+    "minimum_promotion_benchmark_cases": {
+      "default": 30,
+      "minimum": 1,
+      "title": "Minimum Promotion Benchmark Cases",
+      "type": "integer"
+    },
+    "minimum_required_quality_improvement": {
+      "default": 0.02,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Minimum Required Quality Improvement",
+      "type": "number"
+    },
+    "minimum_shadow_cases": {
+      "default": 50,
+      "minimum": 1,
+      "title": "Minimum Shadow Cases",
+      "type": "integer"
+    },
+    "shadow_execution_enabled": {
+      "default": false,
+      "title": "Shadow Execution Enabled",
+      "type": "boolean"
+    },
+    "shadow_routing_enabled": {
+      "default": true,
+      "title": "Shadow Routing Enabled",
+      "type": "boolean"
+    },
+    "static_policy_id": {
+      "default": "default-static",
+      "title": "Static Policy Id",
+      "type": "string"
+    }
+  },
+  "title": "RoutingConfiguration",
+  "type": "object"
+}

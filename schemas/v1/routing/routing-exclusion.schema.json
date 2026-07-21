@@ -1,0 +1,52 @@
+{
+  "$defs": {
+    "RoutingExclusionReason": {
+      "enum": [
+        "provider_disabled",
+        "provider_unhealthy",
+        "model_not_configured",
+        "context_limit",
+        "structured_output",
+        "tool_calling",
+        "modality",
+        "risk",
+        "provider_policy",
+        "execution_mode",
+        "safety",
+        "cost",
+        "policy_status"
+      ],
+      "title": "RoutingExclusionReason",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/routing/routing-exclusion.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "detail": {
+      "minLength": 1,
+      "title": "Detail",
+      "type": "string"
+    },
+    "model_identity_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Model Identity Hash",
+      "type": "string"
+    },
+    "reason": {
+      "$ref": "#/$defs/RoutingExclusionReason"
+    }
+  },
+  "required": [
+    "model_identity_hash",
+    "reason",
+    "detail"
+  ],
+  "title": "RoutingExclusion",
+  "type": "object"
+}

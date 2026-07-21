@@ -1,0 +1,67 @@
+{
+  "$defs": {
+    "ProviderHealthSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "checked_at": {
+          "format": "date-time",
+          "title": "Checked At",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "provider_id": {
+          "minLength": 1,
+          "title": "Provider Id",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/ProviderStatus"
+        }
+      },
+      "required": [
+        "provider_id",
+        "status",
+        "checked_at"
+      ],
+      "title": "ProviderHealthSnapshot",
+      "type": "object"
+    },
+    "ProviderStatus": {
+      "enum": [
+        "available",
+        "degraded",
+        "unavailable",
+        "misconfigured",
+        "unauthenticated"
+      ],
+      "title": "ProviderStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/routing/provider-registry-snapshot.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "health": {
+      "items": {
+        "$ref": "#/$defs/ProviderHealthSnapshot"
+      },
+      "maxItems": 256,
+      "title": "Health",
+      "type": "array"
+    }
+  },
+  "required": [
+    "health"
+  ],
+  "title": "ProviderRegistrySnapshot",
+  "type": "object"
+}

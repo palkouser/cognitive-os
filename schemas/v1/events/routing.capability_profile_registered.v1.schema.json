@@ -1,0 +1,33 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/routing.capability_profile_registered.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "model_identity_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Model Identity Hash",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "profile_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Profile Hash",
+      "type": "string"
+    },
+    "profile_revision": {
+      "title": "Profile Revision",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "model_identity_hash",
+    "profile_revision",
+    "profile_hash",
+    "occurred_at"
+  ],
+  "title": "CapabilityProfileRegistered",
+  "type": "object"
+}

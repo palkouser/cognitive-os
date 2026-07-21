@@ -386,6 +386,66 @@
       "schema_version": 1
     },
     {
+      "event_type": "routing.adaptive_policy_disabled",
+      "file": "v1/events/routing.adaptive_policy_disabled.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "routing.adaptive_policy_enabled",
+      "file": "v1/events/routing.adaptive_policy_enabled.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "routing.capability_profile_registered",
+      "file": "v1/events/routing.capability_profile_registered.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "routing.capability_revision_appended",
+      "file": "v1/events/routing.capability_revision_appended.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "routing.decision_recorded",
+      "file": "v1/events/routing.decision_recorded.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "routing.experiment_completed",
+      "file": "v1/events/routing.experiment_completed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "routing.experiment_created",
+      "file": "v1/events/routing.experiment_created.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "routing.outcome_recorded",
+      "file": "v1/events/routing.outcome_recorded.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "routing.policy_created",
+      "file": "v1/events/routing.policy_created.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "routing.policy_revision_appended",
+      "file": "v1/events/routing.policy_revision_appended.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "routing.shadow_decision_recorded",
+      "file": "v1/events/routing.shadow_decision_recorded.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "routing.statistics_rebuilt",
+      "file": "v1/events/routing.statistics_rebuilt.v1.schema.json",
+      "schema_version": 1
+    },
+    {
       "event_type": "run.resumed",
       "file": "v1/events/run.resumed.v1.schema.json",
       "schema_version": 1
@@ -707,6 +767,11 @@
       "file": "v1/config/memory-configuration.schema.json",
       "model": "MemoryConfiguration",
       "sha256": "65bfef7c923ea727af8f2397e15de57c4831518c9bd709aa8f487ed27905d8d8"
+    },
+    {
+      "file": "v1/config/routing-configuration.schema.json",
+      "model": "RoutingConfiguration",
+      "sha256": "93422939432dd213ffe178cbb361adc878066a4ef9ae7b360b8a13e2658ed43b"
     },
     {
       "file": "v1/config/semantic-memory-configuration.schema.json",
@@ -1341,7 +1406,7 @@
     {
       "file": "v1/domain/model-provider-request.schema.json",
       "model": "ModelProviderRequest",
-      "sha256": "7d47accf47784b5c7784a945f643602a045192c535fa5dc2d5f869ed2a87e57c"
+      "sha256": "249b82f1a15f4a11210ff2ff24aeaeb15049d2d24ea9b1eb9fa61ae772eab7b4"
     },
     {
       "file": "v1/domain/model-provider-response.schema.json",
@@ -1937,6 +2002,66 @@
       "file": "v1/events/problem.representation_revised.v1.schema.json",
       "model": "ProblemRepresentationRevised",
       "sha256": "5f038204d640fe9910313df687d059ef7170e1c9c93c7459f0762635a6aac151"
+    },
+    {
+      "file": "v1/events/routing.adaptive_policy_disabled.v1.schema.json",
+      "model": "AdaptivePolicyDisabled",
+      "sha256": "fa9ecd0e5db119ccd99f7d23b6acb2fcf9089d04f7cc4c7f0e49164ecada747a"
+    },
+    {
+      "file": "v1/events/routing.adaptive_policy_enabled.v1.schema.json",
+      "model": "AdaptivePolicyEnabled",
+      "sha256": "d7e316d854230957e92fef8da48959065a498dfc510ec724629986254b20839e"
+    },
+    {
+      "file": "v1/events/routing.capability_profile_registered.v1.schema.json",
+      "model": "CapabilityProfileRegistered",
+      "sha256": "327a8d55653561ea9c21dc7379a0562674ee7a3a59f87a41ffcb35250a05a162"
+    },
+    {
+      "file": "v1/events/routing.capability_revision_appended.v1.schema.json",
+      "model": "CapabilityRevisionAppended",
+      "sha256": "a79be143802ee9e8098abc4760b24de7a40ec63e1b0443d1472882c104605490"
+    },
+    {
+      "file": "v1/events/routing.decision_recorded.v1.schema.json",
+      "model": "RoutingDecisionRecorded",
+      "sha256": "898f6f2327bee9fbccf3f2eb56d5cb7dde66fe899c47bb7de810759773d68005"
+    },
+    {
+      "file": "v1/events/routing.experiment_completed.v1.schema.json",
+      "model": "RoutingExperimentCompleted",
+      "sha256": "b825a17aef6cf644673417e25ca81b4d6dbb0f3511b90d3ae6367ae33a2fbf07"
+    },
+    {
+      "file": "v1/events/routing.experiment_created.v1.schema.json",
+      "model": "RoutingExperimentCreated",
+      "sha256": "8c3ad83e261bd7bbce4325800e382ffba1a0421fa0de4dc52501b40ca3e8bf74"
+    },
+    {
+      "file": "v1/events/routing.outcome_recorded.v1.schema.json",
+      "model": "RoutingOutcomeRecorded",
+      "sha256": "5cd1fda6af4e550b63da92d294460e7e28899058b535f10120efe4e601d9e3d5"
+    },
+    {
+      "file": "v1/events/routing.policy_created.v1.schema.json",
+      "model": "RoutingPolicyCreated",
+      "sha256": "684b8ba921762b0d01cff11914e272948a352eaf01ed4f882c3cf8ad34023a55"
+    },
+    {
+      "file": "v1/events/routing.policy_revision_appended.v1.schema.json",
+      "model": "RoutingPolicyRevisionAppended",
+      "sha256": "daabaf0f5876fd14086603b5b86bafb12572e99fe9895bc6e2ad3bb9ea759221"
+    },
+    {
+      "file": "v1/events/routing.shadow_decision_recorded.v1.schema.json",
+      "model": "ShadowDecisionRecorded",
+      "sha256": "fc76f3293dd2281e556ab3135d5cf0d1f165d77fb137ea240675e6f30ee3c9e3"
+    },
+    {
+      "file": "v1/events/routing.statistics_rebuilt.v1.schema.json",
+      "model": "RoutingStatisticsRebuilt",
+      "sha256": "44a5d0793d329da7bbf5712c9cf030c20a3b9017e5a2aa9bb557e64851d28edb"
     },
     {
       "file": "v1/events/run.resumed.v1.schema.json",
@@ -2587,6 +2712,226 @@
       "file": "v1/memory/verification-summary-memory-content.schema.json",
       "model": "VerificationSummaryMemoryContent",
       "sha256": "0a8b3f034037a980af0f3b834d79bbe8be57f48f501c42721c0c920d03478b12"
+    },
+    {
+      "file": "v1/routing/capability-cohort.schema.json",
+      "model": "CapabilityCohort",
+      "sha256": "214c96810d7e44564a6be6e848c75c53efe2249232909918d70b457a340ed62a"
+    },
+    {
+      "file": "v1/routing/capability-estimate-set.schema.json",
+      "model": "CapabilityEstimateSet",
+      "sha256": "30e0f24fb3f10444f4ee2de21048ec50fd5ca2f1c21b585a2fe198f20846f0b1"
+    },
+    {
+      "file": "v1/routing/capability-estimate.schema.json",
+      "model": "CapabilityEstimate",
+      "sha256": "4bfb5eb49db5ba0782f72413faa8568944d887015b16002b4dec2505367a95ac"
+    },
+    {
+      "file": "v1/routing/capability-measurement.schema.json",
+      "model": "CapabilityMeasurement",
+      "sha256": "b00422144a743c9c9e19f77c17b5fc8735a20a3812193ca7cc80451e827a725b"
+    },
+    {
+      "file": "v1/routing/capability-registry-snapshot.schema.json",
+      "model": "CapabilityRegistrySnapshot",
+      "sha256": "c2d8a4d77de27a0efa757c6938492829efd0fcb6855dc5e87e61c396023c260e"
+    },
+    {
+      "file": "v1/routing/capability-source-reference.schema.json",
+      "model": "CapabilitySourceReference",
+      "sha256": "ef8d2b1dfa1528a8f959371845025892a08f363ce83c85c22165373d986580b1"
+    },
+    {
+      "file": "v1/routing/context-requirement.schema.json",
+      "model": "ContextRequirement",
+      "sha256": "707addfb183976005d3877796c0f8496681be11262bbc07d5eb510b215c74c17"
+    },
+    {
+      "file": "v1/routing/declared-capability-set.schema.json",
+      "model": "DeclaredCapabilitySet",
+      "sha256": "0f5b878a28a9c0d8caa451bffa237cb6024b177c7e7bc3bb7cca681f8374ffe9"
+    },
+    {
+      "file": "v1/routing/declared-capability.schema.json",
+      "model": "DeclaredCapability",
+      "sha256": "2cd81a10b6f608adab9bc3a122685f22220c3ccc89fa59ddf5188f321ad1e01a"
+    },
+    {
+      "file": "v1/routing/model-capability-profile.schema.json",
+      "model": "ModelCapabilityProfile",
+      "sha256": "3bfb45ecfa3d3d521f4ccd2f1effb4d22ea2b172dd3e146b8fd7b2b94d951516"
+    },
+    {
+      "file": "v1/routing/model-capability-requirement.schema.json",
+      "model": "ModelCapabilityRequirement",
+      "sha256": "5e480cfb2de2a6ccb0dbebb565830ac8606c4e9f485fe33bc38f51fdab2f4ab0"
+    },
+    {
+      "file": "v1/routing/model-identity.schema.json",
+      "model": "ModelIdentity",
+      "sha256": "0d327dc064fa6895a3af52960fb6f3de65a5233705e67b184c9b727637277bcc"
+    },
+    {
+      "file": "v1/routing/multi-model-execution-plan.schema.json",
+      "model": "MultiModelExecutionPlan",
+      "sha256": "a0135e4d4cb3a287d570a19c3d8ea5266a1d6648b5d01ccdef0145134cd9cce0"
+    },
+    {
+      "file": "v1/routing/multi-model-pattern.schema.json",
+      "model": "MultiModelPattern",
+      "sha256": "9c4625b7bb97e358cbbe4ab4296510f863382c0d6185497c364fde92ddae43cb"
+    },
+    {
+      "file": "v1/routing/multi-model-role-result.schema.json",
+      "model": "MultiModelRoleResult",
+      "sha256": "83fcf03ddadd6f3af8cb7fe1f44989498bbaf83028bd54876462d3fb92dc2dcf"
+    },
+    {
+      "file": "v1/routing/multi-model-role.schema.json",
+      "model": "MultiModelRole",
+      "sha256": "458b0eb6a2e21f20eeb77ac58cba435b3ed45675508ad4aaecb4a21c0233ba23"
+    },
+    {
+      "file": "v1/routing/multi-model-selection-result.schema.json",
+      "model": "MultiModelSelectionResult",
+      "sha256": "944417cd509807fded7859b85c89a54125f770a5af32ae2cc3c84f7d2acf3db1"
+    },
+    {
+      "file": "v1/routing/operator-routing-restriction.schema.json",
+      "model": "OperatorRoutingRestriction",
+      "sha256": "f8306a1c85b241e494af02379b2b618a8df97c054e01b3bc2cbffa3acd60ab94"
+    },
+    {
+      "file": "v1/routing/provider-health-snapshot.schema.json",
+      "model": "ProviderHealthSnapshot",
+      "sha256": "40cc2ed92d43efe69c519fb5ec4578ae9d06bedfb1aedee05226893a8e3f2186"
+    },
+    {
+      "file": "v1/routing/provider-policy-constraint.schema.json",
+      "model": "ProviderPolicyConstraint",
+      "sha256": "cdfe13eee12d82bbb30ebd98e8e9b95d1a432554fdb3904d7b2fa09d1640719d"
+    },
+    {
+      "file": "v1/routing/provider-registry-snapshot.schema.json",
+      "model": "ProviderRegistrySnapshot",
+      "sha256": "5b88441df68c1fc46101b7f8e732abae329d76e2d445a6bab1081e3450d88812"
+    },
+    {
+      "file": "v1/routing/routing-access-record.schema.json",
+      "model": "RoutingAccessRecord",
+      "sha256": "b17a2c3f7d91fe54fad3a3444cda35dde0c1d41d727efe6f8943aa1733425ddf"
+    },
+    {
+      "file": "v1/routing/routing-budget.schema.json",
+      "model": "RoutingBudget",
+      "sha256": "b80f9ce40102a92d402dd4c7e0f75e380644549045a479e6d9f44175c3701e24"
+    },
+    {
+      "file": "v1/routing/routing-candidate-score.schema.json",
+      "model": "RoutingCandidateScore",
+      "sha256": "4b977321aea2b27d21584a97d89b1f07017fa685b079a8984b0d0429c7237eb1"
+    },
+    {
+      "file": "v1/routing/routing-candidate.schema.json",
+      "model": "RoutingCandidate",
+      "sha256": "d3b410147102c45a6752ed89cb1cddebbde803e872ced9936f471ea8800fedef"
+    },
+    {
+      "file": "v1/routing/routing-decision.schema.json",
+      "model": "RoutingDecision",
+      "sha256": "34059f04e105114c48c8375b818ef47f790c44667822c615821215c726bd966a"
+    },
+    {
+      "file": "v1/routing/routing-exclusion.schema.json",
+      "model": "RoutingExclusion",
+      "sha256": "c9b7a1e3a32744b4e9e3a334c5c0189d54520319ae57b587b4e0dd34a723e7f3"
+    },
+    {
+      "file": "v1/routing/routing-experiment-case.schema.json",
+      "model": "RoutingExperimentCase",
+      "sha256": "cbd04acfe36e35208743601f4943345fc0082fe5f06df82bf3f6d691ac1ff6c2"
+    },
+    {
+      "file": "v1/routing/routing-experiment-result.schema.json",
+      "model": "RoutingExperimentResult",
+      "sha256": "192493ebad6841745512c30c62871ad07d9179b0f286e1cbeec8fdcb59ffc6c6"
+    },
+    {
+      "file": "v1/routing/routing-experiment.schema.json",
+      "model": "RoutingExperiment",
+      "sha256": "12216a42f7eb1569ce6c805de28771a681b326a5ba9056d608c16c8fdda566f3"
+    },
+    {
+      "file": "v1/routing/routing-fallback-entry.schema.json",
+      "model": "RoutingFallbackEntry",
+      "sha256": "4c2d92ceba6055b9a06b20052b4912e64b363491d3daf1da67ad49e6b1ff9e5c"
+    },
+    {
+      "file": "v1/routing/routing-observation.schema.json",
+      "model": "RoutingObservation",
+      "sha256": "f15f3b81ddf9410f30de60567af4ed9f9869fb353818a8e5ef0911826bfa2cfd"
+    },
+    {
+      "file": "v1/routing/routing-outcome.schema.json",
+      "model": "RoutingOutcome",
+      "sha256": "133aeaa4c33db749882ce6b03391831d45cb3963a72f3562e0bccaa741083b91"
+    },
+    {
+      "file": "v1/routing/routing-policy-revision.schema.json",
+      "model": "RoutingPolicyRevision",
+      "sha256": "836a49889aa5327e41405b5810a5219e18cc77b5f8e697649d04310ecff62dc7"
+    },
+    {
+      "file": "v1/routing/routing-promotion-assessment.schema.json",
+      "model": "RoutingPromotionAssessment",
+      "sha256": "50df7224cd22efb96c6accf177a81d40b6929e6bfe432ee2ba7ef2ec7959c301"
+    },
+    {
+      "file": "v1/routing/routing-reference.schema.json",
+      "model": "RoutingReference",
+      "sha256": "887393410b1ee816b492177fa8adc84b0aaeec990dca2375a2c750aefa2a8546"
+    },
+    {
+      "file": "v1/routing/routing-request.schema.json",
+      "model": "RoutingRequest",
+      "sha256": "258c85ef49f107770317fcb4706d8786977cef267c24c345d6f04473a0d6d481"
+    },
+    {
+      "file": "v1/routing/routing-role-assignment.schema.json",
+      "model": "RoutingRoleAssignment",
+      "sha256": "4c86e3245e6abc1cf4d294c225a4fdf51952428c467e9d25e169275853aaa793"
+    },
+    {
+      "file": "v1/routing/routing-statistics-snapshot.schema.json",
+      "model": "RoutingStatisticsSnapshot",
+      "sha256": "7693590b77c54051f04f530bf4b6ca765e4ed4898b65c9e149116ace76ac7d8d"
+    },
+    {
+      "file": "v1/routing/routing-statistics.schema.json",
+      "model": "RoutingStatistics",
+      "sha256": "b05193a671b6036b79516f0651eb1e6b828ac0c006f3a778d2cd60f86908d1a2"
+    },
+    {
+      "file": "v1/routing/routing-verification-subject.schema.json",
+      "model": "RoutingVerificationSubject",
+      "sha256": "a512628b9fda97395d9f1d9382cc628cef4beab09516d2f3171c1f5a361931a2"
+    },
+    {
+      "file": "v1/routing/shadow-routing-result.schema.json",
+      "model": "ShadowRoutingResult",
+      "sha256": "053e387ba55c58ee946b88b7563865f6207179e4688e3fd0567da95be38457d4"
+    },
+    {
+      "file": "v1/routing/task-signature.schema.json",
+      "model": "TaskSignature",
+      "sha256": "68f538a1ddb46c93970753f105af772c9135f966939fb35bb2d188066e9c78b3"
+    },
+    {
+      "file": "v1/routing/uncertainty-assessment.schema.json",
+      "model": "UncertaintyAssessment",
+      "sha256": "689e6fb30388032c67ac7c7b804b46f1aab4aa2affec8b774fad811dfc6e348a"
     },
     {
       "file": "v1/semantic-memory/claim-identity.schema.json",

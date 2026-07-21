@@ -1,0 +1,106 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/routing/routing-promotion-assessment.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "assessed_at": {
+      "format": "date-time",
+      "title": "Assessed At",
+      "type": "string"
+    },
+    "assessment_id": {
+      "format": "uuid",
+      "title": "Assessment Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "eligible_for_approval": {
+      "title": "Eligible For Approval",
+      "type": "boolean"
+    },
+    "fallback_validated": {
+      "title": "Fallback Validated",
+      "type": "boolean"
+    },
+    "operator_approval_reference": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Operator Approval Reference"
+    },
+    "policy_id": {
+      "minLength": 1,
+      "title": "Policy Id",
+      "type": "string"
+    },
+    "policy_regression": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Policy Regression",
+      "type": "string"
+    },
+    "policy_revision": {
+      "exclusiveMinimum": 0,
+      "title": "Policy Revision",
+      "type": "integer"
+    },
+    "quality_improvement": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Quality Improvement",
+      "type": "string"
+    },
+    "reasons": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Reasons",
+      "type": "array"
+    },
+    "replay_validated": {
+      "title": "Replay Validated",
+      "type": "boolean"
+    },
+    "safety_regression": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Safety Regression",
+      "type": "string"
+    },
+    "sample_count": {
+      "minimum": 0,
+      "title": "Sample Count",
+      "type": "integer"
+    },
+    "shadow_case_count": {
+      "minimum": 0,
+      "title": "Shadow Case Count",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "assessment_id",
+    "policy_id",
+    "policy_revision",
+    "eligible_for_approval",
+    "reasons",
+    "sample_count",
+    "shadow_case_count",
+    "quality_improvement",
+    "safety_regression",
+    "policy_regression",
+    "fallback_validated",
+    "replay_validated",
+    "assessed_at"
+  ],
+  "title": "RoutingPromotionAssessment",
+  "type": "object"
+}

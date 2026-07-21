@@ -455,6 +455,36 @@ jobs:
       - name: Fifty-six-case credential-free Corpus Factory seed gate
         run: uv run python scripts/corpus_benchmark.py --cases 56
 
+  model-routing-core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          version: "0.11.28"
+          enable-cache: true
+      - name: Install Python and core dependencies
+        run: uv python install 3.12 && uv sync --locked --all-groups
+      - name: Routing contracts, governance, statistics, and security gate
+        run: uv run pytest tests/cognitive_os/routing -q
+      - name: Routing contract schema gate
+        run: uv run python -m cognitive_os.schemas.export --check
+      - name: Deterministic model routing smoke gate
+        run: uv run python scripts/routing_smoke_test.py
+      - name: Sixteen-case credential-free routing gate
+        run: >-
+          uv run python scripts/benchmark_run.py
+          --manifest benchmarks/manifests/sprint16-routing-ci.yaml
+          --mode routing-replay --report-directory /tmp/sprint16-routing-benchmark
+      - name: Sixty-four-case credential-free routing seed gate
+        run: >-
+          uv run python scripts/benchmark_run.py
+          --manifest benchmarks/manifests/sprint16-routing-seed.yaml
+          --mode routing-replay --report-directory /tmp/sprint16-routing-seed
+
   security:
     runs-on: ubuntu-latest
     steps:
@@ -551,10 +581,14 @@ jobs:
         run: uv run python scripts/experience.py health --database
       - name: Corpus Factory health
         run: uv run python scripts/corpus.py health --database
+      - name: Model Capability Registry health
+        run: uv run python scripts/routing.py health --database
       - name: Credential-free Sprint 14 experience smoke
         run: uv run python scripts/experience_smoke_test.py
       - name: Credential-free Sprint 15 corpus smoke
         run: uv run python scripts/corpus_smoke_test.py
+      - name: Credential-free Sprint 16 routing smoke
+        run: uv run python scripts/routing_smoke_test.py
       - name: Four-case semantic benchmark gate with PostgreSQL service
         run: >-
           uv run python scripts/benchmark_run.py

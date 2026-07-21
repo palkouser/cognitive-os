@@ -87,3 +87,15 @@ Sprint 14 adds no dependency. The compiler uses the standard library, Pydantic, 
 Core and PostgreSQL extras, existing provider boundaries, and existing event, artifact, verifier,
 benchmark, skill, and strategy contracts. Every donor is pattern-only and can be removed without a
 runtime or schema change.
+
+## Sprint 16 routing references
+
+| Project | License | Use | Authority and dependency decision |
+| --- | --- | --- | --- |
+| RouteLLM | Apache-2.0 | Routing algorithm and benchmark pattern donor | No dependency, provider runtime, learned policy, or capability authority |
+| LiteLLM | MIT | Optional provider-normalization reference | Not adopted; the existing Cognitive OS provider layer remains primary |
+
+Sprint 16 adds no dependency. Deterministic host-owned scoring, `Decimal`, standard-library
+statistics, existing Pydantic contracts, SQLAlchemy Core, PostgreSQL, provider, Controller, Context,
+and verifier boundaries cover the required scope. Either reference can be removed without changing
+the runtime or schema.

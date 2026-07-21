@@ -1,0 +1,28 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/routing/routing-statistics-snapshot.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "profile_version": {
+      "default": "routing-statistics-v1",
+      "minLength": 1,
+      "title": "Profile Version",
+      "type": "string"
+    },
+    "statistic_hashes": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Statistic Hashes",
+      "type": "array"
+    }
+  },
+  "title": "RoutingStatisticsSnapshot",
+  "type": "object"
+}

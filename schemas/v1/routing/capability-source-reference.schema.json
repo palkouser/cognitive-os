@@ -1,0 +1,58 @@
+{
+  "$defs": {
+    "CapabilityEvidenceType": {
+      "enum": [
+        "provider_self_description",
+        "provider_documentation",
+        "operator_declaration",
+        "replay_contract_evidence",
+        "deterministic_benchmark",
+        "opt_in_live_benchmark",
+        "verified_task_outcome"
+      ],
+      "title": "CapabilityEvidenceType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/routing/capability-source-reference.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "actor_id": {
+      "minLength": 1,
+      "title": "Actor Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "evidence_type": {
+      "$ref": "#/$defs/CapabilityEvidenceType"
+    },
+    "source_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Hash",
+      "type": "string"
+    },
+    "source_id": {
+      "minLength": 1,
+      "title": "Source Id",
+      "type": "string"
+    },
+    "source_revision": {
+      "minLength": 1,
+      "title": "Source Revision",
+      "type": "string"
+    }
+  },
+  "required": [
+    "evidence_type",
+    "source_id",
+    "source_revision",
+    "source_hash",
+    "actor_id"
+  ],
+  "title": "CapabilitySourceReference",
+  "type": "object"
+}

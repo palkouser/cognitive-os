@@ -9,6 +9,7 @@ from cognitive_os.benchmarks.cases import load_manifest
 from cognitive_os.benchmarks.context_adapter import context_benchmark_case
 from cognitive_os.benchmarks.experience_adapter import experience_benchmark_case
 from cognitive_os.benchmarks.reporting import render_json, render_markdown
+from cognitive_os.benchmarks.routing_adapter import routing_benchmark_case
 from cognitive_os.benchmarks.runner import BenchmarkRunner, CaseExecutor
 from cognitive_os.benchmarks.semantic_adapter import (
     SemanticBenchmarkAdapter,
@@ -99,6 +100,8 @@ async def _run(manifest_path: Path, output: Path, seed: int, mode: str) -> int:
         executor = strategy_benchmark_case
     elif mode == "experience-replay":
         executor = experience_benchmark_case
+    elif mode == "routing-replay":
+        executor = routing_benchmark_case
     elif mode == "memory-replay":
         executor = memory_replay_case
     elif mode == "semantic-replay":
@@ -178,6 +181,7 @@ def main() -> int:
             "skill-replay",
             "strategy-replay",
             "experience-replay",
+            "routing-replay",
         ),
         default="verifier_only",
     )

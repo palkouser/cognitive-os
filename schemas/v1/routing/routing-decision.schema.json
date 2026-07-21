@@ -1,0 +1,737 @@
+{
+  "$defs": {
+    "CapabilityRegistrySnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "profile_hashes": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "maxItems": 256,
+          "title": "Profile Hashes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "profile_hashes"
+      ],
+      "title": "CapabilityRegistrySnapshot",
+      "type": "object"
+    },
+    "ContextSizeClass": {
+      "enum": [
+        "small",
+        "medium",
+        "large",
+        "long",
+        "unknown"
+      ],
+      "title": "ContextSizeClass",
+      "type": "string"
+    },
+    "CostClass": {
+      "enum": [
+        "low",
+        "standard",
+        "premium",
+        "unknown"
+      ],
+      "title": "CostClass",
+      "type": "string"
+    },
+    "ExecutionRole": {
+      "enum": [
+        "primary",
+        "fallback",
+        "planner",
+        "executor",
+        "generator",
+        "critic",
+        "proposer"
+      ],
+      "title": "ExecutionRole",
+      "type": "string"
+    },
+    "LatencyClass": {
+      "enum": [
+        "low",
+        "standard",
+        "relaxed",
+        "unknown"
+      ],
+      "title": "LatencyClass",
+      "type": "string"
+    },
+    "ModelIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "endpoint_profile": {
+          "minLength": 1,
+          "title": "Endpoint Profile",
+          "type": "string"
+        },
+        "execution_mode": {
+          "minLength": 1,
+          "title": "Execution Mode",
+          "type": "string"
+        },
+        "model_id": {
+          "minLength": 1,
+          "title": "Model Id",
+          "type": "string"
+        },
+        "model_revision": {
+          "minLength": 1,
+          "title": "Model Revision",
+          "type": "string"
+        },
+        "provider_id": {
+          "minLength": 1,
+          "title": "Provider Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider_id",
+        "model_id",
+        "model_revision",
+        "endpoint_profile",
+        "execution_mode"
+      ],
+      "title": "ModelIdentity",
+      "type": "object"
+    },
+    "MultiModelPatternType": {
+      "enum": [
+        "single_model",
+        "primary_with_fallback",
+        "planner_executor",
+        "generator_critic",
+        "multiple_proposals_with_verifier_selection"
+      ],
+      "title": "MultiModelPatternType",
+      "type": "string"
+    },
+    "ProviderHealthSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "checked_at": {
+          "format": "date-time",
+          "title": "Checked At",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "provider_id": {
+          "minLength": 1,
+          "title": "Provider Id",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/ProviderStatus"
+        }
+      },
+      "required": [
+        "provider_id",
+        "status",
+        "checked_at"
+      ],
+      "title": "ProviderHealthSnapshot",
+      "type": "object"
+    },
+    "ProviderRegistrySnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "health": {
+          "items": {
+            "$ref": "#/$defs/ProviderHealthSnapshot"
+          },
+          "maxItems": 256,
+          "title": "Health",
+          "type": "array"
+        }
+      },
+      "required": [
+        "health"
+      ],
+      "title": "ProviderRegistrySnapshot",
+      "type": "object"
+    },
+    "ProviderStatus": {
+      "enum": [
+        "available",
+        "degraded",
+        "unavailable",
+        "misconfigured",
+        "unauthenticated"
+      ],
+      "title": "ProviderStatus",
+      "type": "string"
+    },
+    "RoutingCandidateScore": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "dimensions": {
+          "additionalProperties": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "type": "string"
+          },
+          "propertyNames": {
+            "minLength": 1
+          },
+          "title": "Dimensions",
+          "type": "object"
+        },
+        "eligible": {
+          "title": "Eligible",
+          "type": "boolean"
+        },
+        "model_identity_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Model Identity Hash",
+          "type": "string"
+        },
+        "source_cohort_level": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Cohort Level"
+        },
+        "source_statistics_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Statistics Hash"
+        },
+        "static_priority": {
+          "default": 0,
+          "title": "Static Priority",
+          "type": "integer"
+        },
+        "total": {
+          "default": "0",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Total",
+          "type": "string"
+        },
+        "uncertainty": {
+          "default": "1",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Uncertainty",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_identity_hash",
+        "eligible"
+      ],
+      "title": "RoutingCandidateScore",
+      "type": "object"
+    },
+    "RoutingControlMode": {
+      "enum": [
+        "static",
+        "shadow",
+        "adaptive",
+        "explicit_override",
+        "legacy_static"
+      ],
+      "title": "RoutingControlMode",
+      "type": "string"
+    },
+    "RoutingDecisionStatus": {
+      "enum": [
+        "selected",
+        "no_eligible_model",
+        "blocked"
+      ],
+      "title": "RoutingDecisionStatus",
+      "type": "string"
+    },
+    "RoutingExclusion": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "detail": {
+          "minLength": 1,
+          "title": "Detail",
+          "type": "string"
+        },
+        "model_identity_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Model Identity Hash",
+          "type": "string"
+        },
+        "reason": {
+          "$ref": "#/$defs/RoutingExclusionReason"
+        }
+      },
+      "required": [
+        "model_identity_hash",
+        "reason",
+        "detail"
+      ],
+      "title": "RoutingExclusion",
+      "type": "object"
+    },
+    "RoutingExclusionReason": {
+      "enum": [
+        "provider_disabled",
+        "provider_unhealthy",
+        "model_not_configured",
+        "context_limit",
+        "structured_output",
+        "tool_calling",
+        "modality",
+        "risk",
+        "provider_policy",
+        "execution_mode",
+        "safety",
+        "cost",
+        "policy_status"
+      ],
+      "title": "RoutingExclusionReason",
+      "type": "string"
+    },
+    "RoutingFallbackEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "model_identity_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Model Identity Hash",
+          "type": "string"
+        },
+        "position": {
+          "exclusiveMinimum": 0,
+          "title": "Position",
+          "type": "integer"
+        },
+        "reason": {
+          "$ref": "#/$defs/RoutingFallbackReason",
+          "default": "provider_unavailable"
+        }
+      },
+      "required": [
+        "position",
+        "model_identity_hash"
+      ],
+      "title": "RoutingFallbackEntry",
+      "type": "object"
+    },
+    "RoutingFallbackReason": {
+      "enum": [
+        "provider_unavailable",
+        "timeout_before_side_effect",
+        "timeout_after_uncertain_side_effect",
+        "rate_limited",
+        "invalid_response",
+        "structured_output_failure",
+        "tool_call_failure",
+        "context_limit_failure",
+        "policy_denial",
+        "safety_denial",
+        "unknown"
+      ],
+      "title": "RoutingFallbackReason",
+      "type": "string"
+    },
+    "RoutingRoleAssignment": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "model_identity_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Model Identity Hash",
+          "type": "string"
+        },
+        "role": {
+          "$ref": "#/$defs/ExecutionRole"
+        },
+        "routing_decision_id": {
+          "format": "uuid",
+          "title": "Routing Decision Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "role",
+        "model_identity_hash",
+        "routing_decision_id"
+      ],
+      "title": "RoutingRoleAssignment",
+      "type": "object"
+    },
+    "RoutingStatisticsSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "profile_version": {
+          "default": "routing-statistics-v1",
+          "minLength": 1,
+          "title": "Profile Version",
+          "type": "string"
+        },
+        "statistic_hashes": {
+          "default": [],
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Statistic Hashes",
+          "type": "array"
+        }
+      },
+      "title": "RoutingStatisticsSnapshot",
+      "type": "object"
+    },
+    "TaskComplexityClass": {
+      "enum": [
+        "trivial",
+        "small",
+        "medium",
+        "large",
+        "long_horizon",
+        "unknown"
+      ],
+      "title": "TaskComplexityClass",
+      "type": "string"
+    },
+    "TaskSignature": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "context_size_class": {
+          "$ref": "#/$defs/ContextSizeClass",
+          "default": "unknown"
+        },
+        "cost_class": {
+          "$ref": "#/$defs/CostClass",
+          "default": "unknown"
+        },
+        "estimated_complexity": {
+          "$ref": "#/$defs/TaskComplexityClass",
+          "default": "unknown"
+        },
+        "execution_role": {
+          "$ref": "#/$defs/ExecutionRole",
+          "default": "primary"
+        },
+        "latency_class": {
+          "$ref": "#/$defs/LatencyClass",
+          "default": "unknown"
+        },
+        "output_type": {
+          "minLength": 1,
+          "title": "Output Type",
+          "type": "string"
+        },
+        "problem_class": {
+          "minLength": 1,
+          "title": "Problem Class",
+          "type": "string"
+        },
+        "problem_domain": {
+          "minLength": 1,
+          "title": "Problem Domain",
+          "type": "string"
+        },
+        "profile_version": {
+          "default": "task-signature-v1",
+          "minLength": 1,
+          "title": "Profile Version",
+          "type": "string"
+        },
+        "repository_profile": {
+          "default": "unknown",
+          "minLength": 1,
+          "title": "Repository Profile",
+          "type": "string"
+        },
+        "required_structured_output": {
+          "default": false,
+          "title": "Required Structured Output",
+          "type": "boolean"
+        },
+        "required_tool_capabilities": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Required Tool Capabilities",
+          "type": "array"
+        },
+        "risk_level": {
+          "default": "standard",
+          "minLength": 1,
+          "title": "Risk Level",
+          "type": "string"
+        },
+        "skill_revisions": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Skill Revisions",
+          "type": "array"
+        },
+        "strategy_revisions": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Strategy Revisions",
+          "type": "array"
+        },
+        "verifier_profile": {
+          "default": "default",
+          "minLength": 1,
+          "title": "Verifier Profile",
+          "type": "string"
+        }
+      },
+      "required": [
+        "problem_domain",
+        "problem_class",
+        "output_type"
+      ],
+      "title": "TaskSignature",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/routing/routing-decision.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "candidate_models": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Candidate Models",
+      "type": "array"
+    },
+    "candidate_scores": {
+      "items": {
+        "$ref": "#/$defs/RoutingCandidateScore"
+      },
+      "title": "Candidate Scores",
+      "type": "array"
+    },
+    "capability_registry_snapshot": {
+      "$ref": "#/$defs/CapabilityRegistrySnapshot"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "control_mode": {
+      "$ref": "#/$defs/RoutingControlMode"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "decision_id": {
+      "format": "uuid",
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "exclusions": {
+      "items": {
+        "$ref": "#/$defs/RoutingExclusion"
+      },
+      "title": "Exclusions",
+      "type": "array"
+    },
+    "fallback_order": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/RoutingFallbackEntry"
+      },
+      "title": "Fallback Order",
+      "type": "array"
+    },
+    "policy_id": {
+      "minLength": 1,
+      "title": "Policy Id",
+      "type": "string"
+    },
+    "policy_revision": {
+      "exclusiveMinimum": 0,
+      "title": "Policy Revision",
+      "type": "integer"
+    },
+    "previous_decision_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Decision Id"
+    },
+    "provider_registry_snapshot": {
+      "$ref": "#/$defs/ProviderRegistrySnapshot"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "role_assignments": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/RoutingRoleAssignment"
+      },
+      "title": "Role Assignments",
+      "type": "array"
+    },
+    "routing_request_id": {
+      "format": "uuid",
+      "title": "Routing Request Id",
+      "type": "string"
+    },
+    "selected_model": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ModelIdentity"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "selected_role_pattern": {
+      "$ref": "#/$defs/MultiModelPatternType",
+      "default": "single_model"
+    },
+    "shadow_decision_reference": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Shadow Decision Reference"
+    },
+    "static_decision_reference": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Static Decision Reference"
+    },
+    "statistics_snapshot": {
+      "$ref": "#/$defs/RoutingStatisticsSnapshot"
+    },
+    "status": {
+      "$ref": "#/$defs/RoutingDecisionStatus"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    },
+    "task_signature": {
+      "$ref": "#/$defs/TaskSignature"
+    }
+  },
+  "required": [
+    "decision_id",
+    "routing_request_id",
+    "task_run_id",
+    "task_signature",
+    "policy_id",
+    "policy_revision",
+    "control_mode",
+    "status",
+    "candidate_models",
+    "candidate_scores",
+    "exclusions",
+    "selected_model",
+    "reason",
+    "provider_registry_snapshot",
+    "capability_registry_snapshot",
+    "statistics_snapshot",
+    "created_at"
+  ],
+  "title": "RoutingDecision",
+  "type": "object"
+}

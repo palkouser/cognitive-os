@@ -1,0 +1,564 @@
+{
+  "$defs": {
+    "CapabilityCohort": {
+      "additionalProperties": false,
+      "properties": {
+        "cohort_level": {
+          "minLength": 1,
+          "title": "Cohort Level",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "parent_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Hash"
+        },
+        "task_signature_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Task Signature Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_signature_hash",
+        "cohort_level"
+      ],
+      "title": "CapabilityCohort",
+      "type": "object"
+    },
+    "CapabilityDimension": {
+      "enum": [
+        "accepted_task_rate",
+        "verifier_quality",
+        "structured_output_validity",
+        "tool_call_validity",
+        "repair_count",
+        "provider_failure_rate",
+        "timeout_rate",
+        "latency",
+        "input_token_usage",
+        "output_token_usage",
+        "cost_units",
+        "context_fit",
+        "policy_denial_rate",
+        "safety_failure_rate",
+        "coding_benchmark_quality",
+        "task_signature_coverage"
+      ],
+      "title": "CapabilityDimension",
+      "type": "string"
+    },
+    "CapabilityEstimate": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "dimension": {
+          "$ref": "#/$defs/CapabilityDimension"
+        },
+        "effective_sample_count": {
+          "minimum": 0,
+          "title": "Effective Sample Count",
+          "type": "integer"
+        },
+        "estimate": {
+          "anyOf": [
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Estimate"
+        },
+        "lower_bound": {
+          "anyOf": [
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lower Bound"
+        },
+        "missing_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Missing Count",
+          "type": "integer"
+        },
+        "sample_count": {
+          "minimum": 0,
+          "title": "Sample Count",
+          "type": "integer"
+        },
+        "source_class_counts": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "propertyNames": {
+            "$ref": "#/$defs/CapabilityEvidenceType"
+          },
+          "title": "Source Class Counts",
+          "type": "object"
+        },
+        "uncertainty": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Uncertainty",
+          "type": "string"
+        },
+        "upper_bound": {
+          "anyOf": [
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Upper Bound"
+        }
+      },
+      "required": [
+        "dimension",
+        "sample_count",
+        "effective_sample_count",
+        "uncertainty"
+      ],
+      "title": "CapabilityEstimate",
+      "type": "object"
+    },
+    "CapabilityEstimateSet": {
+      "additionalProperties": false,
+      "properties": {
+        "cohort": {
+          "$ref": "#/$defs/CapabilityCohort"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "estimates": {
+          "items": {
+            "$ref": "#/$defs/CapabilityEstimate"
+          },
+          "title": "Estimates",
+          "type": "array"
+        },
+        "source_observation_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Source Observation Ids",
+          "type": "array"
+        },
+        "statistics_profile": {
+          "minLength": 1,
+          "title": "Statistics Profile",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cohort",
+        "estimates",
+        "statistics_profile",
+        "source_observation_ids"
+      ],
+      "title": "CapabilityEstimateSet",
+      "type": "object"
+    },
+    "CapabilityEvidenceType": {
+      "enum": [
+        "provider_self_description",
+        "provider_documentation",
+        "operator_declaration",
+        "replay_contract_evidence",
+        "deterministic_benchmark",
+        "opt_in_live_benchmark",
+        "verified_task_outcome"
+      ],
+      "title": "CapabilityEvidenceType",
+      "type": "string"
+    },
+    "CapabilitySourceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "actor_id": {
+          "minLength": 1,
+          "title": "Actor Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "evidence_type": {
+          "$ref": "#/$defs/CapabilityEvidenceType"
+        },
+        "source_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Hash",
+          "type": "string"
+        },
+        "source_id": {
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_revision": {
+          "minLength": 1,
+          "title": "Source Revision",
+          "type": "string"
+        }
+      },
+      "required": [
+        "evidence_type",
+        "source_id",
+        "source_revision",
+        "source_hash",
+        "actor_id"
+      ],
+      "title": "CapabilitySourceReference",
+      "type": "object"
+    },
+    "CapabilitySupportStatus": {
+      "enum": [
+        "supported",
+        "unsupported",
+        "unknown",
+        "restricted"
+      ],
+      "title": "CapabilitySupportStatus",
+      "type": "string"
+    },
+    "DeclaredCapability": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "dimension": {
+          "minLength": 1,
+          "title": "Dimension",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/CapabilitySourceReference"
+        },
+        "support": {
+          "$ref": "#/$defs/CapabilitySupportStatus"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/JsonValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "dimension",
+        "support",
+        "source"
+      ],
+      "title": "DeclaredCapability",
+      "type": "object"
+    },
+    "DeclaredCapabilitySet": {
+      "additionalProperties": false,
+      "properties": {
+        "capabilities": {
+          "items": {
+            "$ref": "#/$defs/DeclaredCapability"
+          },
+          "title": "Capabilities",
+          "type": "array"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "capabilities"
+      ],
+      "title": "DeclaredCapabilitySet",
+      "type": "object"
+    },
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "ModelIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "endpoint_profile": {
+          "minLength": 1,
+          "title": "Endpoint Profile",
+          "type": "string"
+        },
+        "execution_mode": {
+          "minLength": 1,
+          "title": "Execution Mode",
+          "type": "string"
+        },
+        "model_id": {
+          "minLength": 1,
+          "title": "Model Id",
+          "type": "string"
+        },
+        "model_revision": {
+          "minLength": 1,
+          "title": "Model Revision",
+          "type": "string"
+        },
+        "provider_id": {
+          "minLength": 1,
+          "title": "Provider Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider_id",
+        "model_id",
+        "model_revision",
+        "endpoint_profile",
+        "execution_mode"
+      ],
+      "title": "ModelIdentity",
+      "type": "object"
+    },
+    "ModelProfileStatus": {
+      "enum": [
+        "draft",
+        "registered",
+        "verified",
+        "deprecated",
+        "retracted"
+      ],
+      "title": "ModelProfileStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/routing/model-capability-profile.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "availability_reference": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Availability Reference"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "context_limit": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Context Limit"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "created_by": {
+      "minLength": 1,
+      "title": "Created By",
+      "type": "string"
+    },
+    "declared_capabilities": {
+      "$ref": "#/$defs/DeclaredCapabilitySet"
+    },
+    "input_modalities": {
+      "default": [
+        "text"
+      ],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Input Modalities",
+      "type": "array"
+    },
+    "measured_capabilities": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CapabilityEstimateSet"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "model_identity": {
+      "$ref": "#/$defs/ModelIdentity"
+    },
+    "output_modalities": {
+      "default": [
+        "text"
+      ],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Output Modalities",
+      "type": "array"
+    },
+    "previous_revision": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Revision"
+    },
+    "profile_revision": {
+      "exclusiveMinimum": 0,
+      "title": "Profile Revision",
+      "type": "integer"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "source_refs": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Source Refs",
+      "type": "array"
+    },
+    "status": {
+      "$ref": "#/$defs/ModelProfileStatus"
+    },
+    "structured_output_support": {
+      "$ref": "#/$defs/CapabilitySupportStatus",
+      "default": "unknown"
+    },
+    "supported_domains": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Supported Domains",
+      "type": "array"
+    },
+    "tool_call_support": {
+      "$ref": "#/$defs/CapabilitySupportStatus",
+      "default": "unknown"
+    }
+  },
+  "required": [
+    "model_identity",
+    "profile_revision",
+    "status",
+    "declared_capabilities",
+    "source_refs",
+    "created_at",
+    "created_by",
+    "reason"
+  ],
+  "title": "ModelCapabilityProfile",
+  "type": "object"
+}

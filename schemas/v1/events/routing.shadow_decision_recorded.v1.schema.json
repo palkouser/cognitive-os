@@ -1,0 +1,34 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/routing.shadow_decision_recorded.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "decision_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Decision Hash",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "shadow_decision_id": {
+      "format": "uuid",
+      "title": "Shadow Decision Id",
+      "type": "string"
+    },
+    "static_decision_id": {
+      "format": "uuid",
+      "title": "Static Decision Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "static_decision_id",
+    "shadow_decision_id",
+    "decision_hash",
+    "occurred_at"
+  ],
+  "title": "ShadowDecisionRecorded",
+  "type": "object"
+}

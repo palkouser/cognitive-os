@@ -1,0 +1,34 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/routing.outcome_recorded.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "decision_id": {
+      "format": "uuid",
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "outcome_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Outcome Hash",
+      "type": "string"
+    },
+    "outcome_id": {
+      "format": "uuid",
+      "title": "Outcome Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "decision_id",
+    "outcome_id",
+    "outcome_hash",
+    "occurred_at"
+  ],
+  "title": "RoutingOutcomeRecorded",
+  "type": "object"
+}

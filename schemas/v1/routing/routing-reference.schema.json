@@ -1,0 +1,73 @@
+{
+  "$defs": {
+    "ExecutionRole": {
+      "enum": [
+        "primary",
+        "fallback",
+        "planner",
+        "executor",
+        "generator",
+        "critic",
+        "proposer"
+      ],
+      "title": "ExecutionRole",
+      "type": "string"
+    },
+    "RoutingControlMode": {
+      "enum": [
+        "static",
+        "shadow",
+        "adaptive",
+        "explicit_override",
+        "legacy_static"
+      ],
+      "title": "RoutingControlMode",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/routing/routing-reference.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "control_mode": {
+      "$ref": "#/$defs/RoutingControlMode"
+    },
+    "role_assignment": {
+      "$ref": "#/$defs/ExecutionRole"
+    },
+    "routing_decision_id": {
+      "format": "uuid",
+      "title": "Routing Decision Id",
+      "type": "string"
+    },
+    "routing_policy_id": {
+      "minLength": 1,
+      "title": "Routing Policy Id",
+      "type": "string"
+    },
+    "routing_policy_revision": {
+      "exclusiveMinimum": 0,
+      "title": "Routing Policy Revision",
+      "type": "integer"
+    },
+    "selected_model_identity_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Selected Model Identity Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "routing_decision_id",
+    "routing_policy_id",
+    "routing_policy_revision",
+    "control_mode",
+    "selected_model_identity_hash",
+    "role_assignment"
+  ],
+  "title": "RoutingReference",
+  "type": "object"
+}
