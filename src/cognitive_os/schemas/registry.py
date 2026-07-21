@@ -15,6 +15,7 @@ from cognitive_os.config.routing_config import RoutingConfiguration
 from cognitive_os.config.semantic_memory_config import SemanticMemoryConfiguration
 from cognitive_os.config.skill_config import SkillConfiguration
 from cognitive_os.config.strategy_config import StrategyConfiguration
+from cognitive_os.config.weakness_config import WeaknessConfiguration
 from cognitive_os.domain import (
     ApprovalDecision,
     ApprovalRequest,
@@ -108,6 +109,7 @@ from cognitive_os.domain.verifiers import (
     VerifierCapability,
     VerifierDescriptor,
 )
+from cognitive_os.domain.weakness import PUBLIC_WEAKNESS_CONTRACTS
 from cognitive_os.events.base import EventEnvelope
 from cognitive_os.events.catalog import DEFAULT_EVENT_MODELS
 
@@ -130,6 +132,19 @@ DOMAIN_SCHEMAS: tuple[tuple[type[BaseModel], str], ...] = (
     (SemanticMemoryConfiguration, "v1/config/semantic-memory-configuration.schema.json"),
     (SkillConfiguration, "v1/config/skill-configuration.schema.json"),
     (StrategyConfiguration, "v1/config/strategy-configuration.schema.json"),
+    (WeaknessConfiguration, "v1/config/weakness-configuration.schema.json"),
+    *tuple(
+        (
+            model,
+            "v1/weakness/"
+            + "".join(
+                ("-" + character.lower()) if character.isupper() else character
+                for character in model.__name__
+            ).lstrip("-")
+            + ".schema.json",
+        )
+        for model in PUBLIC_WEAKNESS_CONTRACTS
+    ),
     *tuple(
         (
             model,

@@ -739,6 +739,76 @@
       "event_type": "verifier.started",
       "file": "v1/events/verifier.started.v1.schema.json",
       "schema_version": 1
+    },
+    {
+      "event_type": "weakness.cluster_created",
+      "file": "v1/events/weakness.cluster_created.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "weakness.cluster_rebuilt",
+      "file": "v1/events/weakness.cluster_rebuilt.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "weakness.confirmed",
+      "file": "v1/events/weakness.confirmed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "weakness.created",
+      "file": "v1/events/weakness.created.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "weakness.mining_completed",
+      "file": "v1/events/weakness.mining_completed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "weakness.mining_failed",
+      "file": "v1/events/weakness.mining_failed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "weakness.mining_started",
+      "file": "v1/events/weakness.mining_started.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "weakness.monitoring_started",
+      "file": "v1/events/weakness.monitoring_started.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "weakness.queued",
+      "file": "v1/events/weakness.queued.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "weakness.resolved",
+      "file": "v1/events/weakness.resolved.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "weakness.retracted",
+      "file": "v1/events/weakness.retracted.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "weakness.revision_appended",
+      "file": "v1/events/weakness.revision_appended.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "weakness.signal_recorded",
+      "file": "v1/events/weakness.signal_recorded.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "weakness.superseded",
+      "file": "v1/events/weakness.superseded.v1.schema.json",
+      "schema_version": 1
     }
   ],
   "generated_by": "cognitive_os.schemas.export",
@@ -787,6 +857,11 @@
       "file": "v1/config/strategy-configuration.schema.json",
       "model": "StrategyConfiguration",
       "sha256": "19c4327140f1ffaf12dab259cb41c4bc1042243a0a20e62a3ca505ea44b4e35b"
+    },
+    {
+      "file": "v1/config/weakness-configuration.schema.json",
+      "model": "WeaknessConfiguration",
+      "sha256": "ee63e143707595beadb53489f2f0f5d4c05abaa0e23f8c8f85fc4093bdc67947"
     },
     {
       "file": "v1/context/artifact-snapshot.schema.json",
@@ -2359,6 +2434,76 @@
       "sha256": "c3768ca5b235ef1fe2321c1cb21ee2a41dd3f3956c578d824a169022243e0139"
     },
     {
+      "file": "v1/events/weakness.cluster_created.v1.schema.json",
+      "model": "WeaknessClusterCreated",
+      "sha256": "8e20805290e0532971eb410695907d672d8a2e9dc2b9d1e704452f00660b559c"
+    },
+    {
+      "file": "v1/events/weakness.cluster_rebuilt.v1.schema.json",
+      "model": "WeaknessClusterRebuilt",
+      "sha256": "858e8b59efa4492575aa8b7ffacd6364628830f85eeedc37ee3c7bd772b61c20"
+    },
+    {
+      "file": "v1/events/weakness.confirmed.v1.schema.json",
+      "model": "WeaknessConfirmed",
+      "sha256": "1753c6c491fa41a922d7b7e1dfb3873c574771e2ffe152ba1a508fc0ece11d88"
+    },
+    {
+      "file": "v1/events/weakness.created.v1.schema.json",
+      "model": "WeaknessCreated",
+      "sha256": "e95a49411414d610bc2060b84a710615c246257543f59cf2047578184dbe798c"
+    },
+    {
+      "file": "v1/events/weakness.mining_completed.v1.schema.json",
+      "model": "WeaknessMiningCompleted",
+      "sha256": "f3fb51410d99c0fcbeb6beebf36a64833538cefe05bd45ddc2d161424f5b877c"
+    },
+    {
+      "file": "v1/events/weakness.mining_failed.v1.schema.json",
+      "model": "WeaknessMiningFailed",
+      "sha256": "536ada6cfab854fd21ca3648de3071c7b0a96df8e8fd4c00fa8ef300c81a03e4"
+    },
+    {
+      "file": "v1/events/weakness.mining_started.v1.schema.json",
+      "model": "WeaknessMiningStarted",
+      "sha256": "9f5f2c71dd8b53794dbaadf7a34305b0d09548798ffef34b6a997b74be9116f5"
+    },
+    {
+      "file": "v1/events/weakness.monitoring_started.v1.schema.json",
+      "model": "WeaknessMonitoringStarted",
+      "sha256": "79e50ae40d5da04e4e1423b0fb73a8694d6887d9cd587ab51b9c4730cdd7f736"
+    },
+    {
+      "file": "v1/events/weakness.queued.v1.schema.json",
+      "model": "WeaknessQueued",
+      "sha256": "32406edf4c70c503ab2a55b34fc1fb80b56441ef89a1d443e617623b7f211d0c"
+    },
+    {
+      "file": "v1/events/weakness.resolved.v1.schema.json",
+      "model": "WeaknessResolved",
+      "sha256": "91456ed7b979bda3d0fb844d58612954797a611ffd786e341610346410f85937"
+    },
+    {
+      "file": "v1/events/weakness.retracted.v1.schema.json",
+      "model": "WeaknessRetracted",
+      "sha256": "7dfeb99107ea27173ac0f39f28dc40a68e1f94a7c9b7c512181cc93b67c6b104"
+    },
+    {
+      "file": "v1/events/weakness.revision_appended.v1.schema.json",
+      "model": "WeaknessRevisionAppended",
+      "sha256": "7acc837c54528a89dc12cad4a12a3c01a0b2419c58c9e2d074eced8ae30a9f34"
+    },
+    {
+      "file": "v1/events/weakness.signal_recorded.v1.schema.json",
+      "model": "WeaknessSignalRecorded",
+      "sha256": "3907ddbda38dc8c4733db22fbf6a3a832d77418c2bbab80e0527436b177b96c6"
+    },
+    {
+      "file": "v1/events/weakness.superseded.v1.schema.json",
+      "model": "WeaknessSuperseded",
+      "sha256": "b49bf270e805680052c49988cd2caf4249ee51c515c780d5f665504681a64f10"
+    },
+    {
       "file": "v1/experience/candidate-revision.schema.json",
       "model": "CandidateRevision",
       "sha256": "ca06fa51e22ad0efda099c3bf522aa7c2f921a708ba1e4fdaf1b6db832438ef3"
@@ -3587,6 +3732,191 @@
       "file": "v1/strategies/strategy-verification-snapshot.schema.json",
       "model": "StrategyVerificationSnapshot",
       "sha256": "6b8be1a20bd733cb8dc14347601a7e5cb94ee0e847326c5c3f7e368f322de323"
+    },
+    {
+      "file": "v1/weakness/impact-dimension-result.schema.json",
+      "model": "ImpactDimensionResult",
+      "sha256": "235570031d14bd52a72dcde5c9dbb029f3a13592bb7b907956d69c409e7a45ac"
+    },
+    {
+      "file": "v1/weakness/impact-evidence.schema.json",
+      "model": "ImpactEvidence",
+      "sha256": "1b4d5eabf85d97c9d224e25317a41e2c422de339439f98d956ba6fbcc4446048"
+    },
+    {
+      "file": "v1/weakness/impact-profile-reference.schema.json",
+      "model": "ImpactProfileReference",
+      "sha256": "991dd85dfffe20025db34ff1556d9c0b5c8576c67c037092b6ffdc78a1df9b6c"
+    },
+    {
+      "file": "v1/weakness/impact-score.schema.json",
+      "model": "ImpactScore",
+      "sha256": "26b830719abb279f6f7fde2cd0f967b3d514f880edd66678401fcd9a8efb0882"
+    },
+    {
+      "file": "v1/weakness/impact-uncertainty.schema.json",
+      "model": "ImpactUncertainty",
+      "sha256": "9a7cf621f20694732f195b683d391e600215bc44324e58ec2fe6dd40e1278785"
+    },
+    {
+      "file": "v1/weakness/mining-profile.schema.json",
+      "model": "MiningProfile",
+      "sha256": "b15fb9c77223c4a08fd6954f629c2d7959f112989aae084e7d065ac19a095292"
+    },
+    {
+      "file": "v1/weakness/mining-request.schema.json",
+      "model": "MiningRequest",
+      "sha256": "b89777785e995bd729194d7724a76f4c38ebf24ff88cbd570a77d4844303d3a3"
+    },
+    {
+      "file": "v1/weakness/mining-run-manifest.schema.json",
+      "model": "MiningRunManifest",
+      "sha256": "dc74b651027ea121c42b24c03fb518cfa9e5b2d08bba9945e89b3a05ff563bbc"
+    },
+    {
+      "file": "v1/weakness/mining-run-result.schema.json",
+      "model": "MiningRunResult",
+      "sha256": "f2aea4abba4a90f06afa9ad1c723e6b1c3bfba708101c33dc13ca9b3203802e3"
+    },
+    {
+      "file": "v1/weakness/mining-run-summary.schema.json",
+      "model": "MiningRunSummary",
+      "sha256": "14af463fa3719df502bc44379d570f954a29f86f8680d96b4c056ecac4e1deae"
+    },
+    {
+      "file": "v1/weakness/mining-source-reference.schema.json",
+      "model": "MiningSourceReference",
+      "sha256": "ba9e536bf857bbfeee4ef221c79b47762bd6a48bedea6f216afd5b83e0ab772c"
+    },
+    {
+      "file": "v1/weakness/mining-source-snapshot.schema.json",
+      "model": "MiningSourceSnapshot",
+      "sha256": "6441d55b7c6233b288656878f779af39b4f01076484ae933f8ab284e25efc1a4"
+    },
+    {
+      "file": "v1/weakness/weakness-access-record.schema.json",
+      "model": "WeaknessAccessRecord",
+      "sha256": "b9e98bac048bf92f5de5554fd53686c018c3b0ada61c937357239adc252f98f1"
+    },
+    {
+      "file": "v1/weakness/weakness-benchmark-candidate.schema.json",
+      "model": "WeaknessBenchmarkCandidate",
+      "sha256": "31ae92ab559cc58d9e5ae7015f7618b7c309e8619fe5e124b9d7e00e6e11ca5a"
+    },
+    {
+      "file": "v1/weakness/weakness-cluster-comparison.schema.json",
+      "model": "WeaknessClusterComparison",
+      "sha256": "423fca4cc48873124a36c64cdacdb9cb3043a3b05a7fe20edf90887673e64973"
+    },
+    {
+      "file": "v1/weakness/weakness-cluster-member.schema.json",
+      "model": "WeaknessClusterMember",
+      "sha256": "37467f0198552c3f9f432f5f72489ea7eac62f9b78ba6fd580f2f1278ef8e94f"
+    },
+    {
+      "file": "v1/weakness/weakness-cluster-snapshot.schema.json",
+      "model": "WeaknessClusterSnapshot",
+      "sha256": "12d0cad4632ad6df2546cec4926c35ee01196304a9527eafdc9cd400af2cad0d"
+    },
+    {
+      "file": "v1/weakness/weakness-cluster.schema.json",
+      "model": "WeaknessCluster",
+      "sha256": "29660ddcfc8c631537bdb4e066fe350f688bd34272ecaae7a11c4d3bd11e9e31"
+    },
+    {
+      "file": "v1/weakness/weakness-counterexample.schema.json",
+      "model": "WeaknessCounterexample",
+      "sha256": "97d840607f963c6de7782c77d0e03fb3b7f6ca2ba9305357801240dd6bf04bd6"
+    },
+    {
+      "file": "v1/weakness/weakness-evidence-package.schema.json",
+      "model": "WeaknessEvidencePackage",
+      "sha256": "b8e538aec28aa80c404f54a1cbe6fa684fc9a2d22fc43c44c5c678df3c4f52cd"
+    },
+    {
+      "file": "v1/weakness/weakness-group-member.schema.json",
+      "model": "WeaknessGroupMember",
+      "sha256": "8f4bb86c5d8de50a2375b672cbbad07f8666773a94052674744c63827da45ebc"
+    },
+    {
+      "file": "v1/weakness/weakness-group-snapshot.schema.json",
+      "model": "WeaknessGroupSnapshot",
+      "sha256": "4c77ed5eab6716b11bcbc30ced00ee4fa34d647d4dfff9023bdedfdd678d4f21"
+    },
+    {
+      "file": "v1/weakness/weakness-group.schema.json",
+      "model": "WeaknessGroup",
+      "sha256": "5e4b0f120f5c96ef3b783afa5a78b99d9666feb20a820e1b05dd8642f3558f70"
+    },
+    {
+      "file": "v1/weakness/weakness-identity.schema.json",
+      "model": "WeaknessIdentity",
+      "sha256": "2c4a5a2870228f6ebc4d0d5dea9202dd718e8e178a66b123f6edabcd1239f2c1"
+    },
+    {
+      "file": "v1/weakness/weakness-queue-decision.schema.json",
+      "model": "WeaknessQueueDecision",
+      "sha256": "62e059d1645da54a30914242ec7016cf6411e43d5eae27ce50ea099e316219b7"
+    },
+    {
+      "file": "v1/weakness/weakness-queue-dependency.schema.json",
+      "model": "WeaknessQueueDependency",
+      "sha256": "1743d462191f48d04157f7603d29b586e524e354531d97342f93c877a2203d40"
+    },
+    {
+      "file": "v1/weakness/weakness-queue-entry.schema.json",
+      "model": "WeaknessQueueEntry",
+      "sha256": "67afcee042825124087b4987370662698ebbb0b8aaadb429911e437edcf57b9d"
+    },
+    {
+      "file": "v1/weakness/weakness-queue-snapshot.schema.json",
+      "model": "WeaknessQueueSnapshot",
+      "sha256": "17ee8688f4ca58291e6483ceb47727d304eb7af392b49f46692a229e8b1ba9ac"
+    },
+    {
+      "file": "v1/weakness/weakness-replay-candidate.schema.json",
+      "model": "WeaknessReplayCandidate",
+      "sha256": "93d5475854b5653528ad1c78f5aaf6b973986188cf1af988c848f650ab25aaff"
+    },
+    {
+      "file": "v1/weakness/weakness-reproduction-assessment.schema.json",
+      "model": "WeaknessReproductionAssessment",
+      "sha256": "140e9a43e3441c4c235e46dbb071f9e787c3ecce4c21f8b5e2ea53500fda3202"
+    },
+    {
+      "file": "v1/weakness/weakness-reproduction-attempt.schema.json",
+      "model": "WeaknessReproductionAttempt",
+      "sha256": "556f504caf76ca5fcb294961231d82529851db2e4f66f210b897ba0e53b0acd8"
+    },
+    {
+      "file": "v1/weakness/weakness-revision.schema.json",
+      "model": "WeaknessRevision",
+      "sha256": "3e34958b5c1a97d1c68bb912ff9a467c637c736108fd9db514c11c22a9ee5ff1"
+    },
+    {
+      "file": "v1/weakness/weakness-signal-conflict.schema.json",
+      "model": "WeaknessSignalConflict",
+      "sha256": "95a7367b2ace8424e00acf031c61379ebcbdb54083fe117a975e32a2d8d5c167"
+    },
+    {
+      "file": "v1/weakness/weakness-signal-evidence.schema.json",
+      "model": "WeaknessSignalEvidence",
+      "sha256": "b2e3717e7bcd3beb86cc00d7615f8d9a03fdcfc4e147e3097e32686f38e7922e"
+    },
+    {
+      "file": "v1/weakness/weakness-signal.schema.json",
+      "model": "WeaknessSignal",
+      "sha256": "62a7ba033b6e62744b39c67fd4f98d9a6bc48aa33a340fb1693bd606af738501"
+    },
+    {
+      "file": "v1/weakness/weakness-signature.schema.json",
+      "model": "WeaknessSignature",
+      "sha256": "92570bbbc08056b7dd4e487ca9db91969fe88b1526529b3c5c3fcaffe2af06db"
+    },
+    {
+      "file": "v1/weakness/weakness-verification-subject.schema.json",
+      "model": "WeaknessVerificationSubject",
+      "sha256": "b574d2687953cff751408cab6cc69618ff06fcc17c7f6add4f35b1a9a098d90b"
     }
   ],
   "schema_set_version": 1

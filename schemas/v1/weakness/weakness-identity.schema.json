@@ -1,0 +1,92 @@
+{
+  "$defs": {
+    "WeaknessType": {
+      "enum": [
+        "model_routing_failure",
+        "tool_routing_failure",
+        "provider_structured_output_failure",
+        "provider_availability_failure",
+        "context_required_item_missing",
+        "context_irrelevant_content",
+        "context_budget_failure",
+        "retrieval_recall_failure",
+        "retrieval_scope_or_sensitivity_denial",
+        "missing_skill",
+        "skill_precondition_failure",
+        "skill_execution_failure",
+        "strategy_mismatch",
+        "strategy_fallback_overuse",
+        "verifier_gap",
+        "verifier_instability",
+        "memory_retrieval_failure",
+        "semantic_contradiction_block",
+        "corpus_coverage_gap",
+        "excessive_repair",
+        "excessive_iteration",
+        "unnecessary_provider_call",
+        "unnecessary_tool_call",
+        "cost_regression",
+        "latency_regression",
+        "policy_denial_pattern",
+        "sandbox_failure",
+        "user_correction_pattern",
+        "unknown"
+      ],
+      "title": "WeaknessType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/weakness/weakness-identity.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "canonical_name": {
+      "minLength": 1,
+      "title": "Canonical Name",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "created_by": {
+      "minLength": 1,
+      "title": "Created By",
+      "type": "string"
+    },
+    "scope": {
+      "minLength": 1,
+      "title": "Scope",
+      "type": "string"
+    },
+    "signature_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Signature Hash",
+      "type": "string"
+    },
+    "weakness_id": {
+      "format": "uuid",
+      "title": "Weakness Id",
+      "type": "string"
+    },
+    "weakness_type": {
+      "$ref": "#/$defs/WeaknessType"
+    }
+  },
+  "required": [
+    "weakness_id",
+    "canonical_name",
+    "weakness_type",
+    "signature_hash",
+    "scope",
+    "created_at",
+    "created_by"
+  ],
+  "title": "WeaknessIdentity",
+  "type": "object"
+}

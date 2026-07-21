@@ -99,3 +99,18 @@ Sprint 16 adds no dependency. Deterministic host-owned scoring, `Decimal`, stand
 statistics, existing Pydantic contracts, SQLAlchemy Core, PostgreSQL, provider, Controller, Context,
 and verifier boundaries cover the required scope. Either reference can be removed without changing
 the runtime or schema.
+
+## Sprint 17 weakness-mining references
+
+| Project | License | Use | Authority and dependency decision |
+| --- | --- | --- | --- |
+| Langfuse | MIT | Trace-input adapter and observability pattern | Optional input pattern only; not a source authority or dependency |
+| Inspect AI | MIT | Evaluation and benchmark reference | Existing reference only; no diagnostic authority |
+| NetworkX | BSD-3-Clause | Optional bounded cluster comparison | Existing optional extra; PostgreSQL and exact groups remain authoritative |
+| scikit-learn | BSD-3-Clause | Experimental clustering candidate | Not added; requires benchmark and dependency review |
+| HDBSCAN | BSD-3-Clause | Experimental density clustering candidate | Not added; requires benchmark and dependency review |
+| GEPA | Apache-2.0 | Sprint 18 proposal-pattern donor | Deferred; no Sprint 17 runtime, optimizer, or authority |
+
+Sprint 17 adds no dependency. Standard-library hashing, sorting and `Decimal`, Pydantic,
+SQLAlchemy Core, PostgreSQL, and existing host services implement the core. Optional clustering can
+be removed without changing exact grouping, persistence, lifecycle, or queue semantics.

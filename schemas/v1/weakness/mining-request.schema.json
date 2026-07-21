@@ -1,0 +1,165 @@
+{
+  "$defs": {
+    "SignalSourceType": {
+      "enum": [
+        "controller",
+        "acceptance",
+        "verifier",
+        "user_correction",
+        "context",
+        "retrieval",
+        "provider_request",
+        "provider_result",
+        "tool",
+        "memory",
+        "semantic",
+        "skill",
+        "strategy",
+        "experience",
+        "corpus",
+        "routing_decision",
+        "routing_outcome",
+        "routing_shadow",
+        "benchmark",
+        "artifact"
+      ],
+      "title": "SignalSourceType",
+      "type": "string"
+    },
+    "WeaknessType": {
+      "enum": [
+        "model_routing_failure",
+        "tool_routing_failure",
+        "provider_structured_output_failure",
+        "provider_availability_failure",
+        "context_required_item_missing",
+        "context_irrelevant_content",
+        "context_budget_failure",
+        "retrieval_recall_failure",
+        "retrieval_scope_or_sensitivity_denial",
+        "missing_skill",
+        "skill_precondition_failure",
+        "skill_execution_failure",
+        "strategy_mismatch",
+        "strategy_fallback_overuse",
+        "verifier_gap",
+        "verifier_instability",
+        "memory_retrieval_failure",
+        "semantic_contradiction_block",
+        "corpus_coverage_gap",
+        "excessive_repair",
+        "excessive_iteration",
+        "unnecessary_provider_call",
+        "unnecessary_tool_call",
+        "cost_regression",
+        "latency_regression",
+        "policy_denial_pattern",
+        "sandbox_failure",
+        "user_correction_pattern",
+        "unknown"
+      ],
+      "title": "WeaknessType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/weakness/mining-request.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "idempotency_key": {
+      "minLength": 1,
+      "title": "Idempotency Key",
+      "type": "string"
+    },
+    "mining_profile_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Mining Profile Hash",
+      "type": "string"
+    },
+    "mining_run_id": {
+      "format": "uuid",
+      "title": "Mining Run Id",
+      "type": "string"
+    },
+    "requested_by": {
+      "minLength": 1,
+      "title": "Requested By",
+      "type": "string"
+    },
+    "scope": {
+      "minLength": 1,
+      "title": "Scope",
+      "type": "string"
+    },
+    "source_filters": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/SignalSourceType"
+      },
+      "title": "Source Filters",
+      "type": "array"
+    },
+    "task_run_ids": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Task Run Ids",
+      "type": "array"
+    },
+    "time_range_end": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Time Range End"
+    },
+    "time_range_start": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Time Range Start"
+    },
+    "weakness_type_filters": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/WeaknessType"
+      },
+      "title": "Weakness Type Filters",
+      "type": "array"
+    }
+  },
+  "required": [
+    "mining_run_id",
+    "scope",
+    "mining_profile_hash",
+    "requested_by",
+    "idempotency_key",
+    "created_at"
+  ],
+  "title": "MiningRequest",
+  "type": "object"
+}

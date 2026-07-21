@@ -1,0 +1,28 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/weakness.superseded.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "successor_weakness_id": {
+      "format": "uuid",
+      "title": "Successor Weakness Id",
+      "type": "string"
+    },
+    "weakness_id": {
+      "format": "uuid",
+      "title": "Weakness Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "weakness_id",
+    "successor_weakness_id",
+    "occurred_at"
+  ],
+  "title": "WeaknessSuperseded",
+  "type": "object"
+}

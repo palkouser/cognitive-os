@@ -1,0 +1,65 @@
+{
+  "$defs": {
+    "WeaknessPriority": {
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low",
+        "informational"
+      ],
+      "title": "WeaknessPriority",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/weakness/weakness-queue-decision.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "eligible": {
+      "title": "Eligible",
+      "type": "boolean"
+    },
+    "exclusion_reasons": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Exclusion Reasons",
+      "type": "array"
+    },
+    "policy_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Policy Hash",
+      "type": "string"
+    },
+    "priority": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WeaknessPriority"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "priority_reason": {
+      "minLength": 1,
+      "title": "Priority Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "eligible",
+    "priority_reason",
+    "policy_hash"
+  ],
+  "title": "WeaknessQueueDecision",
+  "type": "object"
+}

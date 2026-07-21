@@ -80,6 +80,11 @@ require reproducible evidence plus explicit operator approval. Provider configur
 credentials remain outside routing state. See the
 [Model Capability Registry architecture](docs/architecture/model-capability-registry.md).
 
+Sprint 17 adds governed, diagnostic-only Weakness Mining. Exact source revisions and signatures
+produce deterministic groups, impact assessments, evidence packages, candidate revisions, and a
+prioritized Weakness Queue without source writes, automatic confirmation, repair, or provider
+authority. See the [Weakness Mining architecture](docs/architecture/weakness-mining.md).
+
 ![LightAgent Banner](docs/images/lightagent-banner.jpg)
 <div align="center">
   <p>

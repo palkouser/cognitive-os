@@ -5,42 +5,41 @@
 This repository develops Cognitive OS, a local, model-independent, self-improving
 agent harness based on LightAgent.
 
-## Sprint 16 scope
+## Sprint 17 scope
 
-The active scope is a governed Model Capability Registry and deterministic adaptive-routing layer
-built on the Sprint 15 Corpus Factory and the existing provider, Controller, Context Builder, Tool
-Plane, verifier, event, artifact, repository, workspace, and PostgreSQL boundaries.
+The active scope is a governed, diagnostic-only Weakness Mining Engine built on the Sprint 16
+Model Capability Registry and routing layer plus the existing Controller, Context Builder, memory,
+semantic, skill, strategy, experience, corpus, provider, Tool Plane, verifier, event, artifact,
+repository, workspace, and PostgreSQL boundaries.
 
 Allowed work:
 
-- immutable model identity, capability profile, TaskSignature, observation, policy, decision,
-  outcome, statistics, experiment, promotion, multi-model, access, and verifier contracts;
-- operator-declared and measured capability evidence with deterministic cohort statistics,
-  uncertainty, static routing, bounded fallback, shadow routing, and explicit promotion gates;
-- provider-specific Context validation and bounded multi-model patterns compiled into ordinary
-  Controller steps with final acceptance retained by registered verifiers;
-- credential-free replay fixtures, deterministic benchmarks, health, backup, restore, and
-  PostgreSQL migration `0008`.
+- immutable mining requests, source snapshots, weakness signals, deterministic signatures, exact
+  groups, advisory clusters, impact scores, evidence packages, revisions, queue entries, accesses,
+  manifests, reproduction assessments, and verifier subjects;
+- read-only exact-revision source resolution, registered deterministic extraction, exact grouping,
+  counterexample retention, deterministic impact and queue scoring, governed lifecycle transitions,
+  incremental mining, resume, health, backup, restore, and PostgreSQL migration `0009`;
+- optional bounded advisory clustering after exact grouping, with no merge, confirmation,
+  resolution, priority, source, or modification authority.
 
 Out of scope:
 
-- learned routing, reinforcement learning, live bandit exploration, model training, autonomous
-  provider onboarding, pricing-web scraping, or network model downloads;
-- provider configuration, credential, base-URL, enablement, transport, retry, or timeout changes;
-- automatic adaptive-policy or benchmark promotion and unbounded exploration;
-- provider-authored routing policies, measured evidence, self-promotion, or acceptance authority;
-- strategy, skill, prompt, verifier, workflow, Tool Plane, permission, or budget mutation;
-- a second Controller, independent orchestration loop, autonomous agent team, or model ensemble;
-- external routing gateways used as the primary runtime or provider execution path;
-- automatic context ingestion, autonomous memory or claim promotion, unrestricted external or web
-  retrieval, multi-agent execution authority, and Sprint 17 weakness-mining features.
+- automatic repair, proposal generation, source-code or prompt changes, policy changes, skill or
+  strategy revisions, routing-policy changes, provider configuration changes, tool or verifier
+  creation, commits, pull requests, or model training;
+- learned impact scoring, learned queue priority, provider-authoritative signals or clustering,
+  shadow counterfactual outcomes, unrestricted semantic clustering, external telemetry authority,
+  automatic Langfuse ingestion, external benchmark activation, or multi-agent diagnosis;
+- Sprint 18 Harness Proposal Engine behavior or any destination write into source subsystems.
 
-PostgreSQL is authoritative for capability profiles, policy revisions, routing observations,
-decisions, outcomes, statistics, experiments, and access state; the event store owns lifecycle
-evidence and the artifact store owns large benchmark and experiment content. The existing provider
-layer remains authoritative for adapters, credentials, configuration, health, and execution. Static
-routing is the control baseline. Shadow decisions cannot execute, and bounded adaptive execution
-requires evidence, explicit operator approval, and a task-signature-scoped enabled policy.
+PostgreSQL is authoritative for weakness mining metadata, signals, exact groups, advisory cluster
+projections, revisions, impact scores, queue state, and accesses; source subsystems remain
+authoritative for their records, the event store owns lifecycle evidence, and the artifact store
+owns source snapshots and evidence or reproduction packages. Mining is read-only toward source
+systems. Signals, revisions, impact scores, queue history, and accesses are append-only. Exact
+groups are authoritative; clusters are advisory. Provider prose cannot create a signal, repeated
+correlation cannot become a causal conclusion, and no weakness artifact may authorize a change.
 
 Do not move or rewrite LightAgent runtime files unless the active issue explicitly
 authorizes it.

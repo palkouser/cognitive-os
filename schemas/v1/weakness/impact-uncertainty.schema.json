@@ -1,0 +1,48 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/weakness/impact-uncertainty.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "conflict_count": {
+      "minimum": 0,
+      "title": "Conflict Count",
+      "type": "integer"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "counterexample_count": {
+      "minimum": 0,
+      "title": "Counterexample Count",
+      "type": "integer"
+    },
+    "limitations": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "missing_source_count": {
+      "minimum": 0,
+      "title": "Missing Source Count",
+      "type": "integer"
+    },
+    "value": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Value",
+      "type": "string"
+    }
+  },
+  "required": [
+    "value",
+    "missing_source_count",
+    "conflict_count",
+    "counterexample_count"
+  ],
+  "title": "ImpactUncertainty",
+  "type": "object"
+}

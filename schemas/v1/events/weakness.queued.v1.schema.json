@@ -1,0 +1,39 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/weakness.queued.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "queue_entry_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Queue Entry Hash",
+      "type": "string"
+    },
+    "queue_entry_id": {
+      "format": "uuid",
+      "title": "Queue Entry Id",
+      "type": "string"
+    },
+    "revision": {
+      "title": "Revision",
+      "type": "integer"
+    },
+    "weakness_id": {
+      "format": "uuid",
+      "title": "Weakness Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "weakness_id",
+    "revision",
+    "queue_entry_id",
+    "queue_entry_hash",
+    "occurred_at"
+  ],
+  "title": "WeaknessQueued",
+  "type": "object"
+}

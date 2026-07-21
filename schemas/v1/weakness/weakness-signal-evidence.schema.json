@@ -1,0 +1,200 @@
+{
+  "$defs": {
+    "EvidenceRole": {
+      "enum": [
+        "primary",
+        "corroborating",
+        "counterexample",
+        "conflicting"
+      ],
+      "title": "EvidenceRole",
+      "type": "string"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "MiningSourceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artifact Id"
+        },
+        "authoritative": {
+          "default": true,
+          "title": "Authoritative",
+          "type": "boolean"
+        },
+        "contains_secret": {
+          "default": false,
+          "title": "Contains Secret",
+          "type": "boolean"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "event_stream_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Stream Id"
+        },
+        "event_stream_version": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Stream Version"
+        },
+        "outcome_authority": {
+          "default": false,
+          "title": "Outcome Authority",
+          "type": "boolean"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "scope": {
+          "minLength": 1,
+          "title": "Scope",
+          "type": "string"
+        },
+        "sensitivity": {
+          "$ref": "#/$defs/MemorySensitivity"
+        },
+        "shadow": {
+          "default": false,
+          "title": "Shadow",
+          "type": "boolean"
+        },
+        "source_content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Content Hash",
+          "type": "string"
+        },
+        "source_id": {
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_revision": {
+          "minLength": 1,
+          "title": "Source Revision",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/SignalSourceType"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_id",
+        "source_revision",
+        "source_content_hash",
+        "scope",
+        "sensitivity"
+      ],
+      "title": "MiningSourceReference",
+      "type": "object"
+    },
+    "SignalSourceType": {
+      "enum": [
+        "controller",
+        "acceptance",
+        "verifier",
+        "user_correction",
+        "context",
+        "retrieval",
+        "provider_request",
+        "provider_result",
+        "tool",
+        "memory",
+        "semantic",
+        "skill",
+        "strategy",
+        "experience",
+        "corpus",
+        "routing_decision",
+        "routing_outcome",
+        "routing_shadow",
+        "benchmark",
+        "artifact"
+      ],
+      "title": "SignalSourceType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/weakness/weakness-signal-evidence.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "evidence_code": {
+      "minLength": 1,
+      "title": "Evidence Code",
+      "type": "string"
+    },
+    "limitation": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Limitation"
+    },
+    "role": {
+      "$ref": "#/$defs/EvidenceRole"
+    },
+    "source_ref": {
+      "$ref": "#/$defs/MiningSourceReference"
+    }
+  },
+  "required": [
+    "source_ref",
+    "role",
+    "evidence_code"
+  ],
+  "title": "WeaknessSignalEvidence",
+  "type": "object"
+}

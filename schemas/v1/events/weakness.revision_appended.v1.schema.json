@@ -1,0 +1,33 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/weakness.revision_appended.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "revision": {
+      "title": "Revision",
+      "type": "integer"
+    },
+    "revision_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Revision Hash",
+      "type": "string"
+    },
+    "weakness_id": {
+      "format": "uuid",
+      "title": "Weakness Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "weakness_id",
+    "revision",
+    "revision_hash",
+    "occurred_at"
+  ],
+  "title": "WeaknessRevisionAppended",
+  "type": "object"
+}

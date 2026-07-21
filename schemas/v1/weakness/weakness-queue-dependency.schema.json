@@ -1,0 +1,58 @@
+{
+  "$defs": {
+    "QueueBlockerType": {
+      "enum": [
+        "requires_more_evidence",
+        "requires_reproduction",
+        "depends_on_other_weakness",
+        "requires_operator_review",
+        "source_unavailable",
+        "sensitivity_restriction"
+      ],
+      "title": "QueueBlockerType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/weakness/weakness-queue-dependency.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "blocked_by_weakness_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Blocked By Weakness Id"
+    },
+    "blocker_type": {
+      "$ref": "#/$defs/QueueBlockerType"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "evidence_reference": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Evidence Reference",
+      "type": "string"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "blocker_type",
+    "evidence_reference",
+    "reason"
+  ],
+  "title": "WeaknessQueueDependency",
+  "type": "object"
+}

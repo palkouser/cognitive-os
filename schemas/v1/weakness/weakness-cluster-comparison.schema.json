@@ -1,0 +1,60 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/weakness/weakness-cluster-comparison.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "added_group_hashes": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Added Group Hashes",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "left_snapshot_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Left Snapshot Hash",
+      "type": "string"
+    },
+    "limitations": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "removed_group_hashes": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Removed Group Hashes",
+      "type": "array"
+    },
+    "right_snapshot_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Right Snapshot Hash",
+      "type": "string"
+    },
+    "stable_group_count": {
+      "minimum": 0,
+      "title": "Stable Group Count",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "left_snapshot_hash",
+    "right_snapshot_hash",
+    "added_group_hashes",
+    "removed_group_hashes",
+    "stable_group_count"
+  ],
+  "title": "WeaknessClusterComparison",
+  "type": "object"
+}

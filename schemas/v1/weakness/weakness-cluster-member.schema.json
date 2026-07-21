@@ -1,0 +1,33 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/weakness/weakness-cluster-member.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "group_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Group Hash",
+      "type": "string"
+    },
+    "group_id": {
+      "format": "uuid",
+      "title": "Group Id",
+      "type": "string"
+    },
+    "group_revision": {
+      "exclusiveMinimum": 0,
+      "title": "Group Revision",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "group_id",
+    "group_revision",
+    "group_hash"
+  ],
+  "title": "WeaknessClusterMember",
+  "type": "object"
+}

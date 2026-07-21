@@ -1,0 +1,226 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/config/weakness-configuration.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "allow_single_critical_safety_confirmation": {
+      "default": true,
+      "title": "Allow Single Critical Safety Confirmation",
+      "type": "boolean"
+    },
+    "automatic_confirmation_enabled": {
+      "default": false,
+      "title": "Automatic Confirmation Enabled",
+      "type": "boolean"
+    },
+    "automatic_proposal_creation_enabled": {
+      "default": false,
+      "title": "Automatic Proposal Creation Enabled",
+      "type": "boolean"
+    },
+    "automatic_resolution_enabled": {
+      "default": false,
+      "title": "Automatic Resolution Enabled",
+      "type": "boolean"
+    },
+    "automatic_source_modification_enabled": {
+      "default": false,
+      "title": "Automatic Source Modification Enabled",
+      "type": "boolean"
+    },
+    "clustering_can_mutate_authority": {
+      "default": false,
+      "title": "Clustering Can Mutate Authority",
+      "type": "boolean"
+    },
+    "critical_safety_confirmation_requires_operator": {
+      "default": true,
+      "title": "Critical Safety Confirmation Requires Operator",
+      "type": "boolean"
+    },
+    "exact_grouping_enabled": {
+      "default": true,
+      "title": "Exact Grouping Enabled",
+      "type": "boolean"
+    },
+    "external_network_sources_enabled": {
+      "default": false,
+      "title": "External Network Sources Enabled",
+      "type": "boolean"
+    },
+    "maximum_cluster_members": {
+      "default": 10000,
+      "maximum": 10000,
+      "minimum": 1,
+      "title": "Maximum Cluster Members",
+      "type": "integer"
+    },
+    "maximum_clusters_per_run": {
+      "default": 10000,
+      "maximum": 10000,
+      "minimum": 1,
+      "title": "Maximum Clusters Per Run",
+      "type": "integer"
+    },
+    "maximum_concurrent_mining_runs": {
+      "default": 4,
+      "maximum": 4,
+      "minimum": 1,
+      "title": "Maximum Concurrent Mining Runs",
+      "type": "integer"
+    },
+    "maximum_counterexamples": {
+      "default": 256,
+      "maximum": 256,
+      "minimum": 0,
+      "title": "Maximum Counterexamples",
+      "type": "integer"
+    },
+    "maximum_evidence_package_bytes": {
+      "default": 33554432,
+      "maximum": 33554432,
+      "minimum": 1,
+      "title": "Maximum Evidence Package Bytes",
+      "type": "integer"
+    },
+    "maximum_group_query_depth": {
+      "default": 8,
+      "maximum": 8,
+      "minimum": 1,
+      "title": "Maximum Group Query Depth",
+      "type": "integer"
+    },
+    "maximum_groups_per_run": {
+      "default": 25000,
+      "maximum": 25000,
+      "minimum": 1,
+      "title": "Maximum Groups Per Run",
+      "type": "integer"
+    },
+    "maximum_mining_runs": {
+      "default": 100000,
+      "maximum": 100000,
+      "minimum": 1,
+      "title": "Maximum Mining Runs",
+      "type": "integer"
+    },
+    "maximum_mining_seconds": {
+      "default": 1800,
+      "maximum": 1800,
+      "minimum": 1,
+      "title": "Maximum Mining Seconds",
+      "type": "integer"
+    },
+    "maximum_queue_dependencies": {
+      "default": 32,
+      "maximum": 32,
+      "minimum": 0,
+      "title": "Maximum Queue Dependencies",
+      "type": "integer"
+    },
+    "maximum_queue_entries": {
+      "default": 100000,
+      "maximum": 100000,
+      "minimum": 1,
+      "title": "Maximum Queue Entries",
+      "type": "integer"
+    },
+    "maximum_signals_per_run": {
+      "default": 100000,
+      "maximum": 100000,
+      "minimum": 1,
+      "title": "Maximum Signals Per Run",
+      "type": "integer"
+    },
+    "maximum_signals_per_signature": {
+      "default": 10000,
+      "maximum": 10000,
+      "minimum": 1,
+      "title": "Maximum Signals Per Signature",
+      "type": "integer"
+    },
+    "maximum_source_artifacts_per_run": {
+      "default": 10000,
+      "maximum": 10000,
+      "minimum": 0,
+      "title": "Maximum Source Artifacts Per Run",
+      "type": "integer"
+    },
+    "maximum_source_records_per_run": {
+      "default": 100000,
+      "maximum": 100000,
+      "minimum": 1,
+      "title": "Maximum Source Records Per Run",
+      "type": "integer"
+    },
+    "maximum_sources_per_signal": {
+      "default": 64,
+      "maximum": 64,
+      "minimum": 1,
+      "title": "Maximum Sources Per Signal",
+      "type": "integer"
+    },
+    "maximum_sources_per_weakness": {
+      "default": 2048,
+      "maximum": 2048,
+      "minimum": 1,
+      "title": "Maximum Sources Per Weakness",
+      "type": "integer"
+    },
+    "maximum_summary_bytes": {
+      "default": 65536,
+      "maximum": 65536,
+      "minimum": 1,
+      "title": "Maximum Summary Bytes",
+      "type": "integer"
+    },
+    "minimum_distinct_tasks_for_confirmation": {
+      "default": 2,
+      "minimum": 1,
+      "title": "Minimum Distinct Tasks For Confirmation",
+      "type": "integer"
+    },
+    "minimum_evidence_coverage": {
+      "default": 0.8,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Minimum Evidence Coverage",
+      "type": "number"
+    },
+    "minimum_monitoring_task_count": {
+      "default": 10,
+      "minimum": 1,
+      "title": "Minimum Monitoring Task Count",
+      "type": "integer"
+    },
+    "minimum_reproduction_count": {
+      "default": 2,
+      "minimum": 1,
+      "title": "Minimum Reproduction Count",
+      "type": "integer"
+    },
+    "minimum_resolution_task_count": {
+      "default": 20,
+      "minimum": 1,
+      "title": "Minimum Resolution Task Count",
+      "type": "integer"
+    },
+    "minimum_signals_for_confirmation": {
+      "default": 2,
+      "minimum": 1,
+      "title": "Minimum Signals For Confirmation",
+      "type": "integer"
+    },
+    "optional_clustering_enabled": {
+      "default": false,
+      "title": "Optional Clustering Enabled",
+      "type": "boolean"
+    },
+    "provider_assisted_clustering_enabled": {
+      "default": false,
+      "title": "Provider Assisted Clustering Enabled",
+      "type": "boolean"
+    }
+  },
+  "title": "WeaknessConfiguration",
+  "type": "object"
+}

@@ -1,0 +1,436 @@
+{
+  "$defs": {
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "MiningSourceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artifact Id"
+        },
+        "authoritative": {
+          "default": true,
+          "title": "Authoritative",
+          "type": "boolean"
+        },
+        "contains_secret": {
+          "default": false,
+          "title": "Contains Secret",
+          "type": "boolean"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "event_stream_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Stream Id"
+        },
+        "event_stream_version": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Stream Version"
+        },
+        "outcome_authority": {
+          "default": false,
+          "title": "Outcome Authority",
+          "type": "boolean"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "scope": {
+          "minLength": 1,
+          "title": "Scope",
+          "type": "string"
+        },
+        "sensitivity": {
+          "$ref": "#/$defs/MemorySensitivity"
+        },
+        "shadow": {
+          "default": false,
+          "title": "Shadow",
+          "type": "boolean"
+        },
+        "source_content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Content Hash",
+          "type": "string"
+        },
+        "source_id": {
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_revision": {
+          "minLength": 1,
+          "title": "Source Revision",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/SignalSourceType"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_id",
+        "source_revision",
+        "source_content_hash",
+        "scope",
+        "sensitivity"
+      ],
+      "title": "MiningSourceReference",
+      "type": "object"
+    },
+    "SignalSourceType": {
+      "enum": [
+        "controller",
+        "acceptance",
+        "verifier",
+        "user_correction",
+        "context",
+        "retrieval",
+        "provider_request",
+        "provider_result",
+        "tool",
+        "memory",
+        "semantic",
+        "skill",
+        "strategy",
+        "experience",
+        "corpus",
+        "routing_decision",
+        "routing_outcome",
+        "routing_shadow",
+        "benchmark",
+        "artifact"
+      ],
+      "title": "SignalSourceType",
+      "type": "string"
+    },
+    "WeaknessReproductionAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "assessed_at": {
+          "format": "date-time",
+          "title": "Assessed At",
+          "type": "string"
+        },
+        "attempts": {
+          "items": {
+            "$ref": "#/$defs/WeaknessReproductionAttempt"
+          },
+          "title": "Attempts",
+          "type": "array"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "limitations": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "required_safety_restrictions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Required Safety Restrictions",
+          "type": "array"
+        },
+        "status": {
+          "$ref": "#/$defs/WeaknessReproductionStatus"
+        }
+      },
+      "required": [
+        "status",
+        "attempts",
+        "required_safety_restrictions",
+        "limitations",
+        "assessed_at"
+      ],
+      "title": "WeaknessReproductionAssessment",
+      "type": "object"
+    },
+    "WeaknessReproductionAttempt": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_id": {
+          "format": "uuid",
+          "title": "Attempt Id",
+          "type": "string"
+        },
+        "attempted_at": {
+          "format": "date-time",
+          "title": "Attempted At",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "environment_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Environment Hash",
+          "type": "string"
+        },
+        "limitations": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "result": {
+          "$ref": "#/$defs/WeaknessReproductionStatus"
+        },
+        "source_snapshot_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Snapshot Hash",
+          "type": "string"
+        },
+        "verifier_bundle_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Verifier Bundle Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "attempt_id",
+        "source_snapshot_hash",
+        "environment_hash",
+        "result",
+        "verifier_bundle_hash",
+        "attempted_at"
+      ],
+      "title": "WeaknessReproductionAttempt",
+      "type": "object"
+    },
+    "WeaknessReproductionStatus": {
+      "enum": [
+        "not_attempted",
+        "reproducible",
+        "partially_reproducible",
+        "not_reproduced",
+        "blocked",
+        "unsafe_to_reproduce",
+        "insufficient_evidence"
+      ],
+      "title": "WeaknessReproductionStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/weakness/weakness-evidence-package.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifact_reference": {
+      "format": "uuid",
+      "title": "Artifact Reference",
+      "type": "string"
+    },
+    "artifact_refs": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Artifact Refs",
+      "type": "array"
+    },
+    "checksums": {
+      "additionalProperties": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "propertyNames": {
+        "minLength": 1
+      },
+      "title": "Checksums",
+      "type": "object"
+    },
+    "complete_source_count": {
+      "exclusiveMinimum": 0,
+      "title": "Complete Source Count",
+      "type": "integer"
+    },
+    "component_sections": {
+      "additionalProperties": {
+        "items": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "propertyNames": {
+        "minLength": 1
+      },
+      "title": "Component Sections",
+      "type": "object"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "counterexample_hashes": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Counterexample Hashes",
+      "type": "array"
+    },
+    "event_refs": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Event Refs",
+      "type": "array"
+    },
+    "evidence_package_id": {
+      "format": "uuid",
+      "title": "Evidence Package Id",
+      "type": "string"
+    },
+    "group_snapshot_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Group Snapshot Hash",
+      "type": "string"
+    },
+    "limitations": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "representative_signal_hashes": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Representative Signal Hashes",
+      "type": "array"
+    },
+    "reproduction": {
+      "$ref": "#/$defs/WeaknessReproductionAssessment"
+    },
+    "sensitivity": {
+      "$ref": "#/$defs/MemorySensitivity"
+    },
+    "source_manifest": {
+      "items": {
+        "$ref": "#/$defs/MiningSourceReference"
+      },
+      "title": "Source Manifest",
+      "type": "array"
+    },
+    "task_refs": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Task Refs",
+      "type": "array"
+    },
+    "verification_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Verification Hash",
+      "type": "string"
+    },
+    "weakness_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Weakness Id"
+    },
+    "weakness_revision": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Weakness Revision"
+    }
+  },
+  "required": [
+    "evidence_package_id",
+    "group_snapshot_hash",
+    "source_manifest",
+    "representative_signal_hashes",
+    "complete_source_count",
+    "counterexample_hashes",
+    "task_refs",
+    "event_refs",
+    "artifact_refs",
+    "component_sections",
+    "reproduction",
+    "sensitivity",
+    "limitations",
+    "artifact_reference",
+    "checksums",
+    "verification_hash"
+  ],
+  "title": "WeaknessEvidencePackage",
+  "type": "object"
+}

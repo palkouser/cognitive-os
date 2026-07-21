@@ -1,0 +1,91 @@
+{
+  "$defs": {
+    "ImpactDimension": {
+      "enum": [
+        "frequency",
+        "affected_task_count",
+        "severity",
+        "safety_impact",
+        "correctness_impact",
+        "user_correction_count",
+        "cost_impact",
+        "latency_impact",
+        "repair_iteration_impact",
+        "recency",
+        "reproducibility",
+        "evidence_confidence",
+        "strategic_reach"
+      ],
+      "title": "ImpactDimension",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/weakness/impact-dimension-result.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "dimension": {
+      "$ref": "#/$defs/ImpactDimension"
+    },
+    "normalized_value": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Normalized Value",
+      "type": "string"
+    },
+    "profile_version": {
+      "exclusiveMinimum": 0,
+      "title": "Profile Version",
+      "type": "integer"
+    },
+    "raw_value": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Raw Value",
+      "type": "string"
+    },
+    "sample_count": {
+      "minimum": 0,
+      "title": "Sample Count",
+      "type": "integer"
+    },
+    "source_refs": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Source Refs",
+      "type": "array"
+    },
+    "uncertainty": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Uncertainty",
+      "type": "string"
+    },
+    "weight": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Weight",
+      "type": "string"
+    },
+    "weighted_value": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Weighted Value",
+      "type": "string"
+    }
+  },
+  "required": [
+    "dimension",
+    "raw_value",
+    "normalized_value",
+    "weight",
+    "weighted_value",
+    "source_refs",
+    "sample_count",
+    "uncertainty",
+    "profile_version"
+  ],
+  "title": "ImpactDimensionResult",
+  "type": "object"
+}

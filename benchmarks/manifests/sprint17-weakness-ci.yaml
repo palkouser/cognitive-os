@@ -1,0 +1,28 @@
+benchmark_id: sprint17-weakness-ci
+version: "1"
+title: Sprint 17 weakness mining CI gate
+description: Eighteen credential-free signal, grouping, impact, lifecycle, queue, and security cases.
+default_configuration: {mode: weakness-replay}
+source: Cognitive OS Sprint 17 executable backlog
+license: Apache-2.0
+created_at: 2026-01-01T00:00:00Z
+case_matrix:
+  generic:
+    - {id: weakness-ci.source-01, scenario: exact-source, expected: passed}
+    - {id: weakness-ci.signal-02, scenario: authoritative-signal, expected: passed}
+    - {id: weakness-ci.signature-03, scenario: signature, expected: passed}
+    - {id: weakness-ci.group-04, scenario: exact-group, expected: passed}
+    - {id: weakness-ci.cluster-05, scenario: advisory-cluster, expected: passed}
+    - {id: weakness-ci.counterexample-06, scenario: counterexample, expected: passed}
+    - {id: weakness-ci.impact-07, scenario: impact, expected: passed}
+    - {id: weakness-ci.floor-08, scenario: safety-floor, expected: passed}
+    - {id: weakness-ci.uncertainty-09, scenario: uncertainty, expected: passed}
+    - {id: weakness-ci.evidence-10, scenario: evidence-package, expected: passed}
+    - {id: weakness-ci.candidate-11, scenario: candidate, expected: passed}
+    - {id: weakness-ci.confirmation-12, scenario: confirmation-policy, expected: passed}
+    - {id: weakness-ci.resolution-13, scenario: resolution-policy, expected: passed}
+    - {id: weakness-ci.queue-14, scenario: queue, expected: passed}
+    - {id: weakness-ci.replay-15, scenario: replay-candidate, expected: passed}
+    - {id: weakness-ci.benchmark-16, scenario: benchmark-candidate, expected: passed}
+    - {id: weakness-ci.authority-17, scenario: provider-non-authority, expected: passed}
+    - {id: weakness-ci.security-18, scenario: no-source-write, expected: passed}

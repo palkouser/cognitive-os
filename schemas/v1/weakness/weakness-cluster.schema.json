@@ -1,0 +1,100 @@
+{
+  "$defs": {
+    "WeaknessClusterMember": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "group_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Group Hash",
+          "type": "string"
+        },
+        "group_id": {
+          "format": "uuid",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "group_revision": {
+          "exclusiveMinimum": 0,
+          "title": "Group Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "group_id",
+        "group_revision",
+        "group_hash"
+      ],
+      "title": "WeaknessClusterMember",
+      "type": "object"
+    },
+    "WeaknessClusterMethod": {
+      "enum": [
+        "exact_signature",
+        "no_op",
+        "graph_neighbourhood",
+        "embedding_advisory"
+      ],
+      "title": "WeaknessClusterMethod",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/weakness/weakness-cluster.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "advisory": {
+      "default": true,
+      "title": "Advisory",
+      "type": "boolean"
+    },
+    "cluster_id": {
+      "format": "uuid",
+      "title": "Cluster Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "members": {
+      "items": {
+        "$ref": "#/$defs/WeaknessClusterMember"
+      },
+      "title": "Members",
+      "type": "array"
+    },
+    "method": {
+      "$ref": "#/$defs/WeaknessClusterMethod"
+    },
+    "method_profile_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Method Profile Hash",
+      "type": "string"
+    },
+    "revision": {
+      "exclusiveMinimum": 0,
+      "title": "Revision",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "cluster_id",
+    "revision",
+    "method",
+    "method_profile_hash",
+    "members",
+    "created_at"
+  ],
+  "title": "WeaknessCluster",
+  "type": "object"
+}

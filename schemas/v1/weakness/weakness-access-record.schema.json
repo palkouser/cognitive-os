@@ -1,0 +1,85 @@
+{
+  "$defs": {
+    "WeaknessAccessType": {
+      "enum": [
+        "source_resolution",
+        "signal_read",
+        "group_query",
+        "cluster_query",
+        "impact_read",
+        "evidence_read",
+        "weakness_read",
+        "queue_read",
+        "reproduction_read"
+      ],
+      "title": "WeaknessAccessType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/weakness/weakness-access-record.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "access_id": {
+      "format": "uuid",
+      "title": "Access Id",
+      "type": "string"
+    },
+    "access_type": {
+      "$ref": "#/$defs/WeaknessAccessType"
+    },
+    "accessed_at": {
+      "format": "date-time",
+      "title": "Accessed At",
+      "type": "string"
+    },
+    "actor_id": {
+      "minLength": 1,
+      "title": "Actor Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "subject_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Subject Hash",
+      "type": "string"
+    },
+    "subject_id": {
+      "minLength": 1,
+      "title": "Subject Id",
+      "type": "string"
+    },
+    "subject_revision": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Subject Revision"
+    }
+  },
+  "required": [
+    "access_id",
+    "access_type",
+    "actor_id",
+    "subject_id",
+    "subject_hash",
+    "accessed_at",
+    "reason"
+  ],
+  "title": "WeaknessAccessRecord",
+  "type": "object"
+}

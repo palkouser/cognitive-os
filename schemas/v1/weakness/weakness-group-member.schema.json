@@ -1,0 +1,39 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/weakness/weakness-group-member.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "observed_at": {
+      "format": "date-time",
+      "title": "Observed At",
+      "type": "string"
+    },
+    "signal_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Signal Hash",
+      "type": "string"
+    },
+    "signal_id": {
+      "format": "uuid",
+      "title": "Signal Id",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "signal_id",
+    "signal_hash",
+    "task_run_id",
+    "observed_at"
+  ],
+  "title": "WeaknessGroupMember",
+  "type": "object"
+}

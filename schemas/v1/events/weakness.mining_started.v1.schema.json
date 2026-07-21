@@ -1,0 +1,28 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/weakness.mining_started.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "mining_run_id": {
+      "format": "uuid",
+      "title": "Mining Run Id",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "request_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Request Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "mining_run_id",
+    "request_hash",
+    "occurred_at"
+  ],
+  "title": "WeaknessMiningStarted",
+  "type": "object"
+}

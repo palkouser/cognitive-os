@@ -1,0 +1,404 @@
+{
+  "$defs": {
+    "WeaknessComponentType": {
+      "enum": [
+        "controller",
+        "context",
+        "retrieval",
+        "provider",
+        "model",
+        "tool",
+        "verifier",
+        "memory",
+        "semantic_memory",
+        "skill",
+        "strategy",
+        "experience",
+        "corpus",
+        "routing",
+        "sandbox",
+        "unknown"
+      ],
+      "title": "WeaknessComponentType",
+      "type": "string"
+    },
+    "WeaknessGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "counterexample_refs": {
+          "default": [],
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Counterexample Refs",
+          "type": "array"
+        },
+        "distinct_component_count": {
+          "exclusiveMinimum": 0,
+          "title": "Distinct Component Count",
+          "type": "integer"
+        },
+        "distinct_task_count": {
+          "exclusiveMinimum": 0,
+          "title": "Distinct Task Count",
+          "type": "integer"
+        },
+        "first_seen": {
+          "format": "date-time",
+          "title": "First Seen",
+          "type": "string"
+        },
+        "group_id": {
+          "format": "uuid",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "last_seen": {
+          "format": "date-time",
+          "title": "Last Seen",
+          "type": "string"
+        },
+        "members": {
+          "items": {
+            "$ref": "#/$defs/WeaknessGroupMember"
+          },
+          "minItems": 1,
+          "title": "Members",
+          "type": "array"
+        },
+        "revision": {
+          "exclusiveMinimum": 0,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "signature": {
+          "$ref": "#/$defs/WeaknessSignature"
+        }
+      },
+      "required": [
+        "group_id",
+        "revision",
+        "signature",
+        "members",
+        "distinct_task_count",
+        "distinct_component_count",
+        "first_seen",
+        "last_seen"
+      ],
+      "title": "WeaknessGroup",
+      "type": "object"
+    },
+    "WeaknessGroupMember": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "observed_at": {
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "signal_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Signal Hash",
+          "type": "string"
+        },
+        "signal_id": {
+          "format": "uuid",
+          "title": "Signal Id",
+          "type": "string"
+        },
+        "task_run_id": {
+          "format": "uuid",
+          "title": "Task Run Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "signal_id",
+        "signal_hash",
+        "task_run_id",
+        "observed_at"
+      ],
+      "title": "WeaknessGroupMember",
+      "type": "object"
+    },
+    "WeaknessSignature": {
+      "additionalProperties": false,
+      "properties": {
+        "component_identity": {
+          "minLength": 1,
+          "title": "Component Identity",
+          "type": "string"
+        },
+        "component_type": {
+          "$ref": "#/$defs/WeaknessComponentType"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "context_source_type": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context Source Type"
+        },
+        "corpus_destination": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Corpus Destination"
+        },
+        "model_identity": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Identity"
+        },
+        "normalized_failure_code": {
+          "minLength": 1,
+          "title": "Normalized Failure Code",
+          "type": "string"
+        },
+        "normalized_problem_signature": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Normalized Problem Signature",
+          "type": "string"
+        },
+        "provider_identity": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider Identity"
+        },
+        "retrieval_identity": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retrieval Identity"
+        },
+        "risk_class": {
+          "minLength": 1,
+          "title": "Risk Class",
+          "type": "string"
+        },
+        "routing_policy_identity": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Routing Policy Identity"
+        },
+        "scope": {
+          "minLength": 1,
+          "title": "Scope",
+          "type": "string"
+        },
+        "signature_version": {
+          "default": "weakness-signature-v1",
+          "minLength": 1,
+          "title": "Signature Version",
+          "type": "string"
+        },
+        "skill_identity": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Skill Identity"
+        },
+        "strategy_identity": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Strategy Identity"
+        },
+        "tool_identity": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tool Identity"
+        },
+        "verifier_identity": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Verifier Identity"
+        },
+        "weakness_type": {
+          "$ref": "#/$defs/WeaknessType"
+        }
+      },
+      "required": [
+        "weakness_type",
+        "normalized_problem_signature",
+        "normalized_failure_code",
+        "component_type",
+        "component_identity",
+        "risk_class",
+        "scope"
+      ],
+      "title": "WeaknessSignature",
+      "type": "object"
+    },
+    "WeaknessType": {
+      "enum": [
+        "model_routing_failure",
+        "tool_routing_failure",
+        "provider_structured_output_failure",
+        "provider_availability_failure",
+        "context_required_item_missing",
+        "context_irrelevant_content",
+        "context_budget_failure",
+        "retrieval_recall_failure",
+        "retrieval_scope_or_sensitivity_denial",
+        "missing_skill",
+        "skill_precondition_failure",
+        "skill_execution_failure",
+        "strategy_mismatch",
+        "strategy_fallback_overuse",
+        "verifier_gap",
+        "verifier_instability",
+        "memory_retrieval_failure",
+        "semantic_contradiction_block",
+        "corpus_coverage_gap",
+        "excessive_repair",
+        "excessive_iteration",
+        "unnecessary_provider_call",
+        "unnecessary_tool_call",
+        "cost_regression",
+        "latency_regression",
+        "policy_denial_pattern",
+        "sandbox_failure",
+        "user_correction_pattern",
+        "unknown"
+      ],
+      "title": "WeaknessType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/weakness/weakness-group-snapshot.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "groups": {
+      "items": {
+        "$ref": "#/$defs/WeaknessGroup"
+      },
+      "title": "Groups",
+      "type": "array"
+    },
+    "profile_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Profile Hash",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "format": "uuid",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "source_signal_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Signal Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "snapshot_id",
+    "groups",
+    "source_signal_hash",
+    "profile_hash",
+    "created_at"
+  ],
+  "title": "WeaknessGroupSnapshot",
+  "type": "object"
+}
