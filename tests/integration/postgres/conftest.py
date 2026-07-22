@@ -40,6 +40,12 @@ async def engines(database_urls) -> AsyncIterator[tuple[object, object]]:
         await connection.execute(
             text(
                 "TRUNCATE cognitive_os.routing_accesses, cognitive_os.routing_experiments, "
+                "cognitive_os.change_accesses, cognitive_os.change_rollbacks, "
+                "cognitive_os.change_promotions, cognitive_os.change_promotion_assessments, "
+                "cognitive_os.change_regression_comparisons, cognitive_os.change_evaluation_runs, "
+                "cognitive_os.change_candidate_artifacts, cognitive_os.change_candidates, "
+                "cognitive_os.change_isolation_manifests, "
+                "cognitive_os.change_experiment_revisions, cognitive_os.change_experiments, "
                 "cognitive_os.harness_proposal_accesses, cognitive_os.harness_proposal_queue, "
                 "cognitive_os.harness_proposal_reviews, "
                 "cognitive_os.harness_proposal_rollback_plans, "

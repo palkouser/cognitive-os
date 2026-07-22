@@ -1,0 +1,82 @@
+benchmark_id: sprint19-change-seed
+version: "1"
+title: Sprint 19 controlled-change deterministic seed gate
+description: 72 credential-free controlled-change cases over four deterministic seeds.
+default_configuration: {mode: change-replay}
+source: Cognitive OS Sprint 19 executable backlog
+license: Apache-2.0
+created_at: 2026-01-01T00:00:00Z
+case_matrix:
+  generic:
+    - {id: change-seed-001, scenario: tier0_repository_bundle, expected: passed}
+    - {id: change-seed-002, scenario: tier1_governed_promotion, expected: passed}
+    - {id: change-seed-003, scenario: tier1_rollback, expected: passed}
+    - {id: change-seed-004, scenario: tier2_repository_bundle, expected: passed}
+    - {id: change-seed-005, scenario: historical_regression, expected: rejected}
+    - {id: change-seed-006, scenario: security_regression, expected: rejected}
+    - {id: change-seed-007, scenario: unrelated_domain_regression, expected: rejected}
+    - {id: change-seed-008, scenario: tier3_manual_review, expected: manual_review}
+    - {id: change-seed-009, scenario: unapproved_proposal, expected: rejected}
+    - {id: change-seed-010, scenario: stale_proposal, expected: rejected}
+    - {id: change-seed-011, scenario: worktree_scope_escape, expected: rejected}
+    - {id: change-seed-012, scenario: active_database_write, expected: rejected}
+    - {id: change-seed-013, scenario: provider_scope_escape, expected: rejected}
+    - {id: change-seed-014, scenario: dependency_expansion, expected: rejected}
+    - {id: change-seed-015, scenario: migration_failure, expected: rejected}
+    - {id: change-seed-016, scenario: backup_restore_failure, expected: rejected}
+    - {id: change-seed-017, scenario: rollback_failure, expected: rejected}
+    - {id: change-seed-018, scenario: concurrent_promotion_conflict, expected: rejected}
+    - {id: change-seed-019, scenario: tier0_repository_bundle, expected: passed}
+    - {id: change-seed-020, scenario: tier1_governed_promotion, expected: passed}
+    - {id: change-seed-021, scenario: tier1_rollback, expected: passed}
+    - {id: change-seed-022, scenario: tier2_repository_bundle, expected: passed}
+    - {id: change-seed-023, scenario: historical_regression, expected: rejected}
+    - {id: change-seed-024, scenario: security_regression, expected: rejected}
+    - {id: change-seed-025, scenario: unrelated_domain_regression, expected: rejected}
+    - {id: change-seed-026, scenario: tier3_manual_review, expected: manual_review}
+    - {id: change-seed-027, scenario: unapproved_proposal, expected: rejected}
+    - {id: change-seed-028, scenario: stale_proposal, expected: rejected}
+    - {id: change-seed-029, scenario: worktree_scope_escape, expected: rejected}
+    - {id: change-seed-030, scenario: active_database_write, expected: rejected}
+    - {id: change-seed-031, scenario: provider_scope_escape, expected: rejected}
+    - {id: change-seed-032, scenario: dependency_expansion, expected: rejected}
+    - {id: change-seed-033, scenario: migration_failure, expected: rejected}
+    - {id: change-seed-034, scenario: backup_restore_failure, expected: rejected}
+    - {id: change-seed-035, scenario: rollback_failure, expected: rejected}
+    - {id: change-seed-036, scenario: concurrent_promotion_conflict, expected: rejected}
+    - {id: change-seed-037, scenario: tier0_repository_bundle, expected: passed}
+    - {id: change-seed-038, scenario: tier1_governed_promotion, expected: passed}
+    - {id: change-seed-039, scenario: tier1_rollback, expected: passed}
+    - {id: change-seed-040, scenario: tier2_repository_bundle, expected: passed}
+    - {id: change-seed-041, scenario: historical_regression, expected: rejected}
+    - {id: change-seed-042, scenario: security_regression, expected: rejected}
+    - {id: change-seed-043, scenario: unrelated_domain_regression, expected: rejected}
+    - {id: change-seed-044, scenario: tier3_manual_review, expected: manual_review}
+    - {id: change-seed-045, scenario: unapproved_proposal, expected: rejected}
+    - {id: change-seed-046, scenario: stale_proposal, expected: rejected}
+    - {id: change-seed-047, scenario: worktree_scope_escape, expected: rejected}
+    - {id: change-seed-048, scenario: active_database_write, expected: rejected}
+    - {id: change-seed-049, scenario: provider_scope_escape, expected: rejected}
+    - {id: change-seed-050, scenario: dependency_expansion, expected: rejected}
+    - {id: change-seed-051, scenario: migration_failure, expected: rejected}
+    - {id: change-seed-052, scenario: backup_restore_failure, expected: rejected}
+    - {id: change-seed-053, scenario: rollback_failure, expected: rejected}
+    - {id: change-seed-054, scenario: concurrent_promotion_conflict, expected: rejected}
+    - {id: change-seed-055, scenario: tier0_repository_bundle, expected: passed}
+    - {id: change-seed-056, scenario: tier1_governed_promotion, expected: passed}
+    - {id: change-seed-057, scenario: tier1_rollback, expected: passed}
+    - {id: change-seed-058, scenario: tier2_repository_bundle, expected: passed}
+    - {id: change-seed-059, scenario: historical_regression, expected: rejected}
+    - {id: change-seed-060, scenario: security_regression, expected: rejected}
+    - {id: change-seed-061, scenario: unrelated_domain_regression, expected: rejected}
+    - {id: change-seed-062, scenario: tier3_manual_review, expected: manual_review}
+    - {id: change-seed-063, scenario: unapproved_proposal, expected: rejected}
+    - {id: change-seed-064, scenario: stale_proposal, expected: rejected}
+    - {id: change-seed-065, scenario: worktree_scope_escape, expected: rejected}
+    - {id: change-seed-066, scenario: active_database_write, expected: rejected}
+    - {id: change-seed-067, scenario: provider_scope_escape, expected: rejected}
+    - {id: change-seed-068, scenario: dependency_expansion, expected: rejected}
+    - {id: change-seed-069, scenario: migration_failure, expected: rejected}
+    - {id: change-seed-070, scenario: backup_restore_failure, expected: rejected}
+    - {id: change-seed-071, scenario: rollback_failure, expected: rejected}
+    - {id: change-seed-072, scenario: concurrent_promotion_conflict, expected: rejected}

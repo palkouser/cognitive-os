@@ -90,6 +90,11 @@ into deterministic, verifier-gated, explicitly reviewed proposals for future iso
 It cannot apply a change, write a destination, approve promotion, or act as a second controller.
 See the [Harness Proposal Engine architecture](docs/architecture/harness-proposal-engine.md).
 
+Sprint 19 adds regression-gated controlled changes. Exact approved proposals can produce isolated,
+immutable candidates, complete target and non-target comparisons, separately approved Tier 1
+promotions, or operator-owned repository bundles. Runtime merge and release remain forbidden. See
+the [Controlled Change architecture](docs/architecture/controlled-change-management.md).
+
 ![LightAgent Banner](docs/images/lightagent-banner.jpg)
 <div align="center">
   <p>

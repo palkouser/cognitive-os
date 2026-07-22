@@ -1,0 +1,158 @@
+{
+  "$defs": {
+    "ChangeOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "expected_before_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Expected Before Hash",
+          "type": "string"
+        },
+        "operation_type": {
+          "$ref": "#/$defs/ChangeOperationType"
+        },
+        "target": {
+          "minLength": 1,
+          "title": "Target",
+          "type": "string"
+        },
+        "value_artifact_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Value Artifact Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_type",
+        "target",
+        "expected_before_hash",
+        "value_artifact_hash"
+      ],
+      "title": "ChangeOperation",
+      "type": "object"
+    },
+    "ChangeOperationType": {
+      "enum": [
+        "replace_exact_text",
+        "set_configuration_value",
+        "append_declarative_revision",
+        "write_approved_artifact"
+      ],
+      "title": "ChangeOperationType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/changes/change-implementation-plan.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "allowed_provider_roles": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Allowed Provider Roles",
+      "type": "array"
+    },
+    "allowed_tools": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Allowed Tools",
+      "type": "array"
+    },
+    "checkpoint_policy": {
+      "minLength": 1,
+      "title": "Checkpoint Policy",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "expected_artifacts": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Expected Artifacts",
+      "type": "array"
+    },
+    "expected_files": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Expected Files",
+      "type": "array"
+    },
+    "expected_schema_changes": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Expected Schema Changes",
+      "type": "array"
+    },
+    "failure_policy": {
+      "minLength": 1,
+      "title": "Failure Policy",
+      "type": "string"
+    },
+    "forbidden_operations": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Forbidden Operations",
+      "type": "array"
+    },
+    "ordered_operations": {
+      "items": {
+        "$ref": "#/$defs/ChangeOperation"
+      },
+      "minItems": 1,
+      "title": "Ordered Operations",
+      "type": "array"
+    },
+    "proposal_reference": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Proposal Reference",
+      "type": "string"
+    },
+    "rollback_plan_reference": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Rollback Plan Reference",
+      "type": "string"
+    },
+    "validation_plan_reference": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Validation Plan Reference",
+      "type": "string"
+    }
+  },
+  "required": [
+    "proposal_reference",
+    "ordered_operations",
+    "expected_files",
+    "expected_schema_changes",
+    "expected_artifacts",
+    "allowed_tools",
+    "allowed_provider_roles",
+    "forbidden_operations",
+    "checkpoint_policy",
+    "failure_policy",
+    "validation_plan_reference",
+    "rollback_plan_reference"
+  ],
+  "title": "ChangeImplementationPlan",
+  "type": "object"
+}

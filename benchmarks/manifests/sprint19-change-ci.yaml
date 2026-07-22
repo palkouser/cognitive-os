@@ -1,0 +1,28 @@
+benchmark_id: sprint19-change-ci
+version: "1"
+title: Sprint 19 controlled-change CI gate
+description: 18 credential-free isolation, evaluation, promotion, rejection, and rollback cases.
+default_configuration: {mode: change-replay}
+source: Cognitive OS Sprint 19 executable backlog
+license: Apache-2.0
+created_at: 2026-01-01T00:00:00Z
+case_matrix:
+  generic:
+    - {id: change-ci-001, scenario: tier0_repository_bundle, expected: passed}
+    - {id: change-ci-002, scenario: tier1_governed_promotion, expected: passed}
+    - {id: change-ci-003, scenario: tier1_rollback, expected: passed}
+    - {id: change-ci-004, scenario: tier2_repository_bundle, expected: passed}
+    - {id: change-ci-005, scenario: historical_regression, expected: rejected}
+    - {id: change-ci-006, scenario: security_regression, expected: rejected}
+    - {id: change-ci-007, scenario: unrelated_domain_regression, expected: rejected}
+    - {id: change-ci-008, scenario: tier3_manual_review, expected: manual_review}
+    - {id: change-ci-009, scenario: unapproved_proposal, expected: rejected}
+    - {id: change-ci-010, scenario: stale_proposal, expected: rejected}
+    - {id: change-ci-011, scenario: worktree_scope_escape, expected: rejected}
+    - {id: change-ci-012, scenario: active_database_write, expected: rejected}
+    - {id: change-ci-013, scenario: provider_scope_escape, expected: rejected}
+    - {id: change-ci-014, scenario: dependency_expansion, expected: rejected}
+    - {id: change-ci-015, scenario: migration_failure, expected: rejected}
+    - {id: change-ci-016, scenario: backup_restore_failure, expected: rejected}
+    - {id: change-ci-017, scenario: rollback_failure, expected: rejected}
+    - {id: change-ci-018, scenario: concurrent_promotion_conflict, expected: rejected}

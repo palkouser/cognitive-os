@@ -126,3 +126,15 @@ be removed without changing exact grouping, persistence, lifecycle, or queue sem
 Sprint 18 adds no dependency and changes no lockfile. Existing Pydantic, SQLAlchemy, Alembic,
 asyncpg, pytest, and Hypothesis surfaces are sufficient. Any future code reuse requires exact file
 and commit provenance, license and notice review, dependency justification, and a separate ADR.
+
+## Sprint 19 controlled-change references
+
+| Project | License | Use | Authority and dependency decision |
+| --- | --- | --- | --- |
+| OpenEvolve | Apache-2.0 | Evaluator and candidate-lineage patterns | Conceptual study only; adapter disabled, no dependency or active-state authority |
+| GEPA | Apache-2.0 | Evaluator side-information pattern | Conceptual study only; no text mutation or promotion authority |
+| EvoAgentX | MIT | Modular workflow and evaluation pattern | Conceptual study only; not a second Controller or registry |
+
+Sprint 19 adds no dependency and leaves `uv.lock` unchanged. Existing Git worktree, rootless
+sandbox, Controller, Coding Agent, Artifact Store, Pydantic, SQLAlchemy, Alembic, asyncpg, pytest,
+and Hypothesis surfaces cover Gate J. Future donor adoption requires a separate measured ADR.

@@ -1,0 +1,93 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/changes/promotion-receipt.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "approval_reference": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Approval Reference",
+      "type": "string"
+    },
+    "artifact_refs": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Artifact Refs",
+      "type": "array"
+    },
+    "candidate_id": {
+      "format": "uuid",
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "experiment_id": {
+      "format": "uuid",
+      "title": "Experiment Id",
+      "type": "string"
+    },
+    "performed_at": {
+      "format": "date-time",
+      "title": "Performed At",
+      "type": "string"
+    },
+    "performed_by": {
+      "minLength": 1,
+      "title": "Performed By",
+      "type": "string"
+    },
+    "post_promotion_revision": {
+      "minLength": 1,
+      "title": "Post Promotion Revision",
+      "type": "string"
+    },
+    "pre_promotion_revision": {
+      "minLength": 1,
+      "title": "Pre Promotion Revision",
+      "type": "string"
+    },
+    "promotion_bundle_id": {
+      "format": "uuid",
+      "title": "Promotion Bundle Id",
+      "type": "string"
+    },
+    "promotion_id": {
+      "format": "uuid",
+      "title": "Promotion Id",
+      "type": "string"
+    },
+    "target_authority": {
+      "minLength": 1,
+      "title": "Target Authority",
+      "type": "string"
+    },
+    "verification_result": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Verification Result",
+      "type": "string"
+    }
+  },
+  "required": [
+    "promotion_id",
+    "experiment_id",
+    "candidate_id",
+    "promotion_bundle_id",
+    "approval_reference",
+    "target_authority",
+    "pre_promotion_revision",
+    "post_promotion_revision",
+    "performed_by",
+    "performed_at",
+    "verification_result",
+    "artifact_refs"
+  ],
+  "title": "PromotionReceipt",
+  "type": "object"
+}

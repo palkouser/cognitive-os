@@ -1,0 +1,43 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/changes/measured-benefit.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "limitations": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Limitations",
+      "type": "array"
+    },
+    "metrics": {
+      "additionalProperties": {
+        "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+        "type": "string"
+      },
+      "propertyNames": {
+        "minLength": 1
+      },
+      "title": "Metrics",
+      "type": "object"
+    },
+    "sample_count": {
+      "minimum": 0,
+      "title": "Sample Count",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "metrics",
+    "sample_count",
+    "limitations"
+  ],
+  "title": "MeasuredBenefit",
+  "type": "object"
+}

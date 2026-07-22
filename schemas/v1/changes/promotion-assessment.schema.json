@@ -1,0 +1,411 @@
+{
+  "$defs": {
+    "ChangeSurfaceTier": {
+      "enum": [
+        "tier_0_metadata",
+        "tier_1_governed_declarative",
+        "tier_2_repository",
+        "tier_3_critical"
+      ],
+      "title": "ChangeSurfaceTier",
+      "type": "string"
+    },
+    "EvaluationCaseResult": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "evidence_artifact": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Evidence Artifact",
+          "type": "string"
+        },
+        "failure_code": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperimentFailureCode"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "gate_id": {
+          "minLength": 1,
+          "title": "Gate Id",
+          "type": "string"
+        },
+        "measured_value": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Measured Value",
+          "type": "string"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        },
+        "threshold": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Threshold",
+          "type": "string"
+        }
+      },
+      "required": [
+        "gate_id",
+        "passed",
+        "measured_value",
+        "threshold",
+        "evidence_artifact"
+      ],
+      "title": "EvaluationCaseResult",
+      "type": "object"
+    },
+    "ExperimentFailureCode": {
+      "enum": [
+        "stale_proposal",
+        "unapproved_proposal",
+        "hash_mismatch",
+        "baseline_mismatch",
+        "active_state_mutation",
+        "scope_escape",
+        "security_regression",
+        "policy_regression",
+        "migration_failure",
+        "dependency_expansion",
+        "performance_regression",
+        "recovery_failure",
+        "rollback_failure",
+        "missing_approval"
+      ],
+      "title": "ExperimentFailureCode",
+      "type": "string"
+    },
+    "MeasuredBenefit": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "limitations": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Limitations",
+          "type": "array"
+        },
+        "metrics": {
+          "additionalProperties": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "type": "string"
+          },
+          "propertyNames": {
+            "minLength": 1
+          },
+          "title": "Metrics",
+          "type": "object"
+        },
+        "sample_count": {
+          "minimum": 0,
+          "title": "Sample Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "metrics",
+        "sample_count",
+        "limitations"
+      ],
+      "title": "MeasuredBenefit",
+      "type": "object"
+    },
+    "PromotionDecision": {
+      "enum": [
+        "eligible_for_operator_approval",
+        "insufficient_improvement",
+        "target_failure",
+        "historical_regression",
+        "unrelated_domain_regression",
+        "security_regression",
+        "policy_regression",
+        "performance_regression",
+        "compatibility_failure",
+        "migration_failure",
+        "recovery_failure",
+        "rollback_failure",
+        "requires_manual_review",
+        "rejected"
+      ],
+      "title": "PromotionDecision",
+      "type": "string"
+    },
+    "RegressionComparison": {
+      "additionalProperties": false,
+      "properties": {
+        "baseline_reference": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Baseline Reference",
+          "type": "string"
+        },
+        "candidate_id": {
+          "format": "uuid",
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "candidate_reference": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Candidate Reference",
+          "type": "string"
+        },
+        "case_results": {
+          "items": {
+            "$ref": "#/$defs/EvaluationCaseResult"
+          },
+          "minItems": 1,
+          "title": "Case Results",
+          "type": "array"
+        },
+        "comparison_id": {
+          "format": "uuid",
+          "title": "Comparison Id",
+          "type": "string"
+        },
+        "compatibility_delta": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Compatibility Delta",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "cost_delta": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Cost Delta",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "experiment_id": {
+          "format": "uuid",
+          "title": "Experiment Id",
+          "type": "string"
+        },
+        "hard_failure_codes": {
+          "items": {
+            "$ref": "#/$defs/ExperimentFailureCode"
+          },
+          "title": "Hard Failure Codes",
+          "type": "array"
+        },
+        "latency_delta": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Latency Delta",
+          "type": "string"
+        },
+        "limitations": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Limitations",
+          "type": "array"
+        },
+        "policy_delta": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Policy Delta",
+          "type": "string"
+        },
+        "quality_delta": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Quality Delta",
+          "type": "string"
+        },
+        "recovery_delta": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Recovery Delta",
+          "type": "string"
+        },
+        "resource_delta": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Resource Delta",
+          "type": "string"
+        },
+        "safety_delta": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Safety Delta",
+          "type": "string"
+        },
+        "uncertainty": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Uncertainty",
+          "type": "string"
+        }
+      },
+      "required": [
+        "comparison_id",
+        "experiment_id",
+        "candidate_id",
+        "baseline_reference",
+        "candidate_reference",
+        "case_results",
+        "quality_delta",
+        "safety_delta",
+        "policy_delta",
+        "cost_delta",
+        "latency_delta",
+        "resource_delta",
+        "compatibility_delta",
+        "recovery_delta",
+        "uncertainty",
+        "limitations",
+        "hard_failure_codes",
+        "created_at"
+      ],
+      "title": "RegressionComparison",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/changes/promotion-assessment.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "approval_requirements": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Approval Requirements",
+      "type": "array"
+    },
+    "assessment_id": {
+      "format": "uuid",
+      "title": "Assessment Id",
+      "type": "string"
+    },
+    "backup_restore_result": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Backup Restore Result",
+      "type": "string"
+    },
+    "candidate_id": {
+      "format": "uuid",
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "change_surface_tier": {
+      "$ref": "#/$defs/ChangeSurfaceTier"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "decision": {
+      "$ref": "#/$defs/PromotionDecision"
+    },
+    "dependency_result": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Dependency Result",
+      "type": "string"
+    },
+    "experiment_id": {
+      "format": "uuid",
+      "title": "Experiment Id",
+      "type": "string"
+    },
+    "measured_benefit": {
+      "$ref": "#/$defs/MeasuredBenefit"
+    },
+    "migration_result": {
+      "enum": [
+        "passed",
+        "failed",
+        "not_applicable"
+      ],
+      "title": "Migration Result",
+      "type": "string"
+    },
+    "policy_result": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Policy Result",
+      "type": "string"
+    },
+    "proposal_expected_benefit": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Proposal Expected Benefit",
+      "type": "string"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "regression_comparison": {
+      "$ref": "#/$defs/RegressionComparison"
+    },
+    "rollback_validation": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Rollback Validation",
+      "type": "string"
+    },
+    "security_result": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Security Result",
+      "type": "string"
+    }
+  },
+  "required": [
+    "assessment_id",
+    "experiment_id",
+    "candidate_id",
+    "change_surface_tier",
+    "proposal_expected_benefit",
+    "measured_benefit",
+    "regression_comparison",
+    "security_result",
+    "policy_result",
+    "migration_result",
+    "dependency_result",
+    "backup_restore_result",
+    "rollback_validation",
+    "approval_requirements",
+    "decision",
+    "reason",
+    "created_at"
+  ],
+  "title": "PromotionAssessment",
+  "type": "object"
+}

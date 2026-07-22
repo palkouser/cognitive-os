@@ -1,0 +1,114 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/changes/change-run-manifest.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "active_checkout_mutations": {
+      "const": 0,
+      "default": 0,
+      "title": "Active Checkout Mutations",
+      "type": "integer"
+    },
+    "active_database_writes": {
+      "const": 0,
+      "default": 0,
+      "title": "Active Database Writes",
+      "type": "integer"
+    },
+    "assessment_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Assessment Hash"
+    },
+    "baseline_commit": {
+      "pattern": "^[0-9a-f]{40}$",
+      "title": "Baseline Commit",
+      "type": "string"
+    },
+    "candidate_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Candidate Hash"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "experiment_id": {
+      "format": "uuid",
+      "title": "Experiment Id",
+      "type": "string"
+    },
+    "experiment_revision": {
+      "exclusiveMinimum": 0,
+      "title": "Experiment Revision",
+      "type": "integer"
+    },
+    "isolation_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Isolation Hash",
+      "type": "string"
+    },
+    "matrix_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Matrix Hash"
+    },
+    "proposal_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Proposal Hash",
+      "type": "string"
+    },
+    "run_manifest_id": {
+      "format": "uuid",
+      "title": "Run Manifest Id",
+      "type": "string"
+    },
+    "runtime_release_operations": {
+      "const": 0,
+      "default": 0,
+      "title": "Runtime Release Operations",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "run_manifest_id",
+    "experiment_id",
+    "experiment_revision",
+    "proposal_hash",
+    "baseline_commit",
+    "isolation_hash",
+    "created_at"
+  ],
+  "title": "ChangeRunManifest",
+  "type": "object"
+}

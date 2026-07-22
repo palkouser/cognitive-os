@@ -130,8 +130,8 @@ class PostgresSkillHealthService:
             ("package_mismatch", package_errors, "Skill package artifact mismatch"),
             (
                 "migration_head",
-                int(revision != "0010"),
-                f"Expected Alembic revision 0010, found {revision}",
+                int(revision != "0011"),
+                f"Expected Alembic revision 0011, found {revision}",
             ),
         )
         findings = tuple(

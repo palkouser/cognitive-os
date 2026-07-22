@@ -10,6 +10,7 @@ from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
+from cognitive_os.infrastructure.changes.postgres.tables import change_experiments
 from cognitive_os.infrastructure.memory.postgres.tables import memory_items
 from cognitive_os.infrastructure.postgres.tables import metadata
 from cognitive_os.infrastructure.proposals.postgres.tables import harness_proposals
@@ -18,6 +19,7 @@ from cognitive_os.infrastructure.skills.postgres.tables import skill_items
 from cognitive_os.infrastructure.strategies.postgres.tables import strategy_items
 
 _ = memory_items  # Register optional Memory Plane tables in shared migration metadata.
+_ = change_experiments  # Register controlled-change tables.
 _ = semantic_claims  # Register optional temporal semantic-memory tables.
 _ = skill_items  # Register governed procedural Skill Engine tables.
 _ = strategy_items  # Register governed Strategy Evolution Graph tables.

@@ -1,0 +1,49 @@
+{
+  "$defs": {
+    "ChangeOperationType": {
+      "enum": [
+        "replace_exact_text",
+        "set_configuration_value",
+        "append_declarative_revision",
+        "write_approved_artifact"
+      ],
+      "title": "ChangeOperationType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/changes/change-operation.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "expected_before_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Expected Before Hash",
+      "type": "string"
+    },
+    "operation_type": {
+      "$ref": "#/$defs/ChangeOperationType"
+    },
+    "target": {
+      "minLength": 1,
+      "title": "Target",
+      "type": "string"
+    },
+    "value_artifact_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Value Artifact Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "operation_type",
+    "target",
+    "expected_before_hash",
+    "value_artifact_hash"
+  ],
+  "title": "ChangeOperation",
+  "type": "object"
+}

@@ -1,0 +1,99 @@
+{
+  "$defs": {
+    "ChangeSurfaceTier": {
+      "enum": [
+        "tier_0_metadata",
+        "tier_1_governed_declarative",
+        "tier_2_repository",
+        "tier_3_critical"
+      ],
+      "title": "ChangeSurfaceTier",
+      "type": "string"
+    },
+    "PromotionMode": {
+      "enum": [
+        "repository_bundle_only",
+        "governed_destination_adapter",
+        "manual_review_only"
+      ],
+      "title": "PromotionMode",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/changes/change-surface-registration.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "adapter": {
+      "minLength": 1,
+      "title": "Adapter",
+      "type": "string"
+    },
+    "allowed_configuration_keys": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Allowed Configuration Keys",
+      "type": "array"
+    },
+    "allowed_files": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Allowed Files",
+      "type": "array"
+    },
+    "allowed_tools": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Allowed Tools",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "isolation_profile": {
+      "minLength": 1,
+      "title": "Isolation Profile",
+      "type": "string"
+    },
+    "promotion_mode": {
+      "$ref": "#/$defs/PromotionMode"
+    },
+    "proposal_type": {
+      "minLength": 1,
+      "title": "Proposal Type",
+      "type": "string"
+    },
+    "tier": {
+      "$ref": "#/$defs/ChangeSurfaceTier"
+    },
+    "verifier_capabilities": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Verifier Capabilities",
+      "type": "array"
+    }
+  },
+  "required": [
+    "proposal_type",
+    "tier",
+    "adapter",
+    "verifier_capabilities",
+    "isolation_profile",
+    "promotion_mode"
+  ],
+  "title": "ChangeSurfaceRegistration",
+  "type": "object"
+}

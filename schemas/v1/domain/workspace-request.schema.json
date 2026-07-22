@@ -25,6 +25,19 @@
   "$id": "https://cognitive-os.local/schemas/v1/domain/workspace-request.schema.json",
   "additionalProperties": false,
   "properties": {
+    "destination_name": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Destination Name"
+    },
     "idempotency_key": {
       "pattern": "^[0-9a-f]{64}$",
       "title": "Idempotency Key",

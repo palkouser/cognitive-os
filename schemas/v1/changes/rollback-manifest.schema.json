@@ -1,0 +1,137 @@
+{
+  "$defs": {
+    "TypedPromotionStep": {
+      "additionalProperties": false,
+      "properties": {
+        "adapter": {
+          "minLength": 1,
+          "title": "Adapter",
+          "type": "string"
+        },
+        "artifact_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Artifact Hash",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "exact_precondition_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Exact Precondition Hash",
+          "type": "string"
+        },
+        "operation": {
+          "enum": [
+            "append_revision",
+            "verify_revision",
+            "prepare_patch_bundle"
+          ],
+          "title": "Operation",
+          "type": "string"
+        },
+        "target": {
+          "minLength": 1,
+          "title": "Target",
+          "type": "string"
+        }
+      },
+      "required": [
+        "adapter",
+        "operation",
+        "target",
+        "exact_precondition_hash",
+        "artifact_hash"
+      ],
+      "title": "TypedPromotionStep",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/changes/rollback-manifest.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifact_restore_requirements": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Artifact Restore Requirements",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "database_restore_requirements": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Database Restore Requirements",
+      "type": "array"
+    },
+    "manual_steps": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Manual Steps",
+      "type": "array"
+    },
+    "maximum_recovery_objective": {
+      "exclusiveMinimum": 0,
+      "title": "Maximum Recovery Objective",
+      "type": "integer"
+    },
+    "post_promotion_state": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Post Promotion State",
+      "type": "string"
+    },
+    "pre_promotion_state": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Pre Promotion State",
+      "type": "string"
+    },
+    "promotion_reference": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Promotion Reference",
+      "type": "string"
+    },
+    "rollback_operations": {
+      "items": {
+        "$ref": "#/$defs/TypedPromotionStep"
+      },
+      "minItems": 1,
+      "title": "Rollback Operations",
+      "type": "array"
+    },
+    "verification_plan": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Verification Plan",
+      "type": "string"
+    }
+  },
+  "required": [
+    "promotion_reference",
+    "pre_promotion_state",
+    "post_promotion_state",
+    "rollback_operations",
+    "artifact_restore_requirements",
+    "database_restore_requirements",
+    "verification_plan",
+    "maximum_recovery_objective",
+    "manual_steps",
+    "created_at"
+  ],
+  "title": "RollbackManifest",
+  "type": "object"
+}

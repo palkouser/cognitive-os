@@ -1,0 +1,75 @@
+{
+  "$defs": {
+    "ChangeAccessType": {
+      "enum": [
+        "read",
+        "create",
+        "evaluate",
+        "approve",
+        "promote",
+        "rollback"
+      ],
+      "title": "ChangeAccessType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/changes/change-access-record.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "access_id": {
+      "format": "uuid",
+      "title": "Access Id",
+      "type": "string"
+    },
+    "access_type": {
+      "$ref": "#/$defs/ChangeAccessType"
+    },
+    "actor": {
+      "minLength": 1,
+      "title": "Actor",
+      "type": "string"
+    },
+    "authority": {
+      "minLength": 1,
+      "title": "Authority",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "exact_revision": {
+      "exclusiveMinimum": 0,
+      "title": "Exact Revision",
+      "type": "integer"
+    },
+    "experiment_id": {
+      "format": "uuid",
+      "title": "Experiment Id",
+      "type": "string"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "access_id",
+    "experiment_id",
+    "access_type",
+    "actor",
+    "authority",
+    "exact_revision",
+    "reason",
+    "created_at"
+  ],
+  "title": "ChangeAccessRecord",
+  "type": "object"
+}

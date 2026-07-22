@@ -1,0 +1,49 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/changes/typed-promotion-step.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "adapter": {
+      "minLength": 1,
+      "title": "Adapter",
+      "type": "string"
+    },
+    "artifact_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Artifact Hash",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "exact_precondition_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Exact Precondition Hash",
+      "type": "string"
+    },
+    "operation": {
+      "enum": [
+        "append_revision",
+        "verify_revision",
+        "prepare_patch_bundle"
+      ],
+      "title": "Operation",
+      "type": "string"
+    },
+    "target": {
+      "minLength": 1,
+      "title": "Target",
+      "type": "string"
+    }
+  },
+  "required": [
+    "adapter",
+    "operation",
+    "target",
+    "exact_precondition_hash",
+    "artifact_hash"
+  ],
+  "title": "TypedPromotionStep",
+  "type": "object"
+}

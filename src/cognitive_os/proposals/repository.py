@@ -38,6 +38,9 @@ class InMemoryProposalRepository:
         self._immutable(self.identities, identity.proposal_id, identity)
         self._immutable(self.revisions, (identity.proposal_id, 1), revision)
 
+    async def get_identity(self, proposal_id: UUID) -> HarnessProposalIdentity | None:
+        return self.identities.get(proposal_id)
+
     async def append(self, revision: HarnessProposalRevision, *, expected_revision: int) -> None:
         current = await self.get_current(revision.proposal_id)
         if current is None or current.revision != expected_revision:

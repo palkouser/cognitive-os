@@ -57,6 +57,7 @@ class ProposalGeneratorPort(Protocol):
 
 
 class ProposalRepositoryPort(Protocol):
+    async def get_identity(self, proposal_id: UUID) -> HarnessProposalIdentity | None: ...
     async def create(
         self, identity: HarnessProposalIdentity, revision: HarnessProposalRevision
     ) -> None: ...

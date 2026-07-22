@@ -6,6 +6,7 @@ from dataclasses import dataclass
 
 from pydantic import BaseModel
 
+from cognitive_os.config.change_config import ControlledChangeConfiguration
 from cognitive_os.config.coding_config import CodingConfiguration
 from cognitive_os.config.context_config import ContextConfiguration
 from cognitive_os.config.corpus_config import CorpusConfiguration
@@ -66,6 +67,7 @@ from cognitive_os.domain.benchmarks import (
     BenchmarkResourceBudget,
     BenchmarkRun,
 )
+from cognitive_os.domain.changes import PUBLIC_CHANGE_CONTRACTS
 from cognitive_os.domain.coding import (
     ChangedFileManifest,
     CodingCommandPolicy,
@@ -125,6 +127,7 @@ class SchemaEntry:
 
 
 DOMAIN_SCHEMAS: tuple[tuple[type[BaseModel], str], ...] = (
+    (ControlledChangeConfiguration, "v1/config/controlled-change-configuration.schema.json"),
     (CodingConfiguration, "v1/config/coding-configuration.schema.json"),
     (ContextConfiguration, "v1/config/context-configuration.schema.json"),
     (CorpusConfiguration, "v1/config/corpus-configuration.schema.json"),
@@ -136,6 +139,18 @@ DOMAIN_SCHEMAS: tuple[tuple[type[BaseModel], str], ...] = (
     (SkillConfiguration, "v1/config/skill-configuration.schema.json"),
     (StrategyConfiguration, "v1/config/strategy-configuration.schema.json"),
     (WeaknessConfiguration, "v1/config/weakness-configuration.schema.json"),
+    *tuple(
+        (
+            model,
+            "v1/changes/"
+            + "".join(
+                ("-" + character.lower()) if character.isupper() else character
+                for character in model.__name__
+            ).lstrip("-")
+            + ".schema.json",
+        )
+        for model in PUBLIC_CHANGE_CONTRACTS
+    ),
     *tuple(
         (
             model,

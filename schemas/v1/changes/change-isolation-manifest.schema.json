@@ -1,0 +1,220 @@
+{
+  "$defs": {
+    "ActiveStateProtectionSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "active_artifact_namespace_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Active Artifact Namespace Hash",
+          "type": "string"
+        },
+        "active_database_fingerprint": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Active Database Fingerprint",
+          "type": "string"
+        },
+        "captured_at": {
+          "format": "date-time",
+          "title": "Captured At",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "repository_commit": {
+          "pattern": "^[0-9a-f]{40}$",
+          "title": "Repository Commit",
+          "type": "string"
+        },
+        "repository_manifest_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Repository Manifest Hash",
+          "type": "string"
+        },
+        "repository_status_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Repository Status Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "repository_commit",
+        "repository_status_hash",
+        "repository_manifest_hash",
+        "active_database_fingerprint",
+        "active_artifact_namespace_hash",
+        "captured_at"
+      ],
+      "title": "ActiveStateProtectionSnapshot",
+      "type": "object"
+    },
+    "ChangeResourceBudget": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "cpu_limit": {
+          "maximum": 64,
+          "minimum": 1,
+          "title": "Cpu Limit",
+          "type": "integer"
+        },
+        "disk_mb": {
+          "maximum": 1048576,
+          "minimum": 16,
+          "title": "Disk Mb",
+          "type": "integer"
+        },
+        "max_iterations": {
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Max Iterations",
+          "type": "integer"
+        },
+        "memory_mb": {
+          "maximum": 262144,
+          "minimum": 128,
+          "title": "Memory Mb",
+          "type": "integer"
+        },
+        "wall_time_seconds": {
+          "maximum": 86400,
+          "minimum": 1,
+          "title": "Wall Time Seconds",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "cpu_limit",
+        "memory_mb",
+        "wall_time_seconds",
+        "disk_mb",
+        "max_iterations"
+      ],
+      "title": "ChangeResourceBudget",
+      "type": "object"
+    },
+    "IsolationKind": {
+      "enum": [
+        "linked_worktree",
+        "declarative_copy"
+      ],
+      "title": "IsolationKind",
+      "type": "string"
+    },
+    "NetworkPolicy": {
+      "enum": [
+        "disabled",
+        "approved_provider_only"
+      ],
+      "title": "NetworkPolicy",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/changes/change-isolation-manifest.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "active_state_protection_snapshot": {
+      "$ref": "#/$defs/ActiveStateProtectionSnapshot"
+    },
+    "allowed_configuration_keys": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Allowed Configuration Keys",
+      "type": "array"
+    },
+    "allowed_repository_paths": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Allowed Repository Paths",
+      "type": "array"
+    },
+    "artifact_namespace": {
+      "minLength": 1,
+      "title": "Artifact Namespace",
+      "type": "string"
+    },
+    "baseline_commit": {
+      "pattern": "^[0-9a-f]{40}$",
+      "title": "Baseline Commit",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "database_clone_reference": {
+      "minLength": 1,
+      "title": "Database Clone Reference",
+      "type": "string"
+    },
+    "experiment_id": {
+      "format": "uuid",
+      "title": "Experiment Id",
+      "type": "string"
+    },
+    "isolation_kind": {
+      "$ref": "#/$defs/IsolationKind"
+    },
+    "network_policy": {
+      "$ref": "#/$defs/NetworkPolicy"
+    },
+    "provider_policy": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Provider Policy",
+      "type": "string"
+    },
+    "resource_budget": {
+      "$ref": "#/$defs/ChangeResourceBudget"
+    },
+    "sandbox_profile": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Sandbox Profile",
+      "type": "string"
+    },
+    "tool_policy": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Tool Policy",
+      "type": "string"
+    },
+    "worktree_path_reference": {
+      "minLength": 1,
+      "title": "Worktree Path Reference",
+      "type": "string"
+    }
+  },
+  "required": [
+    "experiment_id",
+    "isolation_kind",
+    "worktree_path_reference",
+    "baseline_commit",
+    "allowed_repository_paths",
+    "allowed_configuration_keys",
+    "database_clone_reference",
+    "artifact_namespace",
+    "sandbox_profile",
+    "network_policy",
+    "provider_policy",
+    "tool_policy",
+    "resource_budget",
+    "active_state_protection_snapshot",
+    "created_at"
+  ],
+  "title": "ChangeIsolationManifest",
+  "type": "object"
+}

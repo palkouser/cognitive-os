@@ -1,0 +1,86 @@
+{
+  "$defs": {
+    "ChangeVerificationFinding": {
+      "additionalProperties": false,
+      "properties": {
+        "capability_id": {
+          "minLength": 1,
+          "title": "Capability Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "evidence_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Evidence Hash",
+          "type": "string"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "capability_id",
+        "passed",
+        "reason",
+        "evidence_hash"
+      ],
+      "title": "ChangeVerificationFinding",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/changes/change-verifier-bundle.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "findings": {
+      "items": {
+        "$ref": "#/$defs/ChangeVerificationFinding"
+      },
+      "minItems": 1,
+      "title": "Findings",
+      "type": "array"
+    },
+    "passed": {
+      "title": "Passed",
+      "type": "boolean"
+    },
+    "registry_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Registry Hash",
+      "type": "string"
+    },
+    "subject_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Subject Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "subject_hash",
+    "findings",
+    "passed",
+    "registry_hash",
+    "created_at"
+  ],
+  "title": "ChangeVerifierBundle",
+  "type": "object"
+}
