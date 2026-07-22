@@ -1,0 +1,221 @@
+{
+  "$defs": {
+    "EvaluationGate": {
+      "additionalProperties": false,
+      "properties": {
+        "command_reference": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Command Reference",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "gate_id": {
+          "minLength": 1,
+          "title": "Gate Id",
+          "type": "string"
+        },
+        "manifest_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Manifest Hash",
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/$defs/GateSeverity"
+        },
+        "threshold": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Threshold",
+          "type": "string"
+        }
+      },
+      "required": [
+        "gate_id",
+        "command_reference",
+        "manifest_hash",
+        "severity",
+        "threshold"
+      ],
+      "title": "EvaluationGate",
+      "type": "object"
+    },
+    "ExperimentFailureCode": {
+      "enum": [
+        "stale_proposal",
+        "unapproved_proposal",
+        "hash_mismatch",
+        "baseline_mismatch",
+        "active_state_mutation",
+        "scope_escape",
+        "security_regression",
+        "policy_regression",
+        "migration_failure",
+        "dependency_expansion",
+        "performance_regression",
+        "recovery_failure",
+        "rollback_failure",
+        "missing_approval"
+      ],
+      "title": "ExperimentFailureCode",
+      "type": "string"
+    },
+    "GateSeverity": {
+      "enum": [
+        "required",
+        "diagnostic"
+      ],
+      "title": "GateSeverity",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/changes/evaluation-matrix.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "backup_restore_tests": {
+      "items": {
+        "$ref": "#/$defs/EvaluationGate"
+      },
+      "title": "Backup Restore Tests",
+      "type": "array"
+    },
+    "compatibility_tests": {
+      "items": {
+        "$ref": "#/$defs/EvaluationGate"
+      },
+      "title": "Compatibility Tests",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "execution_order": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Execution Order",
+      "type": "array"
+    },
+    "focused_tests": {
+      "items": {
+        "$ref": "#/$defs/EvaluationGate"
+      },
+      "title": "Focused Tests",
+      "type": "array"
+    },
+    "hard_failures": {
+      "items": {
+        "$ref": "#/$defs/ExperimentFailureCode"
+      },
+      "title": "Hard Failures",
+      "type": "array"
+    },
+    "historical_regressions": {
+      "items": {
+        "$ref": "#/$defs/EvaluationGate"
+      },
+      "title": "Historical Regressions",
+      "type": "array"
+    },
+    "migration_tests": {
+      "items": {
+        "$ref": "#/$defs/EvaluationGate"
+      },
+      "title": "Migration Tests",
+      "type": "array"
+    },
+    "packaging_tests": {
+      "items": {
+        "$ref": "#/$defs/EvaluationGate"
+      },
+      "title": "Packaging Tests",
+      "type": "array"
+    },
+    "performance_tests": {
+      "items": {
+        "$ref": "#/$defs/EvaluationGate"
+      },
+      "title": "Performance Tests",
+      "type": "array"
+    },
+    "policy_tests": {
+      "items": {
+        "$ref": "#/$defs/EvaluationGate"
+      },
+      "title": "Policy Tests",
+      "type": "array"
+    },
+    "required_thresholds": {
+      "additionalProperties": {
+        "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+        "type": "string"
+      },
+      "propertyNames": {
+        "minLength": 1
+      },
+      "title": "Required Thresholds",
+      "type": "object"
+    },
+    "resource_tests": {
+      "items": {
+        "$ref": "#/$defs/EvaluationGate"
+      },
+      "title": "Resource Tests",
+      "type": "array"
+    },
+    "schema_tests": {
+      "items": {
+        "$ref": "#/$defs/EvaluationGate"
+      },
+      "title": "Schema Tests",
+      "type": "array"
+    },
+    "security_tests": {
+      "items": {
+        "$ref": "#/$defs/EvaluationGate"
+      },
+      "title": "Security Tests",
+      "type": "array"
+    },
+    "target_benchmarks": {
+      "items": {
+        "$ref": "#/$defs/EvaluationGate"
+      },
+      "title": "Target Benchmarks",
+      "type": "array"
+    },
+    "unrelated_domain_regressions": {
+      "items": {
+        "$ref": "#/$defs/EvaluationGate"
+      },
+      "title": "Unrelated Domain Regressions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "target_benchmarks",
+    "focused_tests",
+    "historical_regressions",
+    "unrelated_domain_regressions",
+    "security_tests",
+    "policy_tests",
+    "migration_tests",
+    "schema_tests",
+    "backup_restore_tests",
+    "performance_tests",
+    "resource_tests",
+    "compatibility_tests",
+    "packaging_tests",
+    "required_thresholds",
+    "hard_failures",
+    "execution_order"
+  ],
+  "title": "EvaluationMatrix",
+  "type": "object"
+}

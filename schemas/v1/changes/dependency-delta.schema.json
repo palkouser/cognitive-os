@@ -1,0 +1,50 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/changes/dependency-delta.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "added": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Added",
+      "type": "array"
+    },
+    "approved": {
+      "default": false,
+      "title": "Approved",
+      "type": "boolean"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "lockfile_hash_after": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Lockfile Hash After",
+      "type": "string"
+    },
+    "lockfile_hash_before": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Lockfile Hash Before",
+      "type": "string"
+    },
+    "removed": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Removed",
+      "type": "array"
+    }
+  },
+  "required": [
+    "lockfile_hash_before",
+    "lockfile_hash_after"
+  ],
+  "title": "DependencyDelta",
+  "type": "object"
+}

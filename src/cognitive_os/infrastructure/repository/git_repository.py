@@ -75,6 +75,24 @@ class GitRepositoryService:
     async def remove_worktree(self, repository: Path, destination: Path) -> None:
         await self.runner.run(repository, "worktree", ("remove", "--force", str(destination)))
 
+    async def lock_worktree(self, repository: Path, destination: Path, reason: str) -> None:
+        if not reason or "\n" in reason:
+            raise RepositoryPolicyError("worktree lock reason must be bounded text")
+        await self.runner.run(
+            repository,
+            "worktree",
+            ("lock", "--reason", reason, str(destination)),
+        )
+
+    async def unlock_worktree(self, repository: Path, destination: Path) -> None:
+        await self.runner.run(repository, "worktree", ("unlock", str(destination)))
+
+    async def list_worktrees(self, repository: Path) -> str:
+        return (await self.runner.run(repository, "worktree", ("list", "--porcelain"))).stdout
+
+    async def repair_worktrees(self, repository: Path, destination: Path) -> None:
+        await self.runner.run(repository, "worktree", ("repair", str(destination)))
+
     async def prune_worktrees(self, repository: Path, *, dry_run: bool = True) -> str:
         arguments = ("prune", "--dry-run") if dry_run else ("prune",)
         return (await self.runner.run(repository, "worktree", arguments)).stdout

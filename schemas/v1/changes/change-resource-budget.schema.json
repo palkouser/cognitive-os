@@ -1,0 +1,50 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/changes/change-resource-budget.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "cpu_limit": {
+      "maximum": 64,
+      "minimum": 1,
+      "title": "Cpu Limit",
+      "type": "integer"
+    },
+    "disk_mb": {
+      "maximum": 1048576,
+      "minimum": 16,
+      "title": "Disk Mb",
+      "type": "integer"
+    },
+    "max_iterations": {
+      "maximum": 1000,
+      "minimum": 1,
+      "title": "Max Iterations",
+      "type": "integer"
+    },
+    "memory_mb": {
+      "maximum": 262144,
+      "minimum": 128,
+      "title": "Memory Mb",
+      "type": "integer"
+    },
+    "wall_time_seconds": {
+      "maximum": 86400,
+      "minimum": 1,
+      "title": "Wall Time Seconds",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "cpu_limit",
+    "memory_mb",
+    "wall_time_seconds",
+    "disk_mb",
+    "max_iterations"
+  ],
+  "title": "ChangeResourceBudget",
+  "type": "object"
+}

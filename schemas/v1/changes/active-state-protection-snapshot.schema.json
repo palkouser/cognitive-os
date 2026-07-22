@@ -1,0 +1,51 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/changes/active-state-protection-snapshot.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "active_artifact_namespace_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Active Artifact Namespace Hash",
+      "type": "string"
+    },
+    "active_database_fingerprint": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Active Database Fingerprint",
+      "type": "string"
+    },
+    "captured_at": {
+      "format": "date-time",
+      "title": "Captured At",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "repository_commit": {
+      "pattern": "^[0-9a-f]{40}$",
+      "title": "Repository Commit",
+      "type": "string"
+    },
+    "repository_manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Repository Manifest Hash",
+      "type": "string"
+    },
+    "repository_status_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Repository Status Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "repository_commit",
+    "repository_status_hash",
+    "repository_manifest_hash",
+    "active_database_fingerprint",
+    "active_artifact_namespace_hash",
+    "captured_at"
+  ],
+  "title": "ActiveStateProtectionSnapshot",
+  "type": "object"
+}

@@ -35,6 +35,29 @@ class PostgresProposalRepository(ProposalRepositoryPort):
     def __init__(self, engine: AsyncEngine) -> None:
         self._engine = engine
 
+    async def get_identity(self, proposal_id: UUID) -> HarnessProposalIdentity | None:
+        statement = select(
+            harness_proposals.c.proposal_id,
+            harness_proposals.c.canonical_name,
+            harness_proposals.c.proposal_type,
+            harness_proposals.c.scope,
+            harness_proposals.c.created_at,
+            harness_proposals.c.payload_json,
+        ).where(harness_proposals.c.proposal_id == proposal_id)
+        async with self._engine.connect() as connection:
+            row = (await connection.execute(statement)).mappings().one_or_none()
+        if row is None:
+            return None
+        payload = row["payload_json"]
+        return HarnessProposalIdentity(
+            proposal_id=row["proposal_id"],
+            canonical_name=row["canonical_name"],
+            proposal_type=row["proposal_type"],
+            scope=row["scope"],
+            created_at=row["created_at"],
+            created_by=payload["created_by"],
+        )
+
     async def create(
         self, identity: HarnessProposalIdentity, revision: HarnessProposalRevision
     ) -> None:

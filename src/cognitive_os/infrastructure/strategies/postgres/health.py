@@ -150,8 +150,8 @@ class PostgresStrategyHealthService:
             ),
             (
                 "migration_head",
-                int(revision != "0010"),
-                f"Expected Alembic revision 0010, found {revision}",
+                int(revision != "0011"),
+                f"Expected Alembic revision 0011, found {revision}",
             ),
             (
                 "projection_mismatch",

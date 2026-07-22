@@ -1,0 +1,176 @@
+{
+  "$defs": {
+    "ChangeExperimentStatus": {
+      "enum": [
+        "requested",
+        "approved_for_isolation",
+        "preparing",
+        "implementing",
+        "implemented",
+        "evaluating",
+        "failed",
+        "rejected",
+        "eligible_for_promotion",
+        "approved_for_promotion",
+        "promoted",
+        "rolled_back",
+        "cancelled",
+        "superseded"
+      ],
+      "title": "ChangeExperimentStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/changes/change-experiment-revision.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifact_refs": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Artifact Refs",
+      "type": "array"
+    },
+    "candidate_refs": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Candidate Refs",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "created_by": {
+      "minLength": 1,
+      "title": "Created By",
+      "type": "string"
+    },
+    "evaluation_run_refs": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Evaluation Run Refs",
+      "type": "array"
+    },
+    "experiment_id": {
+      "format": "uuid",
+      "title": "Experiment Id",
+      "type": "string"
+    },
+    "implementation_plan_ref": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Implementation Plan Ref"
+    },
+    "isolation_manifest_ref": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Isolation Manifest Ref"
+    },
+    "previous_revision": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Revision"
+    },
+    "promotion_assessment_ref": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Promotion Assessment Ref"
+    },
+    "promotion_ref": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Promotion Ref"
+    },
+    "revision": {
+      "exclusiveMinimum": 0,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "rollback_ref": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rollback Ref"
+    },
+    "status": {
+      "$ref": "#/$defs/ChangeExperimentStatus"
+    },
+    "status_reason": {
+      "minLength": 1,
+      "title": "Status Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "experiment_id",
+    "revision",
+    "status",
+    "status_reason",
+    "created_at",
+    "created_by"
+  ],
+  "title": "ChangeExperimentRevision",
+  "type": "object"
+}

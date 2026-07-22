@@ -1,0 +1,53 @@
+{
+  "$defs": {
+    "GateSeverity": {
+      "enum": [
+        "required",
+        "diagnostic"
+      ],
+      "title": "GateSeverity",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/changes/evaluation-gate.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "command_reference": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Command Reference",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "gate_id": {
+      "minLength": 1,
+      "title": "Gate Id",
+      "type": "string"
+    },
+    "manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Manifest Hash",
+      "type": "string"
+    },
+    "severity": {
+      "$ref": "#/$defs/GateSeverity"
+    },
+    "threshold": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Threshold",
+      "type": "string"
+    }
+  },
+  "required": [
+    "gate_id",
+    "command_reference",
+    "manifest_hash",
+    "severity",
+    "threshold"
+  ],
+  "title": "EvaluationGate",
+  "type": "object"
+}

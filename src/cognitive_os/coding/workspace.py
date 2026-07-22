@@ -123,7 +123,9 @@ class WorkspaceManager:
                 raise RepositoryPolicyError("Sprint 8 permits one active coding workspace")
             repository = request.repository.repository_path
             await self.repository_service.validate(repository, request.repository.base_commit)
-            destination = self.worktree_root / str(request.task_run_id)
+            destination = self.worktree_root / (
+                request.destination_name or str(request.task_run_id)
+            )
             if destination.exists() or destination.is_symlink():
                 raise RepositoryPolicyError("workspace destination already exists")
             main_before = await self.repository_service.status(repository)

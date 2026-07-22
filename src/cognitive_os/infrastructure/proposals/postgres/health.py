@@ -118,7 +118,7 @@ class PostgresProposalHealthService:
         event_count = sum((model.event_type, 1) in catalog for model in PROPOSAL_EVENT_MODELS)
         messages = []
         for actual, expected, name in (
-            (revision, "0010", "migration revision"),
+            (revision, "0011", "migration revision"),
             (table_count, 10, "proposal table count"),
             (trigger_count, 9, "append-only trigger count"),
             (function_count, 7, "controlled function count"),

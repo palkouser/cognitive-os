@@ -1,0 +1,303 @@
+{
+  "$defs": {
+    "ChangeEvaluationConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "fail_fast_on_hard_failure": {
+          "default": true,
+          "title": "Fail Fast On Hard Failure",
+          "type": "boolean"
+        },
+        "require_backup_restore_rollback": {
+          "default": true,
+          "title": "Require Backup Restore Rollback",
+          "type": "boolean"
+        },
+        "require_dependency_packaging_gates": {
+          "default": true,
+          "title": "Require Dependency Packaging Gates",
+          "type": "boolean"
+        },
+        "require_historical_regression": {
+          "default": true,
+          "title": "Require Historical Regression",
+          "type": "boolean"
+        },
+        "require_migration_schema_gates": {
+          "default": true,
+          "title": "Require Migration Schema Gates",
+          "type": "boolean"
+        },
+        "require_security_policy_gates": {
+          "default": true,
+          "title": "Require Security Policy Gates",
+          "type": "boolean"
+        },
+        "require_target_benchmark": {
+          "default": true,
+          "title": "Require Target Benchmark",
+          "type": "boolean"
+        },
+        "require_unrelated_domain_regression": {
+          "default": true,
+          "title": "Require Unrelated Domain Regression",
+          "type": "boolean"
+        }
+      },
+      "title": "ChangeEvaluationConfiguration",
+      "type": "object"
+    },
+    "ChangeImplementationConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_channels": {
+          "default": [
+            "deterministic_transformation",
+            "cognitive_os_coding_agent",
+            "claude_code_role"
+          ],
+          "items": {
+            "$ref": "#/$defs/ImplementationChannel"
+          },
+          "title": "Allowed Channels",
+          "type": "array"
+        },
+        "external_evolution_adapter_enabled": {
+          "default": false,
+          "title": "External Evolution Adapter Enabled",
+          "type": "boolean"
+        },
+        "forbid_active_checkout": {
+          "default": true,
+          "title": "Forbid Active Checkout",
+          "type": "boolean"
+        },
+        "forbid_active_database": {
+          "default": true,
+          "title": "Forbid Active Database",
+          "type": "boolean"
+        },
+        "forbid_release_operations": {
+          "default": true,
+          "title": "Forbid Release Operations",
+          "type": "boolean"
+        },
+        "require_typed_operations": {
+          "default": true,
+          "title": "Require Typed Operations",
+          "type": "boolean"
+        }
+      },
+      "title": "ChangeImplementationConfiguration",
+      "type": "object"
+    },
+    "ChangeIntakeConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "require_approved_for_experiment": {
+          "default": true,
+          "title": "Require Approved For Experiment",
+          "type": "boolean"
+        },
+        "require_exact_proposal_revision": {
+          "default": true,
+          "title": "Require Exact Proposal Revision",
+          "type": "boolean"
+        },
+        "require_frozen_source_snapshot": {
+          "default": true,
+          "title": "Require Frozen Source Snapshot",
+          "type": "boolean"
+        },
+        "require_passing_proposal_verifier_bundle": {
+          "default": true,
+          "title": "Require Passing Proposal Verifier Bundle",
+          "type": "boolean"
+        }
+      },
+      "title": "ChangeIntakeConfiguration",
+      "type": "object"
+    },
+    "ChangeIsolationConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "max_parallel_experiments": {
+          "default": 2,
+          "maximum": 2,
+          "minimum": 1,
+          "title": "Max Parallel Experiments",
+          "type": "integer"
+        },
+        "network_default": {
+          "$ref": "#/$defs/NetworkPolicy",
+          "default": "disabled"
+        },
+        "normal_cpu_limit": {
+          "default": 4,
+          "maximum": 64,
+          "minimum": 1,
+          "title": "Normal Cpu Limit",
+          "type": "integer"
+        },
+        "normal_memory_gb": {
+          "default": 8,
+          "maximum": 256,
+          "minimum": 1,
+          "title": "Normal Memory Gb",
+          "type": "integer"
+        },
+        "normal_wall_time_seconds": {
+          "default": 3600,
+          "maximum": 86400,
+          "minimum": 1,
+          "title": "Normal Wall Time Seconds",
+          "type": "integer"
+        },
+        "require_artifact_namespace": {
+          "default": true,
+          "title": "Require Artifact Namespace",
+          "type": "boolean"
+        },
+        "require_database_clone": {
+          "default": true,
+          "title": "Require Database Clone",
+          "type": "boolean"
+        },
+        "require_external_worktree_root": {
+          "default": true,
+          "title": "Require External Worktree Root",
+          "type": "boolean"
+        },
+        "workspace_root": {
+          "format": "path",
+          "title": "Workspace Root",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_root"
+      ],
+      "title": "ChangeIsolationConfiguration",
+      "type": "object"
+    },
+    "ChangePromotionConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "require_separate_approval": {
+          "default": true,
+          "title": "Require Separate Approval",
+          "type": "boolean"
+        },
+        "runtime_git_merge_enabled": {
+          "default": false,
+          "title": "Runtime Git Merge Enabled",
+          "type": "boolean"
+        },
+        "runtime_publish_enabled": {
+          "default": false,
+          "title": "Runtime Publish Enabled",
+          "type": "boolean"
+        },
+        "runtime_tag_enabled": {
+          "default": false,
+          "title": "Runtime Tag Enabled",
+          "type": "boolean"
+        },
+        "tier_0_mode": {
+          "$ref": "#/$defs/PromotionMode",
+          "default": "repository_bundle_only"
+        },
+        "tier_1_mode": {
+          "$ref": "#/$defs/PromotionMode",
+          "default": "governed_destination_adapter"
+        },
+        "tier_2_mode": {
+          "$ref": "#/$defs/PromotionMode",
+          "default": "repository_bundle_only"
+        },
+        "tier_3_mode": {
+          "$ref": "#/$defs/PromotionMode",
+          "default": "manual_review_only"
+        }
+      },
+      "title": "ChangePromotionConfiguration",
+      "type": "object"
+    },
+    "ChangeRollbackConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "preserve_failed_history": {
+          "default": true,
+          "title": "Preserve Failed History",
+          "type": "boolean"
+        },
+        "require_pre_promotion_validation": {
+          "default": true,
+          "title": "Require Pre Promotion Validation",
+          "type": "boolean"
+        }
+      },
+      "title": "ChangeRollbackConfiguration",
+      "type": "object"
+    },
+    "ImplementationChannel": {
+      "enum": [
+        "deterministic_transformation",
+        "cognitive_os_coding_agent",
+        "claude_code_role",
+        "external_evolution_adapter"
+      ],
+      "title": "ImplementationChannel",
+      "type": "string"
+    },
+    "NetworkPolicy": {
+      "enum": [
+        "disabled",
+        "approved_provider_only"
+      ],
+      "title": "NetworkPolicy",
+      "type": "string"
+    },
+    "PromotionMode": {
+      "enum": [
+        "repository_bundle_only",
+        "governed_destination_adapter",
+        "manual_review_only"
+      ],
+      "title": "PromotionMode",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/config/controlled-change-configuration.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "enabled": {
+      "default": true,
+      "title": "Enabled",
+      "type": "boolean"
+    },
+    "evaluation": {
+      "$ref": "#/$defs/ChangeEvaluationConfiguration"
+    },
+    "implementation": {
+      "$ref": "#/$defs/ChangeImplementationConfiguration"
+    },
+    "intake": {
+      "$ref": "#/$defs/ChangeIntakeConfiguration"
+    },
+    "isolation": {
+      "$ref": "#/$defs/ChangeIsolationConfiguration"
+    },
+    "promotion": {
+      "$ref": "#/$defs/ChangePromotionConfiguration"
+    },
+    "rollback": {
+      "$ref": "#/$defs/ChangeRollbackConfiguration"
+    }
+  },
+  "required": [
+    "isolation"
+  ],
+  "title": "ControlledChangeConfiguration",
+  "type": "object"
+}

@@ -1,0 +1,77 @@
+{
+  "$defs": {
+    "ExperimentFailureCode": {
+      "enum": [
+        "stale_proposal",
+        "unapproved_proposal",
+        "hash_mismatch",
+        "baseline_mismatch",
+        "active_state_mutation",
+        "scope_escape",
+        "security_regression",
+        "policy_regression",
+        "migration_failure",
+        "dependency_expansion",
+        "performance_regression",
+        "recovery_failure",
+        "rollback_failure",
+        "missing_approval"
+      ],
+      "title": "ExperimentFailureCode",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/changes/evaluation-case-result.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "evidence_artifact": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Evidence Artifact",
+      "type": "string"
+    },
+    "failure_code": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ExperimentFailureCode"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "gate_id": {
+      "minLength": 1,
+      "title": "Gate Id",
+      "type": "string"
+    },
+    "measured_value": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Measured Value",
+      "type": "string"
+    },
+    "passed": {
+      "title": "Passed",
+      "type": "boolean"
+    },
+    "threshold": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Threshold",
+      "type": "string"
+    }
+  },
+  "required": [
+    "gate_id",
+    "passed",
+    "measured_value",
+    "threshold",
+    "evidence_artifact"
+  ],
+  "title": "EvaluationCaseResult",
+  "type": "object"
+}

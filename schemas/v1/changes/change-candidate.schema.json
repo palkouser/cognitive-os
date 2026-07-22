@@ -1,0 +1,210 @@
+{
+  "$defs": {
+    "CandidateStatus": {
+      "enum": [
+        "captured",
+        "verified",
+        "rejected"
+      ],
+      "title": "CandidateStatus",
+      "type": "string"
+    },
+    "DependencyDelta": {
+      "additionalProperties": false,
+      "properties": {
+        "added": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Added",
+          "type": "array"
+        },
+        "approved": {
+          "default": false,
+          "title": "Approved",
+          "type": "boolean"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "lockfile_hash_after": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Lockfile Hash After",
+          "type": "string"
+        },
+        "lockfile_hash_before": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Lockfile Hash Before",
+          "type": "string"
+        },
+        "removed": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Removed",
+          "type": "array"
+        }
+      },
+      "required": [
+        "lockfile_hash_before",
+        "lockfile_hash_after"
+      ],
+      "title": "DependencyDelta",
+      "type": "object"
+    },
+    "ImplementationChannel": {
+      "enum": [
+        "deterministic_transformation",
+        "cognitive_os_coding_agent",
+        "claude_code_role",
+        "external_evolution_adapter"
+      ],
+      "title": "ImplementationChannel",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/changes/change-candidate.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "build_manifest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Build Manifest",
+      "type": "string"
+    },
+    "candidate_id": {
+      "format": "uuid",
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "candidate_revision": {
+      "exclusiveMinimum": 0,
+      "title": "Candidate Revision",
+      "type": "integer"
+    },
+    "changed_contracts": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Changed Contracts",
+      "type": "array"
+    },
+    "changed_events": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Changed Events",
+      "type": "array"
+    },
+    "changed_files": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Changed Files",
+      "type": "array"
+    },
+    "changed_permissions": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Changed Permissions",
+      "type": "array"
+    },
+    "changed_schemas": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Changed Schemas",
+      "type": "array"
+    },
+    "configuration_artifact": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Configuration Artifact"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "dependency_delta": {
+      "$ref": "#/$defs/DependencyDelta"
+    },
+    "experiment_id": {
+      "format": "uuid",
+      "title": "Experiment Id",
+      "type": "string"
+    },
+    "implementation_artifact": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Implementation Artifact",
+      "type": "string"
+    },
+    "implementation_channel": {
+      "$ref": "#/$defs/ImplementationChannel"
+    },
+    "migration_artifact": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Migration Artifact"
+    },
+    "patch_artifact": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Patch Artifact",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/CandidateStatus"
+    }
+  },
+  "required": [
+    "candidate_id",
+    "experiment_id",
+    "candidate_revision",
+    "status",
+    "implementation_channel",
+    "implementation_artifact",
+    "patch_artifact",
+    "dependency_delta",
+    "changed_files",
+    "changed_contracts",
+    "changed_schemas",
+    "changed_events",
+    "changed_permissions",
+    "build_manifest",
+    "created_at"
+  ],
+  "title": "ChangeCandidate",
+  "type": "object"
+}

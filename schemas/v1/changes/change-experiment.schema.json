@@ -1,0 +1,121 @@
+{
+  "$defs": {
+    "ChangeSurfaceTier": {
+      "enum": [
+        "tier_0_metadata",
+        "tier_1_governed_declarative",
+        "tier_2_repository",
+        "tier_3_critical"
+      ],
+      "title": "ChangeSurfaceTier",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/changes/change-experiment.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "approved_by": {
+      "minLength": 1,
+      "title": "Approved By",
+      "type": "string"
+    },
+    "baseline_commit": {
+      "pattern": "^[0-9a-f]{40}$",
+      "title": "Baseline Commit",
+      "type": "string"
+    },
+    "baseline_tag": {
+      "minLength": 1,
+      "title": "Baseline Tag",
+      "type": "string"
+    },
+    "change_surface_tier": {
+      "$ref": "#/$defs/ChangeSurfaceTier"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "evaluation_profile": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Evaluation Profile",
+      "type": "string"
+    },
+    "experiment_id": {
+      "format": "uuid",
+      "title": "Experiment Id",
+      "type": "string"
+    },
+    "implementation_profile": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Implementation Profile",
+      "type": "string"
+    },
+    "isolation_profile": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Isolation Profile",
+      "type": "string"
+    },
+    "promotion_policy": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Promotion Policy",
+      "type": "string"
+    },
+    "proposal_approval_reference": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Proposal Approval Reference",
+      "type": "string"
+    },
+    "proposal_content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Proposal Content Hash",
+      "type": "string"
+    },
+    "proposal_id": {
+      "format": "uuid",
+      "title": "Proposal Id",
+      "type": "string"
+    },
+    "proposal_revision": {
+      "exclusiveMinimum": 0,
+      "title": "Proposal Revision",
+      "type": "integer"
+    },
+    "requested_by": {
+      "minLength": 1,
+      "title": "Requested By",
+      "type": "string"
+    },
+    "surface_registry_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Surface Registry Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "experiment_id",
+    "proposal_id",
+    "proposal_revision",
+    "proposal_content_hash",
+    "proposal_approval_reference",
+    "baseline_tag",
+    "baseline_commit",
+    "change_surface_tier",
+    "isolation_profile",
+    "implementation_profile",
+    "evaluation_profile",
+    "promotion_policy",
+    "surface_registry_hash",
+    "requested_by",
+    "approved_by",
+    "created_at"
+  ],
+  "title": "ChangeExperiment",
+  "type": "object"
+}

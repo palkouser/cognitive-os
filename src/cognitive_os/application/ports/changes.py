@@ -1,0 +1,76 @@
+"""Typed boundaries for controlled-change intake, persistence, and promotion."""
+
+from typing import Protocol
+from uuid import UUID
+
+from cognitive_os.domain.changes import (
+    ChangeAccessRecord,
+    ChangeCandidate,
+    ChangeExperiment,
+    ChangeExperimentRevision,
+    ChangeIsolationManifest,
+    ChangeRunManifest,
+    EvaluationRun,
+    PromotionAssessment,
+    PromotionBundle,
+    PromotionReceipt,
+    PromotionReview,
+    RegressionComparison,
+    RollbackReceipt,
+)
+from cognitive_os.domain.proposals import (
+    HarnessProposalIdentity,
+    HarnessProposalRevision,
+    ProposalReview,
+)
+
+
+class ApprovedProposalIntakePort(Protocol):
+    async def get_proposal_identity(self, proposal_id: UUID) -> HarnessProposalIdentity | None: ...
+    async def get_exact_proposal(
+        self, proposal_id: UUID, revision: int
+    ) -> HarnessProposalRevision | None: ...
+    async def list_proposal_reviews(
+        self, proposal_id: UUID, revision: int
+    ) -> tuple[ProposalReview, ...]: ...
+    async def artifact_exists(self, content_hash: str) -> bool: ...
+
+
+class ChangeRepositoryPort(Protocol):
+    async def create(
+        self, experiment: ChangeExperiment, revision: ChangeExperimentRevision
+    ) -> None: ...
+    async def append_revision(
+        self, revision: ChangeExperimentRevision, *, expected_revision: int
+    ) -> None: ...
+    async def get_exact_revision(
+        self, experiment_id: UUID, revision: int
+    ) -> ChangeExperimentRevision | None: ...
+    async def get_current_revision(
+        self, experiment_id: UUID
+    ) -> ChangeExperimentRevision | None: ...
+    async def find_by_request_signature(self, signature: str) -> ChangeExperiment | None: ...
+    async def record_isolation(self, value: ChangeIsolationManifest) -> None: ...
+    async def record_candidate(self, value: ChangeCandidate) -> None: ...
+    async def record_evaluation(self, value: EvaluationRun) -> None: ...
+    async def record_comparison(self, value: RegressionComparison) -> None: ...
+    async def record_assessment(self, value: PromotionAssessment) -> None: ...
+    async def record_review(self, value: PromotionReview) -> None: ...
+    async def get_review(self, review_id: UUID) -> PromotionReview | None: ...
+    async def record_bundle(self, value: PromotionBundle) -> None: ...
+    async def record_promotion(self, value: PromotionReceipt) -> None: ...
+    async def record_rollback(self, value: RollbackReceipt) -> None: ...
+    async def record_access(self, value: ChangeAccessRecord) -> None: ...
+    async def record_manifest(self, value: ChangeRunManifest) -> None: ...
+    async def list_current(self) -> tuple[ChangeExperimentRevision, ...]: ...
+
+
+class GovernedDestinationPort(Protocol):
+    async def append_verified_revision(
+        self,
+        *,
+        target: str,
+        expected_revision: str,
+        artifact_hash: str,
+        actor: str,
+    ) -> tuple[str, str]: ...

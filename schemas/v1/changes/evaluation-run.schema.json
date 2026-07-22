@@ -1,0 +1,154 @@
+{
+  "$defs": {
+    "EvaluationRunStatus": {
+      "enum": [
+        "requested",
+        "running",
+        "passed",
+        "failed",
+        "cancelled"
+      ],
+      "title": "EvaluationRunStatus",
+      "type": "string"
+    },
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/changes/evaluation-run.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "baseline_reference": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Baseline Reference",
+      "type": "string"
+    },
+    "candidate_id": {
+      "format": "uuid",
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "candidate_reference": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Candidate Reference",
+      "type": "string"
+    },
+    "case_result_artifacts": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Case Result Artifacts",
+      "type": "array"
+    },
+    "completed_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Completed At"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "evaluation_run_id": {
+      "format": "uuid",
+      "title": "Evaluation Run Id",
+      "type": "string"
+    },
+    "experiment_id": {
+      "format": "uuid",
+      "title": "Experiment Id",
+      "type": "string"
+    },
+    "matrix_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Matrix Hash",
+      "type": "string"
+    },
+    "raw_log_artifacts": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Raw Log Artifacts",
+      "type": "array"
+    },
+    "resource_profile": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "propertyNames": {
+        "minLength": 1
+      },
+      "title": "Resource Profile",
+      "type": "object"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/EvaluationRunStatus"
+    }
+  },
+  "required": [
+    "evaluation_run_id",
+    "experiment_id",
+    "candidate_id",
+    "matrix_hash",
+    "baseline_reference",
+    "candidate_reference",
+    "started_at",
+    "status",
+    "case_result_artifacts",
+    "raw_log_artifacts",
+    "resource_profile"
+  ],
+  "title": "EvaluationRun",
+  "type": "object"
+}

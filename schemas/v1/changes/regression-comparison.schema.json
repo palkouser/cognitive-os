@@ -1,0 +1,208 @@
+{
+  "$defs": {
+    "EvaluationCaseResult": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "evidence_artifact": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Evidence Artifact",
+          "type": "string"
+        },
+        "failure_code": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExperimentFailureCode"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "gate_id": {
+          "minLength": 1,
+          "title": "Gate Id",
+          "type": "string"
+        },
+        "measured_value": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Measured Value",
+          "type": "string"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        },
+        "threshold": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Threshold",
+          "type": "string"
+        }
+      },
+      "required": [
+        "gate_id",
+        "passed",
+        "measured_value",
+        "threshold",
+        "evidence_artifact"
+      ],
+      "title": "EvaluationCaseResult",
+      "type": "object"
+    },
+    "ExperimentFailureCode": {
+      "enum": [
+        "stale_proposal",
+        "unapproved_proposal",
+        "hash_mismatch",
+        "baseline_mismatch",
+        "active_state_mutation",
+        "scope_escape",
+        "security_regression",
+        "policy_regression",
+        "migration_failure",
+        "dependency_expansion",
+        "performance_regression",
+        "recovery_failure",
+        "rollback_failure",
+        "missing_approval"
+      ],
+      "title": "ExperimentFailureCode",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/changes/regression-comparison.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "baseline_reference": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Baseline Reference",
+      "type": "string"
+    },
+    "candidate_id": {
+      "format": "uuid",
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "candidate_reference": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Candidate Reference",
+      "type": "string"
+    },
+    "case_results": {
+      "items": {
+        "$ref": "#/$defs/EvaluationCaseResult"
+      },
+      "minItems": 1,
+      "title": "Case Results",
+      "type": "array"
+    },
+    "comparison_id": {
+      "format": "uuid",
+      "title": "Comparison Id",
+      "type": "string"
+    },
+    "compatibility_delta": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Compatibility Delta",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "cost_delta": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Cost Delta",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "experiment_id": {
+      "format": "uuid",
+      "title": "Experiment Id",
+      "type": "string"
+    },
+    "hard_failure_codes": {
+      "items": {
+        "$ref": "#/$defs/ExperimentFailureCode"
+      },
+      "title": "Hard Failure Codes",
+      "type": "array"
+    },
+    "latency_delta": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Latency Delta",
+      "type": "string"
+    },
+    "limitations": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Limitations",
+      "type": "array"
+    },
+    "policy_delta": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Policy Delta",
+      "type": "string"
+    },
+    "quality_delta": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Quality Delta",
+      "type": "string"
+    },
+    "recovery_delta": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Recovery Delta",
+      "type": "string"
+    },
+    "resource_delta": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Resource Delta",
+      "type": "string"
+    },
+    "safety_delta": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Safety Delta",
+      "type": "string"
+    },
+    "uncertainty": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Uncertainty",
+      "type": "string"
+    }
+  },
+  "required": [
+    "comparison_id",
+    "experiment_id",
+    "candidate_id",
+    "baseline_reference",
+    "candidate_reference",
+    "case_results",
+    "quality_delta",
+    "safety_delta",
+    "policy_delta",
+    "cost_delta",
+    "latency_delta",
+    "resource_delta",
+    "compatibility_delta",
+    "recovery_delta",
+    "uncertainty",
+    "limitations",
+    "hard_failure_codes",
+    "created_at"
+  ],
+  "title": "RegressionComparison",
+  "type": "object"
+}

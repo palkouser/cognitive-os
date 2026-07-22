@@ -26,3 +26,6 @@ promotion or source-write authority from Sprint 17.
 Sprint 18 begins Gate I with immutable proposal revisions, typed change descriptions, deterministic
 verification, explicit experiment review, and a governed queue. Sprint 19 may evaluate an approved
 exact revision in isolation, but implementation and promotion remain separately authorized.
+Sprint 19 implements Gate J with isolated candidates, baseline-owned regression matrices, separate
+promotion approval, governed Tier 1 promotion, Tier 0/2 repository bundles, Tier 3 manual review,
+and tested rollback. Runtime repository merge, tag, publish, and release remain forbidden.

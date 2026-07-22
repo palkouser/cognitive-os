@@ -1,0 +1,87 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/changes/rollback-receipt.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifact_refs": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Artifact Refs",
+      "type": "array"
+    },
+    "completed_at": {
+      "format": "date-time",
+      "title": "Completed At",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "experiment_id": {
+      "format": "uuid",
+      "title": "Experiment Id",
+      "type": "string"
+    },
+    "performed_by": {
+      "minLength": 1,
+      "title": "Performed By",
+      "type": "string"
+    },
+    "promotion_reference": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Promotion Reference",
+      "type": "string"
+    },
+    "restored_revision": {
+      "minLength": 1,
+      "title": "Restored Revision",
+      "type": "string"
+    },
+    "result": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Result",
+      "type": "string"
+    },
+    "rollback_id": {
+      "format": "uuid",
+      "title": "Rollback Id",
+      "type": "string"
+    },
+    "rollback_manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Rollback Manifest Hash",
+      "type": "string"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    },
+    "verification_evidence": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Verification Evidence",
+      "type": "string"
+    }
+  },
+  "required": [
+    "rollback_id",
+    "experiment_id",
+    "promotion_reference",
+    "rollback_manifest_hash",
+    "started_at",
+    "completed_at",
+    "performed_by",
+    "result",
+    "restored_revision",
+    "verification_evidence",
+    "artifact_refs"
+  ],
+  "title": "RollbackReceipt",
+  "type": "object"
+}

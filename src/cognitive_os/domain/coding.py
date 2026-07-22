@@ -254,6 +254,7 @@ class WorkspaceRequest(CodingRecord):
     task_run_id: UUID
     repository: RepositoryReference
     idempotency_key: Sha256Hex
+    destination_name: Annotated[str, Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$")] | None = None
 
 
 class WorkspaceDescriptor(CodingRecord):

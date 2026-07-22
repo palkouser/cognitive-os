@@ -1,0 +1,257 @@
+{
+  "$defs": {
+    "PromotionMode": {
+      "enum": [
+        "repository_bundle_only",
+        "governed_destination_adapter",
+        "manual_review_only"
+      ],
+      "title": "PromotionMode",
+      "type": "string"
+    },
+    "RollbackManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_restore_requirements": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Artifact Restore Requirements",
+          "type": "array"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "database_restore_requirements": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Database Restore Requirements",
+          "type": "array"
+        },
+        "manual_steps": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Manual Steps",
+          "type": "array"
+        },
+        "maximum_recovery_objective": {
+          "exclusiveMinimum": 0,
+          "title": "Maximum Recovery Objective",
+          "type": "integer"
+        },
+        "post_promotion_state": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Post Promotion State",
+          "type": "string"
+        },
+        "pre_promotion_state": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Pre Promotion State",
+          "type": "string"
+        },
+        "promotion_reference": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Promotion Reference",
+          "type": "string"
+        },
+        "rollback_operations": {
+          "items": {
+            "$ref": "#/$defs/TypedPromotionStep"
+          },
+          "minItems": 1,
+          "title": "Rollback Operations",
+          "type": "array"
+        },
+        "verification_plan": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Verification Plan",
+          "type": "string"
+        }
+      },
+      "required": [
+        "promotion_reference",
+        "pre_promotion_state",
+        "post_promotion_state",
+        "rollback_operations",
+        "artifact_restore_requirements",
+        "database_restore_requirements",
+        "verification_plan",
+        "maximum_recovery_objective",
+        "manual_steps",
+        "created_at"
+      ],
+      "title": "RollbackManifest",
+      "type": "object"
+    },
+    "TypedPromotionStep": {
+      "additionalProperties": false,
+      "properties": {
+        "adapter": {
+          "minLength": 1,
+          "title": "Adapter",
+          "type": "string"
+        },
+        "artifact_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Artifact Hash",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "exact_precondition_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Exact Precondition Hash",
+          "type": "string"
+        },
+        "operation": {
+          "enum": [
+            "append_revision",
+            "verify_revision",
+            "prepare_patch_bundle"
+          ],
+          "title": "Operation",
+          "type": "string"
+        },
+        "target": {
+          "minLength": 1,
+          "title": "Target",
+          "type": "string"
+        }
+      },
+      "required": [
+        "adapter",
+        "operation",
+        "target",
+        "exact_precondition_hash",
+        "artifact_hash"
+      ],
+      "title": "TypedPromotionStep",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/changes/promotion-bundle.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "approved_scope": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Approved Scope",
+      "type": "array"
+    },
+    "candidate_id": {
+      "format": "uuid",
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "checksums": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Checksums",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "exact_baseline": {
+      "pattern": "^[0-9a-f]{40}$",
+      "title": "Exact Baseline",
+      "type": "string"
+    },
+    "exact_candidate": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Exact Candidate",
+      "type": "string"
+    },
+    "experiment_id": {
+      "format": "uuid",
+      "title": "Experiment Id",
+      "type": "string"
+    },
+    "machine_executable_typed_steps": {
+      "items": {
+        "$ref": "#/$defs/TypedPromotionStep"
+      },
+      "title": "Machine Executable Typed Steps",
+      "type": "array"
+    },
+    "promotion_bundle_id": {
+      "format": "uuid",
+      "title": "Promotion Bundle Id",
+      "type": "string"
+    },
+    "promotion_mode": {
+      "$ref": "#/$defs/PromotionMode"
+    },
+    "required_manual_steps": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Required Manual Steps",
+      "type": "array"
+    },
+    "rollback_bundle": {
+      "$ref": "#/$defs/RollbackManifest"
+    },
+    "signatures": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Signatures",
+      "type": "array"
+    },
+    "target_authority": {
+      "minLength": 1,
+      "title": "Target Authority",
+      "type": "string"
+    }
+  },
+  "required": [
+    "promotion_bundle_id",
+    "experiment_id",
+    "candidate_id",
+    "target_authority",
+    "promotion_mode",
+    "exact_baseline",
+    "exact_candidate",
+    "approved_scope",
+    "required_manual_steps",
+    "machine_executable_typed_steps",
+    "rollback_bundle",
+    "checksums",
+    "signatures",
+    "created_at"
+  ],
+  "title": "PromotionBundle",
+  "type": "object"
+}

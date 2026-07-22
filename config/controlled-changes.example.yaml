@@ -1,0 +1,48 @@
+controlled_changes:
+  enabled: true
+  intake:
+    require_exact_proposal_revision: true
+    require_approved_for_experiment: true
+    require_passing_proposal_verifier_bundle: true
+    require_frozen_source_snapshot: true
+  isolation:
+    workspace_root: /home/palkouser/projekt/cognitive-os-data/change-workspaces
+    require_external_worktree_root: true
+    require_database_clone: true
+    require_artifact_namespace: true
+    network_default: disabled
+    max_parallel_experiments: 2
+    normal_cpu_limit: 4
+    normal_memory_gb: 8
+    normal_wall_time_seconds: 3600
+  implementation:
+    allowed_channels:
+      - deterministic_transformation
+      - cognitive_os_coding_agent
+      - claude_code_role
+    external_evolution_adapter_enabled: false
+    require_typed_operations: true
+    forbid_active_checkout: true
+    forbid_active_database: true
+    forbid_release_operations: true
+  evaluation:
+    fail_fast_on_hard_failure: true
+    require_target_benchmark: true
+    require_historical_regression: true
+    require_unrelated_domain_regression: true
+    require_security_policy_gates: true
+    require_migration_schema_gates: true
+    require_dependency_packaging_gates: true
+    require_backup_restore_rollback: true
+  promotion:
+    require_separate_approval: true
+    tier_0_mode: repository_bundle_only
+    tier_1_mode: governed_destination_adapter
+    tier_2_mode: repository_bundle_only
+    tier_3_mode: manual_review_only
+    runtime_git_merge_enabled: false
+    runtime_tag_enabled: false
+    runtime_publish_enabled: false
+  rollback:
+    require_pre_promotion_validation: true
+    preserve_failed_history: true

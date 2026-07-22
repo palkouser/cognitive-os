@@ -36,6 +36,76 @@
       "schema_version": 1
     },
     {
+      "event_type": "change.cancelled",
+      "file": "v1/events/change.cancelled.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "change.evaluation_completed",
+      "file": "v1/events/change.evaluation_completed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "change.evaluation_started",
+      "file": "v1/events/change.evaluation_started.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "change.experiment_created",
+      "file": "v1/events/change.experiment_created.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "change.failed",
+      "file": "v1/events/change.failed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "change.implementation_completed",
+      "file": "v1/events/change.implementation_completed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "change.implementation_started",
+      "file": "v1/events/change.implementation_started.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "change.isolation_prepared",
+      "file": "v1/events/change.isolation_prepared.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "change.promoted",
+      "file": "v1/events/change.promoted.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "change.promotion_approved",
+      "file": "v1/events/change.promotion_approved.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "change.promotion_assessed",
+      "file": "v1/events/change.promotion_assessed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "change.rejected",
+      "file": "v1/events/change.rejected.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "change.rollback_started",
+      "file": "v1/events/change.rollback_started.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "change.rolled_back",
+      "file": "v1/events/change.rolled_back.v1.schema.json",
+      "schema_version": 1
+    },
+    {
       "event_type": "checkpoint.created",
       "file": "v1/events/checkpoint.created.v1.schema.json",
       "schema_version": 1
@@ -864,6 +934,141 @@
   "generated_by": "cognitive_os.schemas.export",
   "models": [
     {
+      "file": "v1/changes/active-state-protection-snapshot.schema.json",
+      "model": "ActiveStateProtectionSnapshot",
+      "sha256": "36d66a93ee3013a8eac0bf59802c8d1be213a44604cc1e24a42c8de29178d97e"
+    },
+    {
+      "file": "v1/changes/change-access-record.schema.json",
+      "model": "ChangeAccessRecord",
+      "sha256": "07e241bdb8148ccda7cb91063de719700bb9dcdace3647841febd22c41dd2b5d"
+    },
+    {
+      "file": "v1/changes/change-candidate.schema.json",
+      "model": "ChangeCandidate",
+      "sha256": "0801eede419f4cd4aeb52d8c5fd0100d8677412db8e83bff8731e39cf3abf6de"
+    },
+    {
+      "file": "v1/changes/change-experiment-revision.schema.json",
+      "model": "ChangeExperimentRevision",
+      "sha256": "dcd4ae418c7ce7ecafbcb0ac785a8ddb5ac919ea9f8a979d0e34bb81bc0c9d48"
+    },
+    {
+      "file": "v1/changes/change-experiment.schema.json",
+      "model": "ChangeExperiment",
+      "sha256": "da625cb5530f43782e3c8a166f50b1b786dbcc5d42bad1739ecdb5b674ffc0c6"
+    },
+    {
+      "file": "v1/changes/change-implementation-plan.schema.json",
+      "model": "ChangeImplementationPlan",
+      "sha256": "327481a8c1286e50a5969c86524da3d42e83423f78d0a655787ad62d4dd74d81"
+    },
+    {
+      "file": "v1/changes/change-isolation-manifest.schema.json",
+      "model": "ChangeIsolationManifest",
+      "sha256": "b4681be0d8bb55bdc2cda8f9566a8e1c8810972e00e1d77b49908af6d37dca8b"
+    },
+    {
+      "file": "v1/changes/change-operation.schema.json",
+      "model": "ChangeOperation",
+      "sha256": "587045ae17a97ee83067a7967861494ff02a48f75af93c9ec124161b2f04a696"
+    },
+    {
+      "file": "v1/changes/change-resource-budget.schema.json",
+      "model": "ChangeResourceBudget",
+      "sha256": "e962ff260c9d3ecc3ab38337036d3b67d2facefe1fcd7f105f17dda48971c18c"
+    },
+    {
+      "file": "v1/changes/change-run-manifest.schema.json",
+      "model": "ChangeRunManifest",
+      "sha256": "4b35af6df7f2ac2726d9d9373395cca9fad7aa9a96cd7a1ba26a56be85f1473d"
+    },
+    {
+      "file": "v1/changes/change-surface-registration.schema.json",
+      "model": "ChangeSurfaceRegistration",
+      "sha256": "f5eb3fc7887374ca6b6eefc075e8d8608c667968ae58c43cb8816f129d968d5e"
+    },
+    {
+      "file": "v1/changes/change-verification-finding.schema.json",
+      "model": "ChangeVerificationFinding",
+      "sha256": "4c036b7a56901a99815a91bfd69bc70511af7d2d0fc93b0c7516b212ab6d7849"
+    },
+    {
+      "file": "v1/changes/change-verifier-bundle.schema.json",
+      "model": "ChangeVerifierBundle",
+      "sha256": "0c462b4425bf102d8eaa887ecc2d38ad5dccd35b71f406c5938e8017db093b83"
+    },
+    {
+      "file": "v1/changes/dependency-delta.schema.json",
+      "model": "DependencyDelta",
+      "sha256": "ebb1f8159e70521f0e6aca0ba1fbaa2859d6c20ca0eb429b69b26472cbf89724"
+    },
+    {
+      "file": "v1/changes/evaluation-case-result.schema.json",
+      "model": "EvaluationCaseResult",
+      "sha256": "320ce52fb01121c1360871ab6a9864befbb9006ec8e939d384de4e4c37e2f69a"
+    },
+    {
+      "file": "v1/changes/evaluation-gate.schema.json",
+      "model": "EvaluationGate",
+      "sha256": "d85aa0d22ae74eddf094d2561595920b0c55125d205c9071f98d8adbb7e0bff0"
+    },
+    {
+      "file": "v1/changes/evaluation-matrix.schema.json",
+      "model": "EvaluationMatrix",
+      "sha256": "7ed88dc94b5af3344393e4689c061848e63b8225cfc0dbcb1fc6525fdbbb9bd4"
+    },
+    {
+      "file": "v1/changes/evaluation-run.schema.json",
+      "model": "EvaluationRun",
+      "sha256": "9411d16195bdba23d34842ddb6b4559742bfb9fe119e4acdb3a5b59fe5318d6c"
+    },
+    {
+      "file": "v1/changes/measured-benefit.schema.json",
+      "model": "MeasuredBenefit",
+      "sha256": "b43c7b27b0e8f683d36a11300908e25508422e3d6be534c1cfc80fd41429e826"
+    },
+    {
+      "file": "v1/changes/promotion-assessment.schema.json",
+      "model": "PromotionAssessment",
+      "sha256": "fe1850afacd4aad08ee1c55c0568f70b24c4427854f529e50f0fd9d1c0ad2669"
+    },
+    {
+      "file": "v1/changes/promotion-bundle.schema.json",
+      "model": "PromotionBundle",
+      "sha256": "9a44aae2ee94b982926788b2049d2d8a12779682ad9732f619918e17dfd8a824"
+    },
+    {
+      "file": "v1/changes/promotion-receipt.schema.json",
+      "model": "PromotionReceipt",
+      "sha256": "de0c2ef6bc699eb995c88512d6752cc7048997478b75399ef98bd94b6e2baa31"
+    },
+    {
+      "file": "v1/changes/promotion-review.schema.json",
+      "model": "PromotionReview",
+      "sha256": "9c6287894096d8a33a7e9a11323eefe82d04642e87ca97cc5b7480516531604b"
+    },
+    {
+      "file": "v1/changes/regression-comparison.schema.json",
+      "model": "RegressionComparison",
+      "sha256": "723e98c2b05a5ece44b2c2fb8f973453bf71faad53c7d9345b4f67c5010f42b0"
+    },
+    {
+      "file": "v1/changes/rollback-manifest.schema.json",
+      "model": "RollbackManifest",
+      "sha256": "a11b6dcd7367e5bd8f4716f7c8f244d703aab06cb63859af3884cdf7907b344c"
+    },
+    {
+      "file": "v1/changes/rollback-receipt.schema.json",
+      "model": "RollbackReceipt",
+      "sha256": "e7e922464686e4ad01236d86082183a7b8544b836345d0d9368380d8aa6dfe9e"
+    },
+    {
+      "file": "v1/changes/typed-promotion-step.schema.json",
+      "model": "TypedPromotionStep",
+      "sha256": "6a823a5743c655622bb24ba0fe6216e425e6feed1ac8c5eab073e67cfa0f0b3d"
+    },
+    {
       "file": "v1/config/coding-configuration.schema.json",
       "model": "CodingConfiguration",
       "sha256": "4d19475e4a5af59006a015530da0fd027bac7faa06e2112c411c2642bcbd7c84"
@@ -872,6 +1077,11 @@
       "file": "v1/config/context-configuration.schema.json",
       "model": "ContextConfiguration",
       "sha256": "b750bc9e1a4d1f57e83840254f56412091fe4377c73f41af061579dfc8de9028"
+    },
+    {
+      "file": "v1/config/controlled-change-configuration.schema.json",
+      "model": "ControlledChangeConfiguration",
+      "sha256": "7fb0f06745289836c3823ed87202cdf7488f6d9aae7c6e3f90d9ad138df0138d"
     },
     {
       "file": "v1/config/corpus-configuration.schema.json",
@@ -1741,7 +1951,7 @@
     {
       "file": "v1/domain/workspace-request.schema.json",
       "model": "WorkspaceRequest",
-      "sha256": "0cb9f65bc313f06baccf04eb34852431494c78385b8a63e192e3a2b0f1d14a79"
+      "sha256": "300a2feb50ede464500f097bd2fe6d0ff0f6a03f7b554e8ffaa0737bdd85d34e"
     },
     {
       "file": "v1/events/benchmark.case_completed.v1.schema.json",
@@ -1777,6 +1987,76 @@
       "file": "v1/events/benchmark.run_started.v1.schema.json",
       "model": "BenchmarkRunStarted",
       "sha256": "e0ff1ded11eaa2b526a248ea4483cdbc4451f8ec3cc14599d8cb322bb03b3623"
+    },
+    {
+      "file": "v1/events/change.cancelled.v1.schema.json",
+      "model": "ChangeCancelled",
+      "sha256": "983a43be1872a8f1a5cb170ed15c2138b5f18730f7e0e65f779440cf0b19fbb3"
+    },
+    {
+      "file": "v1/events/change.evaluation_completed.v1.schema.json",
+      "model": "ChangeEvaluationCompleted",
+      "sha256": "5da5085d8a43eb15b0f5bd2ed087319c49e4ee4c066fcc14bd7b64ac90988a31"
+    },
+    {
+      "file": "v1/events/change.evaluation_started.v1.schema.json",
+      "model": "ChangeEvaluationStarted",
+      "sha256": "8d4e8f41b69babfd3501e46ebee59afa03873ca4107799df5e71515afd7db3d0"
+    },
+    {
+      "file": "v1/events/change.experiment_created.v1.schema.json",
+      "model": "ChangeExperimentCreated",
+      "sha256": "032b9d781d083baaa9a6b6736a81c9ae38848284d2d5dab4f4cf7a1f0427fd02"
+    },
+    {
+      "file": "v1/events/change.failed.v1.schema.json",
+      "model": "ChangeFailed",
+      "sha256": "12796cbf6c3db3f7635a0557fe9d2e4c69317d4d8699a70503a00d3c3c79b539"
+    },
+    {
+      "file": "v1/events/change.implementation_completed.v1.schema.json",
+      "model": "ChangeImplementationCompleted",
+      "sha256": "b57770122ce89579fd3c61828f93d059eaa784ef034d85755745d21bff8ffbf7"
+    },
+    {
+      "file": "v1/events/change.implementation_started.v1.schema.json",
+      "model": "ChangeImplementationStarted",
+      "sha256": "2467e065631cddd84ddf31f165258eced42fb855cbf9d9e2cb44584ba5a0814b"
+    },
+    {
+      "file": "v1/events/change.isolation_prepared.v1.schema.json",
+      "model": "ChangeIsolationPrepared",
+      "sha256": "aea73ab3c89978e1c899fe5ad6776752b8a7eb01aba5c6b9190c40c94bf78b0a"
+    },
+    {
+      "file": "v1/events/change.promoted.v1.schema.json",
+      "model": "ChangePromoted",
+      "sha256": "5e4dbfb00d8d40010e717dadb67ce431cf51ec83884a6b607021e62e5010e357"
+    },
+    {
+      "file": "v1/events/change.promotion_approved.v1.schema.json",
+      "model": "ChangePromotionApproved",
+      "sha256": "8494d0a81f0d90d1b811e2c225d372701c64e341a420eeb5d342751d663ed1cc"
+    },
+    {
+      "file": "v1/events/change.promotion_assessed.v1.schema.json",
+      "model": "ChangePromotionAssessed",
+      "sha256": "e1190942b316dc673735a0ef3186c4b4635914d5a1c1131f139b9b903cef81d0"
+    },
+    {
+      "file": "v1/events/change.rejected.v1.schema.json",
+      "model": "ChangeRejected",
+      "sha256": "68d8a5ca9ae36c3ec8862f8144ffb2a57c023aa1b7c084dbaef6d275d6de2e80"
+    },
+    {
+      "file": "v1/events/change.rollback_started.v1.schema.json",
+      "model": "ChangeRollbackStarted",
+      "sha256": "eed9a7a1f4e9af21311e7b0a19fa782c51d22fbedf5c9af10dd688b3d9599d94"
+    },
+    {
+      "file": "v1/events/change.rolled_back.v1.schema.json",
+      "model": "ChangeRolledBack",
+      "sha256": "2278a031e12f535b05e0b4dd5da3450580593a5e52d7253a36c97b58fe617bc4"
     },
     {
       "file": "v1/events/checkpoint.created.v1.schema.json",
