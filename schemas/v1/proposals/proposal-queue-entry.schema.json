@@ -1,0 +1,142 @@
+{
+  "$defs": {
+    "ProposalStatus": {
+      "enum": [
+        "draft",
+        "generated",
+        "validated",
+        "staged_for_review",
+        "approved_for_experiment",
+        "rejected",
+        "superseded",
+        "retracted"
+      ],
+      "title": "ProposalStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/proposals/proposal-queue-entry.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "active": {
+      "default": true,
+      "title": "Active",
+      "type": "boolean"
+    },
+    "blast_radius_rank": {
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Blast Radius Rank",
+      "type": "integer"
+    },
+    "blocked_by_dependency": {
+      "title": "Blocked By Dependency",
+      "type": "boolean"
+    },
+    "canonical_name": {
+      "minLength": 1,
+      "title": "Canonical Name",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "dependency_count": {
+      "minimum": 0,
+      "title": "Dependency Count",
+      "type": "integer"
+    },
+    "evidence_confidence": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Evidence Confidence",
+      "type": "string"
+    },
+    "expected_value_rank": {
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Expected Value Rank",
+      "type": "integer"
+    },
+    "experiment_cost_rank": {
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Experiment Cost Rank",
+      "type": "integer"
+    },
+    "operator_priority": {
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Operator Priority",
+      "type": "integer"
+    },
+    "proposal_content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Proposal Content Hash",
+      "type": "string"
+    },
+    "proposal_id": {
+      "format": "uuid",
+      "title": "Proposal Id",
+      "type": "string"
+    },
+    "proposal_revision": {
+      "exclusiveMinimum": 0,
+      "title": "Proposal Revision",
+      "type": "integer"
+    },
+    "proposal_status": {
+      "$ref": "#/$defs/ProposalStatus"
+    },
+    "queue_entry_id": {
+      "format": "uuid",
+      "title": "Queue Entry Id",
+      "type": "string"
+    },
+    "risk_rank": {
+      "maximum": 3,
+      "minimum": 0,
+      "title": "Risk Rank",
+      "type": "integer"
+    },
+    "rollback_readiness_rank": {
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Rollback Readiness Rank",
+      "type": "integer"
+    },
+    "weakness_priority": {
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Weakness Priority",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "queue_entry_id",
+    "proposal_id",
+    "proposal_revision",
+    "proposal_content_hash",
+    "proposal_status",
+    "blocked_by_dependency",
+    "operator_priority",
+    "weakness_priority",
+    "evidence_confidence",
+    "risk_rank",
+    "expected_value_rank",
+    "experiment_cost_rank",
+    "blast_radius_rank",
+    "rollback_readiness_rank",
+    "dependency_count",
+    "canonical_name",
+    "created_at"
+  ],
+  "title": "ProposalQueueEntry",
+  "type": "object"
+}

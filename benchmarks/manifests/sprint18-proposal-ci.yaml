@@ -1,0 +1,26 @@
+benchmark_id: sprint18-proposal-ci
+version: "1"
+title: Sprint 18 harness proposal CI gate
+description: 16 credential-free proposal generation, validation, lifecycle, queue, and authority cases.
+default_configuration: {mode: proposal-replay}
+source: Cognitive OS Sprint 18 executable backlog
+license: Apache-2.0
+created_at: 2026-01-01T00:00:00Z
+case_matrix:
+  generic:
+    - {id: proposal-ci-001, scenario: prompt_template_change, expected: passed}
+    - {id: proposal-ci-002, scenario: context_profile_change, expected: passed}
+    - {id: proposal-ci-003, scenario: retrieval_policy_change, expected: passed}
+    - {id: proposal-ci-004, scenario: memory_policy_change, expected: passed}
+    - {id: proposal-ci-005, scenario: skill_change, expected: passed}
+    - {id: proposal-ci-006, scenario: strategy_change, expected: passed}
+    - {id: proposal-ci-007, scenario: routing_policy_change, expected: passed}
+    - {id: proposal-ci-008, scenario: tool_definition_change, expected: passed}
+    - {id: proposal-ci-009, scenario: verifier_change, expected: passed}
+    - {id: proposal-ci-010, scenario: workflow_change, expected: passed}
+    - {id: proposal-ci-011, scenario: retry_policy_change, expected: passed}
+    - {id: proposal-ci-012, scenario: benchmark_change, expected: passed}
+    - {id: proposal-ci-013, scenario: configuration_change, expected: passed}
+    - {id: proposal-ci-014, scenario: source_code_change, expected: passed}
+    - {id: proposal-ci-015, scenario: documentation_change, expected: passed}
+    - {id: proposal-ci-016, scenario: prompt_template_change, expected: passed}

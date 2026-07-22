@@ -1,0 +1,144 @@
+{
+  "$defs": {
+    "RollbackOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "baseline_reference": {
+          "minLength": 1,
+          "title": "Baseline Reference",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "operation_type": {
+          "enum": [
+            "restore_revision",
+            "restore_configuration",
+            "restore_artifact",
+            "manual_restore"
+          ],
+          "title": "Operation Type",
+          "type": "string"
+        },
+        "target_identity": {
+          "minLength": 1,
+          "title": "Target Identity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_type",
+        "target_identity",
+        "baseline_reference"
+      ],
+      "title": "RollbackOperation",
+      "type": "object"
+    },
+    "RollbackType": {
+      "enum": [
+        "declarative_revision",
+        "configuration_restore",
+        "repository_revert_plan",
+        "database_restore_plan",
+        "artifact_restore_plan",
+        "manual_only"
+      ],
+      "title": "RollbackType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/proposals/proposal-rollback-plan.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "artifact_requirements": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Artifact Requirements",
+      "type": "array"
+    },
+    "baseline_references": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Baseline References",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "limitations": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Limitations",
+      "type": "array"
+    },
+    "manual_steps": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Manual Steps",
+      "type": "array"
+    },
+    "maximum_rollback_time": {
+      "exclusiveMinimum": 0,
+      "title": "Maximum Rollback Time",
+      "type": "integer"
+    },
+    "rollback_commands_as_typed_operations": {
+      "items": {
+        "$ref": "#/$defs/RollbackOperation"
+      },
+      "minItems": 1,
+      "title": "Rollback Commands As Typed Operations",
+      "type": "array"
+    },
+    "rollback_type": {
+      "$ref": "#/$defs/RollbackType"
+    },
+    "state_snapshot_requirements": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "State Snapshot Requirements",
+      "type": "array"
+    },
+    "verification_steps": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Verification Steps",
+      "type": "array"
+    }
+  },
+  "required": [
+    "rollback_type",
+    "baseline_references",
+    "state_snapshot_requirements",
+    "artifact_requirements",
+    "rollback_commands_as_typed_operations",
+    "verification_steps",
+    "maximum_rollback_time",
+    "manual_steps",
+    "limitations"
+  ],
+  "title": "ProposalRollbackPlan",
+  "type": "object"
+}

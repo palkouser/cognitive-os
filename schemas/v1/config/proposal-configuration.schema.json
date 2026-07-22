@@ -1,0 +1,261 @@
+{
+  "$defs": {
+    "HarnessProposalType": {
+      "enum": [
+        "prompt_template_change",
+        "context_profile_change",
+        "retrieval_policy_change",
+        "memory_policy_change",
+        "skill_change",
+        "strategy_change",
+        "routing_policy_change",
+        "tool_definition_change",
+        "verifier_change",
+        "workflow_change",
+        "retry_policy_change",
+        "benchmark_change",
+        "configuration_change",
+        "source_code_change",
+        "documentation_change"
+      ],
+      "title": "HarnessProposalType",
+      "type": "string"
+    },
+    "ProposalEligibilityConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmed_weaknesses": {
+          "default": true,
+          "title": "Confirmed Weaknesses",
+          "type": "boolean"
+        },
+        "high_impact_candidates": {
+          "default": false,
+          "title": "High Impact Candidates",
+          "type": "boolean"
+        },
+        "reject_unresolved_source_integrity": {
+          "default": true,
+          "title": "Reject Unresolved Source Integrity",
+          "type": "boolean"
+        },
+        "require_current_revision": {
+          "default": true,
+          "title": "Require Current Revision",
+          "type": "boolean"
+        },
+        "require_valid_impact_score": {
+          "default": true,
+          "title": "Require Valid Impact Score",
+          "type": "boolean"
+        },
+        "require_verified_evidence": {
+          "default": true,
+          "title": "Require Verified Evidence",
+          "type": "boolean"
+        }
+      },
+      "title": "ProposalEligibilityConfiguration",
+      "type": "object"
+    },
+    "ProposalGenerationConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "deterministic_enabled": {
+          "default": true,
+          "title": "Deterministic Enabled",
+          "type": "boolean"
+        },
+        "max_alternatives_per_proposal": {
+          "default": 7,
+          "maximum": 7,
+          "minimum": 2,
+          "title": "Max Alternatives Per Proposal",
+          "type": "integer"
+        },
+        "max_parallel_analysis_workers": {
+          "default": 4,
+          "maximum": 4,
+          "minimum": 1,
+          "title": "Max Parallel Analysis Workers",
+          "type": "integer"
+        },
+        "max_proposals_per_weakness": {
+          "default": 3,
+          "maximum": 3,
+          "minimum": 1,
+          "title": "Max Proposals Per Weakness",
+          "type": "integer"
+        },
+        "provider_assisted_enabled": {
+          "default": false,
+          "title": "Provider Assisted Enabled",
+          "type": "boolean"
+        }
+      },
+      "title": "ProposalGenerationConfiguration",
+      "type": "object"
+    },
+    "ProposalProviderConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "approval_enabled": {
+          "default": false,
+          "title": "Approval Enabled",
+          "type": "boolean"
+        },
+        "destination_write_enabled": {
+          "default": false,
+          "title": "Destination Write Enabled",
+          "type": "boolean"
+        },
+        "repository_write_enabled": {
+          "default": false,
+          "title": "Repository Write Enabled",
+          "type": "boolean"
+        },
+        "tools_enabled": {
+          "default": false,
+          "title": "Tools Enabled",
+          "type": "boolean"
+        }
+      },
+      "title": "ProposalProviderConfiguration",
+      "type": "object"
+    },
+    "ProposalQueueConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "deterministic_ordering": {
+          "default": true,
+          "title": "Deterministic Ordering",
+          "type": "boolean"
+        },
+        "executable_payloads_forbidden": {
+          "default": true,
+          "title": "Executable Payloads Forbidden",
+          "type": "boolean"
+        }
+      },
+      "title": "ProposalQueueConfiguration",
+      "type": "object"
+    },
+    "ProposalReviewConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "automatic_approval": {
+          "default": false,
+          "title": "Automatic Approval",
+          "type": "boolean"
+        },
+        "explicit_operator_review_required": {
+          "default": true,
+          "title": "Explicit Operator Review Required",
+          "type": "boolean"
+        },
+        "provider_may_approve": {
+          "default": false,
+          "title": "Provider May Approve",
+          "type": "boolean"
+        }
+      },
+      "title": "ProposalReviewConfiguration",
+      "type": "object"
+    },
+    "ProposalScopeConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "reject_arbitrary_shell": {
+          "default": true,
+          "title": "Reject Arbitrary Shell",
+          "type": "boolean"
+        },
+        "reject_omnibus_proposals": {
+          "default": true,
+          "title": "Reject Omnibus Proposals",
+          "type": "boolean"
+        },
+        "reject_untyped_operations": {
+          "default": true,
+          "title": "Reject Untyped Operations",
+          "type": "boolean"
+        },
+        "supported_proposal_types": {
+          "default": [
+            "prompt_template_change",
+            "context_profile_change",
+            "retrieval_policy_change",
+            "memory_policy_change",
+            "skill_change",
+            "strategy_change",
+            "routing_policy_change",
+            "tool_definition_change",
+            "verifier_change",
+            "workflow_change",
+            "retry_policy_change",
+            "benchmark_change",
+            "configuration_change",
+            "source_code_change",
+            "documentation_change"
+          ],
+          "items": {
+            "$ref": "#/$defs/HarnessProposalType"
+          },
+          "title": "Supported Proposal Types",
+          "type": "array"
+        }
+      },
+      "title": "ProposalScopeConfiguration",
+      "type": "object"
+    },
+    "ProposalStorageConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "inline_secret_material_forbidden": {
+          "default": true,
+          "title": "Inline Secret Material Forbidden",
+          "type": "boolean"
+        },
+        "large_bodies_in_artifact_store": {
+          "default": true,
+          "title": "Large Bodies In Artifact Store",
+          "type": "boolean"
+        }
+      },
+      "title": "ProposalStorageConfiguration",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/config/proposal-configuration.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "eligibility": {
+      "$ref": "#/$defs/ProposalEligibilityConfiguration"
+    },
+    "enabled": {
+      "default": true,
+      "title": "Enabled",
+      "type": "boolean"
+    },
+    "generation": {
+      "$ref": "#/$defs/ProposalGenerationConfiguration"
+    },
+    "provider": {
+      "$ref": "#/$defs/ProposalProviderConfiguration"
+    },
+    "queue": {
+      "$ref": "#/$defs/ProposalQueueConfiguration"
+    },
+    "review": {
+      "$ref": "#/$defs/ProposalReviewConfiguration"
+    },
+    "scope": {
+      "$ref": "#/$defs/ProposalScopeConfiguration"
+    },
+    "storage": {
+      "$ref": "#/$defs/ProposalStorageConfiguration"
+    }
+  },
+  "title": "ProposalConfiguration",
+  "type": "object"
+}

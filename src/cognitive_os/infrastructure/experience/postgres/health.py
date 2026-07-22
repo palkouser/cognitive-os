@@ -98,8 +98,8 @@ class PostgresExperienceHealthService:
                 )
                 or 0
             )
-        if revision != "0009":
-            messages.append(f"Expected Alembic revision 0009, found {revision}")
+        if revision != "0010":
+            messages.append(f"Expected Alembic revision 0010, found {revision}")
         if table_count != 9:
             messages.append(f"Expected 9 Experience Compiler tables, found {table_count}")
         if trigger_count != 7:

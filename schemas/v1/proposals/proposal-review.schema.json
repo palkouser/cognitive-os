@@ -1,0 +1,99 @@
+{
+  "$defs": {
+    "ProposalReviewDecision": {
+      "enum": [
+        "approve_for_experiment",
+        "reject",
+        "abstain"
+      ],
+      "title": "ProposalReviewDecision",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/proposals/proposal-review.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "policy_snapshot_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Policy Snapshot Hash",
+      "type": "string"
+    },
+    "proposal_content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Proposal Content Hash",
+      "type": "string"
+    },
+    "proposal_id": {
+      "format": "uuid",
+      "title": "Proposal Id",
+      "type": "string"
+    },
+    "proposal_revision": {
+      "exclusiveMinimum": 0,
+      "title": "Proposal Revision",
+      "type": "integer"
+    },
+    "rationale": {
+      "minLength": 1,
+      "title": "Rationale",
+      "type": "string"
+    },
+    "required_changes": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Required Changes",
+      "type": "array"
+    },
+    "review_decision": {
+      "$ref": "#/$defs/ProposalReviewDecision"
+    },
+    "review_id": {
+      "format": "uuid",
+      "title": "Review Id",
+      "type": "string"
+    },
+    "reviewer_authority": {
+      "minLength": 1,
+      "title": "Reviewer Authority",
+      "type": "string"
+    },
+    "reviewer_identity": {
+      "minLength": 1,
+      "title": "Reviewer Identity",
+      "type": "string"
+    },
+    "verifier_bundle_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Verifier Bundle Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "review_id",
+    "proposal_id",
+    "proposal_revision",
+    "reviewer_identity",
+    "reviewer_authority",
+    "review_decision",
+    "rationale",
+    "required_changes",
+    "policy_snapshot_hash",
+    "verifier_bundle_hash",
+    "proposal_content_hash",
+    "created_at"
+  ],
+  "title": "ProposalReview",
+  "type": "object"
+}

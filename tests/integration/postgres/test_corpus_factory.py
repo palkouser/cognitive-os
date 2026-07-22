@@ -33,9 +33,9 @@ async def test_corpus_repository_pipeline_append_only_and_health(engines) -> Non
 async def test_runtime_role_cannot_directly_route_or_create_late_revision(engines) -> None:
     app, _ = engines
     request, source = build_corpus_fixture("document")
-    result = await CorpusFactory(
-        PostgresCorpusRepository(app), FixtureArtifactStore()
-    ).ingest(request, source)
+    result = await CorpusFactory(PostgresCorpusRepository(app), FixtureArtifactStore()).ingest(
+        request, source
+    )
     item_id = result.items[0].corpus_item_id
     for statement in (
         "UPDATE cognitive_os.corpus_items SET current_status='exported' "

@@ -1,0 +1,95 @@
+{
+  "$defs": {
+    "ExpectedDirection": {
+      "enum": [
+        "increase",
+        "decrease",
+        "maintain_with_lower_cost",
+        "eliminate_failure"
+      ],
+      "title": "ExpectedDirection",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/proposals/expected-benefit.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "applicable_task_signatures": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Applicable Task Signatures",
+      "type": "array"
+    },
+    "baseline_values": {
+      "additionalProperties": {
+        "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+        "type": "string"
+      },
+      "propertyNames": {
+        "minLength": 1
+      },
+      "title": "Baseline Values",
+      "type": "object"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "expected_direction": {
+      "$ref": "#/$defs/ExpectedDirection"
+    },
+    "hypothesis_only": {
+      "const": true,
+      "default": true,
+      "title": "Hypothesis Only",
+      "type": "boolean"
+    },
+    "limitations": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Limitations",
+      "type": "array"
+    },
+    "minimum_material_improvement": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Minimum Material Improvement",
+      "type": "string"
+    },
+    "source_refs": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Source Refs",
+      "type": "array"
+    },
+    "target_metrics": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Target Metrics",
+      "type": "array"
+    }
+  },
+  "required": [
+    "target_metrics",
+    "baseline_values",
+    "expected_direction",
+    "minimum_material_improvement",
+    "applicable_task_signatures",
+    "limitations",
+    "source_refs"
+  ],
+  "title": "ExpectedBenefit",
+  "type": "object"
+}

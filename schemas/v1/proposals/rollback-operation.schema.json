@@ -1,0 +1,38 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/proposals/rollback-operation.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "baseline_reference": {
+      "minLength": 1,
+      "title": "Baseline Reference",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "operation_type": {
+      "enum": [
+        "restore_revision",
+        "restore_configuration",
+        "restore_artifact",
+        "manual_restore"
+      ],
+      "title": "Operation Type",
+      "type": "string"
+    },
+    "target_identity": {
+      "minLength": 1,
+      "title": "Target Identity",
+      "type": "string"
+    }
+  },
+  "required": [
+    "operation_type",
+    "target_identity",
+    "baseline_reference"
+  ],
+  "title": "RollbackOperation",
+  "type": "object"
+}

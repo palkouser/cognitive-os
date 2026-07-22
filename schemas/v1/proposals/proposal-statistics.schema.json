@@ -1,0 +1,153 @@
+{
+  "$defs": {
+    "ChangeSurfaceTier": {
+      "enum": [
+        "tier_0",
+        "tier_1",
+        "tier_2",
+        "tier_3"
+      ],
+      "title": "ChangeSurfaceTier",
+      "type": "string"
+    },
+    "HarnessProposalType": {
+      "enum": [
+        "prompt_template_change",
+        "context_profile_change",
+        "retrieval_policy_change",
+        "memory_policy_change",
+        "skill_change",
+        "strategy_change",
+        "routing_policy_change",
+        "tool_definition_change",
+        "verifier_change",
+        "workflow_change",
+        "retry_policy_change",
+        "benchmark_change",
+        "configuration_change",
+        "source_code_change",
+        "documentation_change"
+      ],
+      "title": "HarnessProposalType",
+      "type": "string"
+    },
+    "ProposalReviewDecision": {
+      "enum": [
+        "approve_for_experiment",
+        "reject",
+        "abstain"
+      ],
+      "title": "ProposalReviewDecision",
+      "type": "string"
+    },
+    "ProposalRiskLevel": {
+      "enum": [
+        "low",
+        "moderate",
+        "high",
+        "critical"
+      ],
+      "title": "ProposalRiskLevel",
+      "type": "string"
+    },
+    "ProposalStatus": {
+      "enum": [
+        "draft",
+        "generated",
+        "validated",
+        "staged_for_review",
+        "approved_for_experiment",
+        "rejected",
+        "superseded",
+        "retracted"
+      ],
+      "title": "ProposalStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/proposals/proposal-statistics.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "proposals_by_risk": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/ProposalRiskLevel"
+      },
+      "title": "Proposals By Risk",
+      "type": "object"
+    },
+    "proposals_by_status": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/ProposalStatus"
+      },
+      "title": "Proposals By Status",
+      "type": "object"
+    },
+    "proposals_by_tier": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/ChangeSurfaceTier"
+      },
+      "title": "Proposals By Tier",
+      "type": "object"
+    },
+    "proposals_by_type": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/HarnessProposalType"
+      },
+      "title": "Proposals By Type",
+      "type": "object"
+    },
+    "provider_fallback_count": {
+      "minimum": 0,
+      "title": "Provider Fallback Count",
+      "type": "integer"
+    },
+    "review_outcomes": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/ProposalReviewDecision"
+      },
+      "title": "Review Outcomes",
+      "type": "object"
+    },
+    "verifier_failure_reasons": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "propertyNames": {
+        "minLength": 1
+      },
+      "title": "Verifier Failure Reasons",
+      "type": "object"
+    }
+  },
+  "required": [
+    "proposals_by_type",
+    "proposals_by_status",
+    "proposals_by_risk",
+    "proposals_by_tier",
+    "review_outcomes",
+    "verifier_failure_reasons",
+    "provider_fallback_count"
+  ],
+  "title": "ProposalStatistics",
+  "type": "object"
+}

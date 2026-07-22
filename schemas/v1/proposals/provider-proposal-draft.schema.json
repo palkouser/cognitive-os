@@ -1,0 +1,108 @@
+{
+  "$defs": {
+    "HarnessProposalType": {
+      "enum": [
+        "prompt_template_change",
+        "context_profile_change",
+        "retrieval_policy_change",
+        "memory_policy_change",
+        "skill_change",
+        "strategy_change",
+        "routing_policy_change",
+        "tool_definition_change",
+        "verifier_change",
+        "workflow_change",
+        "retry_policy_change",
+        "benchmark_change",
+        "configuration_change",
+        "source_code_change",
+        "documentation_change"
+      ],
+      "title": "HarnessProposalType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/proposals/provider-proposal-draft.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "affected_component_hints": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Affected Component Hints",
+      "type": "array"
+    },
+    "alternative_drafts": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Alternative Drafts",
+      "type": "array"
+    },
+    "cited_host_source_ref_ids": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Cited Host Source Ref Ids",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "limitations": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "proposal_type": {
+      "$ref": "#/$defs/HarnessProposalType"
+    },
+    "proposed_body": {
+      "minLength": 1,
+      "title": "Proposed Body",
+      "type": "string"
+    },
+    "rationale": {
+      "minLength": 1,
+      "title": "Rationale",
+      "type": "string"
+    },
+    "rollback_rationale": {
+      "minLength": 1,
+      "title": "Rollback Rationale",
+      "type": "string"
+    },
+    "summary": {
+      "minLength": 1,
+      "title": "Summary",
+      "type": "string"
+    },
+    "validation_rationale": {
+      "minLength": 1,
+      "title": "Validation Rationale",
+      "type": "string"
+    }
+  },
+  "required": [
+    "proposal_type",
+    "summary",
+    "proposed_body",
+    "rationale",
+    "alternative_drafts",
+    "affected_component_hints",
+    "validation_rationale",
+    "rollback_rationale",
+    "limitations",
+    "cited_host_source_ref_ids"
+  ],
+  "title": "ProviderProposalDraft",
+  "type": "object"
+}

@@ -1,0 +1,270 @@
+{
+  "$defs": {
+    "ArtifactRevisionOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "operation_type": {
+          "const": "artifact_revision",
+          "default": "artifact_revision",
+          "title": "Operation Type",
+          "type": "string"
+        },
+        "proposed_artifact_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Proposed Artifact Hash",
+          "type": "string"
+        },
+        "target_identity": {
+          "minLength": 1,
+          "title": "Target Identity",
+          "type": "string"
+        },
+        "target_revision": {
+          "minLength": 1,
+          "title": "Target Revision",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_identity",
+        "target_revision",
+        "proposed_artifact_hash"
+      ],
+      "title": "ArtifactRevisionOperation",
+      "type": "object"
+    },
+    "ChangeSurfaceTier": {
+      "enum": [
+        "tier_0",
+        "tier_1",
+        "tier_2",
+        "tier_3"
+      ],
+      "title": "ChangeSurfaceTier",
+      "type": "string"
+    },
+    "ConfigurationValueOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "configuration_key": {
+          "minLength": 1,
+          "title": "Configuration Key",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "operation_type": {
+          "const": "configuration_value",
+          "default": "configuration_value",
+          "title": "Operation Type",
+          "type": "string"
+        },
+        "proposed_value_artifact_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Proposed Value Artifact Hash",
+          "type": "string"
+        },
+        "target_identity": {
+          "minLength": 1,
+          "title": "Target Identity",
+          "type": "string"
+        },
+        "target_revision": {
+          "minLength": 1,
+          "title": "Target Revision",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_identity",
+        "target_revision",
+        "configuration_key",
+        "proposed_value_artifact_hash"
+      ],
+      "title": "ConfigurationValueOperation",
+      "type": "object"
+    },
+    "RepositoryFileOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_files": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Allowed Files",
+          "type": "array"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "description_artifact_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Description Artifact Hash",
+          "type": "string"
+        },
+        "operation_type": {
+          "const": "repository_file",
+          "default": "repository_file",
+          "title": "Operation Type",
+          "type": "string"
+        },
+        "target_identity": {
+          "minLength": 1,
+          "title": "Target Identity",
+          "type": "string"
+        },
+        "target_revision": {
+          "minLength": 1,
+          "title": "Target Revision",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_identity",
+        "target_revision",
+        "allowed_files",
+        "description_artifact_hash"
+      ],
+      "title": "RepositoryFileOperation",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/proposals/change-specification.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "allowed_configuration_keys": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Allowed Configuration Keys",
+      "type": "array"
+    },
+    "allowed_files": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Allowed Files",
+      "type": "array"
+    },
+    "allowed_registry_targets": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Allowed Registry Targets",
+      "type": "array"
+    },
+    "change_surface": {
+      "minLength": 1,
+      "title": "Change Surface",
+      "type": "string"
+    },
+    "change_surface_tier": {
+      "$ref": "#/$defs/ChangeSurfaceTier"
+    },
+    "compatibility_requirements": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Compatibility Requirements",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "current_identity": {
+      "minLength": 1,
+      "title": "Current Identity",
+      "type": "string"
+    },
+    "current_revision": {
+      "minLength": 1,
+      "title": "Current Revision",
+      "type": "string"
+    },
+    "expected_artifacts": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Expected Artifacts",
+      "type": "array"
+    },
+    "forbidden_surfaces": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Forbidden Surfaces",
+      "type": "array"
+    },
+    "proposed_body_artifact": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Proposed Body Artifact",
+      "type": "string"
+    },
+    "proposed_operation": {
+      "discriminator": {
+        "mapping": {
+          "artifact_revision": "#/$defs/ArtifactRevisionOperation",
+          "configuration_value": "#/$defs/ConfigurationValueOperation",
+          "repository_file": "#/$defs/RepositoryFileOperation"
+        },
+        "propertyName": "operation_type"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ArtifactRevisionOperation"
+        },
+        {
+          "$ref": "#/$defs/ConfigurationValueOperation"
+        },
+        {
+          "$ref": "#/$defs/RepositoryFileOperation"
+        }
+      ],
+      "title": "Proposed Operation"
+    },
+    "proposed_schema": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Proposed Schema",
+      "type": "string"
+    }
+  },
+  "required": [
+    "change_surface",
+    "change_surface_tier",
+    "current_identity",
+    "current_revision",
+    "proposed_operation",
+    "proposed_schema",
+    "proposed_body_artifact",
+    "forbidden_surfaces",
+    "expected_artifacts"
+  ],
+  "title": "ChangeSpecification",
+  "type": "object"
+}

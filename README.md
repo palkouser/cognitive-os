@@ -85,6 +85,11 @@ produce deterministic groups, impact assessments, evidence packages, candidate r
 prioritized Weakness Queue without source writes, automatic confirmation, repair, or provider
 authority. See the [Weakness Mining architecture](docs/architecture/weakness-mining.md).
 
+Sprint 18 adds the governed Harness Proposal Engine. It converts exact eligible weakness revisions
+into deterministic, verifier-gated, explicitly reviewed proposals for future isolated experiments.
+It cannot apply a change, write a destination, approve promotion, or act as a second controller.
+See the [Harness Proposal Engine architecture](docs/architecture/harness-proposal-engine.md).
+
 ![LightAgent Banner](docs/images/lightagent-banner.jpg)
 <div align="center">
   <p>

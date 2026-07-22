@@ -8,6 +8,7 @@ from pathlib import Path
 from cognitive_os.benchmarks.cases import load_manifest
 from cognitive_os.benchmarks.context_adapter import context_benchmark_case
 from cognitive_os.benchmarks.experience_adapter import experience_benchmark_case
+from cognitive_os.benchmarks.proposal_adapter import proposal_benchmark_case
 from cognitive_os.benchmarks.reporting import render_json, render_markdown
 from cognitive_os.benchmarks.routing_adapter import routing_benchmark_case
 from cognitive_os.benchmarks.runner import BenchmarkRunner, CaseExecutor
@@ -105,6 +106,8 @@ async def _run(manifest_path: Path, output: Path, seed: int, mode: str) -> int:
         executor = routing_benchmark_case
     elif mode == "weakness-replay":
         executor = weakness_benchmark_case
+    elif mode == "proposal-replay":
+        executor = proposal_benchmark_case
     elif mode == "memory-replay":
         executor = memory_replay_case
     elif mode == "semantic-replay":
@@ -186,6 +189,7 @@ def main() -> int:
             "experience-replay",
             "routing-replay",
             "weakness-replay",
+            "proposal-replay",
         ),
         default="verifier_only",
     )

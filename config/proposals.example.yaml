@@ -1,0 +1,50 @@
+harness_proposals:
+  enabled: true
+  eligibility:
+    confirmed_weaknesses: true
+    high_impact_candidates: false
+    require_current_revision: true
+    require_verified_evidence: true
+    require_valid_impact_score: true
+    reject_unresolved_source_integrity: true
+  generation:
+    deterministic_enabled: true
+    provider_assisted_enabled: false
+    max_proposals_per_weakness: 3
+    max_alternatives_per_proposal: 7
+    max_parallel_analysis_workers: 4
+  scope:
+    supported_proposal_types:
+      - prompt_template_change
+      - context_profile_change
+      - retrieval_policy_change
+      - memory_policy_change
+      - skill_change
+      - strategy_change
+      - routing_policy_change
+      - tool_definition_change
+      - verifier_change
+      - workflow_change
+      - retry_policy_change
+      - benchmark_change
+      - configuration_change
+      - source_code_change
+      - documentation_change
+    reject_untyped_operations: true
+    reject_arbitrary_shell: true
+    reject_omnibus_proposals: true
+  review:
+    explicit_operator_review_required: true
+    provider_may_approve: false
+    automatic_approval: false
+  queue:
+    deterministic_ordering: true
+    executable_payloads_forbidden: true
+  storage:
+    large_bodies_in_artifact_store: true
+    inline_secret_material_forbidden: true  # pragma: allowlist secret
+  provider:
+    tools_enabled: false
+    repository_write_enabled: false
+    destination_write_enabled: false
+    approval_enabled: false

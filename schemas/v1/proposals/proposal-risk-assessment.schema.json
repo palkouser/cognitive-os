@@ -1,0 +1,155 @@
+{
+  "$defs": {
+    "ChangeSurfaceTier": {
+      "enum": [
+        "tier_0",
+        "tier_1",
+        "tier_2",
+        "tier_3"
+      ],
+      "title": "ChangeSurfaceTier",
+      "type": "string"
+    },
+    "ProposalRiskLevel": {
+      "enum": [
+        "low",
+        "moderate",
+        "high",
+        "critical"
+      ],
+      "title": "ProposalRiskLevel",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/proposals/proposal-risk-assessment.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "affected_authorities": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Affected Authorities",
+      "type": "array"
+    },
+    "affected_data": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Affected Data",
+      "type": "array"
+    },
+    "affected_tasks": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Affected Tasks",
+      "type": "array"
+    },
+    "blast_radius": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Blast Radius",
+      "type": "array"
+    },
+    "change_surface_tier": {
+      "$ref": "#/$defs/ChangeSurfaceTier"
+    },
+    "compatibility_risks": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Compatibility Risks",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "performance_risks": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Performance Risks",
+      "type": "array"
+    },
+    "privacy_risks": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Privacy Risks",
+      "type": "array"
+    },
+    "recovery_risks": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Recovery Risks",
+      "type": "array"
+    },
+    "required_approvals": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Required Approvals",
+      "type": "array"
+    },
+    "risk_level": {
+      "$ref": "#/$defs/ProposalRiskLevel"
+    },
+    "security_risks": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Security Risks",
+      "type": "array"
+    },
+    "unknowns": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Unknowns",
+      "type": "array"
+    }
+  },
+  "required": [
+    "risk_level",
+    "blast_radius",
+    "affected_authorities",
+    "affected_tasks",
+    "affected_data",
+    "security_risks",
+    "privacy_risks",
+    "compatibility_risks",
+    "performance_risks",
+    "recovery_risks",
+    "unknowns",
+    "required_approvals",
+    "change_surface_tier"
+  ],
+  "title": "ProposalRiskAssessment",
+  "type": "object"
+}
