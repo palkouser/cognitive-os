@@ -1,0 +1,78 @@
+{
+  "$defs": {
+    "HarnessProposalType": {
+      "enum": [
+        "prompt_template_change",
+        "context_profile_change",
+        "retrieval_policy_change",
+        "memory_policy_change",
+        "skill_change",
+        "strategy_change",
+        "routing_policy_change",
+        "tool_definition_change",
+        "verifier_change",
+        "workflow_change",
+        "retry_policy_change",
+        "benchmark_change",
+        "configuration_change",
+        "source_code_change",
+        "documentation_change"
+      ],
+      "title": "HarnessProposalType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/proposals/harness-proposal-identity.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "canonical_name": {
+      "minLength": 1,
+      "title": "Canonical Name",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "created_by": {
+      "minLength": 1,
+      "title": "Created By",
+      "type": "string"
+    },
+    "proposal_id": {
+      "format": "uuid",
+      "title": "Proposal Id",
+      "type": "string"
+    },
+    "proposal_type": {
+      "$ref": "#/$defs/HarnessProposalType"
+    },
+    "schema_version": {
+      "default": 1,
+      "exclusiveMinimum": 0,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "scope": {
+      "minLength": 1,
+      "title": "Scope",
+      "type": "string"
+    }
+  },
+  "required": [
+    "proposal_id",
+    "canonical_name",
+    "proposal_type",
+    "scope",
+    "created_at",
+    "created_by"
+  ],
+  "title": "HarnessProposalIdentity",
+  "type": "object"
+}

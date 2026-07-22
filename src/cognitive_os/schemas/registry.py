@@ -11,6 +11,7 @@ from cognitive_os.config.context_config import ContextConfiguration
 from cognitive_os.config.corpus_config import CorpusConfiguration
 from cognitive_os.config.experience_config import ExperienceConfiguration
 from cognitive_os.config.memory_config import MemoryConfiguration
+from cognitive_os.config.proposal_config import ProposalConfiguration
 from cognitive_os.config.routing_config import RoutingConfiguration
 from cognitive_os.config.semantic_memory_config import SemanticMemoryConfiguration
 from cognitive_os.config.skill_config import SkillConfiguration
@@ -97,6 +98,7 @@ from cognitive_os.domain.context import PUBLIC_CONTEXT_CONTRACTS
 from cognitive_os.domain.corpus import PUBLIC_CORPUS_CONTRACTS
 from cognitive_os.domain.experience import PUBLIC_EXPERIENCE_CONTRACTS
 from cognitive_os.domain.memory import PUBLIC_MEMORY_CONTRACTS
+from cognitive_os.domain.proposals import PUBLIC_PROPOSAL_CONTRACTS
 from cognitive_os.domain.routing import PUBLIC_ROUTING_CONTRACTS
 from cognitive_os.domain.semantic_memory import PUBLIC_SEMANTIC_CONTRACTS
 from cognitive_os.domain.skills import PUBLIC_SKILL_CONTRACTS
@@ -128,11 +130,24 @@ DOMAIN_SCHEMAS: tuple[tuple[type[BaseModel], str], ...] = (
     (CorpusConfiguration, "v1/config/corpus-configuration.schema.json"),
     (ExperienceConfiguration, "v1/config/experience-configuration.schema.json"),
     (MemoryConfiguration, "v1/config/memory-configuration.schema.json"),
+    (ProposalConfiguration, "v1/config/proposal-configuration.schema.json"),
     (RoutingConfiguration, "v1/config/routing-configuration.schema.json"),
     (SemanticMemoryConfiguration, "v1/config/semantic-memory-configuration.schema.json"),
     (SkillConfiguration, "v1/config/skill-configuration.schema.json"),
     (StrategyConfiguration, "v1/config/strategy-configuration.schema.json"),
     (WeaknessConfiguration, "v1/config/weakness-configuration.schema.json"),
+    *tuple(
+        (
+            model,
+            "v1/proposals/"
+            + "".join(
+                ("-" + character.lower()) if character.isupper() else character
+                for character in model.__name__
+            ).lstrip("-")
+            + ".schema.json",
+        )
+        for model in PUBLIC_PROPOSAL_CONTRACTS
+    ),
     *tuple(
         (
             model,

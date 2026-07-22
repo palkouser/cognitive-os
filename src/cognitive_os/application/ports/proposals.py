@@ -1,0 +1,78 @@
+"""Read-only source, optional draft, and persistence boundaries for proposals."""
+
+from typing import Protocol
+from uuid import UUID
+
+from cognitive_os.domain.proposals import (
+    HarnessProposalIdentity,
+    HarnessProposalRevision,
+    ProposalAccessRecord,
+    ProposalQueueEntry,
+    ProposalReview,
+    ProposalRunManifest,
+    ProposalSourceSnapshot,
+    ProviderProposalDraft,
+)
+from cognitive_os.domain.weakness import (
+    ImpactScore,
+    WeaknessBenchmarkCandidate,
+    WeaknessEvidencePackage,
+    WeaknessQueueEntry,
+    WeaknessReplayCandidate,
+    WeaknessReproductionAssessment,
+    WeaknessRevision,
+)
+
+
+class WeaknessProposalSourcePort(Protocol):
+    async def get_exact_weakness_revision(
+        self, weakness_id: UUID, revision: int
+    ) -> WeaknessRevision | None: ...
+    async def get_current_weakness_revision(self, weakness_id: UUID) -> WeaknessRevision | None: ...
+    async def get_exact_queue_entry(
+        self, weakness_id: UUID, weakness_revision: int
+    ) -> WeaknessQueueEntry | None: ...
+    async def get_exact_evidence_package(
+        self, weakness_id: UUID, weakness_revision: int
+    ) -> WeaknessEvidencePackage | None: ...
+    async def get_exact_impact_score(
+        self, weakness_id: UUID, weakness_revision: int
+    ) -> ImpactScore | None: ...
+    async def get_reproduction_assessment(
+        self, weakness_id: UUID, weakness_revision: int
+    ) -> WeaknessReproductionAssessment | None: ...
+    async def get_related_benchmark_candidates(
+        self, weakness_id: UUID, weakness_revision: int
+    ) -> tuple[WeaknessBenchmarkCandidate, ...]: ...
+    async def get_related_replay_candidates(
+        self, weakness_id: UUID, weakness_revision: int
+    ) -> tuple[WeaknessReplayCandidate, ...]: ...
+    async def get_required_registry_snapshots(self) -> dict[str, str]: ...
+
+
+class ProposalGeneratorPort(Protocol):
+    async def draft(
+        self, source: ProposalSourceSnapshot, *, allowed_source_ids: tuple[str, ...]
+    ) -> ProviderProposalDraft: ...
+
+
+class ProposalRepositoryPort(Protocol):
+    async def create(
+        self, identity: HarnessProposalIdentity, revision: HarnessProposalRevision
+    ) -> None: ...
+    async def append(
+        self, revision: HarnessProposalRevision, *, expected_revision: int
+    ) -> None: ...
+    async def get_exact(
+        self, proposal_id: UUID, revision: int
+    ) -> HarnessProposalRevision | None: ...
+    async def get_current(self, proposal_id: UUID) -> HarnessProposalRevision | None: ...
+    async def find_active_signature(self, signature: str) -> HarnessProposalRevision | None: ...
+    async def record_source(self, snapshot: ProposalSourceSnapshot) -> None: ...
+    async def record_review(self, review: ProposalReview) -> None: ...
+    async def list_reviews(self) -> tuple[ProposalReview, ...]: ...
+    async def record_queue(self, entry: ProposalQueueEntry) -> None: ...
+    async def list_queue(self) -> tuple[ProposalQueueEntry, ...]: ...
+    async def record_access(self, access: ProposalAccessRecord) -> None: ...
+    async def record_manifest(self, manifest: ProposalRunManifest) -> None: ...
+    async def list_current(self) -> tuple[HarnessProposalRevision, ...]: ...

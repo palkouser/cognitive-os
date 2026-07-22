@@ -1,0 +1,98 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/proposals/proposal-alternative.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "alternative_id": {
+      "format": "uuid",
+      "title": "Alternative Id",
+      "type": "string"
+    },
+    "change_surface": {
+      "minLength": 1,
+      "title": "Change Surface",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "expected_tradeoffs": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Expected Tradeoffs",
+      "type": "array"
+    },
+    "kind": {
+      "minLength": 1,
+      "title": "Kind",
+      "type": "string"
+    },
+    "required_dependencies": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Required Dependencies",
+      "type": "array"
+    },
+    "risk_delta": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Risk Delta",
+      "type": "array"
+    },
+    "rollback_delta": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Rollback Delta",
+      "type": "array"
+    },
+    "source_refs": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Source Refs",
+      "type": "array"
+    },
+    "summary": {
+      "minLength": 1,
+      "title": "Summary",
+      "type": "string"
+    },
+    "validation_delta": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Validation Delta",
+      "type": "array"
+    }
+  },
+  "required": [
+    "alternative_id",
+    "kind",
+    "summary",
+    "change_surface",
+    "expected_tradeoffs",
+    "required_dependencies",
+    "validation_delta",
+    "rollback_delta",
+    "risk_delta",
+    "source_refs"
+  ],
+  "title": "ProposalAlternative",
+  "type": "object"
+}

@@ -1,0 +1,156 @@
+{
+  "$defs": {
+    "ChangeSurfaceTier": {
+      "enum": [
+        "tier_0",
+        "tier_1",
+        "tier_2",
+        "tier_3"
+      ],
+      "title": "ChangeSurfaceTier",
+      "type": "string"
+    },
+    "HarnessProposalType": {
+      "enum": [
+        "prompt_template_change",
+        "context_profile_change",
+        "retrieval_policy_change",
+        "memory_policy_change",
+        "skill_change",
+        "strategy_change",
+        "routing_policy_change",
+        "tool_definition_change",
+        "verifier_change",
+        "workflow_change",
+        "retry_policy_change",
+        "benchmark_change",
+        "configuration_change",
+        "source_code_change",
+        "documentation_change"
+      ],
+      "title": "HarnessProposalType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/proposals/proposal-type-registration.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "allowed_target_identity_kinds": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Allowed Target Identity Kinds",
+      "type": "array"
+    },
+    "change_surface_tier": {
+      "$ref": "#/$defs/ChangeSurfaceTier"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "dependency_requirements": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Dependency Requirements",
+      "type": "array"
+    },
+    "license_requirements": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "License Requirements",
+      "type": "array"
+    },
+    "mandatory_rollback_sections": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Mandatory Rollback Sections",
+      "type": "array"
+    },
+    "mandatory_validation_sections": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Mandatory Validation Sections",
+      "type": "array"
+    },
+    "mandatory_verifier_capabilities": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Mandatory Verifier Capabilities",
+      "type": "array"
+    },
+    "manual_review_required": {
+      "const": true,
+      "default": true,
+      "title": "Manual Review Required",
+      "type": "boolean"
+    },
+    "operation_type": {
+      "enum": [
+        "artifact_revision",
+        "configuration_value",
+        "repository_file"
+      ],
+      "title": "Operation Type",
+      "type": "string"
+    },
+    "proposal_type": {
+      "$ref": "#/$defs/HarnessProposalType"
+    },
+    "provider_assistance_permitted": {
+      "title": "Provider Assistance Permitted",
+      "type": "boolean"
+    },
+    "supported_weakness_types": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Supported Weakness Types",
+      "type": "array"
+    },
+    "template_id": {
+      "minLength": 1,
+      "title": "Template Id",
+      "type": "string"
+    },
+    "template_version": {
+      "exclusiveMinimum": 0,
+      "title": "Template Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "proposal_type",
+    "supported_weakness_types",
+    "change_surface_tier",
+    "template_id",
+    "template_version",
+    "operation_type",
+    "allowed_target_identity_kinds",
+    "mandatory_verifier_capabilities",
+    "mandatory_validation_sections",
+    "mandatory_rollback_sections",
+    "provider_assistance_permitted"
+  ],
+  "title": "ProposalTypeRegistration",
+  "type": "object"
+}

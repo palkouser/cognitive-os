@@ -386,6 +386,56 @@
       "schema_version": 1
     },
     {
+      "event_type": "proposal.approved_for_experiment",
+      "file": "v1/events/proposal.approved_for_experiment.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "proposal.created",
+      "file": "v1/events/proposal.created.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "proposal.queue_removed",
+      "file": "v1/events/proposal.queue_removed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "proposal.queued",
+      "file": "v1/events/proposal.queued.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "proposal.rejected",
+      "file": "v1/events/proposal.rejected.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "proposal.retracted",
+      "file": "v1/events/proposal.retracted.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "proposal.revision_appended",
+      "file": "v1/events/proposal.revision_appended.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "proposal.staged_for_review",
+      "file": "v1/events/proposal.staged_for_review.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "proposal.superseded",
+      "file": "v1/events/proposal.superseded.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "proposal.validated",
+      "file": "v1/events/proposal.validated.v1.schema.json",
+      "schema_version": 1
+    },
+    {
       "event_type": "routing.adaptive_policy_disabled",
       "file": "v1/events/routing.adaptive_policy_disabled.v1.schema.json",
       "schema_version": 1
@@ -837,6 +887,11 @@
       "file": "v1/config/memory-configuration.schema.json",
       "model": "MemoryConfiguration",
       "sha256": "65bfef7c923ea727af8f2397e15de57c4831518c9bd709aa8f487ed27905d8d8"
+    },
+    {
+      "file": "v1/config/proposal-configuration.schema.json",
+      "model": "ProposalConfiguration",
+      "sha256": "e822e387f2d8d31547e0b055302da477030ab7da76cd008eba825a1d4fecb3ea"
     },
     {
       "file": "v1/config/routing-configuration.schema.json",
@@ -2079,6 +2134,56 @@
       "sha256": "5f038204d640fe9910313df687d059ef7170e1c9c93c7459f0762635a6aac151"
     },
     {
+      "file": "v1/events/proposal.approved_for_experiment.v1.schema.json",
+      "model": "ProposalApprovedForExperiment",
+      "sha256": "2241a2cb9302a037a4136749106d5cf508146e5d3e3caedb5e4bb8df36df3754"
+    },
+    {
+      "file": "v1/events/proposal.created.v1.schema.json",
+      "model": "ProposalCreated",
+      "sha256": "463e62a6f5b8f2c0e519d95d5e5ce03abea4b6c443e86a5b8b09ed97f94bb568"
+    },
+    {
+      "file": "v1/events/proposal.queue_removed.v1.schema.json",
+      "model": "ProposalQueueRemoved",
+      "sha256": "ad277c4c6bc7513753b9fb549c4cef9c74b5cfe76b28d579e5db4067d0fdbe11"
+    },
+    {
+      "file": "v1/events/proposal.queued.v1.schema.json",
+      "model": "ProposalQueued",
+      "sha256": "13fb71af0c9a137b459da8d6ee5b1898af7a404239b2f1dc871d96cdd42aaa06"
+    },
+    {
+      "file": "v1/events/proposal.rejected.v1.schema.json",
+      "model": "ProposalRejected",
+      "sha256": "e7a425bdeabf2bf49ff24cc91ec1489239fb9e583dd16e3f5b49ea6cd918bdc1"
+    },
+    {
+      "file": "v1/events/proposal.retracted.v1.schema.json",
+      "model": "ProposalRetracted",
+      "sha256": "f811608b698ba2136b4a1f573e3f9c1822e30ad9790c029df63fcce97b828ad5"
+    },
+    {
+      "file": "v1/events/proposal.revision_appended.v1.schema.json",
+      "model": "ProposalRevisionAppended",
+      "sha256": "2df94c03ea80c911fb9b9d446fe78c6a7613fe85f8c8925563315efd4ae022d1"
+    },
+    {
+      "file": "v1/events/proposal.staged_for_review.v1.schema.json",
+      "model": "ProposalStagedForReview",
+      "sha256": "a90781f84f005ba5d2773d0754d6bd89d1af996258335a88dd2937b8f19120a4"
+    },
+    {
+      "file": "v1/events/proposal.superseded.v1.schema.json",
+      "model": "ProposalSuperseded",
+      "sha256": "db5765ec26cbe058c32d2bed3ef0ad29ec81d1426cd67695204a8cc5ccdbe5ed"
+    },
+    {
+      "file": "v1/events/proposal.validated.v1.schema.json",
+      "model": "ProposalValidated",
+      "sha256": "4f8ea7679ae20795dd491edb9a841340263487de312826f9cf36d37f209bbae8"
+    },
+    {
       "file": "v1/events/routing.adaptive_policy_disabled.v1.schema.json",
       "model": "AdaptivePolicyDisabled",
       "sha256": "fa9ecd0e5db119ccd99f7d23b6acb2fcf9089d04f7cc4c7f0e49164ecada747a"
@@ -2857,6 +2962,136 @@
       "file": "v1/memory/verification-summary-memory-content.schema.json",
       "model": "VerificationSummaryMemoryContent",
       "sha256": "0a8b3f034037a980af0f3b834d79bbe8be57f48f501c42721c0c920d03478b12"
+    },
+    {
+      "file": "v1/proposals/artifact-revision-operation.schema.json",
+      "model": "ArtifactRevisionOperation",
+      "sha256": "0faf3b24625e85a917073fd29d5321cdc180b6be6934821027c1ee4041ec721e"
+    },
+    {
+      "file": "v1/proposals/change-specification.schema.json",
+      "model": "ChangeSpecification",
+      "sha256": "61fa15f84cb4c4fbd7454d05820496166ff9e2cd0b3106d4102465ce047f3a39"
+    },
+    {
+      "file": "v1/proposals/configuration-value-operation.schema.json",
+      "model": "ConfigurationValueOperation",
+      "sha256": "f6d6bc8807f1ae1092c9f7415da927dbab465667753bb562675d9ad94600c157"
+    },
+    {
+      "file": "v1/proposals/expected-benefit.schema.json",
+      "model": "ExpectedBenefit",
+      "sha256": "08c88c576a64f5bd61594e755d820dd7153b3577b0ce617dc897685d892d7450"
+    },
+    {
+      "file": "v1/proposals/harness-proposal-identity.schema.json",
+      "model": "HarnessProposalIdentity",
+      "sha256": "44c305d354df2c6d546c175cdb1dac2530fe5c6da32477121d23d1c833c6451c"
+    },
+    {
+      "file": "v1/proposals/harness-proposal-revision.schema.json",
+      "model": "HarnessProposalRevision",
+      "sha256": "e242e31906937e10f8f615f8a23abdd76f96069c48c31c9455ea8546d73afac9"
+    },
+    {
+      "file": "v1/proposals/minimality-assessment.schema.json",
+      "model": "MinimalityAssessment",
+      "sha256": "46030e5b3b9eb9cb7ce02ea65ce37c4564ac437e1c4aa31087b0ae867aa37155"
+    },
+    {
+      "file": "v1/proposals/proposal-access-record.schema.json",
+      "model": "ProposalAccessRecord",
+      "sha256": "311201136f0bdccd0832f9d6f1733cf09eaef1876158ede44d31a0de153ddb53"
+    },
+    {
+      "file": "v1/proposals/proposal-alternative.schema.json",
+      "model": "ProposalAlternative",
+      "sha256": "8f3470a590aa3d860c26cd3d6dbd1ca172e9b5475f9a6e8d8a4c803b1e5cff8b"
+    },
+    {
+      "file": "v1/proposals/proposal-eligibility-result.schema.json",
+      "model": "ProposalEligibilityResult",
+      "sha256": "f455e9b716df8ca45467cd4cbac28a0f90944e9844a38a4a64f158562f08a78f"
+    },
+    {
+      "file": "v1/proposals/proposal-queue-entry.schema.json",
+      "model": "ProposalQueueEntry",
+      "sha256": "4bf6b5b4071f03ed3e88820c3602dec61b5eee062aa26d1440007c23bcef3e57"
+    },
+    {
+      "file": "v1/proposals/proposal-queue-snapshot.schema.json",
+      "model": "ProposalQueueSnapshot",
+      "sha256": "2cfc8b177359c06b16408c5a0a23b7611cf7df7cad846a231aaac810e51806d7"
+    },
+    {
+      "file": "v1/proposals/proposal-review.schema.json",
+      "model": "ProposalReview",
+      "sha256": "bcdabc12c0ea1cb05881ceca3202332d989f9ff826066dcb54805ffd5c7f270a"
+    },
+    {
+      "file": "v1/proposals/proposal-risk-assessment.schema.json",
+      "model": "ProposalRiskAssessment",
+      "sha256": "2728089ac3311e539db6cb35ac733d84cbbe470891c08d822f58998cfacc6d32"
+    },
+    {
+      "file": "v1/proposals/proposal-rollback-plan.schema.json",
+      "model": "ProposalRollbackPlan",
+      "sha256": "2824fedd00169e7cc2c314bb63739ffe3c46e85add90f0d424a97936eb16f9d6"
+    },
+    {
+      "file": "v1/proposals/proposal-run-manifest.schema.json",
+      "model": "ProposalRunManifest",
+      "sha256": "bc941b5b559b29efe648fa7b87c49e6f96090eedde61c3e7251b161fcad825c5"
+    },
+    {
+      "file": "v1/proposals/proposal-source-snapshot.schema.json",
+      "model": "ProposalSourceSnapshot",
+      "sha256": "0101eff63e74f21b4d3a4db54f767165dad8dfe81c639c5e164e2fa5afc9adea"
+    },
+    {
+      "file": "v1/proposals/proposal-statistics.schema.json",
+      "model": "ProposalStatistics",
+      "sha256": "f5cb0ec213fe3c92f217c2df0ab0785902dae146eade4774b95b97b19929b9c3"
+    },
+    {
+      "file": "v1/proposals/proposal-type-registration.schema.json",
+      "model": "ProposalTypeRegistration",
+      "sha256": "d4fb683aa53b694d2a9bf34d22406ffe3141ce2c19e1688b3ec9a49c00bb0bec"
+    },
+    {
+      "file": "v1/proposals/proposal-validation-plan.schema.json",
+      "model": "ProposalValidationPlan",
+      "sha256": "a5116321db03e8285b91306bc0bc8d2889502b2ae7f3ca0c99cc7f5fae467dbb"
+    },
+    {
+      "file": "v1/proposals/proposal-verification-subject.schema.json",
+      "model": "ProposalVerificationSubject",
+      "sha256": "e16dc92fb8a6ad27b3f04917a21afb053713fe9b5ac9df9f18c1f4d8a1475b1e"
+    },
+    {
+      "file": "v1/proposals/proposal-verifier-bundle.schema.json",
+      "model": "ProposalVerifierBundle",
+      "sha256": "140e38dfaf06e68ef68c611789c71a91b0a034548a43cd372d282da4d0e1aa18"
+    },
+    {
+      "file": "v1/proposals/proposal-verifier-finding.schema.json",
+      "model": "ProposalVerifierFinding",
+      "sha256": "9c72a265f5771908edf96b5940d188362d89edef59d39a40944674ca0af526af"
+    },
+    {
+      "file": "v1/proposals/provider-proposal-draft.schema.json",
+      "model": "ProviderProposalDraft",
+      "sha256": "5f2c06cf0ef0f9fb8b6002216f192ee93dcfd6c7dc3f7e2f3af7e1f9aa733936"
+    },
+    {
+      "file": "v1/proposals/repository-file-operation.schema.json",
+      "model": "RepositoryFileOperation",
+      "sha256": "586ca01480f4ebd7ee71f5f42d7b3166a24228cc6ed0ceb05ba5c6cc973cbcbc"
+    },
+    {
+      "file": "v1/proposals/rollback-operation.schema.json",
+      "model": "RollbackOperation",
+      "sha256": "0f5e91eda52837eaf1077694b0a60ae3c35c332a400502714e81b673b9fd9bab"
     },
     {
       "file": "v1/routing/capability-cohort.schema.json",

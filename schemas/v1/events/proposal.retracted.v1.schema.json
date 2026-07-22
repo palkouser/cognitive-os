@@ -1,0 +1,57 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/proposal.retracted.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "actor_authority": {
+      "minLength": 1,
+      "title": "Actor Authority",
+      "type": "string"
+    },
+    "actor_identity": {
+      "minLength": 1,
+      "title": "Actor Identity",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "proposal_content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Proposal Content Hash",
+      "type": "string"
+    },
+    "proposal_id": {
+      "format": "uuid",
+      "title": "Proposal Id",
+      "type": "string"
+    },
+    "proposal_revision": {
+      "title": "Proposal Revision",
+      "type": "integer"
+    },
+    "source_snapshot_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Snapshot Hash",
+      "type": "string"
+    },
+    "summary": {
+      "minLength": 1,
+      "title": "Summary",
+      "type": "string"
+    }
+  },
+  "required": [
+    "proposal_id",
+    "proposal_revision",
+    "source_snapshot_hash",
+    "proposal_content_hash",
+    "actor_identity",
+    "actor_authority",
+    "summary",
+    "occurred_at"
+  ],
+  "title": "ProposalRetracted",
+  "type": "object"
+}

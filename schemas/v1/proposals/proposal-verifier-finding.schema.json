@@ -1,0 +1,73 @@
+{
+  "$defs": {
+    "ProposalVerifierStatus": {
+      "enum": [
+        "passed",
+        "failed",
+        "indeterminate"
+      ],
+      "title": "ProposalVerifierStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/proposals/proposal-verifier-finding.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "capability_id": {
+      "minLength": 1,
+      "title": "Capability Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "input_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Input Hash",
+      "type": "string"
+    },
+    "limitations": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "reason_code": {
+      "minLength": 1,
+      "title": "Reason Code",
+      "type": "string"
+    },
+    "severity": {
+      "enum": [
+        "info",
+        "warning",
+        "error"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/ProposalVerifierStatus"
+    },
+    "verifier_revision": {
+      "default": 1,
+      "exclusiveMinimum": 0,
+      "title": "Verifier Revision",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "capability_id",
+    "status",
+    "severity",
+    "reason_code",
+    "input_hash"
+  ],
+  "title": "ProposalVerifierFinding",
+  "type": "object"
+}

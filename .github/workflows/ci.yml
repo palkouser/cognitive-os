@@ -515,6 +515,36 @@ jobs:
           --manifest benchmarks/manifests/sprint17-weakness-seed.yaml
           --mode weakness-replay --report-directory /tmp/sprint17-weakness-seed
 
+  harness-proposals-core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          version: "0.11.28"
+          enable-cache: true
+      - name: Install Python and core dependencies
+        run: uv python install 3.12 && uv sync --locked --all-groups
+      - name: Proposal contracts, governance, lifecycle, and authority gate
+        run: uv run pytest tests/cognitive_os/proposals tests/cognitive_os/benchmarks/test_proposal_adapter.py -q
+      - name: Proposal contract schema gate
+        run: uv run python -m cognitive_os.schemas.export --check
+      - name: Deterministic proposal smoke gate
+        run: uv run python scripts/proposal_smoke_test.py
+      - name: Sixteen-case credential-free proposal gate
+        run: >-
+          uv run python scripts/benchmark_run.py
+          --manifest benchmarks/manifests/sprint18-proposal-ci.yaml
+          --mode proposal-replay --report-directory /tmp/sprint18-proposal-benchmark
+      - name: Sixty-four-case credential-free proposal seed gate
+        run: >-
+          uv run python scripts/benchmark_run.py
+          --manifest benchmarks/manifests/sprint18-proposal-seed.yaml
+          --mode proposal-replay --report-directory /tmp/sprint18-proposal-seed
+
   security:
     runs-on: ubuntu-latest
     steps:
@@ -615,6 +645,8 @@ jobs:
         run: uv run python scripts/routing.py health --database
       - name: Weakness Mining health
         run: uv run python scripts/weakness.py health --database
+      - name: Harness Proposal Engine health
+        run: uv run python scripts/proposal.py health --database
       - name: Credential-free Sprint 14 experience smoke
         run: uv run python scripts/experience_smoke_test.py
       - name: Credential-free Sprint 15 corpus smoke
@@ -623,6 +655,8 @@ jobs:
         run: uv run python scripts/routing_smoke_test.py
       - name: Credential-free Sprint 17 weakness smoke
         run: uv run python scripts/weakness_smoke_test.py
+      - name: Credential-free Sprint 18 proposal smoke
+        run: uv run python scripts/proposal_smoke_test.py
       - name: Four-case semantic benchmark gate with PostgreSQL service
         run: >-
           uv run python scripts/benchmark_run.py

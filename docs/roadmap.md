@@ -23,3 +23,6 @@ bounded promotion, fallback, and Controller-owned multi-model patterns. Sprint 1
 with evidence-backed, deterministic, diagnostic-only weakness mining and completes Sprint Group 3.
 Sprint 18 may consume proposal-only replay and benchmark candidates, but receives no automatic
 promotion or source-write authority from Sprint 17.
+Sprint 18 begins Gate I with immutable proposal revisions, typed change descriptions, deterministic
+verification, explicit experiment review, and a governed queue. Sprint 19 may evaluate an approved
+exact revision in isolation, but implementation and promotion remain separately authorized.

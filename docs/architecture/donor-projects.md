@@ -114,3 +114,15 @@ the runtime or schema.
 Sprint 17 adds no dependency. Standard-library hashing, sorting and `Decimal`, Pydantic,
 SQLAlchemy Core, PostgreSQL, and existing host services implement the core. Optional clustering can
 be removed without changing exact grouping, persistence, lifecycle, or queue semantics.
+
+## Sprint 18 proposal-engine references
+
+| Project | License | Use | Authority and dependency decision |
+| --- | --- | --- | --- |
+| EvoAgentX | MIT | Proposal and workflow research patterns | Conceptual study only; no dependency, copied code, optimizer, or authority |
+| GEPA | Apache-2.0 | Reflective proposal pattern | Conceptual study only; no runtime, model download, or authority |
+| DSPy | MIT | Declarative optimization pattern | Conceptual study only; no dependency, teleprompter, or provider authority |
+
+Sprint 18 adds no dependency and changes no lockfile. Existing Pydantic, SQLAlchemy, Alembic,
+asyncpg, pytest, and Hypothesis surfaces are sufficient. Any future code reuse requires exact file
+and commit provenance, license and notice review, dependency justification, and a separate ADR.

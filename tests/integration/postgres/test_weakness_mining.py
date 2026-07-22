@@ -32,9 +32,11 @@ def _service(repository) -> tuple[WeaknessMiningService, object, object]:
     extractors.register(FixtureSignalExtractor())
     extractors.freeze()
     profile = fixture_profile(sources)
-    return WeaknessMiningService(repository, source_registry, extractors), fixture_request(
-        profile, 18
-    ), profile
+    return (
+        WeaknessMiningService(repository, source_registry, extractors),
+        fixture_request(profile, 18),
+        profile,
+    )
 
 
 @pytest.mark.asyncio

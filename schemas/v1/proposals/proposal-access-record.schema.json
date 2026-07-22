@@ -1,0 +1,73 @@
+{
+  "$defs": {
+    "ProposalAccessType": {
+      "enum": [
+        "read",
+        "export",
+        "review",
+        "queue"
+      ],
+      "title": "ProposalAccessType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/proposals/proposal-access-record.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "access_id": {
+      "format": "uuid",
+      "title": "Access Id",
+      "type": "string"
+    },
+    "access_type": {
+      "$ref": "#/$defs/ProposalAccessType"
+    },
+    "accessed_at": {
+      "format": "date-time",
+      "title": "Accessed At",
+      "type": "string"
+    },
+    "actor_id": {
+      "minLength": 1,
+      "title": "Actor Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "proposal_content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Proposal Content Hash",
+      "type": "string"
+    },
+    "proposal_id": {
+      "format": "uuid",
+      "title": "Proposal Id",
+      "type": "string"
+    },
+    "proposal_revision": {
+      "exclusiveMinimum": 0,
+      "title": "Proposal Revision",
+      "type": "integer"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "access_id",
+    "access_type",
+    "actor_id",
+    "proposal_id",
+    "proposal_revision",
+    "proposal_content_hash",
+    "reason",
+    "accessed_at"
+  ],
+  "title": "ProposalAccessRecord",
+  "type": "object"
+}

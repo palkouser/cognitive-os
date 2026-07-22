@@ -1,0 +1,87 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/proposals/minimality-assessment.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "excluded_surfaces": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Excluded Surfaces",
+      "type": "array"
+    },
+    "included_surfaces": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Included Surfaces",
+      "type": "array"
+    },
+    "is_effect_isolatable": {
+      "title": "Is Effect Isolatable",
+      "type": "boolean"
+    },
+    "is_exact_rollback_possible": {
+      "title": "Is Exact Rollback Possible",
+      "type": "boolean"
+    },
+    "omnibus_reasons": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Omnibus Reasons",
+      "type": "array"
+    },
+    "optional_changes_split_out": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Optional Changes Split Out",
+      "type": "array"
+    },
+    "primary_weakness_signature": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Primary Weakness Signature",
+      "type": "string"
+    },
+    "required_compatibility_changes": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Required Compatibility Changes",
+      "type": "array"
+    },
+    "result": {
+      "enum": [
+        "passed",
+        "failed"
+      ],
+      "title": "Result",
+      "type": "string"
+    }
+  },
+  "required": [
+    "primary_weakness_signature",
+    "included_surfaces",
+    "excluded_surfaces",
+    "required_compatibility_changes",
+    "optional_changes_split_out",
+    "is_effect_isolatable",
+    "is_exact_rollback_possible",
+    "omnibus_reasons",
+    "result"
+  ],
+  "title": "MinimalityAssessment",
+  "type": "object"
+}

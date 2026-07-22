@@ -1,0 +1,49 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/proposals/repository-file-operation.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "allowed_files": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Allowed Files",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "description_artifact_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Description Artifact Hash",
+      "type": "string"
+    },
+    "operation_type": {
+      "const": "repository_file",
+      "default": "repository_file",
+      "title": "Operation Type",
+      "type": "string"
+    },
+    "target_identity": {
+      "minLength": 1,
+      "title": "Target Identity",
+      "type": "string"
+    },
+    "target_revision": {
+      "minLength": 1,
+      "title": "Target Revision",
+      "type": "string"
+    }
+  },
+  "required": [
+    "target_identity",
+    "target_revision",
+    "allowed_files",
+    "description_artifact_hash"
+  ],
+  "title": "RepositoryFileOperation",
+  "type": "object"
+}

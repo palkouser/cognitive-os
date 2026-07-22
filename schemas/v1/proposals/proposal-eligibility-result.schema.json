@@ -1,0 +1,56 @@
+{
+  "$defs": {
+    "EligibilityReason": {
+      "enum": [
+        "eligible_confirmed",
+        "eligible_policy_candidate",
+        "candidate_disabled",
+        "status_ineligible",
+        "stale_revision",
+        "missing_evidence",
+        "missing_impact",
+        "source_integrity",
+        "duplicate_active_signature"
+      ],
+      "title": "EligibilityReason",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/proposals/proposal-eligibility-result.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "eligible": {
+      "title": "Eligible",
+      "type": "boolean"
+    },
+    "policy_snapshot_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Policy Snapshot Hash",
+      "type": "string"
+    },
+    "reason": {
+      "$ref": "#/$defs/EligibilityReason"
+    },
+    "source_hashes": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Source Hashes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "eligible",
+    "reason",
+    "policy_snapshot_hash",
+    "source_hashes"
+  ],
+  "title": "ProposalEligibilityResult",
+  "type": "object"
+}

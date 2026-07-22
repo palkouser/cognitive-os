@@ -77,8 +77,8 @@ class PostgresWeaknessHealthService:
                 or 0
             )
         messages = []
-        if revision != "0009":
-            messages.append(f"Expected Alembic revision 0009, found {revision}")
+        if revision != "0010":
+            messages.append(f"Expected Alembic revision 0010, found {revision}")
         if table_count != 10:
             messages.append(f"Expected 10 weakness tables, found {table_count}")
         if trigger_count != 8:

@@ -1,0 +1,39 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/proposals/artifact-revision-operation.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "operation_type": {
+      "const": "artifact_revision",
+      "default": "artifact_revision",
+      "title": "Operation Type",
+      "type": "string"
+    },
+    "proposed_artifact_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Proposed Artifact Hash",
+      "type": "string"
+    },
+    "target_identity": {
+      "minLength": 1,
+      "title": "Target Identity",
+      "type": "string"
+    },
+    "target_revision": {
+      "minLength": 1,
+      "title": "Target Revision",
+      "type": "string"
+    }
+  },
+  "required": [
+    "target_identity",
+    "target_revision",
+    "proposed_artifact_hash"
+  ],
+  "title": "ArtifactRevisionOperation",
+  "type": "object"
+}

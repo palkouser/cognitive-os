@@ -1,0 +1,2640 @@
+{
+  "$defs": {
+    "ArtifactRevisionOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "operation_type": {
+          "const": "artifact_revision",
+          "default": "artifact_revision",
+          "title": "Operation Type",
+          "type": "string"
+        },
+        "proposed_artifact_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Proposed Artifact Hash",
+          "type": "string"
+        },
+        "target_identity": {
+          "minLength": 1,
+          "title": "Target Identity",
+          "type": "string"
+        },
+        "target_revision": {
+          "minLength": 1,
+          "title": "Target Revision",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_identity",
+        "target_revision",
+        "proposed_artifact_hash"
+      ],
+      "title": "ArtifactRevisionOperation",
+      "type": "object"
+    },
+    "ChangeSpecification": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_configuration_keys": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Allowed Configuration Keys",
+          "type": "array"
+        },
+        "allowed_files": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Allowed Files",
+          "type": "array"
+        },
+        "allowed_registry_targets": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Allowed Registry Targets",
+          "type": "array"
+        },
+        "change_surface": {
+          "minLength": 1,
+          "title": "Change Surface",
+          "type": "string"
+        },
+        "change_surface_tier": {
+          "$ref": "#/$defs/ChangeSurfaceTier"
+        },
+        "compatibility_requirements": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Compatibility Requirements",
+          "type": "array"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "current_identity": {
+          "minLength": 1,
+          "title": "Current Identity",
+          "type": "string"
+        },
+        "current_revision": {
+          "minLength": 1,
+          "title": "Current Revision",
+          "type": "string"
+        },
+        "expected_artifacts": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Expected Artifacts",
+          "type": "array"
+        },
+        "forbidden_surfaces": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Forbidden Surfaces",
+          "type": "array"
+        },
+        "proposed_body_artifact": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Proposed Body Artifact",
+          "type": "string"
+        },
+        "proposed_operation": {
+          "discriminator": {
+            "mapping": {
+              "artifact_revision": "#/$defs/ArtifactRevisionOperation",
+              "configuration_value": "#/$defs/ConfigurationValueOperation",
+              "repository_file": "#/$defs/RepositoryFileOperation"
+            },
+            "propertyName": "operation_type"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ArtifactRevisionOperation"
+            },
+            {
+              "$ref": "#/$defs/ConfigurationValueOperation"
+            },
+            {
+              "$ref": "#/$defs/RepositoryFileOperation"
+            }
+          ],
+          "title": "Proposed Operation"
+        },
+        "proposed_schema": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Proposed Schema",
+          "type": "string"
+        }
+      },
+      "required": [
+        "change_surface",
+        "change_surface_tier",
+        "current_identity",
+        "current_revision",
+        "proposed_operation",
+        "proposed_schema",
+        "proposed_body_artifact",
+        "forbidden_surfaces",
+        "expected_artifacts"
+      ],
+      "title": "ChangeSpecification",
+      "type": "object"
+    },
+    "ChangeSurfaceTier": {
+      "enum": [
+        "tier_0",
+        "tier_1",
+        "tier_2",
+        "tier_3"
+      ],
+      "title": "ChangeSurfaceTier",
+      "type": "string"
+    },
+    "ConfigurationValueOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "configuration_key": {
+          "minLength": 1,
+          "title": "Configuration Key",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "operation_type": {
+          "const": "configuration_value",
+          "default": "configuration_value",
+          "title": "Operation Type",
+          "type": "string"
+        },
+        "proposed_value_artifact_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Proposed Value Artifact Hash",
+          "type": "string"
+        },
+        "target_identity": {
+          "minLength": 1,
+          "title": "Target Identity",
+          "type": "string"
+        },
+        "target_revision": {
+          "minLength": 1,
+          "title": "Target Revision",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_identity",
+        "target_revision",
+        "configuration_key",
+        "proposed_value_artifact_hash"
+      ],
+      "title": "ConfigurationValueOperation",
+      "type": "object"
+    },
+    "ExpectedBenefit": {
+      "additionalProperties": false,
+      "properties": {
+        "applicable_task_signatures": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Applicable Task Signatures",
+          "type": "array"
+        },
+        "baseline_values": {
+          "additionalProperties": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "type": "string"
+          },
+          "propertyNames": {
+            "minLength": 1
+          },
+          "title": "Baseline Values",
+          "type": "object"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "expected_direction": {
+          "$ref": "#/$defs/ExpectedDirection"
+        },
+        "hypothesis_only": {
+          "const": true,
+          "default": true,
+          "title": "Hypothesis Only",
+          "type": "boolean"
+        },
+        "limitations": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Limitations",
+          "type": "array"
+        },
+        "minimum_material_improvement": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Minimum Material Improvement",
+          "type": "string"
+        },
+        "source_refs": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "target_metrics": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Target Metrics",
+          "type": "array"
+        }
+      },
+      "required": [
+        "target_metrics",
+        "baseline_values",
+        "expected_direction",
+        "minimum_material_improvement",
+        "applicable_task_signatures",
+        "limitations",
+        "source_refs"
+      ],
+      "title": "ExpectedBenefit",
+      "type": "object"
+    },
+    "ExpectedDirection": {
+      "enum": [
+        "increase",
+        "decrease",
+        "maintain_with_lower_cost",
+        "eliminate_failure"
+      ],
+      "title": "ExpectedDirection",
+      "type": "string"
+    },
+    "ImpactDimension": {
+      "enum": [
+        "frequency",
+        "affected_task_count",
+        "severity",
+        "safety_impact",
+        "correctness_impact",
+        "user_correction_count",
+        "cost_impact",
+        "latency_impact",
+        "repair_iteration_impact",
+        "recency",
+        "reproducibility",
+        "evidence_confidence",
+        "strategic_reach"
+      ],
+      "title": "ImpactDimension",
+      "type": "string"
+    },
+    "ImpactDimensionResult": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "dimension": {
+          "$ref": "#/$defs/ImpactDimension"
+        },
+        "normalized_value": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Normalized Value",
+          "type": "string"
+        },
+        "profile_version": {
+          "exclusiveMinimum": 0,
+          "title": "Profile Version",
+          "type": "integer"
+        },
+        "raw_value": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Raw Value",
+          "type": "string"
+        },
+        "sample_count": {
+          "minimum": 0,
+          "title": "Sample Count",
+          "type": "integer"
+        },
+        "source_refs": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "uncertainty": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Uncertainty",
+          "type": "string"
+        },
+        "weight": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Weight",
+          "type": "string"
+        },
+        "weighted_value": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Weighted Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dimension",
+        "raw_value",
+        "normalized_value",
+        "weight",
+        "weighted_value",
+        "source_refs",
+        "sample_count",
+        "uncertainty",
+        "profile_version"
+      ],
+      "title": "ImpactDimensionResult",
+      "type": "object"
+    },
+    "ImpactProfileReference": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "critical_safety_priority_floor": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Critical Safety Priority Floor",
+          "type": "string"
+        },
+        "high_correctness_priority_floor": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "High Correctness Priority Floor",
+          "type": "string"
+        },
+        "profile_id": {
+          "minLength": 1,
+          "title": "Profile Id",
+          "type": "string"
+        },
+        "score_precision": {
+          "default": 4,
+          "maximum": 8,
+          "minimum": 0,
+          "title": "Score Precision",
+          "type": "integer"
+        },
+        "version": {
+          "exclusiveMinimum": 0,
+          "title": "Version",
+          "type": "integer"
+        },
+        "weights": {
+          "additionalProperties": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "type": "string"
+          },
+          "propertyNames": {
+            "$ref": "#/$defs/ImpactDimension"
+          },
+          "title": "Weights",
+          "type": "object"
+        }
+      },
+      "required": [
+        "profile_id",
+        "version",
+        "weights",
+        "critical_safety_priority_floor",
+        "high_correctness_priority_floor"
+      ],
+      "title": "ImpactProfileReference",
+      "type": "object"
+    },
+    "ImpactScore": {
+      "additionalProperties": false,
+      "properties": {
+        "base_score": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Base Score",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "dimensions": {
+          "items": {
+            "$ref": "#/$defs/ImpactDimensionResult"
+          },
+          "maxItems": 13,
+          "minItems": 13,
+          "title": "Dimensions",
+          "type": "array"
+        },
+        "final_score": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Final Score",
+          "type": "string"
+        },
+        "group_snapshot_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Group Snapshot Hash",
+          "type": "string"
+        },
+        "impact_score_id": {
+          "format": "uuid",
+          "title": "Impact Score Id",
+          "type": "string"
+        },
+        "limitations": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "priority": {
+          "$ref": "#/$defs/WeaknessPriority"
+        },
+        "priority_floor": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Priority Floor",
+          "type": "string"
+        },
+        "profile": {
+          "$ref": "#/$defs/ImpactProfileReference"
+        },
+        "uncertainty": {
+          "$ref": "#/$defs/ImpactUncertainty"
+        },
+        "weakness_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Weakness Id"
+        },
+        "weakness_revision": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Weakness Revision"
+        }
+      },
+      "required": [
+        "impact_score_id",
+        "group_snapshot_hash",
+        "dimensions",
+        "base_score",
+        "priority_floor",
+        "final_score",
+        "priority",
+        "uncertainty",
+        "profile",
+        "created_at"
+      ],
+      "title": "ImpactScore",
+      "type": "object"
+    },
+    "ImpactUncertainty": {
+      "additionalProperties": false,
+      "properties": {
+        "conflict_count": {
+          "minimum": 0,
+          "title": "Conflict Count",
+          "type": "integer"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "counterexample_count": {
+          "minimum": 0,
+          "title": "Counterexample Count",
+          "type": "integer"
+        },
+        "limitations": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "missing_source_count": {
+          "minimum": 0,
+          "title": "Missing Source Count",
+          "type": "integer"
+        },
+        "value": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "missing_source_count",
+        "conflict_count",
+        "counterexample_count"
+      ],
+      "title": "ImpactUncertainty",
+      "type": "object"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "MinimalityAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "excluded_surfaces": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Excluded Surfaces",
+          "type": "array"
+        },
+        "included_surfaces": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Included Surfaces",
+          "type": "array"
+        },
+        "is_effect_isolatable": {
+          "title": "Is Effect Isolatable",
+          "type": "boolean"
+        },
+        "is_exact_rollback_possible": {
+          "title": "Is Exact Rollback Possible",
+          "type": "boolean"
+        },
+        "omnibus_reasons": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Omnibus Reasons",
+          "type": "array"
+        },
+        "optional_changes_split_out": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Optional Changes Split Out",
+          "type": "array"
+        },
+        "primary_weakness_signature": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Primary Weakness Signature",
+          "type": "string"
+        },
+        "required_compatibility_changes": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Required Compatibility Changes",
+          "type": "array"
+        },
+        "result": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Result",
+          "type": "string"
+        }
+      },
+      "required": [
+        "primary_weakness_signature",
+        "included_surfaces",
+        "excluded_surfaces",
+        "required_compatibility_changes",
+        "optional_changes_split_out",
+        "is_effect_isolatable",
+        "is_exact_rollback_possible",
+        "omnibus_reasons",
+        "result"
+      ],
+      "title": "MinimalityAssessment",
+      "type": "object"
+    },
+    "MiningSourceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artifact Id"
+        },
+        "authoritative": {
+          "default": true,
+          "title": "Authoritative",
+          "type": "boolean"
+        },
+        "contains_secret": {
+          "default": false,
+          "title": "Contains Secret",
+          "type": "boolean"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "event_stream_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Stream Id"
+        },
+        "event_stream_version": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Stream Version"
+        },
+        "outcome_authority": {
+          "default": false,
+          "title": "Outcome Authority",
+          "type": "boolean"
+        },
+        "required": {
+          "default": true,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "scope": {
+          "minLength": 1,
+          "title": "Scope",
+          "type": "string"
+        },
+        "sensitivity": {
+          "$ref": "#/$defs/MemorySensitivity"
+        },
+        "shadow": {
+          "default": false,
+          "title": "Shadow",
+          "type": "boolean"
+        },
+        "source_content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Content Hash",
+          "type": "string"
+        },
+        "source_id": {
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_revision": {
+          "minLength": 1,
+          "title": "Source Revision",
+          "type": "string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/SignalSourceType"
+        }
+      },
+      "required": [
+        "source_type",
+        "source_id",
+        "source_revision",
+        "source_content_hash",
+        "scope",
+        "sensitivity"
+      ],
+      "title": "MiningSourceReference",
+      "type": "object"
+    },
+    "NextAnalysisType": {
+      "enum": [
+        "collect_more_evidence",
+        "run_bounded_replay",
+        "create_benchmark_candidate",
+        "inspect_context_trace",
+        "inspect_retrieval",
+        "inspect_verifier",
+        "inspect_routing",
+        "inspect_skill",
+        "inspect_strategy",
+        "inspect_provider_or_tool",
+        "operator_review",
+        "monitor",
+        "none"
+      ],
+      "title": "NextAnalysisType",
+      "type": "string"
+    },
+    "ProposalAlternative": {
+      "additionalProperties": false,
+      "properties": {
+        "alternative_id": {
+          "format": "uuid",
+          "title": "Alternative Id",
+          "type": "string"
+        },
+        "change_surface": {
+          "minLength": 1,
+          "title": "Change Surface",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "expected_tradeoffs": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Expected Tradeoffs",
+          "type": "array"
+        },
+        "kind": {
+          "minLength": 1,
+          "title": "Kind",
+          "type": "string"
+        },
+        "required_dependencies": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Required Dependencies",
+          "type": "array"
+        },
+        "risk_delta": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Risk Delta",
+          "type": "array"
+        },
+        "rollback_delta": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Rollback Delta",
+          "type": "array"
+        },
+        "source_refs": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "summary": {
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        },
+        "validation_delta": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Validation Delta",
+          "type": "array"
+        }
+      },
+      "required": [
+        "alternative_id",
+        "kind",
+        "summary",
+        "change_surface",
+        "expected_tradeoffs",
+        "required_dependencies",
+        "validation_delta",
+        "rollback_delta",
+        "risk_delta",
+        "source_refs"
+      ],
+      "title": "ProposalAlternative",
+      "type": "object"
+    },
+    "ProposalGenerationMode": {
+      "enum": [
+        "deterministic",
+        "provider_assisted"
+      ],
+      "title": "ProposalGenerationMode",
+      "type": "string"
+    },
+    "ProposalRiskAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "affected_authorities": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Affected Authorities",
+          "type": "array"
+        },
+        "affected_data": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Affected Data",
+          "type": "array"
+        },
+        "affected_tasks": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Affected Tasks",
+          "type": "array"
+        },
+        "blast_radius": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Blast Radius",
+          "type": "array"
+        },
+        "change_surface_tier": {
+          "$ref": "#/$defs/ChangeSurfaceTier"
+        },
+        "compatibility_risks": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Compatibility Risks",
+          "type": "array"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "performance_risks": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Performance Risks",
+          "type": "array"
+        },
+        "privacy_risks": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Privacy Risks",
+          "type": "array"
+        },
+        "recovery_risks": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Recovery Risks",
+          "type": "array"
+        },
+        "required_approvals": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Required Approvals",
+          "type": "array"
+        },
+        "risk_level": {
+          "$ref": "#/$defs/ProposalRiskLevel"
+        },
+        "security_risks": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Security Risks",
+          "type": "array"
+        },
+        "unknowns": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Unknowns",
+          "type": "array"
+        }
+      },
+      "required": [
+        "risk_level",
+        "blast_radius",
+        "affected_authorities",
+        "affected_tasks",
+        "affected_data",
+        "security_risks",
+        "privacy_risks",
+        "compatibility_risks",
+        "performance_risks",
+        "recovery_risks",
+        "unknowns",
+        "required_approvals",
+        "change_surface_tier"
+      ],
+      "title": "ProposalRiskAssessment",
+      "type": "object"
+    },
+    "ProposalRiskLevel": {
+      "enum": [
+        "low",
+        "moderate",
+        "high",
+        "critical"
+      ],
+      "title": "ProposalRiskLevel",
+      "type": "string"
+    },
+    "ProposalRollbackPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_requirements": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Artifact Requirements",
+          "type": "array"
+        },
+        "baseline_references": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Baseline References",
+          "type": "array"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "limitations": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Limitations",
+          "type": "array"
+        },
+        "manual_steps": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Manual Steps",
+          "type": "array"
+        },
+        "maximum_rollback_time": {
+          "exclusiveMinimum": 0,
+          "title": "Maximum Rollback Time",
+          "type": "integer"
+        },
+        "rollback_commands_as_typed_operations": {
+          "items": {
+            "$ref": "#/$defs/RollbackOperation"
+          },
+          "minItems": 1,
+          "title": "Rollback Commands As Typed Operations",
+          "type": "array"
+        },
+        "rollback_type": {
+          "$ref": "#/$defs/RollbackType"
+        },
+        "state_snapshot_requirements": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "State Snapshot Requirements",
+          "type": "array"
+        },
+        "verification_steps": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Verification Steps",
+          "type": "array"
+        }
+      },
+      "required": [
+        "rollback_type",
+        "baseline_references",
+        "state_snapshot_requirements",
+        "artifact_requirements",
+        "rollback_commands_as_typed_operations",
+        "verification_steps",
+        "maximum_rollback_time",
+        "manual_steps",
+        "limitations"
+      ],
+      "title": "ProposalRollbackPlan",
+      "type": "object"
+    },
+    "ProposalSourceSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "impact_score": {
+          "$ref": "#/$defs/ImpactScore"
+        },
+        "policy_snapshot": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Policy Snapshot",
+          "type": "string"
+        },
+        "proposal_id": {
+          "format": "uuid",
+          "title": "Proposal Id",
+          "type": "string"
+        },
+        "registry_snapshots": {
+          "additionalProperties": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "propertyNames": {
+            "minLength": 1
+          },
+          "title": "Registry Snapshots",
+          "type": "object"
+        },
+        "related_benchmark_candidates": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/WeaknessBenchmarkCandidate"
+          },
+          "title": "Related Benchmark Candidates",
+          "type": "array"
+        },
+        "related_replay_candidates": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/WeaknessReplayCandidate"
+          },
+          "title": "Related Replay Candidates",
+          "type": "array"
+        },
+        "reproduction_assessment": {
+          "$ref": "#/$defs/WeaknessReproductionAssessment"
+        },
+        "snapshot_hash": {
+          "default": "",
+          "title": "Snapshot Hash",
+          "type": "string"
+        },
+        "source_hashes": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Source Hashes",
+          "type": "array"
+        },
+        "weakness_evidence_package": {
+          "$ref": "#/$defs/WeaknessEvidencePackage"
+        },
+        "weakness_id": {
+          "format": "uuid",
+          "title": "Weakness Id",
+          "type": "string"
+        },
+        "weakness_queue_entry": {
+          "$ref": "#/$defs/WeaknessQueueEntry"
+        },
+        "weakness_record": {
+          "$ref": "#/$defs/WeaknessRevision"
+        },
+        "weakness_revision": {
+          "exclusiveMinimum": 0,
+          "title": "Weakness Revision",
+          "type": "integer"
+        },
+        "weakness_status": {
+          "$ref": "#/$defs/WeaknessStatus"
+        }
+      },
+      "required": [
+        "proposal_id",
+        "weakness_id",
+        "weakness_revision",
+        "weakness_status",
+        "weakness_record",
+        "weakness_queue_entry",
+        "weakness_evidence_package",
+        "impact_score",
+        "reproduction_assessment",
+        "source_hashes",
+        "registry_snapshots",
+        "policy_snapshot",
+        "created_at"
+      ],
+      "title": "ProposalSourceSnapshot",
+      "type": "object"
+    },
+    "ProposalStatus": {
+      "enum": [
+        "draft",
+        "generated",
+        "validated",
+        "staged_for_review",
+        "approved_for_experiment",
+        "rejected",
+        "superseded",
+        "retracted"
+      ],
+      "title": "ProposalStatus",
+      "type": "string"
+    },
+    "ProposalValidationPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "acceptance_thresholds": {
+          "additionalProperties": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "type": "string"
+          },
+          "propertyNames": {
+            "minLength": 1
+          },
+          "title": "Acceptance Thresholds",
+          "type": "object"
+        },
+        "backup_restore_gates": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Backup Restore Gates",
+          "type": "array"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "cost_latency_gates": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Cost Latency Gates",
+          "type": "array"
+        },
+        "dependency_gates": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Dependency Gates",
+          "type": "array"
+        },
+        "failure_conditions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Failure Conditions",
+          "type": "array"
+        },
+        "historical_regression_manifests": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Historical Regression Manifests",
+          "type": "array"
+        },
+        "migration_gates": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Migration Gates",
+          "type": "array"
+        },
+        "performance_gates": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Performance Gates",
+          "type": "array"
+        },
+        "policy_gates": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Policy Gates",
+          "type": "array"
+        },
+        "required_artifacts": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Required Artifacts",
+          "type": "array"
+        },
+        "required_verifiers": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Required Verifiers",
+          "type": "array"
+        },
+        "security_gates": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Security Gates",
+          "type": "array"
+        },
+        "target_benchmarks": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Target Benchmarks",
+          "type": "array"
+        },
+        "unrelated_domain_manifests": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Unrelated Domain Manifests",
+          "type": "array"
+        }
+      },
+      "required": [
+        "target_benchmarks",
+        "historical_regression_manifests",
+        "unrelated_domain_manifests",
+        "security_gates",
+        "policy_gates",
+        "migration_gates",
+        "dependency_gates",
+        "performance_gates",
+        "cost_latency_gates",
+        "backup_restore_gates",
+        "acceptance_thresholds",
+        "failure_conditions",
+        "required_verifiers",
+        "required_artifacts"
+      ],
+      "title": "ProposalValidationPlan",
+      "type": "object"
+    },
+    "ProposalVerifierBundle": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/ProposalVerifierFinding"
+          },
+          "minItems": 1,
+          "title": "Findings",
+          "type": "array"
+        },
+        "input_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Input Hash",
+          "type": "string"
+        },
+        "proposal_id": {
+          "format": "uuid",
+          "title": "Proposal Id",
+          "type": "string"
+        },
+        "proposal_revision": {
+          "exclusiveMinimum": 0,
+          "title": "Proposal Revision",
+          "type": "integer"
+        },
+        "status": {
+          "$ref": "#/$defs/ProposalVerifierStatus"
+        },
+        "verifier_registry_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Verifier Registry Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "proposal_id",
+        "proposal_revision",
+        "input_hash",
+        "findings",
+        "status",
+        "verifier_registry_hash",
+        "created_at"
+      ],
+      "title": "ProposalVerifierBundle",
+      "type": "object"
+    },
+    "ProposalVerifierFinding": {
+      "additionalProperties": false,
+      "properties": {
+        "capability_id": {
+          "minLength": 1,
+          "title": "Capability Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "input_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Input Hash",
+          "type": "string"
+        },
+        "limitations": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "reason_code": {
+          "minLength": 1,
+          "title": "Reason Code",
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "info",
+            "warning",
+            "error"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/ProposalVerifierStatus"
+        },
+        "verifier_revision": {
+          "default": 1,
+          "exclusiveMinimum": 0,
+          "title": "Verifier Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "capability_id",
+        "status",
+        "severity",
+        "reason_code",
+        "input_hash"
+      ],
+      "title": "ProposalVerifierFinding",
+      "type": "object"
+    },
+    "ProposalVerifierStatus": {
+      "enum": [
+        "passed",
+        "failed",
+        "indeterminate"
+      ],
+      "title": "ProposalVerifierStatus",
+      "type": "string"
+    },
+    "QueueBlockerType": {
+      "enum": [
+        "requires_more_evidence",
+        "requires_reproduction",
+        "depends_on_other_weakness",
+        "requires_operator_review",
+        "source_unavailable",
+        "sensitivity_restriction"
+      ],
+      "title": "QueueBlockerType",
+      "type": "string"
+    },
+    "RepositoryFileOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_files": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Allowed Files",
+          "type": "array"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "description_artifact_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Description Artifact Hash",
+          "type": "string"
+        },
+        "operation_type": {
+          "const": "repository_file",
+          "default": "repository_file",
+          "title": "Operation Type",
+          "type": "string"
+        },
+        "target_identity": {
+          "minLength": 1,
+          "title": "Target Identity",
+          "type": "string"
+        },
+        "target_revision": {
+          "minLength": 1,
+          "title": "Target Revision",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_identity",
+        "target_revision",
+        "allowed_files",
+        "description_artifact_hash"
+      ],
+      "title": "RepositoryFileOperation",
+      "type": "object"
+    },
+    "RollbackOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "baseline_reference": {
+          "minLength": 1,
+          "title": "Baseline Reference",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "operation_type": {
+          "enum": [
+            "restore_revision",
+            "restore_configuration",
+            "restore_artifact",
+            "manual_restore"
+          ],
+          "title": "Operation Type",
+          "type": "string"
+        },
+        "target_identity": {
+          "minLength": 1,
+          "title": "Target Identity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_type",
+        "target_identity",
+        "baseline_reference"
+      ],
+      "title": "RollbackOperation",
+      "type": "object"
+    },
+    "RollbackType": {
+      "enum": [
+        "declarative_revision",
+        "configuration_restore",
+        "repository_revert_plan",
+        "database_restore_plan",
+        "artifact_restore_plan",
+        "manual_only"
+      ],
+      "title": "RollbackType",
+      "type": "string"
+    },
+    "SignalSourceType": {
+      "enum": [
+        "controller",
+        "acceptance",
+        "verifier",
+        "user_correction",
+        "context",
+        "retrieval",
+        "provider_request",
+        "provider_result",
+        "tool",
+        "memory",
+        "semantic",
+        "skill",
+        "strategy",
+        "experience",
+        "corpus",
+        "routing_decision",
+        "routing_outcome",
+        "routing_shadow",
+        "benchmark",
+        "artifact"
+      ],
+      "title": "SignalSourceType",
+      "type": "string"
+    },
+    "WeaknessBenchmarkCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {
+          "format": "uuid",
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "expected_outcome_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Expected Outcome Hash",
+          "type": "string"
+        },
+        "forbidden_operations": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Forbidden Operations",
+          "type": "array"
+        },
+        "proposal_only": {
+          "default": true,
+          "title": "Proposal Only",
+          "type": "boolean"
+        },
+        "required_verifiers": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Required Verifiers",
+          "type": "array"
+        },
+        "sensitivity": {
+          "$ref": "#/$defs/MemorySensitivity"
+        },
+        "task_fixture_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Task Fixture Hash",
+          "type": "string"
+        },
+        "weakness_revision_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Weakness Revision Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "candidate_id",
+        "weakness_revision_hash",
+        "task_fixture_hash",
+        "expected_outcome_hash",
+        "required_verifiers",
+        "forbidden_operations",
+        "sensitivity"
+      ],
+      "title": "WeaknessBenchmarkCandidate",
+      "type": "object"
+    },
+    "WeaknessEvidencePackage": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_reference": {
+          "format": "uuid",
+          "title": "Artifact Reference",
+          "type": "string"
+        },
+        "artifact_refs": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Artifact Refs",
+          "type": "array"
+        },
+        "checksums": {
+          "additionalProperties": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "propertyNames": {
+            "minLength": 1
+          },
+          "title": "Checksums",
+          "type": "object"
+        },
+        "complete_source_count": {
+          "exclusiveMinimum": 0,
+          "title": "Complete Source Count",
+          "type": "integer"
+        },
+        "component_sections": {
+          "additionalProperties": {
+            "items": {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "propertyNames": {
+            "minLength": 1
+          },
+          "title": "Component Sections",
+          "type": "object"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "counterexample_hashes": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Counterexample Hashes",
+          "type": "array"
+        },
+        "event_refs": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Event Refs",
+          "type": "array"
+        },
+        "evidence_package_id": {
+          "format": "uuid",
+          "title": "Evidence Package Id",
+          "type": "string"
+        },
+        "group_snapshot_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Group Snapshot Hash",
+          "type": "string"
+        },
+        "limitations": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "representative_signal_hashes": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Representative Signal Hashes",
+          "type": "array"
+        },
+        "reproduction": {
+          "$ref": "#/$defs/WeaknessReproductionAssessment"
+        },
+        "sensitivity": {
+          "$ref": "#/$defs/MemorySensitivity"
+        },
+        "source_manifest": {
+          "items": {
+            "$ref": "#/$defs/MiningSourceReference"
+          },
+          "title": "Source Manifest",
+          "type": "array"
+        },
+        "task_refs": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "title": "Task Refs",
+          "type": "array"
+        },
+        "verification_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Verification Hash",
+          "type": "string"
+        },
+        "weakness_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Weakness Id"
+        },
+        "weakness_revision": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Weakness Revision"
+        }
+      },
+      "required": [
+        "evidence_package_id",
+        "group_snapshot_hash",
+        "source_manifest",
+        "representative_signal_hashes",
+        "complete_source_count",
+        "counterexample_hashes",
+        "task_refs",
+        "event_refs",
+        "artifact_refs",
+        "component_sections",
+        "reproduction",
+        "sensitivity",
+        "limitations",
+        "artifact_reference",
+        "checksums",
+        "verification_hash"
+      ],
+      "title": "WeaknessEvidencePackage",
+      "type": "object"
+    },
+    "WeaknessPriority": {
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low",
+        "informational"
+      ],
+      "title": "WeaknessPriority",
+      "type": "string"
+    },
+    "WeaknessQueueDependency": {
+      "additionalProperties": false,
+      "properties": {
+        "blocked_by_weakness_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Blocked By Weakness Id"
+        },
+        "blocker_type": {
+          "$ref": "#/$defs/QueueBlockerType"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "evidence_reference": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Evidence Reference",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "blocker_type",
+        "evidence_reference",
+        "reason"
+      ],
+      "title": "WeaknessQueueDependency",
+      "type": "object"
+    },
+    "WeaknessQueueEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "blocked_by": {
+          "items": {
+            "$ref": "#/$defs/WeaknessQueueDependency"
+          },
+          "title": "Blocked By",
+          "type": "array"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "priority": {
+          "$ref": "#/$defs/WeaknessPriority"
+        },
+        "priority_reason": {
+          "minLength": 1,
+          "title": "Priority Reason",
+          "type": "string"
+        },
+        "queue_entry_id": {
+          "format": "uuid",
+          "title": "Queue Entry Id",
+          "type": "string"
+        },
+        "queue_policy_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Queue Policy Hash",
+          "type": "string"
+        },
+        "recommended_next_analysis": {
+          "$ref": "#/$defs/NextAnalysisType"
+        },
+        "status": {
+          "$ref": "#/$defs/WeaknessQueueStatus"
+        },
+        "weakness_id": {
+          "format": "uuid",
+          "title": "Weakness Id",
+          "type": "string"
+        },
+        "weakness_revision": {
+          "exclusiveMinimum": 0,
+          "title": "Weakness Revision",
+          "type": "integer"
+        },
+        "weakness_revision_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Weakness Revision Hash",
+          "type": "string"
+        },
+        "weakness_status": {
+          "$ref": "#/$defs/WeaknessStatus"
+        }
+      },
+      "required": [
+        "queue_entry_id",
+        "weakness_id",
+        "weakness_revision",
+        "weakness_revision_hash",
+        "weakness_status",
+        "priority",
+        "priority_reason",
+        "blocked_by",
+        "recommended_next_analysis",
+        "status",
+        "queue_policy_hash",
+        "created_at"
+      ],
+      "title": "WeaknessQueueEntry",
+      "type": "object"
+    },
+    "WeaknessQueueStatus": {
+      "enum": [
+        "queued",
+        "blocked",
+        "deferred",
+        "monitoring",
+        "removed",
+        "superseded"
+      ],
+      "title": "WeaknessQueueStatus",
+      "type": "string"
+    },
+    "WeaknessReplayCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {
+          "format": "uuid",
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "expected_result_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Expected Result Hash",
+          "type": "string"
+        },
+        "proposal_only": {
+          "default": true,
+          "title": "Proposal Only",
+          "type": "boolean"
+        },
+        "request_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Request Hash",
+          "type": "string"
+        },
+        "source_snapshot_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Snapshot Hash",
+          "type": "string"
+        },
+        "weakness_revision_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Weakness Revision Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "candidate_id",
+        "weakness_revision_hash",
+        "source_snapshot_hash",
+        "request_hash",
+        "expected_result_hash"
+      ],
+      "title": "WeaknessReplayCandidate",
+      "type": "object"
+    },
+    "WeaknessReproductionAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "assessed_at": {
+          "format": "date-time",
+          "title": "Assessed At",
+          "type": "string"
+        },
+        "attempts": {
+          "items": {
+            "$ref": "#/$defs/WeaknessReproductionAttempt"
+          },
+          "title": "Attempts",
+          "type": "array"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "limitations": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "required_safety_restrictions": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Required Safety Restrictions",
+          "type": "array"
+        },
+        "status": {
+          "$ref": "#/$defs/WeaknessReproductionStatus"
+        }
+      },
+      "required": [
+        "status",
+        "attempts",
+        "required_safety_restrictions",
+        "limitations",
+        "assessed_at"
+      ],
+      "title": "WeaknessReproductionAssessment",
+      "type": "object"
+    },
+    "WeaknessReproductionAttempt": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_id": {
+          "format": "uuid",
+          "title": "Attempt Id",
+          "type": "string"
+        },
+        "attempted_at": {
+          "format": "date-time",
+          "title": "Attempted At",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "environment_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Environment Hash",
+          "type": "string"
+        },
+        "limitations": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "result": {
+          "$ref": "#/$defs/WeaknessReproductionStatus"
+        },
+        "source_snapshot_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Snapshot Hash",
+          "type": "string"
+        },
+        "verifier_bundle_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Verifier Bundle Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "attempt_id",
+        "source_snapshot_hash",
+        "environment_hash",
+        "result",
+        "verifier_bundle_hash",
+        "attempted_at"
+      ],
+      "title": "WeaknessReproductionAttempt",
+      "type": "object"
+    },
+    "WeaknessReproductionStatus": {
+      "enum": [
+        "not_attempted",
+        "reproducible",
+        "partially_reproducible",
+        "not_reproduced",
+        "blocked",
+        "unsafe_to_reproduce",
+        "insufficient_evidence"
+      ],
+      "title": "WeaknessReproductionStatus",
+      "type": "string"
+    },
+    "WeaknessRevision": {
+      "additionalProperties": false,
+      "properties": {
+        "affected_components": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Affected Components",
+          "type": "array"
+        },
+        "cluster_refs": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Cluster Refs",
+          "type": "array"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "counterexample_refs": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Counterexample Refs",
+          "type": "array"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "created_by": {
+          "minLength": 1,
+          "title": "Created By",
+          "type": "string"
+        },
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "evidence_package_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Evidence Package Hash",
+          "type": "string"
+        },
+        "group_snapshot_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Group Snapshot Hash",
+          "type": "string"
+        },
+        "impact_score_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Impact Score Hash",
+          "type": "string"
+        },
+        "monitoring_policy": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Monitoring Policy"
+        },
+        "operator_approval_reference": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Operator Approval Reference"
+        },
+        "previous_revision": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Previous Revision"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "reproduction_status": {
+          "$ref": "#/$defs/WeaknessReproductionStatus"
+        },
+        "revision": {
+          "exclusiveMinimum": 0,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "signature_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Signature Hash",
+          "type": "string"
+        },
+        "source_refs": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "title": "Source Refs",
+          "type": "array"
+        },
+        "status": {
+          "$ref": "#/$defs/WeaknessStatus"
+        },
+        "successor_weakness_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Successor Weakness Id"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "verifier_bundle_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Verifier Bundle Hash",
+          "type": "string"
+        },
+        "weakness_id": {
+          "format": "uuid",
+          "title": "Weakness Id",
+          "type": "string"
+        },
+        "weakness_type": {
+          "$ref": "#/$defs/WeaknessType"
+        }
+      },
+      "required": [
+        "weakness_id",
+        "revision",
+        "status",
+        "title",
+        "description",
+        "weakness_type",
+        "signature_hash",
+        "group_snapshot_hash",
+        "cluster_refs",
+        "impact_score_hash",
+        "evidence_package_hash",
+        "reproduction_status",
+        "affected_components",
+        "source_refs",
+        "counterexample_refs",
+        "verifier_bundle_hash",
+        "created_at",
+        "created_by",
+        "reason"
+      ],
+      "title": "WeaknessRevision",
+      "type": "object"
+    },
+    "WeaknessStatus": {
+      "enum": [
+        "candidate",
+        "confirmed",
+        "monitoring",
+        "resolved",
+        "superseded",
+        "retracted"
+      ],
+      "title": "WeaknessStatus",
+      "type": "string"
+    },
+    "WeaknessType": {
+      "enum": [
+        "model_routing_failure",
+        "tool_routing_failure",
+        "provider_structured_output_failure",
+        "provider_availability_failure",
+        "context_required_item_missing",
+        "context_irrelevant_content",
+        "context_budget_failure",
+        "retrieval_recall_failure",
+        "retrieval_scope_or_sensitivity_denial",
+        "missing_skill",
+        "skill_precondition_failure",
+        "skill_execution_failure",
+        "strategy_mismatch",
+        "strategy_fallback_overuse",
+        "verifier_gap",
+        "verifier_instability",
+        "memory_retrieval_failure",
+        "semantic_contradiction_block",
+        "corpus_coverage_gap",
+        "excessive_repair",
+        "excessive_iteration",
+        "unnecessary_provider_call",
+        "unnecessary_tool_call",
+        "cost_regression",
+        "latency_regression",
+        "policy_denial_pattern",
+        "sandbox_failure",
+        "user_correction_pattern",
+        "unknown"
+      ],
+      "title": "WeaknessType",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/proposals/harness-proposal-revision.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "alternatives": {
+      "items": {
+        "$ref": "#/$defs/ProposalAlternative"
+      },
+      "minItems": 2,
+      "title": "Alternatives",
+      "type": "array"
+    },
+    "artifact_refs": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Artifact Refs",
+      "type": "array"
+    },
+    "change_specification": {
+      "$ref": "#/$defs/ChangeSpecification"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "created_by": {
+      "minLength": 1,
+      "title": "Created By",
+      "type": "string"
+    },
+    "expected_benefit": {
+      "$ref": "#/$defs/ExpectedBenefit"
+    },
+    "generation_mode": {
+      "$ref": "#/$defs/ProposalGenerationMode"
+    },
+    "limitations": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Limitations",
+      "type": "array"
+    },
+    "minimality_assessment": {
+      "$ref": "#/$defs/MinimalityAssessment"
+    },
+    "previous_revision": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Revision"
+    },
+    "proposal_id": {
+      "format": "uuid",
+      "title": "Proposal Id",
+      "type": "string"
+    },
+    "proposal_signature": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Proposal Signature",
+      "type": "string"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "revision": {
+      "exclusiveMinimum": 0,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "risk_assessment": {
+      "$ref": "#/$defs/ProposalRiskAssessment"
+    },
+    "rollback_plan": {
+      "$ref": "#/$defs/ProposalRollbackPlan"
+    },
+    "schema_version": {
+      "default": 1,
+      "exclusiveMinimum": 0,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "source_snapshot": {
+      "$ref": "#/$defs/ProposalSourceSnapshot"
+    },
+    "status": {
+      "$ref": "#/$defs/ProposalStatus"
+    },
+    "validation_plan": {
+      "$ref": "#/$defs/ProposalValidationPlan"
+    },
+    "verifier_bundle": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ProposalVerifierBundle"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "proposal_id",
+    "revision",
+    "status",
+    "generation_mode",
+    "proposal_signature",
+    "source_snapshot",
+    "change_specification",
+    "expected_benefit",
+    "risk_assessment",
+    "validation_plan",
+    "rollback_plan",
+    "alternatives",
+    "minimality_assessment",
+    "limitations",
+    "artifact_refs",
+    "created_at",
+    "created_by",
+    "reason"
+  ],
+  "title": "HarnessProposalRevision",
+  "type": "object"
+}

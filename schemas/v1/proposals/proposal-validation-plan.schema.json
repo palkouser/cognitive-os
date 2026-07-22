@@ -1,0 +1,157 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/proposals/proposal-validation-plan.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "acceptance_thresholds": {
+      "additionalProperties": {
+        "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+        "type": "string"
+      },
+      "propertyNames": {
+        "minLength": 1
+      },
+      "title": "Acceptance Thresholds",
+      "type": "object"
+    },
+    "backup_restore_gates": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Backup Restore Gates",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "cost_latency_gates": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Cost Latency Gates",
+      "type": "array"
+    },
+    "dependency_gates": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Dependency Gates",
+      "type": "array"
+    },
+    "failure_conditions": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Failure Conditions",
+      "type": "array"
+    },
+    "historical_regression_manifests": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Historical Regression Manifests",
+      "type": "array"
+    },
+    "migration_gates": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Migration Gates",
+      "type": "array"
+    },
+    "performance_gates": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Performance Gates",
+      "type": "array"
+    },
+    "policy_gates": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Policy Gates",
+      "type": "array"
+    },
+    "required_artifacts": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Required Artifacts",
+      "type": "array"
+    },
+    "required_verifiers": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Required Verifiers",
+      "type": "array"
+    },
+    "security_gates": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Security Gates",
+      "type": "array"
+    },
+    "target_benchmarks": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Target Benchmarks",
+      "type": "array"
+    },
+    "unrelated_domain_manifests": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Unrelated Domain Manifests",
+      "type": "array"
+    }
+  },
+  "required": [
+    "target_benchmarks",
+    "historical_regression_manifests",
+    "unrelated_domain_manifests",
+    "security_gates",
+    "policy_gates",
+    "migration_gates",
+    "dependency_gates",
+    "performance_gates",
+    "cost_latency_gates",
+    "backup_restore_gates",
+    "acceptance_thresholds",
+    "failure_conditions",
+    "required_verifiers",
+    "required_artifacts"
+  ],
+  "title": "ProposalValidationPlan",
+  "type": "object"
+}
