@@ -52,6 +52,56 @@ async def _domain_report() -> dict[str, object]:
     return {"domains": per_domain, "evidence_rows": len(repository.runs)}
 
 
+async def _governed_report() -> dict[str, object]:
+    """Prove the governed path, not just the kernels, over one case per domain."""
+    from cognitive_os.domain.skills import SkillExecutionStatus
+    from cognitive_os.domains.runner import run_case_controlled
+    from cognitive_os.domains.skill_execution import domain_task_signature
+    from cognitive_os.domains.skill_runner import run_case_as_skill
+
+    cases = build_all_cases()
+    rows: dict[str, object] = {}
+    for domain in DomainKind:
+        case = next(item for item in cases if item.domain is domain)
+        controlled = await run_case_controlled(case)
+        rejected = await run_case_controlled(case, candidate_override=wrong_answer_for(case))
+        skill = await run_case_as_skill(case)
+        rows[domain.value] = {
+            "case": case.case_id,
+            "controller_state": controlled.state.value,
+            "accepted": controlled.accepted,
+            "wrong_answer_rejected": not rejected.accepted,
+            "tool_calls": controlled.tool_calls,
+            "verifier_calls": controlled.verifier_calls,
+            "tool_plane_audited": all(
+                item in controlled.event_types
+                for item in (
+                    "tool_call.requested",
+                    "tool_call.authorized",
+                    "tool_call.started",
+                    "tool_call.completed",
+                )
+            ),
+            "skill_execution": skill.result.status.value,
+            "task_signature": domain_task_signature(case).content_hash,
+        }
+    return {
+        "per_domain": rows,
+        "all_controller_owned": all(
+            item["controller_state"] == "completed" and item["accepted"]  # type: ignore[index]
+            for item in rows.values()
+        ),
+        "all_tool_plane_audited": all(
+            item["tool_plane_audited"]
+            for item in rows.values()  # type: ignore[index]
+        ),
+        "all_skill_executions_accepted": all(
+            item["skill_execution"] == SkillExecutionStatus.ACCEPTED.value  # type: ignore[index]
+            for item in rows.values()
+        ),
+    }
+
+
 async def _transfer_report() -> dict[str, object]:
     _, skill = await run_experiment(
         source_domain=DomainKind.MATHEMATICS,
@@ -116,13 +166,18 @@ async def _main(output: Path | None) -> int:
         "smoke_test": "sprint20-cross-domain-pilot",
         "health": await _health(),
         "pilot": await _domain_report(),
+        "governed": await _governed_report(),
         "transfer": await _transfer_report(),
     }
     health = report["health"]
     pilot = report["pilot"]
     transfer = report["transfer"]
+    governed = report["governed"]
     report["passed"] = bool(
         health["governance_all_passed"]  # type: ignore[index]
+        and governed["all_controller_owned"]  # type: ignore[index]
+        and governed["all_tool_plane_audited"]  # type: ignore[index]
+        and governed["all_skill_executions_accepted"]  # type: ignore[index]
         and transfer["positive_skill_transfer"]  # type: ignore[index]
         and transfer["positive_strategy_transfer"]  # type: ignore[index]
         and transfer["negative_transfer_rejected"]  # type: ignore[index]

@@ -4,19 +4,62 @@ Sprint 20 runs representative mathematics, physics, and logic tasks through the 
 boundaries the coding path already uses. It adds an orchestration and evidence layer; it does not
 add a second controller, verifier authority, memory store, or release path.
 
-## Path
+## Governed path
+
+This is the path Gate K condition 2 requires. Everything except the solver and the checker belongs
+to a service that already existed.
 
 ```text
 DomainBenchmarkCase
--> immutable DomainProblem + frozen DomainVerificationPlan
--> registry resolution (exactly one solver and one independent checker)
--> solver produces DomainDerivation + candidate answer
--> checker recomputes by a different route and judges the candidate
--> compose_disposition -> DomainVerificationOutcome
--> DomainPilotRun + lifecycle events + append-only evidence
--> TransferExperiment over every control arm
--> hard negative-transfer gates -> TransferResult
+-> DomainProblemEngine (ProblemRepresentationPort)  -> ProblemRepresentation
+-> Cognitive Controller state machine + budgets
+-> DomainPlanner (PlanningPort)                     -> ControllerExecutionPlan, one TOOL action
+-> DomainActionExecutor (ControllerActionExecutor)
+-> Tool Plane: domains.solve, R0, deterministic     -> requested/authorized/started/completed
+-> ControllerVerificationService -> VerifierRegistry -> domains.checker
+-> Acceptance Service                                -> acceptance decision
+-> SkillExecutionService when run as a verified skill revision
+-> TaskSignature recorded for routing observation
 ```
+
+The domain package contributes a solver and a checker. It borrows planning, execution, budgets,
+state transitions, verification, acceptance, skill lifecycle, and context assembly.
+
+### Direct path
+
+`DomainPilotService` composes the same solver and checker without the Controller. It is not the
+governed path and is not used for case execution; it remains as the verification composer behind the
+transfer experiments, where nine full Controller arms per experiment would add ceremony without
+changing what is measured.
+
+## Authority map
+
+| Concern | Owner | Domain contribution |
+|---|---|---|
+| Problem representation | Cognitive Controller | supplies a `ProblemRepresentationPort` |
+| Planning | Cognitive Controller | supplies a `PlanningPort` emitting one TOOL action |
+| Budgets, state machine | Cognitive Controller | none |
+| Tool authorisation, audit, timeout | Tool Plane | registers `domains.solve` |
+| Verification | Verifier Registry | registers `domains.checker` |
+| Acceptance | Acceptance Service | none |
+| Skill lifecycle | Skill Engine | supplies a runner and a context factory |
+| Context assembly | Context Builder | supplies required-evidence candidates |
+| Routing | Model Capability Registry | emits a `TaskSignature` |
+| Merge, tag, release | Operator | none, structurally |
+
+### Provider accounting
+
+The Controller charges one nominal provider call for problem representation, because that step is
+normally a model call. `DomainProblemEngine` is deterministic and contacts no provider. That entry
+is the Controller's accounting and is not overridden; the domain budget allows for it, and no
+provider is configured, so a real model call cannot occur.
+
+### Required evidence
+
+Assumptions, required units, constraints, and provenance are `required` and `pinned` Context
+candidates. The Context Builder fails closed on a required candidate it cannot fit or hydrate;
+`assert_required_context` additionally catches an item a retriever never offered, which no retrieval
+system can detect on its own.
 
 ## What Sprint 7 already provided
 
@@ -46,6 +89,14 @@ Sprint 7 parser.
 | `domains/transfer.py` | Control arms, measurement, and hard gates |
 | `domains/repository.py` | Append-only in-memory evidence store |
 | `domains/fixtures.py` | 51 credential-free deterministic cases |
+| `domains/controller.py` | Problem engine, planner, Tool Plane action executor |
+| `domains/runner.py` | Composition of the governed Controller stack |
+| `domains/context.py` | Required-evidence Context profile and coverage check |
+| `domains/skill_execution.py` | Skill runner, context factory, `TaskSignature` |
+| `domains/skill_runner.py` | Skill Engine composition |
+| `tools/domains.py` | `domains.solve` Tool Plane tool |
+| `verification/domains.py` | `domains.checker` registered verifier |
+| `events/memory_store.py` | Shared in-process `EventStorePort` for offline runs |
 | `events/domain_events.py` | Seven lifecycle events |
 | `benchmarks/domain_adapter.py` | Executes cases and 16 governance invariants |
 | `infrastructure/domains/postgres/` | Migration `0012` metadata |

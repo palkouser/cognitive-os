@@ -38,8 +38,13 @@ harness actually behaves as declared.
 
 ## Governance invariants
 
-Sixteen invariants run in both manifests and as parametrised tests:
+Twenty-two invariants run in both manifests and as parametrised tests.
 
+Governed execution:
+`controller_owns_plan`, `tool_plane_audits_solve`, `controlled_path_rejects_wrong`,
+`required_context_enforced`, `skill_engine_verified_only`, `routing_signature_tool_only`.
+
+Safety, authority, and determinism:
 `unsupported_problem_type`, `forbidden_operation`, `raw_text_rejected`, `expression_bomb_bounded`,
 `unknown_not_unsat`, `incompatible_units`, `offset_units_exact`, `core_without_extras`,
 `transfer_controls_required`, `hard_gate_blocks_positive`, `runtime_cannot_release`,
@@ -49,7 +54,13 @@ Sixteen invariants run in both manifests and as parametrised tests:
 ## Measured results
 
 All 24 CI and all 120 seed cases pass their expected disposition. Across the 51 underlying fixture
-cases: 51 accepted with correct answers, 51 rejected with wrong answers.
+cases, on every path:
+
+| Path | Correct accepted | Wrong rejected |
+|---|---|---|
+| Direct solver and checker | 51/51 | 51/51 |
+| Cognitive Controller + Tool Plane | 51/51 | 51/51 |
+| Skill Engine (exact `VERIFIED` revision) | 51/51 | 51/51 |
 
 | Arm | Mathematics → physics (skill) | Mathematics → logic (strategy) |
 |---|---|---|

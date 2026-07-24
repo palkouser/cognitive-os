@@ -8,21 +8,24 @@
 
 ## Status: Gate K is NOT closed
 
-A substantial vertical slice is delivered, tested, and verified. Five backlog areas are **not**
-implemented, and three of them are Gate K conditions. This report states what was measured and what
-was not built. Nothing below is projected — every number was produced by a command in this
-repository.
+A substantial vertical slice is delivered, tested, and verified, and the execution path is now
+governed end to end. Three backlog areas remain **not** implemented, and two of them are Gate K
+conditions. This report states what was measured and what was not built. Nothing below is
+projected — every number was produced by a command in this repository.
+
+**Update after the follow-up round:** gap 1 (Controller, Context, Tool Plane, and routing
+integration) is closed. Gate K condition 2 is now met. See "Governed execution" below.
 
 ## Verified evidence
 
 | Gate | Result |
 |---|---|
-| Test suite (extras absent) | 997 passed, 47 skipped |
-| Test suite (extras present) | 1001 passed, 43 skipped |
+| Test suite (extras absent) | 1130 passed, 47 skipped |
+| Test suite (extras present) | 1134 passed, 43 skipped |
 | PostgreSQL integration | 38 passed against PostgreSQL 18 / pgvector 0.8.2 |
 | Ruff check | 1 pre-existing error, unchanged from baseline |
 | Ruff format | clean |
-| MyPy | clean, 494 source files |
+| MyPy | clean, 502 source files |
 | Bandit (pilot package) | 0 issues |
 | Repository language | passed |
 | CI manifest | 24/24 cases at expected disposition |
@@ -76,44 +79,82 @@ disposition, and it was fixed rather than papered over.
 | # | Condition | Status |
 |---|---|---|
 | 1 | Immutable typed contracts | **Met** — 15 contracts, JSON Schemas exported and drift-gated |
-| 2 | Controller-owned plans, Tool Plane-mediated tools | **Not met** — see gap 1 |
+| 2 | Controller-owned plans, Tool Plane-mediated tools | **Met** — see "Governed execution" |
 | 3 | No raw evaluation or unbounded solver path | **Met** — Sprint 7 parser reused, no `eval`/`exec`, budgets enforced |
 | 4 | Deterministic verifier coverage | **Met** for the registered scope |
 | 5 | Skills and strategies via existing registries | **Met** — 11 skills, 6 strategies reach `VERIFIED` |
 | 6 | Positive skill and strategy transfer | **Met** — measured above |
 | 7 | Source-retention and negative-transfer gates | **Met** — enforced in contract and in the database |
-| 8 | Experience, memory, weakness, proposal, change flow | **Not met** — see gaps 2 and 3 |
-| 9 | Migration, events, CLI, health, backup, restore, packaging | **Partial** — see gap 4 |
+| 8 | Experience, memory, weakness, proposal, change flow | **Not met** — see gaps 1 and 2 |
+| 9 | Migration, events, CLI, health, backup, restore, packaging | **Partial** — see gap 3 |
 | 10 | ≥24 CI and ≥120 seed cases | **Met** — 24 and 120, all at expected disposition |
-| 11 | Committed, merged, post-merge validated, tagged | **Not met** — see gap 5 |
+| 11 | Committed, merged, post-merge validated, tagged | **Not met** — see gap 4 |
+
+## Governed execution
+
+Gate K condition 2 is met. The execution path now belongs to the services that already own it; the
+domain package contributes a solver and a checker and borrows every authority.
+
+| Concern | Owner | Domain contribution |
+|---|---|---|
+| Problem representation | Cognitive Controller | a `ProblemRepresentationPort` |
+| Planning, budgets, state machine | Cognitive Controller | a `PlanningPort` emitting one TOOL action |
+| Tool authorisation, audit, timeout | Tool Plane | registers `domains.solve` (R0, deterministic) |
+| Verification | Verifier Registry | registers `domains.checker` |
+| Acceptance | Acceptance Service | none |
+| Skill lifecycle | Skill Engine | a runner and a context request factory |
+| Context assembly | Context Builder | required-evidence candidates |
+| Routing | Model Capability Registry | a canonical `TaskSignature` |
+
+Measured over all 51 fixture cases:
+
+| Path | Correct answers accepted | Wrong answers rejected |
+|---|---|---|
+| Cognitive Controller + Tool Plane | 51/51 | 51/51 |
+| Skill Engine (exact `VERIFIED` revision) | 51/51 | 51/51 |
+
+Each run produces the full audit trail — `problem.representation_created`, `plan.created`,
+`tool_call.requested/authorized/started/completed`, two `verifier.completed`, and
+`controller.acceptance_decision_recorded` — with the acceptance decision strictly after the tool
+result. A wrong answer travels the identical plan, tool call, and acceptance path, which is what
+makes it detectable rather than trusted.
+
+Six new governance invariants run in both benchmark manifests and as parametrised tests:
+`controller_owns_plan`, `tool_plane_audits_solve`, `controlled_path_rejects_wrong`,
+`required_context_enforced`, `skill_engine_verified_only`, `routing_signature_tool_only` — 22
+invariants in total, all passing.
+
+**Two honest notes.** The Controller charges one *nominal* provider call for problem representation
+because that step is normally a model call; `DomainProblemEngine` is deterministic and contacts no
+provider. That entry is the Controller's accounting and was not overridden — the domain budget
+allows for it, and no provider is configured, so a real model call cannot occur. Separately, the
+Context Builder cannot detect an item a retriever never offered, which no retrieval system can;
+`assert_required_context` closes that gap where the requirement is declared, and omitting a required
+unit, assumption, or provenance record raises.
+
+`DomainPilotService` remains as the direct verification composer behind the transfer experiments,
+where running nine full Controller arms per experiment would add ceremony without changing what is
+measured. It is no longer the case-execution path.
 
 ## Gaps — what was not built
 
-**1. Controller, Context, Tool Plane, and routing integration (S20-040 to S20-044).**
-`DomainPilotService` is its own orchestrator. It does not map `DomainProblem` onto
-`ProblemRepresentation`, does not drive the Cognitive Controller state machine, does not build
-Context Bundles, does not register the domain kernels as Tool Plane tools, and does not use the
-Skill Engine to *execute* the skills it registers. The skills and strategies are registered and
-verified through the real engines, but the pilot invokes solvers directly. Gate K condition 2 is
-therefore not satisfied, and this is the largest remaining item.
-
-**2. Learning-plane integration (S20-045, S20-046).**
+**1. Learning-plane integration (S20-045, S20-046).**
 Domain trajectories are not compiled by the Experience Compiler and no domain evidence is written
 to the Memory Plane, semantic memory, or the Corpus Factory. Evidence currently terminates in the
 `domains` repository and migration `0012` tables.
 
-**3. Weakness, proposal, and controlled-change cycle (S20-052, S20-053, S20-054).**
+**2. Weakness, proposal, and controlled-change cycle (S20-052, S20-053, S20-054).**
 No domain weakness fixtures were mined, no `HarnessProposal` was generated from a domain weakness,
 and no approved isolated change experiment was run. This is a Gate K condition and a complete
 epic.
 
-**4. Operations (S20-059 partial, S20-060, S20-064 partial).**
+**3. Operations (S20-059 partial, S20-060, S20-064 partial).**
 An offline smoke script exists and is machine-readable, but the main CLI was not extended with
 domain subcommands. Backup, isolated restore, and recovery were not extended to cover Sprint 20
 artefacts. Extras were verified to install and uninstall independently and the core was confirmed
 to work without them, but no wheel or sdist was built.
 
-**5. Release (S20-066).**
+**4. Release (S20-066).**
 Nothing has been committed, pushed, reviewed, merged, or tagged. `sprint-20-baseline` does not
 exist. The runtime holds no release authority by design — the pilot package imports no process or
 network module, verified structurally — so this step is operator-owned and deliberately outside
@@ -144,6 +185,6 @@ existing manifest uses a non-reserved key, so sprints 7 to 19 expand byte-identi
 
 ## Recommended next step
 
-Close gap 1 first. Controller and Tool Plane integration is a Gate K condition, and gaps 2 and 3
-depend on domain trajectories flowing through the real execution path before the Experience
-Compiler and Weakness Mining have anything authentic to consume.
+Close the learning-plane gap next. Domain trajectories now flow through the real Controller and Tool
+Plane, so the Experience Compiler and Weakness Mining finally have authentic material to consume —
+which was the blocker that made this the right order.

@@ -18,7 +18,7 @@ depends_on = None
 
 # Provenance marker for the preflight inventory this migration was authored against,
 # matching the Sprint 19 convention.
-SPRINT20_INVENTORY_SHA256 = "10b88558aad1a8d5bb783420cce951698799c0e5ea36792e36fed071aa790798"
+SPRINT20_INVENTORY_SHA256 = "c51b4a4f193bb7bcaf8fc41c24bdf084b5761500a8498d0a9075c3c89d79df40"
 
 
 def upgrade() -> None:

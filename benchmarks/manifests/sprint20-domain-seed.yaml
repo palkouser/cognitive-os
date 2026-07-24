@@ -10,34 +10,34 @@ case_matrix:
   generic:
     - {id: domain-seed-gen-01, scenario: transfer, expected: positive_transfer}
     - {id: domain-seed-gen-02, scenario: transfer, expected: negative_transfer}
-    - {id: domain-seed-gen-03, scenario: governance, check: core_without_extras}
-    - {id: domain-seed-gen-04, scenario: governance, check: evidence_immutable}
-    - {id: domain-seed-gen-05, scenario: governance, check: exact_not_approximate}
-    - {id: domain-seed-gen-06, scenario: governance, check: expression_bomb_bounded}
-    - {id: domain-seed-gen-07, scenario: governance, check: forbidden_operation}
-    - {id: domain-seed-gen-08, scenario: governance, check: hard_gate_blocks_positive}
-    - {id: domain-seed-gen-09, scenario: governance, check: incompatible_units}
-    - {id: domain-seed-gen-10, scenario: governance, check: missing_verifier_blocks}
-    - {id: domain-seed-gen-11, scenario: governance, check: nan_rejected}
-    - {id: domain-seed-gen-12, scenario: governance, check: offset_units_exact}
-    - {id: domain-seed-gen-13, scenario: governance, check: raw_text_rejected}
-    - {id: domain-seed-gen-14, scenario: governance, check: runtime_cannot_release}
-    - {id: domain-seed-gen-15, scenario: governance, check: transfer_controls_required}
-    - {id: domain-seed-gen-16, scenario: governance, check: underdetermination_reported}
-    - {id: domain-seed-gen-17, scenario: governance, check: unknown_not_unsat}
-    - {id: domain-seed-gen-18, scenario: governance, check: unsupported_problem_type}
-    - {id: domain-seed-gen-19, scenario: governance, check: core_without_extras}
-    - {id: domain-seed-gen-20, scenario: governance, check: evidence_immutable}
-    - {id: domain-seed-gen-21, scenario: governance, check: exact_not_approximate}
-    - {id: domain-seed-gen-22, scenario: governance, check: expression_bomb_bounded}
-    - {id: domain-seed-gen-23, scenario: governance, check: forbidden_operation}
-    - {id: domain-seed-gen-24, scenario: governance, check: hard_gate_blocks_positive}
-    - {id: domain-seed-gen-25, scenario: governance, check: incompatible_units}
-    - {id: domain-seed-gen-26, scenario: governance, check: missing_verifier_blocks}
-    - {id: domain-seed-gen-27, scenario: governance, check: nan_rejected}
-    - {id: domain-seed-gen-28, scenario: governance, check: offset_units_exact}
-    - {id: domain-seed-gen-29, scenario: governance, check: raw_text_rejected}
-    - {id: domain-seed-gen-30, scenario: governance, check: runtime_cannot_release}
+    - {id: domain-seed-gen-03, scenario: governance, check: controlled_path_rejects_wrong}
+    - {id: domain-seed-gen-04, scenario: governance, check: controller_owns_plan}
+    - {id: domain-seed-gen-05, scenario: governance, check: core_without_extras}
+    - {id: domain-seed-gen-06, scenario: governance, check: evidence_immutable}
+    - {id: domain-seed-gen-07, scenario: governance, check: exact_not_approximate}
+    - {id: domain-seed-gen-08, scenario: governance, check: expression_bomb_bounded}
+    - {id: domain-seed-gen-09, scenario: governance, check: forbidden_operation}
+    - {id: domain-seed-gen-10, scenario: governance, check: hard_gate_blocks_positive}
+    - {id: domain-seed-gen-11, scenario: governance, check: incompatible_units}
+    - {id: domain-seed-gen-12, scenario: governance, check: missing_verifier_blocks}
+    - {id: domain-seed-gen-13, scenario: governance, check: nan_rejected}
+    - {id: domain-seed-gen-14, scenario: governance, check: offset_units_exact}
+    - {id: domain-seed-gen-15, scenario: governance, check: raw_text_rejected}
+    - {id: domain-seed-gen-16, scenario: governance, check: required_context_enforced}
+    - {id: domain-seed-gen-17, scenario: governance, check: routing_signature_tool_only}
+    - {id: domain-seed-gen-18, scenario: governance, check: runtime_cannot_release}
+    - {id: domain-seed-gen-19, scenario: governance, check: skill_engine_verified_only}
+    - {id: domain-seed-gen-20, scenario: governance, check: tool_plane_audits_solve}
+    - {id: domain-seed-gen-21, scenario: governance, check: transfer_controls_required}
+    - {id: domain-seed-gen-22, scenario: governance, check: underdetermination_reported}
+    - {id: domain-seed-gen-23, scenario: governance, check: unknown_not_unsat}
+    - {id: domain-seed-gen-24, scenario: governance, check: unsupported_problem_type}
+    - {id: domain-seed-gen-25, scenario: governance, check: controlled_path_rejects_wrong}
+    - {id: domain-seed-gen-26, scenario: governance, check: controller_owns_plan}
+    - {id: domain-seed-gen-27, scenario: governance, check: core_without_extras}
+    - {id: domain-seed-gen-28, scenario: governance, check: evidence_immutable}
+    - {id: domain-seed-gen-29, scenario: governance, check: exact_not_approximate}
+    - {id: domain-seed-gen-30, scenario: governance, check: expression_bomb_bounded}
   logic:
     - {id: domain-seed-logic-01, scenario: accept, case: domain-affirming-consequent, expected: passed}
     - {id: domain-seed-logic-02, scenario: accept, case: domain-consistency, expected: passed}

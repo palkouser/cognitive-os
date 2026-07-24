@@ -10,10 +10,10 @@ case_matrix:
   generic:
     - {id: domain-ci-transfer-01, scenario: transfer, expected: positive_transfer}
     - {id: domain-ci-transfer-02, scenario: transfer, expected: negative_transfer}
-    - {id: domain-ci-gov-01, scenario: governance, check: unsupported_problem_type}
-    - {id: domain-ci-gov-02, scenario: governance, check: raw_text_rejected}
-    - {id: domain-ci-gov-03, scenario: governance, check: hard_gate_blocks_positive}
-    - {id: domain-ci-gov-04, scenario: governance, check: unknown_not_unsat}
+    - {id: domain-ci-gov-01, scenario: governance, check: controller_owns_plan}
+    - {id: domain-ci-gov-02, scenario: governance, check: tool_plane_audits_solve}
+    - {id: domain-ci-gov-03, scenario: governance, check: raw_text_rejected}
+    - {id: domain-ci-gov-04, scenario: governance, check: skill_engine_verified_only}
   logic:
     - {id: domain-ci-logic-01, scenario: accept, case: domain-affirming-consequent, expected: passed}
     - {id: domain-ci-logic-02, scenario: reject, case: domain-consistency, expected: passed}

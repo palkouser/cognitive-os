@@ -38,6 +38,22 @@ declarative table.
 uv run pytest tests/cognitive_os/domains tests/cognitive_os/benchmarks/test_domain_adapter.py -q
 ```
 
+## Running one case through the governed stack
+
+```python
+from cognitive_os.domains.fixtures import build_all_cases
+from cognitive_os.domains.runner import run_case_controlled   # Controller + Tool Plane
+from cognitive_os.domains.skill_runner import run_case_as_skill  # + Skill Engine
+
+case = build_all_cases()[0]
+run = await run_case_controlled(case)      # run.state, run.accepted, run.event_types
+skill = await run_case_as_skill(case)      # exact VERIFIED revision, Context Bundle enforced
+```
+
+`run.event_types` carries the full audit trail, including the Tool Plane
+`requested/authorized/started/completed` sequence and the acceptance decision. The smoke report
+prints the same evidence per domain under its `governed` key.
+
 ## PostgreSQL
 
 Migration `0012` is required; the expected Alembic head is `0012`.
@@ -75,7 +91,7 @@ uv pip install 'pint>=0.25.3,<0.26'      # verification-physics
 uv pip install 'z3-solver>=4.16,<5'      # verification-logic
 ```
 
-With all three absent the suite reports 985 passed and 47 skipped; with all three present, 989
+With all three absent the suite reports 1130 passed and 47 skipped; with all three present, 1134
 passed and 43 skipped. The difference is exactly the optional escalation verifiers, which skip
 cleanly rather than failing.
 
@@ -88,5 +104,8 @@ cleanly rather than failing.
 | `BudgetExceededError` | a declared ceiling was crossed | raise the budget deliberately or reduce the input |
 | `UnitError: incompatible units` | dimensional mismatch | fix the case; this is the check working |
 | Disposition `unsupported` | a required verifier did not run | the plan requires a capability the checker never exercised |
+| `RequiredContextMissingError` | declared evidence is absent from the bundle | supply the unit, assumption, or provenance record; do not relax the requirement |
+| Controller state `budget_exhausted` | a declared ceiling was crossed | check `domain_budget()`; representation costs one nominal provider call |
+| `SkillPolicyError` | package hash or registry snapshot mismatch | the skill revision is not the exact verified one |
 | `record_domain_pilot_run` raises "different content" | immutable evidence would change | investigate; do not force the write |
 | Health reports a revision mismatch | database is not at `0012` | run the migration |

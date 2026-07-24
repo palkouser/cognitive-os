@@ -389,7 +389,102 @@ async def _underdetermination_must_be_reported() -> bool:
     )
 
 
+async def _controller_owns_the_plan() -> bool:
+    """The plan, the tool call, and the acceptance decision are all Controller-driven."""
+    from cognitive_os.domain.controller import ControllerState
+    from cognitive_os.domains.runner import run_case_controlled
+
+    run = await run_case_controlled(next(iter(_CASES.values())))
+    required = (
+        "problem.representation_created",
+        "plan.created",
+        "controller.acceptance_decision_recorded",
+    )
+    return (
+        run.state is ControllerState.COMPLETED
+        and run.accepted
+        and all(item in run.event_types for item in required)
+    )
+
+
+async def _tool_plane_audits_every_solve() -> bool:
+    """No solve happens without a full Tool Plane authorisation trail."""
+    from cognitive_os.domains.runner import run_case_controlled
+
+    run = await run_case_controlled(next(iter(_CASES.values())))
+    trail = (
+        "tool_call.requested",
+        "tool_call.authorized",
+        "tool_call.started",
+        "tool_call.completed",
+    )
+    return all(item in run.event_types for item in trail) and run.tool_calls >= 1
+
+
+async def _controlled_path_rejects_a_wrong_answer() -> bool:
+    from cognitive_os.domains.runner import run_case_controlled
+
+    case = next(iter(_CASES.values()))
+    run = await run_case_controlled(case, candidate_override=wrong_answer_for(case))
+    return not run.accepted
+
+
+async def _required_context_cannot_be_omitted() -> bool:
+    from uuid import uuid4
+
+    from cognitive_os.domain.domains import DomainKind
+    from cognitive_os.domains.context import (
+        RequiredContextMissingError,
+        assert_required_context,
+        build_domain_context,
+    )
+
+    case = next(item for item in _CASES.values() if item.domain is DomainKind.PHYSICS)
+    service, request = build_domain_context(
+        case, task_run_id=uuid4(), step_id=uuid4(), omit="unit:"
+    )
+    built = await service.build_context(request)
+    try:
+        assert_required_context(case, built.bundle)
+    except RequiredContextMissingError:
+        return True
+    return False
+
+
+async def _skill_engine_runs_only_verified_revisions() -> bool:
+    from cognitive_os.domain.skills import SkillExecutionStatus
+    from cognitive_os.domains.skill_runner import run_case_as_skill
+
+    run = await run_case_as_skill(next(iter(_CASES.values())))
+    return (
+        run.result.status is SkillExecutionStatus.ACCEPTED
+        and run.result.acceptance_decision_id is not None
+        and "tool_call.completed" in run.controlled.event_types
+    )
+
+
+async def _routing_signature_is_tool_only() -> bool:
+    """No provider is required for acceptance, and no prompt text is routed."""
+    from cognitive_os.domains.skill_execution import domain_task_signature
+
+    for case in list(_CASES.values())[:8]:
+        signature = domain_task_signature(case)
+        if signature.required_tool_capabilities != ("domains.solve",):
+            return False
+        if signature.verifier_profile != "domains.checker":
+            return False
+        if case.problem.statement in signature.canonical_json():
+            return False
+    return True
+
+
 _GOVERNANCE = {
+    "controller_owns_plan": _controller_owns_the_plan,
+    "tool_plane_audits_solve": _tool_plane_audits_every_solve,
+    "controlled_path_rejects_wrong": _controlled_path_rejects_a_wrong_answer,
+    "required_context_enforced": _required_context_cannot_be_omitted,
+    "skill_engine_verified_only": _skill_engine_runs_only_verified_revisions,
+    "routing_signature_tool_only": _routing_signature_is_tool_only,
     "unsupported_problem_type": _unsupported_problem_type_fails,
     "forbidden_operation": _forbidden_operation_is_rejected,
     "raw_text_rejected": _raw_text_cannot_reach_a_solver,

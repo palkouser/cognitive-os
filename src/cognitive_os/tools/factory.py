@@ -2,6 +2,7 @@
 
 from cognitive_os.config.tool_config import ToolPlaneConfiguration
 
+from .domains import DomainSolveTool
 from .host import FilesystemTool, GitReadOnlyTool, SystemInfoTool
 from .registry import ToolRegistry
 
@@ -16,6 +17,7 @@ def build_builtin_registry(config: ToolPlaneConfiguration, *, freeze: bool = Tru
         GitReadOnlyTool("diff", config.workspace_roots),
         GitReadOnlyTool("log", config.workspace_roots),
         SystemInfoTool(),
+        DomainSolveTool(),
     )
     registry.register_many(
         tuple(item for item in candidates if config.tools.get(item.descriptor.tool_id, False))

@@ -25,6 +25,7 @@ from cognitive_os.verification.coding import (
     RuffVerifier,
     WorkspaceIntegrityVerifier,
 )
+from cognitive_os.verification.domains import DomainCheckVerifier
 from cognitive_os.verification.generic import (
     ArtifactIntegrityVerifier,
     ExactValueVerifier,
@@ -83,6 +84,7 @@ def build_builtin_registry(
             ToolSucceededVerifier(),
             PlanConsistencyVerifier(),
             NumericVerifier(),
+            DomainCheckVerifier(),
             FilePolicyVerifier(),
             DiffPolicyVerifier(),
             DependencyPolicyVerifier(),
