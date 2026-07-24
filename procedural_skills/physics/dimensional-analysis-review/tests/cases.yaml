@@ -1,0 +1,4 @@
+cases:
+  - name: dimensional-analysis-baseline
+    input: {problem_type: dimensional-analysis}
+    expected: {disposition: pass}

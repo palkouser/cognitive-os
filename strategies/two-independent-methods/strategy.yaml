@@ -1,0 +1,9 @@
+format_version: "1"
+canonical_name: two-independent-methods
+display_name: Two Independent Methods
+problem_class_id: generic.cross-check
+description: Solve the same task by two independent methods and accept only when both agree.
+skills: [exact-arithmetic-decomposition, constraint-solving, cross-domain-result-review]
+phases: [first-method, second-method, agreement-check, acceptance]
+maximum_repairs: 1
+regression_profile: two-independent-methods-v1

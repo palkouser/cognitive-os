@@ -1,0 +1,9 @@
+format_version: "1"
+canonical_name: decompose-compute-verify
+display_name: Decompose, Compute, Verify
+problem_class_id: mathematics.exact-arithmetic
+description: Split the task, compute each part exactly, then verify with an independent recomputation.
+skills: [exact-arithmetic-decomposition, cross-domain-result-review]
+phases: [decomposition, exact-computation, independent-verification, acceptance]
+maximum_repairs: 2
+regression_profile: decompose-compute-verify-v1

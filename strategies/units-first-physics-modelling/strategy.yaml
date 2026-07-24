@@ -1,0 +1,9 @@
+format_version: "1"
+canonical_name: units-first-physics-modelling
+display_name: Units-First Physics Modelling
+problem_class_id: physics.unit-aware
+description: Fix units and dimensions before any numeric work, then calculate and re-check dimensions.
+skills: [unit-aware-physics-calculation, dimensional-analysis-review, cross-domain-result-review]
+phases: [unit-normalisation, dimensional-check, calculation, acceptance]
+maximum_repairs: 2
+regression_profile: units-first-physics-modelling-v1

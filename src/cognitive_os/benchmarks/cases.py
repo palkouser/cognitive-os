@@ -28,6 +28,11 @@ def load_manifest(path: Path) -> BenchmarkManifest:
     return BenchmarkManifest.model_validate(value)
 
 
+#: Keys the matrix expansion interprets itself; everything else is forwarded
+#: to the adapter through `problem_request`.
+_RESERVED_MATRIX_KEYS = frozenset({"id", "scenario", "expected", "entities", "fixture", "verifier"})
+
+
 def _expand_case_matrix(value: dict[str, Any]) -> dict[str, Any]:
     matrix = value.pop("case_matrix")
     if not isinstance(matrix, dict):
@@ -65,7 +70,16 @@ def _expand_case_matrix(value: dict[str, Any]) -> dict[str, Any]:
                     domain=domain,
                     title=case_id.replace(".", " ").title(),
                     description=f"Bounded deterministic {value.get('benchmark_id')} case.",
-                    problem_request={"scenario": str(entry.get("scenario", case_id))},
+                    problem_request={
+                        "scenario": str(entry.get("scenario", case_id)),
+                        # Adapter-specific parameters travel with the case. Keys
+                        # consumed by the expansion itself are not duplicated.
+                        **{
+                            key: value_item
+                            for key, value_item in entry.items()
+                            if key not in _RESERVED_MATRIX_KEYS
+                        },
+                    },
                     expected_outputs={
                         "status": str(entry.get("expected", "passed")),
                         **(

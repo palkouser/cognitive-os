@@ -10,7 +10,7 @@ from cognitive_os.domain.skills import (
     SkillStatus,
 )
 from cognitive_os.skills.errors import SkillPackageError, SkillPolicyError
-from cognitive_os.skills.fixtures import sprint12_verified_skills
+from cognitive_os.skills.fixtures import seed_package_paths, sprint12_verified_skills
 from cognitive_os.skills.packaging import (
     export_package,
     load_package,
@@ -20,13 +20,13 @@ from cognitive_os.skills.validation import build_skill_verification_snapshot
 
 
 def package_paths() -> tuple[Path, ...]:
-    return tuple(sorted(Path("procedural_skills").glob("*/*")))
+    return seed_package_paths()
 
 
-def test_eight_seed_packages_are_bounded_and_have_regressions() -> None:
+def test_seed_packages_are_bounded_and_have_regressions() -> None:
     packages = [load_package(path, SkillConfiguration()) for path in package_paths()]
-    assert len(packages) == 8
-    assert len({item.manifest.package_hash for item in packages}) == 8
+    assert len(packages) == len(package_paths())
+    assert len({item.manifest.package_hash for item in packages}) == len(packages)
     assert all(any(path.startswith("tests/") for path in item.files) for item in packages)
 
 
@@ -56,7 +56,7 @@ async def test_fixture_promotes_only_verified_revision_three() -> None:
     rows = await repository.query_candidates()
     assert all(revision.status is SkillStatus.VERIFIED for _, revision in rows)
     assert all(revision.revision == 3 for _, revision in rows)
-    assert len(registry.health()) == 8
+    assert len(registry.health()) == len(seed_package_paths())
 
 
 @pytest.mark.asyncio

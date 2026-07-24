@@ -1,0 +1,4 @@
+cases:
+  - name: arithmetic-decomposition-baseline
+    input: {problem_type: arithmetic-decomposition}
+    expected: {disposition: pass}

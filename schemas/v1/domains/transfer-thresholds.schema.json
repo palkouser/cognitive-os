@@ -1,0 +1,44 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/domains/transfer-thresholds.schema.json",
+  "additionalProperties": false,
+  "description": "Predeclared before the run; post-hoc substitution is a contract error.",
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "maximum_latency_ratio": {
+      "default": "1.50",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Maximum Latency Ratio",
+      "type": "string"
+    },
+    "maximum_source_quality_loss": {
+      "default": "0.02",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Maximum Source Quality Loss",
+      "type": "string"
+    },
+    "maximum_tool_call_ratio": {
+      "default": "1.50",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Maximum Tool Call Ratio",
+      "type": "string"
+    },
+    "maximum_unrelated_quality_loss": {
+      "default": "0.02",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Maximum Unrelated Quality Loss",
+      "type": "string"
+    },
+    "minimum_target_quality_gain": {
+      "default": "0.10",
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Minimum Target Quality Gain",
+      "type": "string"
+    }
+  },
+  "title": "TransferThresholds",
+  "type": "object"
+}

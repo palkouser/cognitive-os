@@ -1,0 +1,9 @@
+format_version: "1"
+canonical_name: symbolic-first-numeric-check
+display_name: Symbolic First, Numeric Check
+problem_class_id: mathematics.symbolic
+description: Transform symbolically first, then confirm the result numerically at sampled points.
+skills: [symbolic-equivalence-checking, exact-arithmetic-decomposition, cross-domain-result-review]
+phases: [symbolic-transformation, numeric-confirmation, acceptance]
+maximum_repairs: 2
+regression_profile: symbolic-first-numeric-check-v1

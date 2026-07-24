@@ -1,0 +1,161 @@
+{
+  "$defs": {
+    "DomainFailureCode": {
+      "enum": [
+        "unsupported_problem_type",
+        "missing_required_verifier",
+        "missing_required_evidence",
+        "forbidden_operation",
+        "resource_exhausted",
+        "tool_unavailable",
+        "solver_unknown",
+        "invalid_derivation"
+      ],
+      "title": "DomainFailureCode",
+      "type": "string"
+    },
+    "DomainKind": {
+      "enum": [
+        "mathematics",
+        "physics",
+        "logic"
+      ],
+      "title": "DomainKind",
+      "type": "string"
+    },
+    "DomainRunStatus": {
+      "enum": [
+        "requested",
+        "planned",
+        "executing",
+        "verifying",
+        "accepted",
+        "partially_accepted",
+        "rejected",
+        "failed",
+        "cancelled"
+      ],
+      "title": "DomainRunStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domains/domain-pilot-run.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "answer_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Answer Hash"
+    },
+    "case_id": {
+      "minLength": 1,
+      "title": "Case Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "derivation_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Derivation Hash"
+    },
+    "domain": {
+      "$ref": "#/$defs/DomainKind"
+    },
+    "failure_code": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DomainFailureCode"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "outcome_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Outcome Hash"
+    },
+    "plan_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Plan Hash",
+      "type": "string"
+    },
+    "problem_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Problem Hash",
+      "type": "string"
+    },
+    "run_id": {
+      "format": "uuid",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "skill_revisions": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Skill Revisions",
+      "type": "array"
+    },
+    "status": {
+      "$ref": "#/$defs/DomainRunStatus"
+    },
+    "strategy_revisions": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Strategy Revisions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "run_id",
+    "case_id",
+    "domain",
+    "status",
+    "problem_hash",
+    "plan_hash",
+    "created_at"
+  ],
+  "title": "DomainPilotRun",
+  "type": "object"
+}

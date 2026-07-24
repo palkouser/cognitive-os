@@ -1,0 +1,133 @@
+benchmark_id: sprint20-domain-seed
+version: "1"
+title: Sprint 20 cross-domain seed suite
+description: 120 deterministic offline cases covering every task, verifier, control, and authority rule.
+default_configuration: {mode: domain-pilot}
+source: Cognitive OS Sprint 20 cross-domain pilot backlog
+license: Apache-2.0
+created_at: 2026-07-24T00:00:00Z
+case_matrix:
+  generic:
+    - {id: domain-seed-gen-01, scenario: transfer, expected: positive_transfer}
+    - {id: domain-seed-gen-02, scenario: transfer, expected: negative_transfer}
+    - {id: domain-seed-gen-03, scenario: governance, check: core_without_extras}
+    - {id: domain-seed-gen-04, scenario: governance, check: evidence_immutable}
+    - {id: domain-seed-gen-05, scenario: governance, check: exact_not_approximate}
+    - {id: domain-seed-gen-06, scenario: governance, check: expression_bomb_bounded}
+    - {id: domain-seed-gen-07, scenario: governance, check: forbidden_operation}
+    - {id: domain-seed-gen-08, scenario: governance, check: hard_gate_blocks_positive}
+    - {id: domain-seed-gen-09, scenario: governance, check: incompatible_units}
+    - {id: domain-seed-gen-10, scenario: governance, check: missing_verifier_blocks}
+    - {id: domain-seed-gen-11, scenario: governance, check: nan_rejected}
+    - {id: domain-seed-gen-12, scenario: governance, check: offset_units_exact}
+    - {id: domain-seed-gen-13, scenario: governance, check: raw_text_rejected}
+    - {id: domain-seed-gen-14, scenario: governance, check: runtime_cannot_release}
+    - {id: domain-seed-gen-15, scenario: governance, check: transfer_controls_required}
+    - {id: domain-seed-gen-16, scenario: governance, check: underdetermination_reported}
+    - {id: domain-seed-gen-17, scenario: governance, check: unknown_not_unsat}
+    - {id: domain-seed-gen-18, scenario: governance, check: unsupported_problem_type}
+    - {id: domain-seed-gen-19, scenario: governance, check: core_without_extras}
+    - {id: domain-seed-gen-20, scenario: governance, check: evidence_immutable}
+    - {id: domain-seed-gen-21, scenario: governance, check: exact_not_approximate}
+    - {id: domain-seed-gen-22, scenario: governance, check: expression_bomb_bounded}
+    - {id: domain-seed-gen-23, scenario: governance, check: forbidden_operation}
+    - {id: domain-seed-gen-24, scenario: governance, check: hard_gate_blocks_positive}
+    - {id: domain-seed-gen-25, scenario: governance, check: incompatible_units}
+    - {id: domain-seed-gen-26, scenario: governance, check: missing_verifier_blocks}
+    - {id: domain-seed-gen-27, scenario: governance, check: nan_rejected}
+    - {id: domain-seed-gen-28, scenario: governance, check: offset_units_exact}
+    - {id: domain-seed-gen-29, scenario: governance, check: raw_text_rejected}
+    - {id: domain-seed-gen-30, scenario: governance, check: runtime_cannot_release}
+  logic:
+    - {id: domain-seed-logic-01, scenario: accept, case: domain-affirming-consequent, expected: passed}
+    - {id: domain-seed-logic-02, scenario: accept, case: domain-consistency, expected: passed}
+    - {id: domain-seed-logic-03, scenario: accept, case: domain-constraint, expected: passed}
+    - {id: domain-seed-logic-04, scenario: accept, case: domain-counterexample, expected: passed}
+    - {id: domain-seed-logic-05, scenario: accept, case: domain-de-morgan, expected: passed}
+    - {id: domain-seed-logic-06, scenario: accept, case: domain-hypotheses, expected: passed}
+    - {id: domain-seed-logic-07, scenario: accept, case: domain-hypothetical-syllogism, expected: passed}
+    - {id: domain-seed-logic-08, scenario: accept, case: domain-inconsistency, expected: passed}
+    - {id: domain-seed-logic-09, scenario: accept, case: domain-modus-ponens, expected: passed}
+    - {id: domain-seed-logic-10, scenario: accept, case: domain-no-counterexample, expected: passed}
+    - {id: domain-seed-logic-11, scenario: accept, case: domain-sat, expected: passed}
+    - {id: domain-seed-logic-12, scenario: accept, case: domain-sequence-arithmetic, expected: passed}
+    - {id: domain-seed-logic-13, scenario: accept, case: domain-sequence-underdetermined, expected: passed}
+    - {id: domain-seed-logic-14, scenario: accept, case: domain-truth-table, expected: passed}
+    - {id: domain-seed-logic-15, scenario: accept, case: domain-truth-table-excluded-middle, expected: passed}
+    - {id: domain-seed-logic-16, scenario: accept, case: domain-unsat, expected: passed}
+    - {id: domain-seed-logic-17, scenario: reject, case: domain-affirming-consequent, expected: passed}
+    - {id: domain-seed-logic-18, scenario: reject, case: domain-consistency, expected: passed}
+    - {id: domain-seed-logic-19, scenario: reject, case: domain-constraint, expected: passed}
+    - {id: domain-seed-logic-20, scenario: reject, case: domain-counterexample, expected: passed}
+    - {id: domain-seed-logic-21, scenario: reject, case: domain-de-morgan, expected: passed}
+    - {id: domain-seed-logic-22, scenario: reject, case: domain-hypotheses, expected: passed}
+    - {id: domain-seed-logic-23, scenario: reject, case: domain-hypothetical-syllogism, expected: passed}
+    - {id: domain-seed-logic-24, scenario: reject, case: domain-inconsistency, expected: passed}
+    - {id: domain-seed-logic-25, scenario: reject, case: domain-modus-ponens, expected: passed}
+    - {id: domain-seed-logic-26, scenario: reject, case: domain-no-counterexample, expected: passed}
+    - {id: domain-seed-logic-27, scenario: reject, case: domain-sat, expected: passed}
+    - {id: domain-seed-logic-28, scenario: reject, case: domain-sequence-arithmetic, expected: passed}
+    - {id: domain-seed-logic-29, scenario: reject, case: domain-sequence-underdetermined, expected: passed}
+    - {id: domain-seed-logic-30, scenario: reject, case: domain-truth-table, expected: passed}
+  mathematics:
+    - {id: domain-seed-math-01, scenario: accept, case: domain-approximation, expected: passed}
+    - {id: domain-seed-math-02, scenario: accept, case: domain-equivalence, expected: passed}
+    - {id: domain-seed-math-03, scenario: accept, case: domain-equivalence-false, expected: passed}
+    - {id: domain-seed-math-04, scenario: accept, case: domain-fractions, expected: passed}
+    - {id: domain-seed-math-05, scenario: accept, case: domain-fractions-nested, expected: passed}
+    - {id: domain-seed-math-06, scenario: accept, case: domain-linear, expected: passed}
+    - {id: domain-seed-math-07, scenario: accept, case: domain-linear-fraction, expected: passed}
+    - {id: domain-seed-math-08, scenario: accept, case: domain-long-div, expected: passed}
+    - {id: domain-seed-math-09, scenario: accept, case: domain-long-div-exact, expected: passed}
+    - {id: domain-seed-math-10, scenario: accept, case: domain-long-mult, expected: passed}
+    - {id: domain-seed-math-11, scenario: accept, case: domain-long-mult-negative, expected: passed}
+    - {id: domain-seed-math-12, scenario: accept, case: domain-quadratic, expected: passed}
+    - {id: domain-seed-math-13, scenario: accept, case: domain-quadratic-complex, expected: passed}
+    - {id: domain-seed-math-14, scenario: accept, case: domain-quadratic-double, expected: passed}
+    - {id: domain-seed-math-15, scenario: accept, case: domain-rationals, expected: passed}
+    - {id: domain-seed-math-16, scenario: accept, case: domain-rationals-power, expected: passed}
+    - {id: domain-seed-math-17, scenario: accept, case: domain-simplify, expected: passed}
+    - {id: domain-seed-math-18, scenario: accept, case: domain-simplify-cubic, expected: passed}
+    - {id: domain-seed-math-19, scenario: reject, case: domain-approximation, expected: passed}
+    - {id: domain-seed-math-20, scenario: reject, case: domain-equivalence, expected: passed}
+    - {id: domain-seed-math-21, scenario: reject, case: domain-equivalence-false, expected: passed}
+    - {id: domain-seed-math-22, scenario: reject, case: domain-fractions, expected: passed}
+    - {id: domain-seed-math-23, scenario: reject, case: domain-fractions-nested, expected: passed}
+    - {id: domain-seed-math-24, scenario: reject, case: domain-linear, expected: passed}
+    - {id: domain-seed-math-25, scenario: reject, case: domain-linear-fraction, expected: passed}
+    - {id: domain-seed-math-26, scenario: reject, case: domain-long-div, expected: passed}
+    - {id: domain-seed-math-27, scenario: reject, case: domain-long-div-exact, expected: passed}
+    - {id: domain-seed-math-28, scenario: reject, case: domain-long-mult, expected: passed}
+    - {id: domain-seed-math-29, scenario: reject, case: domain-long-mult-negative, expected: passed}
+    - {id: domain-seed-math-30, scenario: reject, case: domain-quadratic, expected: passed}
+  physics:
+    - {id: domain-seed-phys-01, scenario: accept, case: domain-bad-dimension, expected: passed}
+    - {id: domain-seed-phys-02, scenario: accept, case: domain-energy-conservation, expected: passed}
+    - {id: domain-seed-phys-03, scenario: accept, case: domain-energy-conversion, expected: passed}
+    - {id: domain-seed-phys-04, scenario: accept, case: domain-energy-violation, expected: passed}
+    - {id: domain-seed-phys-05, scenario: accept, case: domain-joule-dimension, expected: passed}
+    - {id: domain-seed-phys-06, scenario: accept, case: domain-kinetic-energy, expected: passed}
+    - {id: domain-seed-phys-07, scenario: accept, case: domain-limiting-case, expected: passed}
+    - {id: domain-seed-phys-08, scenario: accept, case: domain-magnitude, expected: passed}
+    - {id: domain-seed-phys-09, scenario: accept, case: domain-magnitude-small, expected: passed}
+    - {id: domain-seed-phys-10, scenario: accept, case: domain-model-applicable, expected: passed}
+    - {id: domain-seed-phys-11, scenario: accept, case: domain-model-inapplicable, expected: passed}
+    - {id: domain-seed-phys-12, scenario: accept, case: domain-newton-dimension, expected: passed}
+    - {id: domain-seed-phys-13, scenario: accept, case: domain-ohms-law, expected: passed}
+    - {id: domain-seed-phys-14, scenario: accept, case: domain-significant-figures, expected: passed}
+    - {id: domain-seed-phys-15, scenario: accept, case: domain-speed-conversion, expected: passed}
+    - {id: domain-seed-phys-16, scenario: accept, case: domain-temperature-kelvin, expected: passed}
+    - {id: domain-seed-phys-17, scenario: accept, case: domain-temperature-offset, expected: passed}
+    - {id: domain-seed-phys-18, scenario: reject, case: domain-bad-dimension, expected: passed}
+    - {id: domain-seed-phys-19, scenario: reject, case: domain-energy-conservation, expected: passed}
+    - {id: domain-seed-phys-20, scenario: reject, case: domain-energy-conversion, expected: passed}
+    - {id: domain-seed-phys-21, scenario: reject, case: domain-energy-violation, expected: passed}
+    - {id: domain-seed-phys-22, scenario: reject, case: domain-joule-dimension, expected: passed}
+    - {id: domain-seed-phys-23, scenario: reject, case: domain-kinetic-energy, expected: passed}
+    - {id: domain-seed-phys-24, scenario: reject, case: domain-limiting-case, expected: passed}
+    - {id: domain-seed-phys-25, scenario: reject, case: domain-magnitude, expected: passed}
+    - {id: domain-seed-phys-26, scenario: reject, case: domain-magnitude-small, expected: passed}
+    - {id: domain-seed-phys-27, scenario: reject, case: domain-model-applicable, expected: passed}
+    - {id: domain-seed-phys-28, scenario: reject, case: domain-model-inapplicable, expected: passed}
+    - {id: domain-seed-phys-29, scenario: reject, case: domain-newton-dimension, expected: passed}
+    - {id: domain-seed-phys-30, scenario: reject, case: domain-ohms-law, expected: passed}

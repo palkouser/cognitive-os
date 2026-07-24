@@ -5,6 +5,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from cognitive_os.domain.base import ImmutableContractModel
+from cognitive_os.infrastructure.postgres.tables import EXPECTED_MIGRATION_REVISION
 
 
 class RoutingHealthReport(ImmutableContractModel):
@@ -90,7 +91,7 @@ class PostgresRoutingHealthService:
                 or 0
             )
         messages = []
-        if revision != "0011":
+        if revision != EXPECTED_MIGRATION_REVISION:
             messages.append(f"Expected Alembic revision 0011, found {revision}")
         if table_count != 10:
             messages.append(f"Expected 10 routing tables, found {table_count}")

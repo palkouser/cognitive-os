@@ -1,0 +1,62 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/domains/derivation-step.schema.json",
+  "additionalProperties": false,
+  "description": "One typed step; provider prose alone can never constitute a derivation.",
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "detail": {
+      "minLength": 1,
+      "title": "Detail",
+      "type": "string"
+    },
+    "index": {
+      "minimum": 0,
+      "title": "Index",
+      "type": "integer"
+    },
+    "inputs": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Inputs",
+      "type": "array"
+    },
+    "operation": {
+      "minLength": 1,
+      "title": "Operation",
+      "type": "string"
+    },
+    "output": {
+      "minLength": 1,
+      "title": "Output",
+      "type": "string"
+    },
+    "tool_evidence": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tool Evidence"
+    }
+  },
+  "required": [
+    "index",
+    "operation",
+    "detail",
+    "output"
+  ],
+  "title": "DerivationStep",
+  "type": "object"
+}

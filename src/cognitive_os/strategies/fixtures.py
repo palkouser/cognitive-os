@@ -334,6 +334,11 @@ def load_strategy_definition(
     )
 
 
+def seed_strategy_paths(root: Path = Path("strategies")) -> tuple[Path, ...]:
+    """Single source of truth for the seed strategy set; grows with each domain sprint."""
+    return tuple(sorted(root.glob("*/strategy.yaml")))
+
+
 async def sprint13_verified_strategies(
     root: Path = Path("strategies"),
 ) -> tuple[
@@ -349,7 +354,7 @@ async def sprint13_verified_strategies(
     service = StrategyService(repository, clock=lambda: FIXTURE_TIME)
     problem_classes = ProblemClassRegistry()
     target_resolvers = TargetResolverRegistry()
-    for path in sorted(root.glob("*/strategy.yaml")):
+    for path in seed_strategy_paths(root):
         item, draft, edge_set, descriptor = load_strategy_definition(path, skills)
         problem_classes.register(descriptor)
         for edge in edge_set.edges:

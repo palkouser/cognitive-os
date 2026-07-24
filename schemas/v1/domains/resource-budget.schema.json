@@ -1,0 +1,63 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/domains/resource-budget.schema.json",
+  "additionalProperties": false,
+  "description": "Ceilings validated before execution and enforced during it.",
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "maximum_depth": {
+      "default": 32,
+      "exclusiveMinimum": 0,
+      "maximum": 256,
+      "title": "Maximum Depth",
+      "type": "integer"
+    },
+    "maximum_integer_digits": {
+      "default": 256,
+      "exclusiveMinimum": 0,
+      "maximum": 4096,
+      "title": "Maximum Integer Digits",
+      "type": "integer"
+    },
+    "maximum_nodes": {
+      "default": 512,
+      "exclusiveMinimum": 0,
+      "maximum": 8192,
+      "title": "Maximum Nodes",
+      "type": "integer"
+    },
+    "maximum_output_bytes": {
+      "default": 65536,
+      "exclusiveMinimum": 0,
+      "maximum": 4194304,
+      "title": "Maximum Output Bytes",
+      "type": "integer"
+    },
+    "maximum_retries": {
+      "default": 0,
+      "maximum": 3,
+      "minimum": 0,
+      "title": "Maximum Retries",
+      "type": "integer"
+    },
+    "maximum_symbols": {
+      "default": 32,
+      "exclusiveMinimum": 0,
+      "maximum": 1024,
+      "title": "Maximum Symbols",
+      "type": "integer"
+    },
+    "timeout_seconds": {
+      "default": 10,
+      "exclusiveMinimum": 0,
+      "maximum": 300,
+      "title": "Timeout Seconds",
+      "type": "integer"
+    }
+  },
+  "title": "ResourceBudget",
+  "type": "object"
+}

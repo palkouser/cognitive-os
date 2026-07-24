@@ -7,6 +7,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from cognitive_os.domain.base import ImmutableContractModel
+from cognitive_os.infrastructure.postgres.tables import EXPECTED_MIGRATION_REVISION
 
 
 class SemanticHealthSeverity(StrEnum):
@@ -242,7 +243,7 @@ class PostgresSemanticHealthService:
                     message=code.replace("_", " "),
                 )
             )
-        if revision != "0011":
+        if revision != EXPECTED_MIGRATION_REVISION:
             findings.append(
                 SemanticHealthFinding(
                     code="migration_head",

@@ -1,0 +1,78 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/domains/provenance-ref.schema.json",
+  "additionalProperties": false,
+  "description": "Source, licence, and contamination metadata required before activation.",
+  "properties": {
+    "checksum": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Checksum"
+    },
+    "contamination_notes": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Contamination Notes"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "effective_date": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Effective Date"
+    },
+    "licence": {
+      "minLength": 1,
+      "title": "Licence",
+      "type": "string"
+    },
+    "redistributable": {
+      "title": "Redistributable",
+      "type": "boolean"
+    },
+    "revision": {
+      "minLength": 1,
+      "title": "Revision",
+      "type": "string"
+    },
+    "source": {
+      "minLength": 1,
+      "title": "Source",
+      "type": "string"
+    }
+  },
+  "required": [
+    "source",
+    "revision",
+    "licence",
+    "redistributable"
+  ],
+  "title": "ProvenanceRef",
+  "type": "object"
+}

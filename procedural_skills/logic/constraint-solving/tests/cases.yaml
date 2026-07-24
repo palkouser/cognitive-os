@@ -1,0 +1,4 @@
+cases:
+  - name: constraint-solving-baseline
+    input: {problem_type: constraint-solving}
+    expected: {disposition: pass}

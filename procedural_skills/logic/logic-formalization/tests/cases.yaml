@@ -1,0 +1,4 @@
+cases:
+  - name: logic-formalization-baseline
+    input: {problem_type: logic-formalization}
+    expected: {disposition: pass}

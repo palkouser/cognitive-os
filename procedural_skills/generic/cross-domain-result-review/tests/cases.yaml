@@ -1,0 +1,4 @@
+cases:
+  - name: cross-domain-review-baseline
+    input: {problem_type: cross-domain-review}
+    expected: {disposition: pass}

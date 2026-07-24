@@ -22,6 +22,15 @@ from .validation import build_skill_verification_snapshot
 FIXTURE_TIME = datetime(2026, 7, 19, tzinfo=UTC)
 
 
+def seed_package_paths(root: Path = Path("procedural_skills")) -> tuple[Path, ...]:
+    """Single source of truth for the seed package set.
+
+    The set grows every sprint that adds domain skills, so callers assert the
+    discovered count rather than a literal that has to be edited in step.
+    """
+    return tuple(sorted(root.glob("*/*")))
+
+
 async def sprint12_verified_skills(
     root: Path = Path("procedural_skills"),
 ) -> tuple[InMemorySkillRepository, SkillRegistry, FixtureArtifactStore]:
@@ -34,7 +43,7 @@ async def sprint12_verified_skills(
         clock=lambda: FIXTURE_TIME,
     )
     actor = SkillActor(creator_type=SkillCreatorType.OPERATOR, creator_id="sprint-12-fixture")
-    for path in sorted(root.glob("*/*")):
+    for path in seed_package_paths(root):
         item, draft, package = await service.import_package(
             path, actor=actor, reason="Sprint 12 credential-free seed"
         )

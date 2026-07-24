@@ -1,0 +1,4 @@
+cases:
+  - name: arithmetic-repair-baseline
+    input: {problem_type: arithmetic-repair}
+    expected: {disposition: pass}

@@ -1,0 +1,58 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/domain.transfer_started.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "actor": {
+      "minLength": 1,
+      "title": "Actor",
+      "type": "string"
+    },
+    "authority": {
+      "minLength": 1,
+      "title": "Authority",
+      "type": "string"
+    },
+    "case_id": {
+      "minLength": 1,
+      "title": "Case Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "domain": {
+      "minLength": 1,
+      "title": "Domain",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "pilot_id": {
+      "format": "uuid",
+      "title": "Pilot Id",
+      "type": "string"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "pilot_id",
+    "domain",
+    "case_id",
+    "content_hash",
+    "actor",
+    "authority",
+    "reason",
+    "occurred_at"
+  ],
+  "title": "DomainTransferStarted",
+  "type": "object"
+}

@@ -28,16 +28,21 @@ from cognitive_os.strategies.engine import (
     select_strategy,
 )
 from cognitive_os.strategies.errors import StrategyError
-from cognitive_os.strategies.fixtures import FIXTURE_TIME, sprint13_verified_strategies
+from cognitive_os.strategies.fixtures import (
+    FIXTURE_TIME,
+    seed_strategy_paths,
+    sprint13_verified_strategies,
+)
 
 
 @pytest.mark.asyncio
 async def test_initial_strategies_are_verified_and_exactly_skill_bound() -> None:
     repository, registry, problem_classes, targets, _ = await sprint13_verified_strategies()
 
-    assert len(repository.items) == 7
-    assert len(registry.query()) == 7
-    assert len({item.identity.problem_class_id for item, _ in registry.query()}) == 7
+    expected = len(seed_strategy_paths())
+    assert len(repository.items) == expected
+    assert len(registry.query()) == expected
+    assert len({item.identity.problem_class_id for item, _ in registry.query()}) == expected
     assert all(revision.status is StrategyStatus.VERIFIED for _, revision in registry.query())
     assert all(
         binding.skill_id is not None and binding.revision is not None

@@ -17,7 +17,11 @@ from cognitive_os.domain.skills import (
     SkillSelectionRequest,
     SkillStatus,
 )
-from cognitive_os.skills.fixtures import FIXTURE_TIME, sprint12_verified_skills
+from cognitive_os.skills.fixtures import (
+    FIXTURE_TIME,
+    seed_package_paths,
+    sprint12_verified_skills,
+)
 from cognitive_os.skills.preconditions import PreconditionEvaluatorRegistry
 from cognitive_os.skills.selection import SkillSelectionService
 
@@ -112,7 +116,7 @@ async def skill_benchmark_case(case: BenchmarkCase) -> BenchmarkCaseResult:
         for _, revision in rows
     )
     passed = (
-        len(rows) == 8
+        len(rows) == len(seed_package_paths())
         and package_integrity
         and first.decision_hash == second.decision_hash
         and first.selected_skill_id is not None

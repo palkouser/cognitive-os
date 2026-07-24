@@ -19,6 +19,9 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 
 SCHEMA_NAME = "cognitive_os"
+#: Alembic head every health check expects. Bump this once per migration,
+#: not once per adapter.
+EXPECTED_MIGRATION_REVISION = "0012"
 metadata = MetaData(schema=SCHEMA_NAME)
 
 event_streams = Table(

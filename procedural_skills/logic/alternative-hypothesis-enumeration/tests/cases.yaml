@@ -1,0 +1,4 @@
+cases:
+  - name: hypothesis-enumeration-baseline
+    input: {problem_type: hypothesis-enumeration}
+    expected: {disposition: pass}

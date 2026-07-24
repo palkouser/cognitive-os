@@ -1,0 +1,260 @@
+{
+  "$defs": {
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "format": "uuid",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "media_type": {
+          "minLength": 1,
+          "title": "Media Type",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "storage_key": {
+          "minLength": 1,
+          "title": "Storage Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "media_type",
+        "content_hash",
+        "size_bytes",
+        "storage_key",
+        "created_at"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "TransferArm": {
+      "description": "Required control groups; a positive result needs every arm present.",
+      "enum": [
+        "source_retention",
+        "target_baseline",
+        "unchanged_source_revision",
+        "minimally_adapted",
+        "domain_specific",
+        "no_skill_control",
+        "unrelated_domain"
+      ],
+      "title": "TransferArm",
+      "type": "string"
+    },
+    "TransferDisposition": {
+      "enum": [
+        "positive_transfer",
+        "neutral_transfer",
+        "negative_transfer",
+        "inconclusive",
+        "invalid_experiment"
+      ],
+      "title": "TransferDisposition",
+      "type": "string"
+    },
+    "TransferMetrics": {
+      "additionalProperties": false,
+      "description": "Matched-resource measurements; every arm reports the same fields.",
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "cpu_ms": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Cpu Ms",
+          "type": "integer"
+        },
+        "latency_ms": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Latency Ms",
+          "type": "integer"
+        },
+        "peak_memory_bytes": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Peak Memory Bytes",
+          "type": "integer"
+        },
+        "policy_violations": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Policy Violations",
+          "type": "integer"
+        },
+        "repairs": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Repairs",
+          "type": "integer"
+        },
+        "safety_violations": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Safety Violations",
+          "type": "integer"
+        },
+        "solved": {
+          "minimum": 0,
+          "title": "Solved",
+          "type": "integer"
+        },
+        "tool_calls": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Tool Calls",
+          "type": "integer"
+        },
+        "total": {
+          "exclusiveMinimum": 0,
+          "title": "Total",
+          "type": "integer"
+        },
+        "verifier_failures": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Verifier Failures",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "solved",
+        "total"
+      ],
+      "title": "TransferMetrics",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domains/transfer-result.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "arms": {
+      "additionalProperties": {
+        "$ref": "#/$defs/TransferMetrics"
+      },
+      "propertyNames": {
+        "$ref": "#/$defs/TransferArm"
+      },
+      "title": "Arms",
+      "type": "object"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "disposition": {
+      "$ref": "#/$defs/TransferDisposition"
+    },
+    "experiment_id": {
+      "format": "uuid",
+      "title": "Experiment Id",
+      "type": "string"
+    },
+    "hard_gate_failures": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Hard Gate Failures",
+      "type": "array"
+    },
+    "limitations": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "negative_evidence": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Negative Evidence",
+      "type": "array"
+    },
+    "positive_evidence": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Positive Evidence",
+      "type": "array"
+    },
+    "report_artifact": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ArtifactRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "source_quality_delta": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Source Quality Delta",
+      "type": "string"
+    },
+    "target_quality_delta": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Target Quality Delta",
+      "type": "string"
+    },
+    "uncertainty": {
+      "minLength": 1,
+      "title": "Uncertainty",
+      "type": "string"
+    },
+    "unrelated_quality_delta": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Unrelated Quality Delta",
+      "type": "string"
+    }
+  },
+  "required": [
+    "experiment_id",
+    "arms",
+    "target_quality_delta",
+    "source_quality_delta",
+    "unrelated_quality_delta",
+    "disposition",
+    "uncertainty",
+    "created_at"
+  ],
+  "title": "TransferResult",
+  "type": "object"
+}
