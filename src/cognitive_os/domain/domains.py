@@ -44,7 +44,7 @@ class AnswerType(StrEnum):
 
 
 class VerificationDisposition(StrEnum):
-    PASS = "pass"
+    PASS = "pass"  # nosec B105 - verification disposition value, not a credential
     PARTIAL = "partial"
     FAIL = "fail"
     INCONCLUSIVE = "inconclusive"

@@ -27,7 +27,11 @@ from cognitive_os.strategies.engine import (
     resolve_skill_bindings,
     select_strategy,
 )
-from cognitive_os.strategies.fixtures import FIXTURE_TIME, sprint13_verified_strategies
+from cognitive_os.strategies.fixtures import (
+    FIXTURE_TIME,
+    seed_strategy_paths,
+    sprint13_verified_strategies,
+)
 
 
 async def strategy_benchmark_case(case: BenchmarkCase) -> BenchmarkCaseResult:
@@ -134,7 +138,7 @@ async def strategy_benchmark_case(case: BenchmarkCase) -> BenchmarkCaseResult:
     await repository.record_outcome(outcome)
     await repository.write_statistics(statistics)
     passed = (
-        len(rows) == 7
+        len(rows) == len(seed_strategy_paths())
         and first.status is StrategySelectionStatus.SELECTED
         and first.selected_strategy_id == revision.strategy_id
         and first.decision_hash == second.decision_hash

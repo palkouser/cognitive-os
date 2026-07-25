@@ -15,7 +15,7 @@ from cognitive_os.domain.context import (
     RetrievalMode,
     RetrievalSubquery,
 )
-from cognitive_os.skills.fixtures import sprint12_verified_skills
+from cognitive_os.skills.fixtures import seed_package_paths, sprint12_verified_skills
 from cognitive_os.skills.retrieval import SkillContextRetriever
 
 
@@ -61,7 +61,7 @@ async def run() -> int:
         json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
     ).hexdigest()
     print(json.dumps(payload, sort_keys=True, separators=(",", ":")))
-    return 0 if len(rows) == 8 and hydrated.content else 1
+    return 0 if len(rows) == len(seed_package_paths()) and hydrated.content else 1
 
 
 if __name__ == "__main__":
