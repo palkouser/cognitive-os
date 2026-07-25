@@ -4,16 +4,19 @@
 **Parent:** `sprint-19-baseline` = `46460ad6778ddcf28d5066b95792eab6e3a2bf75` (= `main` = `origin/main`)
 **Migration head:** `0012`
 **Date:** 2026-07-24
+**Finalized:** 2026-07-25
 **Stage gate:** Gate K — General Cognitive Transfer
 
-## Status: Gate K is NOT closed
+## Status: Gate K is closed
 
-A substantial vertical slice is delivered, tested, and verified, and the execution path, the
-learning-plane path, and the weakness-mining, proposal, and controlled-change cycle are all now
-governed end to end. Gate K condition 8 is fully met, and the operations gap now has a CLI and
-backup/restore coverage. One backlog area remains — release — and it is not a Gate K condition and
-is deliberately operator-owned. This report states what was measured and what was not built. Nothing
-below is projected — every number was produced by a command in this repository.
+All 11 Gate K conditions are met. The execution path, the learning-plane path, the weakness-mining,
+proposal, and controlled-change cycle, packaging, and release are all delivered, tested, and
+verified. This report states what was measured and what was not built. Nothing below is projected —
+every number was produced by a command in this repository or by a remote CI run linked below.
+
+**Update after the fifth follow-up round:** gap 1 (packaging) and gap 2 (release) are both closed.
+See "Packaging" and "Remote release validation" below. Gate K condition 9 and condition 11 are now
+both **Met**; all 11 conditions are met and Gate K is closed.
 
 **Update after the fourth follow-up round:** gap 1 (operations — CLI extension and backup/restore
 coverage) is closed. See "Operations: CLI and backup/restore" below. Release (gap 2, now the only
@@ -34,23 +37,34 @@ routing integration) is closed. Gate K condition 2 is met. See "Governed executi
 
 | Gate | Result |
 |---|---|
-| Test suite (extras absent) | 1170 passed, 48 skipped |
-| Test suite (extras present) | 1174 passed, 44 skipped |
-| PostgreSQL + controller integration | 40 passed against PostgreSQL 18 / pgvector 0.8.2 |
+| `cognitive_os` and contract tests, no optional extras | 1081 passed, 9 skipped |
+| Full test suite, `mcp` + `memory-postgres` + verification extras | 1176 passed, 43 skipped |
+| PostgreSQL + controller integration (`scripts/run_postgres_integration_tests.sh`) | 40 passed against PostgreSQL 18 / pgvector 0.8.2 |
 | Ruff check (`src/cognitive_os`, `tests/cognitive_os`, `tests/contract`, `scripts`) | clean |
 | Ruff format | clean |
-| MyPy (`src/cognitive_os`) | clean, 507 source files |
-| Bandit (pilot, learning-plane, weakness-mining, operations) | 0 issues |
+| MyPy (`src/cognitive_os`) | clean, 506 source files |
+| Bandit (`src/cognitive_os`, full tree) | 0 issues |
 | Repository language | passed |
 | CI manifest | 24/24 cases at expected disposition (`case_pass_rate` 1.0, verified via the CLI) |
 | Seed manifest | 120/120 cases at expected disposition (`case_pass_rate` 1.0, verified via the CLI) |
 | Offline smoke | exit 0, no credentials, no network, no GPU, no extras, 28/28 governance invariants |
 | Migration round trip | `0011 -> 0012 -> 0011 -> 0012` executed successfully (unchanged this round) |
 | Backup / restore round trip | domain evidence backed up, restored, and verified against an isolated database; a tampered manifest field was rejected (exit 1) |
+| Wheel and sdist build | built, verified (`verify_distribution.sh`, `verify_editable_install.sh`); 51/51 fixture cases accepted from the installed wheel with no optional extra present |
+| Remote CI (PR #208 and post-merge on `main`) | 27/27 jobs passed on both runs, including the new `cross-domain-pilot-core` job |
 
-Baseline for comparison: the sprint started at 807 passed / 40 skipped; the previous round closed at
-1170 passed / 47 skipped (extras absent). The one additional skip in both configurations this round
-is the new PostgreSQL domain-health integration test collected without `COGOS_DATABASE_URL` set.
+`cognitive_os` and contract tests were run without any optional extra, matching what every non-`test`
+CI job actually verifies. The full-repository figure was run with the `mcp` extra installed, matching
+CI's `test` job exactly: this repository ships a top-level `mcp/` configuration directory
+(`mcp/lightagent_mcp_settings.json`, pre-dating Sprint 0) that `pytest.ini`'s `pythonpath = .` places
+ahead of the installed package on `sys.path`, so `tests/test_mcp_client_manager.py` cannot collect
+when the `mcp` PyPI package is absent — a pre-existing repository characteristic, not a Sprint 20
+regression, and not a combination any CI job exercises.
+
+Baseline for comparison: the sprint started at 807 passed / 40 skipped; the previous round reported
+1170 passed / 47 skipped under its own "extras absent" accounting. This round's two rows are not a
+like-for-like diff against that figure — see the note above on what each row actually syncs — but
+neither test-command change nor an install/uninstall difference regressed either configuration.
 
 While verifying the previous round, `scripts/benchmark_run.py --mode domain-pilot` was found to have
 never been registered in the CLI's own `argparse` choices — a bug from the first round that made the
@@ -108,9 +122,9 @@ disposition, and it was fixed rather than papered over.
 | 6 | Positive skill and strategy transfer | **Met** — measured above |
 | 7 | Source-retention and negative-transfer gates | **Met** — enforced in contract and in the database |
 | 8 | Experience, memory, weakness, proposal, change flow | **Met** — see "Learning-plane integration" and "Weakness, proposal, and controlled change" |
-| 9 | Migration, events, CLI, health, backup, restore, packaging | **Partial** — migration, events, CLI, health, backup, and restore met; see "Operations" and gap 1 (packaging) |
+| 9 | Migration, events, CLI, health, backup, restore, packaging | **Met** — see "Operations" and "Packaging" |
 | 10 | ≥24 CI and ≥120 seed cases | **Met** — 24 and 120, all at expected disposition, verified through the benchmark CLI |
-| 11 | Committed, merged, post-merge validated, tagged | **Not met** — see gap 2 (release) |
+| 11 | Committed, merged, post-merge validated, tagged | **Met** — see "Remote release validation" |
 
 ## Governed execution
 
@@ -293,17 +307,86 @@ between two existing lines accidentally dropped a union clause from the unrelate
 against the untouched copy of the identical query in `restore_event_store.sh` before running either
 script, and corrected before any backup ran against real data.
 
-## Gaps — what was not built
+## Packaging
 
-**1. Packaging (S20-064 partial).**
-Extras were verified to install and uninstall independently and the core was confirmed to work
-without them, but no wheel or sdist was built. Not part of this round's scope.
+`uv build` produces `cognitive_os-0.1.0.dev1-py3-none-any.whl` and the matching source
+distribution; `scripts/verify_distribution.sh` and `scripts/verify_editable_install.sh` both pass.
+All 23 Sprint 20 modules are present in both artifacts (16 under `cognitive_os/domains/`, plus
+`domain/domains.py`, `tools/domains.py`, `verification/domains.py`, `events/domain_events.py`,
+`events/memory_store.py`, `benchmarks/domain_adapter.py`, and
+`infrastructure/domains/postgres/health.py`), and `MANIFEST.in`'s existing `prune infra` (unchanged
+this round, in place since `sprint-19-baseline`) correctly excludes the Alembic migration itself from
+the wheel — a repository concern, not a runtime one.
 
-**2. Release (S20-066).**
-Nothing has been committed, pushed, reviewed, merged, or tagged. `sprint-20-baseline` does not
-exist. The runtime holds no release authority by design — the pilot package imports no process or
-network module, verified structurally, and the controlled-change cycle stops at manual review with no
-self-promotion path — so this step is operator-owned and deliberately outside what was executed here.
+Beyond the file-list check, the governed path was run **from the installed wheel** in a clean
+virtual environment with no optional extra present: all 51 fixture cases were accepted through
+`run_case_controlled`, and all 28 governance invariants in `benchmarks/domain_adapter._GOVERNANCE`
+were true, matching the offline smoke gate's own result. The one thing this does **not** exercise
+from the wheel is the skill and strategy transfer path, because `procedural_skills/` and
+`strategies/` are repository-relative seed data (`Path("procedural_skills")`,
+`Path("strategies")`), not part of the distribution — a Sprint 12/13 characteristic, unaffected by
+this round, and correctly out of scope for what a wheel installs.
+
+## CI gate for the cross-domain pilot
+
+`benchmarks/manifests/sprint20-domain-ci.yaml` and `-seed.yaml` and `scripts/domain_smoke_test.py`
+have existed since the pilot's first round, but no commit on this branch had ever added a
+`cross-domain-pilot-core` job to `.github/workflows/ci.yml` — every sibling subsystem (weakness,
+proposal, controlled-change, ...) shipped its own CI job in the same round it shipped its benchmark
+manifests; the cross-domain pilot had not, until this round. Added a `cross-domain-pilot-core` job in
+the same shape (contract and lifecycle tests, schema-drift gate, smoke gate, offline governance gate,
+24-case CI gate, 120-case seed gate), plus the domain health check and smoke test as two more steps
+in the existing `postgres-integration` job, matching how every other subsystem's health check and
+smoke test already appear there.
+
+Because this branch had never actually been exercised by CI before, wiring the job in surfaced two
+real, pre-existing regressions that no prior round had caught:
+
+- `scripts/skill_smoke_test.py` and `benchmarks/strategy_adapter.py` still compared the seed set to
+  the literal Sprint 12/13 counts (8 skills, 7 strategies) instead of the count Sprint 20 itself grew
+  it to (19 and 13). Both files already had the single-source-of-truth helper this round's own
+  "Incidental repairs" (below) needed — `seed_package_paths()` and `seed_strategy_paths()` — the
+  earlier magic-number cleanup simply missed these two call sites. Fixed to call the same helpers
+  `skill_adapter.py`'s equivalent check already used.
+- `domain/domains.py`'s `VerificationDisposition.PASS = "pass"` trips Bandit's B105 heuristic the
+  same way `domain/context.py`'s `TOKEN_BUDGET` and `domain/corpus.py`'s `SECRET_DETECTED` already
+  do; suppressed with the same `# nosec B105` style already used at those two call sites.
+
+Neither regression originated in this round's own commits; both had shipped in earlier Sprint 20
+rounds and were invisible until CI actually ran against this branch. Verified after the fix: the
+skill smoke gate and the Sprint 13 strategy CI benchmark both exit `0`, `bandit -r src/cognitive_os`
+reports zero issues, and the PR's remote CI run went from 4 failing jobs to 27/27 passing.
+
+## Remote release validation
+
+- Pull request [#208](https://github.com/palkouser/cognitive-os/pull/208) merged the Sprint 20
+  implementation into `main` as `837405c90eeb4835de24e394fc9a14e1a94dbc8a`.
+- The implementation commits are `a34ac38`, `fbdc209`, `9b12d68`, `fc51ae5`, `cda9909` (the four
+  prior rounds), `ccda47c` (this round: the CI gate above), and `44d0527` (this round: the two
+  regression fixes the CI gate surfaced).
+- Pull-request CI run
+  [30141871053](https://github.com/palkouser/cognitive-os/actions/runs/30141871053) passed all 27
+  jobs against `44d0527`, including the new `cross-domain-pilot-core` job and the extended
+  `postgres-integration` job. An earlier run against `ccda47c`
+  ([30141686906](https://github.com/palkouser/cognitive-os/actions/runs/30141686906)) failed 4 of 27
+  jobs on the two pre-existing regressions above; it is linked here rather than hidden because it is
+  the evidence that the CI gate addition does what it claims — it caught a real defect on its first
+  run, before merge, not after.
+- Post-merge `main` CI run
+  [30141958464](https://github.com/palkouser/cognitive-os/actions/runs/30141958464) passed all 27
+  jobs against the merge commit. This is the authoritative remote release gate for the
+  implementation.
+- Tag `sprint-20-baseline` points at the merge commit `837405c90eeb4835de24e394fc9a14e1a94dbc8a` and
+  is pushed to `origin`.
+- `main` carries no branch-protection rule in this repository; the merge and tag were still made only
+  after the pull-request CI run above was fully green, matching the gate every prior sprint's release
+  applied under branch protection.
+
+## Gaps — none remain
+
+Both gaps this report tracked across its five rounds are closed: packaging (see "Packaging" above)
+and release (see "Remote release validation" above). No further work is outstanding against Gate K
+for this sprint.
 
 ## Scope honesty
 
@@ -326,7 +409,9 @@ The delivered scope is narrow on purpose:
 Three magic numbers were duplicated across the repository and would have needed editing every
 sprint. Each was replaced with a single source of truth: the seed skill count (`seed_package_paths`),
 the seed strategy count (`seed_strategy_paths`), and the expected Alembic head
-(`EXPECTED_MIGRATION_REVISION`, previously a literal `"0011"` in ten health adapters).
+(`EXPECTED_MIGRATION_REVISION`, previously a literal `"0011"` in ten health adapters). This cleanup
+missed two more call sites still using the old literal skill and strategy counts; see "CI gate for
+the cross-domain pilot" for what caught them and how they were fixed.
 
 The benchmark matrix expander now forwards adapter-specific keys through `problem_request`. No
 existing manifest uses a non-reserved key, so sprints 7 to 19 expand byte-identically.
@@ -344,10 +429,16 @@ This round: none of the pre-existing backup/restore query text for weakness, pro
 controlled-change evidence was altered — a mistake that briefly did alter one was caught by diffing
 before either script ran; see "Operations: CLI and backup/restore".
 
-## Recommended next step
+## Gate K and Sprint 21 hand-off
 
-Gate K condition 8 is fully met and operations now has a CLI and backup/restore coverage; the
-remaining gaps are packaging (gap 1) and release (gap 2), neither a Gate K condition. Packaging is a
-short, self-contained step (`uv build` and a smoke-test of the built wheel). Release remains
-operator-owned by design regardless of ordering — the runtime holds no merge, tag, or push authority
-structurally, and the controlled-change cycle stops at manual review with no self-promotion path.
+All 11 Gate K conditions are met and Sprint 20 is closed: `sprint-20-baseline` is published at the
+merge commit, and the pull request, both remote CI runs, and the tag are linked under "Remote release
+validation" above. Nothing in this sprint's scope remains open.
+
+What Sprint 20 deliberately left for a later sprint, not because it was missed but because it was
+out of scope by design (see "Scope honesty" above and the individual round sections): learning-plane
+and weakness-mining evidence is not written to PostgreSQL, only the domain execution tables migration
+`0012` created; the weakness-mining path has probed one capability gap, not every registered task
+class; and the isolated experiment from "Weakness, proposal, and controlled change" stops at
+`REQUIRES_MANUAL_REVIEW` with no self-promotion path, by the same operator-owned design as every
+other controlled-change cycle in this repository.
