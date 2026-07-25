@@ -87,10 +87,27 @@ class ProvenanceClass(StrEnum):
 
 
 class CounterfactualVariation(StrEnum):
-    """What was varied to obtain a label."""
+    """What was varied to obtain a label.
+
+    The distinction is not cosmetic: it decides which labels are reachable at all.
+    `SELECTION_FORCED` adds a required capability to the run, which only ever adds a
+    conjunct to the acceptance criterion — a monotone restriction, so a rejected baseline
+    can never become accepted and `USEFUL` is impossible by construction rather than
+    merely rare. `SELECTION_REPLACED` executes a different skill instead of the selected
+    one, which is two-sided and can therefore improve an outcome.
+    """
 
     CANDIDATE_REMOVED = "candidate_removed"
     SELECTION_FORCED = "selection_forced"
+    SELECTION_REPLACED = "selection_replaced"
+
+    @property
+    def monotone_restriction(self) -> bool:
+        """Whether the variation can only ever make acceptance harder."""
+        return self in {
+            CounterfactualVariation.CANDIDATE_REMOVED,
+            CounterfactualVariation.SELECTION_FORCED,
+        }
 
 
 class CounterfactualLabelValue(StrEnum):
@@ -229,6 +246,30 @@ class CounterfactualLabel(HashedExperienceContract):
             raise ValueError("a neutral label requires an unchanged outcome")
         if self.label is not CounterfactualLabelValue.NEUTRAL and unchanged:
             raise ValueError("a non-neutral label requires a changed outcome")
+        return self
+
+    @model_validator(mode="after")
+    def a_monotone_variation_cannot_improve_an_outcome(self) -> CounterfactualLabel:
+        """Make the unreachable class unrepresentable instead of merely unobserved.
+
+        Sprint 21A produced 969 labels under `SELECTION_FORCED` with `useful` at zero and
+        recorded that as a corpus property guarded by a tripwire. Measurement in 21B
+        showed the stronger fact: the variation adds a required capability, which can only
+        add a way to fail, so `useful` was never reachable and no future corpus could make
+        it so. A tripwire watching for something impossible watches nothing.
+
+        The impossibility now lives in the type. A harness that needs a three-valued label
+        has to use a genuinely two-sided variation, and one that uses a monotone variation
+        is told so at construction rather than reporting an all-but-empty class.
+        """
+        if (
+            self.label is CounterfactualLabelValue.USEFUL
+            and self.variation_kind.monotone_restriction
+        ):
+            raise ValueError(
+                f"{self.variation_kind.value} only restricts acceptance, so it cannot yield "
+                "a useful label; use selection_replaced for a two-sided variation"
+            )
         return self
 
 

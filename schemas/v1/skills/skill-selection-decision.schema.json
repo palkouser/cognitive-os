@@ -58,7 +58,8 @@
         "missing_requirement",
         "permission_required",
         "invalid_package",
-        "fallback_invalid"
+        "fallback_invalid",
+        "not_permitted"
       ],
       "title": "SkillExclusionReason",
       "type": "string"

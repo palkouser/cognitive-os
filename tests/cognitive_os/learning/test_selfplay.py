@@ -1,13 +1,17 @@
 """Sprint 21A: the self-play counterfactual labelling harness."""
 
+from uuid import uuid4
+
 import pytest
+from pydantic import ValidationError
 
 from cognitive_os.domain.learned import (
+    CounterfactualLabel,
     CounterfactualLabelValue,
     CounterfactualVariation,
     ProvenanceClass,
 )
-from cognitive_os.domains.fixtures import build_all_cases
+from cognitive_os.domains.fixtures import FIXTURE_TIME, build_all_cases
 from cognitive_os.learning.selfplay import (
     SURFACE,
     balance_of,
@@ -78,18 +82,65 @@ async def test_a_bounded_corpus_is_not_degenerate() -> None:
 
 
 @pytest.mark.asyncio
-async def test_useful_is_unreachable_while_the_baseline_always_succeeds() -> None:
-    """An honest property of this corpus, asserted so a future change is noticed.
+async def test_this_variation_is_monotone_so_useful_is_impossible_not_merely_absent() -> None:
+    """Replaces a tripwire that was watching for something that could not happen.
 
-    Every fixture case is accepted at baseline, so forcing a candidate can only
-    leave the outcome unchanged or break it. The three-valued label is therefore
-    binary in practice here. A corpus whose baseline can fail would reach
-    `USEFUL`, and this test is the tripwire that says so.
+    The earlier version asserted `useful == 0` and explained it as a property of the
+    fixtures: every baseline is accepted, so forcing a candidate can only break things.
+    Measurement in 21B showed the stronger fact. `SELECTION_FORCED` *adds* a required
+    capability, which only ever adds a conjunct to the acceptance criterion, so a rejected
+    baseline can never be repaired by it. No corpus could produce `useful` here, and a
+    tripwire watching for the impossible would never have fired.
+
+    The impossibility is now in the contract, so this test asserts that instead — and
+    `learning/replacement.py` provides the two-sided variation for the cases where a
+    three-valued label is genuinely wanted.
     """
     corpus = await build_corpus(case_limit=5)
     assert corpus.balance.useful == 0
     assert corpus.balance.neutral > 0
     assert corpus.balance.harmful > 0
+    assert CounterfactualVariation.SELECTION_FORCED.monotone_restriction
+    assert all(
+        label.variation_kind is CounterfactualVariation.SELECTION_FORCED for label in corpus.labels
+    )
+
+
+def test_a_monotone_variation_cannot_be_recorded_as_useful() -> None:
+    """The impossibility is a type error now, not a corpus observation."""
+    with pytest.raises(ValidationError, match="cannot yield a useful label"):
+        CounterfactualLabel(
+            label_id=uuid4(),
+            surface=SURFACE,
+            case_id="domain-truth-table",
+            variation_kind=CounterfactualVariation.SELECTION_FORCED,
+            variation_identity="logic-formalization",
+            baseline_outcome="rejected",
+            varied_outcome="accepted",
+            label=CounterfactualLabelValue.USEFUL,
+            determinism_proof="d" * 64,
+            provenance_class=ProvenanceClass.SELF_PLAY,
+            created_at=FIXTURE_TIME,
+        )
+
+
+def test_the_two_sided_variation_accepts_a_useful_label() -> None:
+    """`SELECTION_REPLACED` is two-sided, so all three classes are representable."""
+    label = CounterfactualLabel(
+        label_id=uuid4(),
+        surface=SURFACE,
+        case_id="domain-truth-table",
+        variation_kind=CounterfactualVariation.SELECTION_REPLACED,
+        variation_identity="constraint-solving",
+        baseline_outcome="rejected",
+        varied_outcome="accepted",
+        label=CounterfactualLabelValue.USEFUL,
+        determinism_proof="d" * 64,
+        provenance_class=ProvenanceClass.SELF_PLAY,
+        created_at=FIXTURE_TIME,
+    )
+    assert label.label is CounterfactualLabelValue.USEFUL
+    assert not label.variation_kind.monotone_restriction
 
 
 def test_balance_of_an_empty_label_set_is_not_degenerate() -> None:

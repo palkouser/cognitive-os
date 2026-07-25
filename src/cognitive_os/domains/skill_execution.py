@@ -37,6 +37,8 @@ from cognitive_os.domain.skills import (
     SkillInputBinding,
     SkillRequirementType,
     SkillRevision,
+    SkillSelectionDecision,
+    SkillSelectionReason,
 )
 from cognitive_os.routing.service import build_task_signature
 
@@ -91,10 +93,22 @@ class DomainSkillRun:
     result: SkillExecutionResult
     controlled: ControlledRun
     signature: TaskSignature
+    #: The Skill Engine's selection decision. Present since the domain path stopped
+    #: resolving its skill by static table position; `None` only when a caller forced a
+    #: specific revision and no selection was asked for.
+    selection: SkillSelectionDecision | None = None
 
     @property
     def accepted(self) -> bool:
         return self.result.status is SkillExecutionStatus.ACCEPTED
+
+    @property
+    def selected_by_statistics(self) -> bool:
+        """Whether accumulated outcomes, rather than a name, broke the tie."""
+        return (
+            self.selection is not None
+            and self.selection.reason is SkillSelectionReason.VERIFIED_STATISTICS
+        )
 
 
 def declared_verifier_capabilities(revision: SkillRevision) -> tuple[str, ...]:

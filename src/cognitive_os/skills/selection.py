@@ -1,5 +1,6 @@
 """Deterministic, host-authorized skill applicability and selection."""
 
+from collections.abc import Sequence
 from hashlib import sha256
 from uuid import NAMESPACE_URL, uuid5
 
@@ -70,6 +71,42 @@ def _requirements_available(revision: SkillRevision, request: SkillSelectionRequ
     )
 
 
+def _selection_reason(
+    candidates: Sequence[SkillSelectionCandidate], selected: SkillSelectionCandidate | None
+) -> SkillSelectionReason | None:
+    """Name the key that actually discriminated, not an attribute the winner happens to have.
+
+    This used to read the winner's own scores: any candidate with a non-zero specificity
+    reported `EXACT_SIGNATURE`, even when every candidate scored the same specificity and
+    something further down the ordering decided. On the cross-domain path that made the
+    record actively misleading — two physics skills tie at specificity 2 and scope 2, and
+    accumulated statistics break the tie, yet the decision claimed `exact_signature`.
+
+    With one candidate nothing was discriminated against, so the ordering never ran and
+    the winner's own scores are the only honest thing to report.
+    """
+    if selected is None:
+        return None
+    if len(candidates) == 1:
+        return (
+            SkillSelectionReason.EXACT_SIGNATURE
+            if selected.specificity_score
+            else SkillSelectionReason.SCOPE_SPECIFICITY
+            if selected.scope_score > 1
+            else SkillSelectionReason.CANONICAL_TIE_BREAK
+        )
+    runner_up = candidates[1]
+    if selected.specificity_score != runner_up.specificity_score:
+        return SkillSelectionReason.EXACT_SIGNATURE
+    if selected.scope_score != runner_up.scope_score:
+        return SkillSelectionReason.SCOPE_SPECIFICITY
+    if selected.statistics_score != runner_up.statistics_score:
+        return SkillSelectionReason.VERIFIED_STATISTICS
+    # Safety penalty and context cost are cost keys, not merit keys; if they or the
+    # canonical identity decided, the honest answer is that merit did not.
+    return SkillSelectionReason.CANONICAL_TIE_BREAK
+
+
 class SkillSelectionService:
     def __init__(
         self,
@@ -90,6 +127,11 @@ class SkillSelectionService:
             detail = ""
             if revision.status not in request.allowed_statuses:
                 reason, detail = SkillExclusionReason.STATUS, "status_not_authorized"
+            elif (
+                request.permitted_canonical_names
+                and item.identity.canonical_name not in request.permitted_canonical_names
+            ):
+                reason, detail = SkillExclusionReason.NOT_PERMITTED, "outside_permitted_set"
             elif not _scope_matches(item, request):
                 reason, detail = SkillExclusionReason.SCOPE, "scope_mismatch"
             elif not sensitivity_allows(
@@ -164,17 +206,7 @@ class SkillSelectionService:
             request_id=request.request_id,
             selected_skill_id=selected.skill_id if selected else None,
             selected_revision=selected.revision if selected else None,
-            reason=(
-                SkillSelectionReason.EXACT_SIGNATURE
-                if selected and selected.specificity_score
-                else SkillSelectionReason.SCOPE_SPECIFICITY
-                if selected and selected.scope_score > 1
-                else SkillSelectionReason.VERIFIED_STATISTICS
-                if selected and selected.statistics_score
-                else SkillSelectionReason.CANONICAL_TIE_BREAK
-                if selected
-                else None
-            ),
+            reason=_selection_reason(candidates, selected),
             candidates=tuple(candidates),
             exclusions=tuple(
                 sorted(exclusions, key=lambda item: (str(item.skill_id), item.revision))

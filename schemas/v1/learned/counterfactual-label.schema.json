@@ -11,10 +11,11 @@
       "type": "string"
     },
     "CounterfactualVariation": {
-      "description": "What was varied to obtain a label.",
+      "description": "What was varied to obtain a label.\n\nThe distinction is not cosmetic: it decides which labels are reachable at all.\n`SELECTION_FORCED` adds a required capability to the run, which only ever adds a\nconjunct to the acceptance criterion — a monotone restriction, so a rejected baseline\ncan never become accepted and `USEFUL` is impossible by construction rather than\nmerely rare. `SELECTION_REPLACED` executes a different skill instead of the selected\none, which is two-sided and can therefore improve an outcome.",
       "enum": [
         "candidate_removed",
-        "selection_forced"
+        "selection_forced",
+        "selection_replaced"
       ],
       "title": "CounterfactualVariation",
       "type": "string"

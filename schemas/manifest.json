@@ -3366,7 +3366,7 @@
     {
       "file": "v1/learned/counterfactual-label.schema.json",
       "model": "CounterfactualLabel",
-      "sha256": "3b24a23ef93a44cea947823c964b9b52642722f9576c67acada0f209ce34c5d7"
+      "sha256": "348faeb7a2de6310c79b3890c24c23d823aa28444baf5d03c81ce800d8f86fae"
     },
     {
       "file": "v1/learned/distribution-comparison.schema.json",
@@ -4341,17 +4341,17 @@
     {
       "file": "v1/skills/skill-selection-decision.schema.json",
       "model": "SkillSelectionDecision",
-      "sha256": "2042f39faf363d9d04cf36550751f2f43ae8a91c95318b5a6fcef500521f0ec1"
+      "sha256": "ac1886d8df142175f513acc6661de7574d6fcfeea03ae984cb739f07f17f4669"
     },
     {
       "file": "v1/skills/skill-selection-exclusion.schema.json",
       "model": "SkillSelectionExclusion",
-      "sha256": "cab14bd3ebbbb68474cd1068c49ea5189ccd33b3fa9b9fdb051c6918f2130369"
+      "sha256": "d63a897e3150f212c5dd66e2045a28f2beaa66511f60c9bf2f6f9681d62e191f"
     },
     {
       "file": "v1/skills/skill-selection-request.schema.json",
       "model": "SkillSelectionRequest",
-      "sha256": "337df0715dbd41ebc9dfa2b4531ef0ed60897db5fe0f32d9939dbc45643e1763"
+      "sha256": "cede969a4e828b6240f89bf8e41ee6c92f77370e60c6ae3572dc50bdf172081f"
     },
     {
       "file": "v1/skills/skill-source-ref.schema.json",

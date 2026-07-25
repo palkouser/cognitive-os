@@ -81,14 +81,38 @@ Stated so that no later reader infers more than was built.
   delivered; the `learned_*` tables the plan sketches in section 10 are not, because no
   component was promoted and nothing needs to persist an assessment yet.
 
-## Follow-up recorded, not silently dropped
+## Follow-up: all three items are now closed
 
-1. **The domain path performs no skill selection.** `run_case_as_skill` resolves the skill
-   by static lookup and never calls `SkillSelectionService`. That is why the surface had no
-   decision to learn. Wiring the selector in is a change to governed execution behaviour
-   and needs its own controlled change.
-2. **`SkillSelectionCandidate.statistics_score` is still inert at 0**, so ties break on
-   `str(skill_id)`. The fix is a deterministic aggregation over accumulated outcomes, not a
-   learned component.
-3. **The `useful` label class is unreachable** while every fixture baseline is accepted,
-   making a three-valued label binary in practice. Held as a tripwire test.
+Recorded here as resolved rather than deleted, so the record shows what was found.
+Full analysis: [ADR 0084](../../adr/0084-governed-skill-selection-on-the-domain-path.md).
+
+1. **The domain path performed no skill selection — closed.** `run_case_as_skill` took
+   `entry.skills[0]`, discarding a real choice: all 25 problem types offer two candidates.
+   The Skill Engine now selects, with `verifier_capabilities` set to the case's own
+   `required_verifiers`, and the decision is recorded on `DomainSkillRun.selection`.
+   Wiring it in immediately exposed that preconditions do *not* scope selection to a
+   problem type's permitted set — selection reached `deterministic-arithmetic`, a
+   legitimate mathematics skill outside the permitted list — so
+   `SkillSelectionRequest.permitted_canonical_names` was added and non-permitted skills are
+   recorded as `NOT_PERMITTED` exclusions rather than filtered out of sight.
+2. **`statistics_score` inert — closed, and the diagnosis was wrong.** The deterministic
+   aggregation already existed and was already written after every execution; the gap was
+   that a fresh registry per case meant every selection read an empty log. Sharing the
+   registry is the whole fix. Measured over 17 physics cases: 5 honest
+   `canonical_tie_break` below the sample threshold, then **12 selections decided by
+   `verified_statistics`**. A second defect surfaced: `SkillSelectionDecision.reason` read
+   the winner's own attributes and claimed `exact_signature` while statistics were
+   deciding; it now names the key that actually discriminated.
+3. **`useful` unreachable — closed, and it was stronger than "unreachable".** The variation
+   *adds* a required capability, a monotone restriction, so a rejected baseline could never
+   be repaired and no corpus could ever have produced `useful`. The tripwire was watching
+   for the impossible. `CounterfactualVariation` now marks monotone variations and the
+   contract refuses `USEFUL` for one; `SELECTION_REPLACED` provides the genuinely two-sided
+   variation. Measured: 51 labels, useful=0, neutral=17, harmful=34 — `useful` is now
+   **reachable by construction and absent because the selector never picks a loser**, which
+   is a property of the system working, and a different fact from the one previously
+   recorded.
+
+None of this changes the Gate L verdict. Every case still selects and is still accepted, so
+no outcome changed; and the 21B null result stands, because the deterministic rule the
+learned component tied is now the selector itself, still correct.

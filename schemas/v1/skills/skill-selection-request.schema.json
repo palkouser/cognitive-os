@@ -277,6 +277,16 @@
       "title": "Maximum Candidates",
       "type": "integer"
     },
+    "permitted_canonical_names": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Permitted Canonical Names",
+      "type": "array",
+      "uniqueItems": true
+    },
     "provider_suggestion": {
       "anyOf": [
         {

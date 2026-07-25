@@ -179,9 +179,7 @@ async def test_approximate_retrieval_reaches_the_index_and_exact_retrieval_canno
         )
         expression = repository._vector_distance(query)  # noqa: SLF001
         rendered[mode] = str(
-            expression.compile(
-                dialect=admin.dialect, compile_kwargs={"literal_binds": True}
-            )
+            expression.compile(dialect=admin.dialect, compile_kwargs={"literal_binds": True})
         )
     assert rendered[MemoryRetrievalMode.VECTOR] != rendered[MemoryRetrievalMode.VECTOR_APPROXIMATE]
 
@@ -190,14 +188,20 @@ async def test_approximate_retrieval_reaches_the_index_and_exact_retrieval_canno
     rows = ",".join(
         "({dim}, '[{values}]')".format(
             dim=dimension,
-            values=",".join(f"{((seed * 7 + axis * 13) % 97) / 97:.6f}" for axis in range(dimension)),
+            values=",".join(
+                f"{((seed * 7 + axis * 13) % 97) / 97:.6f}" for axis in range(dimension)
+            ),
         )
         for seed in range(4_000)
     )
     try:
         async with admin.begin() as connection:
-            await connection.execute(text(f"CREATE TABLE {scratch} "
-                                          "(id serial primary key, dimension int, embedding vector)"))
+            await connection.execute(
+                text(
+                    f"CREATE TABLE {scratch} "
+                    "(id serial primary key, dimension int, embedding vector)"
+                )
+            )
             await connection.execute(
                 text(f"INSERT INTO {scratch} (dimension, embedding) VALUES {rows}")
             )
