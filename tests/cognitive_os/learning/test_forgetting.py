@@ -11,10 +11,14 @@ import pytest
 from pydantic import ValidationError
 
 from cognitive_os.domain.learned import (
+    BaselineKind,
+    BaselineLadder,
+    BaselineRung,
     ForgettingVerdict,
     LearnedPromotionAssessment,
     LearnedPromotionDecision,
     MandatoryPathInvariance,
+    OutOfDistributionAssessment,
 )
 from cognitive_os.domains.fixtures import FIXTURE_TIME, build_all_cases
 from cognitive_os.infrastructure.learned.reference import AlwaysAbstainingRanker
@@ -23,6 +27,48 @@ from cognitive_os.learning.forgetting import assess_forgetting, measure_retentio
 CASES = build_all_cases()
 SAMPLE = CASES[:6]
 DIGEST = "a" * 64
+
+
+def honest_ladder() -> BaselineLadder:
+    """A ladder whose deterministic rung sits at the baseline the test claims."""
+    return BaselineLadder(
+        ladder_id=uuid4(),
+        surface="skill.selection",
+        split="group-aware-by-case",
+        rungs=(
+            BaselineRung(
+                name="majority",
+                kind=BaselineKind.TRIVIAL,
+                score=Decimal("0.50"),
+                evaluated_count=100,
+                abstained=0,
+                confident_errors=50,
+            ),
+            BaselineRung(
+                name="requirements_available",
+                kind=BaselineKind.DETERMINISTIC,
+                score=Decimal("0.60"),
+                evaluated_count=100,
+                abstained=0,
+                confident_errors=40,
+            ),
+        ),
+        created_at=FIXTURE_TIME,
+    )
+
+
+def abstaining_out_of_distribution() -> OutOfDistributionAssessment:
+    """Clean on the abstention gate, so the forgetting gate is what is under test."""
+    return OutOfDistributionAssessment(
+        assessment_id=uuid4(),
+        component_id="reference.ranker.abstaining",
+        held_out_groups=("mathematics",),
+        evaluated_count=100,
+        abstained=100,
+        confident_errors=0,
+        confidence_threshold=Decimal("0.5"),
+        created_at=FIXTURE_TIME,
+    )
 
 
 def proven_invariance() -> MandatoryPathInvariance:
@@ -129,6 +175,8 @@ async def test_a_regressed_assessment_cannot_reach_an_eligible_promotion() -> No
             minimum_material_improvement=Decimal("0.05"),
             forgetting=regressed,
             invariance=proven_invariance(),
+            baseline_ladder=honest_ladder(),
+            out_of_distribution=abstaining_out_of_distribution(),
             decision=LearnedPromotionDecision.ELIGIBLE_FOR_OPERATOR_APPROVAL,
             reason="large target improvement",
             created_at=FIXTURE_TIME,

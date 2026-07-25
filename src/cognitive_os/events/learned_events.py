@@ -50,6 +50,14 @@ class LearnedCapacityMeasured(LearnedEventPayload):
     event_type = "learned.capacity_measured"
 
 
+class LearnedBaselineLadderEvaluated(LearnedEventPayload):
+    event_type = "learned.baseline_ladder_evaluated"
+
+
+class LearnedOutOfDistributionAssessed(LearnedEventPayload):
+    event_type = "learned.out_of_distribution_assessed"
+
+
 class LearnedPromotionAssessed(LearnedEventPayload):
     event_type = "learned.promotion_assessed"
 
@@ -75,6 +83,8 @@ LEARNED_EVENT_MODELS: tuple[type[EventPayload], ...] = (
     LearnedInvarianceVerified,
     LearnedDistributionCompared,
     LearnedCapacityMeasured,
+    LearnedBaselineLadderEvaluated,
+    LearnedOutOfDistributionAssessed,
     LearnedPromotionAssessed,
     LearnedComponentEnabled,
     LearnedComponentDisabled,

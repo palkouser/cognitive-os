@@ -12,6 +12,9 @@ import pytest
 from pydantic import ValidationError
 
 from cognitive_os.domain.learned import (
+    BaselineKind,
+    BaselineLadder,
+    BaselineRung,
     CorpusRole,
     CounterfactualLabel,
     CounterfactualLabelValue,
@@ -35,6 +38,7 @@ from cognitive_os.domain.learned import (
     LearnedShadowResult,
     MandatoryPathInvariance,
     NumericFeature,
+    OutOfDistributionAssessment,
     ProvenanceClass,
     SituationVector,
 )
@@ -399,6 +403,47 @@ class TestDistributionComparison:
 
 
 class TestPromotionGate:
+    def ladder(self, deterministic: str = "0.60") -> BaselineLadder:
+        """A ladder whose strongest non-learned rung is the deterministic one."""
+        return BaselineLadder(
+            ladder_id=uuid4(),
+            surface="context.reranking",
+            split="group-aware-by-case",
+            rungs=(
+                BaselineRung(
+                    name="majority",
+                    kind=BaselineKind.TRIVIAL,
+                    score=Decimal("0.40"),
+                    evaluated_count=200,
+                    abstained=0,
+                    confident_errors=120,
+                ),
+                BaselineRung(
+                    name="weighted_rrf",
+                    kind=BaselineKind.DETERMINISTIC,
+                    score=Decimal(deterministic),
+                    evaluated_count=200,
+                    abstained=0,
+                    confident_errors=80,
+                ),
+            ),
+            created_at=NOW,
+        )
+
+    def out_of_distribution(self, **overrides: object) -> OutOfDistributionAssessment:
+        payload: dict[str, object] = {
+            "assessment_id": uuid4(),
+            "component_id": "context.reranker.knn",
+            "held_out_groups": ("mathematics",),
+            "evaluated_count": 200,
+            "abstained": 200,
+            "confident_errors": 0,
+            "confidence_threshold": Decimal("0.5"),
+            "created_at": NOW,
+        }
+        payload.update(overrides)
+        return OutOfDistributionAssessment(**payload)  # type: ignore[arg-type]
+
     def assessment(self, **overrides: object) -> LearnedPromotionAssessment:
         payload: dict[str, object] = {
             "assessment_id": uuid4(),
@@ -409,6 +454,8 @@ class TestPromotionGate:
             "minimum_material_improvement": Decimal("0.05"),
             "forgetting": forgetting(),
             "invariance": invariance(),
+            "baseline_ladder": self.ladder(),
+            "out_of_distribution": self.out_of_distribution(),
             "decision": LearnedPromotionDecision.ELIGIBLE_FOR_OPERATOR_APPROVAL,
             "reason": "materially better with retention and invariance proven",
             "created_at": NOW,

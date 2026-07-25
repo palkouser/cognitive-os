@@ -401,6 +401,11 @@
       "schema_version": 1
     },
     {
+      "event_type": "learned.baseline_ladder_evaluated",
+      "file": "v1/events/learned.baseline_ladder_evaluated.v1.schema.json",
+      "schema_version": 1
+    },
+    {
       "event_type": "learned.capacity_measured",
       "file": "v1/events/learned.capacity_measured.v1.schema.json",
       "schema_version": 1
@@ -443,6 +448,11 @@
     {
       "event_type": "learned.invariance_verified",
       "file": "v1/events/learned.invariance_verified.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "learned.out_of_distribution_assessed",
+      "file": "v1/events/learned.out_of_distribution_assessed.v1.schema.json",
       "schema_version": 1
     },
     {
@@ -2529,6 +2539,11 @@
       "sha256": "83e012136617504c2efd2d7548dbbacccb122baffdfd9bdd20617d3fbe9926b2"
     },
     {
+      "file": "v1/events/learned.baseline_ladder_evaluated.v1.schema.json",
+      "model": "LearnedBaselineLadderEvaluated",
+      "sha256": "25469413e4bb788c5ecebf73bd6974e71433ba38fffe97af44a3c5365c286373"
+    },
+    {
       "file": "v1/events/learned.capacity_measured.v1.schema.json",
       "model": "LearnedCapacityMeasured",
       "sha256": "89b5ad81524da7a6a4c597eb83b2ead838f019fa5d170e4b67f1512d8cc3ad19"
@@ -2572,6 +2587,11 @@
       "file": "v1/events/learned.invariance_verified.v1.schema.json",
       "model": "LearnedInvarianceVerified",
       "sha256": "f7be9c4984cf3157ef4c1786f968af912cf78522b8ed68bd5cbd09ff07253424"
+    },
+    {
+      "file": "v1/events/learned.out_of_distribution_assessed.v1.schema.json",
+      "model": "LearnedOutOfDistributionAssessed",
+      "sha256": "6c238b5a180a97245cdff445440a71b7f8f4c3525d77bb6ab17974f918be6ca7"
     },
     {
       "file": "v1/events/learned.promotion_assessed.v1.schema.json",
@@ -3334,6 +3354,16 @@
       "sha256": "54d088dd1a6f55a63b233073b8a0daf6a46022fb9b52121829838da8c675dec3"
     },
     {
+      "file": "v1/learned/baseline-ladder.schema.json",
+      "model": "BaselineLadder",
+      "sha256": "d9ea9520e1f0478f661af8b93a1cbaa49bf2060a9e319a21cbd81e81f1c9b300"
+    },
+    {
+      "file": "v1/learned/baseline-rung.schema.json",
+      "model": "BaselineRung",
+      "sha256": "cfbcce8136b52e8ed2edf0fb1b478f0337ef0773cf21ebc23ecb4c8e21997af9"
+    },
+    {
       "file": "v1/learned/counterfactual-label.schema.json",
       "model": "CounterfactualLabel",
       "sha256": "3b24a23ef93a44cea947823c964b9b52642722f9576c67acada0f209ce34c5d7"
@@ -3376,7 +3406,7 @@
     {
       "file": "v1/learned/learned-promotion-assessment.schema.json",
       "model": "LearnedPromotionAssessment",
-      "sha256": "8c145eedae82e062e530b182dde4dc1c19be05609b18bf5d754519485cd8cac9"
+      "sha256": "20e4e5390894010407fdab22a2515dd8942fed1bde4826e4a80bcb3c07319c06"
     },
     {
       "file": "v1/learned/learned-shadow-result.schema.json",
@@ -3392,6 +3422,11 @@
       "file": "v1/learned/numeric-feature.schema.json",
       "model": "NumericFeature",
       "sha256": "db95bdc3542811916b51bfb773d798fba1320068987b4c2f3275e507e3130c7c"
+    },
+    {
+      "file": "v1/learned/out-of-distribution-assessment.schema.json",
+      "model": "OutOfDistributionAssessment",
+      "sha256": "b0e64940cbd899ce741e673ae4b9adb30b2221819a87acbcdeb7a7d290264a9a"
     },
     {
       "file": "v1/learned/retrieval-capacity-envelope.schema.json",

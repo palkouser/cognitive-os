@@ -532,6 +532,124 @@ class RetrievalCapacityEnvelope(HashedExperienceContract):
         return self
 
 
+class BaselineKind(StrEnum):
+    """What sort of comparison a ladder rung is.
+
+    The distinction exists because a `TRIVIAL` rung is not a baseline anyone should be
+    credited for beating, and the plan's trial order says so: "a complex model is never
+    promoted for beating a weak straw man."
+    """
+
+    #: Majority class, constant prediction, random — a floor, never a comparison.
+    TRIVIAL = "trivial"
+    #: An existing deterministic rule or the shipped deterministic path.
+    DETERMINISTIC = "deterministic"
+    #: A learned component.
+    LEARNED = "learned"
+
+
+class BaselineRung(HashedExperienceContract):
+    """One evaluated comparison on the baseline ladder."""
+
+    name: NonEmptyStr
+    kind: BaselineKind
+    score: Decimal = Field(ge=0, le=1)
+    evaluated_count: int = Field(ge=1)
+    abstained: int = Field(ge=0)
+    confident_errors: int = Field(ge=0)
+
+    @model_validator(mode="after")
+    def counts_fit_the_sample(self) -> BaselineRung:
+        if self.abstained > self.evaluated_count:
+            raise ValueError("a rung cannot abstain more often than it was evaluated")
+        if self.confident_errors > self.evaluated_count:
+            raise ValueError("a rung cannot err more often than it was evaluated")
+        return self
+
+
+class BaselineLadder(HashedExperienceContract):
+    """Every comparison actually run, so the strongest one cannot be omitted.
+
+    This contract exists because of a measurement. On the skill-selection corpus a kNN
+    scored 1.000 against a 0.567 majority class — a 43-point apparent win — while the
+    correct deterministic rule also scored 1.000. Reporting only the majority baseline
+    would have made a useless component look excellent, and nothing in the promotion
+    gate prevented it: `baseline_metric` was whatever the caller passed.
+
+    So the ladder is mandatory, it must contain a real deterministic rung, and the
+    promotion comparison is taken against `strongest_non_learned` rather than against a
+    number chosen freely.
+    """
+
+    ladder_id: UUID
+    surface: NonEmptyStr
+    #: How the sample was split. Recorded because a ladder measured without a
+    #: group-aware split measures memorisation.
+    split: NonEmptyStr
+    rungs: tuple[BaselineRung, ...] = Field(min_length=2)
+    created_at: UtcDatetime
+
+    @field_validator("rungs")
+    @classmethod
+    def unique_rung_names(cls, value: tuple[BaselineRung, ...]) -> tuple[BaselineRung, ...]:
+        if len({item.name for item in value}) != len(value):
+            raise ValueError("baseline rung names must be unique")
+        return value
+
+    @model_validator(mode="after")
+    def a_deterministic_rung_is_mandatory(self) -> BaselineLadder:
+        if not any(rung.kind is BaselineKind.DETERMINISTIC for rung in self.rungs):
+            raise ValueError(
+                "a baseline ladder without a deterministic rung compares against a straw man"
+            )
+        return self
+
+    @property
+    def strongest_non_learned(self) -> Decimal:
+        """The score a learned component actually has to beat."""
+        return max(rung.score for rung in self.rungs if rung.kind is not BaselineKind.LEARNED)
+
+    @property
+    def strongest_deterministic_name(self) -> str:
+        best = max(
+            (rung for rung in self.rungs if rung.kind is BaselineKind.DETERMINISTIC),
+            key=lambda rung: rung.score,
+        )
+        return best.name
+
+
+class OutOfDistributionAssessment(HashedExperienceContract):
+    """Whether a component knows that it does not know.
+
+    Also earned by measurement: held out one domain at a time, the kNN kept answering —
+    zero abstentions — and was confidently wrong 80 to 90 times per domain, because
+    feature overlap stayed high while the capability vocabulary was entirely disjoint.
+    A component that cannot recognise an unseen domain must not reach an operator.
+    """
+
+    assessment_id: UUID
+    component_id: NonEmptyStr
+    held_out_groups: tuple[NonEmptyStr, ...] = Field(min_length=1)
+    evaluated_count: int = Field(ge=1)
+    abstained: int = Field(ge=0)
+    confident_errors: int = Field(ge=0)
+    confidence_threshold: Decimal = Field(ge=0, le=1)
+    created_at: UtcDatetime
+
+    @property
+    def abstains_when_ignorant(self) -> bool:
+        """No confident answer on a group the component never trained on."""
+        return self.confident_errors == 0
+
+    @model_validator(mode="after")
+    def counts_fit_the_sample(self) -> OutOfDistributionAssessment:
+        if self.abstained > self.evaluated_count:
+            raise ValueError("a component cannot abstain more often than it was evaluated")
+        if self.confident_errors > self.evaluated_count:
+            raise ValueError("a component cannot err more often than it was evaluated")
+        return self
+
+
 class LearnedPromotionAssessment(HashedExperienceContract):
     """The gate. Improvement alone never makes a component eligible."""
 
@@ -543,10 +661,28 @@ class LearnedPromotionAssessment(HashedExperienceContract):
     minimum_material_improvement: Decimal = Field(ge=0)
     forgetting: ForgettingAssessment
     invariance: MandatoryPathInvariance
+    #: Mandatory: the comparison a learned component must survive. Optional would mean
+    #: the straw-man guard could be skipped by omitting the field.
+    baseline_ladder: BaselineLadder
+    out_of_distribution: OutOfDistributionAssessment
     distribution: DistributionComparison | None = None
     decision: LearnedPromotionDecision
     reason: NonEmptyStr
     created_at: UtcDatetime
+
+    @model_validator(mode="after")
+    def the_baseline_is_the_strongest_one_measured(self) -> LearnedPromotionAssessment:
+        """Holds whatever the decision is, so a recorded null result stays honest too.
+
+        `baseline_metric` used to be free text in effect. Pinning it to the ladder is
+        what turns "we happened not to be fooled" into "we cannot be fooled".
+        """
+        if self.baseline_metric != self.baseline_ladder.strongest_non_learned:
+            raise ValueError(
+                "the baseline metric must be the strongest non-learned rung on the ladder, "
+                f"which is {self.baseline_ladder.strongest_non_learned}"
+            )
+        return self
 
     @model_validator(mode="after")
     def eligibility_requires_every_gate(self) -> LearnedPromotionAssessment:
@@ -559,6 +695,11 @@ class LearnedPromotionAssessment(HashedExperienceContract):
             raise ValueError("unproven mandatory-path invariance cannot be eligible for approval")
         if not self.descriptor.promotable:
             raise ValueError("a component that cannot abstain cannot be eligible for approval")
+        if not self.out_of_distribution.abstains_when_ignorant:
+            raise ValueError(
+                "a component that answers confidently on an unseen group cannot be eligible: "
+                f"{self.out_of_distribution.confident_errors} confident errors were measured"
+            )
         if self.candidate_metric - self.baseline_metric < self.minimum_material_improvement:
             raise ValueError("eligibility requires a material improvement over the baseline")
         return self
@@ -578,5 +719,8 @@ PUBLIC_LEARNED_CONTRACTS: tuple[type[HashedExperienceContract], ...] = (
     ForgettingAssessment,
     DistributionComparison,
     RetrievalCapacityEnvelope,
+    BaselineRung,
+    BaselineLadder,
+    OutOfDistributionAssessment,
     LearnedPromotionAssessment,
 )

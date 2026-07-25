@@ -1,5 +1,112 @@
 {
   "$defs": {
+    "BaselineKind": {
+      "description": "What sort of comparison a ladder rung is.\n\nThe distinction exists because a `TRIVIAL` rung is not a baseline anyone should be\ncredited for beating, and the plan's trial order says so: \"a complex model is never\npromoted for beating a weak straw man.\"",
+      "enum": [
+        "trivial",
+        "deterministic",
+        "learned"
+      ],
+      "title": "BaselineKind",
+      "type": "string"
+    },
+    "BaselineLadder": {
+      "additionalProperties": false,
+      "description": "Every comparison actually run, so the strongest one cannot be omitted.\n\nThis contract exists because of a measurement. On the skill-selection corpus a kNN\nscored 1.000 against a 0.567 majority class — a 43-point apparent win — while the\ncorrect deterministic rule also scored 1.000. Reporting only the majority baseline\nwould have made a useless component look excellent, and nothing in the promotion\ngate prevented it: `baseline_metric` was whatever the caller passed.\n\nSo the ladder is mandatory, it must contain a real deterministic rung, and the\npromotion comparison is taken against `strongest_non_learned` rather than against a\nnumber chosen freely.",
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "ladder_id": {
+          "format": "uuid",
+          "title": "Ladder Id",
+          "type": "string"
+        },
+        "rungs": {
+          "items": {
+            "$ref": "#/$defs/BaselineRung"
+          },
+          "minItems": 2,
+          "title": "Rungs",
+          "type": "array"
+        },
+        "split": {
+          "minLength": 1,
+          "title": "Split",
+          "type": "string"
+        },
+        "surface": {
+          "minLength": 1,
+          "title": "Surface",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ladder_id",
+        "surface",
+        "split",
+        "rungs",
+        "created_at"
+      ],
+      "title": "BaselineLadder",
+      "type": "object"
+    },
+    "BaselineRung": {
+      "additionalProperties": false,
+      "description": "One evaluated comparison on the baseline ladder.",
+      "properties": {
+        "abstained": {
+          "minimum": 0,
+          "title": "Abstained",
+          "type": "integer"
+        },
+        "confident_errors": {
+          "minimum": 0,
+          "title": "Confident Errors",
+          "type": "integer"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "evaluated_count": {
+          "minimum": 1,
+          "title": "Evaluated Count",
+          "type": "integer"
+        },
+        "kind": {
+          "$ref": "#/$defs/BaselineKind"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "score": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Score",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "kind",
+        "score",
+        "evaluated_count",
+        "abstained",
+        "confident_errors"
+      ],
+      "title": "BaselineRung",
+      "type": "object"
+    },
     "DistributionComparison": {
       "additionalProperties": false,
       "description": "How far the evaluation corpus sits from what a component trained on.\n\nBelow `minimum_sample_threshold` the only permitted verdict is\n`NOT_ESTABLISHED`: an under-powered comparison must not be reportable as\nevidence of low divergence.",
@@ -455,6 +562,73 @@
       ],
       "title": "MandatoryPathInvariance",
       "type": "object"
+    },
+    "OutOfDistributionAssessment": {
+      "additionalProperties": false,
+      "description": "Whether a component knows that it does not know.\n\nAlso earned by measurement: held out one domain at a time, the kNN kept answering —\nzero abstentions — and was confidently wrong 80 to 90 times per domain, because\nfeature overlap stayed high while the capability vocabulary was entirely disjoint.\nA component that cannot recognise an unseen domain must not reach an operator.",
+      "properties": {
+        "abstained": {
+          "minimum": 0,
+          "title": "Abstained",
+          "type": "integer"
+        },
+        "assessment_id": {
+          "format": "uuid",
+          "title": "Assessment Id",
+          "type": "string"
+        },
+        "component_id": {
+          "minLength": 1,
+          "title": "Component Id",
+          "type": "string"
+        },
+        "confidence_threshold": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Confidence Threshold",
+          "type": "string"
+        },
+        "confident_errors": {
+          "minimum": 0,
+          "title": "Confident Errors",
+          "type": "integer"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "evaluated_count": {
+          "minimum": 1,
+          "title": "Evaluated Count",
+          "type": "integer"
+        },
+        "held_out_groups": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Held Out Groups",
+          "type": "array"
+        }
+      },
+      "required": [
+        "assessment_id",
+        "component_id",
+        "held_out_groups",
+        "evaluated_count",
+        "abstained",
+        "confident_errors",
+        "confidence_threshold",
+        "created_at"
+      ],
+      "title": "OutOfDistributionAssessment",
+      "type": "object"
     }
   },
   "$id": "https://cognitive-os.local/schemas/v1/learned/learned-promotion-assessment.schema.json",
@@ -465,6 +639,9 @@
       "format": "uuid",
       "title": "Assessment Id",
       "type": "string"
+    },
+    "baseline_ladder": {
+      "$ref": "#/$defs/BaselineLadder"
     },
     "baseline_metric": {
       "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
@@ -519,6 +696,9 @@
       "title": "Minimum Material Improvement",
       "type": "string"
     },
+    "out_of_distribution": {
+      "$ref": "#/$defs/OutOfDistributionAssessment"
+    },
     "reason": {
       "minLength": 1,
       "title": "Reason",
@@ -534,6 +714,8 @@
     "minimum_material_improvement",
     "forgetting",
     "invariance",
+    "baseline_ladder",
+    "out_of_distribution",
     "decision",
     "reason",
     "created_at"

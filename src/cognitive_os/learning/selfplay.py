@@ -12,9 +12,21 @@ only because a governed domain run is deterministic and costs about 25 ms.
 
 The variation used for the skill-selection surface is `SELECTION_FORCED`: the
 capability a skill revision declares is required of the run, so a skill whose
-declared verifier never runs on this case cannot be accepted. That is the
-consequence the Skill Engine's ranking has and the deterministic selector cannot
-predict, because which checks a problem type emits is a runtime property.
+declared verifier never runs on this case cannot be accepted.
+
+**Correction, phase 21.6.** This module previously claimed that the deterministic
+selector "cannot predict" that consequence, because which checks a problem type
+emits is a runtime property. Measurement disproved it. The rule "harmful iff a
+declared capability is absent from the case's `required_verifiers`" scores **1.000
+on all 969 labels**, `required_verifiers` is declared on the case before it runs,
+and `SkillSelectionService._requirements_available` already implements exactly that
+test. The label is a pure function of `(domain, candidate)` — 57 groups, none
+ambiguous.
+
+The corpus is therefore still a valid causal corpus, and still useful as the
+substrate's proving ground, but it contains **no signal a learned component could
+own**: `learning/baselines.py` measures the tie, and the claim above was an
+assertion that should have been a measurement.
 """
 
 from __future__ import annotations

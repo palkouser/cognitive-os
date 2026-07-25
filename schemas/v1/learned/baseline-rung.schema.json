@@ -1,0 +1,62 @@
+{
+  "$defs": {
+    "BaselineKind": {
+      "description": "What sort of comparison a ladder rung is.\n\nThe distinction exists because a `TRIVIAL` rung is not a baseline anyone should be\ncredited for beating, and the plan's trial order says so: \"a complex model is never\npromoted for beating a weak straw man.\"",
+      "enum": [
+        "trivial",
+        "deterministic",
+        "learned"
+      ],
+      "title": "BaselineKind",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/learned/baseline-rung.schema.json",
+  "additionalProperties": false,
+  "description": "One evaluated comparison on the baseline ladder.",
+  "properties": {
+    "abstained": {
+      "minimum": 0,
+      "title": "Abstained",
+      "type": "integer"
+    },
+    "confident_errors": {
+      "minimum": 0,
+      "title": "Confident Errors",
+      "type": "integer"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "evaluated_count": {
+      "minimum": 1,
+      "title": "Evaluated Count",
+      "type": "integer"
+    },
+    "kind": {
+      "$ref": "#/$defs/BaselineKind"
+    },
+    "name": {
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "score": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Score",
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "kind",
+    "score",
+    "evaluated_count",
+    "abstained",
+    "confident_errors"
+  ],
+  "title": "BaselineRung",
+  "type": "object"
+}
