@@ -14,12 +14,18 @@ from typing import Any
 
 from cognitive_os.application.services.acceptance_service import AcceptancePolicyService
 from cognitive_os.application.services.approval_service import DenyAllApprovalProvider
-from cognitive_os.application.services.cognitive_controller import BoundedCognitiveController
-from cognitive_os.application.services.controller_recovery import ControllerRecoveryService
+from cognitive_os.application.services.cognitive_controller import (
+    BoundedCognitiveController,
+)
+from cognitive_os.application.services.controller_recovery import (
+    ControllerRecoveryService,
+)
 from cognitive_os.application.services.controller_verification import (
     ControllerVerificationService,
 )
-from cognitive_os.application.services.minimal_acceptance import MinimalAcceptanceService
+from cognitive_os.application.services.minimal_acceptance import (
+    MinimalAcceptanceService,
+)
 from cognitive_os.application.services.tool_execution import ToolExecutionService
 from cognitive_os.application.services.verification_service import VerificationService
 from cognitive_os.config.controller_config import ControllerConfiguration
@@ -102,7 +108,11 @@ async def run_case_controlled(
     call, and the acceptance path are unchanged, which is what makes a fabricated
     answer detectable rather than trusted.
     """
-    store = store or MemoryEventStore()
+    # `is None`, not truthiness: an empty store is falsy through `__len__`, and
+    # `or` would silently swap a caller's store for a private one whose events
+    # they can never read.
+    if store is None:
+        store = MemoryEventStore()
     problem_engine = DomainProblemEngine(case)
     planner = DomainPlanner(case, problem_engine.step_id)
     tool_execution = build_tool_execution(store)

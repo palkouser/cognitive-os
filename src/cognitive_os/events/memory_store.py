@@ -105,6 +105,10 @@ class MemoryEventStore:
         ]
         return max(versions) if versions else 0
 
+    def stored_events(self) -> tuple[StoredEvent, ...]:
+        """Every recorded event in global order, for offline replay and compilation."""
+        return tuple(self._events)
+
     def event_types(self) -> tuple[str, ...]:
         """Ordered event-type names, for replay assertions and reports."""
         return tuple(item.envelope.event_type for item in self._events)

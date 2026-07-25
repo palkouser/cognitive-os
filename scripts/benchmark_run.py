@@ -188,6 +188,7 @@ def main() -> int:
             "controller_mock",
             "coding-replay",
             "change-replay",
+            "domain-pilot",
             "memory-replay",
             "semantic-replay",
             "context-replay",

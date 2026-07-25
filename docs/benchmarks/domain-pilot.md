@@ -38,11 +38,14 @@ harness actually behaves as declared.
 
 ## Governance invariants
 
-Twenty-two invariants run in both manifests and as parametrised tests.
+Twenty-five invariants run in both manifests and as parametrised tests.
 
 Governed execution:
 `controller_owns_plan`, `tool_plane_audits_solve`, `controlled_path_rejects_wrong`,
 `required_context_enforced`, `skill_engine_verified_only`, `routing_signature_tool_only`.
+
+Learning-plane integration:
+`learning_recorded_events_only`, `learning_failure_preserved`, `learning_corpus_rights`.
 
 Safety, authority, and determinism:
 `unsupported_problem_type`, `forbidden_operation`, `raw_text_rejected`, `expression_bomb_bounded`,
@@ -76,6 +79,22 @@ cases, on every path:
 | Disposition | `positive_transfer` | `positive_transfer` |
 
 The narrow-optimisation fixture is rejected as `negative_transfer` on the cost-ratio gates.
+
+## Learning-plane results
+
+Every one of the 51 fixture cases, run under the Controller and Tool Plane, compiles through the
+unmodified Experience Compiler:
+
+| Path | Compilation decision | Terminal state | Candidates |
+|---|---|---|---|
+| Accepted run | `completed`, 51/51 | `accepted` | `memory`, `semantic_observation`, `benchmark_case`, `corpus_item` |
+| Wrong-answer run | `completed`, 51/51 | `rejected` | adds `failure_pattern`, `negative_example` |
+
+Full ingestion — compile, memory write, semantic extraction, corpus declaration — produces, per run:
+2 memory revisions, 4 semantic observations, 4 semantic claims, and at least 1 corpus item (2 on the
+wrong-answer path). Corpus usage-rights declarations mirror the case's own `ProvenanceRef`:
+`REDISTRIBUTION` and `PUBLIC_RELEASE` match `redistributable`, and `MODEL_TRAINING` and
+`COMMERCIAL_USE` stay undeclared.
 
 ## Determinism
 

@@ -8,7 +8,7 @@ Everything below runs offline, on CPU, with no credentials and no optional extra
 uv run python scripts/domain_smoke_test.py --output artifacts/sprint-20/evidence/domain-smoke.json
 ```
 
-Exits `0` only when all three domains accept every correct answer, reject every wrong answer, all 16
+Exits `0` only when all three domains accept every correct answer, reject every wrong answer, all 25
 governance invariants hold, both transfer experiments are positive, and the negative-transfer
 fixture is rejected. The JSON report carries the registry snapshot, the unit-registry hash, per-domain
 counts, per-arm transfer deltas, and which optional extras are present.
@@ -18,11 +18,11 @@ counts, per-arm transfer deltas, and which optional extras are present.
 ```bash
 uv run python scripts/benchmark_run.py \
   --manifest benchmarks/manifests/sprint20-domain-ci.yaml \
-  --mode domain-pilot --output artifacts/sprint-20/benchmarks/ci.json
+  --mode domain-pilot --report-directory artifacts/sprint-20/benchmarks/ci
 
 uv run python scripts/benchmark_run.py \
   --manifest benchmarks/manifests/sprint20-domain-seed.yaml \
-  --mode domain-pilot --output artifacts/sprint-20/benchmarks/seed.json
+  --mode domain-pilot --report-directory artifacts/sprint-20/benchmarks/seed
 ```
 
 - CI manifest: 24 cases — 6 mathematics, 6 physics, 6 logic, 6 transfer and governance.
@@ -54,9 +54,44 @@ skill = await run_case_as_skill(case)      # exact VERIFIED revision, Context Bu
 `requested/authorized/started/completed` sequence and the acceptance decision. The smoke report
 prints the same evidence per domain under its `governed` key.
 
+## Feeding a run into the learning plane
+
+```python
+from cognitive_os.domains.fixtures import build_all_cases
+from cognitive_os.domains.learning import run_case_with_learning
+
+case = build_all_cases()[0]
+run, result = await run_case_with_learning(case)
+# result.compilation.decision.decision   -> "completed"
+# result.memory_ids                      -> 2 typed memory revisions written
+# result.observation_count, .claim_count -> grounded semantic extraction
+# result.corpus_item_count               -> corpus items declared to the Factory
+```
+
+This runs the case under the Controller and Tool Plane (as above), then compiles the recorded event
+trail through the unmodified Experience Compiler, projects it into the Memory Plane through the
+governed `MemoryService` gateway, extracts semantic observations and claims, and declares any
+corpus-bound candidates to the Corpus Factory with rights taken from the case's own
+`ProvenanceRef`. A wrong-answer run (pass `candidate_override=wrong_answer_for(case)`) compiles as
+failure evidence — `FAILURE_PATTERN` and `NEGATIVE_EXAMPLE` candidates, `review_status="rejected"` —
+never as a laundered success. See `docs/adr/0077-cross-domain-learning-plane-integration.md`.
+
+To compile a run recorded elsewhere without re-executing it:
+
+```python
+from cognitive_os.domains.learning import compile_run
+
+result = await compile_run(case, store)  # store: the MemoryEventStore the run wrote to
+```
+
 ## PostgreSQL
 
-Migration `0012` is required; the expected Alembic head is `0012`.
+Migration `0012` is required; the expected Alembic head is `0012`. Learning-plane output
+(compilations, memories, semantic observations and claims, corpus declarations) stays in the same
+in-memory repositories the domain execution path uses in this sprint; it is not written to
+PostgreSQL. The Memory Plane, semantic memory, and Corpus Factory PostgreSQL adapters already exist
+from earlier sprints and are exercised by `test_memory_plane.py`, `test_semantic_memory.py`, and
+`test_corpus_factory.py`.
 
 ```bash
 cd infra/postgres
@@ -91,7 +126,7 @@ uv pip install 'pint>=0.25.3,<0.26'      # verification-physics
 uv pip install 'z3-solver>=4.16,<5'      # verification-logic
 ```
 
-With all three absent the suite reports 1130 passed and 47 skipped; with all three present, 1134
+With all three absent the suite reports 1150 passed and 47 skipped; with all three present, 1154
 passed and 43 skipped. The difference is exactly the optional escalation verifiers, which skip
 cleanly rather than failing.
 
@@ -109,3 +144,5 @@ cleanly rather than failing.
 | `SkillPolicyError` | package hash or registry snapshot mismatch | the skill revision is not the exact verified one |
 | `record_domain_pilot_run` raises "different content" | immutable evidence would change | investigate; do not force the write |
 | Health reports a revision mismatch | database is not at `0012` | run the migration |
+| `DomainLearningError: a governed run must record events before it can be compiled` | the store passed to `compile_run` never ran a case | run the case with that same store first, or pass none and let it create one |
+| `DomainLearningError: no trajectory source is declared for event ...` | the Controller emitted an event type the learning bridge does not map | a real gap — extend the source-type table in `domains/learning.py`, do not skip the event |

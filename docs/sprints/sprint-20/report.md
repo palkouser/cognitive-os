@@ -8,32 +8,44 @@
 
 ## Status: Gate K is NOT closed
 
-A substantial vertical slice is delivered, tested, and verified, and the execution path is now
-governed end to end. Three backlog areas remain **not** implemented, and two of them are Gate K
-conditions. This report states what was measured and what was not built. Nothing below is
-projected — every number was produced by a command in this repository.
+A substantial vertical slice is delivered, tested, and verified, and both the execution path and the
+learning-plane path are now governed end to end. Two backlog areas remain **not** implemented, and one
+of them is a Gate K condition. This report states what was measured and what was not built. Nothing
+below is projected — every number was produced by a command in this repository.
 
-**Update after the follow-up round:** gap 1 (Controller, Context, Tool Plane, and routing
-integration) is closed. Gate K condition 2 is now met. See "Governed execution" below.
+**Update after the second follow-up round:** gap 1 (learning-plane integration — Experience Compiler,
+Memory Plane, semantic extraction, Corpus Factory) is closed. Gate K condition 8 is now partially met.
+See "Learning-plane integration" below.
+
+**Update after the first follow-up round:** the prior gap 1 (Controller, Context, Tool Plane, and
+routing integration) is closed. Gate K condition 2 is met. See "Governed execution" below.
 
 ## Verified evidence
 
 | Gate | Result |
 |---|---|
-| Test suite (extras absent) | 1130 passed, 47 skipped |
-| Test suite (extras present) | 1134 passed, 43 skipped |
-| PostgreSQL integration | 38 passed against PostgreSQL 18 / pgvector 0.8.2 |
-| Ruff check | 1 pre-existing error, unchanged from baseline |
+| Test suite (extras absent) | 1150 passed, 47 skipped |
+| Test suite (extras present) | 1154 passed, 43 skipped |
+| PostgreSQL + controller integration | 39 passed against PostgreSQL 18 / pgvector 0.8.2 |
+| Ruff check (`src/cognitive_os`, `tests/cognitive_os`, `tests/contract`, `scripts`) | clean |
 | Ruff format | clean |
-| MyPy | clean, 502 source files |
-| Bandit (pilot package) | 0 issues |
+| MyPy (`src/cognitive_os`) | clean, 503 source files |
+| Bandit (pilot + learning-plane bridge) | 0 issues |
 | Repository language | passed |
-| CI manifest | 24/24 cases at expected disposition |
-| Seed manifest | 120/120 cases at expected disposition |
-| Offline smoke | exit 0, no credentials, no network, no GPU, no extras |
-| Migration round trip | `0011 -> 0012 -> 0011 -> 0012` executed successfully |
+| CI manifest | 24/24 cases at expected disposition (`case_pass_rate` 1.0, verified via the CLI) |
+| Seed manifest | 120/120 cases at expected disposition (`case_pass_rate` 1.0, verified via the CLI) |
+| Offline smoke | exit 0, no credentials, no network, no GPU, no extras, 25/25 governance invariants |
+| Migration round trip | `0011 -> 0012 -> 0011 -> 0012` executed successfully (unchanged this round) |
 
-Baseline for comparison: the sprint started at 807 passed / 40 skipped.
+Baseline for comparison: the sprint started at 807 passed / 40 skipped; the previous round closed at
+1130 passed / 47 skipped (extras absent).
+
+While verifying this round, `scripts/benchmark_run.py --mode domain-pilot` was found to have never
+been registered in the CLI's own `argparse` choices — a bug from the first round that made the
+manifest commands documented in `docs/operations/domain-pilots.md` fail outright. The `elif` branch
+that executes it existed; only the choice list was missing. Fixed alongside this round's changes; both
+manifests now run and pass through the actual CLI, not only through the adapter test that had been
+silently carrying the "24/24" and "120/120" claims.
 
 ## Measured pilot results
 
@@ -85,10 +97,10 @@ disposition, and it was fixed rather than papered over.
 | 5 | Skills and strategies via existing registries | **Met** — 11 skills, 6 strategies reach `VERIFIED` |
 | 6 | Positive skill and strategy transfer | **Met** — measured above |
 | 7 | Source-retention and negative-transfer gates | **Met** — enforced in contract and in the database |
-| 8 | Experience, memory, weakness, proposal, change flow | **Not met** — see gaps 1 and 2 |
-| 9 | Migration, events, CLI, health, backup, restore, packaging | **Partial** — see gap 3 |
-| 10 | ≥24 CI and ≥120 seed cases | **Met** — 24 and 120, all at expected disposition |
-| 11 | Committed, merged, post-merge validated, tagged | **Not met** — see gap 4 |
+| 8 | Experience, memory, weakness, proposal, change flow | **Partial** — experience, memory, semantic, and corpus stages met; see "Learning-plane integration" and gap 1 |
+| 9 | Migration, events, CLI, health, backup, restore, packaging | **Partial** — see gap 2 |
+| 10 | ≥24 CI and ≥120 seed cases | **Met** — 24 and 120, all at expected disposition, verified through the benchmark CLI |
+| 11 | Committed, merged, post-merge validated, tagged | **Not met** — see gap 3 |
 
 ## Governed execution
 
@@ -119,10 +131,9 @@ Each run produces the full audit trail — `problem.representation_created`, `pl
 result. A wrong answer travels the identical plan, tool call, and acceptance path, which is what
 makes it detectable rather than trusted.
 
-Six new governance invariants run in both benchmark manifests and as parametrised tests:
+Six governance invariants run in both benchmark manifests and as parametrised tests:
 `controller_owns_plan`, `tool_plane_audits_solve`, `controlled_path_rejects_wrong`,
-`required_context_enforced`, `skill_engine_verified_only`, `routing_signature_tool_only` — 22
-invariants in total, all passing.
+`required_context_enforced`, `skill_engine_verified_only`, `routing_signature_tool_only`.
 
 **Two honest notes.** The Controller charges one *nominal* provider call for problem representation
 because that step is normally a model call; `DomainProblemEngine` is deterministic and contacts no
@@ -136,25 +147,67 @@ unit, assumption, or provenance record raises.
 where running nine full Controller arms per experiment would add ceremony without changing what is
 measured. It is no longer the case-execution path.
 
+## Learning-plane integration
+
+Gate K condition 8 is now partially met: the experience, memory, semantic, and corpus stages are
+delivered; weakness mining and the controlled-change cycle are not (gap 1, below). `domains/learning.py`
+translates a governed run's recorded event trail into the inputs the existing services already accept
+— it contributes no compilation logic, no memory policy decision, no grounding logic, and no corpus
+routing decision.
+
+| Concern | Owner | Domain contribution |
+|---|---|---|
+| Trajectory compilation | `ExperienceCompiler` (unmodified) | `build_compilation` groups recorded events into trajectory sources |
+| Memory write | `MemoryService` (governed gateway) | `project_run` projects 2 typed contents; `domain_memory_policy()` grants only those types and `DOMAIN`/`TASK` scope |
+| Semantic extraction | `SemanticExtractionService` (unmodified) | reuses the existing typed-memory extractors, no domain-specific extractor added |
+| Corpus declaration | `CorpusFactory` (unmodified) | `corpus_request` derives usage rights from the case's own `ProvenanceRef` |
+
+Measured over all 51 fixture cases, both directions:
+
+| Path | Compilation decision | Terminal state | Memories | Observations / claims | Corpus items |
+|---|---|---|---|---|---|
+| Accepted run | `completed`, 51/51 | `accepted` | 2/run | 4 / 4 | ≥1 |
+| Wrong-answer run | `completed`, 51/51 | `rejected` | 2/run | 4 / 4 | ≥2 (adds a negative example) |
+
+Every `TimelineEntry` the compiler consumes carries the originating event's own `event_id` as its
+identity and the event's own `payload_hash` as its evidence — nothing is synthesised, and an event
+type outside the declared source-type table raises instead of being filed as `unknown`. A rejected
+run is not laundered into success: its terminal state stays `"rejected"`, it produces
+`FAILURE_PATTERN` and `NEGATIVE_EXAMPLE` candidates instead of `MEMORY` and `SKILL` candidates, and
+the projected memory's `review_status` reads `"rejected"`.
+
+Three new governance invariants — `learning_recorded_events_only`, `learning_failure_preserved`,
+`learning_corpus_rights` — run in the seed benchmark manifest and as parametrised tests, bringing the
+pilot's total to **25**, all passing.
+
+**One honest note.** Learning-plane output is written to the same in-memory repositories the domain
+execution path already uses, matching gap 1's precedent from the first round: the mandatory path
+stays offline and credential-free. The Memory Plane, semantic memory, and Corpus Factory PostgreSQL
+adapters already exist from earlier sprints and are exercised by their own integration suites; wiring
+domain learning output into them was out of scope for this round. See `docs/adr/0077-cross-domain-learning-plane-integration.md`.
+
+While implementing this, a real bug was found and fixed in `domains/runner.py`: `store = store or
+MemoryEventStore()` discarded any caller-supplied *empty* store, because `MemoryEventStore.__len__`
+makes an empty store falsy, and `or` silently substituted a private store the caller could never read
+from. Without this fix the learning bridge would have compiled zero events from every governed run.
+Fixed to check `is None`.
+
 ## Gaps — what was not built
 
-**1. Learning-plane integration (S20-045, S20-046).**
-Domain trajectories are not compiled by the Experience Compiler and no domain evidence is written
-to the Memory Plane, semantic memory, or the Corpus Factory. Evidence currently terminates in the
-`domains` repository and migration `0012` tables.
-
-**2. Weakness, proposal, and controlled-change cycle (S20-052, S20-053, S20-054).**
+**1. Weakness, proposal, and controlled-change cycle (S20-052, S20-053, S20-054).**
 No domain weakness fixtures were mined, no `HarnessProposal` was generated from a domain weakness,
-and no approved isolated change experiment was run. This is a Gate K condition and a complete
-epic.
+and no approved isolated change experiment was run. This is the remainder of Gate K condition 8 and
+a complete epic. Domain trajectories now flow through the real Controller, Tool Plane, and Experience
+Compiler, so weakness mining finally has authentic compiled material to consume — which was the
+blocker that made this the right order.
 
-**3. Operations (S20-059 partial, S20-060, S20-064 partial).**
+**2. Operations (S20-059 partial, S20-060, S20-064 partial).**
 An offline smoke script exists and is machine-readable, but the main CLI was not extended with
 domain subcommands. Backup, isolated restore, and recovery were not extended to cover Sprint 20
 artefacts. Extras were verified to install and uninstall independently and the core was confirmed
 to work without them, but no wheel or sdist was built.
 
-**4. Release (S20-066).**
+**3. Release (S20-066).**
 Nothing has been committed, pushed, reviewed, merged, or tagged. `sprint-20-baseline` does not
 exist. The runtime holds no release authority by design — the pilot package imports no process or
 network module, verified structurally — so this step is operator-owned and deliberately outside
@@ -183,8 +236,13 @@ the seed strategy count (`seed_strategy_paths`), and the expected Alembic head
 The benchmark matrix expander now forwards adapter-specific keys through `problem_request`. No
 existing manifest uses a non-reserved key, so sprints 7 to 19 expand byte-identically.
 
+This round: `scripts/benchmark_run.py --mode domain-pilot` is now a registered CLI choice (see
+"Verified evidence"), and `MemoryEventStore` gained a `stored_events()` accessor so a caller can
+replay a run's full envelopes rather than only its event-type names.
+
 ## Recommended next step
 
-Close the learning-plane gap next. Domain trajectories now flow through the real Controller and Tool
-Plane, so the Experience Compiler and Weakness Mining finally have authentic material to consume —
-which was the blocker that made this the right order.
+Close the weakness-mining and controlled-change gap next (gap 1). Domain trajectories now compile
+through the real Experience Compiler with real candidates, so Weakness Mining and the
+`HarnessProposal` flow finally have authentic compiled material to consume — which was the blocker
+that made this the right order.

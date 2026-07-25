@@ -66,6 +66,8 @@ affinely through explicit handling — scale-only conversion would be a defect, 
 
 ## Gates
 
-Bandit reports zero issues across the pilot package. The 16 governance invariants in
-`benchmarks/domain_adapter.py` run as part of both benchmark manifests and as parametrised tests, so
-an authority or safety regression fails CI rather than being reported as a metric.
+Bandit reports zero issues across the pilot package. The 25 governance invariants in
+`benchmarks/domain_adapter.py` — including three that check the learning-plane bridge compiles only
+recorded events, preserves failure evidence, and declares corpus rights no wider than the case's own
+provenance — run as part of both benchmark manifests and as parametrised tests, so an authority or
+safety regression fails CI rather than being reported as a metric.

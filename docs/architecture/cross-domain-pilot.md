@@ -32,6 +32,33 @@ governed path and is not used for case execution; it remains as the verification
 transfer experiments, where nine full Controller arms per experiment would add ceremony without
 changing what is measured.
 
+## Learning-plane path
+
+This is the part of Gate K condition 8 this sprint delivers: experience compilation, memory,
+semantic extraction, and corpus declaration. Weakness mining and the controlled-change cycle — the
+rest of condition 8 — are not built; see "Scope and limitations".
+
+```text
+run_case_controlled -> MemoryEventStore (the recorded event trail)
+-> build_compilation                        -> ExperienceCompilationRequest
+-> ExperienceCompiler (unmodified)          -> candidates, decision, manifest
+-> project_run                              -> TaskSummaryMemoryContent, VerificationSummaryMemoryContent
+-> MemoryService (governed gateway)         -> two memory revisions, DOMAIN/TASK scope
+-> SemanticExtractionService (unmodified)   -> grounded observations and claims
+-> corpus_request per corpus-bound candidate -> CorpusFactory (unmodified)         -> corpus items
+```
+
+`src/cognitive_os/domains/learning.py` contributes the translation from recorded events to compiler
+and memory inputs; it owns no compilation logic, no memory policy decision, no grounding logic, and
+no corpus routing decision. Every `TimelineEntry` traces back to one recorded `EventEnvelope`: its
+identity is the event's own `event_id`, and its evidence is the event's own `payload_hash`. An event
+type outside the declared source-type table raises, so an unrecognised event cannot be silently
+dropped or misfiled.
+
+A rejected run is not laundered into a success story: its terminal state stays `"rejected"`, it
+produces `FAILURE_PATTERN` and `NEGATIVE_EXAMPLE` candidates instead of `MEMORY` and `SKILL`
+candidates, and the projected memory's `review_status` reads `"rejected"`. See ADR 0077.
+
 ## Authority map
 
 | Concern | Owner | Domain contribution |
@@ -98,7 +125,8 @@ Sprint 7 parser.
 | `verification/domains.py` | `domains.checker` registered verifier |
 | `events/memory_store.py` | Shared in-process `EventStorePort` for offline runs |
 | `events/domain_events.py` | Seven lifecycle events |
-| `benchmarks/domain_adapter.py` | Executes cases and 16 governance invariants |
+| `domains/learning.py` | Translates a run's recorded events into compiler, memory, and corpus inputs |
+| `benchmarks/domain_adapter.py` | Executes cases and 25 governance invariants |
 | `infrastructure/domains/postgres/` | Migration `0012` metadata |
 
 ## Registered task classes
@@ -152,3 +180,9 @@ set grew from 8 skills and 7 strategies to 19 and 13; its size is now derived fr
 - Propositional logic only; quantifiers and general theorem proving are out of scope.
 - No general physics simulation. Model selection audits declared assumptions against declared
   conditions.
+- The learning-plane path compiles, projects, extracts, and declares to the Corpus Factory; it does
+  not mine weaknesses from the compiled candidates, propose a `HarnessProposal`, or run an approved
+  isolated change experiment. That is Gate K condition 8's remainder and a separate epic.
+- Learning-plane output stays in the same offline, in-memory repositories the domain execution path
+  uses; it is not written to PostgreSQL in this sprint. The Memory Plane, semantic memory, and Corpus
+  Factory PostgreSQL adapters already exist and are exercised by their own integration suites.

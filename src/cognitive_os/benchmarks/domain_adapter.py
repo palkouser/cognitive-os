@@ -10,9 +10,17 @@ from __future__ import annotations
 
 from time import perf_counter
 
-from cognitive_os.domain.benchmarks import BenchmarkCase, BenchmarkCaseResult, BenchmarkCaseStatus
+from cognitive_os.domain.benchmarks import (
+    BenchmarkCase,
+    BenchmarkCaseResult,
+    BenchmarkCaseStatus,
+)
 from cognitive_os.domain.domains import DomainKind, TransferDisposition
-from cognitive_os.domains.fixtures import FIXTURE_TIME, build_all_cases, wrong_answer_for
+from cognitive_os.domains.fixtures import (
+    FIXTURE_TIME,
+    build_all_cases,
+    wrong_answer_for,
+)
 from cognitive_os.domains.repository import InMemoryDomainRepository
 from cognitive_os.domains.service import DomainPilotService
 
@@ -74,7 +82,10 @@ async def _run_pilot(case_id: str, *, reject: bool) -> tuple[bool, dict[str, flo
 
 
 async def _run_transfer(expected: str) -> tuple[bool, dict[str, float]]:
-    from cognitive_os.domains.transfer import run_experiment, run_negative_transfer_experiment
+    from cognitive_os.domains.transfer import (
+        run_experiment,
+        run_negative_transfer_experiment,
+    )
 
     if expected == "negative_transfer":
         _, result = await run_negative_transfer_experiment()
@@ -120,7 +131,10 @@ async def _forbidden_operation_is_rejected() -> bool:
     hostile = base.model_copy(
         update={
             "problem": DomainProblem(
-                **{**base.problem.model_dump(exclude={"content_hash"}), "required_tools": ("eval",)}
+                **{
+                    **base.problem.model_dump(exclude={"content_hash"}),
+                    "required_tools": ("eval",),
+                }
             )
         }
     )
@@ -173,7 +187,11 @@ async def _expression_bomb_is_bounded() -> bool:
 
 
 async def _unknown_never_becomes_unsat() -> bool:
-    from cognitive_os.domain.domains import AnswerType, VerificationDisposition, compose_disposition
+    from cognitive_os.domain.domains import (
+        AnswerType,
+        VerificationDisposition,
+        compose_disposition,
+    )
     from cognitive_os.domains.registry import resolve
     from cognitive_os.domains.solvers import Candidate
 
@@ -305,7 +323,10 @@ async def _runtime_cannot_release() -> bool:
 
 
 async def _evidence_is_immutable() -> bool:
-    from cognitive_os.domains.repository import DomainConflictError, InMemoryDomainRepository
+    from cognitive_os.domains.repository import (
+        DomainConflictError,
+        InMemoryDomainRepository,
+    )
 
     repository = InMemoryDomainRepository()
     service = DomainPilotService(repository)
@@ -371,7 +392,11 @@ async def _missing_verifier_blocks_acceptance() -> bool:
 
 
 async def _underdetermination_must_be_reported() -> bool:
-    from cognitive_os.domain.domains import AnswerType, VerificationDisposition, compose_disposition
+    from cognitive_os.domain.domains import (
+        AnswerType,
+        VerificationDisposition,
+        compose_disposition,
+    )
     from cognitive_os.domains.registry import resolve
     from cognitive_os.domains.solvers import Candidate
 
@@ -379,7 +404,8 @@ async def _underdetermination_must_be_reported() -> bool:
     checks = entry.checker(
         {"terms": [1, 2, 3]},
         Candidate(
-            AnswerType.STRUCTURED, structured={"rules": ["arithmetic"], "underdetermined": False}
+            AnswerType.STRUCTURED,
+            structured={"rules": ["arithmetic"], "underdetermined": False},
         ),
         entry.budget,
     )
@@ -478,6 +504,73 @@ async def _routing_signature_is_tool_only() -> bool:
     return True
 
 
+async def _learning_compiles_only_recorded_events() -> bool:
+    """Every timeline entry is one recorded event; nothing is synthesised."""
+    from cognitive_os.domains.learning import (
+        DomainLearningError,
+        build_compilation,
+        compile_run,
+    )
+    from cognitive_os.domains.runner import run_case_controlled
+    from cognitive_os.events.memory_store import MemoryEventStore
+
+    case = next(iter(_CASES.values()))
+    store = MemoryEventStore()
+    await run_case_controlled(case, store=store)
+    result = await compile_run(case, store)
+    recorded = {item.envelope.event_id for item in store.stored_events()}
+    hashes = {item.envelope.payload_hash for item in store.stored_events()}
+    entries = result.trajectory.entries
+    if len(entries) != len(recorded):
+        return False
+    if any(entry.timeline_entry_id not in recorded for entry in entries):
+        return False
+    if any(evidence not in hashes for entry in entries for evidence in entry.evidence_refs):
+        return False
+    try:
+        build_compilation(case, MemoryEventStore())
+    except DomainLearningError:
+        return True
+    return False
+
+
+async def _learning_preserves_failure_evidence() -> bool:
+    """A rejected run compiles as failure evidence, never laundered into success."""
+    from cognitive_os.domain.experience import ExperienceCandidateType
+    from cognitive_os.domains.learning import run_case_with_learning
+
+    case = next(iter(_CASES.values()))
+    run, result = await run_case_with_learning(case, candidate_override=wrong_answer_for(case))
+    kinds = set(result.candidate_types)
+    return (
+        not run.accepted
+        and result.compilation.snapshot.terminal_state == "rejected"
+        and ExperienceCandidateType.FAILURE_PATTERN in kinds
+        and ExperienceCandidateType.NEGATIVE_EXAMPLE in kinds
+    )
+
+
+async def _learning_corpus_rights_from_provenance() -> bool:
+    """Corpus declarations grant only what the case provenance grants."""
+    from cognitive_os.domain.corpus import CorpusUsageRight
+    from cognitive_os.domains.learning import corpus_request, run_case_with_learning
+
+    case = next(iter(_CASES.values()))
+    _run, result = await run_case_with_learning(case)
+    for candidate in result.corpus_candidates:
+        request, _source = corpus_request(case, candidate)
+        rights = request.usage_rights
+        if rights[CorpusUsageRight.MODEL_TRAINING] is not None:
+            return False
+        if rights[CorpusUsageRight.COMMERCIAL_USE] is not None:
+            return False
+        if rights[CorpusUsageRight.REDISTRIBUTION] != case.licence_and_source.redistributable:
+            return False
+        if request.license_identifiers != (case.licence_and_source.licence,):
+            return False
+    return bool(result.corpus_candidates) and result.corpus_item_count >= 1
+
+
 _GOVERNANCE = {
     "controller_owns_plan": _controller_owns_the_plan,
     "tool_plane_audits_solve": _tool_plane_audits_every_solve,
@@ -485,6 +578,9 @@ _GOVERNANCE = {
     "required_context_enforced": _required_context_cannot_be_omitted,
     "skill_engine_verified_only": _skill_engine_runs_only_verified_revisions,
     "routing_signature_tool_only": _routing_signature_is_tool_only,
+    "learning_recorded_events_only": _learning_compiles_only_recorded_events,
+    "learning_failure_preserved": _learning_preserves_failure_evidence,
+    "learning_corpus_rights": _learning_corpus_rights_from_provenance,
     "unsupported_problem_type": _unsupported_problem_type_fails,
     "forbidden_operation": _forbidden_operation_is_rejected,
     "raw_text_rejected": _raw_text_cannot_reach_a_solver,

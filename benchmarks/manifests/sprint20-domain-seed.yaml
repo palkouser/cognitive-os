@@ -35,9 +35,9 @@ case_matrix:
     - {id: domain-seed-gen-25, scenario: governance, check: controlled_path_rejects_wrong}
     - {id: domain-seed-gen-26, scenario: governance, check: controller_owns_plan}
     - {id: domain-seed-gen-27, scenario: governance, check: core_without_extras}
-    - {id: domain-seed-gen-28, scenario: governance, check: evidence_immutable}
-    - {id: domain-seed-gen-29, scenario: governance, check: exact_not_approximate}
-    - {id: domain-seed-gen-30, scenario: governance, check: expression_bomb_bounded}
+    - {id: domain-seed-gen-28, scenario: governance, check: learning_recorded_events_only}
+    - {id: domain-seed-gen-29, scenario: governance, check: learning_failure_preserved}
+    - {id: domain-seed-gen-30, scenario: governance, check: learning_corpus_rights}
   logic:
     - {id: domain-seed-logic-01, scenario: accept, case: domain-affirming-consequent, expected: passed}
     - {id: domain-seed-logic-02, scenario: accept, case: domain-consistency, expected: passed}
