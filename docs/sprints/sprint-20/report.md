@@ -10,13 +10,18 @@
 
 A substantial vertical slice is delivered, tested, and verified, and the execution path, the
 learning-plane path, and the weakness-mining, proposal, and controlled-change cycle are all now
-governed end to end. Gate K condition 8 is fully met. Two backlog areas remain **not** implemented,
-and neither is a Gate K condition. This report states what was measured and what was not built.
-Nothing below is projected — every number was produced by a command in this repository.
+governed end to end. Gate K condition 8 is fully met, and the operations gap now has a CLI and
+backup/restore coverage. One backlog area remains — release — and it is not a Gate K condition and
+is deliberately operator-owned. This report states what was measured and what was not built. Nothing
+below is projected — every number was produced by a command in this repository.
 
-**Update after the third follow-up round:** gap 1 (weakness mining, proposal generation, and the
-controlled-change cycle) is closed. Gate K condition 8 is now fully met. See "Weakness, proposal, and
-controlled change" below.
+**Update after the fourth follow-up round:** gap 1 (operations — CLI extension and backup/restore
+coverage) is closed. See "Operations: CLI and backup/restore" below. Release (gap 2, now the only
+remaining gap) stays operator-owned by design.
+
+**Update after the third follow-up round:** the prior gap 1 (weakness mining, proposal generation,
+and the controlled-change cycle) is closed. Gate K condition 8 is now fully met. See "Weakness,
+proposal, and controlled change" below.
 
 **Update after the second follow-up round:** the prior gap 1 (learning-plane integration — Experience
 Compiler, Memory Plane, semantic extraction, Corpus Factory) is closed. See "Learning-plane
@@ -29,21 +34,23 @@ routing integration) is closed. Gate K condition 2 is met. See "Governed executi
 
 | Gate | Result |
 |---|---|
-| Test suite (extras absent) | 1170 passed, 47 skipped |
-| Test suite (extras present) | 1174 passed, 43 skipped |
-| PostgreSQL + controller integration | 39 passed against PostgreSQL 18 / pgvector 0.8.2 |
+| Test suite (extras absent) | 1170 passed, 48 skipped |
+| Test suite (extras present) | 1174 passed, 44 skipped |
+| PostgreSQL + controller integration | 40 passed against PostgreSQL 18 / pgvector 0.8.2 |
 | Ruff check (`src/cognitive_os`, `tests/cognitive_os`, `tests/contract`, `scripts`) | clean |
 | Ruff format | clean |
-| MyPy (`src/cognitive_os`) | clean, 505 source files |
-| Bandit (pilot, learning-plane, weakness-mining) | 0 issues |
+| MyPy (`src/cognitive_os`) | clean, 507 source files |
+| Bandit (pilot, learning-plane, weakness-mining, operations) | 0 issues |
 | Repository language | passed |
 | CI manifest | 24/24 cases at expected disposition (`case_pass_rate` 1.0, verified via the CLI) |
 | Seed manifest | 120/120 cases at expected disposition (`case_pass_rate` 1.0, verified via the CLI) |
 | Offline smoke | exit 0, no credentials, no network, no GPU, no extras, 28/28 governance invariants |
 | Migration round trip | `0011 -> 0012 -> 0011 -> 0012` executed successfully (unchanged this round) |
+| Backup / restore round trip | domain evidence backed up, restored, and verified against an isolated database; a tampered manifest field was rejected (exit 1) |
 
 Baseline for comparison: the sprint started at 807 passed / 40 skipped; the previous round closed at
-1150 passed / 47 skipped (extras absent).
+1170 passed / 47 skipped (extras absent). The one additional skip in both configurations this round
+is the new PostgreSQL domain-health integration test collected without `COGOS_DATABASE_URL` set.
 
 While verifying the previous round, `scripts/benchmark_run.py --mode domain-pilot` was found to have
 never been registered in the CLI's own `argparse` choices — a bug from the first round that made the
@@ -101,9 +108,9 @@ disposition, and it was fixed rather than papered over.
 | 6 | Positive skill and strategy transfer | **Met** — measured above |
 | 7 | Source-retention and negative-transfer gates | **Met** — enforced in contract and in the database |
 | 8 | Experience, memory, weakness, proposal, change flow | **Met** — see "Learning-plane integration" and "Weakness, proposal, and controlled change" |
-| 9 | Migration, events, CLI, health, backup, restore, packaging | **Partial** — see gap 1 |
+| 9 | Migration, events, CLI, health, backup, restore, packaging | **Partial** — migration, events, CLI, health, backup, and restore met; see "Operations" and gap 1 (packaging) |
 | 10 | ≥24 CI and ≥120 seed cases | **Met** — 24 and 120, all at expected disposition, verified through the benchmark CLI |
-| 11 | Committed, merged, post-merge validated, tagged | **Not met** — see gap 2 |
+| 11 | Committed, merged, post-merge validated, tagged | **Not met** — see gap 2 (release) |
 
 ## Governed execution
 
@@ -248,13 +255,49 @@ Both fixes are in shared Controller and Tool Plane code, not worked around insid
 and both are covered by a regression test
 (`test_a_failing_tool_still_records_a_full_audit_trail`).
 
+## Operations: CLI and backup/restore
+
+`scripts/domain.py` is a new operator CLI, matching every sibling subsystem's own script
+(`scripts/weakness.py`, `scripts/experience.py`, `scripts/proposal.py`, `scripts/change.py`, and the
+rest) — there is no single top-level CLI in this repository to extend; each subsystem already ships
+its own. Seven actions, each a thin call into an existing composition function and each printing one
+JSON object: `run`, `run-skill`, `learn`, `mine`, `propose`, `experiment`, `health` (offline by
+default, `--database` for a read-only PostgreSQL check).
+
+`src/cognitive_os/infrastructure/domains/postgres/health.py` adds `PostgresDomainHealthService`,
+matching `PostgresWeaknessHealthService`'s shape: table, trigger, and controlled-function counts,
+plus three read-only checks (evidence rows without a parent run, transfer results without an
+experiment, and any row violating the hard-gate-versus-positive-transfer constraint). Verified
+against the live database: `healthy: true`, 7 tables, 6 append-only triggers, 3 controlled functions,
+zero violations.
+
+`scripts/backup_event_store.sh` and `scripts/restore_event_store.sh` gain `domain_counts` and
+`domain_history_sha256`, following the exact pattern the weakness, proposal, and controlled-change
+additions from earlier sprints already established in these two scripts; restore additionally
+computes `domain_integrity` and folds it into the script's final gate. Verified against an isolated
+database rather than the shared development database (whose artifact store has a pre-existing,
+unrelated metadata-versus-filesystem inconsistency that predates this session): a full backup and
+restore round trip with one recorded `domain_pilot_runs` row reproduced the row exactly and matched
+both new manifest fields, and a backup manifest with a deliberately corrupted `domain_counts` value
+was rejected by the restore script with exit `1`. See
+`docs/adr/0079-cross-domain-operations-cli-and-backup.md`.
+
+**One honest note.** Wheel/sdist packaging (S20-064) was not part of this round — it was not
+requested and remains open. Learning-plane and weakness-mining evidence still is not written to
+PostgreSQL; this round adds coverage only for the domain execution tables migration `0012` already
+created, and creates no new tables.
+
+**One caught-before-it-shipped mistake.** A first attempt at inserting the new backup-script query
+between two existing lines accidentally dropped a union clause from the unrelated
+`change_history_sha256` query, silently narrowing what it covered. Caught by diffing the edited line
+against the untouched copy of the identical query in `restore_event_store.sh` before running either
+script, and corrected before any backup ran against real data.
+
 ## Gaps — what was not built
 
-**1. Operations (S20-059 partial, S20-060, S20-064 partial).**
-An offline smoke script exists and is machine-readable, but the main CLI was not extended with
-domain subcommands. Backup, isolated restore, and recovery were not extended to cover Sprint 20
-artefacts. Extras were verified to install and uninstall independently and the core was confirmed
-to work without them, but no wheel or sdist was built.
+**1. Packaging (S20-064 partial).**
+Extras were verified to install and uninstall independently and the core was confirmed to work
+without them, but no wheel or sdist was built. Not part of this round's scope.
 
 **2. Release (S20-066).**
 Nothing has been committed, pushed, reviewed, merged, or tagged. `sprint-20-baseline` does not
@@ -292,14 +335,19 @@ Previous round: `scripts/benchmark_run.py --mode domain-pilot` became a register
 `MemoryEventStore` gained a `stored_events()` accessor so a caller can replay a run's full envelopes
 rather than only its event-type names.
 
-This round: two shared Controller and Tool Plane defects were fixed rather than worked around — see
-"Weakness, proposal, and controlled change" for `DomainActionExecutor.execute` and
+Previous round: two shared Controller and Tool Plane defects were fixed rather than worked around —
+see "Weakness, proposal, and controlled change" for `DomainActionExecutor.execute` and
 `ControllerVerificationService._subject`. Both are shared code, used by every Controller-driven run
 in the repository, not domain-specific.
 
+This round: none of the pre-existing backup/restore query text for weakness, proposal, or
+controlled-change evidence was altered — a mistake that briefly did alter one was caught by diffing
+before either script ran; see "Operations: CLI and backup/restore".
+
 ## Recommended next step
 
-Gate K condition 8 is fully met; the remaining gaps are operations (gap 1) and release (gap 2),
-neither a Gate K condition. Close operations next: extend the main CLI with domain subcommands, and
-cover Sprint 20 artefacts in backup, isolated restore, and recovery. Release remains operator-owned
-by design and is the last step regardless of ordering.
+Gate K condition 8 is fully met and operations now has a CLI and backup/restore coverage; the
+remaining gaps are packaging (gap 1) and release (gap 2), neither a Gate K condition. Packaging is a
+short, self-contained step (`uv build` and a smoke-test of the built wheel). Release remains
+operator-owned by design regardless of ordering — the runtime holds no merge, tag, or push authority
+structurally, and the controlled-change cycle stops at manual review with no self-promotion path.

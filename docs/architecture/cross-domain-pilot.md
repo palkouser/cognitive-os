@@ -160,7 +160,8 @@ Sprint 7 parser.
 | `domains/weakness.py` | Legitimate-input probes, source resolver, and signal extractor for mining |
 | `domains/improvement.py` | Proposal generation and isolated-experiment composition |
 | `benchmarks/domain_adapter.py` | Executes cases and 28 governance invariants |
-| `infrastructure/domains/postgres/` | Migration `0012` metadata |
+| `infrastructure/domains/postgres/` | Migration `0012` metadata and `PostgresDomainHealthService` |
+| `scripts/domain.py` | Operator CLI: run, run-skill, learn, mine, propose, experiment, health |
 
 ## Registered task classes
 

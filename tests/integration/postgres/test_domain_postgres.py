@@ -220,6 +220,36 @@ async def test_recorded_evidence_is_append_only(engines) -> None:
 
 
 @pytest.mark.asyncio
+async def test_domain_health_reports_healthy_after_recording_evidence(engines) -> None:
+    from cognitive_os.infrastructure.domains.postgres.health import PostgresDomainHealthService
+
+    _, admin = engines
+    run_id = "88888888-8888-8888-8888-888888888888"
+    experiment_id = "99999999-9999-9999-9999-999999999999"
+    async with admin.begin() as connection:
+        await connection.execute(
+            text(f"SELECT cognitive_os.record_domain_pilot_run({_run(run_id)})")
+        )
+        await connection.execute(
+            text(
+                "SELECT cognitive_os.record_domain_transfer_result("
+                + _experiment(experiment_id)
+                + ", "
+                + _result(experiment_id, "neutral_transfer", "jsonb_build_array()")
+                + ")"
+            )
+        )
+    health = await PostgresDomainHealthService(admin).check()
+    assert health.healthy, health.messages
+    assert health.table_count == 7
+    assert health.append_only_trigger_count == 6
+    assert health.controlled_function_count == 3
+    assert health.orphan_evidence_count == 0
+    assert health.orphan_transfer_result_count == 0
+    assert health.hard_gate_violation_count == 0
+
+
+@pytest.mark.asyncio
 async def test_application_role_has_read_only_table_access(engines) -> None:
     _, admin = engines
     async with admin.connect() as connection:

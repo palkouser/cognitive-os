@@ -38,6 +38,27 @@ declarative table.
 uv run pytest tests/cognitive_os/domains tests/cognitive_os/benchmarks/test_domain_adapter.py -q
 ```
 
+## CLI
+
+```bash
+uv run python scripts/domain.py run [--case CASE_ID] [--wrong]
+uv run python scripts/domain.py run-skill [--case CASE_ID]
+uv run python scripts/domain.py learn [--case CASE_ID] [--wrong]
+uv run python scripts/domain.py mine
+uv run python scripts/domain.py propose
+uv run python scripts/domain.py experiment
+uv run python scripts/domain.py health [--database]
+```
+
+`run` and `run-skill` execute one fixture case through the Controller and Tool Plane (or the Skill
+Engine); `--case` selects an exact `case_id`, defaulting to the first fixture case, and `--wrong`
+injects a deliberately wrong answer. `learn` runs a case and feeds it through the whole learning
+plane. `mine`, `propose`, and `experiment` run the weakness-mining, proposal, and controlled-change
+cycle in sequence, each printing its own JSON result. `health` runs the offline governance-invariant
+sweep by default; `--database` runs the read-only PostgreSQL health check instead
+(`COGOS_DATABASE_URL` required). Every action prints one JSON object to stdout and exits non-zero on
+an unexpected outcome, so it composes with `jq` and CI without a separate parsing step.
+
 ## Running one case through the governed stack
 
 ```python
@@ -140,6 +161,14 @@ COGOS_DATABASE_URL=... COGOS_DATABASE_ADMIN_URL=... \
 ```
 
 The integration database name must end in `_test`; the fixture refuses to run otherwise.
+
+`scripts/backup_event_store.sh` and `scripts/restore_event_store.sh` cover the cross-domain pilot
+tables: the backup manifest carries `domain_counts` (pilot runs, problem/derivation/verification
+references, accesses, transfer experiments, transfer results) and `domain_history_sha256`; restore
+verifies both against the manifest and checks `domain_integrity` — every evidence row resolves to
+its parent run, every transfer result resolves to its experiment, and no restored row violates the
+hard-gate-versus-positive-transfer constraint. See `docs/operations/event-store-backup.md` and
+`docs/operations/event-store-restore.md`.
 
 ## Optional extras
 
