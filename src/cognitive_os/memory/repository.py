@@ -132,6 +132,12 @@ class InMemoryMemoryRepository(MemoryRepositoryPort):
         return self.sources.get((memory_id, revision), ())[:limit]
 
     async def search(self, query: MemoryQuery) -> MemoryQueryPage:
+        if query.mode is MemoryRetrievalMode.VECTOR_APPROXIMATE:
+            # This double holds no index, so it has no approximation to offer. Answering
+            # exactly would look like perfect recall and make any measurement taken
+            # against it meaningless, so it refuses — and refuses whether or not it
+            # happens to hold rows, because that is a property of the adapter.
+            raise ValueError("the in-memory repository cannot serve approximate retrieval")
         candidates: list[tuple[MemoryRecord, MemoryRevision, float]] = []
         allowed_statuses = query.filters.statuses
         for memory_id in sorted(self.records, key=str):

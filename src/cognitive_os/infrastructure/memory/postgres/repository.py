@@ -8,10 +8,11 @@ from typing import Any
 from uuid import UUID
 
 from pydantic import TypeAdapter, ValidationError
-from sqlalchemy import and_, cast, insert, literal, select, text
+from sqlalchemy import Float, and_, cast, insert, literal, select, text
 from sqlalchemy.engine import RowMapping
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncEngine
+from sqlalchemy.sql.elements import ColumnElement
 
 from cognitive_os.application.ports.memory_repository import MemoryRepositoryPort
 from cognitive_os.domain.common import utc_now
@@ -26,6 +27,7 @@ from cognitive_os.domain.memory import (
     MemoryQueryPage,
     MemoryQueryResult,
     MemoryRecord,
+    MemoryRetrievalMode,
     MemoryRevision,
     MemoryScope,
     MemorySourceIdentity,
@@ -39,6 +41,7 @@ from cognitive_os.memory.governance import sensitivity_allows
 
 from .statements import current_memory_statement
 from .tables import (
+    VectorType,
     memory_accesses,
     memory_embeddings,
     memory_items,
@@ -47,6 +50,13 @@ from .tables import (
 )
 
 CONTENT_ADAPTER: TypeAdapter[MemoryContent] = TypeAdapter(MemoryContent)
+
+#: Floor for the HNSW candidate list. pgvector's own default of 40 is far below the
+#: query budget's candidate ceiling of 1 000, and an `ef_search` below the LIMIT makes
+#: the index return fewer rows than asked for — a silent truncation that reads as poor
+#: recall. The effective value is therefore raised to the query's candidate limit; this
+#: constant only sets the floor for small pages.
+DEFAULT_EF_SEARCH = 200
 
 
 def _revision_values(revision: MemoryRevision) -> dict[str, Any]:
@@ -118,8 +128,18 @@ def _row_to_revision(row: Mapping[Any, Any]) -> MemoryRevision:
 
 
 class PostgresMemoryRepository(MemoryRepositoryPort):
-    def __init__(self, engine: AsyncEngine) -> None:
+    def __init__(
+        self,
+        engine: AsyncEngine,
+        *,
+        approximate_dimensions: frozenset[int] = frozenset(),
+        approximate_ef_search: int = DEFAULT_EF_SEARCH,
+    ) -> None:
         self._engine = engine
+        # Empty by default, so an unchanged call site keeps Sprint 9's exhaustive search
+        # and an approximate query is refused rather than quietly served exactly.
+        self._approximate_dimensions = approximate_dimensions
+        self._approximate_ef_search = approximate_ef_search
 
     async def create_memory(
         self, request: MemoryWriteRequest
@@ -364,15 +384,41 @@ class PostgresMemoryRepository(MemoryRepositoryPort):
             for row in rows
         )
 
+    def _effective_ef_search(self, query: MemoryQuery) -> int:
+        """Never search less broadly than the number of candidates being asked for.
+
+        pgvector returns at most `ef_search` rows from an HNSW scan, so a LIMIT above it
+        is silently truncated. Left uncorrected that shows up as bad recall rather than
+        as a misconfiguration, which is the wrong thing to go looking for.
+        """
+        return max(self._approximate_ef_search, query.budget.maximum_candidates)
+
+    def _vector_distance(self, query: MemoryQuery) -> ColumnElement[float]:
+        """Build the distance expression, whose *shape* decides exactness.
+
+        The exact form compares the undimensioned column directly, which no pgvector
+        index can serve, so an exhaustive scan is guaranteed by construction rather
+        than by configuration. The approximate form casts to the concrete dimension so
+        that it matches the partial expression index migration 0013 creates. Neither
+        path can drift into the other by accident: they are different SQL.
+        """
+        if query.vector is None:
+            raise ValueError("vector retrieval requires a vector query")
+        vector_literal = "[" + ",".join(str(value) for value in query.vector.vector) + "]"
+        probe = cast(literal(vector_literal), memory_embeddings.c.embedding.type)
+        if query.mode is not MemoryRetrievalMode.VECTOR_APPROXIMATE:
+            return memory_embeddings.c.embedding.op("<=>", return_type=Float)(probe)
+        if query.vector.dimension not in self._approximate_dimensions:
+            raise ValueError(
+                f"no approximate index is declared for dimension {query.vector.dimension}"
+            )
+        indexed = cast(memory_embeddings.c.embedding, VectorType(query.vector.dimension))
+        return indexed.op("<=>", return_type=Float)(probe)
+
     async def search(self, query: MemoryQuery) -> MemoryQueryPage:
         vector_mode = query.vector is not None
-        if vector_mode:
-            if query.vector is None:
-                raise ValueError("vector retrieval requires a vector query")
-            vector_literal = "[" + ",".join(str(value) for value in query.vector.vector) + "]"
-            distance = memory_embeddings.c.embedding.op("<=>")(
-                cast(literal(vector_literal), memory_embeddings.c.embedding.type)
-            )
+        if query.vector is not None:
+            distance = self._vector_distance(query)
             statement = (
                 select(memory_items, memory_revisions, (1.0 - distance).label("vector_score"))
                 .join(
@@ -402,6 +448,12 @@ class PostgresMemoryRepository(MemoryRepositoryPort):
         else:
             statement = current_memory_statement(query)
         async with self._engine.connect() as connection:
+            if query.mode is MemoryRetrievalMode.VECTOR_APPROXIMATE:
+                # SET LOCAL, so the pooled connection carries nothing back to the next
+                # caller: an exact query must never inherit an approximate setting.
+                await connection.execute(
+                    text(f"SET LOCAL hnsw.ef_search = {self._effective_ef_search(query)}")
+                )
             rows = (await connection.execute(statement)).mappings().all()
         scored: list[tuple[RowMapping, float]] = []
         for row in rows:

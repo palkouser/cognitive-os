@@ -2,7 +2,13 @@
 
 Hybrid means fusion of exact ranked lists: PostgreSQL full text, exact pgvector cosine, bounded
 relational graph traversal, recency, metadata lookup, and repository/workspace search. It does not
-mean approximate or learned retrieval.
+mean approximate or learned retrieval: `ContextConfiguration.allow_approximate_vector_search`
+and `allow_learned_ranking` are both sealed to false, so the context build is exhaustive.
+
+Sprint 21.3 added an approximate mode to the *Memory Plane* for capacity measurement
+([ADR 0082](../adr/0082-approximate-vector-retrieval-and-capacity-envelope.md)). The context
+build does not use it, and cannot: a caller must name the mode, and the context retriever maps
+its own `EXACT_VECTOR` mode to exact memory retrieval.
 
 Profile `context-rrf-v1` uses one-based weighted Reciprocal Rank Fusion with `k=60`, followed by
 explicit trust, scope, verification, recency, salience, graph, and contradiction modifiers. Decimal

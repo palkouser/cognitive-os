@@ -11,6 +11,8 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 from cognitive_os.domain.base import ImmutableContractModel
 from cognitive_os.infrastructure.postgres.tables import EXPECTED_MIGRATION_REVISION
 
+from .tables import APPROXIMATE_INDEX_NAMES
+
 
 class MemoryHealthSeverity(StrEnum):
     INFO = "info"
@@ -63,15 +65,43 @@ class PostgresMemoryHealthService:
                     )
                 ).scalars()
             )
-            approximate_indexes = int(
-                await connection.scalar(
-                    text(
-                        "SELECT count(*) FROM pg_indexes WHERE schemaname='cognitive_os' "
-                        "AND (indexdef ILIKE '%hnsw%' OR indexdef ILIKE '%ivfflat%')"
+            # Sprint 9 required this count to be zero. Sprint 21.3 declares a fixed set
+            # of approximate indexes instead, so the check keeps its whole force by
+            # naming them: an approximate index nobody declared is still an error, and
+            # a declared one that is absent means an approximate query silently falls
+            # back to an exhaustive scan.
+            #
+            # Usability is asked about explicitly, because a failed HNSW build leaves an
+            # invalid index behind in the catalogue: `pg_indexes` lists it, the planner
+            # ignores it, and a presence check would call that healthy.
+            usable_names = set(
+                (
+                    await connection.execute(
+                        text(
+                            "SELECT c.relname FROM pg_index i "
+                            "JOIN pg_class c ON c.oid = i.indexrelid "
+                            "JOIN pg_am a ON a.oid = c.relam "
+                            "JOIN pg_namespace n ON n.oid = c.relnamespace "
+                            "WHERE n.nspname='cognitive_os' AND a.amname IN ('hnsw','ivfflat') "
+                            "AND i.indisvalid AND i.indisready"
+                        )
                     )
-                )
-                or 0
+                ).scalars()
             )
+            declared_names = set(
+                (
+                    await connection.execute(
+                        text(
+                            "SELECT c.relname FROM pg_class c "
+                            "JOIN pg_am a ON a.oid = c.relam "
+                            "JOIN pg_namespace n ON n.oid = c.relnamespace "
+                            "WHERE n.nspname='cognitive_os' AND a.amname IN ('hnsw','ivfflat')"
+                        )
+                    )
+                ).scalars()
+            )
+            undeclared_indexes = len(declared_names - APPROXIMATE_INDEX_NAMES)
+            missing_indexes = len(APPROXIMATE_INDEX_NAMES - usable_names)
             projection_errors = int(
                 await connection.scalar(
                     text(
@@ -131,7 +161,16 @@ class PostgresMemoryHealthService:
         missing_tables = self.REQUIRED_TABLES - tables
         checks = (
             ("missing_tables", len(missing_tables), f"Missing tables: {sorted(missing_tables)}"),
-            ("approximate_indexes", approximate_indexes, "Approximate indexes are forbidden"),
+            (
+                "undeclared_approximate_indexes",
+                undeclared_indexes,
+                f"Approximate indexes outside {sorted(APPROXIMATE_INDEX_NAMES)} are forbidden",
+            ),
+            (
+                "missing_approximate_indexes",
+                missing_indexes,
+                "Declared approximate indexes are absent, so approximate queries scan",
+            ),
             ("projection_mismatch", projection_errors, "Current projection mismatch"),
             ("missing_provenance", missing_sources, "Revision without provenance"),
             ("orphan_embeddings", orphan_embeddings, "Embedding/revision mismatch"),
@@ -171,7 +210,9 @@ class PostgresMemoryHealthService:
                     code="migration_head",
                     severity=MemoryHealthSeverity.ERROR,
                     count=1,
-                    message=f"Expected Alembic revision 0011, found {revision}",
+                    message=(
+                        f"Expected Alembic revision {EXPECTED_MIGRATION_REVISION}, found {revision}"
+                    ),
                 )
             )
         if vector_version != "0.8.2":

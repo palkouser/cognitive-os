@@ -1,0 +1,107 @@
+{
+  "$defs": {
+    "CounterfactualLabelValue": {
+      "description": "The variation's effect relative to the baseline run.",
+      "enum": [
+        "useful",
+        "neutral",
+        "harmful"
+      ],
+      "title": "CounterfactualLabelValue",
+      "type": "string"
+    },
+    "CounterfactualVariation": {
+      "description": "What was varied to obtain a label.",
+      "enum": [
+        "candidate_removed",
+        "selection_forced"
+      ],
+      "title": "CounterfactualVariation",
+      "type": "string"
+    },
+    "ProvenanceClass": {
+      "description": "Where an observation came from, which decides what it may be used for.",
+      "enum": [
+        "self_play",
+        "real_governed_run",
+        "operator_supplied"
+      ],
+      "title": "ProvenanceClass",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/learned/counterfactual-label.schema.json",
+  "additionalProperties": false,
+  "description": "A causal label obtained by varying one decision and re-running the case.\n\nTwo variations are supported, because the two candidate surfaces need\ndifferent ones: removing a candidate input, and forcing a selection the\ndeterministic policy would not have made. Both compare against the same\nbaseline run, so the three-valued label means the same thing in both.\n\nOnly a deterministic, provider-free run can be varied this way. A replayed run\nfails closed on the changed request (`request_fingerprint` covers the request's\nsemantic content), and a live provider response differs for reasons unrelated\nto the variation. `determinism_proof` carries the digest showing the baseline\nre-ran identically before the variation was attempted.",
+  "properties": {
+    "baseline_outcome": {
+      "minLength": 1,
+      "title": "Baseline Outcome",
+      "type": "string"
+    },
+    "case_id": {
+      "minLength": 1,
+      "title": "Case Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "determinism_proof": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Determinism Proof",
+      "type": "string"
+    },
+    "label": {
+      "$ref": "#/$defs/CounterfactualLabelValue"
+    },
+    "label_id": {
+      "format": "uuid",
+      "title": "Label Id",
+      "type": "string"
+    },
+    "provenance_class": {
+      "$ref": "#/$defs/ProvenanceClass"
+    },
+    "surface": {
+      "minLength": 1,
+      "title": "Surface",
+      "type": "string"
+    },
+    "variation_identity": {
+      "minLength": 1,
+      "title": "Variation Identity",
+      "type": "string"
+    },
+    "variation_kind": {
+      "$ref": "#/$defs/CounterfactualVariation"
+    },
+    "varied_outcome": {
+      "minLength": 1,
+      "title": "Varied Outcome",
+      "type": "string"
+    }
+  },
+  "required": [
+    "label_id",
+    "surface",
+    "case_id",
+    "variation_kind",
+    "variation_identity",
+    "baseline_outcome",
+    "varied_outcome",
+    "label",
+    "determinism_proof",
+    "provenance_class",
+    "created_at"
+  ],
+  "title": "CounterfactualLabel",
+  "type": "object"
+}

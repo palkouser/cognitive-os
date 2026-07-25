@@ -1,0 +1,62 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/learned/learned-shadow-result.schema.json",
+  "additionalProperties": false,
+  "description": "Shadow evidence that structurally cannot claim an unexecuted outcome.",
+  "properties": {
+    "agreement": {
+      "title": "Agreement",
+      "type": "boolean"
+    },
+    "component_id": {
+      "minLength": 1,
+      "title": "Component Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "deterministic_baseline_decision": {
+      "minLength": 1,
+      "title": "Deterministic Baseline Decision",
+      "type": "string"
+    },
+    "executed_decision": {
+      "minLength": 1,
+      "title": "Executed Decision",
+      "type": "string"
+    },
+    "learned_shadow_decision": {
+      "minLength": 1,
+      "title": "Learned Shadow Decision",
+      "type": "string"
+    },
+    "prediction_id": {
+      "format": "uuid",
+      "title": "Prediction Id",
+      "type": "string"
+    },
+    "shadow_actual_outcome": {
+      "default": null,
+      "title": "Shadow Actual Outcome",
+      "type": "null"
+    }
+  },
+  "required": [
+    "prediction_id",
+    "component_id",
+    "deterministic_baseline_decision",
+    "learned_shadow_decision",
+    "executed_decision",
+    "agreement",
+    "created_at"
+  ],
+  "title": "LearnedShadowResult",
+  "type": "object"
+}

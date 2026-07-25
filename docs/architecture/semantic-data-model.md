@@ -18,7 +18,8 @@ handled as contradictions rather than destructive corrections.
 The frozen predicate registry defines allowed value types, cardinality, temporal behavior, and
 deterministic contradiction rules. Values are typed; labels never replace stable identity.
 PostgreSQL relations reference exact claim revisions. No graph database or approximate index is
-part of this model.
+part of this model; the semantic plane holds no vector column, and its health check still treats
+any approximate index other than the Memory Plane's declared set as prohibited.
 
 The initial registry covers project language and tooling, repository base/profile, task outcome,
 acceptance and changed files, verification results, user instructions, and explicit memory

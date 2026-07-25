@@ -1,0 +1,78 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/learned/feature-schema.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "categorical_names": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Categorical Names",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "encoding_version": {
+      "minLength": 1,
+      "title": "Encoding Version",
+      "type": "string"
+    },
+    "feature_schema_id": {
+      "minLength": 1,
+      "title": "Feature Schema Id",
+      "type": "string"
+    },
+    "missing_value_policy": {
+      "minLength": 1,
+      "title": "Missing Value Policy",
+      "type": "string"
+    },
+    "numeric_names": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Numeric Names",
+      "type": "array"
+    },
+    "prohibited_features": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Prohibited Features",
+      "type": "array"
+    },
+    "surface": {
+      "minLength": 1,
+      "title": "Surface",
+      "type": "string"
+    },
+    "version": {
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "feature_schema_id",
+    "version",
+    "surface",
+    "encoding_version",
+    "prohibited_features",
+    "missing_value_policy",
+    "created_at"
+  ],
+  "title": "FeatureSchema",
+  "type": "object"
+}

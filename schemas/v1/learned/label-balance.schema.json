@@ -1,0 +1,34 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/learned/label-balance.schema.json",
+  "additionalProperties": false,
+  "description": "Class balance of a label set, so a degenerate corpus is visible up front.",
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "harmful": {
+      "minimum": 0,
+      "title": "Harmful",
+      "type": "integer"
+    },
+    "neutral": {
+      "minimum": 0,
+      "title": "Neutral",
+      "type": "integer"
+    },
+    "useful": {
+      "minimum": 0,
+      "title": "Useful",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "useful",
+    "neutral",
+    "harmful"
+  ],
+  "title": "LabelBalance",
+  "type": "object"
+}

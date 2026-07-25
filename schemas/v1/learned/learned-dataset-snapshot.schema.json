@@ -1,0 +1,242 @@
+{
+  "$defs": {
+    "CorpusRole": {
+      "enum": [
+        "training",
+        "evaluation"
+      ],
+      "title": "CorpusRole",
+      "type": "string"
+    },
+    "FeatureSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "categorical_names": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Categorical Names",
+          "type": "array"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "encoding_version": {
+          "minLength": 1,
+          "title": "Encoding Version",
+          "type": "string"
+        },
+        "feature_schema_id": {
+          "minLength": 1,
+          "title": "Feature Schema Id",
+          "type": "string"
+        },
+        "missing_value_policy": {
+          "minLength": 1,
+          "title": "Missing Value Policy",
+          "type": "string"
+        },
+        "numeric_names": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Numeric Names",
+          "type": "array"
+        },
+        "prohibited_features": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Prohibited Features",
+          "type": "array"
+        },
+        "surface": {
+          "minLength": 1,
+          "title": "Surface",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "feature_schema_id",
+        "version",
+        "surface",
+        "encoding_version",
+        "prohibited_features",
+        "missing_value_policy",
+        "created_at"
+      ],
+      "title": "FeatureSchema",
+      "type": "object"
+    },
+    "LabelBalance": {
+      "additionalProperties": false,
+      "description": "Class balance of a label set, so a degenerate corpus is visible up front.",
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "harmful": {
+          "minimum": 0,
+          "title": "Harmful",
+          "type": "integer"
+        },
+        "neutral": {
+          "minimum": 0,
+          "title": "Neutral",
+          "type": "integer"
+        },
+        "useful": {
+          "minimum": 0,
+          "title": "Useful",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "useful",
+        "neutral",
+        "harmful"
+      ],
+      "title": "LabelBalance",
+      "type": "object"
+    },
+    "ProvenanceClass": {
+      "description": "Where an observation came from, which decides what it may be used for.",
+      "enum": [
+        "self_play",
+        "real_governed_run",
+        "operator_supplied"
+      ],
+      "title": "ProvenanceClass",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/learned/learned-dataset-snapshot.schema.json",
+  "additionalProperties": false,
+  "description": "An immutable, hash-identified training or evaluation set.\n\nA training snapshot may not contain real-governed-run evidence. That keeps the\nevaluation corpus uncontaminated, which is the only reason the distribution\ncomparison in `DistributionComparison` means anything.",
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "corpus_role": {
+      "$ref": "#/$defs/CorpusRole"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "dataset_id": {
+      "format": "uuid",
+      "title": "Dataset Id",
+      "type": "string"
+    },
+    "distribution_limitations": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Distribution Limitations",
+      "type": "array"
+    },
+    "domain_distribution": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Domain Distribution",
+      "type": "array"
+    },
+    "feature_schema": {
+      "$ref": "#/$defs/FeatureSchema"
+    },
+    "item_provenance_classes": {
+      "items": {
+        "$ref": "#/$defs/ProvenanceClass"
+      },
+      "title": "Item Provenance Classes",
+      "type": "array"
+    },
+    "label_balance": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LabelBalance"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "observation_count": {
+      "minimum": 1,
+      "title": "Observation Count",
+      "type": "integer"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "split_manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Split Manifest Hash",
+      "type": "string"
+    },
+    "surface": {
+      "minLength": 1,
+      "title": "Surface",
+      "type": "string"
+    },
+    "usage_rights_verified": {
+      "title": "Usage Rights Verified",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "dataset_id",
+    "revision",
+    "corpus_role",
+    "surface",
+    "feature_schema",
+    "item_provenance_classes",
+    "observation_count",
+    "domain_distribution",
+    "split_manifest_hash",
+    "usage_rights_verified",
+    "distribution_limitations",
+    "created_at"
+  ],
+  "title": "LearnedDatasetSnapshot",
+  "type": "object"
+}

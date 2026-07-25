@@ -85,11 +85,6 @@
   "$id": "https://cognitive-os.local/schemas/v1/config/memory-configuration.schema.json",
   "additionalProperties": false,
   "properties": {
-    "allow_approximate_vector_indexes": {
-      "default": false,
-      "title": "Allow Approximate Vector Indexes",
-      "type": "boolean"
-    },
     "allow_automatic_promotion": {
       "default": false,
       "title": "Allow Automatic Promotion",
@@ -125,6 +120,15 @@
       },
       "minItems": 1,
       "title": "Allowed Scope Types",
+      "type": "array",
+      "uniqueItems": true
+    },
+    "approximate_vector_index_dimensions": {
+      "default": [],
+      "items": {
+        "type": "integer"
+      },
+      "title": "Approximate Vector Index Dimensions",
       "type": "array",
       "uniqueItems": true
     },

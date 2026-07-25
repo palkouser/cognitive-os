@@ -11,7 +11,9 @@ def test_example_configuration_loads_with_sealed_defaults() -> None:
     assert configuration.default_query_limit == 20
     assert not configuration.allow_provider_direct_write
     assert not configuration.allow_network_model_download
-    assert not configuration.allow_approximate_vector_indexes
+    # Sprint 21.3 replaced the sealed ANN boolean with a per-dimension declaration; empty
+    # is the default and keeps every vector search exhaustive.
+    assert configuration.approximate_vector_index_dimensions == frozenset()
 
 
 @pytest.mark.parametrize(
@@ -20,7 +22,6 @@ def test_example_configuration_loads_with_sealed_defaults() -> None:
         "allow_provider_direct_write",
         "allow_automatic_promotion",
         "allow_network_model_download",
-        "allow_approximate_vector_indexes",
     ],
 )
 def test_forbidden_sprint_nine_switches_cannot_be_enabled(field: str) -> None:

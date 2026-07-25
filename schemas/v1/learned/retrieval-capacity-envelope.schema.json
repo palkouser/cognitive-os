@@ -1,0 +1,149 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/learned/retrieval-capacity-envelope.schema.json",
+  "additionalProperties": false,
+  "description": "A measured retrieval capacity, at one corpus size, for one retrieval mode.\n\nRequirement 4 makes runtime scalability a criterion for choosing a learning\nmethod, which turns capacity into evidence rather than a target: a Tier A\nnon-parametric method stands or falls on what retrieval can actually do at scale.\n\nRecall is recorded against exhaustive ground truth and is mandatory for an\napproximate measurement, because an approximate latency without its recall is the\none number that can flatter any index. It must be absent for an exact measurement,\nwhere recall is 1 by construction and a stated value would imply it was measured.",
+  "properties": {
+    "candidate_limit": {
+      "minimum": 1,
+      "title": "Candidate Limit",
+      "type": "integer"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "corpus_vector_count": {
+      "minimum": 1,
+      "title": "Corpus Vector Count",
+      "type": "integer"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "ef_search": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ef Search"
+    },
+    "embedding_dimension": {
+      "minimum": 1,
+      "title": "Embedding Dimension",
+      "type": "integer"
+    },
+    "envelope_id": {
+      "format": "uuid",
+      "title": "Envelope Id",
+      "type": "string"
+    },
+    "index_build_seconds": {
+      "anyOf": [
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Index Build Seconds"
+    },
+    "index_scan_confirmed": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Index Scan Confirmed"
+    },
+    "index_size_bytes": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Index Size Bytes"
+    },
+    "latency_p50_ms": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Latency P50 Ms",
+      "type": "string"
+    },
+    "latency_p95_ms": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Latency P95 Ms",
+      "type": "string"
+    },
+    "limitations": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "queries_measured": {
+      "minimum": 1,
+      "title": "Queries Measured",
+      "type": "integer"
+    },
+    "recall_at_result_limit": {
+      "anyOf": [
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Recall At Result Limit"
+    },
+    "result_limit": {
+      "minimum": 1,
+      "title": "Result Limit",
+      "type": "integer"
+    },
+    "retrieval_mode": {
+      "minLength": 1,
+      "title": "Retrieval Mode",
+      "type": "string"
+    }
+  },
+  "required": [
+    "envelope_id",
+    "retrieval_mode",
+    "embedding_dimension",
+    "corpus_vector_count",
+    "queries_measured",
+    "result_limit",
+    "candidate_limit",
+    "latency_p50_ms",
+    "latency_p95_ms",
+    "limitations",
+    "created_at"
+  ],
+  "title": "RetrievalCapacityEnvelope",
+  "type": "object"
+}

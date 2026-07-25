@@ -16,6 +16,11 @@ from pydantic import Field, field_validator, model_validator
 from .base import ImmutableContractModel
 from .common import ArtifactRef, NonEmptyStr, Sha256Hex, UtcDatetime
 
+#: pgvector refuses `CREATE INDEX ... USING hnsw` on a column wider than this, so
+#: embeddings above it can only ever be searched exhaustively. Measured against
+#: pgvector 0.8.2 rather than read from its documentation.
+HNSW_MAXIMUM_DIMENSIONS = 2_000
+
 
 class MemoryContract(ImmutableContractModel):
     """Immutable contract with deterministic canonical serialization."""
@@ -88,6 +93,15 @@ class MemoryRetrievalMode(StrEnum):
     METADATA = "metadata"
     TEXT = "text"
     VECTOR = "vector"
+    #: Approximate nearest-neighbour retrieval (Sprint 21.3). A distinct mode rather
+    #: than a flag on the vector query, because the audit trail must stay able to say
+    #: which results came from an exhaustive scan and which from an index that may
+    #: miss a true neighbour. Callers opt in; nothing selects it for them.
+    VECTOR_APPROXIMATE = "vector_approximate"
+
+    @property
+    def is_vector(self) -> bool:
+        return self in {MemoryRetrievalMode.VECTOR, MemoryRetrievalMode.VECTOR_APPROXIMATE}
 
 
 class MemoryTransitionReason(StrEnum):
@@ -534,10 +548,16 @@ class MemoryQuery(MemoryContract):
     def exactly_one_mode_payload(self) -> MemoryQuery:
         if self.mode is MemoryRetrievalMode.TEXT and (self.text is None or self.vector is not None):
             raise ValueError("text retrieval requires only a text query")
-        if self.mode is MemoryRetrievalMode.VECTOR and (
-            self.vector is None or self.text is not None
-        ):
+        if self.mode.is_vector and (self.vector is None or self.text is not None):
             raise ValueError("vector retrieval requires only a vector query")
+        if self.mode is MemoryRetrievalMode.VECTOR_APPROXIMATE and (
+            self.vector is not None and self.vector.dimension > HNSW_MAXIMUM_DIMENSIONS
+        ):
+            # pgvector refuses to index a column wider than this, so no index can
+            # exist for such a dimension and an approximate request is unsatisfiable.
+            raise ValueError(
+                f"approximate retrieval is impossible above {HNSW_MAXIMUM_DIMENSIONS} dimensions"
+            )
         if self.mode is MemoryRetrievalMode.METADATA and (
             self.text is not None or self.vector is not None
         ):

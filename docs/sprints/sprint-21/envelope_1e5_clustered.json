@@ -1,0 +1,51 @@
+{
+  "envelopes": [
+    {
+      "candidate_limit": 1000,
+      "content_hash": "a8a59ae412735311a6c4493878fe2424bfe9603e8a5304a8d9fef8d266760e3e",
+      "corpus_vector_count": 100000,
+      "created_at": "2026-07-25T09:50:12.286098+00:00",
+      "ef_search": null,
+      "embedding_dimension": 768,
+      "envelope_id": "0265aa79-8319-53a5-b8a2-1f82f0fcbc61",
+      "index_build_seconds": null,
+      "index_scan_confirmed": null,
+      "index_size_bytes": null,
+      "latency_p50_ms": "321.225",
+      "latency_p95_ms": "329.281",
+      "limitations": [
+        "synthetic vectors loaded outside the governed write path: this measures the retrieval engine, not governed ingestion throughput",
+        "corpus drawn from 64 gaussian clusters with spread 0.35, which approximates the neighbourhood structure real embeddings have"
+      ],
+      "queries_measured": 50,
+      "recall_at_result_limit": null,
+      "result_limit": 20,
+      "retrieval_mode": "vector"
+    },
+    {
+      "candidate_limit": 1000,
+      "content_hash": "22d2caa8e65ef53ac60c6a785fa26ecade54682519d0cce35aef7fc16e80d435",
+      "corpus_vector_count": 100000,
+      "created_at": "2026-07-25T09:50:12.286098+00:00",
+      "ef_search": 1000,
+      "embedding_dimension": 768,
+      "envelope_id": "316abca0-dfc0-5e29-84ea-819dcbc06dfa",
+      "index_build_seconds": "209.689",
+      "index_scan_confirmed": true,
+      "index_size_bytes": 409608192,
+      "latency_p50_ms": "15.285",
+      "latency_p95_ms": "16.526",
+      "limitations": [
+        "synthetic vectors loaded outside the governed write path: this measures the retrieval engine, not governed ingestion throughput",
+        "corpus drawn from 64 gaussian clusters with spread 0.35, which approximates the neighbourhood structure real embeddings have"
+      ],
+      "queries_measured": 50,
+      "recall_at_result_limit": "0.992",
+      "result_limit": 20,
+      "retrieval_mode": "vector_approximate"
+    }
+  ],
+  "index_build_seconds": 209.689,
+  "index_size_bytes": 409608192,
+  "load_seconds": 57.83
+}

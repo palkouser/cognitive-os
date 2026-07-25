@@ -90,7 +90,9 @@ class PostgresCorpusHealthService:
             )
         messages = []
         if revision != EXPECTED_MIGRATION_REVISION:
-            messages.append(f"Expected Alembic revision 0011, found {revision}")
+            messages.append(
+                f"Expected Alembic revision {EXPECTED_MIGRATION_REVISION}, found {revision}"
+            )
         if table_count != 9:
             messages.append(f"Expected 9 Corpus Factory tables, found {table_count}")
         if triggers != 8:

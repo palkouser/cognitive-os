@@ -1,0 +1,543 @@
+{
+  "$defs": {
+    "DistributionComparison": {
+      "additionalProperties": false,
+      "description": "How far the evaluation corpus sits from what a component trained on.\n\nBelow `minimum_sample_threshold` the only permitted verdict is\n`NOT_ESTABLISHED`: an under-powered comparison must not be reportable as\nevidence of low divergence.",
+      "properties": {
+        "abstention_rate_evaluation": {
+          "anyOf": [
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Abstention Rate Evaluation"
+        },
+        "abstention_rate_training": {
+          "anyOf": [
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Abstention Rate Training"
+        },
+        "compared_features": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Compared Features",
+          "type": "array"
+        },
+        "comparison_id": {
+          "format": "uuid",
+          "title": "Comparison Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "evaluation_dataset_id": {
+          "format": "uuid",
+          "title": "Evaluation Dataset Id",
+          "type": "string"
+        },
+        "evaluation_sample_count": {
+          "minimum": 0,
+          "title": "Evaluation Sample Count",
+          "type": "integer"
+        },
+        "limitations": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "minimum_sample_threshold": {
+          "minimum": 1,
+          "title": "Minimum Sample Threshold",
+          "type": "integer"
+        },
+        "per_feature_divergence": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Per Feature Divergence",
+          "type": "array"
+        },
+        "training_dataset_id": {
+          "format": "uuid",
+          "title": "Training Dataset Id",
+          "type": "string"
+        },
+        "training_sample_count": {
+          "minimum": 0,
+          "title": "Training Sample Count",
+          "type": "integer"
+        },
+        "verdict": {
+          "$ref": "#/$defs/DivergenceVerdict"
+        }
+      },
+      "required": [
+        "comparison_id",
+        "training_dataset_id",
+        "evaluation_dataset_id",
+        "compared_features",
+        "per_feature_divergence",
+        "training_sample_count",
+        "evaluation_sample_count",
+        "minimum_sample_threshold",
+        "verdict",
+        "limitations",
+        "created_at"
+      ],
+      "title": "DistributionComparison",
+      "type": "object"
+    },
+    "DivergenceVerdict": {
+      "enum": [
+        "low",
+        "high",
+        "not_established"
+      ],
+      "title": "DivergenceVerdict",
+      "type": "string"
+    },
+    "ForgettingAssessment": {
+      "additionalProperties": false,
+      "description": "Retention across every previously passing case, in every domain.",
+      "properties": {
+        "assessment_id": {
+          "format": "uuid",
+          "title": "Assessment Id",
+          "type": "string"
+        },
+        "baseline_manifest_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Baseline Manifest Hash",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "per_domain_after": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Per Domain After",
+          "type": "array"
+        },
+        "per_domain_before": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Per Domain Before",
+          "type": "array"
+        },
+        "regressed_cases": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Regressed Cases",
+          "type": "array"
+        },
+        "retained_case_count": {
+          "minimum": 0,
+          "title": "Retained Case Count",
+          "type": "integer"
+        },
+        "session_id": {
+          "format": "uuid",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "tolerance": {
+          "minimum": 0,
+          "title": "Tolerance",
+          "type": "integer"
+        },
+        "verdict": {
+          "$ref": "#/$defs/ForgettingVerdict"
+        }
+      },
+      "required": [
+        "assessment_id",
+        "session_id",
+        "baseline_manifest_hash",
+        "per_domain_before",
+        "per_domain_after",
+        "regressed_cases",
+        "retained_case_count",
+        "tolerance",
+        "verdict",
+        "created_at"
+      ],
+      "title": "ForgettingAssessment",
+      "type": "object"
+    },
+    "ForgettingVerdict": {
+      "enum": [
+        "retained",
+        "regressed",
+        "not_established"
+      ],
+      "title": "ForgettingVerdict",
+      "type": "string"
+    },
+    "LearnedArtifactFormat": {
+      "description": "Loading an untrusted pickle is prohibited, so it has no enum member.",
+      "enum": [
+        "safetensors",
+        "joblib",
+        "none"
+      ],
+      "title": "LearnedArtifactFormat",
+      "type": "string"
+    },
+    "LearnedCapabilityClass": {
+      "enum": [
+        "discriminative",
+        "ranking",
+        "embedding",
+        "anomaly"
+      ],
+      "title": "LearnedCapabilityClass",
+      "type": "string"
+    },
+    "LearnedComponentDescriptor": {
+      "additionalProperties": false,
+      "description": "Everything the core needs to know about a component it did not know about.\n\nThis is what makes a new capability additive: the descriptor is declared in\nconfiguration, and the enums are extended by the sprint that needs a new value.",
+      "properties": {
+        "artifact_format": {
+          "$ref": "#/$defs/LearnedArtifactFormat"
+        },
+        "capability_class": {
+          "$ref": "#/$defs/LearnedCapabilityClass"
+        },
+        "component_id": {
+          "minLength": 1,
+          "title": "Component Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "declared_limitations": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Declared Limitations",
+          "type": "array"
+        },
+        "deterministic_baseline": {
+          "minLength": 1,
+          "title": "Deterministic Baseline",
+          "type": "string"
+        },
+        "explanation_kind": {
+          "$ref": "#/$defs/LearnedExplanationKind"
+        },
+        "required_extra": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Required Extra"
+        },
+        "resource_class": {
+          "$ref": "#/$defs/LearnedResourceClass"
+        },
+        "supports_abstention": {
+          "title": "Supports Abstention",
+          "type": "boolean"
+        },
+        "surface": {
+          "minLength": 1,
+          "title": "Surface",
+          "type": "string"
+        },
+        "tier": {
+          "$ref": "#/$defs/LearnedComponentTier"
+        },
+        "version": {
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "component_id",
+        "version",
+        "surface",
+        "tier",
+        "capability_class",
+        "resource_class",
+        "artifact_format",
+        "supports_abstention",
+        "explanation_kind",
+        "deterministic_baseline",
+        "declared_limitations"
+      ],
+      "title": "LearnedComponentDescriptor",
+      "type": "object"
+    },
+    "LearnedComponentTier": {
+      "description": "Trial order from the Sprint 21 plan, ranked by expected success.",
+      "enum": [
+        "non_parametric",
+        "incremental_parametric",
+        "adapter",
+        "research"
+      ],
+      "title": "LearnedComponentTier",
+      "type": "string"
+    },
+    "LearnedExplanationKind": {
+      "enum": [
+        "neighbours",
+        "feature_attribution",
+        "none"
+      ],
+      "title": "LearnedExplanationKind",
+      "type": "string"
+    },
+    "LearnedPromotionDecision": {
+      "enum": [
+        "eligible_for_operator_approval",
+        "insufficient_improvement",
+        "forgetting_regression",
+        "invariance_failure",
+        "abstention_unsupported",
+        "distribution_not_established",
+        "requires_manual_review",
+        "rejected"
+      ],
+      "title": "LearnedPromotionDecision",
+      "type": "string"
+    },
+    "LearnedResourceClass": {
+      "enum": [
+        "cpu",
+        "cpu_preferred"
+      ],
+      "title": "LearnedResourceClass",
+      "type": "string"
+    },
+    "MandatoryPathInvariance": {
+      "additionalProperties": false,
+      "description": "Proof that a component cannot alter the deterministic mandatory path.\n\nThe same recorded case set is replayed with the component absent, present but\ndisabled, and present but abstaining. All three decision digests must match.",
+      "properties": {
+        "case_count": {
+          "minimum": 1,
+          "title": "Case Count",
+          "type": "integer"
+        },
+        "case_set_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Case Set Hash",
+          "type": "string"
+        },
+        "component_id": {
+          "minLength": 1,
+          "title": "Component Id",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "decision_hash_absent": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Decision Hash Absent",
+          "type": "string"
+        },
+        "decision_hash_abstaining": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Decision Hash Abstaining",
+          "type": "string"
+        },
+        "decision_hash_disabled": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Decision Hash Disabled",
+          "type": "string"
+        },
+        "record_id": {
+          "format": "uuid",
+          "title": "Record Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record_id",
+        "component_id",
+        "case_set_hash",
+        "case_count",
+        "decision_hash_absent",
+        "decision_hash_disabled",
+        "decision_hash_abstaining",
+        "created_at"
+      ],
+      "title": "MandatoryPathInvariance",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/learned/learned-promotion-assessment.schema.json",
+  "additionalProperties": false,
+  "description": "The gate. Improvement alone never makes a component eligible.",
+  "properties": {
+    "assessment_id": {
+      "format": "uuid",
+      "title": "Assessment Id",
+      "type": "string"
+    },
+    "baseline_metric": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Baseline Metric",
+      "type": "string"
+    },
+    "candidate_metric": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Candidate Metric",
+      "type": "string"
+    },
+    "component_id": {
+      "minLength": 1,
+      "title": "Component Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "decision": {
+      "$ref": "#/$defs/LearnedPromotionDecision"
+    },
+    "descriptor": {
+      "$ref": "#/$defs/LearnedComponentDescriptor"
+    },
+    "distribution": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DistributionComparison"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "forgetting": {
+      "$ref": "#/$defs/ForgettingAssessment"
+    },
+    "invariance": {
+      "$ref": "#/$defs/MandatoryPathInvariance"
+    },
+    "minimum_material_improvement": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Minimum Material Improvement",
+      "type": "string"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "assessment_id",
+    "component_id",
+    "descriptor",
+    "baseline_metric",
+    "candidate_metric",
+    "minimum_material_improvement",
+    "forgetting",
+    "invariance",
+    "decision",
+    "reason",
+    "created_at"
+  ],
+  "title": "LearnedPromotionAssessment",
+  "type": "object"
+}

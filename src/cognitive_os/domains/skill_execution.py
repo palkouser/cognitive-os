@@ -35,6 +35,7 @@ from cognitive_os.domain.skills import (
     SkillExecutionStatus,
     SkillExecutionStepResult,
     SkillInputBinding,
+    SkillRequirementType,
     SkillRevision,
 )
 from cognitive_os.routing.service import build_task_signature
@@ -96,6 +97,24 @@ class DomainSkillRun:
         return self.result.status is SkillExecutionStatus.ACCEPTED
 
 
+def declared_verifier_capabilities(revision: SkillRevision) -> tuple[str, ...]:
+    """The verifier capabilities a skill revision declares it will run.
+
+    Read from the package's own `requirements`, so the declaration stays where the
+    skill author wrote it rather than being duplicated in a lookup table here.
+    """
+    return tuple(
+        sorted(
+            {
+                requirement.capability_id
+                for requirement in revision.requirements
+                if requirement.requirement_type is SkillRequirementType.VERIFIER
+                and requirement.required
+            }
+        )
+    )
+
+
 class DomainSkillRunner:
     """`ExistingControllerSkillRunner` backed by the governed Controller path."""
 
@@ -107,7 +126,17 @@ class DomainSkillRunner:
     async def start(
         self, request: SkillExecutionRequest, revision: SkillRevision
     ) -> SkillExecutionResult:
-        run = await run_case_controlled(self._case, candidate_override=self._override)
+        # The revision is not decoration. A skill package declares the verifier
+        # capability it claims to run, so executing this revision must require that
+        # capability: selecting a skill whose declared verifier never runs on this
+        # case cannot yield an accepted result. Before this, the revision was
+        # ignored entirely and every skill produced an identical outcome, which
+        # made the Skill Engine's selection causally inert on the domain path.
+        run = await run_case_controlled(
+            self._case,
+            candidate_override=self._override,
+            required_capabilities=declared_verifier_capabilities(revision),
+        )
         self.last_run = run
         status = (
             SkillExecutionStatus.ACCEPTED

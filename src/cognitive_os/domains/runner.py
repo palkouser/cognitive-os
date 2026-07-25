@@ -101,19 +101,25 @@ async def run_case_controlled(
     *,
     candidate_override: Any | None = None,
     store: MemoryEventStore | None = None,
+    required_capabilities: tuple[str, ...] = (),
 ) -> ControlledRun:
     """Execute one domain case through the Cognitive Controller.
 
     `candidate_override` submits an externally proposed answer. The plan, the tool
     call, and the acceptance path are unchanged, which is what makes a fabricated
     answer detectable rather than trusted.
+
+    `required_capabilities` adds verifier capabilities the caller requires on top
+    of the case's own — a selected skill revision declares the verifier it claims
+    to run, and a declared capability the checker never exercises must block
+    acceptance instead of passing unnoticed.
     """
     # `is None`, not truthiness: an empty store is falsy through `__len__`, and
     # `or` would silently swap a caller's store for a private one whose events
     # they can never read.
     if store is None:
         store = MemoryEventStore()
-    problem_engine = DomainProblemEngine(case)
+    problem_engine = DomainProblemEngine(case, required_capabilities=required_capabilities)
     planner = DomainPlanner(case, problem_engine.step_id)
     tool_execution = build_tool_execution(store)
     executor = DomainActionExecutor(tool_execution, candidate_override=candidate_override)

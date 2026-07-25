@@ -26,7 +26,9 @@ memory:
   allow_automatic_task_ingestion: false
   allow_automatic_promotion: false
   allow_network_model_download: false
-  allow_approximate_vector_indexes: false
+  # Empty keeps every vector search exhaustive. List a dimension only if migration 0013
+  # created its index and a provider below produces it. See ADR 0082.
+  approximate_vector_index_dimensions: []
   fail_closed_on_access_audit_error: true
   embedding_providers:
     deterministic-test:

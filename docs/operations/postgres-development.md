@@ -37,3 +37,29 @@ The remediation run reached Alembic revision `0001`, passed all 9 PostgreSQL int
 and concurrency tests, and passed the 316-test repository regression with the MCP,
 PostgreSQL, and OpenTelemetry extras. Do not use `--all-extras` for the default-environment
 contract suite: legacy optional dependencies are intentionally required to be absent there.
+
+## Migration 0013: approximate vector index build time
+
+Migration 0013 creates one HNSW index per declared embedding dimension. On an empty or
+small `memory_embeddings` this is instant. On a populated table it is not: building over
+100 000 768-dimensional vectors took **over six minutes** on the development container
+(`maintenance_work_mem = 64MB`, `shared_buffers = 128MB`, two parallel maintenance
+workers), which exceeds the application's 30-second `command_timeout` by two orders of
+magnitude.
+
+Before applying 0013 to a populated deployment:
+
+- raise `maintenance_work_mem` for the session — an HNSW build that does not fit in memory
+  falls back to a much slower on-disk pass, and pgvector says so in a `NOTICE`;
+- run the migration through a client without the application's command timeout;
+- expect writes to `memory_embeddings` to block for the duration, since `CREATE INDEX`
+  without `CONCURRENTLY` takes a lock. Alembic runs inside a transaction, so
+  `CONCURRENTLY` is not available here; schedule accordingly.
+
+A failed build leaves an **invalid** index behind. `pg_indexes` still lists it and the
+planner ignores it entirely, so the Memory Plane health check tests
+`pg_index.indisvalid AND indisready` rather than mere presence — a build that failed
+reports as `missing_approximate_indexes`, not as healthy.
+
+Measure a deployment's own envelope with `scripts/memory_ann_baseline.py`, which creates
+and drops its own scratch table and never writes to governed tables.

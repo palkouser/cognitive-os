@@ -1,0 +1,64 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/learned/mandatory-path-invariance.schema.json",
+  "additionalProperties": false,
+  "description": "Proof that a component cannot alter the deterministic mandatory path.\n\nThe same recorded case set is replayed with the component absent, present but\ndisabled, and present but abstaining. All three decision digests must match.",
+  "properties": {
+    "case_count": {
+      "minimum": 1,
+      "title": "Case Count",
+      "type": "integer"
+    },
+    "case_set_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Case Set Hash",
+      "type": "string"
+    },
+    "component_id": {
+      "minLength": 1,
+      "title": "Component Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "decision_hash_absent": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Decision Hash Absent",
+      "type": "string"
+    },
+    "decision_hash_abstaining": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Decision Hash Abstaining",
+      "type": "string"
+    },
+    "decision_hash_disabled": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Decision Hash Disabled",
+      "type": "string"
+    },
+    "record_id": {
+      "format": "uuid",
+      "title": "Record Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "record_id",
+    "component_id",
+    "case_set_hash",
+    "case_count",
+    "decision_hash_absent",
+    "decision_hash_disabled",
+    "decision_hash_abstaining",
+    "created_at"
+  ],
+  "title": "MandatoryPathInvariance",
+  "type": "object"
+}

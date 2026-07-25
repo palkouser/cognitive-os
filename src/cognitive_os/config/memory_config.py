@@ -8,6 +8,7 @@ import yaml
 from pydantic import Field, field_validator, model_validator
 
 from cognitive_os.domain.base import ImmutableContractModel
+from cognitive_os.domain.memory import HNSW_MAXIMUM_DIMENSIONS
 
 
 class MemoryBenchmarkConfiguration(ImmutableContractModel):
@@ -54,7 +55,13 @@ class MemoryConfiguration(ImmutableContractModel):
     allow_automatic_task_ingestion: bool = False
     allow_automatic_promotion: bool = False
     allow_network_model_download: bool = False
-    allow_approximate_vector_indexes: bool = False
+    #: Dimensions that carry an approximate index and may therefore be queried with
+    #: `MemoryRetrievalMode.VECTOR_APPROXIMATE` (Sprint 21.3). Empty — the default —
+    #: keeps the Sprint 9 behaviour: every vector search is exhaustive. This replaces
+    #: the sealed `allow_approximate_vector_indexes` boolean, because a host that
+    #: permits approximation has to say *for which embeddings*: an index exists per
+    #: dimension, so a blanket yes would have permitted queries no index can serve.
+    approximate_vector_index_dimensions: frozenset[int] = frozenset()
     fail_closed_on_access_audit_error: bool = True
     embedding_providers: dict[str, EmbeddingProviderConfiguration] = Field(default_factory=dict)
     export_root: Path
@@ -73,11 +80,35 @@ class MemoryConfiguration(ImmutableContractModel):
             self.allow_provider_direct_write
             or self.allow_automatic_promotion
             or self.allow_network_model_download
-            or self.allow_approximate_vector_indexes
         ):
-            raise ValueError("Sprint 9 direct writes, promotion, downloads, and ANN are forbidden")
+            raise ValueError("Sprint 9 direct writes, promotion, and model downloads are forbidden")
         if self.default_query_limit > self.maximum_query_results:
             raise ValueError("default query limit exceeds the host maximum")
+        return self
+
+    @model_validator(mode="after")
+    def declared_approximate_dimensions_are_indexable(self) -> MemoryConfiguration:
+        """The ANN permission is narrowed to dimensions an index can actually cover.
+
+        Sprint 21.3 lifts the blanket prohibition, so this validator carries what is
+        left of it: a host cannot declare a dimension pgvector refuses to index, nor
+        one its own embedding providers never produce, because either would leave a
+        permission that silently degrades to an exhaustive scan.
+        """
+        for dimension in sorted(self.approximate_vector_index_dimensions):
+            if dimension < 1 or dimension > HNSW_MAXIMUM_DIMENSIONS:
+                raise ValueError(
+                    f"approximate index dimension {dimension} is not indexable "
+                    f"(1..{HNSW_MAXIMUM_DIMENSIONS})"
+                )
+            if dimension > self.maximum_vector_query_dimension:
+                raise ValueError(
+                    f"approximate index dimension {dimension} exceeds the query maximum"
+                )
+        declared = {provider.dimension for provider in self.embedding_providers.values()}
+        if declared and not self.approximate_vector_index_dimensions <= declared:
+            unmatched = sorted(self.approximate_vector_index_dimensions - declared)
+            raise ValueError(f"no configured embedding provider produces dimension {unmatched}")
         return self
 
 
