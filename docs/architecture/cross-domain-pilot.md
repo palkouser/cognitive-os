@@ -34,9 +34,8 @@ changing what is measured.
 
 ## Learning-plane path
 
-This is the part of Gate K condition 8 this sprint delivers: experience compilation, memory,
-semantic extraction, and corpus declaration. Weakness mining and the controlled-change cycle — the
-rest of condition 8 — are not built; see "Scope and limitations".
+This is the part of Gate K condition 8 the compilation stage delivers: experience compilation,
+memory, semantic extraction, and corpus declaration.
 
 ```text
 run_case_controlled -> MemoryEventStore (the recorded event trail)
@@ -58,6 +57,38 @@ dropped or misfiled.
 A rejected run is not laundered into a success story: its terminal state stays `"rejected"`, it
 produces `FAILURE_PATTERN` and `NEGATIVE_EXAMPLE` candidates instead of `MEMORY` and `SKILL`
 candidates, and the projected memory's `review_status` reads `"rejected"`. See ADR 0077.
+
+## Weakness, proposal, and controlled-change path
+
+This is the rest of Gate K condition 8: a real capability gap, mined by the unmodified Weakness
+Mining Service, proposed by the unmodified Harness Proposal Engine, and run as an isolated experiment
+by the unmodified Controlled Change Service.
+
+```text
+probe_case ("polynomial-equation" with irrational roots — a real, legitimate input)
+-> run_case_controlled                       -> a genuine tool failure and rejection
+-> DomainWeaknessSourceResolver + DomainCapabilityGapExtractor
+-> WeaknessMiningService (unmodified)         -> one grouped, scored WeaknessRevision
+-> confirm_domain_weakness (explicit operator transition) -> CONFIRMED
+-> HarnessProposalService.create_from_weakness (unmodified) -> a TOOL_DEFINITION_CHANGE proposal
+-> ControlledChangeService (unmodified)       -> isolated experiment, evaluation matrix, assessment
+-> PromotionAssessment: REQUIRES_MANUAL_REVIEW (tier 3, no runtime promotion authority)
+```
+
+`src/cognitive_os/domains/weakness.py` and `improvement.py` contribute the probes, the source and
+extractor adapters, and nothing else. The weakness is real: `polynomial-equation` is a registered
+task class that accepts any real quadratic, but the solver is exact-rational only (see "Scope and
+limitations"), so an irrational-root input is admitted at planning time and fails at solve time. The
+probe is not rigged — it is a legitimate input the harness genuinely cannot answer, run through the
+identical governed path every fixture case uses.
+
+Mining identity deliberately excludes each run's per-execution event-payload hashes: a weakness is a
+property of the harness, not of one run, so mining the same gap twice must yield the same weakness.
+See ADR 0078 for the determinism argument and the two shared-component bugs the probes' genuine
+failures surfaced: `DomainActionExecutor` letting a tool failure crash the Controller run instead of
+reporting it, and `ControllerVerificationService` building an invalid verification subject when a
+step produced no output. Both are fixed in the Controller and Tool Plane layers, not worked around in
+the domain package.
 
 ## Authority map
 
@@ -126,7 +157,9 @@ Sprint 7 parser.
 | `events/memory_store.py` | Shared in-process `EventStorePort` for offline runs |
 | `events/domain_events.py` | Seven lifecycle events |
 | `domains/learning.py` | Translates a run's recorded events into compiler, memory, and corpus inputs |
-| `benchmarks/domain_adapter.py` | Executes cases and 25 governance invariants |
+| `domains/weakness.py` | Legitimate-input probes, source resolver, and signal extractor for mining |
+| `domains/improvement.py` | Proposal generation and isolated-experiment composition |
+| `benchmarks/domain_adapter.py` | Executes cases and 28 governance invariants |
 | `infrastructure/domains/postgres/` | Migration `0012` metadata |
 
 ## Registered task classes
@@ -180,9 +213,14 @@ set grew from 8 skills and 7 strategies to 19 and 13; its size is now derived fr
 - Propositional logic only; quantifiers and general theorem proving are out of scope.
 - No general physics simulation. Model selection audits declared assumptions against declared
   conditions.
-- The learning-plane path compiles, projects, extracts, and declares to the Corpus Factory; it does
-  not mine weaknesses from the compiled candidates, propose a `HarnessProposal`, or run an approved
-  isolated change experiment. That is Gate K condition 8's remainder and a separate epic.
-- Learning-plane output stays in the same offline, in-memory repositories the domain execution path
-  uses; it is not written to PostgreSQL in this sprint. The Memory Plane, semantic memory, and Corpus
-  Factory PostgreSQL adapters already exist and are exercised by their own integration suites.
+- Learning-plane and weakness-mining output stays in the same offline, in-memory repositories the
+  domain execution path uses; it is not written to PostgreSQL in this sprint. The Memory Plane,
+  semantic memory, Corpus Factory, weakness, proposal, and change PostgreSQL adapters already exist
+  and are exercised by their own integration suites.
+- The weakness-mining path probes one capability gap (irrational roots on `polynomial-equation`).
+  Finding that gap does not imply every registered task class has been probed for its own edge cases;
+  it demonstrates that the mining, proposal, and controlled-change services accept real domain
+  evidence end to end.
+- The isolated experiment proves the change in isolation and stops at `REQUIRES_MANUAL_REVIEW`.
+  Nothing in this repository promotes it; that step is operator-owned, matching the release stance in
+  ADR 0076.

@@ -38,7 +38,7 @@ harness actually behaves as declared.
 
 ## Governance invariants
 
-Twenty-five invariants run in both manifests and as parametrised tests.
+Twenty-eight invariants run in both manifests and as parametrised tests.
 
 Governed execution:
 `controller_owns_plan`, `tool_plane_audits_solve`, `controlled_path_rejects_wrong`,
@@ -46,6 +46,9 @@ Governed execution:
 
 Learning-plane integration:
 `learning_recorded_events_only`, `learning_failure_preserved`, `learning_corpus_rights`.
+
+Weakness, proposal, and controlled change:
+`weakness_from_recorded_failure`, `proposal_traces_to_weakness`, `change_cannot_self_promote`.
 
 Safety, authority, and determinism:
 `unsupported_problem_type`, `forbidden_operation`, `raw_text_rejected`, `expression_bomb_bounded`,
@@ -95,6 +98,26 @@ Full ingestion — compile, memory write, semantic extraction, corpus declaratio
 wrong-answer path). Corpus usage-rights declarations mirror the case's own `ProvenanceRef`:
 `REDISTRIBUTION` and `PUBLIC_RELEASE` match `redistributable`, and `MODEL_TRAINING` and
 `COMMERCIAL_USE` stay undeclared.
+
+## Weakness, proposal, and controlled-change results
+
+Three legitimate `polynomial-equation` inputs with irrational roots — a real, registry-accepted
+input the exact-rational solver genuinely cannot answer — are run through the governed Controller and
+Tool Plane path and each fails there for real:
+
+| Stage | Result |
+|---|---|
+| Probes run | 3/3 produce a recorded `tool_call.failed` and a rejected acceptance decision |
+| Mining | 3 signals group into 1 weakness signature; `WeaknessType.MISSING_SKILL` |
+| Confirmation | explicit `CANDIDATE -> CONFIRMED` transition, `reproducible` |
+| Proposal | `TOOL_DEFINITION_CHANGE`, reaches `approved_for_experiment` |
+| Isolated experiment | `declarative_copy` isolation, network disabled, 1 file in scope, 15 evaluation gates, 0 hard failures |
+| Assessment | `requires_manual_review` — tier 3, no runtime promotion authority |
+
+Mining and the full cycle are deterministic: two independent runs produce identical mining manifests
+and byte-identical experiment, isolation, and assessment content hashes, because mined-signal identity
+is derived from the case and the observed control-flow shape, not from per-run event-payload hashes
+that would otherwise carry a fresh timestamp every execution.
 
 ## Determinism
 

@@ -571,6 +571,64 @@ async def _learning_corpus_rights_from_provenance() -> bool:
     return bool(result.corpus_candidates) and result.corpus_item_count >= 1
 
 
+async def _weakness_is_mined_from_recorded_failure() -> bool:
+    """Every mined signal traces to a real failed run, not to a declared expectation."""
+    from cognitive_os.domains.weakness import FAILURE_CODE, WEAKNESS_TYPE, mine_domain_weaknesses
+
+    outcome = await mine_domain_weaknesses()
+    manifest = outcome.result.manifest
+    if manifest is None or not outcome.observations:
+        return False
+    if not all(item.is_capability_gap for item in outcome.observations):
+        return False
+    if not all("tool_call.failed" in item.event_types for item in outcome.observations):
+        return False
+    signals = tuple(outcome.repository.signals.values())
+    if len(signals) != len(outcome.observations):
+        return False
+    recorded_runs = {item.task_run_id for item in outcome.observations}
+    return (
+        all(item.weakness_type is WEAKNESS_TYPE for item in signals)
+        and all(item.failure_code == FAILURE_CODE for item in signals)
+        and all(item.task_run_id in recorded_runs for item in signals)
+        and manifest.summary.weakness_count == 1
+    )
+
+
+async def _proposal_traces_to_its_weakness() -> bool:
+    """A proposal carries the exact weakness revision it was derived from."""
+    from cognitive_os.domain.proposals import ProposalStatus
+    from cognitive_os.domains.improvement import PROPOSAL_TYPE, propose_from_domain_weakness
+
+    outcome = await propose_from_domain_weakness()
+    snapshot = outcome.proposal.source_snapshot
+    return (
+        outcome.proposal.status is ProposalStatus.APPROVED_FOR_EXPERIMENT
+        and outcome.proposal.change_specification.change_surface == PROPOSAL_TYPE.value
+        and snapshot.weakness_id == outcome.weakness.revision.weakness_id
+        and snapshot.weakness_revision == outcome.weakness.revision.revision
+        and snapshot.weakness_record.content_hash == outcome.weakness.revision.content_hash
+    )
+
+
+async def _change_experiment_cannot_self_promote() -> bool:
+    """The isolated experiment ends at manual review and touches no active state."""
+    from cognitive_os.domain.changes import PromotionDecision
+    from cognitive_os.domains.improvement import run_isolated_experiment
+
+    outcome = await run_isolated_experiment()
+    isolation = outcome.isolation
+    return (
+        outcome.promotion_is_manual
+        and outcome.assessment.decision is PromotionDecision.REQUIRES_MANUAL_REVIEW
+        and bool(outcome.assessment.approval_requirements)
+        and isolation.network_policy == "disabled"
+        and isolation.baseline_commit
+        == isolation.active_state_protection_snapshot.repository_commit
+        and bool(isolation.allowed_repository_paths)
+    )
+
+
 _GOVERNANCE = {
     "controller_owns_plan": _controller_owns_the_plan,
     "tool_plane_audits_solve": _tool_plane_audits_every_solve,
@@ -581,6 +639,9 @@ _GOVERNANCE = {
     "learning_recorded_events_only": _learning_compiles_only_recorded_events,
     "learning_failure_preserved": _learning_preserves_failure_evidence,
     "learning_corpus_rights": _learning_corpus_rights_from_provenance,
+    "weakness_from_recorded_failure": _weakness_is_mined_from_recorded_failure,
+    "proposal_traces_to_weakness": _proposal_traces_to_its_weakness,
+    "change_cannot_self_promote": _change_experiment_cannot_self_promote,
     "unsupported_problem_type": _unsupported_problem_type_fails,
     "forbidden_operation": _forbidden_operation_is_rejected,
     "raw_text_rejected": _raw_text_cannot_reach_a_solver,

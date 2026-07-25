@@ -222,12 +222,21 @@ class ControllerVerificationService:
         )
         subject_type = VerificationSubjectType(str(type_name))
         output_id = str(configuration.get("output_id", ""))
+        value = outputs.get(output_id, configuration.get("actual"))
+        if value is None:
+            # The step that was to produce this output did not produce one — it
+            # failed, was denied, or never ran. `VerificationSubject` requires a
+            # source, so absence must be stated rather than passed as `None`,
+            # which would raise here and abort the run before any verifier result
+            # or acceptance decision is recorded. A verifier that cannot find its
+            # subject reports that; it does not get to be a crash.
+            return VerificationSubject(
+                subject_type=subject_type,
+                inline_value={"subject_absent": True, "output_id": output_id},
+            )
         return VerificationSubject(
             subject_type=subject_type,
-            inline_value=cast(
-                JsonValue,
-                outputs.get(output_id, configuration.get("actual")),
-            ),
+            inline_value=cast(JsonValue, value),
         )
 
     @staticmethod

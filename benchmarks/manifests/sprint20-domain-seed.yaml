@@ -32,9 +32,9 @@ case_matrix:
     - {id: domain-seed-gen-22, scenario: governance, check: underdetermination_reported}
     - {id: domain-seed-gen-23, scenario: governance, check: unknown_not_unsat}
     - {id: domain-seed-gen-24, scenario: governance, check: unsupported_problem_type}
-    - {id: domain-seed-gen-25, scenario: governance, check: controlled_path_rejects_wrong}
-    - {id: domain-seed-gen-26, scenario: governance, check: controller_owns_plan}
-    - {id: domain-seed-gen-27, scenario: governance, check: core_without_extras}
+    - {id: domain-seed-gen-25, scenario: governance, check: weakness_from_recorded_failure}
+    - {id: domain-seed-gen-26, scenario: governance, check: proposal_traces_to_weakness}
+    - {id: domain-seed-gen-27, scenario: governance, check: change_cannot_self_promote}
     - {id: domain-seed-gen-28, scenario: governance, check: learning_recorded_events_only}
     - {id: domain-seed-gen-29, scenario: governance, check: learning_failure_preserved}
     - {id: domain-seed-gen-30, scenario: governance, check: learning_corpus_rights}

@@ -56,6 +56,7 @@ from cognitive_os.domain.tools import (
     ToolInvocation,
 )
 from cognitive_os.domain.verifiers import VerificationSubjectType
+from cognitive_os.tools.errors import ToolPlaneError
 
 SOLVE_TOOL_ID = "domains.solve"
 SOLVE_TOOL_VERSION = "1"
@@ -312,7 +313,21 @@ class DomainActionExecutor:
             maximum_stderr_bytes=65_536,
             maximum_artifact_bytes=1_048_576,
         )
-        result = await self._tool_execution.execute(invocation, context)
+        # A `ControllerActionExecutor` reports an outcome; it does not raise past the
+        # Controller. The Tool Plane already recorded `tool_call.failed` and re-raised,
+        # and letting that escape would abort the run with a traceback instead of
+        # recording a failed step, a verification, and a rejected acceptance decision.
+        # A task the solver cannot handle is a result the evidence must show, not a
+        # crash that erases the audit trail.
+        try:
+            result = await self._tool_execution.execute(invocation, context)
+        except ToolPlaneError as error:
+            self.invocations.append(invocation.tool_call_id)
+            return ActionOutcome(
+                succeeded=False,
+                tool_call_id=invocation.tool_call_id,
+                warning=f"tool execution failed: {error}",
+            )
         self.invocations.append(invocation.tool_call_id)
         if result.status is not ToolExecutionStatus.COMPLETED:
             return ActionOutcome(

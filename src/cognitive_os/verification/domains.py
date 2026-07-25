@@ -106,6 +106,18 @@ class DomainCheckVerifier(BaseVerifier):
                     message="the verification subject must be a candidate answer object",
                 ),
             )
+        if subject.get("subject_absent") is True:
+            # No answer was produced, so there is nothing to recompute. That is
+            # undecided, not refuted: reporting `FAILED` would claim the checker
+            # disproved an answer it never saw.
+            return self.result(
+                request,
+                VerifierStatus.UNVERIFIABLE,
+                error=ErrorInfo(
+                    code="missing_subject_output",
+                    message="the step under verification produced no candidate answer",
+                ),
+            )
 
         try:
             candidate = candidate_from(dict(subject))

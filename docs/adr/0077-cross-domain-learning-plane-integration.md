@@ -64,12 +64,12 @@ rejected. The mandatory domain path is provider-free by design (ADR 0076); the c
 them for a domain run.
 
 Persisting learning-plane output to PostgreSQL was considered and rejected for this sprint, matching
-gap 1's precedent: the mandatory domain path stays offline, credential-free, and CPU-only (ADR 0076),
-and Memory Plane, semantic memory, and Corpus Factory PostgreSQL adapters already exist and are
+ADR 0076's precedent: the mandatory domain path stays offline, credential-free, and CPU-only, and
+Memory Plane, semantic memory, and Corpus Factory PostgreSQL adapters already exist and are
 exercised by their own integration suites (`test_memory_plane.py`, `test_semantic_memory.py`,
 `test_corpus_factory.py`, `test_experience_compiler.py`); this module reuses the in-memory
 repositories those suites already validate against, the same choice `domains/runner.py` made for the
-event store in gap 1.
+event store when it closed the Controller and Tool Plane integration gap.
 
 The consequence is that a governed run now has a second downstream consumer of its event trail beyond
 the acceptance decision — compilation is a pure read of what was recorded, so it does not change what

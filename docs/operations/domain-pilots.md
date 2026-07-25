@@ -8,7 +8,7 @@ Everything below runs offline, on CPU, with no credentials and no optional extra
 uv run python scripts/domain_smoke_test.py --output artifacts/sprint-20/evidence/domain-smoke.json
 ```
 
-Exits `0` only when all three domains accept every correct answer, reject every wrong answer, all 25
+Exits `0` only when all three domains accept every correct answer, reject every wrong answer, all 28
 governance invariants hold, both transfer experiments are positive, and the negative-transfer
 fixture is rejected. The JSON report carries the registry snapshot, the unit-registry hash, per-domain
 counts, per-arm transfer deltas, and which optional extras are present.
@@ -84,14 +84,40 @@ from cognitive_os.domains.learning import compile_run
 result = await compile_run(case, store)  # store: the MemoryEventStore the run wrote to
 ```
 
+## Mining a real weakness, proposing a fix, and running the isolated experiment
+
+```python
+from cognitive_os.domains.weakness import mine_domain_weaknesses, confirm_domain_weakness
+from cognitive_os.domains.improvement import propose_from_domain_weakness, run_isolated_experiment
+
+mining = await mine_domain_weaknesses()      # runs the real probes, mines the real signals
+# mining.signal_count, mining.weakness_count -> 3, 1
+
+weakness = await confirm_domain_weakness()   # explicit CANDIDATE -> CONFIRMED transition
+proposal = await propose_from_domain_weakness(weakness)
+# proposal.proposal.status -> "approved_for_experiment"
+
+change = await run_isolated_experiment(proposal)
+# change.promotion_mode        -> PromotionMode.MANUAL_REVIEW_ONLY
+# change.assessment.decision   -> PromotionDecision.REQUIRES_MANUAL_REVIEW
+```
+
+Each stage composes the unmodified Weakness Mining Service, Harness Proposal Engine, and Controlled
+Change Service. The probes (`domains.weakness.IRRATIONAL_ROOT_PROBES`) are legitimate
+`polynomial-equation` inputs the harness genuinely cannot solve — not fixtures rigged to fail — so
+mining reads back a real recorded `tool_call.failed` and a real rejected acceptance decision. If the
+underlying gap is ever fixed, `observe_probes` raises `DomainWeaknessError` rather than reporting a
+stale weakness. The cycle stops at `REQUIRES_MANUAL_REVIEW`: nothing in this repository promotes a
+candidate. See `docs/adr/0078-cross-domain-weakness-proposal-change.md`.
+
 ## PostgreSQL
 
-Migration `0012` is required; the expected Alembic head is `0012`. Learning-plane output
-(compilations, memories, semantic observations and claims, corpus declarations) stays in the same
-in-memory repositories the domain execution path uses in this sprint; it is not written to
-PostgreSQL. The Memory Plane, semantic memory, and Corpus Factory PostgreSQL adapters already exist
-from earlier sprints and are exercised by `test_memory_plane.py`, `test_semantic_memory.py`, and
-`test_corpus_factory.py`.
+Migration `0012` is required; the expected Alembic head is `0012`. Learning-plane and
+weakness-mining output (compilations, memories, semantic observations and claims, corpus
+declarations, mined signals, proposals, change experiments) stays in the same in-memory repositories
+the domain execution path uses in this sprint; none of it is written to PostgreSQL. The Memory Plane,
+semantic memory, Corpus Factory, weakness, proposal, and change PostgreSQL adapters already exist
+from earlier sprints and are exercised by their own integration suites.
 
 ```bash
 cd infra/postgres
@@ -126,7 +152,7 @@ uv pip install 'pint>=0.25.3,<0.26'      # verification-physics
 uv pip install 'z3-solver>=4.16,<5'      # verification-logic
 ```
 
-With all three absent the suite reports 1150 passed and 47 skipped; with all three present, 1154
+With all three absent the suite reports 1170 passed and 47 skipped; with all three present, 1174
 passed and 43 skipped. The difference is exactly the optional escalation verifiers, which skip
 cleanly rather than failing.
 
@@ -146,3 +172,7 @@ cleanly rather than failing.
 | Health reports a revision mismatch | database is not at `0012` | run the migration |
 | `DomainLearningError: a governed run must record events before it can be compiled` | the store passed to `compile_run` never ran a case | run the case with that same store first, or pass none and let it create one |
 | `DomainLearningError: no trajectory source is declared for event ...` | the Controller emitted an event type the learning bridge does not map | a real gap — extend the source-type table in `domains/learning.py`, do not skip the event |
+| `DomainWeaknessError: a probe solved an input the harness is documented not to support` | the irrational-root gap was fixed since this miner was written | the weakness is closed; update or remove the probe, do not force a stale weakness |
+| `DomainWeaknessError: a proposable weakness needs at least two distinct task runs` | fewer than two probes produced a capability-gap observation | add another legitimate probe input, do not lower the threshold |
+| `ProposalConflictError: maximum active proposals for weakness reached` | a second proposal was requested for the same weakness while one is still active | resolve or supersede the existing proposal first |
+| Assessment `decision` is not `requires_manual_review` for a tier-3 proposal | the change-surface registry classification changed | expected only if the proposal type's tier changed; investigate before treating this as routine |

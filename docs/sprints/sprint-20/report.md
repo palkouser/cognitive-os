@@ -8,44 +8,47 @@
 
 ## Status: Gate K is NOT closed
 
-A substantial vertical slice is delivered, tested, and verified, and both the execution path and the
-learning-plane path are now governed end to end. Two backlog areas remain **not** implemented, and one
-of them is a Gate K condition. This report states what was measured and what was not built. Nothing
-below is projected — every number was produced by a command in this repository.
+A substantial vertical slice is delivered, tested, and verified, and the execution path, the
+learning-plane path, and the weakness-mining, proposal, and controlled-change cycle are all now
+governed end to end. Gate K condition 8 is fully met. Two backlog areas remain **not** implemented,
+and neither is a Gate K condition. This report states what was measured and what was not built.
+Nothing below is projected — every number was produced by a command in this repository.
 
-**Update after the second follow-up round:** gap 1 (learning-plane integration — Experience Compiler,
-Memory Plane, semantic extraction, Corpus Factory) is closed. Gate K condition 8 is now partially met.
-See "Learning-plane integration" below.
+**Update after the third follow-up round:** gap 1 (weakness mining, proposal generation, and the
+controlled-change cycle) is closed. Gate K condition 8 is now fully met. See "Weakness, proposal, and
+controlled change" below.
 
-**Update after the first follow-up round:** the prior gap 1 (Controller, Context, Tool Plane, and
+**Update after the second follow-up round:** the prior gap 1 (learning-plane integration — Experience
+Compiler, Memory Plane, semantic extraction, Corpus Factory) is closed. See "Learning-plane
+integration" below.
+
+**Update after the first follow-up round:** the original gap 1 (Controller, Context, Tool Plane, and
 routing integration) is closed. Gate K condition 2 is met. See "Governed execution" below.
 
 ## Verified evidence
 
 | Gate | Result |
 |---|---|
-| Test suite (extras absent) | 1150 passed, 47 skipped |
-| Test suite (extras present) | 1154 passed, 43 skipped |
+| Test suite (extras absent) | 1170 passed, 47 skipped |
+| Test suite (extras present) | 1174 passed, 43 skipped |
 | PostgreSQL + controller integration | 39 passed against PostgreSQL 18 / pgvector 0.8.2 |
 | Ruff check (`src/cognitive_os`, `tests/cognitive_os`, `tests/contract`, `scripts`) | clean |
 | Ruff format | clean |
-| MyPy (`src/cognitive_os`) | clean, 503 source files |
-| Bandit (pilot + learning-plane bridge) | 0 issues |
+| MyPy (`src/cognitive_os`) | clean, 505 source files |
+| Bandit (pilot, learning-plane, weakness-mining) | 0 issues |
 | Repository language | passed |
 | CI manifest | 24/24 cases at expected disposition (`case_pass_rate` 1.0, verified via the CLI) |
 | Seed manifest | 120/120 cases at expected disposition (`case_pass_rate` 1.0, verified via the CLI) |
-| Offline smoke | exit 0, no credentials, no network, no GPU, no extras, 25/25 governance invariants |
+| Offline smoke | exit 0, no credentials, no network, no GPU, no extras, 28/28 governance invariants |
 | Migration round trip | `0011 -> 0012 -> 0011 -> 0012` executed successfully (unchanged this round) |
 
 Baseline for comparison: the sprint started at 807 passed / 40 skipped; the previous round closed at
-1130 passed / 47 skipped (extras absent).
+1150 passed / 47 skipped (extras absent).
 
-While verifying this round, `scripts/benchmark_run.py --mode domain-pilot` was found to have never
-been registered in the CLI's own `argparse` choices — a bug from the first round that made the
-manifest commands documented in `docs/operations/domain-pilots.md` fail outright. The `elif` branch
-that executes it existed; only the choice list was missing. Fixed alongside this round's changes; both
-manifests now run and pass through the actual CLI, not only through the adapter test that had been
-silently carrying the "24/24" and "120/120" claims.
+While verifying the previous round, `scripts/benchmark_run.py --mode domain-pilot` was found to have
+never been registered in the CLI's own `argparse` choices — a bug from the first round that made the
+manifest commands documented in `docs/operations/domain-pilots.md` fail outright. Fixed there; both
+manifests continue to run and pass through the actual CLI.
 
 ## Measured pilot results
 
@@ -97,10 +100,10 @@ disposition, and it was fixed rather than papered over.
 | 5 | Skills and strategies via existing registries | **Met** — 11 skills, 6 strategies reach `VERIFIED` |
 | 6 | Positive skill and strategy transfer | **Met** — measured above |
 | 7 | Source-retention and negative-transfer gates | **Met** — enforced in contract and in the database |
-| 8 | Experience, memory, weakness, proposal, change flow | **Partial** — experience, memory, semantic, and corpus stages met; see "Learning-plane integration" and gap 1 |
-| 9 | Migration, events, CLI, health, backup, restore, packaging | **Partial** — see gap 2 |
+| 8 | Experience, memory, weakness, proposal, change flow | **Met** — see "Learning-plane integration" and "Weakness, proposal, and controlled change" |
+| 9 | Migration, events, CLI, health, backup, restore, packaging | **Partial** — see gap 1 |
 | 10 | ≥24 CI and ≥120 seed cases | **Met** — 24 and 120, all at expected disposition, verified through the benchmark CLI |
-| 11 | Committed, merged, post-merge validated, tagged | **Not met** — see gap 3 |
+| 11 | Committed, merged, post-merge validated, tagged | **Not met** — see gap 2 |
 
 ## Governed execution
 
@@ -149,11 +152,9 @@ measured. It is no longer the case-execution path.
 
 ## Learning-plane integration
 
-Gate K condition 8 is now partially met: the experience, memory, semantic, and corpus stages are
-delivered; weakness mining and the controlled-change cycle are not (gap 1, below). `domains/learning.py`
-translates a governed run's recorded event trail into the inputs the existing services already accept
-— it contributes no compilation logic, no memory policy decision, no grounding logic, and no corpus
-routing decision.
+`domains/learning.py` translates a governed run's recorded event trail into the inputs the existing
+services already accept — it contributes no compilation logic, no memory policy decision, no
+grounding logic, and no corpus routing decision.
 
 | Concern | Owner | Domain contribution |
 |---|---|---|
@@ -176,15 +177,14 @@ run is not laundered into success: its terminal state stays `"rejected"`, it pro
 `FAILURE_PATTERN` and `NEGATIVE_EXAMPLE` candidates instead of `MEMORY` and `SKILL` candidates, and
 the projected memory's `review_status` reads `"rejected"`.
 
-Three new governance invariants — `learning_recorded_events_only`, `learning_failure_preserved`,
-`learning_corpus_rights` — run in the seed benchmark manifest and as parametrised tests, bringing the
-pilot's total to **25**, all passing.
+Three governance invariants — `learning_recorded_events_only`, `learning_failure_preserved`,
+`learning_corpus_rights` — run in the seed benchmark manifest and as parametrised tests.
 
 **One honest note.** Learning-plane output is written to the same in-memory repositories the domain
-execution path already uses, matching gap 1's precedent from the first round: the mandatory path
-stays offline and credential-free. The Memory Plane, semantic memory, and Corpus Factory PostgreSQL
-adapters already exist from earlier sprints and are exercised by their own integration suites; wiring
-domain learning output into them was out of scope for this round. See `docs/adr/0077-cross-domain-learning-plane-integration.md`.
+execution path already uses: the mandatory path stays offline and credential-free. The Memory Plane,
+semantic memory, and Corpus Factory PostgreSQL adapters already exist from earlier sprints and are
+exercised by their own integration suites; wiring domain learning output into them was out of scope.
+See `docs/adr/0077-cross-domain-learning-plane-integration.md`.
 
 While implementing this, a real bug was found and fixed in `domains/runner.py`: `store = store or
 MemoryEventStore()` discarded any caller-supplied *empty* store, because `MemoryEventStore.__len__`
@@ -192,26 +192,75 @@ makes an empty store falsy, and `or` silently substituted a private store the ca
 from. Without this fix the learning bridge would have compiled zero events from every governed run.
 Fixed to check `is None`.
 
+## Weakness, proposal, and controlled change
+
+Gate K condition 8 is now fully met. `domains/weakness.py` and `domains/improvement.py` compose the
+unmodified Weakness Mining Service, Harness Proposal Engine, and Controlled Change Service over a
+real cross-domain capability gap — they contribute probes and evidence adapters, nothing else.
+
+**The weakness is real, not staged.** `polynomial-equation` is a registered task class that accepts
+any real quadratic; the solver is exact-rational only (a declared scope limit, not a defect), so a
+quadratic with irrational roots — `x^2 - 2 = 0`, `x^2 - 3 = 0`, `x^2 - 5 = 0` — is admitted at
+planning time and genuinely fails at solve time. Each probe runs through the identical governed
+Controller and Tool Plane path every fixture case uses and fails there for real, producing a recorded
+`tool_call.failed` and a rejected acceptance decision.
+
+| Stage | Owner | Result |
+|---|---|---|
+| Mining | `WeaknessMiningService` (unmodified) | 3 recorded failures group into 1 weakness signature, `MISSING_SKILL` |
+| Confirmation | explicit operator transition | `CANDIDATE -> CONFIRMED`, `reproducible` |
+| Proposal | `HarnessProposalService` (unmodified) | `TOOL_DEFINITION_CHANGE`, reaches `approved_for_experiment`, no provider consulted |
+| Isolated experiment | `ControlledChangeService` (unmodified) | `declarative_copy` isolation, network disabled, 1 file in scope, 15 evaluation gates, 0 hard failures |
+| Assessment | Change Surface Registry (tier 3) | `requires_manual_review` — no runtime promotion authority |
+
+The full cycle is deterministic: two independent runs of mining, and of the proposal-through-experiment
+chain, produce identical manifests and byte-identical experiment, isolation, and assessment content
+hashes. This required a deliberate identity choice — `ProbeObservation.observation_hash` excludes each
+run's real event-payload hashes, because those carry a fresh acceptance `decision_id` and timestamp on
+every execution, and a weakness is a property of the harness, not of one run. Every mined signal still
+cites its own real `task_run_id`.
+
+Three governance invariants — `weakness_from_recorded_failure`, `proposal_traces_to_weakness`,
+`change_cannot_self_promote` — run in the seed benchmark manifest and as parametrised tests, bringing
+the pilot's total to **28**, all passing. See
+`docs/adr/0078-cross-domain-weakness-proposal-change.md`.
+
+**Two shared-component bugs, found because these probes are the pilot's first genuine tool-layer
+failures.** Every prior fixture either fully succeeded or was rejected only at verification; nothing
+before this made the Tool Plane itself fail.
+
+1. `DomainActionExecutor.execute` let a `ToolPlaneError` from a failing tool call propagate past the
+   Controller instead of returning a failed `ActionOutcome`. The Tool Plane had already recorded
+   `tool_call.failed` and re-raised by contract; the domain executor's job is to report that as an
+   outcome, not let it crash the run. Before the fix, a genuinely failing tool aborted the entire
+   governed run with an unhandled traceback — no execution-step failure, no verifier result, no
+   acceptance decision, and no audit trail for what happened. Fixed by catching `ToolPlaneError` and
+   returning `ActionOutcome(succeeded=False, ...)`.
+2. The shared `ControllerVerificationService._subject` — used by every Controller-driven acceptance
+   check, not domain-specific — built an invalid `VerificationSubject` when the step under
+   verification produced no output: `inline_value=None` with no other subject source, which the
+   contract's own validator rejects. This aborted the run one layer later, after the first fix. Fixed
+   by stating absence explicitly (`{"subject_absent": true}`); `domains.checker` now classifies that
+   as `UNVERIFIABLE` rather than `FAILED`, because a verifier that never saw a candidate answer has
+   not refuted one.
+
+Both fixes are in shared Controller and Tool Plane code, not worked around inside the domain package,
+and both are covered by a regression test
+(`test_a_failing_tool_still_records_a_full_audit_trail`).
+
 ## Gaps — what was not built
 
-**1. Weakness, proposal, and controlled-change cycle (S20-052, S20-053, S20-054).**
-No domain weakness fixtures were mined, no `HarnessProposal` was generated from a domain weakness,
-and no approved isolated change experiment was run. This is the remainder of Gate K condition 8 and
-a complete epic. Domain trajectories now flow through the real Controller, Tool Plane, and Experience
-Compiler, so weakness mining finally has authentic compiled material to consume — which was the
-blocker that made this the right order.
-
-**2. Operations (S20-059 partial, S20-060, S20-064 partial).**
+**1. Operations (S20-059 partial, S20-060, S20-064 partial).**
 An offline smoke script exists and is machine-readable, but the main CLI was not extended with
 domain subcommands. Backup, isolated restore, and recovery were not extended to cover Sprint 20
 artefacts. Extras were verified to install and uninstall independently and the core was confirmed
 to work without them, but no wheel or sdist was built.
 
-**3. Release (S20-066).**
+**2. Release (S20-066).**
 Nothing has been committed, pushed, reviewed, merged, or tagged. `sprint-20-baseline` does not
 exist. The runtime holds no release authority by design — the pilot package imports no process or
-network module, verified structurally — so this step is operator-owned and deliberately outside
-what was executed here.
+network module, verified structurally, and the controlled-change cycle stops at manual review with no
+self-promotion path — so this step is operator-owned and deliberately outside what was executed here.
 
 ## Scope honesty
 
@@ -225,6 +274,9 @@ The delivered scope is narrow on purpose:
   general, and underdetermination is reported whenever fitting rules disagree.
 - Propositional logic only.
 - SymPy, Pint, and Z3 remain optional escalation paths; the mandatory path uses none of them.
+- The weakness-mining path probes one capability gap. Finding it demonstrates that mining, proposal
+  generation, and the controlled-change cycle accept real domain evidence end to end; it does not
+  imply every registered task class has been probed for its own edge cases.
 
 ## Incidental repairs
 
@@ -236,13 +288,18 @@ the seed strategy count (`seed_strategy_paths`), and the expected Alembic head
 The benchmark matrix expander now forwards adapter-specific keys through `problem_request`. No
 existing manifest uses a non-reserved key, so sprints 7 to 19 expand byte-identically.
 
-This round: `scripts/benchmark_run.py --mode domain-pilot` is now a registered CLI choice (see
-"Verified evidence"), and `MemoryEventStore` gained a `stored_events()` accessor so a caller can
-replay a run's full envelopes rather than only its event-type names.
+Previous round: `scripts/benchmark_run.py --mode domain-pilot` became a registered CLI choice, and
+`MemoryEventStore` gained a `stored_events()` accessor so a caller can replay a run's full envelopes
+rather than only its event-type names.
+
+This round: two shared Controller and Tool Plane defects were fixed rather than worked around — see
+"Weakness, proposal, and controlled change" for `DomainActionExecutor.execute` and
+`ControllerVerificationService._subject`. Both are shared code, used by every Controller-driven run
+in the repository, not domain-specific.
 
 ## Recommended next step
 
-Close the weakness-mining and controlled-change gap next (gap 1). Domain trajectories now compile
-through the real Experience Compiler with real candidates, so Weakness Mining and the
-`HarnessProposal` flow finally have authentic compiled material to consume — which was the blocker
-that made this the right order.
+Gate K condition 8 is fully met; the remaining gaps are operations (gap 1) and release (gap 2),
+neither a Gate K condition. Close operations next: extend the main CLI with domain subcommands, and
+cover Sprint 20 artefacts in backup, isolated restore, and recovery. Release remains operator-owned
+by design and is the last step regardless of ordering.

@@ -64,10 +64,37 @@ affinely through explicit handling — scale-only conversion would be a defect, 
 - `TransferResult` refuses to hold `positive_transfer` with a non-empty `hard_gate_failures`, and
   migration `0012` repeats that as a check constraint so no writer can record the combination.
 
+## A failing tool cannot crash past the Controller
+
+`DomainActionExecutor.execute` catches `ToolPlaneError` and returns a failed `ActionOutcome` instead
+of letting the exception propagate. Before this fix, a genuinely failing tool call — the Tool Plane
+had already recorded `tool_call.failed` and re-raised — aborted the entire governed run with an
+unhandled traceback: no execution-step failure, no verifier result, no acceptance decision, and no
+audit trail for what happened. A harness that cannot answer a legitimate input must produce a
+rejection with evidence, not lose the evidence to a crash.
+
+Separately, the shared `ControllerVerificationService._subject` (owned outside the domain package,
+used by every Controller-driven acceptance check) built an invalid `VerificationSubject` when the step
+under verification produced no output — passing `inline_value=None` with no other subject source,
+which the contract's own validator rejects. This is now stated explicitly as `{"subject_absent":
+true}`, and `domains.checker` classifies that as `UNVERIFIABLE`, not `FAILED`: a verifier that never
+saw a candidate answer has not refuted one.
+
+## No self-promotion authority
+
+The weakness-mining, proposal, and controlled-change cycle mines a real capability gap, generates a
+proposal, and runs an isolated experiment — and stops. `TOOL_DEFINITION_CHANGE` is classified tier 3
+by the existing `ChangeSurfaceRegistry`, which fixes its promotion mode to `MANUAL_REVIEW_ONLY`; the
+domain package supplies no override and holds no promotion authority. The isolation manifest proves
+the active checkout, database, and artifact namespace are untouched — network policy `disabled`,
+exactly one file in scope, and the baseline commit pinned to the protection snapshot's own recorded
+commit. Every stage of the cycle is deterministic and reproducible offline, with no credentials and no
+network access.
+
 ## Gates
 
-Bandit reports zero issues across the pilot package. The 25 governance invariants in
-`benchmarks/domain_adapter.py` — including three that check the learning-plane bridge compiles only
-recorded events, preserves failure evidence, and declares corpus rights no wider than the case's own
-provenance — run as part of both benchmark manifests and as parametrised tests, so an authority or
-safety regression fails CI rather than being reported as a metric.
+Bandit reports zero issues across the pilot, learning-plane, and weakness-mining packages. The 28
+governance invariants in `benchmarks/domain_adapter.py` — including three for the learning-plane
+bridge and three for weakness mining, proposal traceability, and self-promotion refusal — run as part
+of both benchmark manifests and as parametrised tests, so an authority or safety regression fails CI
+rather than being reported as a metric.
