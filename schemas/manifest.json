@@ -286,6 +286,41 @@
       "schema_version": 1
     },
     {
+      "event_type": "domain.case_completed",
+      "file": "v1/events/domain.case_completed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "domain.case_failed",
+      "file": "v1/events/domain.case_failed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "domain.case_started",
+      "file": "v1/events/domain.case_started.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "domain.pilot_started",
+      "file": "v1/events/domain.pilot_started.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "domain.transfer_completed",
+      "file": "v1/events/domain.transfer_completed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "domain.transfer_failed",
+      "file": "v1/events/domain.transfer_failed.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "domain.transfer_started",
+      "file": "v1/events/domain.transfer_started.v1.schema.json",
+      "schema_version": 1
+    },
+    {
       "event_type": "execution_step.cancelled",
       "file": "v1/events/execution_step.cancelled.v1.schema.json",
       "schema_version": 1
@@ -1954,6 +1989,81 @@
       "sha256": "300a2feb50ede464500f097bd2fe6d0ff0f6a03f7b554e8ffaa0737bdd85d34e"
     },
     {
+      "file": "v1/domains/derivation-step.schema.json",
+      "model": "DerivationStep",
+      "sha256": "e64936d4ea619aebeca28f8243f8f28ab2bcaa14bd915bacc3f1a98273ec9430"
+    },
+    {
+      "file": "v1/domains/domain-answer.schema.json",
+      "model": "DomainAnswer",
+      "sha256": "574c419b3b11ac3d3dfc5d40813a3e7be22c9f93693e6775cc266a3b60c37c34"
+    },
+    {
+      "file": "v1/domains/domain-benchmark-case.schema.json",
+      "model": "DomainBenchmarkCase",
+      "sha256": "ab4a5be2719a39ff063aedacf436ad2fee4fb651976c2558fd4615cd7a50f33d"
+    },
+    {
+      "file": "v1/domains/domain-derivation.schema.json",
+      "model": "DomainDerivation",
+      "sha256": "164950f76d765f9df336466fc8da63d8ba9cc61988cab93c37042493c1faf17c"
+    },
+    {
+      "file": "v1/domains/domain-pilot-run.schema.json",
+      "model": "DomainPilotRun",
+      "sha256": "53cff8b40c1ebad531ba17abebf96a0c59f853902360e64d1aa6845a6919906e"
+    },
+    {
+      "file": "v1/domains/domain-problem.schema.json",
+      "model": "DomainProblem",
+      "sha256": "9f82fb3cbcc411d735a18afe831e05177847328af1c0ca60addf989ce53802af"
+    },
+    {
+      "file": "v1/domains/domain-verification-outcome.schema.json",
+      "model": "DomainVerificationOutcome",
+      "sha256": "cad452f9f0cf2f8464e11a1d0a33aae95447f88bbf5f9c6e9a545f1d1fb3dcd1"
+    },
+    {
+      "file": "v1/domains/domain-verification-plan.schema.json",
+      "model": "DomainVerificationPlan",
+      "sha256": "3f6adc45923ab5c3688d801a2349ace1315f044f59e4685d36d0261a3b561f40"
+    },
+    {
+      "file": "v1/domains/provenance-ref.schema.json",
+      "model": "ProvenanceRef",
+      "sha256": "3e759aab61254be99edae84a74482d6dbcef6307ef676ef4f965e78fe3ebd74b"
+    },
+    {
+      "file": "v1/domains/resource-budget.schema.json",
+      "model": "ResourceBudget",
+      "sha256": "58973bb77f56080ac1e239c27201236b03648248ec36305283db5beb63380c67"
+    },
+    {
+      "file": "v1/domains/transfer-experiment.schema.json",
+      "model": "TransferExperiment",
+      "sha256": "a8a330c97f217648abe31903b49bff81d08336f98252b4f08417820248648504"
+    },
+    {
+      "file": "v1/domains/transfer-metrics.schema.json",
+      "model": "TransferMetrics",
+      "sha256": "f270e172a972422d482825cff25c652de1c09fee5ee9f9fc56ad0a3f1f118a6f"
+    },
+    {
+      "file": "v1/domains/transfer-result.schema.json",
+      "model": "TransferResult",
+      "sha256": "34a04baa5b1e5380f2093faf37aa85c362c3362d335d940c06bcba5137905ebf"
+    },
+    {
+      "file": "v1/domains/transfer-thresholds.schema.json",
+      "model": "TransferThresholds",
+      "sha256": "13f9835d33639c430604a3b813ada15752d0a1b515119c17266602b24f6feb4a"
+    },
+    {
+      "file": "v1/domains/verification-check-result.schema.json",
+      "model": "VerificationCheckResult",
+      "sha256": "a970ce92e91a6339ad109c3f26783a90792c37e51b1ff5d0cb70d171afcd1a6a"
+    },
+    {
       "file": "v1/events/benchmark.case_completed.v1.schema.json",
       "model": "BenchmarkCaseCompleted",
       "sha256": "77d6697902936fbe85ef3b359a48c753412101024749cf1b52b5aaef69cf158f"
@@ -2237,6 +2347,41 @@
       "file": "v1/events/corpus.source_registered.v1.schema.json",
       "model": "CorpusSourceRegistered",
       "sha256": "bdf71076a7fa338d280534925d90304aa958353ef715944f54e6fb100117cf27"
+    },
+    {
+      "file": "v1/events/domain.case_completed.v1.schema.json",
+      "model": "DomainCaseCompleted",
+      "sha256": "86431a562923eb0ee45a5cc3136126be7ef2756a138e5828a905fed2b5e0468c"
+    },
+    {
+      "file": "v1/events/domain.case_failed.v1.schema.json",
+      "model": "DomainCaseFailed",
+      "sha256": "609091808366d585bb45a2987698f1b0eaab85a96370c2f67cd6ee8f2b85aca4"
+    },
+    {
+      "file": "v1/events/domain.case_started.v1.schema.json",
+      "model": "DomainCaseStarted",
+      "sha256": "10ddd173110e6f7bed7f8afc2845995bf41cca8c5163542d01c63c2769791a27"
+    },
+    {
+      "file": "v1/events/domain.pilot_started.v1.schema.json",
+      "model": "DomainPilotStarted",
+      "sha256": "2b0e6fab5e22dd69e3cee8bd45358342019037df643ebc874e8f10860678226e"
+    },
+    {
+      "file": "v1/events/domain.transfer_completed.v1.schema.json",
+      "model": "DomainTransferCompleted",
+      "sha256": "f2cdb399c0eba5be00015f83f9694b743ff47e0f62984befbdc2ffa0150d01cd"
+    },
+    {
+      "file": "v1/events/domain.transfer_failed.v1.schema.json",
+      "model": "DomainTransferFailed",
+      "sha256": "687c56bdccad13ae2840875e88b31b050a98ded97abfffefdf30eda79b9eab74"
+    },
+    {
+      "file": "v1/events/domain.transfer_started.v1.schema.json",
+      "model": "DomainTransferStarted",
+      "sha256": "4979c01b5360f742d7a4979e307986d134ae5633cdafb70ee5a5bd04c1782683"
     },
     {
       "file": "v1/events/event-envelope.schema.json",

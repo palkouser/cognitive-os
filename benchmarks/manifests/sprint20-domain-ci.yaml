@@ -1,0 +1,37 @@
+benchmark_id: sprint20-domain-ci
+version: "1"
+title: Sprint 20 cross-domain CI gate
+description: 24 credential-free CPU-only mathematics, physics, logic, transfer, and governance cases.
+default_configuration: {mode: domain-pilot}
+source: Cognitive OS Sprint 20 cross-domain pilot backlog
+license: Apache-2.0
+created_at: 2026-07-24T00:00:00Z
+case_matrix:
+  generic:
+    - {id: domain-ci-transfer-01, scenario: transfer, expected: positive_transfer}
+    - {id: domain-ci-transfer-02, scenario: transfer, expected: negative_transfer}
+    - {id: domain-ci-gov-01, scenario: governance, check: controller_owns_plan}
+    - {id: domain-ci-gov-02, scenario: governance, check: tool_plane_audits_solve}
+    - {id: domain-ci-gov-03, scenario: governance, check: raw_text_rejected}
+    - {id: domain-ci-gov-04, scenario: governance, check: skill_engine_verified_only}
+  logic:
+    - {id: domain-ci-logic-01, scenario: accept, case: domain-affirming-consequent, expected: passed}
+    - {id: domain-ci-logic-02, scenario: reject, case: domain-consistency, expected: passed}
+    - {id: domain-ci-logic-03, scenario: accept, case: domain-constraint, expected: passed}
+    - {id: domain-ci-logic-04, scenario: reject, case: domain-counterexample, expected: passed}
+    - {id: domain-ci-logic-05, scenario: accept, case: domain-de-morgan, expected: passed}
+    - {id: domain-ci-logic-06, scenario: reject, case: domain-hypotheses, expected: passed}
+  mathematics:
+    - {id: domain-ci-math-01, scenario: accept, case: domain-approximation, expected: passed}
+    - {id: domain-ci-math-02, scenario: reject, case: domain-equivalence, expected: passed}
+    - {id: domain-ci-math-03, scenario: accept, case: domain-equivalence-false, expected: passed}
+    - {id: domain-ci-math-04, scenario: reject, case: domain-fractions, expected: passed}
+    - {id: domain-ci-math-05, scenario: accept, case: domain-fractions-nested, expected: passed}
+    - {id: domain-ci-math-06, scenario: reject, case: domain-linear, expected: passed}
+  physics:
+    - {id: domain-ci-phys-01, scenario: accept, case: domain-bad-dimension, expected: passed}
+    - {id: domain-ci-phys-02, scenario: reject, case: domain-energy-conservation, expected: passed}
+    - {id: domain-ci-phys-03, scenario: accept, case: domain-energy-conversion, expected: passed}
+    - {id: domain-ci-phys-04, scenario: reject, case: domain-energy-violation, expected: passed}
+    - {id: domain-ci-phys-05, scenario: accept, case: domain-joule-dimension, expected: passed}
+    - {id: domain-ci-phys-06, scenario: reject, case: domain-kinetic-energy, expected: passed}

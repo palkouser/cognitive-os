@@ -5,6 +5,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from cognitive_os.domain.base import ImmutableContractModel
+from cognitive_os.infrastructure.postgres.tables import EXPECTED_MIGRATION_REVISION
 
 
 class ExperienceHealthReport(ImmutableContractModel):
@@ -98,7 +99,7 @@ class PostgresExperienceHealthService:
                 )
                 or 0
             )
-        if revision != "0011":
+        if revision != EXPECTED_MIGRATION_REVISION:
             messages.append(f"Expected Alembic revision 0011, found {revision}")
         if table_count != 9:
             messages.append(f"Expected 9 Experience Compiler tables, found {table_count}")

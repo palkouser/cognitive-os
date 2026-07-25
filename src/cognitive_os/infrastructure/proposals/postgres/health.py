@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 from cognitive_os.domain.base import ImmutableContractModel
 from cognitive_os.events.catalog import build_default_event_catalog
 from cognitive_os.events.proposal_events import PROPOSAL_EVENT_MODELS
+from cognitive_os.infrastructure.postgres.tables import EXPECTED_MIGRATION_REVISION
 from cognitive_os.proposals.service import MANDATORY_PROPOSAL_VERIFIERS, ProposalTypeRegistry
 
 
@@ -118,7 +119,7 @@ class PostgresProposalHealthService:
         event_count = sum((model.event_type, 1) in catalog for model in PROPOSAL_EVENT_MODELS)
         messages = []
         for actual, expected, name in (
-            (revision, "0011", "migration revision"),
+            (revision, EXPECTED_MIGRATION_REVISION, "migration revision"),
             (table_count, 10, "proposal table count"),
             (trigger_count, 9, "append-only trigger count"),
             (function_count, 7, "controlled function count"),

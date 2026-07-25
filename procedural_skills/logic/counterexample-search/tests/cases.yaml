@@ -1,0 +1,4 @@
+cases:
+  - name: counterexample-search-baseline
+    input: {problem_type: counterexample-search}
+    expected: {disposition: pass}

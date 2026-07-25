@@ -1,0 +1,9 @@
+format_version: "1"
+canonical_name: assumption-mismatch-detection
+display_name: Assumption Mismatch Detection
+problem_class_id: physics.model-audit
+description: Audit model assumptions before calculating so an inapplicable model fails early.
+skills: [physical-model-assumption-audit, unit-aware-physics-calculation, cross-domain-result-review]
+phases: [assumption-audit, model-selection, calculation, acceptance]
+maximum_repairs: 1
+regression_profile: assumption-mismatch-detection-v1

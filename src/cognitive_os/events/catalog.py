@@ -33,6 +33,7 @@ from .controller_events import (
     ProblemRepresentationRevised,
 )
 from .corpus_events import CORPUS_EVENT_MODELS
+from .domain_events import DOMAIN_EVENT_MODELS
 from .execution_events import (
     CheckpointCreated,
     ExecutionStepCancelled,
@@ -139,6 +140,7 @@ DEFAULT_EVENT_MODELS: tuple[type[EventPayload], ...] = (
     *CHANGE_EVENT_MODELS,
     *CODING_EVENT_MODELS,
     *CONTEXT_EVENT_MODELS,
+    *DOMAIN_EVENT_MODELS,
     *MEMORY_EVENT_MODELS,
     *SEMANTIC_EVENT_MODELS,
     *SKILL_EVENT_MODELS,

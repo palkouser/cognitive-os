@@ -13,6 +13,7 @@ from cognitive_os.changes.service import (
 from cognitive_os.domain.base import ImmutableContractModel
 from cognitive_os.events.catalog import build_default_event_catalog
 from cognitive_os.events.change_events import CHANGE_EVENT_MODELS
+from cognitive_os.infrastructure.postgres.tables import EXPECTED_MIGRATION_REVISION
 
 
 class ChangeHealthReport(ImmutableContractModel):
@@ -108,7 +109,7 @@ class PostgresChangeHealthService:
         catalog = build_default_event_catalog().list_event_types()
         event_count = sum((model.event_type, 1) in catalog for model in CHANGE_EVENT_MODELS)
         expected = (
-            (revision, "0011", "migration revision"),
+            (revision, EXPECTED_MIGRATION_REVISION, "migration revision"),
             (table_count, 11, "change table count"),
             (trigger_count, 10, "append-only trigger count"),
             (function_count, 5, "controlled function count"),

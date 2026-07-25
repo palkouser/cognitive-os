@@ -1,0 +1,177 @@
+{
+  "$defs": {
+    "ResourceBudget": {
+      "additionalProperties": false,
+      "description": "Ceilings validated before execution and enforced during it.",
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "maximum_depth": {
+          "default": 32,
+          "exclusiveMinimum": 0,
+          "maximum": 256,
+          "title": "Maximum Depth",
+          "type": "integer"
+        },
+        "maximum_integer_digits": {
+          "default": 256,
+          "exclusiveMinimum": 0,
+          "maximum": 4096,
+          "title": "Maximum Integer Digits",
+          "type": "integer"
+        },
+        "maximum_nodes": {
+          "default": 512,
+          "exclusiveMinimum": 0,
+          "maximum": 8192,
+          "title": "Maximum Nodes",
+          "type": "integer"
+        },
+        "maximum_output_bytes": {
+          "default": 65536,
+          "exclusiveMinimum": 0,
+          "maximum": 4194304,
+          "title": "Maximum Output Bytes",
+          "type": "integer"
+        },
+        "maximum_retries": {
+          "default": 0,
+          "maximum": 3,
+          "minimum": 0,
+          "title": "Maximum Retries",
+          "type": "integer"
+        },
+        "maximum_symbols": {
+          "default": 32,
+          "exclusiveMinimum": 0,
+          "maximum": 1024,
+          "title": "Maximum Symbols",
+          "type": "integer"
+        },
+        "timeout_seconds": {
+          "default": 10,
+          "exclusiveMinimum": 0,
+          "maximum": 300,
+          "title": "Timeout Seconds",
+          "type": "integer"
+        }
+      },
+      "title": "ResourceBudget",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domains/domain-verification-plan.schema.json",
+  "additionalProperties": false,
+  "description": "Frozen before execution: nothing runs without a plan.",
+  "properties": {
+    "acceptance_policy": {
+      "default": "all_required_checks_must_pass",
+      "minLength": 1,
+      "title": "Acceptance Policy",
+      "type": "string"
+    },
+    "alternative_solution_checks": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Alternative Solution Checks",
+      "type": "array"
+    },
+    "constraint_checks": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Constraint Checks",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "edge_cases": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Edge Cases",
+      "type": "array"
+    },
+    "forbidden_operations": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Forbidden Operations",
+      "type": "array"
+    },
+    "numeric_checks": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Numeric Checks",
+      "type": "array"
+    },
+    "problem_id": {
+      "format": "uuid",
+      "title": "Problem Id",
+      "type": "string"
+    },
+    "property_checks": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Property Checks",
+      "type": "array"
+    },
+    "required_capabilities": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Required Capabilities",
+      "type": "array"
+    },
+    "resource_budget": {
+      "$ref": "#/$defs/ResourceBudget"
+    },
+    "symbolic_checks": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Symbolic Checks",
+      "type": "array"
+    },
+    "unit_checks": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Unit Checks",
+      "type": "array"
+    }
+  },
+  "required": [
+    "problem_id",
+    "required_capabilities"
+  ],
+  "title": "DomainVerificationPlan",
+  "type": "object"
+}

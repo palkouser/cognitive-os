@@ -9,6 +9,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from cognitive_os.domain.base import ImmutableContractModel
+from cognitive_os.infrastructure.postgres.tables import EXPECTED_MIGRATION_REVISION
 
 
 class MemoryHealthSeverity(StrEnum):
@@ -164,7 +165,7 @@ class PostgresMemoryHealthService:
                     message=message,
                 )
             )
-        if revision != "0011":
+        if revision != EXPECTED_MIGRATION_REVISION:
             findings.append(
                 MemoryHealthFinding(
                     code="migration_head",

@@ -1,0 +1,27 @@
+format_version: "1"
+canonical_name: verification-driven-arithmetic-repair
+display_name: Verification-Driven Arithmetic Repair
+description: Repair the single first incorrect arithmetic step identified by a deterministic verifier.
+purpose: Produce a corrected derivation whose changed step set is minimal.
+domains: [mathematics]
+scope_type: project
+scope_id: cognitive-os
+sensitivity: internal
+problem_signatures:
+  - {problem_domain: mathematics, task_type: arithmetic-repair}
+preconditions:
+  - {precondition_id: domain, precondition_type: problem_domain_match, parameters: {allowed: [mathematics]}}
+  - {precondition_id: verifier, precondition_type: verifier_capability, parameters: {capability: mathematics.exact_arithmetic}}
+inputs:
+  - {name: problem, json_type: object, required: true}
+outputs:
+  - {name: result, json_type: object, required: true, requires_evidence: true}
+steps:
+  - {step_id: formalize, step_type: artifact_transform, capability_id: domains.formalize}
+  - {step_id: execute, step_type: tool_action, capability_id: domains.execute}
+  - {step_id: verify, step_type: verification_action, capability_id: mathematics.exact_arithmetic}
+requirements:
+  - {requirement_id: verifier, requirement_type: verifier, capability_id: mathematics.exact_arithmetic}
+failure_policy: {policy_type: return_to_controller_repair, maximum_fallback_depth: 1}
+resource_budget: {maximum_steps: 8, maximum_provider_calls: 0, maximum_tool_calls: 4, maximum_context_builds: 1, maximum_execution_seconds: 30, maximum_repairs: 1, maximum_context_tokens: 4096}
+regression_profile: verification-driven-arithmetic-repair-v1

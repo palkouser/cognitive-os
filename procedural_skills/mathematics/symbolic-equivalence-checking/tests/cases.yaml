@@ -1,0 +1,4 @@
+cases:
+  - name: symbolic-equivalence-baseline
+    input: {problem_type: symbolic-equivalence}
+    expected: {disposition: pass}

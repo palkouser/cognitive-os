@@ -9,6 +9,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from cognitive_os.domain.base import ImmutableContractModel
+from cognitive_os.infrastructure.postgres.tables import EXPECTED_MIGRATION_REVISION
 
 
 class SkillHealthSeverity(StrEnum):
@@ -130,7 +131,7 @@ class PostgresSkillHealthService:
             ("package_mismatch", package_errors, "Skill package artifact mismatch"),
             (
                 "migration_head",
-                int(revision != "0011"),
+                int(revision != EXPECTED_MIGRATION_REVISION),
                 f"Expected Alembic revision 0011, found {revision}",
             ),
         )

@@ -8,6 +8,7 @@ from pathlib import Path
 from cognitive_os.benchmarks.cases import load_manifest
 from cognitive_os.benchmarks.change_adapter import change_benchmark_case
 from cognitive_os.benchmarks.context_adapter import context_benchmark_case
+from cognitive_os.benchmarks.domain_adapter import domain_benchmark_case
 from cognitive_os.benchmarks.experience_adapter import experience_benchmark_case
 from cognitive_os.benchmarks.proposal_adapter import proposal_benchmark_case
 from cognitive_os.benchmarks.reporting import render_json, render_markdown
@@ -97,6 +98,8 @@ async def _run(manifest_path: Path, output: Path, seed: int, mode: str) -> int:
         executor = coding_replay_case
     elif mode == "change-replay":
         executor = change_benchmark_case
+    elif mode == "domain-pilot":
+        executor = domain_benchmark_case
     elif mode == "context-replay":
         executor = context_benchmark_case
     elif mode == "skill-replay":
@@ -185,6 +188,7 @@ def main() -> int:
             "controller_mock",
             "coding-replay",
             "change-replay",
+            "domain-pilot",
             "memory-replay",
             "semantic-replay",
             "context-replay",

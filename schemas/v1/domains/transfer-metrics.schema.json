@@ -1,0 +1,76 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/domains/transfer-metrics.schema.json",
+  "additionalProperties": false,
+  "description": "Matched-resource measurements; every arm reports the same fields.",
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "cpu_ms": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Cpu Ms",
+      "type": "integer"
+    },
+    "latency_ms": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Latency Ms",
+      "type": "integer"
+    },
+    "peak_memory_bytes": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Peak Memory Bytes",
+      "type": "integer"
+    },
+    "policy_violations": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Policy Violations",
+      "type": "integer"
+    },
+    "repairs": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Repairs",
+      "type": "integer"
+    },
+    "safety_violations": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Safety Violations",
+      "type": "integer"
+    },
+    "solved": {
+      "minimum": 0,
+      "title": "Solved",
+      "type": "integer"
+    },
+    "tool_calls": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Tool Calls",
+      "type": "integer"
+    },
+    "total": {
+      "exclusiveMinimum": 0,
+      "title": "Total",
+      "type": "integer"
+    },
+    "verifier_failures": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Verifier Failures",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "solved",
+    "total"
+  ],
+  "title": "TransferMetrics",
+  "type": "object"
+}

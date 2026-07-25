@@ -1,0 +1,4 @@
+cases:
+  - name: unit-aware-calculation-baseline
+    input: {problem_type: unit-aware-calculation}
+    expected: {disposition: pass}

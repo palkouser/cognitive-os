@@ -577,6 +577,40 @@ jobs:
           --manifest benchmarks/manifests/sprint19-change-seed.yaml
           --mode change-replay --report-directory /tmp/sprint19-change-seed
 
+  cross-domain-pilot-core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          version: "0.11.28"
+          enable-cache: true
+      - name: Install Python and core dependencies
+        run: uv python install 3.12 && uv sync --locked --all-groups
+      - name: Cross-domain contracts, governed execution, learning, and transfer gate
+        run: >-
+          uv run pytest tests/cognitive_os/domains
+          tests/cognitive_os/benchmarks/test_domain_adapter.py -q
+      - name: Cross-domain contract schema gate
+        run: uv run python -m cognitive_os.schemas.export --check
+      - name: Deterministic cross-domain smoke gate
+        run: uv run python scripts/domain_smoke_test.py
+      - name: Offline cross-domain governance gate
+        run: uv run python scripts/domain.py health
+      - name: Twenty-four-case credential-free cross-domain gate
+        run: >-
+          uv run python scripts/benchmark_run.py
+          --manifest benchmarks/manifests/sprint20-domain-ci.yaml
+          --mode domain-pilot --report-directory /tmp/sprint20-domain-benchmark
+      - name: One-hundred-twenty-case credential-free cross-domain seed gate
+        run: >-
+          uv run python scripts/benchmark_run.py
+          --manifest benchmarks/manifests/sprint20-domain-seed.yaml
+          --mode domain-pilot --report-directory /tmp/sprint20-domain-seed
+
   security:
     runs-on: ubuntu-latest
     steps:
@@ -681,6 +715,8 @@ jobs:
         run: uv run python scripts/proposal.py health --database
       - name: Controlled Change health
         run: uv run python scripts/change.py health --database
+      - name: Cross-domain pilot health
+        run: uv run python scripts/domain.py health --database
       - name: Credential-free Sprint 14 experience smoke
         run: uv run python scripts/experience_smoke_test.py
       - name: Credential-free Sprint 15 corpus smoke
@@ -693,6 +729,8 @@ jobs:
         run: uv run python scripts/proposal_smoke_test.py
       - name: Credential-free Sprint 19 controlled-change smoke
         run: uv run python scripts/change_smoke_test.py
+      - name: Credential-free Sprint 20 cross-domain smoke
+        run: uv run python scripts/domain_smoke_test.py
       - name: Four-case semantic benchmark gate with PostgreSQL service
         run: >-
           uv run python scripts/benchmark_run.py

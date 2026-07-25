@@ -1,0 +1,4 @@
+cases:
+  - name: model-assumption-audit-baseline
+    input: {problem_type: model-assumption-audit}
+    expected: {disposition: pass}

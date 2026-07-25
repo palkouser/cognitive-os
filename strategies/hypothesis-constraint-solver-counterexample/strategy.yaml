@@ -1,0 +1,9 @@
+format_version: "1"
+canonical_name: hypothesis-constraint-solver-counterexample
+display_name: Hypothesis, Constraint, Solver, Counterexample
+problem_class_id: logic.constraint
+description: Formalize, solve under constraints, then attack the result with a counterexample search.
+skills: [logic-formalization, constraint-solving, counterexample-search, cross-domain-result-review]
+phases: [formalization, constraint-solving, counterexample-search, acceptance]
+maximum_repairs: 2
+regression_profile: hypothesis-constraint-solver-counterexample-v1

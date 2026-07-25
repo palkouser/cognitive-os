@@ -1,0 +1,204 @@
+{
+  "$defs": {
+    "DomainKind": {
+      "enum": [
+        "mathematics",
+        "physics",
+        "logic"
+      ],
+      "title": "DomainKind",
+      "type": "string"
+    },
+    "ResourceBudget": {
+      "additionalProperties": false,
+      "description": "Ceilings validated before execution and enforced during it.",
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "maximum_depth": {
+          "default": 32,
+          "exclusiveMinimum": 0,
+          "maximum": 256,
+          "title": "Maximum Depth",
+          "type": "integer"
+        },
+        "maximum_integer_digits": {
+          "default": 256,
+          "exclusiveMinimum": 0,
+          "maximum": 4096,
+          "title": "Maximum Integer Digits",
+          "type": "integer"
+        },
+        "maximum_nodes": {
+          "default": 512,
+          "exclusiveMinimum": 0,
+          "maximum": 8192,
+          "title": "Maximum Nodes",
+          "type": "integer"
+        },
+        "maximum_output_bytes": {
+          "default": 65536,
+          "exclusiveMinimum": 0,
+          "maximum": 4194304,
+          "title": "Maximum Output Bytes",
+          "type": "integer"
+        },
+        "maximum_retries": {
+          "default": 0,
+          "maximum": 3,
+          "minimum": 0,
+          "title": "Maximum Retries",
+          "type": "integer"
+        },
+        "maximum_symbols": {
+          "default": 32,
+          "exclusiveMinimum": 0,
+          "maximum": 1024,
+          "title": "Maximum Symbols",
+          "type": "integer"
+        },
+        "timeout_seconds": {
+          "default": 10,
+          "exclusiveMinimum": 0,
+          "maximum": 300,
+          "title": "Timeout Seconds",
+          "type": "integer"
+        }
+      },
+      "title": "ResourceBudget",
+      "type": "object"
+    },
+    "TransferThresholds": {
+      "additionalProperties": false,
+      "description": "Predeclared before the run; post-hoc substitution is a contract error.",
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "maximum_latency_ratio": {
+          "default": "1.50",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Maximum Latency Ratio",
+          "type": "string"
+        },
+        "maximum_source_quality_loss": {
+          "default": "0.02",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Maximum Source Quality Loss",
+          "type": "string"
+        },
+        "maximum_tool_call_ratio": {
+          "default": "1.50",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Maximum Tool Call Ratio",
+          "type": "string"
+        },
+        "maximum_unrelated_quality_loss": {
+          "default": "0.02",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Maximum Unrelated Quality Loss",
+          "type": "string"
+        },
+        "minimum_target_quality_gain": {
+          "default": "0.10",
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Minimum Target Quality Gain",
+          "type": "string"
+        }
+      },
+      "title": "TransferThresholds",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domains/transfer-experiment.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "case_manifest": {
+      "minLength": 1,
+      "title": "Case Manifest",
+      "type": "string"
+    },
+    "component_id": {
+      "minLength": 1,
+      "title": "Component Id",
+      "type": "string"
+    },
+    "component_kind": {
+      "minLength": 1,
+      "title": "Component Kind",
+      "type": "string"
+    },
+    "component_revision": {
+      "minLength": 1,
+      "title": "Component Revision",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "environment": {
+      "minLength": 1,
+      "title": "Environment",
+      "type": "string"
+    },
+    "experiment_id": {
+      "format": "uuid",
+      "title": "Experiment Id",
+      "type": "string"
+    },
+    "resource_budget": {
+      "$ref": "#/$defs/ResourceBudget"
+    },
+    "routing_policy": {
+      "minLength": 1,
+      "title": "Routing Policy",
+      "type": "string"
+    },
+    "seed": {
+      "minimum": 0,
+      "title": "Seed",
+      "type": "integer"
+    },
+    "source_domain": {
+      "$ref": "#/$defs/DomainKind"
+    },
+    "target_domain": {
+      "$ref": "#/$defs/DomainKind"
+    },
+    "thresholds": {
+      "$ref": "#/$defs/TransferThresholds"
+    },
+    "unrelated_domain": {
+      "$ref": "#/$defs/DomainKind"
+    }
+  },
+  "required": [
+    "experiment_id",
+    "source_domain",
+    "target_domain",
+    "unrelated_domain",
+    "component_kind",
+    "component_id",
+    "component_revision",
+    "routing_policy",
+    "case_manifest",
+    "thresholds",
+    "seed",
+    "environment",
+    "created_at"
+  ],
+  "title": "TransferExperiment",
+  "type": "object"
+}

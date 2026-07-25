@@ -1,0 +1,159 @@
+{
+  "$defs": {
+    "DomainFailureCode": {
+      "enum": [
+        "unsupported_problem_type",
+        "missing_required_verifier",
+        "missing_required_evidence",
+        "forbidden_operation",
+        "resource_exhausted",
+        "tool_unavailable",
+        "solver_unknown",
+        "invalid_derivation"
+      ],
+      "title": "DomainFailureCode",
+      "type": "string"
+    },
+    "JsonPrimitive": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "JsonValue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JsonPrimitive"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "type": "object"
+        }
+      ]
+    },
+    "VerificationCheckResult": {
+      "additionalProperties": false,
+      "properties": {
+        "capability": {
+          "minLength": 1,
+          "title": "Capability",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "detail": {
+          "minLength": 1,
+          "title": "Detail",
+          "type": "string"
+        },
+        "disposition": {
+          "$ref": "#/$defs/VerificationDisposition"
+        },
+        "evidence": {
+          "$ref": "#/$defs/JsonValue",
+          "default": null
+        }
+      },
+      "required": [
+        "capability",
+        "disposition",
+        "detail"
+      ],
+      "title": "VerificationCheckResult",
+      "type": "object"
+    },
+    "VerificationDisposition": {
+      "enum": [
+        "pass",
+        "partial",
+        "fail",
+        "inconclusive",
+        "unsupported",
+        "resource_exhausted"
+      ],
+      "title": "VerificationDisposition",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/domains/domain-verification-outcome.schema.json",
+  "additionalProperties": false,
+  "description": "Deterministic acceptance receipt; no component may accept itself.",
+  "properties": {
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/VerificationCheckResult"
+      },
+      "minItems": 1,
+      "title": "Checks",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "disposition": {
+      "$ref": "#/$defs/VerificationDisposition"
+    },
+    "failure_code": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DomainFailureCode"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "problem_id": {
+      "format": "uuid",
+      "title": "Problem Id",
+      "type": "string"
+    },
+    "resource_use": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Resource Use",
+      "type": "object"
+    }
+  },
+  "required": [
+    "problem_id",
+    "checks",
+    "disposition",
+    "created_at"
+  ],
+  "title": "DomainVerificationOutcome",
+  "type": "object"
+}
