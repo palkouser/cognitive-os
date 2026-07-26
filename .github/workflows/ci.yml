@@ -827,6 +827,33 @@ jobs:
           uv run alembic -c infra/postgres/alembic.ini upgrade head
           uv run alembic -c infra/postgres/alembic.ini check
 
+  learned-evidence-core:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          version: "0.11.28"
+          enable-cache: true
+      # This lane imports the PostgreSQL learned modules, so it installs the declared
+      # extra. Sprint 21R shipped a job that did not, and the module could not even be
+      # collected; a missing extra must fail setup, never turn into a skip.
+      - name: Install Python and dependencies
+        run: >-
+          uv python install 3.12 && uv sync --locked --all-groups
+          --extra memory-postgres
+      - name: Learned evidence contracts and repository tests
+        run: uv run pytest tests/cognitive_os/learned_evidence -q
+      - name: Learned evidence schema drift
+        run: uv run python -m cognitive_os.schemas.export --check
+      - name: Learned table metadata imports without a live database
+        run: >-
+          uv run python -c "from
+          cognitive_os.infrastructure.learned.postgres.tables import
+          LEARNED_EVIDENCE_TABLES; print(len(LEARNED_EVIDENCE_TABLES))"
+
   optional-boundary:
     runs-on: ubuntu-latest
     steps:

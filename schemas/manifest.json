@@ -3389,9 +3389,34 @@
       "sha256": "dd71f20f41f76c9c841cbc19956724c42ee48820c3be4f65094e80d504ce2352"
     },
     {
+      "file": "v1/learned/learned-access-record.schema.json",
+      "model": "LearnedAccessRecord",
+      "sha256": "401d23df73c5294b1d8190a868d6783507cc6e7c93f4fb4848d81382df37d97e"
+    },
+    {
+      "file": "v1/learned/learned-activation-approval.schema.json",
+      "model": "LearnedActivationApproval",
+      "sha256": "6604276070c777d08d4cc5de4b9da37f661a00e94b27c212f6ac7516c24eaeaa"
+    },
+    {
+      "file": "v1/learned/learned-activation-receipt.schema.json",
+      "model": "LearnedActivationReceipt",
+      "sha256": "84d41ce6af7df860e6584a39aae9691e55b3f06454a59ea6e884a031dbe6180c"
+    },
+    {
+      "file": "v1/learned/learned-artifact-lineage.schema.json",
+      "model": "LearnedArtifactLineage",
+      "sha256": "fd5a881b1b6b4217fb5397c6f2fcdc8db1929fe384dcd476a214b378ee18d394"
+    },
+    {
       "file": "v1/learned/learned-component-descriptor.schema.json",
       "model": "LearnedComponentDescriptor",
       "sha256": "dd46269a91bec55962766d708cd6e1830901774ccb44ee7f1503d74aad1f5398"
+    },
+    {
+      "file": "v1/learned/learned-component-revision-record.schema.json",
+      "model": "LearnedComponentRevisionRecord",
+      "sha256": "68aa4a5abdc242a2ff1f765d4b686cdc3cccb8bc37c956b19c1cfa00a8da3a04"
     },
     {
       "file": "v1/learned/learned-dataset-snapshot.schema.json",
@@ -3399,14 +3424,34 @@
       "sha256": "6efee3041f710e50645d934cfb9338867ca8cdff227a616f491227bbd9f74919"
     },
     {
+      "file": "v1/learned/learned-evidence-record.schema.json",
+      "model": "LearnedEvidenceRecord",
+      "sha256": "857dde0f968a43e7da7a358c02488c86ca0f88c15bb5e6734cb0f6cc6b3777ef"
+    },
+    {
+      "file": "v1/learned/learned-observation-record.schema.json",
+      "model": "LearnedObservationRecord",
+      "sha256": "4894e6447303c9beb5b0fa0cc08d4d230f28d001436a01ced48b8cbdf4b214af"
+    },
+    {
       "file": "v1/learned/learned-prediction.schema.json",
       "model": "LearnedPrediction",
       "sha256": "9fdeea6fa6ea032e1d5da2a95a9e57a6cd35a1d954c3696f338d89e419b15e9d"
     },
     {
+      "file": "v1/learned/learned-projection-row.schema.json",
+      "model": "LearnedProjectionRow",
+      "sha256": "660c536c1c6841991c2bc54588a45256e56f7cb4669ac120bdefd74c1b3747c1"
+    },
+    {
       "file": "v1/learned/learned-promotion-assessment.schema.json",
       "model": "LearnedPromotionAssessment",
       "sha256": "20e4e5390894010407fdab22a2515dd8942fed1bde4826e4a80bcb3c07319c06"
+    },
+    {
+      "file": "v1/learned/learned-replay-result.schema.json",
+      "model": "LearnedReplayResult",
+      "sha256": "36c79b78e21ba2834d58c25ceb71c8f2c2ab1b53efce18984597907046fe1cd7"
     },
     {
       "file": "v1/learned/learned-shadow-result.schema.json",

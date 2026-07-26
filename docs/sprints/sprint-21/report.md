@@ -567,10 +567,12 @@ Sprint 21C1 may begin only once `sprint-21-substrate-baseline` exists and §3 is
 | Next migration | `0014_create_learned_evidence_store.py`, from verified head `0013` |
 | Reproducible capacity artifacts | `envelope_1e5.json`, `envelope_1e5_clustered.json` at 10⁵ |
 | Four-domain regression evidence | §4.3 |
+| Detailed execution backlog | [Sprint 21C1 Technical Backlog](sprint-21c1-technical-backlog.md) |
 
 Gate L2 remains open. The missing evidence and its owning sprints are tabulated in the
-Gate L assessment's *Gate L2* section: durable learned evidence (21C1), real governed
-traffic (21C1), executed coding outcomes (21C3), a materially beneficial learned
+Gate L assessment's *Gate L2* section: durable learned evidence and governed-outcome
+intake (21C1), a governed provider boundary (21C2), real governed traffic and
+executed coding outcomes (21C3), a trained candidate and materially beneficial learned
 component (21D1, 21D2), and a tie-break surface with real ties (21D1).
 
 Known limitations carried forward: non-executable coding fixtures, no real-run corpus, no

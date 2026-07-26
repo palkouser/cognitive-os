@@ -1,0 +1,182 @@
+{
+  "$defs": {
+    "ObservationAttribution": {
+      "description": "How confidently an outcome can be attributed to the decision under study.",
+      "enum": [
+        "direct",
+        "contributing",
+        "unknown"
+      ],
+      "title": "ObservationAttribution",
+      "type": "string"
+    },
+    "ObservationStatus": {
+      "enum": [
+        "accepted",
+        "quarantined",
+        "rejected"
+      ],
+      "title": "ObservationStatus",
+      "type": "string"
+    },
+    "ProvenanceClass": {
+      "description": "Where an observation came from, which decides what it may be used for.",
+      "enum": [
+        "self_play",
+        "real_governed_run",
+        "operator_supplied"
+      ],
+      "title": "ProvenanceClass",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/learned/learned-observation-record.schema.json",
+  "additionalProperties": false,
+  "description": "A governed outcome offered to the learning plane, and what was decided about it.\n\nAn accepted observation is *not* a dataset example. Selection into a dataset is a\nseparate, immutable manifest, so accepting an outcome never silently enrols it in\ntraining.",
+  "properties": {
+    "attribution": {
+      "$ref": "#/$defs/ObservationAttribution"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "decision_reason": {
+      "minLength": 1,
+      "title": "Decision Reason",
+      "type": "string"
+    },
+    "evaluation_eligible": {
+      "title": "Evaluation Eligible",
+      "type": "boolean"
+    },
+    "idempotency_key": {
+      "minLength": 1,
+      "title": "Idempotency Key",
+      "type": "string"
+    },
+    "observation_id": {
+      "format": "uuid",
+      "title": "Observation Id",
+      "type": "string"
+    },
+    "provenance_class": {
+      "$ref": "#/$defs/ProvenanceClass"
+    },
+    "recorded_at": {
+      "format": "date-time",
+      "title": "Recorded At",
+      "type": "string"
+    },
+    "sensitivity": {
+      "minLength": 1,
+      "title": "Sensitivity",
+      "type": "string"
+    },
+    "source_event_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Event Id"
+    },
+    "source_kind": {
+      "minLength": 1,
+      "title": "Source Kind",
+      "type": "string"
+    },
+    "source_payload_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Payload Hash",
+      "type": "string"
+    },
+    "source_run_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Run Id"
+    },
+    "source_task_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Task Id"
+    },
+    "status": {
+      "$ref": "#/$defs/ObservationStatus"
+    },
+    "surface": {
+      "minLength": 1,
+      "title": "Surface",
+      "type": "string"
+    },
+    "usage_rights_verified": {
+      "title": "Usage Rights Verified",
+      "type": "boolean"
+    },
+    "verifier_evidence_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Verifier Evidence Hash"
+    },
+    "verifier_status": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Verifier Status"
+    }
+  },
+  "required": [
+    "observation_id",
+    "surface",
+    "source_kind",
+    "source_payload_hash",
+    "provenance_class",
+    "attribution",
+    "status",
+    "usage_rights_verified",
+    "sensitivity",
+    "decision_reason",
+    "evaluation_eligible",
+    "idempotency_key",
+    "recorded_at"
+  ],
+  "title": "LearnedObservationRecord",
+  "type": "object"
+}

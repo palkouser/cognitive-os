@@ -1,16 +1,17 @@
 # Cognitive OS Learning, Memory, and Scale Development Plan
 
-Status: proposed execution plan
+Status: active execution plan
 
-Revision: 2
+Revision: 3
 
 Assessment date: 2026-07-26
 
-Active branch assessed: `feature/sprint-21a-learning-substrate`
+Current protected baseline: `sprint-21-substrate-baseline`
 
-Active branch head assessed: `fe26644376a35d9f034f738edd67335a8e4b8114`
+Current protected baseline commit: `e9001a9338c9507a60ca43f4e3e4bee7e28ef79b`
 
-`main` and `origin/main` assessed: `c8557389f8bd1e763098125176f1321b2fc765a8`
+Next execution sprint: Sprint 21C1 — Persistent Learned Evidence and Governed
+Outcome Intake
 
 Primary scope: finish Sprint 21 correctly, execute Sprint 22, and define the evidence
 required before Sprint 23 alpha
@@ -21,6 +22,7 @@ Execution documents:
 
 - [Execution sprint allocation](execution-sprint-allocation.md)
 - [Sprint 21R technical backlog](../sprint-21/sprint-21r-technical-backlog.md)
+- [Sprint 21C1 technical backlog](../sprint-21/sprint-21c1-technical-backlog.md)
 - [Sprint 21 Gate L assessment](../sprint-21/gate-l-assessment.md)
 - [Sprint 21 substrate report](../sprint-21/report.md)
 - [Sprint 21 technical plan](../sprint-21/technical-plan.md)
@@ -95,41 +97,46 @@ for the first learning gate.
 
 | Item | Verified state | Consequence |
 |---|---|---|
-| `main` | `c8557389f8bd1e763098125176f1321b2fc765a8` | Current protected baseline |
-| Active branch | `fe26644376a35d9f034f738edd67335a8e4b8114` | Four commits ahead, zero behind |
-| Active branch PR | None | No review or remote branch CI evidence exists |
-| Latest `main` CI | Run `30142384838`, successful | Valid only for `main`, not the active branch |
-| Working tree before this plan edit | Clean | Branch assessment was not contaminated by local changes |
+| `main` and `origin/main` | `e9001a9338c9507a60ca43f4e3e4bee7e28ef79b` | Current protected baseline |
+| Baseline tag | Annotated `sprint-21-substrate-baseline`, peeled to the same commit | Sprint 21C1 has a protected parent |
+| Sprint 21R pull requests | `#210`, `#211`, `#212`, merged | Implementation and evidence are on `main` |
+| Latest `main` CI | Run `30209256649`, successful on the baseline commit | Exact-head release evidence exists |
 | Alembic head | `0013_create_approximate_vector_indexes.py` | The next migration must be based on `0013` |
+| Next branch | `feature/sprint-21c1-learned-evidence` | Create only from the verified tag |
+| Authenticated GitHub CLI API | HTTP 401 during backlog preparation | Reauthentication is required before PR or release mutation |
 
-The active branch cannot be treated as released. Its local evidence is encouraging,
-but it must pass PR CI, merge, pass post-merge `main` CI, and receive a verified
-annotated baseline tag before later work depends on it.
+Sprint 21R is released. Sprint 21C1 must revalidate the source and remote controls
+before implementation and must open its draft pull request early enough for
+pull-request CI to exercise the migration and optional-dependency boundaries.
 
-### 3.2 Local verification on the active branch
+### 3.2 Final Sprint 21R verification
 
-The following checks were run during this assessment:
+The Sprint 21R release report retains the full commands and environments. Its final
+evidence includes:
 
 | Check | Result |
 |---|---:|
-| Core tests | `1236 passed, 5 skipped` |
-| Core plus contract tests | `1301 passed, 5 skipped` |
-| Integration tests without a provisioned PostgreSQL service | `16 passed, 45 skipped` |
+| Core tests | `1238 passed, 5 skipped` |
+| Core plus contract tests | `1303 passed, 5 skipped` |
+| Full local suite | `1385 passed, 50 skipped` |
+| Focused PostgreSQL suite | `42 passed` |
 | Ruff lint | Passed |
-| Ruff format check | `807 files already formatted` |
-| Mypy | No issues in `522` source files |
+| Ruff format check | Passed |
+| Mypy | Passed |
 | Contract schema export check | Passed |
-| `git diff --check main...HEAD` | Passed |
+| Migration round trip and drift | Passed at head `0013` |
+| Consistent backup and test restore | Passed |
+| Domain CI benchmark | `24/24` expected outcomes matched |
+| Domain seed benchmark | `120/120` expected outcomes matched |
 | `sprint22-coding-ci` benchmark | `15/15` expected outcomes matched |
 | `sprint22-coding-seed` benchmark | `25/25` expected outcomes matched |
 
-The skipped integration tests and absence of branch CI mean that PostgreSQL
-migration, backup/restore, full optional-boundary, security, and all remote matrix
-evidence remain release work.
+Sprint 21C1 must preserve these checks and add durable learned-evidence,
+restart/replay, artifact-integrity, activation-concurrency, and quarantine coverage.
 
-### 3.3 What the active branch has completed
+### 3.3 What the released substrate has completed
 
-The four branch commits provide a valuable substrate:
+The released Sprint 21 substrate provides:
 
 - typed learning records, feature schemas, model artifact metadata, promotion
   decisions, replay, invariance, replacement, self-play, and capacity contracts;
@@ -156,7 +163,7 @@ agent learning.
    genuine learned choice on the governed tie-break surface.
 6. Applying all fixture-provided edits would risk leaking the answer. The current
    prediction headroom must not be converted into a misleading agent-success claim.
-7. The Gate L assessment is stale relative to the fourth-domain commit.
+7. Gate L was refreshed at release and remains an explicit no-go.
 8. Teacher output retention and local embedding are not active.
 9. There is a Claude Code advisory adapter, but no governed OpenRouter adapter and no
    Codex CLI adapter. Live provider paths have not been verified as part of this
@@ -165,9 +172,9 @@ agent learning.
     restore evidence do not exist.
 11. Temporal semantic and strategy graphs exist, but failed-to-corrected experience
     graph retrieval and graph edit guidance do not.
-12. The assessed host has sufficient CPU, RAM, and disk for the next CPU-first
-    milestones, but `nvidia-smi` cannot communicate with the NVIDIA driver. GPU work
-    is blocked until a separate hardware preflight passes.
+12. An NVIDIA RTX 5070 Ti is now visible through `nvidia-smi`, but no current gate
+    requires it. CPU-first execution remains the default until a measured workload
+    justifies and reproduces an accelerator path.
 
 ## 4. Non-negotiable learning architecture
 

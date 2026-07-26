@@ -1,0 +1,89 @@
+{
+  "$defs": {
+    "LearnedComponentState": {
+      "enum": [
+        "registered",
+        "shadow",
+        "verified",
+        "active",
+        "disabled",
+        "retracted"
+      ],
+      "title": "LearnedComponentState",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/learned/learned-projection-row.schema.json",
+  "additionalProperties": false,
+  "description": "The current state of one component, derived from its revision history.",
+  "properties": {
+    "artifact_lineage_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Artifact Lineage Id"
+    },
+    "component_id": {
+      "minLength": 1,
+      "title": "Component Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "current_revision": {
+      "minimum": 1,
+      "title": "Current Revision",
+      "type": "integer"
+    },
+    "current_state": {
+      "$ref": "#/$defs/LearnedComponentState"
+    },
+    "descriptor_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Descriptor Hash",
+      "type": "string"
+    },
+    "descriptor_version": {
+      "minLength": 1,
+      "title": "Descriptor Version",
+      "type": "string"
+    },
+    "surface": {
+      "minLength": 1,
+      "title": "Surface",
+      "type": "string"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "component_id",
+    "surface",
+    "descriptor_version",
+    "current_revision",
+    "current_state",
+    "descriptor_hash",
+    "created_at",
+    "updated_at"
+  ],
+  "title": "LearnedProjectionRow",
+  "type": "object"
+}

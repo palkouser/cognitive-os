@@ -1,0 +1,162 @@
+{
+  "$defs": {
+    "LearnedComponentState": {
+      "enum": [
+        "registered",
+        "shadow",
+        "verified",
+        "active",
+        "disabled",
+        "retracted"
+      ],
+      "title": "LearnedComponentState",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/learned/learned-component-revision-record.schema.json",
+  "additionalProperties": false,
+  "description": "One append-only lifecycle step. This is the authority for learned state.\n\nThe projection in `learned_components` is derived from these rows and is wrong by\ndefinition if replay disagrees with it.",
+  "properties": {
+    "activation_approval_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Activation Approval Hash"
+    },
+    "actor": {
+      "minLength": 1,
+      "title": "Actor",
+      "type": "string"
+    },
+    "artifact_lineage_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Artifact Lineage Id"
+    },
+    "authority": {
+      "minLength": 1,
+      "title": "Authority",
+      "type": "string"
+    },
+    "component_id": {
+      "minLength": 1,
+      "title": "Component Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "descriptor_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Descriptor Hash",
+      "type": "string"
+    },
+    "idempotency_key": {
+      "minLength": 1,
+      "title": "Idempotency Key",
+      "type": "string"
+    },
+    "previous_revision": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Revision"
+    },
+    "promotion_assessment_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Promotion Assessment Hash"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "recorded_at": {
+      "format": "date-time",
+      "title": "Recorded At",
+      "type": "string"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "rollback_target_revision": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rollback Target Revision"
+    },
+    "state_after": {
+      "$ref": "#/$defs/LearnedComponentState"
+    },
+    "state_before": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LearnedComponentState"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "surface": {
+      "minLength": 1,
+      "title": "Surface",
+      "type": "string"
+    }
+  },
+  "required": [
+    "component_id",
+    "revision",
+    "surface",
+    "state_after",
+    "descriptor_hash",
+    "actor",
+    "authority",
+    "reason",
+    "idempotency_key",
+    "recorded_at"
+  ],
+  "title": "LearnedComponentRevisionRecord",
+  "type": "object"
+}
