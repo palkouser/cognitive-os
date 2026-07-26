@@ -222,19 +222,32 @@ class TestMeasuredCorpusFindings:
     """Tests over the real corpus. These are the 21.6 result, pinned."""
 
     @pytest.mark.asyncio
-    async def test_the_deterministic_rule_is_perfect_on_this_corpus(self) -> None:
-        """The finding that produced the null result, as a tripwire.
+    async def test_the_deterministic_rule_is_imperfect_on_this_corpus(self) -> None:
+        """The finding that produced the null result, inverted — as a tripwire.
 
-        If a future corpus makes this rule imperfect, real headroom appears and the
-        parametric tiers become worth installing. This test failing is that signal.
+        Until Sprint 21C.1 this test asserted the opposite: the deterministic
+        `requirements_available` rule scored a perfect 1.0000 with zero
+        confident errors, which is precisely why the 21B ladder found no
+        headroom and Gate L closed 8/9. Adding the coding domain — whose
+        outcomes depend on whether a repair strategy actually succeeds, not on
+        which capabilities were declared — broke that perfection.
+
+        The measured numbers are pinned exactly, not bounded. They are the
+        Gate L v2 condition 8b headroom evidence, and 21D.3 re-runs the ladder
+        against them; a silent drift would move the baseline the learned
+        components have to beat.
         """
         examples = await build_examples()
         deterministic = score_deterministic(examples)
-        assert deterministic.score == Decimal("1.0000"), (
-            "the deterministic rule no longer explains the corpus; a learned component "
-            "may now have headroom and the ladder should climb further"
+        assert deterministic.evaluated_count == 1292
+        assert deterministic.score == Decimal("0.9396"), (
+            f"the deterministic rule now scores {deterministic.score}; if the corpus "
+            "changed on purpose, re-run the ladder in 21D.3 and update this pin"
         )
-        assert deterministic.confident_errors == 0
+        assert deterministic.confident_errors == 78, (
+            f"confident errors moved to {deterministic.confident_errors}; the "
+            "headroom the parametric tiers are measured against changed with it"
+        )
 
     @pytest.mark.asyncio
     async def test_the_majority_baseline_is_far_below_the_deterministic_one(self) -> None:
@@ -389,7 +402,8 @@ class TestFeatureSchema:
             shapes.add(tuple(name for name, _ in vector.categorical_features))
             domains.add(vector.problem_domain)
         assert len(shapes) == 1, f"the encoding differs by domain: {shapes}"
-        assert len(domains) >= 3
+        # Sprint 21C.1: Gate L v2 condition 3 closes on four domains.
+        assert len(domains) >= 4, f"Gate L v2 expects >= 4 domains, found {sorted(domains)}"
 
 
 class TestKnnComponent:

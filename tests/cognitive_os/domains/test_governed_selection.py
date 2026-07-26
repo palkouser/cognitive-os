@@ -12,10 +12,13 @@ Three defects are pinned here, each found by running the code rather than readin
 """
 
 from collections import Counter
+from collections.abc import Iterable
+from pathlib import Path
 
 import pytest
 
 import cognitive_os.domains.registry as problem_registry
+from cognitive_os.domain.domains import VerificationDisposition
 from cognitive_os.domain.skills import SkillExclusionReason, SkillSelectionReason
 from cognitive_os.domains.fixtures import build_all_cases
 from cognitive_os.domains.registry import resolve
@@ -29,6 +32,22 @@ from cognitive_os.domains.skill_runner import (
 CASES = build_all_cases()
 PHYSICS = [case for case in CASES if case.domain.value == "physics"]
 MATHEMATICS = [case for case in CASES if case.domain.value == "mathematics"]
+
+
+def _declared_canonical_names(paths: Iterable[Path], manifest: str) -> set[str]:
+    """The `canonical_name` each package declares, not the directory it sits in."""
+    names: set[str] = set()
+    for path in paths:
+        descriptor = path / manifest
+        if not descriptor.is_file():
+            continue
+        for line in descriptor.read_text(encoding="utf-8").splitlines():
+            if line.startswith("canonical_name:"):
+                names.add(line.split(":", 1)[1].strip())
+                break
+        else:  # pragma: no cover - a package without a canonical name is a bug
+            raise AssertionError(f"{descriptor} declares no canonical_name")
+    return names
 
 
 class TestSelectionActuallyRuns:
@@ -78,12 +97,21 @@ class TestSelectionActuallyRuns:
         assert len(decision.candidates) == 1, "only one mathematics skill is satisfiable"
 
     @pytest.mark.asyncio
-    async def test_every_case_selects_and_is_accepted(self) -> None:
-        """The whole corpus still runs, so wiring selection in changed no outcome."""
+    async def test_every_case_selects_and_lands_on_its_declared_outcome(self) -> None:
+        """The whole corpus still selects and runs, so wiring selection in changed no outcome.
+
+        Sprint 21C.1: the coding fixtures declared in `FALLIBLE_CODING_CASES`
+        are expected to reject, and every other case to be accepted. Selection
+        is recorded either way — a rejected baseline is still a governed,
+        recorded selection, which is exactly what makes it usable as 21D corpus
+        material.
+        """
         runs = await run_corpus_as_skills(CASES)
         assert len(runs) == len(CASES)
-        assert all(run.accepted for run in runs)
         assert all(run.selection is not None for run in runs)
+        for run, case in zip(runs, CASES, strict=True):
+            expected_pass = case.expected_disposition is VerificationDisposition.PASS
+            assert run.accepted is expected_pass, case.case_id
 
 
 class TestAccumulatedStatisticsBreakTies:
@@ -161,8 +189,34 @@ class TestPermittedSetsAreCoherent:
         assert all(len(entry.skills) >= 2 for entry in entries)
 
     def test_each_permitted_skill_is_a_registered_seed_skill(self) -> None:
+        """A permitted set is authority, so every name in it has to resolve.
+
+        The directory name and the canonical name differ (`coding/python-repair`
+        declares `verification-driven-python-repair`), so the declaration is what
+        counts, not the folder.
+        """
         from cognitive_os.skills.fixtures import seed_package_paths
 
-        seeds = {path.name for path in seed_package_paths()}
+        seeds = _declared_canonical_names(seed_package_paths(), "metadata.yaml")
         for entry in problem_registry._ENTRIES.values():
-            assert set(entry.skills) <= seeds, f"{entry.problem_type} names an unknown skill"
+            unknown = set(entry.skills) - seeds
+            assert not unknown, f"{entry.problem_type} names an unknown skill: {sorted(unknown)}"
+
+    def test_each_permitted_strategy_is_a_registered_strategy(self) -> None:
+        """The same authority argument as for skills, and the reason it exists.
+
+        Sprint 21C.1 first registered the coding domain with two invented
+        strategy names. Nothing caught it, because only skills were checked,
+        and the names still reached every coding case plan's
+        `strategy_revisions` as provenance for a strategy that did not exist.
+        """
+        from pathlib import Path
+
+        root = Path(__file__).resolve().parents[3] / "strategies"
+        assert root.is_dir(), f"strategy package root not found at {root}"
+        known = _declared_canonical_names(sorted(root.iterdir()), "strategy.yaml")
+        for entry in problem_registry._ENTRIES.values():
+            unknown = set(entry.strategies) - known
+            assert not unknown, (
+                f"{entry.problem_type} names an unregistered strategy: {sorted(unknown)}"
+            )

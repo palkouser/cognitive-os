@@ -68,14 +68,19 @@ _PROBLEM_DOMAINS: dict[DomainKind, ProblemDomain] = {
     DomainKind.MATHEMATICS: ProblemDomain.MATHEMATICS,
     DomainKind.PHYSICS: ProblemDomain.PHYSICS,
     DomainKind.LOGIC: ProblemDomain.LOGIC,
+    DomainKind.CODING: ProblemDomain.CODING,
 }
 
 #: The verifier subject type each domain reports, so the Acceptance Service sees
-#: a typed subject rather than an opaque blob.
+#: a typed subject rather than an opaque blob. Coding reports a structured value
+#: because the checker compares a structured `repaired_source` or
+#: `selected_tests` payload against the case's golden fields — not a workspace
+#: or an executable. See ADR 0085 for the boundary.
 _SUBJECT_TYPES: dict[DomainKind, VerificationSubjectType] = {
     DomainKind.MATHEMATICS: VerificationSubjectType.MATHEMATICAL_EXPRESSION,
     DomainKind.PHYSICS: VerificationSubjectType.PHYSICAL_QUANTITY,
     DomainKind.LOGIC: VerificationSubjectType.LOGICAL_PROBLEM,
+    DomainKind.CODING: VerificationSubjectType.STRUCTURED_VALUE,
 }
 
 

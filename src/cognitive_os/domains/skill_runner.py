@@ -247,7 +247,7 @@ async def run_case_as_skill(
         task_run_id=uuid5(NAMESPACE_URL, f"domain-skill-task:{case.case_id}"),
         problem_reference=case.problem.problem_id,
         plan_reference=uuid5(NAMESPACE_URL, f"domain-skill-plan:{case.case_id}"),
-        input_bindings=domain_input_bindings(case),
+        input_bindings=domain_input_bindings(case, item.identity.canonical_name),
         controller_budget=revision.resource_budget,
         expected_registry_snapshots=snapshot(),
         requested_by=domain_actor(),

@@ -5,7 +5,7 @@ from uuid import uuid4
 import pytest
 
 from cognitive_os.domain.controller import ControllerState
-from cognitive_os.domain.domains import DomainKind
+from cognitive_os.domain.domains import DomainKind, VerificationDisposition
 from cognitive_os.domain.skills import SkillExecutionStatus
 from cognitive_os.domains.context import (
     RequiredContextMissingError,
@@ -36,10 +36,23 @@ SAMPLE = (ALL_CASES[0], ALL_CASES[20], ALL_CASES[40])
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("case", ALL_CASES, ids=lambda item: item.case_id)
-async def test_every_case_completes_under_the_controller(case: object) -> None:
+async def test_every_case_terminates_in_its_declared_controller_state(case: object) -> None:
+    """The controlled path lands in exactly the state the case declares.
+
+    Sprint 21C.1: the coding domain's deliberately fallible baselines end
+    FAILED and not accepted; everything else ends COMPLETED and accepted. Both
+    halves are asserted per case, so a fixture that stops failing — or a
+    regression that turns a working case into a failure — is caught here rather
+    than being absorbed by a domain-wide exemption.
+    """
     run = await run_case_controlled(case)  # type: ignore[arg-type]
-    assert run.state is ControllerState.COMPLETED, run.decision_reason
-    assert run.accepted, run.decision_reason
+    if case.expected_disposition is VerificationDisposition.PASS:  # type: ignore[attr-defined]
+        assert run.state is ControllerState.COMPLETED, run.decision_reason
+        assert run.accepted, run.decision_reason
+    else:
+        assert run.state is ControllerState.FAILED, run.decision_reason
+        assert not run.accepted, run.decision_reason
+    assert run.decision_reason
 
 
 @pytest.mark.asyncio

@@ -18,7 +18,11 @@ if str(REPOSITORY_ROOT) not in sys.path:
     sys.path.insert(0, str(REPOSITORY_ROOT))
 
 from cognitive_os.benchmarks.domain_adapter import _GOVERNANCE, governance_checks  # noqa: E402
-from cognitive_os.domain.domains import DomainKind, TransferDisposition  # noqa: E402
+from cognitive_os.domain.domains import (  # noqa: E402
+    DomainKind,
+    TransferDisposition,
+    VerificationDisposition,
+)
 from cognitive_os.domains import kernels  # noqa: E402
 from cognitive_os.domains.fixtures import build_all_cases, wrong_answer_for  # noqa: E402
 from cognitive_os.domains.registry import entries, problem_types, snapshot_hash  # noqa: E402
@@ -37,15 +41,24 @@ async def _domain_report() -> dict[str, object]:
     per_domain: dict[str, dict[str, int]] = {}
     for domain in DomainKind:
         subset = [item for item in cases if item.domain is domain]
-        accepted = rejected = 0
+        accepted = rejected = as_declared = fallible = 0
         for case in subset:
-            if (await service.run_case(case)).accepted:
-                accepted += 1
+            case_accepted = (await service.run_case(case)).accepted
+            accepted += case_accepted
+            # Sprint 21C.1: the coding domain's baselines are deliberately
+            # fallible, so "everything is accepted" stopped being the right
+            # question. The right one is whether each case lands where its
+            # contract says it will.
+            declared_pass = case.expected_disposition is VerificationDisposition.PASS
+            as_declared += case_accepted is declared_pass
+            fallible += not declared_pass
             if not (await service.run_case(case, candidate=wrong_answer_for(case))).accepted:
                 rejected += 1
         per_domain[domain.value] = {
             "cases": len(subset),
             "accepted_correct": accepted,
+            "matched_declared_disposition": as_declared,
+            "fallible_baselines": fallible,
             "rejected_wrong": rejected,
             "problem_types": len(problem_types(domain)),
         }
@@ -182,7 +195,7 @@ async def _main(output: Path | None) -> int:
         and transfer["positive_strategy_transfer"]  # type: ignore[index]
         and transfer["negative_transfer_rejected"]  # type: ignore[index]
         and all(
-            item["accepted_correct"] == item["cases"] == item["rejected_wrong"]
+            item["matched_declared_disposition"] == item["cases"] == item["rejected_wrong"]
             for item in pilot["domains"].values()  # type: ignore[index,union-attr]
         )
     )

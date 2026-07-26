@@ -2071,7 +2071,7 @@
     {
       "file": "v1/domains/domain-benchmark-case.schema.json",
       "model": "DomainBenchmarkCase",
-      "sha256": "ab4a5be2719a39ff063aedacf436ad2fee4fb651976c2558fd4615cd7a50f33d"
+      "sha256": "908af4d581d601afdc33df107c2f313ab096cac664bd9248458330b32baf03a6"
     },
     {
       "file": "v1/domains/domain-derivation.schema.json",
@@ -2081,12 +2081,12 @@
     {
       "file": "v1/domains/domain-pilot-run.schema.json",
       "model": "DomainPilotRun",
-      "sha256": "53cff8b40c1ebad531ba17abebf96a0c59f853902360e64d1aa6845a6919906e"
+      "sha256": "79bf78719da116134051ff4f2216999a28c28b1700645a6a5215327a825a641b"
     },
     {
       "file": "v1/domains/domain-problem.schema.json",
       "model": "DomainProblem",
-      "sha256": "9f82fb3cbcc411d735a18afe831e05177847328af1c0ca60addf989ce53802af"
+      "sha256": "3c06bb600fd9d314325fbbba41771a050095cff68ccaae26c01a33aa9fdda0ba"
     },
     {
       "file": "v1/domains/domain-verification-outcome.schema.json",
@@ -2111,7 +2111,7 @@
     {
       "file": "v1/domains/transfer-experiment.schema.json",
       "model": "TransferExperiment",
-      "sha256": "a8a330c97f217648abe31903b49bff81d08336f98252b4f08417820248648504"
+      "sha256": "f1c1967ecf33fe9b2b9eac9ac8502b6468205fa8473ab79b00d5f7878c2cbeff"
     },
     {
       "file": "v1/domains/transfer-metrics.schema.json",

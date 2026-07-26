@@ -74,9 +74,14 @@ planning and discussion with the project owner.
 
 Before declaring a task complete, run:
 
-- `uv run ruff check --config ruff.cognitive-os.toml src/cognitive_os tests/cognitive_os tests/contract scripts`
-- `uv run ruff format --check --config ruff.cognitive-os.toml src/cognitive_os tests/cognitive_os tests/contract scripts`
+- `uv run ruff check --config ruff.cognitive-os.toml src tests scripts infra`
+- `uv run ruff format --check --config ruff.cognitive-os.toml src tests scripts infra`
 - `uv run pytest tests/cognitive_os -q`
+
+The lint scope is every first-party tree, matching the CI job. Donor and example
+code (`LightAgent/`, `example/`, `mcp/`, `skills/`) is deliberately outside it and
+governed by `DONOR_CODE_POLICY.md`; `ruff.cognitive-os.toml` excludes what has to
+be excluded, so the paths above never need narrowing by hand.
 
 Report any check that cannot run and explain why.
 

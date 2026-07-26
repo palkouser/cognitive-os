@@ -1280,3 +1280,249 @@ CHECKERS: dict[str, Any] = {
     "sequence-induction": check_sequence_induction,
     "competing-hypotheses": check_sequence_induction,
 }
+
+
+# --------------------------------------------------------------------------
+# Coding (Sprint 21C.1)
+# --------------------------------------------------------------------------
+#
+# Both the solver and the checker are in-process and R0: no filesystem, no
+# network, no subprocess. The checker compares the candidate against the case's
+# golden reference, which is why its capability is `coding.golden_equality` and
+# NOT `coding.pytest` — nothing here runs pytest, and borrowing the name of the
+# real sandboxed verifier for a string comparison would be a false evidence
+# claim. This domain therefore adds no sandbox path at all; the Coding Agent's
+# sandboxed pytest (`verification/coding/commands.py`, exercised by
+# `tests/integration/coding/`) remains the only one. ADR 0085 records why, and
+# what a later sprint would have to build to run the real thing here.
+#
+# Three problem types. Two of them (pytest-repair, assertion-repair) hand the
+# solver a list of patches and let the registered solver apply the first one
+# only: a multi-edit repair task therefore deterministically fails the baseline.
+# The third (test-selection) lets the solver pick the names that mention the
+# target function in their identifier, which both under- and over-selects when
+# a test's identifier and the code it exercises disagree.
+#
+# The golden reference (`golden_source`, `selected_tests`) is withheld from the
+# solver by `registry.solver_inputs`; only the checker sees it.
+
+
+def _apply_first_patch(source: str, patches: tuple[dict[str, str], ...]) -> str:
+    """Apply the first replacement only; multi-edit fixtures fail by construction."""
+    if not patches:
+        return source
+    first = patches[0]
+    needle = first.get("find", "")
+    replace = first.get("replace", "")
+    if not needle:
+        return source
+    return source.replace(needle, replace, 1)
+
+
+def _coerce_patches(value: object) -> tuple[dict[str, str], ...]:
+    """Patches arrive as a JSON list of {find, replace} pairs from `formal_inputs`."""
+    if not isinstance(value, (list, tuple)):
+        raise _fail(DomainFailureCode.INVALID_DERIVATION, "patches must be a list")
+    out: list[dict[str, str]] = []
+    for item in value:
+        if not isinstance(item, dict) or not isinstance(item.get("find"), str):
+            raise _fail(
+                DomainFailureCode.INVALID_DERIVATION, "each patch needs a string find/replace"
+            )
+        out.append({"find": item["find"], "replace": str(item.get("replace", ""))})
+    return tuple(out)
+
+
+def _coerce_string_list(value: object, *, key: str) -> tuple[str, ...]:
+    if not isinstance(value, (list, tuple)) or not all(isinstance(item, str) for item in value):
+        raise _fail(DomainFailureCode.INVALID_DERIVATION, f"{key} must be a list of strings")
+    return tuple(value)
+
+
+def _coerce_source(value: object, *, key: str) -> str:
+    if not isinstance(value, str):
+        raise _fail(DomainFailureCode.INVALID_DERIVATION, f"{key} must be a string source")
+    return value
+
+
+def solve_pytest_repair(inputs: dict[str, Any], budget: ResourceBudget) -> Solution:
+    """Single-edit strategy for a pytest repair task; multi-edit tasks fail it.
+
+    The registered solver is intentionally fallible: it applies only the first
+    `find/replace` patch from the case's patch list. A task that requires
+    multiple coordinated edits therefore produces a candidate whose source
+    disagrees with the golden source on string equality — and the checker
+    rejects it without ever invoking pytest. That measured disagreement is the
+    headroom signal Gate L v2 condition 8b needs.
+    """
+    source = _coerce_source(inputs.get("buggy_source"), key="buggy_source")
+    patches = _coerce_patches(inputs.get("patches"))
+    repaired = _apply_first_patch(source, patches)
+    return Solution(
+        candidate=Candidate(
+            AnswerType.STRUCTURED,
+            exact_value=repaired,
+            structured={"repaired_source": repaired, "applied_patches": 1 if patches else 0},
+        ),
+        steps=(
+            Step("read-source", f"read {len(source)} chars of buggy source", str(len(source))),
+            Step(
+                "apply-first-patch",
+                "applied patch 0 of "
+                f"{len(patches)}; remaining patches are out of scope for the baseline",
+                "repaired_source",
+            ),
+        ),
+        tool_evidence=("coding.kernel:single_edit_repair",),
+        limitations=("baseline strategy applies the first patch only",),
+    )
+
+
+def check_pytest_repair(
+    inputs: dict[str, Any], candidate: Candidate, budget: ResourceBudget
+) -> CheckSet:
+    golden = _coerce_source(inputs.get("golden_source"), key="golden_source")
+    repaired = (candidate.structured or {}).get("repaired_source")
+    if not isinstance(repaired, str):
+        return (
+            _failed("coding.golden_equality", "candidate did not produce a repaired_source"),
+            _failed("coding.required_checks", "missing repaired_source in structured value"),
+        )
+    if repaired == golden:
+        return (
+            _pass("coding.golden_equality", "repaired_source matches golden_source"),
+            _pass("coding.required_checks", "all replacement edits applied"),
+        )
+    return (
+        _failed("coding.golden_equality", "repaired_source disagrees with golden_source"),
+        _failed("coding.required_checks", "remaining edits left the candidate inconsistent"),
+    )
+
+
+def solve_assertion_repair(inputs: dict[str, Any], budget: ResourceBudget) -> Solution:
+    """First-patch repair for an assertion message; multi-assertion tasks fail it.
+
+    Same intent as `solve_pytest_repair`, scoped to assertion text. The baseline
+    applies the first `find/replace`; tasks that require replacing more than
+    one occurrence deterministically fall through.
+    """
+    source = _coerce_source(inputs.get("broken_source"), key="broken_source")
+    patches = _coerce_patches(inputs.get("patches"))
+    repaired = _apply_first_patch(source, patches)
+    return Solution(
+        candidate=Candidate(
+            AnswerType.STRUCTURED,
+            exact_value=repaired,
+            structured={"repaired_source": repaired, "applied_patches": 1 if patches else 0},
+        ),
+        steps=(
+            Step(
+                "read-broken-assertion",
+                f"read {len(source)} chars of broken assertion source",
+                str(len(source)),
+            ),
+            Step(
+                "apply-first-patch",
+                "applied patch 0 of "
+                f"{len(patches)}; remaining assertions are out of scope for the baseline",
+                "repaired_assertion",
+            ),
+        ),
+        tool_evidence=("coding.kernel:assertion_single_edit_repair",),
+        limitations=("baseline strategy applies the first patch only",),
+    )
+
+
+def check_assertion_repair(
+    inputs: dict[str, Any], candidate: Candidate, budget: ResourceBudget
+) -> CheckSet:
+    golden = _coerce_source(inputs.get("golden_source"), key="golden_source")
+    repaired = (candidate.structured or {}).get("repaired_source")
+    if not isinstance(repaired, str):
+        return (
+            _failed("coding.golden_equality", "candidate did not produce a repaired_assertion"),
+            _failed("coding.required_checks", "missing repaired_source in structured value"),
+        )
+    if repaired == golden:
+        return (
+            _pass("coding.golden_equality", "repaired assertion matches the expected message"),
+            _pass("coding.required_checks", "all replacement edits applied"),
+        )
+    return (
+        _failed("coding.golden_equality", "repaired assertion disagrees with the expected message"),
+        _failed("coding.required_checks", "remaining edits left the candidate inconsistent"),
+    )
+
+
+def _name_mentions(name: str, target: str) -> bool:
+    return target in name
+
+
+def solve_test_selection(inputs: dict[str, Any], budget: ResourceBudget) -> Solution:
+    """Pick tests whose identifier mentions the changed function.
+
+    The heuristic fails in both directions, and both are fixtures: a test that
+    exercises the function only through a helper is never selected, and a test
+    that merely names the function without exercising it always is. That is the
+    test-selection headroom a learned reranker has to improve on.
+    """
+    candidates = _coerce_string_list(inputs.get("candidate_tests"), key="candidate_tests")
+    target = _coerce_source(inputs.get("target_function"), key="target_function")
+    selected = tuple(name for name in candidates if _name_mentions(name, target))
+    return Solution(
+        candidate=Candidate(
+            AnswerType.STRUCTURED,
+            # `DomainAnswer.exact_value` is non-empty by contract, and selecting
+            # nothing is a real baseline outcome, so it gets an explicit token
+            # rather than an empty string. `selected_tests` stays authoritative.
+            exact_value=" ".join(selected) or "<none>",
+            structured={
+                "selected_tests": list(selected),
+                "selection_count": len(selected),
+                "target_function": target,
+            },
+        ),
+        steps=(
+            Step(
+                "read-candidates",
+                f"considered {len(candidates)} candidate tests",
+                str(len(candidates)),
+            ),
+            Step(
+                "select-by-name-mention",
+                "kept tests whose identifier mentions the target function",
+                ", ".join(selected) or "<none>",
+            ),
+        ),
+        tool_evidence=("coding.kernel:test_selection_by_identifier",),
+        limitations=("baseline strategy selects by identifier mention only",),
+    )
+
+
+def check_test_selection(
+    inputs: dict[str, Any], candidate: Candidate, budget: ResourceBudget
+) -> CheckSet:
+    expected = _coerce_string_list(inputs.get("selected_tests"), key="selected_tests")
+    produced = (candidate.structured or {}).get("selected_tests")
+    if not isinstance(produced, (list, tuple)):
+        return (
+            _failed("coding.golden_equality", "candidate did not produce selected_tests"),
+            _failed("coding.required_checks", "missing selected_tests in structured value"),
+        )
+    if tuple(produced) == expected:
+        return (
+            _pass("coding.golden_equality", "selected_tests match the expected selection"),
+            _pass("coding.required_checks", "selection is consistent with the target function"),
+        )
+    return (
+        _failed("coding.golden_equality", "selected_tests disagree with the expected selection"),
+        _failed(
+            "coding.required_checks",
+            f"selected {sorted(produced)} where {sorted(expected)} exercises the target",
+        ),
+    )
+
+
+CHECKERS["pytest-repair"] = check_pytest_repair
+CHECKERS["assertion-repair"] = check_assertion_repair
+CHECKERS["test-selection"] = check_test_selection

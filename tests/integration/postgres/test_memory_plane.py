@@ -177,7 +177,7 @@ async def test_approximate_retrieval_reaches_the_index_and_exact_retrieval_canno
                 vector=tuple(0.1 + (index % 5) / 10 for index in range(dimension)),
             ),
         )
-        expression = repository._vector_distance(query)  # noqa: SLF001
+        expression = repository._vector_distance(query)
         rendered[mode] = str(
             expression.compile(dialect=admin.dialect, compile_kwargs={"literal_binds": True})
         )

@@ -6,13 +6,17 @@ repos:
         entry: uv run ruff check --config ruff.cognitive-os.toml
         language: system
         types: [python]
-        files: ^(src/cognitive_os|tests/cognitive_os|tests/contract|scripts)/
+        # Same first-party scope as the CI lint job. Keep the two in step: they
+        # drifted from each other before, and lint errors survived in the gap.
+        files: ^(src|tests|scripts|infra)/
       - id: ruff-format
         name: Ruff format check
         entry: uv run ruff format --check --config ruff.cognitive-os.toml
         language: system
         types: [python]
-        files: ^(src/cognitive_os|tests/cognitive_os|tests/contract|scripts)/
+        # Same first-party scope as the CI lint job. Keep the two in step: they
+        # drifted from each other before, and lint errors survived in the gap.
+        files: ^(src|tests|scripts|infra)/
       - id: detect-secrets
         name: Detect secrets
         entry: uv run detect-secrets-hook --baseline .secrets.baseline

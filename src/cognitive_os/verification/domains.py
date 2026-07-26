@@ -44,8 +44,8 @@ def _descriptor() -> VerifierDescriptor:
         version="1",
         display_name="Cross-domain independent checker",
         description=(
-            "Recompute a candidate mathematics, physics, or logic answer by an independent "
-            "route and judge it. Dependency-free, deterministic, and offline."
+            "Recompute a candidate mathematics, physics, logic, or coding answer by an "
+            "independent route and judge it. Dependency-free, deterministic, and offline."
         ),
         kind=VerifierKind.GENERIC,
         capabilities=tuple(
@@ -56,6 +56,7 @@ def _descriptor() -> VerifierDescriptor:
                     ProblemDomain.MATHEMATICS,
                     ProblemDomain.PHYSICS,
                     ProblemDomain.LOGIC,
+                    ProblemDomain.CODING,
                 ),
                 criterion_types=(CriterionType.DOMAIN_VERIFIER,),
             )

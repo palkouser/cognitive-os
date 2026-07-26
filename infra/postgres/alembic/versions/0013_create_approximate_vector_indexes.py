@@ -34,9 +34,7 @@ HNSW_MAXIMUM_DIMENSIONS = 2_000
 
 
 def upgrade() -> None:
-    op.execute(
-        "ALTER TABLE cognitive_os.memory_accesses DROP CONSTRAINT ck_memory_access_mode"
-    )
+    op.execute("ALTER TABLE cognitive_os.memory_accesses DROP CONSTRAINT ck_memory_access_mode")
     op.execute(
         "ALTER TABLE cognitive_os.memory_accesses ADD CONSTRAINT ck_memory_access_mode "
         "CHECK (retrieval_mode IN ('metadata','text','vector','vector_approximate'))"
@@ -59,9 +57,7 @@ def downgrade() -> None:
         op.execute(f"DROP INDEX IF EXISTS cognitive_os.{approximate_index_name(dimension)}")
     # Any approximate access already recorded would violate the narrower constraint, so
     # the downgrade refuses rather than silently discarding audit rows.
-    op.execute(
-        "ALTER TABLE cognitive_os.memory_accesses DROP CONSTRAINT ck_memory_access_mode"
-    )
+    op.execute("ALTER TABLE cognitive_os.memory_accesses DROP CONSTRAINT ck_memory_access_mode")
     op.execute(
         "ALTER TABLE cognitive_os.memory_accesses ADD CONSTRAINT ck_memory_access_mode "
         "CHECK (retrieval_mode IN ('metadata','text','vector'))"

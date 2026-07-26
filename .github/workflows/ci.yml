@@ -26,10 +26,15 @@ jobs:
         run: uv python install 3.12
       - name: Sync environment
         run: uv sync --locked --all-groups --extra memory-postgres
+      # Scope is every first-party tree, not a hand-listed subset. The previous
+      # list omitted tests/integration and infra, so two lint errors lived there
+      # unnoticed. Donor and example code (LightAgent, example/, mcp/, skills/)
+      # stays out: it is vendored, carries 245 findings of its own, and is
+      # governed by DONOR_CODE_POLICY.md rather than by this gate.
       - name: Ruff check
-        run: uv run ruff check --config ruff.cognitive-os.toml src/cognitive_os tests/cognitive_os tests/contract scripts
+        run: uv run ruff check --config ruff.cognitive-os.toml src tests scripts infra
       - name: Ruff format check
-        run: uv run ruff format --check --config ruff.cognitive-os.toml src/cognitive_os tests/cognitive_os tests/contract scripts
+        run: uv run ruff format --check --config ruff.cognitive-os.toml src tests scripts infra
       - name: Mypy
         run: uv run mypy src/cognitive_os
       - name: Bandit
@@ -610,6 +615,16 @@ jobs:
           uv run python scripts/benchmark_run.py
           --manifest benchmarks/manifests/sprint20-domain-seed.yaml
           --mode domain-pilot --report-directory /tmp/sprint20-domain-seed
+      - name: Coding domain baseline outcome gate
+        run: >-
+          uv run python scripts/benchmark_run.py
+          --manifest benchmarks/manifests/sprint22-coding-ci.yaml
+          --mode domain-pilot --report-directory /tmp/sprint22-coding-benchmark
+      - name: Coding domain seventeen-case baseline outcome table
+        run: >-
+          uv run python scripts/benchmark_run.py
+          --manifest benchmarks/manifests/sprint22-coding-seed.yaml
+          --mode domain-pilot --report-directory /tmp/sprint22-coding-seed
 
   security:
     runs-on: ubuntu-latest

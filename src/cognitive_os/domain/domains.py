@@ -1,4 +1,12 @@
-"""Immutable contracts for the mathematics, physics, and logic cross-domain pilot."""
+"""Immutable contracts for the mathematics, physics, logic, and coding cross-domain pilot.
+
+The fourth domain, coding, is introduced in Sprint 21C.1 to give the learning
+substrate a surface whose baseline can fail (multi-edit pytest repair) so that
+Gate L v2 condition 3 closes on four domains and the headroom assumption the
+rest of the plan rests on becomes measurable. Authority and sandbox boundary
+remain those of the existing tool and verifier planes; the domain only
+contributes a solver, a checker, and its registered problem types.
+"""
 
 from __future__ import annotations
 
@@ -16,6 +24,7 @@ class DomainKind(StrEnum):
     MATHEMATICS = "mathematics"
     PHYSICS = "physics"
     LOGIC = "logic"
+    CODING = "coding"
 
 
 class DomainRunStatus(StrEnum):

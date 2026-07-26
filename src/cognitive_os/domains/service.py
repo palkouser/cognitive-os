@@ -33,7 +33,7 @@ from cognitive_os.events.domain_events import (
     DomainEventPayload,
 )
 
-from .registry import UnsupportedProblemType, resolve
+from .registry import UnsupportedProblemType, resolve, solver_inputs
 from .solvers import Candidate, Solution, SolverError, Step
 
 FIXTURE_TIME = datetime(2026, 7, 24, tzinfo=UTC)
@@ -140,7 +140,7 @@ class DomainPilotService:
         budget = case.plan.resource_budget
 
         try:
-            solution = entry.solver(inputs, budget)
+            solution = entry.solver(solver_inputs(entry, inputs), budget)
         except SolverError as error:
             return await self._fail(case, run_id, correlation, error.code, str(error))
         except (KeyError, TypeError, ValueError) as error:
