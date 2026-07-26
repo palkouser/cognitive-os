@@ -21,6 +21,7 @@ from cognitive_os.application.ports.learned_evidence import LearnedEvidenceRepos
 from cognitive_os.domain.learned import LearnedComponentState
 from cognitive_os.domain.learned_evidence import (
     LearnedActivationAction,
+    LearnedActivationApproval,
     LearnedActivationReceipt,
     LearnedComponentRevisionRecord,
     LearnedEvidenceKind,
@@ -62,6 +63,84 @@ def revision(
     return LearnedComponentRevisionRecord(**fields)  # type: ignore[arg-type]
 
 
+async def drive_to_verified(repository: LearnedEvidenceRepositoryPort) -> None:
+    """Register, shadow and verify the fixture: revisions 1 to 3."""
+    await repository.register_component(
+        revision=revision(number=1, state_after=LearnedComponentState.REGISTERED),
+        descriptor_version=fx.descriptor().version,
+    )
+    for number, before, after in (
+        (2, LearnedComponentState.REGISTERED, LearnedComponentState.SHADOW),
+        (3, LearnedComponentState.SHADOW, LearnedComponentState.VERIFIED),
+    ):
+        await repository.advance_component(
+            revision=revision(number=number, state_before=before, state_after=after),
+            expected_revision=number - 1,
+        )
+
+
+def activation_step(
+    *, number: int, key: str = "activate-1"
+) -> tuple[LearnedComponentRevisionRecord, LearnedActivationReceipt, LearnedActivationApproval]:
+    """A well-formed activation: its revision, its receipt and the approval they name.
+
+    The approval is built here rather than invented per-test because a receipt whose
+    `approval_id` points at nothing is exactly the corruption health is meant to catch —
+    a fixture that produced it by default would make every health run report a defect
+    that only the fixture had.
+    """
+    assessment = fx.promotion_assessment()
+    approval = fx.approval(
+        revision=number - 1,
+        promotion_hash=assessment.content_hash,
+        lineage_id=fx.lineage().lineage_id,
+    )
+    step = revision(
+        number=number,
+        state_before=LearnedComponentState.VERIFIED,
+        state_after=LearnedComponentState.ACTIVE,
+        key=key,
+        artifact_lineage_id=fx.lineage().lineage_id,
+        promotion_assessment_hash=assessment.content_hash,
+        activation_approval_hash=approval.content_hash,
+    )
+    receipt = LearnedActivationReceipt(
+        receipt_id=uuid4(),
+        action=LearnedActivationAction.ACTIVATION,
+        component_id=fx.INERT.component_id,
+        component_revision=number,
+        surface=fx.surface(),
+        artifact_lineage_id=fx.lineage().lineage_id,
+        promotion_assessment_hash=assessment.content_hash,
+        approval_id=approval.approval_id,
+        approval_hash=approval.content_hash,
+        actor="release-operator",
+        authority="operator",
+        reason="contract-suite activation",
+        idempotency_key=key,
+        recorded_at=fx.FIXTURE_NOW,
+    )
+    return step, receipt, approval
+
+
+async def drive_to_activated(repository: LearnedEvidenceRepositoryPort) -> None:
+    """Take the verified fixture to `ACTIVE` at revision 4, with its receipt."""
+    step, receipt, approval = activation_step(number=4)
+    await repository.record_approval(approval)
+    await repository.record_activation_step(revision=step, expected_revision=3, receipt=receipt)
+
+
+async def attempt_stale_activation(repository: LearnedEvidenceRepositoryPort) -> None:
+    """A well-formed activation whose expected revision is already stale.
+
+    Both writes must be refused together: a receipt without its state change would claim
+    an activation that never happened.
+    """
+    step, receipt, approval = activation_step(number=4, key="doomed-activation")
+    await repository.record_approval(approval)
+    await repository.record_activation_step(revision=step, expected_revision=1, receipt=receipt)
+
+
 class LearnedRepositoryContract:
     """Behaviour every learned evidence repository must exhibit identically."""
 
@@ -87,23 +166,8 @@ class LearnedRepositoryContract:
         return repository
 
     async def verified(self) -> LearnedEvidenceRepositoryPort:
-        repository = await self.registered()
-        await repository.advance_component(
-            revision=revision(
-                number=2,
-                state_before=LearnedComponentState.REGISTERED,
-                state_after=LearnedComponentState.SHADOW,
-            ),
-            expected_revision=1,
-        )
-        await repository.advance_component(
-            revision=revision(
-                number=3,
-                state_before=LearnedComponentState.SHADOW,
-                state_after=LearnedComponentState.VERIFIED,
-            ),
-            expected_revision=2,
-        )
+        repository = await self.make_repository()
+        await drive_to_verified(repository)
         return repository
 
     # ---------------------------------------------------------------- registration
@@ -272,35 +336,7 @@ class LearnedRepositoryContract:
     async def activated(self) -> LearnedEvidenceRepositoryPort:
         """Drive the fixture to `ACTIVE` at revision 4 with a receipt."""
         repository = await self.verified()
-        assessment = fx.promotion_assessment()
-        step = revision(
-            number=4,
-            state_before=LearnedComponentState.VERIFIED,
-            state_after=LearnedComponentState.ACTIVE,
-            artifact_lineage_id=fx.lineage().lineage_id,
-            promotion_assessment_hash=assessment.content_hash,
-            activation_approval_hash=fx.ARTIFACT_HASH,
-        )
-        await repository.record_activation_step(
-            revision=step,
-            expected_revision=3,
-            receipt=LearnedActivationReceipt(
-                receipt_id=uuid4(),
-                action=LearnedActivationAction.ACTIVATION,
-                component_id=fx.INERT.component_id,
-                component_revision=4,
-                surface=fx.surface(),
-                artifact_lineage_id=fx.lineage().lineage_id,
-                promotion_assessment_hash=assessment.content_hash,
-                approval_id=uuid4(),
-                approval_hash=fx.ARTIFACT_HASH,
-                actor="release-operator",
-                authority="operator",
-                reason="contract-suite activation",
-                idempotency_key="activate-1",
-                recorded_at=fx.FIXTURE_NOW,
-            ),
-        )
+        await drive_to_activated(repository)
         return repository
 
     @pytest.mark.asyncio
@@ -318,33 +354,10 @@ class LearnedRepositoryContract:
         """Atomicity, stated as the property that matters: no orphan receipt."""
         repository = await self.verified()
         with pytest.raises(LearnedRepositoryError):
-            await repository.record_activation_step(
-                revision=revision(
-                    number=4,
-                    state_before=LearnedComponentState.VERIFIED,
-                    state_after=LearnedComponentState.ACTIVE,
-                    promotion_assessment_hash=fx.promotion_assessment().content_hash,
-                    activation_approval_hash=fx.ARTIFACT_HASH,
-                ),
-                expected_revision=1,
-                receipt=LearnedActivationReceipt(
-                    receipt_id=uuid4(),
-                    action=LearnedActivationAction.ACTIVATION,
-                    component_id=fx.INERT.component_id,
-                    component_revision=4,
-                    surface=fx.surface(),
-                    artifact_lineage_id=fx.lineage().lineage_id,
-                    promotion_assessment_hash=fx.promotion_assessment().content_hash,
-                    approval_id=uuid4(),
-                    approval_hash=fx.ARTIFACT_HASH,
-                    actor="release-operator",
-                    authority="operator",
-                    reason="doomed activation",
-                    idempotency_key="doomed",
-                    recorded_at=fx.FIXTURE_NOW,
-                ),
-            )
+            await attempt_stale_activation(repository)
         assert await repository.latest_activation_for(fx.surface()) is None
+        history = await repository.component_history(fx.INERT.component_id)
+        assert len(history) == 3, "the refused step must not have appended a revision"
 
     @pytest.mark.asyncio
     async def test_one_surface_holds_at_most_one_active_component(self) -> None:

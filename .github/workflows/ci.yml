@@ -696,8 +696,13 @@ jobs:
           --file infra/postgres/bootstrap/roles.sql
       - name: Upgrade database
         run: uv run alembic -c infra/postgres/alembic.ini upgrade head
+      # The learned evidence bindings live beside the contract suite they bind, so the
+      # path is named here rather than moved: `-m postgres` selects only the integration
+      # cases, and the credential-free lane skips the same files.
       - name: PostgreSQL integration tests
-        run: uv run pytest tests/integration/postgres tests/integration/controller -m postgres -q
+        run: >-
+          uv run pytest tests/integration/postgres tests/integration/controller
+          tests/cognitive_os/learned_evidence -m postgres -q
       - name: Reset semantic smoke projections after repository-level tests
         run: |
           uv run alembic -c infra/postgres/alembic.ini downgrade 0002

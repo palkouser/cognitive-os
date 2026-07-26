@@ -11,6 +11,7 @@ keep working unchanged.
 """
 
 from sqlalchemy import (
+    Boolean,
     CheckConstraint,
     Column,
     DateTime,
@@ -155,7 +156,9 @@ learned_datasets = Table(
     Column("example_manifest_hash", String(64), nullable=False),
     Column("provenance_counts", JSONB, nullable=False),
     Column("observation_count", Integer, nullable=False),
-    Column("usage_rights_verified", Integer, nullable=False),
+    # Boolean rather than a 0/1 integer: the contract field is a bool, and a column that
+    # needs a conversion on every read and write is a lossy mapping waiting to drift.
+    Column("usage_rights_verified", Boolean, nullable=False),
     Column("sensitivity", Text, nullable=False),
     Column("payload_json", JSONB, nullable=False),
     Column("content_hash", String(64), nullable=False),
@@ -170,7 +173,7 @@ learned_datasets = Table(
         name="ck_learned_training_excludes_real_runs",
     ),
     CheckConstraint(
-        "corpus_role <> 'training' OR usage_rights_verified = 1",
+        "corpus_role <> 'training' OR usage_rights_verified",
         name="ck_learned_training_rights",
     ),
     Index("ix_learned_datasets_surface", "surface"),
@@ -257,10 +260,10 @@ learned_observations = Table(
     Column("status", String(32), nullable=False),
     Column("verifier_status", Text, nullable=True),
     Column("verifier_evidence_hash", String(64), nullable=True),
-    Column("usage_rights_verified", Integer, nullable=False),
+    Column("usage_rights_verified", Boolean, nullable=False),
     Column("sensitivity", Text, nullable=False),
     Column("decision_reason", Text, nullable=False),
-    Column("evaluation_eligible", Integer, nullable=False),
+    Column("evaluation_eligible", Boolean, nullable=False),
     Column("idempotency_key", Text, nullable=False),
     Column("payload_json", JSONB, nullable=False),
     Column("content_hash", String(64), nullable=False),
@@ -273,11 +276,11 @@ learned_observations = Table(
         _in_list("provenance_class", LEARNED_PROVENANCE_CLASSES), name="ck_learned_obs_prov"
     ),
     CheckConstraint(
-        "status <> 'accepted' OR (usage_rights_verified = 1 AND attribution <> 'unknown')",
+        "status <> 'accepted' OR (usage_rights_verified AND attribution <> 'unknown')",
         name="ck_learned_obs_accept_needs_rights",
     ),
     CheckConstraint(
-        "evaluation_eligible = 0 OR status = 'accepted'", name="ck_learned_obs_eligible"
+        "NOT evaluation_eligible OR status = 'accepted'", name="ck_learned_obs_eligible"
     ),
     UniqueConstraint("idempotency_key", name="uq_learned_observation_idempotency"),
     Index("ix_learned_observations_status", "surface", "status"),
@@ -336,7 +339,7 @@ learned_activation_approvals = Table(
     Column("surface", Text, nullable=False),
     Column("promotion_assessment_hash", String(64), nullable=False),
     Column("artifact_lineage_id", UUID(as_uuid=True), nullable=False),
-    Column("approved", Integer, nullable=False),
+    Column("approved", Boolean, nullable=False),
     Column("approver", Text, nullable=False),
     Column("approver_kind", String(32), nullable=False),
     Column("reason", Text, nullable=False),
@@ -345,7 +348,7 @@ learned_activation_approvals = Table(
     Column("approved_at", DateTime(timezone=True), nullable=False, server_default=func.now()),
     # A model or provider identity cannot approve. Refused in the contract and here.
     CheckConstraint(
-        "approved = 0 OR approver_kind = 'human_operator'",
+        "NOT approved OR approver_kind = 'human_operator'",
         name="ck_learned_approval_human_only",
     ),
     Index("ix_learned_approvals_component", "component_id", "component_revision"),

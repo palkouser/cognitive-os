@@ -53,6 +53,41 @@ def upgrade() -> None:
             """
         )
 
+    # The lifecycle transition policy, in the database as well as in Python.
+    #
+    # `cogos_app` holds EXECUTE on the controlled functions, so a caller that bypassed
+    # the application service could otherwise drive any state change it liked. Keeping
+    # the table here closes that. It is a second copy of
+    # `cognitive_os.learning.registry`, and the risk of a second copy is drift, so
+    # `test_sql_transition_policy_matches_python` compares the two exhaustively.
+    #
+    # `DISABLED -> ACTIVE` is legal only when a rollback target is named, which is the
+    # one deliberate exception ADR 0086 records.
+    op.execute(
+        f"""
+        CREATE FUNCTION {_SCHEMA}.learned_transition_is_legal(
+            state_before text, state_after text, rollback_target integer
+        )
+        RETURNS boolean
+        LANGUAGE sql IMMUTABLE AS $$
+            SELECT CASE
+                WHEN state_before IS NULL THEN state_after = 'registered'
+                WHEN state_before = 'disabled' AND state_after = 'active'
+                     AND rollback_target IS NOT NULL THEN true
+                WHEN state_before = 'registered' THEN state_after IN ('shadow', 'retracted')
+                WHEN state_before = 'shadow'
+                     THEN state_after IN ('verified', 'disabled', 'retracted')
+                WHEN state_before = 'verified'
+                     THEN state_after IN ('active', 'disabled', 'retracted')
+                WHEN state_before = 'active' THEN state_after IN ('disabled', 'retracted')
+                WHEN state_before = 'disabled' THEN state_after IN ('shadow', 'retracted')
+                WHEN state_before = 'retracted' THEN false
+                ELSE false
+            END
+        $$
+        """
+    )
+
     # Registering a component is one controlled operation: revision 1 is appended and
     # the projection created together, so a projection row can never exist without the
     # history that authorises it. Re-registering identical content is idempotent;
@@ -71,6 +106,15 @@ def upgrade() -> None:
             requested_component := requested->>'component_id';
             IF requested_component IS NULL THEN
                 RAISE EXCEPTION 'a learned component registration needs a component_id';
+            END IF;
+            -- Registration is the entry point, not a shortcut past the lifecycle: a
+            -- component cannot be created already active, shadowed or verified.
+            IF NOT {_SCHEMA}.learned_transition_is_legal(
+                NULL, requested->>'state_after', NULL
+            ) THEN
+                RAISE EXCEPTION
+                    'illegal learned transition for %: registration cannot start in %',
+                    requested_component, requested->>'state_after';
             END IF;
 
             SELECT content_hash INTO existing_hash
@@ -100,7 +144,11 @@ def upgrade() -> None:
                 requested->>'activation_approval_hash',
                 (requested->>'rollback_target_revision')::int,
                 requested->>'actor', requested->>'authority', requested->>'reason',
-                requested->>'idempotency_key', requested, requested->>'content_hash',
+                requested->>'idempotency_key',
+                -- `descriptor_version` belongs to the projection, not to the revision
+                -- contract. Storing it in `payload_json` would make every read of the
+                -- authoritative ledger fail contract validation.
+                requested - 'descriptor_version', requested->>'content_hash',
                 COALESCE((requested->>'recorded_at')::timestamptz, now())
             );
 
@@ -171,6 +219,15 @@ def upgrade() -> None:
                     'state before mismatch for %: projection holds %, request claims %',
                     requested_component, current_state_value, requested->>'state_before';
             END IF;
+            IF NOT {_SCHEMA}.learned_transition_is_legal(
+                current_state_value,
+                requested->>'state_after',
+                (requested->>'rollback_target_revision')::int
+            ) THEN
+                RAISE EXCEPTION
+                    'illegal learned transition for %: % -> %',
+                    requested_component, current_state_value, requested->>'state_after';
+            END IF;
 
             INSERT INTO {_SCHEMA}.learned_component_revisions (
                 component_id, revision, previous_revision, surface, state_before,
@@ -209,6 +266,13 @@ def upgrade() -> None:
 
     # Immutable ledger appends. One function per ledger keeps the grant surface exact:
     # `cogos_app` can append evidence without holding INSERT on the tables themselves.
+    #
+    # `jsonb_populate_record` rather than a built column list: it maps JSON keys onto the
+    # table's own row type, so every value lands with the column's declared type instead
+    # of as text. Building `($1->>'key')` expressions is the obvious alternative and is
+    # wrong — it yields text, and PostgreSQL refuses to assign text to a uuid, integer or
+    # timestamptz column, so every append would fail at runtime while the migration
+    # itself applied cleanly.
     for name, table, key_column in (
         ("record_learned_evidence", "learned_evidence_records", "evidence_id"),
         ("record_learned_observation", "learned_observations", "observation_id"),
@@ -224,11 +288,11 @@ def upgrade() -> None:
             RETURNS boolean
             LANGUAGE plpgsql SECURITY DEFINER
             SET search_path = pg_catalog, {_SCHEMA} AS $$
-            DECLARE existing_hash text; columns text; values_list text;
+            DECLARE existing_hash text;
             BEGIN
-                EXECUTE format(
-                    'SELECT content_hash FROM {_SCHEMA}.{table} WHERE {key_column} = $1'
-                ) INTO existing_hash USING (requested->>'{key_column}')::uuid;
+                SELECT content_hash INTO existing_hash
+                FROM {_SCHEMA}.{table}
+                WHERE {key_column} = (requested->>'{key_column}')::uuid;
 
                 IF existing_hash IS NOT NULL THEN
                     IF existing_hash IS DISTINCT FROM requested->>'content_hash' THEN
@@ -239,19 +303,11 @@ def upgrade() -> None:
                     RETURN false;
                 END IF;
 
-                SELECT string_agg(quote_ident(key), ', '),
-                       string_agg(format('($1->>%L)', key), ', ')
-                  INTO columns, values_list
-                FROM jsonb_object_keys(requested) AS key
-                WHERE key IN (
-                    SELECT column_name FROM information_schema.columns
-                    WHERE table_schema = '{_SCHEMA}' AND table_name = '{table}'
+                INSERT INTO {_SCHEMA}.{table}
+                SELECT * FROM jsonb_populate_record(
+                    NULL::{_SCHEMA}.{table},
+                    requested || jsonb_build_object('payload_json', requested)
                 );
-
-                EXECUTE format(
-                    'INSERT INTO {_SCHEMA}.{table} (%s, payload_json) VALUES (%s, $1)',
-                    columns, values_list
-                ) USING requested;
                 RETURN true;
             END;
             $$
@@ -271,6 +327,7 @@ def upgrade() -> None:
         f"{_SCHEMA}.record_learned_approval(jsonb)",
         f"{_SCHEMA}.record_learned_access(jsonb)",
         f"{_SCHEMA}.record_learned_dataset(jsonb)",
+        f"{_SCHEMA}.learned_transition_is_legal(text, text, integer)",
     ):
         op.execute(f"GRANT EXECUTE ON FUNCTION {signature} TO cogos_app")
 
@@ -286,6 +343,7 @@ def downgrade() -> None:
         "record_learned_approval(jsonb)",
         "record_learned_access(jsonb)",
         "record_learned_dataset(jsonb)",
+        "learned_transition_is_legal(text, text, integer)",
     ):
         op.execute(f"DROP FUNCTION IF EXISTS {_SCHEMA}.{signature}")
     for table in LEARNED_APPEND_ONLY_TABLES:
