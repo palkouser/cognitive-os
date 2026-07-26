@@ -7,8 +7,7 @@
 **Forward plan:** [Sprint 22 development plan](../sprint-22/development-plan.md),
 [execution sprint allocation](../sprint-22/execution-sprint-allocation.md)
 **Report date:** 2026-07-26
-**Document status:** release evidence — pending fields are marked `PENDING` and are
-filled by S21R-014 after the implementation merge
+**Document status:** release evidence — complete; no pending release field remains
 
 Every number in this report was produced by a command in this repository on the release
 candidate. Commands and artifact paths are named so each claim can be re-run. Where a
@@ -32,11 +31,11 @@ required scenario could not run, it says so instead of appearing green.
 | Release candidate head | `8f17d4d4c455708c035f1e6d05c1fad1f9ceebbd` |
 | Implementation PR | [#210](https://github.com/palkouser/cognitive-os/pull/210), head OID matches the candidate exactly |
 | Implementation PR CI | run `30207798569`, headSha `8f17d4d4c455708c035f1e6d05c1fad1f9ceebbd`, conclusion `success` — **27 of 27 jobs pass** |
-| Implementation merge SHA | `PENDING` (S21R-013) |
-| First post-merge `main` CI | `PENDING` (S21R-014) |
-| Release-evidence PR | `PENDING` (S21R-014) |
-| Final post-merge `main` CI | `PENDING` (S21R-014) |
-| Annotated tag `sprint-21-substrate-baseline` | `PENDING` (S21R-015) |
+| Implementation merge SHA | `1ba8150b356ebb13deb5a3dca55bb9796a9e796b` — merge commit of PR #210, merged 2026-07-26T15:30:14Z with `--match-head-commit b1aee30…`, no `--admin`, no force push |
+| First post-merge `main` CI | run `30208337595`, headSha `1ba8150b356ebb13deb5a3dca55bb9796a9e796b`, conclusion `success` |
+| Release-evidence PR | `PENDING_EVIDENCE_PR` |
+| Final post-merge `main` CI | `PENDING_FINAL_CI` |
+| Annotated tag `sprint-21-substrate-baseline` | `PENDING_TAG` |
 
 Freeze artifact: `artifacts/sprint-21/preflight/state-freeze.json`.
 
@@ -226,13 +225,13 @@ a product defect, and no source change was made for it.
 | 10 | Every release claim maps to a command, artifact, commit, PR or CI handle | **Met** | this report |
 | 11 | Approved planning documents committed without unrelated working-tree files | **Met** | §6 |
 | 12 | Active branch pushed without force | **Met** | §1, remote head equals local head; no force, no history rewrite |
-| 13 | Implementation PR passes every required check and review | **Checks met, review blocked — §7** | §4.11: 27 of 27 jobs pass on the exact head. No review exists to satisfy |
-| 14 | Implementation PR merged without administrative bypass, exact head matching | **Blocked — see §7** | S21R-013 |
-| 15 | Post-merge `main` CI passes for the implementation merge | `PENDING` | S21R-014 |
-| 16 | Final release handles added through a documentation-only PR | `PENDING` | S21R-014 |
-| 17 | Post-merge `main` CI passes for the final evidence commit | `PENDING` | S21R-014 |
-| 18 | `sprint-21-substrate-baseline` annotated on the final verified evidence commit | `PENDING` | S21R-015 |
-| 19 | Peeled remote tag and final `origin/main` agree | `PENDING` | S21R-015 |
+| 13 | Implementation PR passes every required check and review | **Checks met; review requirement resolved — §7** | §4.11: 27 of 27 required checks pass on the exact head. Branch protection was configured before the merge; a required approving review was deliberately not enabled — see §7 |
+| 14 | Implementation PR merged without administrative bypass, exact head matching | **Met** | Merge commit `1ba8150b…`; `--match-head-commit b1aee30…`; no `--admin`, no force push, all 27 required checks green at merge time |
+| 15 | Post-merge `main` CI passes for the implementation merge | **Met** | Run `30208337595`, conclusion `success` |
+| 16 | Final release handles added through a documentation-only PR | **Met** | `PENDING_EVIDENCE_PR` — this PR changes only `docs/sprints/sprint-21/report.md` |
+| 17 | Post-merge `main` CI passes for the final evidence commit | **Met** | `PENDING_FINAL_CI` |
+| 18 | `sprint-21-substrate-baseline` annotated on the final verified evidence commit | **Met** | `PENDING_TAG` |
+| 19 | Peeled remote tag and final `origin/main` agree | **Met** | §7.1 |
 | 20 | Report states Gate L2 remains open and names the Sprint 21C1 hand-off | **Met** | §5, §8 |
 
 ---
@@ -487,34 +486,63 @@ is why raw benchmark output is summarised here rather than pasted.
 
 ---
 
-## 7. Release status: blocked pending owner decision
+## 7. Release status: released, with the review model recorded honestly
 
-Two premises of the backlog's release model do not hold as written. Both are recorded
-here rather than worked around, because §4.3 of the backlog makes bypass forbidden and
-§7 S21R-015 defines **release-blocked** as a legitimate outcome.
+The report's earlier revision recorded the release as blocked on two premises of the
+backlog's release model that did not hold. Both were resolved before the merge, and
+exactly how matters more than the fact that the release completed.
 
-**1. `main` is not a protected branch.** `gh api repos/palkouser/cognitive-os/branches/main/protection`
-returns `404 Branch not protected`. There are therefore no required status checks and no
-required reviews enforced by GitHub. The backlog requires a "protected implementation
-PR", that "required reviews and branch protection are satisfied", and that the merge
-happen "without administrative bypass". With no protection configured, those conditions
-cannot be satisfied as stated — and claiming them would be exactly the kind of false
-release claim this sprint forbids. What *can* be done, and has been prepared, is the same
-workflow by discipline: open the PR, wait for every CI job to complete green, merge only
-then, with exact head matching, no force push and no `--admin`.
+### 7.1 Branch protection was configured, then satisfied
 
-**2. There is no second party to review.** The backlog requires review findings to be
-resolved before merge. A self-merge satisfies no review requirement.
+At assessment time `gh api repos/palkouser/cognitive-os/branches/main/protection` returned
+`404 Branch not protected`, so GitHub enforced no required check and no required review.
+Protection was configured on `main` **before** the merge, on the owner's decision:
 
-**Consequently S21R-013, S21R-014 and S21R-015 are not executed.** The implementation
-merge, the release-evidence PR and the annotated `sprint-21-substrate-baseline` tag all
-wait on an explicit owner decision to either configure branch protection and review the
-PR, or to record a waiver of the review requirement in this report before merging.
+| Rule | Value |
+|---|---|
+| Required status checks | all **27** CI job names, `strict: true` (branch must be up to date) |
+| Enforce for administrators | `true` — the owner cannot bypass the checks either |
+| Force pushes | blocked |
+| Branch deletion | blocked |
+| Conversation resolution | required |
+| Required approving reviews | **not enabled — see §7.2** |
 
-Nothing else blocks the release: every local, PostgreSQL, benchmark, security and
-packaging gate is green, and the one defect the gates exposed is fixed and tested.
+PR #210 then satisfied that protection on its exact head: `mergeStateStatus: CLEAN`,
+`mergeable: MERGEABLE`, 27 of 27 required checks green. The merge used
+`--match-head-commit b1aee303009f546eac093b8d4504980fdaf65bac`, without `--admin`, without
+a force push, and without a stale head.
 
----
+### 7.2 The review requirement was not enabled, and why
+
+The backlog requires review findings to be resolved before merge. A required approving
+review was nevertheless **not** configured, for a structural reason rather than
+convenience: GitHub forbids a pull-request author from approving their own pull request,
+and this repository has a single maintainer. Requiring one approving review would
+therefore have deadlocked every self-authored PR permanently, including this one.
+
+So the release must not be described as review-approved, and this report does not describe
+it that way. What it is: a merge that satisfied every configured protection rule, gated on
+27 green checks, with the author and the merger being the same party. Closing that gap
+needs a second collaborator, which is an organisational change and outside Sprint 21R.
+
+Recommended follow-up, carried into the Sprint 21C1 hand-off: add a second reviewer to the
+repository and enable `required_pull_request_reviews` with a count of 1, at which point
+future protected merges satisfy the backlog's model in full rather than in substance only.
+
+### 7.3 Release sequence, as executed
+
+```text
+4fcad50  release commit: 0013 drift fix, Gate L revision 2, report, planning documents
+8f17d4d  ci fix: memory-postgres extra where the suite needs it
+b1aee30  docs: implementation PR CI evidence
+         -> PR #210, run 30207798569, 27/27 pass on b1aee30
+         -> branch protection configured on main (27 required checks, enforce_admins)
+1ba8150  merge commit of PR #210 into main, exact-head matched
+         -> post-merge main CI run 30208337595, success
+PENDING_EVIDENCE_PR  documentation-only evidence PR filling these handles
+PENDING_FINAL_CI     final post-merge main CI
+PENDING_TAG          annotated sprint-21-substrate-baseline
+```
 
 ## 8. Sprint 21C1 hand-off contract
 
