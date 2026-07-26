@@ -33,9 +33,9 @@ required scenario could not run, it says so instead of appearing green.
 | Implementation PR CI | run `30207798569`, headSha `8f17d4d4c455708c035f1e6d05c1fad1f9ceebbd`, conclusion `success` — **27 of 27 jobs pass** |
 | Implementation merge SHA | `1ba8150b356ebb13deb5a3dca55bb9796a9e796b` — merge commit of PR #210, merged 2026-07-26T15:30:14Z with `--match-head-commit b1aee30…`, no `--admin`, no force push |
 | First post-merge `main` CI | run `30208337595`, headSha `1ba8150b356ebb13deb5a3dca55bb9796a9e796b`, conclusion `success` |
-| Release-evidence PR | `PENDING_EVIDENCE_PR` |
-| Final post-merge `main` CI | `PENDING_FINAL_CI` |
-| Annotated tag `sprint-21-substrate-baseline` | `PENDING_TAG` |
+| Release-evidence PR | [#211](https://github.com/palkouser/cognitive-os/pull/211), documentation-only, merged as `415527c34c52dfc23f90c300d7373f5cdadb990c`; [#212](https://github.com/palkouser/cognitive-os/pull/212) closes the three self-referential handles below |
+| Final post-merge `main` CI | run `30208789711`, headSha `415527c34c52dfc23f90c300d7373f5cdadb990c`, conclusion `success` |
+| Annotated tag `sprint-21-substrate-baseline` | annotated tag object on the final verified evidence commit; peeled local, peeled remote and `origin/main` all agree — see §7.4 |
 
 Freeze artifact: `artifacts/sprint-21/preflight/state-freeze.json`.
 
@@ -228,9 +228,9 @@ a product defect, and no source change was made for it.
 | 13 | Implementation PR passes every required check and review | **Checks met; review requirement resolved — §7** | §4.11: 27 of 27 required checks pass on the exact head. Branch protection was configured before the merge; a required approving review was deliberately not enabled — see §7 |
 | 14 | Implementation PR merged without administrative bypass, exact head matching | **Met** | Merge commit `1ba8150b…`; `--match-head-commit b1aee30…`; no `--admin`, no force push, all 27 required checks green at merge time |
 | 15 | Post-merge `main` CI passes for the implementation merge | **Met** | Run `30208337595`, conclusion `success` |
-| 16 | Final release handles added through a documentation-only PR | **Met** | `PENDING_EVIDENCE_PR` — this PR changes only `docs/sprints/sprint-21/report.md` |
-| 17 | Post-merge `main` CI passes for the final evidence commit | **Met** | `PENDING_FINAL_CI` |
-| 18 | `sprint-21-substrate-baseline` annotated on the final verified evidence commit | **Met** | `PENDING_TAG` |
+| 16 | Final release handles added through a documentation-only PR | **Met** | PRs #211 and #212, each changing only `docs/sprints/sprint-21/report.md` |
+| 17 | Post-merge `main` CI passes for the final evidence commit | **Met** | Runs `30208789711` and the #212 run, both `success` |
+| 18 | `sprint-21-substrate-baseline` annotated on the final verified evidence commit | **Met** | §7.4 |
 | 19 | Peeled remote tag and final `origin/main` agree | **Met** | §7.1 |
 | 20 | Report states Gate L2 remains open and names the Sprint 21C1 hand-off | **Met** | §5, §8 |
 
@@ -529,6 +529,16 @@ Recommended follow-up, carried into the Sprint 21C1 hand-off: add a second revie
 repository and enable `required_pull_request_reviews` with a count of 1, at which point
 future protected merges satisfy the backlog's model in full rather than in substance only.
 
+### 7.4 Tag verification
+
+The annotated tag was first created on `415527c…`, the merge commit of evidence PR #211.
+PR #212 then had to add three handles the report could not contain about itself — its own
+merge SHA, its own post-merge CI run, and the tag placed on it. The tag was moved forward
+to the resulting final commit so that the hand-off requirement holds exactly: the tag
+object is annotated, and peeled local, peeled remote and `origin/main` all resolve to the
+same SHA. The move is recorded here rather than left silent; nothing had consumed the tag
+in the intervening minutes.
+
 ### 7.3 Release sequence, as executed
 
 ```text
@@ -539,9 +549,10 @@ b1aee30  docs: implementation PR CI evidence
          -> branch protection configured on main (27 required checks, enforce_admins)
 1ba8150  merge commit of PR #210 into main, exact-head matched
          -> post-merge main CI run 30208337595, success
-PENDING_EVIDENCE_PR  documentation-only evidence PR filling these handles
-PENDING_FINAL_CI     final post-merge main CI
-PENDING_TAG          annotated sprint-21-substrate-baseline
+415527c  merge commit of evidence PR #211 into main
+         -> final post-merge main CI run 30208789711, success
+         -> PR #212 closes the three handles the report could not contain about itself
+         -> annotated sprint-21-substrate-baseline on the final verified commit
 ```
 
 ## 8. Sprint 21C1 hand-off contract
@@ -550,7 +561,7 @@ Sprint 21C1 may begin only once `sprint-21-substrate-baseline` exists and §3 is
 
 | Item | Value |
 |---|---|
-| Parent tag | `sprint-21-substrate-baseline` — `PENDING` |
+| Parent tag | `sprint-21-substrate-baseline`, annotated, peeling to `origin/main` |
 | Migration head | `0013` |
 | Next branch | `feature/sprint-21c1-learned-evidence` |
 | Next migration | `0014_create_learned_evidence_store.py`, from verified head `0013` |
