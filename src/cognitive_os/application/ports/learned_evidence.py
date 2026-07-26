@@ -14,6 +14,7 @@ from __future__ import annotations
 from typing import Protocol
 from uuid import UUID
 
+from cognitive_os.domain.common import ArtifactRef
 from cognitive_os.domain.learned import LearnedComponentState
 from cognitive_os.domain.learned_evidence import (
     LearnedAccessRecord,
@@ -28,6 +29,24 @@ from cognitive_os.domain.learned_evidence import (
     LearnedReplayResult,
     ObservationStatus,
 )
+
+
+class LearnedArtifactVerifierPort(Protocol):
+    """The only view of the Artifact Store the learned plane is given.
+
+    Read metadata, and re-hash bytes that already exist. There is deliberately no
+    `load`, `deserialise` or `open` method: an artifact is data, and a learned plane
+    that could execute an object graph supplied as data would turn every lineage
+    record into a remote-code-execution surface. See ADR 0086.
+    """
+
+    async def artifact_metadata(self, artifact_id: UUID) -> ArtifactRef | None:
+        """Declared identity, media type, hash and size. Never the bytes."""
+        ...
+
+    async def verify_artifact(self, artifact_id: UUID) -> bool:
+        """Re-read the stored bytes and confirm they still hash to what is recorded."""
+        ...
 
 
 class LearnedEvidenceRepositoryPort(Protocol):
@@ -65,6 +84,22 @@ class LearnedEvidenceRepositoryPort(Protocol):
         Raises `STALE_REVISION` when the projection has moved, `ILLEGAL_TRANSITION` when
         the registry policy refuses the state change, and `SURFACE_ALREADY_ACTIVE` when
         the step would give one surface two active components.
+        """
+        ...
+
+    async def record_activation_step(
+        self,
+        *,
+        revision: LearnedComponentRevisionRecord,
+        expected_revision: int,
+        receipt: LearnedActivationReceipt,
+    ) -> tuple[LearnedComponentRevisionRecord, LearnedActivationReceipt]:
+        """Advance the lifecycle and append the activation receipt in one transaction.
+
+        Separate from `advance_component` because an activation, disable or rollback
+        that changed state without leaving a receipt — or left a receipt without
+        changing state — is a governance hole either way. Making it one call makes the
+        atomicity the implementation's obligation instead of the caller's discipline.
         """
         ...
 

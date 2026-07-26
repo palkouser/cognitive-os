@@ -50,6 +50,45 @@ _ALLOWED: dict[LearnedComponentState, frozenset[LearnedComponentState]] = {
 }
 
 
+def legal_transitions(current: LearnedComponentState) -> frozenset[LearnedComponentState]:
+    """The states reachable from `current`.
+
+    Exported so durable persistence consults the same table the in-memory registry
+    does. A second copy of this policy in the persistence layer would let the two
+    disagree, and the one that disagreed silently would be the one that wrote to disk.
+    """
+    return _ALLOWED[current]
+
+
+def transition_is_legal(current: LearnedComponentState, target: LearnedComponentState) -> bool:
+    return target in _ALLOWED[current]
+
+
+def durable_transition_is_legal(
+    current: LearnedComponentState,
+    target: LearnedComponentState,
+    *,
+    rollback_target_revision: int | None = None,
+) -> bool:
+    """Transition legality for a durable lifecycle record.
+
+    Identical to `transition_is_legal` with one named exception: `DISABLED -> ACTIVE` is
+    legal when, and only when, the record names the prior activation revision it
+    restores. The generic path still refuses it, so the single most dangerous transition
+    stays unreachable through the ordinary API, and a rollback has to say what it is
+    rolling back to. `LearnedComponentRevisionRecord` separately requires any record
+    reaching `ACTIVE` to carry a promotion assessment and an approval hash, so a
+    rollback re-states the evidence of the activation it restores. See ADR 0086.
+    """
+    if (
+        current is LearnedComponentState.DISABLED
+        and target is LearnedComponentState.ACTIVE
+        and rollback_target_revision is not None
+    ):
+        return True
+    return transition_is_legal(current, target)
+
+
 class LearnedComponentRegistry:
     def __init__(self) -> None:
         self._components: dict[str, LearnedComponentPort] = {}
