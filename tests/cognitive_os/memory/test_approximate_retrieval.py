@@ -11,6 +11,7 @@ that is what proves the index is reached. Here the concern is only that the two 
 cannot collapse into one.
 """
 
+from typing import Any
 from uuid import uuid4
 
 import pytest
@@ -178,3 +179,53 @@ class TestConfigurationAmendment:
         ):
             with pytest.raises(ValueError, match="are forbidden"):
                 MemoryConfiguration(**self.base(**{sealed: True}))
+
+
+class TestAutogenerateSeesTheApproximateIndexesAsIntended:
+    """Sprint 21R: the drift gate must not propose dropping migration 0013's indexes.
+
+    Found by running the CI `migration` job sequence locally against a fresh
+    database. `upgrade head; downgrade base; upgrade head` all succeeded, then
+    `alembic check` failed with `remove_index` for both approximate indexes:
+    they are partial expression indexes created by raw SQL, so autogenerate
+    reflects them, finds no `Table` metadata counterpart, and concludes they
+    should be dropped. The branch had never had a CI run — `ci.yml` triggers on
+    push to `main` and on `pull_request` only — so nothing had surfaced it.
+    """
+
+    @staticmethod
+    def _include_object() -> Any:
+        from pathlib import Path
+
+        path = Path(__file__).resolve().parents[3] / "infra/postgres/alembic/env.py"
+        source = path.read_text(encoding="utf-8")
+        # env.py runs migrations at import time, so lift the hook out on its own.
+        start = source.index("def include_object(")
+        end = source.index("def run_migrations_offline(")
+        namespace: dict[str, object] = {"APPROXIMATE_INDEX_NAMES": APPROXIMATE_INDEX_NAMES}
+        exec(compile(source[start:end], str(path), "exec"), namespace)
+        return namespace["include_object"]
+
+    def test_every_approximate_index_is_excluded_from_comparison(self) -> None:
+        include_object = self._include_object()
+        assert APPROXIMATE_INDEX_NAMES, "the constant must not be empty"
+        for name in APPROXIMATE_INDEX_NAMES:
+            assert include_object(None, name, "index", True, None) is False, name
+
+    def test_nothing_else_is_excluded(self) -> None:
+        """A broad exclusion would hide real drift, which is the opposite of the fix."""
+        include_object = self._include_object()
+        assert include_object(None, "ix_memory_embeddings_model", "index", True, None) is True
+        assert include_object(None, "memory_embeddings", "table", True, None) is True
+        # Same name, different object type: still compared.
+        for name in APPROXIMATE_INDEX_NAMES:
+            assert include_object(None, name, "table", True, None) is True
+
+    def test_the_exclusion_tracks_the_declared_dimensions(self) -> None:
+        """The migration, the health check and the hook read one constant."""
+        assert (
+            frozenset(
+                approximate_index_name(dimension) for dimension in APPROXIMATE_INDEX_DIMENSIONS
+            )
+            == APPROXIMATE_INDEX_NAMES
+        )
