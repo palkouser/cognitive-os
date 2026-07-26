@@ -168,7 +168,38 @@ Three regression tests in
 pin that every approximate index name is excluded, that nothing else is (a broad
 exclusion would hide real drift), and that the exclusion tracks the declared dimensions.
 
-### 2.2 A pre-existing local drift, correctly not fixed
+### 2.2 `memory-plane-core` could not collect its own new test module
+
+**Symptom.** The first CI run of this branch — PR #210, which *is* its first run — failed
+`memory-plane-core`:
+
+```text
+ImportError while importing test module tests/cognitive_os/memory/test_approximate_retrieval.py
+E   ModuleNotFoundError: No module named 'sqlalchemy'
+Interrupted: 1 error during collection
+```
+
+**Root cause.** `test_approximate_retrieval.py` was added by `d8c489c` and imports
+`sqlalchemy.dialects.postgresql` at module level, because its whole purpose is to assert
+the *generated SQL shape* that keeps exact retrieval exact. `memory-plane-core` synced
+`--locked --all-groups` with no extra, and `sqlalchemy` lives behind the
+`memory-postgres` extra: verified by `uv run --isolated --no-dev --all-groups`, where
+`find_spec("sqlalchemy")` is `None`. The module therefore could not be collected at all.
+
+**Why nothing caught it.** The same reason as §2.1 — the branch had never had a CI run.
+Locally it passes, because a development environment synced with
+`--extra memory-postgres` has SQLAlchemy; the gap only appears in the job's narrower
+environment.
+
+**Fix.** `memory-plane-core` now syncs `--all-groups --extra memory-postgres`, following
+the existing precedent of `semantic-memory-core`, which adds `--extra semantic-graph` for
+the same reason. The whole-repository `test` job gained the extra too, since
+`pytest tests/cognitive_os -q` collects the same module. Making the module skip instead
+was rejected: the ANN SQL-shape guarantee is exactly what must not go untested, and a
+skipped mandatory scenario is not a pass. The default-wheel boundary is unaffected and
+still guarded by the separate `optional-boundary` job.
+
+### 2.3 A pre-existing local drift, correctly not fixed
 
 `alembic check` against the *development* database also reported
 `experience_step_assessments.confidence` as `TEXT` where the model declares
@@ -194,7 +225,7 @@ a product defect, and no source change was made for it.
 | 10 | Every release claim maps to a command, artifact, commit, PR or CI handle | **Met** | this report |
 | 11 | Approved planning documents committed without unrelated working-tree files | **Met** | §6 |
 | 12 | Active branch pushed without force | `PENDING` | S21R-011 |
-| 13 | Implementation PR passes every required check and review | **Blocked — see §7** | S21R-012 |
+| 13 | Implementation PR passes every required check and review | **Blocked — see §7**; PR #210 CI evidence in §4.11 | S21R-012 |
 | 14 | Implementation PR merged without administrative bypass, exact head matching | **Blocked — see §7** | S21R-013 |
 | 15 | Post-merge `main` CI passes for the implementation merge | `PENDING` | S21R-014 |
 | 16 | Final release handles added through a documentation-only PR | `PENDING` | S21R-014 |

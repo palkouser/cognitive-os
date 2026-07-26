@@ -55,7 +55,7 @@ jobs:
       - name: Install Python
         run: uv python install 3.12
       - name: Sync environment
-        run: uv sync --locked --all-groups --extra mcp
+        run: uv sync --locked --all-groups --extra mcp --extra memory-postgres
       - name: Cognitive OS tests
         run: uv run pytest tests/cognitive_os -q
       - name: LightAgent contract tests
@@ -280,7 +280,7 @@ jobs:
           version: "0.11.28"
           enable-cache: true
       - name: Install Python and core dependencies
-        run: uv python install 3.12 && uv sync --locked --all-groups
+        run: uv python install 3.12 && uv sync --locked --all-groups --extra memory-postgres
       - name: Memory contracts, governance, ingestion, retrieval, and adapter tests
         run: uv run pytest tests/cognitive_os/memory -q
       - name: Memory contract schema drift
