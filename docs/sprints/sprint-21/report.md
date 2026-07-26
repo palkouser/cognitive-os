@@ -29,8 +29,9 @@ required scenario could not run, it says so instead of appearing green.
 | Migration head | `0013_create_approximate_vector_indexes` — unchanged by Sprint 21R |
 | Latest `main` CI before release | run `30142384838`, conclusion `success` |
 | Branch CI runs before release | none — `ci.yml` triggers on push to `main` and on `pull_request` only, so a feature-branch push produces no run by design |
-| Release candidate head | `PENDING` (S21R-011) |
-| Implementation PR | `PENDING` (S21R-012) |
+| Release candidate head | `8f17d4d4c455708c035f1e6d05c1fad1f9ceebbd` |
+| Implementation PR | [#210](https://github.com/palkouser/cognitive-os/pull/210), head OID matches the candidate exactly |
+| Implementation PR CI | run `30207798569`, headSha `8f17d4d4c455708c035f1e6d05c1fad1f9ceebbd`, conclusion `success` — **27 of 27 jobs pass** |
 | Implementation merge SHA | `PENDING` (S21R-013) |
 | First post-merge `main` CI | `PENDING` (S21R-014) |
 | Release-evidence PR | `PENDING` (S21R-014) |
@@ -224,8 +225,8 @@ a product defect, and no source change was made for it.
 | 9 | Assessment separates internal prediction headroom from downstream learned benefit | **Met** | Gate L assessment, *Condition 8* and *What this assessment does not claim* |
 | 10 | Every release claim maps to a command, artifact, commit, PR or CI handle | **Met** | this report |
 | 11 | Approved planning documents committed without unrelated working-tree files | **Met** | §6 |
-| 12 | Active branch pushed without force | `PENDING` | S21R-011 |
-| 13 | Implementation PR passes every required check and review | **Blocked — see §7**; PR #210 CI evidence in §4.11 | S21R-012 |
+| 12 | Active branch pushed without force | **Met** | §1, remote head equals local head; no force, no history rewrite |
+| 13 | Implementation PR passes every required check and review | **Checks met, review blocked — §7** | §4.11: 27 of 27 jobs pass on the exact head. No review exists to satisfy |
 | 14 | Implementation PR merged without administrative bypass, exact head matching | **Blocked — see §7** | S21R-013 |
 | 15 | Post-merge `main` CI passes for the implementation merge | `PENDING` | S21R-014 |
 | 16 | Final release handles added through a documentation-only PR | `PENDING` | S21R-014 |
@@ -408,6 +409,36 @@ The backlog's S21R-004 task 5 anticipated recording an unavailable NVIDIA driver
 measured fact is the opposite, so the measured fact is recorded. This changes no
 non-goal: no CUDA, `torch` or GPU dependency is introduced, no gate uses the GPU, and
 every benchmark run reported `gpu_calls=0`.
+
+### 4.11 Implementation PR CI — the branch's first remote run
+
+PR [#210](https://github.com/palkouser/cognitive-os/pull/210), run `30207798569`,
+headSha `8f17d4d4c455708c035f1e6d05c1fad1f9ceebbd`, conclusion `success`.
+**27 of 27 jobs pass**, on the exact release-candidate head:
+
+```text
+benchmark-regression pass   context-builder-core pass   optional-boundary    pass
+build                pass   controlled-changes   pass   postgres-integration pass
+coding-agent         pass   corpus-factory-core  pass   provider-offline     pass
+cognitive-controller pass   cross-domain-pilot   pass   quality              pass
+experience-compiler  pass   harness-proposals    pass   sandbox              pass
+inspect-adapter      pass   memory-plane-core    pass   security             pass
+migration            pass   model-routing-core   pass   semantic-memory-core pass
+skill-engine-core    pass   strategy-engine-core pass   test                 pass
+tool-plane           pass   verifier-domains     pass   weakness-mining-core pass
+```
+
+The first attempt on candidate `4fcad50` failed two jobs, and the two failures were of
+different kinds — which is why the failure policy separates them:
+
+- **`test` — infrastructure.** `Install uv` failed with `fetch failed` retrieving the uv
+  version manifest from `raw.githubusercontent.com`. No source change was warranted.
+- **`memory-plane-core` — product.** A real defect, latent since `d8c489c`; diagnosed and
+  fixed in §2.2.
+
+Both cleared on `8f17d4d`. No check was waived, retried to hide a product failure, or
+bypassed. `migration` and `postgres-integration` — the two jobs that would have caught
+§2.1 and §2.2 respectively — both pass with PostgreSQL 18 / pgvector 0.8.2.
 
 ---
 
