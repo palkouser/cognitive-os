@@ -23,12 +23,42 @@ from cognitive_os.infrastructure.postgres.tables import SCHEMA_NAME, metadata
 
 
 class VectorType(UserDefinedType[object]):
-    """Dependency-free SQL type declaration for pgvector's variable vector type."""
+    """Dependency-free SQL type declaration for pgvector's variable vector type.
+
+    The stored column is deliberately undimensioned so that one table can hold
+    embeddings from several models. A dimension is supplied only when casting, to
+    reach the partial expression index (see `APPROXIMATE_INDEX_DIMENSIONS`).
+    """
 
     cache_ok = True
 
+    def __init__(self, dimension: int | None = None) -> None:
+        self.dimension = dimension
+
     def get_col_spec(self, **_kw: object) -> str:
-        return "vector"
+        return "vector" if self.dimension is None else f"vector({self.dimension})"
+
+
+#: Dimensions that migration 0013 gives an approximate index. `memory_embeddings.embedding`
+#: is an undimensioned `vector` so that one table can hold several embedding models, and
+#: pgvector cannot index such a column directly — hence one partial expression index per
+#: dimension. Adding a dimension is a migration, never a runtime decision, and health
+#: checks treat any approximate index outside this set as an error.
+#:
+#: 64 is the dimension the deterministic provider produces, so it is the only one that
+#: can be exercised end to end today; 768 is the dimension the capacity envelope is
+#: measured at, since that is what a local sentence-transformer model would emit.
+APPROXIMATE_INDEX_DIMENSIONS: tuple[int, ...] = (64, 768)
+
+
+def approximate_index_name(dimension: int) -> str:
+    return f"ix_memory_embeddings_hnsw_{dimension}"
+
+
+#: The exhaustive list health checks compare against.
+APPROXIMATE_INDEX_NAMES = frozenset(
+    approximate_index_name(dimension) for dimension in APPROXIMATE_INDEX_DIMENSIONS
+)
 
 
 memory_items = Table(
@@ -220,7 +250,10 @@ memory_accesses = Table(
         [f"{SCHEMA_NAME}.memory_revisions.memory_id", f"{SCHEMA_NAME}.memory_revisions.revision"],
         ondelete="RESTRICT",
     ),
-    CheckConstraint("retrieval_mode IN ('metadata','text','vector')", name="ck_memory_access_mode"),
+    CheckConstraint(
+        "retrieval_mode IN ('metadata','text','vector','vector_approximate')",
+        name="ck_memory_access_mode",
+    ),
     CheckConstraint("retrieval_rank > 0", name="ck_memory_access_rank"),
     CheckConstraint("used_in_context IN (0, 1)", name="ck_memory_access_used"),
 )

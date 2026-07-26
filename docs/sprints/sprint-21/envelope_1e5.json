@@ -1,0 +1,49 @@
+{
+  "envelopes": [
+    {
+      "candidate_limit": 1000,
+      "content_hash": "df96488d7c9ec31a8de319192948456bde7d34a9a6acfec1201f925b2d6640a2",
+      "corpus_vector_count": 100000,
+      "created_at": "2026-07-25T09:43:04.359184+00:00",
+      "ef_search": null,
+      "embedding_dimension": 768,
+      "envelope_id": "bae9cda3-049e-53cf-a5f1-e99769db99a4",
+      "index_build_seconds": null,
+      "index_scan_confirmed": null,
+      "index_size_bytes": null,
+      "latency_p50_ms": "319.447",
+      "latency_p95_ms": "328.846",
+      "limitations": [
+        "synthetic gaussian vectors loaded outside the governed write path: this measures the retrieval engine, not governed ingestion throughput"
+      ],
+      "queries_measured": 50,
+      "recall_at_result_limit": null,
+      "result_limit": 20,
+      "retrieval_mode": "vector"
+    },
+    {
+      "candidate_limit": 1000,
+      "content_hash": "83c99a41b538d3273d2c22ffad8ad3af7376a907f074232e8a3de968faf32a74",
+      "corpus_vector_count": 100000,
+      "created_at": "2026-07-25T09:43:04.359184+00:00",
+      "ef_search": 1000,
+      "embedding_dimension": 768,
+      "envelope_id": "d4532871-801e-537c-9a90-a2bb34467376",
+      "index_build_seconds": "437.917",
+      "index_scan_confirmed": true,
+      "index_size_bytes": 409608192,
+      "latency_p50_ms": "82.020",
+      "latency_p95_ms": "87.965",
+      "limitations": [
+        "synthetic gaussian vectors loaded outside the governed write path: this measures the retrieval engine, not governed ingestion throughput"
+      ],
+      "queries_measured": 50,
+      "recall_at_result_limit": "0.496",
+      "result_limit": 20,
+      "retrieval_mode": "vector_approximate"
+    }
+  ],
+  "index_build_seconds": 437.917,
+  "index_size_bytes": 409608192,
+  "load_seconds": 56.54
+}

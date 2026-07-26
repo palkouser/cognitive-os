@@ -1,0 +1,49 @@
+benchmark_id: sprint22-coding-seed
+version: "1"
+title: Sprint 22 coding domain seed suite
+description: The full 17-case coding seed as a per-case baseline outcome table, plus injected-wrong-answer controls and governance checks. Gate L v2 condition 8b headroom evidence.
+default_configuration: {mode: domain-pilot}
+source: Cognitive OS Sprint 21C.1 cross-domain pilot
+license: Apache-2.0
+created_at: 2026-07-25T00:00:00Z
+case_matrix:
+  generic:
+    - {id: domain-coding-seed-gov-01, scenario: governance, check: controller_owns_plan}
+    - {id: domain-coding-seed-gov-02, scenario: governance, check: tool_plane_audits_solve}
+    - {id: domain-coding-seed-gov-03, scenario: governance, check: raw_text_rejected}
+    - {id: domain-coding-seed-gov-04, scenario: governance, check: skill_engine_verified_only}
+    - {id: domain-coding-seed-gov-05, scenario: governance, check: domain_kind_coding_registered}
+  coding:
+    # The baseline outcome table. `scenario: baseline` injects nothing — it runs
+    # the registered single-edit solver and pins whether that baseline succeeds.
+    # The six `rejected` rows are the measurable headroom; the eleven `accepted`
+    # rows are the control that the domain works at all.
+    #
+    # pytest-repair — 5 accepted, 2 rejected.
+    - {id: domain-coding-seed-01, scenario: baseline, case: domain-repair-single-rename, expected: accepted}
+    - {id: domain-coding-seed-02, scenario: baseline, case: domain-repair-single-off-by-one, expected: accepted}
+    - {id: domain-coding-seed-03, scenario: baseline, case: domain-repair-single-negate-branch, expected: accepted}
+    - {id: domain-coding-seed-04, scenario: baseline, case: domain-repair-single-default-arg, expected: accepted}
+    - {id: domain-coding-seed-05, scenario: baseline, case: domain-repair-single-import, expected: accepted}
+    # Two coordinated edits; the baseline applies the first and stops.
+    - {id: domain-coding-seed-06, scenario: baseline, case: domain-repair-multi-rename-and-sign, expected: rejected}
+    - {id: domain-coding-seed-07, scenario: baseline, case: domain-repair-multi-branch-and-default, expected: rejected}
+    # test-selection — 3 accepted, 2 rejected. The identifier heuristic fails in
+    # both directions: it over-selects a test that only names the target, and it
+    # misses a test that exercises it through a helper.
+    - {id: domain-coding-seed-08, scenario: baseline, case: domain-test-selection-direct, expected: accepted}
+    - {id: domain-coding-seed-09, scenario: baseline, case: domain-test-selection-prefix, expected: accepted}
+    - {id: domain-coding-seed-10, scenario: baseline, case: domain-test-selection-exact-match, expected: accepted}
+    - {id: domain-coding-seed-11, scenario: baseline, case: domain-test-selection-indirect-bypass, expected: rejected}
+    - {id: domain-coding-seed-12, scenario: baseline, case: domain-test-selection-indirect-coverage, expected: rejected}
+    # assertion-repair — 3 accepted, 2 rejected.
+    - {id: domain-coding-seed-13, scenario: baseline, case: domain-assertion-single-message, expected: accepted}
+    - {id: domain-coding-seed-14, scenario: baseline, case: domain-assertion-single-operator, expected: accepted}
+    - {id: domain-coding-seed-15, scenario: baseline, case: domain-assertion-single-import, expected: accepted}
+    - {id: domain-coding-seed-16, scenario: baseline, case: domain-assertion-multi-value-and-message, expected: rejected}
+    - {id: domain-coding-seed-17, scenario: baseline, case: domain-assertion-multi-operator-and-message, expected: rejected}
+    # Injected-wrong-answer controls: acceptance must refuse a corrupted answer
+    # even on cases whose baseline succeeds. One per problem type.
+    - {id: domain-coding-seed-18, scenario: reject, case: domain-repair-single-rename, expected: rejected}
+    - {id: domain-coding-seed-19, scenario: reject, case: domain-test-selection-direct, expected: rejected}
+    - {id: domain-coding-seed-20, scenario: reject, case: domain-assertion-single-message, expected: rejected}

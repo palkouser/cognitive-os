@@ -1,0 +1,52 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/learned.component_enabled.v1.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "actor": {
+      "minLength": 1,
+      "title": "Actor",
+      "type": "string"
+    },
+    "authority": {
+      "minLength": 1,
+      "title": "Authority",
+      "type": "string"
+    },
+    "component_id": {
+      "minLength": 1,
+      "title": "Component Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "surface": {
+      "minLength": 1,
+      "title": "Surface",
+      "type": "string"
+    }
+  },
+  "required": [
+    "component_id",
+    "surface",
+    "content_hash",
+    "actor",
+    "authority",
+    "reason",
+    "occurred_at"
+  ],
+  "title": "LearnedComponentEnabled",
+  "type": "object"
+}

@@ -41,6 +41,19 @@ class ProblemTypeEntry:
     skills: tuple[str, ...]
     strategies: tuple[str, ...]
     budget: ResourceBudget
+    #: Formal-input keys the checker needs and the solver must never see. The
+    #: coding domain carries its golden answer in the case inputs so the checker
+    #: has an independent reference; handing that to the solver would make every
+    #: baseline trivially perfect and the 21D headroom measurement meaningless.
+    checker_only_inputs: tuple[str, ...] = ()
+
+
+def solver_inputs(entry: ProblemTypeEntry, inputs: dict[str, Any]) -> dict[str, Any]:
+    """The subset of formal inputs a solver is allowed to read."""
+    if not entry.checker_only_inputs:
+        return inputs
+    withheld = set(entry.checker_only_inputs)
+    return {key: value for key, value in inputs.items() if key not in withheld}
 
 
 class UnsupportedProblemType(LookupError):
@@ -119,6 +132,15 @@ _LOGIC = (
     ("competing-hypotheses", AnswerType.STRUCTURED, solvers.solve_sequence_induction),
 )
 
+#: Sprint 21C.1, fourth domain. All three task classes answer with a structured
+#: value (a repaired source string or a list of selected test names). The
+#: solver is the registered baseline; the checker is the independent route.
+_CODING = (
+    ("pytest-repair", AnswerType.STRUCTURED, solvers.solve_pytest_repair),
+    ("assertion-repair", AnswerType.STRUCTURED, solvers.solve_assertion_repair),
+    ("test-selection", AnswerType.STRUCTURED, solvers.solve_test_selection),
+)
+
 _DOMAIN_METADATA: dict[DomainKind, tuple[tuple[str, ...], tuple[str, ...], tuple[str, ...]]] = {
     DomainKind.MATHEMATICS: (
         ("mathematics.exact_arithmetic", "mathematics.numeric"),
@@ -135,6 +157,44 @@ _DOMAIN_METADATA: dict[DomainKind, tuple[tuple[str, ...], tuple[str, ...], tuple
         ("logic-formalization", "constraint-solving"),
         ("hypothesis-constraint-solver-counterexample", "two-independent-methods"),
     ),
+    DomainKind.CODING: (
+        # The check capabilities name what the in-process checker actually does:
+        # compare the candidate against the case's golden reference, and confirm
+        # that every declared edit landed. Deliberately NOT `coding.pytest` —
+        # that capability means sandboxed pytest execution everywhere else in
+        # the system (`verification/coding/commands.py`), and a check that never
+        # ran pytest must not borrow its name. See ADR 0085.
+        ("coding.golden_equality", "coding.required_checks"),
+        # Two permitted skills (the python-repair and focused-tests families)
+        # keep selection tight and the ADR 0084 statistic-binding story uniform.
+        ("verification-driven-python-repair", "focused-test-execution"),
+        # Registered strategies only — both already declare exactly these two
+        # skills in `strategies/`.
+        ("python-bug-fix", "verification-driven-repair"),
+    ),
+}
+
+
+#: The tool capabilities a problem type in this domain needs in order to run.
+#: Solvers cite one of these in `tool_evidence` as `<capability>:<operation>`.
+#: Coding declares two: `coding.pytest` is what a real repair of these tasks
+#: needs and what the permitted skills match their tool precondition against,
+#: while `coding.kernel` is the deterministic in-process solve the Sprint 21C.1
+#: baseline actually performs and cites.
+_REQUIRED_TOOLS: dict[DomainKind, tuple[str, ...]] = {
+    DomainKind.MATHEMATICS: ("mathematics.kernel",),
+    DomainKind.PHYSICS: ("physics.kernel",),
+    DomainKind.LOGIC: ("logic.kernel",),
+    DomainKind.CODING: ("coding.pytest", "coding.kernel"),
+}
+
+#: Formal-input keys withheld from the solver, per problem type. Only the coding
+#: domain needs them: its cases carry the golden answer so the checker has an
+#: independent reference.
+_CHECKER_ONLY_INPUTS: dict[str, tuple[str, ...]] = {
+    "pytest-repair": ("golden_source",),
+    "assertion-repair": ("golden_source",),
+    "test-selection": ("selected_tests",),
 }
 
 
@@ -152,10 +212,11 @@ def _register_domain(
                 solver=solver,
                 checker=solvers.CHECKERS[problem_type],
                 required_verifiers=verifiers,
-                required_tools=(f"{domain.value}.kernel",),
+                required_tools=_REQUIRED_TOOLS[domain],
                 skills=skills,
                 strategies=strategies,
                 budget=_DEFAULT_BUDGET,
+                checker_only_inputs=_CHECKER_ONLY_INPUTS.get(problem_type, ()),
             )
         )
 
@@ -163,6 +224,7 @@ def _register_domain(
 _register_domain(DomainKind.MATHEMATICS, _MATH)
 _register_domain(DomainKind.PHYSICS, _PHYSICS)
 _register_domain(DomainKind.LOGIC, _LOGIC)
+_register_domain(DomainKind.CODING, _CODING)
 
 
 def exact_decimal(value: Fraction) -> Decimal:

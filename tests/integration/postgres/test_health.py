@@ -1,6 +1,7 @@
 import pytest
 
 from cognitive_os.infrastructure.postgres.health import check_postgres_health
+from cognitive_os.infrastructure.postgres.tables import EXPECTED_MIGRATION_REVISION
 from cognitive_os.infrastructure.semantic_memory.postgres.health import (
     PostgresSemanticHealthService,
 )
@@ -12,10 +13,10 @@ async def test_health_reports_database_and_migration_without_url(engines) -> Non
     health = await check_postgres_health(app)
     assert health.healthy
     assert health.database_version
-    assert health.migration_revision == "0012"
+    assert health.migration_revision == EXPECTED_MIGRATION_REVISION
     semantic = await PostgresSemanticHealthService(app).check()
     assert semantic.healthy
-    assert semantic.alembic_revision == "0012"
+    assert semantic.alembic_revision == EXPECTED_MIGRATION_REVISION
     assert not any(
         finding.count for finding in semantic.findings if finding.severity.value == "error"
     )

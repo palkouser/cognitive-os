@@ -1,0 +1,114 @@
+{
+  "$defs": {
+    "ForgettingVerdict": {
+      "enum": [
+        "retained",
+        "regressed",
+        "not_established"
+      ],
+      "title": "ForgettingVerdict",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/learned/forgetting-assessment.schema.json",
+  "additionalProperties": false,
+  "description": "Retention across every previously passing case, in every domain.",
+  "properties": {
+    "assessment_id": {
+      "format": "uuid",
+      "title": "Assessment Id",
+      "type": "string"
+    },
+    "baseline_manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Baseline Manifest Hash",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "per_domain_after": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Per Domain After",
+      "type": "array"
+    },
+    "per_domain_before": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Per Domain Before",
+      "type": "array"
+    },
+    "regressed_cases": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Regressed Cases",
+      "type": "array"
+    },
+    "retained_case_count": {
+      "minimum": 0,
+      "title": "Retained Case Count",
+      "type": "integer"
+    },
+    "session_id": {
+      "format": "uuid",
+      "title": "Session Id",
+      "type": "string"
+    },
+    "tolerance": {
+      "minimum": 0,
+      "title": "Tolerance",
+      "type": "integer"
+    },
+    "verdict": {
+      "$ref": "#/$defs/ForgettingVerdict"
+    }
+  },
+  "required": [
+    "assessment_id",
+    "session_id",
+    "baseline_manifest_hash",
+    "per_domain_before",
+    "per_domain_after",
+    "regressed_cases",
+    "retained_case_count",
+    "tolerance",
+    "verdict",
+    "created_at"
+  ],
+  "title": "ForgettingAssessment",
+  "type": "object"
+}

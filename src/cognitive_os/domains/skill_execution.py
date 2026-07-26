@@ -18,6 +18,7 @@ from dataclasses import dataclass
 from typing import Any
 from uuid import NAMESPACE_URL, UUID, uuid5
 
+from cognitive_os.domain.common import JsonValue
 from cognitive_os.domain.domains import DomainBenchmarkCase, DomainKind
 from cognitive_os.domain.routing import (
     ContextSizeClass,
@@ -35,13 +36,16 @@ from cognitive_os.domain.skills import (
     SkillExecutionStatus,
     SkillExecutionStepResult,
     SkillInputBinding,
+    SkillRequirementType,
     SkillRevision,
+    SkillSelectionDecision,
+    SkillSelectionReason,
 )
 from cognitive_os.routing.service import build_task_signature
 
 from .context import build_domain_context
 from .fixtures import FIXTURE_TIME
-from .registry import resolve
+from .registry import resolve, solver_inputs
 from .runner import ControlledRun, run_case_controlled
 
 #: The mandatory domain path is tool-only. The signature records that explicitly
@@ -52,6 +56,7 @@ _DOMAIN_NAMES: dict[DomainKind, str] = {
     DomainKind.MATHEMATICS: "mathematics",
     DomainKind.PHYSICS: "physics",
     DomainKind.LOGIC: "logic",
+    DomainKind.CODING: "coding",
 }
 
 
@@ -90,10 +95,40 @@ class DomainSkillRun:
     result: SkillExecutionResult
     controlled: ControlledRun
     signature: TaskSignature
+    #: The Skill Engine's selection decision. Present since the domain path stopped
+    #: resolving its skill by static table position; `None` only when a caller forced a
+    #: specific revision and no selection was asked for.
+    selection: SkillSelectionDecision | None = None
 
     @property
     def accepted(self) -> bool:
         return self.result.status is SkillExecutionStatus.ACCEPTED
+
+    @property
+    def selected_by_statistics(self) -> bool:
+        """Whether accumulated outcomes, rather than a name, broke the tie."""
+        return (
+            self.selection is not None
+            and self.selection.reason is SkillSelectionReason.VERIFIED_STATISTICS
+        )
+
+
+def declared_verifier_capabilities(revision: SkillRevision) -> tuple[str, ...]:
+    """The verifier capabilities a skill revision declares it will run.
+
+    Read from the package's own `requirements`, so the declaration stays where the
+    skill author wrote it rather than being duplicated in a lookup table here.
+    """
+    return tuple(
+        sorted(
+            {
+                requirement.capability_id
+                for requirement in revision.requirements
+                if requirement.requirement_type is SkillRequirementType.VERIFIER
+                and requirement.required
+            }
+        )
+    )
 
 
 class DomainSkillRunner:
@@ -107,7 +142,17 @@ class DomainSkillRunner:
     async def start(
         self, request: SkillExecutionRequest, revision: SkillRevision
     ) -> SkillExecutionResult:
-        run = await run_case_controlled(self._case, candidate_override=self._override)
+        # The revision is not decoration. A skill package declares the verifier
+        # capability it claims to run, so executing this revision must require that
+        # capability: selecting a skill whose declared verifier never runs on this
+        # case cannot yield an accepted result. Before this, the revision was
+        # ignored entirely and every skill produced an identical outcome, which
+        # made the Skill Engine's selection causally inert on the domain path.
+        run = await run_case_controlled(
+            self._case,
+            candidate_override=self._override,
+            required_capabilities=declared_verifier_capabilities(revision),
+        )
         self.last_run = run
         status = (
             SkillExecutionStatus.ACCEPTED
@@ -160,7 +205,47 @@ def domain_context_request_factory(case: DomainBenchmarkCase) -> Any:
     return factory
 
 
-def domain_input_bindings(case: DomainBenchmarkCase) -> tuple[SkillInputBinding, ...]:
+def domain_input_bindings(
+    case: DomainBenchmarkCase,
+    selected_skill_name: str | None = None,
+) -> tuple[SkillInputBinding, ...]:
+    """Bindings for the Skill Engine: per skill-family contract only.
+
+    The python-repair family (`verification-driven-python-repair`) declares
+    `failure_evidence`; the focused-tests family (`focused-test-execution`)
+    declares `changed_paths`. Generic math/physics/logic cases use the single
+    `problem` binding because their skill revisions expect it.
+
+    `selected_skill_name` overrides the case-driven default. That override is
+    needed because the Skill Engine is permitted to pick either skill for a
+    coding case, and the binding must match what the chosen skill revision
+    declares — the Skill Execution Service rejects any other binding.
+    """
+    if selected_skill_name == "focused-test-execution" or (
+        selected_skill_name is None and case.problem_type == "test-selection"
+    ):
+        raw = case.problem.formal_inputs.get("candidate_tests")
+        candidates: list[JsonValue] = (
+            [str(item) for item in raw] if isinstance(raw, (list, tuple)) else []
+        )
+        return (SkillInputBinding(name="changed_paths", value=candidates),)
+    if selected_skill_name == "verification-driven-python-repair" or (
+        selected_skill_name is None and case.problem_type in {"pytest-repair", "assertion-repair"}
+    ):
+        return (
+            SkillInputBinding(
+                name="failure_evidence",
+                value={
+                    "problem_type": case.problem_type,
+                    # Withheld inputs stay withheld here too; a skill that could
+                    # read `golden_source` off its own binding would make the
+                    # baseline outcome table meaningless.
+                    "formal_inputs": solver_inputs(
+                        resolve(case.problem_type), dict(case.problem.formal_inputs)
+                    ),
+                },
+            ),
+        )
     return (
         SkillInputBinding(
             name="problem",

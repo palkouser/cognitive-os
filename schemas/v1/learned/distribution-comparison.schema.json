@@ -1,0 +1,137 @@
+{
+  "$defs": {
+    "DivergenceVerdict": {
+      "enum": [
+        "low",
+        "high",
+        "not_established"
+      ],
+      "title": "DivergenceVerdict",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/learned/distribution-comparison.schema.json",
+  "additionalProperties": false,
+  "description": "How far the evaluation corpus sits from what a component trained on.\n\nBelow `minimum_sample_threshold` the only permitted verdict is\n`NOT_ESTABLISHED`: an under-powered comparison must not be reportable as\nevidence of low divergence.",
+  "properties": {
+    "abstention_rate_evaluation": {
+      "anyOf": [
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Abstention Rate Evaluation"
+    },
+    "abstention_rate_training": {
+      "anyOf": [
+        {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Abstention Rate Training"
+    },
+    "compared_features": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Compared Features",
+      "type": "array"
+    },
+    "comparison_id": {
+      "format": "uuid",
+      "title": "Comparison Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "evaluation_dataset_id": {
+      "format": "uuid",
+      "title": "Evaluation Dataset Id",
+      "type": "string"
+    },
+    "evaluation_sample_count": {
+      "minimum": 0,
+      "title": "Evaluation Sample Count",
+      "type": "integer"
+    },
+    "limitations": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "minimum_sample_threshold": {
+      "minimum": 1,
+      "title": "Minimum Sample Threshold",
+      "type": "integer"
+    },
+    "per_feature_divergence": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Per Feature Divergence",
+      "type": "array"
+    },
+    "training_dataset_id": {
+      "format": "uuid",
+      "title": "Training Dataset Id",
+      "type": "string"
+    },
+    "training_sample_count": {
+      "minimum": 0,
+      "title": "Training Sample Count",
+      "type": "integer"
+    },
+    "verdict": {
+      "$ref": "#/$defs/DivergenceVerdict"
+    }
+  },
+  "required": [
+    "comparison_id",
+    "training_dataset_id",
+    "evaluation_dataset_id",
+    "compared_features",
+    "per_feature_divergence",
+    "training_sample_count",
+    "evaluation_sample_count",
+    "minimum_sample_threshold",
+    "verdict",
+    "limitations",
+    "created_at"
+  ],
+  "title": "DistributionComparison",
+  "type": "object"
+}

@@ -55,7 +55,9 @@ def upgrade() -> None:
             IF TG_TABLE_NAME = 'routing_policies'
                AND to_jsonb(NEW)->>'control_mode' = 'adaptive'
                AND to_jsonb(NEW)->>'current_status' IN ('approved','enabled')
-               AND COALESCE(to_jsonb(NEW)->'payload_json'->>'operator_approval_reference','') = '' THEN
+               AND COALESCE(
+                   to_jsonb(NEW)->'payload_json'->>'operator_approval_reference',''
+               ) = '' THEN
                 RAISE EXCEPTION 'Adaptive routing requires operator approval';
             END IF;
             RETURN NEW;
@@ -95,7 +97,9 @@ def upgrade() -> None:
             IF TG_TABLE_NAME = 'routing_policy_revisions'
                AND to_jsonb(NEW)->>'control_mode' = 'adaptive'
                AND to_jsonb(NEW)->>'status' IN ('approved','enabled')
-               AND COALESCE(to_jsonb(NEW)->'payload_json'->>'operator_approval_reference','') = '' THEN
+               AND COALESCE(
+                   to_jsonb(NEW)->'payload_json'->>'operator_approval_reference',''
+               ) = '' THEN
                 RAISE EXCEPTION 'Adaptive routing requires operator approval';
             END IF;
             RETURN NEW;

@@ -62,7 +62,8 @@ async def test_change_persistence_is_append_only_least_privilege_and_compare_and
             await connection.execute(
                 text(
                     "INSERT INTO cognitive_os.change_accesses("
-                    "access_id, experiment_id, record_kind, content_hash, payload_json, created_at) "
+                    "access_id, experiment_id, record_kind, content_hash, "
+                    "payload_json, created_at) "
                     "VALUES (gen_random_uuid(), :experiment_id, 'read', :hash, '{}', now())"
                 ),
                 {"experiment_id": experiment.experiment_id, "hash": "f" * 64},

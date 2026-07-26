@@ -30,6 +30,11 @@ _CASES = {item.case_id: item for item in build_all_cases()}
 async def domain_benchmark_case(case: BenchmarkCase) -> BenchmarkCaseResult:
     request = case.problem_request
     scenario = str(request.get("scenario", ""))
+    # `expected` is a reserved matrix key: the expansion in `benchmarks/cases.py`
+    # routes it to `expected_outputs["status"]` and deliberately keeps it out of
+    # `problem_request`. Reading it from the request would silently fall back to
+    # the default for every case that declares one.
+    expected = str(case.expected_outputs.get("status", "passed"))
     started = perf_counter()
     metrics: dict[str, float] = {
         "provider_calls": 0.0,
@@ -43,8 +48,10 @@ async def domain_benchmark_case(case: BenchmarkCase) -> BenchmarkCaseResult:
 
     if scenario in ("accept", "reject"):
         matched, extra = await _run_pilot(str(request["case"]), reject=scenario == "reject")
+    elif scenario == "baseline":
+        matched, extra = await _run_baseline(str(request["case"]), expected=expected)
     elif scenario == "transfer":
-        matched, extra = await _run_transfer(str(request.get("expected", "positive_transfer")))
+        matched, extra = await _run_transfer(expected)
     elif scenario == "governance":
         matched, extra = await _run_governance(str(request["check"]))
     else:
@@ -75,6 +82,34 @@ async def _run_pilot(case_id: str, *, reject: bool) -> tuple[bool, dict[str, flo
     outcome = result.outcome
     return matched, {
         "accepted": float(result.accepted),
+        "checks_run": float(len(outcome.checks)) if outcome else 0.0,
+        "derivation_recorded": float(result.derivation is not None),
+        "evidence_rows": float(len(repository.runs)),
+    }
+
+
+async def _run_baseline(case_id: str, *, expected: str) -> tuple[bool, dict[str, float]]:
+    """Run the case with its registered baseline and pin the outcome.
+
+    Distinct from `accept`/`reject`, which prove that a correct answer is taken
+    and an injected wrong one is refused. This scenario injects nothing: it runs
+    the registered solver and records whether the baseline succeeded, so the
+    manifest carries the per-case baseline outcome table itself. `rejected` rows
+    are the Gate L v2 condition 8b headroom; `accepted` rows are the control
+    that the domain is not simply broken.
+    """
+    if expected not in ("accepted", "rejected"):
+        return False, {"unknown_expected_outcome": 1.0}
+    domain_case = _CASES.get(case_id)
+    if domain_case is None:
+        return False, {"unknown_case": 1.0}
+    repository = InMemoryDomainRepository()
+    result = await DomainPilotService(repository).run_case(domain_case)
+    matched = result.accepted is (expected == "accepted")
+    outcome = result.outcome
+    return matched, {
+        "accepted": float(result.accepted),
+        "baseline_rejected": float(not result.accepted),
         "checks_run": float(len(outcome.checks)) if outcome else 0.0,
         "derivation_recorded": float(result.derivation is not None),
         "evidence_rows": float(len(repository.runs)),
@@ -477,6 +512,45 @@ async def _required_context_cannot_be_omitted() -> bool:
     return False
 
 
+async def _domain_kind_coding_registered() -> bool:
+    """Gate L v2 condition 3: the fourth domain is registered and still fallible.
+
+    Two things are checked, both by measurement. First, the domain is wired
+    through every level — problem-type registry, solver, checker, fixtures.
+    Second, the per-case baseline outcome table matches what the fixtures
+    *declare* in `FALLIBLE_CODING_CASES`: each case's measured acceptance must
+    equal its declared `expected_disposition`, and at least the plan's minimum
+    number of baselines must genuinely fail. A fixture that quietly stops
+    failing — the way a no-op patch or a substring collision can make one —
+    turns this check red instead of eroding the condition 8b headroom evidence
+    in silence.
+    """
+    from cognitive_os.domain.domains import DomainKind, DomainRunStatus, VerificationDisposition
+    from cognitive_os.domains.fixtures import (
+        MINIMUM_FALLIBLE_CODING_CASES,
+        build_all_cases,
+    )
+    from cognitive_os.domains.registry import problem_types
+    from cognitive_os.domains.service import DomainPilotService
+
+    coding_cases = [item for item in build_all_cases() if item.domain is DomainKind.CODING]
+    if len(coding_cases) < 16:
+        return False
+    required_types = {"pytest-repair", "assertion-repair", "test-selection"}
+    if not required_types.issubset(set(problem_types(DomainKind.CODING))):
+        return False
+
+    rejected = 0
+    for case in coding_cases:
+        result = await DomainPilotService().run_case(case)
+        accepted = result.run.status is DomainRunStatus.ACCEPTED
+        declared_pass = case.expected_disposition is VerificationDisposition.PASS
+        if accepted is not declared_pass:
+            return False
+        rejected += not accepted
+    return rejected >= MINIMUM_FALLIBLE_CODING_CASES
+
+
 async def _skill_engine_runs_only_verified_revisions() -> bool:
     from cognitive_os.domain.skills import SkillExecutionStatus
     from cognitive_os.domains.skill_runner import run_case_as_skill
@@ -658,6 +732,7 @@ _GOVERNANCE = {
     "nan_rejected": _nan_and_infinity_are_rejected,
     "missing_verifier_blocks": _missing_verifier_blocks_acceptance,
     "underdetermination_reported": _underdetermination_must_be_reported,
+    "domain_kind_coding_registered": _domain_kind_coding_registered,
 }
 
 

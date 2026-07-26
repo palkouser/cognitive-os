@@ -5,7 +5,7 @@ from uuid import uuid4
 import pytest
 
 from cognitive_os.domain.controller import ControllerState
-from cognitive_os.domain.domains import DomainKind
+from cognitive_os.domain.domains import DomainKind, VerificationDisposition
 from cognitive_os.domain.skills import SkillExecutionStatus
 from cognitive_os.domains.context import (
     RequiredContextMissingError,
@@ -36,10 +36,23 @@ SAMPLE = (ALL_CASES[0], ALL_CASES[20], ALL_CASES[40])
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("case", ALL_CASES, ids=lambda item: item.case_id)
-async def test_every_case_completes_under_the_controller(case: object) -> None:
+async def test_every_case_terminates_in_its_declared_controller_state(case: object) -> None:
+    """The controlled path lands in exactly the state the case declares.
+
+    Sprint 21C.1: the coding domain's deliberately fallible baselines end
+    FAILED and not accepted; everything else ends COMPLETED and accepted. Both
+    halves are asserted per case, so a fixture that stops failing — or a
+    regression that turns a working case into a failure — is caught here rather
+    than being absorbed by a domain-wide exemption.
+    """
     run = await run_case_controlled(case)  # type: ignore[arg-type]
-    assert run.state is ControllerState.COMPLETED, run.decision_reason
-    assert run.accepted, run.decision_reason
+    if case.expected_disposition is VerificationDisposition.PASS:  # type: ignore[attr-defined]
+        assert run.state is ControllerState.COMPLETED, run.decision_reason
+        assert run.accepted, run.decision_reason
+    else:
+        assert run.state is ControllerState.FAILED, run.decision_reason
+        assert not run.accepted, run.decision_reason
+    assert run.decision_reason
 
 
 @pytest.mark.asyncio
@@ -319,3 +332,60 @@ async def test_skill_execution_refuses_a_tampered_package_hash() -> None:
                 created_at=FIXTURE_TIME,
             )
         )
+
+
+@pytest.mark.asyncio
+async def test_a_skill_revision_is_honoured_rather_than_ignored() -> None:
+    """Selecting a skill must have a consequence.
+
+    `DomainSkillRunner.start` previously ignored the revision it was handed and ran
+    the identical governed path for every skill, which made Skill Engine selection
+    causally inert: any ranking of any skill produced the same outcome. A skill
+    package declares the verifier capability it claims to run, so executing a
+    revision now requires that capability, and a declared verifier that never runs
+    on this case cannot yield an accepted result.
+    """
+    case = next(item for item in ALL_CASES if item.domain is DomainKind.MATHEMATICS)
+
+    matching = await run_case_controlled(
+        case, required_capabilities=("mathematics.exact_arithmetic",)
+    )
+    assert matching.accepted
+
+    # Declared but never exercised on a long-multiplication case: a symbolic
+    # equivalence check is not part of this problem type's verification.
+    mismatched = await run_case_controlled(
+        case, required_capabilities=("mathematics.symbolic_equivalence",)
+    )
+    assert not mismatched.accepted
+
+
+@pytest.mark.asyncio
+async def test_declared_verifier_capabilities_come_from_the_package() -> None:
+    from cognitive_os.domains.skill_execution import declared_verifier_capabilities
+    from cognitive_os.skills.fixtures import sprint12_verified_skills
+
+    _, registry, _ = await sprint12_verified_skills()
+    declared = {
+        item.identity.canonical_name: declared_verifier_capabilities(revision)
+        for item, revision in registry.query()
+    }
+    assert declared["exact-arithmetic-decomposition"] == ("mathematics.exact_arithmetic",)
+    assert declared["unit-aware-physics-calculation"] == ("physics.dimension",)
+    assert declared["constraint-solving"] == ("logic.satisfiable",)
+    # A skill that declares no verifier imposes no additional requirement.
+    assert declared["evidence-collection"] == ()
+
+
+@pytest.mark.asyncio
+async def test_an_unexercised_required_capability_blocks_acceptance_on_the_governed_path() -> None:
+    """The governed path enforces required capabilities, not only the direct path.
+
+    `DomainPilotService` has always injected `UNSUPPORTED` for a required verifier
+    that never ran. The Controller path did not, so a declared-but-unrun verifier
+    passed silently.
+    """
+    case = ALL_CASES[0]
+    run = await run_case_controlled(case, required_capabilities=("nonexistent.capability",))
+    assert not run.accepted
+    assert "verif" in run.decision_reason.lower() or run.decision_reason

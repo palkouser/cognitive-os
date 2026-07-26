@@ -1,0 +1,68 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/learned/out-of-distribution-assessment.schema.json",
+  "additionalProperties": false,
+  "description": "Whether a component knows that it does not know.\n\nAlso earned by measurement: held out one domain at a time, the kNN kept answering —\nzero abstentions — and was confidently wrong 80 to 90 times per domain, because\nfeature overlap stayed high while the capability vocabulary was entirely disjoint.\nA component that cannot recognise an unseen domain must not reach an operator.",
+  "properties": {
+    "abstained": {
+      "minimum": 0,
+      "title": "Abstained",
+      "type": "integer"
+    },
+    "assessment_id": {
+      "format": "uuid",
+      "title": "Assessment Id",
+      "type": "string"
+    },
+    "component_id": {
+      "minLength": 1,
+      "title": "Component Id",
+      "type": "string"
+    },
+    "confidence_threshold": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Confidence Threshold",
+      "type": "string"
+    },
+    "confident_errors": {
+      "minimum": 0,
+      "title": "Confident Errors",
+      "type": "integer"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "evaluated_count": {
+      "minimum": 1,
+      "title": "Evaluated Count",
+      "type": "integer"
+    },
+    "held_out_groups": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Held Out Groups",
+      "type": "array"
+    }
+  },
+  "required": [
+    "assessment_id",
+    "component_id",
+    "held_out_groups",
+    "evaluated_count",
+    "abstained",
+    "confident_errors",
+    "confidence_threshold",
+    "created_at"
+  ],
+  "title": "OutOfDistributionAssessment",
+  "type": "object"
+}

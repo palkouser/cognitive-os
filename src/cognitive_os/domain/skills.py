@@ -144,6 +144,10 @@ class SkillExclusionReason(StrEnum):
     PERMISSION_REQUIRED = "permission_required"
     INVALID_PACKAGE = "invalid_package"
     FALLBACK_INVALID = "fallback_invalid"
+    #: The caller restricted selection to a named set and this skill is outside it.
+    #: Recorded as an exclusion rather than filtered out of the candidate query, so the
+    #: decision states what it was not allowed to consider.
+    NOT_PERMITTED = "not_permitted"
 
 
 class SkillPackageFileType(StrEnum):
@@ -543,6 +547,15 @@ class SkillSelectionRequest(SkillContract):
     applicability_input: SkillApplicabilityInput
     registry_snapshot: SkillRegistrySnapshot
     allowed_statuses: tuple[SkillStatus, ...] = (SkillStatus.VERIFIED,)
+    #: Canonical names selection may choose among. Empty means unrestricted, which is the
+    #: behaviour every caller had before this field existed.
+    #:
+    #: Added in Sprint 21 for the cross-domain path, where the problem-type registry is
+    #: the authority on which skills a task class may use — a narrower authority than
+    #: preconditions can express, since several skills of the same domain legitimately
+    #: satisfy the same capability. Restricting here rather than by pre-filtering the
+    #: candidate query keeps the excluded names in the decision record.
+    permitted_canonical_names: frozenset[NonEmptyStr] = frozenset()
     provider_suggestion: UUID | None = None
     maximum_candidates: int = Field(default=32, ge=1, le=200)
     created_at: UtcDatetime

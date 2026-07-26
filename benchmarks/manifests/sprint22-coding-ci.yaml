@@ -1,0 +1,28 @@
+benchmark_id: sprint22-coding-ci
+version: "1"
+title: Sprint 22 coding domain CI gate
+description: 9 offline coding cases plus 6 governance checks. One accepted and one rejected baseline per problem type, plus injected-wrong-answer rejection.
+default_configuration: {mode: domain-pilot}
+source: Cognitive OS Sprint 21C.1 cross-domain pilot
+license: Apache-2.0
+created_at: 2026-07-25T00:00:00Z
+case_matrix:
+  generic:
+    - {id: domain-coding-ci-gov-01, scenario: governance, check: controller_owns_plan}
+    - {id: domain-coding-ci-gov-02, scenario: governance, check: tool_plane_audits_solve}
+    - {id: domain-coding-ci-gov-03, scenario: governance, check: raw_text_rejected}
+    - {id: domain-coding-ci-gov-04, scenario: governance, check: skill_engine_verified_only}
+    - {id: domain-coding-ci-gov-05, scenario: governance, check: required_context_enforced}
+    - {id: domain-coding-ci-gov-06, scenario: governance, check: domain_kind_coding_registered}
+  coding:
+    # Baseline outcome, one succeeding and one failing case per problem type.
+    - {id: domain-coding-ci-01, scenario: baseline, case: domain-repair-single-rename, expected: accepted}
+    - {id: domain-coding-ci-02, scenario: baseline, case: domain-repair-multi-rename-and-sign, expected: rejected}
+    - {id: domain-coding-ci-03, scenario: baseline, case: domain-test-selection-direct, expected: accepted}
+    - {id: domain-coding-ci-04, scenario: baseline, case: domain-test-selection-indirect-coverage, expected: rejected}
+    - {id: domain-coding-ci-05, scenario: baseline, case: domain-assertion-single-message, expected: accepted}
+    - {id: domain-coding-ci-06, scenario: baseline, case: domain-assertion-multi-operator-and-message, expected: rejected}
+    # Injected-wrong-answer controls, one per problem type.
+    - {id: domain-coding-ci-07, scenario: reject, case: domain-repair-single-rename, expected: rejected}
+    - {id: domain-coding-ci-08, scenario: reject, case: domain-test-selection-direct, expected: rejected}
+    - {id: domain-coding-ci-09, scenario: reject, case: domain-assertion-single-message, expected: rejected}

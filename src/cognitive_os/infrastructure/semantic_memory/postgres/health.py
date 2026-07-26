@@ -7,6 +7,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from cognitive_os.domain.base import ImmutableContractModel
+from cognitive_os.infrastructure.memory.postgres.tables import APPROXIMATE_INDEX_NAMES
 from cognitive_os.infrastructure.postgres.tables import EXPECTED_MIGRATION_REVISION
 
 
@@ -100,11 +101,17 @@ class PostgresSemanticHealthService:
                         "AND r.revision=w.claim_revision WHERE r.claim_id IS NULL"
                     )
                 ),
+                # The semantic plane introduces no vector column of its own, so any
+                # approximate index here must be one the memory plane declared in
+                # Sprint 21.3; anything else is still prohibited.
                 "prohibited_indexes": await connection.scalar(
                     text(
-                        "SELECT count(*) FROM pg_indexes WHERE schemaname='cognitive_os' "
-                        "AND (indexdef ILIKE '%hnsw%' OR indexdef ILIKE '%ivfflat%')"
-                    )
+                        "SELECT count(*) FROM pg_class c "
+                        "JOIN pg_am a ON a.oid = c.relam "
+                        "JOIN pg_namespace n ON n.oid = c.relnamespace "
+                        "WHERE n.nspname='cognitive_os' AND a.amname IN ('hnsw','ivfflat') "
+                        "AND c.relname <> ALL(:declared)"
+                    ).bindparams(declared=sorted(APPROXIMATE_INDEX_NAMES))
                 ),
                 "claim_revision_gap": await connection.scalar(
                     text(
@@ -249,7 +256,9 @@ class PostgresSemanticHealthService:
                     code="migration_head",
                     severity=SemanticHealthSeverity.ERROR,
                     count=1,
-                    message=f"Expected Alembic revision 0011, found {revision}",
+                    message=(
+                        f"Expected Alembic revision {EXPECTED_MIGRATION_REVISION}, found {revision}"
+                    ),
                 )
             )
         return SemanticHealthReport(

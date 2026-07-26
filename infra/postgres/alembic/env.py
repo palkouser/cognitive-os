@@ -11,7 +11,10 @@ from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from cognitive_os.infrastructure.changes.postgres.tables import change_experiments
-from cognitive_os.infrastructure.memory.postgres.tables import memory_items
+from cognitive_os.infrastructure.memory.postgres.tables import (
+    APPROXIMATE_INDEX_NAMES,
+    memory_items,
+)
 from cognitive_os.infrastructure.postgres.tables import metadata
 from cognitive_os.infrastructure.proposals.postgres.tables import harness_proposals
 from cognitive_os.infrastructure.semantic_memory.postgres.tables import semantic_claims
@@ -36,6 +39,26 @@ config.set_main_option("sqlalchemy.url", database_url.replace("%", "%%"))
 target_metadata = metadata
 
 
+def include_object(
+    object_: object, name: str | None, type_: str, reflected: bool, compare_to: object
+) -> bool:
+    """Hide the approximate-retrieval indexes from autogenerate comparison.
+
+    Migration 0013 creates them as partial expression indexes
+    (`USING hnsw ((embedding::vector(N)) vector_cosine_ops) WHERE dimension = N`).
+    SQLAlchemy's `Table` metadata cannot express that shape, so autogenerate
+    reflects them, finds no metadata counterpart, and proposes dropping them —
+    which makes `alembic check` fail on any database that has been upgraded to
+    0013 even though the schema is exactly what the migration intends.
+
+    The exclusion is narrow and cannot drift: `APPROXIMATE_INDEX_NAMES` is the
+    same constant the migration builds its names from and the memory-plane
+    health check verifies against. Only autogenerate comparison is affected;
+    migration execution is untouched.
+    """
+    return not (type_ == "index" and name in APPROXIMATE_INDEX_NAMES)
+
+
 def run_migrations_offline() -> None:
     context.configure(
         url=database_url,
@@ -44,6 +67,7 @@ def run_migrations_offline() -> None:
         dialect_opts={"paramstyle": "named"},
         compare_type=True,
         include_schemas=True,
+        include_object=include_object,
     )
     with context.begin_transaction():
         context.run_migrations()
@@ -55,6 +79,7 @@ def do_run_migrations(connection: object) -> None:
         target_metadata=target_metadata,
         compare_type=True,
         include_schemas=True,
+        include_object=include_object,
     )
     with context.begin_transaction():
         context.run_migrations()

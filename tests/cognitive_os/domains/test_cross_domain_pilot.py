@@ -22,7 +22,13 @@ from cognitive_os.domain.domains import (
     compose_disposition,
 )
 from cognitive_os.domains import kernels
-from cognitive_os.domains.fixtures import FIXTURE_TIME, build_all_cases, wrong_answer_for
+from cognitive_os.domains.fixtures import (
+    FALLIBLE_CODING_CASES,
+    FIXTURE_TIME,
+    MINIMUM_FALLIBLE_CODING_CASES,
+    build_all_cases,
+    wrong_answer_for,
+)
 from cognitive_os.domains.registry import (
     UnsupportedProblemType,
     entries,
@@ -234,15 +240,64 @@ def test_contract_hashes_are_stable_and_round_trip() -> None:
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("case", ALL_CASES, ids=lambda item: item.case_id)
-async def test_correct_answers_are_accepted(case: object) -> None:
+async def test_every_case_reaches_its_declared_disposition(case: object) -> None:
+    """Each case ends where its contract says it will — accepted, or not.
+
+    Sprint 21C.1 made this two-sided. Math, physics and logic declare
+    `expected_disposition=PASS` and must be accepted, as before. The coding
+    fixtures listed in `FALLIBLE_CODING_CASES` declare FAIL, because their
+    registered single-edit baseline cannot solve them; those must be rejected.
+    Asserting the declaration rather than allowing any outcome is what keeps
+    the Gate L v2 condition 8b headroom measurable: a fallible fixture that
+    silently starts passing fails here.
+    """
     result = await DomainPilotService().run_case(case)  # type: ignore[arg-type]
-    assert result.run.status is DomainRunStatus.ACCEPTED, [
-        (item.capability, item.detail)
+    expected_pass = case.expected_disposition is VerificationDisposition.PASS  # type: ignore[attr-defined]
+    accepted = result.run.status is DomainRunStatus.ACCEPTED
+    assert accepted is expected_pass, [
+        (item.capability, item.disposition, item.detail)
         for item in result.outcome.checks  # type: ignore[union-attr]
-        if item.disposition is not VerificationDisposition.PASS
     ]
     assert result.derivation is not None and result.derivation.steps
     assert result.answer is not None
+
+
+@pytest.mark.asyncio
+async def test_the_coding_baseline_outcome_table_is_pinned() -> None:
+    """Sprint 21C.1 exit evidence: the baseline outcome table, measured.
+
+    Gate L v2 condition 8b needs coding cases whose registered baseline
+    genuinely fails, and needs that to be a measurement rather than a claim.
+    This test produces the whole table in one place and pins three things:
+    which cases fail, how many, and that the count clears the plan's minimum
+    with room to spare.
+
+    It is deliberately easy to break. Two of the original fixtures did not fail
+    at all — one carried a no-op patch, the other's "indirect" test name still
+    contained the target function, so a substring match found it — and every
+    surrounding gate stayed green while the headroom evidence was two cases
+    thinner than it claimed.
+    """
+    coding = [case for case in ALL_CASES if case.domain is DomainKind.CODING]
+    assert len(coding) >= 16, "the plan's seed-case floor for the fourth domain"
+
+    rejected = set()
+    for case in coding:
+        result = await DomainPilotService().run_case(case)
+        if not result.accepted:
+            rejected.add(case.case_id)
+
+    assert rejected == FALLIBLE_CODING_CASES, {
+        "unexpectedly_passing": sorted(FALLIBLE_CODING_CASES - rejected),
+        "unexpectedly_failing": sorted(rejected - FALLIBLE_CODING_CASES),
+    }
+    assert len(rejected) > MINIMUM_FALLIBLE_CODING_CASES, (
+        "the fallible set must clear the plan's minimum with margin, so that one "
+        "fixture drifting does not put Gate L v2 condition 8b on the boundary"
+    )
+    # Every problem type contributes headroom, not just the repair families.
+    by_type = {case.problem_type for case in coding if case.case_id in rejected}
+    assert by_type == set(problem_types(DomainKind.CODING))
 
 
 @pytest.mark.asyncio

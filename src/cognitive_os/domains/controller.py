@@ -68,14 +68,19 @@ _PROBLEM_DOMAINS: dict[DomainKind, ProblemDomain] = {
     DomainKind.MATHEMATICS: ProblemDomain.MATHEMATICS,
     DomainKind.PHYSICS: ProblemDomain.PHYSICS,
     DomainKind.LOGIC: ProblemDomain.LOGIC,
+    DomainKind.CODING: ProblemDomain.CODING,
 }
 
 #: The verifier subject type each domain reports, so the Acceptance Service sees
-#: a typed subject rather than an opaque blob.
+#: a typed subject rather than an opaque blob. Coding reports a structured value
+#: because the checker compares a structured `repaired_source` or
+#: `selected_tests` payload against the case's golden fields — not a workspace
+#: or an executable. See ADR 0085 for the boundary.
 _SUBJECT_TYPES: dict[DomainKind, VerificationSubjectType] = {
     DomainKind.MATHEMATICS: VerificationSubjectType.MATHEMATICAL_EXPRESSION,
     DomainKind.PHYSICS: VerificationSubjectType.PHYSICAL_QUANTITY,
     DomainKind.LOGIC: VerificationSubjectType.LOGICAL_PROBLEM,
+    DomainKind.CODING: VerificationSubjectType.STRUCTURED_VALUE,
 }
 
 
@@ -106,9 +111,19 @@ def domain_budget() -> ControllerBudget:
 class DomainProblemEngine:
     """`ProblemRepresentationPort` over one cross-domain benchmark case."""
 
-    def __init__(self, case: DomainBenchmarkCase) -> None:
+    def __init__(
+        self,
+        case: DomainBenchmarkCase,
+        *,
+        required_capabilities: tuple[str, ...] = (),
+    ) -> None:
         self._case = case
         self.step_id = _uuid("step", case.case_id)
+        #: Capabilities the caller requires on top of the case's own, used when a
+        #: skill revision declares the verifier it claims to run. A declared
+        #: capability the checker never exercises must block acceptance rather
+        #: than pass silently.
+        self._required_capabilities = tuple(sorted(set(required_capabilities)))
 
     async def represent(self, request: Any) -> ProblemRepresentation:
         case = self._case
@@ -187,6 +202,14 @@ class DomainProblemEngine:
                         "formal_inputs": dict(problem.formal_inputs),
                         "output_id": str(self.step_id),
                         "subject_type": _SUBJECT_TYPES[case.domain].value,
+                        # The checker must account for every capability the plan
+                        # requires, including one a selected skill declares. An
+                        # unexercised requirement is a missing verifier, not a pass.
+                        "required_capabilities": list(
+                            dict.fromkeys(
+                                (*case.plan.required_capabilities, *self._required_capabilities)
+                            )
+                        ),
                     },
                 ),
                 # The solve step must actually have completed; a missing tool result

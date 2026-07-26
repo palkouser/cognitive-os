@@ -215,7 +215,8 @@
       "enum": [
         "mathematics",
         "physics",
-        "logic"
+        "logic",
+        "coding"
       ],
       "title": "DomainKind",
       "type": "string"

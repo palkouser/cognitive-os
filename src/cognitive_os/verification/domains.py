@@ -44,8 +44,8 @@ def _descriptor() -> VerifierDescriptor:
         version="1",
         display_name="Cross-domain independent checker",
         description=(
-            "Recompute a candidate mathematics, physics, or logic answer by an independent "
-            "route and judge it. Dependency-free, deterministic, and offline."
+            "Recompute a candidate mathematics, physics, logic, or coding answer by an "
+            "independent route and judge it. Dependency-free, deterministic, and offline."
         ),
         kind=VerifierKind.GENERIC,
         capabilities=tuple(
@@ -56,6 +56,7 @@ def _descriptor() -> VerifierDescriptor:
                     ProblemDomain.MATHEMATICS,
                     ProblemDomain.PHYSICS,
                     ProblemDomain.LOGIC,
+                    ProblemDomain.CODING,
                 ),
                 criterion_types=(CriterionType.DOMAIN_VERIFIER,),
             )
@@ -70,6 +71,9 @@ def _descriptor() -> VerifierDescriptor:
             "properties": {
                 "problem_type": {"type": "string"},
                 "formal_inputs": {"type": "object"},
+                # Capabilities the plan requires. One that the checker never
+                # exercises is a missing verifier, not a pass.
+                "required_capabilities": {"type": "array", "items": {"type": "string"}},
             },
             "required": ["problem_type", "formal_inputs"],
         },
@@ -137,6 +141,26 @@ class DomainCheckVerifier(BaseVerifier):
                 request,
                 VerifierStatus.ERROR,
                 error=ErrorInfo(code="invalid_domain_check", message=str(error)),
+            )
+
+        # A plan may require a capability the checker never exercised — including
+        # one declared by the skill revision that was selected to run. That is a
+        # missing verifier, not a pass, so it is injected as an explicit failure.
+        # The direct `DomainPilotService` path has always done this; the governed
+        # path did not, which let a declared-but-unrun verifier pass silently.
+        declared = configuration.get("required_capabilities")
+        required = declared if isinstance(declared, list) else []
+        covered = {item.capability for item in checks}
+        missing = tuple(item for item in required if isinstance(item, str) and item not in covered)
+        if missing:
+            return self.result(
+                request,
+                VerifierStatus.UNVERIFIABLE,
+                code="domains.checker.unsupported",
+                error=ErrorInfo(
+                    code="missing_required_verifier",
+                    message=f"required verifier did not run: {sorted(missing)}",
+                ),
             )
 
         disposition = compose_disposition(tuple(item.disposition for item in checks))

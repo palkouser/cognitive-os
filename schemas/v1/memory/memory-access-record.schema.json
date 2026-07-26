@@ -12,7 +12,8 @@
       "enum": [
         "metadata",
         "text",
-        "vector"
+        "vector",
+        "vector_approximate"
       ],
       "title": "MemoryRetrievalMode",
       "type": "string"

@@ -1,0 +1,137 @@
+{
+  "$defs": {
+    "LearnedArtifactFormat": {
+      "description": "Loading an untrusted pickle is prohibited, so it has no enum member.",
+      "enum": [
+        "safetensors",
+        "joblib",
+        "none"
+      ],
+      "title": "LearnedArtifactFormat",
+      "type": "string"
+    },
+    "LearnedCapabilityClass": {
+      "enum": [
+        "discriminative",
+        "ranking",
+        "embedding",
+        "anomaly"
+      ],
+      "title": "LearnedCapabilityClass",
+      "type": "string"
+    },
+    "LearnedComponentTier": {
+      "description": "Trial order from the Sprint 21 plan, ranked by expected success.",
+      "enum": [
+        "non_parametric",
+        "incremental_parametric",
+        "adapter",
+        "research"
+      ],
+      "title": "LearnedComponentTier",
+      "type": "string"
+    },
+    "LearnedExplanationKind": {
+      "enum": [
+        "neighbours",
+        "feature_attribution",
+        "none"
+      ],
+      "title": "LearnedExplanationKind",
+      "type": "string"
+    },
+    "LearnedResourceClass": {
+      "enum": [
+        "cpu",
+        "cpu_preferred"
+      ],
+      "title": "LearnedResourceClass",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/learned/learned-component-descriptor.schema.json",
+  "additionalProperties": false,
+  "description": "Everything the core needs to know about a component it did not know about.\n\nThis is what makes a new capability additive: the descriptor is declared in\nconfiguration, and the enums are extended by the sprint that needs a new value.",
+  "properties": {
+    "artifact_format": {
+      "$ref": "#/$defs/LearnedArtifactFormat"
+    },
+    "capability_class": {
+      "$ref": "#/$defs/LearnedCapabilityClass"
+    },
+    "component_id": {
+      "minLength": 1,
+      "title": "Component Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "declared_limitations": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Declared Limitations",
+      "type": "array"
+    },
+    "deterministic_baseline": {
+      "minLength": 1,
+      "title": "Deterministic Baseline",
+      "type": "string"
+    },
+    "explanation_kind": {
+      "$ref": "#/$defs/LearnedExplanationKind"
+    },
+    "required_extra": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Required Extra"
+    },
+    "resource_class": {
+      "$ref": "#/$defs/LearnedResourceClass"
+    },
+    "supports_abstention": {
+      "title": "Supports Abstention",
+      "type": "boolean"
+    },
+    "surface": {
+      "minLength": 1,
+      "title": "Surface",
+      "type": "string"
+    },
+    "tier": {
+      "$ref": "#/$defs/LearnedComponentTier"
+    },
+    "version": {
+      "minLength": 1,
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "component_id",
+    "version",
+    "surface",
+    "tier",
+    "capability_class",
+    "resource_class",
+    "artifact_format",
+    "supports_abstention",
+    "explanation_kind",
+    "deterministic_baseline",
+    "declared_limitations"
+  ],
+  "title": "LearnedComponentDescriptor",
+  "type": "object"
+}
