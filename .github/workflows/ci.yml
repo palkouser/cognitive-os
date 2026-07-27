@@ -869,6 +869,19 @@ jobs:
           uv run python -c "from
           cognitive_os.infrastructure.learned.postgres.tables import
           LEARNED_EVIDENCE_TABLES; print(len(LEARNED_EVIDENCE_TABLES))"
+      # Credential-free by construction: the whole family runs against the in-memory
+      # reference and a stub Artifact Store, so the gate cannot acquire a reason to be
+      # skipped. Every case measures whether a policy held, never accuracy or uplift.
+      - name: Sixteen-case learned evidence CI gate
+        run: >-
+          uv run python scripts/benchmark_run.py
+          --manifest benchmarks/manifests/sprint21c1-learned-ci.yaml
+          --mode learned-replay --report-directory /tmp/sprint21c1-learned-ci
+      - name: Forty-eight-case learned evidence seed set
+        run: >-
+          uv run python scripts/benchmark_run.py
+          --manifest benchmarks/manifests/sprint21c1-learned-seed.yaml
+          --mode learned-replay --report-directory /tmp/sprint21c1-learned-seed
 
   optional-boundary:
     runs-on: ubuntu-latest
