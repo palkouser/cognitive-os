@@ -434,23 +434,11 @@ async def _fingerprint(admin: AsyncEngine) -> tuple[int, ...]:
 
 
 async def _seed_artifact(admin: AsyncEngine) -> object:
-    artifact_id = uuid4()
-    async with admin.begin() as connection:
-        await connection.execute(
-            text(
-                "INSERT INTO cognitive_os.artifact_blobs (content_hash, size_bytes, storage_key) "
-                "VALUES (:h, :size, :key) ON CONFLICT DO NOTHING"
-            ),
-            {"h": fx.ARTIFACT_HASH, "size": fx.ARTIFACT_SIZE, "key": "cc/cc/" + fx.ARTIFACT_HASH},
-        )
-        await connection.execute(
-            text(
-                "INSERT INTO cognitive_os.artifacts (artifact_id, content_hash, media_type) "
-                "VALUES (:a, :h, 'application/octet-stream')"
-            ),
-            {"a": artifact_id, "h": fx.ARTIFACT_HASH},
-        )
-    return artifact_id
+    """Real bytes through the real Artifact Store, so metadata and disk cannot diverge."""
+    root = os.environ.get("COGOS_ARTIFACT_ROOT")
+    if not root:
+        pytest.skip("COGOS_ARTIFACT_ROOT is not configured")
+    return await fx.seed_artifact(admin, root)
 
 
 def _access():  # type: ignore[no-untyped-def]

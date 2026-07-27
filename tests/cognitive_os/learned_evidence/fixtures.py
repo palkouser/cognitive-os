@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 from decimal import Decimal
+from hashlib import sha256
 from uuid import UUID, uuid4, uuid5
 
 from cognitive_os.domain.common import ArtifactRef
@@ -51,9 +52,13 @@ INERT = AlwaysAbstainingRanker()
 #: The negative control: it cannot abstain, so it can never legitimately activate.
 UNPROMOTABLE = ConstantClassifier()
 
+#: Real bytes with a real hash. An earlier version used a made-up digest, which let a
+#: test insert artifact metadata with nothing behind it — exactly the metadata/filesystem
+#: drift Sprint 21C1 exists to prevent, and which the restore verifier duly caught.
+ARTIFACT_BYTES = b"inert reference component: this artifact is data and is never loaded\n"
+ARTIFACT_HASH = sha256(ARTIFACT_BYTES).hexdigest()
+ARTIFACT_SIZE = len(ARTIFACT_BYTES)
 ARTIFACT_ID = uuid5(FIXTURE_NAMESPACE, "model-artifact")
-ARTIFACT_HASH = "c" * 64
-ARTIFACT_SIZE = 128
 
 
 def descriptor() -> LearnedComponentDescriptor:
@@ -70,7 +75,7 @@ def artifact_ref(**overrides: object) -> ArtifactRef:
         "media_type": "application/octet-stream",
         "content_hash": ARTIFACT_HASH,
         "size_bytes": ARTIFACT_SIZE,
-        "storage_key": "cc/cc/" + ARTIFACT_HASH,
+        "storage_key": f"{ARTIFACT_HASH[:2]}/{ARTIFACT_HASH[2:4]}/{ARTIFACT_HASH}",
         "created_at": FIXTURE_NOW,
     }
     fields.update(overrides)
@@ -251,6 +256,29 @@ def observation(**overrides: object) -> LearnedObservationRecord:
     }
     fields.update(overrides)
     return LearnedObservationRecord(**fields)  # type: ignore[arg-type]
+
+
+async def seed_artifact(engine: object, root: object) -> UUID:
+    """Store the fixture bytes through the real Artifact Store and return its ID.
+
+    Deliberately not a raw INSERT into `artifacts`. Metadata without bytes behind it is
+    precisely the drift Sprint 21C1 refuses to create, and the restore verifier walks
+    every artifact row, so a fabricated one breaks a release check several steps later.
+    """
+    from pathlib import Path
+
+    from cognitive_os.infrastructure.artifacts.filesystem import ContentAddressedFilesystem
+    from cognitive_os.infrastructure.artifacts.service import ArtifactService
+    from cognitive_os.infrastructure.postgres.artifact_repository import (
+        PostgresArtifactRepository,
+    )
+
+    service = ArtifactService(
+        ContentAddressedFilesystem(Path(str(root))),
+        PostgresArtifactRepository(engine),  # type: ignore[arg-type]
+    )
+    reference = await service.put_bytes(ARTIFACT_BYTES, media_type="application/octet-stream")
+    return reference.artifact_id
 
 
 class StubArtifactVerifier:
