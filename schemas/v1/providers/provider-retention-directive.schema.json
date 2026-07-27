@@ -1,0 +1,106 @@
+{
+  "$defs": {
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "ProviderOutputIntendedUse": {
+      "description": "What the caller intends to do with the output, declared *before* the call.\n\nDeclared up front because the rights question is not answerable in the abstract: the\nsame response may be freely usable as transient advice and prohibited as training\ninput, and a decision made after the bytes exist is a decision under pressure.",
+      "enum": [
+        "transient_advice",
+        "evaluation_evidence",
+        "corpus_candidate",
+        "skill_candidate",
+        "training_candidate"
+      ],
+      "title": "ProviderOutputIntendedUse",
+      "type": "string"
+    },
+    "ProviderOutputRetentionMode": {
+      "description": "What is allowed to survive the call. `NONE` is the default everywhere.",
+      "enum": [
+        "none",
+        "hash_only",
+        "normalized_content"
+      ],
+      "title": "ProviderOutputRetentionMode",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/providers/provider-retention-directive.schema.json",
+  "additionalProperties": false,
+  "description": "The caller's explicit instruction for one governed execution.\n\nThere is no default constructor value for `intended_use`: a governed call must say what\nit is for. `retention_mode` does default, to `NONE`, because the safe path should also\nbe the one a caller reaches by not thinking about it.",
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "expires_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expires At"
+    },
+    "intended_use": {
+      "$ref": "#/$defs/ProviderOutputIntendedUse"
+    },
+    "physical_deletion_required": {
+      "default": false,
+      "title": "Physical Deletion Required",
+      "type": "boolean"
+    },
+    "prompt_template_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Prompt Template Id"
+    },
+    "prompt_template_version": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Prompt Template Version"
+    },
+    "retention_mode": {
+      "$ref": "#/$defs/ProviderOutputRetentionMode",
+      "default": "none"
+    },
+    "sensitivity": {
+      "$ref": "#/$defs/MemorySensitivity",
+      "default": "internal"
+    }
+  },
+  "required": [
+    "intended_use"
+  ],
+  "title": "ProviderRetentionDirective",
+  "type": "object"
+}

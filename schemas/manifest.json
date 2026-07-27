@@ -1234,6 +1234,11 @@
       "sha256": "e822e387f2d8d31547e0b055302da477030ab7da76cd008eba825a1d4fecb3ea"
     },
     {
+      "file": "v1/config/provider-configuration.schema.json",
+      "model": "ProviderConfiguration",
+      "sha256": "a24524783da6958414d8876e1e004a0cdfbb15219e8babb2380dfc5c5a6159ba"
+    },
+    {
       "file": "v1/config/routing-configuration.schema.json",
       "model": "RoutingConfiguration",
       "sha256": "93422939432dd213ffe178cbb361adc878066a4ef9ae7b360b8a13e2658ed43b"
@@ -3857,6 +3862,21 @@
       "file": "v1/proposals/rollback-operation.schema.json",
       "model": "RollbackOperation",
       "sha256": "0f5e91eda52837eaf1077694b0a60ae3c35c332a400502714e81b673b9fd9bab"
+    },
+    {
+      "file": "v1/providers/governed-execution-receipt.schema.json",
+      "model": "GovernedExecutionReceipt",
+      "sha256": "44eff69cdfc70150fc54b396fc001fd8abda1ad1b9ed4666bb4a6a367a31def2"
+    },
+    {
+      "file": "v1/providers/provider-output-record.schema.json",
+      "model": "ProviderOutputRecord",
+      "sha256": "94cd05921fa72fd5cdfad9584e1eda89f979d1505f1c008f174f3747855bc33d"
+    },
+    {
+      "file": "v1/providers/provider-retention-directive.schema.json",
+      "model": "ProviderRetentionDirective",
+      "sha256": "75791999f6ea09fe9d9beba115492f66980ef81e81c96ba95051c75d13f81274"
     },
     {
       "file": "v1/routing/capability-cohort.schema.json",

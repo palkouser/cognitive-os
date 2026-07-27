@@ -128,7 +128,7 @@ class ProviderEventService:
         *,
         provider_id: str,
         request_artifact: ArtifactRef | None = None,
-    ) -> None:
+    ) -> UUID:
         record = ModelCallRequestRecord(
             model_call_id=request.model_call_id,
             task_run_id=request.task_run_id,
@@ -145,7 +145,7 @@ class ProviderEventService:
             ),
             requested_at=utc_now(),
         )
-        await self._append(request, ModelCallRequested(request=record))
+        return await self._append(request, ModelCallRequested(request=record))
 
     async def started(self, request: ModelProviderRequest) -> None:
         await self._append(
@@ -176,7 +176,7 @@ class ProviderEventService:
         *,
         started_at: datetime,
         response_artifact: ArtifactRef | None = None,
-    ) -> None:
+    ) -> UUID:
         now = utc_now()
         result = ModelCallResultRecord(
             model_call_id=request.model_call_id,
@@ -190,7 +190,7 @@ class ProviderEventService:
             latency_ms=response.latency_ms,
             warnings=response.warnings,
         )
-        await self._append(request, ModelCallCompleted(result=result))
+        return await self._append(request, ModelCallCompleted(result=result))
 
     async def failed(self, request: ModelProviderRequest, error: ProviderError) -> None:
         info = ErrorInfo(
@@ -222,7 +222,13 @@ class ProviderEventService:
             ),
         )
 
-    async def _append(self, request: ModelProviderRequest, payload: EventPayload) -> None:
+    async def _append(self, request: ModelProviderRequest, payload: EventPayload) -> UUID:
+        """Append one lifecycle envelope and return its ID.
+
+        The ID is returned rather than discarded because the provider-output governance
+        ledger's foreign key names the exact `model_call.completed` envelope. A caller that
+        had to go looking for it afterwards would be guessing which append it got.
+        """
         try:
             current = await self._event_store.get_stream_version(request.model_call_id)
             expected = current or 0
@@ -238,6 +244,7 @@ class ProviderEventService:
                 privacy_class=PrivacyClass.SENSITIVE,
             )
             await self._event_store.append((envelope,), expected_version=expected)
+            return envelope.event_id
         except ProviderPersistenceError:
             raise
         except Exception as error:

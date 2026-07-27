@@ -100,6 +100,10 @@ jobs:
         run: uv sync --locked --all-groups
       - name: Provider domain and adapter tests
         run: uv run pytest tests/cognitive_os/providers tests/cognitive_os/config -q
+      # Contracts, table metadata and enum parity only: the PostgreSQL cases in the same
+      # package carry `-m postgres` and are collected by the integration lane instead.
+      - name: Provider output governance contracts
+        run: uv run pytest tests/cognitive_os/provider_output -q -m "not postgres"
       - name: Shared provider contract tests
         run: uv run pytest tests/contract/providers -q
       - name: In-memory provider persistence tests
@@ -702,7 +706,8 @@ jobs:
       - name: PostgreSQL integration tests
         run: >-
           uv run pytest tests/integration/postgres tests/integration/controller
-          tests/cognitive_os/learned_evidence -m postgres -q
+          tests/cognitive_os/learned_evidence tests/cognitive_os/provider_output
+          -m postgres -q
       - name: Reset semantic smoke projections after repository-level tests
         run: |
           uv run alembic -c infra/postgres/alembic.ini downgrade 0002
@@ -842,6 +847,15 @@ jobs:
           uv run alembic -c infra/postgres/alembic.ini downgrade base
           uv run alembic -c infra/postgres/alembic.ini upgrade head
           uv run alembic -c infra/postgres/alembic.ini check
+      # Migration 0014 applied cleanly and its record functions produced `text` for every
+      # non-text column, so every runtime append failed. Applying a migration is not
+      # evidence that its functions work; this step calls one.
+      - name: Invoke the 0015 controlled function directly
+        env:
+          COGOS_DATABASE_URL: postgresql+asyncpg://cogos_app:app-ci@127.0.0.1:5432/cognitive_os_test
+        run: >-
+          uv run pytest tests/cognitive_os/provider_output
+          -m postgres -q
 
   learned-evidence-core:
     runs-on: ubuntu-latest
