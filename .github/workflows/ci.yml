@@ -696,8 +696,13 @@ jobs:
           --file infra/postgres/bootstrap/roles.sql
       - name: Upgrade database
         run: uv run alembic -c infra/postgres/alembic.ini upgrade head
+      # The learned evidence bindings live beside the contract suite they bind, so the
+      # path is named here rather than moved: `-m postgres` selects only the integration
+      # cases, and the credential-free lane skips the same files.
       - name: PostgreSQL integration tests
-        run: uv run pytest tests/integration/postgres tests/integration/controller -m postgres -q
+        run: >-
+          uv run pytest tests/integration/postgres tests/integration/controller
+          tests/cognitive_os/learned_evidence -m postgres -q
       - name: Reset semantic smoke projections after repository-level tests
         run: |
           uv run alembic -c infra/postgres/alembic.ini downgrade 0002
@@ -746,6 +751,17 @@ jobs:
         run: uv run python scripts/change_smoke_test.py
       - name: Credential-free Sprint 20 cross-domain smoke
         run: uv run python scripts/domain_smoke_test.py
+      # Placed before the backup step on purpose: the smoke writes the learned lifecycle
+      # fixture, so the backup manifest and the restore verification below actually have
+      # learned rows to compare rather than agreeing about an empty store.
+      - name: Credential-free Sprint 21C1 learned lifecycle smoke
+        run: uv run python scripts/learned.py smoke --confirm-isolated
+      - name: Learned evidence health
+        run: uv run python scripts/learned.py health
+      - name: Learned evidence replay verification
+        run: uv run python scripts/learned.py replay-verify
+      - name: Learned artifact lineage verification
+        run: uv run python scripts/learned.py artifact-verify
       - name: Four-case semantic benchmark gate with PostgreSQL service
         run: >-
           uv run python scripts/benchmark_run.py
@@ -826,6 +842,46 @@ jobs:
           uv run alembic -c infra/postgres/alembic.ini downgrade base
           uv run alembic -c infra/postgres/alembic.ini upgrade head
           uv run alembic -c infra/postgres/alembic.ini check
+
+  learned-evidence-core:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          version: "0.11.28"
+          enable-cache: true
+      # This lane imports the PostgreSQL learned modules, so it installs the declared
+      # extra. Sprint 21R shipped a job that did not, and the module could not even be
+      # collected; a missing extra must fail setup, never turn into a skip.
+      - name: Install Python and dependencies
+        run: >-
+          uv python install 3.12 && uv sync --locked --all-groups
+          --extra memory-postgres
+      - name: Learned evidence contracts and repository tests
+        run: uv run pytest tests/cognitive_os/learned_evidence -q
+      - name: Learned evidence schema drift
+        run: uv run python -m cognitive_os.schemas.export --check
+      - name: Learned table metadata imports without a live database
+        run: >-
+          uv run python -c "from
+          cognitive_os.infrastructure.learned.postgres.tables import
+          LEARNED_EVIDENCE_TABLES; print(len(LEARNED_EVIDENCE_TABLES))"
+      # Credential-free by construction: the whole family runs against the in-memory
+      # reference and a stub Artifact Store, so the gate cannot acquire a reason to be
+      # skipped. Every case measures whether a policy held, never accuracy or uplift.
+      - name: Sixteen-case learned evidence CI gate
+        run: >-
+          uv run python scripts/benchmark_run.py
+          --manifest benchmarks/manifests/sprint21c1-learned-ci.yaml
+          --mode learned-replay --report-directory /tmp/sprint21c1-learned-ci
+      - name: Forty-eight-case learned evidence seed set
+        run: >-
+          uv run python scripts/benchmark_run.py
+          --manifest benchmarks/manifests/sprint21c1-learned-seed.yaml
+          --mode learned-replay --report-directory /tmp/sprint21c1-learned-seed
 
   optional-boundary:
     runs-on: ubuntu-latest

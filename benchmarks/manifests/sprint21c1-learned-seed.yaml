@@ -1,0 +1,71 @@
+benchmark_id: sprint21c1-learned-seed
+version: "1"
+title: Sprint 21C1 durable learned evidence seed set
+description: >-
+  48 fixed-seed credential-free cases across lifecycle persistence, activation
+  refusal, rollback, governed outcome intake, dataset selection determinism, artifact
+  verification, replay integrity and standing governance guarantees. Every case
+  measures whether a policy held. None measures accuracy or uplift, and passing the
+  whole set says nothing about Gate L2.
+default_configuration: {mode: learned-replay}
+source: Cognitive OS Sprint 21C1 executable backlog
+license: Apache-2.0
+created_at: 2026-07-27T00:00:00Z
+case_matrix:
+  generic:
+    # lifecycle persistence: every reachable state, twice (fresh store each run)
+    - {id: learned-seed-001, scenario: lifecycle, target: registered, expected: passed}
+    - {id: learned-seed-002, scenario: lifecycle, target: shadow, expected: passed}
+    - {id: learned-seed-003, scenario: lifecycle, target: verified, expected: passed}
+    - {id: learned-seed-004, scenario: lifecycle, target: disabled, expected: passed}
+    - {id: learned-seed-005, scenario: lifecycle, target: retracted, expected: passed}
+    - {id: learned-seed-006, scenario: lifecycle, target: registered, expected: passed}
+    - {id: learned-seed-007, scenario: lifecycle, target: shadow, expected: passed}
+    - {id: learned-seed-008, scenario: lifecycle, target: verified, expected: passed}
+    - {id: learned-seed-009, scenario: lifecycle, target: disabled, expected: passed}
+    - {id: learned-seed-010, scenario: lifecycle, target: retracted, expected: passed}
+    # activation: the happy path and every named evidence defect
+    - {id: learned-seed-011, scenario: activation, defect: none, expected: passed}
+    - {id: learned-seed-012, scenario: activation, defect: unauthorised_actor, expected: rejected}
+    - {id: learned-seed-013, scenario: activation, defect: unrecorded_approval, expected: rejected}
+    - {id: learned-seed-014, scenario: activation, defect: unrecorded_assessment, expected: rejected}
+    - {id: learned-seed-015, scenario: activation, defect: wrong_assessment, expected: rejected}
+    - {id: learned-seed-016, scenario: activation, defect: wrong_revision, expected: rejected}
+    - {id: learned-seed-017, scenario: activation, defect: refused_approval, expected: rejected}
+    - {id: learned-seed-018, scenario: activation, defect: model_approver, expected: rejected}
+    - {id: learned-seed-019, scenario: activation, defect: unverified_artifact, expected: rejected}
+    # rollback restores exactly the activation the receipt chain names
+    - {id: learned-seed-020, scenario: rollback, expected: passed}
+    - {id: learned-seed-021, scenario: rollback, expected: passed}
+    - {id: learned-seed-022, scenario: rollback, expected: passed}
+    # governed outcome intake classification
+    - {id: learned-seed-023, scenario: observation, defect: none, expected: accepted}
+    - {id: learned-seed-024, scenario: observation, defect: real_run, expected: accepted}
+    - {id: learned-seed-025, scenario: observation, defect: unknown_attribution, expected: quarantined}
+    - {id: learned-seed-026, scenario: observation, defect: missing_verifier_evidence, expected: quarantined}
+    - {id: learned-seed-027, scenario: observation, defect: unknown_sensitivity, expected: quarantined}
+    - {id: learned-seed-028, scenario: observation, defect: missing_rights, expected: rejected}
+    - {id: learned-seed-029, scenario: observation, defect: fixture_as_real_run, expected: rejected}
+    # dataset selection determinism and the training exclusion
+    - {id: learned-seed-030, scenario: dataset, variation: identical, expected: passed}
+    - {id: learned-seed-031, scenario: dataset, variation: added_member, expected: passed}
+    - {id: learned-seed-032, scenario: dataset, variation: changed_split, expected: passed}
+    - {id: learned-seed-033, scenario: dataset, variation: real_run_training, expected: rejected}
+    # artifact verification before lineage
+    - {id: learned-seed-034, scenario: artifact, defect: none, expected: passed}
+    - {id: learned-seed-035, scenario: artifact, defect: missing_artifact, expected: rejected}
+    - {id: learned-seed-036, scenario: artifact, defect: corrupted_artifact, expected: rejected}
+    - {id: learned-seed-037, scenario: artifact, defect: hash_mismatch, expected: rejected}
+    - {id: learned-seed-038, scenario: artifact, defect: size_mismatch, expected: rejected}
+    # replay agrees, or fails closed and says what disagreed
+    - {id: learned-seed-039, scenario: replay, defect: none, expected: passed}
+    - {id: learned-seed-040, scenario: replay, defect: missing_revision, expected: rejected}
+    - {id: learned-seed-041, scenario: replay, defect: orphan_projection, expected: rejected}
+    - {id: learned-seed-042, scenario: replay, defect: broken_predecessor, expected: rejected}
+    - {id: learned-seed-043, scenario: replay, defect: hash_mismatch, expected: rejected}
+    # standing guarantees that must hold whatever else changed
+    - {id: learned-seed-044, scenario: governance, check: no_default_active_component, expected: passed}
+    - {id: learned-seed-045, scenario: governance, check: activation_requires_named_actor, expected: passed}
+    - {id: learned-seed-046, scenario: governance, check: disabled_cannot_reach_active_generically, expected: passed}
+    - {id: learned-seed-047, scenario: governance, check: artifact_store_exposes_no_loader, expected: passed}
+    - {id: learned-seed-048, scenario: governance, check: retracted_is_terminal, expected: passed}

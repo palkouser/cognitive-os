@@ -1,0 +1,64 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/learned/learned-access-record.schema.json",
+  "additionalProperties": false,
+  "description": "Read and export audit for sensitive learned datasets and artifacts.\n\nThe payload deliberately carries no example body: an audit trail that copies the\nsensitive content it audits has widened the exposure it exists to record.",
+  "properties": {
+    "access_id": {
+      "format": "uuid",
+      "title": "Access Id",
+      "type": "string"
+    },
+    "actor": {
+      "minLength": 1,
+      "title": "Actor",
+      "type": "string"
+    },
+    "authority": {
+      "minLength": 1,
+      "title": "Authority",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "decision": {
+      "minLength": 1,
+      "title": "Decision",
+      "type": "string"
+    },
+    "purpose": {
+      "minLength": 1,
+      "title": "Purpose",
+      "type": "string"
+    },
+    "recorded_at": {
+      "format": "date-time",
+      "title": "Recorded At",
+      "type": "string"
+    },
+    "target_id": {
+      "minLength": 1,
+      "title": "Target Id",
+      "type": "string"
+    },
+    "target_type": {
+      "minLength": 1,
+      "title": "Target Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "access_id",
+    "actor",
+    "authority",
+    "target_type",
+    "target_id",
+    "purpose",
+    "decision",
+    "recorded_at"
+  ],
+  "title": "LearnedAccessRecord",
+  "type": "object"
+}

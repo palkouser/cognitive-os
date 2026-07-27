@@ -1,0 +1,91 @@
+{
+  "$defs": {
+    "LearnedApprovalAuthorityKind": {
+      "description": "Who issued an approval.\n\n`MODEL` and `PROVIDER` exist so that a self-approval can be *named* and refused,\nrather than being unrepresentable and therefore unchecked.",
+      "enum": [
+        "human_operator",
+        "model",
+        "provider"
+      ],
+      "title": "LearnedApprovalAuthorityKind",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/learned/learned-activation-approval.schema.json",
+  "additionalProperties": false,
+  "description": "A human authorisation to activate one exact component revision.",
+  "properties": {
+    "approval_id": {
+      "format": "uuid",
+      "title": "Approval Id",
+      "type": "string"
+    },
+    "approved": {
+      "title": "Approved",
+      "type": "boolean"
+    },
+    "approved_at": {
+      "format": "date-time",
+      "title": "Approved At",
+      "type": "string"
+    },
+    "approver": {
+      "minLength": 1,
+      "title": "Approver",
+      "type": "string"
+    },
+    "approver_kind": {
+      "$ref": "#/$defs/LearnedApprovalAuthorityKind"
+    },
+    "artifact_lineage_id": {
+      "format": "uuid",
+      "title": "Artifact Lineage Id",
+      "type": "string"
+    },
+    "component_id": {
+      "minLength": 1,
+      "title": "Component Id",
+      "type": "string"
+    },
+    "component_revision": {
+      "minimum": 1,
+      "title": "Component Revision",
+      "type": "integer"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "promotion_assessment_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Promotion Assessment Hash",
+      "type": "string"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "surface": {
+      "minLength": 1,
+      "title": "Surface",
+      "type": "string"
+    }
+  },
+  "required": [
+    "approval_id",
+    "component_id",
+    "component_revision",
+    "surface",
+    "promotion_assessment_hash",
+    "artifact_lineage_id",
+    "approved",
+    "approver",
+    "approver_kind",
+    "reason",
+    "approved_at"
+  ],
+  "title": "LearnedActivationApproval",
+  "type": "object"
+}

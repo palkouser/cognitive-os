@@ -75,6 +75,10 @@ class ArtifactService:
             artifact.storage_key, artifact.content_hash, artifact.size_bytes
         )
 
+    async def describe(self, artifact_id: UUID) -> ArtifactRef | None:
+        """Metadata only, never bytes. `None` when the artifact is unknown."""
+        return await self._repository.get_artifact(artifact_id)
+
     async def exists(self, artifact_id: UUID) -> bool:
         artifact = await self._repository.get_artifact(artifact_id)
         return artifact is not None and self._filesystem.exists(artifact.storage_key)

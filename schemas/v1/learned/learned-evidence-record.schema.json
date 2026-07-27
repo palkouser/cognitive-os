@@ -1,0 +1,126 @@
+{
+  "$defs": {
+    "LearnedEvidenceKind": {
+      "description": "The allowlisted evidence contracts the store accepts.\n\nOne typed table rather than one table per contract; an unknown kind fails here and\nagain at a database CHECK constraint, so an unrecognised record cannot be stored and\nlater mistaken for evidence. See ADR 0086.",
+      "enum": [
+        "prediction",
+        "shadow_result",
+        "mandatory_path_invariance",
+        "forgetting_assessment",
+        "distribution_comparison",
+        "retrieval_capacity",
+        "baseline_ladder",
+        "out_of_distribution_assessment",
+        "promotion_assessment"
+      ],
+      "title": "LearnedEvidenceKind",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/learned/learned-evidence-record.schema.json",
+  "additionalProperties": false,
+  "description": "One typed, hash-bound evidence payload reference.\n\nThe payload itself stays in the Artifact Store when it is large; what is stored here\nis its identity, its kind and its hash, so evidence can be located and verified\nwithout the store growing without bound.",
+  "properties": {
+    "component_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Component Id"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "dataset_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Dataset Id"
+    },
+    "evidence_id": {
+      "format": "uuid",
+      "title": "Evidence Id",
+      "type": "string"
+    },
+    "evidence_kind": {
+      "$ref": "#/$defs/LearnedEvidenceKind"
+    },
+    "payload_artifact_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Payload Artifact Id"
+    },
+    "payload_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Payload Hash",
+      "type": "string"
+    },
+    "recorded_at": {
+      "format": "date-time",
+      "title": "Recorded At",
+      "type": "string"
+    },
+    "recorded_by": {
+      "minLength": 1,
+      "title": "Recorded By",
+      "type": "string"
+    },
+    "schema_version": {
+      "minLength": 1,
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_run_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Run Id"
+    },
+    "surface": {
+      "minLength": 1,
+      "title": "Surface",
+      "type": "string"
+    }
+  },
+  "required": [
+    "evidence_id",
+    "evidence_kind",
+    "surface",
+    "schema_version",
+    "payload_hash",
+    "recorded_by",
+    "recorded_at"
+  ],
+  "title": "LearnedEvidenceRecord",
+  "type": "object"
+}

@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "sprint": "21C1",
+  "item": "S21C1-002",
+  "assessed_at": "2026-07-26T18:00:52.960467+00:00",
+  "mode": "read-only diagnostic; nothing deleted, rewritten or repaired",
+  "database": "cognitive_os_dev",
+  "artifact_root": "/home/palkouser/projekt/cognitive-os-data/artifacts",
+  "artifact_rows": 5,
+  "blob_rows": 4,
+  "files_on_disk": 5,
+  "verified_ok": [],
+  "missing_content": [
+    {
+      "storage_key": "sha256/09/0967115f2813a3541eaef77de9d9d5773f1c0c04314b0bbfe4ff3b3b1c55b5d5",
+      "content_hash": "0967115f2813a3541eaef77de9d9d5773f1c0c04314b0bbfe4ff3b3b1c55b5d5",
+      "declared_size": 4
+    },
+    {
+      "storage_key": "sha256/4d/4d3571d05460908935cdae774bc99b8c6d210381e5bb13377f6e055e5cb9401d",
+      "content_hash": "4d3571d05460908935cdae774bc99b8c6d210381e5bb13377f6e055e5cb9401d",
+      "declared_size": 311
+    },
+    {
+      "storage_key": "sha256/58/581c9fa798b8d763386c9e9d25404096e4fbac97c14e08a3302609770f89a77e",
+      "content_hash": "581c9fa798b8d763386c9e9d25404096e4fbac97c14e08a3302609770f89a77e",
+      "declared_size": 528
+    },
+    {
+      "storage_key": "sha256/ec/ec654fac9599f62e79e2706abef23dfb7c07c08185aa86db4d8695f0b718d1b3",
+      "content_hash": "ec654fac9599f62e79e2706abef23dfb7c07c08185aa86db4d8695f0b718d1b3",
+      "declared_size": 5
+    }
+  ],
+  "hash_or_size_mismatch": [],
+  "orphan_files_without_metadata": [
+    "sha256/11/11c11db30f4b3f6c758722ba3e27eea08145b7d212f6a157451e364b48475280",
+    "sha256/1d/1dfe644148a8c7240f807fd2f80548d88351739da0ac93803629696dedcf99b3",
+    "sha256/23/2323f2a26b60c43935c75e9610e9c8e54575ecc797e7ecfa9e82effd8cbcb9af",
+    "sha256/35/35e7db5b21aa1c4c6c210a37312ba05afc8f1e0d42e64eb4db7b60bd14a196b4",
+    "sha256/8f/8f36efabf16f6614bad70f64dd9eb04db70c7aed31e8e32c03095fb9d8e41f9d"
+  ],
+  "remediation_proposal": {
+    "status": "proposed, NOT executed - requires operator approval",
+    "principle": "neither side is authoritative enough to delete; both are recoverable evidence",
+    "steps": [
+      "1. Export the current artifact_blobs rows and the orphan file inventory to an operator-owned archive before any change.",
+      "2. For each missing content hash, search operator backups and the COGOS_BACKUP_ROOT archives for a file whose sha256 equals the declared hash; restore it into the artifact root if found.",
+      "3. For each orphan file, compute its sha256 and check whether any artifact_blobs row declares that hash under a different storage_key; if so, the storage key drifted and only the key needs correcting.",
+      "4. Only for content that remains unrecoverable, record a tombstone row rather than deleting metadata, so lineage stays auditable.",
+      "5. Re-run the artifact verification and the backup script against the repaired pair."
+    ],
+    "explicitly_forbidden": [
+      "deleting artifact_blobs rows to make the verifier pass",
+      "deleting orphan files to make the inventory tidy",
+      "using this pair for any Sprint 21C1 release evidence"
+    ]
+  }
+}

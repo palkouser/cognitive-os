@@ -1,0 +1,35 @@
+benchmark_id: sprint21c1-learned-ci
+version: "1"
+title: Sprint 21C1 durable learned evidence CI gate
+description: >-
+  16 credential-free lifecycle, activation-refusal, rollback, intake, dataset,
+  artifact, replay and governance cases. Every case measures whether a policy held;
+  none measures accuracy, uplift, or anything Gate L2 would ask about.
+default_configuration: {mode: learned-replay}
+source: Cognitive OS Sprint 21C1 executable backlog
+license: Apache-2.0
+created_at: 2026-07-27T00:00:00Z
+case_matrix:
+  generic:
+    # lifecycle persistence
+    - {id: learned-ci-001, scenario: lifecycle, target: registered, expected: passed}
+    - {id: learned-ci-002, scenario: lifecycle, target: shadow, expected: passed}
+    - {id: learned-ci-003, scenario: lifecycle, target: verified, expected: passed}
+    # activation requires exact evidence
+    - {id: learned-ci-004, scenario: activation, defect: none, expected: passed}
+    - {id: learned-ci-005, scenario: activation, defect: unauthorised_actor, expected: rejected}
+    - {id: learned-ci-006, scenario: activation, defect: unrecorded_approval, expected: rejected}
+    - {id: learned-ci-007, scenario: activation, defect: wrong_assessment, expected: rejected}
+    - {id: learned-ci-008, scenario: activation, defect: refused_approval, expected: rejected}
+    # rollback restores exactly what was approved
+    - {id: learned-ci-009, scenario: rollback, expected: passed}
+    # governed outcome intake
+    - {id: learned-ci-010, scenario: observation, defect: none, expected: accepted}
+    - {id: learned-ci-011, scenario: observation, defect: unknown_attribution, expected: quarantined}
+    - {id: learned-ci-012, scenario: observation, defect: missing_rights, expected: rejected}
+    - {id: learned-ci-013, scenario: observation, defect: fixture_as_real_run, expected: rejected}
+    # dataset determinism and artifact verification
+    - {id: learned-ci-014, scenario: dataset, variation: identical, expected: passed}
+    - {id: learned-ci-015, scenario: artifact, defect: corrupted_artifact, expected: rejected}
+    # replay fails closed
+    - {id: learned-ci-016, scenario: replay, defect: none, expected: passed}

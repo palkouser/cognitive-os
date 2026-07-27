@@ -2,7 +2,7 @@
 
 Status: implementation sequencing plan
 
-Revision: 1
+Revision: 2
 
 Assessment date: 2026-07-26
 
@@ -12,6 +12,7 @@ Plan](development-plan.md)
 Companion documents:
 
 - [Sprint 21R technical backlog](../sprint-21/sprint-21r-technical-backlog.md)
+- [Sprint 21C1 technical backlog](../sprint-21/sprint-21c1-technical-backlog.md)
 - [Sprint 21 Gate L assessment](../sprint-21/gate-l-assessment.md)
 - [Sprint 21 substrate report](../sprint-21/report.md)
 
@@ -43,22 +44,21 @@ The state verified before this allocation was written is:
 
 | Item | Verified value |
 |---|---|
-| Active branch | `feature/sprint-21a-learning-substrate` |
-| Active branch head | `fe26644376a35d9f034f738edd67335a8e4b8114` |
-| `main` and `origin/main` | `c8557389f8bd1e763098125176f1321b2fc765a8` |
-| Branch divergence | zero behind, four commits ahead |
-| Active-branch PR | none |
-| Active-branch GitHub Actions runs | none |
-| Current migration head on the branch | `0013` |
-| Last protected implementation tag | `sprint-20-baseline` at `837405c90eeb4835de24e394fc9a14e1a94dbc8a` |
-| Latest assessed `main` CI | run `30142384838`, successful |
-| Local core plus contract suite | `1301 passed, 5 skipped` |
-| Local integration suite without provisioned PostgreSQL | `16 passed, 45 skipped` |
+| Current branch before planning edits | `main` |
+| `main` and `origin/main` | `e9001a9338c9507a60ca43f4e3e4bee7e28ef79b` |
+| Protected parent tag | `sprint-21-substrate-baseline`, annotated and peeled to the same commit |
+| Current migration head | `0013` |
+| Sprint 21R pull requests | `#210`, `#211`, `#212`, merged |
+| Latest assessed `main` CI | run `30209256649`, successful on the baseline commit |
+| Final full local suite | `1385 passed, 50 skipped` |
+| Final focused PostgreSQL suite | `42 passed` |
+| Next branch | `feature/sprint-21c1-learned-evidence` |
+| Next migration | `0014_create_learned_evidence_store.py` |
+| Authenticated GitHub CLI API | HTTP 401; reauthentication required before remote mutation |
 
-Planning documents are currently uncommitted working-tree changes. Sprint 21R must
-review and include only the approved planning artifacts in its coherent release
-commit. All state above must be revalidated at sprint start because repository and
-remote state may change.
+Sprint 21R is complete. Sprint 21C1 is the next execution sprint. All source, tag,
+credential, branch-protection, reviewer, and remote pull-request state must be
+revalidated at sprint start because repository and remote state may change.
 
 ## 3. Allocation principles
 
@@ -95,7 +95,9 @@ dependency or infrastructure authority only after a measured gap and an ADR.
 - Normal CI remains credential-free and replay-based.
 - Live OpenRouter, Claude Code, and Codex checks are operator-approved, bounded, and
   never required for an unrelated PR job.
-- GPU-dependent work is not scheduled until NVIDIA driver and VRAM preflight passes.
+- GPU-dependent work is scheduled only after a workload demonstrates need and the
+  complete accelerator software path passes a reproducible preflight. The current
+  host exposes an NVIDIA RTX 5070 Ti, but Sprint 21C1 remains CPU-only.
 - CPU-first retrieval, classical ML, graph projection, and local inference remain the
   default execution path.
 
@@ -119,6 +121,8 @@ dependency or infrastructure authority only after a measured gap and an ADR.
 Nominal total: 23 weeks for one primary delivery stream. Independent fixture,
 documentation, and benchmark work can shorten elapsed time, but the protected
 release order remains serial.
+
+Sprint 21R completed on 2026-07-26. Sprint 21C1 is now the active planned delivery.
 
 ## 5. Detailed sprint allocation
 
@@ -158,6 +162,13 @@ Detailed backlog:
 
 [Sprint 21R Technical Backlog](../sprint-21/sprint-21r-technical-backlog.md)
 
+Completion:
+
+- released as `sprint-21-substrate-baseline`;
+- peeled tag, `origin/main`, and final CI head resolve to
+  `e9001a9338c9507a60ca43f4e3e4bee7e28ef79b`;
+- Gate R0 passed and Gate L remained a no-go.
+
 ### Sprint 21C1 — Persistent Learned Evidence
 
 Objective:
@@ -191,6 +202,10 @@ Exit:
 - hash mismatch and unauthorized write fail closed;
 - migration round trip, backup, restore, and replay pass;
 - no learned component is activated merely because persistence exists.
+
+Detailed backlog:
+
+[Sprint 21C1 Technical Backlog](../sprint-21/sprint-21c1-technical-backlog.md)
 
 ### Sprint 21C2 — Governed Teacher and Provider Boundary
 

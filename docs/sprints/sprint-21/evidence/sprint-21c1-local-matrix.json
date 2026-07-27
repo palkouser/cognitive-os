@@ -1,0 +1,182 @@
+{
+  "all_expected": true,
+  "branch": "feature/sprint-21c1-learned-evidence",
+  "commands": [
+    {
+      "command": "scripts/check_repository_language.sh",
+      "exit": 0,
+      "last_line": "Repository language check passed.",
+      "seconds": 0
+    },
+    {
+      "command": "python -m cognitive_os.schemas.export --check",
+      "exit": 0,
+      "last_line": "Contract schema check passed.",
+      "seconds": 2
+    },
+    {
+      "command": "ruff check src tests scripts infra",
+      "exit": 0,
+      "last_line": "All checks passed!",
+      "seconds": 0
+    },
+    {
+      "command": "ruff format --check src tests scripts infra",
+      "exit": 0,
+      "last_line": "839 files already formatted",
+      "seconds": 0
+    },
+    {
+      "command": "mypy src/cognitive_os",
+      "exit": 0,
+      "last_line": "Success: no issues found in 538 source files",
+      "seconds": 0
+    },
+    {
+      "command": "bandit -r src/cognitive_os",
+      "exit": 0,
+      "last_line": "Files skipped (0):",
+      "seconds": 4
+    },
+    {
+      "command": "pytest tests/cognitive_os/learned_evidence -q (with database)",
+      "exit": 0,
+      "last_line": "201 passed in 5.15s",
+      "seconds": 5
+    },
+    {
+      "command": "pytest tests/contract -q",
+      "exit": 0,
+      "last_line": "65 passed in 2.32s",
+      "seconds": 3
+    },
+    {
+      "command": "pytest tests/integration/postgres tests/integration/controller tests/cognitive_os/learned_evidence -m postgres -q",
+      "exit": 0,
+      "last_line": "243 passed in 12.43s",
+      "seconds": 14
+    },
+    {
+      "command": "pytest -q (full, database present)",
+      "exit": 0,
+      "last_line": "1634 passed, 11 skipped in 112.52s (0:01:52)",
+      "seconds": 113
+    },
+    {
+      "command": "pytest -q (credential-free)",
+      "exit": 0,
+      "last_line": "1535 passed, 110 skipped in 100.56s (0:01:40)",
+      "seconds": 101
+    },
+    {
+      "command": "alembic downgrade base",
+      "exit": 0,
+      "last_line": "",
+      "seconds": 2
+    },
+    {
+      "command": "alembic upgrade head",
+      "exit": 0,
+      "last_line": "",
+      "seconds": 1
+    },
+    {
+      "command": "alembic downgrade 0013",
+      "exit": 0,
+      "last_line": "",
+      "seconds": 1
+    },
+    {
+      "command": "alembic upgrade head (re-upgrade)",
+      "exit": 0,
+      "last_line": "",
+      "seconds": 1
+    },
+    {
+      "command": "alembic heads",
+      "exit": 0,
+      "last_line": "0014 (head)",
+      "seconds": 0
+    },
+    {
+      "command": "alembic check (drift)",
+      "exit": 0,
+      "last_line": "No new upgrade operations detected.",
+      "seconds": 1
+    },
+    {
+      "command": "benchmark sprint21c1-learned-ci (16 cases)",
+      "exit": 0,
+      "last_line": "/tmp/claude-1000/-home-palkouser-projekt/1a43c8ff-4c4d-475e-a365-21b23770be22/scratchpad/m-ci/4aba3629-687c-4270-b2e1-59dd46c53d3e.json",
+      "seconds": 1
+    },
+    {
+      "command": "benchmark sprint21c1-learned-seed (48 cases)",
+      "exit": 0,
+      "last_line": "/tmp/claude-1000/-home-palkouser-projekt/1a43c8ff-4c4d-475e-a365-21b23770be22/scratchpad/m-seed/fb6684d5-f032-4b14-a12e-0c597e4e422f.json",
+      "seconds": 1
+    },
+    {
+      "command": "scripts/learned.py smoke --confirm-isolated",
+      "exit": 0,
+      "last_line": "{\"activation_receipt\":\"f25084e2-d22a-5a38-b739-2f4555059973\",\"active_after_restart\":\"reference.ranker.abstaining\",\"component_id\":\"reference.ranker.abstaining\",\"correlation_failures\":[],\"database\":\"cog",
+      "seconds": 1
+    },
+    {
+      "command": "scripts/learned.py health",
+      "exit": 0,
+      "last_line": "{\"active_component_count\":1,\"append_only_trigger_count\":8,\"component_count\":1,\"controlled_function_count\":10,\"correlation_checked\":false,\"correlation_warnings\":[],\"healthy\":true,\"integrity_failures\":[",
+      "seconds": 1
+    },
+    {
+      "command": "scripts/learned.py replay-verify",
+      "exit": 0,
+      "last_line": "{\"content_hash\":\"e6b5224cab11ac59cea9e494f6a345ec8cec3047abae4119d1ad5f95fb20f961\",\"failures\":[],\"hash_chain_verified\":true,\"projection_matches\":true,\"replayed_at\":\"2026-07-27T16:16:16.399461Z\",\"repla",
+      "seconds": 1
+    },
+    {
+      "command": "scripts/learned.py artifact-verify",
+      "exit": 0,
+      "last_line": "{\"failed\":[],\"healthy\":true,\"verified\":1}",
+      "seconds": 1
+    },
+    {
+      "command": "scripts/learned.py component-show (missing)",
+      "exit": 3,
+      "last_line": "{\"component_id\":\"absent\",\"found\":false}",
+      "seconds": 1
+    },
+    {
+      "command": "scripts/learned_restart_smoke.sh (migrate, restart, backup, restore)",
+      "exit": 0,
+      "last_line": "Learned restart and restore smoke passed.",
+      "seconds": 23
+    }
+  ],
+  "environment_class": {
+    "accelerator": "none; Sprint 21C1 is CPU-only by design",
+    "database": "PostgreSQL 18 with pgvector 0.8.2 in a rootless container",
+    "isolated_database": "cognitive_os_s21c1_test",
+    "kind": "local developer workstation",
+    "network_or_provider_calls": 0,
+    "platform": "Linux-7.0.0-28-generic-x86_64-with-glibc2.43",
+    "python": "3.12.13"
+  },
+  "git_commit": "5a84bea8e851a31ccc45bb3901e171649c4a174d",
+  "git_commit_note": "git_commit is HEAD at record time. The working tree additionally contained the uncommitted wave-6 benchmark adapter, fixtures, manifests and manifest tests, which the two benchmark rows exercised. Those land in the commit that carries this file.",
+  "recorded_at": "2026-07-27T16:17:05.901566+00:00",
+  "skips": [
+    {
+      "what": "110 tests skipped in the credential-free run",
+      "why": "PostgreSQL integration tests, including the 29 learned repository and 16 learned health cases, skip when COGOS_DATABASE_URL is unset. All of them run in the database-present row above, where 11 skip for unrelated opt-in reasons (live provider and MCP integration)."
+    },
+    {
+      "what": "11 tests skipped in the database-present run",
+      "why": "Opt-in live-provider and MCP integration cases, gated by their own environment flags. None is a learned evidence test."
+    }
+  ],
+  "sprint": "21C1",
+  "task": "S21C1-064",
+  "total_seconds": 278,
+  "unexpected_exit_codes": []
+}

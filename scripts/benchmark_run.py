@@ -114,6 +114,10 @@ async def _run(manifest_path: Path, output: Path, seed: int, mode: str) -> int:
         executor = weakness_benchmark_case
     elif mode == "proposal-replay":
         executor = proposal_benchmark_case
+    elif mode == "learned-replay":
+        from cognitive_os.benchmarks.learned_adapter import learned_benchmark_case
+
+        executor = learned_benchmark_case
     elif mode == "memory-replay":
         executor = memory_replay_case
     elif mode == "semantic-replay":
@@ -198,6 +202,7 @@ def main() -> int:
             "routing-replay",
             "weakness-replay",
             "proposal-replay",
+            "learned-replay",
         ),
         default="verifier_only",
     )

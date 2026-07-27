@@ -1,0 +1,53 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/learned/learned-replay-result.schema.json",
+  "additionalProperties": false,
+  "description": "What replaying append-only history produced, and whether it agreed.\n\nReplay mutates nothing, so this is usable as a health check against a live\ndatabase. Disagreement means the projection is wrong, by definition.",
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "failures": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Failures",
+      "type": "array"
+    },
+    "hash_chain_verified": {
+      "title": "Hash Chain Verified",
+      "type": "boolean"
+    },
+    "projection_matches": {
+      "title": "Projection Matches",
+      "type": "boolean"
+    },
+    "replayed_at": {
+      "format": "date-time",
+      "title": "Replayed At",
+      "type": "string"
+    },
+    "replayed_components": {
+      "minimum": 0,
+      "title": "Replayed Components",
+      "type": "integer"
+    },
+    "replayed_revisions": {
+      "minimum": 0,
+      "title": "Replayed Revisions",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "replayed_components",
+    "replayed_revisions",
+    "projection_matches",
+    "hash_chain_verified",
+    "replayed_at"
+  ],
+  "title": "LearnedReplayResult",
+  "type": "object"
+}

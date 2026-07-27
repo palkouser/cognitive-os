@@ -1,0 +1,128 @@
+{
+  "$defs": {
+    "LearnedArtifactRole": {
+      "description": "What a referenced artifact is, which decides how lineage may use it.",
+      "enum": [
+        "dataset",
+        "split_manifest",
+        "example_manifest",
+        "model",
+        "report",
+        "metric_bundle"
+      ],
+      "title": "LearnedArtifactRole",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/learned/learned-artifact-lineage.schema.json",
+  "additionalProperties": false,
+  "description": "A reference to bytes that already live in the Artifact Store.\n\nBytes are never copied here. `observed_content_hash` is what verification actually\nread; it must equal what was declared, or the lineage is not usable.",
+  "properties": {
+    "artifact_id": {
+      "format": "uuid",
+      "title": "Artifact Id",
+      "type": "string"
+    },
+    "component_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Component Id"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "dataset_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Dataset Id"
+    },
+    "declared_content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Declared Content Hash",
+      "type": "string"
+    },
+    "declared_format": {
+      "minLength": 1,
+      "title": "Declared Format",
+      "type": "string"
+    },
+    "lineage_id": {
+      "format": "uuid",
+      "title": "Lineage Id",
+      "type": "string"
+    },
+    "media_type": {
+      "minLength": 1,
+      "title": "Media Type",
+      "type": "string"
+    },
+    "observed_content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Observed Content Hash",
+      "type": "string"
+    },
+    "producing_evidence_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Producing Evidence Hash"
+    },
+    "role": {
+      "$ref": "#/$defs/LearnedArtifactRole"
+    },
+    "size_bytes": {
+      "minimum": 0,
+      "title": "Size Bytes",
+      "type": "integer"
+    },
+    "verified_at": {
+      "format": "date-time",
+      "title": "Verified At",
+      "type": "string"
+    },
+    "verified_by": {
+      "minLength": 1,
+      "title": "Verified By",
+      "type": "string"
+    }
+  },
+  "required": [
+    "lineage_id",
+    "artifact_id",
+    "role",
+    "media_type",
+    "declared_format",
+    "declared_content_hash",
+    "observed_content_hash",
+    "size_bytes",
+    "verified_by",
+    "verified_at"
+  ],
+  "title": "LearnedArtifactLineage",
+  "type": "object"
+}

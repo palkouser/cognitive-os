@@ -401,6 +401,21 @@
       "schema_version": 1
     },
     {
+      "event_type": "learned.access_recorded",
+      "file": "v1/events/learned.access_recorded.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "learned.activation_approval_recorded",
+      "file": "v1/events/learned.activation_approval_recorded.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "learned.artifact_lineage_linked",
+      "file": "v1/events/learned.artifact_lineage_linked.v1.schema.json",
+      "schema_version": 1
+    },
+    {
       "event_type": "learned.baseline_ladder_evaluated",
       "file": "v1/events/learned.baseline_ladder_evaluated.v1.schema.json",
       "schema_version": 1
@@ -431,6 +446,11 @@
       "schema_version": 1
     },
     {
+      "event_type": "learned.component_rolled_back",
+      "file": "v1/events/learned.component_rolled_back.v1.schema.json",
+      "schema_version": 1
+    },
+    {
       "event_type": "learned.dataset_created",
       "file": "v1/events/learned.dataset_created.v1.schema.json",
       "schema_version": 1
@@ -448,6 +468,11 @@
     {
       "event_type": "learned.invariance_verified",
       "file": "v1/events/learned.invariance_verified.v1.schema.json",
+      "schema_version": 1
+    },
+    {
+      "event_type": "learned.observation_recorded",
+      "file": "v1/events/learned.observation_recorded.v1.schema.json",
       "schema_version": 1
     },
     {
@@ -2539,6 +2564,21 @@
       "sha256": "83e012136617504c2efd2d7548dbbacccb122baffdfd9bdd20617d3fbe9926b2"
     },
     {
+      "file": "v1/events/learned.access_recorded.v1.schema.json",
+      "model": "LearnedAccessRecorded",
+      "sha256": "dccb5a5b88c2f2c2d9d5b955a9bf8def64e502ca25faa60cf487103ad6b4d283"
+    },
+    {
+      "file": "v1/events/learned.activation_approval_recorded.v1.schema.json",
+      "model": "LearnedActivationApprovalRecorded",
+      "sha256": "3f2ae2c61612976f7ecf3d6be32495e22e70fabeccbb43a12af04a7a40541a82"
+    },
+    {
+      "file": "v1/events/learned.artifact_lineage_linked.v1.schema.json",
+      "model": "LearnedArtifactLineageLinked",
+      "sha256": "70a643158da8e83efb27d23d970b5ea3da5e734c70553e0ecb6df41d57dc8f70"
+    },
+    {
       "file": "v1/events/learned.baseline_ladder_evaluated.v1.schema.json",
       "model": "LearnedBaselineLadderEvaluated",
       "sha256": "25469413e4bb788c5ecebf73bd6974e71433ba38fffe97af44a3c5365c286373"
@@ -2569,6 +2609,11 @@
       "sha256": "bb2541e8e0541428ce7eb4104806e1bf3a3f0ba8cd035c0266a82d3b6b214e31"
     },
     {
+      "file": "v1/events/learned.component_rolled_back.v1.schema.json",
+      "model": "LearnedComponentRolledBack",
+      "sha256": "f510203b50a4fbb58f814790a7aed0d7a3c7691ec95737971b214c42cd406cfd"
+    },
+    {
       "file": "v1/events/learned.dataset_created.v1.schema.json",
       "model": "LearnedDatasetCreated",
       "sha256": "1cca2b7f54655bf317d653e97d735e4202abc4fce38321e205b4afcc3cf124ae"
@@ -2587,6 +2632,11 @@
       "file": "v1/events/learned.invariance_verified.v1.schema.json",
       "model": "LearnedInvarianceVerified",
       "sha256": "f7be9c4984cf3157ef4c1786f968af912cf78522b8ed68bd5cbd09ff07253424"
+    },
+    {
+      "file": "v1/events/learned.observation_recorded.v1.schema.json",
+      "model": "LearnedObservationRecorded",
+      "sha256": "334197dc9fc5a04b3fc812a062e09af6b2f2efb32738606d52e7f761da7eacb7"
     },
     {
       "file": "v1/events/learned.out_of_distribution_assessed.v1.schema.json",
@@ -3384,9 +3434,34 @@
       "sha256": "d614cd3d9e04bb974f14f104862be48854d7df585b94804eaf47d4cf52f6876f"
     },
     {
+      "file": "v1/learned/governed-outcome-reference.schema.json",
+      "model": "GovernedOutcomeReference",
+      "sha256": "d71efa9f4488396b9f7c8e9c187717274192375310c10110ee461b7e8267ab3c"
+    },
+    {
       "file": "v1/learned/label-balance.schema.json",
       "model": "LabelBalance",
       "sha256": "dd71f20f41f76c9c841cbc19956724c42ee48820c3be4f65094e80d504ce2352"
+    },
+    {
+      "file": "v1/learned/learned-access-record.schema.json",
+      "model": "LearnedAccessRecord",
+      "sha256": "401d23df73c5294b1d8190a868d6783507cc6e7c93f4fb4848d81382df37d97e"
+    },
+    {
+      "file": "v1/learned/learned-activation-approval.schema.json",
+      "model": "LearnedActivationApproval",
+      "sha256": "6604276070c777d08d4cc5de4b9da37f661a00e94b27c212f6ac7516c24eaeaa"
+    },
+    {
+      "file": "v1/learned/learned-activation-receipt.schema.json",
+      "model": "LearnedActivationReceipt",
+      "sha256": "84d41ce6af7df860e6584a39aae9691e55b3f06454a59ea6e884a031dbe6180c"
+    },
+    {
+      "file": "v1/learned/learned-artifact-lineage.schema.json",
+      "model": "LearnedArtifactLineage",
+      "sha256": "fd5a881b1b6b4217fb5397c6f2fcdc8db1929fe384dcd476a214b378ee18d394"
     },
     {
       "file": "v1/learned/learned-component-descriptor.schema.json",
@@ -3394,9 +3469,34 @@
       "sha256": "dd46269a91bec55962766d708cd6e1830901774ccb44ee7f1503d74aad1f5398"
     },
     {
+      "file": "v1/learned/learned-component-revision-record.schema.json",
+      "model": "LearnedComponentRevisionRecord",
+      "sha256": "68aa4a5abdc242a2ff1f765d4b686cdc3cccb8bc37c956b19c1cfa00a8da3a04"
+    },
+    {
+      "file": "v1/learned/learned-dataset-record.schema.json",
+      "model": "LearnedDatasetRecord",
+      "sha256": "8c9f9555f5dc8bc5ae69d7eb7b0fc7a3027f3edfe406c311b755ec9ee7b55029"
+    },
+    {
       "file": "v1/learned/learned-dataset-snapshot.schema.json",
       "model": "LearnedDatasetSnapshot",
       "sha256": "6efee3041f710e50645d934cfb9338867ca8cdff227a616f491227bbd9f74919"
+    },
+    {
+      "file": "v1/learned/learned-evidence-record.schema.json",
+      "model": "LearnedEvidenceRecord",
+      "sha256": "857dde0f968a43e7da7a358c02488c86ca0f88c15bb5e6734cb0f6cc6b3777ef"
+    },
+    {
+      "file": "v1/learned/learned-example-manifest.schema.json",
+      "model": "LearnedExampleManifest",
+      "sha256": "b31e96200df7a651c6b009d52e8caaf0edbb62aa9edbc052266cdb1f1667cb5d"
+    },
+    {
+      "file": "v1/learned/learned-observation-record.schema.json",
+      "model": "LearnedObservationRecord",
+      "sha256": "4894e6447303c9beb5b0fa0cc08d4d230f28d001436a01ced48b8cbdf4b214af"
     },
     {
       "file": "v1/learned/learned-prediction.schema.json",
@@ -3404,14 +3504,29 @@
       "sha256": "9fdeea6fa6ea032e1d5da2a95a9e57a6cd35a1d954c3696f338d89e419b15e9d"
     },
     {
+      "file": "v1/learned/learned-projection-row.schema.json",
+      "model": "LearnedProjectionRow",
+      "sha256": "660c536c1c6841991c2bc54588a45256e56f7cb4669ac120bdefd74c1b3747c1"
+    },
+    {
       "file": "v1/learned/learned-promotion-assessment.schema.json",
       "model": "LearnedPromotionAssessment",
       "sha256": "20e4e5390894010407fdab22a2515dd8942fed1bde4826e4a80bcb3c07319c06"
     },
     {
+      "file": "v1/learned/learned-replay-result.schema.json",
+      "model": "LearnedReplayResult",
+      "sha256": "36c79b78e21ba2834d58c25ceb71c8f2c2ab1b53efce18984597907046fe1cd7"
+    },
+    {
       "file": "v1/learned/learned-shadow-result.schema.json",
       "model": "LearnedShadowResult",
       "sha256": "1cfcc4f1308b6b26f46162c5381ff89a6418815a52c7764d24082ec3f529907a"
+    },
+    {
+      "file": "v1/learned/learned-split-manifest.schema.json",
+      "model": "LearnedSplitManifest",
+      "sha256": "7025046784dca2454111eff928874570e479c7cf77967db78fdf708cce70375a"
     },
     {
       "file": "v1/learned/mandatory-path-invariance.schema.json",
