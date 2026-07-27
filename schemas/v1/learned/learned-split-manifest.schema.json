@@ -1,0 +1,63 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/learned/learned-split-manifest.schema.json",
+  "additionalProperties": false,
+  "description": "How a dataset's members are divided, and by what rule.\n\nThe rule is named rather than implied: a split whose policy is not recorded cannot be\nreproduced, and a comparison against an unreproducible split measures nothing.",
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "dataset_id": {
+      "format": "uuid",
+      "title": "Dataset Id",
+      "type": "string"
+    },
+    "policy": {
+      "minLength": 1,
+      "title": "Policy",
+      "type": "string"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "splits": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Splits",
+      "type": "array"
+    }
+  },
+  "required": [
+    "dataset_id",
+    "revision",
+    "policy",
+    "splits",
+    "created_at"
+  ],
+  "title": "LearnedSplitManifest",
+  "type": "object"
+}

@@ -26,13 +26,14 @@ from sqlalchemy.exc import DBAPIError, IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine
 
 from cognitive_os.domain.common import utc_now
-from cognitive_os.domain.learned import LearnedComponentState
+from cognitive_os.domain.learned import CorpusRole, LearnedComponentState
 from cognitive_os.domain.learned_evidence import (
     LearnedAccessRecord,
     LearnedActivationApproval,
     LearnedActivationReceipt,
     LearnedArtifactLineage,
     LearnedComponentRevisionRecord,
+    LearnedDatasetRecord,
     LearnedEvidenceKind,
     LearnedEvidenceRecord,
     LearnedObservationRecord,
@@ -52,6 +53,7 @@ from .tables import (
     learned_artifacts,
     learned_component_revisions,
     learned_components,
+    learned_datasets,
     learned_evidence_records,
     learned_observations,
 )
@@ -244,6 +246,34 @@ class PostgresLearnedEvidenceRepository:
         )
         rows = await self._page(statement, limit=limit, offset=offset)
         return tuple(LearnedEvidenceRecord.model_validate(row["payload_json"]) for row in rows)
+
+    # ------------------------------------------------------------------- datasets
+
+    async def record_dataset(self, dataset: LearnedDatasetRecord) -> LearnedDatasetRecord:
+        await self._append("record_learned_dataset", dataset.model_dump_json())
+        stored = await self.get_dataset(dataset.dataset_id)
+        return stored if stored is not None else dataset
+
+    async def get_dataset(self, dataset_id: UUID) -> LearnedDatasetRecord | None:
+        payload = await self._payload(learned_datasets, learned_datasets.c.dataset_id, dataset_id)
+        return LearnedDatasetRecord.model_validate(payload) if payload is not None else None
+
+    async def list_datasets(
+        self,
+        *,
+        surface: str | None = None,
+        corpus_role: CorpusRole | None = None,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> tuple[LearnedDatasetRecord, ...]:
+        statement = select(learned_datasets.c.payload_json)
+        if surface is not None:
+            statement = statement.where(learned_datasets.c.surface == surface)
+        if corpus_role is not None:
+            statement = statement.where(learned_datasets.c.corpus_role == corpus_role.value)
+        statement = statement.order_by(learned_datasets.c.created_at, learned_datasets.c.dataset_id)
+        rows = await self._page(statement, limit=limit, offset=offset)
+        return tuple(LearnedDatasetRecord.model_validate(row["payload_json"]) for row in rows)
 
     # -------------------------------------------------------------------- intake
 

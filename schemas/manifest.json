@@ -3434,6 +3434,11 @@
       "sha256": "d614cd3d9e04bb974f14f104862be48854d7df585b94804eaf47d4cf52f6876f"
     },
     {
+      "file": "v1/learned/governed-outcome-reference.schema.json",
+      "model": "GovernedOutcomeReference",
+      "sha256": "d71efa9f4488396b9f7c8e9c187717274192375310c10110ee461b7e8267ab3c"
+    },
+    {
       "file": "v1/learned/label-balance.schema.json",
       "model": "LabelBalance",
       "sha256": "dd71f20f41f76c9c841cbc19956724c42ee48820c3be4f65094e80d504ce2352"
@@ -3469,6 +3474,11 @@
       "sha256": "68aa4a5abdc242a2ff1f765d4b686cdc3cccb8bc37c956b19c1cfa00a8da3a04"
     },
     {
+      "file": "v1/learned/learned-dataset-record.schema.json",
+      "model": "LearnedDatasetRecord",
+      "sha256": "8c9f9555f5dc8bc5ae69d7eb7b0fc7a3027f3edfe406c311b755ec9ee7b55029"
+    },
+    {
       "file": "v1/learned/learned-dataset-snapshot.schema.json",
       "model": "LearnedDatasetSnapshot",
       "sha256": "6efee3041f710e50645d934cfb9338867ca8cdff227a616f491227bbd9f74919"
@@ -3477,6 +3487,11 @@
       "file": "v1/learned/learned-evidence-record.schema.json",
       "model": "LearnedEvidenceRecord",
       "sha256": "857dde0f968a43e7da7a358c02488c86ca0f88c15bb5e6734cb0f6cc6b3777ef"
+    },
+    {
+      "file": "v1/learned/learned-example-manifest.schema.json",
+      "model": "LearnedExampleManifest",
+      "sha256": "b31e96200df7a651c6b009d52e8caaf0edbb62aa9edbc052266cdb1f1667cb5d"
     },
     {
       "file": "v1/learned/learned-observation-record.schema.json",
@@ -3507,6 +3522,11 @@
       "file": "v1/learned/learned-shadow-result.schema.json",
       "model": "LearnedShadowResult",
       "sha256": "1cfcc4f1308b6b26f46162c5381ff89a6418815a52c7764d24082ec3f529907a"
+    },
+    {
+      "file": "v1/learned/learned-split-manifest.schema.json",
+      "model": "LearnedSplitManifest",
+      "sha256": "7025046784dca2454111eff928874570e479c7cf77967db78fdf708cce70375a"
     },
     {
       "file": "v1/learned/mandatory-path-invariance.schema.json",

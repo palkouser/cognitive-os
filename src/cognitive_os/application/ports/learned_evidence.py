@@ -15,13 +15,14 @@ from typing import Protocol
 from uuid import UUID
 
 from cognitive_os.domain.common import ArtifactRef
-from cognitive_os.domain.learned import LearnedComponentState
+from cognitive_os.domain.learned import CorpusRole, LearnedComponentState
 from cognitive_os.domain.learned_evidence import (
     LearnedAccessRecord,
     LearnedActivationApproval,
     LearnedActivationReceipt,
     LearnedArtifactLineage,
     LearnedComponentRevisionRecord,
+    LearnedDatasetRecord,
     LearnedEvidenceKind,
     LearnedEvidenceRecord,
     LearnedObservationRecord,
@@ -146,6 +147,21 @@ class LearnedEvidenceRepositoryPort(Protocol):
         limit: int = 100,
         offset: int = 0,
     ) -> tuple[LearnedEvidenceRecord, ...]: ...
+
+    async def record_dataset(self, dataset: LearnedDatasetRecord) -> LearnedDatasetRecord:
+        """Append one immutable dataset snapshot. Manifests stay in the Artifact Store."""
+        ...
+
+    async def get_dataset(self, dataset_id: UUID) -> LearnedDatasetRecord | None: ...
+
+    async def list_datasets(
+        self,
+        *,
+        surface: str | None = None,
+        corpus_role: CorpusRole | None = None,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> tuple[LearnedDatasetRecord, ...]: ...
 
     async def record_observation(
         self, observation: LearnedObservationRecord

@@ -1,0 +1,140 @@
+{
+  "$defs": {
+    "ObservationAttribution": {
+      "description": "How confidently an outcome can be attributed to the decision under study.",
+      "enum": [
+        "direct",
+        "contributing",
+        "unknown"
+      ],
+      "title": "ObservationAttribution",
+      "type": "string"
+    },
+    "ProvenanceClass": {
+      "description": "Where an observation came from, which decides what it may be used for.",
+      "enum": [
+        "self_play",
+        "real_governed_run",
+        "operator_supplied"
+      ],
+      "title": "ProvenanceClass",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/learned/governed-outcome-reference.schema.json",
+  "additionalProperties": false,
+  "description": "A pointer to an outcome that already happened, offered to the learning plane.\n\nCarries identity and hashes only. The outcome itself stays where it was produced, so\nintake reads and classifies without ever modifying — or copying — a source record.",
+  "properties": {
+    "attribution": {
+      "$ref": "#/$defs/ObservationAttribution"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "provenance_class": {
+      "$ref": "#/$defs/ProvenanceClass"
+    },
+    "sensitivity": {
+      "minLength": 1,
+      "title": "Sensitivity",
+      "type": "string"
+    },
+    "source_event_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Event Id"
+    },
+    "source_kind": {
+      "minLength": 1,
+      "title": "Source Kind",
+      "type": "string"
+    },
+    "source_payload_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Payload Hash",
+      "type": "string"
+    },
+    "source_run_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Run Id"
+    },
+    "source_task_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Task Id"
+    },
+    "surface": {
+      "minLength": 1,
+      "title": "Surface",
+      "type": "string"
+    },
+    "usage_rights_verified": {
+      "title": "Usage Rights Verified",
+      "type": "boolean"
+    },
+    "verifier_evidence_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Verifier Evidence Hash"
+    },
+    "verifier_status": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Verifier Status"
+    }
+  },
+  "required": [
+    "surface",
+    "source_kind",
+    "source_payload_hash",
+    "provenance_class",
+    "attribution",
+    "usage_rights_verified",
+    "sensitivity"
+  ],
+  "title": "GovernedOutcomeReference",
+  "type": "object"
+}

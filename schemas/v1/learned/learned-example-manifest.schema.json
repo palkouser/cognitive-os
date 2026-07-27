@@ -1,0 +1,66 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/learned/learned-example-manifest.schema.json",
+  "additionalProperties": false,
+  "description": "Which observations a dataset is made of, by identity and hash.\n\nStored in the Artifact Store, never in a table column. Two reasons, and the second is\nthe important one: manifests grow with the corpus, and a manifest that lived in JSONB\nwould tempt someone to put the example bodies in it. This carries references only, so\na sensitive outcome is never copied into the learning plane's own storage.",
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "corpus_role": {
+      "minLength": 1,
+      "title": "Corpus Role",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "dataset_id": {
+      "format": "uuid",
+      "title": "Dataset Id",
+      "type": "string"
+    },
+    "members": {
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Members",
+      "type": "array"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "surface": {
+      "minLength": 1,
+      "title": "Surface",
+      "type": "string"
+    }
+  },
+  "required": [
+    "dataset_id",
+    "revision",
+    "surface",
+    "corpus_role",
+    "members",
+    "created_at"
+  ],
+  "title": "LearnedExampleManifest",
+  "type": "object"
+}

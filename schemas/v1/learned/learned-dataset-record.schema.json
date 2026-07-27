@@ -1,0 +1,123 @@
+{
+  "$defs": {
+    "CorpusRole": {
+      "enum": [
+        "training",
+        "evaluation"
+      ],
+      "title": "CorpusRole",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/learned/learned-dataset-record.schema.json",
+  "additionalProperties": false,
+  "description": "A durable, immutable dataset snapshot: what was selected, and how it was split.\n\nMirrors `learned_datasets`. The training exclusion is enforced here *and* by a\ndatabase CHECK, because a training corpus contaminated with real governed runs would\nnot fail anything — it would only make every later distribution comparison mean less\nthan it claims.",
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "corpus_role": {
+      "$ref": "#/$defs/CorpusRole"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "dataset_id": {
+      "format": "uuid",
+      "title": "Dataset Id",
+      "type": "string"
+    },
+    "example_manifest_artifact_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Example Manifest Artifact Id"
+    },
+    "example_manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Example Manifest Hash",
+      "type": "string"
+    },
+    "feature_schema_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Feature Schema Hash",
+      "type": "string"
+    },
+    "observation_count": {
+      "minimum": 0,
+      "title": "Observation Count",
+      "type": "integer"
+    },
+    "provenance_counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Provenance Counts",
+      "type": "object"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "sensitivity": {
+      "minLength": 1,
+      "title": "Sensitivity",
+      "type": "string"
+    },
+    "split_manifest_artifact_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Split Manifest Artifact Id"
+    },
+    "split_manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Split Manifest Hash",
+      "type": "string"
+    },
+    "surface": {
+      "minLength": 1,
+      "title": "Surface",
+      "type": "string"
+    },
+    "usage_rights_verified": {
+      "title": "Usage Rights Verified",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "dataset_id",
+    "revision",
+    "surface",
+    "corpus_role",
+    "feature_schema_hash",
+    "split_manifest_hash",
+    "example_manifest_hash",
+    "provenance_counts",
+    "observation_count",
+    "usage_rights_verified",
+    "sensitivity",
+    "created_at"
+  ],
+  "title": "LearnedDatasetRecord",
+  "type": "object"
+}

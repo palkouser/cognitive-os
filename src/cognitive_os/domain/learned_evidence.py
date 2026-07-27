@@ -30,7 +30,7 @@ from pydantic import Field, field_validator, model_validator
 
 from .common import NonEmptyStr, Sha256Hex, UtcDatetime
 from .experience import HashedExperienceContract
-from .learned import LearnedComponentState, ProvenanceClass
+from .learned import CorpusRole, LearnedComponentState, ProvenanceClass
 
 
 class LearnedEvidenceKind(StrEnum):
@@ -262,6 +262,77 @@ class LearnedObservationRecord(HashedExperienceContract):
         )
 
 
+class ObservationDecisionCode(StrEnum):
+    """Why intake decided what it decided.
+
+    Stable codes rather than free text: an operator reviewing a quarantine queue needs to
+    group by cause, and a reason that is only prose can be reworded into a different
+    category without anyone noticing.
+    """
+
+    ACCEPTED = "accepted"
+    QUARANTINED_ATTRIBUTION_UNKNOWN = "quarantined_attribution_unknown"
+    QUARANTINED_VERIFIER_EVIDENCE_MISSING = "quarantined_verifier_evidence_missing"
+    QUARANTINED_SOURCE_INCOMPLETE = "quarantined_source_incomplete"
+    REJECTED_USAGE_RIGHTS_UNVERIFIED = "rejected_usage_rights_unverified"
+    REJECTED_PROVENANCE_NOT_CREDIBLE = "rejected_provenance_not_credible"
+
+    @property
+    def status(self) -> ObservationStatus:
+        if self is ObservationDecisionCode.ACCEPTED:
+            return ObservationStatus.ACCEPTED
+        if self.value.startswith("quarantined_"):
+            return ObservationStatus.QUARANTINED
+        return ObservationStatus.REJECTED
+
+
+class GovernedOutcomeReference(HashedExperienceContract):
+    """A pointer to an outcome that already happened, offered to the learning plane.
+
+    Carries identity and hashes only. The outcome itself stays where it was produced, so
+    intake reads and classifies without ever modifying — or copying — a source record.
+    """
+
+    surface: NonEmptyStr
+    source_kind: NonEmptyStr
+    source_task_id: UUID | None = None
+    source_run_id: UUID | None = None
+    source_event_id: UUID | None = None
+    source_payload_hash: Sha256Hex
+    provenance_class: ProvenanceClass
+    attribution: ObservationAttribution
+    usage_rights_verified: bool
+    sensitivity: NonEmptyStr
+    verifier_status: NonEmptyStr | None = None
+    verifier_evidence_hash: Sha256Hex | None = None
+
+    @model_validator(mode="after")
+    def something_identifies_the_source(self) -> GovernedOutcomeReference:
+        if (
+            self.source_task_id is None
+            and self.source_run_id is None
+            and self.source_event_id is None
+        ):
+            raise ValueError(
+                "a governed outcome must name the task, run or event it came from; an "
+                "observation nobody can trace back is not evidence"
+            )
+        return self
+
+    @property
+    def identity(self) -> str:
+        """The stable key two intakes of the same outcome must agree on."""
+        return "|".join(
+            (
+                self.surface,
+                self.source_kind,
+                str(self.source_task_id),
+                str(self.source_run_id),
+                str(self.source_event_id),
+            )
+        )
+
+
 class LearnedActivationApproval(HashedExperienceContract):
     """A human authorisation to activate one exact component revision."""
 
@@ -331,6 +402,127 @@ class LearnedActivationReceipt(HashedExperienceContract):
                 raise ValueError("a rollback cannot target itself")
         elif self.rollback_target_receipt_id is not None:
             raise ValueError("only a rollback may name a rollback target")
+        return self
+
+
+class LearnedExampleManifest(HashedExperienceContract):
+    """Which observations a dataset is made of, by identity and hash.
+
+    Stored in the Artifact Store, never in a table column. Two reasons, and the second is
+    the important one: manifests grow with the corpus, and a manifest that lived in JSONB
+    would tempt someone to put the example bodies in it. This carries references only, so
+    a sensitive outcome is never copied into the learning plane's own storage.
+    """
+
+    dataset_id: UUID
+    revision: int = Field(ge=1)
+    surface: NonEmptyStr
+    corpus_role: NonEmptyStr
+    #: `(observation_id, source_payload_hash)` in a stable order. The hash is what makes
+    #: the manifest verifiable: a selected observation that later changed is detectable.
+    members: tuple[tuple[NonEmptyStr, Sha256Hex], ...]
+    created_at: UtcDatetime
+
+    @field_validator("members")
+    @classmethod
+    def canonical_members(cls, value: tuple[tuple[str, str], ...]) -> tuple[tuple[str, str], ...]:
+        """Sorted and de-duplicated, so selection order cannot change the dataset hash."""
+        unique = dict(value)
+        if len(unique) != len(value):
+            raise ValueError("an observation cannot appear twice in one manifest")
+        return tuple(sorted(value))
+
+    @model_validator(mode="after")
+    def a_manifest_selects_something(self) -> LearnedExampleManifest:
+        if not self.members:
+            raise ValueError("a dataset manifest must select at least one observation")
+        return self
+
+
+class LearnedSplitManifest(HashedExperienceContract):
+    """How a dataset's members are divided, and by what rule.
+
+    The rule is named rather than implied: a split whose policy is not recorded cannot be
+    reproduced, and a comparison against an unreproducible split measures nothing.
+    """
+
+    dataset_id: UUID
+    revision: int = Field(ge=1)
+    policy: NonEmptyStr
+    #: `(split_name, (observation_id, ...))`, both levels in a stable order.
+    splits: tuple[tuple[NonEmptyStr, tuple[NonEmptyStr, ...]], ...]
+    created_at: UtcDatetime
+
+    @field_validator("splits")
+    @classmethod
+    def canonical_splits(
+        cls, value: tuple[tuple[str, tuple[str, ...]], ...]
+    ) -> tuple[tuple[str, tuple[str, ...]], ...]:
+        return tuple(sorted((name, tuple(sorted(members))) for name, members in value))
+
+    @model_validator(mode="after")
+    def a_member_belongs_to_one_split(self) -> LearnedSplitManifest:
+        seen: set[str] = set()
+        for _, members in self.splits:
+            overlap = seen & set(members)
+            if overlap:
+                raise ValueError(
+                    f"observations appear in more than one split: {sorted(overlap)}; "
+                    "an example evaluated on the split it trained on proves nothing"
+                )
+            seen |= set(members)
+        return self
+
+
+class LearnedDatasetRecord(HashedExperienceContract):
+    """A durable, immutable dataset snapshot: what was selected, and how it was split.
+
+    Mirrors `learned_datasets`. The training exclusion is enforced here *and* by a
+    database CHECK, because a training corpus contaminated with real governed runs would
+    not fail anything — it would only make every later distribution comparison mean less
+    than it claims.
+    """
+
+    dataset_id: UUID
+    revision: int = Field(ge=1)
+    surface: NonEmptyStr
+    corpus_role: CorpusRole
+    feature_schema_hash: Sha256Hex
+    split_manifest_artifact_id: UUID | None = None
+    split_manifest_hash: Sha256Hex
+    example_manifest_artifact_id: UUID | None = None
+    example_manifest_hash: Sha256Hex
+    #: `{provenance_class: count}`. A JSON object rather than a list of pairs, so the
+    #: database CHECK can test key existence directly.
+    provenance_counts: dict[str, int]
+    observation_count: int = Field(ge=0)
+    usage_rights_verified: bool
+    sensitivity: NonEmptyStr
+    created_at: UtcDatetime
+
+    @field_validator("provenance_counts")
+    @classmethod
+    def only_known_provenance(cls, value: dict[str, int]) -> dict[str, int]:
+        known = {item.value for item in ProvenanceClass}
+        unknown = sorted(set(value) - known)
+        if unknown:
+            raise ValueError(f"unknown provenance classes in a dataset: {unknown}")
+        if any(count < 0 for count in value.values()):
+            raise ValueError("a provenance count cannot be negative")
+        return dict(sorted(value.items()))
+
+    @model_validator(mode="after")
+    def training_excludes_real_runs(self) -> LearnedDatasetRecord:
+        if self.corpus_role is CorpusRole.TRAINING:
+            if ProvenanceClass.REAL_GOVERNED_RUN.value in self.provenance_counts:
+                raise ValueError(
+                    "a training dataset cannot contain real-governed-run evidence: the "
+                    "evaluation corpus must stay uncontaminated"
+                )
+            if not self.usage_rights_verified:
+                raise ValueError("a training dataset requires verified usage rights")
+        if sum(self.provenance_counts.values()) != self.observation_count:
+            raise ValueError("the provenance counts must add up to the observation count")
         return self
 
 
@@ -429,7 +621,11 @@ PUBLIC_LEARNED_EVIDENCE_CONTRACTS: tuple[type[HashedExperienceContract], ...] = 
     LearnedProjectionRow,
     LearnedArtifactLineage,
     LearnedEvidenceRecord,
+    GovernedOutcomeReference,
     LearnedObservationRecord,
+    LearnedExampleManifest,
+    LearnedSplitManifest,
+    LearnedDatasetRecord,
     LearnedActivationApproval,
     LearnedActivationReceipt,
     LearnedAccessRecord,

@@ -18,13 +18,15 @@ import asyncio
 from uuid import UUID
 
 from cognitive_os.domain.common import utc_now
-from cognitive_os.domain.learned import LearnedComponentState
+from cognitive_os.domain.experience import HashedExperienceContract
+from cognitive_os.domain.learned import CorpusRole, LearnedComponentState
 from cognitive_os.domain.learned_evidence import (
     LearnedAccessRecord,
     LearnedActivationApproval,
     LearnedActivationReceipt,
     LearnedArtifactLineage,
     LearnedComponentRevisionRecord,
+    LearnedDatasetRecord,
     LearnedEvidenceKind,
     LearnedEvidenceRecord,
     LearnedObservationRecord,
@@ -55,6 +57,7 @@ class InMemoryLearnedEvidenceRepository:
         self._approvals: dict[UUID, LearnedActivationApproval] = {}
         self._receipts: list[LearnedActivationReceipt] = []
         self._accesses: list[LearnedAccessRecord] = []
+        self._datasets: dict[UUID, LearnedDatasetRecord] = {}
         self._revision_keys: dict[str, LearnedComponentRevisionRecord] = {}
         self._observation_keys: dict[str, LearnedObservationRecord] = {}
 
@@ -300,6 +303,35 @@ class InMemoryLearnedEvidenceRepository:
         ]
         return _page(rows, limit=limit, offset=offset)
 
+    # ------------------------------------------------------------------- datasets
+
+    async def record_dataset(self, dataset: LearnedDatasetRecord) -> LearnedDatasetRecord:
+        async with self._lock:
+            known = self._datasets.get(dataset.dataset_id)
+            if known is not None:
+                return _same_or_conflict(known, dataset, "dataset snapshot")
+            self._datasets[dataset.dataset_id] = dataset
+            return dataset
+
+    async def get_dataset(self, dataset_id: UUID) -> LearnedDatasetRecord | None:
+        return self._datasets.get(dataset_id)
+
+    async def list_datasets(
+        self,
+        *,
+        surface: str | None = None,
+        corpus_role: CorpusRole | None = None,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> tuple[LearnedDatasetRecord, ...]:
+        rows = [
+            item
+            for item in sorted(self._datasets.values(), key=lambda row: str(row.dataset_id))
+            if (surface is None or item.surface == surface)
+            and (corpus_role is None or item.corpus_role is corpus_role)
+        ]
+        return _page(rows, limit=limit, offset=offset)
+
     # -------------------------------------------------------------------- intake
 
     async def record_observation(
@@ -488,6 +520,7 @@ class InMemoryLearnedEvidenceRepository:
             "approvals": len(self._approvals),
             "receipts": len(self._receipts),
             "accesses": len(self._accesses),
+            "datasets": len(self._datasets),
         }
 
 
@@ -498,14 +531,7 @@ def _page[T](rows: list[T] | tuple[T, ...], *, limit: int, offset: int) -> tuple
     return tuple(rows[offset : offset + capped])
 
 
-def _same_or_conflict[
-    T: LearnedAccessRecord
-    | LearnedActivationApproval
-    | LearnedActivationReceipt
-    | LearnedArtifactLineage
-    | LearnedEvidenceRecord
-    | LearnedObservationRecord
-](
+def _same_or_conflict[T: HashedExperienceContract](
     known: T,
     candidate: T,
     label: str,
