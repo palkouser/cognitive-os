@@ -1,0 +1,45 @@
+{
+  "captured_at": "2026-07-27T17:14:29.590993+00:00",
+  "claude_code": {
+    "installed": true,
+    "supported_flags": {
+      "--allowed-tools": true,
+      "--disallowed-tools": true,
+      "--json-schema": true,
+      "--max-turns": true,
+      "--mcp-config": true,
+      "--output-format": true,
+      "--permission-mode": true,
+      "--print": true,
+      "--safe-mode": true,
+      "--setting-sources": true,
+      "--strict-mcp-config": true
+    },
+    "version": "2.1.219"
+  },
+  "codex_cli": {
+    "installed": true,
+    "supported_flags": {
+      "--ask-for-approval": false,
+      "--cd": true,
+      "--ephemeral": true,
+      "--ignore-rules": true,
+      "--ignore-user-config": true,
+      "--json": true,
+      "--output-schema": true,
+      "--sandbox=read-only": true,
+      "--skip-git-repo-check": true,
+      "-c approval_policy": true,
+      "-c mcp_servers": true
+    },
+    "version": "0.144.6"
+  },
+  "item": "S21C2-004",
+  "mode": "allowlisted flag-name parse probing; no account, email, organization, subscription, or credential value captured",
+  "runtime": {
+    "openai_python_client": "1.109.1",
+    "python": "3.12.13"
+  },
+  "schema_version": 1,
+  "sprint": "21C2"
+}

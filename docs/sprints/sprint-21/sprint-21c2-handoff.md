@@ -10,14 +10,20 @@ whose whole value is that its contents can be trusted afterwards.
 | | |
 |---|---|
 | Parent tag | `sprint-21c1-evidence-baseline` |
+| Parent tag object | `fc7bd5cf384890d036cd70149b4408de650c8ec8` |
+| Parent peeled commit | `aed2c1b0af280d3f0924a37eeddc191cd320e936` |
+| Parent final `main` CI | `30285564507`, successful |
 | Parent migration head | `0014` |
 | Next available migration | `0015` — only if Sprint 21C2 needs a schema change |
 | Recommended branch | `feature/sprint-21c2-governed-providers` |
-| Gate C1 | conditional pass ([assessment](gate-c1-assessment.md)) |
+| Gate C1 | **pass**; the final release condition is closed by the verified tag annotation |
 | Gate L2 | **closed** |
 
 Start from the tag's peeled commit, not from a branch name, and verify the migration head
 is `0014` before writing anything.
+
+The implementation authority is the
+[Sprint 21C2 Technical Backlog](sprint-21c2-technical-backlog.md).
 
 ## 2. The APIs Sprint 21C2 inherits
 
@@ -96,8 +102,9 @@ than a general sense that one is needed.
    the same map.
 3. **Health re-validates at most 1000 payload rows per ledger.** Bulk artifact re-hashing is
    in `learned.py artifact-verify`, which is unbounded.
-4. **The release sequence is the open Gate C1 condition.** It closes with the merge,
-   post-merge CI and tag verification, whose handles live in the tag annotation.
+4. **The release sequence is closed.** The merge, successful post-merge CI, and remote
+   annotated tag verification closed the thirteenth Gate C1 condition. The immutable
+   handles remain in the tag annotation.
 
 ## 5. Boundaries Sprint 21C2 must not cross
 

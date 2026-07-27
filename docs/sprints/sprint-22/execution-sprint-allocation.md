@@ -2,9 +2,9 @@
 
 Status: implementation sequencing plan
 
-Revision: 2
+Revision: 3
 
-Assessment date: 2026-07-26
+Assessment date: 2026-07-27
 
 Source plan: [Cognitive OS Learning, Memory, and Scale Development
 Plan](development-plan.md)
@@ -13,6 +13,7 @@ Companion documents:
 
 - [Sprint 21R technical backlog](../sprint-21/sprint-21r-technical-backlog.md)
 - [Sprint 21C1 technical backlog](../sprint-21/sprint-21c1-technical-backlog.md)
+- [Sprint 21C2 technical backlog](../sprint-21/sprint-21c2-technical-backlog.md)
 - [Sprint 21 Gate L assessment](../sprint-21/gate-l-assessment.md)
 - [Sprint 21 substrate report](../sprint-21/report.md)
 
@@ -45,20 +46,22 @@ The state verified before this allocation was written is:
 | Item | Verified value |
 |---|---|
 | Current branch before planning edits | `main` |
-| `main` and `origin/main` | `e9001a9338c9507a60ca43f4e3e4bee7e28ef79b` |
-| Protected parent tag | `sprint-21-substrate-baseline`, annotated and peeled to the same commit |
-| Current migration head | `0013` |
-| Sprint 21R pull requests | `#210`, `#211`, `#212`, merged |
-| Latest assessed `main` CI | run `30209256649`, successful on the baseline commit |
-| Final full local suite | `1385 passed, 50 skipped` |
-| Final focused PostgreSQL suite | `42 passed` |
-| Next branch | `feature/sprint-21c1-learned-evidence` |
-| Next migration | `0014_create_learned_evidence_store.py` |
-| Authenticated GitHub CLI API | HTTP 401; reauthentication required before remote mutation |
+| `main`, `origin/main`, and peeled parent tag | `aed2c1b0af280d3f0924a37eeddc191cd320e936` |
+| Protected parent tag | `sprint-21c1-evidence-baseline`, tag object `fc7bd5cf384890d036cd70149b4408de650c8ec8` |
+| Current migration head | `0014` |
+| Sprint 21C1 pull request | `#213`, merged |
+| Latest assessed `main` CI | run `30285564507`, successful on the parent commit |
+| Gate C1 | pass, all 13 conditions closed in the final tag annotation |
+| Gate L2 | closed |
+| Next branch | `feature/sprint-21c2-governed-providers` |
+| Next migration | `0015_create_provider_output_governance.py` |
+| Reviewer limitation | one collaborator; required approval remains disabled without weakening the 27 checks or `enforce_admins` |
+| Artifact limitation | development metadata/filesystem pair remains inconsistent and awaits operator-approved remediation |
 
-Sprint 21R is complete. Sprint 21C1 is the next execution sprint. All source, tag,
-credential, branch-protection, reviewer, and remote pull-request state must be
-revalidated at sprint start because repository and remote state may change.
+Sprint 21R and Sprint 21C1 are complete. Sprint 21C2 is the next execution sprint.
+All source, tag, credential, branch-protection, reviewer, and remote pull-request
+state must be revalidated at sprint start because repository and remote state may
+change.
 
 ## 3. Allocation principles
 
@@ -122,7 +125,8 @@ Nominal total: 23 weeks for one primary delivery stream. Independent fixture,
 documentation, and benchmark work can shorten elapsed time, but the protected
 release order remains serial.
 
-Sprint 21R completed on 2026-07-26. Sprint 21C1 is now the active planned delivery.
+Sprint 21R and Sprint 21C1 completed on 2026-07-26. Sprint 21C2 is now the active
+planned delivery.
 
 ## 5. Detailed sprint allocation
 
@@ -233,6 +237,10 @@ Exit:
 - no credential, secret, raw authorization header, or uncontrolled tool authority is
   retained;
 - provider output cannot write active memory or approve itself.
+
+Detailed backlog:
+
+[Sprint 21C2 Technical Backlog](../sprint-21/sprint-21c2-technical-backlog.md)
 
 ### Sprint 21C3 — Reality-Grade Learning Inputs
 

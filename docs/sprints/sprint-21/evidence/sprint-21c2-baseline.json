@@ -1,0 +1,66 @@
+{
+  "implementation_branch": {
+    "carried_changes": [
+      "docs/sprints/sprint-21/sprint-21c2-handoff.md",
+      "docs/sprints/sprint-22/development-plan.md",
+      "docs/sprints/sprint-22/execution-sprint-allocation.md",
+      "docs/sprints/sprint-21/sprint-21c2-technical-backlog.md"
+    ],
+    "carried_changes_note": "Sprint 21C2 planning documents only; no source, schema or migration change was carried from the parent worktree.",
+    "created_from": "sprint-21c1-evidence-baseline^{commit}",
+    "name": "feature/sprint-21c2-governed-providers"
+  },
+  "items": [
+    "S21C2-000",
+    "S21C2-001",
+    "S21C2-002"
+  ],
+  "parent_baseline": {
+    "alembic_head": "0014",
+    "final_parent_ci_conclusion": "success",
+    "final_parent_ci_head_sha": "aed2c1b0af280d3f0924a37eeddc191cd320e936",
+    "final_parent_ci_run": 30285564507,
+    "local_main": "aed2c1b0af280d3f0924a37eeddc191cd320e936",
+    "peeled_commit": "aed2c1b0af280d3f0924a37eeddc191cd320e936",
+    "provider_and_learned_import_smoke": "passed",
+    "remote_main": "aed2c1b0af280d3f0924a37eeddc191cd320e936",
+    "remote_tag_object": "fc7bd5cf384890d036cd70149b4408de650c8ec8",
+    "repository_language_check": "passed",
+    "tag": "sprint-21c1-evidence-baseline",
+    "tag_object": "fc7bd5cf384890d036cd70149b4408de650c8ec8"
+  },
+  "recorded_at": "2026-07-27T17:16:23.964536+00:00",
+  "remote_protection": {
+    "allow_deletions": false,
+    "allow_force_pushes": false,
+    "collaborators": 1,
+    "decision": "Required approving reviews remain disabled; the limitation is retained and reported. No protection control was weakened.",
+    "enforce_admins": true,
+    "open_pull_requests": 0,
+    "repository": "palkouser/cognitive-os",
+    "required_conversation_resolution": true,
+    "required_pull_request_reviews": null,
+    "required_status_check_contexts": 27,
+    "second_eligible_reviewer": false,
+    "strict_status_checks": true
+  },
+  "schema_version": 1,
+  "sprint": "21C2",
+  "store_isolation": {
+    "c2_artifact_filesystem_verification": "passed (empty, consistent)",
+    "c2_artifact_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21c2",
+    "c2_backup_root": "/home/palkouser/projekt/cognitive-os-data/backups-s21c2",
+    "c2_database": "cognitive_os_s21c2_test",
+    "c2_database_migration_head": "0014",
+    "environment_file": ".env.s21c2.local (untracked, mode 0600)",
+    "inconsistent_development_pair": {
+      "artifact_root": "/home/palkouser/projekt/cognitive-os-data/artifacts",
+      "c1_inventory": "docs/sprints/sprint-21/evidence/sprint-21c1-artifact-mismatch-inventory.json",
+      "database": "cognitive_os_dev",
+      "files_on_disk": 5,
+      "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf",
+      "remediation": "proposed, not executed; requires separate operator authority",
+      "status": "untouched; read-only diagnostic reference only"
+    }
+  }
+}
