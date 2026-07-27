@@ -1,0 +1,336 @@
+"""Credential-free lifecycle smoke for the durable learned evidence store.
+
+Drives the inert reference component through its whole governed lifecycle against a real
+database — register, lineage, evidence, verify, approve, activate, disable, roll back —
+and then replays history and checks health. It is the one learned code path that writes,
+so it is fenced twice: it refuses any database whose name does not end in `_test`, and it
+uses the abstaining reference component, which cannot change a decision even if something
+did activate it.
+
+The component it activates is never a shipped default. Nothing here demonstrates that the
+system learns anything; it demonstrates that the record of an activation survives a
+process boundary and still verifies. See ADR 0086.
+"""
+
+from __future__ import annotations
+
+import os
+from datetime import UTC, datetime
+from pathlib import Path
+from typing import Any
+from uuid import UUID, uuid4, uuid5
+
+from sqlalchemy import text
+
+from cognitive_os.application.services.learned_evidence import LearnedEvidenceService
+from cognitive_os.domain.learned import (
+    LearnedArtifactFormat,
+    LearnedComponentState,
+    LearnedPromotionAssessment,
+)
+from cognitive_os.domain.learned_evidence import (
+    LearnedActivationApproval,
+    LearnedApprovalAuthorityKind,
+    LearnedArtifactRole,
+    LearnedEvidenceKind,
+    LearnedEvidenceRecord,
+)
+from cognitive_os.events.learned_event_service import LearnedEventService
+from cognitive_os.events.memory_store import MemoryEventStore
+from cognitive_os.infrastructure.artifacts.filesystem import ContentAddressedFilesystem
+from cognitive_os.infrastructure.artifacts.service import ArtifactService
+from cognitive_os.infrastructure.learned.artifacts import LearnedArtifactStore
+from cognitive_os.infrastructure.learned.postgres.health import PostgresLearnedHealthService
+from cognitive_os.infrastructure.learned.postgres.repository import (
+    PostgresLearnedEvidenceRepository,
+)
+from cognitive_os.infrastructure.learned.postgres.tables import LEARNED_EVIDENCE_TABLES
+from cognitive_os.infrastructure.learned.reference import AlwaysAbstainingRanker
+from cognitive_os.infrastructure.postgres.artifact_repository import PostgresArtifactRepository
+from cognitive_os.infrastructure.postgres.engine import create_postgres_engine
+
+SMOKE_NAMESPACE = UUID("7e2b5c98-40a1-5d37-8f6b-1c94ae30d752")
+SMOKE_OPERATOR = "learned-smoke-operator"
+SMOKE_ARTIFACT = b"learned smoke fixture: inert bytes, referenced and never loaded\n"
+SMOKE_TIME = datetime(2026, 7, 27, tzinfo=UTC)
+
+
+class SmokeRefused(RuntimeError):
+    """The smoke declined to run, which is a success for the guard that refused it."""
+
+
+def _require_isolated(url: str) -> None:
+    if "_test" not in url:
+        raise SmokeRefused(
+            "the learned smoke writes, so it only runs against an isolated *_test database"
+        )
+
+
+async def run_learned_smoke() -> dict[str, Any]:
+    """Run the full lifecycle and return a JSON-serialisable report."""
+    database_url = os.environ.get("COGOS_DATABASE_ADMIN_URL") or os.environ.get(
+        "COGOS_DATABASE_URL"
+    )
+    root = os.environ.get("COGOS_ARTIFACT_ROOT")
+    if not database_url:
+        raise SmokeRefused("COGOS_DATABASE_ADMIN_URL or COGOS_DATABASE_URL is required")
+    if not root:
+        raise SmokeRefused("COGOS_ARTIFACT_ROOT is required")
+    _require_isolated(database_url)
+
+    engine = create_postgres_engine(database_url, pool_size=2, max_overflow=1)
+    try:
+        async with engine.connect() as connection:
+            name = str(await connection.scalar(text("SELECT current_database()")))
+        if not name.endswith("_test"):
+            raise SmokeRefused(f"refusing to write learned smoke evidence to {name}")
+        async with engine.begin() as connection:
+            tables = ", ".join(f"cognitive_os.{table.name}" for table in LEARNED_EVIDENCE_TABLES)
+            await connection.execute(text(f"TRUNCATE {tables} RESTART IDENTITY CASCADE"))
+
+        repository = PostgresLearnedEvidenceRepository(engine)
+        artifacts = LearnedArtifactStore(
+            ArtifactService(
+                ContentAddressedFilesystem(Path(root)), PostgresArtifactRepository(engine)
+            )
+        )
+        return await _drive(engine, repository, artifacts, database=name)
+    finally:
+        await engine.dispose()
+
+
+async def _drive(
+    engine: Any,
+    repository: PostgresLearnedEvidenceRepository,
+    artifacts: LearnedArtifactStore,
+    *,
+    database: str,
+) -> dict[str, Any]:
+    component = AlwaysAbstainingRanker()
+    descriptor = component.descriptor
+    correlation = uuid5(SMOKE_NAMESPACE, "correlation")
+    service = LearnedEvidenceService(
+        repository,
+        artifacts=artifacts,
+        events=LearnedEventService(MemoryEventStore()),
+        activation_actors=frozenset({SMOKE_OPERATOR}),
+        clock=lambda: datetime.now(UTC),
+    )
+
+    await service.register_component(
+        descriptor,
+        actor=SMOKE_OPERATOR,
+        authority="operator",
+        reason="learned smoke: register the inert reference component",
+        idempotency_key="smoke-register",
+        correlation_id=correlation,
+    )
+
+    reference = await artifacts.store(SMOKE_ARTIFACT, media_type="application/octet-stream")
+    lineage = await artifacts.build_lineage(
+        lineage_id=uuid5(SMOKE_NAMESPACE, "lineage"),
+        artifact_id=reference.artifact_id,
+        role=LearnedArtifactRole.MODEL,
+        declared_format=LearnedArtifactFormat.NONE,
+        component_id=descriptor.component_id,
+        verified_by=SMOKE_OPERATOR,
+    )
+    await service.register_artifact_lineage(
+        lineage,
+        correlation_id=correlation,
+        actor=SMOKE_OPERATOR,
+        authority="operator",
+        reason="learned smoke: link the verified artifact",
+    )
+
+    for target in (LearnedComponentState.SHADOW, LearnedComponentState.VERIFIED):
+        await service.advance_component(
+            descriptor.component_id,
+            target,
+            descriptor=descriptor,
+            actor=SMOKE_OPERATOR,
+            authority="operator",
+            reason=f"learned smoke: advance to {target.value}",
+            idempotency_key=f"smoke-{target.value}",
+            correlation_id=correlation,
+        )
+
+    assessment = _assessment(descriptor)
+    await service.record_evidence(
+        LearnedEvidenceRecord(
+            evidence_id=uuid5(SMOKE_NAMESPACE, "promotion-evidence"),
+            evidence_kind=LearnedEvidenceKind.PROMOTION_ASSESSMENT,
+            component_id=descriptor.component_id,
+            surface=descriptor.surface,
+            schema_version="1",
+            payload_hash=assessment.content_hash,
+            recorded_by=SMOKE_OPERATOR,
+            recorded_at=SMOKE_TIME,
+        ),
+        correlation_id=correlation,
+        actor=SMOKE_OPERATOR,
+        authority="operator",
+        reason="learned smoke: record the promotion assessment",
+    )
+
+    approval = LearnedActivationApproval(
+        approval_id=uuid5(SMOKE_NAMESPACE, "approval"),
+        component_id=descriptor.component_id,
+        component_revision=3,
+        surface=descriptor.surface,
+        promotion_assessment_hash=assessment.content_hash,
+        artifact_lineage_id=lineage.lineage_id,
+        approved=True,
+        approver=SMOKE_OPERATOR,
+        approver_kind=LearnedApprovalAuthorityKind.HUMAN_OPERATOR,
+        reason="learned smoke: approval issued inside an isolated database",
+        approved_at=SMOKE_TIME,
+    )
+    await service.record_approval(approval, correlation_id=correlation)
+
+    activation = await service.activate(
+        descriptor=descriptor,
+        component_revision=3,
+        promotion_assessment=assessment,
+        approval=approval,
+        lineage=lineage,
+        actor=SMOKE_OPERATOR,
+        authority="operator",
+        reason="learned smoke: activate the inert fixture",
+        idempotency_key="smoke-activate",
+        correlation_id=correlation,
+    )
+    await service.disable(
+        descriptor.component_id,
+        descriptor=descriptor,
+        actor=SMOKE_OPERATOR,
+        authority="operator",
+        reason="learned smoke: withdraw the fixture",
+        idempotency_key="smoke-disable",
+        correlation_id=correlation,
+    )
+    rollback = await service.roll_back(
+        descriptor.component_id,
+        descriptor=descriptor,
+        actor=SMOKE_OPERATOR,
+        authority="operator",
+        reason="learned smoke: restore the prior activation",
+        idempotency_key="smoke-rollback",
+        correlation_id=correlation,
+    )
+
+    # A second service over the same database. If the first held authoritative state,
+    # this is where the system would quietly forget what was active.
+    restarted = LearnedEvidenceService(repository, artifacts=artifacts)
+    row = await restarted.get_component(descriptor.component_id)
+    active = await restarted.active_component_for(descriptor.surface)
+    replay = await repository.replay()
+    health = await PostgresLearnedHealthService(engine).check()
+
+    return {
+        "database": database,
+        "component_id": descriptor.component_id,
+        "final_state": row.current_state.value if row else None,
+        "final_revision": row.current_revision if row else None,
+        "active_after_restart": active.component_id if active else None,
+        "activation_receipt": str(activation.receipt_id),
+        "rollback_receipt": str(rollback.receipt_id),
+        "rollback_target": str(rollback.rollback_target_receipt_id),
+        "replay_matches": replay.projection_matches,
+        "replay_revisions": replay.replayed_revisions,
+        "health_failures": list(health.integrity_failures),
+        "correlation_failures": [item.subject for item in service.correlation_failures],
+        "healthy": bool(
+            row
+            and row.current_state is LearnedComponentState.ACTIVE
+            and replay.projection_matches
+            and replay.hash_chain_verified
+            and health.healthy
+            and rollback.rollback_target_receipt_id == activation.receipt_id
+        ),
+    }
+
+
+def _assessment(descriptor: Any) -> LearnedPromotionAssessment:
+    """A shape-only assessment. It makes no accuracy claim and proves no uplift."""
+    from decimal import Decimal
+
+    from cognitive_os.domain.learned import (
+        BaselineKind,
+        BaselineLadder,
+        BaselineRung,
+        ForgettingAssessment,
+        ForgettingVerdict,
+        LearnedPromotionDecision,
+        MandatoryPathInvariance,
+        OutOfDistributionAssessment,
+    )
+
+    digest = "f" * 64
+    return LearnedPromotionAssessment(
+        assessment_id=uuid5(SMOKE_NAMESPACE, "assessment"),
+        component_id=descriptor.component_id,
+        descriptor=descriptor,
+        baseline_metric=Decimal("0.60"),
+        candidate_metric=Decimal("0.70"),
+        minimum_material_improvement=Decimal("0.05"),
+        forgetting=ForgettingAssessment(
+            assessment_id=uuid5(SMOKE_NAMESPACE, "forgetting"),
+            session_id=uuid4(),
+            baseline_manifest_hash=digest,
+            per_domain_before=(("mathematics", 100),),
+            per_domain_after=(("mathematics", 100),),
+            regressed_cases=(),
+            retained_case_count=100,
+            tolerance=0,
+            verdict=ForgettingVerdict.RETAINED,
+            created_at=SMOKE_TIME,
+        ),
+        invariance=MandatoryPathInvariance(
+            record_id=uuid5(SMOKE_NAMESPACE, "invariance"),
+            component_id=descriptor.component_id,
+            case_set_hash=digest,
+            case_count=100,
+            decision_hash_absent=digest,
+            decision_hash_disabled=digest,
+            decision_hash_abstaining=digest,
+            created_at=SMOKE_TIME,
+        ),
+        baseline_ladder=BaselineLadder(
+            ladder_id=uuid5(SMOKE_NAMESPACE, "ladder"),
+            surface=descriptor.surface,
+            split="group-aware-by-case",
+            rungs=(
+                BaselineRung(
+                    name="majority",
+                    kind=BaselineKind.TRIVIAL,
+                    score=Decimal("0.40"),
+                    evaluated_count=100,
+                    abstained=0,
+                    confident_errors=60,
+                ),
+                BaselineRung(
+                    name=descriptor.deterministic_baseline,
+                    kind=BaselineKind.DETERMINISTIC,
+                    score=Decimal("0.60"),
+                    evaluated_count=100,
+                    abstained=0,
+                    confident_errors=40,
+                ),
+            ),
+            created_at=SMOKE_TIME,
+        ),
+        out_of_distribution=OutOfDistributionAssessment(
+            assessment_id=uuid5(SMOKE_NAMESPACE, "ood"),
+            component_id=descriptor.component_id,
+            held_out_groups=("mathematics",),
+            evaluated_count=100,
+            abstained=100,
+            confident_errors=0,
+            confidence_threshold=Decimal("0.5"),
+            created_at=SMOKE_TIME,
+        ),
+        decision=LearnedPromotionDecision.ELIGIBLE_FOR_OPERATOR_APPROVAL,
+        reason="learned smoke: shape only, no accuracy claim is made",
+        created_at=SMOKE_TIME,
+    )

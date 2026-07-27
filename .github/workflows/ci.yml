@@ -751,6 +751,17 @@ jobs:
         run: uv run python scripts/change_smoke_test.py
       - name: Credential-free Sprint 20 cross-domain smoke
         run: uv run python scripts/domain_smoke_test.py
+      # Placed before the backup step on purpose: the smoke writes the learned lifecycle
+      # fixture, so the backup manifest and the restore verification below actually have
+      # learned rows to compare rather than agreeing about an empty store.
+      - name: Credential-free Sprint 21C1 learned lifecycle smoke
+        run: uv run python scripts/learned.py smoke --confirm-isolated
+      - name: Learned evidence health
+        run: uv run python scripts/learned.py health
+      - name: Learned evidence replay verification
+        run: uv run python scripts/learned.py replay-verify
+      - name: Learned artifact lineage verification
+        run: uv run python scripts/learned.py artifact-verify
       - name: Four-case semantic benchmark gate with PostgreSQL service
         run: >-
           uv run python scripts/benchmark_run.py
