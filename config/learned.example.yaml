@@ -1,0 +1,35 @@
+# Durable learned evidence. The defaults below are the shipped state, and a deployment
+# that changes nothing runs exactly the deterministic system it ran before Sprint 21C1.
+#
+# Persistence is on because recording what happened is never the risk. Activation is off,
+# nobody is authorised to activate, and no component is active. See ADR 0086 and
+# docs/operations/learned-evidence.md.
+learned:
+  persistence_enabled: true
+
+  # Sprint 21C1 trained nothing, so there is nothing whose activation could be justified.
+  # Enabling this without also naming an authorised actor is refused by the loader.
+  activation_enabled: false
+  activation_actors: []
+
+  # Empty is the only state Sprint 21C1 supports. A name here without a stored activation
+  # receipt would be a claim the learned ledger cannot back.
+  active_components: []
+
+  # Operators permitted to review quarantined observations. Empty means review is
+  # unavailable, which is the correct default for a fresh deployment.
+  quarantine_reviewers: []
+
+  # An activation justified by a months-old hash check is justified by a memory.
+  artifact_verification_max_age_hours: 168
+
+  maximum_page_size: 500
+  maximum_quarantine_page_size: 200
+  audited_sensitivities: [internal, restricted]
+
+  # The three settings below are permanently false in Sprint 21C1. The loader refuses to
+  # start if any is true; they exist so the refusal is explicit rather than implied.
+  artifact_deserialisation_enabled: false
+  model_approval_enabled: false
+  model_review_enabled: false
+  real_run_training_enabled: false

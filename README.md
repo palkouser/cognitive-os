@@ -729,6 +729,17 @@ It never commits, pushes, or merges. See the
 [architecture](docs/architecture/python-coding-agent.md) and
 [operations guide](docs/operations/python-coding-agent.md).
 
+## Durable Learned Evidence (Sprint 21C1)
+
+Cognitive OS records learned lifecycle history, evidence, governed-outcome intake and
+activation decisions in an append-only store that survives the process that wrote it and
+can be replayed and verified afterwards. **No component is trained and no component is
+active in any shipped configuration**: persistence support for activation is not
+authorisation to activate, and Gate L2 — whether the system learns anything useful —
+remains closed. See
+[ADR 0086](docs/adr/0086-learned-evidence-persistence-authority.md) and the
+[operations guide](docs/operations/learned-evidence.md).
+
 ---
 
 ## 📬 Contact Us
