@@ -829,9 +829,12 @@ jobs:
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
         with:
           version: "0.11.28"
+      # `--all-groups` for the test runner: the controlled-function step below is a pytest
+      # invocation, and this lane is where it is worth the most — immediately after a full
+      # downgrade and re-upgrade, where a function that failed to survive the cycle shows up.
       - name: Install Python and dependencies
         run: >-
-          uv python install 3.12 && uv sync --locked --extra postgres
+          uv python install 3.12 && uv sync --locked --all-groups --extra postgres
           --extra memory-postgres
       - name: Bootstrap isolated roles
         env:
