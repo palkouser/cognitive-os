@@ -103,7 +103,15 @@ def superseding_record(previous: ProviderOutputRecord, **overrides: Any) -> Prov
 
 
 async def seed_artifact(engine: object, root: object) -> tuple[UUID, str]:
-    """Store the fixture bytes through the real Artifact Store and return ID and hash."""
+    """Store the fixture bytes through the real Artifact Store and return ID and hash.
+
+    The bytes go to `COGOS_ARTIFACT_ROOT` when it is configured, *not* to the caller's
+    temporary directory. Writing metadata into the shared database while the bytes live in
+    a directory pytest deletes produces precisely the metadata-without-bytes drift Sprint
+    21C1 diagnosed — and the restore verifier walks every artifact row, so it surfaces
+    several release steps later as a failed backup check rather than as a failed test.
+    """
+    import os
     from pathlib import Path
 
     from cognitive_os.infrastructure.artifacts.filesystem import ContentAddressedFilesystem
@@ -112,8 +120,10 @@ async def seed_artifact(engine: object, root: object) -> tuple[UUID, str]:
         PostgresArtifactRepository,
     )
 
+    configured = os.environ.get("COGOS_ARTIFACT_ROOT")
+    destination = Path(configured) if configured else Path(str(root))
     service = ArtifactService(
-        ContentAddressedFilesystem(Path(str(root))),
+        ContentAddressedFilesystem(destination),
         PostgresArtifactRepository(engine),  # type: ignore[arg-type]
     )
     reference = await service.put_bytes(ARTIFACT_BYTES, media_type="application/json")

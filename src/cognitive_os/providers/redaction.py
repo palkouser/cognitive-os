@@ -26,7 +26,7 @@ from cognitive_os.domain.provider_output import SecretScanStatus
 
 #: Bumped whenever a rule is added, removed or changed. Stored beside every scan result, so
 #: a record scanned by an older rule set is identifiable rather than assumed current.
-SECRET_RULESET_VERSION = "2026.07-c2"  # pragma: allowlist secret
+REDACTION_RULESET_VERSION = "2026.07-c2"
 
 REDACTED = "<redacted>"
 
@@ -127,7 +127,7 @@ class SecretScanResult:
         status: SecretScanStatus,
         matched_rules: Mapping[str, int],
         scanned_fields: tuple[str, ...],
-        ruleset_version: str = SECRET_RULESET_VERSION,
+        ruleset_version: str = REDACTION_RULESET_VERSION,
     ) -> None:
         self.status = status
         self.matched_rules = dict(sorted(matched_rules.items()))
@@ -161,7 +161,7 @@ def scan_for_secrets(
     value: object,
     *,
     extra_secrets: tuple[str, ...] | None = None,
-    ruleset_version: str = SECRET_RULESET_VERSION,
+    ruleset_version: str = REDACTION_RULESET_VERSION,
 ) -> SecretScanResult:
     """Walk a JSON-shaped value and report whether anything credential-shaped is in it.
 

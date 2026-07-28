@@ -100,10 +100,11 @@ jobs:
         run: uv sync --locked --all-groups
       - name: Provider domain and adapter tests
         run: uv run pytest tests/cognitive_os/providers tests/cognitive_os/config -q
-      # Contracts, table metadata and enum parity only: the PostgreSQL cases in the same
-      # package carry `-m postgres` and are collected by the integration lane instead.
+      # Contracts only. This lane deliberately installs no PostgreSQL extra, so the table
+      # metadata tests — which import SQLAlchemy — belong to `learned-evidence-core`, which
+      # declares it. A missing dependency must move the test, never become a skip.
       - name: Provider output governance contracts
-        run: uv run pytest tests/cognitive_os/provider_output -q -m "not postgres"
+        run: uv run pytest tests/cognitive_os/provider_output/test_contracts.py -q
       - name: Shared provider contract tests
         run: uv run pytest tests/contract/providers -q
       - name: In-memory provider persistence tests
@@ -883,6 +884,10 @@ jobs:
           uv run python -c "from
           cognitive_os.infrastructure.learned.postgres.tables import
           LEARNED_EVIDENCE_TABLES; print(len(LEARNED_EVIDENCE_TABLES))"
+      # Table metadata and enum-parity checks for the 0015 ledger. Here rather than in
+      # `provider-offline` because they import SQLAlchemy and this lane declares the extra.
+      - name: Provider output table metadata and enum parity
+        run: uv run pytest tests/cognitive_os/provider_output/test_tables.py -q
       # Credential-free by construction: the whole family runs against the in-memory
       # reference and a stub Artifact Store, so the gate cannot acquire a reason to be
       # skipped. Every case measures whether a policy held, never accuracy or uplift.
