@@ -1,0 +1,62 @@
+benchmark_id: sprint21c2-provider-ci
+version: "1"
+title: Sprint 21C2 governed provider boundary CI gate
+description: >-
+  35 credential-free, network-free, binary-free cases across OpenRouter routing and
+  response mapping, the two CLI parsers, the independent advisory verifier, the governed
+  teacher, selection eligibility, learned intake classification, the mutation guard,
+  runner cleanup and secret scanning. Every case measures whether a policy held; none
+  measures whether a teacher is useful, and passing the whole set says nothing about
+  Gate L2.
+default_configuration: {mode: provider-replay}
+source: Cognitive OS Sprint 21C2 executable backlog
+license: Apache-2.0
+created_at: 2026-07-28T00:00:00Z
+case_matrix:
+  generic:
+    # OpenRouter routing: free-only policy, refusals, and an unusable catalog
+    - {id: provider-ci-001, scenario: openrouter_route, catalog: free, route: default, expected: routed}
+    - {id: provider-ci-002, scenario: openrouter_route, catalog: paid_only, route: default, expected: unavailable}
+    - {id: provider-ci-003, scenario: openrouter_route, catalog: free, route: paid, expected: budget_refused}
+    - {id: provider-ci-004, scenario: openrouter_route, catalog: malformed, expected: invalid_catalog}
+    # OpenRouter response mapping
+    - {id: provider-ci-005, scenario: openrouter_response, defect: none, expected: mapped}
+    - {id: provider-ci-006, scenario: openrouter_response, defect: no_choices, expected: invalid}
+    - {id: provider-ci-007, scenario: openrouter_response, defect: length_truncated, expected: truncated}
+    # Claude Code envelope: nothing unexpected is coerced into an answer
+    - {id: provider-ci-008, scenario: claude_envelope, defect: none, expected: mapped}
+    - {id: provider-ci-009, scenario: claude_envelope, defect: error_result, expected: invalid}
+    - {id: provider-ci-010, scenario: claude_envelope, defect: not_json, expected: invalid}
+    - {id: provider-ci-011, scenario: claude_envelope, defect: schema_mismatch, expected: invalid}
+    # Codex JSONL: an unrecognised event fails closed rather than being skipped
+    - {id: provider-ci-012, scenario: codex_events, defect: none, expected: mapped}
+    - {id: provider-ci-013, scenario: codex_events, defect: unknown_event, expected: invalid}
+    - {id: provider-ci-014, scenario: codex_events, defect: malformed_line, expected: invalid}
+    - {id: provider-ci-015, scenario: codex_events, defect: no_final_message, expected: invalid}
+    # The independent verifier: schema validity is not correctness
+    - {id: provider-ci-016, scenario: advisory_verify, answer: correct, expected: correct}
+    - {id: provider-ci-017, scenario: advisory_verify, answer: empty, expected: rejected}
+    - {id: provider-ci-018, scenario: advisory_verify, answer: wrong_defect, expected: rejected}
+    - {id: provider-ci-019, scenario: advisory_verify, answer: too_many, expected: rejected}
+    # Governed teacher: retention is the directive intersected with the evidence
+    - {id: provider-ci-020, scenario: governance, variant: default, retention: none, expected: none}
+    - {id: provider-ci-021, scenario: governance, variant: default, retention: hash_only, expected: hash_only}
+    - {id: provider-ci-022, scenario: governance, variant: default, retention: normalized_content, expected: normalized_content}
+    - {id: provider-ci-023, scenario: governance, variant: default, retention: normalized_content, rights: unknown, expected: hash_only}
+    - {id: provider-ci-024, scenario: governance, variant: scan_failed, retention: normalized_content, expected: hash_only}
+    - {id: provider-ci-025, scenario: governance, variant: self_verification, retention: hash_only, expected: refused}
+    # Retry and idempotency are two different questions
+    - {id: provider-ci-026, scenario: governance, variant: reuse_same_execution, retention: hash_only, expected: idempotent}
+    - {id: provider-ci-027, scenario: governance, variant: reuse_different_execution, retention: hash_only, expected: conflict}
+    # Selection eligibility, which is not the same question as valid recording
+    - {id: provider-ci-028, scenario: selection, defect: none, expected: selectable}
+    - {id: provider-ci-029, scenario: selection, defect: expired, expected: refused}
+    # A provider answer is never a real governed run
+    - {id: provider-ci-030, scenario: intake, adapter: openrouter, expected: advisory}
+    # Content-based mutation guard and runner cleanup
+    - {id: provider-ci-031, scenario: mutation, change: none, expected: clean}
+    - {id: provider-ci-032, scenario: mutation, change: modified, expected: detected}
+    - {id: provider-ci-033, scenario: cleanup, expected: clean}
+    # Secret scanning runs on the unredacted value
+    - {id: provider-ci-034, scenario: scan, payload: clean, expected: passed}
+    - {id: provider-ci-035, scenario: scan, payload: api_key, expected: failed}

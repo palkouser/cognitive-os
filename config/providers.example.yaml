@@ -56,9 +56,9 @@ providers:
     kind: cli_agent
     enabled: false
     executable: claude
-    # Never the Cognitive OS worktree for live execution: point this at an isolated
-    # synthetic fixture directory.
-    working_directory: /home/palkouser/projekt/cognitive-os
+    # Never the Cognitive OS worktree for live execution: this is a placeholder for an
+    # isolated copy of tests/fixtures/providers/advisory, made outside the repository.
+    working_directory: /var/tmp/cogos-advisory-fixture/workspace
     output_format: json
     permission_mode: plan
     safe_mode: true
@@ -83,7 +83,8 @@ providers:
     kind: cli_agent
     enabled: false
     executable: codex
-    working_directory: /home/palkouser/projekt/cognitive-os
+    # Placeholder, as above: an isolated fixture copy, never the worktree.
+    working_directory: /var/tmp/cogos-advisory-fixture/workspace
     sandbox_mode: read-only
     # codex exec 0.144.6 has no --ask-for-approval flag; the adapter emits
     # -c approval_policy="never", which is the same policy through the configuration path.

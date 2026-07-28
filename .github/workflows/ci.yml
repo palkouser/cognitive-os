@@ -110,12 +110,41 @@ jobs:
       - name: In-memory provider persistence tests
         run: uv run pytest tests/integration/provider_persistence -q
       - name: Offline replay command
-        run: uv run python scripts/provider_replay_test.py
+        run: uv run python scripts/provider.py replay
+      # The committed fixture still hashes to its manifest, and the verifier still tells a
+      # correct answer from a well-formed empty one. A verifier that stopped discriminating
+      # would make every live smoke pass.
+      - name: Advisory fixture and verifier
+        run: uv run python scripts/provider.py fixture
       # Every adapter constructs through the one factory match, so this also proves the
       # OpenRouter, Claude Code and Codex configurations in the example file are buildable
       # — without a credential, a network or an installed CLI.
       - name: Credential-safe provider health
-        run: uv run python scripts/provider_health.py --config config/providers.example.yaml
+        run: uv run python scripts/provider.py health --config config/providers.example.yaml
+      # The live command must refuse without both halves of the opt-in. Exit 4 is the
+      # refusal; any other status here means CI just tried to call a real provider.
+      - name: Live smoke refuses without the runtime opt-in
+        run: |
+          set +e
+          uv run python scripts/provider.py live-smoke \
+            --config config/providers.example.yaml --provider claude-code \
+            --isolation-root "$RUNNER_TEMP"
+          status=$?
+          set -e
+          test "$status" -eq 4
+      # Credential-free by construction: every case runs the real routing, parsing,
+      # retention and governance code against fixed synthetic payloads, with no network,
+      # no key and no installed CLI. Every case measures whether a policy held.
+      - name: Thirty-five-case provider boundary CI gate
+        run: >-
+          uv run python scripts/benchmark_run.py
+          --manifest benchmarks/manifests/sprint21c2-provider-ci.yaml
+          --mode provider-replay --report-directory /tmp/sprint21c2-provider-ci
+      - name: Seventy-seven-case provider boundary seed set
+        run: >-
+          uv run python scripts/benchmark_run.py
+          --manifest benchmarks/manifests/sprint21c2-provider-seed.yaml
+          --mode provider-replay --report-directory /tmp/sprint21c2-provider-seed
 
   tool-plane:
     runs-on: ubuntu-latest
