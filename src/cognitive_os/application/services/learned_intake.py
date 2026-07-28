@@ -55,9 +55,19 @@ REAL_GOVERNED_SOURCE_KINDS: frozenset[str] = frozenset(
 #: it decides whether a read has to be audited, so an unknown one is quarantined.
 KNOWN_SENSITIVITIES: frozenset[str] = frozenset({"public", "internal", "restricted"})
 
+#: Source kinds produced by the Sprint 21C2 advisory providers.
+#:
+#: They belong to `VERIFIER_BACKED_SOURCE_KINDS` and must never be added to
+#: `REAL_GOVERNED_SOURCE_KINDS`. A provider answering a question is not a governed run of
+#: this system, and a provider output that borrowed that label would become evaluation-only
+#: evidence that nothing actually evaluated. See ADR 0087.
+PROVIDER_ADVISORY_SOURCE_KINDS: frozenset[str] = frozenset(
+    {"openrouter_advisory", "claude_code_advisory", "codex_cli_advisory"}
+)
+
 #: Source kinds whose outcome is only meaningful with verifier evidence behind it.
-VERIFIER_BACKED_SOURCE_KINDS: frozenset[str] = frozenset(
-    {"governed_task_run", "governed_benchmark_case"}
+VERIFIER_BACKED_SOURCE_KINDS: frozenset[str] = (
+    frozenset({"governed_task_run", "governed_benchmark_case"}) | PROVIDER_ADVISORY_SOURCE_KINDS
 )
 
 

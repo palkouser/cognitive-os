@@ -894,6 +894,13 @@ jobs:
       # `provider-offline` because they import SQLAlchemy and this lane declares the extra.
       - name: Provider output table metadata and enum parity
         run: uv run pytest tests/cognitive_os/provider_output/test_tables.py -q
+      # The in-memory governance ledger and the governed teacher. Credential-free by
+      # construction: a mock provider, an in-memory event store and an in-memory artifact
+      # store, so the gate cannot acquire a reason to be skipped.
+      - name: Provider output governance reference and orchestration
+        run: >-
+          uv run pytest tests/cognitive_os/provider_output/test_memory_repository.py
+          tests/cognitive_os/provider_output/test_governed_teacher.py -q
       # Credential-free by construction: the whole family runs against the in-memory
       # reference and a stub Artifact Store, so the gate cannot acquire a reason to be
       # skipped. Every case measures whether a policy held, never accuracy or uplift.
