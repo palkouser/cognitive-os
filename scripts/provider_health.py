@@ -7,19 +7,16 @@ import asyncio
 from pathlib import Path
 
 from cognitive_os.config.provider_config import (
-    ClaudeCodeProviderConfig,
-    MiniMaxProviderConfig,
+    ProviderAdapterConfig,
     load_provider_configuration,
 )
 from cognitive_os.domain.common import utc_now
 from cognitive_os.domain.provider import ProviderHealth, ProviderStatus
-from cognitive_os.providers.claude_code.advisory import ClaudeCodeAdvisoryProvider
-from cognitive_os.providers.minimax.client import MiniMaxProvider
+from cognitive_os.providers.factory import build_provider
 
 
-async def check_configured_provider(
-    config: MiniMaxProviderConfig | ClaudeCodeProviderConfig,
-) -> ProviderHealth:
+async def check_configured_provider(config: ProviderAdapterConfig) -> ProviderHealth:
+    """One construction path for every adapter, so a new one cannot be forgotten here."""
     if not config.enabled:
         return ProviderHealth(
             provider_id=config.provider_id,
@@ -28,13 +25,13 @@ async def check_configured_provider(
             configured_model=getattr(config, "model", None),
             message="provider is disabled",
         )
-    if isinstance(config, MiniMaxProviderConfig):
-        provider = MiniMaxProvider(config)
-        try:
-            return await provider.health_check()
-        finally:
-            await provider.close()
-    return await ClaudeCodeAdvisoryProvider(config).health_check()
+    provider = build_provider(config)
+    try:
+        return await provider.health_check()
+    finally:
+        closer = getattr(provider, "close", None)
+        if closer is not None:
+            await closer()
 
 
 async def run(config_path: Path) -> None:

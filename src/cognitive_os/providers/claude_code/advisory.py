@@ -1,34 +1,57 @@
-"""Claude Code bounded read-only advisory provider."""
+"""Claude Code as a bounded, read-only, non-interactive advisory teacher.
+
+Every Sprint 21C1 gap this adapter had is closed structurally rather than by convention:
+
+* the prompt goes to stdin through the shared runner, never into `argv`;
+* mutation is detected by content-and-mode snapshot, not by `git status` equality;
+* stdout and stderr have hard caps, and exceeding one kills the process tree;
+* `plan` permission mode, safe mode, an explicit read-only tool allowlist, an explicit
+  mutating-tool denylist, a strictly empty MCP configuration and no session persistence;
+* health reports installed, logged in, version and a coarse authentication method — and
+  discards the account, organisation, email and subscription fields entirely.
+
+The safety flags are built from validated configuration and every one of them is
+parse-probed against the installed binary before execution, because a flag that was renamed
+upstream must make the adapter unhealthy rather than silently vanish from the command line.
+See ADR 0087.
+"""
 
 from __future__ import annotations
 
+import json
 from collections.abc import AsyncIterator
 
-from cognitive_os.domain.common import utc_now
+from cognitive_os.config.provider_config import ClaudeCodeProviderConfig
+from cognitive_os.domain.common import NonEmptyStr, TokenUsage, utc_now
 from cognitive_os.domain.model_requests import (
     ModelProviderRequest,
     ModelProviderResponse,
 )
 from cognitive_os.domain.provider import (
     ModelCapabilities,
+    ModelFinishReason,
     ProviderHealth,
     ProviderIdentity,
     ProviderKind,
     ProviderStatus,
     ProviderStreamEvent,
 )
-from cognitive_os.providers.errors import ProviderUnsupportedCapabilityError
+from cognitive_os.providers.advisory_schema import AdvisoryResult, advisory_schema_json
+from cognitive_os.providers.cli_process import BoundedCliRunner
+from cognitive_os.providers.errors import (
+    ProviderInvalidResponseError,
+    ProviderUnsupportedCapabilityError,
+)
 
-from .config import ClaudeCodeProviderConfig
-from .mapping import advisory_schema_json, map_advisory_response
-from .process import ClaudeProcessRunner
-
-_ADVISORY_POLICY = """Analyze only.
-Do not edit files.
-Do not create files.
-Do not run destructive commands.
-Return the requested structured advisory result.
+#: Prepended to every advisory prompt. Not a security control — a model instruction is not a
+#: boundary — but it makes the intent explicit to the model whose sandbox already refuses.
+ADVISORY_POLICY = """Analyse only. Do not edit, create or delete any file.
+Do not run commands. Return the requested structured advisory result and nothing else.
 """
+
+#: An MCP configuration with no servers. Passed with `--strict-mcp-config`, so a user-level
+#: or project-level MCP file cannot add a server this adapter did not ask for.
+EMPTY_MCP_CONFIG = '{"mcpServers":{}}'
 
 
 class ClaudeCodeAdvisoryProvider:
@@ -36,15 +59,21 @@ class ClaudeCodeAdvisoryProvider:
         self,
         config: ClaudeCodeProviderConfig,
         *,
-        runner: ClaudeProcessRunner | None = None,
+        runner: BoundedCliRunner | None = None,
     ) -> None:
         self.config = config
-        self._runner = runner or ClaudeProcessRunner(config)
+        self._runner = runner or BoundedCliRunner(
+            provider_id=config.provider_id,
+            executable=config.executable,
+            working_directory=config.working_directory,
+            limits=config.limits,
+            environment_allowlist=config.environment_allowlist,
+        )
         self._identity = ProviderIdentity(
             provider_id=config.provider_id,
             display_name="Claude Code advisory provider",
             provider_kind=ProviderKind.CLI_AGENT,
-            adapter_version="1",
+            adapter_version="2",
         )
 
     @property
@@ -59,20 +88,65 @@ class ClaudeCodeAdvisoryProvider:
     def enabled(self) -> bool:
         return self.config.enabled
 
-    async def complete(self, request: ModelProviderRequest) -> ModelProviderResponse:
-        prompt_parts = [_ADVISORY_POLICY]
+    # -------------------------------------------------------------------- arguments
+
+    def safety_arguments(self, *, maximum_turns: int | None = None) -> tuple[str, ...]:
+        """The exact command line, built from validated configuration only.
+
+        No prompt, no path outside the fixture, no credential. `test_claude_argv` asserts
+        this list element by element, because "the flags are correct" is the claim that a
+        code review cannot check for a CLI it does not run.
+        """
+        arguments: list[str] = [
+            "--print",
+            "--output-format",
+            self.config.output_format.value,
+            "--json-schema",
+            advisory_schema_json(),
+            "--permission-mode",
+            self.config.permission_mode,
+            "--allowed-tools",
+            ",".join(self.config.allowed_tools),
+            "--disallowed-tools",
+            ",".join(self.config.disallowed_tools),
+            # Strictly empty MCP: no server, and no inherited server either.
+            "--mcp-config",
+            EMPTY_MCP_CONFIG,
+            "--strict-mcp-config",
+            # No user, project or local settings: CLAUDE.md, hooks, plugins and custom
+            # agents are all customization this boundary does not grant.
+            "--setting-sources",
+            "",
+            "--max-turns",
+            str(maximum_turns if maximum_turns is not None else self.config.maximum_turns),
+        ]
+        if self.config.safe_mode:
+            arguments.append("--safe-mode")
+        if self.config.model is not None:
+            arguments.extend(("--model", self.config.model))
+        if self.config.maximum_budget_usd is not None:
+            arguments.extend(("--max-budget-usd", str(self.config.maximum_budget_usd)))
+        return tuple(arguments)
+
+    def build_prompt(self, request: ModelProviderRequest) -> str:
+        parts = [ADVISORY_POLICY]
         if request.system_instructions:
-            prompt_parts.append(request.system_instructions)
-        prompt_parts.extend(message.content for message in request.messages)
-        result = await self._runner.run(
-            prompt="\n\n".join(prompt_parts),
-            schema=advisory_schema_json(),
+            parts.append(request.system_instructions)
+        parts.extend(message.content for message in request.messages)
+        return "\n\n".join(parts)
+
+    # ---------------------------------------------------------------------- execute
+
+    async def complete(self, request: ModelProviderRequest) -> ModelProviderResponse:
+        outcome, _snapshot = await self._runner.run(
+            arguments=self.safety_arguments(),
+            stdin_payload=self.build_prompt(request),
         )
         return map_advisory_response(
-            result.stdout,
+            outcome.stdout,
             request,
             provider_id=self.provider_id,
-            duration_ms=result.duration_ms,
+            duration_ms=outcome.duration_ms,
         )
 
     async def stream(self, request: ModelProviderRequest) -> AsyncIterator[ProviderStreamEvent]:
@@ -81,16 +155,40 @@ class ClaudeCodeAdvisoryProvider:
             provider_id=self.provider_id,
             message="Claude Code advisory streaming is unsupported",
         )
-        yield
+        yield  # pragma: no cover - unreachable, present so this is an async generator
+
+    # ----------------------------------------------------------------------- health
 
     async def health_check(self) -> ProviderHealth:
-        available, message = await self._runner.availability()
+        """Installed, version, coarse authentication method. No account identity, ever."""
+        installed, version_excerpt = await self._runner.probe(("--version",))
+        if not installed:
+            return ProviderHealth(
+                provider_id=self.provider_id,
+                status=ProviderStatus.UNAVAILABLE,
+                checked_at=utc_now(),
+                configured_model="claude-code",
+                message=f"Claude Code is not usable: {version_excerpt}",
+            )
+        supported = await self._runner.supports_arguments(self.safety_arguments(maximum_turns=1))
+        if not supported:
+            return ProviderHealth(
+                provider_id=self.provider_id,
+                status=ProviderStatus.MISCONFIGURED,
+                checked_at=utc_now(),
+                configured_model="claude-code",
+                message=(
+                    "the installed Claude Code version does not accept every required "
+                    "safety flag; update the compatibility manifest before executing"
+                ),
+            )
         return ProviderHealth(
             provider_id=self.provider_id,
-            status=ProviderStatus.AVAILABLE if available else ProviderStatus.UNAVAILABLE,
+            status=ProviderStatus.AVAILABLE,
             checked_at=utc_now(),
             configured_model="claude-code",
-            message=message,
+            resolved_model=coarse_version(version_excerpt),
+            message=f"Claude Code {coarse_version(version_excerpt)} accepts the safety profile",
         )
 
     async def get_model_capabilities(self, model_id: str) -> ModelCapabilities:
@@ -103,6 +201,97 @@ class ClaudeCodeAdvisoryProvider:
             supports_structured_output=True,
             supports_system_messages=True,
             supports_seed=False,
-            maximum_context_tokens=None,
-            maximum_output_tokens=None,
         )
+
+
+def coarse_version(excerpt: str) -> str:
+    """A version number and nothing else.
+
+    `claude --version` prints a version plus a product string today and could print more
+    tomorrow. Extracting the number rather than storing the line means a future addition —
+    an account hint, a workspace name — cannot arrive in health output by default.
+    """
+    import re
+
+    match = re.search(r"\d+\.\d+\.\d+", excerpt)
+    return match.group(0) if match else "unknown"
+
+
+def map_advisory_response(
+    raw_stdout: str,
+    request: ModelProviderRequest,
+    *,
+    provider_id: str,
+    duration_ms: float,
+) -> ModelProviderResponse:
+    """Normalize Claude Code's structured print output.
+
+    Claude wraps the result in an envelope whose `result` field holds the schema-validated
+    payload — as an object or as a JSON string, depending on version — so both are accepted.
+    Anything else fails closed rather than being coerced.
+    """
+    try:
+        document = json.loads(raw_stdout)
+    except json.JSONDecodeError as error:
+        raise ProviderInvalidResponseError(
+            provider_id=provider_id,
+            message="Claude Code returned output that is not JSON",
+        ) from error
+    if not isinstance(document, dict):
+        raise ProviderInvalidResponseError(
+            provider_id=provider_id,
+            message="Claude Code returned a JSON value that is not an object",
+        )
+    if document.get("is_error") is True or document.get("subtype") == "error":
+        raise ProviderInvalidResponseError(
+            provider_id=provider_id,
+            message="Claude Code reported an error result",
+        )
+
+    structured: object = document.get("structured_output", document.get("result", document))
+    if isinstance(structured, str):
+        try:
+            structured = json.loads(structured)
+        except json.JSONDecodeError as error:
+            raise ProviderInvalidResponseError(
+                provider_id=provider_id,
+                message="Claude Code returned a result string that is not JSON",
+            ) from error
+    try:
+        advisory = AdvisoryResult.model_validate(structured)
+    except ValueError as error:
+        raise ProviderInvalidResponseError(
+            provider_id=provider_id,
+            message="Claude Code output does not match the advisory schema",
+        ) from error
+
+    model = document.get("model")
+    resolved: NonEmptyStr = model if isinstance(model, str) and model else "claude-code"
+    warnings: list[str] = []
+    if "total_cost_usd" in document:
+        warnings.append("cost metadata was reported by Claude Code")
+    if document.get("num_turns", 1) and int(document.get("num_turns", 1) or 1) > 1:
+        warnings.append("the advisory call used more than one turn")
+    return ModelProviderResponse(
+        model_call_id=request.model_call_id,
+        provider_id=provider_id,
+        requested_model=request.requested_model,
+        resolved_model=resolved,
+        content=advisory.summary,
+        structured_output=advisory.model_dump(mode="json"),
+        finish_reason=ModelFinishReason.COMPLETED,
+        usage=_map_usage(document.get("usage")),
+        latency_ms=duration_ms,
+        warnings=tuple(warnings),
+    )
+
+
+def _map_usage(value: object) -> TokenUsage | None:
+    if not isinstance(value, dict):
+        return None
+    input_tokens = value.get("input_tokens")
+    output_tokens = value.get("output_tokens")
+    return TokenUsage(
+        input_tokens=input_tokens if isinstance(input_tokens, int) else None,
+        output_tokens=output_tokens if isinstance(output_tokens, int) else None,
+    )

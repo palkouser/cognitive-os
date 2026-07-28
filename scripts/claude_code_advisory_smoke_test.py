@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 from uuid import uuid4
 
-from cognitive_os.config.provider_config import ClaudeCodeProviderConfig
+from cognitive_os.config.provider_config import ClaudeCodeProviderConfig, CliProcessLimits
 from cognitive_os.domain.model_requests import (
     ModelProviderRequest,
     ProviderMessage,
@@ -25,7 +25,7 @@ async def run(working_directory: Path) -> None:
             working_directory=working_directory,
             enabled=True,
             maximum_turns=3,
-            timeout_seconds=180,
+            limits=CliProcessLimits(timeout_seconds=180),
         )
     )
     request = ModelProviderRequest(

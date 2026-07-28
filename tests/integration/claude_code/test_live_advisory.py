@@ -4,7 +4,7 @@ from uuid import uuid4
 
 import pytest
 
-from cognitive_os.config.provider_config import ClaudeCodeProviderConfig
+from cognitive_os.config.provider_config import ClaudeCodeProviderConfig, CliProcessLimits
 from cognitive_os.domain.model_requests import (
     ModelProviderRequest,
     ProviderMessage,
@@ -22,7 +22,7 @@ async def test_live_claude_code_read_only_advisory() -> None:
         ClaudeCodeProviderConfig(
             working_directory=Path.cwd(),
             enabled=True,
-            timeout_seconds=180,
+            limits=CliProcessLimits(timeout_seconds=180),
             maximum_turns=3,
         )
     )
