@@ -9,6 +9,7 @@ its own.
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 from shutil import copytree
 from typing import Any
@@ -176,6 +177,22 @@ class TestCredentialFreeChecks:
         status, payload = run(capsys, "governance-verify")
         assert status == cli.NOT_FOUND
         assert payload["found"] is False
+
+    def test_governance_verify_imports_nothing_postgres_when_unconfigured(
+        self, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """The credential-free lanes install no PostgreSQL extra.
+
+        Importing the health module before checking the URL turned "no database is
+        configured" into an unhandled `ModuleNotFoundError` in the `provider-offline` lane.
+        Asserting on the module table rather than on the message keeps the fix from being
+        undone by a later import moved back to the top of the function.
+        """
+        module = "cognitive_os.infrastructure.learned.postgres.provider_output_health"
+        monkeypatch.delenv("COGOS_DATABASE_URL", raising=False)
+        monkeypatch.delitem(sys.modules, module, raising=False)
+        run(capsys, "governance-verify")
+        assert module not in sys.modules
 
 
 class TestLiveExecutionCannotHappenByAccident:

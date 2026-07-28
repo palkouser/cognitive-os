@@ -253,11 +253,9 @@ async def _fixture(args: argparse.Namespace) -> int:
 
 
 async def _governance_verify(_args: argparse.Namespace) -> int:
-    from cognitive_os.infrastructure.learned.postgres.provider_output_health import (
-        PostgresProviderOutputHealthService,
-    )
-    from cognitive_os.infrastructure.postgres.engine import create_postgres_engine
-
+    # The URL is checked before the PostgreSQL modules are imported. Not style: the
+    # credential-free lanes install no PostgreSQL extra, and importing first would turn
+    # "there is no database configured" into an unhandled ModuleNotFoundError.
     url = os.environ.get("COGOS_DATABASE_URL")
     if not url:
         _emit(
@@ -268,6 +266,12 @@ async def _governance_verify(_args: argparse.Namespace) -> int:
             }
         )
         return NOT_FOUND
+
+    from cognitive_os.infrastructure.learned.postgres.provider_output_health import (
+        PostgresProviderOutputHealthService,
+    )
+    from cognitive_os.infrastructure.postgres.engine import create_postgres_engine
+
     engine = create_postgres_engine(url, pool_size=1, max_overflow=0)
     try:
         report = await PostgresProviderOutputHealthService(engine).check()
