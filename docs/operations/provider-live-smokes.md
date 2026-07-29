@@ -118,6 +118,20 @@ Rerunning is always safe with respect to the ledger: re-recording *the same* exe
 the first record and changes nothing. Re-*executing* under a reused model call ID is refused,
 because it produces a second answer and would otherwise overwrite the first decision.
 
+## The opt-in integration tests
+
+The same governed path is also reachable from the test suite, and it is the *same* path —
+these tests call `live-smoke`'s own implementation rather than building an adapter of their
+own, so they cannot skip the isolation check, the mutation guard or the verifier:
+
+```bash
+COGOS_RUN_CLAUDE_CODE_LIVE=1 uv run pytest tests/integration/claude_code -q -m claude_code_live
+COGOS_RUN_CODEX_LIVE=1       uv run pytest tests/integration/claude_code -q -m codex_cli_live
+```
+
+Both skip without their variable, and both build their own isolated fixture copy under a
+pytest temporary root. They are excluded from every credential-free lane.
+
 ## After a run
 
 The runner's temporary directory lives outside the workspace and is removed on every path,
