@@ -1,0 +1,106 @@
+{
+  "data_policy": {
+    "adr": "docs/adr/0088-open-development-data-policy.md",
+    "amends": "docs/adr/0087-governed-provider-boundary-and-output-retention.md",
+    "credential_boundary": "unchanged; openness covers subject matter only",
+    "executable_consequences": "deferred to S21C3-040 and S21C3-041 in wave W4; Gate C3 condition 2 stays open until configuration agrees with ADR 0088",
+    "source_rights": "unchanged; UsageRightsDecision remains an operator input with an evidence hash",
+    "status": "accepted"
+  },
+  "deviations": [
+    {
+      "action": "Pre-existing local-environment condition, identical for 21C1 and 21C2. The C3 database was created directly with the same ownership. Not remediated in C3; recorded for the operator.",
+      "id": "W0-D1",
+      "impact": "The least-privilege intent of roles.sql is unenforceable on this cluster; the script fails closed rather than degrading silently.",
+      "observed": "ALTER ROLE cogos_owner NOSUPERUSER is refused by PostgreSQL because cogos_owner is this local cluster's bootstrap superuser (OID 10).",
+      "subject": "scripts/postgres_bootstrap_roles.sh"
+    },
+    {
+      "action": "Fixed. scripts/artifact_store_fingerprint.py records the algorithm and reproduces the historical value exactly.",
+      "id": "W0-D2",
+      "impact": "The 'untouched' invariant could not be independently reverified.",
+      "observed": "The 7e85d9a6... fingerprint is asserted by three sprints but its algorithm was never tracked in the repository.",
+      "subject": "development Artifact Store pair fingerprint"
+    },
+    {
+      "action": "Fixed. Both hook entries now pass --force-exclude, so pre-commit and CI agree in both directions. Verified: pre-commit run --all-files and the CI invocation both pass on the same tree.",
+      "id": "W0-D3",
+      "impact": "pre-commit run --all-files failed on the untouched parent commit while CI lint was green, so the local gate could not be used to predict the remote one.",
+      "observed": "The ruff pre-commit hooks pass explicit file paths, which bypasses ruff's extend-exclude; the CI lint job passes directories, which does not. The config comment claimed the two were in step.",
+      "subject": ".pre-commit-config.yaml"
+    }
+  ],
+  "implementation_branch": {
+    "carried_changes": [
+      "docs/sprints/sprint-21/sprint-21c3-handoff.md",
+      "docs/sprints/sprint-21/sprint-21c3-technical-backlog.md",
+      "docs/sprints/sprint-22/development-plan.md",
+      "docs/sprints/sprint-22/execution-sprint-allocation.md"
+    ],
+    "carried_changes_note": "Sprint 21C3 planning documents only; no source, schema or migration change was carried from the parent worktree.",
+    "created_from": "sprint-21c2-provider-baseline^{commit}",
+    "name": "feature/sprint-21c3-reality-inputs"
+  },
+  "items": [
+    "S21C3-000",
+    "S21C3-001",
+    "S21C3-002",
+    "S21C3-003",
+    "S21C3-004"
+  ],
+  "parent_baseline": {
+    "alembic_head": "0015",
+    "final_parent_ci_conclusion": "success",
+    "final_parent_ci_head_sha": "94abe263c8f26f36c8f8c3bc7b86859c14c1f291",
+    "final_parent_ci_required_checks": "28 of 28",
+    "final_parent_ci_run": 30434494612,
+    "local_main": "94abe263c8f26f36c8f8c3bc7b86859c14c1f291",
+    "peeled_commit": "94abe263c8f26f36c8f8c3bc7b86859c14c1f291",
+    "reality_input_import_smoke": "passed",
+    "remote_main": "94abe263c8f26f36c8f8c3bc7b86859c14c1f291",
+    "remote_tag_object": "23b3304890f4a90112514c633c7e2b768f7eeeff",
+    "repository_language_check": "passed",
+    "tag": "sprint-21c2-provider-baseline",
+    "tag_object": "23b3304890f4a90112514c633c7e2b768f7eeeff",
+    "worktree_clean_of_source_changes": true
+  },
+  "recorded_at": "2026-07-29T15:51:17.776738+00:00",
+  "remote_protection": {
+    "allow_deletions": false,
+    "allow_force_pushes": false,
+    "collaborators": 1,
+    "decision": "Required approving reviews remain disabled; the limitation is retained and reported. No protection control was weakened.",
+    "enforce_admins": true,
+    "open_pull_requests": 0,
+    "repository": "palkouser/cognitive-os",
+    "required_conversation_resolution": true,
+    "required_pull_request_reviews": null,
+    "required_status_check_contexts": 27,
+    "second_eligible_reviewer": false,
+    "strict_status_checks": true
+  },
+  "schema_version": 1,
+  "sprint": "21C3",
+  "store_isolation": {
+    "c3_artifact_filesystem_verification": "passed (empty, consistent)",
+    "c3_artifact_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21c3",
+    "c3_artifact_root_files": 0,
+    "c3_backup_root": "/home/palkouser/projekt/cognitive-os-data/backups-s21c3",
+    "c3_database": "cognitive_os_s21c3_test",
+    "c3_database_created_migration": null,
+    "c3_database_migration_head": "0015",
+    "environment_file": ".env.s21c3.local (untracked, mode 0600)",
+    "inconsistent_development_pair": {
+      "artifact_root": "/home/palkouser/projekt/cognitive-os-data/artifacts",
+      "c1_inventory": "docs/sprints/sprint-21/evidence/sprint-21c1-artifact-mismatch-inventory.json",
+      "c3_writes": 0,
+      "database": "cognitive_os_dev",
+      "files_on_disk": 5,
+      "fingerprint_tool": "scripts/artifact_store_fingerprint.py",
+      "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf",
+      "remediation": "proposed, not executed; requires separate operator authority",
+      "status": "untouched; read-only diagnostic reference only",
+      "w0_fingerprint_matches_c1_and_c2_baseline": true
+    }
+  }
+}

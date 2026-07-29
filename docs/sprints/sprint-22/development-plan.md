@@ -2,16 +2,15 @@
 
 Status: active execution plan
 
-Revision: 3
+Revision: 4
 
-Assessment date: 2026-07-26
+Assessment date: 2026-07-29
 
-Current protected baseline: `sprint-21-substrate-baseline`
+Current protected baseline: `sprint-21c2-provider-baseline`
 
-Current protected baseline commit: `e9001a9338c9507a60ca43f4e3e4bee7e28ef79b`
+Current protected baseline commit: `94abe263c8f26f36c8f8c3bc7b86859c14c1f291`
 
-Next execution sprint: Sprint 21C1 — Persistent Learned Evidence and Governed
-Outcome Intake
+Next execution sprint: Sprint 21C3 — Reality-Grade Learning Inputs
 
 Primary scope: finish Sprint 21 correctly, execute Sprint 22, and define the evidence
 required before Sprint 23 alpha
@@ -23,6 +22,8 @@ Execution documents:
 - [Execution sprint allocation](execution-sprint-allocation.md)
 - [Sprint 21R technical backlog](../sprint-21/sprint-21r-technical-backlog.md)
 - [Sprint 21C1 technical backlog](../sprint-21/sprint-21c1-technical-backlog.md)
+- [Sprint 21C2 technical backlog](../sprint-21/sprint-21c2-technical-backlog.md)
+- [Sprint 21C3 technical backlog](../sprint-21/sprint-21c3-technical-backlog.md)
 - [Sprint 21 Gate L assessment](../sprint-21/gate-l-assessment.md)
 - [Sprint 21 substrate report](../sprint-21/report.md)
 - [Sprint 21 technical plan](../sprint-21/technical-plan.md)
@@ -97,42 +98,40 @@ for the first learning gate.
 
 | Item | Verified state | Consequence |
 |---|---|---|
-| `main` and `origin/main` | `e9001a9338c9507a60ca43f4e3e4bee7e28ef79b` | Current protected baseline |
-| Baseline tag | Annotated `sprint-21-substrate-baseline`, peeled to the same commit | Sprint 21C1 has a protected parent |
-| Sprint 21R pull requests | `#210`, `#211`, `#212`, merged | Implementation and evidence are on `main` |
-| Latest `main` CI | Run `30209256649`, successful on the baseline commit | Exact-head release evidence exists |
-| Alembic head | `0013_create_approximate_vector_indexes.py` | The next migration must be based on `0013` |
-| Next branch | `feature/sprint-21c1-learned-evidence` | Create only from the verified tag |
-| Authenticated GitHub CLI API | HTTP 401 during backlog preparation | Reauthentication is required before PR or release mutation |
+| `main` and `origin/main` | `94abe263c8f26f36c8f8c3bc7b86859c14c1f291` | Current protected baseline |
+| Baseline tag | Annotated `sprint-21c2-provider-baseline`, tag object `23b3304890f4a90112514c633c7e2b768f7eeeff`, peeled to the same commit | Sprint 21C3 has a protected parent |
+| Sprint 21C2 pull request | `#214`, merged | Provider-boundary implementation and evidence are on `main` |
+| Latest `main` CI | Run `30434494612`, 28 of 28 required checks successful on the baseline commit | Exact-head release evidence exists |
+| Alembic head | `0015_create_provider_output_governance.py` | C3 uses existing stores by default; `0016` requires measured need |
+| Next branch | `feature/sprint-21c3-reality-inputs` | Create only from the verified tag |
+| Gate state | Gate C2 passed; Gate L2 remains closed | Reality evidence is next; provider connectivity is not learned benefit |
 
-Sprint 21R is released. Sprint 21C1 must revalidate the source and remote controls
-before implementation and must open its draft pull request early enough for
-pull-request CI to exercise the migration and optional-dependency boundaries.
+Sprint 21R, Sprint 21C1, and Sprint 21C2 are released. Sprint 21C3 must revalidate
+the source and remote controls before implementation and must open its draft pull
+request early enough for pull-request CI to exercise the hidden-verifier,
+provider-replay, and local-model boundaries.
 
-### 3.2 Final Sprint 21R verification
+### 3.2 Final Sprint 21C2 verification
 
-The Sprint 21R release report retains the full commands and environments. Its final
-evidence includes:
+The C1 and C2 reports and their annotated tags retain the full commands,
+environments, hashes, and limitations. The latest release evidence includes:
 
 | Check | Result |
 |---|---:|
-| Core tests | `1238 passed, 5 skipped` |
-| Core plus contract tests | `1303 passed, 5 skipped` |
-| Full local suite | `1385 passed, 50 skipped` |
-| Focused PostgreSQL suite | `42 passed` |
-| Ruff lint | Passed |
-| Ruff format check | Passed |
-| Mypy | Passed |
-| Contract schema export check | Passed |
-| Migration round trip and drift | Passed at head `0013` |
-| Consistent backup and test restore | Passed |
-| Domain CI benchmark | `24/24` expected outcomes matched |
-| Domain seed benchmark | `120/120` expected outcomes matched |
-| `sprint22-coding-ci` benchmark | `15/15` expected outcomes matched |
-| `sprint22-coding-seed` benchmark | `25/25` expected outcomes matched |
+| Required post-merge `main` checks | `28/28` passed |
+| Full local suite | `2028 passed, 12 skipped` |
+| Provider policy benchmark | `35` CI plus `77` seed cases, 100% expected outcomes |
+| Local evidence matrix | `37` commands at expected status |
+| Alembic migration and drift | Passed at head `0015` |
+| Learned store contracts | Shared in-memory/PostgreSQL suite passed unchanged |
+| Provider output governance | Controlled append/revision path passed |
+| Claude Code governed fixture | Correct on every recorded attempt |
+| Codex governed fixture | Correct on every recorded attempt |
+| OpenRouter free governed fixture | `5/22` correct; failures retained |
 
-Sprint 21C1 must preserve these checks and add durable learned-evidence,
-restart/replay, artifact-integrity, activation-concurrency, and quarantine coverage.
+Sprint 21C3 must preserve these checks and add executable hidden verification,
+full-outcome artifact resolution, real-run harvesting, corpus leakage checks,
+campaign restart/resume, local-model identity, and retrieval evidence.
 
 ### 3.3 What the released substrate has completed
 
@@ -140,6 +139,11 @@ The released Sprint 21 substrate provides:
 
 - typed learning records, feature schemas, model artifact metadata, promotion
   decisions, replay, invariance, replacement, self-play, and capacity contracts;
+- durable learned-evidence, corpus, evaluation, promotion, artifact-lineage, and
+  activation ledgers in PostgreSQL with controlled append paths;
+- governed, replayable OpenRouter, Claude Code, and Codex advisory boundaries;
+- provider-output rights, sensitivity, retention, verifier, revision, and learned
+  intake evidence;
 - a deterministic baseline ladder and a bounded k-NN implementation;
 - governed learned skill selection with deterministic fallback;
 - four domain pilots: logic, mathematics, physics, and coding;
@@ -155,8 +159,9 @@ agent learning.
 ### 3.4 Critical gaps
 
 1. No learned component is active because of demonstrated downstream benefit.
-2. Learned state and evaluation evidence are still primarily in-memory contracts.
-3. There are no harvested real-run learning rows in the assessed Gate L evidence.
+2. Durable learned evidence exists, but there are not yet enough honest executable
+   outcomes to select a learning surface.
+3. There are no harvested real-run learning rows in the current Gate L evidence.
 4. The coding pilot compares expected strings and deliberately executes no submitted
    code. It does not yet prove repair success in a real sandbox.
 5. The coding pilot exposes one applicable skill per case, so it does not provide a
@@ -164,10 +169,11 @@ agent learning.
 6. Applying all fixture-provided edits would risk leaking the answer. The current
    prediction headroom must not be converted into a misleading agent-success claim.
 7. Gate L was refreshed at release and remains an explicit no-go.
-8. Teacher output retention and local embedding are not active.
-9. There is a Claude Code advisory adapter, but no governed OpenRouter adapter and no
-   Codex CLI adapter. Live provider paths have not been verified as part of this
-   assessment.
+8. Governed teacher-output retention exists, but local production embedding and
+   retrieval evidence are not active.
+9. OpenRouter free is operational but unreliable on the governed C2 fixture
+   (`5/22` correct). It is suitable for bounded diversity, not corpus coverage or a
+   correctness critical path.
 10. The `10^6` capacity envelope, incremental maintenance, consolidation, and
     restore evidence do not exist.
 11. Temporal semantic and strategy graphs exist, but failed-to-corrected experience
@@ -175,6 +181,11 @@ agent learning.
 12. An NVIDIA RTX 5070 Ti is now visible through `nvidia-smi`, but no current gate
     requires it. CPU-first execution remains the default until a measured workload
     justifies and reproduces an accelerator path.
+13. The inconsistent development Artifact Store pair remains intentionally
+    untouched; all C3 evidence must use an isolated consistent pair.
+14. One collaborator means required approving reviews remain unavailable; the
+    project retains 27 required checks and `enforce_admins` in accepted
+    single-maintainer release mode.
 
 ## 4. Non-negotiable learning architecture
 
@@ -457,7 +468,30 @@ They may not:
 - mutate the repository during advisory analysis;
 - become the only retained record of learning.
 
-### 8.2 OpenRouter
+### 8.2 Open-development provider data policy
+
+For project-owned, generated, or rights-verified open-project material, development
+speed takes priority over enterprise-style retention restrictions:
+
+- `require_zero_data_retention=false` is the default;
+- `allow_data_collection=true` is the default;
+- provider storage, collection, and sharing are accepted without a per-call ZDR
+  waiver or interactive retention confirmation;
+- live access still requires an enabled campaign configuration and an explicit
+  runtime `--live` opt-in;
+- free-only routing and a zero-spend ceiling remain independent controls.
+
+This policy does not make credentials public. API keys, tokens, authorization
+material, subscription identities, undisclosed personal data, and
+rights-restricted third-party content remain excluded. Source rights and license
+evidence also remain required: they protect lawful reuse and provenance, not
+enterprise confidentiality.
+
+The existing directive and provider configuration contracts are the single policy
+surface. Do not create a second retention subsystem or an interactive ZDR approval
+workflow.
+
+### 8.3 OpenRouter
 
 Implement a generic OpenAI-compatible provider using the existing OpenAI Python
 client:
@@ -482,7 +516,7 @@ Free model availability and quotas change. The model catalog must be checked at 
 time, and the resolved model must be recorded. A disappearing free model is a health
 or skip outcome, not a reason to weaken offline CI.
 
-### 8.3 Claude Code
+### 8.4 Claude Code
 
 Harden the existing `providers/claude_code` advisory adapter:
 
@@ -500,7 +534,7 @@ The installed CLI and a Claude subscription can support local operator-initiated
 evaluation. Unattended service operation requires a separately approved
 authentication and terms path.
 
-### 8.4 Codex
+### 8.5 Codex
 
 Add a sibling `providers/codex_cli` advisory adapter around stable non-interactive
 `codex exec`:
@@ -521,10 +555,11 @@ operator-initiated local trials. API-key authentication is the preferred future 
 for unattended CI or service automation. Cognitive OS must not copy or manage Codex
 login credentials.
 
-### 8.5 Teacher-output retention
+### 8.6 Teacher-output retention
 
-Provider output is stored only when retention is explicitly enabled. A retained item
-must include:
+Normalized provider output for eligible open-development data is retained by default
+when it contributes to evaluation, corpus construction, or reproducibility. A
+retained item must include:
 
 - provider, requested model, resolved model, request hash, response hash, and time;
 - prompt/template version and sampling parameters;
@@ -536,8 +571,10 @@ must include:
 - terms/rights decision for the intended use;
 - expiry or retention policy.
 
-An output that is acceptable as transient advice is not automatically acceptable as
-training data.
+Raw transport bodies remain optional because normalized governed output is normally
+the smallest useful record. An output that is acceptable as advice or evaluation
+evidence is not automatically acceptable as training data; verifier, rights, and
+lineage gates still decide that use.
 
 ## 9. Knowledge acquisition and self-improvement
 
@@ -726,7 +763,8 @@ Acceptance:
   harvested from executable or real provider-assisted runs;
 - no synthetic fixture is labeled as a real run;
 - every promoted row has a verifier result and provenance;
-- raw provider payload retention remains opt-in.
+- governed normalized provider output is retained for eligible open-development
+  evidence; raw transport-body retention remains optional rather than prohibited.
 
 #### S21C-03 — Provider adapters and live smoke
 
@@ -1160,18 +1198,25 @@ Every PR in this programme must include, as applicable:
 
 ## 16. Immediate next action
 
-Sprint 21R and Sprint 21C1 are released. The immediate implementation action is
-**Sprint 21C2 — Governed Teacher and Provider Boundary**:
+Sprint 21R, Sprint 21C1, and Sprint 21C2 are released. The immediate implementation
+action is **Sprint 21C3 — Reality-Grade Learning Inputs**:
 
-1. verify remote `main` and the peeled `sprint-21c1-evidence-baseline` tag at
-   `aed2c1b0af280d3f0924a37eeddc191cd320e936`;
+1. verify remote `main` and the peeled `sprint-21c2-provider-baseline` tag at
+   `94abe263c8f26f36c8f8c3bc7b86859c14c1f291`;
 2. retain the existing 27 required checks and `enforce_admins`, while recording that a
-   second eligible reviewer is still unavailable;
-3. isolate all C2 evidence from the inconsistent development Artifact Store pair;
-4. implement the bounded OpenRouter, Claude Code, and Codex advisory boundaries;
-5. add explicit provider-output governance before learned intake;
-6. complete offline evidence, three operator-approved live smokes, protected release,
-   and the `sprint-21c2-provider-baseline` tag.
+   second eligible reviewer is still unavailable and does not justify release delay;
+3. keep the inconsistent development Artifact Store pair read-only and isolate every
+   C3 write in a fresh, internally consistent store;
+4. implement 30 rights-clean executable coding tasks, hidden verifier control, and
+   deterministic multi-candidate runs using existing Coding Agent infrastructure;
+5. record at least 200 authoritative outcomes and 50 failed-to-corrected trajectories,
+   with OpenRouter free used only as bounded optional diversity;
+6. make non-ZDR, collection-allowed open-development provider policy the tracked
+   default without a per-call waiver;
+7. pin and benchmark a local CPU embedding model, measure float32 versus halfvec, and
+   add no migration unless evidence requires one;
+8. complete Gate C3 evidence, protected release, and the
+   `sprint-21c3-reality-baseline` tag.
 
 The implementation authority is the
-[Sprint 21C2 Technical Backlog](../sprint-21/sprint-21c2-technical-backlog.md).
+[Sprint 21C3 Technical Backlog](../sprint-21/sprint-21c3-technical-backlog.md).
