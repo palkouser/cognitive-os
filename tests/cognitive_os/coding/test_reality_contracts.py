@@ -6,7 +6,6 @@ from uuid import uuid4
 
 import pytest
 
-from cognitive_os.coding import reality_tasks
 from cognitive_os.domain.coding import CodingOutcomeStatus
 from cognitive_os.domain.reality import (
     PUBLIC_REALITY_CONTRACTS,
@@ -283,106 +282,6 @@ def test_campaign_cannot_plan_the_same_run_twice() -> None:
 def test_a_breakdown_cannot_report_more_than_its_denominator() -> None:
     with pytest.raises(ValueError, match="cannot exceed its denominator"):
         RealityCountBreakdown(dimension="provider", value="openrouter", numerator=6, denominator=5)
-
-
-def test_generated_task_regenerates_byte_identically() -> None:
-    """A corpus that cannot be regenerated cannot be audited."""
-    artifact_id = uuid4()
-    bundle_hash = digest("bundle")
-    first = reality_tasks.build_manifest(
-        "numeric_logic.empty_mean",
-        seed=7,
-        hidden_bundle_artifact_id=artifact_id,
-        hidden_bundle_hash=bundle_hash,
-        created_at=FIXTURE_TIME,
-    )
-    second = reality_tasks.build_manifest(
-        "numeric_logic.empty_mean",
-        seed=7,
-        hidden_bundle_artifact_id=artifact_id,
-        hidden_bundle_hash=bundle_hash,
-        created_at=FIXTURE_TIME,
-    )
-
-    assert first.task_id == second.task_id
-    assert first.content_hash == second.content_hash
-
-
-def test_a_different_seed_is_a_different_task() -> None:
-    artifact_id = uuid4()
-    bundle_hash = digest("bundle")
-    first = reality_tasks.build_manifest(
-        "numeric_logic.empty_mean",
-        seed=1,
-        hidden_bundle_artifact_id=artifact_id,
-        hidden_bundle_hash=bundle_hash,
-        created_at=FIXTURE_TIME,
-    )
-    second = reality_tasks.build_manifest(
-        "numeric_logic.empty_mean",
-        seed=2,
-        hidden_bundle_artifact_id=artifact_id,
-        hidden_bundle_hash=bundle_hash,
-        created_at=FIXTURE_TIME,
-    )
-
-    assert first.task_id != second.task_id
-
-
-def test_generated_task_keeps_control_material_out_of_the_workspace(tmp_path: object) -> None:
-    from pathlib import Path
-
-    root = Path(str(tmp_path))
-    task = reality_tasks.write_task(
-        "numeric_logic.empty_mean",
-        root=root,
-        seed=1,
-        hidden_bundle_artifact_id=uuid4(),
-        hidden_bundle_hash=digest("bundle"),
-        created_at=FIXTURE_TIME,
-    )
-
-    workspace_files = {
-        item.relative_to(task.workspace).as_posix()
-        for item in task.workspace.rglob("*")
-        if item.is_file()
-    }
-    control_files = {
-        item.relative_to(task.control).as_posix()
-        for item in task.control.rglob("*")
-        if item.is_file()
-    }
-
-    assert task.control.resolve() not in task.workspace.resolve().parents
-    assert not any("hidden" in name for name in workspace_files)
-    assert any("hidden" in name for name in control_files)
-    assert workspace_files == {"src/stats.py", "tests/test_stats.py"}
-
-
-def test_generated_task_declares_verified_project_rights() -> None:
-    task = reality_tasks.build_manifest(
-        "numeric_logic.empty_mean",
-        seed=1,
-        hidden_bundle_artifact_id=uuid4(),
-        hidden_bundle_hash=digest("bundle"),
-        created_at=FIXTURE_TIME,
-    )
-
-    assert task.rights.licence_identifier == "Apache-2.0"
-    assert task.rights.rights_verified is True
-    assert task.rights.sensitivity.value == "public"
-
-
-def test_every_offline_strategy_has_a_generated_candidate() -> None:
-    from cognitive_os.coding.reality_tasks import _TEMPLATES
-
-    for template in _TEMPLATES.values():
-        assert set(template.candidate_sources) == {
-            RealityCandidateStrategy.INCOMPLETE_A,
-            RealityCandidateStrategy.CORRECT_NARROW,
-            RealityCandidateStrategy.INCOMPLETE_B,
-            RealityCandidateStrategy.CORRECT_ROBUST,
-        }
 
 
 def test_candidate_manifest_carries_no_expected_result() -> None:

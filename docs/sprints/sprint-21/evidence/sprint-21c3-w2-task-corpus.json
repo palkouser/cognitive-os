@@ -1,0 +1,110 @@
+{
+  "carried_findings": [
+    {
+      "id": "W1-F1",
+      "status": "open, scheduled for the start of W3 by operator decision",
+      "summary": "LearnedObservationIntake refuses a re-offer of the same governed outcome at a different moment, contradicting its own documented crash-safety."
+    }
+  ],
+  "corpus": {
+    "candidates": 120,
+    "families": {
+      "boundary_collections": 5,
+      "data_transformation": 5,
+      "error_handling": 5,
+      "numeric_logic": 5,
+      "parsing_validation": 5,
+      "state_idempotency": 5
+    },
+    "regeneration": "byte-identical; task and candidate identities are uuid5 over template and seed",
+    "repository_groups": 30,
+    "rights": "Apache-2.0, project-owned, verified per task with an evidence hash",
+    "tasks": 30,
+    "tasks_per_family_minimum": 5,
+    "unique_candidate_patch_hashes": 120
+  },
+  "corpus_contract_verified_in_the_real_sandbox": {
+    "baseline_fails_the_hidden_suite": "30 of 30",
+    "baseline_passes_the_published_suite": "30 of 30",
+    "container_runs": 420,
+    "correct_candidates_pass_both_suites": "60 of 60",
+    "incomplete_a_and_b_fail_different_hidden_tests": "30 of 30",
+    "incomplete_candidates_fail_the_hidden_suite": "60 of 60",
+    "incomplete_candidates_pass_the_published_suite": "60 of 60",
+    "note": "The published suite passing on the broken code is the property the sprint rests on: only the hidden suite discriminates.",
+    "sandbox_image": "cognitive-os-sandbox:sprint-5"
+  },
+  "deviations": [
+    {
+      "id": "W2-D1",
+      "observed": "Experience Compiler trajectory compilation and Corpus Factory routing are still unproven.",
+      "reason": "Both are W3 work items (S21C3-034, S21C3-035).",
+      "risk_accepted": "Unchanged from W1 and still the largest unproven integration. W3 must start with them, together with the W1-F1 intake fix.",
+      "subject": "backlog section 6.1 steps 8 and 9, carried from W1"
+    }
+  ],
+  "findings": [
+    {
+      "action": "checkpoint was redesigned around a different second edge case (the history is trimmed to a limit) and a non-mutating baseline. Re-verified in the sandbox; the near-clone report is now empty across all five variants.",
+      "component": "task corpus, state_idempotency family",
+      "id": "W2-F1",
+      "impact": "They sat in different repository groups, so a group-aware split could have separated two structurally identical tasks and leaked one into the evaluation of the other.",
+      "observed": "The AST and token normalizers reported state_idempotency.checkpoint and state_idempotency.merge_settings as near-clones: both baselines were 'call a mutating method on the first argument and return it', and both shared the 'does not mutate the input' edge case.",
+      "severity": "resolved in W2"
+    },
+    {
+      "action": "A control path is now a control token only when it is absent from the visible files. A name collision is not a leak.",
+      "component": "cognitive_os.coding.reality_leakage.control_tokens",
+      "id": "W2-F2",
+      "impact": "A detector whose output is 90 false positives is a detector nobody reads.",
+      "observed": "The scanner reported 90 control leaks that were all the filename 'conftest.py', which exists in both the control bundle and the workspace.",
+      "severity": "resolved in W2"
+    },
+    {
+      "action": "The header is emitted, and every candidate is asserted to round-trip through parse_unified_diff and apply_file_patch back to its own declared source.",
+      "component": "cognitive_os.coding.reality_candidates",
+      "id": "W2-F3",
+      "impact": "120 candidates would have been recorded as executions of patches the patch plane could not apply.",
+      "observed": "difflib.unified_diff emits file headers but not the 'diff --git' line the repository's own parser keys on, so every generated candidate patch was unreadable by the patch plane.",
+      "severity": "resolved in W2"
+    }
+  ],
+  "gates": {
+    "bandit": "0 issues",
+    "contract_schema_drift": "passed",
+    "corpus_execution_suite": "64 passed (opt-in, COGOS_RUN_SANDBOX_INTEGRATION=1)",
+    "mypy": "passed (571 files)",
+    "offline_suite": "1966 passed, 109 skipped",
+    "ruff_check": "passed",
+    "ruff_format": "passed",
+    "vertical_slice": "2 passed"
+  },
+  "items": [
+    "S21C3-020",
+    "S21C3-021",
+    "S21C3-022",
+    "S21C3-023",
+    "S21C3-024",
+    "S21C3-030"
+  ],
+  "leakage_and_shortcuts": {
+    "control_tokens_in_provider_visible_surfaces": 0,
+    "cross_task_correction_transfers_attempted": 120,
+    "cross_task_transfers_that_solved_another_task": 0,
+    "detector_self_check": "The normalizer is asserted to collapse a renamed clone and to separate genuinely different shapes, so a detector that finds nothing is distinguishable from one that detects nothing.",
+    "duplicate_candidate_sources": 0,
+    "lookup_key_leaks_in_the_projection": 0,
+    "near_clone_pairs_baseline": 0,
+    "near_clone_pairs_correct_narrow": 0,
+    "near_clone_pairs_correct_robust": 0,
+    "near_clone_pairs_incomplete_a": 0,
+    "near_clone_pairs_incomplete_b": 0,
+    "universal_patch_note": "Concatenating every declared answer trivially solves the corpus because each task's own answer is in the pile. The adversary implemented here is the meaningful one: a correction written for one task, dropped into a sibling task's file, must not make the sibling pass."
+  },
+  "migration_created": null,
+  "migration_head": "0015",
+  "recorded_at": "2026-07-29T17:39:39.961794+00:00",
+  "schema_version": 1,
+  "sprint": "21C3",
+  "wave": "W2"
+}

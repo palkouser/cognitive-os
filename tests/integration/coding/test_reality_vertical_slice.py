@@ -84,10 +84,6 @@ pytestmark = [
     ),
 ]
 
-VISIBLE_CONFTEST = (
-    "import pathlib\nimport sys\n\nsys.path.insert(0, str(pathlib.Path(__file__).parent / 'src'))\n"
-)
-
 
 async def _visible_pytest(sandbox: DockerSandbox, workspace: Path) -> int:
     sandbox_id = f"cogos-visible-{uuid4().hex[:12]}"
@@ -125,7 +121,7 @@ async def test_first_vertical_slice_end_to_end(tmp_path: Path) -> None:
     # 1. deterministic task generation
     bundle_artifact_id = uuid4()
     task = write_task(
-        "numeric_logic.empty_mean",
+        "numeric_logic.mean",
         root=tmp_path / "task",
         seed=1,
         hidden_bundle_artifact_id=bundle_artifact_id,
@@ -144,7 +140,6 @@ async def test_first_vertical_slice_end_to_end(tmp_path: Path) -> None:
     async def run_one(label: str, strategy: RealityCandidateStrategy | None) -> tuple[object, int]:
         workspace = tmp_path / f"run-{label}"
         shutil.copytree(task.workspace, workspace)
-        (workspace / "conftest.py").write_text(VISIBLE_CONFTEST)
         if strategy is not None:
             apply_candidate(task, strategy, workspace=workspace)
         visible_exit = await _visible_pytest(sandbox, workspace)
@@ -283,7 +278,7 @@ async def test_the_control_bundle_is_not_writable_from_inside_the_container(
     """The hidden tests are the answer key. A container that could rewrite them owns the score."""
     sandbox = DockerSandbox(SANDBOX_IMAGE)
     task = write_task(
-        "numeric_logic.empty_mean",
+        "numeric_logic.mean",
         root=tmp_path / "task",
         seed=1,
         hidden_bundle_artifact_id=uuid4(),

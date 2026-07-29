@@ -1,21 +1,27 @@
 """Deterministic generation of rights-clean repair tasks, §S21C3-020.
 
-Sprint 21C3 W1 ships one family so that the *shape* can be proved end to end before thirty
-tasks are generated against it. W2 adds the remaining five; the only thing that changes is the
-`_TEMPLATES` table, and a template that needed new machinery would be a sign the shape is
-wrong.
+This module is the machinery. The corpus itself — thirty tasks across six families — is the
+`TaskSpec` table in `reality_task_specs`, kept separate so that adding a family is a data
+change and never a code change. A template that needed new machinery here would be a sign the
+shape is wrong.
 
-Two properties are load-bearing and are asserted by the generator rather than by convention:
+Three properties are load-bearing, and the generator enforces them rather than trusting a
+convention:
 
 *Byte-identical regeneration.* Every file is literal text keyed by a template and a seed.
-Nothing is timestamped, nothing is uuid4-ed into content, and the manifest's identity is a
-uuid5 over the template and seed — so a task regenerated on another machine is the same task,
-and a corpus that cannot be regenerated cannot be audited.
+Nothing is timestamped, nothing is uuid4-ed into content, and a task's identity is a uuid5
+over the template and seed — so a task regenerated on another machine is the same task, and a
+corpus that cannot be regenerated cannot be audited.
 
 *The control bundle lives outside the workspace.* `write_task` puts visible files under
 `<root>/workspace` and hidden tests under `<root>/control`, never nested. A hidden test written
-into the workspace would be readable by the candidate, by the provider, and by the repository
+into the workspace would be readable by the candidate, by any provider and by the repository
 indexer, and it would still pass every test that only checks the mount is read-only.
+
+*Every candidate replaces exactly the one file under repair.* `incomplete_a` and `incomplete_b`
+rewrite the same function differently, which is why an adversary cannot concatenate the corpus
+edits into a patch that solves everything: the two halves of the answer conflict on the same
+lines. §S21C3-024 asserts that rather than assuming it.
 """
 
 from __future__ import annotations
@@ -37,6 +43,8 @@ from cognitive_os.domain.reality import (
     RealityTaskProjection,
 )
 
+from .reality_task_specs import TASK_SPECS, TaskSpec
+
 #: Fixed forever: it is what makes a regenerated task the same task.
 REALITY_TASK_NAMESPACE = UUID("6f2a1c94-8d3b-5e17-a4c0-2b9d7e5f83a1")
 
@@ -45,10 +53,43 @@ REALITY_TASK_NAMESPACE = UUID("6f2a1c94-8d3b-5e17-a4c0-2b9d7e5f83a1")
 #: inferred, because ADR 0088 keeps redistribution separate from openness.
 GENERATED_TASK_LICENCE = "Apache-2.0"
 
+GENERATOR_PROFILE_ID = "reality.tasks"
+GENERATOR_PROFILE_VERSION = 1
+
+#: Shared by every control bundle. The hidden suite runs from `/verification` while the code
+#: under repair is bind-mounted at `/workspace`; importing across that gap is all this does.
+CONTROL_CONFTEST = '''"""Put the workspace under test on the import path.
+
+The hidden suite lives at /verification and the code under repair is bind-mounted at
+/workspace, read-write for the candidate and never for this suite.
+"""
+
+import sys
+
+sys.path.insert(0, "/workspace/src")
+'''
+
+#: Written into the workspace so the *visible* suite can import the same module locally.
+#: Kept out of `allowed_paths`, so a candidate that edits it is a file-policy violation.
+VISIBLE_CONFTEST = '''"""Put the package under test on the import path."""
+
+import pathlib
+import sys
+
+sys.path.insert(0, str(pathlib.Path(__file__).parent / "src"))
+'''
+
+_ORDERED_STRATEGIES = (
+    RealityCandidateStrategy.INCOMPLETE_A,
+    RealityCandidateStrategy.CORRECT_NARROW,
+    RealityCandidateStrategy.INCOMPLETE_B,
+    RealityCandidateStrategy.CORRECT_ROBUST,
+)
+
 
 @dataclass(frozen=True, slots=True)
 class TaskTemplate:
-    """One repair task, as literal file contents. Adding a family means adding one of these."""
+    """One repair task expanded into literal file contents."""
 
     template_id: str
     family: RealityTaskFamily
@@ -79,147 +120,63 @@ def _digest(text: str) -> str:
     return sha256(text.encode()).hexdigest()
 
 
-_STATS_VISIBLE_TEST = '''"""Published contract for the statistics helpers."""
-
-from stats import mean
-
-
-def test_mean_of_integers() -> None:
-    assert mean([1, 2, 3]) == 2.0
+def _module_source(spec: TaskSpec, function_source: str) -> str:
+    header = f'"""{spec.module_doc}"""\n'
+    if spec.imports:
+        header += f"\n{spec.imports}\n"
+    return f"{header}\n\n{function_source.strip()}\n"
 
 
-def test_mean_of_floats() -> None:
-    assert mean([1.5, 2.5]) == 2.0
-
-
-def test_mean_of_single_value() -> None:
-    assert mean([7]) == 7.0
-'''
-
-_STATS_CONTROL_CONFTEST = '''"""Put the workspace under test on the import path.
-
-The hidden suite lives at /verification and the code under repair is bind-mounted at
-/workspace. Importing across that gap is the whole reason this file exists.
-"""
-
-import sys
-
-sys.path.insert(0, "/workspace/src")
-'''
-
-_STATS_CONTROL_TEST = '''"""The part of the contract the published tests do not state."""
-
-import pytest
-from stats import mean
-
-
-def test_mean_of_integers() -> None:
-    assert mean([1, 2, 3]) == 2.0
-
-
-def test_mean_returns_float_for_integer_input() -> None:
-    assert isinstance(mean([1, 2, 3]), float)
-
-
-def test_empty_sequence_raises_value_error() -> None:
-    with pytest.raises(ValueError):
-        mean([])
-
-
-def test_empty_tuple_raises_value_error() -> None:
-    with pytest.raises(ValueError):
-        mean(())
-'''
-
-_STATS_BASELINE = '''"""Small statistics helpers."""
-
-
-def mean(values):
-    """Return the arithmetic mean of `values`."""
-    if not values:
-        return 0.0
-    return sum(values) / len(values)
-'''
-
-_STATS_INCOMPLETE_A = '''"""Small statistics helpers."""
-
-
-def mean(values):
-    """Return the arithmetic mean of `values`."""
-    return sum(values) / len(values)
-'''
-
-_STATS_INCOMPLETE_B = '''"""Small statistics helpers."""
-
-
-def mean(values):
-    """Return the arithmetic mean of `values`."""
-    if not values:
-        return None
-    return sum(values) / len(values)
-'''
-
-_STATS_CORRECT_NARROW = '''"""Small statistics helpers."""
-
-
-def mean(values):
-    """Return the arithmetic mean of `values`."""
-    if not values:
-        raise ValueError("mean() requires at least one value")
-    return sum(values) / len(values)
-'''
-
-_STATS_CORRECT_ROBUST = '''"""Small statistics helpers."""
-
-
-def mean(values):
-    """Return the arithmetic mean of `values`.
-
-    Raises:
-        ValueError: if `values` is empty.
-    """
-    materialized = list(values)
-    if len(materialized) == 0:
-        raise ValueError("mean() requires at least one value")
-    return float(sum(materialized)) / len(materialized)
-'''
-
-_TEMPLATES: dict[str, TaskTemplate] = {
-    "numeric_logic.empty_mean": TaskTemplate(
-        template_id="numeric_logic.empty_mean",
-        family=RealityTaskFamily.NUMERIC_LOGIC,
-        repository_group="numeric-logic-statistics",
-        difficulty=RealityTaskDifficulty.SINGLE_EDIT,
-        issue_description=(
-            "mean() silently returns 0.0 when it is given an empty sequence. Callers cannot "
-            "tell that result apart from a genuine mean of zero, so an empty input is being "
-            "reported as a real measurement."
-        ),
-        expected_behavior=(
-            "mean() raises ValueError for an empty sequence and is unchanged for every "
-            "non-empty one."
-        ),
-        baseline_failure_reason="mean([]) returns 0.0 instead of raising ValueError",
-        visible_files={"src/stats.py": _STATS_BASELINE, "tests/test_stats.py": _STATS_VISIBLE_TEST},
+def _expand(spec: TaskSpec) -> TaskTemplate:
+    source_path = f"src/{spec.module}.py"
+    return TaskTemplate(
+        template_id=spec.template_id,
+        family=spec.family,
+        repository_group=spec.repository_group,
+        difficulty=spec.difficulty,
+        issue_description=spec.issue,
+        expected_behavior=spec.expected,
+        baseline_failure_reason=spec.baseline_reason,
+        visible_files={
+            source_path: _module_source(spec, spec.baseline),
+            f"tests/test_{spec.module}.py": spec.visible_test,
+            "conftest.py": VISIBLE_CONFTEST,
+        },
         control_files={
-            "conftest.py": _STATS_CONTROL_CONFTEST,
-            "test_hidden_stats.py": _STATS_CONTROL_TEST,
+            "conftest.py": CONTROL_CONFTEST,
+            f"test_hidden_{spec.module}.py": spec.hidden_test,
         },
         candidate_sources={
-            RealityCandidateStrategy.INCOMPLETE_A: {"src/stats.py": _STATS_INCOMPLETE_A},
-            RealityCandidateStrategy.CORRECT_NARROW: {"src/stats.py": _STATS_CORRECT_NARROW},
-            RealityCandidateStrategy.INCOMPLETE_B: {"src/stats.py": _STATS_INCOMPLETE_B},
-            RealityCandidateStrategy.CORRECT_ROBUST: {"src/stats.py": _STATS_CORRECT_ROBUST},
+            RealityCandidateStrategy.INCOMPLETE_A: {
+                source_path: _module_source(spec, spec.incomplete_a)
+            },
+            RealityCandidateStrategy.CORRECT_NARROW: {
+                source_path: _module_source(spec, spec.correct_narrow)
+            },
+            RealityCandidateStrategy.INCOMPLETE_B: {
+                source_path: _module_source(spec, spec.incomplete_b)
+            },
+            RealityCandidateStrategy.CORRECT_ROBUST: {
+                source_path: _module_source(spec, spec.correct_robust)
+            },
         },
     )
-}
 
-GENERATOR_PROFILE_ID = "reality.tasks"
-GENERATOR_PROFILE_VERSION = 1
+
+_TEMPLATES: dict[str, TaskTemplate] = {spec.template_id: _expand(spec) for spec in TASK_SPECS}
 
 
 def available_templates() -> tuple[str, ...]:
     return tuple(sorted(_TEMPLATES))
+
+
+def template(template_id: str) -> TaskTemplate:
+    return _TEMPLATES[template_id]
+
+
+def offline_strategies() -> tuple[RealityCandidateStrategy, ...]:
+    """The four of §4.6, in the order a correction trajectory walks them."""
+    return _ORDERED_STRATEGIES
 
 
 def build_manifest(
@@ -233,44 +190,39 @@ def build_manifest(
     """Describe one task without writing anything.
 
     The manifest is built from the template's literal text, so the hashes it declares are the
-    hashes of the bytes `write_task` will produce. Building the manifest from files already on
-    disk would make the manifest a description of whatever happened to be there.
+    hashes of the bytes `write_task` will produce. Building it from files already on disk would
+    make the manifest a description of whatever happened to be there.
     """
-    template = _TEMPLATES[template_id]
+    item = _TEMPLATES[template_id]
     task_id = uuid5(REALITY_TASK_NAMESPACE, f"{template_id}:{seed}")
     projection = RealityTaskProjection(
         task_id=task_id,
-        task_family=template.family,
-        difficulty=template.difficulty,
-        issue_description=template.issue_description,
-        expected_behavior=template.expected_behavior,
+        task_family=item.family,
+        difficulty=item.difficulty,
+        issue_description=item.issue_description,
+        expected_behavior=item.expected_behavior,
         visible_test_command=("pytest", "-q", "tests"),
         allowed_paths=("src",),
-        forbidden_paths=("tests",),
+        forbidden_paths=("tests", "conftest.py"),
         files=tuple(
             RealityContentEntry(path=path, size_bytes=len(text.encode()), file_hash=_digest(text))
-            for path, text in sorted(template.visible_files.items())
+            for path, text in sorted(item.visible_files.items())
         ),
     )
-    control_manifest_hash = sha256(
-        "\n".join(
-            f"{path} {_digest(text)}" for path, text in sorted(template.control_files.items())
-        ).encode()
-    ).hexdigest()
     return RealityTaskManifest(
         task_id=task_id,
-        task_family=template.family,
-        repository_group=template.repository_group,
-        difficulty=template.difficulty,
+        task_family=item.family,
+        repository_group=item.repository_group,
+        difficulty=item.difficulty,
         generator_profile_id=GENERATOR_PROFILE_ID,
         generator_profile_version=GENERATOR_PROFILE_VERSION,
         generation_seed=seed,
         projection=projection,
-        base_repository_manifest_hash=_repository_manifest_hash(template.visible_files),
+        base_repository_manifest_hash=_manifest_hash(item.visible_files),
         hidden_verifier_bundle_artifact_id=hidden_bundle_artifact_id,
         hidden_verifier_bundle_hash=hidden_bundle_hash,
-        control_material_manifest_hash=control_manifest_hash,
-        baseline_failure_reason=template.baseline_failure_reason,
+        control_material_manifest_hash=_manifest_hash(item.control_files),
+        baseline_failure_reason=item.baseline_failure_reason,
         required_verifier_ids=("coding.hidden_pytest", "coding.pytest"),
         rights=RealitySourceRights(
             source_identity=f"cognitive-os:generated:{template_id}",
@@ -294,19 +246,23 @@ def write_task(
     created_at: UtcDatetime,
 ) -> GeneratedTask:
     """Materialize one task package under `root`, workspace and control kept apart."""
-    template = _TEMPLATES[template_id]
+    item = _TEMPLATES[template_id]
     workspace = root / "workspace"
     control = root / "control"
-    _write_tree(workspace, template.visible_files)
-    _write_tree(control, template.control_files)
-    manifest = build_manifest(
-        template_id,
-        seed=seed,
-        hidden_bundle_artifact_id=hidden_bundle_artifact_id,
-        hidden_bundle_hash=hidden_bundle_hash,
-        created_at=created_at,
+    _write_tree(workspace, item.visible_files)
+    _write_tree(control, item.control_files)
+    return GeneratedTask(
+        manifest=build_manifest(
+            template_id,
+            seed=seed,
+            hidden_bundle_artifact_id=hidden_bundle_artifact_id,
+            hidden_bundle_hash=hidden_bundle_hash,
+            created_at=created_at,
+        ),
+        template=item,
+        workspace=workspace,
+        control=control,
     )
-    return GeneratedTask(manifest=manifest, template=template, workspace=workspace, control=control)
 
 
 def apply_candidate(
@@ -325,7 +281,7 @@ def _write_tree(root: Path, files: dict[str, str], *, create: bool = True) -> No
         destination.write_text(text, encoding="utf-8")
 
 
-def _repository_manifest_hash(files: dict[str, str]) -> str:
+def _manifest_hash(files: dict[str, str]) -> str:
     return sha256(
         "\n".join(f"{path} {_digest(text)}" for path, text in sorted(files.items())).encode()
     ).hexdigest()
