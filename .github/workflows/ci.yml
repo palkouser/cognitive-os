@@ -100,14 +100,51 @@ jobs:
         run: uv sync --locked --all-groups
       - name: Provider domain and adapter tests
         run: uv run pytest tests/cognitive_os/providers tests/cognitive_os/config -q
+      # Contracts only. This lane deliberately installs no PostgreSQL extra, so the table
+      # metadata tests — which import SQLAlchemy — belong to `learned-evidence-core`, which
+      # declares it. A missing dependency must move the test, never become a skip.
+      - name: Provider output governance contracts
+        run: uv run pytest tests/cognitive_os/provider_output/test_contracts.py -q
       - name: Shared provider contract tests
         run: uv run pytest tests/contract/providers -q
       - name: In-memory provider persistence tests
         run: uv run pytest tests/integration/provider_persistence -q
       - name: Offline replay command
-        run: uv run python scripts/provider_replay_test.py
+        run: uv run python scripts/provider.py replay
+      # The committed fixture still hashes to its manifest, and the verifier still tells a
+      # correct answer from a well-formed empty one. A verifier that stopped discriminating
+      # would make every live smoke pass.
+      - name: Advisory fixture and verifier
+        run: uv run python scripts/provider.py fixture
+      # Every adapter constructs through the one factory match, so this also proves the
+      # OpenRouter, Claude Code and Codex configurations in the example file are buildable
+      # — without a credential, a network or an installed CLI.
       - name: Credential-safe provider health
-        run: uv run python scripts/provider_health.py --config config/providers.example.yaml
+        run: uv run python scripts/provider.py health --config config/providers.example.yaml
+      # The live command must refuse without both halves of the opt-in. Exit 4 is the
+      # refusal; any other status here means CI just tried to call a real provider.
+      - name: Live smoke refuses without the runtime opt-in
+        run: |
+          set +e
+          uv run python scripts/provider.py live-smoke \
+            --config config/providers.example.yaml --provider claude-code \
+            --isolation-root "$RUNNER_TEMP"
+          status=$?
+          set -e
+          test "$status" -eq 4
+      # Credential-free by construction: every case runs the real routing, parsing,
+      # retention and governance code against fixed synthetic payloads, with no network,
+      # no key and no installed CLI. Every case measures whether a policy held.
+      - name: Thirty-five-case provider boundary CI gate
+        run: >-
+          uv run python scripts/benchmark_run.py
+          --manifest benchmarks/manifests/sprint21c2-provider-ci.yaml
+          --mode provider-replay --report-directory /tmp/sprint21c2-provider-ci
+      - name: Seventy-seven-case provider boundary seed set
+        run: >-
+          uv run python scripts/benchmark_run.py
+          --manifest benchmarks/manifests/sprint21c2-provider-seed.yaml
+          --mode provider-replay --report-directory /tmp/sprint21c2-provider-seed
 
   tool-plane:
     runs-on: ubuntu-latest
@@ -702,7 +739,8 @@ jobs:
       - name: PostgreSQL integration tests
         run: >-
           uv run pytest tests/integration/postgres tests/integration/controller
-          tests/cognitive_os/learned_evidence -m postgres -q
+          tests/cognitive_os/learned_evidence tests/cognitive_os/provider_output
+          -m postgres -q
       - name: Reset semantic smoke projections after repository-level tests
         run: |
           uv run alembic -c infra/postgres/alembic.ini downgrade 0002
@@ -823,9 +861,12 @@ jobs:
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
         with:
           version: "0.11.28"
+      # `--all-groups` for the test runner: the controlled-function step below is a pytest
+      # invocation, and this lane is where it is worth the most — immediately after a full
+      # downgrade and re-upgrade, where a function that failed to survive the cycle shows up.
       - name: Install Python and dependencies
         run: >-
-          uv python install 3.12 && uv sync --locked --extra postgres
+          uv python install 3.12 && uv sync --locked --all-groups --extra postgres
           --extra memory-postgres
       - name: Bootstrap isolated roles
         env:
@@ -842,6 +883,15 @@ jobs:
           uv run alembic -c infra/postgres/alembic.ini downgrade base
           uv run alembic -c infra/postgres/alembic.ini upgrade head
           uv run alembic -c infra/postgres/alembic.ini check
+      # Migration 0014 applied cleanly and its record functions produced `text` for every
+      # non-text column, so every runtime append failed. Applying a migration is not
+      # evidence that its functions work; this step calls one.
+      - name: Invoke the 0015 controlled function directly
+        env:
+          COGOS_DATABASE_URL: postgresql+asyncpg://cogos_app:app-ci@127.0.0.1:5432/cognitive_os_test
+        run: >-
+          uv run pytest tests/cognitive_os/provider_output
+          -m postgres -q
 
   learned-evidence-core:
     runs-on: ubuntu-latest
@@ -869,6 +919,17 @@ jobs:
           uv run python -c "from
           cognitive_os.infrastructure.learned.postgres.tables import
           LEARNED_EVIDENCE_TABLES; print(len(LEARNED_EVIDENCE_TABLES))"
+      # Table metadata and enum-parity checks for the 0015 ledger. Here rather than in
+      # `provider-offline` because they import SQLAlchemy and this lane declares the extra.
+      - name: Provider output table metadata and enum parity
+        run: uv run pytest tests/cognitive_os/provider_output/test_tables.py -q
+      # The in-memory governance ledger and the governed teacher. Credential-free by
+      # construction: a mock provider, an in-memory event store and an in-memory artifact
+      # store, so the gate cannot acquire a reason to be skipped.
+      - name: Provider output governance reference and orchestration
+        run: >-
+          uv run pytest tests/cognitive_os/provider_output/test_memory_repository.py
+          tests/cognitive_os/provider_output/test_governed_teacher.py -q
       # Credential-free by construction: the whole family runs against the in-memory
       # reference and a stub Artifact Store, so the gate cannot acquire a reason to be
       # skipped. Every case measures whether a policy held, never accuracy or uplift.

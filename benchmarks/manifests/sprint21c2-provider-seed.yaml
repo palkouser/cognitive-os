@@ -1,0 +1,110 @@
+benchmark_id: sprint21c2-provider-seed
+version: "1"
+title: Sprint 21C2 governed provider boundary seed set
+description: >-
+  77 fixed-seed, credential-free, network-free, binary-free cases covering every branch
+  the CI gate samples: OpenRouter routing and budget policy, response normalization, the
+  Claude Code envelope, the Codex JSONL stream, the independent advisory verifier,
+  governed retention and rights, idempotency and retry, selection eligibility, intake
+  classification, the mutation guard, runner cleanup and secret scanning. Every case
+  measures whether a policy held. None measures accuracy or uplift, and passing the whole
+  set says nothing about Gate L2.
+default_configuration: {mode: provider-replay}
+source: Cognitive OS Sprint 21C2 executable backlog
+license: Apache-2.0
+created_at: 2026-07-28T00:00:00Z
+case_matrix:
+  generic:
+    # ---------------------------------------------------------------- OpenRouter routing
+    - {id: provider-seed-001, scenario: openrouter_route, catalog: free, route: default, expected: routed}
+    - {id: provider-seed-002, scenario: openrouter_route, catalog: free, route: free, expected: routed}
+    - {id: provider-seed-003, scenario: openrouter_route, catalog: free, route: paid, expected: budget_refused}
+    - {id: provider-seed-004, scenario: openrouter_route, catalog: free, route: unknown, expected: unavailable}
+    # An unparsable price is treated as not free, so it cannot buy its way past a free-only policy.
+    - {id: provider-seed-005, scenario: openrouter_route, catalog: free, route: unpriced, expected: budget_refused}
+    - {id: provider-seed-006, scenario: openrouter_route, catalog: paid_only, route: default, expected: unavailable}
+    - {id: provider-seed-007, scenario: openrouter_route, catalog: paid_only, route: paid, expected: budget_refused}
+    - {id: provider-seed-008, scenario: openrouter_route, catalog: paid_only, route: unknown, expected: unavailable}
+    - {id: provider-seed-009, scenario: openrouter_route, catalog: empty, expected: invalid_catalog}
+    - {id: provider-seed-010, scenario: openrouter_route, catalog: malformed, expected: invalid_catalog}
+    # Free-only lifted, but zero maximum spend still refuses a paid model.
+    - {id: provider-seed-011, scenario: openrouter_route, catalog: free, route: paid, require_free: false, expected: budget_refused}
+    - {id: provider-seed-012, scenario: openrouter_route, catalog: free, route: paid, require_free: false, maximum_spend_usd: 1.0, expected: routed}
+    # -------------------------------------------------------------- response normalization
+    - {id: provider-seed-013, scenario: openrouter_response, defect: none, expected: mapped}
+    - {id: provider-seed-014, scenario: openrouter_response, defect: no_choices, expected: invalid}
+    - {id: provider-seed-015, scenario: openrouter_response, defect: missing_model, expected: invalid}
+    - {id: provider-seed-016, scenario: openrouter_response, defect: null_content, expected: mapped}
+    - {id: provider-seed-017, scenario: openrouter_response, defect: length_truncated, expected: truncated}
+    - {id: provider-seed-018, scenario: openrouter_response, defect: unknown_finish_reason, expected: mapped}
+    # ------------------------------------------------------------------ Claude Code envelope
+    - {id: provider-seed-019, scenario: claude_envelope, defect: none, expected: mapped}
+    - {id: provider-seed-020, scenario: claude_envelope, defect: result_as_string, expected: mapped}
+    - {id: provider-seed-021, scenario: claude_envelope, defect: error_result, expected: invalid}
+    - {id: provider-seed-022, scenario: claude_envelope, defect: not_json, expected: invalid}
+    - {id: provider-seed-023, scenario: claude_envelope, defect: not_object, expected: invalid}
+    - {id: provider-seed-024, scenario: claude_envelope, defect: missing_result, expected: invalid}
+    - {id: provider-seed-025, scenario: claude_envelope, defect: schema_mismatch, expected: invalid}
+    # ---------------------------------------------------------------------- Codex JSONL
+    - {id: provider-seed-026, scenario: codex_events, defect: none, expected: mapped}
+    - {id: provider-seed-027, scenario: codex_events, defect: fenced, expected: mapped}
+    - {id: provider-seed-028, scenario: codex_events, defect: ignored_event, expected: mapped}
+    - {id: provider-seed-029, scenario: codex_events, defect: malformed_line, expected: invalid}
+    - {id: provider-seed-030, scenario: codex_events, defect: failure_event, expected: invalid}
+    - {id: provider-seed-031, scenario: codex_events, defect: unknown_event, expected: invalid}
+    - {id: provider-seed-032, scenario: codex_events, defect: no_final_message, expected: invalid}
+    - {id: provider-seed-033, scenario: codex_events, defect: schema_mismatch, expected: invalid}
+    # ------------------------------------------------------------- independent verifier
+    - {id: provider-seed-034, scenario: advisory_verify, answer: correct, expected: correct}
+    - {id: provider-seed-035, scenario: advisory_verify, answer: empty, expected: rejected}
+    - {id: provider-seed-036, scenario: advisory_verify, answer: wrong_defect, expected: rejected}
+    - {id: provider-seed-037, scenario: advisory_verify, answer: shotgun, expected: rejected}
+    - {id: provider-seed-038, scenario: advisory_verify, answer: too_many, expected: rejected}
+    - {id: provider-seed-039, scenario: advisory_verify, answer: malformed, expected: rejected}
+    # --------------------------------------------------- governed retention and rights
+    - {id: provider-seed-040, scenario: governance, variant: default, retention: none, expected: none}
+    - {id: provider-seed-041, scenario: governance, variant: default, retention: hash_only, expected: hash_only}
+    - {id: provider-seed-042, scenario: governance, variant: default, retention: normalized_content, sensitivity: public, expected: normalized_content}
+    - {id: provider-seed-043, scenario: governance, variant: default, retention: normalized_content, sensitivity: internal, expected: normalized_content}
+    - {id: provider-seed-044, scenario: governance, variant: default, retention: normalized_content, rights: unknown, expected: hash_only}
+    - {id: provider-seed-045, scenario: governance, variant: default, retention: normalized_content, rights: prohibited, expected: hash_only}
+    - {id: provider-seed-046, scenario: governance, variant: scan_failed, retention: normalized_content, expected: hash_only}
+    - {id: provider-seed-047, scenario: governance, variant: scan_failed, retention: hash_only, expected: hash_only}
+    # Restricted content and a deletion obligation are impossible against an immutable
+    # store, so the directive is refused where it is written rather than downgraded later.
+    - {id: provider-seed-048, scenario: governance, variant: default, retention: normalized_content, sensitivity: restricted, expected: directive_refused}
+    - {id: provider-seed-049, scenario: governance, variant: default, retention: normalized_content, physical_deletion_required: true, expected: directive_refused}
+    - {id: provider-seed-050, scenario: governance, variant: default, retention: hash_only, physical_deletion_required: true, expected: hash_only}
+    - {id: provider-seed-051, scenario: governance, variant: default, retention: hash_only, sensitivity: restricted, expected: hash_only}
+    - {id: provider-seed-052, scenario: governance, variant: self_verification, retention: hash_only, expected: refused}
+    - {id: provider-seed-053, scenario: governance, variant: self_verification, retention: none, expected: refused}
+    # --------------------------------------------------------------- retry and idempotency
+    - {id: provider-seed-054, scenario: governance, variant: reuse_same_execution, retention: hash_only, expected: idempotent}
+    - {id: provider-seed-055, scenario: governance, variant: reuse_same_execution, retention: normalized_content, expected: idempotent}
+    - {id: provider-seed-056, scenario: governance, variant: reuse_different_execution, retention: hash_only, expected: conflict}
+    - {id: provider-seed-057, scenario: governance, variant: reuse_different_execution, retention: normalized_content, expected: conflict}
+    # ------------------------------------------------------------- selection eligibility
+    - {id: provider-seed-058, scenario: selection, defect: none, expected: selectable}
+    - {id: provider-seed-059, scenario: selection, defect: rights_unknown, expected: refused}
+    - {id: provider-seed-060, scenario: selection, defect: scan_failed, expected: refused}
+    - {id: provider-seed-061, scenario: selection, defect: verifier_failed, expected: refused}
+    - {id: provider-seed-062, scenario: selection, defect: expired, expected: refused}
+    - {id: provider-seed-063, scenario: selection, defect: deletion_required, expected: refused}
+    # ------------------------------------------------------------ intake classification
+    - {id: provider-seed-064, scenario: intake, adapter: openrouter, expected: advisory}
+    - {id: provider-seed-065, scenario: intake, adapter: claude_code, expected: advisory}
+    - {id: provider-seed-066, scenario: intake, adapter: codex_cli, expected: advisory}
+    # ------------------------------------------------------------------- mutation guard
+    - {id: provider-seed-067, scenario: mutation, change: none, expected: clean}
+    - {id: provider-seed-068, scenario: mutation, change: created, expected: detected}
+    - {id: provider-seed-069, scenario: mutation, change: modified, expected: detected}
+    - {id: provider-seed-070, scenario: mutation, change: deleted, expected: detected}
+    # The case a size or timestamp check would miss.
+    - {id: provider-seed-071, scenario: mutation, change: same_size, expected: detected}
+    - {id: provider-seed-072, scenario: mutation, change: symlink_swap, expected: detected}
+    # ------------------------------------------------------------- cleanup and scanning
+    - {id: provider-seed-073, scenario: cleanup, expected: clean}
+    - {id: provider-seed-074, scenario: scan, payload: clean, expected: passed}
+    - {id: provider-seed-075, scenario: scan, payload: api_key, expected: failed}
+    - {id: provider-seed-076, scenario: scan, payload: bearer, expected: failed}
+    - {id: provider-seed-077, scenario: scan, payload: secret_named_field, expected: failed}

@@ -1,0 +1,170 @@
+{
+  "defects_found_by_the_live_smokes": [
+    "advisory_schema_json() emitted a non-strict JSON Schema; codex exec --output-schema forwards it to a strict structured-output backend, which rejected the turn with a 400.",
+    "The Codex adapter reused the Claude Code advisory policy, which forbids running commands - the only way Codex can read a file. The prompt made the task impossible.",
+    "The committed fixture task carried the same assumption; rewritten provider-neutral.",
+    "A non-zero CLI exit reported only 'non-zero status'; Claude Code reports the reason on stdout, so the runner now takes an adapter-supplied allowlisted diagnoser.",
+    "maximum_turns defaulted to 3, which an ordinary read-then-answer task exhausts.",
+    "The live OpenRouter catalog carries -1 prices for variable-priced models; CatalogModel constrained prices to ge=0, so the whole catalog failed to parse and the error escaped as a raw ValidationError.",
+    "OpenRouter's `provider` preferences were passed as a top-level kwarg, which the OpenAI client rejects, so the zero-data-retention and data-collection policy never reached the wire at all.",
+    "The live smoke handed a network API a task that says 'read the file in the directory you were given'. OpenRouter has no filesystem and confidently described functions that do not exist. Workspace content is now inlined for non-CLI adapters."
+  ],
+  "environment": {
+    "claude_code_version": "2.1.219",
+    "codex_cli_version": "0.144.6",
+    "openrouter_free_models_in_catalog": 17,
+    "openrouter_route": "openrouter/free"
+  },
+  "git_commit": "f12dbe30aca3e6b7caf0482440608b2949f670d1",
+  "isolation": {
+    "fixture_content_hash": "0e2dc4d10c6bd1a79d704081193febfee549ab58b022abaad63d8db690744eb6",
+    "fixture_id": "sprint21c2-advisory-empty-input",
+    "fixture_verified_before_and_after": true,
+    "fixture_version": "2",
+    "outside_repository": true,
+    "root": "/var/tmp/cogos-advisory-fixture"
+  },
+  "operator_approval": {
+    "data_policy_decision": "Zero data retention was relaxed for OpenRouter by explicit operator decision, for this public synthetic fixture only. No free OpenRouter endpoint offers ZDR, so the strict default returns 404 'No endpoints found matching your data policy'. ADR 0087 permits a relaxed policy for public content and forbids it for internal or restricted material; the fixture is public, synthetic and Apache-2.0. Data collection remained denied and spend remained zero. The tracked example configuration keeps both strict defaults.",
+    "providers": [
+      "claude-code",
+      "codex-cli",
+      "openrouter"
+    ]
+  },
+  "receipts": {
+    "claude-code": {
+      "attempts": 1,
+      "correct": 1,
+      "outcomes": [
+        "correct"
+      ],
+      "successful_receipt": {
+        "adapter": "claude_code",
+        "answer_correct": true,
+        "answer_hash": "da265ae3b3ba14b1bc62dfdd6ad9cb2565002cd658b7dbec8fad16b69bf26e78",
+        "check": "live-smoke",
+        "elapsed_ms": 18873.6,
+        "exit": 0,
+        "finish_reason": "completed",
+        "fixture_content_hash": "0e2dc4d10c6bd1a79d704081193febfee549ab58b022abaad63d8db690744eb6",
+        "fixture_id": "sprint21c2-advisory-empty-input",
+        "governance_recorded": false,
+        "missing_concepts": [],
+        "normalized_response_hash": "25ee492edb15a72eb936c958a682f2905a476e453cc11f3e2a51b23cc1c5c9fd",
+        "provider_id": "claude-code",
+        "request_hash": "dbf9586233b2f06d2a5bdc00c8d48f57975fbb65797fd388359072018e34cd26",
+        "requested_model": "claude_code:default",
+        "resolved_model": "claude-code",
+        "retention_mode": "none",
+        "usage": {
+          "cached_input_tokens": null,
+          "input_tokens": 6,
+          "output_tokens": 1319,
+          "reasoning_tokens": null,
+          "total_tokens": null
+        },
+        "verifier_verdict": "correct",
+        "workspace_changes": [],
+        "workspace_unchanged": true
+      }
+    },
+    "codex-cli": {
+      "attempts": 1,
+      "correct": 1,
+      "outcomes": [
+        "correct"
+      ],
+      "successful_receipt": {
+        "adapter": "codex_cli",
+        "answer_correct": true,
+        "answer_hash": "2fa1e242c0559dc15d198e96984de5a181af2060f4545f3aece09991aeab81b9",
+        "check": "live-smoke",
+        "elapsed_ms": 14627.6,
+        "exit": 0,
+        "finish_reason": "completed",
+        "fixture_content_hash": "0e2dc4d10c6bd1a79d704081193febfee549ab58b022abaad63d8db690744eb6",
+        "fixture_id": "sprint21c2-advisory-empty-input",
+        "governance_recorded": false,
+        "missing_concepts": [],
+        "normalized_response_hash": "c77b48559b4c851714d22b42a8decc248c8c2bc896e67d450c49ed5c74380ff1",
+        "provider_id": "codex-cli",
+        "request_hash": "e538b2055a9ef42ff440095f1ce9bead045b25c48f55d76ea3bd8ff5a82dad34",
+        "requested_model": "codex_cli:default",
+        "resolved_model": "codex",
+        "retention_mode": "none",
+        "usage": null,
+        "verifier_verdict": "correct",
+        "workspace_changes": [],
+        "workspace_unchanged": true
+      }
+    },
+    "openrouter": {
+      "attempts": 9,
+      "capture_note": "The recording run caught no success in its first three attempts, so a bounded capture loop ran until one verified receipt was obtained. The denominator below is reported in full; a single receipt is not evidence of reliability and is not presented as any.",
+      "correct": 1,
+      "outcomes": [
+        "wrong_defect",
+        "wrong_defect",
+        "typed provider failure"
+      ],
+      "successful_receipt": {
+        "adapter": "openrouter",
+        "answer_correct": true,
+        "answer_hash": "d176f279aeba7f0adfcc75310e3d7f8896da2802188f66f6de7222666571ef3d",
+        "check": "live-smoke",
+        "elapsed_ms": 6022.2,
+        "exit": 0,
+        "finish_reason": "completed",
+        "fixture_content_hash": "0e2dc4d10c6bd1a79d704081193febfee549ab58b022abaad63d8db690744eb6",
+        "fixture_id": "sprint21c2-advisory-empty-input",
+        "governance_recorded": false,
+        "missing_concepts": [],
+        "normalized_response_hash": "173aa91b4de3012374a4bba674b3e3d79a2e002bf97c03bcf47090a50bea20b8",
+        "provider_id": "openrouter",
+        "request_hash": "4771a4de1900b7277b38842328e07efc28f19eda80b669c2f55c0bca0b988507",
+        "requested_model": "openrouter/free",
+        "resolved_model": "google/gemma-4-26b-a4b-it:free",
+        "retention_mode": "none",
+        "usage": {
+          "cached_input_tokens": null,
+          "input_tokens": 631,
+          "output_tokens": 249,
+          "reasoning_tokens": null,
+          "total_tokens": 880
+        },
+        "verifier_verdict": "correct",
+        "workspace_changes": [],
+        "workspace_unchanged": true
+      }
+    }
+  },
+  "recorded_at": "2026-07-29T07:47:16.508982+00:00",
+  "reliability": {
+    "note": "Measured rather than assumed. The two CLI agents answer correctly on every attempt. The OpenRouter free tier does not: across 13 post-fix attempts the router selected small free models that produced a wrong diagnosis or schema-violating JSON most of the time. Both outcomes are the boundary working correctly - the verifier scored the wrong answers wrong, and the strict schema refused a malformed field ('severityanas') rather than coercing it. The instability belongs to the free tier, not to the adapter.",
+    "openrouter_correct": 5,
+    "openrouter_models_seen": [
+      "google/gemma-4-26b-a4b-it:free",
+      "openai/gpt-oss-20b:free"
+    ],
+    "openrouter_post_fix_attempts": 22
+  },
+  "results": {
+    "content_retained": "none; hashes, model identity, policy, usage, timing and status only",
+    "governance_records_written": 0,
+    "providers_with_a_successful_verified_smoke": [
+      "claude-code",
+      "codex-cli",
+      "openrouter"
+    ],
+    "retention_mode": "none"
+  },
+  "schema_version": 2,
+  "sprint": "21C2",
+  "store_isolation": {
+    "c2_writes": 0,
+    "inconsistent_development_pair_unchanged": true,
+    "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf"
+  },
+  "task": "S21C2-075"
+}

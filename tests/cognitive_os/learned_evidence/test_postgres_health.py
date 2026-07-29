@@ -78,7 +78,7 @@ class TestAHealthyStoreReportsNothingWrong:
         report = await PostgresLearnedHealthService(app).check()
         assert report.healthy
         assert report.integrity_failures == ()
-        assert report.migration_revision == "0014"
+        assert report.migration_revision == "0015"
         assert report.table_count == EXPECTED_TABLE_COUNT
         assert report.append_only_trigger_count == EXPECTED_TRIGGER_COUNT
         assert report.controlled_function_count == 10

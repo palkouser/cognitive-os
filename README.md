@@ -740,6 +740,24 @@ remains closed. See
 [ADR 0086](docs/adr/0086-learned-evidence-persistence-authority.md) and the
 [operations guide](docs/operations/learned-evidence.md).
 
+## Governed Teacher and Provider Boundary (Sprint 21C2)
+
+An operator can use OpenRouter, Claude Code and Codex as **bounded advisory teachers**
+through one governed boundary. Every call declares its intended use before it happens, is
+recorded as an immutable governance revision, and retains only what the evidence permits —
+the directive intersected with verified rights, a passed secret scan, a storable sensitivity
+and no deletion obligation. **A provider answer is never a real governed run**, cannot write
+active memory, cannot activate or approve a learned component, and cannot be the only
+evidence for a decision. Correctness is decided by an independent deterministic verifier
+against a public synthetic fixture, never by the provider itself.
+
+Live provider calls are off by default and require two separate opt-ins; no credential is
+read and no socket is opened in normal CI. See
+[ADR 0087](docs/adr/0087-governed-provider-boundary-and-output-retention.md),
+[provider configuration](docs/operations/provider-configuration.md),
+[provider commands](docs/operations/provider-health-checks.md) and
+[live smokes](docs/operations/provider-live-smokes.md).
+
 ---
 
 ## 📬 Contact Us

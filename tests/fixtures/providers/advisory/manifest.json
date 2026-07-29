@@ -1,0 +1,56 @@
+{
+  "fixture_id": "sprint21c2-advisory-empty-input",
+  "fixture_version": "2",
+  "schema_version": "1",
+  "title": "One unguarded division by the length of a possibly empty sequence",
+  "task_path": "task.md",
+  "workspace_path": "workspace",
+  "provenance": {
+    "origin": "Written for Cognitive OS Sprint 21C2 as a public cross-provider advisory fixture. Not derived from any repository, product, user, or third-party corpus.",
+    "license": "Apache-2.0",
+    "author": "cognitive-os-maintainers",
+    "created_at": "2026-07-28",
+    "contains_repository_content": false,
+    "contains_personal_data": false,
+    "is_real_governed_outcome": false
+  },
+  "usage_rights": "verified: synthetic content authored for this repository and released under the repository license",
+  "expected_finding": {
+    "target_path": "workspace/statistics_helper.py",
+    "required_concepts": {
+      "file": [
+        "statistics_helper.py",
+        "statistics_helper"
+      ],
+      "function": [
+        "arithmetic_mean"
+      ],
+      "trigger": [
+        "empty",
+        "no values",
+        "no elements",
+        "zero values",
+        "zero elements",
+        "zero-length",
+        "len(values) == 0",
+        "len(values) is 0"
+      ],
+      "failure": [
+        "zerodivision",
+        "zero division",
+        "division by zero",
+        "divide by zero",
+        "divided by zero",
+        "dividing by zero",
+        "divides by zero"
+      ]
+    },
+    "minimum_findings": 1,
+    "maximum_findings": 3
+  },
+  "content_manifest": {
+    "task.md": "7991635968b912c69c557e0621a122a00bd471352500a69e29020f42a5c587dc",
+    "workspace/statistics_helper.py": "b598daa1eedaa9464accd811d75cd26c8834f04bf1e40e1ff1336194c19fd9c8"
+  },
+  "content_hash": "0e2dc4d10c6bd1a79d704081193febfee549ab58b022abaad63d8db690744eb6"
+}

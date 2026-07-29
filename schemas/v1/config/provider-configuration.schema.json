@@ -1,0 +1,700 @@
+{
+  "$defs": {
+    "ClaudeCodeProviderConfig": {
+      "additionalProperties": false,
+      "description": "Claude Code as a bounded, read-only, non-interactive advisory teacher.",
+      "properties": {
+        "adapter": {
+          "const": "claude_code",
+          "default": "claude_code",
+          "title": "Adapter",
+          "type": "string"
+        },
+        "allowed_tools": {
+          "default": [
+            "Read",
+            "Glob",
+            "Grep"
+          ],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Allowed Tools",
+          "type": "array"
+        },
+        "disallowed_tools": {
+          "default": [
+            "Bash",
+            "Edit",
+            "Write",
+            "WebFetch",
+            "WebSearch"
+          ],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Disallowed Tools",
+          "type": "array"
+        },
+        "enabled": {
+          "default": false,
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "environment_allowlist": {
+          "default": [
+            "HOME",
+            "LANG",
+            "LC_ALL",
+            "PATH",
+            "TERM",
+            "TZ"
+          ],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Environment Allowlist",
+          "type": "array"
+        },
+        "executable": {
+          "default": "claude",
+          "minLength": 1,
+          "title": "Executable",
+          "type": "string"
+        },
+        "kind": {
+          "const": "cli_agent",
+          "default": "cli_agent",
+          "title": "Kind",
+          "type": "string"
+        },
+        "limits": {
+          "$ref": "#/$defs/CliProcessLimits",
+          "default": {
+            "maximum_stderr_bytes": 65536,
+            "maximum_stdout_bytes": 262144,
+            "termination_grace_seconds": 2.0,
+            "timeout_seconds": 120.0
+          }
+        },
+        "live_smoke_enabled": {
+          "default": false,
+          "title": "Live Smoke Enabled",
+          "type": "boolean"
+        },
+        "maximum_budget_usd": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum Budget Usd"
+        },
+        "maximum_turns": {
+          "default": 6,
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Maximum Turns",
+          "type": "integer"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "output_format": {
+          "$ref": "#/$defs/ClaudeOutputFormat",
+          "default": "json"
+        },
+        "permission_mode": {
+          "default": "plan",
+          "minLength": 1,
+          "title": "Permission Mode",
+          "type": "string"
+        },
+        "provider_id": {
+          "default": "claude-code",
+          "minLength": 1,
+          "title": "Provider Id",
+          "type": "string"
+        },
+        "retention": {
+          "$ref": "#/$defs/ProviderRetentionDefaults",
+          "default": {
+            "intended_use": "transient_advice",
+            "retention_mode": "none",
+            "sensitivity": "internal"
+          }
+        },
+        "safe_mode": {
+          "default": true,
+          "title": "Safe Mode",
+          "type": "boolean"
+        },
+        "working_directory": {
+          "format": "path",
+          "title": "Working Directory",
+          "type": "string"
+        }
+      },
+      "required": [
+        "working_directory"
+      ],
+      "title": "ClaudeCodeProviderConfig",
+      "type": "object"
+    },
+    "ClaudeOutputFormat": {
+      "enum": [
+        "json",
+        "stream-json"
+      ],
+      "title": "ClaudeOutputFormat",
+      "type": "string"
+    },
+    "CliProcessLimits": {
+      "additionalProperties": false,
+      "description": "Bounds the shared runner enforces. Configuration may lower them, never raise them.",
+      "properties": {
+        "maximum_stderr_bytes": {
+          "default": 65536,
+          "exclusiveMinimum": 0,
+          "title": "Maximum Stderr Bytes",
+          "type": "integer"
+        },
+        "maximum_stdout_bytes": {
+          "default": 262144,
+          "exclusiveMinimum": 0,
+          "title": "Maximum Stdout Bytes",
+          "type": "integer"
+        },
+        "termination_grace_seconds": {
+          "default": 2.0,
+          "exclusiveMinimum": 0,
+          "maximum": 30,
+          "title": "Termination Grace Seconds",
+          "type": "number"
+        },
+        "timeout_seconds": {
+          "default": 120.0,
+          "exclusiveMinimum": 0,
+          "title": "Timeout Seconds",
+          "type": "number"
+        }
+      },
+      "title": "CliProcessLimits",
+      "type": "object"
+    },
+    "CodexCliProviderConfig": {
+      "additionalProperties": false,
+      "description": "Codex `exec` as an ephemeral, read-only, never-approving advisory teacher.",
+      "properties": {
+        "adapter": {
+          "const": "codex_cli",
+          "default": "codex_cli",
+          "title": "Adapter",
+          "type": "string"
+        },
+        "approval_policy": {
+          "default": "never",
+          "minLength": 1,
+          "title": "Approval Policy",
+          "type": "string"
+        },
+        "enabled": {
+          "default": false,
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "environment_allowlist": {
+          "default": [
+            "HOME",
+            "LANG",
+            "LC_ALL",
+            "PATH",
+            "TERM",
+            "TZ"
+          ],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Environment Allowlist",
+          "type": "array"
+        },
+        "ephemeral": {
+          "const": true,
+          "default": true,
+          "title": "Ephemeral",
+          "type": "boolean"
+        },
+        "executable": {
+          "default": "codex",
+          "minLength": 1,
+          "title": "Executable",
+          "type": "string"
+        },
+        "ignore_rules": {
+          "default": true,
+          "title": "Ignore Rules",
+          "type": "boolean"
+        },
+        "ignore_user_config": {
+          "const": true,
+          "default": true,
+          "title": "Ignore User Config",
+          "type": "boolean"
+        },
+        "kind": {
+          "const": "cli_agent",
+          "default": "cli_agent",
+          "title": "Kind",
+          "type": "string"
+        },
+        "limits": {
+          "$ref": "#/$defs/CliProcessLimits",
+          "default": {
+            "maximum_stderr_bytes": 65536,
+            "maximum_stdout_bytes": 262144,
+            "termination_grace_seconds": 2.0,
+            "timeout_seconds": 120.0
+          }
+        },
+        "live_smoke_enabled": {
+          "default": false,
+          "title": "Live Smoke Enabled",
+          "type": "boolean"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "provider_id": {
+          "default": "codex-cli",
+          "minLength": 1,
+          "title": "Provider Id",
+          "type": "string"
+        },
+        "retention": {
+          "$ref": "#/$defs/ProviderRetentionDefaults",
+          "default": {
+            "intended_use": "transient_advice",
+            "retention_mode": "none",
+            "sensitivity": "internal"
+          }
+        },
+        "sandbox_mode": {
+          "default": "read-only",
+          "minLength": 1,
+          "title": "Sandbox Mode",
+          "type": "string"
+        },
+        "skip_git_repo_check": {
+          "default": true,
+          "title": "Skip Git Repo Check",
+          "type": "boolean"
+        },
+        "working_directory": {
+          "format": "path",
+          "title": "Working Directory",
+          "type": "string"
+        }
+      },
+      "required": [
+        "working_directory"
+      ],
+      "title": "CodexCliProviderConfig",
+      "type": "object"
+    },
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "MiniMaxKeyType": {
+      "enum": [
+        "pay_as_you_go",
+        "subscription"
+      ],
+      "title": "MiniMaxKeyType",
+      "type": "string"
+    },
+    "MiniMaxProviderConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "adapter": {
+          "const": "minimax",
+          "default": "minimax",
+          "title": "Adapter",
+          "type": "string"
+        },
+        "api_key_environment_variable": {
+          "default": "COGOS_MINIMAX_API_KEY",
+          "minLength": 1,
+          "title": "Api Key Environment Variable",
+          "type": "string"
+        },
+        "base_url": {
+          "default": "https://api.minimax.io/v1",
+          "title": "Base Url",
+          "type": "string"
+        },
+        "default_max_output_tokens": {
+          "default": 8192,
+          "minimum": 1,
+          "title": "Default Max Output Tokens",
+          "type": "integer"
+        },
+        "enabled": {
+          "default": true,
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "key_type": {
+          "$ref": "#/$defs/MiniMaxKeyType"
+        },
+        "kind": {
+          "const": "network_api",
+          "default": "network_api",
+          "title": "Kind",
+          "type": "string"
+        },
+        "live_smoke_enabled": {
+          "default": false,
+          "title": "Live Smoke Enabled",
+          "type": "boolean"
+        },
+        "maximum_attempts": {
+          "default": 3,
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Maximum Attempts",
+          "type": "integer"
+        },
+        "maximum_context_tokens": {
+          "default": 131072,
+          "maximum": 131072,
+          "minimum": 1,
+          "title": "Maximum Context Tokens",
+          "type": "integer"
+        },
+        "model": {
+          "default": "MiniMax-M3",
+          "minLength": 1,
+          "title": "Model",
+          "type": "string"
+        },
+        "provider_id": {
+          "default": "minimax",
+          "minLength": 1,
+          "title": "Provider Id",
+          "type": "string"
+        },
+        "retention": {
+          "$ref": "#/$defs/ProviderRetentionDefaults",
+          "default": {
+            "intended_use": "transient_advice",
+            "retention_mode": "none",
+            "sensitivity": "internal"
+          }
+        },
+        "supports_structured_output": {
+          "default": false,
+          "title": "Supports Structured Output",
+          "type": "boolean"
+        },
+        "supports_tool_calls": {
+          "default": false,
+          "title": "Supports Tool Calls",
+          "type": "boolean"
+        },
+        "timeout_seconds": {
+          "default": 120,
+          "exclusiveMinimum": 0,
+          "title": "Timeout Seconds",
+          "type": "number"
+        }
+      },
+      "required": [
+        "key_type"
+      ],
+      "title": "MiniMaxProviderConfig",
+      "type": "object"
+    },
+    "OpenRouterProviderConfig": {
+      "additionalProperties": false,
+      "description": "OpenRouter through the installed OpenAI client. Zero spend unless raised on purpose.",
+      "properties": {
+        "adapter": {
+          "const": "openrouter",
+          "default": "openrouter",
+          "title": "Adapter",
+          "type": "string"
+        },
+        "allow_data_collection": {
+          "default": false,
+          "title": "Allow Data Collection",
+          "type": "boolean"
+        },
+        "api_key_environment_variable": {
+          "default": "OPENROUTER_API_KEY",
+          "minLength": 1,
+          "title": "Api Key Environment Variable",
+          "type": "string"
+        },
+        "application_referer": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Application Referer"
+        },
+        "application_title": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Application Title"
+        },
+        "base_url": {
+          "default": "https://openrouter.ai/api/v1",
+          "title": "Base Url",
+          "type": "string"
+        },
+        "catalog_cache_seconds": {
+          "default": 300,
+          "maximum": 3600,
+          "minimum": 0,
+          "title": "Catalog Cache Seconds",
+          "type": "number"
+        },
+        "default_route": {
+          "default": "openrouter/free",
+          "minLength": 1,
+          "title": "Default Route",
+          "type": "string"
+        },
+        "enabled": {
+          "default": false,
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "kind": {
+          "const": "network_api",
+          "default": "network_api",
+          "title": "Kind",
+          "type": "string"
+        },
+        "live_smoke_enabled": {
+          "default": false,
+          "title": "Live Smoke Enabled",
+          "type": "boolean"
+        },
+        "maximum_attempts": {
+          "default": 1,
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Maximum Attempts",
+          "type": "integer"
+        },
+        "maximum_context_tokens": {
+          "default": 32768,
+          "maximum": 131072,
+          "minimum": 1,
+          "title": "Maximum Context Tokens",
+          "type": "integer"
+        },
+        "maximum_output_tokens": {
+          "default": 1024,
+          "maximum": 32768,
+          "minimum": 1,
+          "title": "Maximum Output Tokens",
+          "type": "integer"
+        },
+        "maximum_spend_usd": {
+          "default": 0.0,
+          "minimum": 0,
+          "title": "Maximum Spend Usd",
+          "type": "number"
+        },
+        "pinned_free_model": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pinned Free Model"
+        },
+        "provider_id": {
+          "default": "openrouter",
+          "minLength": 1,
+          "title": "Provider Id",
+          "type": "string"
+        },
+        "require_free_model": {
+          "default": true,
+          "title": "Require Free Model",
+          "type": "boolean"
+        },
+        "require_zero_data_retention": {
+          "default": true,
+          "title": "Require Zero Data Retention",
+          "type": "boolean"
+        },
+        "retention": {
+          "$ref": "#/$defs/ProviderRetentionDefaults",
+          "default": {
+            "intended_use": "transient_advice",
+            "retention_mode": "none",
+            "sensitivity": "internal"
+          }
+        },
+        "timeout_seconds": {
+          "default": 120,
+          "exclusiveMinimum": 0,
+          "title": "Timeout Seconds",
+          "type": "number"
+        }
+      },
+      "title": "OpenRouterProviderConfig",
+      "type": "object"
+    },
+    "ProviderOutputIntendedUse": {
+      "description": "What the caller intends to do with the output, declared *before* the call.\n\nDeclared up front because the rights question is not answerable in the abstract: the\nsame response may be freely usable as transient advice and prohibited as training\ninput, and a decision made after the bytes exist is a decision under pressure.",
+      "enum": [
+        "transient_advice",
+        "evaluation_evidence",
+        "corpus_candidate",
+        "skill_candidate",
+        "training_candidate"
+      ],
+      "title": "ProviderOutputIntendedUse",
+      "type": "string"
+    },
+    "ProviderOutputRetentionMode": {
+      "description": "What is allowed to survive the call. `NONE` is the default everywhere.",
+      "enum": [
+        "none",
+        "hash_only",
+        "normalized_content"
+      ],
+      "title": "ProviderOutputRetentionMode",
+      "type": "string"
+    },
+    "ProviderRetentionDefaults": {
+      "additionalProperties": false,
+      "description": "What a provider retains when a caller does not say otherwise.\n\nAll three defaults are the refusing ones. A caller who wants bytes kept has to ask for\nit explicitly and answer the rights question at the same time.",
+      "properties": {
+        "intended_use": {
+          "$ref": "#/$defs/ProviderOutputIntendedUse",
+          "default": "transient_advice"
+        },
+        "retention_mode": {
+          "$ref": "#/$defs/ProviderOutputRetentionMode",
+          "default": "none"
+        },
+        "sensitivity": {
+          "$ref": "#/$defs/MemorySensitivity",
+          "default": "internal"
+        }
+      },
+      "title": "ProviderRetentionDefaults",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/config/provider-configuration.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "configuration_version": {
+      "default": 2,
+      "title": "Configuration Version",
+      "type": "integer"
+    },
+    "default_provider_id": {
+      "minLength": 1,
+      "title": "Default Provider Id",
+      "type": "string"
+    },
+    "providers": {
+      "additionalProperties": {
+        "discriminator": {
+          "mapping": {
+            "claude_code": "#/$defs/ClaudeCodeProviderConfig",
+            "codex_cli": "#/$defs/CodexCliProviderConfig",
+            "minimax": "#/$defs/MiniMaxProviderConfig",
+            "openrouter": "#/$defs/OpenRouterProviderConfig"
+          },
+          "propertyName": "adapter"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/$defs/MiniMaxProviderConfig"
+          },
+          {
+            "$ref": "#/$defs/OpenRouterProviderConfig"
+          },
+          {
+            "$ref": "#/$defs/ClaudeCodeProviderConfig"
+          },
+          {
+            "$ref": "#/$defs/CodexCliProviderConfig"
+          }
+        ]
+      },
+      "title": "Providers",
+      "type": "object"
+    }
+  },
+  "required": [
+    "default_provider_id",
+    "providers"
+  ],
+  "title": "ProviderConfiguration",
+  "type": "object"
+}

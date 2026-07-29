@@ -13,6 +13,7 @@ from cognitive_os.config.corpus_config import CorpusConfiguration
 from cognitive_os.config.experience_config import ExperienceConfiguration
 from cognitive_os.config.memory_config import MemoryConfiguration
 from cognitive_os.config.proposal_config import ProposalConfiguration
+from cognitive_os.config.provider_config import ProviderConfiguration
 from cognitive_os.config.routing_config import RoutingConfiguration
 from cognitive_os.config.semantic_memory_config import SemanticMemoryConfiguration
 from cognitive_os.config.skill_config import SkillConfiguration
@@ -104,6 +105,7 @@ from cognitive_os.domain.learned import PUBLIC_LEARNED_CONTRACTS
 from cognitive_os.domain.learned_evidence import PUBLIC_LEARNED_EVIDENCE_CONTRACTS
 from cognitive_os.domain.memory import PUBLIC_MEMORY_CONTRACTS
 from cognitive_os.domain.proposals import PUBLIC_PROPOSAL_CONTRACTS
+from cognitive_os.domain.provider_output import PUBLIC_PROVIDER_OUTPUT_CONTRACTS
 from cognitive_os.domain.routing import PUBLIC_ROUTING_CONTRACTS
 from cognitive_os.domain.semantic_memory import PUBLIC_SEMANTIC_CONTRACTS
 from cognitive_os.domain.skills import PUBLIC_SKILL_CONTRACTS
@@ -139,6 +141,7 @@ DOMAIN_SCHEMAS: tuple[tuple[type[BaseModel], str], ...] = (
     (ProposalConfiguration, "v1/config/proposal-configuration.schema.json"),
     (RoutingConfiguration, "v1/config/routing-configuration.schema.json"),
     (SemanticMemoryConfiguration, "v1/config/semantic-memory-configuration.schema.json"),
+    (ProviderConfiguration, "v1/config/provider-configuration.schema.json"),
     (SkillConfiguration, "v1/config/skill-configuration.schema.json"),
     (StrategyConfiguration, "v1/config/strategy-configuration.schema.json"),
     (WeaknessConfiguration, "v1/config/weakness-configuration.schema.json"),
@@ -201,6 +204,18 @@ DOMAIN_SCHEMAS: tuple[tuple[type[BaseModel], str], ...] = (
             + ".schema.json",
         )
         for model in PUBLIC_LEARNED_EVIDENCE_CONTRACTS
+    ),
+    *tuple(
+        (
+            model,
+            "v1/providers/"
+            + "".join(
+                ("-" + character.lower()) if character.isupper() else character
+                for character in model.__name__
+            ).lstrip("-")
+            + ".schema.json",
+        )
+        for model in PUBLIC_PROVIDER_OUTPUT_CONTRACTS
     ),
     *tuple(
         (

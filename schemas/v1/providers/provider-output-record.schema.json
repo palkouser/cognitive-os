@@ -1,0 +1,402 @@
+{
+  "$defs": {
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "ProviderAdapterKind": {
+      "description": "Which adapter produced the output.\n\nDistinct from `ProviderKind`: two adapters share `cli_agent`, and the governance ledger\nhas to be able to say *which* CLI answered.",
+      "enum": [
+        "minimax",
+        "openrouter",
+        "claude_code",
+        "codex_cli",
+        "replay",
+        "mock"
+      ],
+      "title": "ProviderAdapterKind",
+      "type": "string"
+    },
+    "ProviderOutputIntendedUse": {
+      "description": "What the caller intends to do with the output, declared *before* the call.\n\nDeclared up front because the rights question is not answerable in the abstract: the\nsame response may be freely usable as transient advice and prohibited as training\ninput, and a decision made after the bytes exist is a decision under pressure.",
+      "enum": [
+        "transient_advice",
+        "evaluation_evidence",
+        "corpus_candidate",
+        "skill_candidate",
+        "training_candidate"
+      ],
+      "title": "ProviderOutputIntendedUse",
+      "type": "string"
+    },
+    "ProviderOutputRetentionMode": {
+      "description": "What is allowed to survive the call. `NONE` is the default everywhere.",
+      "enum": [
+        "none",
+        "hash_only",
+        "normalized_content"
+      ],
+      "title": "ProviderOutputRetentionMode",
+      "type": "string"
+    },
+    "ProviderOutputVerifierStatus": {
+      "enum": [
+        "not_run",
+        "passed",
+        "failed",
+        "inconclusive"
+      ],
+      "title": "ProviderOutputVerifierStatus",
+      "type": "string"
+    },
+    "SecretScanStatus": {
+      "description": "Tri-state on purpose.\n\n\"we redacted it\" and \"we checked and found nothing\" are different claims. A scan that\nnever ran cannot stand in for one that passed, so `NOT_RUN` blocks retention exactly as\n`FAILED` does.",
+      "enum": [
+        "not_run",
+        "passed",
+        "failed"
+      ],
+      "title": "SecretScanStatus",
+      "type": "string"
+    },
+    "UsageRightsDecision": {
+      "enum": [
+        "unknown",
+        "prohibited",
+        "verified"
+      ],
+      "title": "UsageRightsDecision",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/providers/provider-output-record.schema.json",
+  "additionalProperties": false,
+  "description": "One immutable governance revision for one provider output.\n\n`provider_output_id` is stable across revisions; `revision` orders them. A rights\nrevocation, a verifier correction or an expiry change appends a new revision and leaves\nevery earlier row exactly as it was, so an audit can see what was believed and when.",
+  "properties": {
+    "adapter_kind": {
+      "$ref": "#/$defs/ProviderAdapterKind"
+    },
+    "completed_event_id": {
+      "format": "uuid",
+      "title": "Completed Event Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "expires_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expires At"
+    },
+    "human_reviewer": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Human Reviewer"
+    },
+    "idempotency_key": {
+      "minLength": 1,
+      "title": "Idempotency Key",
+      "type": "string"
+    },
+    "input_source_hashes": {
+      "default": [],
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Input Source Hashes",
+      "type": "array"
+    },
+    "input_source_ids": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Input Source Ids",
+      "type": "array"
+    },
+    "intended_use": {
+      "$ref": "#/$defs/ProviderOutputIntendedUse"
+    },
+    "model_call_id": {
+      "format": "uuid",
+      "title": "Model Call Id",
+      "type": "string"
+    },
+    "normalized_response_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Normalized Response Hash",
+      "type": "string"
+    },
+    "parameter_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Parameter Hash",
+      "type": "string"
+    },
+    "physical_deletion_required": {
+      "default": false,
+      "title": "Physical Deletion Required",
+      "type": "boolean"
+    },
+    "previous_revision_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Previous Revision Id"
+    },
+    "prompt_template_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Prompt Template Id"
+    },
+    "prompt_template_version": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Prompt Template Version"
+    },
+    "provider_id": {
+      "minLength": 1,
+      "title": "Provider Id",
+      "type": "string"
+    },
+    "provider_output_id": {
+      "format": "uuid",
+      "title": "Provider Output Id",
+      "type": "string"
+    },
+    "provider_output_revision_id": {
+      "format": "uuid",
+      "title": "Provider Output Revision Id",
+      "type": "string"
+    },
+    "recorded_at": {
+      "format": "date-time",
+      "title": "Recorded At",
+      "type": "string"
+    },
+    "recorded_by": {
+      "minLength": 1,
+      "title": "Recorded By",
+      "type": "string"
+    },
+    "request_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Request Hash",
+      "type": "string"
+    },
+    "requested_model": {
+      "minLength": 1,
+      "title": "Requested Model",
+      "type": "string"
+    },
+    "resolved_model": {
+      "minLength": 1,
+      "title": "Resolved Model",
+      "type": "string"
+    },
+    "response_artifact_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Response Artifact Hash"
+    },
+    "response_artifact_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Response Artifact Id"
+    },
+    "retention_mode": {
+      "$ref": "#/$defs/ProviderOutputRetentionMode"
+    },
+    "revision": {
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "rights_decision": {
+      "$ref": "#/$defs/UsageRightsDecision"
+    },
+    "rights_evidence_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rights Evidence Hash"
+    },
+    "schema_version": {
+      "default": "1",
+      "minLength": 1,
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "secret_scan_evidence_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Secret Scan Evidence Hash"
+    },
+    "secret_scan_ruleset_version": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Secret Scan Ruleset Version"
+    },
+    "secret_scan_status": {
+      "$ref": "#/$defs/SecretScanStatus"
+    },
+    "sensitivity": {
+      "$ref": "#/$defs/MemorySensitivity"
+    },
+    "supersession_reason": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Supersession Reason"
+    },
+    "verifier_evidence_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Verifier Evidence Hash"
+    },
+    "verifier_identity": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Verifier Identity"
+    },
+    "verifier_status": {
+      "$ref": "#/$defs/ProviderOutputVerifierStatus"
+    }
+  },
+  "required": [
+    "provider_output_revision_id",
+    "provider_output_id",
+    "revision",
+    "model_call_id",
+    "provider_id",
+    "adapter_kind",
+    "requested_model",
+    "resolved_model",
+    "request_hash",
+    "normalized_response_hash",
+    "completed_event_id",
+    "parameter_hash",
+    "intended_use",
+    "rights_decision",
+    "sensitivity",
+    "secret_scan_status",
+    "retention_mode",
+    "verifier_status",
+    "recorded_by",
+    "recorded_at",
+    "idempotency_key"
+  ],
+  "title": "ProviderOutputRecord",
+  "type": "object"
+}

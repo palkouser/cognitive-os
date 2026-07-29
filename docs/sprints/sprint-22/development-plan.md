@@ -1160,14 +1160,18 @@ Every PR in this programme must include, as applicable:
 
 ## 16. Immediate next action
 
-The immediate implementation action is **Phase R0**, not a new learner:
+Sprint 21R and Sprint 21C1 are released. The immediate implementation action is
+**Sprint 21C2 — Governed Teacher and Provider Boundary**:
 
-1. update the Sprint 21 assessment and report at the current branch head;
-2. open the branch PR;
-3. obtain full remote and PostgreSQL evidence;
-4. merge and protect the substrate baseline;
-5. start the Learned Evidence Store from the verified Alembic head.
+1. verify remote `main` and the peeled `sprint-21c1-evidence-baseline` tag at
+   `aed2c1b0af280d3f0924a37eeddc191cd320e936`;
+2. retain the existing 27 required checks and `enforce_admins`, while recording that a
+   second eligible reviewer is still unavailable;
+3. isolate all C2 evidence from the inconsistent development Artifact Store pair;
+4. implement the bounded OpenRouter, Claude Code, and Codex advisory boundaries;
+5. add explicit provider-output governance before learned intake;
+6. complete offline evidence, three operator-approved live smokes, protected release,
+   and the `sprint-21c2-provider-baseline` tag.
 
-This ordering preserves the valid Sprint 21 work, prevents new persistence and
-provider code from accumulating on an unreviewed four-commit branch, and creates a
-stable base for the mandatory machine-learning gate.
+The implementation authority is the
+[Sprint 21C2 Technical Backlog](../sprint-21/sprint-21c2-technical-backlog.md).

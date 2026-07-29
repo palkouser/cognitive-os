@@ -1,22 +1,41 @@
 # Claude Code advisory operation
 
-Claude Code must be locally installed and authenticated before an opt-in smoke test. Advisory
-mode is non-interactive, read-only, limited by timeout and maximum turns, and returns the
-Cognitive OS-owned advisory schema: summary, findings, recommendations, risks, and
+Claude Code runs as a bounded, read-only advisory teacher. It is non-interactive, limited by
+timeout, output cap and maximum turns, and returns the one Cognitive OS-owned advisory schema
+that all three providers answer in: summary, findings, recommendations, risks and
 verification steps.
 
-Run only with explicit opt-in:
+The exact command line, the empty MCP configuration and the disabled setting sources are
+documented in [provider-configuration.md](provider-configuration.md#cli-safety-flags).
+`--dangerously-skip-permissions` is never emitted.
+
+## Running one
+
+There is one live path, and it is the operator CLI:
 
 ```bash
-COGOS_RUN_CLAUDE_CODE_LIVE=1 \
-uv run python scripts/claude_code_advisory_smoke_test.py \
-  --working-directory /home/palkouser/projekt/cognitive-os
-git status --short
+uv run python scripts/provider.py live-smoke \
+  --config config/providers.local.yaml \
+  --provider claude-code \
+  --isolation-root /var/tmp/cogos-advisory-fixture \
+  --i-understand-this-calls-a-live-provider
 ```
 
-The runner never uses `--dangerously-skip-permissions`. A repository status change is a
-policy violation; inspect it manually because the adapter does not delete user files.
+Read [provider-live-smokes.md](provider-live-smokes.md) first: it covers the two-part opt-in,
+how to build and verify an isolated fixture root, what the receipt keeps, and what to do with
+each typed failure.
 
-For Coding Agent runs, advisory output is untrusted review context only. It cannot call
-workspace mutation tools, approve a patch, satisfy an acceptance criterion, or override a
-verifier result. Live advisory execution remains opt-in and is excluded from credential-free CI.
+Claude Code never runs against the Cognitive OS worktree. It runs against a verified copy of
+the public synthetic advisory fixture, made outside the repository, and the smoke fails if a
+single byte of that copy changed — a correct diagnosis from a provider that edited its
+workspace is still a failure.
+
+## Standing limits on advisory output
+
+Advisory output is untrusted review context. It cannot write active memory; activate,
+approve, promote or roll back a learned component; review its own quarantined output; be
+classified as a real governed run; call a workspace mutation tool; approve a patch; satisfy
+an acceptance criterion; override a verifier result; or be the only evidence for a decision.
+
+Whether an answer is *correct* is decided by an independent deterministic verifier, never by
+Claude Code and never by the adapter that parsed its output.

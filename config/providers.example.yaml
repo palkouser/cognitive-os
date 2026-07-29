@@ -1,6 +1,17 @@
+# Provider configuration example. No credential value belongs in this file: every key is
+# named by the environment variable that carries it.
+#
+# Every adapter is selected by the explicit `adapter` discriminator. `kind` is retained for
+# the provider taxonomy, but it cannot distinguish Claude Code from Codex, so it is no
+# longer what the loader dispatches on.
+#
+# Defaults across every adapter: disabled, offline, transient retention, read-only, zero
+# spend, live smoke off. Turning any of them on is an operator decision.
+configuration_version: 2
 default_provider_id: minimax
 providers:
   minimax:
+    adapter: minimax
     kind: network_api
     enabled: true
     base_url: https://api.minimax.io/v1
@@ -13,12 +24,85 @@ providers:
     default_max_output_tokens: 8192
     supports_tool_calls: false
     supports_structured_output: false
+
+  openrouter:
+    adapter: openrouter
+    kind: network_api
+    enabled: false
+    base_url: https://openrouter.ai/api/v1
+    api_key_environment_variable: OPENROUTER_API_KEY  # pragma: allowlist secret
+    # The router, not a model. Free availability is dynamic, so a pinned slug is validated
+    # against the runtime catalog before it is used and never treated as permanent.
+    default_route: openrouter/free
+    pinned_free_model: null
+    require_free_model: true
+    maximum_spend_usd: 0.0
+    maximum_attempts: 1
+    maximum_output_tokens: 1024
+    maximum_context_tokens: 32768
+    catalog_cache_seconds: 300
+    # Strict provider-side data policy. Relaxing either is an explicit operator decision
+    # and may never be applied to internal or restricted content.
+    require_zero_data_retention: true
+    allow_data_collection: false
+    live_smoke_enabled: false
+    retention:
+      retention_mode: none
+      intended_use: transient_advice
+      sensitivity: internal
+
   claude-code:
+    adapter: claude_code
     kind: cli_agent
     enabled: false
     executable: claude
-    working_directory: /home/palkouser/projekt/cognitive-os
-    timeout_seconds: 300
-    maximum_turns: 3
-    maximum_budget_usd: null
+    # Never the Cognitive OS worktree for live execution: this is a placeholder for an
+    # isolated copy of tests/fixtures/providers/advisory, made outside the repository.
+    working_directory: /var/tmp/cogos-advisory-fixture/workspace
     output_format: json
+    permission_mode: plan
+    safe_mode: true
+    allowed_tools: [Read, Glob, Grep]
+    disallowed_tools: [Bash, Edit, Write, WebFetch, WebSearch]
+    # A cost bound, not a safety boundary. Too low a value makes an ordinary
+    # read-then-answer task exit non-zero on the turn budget.
+    maximum_turns: 6
+    maximum_budget_usd: null
+    limits:
+      timeout_seconds: 120
+      maximum_stdout_bytes: 262144
+      maximum_stderr_bytes: 65536
+      termination_grace_seconds: 2.0
+    environment_allowlist: [HOME, LANG, LC_ALL, PATH, TERM, TZ]
+    live_smoke_enabled: false
+    retention:
+      retention_mode: none
+      intended_use: transient_advice
+      sensitivity: internal
+
+  codex-cli:
+    adapter: codex_cli
+    kind: cli_agent
+    enabled: false
+    executable: codex
+    # Placeholder, as above: an isolated fixture copy, never the worktree.
+    working_directory: /var/tmp/cogos-advisory-fixture/workspace
+    sandbox_mode: read-only
+    # codex exec 0.144.6 has no --ask-for-approval flag; the adapter emits
+    # -c approval_policy="never", which is the same policy through the configuration path.
+    approval_policy: never
+    ephemeral: true
+    ignore_user_config: true
+    ignore_rules: true
+    skip_git_repo_check: true
+    limits:
+      timeout_seconds: 120
+      maximum_stdout_bytes: 262144
+      maximum_stderr_bytes: 65536
+      termination_grace_seconds: 2.0
+    environment_allowlist: [HOME, LANG, LC_ALL, PATH, TERM, TZ]
+    live_smoke_enabled: false
+    retention:
+      retention_mode: none
+      intended_use: transient_advice
+      sensitivity: internal

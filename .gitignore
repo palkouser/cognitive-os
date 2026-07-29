@@ -9,6 +9,7 @@ LightAgent/__pycache__/la_core.cpython-311.pyc
 !.env.example
 !.env.postgres.example
 config/providers.local.yaml
+config/providers.live.local.yaml
 config/verifiers.local.yaml
 config/benchmarks.local.yaml
 .tmp-benchmark-reports/

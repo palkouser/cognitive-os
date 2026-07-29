@@ -129,3 +129,34 @@ class ProviderBudgetExceededError(ProviderError):
 
 class ProviderPersistenceError(ProviderError):
     default_code = "provider_persistence"
+
+
+class ProviderModelUnavailableError(ProviderError):
+    """The requested route or model is not currently offered.
+
+    Distinct from `ProviderUnavailableError`: the provider answered, and what it said is
+    that this model is gone. A free model disappearing from a catalog is normal operation,
+    not an outage and not a defect, and conflating the two would make a routine typed
+    result look like an incident.
+    """
+
+    default_code = "provider_model_unavailable"
+
+
+class ProviderOutputLimitExceededError(ProviderError):
+    """The provider produced more output than the configured cap allows.
+
+    Never retryable. A retry would produce the same oversized output and pay for it twice.
+    """
+
+    default_code = "provider_output_limit_exceeded"
+
+
+class ProviderMutationDetectedError(ProviderError):
+    """An advisory provider changed the content of its working directory.
+
+    The most serious failure this boundary can report: an advisory teacher that can write
+    is not advisory. Carries paths and hashes only — never the changed content.
+    """
+
+    default_code = "provider_mutation_detected"

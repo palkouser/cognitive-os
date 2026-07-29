@@ -6,7 +6,6 @@ import time
 from collections.abc import AsyncIterator
 from typing import Protocol, cast
 
-import openai
 from openai import AsyncOpenAI
 
 from cognitive_os.config.provider_config import MiniMaxProviderConfig
@@ -23,17 +22,8 @@ from cognitive_os.domain.provider import (
     ProviderStreamEvent,
     ProviderStreamEventType,
 )
-from cognitive_os.providers.errors import (
-    ProviderAuthenticationError,
-    ProviderAuthorizationError,
-    ProviderConnectionError,
-    ProviderError,
-    ProviderInvalidRequestError,
-    ProviderInvalidResponseError,
-    ProviderRateLimitError,
-    ProviderTimeoutError,
-    ProviderUnavailableError,
-)
+from cognitive_os.providers.errors import ProviderError
+from cognitive_os.providers.openai_compatible import map_sdk_error as map_openai_sdk_error
 
 from .health import elapsed_ms, health_from_error, health_from_models, model_ids
 from .mapping import map_finish_reason, map_request, map_response
@@ -216,19 +206,4 @@ class MiniMaxProvider:
 
 
 def map_sdk_error(provider_id: str, error: Exception) -> ProviderError:
-    message = "MiniMax provider request failed"
-    if isinstance(error, openai.AuthenticationError):
-        return ProviderAuthenticationError(provider_id=provider_id, message=message)
-    if isinstance(error, openai.PermissionDeniedError):
-        return ProviderAuthorizationError(provider_id=provider_id, message=message)
-    if isinstance(error, openai.RateLimitError):
-        return ProviderRateLimitError(provider_id=provider_id, message=message)
-    if isinstance(error, openai.APITimeoutError):
-        return ProviderTimeoutError(provider_id=provider_id, message=message)
-    if isinstance(error, openai.APIConnectionError):
-        return ProviderConnectionError(provider_id=provider_id, message=message)
-    if isinstance(error, openai.BadRequestError):
-        return ProviderInvalidRequestError(provider_id=provider_id, message=message)
-    if isinstance(error, openai.InternalServerError):
-        return ProviderUnavailableError(provider_id=provider_id, message=message)
-    return ProviderInvalidResponseError(provider_id=provider_id, message=message)
+    return map_openai_sdk_error(provider_id, error, message="MiniMax provider request failed")

@@ -6,8 +6,10 @@ import asyncio
 import secrets
 import time
 from collections.abc import AsyncIterator, Awaitable, Callable
+from dataclasses import dataclass
+from uuid import UUID
 
-from cognitive_os.domain.common import TokenUsage, UtcDatetime, utc_now
+from cognitive_os.domain.common import ArtifactRef, TokenUsage, UtcDatetime, utc_now
 from cognitive_os.domain.context import ContextBundleReference
 from cognitive_os.domain.model_requests import (
     ModelProviderRequest,
@@ -36,6 +38,21 @@ from cognitive_os.providers.retry import RetryPolicy, execute_with_retry
 
 type MonotonicClock = Callable[[], float]
 type ContextReferenceValidator = Callable[[ContextBundleReference], Awaitable[bool]]
+
+
+@dataclass(frozen=True, slots=True)
+class ExecutionHandles:
+    """What one execution produced besides the response, by identity.
+
+    A plain record rather than extra return values: the governance ledger's foreign key
+    names the exact completed envelope, and a caller that had to go looking for it
+    afterwards would be guessing which append it got.
+    """
+
+    provider_id: str
+    completed_event_id: UUID | None
+    request_artifact: ArtifactRef | None
+    response_artifact: ArtifactRef | None
 
 
 class ModelExecutionService:
@@ -71,6 +88,29 @@ class ModelExecutionService:
         *,
         provider_id: str | None = None,
     ) -> ModelProviderResponse:
+        response, _receipt = await self._execute_once(request, provider_id=provider_id)
+        return response
+
+    async def execute_for_governance(
+        self,
+        request: ModelProviderRequest,
+        *,
+        provider_id: str | None = None,
+    ) -> tuple[ModelProviderResponse, ExecutionHandles]:
+        """The same single provider call, plus the handles a governance record needs.
+
+        Deliberately not a second request: a second call would double the spend, double the
+        provider-side retention and produce two model-call event streams for one logical
+        execution. The governed teacher composes this; ordinary callers keep `execute`.
+        """
+        return await self._execute_once(request, provider_id=provider_id)
+
+    async def _execute_once(
+        self,
+        request: ModelProviderRequest,
+        *,
+        provider_id: str | None = None,
+    ) -> tuple[ModelProviderResponse, ExecutionHandles]:
         await self._validate_context_reference(request)
         provider = select_provider(self._registry, provider_id, self._default_provider_id)
         capabilities = await provider.get_model_capabilities(request.requested_model)
@@ -136,14 +176,21 @@ class ModelExecutionService:
         response_artifact = None
         if self._artifacts is not None:
             response_artifact = await self._artifacts.store_response(response)
+        completed_event_id = None
         if self._events is not None:
-            await self._events.completed(
+            completed_event_id = await self._events.completed(
                 request,
                 response,
                 started_at=started_at,
                 response_artifact=response_artifact,
             )
-        return response
+        handles = ExecutionHandles(
+            provider_id=provider.provider_id,
+            completed_event_id=completed_event_id,
+            request_artifact=request_artifact,
+            response_artifact=response_artifact,
+        )
+        return response, handles
 
     async def stream(
         self,
