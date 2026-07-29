@@ -33,6 +33,7 @@ from cognitive_os.providers.errors import (
     ProviderUnsupportedCapabilityError,
 )
 from cognitive_os.providers.openrouter import OpenRouterProvider
+from cognitive_os.providers.openrouter.discovery import parse_catalog, resolve_route
 
 from . import fake_transport as fake
 
@@ -113,7 +114,7 @@ class TestTheDataPolicyIsWhatIsSent:
     async def test_every_request_denies_data_collection_and_asks_for_zero_retention(self) -> None:
         provider, transport = build()
         await provider.complete(a_request())
-        preferences = transport.completion_payloads[0]["provider"]
+        preferences = transport.completion_payloads[0]["extra_body"]["provider"]
         assert preferences["data_collection"] == "deny"
         assert preferences["zdr"] is True
 
@@ -122,7 +123,7 @@ class TestTheDataPolicyIsWhatIsSent:
         """Belt and braces: a catalog that went stale still cannot bill anything."""
         provider, transport = build()
         await provider.complete(a_request())
-        assert transport.completion_payloads[0]["provider"]["max_price"] == {
+        assert transport.completion_payloads[0]["extra_body"]["provider"]["max_price"] == {
             "prompt": 0,
             "completion": 0,
         }
@@ -132,7 +133,7 @@ class TestTheDataPolicyIsWhatIsSent:
         """A relaxed public-smoke policy must be legible in what was sent, not only in config."""
         provider, transport = build(require_zero_data_retention=False, allow_data_collection=True)
         await provider.complete(a_request())
-        preferences = transport.completion_payloads[0]["provider"]
+        preferences = transport.completion_payloads[0]["extra_body"]["provider"]
         assert preferences["data_collection"] == "allow"
         assert "zdr" not in preferences
 
@@ -319,3 +320,97 @@ class TestCapabilities:
         capabilities = await provider.get_model_capabilities("vendor/premium-model")
         assert capabilities.maximum_context_tokens == 16384
         assert capabilities.maximum_output_tokens == 512
+
+
+class TestThePayloadIsAcceptableToTheInstalledClient:
+    """The fake transport takes whatever dict it is handed, so nothing in this suite used to
+    check that the real client would accept the same keys.
+
+    It did not. `provider` is an OpenRouter extension, not a chat-completions parameter, and
+    the OpenAI client validates its keyword arguments: passing it at the top level raised
+    `TypeError: unexpected keyword argument 'provider'` and the data policy never reached the
+    wire. The Sprint 21C2 live smoke found it. This test is the offline equivalent — it reads
+    the installed client's own signature, so it needs no credential and no network.
+    """
+
+    @pytest.mark.asyncio
+    async def test_every_top_level_key_is_a_parameter_the_client_accepts(self) -> None:
+        import inspect
+
+        from openai.resources.chat.completions import AsyncCompletions
+
+        provider, transport = build()
+        await provider.complete(a_request())
+        payload = transport.completion_payloads[0]
+
+        accepted = set(inspect.signature(AsyncCompletions.create).parameters)
+        unexpected = sorted(key for key in payload if key not in accepted)
+        assert unexpected == [], f"the installed client would reject: {unexpected}"
+
+    @pytest.mark.asyncio
+    async def test_the_vendor_extension_travels_in_extra_body(self) -> None:
+        provider, transport = build()
+        await provider.complete(a_request())
+        payload = transport.completion_payloads[0]
+        assert "provider" not in payload
+        assert payload["extra_body"]["provider"]["data_collection"] == "deny"
+
+
+class TestTheLiveCatalogShapes:
+    """Shapes the real `/models` catalog contains that the reviewed fixture did not."""
+
+    def test_a_variable_price_is_not_free(self) -> None:
+        """OpenRouter sends `-1` for models whose price is not fixed.
+
+        `CatalogModel` constrains prices to `ge=0`, so the whole catalog failed to parse and
+        the error escaped as a raw `ValidationError` rather than a typed provider failure.
+        Normalising to infinity keeps `ge=0` true, so no later `price <= 0` test can read a
+        variable price as a free one.
+        """
+        catalog = parse_catalog(
+            {
+                "data": [
+                    {"id": "vendor/variable", "pricing": {"prompt": "-1", "completion": "-1"}},
+                    {"id": "vendor/free", "pricing": {"prompt": "0", "completion": "0"}},
+                ]
+            },
+            provider_id="openrouter",
+            now=0.0,
+        )
+        variable = catalog.get("vendor/variable")
+        assert variable is not None
+        assert variable.is_free is False
+        assert catalog.free_model_ids == ("vendor/free",)
+
+    def test_a_variable_price_model_is_refused_under_a_free_only_policy(self) -> None:
+        catalog = parse_catalog(
+            {"data": [{"id": "vendor/variable", "pricing": {"prompt": "-1", "completion": "-1"}}]},
+            provider_id="openrouter",
+            now=0.0,
+        )
+        with pytest.raises(ProviderBudgetExceededError):
+            resolve_route(
+                provider_id="openrouter",
+                catalog=catalog,
+                requested="vendor/variable",
+                default_route="openrouter/free",
+                pinned_free_model=None,
+                require_free_model=True,
+                maximum_spend_usd=0.0,
+            )
+
+    def test_one_unusable_row_does_not_destroy_the_catalog(self) -> None:
+        """It stays absent, so `resolve_route` refuses it with a typed unavailability
+        rather than the adapter guessing at its price."""
+        catalog = parse_catalog(
+            {
+                "data": [
+                    {"id": "vendor/broken", "pricing": {"prompt": "0"}, "context_length": -5},
+                    {"id": "vendor/free", "pricing": {"prompt": "0", "completion": "0"}},
+                ]
+            },
+            provider_id="openrouter",
+            now=0.0,
+        )
+        assert catalog.get("vendor/broken") is None
+        assert catalog.get("vendor/free") is not None

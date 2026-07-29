@@ -13,9 +13,10 @@ from __future__ import annotations
 
 import time
 from collections.abc import Mapping, Sequence
+from math import isfinite
 from typing import cast
 
-from pydantic import Field
+from pydantic import Field, ValidationError
 
 from cognitive_os.domain.base import ImmutableContractModel
 from cognitive_os.domain.common import NonEmptyStr
@@ -60,19 +61,29 @@ class ModelCatalog(ImmutableContractModel):
 
 
 def _price(entry: Mapping[str, object], key: str) -> float:
-    """OpenRouter prices are decimal strings. An unparsable one is treated as *not free*.
+    """OpenRouter prices are decimal strings. Anything not a finite, non-negative number is
+    treated as *not free*.
 
     Failing towards "this costs money" is the safe direction: the alternative would let a
     malformed catalog entry pass a zero-spend policy.
+
+    The live catalog carries `-1` for models whose price is not fixed — auto-routed and
+    dynamically priced entries. That is emphatically not "free", and normalising it here
+    rather than widening `CatalogModel` keeps the contract's `ge=0` invariant true, so no
+    later `price <= 0` test can read a variable price as a free one. Found by the Sprint
+    21C2 OpenRouter live smoke; the fixture catalog had no such entry.
     """
     pricing = entry.get("pricing")
     if not isinstance(pricing, Mapping):
         return float("inf")
     raw = pricing.get(key)
     try:
-        return float(cast(str | float | int, raw))
+        value = float(cast(str | float | int, raw))
     except (TypeError, ValueError):
         return float("inf")
+    if not isfinite(value) or value < 0:
+        return float("inf")
+    return value
 
 
 def parse_catalog(payload: object, *, provider_id: str, now: float) -> ModelCatalog:
@@ -91,14 +102,19 @@ def parse_catalog(payload: object, *, provider_id: str, now: float) -> ModelCata
         if not isinstance(identifier, str) or not identifier:
             continue
         context_length = entry.get("context_length")
-        models.append(
-            CatalogModel(
+        try:
+            model = CatalogModel(
                 model_id=identifier,
                 prompt_price=_price(entry, "prompt"),
                 completion_price=_price(entry, "completion"),
                 context_length=context_length if isinstance(context_length, int) else None,
             )
-        )
+        except ValidationError:
+            # One unusable row must not destroy the whole catalog, and it must not become
+            # routable either. Skipping leaves it absent, so `resolve_route` refuses it with
+            # a typed `ProviderModelUnavailableError` rather than guessing at its price.
+            continue
+        models.append(model)
     if not models:
         raise ProviderInvalidResponseError(
             provider_id=provider_id,

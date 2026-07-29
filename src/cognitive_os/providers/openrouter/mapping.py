@@ -68,7 +68,15 @@ def build_completion_payload(
         preferences["max_price"] = {"prompt": 0, "completion": 0}
     payload["model"] = route
     payload["max_tokens"] = capped
-    payload["provider"] = preferences
+    # `provider` is an OpenRouter extension, not a chat-completions field. The OpenAI client
+    # validates its keyword arguments, so passing it at the top level raises
+    # `TypeError: unexpected keyword argument 'provider'` and the data policy never reaches
+    # the wire at all. `extra_body` is the client's documented passthrough and is where a
+    # vendor extension belongs. Found by the Sprint 21C2 OpenRouter live smoke; the fake
+    # transport in CI accepted the payload dict as given and could not have caught it.
+    extra_body = dict(payload.get("extra_body") or {})
+    extra_body["provider"] = preferences
+    payload["extra_body"] = extra_body
     return payload
 
 
