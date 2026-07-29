@@ -1,0 +1,109 @@
+{
+  "defects_found_by_this_smoke": [
+    "advisory_schema_json() emitted a non-strict JSON Schema; codex exec --output-schema forwards it to a strict structured-output backend, which rejected the whole turn with a 400. Fixed by emitting the strict subset.",
+    "The Codex adapter reused the Claude Code advisory policy text, which forbids running commands. Codex reads files only by running commands in its read-only sandbox, so the prompt made the task impossible and Codex correctly reported it could not inspect the file. Fixed with a Codex-specific policy that forbids mutation rather than commands.",
+    "The committed fixture task carried the same assumption and was rewritten to be provider-neutral; fixture_version is now 2.",
+    "A non-zero CLI exit reported only 'non-zero status'. Claude Code reports the reason on stdout, so the runner now accepts an adapter-supplied diagnoser returning allowlisted metadata keys only, never a message body.",
+    "maximum_turns defaulted to 3, which an ordinary read-then-answer task exhausts. Raised to 6; it is a cost bound, not a safety boundary."
+  ],
+  "environment": {
+    "claude_code_version": "2.1.219",
+    "codex_cli_version": "0.144.6",
+    "openrouter": "not exercised"
+  },
+  "gaps": [
+    "S21C2-075 requires three live smokes. OpenRouter was deferred by operator decision, so this condition is partially met and Gate C2 must report it as such rather than as a pass."
+  ],
+  "git_commit": "e9d0f16cae8b9755fc2ee37cb3c6d1d31ab72ae4",
+  "isolation": {
+    "fixture_content_hash_before": "0e2dc4d10c6bd1a79d704081193febfee549ab58b022abaad63d8db690744eb6",
+    "fixture_id": "sprint21c2-advisory-empty-input",
+    "fixture_verified_before_and_after": true,
+    "fixture_version": "2",
+    "outside_repository": true,
+    "root": "/var/tmp/cogos-advisory-fixture",
+    "runner_temporary_directories_remaining": 0
+  },
+  "operator_approval": {
+    "decision": "The operator approved the two local CLI live smokes and deferred OpenRouter. OPENROUTER_API_KEY was not present and no OpenRouter call was attempted.",
+    "deferred": [
+      "openrouter"
+    ],
+    "granted": [
+      "claude-code",
+      "codex-cli"
+    ]
+  },
+  "receipts": {
+    "claude-code": {
+      "adapter": "claude_code",
+      "answer_correct": true,
+      "answer_hash": "7e8b9f59ff4af22f862a2cf9606bd28cfaf2bddcc2cd5f4705037ecc1f792375",
+      "check": "live-smoke",
+      "elapsed_ms": 20492.7,
+      "exit": 0,
+      "finish_reason": "completed",
+      "fixture_content_hash": "0e2dc4d10c6bd1a79d704081193febfee549ab58b022abaad63d8db690744eb6",
+      "fixture_id": "sprint21c2-advisory-empty-input",
+      "governance_recorded": false,
+      "missing_concepts": [],
+      "normalized_response_hash": "0731afe5709b394d5f363632c62408e0dda3515eef28a470514dd8359c0ce069",
+      "provider_id": "claude-code",
+      "request_hash": "dbf9586233b2f06d2a5bdc00c8d48f57975fbb65797fd388359072018e34cd26",
+      "requested_model": "claude_code:default",
+      "resolved_model": "claude-code",
+      "retention_mode": "none",
+      "usage": {
+        "cached_input_tokens": null,
+        "input_tokens": 8,
+        "output_tokens": 1663,
+        "reasoning_tokens": null,
+        "total_tokens": null
+      },
+      "verifier_verdict": "correct",
+      "workspace_changes": [],
+      "workspace_unchanged": true
+    },
+    "codex-cli": {
+      "adapter": "codex_cli",
+      "answer_correct": true,
+      "answer_hash": "db31918bd70cb1cfde5884d006462c87ef4990a40fc9f9c16d7f75fbef8aed9b",
+      "check": "live-smoke",
+      "elapsed_ms": 15778.0,
+      "exit": 0,
+      "finish_reason": "completed",
+      "fixture_content_hash": "0e2dc4d10c6bd1a79d704081193febfee549ab58b022abaad63d8db690744eb6",
+      "fixture_id": "sprint21c2-advisory-empty-input",
+      "governance_recorded": false,
+      "missing_concepts": [],
+      "normalized_response_hash": "dcff960f2dca2dda7b57681a1dc3c3a29c31a5fd67054258dc86742d4b7e6775",
+      "provider_id": "codex-cli",
+      "request_hash": "e538b2055a9ef42ff440095f1ce9bead045b25c48f55d76ea3bd8ff5a82dad34",
+      "requested_model": "codex_cli:default",
+      "resolved_model": "codex",
+      "retention_mode": "none",
+      "usage": null,
+      "verifier_verdict": "correct",
+      "workspace_changes": [],
+      "workspace_unchanged": true
+    }
+  },
+  "recorded_at": "2026-07-29T06:04:37.362673+00:00",
+  "results": {
+    "answers_independently_verified_correct": 2,
+    "calls_attempted": 2,
+    "calls_succeeded": 2,
+    "content_retained": "none; hashes, model identity, policy, usage, timing and status only",
+    "governance_records_written": 0,
+    "retention_mode": "none",
+    "workspaces_unchanged": 2
+  },
+  "schema_version": 1,
+  "sprint": "21C2",
+  "store_isolation": {
+    "c2_writes": 0,
+    "inconsistent_development_pair_unchanged": true,
+    "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf"
+  },
+  "task": "S21C2-075"
+}

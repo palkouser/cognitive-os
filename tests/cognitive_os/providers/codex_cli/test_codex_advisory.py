@@ -26,6 +26,7 @@ from cognitive_os.domain.model_requests import (
 from cognitive_os.domain.provider import ProviderStatus
 from cognitive_os.providers.cli_process import BoundedCliRunner
 from cognitive_os.providers.codex_cli import CodexCliAdvisoryProvider
+from cognitive_os.providers.codex_cli.advisory import ADVISORY_POLICY
 from cognitive_os.providers.errors import (
     ProviderInvalidResponseError,
     ProviderMutationDetectedError,
@@ -390,3 +391,34 @@ class TestCapabilities:
         with pytest.raises(ProviderUnsupportedCapabilityError):
             async for _ in provider.stream(a_request()):
                 pass
+
+
+class TestTheAdvisoryPolicyMatchesCodexCapabilities:
+    """Codex has no native file-reading tool: it reads by running commands in its sandbox.
+
+    The adapter first reused the Claude Code policy text, which forbids running commands, and
+    Codex correctly answered that it could not inspect the file at all. The prompt had made
+    the task impossible. The boundary is `--sandbox read-only`, which the CLI enforces; the
+    prompt now states the same intent instead of contradicting it.
+    """
+
+    def test_it_does_not_forbid_the_only_capability_codex_has(self) -> None:
+        assert "run any command" not in ADVISORY_POLICY.lower()
+        assert "do not run commands" not in ADVISORY_POLICY.lower()
+
+    def test_it_still_forbids_every_mutation(self) -> None:
+        lowered = ADVISORY_POLICY.lower()
+        assert "analyse only" in lowered
+        assert "do not edit, create or delete any file" in lowered
+
+    def test_it_is_not_the_claude_code_text(self) -> None:
+        from cognitive_os.providers.claude_code.advisory import (
+            ADVISORY_POLICY as CLAUDE_POLICY,
+        )
+
+        assert ADVISORY_POLICY != CLAUDE_POLICY
+        assert "do not run commands" in CLAUDE_POLICY.lower()
+
+    def test_the_prompt_leads_with_the_policy(self, tmp_path: Path) -> None:
+        provider, _workspace, _record = build(tmp_path)
+        assert provider.build_prompt(a_request()).startswith(ADVISORY_POLICY)

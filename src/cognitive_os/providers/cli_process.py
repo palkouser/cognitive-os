@@ -36,7 +36,7 @@ import shutil
 import signal
 import tempfile
 import time
-from collections.abc import AsyncIterator, Mapping, Sequence
+from collections.abc import AsyncIterator, Callable, Mapping, Sequence
 from contextlib import asynccontextmanager, suppress
 from pathlib import Path
 
@@ -44,7 +44,7 @@ from pydantic import Field
 
 from cognitive_os.config.provider_config import FORBIDDEN_CLI_ARGUMENTS, CliProcessLimits
 from cognitive_os.domain.base import ImmutableContractModel
-from cognitive_os.domain.common import NonEmptyStr
+from cognitive_os.domain.common import JsonValue, NonEmptyStr
 from cognitive_os.providers.errors import (
     ProviderCancelledError,
     ProviderConfigurationError,
@@ -93,6 +93,7 @@ class BoundedCliRunner:
         limits: CliProcessLimits,
         environment_allowlist: Sequence[str],
         environment: Mapping[str, str] | None = None,
+        diagnose_failure: Callable[[str], Mapping[str, JsonValue]] | None = None,
     ) -> None:
         self.provider_id = provider_id
         self.executable = executable
@@ -100,6 +101,12 @@ class BoundedCliRunner:
         self.limits = limits
         self.environment_allowlist = tuple(environment_allowlist)
         self._environment = os.environ if environment is None else environment
+        # Adapters know their own CLI's failure envelope; this runner does not, and must
+        # not learn. `stdout` on a failing advisory run can hold partial model prose, which
+        # is content this boundary deliberately never retains — so the raw text never leaves
+        # here. The adapter's diagnoser is handed the text and returns only the allowlisted
+        # scalar metadata that explains *why* it failed.
+        self._diagnose_failure = diagnose_failure or (lambda _stdout: {})
 
     # ------------------------------------------------------------------ environment
 
@@ -303,6 +310,7 @@ class BoundedCliRunner:
                     "stderr_excerpt": redact_for_diagnostics(
                         stderr.decode(errors="replace"), limit=400
                     ),
+                    **self._diagnose_failure(stdout.decode(errors="replace")),
                 },
             )
         return (

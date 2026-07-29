@@ -22,7 +22,7 @@ import json
 from collections.abc import AsyncIterator
 
 from cognitive_os.config.provider_config import ClaudeCodeProviderConfig
-from cognitive_os.domain.common import NonEmptyStr, TokenUsage, utc_now
+from cognitive_os.domain.common import JsonValue, NonEmptyStr, TokenUsage, utc_now
 from cognitive_os.domain.model_requests import (
     ModelProviderRequest,
     ModelProviderResponse,
@@ -54,6 +54,41 @@ Do not run commands. Return the requested structured advisory result and nothing
 EMPTY_MCP_CONFIG = '{"mcpServers":{}}'
 
 
+#: The only envelope keys a failure may report. Metadata about the run, never `result` and
+#: never any message body: a failing advisory run can still hold partial model prose, and a
+#: diagnostic that copied it would retain exactly the content this boundary refuses to keep.
+FAILURE_DIAGNOSTIC_KEYS: tuple[str, ...] = (
+    "subtype",
+    "stop_reason",
+    "num_turns",
+    "duration_api_ms",
+    "is_error",
+)
+
+
+def failure_details(stdout: str) -> dict[str, JsonValue]:
+    """Explain a non-zero exit from the envelope Claude Code writes to stdout.
+
+    Claude Code reports why it stopped on *stdout*, not stderr, so without this the operator
+    saw only "non-zero status" — which is what the Sprint 21C2 live smoke hit when the run
+    exhausted its turn budget. Unparsable output yields no keys rather than a guess.
+    """
+    try:
+        document = json.loads(stdout)
+    except (json.JSONDecodeError, ValueError):
+        return {}
+    if not isinstance(document, dict):
+        return {}
+    details: dict[str, JsonValue] = {
+        f"envelope_{key}": document[key]
+        for key in FAILURE_DIAGNOSTIC_KEYS
+        if isinstance(document.get(key), str | int | float | bool)
+    }
+    if document.get("stop_reason") == "tool_use" or document.get("subtype") == "error_max_turns":
+        details["likely_cause"] = "the run reached its configured maximum turns"
+    return details
+
+
 class ClaudeCodeAdvisoryProvider:
     def __init__(
         self,
@@ -68,6 +103,7 @@ class ClaudeCodeAdvisoryProvider:
             working_directory=config.working_directory,
             limits=config.limits,
             environment_allowlist=config.environment_allowlist,
+            diagnose_failure=failure_details,
         )
         self._identity = ProviderIdentity(
             provider_id=config.provider_id,

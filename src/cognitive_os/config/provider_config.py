@@ -295,7 +295,11 @@ class ClaudeCodeProviderConfig(_BaseCliProviderConfig):
     safe_mode: bool = True
     allowed_tools: tuple[NonEmptyStr, ...] = ("Read", "Glob", "Grep")
     disallowed_tools: tuple[NonEmptyStr, ...] = ("Bash", "Edit", "Write", "WebFetch", "WebSearch")
-    maximum_turns: int = Field(default=3, ge=1, le=20)
+    #: A cost and latency bound, not a safety boundary — the sandbox flags, the timeout
+    #: and the output caps are what contain the run. Three was too low for a read-then-
+    #: answer task: the Sprint 21C2 live smoke exhausted it on a two-function file and
+    #: exited non-zero, which reads as a failure rather than as the budget it is.
+    maximum_turns: int = Field(default=6, ge=1, le=20)
     maximum_budget_usd: float | None = Field(default=None, gt=0)
     model: NonEmptyStr | None = None
 

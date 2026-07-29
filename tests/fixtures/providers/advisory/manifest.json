@@ -1,6 +1,6 @@
 {
   "fixture_id": "sprint21c2-advisory-empty-input",
-  "fixture_version": "1",
+  "fixture_version": "2",
   "schema_version": "1",
   "title": "One unguarded division by the length of a possibly empty sequence",
   "task_path": "task.md",
@@ -18,8 +18,13 @@
   "expected_finding": {
     "target_path": "workspace/statistics_helper.py",
     "required_concepts": {
-      "file": ["statistics_helper.py", "statistics_helper"],
-      "function": ["arithmetic_mean"],
+      "file": [
+        "statistics_helper.py",
+        "statistics_helper"
+      ],
+      "function": [
+        "arithmetic_mean"
+      ],
       "trigger": [
         "empty",
         "no values",
@@ -44,8 +49,8 @@
     "maximum_findings": 3
   },
   "content_manifest": {
-    "task.md": "ac8d9101189c06d196f8c66497c8bbb2a0825027fa0c3102d1cd4e6a9e8cb2e8",
+    "task.md": "7991635968b912c69c557e0621a122a00bd471352500a69e29020f42a5c587dc",
     "workspace/statistics_helper.py": "b598daa1eedaa9464accd811d75cd26c8834f04bf1e40e1ff1336194c19fd9c8"
   },
-  "content_hash": "ca7952922b707e381f56887b16ed626549e35ccbc000d391def37115f7546a61"
+  "content_hash": "0e2dc4d10c6bd1a79d704081193febfee549ab58b022abaad63d8db690744eb6"
 }

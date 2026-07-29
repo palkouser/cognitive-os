@@ -131,7 +131,7 @@ class TestTheCommandLineIsExact:
             "--setting-sources",
             "",
             "--max-turns",
-            "3",
+            "6",
             "--safe-mode",
         )
 

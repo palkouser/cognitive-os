@@ -64,7 +64,9 @@ providers:
     safe_mode: true
     allowed_tools: [Read, Glob, Grep]
     disallowed_tools: [Bash, Edit, Write, WebFetch, WebSearch]
-    maximum_turns: 3
+    # A cost bound, not a safety boundary. Too low a value makes an ordinary
+    # read-then-answer task exit non-zero on the turn budget.
+    maximum_turns: 6
     maximum_budget_usd: null
     limits:
       timeout_seconds: 120

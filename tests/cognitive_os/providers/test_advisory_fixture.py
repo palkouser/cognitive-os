@@ -31,7 +31,7 @@ FIXTURE_ROOT = Path("tests/fixtures/providers/advisory")
 #: Pinned deliberately. If a wording change moves this value the fixture changed, and every
 #: recorded receipt that named the old hash described a different task.
 EXPECTED_CONTENT_HASH = (
-    "ca7952922b707e381f56887b16ed626549e35ccbc000d391def37115f7546a61"  # pragma: allowlist secret
+    "0e2dc4d10c6bd1a79d704081193febfee549ab58b022abaad63d8db690744eb6"  # pragma: allowlist secret
 )
 
 

@@ -32,11 +32,27 @@ from cognitive_os.domain.provider import (
     ProviderStreamEvent,
 )
 from cognitive_os.providers.advisory_schema import advisory_schema_json
-from cognitive_os.providers.claude_code.advisory import ADVISORY_POLICY, coarse_version
+from cognitive_os.providers.claude_code.advisory import coarse_version
 from cognitive_os.providers.cli_process import BoundedCliRunner
 from cognitive_os.providers.errors import ProviderUnsupportedCapabilityError
 
 from .mapping import parse_advisory_result
+
+#: Codex's own advisory policy, deliberately not the Claude Code text.
+#:
+#: Claude Code reads files with native Read/Glob/Grep tools, so telling it "do not run
+#: commands" costs it nothing. Codex has no such tool: it reads files *by* running commands
+#: inside its read-only sandbox. Reusing the Claude wording forbade the only capability
+#: Codex has, and it correctly answered that it could not inspect the file at all — a
+#: prompt that made the task impossible, discovered by the Sprint 21C2 live smoke.
+#:
+#: The boundary is `--sandbox read-only`, which the CLI enforces. This text states the same
+#: intent instead of contradicting it, because a model instruction is not a boundary and a
+#: model instruction that fights the boundary is worse than none.
+ADVISORY_POLICY = """Analyse only. Do not edit, create or delete any file, and make no
+change of any kind. Read-only inspection of the given directory is expected.
+Return the requested structured advisory result and nothing else.
+"""
 
 #: Configuration overrides emitted with every call. Each is a policy the flag surface either
 #: cannot express (`approval_policy`) or expresses less completely (empty MCP, no tools).
