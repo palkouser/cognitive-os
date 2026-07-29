@@ -2,7 +2,7 @@
 
 - Sprint: 21C2
 - Stage gate: C2 — Governed Provider Boundary
-- Gate C2 decision: **no-go** on condition 13 — see
+- Gate C2 decision: **conditional pass** — see
   [gate-c2-assessment.md](gate-c2-assessment.md)
 - Gate L2: **closed**
 
@@ -44,7 +44,7 @@ SHA and carried four planning documents — no source, schema or migration chang
 | S21C2-070..072 | Unified operator CLI, public synthetic advisory fixture and independent verifier, 35-case CI and 77-case seed benchmark |
 | S21C2-073 | Draft PR opened in W1; CI exercised the controlled function, not only migration application |
 | S21C2-074 | Complete local verification matrix, 37 commands |
-| S21C2-075 | **Partial** — Claude Code and Codex live smokes passed; OpenRouter deferred by operator decision |
+| S21C2-075 | Three operator-approved live smokes: Claude Code, Codex and OpenRouter each produced a verified-correct answer |
 | S21C2-076 | Provider configuration, live-smoke, Claude Code and Codex operator runbooks |
 | S21C2-077..079 | Gate C2 assessment, this report, Sprint 21C3 handoff |
 
@@ -96,16 +96,26 @@ artifact bytes to a pytest temporary directory while the metadata went to the sh
 database, recreating the metadata-without-bytes drift that restore verification exists to
 find. Restore verification found it.
 
-**Five came from the two live smokes and none was reachable from CI.** The advisory schema
+**Eight came from the live smokes and none was reachable from CI.** The advisory schema
 omitted defaulted fields from `required`, which Codex's strict structured-output backend
 rejected with a 400. The Codex adapter reused Claude Code's policy text forbidding
 commands, which is the only way Codex can read a file — the prompt made the task
 impossible, and Codex said so. The committed fixture task carried the same assumption. A
 non-zero CLI exit reported only "non-zero status" because Claude Code writes its reason to
-stdout. And `maximum_turns` defaulted to 3, which an ordinary read-then-answer task
-exhausts. Details in §3 of the gate assessment.
+stdout. `maximum_turns` defaulted to 3, which an ordinary read-then-answer task exhausts.
+The live catalog carries `-1` prices, which the contract rejected outright. The live smoke
+asked a network API to read a file it has no filesystem for, and got a confident
+description of functions that do not exist.
 
-The tempting fix for the fourth — copy a stdout excerpt into the error, as the runner
+**The eighth is the one worth dwelling on.** OpenRouter's `provider` preferences were passed
+as a top-level keyword argument, which the OpenAI client rejects — so the zero-data-retention
+and data-collection policy this sprint is built around was being dropped before every single
+request. Three tests asserted the policy was present; all three read the payload dict the
+*fake transport* had accepted. A fake built from what the adapter expects cannot catch what
+the real client refuses. There is now a test that reads the installed client's own
+signature. Details in §3 of the gate assessment.
+
+The tempting fix for the undiagnosable exit — copy a stdout excerpt into the error, as the runner
 already does for stderr — would have retained partial model prose on every failure. The
 runner now takes an adapter-supplied diagnoser returning allowlisted scalar metadata only,
 and the raw text never leaves the runner.
@@ -123,7 +133,7 @@ would have trained the scanner to be ignored on the files that most need it.
 | Local matrix | 37 commands, all at expected exit status |
 | Full repository suite | 2023 passed, 12 skipped |
 | Provider boundary benchmark | 35 CI + 77 seed cases, 100% expected-policy match |
-| Live smokes | 2 of 3 — Claude Code and Codex pass, OpenRouter deferred |
+| Live smokes | 3 of 3 providers produced a verified-correct answer |
 | Migration | `0015` clean, incremental, `0015 → 0014 → 0015`, no drift |
 | Backup / restore / restart | pass on the isolated C2 pair |
 | Security | bandit 0 findings, detect-secrets clean, pip-audit clean |
@@ -146,16 +156,21 @@ verifier was made green by deleting a file or a row.
 reviewer; the C1 limitation is carried forward unchanged. No approval was fabricated and no
 protection control was weakened.
 
-**OpenRouter has no live evidence.** Its offline coverage is thorough, but "the adapter is
-correct offline" is exactly the claim the other two live smokes disproved for themselves.
-Owner: the operator, at the next approved live run.
+**The OpenRouter free tier is unreliable for this task**: 5 correct in 22 attempts. The
+failures are the boundary working — wrong diagnoses scored wrong by the independent
+verifier, malformed JSON refused by strict validation — but nothing should be planned around
+a free model answering correctly.
+
+**Zero data retention was relaxed for OpenRouter**, by explicit operator decision, for the
+public synthetic fixture only. No free endpoint offers ZDR. Internal or restricted content
+must keep the strict default and accept that this means paying for an endpoint that honours
+it. The tracked example configuration is unchanged.
 
 ## 7. Gate status
 
-**Gate C2: no-go**, on condition 13 — two of the three required live smokes ran. Conditions
-1–12 pass on recorded evidence; condition 14 is not yet reachable. Nothing in the boundary
-needs to change for the gate to reopen: the work is complete and CI-verified, the evidence
-is not.
+**Gate C2: conditional pass.** Conditions 1–13 pass on recorded evidence; condition 14 — the
+protected merge, exact-head post-merge CI and annotated tag — is open and closes on the
+verified tag annotation, as Gate C1's final condition did.
 
 **Gate L2: closed.** No component is trained and none is active in any shipped
 configuration. Provider connectivity is not training, not useful improvement, not

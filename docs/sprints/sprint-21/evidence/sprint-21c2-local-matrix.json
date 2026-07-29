@@ -1,5 +1,5 @@
 {
-  "all_expected": true,
+  "all_expected": false,
   "branch": "feature/sprint-21c2-governed-providers",
   "commands": [
     {
@@ -8,11 +8,11 @@
       "environment_class": "none",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:14:03.493941+00:00",
+      "finished_at": "2026-07-29T07:51:52.491536+00:00",
       "group": "hygiene",
       "last_line": "Repository language check passed.",
       "seconds": 0.0,
-      "started_at": "2026-07-29T06:14:03.476195+00:00"
+      "started_at": "2026-07-29T07:51:52.472484+00:00"
     },
     {
       "as_expected": true,
@@ -20,11 +20,11 @@
       "environment_class": "none",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:14:03.535354+00:00",
+      "finished_at": "2026-07-29T07:51:52.539689+00:00",
       "group": "hygiene",
       "last_line": "All checks passed!",
       "seconds": 0.0,
-      "started_at": "2026-07-29T06:14:03.494018+00:00"
+      "started_at": "2026-07-29T07:51:52.491604+00:00"
     },
     {
       "as_expected": true,
@@ -32,11 +32,11 @@
       "environment_class": "none",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:14:03.571855+00:00",
+      "finished_at": "2026-07-29T07:51:52.581100+00:00",
       "group": "hygiene",
       "last_line": "890 files already formatted",
       "seconds": 0.0,
-      "started_at": "2026-07-29T06:14:03.535391+00:00"
+      "started_at": "2026-07-29T07:51:52.539724+00:00"
     },
     {
       "as_expected": true,
@@ -44,11 +44,11 @@
       "environment_class": "none",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:14:03.916224+00:00",
+      "finished_at": "2026-07-29T07:51:53.345140+00:00",
       "group": "hygiene",
       "last_line": "Success: no issues found in 561 source files",
-      "seconds": 0.3,
-      "started_at": "2026-07-29T06:14:03.571891+00:00"
+      "seconds": 0.8,
+      "started_at": "2026-07-29T07:51:52.581136+00:00"
     },
     {
       "as_expected": true,
@@ -56,23 +56,23 @@
       "environment_class": "none",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:14:07.562163+00:00",
+      "finished_at": "2026-07-29T07:51:57.035648+00:00",
       "group": "security",
       "last_line": "[tester]\tWARNING\tnosec encountered (B108), but no failed test on file src/cognitive_os/tools/sandbox/lifecycle.py:54",
-      "seconds": 3.6,
-      "started_at": "2026-07-29T06:14:03.916253+00:00"
+      "seconds": 3.7,
+      "started_at": "2026-07-29T07:51:53.345175+00:00"
     },
     {
-      "as_expected": true,
+      "as_expected": false,
       "command": "git ls-files -z | xargs -0 uv run detect-secrets-hook --baseline .secrets.baseline",
       "environment_class": "none",
-      "exit": 0,
+      "exit": 123,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:14:42.754047+00:00",
+      "finished_at": "2026-07-29T07:52:32.624450+00:00",
       "group": "security",
-      "last_line": "",
-      "seconds": 35.2,
-      "started_at": "2026-07-29T06:14:07.562199+00:00"
+      "last_line": "https://help.github.com/articles/removing-sensitive-data-from-a-repository",
+      "seconds": 35.6,
+      "started_at": "2026-07-29T07:51:57.035685+00:00"
     },
     {
       "as_expected": true,
@@ -80,11 +80,11 @@
       "environment_class": "none",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:14:46.381965+00:00",
+      "finished_at": "2026-07-29T07:52:36.513915+00:00",
       "group": "security",
       "last_line": "No known vulnerabilities found",
-      "seconds": 3.6,
-      "started_at": "2026-07-29T06:14:42.754084+00:00"
+      "seconds": 3.9,
+      "started_at": "2026-07-29T07:52:32.624491+00:00"
     },
     {
       "as_expected": true,
@@ -92,11 +92,11 @@
       "environment_class": "none",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:14:48.011205+00:00",
+      "finished_at": "2026-07-29T07:52:38.164873+00:00",
       "group": "hygiene",
       "last_line": "Contract schema check passed.",
-      "seconds": 1.6,
-      "started_at": "2026-07-29T06:14:46.382017+00:00"
+      "seconds": 1.7,
+      "started_at": "2026-07-29T07:52:36.513952+00:00"
     },
     {
       "as_expected": true,
@@ -104,11 +104,11 @@
       "environment_class": "none",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:14:50.854496+00:00",
+      "finished_at": "2026-07-29T07:52:41.039132+00:00",
       "group": "packaging",
       "last_line": "+ typing-inspection==0.4.2",
-      "seconds": 2.8,
-      "started_at": "2026-07-29T06:14:48.011272+00:00"
+      "seconds": 2.9,
+      "started_at": "2026-07-29T07:52:38.164907+00:00"
     },
     {
       "as_expected": true,
@@ -116,11 +116,11 @@
       "environment_class": "none",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:14:51.599034+00:00",
+      "finished_at": "2026-07-29T07:52:41.768829+00:00",
       "group": "packaging",
       "last_line": "+ typing-inspection==0.4.2",
       "seconds": 0.7,
-      "started_at": "2026-07-29T06:14:50.854574+00:00"
+      "started_at": "2026-07-29T07:52:41.039207+00:00"
     },
     {
       "as_expected": true,
@@ -128,11 +128,11 @@
       "environment_class": "none",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:14:52.248620+00:00",
+      "finished_at": "2026-07-29T07:52:42.426411+00:00",
       "group": "provider",
       "last_line": "{\"configuration_version\":2,\"providers\":[{\"adapter\":\"claude_code\",\"credential_source\":null,\"default_retention_mode\":\"none\",\"enabled\":false,\"executable\":\"claude\",\"kind\":\"cli_agent\",\"live_smoke_enabled\":false,\"model\":null,\"provider_id\":\"claude-code\",\"working_directory\":\"/var/tmp/cogos-advisory-fixture/",
-      "seconds": 0.6,
-      "started_at": "2026-07-29T06:14:51.599066+00:00"
+      "seconds": 0.7,
+      "started_at": "2026-07-29T07:52:41.768862+00:00"
     },
     {
       "as_expected": true,
@@ -140,11 +140,11 @@
       "environment_class": "none",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:14:53.224099+00:00",
+      "finished_at": "2026-07-29T07:52:43.418715+00:00",
       "group": "provider",
-      "last_line": "{\"providers\":[{\"checked_at\":\"2026-07-29T06:14:53.080169Z\",\"configured_model\":null,\"error\":null,\"latency_ms\":null,\"message\":\"provider is disabled in configuration\",\"provider_id\":\"claude-code\",\"resolved_model\":null,\"status\":\"unavailable\"},{\"checked_at\":\"2026-07-29T06:14:53.080206Z\",\"configured_model\":",
+      "last_line": "{\"providers\":[{\"checked_at\":\"2026-07-29T07:52:43.281867Z\",\"configured_model\":null,\"error\":null,\"latency_ms\":null,\"message\":\"provider is disabled in configuration\",\"provider_id\":\"claude-code\",\"resolved_model\":null,\"status\":\"unavailable\"},{\"checked_at\":\"2026-07-29T07:52:43.281901Z\",\"configured_model\":",
       "seconds": 1.0,
-      "started_at": "2026-07-29T06:14:52.248665+00:00"
+      "started_at": "2026-07-29T07:52:42.426444+00:00"
     },
     {
       "as_expected": true,
@@ -152,11 +152,11 @@
       "environment_class": "none",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:14:53.848005+00:00",
+      "finished_at": "2026-07-29T07:52:44.048911+00:00",
       "group": "provider",
       "last_line": "{\"check\":\"provider-replay\",\"finish_reason\":\"completed\",\"fixture_root\":\"tests/fixtures/providers/replay\",\"matched_reviewed_fixture\":true,\"resolved_model\":\"replay-model-v1\"}",
       "seconds": 0.6,
-      "started_at": "2026-07-29T06:14:53.224132+00:00"
+      "started_at": "2026-07-29T07:52:43.418751+00:00"
     },
     {
       "as_expected": true,
@@ -164,11 +164,11 @@
       "environment_class": "none",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:14:54.485171+00:00",
+      "finished_at": "2026-07-29T07:52:44.671056+00:00",
       "group": "provider",
       "last_line": "{\"check\":\"advisory-fixture\",\"content_hash\":\"0e2dc4d10c6bd1a79d704081193febfee549ab58b022abaad63d8db690744eb6\",\"files\":2,\"fixture_id\":\"sprint21c2-advisory-empty-input\",\"fixture_version\":\"2\",\"is_real_governed_outcome\":false,\"license\":\"Apache-2.0\",\"verifier_accepts_expected_finding\":true,\"verifier_disc",
       "seconds": 0.6,
-      "started_at": "2026-07-29T06:14:53.848050+00:00"
+      "started_at": "2026-07-29T07:52:44.048947+00:00"
     },
     {
       "as_expected": true,
@@ -176,11 +176,11 @@
       "environment_class": "none",
       "exit": 4,
       "expected_exit": 4,
-      "finished_at": "2026-07-29T06:14:54.837996+00:00",
+      "finished_at": "2026-07-29T07:52:45.021435+00:00",
       "group": "provider",
       "last_line": "{\"check\":\"live-smoke\",\"reason\":\"live execution requires --i-understand-this-calls-a-live-provider\",\"refused\":true}",
       "seconds": 0.4,
-      "started_at": "2026-07-29T06:14:54.485218+00:00"
+      "started_at": "2026-07-29T07:52:44.671088+00:00"
     },
     {
       "as_expected": true,
@@ -188,11 +188,11 @@
       "environment_class": "none",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:15:11.784295+00:00",
+      "finished_at": "2026-07-29T07:53:02.152693+00:00",
       "group": "provider",
-      "last_line": "312 passed in 16.41s",
-      "seconds": 16.9,
-      "started_at": "2026-07-29T06:14:54.838032+00:00"
+      "last_line": "317 passed in 16.55s",
+      "seconds": 17.1,
+      "started_at": "2026-07-29T07:52:45.021467+00:00"
     },
     {
       "as_expected": true,
@@ -200,11 +200,11 @@
       "environment_class": "none",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:15:12.967406+00:00",
+      "finished_at": "2026-07-29T07:53:03.356225+00:00",
       "group": "provider",
-      "last_line": "20 passed in 0.59s",
+      "last_line": "20 passed in 0.60s",
       "seconds": 1.2,
-      "started_at": "2026-07-29T06:15:11.784331+00:00"
+      "started_at": "2026-07-29T07:53:02.152728+00:00"
     },
     {
       "as_expected": true,
@@ -212,11 +212,11 @@
       "environment_class": "none",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:15:14.011048+00:00",
+      "finished_at": "2026-07-29T07:53:04.401544+00:00",
       "group": "provider",
-      "last_line": "4 passed in 0.67s",
+      "last_line": "4 passed in 0.66s",
       "seconds": 1.0,
-      "started_at": "2026-07-29T06:15:12.967441+00:00"
+      "started_at": "2026-07-29T07:53:03.356261+00:00"
     },
     {
       "as_expected": true,
@@ -224,11 +224,11 @@
       "environment_class": "none",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:15:15.260164+00:00",
+      "finished_at": "2026-07-29T07:53:05.662917+00:00",
       "group": "benchmark",
-      "last_line": "/tmp/c2-matrix-ci/4c7a6e58-94fa-4420-9b97-5c438151c3d9.json",
-      "seconds": 1.2,
-      "started_at": "2026-07-29T06:15:14.011083+00:00"
+      "last_line": "/tmp/c2-matrix-ci/401d16f7-9ec5-430d-84fb-3647ca6d5dde.json",
+      "seconds": 1.3,
+      "started_at": "2026-07-29T07:53:04.401576+00:00"
     },
     {
       "as_expected": true,
@@ -236,11 +236,11 @@
       "environment_class": "none",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:15:16.501604+00:00",
+      "finished_at": "2026-07-29T07:53:06.903638+00:00",
       "group": "benchmark",
-      "last_line": "/tmp/c2-matrix-seed/945204d4-b93d-4e70-9437-5d4902146cc2.json",
+      "last_line": "/tmp/c2-matrix-seed/b5466496-ea14-4581-90eb-69cb6aaf19dc.json",
       "seconds": 1.2,
-      "started_at": "2026-07-29T06:15:15.260203+00:00"
+      "started_at": "2026-07-29T07:53:05.662952+00:00"
     },
     {
       "as_expected": true,
@@ -248,11 +248,11 @@
       "environment_class": "none",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:15:17.608789+00:00",
+      "finished_at": "2026-07-29T07:53:08.024858+00:00",
       "group": "benchmark",
-      "last_line": "/tmp/c2-matrix-learned/a34465c5-40db-45bb-ac84-d8061af569bb.json",
+      "last_line": "/tmp/c2-matrix-learned/2571e652-bec7-4777-8ff3-09d57438445a.json",
       "seconds": 1.1,
-      "started_at": "2026-07-29T06:15:16.501639+00:00"
+      "started_at": "2026-07-29T07:53:06.903675+00:00"
     },
     {
       "as_expected": true,
@@ -260,11 +260,11 @@
       "environment_class": "none",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:15:26.001578+00:00",
+      "finished_at": "2026-07-29T07:53:16.459656+00:00",
       "group": "benchmark",
-      "last_line": "52 passed in 7.81s",
+      "last_line": "52 passed in 7.85s",
       "seconds": 8.4,
-      "started_at": "2026-07-29T06:15:17.608824+00:00"
+      "started_at": "2026-07-29T07:53:08.024894+00:00"
     },
     {
       "as_expected": true,
@@ -272,11 +272,11 @@
       "environment_class": "integration",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:15:30.844929+00:00",
+      "finished_at": "2026-07-29T07:53:21.271817+00:00",
       "group": "postgres",
-      "last_line": "138 passed in 4.27s",
+      "last_line": "138 passed in 4.24s",
       "seconds": 4.8,
-      "started_at": "2026-07-29T06:15:26.001616+00:00"
+      "started_at": "2026-07-29T07:53:16.459691+00:00"
     },
     {
       "as_expected": true,
@@ -284,11 +284,11 @@
       "environment_class": "integration",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:15:36.693485+00:00",
+      "finished_at": "2026-07-29T07:53:27.206372+00:00",
       "group": "postgres",
-      "last_line": "236 passed in 5.06s",
-      "seconds": 5.8,
-      "started_at": "2026-07-29T06:15:30.844999+00:00"
+      "last_line": "236 passed in 5.12s",
+      "seconds": 5.9,
+      "started_at": "2026-07-29T07:53:21.271851+00:00"
     },
     {
       "as_expected": true,
@@ -296,11 +296,11 @@
       "environment_class": "integration",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:15:46.037493+00:00",
+      "finished_at": "2026-07-29T07:53:36.552812+00:00",
       "group": "postgres",
       "last_line": "41 passed in 8.11s",
       "seconds": 9.3,
-      "started_at": "2026-07-29T06:15:36.693521+00:00"
+      "started_at": "2026-07-29T07:53:27.206407+00:00"
     },
     {
       "as_expected": true,
@@ -308,11 +308,11 @@
       "environment_class": "integration",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:15:46.593270+00:00",
+      "finished_at": "2026-07-29T07:53:37.115880+00:00",
       "group": "postgres",
       "last_line": "{\"append_only_trigger_count\":1,\"controlled_function_count\":1,\"expired_count\":0,\"healthy\":true,\"integrity_failures\":[],\"migration_revision\":\"0015\",\"output_count\":0,\"payload_rows_verified\":0,\"provider_warnings\":[],\"retained_artifact_count\":0,\"revision_count\":0,\"table_count\":1}",
       "seconds": 0.6,
-      "started_at": "2026-07-29T06:15:46.037529+00:00"
+      "started_at": "2026-07-29T07:53:36.552848+00:00"
     },
     {
       "as_expected": true,
@@ -320,11 +320,11 @@
       "environment_class": "integration",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:15:47.525602+00:00",
+      "finished_at": "2026-07-29T07:53:38.043392+00:00",
       "group": "postgres",
       "last_line": "{\"active_component_count\":0,\"append_only_trigger_count\":8,\"component_count\":0,\"controlled_function_count\":10,\"correlation_checked\":false,\"correlation_warnings\":[],\"healthy\":true,\"integrity_failures\":[],\"migration_revision\":\"0015\",\"observation_count\":0,\"payload_rows_verified\":0,\"quarantined_observati",
       "seconds": 0.9,
-      "started_at": "2026-07-29T06:15:46.593312+00:00"
+      "started_at": "2026-07-29T07:53:37.115916+00:00"
     },
     {
       "as_expected": true,
@@ -332,11 +332,11 @@
       "environment_class": "c2",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:15:48.597224+00:00",
+      "finished_at": "2026-07-29T07:53:39.125045+00:00",
       "group": "migration",
       "last_line": "INFO  [alembic.runtime.migration] Will assume transactional DDL.",
       "seconds": 1.1,
-      "started_at": "2026-07-29T06:15:47.525639+00:00"
+      "started_at": "2026-07-29T07:53:38.043450+00:00"
     },
     {
       "as_expected": true,
@@ -344,11 +344,11 @@
       "environment_class": "c2",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:15:50.181870+00:00",
+      "finished_at": "2026-07-29T07:53:40.735973+00:00",
       "group": "migration",
       "last_line": "INFO  [alembic.autogenerate.compare.types] Couldn't determine database type for column 'memory_embeddings.embedding'",
       "seconds": 1.6,
-      "started_at": "2026-07-29T06:15:48.597261+00:00"
+      "started_at": "2026-07-29T07:53:39.125081+00:00"
     },
     {
       "as_expected": true,
@@ -356,11 +356,11 @@
       "environment_class": "c2",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:15:51.276584+00:00",
+      "finished_at": "2026-07-29T07:53:41.791337+00:00",
       "group": "migration",
       "last_line": "INFO  [alembic.runtime.migration] Running downgrade 0015 -> 0014, Create the append-only provider-output governance ledger.",
       "seconds": 1.1,
-      "started_at": "2026-07-29T06:15:50.181906+00:00"
+      "started_at": "2026-07-29T07:53:40.736019+00:00"
     },
     {
       "as_expected": true,
@@ -368,11 +368,11 @@
       "environment_class": "c2",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:15:52.353984+00:00",
+      "finished_at": "2026-07-29T07:53:42.881643+00:00",
       "group": "migration",
       "last_line": "INFO  [alembic.runtime.migration] Running upgrade 0014 -> 0015, Create the append-only provider-output governance ledger.",
       "seconds": 1.1,
-      "started_at": "2026-07-29T06:15:51.276620+00:00"
+      "started_at": "2026-07-29T07:53:41.791373+00:00"
     },
     {
       "as_expected": true,
@@ -380,11 +380,11 @@
       "environment_class": "c2",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:15:53.949697+00:00",
+      "finished_at": "2026-07-29T07:53:44.484964+00:00",
       "group": "migration",
       "last_line": "INFO  [alembic.autogenerate.compare.types] Couldn't determine database type for column 'memory_embeddings.embedding'",
       "seconds": 1.6,
-      "started_at": "2026-07-29T06:15:52.354021+00:00"
+      "started_at": "2026-07-29T07:53:42.881680+00:00"
     },
     {
       "as_expected": true,
@@ -392,11 +392,11 @@
       "environment_class": "c2",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:15:54.513762+00:00",
+      "finished_at": "2026-07-29T07:53:45.036111+00:00",
       "group": "migration",
       "last_line": "{\"append_only_trigger_count\":1,\"controlled_function_count\":1,\"expired_count\":0,\"healthy\":true,\"integrity_failures\":[],\"migration_revision\":\"0015\",\"output_count\":0,\"payload_rows_verified\":0,\"provider_warnings\":[],\"retained_artifact_count\":0,\"revision_count\":0,\"table_count\":1}",
       "seconds": 0.6,
-      "started_at": "2026-07-29T06:15:53.949734+00:00"
+      "started_at": "2026-07-29T07:53:44.485009+00:00"
     },
     {
       "as_expected": true,
@@ -404,11 +404,11 @@
       "environment_class": "c2",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:15:56.692012+00:00",
+      "finished_at": "2026-07-29T07:53:47.212020+00:00",
       "group": "backup",
-      "last_line": "Backup manifest: /home/palkouser/projekt/cognitive-os-data/backups-s21c2/database-backups/20260729T061554Z-backup-manifest.json",
+      "last_line": "Backup manifest: /home/palkouser/projekt/cognitive-os-data/backups-s21c2/database-backups/20260729T075345Z-backup-manifest.json",
       "seconds": 2.2,
-      "started_at": "2026-07-29T06:15:54.513797+00:00"
+      "started_at": "2026-07-29T07:53:45.036149+00:00"
     },
     {
       "as_expected": true,
@@ -416,11 +416,11 @@
       "environment_class": "c2",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:16:03.337821+00:00",
+      "finished_at": "2026-07-29T07:53:53.858047+00:00",
       "group": "backup",
       "last_line": "Isolated restore verification passed.",
       "seconds": 6.6,
-      "started_at": "2026-07-29T06:15:56.692048+00:00"
+      "started_at": "2026-07-29T07:53:47.212053+00:00"
     },
     {
       "as_expected": true,
@@ -428,11 +428,11 @@
       "environment_class": "c2",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:16:22.253730+00:00",
+      "finished_at": "2026-07-29T07:54:12.805374+00:00",
       "group": "backup",
       "last_line": "INFO  [alembic.autogenerate.compare.types] Couldn't determine database type for column 'memory_embeddings.embedding'",
       "seconds": 18.9,
-      "started_at": "2026-07-29T06:16:03.337852+00:00"
+      "started_at": "2026-07-29T07:53:53.858114+00:00"
     },
     {
       "as_expected": true,
@@ -440,10 +440,10 @@
       "environment_class": "integration",
       "exit": 0,
       "expected_exit": 0,
-      "finished_at": "2026-07-29T06:18:36.711592+00:00",
+      "finished_at": "2026-07-29T07:56:26.549497+00:00",
       "group": "full",
-      "last_line": "2023 passed, 12 skipped in 133.13s (0:02:13)",
-      "seconds": 134.5,
+      "last_line": "2028 passed, 12 skipped in 132.34s (0:02:12)",
+      "seconds": 133.7,
       "skips": [
         "SKIPPED [1] tests/cognitive_os/telemetry/test_opentelemetry.py:3: could not import 'opentelemetry.sdk': No module named 'opentelemetry'",
         "SKIPPED [1] tests/cognitive_os/verification/test_generic_and_domains.py:89: verification-math extra is absent",
@@ -458,11 +458,11 @@
         "SKIPPED [1] tests/integration/sandbox/test_sandbox_image.py:8: opt-in Docker test",
         "SKIPPED [1] tests/integration/sandbox/test_sandbox_image.py:40: opt-in Docker test"
       ],
-      "started_at": "2026-07-29T06:16:22.253761+00:00"
+      "started_at": "2026-07-29T07:54:12.805404+00:00"
     }
   ],
-  "git_commit": "b0cacc80203432c69d143fecc9bf4dc431031626",
-  "recorded_at": "2026-07-29T06:18:36.714141+00:00",
+  "git_commit": "f12dbe30aca3e6b7caf0482440608b2949f670d1",
+  "recorded_at": "2026-07-29T07:56:26.551911+00:00",
   "schema_version": 1,
   "sprint": "21C2",
   "store_isolation": {
@@ -489,7 +489,7 @@
     "note": "Every command ran against no database, the shared integration test database, or the isolated Sprint 21C2 pair. Nothing reads or writes the inconsistent development pair."
   },
   "suite_totals": {
-    "full_repository_suite": "2023 passed, 12 skipped in 133.13s (0:02:13)",
+    "full_repository_suite": "2028 passed, 12 skipped in 132.34s (0:02:12)",
     "provider_boundary_ci_benchmark_cases": 35,
     "provider_boundary_seed_benchmark_cases": 77,
     "skip_assessment": "Every skip is an absent optional extra or an explicitly opt-in live or Docker test. The two provider skips are the live CLI advisory tests, which are opt-in by design; no provider behaviour is hidden by a skip.",
@@ -509,6 +509,8 @@
     ]
   },
   "task": "S21C2-074",
-  "total_seconds": 272.7,
-  "unexpected_exit_codes": []
+  "total_seconds": 273.9,
+  "unexpected_exit_codes": [
+    "git ls-files -z | xargs -0 uv run detect-secrets-hook --baseline .secrets.baseline"
+  ]
 }

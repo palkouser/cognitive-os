@@ -414,7 +414,11 @@ async def _run_live_smoke(config: Any, args: argparse.Namespace) -> int:
         correlation_id=uuid4(),
         requested_model=_requested_model(config),
         system_instructions=None,
-        messages=(ProviderMessage(role=ProviderMessageRole.USER, content=loaded.task_prompt()),),
+        messages=(
+            ProviderMessage(
+                role=ProviderMessageRole.USER, content=_task_for(loaded, is_cli=is_cli)
+            ),
+        ),
         response_format=ResponseFormat.JSON_SCHEMA,
         response_schema=ADVISORY_JSON_SCHEMA,
         max_output_tokens=getattr(config, "maximum_output_tokens", None),
@@ -470,6 +474,31 @@ async def _run_live_smoke(config: Any, args: argparse.Namespace) -> int:
     }
     _emit(payload)
     return 0 if verification.correct and not changes else 1
+
+
+def _task_for(loaded: Any, *, is_cli: bool) -> str:
+    """The same task, delivered the only way each kind of provider can receive it.
+
+    A CLI agent is given a workspace and reads the file itself, which is the behaviour the
+    mutation guard then checks. A network API has no filesystem at all, so the identical
+    task sent verbatim asks it to read something it cannot reach — and a model asked to read
+    a file it cannot see will confidently describe one it imagined. The first OpenRouter
+    live run diagnosed `calculate_mean` and `calculate_median`, neither of which exists.
+
+    Inlining is safe and stays deterministic because every byte is pinned by the fixture's
+    own content manifest, which was verified before this ran.
+    """
+    task = loaded.task_prompt()
+    if is_cli:
+        return task
+    parts = [task, "", "The file follows in full; you have no filesystem access."]
+    for relative in sorted(loaded.manifest.content_manifest):
+        if not relative.startswith(f"{loaded.manifest.workspace_path}/"):
+            continue
+        name = relative.split("/", 1)[1]
+        body = (loaded.root / relative).read_text(encoding="utf-8")
+        parts.extend(("", f"--- {name} ---", body))
+    return "\n".join(parts)
 
 
 def _requested_model(config: Any) -> str:

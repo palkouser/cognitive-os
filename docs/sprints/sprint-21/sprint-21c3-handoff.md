@@ -9,19 +9,18 @@ arrive — which is where the question stops being "can this be recorded safely"
 
 | | |
 |---|---|
-| Parent tag | `sprint-21c2-provider-baseline` — **not yet created**, see §6 |
+| Parent tag | `sprint-21c2-provider-baseline` — verify it exists, see §6 |
 | Parent branch | `feature/sprint-21c2-governed-providers` |
 | Final implementation commit | `bc35ddd` |
 | Parent final CI | 28 of 28 required checks green on `bc35ddd` |
 | Parent migration head | `0015` |
 | Next available migration | `0016` — only if Sprint 21C3 needs a schema change |
 | Recommended branch | `feature/sprint-21c3-reality-inputs` |
-| Gate C2 | **no-go** on condition 13 — see [gate-c2-assessment.md](gate-c2-assessment.md) |
+| Gate C2 | **conditional pass** — see [gate-c2-assessment.md](gate-c2-assessment.md) |
 | Gate L2 | **closed** |
 
-**Read §6 before starting.** Gate C2 did not pass, and the release sequence that would
-normally produce the parent tag has not run. Sprint 21C3 must not assume a
-`sprint-21c2-provider-baseline` tag exists.
+**Read §6 before starting.** The release sequence that produces the parent tag had not run
+when this was written. Verify the tag exists before relying on it.
 
 Verify the migration head is `0015` before writing anything.
 
@@ -124,8 +123,9 @@ configuration file, and an explicit runtime flag. Do not collapse them into one.
 
 | Limitation | Owner | Status |
 |---|---|---|
-| OpenRouter has no live-smoke evidence | operator | open; blocks Gate C2 condition 13 |
-| Gate C2 condition 14 (merge, post-merge CI, tag) not attempted | operator | open; see §6 |
+| OpenRouter free tier answers this task correctly about 1 time in 4 (5 of 22) | — | measured; the failures are the boundary working |
+| Zero data retention relaxed for OpenRouter, public fixture only | operator | explicit decision; never for internal or restricted content |
+| Gate C2 condition 14 (merge, post-merge CI, tag) | operator | open when written; see §6 |
 | Inconsistent development Artifact Store pair (`cognitive_os_dev` + `…/artifacts`): 4 rows without content, 5 orphan files | operator | untouched since Sprint 21C1; remediation proposed, needs separate authority |
 | Required approving reviews disabled — one collaborator, no second eligible reviewer | operator | carried forward from C1 unchanged |
 | No component is trained; none is active in any shipped configuration | — | by design |
@@ -150,23 +150,14 @@ Gate L2 stays closed until a sprint demonstrates useful learned behaviour on rea
 outcomes. Provider connectivity is not training, not useful improvement, and not activation
 authorization. Do not carry a Gate L2 claim forward.
 
-## 6. The release that has not happened
+## 6. The release
 
-Gate C2 is a **no-go** on condition 13: two of the three required operator live smokes ran.
-Because the gate did not pass, the release sequence in S21C2-078 — ready PR, protected
-merge, exact-head post-merge `main` CI, annotated `sprint-21c2-provider-baseline` tag — was
-not attempted.
+Gate C2 is a **conditional pass**: conditions 1–13 pass on recorded evidence, and condition
+14 — ready PR, protected merge, exact-head post-merge `main` CI, and the annotated
+`sprint-21c2-provider-baseline` tag — closes on the verified tag annotation, as Gate C1's
+final condition did.
 
-The consequence for C3 is concrete: **there is no parent tag yet.** Two paths are open, and
-both are operator decisions:
-
-1. **Close condition 13 first.** Run the OpenRouter live smoke under the same bounds as the
-   other two, re-assess, and then run the release sequence. C3 then starts from the tag as
-   every previous sprint did.
-2. **Release with the gap recorded.** Merge and tag with the annotation stating Gate C2 as a
-   no-go on condition 13 and naming OpenRouter as the open item. C3 starts from that tag
-   with an explicit inherited gap.
-
-Do not start C3 by assuming the tag exists, and do not create it retroactively to make a
-handoff table look complete. The work on the branch is complete and CI-verified at
-`bc35ddd`; what is missing is evidence, and evidence is not something a tag can supply.
+This document was written before that sequence ran. **Verify the tag exists and peels to the
+final `main` commit before treating it as the C3 parent**, rather than assuming it from this
+table. If it is absent, the release did not complete and that is the first thing C3 should
+establish, not work around.

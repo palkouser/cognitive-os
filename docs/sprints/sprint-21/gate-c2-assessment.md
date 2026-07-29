@@ -11,7 +11,7 @@
   [`evidence/sprint-21c2-provider-compatibility.json`](evidence/sprint-21c2-provider-compatibility.json),
   [`evidence/sprint-21c2-local-matrix.json`](evidence/sprint-21c2-local-matrix.json),
   [`evidence/sprint-21c2-live-smokes.json`](evidence/sprint-21c2-live-smokes.json)
-- Decision: **no-go**, on condition 13. Conditions 1–12 pass; 14 is not yet reachable.
+- Decision: **conditional pass** — conditions 1–13 pass; condition 14 closes on release
 
 ## 1. Scope of this assessment
 
@@ -19,16 +19,14 @@ Gate C2 asks whether an operator can use OpenRouter, Claude Code and Codex as bo
 advisory teachers without losing the authority, provenance, retention and quarantine
 guarantees Sprint 21C1 established. It does not ask whether any of them is *useful*.
 
-§2.2 of the backlog is explicit that any failed condition is a no-go, and that a typed
-provider failure does not substitute for the three required live smokes. Condition 13
-requires one successful operator-approved live smoke **for each provider**. Two ran and
-passed; the OpenRouter smoke was deferred by operator decision. That is a failed
-condition, and this assessment reports it as one.
+§2.2 is explicit that any failed condition is a no-go and that a typed provider failure
+does not substitute for the required live smokes. All three now have one, so condition 13
+passes. Condition 14 is the release sequence and closes on the verified tag annotation, the
+same way Gate C1 closed its final condition.
 
-The alternative — counting two of three, or reclassifying the deferral as out of scope —
-would make the gate mean whatever the run happened to achieve. The two smokes that did run
-were worth far more than a pass mark: they found five defects that CI could not reach
-(§3).
+The live smokes are the reason this assessment is worth reading. Eight defects survived a
+complete offline suite and were caught by calling the real providers (§3), two of them in
+the data-policy path this sprint is built around.
 
 **Gate L2 remains closed.** §5 states what that means.
 
@@ -72,7 +70,8 @@ The router slug is passed through untouched and OpenRouter's resolved model is w
 receipt records. Twelve benchmark seed cases and four CI cases cover the routing matrix;
 six more cover response normalization.
 
-**Not exercised live.** See §2.13.
+Two of the offline certainties turned out to be wrong when the API was actually called; see
+§3.6 and §3.7.
 
 ### 2.4 Claude Code structurally enforces bounded read-only advisory operation — **PASS**
 
@@ -190,32 +189,45 @@ Local matrix: 37 commands, every one at its expected exit status; 2023 passed, 1
 across `tests/cognitive_os`, `tests/contract` and `tests/integration`. Every skip is an
 absent optional extra or an explicitly opt-in live or Docker test.
 
-### 2.13 One operator-approved live smoke per provider — **FAIL**
+### 2.13 One operator-approved live smoke per provider — **PASS**, with a reliability caveat
 
 | Provider | Result |
 | -------- | ------ |
-| Claude Code 2.1.219 | **pass** — correct diagnosis, fixture byte-identical, retention `none` |
-| codex-cli 0.144.6 | **pass** — correct diagnosis, fixture byte-identical, retention `none` |
-| OpenRouter | **not run** — deferred by operator decision; `OPENROUTER_API_KEY` was absent |
+| Claude Code 2.1.219 | **pass** — correct on every attempt |
+| codex-cli 0.144.6 | **pass** — correct on every attempt |
+| OpenRouter (`openrouter/free`) | **pass** — 5 correct in 22 attempts |
 
-Both approved calls ran against a verified copy of the public synthetic fixture outside the
-repository, were scored by the independent verifier, left their workspace unchanged, wrote
-no governance revision, and left no runner temporary directory behind. No prompt, response,
+Every call ran against a verified copy of the public synthetic fixture outside the
+repository, was scored by the independent verifier, left the workspace unchanged, wrote no
+governance revision, and left no runner temporary directory behind. No prompt, response,
 credential or identity is retained in the evidence.
 
-The condition requires three. It is not met, and this is the no-go.
+**The OpenRouter number is reported as measured, not as achieved.** The router selects a
+small free model, and most of them either diagnose the wrong thing or emit JSON that
+violates the schema. Both outcomes are the boundary working: the independent verifier
+scored the wrong answers wrong, and strict validation refused a malformed field
+(`severityanas`) rather than coercing it. A single receipt is not evidence of reliability
+and is not offered as any — the denominator is in the evidence file.
 
-### 2.14 Protected merge, exact-head post-merge CI, annotated tag, remote verification — **NOT MET**
+**Zero data retention was relaxed for OpenRouter, by explicit operator decision, for this
+public fixture only.** No free OpenRouter endpoint offers ZDR; the strict default returns
+`404 No endpoints found matching your data policy`. ADR 0087 permits a relaxed policy for
+public content and forbids it for internal or restricted material, and the fixture is
+public, synthetic and Apache-2.0. Data collection stayed denied, spend stayed at zero, and
+the tracked example configuration keeps both strict defaults.
 
-Not yet attempted. PR #214 is a draft with all 28 required checks green and
-`enforce_admins` intact; no branch-protection control has been changed. This condition
-cannot be assessed until the release sequence runs, and the release sequence should not run
-on a gate that is already a no-go without an explicit operator decision.
+### 2.14 Protected merge, exact-head post-merge CI, annotated tag, remote verification — **OPEN**
+
+The release sequence has not run. PR #214 has all 28 required checks green and
+`enforce_admins` intact; no branch-protection control has been changed and no approval has
+been fabricated. As in Gate C1, this condition closes on the verified tag annotation rather
+than on a tracked document, so that the release does not need a second release commit to
+describe itself.
 
 ## 3. What the live smokes found
 
-The two smokes that ran were the most productive hours of the sprint, and every defect they
-found was invisible to CI by construction:
+The live smokes were the most productive hours of the sprint. Eight defects, every one
+invisible to CI by construction:
 
 1. **the advisory schema was rejected outright by Codex.** `advisory_schema_json()` emitted
    Pydantic's schema, which omits defaulted fields from `required`. `codex exec
@@ -230,11 +242,29 @@ found was invisible to CI by construction:
 4. **a non-zero CLI exit was undiagnosable** — see §2.10;
 5. **`maximum_turns` defaulted to 3**, which an ordinary read-then-answer task exhausts, so a
    budget exhaustion read as a failure. Raised to 6; it is a cost bound, and the sandbox
-   flags, timeout and output caps are unchanged.
+   flags, timeout and output caps are unchanged;
+6. **the live catalog carries `-1` prices** for models whose price is not fixed.
+   `CatalogModel` constrains prices to `ge=0`, so the entire catalog failed to parse and the
+   error escaped as a raw `ValidationError` rather than a typed provider failure. Normalising
+   to infinity keeps the `ge=0` invariant true, so no later `price <= 0` test can read a
+   variable price as a free one;
+7. **the data policy never reached the wire.** `provider` is an OpenRouter extension, not a
+   chat-completions parameter, and the OpenAI client validates its keyword arguments, so
+   passing it at the top level raised `TypeError: unexpected keyword argument 'provider'`.
+   Three tests asserted the policy was present by reading the payload dict the *fake* had
+   accepted. This is the most uncomfortable finding in the sprint: the zero-data-retention
+   setting the whole OpenRouter configuration is built around was being dropped before every
+   request. There is now a test that reads the installed client's own signature;
+8. **a network API was asked to read a file.** The live smoke handed all three providers the
+   same task — "read the file in the directory you were given" — but OpenRouter has no
+   filesystem, and a model asked to read a file it cannot see will confidently describe one
+   it imagined. The first run diagnosed `calculate_mean` and `calculate_median`, neither of
+   which exists. Workspace content is now inlined for non-CLI adapters, which stays
+   deterministic because every byte is pinned by the fixture manifest.
 
 Each has a regression test written against the shape the providers demand, so they hold
-without a credential. That five defects survived a full offline suite and were caught by two
-live calls is the argument for condition 13, not against it.
+without a credential. That eight defects survived a full offline suite and were caught by
+calling the real thing is the argument for condition 13, not against it.
 
 ## 4. Inherited and accepted limitations
 
@@ -250,10 +280,15 @@ this sprint was made green by deleting a file or a row.
 second eligible reviewer, so the C1 limitation is carried forward unchanged. No approval was
 fabricated and no protection control was weakened to compensate.
 
-**OpenRouter has no live evidence.** Its offline behaviour is thoroughly covered and its
-adapter is built through the same construction boundary as the two that ran, but "the
-adapter is correct offline" is exactly the claim the other two smokes disproved for
-themselves. This is an open gap with an owner: the operator, at the next approved live run.
+**The OpenRouter free tier is unreliable for this task.** Five correct answers in 22
+attempts. The failures are the boundary working — wrong diagnoses scored wrong, malformed
+JSON refused — but an operator should not plan around a free model answering correctly, and
+no learned pipeline should depend on one.
+
+**Zero data retention cannot be satisfied on the free tier.** Relaxing it was an explicit
+operator decision limited to the public synthetic fixture. Any use of OpenRouter for
+internal or restricted content must keep `require_zero_data_retention: true` and accept
+that this means paying for an endpoint that offers it.
 
 ## 5. Gate L2 status
 
@@ -271,12 +306,12 @@ authorization.
 
 ## 6. Decision
 
-**Gate C2: no-go.**
+**Gate C2: conditional pass.**
 
-Conditions 1–12 pass on recorded evidence. Condition 13 fails: two of three required live
-smokes ran. Condition 14 is not yet reachable.
+Conditions 1–13 pass on recorded evidence. Condition 14 — the protected merge, exact-head
+post-merge CI, annotated tag and remote verification — is open and closes on the verified
+tag annotation, as Gate C1's final condition did.
 
-The gate reopens when an operator-approved OpenRouter live smoke succeeds under the same
-bounds as the other two, after which condition 14 can be attempted. Nothing in the boundary
-needs to change for that to happen — the work is complete and CI-verified; the evidence is
-not.
+Two limitations travel with the pass and are not hidden by it: the OpenRouter free tier
+answers this task correctly about one time in four, and zero data retention was relaxed for
+the public fixture because no free endpoint offers it.
