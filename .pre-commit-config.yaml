@@ -3,19 +3,25 @@ repos:
     hooks:
       - id: ruff-check
         name: Ruff check
-        entry: uv run ruff check --config ruff.cognitive-os.toml
+        entry: uv run ruff check --config ruff.cognitive-os.toml --force-exclude
         language: system
         types: [python]
         # Same first-party scope as the CI lint job. Keep the two in step: they
         # drifted from each other before, and lint errors survived in the gap.
+        # --force-exclude is what keeps them in step in the other direction: CI
+        # passes directories, so ruff applies extend-exclude itself, but
+        # pre-commit passes explicit paths, which bypasses it unless forced.
         files: ^(src|tests|scripts|infra)/
       - id: ruff-format
         name: Ruff format check
-        entry: uv run ruff format --check --config ruff.cognitive-os.toml
+        entry: uv run ruff format --check --config ruff.cognitive-os.toml --force-exclude
         language: system
         types: [python]
         # Same first-party scope as the CI lint job. Keep the two in step: they
         # drifted from each other before, and lint errors survived in the gap.
+        # --force-exclude is what keeps them in step in the other direction: CI
+        # passes directories, so ruff applies extend-exclude itself, but
+        # pre-commit passes explicit paths, which bypasses it unless forced.
         files: ^(src|tests|scripts|infra)/
       - id: detect-secrets
         name: Detect secrets
