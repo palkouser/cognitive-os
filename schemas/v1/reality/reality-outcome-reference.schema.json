@@ -1,0 +1,160 @@
+{
+  "$defs": {
+    "CodingOutcomeStatus": {
+      "enum": [
+        "accepted",
+        "failed",
+        "rejected",
+        "cancelled",
+        "budget_exhausted",
+        "security_failure"
+      ],
+      "title": "CodingOutcomeStatus",
+      "type": "string"
+    },
+    "RealityCandidateStrategy": {
+      "description": "The four offline strategies of §4.6, plus what a provider returns.\n\n`PROVIDER_PROPOSED` deliberately has no declared correctness. A provider candidate's\nresult is whatever the hidden verifier says it is, and a strategy value that predicted\nit would be a label the corpus had assigned to itself.",
+      "enum": [
+        "incomplete_a",
+        "correct_narrow",
+        "incomplete_b",
+        "correct_robust",
+        "provider_proposed"
+      ],
+      "title": "RealityCandidateStrategy",
+      "type": "string"
+    },
+    "RealityRunKind": {
+      "enum": [
+        "baseline",
+        "candidate"
+      ],
+      "title": "RealityRunKind",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/reality/reality-outcome-reference.schema.json",
+  "additionalProperties": false,
+  "description": "One executed run, resolvable to bytes and to an event.\n\nThis is the unit the 200-outcome threshold counts. Every field that identifies it is\nrequired, because a reference that cannot be resolved is a label, and the whole point of\nC3 is that labels are not outcomes.",
+  "properties": {
+    "candidate_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Candidate Id"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "final_status": {
+      "$ref": "#/$defs/CodingOutcomeStatus"
+    },
+    "hidden_evidence_artifact_id": {
+      "format": "uuid",
+      "title": "Hidden Evidence Artifact Id",
+      "type": "string"
+    },
+    "hidden_evidence_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Hidden Evidence Hash",
+      "type": "string"
+    },
+    "hidden_verification_passed": {
+      "title": "Hidden Verification Passed",
+      "type": "boolean"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "outcome_artifact_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Outcome Artifact Hash",
+      "type": "string"
+    },
+    "outcome_artifact_id": {
+      "format": "uuid",
+      "title": "Outcome Artifact Id",
+      "type": "string"
+    },
+    "outcome_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Outcome Hash",
+      "type": "string"
+    },
+    "provider_output_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Provider Output Id"
+    },
+    "run_kind": {
+      "$ref": "#/$defs/RealityRunKind"
+    },
+    "source_event_id": {
+      "format": "uuid",
+      "title": "Source Event Id",
+      "type": "string"
+    },
+    "strategy": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RealityCandidateStrategy"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "task_id": {
+      "format": "uuid",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "task_manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Task Manifest Hash",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_run_id",
+    "run_kind",
+    "task_id",
+    "task_manifest_hash",
+    "outcome_hash",
+    "outcome_artifact_id",
+    "outcome_artifact_hash",
+    "hidden_evidence_artifact_id",
+    "hidden_evidence_hash",
+    "final_status",
+    "hidden_verification_passed",
+    "source_event_id",
+    "occurred_at"
+  ],
+  "title": "RealityOutcomeReference",
+  "type": "object"
+}

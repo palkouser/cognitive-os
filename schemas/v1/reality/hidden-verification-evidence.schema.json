@@ -1,0 +1,123 @@
+{
+  "$defs": {
+    "HiddenVerificationStatus": {
+      "description": "What the hidden suite established. `UNVERIFIABLE` is not `FAILED`.\n\nA missing bundle, a tampered bundle or a sandbox that never started tells us nothing\nabout the candidate. Recording that as a failure would put an infrastructure problem into\nthe corpus as evidence about a patch, which is the mislabelling §9 requires us to avoid.",
+      "enum": [
+        "passed",
+        "failed",
+        "timed_out",
+        "unverifiable"
+      ],
+      "title": "HiddenVerificationStatus",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/reality/hidden-verification-evidence.schema.json",
+  "additionalProperties": false,
+  "description": "The normalized result of one hidden run.\n\nCarries hashes of the captured output, never the output itself. A hidden test's assertion\nmessage names the edge case it checks, so quoting it into an event, a manifest or a report\nwould leak the answer through the evidence trail rather than through the mount.",
+  "properties": {
+    "bundle_content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Bundle Content Hash",
+      "type": "string"
+    },
+    "captured_bytes": {
+      "minimum": 0,
+      "title": "Captured Bytes",
+      "type": "integer"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "criterion_id": {
+      "default": "coding.hidden_pytest",
+      "minLength": 1,
+      "title": "Criterion Id",
+      "type": "string"
+    },
+    "duration_seconds": {
+      "minimum": 0,
+      "title": "Duration Seconds",
+      "type": "number"
+    },
+    "exit_code": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Exit Code"
+    },
+    "reason": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reason"
+    },
+    "recorded_at": {
+      "format": "date-time",
+      "title": "Recorded At",
+      "type": "string"
+    },
+    "sandbox_image_digest": {
+      "minLength": 1,
+      "title": "Sandbox Image Digest",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/HiddenVerificationStatus"
+    },
+    "stderr_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Stderr Hash",
+      "type": "string"
+    },
+    "stdout_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Stdout Hash",
+      "type": "string"
+    },
+    "task_id": {
+      "format": "uuid",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    },
+    "truncated": {
+      "default": false,
+      "title": "Truncated",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "task_id",
+    "task_run_id",
+    "status",
+    "bundle_content_hash",
+    "sandbox_image_digest",
+    "stdout_hash",
+    "stderr_hash",
+    "captured_bytes",
+    "duration_seconds",
+    "recorded_at"
+  ],
+  "title": "HiddenVerificationEvidence",
+  "type": "object"
+}

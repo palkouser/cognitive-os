@@ -1,0 +1,104 @@
+{
+  "deviations": [
+    {
+      "id": "W1-D1",
+      "observed": "The vertical slice proves steps 1-7 and 10. Experience Compiler trajectory compilation and Corpus Factory routing are not exercised.",
+      "reason": "Both are W3 work items (S21C3-034, S21C3-035) with their own contracts. Building a throwaway mapping in W1 would be replaced rather than reused.",
+      "risk_accepted": "The two largest downstream integrations remain unproven until W3, which is the risk section 6.1 exists to avoid. Recorded rather than hidden; W3 must start with them.",
+      "subject": "backlog section 6.1 steps 8 and 9"
+    }
+  ],
+  "findings": [
+    {
+      "c3_impact": "S21C3-036 offers every outcome to intake and S21C3-062 requires restart to re-resolve every counted outcome. A re-harvest after an interruption currently raises.",
+      "component": "cognitive_os.application.services.learned_intake (Sprint 21C1, ADR 0086)",
+      "contradicts": "The module docstring states intake 'can be re-run after a crash without producing a second record'. That holds only when the clock is pinned, which the C1 tests do and production does not.",
+      "id": "W1-F1",
+      "observed": "LearnedObservationIntake stamps recorded_at from its clock and LearnedObservationRecord is hash-bound, so offering the same governed outcome twice at different moments raises idempotency_key_reused instead of returning the existing record.",
+      "severity": "blocks S21C3-036 and S21C3-062 in W3",
+      "status": "documented by tests/cognitive_os/coding/test_reality_harvest_and_campaign.py; NOT fixed in W1; needs operator approval because the fix changes a C1 authority component governed by ADR 0086"
+    },
+    {
+      "action": "describe() added to the port; the two in-repo FixtureArtifactStore implementations completed to match.",
+      "component": "cognitive_os.application.ports.artifact_store",
+      "id": "W1-F2",
+      "observed": "ArtifactStorePort had no describe(), so a service needing metadata-only reads had to depend on the concrete ArtifactService and could not be given a substitute.",
+      "severity": "resolved in W1"
+    }
+  ],
+  "gates": {
+    "bandit": "passed",
+    "contract_schema_drift": "passed",
+    "event_types": 213,
+    "mypy": "passed (568 files)",
+    "offline_suite": "1942 passed, 109 skipped",
+    "postgres_integration": "41 passed",
+    "ruff_check": "passed",
+    "ruff_format": "passed"
+  },
+  "hidden_boundary_evidence": {
+    "control_mount_destination": "/verification",
+    "control_mount_mode": "readonly",
+    "missing_bundle": "unverifiable, not failed",
+    "provider_visible_tool_descriptors_carry_control_mount": false,
+    "tampered_bundle": "unverifiable before pytest starts",
+    "visible_only_patch_accepted": false,
+    "write_from_inside_container": "refused (OSError), bundle hash unchanged"
+  },
+  "items": [
+    "S21C3-010",
+    "S21C3-011",
+    "S21C3-012",
+    "S21C3-013",
+    "S21C3-014",
+    "S21C3-020 (initial)",
+    "S21C3-021 (initial)",
+    "S21C3-022 (initial)",
+    "S21C3-023 (initial)",
+    "S21C3-064"
+  ],
+  "migration_created": null,
+  "migration_head": "0015",
+  "postgres_round_trip": {
+    "database": "cognitive_os_s21c3_test",
+    "event_type": "coding.outcome_recorded",
+    "hidden_evidence_bytes_verified": true,
+    "outcome_bytes_verified": true,
+    "replay_is_no_op": true
+  },
+  "recorded_at": "2026-07-29T16:40:56.824999+00:00",
+  "schema_version": 1,
+  "sprint": "21C3",
+  "store_isolation": {
+    "c3_artifact_filesystem_verification": "passed",
+    "c3_artifact_root_files": 5,
+    "development_pair_c3_writes": 0,
+    "development_pair_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf",
+    "development_pair_unchanged": true
+  },
+  "vertical_slice": {
+    "command": "COGOS_RUN_SANDBOX_INTEGRATION=1 uv run pytest tests/integration/coding/test_reality_vertical_slice.py",
+    "outcome_counts": {
+      "duplicates_excluded": 0,
+      "hidden_failed": 2,
+      "hidden_passed": 1,
+      "unique": 3
+    },
+    "result": "2 passed",
+    "sandbox_image": "cognitive-os-sandbox:sprint-5",
+    "sandbox_image_id": "sha256:a282c8db2276feeda082fb26533c71b4c4951e3b91c37a862886f318d931d1bc",
+    "steps": {
+      "10_restart_and_exact_replay": "passed; replay is a no-op, denominator stays 3",
+      "1_deterministic_task_generation": "passed",
+      "2_baseline_hidden_failure": "passed; visible pytest exit 0, hidden pytest exit 1",
+      "3_incomplete_candidate_failure": "passed; visible pytest exit 0, hidden pytest exit 1",
+      "4_correct_candidate_pass": "passed; visible exit 0, hidden exit 0",
+      "5_full_outcome_artifact": "passed; bytes verified after write",
+      "6_coding_outcome_recorded_event": "passed",
+      "7_learned_intake_reference": "passed; accepted, evaluation-only",
+      "8_experience_compiler_trajectory": "deferred to W3 (S21C3-034)",
+      "9_corpus_factory_item": "deferred to W3 (S21C3-035)"
+    }
+  },
+  "wave": "W1"
+}

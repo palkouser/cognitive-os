@@ -1,0 +1,40 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/reality/hidden-verification-bundle.schema.json",
+  "additionalProperties": false,
+  "description": "One task's control material: where it lives, what it hashes to, where it is archived.",
+  "properties": {
+    "artifact_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Artifact Hash",
+      "type": "string"
+    },
+    "artifact_id": {
+      "format": "uuid",
+      "title": "Artifact Id",
+      "type": "string"
+    },
+    "bundle_content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Bundle Content Hash",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "task_id": {
+      "format": "uuid",
+      "title": "Task Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_id",
+    "bundle_content_hash",
+    "artifact_id",
+    "artifact_hash"
+  ],
+  "title": "HiddenVerificationBundle",
+  "type": "object"
+}

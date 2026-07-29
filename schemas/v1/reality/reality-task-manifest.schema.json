@@ -1,0 +1,325 @@
+{
+  "$defs": {
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    },
+    "RealityBaselineExpectation": {
+      "description": "What the untouched repository must do before any candidate runs.\n\nOnly one value is valid for a C3 task. It is an enum rather than a boolean because\n`expected_baseline_status=False` reads as \"we expect no baseline status\", and the field\nexists precisely so that a task whose baseline unexpectedly passes is rejected.",
+      "enum": [
+        "hidden_verification_fails"
+      ],
+      "title": "RealityBaselineExpectation",
+      "type": "string"
+    },
+    "RealityContentEntry": {
+      "additionalProperties": false,
+      "description": "One file a provider is allowed to see, pinned by hash.\n\nThe file's own digest is `file_hash`; `content_hash` is the sealed hash of this contract,\ninherited from `HashedExperienceContract`. Naming the file digest `content_hash` would\nsilently override the seal, which is how the corpus `SourceFileEntry` arrived at the same\ntwo names.",
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "file_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "File Hash",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "path",
+        "size_bytes",
+        "file_hash"
+      ],
+      "title": "RealityContentEntry",
+      "type": "object"
+    },
+    "RealitySourceRights": {
+      "additionalProperties": false,
+      "description": "Redistribution evidence for one task's source material.\n\n`rights_verified` stays an operator input with an evidence hash. ADR 0088 classifies\nopen-development data as `public`; it explicitly does not let that classification answer\nthe redistribution question, so this contract refuses to derive one from the other.",
+      "properties": {
+        "attribution": {
+          "minLength": 1,
+          "title": "Attribution",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "licence_identifier": {
+          "minLength": 1,
+          "title": "Licence Identifier",
+          "type": "string"
+        },
+        "rights_evidence_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Rights Evidence Hash",
+          "type": "string"
+        },
+        "rights_verified": {
+          "title": "Rights Verified",
+          "type": "boolean"
+        },
+        "sensitivity": {
+          "$ref": "#/$defs/MemorySensitivity"
+        },
+        "source_identity": {
+          "minLength": 1,
+          "title": "Source Identity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_identity",
+        "licence_identifier",
+        "rights_verified",
+        "rights_evidence_hash",
+        "attribution",
+        "sensitivity"
+      ],
+      "title": "RealitySourceRights",
+      "type": "object"
+    },
+    "RealityTaskDifficulty": {
+      "enum": [
+        "single_edit",
+        "multi_edit",
+        "cross_module"
+      ],
+      "title": "RealityTaskDifficulty",
+      "type": "string"
+    },
+    "RealityTaskFamily": {
+      "description": "The six families of §3.1.\n\nFixed for C3: the split policy assigns whole families, so adding a seventh silently\nwould move a split.",
+      "enum": [
+        "boundary_collections",
+        "parsing_validation",
+        "state_idempotency",
+        "numeric_logic",
+        "error_handling",
+        "data_transformation"
+      ],
+      "title": "RealityTaskFamily",
+      "type": "string"
+    },
+    "RealityTaskProjection": {
+      "additionalProperties": false,
+      "description": "The provider-visible face of a task. Structurally incapable of leaking the answer.\n\nThere is no hidden path, hidden test name, golden patch, solution hash, expected\ncandidate ID or control rationale field on this model, and `extra=\"forbid\"` means one\ncannot be added at runtime. This is the only task shape that may reach a provider\nrequest, a candidate feature row, an embedding input or a selection input before scoring.",
+      "properties": {
+        "allowed_paths": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Allowed Paths",
+          "type": "array"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "difficulty": {
+          "$ref": "#/$defs/RealityTaskDifficulty"
+        },
+        "expected_behavior": {
+          "minLength": 1,
+          "title": "Expected Behavior",
+          "type": "string"
+        },
+        "files": {
+          "items": {
+            "$ref": "#/$defs/RealityContentEntry"
+          },
+          "maxItems": 256,
+          "minItems": 1,
+          "title": "Files",
+          "type": "array"
+        },
+        "forbidden_paths": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Forbidden Paths",
+          "type": "array"
+        },
+        "issue_description": {
+          "minLength": 1,
+          "title": "Issue Description",
+          "type": "string"
+        },
+        "task_family": {
+          "$ref": "#/$defs/RealityTaskFamily"
+        },
+        "task_id": {
+          "format": "uuid",
+          "title": "Task Id",
+          "type": "string"
+        },
+        "visible_test_command": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Visible Test Command",
+          "type": "array"
+        }
+      },
+      "required": [
+        "task_id",
+        "task_family",
+        "difficulty",
+        "issue_description",
+        "expected_behavior",
+        "visible_test_command",
+        "files"
+      ],
+      "title": "RealityTaskProjection",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/reality/reality-task-manifest.schema.json",
+  "additionalProperties": false,
+  "description": "The full task package, including everything a provider may not see.\n\nHeld by the generator, the verifier and the campaign. Never serialized into a provider\nrequest: `projection` is what goes out.",
+  "properties": {
+    "base_repository_manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Base Repository Manifest Hash",
+      "type": "string"
+    },
+    "baseline_failure_reason": {
+      "minLength": 1,
+      "title": "Baseline Failure Reason",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "control_material_manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Control Material Manifest Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "difficulty": {
+      "$ref": "#/$defs/RealityTaskDifficulty"
+    },
+    "domain": {
+      "default": "coding",
+      "minLength": 1,
+      "title": "Domain",
+      "type": "string"
+    },
+    "expected_baseline": {
+      "$ref": "#/$defs/RealityBaselineExpectation",
+      "default": "hidden_verification_fails"
+    },
+    "generation_seed": {
+      "minimum": 0,
+      "title": "Generation Seed",
+      "type": "integer"
+    },
+    "generator_profile_id": {
+      "minLength": 1,
+      "title": "Generator Profile Id",
+      "type": "string"
+    },
+    "generator_profile_version": {
+      "minimum": 1,
+      "title": "Generator Profile Version",
+      "type": "integer"
+    },
+    "hidden_verifier_bundle_artifact_id": {
+      "format": "uuid",
+      "title": "Hidden Verifier Bundle Artifact Id",
+      "type": "string"
+    },
+    "hidden_verifier_bundle_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Hidden Verifier Bundle Hash",
+      "type": "string"
+    },
+    "manifest_version": {
+      "default": 1,
+      "minimum": 1,
+      "title": "Manifest Version",
+      "type": "integer"
+    },
+    "projection": {
+      "$ref": "#/$defs/RealityTaskProjection"
+    },
+    "repository_group": {
+      "minLength": 1,
+      "title": "Repository Group",
+      "type": "string"
+    },
+    "required_verifier_ids": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 32,
+      "minItems": 1,
+      "title": "Required Verifier Ids",
+      "type": "array"
+    },
+    "rights": {
+      "$ref": "#/$defs/RealitySourceRights"
+    },
+    "task_family": {
+      "$ref": "#/$defs/RealityTaskFamily"
+    },
+    "task_id": {
+      "format": "uuid",
+      "title": "Task Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_id",
+    "task_family",
+    "repository_group",
+    "difficulty",
+    "generator_profile_id",
+    "generator_profile_version",
+    "generation_seed",
+    "projection",
+    "base_repository_manifest_hash",
+    "hidden_verifier_bundle_artifact_id",
+    "hidden_verifier_bundle_hash",
+    "control_material_manifest_hash",
+    "baseline_failure_reason",
+    "required_verifier_ids",
+    "rights",
+    "created_at"
+  ],
+  "title": "RealityTaskManifest",
+  "type": "object"
+}

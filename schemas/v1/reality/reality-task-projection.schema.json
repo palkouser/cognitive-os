@@ -1,0 +1,135 @@
+{
+  "$defs": {
+    "RealityContentEntry": {
+      "additionalProperties": false,
+      "description": "One file a provider is allowed to see, pinned by hash.\n\nThe file's own digest is `file_hash`; `content_hash` is the sealed hash of this contract,\ninherited from `HashedExperienceContract`. Naming the file digest `content_hash` would\nsilently override the seal, which is how the corpus `SourceFileEntry` arrived at the same\ntwo names.",
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "file_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "File Hash",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "title": "Size Bytes",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "path",
+        "size_bytes",
+        "file_hash"
+      ],
+      "title": "RealityContentEntry",
+      "type": "object"
+    },
+    "RealityTaskDifficulty": {
+      "enum": [
+        "single_edit",
+        "multi_edit",
+        "cross_module"
+      ],
+      "title": "RealityTaskDifficulty",
+      "type": "string"
+    },
+    "RealityTaskFamily": {
+      "description": "The six families of §3.1.\n\nFixed for C3: the split policy assigns whole families, so adding a seventh silently\nwould move a split.",
+      "enum": [
+        "boundary_collections",
+        "parsing_validation",
+        "state_idempotency",
+        "numeric_logic",
+        "error_handling",
+        "data_transformation"
+      ],
+      "title": "RealityTaskFamily",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/reality/reality-task-projection.schema.json",
+  "additionalProperties": false,
+  "description": "The provider-visible face of a task. Structurally incapable of leaking the answer.\n\nThere is no hidden path, hidden test name, golden patch, solution hash, expected\ncandidate ID or control rationale field on this model, and `extra=\"forbid\"` means one\ncannot be added at runtime. This is the only task shape that may reach a provider\nrequest, a candidate feature row, an embedding input or a selection input before scoring.",
+  "properties": {
+    "allowed_paths": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Allowed Paths",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "difficulty": {
+      "$ref": "#/$defs/RealityTaskDifficulty"
+    },
+    "expected_behavior": {
+      "minLength": 1,
+      "title": "Expected Behavior",
+      "type": "string"
+    },
+    "files": {
+      "items": {
+        "$ref": "#/$defs/RealityContentEntry"
+      },
+      "maxItems": 256,
+      "minItems": 1,
+      "title": "Files",
+      "type": "array"
+    },
+    "forbidden_paths": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Forbidden Paths",
+      "type": "array"
+    },
+    "issue_description": {
+      "minLength": 1,
+      "title": "Issue Description",
+      "type": "string"
+    },
+    "task_family": {
+      "$ref": "#/$defs/RealityTaskFamily"
+    },
+    "task_id": {
+      "format": "uuid",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "visible_test_command": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 16,
+      "minItems": 1,
+      "title": "Visible Test Command",
+      "type": "array"
+    }
+  },
+  "required": [
+    "task_id",
+    "task_family",
+    "difficulty",
+    "issue_description",
+    "expected_behavior",
+    "visible_test_command",
+    "files"
+  ],
+  "title": "RealityTaskProjection",
+  "type": "object"
+}

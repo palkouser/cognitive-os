@@ -1,0 +1,124 @@
+{
+  "$defs": {
+    "CorpusSplit": {
+      "enum": [
+        "train",
+        "validation",
+        "test",
+        "holdout"
+      ],
+      "title": "CorpusSplit",
+      "type": "string"
+    },
+    "RealityCountBreakdown": {
+      "additionalProperties": false,
+      "description": "A count that carries its own denominator. §8 asks for no bare percentages.",
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "denominator": {
+          "minimum": 0,
+          "title": "Denominator",
+          "type": "integer"
+        },
+        "dimension": {
+          "minLength": 1,
+          "title": "Dimension",
+          "type": "string"
+        },
+        "numerator": {
+          "minimum": 0,
+          "title": "Numerator",
+          "type": "integer"
+        },
+        "value": {
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dimension",
+        "value",
+        "numerator",
+        "denominator"
+      ],
+      "title": "RealityCountBreakdown",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/reality/reality-corpus-statistics.schema.json",
+  "additionalProperties": false,
+  "description": "Machine-readable corpus and provider counts, reproducible from persisted evidence.",
+  "properties": {
+    "breakdowns": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/RealityCountBreakdown"
+      },
+      "title": "Breakdowns",
+      "type": "array"
+    },
+    "campaign_id": {
+      "format": "uuid",
+      "title": "Campaign Id",
+      "type": "string"
+    },
+    "campaign_version": {
+      "minimum": 1,
+      "title": "Campaign Version",
+      "type": "integer"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "distinct_trajectories": {
+      "minimum": 0,
+      "title": "Distinct Trajectories",
+      "type": "integer"
+    },
+    "duplicate_outcomes_excluded": {
+      "minimum": 0,
+      "title": "Duplicate Outcomes Excluded",
+      "type": "integer"
+    },
+    "split_assignments": {
+      "additionalProperties": {
+        "$ref": "#/$defs/CorpusSplit"
+      },
+      "title": "Split Assignments",
+      "type": "object"
+    },
+    "unique_outcomes": {
+      "minimum": 0,
+      "title": "Unique Outcomes",
+      "type": "integer"
+    },
+    "unique_tasks_with_trajectories": {
+      "minimum": 0,
+      "title": "Unique Tasks With Trajectories",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "campaign_id",
+    "campaign_version",
+    "unique_outcomes",
+    "duplicate_outcomes_excluded",
+    "distinct_trajectories",
+    "unique_tasks_with_trajectories",
+    "created_at"
+  ],
+  "title": "RealityCorpusStatistics",
+  "type": "object"
+}

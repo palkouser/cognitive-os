@@ -49,6 +49,7 @@ class FixtureArtifactStore:
 
     def __init__(self) -> None:
         self.data: dict[UUID, bytes] = {}
+        self.references: dict[UUID, ArtifactRef] = {}
 
     async def put_bytes(
         self, data: bytes, *, media_type: str, source_event_id: UUID | None = None
@@ -57,7 +58,7 @@ class FixtureArtifactStore:
         digest = sha256(data).hexdigest()
         artifact_id = fixture_id("artifact", f"{media_type}:{digest}")
         self.data[artifact_id] = data
-        return ArtifactRef(
+        reference = ArtifactRef(
             artifact_id=artifact_id,
             media_type=media_type,
             content_hash=digest,
@@ -65,6 +66,8 @@ class FixtureArtifactStore:
             storage_key=f"sha256/{digest[:2]}/{digest}",
             created_at=FIXTURE_TIME,
         )
+        self.references[artifact_id] = reference
+        return reference
 
     async def put_file(
         self, path: Path, *, media_type: str, source_event_id: UUID | None = None
@@ -82,6 +85,9 @@ class FixtureArtifactStore:
     async def verify(self, artifact_id: UUID) -> bool:
         data = self.data.get(artifact_id)
         return data is not None
+
+    async def describe(self, artifact_id: UUID) -> ArtifactRef | None:
+        return self.references.get(artifact_id)
 
     async def exists(self, artifact_id: UUID) -> bool:
         return artifact_id in self.data

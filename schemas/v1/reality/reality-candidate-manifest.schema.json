@@ -1,0 +1,137 @@
+{
+  "$defs": {
+    "RealityCandidateSource": {
+      "description": "Who produced the patch. Not who decided whether it works — that is the verifier.",
+      "enum": [
+        "baseline",
+        "curated",
+        "codex_cli",
+        "claude_code",
+        "openrouter"
+      ],
+      "title": "RealityCandidateSource",
+      "type": "string"
+    },
+    "RealityCandidateStrategy": {
+      "description": "The four offline strategies of §4.6, plus what a provider returns.\n\n`PROVIDER_PROPOSED` deliberately has no declared correctness. A provider candidate's\nresult is whatever the hidden verifier says it is, and a strategy value that predicted\nit would be a label the corpus had assigned to itself.",
+      "enum": [
+        "incomplete_a",
+        "correct_narrow",
+        "incomplete_b",
+        "correct_robust",
+        "provider_proposed"
+      ],
+      "title": "RealityCandidateStrategy",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/reality/reality-candidate-manifest.schema.json",
+  "additionalProperties": false,
+  "description": "One proposed repair, bound to its task and its patch bytes.\n\nCarries no expected result. `strategy` says what the generator was *trying* to produce;\nwhether it succeeded is the hidden verifier's answer and lives in the outcome, so a\nselector reading candidates cannot read the label off them.",
+  "properties": {
+    "candidate_id": {
+      "format": "uuid",
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "generator_profile_id": {
+      "minLength": 1,
+      "title": "Generator Profile Id",
+      "type": "string"
+    },
+    "generator_profile_version": {
+      "minimum": 1,
+      "title": "Generator Profile Version",
+      "type": "integer"
+    },
+    "patch_artifact_id": {
+      "format": "uuid",
+      "title": "Patch Artifact Id",
+      "type": "string"
+    },
+    "patch_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Patch Hash",
+      "type": "string"
+    },
+    "provider_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Provider Id"
+    },
+    "provider_output_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Provider Output Id"
+    },
+    "resolved_model": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Resolved Model"
+    },
+    "source": {
+      "$ref": "#/$defs/RealityCandidateSource"
+    },
+    "strategy": {
+      "$ref": "#/$defs/RealityCandidateStrategy"
+    },
+    "task_id": {
+      "format": "uuid",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "task_manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Task Manifest Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "candidate_id",
+    "task_id",
+    "task_manifest_hash",
+    "strategy",
+    "source",
+    "patch_artifact_id",
+    "patch_hash",
+    "generator_profile_id",
+    "generator_profile_version",
+    "created_at"
+  ],
+  "title": "RealityCandidateManifest",
+  "type": "object"
+}

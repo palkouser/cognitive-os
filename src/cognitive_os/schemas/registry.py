@@ -6,6 +6,10 @@ from dataclasses import dataclass
 
 from pydantic import BaseModel
 
+from cognitive_os.coding.hidden_verification import (
+    HiddenVerificationBundle,
+    HiddenVerificationEvidence,
+)
 from cognitive_os.config.change_config import ControlledChangeConfiguration
 from cognitive_os.config.coding_config import CodingConfiguration
 from cognitive_os.config.context_config import ContextConfiguration
@@ -106,7 +110,9 @@ from cognitive_os.domain.learned_evidence import PUBLIC_LEARNED_EVIDENCE_CONTRAC
 from cognitive_os.domain.memory import PUBLIC_MEMORY_CONTRACTS
 from cognitive_os.domain.proposals import PUBLIC_PROPOSAL_CONTRACTS
 from cognitive_os.domain.provider_output import PUBLIC_PROVIDER_OUTPUT_CONTRACTS
+from cognitive_os.domain.reality import PUBLIC_REALITY_CONTRACTS
 from cognitive_os.domain.routing import PUBLIC_ROUTING_CONTRACTS
+from cognitive_os.domain.sandbox import SandboxVerificationInput
 from cognitive_os.domain.semantic_memory import PUBLIC_SEMANTIC_CONTRACTS
 from cognitive_os.domain.skills import PUBLIC_SKILL_CONTRACTS
 from cognitive_os.domain.strategies import PUBLIC_STRATEGY_CONTRACTS
@@ -130,6 +136,15 @@ class SchemaEntry:
     event_type: str | None = None
     schema_version: int | None = None
 
+
+#: The reality contracts plus the two hidden-verification records, which live in
+#: `cognitive_os.coding` rather than `cognitive_os.domain` but are exported alongside them
+#: because they are the same corpus's public shape.
+REALITY_SCHEMA_MODELS: tuple[type[BaseModel], ...] = (
+    *PUBLIC_REALITY_CONTRACTS,
+    HiddenVerificationBundle,
+    HiddenVerificationEvidence,
+)
 
 DOMAIN_SCHEMAS: tuple[tuple[type[BaseModel], str], ...] = (
     (ControlledChangeConfiguration, "v1/config/controlled-change-configuration.schema.json"),
@@ -252,6 +267,18 @@ DOMAIN_SCHEMAS: tuple[tuple[type[BaseModel], str], ...] = (
             + ".schema.json",
         )
         for model in PUBLIC_CORPUS_CONTRACTS
+    ),
+    *tuple(
+        (
+            model,
+            "v1/reality/"
+            + "".join(
+                ("-" + character.lower()) if character.isupper() else character
+                for character in model.__name__
+            ).lstrip("-")
+            + ".schema.json",
+        )
+        for model in REALITY_SCHEMA_MODELS
     ),
     *tuple(
         (
@@ -398,6 +425,7 @@ DOMAIN_SCHEMAS: tuple[tuple[type[BaseModel], str], ...] = (
     (ToolPolicyDecision, "v1/domain/tool-policy-decision.schema.json"),
     (SandboxLimits, "v1/domain/sandbox-limits.schema.json"),
     (SandboxRequest, "v1/domain/sandbox-request.schema.json"),
+    (SandboxVerificationInput, "v1/domain/sandbox-verification-input.schema.json"),
     (SandboxResult, "v1/domain/sandbox-result.schema.json"),
     (VerifierResult, "v1/domain/verifier-result.schema.json"),
     (EventEnvelope, "v1/events/event-envelope.schema.json"),

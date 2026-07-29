@@ -1,0 +1,28 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/domain/sandbox-verification-input.schema.json",
+  "additionalProperties": false,
+  "description": "The one read-only control mount a hidden verifier may receive, Sprint 21C3.\n\nDeliberately not a general mount list. A verifier needs exactly one trusted input at\nexactly one destination, and `container_path` is a `Literal` so that widening it is a\ncontract change someone has to make on purpose rather than a config value someone can\nset. There is no writable variant: the hidden tests are the answer key, and a container\nthat could write to them could rewrite the answer.\n\n`content_hash` is a `snapshot_workspace` tree digest, checked immediately before the\ncontainer starts. A changed bundle fails closed rather than running against unknown\ntests.",
+  "properties": {
+    "container_path": {
+      "const": "/verification",
+      "default": "/verification",
+      "title": "Container Path",
+      "type": "string"
+    },
+    "content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "host_path": {
+      "title": "Host Path",
+      "type": "string"
+    }
+  },
+  "required": [
+    "host_path",
+    "content_hash"
+  ],
+  "title": "SandboxVerificationInput",
+  "type": "object"
+}
