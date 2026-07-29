@@ -8,6 +8,14 @@
       "subject": "backlog section 6.1 steps 8 and 9"
     }
   ],
+  "draft_pull_request": {
+    "ci_run": 30471971289,
+    "head": "6b7ede5224d4ff56ae7464e9a3dab7047f4388ca",
+    "note": "Opened at W1 per S21C3-064 so remote CI exercises the real outcome-record path before bulk corpus work accumulates. Live providers and the local embedding model stay outside normal CI; the Docker vertical slice is opt-in and ran locally, not in CI.",
+    "number": 215,
+    "required_checks": "28 of 28 pass",
+    "state": "draft"
+  },
   "findings": [
     {
       "c3_impact": "S21C3-036 offers every outcome to intake and S21C3-062 requires restart to re-resolve every counted outcome. A re-harvest after an interruption currently raises.",
