@@ -1,0 +1,91 @@
+{
+  "$defs": {
+    "RealityCandidateStrategy": {
+      "description": "The four offline strategies of §4.6, plus what a provider returns.\n\n`PROVIDER_PROPOSED` deliberately has no declared correctness. A provider candidate's\nresult is whatever the hidden verifier says it is, and a strategy value that predicted\nit would be a label the corpus had assigned to itself.",
+      "enum": [
+        "incomplete_a",
+        "correct_narrow",
+        "incomplete_b",
+        "correct_robust",
+        "provider_proposed"
+      ],
+      "title": "RealityCandidateStrategy",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/reality/correction-trajectory-manifest.schema.json",
+  "additionalProperties": false,
+  "description": "An ordered baseline-failure to corrected path, §4.10.\n\nDistinctness is the ordered source identity, not the manifest ID, so two manifests built\nfrom the same three runs cannot both be counted.",
+  "properties": {
+    "compilation_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Compilation Id"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "correct_strategy": {
+      "$ref": "#/$defs/RealityCandidateStrategy"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "incorrect_strategy": {
+      "$ref": "#/$defs/RealityCandidateStrategy"
+    },
+    "ordered_outcome_event_ids": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "maxItems": 8,
+      "minItems": 3,
+      "title": "Ordered Outcome Event Ids",
+      "type": "array"
+    },
+    "ordered_outcome_hashes": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 8,
+      "minItems": 3,
+      "title": "Ordered Outcome Hashes",
+      "type": "array"
+    },
+    "task_id": {
+      "format": "uuid",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "trajectory_id": {
+      "format": "uuid",
+      "title": "Trajectory Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "trajectory_id",
+    "task_id",
+    "incorrect_strategy",
+    "correct_strategy",
+    "ordered_outcome_event_ids",
+    "ordered_outcome_hashes",
+    "created_at"
+  ],
+  "title": "CorrectionTrajectoryManifest",
+  "type": "object"
+}

@@ -1,0 +1,61 @@
+{
+  "$defs": {
+    "MemorySensitivity": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "title": "MemorySensitivity",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/reality/reality-source-rights.schema.json",
+  "additionalProperties": false,
+  "description": "Redistribution evidence for one task's source material.\n\n`rights_verified` stays an operator input with an evidence hash. ADR 0088 classifies\nopen-development data as `public`; it explicitly does not let that classification answer\nthe redistribution question, so this contract refuses to derive one from the other.",
+  "properties": {
+    "attribution": {
+      "minLength": 1,
+      "title": "Attribution",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "licence_identifier": {
+      "minLength": 1,
+      "title": "Licence Identifier",
+      "type": "string"
+    },
+    "rights_evidence_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Rights Evidence Hash",
+      "type": "string"
+    },
+    "rights_verified": {
+      "title": "Rights Verified",
+      "type": "boolean"
+    },
+    "sensitivity": {
+      "$ref": "#/$defs/MemorySensitivity"
+    },
+    "source_identity": {
+      "minLength": 1,
+      "title": "Source Identity",
+      "type": "string"
+    }
+  },
+  "required": [
+    "source_identity",
+    "licence_identifier",
+    "rights_verified",
+    "rights_evidence_hash",
+    "attribution",
+    "sensitivity"
+  ],
+  "title": "RealitySourceRights",
+  "type": "object"
+}

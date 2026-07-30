@@ -36,7 +36,11 @@ from cognitive_os.domain.provider import (
     ProviderStatus,
     ProviderStreamEvent,
 )
-from cognitive_os.providers.advisory_schema import AdvisoryResult, advisory_schema_json
+from cognitive_os.providers.advisory_schema import (
+    AdvisoryResult,
+    advisory_schema_json,
+    requested_schema_json,
+)
 from cognitive_os.providers.cli_process import BoundedCliRunner
 from cognitive_os.providers.errors import (
     ProviderInvalidResponseError,
@@ -126,19 +130,27 @@ class ClaudeCodeAdvisoryProvider:
 
     # -------------------------------------------------------------------- arguments
 
-    def safety_arguments(self, *, maximum_turns: int | None = None) -> tuple[str, ...]:
+    def safety_arguments(
+        self, *, maximum_turns: int | None = None, schema_json: str | None = None
+    ) -> tuple[str, ...]:
         """The exact command line, built from validated configuration only.
 
         No prompt, no path outside the fixture, no credential. `test_claude_argv` asserts
         this list element by element, because "the flags are correct" is the claim that a
         code review cannot check for a CLI it does not run.
+
+        `schema_json` is the shape the *caller* asked for. It used to be hardcoded to the
+        advisory schema, so a request carrying its own `response_schema` was answered in a
+        shape nobody had asked for — the reply validated against the wrong contract and the
+        caller saw a malformed answer rather than a wrong schema. Defaulting to the advisory
+        schema keeps every C2 caller unchanged.
         """
         arguments: list[str] = [
             "--print",
             "--output-format",
             self.config.output_format.value,
             "--json-schema",
-            advisory_schema_json(),
+            schema_json or advisory_schema_json(),
             "--permission-mode",
             self.config.permission_mode,
             "--allowed-tools",
@@ -175,7 +187,9 @@ class ClaudeCodeAdvisoryProvider:
 
     async def complete(self, request: ModelProviderRequest) -> ModelProviderResponse:
         outcome, _snapshot = await self._runner.run(
-            arguments=self.safety_arguments(),
+            arguments=self.safety_arguments(
+                schema_json=requested_schema_json(request.response_schema)
+            ),
             stdin_payload=self.build_prompt(request),
         )
         return map_advisory_response(
@@ -293,13 +307,24 @@ def map_advisory_response(
                 provider_id=provider_id,
                 message="Claude Code returned a result string that is not JSON",
             ) from error
-    try:
-        advisory = AdvisoryResult.model_validate(structured)
-    except ValueError as error:
-        raise ProviderInvalidResponseError(
-            provider_id=provider_id,
-            message="Claude Code output does not match the advisory schema",
-        ) from error
+    # A caller that supplied its own `response_schema` asked for its own contract, and the
+    # CLI was told to produce it. Re-validating that reply against `AdvisoryResult` would
+    # reject a correct answer for being the wrong shape — the shape the caller chose — so
+    # the payload is handed back unread and the caller validates what it asked for.
+    advisory: AdvisoryResult | None = None
+    if request.response_schema:
+        content = json.dumps(structured, sort_keys=True, separators=(",", ":"))
+        structured_output = structured if isinstance(structured, dict | list) else None
+    else:
+        try:
+            advisory = AdvisoryResult.model_validate(structured)
+        except ValueError as error:
+            raise ProviderInvalidResponseError(
+                provider_id=provider_id,
+                message="Claude Code output does not match the advisory schema",
+            ) from error
+        content = advisory.summary
+        structured_output = advisory.model_dump(mode="json")
 
     model = document.get("model")
     resolved: NonEmptyStr = model if isinstance(model, str) and model else "claude-code"
@@ -313,8 +338,8 @@ def map_advisory_response(
         provider_id=provider_id,
         requested_model=request.requested_model,
         resolved_model=resolved,
-        content=advisory.summary,
-        structured_output=advisory.model_dump(mode="json"),
+        content=content,
+        structured_output=structured_output,
         finish_reason=ModelFinishReason.COMPLETED,
         usage=_map_usage(document.get("usage")),
         latency_ms=duration_ms,

@@ -291,6 +291,11 @@ class GovernedOutcomeReference(HashedExperienceContract):
 
     Carries identity and hashes only. The outcome itself stays where it was produced, so
     intake reads and classifies without ever modifying — or copying — a source record.
+
+    `occurred_at` is the outcome's own time, taken from the event or record that produced
+    it. Intake stamps it onto the observation instead of reading a clock, which is what
+    makes re-offering the same outcome produce a byte-identical record rather than an
+    idempotency conflict.
     """
 
     surface: NonEmptyStr
@@ -305,6 +310,7 @@ class GovernedOutcomeReference(HashedExperienceContract):
     sensitivity: NonEmptyStr
     verifier_status: NonEmptyStr | None = None
     verifier_evidence_hash: Sha256Hex | None = None
+    occurred_at: UtcDatetime
 
     @model_validator(mode="after")
     def something_identifies_the_source(self) -> GovernedOutcomeReference:

@@ -90,6 +90,9 @@ class FixtureArtifactStore:
             and sha256(self._data[artifact_id]).hexdigest() == reference.content_hash
         )
 
+    async def describe(self, artifact_id: UUID) -> ArtifactRef | None:
+        return self._refs.get(artifact_id)
+
     async def exists(self, artifact_id: UUID) -> bool:
         return artifact_id in self._data
 

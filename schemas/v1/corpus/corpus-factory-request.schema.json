@@ -65,6 +65,7 @@
   },
   "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-factory-request.schema.json",
   "additionalProperties": false,
+  "description": "One governed ingest.\n\n`split_group_key` names the group every item in this request belongs to — a repository\ngroup, a generator template, a task family. When it is set the split is a function of\nthat key rather than of each item's lineage, which is what keeps two variants of one task\nfrom landing on opposite sides of an evaluation boundary. Left unset, splits stay\nper-lineage, which is what every source before Sprint 21C3 wants.",
   "properties": {
     "content_hash": {
       "default": "",
@@ -126,6 +127,19 @@
     },
     "source_type": {
       "$ref": "#/$defs/CorpusSourceType"
+    },
+    "split_group_key": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Split Group Key"
     },
     "usage_rights": {
       "additionalProperties": {

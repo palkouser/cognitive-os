@@ -31,12 +31,15 @@ from cognitive_os.domain.provider import (
     ProviderStatus,
     ProviderStreamEvent,
 )
-from cognitive_os.providers.advisory_schema import advisory_schema_json
+from cognitive_os.providers.advisory_schema import (
+    advisory_schema_json,
+    requested_schema_json,
+)
 from cognitive_os.providers.claude_code.advisory import coarse_version
 from cognitive_os.providers.cli_process import BoundedCliRunner
 from cognitive_os.providers.errors import ProviderUnsupportedCapabilityError
 
-from .mapping import parse_advisory_result
+from .mapping import extract_final_message, parse_advisory_result
 
 #: Codex's own advisory policy, deliberately not the Claude Code text.
 #:
@@ -145,19 +148,31 @@ class CodexCliAdvisoryProvider:
     async def complete(self, request: ModelProviderRequest) -> ModelProviderResponse:
         async with self._runner.temporary_directory() as scratch:
             schema_path = scratch / "advisory-schema.json"
-            schema_path.write_text(advisory_schema_json(), encoding="utf-8")
+            schema_path.write_text(
+                requested_schema_json(request.response_schema) or advisory_schema_json(),
+                encoding="utf-8",
+            )
             outcome, _snapshot = await self._runner.run(
                 arguments=self.safety_arguments(schema_path=schema_path),
                 stdin_payload=self.build_prompt(request),
             )
-        advisory = parse_advisory_result(outcome.stdout, provider_id=self.provider_id)
+        # See the same decision in the Claude Code adapter: a caller that supplied a schema
+        # gets its own contract back, unread. Only the default advisory path is validated
+        # here, because only there is `AdvisoryResult` the contract that was asked for.
+        if request.response_schema:
+            content = extract_final_message(outcome.stdout, provider_id=self.provider_id)
+            structured_output = None
+        else:
+            advisory = parse_advisory_result(outcome.stdout, provider_id=self.provider_id)
+            content = advisory.summary
+            structured_output = advisory.model_dump(mode="json")
         return ModelProviderResponse(
             model_call_id=request.model_call_id,
             provider_id=self.provider_id,
             requested_model=request.requested_model,
             resolved_model=self.config.model or "codex",
-            content=advisory.summary,
-            structured_output=advisory.model_dump(mode="json"),
+            content=content,
+            structured_output=structured_output,
             finish_reason=ModelFinishReason.COMPLETED,
             latency_ms=outcome.duration_ms,
             warnings=("stdout was truncated at the configured cap",)

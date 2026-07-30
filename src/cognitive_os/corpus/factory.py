@@ -1292,20 +1292,32 @@ class CorpusFactory:
         )
         if not eligible:
             return None, None
+        # A declared group makes the split a property of the group, so every item in this
+        # request lands in the same one. Without it the split stays per-lineage, which is
+        # what a request that is not part of a group wants.
+        group = (
+            sha256(request.split_group_key.encode()).hexdigest()
+            if request.split_group_key is not None
+            else None
+        )
         manifest_items = tuple(
             CorpusManifestItem(
                 corpus_item_id=item.corpus_item_id,
                 item_revision=item.current_revision,
                 item_hash=item.content_hash,
-                split=self._split(item.lineage_ref),
+                split=self._split(group or item.lineage_ref),
             )
             for item in eligible
         )
         split = CorpusSplitManifest(
-            profile_id="sprint15-lineage-safe-split-v1",
+            profile_id=(
+                "sprint21c3-group-aware-split-v1" if group else "sprint15-lineage-safe-split-v1"
+            ),
             seed=15,
             assignments=manifest_items,
-            lineage_group_hashes=tuple(sorted({item.lineage_ref for item in eligible})),
+            lineage_group_hashes=(
+                (group,) if group else tuple(sorted({item.lineage_ref for item in eligible}))
+            ),
         )
         purpose = request.requested_destination or CorpusDestinationType.REFERENCE_CORPUS
         corpus_id = _uuid("manifest", f"{request.request_id}:{purpose.value}")

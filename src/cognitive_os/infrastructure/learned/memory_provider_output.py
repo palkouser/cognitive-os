@@ -107,6 +107,7 @@ def build_source_reference(
         sensitivity=record.sensitivity.value,
         verifier_status=record.verifier_status.value,
         verifier_evidence_hash=record.verifier_evidence_hash,
+        occurred_at=record.recorded_at,
     )
 
 

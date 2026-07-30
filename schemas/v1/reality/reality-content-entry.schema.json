@@ -1,0 +1,33 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/reality/reality-content-entry.schema.json",
+  "additionalProperties": false,
+  "description": "One file a provider is allowed to see, pinned by hash.\n\nThe file's own digest is `file_hash`; `content_hash` is the sealed hash of this contract,\ninherited from `HashedExperienceContract`. Naming the file digest `content_hash` would\nsilently override the seal, which is how the corpus `SourceFileEntry` arrived at the same\ntwo names.",
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "file_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "File Hash",
+      "type": "string"
+    },
+    "path": {
+      "title": "Path",
+      "type": "string"
+    },
+    "size_bytes": {
+      "minimum": 0,
+      "title": "Size Bytes",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "path",
+    "size_bytes",
+    "file_hash"
+  ],
+  "title": "RealityContentEntry",
+  "type": "object"
+}

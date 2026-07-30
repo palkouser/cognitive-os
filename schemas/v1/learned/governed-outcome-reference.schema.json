@@ -23,7 +23,7 @@
   },
   "$id": "https://cognitive-os.local/schemas/v1/learned/governed-outcome-reference.schema.json",
   "additionalProperties": false,
-  "description": "A pointer to an outcome that already happened, offered to the learning plane.\n\nCarries identity and hashes only. The outcome itself stays where it was produced, so\nintake reads and classifies without ever modifying — or copying — a source record.",
+  "description": "A pointer to an outcome that already happened, offered to the learning plane.\n\nCarries identity and hashes only. The outcome itself stays where it was produced, so\nintake reads and classifies without ever modifying — or copying — a source record.\n\n`occurred_at` is the outcome's own time, taken from the event or record that produced\nit. Intake stamps it onto the observation instead of reading a clock, which is what\nmakes re-offering the same outcome produce a byte-identical record rather than an\nidempotency conflict.",
   "properties": {
     "attribution": {
       "$ref": "#/$defs/ObservationAttribution"
@@ -31,6 +31,11 @@
     "content_hash": {
       "default": "",
       "title": "Content Hash",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
       "type": "string"
     },
     "provenance_class": {
@@ -133,7 +138,8 @@
     "provenance_class",
     "attribution",
     "usage_rights_verified",
-    "sensitivity"
+    "sensitivity",
+    "occurred_at"
   ],
   "title": "GovernedOutcomeReference",
   "type": "object"

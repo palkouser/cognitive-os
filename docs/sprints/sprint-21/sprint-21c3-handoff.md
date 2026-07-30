@@ -9,20 +9,21 @@ arrive — which is where the question stops being "can this be recorded safely"
 
 | | |
 |---|---|
-| Parent tag | `sprint-21c2-provider-baseline` — verify it exists, see §6 |
-| Parent branch | `feature/sprint-21c2-governed-providers` |
-| Final implementation commit | `bc35ddd` |
-| Parent final CI | 28 of 28 required checks green on `bc35ddd` |
+| Parent tag | `sprint-21c2-provider-baseline`, annotated tag object `23b3304890f4a90112514c633c7e2b768f7eeeff` |
+| Parent commit | `94abe263c8f26f36c8f8c3bc7b86859c14c1f291`, equal to verified `main` and `origin/main` |
+| Parent pull request | `#214`, merged |
+| Parent final CI | run `30434494612`, 28 of 28 required checks green on the parent commit |
 | Parent migration head | `0015` |
-| Next available migration | `0016` — only if Sprint 21C3 needs a schema change |
+| Next available migration | `0016` — evidence-gated only; C3 requires no schema change by default |
 | Recommended branch | `feature/sprint-21c3-reality-inputs` |
-| Gate C2 | **conditional pass** — see [gate-c2-assessment.md](gate-c2-assessment.md) |
+| Gate C2 | **pass** — all 14 conditions closed by the verified release annotation |
 | Gate L2 | **closed** |
 
-**Read §6 before starting.** The release sequence that produces the parent tag had not run
-when this was written. Verify the tag exists before relying on it.
+The remote tag and peeled commit were reverified on 2026-07-29. Reverify them and
+migration head `0015` at sprint start because remote state can change.
 
-Verify the migration head is `0015` before writing anything.
+The implementation authority is the
+[Sprint 21C3 Technical Backlog](sprint-21c3-technical-backlog.md).
 
 ## 2. The APIs Sprint 21C3 inherits
 
@@ -119,19 +120,37 @@ calls or credential reads in normal CI.
 **Live execution needs two independent opt-ins**: `live_smoke_enabled` in a reviewed
 configuration file, and an explicit runtime flag. Do not collapse them into one.
 
+**Open-development data does not require zero data retention.** Beginning with C3,
+project-owned, generated, or rights-verified open-project material defaults to `public`,
+`require_zero_data_retention=false`, and `allow_data_collection=true`. A live campaign
+still needs the configuration and runtime opt-ins above, but it needs no separate ZDR
+waiver or interactive retention prompt. Provider collection, storage, and sharing are
+accepted for that material because iteration speed is the governing project priority.
+This policy does not classify API keys, tokens, authorization material, subscription
+identities, undisclosed personal data, or rights-restricted third-party material as
+open-project data. Secret exclusion and source-rights evidence remain mandatory.
+
+The decision is recorded as [ADR 0088](../../adr/0088-open-development-data-policy.md), which
+amends the provider-side data expectations of
+[ADR 0087](../../adr/0087-governed-provider-boundary-and-output-retention.md) and leaves its
+authority table, retention modes, redaction order and secret-scan rules unchanged.
+
 ## 4. Known failures and accepted limitations
 
 | Limitation | Owner | Status |
 |---|---|---|
-| OpenRouter free tier answers this task correctly about 1 time in 4 (5 of 22) | — | measured; the failures are the boundary working |
-| Zero data retention relaxed for OpenRouter, public fixture only | operator | explicit decision; never for internal or restricted content |
-| Gate C2 condition 14 (merge, post-merge CI, tag) | operator | open when written; see §6 |
+| OpenRouter free tier answered the C2 fixture correctly 5 of 22 times | — | measured; use for bounded diversity, never as C3 corpus coverage or correctness critical path |
+| C2 limited its ZDR exception to the public fixture | operator | superseded for C3 and later work by the open-development data policy in §3 |
+| Gate C2 release condition | operator | closed by protected merge, exact-head post-merge CI, and verified annotated tag |
 | Inconsistent development Artifact Store pair (`cognitive_os_dev` + `…/artifacts`): 4 rows without content, 5 orphan files | operator | untouched since Sprint 21C1; remediation proposed, needs separate authority |
-| Required approving reviews disabled — one collaborator, no second eligible reviewer | operator | carried forward from C1 unchanged |
+| Required approving reviews disabled — one collaborator, no second eligible reviewer | operator | accepted single-maintainer mode; retain 27 checks and `enforce_admins`, and reassess only if collaborator eligibility changes |
 | No component is trained; none is active in any shipped configuration | — | by design |
 
 The development pair's path-and-size fingerprint is `7e85d9a6…` over 5 files, unchanged
-since Sprint 21C2 W0. Do not make a verifier green by deleting orphan files or metadata.
+since Sprint 21C2 W0 and reverified at Sprint 21C3 W0. Do not make a verifier green by
+deleting orphan files or metadata. The algorithm behind that value is now tracked as
+`scripts/artifact_store_fingerprint.py`; until Sprint 21C3 it existed only in an operator's
+shell history, so the claim could not be independently rechecked.
 
 ## 5. What Sprint 21C3 is for, and what it is not
 
@@ -152,12 +171,12 @@ authorization. Do not carry a Gate L2 claim forward.
 
 ## 6. The release
 
-Gate C2 is a **conditional pass**: conditions 1–13 pass on recorded evidence, and condition
-14 — ready PR, protected merge, exact-head post-merge `main` CI, and the annotated
-`sprint-21c2-provider-baseline` tag — closes on the verified tag annotation, as Gate C1's
-final condition did.
+Gate C2 is a **pass**. Pull request `#214` merged through the protected path, post-merge
+`main` CI run `30434494612` completed with 28 of 28 required checks green, and annotated
+tag `sprint-21c2-provider-baseline` peels to
+`94abe263c8f26f36c8f8c3bc7b86859c14c1f291`, the same commit as verified `main` and
+`origin/main`. The tag object is
+`23b3304890f4a90112514c633c7e2b768f7eeeff`.
 
-This document was written before that sequence ran. **Verify the tag exists and peels to the
-final `main` commit before treating it as the C3 parent**, rather than assuming it from this
-table. If it is absent, the release did not complete and that is the first thing C3 should
-establish, not work around.
+C3 must still revalidate those handles before branching. A future mismatch is release
+drift to investigate, not permission to select another parent.

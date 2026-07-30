@@ -2,9 +2,9 @@
 
 Status: implementation sequencing plan
 
-Revision: 3
+Revision: 4
 
-Assessment date: 2026-07-27
+Assessment date: 2026-07-29
 
 Source plan: [Cognitive OS Learning, Memory, and Scale Development
 Plan](development-plan.md)
@@ -14,6 +14,7 @@ Companion documents:
 - [Sprint 21R technical backlog](../sprint-21/sprint-21r-technical-backlog.md)
 - [Sprint 21C1 technical backlog](../sprint-21/sprint-21c1-technical-backlog.md)
 - [Sprint 21C2 technical backlog](../sprint-21/sprint-21c2-technical-backlog.md)
+- [Sprint 21C3 technical backlog](../sprint-21/sprint-21c3-technical-backlog.md)
 - [Sprint 21 Gate L assessment](../sprint-21/gate-l-assessment.md)
 - [Sprint 21 substrate report](../sprint-21/report.md)
 
@@ -46,19 +47,20 @@ The state verified before this allocation was written is:
 | Item | Verified value |
 |---|---|
 | Current branch before planning edits | `main` |
-| `main`, `origin/main`, and peeled parent tag | `aed2c1b0af280d3f0924a37eeddc191cd320e936` |
-| Protected parent tag | `sprint-21c1-evidence-baseline`, tag object `fc7bd5cf384890d036cd70149b4408de650c8ec8` |
-| Current migration head | `0014` |
-| Sprint 21C1 pull request | `#213`, merged |
-| Latest assessed `main` CI | run `30285564507`, successful on the parent commit |
-| Gate C1 | pass, all 13 conditions closed in the final tag annotation |
+| `main`, `origin/main`, and peeled parent tag | `94abe263c8f26f36c8f8c3bc7b86859c14c1f291` |
+| Protected parent tag | `sprint-21c2-provider-baseline`, tag object `23b3304890f4a90112514c633c7e2b768f7eeeff` |
+| Current migration head | `0015` |
+| Sprint 21C2 pull request | `#214`, merged |
+| Latest assessed `main` CI | run `30434494612`, 28 of 28 required checks successful on the parent commit |
+| Gate C2 | pass, all 14 conditions closed in the final tag annotation |
 | Gate L2 | closed |
-| Next branch | `feature/sprint-21c2-governed-providers` |
-| Next migration | `0015_create_provider_output_governance.py` |
+| Next branch | `feature/sprint-21c3-reality-inputs` |
+| Next migration | none by default; `0016` remains available only after measured need |
 | Reviewer limitation | one collaborator; required approval remains disabled without weakening the 27 checks or `enforce_admins` |
-| Artifact limitation | development metadata/filesystem pair remains inconsistent and awaits operator-approved remediation |
+| Artifact limitation | development pair fingerprint `7e85d9a6…`, five orphan files, and zero C2 writes; isolate it pending separate operator-approved remediation |
 
-Sprint 21R and Sprint 21C1 are complete. Sprint 21C2 is the next execution sprint.
+Sprint 21R, Sprint 21C1, and Sprint 21C2 are complete. Sprint 21C3 is the next
+execution sprint.
 All source, tag, credential, branch-protection, reviewer, and remote pull-request
 state must be revalidated at sprint start because repository and remote state may
 change.
@@ -104,6 +106,27 @@ dependency or infrastructure authority only after a measured gap and an ADR.
 - CPU-first retrieval, classical ML, graph projection, and local inference remain the
   default execution path.
 
+### 3.5. Open-development data rule
+
+Development speed is the primary optimization target for project-owned, generated,
+or rights-verified open-project data:
+
+- default provider policy is `require_zero_data_retention=false` and
+  `allow_data_collection=true`;
+- provider storage, collection, and sharing are allowed for this open-development
+  data without a per-call ZDR waiver;
+- a configured live campaign still requires the explicit runtime `--live` opt-in,
+  and spend remains independently capped;
+- API keys, tokens, authorization material, subscription identities, undisclosed
+  personal data, and rights-restricted third-party content are not open-development
+  data and remain excluded;
+- source rights and license evidence remain mandatory because they are provenance
+  and legal constraints, not enterprise-confidentiality controls.
+
+Do not add interactive ZDR confirmation, a second policy registry, or a provider-
+specific retention fork. Express the rule through the existing directive and
+configuration contracts.
+
 ## 4. Sprint summary
 
 | Order | Sprint | Nominal timebox | Primary outcome | Required predecessor | Target tag |
@@ -125,8 +148,8 @@ Nominal total: 23 weeks for one primary delivery stream. Independent fixture,
 documentation, and benchmark work can shorten elapsed time, but the protected
 release order remains serial.
 
-Sprint 21R and Sprint 21C1 completed on 2026-07-26. Sprint 21C2 is now the active
-planned delivery.
+Sprint 21R and Sprint 21C1 completed on 2026-07-26. Sprint 21C2 completed on
+2026-07-29. Sprint 21C3 is now the active planned delivery.
 
 ## 5. Detailed sprint allocation
 
@@ -242,6 +265,19 @@ Detailed backlog:
 
 [Sprint 21C2 Technical Backlog](../sprint-21/sprint-21c2-technical-backlog.md)
 
+Completion:
+
+- released as `sprint-21c2-provider-baseline`;
+- protected pull request `#214`, exact-head post-merge CI run `30434494612`, and the
+  annotated tag resolve to commit
+  `94abe263c8f26f36c8f8c3bc7b86859c14c1f291`;
+- all 28 required checks passed;
+- the full suite passed with `2028 passed, 12 skipped`;
+- Claude Code and Codex answered the governed fixture correctly on every recorded
+  attempt; OpenRouter free answered correctly 5 of 22 times and is therefore a
+  bounded diversity source, not a correctness dependency;
+- Gate C2 passed and Gate L2 remains closed.
+
 ### Sprint 21C3 — Reality-Grade Learning Inputs
 
 Objective:
@@ -267,6 +303,10 @@ Exit:
 - no “apply all fixture edits” shortcut can solve the corpus;
 - fake/hash embeddings are excluded from production evidence;
 - Sprint 21D1 has sufficient honest data to pre-register a learning surface.
+
+Detailed backlog:
+
+[Sprint 21C3 Technical Backlog](../sprint-21/sprint-21c3-technical-backlog.md)
 
 ### Sprint 21D1 — Learning Surface and Experience Memory Graph
 

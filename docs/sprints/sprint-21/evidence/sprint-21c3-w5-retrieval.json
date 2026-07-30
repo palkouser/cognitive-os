@@ -1,0 +1,553 @@
+{
+  "arms": {
+    "deterministic": {
+      "aggregate": {
+        "mrr@10": 0.3784,
+        "ndcg@10": 0.4156,
+        "recall@10": 0.6167,
+        "recall@5": 0.4583
+      },
+      "by_family": {
+        "boundary_collections": {
+          "mrr@10": 0.1269,
+          "ndcg@10": 0.1819,
+          "recall@10": 0.4,
+          "recall@5": 0.25
+        },
+        "data_transformation": {
+          "mrr@10": 0.4183,
+          "ndcg@10": 0.4384,
+          "recall@10": 0.65,
+          "recall@5": 0.55
+        },
+        "error_handling": {
+          "mrr@10": 0.625,
+          "ndcg@10": 0.6266,
+          "recall@10": 0.75,
+          "recall@5": 0.7
+        },
+        "numeric_logic": {
+          "mrr@10": 0.3917,
+          "ndcg@10": 0.4235,
+          "recall@10": 0.6,
+          "recall@5": 0.45
+        },
+        "parsing_validation": {
+          "mrr@10": 0.3076,
+          "ndcg@10": 0.3672,
+          "recall@10": 0.65,
+          "recall@5": 0.35
+        },
+        "state_idempotency": {
+          "mrr@10": 0.401,
+          "ndcg@10": 0.4558,
+          "recall@10": 0.65,
+          "recall@5": 0.45
+        }
+      },
+      "by_kind": {
+        "analogous": {
+          "mrr@10": 0.5271,
+          "ndcg@10": 0.4452,
+          "recall@10": 0.5833,
+          "recall@5": 0.375
+        },
+        "correction": {
+          "mrr@10": 0.3753,
+          "ndcg@10": 0.4439,
+          "recall@10": 0.6667,
+          "recall@5": 0.5
+        },
+        "failure": {
+          "mrr@10": 0.0556,
+          "ndcg@10": 0.0823,
+          "recall@10": 0.1667,
+          "recall@5": 0.0833
+        },
+        "symptom": {
+          "mrr@10": 0.4438,
+          "ndcg@10": 0.5341,
+          "recall@10": 0.8333,
+          "recall@5": 0.5833
+        },
+        "terminology": {
+          "mrr@10": 0.4903,
+          "ndcg@10": 0.5724,
+          "recall@10": 0.8333,
+          "recall@5": 0.75
+        }
+      },
+      "ingest_seconds": 0.155,
+      "label": "non-production hashing vector",
+      "p50_ms": 17.947,
+      "p95_ms": 20.198,
+      "production": false,
+      "stable_across_repeats": true
+    },
+    "lexical": {
+      "aggregate": {
+        "mrr@10": 0.0167,
+        "ndcg@10": 0.0167,
+        "recall@10": 0.0167,
+        "recall@5": 0.0167
+      },
+      "by_family": {
+        "boundary_collections": {
+          "mrr@10": 0.0,
+          "ndcg@10": 0.0,
+          "recall@10": 0.0,
+          "recall@5": 0.0
+        },
+        "data_transformation": {
+          "mrr@10": 0.0,
+          "ndcg@10": 0.0,
+          "recall@10": 0.0,
+          "recall@5": 0.0
+        },
+        "error_handling": {
+          "mrr@10": 0.0,
+          "ndcg@10": 0.0,
+          "recall@10": 0.0,
+          "recall@5": 0.0
+        },
+        "numeric_logic": {
+          "mrr@10": 0.1,
+          "ndcg@10": 0.1,
+          "recall@10": 0.1,
+          "recall@5": 0.1
+        },
+        "parsing_validation": {
+          "mrr@10": 0.0,
+          "ndcg@10": 0.0,
+          "recall@10": 0.0,
+          "recall@5": 0.0
+        },
+        "state_idempotency": {
+          "mrr@10": 0.0,
+          "ndcg@10": 0.0,
+          "recall@10": 0.0,
+          "recall@5": 0.0
+        }
+      },
+      "by_kind": {
+        "analogous": {
+          "mrr@10": 0.0,
+          "ndcg@10": 0.0,
+          "recall@10": 0.0,
+          "recall@5": 0.0
+        },
+        "correction": {
+          "mrr@10": 0.0,
+          "ndcg@10": 0.0,
+          "recall@10": 0.0,
+          "recall@5": 0.0
+        },
+        "failure": {
+          "mrr@10": 0.0,
+          "ndcg@10": 0.0,
+          "recall@10": 0.0,
+          "recall@5": 0.0
+        },
+        "symptom": {
+          "mrr@10": 0.0,
+          "ndcg@10": 0.0,
+          "recall@10": 0.0,
+          "recall@5": 0.0
+        },
+        "terminology": {
+          "mrr@10": 0.0833,
+          "ndcg@10": 0.0833,
+          "recall@10": 0.0833,
+          "recall@5": 0.0833
+        }
+      },
+      "ingest_seconds": null,
+      "label": "lexical",
+      "p50_ms": 1.32,
+      "p95_ms": 2.46,
+      "production": false,
+      "stable_across_repeats": true
+    },
+    "lexical_or": {
+      "aggregate": {
+        "mrr@10": 0.231,
+        "ndcg@10": 0.2794,
+        "recall@10": 0.4833,
+        "recall@5": 0.25
+      },
+      "by_family": {
+        "boundary_collections": {
+          "mrr@10": 0.0354,
+          "ndcg@10": 0.0695,
+          "recall@10": 0.2,
+          "recall@5": 0.0
+        },
+        "data_transformation": {
+          "mrr@10": 0.301,
+          "ndcg@10": 0.3808,
+          "recall@10": 0.65,
+          "recall@5": 0.3
+        },
+        "error_handling": {
+          "mrr@10": 0.381,
+          "ndcg@10": 0.369,
+          "recall@10": 0.5,
+          "recall@5": 0.3
+        },
+        "numeric_logic": {
+          "mrr@10": 0.255,
+          "ndcg@10": 0.3188,
+          "recall@10": 0.5,
+          "recall@5": 0.3
+        },
+        "parsing_validation": {
+          "mrr@10": 0.1743,
+          "ndcg@10": 0.2744,
+          "recall@10": 0.6,
+          "recall@5": 0.25
+        },
+        "state_idempotency": {
+          "mrr@10": 0.2393,
+          "ndcg@10": 0.2639,
+          "recall@10": 0.45,
+          "recall@5": 0.35
+        }
+      },
+      "by_kind": {
+        "analogous": {
+          "mrr@10": 0.3773,
+          "ndcg@10": 0.3976,
+          "recall@10": 0.6667,
+          "recall@5": 0.4167
+        },
+        "correction": {
+          "mrr@10": 0.0139,
+          "ndcg@10": 0.0297,
+          "recall@10": 0.0833,
+          "recall@5": 0.0
+        },
+        "failure": {
+          "mrr@10": 0.0,
+          "ndcg@10": 0.0,
+          "recall@10": 0.0,
+          "recall@5": 0.0
+        },
+        "symptom": {
+          "mrr@10": 0.2538,
+          "ndcg@10": 0.3856,
+          "recall@10": 0.8333,
+          "recall@5": 0.3333
+        },
+        "terminology": {
+          "mrr@10": 0.5099,
+          "ndcg@10": 0.5842,
+          "recall@10": 0.8333,
+          "recall@5": 0.5
+        }
+      },
+      "ingest_seconds": null,
+      "label": "lexical_or",
+      "p50_ms": 16.407,
+      "p95_ms": 19.892,
+      "production": false,
+      "stable_across_repeats": true
+    },
+    "minilm": {
+      "aggregate": {
+        "mrr@10": 0.7105,
+        "ndcg@10": 0.7704,
+        "recall@10": 0.9667,
+        "recall@5": 0.9167
+      },
+      "by_family": {
+        "boundary_collections": {
+          "mrr@10": 0.5087,
+          "ndcg@10": 0.6027,
+          "recall@10": 0.9,
+          "recall@5": 0.7
+        },
+        "data_transformation": {
+          "mrr@10": 0.6708,
+          "ndcg@10": 0.7508,
+          "recall@10": 1.0,
+          "recall@5": 0.9
+        },
+        "error_handling": {
+          "mrr@10": 0.8167,
+          "ndcg@10": 0.8401,
+          "recall@10": 1.0,
+          "recall@5": 1.0
+        },
+        "numeric_logic": {
+          "mrr@10": 0.65,
+          "ndcg@10": 0.7393,
+          "recall@10": 1.0,
+          "recall@5": 1.0
+        },
+        "parsing_validation": {
+          "mrr@10": 0.8333,
+          "ndcg@10": 0.8762,
+          "recall@10": 1.0,
+          "recall@5": 1.0
+        },
+        "state_idempotency": {
+          "mrr@10": 0.7833,
+          "ndcg@10": 0.8131,
+          "recall@10": 0.9,
+          "recall@5": 0.9
+        }
+      },
+      "by_kind": {
+        "analogous": {
+          "mrr@10": 1.0,
+          "ndcg@10": 0.9808,
+          "recall@10": 1.0,
+          "recall@5": 1.0
+        },
+        "correction": {
+          "mrr@10": 0.6389,
+          "ndcg@10": 0.7103,
+          "recall@10": 0.9167,
+          "recall@5": 0.9167
+        },
+        "failure": {
+          "mrr@10": 0.5718,
+          "ndcg@10": 0.677,
+          "recall@10": 1.0,
+          "recall@5": 0.9167
+        },
+        "symptom": {
+          "mrr@10": 0.4807,
+          "ndcg@10": 0.5868,
+          "recall@10": 0.9167,
+          "recall@5": 0.75
+        },
+        "terminology": {
+          "mrr@10": 0.8611,
+          "ndcg@10": 0.8968,
+          "recall@10": 1.0,
+          "recall@5": 1.0
+        }
+      },
+      "ingest_seconds": 0.875,
+      "label": "minilm",
+      "p50_ms": 22.878,
+      "p95_ms": 24.304,
+      "production": true,
+      "stable_across_repeats": true
+    }
+  },
+  "benchmark_manifest_hash": "c9d2ac44731e81f2443545111c8e4832f848d63b68557862a7319cdd8beeca9d",
+  "cases": 60,
+  "cross_group_leakage": [],
+  "documents": 60,
+  "model": {
+    "dimension": 384,
+    "licence": "apache-2.0",
+    "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+    "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+    "tree_digest": "98eb3ae4df320d0b721902aabef795cafb36c3a516f036e92e2b046f55ef4229"
+  },
+  "peak_rss_mib": 742.2,
+  "precision_comparison": {
+    "f16": {
+      "aggregate": {
+        "mrr@10": 0.7105,
+        "ndcg@10": 0.7704,
+        "recall@10": 0.9667,
+        "recall@5": 0.9167
+      },
+      "by_family": {
+        "boundary_collections": {
+          "mrr@10": 0.5087,
+          "ndcg@10": 0.6027,
+          "recall@10": 0.9,
+          "recall@5": 0.7
+        },
+        "data_transformation": {
+          "mrr@10": 0.6708,
+          "ndcg@10": 0.7508,
+          "recall@10": 1.0,
+          "recall@5": 0.9
+        },
+        "error_handling": {
+          "mrr@10": 0.8167,
+          "ndcg@10": 0.8401,
+          "recall@10": 1.0,
+          "recall@5": 1.0
+        },
+        "numeric_logic": {
+          "mrr@10": 0.65,
+          "ndcg@10": 0.7393,
+          "recall@10": 1.0,
+          "recall@5": 1.0
+        },
+        "parsing_validation": {
+          "mrr@10": 0.8333,
+          "ndcg@10": 0.8762,
+          "recall@10": 1.0,
+          "recall@5": 1.0
+        },
+        "state_idempotency": {
+          "mrr@10": 0.7833,
+          "ndcg@10": 0.8131,
+          "recall@10": 0.9,
+          "recall@5": 0.9
+        }
+      },
+      "by_kind": {
+        "analogous": {
+          "mrr@10": 1.0,
+          "ndcg@10": 0.9808,
+          "recall@10": 1.0,
+          "recall@5": 1.0
+        },
+        "correction": {
+          "mrr@10": 0.6389,
+          "ndcg@10": 0.7103,
+          "recall@10": 0.9167,
+          "recall@5": 0.9167
+        },
+        "failure": {
+          "mrr@10": 0.5718,
+          "ndcg@10": 0.677,
+          "recall@10": 1.0,
+          "recall@5": 0.9167
+        },
+        "symptom": {
+          "mrr@10": 0.4807,
+          "ndcg@10": 0.5868,
+          "recall@10": 0.9167,
+          "recall@5": 0.75
+        },
+        "terminology": {
+          "mrr@10": 0.8611,
+          "ndcg@10": 0.8968,
+          "recall@10": 1.0,
+          "recall@5": 1.0
+        }
+      },
+      "index_seconds": 0.0038,
+      "load_seconds": 0.0314,
+      "p50_ms": 0.306,
+      "p95_ms": 0.46,
+      "table_bytes": 57344,
+      "total_bytes": 188416
+    },
+    "f32": {
+      "aggregate": {
+        "mrr@10": 0.7105,
+        "ndcg@10": 0.7704,
+        "recall@10": 0.9667,
+        "recall@5": 0.9167
+      },
+      "by_family": {
+        "boundary_collections": {
+          "mrr@10": 0.5087,
+          "ndcg@10": 0.6027,
+          "recall@10": 0.9,
+          "recall@5": 0.7
+        },
+        "data_transformation": {
+          "mrr@10": 0.6708,
+          "ndcg@10": 0.7508,
+          "recall@10": 1.0,
+          "recall@5": 0.9
+        },
+        "error_handling": {
+          "mrr@10": 0.8167,
+          "ndcg@10": 0.8401,
+          "recall@10": 1.0,
+          "recall@5": 1.0
+        },
+        "numeric_logic": {
+          "mrr@10": 0.65,
+          "ndcg@10": 0.7393,
+          "recall@10": 1.0,
+          "recall@5": 1.0
+        },
+        "parsing_validation": {
+          "mrr@10": 0.8333,
+          "ndcg@10": 0.8762,
+          "recall@10": 1.0,
+          "recall@5": 1.0
+        },
+        "state_idempotency": {
+          "mrr@10": 0.7833,
+          "ndcg@10": 0.8131,
+          "recall@10": 0.9,
+          "recall@5": 0.9
+        }
+      },
+      "by_kind": {
+        "analogous": {
+          "mrr@10": 1.0,
+          "ndcg@10": 0.9808,
+          "recall@10": 1.0,
+          "recall@5": 1.0
+        },
+        "correction": {
+          "mrr@10": 0.6389,
+          "ndcg@10": 0.7103,
+          "recall@10": 0.9167,
+          "recall@5": 0.9167
+        },
+        "failure": {
+          "mrr@10": 0.5718,
+          "ndcg@10": 0.677,
+          "recall@10": 1.0,
+          "recall@5": 0.9167
+        },
+        "symptom": {
+          "mrr@10": 0.4807,
+          "ndcg@10": 0.5868,
+          "recall@10": 0.9167,
+          "recall@5": 0.75
+        },
+        "terminology": {
+          "mrr@10": 0.8611,
+          "ndcg@10": 0.8968,
+          "recall@10": 1.0,
+          "recall@5": 1.0
+        }
+      },
+      "index_seconds": 0.0038,
+      "load_seconds": 0.0284,
+      "p50_ms": 0.3,
+      "p95_ms": 0.558,
+      "table_bytes": 98304,
+      "total_bytes": 278528
+    },
+    "migration_rehearsal_seconds": 0.0068,
+    "temporary_objects_remaining": 0,
+    "top10_agreement": 1.0
+  },
+  "profile_id": "sprint21c3-retrieval-benchmark-v1",
+  "query_kinds": {
+    "analogous": 12,
+    "correction": 12,
+    "failure": 12,
+    "symptom": 12,
+    "terminology": 12
+  },
+  "thresholds": {
+    "half_precision_chosen": false,
+    "recall@5_margin_over_deterministic": 0.4584,
+    "section_4_15": {
+      "mrr@10>=0.65": true,
+      "rankings stable across repeats": true,
+      "recall@5 beats deterministic by >=0.15": true,
+      "recall@5>=0.80": true,
+      "zero cross-group leakage": true
+    },
+    "section_4_16": {
+      "latency_within_tolerance": true,
+      "mrr@10_loss": 0.0,
+      "p95_change": -0.1756,
+      "quality_within_tolerance": true,
+      "recall@10_loss": 0.0,
+      "storage_reduction": 0.3235,
+      "storage_reduction_at_least_35pct": false
+    }
+  }
+}

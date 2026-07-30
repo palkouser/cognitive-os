@@ -1,0 +1,152 @@
+{
+  "backup_and_restore": {
+    "artifact_files_verified": 8500,
+    "backup_command": "COGOS_POSTGRES_ENV_FILE=.env.s21c3.local ./scripts/backup_event_store.sh",
+    "manifest": "20260730T163758Z-backup-manifest.json",
+    "migration_head": "0015",
+    "restore_command": "COGOS_POSTGRES_ENV_FILE=.env.s21c3.local ./scripts/restore_event_store.sh --test-restore",
+    "restore_database": "cognitive_os_s21c3_restore_test",
+    "restore_verification": "passed",
+    "tables_added": 0
+  },
+  "campaign_resume": {
+    "completed": 150,
+    "corpus_items_rewritten": 0,
+    "duplicates_excluded": 0,
+    "planned": 150,
+    "remaining": 0,
+    "replayed_runs": 150,
+    "seconds": 8.4,
+    "source": "scripts/reality_inputs.py resume -- --resume-from sprint-21c3-w3-campaign.json",
+    "trajectories_recompiled": 0,
+    "trajectory_failures": 60,
+    "unique_outcomes": 150
+  },
+  "ci_lane": {
+    "asserts_zero_skips_under_tests_cognitive_os_coding": true,
+    "credential_free": true,
+    "job": "reality-inputs-core",
+    "network": false,
+    "representative_tasks": 6,
+    "requires_gpu": false,
+    "requires_local_model": false,
+    "workflow": ".github/workflows/ci.yml"
+  },
+  "deviations": [
+    {
+      "affects": "trajectory recompilation only. Outcomes, counts, corpus items, splits, observations and retrieval rankings all reproduce.",
+      "detail": "compilation_id is derived from the task and its ordered source events, so the W3 rows cannot be recompiled to match after the W6-F1 fix: their created_at is the moment the operator ran the campaign. They are left as recorded history rather than deleted or rewritten, on the same reasoning as W3-D2. A campaign on a clean store reproduces exactly; recompilation of these sixty rows will keep refusing, and that refusal is correct behaviour reporting a real difference.",
+      "id": "W6-D1",
+      "title": "the sixty trajectory manifests compiled in W3 keep a wall-clock created_at and are not rewritten"
+    }
+  ],
+  "draft_pull_request": {
+    "is_draft": true,
+    "number": 215,
+    "opened_in": "W1",
+    "remote_lanes_exercising_the_real_outcome_path": [
+      "coding-agent",
+      "postgres-integration",
+      "migration",
+      "reality-inputs-core"
+    ],
+    "state": "OPEN",
+    "url": "https://github.com/palkouser/cognitive-os/pull/215"
+  },
+  "findings": [
+    {
+      "detail": "scripts/reality_campaign.py passed created_at=utc_now() into reality_trajectories.build_request. ExperienceCompilerService verifies a persisted manifest by recompiling the request and comparing for exact equality, and created_at is the manifest's only field not derived from the task and its outcomes. A resume therefore failed all sixty compilations with 'persisted manifest differs from deterministic recompilation'. Fixed by passing the campaign epoch, the same fix W3-F2 applied to corpus requests.",
+      "id": "W6-F1",
+      "regression_test": "tests/cognitive_os/coding/test_reality_family_slice.py::test_the_same_request_built_twice_is_byte_identical",
+      "severity": "structural",
+      "title": "trajectory compilation read a wall clock, so no trajectory could be verified by recompilation"
+    },
+    {
+      "detail": "tests/integration/postgres/conftest.py TRUNCATEs the whole cognitive_os schema and guarded only on the database name ending in `_test`. The C3 evidence store is also named `..._test`, so putting the PostgreSQL integration suite into the release matrix under the C3 environment destroyed the campaign evidence. Several unit suites additionally write into whatever COGOS_DATABASE_URL and COGOS_ARTIFACT_ROOT name, so the contamination was wider than the truncation. Fixed in three places: the fixture now requires the database to be nominated by name in COGOS_TRUNCATABLE_DATABASE and skips with a reason when nothing is nominated; the matrix gives every test row a scratch database and a scratch artifact root and refuses when the scratch handle names the evidence store; CI nominates its own throwaway service database.",
+      "id": "W6-F2",
+      "impact": "no data was lost: both wipes were recovered in full from the backup taken by S21C3-062 minutes earlier.",
+      "recovery": "pg_restore of 20260730T163758Z-event-store.dump plus the matching artifact tar; every count returned to its pre-incident value.",
+      "regression_test": "tests/cognitive_os/coding/test_reality_operations.py and the fixture's own refusal, exercised in three states (unnominated, mismatched, nominated).",
+      "severity": "structural",
+      "title": "the release matrix erased the C3 evidence store, twice, and the guard that should have stopped it only checked a naming convention"
+    }
+  ],
+  "integrity_report": {
+    "checks": 15,
+    "counts": {
+      "artifact_blobs": 8500,
+      "artifacts": 11355,
+      "corpus_items": 1798,
+      "corpus_manifest_items": 1798,
+      "corpus_route_decisions": 1798,
+      "events": 1601,
+      "experience_candidates": 1750,
+      "experience_compilations": 250,
+      "learned_datasets": 5,
+      "learned_observations": 960,
+      "memory_embeddings": 120,
+      "memory_items": 60
+    },
+    "failures": [],
+    "healthy": true,
+    "healthy_without_model": true,
+    "source": "scripts/reality_inputs.py verify --model <local model>",
+    "warning_without_model": [
+      "local_embedding_model_is_available"
+    ],
+    "warnings": []
+  },
+  "items": [
+    "S21C3-060",
+    "S21C3-061",
+    "S21C3-062",
+    "S21C3-063",
+    "S21C3-064"
+  ],
+  "operator_cli": {
+    "exit_codes": {
+      "0": "did what it says",
+      "1": "ran, a check failed, evidence still written",
+      "2": "refused before acting"
+    },
+    "provider_without_live_is_refused": true,
+    "receipts_carry_the_database_name_never_the_url": true,
+    "resume_without_previous_evidence_is_refused": true,
+    "source": "scripts/reality_inputs.py",
+    "subcommands": [
+      "generate",
+      "validate",
+      "run",
+      "resume",
+      "harvest",
+      "stats",
+      "embed",
+      "verify",
+      "provider"
+    ]
+  },
+  "restart": {
+    "counts_identical_after_restart": true,
+    "integrity_identical_after_restart": true,
+    "service": "compose-postgres-1"
+  },
+  "restore_proved_in_anger": {
+    "counts_returned_to_baseline": true,
+    "note": "the backup/restore path of S21C3-062 was exercised for real, not only as a drill: it recovered the evidence store after W6-F2.",
+    "restores_performed": 2
+  },
+  "retrieval_reproduction": {
+    "after": "backup, test-restore and a PostgreSQL restart",
+    "benchmark_manifest_hash_unchanged": true,
+    "every_arm_metric_identical": true,
+    "section_4_15_verdicts_identical": true,
+    "source": "scripts/reality_inputs.py embed -- --model <local model>",
+    "storage_bytes_identical": true
+  },
+  "sprint": "21C3",
+  "storage": {
+    "artifact_root": "cognitive-os-data/artifacts-s21c3",
+    "database": "cognitive_os_s21c3_test"
+  },
+  "wave": "W6"
+}

@@ -1,0 +1,162 @@
+{
+  "$defs": {
+    "CodingOutcomeStatus": {
+      "enum": [
+        "accepted",
+        "failed",
+        "rejected",
+        "cancelled",
+        "budget_exhausted",
+        "security_failure"
+      ],
+      "title": "CodingOutcomeStatus",
+      "type": "string"
+    },
+    "RealityCandidateStrategy": {
+      "description": "The four offline strategies of §4.6, plus what a provider returns.\n\n`PROVIDER_PROPOSED` deliberately has no declared correctness. A provider candidate's\nresult is whatever the hidden verifier says it is, and a strategy value that predicted\nit would be a label the corpus had assigned to itself.",
+      "enum": [
+        "incomplete_a",
+        "correct_narrow",
+        "incomplete_b",
+        "correct_robust",
+        "provider_proposed"
+      ],
+      "title": "RealityCandidateStrategy",
+      "type": "string"
+    },
+    "RealityRunKind": {
+      "enum": [
+        "baseline",
+        "candidate"
+      ],
+      "title": "RealityRunKind",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/events/coding.outcome_recorded.v1.schema.json",
+  "additionalProperties": false,
+  "description": "The authoritative identity of one executed coding run, Sprint 21C3.\n\n`CodingResultPackaged` carries an outcome hash and nothing that resolves it, so an\noutcome recorded under it is a claim about bytes nobody can fetch. This is a *new* event\nrather than extra fields on that one: `CodingResultPackaged` already has rows, and its\npayload hash is what the replay machinery checks, so widening it would rewrite the\ncanonical hash of every historical envelope — the exact drift the hashing exists to\ncatch.\n\nEvery reference here is resolvable. The outcome artifact and the hidden-verifier evidence\nare named by ID *and* by hash, so an event cannot claim bytes that were never written and\ncannot survive those bytes changing underneath it.",
+  "properties": {
+    "candidate_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Candidate Id"
+    },
+    "candidate_strategy": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RealityCandidateStrategy"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "final_status": {
+      "$ref": "#/$defs/CodingOutcomeStatus"
+    },
+    "hidden_evidence_artifact_id": {
+      "format": "uuid",
+      "title": "Hidden Evidence Artifact Id",
+      "type": "string"
+    },
+    "hidden_evidence_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Hidden Evidence Hash",
+      "type": "string"
+    },
+    "hidden_verification_passed": {
+      "title": "Hidden Verification Passed",
+      "type": "boolean"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "outcome_artifact_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Outcome Artifact Hash",
+      "type": "string"
+    },
+    "outcome_artifact_id": {
+      "format": "uuid",
+      "title": "Outcome Artifact Id",
+      "type": "string"
+    },
+    "outcome_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Outcome Hash",
+      "type": "string"
+    },
+    "provider_output_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Provider Output Id"
+    },
+    "run_identity_key": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Run Identity Key"
+    },
+    "run_kind": {
+      "$ref": "#/$defs/RealityRunKind"
+    },
+    "task_id": {
+      "format": "uuid",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "task_manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Task Manifest Hash",
+      "type": "string"
+    },
+    "task_run_id": {
+      "format": "uuid",
+      "title": "Task Run Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_run_id",
+    "run_kind",
+    "task_id",
+    "task_manifest_hash",
+    "outcome_hash",
+    "outcome_artifact_id",
+    "outcome_artifact_hash",
+    "hidden_evidence_artifact_id",
+    "hidden_evidence_hash",
+    "final_status",
+    "hidden_verification_passed",
+    "occurred_at"
+  ],
+  "title": "CodingOutcomeRecorded",
+  "type": "object"
+}

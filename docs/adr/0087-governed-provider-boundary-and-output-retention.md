@@ -7,6 +7,10 @@
 - Relates to: [ADR 0086](0086-learned-evidence-persistence-authority.md) (learned evidence
   persistence authority), [ADR 0081](0081-learning-substrate-extension-seam.md) (learning
   substrate seam)
+- Amended by: [ADR 0088](0088-open-development-data-policy.md) — the provider-side
+  zero-data-retention and data-collection expectations are superseded for open-development
+  data from Sprint 21C3. The authority table, retention modes, redaction order and
+  secret-scan rules below are unchanged.
 
 ## Context
 

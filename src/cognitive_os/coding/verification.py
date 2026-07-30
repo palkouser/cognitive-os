@@ -37,6 +37,14 @@ _REQUIRED_VERIFIERS = (
     "coding.workspace_integrity",
 )
 
+#: Added only when a caller supplies hidden evidence, Sprint 21C3.
+#:
+#: Not appended to `_REQUIRED_VERIFIERS`: every pre-C3 caller would then need control material
+#: it has no way to produce, and a required criterion nobody can satisfy turns every existing
+#: coding run unverifiable. The two profiles are distinguished by their policy ID, so an
+#: acceptance decision records which one it was measured against.
+_HIDDEN_VERIFIER = "coding.hidden_pytest"
+
 
 class CodingVerifierBundleFactory:
     def __init__(
@@ -51,7 +59,10 @@ class CodingVerifierBundleFactory:
         self.acceptance = acceptance
         self.limits = limits
 
-    def policy(self) -> AcceptancePolicy:
+    def policy(self, *, hidden_verification: bool = False) -> AcceptancePolicy:
+        verifier_ids = (
+            (*_REQUIRED_VERIFIERS, _HIDDEN_VERIFIER) if hidden_verification else _REQUIRED_VERIFIERS
+        )
         requirements = tuple(
             VerifierRequirement(
                 requirement_id=uuid5(NAMESPACE_URL, f"cognitive-os:sprint8:{verifier_id}"),
@@ -61,8 +72,23 @@ class CodingVerifierBundleFactory:
                 required=True,
                 allowed_outcomes=(VerifierStatus.PASSED,),
             )
-            for verifier_id in _REQUIRED_VERIFIERS
+            for verifier_id in verifier_ids
         )
+        if hidden_verification:
+            return AcceptancePolicy(
+                policy_id=uuid5(
+                    NAMESPACE_URL, "cognitive-os:sprint21c3:python-coding-hidden-acceptance"
+                ),
+                version="1",
+                name="Python Coding Agent acceptance with hidden verification",
+                description=(
+                    "Require the Sprint 8 visible profile plus the Sprint 21C3 hidden test "
+                    "suite, so a patch that satisfies only the published contract is not "
+                    "accepted."
+                ),
+                requirements=requirements,
+                created_at=utc_now(),
+            )
         return AcceptancePolicy(
             policy_id=uuid5(NAMESPACE_URL, "cognitive-os:sprint8:python-coding-acceptance"),
             version="1",
@@ -88,8 +114,9 @@ class CodingVerifierBundleFactory:
         mypy_arguments: tuple[str, ...] = ("src",),
         import_modules: tuple[str, ...] = ("cognitive_os",),
         repair_budget_remaining: bool = False,
+        hidden_evidence: dict[str, JsonValue] | None = None,
     ) -> CodingVerificationOutcome:
-        policy = self.policy()
+        policy = self.policy(hidden_verification=hidden_evidence is not None)
         subjects: dict[str, tuple[VerificationSubject, dict[str, JsonValue]]] = {
             "coding.pytest": (
                 VerificationSubject(
@@ -151,6 +178,14 @@ class CodingVerifierBundleFactory:
                 {},
             ),
         }
+        if hidden_evidence is not None:
+            subjects[_HIDDEN_VERIFIER] = (
+                VerificationSubject(
+                    subject_type=VerificationSubjectType.STRUCTURED_VALUE,
+                    inline_value=hidden_evidence,
+                ),
+                {},
+            )
         results = []
         for requirement in policy.requirements:
             self.registry.require(requirement.verifier_id, requirement.minimum_version)

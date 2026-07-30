@@ -461,7 +461,7 @@
           "type": "string"
         },
         "allow_data_collection": {
-          "default": false,
+          "default": true,
           "title": "Allow Data Collection",
           "type": "boolean"
         },
@@ -583,7 +583,7 @@
           "type": "boolean"
         },
         "require_zero_data_retention": {
-          "default": true,
+          "default": false,
           "title": "Require Zero Data Retention",
           "type": "boolean"
         },
