@@ -36,6 +36,18 @@ memory:
       model_id: deterministic-v1
       dimension: 64
       enabled: true
+    # The production provider (Sprint 21.3). `local_model_digest` is the `tree_digest` that
+    # `scripts/embedding_model.py prefetch` writes beside the model; the factory refuses to
+    # build this provider when the bytes on disk hash to anything else, and never falls back
+    # to `deterministic-test` — a hashing vector carrying the production provider's name in
+    # the evidence is worse than no retrieval at all.
+    sentence-transformers-local:
+      provider_type: sentence_transformers
+      model_id: sentence-transformers/all-MiniLM-L6-v2
+      dimension: 384
+      enabled: false
+      local_model_path: /srv/cognitive-os/models/all-MiniLM-L6-v2
+      local_model_digest: "0000000000000000000000000000000000000000000000000000000000000000"
   export_root: /srv/cognitive-os/archives/memory
   benchmark:
     maximum_records: 10000
