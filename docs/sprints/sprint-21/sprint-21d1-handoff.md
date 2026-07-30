@@ -12,8 +12,10 @@ Nothing in C1, C2 or C3 has answered it, and C3's numbers must not be mistaken f
 
 | | |
 | --- | --- |
-| Parent tag | `sprint-21c3-reality-baseline` *(created by S21C3-073; verify the tag object and peeled commit at sprint start)* |
-| Parent branch | `feature/sprint-21c3-reality-inputs`, merged via PR #215 |
+| Parent tag | `sprint-21c3-reality-baseline`, annotated tag object `497f959bc55989541016a61bd9034e12523b8573` |
+| Parent commit | `05809446c726444146d85aad22808e10ce87ca3e`, equal to verified `main` and `origin/main` |
+| Parent pull request | `#215`, squash-merged |
+| Parent final CI | run `30571166301`, 29 of 29 jobs success on the parent commit |
 | Parent migration head | `0015` |
 | Next available migration | `0016` — still unallocated. ADR 0089 declined it deliberately; see §6. |
 | Gate C3 | **pass** — 15 of 16 conditions on evidence, the sixteenth closed by the release |

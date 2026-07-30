@@ -4,7 +4,8 @@
 - Parent: `sprint-21c2-provider-baseline` → `94abe263c8f26f36c8f8c3bc7b86859c14c1f291`
 - Alembic head: **0015** at the start and at the end
 - Storage: the isolated C3 pair (`cognitive_os_s21c3_test`, `cognitive-os-data/artifacts-s21c3`)
-- Gate C3: 15 of 16 conditions passed, one open pending the release itself
+- Gate C3: **pass** — conditions 1–15 evidenced in the assessment, condition 16 closed by the
+  verified release annotation
 - **Gate L2: closed**
 
 > Reality-grade inputs and local semantic retrieval are available, but useful learned
