@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
-from datetime import datetime
 from uuid import uuid4
 
 import pytest
@@ -23,7 +21,11 @@ from cognitive_os.coding.hidden_verification import HiddenVerificationStatus
 from cognitive_os.coding.outcome_recording import CodingOutcomeRecorder
 from cognitive_os.domain.coding import CodingOutcomeStatus
 from cognitive_os.domain.learned import ProvenanceClass
-from cognitive_os.domain.learned_evidence import LearnedRepositoryError, ObservationStatus
+from cognitive_os.domain.learned_evidence import (
+    GovernedOutcomeReference,
+    LearnedRepositoryError,
+    ObservationStatus,
+)
 from cognitive_os.domain.reality import (
     RealityCampaignManifest,
     RealityCandidateSource,
@@ -52,7 +54,7 @@ from .reality_fixtures import (
 
 
 class _Harness:
-    def __init__(self, *, intake_clock: Callable[[], datetime] | None = None) -> None:
+    def __init__(self) -> None:
         self.artifacts = InMemoryArtifactStore()
         self.store = MemoryEventStore()
         self.recorder = CodingOutcomeRecorder(
@@ -61,11 +63,7 @@ class _Harness:
         service = LearnedEvidenceService(
             InMemoryLearnedEvidenceRepository(), events=LearnedEventService(self.store)
         )
-        self.intake = (
-            LearnedObservationIntake(service, clock=intake_clock)
-            if intake_clock is not None
-            else LearnedObservationIntake(service)
-        )
+        self.intake = LearnedObservationIntake(service)
         self.harvester = RealityOutcomeHarvester(self.artifacts, self.store, self.intake)
         self.ledger = RealityCampaignLedger(self.store)
 
@@ -217,13 +215,17 @@ async def test_an_event_that_is_not_a_recorded_outcome_is_refused() -> None:
 
 
 @pytest.mark.asyncio
-async def test_re_offering_the_same_outcome_is_a_free_no_op_under_a_stable_clock() -> None:
-    """The C1 intake promises crash-safe re-offering. It keeps that promise on a fixed clock.
+async def test_re_offering_the_same_outcome_is_a_free_no_op() -> None:
+    """W1-F1, fixed: re-offering is safe on a real clock, not only on a pinned one.
 
-    See `test_re_offering_under_a_moving_clock_is_refused` for the case where it does not,
-    which is a defect this sprint inherited rather than introduced.
+    Intake used to stamp `recorded_at` from its own clock onto a hash-bound record, so the
+    same outcome offered at two different moments produced two different content hashes and
+    the second was refused as an idempotency conflict — while the module docstring promised
+    crash-safe re-offering. `recorded_at` now comes from the outcome's own `occurred_at`, so
+    every field of the observation is a function of the reference. No clock is pinned here;
+    that is the point.
     """
-    harness = _Harness(intake_clock=lambda: FIXTURE_TIME)
+    harness = _Harness()
     task = task_manifest()
     recorded, _ = await harness.record(task)
     event_id = recorded.reference.source_event_id  # type: ignore[attr-defined]
@@ -233,28 +235,30 @@ async def test_re_offering_the_same_outcome_is_a_free_no_op_under_a_stable_clock
 
     assert first.observation.observation_id == second.observation.observation_id
     assert first.observation.content_hash == second.observation.content_hash
+    assert first.observation.recorded_at == recorded.reference.occurred_at  # type: ignore[attr-defined]
 
 
 @pytest.mark.asyncio
-async def test_re_offering_under_a_moving_clock_is_refused() -> None:
-    """Documents an inherited defect, so the sprint does not discover it in W3.
+async def test_a_source_whose_content_changed_is_still_refused() -> None:
+    """The fix must not turn the fail-closed rule into a shrug.
 
-    `LearnedObservationIntake` stamps `recorded_at` from its clock and the observation record
-    is hash-bound, so the same outcome offered twice at different moments is refused as an
-    idempotency-key conflict — even though the module docstring states intake "can be re-run
-    after a crash without producing a second record". Recorded here rather than worked around:
-    S21C3-036 and S21C3-062 need re-offering to be safe, and the fix belongs to the C1 intake
-    (ADR 0086), not to the C3 harvester.
+    Same source identity, different payload: that is an outcome that changed after the fact,
+    and it stays an idempotency conflict rather than becoming a silent second record.
     """
     harness = _Harness()
     task = task_manifest()
     recorded, _ = await harness.record(task)
     event_id = recorded.reference.source_event_id  # type: ignore[attr-defined]
 
-    await harness.harvester.harvest(event_id=event_id, task=task, correlation_id=uuid4())
+    harvested = await harness.harvester.harvest(
+        event_id=event_id, task=task, correlation_id=uuid4()
+    )
+    changed = GovernedOutcomeReference.model_validate(
+        harvested.governed.model_dump() | {"source_payload_hash": "c" * 64, "content_hash": ""}
+    )
 
     with pytest.raises(LearnedRepositoryError, match="idempotency_key_reused"):
-        await harness.harvester.harvest(event_id=event_id, task=task, correlation_id=uuid4())
+        await harness.intake.offer(changed, correlation_id=uuid4())
 
 
 @pytest.mark.asyncio

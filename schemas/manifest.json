@@ -1491,7 +1491,7 @@
     {
       "file": "v1/corpus/corpus-factory-request.schema.json",
       "model": "CorpusFactoryRequest",
-      "sha256": "039092b4d95ccfcfd022ea2dadb652aa79ff66e3c919b4fc2c16c5c258f2e9f0"
+      "sha256": "8b12f84414f73447f89bdaaf7085164ab4a9ec0531a18125c33ec1f4c3c7b5d8"
     },
     {
       "file": "v1/corpus/corpus-factory-result.schema.json",
@@ -3456,7 +3456,7 @@
     {
       "file": "v1/learned/governed-outcome-reference.schema.json",
       "model": "GovernedOutcomeReference",
-      "sha256": "d71efa9f4488396b9f7c8e9c187717274192375310c10110ee461b7e8267ab3c"
+      "sha256": "b58e2358e00acdcba00571ee26fbe3068a869929823e7cce97c2bfe8440dae02"
     },
     {
       "file": "v1/learned/label-balance.schema.json",

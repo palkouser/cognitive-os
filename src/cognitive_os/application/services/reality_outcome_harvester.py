@@ -126,6 +126,7 @@ class RealityOutcomeHarvester:
             sensitivity=task.rights.sensitivity.value,
             verifier_status="passed" if payload.hidden_verification_passed else "failed",
             verifier_evidence_hash=payload.hidden_evidence_hash,
+            occurred_at=payload.occurred_at,
         )
         observation = await self._intake.offer(governed, correlation_id=correlation_id)
         return HarvestedOutcome(

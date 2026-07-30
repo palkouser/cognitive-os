@@ -816,6 +816,15 @@ class CorpusExportVerificationSubject(CorpusManifestVerificationSubject):
 
 
 class CorpusFactoryRequest(HashedExperienceContract):
+    """One governed ingest.
+
+    `split_group_key` names the group every item in this request belongs to — a repository
+    group, a generator template, a task family. When it is set the split is a function of
+    that key rather than of each item's lineage, which is what keeps two variants of one task
+    from landing on opposite sides of an evaluation boundary. Left unset, splits stay
+    per-lineage, which is what every source before Sprint 21C3 wants.
+    """
+
     request_id: UUID
     source_type: CorpusSourceType
     source_identity: NonEmptyStr
@@ -825,6 +834,7 @@ class CorpusFactoryRequest(HashedExperienceContract):
     license_identifiers: tuple[NonEmptyStr, ...] = ()
     usage_rights: dict[CorpusUsageRight, bool | None]
     requested_destination: CorpusDestinationType | None = None
+    split_group_key: NonEmptyStr | None = None
     created_at: UtcDatetime
     created_by: NonEmptyStr
 

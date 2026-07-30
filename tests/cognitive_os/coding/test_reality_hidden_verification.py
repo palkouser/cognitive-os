@@ -97,7 +97,7 @@ async def test_runner_mounts_the_bundle_read_only_at_the_fixed_destination(
     workspace.mkdir()
     sandbox = StubSandbox(exit_code=0)
     runner = HiddenVerificationRunner(
-        sandbox=sandbox,  # type: ignore[arg-type]
+        sandbox=sandbox,
         limits=SANDBOX_LIMITS,
         image_digest="sha256:fixture",
     )
@@ -123,7 +123,7 @@ async def test_a_tampered_bundle_is_unverifiable_before_anything_runs(tmp_path: 
     (tmp_path / "control" / "test_hidden.py").write_text("def test_hidden():\n    assert True\n")
     sandbox = StubSandbox()
     runner = HiddenVerificationRunner(
-        sandbox=sandbox,  # type: ignore[arg-type]
+        sandbox=sandbox,
         limits=SANDBOX_LIMITS,
         image_digest="sha256:fixture",
     )
@@ -146,7 +146,7 @@ async def test_a_missing_bundle_is_unverifiable_rather_than_failed(tmp_path: Pat
         item.unlink()
     (tmp_path / "control").rmdir()
     runner = HiddenVerificationRunner(
-        sandbox=StubSandbox(),  # type: ignore[arg-type]
+        sandbox=StubSandbox(),
         limits=SANDBOX_LIMITS,
         image_digest="sha256:fixture",
     )

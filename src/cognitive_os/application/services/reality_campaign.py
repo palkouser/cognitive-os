@@ -157,6 +157,30 @@ class RealityCampaignLedger:
         _require_consistent_with(manifest, references)
         return tuple(references), frozenset(keys)
 
+    async def completed_by_identity(
+        self, task_run_ids: Iterable[UUID]
+    ) -> dict[str, RealityOutcomeReference]:
+        """Recorded outcomes on the given streams, keyed by the run identity that produced them.
+
+        `recorded_runs` needs a manifest because it verifies evidence against a plan. A
+        campaign that is about to *execute* does not need that check yet — it needs to know
+        which run identities already have an outcome, so it can skip them instead of paying
+        for the containers again. Runs recorded without an identity key are not returned:
+        they belong to no campaign, so no campaign may skip work on their account.
+        """
+        completed: dict[str, RealityOutcomeReference] = {}
+        for task_run_id in task_run_ids:
+            for stored in await self._store.read_stream(task_run_id):
+                if stored.envelope.event_type != CodingOutcomeRecorded.event_type:
+                    continue
+                payload = CodingOutcomeRecorded.model_validate(stored.envelope.payload)
+                if payload.run_identity_key is None:
+                    continue
+                completed[payload.run_identity_key] = _reference_from(
+                    payload, stored.envelope.event_id
+                )
+        return completed
+
     async def plan_resume(
         self, manifest: RealityCampaignManifest, *, task_run_ids: Iterable[UUID]
     ) -> ResumePlan:

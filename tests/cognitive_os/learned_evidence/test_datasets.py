@@ -79,7 +79,7 @@ async def builder() -> AsyncIterator[tuple[LearnedDatasetBuilder, LearnedObserva
     try:
         yield (
             LearnedDatasetBuilder(repository, artifacts, clock=lambda: fx.FIXTURE_NOW),
-            LearnedObservationIntake(service, clock=lambda: fx.FIXTURE_NOW),
+            LearnedObservationIntake(service),
         )
     finally:
         await engine.dispose()
@@ -98,6 +98,7 @@ def reference(index: int, **overrides: object) -> GovernedOutcomeReference:
         "sensitivity": "internal",
         "verifier_status": "passed",
         "verifier_evidence_hash": "b" * 64,
+        "occurred_at": fx.FIXTURE_NOW,
     }
     fields.update(overrides)
     return GovernedOutcomeReference(**fields)  # type: ignore[arg-type]

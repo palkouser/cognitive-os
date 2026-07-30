@@ -377,6 +377,7 @@ def outcome_reference(defect: str) -> GovernedOutcomeReference:
         sensitivity="probably-fine" if defect == "unknown_sensitivity" else "internal",
         verifier_status="passed",
         verifier_evidence_hash=None if defect == "missing_verifier_evidence" else "b" * 64,
+        occurred_at=FIXTURE_TIME,
     )
 
 
@@ -392,7 +393,7 @@ async def build_dataset_pair(variation: str) -> tuple[Any, Any, bool]:
 
     repository = InMemoryLearnedEvidenceRepository()
     service = LearnedEvidenceService(repository, clock=lambda: FIXTURE_TIME)
-    intake = LearnedObservationIntake(service, clock=lambda: FIXTURE_TIME)
+    intake = LearnedObservationIntake(service)
     correlation = uuid5(NAMESPACE, "correlation")
     provenance = (
         ProvenanceClass.REAL_GOVERNED_RUN
@@ -412,6 +413,7 @@ async def build_dataset_pair(variation: str) -> tuple[Any, Any, bool]:
                 sensitivity="internal",
                 verifier_status="passed",
                 verifier_evidence_hash="b" * 64,
+                occurred_at=FIXTURE_TIME,
             ),
             correlation_id=correlation,
         )
@@ -442,6 +444,7 @@ async def build_dataset_pair(variation: str) -> tuple[Any, Any, bool]:
                 sensitivity="internal",
                 verifier_status="passed",
                 verifier_evidence_hash="b" * 64,
+                occurred_at=FIXTURE_TIME,
             ),
             correlation_id=correlation,
         )

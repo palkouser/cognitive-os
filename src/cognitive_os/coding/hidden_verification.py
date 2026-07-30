@@ -13,7 +13,7 @@ could forget:
 * the hidden run does **not** go through the tool plane. `SandboxDevelopmentTool` descriptors
   are `provider_visible=True`, so routing the control mount through them would put a
   provider-visible tool one argument away from the answer key. This module talks to
-  `DockerSandbox` directly and exposes no descriptor at all;
+  the sandbox port directly and exposes no descriptor at all;
 * the pytest command is a module constant. Nothing a candidate, a provider or a caller
   supplies reaches the argument vector, so there is no "run only the tests that pass" input.
 
@@ -33,12 +33,12 @@ from uuid import UUID, uuid4
 
 from pydantic import Field, field_validator
 
+from cognitive_os.application.ports.sandbox import SandboxPort
 from cognitive_os.domain.common import JsonValue, NonEmptyStr, Sha256Hex, UtcDatetime, utc_now
 from cognitive_os.domain.experience import HashedExperienceContract
 from cognitive_os.domain.sandbox import SandboxLimits, SandboxRequest, SandboxVerificationInput
 from cognitive_os.providers.workspace_snapshot import snapshot_workspace
 from cognitive_os.tools.errors import SandboxExecutionError
-from cognitive_os.tools.sandbox.lifecycle import DockerSandbox
 
 #: The criterion identity every C3 run is measured against.
 HIDDEN_PYTEST_VERIFIER_ID = "coding.hidden_pytest"
@@ -134,7 +134,7 @@ class HiddenVerificationEvidence(HashedExperienceContract):
 class HiddenVerificationRunner:
     """Runs the fixed hidden pytest command against one workspace and one control bundle."""
 
-    sandbox: DockerSandbox
+    sandbox: SandboxPort
     limits: SandboxLimits
     image_digest: str
 

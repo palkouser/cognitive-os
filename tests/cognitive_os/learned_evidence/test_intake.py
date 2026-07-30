@@ -53,6 +53,7 @@ def reference(**overrides: object) -> GovernedOutcomeReference:
         "sensitivity": "internal",
         "verifier_status": "passed",
         "verifier_evidence_hash": "b" * 64,
+        "occurred_at": fx.FIXTURE_NOW,
     }
     fields.update(overrides)
     return GovernedOutcomeReference(**fields)  # type: ignore[arg-type]
@@ -65,7 +66,7 @@ def make_intake() -> tuple[LearnedObservationIntake, InMemoryLearnedEvidenceRepo
         events=LearnedEventService(MemoryEventStore()),
         clock=lambda: fx.FIXTURE_NOW,
     )
-    return LearnedObservationIntake(service, clock=lambda: fx.FIXTURE_NOW), repository
+    return LearnedObservationIntake(service), repository
 
 
 class TestASourceMustBeTraceable:
@@ -80,6 +81,7 @@ class TestASourceMustBeTraceable:
                 attribution=ObservationAttribution.DIRECT,
                 usage_rights_verified=True,
                 sensitivity="internal",
+                occurred_at=fx.FIXTURE_NOW,
             )
 
     def test_identity_ignores_content(self) -> None:

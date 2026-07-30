@@ -11,8 +11,10 @@ Three properties make this safe to run repeatedly against live surfaces:
 * it reads. Source records are resolved by identity and hash, never modified and never
   copied — the observation stores a reference, so a sensitive body is not duplicated
   into the learning plane;
-* it is deterministic. The same outcome yields the same observation ID and the same
-  receipt, so intake can be re-run after a crash without producing a second record;
+* it is deterministic. Every field of the observation, `recorded_at` included, is a
+  function of the reference — no clock is read here — so the same outcome yields the same
+  observation ID *and the same content hash*, and intake can be re-run after a crash
+  without producing a second record or an idempotency conflict;
 * it fails closed. The same source identity presenting *different* content is refused
   rather than accepted as an update, because an outcome that changed after the fact is
   either a different outcome or a corrupted one, and both need a human.
@@ -22,11 +24,8 @@ See ADR 0086.
 
 from __future__ import annotations
 
-from collections.abc import Callable
-from datetime import datetime
 from uuid import UUID, uuid5
 
-from cognitive_os.domain.common import utc_now
 from cognitive_os.domain.learned import ProvenanceClass
 from cognitive_os.domain.learned_evidence import (
     GovernedOutcomeReference,
@@ -137,12 +136,10 @@ class LearnedObservationIntake:
         *,
         actor: str = "learned-intake",
         authority: str = "system",
-        clock: Callable[[], datetime] = utc_now,
     ) -> None:
         self._service = service
         self._actor = actor
         self._authority = authority
-        self._clock = clock
 
     async def offer(
         self, reference: GovernedOutcomeReference, *, correlation_id: UUID
@@ -174,7 +171,7 @@ class LearnedObservationIntake:
             decision_reason=f"{code.value}: {reason}",
             evaluation_eligible=accepted,
             idempotency_key=idempotency_key_for(reference),
-            recorded_at=self._clock(),
+            recorded_at=reference.occurred_at,
         )
         return await self._service.record_observation(
             observation,
