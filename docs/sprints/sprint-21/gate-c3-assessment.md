@@ -13,9 +13,12 @@ not a pass; it is recorded as open with the caveat stated.
 
 | | Count |
 | --- | --- |
-| Conditions passed | 15 |
-| Conditions open | 1 (condition 16 — the release itself) |
+| Conditions passed | 16 |
+| Conditions open | 0 |
 | Conditions failed | 0 |
+
+**Gate C3: pass.** Conditions 1–15 are evidenced in this document; condition 16 closes on the
+verified tag annotation, as Gate C1's and Gate C2's final conditions did.
 
 **Gate L2 remains closed.** Nothing in this sprint trained or activated a learned component.
 
@@ -195,13 +198,21 @@ backup, a test-restore and a restart. Remote CI: 29 of 29.
 The backup path was exercised in anger, not only as a drill: W6-F2 erased the evidence store
 twice and both wipes were recovered in full from it.
 
-### 16. Protected merge, post-merge CI, annotated tag, remote verification, report, gate assessment, D1 handoff — **OPEN**
+### 16. Protected merge, post-merge CI, annotated tag, remote verification, report, gate assessment, D1 handoff — **PASS**
 
-Not a failure — not yet done. The PR is open and in draft with 29 of 29 checks green on
-`0bd490b`; the report, this assessment and the D1 handoff are written; the merge, the
-post-merge `main` CI and the `sprint-21c3-reality-baseline` tag remain.
+PR #215 squash-merged with 29 of 29 checks green and no protection control weakened: 27
+required contexts, strict checks, `enforce_admins` on, force pushes and deletions refused,
+conversation resolution required, and no review fabricated to compensate for the disabled
+review requirement. Remote `main` is `05809446c726444146d85aad22808e10ce87ca3e`; post-merge
+run `30571166301` succeeded on that exact commit, 29 of 29 jobs. One annotated tag,
+`sprint-21c3-reality-baseline`, object `497f959bc55989541016a61bd9034e12523b8573`, peels to
+that same commit and was pushed once.
 
-This row is updated when S21C3-073 completes, and not before.
+The full release handles live in the tag annotation rather than in this document, following
+Gate C1 and Gate C2: a gate record that had to be amended with its own release handles would
+need a second release commit after the tag it describes.
+
+*Evidence:* `git cat-file tag sprint-21c3-reality-baseline`; PR #215; run `30571166301`.
 
 ## Limitations that remain explicit
 
