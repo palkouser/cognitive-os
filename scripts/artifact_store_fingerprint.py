@@ -13,21 +13,13 @@ cheap read-only one. ``scripts/verify_artifact_store.sh`` is the content check.
 """
 
 import argparse
-import hashlib
 import json
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-def fingerprint(root: Path) -> tuple[str, int]:
-    """Return the path-and-size fingerprint of ``root`` and the number of files counted."""
-    rows = sorted(
-        (path.relative_to(root).as_posix(), path.stat().st_size)
-        for path in root.rglob("*")
-        if path.is_file() and not path.is_symlink()
-    )
-    body = "\n".join(f"{name} {size}" for name, size in rows)
-    return hashlib.sha256(body.encode("utf-8")).hexdigest(), len(rows)
+from cognitive_os.coding.reality_integrity import fingerprint
 
 
 def main() -> int:

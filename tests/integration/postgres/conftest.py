@@ -33,9 +33,27 @@ async def engines(database_urls) -> AsyncIterator[tuple[object, object]]:
     app = create_postgres_engine(database_urls[0], pool_size=2, max_overflow=2)
     admin = create_postgres_engine(database_urls[1], pool_size=2, max_overflow=2)
     async with admin.connect() as connection:
-        database_name = await connection.scalar(text("SELECT current_database()"))
-        if not str(database_name).endswith("_test"):
+        database_name = str(await connection.scalar(text("SELECT current_database()")))
+        if not database_name.endswith("_test"):
             pytest.fail(f"refusing integration tests against database: {database_name}")
+        # W6-F2. The suffix guard is not enough: this fixture TRUNCATEs the whole
+        # `cognitive_os` schema, and Sprint 21C3's *evidence* store is also named `..._test`.
+        # Pointing the release matrix at it erased a campaign. So the database has to be
+        # nominated for erasure by name, in the environment, by whoever meant it — "ends with
+        # _test" is a naming convention, and this fixture needs consent.
+        nominated = os.environ.get("COGOS_TRUNCATABLE_DATABASE")
+        if nominated is None:
+            # Nobody nominated a database, so nobody asked for this. Skipping with a reason,
+            # like every other opt-in integration test here, keeps a whole-repository run from
+            # erasing a store it was never pointed at on purpose.
+            pytest.skip("no database is nominated by COGOS_TRUNCATABLE_DATABASE")
+        if nominated != database_name:
+            # Nominated one database and connected to another. That is a misconfiguration and
+            # it must be loud: the next thing this fixture does is TRUNCATE.
+            pytest.fail(
+                f"refusing to TRUNCATE {database_name}: COGOS_TRUNCATABLE_DATABASE names "
+                f"{nominated}"
+            )
     async with admin.begin() as connection:
         await connection.execute(
             text(

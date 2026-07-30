@@ -1,0 +1,146 @@
+{
+  "commands": [
+    {
+      "exit_code": 0,
+      "last_line": "All checks passed!",
+      "name": "ruff_check",
+      "seconds": 0.03,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "933 files already formatted",
+      "name": "ruff_format",
+      "seconds": 0.03,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "Success: no issues found in 580 source files",
+      "name": "mypy",
+      "seconds": 0.85,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "",
+      "name": "bandit",
+      "seconds": 3.89,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "Contract schema check passed.",
+      "name": "schema_drift",
+      "seconds": 1.76,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "Repository language check passed.",
+      "name": "repository_language",
+      "seconds": 0.02,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "2107 passed, 4 skipped in 131.28s (0:02:11)",
+      "name": "unit_suite",
+      "seconds": 132.64,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "65 passed in 2.59s",
+      "name": "contract_suite",
+      "seconds": 3.16,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "2293 passed, 75 skipped in 142.18s (0:02:22)",
+      "name": "full_suite",
+      "seconds": 143.82,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "67 passed in 199.85s (0:03:19)",
+      "name": "coding_docker_slice",
+      "seconds": 200.26,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "41 passed in 8.70s",
+      "name": "postgres_integration",
+      "seconds": 10.0,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "}",
+      "name": "reality_inputs_validate",
+      "seconds": 0.46,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "}",
+      "name": "reality_inputs_stats",
+      "seconds": 0.65,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "}",
+      "name": "reality_inputs_harvest",
+      "seconds": 0.62,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "}",
+      "name": "reality_inputs_verify",
+      "seconds": 1.19,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "Artifact filesystem verification passed.",
+      "name": "artifact_store_content",
+      "seconds": 0.04,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf  5 files  /home/palkouser/projekt/cognitive-os-data/artifacts",
+      "name": "development_pair_fingerprint",
+      "seconds": 0.39,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "0015_create_provider_output_governance",
+      "name": "migration_head",
+      "seconds": 0.04,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "Editable import OK: /home/palkouser/projekt/cognitive-os/src/cognitive_os/__init__.py",
+      "name": "editable_install",
+      "seconds": 1.09,
+      "status": "passed"
+    }
+  ],
+  "database": "cognitive_os_s21c3_test",
+  "failed": [],
+  "item": "S21C3-065",
+  "migration_head": "0015_create_provider_output_governance",
+  "passed": 19,
+  "recorded_at": "2026-07-30T18:10:23.728177+00:00",
+  "skipped": {},
+  "sprint": "21C3",
+  "wave": "W6"
+}

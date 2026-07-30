@@ -391,7 +391,13 @@ async def _compile_trajectories(
                     plan,
                     task=task.task.manifest,
                     artifacts=artifacts,
-                    created_at=utc_now(),
+                    # W6-F1: the campaign epoch, not the clock. `ExperienceCompilerService`
+                    # verifies a persisted manifest by recompiling the request and comparing
+                    # for exact equality, and `created_at` is the manifest's only field that
+                    # is not derived from the task and its outcomes. Reading a clock here made
+                    # every trajectory unverifiable one second after it was written — the same
+                    # defect as W1-F1 and W3-F2, in the third plane to inherit it.
+                    created_at=GENERATION_EPOCH,
                 )
                 result = await ExperienceCompilerService(
                     ExperienceCompiler(sources, profiles), repository
