@@ -216,6 +216,11 @@ public content and forbids it for internal or restricted material, and the fixtu
 public, synthetic and Apache-2.0. Data collection stayed denied, spend stayed at zero, and
 the tracked example configuration keeps both strict defaults.
 
+> **Superseded by [ADR 0088](../../adr/0088-open-development-data-policy.md) (Sprint 21C3).**
+> The per-fixture exception is gone: the relaxed policy is now the tracked default for
+> open-development data, and data collection is permitted for it. Spend still stays at zero,
+> and internal or restricted material still requires the strict values.
+
 ### 2.14 Protected merge, exact-head post-merge CI, annotated tag, remote verification — **OPEN**
 
 The release sequence has not run. PR #214 has all 28 required checks green and

@@ -166,6 +166,12 @@ public synthetic fixture only. No free endpoint offers ZDR. Internal or restrict
 must keep the strict default and accept that this means paying for an endpoint that honours
 it. The tracked example configuration is unchanged.
 
+> **Superseded by [ADR 0088](../../adr/0088-open-development-data-policy.md) (Sprint 21C3).**
+> The per-fixture exception described above is no longer how this works. `require_zero_data_
+> retention: false` and `allow_data_collection: true` are now the tracked defaults for
+> open-development data, so the last sentence of the paragraph above is history rather than
+> current configuration. The rule for internal and restricted material is unchanged.
+
 ## 7. Gate status
 
 **Gate C2: conditional pass.** Conditions 1–13 pass on recorded evidence; condition 14 — the
