@@ -54,10 +54,24 @@ typed unavailability it is.
 
 ## Data policy
 
-`require_zero_data_retention: true` and `allow_data_collection: false` are the defaults, and
-they are sent to OpenRouter as provider preferences on every request. Relaxing either is an
-explicit operator decision recorded in the configuration file, and neither may be relaxed for
-`internal` or `restricted` content.
+`require_zero_data_retention: false` and `allow_data_collection: true` are the defaults, and
+they are sent to OpenRouter as provider preferences on every request.
+
+These defaults follow ADR 0088, which classifies this project's development data as `public`:
+task text, public source and generated diffs. No free OpenRouter endpoint offers zero data
+retention, so demanding it bought no confidentiality and refused every free route — the
+strict setting made the honest configuration the one an operator had to override, which is
+the wrong way round.
+
+Set both back to the strict values — `require_zero_data_retention: true` and
+`allow_data_collection: false` — for anything classified `internal` or `restricted`. ADR 0087
+still forbids sending such content under a relaxed policy whatever the configuration file
+says.
+
+What did **not** change: HTTPS-only base URLs, the key source (`OPENROUTER_API_KEY` and
+nothing else), free-only routing, `maximum_spend_usd: 0.0`, and one attempt per task.
+Credentials and authorization values are excluded from provider requests by the prompt
+boundary, not by these two flags, in either configuration.
 
 ## CLI safety flags
 

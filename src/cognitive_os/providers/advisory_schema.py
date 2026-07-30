@@ -82,3 +82,18 @@ def advisory_schema_json() -> str:
     schema on the wire beats one per adapter.
     """
     return json.dumps(STRICT_ADVISORY_JSON_SCHEMA, sort_keys=True, separators=(",", ":"))
+
+
+def requested_schema_json(response_schema: dict[str, Any] | None) -> str | None:
+    """The caller's own structured shape, in the strict subset, or `None` for the default.
+
+    A CLI adapter that ignored `ModelProviderRequest.response_schema` and always sent the
+    advisory schema would constrain the reply to a contract the caller never asked for, and
+    the caller would read the mismatch as a malformed answer rather than as the wrong shape.
+    `_strict` is applied here too: a caller's schema is no more likely than ours to list
+    every defaulted field in `required`, and `codex exec --output-schema` refuses the turn
+    when it does not.
+    """
+    if not response_schema:
+        return None
+    return json.dumps(_strict(deepcopy(response_schema)), sort_keys=True, separators=(",", ":"))

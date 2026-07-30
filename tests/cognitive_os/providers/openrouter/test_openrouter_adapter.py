@@ -111,12 +111,13 @@ class TestNoNewDependencyAndNoRawRetention:
 
 class TestTheDataPolicyIsWhatIsSent:
     @pytest.mark.asyncio
-    async def test_every_request_denies_data_collection_and_asks_for_zero_retention(self) -> None:
+    async def test_the_default_request_carries_the_open_development_policy(self) -> None:
+        """ADR 0088: public material, so no zero-retention demand and collection allowed."""
         provider, transport = build()
         await provider.complete(a_request())
         preferences = transport.completion_payloads[0]["extra_body"]["provider"]
-        assert preferences["data_collection"] == "deny"
-        assert preferences["zdr"] is True
+        assert preferences["data_collection"] == "allow"
+        assert "zdr" not in preferences
 
     @pytest.mark.asyncio
     async def test_a_free_only_policy_sends_a_server_side_price_cap(self) -> None:
@@ -129,13 +130,13 @@ class TestTheDataPolicyIsWhatIsSent:
         }
 
     @pytest.mark.asyncio
-    async def test_relaxing_the_policy_is_visible_in_the_payload(self) -> None:
-        """A relaxed public-smoke policy must be legible in what was sent, not only in config."""
-        provider, transport = build(require_zero_data_retention=False, allow_data_collection=True)
+    async def test_the_strict_policy_is_visible_in_the_payload_when_configured(self) -> None:
+        """Non-public material must be legible in what was sent, not only in the config file."""
+        provider, transport = build(require_zero_data_retention=True, allow_data_collection=False)
         await provider.complete(a_request())
         preferences = transport.completion_payloads[0]["extra_body"]["provider"]
-        assert preferences["data_collection"] == "allow"
-        assert "zdr" not in preferences
+        assert preferences["data_collection"] == "deny"
+        assert preferences["zdr"] is True
 
     @pytest.mark.asyncio
     async def test_the_output_cap_is_applied_even_when_the_request_asks_for_more(self) -> None:
@@ -353,7 +354,7 @@ class TestThePayloadIsAcceptableToTheInstalledClient:
         await provider.complete(a_request())
         payload = transport.completion_payloads[0]
         assert "provider" not in payload
-        assert payload["extra_body"]["provider"]["data_collection"] == "deny"
+        assert payload["extra_body"]["provider"]["data_collection"] == "allow"
 
 
 class TestTheLiveCatalogShapes:

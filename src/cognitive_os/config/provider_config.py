@@ -243,10 +243,19 @@ class OpenRouterProviderConfig(_BaseProviderConfig):
     maximum_output_tokens: int = Field(default=1024, ge=1, le=32768)
     maximum_context_tokens: int = Field(default=32768, ge=1, le=131072)
     catalog_cache_seconds: float = Field(default=300, ge=0, le=3600)
-    #: Provider-side data policy. Both default to the strict setting; a relaxed public-smoke
-    #: policy is an explicit operator decision recorded in the configuration file.
-    require_zero_data_retention: bool = True
-    allow_data_collection: bool = False
+    #: Provider-side data policy, defaulted for this project's material rather than for a
+    #: hypothetical one. ADR 0088 classifies open-development data as `public`: task text,
+    #: public source and generated diffs. Demanding zero data retention for material that is
+    #: already public bought no confidentiality and cost every free route, because free
+    #: OpenRouter endpoints do not offer ZDR — so the strict default made the honest
+    #: configuration the one an operator had to override.
+    #:
+    #: The relaxation is about subject matter only. Credentials, keys and authorization
+    #: values are excluded from provider requests by the prompt boundary, not by these
+    #: flags, and that boundary is unchanged. An operator handling non-public material sets
+    #: these back to the strict values.
+    require_zero_data_retention: bool = False
+    allow_data_collection: bool = True
     application_referer: NonEmptyStr | None = None
     application_title: NonEmptyStr | None = None
 

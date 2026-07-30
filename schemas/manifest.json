@@ -1241,7 +1241,7 @@
     {
       "file": "v1/config/provider-configuration.schema.json",
       "model": "ProviderConfiguration",
-      "sha256": "f101f2dd264223e58102567e817467988ae881113812c84964823b35414e2f84"
+      "sha256": "d967dfae76b8b7981f27c7066ee50f66abedec76ec2490ff16dcb8741e883ed7"
     },
     {
       "file": "v1/config/routing-configuration.schema.json",

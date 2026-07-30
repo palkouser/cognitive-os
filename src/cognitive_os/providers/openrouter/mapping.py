@@ -25,9 +25,11 @@ SAFE_ROUTING_FIELDS = ("id", "model", "provider")
 def data_policy_payload(config: OpenRouterProviderConfig) -> dict[str, JsonValue]:
     """The provider-selection preferences sent with every completion.
 
-    `data_collection: "deny"` and `zdr: True` are the strict settings, and they are the
-    defaults. Relaxing either is an explicit configuration decision, and ADR 0087 forbids
-    applying a relaxed policy to internal or restricted content whatever the file says.
+    `data_collection: "deny"` and `zdr: True` are the strict settings. Under ADR 0088 they
+    are no longer the defaults for this project, whose material is classified `public`;
+    they remain what an operator sets for anything that is not. ADR 0087 still forbids
+    applying a relaxed policy to internal or restricted content whatever the file says, and
+    credentials never reach a provider request in either configuration.
     """
     preferences: dict[str, JsonValue] = {
         "data_collection": "allow" if config.allow_data_collection else "deny",

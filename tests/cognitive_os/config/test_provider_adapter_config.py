@@ -141,15 +141,32 @@ class TestDefaultsAreTheRefusingOnes:
         with pytest.raises(ValidationError):
             ProviderRetentionDefaults(sensitivity=MemorySensitivity.CONFIDENTIAL)
 
-    def test_openrouter_defaults_to_zero_spend_and_the_strict_data_policy(self) -> None:
+    def test_openrouter_defaults_to_zero_spend_and_one_attempt(self) -> None:
+        """The cost and retry boundaries are the ones ADR 0088 did not touch."""
         config = OpenRouterProviderConfig()
         assert config.maximum_spend_usd == 0.0
         assert config.require_free_model is True
-        assert config.require_zero_data_retention is True
-        assert config.allow_data_collection is False
         assert config.maximum_attempts == 1
         assert config.default_route == "openrouter/free"
         assert config.pinned_free_model is None
+
+    def test_openrouter_defaults_to_the_open_development_data_policy(self) -> None:
+        """ADR 0088: this project's material is public, so ZDR is not the default.
+
+        Asserted separately from the spend defaults on purpose. These two flags are the ones
+        the ADR moved; the ones above are the ones it deliberately left alone, and a single
+        test would let a future edit relax spend under cover of the data-policy change.
+        """
+        config = OpenRouterProviderConfig()
+        assert config.require_zero_data_retention is False
+        assert config.allow_data_collection is True
+
+    def test_the_strict_data_policy_is_still_available_for_non_public_material(self) -> None:
+        strict = OpenRouterProviderConfig(
+            require_zero_data_retention=True, allow_data_collection=False
+        )
+        assert strict.require_zero_data_retention is True
+        assert strict.allow_data_collection is False
 
     def test_the_cli_process_limits_default_below_the_hard_maxima(self) -> None:
         limits = CliProcessLimits()

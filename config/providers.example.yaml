@@ -41,10 +41,14 @@ providers:
     maximum_output_tokens: 1024
     maximum_context_tokens: 32768
     catalog_cache_seconds: 300
-    # Strict provider-side data policy. Relaxing either is an explicit operator decision
-    # and may never be applied to internal or restricted content.
-    require_zero_data_retention: true
-    allow_data_collection: false
+    # Provider-side data policy for open-development material, per ADR 0088. This project's
+    # task text, public source and generated diffs are classified `public`, and free
+    # OpenRouter routes do not offer zero data retention — so requiring it bought no
+    # confidentiality and refused every free model. Set both back to the strict values
+    # (true / false) for anything internal or restricted; credentials are excluded from
+    # provider requests by the prompt boundary either way.
+    require_zero_data_retention: false
+    allow_data_collection: true
     live_smoke_enabled: false
     retention:
       retention_mode: none

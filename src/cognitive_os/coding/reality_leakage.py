@@ -94,10 +94,19 @@ def control_tokens(task: RealityTaskManifest, item: TaskTemplate) -> frozenset[s
     # A control path is only secret if it is *only* in the control bundle. Both trees carry a
     # `conftest.py`, and the workspace's is a file the provider is meant to see, so treating
     # the name as a control token would report ninety leaks that are one filename collision.
+    #
+    # The same rule applies to test *names*. A hidden suite reuses obvious names — a stricter
+    # `test_exact_multiple` next to the published one — and the published name is on the
+    # provider's screen by design. Treating it as secret reported one leak per task against
+    # prompts that carried nothing but material the provider is meant to see, and a scanner
+    # with thirty-two false positives is a scanner nobody reads.
+    visible_names = {
+        name for text in item.visible_files.values() for name in _test_function_names(text)
+    }
     for path, text in item.control_files.items():
         if path not in item.visible_files:
             tokens.add(path)
-        tokens.update(_test_function_names(text))
+        tokens.update(_test_function_names(text) - visible_names)
     for strategy in (
         RealityCandidateStrategy.CORRECT_NARROW,
         RealityCandidateStrategy.CORRECT_ROBUST,
@@ -302,18 +311,23 @@ def _test_function_names(text: str) -> set[str]:
 
 
 def _significant_lines(source: str, item: TaskTemplate) -> set[str]:
-    """Lines unique to a correction: present in the answer and absent from the baseline.
+    """Lines unique to a correction: present in the answer and absent from the visible tree.
 
-    Comparing against the baseline is what keeps the signature lines and the docstring — which
-    a provider is *supposed* to see — out of the control-token set.
+    Comparing against the visible material is what keeps the signature lines and the
+    docstring — which a provider is *supposed* to see — out of the control-token set.
+
+    The comparison is substring, not line equality, because the scan that consumes these
+    tokens is itself a substring search. A correction line is often a prefix of the baseline
+    line it replaces — `return min(max(value, low), high)` against
+    `return min(max(value, low), high) if low < high else value` — and line equality called
+    that a secret while the longer line sat in the provider's prompt. A token whose
+    characters are already on the screen leaks nothing.
     """
-    baseline: set[str] = set()
-    for text in item.visible_files.values():
-        baseline.update(line.strip() for line in text.splitlines())
+    visible = "\n".join(item.visible_files.values())
     return {
-        line.strip()
+        stripped
         for line in source.splitlines()
-        if line.strip() and line.strip() not in baseline
+        if (stripped := line.strip()) and stripped not in visible
     }
 
 
