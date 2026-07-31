@@ -2,15 +2,19 @@
 
 Status: active execution plan
 
-Revision: 4
+Revision: 5
 
-Assessment date: 2026-07-29
+Assessment date: 2026-07-30
 
-Current protected baseline: `sprint-21c2-provider-baseline`
+Current protected predecessor release: `sprint-21c3-reality-baseline`
 
-Current protected baseline commit: `94abe263c8f26f36c8f8c3bc7b86859c14c1f291`
+Protected predecessor commit: `05809446c726444146d85aad22808e10ce87ca3e`
 
-Next execution sprint: Sprint 21C3 — Reality-Grade Learning Inputs
+Current planning head: `origin/main` at
+`1856b8539b690528116816c105d82810e67f00d9`
+
+Next execution sprint: Sprint 21D1 — Pre-registered Learning Surface and Experience
+Memory Graph Baseline
 
 Primary scope: finish Sprint 21 correctly, execute Sprint 22, and define the evidence
 required before Sprint 23 alpha
@@ -24,6 +28,7 @@ Execution documents:
 - [Sprint 21C1 technical backlog](../sprint-21/sprint-21c1-technical-backlog.md)
 - [Sprint 21C2 technical backlog](../sprint-21/sprint-21c2-technical-backlog.md)
 - [Sprint 21C3 technical backlog](../sprint-21/sprint-21c3-technical-backlog.md)
+- [Sprint 21D1 technical backlog](../sprint-21/sprint-21d1-technical-backlog.md)
 - [Sprint 21 Gate L assessment](../sprint-21/gate-l-assessment.md)
 - [Sprint 21 substrate report](../sprint-21/report.md)
 - [Sprint 21 technical plan](../sprint-21/technical-plan.md)
@@ -98,40 +103,41 @@ for the first learning gate.
 
 | Item | Verified state | Consequence |
 |---|---|---|
-| `main` and `origin/main` | `94abe263c8f26f36c8f8c3bc7b86859c14c1f291` | Current protected baseline |
-| Baseline tag | Annotated `sprint-21c2-provider-baseline`, tag object `23b3304890f4a90112514c633c7e2b768f7eeeff`, peeled to the same commit | Sprint 21C3 has a protected parent |
-| Sprint 21C2 pull request | `#214`, merged | Provider-boundary implementation and evidence are on `main` |
-| Latest `main` CI | Run `30434494612`, 28 of 28 required checks successful on the baseline commit | Exact-head release evidence exists |
-| Alembic head | `0015_create_provider_output_governance.py` | C3 uses existing stores by default; `0016` requires measured need |
-| Next branch | `feature/sprint-21c3-reality-inputs` | Create only from the verified tag |
-| Gate state | Gate C2 passed; Gate L2 remains closed | Reality evidence is next; provider connectivity is not learned benefit |
+| Current `origin/main` | `1856b8539b690528116816c105d82810e67f00d9` | Includes the C3 implementation and gate-close PR |
+| C3 release tag | Annotated `sprint-21c3-reality-baseline`, tag object `497f959bc55989541016a61bd9034e12523b8573`, peeled to `05809446c726444146d85aad22808e10ce87ca3e` | Protected D1 predecessor evidence |
+| Sprint 21C3 pull requests | `#215` implementation and `#216` gate-close documentation, merged | C3 behavior and final assessment are on `main` |
+| C3 release CI | Run `30571166301`, 29 of 29 jobs successful on the peeled release commit | Exact implementation-release evidence exists |
+| Latest `main` CI | Run `30572361952`, success on exact current `origin/main` | Gate-close planning head is green |
+| Alembic head | `0015_create_provider_output_governance.py` | D1 uses existing stores by default; `0016` requires measured need |
+| Next branch | `feature/sprint-21d1-learning-surface-emg` | Create from revalidated current `origin/main`, retaining gate-close documentation |
+| Gate state | Gate C3 passed; Gate L2 remains closed | Surface pre-registration and EMG baselining are next |
 
-Sprint 21R, Sprint 21C1, and Sprint 21C2 are released. Sprint 21C3 must revalidate
-the source and remote controls before implementation and must open its draft pull
-request early enough for pull-request CI to exercise the hidden-verifier,
-provider-replay, and local-model boundaries.
+Sprint 21R, Sprint 21C1, Sprint 21C2, and Sprint 21C3 are released. Sprint 21D1
+must revalidate the predecessor tag and current planning head separately, then open
+its draft pull request before bulk graph evidence is produced.
 
-### 3.2 Final Sprint 21C2 verification
+### 3.2 Final Sprint 21C3 verification
 
-The C1 and C2 reports and their annotated tags retain the full commands,
-environments, hashes, and limitations. The latest release evidence includes:
+The C1, C2, and C3 reports and annotated tags retain the full commands, environments,
+hashes, and limitations. The latest release evidence includes:
 
 | Check | Result |
 |---|---:|
-| Required post-merge `main` checks | `28/28` passed |
-| Full local suite | `2028 passed, 12 skipped` |
-| Provider policy benchmark | `35` CI plus `77` seed cases, 100% expected outcomes |
-| Local evidence matrix | `37` commands at expected status |
-| Alembic migration and drift | Passed at head `0015` |
-| Learned store contracts | Shared in-memory/PostgreSQL suite passed unchanged |
-| Provider output governance | Controlled append/revision path passed |
-| Claude Code governed fixture | Correct on every recorded attempt |
-| Codex governed fixture | Correct on every recorded attempt |
-| OpenRouter free governed fixture | `5/22` correct; failures retained |
+| C3 release CI | `29/29` jobs passed on `05809446c726444146d85aad22808e10ce87ca3e` |
+| Current gate-close CI | run `30572361952` succeeded on `1856b8539b690528116816c105d82810e67f00d9` |
+| Full local suite | `2293 passed, 75 skipped` |
+| Local evidence matrix | `19/19` commands passed, zero matrix rows skipped |
+| Unique executed outcomes | `214`: 150 offline coding plus 64 re-executed governed benchmark cases |
+| Correction trajectories | `60` across 30 coding tasks and four strategies |
+| Corpus items | `420`, group-aware, zero split crossing, zero training actions |
+| Learned observations | `896` accepted evaluation-only, `64` quarantined, zero real runs in training |
+| MiniLM retrieval | recall@5 `0.917`, MRR@10 `0.711`, frozen 384-dimensional model |
+| OpenRouter C3 campaign | `0/10` correct; failures retained at the governed boundary |
+| Migration | Remained at `0015`; 32.4% half-precision saving did not meet the 35% trigger |
 
-Sprint 21C3 must preserve these checks and add executable hidden verification,
-full-outcome artifact resolution, real-run harvesting, corpus leakage checks,
-campaign restart/resume, local-model identity, and retrieval evidence.
+Sprint 21D1 must preserve these controls and add surface pre-registration,
+cross-domain graph pairs, edit-path integrity, bounded retrieval, advisory context
+integration, and an evidence-backed FGW decision.
 
 ### 3.3 What the released substrate has completed
 
@@ -159,25 +165,26 @@ agent learning.
 ### 3.4 Critical gaps
 
 1. No learned component is active because of demonstrated downstream benefit.
-2. Durable learned evidence exists, but there are not yet enough honest executable
-   outcomes to select a learning surface.
-3. There are no harvested real-run learning rows in the current Gate L evidence.
-4. The coding pilot compares expected strings and deliberately executes no submitted
-   code. It does not yet prove repair success in a real sandbox.
-5. The coding pilot exposes one applicable skill per case, so it does not provide a
-   genuine learned choice on the governed tie-break surface.
-6. Applying all fixture-provided edits would risk leaking the answer. The current
-   prediction headroom must not be converted into a misleading agent-success claim.
-7. Gate L was refreshed at release and remains an explicit no-go.
-8. Governed teacher-output retention exists, but local production embedding and
-   retrieval evidence are not active.
-9. OpenRouter free is operational but unreliable on the governed C2 fixture
-   (`5/22` correct). It is suitable for bounded diversity, not corpus coverage or a
-   correctness critical path.
-10. The `10^6` capacity envelope, incremental maintenance, consolidation, and
-    restore evidence do not exist.
-11. Temporal semantic and strategy graphs exist, but failed-to-corrected experience
-    graph retrieval and graph edit guidance do not.
+2. The 214 outcomes have not yet been audited into an immutable, leakage-free,
+   actionable learning surface with a strongest deterministic baseline.
+3. No surface has yet proven at least 200 eligible held-out outcomes and 20 decisions
+   a later learned policy could change.
+4. The 60 coding correction manifests preserve their source evidence but cannot be
+   verified by recompilation because a legacy wall clock entered `created_at`; they
+   must not be rewritten.
+5. Failed-to-success experience graphs and verified graph edit paths do not yet
+   exist.
+6. The existing correction pairs cover coding only; D1 needs fresh, exactly
+   recompilable cross-domain pairs before making a robust EMG claim.
+7. The current Context Builder has no explicit Experience Graph source; correction
+   paths cannot yet enter it as bounded advisory candidates.
+8. Simple graph retrieval has not been compared with no-memory, text, exact-signature,
+   and frozen MiniLM baselines on the same unseen-task protocol.
+9. FGW has neither residual-error justification nor dependency/license approval.
+10. OpenRouter free remained unreliable in C3 (`0/10` correct) and is outside the D1
+    critical path.
+11. The `10^6` capacity envelope, incremental maintenance, consolidation, and restore
+    evidence do not exist.
 12. An NVIDIA RTX 5070 Ti is now visible through `nvidia-smi`, but no current gate
     requires it. CPU-first execution remains the default until a measured workload
     justifies and reproduces an accelerator path.
@@ -834,17 +841,21 @@ Acceptance:
 
 Candidate surfaces:
 
-1. correction/experience retrieval for failed coding and domain tasks;
-2. selection among genuinely different repair or strategy candidates;
-3. context-memory ranking where downstream use and outcome are attributable;
-4. provider/model routing by verified success, latency, and cost.
+1. correction ranking over failed-to-corrected trajectories;
+2. retrieval-augmented repair context;
+3. verifier-outcome triage from strictly pre-outcome evidence;
+4. strategy selection among genuinely different candidates.
 
 Tasks:
 
 - audit each surface for label leakage, class balance, actionability, sample size,
-  deterministic headroom, and verifier quality;
+  group structure, attribution, deterministic headroom, and verifier quality;
 - select one primary and one secondary surface before viewing held-out results;
-- publish feature and evaluation manifests.
+- publish feature, label, action, group, baseline, metric, and evaluation manifests;
+- use the 214 unique C3 outcomes rather than counting 960 intake observations as
+  independent examples;
+- create at most 50 deterministic, provider-free evaluation outcomes only when the
+  audited shortfall is between 1 and 50.
 
 Acceptance:
 
@@ -852,27 +863,43 @@ Acceptance:
   that a learned policy can change;
 - the strongest deterministic baseline is explicit;
 - labels measure downstream accepted outcome, not only internal prediction accuracy.
+- a triage prediction may prioritize verification or request repair context but cannot
+  bypass the independent verifier;
+- real governed runs remain evaluation-only.
 
 #### S21D-02 — Experience Memory Graph baseline
 
 Tasks:
 
-- derive bounded action-decision graphs from normalized trajectories;
+- resolve the 60 historical C3 coding correction manifests without rewriting their
+  legacy wall-clock timestamps;
+- execute and exactly recompile 10 fresh logic and 10 fresh mathematics
+  failed/success pairs;
+- derive bounded action-decision graphs through focused coding and domain adapters;
 - pair failed and successful trajectories by task signature without evaluation
   leakage;
-- implement exact/vector and simple graph-edit baselines;
+- implement no-memory, lexical, exact-signature, frozen MiniLM vector, and bounded
+  simple graph-edit baselines;
 - retrieve correction paths as advisory Context Candidates;
-- store derivation, confidence, and algorithm version.
+- store derivation, source hashes, resource policy, confidence, and algorithm version
+  through existing Artifact Store and learned artifact lineage;
+- retain PostgreSQL authority and avoid a graph database or migration by default.
 
 Acceptance:
 
-- at least `50` failed-to-success graph pairs across at least two domains;
+- at least `80` failed-to-success graph pairs across coding, logic, and mathematics;
+- all fresh pairs pass exact Experience Compiler recompilation;
+- all graph edit paths reconstruct the successful graph exactly;
 - malformed, cyclic, oversized, and poisoned graphs fail closed;
-- retrieval is bounded by node, edge, depth, time, and result limits;
+- retrieval is bounded to 64 nodes, 128 edges, depth 32, 250 ms per GED comparison,
+  2 seconds per query, and 10 returned results;
 - evaluation reports unseen tasks separately;
 - graph retrieval is compared with text and vector baselines.
 
 #### S21D-03 — Learner ladder
+
+Execution allocation: Sprint 21D2. Sprint 21D1 freezes its inputs and baselines but
+does not fit a learner.
 
 Tasks:
 
@@ -898,7 +925,8 @@ Tasks:
 - measure residual errors from simple graph retrieval;
 - estimate graph-size distribution and runtime budget;
 - perform dependency and license review;
-- implement a bounded FGW comparison only if the previous evidence justifies it.
+- approve a bounded Sprint 21D2 FGW comparison only if the previous evidence
+  justifies it; do not install an FGW dependency in D1.
 
 Acceptance:
 
@@ -906,9 +934,13 @@ Acceptance:
   budget, and license result;
 - if implemented, FGW must improve the primary graph outcome materially within the
   latency budget;
-- if rejected, no unused dependency remains.
+- if rejected, no unused dependency remains;
+- paper concepts are used clean-room and no CC BY-NC-SA code or assets are copied into
+  the Apache-licensed repository.
 
 #### S21D-05 — Shadow, canary, and activation
+
+Execution allocation: Sprint 21D2. Gate L2 remains closed throughout Sprint 21D1.
 
 Tasks:
 
@@ -1181,6 +1213,12 @@ Every PR in this programme must include, as applicable:
 
 - Experience Memory Graph preprint:
   <https://arxiv.org/abs/2607.13884>
+- Experience Memory Graph preprint license:
+  <https://creativecommons.org/licenses/by-nc-sa/4.0/>
+- NetworkX similarity and graph edit distance:
+  <https://networkx.org/documentation/stable/reference/algorithms/similarity.html>
+- NetworkX bounded graph edit distance:
+  <https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.similarity.graph_edit_distance.html>
 - OpenRouter free models:
   <https://openrouter.ai/models?max_price=0>
 - OpenRouter free-model router:
@@ -1198,25 +1236,32 @@ Every PR in this programme must include, as applicable:
 
 ## 16. Immediate next action
 
-Sprint 21R, Sprint 21C1, and Sprint 21C2 are released. The immediate implementation
-action is **Sprint 21C3 — Reality-Grade Learning Inputs**:
+Sprint 21R, Sprint 21C1, Sprint 21C2, and Sprint 21C3 are released. The immediate
+implementation action is **Sprint 21D1 — Pre-registered Learning Surface and
+Experience Memory Graph Baseline**:
 
-1. verify remote `main` and the peeled `sprint-21c2-provider-baseline` tag at
-   `94abe263c8f26f36c8f8c3bc7b86859c14c1f291`;
+1. verify current `origin/main` at
+   `1856b8539b690528116816c105d82810e67f00d9` and separately verify the peeled
+   `sprint-21c3-reality-baseline` release at
+   `05809446c726444146d85aad22808e10ce87ca3e`;
 2. retain the existing 27 required checks and `enforce_admins`, while recording that a
    second eligible reviewer is still unavailable and does not justify release delay;
 3. keep the inconsistent development Artifact Store pair read-only and isolate every
-   C3 write in a fresh, internally consistent store;
-4. implement 30 rights-clean executable coding tasks, hidden verifier control, and
-   deterministic multi-candidate runs using existing Coding Agent infrastructure;
-5. record at least 200 authoritative outcomes and 50 failed-to-corrected trajectories,
-   with OpenRouter free used only as bounded optional diversity;
-6. make non-ZDR, collection-allowed open-development provider policy the tracked
-   default without a per-call waiver;
-7. pin and benchmark a local CPU embedding model, measure float32 versus halfvec, and
-   add no migration unless evidence requires one;
-8. complete Gate C3 evidence, protected release, and the
-   `sprint-21c3-reality-baseline` tag.
+   D1 write in a fresh, internally consistent store;
+4. audit the four candidate learning surfaces and commit the primary/secondary
+   decision plus feature, label, action, group, baseline, metric, and resource
+   manifests before held-out evaluation;
+5. prove at least 200 unique eligible held-out outcomes and 20 changeable advisory
+   decisions without counting duplicate intake observations;
+6. resolve 60 historical coding pairs without rewriting them and add 20 fresh,
+   exactly recompilable logic/mathematics pairs;
+7. create 80 canonical action-decision graph pairs, verified edit paths, and one
+   artifact-backed EMG root using existing authority;
+8. compare no-memory, lexical, signature, MiniLM, and bounded graph retrieval on the
+   same unseen-task protocol, then record the FGW go/no-go decision;
+9. expose correction paths only as verified advisory Context Candidates;
+10. complete Gate D1 evidence, protected release, and the
+    `sprint-21d1-emg-baseline` tag while keeping Gate L2 closed.
 
 The implementation authority is the
-[Sprint 21C3 Technical Backlog](../sprint-21/sprint-21c3-technical-backlog.md).
+[Sprint 21D1 Technical Backlog](../sprint-21/sprint-21d1-technical-backlog.md).

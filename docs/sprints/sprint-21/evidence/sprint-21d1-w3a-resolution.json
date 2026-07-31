@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "sprint": "21D1",
+  "wave": "W3a",
+  "items": ["S21D1-034"],
+  "recorded_at": "2026-07-31T15:30:00+00:00",
+  "report": "docs/sprints/sprint-21/evidence/sprint-21d1-historical-pairs.json",
+  "report_sha256": "364c9812816be777811bf82e31bd2746316743b15dd10199d483c15171335d76",
+
+  "selector": {
+    "rule": "cognitive_os.experience_compilations whose task_run_id is one of the 150 enumerated execution.task_run_ids in sprint-21c3-w3-campaign.json",
+    "established": "wave W0",
+    "result": "60 rows, 60 distinct compilation identities",
+    "store_total_compilations": 250,
+    "why_a_selector_was_needed": "The released C3 evidence counts the 60 correction manifests but does not enumerate them, and the evidence store holds 250 compilations spanning every wave."
+  },
+
+  "pairing": {
+    "source": "experience_sources.source_revision on the coding_trajectory source of each compilation",
+    "note": "The failed-to-corrected pairing is recorded in the C3 evidence itself, so D1 declares no pairing rule of its own.",
+    "distribution": {"incomplete_a+correct_narrow": 30, "incomplete_b+correct_robust": 30},
+    "compilations_are_on_the_corrected_side": true,
+    "corrected_strategies": {"correct_narrow": 30, "correct_robust": 30}
+  },
+
+  "resolution": {
+    "pairs_resolved": 60,
+    "pairs_unresolved": 0,
+    "source_resolution_rate": "100%",
+    "distinct_tasks": 30,
+    "distinct_groups": 30,
+    "ordered_sources_per_pair": 5,
+    "ordered_source_types": ["acceptance", "coding_trajectory", "controller_event", "task", "verifier"],
+    "every_ordered_source_has_a_hash": true,
+    "failed_side_rejected_by_verifier": "60 of 60",
+    "successful_side_accepted_by_verifier": "60 of 60",
+    "strategy_pairing_mismatches": 0
+  },
+
+  "artifact_resolution": {
+    "distinct_outcome_artifact_ids": 120,
+    "rows_present_in_artifacts": 120,
+    "with_a_resolvable_blob": 120,
+    "declared_versus_stored_content_hash_mismatches": 0
+  },
+
+  "legacy_status": {
+    "legacy_recompilation_unavailable": "true on all 60 pairs",
+    "verification_mode": "source_resolution_only",
+    "reason": "The manifests carry a legacy wall-clock created_at, for example 2026-07-30T06:10:21.675830Z, so recompilation cannot reproduce them byte for byte. Backlog section 0.3 requires this to be marked rather than repaired.",
+    "recorded_per_pair_fields": ["manifest_hash", "request_hash", "content_hash", "analysis_hash", "reconstruction_hash", "source_snapshot_hash", "verifier_bundle_hash", "legacy_created_at"],
+    "timestamps_rewritten": 0,
+    "manifests_rewritten": 0
+  },
+
+  "read_only_proof": {
+    "method": "raw SQL SELECT and file reads only; no application service was used, so no corpus, memory or experience access row was written",
+    "c3_artifact_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21c3",
+    "c3_fingerprint_before": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593",
+    "c3_fingerprint_after": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593",
+    "c3_files": 8503,
+    "development_pair_fingerprint": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf",
+    "development_pair_writes": 0,
+    "d1_artifact_root_files": 0
+  },
+
+  "environment_change": {
+    "package": "z3-solver 4.16.0.0",
+    "why": "src/cognitive_os/verification/factory.py registers the four logic verifiers only when find_spec(\"z3\") succeeds; without it they stay unavailable and the wave W3b logic runs could not be verifier-backed.",
+    "method": "the single locked version installed with --no-deps, not a full uv sync",
+    "why_not_a_full_sync": "uv.lock pins sentence-transformers 5.6.0 while 5.6.1 is installed, and torch is a local +cpu build. A full sync would replace both and perturb the frozen MiniLM stack, which is release-frozen material.",
+    "verifiers_available_after": "57 of 65, including logic.satisfiable, logic.contradiction, logic.implication and logic.equivalence",
+    "verifier_registry_snapshot": "44b01e0c86a993bc01c1d06f28973db76c4383a30da539ff1d8ca3841c0a155c",
+    "regression_check": "466 passed, 2 skipped across tests/cognitive_os/verification, tests/contract/verifiers and tests/cognitive_os/domains"
+  },
+
+  "gate_contribution": {
+    "condition_9": "met for the historical half: 60 of 60 manifests resolve every required event and artifact without mutating legacy bytes",
+    "condition_11": "partially met: 60 of the required 80 pairs are frozen and source-bound. The remaining 20 fresh logic and mathematics pairs are wave W3b."
+  }
+}

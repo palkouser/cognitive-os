@@ -1,0 +1,45 @@
+{
+  "$defs": {
+    "GraphEditOperationKind": {
+      "enum": [
+        "insert_node",
+        "delete_node",
+        "relabel_node",
+        "insert_edge",
+        "delete_edge",
+        "relabel_edge"
+      ],
+      "title": "GraphEditOperationKind",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/experience-graph/graph-edit-operation.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "detail": {
+      "default": "",
+      "maxLength": 2048,
+      "title": "Detail",
+      "type": "string"
+    },
+    "kind": {
+      "$ref": "#/$defs/GraphEditOperationKind"
+    },
+    "target": {
+      "minLength": 1,
+      "title": "Target",
+      "type": "string"
+    }
+  },
+  "required": [
+    "kind",
+    "target"
+  ],
+  "title": "GraphEditOperation",
+  "type": "object"
+}

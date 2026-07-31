@@ -1,0 +1,46 @@
+{
+  "$defs": {
+    "ExperienceGraphEdgeKind": {
+      "enum": [
+        "next",
+        "branches_to",
+        "caused_by",
+        "supports",
+        "contradicts",
+        "corrected_by",
+        "recovers_to"
+      ],
+      "title": "ExperienceGraphEdgeKind",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/experience-graph/experience-graph-edge.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "kind": {
+      "$ref": "#/$defs/ExperienceGraphEdgeKind"
+    },
+    "source_id": {
+      "minLength": 1,
+      "title": "Source Id",
+      "type": "string"
+    },
+    "target_id": {
+      "minLength": 1,
+      "title": "Target Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "source_id",
+    "target_id",
+    "kind"
+  ],
+  "title": "ExperienceGraphEdge",
+  "type": "object"
+}

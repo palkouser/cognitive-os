@@ -1,0 +1,81 @@
+{
+ "schema_version": 1,
+ "sprint": "21D1",
+ "wave": "W6c",
+ "items": [
+  "S21D1-066",
+  "S21D1-067"
+ ],
+ "recorded_at": "2026-08-01T11:20:00+00:00",
+ "s21d1_066_credential_free_lane": {
+  "job": "experience-graph-core in .github/workflows/ci.yml",
+  "jobs_before": 29,
+  "jobs_after": 30,
+  "required_status_contexts": "unchanged at 27. Branch protection was not touched; the new lane runs as an additional check.",
+  "extras": "uv sync --locked --all-groups --extra semantic-graph --extra verification-logic --extra verification-math. A missing extra fails setup rather than turning into a skip, which is the F6 risk this closes.",
+  "steps": [
+   "Experience Graph contracts, projection, retrieval, and operator gate: pytest tests/cognitive_os/experience tests/cognitive_os/learning",
+   "Experience Graph schema drift: python -m cognitive_os.schemas.export --check",
+   "Resource-bound and fail-closed graph gate: pytest tests/cognitive_os/experience/test_graph_projection.py",
+   "The embedding provider refuses rather than substituting: pytest tests/cognitive_os/infrastructure/test_local_embedding_model.py",
+   "Credential-free graph operator smoke gate: pytest tests/cognitive_os/experience/test_graph_evidence_operations.py"
+  ],
+  "local_equivalent": "uv run pytest tests/cognitive_os/experience tests/cognitive_os/learning tests/cognitive_os/infrastructure/test_local_embedding_model.py -q",
+  "credentials_network_provider_gpu": "none. Every fixture is built inside the test process, no evidence store is read, no model is loaded and no provider is contacted.",
+  "no_second_smoke_script": "the operator commands are exercised end to end by the CLI tests through subprocess, so a separate smoke script would run the same commands a second way. The pytest line above is the local equivalent the evidence asks for.",
+  "fake_embeddings_cannot_reach_production_evidence": "build_embedding_provider raises when the local model is absent or its digest does not match, and never substitutes the hashing provider. That refusal is pinned by the step above.",
+  "runtime_bound": "timeout-minutes: 12, matching the other core lanes",
+  "new_test": "the contract still refuses a cycle with networkx blocked from sys.meta_path. This is the W5a CI defect kept as a test: the DAG invariant must not depend on an optional extra being installed."
+ },
+ "s21d1_067_verification_matrix": {
+  "artifact": "docs/sprints/sprint-21/evidence/sprint-21d1-verification-matrix.json",
+  "rows": 22,
+  "passed": 22,
+  "failed": 0,
+  "total_seconds": 306.06,
+  "coverage": [
+   "schemas: schema_drift",
+   "unit, contract and full suites",
+   "PostgreSQL: postgres_integration",
+   "migrations: migration_check and migration_head",
+   "artifact integrity: artifact_store_content and development_pair_fingerprint",
+   "restore: covered in W6b and referenced from there rather than repeated here",
+   "security: bandit",
+   "packaging: packaging_boundary and editable_install",
+   "language: repository_language",
+   "graph: graph_verify, graph_health, graph_benchmark and two negative rows",
+   "report checks: every D1 evidence file parses"
+  ],
+  "expected_and_actual_exit_status": "every row records both. Two rows expect a non-zero status: graph-verify against a damaged store and graph-verify with no store configured. A zero there would be the failure.",
+  "scratch_stores": {
+   "artifact_root": "the suites run against a scratch artifact root, never the evidence pair",
+   "backup_root": "scratch",
+   "database": "cognitive_os_s21d1_integration_test, migrated to 0015 for this wave; the application handle keeps the application role and the admin handle the owner role",
+   "truncation_consent": "COGOS_TRUNCATABLE_DATABASE names the integration database. The evidence database was never nominated, and the conftest fails loudly when the nomination and the connection disagree."
+  },
+  "evidence_stores_untouched": true,
+  "fingerprints_before_and_after": {
+   "development": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf over 5 files",
+   "c3_source": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593 over 8503 files",
+   "d1_evidence": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f over 83 files"
+  }
+ },
+ "deviations": [
+  {
+   "id": "W6C-D1",
+   "observed": "The first matrix run left COGOS_ARTIFACT_ROOT pointing at the D1 evidence pair while running the suites. Five artifact files appeared in it, taking the store from 83 files to 88.",
+   "detected_by": "the matrix's own before-and-after fingerprint comparison, which is why it compares rather than asserts",
+   "remediation": "the five files were identified by modification time and removed, and the store's fingerprint returned exactly to f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f over 83 files. The matrix now gives every test row a scratch artifact and backup root.",
+   "residual_risk": "none for the evidence: the pair is byte-for-byte what it was before the run, and the second run left it unchanged."
+  },
+  {
+   "id": "W6C-D2",
+   "observed": "cognitive_os_s21d1_integration_test was created in W0 but never migrated, so the first run produced 8 failures and 94 errors that were a missing schema rather than a defect.",
+   "remediation": "migrated to head 0015, 114 tables, matching the evidence database. The migration check now runs as a matrix row against it.",
+   "note": "the migration had to use the owner handle; the application role cannot create a schema. Recorded because the environment file's admin URL names the evidence database and had to be redirected."
+  }
+ ],
+ "gate_contribution": {
+  "condition_20": "met: integrity, replay, restart, backup/restore, scratch-store matrix, schema, packaging, security, language and full regression checks all pass, 22 of 22 rows, with the evidence stores byte-identical before and after"
+ }
+}

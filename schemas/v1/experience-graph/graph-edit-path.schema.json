@@ -1,0 +1,86 @@
+{
+  "$defs": {
+    "GraphEditOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "detail": {
+          "default": "",
+          "maxLength": 2048,
+          "title": "Detail",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/GraphEditOperationKind"
+        },
+        "target": {
+          "minLength": 1,
+          "title": "Target",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "target"
+      ],
+      "title": "GraphEditOperation",
+      "type": "object"
+    },
+    "GraphEditOperationKind": {
+      "enum": [
+        "insert_node",
+        "delete_node",
+        "relabel_node",
+        "insert_edge",
+        "delete_edge",
+        "relabel_edge"
+      ],
+      "title": "GraphEditOperationKind",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/experience-graph/graph-edit-path.schema.json",
+  "additionalProperties": false,
+  "description": "The ordered operations that turn a failed graph into its successful replacement.",
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "from_graph_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "From Graph Hash",
+      "type": "string"
+    },
+    "operations": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/GraphEditOperation"
+      },
+      "title": "Operations",
+      "type": "array"
+    },
+    "path_id": {
+      "minLength": 1,
+      "title": "Path Id",
+      "type": "string"
+    },
+    "to_graph_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "To Graph Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "path_id",
+    "from_graph_hash",
+    "to_graph_hash"
+  ],
+  "title": "GraphEditPath",
+  "type": "object"
+}

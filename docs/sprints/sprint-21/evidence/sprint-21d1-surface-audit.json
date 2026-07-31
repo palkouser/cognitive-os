@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "sprint": "21D1",
+  "wave": "W1",
+  "items": [
+    "S21D1-010",
+    "S21D1-011",
+    "E1.5"
+  ],
+  "recorded_at": "2026-07-31T13:40:00+00:00",
+  "held_out_metrics_inspected": false,
+  "authority": "docs/sprints/sprint-21/evidence/sprint-21d1-c3-inventory.json",
+  "replay": ".venv/bin/python -m cognitive_os.learning.surfaces",
+
+  "f12_resolution": {
+    "question": "Can the 64 governed benchmark outcomes be resolved to per-case identities?",
+    "answer": "yes",
+    "rule": "cognitive_os.learned_observations WHERE source_kind='governed_benchmark_case' AND status='accepted', deduplicated by source_task_id",
+    "measured": {
+      "observations": 256,
+      "distinct_cases": 64,
+      "replay_multiplicity": 4,
+      "by_surface": {"benchmark.context": 6, "benchmark.generic": 36, "benchmark.logic": 6, "benchmark.mathematics": 6, "benchmark.physics": 6, "benchmark.semantic": 4}
+    },
+    "matches_released_histogram": true,
+    "quarantined_64": "the same 64 case identities under attribution=unknown with no verifier_evidence_hash; one unattributable replay wave, correctly excluded",
+    "consequence": "The released denominator reconciles exactly: 214 = 150 enumerated coding outcomes + 64 distinct accepted benchmark cases. The population is 214, not 150, so the S21D1-016 shortfall campaign is not triggered by a missing denominator.",
+    "caveat": "All 320 governed_benchmark_case observations carry source_event_id = NULL. They resolve to verifier evidence but not to an ordered pre-outcome event sequence."
+  },
+
+  "e1_5_eligibility_probe": {
+    "method": "read-only SQL SELECT over the enumerated campaign identities; no application service, no held-out metric",
+    "coding_outcomes": {
+      "population": 150,
+      "distinct_tasks": 30,
+      "distinct_task_manifest_hashes": 30,
+      "outcome_artifacts_resolvable": 150,
+      "label_balance": {"verifier_passed": 60, "verifier_failed": 90},
+      "final_status": {"accepted": 60, "failed": 90},
+      "run_kind": {"baseline": 30, "candidate": 120},
+      "candidate_strategy": {"(baseline)": 30, "correct_narrow": 30, "correct_robust": 30, "incomplete_a": 30, "incomplete_b": 30}
+    },
+    "benchmark_outcomes": {
+      "population": 64,
+      "label_balance": {"verifier_passed": 64, "verifier_failed": 0}
+    }
+  },
+
+  "decisive_measurement": {
+    "name": "candidate_strategy is a perfect label oracle",
+    "query": "SELECT candidate_strategy, hidden_verification_passed, count(*) FROM the 150 enumerated coding outcome events GROUP BY 1,2",
+    "result": {
+      "(baseline)": {"false": 30},
+      "correct_narrow": {"true": 30},
+      "correct_robust": {"true": 30},
+      "incomplete_a": {"false": 30},
+      "incomplete_b": {"false": 30}
+    },
+    "interpretation": "candidate_strategy determines the independent verifier label with no error on all 150 outcomes. Backlog section 2.2 condition 5 forbids answer-revealing strategy labels, so the field must be excluded. What remains after excluding it is the second half of the finding: every one of the 30 tasks carries the identical 2-of-5 pass pattern, so no surviving pre-outcome feature discriminates between an accepted and a rejected outcome. The surface is not merely leaky, it is information-free once the leak is removed.",
+    "not_a_defect": "This is a property of how the C3 corpus was generated: 30 tasks x 5 fixed strategies, two of which are correct by construction. C3 built it to prove the sandbox and the verifier, and it does that. It was never built to carry a prediction problem."
+  },
+
+  "surface_audits": [
+    {
+      "surface": "experience.correction_ranking",
+      "eligible": 120,
+      "label_source": "independent_verifier",
+      "balance": {"positive": 60, "negative": 60},
+      "groups": 30,
+      "domains": 1,
+      "changeable_decisions": 30,
+      "deterministic_headroom": "positional or majority baseline scores 0.5; every task has exactly 4 candidates of which exactly 2 pass",
+      "attribution": "direct",
+      "leakage_risks": ["candidate_strategy must be excluded", "the identical 2-of-4 split makes group frequency constant"],
+      "disposition": "deferred",
+      "blocking_reason": "120 eligible samples against the 200 threshold of Gate D1 condition 6. It is the only candidate with a genuine 60/60 balance and real content variation between candidates, but 120 + the 50-outcome shortfall cap of section 3.3 reaches 170, still short of 200."
+    },
+    {
+      "surface": "experience.correction_context",
+      "eligible": 60,
+      "label_source": "derived",
+      "balance": {"positive": 60, "negative": 0},
+      "groups": 30,
+      "domains": 1,
+      "changeable_decisions": 60,
+      "deterministic_headroom": "a retrieval surface; relevance is judged by task and group identity, so a single-class balance is expected rather than degenerate",
+      "attribution": "direct",
+      "leakage_risks": ["the query group must be excluded from the candidate pool", "correction bytes from the query group must not reach the graph arm"],
+      "disposition": "selected_secondary",
+      "note": "60 historical pairs plus the 20 fresh logic and mathematics pairs of S21D1-030..033 reach the 80-pair graph threshold of section 8.2. This surface is unaffected by the oracle finding."
+    },
+    {
+      "surface": "governed.outcome_triage",
+      "eligible": 0,
+      "label_source": "independent_verifier",
+      "balance": {"positive": 0, "negative": 0},
+      "groups": 30,
+      "domains": 7,
+      "changeable_decisions": 0,
+      "deterministic_headroom": "none",
+      "attribution": "direct",
+      "leakage_risks": ["candidate_strategy is a measured perfect oracle", "final_status, outcome_hash and hidden_evidence_hash are terminal by definition", "the 64 benchmark observations have no source_event_id"],
+      "disposition": "rejected",
+      "blocking_reason": "150 coding outcomes are ineligible for no_pre_outcome_feature: the label is a deterministic function of an answer-revealing field, and removing that field leaves nothing that discriminates. 64 benchmark cases are 64/64 passed, a single class, and additionally carry no source event. Gate D1 conditions 6 and 7 both fail."
+    },
+    {
+      "surface": "experience.strategy_selection",
+      "eligible": 30,
+      "label_source": "independent_verifier",
+      "balance": {"positive": 30, "negative": 0},
+      "groups": 30,
+      "domains": 1,
+      "changeable_decisions": 0,
+      "deterministic_headroom": "none; correct_narrow and correct_robust pass on 30 of 30 tasks, so a constant policy is already optimal",
+      "attribution": "direct",
+      "leakage_risks": ["the strategy name is the label"],
+      "disposition": "rejected",
+      "blocking_reason": "zero changeable decisions. No learned selection can change an outcome."
+    }
+  ],
+
+  "primary_threshold_result": {
+    "rule": "cognitive_os.learning.surfaces.surfaces_meeting_primary_thresholds()",
+    "thresholds": {"minimum_eligible": 200, "minimum_changeable_decisions": 20, "non_degenerate": true},
+    "surfaces_clearing_all_three": [],
+    "gate_d1_conditions_affected": [6, 7],
+    "status": "Gate D1 stays open on the primary surface. No threshold was relaxed to produce a winner."
+  },
+
+  "options_for_s21d1_014": [
+    {
+      "id": "A",
+      "name": "correction ranking plus a bounded shortfall campaign",
+      "effect": "Primary becomes experience.correction_ranking. Needs 80 further verifier-backed candidate outcomes to reach 200, which exceeds the 50-outcome cap of section 3.3.",
+      "requires": "an explicit, recorded amendment to the section 3.3 cap, or acceptance of a lower primary threshold",
+      "gate_impact": "condition 6 met only after the amendment"
+    },
+    {
+      "id": "B",
+      "name": "re-scope the primary surface to new evidence",
+      "effect": "Generate a fresh, deterministic, provider-free outcome population whose label is not a function of a synthetic strategy name, then pre-register on it.",
+      "requires": "materially more than the 50-outcome shortfall cap; effectively a new campaign inside D1",
+      "gate_impact": "section 3.3 explicitly forbids an unbounded campaign inside D1"
+    },
+    {
+      "id": "C",
+      "name": "declare the primary surface unavailable on frozen C3 evidence",
+      "effect": "D1 proceeds with experience.correction_context as the single pre-registered surface, completes the whole EMG track (waves W3 to W6), and reports the primary-surface finding as a measured negative result.",
+      "requires": "Gate D1 conditions 6 and 7 stay open; the release records why",
+      "gate_impact": "Gate D1 does not pass in full; Gate L2 stays closed either way. D2 receives a proven graph track and an honest statement that C3 evidence does not carry a triage decision problem."
+    }
+  ]
+}

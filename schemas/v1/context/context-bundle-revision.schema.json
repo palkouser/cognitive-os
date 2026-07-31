@@ -365,7 +365,8 @@
         "workspace",
         "user_correction",
         "procedural_skill",
-        "strategy"
+        "strategy",
+        "experience_graph"
       ],
       "title": "ContextSourceType",
       "type": "string"

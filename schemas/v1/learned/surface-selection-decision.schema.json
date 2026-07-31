@@ -1,0 +1,305 @@
+{
+  "$defs": {
+    "LabelSource": {
+      "description": "What produced a label, which decides whether it can supervise anything.",
+      "enum": [
+        "independent_verifier",
+        "self_reported",
+        "derived",
+        "unresolved"
+      ],
+      "title": "LabelSource",
+      "type": "string"
+    },
+    "SurfaceActionCostMatrix": {
+      "additionalProperties": false,
+      "description": "The cost of each advisory action, per true label.\n\nThe validator encodes the one rule the whole surface rests on: no action may be\ncheaper than `verify_now` on a candidate that the verifier would reject. If skipping\nverification ever scored better, a predictor could be optimised into an acceptance\nauthority, which is precisely what the primary surface must never become.",
+      "properties": {
+        "abstain_when_accepted": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Abstain When Accepted",
+          "type": "string"
+        },
+        "abstain_when_rejected": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Abstain When Rejected",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "request_repair_when_accepted": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Request Repair When Accepted",
+          "type": "string"
+        },
+        "request_repair_when_rejected": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Request Repair When Rejected",
+          "type": "string"
+        },
+        "surface": {
+          "minLength": 1,
+          "title": "Surface",
+          "type": "string"
+        },
+        "verify_now_when_accepted": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Verify Now When Accepted",
+          "type": "string"
+        },
+        "verify_now_when_rejected": {
+          "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+          "title": "Verify Now When Rejected",
+          "type": "string"
+        }
+      },
+      "required": [
+        "surface",
+        "verify_now_when_accepted",
+        "verify_now_when_rejected",
+        "request_repair_when_accepted",
+        "request_repair_when_rejected",
+        "abstain_when_accepted",
+        "abstain_when_rejected"
+      ],
+      "title": "SurfaceActionCostMatrix",
+      "type": "object"
+    },
+    "SurfaceDisposition": {
+      "enum": [
+        "selected_primary",
+        "selected_secondary",
+        "rejected",
+        "deferred"
+      ],
+      "title": "SurfaceDisposition",
+      "type": "string"
+    },
+    "SurfaceEligibilityReason": {
+      "description": "Why one candidate sample is or is not eligible for a surface.\n\nEvery excluded sample carries a reason, so a shrinking denominator is explained\nrather than discovered later as a discrepancy.",
+      "enum": [
+        "eligible",
+        "duplicate_identity",
+        "label_unresolved",
+        "attribution_unknown",
+        "source_event_unresolved",
+        "source_artifact_unresolved",
+        "no_pre_outcome_feature",
+        "group_unresolved"
+      ],
+      "title": "SurfaceEligibilityReason",
+      "type": "string"
+    },
+    "SurfaceSampleAudit": {
+      "additionalProperties": false,
+      "description": "The measured state of one candidate surface, recorded before any selection.\n\n`held_out_metrics_inspected` is stored rather than assumed. An audit that admits it\nread held-out results is still a valid record; it simply cannot support a selection,\nwhich `SurfaceSelectionDecision` enforces.",
+      "properties": {
+        "action_cost": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SurfaceActionCostMatrix"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "audited_at": {
+          "format": "date-time",
+          "title": "Audited At",
+          "type": "string"
+        },
+        "authority_reference": {
+          "minLength": 1,
+          "title": "Authority Reference",
+          "type": "string"
+        },
+        "changeable_decision_count": {
+          "minimum": 0,
+          "title": "Changeable Decision Count",
+          "type": "integer"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "deterministic_headroom": {
+          "minLength": 1,
+          "title": "Deterministic Headroom",
+          "type": "string"
+        },
+        "disposition": {
+          "$ref": "#/$defs/SurfaceDisposition"
+        },
+        "domain_count": {
+          "minimum": 0,
+          "title": "Domain Count",
+          "type": "integer"
+        },
+        "eligible_count": {
+          "minimum": 0,
+          "title": "Eligible Count",
+          "type": "integer"
+        },
+        "feature_timing_violations": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Feature Timing Violations",
+          "type": "array"
+        },
+        "group_count": {
+          "minimum": 0,
+          "title": "Group Count",
+          "type": "integer"
+        },
+        "held_out_metrics_inspected": {
+          "default": false,
+          "title": "Held Out Metrics Inspected",
+          "type": "boolean"
+        },
+        "ineligible_counts": {
+          "default": [],
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "$ref": "#/$defs/SurfaceEligibilityReason"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Ineligible Counts",
+          "type": "array"
+        },
+        "label_source": {
+          "$ref": "#/$defs/LabelSource"
+        },
+        "leakage_risks": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Leakage Risks",
+          "type": "array"
+        },
+        "negative_count": {
+          "minimum": 0,
+          "title": "Negative Count",
+          "type": "integer"
+        },
+        "positive_count": {
+          "minimum": 0,
+          "title": "Positive Count",
+          "type": "integer"
+        },
+        "surface": {
+          "minLength": 1,
+          "title": "Surface",
+          "type": "string"
+        }
+      },
+      "required": [
+        "surface",
+        "authority_reference",
+        "eligible_count",
+        "positive_count",
+        "negative_count",
+        "group_count",
+        "domain_count",
+        "changeable_decision_count",
+        "label_source",
+        "deterministic_headroom",
+        "disposition",
+        "audited_at"
+      ],
+      "title": "SurfaceSampleAudit",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/learned/surface-selection-decision.schema.json",
+  "additionalProperties": false,
+  "description": "Which surfaces D1 pre-registers, and what it rejected to get there.\n\nA selection made after reading held-out metrics is refused here rather than\ndescribed as a caveat in a report. That ordering is the only thing separating a\npre-registered decision problem from a result chosen because it already looked good.",
+  "properties": {
+    "audits": {
+      "items": {
+        "$ref": "#/$defs/SurfaceSampleAudit"
+      },
+      "minItems": 2,
+      "title": "Audits",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "decided_at": {
+      "format": "date-time",
+      "title": "Decided At",
+      "type": "string"
+    },
+    "decision_id": {
+      "format": "uuid",
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "primary_surface": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Primary Surface"
+    },
+    "primary_unavailable_reason": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Primary Unavailable Reason"
+    },
+    "rationale": {
+      "minLength": 1,
+      "title": "Rationale",
+      "type": "string"
+    },
+    "secondary_surface": {
+      "minLength": 1,
+      "title": "Secondary Surface",
+      "type": "string"
+    }
+  },
+  "required": [
+    "decision_id",
+    "secondary_surface",
+    "audits",
+    "rationale",
+    "decided_at"
+  ],
+  "title": "SurfaceSelectionDecision",
+  "type": "object"
+}

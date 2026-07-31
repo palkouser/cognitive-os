@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "sprint": "21D1",
+  "wave": "W3b",
+  "items": ["S21D1-030"],
+  "recorded_at": "2026-07-31T15:50:00+00:00",
+  "status": "frozen before execution",
+
+  "selection_rule": {
+    "statement": "Round-robin over problem types in declaration order. Pass one takes the first case of every problem type, pass two the second, and so on until ten are selected.",
+    "why": "It maximises problem-type coverage without a seed or a tie-break, so the selection is reproducible from the fixture module alone. Taking the first ten in declaration order would have yielded six logic problem types instead of eight.",
+    "source": "cognitive_os.domains.fixtures.LOGIC_CASES and MATHEMATICS_CASES",
+    "available": {"logic": 16, "mathematics": 18},
+    "selected": {"logic": 10, "mathematics": 10},
+    "distinct_problem_types": {"logic": 8, "mathematics": 9}
+  },
+
+  "signature_constraint": {
+    "rule": "each selected case identity is distinct and appears exactly once",
+    "why": "Backlog section 8.2 requires 50 task signatures across the combined pair set. The 60 historical coding pairs supply 30, so the 20 fresh pairs must supply 20 with zero margin.",
+    "distinct_case_identities": 20
+  },
+
+  "logic_cases": [
+    {"case_id": "modus-ponens", "problem_type": "validity-check"},
+    {"case_id": "truth-table", "problem_type": "truth-table"},
+    {"case_id": "sat", "problem_type": "satisfiability"},
+    {"case_id": "constraint", "problem_type": "constraint-satisfaction"},
+    {"case_id": "consistency", "problem_type": "consistency-check"},
+    {"case_id": "counterexample", "problem_type": "counterexample-search"},
+    {"case_id": "sequence-arithmetic", "problem_type": "sequence-induction"},
+    {"case_id": "hypotheses", "problem_type": "competing-hypotheses"},
+    {"case_id": "affirming-consequent", "problem_type": "validity-check"},
+    {"case_id": "truth-table-excluded-middle", "problem_type": "truth-table"}
+  ],
+
+  "mathematics_cases": [
+    {"case_id": "long-mult", "problem_type": "long-multiplication"},
+    {"case_id": "long-div", "problem_type": "long-division"},
+    {"case_id": "fractions", "problem_type": "fraction-arithmetic"},
+    {"case_id": "rationals", "problem_type": "rational-arithmetic"},
+    {"case_id": "simplify", "problem_type": "algebraic-simplification"},
+    {"case_id": "linear", "problem_type": "linear-equation"},
+    {"case_id": "quadratic", "problem_type": "polynomial-equation"},
+    {"case_id": "equivalence", "problem_type": "symbolic-equivalence"},
+    {"case_id": "approximation", "problem_type": "exact-versus-approximate"},
+    {"case_id": "long-mult-negative", "problem_type": "long-multiplication"}
+  ],
+
+  "execution_protocol": {
+    "failed_side": "cognitive_os.domains.fixtures.wrong_answer_for(case) submitted through run_case_controlled(case, candidate_override=...)",
+    "successful_side": "the same case with no override",
+    "failure_must_be": "task-semantic, that is the acceptance decision reports required verification failed, never an infrastructure error",
+    "verifiers": "the built-in registry with z3-solver and sympy present; 57 of 65 verifiers available, registry snapshot 44b01e0c86a993bc01c1d06f28973db76c4383a30da539ff1d8ca3841c0a155c",
+    "provider_calls": 0,
+    "network_calls": 0
+  },
+
+  "determinism_protocol": {
+    "measured_before_freezing": "Recompiling a persisted trajectory reproduces its manifest byte for byte. A fresh independent run of the same case does not, because event occurred_at values come from a wall clock and the compilation identity is a digest over event content.",
+    "consequence": "Byte-identical recompilation is verified the way ExperienceCompilerService already defines it: a persisted manifest that differs from deterministic recompilation raises rather than being overwritten. The trajectory is the immutable evidence; a re-run is a different trajectory, exactly as two C3 runs of one task are two outcomes.",
+    "compilation_created_at": "derived as the minimum event occurred_at of the trajectory, in cognitive_os.domains.learning.build_compilation, not read from a clock at compile time",
+    "compilation_identity": "uuid5 over the trajectory digest, so identity follows the evidence rather than the clock",
+    "distinction_from_legacy": "The 60 historical coding pairs are marked legacy_recompilation_unavailable because their manifests carry a wall-clock created_at that cannot be reproduced at all. The fresh pairs are verified by actual recompilation, which is the stronger of the two modes."
+  },
+
+  "group_policy": {
+    "group_identity": "domain.case_id, one group per case",
+    "overlap_with_query_groups": "none; no fresh case shares a group with any of the 30 coding repository groups",
+    "distinct_groups": 20
+  },
+
+  "rights": {
+    "source": "project-owned domain fixtures, already released under the repository licence",
+    "usage_rights_verified": true,
+    "physics": "not selected; backlog section 5 forbids claiming physics without a pair"
+  }
+}

@@ -1,0 +1,169 @@
+{
+  "schema_version": 1,
+  "sprint": "21D1",
+  "wave": "W0",
+  "items": [
+    "S21D1-002"
+  ],
+  "recorded_at": "2026-07-31T12:59:07+00:00",
+  "purpose": "Freeze what Sprint 21C3 actually leaves behind, and separate the released denominators from the raw contents of the C3 evidence store. Read-only: every figure below came from a SQL SELECT or a file read, never through an application service.",
+
+  "authority_rule": {
+    "statement": "The C3 evidence store is NOT the authority for any released count. It was never emptied between waves (C3 deviation W3-D1), so it holds rehearsal executions alongside the released campaign. The authority is docs/sprints/sprint-21/evidence/sprint-21c3-w3-campaign.json, which enumerates identities.",
+    "enumerated_in_released_evidence": [
+      "execution.task_run_ids: 150 coding task runs, listed by UUID"
+    ],
+    "counted_but_not_enumerated_in_released_evidence": [
+      "the 64 re-executed governed benchmark cases (only 6 benchmark run IDs and a per-domain histogram)",
+      "the 60 correction trajectory manifests (only compiled/distinct counts)"
+    ]
+  },
+
+  "denominator_reconciliation": {
+    "note": "Five different numbers describe 'the C3 outcomes'. Confusing them is the single largest sample-inflation risk in D1.",
+    "released_unique_outcomes": {
+      "value": 214,
+      "composition": "150 offline coding outcomes (30 tasks x 5 strategies) + 64 re-executed governed benchmark cases across 6 domains",
+      "authority": "sprint-21c3-report.md and sprint-21c3-w3-campaign.json",
+      "duplicates_excluded": 0
+    },
+    "coding_outcome_recorded_events_in_store": {
+      "value": 641,
+      "distinct_outcome_hash": 641,
+      "distinct_task_run_id": 641,
+      "distinct_outcome_artifact_id": 641,
+      "distinct_task_id": 31,
+      "by_run_kind": {"baseline": 126, "candidate": 515},
+      "interpretation": "Spans every C3 wave including rehearsals. Roughly 3x the released coding denominator. A naive query over this table inflates the primary surface."
+    },
+    "learned_observations_in_store": {
+      "value": 960,
+      "accepted": 896,
+      "quarantined": 64,
+      "evaluation_eligible": 896,
+      "distinct_source_run_id": 960,
+      "distinct_source_event_id": 640,
+      "provenance": "all real_governed_run",
+      "by_surface_accepted": {
+        "coding.repair": 640,
+        "benchmark.generic": 144,
+        "benchmark.context": 24,
+        "benchmark.logic": 24,
+        "benchmark.mathematics": 24,
+        "benchmark.physics": 24,
+        "benchmark.semantic": 16
+      },
+      "by_surface_quarantined": {
+        "benchmark.generic": 36,
+        "benchmark.context": 6,
+        "benchmark.logic": 6,
+        "benchmark.mathematics": 6,
+        "benchmark.physics": 6,
+        "benchmark.semantic": 4
+      },
+      "interpretation": "Intake references, not outcome identities. The benchmark surfaces hold exactly 4x the released 64-case histogram, i.e. four replay waves of which the campaign is one."
+    },
+    "final_c3_evaluation_dataset": {
+      "dataset_id": "fbfbab05-3ffd-571f-8056-e71eb2b63a5a",
+      "surface": "coding.repair",
+      "corpus_role": "evaluation",
+      "observation_count": 500,
+      "provenance_counts": {"real_governed_run": 500},
+      "created_at": "2026-07-30T06:45:43.198487+00:00",
+      "earlier_revisions": [
+        {"dataset_id": "0c2e68aa-f497-5e0a-a80a-d91bb6e13da2", "observation_count": 20},
+        {"dataset_id": "f87fe497-8597-5cda-92ff-12193a894cca", "observation_count": 175},
+        {"dataset_id": "4ffae7be-74fc-58a3-8fe7-6fe9111330c8", "observation_count": 325},
+        {"dataset_id": "e653addf-5b36-5370-bc32-0b5f115d70f6", "observation_count": 475}
+      ],
+      "interpretation": "A fifth denominator. Evaluation-only, coding.repair only. Not the released 214 and not a primary-surface sample."
+    },
+    "campaign_enumerated_coding_runs": {
+      "value": 150,
+      "unique": 150,
+      "resolved_in_c3_store": 150,
+      "distinct_outcome_hash_of_those": 150,
+      "interpretation": "The only outcome population D1 can currently resolve to enumerated identities."
+    }
+  },
+
+  "resolution_rules": {
+    "coding_outcomes": {
+      "rule": "coding.outcome_recorded events whose payload_json->>'task_run_id' is one of the 150 execution.task_run_ids in sprint-21c3-w3-campaign.json",
+      "verified_result": "150 events, 150 distinct outcome hashes",
+      "status": "resolved"
+    },
+    "correction_manifests": {
+      "rule": "cognitive_os.experience_compilations whose task_run_id is one of the same 150 enumerated campaign runs",
+      "verified_result": "60 rows, 60 distinct compilation_id",
+      "matches_released_count": true,
+      "status": "resolved",
+      "note": "This gives S21D1-034 a reproducible, evidence-anchored selector for the 60 historical coding pairs, which the backlog did not specify. Store total is 250 compilations across all waves."
+    },
+    "benchmark_outcomes": {
+      "rule": "not yet established",
+      "attempts": [
+        "learned_observations.source_run_id IN (the 6 benchmark_replay run IDs) -> 0 rows; those are benchmark run identities, not observation source runs",
+        "benchmark.* observations inside the campaign started_at/finished_at window -> 40 accepted (context 6, generic 30, semantic 4), not 64"
+      ],
+      "status": "UNRESOLVED - quarantined pending W1",
+      "consequence": "If the 64 cannot be resolved to per-case identities, the eligible primary population is the 150 enumerated coding outcomes, which is below the 200 threshold and inside the 150-199 band of backlog section 3.3. That triggers the bounded shortfall campaign S21D1-016 with at most 50 new outcomes, rather than a replan."
+    }
+  },
+
+  "frozen_material": {
+    "coding_tasks": {"templates": 30, "seed": 1, "identity": "uuid5 over template and seed", "families": 6, "repository_groups": 30},
+    "corpus": {
+      "released_items_routed": 420,
+      "route_status_counts": {"allowed": 420},
+      "repository_groups": 30,
+      "split_profile": "sprint21c3-group-aware-split-v1",
+      "groups_crossing_splits": 0,
+      "real_run_items_in_corpus": 0,
+      "training_actions_started": 0,
+      "store_total_corpus_items": 1798,
+      "store_distinct_scopes": 30,
+      "note": "Store total spans all waves. The 30 distinct scopes (project:cognitive-os:<group>) do match the 30 released repository groups."
+    },
+    "correction_trajectories": {
+      "released": 60,
+      "unique_tasks_represented": 30,
+      "strategy_families": {"correct_narrow": 30, "correct_robust": 30, "incomplete_a": 30, "incomplete_b": 30},
+      "failed_compilations": 0,
+      "legacy_recompilation_unavailable": true
+    },
+    "retrieval_benchmark": {"manifest_hash": "c9d2ac44731e81f2443545111c8e4832f848d63b68557862a7319cdd8beeca9d", "records": 60, "queries": 60},
+    "minilm": {
+      "model": "sentence-transformers/all-MiniLM-L6-v2",
+      "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "tree_digest": "98eb3ae4df320d0b721902aabef795cafb36c3a516f036e92e2b046f55ef4229",
+      "dimensions": 384,
+      "local_root": "/home/palkouser/projekt/cognitive-os-data/models/all-MiniLM-L6-v2",
+      "health": "verified 2026-07-31"
+    }
+  },
+
+  "store_integrity": {
+    "database": "cognitive_os_s21c3_test",
+    "schema_tables": 114,
+    "alembic_version": "0015",
+    "events_total": 1601,
+    "events_by_type": {"learned.observation_recorded": 960, "coding.outcome_recorded": 641},
+    "artifact_rows": 11355,
+    "artifact_distinct_content_hash": 8500,
+    "artifact_blobs": 8500,
+    "artifacts_without_a_blob": 0,
+    "artifact_files_on_disk": 8503,
+    "artifact_filesystem_verification": "passed",
+    "unresolved_items": [
+      "the 64 governed benchmark outcomes have no per-case identity in the released C3 evidence"
+    ]
+  },
+
+  "consequences_for_d1": [
+    "S21D1-011 and the W1 eligibility probe must count from the enumerated campaign identities, never from cognitive_os.events or cognitive_os.learned_observations directly.",
+    "S21D1-034 gains a verified selector: experience_compilations joined to the 150 enumerated campaign run IDs yields exactly the 60 historical pairs.",
+    "S21D1-016 is more likely than the backlog assumes. Resolving or quarantining the 64 benchmark outcomes is the first W1 decision, and it decides whether the primary surface starts at 214 or at 150.",
+    "Backlog section 1.2 warns that intake observations must not inflate the sample. The larger trap is the 641 raw outcome events, which section 1.2 does not mention."
+  ]
+}

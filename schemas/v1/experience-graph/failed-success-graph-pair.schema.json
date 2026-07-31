@@ -1,0 +1,408 @@
+{
+  "$defs": {
+    "ActionDecisionGraph": {
+      "additionalProperties": false,
+      "description": "One trajectory as a bounded, acyclic, canonically ordered graph.",
+      "properties": {
+        "accepted": {
+          "title": "Accepted",
+          "type": "boolean"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "domain": {
+          "minLength": 1,
+          "title": "Domain",
+          "type": "string"
+        },
+        "edges": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ExperienceGraphEdge"
+          },
+          "title": "Edges",
+          "type": "array"
+        },
+        "graph_id": {
+          "minLength": 1,
+          "title": "Graph Id",
+          "type": "string"
+        },
+        "group": {
+          "minLength": 1,
+          "title": "Group",
+          "type": "string"
+        },
+        "limits": {
+          "$ref": "#/$defs/GraphResourceLimits",
+          "default": {
+            "content_hash": "4a7fe3b12ad9b25211fd05e95836080432d3fd94d0b04f64c289ea5407b66915",
+            "cross_task_similarity_neighbors": 3,
+            "edges_per_graph": 128,
+            "nodes_per_graph": 64,
+            "path_depth": 32,
+            "per_pair_ged_timeout_ms": 250,
+            "query_budget_seconds": 2,
+            "returned_results": 10,
+            "vector_shortlist": 10
+          }
+        },
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/ExperienceGraphNode"
+          },
+          "minItems": 1,
+          "title": "Nodes",
+          "type": "array"
+        },
+        "source_manifest_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Manifest Hash",
+          "type": "string"
+        },
+        "task_signature": {
+          "minLength": 1,
+          "title": "Task Signature",
+          "type": "string"
+        }
+      },
+      "required": [
+        "graph_id",
+        "domain",
+        "group",
+        "task_signature",
+        "accepted",
+        "nodes",
+        "source_manifest_hash"
+      ],
+      "title": "ActionDecisionGraph",
+      "type": "object"
+    },
+    "ExperienceGraphEdge": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/ExperienceGraphEdgeKind"
+        },
+        "source_id": {
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "target_id": {
+          "minLength": 1,
+          "title": "Target Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "target_id",
+        "kind"
+      ],
+      "title": "ExperienceGraphEdge",
+      "type": "object"
+    },
+    "ExperienceGraphEdgeKind": {
+      "enum": [
+        "next",
+        "branches_to",
+        "caused_by",
+        "supports",
+        "contradicts",
+        "corrected_by",
+        "recovers_to"
+      ],
+      "title": "ExperienceGraphEdgeKind",
+      "type": "string"
+    },
+    "ExperienceGraphNode": {
+      "additionalProperties": false,
+      "properties": {
+        "attributes": {
+          "default": [],
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Attributes",
+          "type": "array"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/ExperienceGraphNodeKind"
+        },
+        "logical_id": {
+          "minLength": 1,
+          "title": "Logical Id",
+          "type": "string"
+        },
+        "source_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "logical_id",
+        "kind",
+        "source_hash"
+      ],
+      "title": "ExperienceGraphNode",
+      "type": "object"
+    },
+    "ExperienceGraphNodeKind": {
+      "enum": [
+        "observation",
+        "reasoning",
+        "tool_action",
+        "tool_result",
+        "verifier",
+        "correction",
+        "accepted_outcome"
+      ],
+      "title": "ExperienceGraphNodeKind",
+      "type": "string"
+    },
+    "GraphEditOperation": {
+      "additionalProperties": false,
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "detail": {
+          "default": "",
+          "maxLength": 2048,
+          "title": "Detail",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/GraphEditOperationKind"
+        },
+        "target": {
+          "minLength": 1,
+          "title": "Target",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "target"
+      ],
+      "title": "GraphEditOperation",
+      "type": "object"
+    },
+    "GraphEditOperationKind": {
+      "enum": [
+        "insert_node",
+        "delete_node",
+        "relabel_node",
+        "insert_edge",
+        "delete_edge",
+        "relabel_edge"
+      ],
+      "title": "GraphEditOperationKind",
+      "type": "string"
+    },
+    "GraphEditPath": {
+      "additionalProperties": false,
+      "description": "The ordered operations that turn a failed graph into its successful replacement.",
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "from_graph_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "From Graph Hash",
+          "type": "string"
+        },
+        "operations": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/GraphEditOperation"
+          },
+          "title": "Operations",
+          "type": "array"
+        },
+        "path_id": {
+          "minLength": 1,
+          "title": "Path Id",
+          "type": "string"
+        },
+        "to_graph_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "To Graph Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_id",
+        "from_graph_hash",
+        "to_graph_hash"
+      ],
+      "title": "GraphEditPath",
+      "type": "object"
+    },
+    "GraphResourceLimits": {
+      "additionalProperties": false,
+      "description": "The pre-registered bounds. A change must be committed before the next benchmark.",
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "cross_task_similarity_neighbors": {
+          "default": 3,
+          "maximum": 50,
+          "minimum": 0,
+          "title": "Cross Task Similarity Neighbors",
+          "type": "integer"
+        },
+        "edges_per_graph": {
+          "default": 128,
+          "maximum": 8192,
+          "minimum": 1,
+          "title": "Edges Per Graph",
+          "type": "integer"
+        },
+        "nodes_per_graph": {
+          "default": 64,
+          "maximum": 4096,
+          "minimum": 1,
+          "title": "Nodes Per Graph",
+          "type": "integer"
+        },
+        "path_depth": {
+          "default": 32,
+          "maximum": 512,
+          "minimum": 1,
+          "title": "Path Depth",
+          "type": "integer"
+        },
+        "per_pair_ged_timeout_ms": {
+          "default": 250,
+          "maximum": 60000,
+          "minimum": 1,
+          "title": "Per Pair Ged Timeout Ms",
+          "type": "integer"
+        },
+        "query_budget_seconds": {
+          "default": 2,
+          "maximum": 600,
+          "minimum": 1,
+          "title": "Query Budget Seconds",
+          "type": "integer"
+        },
+        "returned_results": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Returned Results",
+          "type": "integer"
+        },
+        "vector_shortlist": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Vector Shortlist",
+          "type": "integer"
+        }
+      },
+      "title": "GraphResourceLimits",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/experience-graph/failed-success-graph-pair.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "compiled_at": {
+      "format": "date-time",
+      "title": "Compiled At",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "domain": {
+      "minLength": 1,
+      "title": "Domain",
+      "type": "string"
+    },
+    "edit_path": {
+      "$ref": "#/$defs/GraphEditPath"
+    },
+    "failed": {
+      "$ref": "#/$defs/ActionDecisionGraph"
+    },
+    "group": {
+      "minLength": 1,
+      "title": "Group",
+      "type": "string"
+    },
+    "legacy_recompilation_unavailable": {
+      "title": "Legacy Recompilation Unavailable",
+      "type": "boolean"
+    },
+    "pair_id": {
+      "minLength": 1,
+      "title": "Pair Id",
+      "type": "string"
+    },
+    "successful": {
+      "$ref": "#/$defs/ActionDecisionGraph"
+    },
+    "task_signature": {
+      "minLength": 1,
+      "title": "Task Signature",
+      "type": "string"
+    },
+    "verification_mode": {
+      "minLength": 1,
+      "title": "Verification Mode",
+      "type": "string"
+    }
+  },
+  "required": [
+    "pair_id",
+    "domain",
+    "group",
+    "task_signature",
+    "failed",
+    "successful",
+    "edit_path",
+    "legacy_recompilation_unavailable",
+    "verification_mode",
+    "compiled_at"
+  ],
+  "title": "FailedSuccessGraphPair",
+  "type": "object"
+}

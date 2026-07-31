@@ -1,0 +1,38 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/experience-graph/experience-graph-result-entry.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "arm": {
+      "minLength": 1,
+      "title": "Arm",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "pair_id": {
+      "minLength": 1,
+      "title": "Pair Id",
+      "type": "string"
+    },
+    "rank": {
+      "minimum": 1,
+      "title": "Rank",
+      "type": "integer"
+    },
+    "score": {
+      "title": "Score",
+      "type": "string"
+    }
+  },
+  "required": [
+    "pair_id",
+    "rank",
+    "score",
+    "arm"
+  ],
+  "title": "ExperienceGraphResultEntry",
+  "type": "object"
+}

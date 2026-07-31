@@ -1,0 +1,1734 @@
+[
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "boundary-sequence-head"
+  ],
+  "query_hash": "42e39b36695f07d9a250d9d336223d77a335999ba2fc75b11ec95b2dfd8d8146",
+  "query_id": "q:03d3c56e-2219-56c5-9e3d-d289c8e3d46e",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "09ff63a2-d026-5835-a070-1d26677fbfb1",
+   "102717e8-6452-579a-a265-d76a11adac7d",
+   "2751b48e-1ba5-5b5b-a378-c9eb3dc45888",
+   "4042d35d-aa7b-5d6a-b1ee-3370f4d35af6",
+   "5caaf6fc-21ee-5469-81d9-02e54f85d4cc",
+   "654e71b2-1fb8-5c1f-955c-4fb88db87eb3",
+   "89c0e20f-90e2-5151-9a63-2d14fef0b627",
+   "bd2c6ec4-e0cf-540e-ab30-a437767962be"
+  ],
+  "seen_task": false,
+  "task_signature": "1f8226dc-5a2a-5baa-a777-f788cb0a7de2"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "boundary-sequence-tail"
+  ],
+  "query_hash": "a51c7117df6e93a13490e663ed9b1d1bb1f42ee50af966f4ffb9c54d3c1da672",
+  "query_id": "q:09ff63a2-d026-5835-a070-1d26677fbfb1",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "03d3c56e-2219-56c5-9e3d-d289c8e3d46e",
+   "102717e8-6452-579a-a265-d76a11adac7d",
+   "2751b48e-1ba5-5b5b-a378-c9eb3dc45888",
+   "4042d35d-aa7b-5d6a-b1ee-3370f4d35af6",
+   "654e71b2-1fb8-5c1f-955c-4fb88db87eb3",
+   "898c40a6-bccf-536b-aef1-e7af77615195",
+   "89c0e20f-90e2-5151-9a63-2d14fef0b627",
+   "bd2c6ec4-e0cf-540e-ab30-a437767962be"
+  ],
+  "seen_task": false,
+  "task_signature": "ab668a23-8051-5b14-a595-f7b711f90d2e"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "numeric-distribution"
+  ],
+  "query_hash": "d2f1c46e7308b5072cc6b0d762629e59c8206f2876c2d1187ec6da5521e9896d",
+  "query_id": "q:0cbba053-46b9-54ec-99ba-af601e12f537",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "1d962b28-144f-5c62-be69-9259fab6de9b",
+   "33cb039b-c4ef-55e9-8706-c5d48dedf8af",
+   "37e67c86-8fc5-568c-96b3-0e3e00bff087",
+   "4c4aac18-026f-546b-846a-8bb5d0ce47c3",
+   "55ac95fb-9274-51a2-a51b-ba4f034ff66c",
+   "b4c136e0-5112-5f77-8f65-c16d3dafff2e",
+   "c46bfb4b-08f1-5b2d-8999-717d98dd41f6",
+   "ee56723c-8118-5826-aac8-9fabc8ef71d5"
+  ],
+  "seen_task": false,
+  "task_signature": "e0568521-8fbe-5bba-a1b5-234c1a97991b"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "boundary-windowing"
+  ],
+  "query_hash": "affcbb72788519148ce3d596f37583a6320aeb953c925816cd2cce0752df8f13",
+  "query_id": "q:102717e8-6452-579a-a265-d76a11adac7d",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "03d3c56e-2219-56c5-9e3d-d289c8e3d46e",
+   "09ff63a2-d026-5835-a070-1d26677fbfb1",
+   "2751b48e-1ba5-5b5b-a378-c9eb3dc45888",
+   "4042d35d-aa7b-5d6a-b1ee-3370f4d35af6",
+   "5caaf6fc-21ee-5469-81d9-02e54f85d4cc",
+   "654e71b2-1fb8-5c1f-955c-4fb88db87eb3",
+   "898c40a6-bccf-536b-aef1-e7af77615195",
+   "89c0e20f-90e2-5151-9a63-2d14fef0b627"
+  ],
+  "seen_task": false,
+  "task_signature": "9784dd89-2716-5352-b70a-2e5a220bbe55"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "errors-lenient-parsing"
+  ],
+  "query_hash": "3da12272736941617e9fe599c7516da6bcca923455ba7f05348f05b9c3ec3d96",
+  "query_id": "q:10ecba4b-a57c-5f0a-9a51-d4e8619f2b1e",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "26d11e28-afa6-5e6f-8b5d-241b1e603532",
+   "2ac52ac7-5ee0-5578-9f4b-d3675b0280f1",
+   "3c1b50cd-de4f-513d-ad15-940dc132bbe9",
+   "46479b31-d8fe-5345-8f9d-988a6f1ede86",
+   "ac60f847-1a2a-5503-ae8d-4704649189a5",
+   "c6059ca1-7e4d-54a8-8ea4-83f5d644c9e5",
+   "c7495963-de99-5413-8bb2-aa98d294195d",
+   "e759e5bb-0440-5729-945b-388bd7482685"
+  ],
+  "seen_task": false,
+  "task_signature": "9131c938-f8e4-56d1-bcd9-79a27a84871b"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "parsing-delimited-fields"
+  ],
+  "query_hash": "3f5d393f1d64f7daf83cee52108ea0a47f4b23a1afae0c6f00e11f7ce22a1c73",
+  "query_id": "q:182751d9-53da-59f2-8daf-3d0e57a2c125",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "25ee7635-3307-5575-9e2e-ea86efafca29",
+   "558299d1-3437-50d2-9eb1-336849bd9e85",
+   "8f9a687c-f048-5c6f-a6c7-72dc9b2f1bcc",
+   "9eada859-a46f-52c5-b62f-8e12e18588ec",
+   "af2c37f5-d7be-530c-9ba6-780975f54677",
+   "b76a63ef-685d-561e-a568-2e4b5e0d61f9",
+   "f1d6357e-80f2-5910-bcd6-6c1b3f6e284c",
+   "f3f686fe-01bf-57a2-9548-eba22a00e8de"
+  ],
+  "seen_task": false,
+  "task_signature": "af70b99e-3a12-5bd0-a846-abe2e573bbf4"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "numeric-averages"
+  ],
+  "query_hash": "3aa7dd86091bf965f33058a5379dddcac56b520c7f2634b05fc06d18446a6079",
+  "query_id": "q:1d962b28-144f-5c62-be69-9259fab6de9b",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "0cbba053-46b9-54ec-99ba-af601e12f537",
+   "33cb039b-c4ef-55e9-8706-c5d48dedf8af",
+   "4c4aac18-026f-546b-846a-8bb5d0ce47c3",
+   "55ac95fb-9274-51a2-a51b-ba4f034ff66c",
+   "b4c136e0-5112-5f77-8f65-c16d3dafff2e",
+   "c46bfb4b-08f1-5b2d-8999-717d98dd41f6",
+   "e93659a5-5496-5272-8053-b33bf1f6b310",
+   "ee56723c-8118-5826-aac8-9fabc8ef71d5"
+  ],
+  "seen_task": false,
+  "task_signature": "cf8ccc01-f45d-5f49-a841-a672952019f1"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "state-registry"
+  ],
+  "query_hash": "2dfa36b3b17f28434fb363aeabfb9ec5aeedbba794babfc3f2ce59fd02fca2ee",
+  "query_id": "q:2482e9de-44d1-5f7b-b7c9-41f326ab8888",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "612a9978-bf89-598b-b905-bdf3ed700e55",
+   "76433e4e-970a-5499-81a6-217c39dc62fe",
+   "85fe081a-776a-5b36-8cc1-40b040fe9dac",
+   "93af157f-4d5a-5912-a18a-a2e33c1f7b5b",
+   "c08b84d6-653d-59c7-ae05-fd1686b0d268",
+   "cb8a5c23-5d57-516f-bd0d-eb66501ec81d",
+   "d318bde5-3d01-575f-9863-f0d39d14f106",
+   "dedb9e6b-0862-546f-897b-7497230bddc1"
+  ],
+  "seen_task": false,
+  "task_signature": "43dbdbe2-4f41-57c2-95e9-c65342f16474"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "parsing-booleans"
+  ],
+  "query_hash": "1a3a1c281ad925ae4feaffa732aeafcddeb808b8df4ba8ab09b66570c6d1627e",
+  "query_id": "q:25ee7635-3307-5575-9e2e-ea86efafca29",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "182751d9-53da-59f2-8daf-3d0e57a2c125",
+   "558299d1-3437-50d2-9eb1-336849bd9e85",
+   "8f9a687c-f048-5c6f-a6c7-72dc9b2f1bcc",
+   "9eada859-a46f-52c5-b62f-8e12e18588ec",
+   "af2c37f5-d7be-530c-9ba6-780975f54677",
+   "b76a63ef-685d-561e-a568-2e4b5e0d61f9",
+   "dee400ee-046f-54d4-9ca8-e2ac82294e3b",
+   "f3f686fe-01bf-57a2-9548-eba22a00e8de"
+  ],
+  "seen_task": false,
+  "task_signature": "9c0fb9de-5a2b-553f-908f-716822f8dc3b"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "errors-nested-lookup"
+  ],
+  "query_hash": "4dfb318ab59d033cb00719ce4daf599ef912f3a0a1f3d4bedaf5413d4c2d299c",
+  "query_id": "q:26d11e28-afa6-5e6f-8b5d-241b1e603532",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "10ecba4b-a57c-5f0a-9a51-d4e8619f2b1e",
+   "2ac52ac7-5ee0-5578-9f4b-d3675b0280f1",
+   "3c1b50cd-de4f-513d-ad15-940dc132bbe9",
+   "46479b31-d8fe-5345-8f9d-988a6f1ede86",
+   "876d91b2-d3e9-528a-a200-bcc7a48ced9a",
+   "c6059ca1-7e4d-54a8-8ea4-83f5d644c9e5",
+   "c7495963-de99-5413-8bb2-aa98d294195d",
+   "e759e5bb-0440-5729-945b-388bd7482685"
+  ],
+  "seen_task": false,
+  "task_signature": "c0fdc1d0-e8cb-51c1-b553-7ea4e4557cf0"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "boundary-chunking"
+  ],
+  "query_hash": "7829d1075b6800cab751067b722ad8e54f5b2276f640695d8c82e328a224fc8b",
+  "query_id": "q:2751b48e-1ba5-5b5b-a378-c9eb3dc45888",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "03d3c56e-2219-56c5-9e3d-d289c8e3d46e",
+   "09ff63a2-d026-5835-a070-1d26677fbfb1",
+   "102717e8-6452-579a-a265-d76a11adac7d",
+   "4042d35d-aa7b-5d6a-b1ee-3370f4d35af6",
+   "5caaf6fc-21ee-5469-81d9-02e54f85d4cc",
+   "898c40a6-bccf-536b-aef1-e7af77615195",
+   "89c0e20f-90e2-5151-9a63-2d14fef0b627",
+   "bd2c6ec4-e0cf-540e-ab30-a437767962be"
+  ],
+  "seen_task": false,
+  "task_signature": "ebc8416c-8d61-5ddc-addd-09bae62c5d48"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "errors-bulk-cleanup"
+  ],
+  "query_hash": "69f7670f6bdcb17e456bfd1733648ffdfa199ddfd851f98fbfff6d18f559cc11",
+  "query_id": "q:2ac52ac7-5ee0-5578-9f4b-d3675b0280f1",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "10ecba4b-a57c-5f0a-9a51-d4e8619f2b1e",
+   "26d11e28-afa6-5e6f-8b5d-241b1e603532",
+   "3c1b50cd-de4f-513d-ad15-940dc132bbe9",
+   "46479b31-d8fe-5345-8f9d-988a6f1ede86",
+   "876d91b2-d3e9-528a-a200-bcc7a48ced9a",
+   "ac60f847-1a2a-5503-ae8d-4704649189a5",
+   "c7495963-de99-5413-8bb2-aa98d294195d",
+   "e759e5bb-0440-5729-945b-388bd7482685"
+  ],
+  "seen_task": false,
+  "task_signature": "807e16ae-021f-5b14-81b1-ef3dac1eea82"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "transform-columns-to-rows"
+  ],
+  "query_hash": "2e9c39d85c8d726ee8411a66e4cce5f188a70804fda0823a086f40979b25ca31",
+  "query_id": "q:2b5e15e0-b704-5c0f-826f-07267d9cf9a4",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "64e95db9-2df5-5ce4-876f-48b4b36bfa04",
+   "74c47116-a435-57b5-a6c5-6e7860b275d4",
+   "856dc92b-eb1c-57c4-847f-b6c4fda51040",
+   "857ed136-4568-592d-bb38-335bc1f29a51",
+   "c6221fb7-39dd-5d70-b306-6d21d5a1e1aa",
+   "e4d3d18e-593d-5e82-8511-fa156d9652ce",
+   "f8bdf14a-efb0-5439-a564-c9614af7e47a",
+   "fde1e0f8-9fdb-5694-a0cc-670cc8579ca3"
+  ],
+  "seen_task": false,
+  "task_signature": "4ae905f5-e1d3-5874-9e52-e6a27ef22141"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "numeric-percentages"
+  ],
+  "query_hash": "af3824be79ad5eda8c34972ce4b56f45e72af2437e79a0a0f00c637b5c57edaa",
+  "query_id": "q:33cb039b-c4ef-55e9-8706-c5d48dedf8af",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "0cbba053-46b9-54ec-99ba-af601e12f537",
+   "1d962b28-144f-5c62-be69-9259fab6de9b",
+   "37e67c86-8fc5-568c-96b3-0e3e00bff087",
+   "4c4aac18-026f-546b-846a-8bb5d0ce47c3",
+   "b4c136e0-5112-5f77-8f65-c16d3dafff2e",
+   "c46bfb4b-08f1-5b2d-8999-717d98dd41f6",
+   "e93659a5-5496-5272-8053-b33bf1f6b310",
+   "ee56723c-8118-5826-aac8-9fabc8ef71d5"
+  ],
+  "seen_task": false,
+  "task_signature": "cf4649bd-585d-58bf-9979-3e631695bbd5"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "numeric-averages"
+  ],
+  "query_hash": "cdfd35de29db831b8a6a39cdcc3e66e2a6c6b454337d7c578a215eafad35c0d7",
+  "query_id": "q:37e67c86-8fc5-568c-96b3-0e3e00bff087",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "0cbba053-46b9-54ec-99ba-af601e12f537",
+   "33cb039b-c4ef-55e9-8706-c5d48dedf8af",
+   "4c4aac18-026f-546b-846a-8bb5d0ce47c3",
+   "55ac95fb-9274-51a2-a51b-ba4f034ff66c",
+   "b4c136e0-5112-5f77-8f65-c16d3dafff2e",
+   "c46bfb4b-08f1-5b2d-8999-717d98dd41f6",
+   "e93659a5-5496-5272-8053-b33bf1f6b310",
+   "ee56723c-8118-5826-aac8-9fabc8ef71d5"
+  ],
+  "seen_task": false,
+  "task_signature": "cf8ccc01-f45d-5f49-a841-a672952019f1"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "errors-fallback-chain"
+  ],
+  "query_hash": "1cbd9d8537c664e9921de7ed87ad263ecacbbbd9568918217a8efc9f43334d9f",
+  "query_id": "q:3c1b50cd-de4f-513d-ad15-940dc132bbe9",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "10ecba4b-a57c-5f0a-9a51-d4e8619f2b1e",
+   "26d11e28-afa6-5e6f-8b5d-241b1e603532",
+   "2ac52ac7-5ee0-5578-9f4b-d3675b0280f1",
+   "46479b31-d8fe-5345-8f9d-988a6f1ede86",
+   "876d91b2-d3e9-528a-a200-bcc7a48ced9a",
+   "ac60f847-1a2a-5503-ae8d-4704649189a5",
+   "c6059ca1-7e4d-54a8-8ea4-83f5d644c9e5",
+   "c7495963-de99-5413-8bb2-aa98d294195d"
+  ],
+  "seen_task": false,
+  "task_signature": "280faca8-d949-5358-a720-d7b1d6574595"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "boundary-deduplication"
+  ],
+  "query_hash": "4aafbf512a4b85edd042825ef597c2a73f776b3ec76f7524b350d6d9bbd32fe8",
+  "query_id": "q:4042d35d-aa7b-5d6a-b1ee-3370f4d35af6",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "03d3c56e-2219-56c5-9e3d-d289c8e3d46e",
+   "09ff63a2-d026-5835-a070-1d26677fbfb1",
+   "102717e8-6452-579a-a265-d76a11adac7d",
+   "2751b48e-1ba5-5b5b-a378-c9eb3dc45888",
+   "5caaf6fc-21ee-5469-81d9-02e54f85d4cc",
+   "654e71b2-1fb8-5c1f-955c-4fb88db87eb3",
+   "898c40a6-bccf-536b-aef1-e7af77615195",
+   "bd2c6ec4-e0cf-540e-ab30-a437767962be"
+  ],
+  "seen_task": false,
+  "task_signature": "92d9e85a-e735-5e5f-a609-626061ac81c0"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "errors-preconditions"
+  ],
+  "query_hash": "595b299724531dc9e5943cb3ff70e794078c736b7d176e5d5a658442fad2aa7c",
+  "query_id": "q:46479b31-d8fe-5345-8f9d-988a6f1ede86",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "10ecba4b-a57c-5f0a-9a51-d4e8619f2b1e",
+   "26d11e28-afa6-5e6f-8b5d-241b1e603532",
+   "2ac52ac7-5ee0-5578-9f4b-d3675b0280f1",
+   "3c1b50cd-de4f-513d-ad15-940dc132bbe9",
+   "876d91b2-d3e9-528a-a200-bcc7a48ced9a",
+   "ac60f847-1a2a-5503-ae8d-4704649189a5",
+   "c6059ca1-7e4d-54a8-8ea4-83f5d644c9e5",
+   "e759e5bb-0440-5729-945b-388bd7482685"
+  ],
+  "seen_task": false,
+  "task_signature": "50dc1a69-236d-51b9-a7f1-76bc36860374"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "numeric-clamping"
+  ],
+  "query_hash": "ce5e453bbbb78ca9ce6d542cb4d9a58a7ea1cf993cf2f0adb336e0d39eef9037",
+  "query_id": "q:4c4aac18-026f-546b-846a-8bb5d0ce47c3",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "0cbba053-46b9-54ec-99ba-af601e12f537",
+   "1d962b28-144f-5c62-be69-9259fab6de9b",
+   "33cb039b-c4ef-55e9-8706-c5d48dedf8af",
+   "37e67c86-8fc5-568c-96b3-0e3e00bff087",
+   "55ac95fb-9274-51a2-a51b-ba4f034ff66c",
+   "c46bfb4b-08f1-5b2d-8999-717d98dd41f6",
+   "e93659a5-5496-5272-8053-b33bf1f6b310",
+   "ee56723c-8118-5826-aac8-9fabc8ef71d5"
+  ],
+  "seen_task": false,
+  "task_signature": "109289fd-58ea-52c3-9cf9-b57cb863313f"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "state-registry"
+  ],
+  "query_hash": "17942435150b557ac7308e9d0e91177f719e6f69c3beacf5d2f2d69331f78943",
+  "query_id": "q:4d8bd748-82d1-50d2-99f1-97858f4c1905",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "612a9978-bf89-598b-b905-bdf3ed700e55",
+   "76433e4e-970a-5499-81a6-217c39dc62fe",
+   "85fe081a-776a-5b36-8cc1-40b040fe9dac",
+   "93af157f-4d5a-5912-a18a-a2e33c1f7b5b",
+   "c08b84d6-653d-59c7-ae05-fd1686b0d268",
+   "cb8a5c23-5d57-516f-bd0d-eb66501ec81d",
+   "d318bde5-3d01-575f-9863-f0d39d14f106",
+   "dedb9e6b-0862-546f-897b-7497230bddc1"
+  ],
+  "seen_task": false,
+  "task_signature": "43dbdbe2-4f41-57c2-95e9-c65342f16474"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "parsing-key-values"
+  ],
+  "query_hash": "7545eaaf9c4e93f9cb23cd05591e6de76ca4ffc3974600f67c3792e76f7ab49b",
+  "query_id": "q:558299d1-3437-50d2-9eb1-336849bd9e85",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "182751d9-53da-59f2-8daf-3d0e57a2c125",
+   "25ee7635-3307-5575-9e2e-ea86efafca29",
+   "8f9a687c-f048-5c6f-a6c7-72dc9b2f1bcc",
+   "af2c37f5-d7be-530c-9ba6-780975f54677",
+   "b76a63ef-685d-561e-a568-2e4b5e0d61f9",
+   "dee400ee-046f-54d4-9ca8-e2ac82294e3b",
+   "f1d6357e-80f2-5910-bcd6-6c1b3f6e284c",
+   "f3f686fe-01bf-57a2-9548-eba22a00e8de"
+  ],
+  "seen_task": false,
+  "task_signature": "049bd23c-3838-5b57-97cd-a5a9b5200f54"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "numeric-percentages"
+  ],
+  "query_hash": "7787332001205e71be72c3c5a7e71557e6d11d12f7a344689d9b4eff49bfab96",
+  "query_id": "q:55ac95fb-9274-51a2-a51b-ba4f034ff66c",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "0cbba053-46b9-54ec-99ba-af601e12f537",
+   "1d962b28-144f-5c62-be69-9259fab6de9b",
+   "37e67c86-8fc5-568c-96b3-0e3e00bff087",
+   "4c4aac18-026f-546b-846a-8bb5d0ce47c3",
+   "b4c136e0-5112-5f77-8f65-c16d3dafff2e",
+   "c46bfb4b-08f1-5b2d-8999-717d98dd41f6",
+   "e93659a5-5496-5272-8053-b33bf1f6b310",
+   "ee56723c-8118-5826-aac8-9fabc8ef71d5"
+  ],
+  "seen_task": false,
+  "task_signature": "cf4649bd-585d-58bf-9979-3e631695bbd5"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "boundary-sequence-tail"
+  ],
+  "query_hash": "f5c7b345848794b76e2e191631d5d0524e90283fc5029ae5854afed9a8d981d7",
+  "query_id": "q:5caaf6fc-21ee-5469-81d9-02e54f85d4cc",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "03d3c56e-2219-56c5-9e3d-d289c8e3d46e",
+   "102717e8-6452-579a-a265-d76a11adac7d",
+   "2751b48e-1ba5-5b5b-a378-c9eb3dc45888",
+   "4042d35d-aa7b-5d6a-b1ee-3370f4d35af6",
+   "654e71b2-1fb8-5c1f-955c-4fb88db87eb3",
+   "898c40a6-bccf-536b-aef1-e7af77615195",
+   "89c0e20f-90e2-5151-9a63-2d14fef0b627",
+   "bd2c6ec4-e0cf-540e-ab30-a437767962be"
+  ],
+  "seen_task": false,
+  "task_signature": "ab668a23-8051-5b14-a595-f7b711f90d2e"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "state-settings-merge"
+  ],
+  "query_hash": "55dfae945d06ef7aa36fe757d7d5c0f2a17bc9fbbdda894682337fd3bdd33c8e",
+  "query_id": "q:612a9978-bf89-598b-b905-bdf3ed700e55",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "2482e9de-44d1-5f7b-b7c9-41f326ab8888",
+   "4d8bd748-82d1-50d2-99f1-97858f4c1905",
+   "76433e4e-970a-5499-81a6-217c39dc62fe",
+   "85fe081a-776a-5b36-8cc1-40b040fe9dac",
+   "c08b84d6-653d-59c7-ae05-fd1686b0d268",
+   "cb8a5c23-5d57-516f-bd0d-eb66501ec81d",
+   "d318bde5-3d01-575f-9863-f0d39d14f106",
+   "dedb9e6b-0862-546f-897b-7497230bddc1"
+  ],
+  "seen_task": false,
+  "task_signature": "46bf9401-2320-57e7-ab8e-11e646c870e9"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "transform-inversion"
+  ],
+  "query_hash": "bc621eed3db377b5d087bba3dbc333378ba1e775d68d4d83de829aabb5cee17a",
+  "query_id": "q:64e95db9-2df5-5ce4-876f-48b4b36bfa04",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "2b5e15e0-b704-5c0f-826f-07267d9cf9a4",
+   "6b74eb37-1428-5f29-97e9-bd1b6522eda0",
+   "74c47116-a435-57b5-a6c5-6e7860b275d4",
+   "857ed136-4568-592d-bb38-335bc1f29a51",
+   "c6221fb7-39dd-5d70-b306-6d21d5a1e1aa",
+   "e4d3d18e-593d-5e82-8511-fa156d9652ce",
+   "f8bdf14a-efb0-5439-a564-c9614af7e47a",
+   "fde1e0f8-9fdb-5694-a0cc-670cc8579ca3"
+  ],
+  "seen_task": false,
+  "task_signature": "4a28bdaf-952e-56bd-99f8-77736c8df318"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "boundary-chunking"
+  ],
+  "query_hash": "80c3e7835a8f1c300ccd2c440417e0b9f6bacb7ce7962cb4bbf015f2713d62ae",
+  "query_id": "q:654e71b2-1fb8-5c1f-955c-4fb88db87eb3",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "03d3c56e-2219-56c5-9e3d-d289c8e3d46e",
+   "09ff63a2-d026-5835-a070-1d26677fbfb1",
+   "102717e8-6452-579a-a265-d76a11adac7d",
+   "4042d35d-aa7b-5d6a-b1ee-3370f4d35af6",
+   "5caaf6fc-21ee-5469-81d9-02e54f85d4cc",
+   "898c40a6-bccf-536b-aef1-e7af77615195",
+   "89c0e20f-90e2-5151-9a63-2d14fef0b627",
+   "bd2c6ec4-e0cf-540e-ab30-a437767962be"
+  ],
+  "seen_task": false,
+  "task_signature": "ebc8416c-8d61-5ddc-addd-09bae62c5d48"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "transform-columns-to-rows"
+  ],
+  "query_hash": "893d9103d1b11c3029008ca5a86c751b5422c742d9d2894ddd31c13fcb1ce332",
+  "query_id": "q:6b74eb37-1428-5f29-97e9-bd1b6522eda0",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "64e95db9-2df5-5ce4-876f-48b4b36bfa04",
+   "74c47116-a435-57b5-a6c5-6e7860b275d4",
+   "856dc92b-eb1c-57c4-847f-b6c4fda51040",
+   "857ed136-4568-592d-bb38-335bc1f29a51",
+   "c6221fb7-39dd-5d70-b306-6d21d5a1e1aa",
+   "e4d3d18e-593d-5e82-8511-fa156d9652ce",
+   "f8bdf14a-efb0-5439-a564-c9614af7e47a",
+   "fde1e0f8-9fdb-5694-a0cc-670cc8579ca3"
+  ],
+  "seen_task": false,
+  "task_signature": "4ae905f5-e1d3-5874-9e52-e6a27ef22141"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "transform-key-renaming"
+  ],
+  "query_hash": "9c238865de7f4bcab45486426936aebf615f691d0945059c13972a6ac84a4d3d",
+  "query_id": "q:74c47116-a435-57b5-a6c5-6e7860b275d4",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "2b5e15e0-b704-5c0f-826f-07267d9cf9a4",
+   "64e95db9-2df5-5ce4-876f-48b4b36bfa04",
+   "6b74eb37-1428-5f29-97e9-bd1b6522eda0",
+   "856dc92b-eb1c-57c4-847f-b6c4fda51040",
+   "c6221fb7-39dd-5d70-b306-6d21d5a1e1aa",
+   "e4d3d18e-593d-5e82-8511-fa156d9652ce",
+   "f8bdf14a-efb0-5439-a564-c9614af7e47a",
+   "fde1e0f8-9fdb-5694-a0cc-670cc8579ca3"
+  ],
+  "seen_task": false,
+  "task_signature": "ca3e69c8-b868-5ceb-98be-f4cfd11b92b9"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "state-checkpoint-history"
+  ],
+  "query_hash": "c68136fe30b623c0a6109b3023b86d11653d201eb84288fe8ada1a636e441457",
+  "query_id": "q:76433e4e-970a-5499-81a6-217c39dc62fe",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "2482e9de-44d1-5f7b-b7c9-41f326ab8888",
+   "4d8bd748-82d1-50d2-99f1-97858f4c1905",
+   "612a9978-bf89-598b-b905-bdf3ed700e55",
+   "85fe081a-776a-5b36-8cc1-40b040fe9dac",
+   "93af157f-4d5a-5912-a18a-a2e33c1f7b5b",
+   "c08b84d6-653d-59c7-ae05-fd1686b0d268",
+   "cb8a5c23-5d57-516f-bd0d-eb66501ec81d",
+   "d318bde5-3d01-575f-9863-f0d39d14f106"
+  ],
+  "seen_task": false,
+  "task_signature": "68418095-52de-5a63-b6e6-145cbfa6bf45"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "transform-inversion"
+  ],
+  "query_hash": "bc1d4f25563ceef1075f1e1d9caabc37a2d7ce5799ea26f7c84b6b7d0b6ec004",
+  "query_id": "q:856dc92b-eb1c-57c4-847f-b6c4fda51040",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "2b5e15e0-b704-5c0f-826f-07267d9cf9a4",
+   "6b74eb37-1428-5f29-97e9-bd1b6522eda0",
+   "74c47116-a435-57b5-a6c5-6e7860b275d4",
+   "857ed136-4568-592d-bb38-335bc1f29a51",
+   "c6221fb7-39dd-5d70-b306-6d21d5a1e1aa",
+   "e4d3d18e-593d-5e82-8511-fa156d9652ce",
+   "f8bdf14a-efb0-5439-a564-c9614af7e47a",
+   "fde1e0f8-9fdb-5694-a0cc-670cc8579ca3"
+  ],
+  "seen_task": false,
+  "task_signature": "4a28bdaf-952e-56bd-99f8-77736c8df318"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "transform-key-renaming"
+  ],
+  "query_hash": "ddc8839c7ea92122d81ed1a32654254edb05eea9ac84fe01bb59d4446e9a4686",
+  "query_id": "q:857ed136-4568-592d-bb38-335bc1f29a51",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "2b5e15e0-b704-5c0f-826f-07267d9cf9a4",
+   "64e95db9-2df5-5ce4-876f-48b4b36bfa04",
+   "6b74eb37-1428-5f29-97e9-bd1b6522eda0",
+   "856dc92b-eb1c-57c4-847f-b6c4fda51040",
+   "c6221fb7-39dd-5d70-b306-6d21d5a1e1aa",
+   "e4d3d18e-593d-5e82-8511-fa156d9652ce",
+   "f8bdf14a-efb0-5439-a564-c9614af7e47a",
+   "fde1e0f8-9fdb-5694-a0cc-670cc8579ca3"
+  ],
+  "seen_task": false,
+  "task_signature": "ca3e69c8-b868-5ceb-98be-f4cfd11b92b9"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "state-slot-allocation"
+  ],
+  "query_hash": "08c155c8752131e61363fe041d018ba28a765fb8cbe85c1309fda17669b51cfc",
+  "query_id": "q:85fe081a-776a-5b36-8cc1-40b040fe9dac",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "2482e9de-44d1-5f7b-b7c9-41f326ab8888",
+   "4d8bd748-82d1-50d2-99f1-97858f4c1905",
+   "612a9978-bf89-598b-b905-bdf3ed700e55",
+   "76433e4e-970a-5499-81a6-217c39dc62fe",
+   "93af157f-4d5a-5912-a18a-a2e33c1f7b5b",
+   "c08b84d6-653d-59c7-ae05-fd1686b0d268",
+   "cb8a5c23-5d57-516f-bd0d-eb66501ec81d",
+   "dedb9e6b-0862-546f-897b-7497230bddc1"
+  ],
+  "seen_task": false,
+  "task_signature": "f97c41de-bd4e-52f9-9fff-5d703be42590"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "errors-lenient-parsing"
+  ],
+  "query_hash": "be14f25e348cc6d101387b0bbc3b76f3c2cbae6c490f52f4c01be09a938ad511",
+  "query_id": "q:876d91b2-d3e9-528a-a200-bcc7a48ced9a",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "26d11e28-afa6-5e6f-8b5d-241b1e603532",
+   "2ac52ac7-5ee0-5578-9f4b-d3675b0280f1",
+   "3c1b50cd-de4f-513d-ad15-940dc132bbe9",
+   "46479b31-d8fe-5345-8f9d-988a6f1ede86",
+   "ac60f847-1a2a-5503-ae8d-4704649189a5",
+   "c6059ca1-7e4d-54a8-8ea4-83f5d644c9e5",
+   "c7495963-de99-5413-8bb2-aa98d294195d",
+   "e759e5bb-0440-5729-945b-388bd7482685"
+  ],
+  "seen_task": false,
+  "task_signature": "9131c938-f8e4-56d1-bcd9-79a27a84871b"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "boundary-sequence-head"
+  ],
+  "query_hash": "bd11d1178819e6b85c6897b962230c95e9f0990a7be05e96c5da39389ad80b88",
+  "query_id": "q:898c40a6-bccf-536b-aef1-e7af77615195",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "09ff63a2-d026-5835-a070-1d26677fbfb1",
+   "102717e8-6452-579a-a265-d76a11adac7d",
+   "2751b48e-1ba5-5b5b-a378-c9eb3dc45888",
+   "4042d35d-aa7b-5d6a-b1ee-3370f4d35af6",
+   "5caaf6fc-21ee-5469-81d9-02e54f85d4cc",
+   "654e71b2-1fb8-5c1f-955c-4fb88db87eb3",
+   "89c0e20f-90e2-5151-9a63-2d14fef0b627",
+   "bd2c6ec4-e0cf-540e-ab30-a437767962be"
+  ],
+  "seen_task": false,
+  "task_signature": "1f8226dc-5a2a-5baa-a777-f788cb0a7de2"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "boundary-deduplication"
+  ],
+  "query_hash": "05f4154d316f9e83b58991daf9c0cb0f05fe158e66be217fe8989eb367de8b67",
+  "query_id": "q:89c0e20f-90e2-5151-9a63-2d14fef0b627",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "03d3c56e-2219-56c5-9e3d-d289c8e3d46e",
+   "09ff63a2-d026-5835-a070-1d26677fbfb1",
+   "102717e8-6452-579a-a265-d76a11adac7d",
+   "2751b48e-1ba5-5b5b-a378-c9eb3dc45888",
+   "5caaf6fc-21ee-5469-81d9-02e54f85d4cc",
+   "654e71b2-1fb8-5c1f-955c-4fb88db87eb3",
+   "898c40a6-bccf-536b-aef1-e7af77615195",
+   "bd2c6ec4-e0cf-540e-ab30-a437767962be"
+  ],
+  "seen_task": false,
+  "task_signature": "92d9e85a-e735-5e5f-a609-626061ac81c0"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "parsing-versions"
+  ],
+  "query_hash": "db4f6f44e721833bb8441b45f0fbcc902eb634761da850af3eb5b0d6ac109032",
+  "query_id": "q:8f9a687c-f048-5c6f-a6c7-72dc9b2f1bcc",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "182751d9-53da-59f2-8daf-3d0e57a2c125",
+   "25ee7635-3307-5575-9e2e-ea86efafca29",
+   "558299d1-3437-50d2-9eb1-336849bd9e85",
+   "9eada859-a46f-52c5-b62f-8e12e18588ec",
+   "af2c37f5-d7be-530c-9ba6-780975f54677",
+   "dee400ee-046f-54d4-9ca8-e2ac82294e3b",
+   "f1d6357e-80f2-5910-bcd6-6c1b3f6e284c",
+   "f3f686fe-01bf-57a2-9548-eba22a00e8de"
+  ],
+  "seen_task": false,
+  "task_signature": "112b2ec1-5919-53b4-87d7-7db355a5fe1e"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "state-settings-merge"
+  ],
+  "query_hash": "955d5e1eb6058f4711e3b5488943cd2504a3578c940a028f7ed3fd4d63965010",
+  "query_id": "q:93af157f-4d5a-5912-a18a-a2e33c1f7b5b",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "2482e9de-44d1-5f7b-b7c9-41f326ab8888",
+   "4d8bd748-82d1-50d2-99f1-97858f4c1905",
+   "76433e4e-970a-5499-81a6-217c39dc62fe",
+   "85fe081a-776a-5b36-8cc1-40b040fe9dac",
+   "c08b84d6-653d-59c7-ae05-fd1686b0d268",
+   "cb8a5c23-5d57-516f-bd0d-eb66501ec81d",
+   "d318bde5-3d01-575f-9863-f0d39d14f106",
+   "dedb9e6b-0862-546f-897b-7497230bddc1"
+  ],
+  "seen_task": false,
+  "task_signature": "46bf9401-2320-57e7-ab8e-11e646c870e9"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "parsing-key-values"
+  ],
+  "query_hash": "6197e51ee66853cd4f0283ed033e012678bfb6f5125f3287a515544b6f3b078a",
+  "query_id": "q:9eada859-a46f-52c5-b62f-8e12e18588ec",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "182751d9-53da-59f2-8daf-3d0e57a2c125",
+   "25ee7635-3307-5575-9e2e-ea86efafca29",
+   "8f9a687c-f048-5c6f-a6c7-72dc9b2f1bcc",
+   "af2c37f5-d7be-530c-9ba6-780975f54677",
+   "b76a63ef-685d-561e-a568-2e4b5e0d61f9",
+   "dee400ee-046f-54d4-9ca8-e2ac82294e3b",
+   "f1d6357e-80f2-5910-bcd6-6c1b3f6e284c",
+   "f3f686fe-01bf-57a2-9548-eba22a00e8de"
+  ],
+  "seen_task": false,
+  "task_signature": "049bd23c-3838-5b57-97cd-a5a9b5200f54"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "errors-nested-lookup"
+  ],
+  "query_hash": "2647919f7e70af593dafacfcf238e79c3faeb0b045ff9e87391561c45a1652c8",
+  "query_id": "q:ac60f847-1a2a-5503-ae8d-4704649189a5",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "10ecba4b-a57c-5f0a-9a51-d4e8619f2b1e",
+   "2ac52ac7-5ee0-5578-9f4b-d3675b0280f1",
+   "3c1b50cd-de4f-513d-ad15-940dc132bbe9",
+   "46479b31-d8fe-5345-8f9d-988a6f1ede86",
+   "876d91b2-d3e9-528a-a200-bcc7a48ced9a",
+   "c6059ca1-7e4d-54a8-8ea4-83f5d644c9e5",
+   "c7495963-de99-5413-8bb2-aa98d294195d",
+   "e759e5bb-0440-5729-945b-388bd7482685"
+  ],
+  "seen_task": false,
+  "task_signature": "c0fdc1d0-e8cb-51c1-b553-7ea4e4557cf0"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "parsing-header-names"
+  ],
+  "query_hash": "b93476e883eeedfc74f8cca85ab92b8c7520353b582e182a9ae010fd1157cb21",
+  "query_id": "q:af2c37f5-d7be-530c-9ba6-780975f54677",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "182751d9-53da-59f2-8daf-3d0e57a2c125",
+   "25ee7635-3307-5575-9e2e-ea86efafca29",
+   "558299d1-3437-50d2-9eb1-336849bd9e85",
+   "8f9a687c-f048-5c6f-a6c7-72dc9b2f1bcc",
+   "9eada859-a46f-52c5-b62f-8e12e18588ec",
+   "b76a63ef-685d-561e-a568-2e4b5e0d61f9",
+   "dee400ee-046f-54d4-9ca8-e2ac82294e3b",
+   "f1d6357e-80f2-5910-bcd6-6c1b3f6e284c"
+  ],
+  "seen_task": false,
+  "task_signature": "68ccf88c-29ac-5bba-a68e-d0625683e39c"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "numeric-clamping"
+  ],
+  "query_hash": "76d93749ef8768eb9bfaaf98665c3339c3a44c5a0bb169a5ce84aecfa3fc6ab7",
+  "query_id": "q:b4c136e0-5112-5f77-8f65-c16d3dafff2e",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "0cbba053-46b9-54ec-99ba-af601e12f537",
+   "1d962b28-144f-5c62-be69-9259fab6de9b",
+   "33cb039b-c4ef-55e9-8706-c5d48dedf8af",
+   "37e67c86-8fc5-568c-96b3-0e3e00bff087",
+   "55ac95fb-9274-51a2-a51b-ba4f034ff66c",
+   "c46bfb4b-08f1-5b2d-8999-717d98dd41f6",
+   "e93659a5-5496-5272-8053-b33bf1f6b310",
+   "ee56723c-8118-5826-aac8-9fabc8ef71d5"
+  ],
+  "seen_task": false,
+  "task_signature": "109289fd-58ea-52c3-9cf9-b57cb863313f"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "parsing-versions"
+  ],
+  "query_hash": "9f86b2fa5ada720a149f43a3b8264ca95ca802caea23f7223ba54339f240b32d",
+  "query_id": "q:b76a63ef-685d-561e-a568-2e4b5e0d61f9",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "182751d9-53da-59f2-8daf-3d0e57a2c125",
+   "25ee7635-3307-5575-9e2e-ea86efafca29",
+   "558299d1-3437-50d2-9eb1-336849bd9e85",
+   "9eada859-a46f-52c5-b62f-8e12e18588ec",
+   "af2c37f5-d7be-530c-9ba6-780975f54677",
+   "dee400ee-046f-54d4-9ca8-e2ac82294e3b",
+   "f1d6357e-80f2-5910-bcd6-6c1b3f6e284c",
+   "f3f686fe-01bf-57a2-9548-eba22a00e8de"
+  ],
+  "seen_task": false,
+  "task_signature": "112b2ec1-5919-53b4-87d7-7db355a5fe1e"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "boundary-windowing"
+  ],
+  "query_hash": "78dc28c8f2ddc7c7b7a2e2f4dc4499e92c588529c09cbff61dd78045c75a124c",
+  "query_id": "q:bd2c6ec4-e0cf-540e-ab30-a437767962be",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "03d3c56e-2219-56c5-9e3d-d289c8e3d46e",
+   "09ff63a2-d026-5835-a070-1d26677fbfb1",
+   "2751b48e-1ba5-5b5b-a378-c9eb3dc45888",
+   "4042d35d-aa7b-5d6a-b1ee-3370f4d35af6",
+   "5caaf6fc-21ee-5469-81d9-02e54f85d4cc",
+   "654e71b2-1fb8-5c1f-955c-4fb88db87eb3",
+   "898c40a6-bccf-536b-aef1-e7af77615195",
+   "89c0e20f-90e2-5151-9a63-2d14fef0b627"
+  ],
+  "seen_task": false,
+  "task_signature": "9784dd89-2716-5352-b70a-2e5a220bbe55"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "state-machine"
+  ],
+  "query_hash": "d1c92691c74080bda1fdbc37add336ddb21d55c1836b0165c9e6e3994f3651ef",
+  "query_id": "q:c08b84d6-653d-59c7-ae05-fd1686b0d268",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "2482e9de-44d1-5f7b-b7c9-41f326ab8888",
+   "4d8bd748-82d1-50d2-99f1-97858f4c1905",
+   "612a9978-bf89-598b-b905-bdf3ed700e55",
+   "76433e4e-970a-5499-81a6-217c39dc62fe",
+   "85fe081a-776a-5b36-8cc1-40b040fe9dac",
+   "93af157f-4d5a-5912-a18a-a2e33c1f7b5b",
+   "d318bde5-3d01-575f-9863-f0d39d14f106",
+   "dedb9e6b-0862-546f-897b-7497230bddc1"
+  ],
+  "seen_task": false,
+  "task_signature": "e81e5275-1bdc-5d21-9f41-a806e830133c"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "numeric-compounding"
+  ],
+  "query_hash": "177da46e30c32a7ea9601d4ba20f01d947f66d056c0726257404b689ff6a7805",
+  "query_id": "q:c46bfb4b-08f1-5b2d-8999-717d98dd41f6",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "0cbba053-46b9-54ec-99ba-af601e12f537",
+   "1d962b28-144f-5c62-be69-9259fab6de9b",
+   "33cb039b-c4ef-55e9-8706-c5d48dedf8af",
+   "37e67c86-8fc5-568c-96b3-0e3e00bff087",
+   "4c4aac18-026f-546b-846a-8bb5d0ce47c3",
+   "55ac95fb-9274-51a2-a51b-ba4f034ff66c",
+   "b4c136e0-5112-5f77-8f65-c16d3dafff2e",
+   "e93659a5-5496-5272-8053-b33bf1f6b310"
+  ],
+  "seen_task": false,
+  "task_signature": "16b42c80-7ce3-53fb-8ec9-93c1e8879d6b"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "errors-bulk-cleanup"
+  ],
+  "query_hash": "8dc9b4c8d9a990976ed8beaa6524a5c9d42f7d0640f8fe473373844000022b39",
+  "query_id": "q:c6059ca1-7e4d-54a8-8ea4-83f5d644c9e5",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "10ecba4b-a57c-5f0a-9a51-d4e8619f2b1e",
+   "26d11e28-afa6-5e6f-8b5d-241b1e603532",
+   "3c1b50cd-de4f-513d-ad15-940dc132bbe9",
+   "46479b31-d8fe-5345-8f9d-988a6f1ede86",
+   "876d91b2-d3e9-528a-a200-bcc7a48ced9a",
+   "ac60f847-1a2a-5503-ae8d-4704649189a5",
+   "c7495963-de99-5413-8bb2-aa98d294195d",
+   "e759e5bb-0440-5729-945b-388bd7482685"
+  ],
+  "seen_task": false,
+  "task_signature": "807e16ae-021f-5b14-81b1-ef3dac1eea82"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "transform-grouping"
+  ],
+  "query_hash": "81641f6a39a78817c31ed934a51060f0d985fefeb25a02f8c83577c3b006a97d",
+  "query_id": "q:c6221fb7-39dd-5d70-b306-6d21d5a1e1aa",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "2b5e15e0-b704-5c0f-826f-07267d9cf9a4",
+   "64e95db9-2df5-5ce4-876f-48b4b36bfa04",
+   "6b74eb37-1428-5f29-97e9-bd1b6522eda0",
+   "74c47116-a435-57b5-a6c5-6e7860b275d4",
+   "856dc92b-eb1c-57c4-847f-b6c4fda51040",
+   "857ed136-4568-592d-bb38-335bc1f29a51",
+   "e4d3d18e-593d-5e82-8511-fa156d9652ce",
+   "f8bdf14a-efb0-5439-a564-c9614af7e47a"
+  ],
+  "seen_task": false,
+  "task_signature": "6adc3b61-134e-5aac-93ff-713ed18997cf"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "errors-preconditions"
+  ],
+  "query_hash": "4bda25a925e3a8277e0debd143b6564c9d138badb54ebaaa337bcecc3c1885ec",
+  "query_id": "q:c7495963-de99-5413-8bb2-aa98d294195d",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "10ecba4b-a57c-5f0a-9a51-d4e8619f2b1e",
+   "26d11e28-afa6-5e6f-8b5d-241b1e603532",
+   "2ac52ac7-5ee0-5578-9f4b-d3675b0280f1",
+   "3c1b50cd-de4f-513d-ad15-940dc132bbe9",
+   "876d91b2-d3e9-528a-a200-bcc7a48ced9a",
+   "ac60f847-1a2a-5503-ae8d-4704649189a5",
+   "c6059ca1-7e4d-54a8-8ea4-83f5d644c9e5",
+   "e759e5bb-0440-5729-945b-388bd7482685"
+  ],
+  "seen_task": false,
+  "task_signature": "50dc1a69-236d-51b9-a7f1-76bc36860374"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "state-machine"
+  ],
+  "query_hash": "8d38ff25152ed802efd6c7aa98c9a1996f743b05540d2382fd041cfbc0f49718",
+  "query_id": "q:cb8a5c23-5d57-516f-bd0d-eb66501ec81d",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "2482e9de-44d1-5f7b-b7c9-41f326ab8888",
+   "4d8bd748-82d1-50d2-99f1-97858f4c1905",
+   "612a9978-bf89-598b-b905-bdf3ed700e55",
+   "76433e4e-970a-5499-81a6-217c39dc62fe",
+   "85fe081a-776a-5b36-8cc1-40b040fe9dac",
+   "93af157f-4d5a-5912-a18a-a2e33c1f7b5b",
+   "d318bde5-3d01-575f-9863-f0d39d14f106",
+   "dedb9e6b-0862-546f-897b-7497230bddc1"
+  ],
+  "seen_task": false,
+  "task_signature": "e81e5275-1bdc-5d21-9f41-a806e830133c"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "state-slot-allocation"
+  ],
+  "query_hash": "8bc1d73cf1096f31ac164a89d67a50cbf6a6e7c8193c4bfcdd7a96ea62d04e07",
+  "query_id": "q:d318bde5-3d01-575f-9863-f0d39d14f106",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "2482e9de-44d1-5f7b-b7c9-41f326ab8888",
+   "4d8bd748-82d1-50d2-99f1-97858f4c1905",
+   "612a9978-bf89-598b-b905-bdf3ed700e55",
+   "76433e4e-970a-5499-81a6-217c39dc62fe",
+   "93af157f-4d5a-5912-a18a-a2e33c1f7b5b",
+   "c08b84d6-653d-59c7-ae05-fd1686b0d268",
+   "cb8a5c23-5d57-516f-bd0d-eb66501ec81d",
+   "dedb9e6b-0862-546f-897b-7497230bddc1"
+  ],
+  "seen_task": false,
+  "task_signature": "f97c41de-bd4e-52f9-9fff-5d703be42590"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "state-checkpoint-history"
+  ],
+  "query_hash": "7c00e094001fba45d51fbfe23ff17cfc9691eb97de300207f9d341d86661f36e",
+  "query_id": "q:dedb9e6b-0862-546f-897b-7497230bddc1",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "2482e9de-44d1-5f7b-b7c9-41f326ab8888",
+   "4d8bd748-82d1-50d2-99f1-97858f4c1905",
+   "612a9978-bf89-598b-b905-bdf3ed700e55",
+   "85fe081a-776a-5b36-8cc1-40b040fe9dac",
+   "93af157f-4d5a-5912-a18a-a2e33c1f7b5b",
+   "c08b84d6-653d-59c7-ae05-fd1686b0d268",
+   "cb8a5c23-5d57-516f-bd0d-eb66501ec81d",
+   "d318bde5-3d01-575f-9863-f0d39d14f106"
+  ],
+  "seen_task": false,
+  "task_signature": "68418095-52de-5a63-b6e6-145cbfa6bf45"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "parsing-delimited-fields"
+  ],
+  "query_hash": "0ad108253ff07943555525b477b2bd27afe9efbba7f93f6478159fafb10db711",
+  "query_id": "q:dee400ee-046f-54d4-9ca8-e2ac82294e3b",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "25ee7635-3307-5575-9e2e-ea86efafca29",
+   "558299d1-3437-50d2-9eb1-336849bd9e85",
+   "8f9a687c-f048-5c6f-a6c7-72dc9b2f1bcc",
+   "9eada859-a46f-52c5-b62f-8e12e18588ec",
+   "af2c37f5-d7be-530c-9ba6-780975f54677",
+   "b76a63ef-685d-561e-a568-2e4b5e0d61f9",
+   "f1d6357e-80f2-5910-bcd6-6c1b3f6e284c",
+   "f3f686fe-01bf-57a2-9548-eba22a00e8de"
+  ],
+  "seen_task": false,
+  "task_signature": "af70b99e-3a12-5bd0-a846-abe2e573bbf4"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "transform-summaries"
+  ],
+  "query_hash": "5a00812d8cec723a738e115f4455fb487abd72b8a20478d052f52a196b771a59",
+  "query_id": "q:e4d3d18e-593d-5e82-8511-fa156d9652ce",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "2b5e15e0-b704-5c0f-826f-07267d9cf9a4",
+   "64e95db9-2df5-5ce4-876f-48b4b36bfa04",
+   "6b74eb37-1428-5f29-97e9-bd1b6522eda0",
+   "74c47116-a435-57b5-a6c5-6e7860b275d4",
+   "856dc92b-eb1c-57c4-847f-b6c4fda51040",
+   "857ed136-4568-592d-bb38-335bc1f29a51",
+   "c6221fb7-39dd-5d70-b306-6d21d5a1e1aa",
+   "fde1e0f8-9fdb-5694-a0cc-670cc8579ca3"
+  ],
+  "seen_task": false,
+  "task_signature": "36b70f82-9eee-5249-867c-434634ddcca1"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "errors-fallback-chain"
+  ],
+  "query_hash": "35135bd3728b77ccdf9e40b7015112f2c6ee72906961679b4ee6a6ff522e9b5d",
+  "query_id": "q:e759e5bb-0440-5729-945b-388bd7482685",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "10ecba4b-a57c-5f0a-9a51-d4e8619f2b1e",
+   "26d11e28-afa6-5e6f-8b5d-241b1e603532",
+   "2ac52ac7-5ee0-5578-9f4b-d3675b0280f1",
+   "46479b31-d8fe-5345-8f9d-988a6f1ede86",
+   "876d91b2-d3e9-528a-a200-bcc7a48ced9a",
+   "ac60f847-1a2a-5503-ae8d-4704649189a5",
+   "c6059ca1-7e4d-54a8-8ea4-83f5d644c9e5",
+   "c7495963-de99-5413-8bb2-aa98d294195d"
+  ],
+  "seen_task": false,
+  "task_signature": "280faca8-d949-5358-a720-d7b1d6574595"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "numeric-distribution"
+  ],
+  "query_hash": "a04b1e1698b210c7531627c37948f39ee179ba2703b28bd20cb2bd7888c5b40c",
+  "query_id": "q:e93659a5-5496-5272-8053-b33bf1f6b310",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "1d962b28-144f-5c62-be69-9259fab6de9b",
+   "33cb039b-c4ef-55e9-8706-c5d48dedf8af",
+   "37e67c86-8fc5-568c-96b3-0e3e00bff087",
+   "4c4aac18-026f-546b-846a-8bb5d0ce47c3",
+   "55ac95fb-9274-51a2-a51b-ba4f034ff66c",
+   "b4c136e0-5112-5f77-8f65-c16d3dafff2e",
+   "c46bfb4b-08f1-5b2d-8999-717d98dd41f6",
+   "ee56723c-8118-5826-aac8-9fabc8ef71d5"
+  ],
+  "seen_task": false,
+  "task_signature": "e0568521-8fbe-5bba-a1b5-234c1a97991b"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "numeric-compounding"
+  ],
+  "query_hash": "a3d77d4f7f2b5c4bef9f81feb127190e4c2baddd1187eb5cac84f6e73ffd7494",
+  "query_id": "q:ee56723c-8118-5826-aac8-9fabc8ef71d5",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "0cbba053-46b9-54ec-99ba-af601e12f537",
+   "1d962b28-144f-5c62-be69-9259fab6de9b",
+   "33cb039b-c4ef-55e9-8706-c5d48dedf8af",
+   "37e67c86-8fc5-568c-96b3-0e3e00bff087",
+   "4c4aac18-026f-546b-846a-8bb5d0ce47c3",
+   "55ac95fb-9274-51a2-a51b-ba4f034ff66c",
+   "b4c136e0-5112-5f77-8f65-c16d3dafff2e",
+   "e93659a5-5496-5272-8053-b33bf1f6b310"
+  ],
+  "seen_task": false,
+  "task_signature": "16b42c80-7ce3-53fb-8ec9-93c1e8879d6b"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "parsing-booleans"
+  ],
+  "query_hash": "74d1a1620b557d899e21aca02fe8f71296dddcce193c46889004cedaf6217bb9",
+  "query_id": "q:f1d6357e-80f2-5910-bcd6-6c1b3f6e284c",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "182751d9-53da-59f2-8daf-3d0e57a2c125",
+   "558299d1-3437-50d2-9eb1-336849bd9e85",
+   "8f9a687c-f048-5c6f-a6c7-72dc9b2f1bcc",
+   "9eada859-a46f-52c5-b62f-8e12e18588ec",
+   "af2c37f5-d7be-530c-9ba6-780975f54677",
+   "b76a63ef-685d-561e-a568-2e4b5e0d61f9",
+   "dee400ee-046f-54d4-9ca8-e2ac82294e3b",
+   "f3f686fe-01bf-57a2-9548-eba22a00e8de"
+  ],
+  "seen_task": false,
+  "task_signature": "9c0fb9de-5a2b-553f-908f-716822f8dc3b"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "parsing-header-names"
+  ],
+  "query_hash": "dff97d5a3f8d2467a732d3d1d743f0f56179f54a63cefaeb7914b09b5767ad3a",
+  "query_id": "q:f3f686fe-01bf-57a2-9548-eba22a00e8de",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "182751d9-53da-59f2-8daf-3d0e57a2c125",
+   "25ee7635-3307-5575-9e2e-ea86efafca29",
+   "558299d1-3437-50d2-9eb1-336849bd9e85",
+   "8f9a687c-f048-5c6f-a6c7-72dc9b2f1bcc",
+   "9eada859-a46f-52c5-b62f-8e12e18588ec",
+   "b76a63ef-685d-561e-a568-2e4b5e0d61f9",
+   "dee400ee-046f-54d4-9ca8-e2ac82294e3b",
+   "f1d6357e-80f2-5910-bcd6-6c1b3f6e284c"
+  ],
+  "seen_task": false,
+  "task_signature": "68ccf88c-29ac-5bba-a68e-d0625683e39c"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "transform-summaries"
+  ],
+  "query_hash": "6ba633323bf62ecdff165ce4ff65143a03870ddb821f8ad372cf6418bc5914c4",
+  "query_id": "q:f8bdf14a-efb0-5439-a564-c9614af7e47a",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "2b5e15e0-b704-5c0f-826f-07267d9cf9a4",
+   "64e95db9-2df5-5ce4-876f-48b4b36bfa04",
+   "6b74eb37-1428-5f29-97e9-bd1b6522eda0",
+   "74c47116-a435-57b5-a6c5-6e7860b275d4",
+   "856dc92b-eb1c-57c4-847f-b6c4fda51040",
+   "857ed136-4568-592d-bb38-335bc1f29a51",
+   "c6221fb7-39dd-5d70-b306-6d21d5a1e1aa",
+   "fde1e0f8-9fdb-5694-a0cc-670cc8579ca3"
+  ],
+  "seen_task": false,
+  "task_signature": "36b70f82-9eee-5249-867c-434634ddcca1"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "transform-grouping"
+  ],
+  "query_hash": "1c18d3f49a8c36f27243a1d78299d8cd86364451094afa37c42573d0da251ca8",
+  "query_id": "q:fde1e0f8-9fdb-5694-a0cc-670cc8579ca3",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "2b5e15e0-b704-5c0f-826f-07267d9cf9a4",
+   "64e95db9-2df5-5ce4-876f-48b4b36bfa04",
+   "6b74eb37-1428-5f29-97e9-bd1b6522eda0",
+   "74c47116-a435-57b5-a6c5-6e7860b275d4",
+   "856dc92b-eb1c-57c4-847f-b6c4fda51040",
+   "857ed136-4568-592d-bb38-335bc1f29a51",
+   "e4d3d18e-593d-5e82-8511-fa156d9652ce",
+   "f8bdf14a-efb0-5439-a564-c9614af7e47a"
+  ],
+  "seen_task": false,
+  "task_signature": "6adc3b61-134e-5aac-93ff-713ed18997cf"
+ },
+ {
+  "domain": "logic",
+  "excluded_groups": [
+   "logic.affirming-consequent"
+  ],
+  "query_hash": "0688f6dc284a9f20888eeea01af2fa8c68d8abf0a6829b3a38bcb2e1a7c7aa46",
+  "query_id": "q:logic:affirming-consequent",
+  "relevance_family": "validity-check",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "logic:modus-ponens"
+  ],
+  "seen_task": false,
+  "task_signature": "logic:affirming-consequent"
+ },
+ {
+  "domain": "logic",
+  "excluded_groups": [
+   "logic.consistency"
+  ],
+  "query_hash": "241948d1abafffaa348fce60786d78fdb818ee2fa70c8b466229f360b296bba6",
+  "query_id": "q:logic:consistency",
+  "relevance_family": "consistency-check",
+  "relevance_tier": 2,
+  "relevant_pair_ids": [
+   "logic:affirming-consequent",
+   "logic:constraint",
+   "logic:counterexample",
+   "logic:hypotheses",
+   "logic:modus-ponens",
+   "logic:sat",
+   "logic:sequence-arithmetic",
+   "logic:truth-table",
+   "logic:truth-table-excluded-middle"
+  ],
+  "seen_task": false,
+  "task_signature": "logic:consistency"
+ },
+ {
+  "domain": "logic",
+  "excluded_groups": [
+   "logic.constraint"
+  ],
+  "query_hash": "66542b8e706377e38b11454250a604b2edb6f8ce1233c796384c2808a984a0d9",
+  "query_id": "q:logic:constraint",
+  "relevance_family": "constraint-satisfaction",
+  "relevance_tier": 2,
+  "relevant_pair_ids": [
+   "logic:affirming-consequent",
+   "logic:consistency",
+   "logic:counterexample",
+   "logic:hypotheses",
+   "logic:modus-ponens",
+   "logic:sat",
+   "logic:sequence-arithmetic",
+   "logic:truth-table",
+   "logic:truth-table-excluded-middle"
+  ],
+  "seen_task": false,
+  "task_signature": "logic:constraint"
+ },
+ {
+  "domain": "logic",
+  "excluded_groups": [
+   "logic.counterexample"
+  ],
+  "query_hash": "f2e06eec4d174c7a043f02645baf12f42fe0a7dd4046d5a85b7d30172fbb06a4",
+  "query_id": "q:logic:counterexample",
+  "relevance_family": "counterexample-search",
+  "relevance_tier": 2,
+  "relevant_pair_ids": [
+   "logic:affirming-consequent",
+   "logic:consistency",
+   "logic:constraint",
+   "logic:hypotheses",
+   "logic:modus-ponens",
+   "logic:sat",
+   "logic:sequence-arithmetic",
+   "logic:truth-table",
+   "logic:truth-table-excluded-middle"
+  ],
+  "seen_task": false,
+  "task_signature": "logic:counterexample"
+ },
+ {
+  "domain": "logic",
+  "excluded_groups": [
+   "logic.hypotheses"
+  ],
+  "query_hash": "08344eb371f24a75a6f16eaf8c9b4000ecaa39c47b847342b434fefe60e16bb0",
+  "query_id": "q:logic:hypotheses",
+  "relevance_family": "competing-hypotheses",
+  "relevance_tier": 2,
+  "relevant_pair_ids": [
+   "logic:affirming-consequent",
+   "logic:consistency",
+   "logic:constraint",
+   "logic:counterexample",
+   "logic:modus-ponens",
+   "logic:sat",
+   "logic:sequence-arithmetic",
+   "logic:truth-table",
+   "logic:truth-table-excluded-middle"
+  ],
+  "seen_task": false,
+  "task_signature": "logic:hypotheses"
+ },
+ {
+  "domain": "logic",
+  "excluded_groups": [
+   "logic.modus-ponens"
+  ],
+  "query_hash": "cd91a3884f2daef7c52b35dd9dcd05e1fc105dae5d747f92c7464813c84e3bac",
+  "query_id": "q:logic:modus-ponens",
+  "relevance_family": "validity-check",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "logic:affirming-consequent"
+  ],
+  "seen_task": false,
+  "task_signature": "logic:modus-ponens"
+ },
+ {
+  "domain": "logic",
+  "excluded_groups": [
+   "logic.sat"
+  ],
+  "query_hash": "2edca758d2b750cd49b62c63d1c47b3ac9c56dacbff4b619edb28cc12600c4ec",
+  "query_id": "q:logic:sat",
+  "relevance_family": "satisfiability",
+  "relevance_tier": 2,
+  "relevant_pair_ids": [
+   "logic:affirming-consequent",
+   "logic:consistency",
+   "logic:constraint",
+   "logic:counterexample",
+   "logic:hypotheses",
+   "logic:modus-ponens",
+   "logic:sequence-arithmetic",
+   "logic:truth-table",
+   "logic:truth-table-excluded-middle"
+  ],
+  "seen_task": false,
+  "task_signature": "logic:sat"
+ },
+ {
+  "domain": "logic",
+  "excluded_groups": [
+   "logic.sequence-arithmetic"
+  ],
+  "query_hash": "143034cfd9642d77727b3a47e53b74913e6f65f50d33537e1f402493d5854a91",
+  "query_id": "q:logic:sequence-arithmetic",
+  "relevance_family": "sequence-induction",
+  "relevance_tier": 2,
+  "relevant_pair_ids": [
+   "logic:affirming-consequent",
+   "logic:consistency",
+   "logic:constraint",
+   "logic:counterexample",
+   "logic:hypotheses",
+   "logic:modus-ponens",
+   "logic:sat",
+   "logic:truth-table",
+   "logic:truth-table-excluded-middle"
+  ],
+  "seen_task": false,
+  "task_signature": "logic:sequence-arithmetic"
+ },
+ {
+  "domain": "logic",
+  "excluded_groups": [
+   "logic.truth-table"
+  ],
+  "query_hash": "a3070179f1ab03227585e01bc3f1e865862549e202c69d77591d53a0892838d0",
+  "query_id": "q:logic:truth-table",
+  "relevance_family": "truth-table",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "logic:truth-table-excluded-middle"
+  ],
+  "seen_task": false,
+  "task_signature": "logic:truth-table"
+ },
+ {
+  "domain": "logic",
+  "excluded_groups": [
+   "logic.truth-table-excluded-middle"
+  ],
+  "query_hash": "15e79d8e9f2447d74dfd79de2aebc1a8991d71dbc4fd2068b02572316f86b8e6",
+  "query_id": "q:logic:truth-table-excluded-middle",
+  "relevance_family": "truth-table",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "logic:truth-table"
+  ],
+  "seen_task": false,
+  "task_signature": "logic:truth-table-excluded-middle"
+ },
+ {
+  "domain": "mathematics",
+  "excluded_groups": [
+   "mathematics.approximation"
+  ],
+  "query_hash": "6825d51839d54cfc4ecec5599e7aeafe8e9768982183a60b9a11fd5a0660cee1",
+  "query_id": "q:mathematics:approximation",
+  "relevance_family": "exact-versus-approximate",
+  "relevance_tier": 2,
+  "relevant_pair_ids": [
+   "mathematics:equivalence",
+   "mathematics:fractions",
+   "mathematics:linear",
+   "mathematics:long-div",
+   "mathematics:long-mult",
+   "mathematics:long-mult-negative",
+   "mathematics:quadratic",
+   "mathematics:rationals",
+   "mathematics:simplify"
+  ],
+  "seen_task": false,
+  "task_signature": "mathematics:approximation"
+ },
+ {
+  "domain": "mathematics",
+  "excluded_groups": [
+   "mathematics.equivalence"
+  ],
+  "query_hash": "44b594a46cf2aae27002c073bc88c6043a60b482cc09a90adb415cdf97a88774",
+  "query_id": "q:mathematics:equivalence",
+  "relevance_family": "symbolic-equivalence",
+  "relevance_tier": 2,
+  "relevant_pair_ids": [
+   "mathematics:approximation",
+   "mathematics:fractions",
+   "mathematics:linear",
+   "mathematics:long-div",
+   "mathematics:long-mult",
+   "mathematics:long-mult-negative",
+   "mathematics:quadratic",
+   "mathematics:rationals",
+   "mathematics:simplify"
+  ],
+  "seen_task": false,
+  "task_signature": "mathematics:equivalence"
+ },
+ {
+  "domain": "mathematics",
+  "excluded_groups": [
+   "mathematics.fractions"
+  ],
+  "query_hash": "c7159f3f4937f653e6f6b685edb502d0b8043a58e9c81d6389a20dd0ba995e00",
+  "query_id": "q:mathematics:fractions",
+  "relevance_family": "fraction-arithmetic",
+  "relevance_tier": 2,
+  "relevant_pair_ids": [
+   "mathematics:approximation",
+   "mathematics:equivalence",
+   "mathematics:linear",
+   "mathematics:long-div",
+   "mathematics:long-mult",
+   "mathematics:long-mult-negative",
+   "mathematics:quadratic",
+   "mathematics:rationals",
+   "mathematics:simplify"
+  ],
+  "seen_task": false,
+  "task_signature": "mathematics:fractions"
+ },
+ {
+  "domain": "mathematics",
+  "excluded_groups": [
+   "mathematics.linear"
+  ],
+  "query_hash": "9108d3642848276aa9b27107c66c63e4f60ee6789489c279d71d12121fe09321",
+  "query_id": "q:mathematics:linear",
+  "relevance_family": "linear-equation",
+  "relevance_tier": 2,
+  "relevant_pair_ids": [
+   "mathematics:approximation",
+   "mathematics:equivalence",
+   "mathematics:fractions",
+   "mathematics:long-div",
+   "mathematics:long-mult",
+   "mathematics:long-mult-negative",
+   "mathematics:quadratic",
+   "mathematics:rationals",
+   "mathematics:simplify"
+  ],
+  "seen_task": false,
+  "task_signature": "mathematics:linear"
+ },
+ {
+  "domain": "mathematics",
+  "excluded_groups": [
+   "mathematics.long-div"
+  ],
+  "query_hash": "9424420c2ce0491966c7d9cd699da71446d8089db496b33eb71a1e6c034cd1b7",
+  "query_id": "q:mathematics:long-div",
+  "relevance_family": "long-division",
+  "relevance_tier": 2,
+  "relevant_pair_ids": [
+   "mathematics:approximation",
+   "mathematics:equivalence",
+   "mathematics:fractions",
+   "mathematics:linear",
+   "mathematics:long-mult",
+   "mathematics:long-mult-negative",
+   "mathematics:quadratic",
+   "mathematics:rationals",
+   "mathematics:simplify"
+  ],
+  "seen_task": false,
+  "task_signature": "mathematics:long-div"
+ },
+ {
+  "domain": "mathematics",
+  "excluded_groups": [
+   "mathematics.long-mult"
+  ],
+  "query_hash": "2916b2100664520a3d9749fa287275ecf279dd3411b12efb16dc9775e85db194",
+  "query_id": "q:mathematics:long-mult",
+  "relevance_family": "long-multiplication",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "mathematics:long-mult-negative"
+  ],
+  "seen_task": false,
+  "task_signature": "mathematics:long-mult"
+ },
+ {
+  "domain": "mathematics",
+  "excluded_groups": [
+   "mathematics.long-mult-negative"
+  ],
+  "query_hash": "6edd967c7740606fa3326546c2831bd7153f017e6a977a0af502fe0027919365",
+  "query_id": "q:mathematics:long-mult-negative",
+  "relevance_family": "long-multiplication",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "mathematics:long-mult"
+  ],
+  "seen_task": false,
+  "task_signature": "mathematics:long-mult-negative"
+ },
+ {
+  "domain": "mathematics",
+  "excluded_groups": [
+   "mathematics.quadratic"
+  ],
+  "query_hash": "dfa2a83f110d09148ef307d6b978f3fa32a34dc1ae922e8900583757b213a798",
+  "query_id": "q:mathematics:quadratic",
+  "relevance_family": "polynomial-equation",
+  "relevance_tier": 2,
+  "relevant_pair_ids": [
+   "mathematics:approximation",
+   "mathematics:equivalence",
+   "mathematics:fractions",
+   "mathematics:linear",
+   "mathematics:long-div",
+   "mathematics:long-mult",
+   "mathematics:long-mult-negative",
+   "mathematics:rationals",
+   "mathematics:simplify"
+  ],
+  "seen_task": false,
+  "task_signature": "mathematics:quadratic"
+ },
+ {
+  "domain": "mathematics",
+  "excluded_groups": [
+   "mathematics.rationals"
+  ],
+  "query_hash": "cb8a70c06941af71c7e3c23e365f27234ffb1ea2344ad4afb51c387a41d132cd",
+  "query_id": "q:mathematics:rationals",
+  "relevance_family": "rational-arithmetic",
+  "relevance_tier": 2,
+  "relevant_pair_ids": [
+   "mathematics:approximation",
+   "mathematics:equivalence",
+   "mathematics:fractions",
+   "mathematics:linear",
+   "mathematics:long-div",
+   "mathematics:long-mult",
+   "mathematics:long-mult-negative",
+   "mathematics:quadratic",
+   "mathematics:simplify"
+  ],
+  "seen_task": false,
+  "task_signature": "mathematics:rationals"
+ },
+ {
+  "domain": "mathematics",
+  "excluded_groups": [
+   "mathematics.simplify"
+  ],
+  "query_hash": "5f8dced48dce9ffeea0e8b9b99083403acf1e8549cb52c4119e09ea7689d85a0",
+  "query_id": "q:mathematics:simplify",
+  "relevance_family": "algebraic-simplification",
+  "relevance_tier": 2,
+  "relevant_pair_ids": [
+   "mathematics:approximation",
+   "mathematics:equivalence",
+   "mathematics:fractions",
+   "mathematics:linear",
+   "mathematics:long-div",
+   "mathematics:long-mult",
+   "mathematics:long-mult-negative",
+   "mathematics:quadratic",
+   "mathematics:rationals"
+  ],
+  "seen_task": false,
+  "task_signature": "mathematics:simplify"
+ }
+]

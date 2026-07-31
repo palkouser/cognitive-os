@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "sprint": "21D1",
+  "wave": "W3b",
+  "items": ["S21D1-031", "S21D1-032", "S21D1-033"],
+  "recorded_at": "2026-07-31T16:20:00+00:00",
+  "selection_frozen_before_execution": "docs/sprints/sprint-21/evidence/sprint-21d1-w3b-selection.json, committed in b4c104f",
+  "report": "docs/sprints/sprint-21/evidence/sprint-21d1-fresh-pairs.json",
+  "report_sha256": "e484393e474cd029fcb1fc97efd5c5cc099780adf51798a50339bc9c5d763ccf",
+
+  "s21d1_031_failed_runs": {
+    "executed": 20,
+    "all_rejected": true,
+    "decision_reason": {"required verification failed": 20},
+    "failure_mode": "task-semantic on all 20; no infrastructure error, no timeout, no missing verifier",
+    "method": "cognitive_os.domains.fixtures.wrong_answer_for(case) submitted through run_case_controlled(case, candidate_override=...)",
+    "verifier_calls_per_run": 4,
+    "provider_calls": 0,
+    "network_calls": 0
+  },
+
+  "s21d1_032_successful_runs": {
+    "executed": 20,
+    "all_accepted": true,
+    "decision_reason": {"all required verifier evidence satisfies policy": 20},
+    "pairing": "one to one with the failed side on the same case identity; no evaluation answer was copied into an input feature, because the successful side is the unmodified case and the failed side differs only by the injected candidate",
+    "verifier_calls_per_run": 2
+  },
+
+  "s21d1_033_compilation": {
+    "compilations": 40,
+    "distinct_compilation_ids": 40,
+    "compilation_decision": {"completed": 40},
+    "byte_identical_recompilation": "40 of 40",
+    "how_it_was_verified": "ExperienceCompilerService.compile was called twice per trajectory. The second call reads the persisted manifest from PostgreSQL, recompiles from the sources, and raises 'persisted manifest differs from deterministic recompilation' on any difference. Nothing raised, so a freshly compiled manifest equalled the stored one on all 40.",
+    "restart_proof": {
+      "method": "a separate process opened a new engine against the D1 database and resolved every manifest by compilation identity",
+      "manifests_resolved": 40,
+      "missing": 0,
+      "hash_mismatches": 0
+    },
+    "verification_mode": "byte_identical_recompilation",
+    "legacy_recompilation_unavailable": false,
+    "contrast_with_w3a": "The 60 historical coding pairs are source_resolution_only because their wall-clock manifests cannot be recompiled at all. The 20 fresh pairs are verified by actual recompilation against the persisted manifest."
+  },
+
+  "limitation": {
+    "what_was_not_proven": "recompilation from persisted sources inside a fresh process",
+    "why": "PostgresExperienceRepository exposes get_manifest and list_candidates but no source reader, so rebuilding a SourceResolverRegistry from the 280 persisted experience_sources rows would need a loader that does not exist. Building one speculatively is not in D1 scope.",
+    "what_was_proven_instead": "the recompilation equality check ran against the manifest as read back from PostgreSQL, which is the byte-identity gate the repository itself defines, and a fresh process resolved all 40 manifests with identical hashes",
+    "resume_idempotency": "compilation identity is uuid5 over the trajectory digest and create_compilation uses on_conflict_do_nothing, so re-offering the same trajectory is a no-op. A re-execution produces a different trajectory and therefore a different compilation, which the selection manifest records as intended behaviour rather than a defect."
+  },
+
+  "coverage": {
+    "pairs": 20,
+    "domains": ["logic", "mathematics"],
+    "distinct_case_identities": 20,
+    "distinct_problem_types": 17,
+    "distinct_groups": 20,
+    "group_overlap_with_the_60_coding_groups": 0
+  },
+
+  "d1_store_state": {
+    "database": "cognitive_os_s21d1_test",
+    "experience_compilations": 40,
+    "experience_snapshots": 40,
+    "experience_decisions": 40,
+    "experience_sources": 280,
+    "experience_candidates": 200,
+    "experience_candidate_revisions": 200,
+    "experience_candidate_sources": 1440,
+    "experience_step_assessments": 1020,
+    "experience_accesses": 360,
+    "artifact_root_files": 0,
+    "artifact_root_note": "still empty. The fresh trajectories persist through the experience tables; graph payload bytes arrive in wave W4 with S21D1-046."
+  },
+
+  "isolation": {
+    "c3_source_pair_fingerprint": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593",
+    "c3_source_pair_status": "unchanged, 8503 files",
+    "development_pair_fingerprint": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf",
+    "development_pair_writes": 0,
+    "writes_went_to": "the D1 evidence pair only"
+  },
+
+  "environment": {
+    "verifier_registry_snapshot": "44b01e0c86a993bc01c1d06f28973db76c4383a30da539ff1d8ca3841c0a155c",
+    "identical_across_all_40_runs": true,
+    "z3_solver": "4.16.0.0",
+    "sympy": "1.14.0"
+  },
+
+  "combined_pair_set_preview": {
+    "note": "reconciled here for visibility; freezing it is S21D1-035 in wave W3c",
+    "pairs": 80,
+    "historical": 60,
+    "fresh": 20,
+    "domains": ["coding", "logic", "mathematics"],
+    "task_signatures": 50,
+    "groups": 50,
+    "group_overlap": 0,
+    "margin_on_the_50_signature_threshold": 0
+  },
+
+  "gate_contribution": {
+    "condition_10": "met: 20 fresh deterministic pairs cover logic and mathematics and pass recompilation",
+    "condition_11": "80 of 80 pairs now exist across three domains with zero group crossing; freezing the set is S21D1-035"
+  }
+}

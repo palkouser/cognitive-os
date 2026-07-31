@@ -4,26 +4,36 @@ Sprint 21C1 built the durable evidence layer. 21C2 built the governed boundary a
 teacher reaches it through. 21C3 filled it with **real** outcomes: executed, verified,
 rights-clean, and split so that nothing in the evaluation groups can be trained on.
 
-D1 is where the question this project has been deferring finally gets asked. Not "can this be
-recorded safely" — that is answered — but **"does any learned component actually help?"**
-Nothing in C1, C2 or C3 has answered it, and C3's numbers must not be mistaken for an answer.
+D1 freezes the decision problem on which the deferred question can be answered honestly:
+**"does a learned component actually help?"** D1 does not fit or activate that component.
+It pre-registers the surface, establishes the strongest deterministic baseline, and tests
+whether bounded Experience Memory Graph retrieval contributes useful structure. D2 performs
+the learned comparison. Nothing in C1, C2 or C3 has answered the benefit question, and C3's
+numbers must not be mistaken for an answer.
+
+Implementation authority:
+[Sprint 21D1 Technical Backlog](sprint-21d1-technical-backlog.md).
 
 ## 1. Starting point
 
 | | |
 | --- | --- |
 | Parent tag | `sprint-21c3-reality-baseline`, annotated tag object `497f959bc55989541016a61bd9034e12523b8573` |
-| Parent commit | `05809446c726444146d85aad22808e10ce87ca3e`, equal to verified `main` and `origin/main` |
+| Parent release commit | `05809446c726444146d85aad22808e10ce87ca3e`, peeled C3 implementation baseline |
 | Parent pull request | `#215`, squash-merged |
 | Parent final CI | run `30571166301`, 29 of 29 jobs success on the parent commit |
+| Current planning head | `origin/main` at `1856b8539b690528116816c105d82810e67f00d9`, after gate-close PR `#216` |
+| Current planning-head CI | run `30572361952`, success on the exact planning head |
 | Parent migration head | `0015` |
 | Next available migration | `0016` — still unallocated. ADR 0089 declined it deliberately; see §6. |
 | Gate C3 | **pass** — 15 of 16 conditions on evidence, the sixteenth closed by the release |
 | Gate L2 | **closed** |
 | Recommended branch | `feature/sprint-21d1-learning-surface-emg` |
 
-Remote state can change. Reverify the tag object, the peeled commit, remote `main` and the
-migration head on day one rather than trusting this table.
+Remote state can change. Reverify the tag object, peeled release commit, current remote
+`main`, both CI handles, branch protection, and migration head on day one. Branch D1 from
+the current verified `origin/main`, not directly from the older peeled tag, so the C3
+gate-close documentation remains in history.
 
 ## 2. What C3 leaves behind, by API
 
@@ -93,6 +103,7 @@ migration head on day one rather than trusting this table.
 | Retrieval benchmark | manifest hash `c9d2ac44731e81f2443545111c8e4832f848d63b68557862a7319cdd8beeca9d`, 60 records, 60 queries |
 | Group-aware splits | profile `sprint21c3-group-aware-split-v1`, seed 15, 30 groups, 0 crossing |
 | Embedding model | `sentence-transformers/all-MiniLM-L6-v2` @ `1110a243fdf4706b3f48f1d95db1a4f5529b4d41`, tree digest `98eb3ae4df320d0b721902aabef795cafb36c3a516f036e92e2b046f55ef4229` |
+| Unique outcomes | 214 authoritative outcomes; use this denominator for surface eligibility |
 | Evaluation observations | 896 accepted `real_governed_run`, evaluation-eligible, never training-eligible |
 
 §4.15 is explicit and D1 inherits it: **if a threshold fails, the gate stays open or the
@@ -114,9 +125,14 @@ separation exists to prevent. Pre-register one, then measure.
 4. **Strategy selection.** Four candidate strategies with known per-strategy outcomes across
    all 30 tasks.
 
-Whichever is chosen, D1 has to answer the question C3 could not: material downstream uplift,
-anti-forgetting evidence, and shadow safety. Corpus volume and recall@5 are prerequisites, not
-any of those three.
+The provisional primary choice is verifier-outcome triage, expressed as the advisory actions
+`verify_now`, `request_repair_context`, and `abstain`. The provisional secondary choice is
+retrieval-augmented correction context. The audit may reject either choice; it may not weaken
+the 200-outcome, 20-changeable-decision, leakage, or attribution requirements to preserve it.
+
+D1 establishes the honest baseline and evaluation protocol. Material downstream uplift,
+anti-forgetting, shadow safety, canary, promotion, and activation remain D2 work. Corpus
+volume and retrieval quality are prerequisites, not evidence of learned benefit.
 
 ## 5. Limitations carried forward, with owners
 
@@ -144,3 +160,22 @@ indexes — and it must be re-measured on the corpus of the day, not argued from
 
 No training run, no component activation, no promotion of a C3 metric into a claim of learned
 behaviour. Gate L2 is closed and D1 opens it only with the evidence L2 actually asks for.
+
+## 8. Concrete D1 evidence targets
+
+- At least 200 unique held-out verifier-backed outcomes and 20 changeable advisory
+  decisions for the primary surface.
+- Exactly one pre-registered primary and one secondary surface selected before held-out
+  evaluation.
+- Sixty source-resolved historical coding graph pairs, retaining
+  `legacy_recompilation_unavailable`.
+- Ten fresh logic and ten fresh mathematics failed/success pairs with fixed epochs and
+  exact Experience Compiler recompilation.
+- At least 80 graph pairs across coding, logic, and mathematics.
+- Deterministic edit paths that reconstruct the successful graph for every pair.
+- No-memory, lexical, exact-signature, frozen MiniLM, and bounded graph-edit retrieval on
+  the same queries and group exclusions.
+- Advisory `EXPERIENCE_GRAPH` Context Candidates with exact artifact provenance and no
+  execution or acceptance authority.
+- No new database, migration, provider campaign, embedding model, or training framework by
+  default.

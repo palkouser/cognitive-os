@@ -1,0 +1,73 @@
+{
+  "gate_contribution": {
+    "condition_18": "met: Experience Graph results enter the existing Context Builder as hash-resolvable, verified, advisory, non-required, non-pinned candidates with no execution or acceptance authority"
+  },
+  "items": [
+    "S21D1-055",
+    "S21D1-056",
+    "S21D1-057"
+  ],
+  "not_in_scope_here": [
+    "registering the retriever in a running Context Builder deployment, which is operator configuration rather than D1 evidence",
+    "the operator CLI surface, S21D1-063 in wave W6b"
+  ],
+  "recorded_at": "2026-07-31T23:10:00+00:00",
+  "s21d1_055_context_source": {
+    "additive": true,
+    "backward_compatibility": "SPRINT11_SOURCE_TYPES excludes the new type, so the Sprint 11 fixtures and their clients stay valid. Covered by a test that asserts the exclusion and a test that every source type declares a trust class.",
+    "default_trust_class": "unverified",
+    "delivered_in": "the vertical slice; verified here",
+    "retrieval_modes": [
+      "metadata",
+      "lexical",
+      "source_lookup",
+      "graph"
+    ],
+    "schema_change": "one added enum value across the 11 context schemas; nothing removed and no field changed",
+    "source_type": "ContextSourceType.EXPERIENCE_GRAPH",
+    "why_unverified_by_default": "fail closed. A candidate earns VERIFIED per retrieval by resolving its hashes, never by belonging to a source type. A source type that grants trust would make a corrupt store indistinguishable from a healthy one."
+  },
+  "s21d1_056_retriever": {
+    "bounds": {
+      "returned_results": 10,
+      "verified_by_test": "25 pairs in, 10 candidates out"
+    },
+    "candidate_properties": {
+      "content": null,
+      "content_hash": "the edit path's hash, so the candidate is identified by the suggestion it carries",
+      "evidence": false,
+      "pinned": false,
+      "provenance": "pair identity, revision and the successful graph's content hash",
+      "required": false
+    },
+    "class": "cognitive_os.experience.graph_context.ExperienceGraphContextRetriever",
+    "empty_set_health": "degraded, not unavailable, because the deterministic path keeps working without graph memory",
+    "fail_closed_behaviours": [
+      "a request whose purpose is not repair or advisory receives nothing",
+      "a pair whose group or task signature appears in the request text is dropped before ranking, so a repair request cannot retrieve its own answer",
+      "VERIFIED requires the source outcome to be accepted, an artifact id to be known, and the verifier to resolve it",
+      "a verifier that raises degrades the candidate to UNVERIFIED rather than propagating; a corrupt store stays visible instead of looking like an empty corpus",
+      "a subquery for another source type raises",
+      "a set cancellation event raises CancelledError before any work"
+    ],
+    "location_rationale": "the owning subsystem holds its own retriever, matching strategies/retrieval.py rather than adding a second home under context/",
+    "retriever_id": "context.experience_graph"
+  },
+  "s21d1_057_advisory_path": {
+    "bundle": "assembled through the real assemble_bundle with the standard provider profile and token estimator",
+    "deterministic_fallback": "an empty retriever reports DEGRADED and returns nothing; the caller's deterministic path is unaffected",
+    "executable_patch_in_any_candidate": false,
+    "exercised": "repair request -> retriever -> safety filter -> ranking -> assembled bundle",
+    "ranking": "graph candidates pass through the existing rank_candidates with the standard ranking profile and remain non-required and non-pinned",
+    "rendered_bundle_contains": [
+      "suggested edit operations",
+      "Advisory only"
+    ],
+    "safety_filter": "0 exclusions; nothing in a graph candidate is unsafe content"
+  },
+  "schema_version": 1,
+  "sprint": "21D1",
+  "test_file": "tests/cognitive_os/experience/test_graph_context.py",
+  "tests": 13,
+  "wave": "W5b"
+}
