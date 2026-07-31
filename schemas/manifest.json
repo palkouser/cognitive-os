@@ -1286,7 +1286,7 @@
     {
       "file": "v1/context/context-build-result.schema.json",
       "model": "ContextBuildResult",
-      "sha256": "16b5198ae587cccac0669e0bec49681cf1a63660279940a01c676fc27e5b4e5d"
+      "sha256": "a642b0825406d6993a4345ca07d8d6c8533658fb643f6832217a7a1ae16ae9e4"
     },
     {
       "file": "v1/context/context-bundle-reference.schema.json",
@@ -1296,12 +1296,12 @@
     {
       "file": "v1/context/context-bundle-revision.schema.json",
       "model": "ContextBundleRevision",
-      "sha256": "deec57e4237e16e4ae0ad37e555a2a42c904f38c5bb59c4c01774ba28a553435"
+      "sha256": "7f881337f4d7b6706b481f00caf9aea346aeef4ae1552a49a4c4c7ab9b2fae33"
     },
     {
       "file": "v1/context/context-candidate.schema.json",
       "model": "ContextCandidate",
-      "sha256": "607949fbebba146585a7b36aecb7181f319f48264ebd7caceda27aecddc892e6"
+      "sha256": "a48ac7cb90a937e01778f80658962f480a3399efd169ac46b2ace5691454f2d6"
     },
     {
       "file": "v1/context/context-component-health.schema.json",
@@ -1316,12 +1316,12 @@
     {
       "file": "v1/context/context-query-plan.schema.json",
       "model": "ContextQueryPlan",
-      "sha256": "bd7a4b3efb74b600b8f67b87977c12c546ba803b1b931ad3b0aee449834f9d94"
+      "sha256": "8031041265b09d08de42796c3e16e9bee3ce30f7f7b527b58e380c2fececb533"
     },
     {
       "file": "v1/context/context-request.schema.json",
       "model": "ContextRequest",
-      "sha256": "41dbd15587cd4cd3234780ca0ed2d28f6bb4c85866ea53dd33353ff5c7653f1d"
+      "sha256": "93d85241f1af318b1ddc0e5503287f02c16feb3fe1fe2c40da1af942b04e2d47"
     },
     {
       "file": "v1/context/context-reranker-descriptor.schema.json",
@@ -1331,12 +1331,12 @@
     {
       "file": "v1/context/context-retrieval-trace.schema.json",
       "model": "ContextRetrievalTrace",
-      "sha256": "00e2f0a949e9fc21750e7ed6ca4b302b1f051d1dce374704ca895d4f58d50ead"
+      "sha256": "6ad8808d182b083fcce51c419e7e0ce3cf6ee2f9ecad56c280f4f40acbe04cb6"
     },
     {
       "file": "v1/context/context-retriever-descriptor.schema.json",
       "model": "ContextRetrieverDescriptor",
-      "sha256": "6ca759594eec24c2610ac08c737ade4834d24beb40dc1fd0dcf5dbc257014b83"
+      "sha256": "159e6bf0022c78d1d9c2006573518dcd1da03d4c5a45527444950afb2a8f8dd0"
     },
     {
       "file": "v1/context/context-score-breakdown.schema.json",
@@ -1346,12 +1346,12 @@
     {
       "file": "v1/context/context-section.schema.json",
       "model": "ContextSection",
-      "sha256": "62735546df2de037436dcd744bbd67a5cae0895feb18ff9fc7ce84ac7e560aa2"
+      "sha256": "5b399d557c4065194222e703e62861a2de7d528711370f2c422334c0713641eb"
     },
     {
       "file": "v1/context/context-source-reference.schema.json",
       "model": "ContextSourceReference",
-      "sha256": "55753c26764b7d2fe3e7559047aed37b40604ec7920d08f82a95adf6af424def"
+      "sha256": "80ffccb16f9869c1a8e4e9115c383e31ee7e654c5f8a1b6f6f731465865785f3"
     },
     {
       "file": "v1/context/context-source-snapshot.schema.json",
@@ -1361,7 +1361,7 @@
     {
       "file": "v1/context/context-warning.schema.json",
       "model": "ContextWarning",
-      "sha256": "4f42cbdeaf687ae0099d827e73b4b0c5fc8d94d8483f8426c76b7e497ab65ba1"
+      "sha256": "e018d73e44d159ec903c74111bbd3856aa1b5796ae305ea6340e935acbefe79c"
     },
     {
       "file": "v1/context/deduplication-decision.schema.json",
@@ -1411,7 +1411,7 @@
     {
       "file": "v1/context/retrieval-subquery.schema.json",
       "model": "RetrievalSubquery",
-      "sha256": "34086f18ed5937a257e28ab37ecd39260b16ae89d47f6b371ce183c7cb7bd3bd"
+      "sha256": "db1558138a7db4aba60b0642465b8da89ee0b8ea4632869d0af446531bf184e9"
     },
     {
       "file": "v1/context/retriever-call-trace.schema.json",

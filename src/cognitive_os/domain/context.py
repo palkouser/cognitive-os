@@ -49,6 +49,7 @@ class ContextSourceType(StrEnum):
     USER_CORRECTION = "user_correction"
     PROCEDURAL_SKILL = "procedural_skill"
     STRATEGY = "strategy"
+    EXPERIENCE_GRAPH = "experience_graph"
 
 
 class ContextTrustClass(StrEnum):

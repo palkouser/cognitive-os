@@ -63,6 +63,10 @@ _SOURCE_TRUST = {
     ContextSourceType.USER_CORRECTION: ContextTrustClass.USER_PROVIDED,
     ContextSourceType.PROCEDURAL_SKILL: ContextTrustClass.VERIFIED,
     ContextSourceType.STRATEGY: ContextTrustClass.VERIFIED,
+    # Fail closed. A graph candidate is only VERIFIED once its root, pair, edit-path and
+    # source hashes all resolve and its group was excluded, which is a decision the
+    # retriever makes per candidate, not a property of the source type.
+    ContextSourceType.EXPERIENCE_GRAPH: ContextTrustClass.UNVERIFIED,
 }
 
 
@@ -143,6 +147,12 @@ def host_context_retriever(
             RetrievalMode.SOURCE_LOOKUP,
         ),
         ContextSourceType.STRATEGY: (
+            RetrievalMode.METADATA,
+            RetrievalMode.LEXICAL,
+            RetrievalMode.SOURCE_LOOKUP,
+            RetrievalMode.GRAPH,
+        ),
+        ContextSourceType.EXPERIENCE_GRAPH: (
             RetrievalMode.METADATA,
             RetrievalMode.LEXICAL,
             RetrievalMode.SOURCE_LOOKUP,

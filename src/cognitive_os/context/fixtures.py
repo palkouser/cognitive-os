@@ -42,7 +42,12 @@ FIXTURE_SCOPE = MemoryScope(scope_type=MemoryScopeType.PROJECT, scope_id="cognit
 SPRINT11_SOURCE_TYPES = tuple(
     item
     for item in ContextSourceType
-    if item not in {ContextSourceType.PROCEDURAL_SKILL, ContextSourceType.STRATEGY}
+    if item
+    not in {
+        ContextSourceType.PROCEDURAL_SKILL,
+        ContextSourceType.STRATEGY,
+        ContextSourceType.EXPERIENCE_GRAPH,
+    }
 )
 
 

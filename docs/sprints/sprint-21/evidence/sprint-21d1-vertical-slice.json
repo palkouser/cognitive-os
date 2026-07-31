@@ -1,0 +1,146 @@
+{
+ "steps": {
+  "1_governed_runs": {
+   "detail": {
+    "affirming-consequent": {
+     "edit_ops": 20,
+     "failed_accepted": false,
+     "nodes": [
+      30,
+      21
+     ],
+     "recompilation_identical": true,
+     "round_trip": true,
+     "successful_accepted": true
+    },
+    "long-mult": {
+     "edit_ops": 20,
+     "failed_accepted": false,
+     "nodes": [
+      30,
+      21
+     ],
+     "recompilation_identical": true,
+     "round_trip": true,
+     "successful_accepted": true
+    },
+    "modus-ponens": {
+     "edit_ops": 20,
+     "failed_accepted": false,
+     "nodes": [
+      30,
+      21
+     ],
+     "recompilation_identical": true,
+     "round_trip": true,
+     "successful_accepted": true
+    },
+    "truth-table": {
+     "edit_ops": 20,
+     "failed_accepted": false,
+     "nodes": [
+      30,
+      21
+     ],
+     "recompilation_identical": true,
+     "round_trip": true,
+     "successful_accepted": true
+    }
+   },
+   "pairs_built": 4
+  },
+  "2_exact_recompilation": {
+   "all_identical": true
+  },
+  "3_canonical_graphs": {
+   "failed_hash": "7c7c480d4a5c06eb8ea3f7f58d89f35827e784e62dbb4f77892c45fab4c74dd7",
+   "failed_structural": "02a1dd3fe654628c02b0e88f2f1e352b548e7d5dc7ec871f9ec4df45c0bc9da6",
+   "successful_hash": "181ac271e76b22d21bab8b1f386c6bbffd319ed3cdadf090968c8d26d0d432a4",
+   "successful_structural": "aaeec023bd36d4b1fcd0b72b70c9110ad085e46215c4cb4a0e4e36c9853595d1"
+  },
+  "4_edit_path": {
+   "all_pairs_round_trip": true,
+   "operations": 20,
+   "round_trip": true
+  },
+  "5_artifact_and_lineage": {
+   "artifact_id": "7545543c-8b3d-4c6a-92a5-44791d3c2a18",
+   "bytes": 360,
+   "content_hash": "601e027e125c62a05c69a7f4faff6a3495ba8b70bd2e80626638be40aad6c316",
+   "lineage_role": "dataset",
+   "verified": true
+  },
+  "6_frozen_query": {
+   "excluded_groups": [
+    "logic.modus-ponens"
+   ],
+   "query_hash": "6e5e44a23b0f42ffea1f8622cfc22171b6b79e8fba0c3120f75e626a3e49a076",
+   "query_id": "vs-q1",
+   "relevant_pair": "logic:affirming-consequent"
+  },
+  "7_arms": {
+   "bounded_ged": {
+    "considered": 3,
+    "recall_at_5": 1,
+    "reciprocal_rank": "1",
+    "timed_out": 0,
+    "top": [
+     "logic:affirming-consequent",
+     "logic:truth-table",
+     "mathematics:long-mult"
+    ]
+   },
+   "exact_signature": {
+    "considered": 3,
+    "recall_at_5": 0,
+    "reciprocal_rank": "0",
+    "timed_out": 0,
+    "top": []
+   },
+   "lexical": {
+    "considered": 3,
+    "recall_at_5": 1,
+    "reciprocal_rank": "1",
+    "timed_out": 0,
+    "top": [
+     "logic:affirming-consequent",
+     "logic:truth-table",
+     "mathematics:long-mult"
+    ]
+   },
+   "minilm_vector": {
+    "considered": 3,
+    "recall_at_5": 1,
+    "reciprocal_rank": "1",
+    "timed_out": 0,
+    "top": [
+     "logic:affirming-consequent",
+     "logic:truth-table",
+     "mathematics:long-mult"
+    ]
+   },
+   "no_memory": {
+    "considered": 0,
+    "recall_at_5": 0,
+    "reciprocal_rank": "0",
+    "timed_out": 0,
+    "top": []
+   },
+   "pool_size": 3
+  },
+  "8_advisory_candidate": {
+   "candidate_id": "23956207-9b43-5388-80d1-d2aa7990b631",
+   "carries_executable_patch": false,
+   "pinned": false,
+   "required": false,
+   "source_type": "experience_graph",
+   "suggested_edit_count": 20,
+   "trust_class": "verified"
+  },
+  "9_restart_and_replay": {
+   "artifact_bytes_identical": true,
+   "artifact_verified_after_restart": true,
+   "ranking_identical_after_restart": true
+  }
+ }
+}

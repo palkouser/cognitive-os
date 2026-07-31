@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "sprint": "21D1",
+  "wave": "W3c and VS",
+  "items": ["S21D1-035", "vertical-slice"],
+  "recorded_at": "2026-07-31T17:30:00+00:00",
+
+  "s21d1_035_combined_pair_set": {
+    "artifact": "docs/sprints/sprint-21/evidence/sprint-21d1-pair-set.json",
+    "sha256": "4cdd07706f695401c1ead558d9fdb974c4c2ddf866af5f0d12eeea233588481f",
+    "root_hash": "a6290c08b0e9eb8198cc845d1c49a5416ea81acc3c70d59323a92da3654320b4",
+    "pairs": 80,
+    "historical": 60,
+    "fresh": 20,
+    "distinct_pair_ids": 80,
+    "domains": ["coding", "logic", "mathematics"],
+    "task_signatures": 50,
+    "groups": 50,
+    "group_crossing": 0,
+    "source_resolution": "100%",
+    "verification_modes": {"source_resolution_only": 60, "byte_identical_recompilation": 20},
+    "threshold_margin": "zero on the 50-signature requirement of section 8.2, exactly as the wave plan predicted"
+  },
+
+  "vertical_slice": {
+    "purpose": "Backlog section 6.1: prove one fresh logic pair through every D1 authority before bulk projection, without relying on legacy C3 timestamps.",
+    "report": "docs/sprints/sprint-21/evidence/sprint-21d1-vertical-slice.json",
+    "sha256": "33e092c535543f4bed169729c726c52cbc0d5b220cce561332f646b445070821",
+    "target_pair": "logic:modus-ponens",
+    "distractor_pairs": ["logic:affirming-consequent", "logic:truth-table", "mathematics:long-mult"],
+    "steps": [
+      {"step": 1, "name": "fixed failed and successful governed runs", "result": "4 pairs built; failed side rejected and successful side accepted on all 4"},
+      {"step": 2, "name": "exact Experience Compiler recompilation", "result": "identical on all 8 trajectories, verified against the manifest read back from PostgreSQL"},
+      {"step": 3, "name": "two canonical graphs", "result": "failed 30 nodes, successful 21 nodes; content hash and structural hash both recorded"},
+      {"step": 4, "name": "deterministic edit path and round trip", "result": "20 operations; round trip true on the target and on all 4 pairs"},
+      {"step": 5, "name": "Artifact Store bytes and learned lineage", "result": "360 bytes stored and verified; lineage role dataset"},
+      {"step": 6, "name": "one frozen query", "result": "query hash recorded, own group excluded, relevant pair declared before any ranking"},
+      {"step": 7, "name": "lexical, vector and bounded graph ranking", "result": "all five arms ran on the same pool of 3; zero timeouts"},
+      {"step": 8, "name": "advisory context candidate", "result": "EXPERIENCE_GRAPH candidate, trust verified, not pinned, not required, no executable patch"},
+      {"step": 9, "name": "restart and exact replay", "result": "artifact bytes identical and re-verified; ranking identical after restart"}
+    ],
+    "arms": {
+      "no_memory": {"recall_at_5": 0, "reciprocal_rank": "0", "returned": 0},
+      "lexical": {"recall_at_5": 1, "reciprocal_rank": "1", "returned": 3},
+      "exact_signature": {"recall_at_5": 0, "reciprocal_rank": "0", "returned": 0, "note": "correct behaviour: the only pair sharing the query signature is in the excluded group, so a signature match has nothing to return. Precise where it fires, silent elsewhere."},
+      "minilm_vector": {"recall_at_5": 1, "reciprocal_rank": "1", "returned": 3},
+      "minilm_shortlist_plus_bounded_ged": {"recall_at_5": 1, "reciprocal_rank": "1", "returned": 3, "timed_out": 0}
+    },
+    "arms_caveat": "A three-candidate pool cannot separate the arms and is not meant to. The slice proves the path executes end to end; the comparison that decides anything is the frozen 80-query benchmark of S21D1-050 to 054.",
+    "verdict": "PASS"
+  },
+
+  "design_finding": {
+    "name": "canonical-hash verification of an edit path must be structural",
+    "observed": "The first round-trip attempt failed on every node. The two sides of a pair are two different runs, so the same logical step carries different authoritative evidence bytes, and a node's content hash includes that source hash.",
+    "why_it_matters": "Including provenance in the comparison would force the edit path to emit a relabel for every single node, which is noise rather than a repair suggestion, and no repair path could ever reproduce a successful graph's full content hash.",
+    "resolution": "ActionDecisionGraph.structural_hash covers the labelled structure and deliberately excludes provenance. The edit path's from and to hashes are structural, the round trip compares structural hashes, and provenance is verified separately by resolving every source hash. Backlog section 2.2 condition 12 is satisfied by a canonical hash that the transformation can actually reproduce.",
+    "scope": "affects S21D1-044 in wave W4, which inherits this definition"
+  },
+
+  "code_added_for_the_slice": {
+    "note": "the minimum for one pair end to end; wave W4 extends it to the bulk set and adds the coding adapter",
+    "files": [
+      "src/cognitive_os/domain/experience_graph.py",
+      "src/cognitive_os/experience/graph_projection.py",
+      "src/cognitive_os/experience/graph_retrieval.py"
+    ],
+    "context_integration": "additive ContextSourceType.EXPERIENCE_GRAPH with a fail-closed UNVERIFIED default trust class; the retriever upgrades a candidate to VERIFIED only when its hashes resolve and its group was excluded",
+    "backward_compatibility": "the context schema change is one added enum value and nothing removed; SPRINT11_SOURCE_TYPES excludes the new type so the Sprint 11 fixtures stay valid",
+    "not_yet_done": [
+      "the coding correction adapter, S21D1-041",
+      "graph contract registration in the schema registry, S21D1-040",
+      "the EMG root manifest and cross-task similarity links, S21D1-045",
+      "the ExperienceGraphContextRetriever as a registered retriever, S21D1-056"
+    ]
+  },
+
+  "gates": {
+    "ruff_check": "passed",
+    "ruff_format": "passed",
+    "mypy": "passed, 586 source files",
+    "schema_export": "passed after regeneration; the only change is one added ContextSourceType enum value",
+    "repository_language": "passed",
+    "offline_suite": "2069 passed, 107 skipped"
+  },
+
+  "isolation": {
+    "d1_artifact_root_files": 2,
+    "d1_artifact_fingerprint": "5edd50ab99a1f535d2407d45329580e3f33ec4e937cb3c11a24fd50f1ca18383",
+    "c3_source_pair": "unchanged, 8503 files, 7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593",
+    "development_pair": "unchanged, 5 files, 7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf",
+    "development_pair_writes": 0
+  },
+
+  "gate_contribution": {
+    "condition_11": "met: 80 pairs across three domains, zero group crossing, 100% source resolution",
+    "condition_12": "demonstrated on 4 of 4 slice pairs; the full 80 are wave W4",
+    "condition_18": "demonstrated: a graph result entered as a verified, advisory, non-required, non-pinned candidate with no execution authority"
+  }
+}
