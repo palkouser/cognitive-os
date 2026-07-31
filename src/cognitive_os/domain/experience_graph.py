@@ -58,10 +58,11 @@ class GraphEditOperationKind(StrEnum):
 
 
 #: Markers that must never reach a graph attribute. Everything in a graph is retrievable.
+#: These are a denylist of strings to *refuse*, not paths this module ever writes to.
 FORBIDDEN_ATTRIBUTE_MARKERS = (
     "/home/",
     "/root/",
-    "/var/tmp/",
+    "/var/tmp/",  # nosec B108
     "authorization",
     "api_key",
     "password",
@@ -164,15 +165,37 @@ class ActionDecisionGraph(HashedExperienceContract):
         return self
 
     def _refuse_cycles_and_depth(self) -> None:
-        """A DAG check and a longest-path bound, using the already-present networkx."""
-        import networkx as nx  # type: ignore[import-untyped]
+        """Kahn's algorithm, then the longest path along the resulting topological order.
 
-        graph = nx.DiGraph()
-        graph.add_nodes_from(node.logical_id for node in self.nodes)
-        graph.add_edges_from((edge.source_id, edge.target_id) for edge in self.edges)
-        if not nx.is_directed_acyclic_graph(graph):
+        Deliberately not networkx. `networkx` is the optional `semantic-graph` extra, and
+        a domain contract that cannot validate itself without an optional dependency is
+        not a contract — it silently stops enforcing its own invariant wherever the extra
+        is absent. networkx stays where it earns its place: the graph-edit-distance
+        reranker, which is the one thing here that is genuinely hard to write.
+
+        Bounded by `nodes_per_graph` and `edges_per_graph`, so this is linear on inputs
+        that can never exceed a few hundred elements.
+        """
+        successors: dict[str, list[str]] = {node.logical_id: [] for node in self.nodes}
+        indegree = dict.fromkeys(successors, 0)
+        for edge in self.edges:
+            successors[edge.source_id].append(edge.target_id)
+            indegree[edge.target_id] += 1
+
+        ready = [identity for identity, count in indegree.items() if count == 0]
+        depth = dict.fromkeys(successors, 0)
+        visited = 0
+        while ready:
+            current = ready.pop()
+            visited += 1
+            for target in successors[current]:
+                depth[target] = max(depth[target], depth[current] + 1)
+                indegree[target] -= 1
+                if indegree[target] == 0:
+                    ready.append(target)
+        if visited != len(successors):
             raise ValueError("an action-decision graph must be acyclic")
-        if graph.number_of_edges() and nx.dag_longest_path_length(graph) > self.limits.path_depth:
+        if self.edges and max(depth.values()) > self.limits.path_depth:
             raise ValueError("path depth exceeds the declared bound")
 
     def node(self, logical_id: str) -> ExperienceGraphNode | None:

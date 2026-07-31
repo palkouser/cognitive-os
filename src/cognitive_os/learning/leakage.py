@@ -66,8 +66,9 @@ FORBIDDEN_IN_QUERY = frozenset(
     name for name, timing in FIELD_TIMING.items() if timing is not FeatureTiming.PRE_OUTCOME
 )
 
-#: Substrings that mark host paths and credential material in a projected value.
-_HOST_PATH_MARKERS = ("/home/", "/root/", "/var/tmp/", "C:\\")
+#: Substrings that mark host paths and credential material in a projected value. A
+#: denylist of strings to refuse; nothing here is a path this module reads or writes.
+_HOST_PATH_MARKERS = ("/home/", "/root/", "/var/tmp/", "C:\\")  # nosec B108
 _CREDENTIAL_MARKERS = ("authorization", "api_key", "apikey", "password", "secret", "token=")
 
 

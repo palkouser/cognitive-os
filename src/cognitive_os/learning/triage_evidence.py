@@ -259,7 +259,7 @@ def paired_bootstrap(
         raise ValueError("a paired bootstrap needs two equally sized score vectors")
     size = len(left)
     point = sum(right) / size - sum(left) / size
-    rng = Random(seed)
+    rng = Random(seed)  # nosec B311 - resampling a metric, not generating a secret
     deltas = []
     for _ in range(resamples):
         picks = [rng.randrange(size) for _ in range(size)]

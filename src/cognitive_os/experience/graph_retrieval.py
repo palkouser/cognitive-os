@@ -12,10 +12,11 @@ whose expiry is recorded as a bounded result rather than retried or silently dro
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Collection, Sequence
 from dataclasses import dataclass
 from decimal import Decimal
-from math import sqrt
+from math import log2, sqrt
+from time import perf_counter
 from typing import Any
 
 from cognitive_os.application.ports.embedding_provider import EmbeddingProviderPort
@@ -130,6 +131,34 @@ def exact_signature(
     )
 
 
+#: The provider refuses a batch above its configured maximum, and the candidate pool is
+#: larger than that once the corpus grows past a handful of groups. Chunking here keeps
+#: the arm working on a real pool instead of failing on the 65th candidate.
+_EMBED_BATCH = 64
+
+
+async def _embed_all(
+    embed: EmbeddingProviderPort,
+    texts: Sequence[str],
+    cache: dict[str, tuple[float, ...]] | None = None,
+) -> tuple[tuple[float, ...], ...]:
+    """Embed in provider-sized batches, reusing anything the caller already has.
+
+    Candidate texts do not change between queries, so re-embedding the whole pool once
+    per query is pure waste — and it was the single largest latency component, roughly
+    936 ms of the graph arm's 940 ms median. The cache is the caller's, so a benchmark
+    can share it across queries while a one-off call stays stateless.
+    """
+    if cache is None:
+        cache = {}
+    missing = [text for text in dict.fromkeys(texts) if text not in cache]
+    for start in range(0, len(missing), _EMBED_BATCH):
+        chunk = tuple(missing[start : start + _EMBED_BATCH])
+        for text, vector in zip(chunk, await embed.embed_documents(chunk), strict=True):
+            cache[text] = vector
+    return tuple(cache[text] for text in texts)
+
+
 def _cosine(left: Sequence[float], right: Sequence[float]) -> float:
     dot = sum(a * b for a, b in zip(left, right, strict=True))
     norm = sqrt(sum(a * a for a in left)) * sqrt(sum(b * b for b in right))
@@ -142,6 +171,7 @@ async def minilm_vector(
     *,
     limits: GraphResourceLimits,
     embed: EmbeddingProviderPort,
+    cache: dict[str, tuple[float, ...]] | None = None,
 ) -> ExperienceGraphResult:
     """Frozen MiniLM cosine ranking. A missing or wrong model must fail, never fall back.
 
@@ -150,7 +180,7 @@ async def minilm_vector(
     that is what keeps a benchmark number from silently describing a hash.
     """
     query_vector = await embed.embed_query(query.query_text)
-    candidate_vectors = await embed.embed_documents(tuple(c.text for c in pool))
+    candidate_vectors = await _embed_all(embed, tuple(c.text for c in pool), cache)
     scored = [
         (candidate.pair_id, _cosine(query_vector, vector))
         for candidate, vector in zip(pool, candidate_vectors, strict=True)
@@ -165,6 +195,7 @@ async def bounded_ged(
     *,
     limits: GraphResourceLimits,
     embed: EmbeddingProviderPort,
+    cache: dict[str, tuple[float, ...]] | None = None,
 ) -> ExperienceGraphResult:
     """MiniLM shortlist, then labelled graph edit distance with a per-pair timeout.
 
@@ -175,7 +206,8 @@ async def bounded_ged(
     """
     import networkx as nx  # type: ignore[import-untyped]
 
-    shortlist_result = await minilm_vector(query, pool, limits=limits, embed=embed)
+    started = perf_counter()
+    shortlist_result = await minilm_vector(query, pool, limits=limits, embed=embed, cache=cache)
     shortlist_ids = [entry.pair_id for entry in shortlist_result.entries][: limits.vector_shortlist]
     by_id = {candidate.pair_id: candidate for candidate in pool}
 
@@ -183,6 +215,18 @@ async def bounded_ged(
     scored: list[tuple[str, float]] = []
     timed_out = 0
     for pair_id in shortlist_ids:
+        # The declared per-pair timeout multiplied by the shortlist length already exceeds
+        # the total query budget, so the budget has to be enforced here as well or the
+        # arm silently overruns it. A pair the budget cuts off keeps its shortlist
+        # position at the fallback score and is counted, exactly like a per-pair timeout.
+        # Reserve the per-pair timeout, not just the elapsed time. Checking only elapsed
+        # lets a comparison start at the last moment and still run its full timeout, which
+        # overshoots the budget by up to that timeout and is not a budget at all.
+        remaining = limits.query_budget_seconds - (perf_counter() - started)
+        if remaining <= limits.per_pair_ged_timeout_ms / 1000:
+            timed_out += 1
+            scored.append((pair_id, 0.0))
+            continue
         right = _as_nx(by_id[pair_id].graph)
         ceiling = max(left.number_of_nodes(), right.number_of_nodes()) + max(
             left.number_of_edges(), right.number_of_edges()
@@ -221,13 +265,29 @@ def _as_nx(graph: ActionDecisionGraph) -> Any:
     return converted
 
 
-def reciprocal_rank(result: ExperienceGraphResult, relevant: str) -> Decimal:
-    """MRR contribution of one query, zero when the relevant pair was not returned."""
+def reciprocal_rank(result: ExperienceGraphResult, relevant: Collection[str]) -> Decimal:
+    """Rank of the first relevant pair, zero when none was returned."""
     for entry in result.entries:
-        if entry.pair_id == relevant:
+        if entry.pair_id in relevant:
             return Decimal(1) / Decimal(entry.rank)
     return Decimal(0)
 
 
-def recall_at(result: ExperienceGraphResult, relevant: str, *, k: int) -> int:
-    return int(any(e.pair_id == relevant for e in result.entries[:k]))
+def recall_at(result: ExperienceGraphResult, relevant: Collection[str], *, k: int) -> int:
+    """Whether any relevant pair appears in the top k. Binary, so a query counts once."""
+    return int(any(entry.pair_id in relevant for entry in result.entries[:k]))
+
+
+def ndcg_at(result: ExperienceGraphResult, relevant: Collection[str], *, k: int) -> Decimal:
+    """Binary-gain nDCG, normalised by the best achievable ordering for this query.
+
+    Normalising by `min(len(relevant), k)` rather than by `k` keeps a query with two
+    relevant pairs from being scored against an ideal it could never reach.
+    """
+    gain = sum(
+        1 / log2(index + 1)
+        for index, entry in enumerate(result.entries[:k], start=1)
+        if entry.pair_id in relevant
+    )
+    ideal = sum(1 / log2(index + 1) for index in range(1, min(len(relevant), k) + 1))
+    return Decimal(f"{gain / ideal:.6f}") if ideal else Decimal(0)
