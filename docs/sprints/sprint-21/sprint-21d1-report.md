@@ -4,6 +4,7 @@
 - Parent: `sprint-21c3-reality-baseline` → `05809446c726444146d85aad22808e10ce87ca3e`
 - Alembic head: **0015** at the start and at the end; `0016` still unallocated
 - Storage: the isolated D1 pair (`cognitive_os_s21d1_test`, `cognitive-os-data/artifacts-s21d1`)
+- Release: PR #217 squash-merged to `b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9`; main CI run `30657167717`, 30 of 30 success; annotated tag `sprint-21d1-emg-baseline`
 - Gate D1: **does not pass** — conditions 6, 7 and 15 open, the other eighteen met
 - **Gate L2: closed**
 

@@ -19,8 +19,8 @@ Gate status: [Gate D1 assessment](gate-d1-assessment.md). Results:
 | | |
 | --- | --- |
 | Parent tag | `sprint-21d1-emg-baseline`, annotated |
-| Parent release commit | the peeled D1 implementation baseline recorded in the release evidence |
-| Parent pull request | `#217`, squash-merged under unchanged branch protection |
+| Parent release commit | `b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9`, peeled D1 implementation baseline |
+| Parent pull request | `#217`, squash-merged under unchanged branch protection; main CI run `30657167717`, 30 of 30 success |
 | Alembic head | `0015`; `0016` unallocated |
 | Gate D1 | **does not pass** — conditions 6, 7 and 15 open |
 | Gate L2 | **closed** |

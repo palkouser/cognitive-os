@@ -1,0 +1,78 @@
+{
+ "schema_version": 1,
+ "sprint": "21D1",
+ "wave": "W7",
+ "item": "S21D1-073",
+ "recorded_at": "2026-08-01T13:10:00+00:00",
+ "gate_d1": "does not pass; conditions 6, 7 and 15 open",
+ "gate_l2": "closed",
+ "pull_request": {
+  "number": 217,
+  "state": "MERGED",
+  "merge_strategy": "squash",
+  "commits_on_the_branch": 13,
+  "final_head": "f845e810",
+  "pr_ci_run": 30656817281,
+  "pr_ci_jobs": "30 of 30 success",
+  "protection_bypassed": false,
+  "administrative_override_used": false
+ },
+ "merge": {
+  "merge_commit": "b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9",
+  "remote_main_after_merge": "b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9",
+  "parent_release_commit": "05809446c726444146d85aad22808e10ce87ca3e",
+  "parent_tag": "sprint-21c3-reality-baseline"
+ },
+ "post_merge_main_ci": {
+  "run": 30657167717,
+  "head_sha": "b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9",
+  "conclusion": "success",
+  "jobs": "30 of 30 success",
+  "exact_head": true,
+  "note": "30 rather than 29 because W6c added the credential-free experience-graph-core lane"
+ },
+ "tag": {
+  "name": "sprint-21d1-emg-baseline",
+  "type": "annotated",
+  "local_tag_object": "a59977dbcf23df60a700385a6fc15b012bf6d142",
+  "remote_tag_object": "a59977dbcf23df60a700385a6fc15b012bf6d142",
+  "peeled_commit": "b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9",
+  "created_once_after_the_final_main_ci": true,
+  "annotation_records": [
+   "the gate verdict and every open condition with its threshold",
+   "the rejected and deferred surfaces with the numbers that rejected them",
+   "all five retrieval arms including the metric the graph arm loses",
+   "the score degeneracy, the tie count and the three regressions",
+   "the FGW no-go and the single condition on which it reopens",
+   "the advisory authority boundary",
+   "six limitations carried forward"
+  ]
+ },
+ "branch_protection": {
+  "checked_after_merge": true,
+  "required_status_check_contexts": 27,
+  "strict_status_checks": true,
+  "enforce_admins": true,
+  "allow_force_pushes": false,
+  "allow_deletions": false,
+  "changed_during_the_sprint": false,
+  "required_approving_reviews": "still disabled; a second eligible reviewer does not exist. Carried forward from C3, not worked around."
+ },
+ "dependencies": {
+  "packages_added": 0,
+  "lockfile_diff_against_parent": "empty for uv.lock and pyproject.toml"
+ },
+ "migration": {
+  "head": "0015",
+  "changed_during_the_sprint": false,
+  "next_available": "0016, still unallocated"
+ },
+ "isolation_at_release": {
+  "development_pair": "unchanged, 5 files, 7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf",
+  "c3_source_pair": "unchanged, 8503 files, 7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593",
+  "d1_evidence_pair": "83 files, f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f"
+ },
+ "gate_contribution": {
+  "condition_21": "met: the protected release sequence completed with no bypass, the assessment, report and handoff are committed, the annotated tag was created once after the final main CI and peels to the verified release commit, and Gate L2 remained closed throughout"
+ }
+}

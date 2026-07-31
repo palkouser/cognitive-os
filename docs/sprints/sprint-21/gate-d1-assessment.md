@@ -47,7 +47,7 @@ this sprint reaches a live decision.
 | 18 | graph results enter the Context Builder as hash-resolvable, verified, advisory, non-required, non-pinned candidates with no execution or acceptance authority | **met** | `ExperienceGraphContextRetriever`, 13 tests; candidates carry `content=None`, `pinned=False`, `required=False`, `evidence=False`; a non-advisory purpose receives nothing |
 | 19 | FGW approved only if residual, benefit, budget, dependency and licence justify it; otherwise rejected with no new dependency | **met, as a rejection** | [ADR 0090](../../adr/0090-no-fused-gromov-wasserstein-and-the-shortlist-constraint.md). `git diff origin/main...HEAD -- uv.lock pyproject.toml` is empty |
 | 20 | integrity, replay, restart, backup/restore, scratch-store matrix, schema, packaging, security, language and full regression checks pass | **met** | `sprint-21d1-verification-matrix.json`: 22 of 22 rows on their expected exit status, 306 s, evidence stores byte-identical before and after |
-| 21 | protected release sequence, assessment, report, annotated tag and D2 handoff complete while Gate L2 remains closed | **met on completion** | this assessment, `sprint-21d1-report.md`, the D1 handoff, PR #217 merged under unchanged protection, exact-head `main` CI, annotated `sprint-21d1-emg-baseline` |
+| 21 | protected release sequence, assessment, report, annotated tag and D2 handoff complete while Gate L2 remains closed | **met** | PR #217 squash-merged to `b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9` under unchanged protection, main CI run `30657167717` 30 of 30 success at that exact head, annotated tag `sprint-21d1-emg-baseline` peeling to it; `sprint-21d1-release.json` |
 
 ## What keeps the gate open, precisely
 
