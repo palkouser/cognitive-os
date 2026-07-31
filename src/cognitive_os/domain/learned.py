@@ -746,6 +746,202 @@ class LearnedPromotionAssessment(HashedExperienceContract):
         return self
 
 
+class FeatureTiming(StrEnum):
+    """When a field's value becomes known, relative to the terminal outcome.
+
+    Only `PRE_OUTCOME` may enter a feature vector. `UNKNOWN` is not a soft version of
+    pre-outcome: a field whose timing nobody established is refused, because a leak that
+    survives review is exactly the one nobody could describe.
+    """
+
+    PRE_OUTCOME = "pre_outcome"
+    POST_OUTCOME = "post_outcome"
+    UNKNOWN = "unknown"
+
+
+class LabelSource(StrEnum):
+    """What produced a label, which decides whether it can supervise anything."""
+
+    INDEPENDENT_VERIFIER = "independent_verifier"
+    SELF_REPORTED = "self_reported"
+    DERIVED = "derived"
+    UNRESOLVED = "unresolved"
+
+
+class SurfaceEligibilityReason(StrEnum):
+    """Why one candidate sample is or is not eligible for a surface.
+
+    Every excluded sample carries a reason, so a shrinking denominator is explained
+    rather than discovered later as a discrepancy.
+    """
+
+    ELIGIBLE = "eligible"
+    DUPLICATE_IDENTITY = "duplicate_identity"
+    LABEL_UNRESOLVED = "label_unresolved"
+    ATTRIBUTION_UNKNOWN = "attribution_unknown"
+    SOURCE_EVENT_UNRESOLVED = "source_event_unresolved"
+    SOURCE_ARTIFACT_UNRESOLVED = "source_artifact_unresolved"
+    NO_PRE_OUTCOME_FEATURE = "no_pre_outcome_feature"
+    GROUP_UNRESOLVED = "group_unresolved"
+
+
+class SurfaceAdvisoryAction(StrEnum):
+    """What a triage policy may advise. None of these accepts or rejects anything."""
+
+    VERIFY_NOW = "verify_now"
+    REQUEST_REPAIR_CONTEXT = "request_repair_context"
+    ABSTAIN = "abstain"
+
+
+class SurfaceDisposition(StrEnum):
+    SELECTED_PRIMARY = "selected_primary"
+    SELECTED_SECONDARY = "selected_secondary"
+    REJECTED = "rejected"
+    DEFERRED = "deferred"
+
+
+class SurfaceActionCostMatrix(HashedExperienceContract):
+    """The cost of each advisory action, per true label.
+
+    The validator encodes the one rule the whole surface rests on: no action may be
+    cheaper than `verify_now` on a candidate that the verifier would reject. If skipping
+    verification ever scored better, a predictor could be optimised into an acceptance
+    authority, which is precisely what the primary surface must never become.
+    """
+
+    surface: NonEmptyStr
+    verify_now_when_accepted: Decimal = Field(ge=0)
+    verify_now_when_rejected: Decimal = Field(ge=0)
+    request_repair_when_accepted: Decimal = Field(ge=0)
+    request_repair_when_rejected: Decimal = Field(ge=0)
+    abstain_when_accepted: Decimal = Field(ge=0)
+    abstain_when_rejected: Decimal = Field(ge=0)
+
+    @model_validator(mode="after")
+    def verification_is_never_worth_skipping(self) -> SurfaceActionCostMatrix:
+        if self.abstain_when_rejected < self.verify_now_when_rejected:
+            raise ValueError(
+                "abstaining on a candidate the verifier would reject cannot cost less "
+                "than verifying it"
+            )
+        if self.request_repair_when_rejected < self.verify_now_when_rejected:
+            raise ValueError(
+                "requesting repair context cannot cost less than verifying a candidate "
+                "the verifier would reject"
+            )
+        return self
+
+
+class SurfaceSampleAudit(HashedExperienceContract):
+    """The measured state of one candidate surface, recorded before any selection.
+
+    `held_out_metrics_inspected` is stored rather than assumed. An audit that admits it
+    read held-out results is still a valid record; it simply cannot support a selection,
+    which `SurfaceSelectionDecision` enforces.
+    """
+
+    surface: NonEmptyStr
+    authority_reference: NonEmptyStr
+    eligible_count: int = Field(ge=0)
+    ineligible_counts: tuple[tuple[SurfaceEligibilityReason, int], ...] = ()
+    positive_count: int = Field(ge=0)
+    negative_count: int = Field(ge=0)
+    group_count: int = Field(ge=0)
+    domain_count: int = Field(ge=0)
+    changeable_decision_count: int = Field(ge=0)
+    label_source: LabelSource
+    deterministic_headroom: NonEmptyStr
+    action_cost: SurfaceActionCostMatrix | None = None
+    leakage_risks: tuple[NonEmptyStr, ...] = ()
+    feature_timing_violations: tuple[NonEmptyStr, ...] = ()
+    disposition: SurfaceDisposition
+    held_out_metrics_inspected: bool = False
+    audited_at: UtcDatetime
+
+    @model_validator(mode="after")
+    def counts_are_consistent(self) -> SurfaceSampleAudit:
+        if self.positive_count + self.negative_count != self.eligible_count:
+            raise ValueError(
+                "the positive and negative counts must partition the eligible count: "
+                f"{self.positive_count} + {self.negative_count} != {self.eligible_count}"
+            )
+        if self.changeable_decision_count > self.eligible_count:
+            raise ValueError("more decisions cannot change than there are eligible samples")
+        reasons = [reason for reason, _ in self.ineligible_counts]
+        if len(reasons) != len(set(reasons)):
+            raise ValueError("each ineligibility reason may be counted once")
+        return self
+
+    @property
+    def degenerate(self) -> bool:
+        """True when one class holds every eligible sample and there is nothing to learn."""
+        return self.eligible_count > 0 and 0 in (self.positive_count, self.negative_count)
+
+
+class SurfaceSelectionDecision(HashedExperienceContract):
+    """Which surfaces D1 pre-registers, and what it rejected to get there.
+
+    A selection made after reading held-out metrics is refused here rather than
+    described as a caveat in a report. That ordering is the only thing separating a
+    pre-registered decision problem from a result chosen because it already looked good.
+    """
+
+    decision_id: UUID
+    primary_surface: NonEmptyStr | None = None
+    primary_unavailable_reason: NonEmptyStr | None = None
+    secondary_surface: NonEmptyStr
+    audits: tuple[SurfaceSampleAudit, ...] = Field(min_length=2)
+    rationale: NonEmptyStr
+    decided_at: UtcDatetime
+
+    @model_validator(mode="after")
+    def selection_precedes_held_out_metrics(self) -> SurfaceSelectionDecision:
+        inspected = [audit.surface for audit in self.audits if audit.held_out_metrics_inspected]
+        if inspected:
+            raise ValueError(
+                "a surface selection cannot rest on audits that read held-out metrics: "
+                f"{sorted(inspected)}"
+            )
+        return self
+
+    @model_validator(mode="after")
+    def an_absent_primary_is_explained(self) -> SurfaceSelectionDecision:
+        """No primary surface is a permitted outcome, but never a silent one.
+
+        An audit can honestly conclude that the available evidence carries no learnable
+        decision problem. That result has to survive into the release, so the absence is
+        recorded with its reason rather than left as a missing field for a later reader
+        to interpret as an oversight.
+        """
+        if self.primary_surface is None and not self.primary_unavailable_reason:
+            raise ValueError(
+                "a selection without a primary surface must record why none was available"
+            )
+        if self.primary_surface is not None and self.primary_unavailable_reason:
+            raise ValueError(
+                "a selection cannot both name a primary surface and declare none available"
+            )
+        return self
+
+    @model_validator(mode="after")
+    def dispositions_match_the_selection(self) -> SurfaceSelectionDecision:
+        by_disposition: dict[SurfaceDisposition, list[str]] = {
+            SurfaceDisposition.SELECTED_PRIMARY: [],
+            SurfaceDisposition.SELECTED_SECONDARY: [],
+        }
+        for audit in self.audits:
+            if audit.disposition in by_disposition:
+                by_disposition[audit.disposition].append(audit.surface)
+        expected_primary = [] if self.primary_surface is None else [self.primary_surface]
+        if by_disposition[SurfaceDisposition.SELECTED_PRIMARY] != expected_primary:
+            raise ValueError("the primary disposition must match the named primary surface")
+        if by_disposition[SurfaceDisposition.SELECTED_SECONDARY] != [self.secondary_surface]:
+            raise ValueError("exactly one audit must be dispositioned as the secondary surface")
+        if self.primary_surface == self.secondary_surface:
+            raise ValueError("the primary and secondary surfaces must differ")
+        return self
+
+
 PUBLIC_LEARNED_CONTRACTS: tuple[type[HashedExperienceContract], ...] = (
     NumericFeature,
     SituationVector,
@@ -764,4 +960,7 @@ PUBLIC_LEARNED_CONTRACTS: tuple[type[HashedExperienceContract], ...] = (
     BaselineLadder,
     OutOfDistributionAssessment,
     LearnedPromotionAssessment,
+    SurfaceActionCostMatrix,
+    SurfaceSampleAudit,
+    SurfaceSelectionDecision,
 )

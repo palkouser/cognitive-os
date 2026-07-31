@@ -1,0 +1,58 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/learned/surface-action-cost-matrix.schema.json",
+  "additionalProperties": false,
+  "description": "The cost of each advisory action, per true label.\n\nThe validator encodes the one rule the whole surface rests on: no action may be\ncheaper than `verify_now` on a candidate that the verifier would reject. If skipping\nverification ever scored better, a predictor could be optimised into an acceptance\nauthority, which is precisely what the primary surface must never become.",
+  "properties": {
+    "abstain_when_accepted": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Abstain When Accepted",
+      "type": "string"
+    },
+    "abstain_when_rejected": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Abstain When Rejected",
+      "type": "string"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "request_repair_when_accepted": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Request Repair When Accepted",
+      "type": "string"
+    },
+    "request_repair_when_rejected": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Request Repair When Rejected",
+      "type": "string"
+    },
+    "surface": {
+      "minLength": 1,
+      "title": "Surface",
+      "type": "string"
+    },
+    "verify_now_when_accepted": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Verify Now When Accepted",
+      "type": "string"
+    },
+    "verify_now_when_rejected": {
+      "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+      "title": "Verify Now When Rejected",
+      "type": "string"
+    }
+  },
+  "required": [
+    "surface",
+    "verify_now_when_accepted",
+    "verify_now_when_rejected",
+    "request_repair_when_accepted",
+    "request_repair_when_rejected",
+    "abstain_when_accepted",
+    "abstain_when_rejected"
+  ],
+  "title": "SurfaceActionCostMatrix",
+  "type": "object"
+}

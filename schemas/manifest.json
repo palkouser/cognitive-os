@@ -3574,6 +3574,21 @@
       "sha256": "5d75d368fc3cbb6cef65c829fd5550dc6d7dfc02cdad80b2f515fab079508720"
     },
     {
+      "file": "v1/learned/surface-action-cost-matrix.schema.json",
+      "model": "SurfaceActionCostMatrix",
+      "sha256": "feb324a25d51fc2669cb9b0da62de000534f3cbc8cfdf637ba37400a847859ad"
+    },
+    {
+      "file": "v1/learned/surface-sample-audit.schema.json",
+      "model": "SurfaceSampleAudit",
+      "sha256": "3aaf7e27209611396313b51ef574848f7d92a4b422c3882bc816c6f57f1b1829"
+    },
+    {
+      "file": "v1/learned/surface-selection-decision.schema.json",
+      "model": "SurfaceSelectionDecision",
+      "sha256": "abf02ad82ce35946b708ba4406648b5386a50cad5e9d76319a150c6065ff9ec6"
+    },
+    {
       "file": "v1/memory/code-context-memory-content.schema.json",
       "model": "CodeContextMemoryContent",
       "sha256": "12d6a1bf1c1e6c3b6d2ae12b8cc52bb6d41e62ba3a7bb4afb8cd7e869eca592e"

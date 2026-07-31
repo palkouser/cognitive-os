@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "sprint": "21D1",
+  "wave": "W1",
+  "items": [
+    "S21D1-014",
+    "S21D1-015"
+  ],
+  "recorded_at": "2026-07-31T14:05:00+00:00",
+  "revision": 1,
+  "held_out_metrics_inspected": false,
+  "replay": ".venv/bin/python -m cognitive_os.learning.surfaces && .venv/bin/python -m cognitive_os.learning.leakage",
+
+  "selection": {
+    "decision_id": "urn:uuid5:NAMESPACE_URL:cognitive-os/sprint-21d1/surface-selection",
+    "decision_hash": "4ceeb74ec6fb188ac6bae16d845ff99f6b902b57ea1c28f0510ffd47ab376853",
+    "primary_surface": null,
+    "primary_unavailable_reason": "No candidate clears Gate D1 conditions 6 and 7 on frozen C3 evidence. governed.outcome_triage: candidate_strategy determines the verifier label with no error on all 150 enumerated coding outcomes, and removing it leaves the identical 2-of-5 pattern on every task, so nothing discriminates; the 64 benchmark cases are 64/64 passed. experience.strategy_selection: zero changeable decisions. experience.correction_ranking is the only balanced candidate at 60/60 but offers 120 eligible samples against a threshold of 200, and the section 3.3 shortfall cap of 50 cannot close that gap.",
+    "secondary_surface": "experience.correction_context",
+    "audit_hashes": {
+      "experience.correction_ranking": "d23fbd559a8a39f51526abeddcaa0d2103c4e86298f5cf652c21243b01b2a9e7",
+      "experience.correction_context": "1f5f00986e645b14e2902f76fa188da8d35aeb7b2f31a4d07aa409c931d0a59d",
+      "governed.outcome_triage": "2d96d2ad9dace9e10958af3667662cd6fdcd1b3b8a74e8561d6b2f515464f1f4",
+      "experience.strategy_selection": "01f356d9f983e34f8ae8cf8a8759c845bdd90c1288fe0ba141fd4b2405bf969f"
+    },
+    "rejected_alternatives": ["governed.outcome_triage", "experience.strategy_selection"],
+    "deferred_alternatives": ["experience.correction_ranking"],
+    "operator_decision": "Option C of the surface audit: declare the primary surface unavailable on frozen C3 evidence and report it as a measured negative result. Options A and B were declined because both required amending or breaching the section 3.3 shortfall cap."
+  },
+
+  "field_allowlist": {
+    "version": "correction-context-fields-v1",
+    "module": "cognitive_os.learning.leakage",
+    "pre_outcome_fields": ["action_type", "edge_kind", "failure_classification", "node_kind", "problem_domain", "problem_type", "repository_group", "split_group_key", "task_id", "task_manifest_hash", "task_run_id", "task_signature_hash", "visible_test_command"],
+    "post_outcome_fields": ["final_status", "hidden_verification_passed", "outcome_hash", "outcome_artifact_hash", "hidden_evidence_hash", "verifier_status", "recorded_at"],
+    "answer_revealing_fields": ["candidate_strategy"],
+    "rule": "A field absent from the declared mapping is refused as unknown_field_timing, not permitted by default.",
+    "post_outcome_note": "Post-outcome fields remain legitimate as provenance on a stored graph pair. They are refused only in a query projection."
+  },
+
+  "leakage_validator": {
+    "module": "cognitive_os.learning.leakage",
+    "reason_codes": ["unknown_field_timing", "post_outcome_field", "answer_revealing_field", "host_path_present", "credential_marker_present", "control_token_present", "same_group_crossing"],
+    "control_token_authority": "cognitive_os.coding.reality_leakage.scan_for_control_leaks, the C3 release authority; not reimplemented",
+    "deduplication": "cognitive_os.learning.leakage.duplicate_identities"
+  },
+
+  "action_policy": {
+    "surface": "governed.outcome_triage",
+    "status": "recorded but not pre-registered, because the surface was rejected",
+    "actions": ["verify_now", "request_repair_context", "abstain"],
+    "cost_matrix_hash": "404abd3150be6f05fe3bd90c962ead8906ec555f03a38e11df34744e71e55ecb",
+    "invariant": "SurfaceActionCostMatrix refuses any matrix in which abstaining or requesting repair costs less than verifying a candidate the verifier would reject. A predictor can therefore never be optimised into an acceptance authority."
+  },
+
+  "secondary_surface_protocol": {
+    "surface": "experience.correction_context",
+    "task": "given a failing state, retrieve a verified failed-to-success edit path as advisory repair context",
+    "relevance_judgment": "task and group identity, frozen before any ranking is produced (S21D1-050)",
+    "group_policy": "the query group is excluded from the candidate pool; correction bytes from the query group never reach the graph arm",
+    "arms": ["no_memory", "lexical", "exact_signature", "minilm_vector", "minilm_shortlist_plus_bounded_ged"],
+    "metrics": ["top_5_recall", "mrr_at_10", "ndcg_at_10", "coverage", "abstention", "timeout_count", "ranking_stability", "p50_latency", "p95_latency", "peak_memory"],
+    "usefulness_floor": {"top_5_relevant_path_recall": 0.70, "mrr_at_10": 0.50, "applies_to": "at least one bounded arm"},
+    "graph_arm_uplift_threshold": null,
+    "graph_arm_note": "No mandatory uplift in D1. A loss to the vector arm is a valid, reportable result that keeps the vector arm for D2 and rejects FGW.",
+    "resource_limits": {"nodes_per_graph": 64, "edges_per_graph": 128, "path_depth": 32, "vector_shortlist": 10, "returned_results": 10, "per_pair_ged_timeout_ms": 250, "query_budget_seconds": 2, "cross_task_similarity_neighbors": 3},
+    "seeds": {"group_split_profile": "sprint21c3-group-aware-split-v1", "group_split_seed": 15, "task_seed": 1, "fixed_epoch": "2026-07-24T00:00:00+00:00"},
+    "embedding_identity": {"model": "sentence-transformers/all-MiniLM-L6-v2", "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41", "dimensions": 384}
+  },
+
+  "stop_rules": [
+    "A change to the field allowlist, the group policy, the resource limits or the relevance judgments creates revision 2 and invalidates every result derived from revision 1.",
+    "A held-out evaluator that cannot resolve this bundle's hash refuses to read examples.",
+    "If fewer than 80 failed-to-success pairs survive source resolution, Gate D1 stays open rather than the threshold moving.",
+    "If no bounded arm reaches the usefulness floor, the result is reported and FGW is rejected; the floor is not lowered."
+  ],
+
+  "gate_d1_status_after_w1": {
+    "condition_3": "met: the selection artifact is committed before any held-out metric is read",
+    "condition_4": "not applicable: no primary label was pre-registered",
+    "condition_5": "met: the leakage validator refuses every prohibited field with a stable reason code",
+    "condition_6": "OPEN: no surface reaches 200 eligible held-out outcomes",
+    "condition_7": "OPEN: no surface reaches 20 changeable advisory decisions",
+    "conditions_8_to_21": "unaffected by this decision; the Experience Memory Graph track proceeds in full"
+  },
+
+  "deferred": [
+    {
+      "item": "S21D1-015 Artifact Store bytes and learned artifact lineage",
+      "reason": "Lineage attaches to a D1 evaluation dataset, and that dataset does not exist until the combined pair set is frozen in S21D1-035. Registering the bundle before its dataset would invent a lineage parent.",
+      "scheduled": "S21D1-046, wave W4",
+      "meanwhile": "the bundle is immutable and hash-bound through SurfaceSelectionDecision.content_hash, which the module replays deterministically"
+    },
+    {
+      "item": "S21D1-004 draft implementation pull request",
+      "reason": "Operator chose local commits without a push for now.",
+      "scheduled": "one push away; the branch is already based on the verified origin/main"
+    },
+    {
+      "item": "S21D1-016 bounded shortfall campaign",
+      "reason": "Not triggered. The denominator question it exists to answer was resolved by F12: the population is 214, and the blocker is signal, not sample size.",
+      "scheduled": "not required"
+    }
+  ]
+}
