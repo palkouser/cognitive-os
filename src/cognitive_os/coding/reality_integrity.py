@@ -313,6 +313,152 @@ def local_embedding_model_is_available(root: Path | None) -> IntegrityCheck:
     )
 
 
+# ------------------------------------------------- Experience Graph checks. §S21D1-064
+#
+# D1's graph evidence belongs in this report rather than in a second release report of its
+# own: an operator asking whether the store is sound should not have to know that graphs are
+# kept somewhere else. The four failure modes stay separate here for the same reason failure
+# and warning stay separate above — each one has a different remedy, and a report that says
+# only "graphs are bad" sends the operator looking in the wrong place.
+
+
+def experience_graph_checks(evidence: Any) -> tuple[IntegrityCheck, ...]:
+    """Turn loaded graph evidence into checks. `evidence` is a `GraphEvidence`.
+
+    Typed as `Any` to keep this module importable without the experience package, which is
+    the same reason its other collaborators are imported inside the functions that use them.
+    """
+    resolved = len(evidence.pairs)
+    declared = evidence.declared_pairs
+    return (
+        IntegrityCheck(
+            name="experience_graph_bytes_resolve",
+            ok=not evidence.missing_bytes,
+            severity=FAILURE,
+            detail=(
+                f"{resolved} of {declared} pairs resolved"
+                if not evidence.missing_bytes
+                else f"{len(evidence.missing_bytes)} pairs the root names have no bytes in the "
+                f"store: {', '.join(evidence.missing_bytes[:5])}"
+            ),
+        ),
+        IntegrityCheck(
+            name="experience_graph_bytes_are_uncorrupted",
+            ok=not evidence.corrupt_bytes,
+            severity=FAILURE,
+            detail=(
+                "every stored pair hashes to the name it is filed under and validates"
+                if not evidence.corrupt_bytes
+                else f"{len(evidence.corrupt_bytes)} pairs hold bytes that do not hash to their "
+                f"name or that the contract refuses: {', '.join(evidence.corrupt_bytes[:5])}"
+            ),
+        ),
+        IntegrityCheck(
+            name="experience_graph_authority_links_agree",
+            ok=not evidence.broken_links,
+            severity=FAILURE,
+            detail=(
+                "the root's pair, structural and edit-path hashes match the stored bytes"
+                if not evidence.broken_links
+                else f"{len(evidence.broken_links)} pairs whose stored bytes disagree with a hash "
+                f"the root declared: {', '.join(evidence.broken_links[:5])}"
+            ),
+        ),
+        IntegrityCheck(
+            name="experience_graph_edit_paths_round_trip",
+            ok=not evidence.failed_round_trips,
+            severity=FAILURE,
+            detail=(
+                f"{resolved} of {resolved} edit paths reproduce their successful graph"
+                if not evidence.failed_round_trips
+                else f"{len(evidence.failed_round_trips)} edit paths do not reproduce their "
+                f"successful graph: {', '.join(evidence.failed_round_trips[:5])}"
+            ),
+        ),
+        IntegrityCheck(
+            # A warning, and deliberately not the check above. A legacy pair's original run
+            # cannot be recompiled byte for byte because the run predates the compiler that
+            # would verify it; its graph is intact and its edit path round trips. Reporting
+            # that as unresolved evidence would condemn sixty sound pairs.
+            name="experience_graph_legacy_recompilation",
+            ok=not evidence.legacy_recompilation,
+            severity=WARNING,
+            detail=(
+                "every pair carries byte-identical recompilation"
+                if not evidence.legacy_recompilation
+                else f"{len(evidence.legacy_recompilation)} of {resolved} pairs are historical and "
+                "cannot be recompiled byte for byte; their graphs and edit paths are intact"
+            ),
+        ),
+        IntegrityCheck(
+            # Availability, not integrity. A store with no pair at all leaves the advisory
+            # retriever with nothing to offer and the deterministic path entirely unaffected,
+            # which is a capability report. Corruption is the check above and is a failure.
+            name="experience_graph_retriever_is_available",
+            ok=bool(evidence.pairs),
+            severity=WARNING,
+            detail=(
+                f"{resolved} pairs are available to the advisory retriever"
+                if evidence.pairs
+                else "no pair loaded; the advisory retriever offers nothing and the deterministic "
+                "path is unaffected"
+            ),
+        ),
+    )
+
+
+def experience_graph_is_configured(root: Path | None, artifact_root: Path | None) -> IntegrityCheck:
+    """A warning when no graph evidence is configured. An unconfigured host is not a broken one."""
+    return IntegrityCheck(
+        name="experience_graph_is_configured",
+        ok=root is not None and artifact_root is not None,
+        severity=WARNING,
+        detail=(
+            f"graph evidence read from {root}"
+            if root is not None and artifact_root is not None
+            else "no graph root or artifact root was given; graph status is a capability this "
+            "invocation did not ask for"
+        ),
+    )
+
+
+async def _graph_artifact_rows_have_bytes(connection: Any, root: Path) -> IntegrityCheck:
+    """The D1 authority link: every artifact id the root names is a row with bytes.
+
+    The store-side checks above ask whether the files agree with the root. This one asks
+    whether the database agrees with it too, which is the link that would break if a graph
+    were written to the store and never recorded, or recorded and later pruned.
+    """
+    import json as _json
+
+    from sqlalchemy import text as sql
+
+    manifest = _json.loads(root.read_text())
+    ids = [child["artifact_id"] for child in manifest.get("children", ())]
+    if manifest.get("root_artifact_id"):
+        ids.append(manifest["root_artifact_id"])
+    found = int(
+        await connection.scalar(
+            sql(
+                """
+                SELECT count(*) FROM cognitive_os.artifacts a
+                JOIN cognitive_os.artifact_blobs b ON b.content_hash = a.content_hash
+                WHERE a.artifact_id = ANY(CAST(:ids AS uuid[]))
+                """
+            ),
+            {"ids": ids},
+        )
+        or 0
+    )
+    return IntegrityCheck(
+        name="every_graph_artifact_row_has_bytes",
+        ok=found == len(ids),
+        severity=FAILURE,
+        detail=f"{found} of {len(ids)} artifact ids the graph root names resolve to rows "
+        "with bytes",
+    )
+
+
 async def inspect(
     connection: Any,
     *,
@@ -320,6 +466,8 @@ async def inspect(
     development_digest: str,
     development_files: int,
     model_root: Path | None,
+    graph_root: Path | None = None,
+    graph_artifact_root: Path | None = None,
 ) -> tuple[IntegrityReport, dict[str, int]]:
     """Every check, once, against one open connection. Returns the report and the counts."""
     from sqlalchemy import text as sql
@@ -343,6 +491,14 @@ async def inspect(
         )
     )
     checks.append(local_embedding_model_is_available(model_root))
+
+    checks.append(experience_graph_is_configured(graph_root, graph_artifact_root))
+    if graph_root is not None and graph_artifact_root is not None:
+        from cognitive_os.experience.graph_store import load_evidence
+
+        evidence = load_evidence(graph_root, graph_artifact_root)
+        checks.extend(experience_graph_checks(evidence))
+        checks.append(await _graph_artifact_rows_have_bytes(connection, graph_root))
 
     import json
 

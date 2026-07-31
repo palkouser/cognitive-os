@@ -1,0 +1,101 @@
+{
+ "schema_version": 1,
+ "sprint": "21D1",
+ "wave": "W6b",
+ "items": [
+  "S21D1-063",
+  "S21D1-064",
+  "S21D1-065"
+ ],
+ "recorded_at": "2026-08-01T10:40:00+00:00",
+ "s21d1_063_operator_cli": {
+  "entry_point": "scripts/experience.py, extended. No second operator entry point was added.",
+  "commands": {
+   "graph-build": "projects a compiled fixture into an action-decision graph and prints it with its structural hash. Needs no store and no database.",
+   "graph-verify": "loads every pair a root manifest names and reports what did not resolve. Exits 1 when the set is not intact.",
+   "graph-query": "one bounded retrieval query over the persisted set, one arm at a time.",
+   "graph-benchmark": "every arm over a frozen query manifest. Without --model it runs the three arms that need no embedding.",
+   "graph-health": "the same checks the unified integrity report carries, as machine-readable JSON."
+  },
+  "output": "canonical JSON, sorted keys, no spaces, printed to stdout. The same _json helper the existing commands use.",
+  "read_only": "all five commands read. Verified mechanically: the store fingerprint before and after graph-verify, graph-health and graph-query is identical, asserted in a test rather than claimed.",
+  "stores_are_never_guessed": "a graph command without --graph-root and --artifact-root, or their COGOS_ equivalents, exits non-zero and names both. A root that is not a file and a store that is not a directory are each refused separately.",
+  "embedding_provider": "the vector and graph arms require --model and build the frozen local provider, which raises rather than substituting the hashing provider. Asking for a vector arm without a model exits 1.",
+  "failures_return_non_zero": [
+   "graph-verify on a set with missing, corrupt or mislinked bytes",
+   "graph-health when any failure-severity check fails",
+   "any incomplete or invalid configuration"
+  ],
+  "replay_check": "graph-benchmark over the frozen 80-query manifest reproduces the published lexical numbers exactly, 0.5250 top-5 recall and 0.4145 MRR@10, in 0.85 s with no model, no database and no credentials"
+ },
+ "s21d1_064_unified_integrity": {
+  "extends": "src/cognitive_os/coding/reality_integrity.py. No second release report was created.",
+  "shared_reader": "src/cognitive_os/experience/graph_store.py, used by both the report and the CLI so neither carries its own copy of where a pair is filed",
+  "checks_added": {
+   "experience_graph_bytes_resolve": "failure. The root names an artifact the store does not hold.",
+   "experience_graph_bytes_are_uncorrupted": "failure. The store holds bytes that do not hash to the name they are filed under, or that the contract refuses.",
+   "experience_graph_authority_links_agree": "failure. The pair loads and is internally sound but a hash the root declared about it disagrees.",
+   "experience_graph_edit_paths_round_trip": "failure. Applying the edit path does not reproduce the successful graph.",
+   "experience_graph_legacy_recompilation": "warning. A historical pair whose original run cannot be recompiled byte for byte. Its graph and edit path are intact.",
+   "experience_graph_retriever_is_available": "warning. An empty set leaves the advisory retriever with nothing and the deterministic path unaffected.",
+   "experience_graph_is_configured": "warning. A host that was not asked for graph status is not a broken host.",
+   "every_graph_artifact_row_has_bytes": "failure. The D1 authority link: every artifact id the root names is a database row with bytes."
+  },
+  "distinctions_the_acceptance_asks_for": {
+   "failure_versus_warning": "failures decide health; warnings are reported and do not condemn the store. Unchanged from the C3 semantics.",
+   "legacy_non_recompilation_versus_unresolved_sources": "a legacy pair resolves, round trips and is reported as a warning; unresolved bytes are a failure. A fixture asserts that each is reported without the other.",
+   "retriever_availability_versus_graph_corruption": "a fixture with one corrupt pair of two reports the corruption as a failure while the retriever stays available, because one surviving pair still gives it something to offer."
+  },
+  "fixtures": "healthy, degraded (legacy), corrupt, missing-artifact, broken-link, and empty, in tests/cognitive_os/experience/test_graph_evidence_operations.py",
+  "tests": 22,
+  "live_check": "the D1 evidence pair reports 80 of 80 pairs resolved, 80 of 80 edit paths round-tripping, and 60 of 80 legacy as a warning"
+ },
+ "s21d1_065_restart_backup_restore": {
+  "tooling": "scripts/backup_event_store.sh and scripts/restore_event_store.sh --test-restore, unchanged. The wave used the existing operational path rather than adding a D1-specific one.",
+  "backup": {
+   "manifest": "20260731T181325Z-backup-manifest.json",
+   "database_dump_sha256": "ba421c4bf5b8ee175fa964fd6cb79ff23d33d21275302e3f8bde85642183c57f",
+   "artifact_archive_sha256": "d05e5049f88100c5de8dcb82ea7c877b1d8a9e1a38a67dcc0f8221d8ecf4f634",
+   "artifact_files_verified": 83,
+   "alembic_revision": "0015"
+  },
+  "restart": {
+   "action": "the PostgreSQL container was restarted between the two captures",
+   "store_fingerprint": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f over 83 files, identical before and after",
+   "row_counts": "identical, including the md5 of every artifact content hash in order",
+   "query_determinism": "graph-verify, the 80-query benchmark and a lexical query all byte-identical after the restart"
+  },
+  "restore": {
+   "target": "cognitive_os_s21d1_restore_test, a separate database; the evidence store was never the restore target",
+   "verification": "the existing isolated restore verification passed, including 83 restored artifact files",
+   "counts_match_source": true,
+   "graph_bytes_from_the_archive": "the artifact archive was extracted to a scratch directory and the same three graph commands run against it produced byte-identical output to the pre-backup capture"
+  },
+  "before_and_after_query_hashes": {
+   "graph_verify": "1a1b2acaac8efc69cfb50fad17ccd0c8152519e0de384a9ff5c95a941c3be4de",
+   "graph_benchmark_80_queries": "ef2a270e4de431cc43a26322a028b3bc698676b6a8edfc961dd53b0f5995c3fc",
+   "graph_query_lexical": "4f5af83c68e65687ce4f8d23acb2b0a102866218b52c1481a25c784d3b1d63da",
+   "identical_at": [
+    "before backup",
+    "after restart",
+    "after restore, from the extracted archive"
+   ]
+  },
+  "corruption_is_rejected": {
+   "method": "on the extracted copy only. The evidence store was never written to.",
+   "appended_byte": "exit 1, the pair named under corrupt_bytes, missing_bytes empty, 79 of 80 resolved",
+   "deleted_file": "exit 1, the pair named under missing_bytes, 78 of 80 resolved",
+   "reading": "the two damage modes are reported apart, which is what lets an operator tell a lost file from a changed one"
+  }
+ },
+ "isolation": {
+  "development_pair": "unchanged, 5 files, 7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf",
+  "c3_source_pair": "unchanged, 8503 files, 7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593",
+  "d1_evidence_pair": "unchanged, 83 files, f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f",
+  "writes": "the D1 backup root only; the evidence store received nothing",
+  "migration_head": "0015, unchanged"
+ },
+ "gate_contribution": {
+  "condition_20_partial": "integrity, replay, restart and backup/restore pass. The scratch-store matrix, schema, packaging, security, language and full regression checks are wave W6c."
+ }
+}
