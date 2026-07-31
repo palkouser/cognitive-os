@@ -758,6 +758,24 @@ read and no socket is opened in normal CI. See
 [provider commands](docs/operations/provider-health-checks.md) and
 [live smokes](docs/operations/provider-live-smokes.md).
 
+## Experience Memory Graph (Sprint 21D1)
+
+Cognitive OS can project compiled trajectories into canonical action-decision graphs, pair a
+failed run with the successful run that repaired it, and retrieve similar repairs under a
+declared resource budget. **Nothing is fitted and nothing is activated**: no component is
+trained, no threshold reaches a live decision, and Gate L2 remains closed. Retrieved history
+enters the Context Builder as advisory, non-required, non-pinned candidates that carry no
+executable patch and confer no execution or acceptance authority.
+
+The measured result is reported as measured. The graph arm beats the strongest arm needing no
+structure on recall, loses on nDCG, and misses the pre-registered usefulness floor, so Gate D1
+stays open on that condition. The residual analysis shows the shortlist width rather than the
+structural comparator is what caps retrieval, which is why
+[ADR 0090](docs/adr/0090-no-fused-gromov-wasserstein-and-the-shortlist-constraint.md) rejects a
+Fused Gromov-Wasserstein dependency and adds no package at all. See the
+[architecture](docs/architecture/experience-memory-graph.md) and
+[operations guide](docs/operations/experience-memory-graph.md).
+
 ---
 
 ## 📬 Contact Us

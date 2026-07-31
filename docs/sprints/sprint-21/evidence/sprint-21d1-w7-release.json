@@ -1,0 +1,68 @@
+{
+ "schema_version": 1,
+ "sprint": "21D1",
+ "wave": "W7",
+ "items": [
+  "S21D1-070",
+  "S21D1-071",
+  "S21D1-072",
+  "S21D1-074"
+ ],
+ "recorded_at": "2026-08-01T12:00:00+00:00",
+ "s21d1_070_documentation": {
+  "architecture": "docs/architecture/experience-memory-graph.md",
+  "operations": "docs/operations/experience-memory-graph.md",
+  "readme_section": "Experience Memory Graph (Sprint 21D1), stating that nothing is fitted and nothing is activated and that Gate L2 remains closed",
+  "advisory_is_explicit": "each of the three states that the graph confers no execution or acceptance authority, that candidates are never pinned or required and carry no patch body, and that D1 trains and activates nothing",
+  "link_validation": "every relative link in the three documents resolves; every src/, scripts/ and docs/ path named in backticks exists",
+  "command_validation": "graph-build, graph-verify, graph-health, graph-query, graph-benchmark and artifact_store_fingerprint.py were each executed exactly as documented and each exited 0"
+ },
+ "s21d1_071_gate_assessment": {
+  "artifact": "docs/sprints/sprint-21/gate-d1-assessment.md",
+  "conditions": 21,
+  "met": 17,
+  "not_applicable": 1,
+  "open": [
+   "6: 0 eligible held-out outcomes for any surface against a threshold of 200",
+   "7: 0 changeable advisory decisions against a threshold of 20",
+   "15: best bounded arm 0.6750 top-5 recall and 0.4481 MRR@10 against 0.70 and 0.50"
+  ],
+  "not_applicable_detail": "condition 4: no primary label was pre-registered, because no primary surface was available",
+  "verdict": "Gate D1 does not pass",
+  "gate_l2": "closed",
+  "every_condition_has_a_handle": "each row names a committed evidence file, a module, a CI run or a release handle",
+  "null_results_remain_visible": "the graph arm's nDCG loss, its 60 budget cutoffs and the anti-informative group-frequency rung are all stated in the assessment rather than summarised away"
+ },
+ "s21d1_072_report": {
+  "artifact": "docs/sprints/sprint-21/sprint-21d1-report.md",
+  "waves": 13,
+  "backlog_items": 41,
+  "commits": 13,
+  "files_changed": 77,
+  "code_and_ci_files": 20,
+  "tests_in_the_graph_and_learning_packages": 160,
+  "denominator_reconciliation": "214 outcomes reconcile exactly as 150 enumerated coding outcomes plus 64 distinct accepted benchmark cases; the C3 store was never emptied between waves, so every D1 count anchors to enumerated campaign identities",
+  "graph_denominator": "80 pairs, 50 task signatures, 50 groups, zero crossing, 100% source resolution",
+  "no_metric_described_as_learned_benefit": "the report states explicitly that nothing was fitted, no threshold reaches a live decision and Gate L2 is closed",
+  "legacy_constraints_explicit": "60 of 80 pairs carry legacy_recompilation_unavailable and the report says so in three places"
+ },
+ "s21d1_074_handoff": {
+  "artifact": "docs/sprints/sprint-21/sprint-21d2-handoff.md",
+  "covers": [
+   "exact APIs for every D1 module",
+   "surface, outcome, baseline, pair-set, root, query, benchmark and residual manifests",
+   "group-level split rule and the absence of a D2 holdout",
+   "the strongest retrieval arm and the strongest structure-free arm, carried forward together",
+   "the shortlist lever with its measured ceiling by width",
+   "the FGW no-go and the single condition on which it reopens",
+   "a six-part material-benefit rule",
+   "six named risks with what D1 leaves for each",
+   "release handles"
+  ],
+  "gate_l2_explicitly_closed_at_handoff": true,
+  "d2_can_proceed_without_reopening_d1": "the two contract invariants D2 inherits are named, the deferred surface is named, and the thresholds are hash-bound so that moving one invalidates affected results rather than passing silently"
+ },
+ "gate_contribution": {
+  "condition_21_partial": "the assessment, report and handoff are complete. The protected release sequence and the annotated tag are recorded in the release evidence."
+ }
+}
