@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "sprint": "21D1",
+  "wave": "W2",
+  "items": ["S21D1-016", "S21D1-020", "S21D1-021", "S21D1-022", "S21D1-023", "S21D1-024", "S21D1-025", "S21D1-026"],
+  "recorded_at": "2026-07-31T14:55:00+00:00",
+  "replay": ".venv/bin/python -m cognitive_os.learning.triage_evidence",
+  "scope_note": "W2 was scoped around a primary surface. The W1 audit rejected it, so W2 quantifies the rejection instead of evaluating a comparator for a learner that will not be fitted. Nothing here fits anything; every rung is a declared deterministic rule.",
+
+  "s21d1_016_shortfall_campaign": {
+    "required": false,
+    "reason": "The denominator question this task exists to answer was resolved in W1. The released 214 reconciles exactly as 150 enumerated coding outcomes plus 64 distinct accepted benchmark cases. The blocker is signal, not sample size, and section 3.3 provides no remedy for a surface whose label is a function of a forbidden field.",
+    "outcomes_generated": 0,
+    "provider_calls": 0,
+    "network_calls": 0
+  },
+
+  "s21d1_020_canonical_outcome_view": {
+    "artifact": "docs/sprints/sprint-21/evidence/sprint-21d1-outcome-view.json",
+    "sha256": "109e5b7486eb6c0ebde16df7b8406aa5ce85db4d87563e24fcd014317be247f0",
+    "records": 214,
+    "distinct_outcome_identities": 214,
+    "duplicates_collapsed": 0,
+    "coding": 150,
+    "benchmark": 64,
+    "label_balance": {"accepted": 124, "rejected": 90},
+    "label_source": "independent_verifier for all 214",
+    "source_event_resolved": {"true": 150, "false": 64},
+    "source_event_note": "The 64 governed benchmark cases carry verifier evidence hashes but no source_event_id, so they resolve to a verifier result and not to an ordered pre-outcome event sequence.",
+    "group_derivation": "task identity to repository group is derived from cognitive_os.coding.reality_task_specs and uuid5 over template and seed. Verified against the C3 store: 30 derived task identities match the 30 in the store exactly, 30 distinct groups, one to one. The view therefore replays without database access.",
+    "forbidden_fields_excluded_from_features": ["candidate_strategy", "final_status", "hidden_verification_passed", "outcome_hash", "outcome_artifact_hash", "hidden_evidence_hash", "verifier_status", "recorded_at"]
+  },
+
+  "s21d1_021_evaluation_roles_and_groups": {
+    "groups": 36,
+    "composition": "30 coding repository groups plus 6 benchmark domain groups",
+    "group_sizes": {"5": 30, "6": 4, "4": 1, "36": 1},
+    "groups_spanning_more_than_one_population_or_domain": 0,
+    "role": "evaluation",
+    "role_note": "Every group is evaluation-only. All 214 outcomes are real_governed_run provenance, and a training snapshot containing one is refused rather than filtered. No group carries two roles.",
+    "split_profile": "sprint21c3-group-aware-split-v1",
+    "split_seed": 15,
+    "exact_and_normalized_duplicate_crossing": 0
+  },
+
+  "s21d1_022_sample_and_decision_sufficiency": {
+    "threshold_eligible_outcomes": 200,
+    "threshold_changeable_decisions": 20,
+    "measured_eligible_outcomes": 0,
+    "measured_changeable_decisions": 0,
+    "verdict": "BLOCKED",
+    "gate_action": "Gate D1 conditions 6 and 7 stay open. No definition was weakened and no threshold was moved.",
+    "why_zero_not_214": "All 214 outcomes carry a resolvable independent verifier label. None of them carries a usable pre-outcome feature, so none is eligible as a triage example. The denominator is intact; the feature side is empty."
+  },
+
+  "s21d1_023_baseline_ladder": {
+    "surface": "governed.outcome_triage",
+    "split": "all-214",
+    "rungs": [
+      {"name": "always_verify_now", "kind": "trivial", "score": "0.4206", "abstained": 0, "note": "the safety constant; the only rung that never skips a verification"},
+      {"name": "majority[accepted]", "kind": "trivial", "score": "0.5794", "abstained": 0},
+      {"name": "visible_contract[run_kind]", "kind": "deterministic", "score": "0.7196", "abstained": 0, "note": "highest scoring, and an oracle: C3 built every coding baseline to fail the hidden suite, so run_kind=baseline predicts rejection on 30 of 30"},
+      {"name": "grouped_frequency[leave_one_out]", "kind": "deterministic", "score": "0.2991", "abstained": 0, "note": "worse than every other rung; see the residual analysis"}
+    ],
+    "forbidden_rung_scored_once_for_the_record": {
+      "name": "FORBIDDEN:candidate_strategy",
+      "score_on_coding": "1.0000",
+      "purpose": "so that 'candidate_strategy is an oracle' is a number rather than a claim. It is never a candidate baseline."
+    },
+    "strongest_valid_rung": "visible_contract[run_kind] at 0.7196, with the caveat that it is itself an oracle on the baseline third of the coding population"
+  },
+
+  "s21d1_024_held_out_evaluator": {
+    "module": "cognitive_os.learning.triage_evidence",
+    "behaviour": "refuses a canonical view containing duplicate outcome identities; scores abstentions as never correct; reports every sample and never converts a prediction into an accepted status",
+    "all_samples_reported": true,
+    "predictions_converted_to_acceptance": 0
+  },
+
+  "s21d1_025_paired_uncertainty": {
+    "method": "deterministic paired bootstrap, standard library only, fixed seed",
+    "seed": 21041,
+    "resamples": 2000,
+    "worked_example": {
+      "comparison": "majority[accepted] minus always_verify_now",
+      "point": "0.1589",
+      "confidence_interval_95": ["0.0280", "0.2897"]
+    },
+    "d2_comparison_contract": "A candidate beats a baseline only when the lower bound of the paired interval on the same samples is above zero. D1 makes no learned-benefit claim; the machinery is delivered for D2 and is reused by the W5 retrieval-arm comparison.",
+    "dependency_added": "none; random.Random and the standard library"
+  },
+
+  "s21d1_026_frozen_baseline_report": {
+    "headline": "The C3 outcome corpus does not carry a triage decision problem, and this is measured rather than asserted.",
+    "oracle_free_residual": {
+      "definition": "both construction oracles removed: the 30 coding baselines are dropped because C3 built every one of them to fail, and candidate_strategy is unused",
+      "coding": {
+        "count": 120,
+        "accepted": 60,
+        "rejected": 60,
+        "single_class": false,
+        "strongest_rung": "always_verify_now",
+        "strongest_score": "0.5000",
+        "grouped_frequency_score": "0.0000"
+      },
+      "benchmark": {
+        "count": 64,
+        "accepted": 64,
+        "rejected": 0,
+        "single_class": true,
+        "strongest_rung": "majority[accepted]",
+        "strongest_score": "1.0000",
+        "grouped_frequency_score": "1.0000"
+      }
+    },
+    "interpretation": [
+      "With both oracles removed, the coding half is an exactly balanced 60 against 60 set on which no declared rung beats a coin flip.",
+      "The group structure is not merely uninformative but perfectly anti-informative: leave-one-out group frequency scores 0.0000, getting none of the 120 right. Each group holds 2 accepted and 2 rejected candidates, so removing the held-out record always tips the remaining majority to the wrong side. There is no group-level signal for a learned component to find.",
+      "The benchmark half is single class, where every rung is trivially perfect and nothing is learnable.",
+      "Neither half supports a decision problem. This is a property of a corpus built to prove a sandbox and a verifier, which it does, and not a defect in C3."
+    ],
+    "failures_left_visible": true,
+    "learned_benefit_claimed": false
+  },
+
+  "gate_d1_status_after_w2": {
+    "condition_6": "OPEN, 0 eligible against a threshold of 200",
+    "condition_7": "OPEN, 0 changeable decisions against a threshold of 20",
+    "conditions_8_to_21": "unaffected; the Experience Memory Graph track proceeds in full from wave W3"
+  },
+
+  "value_delivered_to_d2": [
+    "A canonical, replayable 214-outcome view with a database-free group derivation.",
+    "A measured statement of exactly which fields are oracles and why, so D2 does not rediscover them.",
+    "A deterministic paired-bootstrap comparison contract reused by the W5 retrieval benchmark.",
+    "A quantified ceiling: any future triage surface must be built on evidence whose label is not a function of a synthetic strategy label or a by-construction failing baseline."
+  ]
+}
