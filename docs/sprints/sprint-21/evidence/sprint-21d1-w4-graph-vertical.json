@@ -1,0 +1,188 @@
+{
+  "ci_finding": {
+    "id": "W4-D1",
+    "observed": "The first PR CI run failed the quality job on bandit B101. Three D1 modules carried `__main__` self-checks using `assert`, which bandit refuses in src/.",
+    "resolution": "The self-checks moved to tests/cognitive_os/learning/test_surface_audit.py, 19 tests, where they run in CI on every push rather than only when someone executes the module. No check was dropped.",
+    "verified": "bandit -r src/cognitive_os reports 0 high and 2 medium, the same as before D1",
+    "why_it_was_missed": "bandit was not run locally before the push; ruff, mypy and the schema export were."
+  },
+  "gate_contribution": {
+    "condition_11": "met: 80 pairs, three domains, zero group crossing, 100% source resolution",
+    "condition_12": "met: 80 of 80 edit scripts transform their failed graph into the declared successful graph and pass canonical-hash verification",
+    "condition_13": "met: malformed, cyclic, oversized, over-depth, secret-bearing and unresolved graphs all fail closed, with 16 tests",
+    "condition_17_partial": "the resource policy is enforced by contract; latency measurement is wave W5"
+  },
+  "isolation": {
+    "c3_access_mode": "raw SQL SELECT only",
+    "c3_source_pair": "unchanged, 8503 files, 7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593",
+    "development_pair": "unchanged, 5 files, 7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf",
+    "development_pair_writes": 0,
+    "writes": "the D1 evidence pair only"
+  },
+  "items": [
+    "S21D1-040",
+    "S21D1-041",
+    "S21D1-042",
+    "S21D1-043",
+    "S21D1-044",
+    "S21D1-045",
+    "S21D1-046",
+    "S21D1-047"
+  ],
+  "recorded_at": "2026-07-31T19:10:00+00:00",
+  "resource_policy_observed": {
+    "bound_changes_required": 0,
+    "declared": {
+      "edges_per_graph": 128,
+      "nodes_per_graph": 64,
+      "path_depth": 32
+    },
+    "note": "This closes the F8 risk from the wave plan. The 60 historical trajectories were unmeasured before W4; the largest graph uses 21 of the 64 permitted nodes, so no bound had to be changed before any benchmark.",
+    "observed": {
+      "max_depth": 20,
+      "max_nodes": 21,
+      "min_nodes": 2
+    },
+    "over_limit_graphs": 0
+  },
+  "s21d1_040_contracts_and_schema": {
+    "contracts": [
+      "GraphResourceLimits",
+      "ExperienceGraphNode",
+      "ExperienceGraphEdge",
+      "ActionDecisionGraph",
+      "GraphEditOperation",
+      "GraphEditPath",
+      "FailedSuccessGraphPair",
+      "ExperienceGraphQuery",
+      "ExperienceGraphResultEntry",
+      "ExperienceGraphResult"
+    ],
+    "edge_kinds": [
+      "next",
+      "branches_to",
+      "caused_by",
+      "supports",
+      "contradicts",
+      "corrected_by",
+      "recovers_to"
+    ],
+    "module": "src/cognitive_os/domain/experience_graph.py",
+    "node_kinds": [
+      "observation",
+      "reasoning",
+      "tool_action",
+      "tool_result",
+      "verifier",
+      "correction",
+      "accepted_outcome"
+    ],
+    "registered_via": "PUBLIC_EXPERIENCE_GRAPH_CONTRACTS in the existing schema registry, no new wiring",
+    "schema_export": "10 schemas added under v1/experience-graph/; nothing removed and no existing schema changed"
+  },
+  "s21d1_041_coding_adapter": {
+    "assessments_available": 270,
+    "bytes_or_timestamps_modified": 0,
+    "legacy_recompilation_unavailable": "true on all 60",
+    "pairs": 60,
+    "source": "the 60 historical correction trajectories resolved in W3a, read from the C3 store",
+    "split_read_from": "the recorded correctness field, not from step positions",
+    "split_rule": "a correction trajectory records both sides in one ordered sequence, so the failed graph is the prefix through the last step the verifier marked incorrect and the successful graph is the whole trajectory",
+    "trajectory_shapes": {
+      "4_steps": 30,
+      "5_steps": 30
+    }
+  },
+  "s21d1_042_domain_adapter": {
+    "no_coding_specific_branch": true,
+    "pairs": 20,
+    "source": "the persisted step assessments of the 40 fresh compilations in the D1 store",
+    "why_not_re_running": "re-executing a case produces a different trajectory and would silently detach the graph from the pair set frozen in W3c. Projecting from persisted assessments keeps every graph tied to the trajectory that was actually stored."
+  },
+  "s21d1_043_normalisation_and_validation": {
+    "additional_tests": "tests/cognitive_os/learning/test_surface_audit.py, 19 tests over the surface audit, the leakage validator and the triage evidence",
+    "canonical_ordering": "nodes by logical id, edges by (source, target, kind)",
+    "dag_validation": "networkx is_directed_acyclic_graph plus dag_longest_path_length against the declared depth bound",
+    "fail_closed_tests": 16,
+    "refusals_covered": [
+      "cycle",
+      "duplicate logical id",
+      "edge to an unknown node",
+      "self loop",
+      "oversized graph",
+      "excessive depth",
+      "host path in an attribute",
+      "credential marker in an attribute",
+      "unbounded attribute body",
+      "unsorted node order",
+      "pair whose sides disagree on the task",
+      "pair whose failed side was accepted",
+      "edit path applied to the wrong graph"
+    ],
+    "test_file": "tests/cognitive_os/experience/test_graph_projection.py"
+  },
+  "s21d1_044_edit_paths": {
+    "canonical_ordering": "operations sorted by (kind, target)",
+    "edit_operations": {
+      "max": 20,
+      "min": 4
+    },
+    "failures": 0,
+    "hash_semantics": "structural. ActionDecisionGraph.structural_hash covers labelled structure and excludes provenance, because the two sides of a pair are two different runs whose evidence bytes differ at every step. Established by the vertical slice; see sprint-21d1-w3c-and-vertical-slice.json.",
+    "round_trips": "80 of 80"
+  },
+  "s21d1_045_root_and_similarity": {
+    "artifact": "docs/sprints/sprint-21/evidence/sprint-21d1-emg-root.json",
+    "children": 80,
+    "cross_task_similarity_links": 240,
+    "domains": [
+      "coding",
+      "logic",
+      "mathematics"
+    ],
+    "embedding_identity": {
+      "dimension": 384,
+      "model": "sentence-transformers/all-MiniLM-L6-v2",
+      "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
+    },
+    "groups": 50,
+    "max_links_per_pair": 3,
+    "pairs": 80,
+    "root_artifact_id": "4a727373-3927-4ea8-b61b-8a64c3e96f23",
+    "root_content_hash": "d56fa85cc998b9bba46d9133a2428261139cbc4532aa875803e9e84c4c795316",
+    "same_group_links": 0,
+    "sha256": "25b89bc8316c7b3d2f556e4e1aca4ff9619702a8bf1306fbe346cef2362f90ae",
+    "task_signatures": 50
+  },
+  "s21d1_046_persistence": {
+    "artifact_root_files": 83,
+    "artifact_root_size": "1.4M",
+    "children_verified": 80,
+    "children_written": 80,
+    "hash_mismatches": 0,
+    "new_migrations": 0,
+    "new_tables": 0,
+    "restart_proof": {
+      "children_mismatched": 0,
+      "children_resolved_after_restart": 80,
+      "root_bytes_match_declared_manifest": true
+    },
+    "store": "the existing Artifact Store on the D1 evidence pair"
+  },
+  "s21d1_047_migration_decision": {
+    "alembic_versions_on_disk": 15,
+    "decision": "not required",
+    "measured_basis": {
+      "pairs": 80,
+      "query_pattern": "the retrieval arms load the root manifest once and rank in memory over at most 80 candidates, well inside the 2-second query budget",
+      "root_manifest_size_bytes": 74448,
+      "total_graph_payload": "1.4 MB across 83 files"
+    },
+    "migration_head": "0015, unchanged",
+    "next_available": "0016, still unallocated",
+    "reasoning": "PostgreSQL already holds dataset and lineage identity through the existing learned tables, and the Artifact Store already holds the payload bytes with content-addressed deduplication and verification. No query or integrity requirement was found that this representation cannot meet. Backlog section 4.8 is explicit that convenience is not sufficient, and nothing here is more than convenience."
+  },
+  "schema_version": 1,
+  "sprint": "21D1",
+  "wave": "W4"
+}

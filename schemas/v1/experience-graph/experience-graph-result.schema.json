@@ -1,0 +1,169 @@
+{
+  "$defs": {
+    "ExperienceGraphResultEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "arm": {
+          "minLength": 1,
+          "title": "Arm",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "pair_id": {
+          "minLength": 1,
+          "title": "Pair Id",
+          "type": "string"
+        },
+        "rank": {
+          "minimum": 1,
+          "title": "Rank",
+          "type": "integer"
+        },
+        "score": {
+          "title": "Score",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pair_id",
+        "rank",
+        "score",
+        "arm"
+      ],
+      "title": "ExperienceGraphResultEntry",
+      "type": "object"
+    },
+    "GraphResourceLimits": {
+      "additionalProperties": false,
+      "description": "The pre-registered bounds. A change must be committed before the next benchmark.",
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "cross_task_similarity_neighbors": {
+          "default": 3,
+          "maximum": 50,
+          "minimum": 0,
+          "title": "Cross Task Similarity Neighbors",
+          "type": "integer"
+        },
+        "edges_per_graph": {
+          "default": 128,
+          "maximum": 8192,
+          "minimum": 1,
+          "title": "Edges Per Graph",
+          "type": "integer"
+        },
+        "nodes_per_graph": {
+          "default": 64,
+          "maximum": 4096,
+          "minimum": 1,
+          "title": "Nodes Per Graph",
+          "type": "integer"
+        },
+        "path_depth": {
+          "default": 32,
+          "maximum": 512,
+          "minimum": 1,
+          "title": "Path Depth",
+          "type": "integer"
+        },
+        "per_pair_ged_timeout_ms": {
+          "default": 250,
+          "maximum": 60000,
+          "minimum": 1,
+          "title": "Per Pair Ged Timeout Ms",
+          "type": "integer"
+        },
+        "query_budget_seconds": {
+          "default": 2,
+          "maximum": 600,
+          "minimum": 1,
+          "title": "Query Budget Seconds",
+          "type": "integer"
+        },
+        "returned_results": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Returned Results",
+          "type": "integer"
+        },
+        "vector_shortlist": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Vector Shortlist",
+          "type": "integer"
+        }
+      },
+      "title": "GraphResourceLimits",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/experience-graph/experience-graph-result.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "arm": {
+      "minLength": 1,
+      "title": "Arm",
+      "type": "string"
+    },
+    "candidates_considered": {
+      "minimum": 0,
+      "title": "Candidates Considered",
+      "type": "integer"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "entries": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ExperienceGraphResultEntry"
+      },
+      "title": "Entries",
+      "type": "array"
+    },
+    "limits": {
+      "$ref": "#/$defs/GraphResourceLimits",
+      "default": {
+        "content_hash": "4a7fe3b12ad9b25211fd05e95836080432d3fd94d0b04f64c289ea5407b66915",
+        "cross_task_similarity_neighbors": 3,
+        "edges_per_graph": 128,
+        "nodes_per_graph": 64,
+        "path_depth": 32,
+        "per_pair_ged_timeout_ms": 250,
+        "query_budget_seconds": 2,
+        "returned_results": 10,
+        "vector_shortlist": 10
+      }
+    },
+    "query_id": {
+      "minLength": 1,
+      "title": "Query Id",
+      "type": "string"
+    },
+    "timed_out": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Timed Out",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "query_id",
+    "arm",
+    "candidates_considered"
+  ],
+  "title": "ExperienceGraphResult",
+  "type": "object"
+}

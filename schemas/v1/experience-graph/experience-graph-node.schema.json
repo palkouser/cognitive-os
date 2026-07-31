@@ -1,0 +1,65 @@
+{
+  "$defs": {
+    "ExperienceGraphNodeKind": {
+      "enum": [
+        "observation",
+        "reasoning",
+        "tool_action",
+        "tool_result",
+        "verifier",
+        "correction",
+        "accepted_outcome"
+      ],
+      "title": "ExperienceGraphNodeKind",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/experience-graph/experience-graph-node.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "attributes": {
+      "default": [],
+      "items": {
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "type": "array"
+      },
+      "title": "Attributes",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "kind": {
+      "$ref": "#/$defs/ExperienceGraphNodeKind"
+    },
+    "logical_id": {
+      "minLength": 1,
+      "title": "Logical Id",
+      "type": "string"
+    },
+    "source_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Source Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "logical_id",
+    "kind",
+    "source_hash"
+  ],
+  "title": "ExperienceGraphNode",
+  "type": "object"
+}

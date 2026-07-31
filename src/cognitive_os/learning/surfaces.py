@@ -244,25 +244,3 @@ def selection_decision() -> SurfaceSelectionDecision:
         ),
         decided_at=FIXTURE_TIME,
     )
-
-
-if __name__ == "__main__":  # pragma: no cover - the smallest runnable check
-    assert surfaces_meeting_primary_thresholds() == (), (
-        "no C3 surface should clear the primary thresholds; if one does, the audit "
-        "numbers changed and the D1 selection must be revisited"
-    )
-    assert OUTCOME_TRIAGE.disposition is SurfaceDisposition.REJECTED
-    assert CORRECTION_CONTEXT.disposition is SurfaceDisposition.SELECTED_SECONDARY
-    assert not CORRECTION_RANKING.degenerate, "60/60 is the only balanced candidate"
-    assert STRATEGY_SELECTION.changeable_decision_count == 0
-
-    decision = selection_decision()
-    assert decision.primary_surface is None
-    assert decision.secondary_surface == "experience.correction_context"
-    assert decision.content_hash == selection_decision().content_hash, "decision must replay"
-    print(
-        "surface audit self-check passed;",
-        len(CANDIDATE_SURFACES),
-        "surfaces audited; decision",
-        decision.content_hash[:16],
-    )

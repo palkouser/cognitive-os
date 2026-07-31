@@ -275,34 +275,3 @@ def correctness_vector(
 ) -> tuple[bool, ...]:
     """Per-sample correctness, the input a paired comparison needs."""
     return tuple(p == o.accepted for p, o in zip(rung_predictions, outcomes, strict=True))
-
-
-if __name__ == "__main__":  # pragma: no cover - the smallest runnable check
-    outcomes = load_outcomes()
-    assert len(outcomes) == 214, len(outcomes)
-    coding = tuple(o for o in outcomes if o.population == "coding")
-    benchmark = tuple(o for o in outcomes if o.population == "benchmark")
-    assert (len(coding), len(benchmark)) == (150, 64)
-    assert sum(o.accepted for o in benchmark) == 64, "the benchmark half is single class"
-
-    full = ladder(outcomes, split="all-214")
-    for rung in full.rungs:
-        print(f"  {rung.name:38s} {rung.score}  abstained={rung.abstained}")
-    print(f"  {strategy_oracle(coding).name:38s} {strategy_oracle(coding).score}  (coding only)")
-
-    assert strategy_oracle(coding).score == Decimal("1.0000"), "the oracle must be perfect"
-
-    residual = residual_headroom(outcomes)
-    for population, measured in sorted(residual.items()):
-        print(f"  oracle-free {population}: {measured}")
-    assert residual["coding"]["count"] == 120  # type: ignore[index]
-    assert residual["coding"]["accepted"] == 60  # type: ignore[index]
-    assert residual["benchmark"]["single_class"] is True  # type: ignore[index]
-
-    left = correctness_vector([False] * len(outcomes), outcomes)
-    right = correctness_vector([True] * len(outcomes), outcomes)
-    lower, point, upper = paired_bootstrap(left, right)
-    assert lower <= point <= upper
-    assert paired_bootstrap(left, right) == (lower, point, upper), "bootstrap must replay"
-    print(f"  paired bootstrap majority - always_verify_now: {point} [{lower}, {upper}]")
-    print("triage evidence self-check passed")

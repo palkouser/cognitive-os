@@ -1,0 +1,49 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/experience-graph/experience-graph-query.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "domain": {
+      "minLength": 1,
+      "title": "Domain",
+      "type": "string"
+    },
+    "excluded_groups": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Excluded Groups",
+      "type": "array"
+    },
+    "query_id": {
+      "minLength": 1,
+      "title": "Query Id",
+      "type": "string"
+    },
+    "query_text": {
+      "minLength": 1,
+      "title": "Query Text",
+      "type": "string"
+    },
+    "task_signature": {
+      "minLength": 1,
+      "title": "Task Signature",
+      "type": "string"
+    }
+  },
+  "required": [
+    "query_id",
+    "query_text",
+    "domain",
+    "task_signature",
+    "excluded_groups"
+  ],
+  "title": "ExperienceGraphQuery",
+  "type": "object"
+}

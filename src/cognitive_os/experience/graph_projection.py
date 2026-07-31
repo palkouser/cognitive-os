@@ -14,7 +14,9 @@ graph exactly, and `apply_edit_path` is what proves it.
 
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from itertools import pairwise
+from typing import Any
 
 from cognitive_os.domain.experience import ExecutionSegmentType, ExperienceStepStatus
 from cognitive_os.domain.experience_graph import (
@@ -112,6 +114,172 @@ def project(
         edges=tuple(sorted(edges, key=lambda e: e.key)),
         limits=limits,
         source_manifest_hash=result.manifest.content_hash,
+    )
+
+
+#: Intent prefix to node kind, for a C3 correction trajectory. The intents are fixed
+#: strings the C3 compiler wrote, so matching on them reads recorded evidence rather than
+#: guessing at it.
+_CORRECTION_INTENT_KIND = (
+    ("Ordered correction path", ExperienceGraphNodeKind.OBSERVATION),
+    ("Hidden verification", ExperienceGraphNodeKind.VERIFIER),
+    ("Applied", ExperienceGraphNodeKind.CORRECTION),
+    ("Terminal outcome", ExperienceGraphNodeKind.ACCEPTED_OUTCOME),
+)
+
+
+def _correction_kind(intent: str) -> ExperienceGraphNodeKind:
+    for prefix, kind in _CORRECTION_INTENT_KIND:
+        if intent.startswith(prefix):
+            return kind
+    return ExperienceGraphNodeKind.OBSERVATION
+
+
+def _nodes_from(
+    assessments: Sequence[Mapping[str, Any]], *, segment: str
+) -> tuple[ExperienceGraphNode, ...]:
+    """Nodes from persisted step assessments, in recorded sequence order.
+
+    Reading persisted assessments rather than re-running keeps a projection tied to the
+    trajectory that was actually stored. Re-executing a case would produce a different
+    trajectory and silently detach the graph from the pair set it belongs to.
+    """
+    nodes = []
+    for assessment in sorted(assessments, key=lambda item: int(item["sequence"])):
+        evidence = tuple(assessment.get("authoritative_evidence") or ())
+        if not evidence:
+            raise ValueError(f"assessment {assessment['step_id']} has no authoritative evidence")
+        nodes.append(
+            ExperienceGraphNode(
+                logical_id=f"s{int(assessment['sequence']):04d}",
+                kind=_correction_kind(str(assessment["intent"])),
+                attributes=tuple(
+                    sorted(
+                        (
+                            ("correctness", str(assessment["correctness"])),
+                            ("necessity", str(assessment["necessity"])),
+                            ("segment", segment),
+                            ("status", str(assessment["status"])),
+                        )
+                    )
+                ),
+                source_hash=evidence[0],
+            )
+        )
+    return tuple(nodes)
+
+
+def project_persisted_side(
+    assessments: Sequence[Mapping[str, Any]],
+    *,
+    graph_id: str,
+    domain: str,
+    group: str,
+    task_signature: str,
+    accepted: bool,
+    source_manifest_hash: str,
+    limits: GraphResourceLimits | None = None,
+) -> ActionDecisionGraph:
+    """One side of a fresh pair, projected from its persisted assessments."""
+    return _graph(
+        _nodes_from(assessments, segment="domain_trajectory"),
+        graph_id=graph_id,
+        domain=domain,
+        group=group,
+        task_signature=task_signature,
+        accepted=accepted,
+        limits=limits or GraphResourceLimits(),
+        source_manifest_hash=source_manifest_hash,
+    )
+
+
+def project_correction(
+    assessments: Sequence[Mapping[str, Any]],
+    *,
+    domain: str,
+    group: str,
+    task_signature: str,
+    source_manifest_hash: str,
+    limits: GraphResourceLimits | None = None,
+) -> tuple[ActionDecisionGraph, ActionDecisionGraph]:
+    """Split one historical C3 correction trajectory into a failed and a successful graph.
+
+    A correction trajectory records both sides in one ordered sequence: the failing
+    attempts, then the patch that worked, then the terminal acceptance. So the failed
+    graph is the prefix through the last step the verifier rejected, and the successful
+    graph is the whole trajectory. The split is read from the recorded `correctness`
+    field, not from step positions, so a trajectory with a different shape still splits
+    where the evidence says it does.
+
+    These graphs are never recompiled. The legacy manifests carry a wall-clock
+    `created_at`, so their pairs stay marked `legacy_recompilation_unavailable` and are
+    verified by resolving sources instead.
+    """
+    limits = limits or GraphResourceLimits()
+    nodes = _nodes_from(assessments, segment="correction_trajectory")
+    last_rejected = max(
+        (
+            index
+            for index, node in enumerate(nodes)
+            if ("correctness", "incorrect") in node.attributes
+        ),
+        default=-1,
+    )
+    if last_rejected < 0:
+        raise ValueError("a correction trajectory must record at least one rejected step")
+
+    failed_nodes = tuple(nodes[: last_rejected + 1])
+    return (
+        _graph(
+            failed_nodes,
+            graph_id=f"{task_signature}:failed",
+            domain=domain,
+            group=group,
+            task_signature=task_signature,
+            accepted=False,
+            limits=limits,
+            source_manifest_hash=source_manifest_hash,
+        ),
+        _graph(
+            tuple(nodes),
+            graph_id=f"{task_signature}:successful",
+            domain=domain,
+            group=group,
+            task_signature=task_signature,
+            accepted=True,
+            limits=limits,
+            source_manifest_hash=source_manifest_hash,
+        ),
+    )
+
+
+def _graph(
+    nodes: tuple[ExperienceGraphNode, ...],
+    *,
+    graph_id: str,
+    domain: str,
+    group: str,
+    task_signature: str,
+    accepted: bool,
+    limits: GraphResourceLimits,
+    source_manifest_hash: str,
+) -> ActionDecisionGraph:
+    edges = tuple(
+        ExperienceGraphEdge(
+            source_id=left.logical_id, target_id=right.logical_id, kind=ExperienceGraphEdgeKind.NEXT
+        )
+        for left, right in pairwise(nodes)
+    )
+    return ActionDecisionGraph(
+        graph_id=graph_id,
+        domain=domain,
+        group=group,
+        task_signature=task_signature,
+        accepted=accepted,
+        nodes=nodes,
+        edges=tuple(sorted(edges, key=lambda e: e.key)),
+        limits=limits,
+        source_manifest_hash=source_manifest_hash,
     )
 
 

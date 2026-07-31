@@ -3244,6 +3244,56 @@
       "sha256": "b49bf270e805680052c49988cd2caf4249ee51c515c780d5f665504681a64f10"
     },
     {
+      "file": "v1/experience-graph/action-decision-graph.schema.json",
+      "model": "ActionDecisionGraph",
+      "sha256": "232ad2188f3350285ec899d35515640eaac6d2fa585e6aa97d0d08f1bb524b3f"
+    },
+    {
+      "file": "v1/experience-graph/experience-graph-edge.schema.json",
+      "model": "ExperienceGraphEdge",
+      "sha256": "8b2df646e699c198d34d65292c84e6703b8c01014b2d7926d35db36cdad9515b"
+    },
+    {
+      "file": "v1/experience-graph/experience-graph-node.schema.json",
+      "model": "ExperienceGraphNode",
+      "sha256": "3287f5fe8163d874373fb0911e6d4fd4022ae0ea83878fb24b520e0728ce2c2d"
+    },
+    {
+      "file": "v1/experience-graph/experience-graph-query.schema.json",
+      "model": "ExperienceGraphQuery",
+      "sha256": "41cb197a9c732ac4df8f2224dff2f67b0b61268ddbf3962477bbe793f4c1cfd5"
+    },
+    {
+      "file": "v1/experience-graph/experience-graph-result-entry.schema.json",
+      "model": "ExperienceGraphResultEntry",
+      "sha256": "8c01f9b84ef25f8ea53a2fc50df96ac0424c3dcaaf86ec7d843f050a1d8c75e9"
+    },
+    {
+      "file": "v1/experience-graph/experience-graph-result.schema.json",
+      "model": "ExperienceGraphResult",
+      "sha256": "7cdb9f7528e096a8a1ad1e8b9224ac1cb77fe8eb8b33e4ada3c8f6d626c17ba7"
+    },
+    {
+      "file": "v1/experience-graph/failed-success-graph-pair.schema.json",
+      "model": "FailedSuccessGraphPair",
+      "sha256": "f47cc86e8f5d68a83fe27a499d47cc400c8bd1f2ed2db1e562891b208d37581b"
+    },
+    {
+      "file": "v1/experience-graph/graph-edit-operation.schema.json",
+      "model": "GraphEditOperation",
+      "sha256": "20e32eebb3f51594bc8d872a7e9c63d6dfdf44d14b8384a9bfb40dcdc6853e8f"
+    },
+    {
+      "file": "v1/experience-graph/graph-edit-path.schema.json",
+      "model": "GraphEditPath",
+      "sha256": "056855c63c8e9dee9b122fc483d9cfc8471e5e7cf9915cdf134a5f70d62d5e23"
+    },
+    {
+      "file": "v1/experience-graph/graph-resource-limits.schema.json",
+      "model": "GraphResourceLimits",
+      "sha256": "315b5be653b51ca26885eff86d3a4f76313cfb6338eb7f37b8e479bfa06a9497"
+    },
+    {
       "file": "v1/experience/candidate-revision.schema.json",
       "model": "CandidateRevision",
       "sha256": "ca06fa51e22ad0efda099c3bf522aa7c2f921a708ba1e4fdaf1b6db832438ef3"
