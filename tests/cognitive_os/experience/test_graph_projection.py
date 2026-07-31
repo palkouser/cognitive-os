@@ -179,3 +179,38 @@ def test_an_edit_path_from_a_different_graph_is_refused() -> None:
     path = derive_edit_path(other, successful, path_id="p")
     with pytest.raises(ValueError, match="does not start at this graph"):
         round_trips(failed, successful, path)
+
+
+class _RefuseNetworkx:
+    """An import hook that makes `networkx` unavailable, the way a lane without the extra is."""
+
+    def find_spec(self, name: str, path: object = None, target: object = None) -> None:
+        if name == "networkx" or name.startswith("networkx."):
+            raise ImportError("networkx is the optional semantic-graph extra")
+        return None
+
+
+def test_the_contract_still_refuses_a_cycle_without_the_optional_graph_extra() -> None:
+    """The invariant must not depend on an optional dependency being installed.
+
+    This is the CI defect from W5a, kept as a test. The contract validated its DAG rule
+    through networkx, so every lane that synced without `semantic-graph` could not build the
+    contract at all — and a contract that stops enforcing its invariant wherever an optional
+    extra is absent is not a contract.
+    """
+    import sys
+
+    blocked = _RefuseNetworkx()
+    saved = {name: module for name, module in sys.modules.items() if name.startswith("networkx")}
+    for name in saved:
+        del sys.modules[name]
+    sys.meta_path.insert(0, blocked)
+    try:
+        with pytest.raises(ImportError):
+            import networkx  # noqa: F401
+        with pytest.raises(ValueError, match="acyclic"):
+            graph([node("s0001"), node("s0002")], [edge("s0001", "s0002"), edge("s0002", "s0001")])
+        assert graph([node("s0001"), node("s0002")], [edge("s0001", "s0002")]).nodes
+    finally:
+        sys.meta_path.remove(blocked)
+        sys.modules.update(saved)

@@ -1,0 +1,225 @@
+{
+ "artifact_pairs_after": {
+  "c3_source": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593 8503",
+  "d1_evidence": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f 83",
+  "development": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf 5"
+ },
+ "artifact_pairs_before": {
+  "c3_source": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593 8503",
+  "d1_evidence": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f 83",
+  "development": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf 5"
+ },
+ "commands": [
+  {
+   "command": "ruff check --config ruff.cognitive-os.toml src tests scripts",
+   "exit_code": 0,
+   "expected_exit": 0,
+   "last_line": "All checks passed!",
+   "name": "ruff_check",
+   "seconds": 0.01,
+   "status": "passed"
+  },
+  {
+   "command": "ruff format --check --config ruff.cognitive-os.toml src tests scripts",
+   "exit_code": 0,
+   "expected_exit": 0,
+   "last_line": "929 files already formatted",
+   "name": "ruff_format",
+   "seconds": 0.01,
+   "status": "passed"
+  },
+  {
+   "command": "mypy src/cognitive_os",
+   "exit_code": 0,
+   "expected_exit": 0,
+   "last_line": "Success: no issues found in 588 source files",
+   "name": "mypy",
+   "seconds": 0.8,
+   "status": "passed"
+  },
+  {
+   "command": "bandit -r src/cognitive_os -q",
+   "exit_code": 0,
+   "expected_exit": 0,
+   "last_line": "[tester]\tWARNING\tnosec encountered (B108), but no failed test on file src/cognitive_os/tools/sandbox/lifecycle.py:57",
+   "name": "bandit",
+   "seconds": 3.84,
+   "status": "passed"
+  },
+  {
+   "command": "python -m cognitive_os.schemas.export --check",
+   "exit_code": 0,
+   "expected_exit": 0,
+   "last_line": "Contract schema check passed.",
+   "name": "schema_drift",
+   "seconds": 1.7,
+   "status": "passed"
+  },
+  {
+   "command": "bash scripts/check_repository_language.sh",
+   "exit_code": 0,
+   "expected_exit": 0,
+   "last_line": "Repository language check passed.",
+   "name": "repository_language",
+   "seconds": 0.02,
+   "status": "passed"
+  },
+  {
+   "command": "python -m pytest tests/cognitive_os -q",
+   "exit_code": 0,
+   "expected_exit": 0,
+   "last_line": "2179 passed, 3 skipped in 136.24s (0:02:16)",
+   "name": "unit_suite",
+   "seconds": 137.39,
+   "status": "passed"
+  },
+  {
+   "command": "python -m pytest tests/contract -q",
+   "exit_code": 0,
+   "expected_exit": 0,
+   "last_line": "65 passed in 2.44s",
+   "name": "contract_suite",
+   "seconds": 2.96,
+   "status": "passed"
+  },
+  {
+   "command": "python -m pytest tests -q --ignore=tests/integration",
+   "exit_code": 0,
+   "expected_exit": 0,
+   "last_line": "2310 passed, 3 skipped in 137.78s (0:02:17)",
+   "name": "full_suite",
+   "seconds": 139.09,
+   "status": "passed"
+  },
+  {
+   "command": "python -m pytest tests/integration/postgres -q",
+   "exit_code": 0,
+   "expected_exit": 0,
+   "last_line": "41 passed in 8.51s",
+   "name": "postgres_integration",
+   "seconds": 9.7,
+   "status": "passed"
+  },
+  {
+   "command": "python -m pytest tests/cognitive_os/test_installed_import.py -q",
+   "exit_code": 0,
+   "expected_exit": 0,
+   "last_line": "1 passed in 0.08s",
+   "name": "editable_install",
+   "seconds": 0.29,
+   "status": "passed"
+  },
+  {
+   "command": "bash scripts/verify_distribution.sh",
+   "exit_code": 0,
+   "expected_exit": 0,
+   "last_line": "Installed semantic extra: /home/palkouser/projekt/cognitive-os/src/cognitive_os/__init__.py; NetworkX 3.6.1",
+   "name": "packaging_boundary",
+   "seconds": 2.99,
+   "status": "passed"
+  },
+  {
+   "command": "bash scripts/postgres_migration_check.sh",
+   "exit_code": 0,
+   "expected_exit": 0,
+   "last_line": "No new upgrade operations detected.",
+   "name": "migration_check",
+   "seconds": 2.65,
+   "status": "passed"
+  },
+  {
+   "command": "python -c import pathlib;print(sorted(p.name for p in pathlib.Path('infra/postgres/alembic/versions').glob('*.py'))[-1])",
+   "exit_code": 0,
+   "expected_exit": 0,
+   "last_line": "0015_create_provider_output_governance.py",
+   "name": "migration_head",
+   "seconds": 0.02,
+   "status": "passed"
+  },
+  {
+   "command": "python scripts/experience.py graph-verify --graph-root /home/palkouser/projekt/cognitive-os/docs/sprints/sprint-21/evidence/sprint-21d1-emg-root.json --artifact-root /home/palkouser/projekt/cognitive-os-data/artifacts-s21d1",
+   "exit_code": 0,
+   "expected_exit": 0,
+   "last_line": "{\"broken_links\":[],\"corrupt_bytes\":[],\"declared_pairs\":80,\"failed_round_trips\":[],\"graph_set_id\":\"sprint-21d1-emg-root\",\"intact\":true,\"legacy_recompilation\":60,\"missing_bytes\":[],\"resolved_pairs\":80}",
+   "name": "graph_verify",
+   "seconds": 0.75,
+   "status": "passed"
+  },
+  {
+   "command": "python scripts/experience.py graph-health --graph-root /home/palkouser/projekt/cognitive-os/docs/sprints/sprint-21/evidence/sprint-21d1-emg-root.json --artifact-root /home/palkouser/projekt/cognitive-os-data/artifacts-s21d1",
+   "exit_code": 0,
+   "expected_exit": 0,
+   "last_line": "{\"checks\":[{\"detail\":\"80 of 80 pairs resolved\",\"name\":\"experience_graph_bytes_resolve\",\"ok\":true,\"severity\":\"failure\"},{\"detail\":\"every stored pair hashes to the name it is filed under and validates\",",
+   "name": "graph_health",
+   "seconds": 0.78,
+   "status": "passed"
+  },
+  {
+   "command": "python scripts/experience.py graph-benchmark --graph-root /home/palkouser/projekt/cognitive-os/docs/sprints/sprint-21/evidence/sprint-21d1-emg-root.json --artifact-root /home/palkouser/projekt/cognitive-os-data/artifacts-s21d1 --queries /home/palkouser/projekt/cognitive-os/docs/sprints/sprint-21/evidence/sprint-21d1-graph-queries.json",
+   "exit_code": 0,
+   "expected_exit": 0,
+   "last_line": "{\"arms\":{\"exact_signature\":{\"mrr_at_10\":0.0,\"top_5_recall\":0},\"lexical\":{\"mrr_at_10\":0.4145,\"top_5_recall\":0.525},\"no_memory\":{\"mrr_at_10\":0.0,\"top_5_recall\":0}},\"arms_without_a_model\":true,\"queries\":",
+   "name": "graph_benchmark",
+   "seconds": 0.81,
+   "status": "passed"
+  },
+  {
+   "command": "python scripts/experience.py graph-verify --graph-root /home/palkouser/projekt/cognitive-os/docs/sprints/sprint-21/evidence/sprint-21d1-emg-root.json --artifact-root /tmp/claude-1000/-home-palkouser-projekt/6be1de63-a175-463f-9c45-51e232e4edab/scratchpad/w6c/damaged",
+   "exit_code": 1,
+   "expected_exit": 1,
+   "last_line": "{\"broken_links\":[],\"corrupt_bytes\":[],\"declared_pairs\":80,\"failed_round_trips\":[],\"graph_set_id\":\"sprint-21d1-emg-root\",\"intact\":false,\"legacy_recompilation\":59,\"missing_bytes\":[\"03d3c56e-2219-56c5-9e",
+   "name": "graph_verify_rejects_damage",
+   "seconds": 0.76,
+   "status": "passed"
+  },
+  {
+   "command": "python scripts/experience.py graph-verify",
+   "exit_code": 1,
+   "expected_exit": 1,
+   "last_line": "graph commands need --graph-root and --artifact-root, or COGOS_GRAPH_ROOT and COGOS_ARTIFACT_ROOT. Neither store is guessed.",
+   "name": "graph_cli_refuses_an_unconfigured_store",
+   "seconds": 0.65,
+   "status": "passed"
+  },
+  {
+   "command": "bash scripts/verify_artifact_store.sh",
+   "exit_code": 0,
+   "expected_exit": 0,
+   "last_line": "Artifact filesystem verification passed.",
+   "name": "artifact_store_content",
+   "seconds": 0.48,
+   "status": "passed"
+  },
+  {
+   "command": "python scripts/artifact_store_fingerprint.py /home/palkouser/projekt/cognitive-os-data/artifacts",
+   "exit_code": 0,
+   "expected_exit": 0,
+   "last_line": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf  5 files  /home/palkouser/projekt/cognitive-os-data/artifacts",
+   "name": "development_pair_fingerprint",
+   "seconds": 0.36,
+   "status": "passed"
+  },
+  {
+   "command": "python -c import json,pathlib;[json.loads(p.read_text()) for p in pathlib.Path('docs/sprints/sprint-21/evidence').glob('sprint-21d1-*.json')];print('every D1 evidence file parses')",
+   "exit_code": 0,
+   "expected_exit": 0,
+   "last_line": "every D1 evidence file parses",
+   "name": "report_checks",
+   "seconds": 0.02,
+   "status": "passed"
+  }
+ ],
+ "database": "cognitive_os_s21d1_test",
+ "evidence_database_was_never_nominated_for_truncation": true,
+ "evidence_stores_untouched": true,
+ "failed": [],
+ "integration_database": "cognitive_os_s21d1_integration_test",
+ "item": "S21D1-067",
+ "migration_head": "0015",
+ "passed": 22,
+ "recorded_at": "2026-07-31T18:41:22.430079+00:00",
+ "schema_version": 1,
+ "sprint": "21D1",
+ "total_seconds": 306.06,
+ "wave": "W6c"
+}

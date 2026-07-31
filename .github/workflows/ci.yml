@@ -984,6 +984,47 @@ jobs:
           --manifest benchmarks/manifests/sprint21c1-learned-seed.yaml
           --mode learned-replay --report-directory /tmp/sprint21c1-learned-seed
 
+  experience-graph-core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          version: "0.11.28"
+          enable-cache: true
+      # The three extras D1 actually uses: `semantic-graph` for the graph-edit-distance
+      # reranker, and the two verification extras for the fresh logic and mathematics
+      # cases. A missing extra must fail setup here, never turn into a skip.
+      - name: Install Python and the D1 extras
+        run: >-
+          uv python install 3.12 && uv sync --locked --all-groups
+          --extra semantic-graph --extra verification-logic --extra verification-math
+      # Contracts, projection, edit paths, bounded retrieval, the advisory context path,
+      # the persisted-evidence reader and the operator commands. Every fixture is built in
+      # the test process; nothing reads an evidence store and nothing reaches the network.
+      - name: Experience Graph contracts, projection, retrieval, and operator gate
+        run: uv run pytest tests/cognitive_os/experience tests/cognitive_os/learning -q
+      - name: Experience Graph schema drift
+        run: uv run python -m cognitive_os.schemas.export --check
+      # The resource policy is a contract, so it is checked as one. Oversized, over-depth,
+      # cyclic and secret-bearing graphs are refused at construction.
+      - name: Resource-bound and fail-closed graph gate
+        run: uv run pytest tests/cognitive_os/experience/test_graph_projection.py -q
+      # Production evidence must never silently carry a hashing vector under a model's
+      # name. The provider factory raises when the local model is absent or mismatched,
+      # and that refusal is what this lane pins.
+      - name: The embedding provider refuses rather than substituting
+        run: uv run pytest tests/cognitive_os/infrastructure/test_local_embedding_model.py -q
+      # The operator commands, credential-free, over a fixture set the command builds
+      # itself. This is the local equivalent of the whole lane in one line.
+      - name: Credential-free graph operator smoke gate
+        run: >-
+          uv run pytest
+          tests/cognitive_os/experience/test_graph_evidence_operations.py -q
+
   optional-boundary:
     runs-on: ubuntu-latest
     steps:
