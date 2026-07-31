@@ -1,0 +1,83 @@
+{
+ "schema_version": 1,
+ "sprint": "21D1",
+ "wave": "W6a",
+ "items": [
+  "S21D1-060",
+  "S21D1-061",
+  "S21D1-062"
+ ],
+ "recorded_at": "2026-08-01T09:20:00+00:00",
+ "adr": "docs/adr/0090-no-fused-gromov-wasserstein-and-the-shortlist-constraint.md",
+ "residual_report": "docs/sprints/sprint-21/evidence/sprint-21d1-residuals.json",
+ "s21d1_060_residuals": {
+  "summary": "26 residual queries out of 80. 19 are shortlist-ceiling misses no reranker can reach, 7 are rerank-ordering misses.",
+  "named_structural_error_classes": [
+   "rerank_ordering: a relevant pair was on the shortlist and the graph score failed to lift it into the top five. 7 queries, ids in the residual report.",
+   "score degeneracy: 2 distinct graph scores per query and 6 across the whole corpus; 61 of 80 rankings are decided by the pair-id tiebreak rather than by the arm."
+  ],
+  "ties": "61 of 80 queries had the rank of their relevant pair decided inside a tied score block. For the 20 fresh logic and mathematics queries every completed comparison returned the identical 0.525424.",
+  "regressions": "3, all of them the tie effect: the relevant pair sits in the arm's highest score block and still lands seventh. Two of the three had been ranked first by the vector arm.",
+  "timeouts": "60 cutoff events over 20 queries, 3 per query, every one of them on a fresh logic or mathematics query. p50 24.69 ms, max 1789.09 ms against a declared 2 s budget.",
+  "domain_concentration": "coding holds 23 of the 26 residuals, 88.5%. Mathematics has none, logic has 3. All 26 are tier-1 queries.",
+  "projected_maximum_gain": {
+   "method": "oracle ordering of the current 10-candidate shortlist, which bounds every reranker",
+   "ceiling_top_5_recall": 0.7625,
+   "ceiling_mrr_at_10": 0.7625,
+   "headroom_over_the_graph_arm": "+0.0875 recall, +0.3144 MRR",
+   "headroom_over_the_strongest_simpler_arm": "+0.2250 recall, +0.3233 MRR"
+  },
+  "binding_constraint": "shortlist width, not the comparator. The reranker ceiling is 0.7625 at width 10, 0.9000 at 15, 0.9750 at 20 and 1.0000 at 30, and no query lacks a relevant pair in the pool.",
+  "no_holdout_was_inspected": "the report replays the frozen D1 benchmark only; no D2 holdout exists yet and none was read",
+  "raw_result_linkage": "every class lists its query ids, and the report carries all 80 per-query records with their returned pair ids and scores"
+ },
+ "s21d1_061_dependency_and_license_review": {
+  "lockfile_diff_against_main": "empty for uv.lock and pyproject.toml; the whole D1 branch adds no package",
+  "networkx": {
+   "version": "3.6.1",
+   "declared_as": "optional extra semantic-graph in pyproject.toml",
+   "license": "BSD-3-Clause, compatible with this repository's Apache-2.0",
+   "runtime_transitive_dependencies": "none; every requirement it declares is extra-gated",
+   "pinned": "sdist and wheel hashes in uv.lock",
+   "usage_in_d1": "graph_retrieval.bounded_ged and its adapter only. The domain contract validates its DAG invariant with Kahn's algorithm so it never depends on the optional extra.",
+   "pre_existing_consumers": [
+    "semantic_memory/graph.py",
+    "strategies/"
+   ]
+  },
+  "fgw_libraries": {
+   "proposed": [],
+   "evaluated": "none installed, imported or resolved. D1 makes no network calls and adds no package, so no license, maintenance or transitive-dependency claim about any candidate is recorded here.",
+   "if_d2_proposes_one": "source, license, maintenance and necessity evidence is gathered then, against a residual report that justifies the proposal"
+  },
+  "paper_license": "the referenced EMG preprint is CC BY-NC-SA 4.0, incompatible with Apache-2.0. Concepts informed the design; no code, asset, dataset or figure is copied or vendored.",
+  "repository_license": "Apache-2.0, LICENSE at the repository root, ADR 0009",
+  "clean_room_boundary": "the four D1 graph modules (337, 411, 293 and 224 lines) are written against this repository's own contracts and carry no external provenance marker. Scanned for adapted-from, copied-from, reference-implementation, arxiv, gromov and wasserstein markers: zero hits."
+ },
+ "s21d1_062_decision": {
+  "verdict": "no-go",
+  "scope": "no FGW in D1, and no D2 experiment approved yet",
+  "simpler_baseline_named": "minilm_vector, 0.5375 top-5 recall and 0.4392 MRR@10",
+  "residual_class_named": "rerank_ordering, 7 of 26 residual queries",
+  "projected_threshold": "any reranker over the current shortlist is bounded at 0.7625 top-5 recall, which is +0.0875 over the arm already in place",
+  "latency_and_memory_budget": "the existing arm already spends 60 cutoff events and 1788.9 ms at p95 within a 2 s budget, with 827.2 MB peak, on 80 pairs. A heavier comparator is not shown to fit.",
+  "section_4_11_conditions": {
+   "named_structural_error_class": "met",
+   "projected_improvement_at_least_0_05": "met on the ceiling: +0.2250 recall and +0.3233 MRR over the strongest simpler arm",
+   "budget_and_memory_remain_credible": "not met",
+   "maintained_dependency_with_acceptable_transitive_deps_and_license": "not evaluated; none proposed",
+   "clean_room_no_incompatible_source": "satisfiable, not a discriminator"
+  },
+  "why_not_a_go": "19 of 26 residual queries sit behind a shortlist a reranker never touches, the budget condition already fails for the cheaper comparator, and the lever that does reach those 19 changes one declared bound and adds nothing.",
+  "d2_disposition": "widen vector_shortlist and re-measure first. Width 20 raises the reranker ceiling from 0.7625 to 0.9750, the only measured change that could carry the arm past the 0.70 recall and 0.50 MRR usefulness floor. The FGW question reopens only on a residual report taken after that lever which still shows rerank_ordering as the dominant residual.",
+  "no_unused_package": "verified by the empty lockfile and manifest diff against origin/main",
+  "no_speculative_abstraction": "no FGW seam, adapter, interface or configuration key was added in anticipation of the decision"
+ },
+ "gate_contribution": {
+  "condition_19": "met: the FGW go/no-go decision is recorded as an accepted ADR with the residual evidence it rests on, and the decision adds no dependency"
+ },
+ "not_in_scope_here": [
+  "widening the shortlist, which is a D2 change to a pre-registered bound and would invalidate the D1 benchmark if made now",
+  "the operator CLI and integrity reporting, S21D1-063 and 064 in wave W6b"
+ ]
+}
