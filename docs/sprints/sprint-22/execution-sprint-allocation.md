@@ -2,9 +2,9 @@
 
 Status: implementation sequencing plan
 
-Revision: 4
+Revision: 5
 
-Assessment date: 2026-07-29
+Assessment date: 2026-07-30
 
 Source plan: [Cognitive OS Learning, Memory, and Scale Development
 Plan](development-plan.md)
@@ -15,6 +15,7 @@ Companion documents:
 - [Sprint 21C1 technical backlog](../sprint-21/sprint-21c1-technical-backlog.md)
 - [Sprint 21C2 technical backlog](../sprint-21/sprint-21c2-technical-backlog.md)
 - [Sprint 21C3 technical backlog](../sprint-21/sprint-21c3-technical-backlog.md)
+- [Sprint 21D1 technical backlog](../sprint-21/sprint-21d1-technical-backlog.md)
 - [Sprint 21 Gate L assessment](../sprint-21/gate-l-assessment.md)
 - [Sprint 21 substrate report](../sprint-21/report.md)
 
@@ -46,21 +47,21 @@ The state verified before this allocation was written is:
 
 | Item | Verified value |
 |---|---|
-| Current branch before planning edits | `main` |
-| `main`, `origin/main`, and peeled parent tag | `94abe263c8f26f36c8f8c3bc7b86859c14c1f291` |
-| Protected parent tag | `sprint-21c2-provider-baseline`, tag object `23b3304890f4a90112514c633c7e2b768f7eeeff` |
+| Current branch before planning edits | `docs/sprint-21c3-gate-close`, tree equal to current `origin/main` |
+| Current `origin/main` | `1856b8539b690528116816c105d82810e67f00d9`, after C3 gate-close PR `#216` |
+| Protected predecessor release | `sprint-21c3-reality-baseline`, tag object `497f959bc55989541016a61bd9034e12523b8573`, peeled commit `05809446c726444146d85aad22808e10ce87ca3e` |
 | Current migration head | `0015` |
-| Sprint 21C2 pull request | `#214`, merged |
-| Latest assessed `main` CI | run `30434494612`, 28 of 28 required checks successful on the parent commit |
-| Gate C2 | pass, all 14 conditions closed in the final tag annotation |
+| Sprint 21C3 implementation | PR `#215`, merged; post-merge run `30571166301`, 29 of 29 successful |
+| Latest assessed `main` CI | run `30572361952`, success on exact current `origin/main` |
+| Gate C3 | pass; implementation release and gate-close evidence complete |
 | Gate L2 | closed |
-| Next branch | `feature/sprint-21c3-reality-inputs` |
+| Next branch | `feature/sprint-21d1-learning-surface-emg`, from revalidated current `origin/main` |
 | Next migration | none by default; `0016` remains available only after measured need |
 | Reviewer limitation | one collaborator; required approval remains disabled without weakening the 27 checks or `enforce_admins` |
-| Artifact limitation | development pair fingerprint `7e85d9a6…`, five orphan files, and zero C2 writes; isolate it pending separate operator-approved remediation |
+| Artifact limitation | development pair fingerprint `7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf`, five files, zero C3 writes; isolate it pending separate operator-approved remediation |
 
-Sprint 21R, Sprint 21C1, and Sprint 21C2 are complete. Sprint 21C3 is the next
-execution sprint.
+Sprint 21R, Sprint 21C1, Sprint 21C2, and Sprint 21C3 are complete. Sprint 21D1 is
+the next execution sprint.
 All source, tag, credential, branch-protection, reviewer, and remote pull-request
 state must be revalidated at sprint start because repository and remote state may
 change.
@@ -149,7 +150,8 @@ documentation, and benchmark work can shorten elapsed time, but the protected
 release order remains serial.
 
 Sprint 21R and Sprint 21C1 completed on 2026-07-26. Sprint 21C2 completed on
-2026-07-29. Sprint 21C3 is now the active planned delivery.
+2026-07-29. Sprint 21C3 completed on 2026-07-30. Sprint 21D1 is now the active
+planned delivery.
 
 ## 5. Detailed sprint allocation
 
@@ -308,6 +310,20 @@ Detailed backlog:
 
 [Sprint 21C3 Technical Backlog](../sprint-21/sprint-21c3-technical-backlog.md)
 
+Completion:
+
+- released as `sprint-21c3-reality-baseline`, peeled to
+  `05809446c726444146d85aad22808e10ce87ca3e`;
+- protected implementation PR `#215` and post-merge CI run `30571166301` completed
+  with 29 of 29 jobs successful;
+- gate-close PR `#216` advanced `origin/main` to
+  `1856b8539b690528116816c105d82810e67f00d9`, with exact-head CI run
+  `30572361952` successful;
+- C3 produced 214 unique executed outcomes, 60 correction trajectories, 420 corpus
+  items, 896 accepted evaluation-only observations, and frozen 384-dimensional
+  MiniLM retrieval evidence;
+- Gate C3 passed and Gate L2 remains closed.
+
 ### Sprint 21D1 — Learning Surface and Experience Memory Graph
 
 Objective:
@@ -320,7 +336,12 @@ Primary scope:
 - leakage, class-balance, actionability, attribution, sample-size, and headroom audit;
 - one primary and one secondary surface selected before held-out evaluation;
 - canonical feature, split, evaluator, and baseline manifests;
-- action-decision graphs derived from existing normalized trajectories;
+- verifier-outcome triage as the provisional primary surface, subject to the audit;
+- correction-context retrieval as the provisional secondary surface;
+- 60 source-resolved historical coding graph pairs without rewriting their legacy
+  timestamps;
+- 20 fresh, exactly recompilable logic and mathematics failed/success pairs;
+- action-decision graphs derived through two focused Experience Compiler adapters;
 - exact signature, vector, text, and simple graph/edit-path baselines;
 - advisory correction-path Context Candidates;
 - bounded node, edge, depth, time, and result policies;
@@ -329,11 +350,16 @@ Primary scope:
 Exit:
 
 - primary surface has at least 200 held-out outcomes and 20 changeable decisions;
-- at least 50 failed-to-success graph pairs cover at least two domains;
+- at least 80 failed-to-success graph pairs cover coding, logic, and mathematics;
+- all edit paths reconstruct the successful graph and all source artifacts resolve;
 - unseen-task results are separate;
 - simple graph retrieval is compared honestly with no-memory, text, and vector
   baselines;
 - FGW is either justified for Sprint 21D2 or explicitly rejected.
+
+Detailed backlog:
+
+[Sprint 21D1 Technical Backlog](../sprint-21/sprint-21d1-technical-backlog.md)
 
 ### Sprint 21D2 — Useful Learned Activation and Gate L2
 

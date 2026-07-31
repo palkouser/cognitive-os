@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "sprint": "21D1",
+  "wave": "W0",
+  "items": [
+    "S21D1-000",
+    "S21D1-001",
+    "S21D1-003"
+  ],
+  "recorded_at": "2026-07-31T12:59:07+00:00",
+  "parent_baseline": {
+    "tag": "sprint-21c3-reality-baseline",
+    "tag_object": "497f959bc55989541016a61bd9034e12523b8573",
+    "remote_tag_object": "497f959bc55989541016a61bd9034e12523b8573",
+    "tag_type": "annotated",
+    "peeled_commit": "05809446c726444146d85aad22808e10ce87ca3e",
+    "implementation_pull_request": 215,
+    "implementation_pull_request_state": "MERGED",
+    "implementation_merge_commit": "05809446c726444146d85aad22808e10ce87ca3e",
+    "final_parent_ci_run": 30571166301,
+    "final_parent_ci_head_sha": "05809446c726444146d85aad22808e10ce87ca3e",
+    "final_parent_ci_conclusion": "success",
+    "final_parent_ci_jobs": "29 of 29 success",
+    "gate_close_pull_request": 216,
+    "gate_close_merge_commit": "1856b8539b690528116816c105d82810e67f00d9",
+    "planning_head_ci_run": 30572361952,
+    "planning_head_ci_head_sha": "1856b8539b690528116816c105d82810e67f00d9",
+    "planning_head_ci_conclusion": "success",
+    "local_main_equivalent": "1856b8539b690528116816c105d82810e67f00d9",
+    "remote_main": "1856b8539b690528116816c105d82810e67f00d9",
+    "alembic_head": "0015",
+    "expected_migration_revision_in_code": "0015",
+    "next_available_migration": "0016 (unallocated)",
+    "drift_detected": false
+  },
+  "implementation_branch": {
+    "name": "feature/sprint-21d1-learning-surface-emg",
+    "created_from": "origin/main",
+    "created_from_sha": "1856b8539b690528116816c105d82810e67f00d9",
+    "not_created_from": "sprint-21c3-reality-baseline^{commit}, so the C3 gate-close documentation stays in history",
+    "carried_changes": [
+      "docs/sprints/sprint-21/sprint-21d1-technical-backlog.md",
+      "docs/sprints/sprint-21/sprint-21d1-handoff.md",
+      "docs/sprints/sprint-22/development-plan.md",
+      "docs/sprints/sprint-22/execution-sprint-allocation.md"
+    ],
+    "carried_changes_note": "Sprint 21D1 planning documents only; no source, schema or migration change was carried. They were uncommitted on the already squash-merged docs/sprint-21c3-gate-close branch, whose tracked content is byte-identical to origin/main (git diff HEAD origin/main is empty).",
+    "previous_branch": "docs/sprint-21c3-gate-close"
+  },
+  "remote_protection": {
+    "repository": "palkouser/cognitive-os",
+    "required_status_check_contexts": 27,
+    "strict_status_checks": true,
+    "enforce_admins": true,
+    "required_pull_request_reviews": null,
+    "required_conversation_resolution": true,
+    "allow_force_pushes": false,
+    "allow_deletions": false,
+    "collaborators": 1,
+    "second_eligible_reviewer": false,
+    "open_pull_requests": 0,
+    "reality_inputs_core_required": false,
+    "decision": "No protection control was changed and none is proposed. Required approving reviews stay disabled because a second eligible reviewer does not exist; the limitation is carried forward, not worked around."
+  },
+  "store_isolation": {
+    "environment_file": ".env.s21d1.local (untracked via .gitignore rule .env.*, mode 0600)",
+    "d1_database": "cognitive_os_s21d1_test",
+    "d1_database_migration_head": "0015",
+    "d1_database_migration_check": "no new upgrade operations detected",
+    "d1_database_schema_tables": 114,
+    "d1_integration_database": "cognitive_os_s21d1_integration_test",
+    "d1_integration_database_note": "W6-F2 carried forward: the PostgreSQL integration suite TRUNCATEs every table it finds and gets a database of its own; the D1 evidence store is never nominated for erasure.",
+    "d1_artifact_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d1",
+    "d1_artifact_root_files": 0,
+    "d1_artifact_filesystem_verification": "passed (empty, consistent)",
+    "d1_backup_root": "/home/palkouser/projekt/cognitive-os-data/backups-s21d1",
+    "d1_restore_database": "cognitive_os_s21d1_restore_test",
+    "sandbox_and_scratch_roots": {
+      "note": "Only COGOS_ARTIFACT_ROOT is environment-configured. Sandbox and report roots are per-command arguments, so D1 declares them here rather than in the environment file.",
+      "sandbox_root": "/home/palkouser/projekt/cognitive-os-data/sandboxes",
+      "scratch_report_root": "session scratchpad under /tmp/claude-1000, never an evidence root"
+    },
+    "c3_source_pair_read_only": {
+      "database": "cognitive_os_s21c3_test",
+      "artifact_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21c3",
+      "artifact_root_files": 8503,
+      "status": "read-only source of inherited C3 evidence",
+      "access_rule": "Read through raw SQL SELECT and file reads only. The application services log corpus_accesses, memory_accesses and experience_accesses rows, so C3 evidence must not be read through them.",
+      "d1_writes": 0,
+      "backlog_gap": "S21D1-001 names a D1 pair and the inconsistent development pair but not this third, read-only pair. Recorded here so the isolation invariant covers all three."
+    },
+    "inconsistent_development_pair": {
+      "database": "cognitive_os_dev",
+      "artifact_root": "/home/palkouser/projekt/cognitive-os-data/artifacts",
+      "files_on_disk": 5,
+      "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf",
+      "fingerprint_tool": "scripts/artifact_store_fingerprint.py",
+      "fingerprint_before_w0": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf",
+      "fingerprint_after_w0": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf",
+      "w0_fingerprint_matches_c1_c2_c3_baseline": true,
+      "d1_writes": 0,
+      "c1_inventory": "docs/sprints/sprint-21/evidence/sprint-21c1-artifact-mismatch-inventory.json",
+      "status": "untouched; read-only diagnostic reference only",
+      "remediation": "explicitly out of D1 scope; requires separate operator authority"
+    }
+  },
+  "limitations": [
+    {
+      "id": "D1-L1",
+      "subject": "review mode",
+      "observed": "One collaborator; no second eligible reviewer exists.",
+      "impact": "Required approving reviews remain disabled on main.",
+      "action": "Carried forward and reported. No approval is fabricated and no protection control is weakened."
+    },
+    {
+      "id": "D1-L2",
+      "subject": "reality-inputs-core check",
+      "observed": "The job runs on every push but is not one of the 27 required status check contexts.",
+      "impact": "A red reality-inputs-core does not block a merge by protection alone.",
+      "action": "Carried forward. Promoting it needs separate operator authority and is out of D1 scope."
+    },
+    {
+      "id": "D1-L3",
+      "subject": "inconsistent development Artifact Store pair",
+      "observed": "cognitive_os_dev and .../artifacts disagree; 5 files, fingerprint 7e85d9a6...",
+      "impact": "The pair cannot be used for any D1 evidence.",
+      "action": "Untouched, fingerprinted before and after, zero writes. Repair stays out of scope."
+    },
+    {
+      "id": "D1-L4",
+      "subject": "OpenRouter free tier",
+      "observed": "0 correct results in 10 C3 attempts, nine adapter-boundary failures.",
+      "impact": "None. D1 plans no live provider call and no provider is on the critical path.",
+      "action": "No retry campaign. D1 stays offline."
+    },
+    {
+      "id": "D1-L5",
+      "subject": "legacy recompilation",
+      "observed": "The 60 C3 correction manifests use a legacy wall-clock created_at.",
+      "impact": "They cannot be proven equal by recompilation; only source resolution is provable.",
+      "action": "Every derived pair is marked legacy_recompilation_unavailable=true. No timestamp or manifest is rewritten to make a verifier green."
+    }
+  ],
+  "deviations": [
+    {
+      "id": "W0-D1",
+      "subject": "scripts/postgres_bootstrap_roles.sh",
+      "observed": "ALTER ROLE cogos_owner NOSUPERUSER is refused because cogos_owner is this local cluster's bootstrap superuser (pg_roles.rolsuper = true). ON_ERROR_STOP aborts the script at that line, so ALTER DATABASE ... OWNER never runs.",
+      "impact": "The least-privilege intent of roles.sql is unenforceable on this cluster; the script fails closed rather than degrading silently.",
+      "action": "Not remediated, identical to the recorded 21C1, 21C2 and 21C3 condition. The two D1 databases were created directly with OWNER cogos_owner, which is what the aborted statement would have set. Verified equal to the C3 database: cognitive_os schema, 114 tables, alembic 0015, cogos_app can read."
+    },
+    {
+      "id": "W0-D2",
+      "subject": "database creation",
+      "observed": "No repository script creates an evidence database; postgres_bootstrap_roles.sh only manages roles and ownership.",
+      "impact": "Every sprint has created its evidence database by hand, which is untracked operator knowledge.",
+      "action": "Recorded, not fixed in D1. The exact statements used are in the D1 report. A create step belongs to whoever owns the bootstrap scripts, not to a gate-blocked sprint."
+    },
+    {
+      "id": "W0-D3",
+      "subject": "docs/sprints/sprint-21/sprint-21d1-technical-backlog.md and three planning documents",
+      "observed": "The D1 planning documents were uncommitted on the already squash-merged docs/sprint-21c3-gate-close branch; feature/sprint-21d1-learning-surface-emg did not exist.",
+      "impact": "D1 would have branched from a stale parent or lost the planning documents.",
+      "action": "Fixed. The branch was created from the verified origin/main and the four documents were carried over unchanged."
+    },
+    {
+      "id": "W0-D4",
+      "subject": "verification-logic extra",
+      "observed": "z3 is not installed in .venv, and src/cognitive_os/verification/factory.py registers the four logic verifiers only when find_spec(\"z3\") succeeds, otherwise register_unavailable.",
+      "impact": "The 10 fresh logic pairs of S21D1-030..033 cannot be verifier-backed, and the registry snapshot hash would differ from the CI one.",
+      "action": "Not installed in W0. It is a declared entry condition of wave W3b: uv sync --locked --all-groups --extra verification-logic. sympy 1.14.0, sentence-transformers and networkx 3.6.1 are present."
+    }
+  ]
+}
