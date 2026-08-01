@@ -5,8 +5,11 @@ It does not replace the backlog's `§6` wave table; it refines it against measur
 repository facts: two probes inserted, four epics resequenced, three waves split along
 real dependencies. Task numbering is unchanged (S21D2-000 … -095, 81 tasks in ten epics).
 
-Status: **not started.** No branch, no evidence, no code change. This document is the
-pre-execution analysis only.
+Status: **W0 complete.** Evidence:
+[`sprint-21d2-baseline.json`](evidence/sprint-21d2-baseline.json),
+[`sprint-21d2-d1-erratum.json`](evidence/sprint-21d2-d1-erratum.json),
+[`sprint-21d2-inherited-inventory.json`](evidence/sprint-21d2-inherited-inventory.json).
+W1 has not started; the draft pull request of S21D2-004 does not exist yet.
 
 ---
 
