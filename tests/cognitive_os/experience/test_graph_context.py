@@ -34,6 +34,7 @@ from cognitive_os.domain.experience_graph import (
     ExperienceGraphNode,
     ExperienceGraphNodeKind,
     FailedSuccessGraphPair,
+    GraphResourceLimits,
 )
 from cognitive_os.domains.fixtures import FIXTURE_TIME
 from cognitive_os.experience.graph_context import ExperienceGraphContextRetriever
@@ -254,3 +255,56 @@ class TestAdvisoryContextPath:
         assert "Advisory only" in rendered
         for candidate in candidates:
             assert candidate.content is None, "a candidate carries no patch body to execute"
+
+
+class TestTheAdvisoryBoundarySurvivesTheWidth20Policy:
+    """S21D2-036. The shortlist repair must not leak into the advisory path.
+
+    The retriever scores its own pool and truncates on `returned_results`; it never calls
+    `minilm_vector` or `bounded_ged`. So widening the internal shortlist is expected to change
+    nothing here — and 'expected' is why this is a test rather than a note.
+    """
+
+    @pytest.mark.asyncio
+    async def test_widening_the_shortlist_changes_no_advisory_candidate(self) -> None:
+        width_10 = ExperienceGraphContextRetriever(
+            PAIRS, limits=GraphResourceLimits(vector_shortlist=10, returned_results=10)
+        )
+        width_20 = ExperienceGraphContextRetriever(
+            PAIRS, limits=GraphResourceLimits(vector_shortlist=20, returned_results=10)
+        )
+        request = _repair_request("some failure")
+
+        before = await width_10.retrieve(_subquery(), request)
+        after = await width_20.retrieve(_subquery(), request)
+
+        assert [c.candidate_id for c in before] == [c.candidate_id for c in after]
+        assert [c.provenance for c in before] == [c.provenance for c in after]
+
+    @pytest.mark.asyncio
+    async def test_the_revision_2_policy_keeps_every_advisory_property(self) -> None:
+        retriever = ExperienceGraphContextRetriever(
+            PAIRS,
+            limits=GraphResourceLimits(
+                vector_shortlist=20, returned_results=10, per_pair_ged_timeout_ms=90
+            ),
+        )
+
+        candidates = await retriever.retrieve(_subquery(), _repair_request("some failure"))
+
+        assert candidates
+        for candidate in candidates:
+            assert not candidate.pinned
+            assert not candidate.required
+            assert not candidate.evidence
+
+    @pytest.mark.asyncio
+    async def test_the_returned_bound_still_governs_what_the_builder_sees(self) -> None:
+        """`returned_results` is the advisory bound; `vector_shortlist` is not one here."""
+        retriever = ExperienceGraphContextRetriever(
+            PAIRS, limits=GraphResourceLimits(vector_shortlist=20, returned_results=1)
+        )
+
+        candidates = await retriever.retrieve(_subquery(), _repair_request("some failure"))
+
+        assert len(candidates) <= 1

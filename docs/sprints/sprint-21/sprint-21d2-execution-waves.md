@@ -5,11 +5,23 @@ It does not replace the backlog's `§6` wave table; it refines it against measur
 repository facts: two probes inserted, four epics resequenced, three waves split along
 real dependencies. Task numbering is unchanged (S21D2-000 … -095, 81 tasks in ten epics).
 
-Status: **W0 complete.** Evidence:
+Status: **W0 and W1 complete.** W0 evidence:
 [`sprint-21d2-baseline.json`](evidence/sprint-21d2-baseline.json),
 [`sprint-21d2-d1-erratum.json`](evidence/sprint-21d2-d1-erratum.json),
 [`sprint-21d2-inherited-inventory.json`](evidence/sprint-21d2-inherited-inventory.json).
-W1 has not started; the draft pull request of S21D2-004 does not exist yet.
+W1 evidence: draft PR `#219`,
+[`sprint-21d2-surface-audit.json`](evidence/sprint-21d2-surface-audit.json),
+[`sprint-21d2-p-ged-probe.json`](evidence/sprint-21d2-p-ged-probe.json),
+[`sprint-21d2-power-analysis.json`](evidence/sprint-21d2-power-analysis.json),
+[`sprint-21d2-pre-registration.json`](evidence/sprint-21d2-pre-registration.json).
+**Door D1 is closed:** revision 2 selects `experience.correction_ranking` as primary. W2 has
+not started.
+
+**W1 changed two planned numbers.** `P-GED` measured the per-pair GED timeout at **90 ms**
+rather than the inherited 250 ms (F1 below, superseded by the probe's own finding), and
+S21D2-014 raised the final batches to **30+30 groups**, which raises the corpus to **125
+groups and 95 new** rather than 115 and 85 (F3's authoring load grows by about ten
+templates).
 
 ---
 
@@ -20,7 +32,7 @@ not inferred from the backlog.
 
 | # | Where | Finding | Status |
 |---|---|---|---|
-| **F1** | `§4.10`, `§8.4` | **Width 20 is cancelled by the unchanged 2-second budget.** `bounded_ged` reserves the per-pair timeout before starting a comparison (`graph_retrieval.py:225-229`), so it stops at `elapsed > budget − per_pair`. D1 measured p95 **1788.9 ms** for ~10 completed pairs (~176 ms/pair after the 27.5 ms embed). At width 20 with `per_pair=250 ms` and `budget=2 s`, roughly the first 9–10 pairs complete and the rest are cut to score `0.0` — and cut pairs sink under the `-score` sort in `_result`. The cut band is exactly shortlist ranks 11–20, which is where D1's **19 shortlist-ceiling misses** live. Width 20 would then reproduce the width-10 result. | **Fixed in the plan** — probe `P-GED` in W1; the per-pair timeout is chosen from it and pre-registered in 017/031. `§8.4`'s 250 ms and 2 s are *maxima*, so lowering per-pair (~90 ms fits 20 pairs) is compliant; raising the budget after a bad final result is not. |
+| **F1** ⚠️ | `§4.10`, `§8.4` | *Direction confirmed, mechanism wrong — see `sprint-21d2-p-ged-probe.json`. The probe measured per-pair GED cost at p50 0.93 ms for coding and 1501 ms for logic and mathematics, not a uniform ~176 ms, and the convergence fraction is 0.7625 at every timeout from 50 ms to 1000 ms. So the lever is cancelled by a non-converging quarter of pairs rather than by uniform cost, and 90 ms per pair leaves zero cuts at width 20 with a 236 ms margin. Original reasoning below.* **Width 20 is cancelled by the unchanged 2-second budget.** `bounded_ged` reserves the per-pair timeout before starting a comparison (`graph_retrieval.py:225-229`), so it stops at `elapsed > budget − per_pair`. D1 measured p95 **1788.9 ms** for ~10 completed pairs (~176 ms/pair after the 27.5 ms embed). At width 20 with `per_pair=250 ms` and `budget=2 s`, roughly the first 9–10 pairs complete and the rest are cut to score `0.0` — and cut pairs sink under the `-score` sort in `_result`. The cut band is exactly shortlist ranks 11–20, which is where D1's **19 shortlist-ceiling misses** live. Width 20 would then reproduce the width-10 result. | **Fixed in the plan** — probe `P-GED` in W1; the per-pair timeout is chosen from it and pre-registered in 017/031. `§8.4`'s 250 ms and 2 s are *maxima*, so lowering per-pair (~90 ms fits 20 pairs) is compliant; raising the budget after a bad final result is not. |
 | **F2** | `§1.4`, S21D2-030 | The shortlist defect is real and one line. `bounded_ged` takes candidates from `minilm_vector`'s public result (`graph_retrieval.py:210`), which `_result` already truncated to `returned_results` (`:88`); the `[: limits.vector_shortlist]` slice on `:211` then re-slices ten entries. `GraphResourceLimits` allows `vector_shortlist` up to 100, so no contract change is needed — only an internal untruncated scoring path. | Confirmed; W1 |
 | **F3** | S21D2-022, `§4.1` | **Corpus scale is the critical path.** `TASK_SPECS` holds exactly **30** specs in 3,121 lines (~104 lines each: baseline + 4 candidate variants + visible and hidden test modules + issue/expected/edge-case prose). D2 needs ≥115 groups, ≥85 new ⇒ **~8,800 lines of hand-authored task code**. `reality_task_specs.py:18-20` states the corpus is deliberately unparameterised because variants of one template "share an AST shape, land in one near-clone group" — so `near_clone_pairs` will actively reject mass production. | **Probe first** — `P-CLONE` at the head of W3a measures the rejection rate on 10 before committing to 85 |
 | **F4** | `§4.1` | **Container volume.** C3's W2 ran "30 tasks, 120 candidates, **420 container runs**" (C3 report `§1`). D2's five partitions are 115 groups of the same shape ⇒ **≈1,600 container runs** across W3c–W8, ~3.8× C3, before canary and any post-stop audit campaign. | Drives the W4 ‖ W5 overlap |

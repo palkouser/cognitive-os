@@ -75,6 +75,11 @@ def _tokens(text: str) -> set[str]:
     return {token for token in text.lower().replace("=", " ").split() if len(token) > 2}
 
 
+def _ranked(scored: Sequence[tuple[str, float]]) -> list[tuple[str, float]]:
+    """Descending score, ties broken by pair id. The one ordering every arm shares."""
+    return sorted(scored, key=lambda item: (-item[1], item[0]))
+
+
 def _result(
     query: ExperienceGraphQuery,
     arm: str,
@@ -85,7 +90,7 @@ def _result(
     timed_out: int = 0,
 ) -> ExperienceGraphResult:
     """Rank, break ties by pair id, and truncate to the declared bound."""
-    ordered = sorted(scored, key=lambda item: (-item[1], item[0]))[: limits.returned_results]
+    ordered = _ranked(scored)[: limits.returned_results]
     return ExperienceGraphResult(
         query_id=query.query_id,
         arm=arm,
@@ -165,6 +170,28 @@ def _cosine(left: Sequence[float], right: Sequence[float]) -> float:
     return dot / norm if norm else 0.0
 
 
+async def _vector_scores(
+    query: ExperienceGraphQuery,
+    pool: Sequence[Candidate],
+    *,
+    embed: EmbeddingProviderPort,
+    cache: dict[str, tuple[float, ...]] | None = None,
+) -> list[tuple[str, float]]:
+    """Cosine-score the whole pool. Untruncated on purpose.
+
+    Truncation belongs to whoever publishes a result, not to scoring. `bounded_ged` used
+    to shortlist from `minilm_vector`'s public result, which `_result` had already cut to
+    `returned_results` — so `vector_shortlist=20` with `returned_results=10` sent ten
+    candidates to the reranker and the wider shortlist was never actually applied.
+    """
+    query_vector = await embed.embed_query(query.query_text)
+    candidate_vectors = await _embed_all(embed, tuple(c.text for c in pool), cache)
+    return [
+        (candidate.pair_id, _cosine(query_vector, vector))
+        for candidate, vector in zip(pool, candidate_vectors, strict=True)
+    ]
+
+
 async def minilm_vector(
     query: ExperienceGraphQuery,
     pool: Sequence[Candidate],
@@ -179,12 +206,7 @@ async def minilm_vector(
     local model is unusable and never substitutes the hashing provider. Depending on
     that is what keeps a benchmark number from silently describing a hash.
     """
-    query_vector = await embed.embed_query(query.query_text)
-    candidate_vectors = await _embed_all(embed, tuple(c.text for c in pool), cache)
-    scored = [
-        (candidate.pair_id, _cosine(query_vector, vector))
-        for candidate, vector in zip(pool, candidate_vectors, strict=True)
-    ]
+    scored = await _vector_scores(query, pool, embed=embed, cache=cache)
     return _result(query, MINILM_VECTOR, scored, considered=len(pool), limits=limits)
 
 
@@ -207,8 +229,8 @@ async def bounded_ged(
     import networkx as nx  # type: ignore[import-untyped]
 
     started = perf_counter()
-    shortlist_result = await minilm_vector(query, pool, limits=limits, embed=embed, cache=cache)
-    shortlist_ids = [entry.pair_id for entry in shortlist_result.entries][: limits.vector_shortlist]
+    scores = await _vector_scores(query, pool, embed=embed, cache=cache)
+    shortlist_ids = [pair_id for pair_id, _ in _ranked(scores)[: limits.vector_shortlist]]
     by_id = {candidate.pair_id: candidate for candidate in pool}
 
     left = _as_nx(query_graph)
