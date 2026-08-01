@@ -17,8 +17,7 @@ from uuid import UUID
 
 import pytest
 
-from cognitive_os.domain.learned import LearnedArtifactFormat
-from cognitive_os.infrastructure.learned.artifacts import UNSAFE_TO_DESERIALISE
+from cognitive_os.domain.learned import UNSAFE_TO_DESERIALISE, LearnedArtifactFormat
 from cognitive_os.learning.correction_artifact import (
     LOADABLE_FORMATS,
     MAXIMUM_EXEMPLARS,

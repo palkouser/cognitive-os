@@ -62,6 +62,15 @@ class LearnedArtifactFormat(StrEnum):
     NONE = "none"
 
 
+#: Formats whose bytes are an executable object graph rather than inert data. They may be
+#: *referenced* — a legacy artifact still has a lineage — and are never loaded.
+#:
+#: It lives here rather than in the infrastructure that enforces it because it is a statement
+#: about formats, not about storage: a test asking "is joblib still unsafe" should not have to
+#: import a PostgreSQL repository to find out.
+UNSAFE_TO_DESERIALISE: frozenset[LearnedArtifactFormat] = frozenset({LearnedArtifactFormat.JOBLIB})
+
+
 class LearnedExplanationKind(StrEnum):
     NEIGHBOURS = "neighbours"
     FEATURE_ATTRIBUTION = "feature_attribution"
