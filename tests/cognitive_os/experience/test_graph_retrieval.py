@@ -14,6 +14,7 @@ consider exactly `vector_shortlist` candidates while the caller still receives a
 from __future__ import annotations
 
 from hashlib import sha256
+from importlib.util import find_spec
 
 import pytest
 
@@ -35,6 +36,16 @@ from cognitive_os.experience.graph_retrieval import Candidate
 
 #: Wider than either bound, so truncation at any stage is visible in the counts.
 POOL_SIZE = 30
+
+#: `graph_edit_distance` imports numpy and scipy unconditionally, so the reranker needs the
+#: whole `semantic-graph` extra. The dedicated experience lanes install it and prove the
+#: shortlist width there; the general test lane runs without extras and skips, as it already
+#: does for every other optional-dependency test. The vector-only tests below stay unmarked,
+#: because they need no extra and should run everywhere.
+needs_bounded_ged = pytest.mark.skipif(
+    find_spec("networkx") is None or find_spec("scipy") is None,
+    reason="semantic-graph extra is absent",
+)
 
 
 def _hash(text: str) -> str:
@@ -133,6 +144,26 @@ def embed() -> DeterministicEmbedding:
     return DeterministicEmbedding()
 
 
+class TestThePublicVectorArmIsUnchanged:
+    """Deliberately unmarked: it needs no extra, so it guards the public arm everywhere."""
+
+    @pytest.mark.asyncio
+    async def test_the_public_vector_arm_still_truncates_to_the_returned_bound(
+        self,
+        query: ExperienceGraphQuery,
+        pool: tuple[Candidate, ...],
+        embed: DeterministicEmbedding,
+    ) -> None:
+        """Widening the internal shortlist must not widen what a caller receives."""
+        limits = GraphResourceLimits(vector_shortlist=20, returned_results=10)
+
+        result = await graph_retrieval.minilm_vector(query, pool, limits=limits, embed=embed)
+
+        assert len(result.entries) == 10
+        assert result.candidates_considered == POOL_SIZE
+
+
+@needs_bounded_ged
 class TestShortlistWidthIsTheDeclaredWidth:
     @pytest.mark.asyncio
     async def test_twenty_are_considered_while_at_most_ten_are_returned(
@@ -150,21 +181,6 @@ class TestShortlistWidthIsTheDeclaredWidth:
 
         assert result.candidates_considered == 20
         assert len(result.entries) <= 10
-
-    @pytest.mark.asyncio
-    async def test_the_public_vector_arm_still_truncates_to_the_returned_bound(
-        self,
-        query: ExperienceGraphQuery,
-        pool: tuple[Candidate, ...],
-        embed: DeterministicEmbedding,
-    ) -> None:
-        """Widening the internal shortlist must not widen what a caller receives."""
-        limits = GraphResourceLimits(vector_shortlist=20, returned_results=10)
-
-        result = await graph_retrieval.minilm_vector(query, pool, limits=limits, embed=embed)
-
-        assert len(result.entries) == 10
-        assert result.candidates_considered == POOL_SIZE
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("width", [1, 5, 10, 20, 25])
@@ -218,6 +234,7 @@ class TestOrderingIsUnchanged:
 
         assert [entry.pair_id for entry in vector.entries] == shortlist
 
+    @needs_bounded_ged
     @pytest.mark.asyncio
     async def test_ranking_is_deterministic_across_repeated_calls(
         self,
@@ -265,6 +282,7 @@ class TestOrderingIsUnchanged:
 
 
 class TestTheCacheStillWorksAcrossArms:
+    @needs_bounded_ged
     @pytest.mark.asyncio
     async def test_a_shared_cache_is_populated_once_and_reused(
         self,
