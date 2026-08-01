@@ -96,7 +96,9 @@ def shuffled_recipe_positions(
     if len(set(recipes)) != len(recipes):
         raise ValueError("a task cannot generate the same recipe twice")
     ordered = list(recipes)
-    Random(f"{task_id}:{campaign_seed}").shuffle(ordered)
+    # nosec B311 - a replayable permutation, not a secret. Cryptographic randomness would be
+    # the wrong tool here: the whole requirement is that a recorded seed reproduces the order.
+    Random(f"{task_id}:{campaign_seed}").shuffle(ordered)  # nosec B311
     return tuple(ordered)
 
 
