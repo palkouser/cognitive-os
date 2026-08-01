@@ -490,8 +490,13 @@ jobs:
         with:
           version: "0.11.28"
           enable-cache: true
+      # This lane runs the whole experience directory, which since S21D2-030 includes the
+      # bounded-GED shortlist regression. A missing extra has to fail setup rather than turn
+      # into a skip, so the extra is installed here too instead of guarding the test.
       - name: Install Python and core dependencies
-        run: uv python install 3.12 && uv sync --locked --all-groups
+        run: >-
+          uv python install 3.12 && uv sync --locked --all-groups
+          --extra semantic-graph
       - name: Experience contracts, compiler, governance, and adversarial gate
         run: uv run pytest tests/cognitive_os/experience -q
       - name: Experience contract schema gate

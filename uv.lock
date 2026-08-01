@@ -289,6 +289,8 @@ postgres = [
 ]
 semantic-graph = [
     { name = "networkx" },
+    { name = "numpy" },
+    { name = "scipy" },
 ]
 verification-logic = [
     { name = "z3-solver" },
@@ -337,6 +339,7 @@ requires-dist = [
     { name = "langfuse", marker = "extra == 'observability-langfuse'", specifier = ">=3,<4" },
     { name = "mcp", marker = "extra == 'mcp'", specifier = ">=1.23,<2" },
     { name = "networkx", marker = "extra == 'semantic-graph'", specifier = ">=3.6,<4" },
+    { name = "numpy", marker = "extra == 'semantic-graph'", specifier = ">=2,<3" },
     { name = "openai", specifier = ">=1.60,<2" },
     { name = "opentelemetry-api", marker = "extra == 'observability-otel'", specifier = ">=1.35,<2" },
     { name = "opentelemetry-exporter-otlp-proto-grpc", marker = "extra == 'observability-otel'", specifier = ">=1.35,<2" },
@@ -345,6 +348,7 @@ requires-dist = [
     { name = "pint", marker = "extra == 'verification-physics'", specifier = ">=0.25.3,<0.26" },
     { name = "pydantic", specifier = ">=2.11,<3" },
     { name = "pyyaml", specifier = ">=6,<7" },
+    { name = "scipy", marker = "extra == 'semantic-graph'", specifier = ">=1.16,<2" },
     { name = "sentence-transformers", marker = "extra == 'local-embeddings'", specifier = ">=5,<6" },
     { name = "sqlalchemy", extras = ["asyncio"], marker = "extra == 'memory-postgres'", specifier = ">=2.0,<2.2" },
     { name = "sqlalchemy", extras = ["asyncio"], marker = "extra == 'postgres'", specifier = ">=2.0,<2.2" },

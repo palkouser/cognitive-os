@@ -39,7 +39,12 @@ memory-postgres = [
     "pgvector>=0.4,<0.5",
     "sqlalchemy[asyncio]>=2.0,<2.2",
 ]
-semantic-graph = ["networkx>=3.6,<4"]
+# networkx declares numpy and scipy as optional, but `graph_edit_distance` imports both
+# unconditionally (networkx/algorithms/similarity.py:688-689). The bounded-GED reranker is
+# the whole point of this extra, so they are requirements of it rather than optional
+# companions. It went unnoticed until S21D2-030 put the reranker under CI: on a developer
+# machine both always arrive with torch, which is exactly how an undeclared dependency hides.
+semantic-graph = ["networkx>=3.6,<4", "numpy>=2,<3", "scipy>=1.16,<2"]
 local-embeddings = ["sentence-transformers>=5,<6"]
 observability-langfuse = ["langfuse>=3,<4"]
 observability-otel = [
