@@ -11,6 +11,7 @@ from cognitive_os.application.services.learned_intake import LearnedObservationI
 from cognitive_os.application.services.reality_campaign import (
     CampaignLedgerError,
     RealityCampaignLedger,
+    ReceiptAction,
     count_outcomes,
 )
 from cognitive_os.application.services.reality_outcome_harvester import (
@@ -432,3 +433,102 @@ async def test_provider_prose_cannot_become_the_real_governed_run() -> None:
     assert harvested.governed.source_payload_hash == recorded.reference.outcome_artifact_hash
     assert harvested.governed.source_run_id == task_run_id
     assert harvested.reference.provider_output_id == provider_output_id
+
+
+# ------------------------------------------------ S21D2-054: resume that reads the receipts
+
+
+async def _seal_sequence(
+    harness: _Harness,
+    *,
+    campaign_id,
+    task_id,
+    attempted,
+    unattempted=(),
+    mode: str = "stop_on_first_accepted",
+) -> None:
+    """Append one sequence receipt to the campaign stream, as the sequencer would."""
+    from cognitive_os.domain.enums import StreamType
+    from cognitive_os.events.coding_events import RealityCampaignSequenceRecorded
+
+    order = tuple(attempted) + tuple(unattempted)
+    await CodingEventService(harness.store).append(
+        campaign_id,
+        RealityCampaignSequenceRecorded(
+            campaign_id=campaign_id,
+            task_id=task_id,
+            partition="training",
+            mode=mode,
+            campaign_manifest_hash=digest("campaign manifest"),
+            baseline_order=order,
+            resolved_order=order,
+            attempted_order=tuple(attempted),
+            intentionally_unattempted=tuple(unattempted),
+            accepted_candidate_id=attempted[-1] if unattempted else None,
+            accepted_position=len(attempted) - 1 if unattempted else None,
+            accepted_event_id=uuid4() if unattempted else None,
+            verifier_evidence_hash=digest("verifier evidence") if unattempted else None,
+            stop_reason="verifier_accepted" if unattempted else "all_candidates_labelled",
+            occurred_at=FIXTURE_TIME,
+        ),
+        correlation_id=uuid4(),
+        stream_type=StreamType.SYSTEM,
+    )
+
+
+@pytest.mark.asyncio
+async def test_a_resume_without_a_receipt_plans_the_task_as_written() -> None:
+    harness = _Harness()
+    task = task_manifest()
+    plan = _campaign(_identity(task))
+
+    resumed = await harness.ledger.plan_resume_with_receipts(
+        plan, task_run_ids=[], campaign_id=plan.campaign_id
+    )
+
+    assert [state.action for state in resumed.tasks] == [ReceiptAction.RESUME_AS_PLANNED]
+    assert resumed.is_resumable is True
+
+
+@pytest.mark.asyncio
+async def test_a_sealed_sequence_leaves_the_unattempted_candidates_alone() -> None:
+    """The whole reason the receipt exists: skipped is neither done nor remaining."""
+    harness = _Harness()
+    task = task_manifest()
+    plan = _campaign(_identity(task))
+    attempted, skipped = uuid4(), uuid4()
+    await _seal_sequence(
+        harness,
+        campaign_id=plan.campaign_id,
+        task_id=task.task_id,
+        attempted=(attempted,),
+        unattempted=(skipped,),
+    )
+
+    resumed = await harness.ledger.plan_resume_with_receipts(
+        plan, task_run_ids=[], campaign_id=plan.campaign_id
+    )
+
+    state = resumed.tasks[0]
+    assert state.action is ReceiptAction.REPLAY_MISSING_OUTCOME
+    assert state.intentionally_unattempted == (skipped,)
+    assert state.missing_outcomes == (attempted,)
+
+
+@pytest.mark.asyncio
+async def test_outcomes_without_a_receipt_mean_the_task_is_re_run_whole() -> None:
+    """A half-sequence has no defensible prefix, so it does not get resumed from the middle."""
+    harness = _Harness()
+    task = task_manifest()
+    recorded = await harness.record_candidate(
+        task, RealityCandidateStrategy.INCOMPLETE_A, passed=False
+    )
+    plan = _campaign(_identity(task))
+
+    resumed = await harness.ledger.plan_resume_with_receipts(
+        plan,
+        task_run_ids=[recorded.reference.task_run_id],
+        campaign_id=plan.campaign_id,
+    )
+
+    assert resumed.tasks[0].action is ReceiptAction.RERUN_UNSEALED_TASK

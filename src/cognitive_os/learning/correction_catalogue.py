@@ -33,11 +33,16 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from dataclasses import dataclass
+from datetime import datetime
 from hashlib import sha256
 from uuid import UUID, uuid5
 
 from pydantic import Field, model_validator
 
+from cognitive_os.application.services.correction_ranking_observations import (
+    SealedCampaignManifest,
+    SealedCampaignMember,
+)
 from cognitive_os.coding.reality_candidates import opaque_candidate_id, shuffled_recipe_positions
 from cognitive_os.coding.reality_task_specs import TASK_SPECS
 from cognitive_os.coding.reality_task_specs_d2 import (
@@ -527,6 +532,42 @@ class SealedCorpusBundle:
 
     def groups_of(self, partition: CorrectionPartition) -> frozenset[str]:
         return frozenset(group.repository_group for group in self.catalogues[partition].groups)
+
+
+def campaign_manifest_for(
+    catalogue: SealedPartitionCatalogue,
+    *,
+    campaign_id: UUID,
+    campaign_version: int,
+    feature_sealed_at: datetime,
+) -> SealedCampaignManifest:
+    """Turn a sealed catalogue into the manifest the projector reads.
+
+    Deferred out of W3b on purpose: `campaign_id`, `campaign_version` and `feature_sealed_at`
+    do not exist until a campaign does, so writing this before one existed would have meant
+    inventing three values to satisfy a shape. The projector takes only a manifest and an
+    outcome, so this is the single point where a partition becomes a role.
+    """
+    members = {
+        slot.candidate_id: SealedCampaignMember(
+            candidate_id=slot.candidate_id,
+            task_id=group.task_id,
+            group=group.repository_group,
+            partition=catalogue.partition,
+            campaign_id=campaign_id,
+            campaign_manifest_hash=catalogue.content_hash,
+            campaign_version=campaign_version,
+            verifier_profile_hash=group.verifier_profile_hash,
+            feature_sealed_at=feature_sealed_at,
+        )
+        for group in catalogue.groups
+        for slot in group.slots
+    }
+    return SealedCampaignManifest(
+        campaign_id=campaign_id,
+        manifest_hash=catalogue.content_hash,
+        members=members,
+    )
 
 
 def seal_corpus() -> SealedCorpusBundle:

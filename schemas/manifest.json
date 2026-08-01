@@ -3526,7 +3526,7 @@
     {
       "file": "v1/learned/learned-activation-receipt.schema.json",
       "model": "LearnedActivationReceipt",
-      "sha256": "84d41ce6af7df860e6584a39aae9691e55b3f06454a59ea6e884a031dbe6180c"
+      "sha256": "ae2a067a3bb43093bdd0168055095a959cf12057444edf5bf6282ed64c664b7d"
     },
     {
       "file": "v1/learned/learned-artifact-lineage.schema.json",

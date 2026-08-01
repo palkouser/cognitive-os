@@ -562,11 +562,17 @@ class LearnedEvidenceService:
         reason: str,
         idempotency_key: str,
         correlation_id: UUID,
+        rollback_permitted: bool,
     ) -> LearnedActivationReceipt:
         """Take a component off its surface. Always available, never gated on evidence.
 
         Disabling narrows what the system does, so it deliberately needs no approval:
         a governance control that is hard to switch off is not a control.
+
+        `rollback_permitted` has no default on purpose. A disable that follows a failed
+        canary and a disable that parks a healthy component look identical from here, and
+        only the caller knows which one it is; a default would guess, and guessing the
+        permissive answer is how a failed component gets restored by the rollback path.
         """
         current = await self._require_component(component_id)
         self._require_descriptor_matches(descriptor, current)
@@ -599,6 +605,7 @@ class LearnedEvidenceService:
             component_revision=revision.revision,
             surface=current.surface,
             previous_receipt_id=previous.receipt_id if previous else None,
+            rollback_permitted=rollback_permitted,
             actor=actor,
             authority=authority,
             reason=reason,
@@ -640,6 +647,15 @@ class LearnedEvidenceService:
                 LearnedRepositoryConflict.ILLEGAL_TRANSITION,
                 f"{component_id} is {current.current_state.value}; only a disabled "
                 "component can be rolled back to its prior activation",
+            )
+
+        refusal = await self._latest_disable(component_id)
+        if refusal is not None and refusal.rollback_permitted is False:
+            raise LearnedRepositoryError(
+                LearnedRepositoryConflict.ILLEGAL_TRANSITION,
+                f"{component_id} was disabled with rollback_permitted=false "
+                f"(receipt {refusal.receipt_id}); the disable that ended this activation was "
+                "a refusal, not a pause, and restoring it is what the flag exists to prevent",
             )
 
         target = await self._prior_activation(component_id)
@@ -910,6 +926,28 @@ class LearnedEvidenceService:
                 LearnedRepositoryConflict.EVIDENCE_MISMATCH,
                 f"the approval does not authorise this exact activation: {sorted(mismatches)}",
             )
+
+    async def _latest_disable(self, component_id: str) -> LearnedActivationReceipt | None:
+        """The disable that put this component into its current state.
+
+        Walked from the surface head rather than read off the component row, because the
+        refusal has to be structural: it must come from the durable chain, not from a state
+        column a later write could overwrite.
+        """
+        current = await self._repository.get_component(component_id)
+        if current is None:  # pragma: no cover - callers check first
+            return None
+        receipt = await self._repository.latest_activation_for(current.surface)
+        while receipt is not None:
+            if receipt.component_id == component_id:
+                if receipt.action is LearnedActivationAction.DISABLE:
+                    return receipt
+                if receipt.action is LearnedActivationAction.ACTIVATION:
+                    return None
+            if receipt.previous_receipt_id is None:
+                return None
+            receipt = await self._repository.get_activation_receipt(receipt.previous_receipt_id)
+        return None
 
     async def _prior_activation(self, component_id: str) -> LearnedActivationReceipt | None:
         """Walk this component's receipt chain back to the activation it last held."""

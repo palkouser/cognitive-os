@@ -5,7 +5,7 @@ It does not replace the backlog's `§6` wave table; it refines it against measur
 repository facts: two probes inserted, four epics resequenced, three waves split along
 real dependencies. Task numbering is unchanged (S21D2-000 … -095, 81 tasks in ten epics).
 
-Status: **W0, W1, W2, W3a and W3b complete — the corpus is sealed at 125 groups.** W0 evidence:
+Status: **W0 through W3c complete — the corpus is sealed and the vertical slice holds.** W0 evidence:
 [`sprint-21d2-baseline.json`](evidence/sprint-21d2-baseline.json),
 [`sprint-21d2-d1-erratum.json`](evidence/sprint-21d2-d1-erratum.json),
 [`sprint-21d2-inherited-inventory.json`](evidence/sprint-21d2-inherited-inventory.json).
@@ -259,12 +259,50 @@ it rejects by absence. A test asserts no catalogue field name appears in the all
 untested by construction. It belongs with W3c's vertical slice (S21D2-058), the first thing
 that runs one.
 
-### W3c — the vertical slice (058, 075-scratch)
-058 is `§6.1`'s ten-step slice; `stop_on_first_accepted` is exercised only through an isolated
-scratch component with a fixture ACTIVE receipt. 075's scratch leg runs immediately after, so
-the `rollback_permitted=false` refusal is proven before any real activation exists. W3c also
-carries the two items W2 and W3b deferred: `plan_resume()` receipt-awareness and the catalogue
-to campaign-manifest adapter.
+### W3c — the vertical slice (058, 075-scratch) — **complete**
+`§6.1`'s ten steps run as ten test classes, so a failure names the step it broke. Evidence:
+[`sprint-21d2-vertical-slice.json`](evidence/sprint-21d2-vertical-slice.json). One training
+group and one synthetic sealed-evaluation group go through rights-clean packaging, pre-outcome
+feature sealing, role-bound projection, the group-aware split, one k-NN fit, canonical JSON,
+the narrow loader, both sequencing modes, fallback, restart determinism, and the closed
+holdout — with **zero containers spent and zero final bodies opened**. CI runs it on committed
+deterministic vectors; the pinned MiniLM identity check stays a separate local release step and
+is not claimed here.
+
+**Both deferred items are closed.** The catalogue-to-campaign adapter could finally be written
+because a campaign now supplies the three values it needs. `plan_resume_with_receipts()` gives
+the typed answer W2 asked for — five actions over the receipt chain, of which
+`refuse_contradicted_receipt` is the one that matters: an outcome for a candidate the receipt
+calls intentionally unattempted means the two durable records disagree, and that is a new
+revision, not a resume.
+
+**Writing it found a defect in itself.** The first implementation read candidate outcomes
+through `completed_by_identity`, which silently drops any run recorded without a run identity
+key. Candidate runs need not carry one, so an interrupted sequence looked like a task nobody
+had touched and would have been planned as fresh work — the precise failure the receipt exists
+to prevent, reintroduced by the code meant to prevent it. Caught by the `rerun_unsealed_task`
+test; fixed by reading the outcome streams directly.
+
+**075's scratch leg exposed a missing authority, not a missing test.** The backlog asks
+`roll_back()` to refuse a disable receipt carrying `rollback_permitted=false`, and no such field
+existed anywhere in the codebase — the refusal was unwritable. It is now a hash-bound field on
+`LearnedActivationReceipt`, required on a disable and forbidden on every other action, and
+`disable()` takes it with **no default**: a disable after a failed canary and a disable that
+parks a healthy component are indistinguishable from inside the service, so a default would
+guess, and the permissive guess is exactly how a failed component gets restored. The refusal is
+structural — the chain is read before the caller, the approval or the lineage, so better
+evidence cannot step around it.
+
+**That change had a compatibility question, and it was measured rather than assumed.** A new
+field on a hashed contract changes the canonical hash of every receipt, so any receipt persisted
+earlier would fail to load. The inherited inventory records `learned_components = 0` in the D1
+store: **zero receipts at risk**. What the wave plan wrote as a sequencing preference —
+"before any real activation exists" — is really a hard compatibility requirement, and the
+window was still open. Anyone running D2 against a store that already holds activation receipts
+needs a migration first.
+
+The contract schema drift gate caught the receipt change before the commit, which is what it is
+for; `learned-activation-receipt.schema.json` was regenerated.
 
 ### W4 ‖ W5 — self-play evidence and retrieval freeze (023–025 ‖ 031, 032)
 W4 is container-bound (F4); W5 is CPU measurement on already-frozen data. They share no

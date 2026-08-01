@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "sprint": "21D2",
+  "wave": "W3c",
+  "items": [
+    "S21D2-058",
+    "S21D2-075 (scratch leg)",
+    "S21D2-054 (deferred)",
+    "S21D2-022 (deferred adapter)"
+  ],
+  "recorded_at": "2026-08-01T17:53:52.234710+00:00",
+  "final_outcomes_inspected": false,
+  "purpose": "Run one training group and one synthetic sealed-evaluation group through every authority this sprint added, before any bulk campaign spends a container, and close the two items W2 and W3b deferred.",
+  "vertical_slice": {
+    "specification": "section 6.1, ten steps",
+    "test_module": "tests/cognitive_os/learning/test_vertical_slice.py",
+    "steps": [
+      {
+        "step": 1,
+        "name": "rights-clean package and four opaque candidates",
+        "proved": true
+      },
+      {
+        "step": 2,
+        "name": "pre-outcome features stored before verifier results",
+        "proved": true
+      },
+      {
+        "step": 3,
+        "name": "role-bound projection from the sealed manifest",
+        "proved": true
+      },
+      {
+        "step": 4,
+        "name": "explicit group-aware dataset split",
+        "proved": true
+      },
+      {
+        "step": 5,
+        "name": "one k-NN fit and a canonical JSON artifact",
+        "proved": true
+      },
+      {
+        "step": 6,
+        "name": "verified reload through the narrow loader",
+        "proved": true
+      },
+      {
+        "step": 7,
+        "name": "label_all plus isolated scratch stop_on_first_accepted",
+        "proved": true
+      },
+      {
+        "step": 8,
+        "name": "missing or corrupt artifact fallback",
+        "proved": true
+      },
+      {
+        "step": 9,
+        "name": "restart and replay determinism",
+        "proved": true
+      },
+      {
+        "step": 10,
+        "name": "the sealed evaluation refuses access before freeze",
+        "proved": true
+      }
+    ],
+    "embedding_fixture": "Deterministic committed vectors derived from a fixed namespace. CI downloads no model to run this slice; the pinned MiniLM identity check is a separate local release step and is not claimed here.",
+    "final_bodies_opened": 0,
+    "containers_spent": 0
+  },
+  "catalogue_to_campaign_adapter": {
+    "item": "S21D2-022, deferred out of W3b",
+    "why_it_was_deferred": "SealedCampaignMember needs campaign_id, campaign_version and feature_sealed_at, none of which exist until a campaign does. Writing it in W3b would have meant inventing three values to satisfy a shape.",
+    "function": "cognitive_os.learning.correction_catalogue.campaign_manifest_for",
+    "members_for_the_training_catalogue": 200,
+    "manifest_hash_equals_catalogue_hash": true
+  },
+  "receipt_aware_resume": {
+    "item": "S21D2-054, deferred out of W2",
+    "why_it_was_deferred": "plan_resume() is C3 resume machinery with its own callers, and changing it without a campaign to resume would have been untested by construction.",
+    "method": "RealityCampaignLedger.plan_resume_with_receipts",
+    "actions": [
+      "resume_as_planned",
+      "sealed_and_consistent",
+      "rerun_unsealed_task",
+      "replay_missing_outcome",
+      "refuse_contradicted_receipt"
+    ],
+    "why_it_matters": "Under stop_on_first_accepted a candidate that was deliberately left alone is neither an outcome nor remaining work. A resume reading only outcomes and plans re-runs it, which is not a repeat of the campaign but a different one.",
+    "defect_found_while_writing_it": {
+      "what": "The first implementation read candidate outcomes through completed_by_identity, which drops any run recorded without a run identity key. A candidate run need not carry one, so an interrupted sequence looked like a task nobody had touched and would have been planned as fresh work.",
+      "found_by": "the rerun_unsealed_task test, which recorded a candidate outcome",
+      "fix": "Read the outcome streams directly for candidate ids, independently of identity keys."
+    }
+  },
+  "rollback_refusal": {
+    "item": "S21D2-075, scratch leg",
+    "authority_gap": "The backlog names roll_back() refusing a disable receipt with rollback_permitted=false, and no such field existed anywhere in the codebase. The refusal could not have been written without adding it.",
+    "field_added_to": "LearnedActivationReceipt.rollback_permitted",
+    "hash_bound": true,
+    "required_on_disable": true,
+    "forbidden_on_every_other_action": true,
+    "disable_parameter_has_no_default": true,
+    "why_no_default": "A disable after a failed canary and a disable that parks a healthy component look identical from inside the service, and only the caller knows which it is. A default would guess, and the permissive guess is how a failed component gets restored by the very path that exists to restore a good one.",
+    "refusal_is_structural": "roll_back() reads the disable off the durable receipt chain before it consults the caller, the approval or the lineage, so the refusal cannot be stepped around by supplying better evidence.",
+    "compatibility_measurement": {
+      "concern": "LearnedActivationReceipt is a hashed contract, so a new field changes the canonical hash of every receipt. A receipt persisted before this change would fail to load with a hash mismatch.",
+      "measured": "learned_components = 0 in the inherited D1 store",
+      "source": "sprint-21d2-inherited-inventory.json",
+      "persisted_receipts_at_risk": 0,
+      "consequence": "The wave plan sequenced this 'before any real activation exists' as a preference. It is in fact a hard compatibility requirement, and the inventory proves the window was still open. Anyone running D2 against a store that already holds activation receipts needs a migration first."
+    }
+  },
+  "constraints_honoured": [
+    "No final, batch-B or canary body was opened; step ten asserts the seal locates none.",
+    "stop_on_first_accepted ran only against an isolated scratch component with a fixture ACTIVE state, never as a SHADOW or final execution mode.",
+    "No container was spent and no campaign was executed.",
+    "No evidence store, database or artifact root was written.",
+    "The frozen pre-registration contracts were not amended."
+  ],
+  "gates": {
+    "cognitive_os_tests": "2875 passed, 107 skipped",
+    "full_repository_tests": "3022 passed, 217 skipped",
+    "contract_schema_drift": "learned-activation-receipt.schema.json regenerated for the new field; the check caught the change before the commit, which is what it is for."
+  }
+}
