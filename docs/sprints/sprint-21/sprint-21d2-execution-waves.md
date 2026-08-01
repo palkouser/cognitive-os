@@ -5,7 +5,7 @@ It does not replace the backlog's `§6` wave table; it refines it against measur
 repository facts: two probes inserted, four epics resequenced, three waves split along
 real dependencies. Task numbering is unchanged (S21D2-000 … -095, 81 tasks in ten epics).
 
-Status: **W0, W1, W2 and W3a complete — the corpus is 95 of 95.** W0 evidence:
+Status: **W0, W1, W2, W3a and W3b complete — the corpus is sealed at 125 groups.** W0 evidence:
 [`sprint-21d2-baseline.json`](evidence/sprint-21d2-baseline.json),
 [`sprint-21d2-d1-erratum.json`](evidence/sprint-21d2-d1-erratum.json),
 [`sprint-21d2-inherited-inventory.json`](evidence/sprint-21d2-inherited-inventory.json).
@@ -100,7 +100,7 @@ with `0016` unallocated; `CorpusRole` is two-valued (`TRAINING`, `EVALUATION`);
 | **W1** | 004, **030**, **`P-GED`**, 010–016, **036**, 017 | strictly sequential after the probe | 036 ‖ 010–016 | **one-way door**: 017 freezes surface, features, groups, metrics, baseline rule, power *and* resource policy |
 | **W2** | **021**, 020, 029, 040, 043, 050, 052, 053, 054, 055, 056, **080**, **081**, **085a** | code only, no evidence | ‖ W3a | every new authority exists and is unit-green before any bulk evidence |
 | **W3a** ✅ | **`P-CLONE`**, 022-author | authoring; critical path (F3) | ‖ W2 | ≥85 genuinely new templates; near-clone and source-rights green — **met at 95** |
-| **W3b** | 022-seal, 026, 027, 028 | manifests, zero outcomes | after W3a | 115 disjoint groups; both OOD submanifests; capability isolation proven |
+| **W3b** ✅ | 022-seal, 026, 027, 028 | manifests, zero outcomes | after W3a | 115 disjoint groups; both OOD submanifests; capability isolation proven — **met at 125, all ten pairs disjoint** |
 | **W3c** | 058, **075-scratch** | one group end to end | after W2 + W3b | 10 slice steps green; failed-canary rollback refusal proven on scratch |
 | **W4** | 023, 024, 025 | container-bound (F4) | ‖ W5 | ≥200 fit + ≥40 calibration `SELF_PLAY`; zero `REAL_GOVERNED_RUN` |
 | **W5** | 031, 032 | measurement | ‖ W4 | canonical resource policy rev 2; width-20 diagnostic on the frozen 80 queries |
@@ -216,11 +216,55 @@ The 489 corpus tests execute every candidate against both suites through a sessi
 thread pool — 570 pytest invocations in ~49s rather than minutes — so the check survives as a
 gate on every later edit instead of being too slow to keep.
 
-### W3b/W3c — sealing and the vertical slice (022-seal, 026–028, 058, 075-scratch)
-Sealing is the second one-way door: counts may rise before it, never after. 058 is `§6.1`'s
-ten-step slice; `stop_on_first_accepted` is exercised only through an isolated scratch
-component with a fixture ACTIVE receipt. 075's scratch leg runs immediately after, so the
-`rollback_permitted=false` refusal is proven before any real activation exists.
+### W3b — sealing (022-seal, 026–028) — **complete**
+Sealing is the second one-way door: counts may rise before it, never after. Evidence:
+[`sprint-21d2-sealed-catalogues.json`](evidence/sprint-21d2-sealed-catalogues.json). Five
+catalogues at 50/10/30/30/5 groups and 500 outcome-free candidate slots, all ten partition
+pairs disjoint, seal hash `521e620f…`, reproducible from the corpus and the recorded seeds.
+Batch B carries its own seed and its own generator path, and is family-identical to batch A
+without being drawn from the same shuffle — it is a confirmation set, so it should look like A.
+
+**The placement of the inherited groups was the real decision.** Five partitions need 125
+groups and D2 authored 95, so C3's thirty must be used. Final A, final B and canary must be new
+relative to D1, and `S21D2-024` refuses an inherited group in calibration — so training is the
+only partition that can hold them, and that is also the only placement keeping a task D1 has
+already published out of every number D2 reports. All thirty go to training, none anywhere else.
+
+**They do not bring their identity with them.** A C3 candidate id is `uuid5(task_id, strategy)`,
+a reversible encoding of the recipe: reusing one would restore the D1 oracle through the
+identifier rather than through a feature — the same leak `F5` found, arriving by a different
+road. Inherited tasks enter under D2 opaque positional identity and the neutral binding
+instead, and zero of the 120 C3-derived candidate ids appear in the seal. The 214 inherited
+`REAL_GOVERNED_RUN` observations stay unread and training-ineligible; only the *tasks* are
+reused, re-executed as self-play.
+
+**The check that earns its runtime is the replay.** Every one of the 500 slots executes the
+variant it points at against that task's hidden verifier: 500 of 500 match their declaration.
+Nothing else catches a wrong recipe-to-position composition, which would mislabel the entire
+campaign while every hash stayed stable. Acceptance sits at exactly 0.5000 in all five
+partitions, and — measured on the sealed slots rather than on the corpus — no recipe and no
+*position* predicts the verdict (positions run 0.448/0.456/0.536/0.560). Position mattered as
+much as recipe here: opaque candidate identity is worth nothing if slot zero is always the
+answer.
+
+**The frozen feature contract was left alone, deliberately.** `variant_index` is label-adjacent
+and belongs in the catalogue, which is control material like the hidden verifier bundle. Adding
+it to `FITTED_FEATURE_DENYLIST` would change the pre-registered contract's hash and spend the
+single pre-final revision `§3.4` permits — to buy a guarantee the allowlist already gives, since
+it rejects by absence. A test asserts no catalogue field name appears in the allowlist instead.
+
+**Deferred with its reason.** No adapter from `SealedPartitionCatalogue` to the projector's
+`SealedCampaignManifest` was written. That shape needs `campaign_id`, `campaign_version` and
+`feature_sealed_at`, none of which exist until a campaign does, so building it now would be
+untested by construction. It belongs with W3c's vertical slice (S21D2-058), the first thing
+that runs one.
+
+### W3c — the vertical slice (058, 075-scratch)
+058 is `§6.1`'s ten-step slice; `stop_on_first_accepted` is exercised only through an isolated
+scratch component with a fixture ACTIVE receipt. 075's scratch leg runs immediately after, so
+the `rollback_permitted=false` refusal is proven before any real activation exists. W3c also
+carries the two items W2 and W3b deferred: `plan_resume()` receipt-awareness and the catalogue
+to campaign-manifest adapter.
 
 ### W4 ‖ W5 — self-play evidence and retrieval freeze (023–025 ‖ 031, 032)
 W4 is container-bound (F4); W5 is CPU measurement on already-frozen data. They share no

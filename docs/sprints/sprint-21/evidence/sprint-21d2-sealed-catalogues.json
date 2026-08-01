@@ -1,0 +1,301 @@
+{
+  "schema_version": 1,
+  "sprint": "21D2",
+  "wave": "W3b",
+  "items": [
+    "S21D2-022",
+    "S21D2-026",
+    "S21D2-027",
+    "S21D2-028"
+  ],
+  "recorded_at": "2026-08-01T17:26:14.613005+00:00",
+  "final_outcomes_inspected": false,
+  "purpose": "Seal the five partition catalogues, both OOD submanifests and the canary routing policy before any candidate is executed. This is the second one-way door: counts may rise up to this record and never after it.",
+  "seal": {
+    "content_hash": "521e620fc251545fe323444fa4a3bf925d0d4b0039efd79b097bb1f015e6fa96",
+    "pre_registration_revision": 2,
+    "distinct_groups": 125,
+    "required_distinct_groups": 125,
+    "new_groups_relative_to_d1": 95,
+    "required_new_groups": 95,
+    "candidate_slots": 500,
+    "outcomes_present": false,
+    "deterministic": true
+  },
+  "catalogues": [
+    {
+      "partition": "training",
+      "content_hash": "37eb59f2c374a06f02764ffcd5a21a4e8b1923ee5a0c62af0093567b708dfda9",
+      "groups": 50,
+      "group_floor": 50,
+      "candidate_slots": 200,
+      "campaign_seed": 21022101,
+      "generator_path": "correction_catalogue.seal_corpus:training",
+      "provenance": "self_play",
+      "corpus_role": "training",
+      "mode": "label_all",
+      "inherited_groups": 30,
+      "families": {
+        "boundary_collections": 9,
+        "data_transformation": 9,
+        "error_handling": 8,
+        "numeric_logic": 8,
+        "parsing_validation": 8,
+        "state_idempotency": 8
+      },
+      "outcomes_present": false
+    },
+    {
+      "partition": "calibration",
+      "content_hash": "39dcb9613d843e840b23db99fd3b99fd774ed8a324d4e718fcb951e084a253e2",
+      "groups": 10,
+      "group_floor": 10,
+      "candidate_slots": 40,
+      "campaign_seed": 21022202,
+      "generator_path": "correction_catalogue.seal_corpus:calibration",
+      "provenance": "self_play",
+      "corpus_role": "training",
+      "mode": "label_all",
+      "inherited_groups": 0,
+      "families": {
+        "boundary_collections": 1,
+        "data_transformation": 1,
+        "error_handling": 2,
+        "numeric_logic": 2,
+        "parsing_validation": 2,
+        "state_idempotency": 2
+      },
+      "outcomes_present": false
+    },
+    {
+      "partition": "final_a",
+      "content_hash": "69d5eedcaeccdfdcc183b050c89c3e4b49b709474a35511620c39f6f0292fb46",
+      "groups": 30,
+      "group_floor": 30,
+      "candidate_slots": 120,
+      "campaign_seed": 21026303,
+      "generator_path": "correction_catalogue.seal_corpus:final_a",
+      "provenance": "real_governed_run",
+      "corpus_role": "evaluation",
+      "mode": "label_all",
+      "inherited_groups": 0,
+      "families": {
+        "boundary_collections": 5,
+        "data_transformation": 5,
+        "error_handling": 5,
+        "numeric_logic": 5,
+        "parsing_validation": 5,
+        "state_idempotency": 5
+      },
+      "outcomes_present": false
+    },
+    {
+      "partition": "final_b",
+      "content_hash": "06a0c2f6641e4bf330d2fd29a9fab54b636c77d689917976133bafc92bf22a33",
+      "groups": 30,
+      "group_floor": 30,
+      "candidate_slots": 120,
+      "campaign_seed": 21027404,
+      "generator_path": "correction_catalogue.seal_corpus:final_b_independent",
+      "provenance": "real_governed_run",
+      "corpus_role": "evaluation",
+      "mode": "label_all",
+      "inherited_groups": 0,
+      "families": {
+        "boundary_collections": 5,
+        "data_transformation": 5,
+        "error_handling": 5,
+        "numeric_logic": 5,
+        "parsing_validation": 5,
+        "state_idempotency": 5
+      },
+      "outcomes_present": false
+    },
+    {
+      "partition": "canary",
+      "content_hash": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7",
+      "groups": 5,
+      "group_floor": 5,
+      "candidate_slots": 20,
+      "campaign_seed": 21028505,
+      "generator_path": "correction_catalogue.seal_corpus:canary",
+      "provenance": "real_governed_run",
+      "corpus_role": "evaluation",
+      "mode": "stop_on_first_accepted",
+      "inherited_groups": 0,
+      "families": {
+        "boundary_collections": 1,
+        "error_handling": 1,
+        "numeric_logic": 1,
+        "parsing_validation": 1,
+        "state_idempotency": 1
+      },
+      "outcomes_present": false
+    }
+  ],
+  "corpus_expansion_count_proof": {
+    "authored_for_d2": 95,
+    "inherited_from_d1": 30,
+    "total": 125,
+    "claimed_exactly_once": true
+  },
+  "group_disjointness_matrix": {
+    "pairs": [
+      {
+        "left": "training",
+        "right": "calibration",
+        "shared_groups": 0
+      },
+      {
+        "left": "training",
+        "right": "final_a",
+        "shared_groups": 0
+      },
+      {
+        "left": "training",
+        "right": "final_b",
+        "shared_groups": 0
+      },
+      {
+        "left": "training",
+        "right": "canary",
+        "shared_groups": 0
+      },
+      {
+        "left": "calibration",
+        "right": "final_a",
+        "shared_groups": 0
+      },
+      {
+        "left": "calibration",
+        "right": "final_b",
+        "shared_groups": 0
+      },
+      {
+        "left": "calibration",
+        "right": "canary",
+        "shared_groups": 0
+      },
+      {
+        "left": "final_a",
+        "right": "final_b",
+        "shared_groups": 0
+      },
+      {
+        "left": "final_a",
+        "right": "canary",
+        "shared_groups": 0
+      },
+      {
+        "left": "final_b",
+        "right": "canary",
+        "shared_groups": 0
+      }
+    ],
+    "pairs_sharing_a_group": 0
+  },
+  "inherited_group_placement": {
+    "decision": "every inherited group is in training and in no other partition",
+    "why": "Final A, final B and canary must be new relative to D1, and S21D2-024 refuses an inherited group in calibration, so training is the only partition that can hold them. It is also the only placement that keeps a task D1 already published out of every number D2 will report.",
+    "inherited_in_training": 30,
+    "inherited_elsewhere": 0,
+    "c3_candidate_identities_reused": 0,
+    "why_that_matters": "A C3 candidate id is uuid5 of the task id and the strategy, so it is a reversible encoding of the recipe. Reusing one would restore the D1 oracle through the identifier rather than through a feature. Inherited tasks enter under D2 opaque positional identity and the neutral recipe binding instead.",
+    "d1_outcomes_read": 0,
+    "d1_outcome_reuse": "None. The inherited tasks are re-executed as self-play; the 214 inherited REAL_GOVERNED_RUN observations remain training-ineligible and unread."
+  },
+  "verifier_replay": {
+    "method": "For every sealed slot, execute the authored variant the slot points at against that task's hidden verifier, and compare the verdict with what the slot declares. This is the only check that catches a wrong recipe-to-position composition, which would leave every hash stable while mislabelling the run.",
+    "slots_replayed": 500,
+    "slots_matching_their_declaration": 500,
+    "mismatches": [],
+    "accepted_fraction_per_partition": {
+      "training": 0.5,
+      "calibration": 0.5,
+      "final_a": 0.5,
+      "final_b": 0.5,
+      "canary": 0.5
+    }
+  },
+  "oracle_checks_at_the_sealed_slot": {
+    "note": "Measured on the sealed slots rather than on the corpus, because it is the slot a ranker will actually see.",
+    "accepted_rate_per_recipe": {
+      "recipe_alpha": 0.576,
+      "recipe_beta": 0.48,
+      "recipe_delta": 0.448,
+      "recipe_gamma": 0.496
+    },
+    "accepted_rate_per_position": {
+      "0": 0.448,
+      "1": 0.456,
+      "2": 0.536,
+      "3": 0.56
+    },
+    "interpretation": "A rate at 1.0 or 0.0 for any recipe would be the C3 oracle under a new name; a rate at an extreme for any position would make opaque candidate identity worthless, because the slot number would be the answer."
+  },
+  "source_rights_report": {
+    "licence": "Apache-2.0",
+    "origin": "first_party_authored_in_repository",
+    "third_party_sources": 0,
+    "groups_covered": 125,
+    "usage_rights_verified": true,
+    "note": "Both corpora are authored in this repository under its own licence, so there is no third-party right to clear and the report is a statement rather than a scan. It is recorded because the acceptance asks for rights to be verified before any candidate execution, and 'none to clear' is the verification."
+  },
+  "ood_submanifests": {
+    "calibration_precheck": {
+      "content_hash": "48d3b766c4dc0104dfe4653e7b808c5c1af6570d9ee9c3cfbf2b8b53082c1381",
+      "bound_to": [
+        "39dcb9613d843e840b23db99fd3b99fd774ed8a324d4e718fcb951e084a253e2"
+      ],
+      "groups": 10,
+      "perturbations": [
+        "rename_every_identifier_in_the_visible_module",
+        "reorder_independent_statements_in_the_baseline",
+        "rewrite_the_issue_text_without_changing_the_contract",
+        "substitute_equivalent_literals_in_the_visible_tests"
+      ],
+      "perturbation_seed": 21024606
+    },
+    "promotion": {
+      "content_hash": "78513b45c657f336a3721f47b47de56dd7d0a966ba9bc4fb6802f11e5ffc339e",
+      "bound_to": [
+        "69d5eedcaeccdfdcc183b050c89c3e4b49b709474a35511620c39f6f0292fb46",
+        "06a0c2f6641e4bf330d2fd29a9fab54b636c77d689917976133bafc92bf22a33"
+      ],
+      "groups": 60,
+      "minimum_groups_required": 10,
+      "future_ranker_decisions_available": 240,
+      "minimum_decisions_required": 100,
+      "perturbations": [
+        "rename_every_identifier_in_the_visible_module",
+        "substitute_equivalent_literals_in_the_visible_tests",
+        "reorder_the_published_test_functions"
+      ],
+      "perturbation_seed": 21022707
+    },
+    "separation": "The two submanifests share no group and no hash, so the promotion set stays untouched while the calibration precheck is resolved."
+  },
+  "canary_routing_policy": {
+    "content_hash": "ee7b37d0be72ff969ce2879165d3997d603d308c9673eb5cbc2071cb78f2589c",
+    "canary_manifest_hash": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7",
+    "routed_groups": 5,
+    "component_id": "learned.knn.correction_ranking",
+    "mode": "stop_on_first_accepted",
+    "kill_switch_setting": "learned.correction_ranking_groups",
+    "kill_switch_partner_setting": "learned.correction_ranking_manifest_hash",
+    "kill_switch_default_is_off": true,
+    "excluded_from_every_decision": true,
+    "shipped_state": "learned.correction_ranking_groups is empty by default, and the configuration refuses a routing set without its manifest hash, so the canary cannot be switched on halfway."
+  },
+  "capability_isolation": {
+    "claim": "fitting receives the manifest hash and nothing that locates a holdout body",
+    "evidence": "The sealed corpus record carries only per-partition hashes. No final or canary repository group, task id or candidate id appears anywhere in its serialisation.",
+    "final_and_canary_identifiers_in_the_seal_serialisation": 0
+  },
+  "constraints_honoured": [
+    "No candidate was executed as a campaign: the replay runs the authored variants in throwaway directories and writes no outcome anywhere.",
+    "No evidence store, database or artifact root was written.",
+    "No D1 or C3 observation was read.",
+    "The frozen feature contract was not amended: the catalogue's field names are absent from the fitted allowlist, which rejects by absence, so spending the one permitted pre-final revision to extend the denylist would have bought nothing."
+  ]
+}
