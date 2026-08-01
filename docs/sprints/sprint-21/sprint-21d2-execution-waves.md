@@ -5,7 +5,7 @@ It does not replace the backlog's `§6` wave table; it refines it against measur
 repository facts: two probes inserted, four epics resequenced, three waves split along
 real dependencies. Task numbering is unchanged (S21D2-000 … -095, 81 tasks in ten epics).
 
-Status: **W0, W1 and W2 complete.** W0 evidence:
+Status: **W0, W1 and W2 complete; W3a probe complete, W3a authoring 10 of 95.** W0 evidence:
 [`sprint-21d2-baseline.json`](evidence/sprint-21d2-baseline.json),
 [`sprint-21d2-d1-erratum.json`](evidence/sprint-21d2-d1-erratum.json),
 [`sprint-21d2-inherited-inventory.json`](evidence/sprint-21d2-inherited-inventory.json).
@@ -32,6 +32,16 @@ resume machinery with its own callers and changing it without a campaign to resu
 untested by construction. It belongs with W3c's vertical slice (S21D2-058), which is the first
 thing that actually resumes a D2 campaign. Recorded here rather than in a commit message so it
 cannot be lost.
+
+**W3a's probe is complete; its authoring is not.** `P-CLONE`
+([`sprint-21d2-p-clone-probe.json`](evidence/sprint-21d2-p-clone-probe.json)) authored the
+first ten D2 templates and measured what the plan needed to know before committing to
+ninety-five. It found a defect in **four of the ten**, none of them visible by inspection, and
+the corrected cohort is clean on every axis. It also removed a leak the enum rename alone would
+not have: binding recipe to variant *per task* is what stops `recipe_alpha` from being the C3
+oracle under a new spelling — measured repair rates are 0.4/0.5/0.5/0.6 where C3 measured 1.0
+and 0.0. **85 templates remain**, at a measured ~80 lines each and an expected ~34 further
+defect-and-repair cycles.
 
 **W1 changed two planned numbers.** `P-GED` measured the per-pair GED timeout at **90 ms**
 rather than the inherited 250 ms (F1 below, superseded by the probe's own finding), and
