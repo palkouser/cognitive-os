@@ -23,6 +23,7 @@ import asyncio
 import json
 import os
 import sys
+from pathlib import Path
 from typing import Any
 from uuid import UUID
 
@@ -299,8 +300,72 @@ async def _smoke(args: argparse.Namespace) -> int:
     return 0 if report["healthy"] else 1
 
 
+async def _correction_runtime(args: argparse.Namespace) -> int:
+    """S21D2-080. Report why the correction surface is or is not using a learned ordering.
+
+    Read-only and offline: it reconciles the *configuration* half against the durable half
+    and prints the reason code the resolver would return. It cannot activate, approve or
+    change anything — there is no flag here that turns the component on, because turning it
+    on is an approval-bound transaction rather than a command-line option.
+    """
+    from cognitive_os.application.services.learned_runtime import (
+        ActiveComponentState,
+        EmbeddingIdentity,
+        LearnedRuntimeResolver,
+        RoutingPolicy,
+    )
+    from cognitive_os.config.learned_config import load_learned_configuration
+    from cognitive_os.learning.correction_ranking import CorrectionKnn
+
+    if not args.config:
+        _emit({"error": "correction-runtime needs --config naming a learned configuration"})
+        return 2
+    configuration = load_learned_configuration(Path(args.config))
+    policy = RoutingPolicy(
+        persistence_enabled=configuration.persistence_enabled,
+        activation_enabled=configuration.activation_enabled,
+        active_components=configuration.active_components,
+        routed_groups=configuration.correction_ranking_groups,
+        routing_manifest_hash=configuration.correction_ranking_manifest_hash,
+    )
+    expected = EmbeddingIdentity(
+        model_id=args.model_id or "", revision=args.model_revision or "", available=True
+    )
+    resolver = LearnedRuntimeResolver(surface=CorrectionKnn.surface, expected_embedding=expected)
+
+    async def action(repository: Any) -> int:
+        row = await repository.active_component_for(CorrectionKnn.surface)
+        states = (
+            []
+            if row is None
+            else [
+                ActiveComponentState(
+                    component_id=row.component_id,
+                    surface=CorrectionKnn.surface,
+                    revision=row.current_revision,
+                    model_artifact_id=UUID(int=0),
+                    lineage_verified=False,
+                    descriptor_revision=row.current_revision,
+                )
+            ]
+        )
+        resolved = resolver.resolve(
+            policy=policy,
+            active_states=states,
+            group=args.group or "",
+            artifact_present=False,
+            local_embedding=expected,
+        )
+        health = resolver.health(resolved, routed_groups=len(policy.routed_groups))
+        _emit(health.as_dict())
+        return 0
+
+    return await _with_repository(action)
+
+
 _ACTIONS = {
     "health": _health,
+    "correction-runtime": _correction_runtime,
     "component-show": _component_show,
     "component-history": _component_history,
     "evidence-verify": _evidence_verify,
@@ -320,6 +385,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--component-id", help="exact learned component identifier")
     parser.add_argument("--lineage-id", help="exact artifact lineage identifier")
     parser.add_argument("--surface", help="restrict to one decision surface")
+    parser.add_argument("--config", help="learned configuration file to reconcile against")
+    parser.add_argument("--group", help="task group to test routing for")
+    parser.add_argument("--model-id", help="expected local embedding model identifier")
+    parser.add_argument("--model-revision", help="expected local embedding model revision")
     parser.add_argument(
         "--status", choices=("accepted", "quarantined", "rejected"), help="observation status"
     )

@@ -55,6 +55,10 @@ class LearnedArtifactFormat(StrEnum):
 
     SAFETENSORS = "safetensors"
     JOBLIB = "joblib"
+    #: Sprint 21D2. Inert by construction: the bytes are UTF-8 JSON validated against a
+    #: declared schema, so loading one constructs a known object from numbers rather than
+    #: reconstructing whatever object graph the producer happened to pickle.
+    JSON = "json"
     NONE = "none"
 
 

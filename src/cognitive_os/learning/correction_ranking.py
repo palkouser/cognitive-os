@@ -271,6 +271,26 @@ class CorrectionKnn:
         return len(self._exemplars)
 
     @property
+    def k(self) -> int:
+        return self._k
+
+    @property
+    def embedding_weight(self) -> Decimal:
+        return Decimal(str(self._embedding_weight))
+
+    @property
+    def similarity_floor(self) -> Decimal:
+        return self._similarity_floor
+
+    @property
+    def agreement_floor(self) -> Decimal:
+        return self._agreement_floor
+
+    @property
+    def confidence_floor(self) -> Decimal:
+        return self._confidence_floor
+
+    @property
     def settings(self) -> dict[str, object]:
         return {
             "k": self._k,

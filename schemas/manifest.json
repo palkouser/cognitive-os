@@ -3536,7 +3536,7 @@
     {
       "file": "v1/learned/learned-component-descriptor.schema.json",
       "model": "LearnedComponentDescriptor",
-      "sha256": "dd46269a91bec55962766d708cd6e1830901774ccb44ee7f1503d74aad1f5398"
+      "sha256": "8786a1c3ca09e526b8312161e45e0c42dd40077c66c9282ec2ba6aa083593a83"
     },
     {
       "file": "v1/learned/learned-component-revision-record.schema.json",
@@ -3581,7 +3581,7 @@
     {
       "file": "v1/learned/learned-promotion-assessment.schema.json",
       "model": "LearnedPromotionAssessment",
-      "sha256": "20e4e5390894010407fdab22a2515dd8942fed1bde4826e4a80bcb3c07319c06"
+      "sha256": "51add23310b15e88ad5259c0d29c9208b280ee72d129dc725a8845cbce52e279"
     },
     {
       "file": "v1/learned/learned-replay-result.schema.json",

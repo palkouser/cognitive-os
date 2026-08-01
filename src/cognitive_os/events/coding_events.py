@@ -153,3 +153,82 @@ CODING_EVENT_MODELS: tuple[type[EventPayload], ...] = (
     CodingResultPackaged,
     CodingOutcomeRecorded,
 )
+
+
+class RealityCampaignSequenceRecorded(EventPayload):
+    """The terminal record of one task's candidate sequence, Sprint 21D2.
+
+    S21D2-054. A campaign that stops at the first verifier acceptance leaves candidates
+    deliberately unattempted, and "deliberately unattempted" is a third state that neither the
+    outcome stream nor the plan can express: the outcome stream has no row for them, and the
+    plan still lists them. A resume that reads only those two therefore re-runs work the
+    campaign already decided not to do, which is not a repeat — it is a different campaign.
+
+    So the sequence itself is the durable authority, appended once per task with
+    compare-and-set on the campaign stream. It records what the baseline order was, what the
+    resolved order was, what was actually attempted and in which order, why it stopped, and
+    which candidates were intentionally left alone.
+    """
+
+    event_type = "reality.campaign_sequence_recorded"
+    campaign_id: UUID
+    task_id: UUID
+    partition: NonEmptyStr
+    mode: NonEmptyStr
+    campaign_manifest_hash: Sha256Hex
+    #: The frozen deterministic order, which is also the tie-break and the fallback.
+    baseline_order: tuple[UUID, ...]
+    #: What the runtime resolved. Equal to `baseline_order` under fallback or abstention.
+    resolved_order: tuple[UUID, ...]
+    #: Actual execution order. A prefix of `resolved_order` under stop-first.
+    attempted_order: tuple[UUID, ...]
+    accepted_candidate_id: UUID | None = None
+    accepted_position: int | None = None
+    accepted_event_id: UUID | None = None
+    verifier_evidence_hash: Sha256Hex | None = None
+    stop_reason: NonEmptyStr
+    #: Never outcomes, and never remaining work. The state resume has to be told about.
+    intentionally_unattempted: tuple[UUID, ...] = ()
+    learned_ordering_used: bool = False
+    occurred_at: UtcDatetime
+
+    @model_validator(mode="after")
+    def the_sequence_describes_one_coherent_execution(self) -> RealityCampaignSequenceRecorded:
+        if not self.baseline_order:
+            raise ValueError("a sequence with no baseline order has nothing to fall back to")
+        if sorted(self.resolved_order, key=str) != sorted(self.baseline_order, key=str):
+            raise ValueError("the resolved order must be a permutation of the baseline order")
+        if len(set(self.attempted_order)) != len(self.attempted_order):
+            raise ValueError("a candidate cannot be attempted twice in one sequence")
+        unknown = set(self.attempted_order) - set(self.baseline_order)
+        if unknown:
+            raise ValueError(
+                f"attempted candidates are not in this task: {sorted(map(str, unknown))}"
+            )
+        overlap = set(self.attempted_order) & set(self.intentionally_unattempted)
+        if overlap:
+            raise ValueError(
+                f"candidates are both attempted and unattempted: {sorted(map(str, overlap))}"
+            )
+        covered = set(self.attempted_order) | set(self.intentionally_unattempted)
+        if covered != set(self.baseline_order):
+            missing = set(self.baseline_order) - covered
+            raise ValueError(
+                "every candidate must be attempted or intentionally unattempted; "
+                f"unaccounted: {sorted(map(str, missing))}"
+            )
+        if (self.accepted_candidate_id is None) != (self.accepted_position is None):
+            raise ValueError("an acceptance needs both its candidate and its position")
+        if self.accepted_candidate_id is not None:
+            if self.accepted_candidate_id not in self.attempted_order:
+                raise ValueError("the accepted candidate was never attempted")
+            if self.attempted_order.index(self.accepted_candidate_id) != self.accepted_position:
+                raise ValueError("the accepted position does not match the attempt order")
+            if self.verifier_evidence_hash is None:
+                raise ValueError("an acceptance without verifier evidence is a claim, not a result")
+        elif self.intentionally_unattempted:
+            raise ValueError(
+                "candidates were left unattempted with nothing accepted, so the sequence "
+                "neither finished nor stopped for a reason it can name"
+            )
+        return self

@@ -957,6 +957,14 @@ jobs:
           --extra memory-postgres
       - name: Learned evidence contracts and repository tests
         run: uv run pytest tests/cognitive_os/learned_evidence -q
+      # S21D2-085a. The general `test` lane runs these too, but it runs everything, so a
+      # failure there says "the suite is red" rather than "the learned plane is red". This
+      # lane owns the correction-ranking spine: pre-registration contracts, encoder, ranker,
+      # artifact and loader, runtime resolver, role-bound projector.
+      - name: Correction-ranking spine
+        run: uv run pytest tests/cognitive_os/learning -q
+      - name: Correction candidate sequencing and receipts
+        run: uv run pytest tests/cognitive_os/coding/test_correction_sequencer.py -q
       - name: Learned evidence schema drift
         run: uv run python -m cognitive_os.schemas.export --check
       - name: Learned table metadata imports without a live database
