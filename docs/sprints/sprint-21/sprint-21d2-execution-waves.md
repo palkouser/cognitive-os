@@ -5,7 +5,7 @@ It does not replace the backlog's `§6` wave table; it refines it against measur
 repository facts: two probes inserted, four epics resequenced, three waves split along
 real dependencies. Task numbering is unchanged (S21D2-000 … -095, 81 tasks in ten epics).
 
-Status: **W0 and W1 complete.** W0 evidence:
+Status: **W0 and W1 complete; W2 partially complete.** W0 evidence:
 [`sprint-21d2-baseline.json`](evidence/sprint-21d2-baseline.json),
 [`sprint-21d2-d1-erratum.json`](evidence/sprint-21d2-d1-erratum.json),
 [`sprint-21d2-inherited-inventory.json`](evidence/sprint-21d2-inherited-inventory.json).
@@ -16,6 +16,13 @@ W1 evidence: draft PR `#219`,
 [`sprint-21d2-pre-registration.json`](evidence/sprint-21d2-pre-registration.json).
 **Door D1 is closed:** revision 2 selects `experience.correction_ranking` as primary. W2 has
 not started.
+
+**W2 is partially complete.** Landed and green: S21D2-021 (opaque candidate identity, neutral
+recipes, validation before the append), S21D2-020 (explicit paged group-aware selection with
+the split digest in dataset identity), S21D2-040 and S21D2-043 (correction encoder and bounded
+k-NN). Not started: S21D2-029, -050, -052, -053, -054, -055, -056, -080, -081 and the 085a CI
+lane. W3 cannot open until those land, since S21D2-058's vertical slice depends on all of
+them.
 
 **W1 changed two planned numbers.** `P-GED` measured the per-pair GED timeout at **90 ms**
 rather than the inherited 250 ms (F1 below, superseded by the probe's own finding), and
