@@ -14,8 +14,7 @@ W1 evidence: draft PR `#219`,
 [`sprint-21d2-p-ged-probe.json`](evidence/sprint-21d2-p-ged-probe.json),
 [`sprint-21d2-power-analysis.json`](evidence/sprint-21d2-power-analysis.json),
 [`sprint-21d2-pre-registration.json`](evidence/sprint-21d2-pre-registration.json).
-**Door D1 is closed:** revision 2 selects `experience.correction_ranking` as primary. W2 has
-not started.
+**Door D1 is closed:** revision 2 selects `experience.correction_ranking` as primary.
 
 **W2 is partially complete.** Landed and green: S21D2-021 (opaque candidate identity, neutral
 recipes, validation before the append), S21D2-020 (explicit paged group-aware selection with
