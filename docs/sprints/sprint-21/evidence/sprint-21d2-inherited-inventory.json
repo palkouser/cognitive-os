@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "sprint": "21D2",
+  "wave": "W0",
+  "items": [
+    "S21D2-003"
+  ],
+  "recorded_at": "2026-08-01T07:17:46+00:00",
+  "purpose": "Freeze exactly what Sprint 21D2 inherits and fix its permitted role before any D2 corpus exists. Every figure below came from a SQL SELECT or a file read; no application service was used, so no access row was written to an inherited store.",
+  "authority_rule": "Backlog section 0.3: all 214 released C3/D1 outcomes are real governed evidence. They are available for surface diagnosis, historical development comparison and retained evaluation. They are not available for training, calibration, threshold choice or artifact exemplars.",
+  "released_outcomes": {
+    "value": 214,
+    "authority_file": "docs/sprints/sprint-21/evidence/sprint-21d1-outcome-view.json",
+    "authority_file_sha256": "109e5b7486eb6c0ebde16df7b8406aa5ce85db4d87563e24fcd014317be247f0",
+    "distinct_outcome_id": 214,
+    "distinct_outcome_hash": 214,
+    "by_population": {
+      "benchmark": 64,
+      "coding": 150
+    },
+    "by_run_kind": {
+      "benchmark_replay": 64,
+      "candidate": 120,
+      "baseline": 30
+    },
+    "by_domain": {
+      "mathematics": 6,
+      "physics": 6,
+      "generic": 36,
+      "logic": 6,
+      "context": 6,
+      "semantic": 4,
+      "coding": 150
+    },
+    "label_source": {
+      "independent_verifier": 214
+    },
+    "source_event_resolved": {
+      "False": 64,
+      "True": 150
+    },
+    "outcome_id_digest_sha256": "bf493ec868d9a047131d059ccb3e776487700c95f18cc238c6ec39ff14ce3b34",
+    "outcome_hash_digest_sha256": "087d55d2ef527514e17f4ba1f4b96479e971ee1ead3cb6c4784d91d438acf012"
+  },
+  "deferred_correction_ranking_examples": {
+    "value": 120,
+    "definition": "The 120 candidate runs of the 30 offline coding tasks, four per task. These are the examples that made experience.correction_ranking the only balanced D1 candidate.",
+    "groups": 30,
+    "tasks": 30,
+    "balance": {
+      "rejected": 60,
+      "accepted": 60
+    },
+    "by_candidate_strategy": {
+      "incomplete_b": 30,
+      "incomplete_a": 30,
+      "correct_narrow": 30,
+      "correct_robust": 30
+    },
+    "outcome_id_digest_sha256": "884e31dccf5f30c185ff6162857abd7171de04997d6314694177e621263048a2",
+    "permitted_d2_use": "surface diagnosis and historical development comparison only",
+    "prohibited_d2_use": "training, calibration, threshold choice, artifact exemplars"
+  },
+  "graph_evidence": {
+    "pairs": {
+      "value": 80,
+      "authority_file_sha256": "4cdd07706f695401c1ead558d9fdb974c4c2ddf866af5f0d12eeea233588481f",
+      "by_origin": {
+        "fresh": 20,
+        "historical": 60
+      },
+      "by_domain": {
+        "logic": 10,
+        "mathematics": 10,
+        "coding": 60
+      },
+      "groups": 50,
+      "task_signatures": 50,
+      "legacy_recompilation_unavailable": 60,
+      "pair_id_digest_sha256": "a28d84a800f39b7a041c1f1d160600981317f6f49f2377fed01d886ac4a5e021"
+    },
+    "queries": {
+      "value": 80,
+      "authority_file_sha256": "0a82bfe390a9216f1017bbeb70a09e29ef4747519fb4b8fd6bcf0803efb6650a",
+      "by_domain": {
+        "coding": 60,
+        "logic": 10,
+        "mathematics": 10
+      },
+      "by_relevance_tier": {
+        "1": 66,
+        "2": 14
+      },
+      "seen_task": {
+        "False": 80
+      },
+      "query_id_digest_sha256": "0e745e58ec05ef56417be35450238bc8c8da803025ed67bc1446f2b11a831727"
+    },
+    "permitted_d2_use": "Development and regression diagnostic only. Backlog section 2.3: rerunning the frozen D1 80 queries is diagnostic evidence, not Gate D1 condition 15 closure."
+  },
+  "embedding_identity": {
+    "model": "all-MiniLM-L6-v2",
+    "tree_digest": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+    "local_path": "/home/palkouser/projekt/cognitive-os-data/models/all-MiniLM-L6-v2",
+    "rule": "D2 pins the same identity. A second embedding model is out of scope."
+  },
+  "inherited_learned_stores": {
+    "cognitive_os_s21c3_test": {
+      "learned_observations": 960,
+      "accepted": 896,
+      "quarantined": 64,
+      "provenance_class": {
+        "real_governed_run": 960
+      },
+      "note": "Revalidates sprint-21d1-c3-inventory.json. The store was never emptied between C3 waves, so it holds rehearsal executions alongside the released campaign and is not the authority for any released count."
+    },
+    "cognitive_os_s21d1_test": {
+      "learned_observations": 0,
+      "learned_datasets": 0,
+      "learned_components": 0,
+      "learned_artifacts": 0,
+      "learned_evidence_records": 0,
+      "note": "D1 fitted nothing and activated nothing, so it projected no learned observation. The inherited learned plane is empty apart from C3's intake."
+    },
+    "cognitive_os_s21d2_test": {
+      "learned_observations": 0,
+      "note": "The D2 store starts empty. Every D2 observation will be created by D2."
+    }
+  },
+  "negative_training_membership_proof": {
+    "claim": "Zero inherited real-run observation is eligible for D2 training or calibration, and no D2 fitting snapshot can reach one.",
+    "structural_argument": [
+      "Every one of the 960 learned observations in the C3 store has provenance_class = real_governed_run. None is self-play, so none is training-eligible under the existing LearnedDatasetBuilder rule that drops non-training-eligible rows from a TRAINING corpus.",
+      "The D1 store holds zero learned observations, so it contributes none.",
+      "D2 reads and writes cognitive_os_s21d2_test, a separate database that starts with zero learned observations. The C3 and D1 stores are not connected to it, so a D2 training snapshot cannot select a row that lives in them.",
+      "The 120 deferred correction-ranking examples are identified here by digest so any later D2 training or calibration manifest can be checked against them directly."
+    ],
+    "forbidden_identity_digests": {
+      "all_released_outcome_ids": "bf493ec868d9a047131d059ccb3e776487700c95f18cc238c6ec39ff14ce3b34",
+      "deferred_correction_ranking_outcome_ids": "884e31dccf5f30c185ff6162857abd7171de04997d6314694177e621263048a2",
+      "algorithm": "sha256 of the newline-joined sorted identity strings"
+    },
+    "check_rule": "A D2 training or calibration manifest is invalid if any member resolves to an outcome identity in sprint-21d1-outcome-view.json, or to any observation whose provenance_class is real_governed_run. Both checks are membership tests, not sampling.",
+    "verified_at_w0": true,
+    "d2_training_snapshots_existing_at_w0": 0
+  },
+  "consequences_for_d2": [
+    "Gate D1 condition 6 cannot be closed by the 214 inherited outcomes; it needs new final D2 evidence.",
+    "Gate D1 condition 15 cannot be closed by the frozen 80 D1 queries; it needs a new unseen-task holdout.",
+    "The 120 deferred examples justify selecting experience.correction_ranking as a candidate. They may not be relabelled as D2 training under any campaign.",
+    "Re-executing a rights-cleared task under a new SELF_PLAY campaign is permitted only as a new observation with new provenance and a group excluded from every D2 final and canary set."
+  ]
+}

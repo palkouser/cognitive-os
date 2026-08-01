@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "sprint": "21D2",
+  "wave": "W0",
+  "items": [
+    "S21D2-001"
+  ],
+  "recorded_at": "2026-08-01T07:17:46+00:00",
+  "purpose": "Record what the released Sprint 21D1 bundle states inaccurately, without changing one byte of it. The D1 tag, report, gate assessment and evidence files are protected historical evidence: they are corrected by this erratum, never by rewriting.",
+  "protected_objects_unchanged": {
+    "tag_object": "a59977dbcf23df60a700385a6fc15b012bf6d142",
+    "peeled_commit": "b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9",
+    "files": {
+      "sprint-21d1-report.md": "feaeb9a40ab64a71c5be51c6b24ff88ca1cd6d16cd4818cdd3d464a1863ce5af",
+      "gate-d1-assessment.md": "450a6998213b865b816d7ecac9a4a0ac6ceed9d5b260761edfbd20b0c12be456"
+    },
+    "evidence_files_hashed": {
+      "sprint-21d1-baseline.json": "2e463d73828c38668a70dce7fe2b2775193c63130474cc1c22292b6cf52b6f56",
+      "sprint-21d1-c3-inventory.json": "2523aa109984f765720d1ca52d7c68d04267640298cd85daf1c57bbc2efd81f5",
+      "sprint-21d1-emg-root.json": "25b89bc8316c7b3d2f556e4e1aca4ff9619702a8bf1306fbe346cef2362f90ae",
+      "sprint-21d1-fresh-pairs.json": "e484393e474cd029fcb1fc97efd5c5cc099780adf51798a50339bc9c5d763ccf",
+      "sprint-21d1-graph-queries.json": "0a82bfe390a9216f1017bbeb70a09e29ef4747519fb4b8fd6bcf0803efb6650a",
+      "sprint-21d1-historical-pairs.json": "8944f892db1ea1d378dc7c7380f52e2eb46f2c944e6f78c5d75974531bb43635",
+      "sprint-21d1-outcome-view.json": "109e5b7486eb6c0ebde16df7b8406aa5ce85db4d87563e24fcd014317be247f0",
+      "sprint-21d1-pair-set.json": "4cdd07706f695401c1ead558d9fdb974c4c2ddf866af5f0d12eeea233588481f",
+      "sprint-21d1-pre-registration.json": "8bf513db879c992dc30f91de433d0b9d350e3c8ae25bd79d63bca546c43f5241",
+      "sprint-21d1-primary-baseline.json": "69ad9047c7ac966b8d9470a06be771eb683f001965ecd7594c2189d242e04823",
+      "sprint-21d1-release.json": "0287adad91e9a24bea6b084da4f936b6a167f2ec291a9a246fb3706dc3b2accb",
+      "sprint-21d1-residuals.json": "8be44ab9b62cf03ae54bf1c7e8e487065c7b727111e73fd46eb3f7548b382e07",
+      "sprint-21d1-retrieval-benchmark.json": "7ca6b1c71872ddd70967a6b1bf5a012077814514d67682b4485788e8f7281510",
+      "sprint-21d1-surface-audit.json": "ea4cdfd342d0821bc174f09fc9b4b3053092f03fb02703f18153d26b4415e06c",
+      "sprint-21d1-verification-matrix.json": "2853844962f5947062f671726ec112eebe1ab89bd1f2c9023dd169d6352156b2",
+      "sprint-21d1-vertical-slice.json": "33e092c535543f4bed169729c726c52cbc0d5b220cce561332f646b445070821",
+      "sprint-21d1-w3a-resolution.json": "74c7241e78bb6d524b6839814de67e28ac59322c723b2c540eec541f0422d2ea",
+      "sprint-21d1-w3b-execution.json": "703795397cae346422a53b9c1d3b994cb023837dc12b292b7b36057c435a44f2",
+      "sprint-21d1-w3b-selection.json": "54bb208b5209d5378561c2d30cd0fed9f20d9f66811e33a6079725a304432ca8",
+      "sprint-21d1-w3c-and-vertical-slice.json": "6839b453e09c84af22e7f1a2704a68bded212f12fdd8c80403d345106a8fc3f1",
+      "sprint-21d1-w4-graph-vertical.json": "1567696e53ee9e74e19190afa72eda08bb6cc18f676a6ea9b86540bd60521c86",
+      "sprint-21d1-w5a-retrieval.json": "4fb18de852f299a1aa630d5d8237efd638179353d93ba2b1d4ee14e343619fb4",
+      "sprint-21d1-w5b-context.json": "cb6ca518fcb2705827ef50bd37c01bf681f6a2a7fe1c90adae854b08c7dcc053",
+      "sprint-21d1-w6a-decision.json": "d4557f2d6b55dc17013b98fc7bbcfe47c5230ff25ec47f1fe6e508d7e07d50de",
+      "sprint-21d1-w6b-operations.json": "d146316d886335f6b562f4d2e9693363aa303b9ce70685254b229ebd332350cd",
+      "sprint-21d1-w6c-ci-and-matrix.json": "4b07477df7a108426952f1bc8f51903ce918fefc12192359b60599e83f164058",
+      "sprint-21d1-w7-release.json": "07d5acf49b541f2d9fd3135c243b6339c4af4dedab446fe1ff4d06fabd4479df"
+    },
+    "statement": "No byte of any object listed above was modified by Sprint 21D2."
+  },
+  "authority_rule": "Remote Git and CI chronology is authoritative for release ordering. A recorded assessment or evidence timestamp describes when a document was written, not when the release event happened.",
+  "discrepancies": [
+    {
+      "id": "E1",
+      "subject": "implementation pull request size",
+      "recorded_in_release_bundle": "13 commits, 77 files (sprint-21d1-report.md, section 1)",
+      "measured_on_the_remote": {
+        "pull_request": 217,
+        "commits": 14,
+        "files": 84,
+        "additions": 44661,
+        "deletions": 520
+      },
+      "source": "gh pr view 217 --json commits,files",
+      "effect": "Descriptive only. No count that Gate D1 or Gate L2 depends on is derived from the commit or file total."
+    },
+    {
+      "id": "E2",
+      "subject": "Gate D1 condition tally",
+      "recorded_in_release_bundle": "'conditions 6, 7 and 15 open, the other eighteen met' (sprint-21d1-report.md, front matter)",
+      "measured_in_the_protected_assessment": {
+        "conditions": 21,
+        "met": 17,
+        "not_applicable": 1,
+        "open": 3,
+        "not_applicable_condition": [
+          4
+        ],
+        "open_conditions": [
+          6,
+          7,
+          15
+        ]
+      },
+      "source": "docs/sprints/sprint-21/gate-d1-assessment.md, condition table",
+      "effect": "The authoritative result is 17 met, one not applicable and three open. The report's prose counts the not-applicable condition as met. The gate verdict itself is unaffected: Gate D1 does not pass either way, and D2 must close conditions 6, 7 and 15 without changing their thresholds."
+    },
+    {
+      "id": "E3",
+      "subject": "wave count",
+      "recorded_in_release_bundle": "'Eleven waves, 41 backlog items' (sprint-21d1-report.md, section 1)",
+      "measured_in_the_same_document": {
+        "execution_table_rows": 13,
+        "rows": [
+          "W0",
+          "W1",
+          "W2",
+          "W3a",
+          "W3b",
+          "W3c + VS",
+          "W4",
+          "W5a",
+          "W5b",
+          "W6a",
+          "W6b",
+          "W6c",
+          "W7"
+        ]
+      },
+      "effect": "Descriptive only. The prose counts the eleven planned waves of the D1 backlog while the table lists the thirteen rows actually executed after W3, W5 and W6 were split."
+    },
+    {
+      "id": "E4",
+      "subject": "release chronology versus recorded evidence times",
+      "recorded_in_release_bundle": {
+        "gate-d1-assessment.md": "Assessed: 2026-08-01",
+        "sprint-21d1-residuals.json": "2026-08-01T09:00:00+00:00",
+        "sprint-21d1-w6a-decision.json": "2026-08-01T09:20:00+00:00",
+        "sprint-21d1-w6b-operations.json": "2026-08-01T10:40:00+00:00",
+        "sprint-21d1-w6c-ci-and-matrix.json": "2026-08-01T11:20:00+00:00",
+        "sprint-21d1-w7-release.json": "2026-08-01T12:00:00+00:00",
+        "sprint-21d1-release.json": "2026-08-01T13:10:00+00:00"
+      },
+      "measured_on_the_remote": {
+        "pull_request_217_merged_at": "2026-07-31T18:56:30Z",
+        "ci_run_30657167717_completed_at": "2026-07-31T19:03:00Z",
+        "tag_sprint_21d1_emg_baseline_created_at": "2026-07-31T21:03:54+02:00",
+        "pull_request_218_merged_at": "2026-07-31T19:13:13Z",
+        "ci_run_30658256397_completed_at": "2026-07-31T19:19:40Z"
+      },
+      "effect": "Every remote release event happened on 2026-07-31; several recorded evidence times say 2026-08-01. The recorded times are later than the events they describe, not earlier, so nothing claims evidence that predates its own execution. Release ordering is verified independently and is correct: the annotated tag was created 54 seconds after its exact-head CI turned green."
+    }
+  ],
+  "consequences_for_d2": [
+    "The D1 tag remains the immutable implementation predecessor; D2 branches from the current planning head instead, which carries the gate-close record.",
+    "Gate D1 conditions 6, 7 and 15 are the three D2 must address, and E2 does not change which three they are.",
+    "D2 evidence records carry a measured recorded_at and cite remote timestamps separately, so the E4 class of discrepancy cannot recur."
+  ]
+}
