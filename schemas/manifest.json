@@ -2286,7 +2286,7 @@
     {
       "file": "v1/events/coding.outcome_recorded.v1.schema.json",
       "model": "CodingOutcomeRecorded",
-      "sha256": "f3d4a0aa4372217bc484f8e1ebb90514c62711df13a20332b9df847b8be21cb1"
+      "sha256": "4cfc491bf13b52929b980299eeedc88a07581fd69962664f00756950db52dee6"
     },
     {
       "file": "v1/events/coding.patch_applied.v1.schema.json",
@@ -3961,7 +3961,7 @@
     {
       "file": "v1/reality/correction-trajectory-manifest.schema.json",
       "model": "CorrectionTrajectoryManifest",
-      "sha256": "3fa45052977bd7aafd02d34a2e63460cb4bc9b3f4903e7759681165c18eda231"
+      "sha256": "1b4c45fa0e91cd290fa35eeac4953c90e8c083c5b5299e316806b1df98bc2029"
     },
     {
       "file": "v1/reality/hidden-verification-bundle.schema.json",
@@ -3976,12 +3976,12 @@
     {
       "file": "v1/reality/reality-campaign-manifest.schema.json",
       "model": "RealityCampaignManifest",
-      "sha256": "65408ab9382d3b6a84360da835b9a9abe2d418ff0df3acee624084db80d0efdc"
+      "sha256": "b013f959d1f511b327c5925389bd77d344d82503c1762f4e20b6a5bc4f0c3dd4"
     },
     {
       "file": "v1/reality/reality-candidate-manifest.schema.json",
       "model": "RealityCandidateManifest",
-      "sha256": "2a42829acac6580a1ae795cddce7c04c5d064822930447965b3b8209fbae53e8"
+      "sha256": "efa4c2fe941a8487be387a7d39edd7a5d9e6cca9af204997a915bc3408631fb9"
     },
     {
       "file": "v1/reality/reality-content-entry.schema.json",
@@ -4001,12 +4001,12 @@
     {
       "file": "v1/reality/reality-outcome-reference.schema.json",
       "model": "RealityOutcomeReference",
-      "sha256": "ca8ae740b0bf70a4da796412de9e69aed86c6e2632a495ab238f4797cef9f63f"
+      "sha256": "2eb0235b1a101aac6181dcd0f378b843b695b541ae75eebe2cb064db6e122334"
     },
     {
       "file": "v1/reality/reality-run-identity.schema.json",
       "model": "RealityRunIdentity",
-      "sha256": "1e7519dc15f16c4a695a629fe5e8bc3352e947eefaf2408e7e82c3db5d00df26"
+      "sha256": "32fcf866093febf5dae585bb9a8763da24b22a49f624fd501fe954b6cafb57e0"
     },
     {
       "file": "v1/reality/reality-source-rights.schema.json",

@@ -56,6 +56,14 @@ class RealityCandidateStrategy(StrEnum):
     `PROVIDER_PROPOSED` deliberately has no declared correctness. A provider candidate's
     result is whatever the hidden verifier says it is, and a strategy value that predicted
     it would be a label the corpus had assigned to itself.
+
+    The four `RECIPE_*` values are Sprint 21D2's, and they exist because the C3 four are a
+    measured perfect oracle: on all 120 D1 correction-ranking examples `correct_*` passed and
+    `incomplete_*` failed, without exception. A ranking surface fitted on a corpus whose
+    recipe name determines the label learns the name. So D2 generates its candidates under
+    outcome-neutral recipes whose family is `UNDECLARED`, which means the corpus makes no
+    claim about them and a hidden-verifier result that contradicts the generator's intent is
+    a valid label rather than a corpus defect.
     """
 
     INCOMPLETE_A = "incomplete_a"
@@ -63,6 +71,10 @@ class RealityCandidateStrategy(StrEnum):
     INCOMPLETE_B = "incomplete_b"
     CORRECT_ROBUST = "correct_robust"
     PROVIDER_PROPOSED = "provider_proposed"
+    RECIPE_ALPHA = "recipe_alpha"
+    RECIPE_BETA = "recipe_beta"
+    RECIPE_GAMMA = "recipe_gamma"
+    RECIPE_DELTA = "recipe_delta"
 
     @property
     def family(self) -> RealityStrategyFamily:
@@ -84,6 +96,23 @@ _INCORRECT_STRATEGIES = frozenset(
 )
 _CORRECT_STRATEGIES = frozenset(
     {RealityCandidateStrategy.CORRECT_NARROW, RealityCandidateStrategy.CORRECT_ROBUST}
+)
+
+#: The recipes a Sprint 21D2 campaign may generate under. Membership is what the D2 campaign
+#: protocol checks; the enum stays open so C3 evidence keeps validating under its own rules.
+D2_NEUTRAL_RECIPES: frozenset[RealityCandidateStrategy] = frozenset(
+    {
+        RealityCandidateStrategy.RECIPE_ALPHA,
+        RealityCandidateStrategy.RECIPE_BETA,
+        RealityCandidateStrategy.RECIPE_GAMMA,
+        RealityCandidateStrategy.RECIPE_DELTA,
+    }
+)
+
+#: The label-predicting family. A D2 campaign that names one of these is refused: the point
+#: of the neutral recipes is lost the moment the corpus can answer its own question.
+LABEL_PREDICTING_STRATEGIES: frozenset[RealityCandidateStrategy] = (
+    _INCORRECT_STRATEGIES | _CORRECT_STRATEGIES
 )
 
 
@@ -289,6 +318,54 @@ class RealityCandidateManifest(HashedExperienceContract):
         return self
 
 
+def validate_recorded_run_invariants(
+    *,
+    run_kind: RealityRunKind,
+    candidate_id: UUID | None,
+    strategy: RealityCandidateStrategy | None,
+    hidden_verification_passed: bool,
+) -> None:
+    """The invariants `CodingOutcomeRecorded` and `RealityOutcomeReference` both depend on.
+
+    S21D2-021. `CodingOutcomeRecorder.record()` used to append the authoritative event and
+    only then build the reference, so a reference validator that refused left the event
+    durably appended with nothing able to resolve it — a partial authority, which is the one
+    outcome the recording order exists to prevent. The rules are the same rules; they simply
+    have to be checkable before the append rather than after it.
+
+    Raises `ValueError`, so the model validators below can delegate and keep their behaviour.
+    """
+    if run_kind is RealityRunKind.BASELINE:
+        if candidate_id is not None or strategy is not None:
+            raise ValueError("a baseline run has no candidate")
+        if hidden_verification_passed:
+            raise ValueError(
+                "a baseline whose hidden verification passed is not a repair task; "
+                "reject or revise the task instead of recording it"
+            )
+    elif candidate_id is None or strategy is None:
+        raise ValueError("a candidate run must name its candidate and strategy")
+
+    if strategy is None:
+        return
+    #: §4.6, enforced where the result is known. A `correct_*` candidate that failed, or an
+    #: `incomplete_*` one that passed, means the generator and the verifier disagree about the
+    #: task: a corpus defect rather than an outcome to count. The D2 `RECIPE_*` values are
+    #: `UNDECLARED` and fall through untouched, which is exactly the point of them — a D2
+    #: outcome that contradicts its generator's intent is a label, not a defect.
+    family = strategy.family
+    if family is RealityStrategyFamily.CORRECT and not hidden_verification_passed:
+        raise ValueError(
+            f"candidate strategy {strategy.value!r} is declared correct but failed "
+            "hidden verification"
+        )
+    if family is RealityStrategyFamily.INCORRECT and hidden_verification_passed:
+        raise ValueError(
+            f"candidate strategy {strategy.value!r} is declared incomplete but passed "
+            "hidden verification"
+        )
+
+
 class RealityOutcomeReference(HashedExperienceContract):
     """One executed run, resolvable to bytes and to an event.
 
@@ -315,40 +392,14 @@ class RealityOutcomeReference(HashedExperienceContract):
     occurred_at: UtcDatetime
 
     @model_validator(mode="after")
-    def candidate_identity_matches_run_kind(self) -> RealityOutcomeReference:
-        if self.run_kind is RealityRunKind.BASELINE:
-            if self.candidate_id is not None or self.strategy is not None:
-                raise ValueError("a baseline run has no candidate")
-            if self.hidden_verification_passed:
-                raise ValueError(
-                    "a baseline whose hidden verification passed is not a repair task; "
-                    "reject or revise the task instead of recording it"
-                )
-        elif self.candidate_id is None or self.strategy is None:
-            raise ValueError("a candidate run must name its candidate and strategy")
-        return self
-
-    @model_validator(mode="after")
-    def declared_correct_strategies_must_pass(self) -> RealityOutcomeReference:
-        """The corpus contract of §4.6, enforced where the result is known.
-
-        A `correct_*` candidate that failed hidden verification, or an `incomplete_*` one
-        that passed, means the generator and the verifier disagree about the task. That is a
-        corpus defect, not an outcome to count.
-        """
-        if self.strategy is None:
-            return self
-        family = self.strategy.family
-        if family is RealityStrategyFamily.CORRECT and not self.hidden_verification_passed:
-            raise ValueError(
-                f"candidate strategy {self.strategy.value!r} is declared correct but failed "
-                "hidden verification"
-            )
-        if family is RealityStrategyFamily.INCORRECT and self.hidden_verification_passed:
-            raise ValueError(
-                f"candidate strategy {self.strategy.value!r} is declared incomplete but passed "
-                "hidden verification"
-            )
+    def run_invariants_hold(self) -> RealityOutcomeReference:
+        """Delegated, so the recorder can check the same rules before it appends anything."""
+        validate_recorded_run_invariants(
+            run_kind=self.run_kind,
+            candidate_id=self.candidate_id,
+            strategy=self.strategy,
+            hidden_verification_passed=self.hidden_verification_passed,
+        )
         return self
 
     @property

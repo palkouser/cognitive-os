@@ -99,19 +99,33 @@ class ExecutedRun:
 
 @dataclass
 class TaskRuns:
-    """Every run recorded for one task, keyed the way the trajectory planner wants it."""
+    """Every run recorded for one task, in the order the manifest asked for them.
+
+    S21D2-021. `candidates` used to be keyed by `RealityCandidateStrategy` and `all_runs`
+    sorted those keys alphabetically, which quietly discarded the manifest's ordering: a
+    campaign that asked for a deterministically shuffled candidate order got the same
+    alphabetical order for every task. That is harmless while nothing reads the order, and it
+    is the whole experiment once a ranker permutes it — so the key is now the opaque candidate
+    ID and the order is insertion order, which is execution order, which is manifest order.
+    """
 
     template_id: str
     task: GeneratedTask
     bundle_artifact_id: UUID | None = None
     baseline: ExecutedRun | None = None
-    candidates: dict[RealityCandidateStrategy, ExecutedRun] = field(default_factory=dict)
+    candidates: dict[UUID, ExecutedRun] = field(default_factory=dict)
 
     @property
     def all_runs(self) -> tuple[ExecutedRun, ...]:
         ordered = [] if self.baseline is None else [self.baseline]
-        ordered.extend(self.candidates[key] for key in sorted(self.candidates, key=str))
+        ordered.extend(self.candidates.values())
         return tuple(ordered)
+
+    def by_strategy(self, strategy: RealityCandidateStrategy) -> ExecutedRun | None:
+        """For C3 callers that named a recipe. D2 code addresses candidates by ID."""
+        return next(
+            (run for run in self.candidates.values() if run.identity.strategy is strategy), None
+        )
 
 
 class RealityCampaignRunner:
@@ -209,7 +223,7 @@ class RealityCampaignRunner:
         )
         self._require_untouched(generated, pristine, control, label="baseline")
         for strategy in strategies:
-            runs.candidates[strategy] = await self._execute(
+            executed = await self._execute(
                 generated,
                 bundle,
                 strategy,
@@ -217,6 +231,12 @@ class RealityCampaignRunner:
                 generated_at=generated_at,
                 completed=completed,
             )
+            # Keyed by the candidate the run actually executed, so nothing downstream has to
+            # know the recipe to address it, and two recipes cannot collide onto one slot.
+            candidate_id = executed.identity.candidate_id
+            if candidate_id is None:  # pragma: no cover - a candidate run always names one
+                raise CampaignRunError("a candidate run recorded no candidate identity")
+            runs.candidates[candidate_id] = executed
             self._require_untouched(generated, pristine, control, label=strategy.value)
         return runs
 

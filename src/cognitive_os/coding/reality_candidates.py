@@ -16,9 +16,11 @@ whether it hit is the hidden verifier's answer and lives in the outcome.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from difflib import unified_diff
 from hashlib import sha256
+from random import Random
 from uuid import UUID, uuid5
 
 from cognitive_os.domain.common import UtcDatetime
@@ -60,6 +62,42 @@ class GeneratedCandidate:
 
 def candidate_id_for(task_id: UUID, strategy: RealityCandidateStrategy) -> UUID:
     return uuid5(REALITY_CANDIDATE_NAMESPACE, f"{task_id}:{strategy.value}")
+
+
+def opaque_candidate_id(task_id: UUID, *, campaign_seed: int, position: int) -> UUID:
+    """A candidate identity derived from its position, not from the recipe that built it.
+
+    S21D2-021. `candidate_id_for` derives the UUID from the strategy value, so a candidate ID
+    is a reversible encoding of the recipe: anyone holding the task ID can recompute all four
+    and read off which is which. That is harmless while the corpus makes no claim about its
+    recipes, and it is a leak the moment a ranker is fitted on the corpus — a per-task
+    constant that identifies the label without ever appearing in the feature schema.
+
+    Positions come from `shuffled_recipe_positions`, so the mapping is fixed and replayable
+    from a recorded seed but is not derivable from the identity alone.
+    """
+    if position < 0:
+        raise ValueError("a candidate position is a zero-based index")
+    return uuid5(REALITY_CANDIDATE_NAMESPACE, f"{task_id}:d2:{campaign_seed}:{position}")
+
+
+def shuffled_recipe_positions(
+    task_id: UUID,
+    recipes: Sequence[RealityCandidateStrategy],
+    *,
+    campaign_seed: int,
+) -> tuple[RealityCandidateStrategy, ...]:
+    """Deterministically permute the recipes for one task, from a recorded campaign seed.
+
+    Without this, position zero is the same recipe in every task and the ranker's first slot
+    carries a constant prior. `Random` is seeded per task so two tasks in one campaign shuffle
+    differently while either replays exactly.
+    """
+    if len(set(recipes)) != len(recipes):
+        raise ValueError("a task cannot generate the same recipe twice")
+    ordered = list(recipes)
+    Random(f"{task_id}:{campaign_seed}").shuffle(ordered)
+    return tuple(ordered)
 
 
 def build_candidate(

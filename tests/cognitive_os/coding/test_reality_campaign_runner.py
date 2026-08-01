@@ -149,7 +149,9 @@ async def test_every_candidate_run_stores_the_patch_it_names(tmp_path: Path) -> 
     )
 
     for strategy in STRATEGIES:
-        candidate = runs.candidates[strategy].step.candidate
+        run = runs.by_strategy(strategy)
+        assert run is not None
+        candidate = run.step.candidate
         assert candidate is not None
         stored = await artifacts.get_bytes(candidate.patch_artifact_id)
         assert stored.decode().startswith("diff --git ")
