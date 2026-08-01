@@ -23,7 +23,8 @@ See ADR 0086.
 
 from __future__ import annotations
 
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Mapping, Sequence
+from dataclasses import dataclass
 from datetime import datetime
 from hashlib import sha256
 from uuid import UUID, uuid5
@@ -91,6 +92,23 @@ def members_digest(members: Sequence[tuple[str, str]]) -> str:
     return sha256(joined.encode()).hexdigest()
 
 
+def split_assignment_digest(splits: Sequence[tuple[str, Sequence[str]]]) -> str:
+    """A stable digest of who landed in which split, not merely of who is present.
+
+    S21D2-020. `dataset_id_for` hashed the split *policy name* alongside the members, which
+    is enough while one policy produces one assignment from one member set. Explicit mode
+    breaks that assumption: two D2 partitions can name the same observations and divide them
+    differently, and under the old identity they would collide onto one dataset ID — so the
+    second build would return the first one's stored snapshot and every later comparison
+    would silently use the wrong split.
+    """
+    joined = "\n".join(
+        f"{name}:{','.join(sorted(members))}"
+        for name, members in sorted(splits, key=lambda x: x[0])
+    )
+    return sha256(joined.encode()).hexdigest()
+
+
 def dataset_id_for(
     *,
     surface: str,
@@ -98,6 +116,7 @@ def dataset_id_for(
     revision: int,
     split_policy: str,
     members: Sequence[tuple[str, str]],
+    assignment_digest: str | None = None,
 ) -> UUID:
     """Identity derived from everything that makes one dataset different from another.
 
@@ -105,11 +124,103 @@ def dataset_id_for(
     different corpus for every purpose that matters, and giving the two one identity
     would let a later comparison silently use the wrong one. Derived from the manifest
     *inputs* rather than the manifest hash, because the manifest embeds this ID.
+
+    `assignment_digest` is absent for the default policy, which keeps every C1 dataset
+    identity exactly what it was, and present in explicit mode where the assignment is an
+    input rather than a function of the members.
     """
-    return uuid5(
-        DATASET_NAMESPACE,
-        f"{surface}|{corpus_role.value}|{revision}|{split_policy}|{members_digest(members)}",
-    )
+    identity = f"{surface}|{corpus_role.value}|{revision}|{split_policy}|{members_digest(members)}"
+    if assignment_digest is not None:
+        identity = f"{identity}|{assignment_digest}"
+    return uuid5(DATASET_NAMESPACE, identity)
+
+
+#: The page the learned plane will serve. `maximum_page_size` is `Field(..., le=500)`, so it
+#: cannot be raised by configuration and explicit selection has to page rather than trust one
+#: listing to hold everything.
+LISTING_PAGE_SIZE = 500
+
+#: The two splits a D2 training dataset has. `train`/`holdout` is the C1 default policy's
+#: naming and stays untouched; explicit mode fits and calibrates, which are different jobs.
+EXPLICIT_SPLIT_POLICY = "explicit-partition-manifest"
+
+
+@dataclass(frozen=True, slots=True)
+class ExplicitSelection:
+    """Exactly which observations a D2 partition contains, and exactly how they divide.
+
+    S21D2-020. The C1 builder selects every accepted observation on a surface and splits it
+    by `observation_id % 4`. Neither is usable for D2: the members are chosen by a sealed
+    campaign manifest rather than by whatever the store happens to hold, and the split has to
+    respect task groups so a template cannot be memorised in `fit` and scored in
+    `calibration`.
+    """
+
+    partition: str
+    #: `(observation_id, expected_source_payload_hash)`. The hash is checked, not trusted:
+    #: a member whose payload changed is a different observation wearing the same ID.
+    members: tuple[tuple[str, str], ...]
+    #: `observation_id -> group`. Whole groups move together or the split is refused.
+    groups: Mapping[str, str]
+    #: `split_name -> observation_ids`. The union must equal the members exactly.
+    splits: Mapping[str, tuple[str, ...]]
+    allowed_provenance: ProvenanceClass
+
+    def __post_init__(self) -> None:
+        ids = [observation_id for observation_id, _ in self.members]
+        if not ids:
+            raise LearnedRepositoryError(
+                LearnedRepositoryConflict.NOT_FOUND,
+                f"partition {self.partition!r} selects no observation",
+            )
+        if len(set(ids)) != len(ids):
+            raise LearnedRepositoryError(
+                LearnedRepositoryConflict.EVIDENCE_MISMATCH,
+                f"partition {self.partition!r} names an observation twice",
+            )
+        missing_groups = sorted(set(ids) - set(self.groups))
+        if missing_groups:
+            raise LearnedRepositoryError(
+                LearnedRepositoryConflict.EVIDENCE_MISMATCH,
+                f"partition {self.partition!r} has members with no group: {missing_groups}",
+            )
+        assigned: list[str] = [item for members in self.splits.values() for item in members]
+        if len(set(assigned)) != len(assigned):
+            raise LearnedRepositoryError(
+                LearnedRepositoryConflict.EVIDENCE_MISMATCH,
+                f"partition {self.partition!r} assigns an observation to two splits",
+            )
+        if set(assigned) != set(ids):
+            extra = sorted(set(assigned) - set(ids))
+            absent = sorted(set(ids) - set(assigned))
+            raise LearnedRepositoryError(
+                LearnedRepositoryConflict.EVIDENCE_MISMATCH,
+                f"partition {self.partition!r} split union does not equal its members; "
+                f"unknown={extra} unassigned={absent}",
+            )
+        if any(not members for members in self.splits.values()):
+            empty = sorted(name for name, members in self.splits.items() if not members)
+            raise LearnedRepositoryError(
+                LearnedRepositoryConflict.EVIDENCE_MISMATCH,
+                f"partition {self.partition!r} has empty splits: {empty}",
+            )
+        owner: dict[str, str] = {}
+        for name, members in sorted(self.splits.items()):
+            for observation_id in members:
+                group = self.groups[observation_id]
+                if owner.setdefault(group, name) != name:
+                    raise LearnedRepositoryError(
+                        LearnedRepositoryConflict.EVIDENCE_MISMATCH,
+                        f"group {group!r} crosses splits {owner[group]!r} and {name!r}",
+                    )
+
+    @property
+    def assignment_digest(self) -> str:
+        return split_assignment_digest([(name, list(m)) for name, m in self.splits.items()])
+
+    @property
+    def split_tuples(self) -> tuple[tuple[str, tuple[str, ...]], ...]:
+        return tuple((name, tuple(members)) for name, members in sorted(self.splits.items()))
 
 
 class LearnedDatasetBuilder:
@@ -137,16 +248,29 @@ class LearnedDatasetBuilder:
         sensitivity: str = "internal",
         revision: int = 1,
         split_policy: str = DEFAULT_SPLIT_POLICY,
+        selection: ExplicitSelection | None = None,
     ) -> LearnedDatasetRecord:
         """Select, split, store both manifests, and append the snapshot.
 
         Raises rather than returning an empty dataset: a snapshot selecting nothing is
         not a small dataset, it is a selection step that silently did not happen.
+
+        With `selection`, membership and split assignment are inputs from a sealed campaign
+        manifest instead of being derived from whatever the store holds. Without it, the C1
+        behaviour is untouched, down to the dataset identity.
         """
-        observations = await self._repository.list_observations(
-            surface=surface, status=ObservationStatus.ACCEPTED, limit=500
-        )
-        members = _eligible(observations, corpus_role)
+        assignment_digest: str | None = None
+        if selection is None:
+            observations = await self._repository.list_observations(
+                surface=surface, status=ObservationStatus.ACCEPTED, limit=LISTING_PAGE_SIZE
+            )
+            members = _eligible(observations, corpus_role)
+            splits = _split(members)
+        else:
+            split_policy = EXPLICIT_SPLIT_POLICY
+            members = await self._resolve_explicit(surface, corpus_role, selection)
+            splits = selection.split_tuples
+            assignment_digest = selection.assignment_digest
         if not members:
             raise LearnedRepositoryError(
                 LearnedRepositoryConflict.NOT_FOUND,
@@ -163,6 +287,7 @@ class LearnedDatasetBuilder:
             revision=revision,
             split_policy=split_policy,
             members=member_pairs,
+            assignment_digest=assignment_digest,
         )
         # Rebuilding an identical selection returns what is already stored. Not merely an
         # optimisation: the manifests would be re-stored under fresh artifact IDs, and
@@ -184,7 +309,7 @@ class LearnedDatasetBuilder:
             dataset_id=dataset_id,
             revision=revision,
             policy=split_policy,
-            splits=_split(members),
+            splits=splits,
             created_at=created_at,
         )
 
@@ -236,3 +361,65 @@ class LearnedDatasetBuilder:
             created_at=created_at,
         )
         return await self._repository.record_dataset(record)
+
+    async def _resolve_explicit(
+        self, surface: str, corpus_role: CorpusRole, selection: ExplicitSelection
+    ) -> tuple[LearnedObservationRecord, ...]:
+        """Resolve exactly the named observations, paging until every one is accounted for.
+
+        Every refusal here is a refusal to build a snapshot that would look complete: a
+        missing member, a changed payload, the wrong provenance, evidence from another
+        surface. The alternative is a dataset that is quietly smaller or quietly different
+        from the manifest that authorised it.
+        """
+        wanted = dict(selection.members)
+        found: dict[str, LearnedObservationRecord] = {}
+        offset = 0
+        while len(found) < len(wanted):
+            page = await self._repository.list_observations(
+                surface=surface,
+                status=ObservationStatus.ACCEPTED,
+                limit=LISTING_PAGE_SIZE,
+                offset=offset,
+            )
+            if not page:
+                break
+            for item in page:
+                key = str(item.observation_id)
+                if key in wanted:
+                    found[key] = item
+            offset += len(page)
+            if len(page) < LISTING_PAGE_SIZE:
+                break
+
+        absent = sorted(set(wanted) - set(found))
+        if absent:
+            raise LearnedRepositoryError(
+                LearnedRepositoryConflict.NOT_FOUND,
+                f"partition {selection.partition!r} names observations that are not accepted "
+                f"on {surface!r}: {absent}",
+            )
+
+        for key, record in sorted(found.items()):
+            if record.source_payload_hash != wanted[key]:
+                raise LearnedRepositoryError(
+                    LearnedRepositoryConflict.EVIDENCE_MISMATCH,
+                    f"observation {key} resolves to payload {record.source_payload_hash} "
+                    f"but the manifest sealed {wanted[key]}",
+                )
+            if record.provenance_class is not selection.allowed_provenance:
+                raise LearnedRepositoryError(
+                    LearnedRepositoryConflict.EVIDENCE_MISMATCH,
+                    f"partition {selection.partition!r} accepts only "
+                    f"{selection.allowed_provenance.value} evidence, but observation {key} is "
+                    f"{record.provenance_class.value}",
+                )
+            if corpus_role is CorpusRole.TRAINING and not record.training_eligible:
+                raise LearnedRepositoryError(
+                    LearnedRepositoryConflict.EVIDENCE_MISMATCH,
+                    f"observation {key} is not training-eligible and cannot enter a training "
+                    f"snapshot",
+                )
+
+        # Manifest order, not store order: the members are what the manifest sealed.
+        return tuple(found[observation_id] for observation_id, _ in selection.members)
