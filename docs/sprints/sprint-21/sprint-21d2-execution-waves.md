@@ -5,7 +5,7 @@ It does not replace the backlog's `§6` wave table; it refines it against measur
 repository facts: two probes inserted, four epics resequenced, three waves split along
 real dependencies. Task numbering is unchanged (S21D2-000 … -095, 81 tasks in ten epics).
 
-Status: **W0, W1 and W2 complete; W3a probe complete, W3a authoring 10 of 95.** W0 evidence:
+Status: **W0, W1, W2 and W3a complete — the corpus is 95 of 95.** W0 evidence:
 [`sprint-21d2-baseline.json`](evidence/sprint-21d2-baseline.json),
 [`sprint-21d2-d1-erratum.json`](evidence/sprint-21d2-d1-erratum.json),
 [`sprint-21d2-inherited-inventory.json`](evidence/sprint-21d2-inherited-inventory.json).
@@ -33,15 +33,24 @@ untested by construction. It belongs with W3c's vertical slice (S21D2-058), whic
 thing that actually resumes a D2 campaign. Recorded here rather than in a commit message so it
 cannot be lost.
 
-**W3a's probe is complete; its authoring is not.** `P-CLONE`
+**W3a is complete: the corpus is 95 of 95.** `P-CLONE`
 ([`sprint-21d2-p-clone-probe.json`](evidence/sprint-21d2-p-clone-probe.json)) authored the
-first ten D2 templates and measured what the plan needed to know before committing to
-ninety-five. It found a defect in **four of the ten**, none of them visible by inspection, and
-the corrected cohort is clean on every axis. It also removed a leak the enum rename alone would
-not have: binding recipe to variant *per task* is what stops `recipe_alpha` from being the C3
-oracle under a new spelling — measured repair rates are 0.4/0.5/0.5/0.6 where C3 measured 1.0
-and 0.0. **85 templates remain**, at a measured ~80 lines each and an expected ~34 further
-defect-and-repair cycles.
+first ten templates and found a defect in **four of them**, none visible by inspection; the
+finished corpus is recorded in
+[`sprint-21d2-corpus.json`](evidence/sprint-21d2-corpus.json). 95 templates, 380 candidates,
+95 distinct repository groups, six families at 16/16/16/16/16/15. Executed rather than
+declared: 95/95 baselines pass their visible tests and fail their hidden ones, 380/380
+candidates match their declaration, and near-clone collisions are zero both within the corpus
+and against every C3 candidate. Binding recipe to variant *per task* is what stops
+`recipe_alpha` from being the C3 oracle under a new spelling — repair rates land at
+0.57/0.53/0.52/0.39 where C3 measured 1.0 and 0.0.
+
+**This document's own cost projection was wrong by roughly a factor of six.** It extrapolated
+`P-CLONE`'s 40% first-pass defect rate to "~34 further defect-and-repair cycles" across the
+remaining 85. The measured figure was **6 in 85**. The probe measured authoring *before* the
+rules were known, and the four defects it found were what taught them; a first-attempt rate
+does not survive past the point where its own lesson lands. The probe earned its place by
+buying the rules, not by forecasting the cost.
 
 **W1 changed two planned numbers.** `P-GED` measured the per-pair GED timeout at **90 ms**
 rather than the inherited 250 ms (F1 below, superseded by the probe's own finding), and
@@ -60,7 +69,7 @@ not inferred from the backlog.
 |---|---|---|---|
 | **F1** ⚠️ | `§4.10`, `§8.4` | *Direction confirmed, mechanism wrong — see `sprint-21d2-p-ged-probe.json`. The probe measured per-pair GED cost at p50 0.93 ms for coding and 1501 ms for logic and mathematics, not a uniform ~176 ms, and the convergence fraction is 0.7625 at every timeout from 50 ms to 1000 ms. So the lever is cancelled by a non-converging quarter of pairs rather than by uniform cost, and 90 ms per pair leaves zero cuts at width 20 with a 236 ms margin. Original reasoning below.* **Width 20 is cancelled by the unchanged 2-second budget.** `bounded_ged` reserves the per-pair timeout before starting a comparison (`graph_retrieval.py:225-229`), so it stops at `elapsed > budget − per_pair`. D1 measured p95 **1788.9 ms** for ~10 completed pairs (~176 ms/pair after the 27.5 ms embed). At width 20 with `per_pair=250 ms` and `budget=2 s`, roughly the first 9–10 pairs complete and the rest are cut to score `0.0` — and cut pairs sink under the `-score` sort in `_result`. The cut band is exactly shortlist ranks 11–20, which is where D1's **19 shortlist-ceiling misses** live. Width 20 would then reproduce the width-10 result. | **Fixed in the plan** — probe `P-GED` in W1; the per-pair timeout is chosen from it and pre-registered in 017/031. `§8.4`'s 250 ms and 2 s are *maxima*, so lowering per-pair (~90 ms fits 20 pairs) is compliant; raising the budget after a bad final result is not. |
 | **F2** | `§1.4`, S21D2-030 | The shortlist defect is real and one line. `bounded_ged` takes candidates from `minilm_vector`'s public result (`graph_retrieval.py:210`), which `_result` already truncated to `returned_results` (`:88`); the `[: limits.vector_shortlist]` slice on `:211` then re-slices ten entries. `GraphResourceLimits` allows `vector_shortlist` up to 100, so no contract change is needed — only an internal untruncated scoring path. | Confirmed; W1 |
-| **F3** | S21D2-022, `§4.1` | **Corpus scale is the critical path.** `TASK_SPECS` holds exactly **30** specs in 3,121 lines (~104 lines each: baseline + 4 candidate variants + visible and hidden test modules + issue/expected/edge-case prose). D2 needs ≥115 groups, ≥85 new ⇒ **~8,800 lines of hand-authored task code**. `reality_task_specs.py:18-20` states the corpus is deliberately unparameterised because variants of one template "share an AST shape, land in one near-clone group" — so `near_clone_pairs` will actively reject mass production. | **Probe first** — `P-CLONE` at the head of W3a measures the rejection rate on 10 before committing to 85 |
+| **F3** | S21D2-022, `§4.1` | **Corpus scale is the critical path.** `TASK_SPECS` holds exactly **30** specs in 3,121 lines (~104 lines each: baseline + 4 candidate variants + visible and hidden test modules + issue/expected/edge-case prose). D2 needs ≥115 groups, ≥85 new ⇒ **~8,800 lines of hand-authored task code**. `reality_task_specs.py:18-20` states the corpus is deliberately unparameterised because variants of one template "share an AST shape, land in one near-clone group" — so `near_clone_pairs` will actively reject mass production. | **Probe first** — `P-CLONE` at the head of W3a measures the rejection rate on 10 before committing to 85. **Settled:** 95 templates authored, 8,523 lines; near-clone collisions within the corpus and against every C3 candidate both zero |
 | **F4** | `§4.1` | **Container volume.** C3's W2 ran "30 tasks, 120 candidates, **420 container runs**" (C3 report `§1`). D2's five partitions are 115 groups of the same shape ⇒ **≈1,600 container runs** across W3c–W8, ~3.8× C3, before canary and any post-stop audit campaign. | Drives the W4 ‖ W5 overlap |
 | **F5** | S21D2-021, `§9` | **Opaque candidates are a cross-layer change, not a rename.** `RealityCandidateStrategy` is exactly the forbidden family (`incomplete_a`, `incomplete_b`, `correct_narrow`, `correct_robust`, `provider_proposed`); `candidate_id_for(task_id, strategy)` derives candidate identity *from it*; `TaskRuns.candidates` is a **dict keyed by the strategy enum** (`reality_campaign_runner.py:101-115`); and `CodingOutcomeRecorded.candidate_strategy` / `RealityOutcomeReference.strategy` persist it. The `§9` risk "runner reorders by strategy" is live in today's code. | Sequenced first in W2 |
 | **F6** | S21D2-021 | `_reference()` is built **after** `self._events.append(...)` (`outcome_recording.py:125-126`). A `RealityOutcomeReference` validator failure therefore leaves the authoritative event durably appended. The validate-before-append refactor the backlog asks for is small and belongs in the same change as F5. | Confirmed; W2 |
@@ -90,7 +99,7 @@ with `0016` unallocated; `CorpusRole` is two-valued (`TRAINING`, `EVALUATION`);
 | **W0** | 000–003, **082** | evidence + operator, no code | — | exact parent revalidated; D2 pair **plus a separate integration database** (F16); three inherited stores fingerprinted; provisioning closed or runbooked |
 | **W1** | 004, **030**, **`P-GED`**, 010–016, **036**, 017 | strictly sequential after the probe | 036 ‖ 010–016 | **one-way door**: 017 freezes surface, features, groups, metrics, baseline rule, power *and* resource policy |
 | **W2** | **021**, 020, 029, 040, 043, 050, 052, 053, 054, 055, 056, **080**, **081**, **085a** | code only, no evidence | ‖ W3a | every new authority exists and is unit-green before any bulk evidence |
-| **W3a** | **`P-CLONE`**, 022-author | authoring; critical path (F3) | ‖ W2 | ≥85 genuinely new templates; near-clone and source-rights green |
+| **W3a** ✅ | **`P-CLONE`**, 022-author | authoring; critical path (F3) | ‖ W2 | ≥85 genuinely new templates; near-clone and source-rights green — **met at 95** |
 | **W3b** | 022-seal, 026, 027, 028 | manifests, zero outcomes | after W3a | 115 disjoint groups; both OOD submanifests; capability isolation proven |
 | **W3c** | 058, **075-scratch** | one group end to end | after W2 + W3b | 10 slice steps green; failed-canary rollback refusal proven on scratch |
 | **W4** | 023, 024, 025 | container-bound (F4) | ‖ W5 | ≥200 fit + ≥40 calibration `SELF_PLAY`; zero `REAL_GOVERNED_RUN` |
@@ -170,11 +179,42 @@ selection, `fit`/`calibration` split names, and the canonical split digest bound
 `dataset_id_for`. 054 needs only a stream-type parameter on `CodingEventService` (F10).
 085a gives the branch a working CI lane from here on.
 
-### W3a — corpus authoring (`P-CLONE`, 022-author) ‖ W2
+### W3a — corpus authoring (`P-CLONE`, 022-author) ‖ W2 — **complete**
 **`P-CLONE` (new).** Author 10 new templates, run `near_clone_pairs` and the source-rights
 check, and record the rejection rate. Extrapolate to 85 (F3). If the rate implies the
 authoring cost exceeds the sprint, that is a scope decision to take here — with 10 templates
 spent — not after 60.
+
+**Outcome.** 95 templates in `reality_task_specs_d2.py`, 380 candidates, 95 distinct
+repository groups, 16/16/16/16/16/15 across the six families. Evidence:
+[`sprint-21d2-corpus.json`](evidence/sprint-21d2-corpus.json). Executed, not declared:
+95/95 baselines pass their visible tests and fail their hidden ones, and 380/380 candidates
+match their declaration. Per-recipe repair rates land at 0.57 / 0.53 / 0.52 / 0.39 against
+C3's 1.0 / 1.0 / 0.0 / 0.0 — the oracle is gone, and it is the per-task *binding* rather than
+the neutral naming that removed it.
+
+**The probe's cost projection was wrong, and the correction matters more than the number.**
+`P-CLONE` measured a 40% first-pass defect rate on ten and this document extrapolated
+"~34 further defect-and-repair cycles" across the remaining 85. The measured figure was
+**6 defects in 85 — 7%**, roughly a sixth of the projection. The reason is that the probe
+measured authoring *without* the rules, and the four defects it found were what taught them;
+extrapolating a first-attempt rate past the point where its lesson lands overstates the
+remaining work. The probe was still worth running — it just bought knowledge, not a forecast.
+
+**One check was missing and was added mid-wave.** The probe compared D2 baselines against C3
+baselines only. Widening it to every D2 variant against every C3 *candidate* immediately found
+that `d2_transform.apply_defaults`'s minimal repair was byte-identical to C3
+`state_idempotency.merge_settings.incomplete_a` — a task already solved in the inherited
+corpus, which is exactly the donor-to-recipient transfer `reality_leakage` exists to refuse.
+Reshaping the variant would not have helped, because the same three lines genuinely solve both
+contracts, so the task was replaced outright with `d2_transform.rank_records`. Three of the ten
+total defects were this kind: a D2 task restating a C3 one (`last_n` = `take_last`,
+`parse_ipv4` = `parse_version`, `apply_defaults` = `merge_settings`). All three are invisible
+to reading and visible only to the detector.
+
+The 489 corpus tests execute every candidate against both suites through a session-scoped
+thread pool — 570 pytest invocations in ~49s rather than minutes — so the check survives as a
+gate on every later edit instead of being too slow to keep.
 
 ### W3b/W3c — sealing and the vertical slice (022-seal, 026–028, 058, 075-scratch)
 Sealing is the second one-way door: counts may rise before it, never after. 058 is `§6.1`'s

@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "sprint": "21D2",
+  "wave": "W3a",
+  "items": [
+    "S21D2-022"
+  ],
+  "recorded_at": "2026-08-01T17:03:20.175087+00:00",
+  "final_outcomes_inspected": false,
+  "purpose": "Record the finished D2 task corpus: that it meets the group floor S21D2-014 raised, that the recipe no longer predicts the verifier's answer, and that no task or candidate is a restatement of a C3 one.",
+  "corpus": {
+    "new_groups": 95,
+    "required_new_groups": 95,
+    "inherited_c3_groups": 30,
+    "total_distinct_groups": 125,
+    "required_total_groups": 125,
+    "candidates_per_group": 4,
+    "families": {
+      "boundary_collections": 16,
+      "data_transformation": 15,
+      "error_handling": 16,
+      "numeric_logic": 16,
+      "parsing_validation": 16,
+      "state_idempotency": 16
+    },
+    "source_file_sha256": "27b13c49c3a28ada6cda3a055a2eb7696e5489be6155dd497d61cb3d9e34180b",
+    "source_file_lines": 8460
+  },
+  "recipe_oracle_removed": {
+    "method": "The recipe carried by each authored variant is a per-task permutation derived from the template id, so the recipe is uninformative about correctness.",
+    "per_recipe_repair_rate": {
+      "recipe_alpha": 0.5684,
+      "recipe_beta": 0.5263,
+      "recipe_delta": 0.3895,
+      "recipe_gamma": 0.5158
+    },
+    "c3_per_recipe_repair_rate": {
+      "correct_narrow": 1.0,
+      "correct_robust": 1.0,
+      "incomplete_a": 0.0,
+      "incomplete_b": 0.0
+    },
+    "c3_oracle_accuracy_on_d1": "120 of 120 correction-ranking examples",
+    "declaration_is_provenance_only": true
+  },
+  "executed_verification": {
+    "note": "Every verdict below is an executed pytest run, not a declaration.",
+    "baselines_passing_their_visible_tests": 95,
+    "baselines_failing_their_hidden_tests": 95,
+    "variants_matching_their_declaration": 380,
+    "variants_checked": 380,
+    "variants_passing_their_visible_tests": 380
+  },
+  "distinctness": {
+    "variant_pairs_colliding_within_the_corpus": 0,
+    "d2_candidates_colliding_with_any_c3_candidate": 0,
+    "template_id_collisions_with_c3": 0,
+    "distinct_repository_groups": 95,
+    "checks": [
+      "normalised AST with identifiers and literals erased",
+      "token stream with names and literals canonicalised",
+      "every D2 variant against every C3 candidate, not only baseline against baseline"
+    ]
+  },
+  "authoring_cost": {
+    "measured_against": "sprint-21d2-p-clone-probe.json",
+    "probe_cohort_size": 10,
+    "probe_first_pass_defect_rate": 0.4,
+    "remaining_templates_authored": 85,
+    "remaining_first_pass_defects": 6,
+    "remaining_first_pass_defect_rate": 0.0706,
+    "projection_published_in_the_wave_plan": "About 34 further defect-and-repair cycles, extrapolating the probe's 40 percent rate across the remaining 85 templates.",
+    "projection_outcome": "overstated by roughly a factor of six",
+    "why_the_projection_was_wrong": "The probe's rate measured authoring without knowing the rules; the four defects it found were what taught them. Extrapolating a first-attempt rate past the point where the lesson lands overstates the remaining cost.",
+    "defects_by_batch": [
+      {
+        "batch": "probe",
+        "templates": 10,
+        "defects": 4
+      },
+      {
+        "batch": "boundary_collections",
+        "templates": 14,
+        "defects": 1
+      },
+      {
+        "batch": "parsing_validation",
+        "templates": 14,
+        "defects": 2
+      },
+      {
+        "batch": "numeric_logic",
+        "templates": 14,
+        "defects": 1
+      },
+      {
+        "batch": "state_idempotency",
+        "templates": 14,
+        "defects": 1
+      },
+      {
+        "batch": "error_handling",
+        "templates": 15,
+        "defects": 0
+      },
+      {
+        "batch": "data_transformation",
+        "templates": 14,
+        "defects": 1
+      }
+    ],
+    "defect_kinds": {
+      "restated_a_c3_task": 3,
+      "edge_case_not_actually_broken_by_the_baseline": 3,
+      "two_variants_collided_after_normalisation": 2,
+      "variants_implemented_different_contracts": 1,
+      "defect_visible_from_the_published_tests": 1
+    }
+  },
+  "defects_that_only_execution_or_the_detector_could_find": [
+    {
+      "template": "d2_state.release_slot",
+      "found_by": "token-stream normalisation",
+      "detail": "Two variants differed only in indentation, which the normaliser drops because those tokens strip to empty."
+    },
+    {
+      "template": "d2_parsing.strip_prefix",
+      "found_by": "executed hidden verifier",
+      "detail": "An empty prefix was handled by accident: startswith('') is always true."
+    },
+    {
+      "template": "d2_numeric.interpolate",
+      "found_by": "executed hidden verifier",
+      "detail": "The declared floating-point drift did not occur for the chosen bounds, so a variant declared incomplete actually repaired the contract."
+    },
+    {
+      "template": "d2_transform.apply_defaults",
+      "found_by": "cross-corpus candidate comparison",
+      "detail": "Its minimal repair was byte-identical to C3 merge_settings incomplete_a, so the task was already solved in the inherited corpus. Replaced outright, because reshaping the variant would not change which three lines solve it."
+    }
+  ],
+  "constraints_honoured": [
+    "No C3 or D1 observation was read, fitted or calibrated against.",
+    "No development, C3 or D1 artifact store was written.",
+    "The declaration of which variant repairs the contract is provenance, never a feature.",
+    "No campaign was run: this records the corpus, not any outcome."
+  ]
+}
