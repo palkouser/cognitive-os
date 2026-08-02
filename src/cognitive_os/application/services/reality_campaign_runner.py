@@ -97,6 +97,26 @@ class ExecutedRun:
         return self.step.reference.hidden_verification_passed
 
 
+@dataclass(frozen=True, slots=True)
+class PreparedTask:
+    """A task package on disk, plus the two digests that say it was not disturbed.
+
+    Held as a value rather than as loop variables inside `run_task` because a caller that
+    executes candidates one at a time still has to re-check the same two things after each of
+    them: a campaign that repaired its own source would produce a corpus where later tasks were
+    fixed by earlier ones, and nothing in the outcomes would show it.
+    """
+
+    template_id: str
+    root: Path
+    generated: GeneratedTask
+    bundle: HiddenVerificationBundle
+    bundle_artifact: ArtifactRef
+    generated_at: datetime
+    pristine_digest: str
+    control_digest: str
+
+
 @dataclass
 class TaskRuns:
     """Every run recorded for one task, in the order the manifest asked for them.
@@ -165,6 +185,7 @@ class RealityCampaignRunner:
         generated_at: datetime,
         completed: Mapping[str, RealityOutcomeReference] = MappingProxyType({}),
         bundle_artifact: ArtifactRef | None = None,
+        candidate_ids: Mapping[RealityCandidateStrategy, UUID] | None = None,
     ) -> TaskRuns:
         """Execute the baseline and every requested candidate for one task.
 
@@ -185,6 +206,56 @@ class RealityCampaignRunner:
         artifact ID — so writing the bundle again would give the same task a new manifest hash
         and a new run identity, and resume would match nothing. A resumed campaign passes back
         the artifact its first run recorded.
+
+        `candidate_ids` is how a D2 campaign runs a *sealed* task: the catalogue named every
+        candidate by position before anything was executed, so re-deriving an identity from the
+        recipe here would record a run under a name the seal never committed to. Absent, the C3
+        derivation is unchanged.
+        """
+        prepared = await self.prepare_task(
+            template_id,
+            root=root,
+            seed=seed,
+            generated_at=generated_at,
+            bundle_artifact=bundle_artifact,
+        )
+        generated = prepared.generated
+
+        runs = TaskRuns(
+            template_id=template_id,
+            task=generated,
+            bundle_artifact_id=prepared.bundle_artifact.artifact_id,
+        )
+        runs.baseline = await self.run_baseline(prepared, completed=completed)
+        for strategy in strategies:
+            executed = await self.run_candidate(
+                prepared,
+                strategy,
+                completed=completed,
+                candidate_id=None if candidate_ids is None else candidate_ids[strategy],
+            )
+            # Keyed by the candidate the run actually executed, so nothing downstream has to
+            # know the recipe to address it, and two recipes cannot collide onto one slot.
+            candidate_id = executed.identity.candidate_id
+            if candidate_id is None:  # pragma: no cover - a candidate run always names one
+                raise CampaignRunError("a candidate run recorded no candidate identity")
+            runs.candidates[candidate_id] = executed
+        return runs
+
+    async def prepare_task(
+        self,
+        template_id: str,
+        *,
+        root: Path,
+        seed: int = 1,
+        generated_at: datetime,
+        bundle_artifact: ArtifactRef | None = None,
+    ) -> PreparedTask:
+        """Materialise one task package and record what must not change while it runs.
+
+        Split out of `run_task` so a caller that decides *which* candidate runs next — the D2
+        sequencer, whose whole job is that decision — can drive the runs one at a time without
+        re-writing the package between them. `run_task` is this plus a fixed order.
         """
         if bundle_artifact is None:
             bundle_artifact = await self._artifacts.put_bytes(
@@ -205,40 +276,57 @@ class RealityCampaignRunner:
             artifact_id=bundle_artifact.artifact_id,
             artifact_hash=bundle_artifact.content_hash,
         )
-        pristine = snapshot_workspace(generated.workspace).digest
-        control = bundle.bundle_content_hash
-
-        runs = TaskRuns(
+        return PreparedTask(
             template_id=template_id,
-            task=generated,
-            bundle_artifact_id=bundle_artifact.artifact_id,
-        )
-        runs.baseline = await self._execute(
-            generated,
-            bundle,
-            None,
             root=root,
+            generated=generated,
+            bundle=bundle,
+            bundle_artifact=bundle_artifact,
             generated_at=generated_at,
+            pristine_digest=snapshot_workspace(generated.workspace).digest,
+            control_digest=bundle.bundle_content_hash,
+        )
+
+    async def run_baseline(
+        self,
+        prepared: PreparedTask,
+        *,
+        completed: Mapping[str, RealityOutcomeReference] = MappingProxyType({}),
+    ) -> ExecutedRun:
+        """The unrepaired package, which must fail its hidden suite for the task to be one."""
+        executed = await self._execute(
+            prepared.generated,
+            prepared.bundle,
+            None,
+            root=prepared.root,
+            generated_at=prepared.generated_at,
             completed=completed,
         )
-        self._require_untouched(generated, pristine, control, label="baseline")
-        for strategy in strategies:
-            executed = await self._execute(
-                generated,
-                bundle,
-                strategy,
-                root=root,
-                generated_at=generated_at,
-                completed=completed,
-            )
-            # Keyed by the candidate the run actually executed, so nothing downstream has to
-            # know the recipe to address it, and two recipes cannot collide onto one slot.
-            candidate_id = executed.identity.candidate_id
-            if candidate_id is None:  # pragma: no cover - a candidate run always names one
-                raise CampaignRunError("a candidate run recorded no candidate identity")
-            runs.candidates[candidate_id] = executed
-            self._require_untouched(generated, pristine, control, label=strategy.value)
-        return runs
+        self._require_untouched(prepared, label="baseline")
+        return executed
+
+    async def run_candidate(
+        self,
+        prepared: PreparedTask,
+        strategy: RealityCandidateStrategy,
+        *,
+        completed: Mapping[str, RealityOutcomeReference] = MappingProxyType({}),
+        candidate_id: UUID | None = None,
+    ) -> ExecutedRun:
+        """One candidate, executed and recorded, with the package re-checked afterwards."""
+        executed = await self._execute(
+            prepared.generated,
+            prepared.bundle,
+            strategy,
+            root=prepared.root,
+            generated_at=prepared.generated_at,
+            completed=completed,
+            candidate_id=candidate_id,
+        )
+        if executed.identity.candidate_id is None:  # pragma: no cover - always names one
+            raise CampaignRunError("a candidate run recorded no candidate identity")
+        self._require_untouched(prepared, label=strategy.value)
+        return executed
 
     async def _execute(
         self,
@@ -249,12 +337,15 @@ class RealityCampaignRunner:
         root: Path,
         generated_at: datetime,
         completed: Mapping[str, RealityOutcomeReference],
+        candidate_id: UUID | None = None,
     ) -> ExecutedRun:
         manifest = generated.manifest
         label = "baseline" if strategy is None else strategy.value
         candidate = None
         if strategy is not None:
-            candidate = await self._candidate_manifest(manifest, strategy, generated_at)
+            candidate = await self._candidate_manifest(
+                manifest, strategy, generated_at, candidate_id=candidate_id
+            )
         identity = RealityRunIdentity(
             task_id=manifest.task_id,
             task_manifest_hash=manifest.content_hash,
@@ -327,9 +418,13 @@ class RealityCampaignRunner:
         manifest: RealityTaskManifest,
         strategy: RealityCandidateStrategy,
         generated_at: datetime,
+        *,
+        candidate_id: UUID | None = None,
     ) -> RealityCandidateManifest:
         """Store the patch bytes, then name them. The trajectory plane reads them back."""
-        generated = reality_candidates.build_candidate(manifest, strategy)
+        generated = reality_candidates.build_candidate(
+            manifest, strategy, candidate_id=candidate_id
+        )
         patch = await self._artifacts.put_bytes(
             generated.unified_diff.encode(),
             media_type=reality_candidates.CANDIDATE_PATCH_MEDIA_TYPE,
@@ -363,13 +458,12 @@ class RealityCampaignRunner:
             await self._sandbox.cleanup(sandbox_id)
 
     @staticmethod
-    def _require_untouched(
-        generated: GeneratedTask, pristine: str, control: str, *, label: str
-    ) -> None:
+    def _require_untouched(prepared: PreparedTask, *, label: str) -> None:
+        generated = prepared.generated
         where = f"{generated.template.template_id}/{label}"
-        if snapshot_workspace(generated.workspace).digest != pristine:
+        if snapshot_workspace(generated.workspace).digest != prepared.pristine_digest:
             raise WorkspaceIntegrityError(f"{where}: the pristine workspace changed during a run")
-        if snapshot_workspace(generated.control).digest != control:
+        if snapshot_workspace(generated.control).digest != prepared.control_digest:
             raise WorkspaceIntegrityError(f"{where}: the control bundle changed during a run")
 
     @staticmethod

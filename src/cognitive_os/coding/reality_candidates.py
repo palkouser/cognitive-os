@@ -103,18 +103,26 @@ def shuffled_recipe_positions(
 
 
 def build_candidate(
-    task: RealityTaskManifest, strategy: RealityCandidateStrategy
+    task: RealityTaskManifest,
+    strategy: RealityCandidateStrategy,
+    *,
+    candidate_id: UUID | None = None,
 ) -> GeneratedCandidate:
     """Produce the diff from the task's baseline to one candidate, and check it applies.
 
     The check is not ceremony. A candidate whose diff does not reproduce its own declared
     source would be recorded as an executed outcome for source nobody ran, and the corpus
     would carry an answer that was never tested.
+
+    `candidate_id` overrides the derived identity, and D2 always supplies it: the sealed
+    catalogue named every candidate by its position before anything ran, and re-deriving one
+    from the recipe here would put the reversible C3 encoding back on top of the opaque ID the
+    seal committed to. Absent, the C3 derivation is unchanged.
     """
     item = template(_template_id_of(task))
-    path = next(iter(item.candidate_sources[strategy]))
+    path = next(iter(item.sources(strategy)))
     before = item.visible_files[path]
-    after = item.candidate_sources[strategy][path]
+    after = item.sources(strategy)[path]
     body = "".join(
         unified_diff(
             before.splitlines(keepends=True),
@@ -141,7 +149,7 @@ def build_candidate(
         )
     return GeneratedCandidate(
         task_id=task.task_id,
-        candidate_id=candidate_id_for(task.task_id, strategy),
+        candidate_id=candidate_id or candidate_id_for(task.task_id, strategy),
         strategy=strategy,
         path=path,
         unified_diff=diff,
@@ -175,7 +183,7 @@ def build_manifest(
 def candidate_source(task: RealityTaskManifest, strategy: RealityCandidateStrategy) -> str:
     """The full file text one candidate produces, for callers that write rather than patch."""
     item = template(_template_id_of(task))
-    return next(iter(item.candidate_sources[strategy].values()))
+    return next(iter(item.sources(strategy).values()))
 
 
 def baseline_source(task: RealityTaskManifest) -> str:
@@ -184,7 +192,14 @@ def baseline_source(task: RealityTaskManifest) -> str:
 
 
 def _source_path(item: TaskTemplate) -> str:
-    return next(iter(item.candidate_sources[RealityCandidateStrategy.CORRECT_NARROW]))
+    """The one file every candidate of this task replaces.
+
+    Read off whichever recipe comes first rather than off `correct_narrow`: a D2 template's
+    candidates are keyed by the neutral recipes, so naming a C3 strategy here would raise a
+    `KeyError` on half the corpus. Every candidate of a template patches the same path, which
+    `build_candidate` verifies per candidate, so the first one answers for all four.
+    """
+    return next(iter(next(iter(item.candidate_sources.values()))))
 
 
 def _template_id_of(task: RealityTaskManifest) -> str:

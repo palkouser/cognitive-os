@@ -48,6 +48,7 @@ from cognitive_os.coding.reality_task_specs import TASK_SPECS
 from cognitive_os.coding.reality_task_specs_d2 import (
     D2_RECIPES,
     D2_TASK_SPECS,
+    INHERITED_VARIANT_FIELDS,
     recipe_binding,
 )
 from cognitive_os.coding.reality_tasks import REALITY_TASK_NAMESPACE
@@ -160,12 +161,7 @@ def corpus_entries() -> tuple[CorpusEntry, ...]:
             template_id=spec.template_id,
             repository_group=spec.repository_group,
             family=spec.family.value,
-            variants=(
-                spec.correct_narrow,
-                spec.correct_robust,
-                spec.incomplete_a,
-                spec.incomplete_b,
-            ),
+            variants=tuple(getattr(spec, field) for field in INHERITED_VARIANT_FIELDS),
             hidden_verifier_source=spec.hidden_test,
             inherited=True,
             module=spec.module,

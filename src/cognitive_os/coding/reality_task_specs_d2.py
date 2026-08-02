@@ -92,6 +92,19 @@ class D2TaskSpec:
         return (True, True, False, False)
 
 
+#: How a C3 spec's four candidate bodies map onto the D2 authoring convention: two repairs
+#: first, then the two partial fixes. Thirty C3 groups are inherited into D2's training
+#: partition, and this order is what `variant_index` indexes into, in the sealed catalogue and
+#: in the template registry alike. Stated once because two copies of it would be one drift away
+#: from a catalogue that names a different body from the one that runs.
+INHERITED_VARIANT_FIELDS: tuple[str, ...] = (
+    "correct_narrow",
+    "correct_robust",
+    "incomplete_a",
+    "incomplete_b",
+)
+
+
 def recipe_binding(template_id: str) -> tuple[RealityCandidateStrategy, ...]:
     """Which recipe carries which authored variant, for one task.
 

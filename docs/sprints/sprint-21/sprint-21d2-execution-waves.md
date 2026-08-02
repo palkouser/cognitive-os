@@ -5,7 +5,8 @@ It does not replace the backlog's `§6` wave table; it refines it against measur
 repository facts: two probes inserted, four epics resequenced, three waves split along
 real dependencies. Task numbering is unchanged (S21D2-000 … -095, 81 tasks in ten epics).
 
-Status: **W0 through W3c complete — the corpus is sealed and the vertical slice holds.** W0 evidence:
+Status: **W0 through W5 complete — 240 self-play outcomes are recorded and the snapshot is
+sealed.** W0 evidence:
 [`sprint-21d2-baseline.json`](evidence/sprint-21d2-baseline.json),
 [`sprint-21d2-d1-erratum.json`](evidence/sprint-21d2-d1-erratum.json),
 [`sprint-21d2-inherited-inventory.json`](evidence/sprint-21d2-inherited-inventory.json).
@@ -101,9 +102,9 @@ with `0016` unallocated; `CorpusRole` is two-valued (`TRAINING`, `EVALUATION`);
 | **W2** | **021**, 020, 029, 040, 043, 050, 052, 053, 054, 055, 056, **080**, **081**, **085a** | code only, no evidence | ‖ W3a | every new authority exists and is unit-green before any bulk evidence |
 | **W3a** ✅ | **`P-CLONE`**, 022-author | authoring; critical path (F3) | ‖ W2 | ≥85 genuinely new templates; near-clone and source-rights green — **met at 95** |
 | **W3b** ✅ | 022-seal, 026, 027, 028 | manifests, zero outcomes | after W3a | 115 disjoint groups; both OOD submanifests; capability isolation proven — **met at 125, all ten pairs disjoint** |
-| **W3c** | 058, **075-scratch** | one group end to end | after W2 + W3b | 10 slice steps green; failed-canary rollback refusal proven on scratch |
-| **W4** | 023, 024, 025 | container-bound (F4) | ‖ W5 | ≥200 fit + ≥40 calibration `SELF_PLAY`; zero `REAL_GOVERNED_RUN` |
-| **W5** | 031, 032 | measurement | ‖ W4 | canonical resource policy rev 2; width-20 diagnostic on the frozen 80 queries |
+| **W3c** ✅ | 058, **075-scratch** | one group end to end | after W2 + W3b | 10 slice steps green; failed-canary rollback refusal proven on scratch |
+| **W4** ✅ | 023, 024, 025 | container-bound (F4) | ‖ W5 | ≥200 fit + ≥40 calibration `SELF_PLAY`; zero `REAL_GOVERNED_RUN` — **met at 200 + 40, acceptance 0.5000 in both** |
+| **W5** ✅ | 031, 032 | measurement | ‖ W4 | canonical resource policy rev 2; width-20 diagnostic on the frozen 80 queries — **met; the wider shortlist measured worse (W5-F1)** |
 | **W6** | 041, 042, 044, 045, *046, 047, 048*, 049, 051, 057, 059 | **one-way door** | none | exactly one candidate **or** an immutable null; `REGISTERED → SHADOW`; final access still closed |
 | **W7a** | 060, 061, 062 | holdout opens | none | ≥25 groups / ≥100 outcomes per batch; no setting changed after A |
 | **W7b** | 063, 064, 065, 066 | measurement | ‖ W7c | benefit, forgetting, OOD, shadow |
@@ -304,10 +305,86 @@ needs a migration first.
 The contract schema drift gate caught the receipt change before the commit, which is what it is
 for; `learned-activation-receipt.schema.json` was regenerated.
 
-### W4 ‖ W5 — self-play evidence and retrieval freeze (023–025 ‖ 031, 032)
+### W4 ‖ W5 — self-play evidence and retrieval freeze (023–025 ‖ 031, 032) — **complete**
 W4 is container-bound (F4); W5 is CPU measurement on already-frozen data. They share no
-input, so W5 fills W4's container time. 031 freezes the policy chosen from `P-GED`; 032 is
-the formal diagnostic artifact and is labelled development-only.
+input, so W5 filled W4's container time.
+
+**W4 met every floor and spent 300 containers to do it.**
+[`sprint-21d2-self-play-campaign.json`](evidence/sprint-21d2-self-play-campaign.json):
+50 training groups → **200** `SELF_PLAY` outcomes, 10 calibration groups → **40**, plus 60
+baselines, none of which passed its hidden suite. Acceptance is exactly **0.5000** in both
+partitions, which is the 2-of-4 authored balance arriving intact through the sandbox. Zero
+`REAL_GOVERNED_RUN` observations were written, no final, batch-B or canary body was opened,
+and the D2 pair is the only store touched.
+
+The order inside the command is the deliverable, not a detail. Every candidate's pre-outcome
+features are encoded and sealed into one hash-bound artifact *before the first container
+starts*, so `every_feature_record_precedes_its_outcome` is a statement about the wall clock —
+and `CorrectionRankingObservationProjector` refuses an outcome that predates its own seal, so
+a campaign run in the wrong order cannot produce an observation at all. Features come from the
+frozen local MiniLM, the task text and the stored diff; nothing else.
+
+**025's snapshot is exact rather than ambient.** One `CorpusRole.TRAINING` dataset of 240
+observations with `fit` (200) and `calibration` (40) as explicit splits sharing no repository
+group, selected by an explicit member list instead of whatever the store happens to hold —
+which is what made the snapshot survive the duplication below. Rebuilt from the same inputs it
+returns the same identity, which is the restart/replay identity test.
+
+**024's OOD perturbations are resolved and executed, not declared.** All four presealed
+perturbations were applied to the ten calibration groups; the reorder had nothing to swap in
+eight of them and says so rather than being given one. All ten perturbed packages still pass
+their published suites, because a probe that cannot run measures whether the ranker notices
+broken Python.
+
+**Three findings, and the second one cost 300 containers.**
+
+*W4-F1.* `RealityCampaignSequenceRecorded` was declared *below* `CODING_EVENT_MODELS` in the
+same module, so the default catalog never registered it and the real Event Store refused it as
+an unsupported contract. The campaign receipt — the durable authority for what a stop-first
+campaign deliberately did not do — could not be appended at all. W2 and W3c exercised the
+sequencer against an in-memory recording double, which is exactly why it looked finished.
+
+*W4-F2.* The first resume re-executed all 300 containers while reporting a resume.
+`prepare_task` minted a fresh control-bundle artifact, the task manifest names its bundle by
+artifact ID, and the run identity hashes the manifest — so every run got a new identity and
+matched nothing. C3 had already learned this and passed its bundles back; this command did
+not. Bundle IDs are now recorded per partition and a runner test pins the identity.
+
+*W4-F3.* With F2 fixed, the resume replayed every run and then refused to project any of
+them: the replayed outcomes carry their original times and the feature set had been re-sealed
+with the current clock, so every outcome preceded its own feature record. The projector was
+right. A resume that re-seals features has not resumed the campaign — it has produced
+post-outcome features for it. The recorded seal time is now carried across a resume and the
+re-encoded set must reproduce the recorded hash.
+
+**One deviation, recorded rather than tidied.** W4-F2 means the same 240 candidates were
+executed twice under two sets of run identities, so the store holds 480 accepted observations
+for 240 distinct pieces of work. Both executions are real and every row resolves to bytes and
+to an event. Nothing was deleted: `store_before_campaign` records what this run inherited, and
+because the snapshot selects an explicit member list the dataset is exactly 240 regardless.
+The final resume replayed 300 identities, started zero containers and added zero rows.
+
+**W5 froze the policy and then found that the wider shortlist is worse.** 031's revision 2 is
+now a named object, `GRAPH_RESOURCE_POLICY_REVISION_2`, whose hash matches the one
+pre-registration froze before any D2 measurement existed; the class defaults deliberately did
+not move, because every Sprint 21D1 result was produced under them. Contract tests pin the
+three acceptance clauses: a comparison never starts unless its timeout is reserved, a cut-off
+pair keeps its shortlist place and is counted, and every result carries the policy it was
+produced under.
+
+032 re-measured the frozen 80 queries under it
+([`sprint-21d2-d1-retrieval-diagnostic.json`](evidence/sprint-21d2-d1-retrieval-diagnostic.json),
+development-only, D1's own evidence read and never written). **W5-F1: the bounded graph arm
+got worse** — top-5 recall 0.5875 against 0.675, MRR 0.3628 against 0.4481, nDCG 0.2327
+against 0.3438 — while the other four arms are unchanged to four decimal places, which is what
+says the difference is the shortlist rather than the run. Timeouts went from 60 to 0, and that
+is the explanation rather than a second result: ten pairs at 250 ms overruns the two-second
+budget, so revision 1 cut off 60 comparisons and scored each of them 0.0, which happened to
+keep weak candidates out of the top ten. Twenty pairs at 90 ms fits, every comparison
+completes, and the extra ten are ranked on their real distance. **The revision 1 number was
+flattered by its own incompleteness.** Nothing in D2 is decided by this: the primary surface
+is `experience.correction_ranking` and the retrieval floors belong to 033/034 on a holdout
+that does not exist yet.
 
 ### W6 — learner selection (041–049, 051, 057, 059)
 The ladder is a stop-first ladder: a passing k-NN at 045 ends learner work. F12 means the

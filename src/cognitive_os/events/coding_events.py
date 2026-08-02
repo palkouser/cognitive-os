@@ -140,21 +140,6 @@ class CodingOutcomeRecorded(EventPayload):
         return self
 
 
-CODING_EVENT_MODELS: tuple[type[EventPayload], ...] = (
-    CodingRepositoryProfileDetected,
-    CodingRepositoryProfileRejected,
-    CodingWorkspacePrepared,
-    CodingWorkspaceArchived,
-    CodingRepositoryIndexCreated,
-    CodingPatchPlanCreated,
-    CodingPatchAttemptRecorded,
-    CodingPatchApplied,
-    CodingPatchRejected,
-    CodingResultPackaged,
-    CodingOutcomeRecorded,
-)
-
-
 class RealityCampaignSequenceRecorded(EventPayload):
     """The terminal record of one task's candidate sequence, Sprint 21D2.
 
@@ -232,3 +217,24 @@ class RealityCampaignSequenceRecorded(EventPayload):
                 "neither finished nor stopped for a reason it can name"
             )
         return self
+
+
+CODING_EVENT_MODELS: tuple[type[EventPayload], ...] = (
+    CodingRepositoryProfileDetected,
+    CodingRepositoryProfileRejected,
+    CodingWorkspacePrepared,
+    CodingWorkspaceArchived,
+    CodingRepositoryIndexCreated,
+    CodingPatchPlanCreated,
+    CodingPatchAttemptRecorded,
+    CodingPatchApplied,
+    CodingPatchRejected,
+    CodingResultPackaged,
+    CodingOutcomeRecorded,
+    # W4-F1. Declared after the tuple when it was written in W2, so the default catalog never
+    # registered it and `PostgresEventStore.append` refused it as an unsupported contract. The
+    # W3c tests exercised the sequencer against an in-memory recording double, which is why a
+    # receipt that could not be appended to a real Event Store looked complete. The tuple now
+    # lives below every model it names, so the next event cannot repeat this.
+    RealityCampaignSequenceRecorded,
+)

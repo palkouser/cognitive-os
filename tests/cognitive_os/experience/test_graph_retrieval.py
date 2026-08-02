@@ -23,6 +23,8 @@ from cognitive_os.application.ports.embedding_provider import (
     EmbeddingProviderIdentity,
 )
 from cognitive_os.domain.experience_graph import (
+    GRAPH_RESOURCE_POLICY_REVISION_2,
+    GRAPH_RESOURCE_POLICY_REVISION_2_HASH,
     ActionDecisionGraph,
     ExperienceGraphEdge,
     ExperienceGraphEdgeKind,
@@ -302,3 +304,97 @@ class TestTheCacheStillWorksAcrossArms:
 
         assert len(after_vector) == POOL_SIZE
         assert cache == after_vector
+
+
+class TestTheFrozenResourcePolicy:
+    """S21D2-031: revision 2 is a policy, not a set of numbers passed around by hand."""
+
+    def test_it_matches_the_hash_the_pre_registration_recorded(self) -> None:
+        """The bundle froze a hash before any D2 measurement existed; this is that object."""
+        assert (
+            GRAPH_RESOURCE_POLICY_REVISION_2.content_hash == GRAPH_RESOURCE_POLICY_REVISION_2_HASH
+        )
+
+    def test_only_the_shortlist_and_the_pair_timeout_moved(self) -> None:
+        """Node, edge, depth, budget, result and neighbour bounds are revision 1's."""
+        default = GraphResourceLimits()
+        frozen = GRAPH_RESOURCE_POLICY_REVISION_2
+
+        assert frozen.vector_shortlist == 20
+        assert frozen.per_pair_ged_timeout_ms == 90
+        assert frozen.nodes_per_graph == default.nodes_per_graph
+        assert frozen.edges_per_graph == default.edges_per_graph
+        assert frozen.path_depth == default.path_depth
+        assert frozen.returned_results == default.returned_results
+        assert frozen.query_budget_seconds == default.query_budget_seconds
+        assert frozen.cross_task_similarity_neighbors == default.cross_task_similarity_neighbors
+
+    def test_the_defaults_did_not_move_with_it(self) -> None:
+        """Sprint 21D1's stored results were produced under the defaults and must stay valid."""
+        assert GraphResourceLimits().vector_shortlist == 10
+        assert GraphResourceLimits().per_pair_ged_timeout_ms == 250
+
+    @pytest.mark.asyncio
+    async def test_every_result_carries_the_policy_it_was_produced_under(
+        self,
+        query: ExperienceGraphQuery,
+        pool: tuple[Candidate, ...],
+        embed: DeterministicEmbedding,
+    ) -> None:
+        """A number without its policy is a number nobody can compare against another one."""
+        result = await graph_retrieval.minilm_vector(
+            query, pool, limits=GRAPH_RESOURCE_POLICY_REVISION_2, embed=embed
+        )
+
+        assert result.limits.content_hash == GRAPH_RESOURCE_POLICY_REVISION_2_HASH
+
+    @needs_bounded_ged
+    @pytest.mark.asyncio
+    async def test_a_comparison_never_starts_unless_its_timeout_is_reserved(
+        self,
+        query: ExperienceGraphQuery,
+        pool: tuple[Candidate, ...],
+        embed: DeterministicEmbedding,
+    ) -> None:
+        """The budget is a budget only if a comparison cannot start and then overrun it.
+
+        With a one-second budget and a per-pair timeout of a full second, no comparison can
+        both start and finish inside the budget, so every shortlisted pair must be cut off
+        rather than one being allowed to start at the last moment and run its whole timeout.
+        """
+        limits = GraphResourceLimits(
+            vector_shortlist=20,
+            returned_results=10,
+            per_pair_ged_timeout_ms=1000,
+            query_budget_seconds=1,
+        )
+
+        result = await graph_retrieval.bounded_ged(
+            query, pool, _graph(999), limits=limits, embed=embed
+        )
+
+        assert result.timed_out == result.candidates_considered == 20
+
+    @needs_bounded_ged
+    @pytest.mark.asyncio
+    async def test_an_incomplete_comparison_is_counted_rather_than_dropped(
+        self,
+        query: ExperienceGraphQuery,
+        pool: tuple[Candidate, ...],
+        embed: DeterministicEmbedding,
+    ) -> None:
+        """A cut-off pair keeps its shortlist place. Omitting it would shrink the denominator."""
+        limits = GraphResourceLimits(
+            vector_shortlist=20,
+            returned_results=10,
+            per_pair_ged_timeout_ms=1000,
+            query_budget_seconds=1,
+        )
+
+        result = await graph_retrieval.bounded_ged(
+            query, pool, _graph(999), limits=limits, embed=embed
+        )
+
+        assert result.candidates_considered == 20
+        assert len(result.entries) == 10
+        assert result.timed_out > 0

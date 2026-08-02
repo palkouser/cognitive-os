@@ -39,7 +39,14 @@ from cognitive_os.coding.reality_task_specs_d2 import (
     recipe_binding,
     recipe_is_repair,
 )
-from cognitive_os.domain.reality import D2_NEUTRAL_RECIPES, LABEL_PREDICTING_STRATEGIES
+from cognitive_os.coding.reality_tasks import available_templates, d2_templates, template
+from cognitive_os.domain.reality import (
+    D2_NEUTRAL_RECIPES,
+    LABEL_PREDICTING_STRATEGIES,
+    RealityCandidateStrategy,
+)
+from cognitive_os.learning.correction_catalogue import corpus_entries, seal_corpus
+from cognitive_os.learning.correction_protocol import CorrectionPartition
 
 #: The C3 fields that hold a candidate body. A D2 variant may collide with any of them, not
 #: only with the baseline: reproducing a C3 *correction* is the more serious collision.
@@ -267,3 +274,45 @@ class TestTheVerifierAgreesWithTheAuthoredIntent:
     def test_exactly_two_of_four_variants_repair_the_contract(self, spec: D2TaskSpec) -> None:
         """The 2-of-4 balance is what fixes the deterministic baseline at 0.5000."""
         assert sum(spec.repairs_contract) == 2
+
+
+class TestTheRegistryPlacesTheBodiesTheSealNamed:
+    """S21D2-023: what the runner materialises has to be what the catalogue committed to.
+
+    The sealed catalogue records a `variant_index` per slot and the runner asks the template
+    registry for a recipe. If those two disagree the campaign executes one body and reports
+    another, and every outcome in the corpus is attached to the wrong candidate — a defect
+    that no count would reveal, because the counts would all still add up.
+    """
+
+    def test_a_d2_template_is_keyed_by_the_neutral_recipes(self) -> None:
+        for template_id in d2_templates():
+            assert set(template(template_id).candidate_sources) == set(D2_RECIPES)
+
+    def test_a_c3_template_keeps_its_own_keying_and_gains_the_neutral_one(self) -> None:
+        """Thirty C3 groups are inherited into D2 training and must not carry C3 recipe names."""
+        item = template(TASK_SPECS[0].template_id)
+
+        assert set(item.candidate_sources) == set(LABEL_PREDICTING_STRATEGIES) - {
+            RealityCandidateStrategy.PROVIDER_PROPOSED
+        }
+        assert set(item.neutral_candidate_sources) == set(D2_RECIPES)
+
+    def test_the_two_corpora_stay_separately_addressable(self) -> None:
+        assert not set(available_templates()) & set(d2_templates())
+        assert len(available_templates()) == len(TASK_SPECS)
+        assert len(d2_templates()) == len(D2_TASK_SPECS)
+
+    @pytest.mark.parametrize("partition", list(CorrectionPartition))
+    def test_every_sealed_slot_resolves_to_the_body_it_indexed(self, partition) -> None:
+        """The catalogue's `variant_index` and the registry's recipe key must agree everywhere."""
+        catalogue = seal_corpus().catalogues[partition]
+        entries = {entry.template_id: entry for entry in corpus_entries()}
+
+        for group in catalogue.groups:
+            item = template(group.template_id)
+            for slot in group.slots:
+                recipe = RealityCandidateStrategy(slot.recipe)
+                materialised = next(iter(item.sources(recipe).values()))
+                declared = entries[group.template_id].module_text(slot.variant_index)
+                assert materialised == declared, f"{group.template_id} slot {slot.position}"

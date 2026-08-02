@@ -641,6 +641,11 @@
       "schema_version": 1
     },
     {
+      "event_type": "reality.campaign_sequence_recorded",
+      "file": "v1/events/reality.campaign_sequence_recorded.v1.schema.json",
+      "schema_version": 1
+    },
+    {
       "event_type": "routing.adaptive_policy_disabled",
       "file": "v1/events/routing.adaptive_policy_disabled.v1.schema.json",
       "schema_version": 1
@@ -2817,6 +2822,11 @@
       "file": "v1/events/proposal.validated.v1.schema.json",
       "model": "ProposalValidated",
       "sha256": "4f8ea7679ae20795dd491edb9a841340263487de312826f9cf36d37f209bbae8"
+    },
+    {
+      "file": "v1/events/reality.campaign_sequence_recorded.v1.schema.json",
+      "model": "RealityCampaignSequenceRecorded",
+      "sha256": "3d7e8bee8c7ab56bc36386287cfbeccd554d4cb347740572778bb2940a54d333"
     },
     {
       "file": "v1/events/routing.adaptive_policy_disabled.v1.schema.json",

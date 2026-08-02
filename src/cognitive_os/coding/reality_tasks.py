@@ -34,6 +34,7 @@ from uuid import UUID, uuid5
 from cognitive_os.domain.common import UtcDatetime
 from cognitive_os.domain.memory import MemorySensitivity
 from cognitive_os.domain.reality import (
+    D2_NEUTRAL_RECIPES,
     RealityCandidateStrategy,
     RealityContentEntry,
     RealitySourceRights,
@@ -44,6 +45,14 @@ from cognitive_os.domain.reality import (
 )
 
 from .reality_task_specs import TASK_SPECS, TaskSpec
+from .reality_task_specs_d2 import (
+    D2_TASK_SPECS,
+    INHERITED_VARIANT_FIELDS,
+    D2TaskSpec,
+    candidate_sources_for,
+    recipe_binding,
+)
+from .reality_task_specs_d2 import module_source as d2_module_source
 
 #: Fixed forever: it is what makes a regenerated task the same task.
 REALITY_TASK_NAMESPACE = UUID("6f2a1c94-8d3b-5e17-a4c0-2b9d7e5f83a1")
@@ -101,6 +110,17 @@ class TaskTemplate:
     visible_files: dict[str, str]
     control_files: dict[str, str]
     candidate_sources: dict[RealityCandidateStrategy, dict[str, str]]
+    #: The same four bodies keyed by the D2 neutral recipes. A C3 template carries both
+    #: keyings because thirty C3 groups are inherited into D2's training partition, and
+    #: running one of them under `correct_narrow` would carry the label oracle in with it.
+    #: For a D2 template the two mappings are the same object: it has no other keying.
+    neutral_candidate_sources: dict[RealityCandidateStrategy, dict[str, str]]
+
+    def sources(self, strategy: RealityCandidateStrategy) -> dict[str, str]:
+        """The files one candidate writes, under whichever naming the caller used."""
+        if strategy in D2_NEUTRAL_RECIPES:
+            return self.neutral_candidate_sources[strategy]
+        return self.candidate_sources[strategy]
 
 
 @dataclass(frozen=True, slots=True)
@@ -113,7 +133,7 @@ class GeneratedTask:
     control: Path
 
     def candidate_files(self, strategy: RealityCandidateStrategy) -> dict[str, str]:
-        return self.template.candidate_sources[strategy]
+        return self.template.sources(strategy)
 
 
 def _digest(text: str) -> str:
@@ -160,18 +180,78 @@ def _expand(spec: TaskSpec) -> TaskTemplate:
                 source_path: _module_source(spec, spec.correct_robust)
             },
         },
+        neutral_candidate_sources={
+            recipe: {source_path: _module_source(spec, getattr(spec, field))}
+            for recipe, field in zip(
+                recipe_binding(spec.template_id), INHERITED_VARIANT_FIELDS, strict=True
+            )
+        },
+    )
+
+
+def _expand_d2(spec: D2TaskSpec) -> TaskTemplate:
+    """One D2 spec as a template, with its variants placed under the neutral recipes.
+
+    The only difference from `_expand` is where the candidate bodies come from. C3 names its
+    four by correctness; D2 authors four variants and `candidate_sources_for` applies the
+    per-task recipe binding, so the recipe a candidate carries says nothing about its label.
+    Everything else — the file layout, both conftests, the hidden bundle — is identical,
+    because a D2 task has to be measurable by exactly the machinery C3's was.
+    """
+    source_path = f"src/{spec.module}.py"
+    return TaskTemplate(
+        template_id=spec.template_id,
+        family=spec.family,
+        repository_group=spec.repository_group,
+        difficulty=spec.difficulty,
+        issue_description=spec.issue,
+        expected_behavior=spec.expected,
+        baseline_failure_reason=spec.baseline_reason,
+        visible_files={
+            source_path: d2_module_source(spec, spec.baseline),
+            f"tests/test_{spec.module}.py": spec.visible_test,
+            "conftest.py": VISIBLE_CONFTEST,
+        },
+        control_files={
+            "conftest.py": CONTROL_CONFTEST,
+            f"test_hidden_{spec.module}.py": spec.hidden_test,
+        },
+        candidate_sources=(neutral := candidate_sources_for(spec, source_path)),
+        neutral_candidate_sources=neutral,
     )
 
 
 _TEMPLATES: dict[str, TaskTemplate] = {spec.template_id: _expand(spec) for spec in TASK_SPECS}
 
+_D2_TEMPLATES: dict[str, TaskTemplate] = {
+    spec.template_id: _expand_d2(spec) for spec in D2_TASK_SPECS
+}
+
+#: Both corpora under one lookup, because the runner, the candidate builder and the retrieval
+#: plane address a task by ID and should not have to know which sprint authored it. The two
+#: are still separate registries above: `available_templates()` is C3's campaign surface and
+#: must not silently grow by ninety-five tasks.
+_ALL_TEMPLATES: dict[str, TaskTemplate] = {**_TEMPLATES, **_D2_TEMPLATES}
+
+if len(_ALL_TEMPLATES) != len(_TEMPLATES) + len(_D2_TEMPLATES):  # pragma: no cover - import guard
+    raise RuntimeError(
+        "a D2 template ID collides with a C3 one; merging the registries would drop a task "
+        "silently and give one repository group two different bodies"
+    )
+
 
 def available_templates() -> tuple[str, ...]:
+    """C3's corpus. Unchanged by D2: it is what the C3 campaign and its integrity check run."""
     return tuple(sorted(_TEMPLATES))
 
 
+def d2_templates() -> tuple[str, ...]:
+    """D2's corpus. Named separately so a caller has to say which corpus it means."""
+    return tuple(sorted(_D2_TEMPLATES))
+
+
 def template(template_id: str) -> TaskTemplate:
-    return _TEMPLATES[template_id]
+    return _ALL_TEMPLATES[template_id]
 
 
 def offline_strategies() -> tuple[RealityCandidateStrategy, ...]:
@@ -193,7 +273,7 @@ def build_manifest(
     hashes of the bytes `write_task` will produce. Building it from files already on disk would
     make the manifest a description of whatever happened to be there.
     """
-    item = _TEMPLATES[template_id]
+    item = _ALL_TEMPLATES[template_id]
     task_id = uuid5(REALITY_TASK_NAMESPACE, f"{template_id}:{seed}")
     projection = RealityTaskProjection(
         task_id=task_id,
@@ -246,7 +326,7 @@ def write_task(
     created_at: UtcDatetime,
 ) -> GeneratedTask:
     """Materialize one task package under `root`, workspace and control kept apart."""
-    item = _TEMPLATES[template_id]
+    item = _ALL_TEMPLATES[template_id]
     workspace = root / "workspace"
     control = root / "control"
     _write_tree(workspace, item.visible_files)
