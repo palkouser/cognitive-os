@@ -346,6 +346,20 @@ class TestMandatoryPathInvariance:
         assert invariance(decision_hash_disabled=OTHER_DIGEST).identical is False
         assert invariance(decision_hash_abstaining=OTHER_DIGEST).identical is False
 
+    def test_a_pre_d2_record_still_loads_without_the_fourth_hash(self) -> None:
+        """S21D2-057 is additive: a three-hash record is a complete proof of what it covers."""
+        record = invariance()
+
+        assert record.decision_hash_artifact_unavailable is None
+        assert record.covers_artifact_unavailable is False
+        assert record.identical is True
+
+    def test_the_fourth_configuration_is_included_once_it_is_present(self) -> None:
+        """The state the component did not choose: present, enabled, artifact unloadable."""
+        assert invariance(decision_hash_artifact_unavailable=DIGEST).identical is True
+        assert invariance(decision_hash_artifact_unavailable=OTHER_DIGEST).identical is False
+        assert invariance(decision_hash_artifact_unavailable=DIGEST).covers_artifact_unavailable
+
 
 class TestForgettingGate:
     def test_regressed_cases_beyond_tolerance_force_a_regressed_verdict(self) -> None:

@@ -327,6 +327,77 @@ class TestMeasuredCorpusFindings:
         assert "short of the" in verdict.reason
         assert "confidently and wrongly" in verdict.reason
 
+    @pytest.mark.asyncio
+    async def test_a_three_hash_record_cannot_carry_a_d2_component_to_eligible(self) -> None:
+        """S21D2-057. The fourth configuration is the one a production failure produces.
+
+        A record written before Sprint 21D2 proves exactly what it covers, and nothing about
+        an artifact that will not load. Under the D2 requirement it must fail the invariance
+        gate rather than pass it by predating the question.
+        """
+        from cognitive_os.learning.baselines import run_ladder
+        from cognitive_os.learning.invariance import verify_invariance
+        from cognitive_os.learning.registry import LearnedComponentRegistry
+
+        report = await run_ladder()
+        sample = build_all_cases()[:4]
+        retention = await measure_retention(sample)
+        forgetting = assess_forgetting(retention, retention, session_id=uuid4())
+        component = ExperienceKnn()
+        registry = LearnedComponentRegistry()
+        registry.register(component)
+        three_hash = await verify_invariance(component.component_id, registry, cases=sample)
+
+        assert three_hash.covers_artifact_unavailable is False
+        assert three_hash.identical
+
+        relaxed = assess_promotion(
+            component.descriptor, report, forgetting=forgetting, invariance=three_hash
+        )
+        strict = assess_promotion(
+            component.descriptor,
+            report,
+            forgetting=forgetting,
+            invariance=three_hash,
+            require_artifact_unavailable_hash=True,
+        )
+
+        assert "artifact-unavailable" not in relaxed.reason
+        assert strict.decision is LearnedPromotionDecision.INVARIANCE_FAILURE
+        assert "artifact-unavailable" in strict.reason
+
+    @pytest.mark.asyncio
+    async def test_a_four_hash_record_satisfies_the_d2_requirement(self) -> None:
+        from cognitive_os.learning.baselines import run_ladder
+        from cognitive_os.learning.invariance import verify_invariance
+        from cognitive_os.learning.registry import LearnedComponentRegistry
+
+        report = await run_ladder()
+        sample = build_all_cases()[:4]
+        retention = await measure_retention(sample)
+        forgetting = assess_forgetting(retention, retention, session_id=uuid4())
+        component = ExperienceKnn()
+        registry = LearnedComponentRegistry()
+        registry.register(component)
+
+        async def unloadable() -> None:
+            """The artifact is made unreadable for the duration of the fourth replay."""
+
+        four_hash = await verify_invariance(
+            component.component_id, registry, cases=sample, artifact_unavailable=unloadable
+        )
+        verdict = assess_promotion(
+            component.descriptor,
+            report,
+            forgetting=forgetting,
+            invariance=four_hash,
+            require_artifact_unavailable_hash=True,
+        )
+
+        assert four_hash.covers_artifact_unavailable is True
+        assert four_hash.identical
+        assert "artifact-unavailable" not in verdict.reason
+
 
 class TestDistributionComparison:
     @pytest.mark.asyncio

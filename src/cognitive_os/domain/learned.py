@@ -444,15 +444,33 @@ class MandatoryPathInvariance(HashedExperienceContract):
     decision_hash_absent: Sha256Hex
     decision_hash_disabled: Sha256Hex
     decision_hash_abstaining: Sha256Hex
+    #: S21D2-057. The fourth configuration: the component is present and enabled, and its
+    #: artifact cannot be loaded. Absent, disabled and abstaining are all states the component
+    #: *chose*; this is the one it did not, and it is the one a production failure actually
+    #: produces — a corrupt blob, a missing file, a hash that no longer matches. A component
+    #: that alters the deterministic path only when its own artifact is unavailable would pass
+    #: the original three hashes without exception.
+    #:
+    #: Optional so that records written before Sprint 21D2 still load; the D2 promotion path
+    #: requires it, which is what stops an older three-hash record from making the D2
+    #: component eligible.
+    decision_hash_artifact_unavailable: Sha256Hex | None = None
     created_at: UtcDatetime
 
     @property
+    def covers_artifact_unavailable(self) -> bool:
+        return self.decision_hash_artifact_unavailable is not None
+
+    @property
     def identical(self) -> bool:
-        return (
-            self.decision_hash_absent
-            == self.decision_hash_disabled
-            == self.decision_hash_abstaining
-        )
+        hashes = {
+            self.decision_hash_absent,
+            self.decision_hash_disabled,
+            self.decision_hash_abstaining,
+        }
+        if self.decision_hash_artifact_unavailable is not None:
+            hashes.add(self.decision_hash_artifact_unavailable)
+        return len(hashes) == 1
 
 
 class ForgettingAssessment(HashedExperienceContract):

@@ -3591,7 +3591,7 @@
     {
       "file": "v1/learned/learned-promotion-assessment.schema.json",
       "model": "LearnedPromotionAssessment",
-      "sha256": "51add23310b15e88ad5259c0d29c9208b280ee72d129dc725a8845cbce52e279"
+      "sha256": "22bf5affda757c220df8e549d7d5dca46ff5da9193c261c07b9e3f5ddb70d861"
     },
     {
       "file": "v1/learned/learned-replay-result.schema.json",
@@ -3611,7 +3611,7 @@
     {
       "file": "v1/learned/mandatory-path-invariance.schema.json",
       "model": "MandatoryPathInvariance",
-      "sha256": "4c747728a83c90270b0f265026b2d488a4190d73244cd4b8be6c52bddf8043fb"
+      "sha256": "8fbdcc025d56ea4b52e87bdf55b914be30b06d7e7267473097a6f213e9ad2a31"
     },
     {
       "file": "v1/learned/numeric-feature.schema.json",

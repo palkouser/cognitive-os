@@ -5,8 +5,10 @@ It does not replace the backlog's `§6` wave table; it refines it against measur
 repository facts: two probes inserted, four epics resequenced, three waves split along
 real dependencies. Task numbering is unchanged (S21D2-000 … -095, 81 tasks in ten epics).
 
-Status: **W0 through W5 complete — 240 self-play outcomes are recorded and the snapshot is
-sealed.** W0 evidence:
+Status: **W0 through W6 complete. Door D3 closed on an immutable null:** the bounded k-NN
+ranks an accepted candidate first in nine of ten calibration groups against a 0.3 deterministic
+baseline, and reverses at full confidence under a semantics-preserving perturbation, so no
+candidate was selected and final access stays closed. W0 evidence:
 [`sprint-21d2-baseline.json`](evidence/sprint-21d2-baseline.json),
 [`sprint-21d2-d1-erratum.json`](evidence/sprint-21d2-d1-erratum.json),
 [`sprint-21d2-inherited-inventory.json`](evidence/sprint-21d2-inherited-inventory.json).
@@ -105,7 +107,7 @@ with `0016` unallocated; `CorpusRole` is two-valued (`TRAINING`, `EVALUATION`);
 | **W3c** ✅ | 058, **075-scratch** | one group end to end | after W2 + W3b | 10 slice steps green; failed-canary rollback refusal proven on scratch |
 | **W4** ✅ | 023, 024, 025 | container-bound (F4) | ‖ W5 | ≥200 fit + ≥40 calibration `SELF_PLAY`; zero `REAL_GOVERNED_RUN` — **met at 200 + 40, acceptance 0.5000 in both** |
 | **W5** ✅ | 031, 032 | measurement | ‖ W4 | canonical resource policy rev 2; width-20 diagnostic on the frozen 80 queries — **met; the wider shortlist measured worse (W5-F1)** |
-| **W6** | 041, 042, 044, 045, *046, 047, 048*, 049, 051, 057, 059 | **one-way door** | none | exactly one candidate **or** an immutable null; `REGISTERED → SHADOW`; final access still closed |
+| **W6** ✅ | 041, 042, 044, 045, *046, 047, 048*, 049, 051, 057, 059 | **one-way door** | none | exactly one candidate **or** an immutable null; `REGISTERED → SHADOW`; final access still closed — **an immutable null: the k-NN reached 0.9 against a 0.3 baseline and reversed confidently under a semantics-preserving perturbation** |
 | **W7a** | 060, 061, 062 | holdout opens | none | ≥25 groups / ≥100 outcomes per batch; no setting changed after A |
 | **W7b** | 063, 064, 065, 066 | measurement | ‖ W7c | benefit, forgetting, OOD, shadow |
 | **W7c** | 033, 034, 035 | retrieval closure | ‖ W7b | ≥50 new queries; one bounded arm ≥0.70 / ≥0.50, or negative |
@@ -386,11 +388,80 @@ flattered by its own incompleteness.** Nothing in D2 is decided by this: the pri
 is `experience.correction_ranking` and the retrieval floors belong to 033/034 on a holdout
 that does not exist yet.
 
-### W6 — learner selection (041–049, 051, 057, 059)
+### W6 — learner selection (041–049, 051, 057, 059) — **complete, and it is a null**
 The ladder is a stop-first ladder: a passing k-NN at 045 ends learner work. F12 means the
 046 gate needs an executable test that a transitive `sklearn` import cannot satisfy the
 dependency contract. 049 is the third one-way door — and by F13 a null there closes final
 access *and* forfeits D1 condition 15, so the null branch runs straight to W9/W10.
+
+**Door D3 closed on an immutable null**
+([`sprint-21d2-learner-selection.json`](evidence/sprint-21d2-learner-selection.json)). The
+short version: **the learner works and is not yet trustworthy.**
+
+**041: the matrices are clean, and the scans can fail.** Eight scans over the serialized fit
+and calibration matrices — forbidden fields, chronology, one source chain per row, group
+split, contradictory duplicates, cross-split near-duplicates, and perfect label separation per
+column on both splits. All pass on the real corpus: 240 rows, 11 columns, 60 groups sharing
+none, highest cross-split similarity **0.978** against a 0.999 floor, and every row reproducing
+the feature hash its seal recorded before execution. The scans are exercised against seeded
+failures rather than described: an injected oracle column and an injected `candidate_id` column
+each fail the scan named for them.
+
+**042: the baseline is derived, and one rung is honestly ineligible.** Four rungs run —
+0.3 / 0.1 / 0.3 / 0.3 for fixed order, static ordering, lexical overlap and MiniLM cosine — and
+`width_20_bounded_graph` is recorded **ineligible with its reason**: a correction task presents
+exactly four candidates, so a twenty-wide shortlist is the entire pool and the rung reduces to
+its own tie-break. `fixed_input_order` at **0.3** is the strongest non-learned rung; the
+contract recomputes that from the ladder and refuses a record that names a weaker one.
+
+**044: the k-NN finds the signal.** At `k=3` with the loosest floors it ranks an accepted
+candidate first in **nine of ten** calibration groups at 0.9 coverage — against a 0.3 baseline,
+on a corpus where every group has exactly two accepted candidates of four. All 24 grid settings
+stay in the record.
+
+**And it is not invariant, which is what ended the wave.** On `d2_parsing.parse_csv_row` the
+same setting is correct at confidence **1.0** unperturbed and wrong at confidence **1.0** once
+identifiers are renamed and the issue text restated — a semantics-preserving perturbation whose
+executed labels are unchanged (20 accepted of 40, exactly as before; the probe's labels come
+from executing the perturbed hidden suites, not from assuming they carried over). Twenty of 24
+settings produce at least one confident OOD error; the other four produce none by abstaining on
+every probe.
+
+**045: fail, `ood_deficient`, and the ladder stops rather than continues.** The frozen contract
+allows zero confident OOD errors and §3.3 requires the OOD checks to pass before a rung may be
+selected, so the null follows from the pre-registration rather than from a judgement made
+today. **046 and 047 are not opened, and the reason is not "we ran out of time":** an
+invariance failure is not a capacity failure, and a parametric model fitted on the same features
+would meet the same perturbation. `FailureKind` now says in itself which kinds open a later
+rung. No dependency was added and no code path imports `sklearn` — which F12 makes worth
+stating, because it imports transitively already and a rung could have been built on it
+unnoticed. **048 is unused; one §3.4 revision remains.**
+
+**049: null.** No artifact was written and no lifecycle revision allocated, because 051 and 059
+are candidate-conditional and there is no candidate. The record names the failed continuation
+rule and states in a field that it authorises no final access.
+
+**057 ran anyway, on the null path, and it is the one guarantee that still holds.** The
+invariance record now carries Sprint 21D2's fourth configuration — present, enabled, artifact
+unloadable — alongside absent, disabled and abstaining. That is the state nobody chooses and
+the one a corrupt blob actually produces, and the digest was taken with the loader genuinely
+refusing (`CorrectionArtifactError`) rather than with a simulated failure. All four digests
+agree over 68 cases. The field is optional so every pre-D2 record still loads, and
+`assess_promotion` gained an explicit D2 requirement so an older three-hash record cannot carry
+a D2 component to eligible — tested in both directions. As in W3c, the compatibility window was
+measured rather than assumed: **zero stored evidence records and zero activation rows** in the
+D2 pair.
+
+**W6-F1: a hole in my own selection rule, found by running it.** As first written the rule
+filtered a setting only for *producing* a confident OOD error. Four settings recorded zero by
+abstaining on all ten probes — passing a safety check by never taking it — and since they still
+changed decisions on calibration they survived every other filter. The rule then selected one
+of them, a setting scoring exactly the baseline, and the continuation record classified the
+failure from column separation alone as `signal_is_linear`, **which authorises the parametric
+rung**. A hole in a safety filter was one step from adding a dependency to the repository. The
+evaluator manifest already states the principle for calibration coverage; applying it to the
+probe as well is what closed it. The verdict was unchanged — the rung fails either way — but
+the reason and the branch were not.
 
 ### W7 — final evidence (060–068, 033–035)
 060's access authorization is the fourth one-way door. Predictions come through the narrow
