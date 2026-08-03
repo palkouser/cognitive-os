@@ -2,9 +2,9 @@
 
 Status: implementation sequencing plan
 
-Revision: 6
+Revision: 7
 
-Assessment date: 2026-07-31
+Assessment date: 2026-08-03
 
 Source plan: [Cognitive OS Learning, Memory, and Scale Development
 Plan](development-plan.md)
@@ -17,6 +17,9 @@ Companion documents:
 - [Sprint 21C3 technical backlog](../sprint-21/sprint-21c3-technical-backlog.md)
 - [Sprint 21D1 technical backlog](../sprint-21/sprint-21d1-technical-backlog.md)
 - [Sprint 21D2 technical backlog](../sprint-21/sprint-21d2-technical-backlog.md)
+- [Sprint 21D3 technical backlog](../sprint-21/sprint-21d3-technical-backlog.md)
+- [Sprint 21D2 report](../sprint-21/sprint-21d2-report.md)
+- [Sprint 21D3 handoff](../sprint-21/sprint-21d3-handoff.md)
 - [Sprint 21D1 report](../sprint-21/sprint-21d1-report.md)
 - [Gate D1 assessment](../sprint-21/gate-d1-assessment.md)
 - [Sprint 21 Gate L assessment](../sprint-21/gate-l-assessment.md)
@@ -50,22 +53,24 @@ The state verified before this allocation was written is:
 
 | Item | Verified value |
 |---|---|
-| Current branch before planning edits | `main`, clean and equal to current `origin/main` |
-| Current `origin/main` | `1cadbabb5cdabb32bbd502f281d734fb25a229ff`, after D1 gate-close PR `#218` |
-| Protected predecessor release | `sprint-21d1-emg-baseline`, tag object `a59977dbcf23df60a700385a6fc15b012bf6d142`, peeled commit `b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9` |
+| Current branch before planning edits | `chore/sprint-21d2-gate-close` at `e40a67d7c73b08ce1304b55f5707f22f33d5f50e`; tree equal to current `origin/main` but not its squash-merge commit |
+| Current `origin/main` | `9fe03cea3975e81bbae57b870e7bc50d8cc29f49`, after D2 gate-close PR `#220` |
+| Protected predecessor release | negative `sprint-21d2-evidence-baseline`, tag object `3f3c00e216879b4d1443ca20ac3e5f14c1bc0e29`, peeled commit `ecb5ea128c26d49af0661c5e2c3fe5a125f1cec5` |
 | Current migration head | `0015` |
-| Sprint 21D1 implementation | PR `#217`, merged; post-merge run `30657167717`, 30 of 30 successful |
-| Latest assessed `main` CI | run `30658256397`, 30 of 30 successful on exact current `origin/main` |
-| Gate D1 | does not pass: 17 met, one not applicable, conditions 6, 7 and 15 open |
+| Sprint 21D2 implementation | PR `#219`, merged; post-merge run `30788129259`, 30 of 30 successful |
+| Latest assessed `main` CI | run `30789985887`, 30 of 30 successful on exact current `origin/main` |
+| Gate D1 | conditions 6, 7 and 15 remain open |
 | Gate L2 | does not pass |
-| Next branch | `feature/sprint-21d2-useful-learned-activation`, from revalidated current `origin/main` |
+| Next branch | `feature/sprint-21d3-invariant-correction-ranking`, from revalidated current `origin/main` |
 | Next migration | none by default; `0016` remains available only after measured need |
 | Reviewer limitation | one collaborator; required approval remains disabled without weakening the 27 checks or `enforce_admins` |
-| Artifact limitation | development pair fingerprint `7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf`, five files and unchanged through D1; isolate it pending separate operator-approved remediation |
+| Artifact limitations | development pair `7e85d9a6…`/5 files remains inconsistent and read-only; D2 pair `39417f1a…`/1,511 files is immutable predecessor evidence; D3 uses a new pair |
 
-Sprint 21R, Sprint 21C1, Sprint 21C2, Sprint 21C3, and the D1 implementation
-release are complete. Sprint 21D2 is the next execution sprint; it inherits D1's three
-open conditions as blocking remediation rather than rewriting the negative assessment.
+Sprint 21R, Sprint 21C1, Sprint 21C2, Sprint 21C3, D1, and D2 are complete releases.
+D2 is a valid negative result: clean calibration improved, semantics-preserving OOD failed,
+selection was null, and final/activation stayed unopened. Sprint 21D3 is the next execution
+sprint; it inherits D1's three open conditions and Gate L2 as blocking remediation rather than
+rewriting either negative assessment.
 All source, tag, credential, branch-protection, reviewer, and remote pull-request
 state must be revalidated at sprint start because repository and remote state may
 change.
@@ -107,7 +112,7 @@ dependency or infrastructure authority only after a measured gap and an ADR.
   never required for an unrelated PR job.
 - GPU-dependent work is scheduled only after a workload demonstrates need and the
   complete accelerator software path passes a reproducible preflight. No accelerator
-  path is verified at the D2 planning head; D1 evidence is CPU-only.
+  path is verified at the D3 planning head; D1/D2 evidence is CPU-only.
 - CPU-first retrieval, classical ML, graph projection, and local inference remain the
   default execution path.
 
@@ -142,21 +147,23 @@ configuration contracts.
 | 4 | Sprint 21C3 | 2 weeks | Executable coding corpus, real outcomes, local embeddings | Sprint 21C2 | `sprint-21c3-reality-baseline` |
 | 5 | Sprint 21D1 | 2 weeks | Pre-registered learning surface and EMG baseline | Sprint 21C3 | `sprint-21d1-emg-baseline` |
 | 6 | Sprint 21D2 | 2 weeks | Useful correction-ranking test and Gate L2 result | Sprint 21D1 | success: `sprint-21-learning-baseline`; negative: `sprint-21d2-evidence-baseline` |
-| 7 | Sprint 22A | 2 weeks | Data-driven domain expansion | Gate L2 | `sprint-22a-domain-baseline` |
-| 8 | Sprint 22B | 2 weeks | Measured `10^6` storage and retrieval envelope | Sprint 22A | `sprint-22b-scale-baseline` |
-| 9 | Sprint 22C | 2 weeks | Continual campaigns and Knowledge Acquisition Factory | Sprint 22B | `sprint-22c-acquisition-baseline` |
-| 10 | Sprint 22D | 2 weeks | Bounded local English and LLM-dependence reduction | Sprint 22C | `sprint-22d-language-baseline` |
-| 11 | Sprint 22E | 2 weeks | Governed self-improvement and Gate M | Sprint 22D | `sprint-22-baseline` |
-| 12 | Sprint 23A | 2 weeks | Controlled alpha package | Gate M | `sprint-23-alpha` |
+| 7 | Sprint 21D3 | 2 weeks | Invariant correction ranking, independent retrieval and Gate L2 result | Sprint 21D2 | success: `sprint-21-learning-baseline`; negative: `sprint-21d3-evidence-baseline` |
+| 8 | Sprint 22A | 2 weeks | Data-driven domain expansion | Gate L2 | `sprint-22a-domain-baseline` |
+| 9 | Sprint 22B | 2 weeks | Measured `10^6` storage and retrieval envelope | Sprint 22A | `sprint-22b-scale-baseline` |
+| 10 | Sprint 22C | 2 weeks | Continual campaigns and Knowledge Acquisition Factory | Sprint 22B | `sprint-22c-acquisition-baseline` |
+| 11 | Sprint 22D | 2 weeks | Bounded local English and LLM-dependence reduction | Sprint 22C | `sprint-22d-language-baseline` |
+| 12 | Sprint 22E | 2 weeks | Governed self-improvement and Gate M | Sprint 22D | `sprint-22-baseline` |
+| 13 | Sprint 23A | 2 weeks | Controlled alpha package | Gate M | `sprint-23-alpha` |
 
-Nominal total: 23 weeks for one primary delivery stream. Independent fixture,
+Nominal total: 25 weeks for one primary delivery stream. Independent fixture,
 documentation, and benchmark work can shorten elapsed time, but the protected
 release order remains serial.
 
 Sprint 21R and Sprint 21C1 completed on 2026-07-26. Sprint 21C2 completed on
 2026-07-29. Sprint 21C3 completed on 2026-07-30. The D1 implementation release and
-gate-close planning head completed on 2026-07-31. Sprint 21D2 is now the active
-planned delivery; Gate D1 does not pass and Gate L2 does not pass.
+gate-close planning head completed on 2026-07-31. Sprint 21D2 and its gate-close release
+completed on 2026-08-03. Sprint 21D3 is now the active planned delivery; Gate D1 conditions 6,
+7 and 15 remain open, Gate L2 does not pass, and Sprint 22A remains blocked.
 
 ## 5. Detailed sprint allocation
 
@@ -441,9 +448,73 @@ Detailed backlog:
 
 [Sprint 21D2 Technical Backlog](../sprint-21/sprint-21d2-technical-backlog.md)
 
-Failure to activate a materially useful learned component blocks Gate L2. The team
-must still complete the negative evidence release, then improve the corpus, surface,
-verifier, or bounded learner; it may not redefine machine learning as optional.
+Completion:
+
+- released as the negative `sprint-21d2-evidence-baseline`, tag object `3f3c00e216879b4d1443ca20ac3e5f14c1bc0e29`, peeled to `ecb5ea128c26d49af0661c5e2c3fe5a125f1cec5`;
+- PR `#219` and exact-head run `30788129259` passed 30 of 30 jobs; gate-close PR `#220` advanced current `main` to `9fe03cea3975e81bbae57b870e7bc50d8cc29f49`, with run `30789985887` passing 30 of 30;
+- 125-group corpus, 200/50 fitting, 40/10 calibration, explicit snapshots, feature chronology,
+  correction ladder, runtime/fallback, recovery, and negative-result authority completed;
+- k-NN reached 0.9 versus 0.3 on clean calibration but failed semantics-preserving OOD;
+  selection remained null, final/canary/lifecycle stayed unopened;
+- width-20 graph retrieval measured 0.5875 Recall@5 and 0.3634 MRR@10 on D1 development
+  evidence, below the fixed floors;
+- Gate D1 conditions 6, 7, and 15 remain open; Gate L2 does not pass; Sprint 22A remains
+  blocked.
+
+Failure to activate a materially useful learned component blocks Gate L2. The programme must
+improve the evidence and bounded method rather than redefine machine learning as optional.
+
+### Sprint 21D3 — Invariant Correction Ranking and Independent Retrieval
+
+Objective:
+
+Replace the unstable correction feature boundary once under a new pre-registration, test it on
+fresh self-play calibration and untouched final evidence, and independently close or reject the
+retrieval usefulness floor on a distinct unseen-task holdout.
+
+Primary scope:
+
+- day-one baseline/store/final-holdout audit and non-destructive D2 denominator/retrieval
+  reconciliation;
+- pre-registration revision 3 before any D3 per-channel/development/holdout measurement or
+  implementation result; immutable D2 reconciliation replay is baseline-only;
+- one exact production alpha-normalised Python 3.12 AST candidate-source representation using
+  the existing frozen MiniLM, tested by an independent perturbation oracle, with issue, raw diff,
+  and requirement/delta cosine removed from fitted v2 features;
+- fitted-matrix leakage/validity scans extended to every embedding dimension;
+- feature- and partition-sensitive explicit dataset identity and campaign-bound receipt resume;
+- D2 channel diagnostic for diagnosis only; fresh 200/50 fitting execution, 80/20 calibration,
+  and at least 100 new metamorphic selection decisions;
+- unchanged 24-setting bounded k-NN grid, strict non-silence/action-invariance rules, one
+  candidate or null, and no parametric rung inside D3;
+- exact final A/B/canary reuse only after catalogue/root/access identity and zero-access proof;
+  protected bodies remain sealed until final access, and any failed whole role is replaced under
+  the frozen procedure before its D3 manifest seal, with only isolated throwaway authoring
+  validation and capability revocation;
+- one fixed standard-library equal-weight lexical+MiniLM reciprocal-rank fusion;
+- a distinct overproduced retrieval corpus yielding at least 50 group-disjoint new queries;
+- final benefit, two-batch direction, paired interval, retention, 100+ correctly counted
+  promotion OOD decisions, shadow, retrieval, artifact, and gate assessment;
+- versioned promotion payload with separately hash-bound canary/steady configs, focused
+  evidence-bound verification, activation-time artifact rehash, exact existing approval fields,
+  canary, cause-bound disable, receipt-selected rollback/refusal, and bounded steady state only
+  on a full pass;
+- isolated recovery, full CI/release matrix, and complete positive or negative protected
+  release.
+
+Exit:
+
+- on success, all Gate L2 and D1 6/7/15 conditions pass without relaxed thresholds, exactly one
+  learned correction component is bounded and active, and `sprint-21-learning-baseline` is
+  protected and remotely verified before Sprint 22A unblocks;
+- on a valid negative, the first pre-registered failure and every dependent not-opened record
+  are immutable, the independent retrieval result is retained when valid,
+  `sprint-21d3-evidence-baseline` is protected and remotely verified, and Sprint 22A remains
+  blocked.
+
+Detailed backlog:
+
+[Sprint 21D3 Technical Backlog](../sprint-21/sprint-21d3-technical-backlog.md)
 
 ### Sprint 22A — Data-Driven Domain Registry
 
@@ -607,7 +678,8 @@ Sprint 21R protected substrate
   -> Sprint 21C2 governed providers
   -> Sprint 21C3 executable corpus and real outcomes
   -> Sprint 21D1 learning surface and EMG baseline
-  -> Sprint 21D2 useful activation and Gate L2
+  -> Sprint 21D2 useful-ranking experiment and negative Gate L2 result
+  -> Sprint 21D3 invariant remediation, independent retrieval and Gate L2
   -> Sprint 22A data-driven domains
   -> Sprint 22B million-item scale
   -> Sprint 22C continual acquisition
@@ -626,6 +698,8 @@ The following preparation may overlap without changing merge order:
   review, but golden data must not enter active training.
 - Sprint 21D1 graph normalizer prototypes may use replay fixtures after persistent
   trajectory identity is frozen.
+- Sprint 21D3 retrieval task authoring may proceed beside correction feature implementation
+  after revision 3 and group-separation contracts freeze, but neither holdout may be scored.
 - Sprint 22A descriptor examples may be prepared after Gate L2 contracts freeze.
 - Sprint 22C source-rights review may begin during the scale sprint.
 - Sprint 22D local-model hardware benchmarks may begin after CPU/GPU preflight, but
@@ -637,7 +711,9 @@ Parallel preparation does not authorize dependent merges or active-state mutatio
 
 Stop the current sprint and report a blocked gate when:
 
-- the required predecessor tag does not match protected `main`;
+- the required predecessor tag object/peeled commit differs from its remote identity, is not an
+  ancestor of current protected `main`, the required gate-close lineage is missing, or either
+  post-merge exact-head CI is red;
 - a migration head or schema baseline is ambiguous;
 - required PR or post-merge CI is red;
 - a corpus has unresolved rights or evaluation leakage;
@@ -655,7 +731,7 @@ revalidation.
 
 The allocation is complete only when:
 
-- all twelve sprint closure reports map scope to exact evidence;
+- all thirteen sprint closure reports map scope to exact evidence;
 - every target tag is annotated, pushed, peeled, and tied to successful protected
   `main` CI;
 - Gate L2 and Gate M remain reproducible from retained artifacts;

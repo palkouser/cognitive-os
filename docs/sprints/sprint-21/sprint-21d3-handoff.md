@@ -13,6 +13,8 @@ Implementation authority for what D2 did:
 [Gate L2 assessment](gate-l2-assessment.md). Results:
 [Sprint 21D2 report](sprint-21d2-report.md). Operating the evidence:
 [correction-ranking operations](../../operations/correction-ranking.md).
+Execution authority for the remediation:
+[Sprint 21D3 Technical Backlog](sprint-21d3-technical-backlog.md).
 
 ## 1. Starting point
 
@@ -21,7 +23,11 @@ Implementation authority for what D2 did:
 | Parent tag | `sprint-21d2-evidence-baseline`, annotated — a **negative** release. Tag object `3f3c00e216879b4d1443ca20ac3e5f14c1bc0e29`, identical on the remote |
 | Parent release commit | `ecb5ea128c26d49af0661c5e2c3fe5a125f1cec5`, the peeled D2 evidence baseline |
 | Parent pull request | `#219`, squash-merged with no administrator bypass under unchanged protection |
+| Parent PR-head CI | run `30787401395`, 30 of 30 success on `139a149c1f6ee592cb534dec3c832d2b1c4a4e91` |
 | Parent exact-head CI | run `30788129259`, 30 of 30 success on `ecb5ea12…` |
+| Current planning head | `origin/main` at `9fe03cea3975e81bbae57b870e7bc50d8cc29f49`, after gate-close PR `#220` |
+| Gate-close PR-head CI | run `30789042482`, 30 of 30 success on `e40a67d7c73b08ce1304b55f5707f22f33d5f50e` |
+| Planning-head CI | run `30789985887`, 30 of 30 success on the exact current planning head |
 | Grandparent tag | `sprint-21d1-emg-baseline`, tag object `a59977dbcf23df60a700385a6fc15b012bf6d142`, peeled to `b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9` |
 | Migration head | `0015`. `0016` still unallocated |
 | Component state | 0 components, 0 approvals, 0 activations on `experience.correction_ranking` |
@@ -29,10 +35,10 @@ Implementation authority for what D2 did:
 | Gate D2 / Gate L2 | **does not pass**, valid negative completion |
 | Sprint 22A | **blocked** |
 
-Remote state can change. Reverify the tag object, peeled commit, current `origin/main`, both
-exact-head CI runs, branch protection and migration head on day one, and branch from the
-verified `origin/main` rather than from the peeled tag, so the gate-close documentation stays
-in history.
+Remote state can change. Reverify the tag object, peeled commit, current `origin/main`, all four
+implementation/gate-close PR-head and post-merge CI runs, branch protection and migration head
+on day one, and branch from the verified `origin/main` rather than from the peeled tag, so the
+gate-close documentation stays in history.
 
 ## 2. The failed condition, stated exactly
 
@@ -42,7 +48,13 @@ Gate L2 condition **20**, at calibration scale, is what stopped the sprint:
 > reported false-confident action rate is at most 1%, and promotion satisfies the existing
 > stricter contract of exactly zero confident errors
 
-Measured on 10 groups and 40 decisions, submanifest `48d3b766c4dc0104dfe4653e7b808c5c1af6570d9ee9c3cfbf2b8b53082c1381`:
+D3 operationalises this gate with pre-registered semantics-preserving metamorphic/OOD ranking
+cases. Malformed input, corrupt artifact, missing configuration, permission, and similar runtime
+adversarial tests remain mandatory, but are counted in their own integrity/runtime evidence and
+cannot inflate the ranking-decision denominator.
+
+Measured on 10 group-level ranking decisions and 40 independently executed candidate
+outcomes, submanifest `48d3b766c4dc0104dfe4653e7b808c5c1af6570d9ee9c3cfbf2b8b53082c1381`:
 
 | Grid settings | Outcome |
 |---|---|
@@ -55,6 +67,12 @@ The continuation record `4e5a690f16b64c22239d9e95f841a1350eeb1ad914694dd49648821
 records `fail_and_stop` with failure kind `ood_deficient`. The selection record
 `274a7a932ce110d12892f3dab102f10308ad556c563483d414979cbc69950536` is a null with
 `authorises_final_access: false`.
+
+The released evidence called the four candidate slots in each group four decisions even though
+the evaluator called the ranker once per group. D3 corrects the unit: one task-group ranking or
+abstention is one decision; candidate labels are outcomes. This strengthens the negative result
+because D2 had ten OOD decision opportunities, not forty, and condition 20 requires at least
+100.
 
 The probe was verified before the null was accepted: `d2_parsing.parse_csv_row` is answered
 correctly at confidence 1.0 unperturbed and wrongly at confidence 1.0 perturbed, and 20 of 40
@@ -87,8 +105,9 @@ These are consequences of `§0.4` and `§3.4`, not preferences.
 Revision 2 is frozen and D2 did **not** spend the single pre-final revision `§3.4` permits.
 That is deliberate: the residual is a finding about the encoder's invariance, and revising
 features after seeing the perturbation that broke them is retuning. D3 opens with revision 3,
-written before any new measurement, and it must name what changed in the feature contract and
-why.
+written before any D3 candidate/development/holdout measurement, and it must name what changed in
+the feature contract and why. Recomputing the immutable D2 evidence for non-destructive baseline
+reconciliation is the explicit exception; it has no D3 selection authority.
 
 ### A new, untouched holdout
 
@@ -101,8 +120,17 @@ condition 15. Two distinct holdouts are needed and must not be the same set:
 | retrieval unseen-task | D1 condition 15 | ≥50 new queries, per `§2.3` |
 
 D2's 125 sealed groups are **spent for training and calibration** — 60 of them carry outcomes.
-The remaining 65 are sealed and unexecuted; whether they are enough for a final holdout is a
-count D3 must do, not assume.
+The remaining 65 are sealed and unexecuted: final A contains 30 groups/120 candidate slots,
+final B contains 30/120, and canary contains 5/20. They are numerically sufficient and pairwise
+disjoint. D3 may reuse the exact roles only after a catalogue/root/access audit proves unchanged
+sealed identities, zero body/outcome/prediction access, fitting capability isolation, and a valid
+revision-3 child binding. Protected bodies and individual v2 feature hashes remain inaccessible
+until the final-access checkpoint. A failed audit replaces the complete role under the frozen
+procedure; partial reuse is forbidden. New replacement bodies receive only isolated throwaway
+authoring validation before deterministic role sealing; that capability is then revoked and no
+authoring result enters learning or evaluation evidence. The
+separate retrieval holdout is still missing and must contain at least 50 new group-disjoint
+queries.
 
 ### An encoder whose features do not move under a rename
 
@@ -116,6 +144,14 @@ A useful first probe, cheap and decisive: hold the ranker fixed, perturb one cha
 time, and record which channels move. If the structural channels are stable and only the
 lexical one moves, the fix is a normalisation D3 can pre-register. If the structural channels
 move too, the feature set is the wrong shape and the pre-registration has more to say.
+
+The D3 backlog resolves the ordering explicitly: revision 3 freezes one exact Python 3.12
+scope-aware alpha-normalised AST byte grammar and an exact applicability/stop rule before the
+channel probe runs. The production normalizer is checked against an independently released
+perturbation generator and hard-coded pairs, so it cannot certify itself. The spent D2 probe can
+confirm that the registered intervention addresses the measured channels, but it cannot choose a
+feature variant or threshold. An unregistered moved channel stops D3 rather than opening an
+improvised encoder.
 
 ## 5. What D2 leaves that works
 
@@ -167,8 +203,14 @@ is bound to the failure kind. If D3 adds a filter, it should ask the same questi
 
 D1 reported 0.675 Recall@5 and 0.4481 MRR@10 for the bounded graph arm, with **60** of its
 comparisons cut off by the budget and scored 0.0. Under resource policy revision 2 the
-shortlist widens to 20, the cutoffs go to **0**, and the scores *fall* to 0.5875 and 0.3628.
+shortlist widens to 20, the cutoffs go to **0**, and the canonical computed fields fall to
+0.5875 Recall@5, 0.3634 MRR@10 and 0.2333 nDCG@10. MiniLM vector remains at 0.5375/0.4392,
+and lexical at 0.5250/0.4145.
 The cutoffs had been keeping weak candidates out of the top ten.
+
+The D2 report and the diagnostic's free-text finding contain different values for graph MRR/
+nDCG and the report prints MiniLM recall as 0.6750. D3 records a non-destructive evidence
+reconciliation and does not modify the D2 protected release.
 
 D1 named the shortlist width as D2's first lever. It is not the lever D1 thought it was. D3
 should treat retrieval as an open question with a corrected starting point, not as a nearly
@@ -178,14 +220,27 @@ solved one, and D1 condition 15 still closes only on a new unseen-task holdout.
 
 D3 completes — positively or negatively — when:
 
-- pre-registration revision 3 is published before any new measurement, naming the feature
-  change and its justification;
+- pre-registration revision 3 is published before any D3 candidate/development/holdout
+  measurement, naming the feature change and its justification; immutable predecessor
+  reconciliation remains the declared baseline-only exception;
 - per-channel invariance under semantics-preserving perturbation is measured and recorded,
   whatever it shows;
-- a new untouched holdout exists and is hash-bound before any candidate is selected;
+- separate correction and retrieval holdouts exist, are mutually group-disjoint, and are
+  hash-bound before either candidate family is selected;
 - either every Gate L2 condition is met and a bounded, reversible, operator-approved
   activation follows, or a complete negative release records the first failed pre-registered
   stop condition, immutably, with a not-opened record for every dependent task.
 
 A green implementation PR without one of those two releases is a checkpoint, not a completed
 sprint.
+
+## 9. W0 execution erratum and authority
+
+Sprint 21D3 W0 published the non-destructive unit and retrieval reconciliation in
+[`sprint-21d3-d2-reconciliation.json`](evidence/sprint-21d3-d2-reconciliation.json) and the
+full execution record in [the D3 execution log](sprint-21d3-execution.md). The authoritative
+interpretation is ten D2 OOD group-ranking decisions plus forty candidate outcomes. The
+authoritative development retrieval fields are graph `0.5875`/`0.3634`/`0.2333`, MiniLM
+`0.5375`/`0.4392`/`0.3740`, and lexical `0.5250`/`0.4145`/`0.3327` for Recall@5, MRR@10, and
+nDCG@10 respectively. D1 and D2 protected evidence remains unchanged, and none of these
+development values closes the new retrieval holdout.

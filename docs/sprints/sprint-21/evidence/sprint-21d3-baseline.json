@@ -1,0 +1,195 @@
+{
+  "branch": {
+    "commits_ahead_at_baseline": 0,
+    "descends_from_current_origin_main": true,
+    "local_head": "9fe03cea3975e81bbae57b870e7bc50d8cc29f49",
+    "merge_base_with_origin_main": "9fe03cea3975e81bbae57b870e7bc50d8cc29f49",
+    "name": "feature/sprint-21d3-invariant-correction-ranking",
+    "origin_main": "9fe03cea3975e81bbae57b870e7bc50d8cc29f49"
+  },
+  "ci_runs": [
+    {
+      "conclusion": "success",
+      "created_at": "2026-08-03T05:31:26Z",
+      "event": "pull_request",
+      "head_sha": "139a149c1f6ee592cb534dec3c832d2b1c4a4e91",
+      "job_count": 30,
+      "run_id": 30787401395,
+      "status": "completed",
+      "successful_jobs": 30,
+      "updated_at": "2026-08-03T05:46:29Z",
+      "url": "https://github.com/palkouser/cognitive-os/actions/runs/30787401395"
+    },
+    {
+      "conclusion": "success",
+      "created_at": "2026-08-03T05:46:54Z",
+      "event": "push",
+      "head_sha": "ecb5ea128c26d49af0661c5e2c3fe5a125f1cec5",
+      "job_count": 30,
+      "run_id": 30788129259,
+      "status": "completed",
+      "successful_jobs": 30,
+      "updated_at": "2026-08-03T06:00:49Z",
+      "url": "https://github.com/palkouser/cognitive-os/actions/runs/30788129259"
+    },
+    {
+      "conclusion": "success",
+      "created_at": "2026-08-03T06:05:34Z",
+      "event": "pull_request",
+      "head_sha": "e40a67d7c73b08ce1304b55f5707f22f33d5f50e",
+      "job_count": 30,
+      "run_id": 30789042482,
+      "status": "completed",
+      "successful_jobs": 30,
+      "updated_at": "2026-08-03T06:21:39Z",
+      "url": "https://github.com/palkouser/cognitive-os/actions/runs/30789042482"
+    },
+    {
+      "conclusion": "success",
+      "created_at": "2026-08-03T06:22:17Z",
+      "event": "push",
+      "head_sha": "9fe03cea3975e81bbae57b870e7bc50d8cc29f49",
+      "job_count": 30,
+      "run_id": 30789985887,
+      "status": "completed",
+      "successful_jobs": 30,
+      "updated_at": "2026-08-03T06:36:44Z",
+      "url": "https://github.com/palkouser/cognitive-os/actions/runs/30789985887"
+    }
+  ],
+  "collaborators": {
+    "approving_review_requirement": "unset_because_no_second_eligible_reviewer",
+    "count": 1,
+    "eligible_reviewers_other_than_maintainer": 0,
+    "logins": [
+      "palkouser"
+    ],
+    "maintainer_permission": "admin"
+  },
+  "commands": [
+    "git fetch origin",
+    "git ls-remote origin main refs/tags/sprint-21d2-evidence-baseline refs/tags/sprint-21d2-evidence-baseline^{}",
+    "gh pr view 219/220 --repo palkouser/cognitive-os --json ...",
+    "gh run view 30787401395/30788129259/30789042482/30789985887 --repo palkouser/cognitive-os --json ...",
+    "gh api repos/palkouser/cognitive-os/branches/main/protection",
+    "gh api repos/palkouser/cognitive-os/collaborators",
+    "uv run alembic -c infra/postgres/alembic.ini heads",
+    "uv run python scripts/artifact_store_fingerprint.py <root> --expect <digest> --expect-files <count> --json"
+  ],
+  "d2_release": {
+    "local_peeled_commit": "ecb5ea128c26d49af0661c5e2c3fe5a125f1cec5",
+    "local_tag_object": "3f3c00e216879b4d1443ca20ac3e5f14c1bc0e29",
+    "remote": "https://github.com/palkouser/cognitive-os",
+    "remote_peeled_commit": "ecb5ea128c26d49af0661c5e2c3fe5a125f1cec5",
+    "remote_tag_object": "3f3c00e216879b4d1443ca20ac3e5f14c1bc0e29",
+    "tag": "sprint-21d2-evidence-baseline"
+  },
+  "integrity_content_hash": "6b517a9f5778752207211ccf28879f82da38b12f01a5b723337facdfe938e15c",
+  "items": [
+    "S21D3-000"
+  ],
+  "learned_state_in_cognitive_os_s21d2_test": {
+    "activations": 0,
+    "approvals": 0,
+    "components": 0,
+    "query": "read-only counts over the three learned lifecycle tables",
+    "surface": "experience.correction_ranking"
+  },
+  "main_protection": {
+    "allow_deletions": false,
+    "allow_force_pushes": false,
+    "enforce_admins": true,
+    "queried_json_sha256_including_trailing_newline": "f22c91f8fc462ee523bfe4d04b8cf9db8be641d410f8ac7e185544b5b346b1f0",
+    "required_context_count": 27,
+    "required_contexts": [
+      "benchmark-regression",
+      "build",
+      "coding-agent",
+      "cognitive-controller",
+      "context-builder-core",
+      "controlled-changes-core",
+      "corpus-factory-core",
+      "cross-domain-pilot-core",
+      "experience-compiler-core",
+      "harness-proposals-core",
+      "inspect-adapter",
+      "memory-plane-core",
+      "migration",
+      "model-routing-core",
+      "optional-boundary",
+      "postgres-integration",
+      "provider-offline",
+      "quality",
+      "sandbox",
+      "security",
+      "semantic-memory-core",
+      "skill-engine-core",
+      "strategy-engine-core",
+      "test",
+      "tool-plane",
+      "verifier-domains",
+      "weakness-mining-core"
+    ],
+    "required_conversation_resolution": true,
+    "required_pull_request_reviews": null,
+    "strict": true
+  },
+  "migration": {
+    "planned_d3_migration": null,
+    "repository_head": "0015"
+  },
+  "predecessor_artifact_stores": {
+    "development": {
+      "absolute_root": "/home/palkouser/projekt/cognitive-os-data/artifacts",
+      "access": "read_only_zero_write_fingerprint",
+      "files": 5,
+      "matches_expected": true,
+      "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf"
+    },
+    "sprint_21c3": {
+      "absolute_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21c3",
+      "access": "read_only_zero_write_fingerprint",
+      "files": 8503,
+      "matches_expected": true,
+      "path_and_size_fingerprint_sha256": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593"
+    },
+    "sprint_21d1": {
+      "absolute_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d1",
+      "access": "read_only_zero_write_fingerprint",
+      "files": 83,
+      "matches_expected": true,
+      "path_and_size_fingerprint_sha256": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f"
+    },
+    "sprint_21d2": {
+      "absolute_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d2",
+      "access": "read_only_zero_write_fingerprint",
+      "files": 1511,
+      "matches_expected": true,
+      "path_and_size_fingerprint_sha256": "39417f1a03f6824cfe6f9c4b7e6bd5a3cd34da8329fb95cff0a35595899438aa"
+    }
+  },
+  "pull_requests": [
+    {
+      "head": "139a149c1f6ee592cb534dec3c832d2b1c4a4e91",
+      "merge_commit": "ecb5ea128c26d49af0661c5e2c3fe5a125f1cec5",
+      "merged_at": "2026-08-03T05:46:52Z",
+      "number": 219,
+      "state": "MERGED",
+      "url": "https://github.com/palkouser/cognitive-os/pull/219"
+    },
+    {
+      "head": "e40a67d7c73b08ce1304b55f5707f22f33d5f50e",
+      "merge_commit": "9fe03cea3975e81bbae57b870e7bc50d8cc29f49",
+      "merged_at": "2026-08-03T06:22:14Z",
+      "number": 220,
+      "state": "MERGED",
+      "url": "https://github.com/palkouser/cognitive-os/pull/220"
+    }
+  ],
+  "read_policy": "fresh local and remote reads; no remote mutation",
+  "recorded_at": "2026-08-03T10:07:42Z",
+  "schema_version": 1,
+  "sprint": "21D3",
+  "wave": "W0",
+  "zero_predecessor_writes": true
+}

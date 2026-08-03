@@ -1,0 +1,81 @@
+{
+  "d1_or_d2_evidence_files_written": 0,
+  "integrity_content_hash": "01b4b68f381cc74beab5b84a0ff2e94536213c998818f2b6f7c22561b691246a",
+  "items": [
+    "S21D3-001"
+  ],
+  "protected_objects_unchanged": true,
+  "purpose": "non-destructive correction of D2 denominators and narrative drift",
+  "ranking_units": {
+    "authoritative_d3_interpretation": "ten ranking decisions and forty candidate outcomes",
+    "candidate_outcome": "one verifier label for one candidate",
+    "d2_ood_candidate_outcomes": 40,
+    "d2_ood_groups": 10,
+    "d2_ood_ranking_decisions": 10,
+    "d2_recorded_decisions_field": 40,
+    "d2_recorded_field_interpretation": "candidate outcome slots, incorrectly labelled decisions",
+    "formula": "candidate_outcomes = ranking_decisions * 4",
+    "metamorphic_case": "one transformation of one group and one ranking decision",
+    "ranking_decision": "one rank-or-abstain call for one four-candidate task group"
+  },
+  "recorded_at": "2026-08-03T10:07:42Z",
+  "replay": {
+    "algorithm": "read the frozen 80-query JSON computed arm fields without recomputation, tuning, or rounding substitution",
+    "command": "uv run python scripts/pre_registration_d3.py --write",
+    "result_hash": "3f61448c82e1474d59206afa31c6d7607d2520e8694b8c5115a90bb4192245c9"
+  },
+  "retrieval": {
+    "calculation_source": "machine-readable computed arm fields",
+    "canonical_development_values": {
+      "lexical": {
+        "json_pointer": "/arms/lexical",
+        "mrr_at_10": 0.4145,
+        "ndcg_at_10": 0.3327,
+        "recall_at_5": 0.525,
+        "timeouts": 0
+      },
+      "minilm_vector": {
+        "json_pointer": "/arms/minilm_vector",
+        "mrr_at_10": 0.4392,
+        "ndcg_at_10": 0.374,
+        "recall_at_5": 0.5375,
+        "timeouts": 0
+      },
+      "width_20_bounded_graph": {
+        "json_pointer": "/arms/minilm_shortlist_plus_bounded_ged",
+        "mrr_at_10": 0.3634,
+        "ndcg_at_10": 0.2333,
+        "recall_at_5": 0.5875,
+        "timeouts": 0
+      }
+    },
+    "mismatches": [
+      {
+        "authoritative": "graph 0.3634/0.2333 and MiniLM recall 0.5375",
+        "location": "sprint-21d2-report.md narrative",
+        "recorded": "graph MRR/nDCG 0.3628/0.2327 and MiniLM recall 0.6750"
+      },
+      {
+        "authoritative": "computed /arms fields 0.3634/0.2333",
+        "location": "/findings/0/observed",
+        "recorded": "graph MRR/nDCG 0.3628/0.2327"
+      },
+      {
+        "authoritative": "10 group decisions and 40 candidate outcomes",
+        "location": "D2 report limitation and handoff OOD prose",
+        "recorded": "40 OOD decisions"
+      }
+    ],
+    "query_count": 80,
+    "query_set_hash": "0a82bfe390a9216f1017bbeb70a09e29ef4747519fb4b8fd6bcf0803efb6650a",
+    "scope": "frozen D1 development replay only; not D1 condition 15 closure"
+  },
+  "schema_version": 1,
+  "source_evidence": {
+    "docs/sprints/sprint-21/evidence/sprint-21d2-d1-retrieval-diagnostic.json": "8ad064376b05c40da2c02db938f69443f6c4f6518d3c6d5de45022e6dd5853c6",
+    "docs/sprints/sprint-21/evidence/sprint-21d2-learner-selection.json": "5537a20f8cdd297449d5d5b801d03a385baae7cd919426430543864bf9b80e6a",
+    "docs/sprints/sprint-21/sprint-21d2-report.md": "edf12fdb3f51482c5fad7331bd099850443a2ca81546b6fd1ab7ad8b08dfa8ba"
+  },
+  "sprint": "21D3",
+  "wave": "W0"
+}

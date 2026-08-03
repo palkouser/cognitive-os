@@ -1,0 +1,125 @@
+{
+  "access_and_outcome_authority": {
+    "canary_opened": false,
+    "capability_seal_exposes_final_or_canary_identifiers": 0,
+    "final_a_opened": false,
+    "final_b_opened": false,
+    "learned_access_rows": 0,
+    "learned_evidence_prediction_rows": 0,
+    "selection_authorises_final_access": false,
+    "selection_hash": "274a7a932ce110d12892f3dab102f10308ad556c563483d414979cbc69950536"
+  },
+  "audit_surface": "sealed catalogue, root, tracked source, and access identities only",
+  "group_disjointness": {
+    "pairs_sharing_a_group": 0,
+    "protected_role_pairs": 3,
+    "source": "docs/sprints/sprint-21/evidence/sprint-21d2-sealed-catalogues.json",
+    "source_sha256": "d4bbf779ad050a2320038987a647d67b482922213272fa12430e593fb9aee86b"
+  },
+  "individual_body_hashes_resolved": 0,
+  "integrity_content_hash": "868c9f507453e7312592e2dd8e58c05c141d4af69427ec04a5b0ccec1ae84e33",
+  "items": [
+    "S21D3-004"
+  ],
+  "protected_bodies_resolved": 0,
+  "recorded_at": "2026-08-03T10:07:42Z",
+  "roles": [
+    {
+      "authoritative_outcomes": 0,
+      "body_access_receipts": 0,
+      "candidate_slots": 120,
+      "catalogue_manifest_hash": "69d5eedcaeccdfdcc183b050c89c3e4b49b709474a35511620c39f6f0292fb46",
+      "catalogue_root_hash": "521e620fc251545fe323444fa4a3bf925d0d4b0039efd79b097bb1f015e6fa96",
+      "d2_selection_authorises_access": false,
+      "decision": "reuse",
+      "fitting_can_resolve_member_or_body": false,
+      "groups": 30,
+      "individual_body_hashes_resolved_by_audit": 0,
+      "pairwise_shared_clone_clusters": 0,
+      "pairwise_shared_groups": 0,
+      "pairwise_shared_source_lineages": 0,
+      "prediction_records": 0,
+      "revision3_child_binding": "pre-registration binds this exact role/root/manifest decision; S21D3-032 binds later v2 child identities before execution",
+      "role": "final_a",
+      "unchanged_catalogue_source_and_manifest": true
+    },
+    {
+      "authoritative_outcomes": 0,
+      "body_access_receipts": 0,
+      "candidate_slots": 120,
+      "catalogue_manifest_hash": "06a0c2f6641e4bf330d2fd29a9fab54b636c77d689917976133bafc92bf22a33",
+      "catalogue_root_hash": "521e620fc251545fe323444fa4a3bf925d0d4b0039efd79b097bb1f015e6fa96",
+      "d2_selection_authorises_access": false,
+      "decision": "reuse",
+      "fitting_can_resolve_member_or_body": false,
+      "groups": 30,
+      "individual_body_hashes_resolved_by_audit": 0,
+      "pairwise_shared_clone_clusters": 0,
+      "pairwise_shared_groups": 0,
+      "pairwise_shared_source_lineages": 0,
+      "prediction_records": 0,
+      "revision3_child_binding": "pre-registration binds this exact role/root/manifest decision; S21D3-032 binds later v2 child identities before execution",
+      "role": "final_b",
+      "unchanged_catalogue_source_and_manifest": true
+    },
+    {
+      "authoritative_outcomes": 0,
+      "body_access_receipts": 0,
+      "candidate_slots": 20,
+      "catalogue_manifest_hash": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7",
+      "catalogue_root_hash": "521e620fc251545fe323444fa4a3bf925d0d4b0039efd79b097bb1f015e6fa96",
+      "d2_selection_authorises_access": false,
+      "decision": "reuse",
+      "fitting_can_resolve_member_or_body": false,
+      "groups": 5,
+      "individual_body_hashes_resolved_by_audit": 0,
+      "pairwise_shared_clone_clusters": 0,
+      "pairwise_shared_groups": 0,
+      "pairwise_shared_source_lineages": 0,
+      "prediction_records": 0,
+      "revision3_child_binding": "pre-registration binds this exact role/root/manifest decision; S21D3-032 binds later v2 child identities before execution",
+      "role": "canary",
+      "unchanged_catalogue_source_and_manifest": true
+    }
+  ],
+  "schema_version": 1,
+  "source_files": {
+    "docs/sprints/sprint-21/evidence/sprint-21d2-sealed-catalogues.json": {
+      "current_sha256": "d4bbf779ad050a2320038987a647d67b482922213272fa12430e593fb9aee86b",
+      "d2_release_sha256": "d4bbf779ad050a2320038987a647d67b482922213272fa12430e593fb9aee86b",
+      "unchanged": true
+    },
+    "src/cognitive_os/coding/reality_task_specs_d2.py": {
+      "current_sha256": "b5676fc141ea87a38c9cd8e720fd294a7bb4d426e7f26ae10ae21e65cd0a4a26",
+      "d2_release_sha256": "b5676fc141ea87a38c9cd8e720fd294a7bb4d426e7f26ae10ae21e65cd0a4a26",
+      "unchanged": true
+    },
+    "src/cognitive_os/learning/correction_catalogue.py": {
+      "current_sha256": "87b673c1a28f2d92c4fdad165fff4bf2cd450cdd1b27ee2732adecbec2ad8a93",
+      "d2_release_sha256": "87b673c1a28f2d92c4fdad165fff4bf2cd450cdd1b27ee2732adecbec2ad8a93",
+      "unchanged": true
+    }
+  },
+  "sprint": "21D3",
+  "wave": "W0",
+  "whole_role_replacement_contract": {
+    "authoring_exception": "isolated throwaway validation only; no learned, event, artifact, or metric write",
+    "counts": {
+      "canary": {
+        "candidate_slots": 20,
+        "groups": 5
+      },
+      "final_a": {
+        "candidate_slots": 120,
+        "groups": 30
+      },
+      "final_b": {
+        "candidate_slots": 120,
+        "groups": 30
+      }
+    },
+    "partial_reuse_allowed": false,
+    "procedure": "S21D3-030 authors the complete role, S21D3-031 proves separation, S21D3-032 seals it before measurement",
+    "trigger": "any later mismatch in role/root/source/access/child binding"
+  }
+}
