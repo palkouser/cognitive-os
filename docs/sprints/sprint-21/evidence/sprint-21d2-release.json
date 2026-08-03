@@ -1,0 +1,79 @@
+{
+  "branch_protection_after_release": {
+    "allow_deletions": false,
+    "allow_force_pushes": false,
+    "enforce_admins": true,
+    "required_conversation_resolution": true,
+    "required_pull_request_reviews": null,
+    "required_status_check_contexts": 27,
+    "strict_status_checks": true,
+    "unchanged_from_the_w0_reading": true
+  },
+  "component_state": {
+    "activations": 0,
+    "active_components": 0,
+    "approvals": 0,
+    "artifact_written": false,
+    "learned_components": 0,
+    "note": "S21D2-049 recorded a null; nothing was registered, approved or activated on experience.correction_ranking"
+  },
+  "d1_conditions_still_open": [
+    6,
+    7,
+    15
+  ],
+  "final_outcomes_inspected": 0,
+  "gate_l2": "does not pass",
+  "items": [
+    "S21D2-094",
+    "S21D2-095"
+  ],
+  "migration_head": "0015",
+  "next_available_migration": "0016 (unallocated)",
+  "outcome": "negative",
+  "recorded_at": "2026-08-03T06:02:24.234522Z",
+  "release": {
+    "chronology": "#219 merge 05:46:52Z -> exact-head main CI 30788129259 complete 06:00:49Z -> annotated tag created once after that CI",
+    "exact_head_main_ci_completed_at": "2026-08-03T06:00:49Z",
+    "exact_head_main_ci_conclusion": "success",
+    "exact_head_main_ci_head_sha": "ecb5ea128c26d49af0661c5e2c3fe5a125f1cec5",
+    "exact_head_main_ci_jobs": "30 of 30 success",
+    "exact_head_main_ci_run": 30788129259,
+    "implementation_merge_commit": "ecb5ea128c26d49af0661c5e2c3fe5a125f1cec5",
+    "implementation_merged_at": "2026-08-03T05:46:52Z",
+    "implementation_pull_request": 219,
+    "merge_method": "squash, no administrator bypass",
+    "peeled_commit": "ecb5ea128c26d49af0661c5e2c3fe5a125f1cec5",
+    "pull_request_head_ci_head_sha": "139a149c1f6ee592cb534dec3c832d2b1c4a4e91",
+    "pull_request_head_ci_jobs": "30 of 30 success",
+    "pull_request_head_ci_run": 30787401395,
+    "remote_main": "ecb5ea128c26d49af0661c5e2c3fe5a125f1cec5",
+    "remote_tag_object": "3f3c00e216879b4d1443ca20ac3e5f14c1bc0e29",
+    "success_tag_forbidden_and_not_created": "sprint-21-learning-baseline",
+    "tag": "sprint-21d2-evidence-baseline",
+    "tag_object": "3f3c00e216879b4d1443ca20ac3e5f14c1bc0e29",
+    "tag_type": "tag"
+  },
+  "schema_version": 1,
+  "sprint": "21D2",
+  "sprint_22a": "blocked; the handoff targets a remediation sprint",
+  "store_fingerprints_after_release": {
+    "artifacts": {
+      "files": 5,
+      "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf"
+    },
+    "artifacts-s21c3": {
+      "files": 8503,
+      "path_and_size_fingerprint_sha256": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593"
+    },
+    "artifacts-s21d1": {
+      "files": 83,
+      "path_and_size_fingerprint_sha256": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f"
+    },
+    "artifacts-s21d2": {
+      "files": 1511,
+      "path_and_size_fingerprint_sha256": "39417f1a03f6824cfe6f9c4b7e6bd5a3cd34da8329fb95cff0a35595899438aa"
+    }
+  },
+  "wave": "W10"
+}

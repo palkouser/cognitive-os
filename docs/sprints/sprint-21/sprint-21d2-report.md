@@ -271,9 +271,14 @@ the protected tag or its chronology.
 
 `sprint-21d2-evidence-baseline`. The success tag `sprint-21-learning-baseline` is forbidden on
 this path and was not created. Sprint 22A remains blocked; the handoff targets a remediation
-sprint. Exact merge, CI and tag handles are recorded in
-[gate-l2-assessment.md](gate-l2-assessment.md) condition 29 after S21D2-095, and are not
-claimed here — a report cannot cite a release it is part of.
+sprint.
+
+Exact merge, CI and tag handles are recorded in
+[gate-l2-assessment.md](gate-l2-assessment.md) condition 29 and in
+[`sprint-21d2-release.json`](evidence/sprint-21d2-release.json), and are deliberately not
+restated here: this report is inside the release it would be citing, so a claim about that
+release made in this file would be self-referential. Read them from the assessment, which was
+updated after the push from the remote rather than from the repository that created it.
 
 ## 15. What this sprint is worth
 

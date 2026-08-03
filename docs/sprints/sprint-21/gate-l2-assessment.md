@@ -7,16 +7,20 @@
   peeled to `b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9`
 - Planning head: `1cadbabb5cdabb32bbd502f281d734fb25a229ff`
 - Migration head: `0015`, unchanged. `0016` remains unallocated.
-- Revision: 1 — pre-release. Condition 29 is pending until S21D2-095.
+- Revision: 2 — post-release. Condition 29 is closed on the handles in
+  [`sprint-21d2-release.json`](evidence/sprint-21d2-release.json).
 
 ## Verdict
 
 **Gate L2 does not pass.**
 
-Twenty-nine conditions. Fourteen are met, one is met as a rejection, thirteen are **not
-opened**, and one is pending the protected release. No condition failed on a number that
-could have been argued about, because the sprint stopped before the conditions that measure a
-model were reachable.
+Twenty-nine conditions. **Fifteen are met**, one is met as a rejection, and thirteen are **not
+opened**. No condition failed on a number that could have been argued about, because the
+sprint stopped before the conditions that measure a model were reachable.
+
+The gate does not pass on met conditions. It passes only when *every applicable* condition is
+met, and thirteen were never authorised to be measured — which is the outcome `§0.4` and
+`§11.3` define as a valid negative completion, not a shortfall in the release.
 
 The stop is condition 12's, at S21D2-049. The bounded k-NN ranked an accepted candidate first
 in **nine of ten** calibration groups against a **0.3** deterministic baseline — the signal is
@@ -77,7 +81,7 @@ and the continuation record hash is
 | 26 | activation, active projection, artifact loading, disable, fallback, restoration and rollback evidence survive process restart | **not opened for the lifecycle; met for what exists** | no activation exists to survive anything. What does exist survived: PostgreSQL was restarted between two captures and the store shape is identical, `sprint-21d2-operations.json` |
 | 27 | a human operator approves the exact promotion assessment, component revision and artifact lineage; no model or provider identity approves or reviews itself | **not opened** | nothing was submitted for approval. No approval was fabricated, and none is claimed |
 | 28 | PostgreSQL replay, backup/restore, corruption, artifact verification, packaging, schema, security, language, focused CI and the complete local matrix pass in isolated stores | **met** | `sprint-21d2-verification-matrix.json`: **29 of 29** rows on their expected exit status in 812 s, none failed, none skipped; all four artifact pairs byte-identical before and after every destructive row. `sprint-21d2-operations.json`: counts, hashed-row roll-up, all 1511 blobs re-hashed and every store-side resume input identical between source and restore; ten damage cases all fail closed |
-| 29 | protected merge, exact-head post-merge `main` CI, Gate L2 assessment, D2 report, handoff, annotated tag and remote verification | **pending** | closed by S21D2-095. This revision is the pre-release assessment; the condition cannot be assessed by the document that is part of it |
+| 29 | protected merge, exact-head post-merge `main` CI, Gate L2 assessment, D2 report, handoff, annotated tag and remote verification | **met** | PR **#219** squash-merged with no administrator bypass to `ecb5ea128c26d49af0661c5e2c3fe5a125f1cec5` at 05:46:52Z; exact-head `main` CI run **30788129259** 30 of 30 success at that commit, complete 06:00:49Z; annotated tag `sprint-21d2-evidence-baseline` created **once, after** that CI — object `3f3c00e216879b4d1443ca20ac3e5f14c1bc0e29`, identical on the remote, peeling to the same commit; `origin/main` re-read at `ecb5ea12…`; protection unchanged at 27 required contexts with `enforce_admins`; `sprint-21-learning-baseline` **not created**. [`sprint-21d2-release.json`](evidence/sprint-21d2-release.json) |
 
 ## Gate D1 remediation — a separate mapping
 
@@ -129,6 +133,30 @@ reason and the branch were not. Recorded as W6-F1.
 - Not that retrieval is closed either way. Condition 24's holdout does not exist.
 - Not that the correction-ranking surface generalises to any other decision. It is one
   surface, four candidates per task, and `CodingAgentFacade` is explicitly not covered.
+
+## Release state, re-read after the push
+
+Every handle below was read from the remote *after* the tag was pushed, not from the local
+repository that created it.
+
+| | |
+|---|---|
+| `origin/main` | `ecb5ea128c26d49af0661c5e2c3fe5a125f1cec5` |
+| Tag object, local and remote | `3f3c00e216879b4d1443ca20ac3e5f14c1bc0e29` |
+| Peeled commit | `ecb5ea128c26d49af0661c5e2c3fe5a125f1cec5` |
+| Implementation PR | `#219`, squash, no bypass |
+| PR-head CI | run `30787401395` at `139a149c…`, 30 of 30 success |
+| Exact-head `main` CI | run `30788129259` at `ecb5ea12…`, 30 of 30 success |
+| Migration head | `0015`; `0016` unallocated |
+| Components / approvals / activations | 0 / 0 / 0 |
+| development `artifacts` | `7e85d9a6…`, 5 files — unchanged since W0 |
+| C3 `artifacts-s21c3` | `7d19e3c8…`, 8503 files — unchanged since W0 |
+| D1 `artifacts-s21d1` | `f7b14ac7…`, 83 files — unchanged since W0 |
+
+**Gate L2 remains `does not pass` after the release.** Condition 29 closing does not change
+the verdict, and it was never able to: a release condition records that the negative result was
+published correctly, not that the result was positive. Sprint 22A stays blocked, and the
+handoff at [`sprint-21d3-handoff.md`](sprint-21d3-handoff.md) targets a remediation sprint.
 
 ## Limitations carried forward
 

@@ -18,10 +18,13 @@ Implementation authority for what D2 did:
 
 | | |
 | --- | --- |
-| Parent tag | `sprint-21d2-evidence-baseline`, annotated — a **negative** release |
-| Parent release commit | recorded in [gate-l2-assessment.md](gate-l2-assessment.md) condition 29 after S21D2-095 |
+| Parent tag | `sprint-21d2-evidence-baseline`, annotated — a **negative** release. Tag object `3f3c00e216879b4d1443ca20ac3e5f14c1bc0e29`, identical on the remote |
+| Parent release commit | `ecb5ea128c26d49af0661c5e2c3fe5a125f1cec5`, the peeled D2 evidence baseline |
+| Parent pull request | `#219`, squash-merged with no administrator bypass under unchanged protection |
+| Parent exact-head CI | run `30788129259`, 30 of 30 success on `ecb5ea12…` |
 | Grandparent tag | `sprint-21d1-emg-baseline`, tag object `a59977dbcf23df60a700385a6fc15b012bf6d142`, peeled to `b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9` |
 | Migration head | `0015`. `0016` still unallocated |
+| Component state | 0 components, 0 approvals, 0 activations on `experience.correction_ranking` |
 | Gate D1 | conditions 6, 7, 15 **open** — D2 was their remediation route and the null forfeits all three |
 | Gate D2 / Gate L2 | **does not pass**, valid negative completion |
 | Sprint 22A | **blocked** |
