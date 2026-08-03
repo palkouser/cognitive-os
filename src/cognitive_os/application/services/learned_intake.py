@@ -64,9 +64,17 @@ PROVIDER_ADVISORY_SOURCE_KINDS: frozenset[str] = frozenset(
     {"openrouter_advisory", "claude_code_advisory", "codex_cli_advisory"}
 )
 
+#: Sprint 21D2 self-play correction runs. Verifier-backed — the same hidden verifier decides
+#: them — but deliberately outside `REAL_GOVERNED_SOURCE_KINDS`, because they are generated to
+#: be fitted on. A self-play run that borrowed the governed label would become evaluation-only
+#: evidence that the model had already trained against, which is the one contamination the
+#: whole role boundary exists to prevent.
+CORRECTION_SELF_PLAY_SOURCE_KIND = "correction_self_play_task_run"
+
 #: Source kinds whose outcome is only meaningful with verifier evidence behind it.
 VERIFIER_BACKED_SOURCE_KINDS: frozenset[str] = (
-    frozenset({"governed_task_run", "governed_benchmark_case"}) | PROVIDER_ADVISORY_SOURCE_KINDS
+    frozenset({"governed_task_run", "governed_benchmark_case", CORRECTION_SELF_PLAY_SOURCE_KIND})
+    | PROVIDER_ADVISORY_SOURCE_KINDS
 )
 
 

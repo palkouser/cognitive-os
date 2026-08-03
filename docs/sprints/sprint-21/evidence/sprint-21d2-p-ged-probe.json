@@ -1,0 +1,324 @@
+{
+  "schema_version": 1,
+  "sprint": "21D2",
+  "wave": "W1",
+  "probe": "P-GED",
+  "items": [
+    "informs S21D2-017 and S21D2-031"
+  ],
+  "recorded_at": "2026-08-01T07:46:37+00:00",
+  "purpose": "Measure what a width-20 bounded-GED query costs, so the D2 revision-2 per-pair timeout is pre-registered from evidence rather than inherited by default. This is a measurement: it publishes no retrieval metric and closes no gate. Recall, MRR and nDCG on this frozen set belong to S21D2-032 and are development diagnostics.",
+  "read_only": true,
+  "query_set": "the frozen D1 80-query manifest, development evidence only",
+  "shortlist_fix_applied": "S21D2-030, without which width 20 could not be measured at all",
+  "control_reproduces_d1": {
+    "configuration": "vector_shortlist=10, per_pair=250ms, budget=2s",
+    "measured_p95_ms": 1785.4,
+    "published_d1_p95_ms": 1788.9,
+    "measured_cutoffs": 60,
+    "published_d1_cutoffs": 60,
+    "verdict": "The control reproduces D1 to within 3.5 ms and matches its cutoff count exactly, so the probe measures the same thing D1 measured and S21D2-030 did not change width-10 behaviour."
+  },
+  "configurations": [
+    {
+      "vector_shortlist": 10,
+      "per_pair_ged_timeout_ms": 250,
+      "query_budget_seconds": 2,
+      "queries": 80,
+      "considered_per_query_min": 10,
+      "considered_per_query_max": 10,
+      "pair_comparisons_attempted": 800,
+      "pair_comparisons_cut": 60,
+      "cut_fraction": 0.075,
+      "queries_with_any_cut": 20,
+      "latency_ms": {
+        "p50": 25.7,
+        "p95": 1785.4,
+        "max": 1788.6,
+        "mean": 465.2
+      },
+      "within_2s_budget_p95": true
+    },
+    {
+      "vector_shortlist": 10,
+      "per_pair_ged_timeout_ms": 150,
+      "query_budget_seconds": 2,
+      "queries": 80,
+      "considered_per_query_min": 10,
+      "considered_per_query_max": 10,
+      "pair_comparisons_attempted": 800,
+      "pair_comparisons_cut": 0,
+      "cut_fraction": 0.0,
+      "queries_with_any_cut": 0,
+      "latency_ms": {
+        "p50": 24.5,
+        "p95": 1539.6,
+        "max": 1541.2,
+        "mean": 402.1
+      },
+      "within_2s_budget_p95": true
+    },
+    {
+      "vector_shortlist": 10,
+      "per_pair_ged_timeout_ms": 90,
+      "query_budget_seconds": 2,
+      "queries": 80,
+      "considered_per_query_min": 10,
+      "considered_per_query_max": 10,
+      "pair_comparisons_attempted": 800,
+      "pair_comparisons_cut": 0,
+      "cut_fraction": 0.0,
+      "queries_with_any_cut": 0,
+      "latency_ms": {
+        "p50": 24.9,
+        "p95": 938.0,
+        "max": 940.2,
+        "mean": 252.4
+      },
+      "within_2s_budget_p95": true
+    },
+    {
+      "vector_shortlist": 20,
+      "per_pair_ged_timeout_ms": 250,
+      "query_budget_seconds": 2,
+      "queries": 80,
+      "considered_per_query_min": 20,
+      "considered_per_query_max": 20,
+      "pair_comparisons_attempted": 1600,
+      "pair_comparisons_cut": 260,
+      "cut_fraction": 0.1625,
+      "queries_with_any_cut": 20,
+      "latency_ms": {
+        "p50": 35.2,
+        "p95": 1786.2,
+        "max": 1788.0,
+        "mean": 471.3
+      },
+      "within_2s_budget_p95": true
+    },
+    {
+      "vector_shortlist": 20,
+      "per_pair_ged_timeout_ms": 150,
+      "query_budget_seconds": 2,
+      "queries": 80,
+      "considered_per_query_min": 20,
+      "considered_per_query_max": 20,
+      "pair_comparisons_attempted": 1600,
+      "pair_comparisons_cut": 140,
+      "cut_fraction": 0.0875,
+      "queries_with_any_cut": 20,
+      "latency_ms": {
+        "p50": 35.4,
+        "p95": 1993.9,
+        "max": 1994.4,
+        "mean": 523.3
+      },
+      "within_2s_budget_p95": true
+    },
+    {
+      "vector_shortlist": 20,
+      "per_pair_ged_timeout_ms": 90,
+      "query_budget_seconds": 2,
+      "queries": 80,
+      "considered_per_query_min": 20,
+      "considered_per_query_max": 20,
+      "pair_comparisons_attempted": 1600,
+      "pair_comparisons_cut": 0,
+      "cut_fraction": 0.0,
+      "queries_with_any_cut": 0,
+      "latency_ms": {
+        "p50": 35.8,
+        "p95": 1764.1,
+        "max": 1765.3,
+        "mean": 465.2
+      },
+      "within_2s_budget_p95": true
+    }
+  ],
+  "per_pair_cost": {
+    "measured_pairs": 1600,
+    "queries": 80,
+    "measurement_ceiling_ms": 1500,
+    "hit_the_measurement_ceiling": 0,
+    "distribution_ms": {
+      "p50": 1.02,
+      "p90": 1501.31,
+      "p95": 1501.35,
+      "p99": 1501.6,
+      "max": 1502.1,
+      "mean": 357.36
+    },
+    "by_domain_ms": {
+      "coding": {
+        "pairs": 1200,
+        "p50": 0.93,
+        "p95": 1.41,
+        "max": 2.7
+      },
+      "logic": {
+        "pairs": 200,
+        "p50": 1501.29,
+        "p95": 1501.53,
+        "max": 1501.8
+      },
+      "mathematics": {
+        "pairs": 200,
+        "p50": 1501.32,
+        "p95": 1501.59,
+        "max": 1502.1
+      }
+    },
+    "fraction_completing_within_timeout": {
+      "50": 0.7625,
+      "90": 0.7625,
+      "150": 0.7625,
+      "250": 0.7625,
+      "500": 0.7625,
+      "1000": 0.7625
+    },
+    "uncapped_query_total_ms": {
+      "p50": 20.2,
+      "p95": 28529.8,
+      "max": 28531.4
+    },
+    "most_expensive_queries": [
+      {
+        "query_id": "q:mathematics:quadratic",
+        "domain": "mathematics",
+        "total_ms": 28531.4,
+        "pairs_over_90ms": 19
+      },
+      {
+        "query_id": "q:mathematics:long-mult-negative",
+        "domain": "mathematics",
+        "total_ms": 28531.3,
+        "pairs_over_90ms": 19
+      },
+      {
+        "query_id": "q:mathematics:long-mult",
+        "domain": "mathematics",
+        "total_ms": 28530.0,
+        "pairs_over_90ms": 19
+      },
+      {
+        "query_id": "q:mathematics:simplify",
+        "domain": "mathematics",
+        "total_ms": 28529.9,
+        "pairs_over_90ms": 19
+      },
+      {
+        "query_id": "q:mathematics:rationals",
+        "domain": "mathematics",
+        "total_ms": 28529.8,
+        "pairs_over_90ms": 19
+      },
+      {
+        "query_id": "q:logic:hypotheses",
+        "domain": "logic",
+        "total_ms": 28529.6,
+        "pairs_over_90ms": 19
+      },
+      {
+        "query_id": "q:mathematics:linear",
+        "domain": "mathematics",
+        "total_ms": 28529.5,
+        "pairs_over_90ms": 19
+      },
+      {
+        "query_id": "q:mathematics:long-div",
+        "domain": "mathematics",
+        "total_ms": 28529.3,
+        "pairs_over_90ms": 19
+      },
+      {
+        "query_id": "q:logic:constraint",
+        "domain": "logic",
+        "total_ms": 28529.1,
+        "pairs_over_90ms": 19
+      },
+      {
+        "query_id": "q:logic:modus-ponens",
+        "domain": "logic",
+        "total_ms": 28528.9,
+        "pairs_over_90ms": 19
+      }
+    ]
+  },
+  "corrected_measurement_note": "A first pass sampled only the first twenty queries and reported a 1.0 ms median, which could not be reconciled with the 1785 ms p95 the full run measured. The sample was the bias: the coding queries are cheap and the logic queries are not. The distribution above is measured over every query in the set and supersedes it.",
+  "findings": [
+    {
+      "id": "P1",
+      "finding": "GED cost here is timeout-bound, not work-bound. networkx returns the best distance found when the timeout expires, so a pair that does not converge spends exactly its allowance. Per-query latency is therefore approximately shortlist width times per-pair timeout, until the query budget truncates it.",
+      "evidence": "width 10 at 250/150/90 ms measured p95 1785.4/1539.6/938.0 ms"
+    },
+    {
+      "id": "P2",
+      "finding": "The cost is bimodal by domain, not uniform. Coding pairs converge in about a millisecond; logic and mathematics pairs never converge and spend their whole allowance.",
+      "evidence": {
+        "coding": {
+          "pairs": 1200,
+          "p50": 0.93,
+          "p95": 1.41,
+          "max": 2.7
+        },
+        "logic": {
+          "pairs": 200,
+          "p50": 1501.29,
+          "p95": 1501.53,
+          "max": 1501.8
+        },
+        "mathematics": {
+          "pairs": 200,
+          "p50": 1501.32,
+          "p95": 1501.59,
+          "max": 1502.1
+        }
+      },
+      "consequence": "A single per-pair timeout is doing two unrelated jobs. For three quarters of the pairs it is irrelevant; for the rest it is the entire cost."
+    },
+    {
+      "id": "P5",
+      "finding": "The timeout does not decide which pairs converge. The fraction completing inside the allowance is 0.7625 at 50 ms and still 0.7625 at 1000 ms \u2014 a twentyfold increase buys no additional convergence, because the pairs that converge do so in about a millisecond and the rest do not converge at any value in the measured range.",
+      "evidence": {
+        "50": 0.7625,
+        "90": 0.7625,
+        "150": 0.7625,
+        "250": 0.7625,
+        "500": 0.7625,
+        "1000": 0.7625
+      },
+      "consequence": "Reducing the per-pair timeout from 250 ms to 90 ms costs no convergence at all. What it does change is how tight the returned upper bound is for the non-converging quarter, since networkx returns its best result so far. This probe measures cost and convergence, not score quality: whether the coarser bound degrades ranking is S21D2-032's question on the frozen diagnostic set, and it is answered for the gate only on the new holdout in S21D2-034."
+    },
+    {
+      "id": "P3",
+      "finding": "At the inherited 250 ms the width-20 lever is substantially cancelled: the budget guard cuts a sixth of all pair comparisons, and a cut pair scores 0.0 and sinks. That band is where D1's 19 shortlist-ceiling misses live.",
+      "evidence": {
+        "width_20_at_250ms_cut": 260,
+        "width_20_at_250ms_attempted": 1600,
+        "cut_fraction": 0.1625
+      }
+    },
+    {
+      "id": "P4",
+      "finding": "90 ms per pair is the setting at which twenty candidates fit inside the unchanged 2-second budget with margin and zero cuts. 150 ms measures p95 1993.9 ms \u2014 inside the budget by six milliseconds, which is not a margin.",
+      "evidence": {
+        "width_20_at_90ms": {
+          "p50": 35.8,
+          "p95": 1764.1,
+          "max": 1765.3,
+          "mean": 465.2
+        },
+        "width_20_at_90ms_cut": 0,
+        "width_20_at_150ms_p95_ms": 1993.9
+      }
+    }
+  ],
+  "recommendation_to_s21d2_017": {
+    "vector_shortlist": 20,
+    "returned_results": 10,
+    "per_pair_ged_timeout_ms": 90,
+    "query_budget_seconds": 2,
+    "rationale": "The backlog's 250 ms and 2 s are maxima, so lowering the per-pair timeout is inside the declared resource contract while raising the budget after an inconvenient result would not be. 90 ms is the largest of the measured rungs that leaves zero cuts at width 20.",
+    "declared_limitation": "Per P5 this costs no convergence, but it does buy candidate breadth with the tightness of the returned bound in the non-converging quarter. Whether that trade is favourable is a retrieval-quality question this probe does not answer: it is measured on the frozen D1 set as a development diagnostic in S21D2-032 and answered for the gate only on the new unseen-task holdout in S21D2-034."
+  }
+}

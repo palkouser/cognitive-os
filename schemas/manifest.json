@@ -641,6 +641,11 @@
       "schema_version": 1
     },
     {
+      "event_type": "reality.campaign_sequence_recorded",
+      "file": "v1/events/reality.campaign_sequence_recorded.v1.schema.json",
+      "schema_version": 1
+    },
+    {
       "event_type": "routing.adaptive_policy_disabled",
       "file": "v1/events/routing.adaptive_policy_disabled.v1.schema.json",
       "schema_version": 1
@@ -2286,7 +2291,7 @@
     {
       "file": "v1/events/coding.outcome_recorded.v1.schema.json",
       "model": "CodingOutcomeRecorded",
-      "sha256": "f3d4a0aa4372217bc484f8e1ebb90514c62711df13a20332b9df847b8be21cb1"
+      "sha256": "4cfc491bf13b52929b980299eeedc88a07581fd69962664f00756950db52dee6"
     },
     {
       "file": "v1/events/coding.patch_applied.v1.schema.json",
@@ -2817,6 +2822,11 @@
       "file": "v1/events/proposal.validated.v1.schema.json",
       "model": "ProposalValidated",
       "sha256": "4f8ea7679ae20795dd491edb9a841340263487de312826f9cf36d37f209bbae8"
+    },
+    {
+      "file": "v1/events/reality.campaign_sequence_recorded.v1.schema.json",
+      "model": "RealityCampaignSequenceRecorded",
+      "sha256": "3d7e8bee8c7ab56bc36386287cfbeccd554d4cb347740572778bb2940a54d333"
     },
     {
       "file": "v1/events/routing.adaptive_policy_disabled.v1.schema.json",
@@ -3526,7 +3536,7 @@
     {
       "file": "v1/learned/learned-activation-receipt.schema.json",
       "model": "LearnedActivationReceipt",
-      "sha256": "84d41ce6af7df860e6584a39aae9691e55b3f06454a59ea6e884a031dbe6180c"
+      "sha256": "ae2a067a3bb43093bdd0168055095a959cf12057444edf5bf6282ed64c664b7d"
     },
     {
       "file": "v1/learned/learned-artifact-lineage.schema.json",
@@ -3536,7 +3546,7 @@
     {
       "file": "v1/learned/learned-component-descriptor.schema.json",
       "model": "LearnedComponentDescriptor",
-      "sha256": "dd46269a91bec55962766d708cd6e1830901774ccb44ee7f1503d74aad1f5398"
+      "sha256": "8786a1c3ca09e526b8312161e45e0c42dd40077c66c9282ec2ba6aa083593a83"
     },
     {
       "file": "v1/learned/learned-component-revision-record.schema.json",
@@ -3581,7 +3591,7 @@
     {
       "file": "v1/learned/learned-promotion-assessment.schema.json",
       "model": "LearnedPromotionAssessment",
-      "sha256": "20e4e5390894010407fdab22a2515dd8942fed1bde4826e4a80bcb3c07319c06"
+      "sha256": "22bf5affda757c220df8e549d7d5dca46ff5da9193c261c07b9e3f5ddb70d861"
     },
     {
       "file": "v1/learned/learned-replay-result.schema.json",
@@ -3601,7 +3611,7 @@
     {
       "file": "v1/learned/mandatory-path-invariance.schema.json",
       "model": "MandatoryPathInvariance",
-      "sha256": "4c747728a83c90270b0f265026b2d488a4190d73244cd4b8be6c52bddf8043fb"
+      "sha256": "8fbdcc025d56ea4b52e87bdf55b914be30b06d7e7267473097a6f213e9ad2a31"
     },
     {
       "file": "v1/learned/numeric-feature.schema.json",
@@ -3961,7 +3971,7 @@
     {
       "file": "v1/reality/correction-trajectory-manifest.schema.json",
       "model": "CorrectionTrajectoryManifest",
-      "sha256": "3fa45052977bd7aafd02d34a2e63460cb4bc9b3f4903e7759681165c18eda231"
+      "sha256": "1b4c45fa0e91cd290fa35eeac4953c90e8c083c5b5299e316806b1df98bc2029"
     },
     {
       "file": "v1/reality/hidden-verification-bundle.schema.json",
@@ -3976,12 +3986,12 @@
     {
       "file": "v1/reality/reality-campaign-manifest.schema.json",
       "model": "RealityCampaignManifest",
-      "sha256": "65408ab9382d3b6a84360da835b9a9abe2d418ff0df3acee624084db80d0efdc"
+      "sha256": "b013f959d1f511b327c5925389bd77d344d82503c1762f4e20b6a5bc4f0c3dd4"
     },
     {
       "file": "v1/reality/reality-candidate-manifest.schema.json",
       "model": "RealityCandidateManifest",
-      "sha256": "2a42829acac6580a1ae795cddce7c04c5d064822930447965b3b8209fbae53e8"
+      "sha256": "efa4c2fe941a8487be387a7d39edd7a5d9e6cca9af204997a915bc3408631fb9"
     },
     {
       "file": "v1/reality/reality-content-entry.schema.json",
@@ -4001,12 +4011,12 @@
     {
       "file": "v1/reality/reality-outcome-reference.schema.json",
       "model": "RealityOutcomeReference",
-      "sha256": "ca8ae740b0bf70a4da796412de9e69aed86c6e2632a495ab238f4797cef9f63f"
+      "sha256": "2eb0235b1a101aac6181dcd0f378b843b695b541ae75eebe2cb064db6e122334"
     },
     {
       "file": "v1/reality/reality-run-identity.schema.json",
       "model": "RealityRunIdentity",
-      "sha256": "1e7519dc15f16c4a695a629fe5e8bc3352e947eefaf2408e7e82c3db5d00df26"
+      "sha256": "32fcf866093febf5dae585bb9a8763da24b22a49f624fd501fe954b6cafb57e0"
     },
     {
       "file": "v1/reality/reality-source-rights.schema.json",

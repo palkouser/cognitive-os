@@ -18,7 +18,7 @@ so a genuine behavioural change fails the gate and an incidental one does not.
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Awaitable, Callable, Sequence
 from hashlib import sha256
 from uuid import NAMESPACE_URL, uuid5
 
@@ -48,12 +48,20 @@ async def verify_invariance(
     registry: LearnedComponentRegistry,
     *,
     cases: Sequence[DomainBenchmarkCase] | None = None,
+    artifact_unavailable: Callable[[], Awaitable[None]] | None = None,
 ) -> MandatoryPathInvariance:
-    """Replay the case set in the three configurations the guarantee names.
+    """Replay the case set in the configurations the guarantee names.
 
     The registry is driven through the real lifecycle rather than simulated: the
     component is disabled and re-enabled through `transition`, so a component that
     cannot be disabled fails here instead of passing on a mock.
+
+    `artifact_unavailable` adds Sprint 21D2's fourth configuration. Absent, disabled and
+    abstaining are all states the component chose; an unloadable artifact is the one it did
+    not, and it is what a corrupt blob or a moved file actually produces in operation. The
+    callback makes the artifact unreadable for the duration of the replay, so the digest
+    describes a real failure rather than a simulated one. Omitted, the record carries three
+    hashes exactly as before, which is what keeps every pre-D2 record loadable.
     """
     subjects = tuple(cases if cases is not None else build_all_cases())
     if not subjects:
@@ -72,6 +80,11 @@ async def verify_invariance(
     registry.transition(component_id, LearnedComponentState.SHADOW)
     abstaining = await decision_digest(subjects)
 
+    unavailable: str | None = None
+    if artifact_unavailable is not None:
+        await artifact_unavailable()
+        unavailable = await decision_digest(subjects)
+
     return MandatoryPathInvariance(
         record_id=uuid5(NAMESPACE_URL, f"invariance:{component_id}:{_case_set_hash(subjects)}"),
         component_id=component_id,
@@ -80,5 +93,6 @@ async def verify_invariance(
         decision_hash_absent=absent,
         decision_hash_disabled=disabled,
         decision_hash_abstaining=abstaining,
+        decision_hash_artifact_unavailable=unavailable,
         created_at=FIXTURE_TIME,
     )

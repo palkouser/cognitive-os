@@ -148,6 +148,7 @@ def assess_promotion(
     invariance: MandatoryPathInvariance,
     distribution: DistributionComparison | None = None,
     minimum_material_improvement: Decimal = Decimal("0.05"),
+    require_artifact_unavailable_hash: bool = False,
 ) -> LearnedPromotionAssessment:
     """Turn the ladder into a decision, refusing to round anything in the model's favour.
 
@@ -170,6 +171,16 @@ def assess_promotion(
             (
                 LearnedPromotionDecision.INVARIANCE_FAILURE,
                 "mandatory-path invariance was not proven",
+            )
+        )
+    if require_artifact_unavailable_hash and not invariance.covers_artifact_unavailable:
+        # S21D2-057. An older three-hash record is a complete proof of what it covers and no
+        # proof at all of what it does not, so it must not carry a D2 component to eligible.
+        failures.append(
+            (
+                LearnedPromotionDecision.INVARIANCE_FAILURE,
+                "the invariance record does not cover the artifact-unavailable configuration, "
+                "which is the one a production failure actually produces",
             )
         )
     if forgetting.verdict is ForgettingVerdict.REGRESSED:

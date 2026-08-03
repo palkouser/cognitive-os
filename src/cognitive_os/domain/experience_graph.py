@@ -83,6 +83,27 @@ class GraphResourceLimits(HashedExperienceContract):
     cross_task_similarity_neighbors: int = Field(default=3, ge=0, le=50)
 
 
+#: S21D2-031. The policy Sprint 21D2's pre-registration revision 2 froze, named here so a
+#: measurement can cite it rather than reconstruct it. Two fields move and the rest are the
+#: class defaults: the shortlist widens to 20, which S21D2-030 made real, and the per-pair GED
+#: timeout drops from 250 ms to 90 ms because the `P-GED` probe measured the wider shortlist at
+#: 250 ms exceeding the query budget — a lever that defeats itself is not a wider shortlist.
+#:
+#: The defaults above are deliberately left where they were. They are what every Sprint 21D1
+#: result was produced under, and moving them would change the canonical hash of stored
+#: evidence that is supposed to be immutable.
+GRAPH_RESOURCE_POLICY_REVISION_2 = GraphResourceLimits(
+    vector_shortlist=20,
+    per_pair_ged_timeout_ms=90,
+)
+
+#: Recorded as a literal so the freeze is checkable against the pre-registration bundle without
+#: recomputing it from the object that is supposed to be being checked.
+GRAPH_RESOURCE_POLICY_REVISION_2_HASH = (
+    "d0e8520e3d3bc3637ce75f632c79aa00c1f456a8af1a4956601dad359c8474ab"
+)
+
+
 class ExperienceGraphNode(HashedExperienceContract):
     logical_id: NonEmptyStr
     kind: ExperienceGraphNodeKind

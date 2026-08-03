@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "sprint": "21D2",
+  "wave": "W0",
+  "items": [
+    "S21D2-000",
+    "S21D2-002",
+    "S21D2-082"
+  ],
+  "recorded_at": "2026-08-01T07:17:46+00:00",
+  "parent_baseline": {
+    "tag": "sprint-21d1-emg-baseline",
+    "tag_type": "tag",
+    "tag_object": "a59977dbcf23df60a700385a6fc15b012bf6d142",
+    "remote_tag_object": "a59977dbcf23df60a700385a6fc15b012bf6d142",
+    "peeled_commit": "b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9",
+    "tag_annotated_at": "2026-07-31T21:03:54+02:00",
+    "implementation_pull_request": 217,
+    "implementation_pull_request_state": "MERGED",
+    "implementation_merge_commit": "b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9",
+    "implementation_merged_at": "2026-07-31T18:56:30Z",
+    "final_parent_ci_run": 30657167717,
+    "final_parent_ci_head_sha": "b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9",
+    "final_parent_ci_conclusion": "success",
+    "final_parent_ci_jobs": "30 of 30 success",
+    "final_parent_ci_completed_at": "2026-07-31T19:03:00Z",
+    "gate_close_pull_request": 218,
+    "gate_close_merge_commit": "1cadbabb5cdabb32bbd502f281d734fb25a229ff",
+    "gate_close_merged_at": "2026-07-31T19:13:13Z",
+    "planning_head_ci_run": 30658256397,
+    "planning_head_ci_head_sha": "1cadbabb5cdabb32bbd502f281d734fb25a229ff",
+    "planning_head_ci_conclusion": "success",
+    "planning_head_ci_jobs": "30 of 30 success",
+    "planning_head_ci_completed_at": "2026-07-31T19:19:40Z",
+    "local_main": "1cadbabb5cdabb32bbd502f281d734fb25a229ff",
+    "remote_main": "1cadbabb5cdabb32bbd502f281d734fb25a229ff",
+    "alembic_head": "0015",
+    "expected_migration_revision_in_code": "0015",
+    "next_available_migration": "0016 (unallocated)",
+    "drift_detected": false,
+    "release_chronology_verified": "#217 merge 18:56:30Z -> exact-head CI 30657167717 complete 19:03:00Z -> annotated tag 19:03:54Z -> #218 merge 19:13:13Z -> exact-head CI 30658256397 complete 19:19:40Z. The tag was created after its CI turned green, and every remote event is 2026-07-31. See sprint-21d2-d1-erratum.json for the recorded evidence times that say 2026-08-01."
+  },
+  "implementation_branch": {
+    "name": "feature/sprint-21d2-useful-learned-activation",
+    "created_from": "origin/main",
+    "created_from_sha": "1cadbabb5cdabb32bbd502f281d734fb25a229ff",
+    "not_created_from": "sprint-21d1-emg-baseline^{commit}, so the D1 gate-close record that D2 also requires stays in history",
+    "carried_changes": [
+      "docs/sprints/sprint-21/sprint-21d2-technical-backlog.md",
+      "docs/sprints/sprint-21/sprint-21d2-execution-waves.md",
+      "docs/sprints/sprint-21/sprint-21d2-handoff.md",
+      "docs/sprints/sprint-22/development-plan.md",
+      "docs/sprints/sprint-22/execution-sprint-allocation.md"
+    ],
+    "carried_changes_note": "Sprint 21D2 planning documents only. No source, schema or migration change was carried onto the branch at creation."
+  },
+  "remote_protection": {
+    "repository": "palkouser/cognitive-os",
+    "required_status_check_contexts": 27,
+    "strict_status_checks": true,
+    "enforce_admins": true,
+    "required_pull_request_reviews": null,
+    "required_conversation_resolution": true,
+    "allow_force_pushes": false,
+    "allow_deletions": false,
+    "collaborators": 1,
+    "second_eligible_reviewer": false,
+    "open_pull_requests": 0,
+    "workflow_jobs_defined": 30,
+    "reality_inputs_core_required": false,
+    "decision": "No protection control was changed and none is proposed. Required approving reviews stay disabled because a second eligible reviewer does not exist; the limitation is carried forward, not worked around."
+  },
+  "store_isolation": {
+    "environment_file": ".env.s21d2.local (untracked via .gitignore rule .env.*, mode 0600)",
+    "d2_database": "cognitive_os_s21d2_test",
+    "d2_database_migration_head": "0015",
+    "d2_database_migration_check": "no new upgrade operations detected",
+    "d2_database_schema_tables": 114,
+    "d2_integration_database": "cognitive_os_s21d2_integration_test",
+    "d2_integration_database_migration_head": "0015",
+    "d2_integration_database_schema_tables": 114,
+    "d2_integration_database_note": "C3 W6-F2 and D1 W6C-D2 carried forward together: the PostgreSQL integration suite TRUNCATEs every table it finds and require_test_database() in postgres_common.sh guards only on a _test suffix, which the evidence database also has. The integration database is therefore separate, and unlike D1's it is migrated to head at creation rather than in the release wave.",
+    "d2_restore_database": "cognitive_os_s21d2_restore_test",
+    "d2_restore_database_migration_head": "0015",
+    "d2_artifact_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d2",
+    "d2_backup_root": "/home/palkouser/projekt/cognitive-os-data/backups-s21d2",
+    "postgres_host": "rootless container compose-postgres-1 (pgvector/pgvector:0.8.2-pg18-bookworm), server 18.4, published on 127.0.0.1:55432. There is no host PostgreSQL cluster: pg_lsclusters is empty and sudo is non-interactive in this environment.",
+    "sandbox_and_scratch_roots": "Only COGOS_ARTIFACT_ROOT and COGOS_BACKUP_ROOT are environment-configured. Sandbox and per-command scratch roots are allocated per command under the D2 prefix and are recorded by the wave that creates them; no destructive matrix row exists yet.",
+    "fingerprints_after_provisioning": {
+      "artifacts": {
+        "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf",
+        "files": 5
+      },
+      "artifacts-s21c3": {
+        "path_and_size_fingerprint_sha256": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593",
+        "files": 8503
+      },
+      "artifacts-s21d1": {
+        "path_and_size_fingerprint_sha256": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f",
+        "files": 83
+      },
+      "artifacts-s21d2": {
+        "path_and_size_fingerprint_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "files": 0
+      },
+      "backups-s21d2": {
+        "path_and_size_fingerprint_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "files": 0
+      }
+    },
+    "inherited_stores_unchanged": true,
+    "writes_to_inherited_stores": 0,
+    "read_rule": "The development, C3 and D1 pairs are read-only for D2. Every figure taken from them in W0 came from a SQL SELECT or a file read, never through an application service, so no corpus_accesses, memory_accesses or learned_accesses row was written."
+  },
+  "evidence_database_provisioning": {
+    "item": "S21D2-082",
+    "gap_inherited": "No repository command provisioned an evidence database; C1, C2, C3 and D1 each created theirs by hand and recorded it as a deviation (D1 W0-D1, W0-D2).",
+    "nosuperuser_finding": {
+      "file": "infra/postgres/bootstrap/roles.sql",
+      "line": 6,
+      "statement": "ALTER ROLE <owner> LOGIN NOSUPERUSER PASSWORD <password>",
+      "measured": "cogos_owner is currently rolsuper = true. The script connects as that same owner, so its first run would succeed and silently demote the role, and every later run would abort on the same line with the earlier statements already applied. That is the partial bootstrap S21D2-082 must make unreachable.",
+      "action": "postgres_bootstrap_roles.sh was not run and no role was altered. The new provisioning path never touches roles: it requires them to exist and reports the superuser condition instead of acting on it.",
+      "ownership": "The bootstrap script's defect belongs to its owner and is not fixed here."
+    },
+    "provisioning_path": "scripts/postgres_provision_evidence.sh",
+    "provisioning_guard": "COGOS_EVIDENCE_DATABASE_PREFIX. A target outside the prefix is refused before any statement runs, so a typo cannot create or touch a database of another sprint.",
+    "transcript": {
+      "negative_case": "./scripts/postgres_provision_evidence.sh cognitive_os_dev -> 'Refusing to create cognitive_os_dev: outside prefix cognitive_os_s21d2', exit 1, zero statements executed",
+      "provision": "created: cognitive_os_s21d2_test, cognitive_os_s21d2_integration_test, cognitive_os_s21d2_restore_test",
+      "idempotence": "second identical run reported 'exists:' for all three and created nothing",
+      "migration": "all three migrated to 0015; postgres_migration_check.sh reports no new upgrade operations"
+    }
+  },
+  "limitations": [
+    "Required approving reviews remain disabled: only one eligible collaborator exists.",
+    "reality-inputs-core runs but is not one of the 27 required contexts. Changing that needs separate operator authority and is not a D2 implementation shortcut.",
+    "The inconsistent development artifact pair keeps its 5 files and its exact fingerprint. Remediating it is explicitly out of D2 scope.",
+    "postgres_bootstrap_roles.sh remains broken for a superuser owner. D2 routes around it rather than repairing someone else's script.",
+    "require_test_database() in postgres_common.sh still guards only on a _test suffix. D2 relies on a separate integration database rather than on that guard."
+  ],
+  "deviations": []
+}

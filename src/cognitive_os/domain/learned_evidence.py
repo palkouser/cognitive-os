@@ -378,6 +378,11 @@ class LearnedActivationReceipt(HashedExperienceContract):
     approval_hash: Sha256Hex | None = None
     previous_receipt_id: UUID | None = None
     rollback_target_receipt_id: UUID | None = None
+    #: Only a disable carries this, and it must say so explicitly. False means the disable was
+    #: a refusal rather than a pause: a component taken off its surface because it failed must
+    #: not be restored by the very mechanism that exists to restore a healthy prior activation.
+    #: Hash-bound like everything else here, so the intent cannot be edited after the fact.
+    rollback_permitted: bool | None = None
     actor: NonEmptyStr
     authority: NonEmptyStr
     reason: NonEmptyStr
@@ -408,6 +413,14 @@ class LearnedActivationReceipt(HashedExperienceContract):
                 raise ValueError("a rollback cannot target itself")
         elif self.rollback_target_receipt_id is not None:
             raise ValueError("only a rollback may name a rollback target")
+        if self.action is LearnedActivationAction.DISABLE:
+            if self.rollback_permitted is None:
+                raise ValueError(
+                    "a disable must state whether the activation it ends may be restored; "
+                    "leaving it unsaid would make a failed canary look like a pause"
+                )
+        elif self.rollback_permitted is not None:
+            raise ValueError("only a disable decides whether a rollback is permitted")
         return self
 
 

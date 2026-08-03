@@ -368,6 +368,7 @@ class TestTheGovernedActivationPath:
             reason="withdraw the fixture",
             idempotency_key="disable-inert",
             correlation_id=CORRELATION,
+            rollback_permitted=True,
         )
         assert disabled.action is LearnedActivationAction.DISABLE
         row = await harness.service.get_component(fx.INERT.component_id)
@@ -415,6 +416,64 @@ class TestTheGovernedActivationPath:
             )
 
     @pytest.mark.asyncio
+    async def test_a_disable_that_refused_the_activation_cannot_be_rolled_back(self) -> None:
+        """S21D2-075, scratch leg: a failed canary is disabled, not paused.
+
+        The refusal is structural rather than procedural: `roll_back()` reads the disable
+        receipt off the durable chain and stops there. Nothing about the caller, the approval
+        or the lineage is consulted first, because a component taken off its surface *because
+        it failed* must not be restored by the mechanism that exists to restore a healthy one.
+        """
+        harness = await ready()
+        approval = await harness.approve()
+        await harness.activate(approval)
+
+        disabled = await harness.service.disable(
+            fx.INERT.component_id,
+            descriptor=fx.descriptor(),
+            actor=OPERATOR,
+            authority="operator",
+            reason="scratch canary failed its gate",
+            idempotency_key="disable-after-failed-canary",
+            correlation_id=CORRELATION,
+            rollback_permitted=False,
+        )
+        assert disabled.rollback_permitted is False
+
+        with pytest.raises(LearnedRepositoryError, match="rollback_permitted=false"):
+            await harness.service.roll_back(
+                fx.INERT.component_id,
+                descriptor=fx.descriptor(),
+                actor=OPERATOR,
+                authority="operator",
+                reason="restore the prior activation",
+                idempotency_key="rollback-after-failed-canary",
+                correlation_id=CORRELATION,
+            )
+
+        row = await harness.service.get_component(fx.INERT.component_id)
+        assert row is not None and row.current_state is LearnedComponentState.DISABLED
+        assert await harness.service.active_component_for(fx.surface()) is None
+
+    @pytest.mark.asyncio
+    async def test_a_disable_must_say_whether_it_may_be_rolled_back(self) -> None:
+        """No default: a disable that stays silent would read as the permissive answer."""
+        harness = await ready()
+        approval = await harness.approve()
+        await harness.activate(approval)
+
+        with pytest.raises(TypeError):
+            await harness.service.disable(  # type: ignore[call-arg]
+                fx.INERT.component_id,
+                descriptor=fx.descriptor(),
+                actor=OPERATOR,
+                authority="operator",
+                reason="withdraw",
+                idempotency_key="disable-without-intent",
+                correlation_id=CORRELATION,
+            )
+
+    @pytest.mark.asyncio
     async def test_an_unauthorised_caller_cannot_roll_back(self) -> None:
         harness = await ready()
         approval = await harness.approve()
@@ -427,6 +486,7 @@ class TestTheGovernedActivationPath:
             reason="withdraw",
             idempotency_key="disable-inert",
             correlation_id=CORRELATION,
+            rollback_permitted=True,
         )
         with pytest.raises(LearnedRepositoryError, match="not authorised to activate"):
             await harness.service.roll_back(
@@ -494,6 +554,7 @@ class TestTheStateSurvivesTheService:
             reason="withdraw",
             idempotency_key="disable-inert",
             correlation_id=CORRELATION,
+            rollback_permitted=True,
         )
         await harness.service.roll_back(
             fx.INERT.component_id,

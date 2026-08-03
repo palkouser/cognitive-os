@@ -37,6 +37,7 @@ from cognitive_os.domain.reality import (
     RealityRunIdentity,
     RealityRunKind,
     RealityTaskManifest,
+    validate_recorded_run_invariants,
 )
 from cognitive_os.events.coding_event_service import CodingEventService
 from cognitive_os.events.coding_events import CodingOutcomeRecorded
@@ -90,6 +91,17 @@ class CodingOutcomeRecorder:
             raise OutcomeRecordingError("hidden evidence belongs to a different task run")
         if run_identity is not None:
             self._require_identity_describes_this_run(run_identity, task, candidate, run_kind)
+
+        # S21D2-021: check here what the reference will re-check. Building the reference after
+        # the append used to be the first place a violation surfaced, by which point the
+        # authoritative event was already durable and nothing could resolve it. Checking before
+        # any write also means a refusal leaves no unreferenced artifact behind.
+        validate_recorded_run_invariants(
+            run_kind=run_kind,
+            candidate_id=None if candidate is None else candidate.candidate_id,
+            strategy=None if candidate is None else candidate.strategy,
+            hidden_verification_passed=evidence.passed,
+        )
 
         outcome_hash = outcome.canonical_hash()
         existing = await self._find_recorded(outcome.task_run_id, outcome_hash)

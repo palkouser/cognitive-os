@@ -2,9 +2,9 @@
 
 Status: implementation sequencing plan
 
-Revision: 5
+Revision: 6
 
-Assessment date: 2026-07-30
+Assessment date: 2026-07-31
 
 Source plan: [Cognitive OS Learning, Memory, and Scale Development
 Plan](development-plan.md)
@@ -16,6 +16,9 @@ Companion documents:
 - [Sprint 21C2 technical backlog](../sprint-21/sprint-21c2-technical-backlog.md)
 - [Sprint 21C3 technical backlog](../sprint-21/sprint-21c3-technical-backlog.md)
 - [Sprint 21D1 technical backlog](../sprint-21/sprint-21d1-technical-backlog.md)
+- [Sprint 21D2 technical backlog](../sprint-21/sprint-21d2-technical-backlog.md)
+- [Sprint 21D1 report](../sprint-21/sprint-21d1-report.md)
+- [Gate D1 assessment](../sprint-21/gate-d1-assessment.md)
 - [Sprint 21 Gate L assessment](../sprint-21/gate-l-assessment.md)
 - [Sprint 21 substrate report](../sprint-21/report.md)
 
@@ -47,21 +50,22 @@ The state verified before this allocation was written is:
 
 | Item | Verified value |
 |---|---|
-| Current branch before planning edits | `docs/sprint-21c3-gate-close`, tree equal to current `origin/main` |
-| Current `origin/main` | `1856b8539b690528116816c105d82810e67f00d9`, after C3 gate-close PR `#216` |
-| Protected predecessor release | `sprint-21c3-reality-baseline`, tag object `497f959bc55989541016a61bd9034e12523b8573`, peeled commit `05809446c726444146d85aad22808e10ce87ca3e` |
+| Current branch before planning edits | `main`, clean and equal to current `origin/main` |
+| Current `origin/main` | `1cadbabb5cdabb32bbd502f281d734fb25a229ff`, after D1 gate-close PR `#218` |
+| Protected predecessor release | `sprint-21d1-emg-baseline`, tag object `a59977dbcf23df60a700385a6fc15b012bf6d142`, peeled commit `b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9` |
 | Current migration head | `0015` |
-| Sprint 21C3 implementation | PR `#215`, merged; post-merge run `30571166301`, 29 of 29 successful |
-| Latest assessed `main` CI | run `30572361952`, success on exact current `origin/main` |
-| Gate C3 | pass; implementation release and gate-close evidence complete |
-| Gate L2 | closed |
-| Next branch | `feature/sprint-21d1-learning-surface-emg`, from revalidated current `origin/main` |
+| Sprint 21D1 implementation | PR `#217`, merged; post-merge run `30657167717`, 30 of 30 successful |
+| Latest assessed `main` CI | run `30658256397`, 30 of 30 successful on exact current `origin/main` |
+| Gate D1 | does not pass: 17 met, one not applicable, conditions 6, 7 and 15 open |
+| Gate L2 | does not pass |
+| Next branch | `feature/sprint-21d2-useful-learned-activation`, from revalidated current `origin/main` |
 | Next migration | none by default; `0016` remains available only after measured need |
 | Reviewer limitation | one collaborator; required approval remains disabled without weakening the 27 checks or `enforce_admins` |
-| Artifact limitation | development pair fingerprint `7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf`, five files, zero C3 writes; isolate it pending separate operator-approved remediation |
+| Artifact limitation | development pair fingerprint `7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf`, five files and unchanged through D1; isolate it pending separate operator-approved remediation |
 
-Sprint 21R, Sprint 21C1, Sprint 21C2, and Sprint 21C3 are complete. Sprint 21D1 is
-the next execution sprint.
+Sprint 21R, Sprint 21C1, Sprint 21C2, Sprint 21C3, and the D1 implementation
+release are complete. Sprint 21D2 is the next execution sprint; it inherits D1's three
+open conditions as blocking remediation rather than rewriting the negative assessment.
 All source, tag, credential, branch-protection, reviewer, and remote pull-request
 state must be revalidated at sprint start because repository and remote state may
 change.
@@ -102,8 +106,8 @@ dependency or infrastructure authority only after a measured gap and an ADR.
 - Live OpenRouter, Claude Code, and Codex checks are operator-approved, bounded, and
   never required for an unrelated PR job.
 - GPU-dependent work is scheduled only after a workload demonstrates need and the
-  complete accelerator software path passes a reproducible preflight. The current
-  host exposes an NVIDIA RTX 5070 Ti, but Sprint 21C1 remains CPU-only.
+  complete accelerator software path passes a reproducible preflight. No accelerator
+  path is verified at the D2 planning head; D1 evidence is CPU-only.
 - CPU-first retrieval, classical ML, graph projection, and local inference remain the
   default execution path.
 
@@ -137,7 +141,7 @@ configuration contracts.
 | 3 | Sprint 21C2 | 2 weeks | Governed OpenRouter, Claude Code, and Codex providers | Sprint 21C1 | `sprint-21c2-provider-baseline` |
 | 4 | Sprint 21C3 | 2 weeks | Executable coding corpus, real outcomes, local embeddings | Sprint 21C2 | `sprint-21c3-reality-baseline` |
 | 5 | Sprint 21D1 | 2 weeks | Pre-registered learning surface and EMG baseline | Sprint 21C3 | `sprint-21d1-emg-baseline` |
-| 6 | Sprint 21D2 | 2 weeks | Materially useful learned activation and Gate L2 | Sprint 21D1 | `sprint-21-learning-baseline` |
+| 6 | Sprint 21D2 | 2 weeks | Useful correction-ranking test and Gate L2 result | Sprint 21D1 | success: `sprint-21-learning-baseline`; negative: `sprint-21d2-evidence-baseline` |
 | 7 | Sprint 22A | 2 weeks | Data-driven domain expansion | Gate L2 | `sprint-22a-domain-baseline` |
 | 8 | Sprint 22B | 2 weeks | Measured `10^6` storage and retrieval envelope | Sprint 22A | `sprint-22b-scale-baseline` |
 | 9 | Sprint 22C | 2 weeks | Continual campaigns and Knowledge Acquisition Factory | Sprint 22B | `sprint-22c-acquisition-baseline` |
@@ -150,8 +154,9 @@ documentation, and benchmark work can shorten elapsed time, but the protected
 release order remains serial.
 
 Sprint 21R and Sprint 21C1 completed on 2026-07-26. Sprint 21C2 completed on
-2026-07-29. Sprint 21C3 completed on 2026-07-30. Sprint 21D1 is now the active
-planned delivery.
+2026-07-29. Sprint 21C3 completed on 2026-07-30. The D1 implementation release and
+gate-close planning head completed on 2026-07-31. Sprint 21D2 is now the active
+planned delivery; Gate D1 does not pass and Gate L2 does not pass.
 
 ## 5. Detailed sprint allocation
 
@@ -184,7 +189,7 @@ Exit:
 
 - `sprint-21-substrate-baseline` peels to the same commit as verified
   `origin/main`;
-- the report states that the substrate is released but Gate L2 remains open;
+- the report states that the substrate is released but Gate L2 does not pass;
 - Sprint 21C1 can branch from the tag without unresolved release debt.
 
 Detailed backlog:
@@ -278,7 +283,7 @@ Completion:
 - Claude Code and Codex answered the governed fixture correctly on every recorded
   attempt; OpenRouter free answered correctly 5 of 22 times and is therefore a
   bounded diversity source, not a correctness dependency;
-- Gate C2 passed and Gate L2 remains closed.
+- Gate C2 passed and Gate L2 does not pass.
 
 ### Sprint 21C3 — Reality-Grade Learning Inputs
 
@@ -322,7 +327,7 @@ Completion:
 - C3 produced 214 unique executed outcomes, 60 correction trajectories, 420 corpus
   items, 896 accepted evaluation-only observations, and frozen 384-dimensional
   MiniLM retrieval evidence;
-- Gate C3 passed and Gate L2 remains closed.
+- Gate C3 passed and Gate L2 does not pass.
 
 ### Sprint 21D1 — Learning Surface and Experience Memory Graph
 
@@ -361,37 +366,84 @@ Detailed backlog:
 
 [Sprint 21D1 Technical Backlog](../sprint-21/sprint-21d1-technical-backlog.md)
 
-### Sprint 21D2 — Useful Learned Activation and Gate L2
+Completion:
+
+- implementation PR `#217` merged to
+  `b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9` and exact-head run
+  `30657167717` passed 30 of 30 jobs;
+- annotated `sprint-21d1-emg-baseline` tag object
+  `a59977dbcf23df60a700385a6fc15b012bf6d142` peels to that commit;
+- gate-close PR `#218` advanced current `main` to
+  `1cadbabb5cdabb32bbd502f281d734fb25a229ff`, with exact-head run
+  `30658256397` passing 30 of 30 jobs;
+- graph construction, edit paths, advisory context, operations, and FGW no-go passed;
+- Gate D1 does not pass: conditions 6, 7, and 15 are blocking D2 remediation;
+- Gate L2 does not pass.
+
+### Sprint 21D2 — Useful Learned Correction Ranking and Gate L2
 
 Objective:
 
-Activate one owned learned component because it improves verified downstream
-behavior while retaining safe fallback and every earlier capability.
+Test one owned correction-ranking component and activate it only if it improves verified
+downstream behavior while retaining safe fallback and every earlier capability. A valid
+negative result is released without passing Gate L2.
 
 Primary scope:
 
-- calibrated k-NN;
-- logistic/SGD or a small tree only if the simpler rung fails;
-- FGW comparison only when Sprint 21D1 approved it;
-- immutable artifact fitting and evaluation;
-- paired material-benefit comparison;
+- pre-registration revision 2 selecting `experience.correction_ranking` as primary only
+  if the renewed surface audit passes, otherwise a protected null-primary decision;
+- explicit two-value durable corpus-role mapping, role-bound observation projection,
+  split-identity-bound paginated exact member selection, capability-isolated holdout
+  roots/processes, and at least 115 disjoint groups including 85 new;
+- at least 200 rights-verified self-play training and 40 separate calibration outcomes;
+- accepted `REAL_GOVERNED_RUN` rows remain permanently training-ineligible under the
+  current contract; future fitting requires a contract/policy revision and newly eligible
+  evidence, not a different snapshot over those rows;
+- two sealed, mutually group-disjoint final real-run batches with at least 100 outcomes
+  and 25 task groups each;
+- exact fitted-feature leakage validation and strongest deterministic baseline;
+- calibrated cosine k-NN first; logistic/SGD or a small tree only if the declared
+  simpler-rung continuation rule opens them before final access;
+- four neutral prebuilt candidate recipes with opaque manifest order and validation before
+  append-only recording; one canonical JSON artifact, narrow verified loader, durable
+  runtime resolver, and a bounded two-mode `RealityCampaignRunner` sequencer with a
+  restart-safe Event Store campaign-stream receipt consumed by
+  `RealityCampaignLedger.plan_resume()`; final label-all execution stays in deterministic
+  order, while approved runtime stops after first verifier acceptance;
+- explicit limitation to the controlled four-candidate campaign path;
+  `CodingAgentFacade` remains outside the activation claim;
+- correction of the internal width-20 shortlist truncation defect and new unseen-task
+  retrieval evidence; FGW remains a D2 no-go under ADR 0090;
+- paired material-benefit comparison with at least 20 changed task rankings, +5 points
+  absolute success or 20% relative error reduction, and a bootstrap lower bound above
+  zero;
 - cross-domain anti-forgetting;
-- OOD abstention;
-- shadow, disagreement review, canary, kill switch, restart, and rollback;
-- complete Gate L2 closure and protected release.
+- sealed pre-final and untouched promotion OOD suites, with exactly zero confident OOD
+  errors required for promotion;
+- chronological REGISTERED and SHADOW transitions followed by a focused evidence-bound
+  VERIFIED transition; exact existing human-approval fields; activation-time promotion-
+  artifact verification; separately hash-recorded canary configuration; cause-bound kill
+  switch, restart, scratch/eligible rollback that cannot revive a failed canary, and final
+  active-state evidence;
+- protected positive or negative release and post-release Gate L2 result.
 
 Exit:
 
-- at least one learned component meets the pre-registered material-benefit threshold;
-- benefit persists across two independent evaluation batches;
-- safety cases have zero accepted-to-rejected transitions;
-- OOD false-confident action rate is at most 1% on the declared adversarial suite;
-- rollback and deterministic fallback are demonstrated after restart;
-- `sprint-21-learning-baseline` is protected and verified.
+- every pre-registered stop produces immutable evidence and downstream not-opened records;
+- on success, benefit persists across two independent batches, Gate D1 conditions 6, 7,
+  and 15 pass without threshold changes, safety/retention/OOD gates pass, rollback and
+  fallback survive restart, and `sprint-21-learning-baseline` is protected and verified;
+- on a valid negative, Gate L2 remains `does not pass`, Sprint 22A stays blocked, the
+  remediation handoff names the required new evidence/holdout, and
+  `sprint-21d2-evidence-baseline` is protected and verified.
+
+Detailed backlog:
+
+[Sprint 21D2 Technical Backlog](../sprint-21/sprint-21d2-technical-backlog.md)
 
 Failure to activate a materially useful learned component blocks Gate L2. The team
-must improve the corpus, surface, verifier, or bounded learner; it may not redefine
-machine learning as optional.
+must still complete the negative evidence release, then improve the corpus, surface,
+verifier, or bounded learner; it may not redefine machine learning as optional.
 
 ### Sprint 22A — Data-Driven Domain Registry
 

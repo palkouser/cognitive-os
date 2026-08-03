@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "sprint": "21D2",
+  "wave": "W3a",
+  "probe": "P-CLONE",
+  "items": [
+    "informs S21D2-022"
+  ],
+  "recorded_at": "2026-08-01T12:45:26+00:00",
+  "purpose": "Measure what one D2 template costs and how many the near-clone detector rejects, on a cohort of ten, before the remaining eighty-five are committed to. The corpus is the sprint's critical path and the detector exists to reject formulaic variants, so the rejection rate is the number that decides whether the plan is affordable.",
+  "cohort_size": 10,
+  "variants_checked": 40,
+  "results": {
+    "near_clone": {
+      "within_cohort_pairs": 0,
+      "against_c3_baseline_pairs": 0,
+      "templates_rejected": 0,
+      "acceptance_rate": 1.0
+    },
+    "corpus_recipe": {
+      "baselines_failing_hidden_tests": 10,
+      "baselines_passing_visible_tests": 10,
+      "expected": "10 of 10 for both"
+    },
+    "recipe_label_correlation": {
+      "per_recipe_repair_rate": {
+        "recipe_alpha": 0.4,
+        "recipe_beta": 0.5,
+        "recipe_delta": 0.5,
+        "recipe_gamma": 0.6
+      },
+      "interpretation": "A rate of 1.0 or 0.0 for any recipe would mean the recipe name predicts the verifier's answer, which is the C3 oracle under a new spelling."
+    },
+    "authoring_cost": {
+      "spec_lines_for_cohort": 799,
+      "lines_per_template": 79.9,
+      "projected_lines_for_95": 7591
+    }
+  },
+  "defects_the_probe_found": [
+    {
+      "id": "C1",
+      "template": "d2_state.release_slot",
+      "defect": "Two variants collided on the token-stream normalisation. They differed only in the indentation of one statement, and the normaliser drops INDENT/DEDENT because their token text strips to empty \u2014 so an indentation-only difference is invisible to it.",
+      "fix": "the variant was rewritten to a materially different implementation",
+      "generalises_to": "An authoring rule for the remaining eighty-five: two variants must differ in structure, not in layout. This is not obvious from reading the detector."
+    },
+    {
+      "id": "C2",
+      "template": "d2_parsing.strip_prefix",
+      "defect": "A variant declared to miss the empty-prefix edge case handled it by accident, because `label.startswith('')` is always True. The declaration and the verifier disagreed, which is exactly the corpus defect the C3 contract refuses.",
+      "fix": "the variant now slices unconditionally once the prefix is non-empty"
+    },
+    {
+      "id": "C3",
+      "template": "d2_boundary.split_evenly",
+      "defect": "The two variants that were supposed to repair the same contract implemented different ones \u2014 round-robin against contiguous chunks \u2014 and the baseline failed its own visible tests as a result.",
+      "fix": "baseline and all four variants aligned onto the published round-robin contract"
+    },
+    {
+      "id": "C4",
+      "template": "d2_numeric.running_total",
+      "defect": "The baseline emitted one entry too many, so it failed a visible test. The published defect has to be invisible to anyone reading the published tests, or the task measures nothing.",
+      "fix": "the baseline now emits the right number of entries and omits the base instead"
+    }
+  ],
+  "verdict": {
+    "acceptance_rate_after_fixes": 1.0,
+    "first_pass_defect_rate": 0.4,
+    "reading": "Four of ten templates carried a defect on the first pass, and none of the four was visible by inspection \u2014 each needed the detector or an executed verifier to surface it. The corrected cohort is clean on every axis: no near-clone pair inside the cohort or against the thirty C3 baselines, all ten baselines failing their hidden tests while passing their visible ones, and no variant contradicting its own declaration.",
+    "recipe_oracle_removed": "Per-recipe repair rates are 0.4, 0.5, 0.5 and 0.6 across the cohort. The C3 corpus measured 1.0 and 0.0. Renaming the recipes would not have achieved this; binding recipe to variant per task is what does."
+  },
+  "projection_to_the_full_corpus": {
+    "groups_required": 125,
+    "genuinely_new_required": 95,
+    "authored_here": 10,
+    "remaining": 85,
+    "measured_lines_per_template": 79.9,
+    "projected_lines_remaining": 6792,
+    "expected_defects_remaining": 34,
+    "note": "The 40% first-pass defect rate is the finding that matters for planning: the authoring cost is not the line count, it is the line count plus a probe-and-repair cycle on roughly two in five templates. Every one of those cycles needs the detector and an executed hidden verifier, not a reading."
+  },
+  "read_only": false,
+  "writes": "source only; no evidence store, database or artifact root was touched"
+}

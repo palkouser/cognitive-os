@@ -1,13 +1,17 @@
 {
   "$defs": {
     "RealityCandidateStrategy": {
-      "description": "The four offline strategies of §4.6, plus what a provider returns.\n\n`PROVIDER_PROPOSED` deliberately has no declared correctness. A provider candidate's\nresult is whatever the hidden verifier says it is, and a strategy value that predicted\nit would be a label the corpus had assigned to itself.",
+      "description": "The four offline strategies of §4.6, plus what a provider returns.\n\n`PROVIDER_PROPOSED` deliberately has no declared correctness. A provider candidate's\nresult is whatever the hidden verifier says it is, and a strategy value that predicted\nit would be a label the corpus had assigned to itself.\n\nThe four `RECIPE_*` values are Sprint 21D2's, and they exist because the C3 four are a\nmeasured perfect oracle: on all 120 D1 correction-ranking examples `correct_*` passed and\n`incomplete_*` failed, without exception. A ranking surface fitted on a corpus whose\nrecipe name determines the label learns the name. So D2 generates its candidates under\noutcome-neutral recipes whose family is `UNDECLARED`, which means the corpus makes no\nclaim about them and a hidden-verifier result that contradicts the generator's intent is\na valid label rather than a corpus defect.",
       "enum": [
         "incomplete_a",
         "correct_narrow",
         "incomplete_b",
         "correct_robust",
-        "provider_proposed"
+        "provider_proposed",
+        "recipe_alpha",
+        "recipe_beta",
+        "recipe_gamma",
+        "recipe_delta"
       ],
       "title": "RealityCandidateStrategy",
       "type": "string"

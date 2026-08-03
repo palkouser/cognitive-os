@@ -1,0 +1,604 @@
+{
+  "backup": {
+    "alembic_revision": "0015",
+    "artifact_archive_bytes": 281953,
+    "artifact_archive_sha256": "44e4e937409b734cca7bf55b3e2e451c13d93e13ab2500bf6c067bed82c317f5",
+    "artifact_count": 2057,
+    "database": "cognitive_os_s21d2_test",
+    "database_dump_sha256": "b14631eedebcb618b4dd319665a7d7d802dd7a5a095159852d904966cfa7f66d",
+    "event_count": 1261,
+    "learned_counts": {
+      "accesses": 0,
+      "activations": 0,
+      "approvals": 0,
+      "artifacts": 4,
+      "components": 0,
+      "datasets": 2,
+      "evidence_records": 0,
+      "observations": 480,
+      "revisions": 0
+    },
+    "learned_history_sha256": "484c96a10e6e4508ac4e879c256adc46dd7f191f5254949aaf24a85b5b27f24a",
+    "manifest": "20260803T052613Z-backup-manifest.json"
+  },
+  "ci_coverage": {
+    "credential_free": "no network, no provider credential, no GPU, no mutable user store and no live service; the isolated PostgreSQL lane is a separate job and this one never reaches a database. Every fixture is built in the test process and the evidence files are read off disk.",
+    "drift_gate": "uv run python -m cognitive_os.schemas.export --check",
+    "lane": "learned-evidence-core",
+    "runs_on": "ubuntu-latest",
+    "steps_added_and_their_exact_local_equivalents": {
+      "Null-path integrity classes and not-opened guards": "uv run pytest tests/cognitive_os/learning/test_correction_integrity.py tests/cognitive_os/learning/test_d2_null_evidence_guard.py -q",
+      "Selection never authorises final access": "uv run pytest tests/cognitive_os/learning/test_knn_calibration.py -q -k \"final_access or null\""
+    },
+    "what_it_does_not_claim": "no final, batch-B, canary or lifecycle evidence is exercised, because none was produced. The lane covers the fixtures and the not-opened guards, which is what a stopped design has to keep true."
+  },
+  "corruption_matrix": [
+    {
+      "case": "tampered_json",
+      "damage": "appended one byte to d48699deb102 in the extracted copy",
+      "expected": "the file no longer hashes to the name it is filed under",
+      "observed": {
+        "content_hash_mismatches": [
+          "sha256/d4/d48699deb102ed600b2842da5d4af5899ca819b852b6fcbfe478556fa1f42e03"
+        ],
+        "failed_closed": true,
+        "files_rehashed": 1511,
+        "reason": "content_hash_mismatches names d48699deb102"
+      }
+    },
+    {
+      "case": "missing_bytes",
+      "damage": "removed d48699deb102 from the extracted copy",
+      "expected": "the read path refuses; a re-hash of what remains would have reported it clean",
+      "observed": {
+        "failed_closed": true,
+        "reason": "ArtifactNotFoundError: artifact blob not found: sha256/d4/d48699deb102ed600b2842da5d4af5899ca819b852b6fcbfe478556fa1f42e03",
+        "remaining_files_still_hash_correctly": {
+          "content_hash_mismatches": [],
+          "files_rehashed": 1510
+        }
+      }
+    },
+    {
+      "case": "metadata_only_artifact",
+      "damage": "a lineage row naming an artifact with no blob",
+      "expected": "every_correction_lineage_row_resolves_to_its_bytes fails",
+      "observed": {
+        "failed_closed": true,
+        "reason": "1 rows with no bytes and 0 whose declared hash is not what the store holds: 00000000-0000-0000-0000-000000000002"
+      }
+    },
+    {
+      "case": "stale_verification",
+      "damage": "a lineage row whose declared hash is not the observed one",
+      "expected": "every_correction_lineage_row_resolves_to_its_bytes fails",
+      "observed": {
+        "failed_closed": true,
+        "reason": "0 rows with no bytes and 1 whose declared hash is not what the store holds: 00000000-0000-0000-0000-000000000002"
+      }
+    },
+    {
+      "case": "wrong_artifact_root",
+      "damage": "the restored database read against an empty artifact root",
+      "expected": "the report refuses rather than reporting a healthy store with no bytes",
+      "observed": {
+        "failed_closed": true,
+        "reason": "ArtifactNotFoundError: artifact blob not found: sha256/97/976697cd1f13a6fa7b3278a855d05615c44fceb84063d6c3cd132a584d4b5a53"
+      }
+    },
+    {
+      "case": "poisoned_feature_record",
+      "damage": "one scaled value changed inside a sealed feature set",
+      "expected": "the poisoned bytes are refused, at the latest by the seal-hash check",
+      "observed": {
+        "failed_closed": true,
+        "field_changed": "changed_file_count",
+        "reason": "ValidationError: records.0",
+        "refused_at": "deserialisation"
+      }
+    },
+    {
+      "case": "substituted_feature_set",
+      "damage": "a valid seal from another execution served under the declared artifact identity",
+      "expected": "every_sealed_feature_set_reproduces_its_hash fails on the recorded hash",
+      "observed": {
+        "failed_closed": true,
+        "reason": "1 sealed feature sets whose stored bytes do not hash to the name the campaign recorded: training",
+        "substitute_is_internally_valid": true,
+        "substituted": "f6649b36-b378-49fb-9237-9b8d8255ebc8"
+      }
+    },
+    {
+      "case": "not_opened_evidence_tampering",
+      "damage": "a learned component fabricated on the stopped correction surface",
+      "expected": "the not-opened claim becomes a failure instead of staying quiet",
+      "observed": {
+        "failed_closed": true,
+        "reason": "the selection record 274a7a932ce1 says no component was registered for experience.correction_ranking, and the store holds 1: 00000000-0000-0000-0000-000000000003",
+        "severity": "failure",
+        "still_bound_to_the_stop_hash": false
+      }
+    },
+    {
+      "case": "partial_database_restore",
+      "damage": "the campaign receipt stream truncated in a copy of the restored shape",
+      "expected": "the receipt chain is no longer contiguous",
+      "observed": {
+        "failed_closed": true,
+        "reason": "1 campaigns whose receipt versions are not contiguous and 0 receipts naming an unsealed manifest: 00000000-0000-0000-0000-000000000005"
+      }
+    },
+    {
+      "case": "inherited_store_isolation",
+      "damage": "the C3 pair checked against a digest that is not its own",
+      "expected": "the check names the store and refuses",
+      "observed": {
+        "failed_closed": true,
+        "named": "artifacts_s21c3_is_untouched",
+        "reason": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593 over 8503 files, expected 0000000000000000000000000000000000000000000000000000000000000000 over"
+      }
+    }
+  ],
+  "final_outcomes_inspected": 0,
+  "findings": [
+    {
+      "action": "Every repository script this command runs, and every shell row of the matrix, is given COGOS_POSTGRES_ENV_FILE pointing at .env.s21d2.local \u2014 the documented form, not a workaround. The backup path additionally refuses any manifest that does not name the D2 database, so a mis-scoped run is a refusal rather than a quiet substitution. docs/operations/correction-ranking.md now states the prerequisite for D2 the way the C3 and D1 documents state it for theirs.",
+      "first_attribution_was_wrong": "This was first recorded as a defect in postgres_common.sh, on the reasoning that load_postgres_environment() re-sources $COGOS_POSTGRES_ENV_FILE inside `set -a` and so overwrites exported handles. The mechanism is right and the attribution was not. The override is deliberate and documented: docs/operations/learned-evidence.md says in as many words that exporting the variables is not enough and that it is what stops a mis-scoped command reaching a real database. C3 and D1 both document the correct form \u2014 `COGOS_POSTGRES_ENV_FILE=$PWD/.env.<sprint>.local ./scripts/backup_event_store.sh` \u2014 in docs/operations/reality-inputs.md and docs/operations/experience-memory-graph.md. What D2 lacked was the operations document that would have said so. S21D2-090 supplies it.",
+      "id": "W9-F1",
+      "observed": "An operator who follows this sprint's own convention \u2014 `set -a && . ./.env.s21d2.local && set +a`, which every D2 command and every D2 evidence file records \u2014 and then runs scripts/backup_event_store.sh backs up the *development* database. The first run of this command printed 'Backing up database: cognitive_os_dev' and wrote 20260802T185709Z-event-store.dump and -artifacts.tar.zst into the development backup root before aborting in artifact_restore_verify.py. Nothing was written to any evidence store and no manifest was produced, so the partial dump is inert: restore_event_store.sh selects the newest *manifest* and there is none for that timestamp. The two files are left where they are and named here rather than deleted; removing them would make the run look cleaner than it was.",
+      "second_instance": "It is not one script. The S21D2-086 matrix hit the same thing from the other side: postgres_migration_check.sh reported 'Database is not on all head revisions' \u2014 a true statement about cognitive_os_dev, made while the matrix was verifying the D2 release. Run against the D2 database the same command reports no new upgrade operations. A gap that produces a *plausible failure about the wrong store* is worse than one that crashes, because the natural next move is to go and migrate something.",
+      "status": "documented and guarded; no repository script was changed",
+      "subject": "D2 had no operations document, so nothing stated the shell scripts' prerequisite"
+    }
+  ],
+  "fingerprints_after": {
+    "artifacts": {
+      "files": 5,
+      "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf"
+    },
+    "artifacts-s21c3": {
+      "files": 8503,
+      "path_and_size_fingerprint_sha256": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593"
+    },
+    "artifacts-s21d1": {
+      "files": 83,
+      "path_and_size_fingerprint_sha256": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f"
+    },
+    "artifacts-s21d2": {
+      "files": 1511,
+      "path_and_size_fingerprint_sha256": "39417f1a03f6824cfe6f9c4b7e6bd5a3cd34da8329fb95cff0a35595899438aa"
+    }
+  },
+  "fingerprints_before": {
+    "artifacts": {
+      "files": 5,
+      "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf"
+    },
+    "artifacts-s21c3": {
+      "files": 8503,
+      "path_and_size_fingerprint_sha256": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593"
+    },
+    "artifacts-s21d1": {
+      "files": 83,
+      "path_and_size_fingerprint_sha256": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f"
+    },
+    "artifacts-s21d2": {
+      "files": 1511,
+      "path_and_size_fingerprint_sha256": "39417f1a03f6824cfe6f9c4b7e6bd5a3cd34da8329fb95cff0a35595899438aa"
+    }
+  },
+  "isolation": {
+    "d2_evidence_pair_unchanged": true,
+    "inherited_stores_unchanged": true,
+    "writes": "the backup root, the restore database and a scratch directory; nothing else"
+  },
+  "items": [
+    "S21D2-081",
+    "S21D2-083",
+    "S21D2-084",
+    "S21D2-085b"
+  ],
+  "main_worktree_mutations": 0,
+  "purpose": "prove the D2 evidence survives being backed up, restarted and restored, and that damage to the restored copy is refused rather than absorbed",
+  "recorded_at": "2026-08-03T05:26:23.516567+00:00",
+  "restart": {
+    "action": "compose-postgres-1 restarted; the D2 database answered again",
+    "history_sha256": "a399ed6c2a54e4c36e1381733f544f48b6b40b6c899f067ec025a4018aea5f58",
+    "store_is_unchanged_across_the_restart": true
+  },
+  "restore": {
+    "artifact_bytes": {
+      "content_hash_mismatches": [],
+      "files_rehashed": 1511
+    },
+    "artifact_copy": "/tmp/s21d2-w9-rcf6g2h8/restored-artifacts",
+    "counts_match": true,
+    "hashed_rows_match": true,
+    "integrity_report_matches": true,
+    "negative_release_state": {
+      "checked_by": "the_correction_surface_has_a_sound_activation_state, which now refuses a stop record the store contradicts rather than trusting it",
+      "counts": {
+        "learned_activation_approvals": 0,
+        "learned_activation_history": 0,
+        "learned_component_revisions": 0,
+        "learned_components": 0,
+        "learned_evidence_records": 0
+      },
+      "nothing_was_registered_approved_or_activated": true
+    },
+    "restored": {
+      "campaigns": {
+        "39212ed3-7a7a-545d-b5f4-265518a4dcd5": 30,
+        "490f58fb-6931-511e-89ca-5368f9373bc9": 151
+      },
+      "counts": {
+        "artifact_blobs": 1511,
+        "artifacts": 2057,
+        "campaign_receipts": 181,
+        "coding_outcomes": 600,
+        "events": 1261,
+        "learned_accesses": 0,
+        "learned_activation_approvals": 0,
+        "learned_activation_history": 0,
+        "learned_artifacts": 4,
+        "learned_component_revisions": 0,
+        "learned_components": 0,
+        "learned_datasets": 2,
+        "learned_evidence_records": 0,
+        "learned_observations": 480
+      },
+      "history_sha256": "a399ed6c2a54e4c36e1381733f544f48b6b40b6c899f067ec025a4018aea5f58",
+      "receipt_sets_sha256": "7faa4b4f35e42040c9b11e32ac5d27a4b1ef3ad95a2482c1e890bd330a6b7cff",
+      "recorded_candidates_sha256": "a4549516d10a1cd7a93a3db7f0d8029b4feabf3946c479507aceb06bcd17c4eb",
+      "run_identity_keys": 600,
+      "run_identity_keys_sha256": "79561fce178a4f69794b6da8291ccb18bf8ac9399944a553b2ad0c54e0dee34a"
+    },
+    "restored_integrity_report": {
+      "checks": [
+        {
+          "detail": "calibration 06f83afe1dca over 40 slots; training 779bed086cda over 200 slots; 4 further seals found in the store and not hash-checked",
+          "name": "every_sealed_feature_set_reproduces_its_hash",
+          "ok": true,
+          "severity": "failure"
+        },
+        {
+          "detail": "480 observations across 2 sealed campaigns carry the role their partition gives them",
+          "name": "every_correction_observation_carries_its_sealed_role",
+          "ok": true,
+          "severity": "failure"
+        },
+        {
+          "detail": "60 repository groups over 2 sealed partitions, each in exactly one",
+          "name": "no_correction_group_crosses_a_partition",
+          "ok": true,
+          "severity": "failure"
+        },
+        {
+          "detail": "earliest seal 2026-08-02T05:26:52.696319+00:00 against the earliest outcome 2026-08-02T05:26:55.066887+00:00; 480 observations, none earlier than the first seal of the campaign that produced it",
+          "name": "every_correction_observation_follows_its_feature_seal",
+          "ok": true,
+          "severity": "failure"
+        },
+        {
+          "detail": "2 campaign manifests were sealed more than once, so the store holds rows from more than one execution and a dataset over it must select an explicit member list: 37eb59f2c374 x3, 39dcb9613d84 x3",
+          "name": "each_campaign_manifest_was_sealed_once",
+          "ok": false,
+          "severity": "warning"
+        },
+        {
+          "detail": "480 observations resolve to tasks inside 2 sealed manifests holding 240 candidate slots",
+          "name": "every_correction_observation_is_a_sealed_member",
+          "ok": true,
+          "severity": "failure"
+        },
+        {
+          "detail": "4 lineage rows over roles ['example_manifest', 'split_manifest']; declared and observed content hashes agree and every row has bytes",
+          "name": "every_correction_lineage_row_resolves_to_its_bytes",
+          "ok": true,
+          "severity": "failure"
+        },
+        {
+          "detail": "39212ed3-7a7a-545d-b5f4-265518a4dcd5 1..30; 490f58fb-6931-511e-89ca-5368f9373bc9 1..151",
+          "name": "every_campaign_receipt_chains_to_its_predecessor",
+          "ok": true,
+          "severity": "failure"
+        },
+        {
+          "bound_hash": "274a7a932ce110d12892f3dab102f10308ad556c563483d414979cbc69950536",
+          "detail": "no component was ever registered for experience.correction_ranking, and the store holds none: no setting in the pre-registered grid survived the selection filter. The strongest scored 0.9 against a baseline of 0.3, so the signal is present; every setting that found it also answered confidently and wrongly on a semantics-preserving perturbation, and every setting that avoided that answered no probe at all",
+          "name": "the_correction_surface_has_a_sound_activation_state",
+          "ok": true,
+          "severity": "not_opened"
+        },
+        {
+          "bound_hash": "274a7a932ce110d12892f3dab102f10308ad556c563483d414979cbc69950536",
+          "detail": "no model artifact exists for experience.correction_ranking, and the store holds no component that could name one: no setting in the pre-registered grid survived the selection filter. The strongest scored 0.9 against a baseline of 0.3, so the signal is present; every setting that found it also answered confidently and wrongly on a semantics-preserving perturbation, and every setting that avoided that answered no probe at all",
+          "name": "every_active_component_resolves_to_the_model_it_declares",
+          "ok": true,
+          "severity": "not_opened"
+        },
+        {
+          "detail": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf over 5 files",
+          "name": "artifacts_is_untouched",
+          "ok": true,
+          "severity": "failure"
+        },
+        {
+          "detail": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593 over 8503 files",
+          "name": "artifacts_s21c3_is_untouched",
+          "ok": true,
+          "severity": "failure"
+        },
+        {
+          "detail": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f over 83 files",
+          "name": "artifacts_s21d1_is_untouched",
+          "ok": true,
+          "severity": "failure"
+        }
+      ],
+      "counts": {
+        "campaign_receipts": 181,
+        "learned_components": 0,
+        "lineage_rows": 4,
+        "observations": 480,
+        "observations_in_a_fittable_partition": 480,
+        "real_governed_run_observations": 0,
+        "sealed_partitions": {
+          "calibration": {
+            "campaign_manifest_hash": "39dcb9613d843e840b23db99fd3b99fd774ed8a324d4e718fcb951e084a253e2",
+            "candidate_slots": 40,
+            "observations": 80,
+            "repository_groups": 10,
+            "seals": [
+              {
+                "artifact_id": "c6685609-b4d4-4c8b-be44-cdf2c14136ce",
+                "declared_by_the_campaign_evidence": false,
+                "feature_set_hash": "23ab7e19de41e617c1be8757de1a82c5e17f0297ab011283efb98445bda903fe",
+                "sealed_at": "2026-08-02T05:26:53.543758+00:00"
+              },
+              {
+                "artifact_id": "7ffe90bd-94ec-468f-9ef6-60154ba513c6",
+                "declared_by_the_campaign_evidence": true,
+                "feature_set_hash": "06f83afe1dcaf30f0b9e3a8c9c6e568d704c8b71cce314f1354a7afbd0ddafdc",
+                "sealed_at": "2026-08-02T05:32:06.959551+00:00"
+              },
+              {
+                "artifact_id": "df7751e0-c5c9-497e-b9bc-54d0d9801221",
+                "declared_by_the_campaign_evidence": false,
+                "feature_set_hash": "76ffc9fc6accf0449459a1338ad3d5d0a830cb4538d1f51dd37c74406b6f9114",
+                "sealed_at": "2026-08-02T05:49:38.213303+00:00"
+              }
+            ]
+          },
+          "training": {
+            "campaign_manifest_hash": "37eb59f2c374a06f02764ffcd5a21a4e8b1923ee5a0c62af0093567b708dfda9",
+            "candidate_slots": 200,
+            "observations": 400,
+            "repository_groups": 50,
+            "seals": [
+              {
+                "artifact_id": "f6649b36-b378-49fb-9237-9b8d8255ebc8",
+                "declared_by_the_campaign_evidence": false,
+                "feature_set_hash": "74d31e105857b93902b4e1060a47eb6b9cced301a8aad965825aaad167b60c85",
+                "sealed_at": "2026-08-02T05:26:52.696319+00:00"
+              },
+              {
+                "artifact_id": "5ca3f2a1-6651-4bb0-855f-12cc2342d27c",
+                "declared_by_the_campaign_evidence": true,
+                "feature_set_hash": "779bed086cda08ea3f4c3524155887a3dc2cef8505ad9d252b31424396266341",
+                "sealed_at": "2026-08-02T05:32:06.177194+00:00"
+              },
+              {
+                "artifact_id": "2e6c31d8-8a9f-4f65-bcf2-49236c15829f",
+                "declared_by_the_campaign_evidence": false,
+                "feature_set_hash": "9dd74c9ef0981286ea1e640a7761d3c7e2c528a988949b9ff85062a752bfbf44",
+                "sealed_at": "2026-08-02T05:49:37.499083+00:00"
+              }
+            ]
+          }
+        }
+      },
+      "failures": [],
+      "healthy": true,
+      "not_opened": {
+        "every_active_component_resolves_to_the_model_it_declares": "274a7a932ce110d12892f3dab102f10308ad556c563483d414979cbc69950536",
+        "the_correction_surface_has_a_sound_activation_state": "274a7a932ce110d12892f3dab102f10308ad556c563483d414979cbc69950536"
+      },
+      "warnings": [
+        "each_campaign_manifest_was_sealed_once"
+      ]
+    },
+    "resume_inputs_match": {
+      "recorded_candidate_outcomes": true,
+      "run_identity_keys": true,
+      "sequence_receipts": true
+    },
+    "source": {
+      "campaigns": {
+        "39212ed3-7a7a-545d-b5f4-265518a4dcd5": 30,
+        "490f58fb-6931-511e-89ca-5368f9373bc9": 151
+      },
+      "counts": {
+        "artifact_blobs": 1511,
+        "artifacts": 2057,
+        "campaign_receipts": 181,
+        "coding_outcomes": 600,
+        "events": 1261,
+        "learned_accesses": 0,
+        "learned_activation_approvals": 0,
+        "learned_activation_history": 0,
+        "learned_artifacts": 4,
+        "learned_component_revisions": 0,
+        "learned_components": 0,
+        "learned_datasets": 2,
+        "learned_evidence_records": 0,
+        "learned_observations": 480
+      },
+      "history_sha256": "a399ed6c2a54e4c36e1381733f544f48b6b40b6c899f067ec025a4018aea5f58",
+      "receipt_sets_sha256": "7faa4b4f35e42040c9b11e32ac5d27a4b1ef3ad95a2482c1e890bd330a6b7cff",
+      "recorded_candidates_sha256": "a4549516d10a1cd7a93a3db7f0d8029b4feabf3946c479507aceb06bcd17c4eb",
+      "run_identity_keys": 600,
+      "run_identity_keys_sha256": "79561fce178a4f69794b6da8291ccb18bf8ac9399944a553b2ad0c54e0dee34a"
+    },
+    "target_database": "cognitive_os_s21d2_restore_test"
+  },
+  "schema_version": 1,
+  "source_integrity_report": {
+    "checks": [
+      {
+        "detail": "calibration 06f83afe1dca over 40 slots; training 779bed086cda over 200 slots; 4 further seals found in the store and not hash-checked",
+        "name": "every_sealed_feature_set_reproduces_its_hash",
+        "ok": true,
+        "severity": "failure"
+      },
+      {
+        "detail": "480 observations across 2 sealed campaigns carry the role their partition gives them",
+        "name": "every_correction_observation_carries_its_sealed_role",
+        "ok": true,
+        "severity": "failure"
+      },
+      {
+        "detail": "60 repository groups over 2 sealed partitions, each in exactly one",
+        "name": "no_correction_group_crosses_a_partition",
+        "ok": true,
+        "severity": "failure"
+      },
+      {
+        "detail": "earliest seal 2026-08-02T05:26:52.696319+00:00 against the earliest outcome 2026-08-02T05:26:55.066887+00:00; 480 observations, none earlier than the first seal of the campaign that produced it",
+        "name": "every_correction_observation_follows_its_feature_seal",
+        "ok": true,
+        "severity": "failure"
+      },
+      {
+        "detail": "2 campaign manifests were sealed more than once, so the store holds rows from more than one execution and a dataset over it must select an explicit member list: 37eb59f2c374 x3, 39dcb9613d84 x3",
+        "name": "each_campaign_manifest_was_sealed_once",
+        "ok": false,
+        "severity": "warning"
+      },
+      {
+        "detail": "480 observations resolve to tasks inside 2 sealed manifests holding 240 candidate slots",
+        "name": "every_correction_observation_is_a_sealed_member",
+        "ok": true,
+        "severity": "failure"
+      },
+      {
+        "detail": "4 lineage rows over roles ['example_manifest', 'split_manifest']; declared and observed content hashes agree and every row has bytes",
+        "name": "every_correction_lineage_row_resolves_to_its_bytes",
+        "ok": true,
+        "severity": "failure"
+      },
+      {
+        "detail": "39212ed3-7a7a-545d-b5f4-265518a4dcd5 1..30; 490f58fb-6931-511e-89ca-5368f9373bc9 1..151",
+        "name": "every_campaign_receipt_chains_to_its_predecessor",
+        "ok": true,
+        "severity": "failure"
+      },
+      {
+        "bound_hash": "274a7a932ce110d12892f3dab102f10308ad556c563483d414979cbc69950536",
+        "detail": "no component was ever registered for experience.correction_ranking, and the store holds none: no setting in the pre-registered grid survived the selection filter. The strongest scored 0.9 against a baseline of 0.3, so the signal is present; every setting that found it also answered confidently and wrongly on a semantics-preserving perturbation, and every setting that avoided that answered no probe at all",
+        "name": "the_correction_surface_has_a_sound_activation_state",
+        "ok": true,
+        "severity": "not_opened"
+      },
+      {
+        "bound_hash": "274a7a932ce110d12892f3dab102f10308ad556c563483d414979cbc69950536",
+        "detail": "no model artifact exists for experience.correction_ranking, and the store holds no component that could name one: no setting in the pre-registered grid survived the selection filter. The strongest scored 0.9 against a baseline of 0.3, so the signal is present; every setting that found it also answered confidently and wrongly on a semantics-preserving perturbation, and every setting that avoided that answered no probe at all",
+        "name": "every_active_component_resolves_to_the_model_it_declares",
+        "ok": true,
+        "severity": "not_opened"
+      },
+      {
+        "detail": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf over 5 files",
+        "name": "artifacts_is_untouched",
+        "ok": true,
+        "severity": "failure"
+      },
+      {
+        "detail": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593 over 8503 files",
+        "name": "artifacts_s21c3_is_untouched",
+        "ok": true,
+        "severity": "failure"
+      },
+      {
+        "detail": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f over 83 files",
+        "name": "artifacts_s21d1_is_untouched",
+        "ok": true,
+        "severity": "failure"
+      }
+    ],
+    "counts": {
+      "campaign_receipts": 181,
+      "learned_components": 0,
+      "lineage_rows": 4,
+      "observations": 480,
+      "observations_in_a_fittable_partition": 480,
+      "real_governed_run_observations": 0,
+      "sealed_partitions": {
+        "calibration": {
+          "campaign_manifest_hash": "39dcb9613d843e840b23db99fd3b99fd774ed8a324d4e718fcb951e084a253e2",
+          "candidate_slots": 40,
+          "observations": 80,
+          "repository_groups": 10,
+          "seals": [
+            {
+              "artifact_id": "c6685609-b4d4-4c8b-be44-cdf2c14136ce",
+              "declared_by_the_campaign_evidence": false,
+              "feature_set_hash": "23ab7e19de41e617c1be8757de1a82c5e17f0297ab011283efb98445bda903fe",
+              "sealed_at": "2026-08-02T05:26:53.543758+00:00"
+            },
+            {
+              "artifact_id": "7ffe90bd-94ec-468f-9ef6-60154ba513c6",
+              "declared_by_the_campaign_evidence": true,
+              "feature_set_hash": "06f83afe1dcaf30f0b9e3a8c9c6e568d704c8b71cce314f1354a7afbd0ddafdc",
+              "sealed_at": "2026-08-02T05:32:06.959551+00:00"
+            },
+            {
+              "artifact_id": "df7751e0-c5c9-497e-b9bc-54d0d9801221",
+              "declared_by_the_campaign_evidence": false,
+              "feature_set_hash": "76ffc9fc6accf0449459a1338ad3d5d0a830cb4538d1f51dd37c74406b6f9114",
+              "sealed_at": "2026-08-02T05:49:38.213303+00:00"
+            }
+          ]
+        },
+        "training": {
+          "campaign_manifest_hash": "37eb59f2c374a06f02764ffcd5a21a4e8b1923ee5a0c62af0093567b708dfda9",
+          "candidate_slots": 200,
+          "observations": 400,
+          "repository_groups": 50,
+          "seals": [
+            {
+              "artifact_id": "f6649b36-b378-49fb-9237-9b8d8255ebc8",
+              "declared_by_the_campaign_evidence": false,
+              "feature_set_hash": "74d31e105857b93902b4e1060a47eb6b9cced301a8aad965825aaad167b60c85",
+              "sealed_at": "2026-08-02T05:26:52.696319+00:00"
+            },
+            {
+              "artifact_id": "5ca3f2a1-6651-4bb0-855f-12cc2342d27c",
+              "declared_by_the_campaign_evidence": true,
+              "feature_set_hash": "779bed086cda08ea3f4c3524155887a3dc2cef8505ad9d252b31424396266341",
+              "sealed_at": "2026-08-02T05:32:06.177194+00:00"
+            },
+            {
+              "artifact_id": "2e6c31d8-8a9f-4f65-bcf2-49236c15829f",
+              "declared_by_the_campaign_evidence": false,
+              "feature_set_hash": "9dd74c9ef0981286ea1e640a7761d3c7e2c528a988949b9ff85062a752bfbf44",
+              "sealed_at": "2026-08-02T05:49:37.499083+00:00"
+            }
+          ]
+        }
+      }
+    },
+    "failures": [],
+    "healthy": true,
+    "not_opened": {
+      "every_active_component_resolves_to_the_model_it_declares": "274a7a932ce110d12892f3dab102f10308ad556c563483d414979cbc69950536",
+      "the_correction_surface_has_a_sound_activation_state": "274a7a932ce110d12892f3dab102f10308ad556c563483d414979cbc69950536"
+    },
+    "warnings": [
+      "each_campaign_manifest_was_sealed_once"
+    ]
+  },
+  "sprint": "21D2",
+  "started_at": "2026-08-03T05:26:12.683772+00:00",
+  "wave": "W9"
+}

@@ -314,6 +314,8 @@ async def activate_disable_rollback(service: Any) -> tuple[Any, Any]:
         reason="benchmark: withdraw",
         idempotency_key="bench-disable",
         correlation_id=correlation,
+        # A healthy fixture parked on purpose, so its prior activation may be restored.
+        rollback_permitted=True,
     )
     rollback = await service.roll_back(
         COMPONENT.component_id,

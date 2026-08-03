@@ -162,6 +162,184 @@ MATRIX: tuple[Command, ...] = (
 )
 
 
+# ------------------------------------------------------------------- Sprint 21D2. §S21D2-086
+#
+# Appended to the table above rather than replacing it: D2's release rests on C3's evidence
+# still being sound, so the rows that check that are part of D2's matrix too. What is added
+# here is everything D2 introduced — the correction-ranking surface, the null-path guards, the
+# two further inherited pairs, and the operator commands that read them.
+
+D2_MATRIX: tuple[Command, ...] = (
+    Command(
+        "correction_ranking_spine",
+        _pytest("tests/cognitive_os/learning", "tests/cognitive_os/learned_evidence"),
+        store="scratch",
+    ),
+    Command(
+        "correction_sequencing_and_receipts",
+        _pytest(
+            "tests/cognitive_os/coding/test_correction_sequencer.py",
+            "tests/cognitive_os/coding/test_reality_d2_corpus.py",
+            "tests/cognitive_os/coding/test_reality_campaign_runner.py",
+        ),
+        store="scratch",
+    ),
+    Command(
+        "null_path_and_not_opened_guards",
+        _pytest(
+            "tests/cognitive_os/learning/test_correction_integrity.py",
+            "tests/cognitive_os/learning/test_d2_null_evidence_guard.py",
+        ),
+        store="scratch",
+    ),
+    Command(
+        "migration_check",
+        ("./scripts/postgres_migration_check.sh",),
+        requires="COGOS_DATABASE_URL",
+    ),
+    # No `artifact_recovery` row. `scripts/artifact_restore_verify.py` is a helper that
+    # `restore_event_store.sh` pipes artifact metadata into, not a command with a standalone
+    # meaning; a row that ran it bare only proved that it prints its usage. Recovery is
+    # proven where it happens — `scripts/operations_d2.py` re-hashes all 1511 blobs out of
+    # the archive — and the two rows below check the store's bytes and its lineage here.
+    Command(
+        "learned_evidence_benchmarks",
+        (
+            PYTHON,
+            "scripts/benchmark_run.py",
+            "--manifest",
+            "benchmarks/manifests/sprint21c1-learned-ci.yaml",
+            "--mode",
+            "learned-replay",
+            "--report-directory",
+            "/tmp/s21d2-matrix-learned-ci",  # nosec B108 - a scratch report directory
+        ),
+        store="scratch",
+    ),
+    Command(
+        # The D2 operator surface, read-only. Exit 0 means every class that was opened is
+        # sound *and* every class that was not names the decision that closed it.
+        "correction_integrity_cli",
+        (
+            PYTHON,
+            "scripts/learned.py",
+            "correction-integrity",
+            "--seals",
+            "docs/sprints/sprint-21/evidence/sprint-21d2-self-play-campaign.json",
+            "--stop-record",
+            "docs/sprints/sprint-21/evidence/sprint-21d2-w9-stop-record.json",
+        ),
+        requires="COGOS_DATABASE_URL",
+    ),
+    Command(
+        "learned_health", (PYTHON, "scripts/learned.py", "health"), requires="COGOS_DATABASE_URL"
+    ),
+    Command(
+        "learned_artifact_verify",
+        (PYTHON, "scripts/learned.py", "artifact-verify"),
+        requires="COGOS_ARTIFACT_ROOT",
+    ),
+    Command(
+        "c3_pair_fingerprint",
+        (
+            PYTHON,
+            "scripts/artifact_store_fingerprint.py",
+            "/home/palkouser/projekt/cognitive-os-data/artifacts-s21c3",
+            "--expect",
+            "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593",
+            "--expect-files",
+            "8503",
+        ),
+    ),
+    Command(
+        "d1_pair_fingerprint",
+        (
+            PYTHON,
+            "scripts/artifact_store_fingerprint.py",
+            "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d1",
+            "--expect",
+            "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f",
+            "--expect-files",
+            "83",
+        ),
+    ),
+)
+
+
+@dataclass(frozen=True, slots=True)
+class NotOpened:
+    """A row a lawful stop closed. Listed, never omitted, and bound to the decision. §S21D2-086.
+
+    A matrix that simply left these out would be indistinguishable from a matrix someone
+    trimmed after a failure — which is the same reason a skipped row carries its reason. The
+    difference is that a skip is a property of the host and this is a property of the sprint:
+    the command was not skipped, the work it would verify was never authorised.
+    """
+
+    name: str
+    reason: str
+
+
+D2_NOT_OPENED: tuple[NotOpened, ...] = (
+    NotOpened(
+        "final_batch_a_and_b",
+        "S21D2-060 was never authorised; the holdout was not opened",
+    ),
+    NotOpened(
+        "benefit_forgetting_and_shadow_measurement",
+        "S21D2-063 to -066 measure a selected candidate, and none was selected",
+    ),
+    NotOpened(
+        "promotion_assessment",
+        "S21D2-067 assesses a component that exists; none was registered",
+    ),
+    NotOpened(
+        "activation_approval_and_canary",
+        "S21D2-069 to -074 need an approved component; the surface has none",
+    ),
+    NotOpened(
+        "governed_rollback_real_leg",
+        "S21D2-075's real leg needs an active component; the scratch proof stands from W3c",
+    ),
+)
+
+
+#: Every artifact pair on this host, D2's own included. §S21D2-086 requires the evidence
+#: stores to be byte-identical across the destructive rows, and the only way to say that is
+#: to measure before and after rather than to assert that the rows were careful.
+D2_PAIRS: tuple[str, ...] = (
+    "artifacts",
+    "artifacts-s21c3",
+    "artifacts-s21d1",
+    "artifacts-s21d2",
+)
+
+
+def _pair_fingerprints() -> dict[str, dict[str, object]]:
+    sys.path.insert(0, str(REPOSITORY / "src"))
+    from cognitive_os.coding.reality_integrity import fingerprint
+
+    root = Path("/home/palkouser/projekt/cognitive-os-data")
+    result: dict[str, dict[str, object]] = {}
+    for name in D2_PAIRS:
+        path = root / name
+        digest, files = fingerprint(path) if path.is_dir() else ("", 0)
+        result[name] = {"path_and_size_fingerprint_sha256": digest, "files": files}
+    return result
+
+
+def _stop_hash(path: Path) -> str:
+    """The content hash of the record that closed the not-opened rows."""
+    selection = json.loads(path.read_text(encoding="utf-8"))["candidate_selection"]
+    stop: str = selection["content_hash"]
+    if selection["selected"] or selection["authorises_final_access"]:
+        raise SystemExit(
+            "refused: the selection record names a candidate, so these rows are not closed "
+            "and the matrix must run them instead of recording why it did not"
+        )
+    return stop
+
+
 def _migration_head() -> str:
     versions = REPOSITORY / "infra" / "postgres" / "alembic" / "versions"
     heads = sorted(path.stem for path in versions.glob("*.py"))
@@ -218,7 +396,21 @@ def _scratch_env() -> dict[str, str]:
     }
 
 
-def _run(command: Command) -> dict[str, object]:
+def _shell_environment(sprint: str) -> dict[str, str]:
+    """What the shell rows need so they operate on the sprint's own store. W9-F1.
+
+    `postgres_common.sh` re-sources `$COGOS_POSTGRES_ENV_FILE` — `.env.postgres.local` by
+    default — inside `set -a`, so it overwrites every handle the caller exported. A matrix run
+    under the D2 environment therefore ran `postgres_migration_check.sh` against the
+    *development* database and recorded a real failure about the wrong store. Naming the file
+    explicitly is the only way a shell row can be about the database the matrix is verifying.
+    """
+    if sprint != "21D2":
+        return {}
+    return {"COGOS_POSTGRES_ENV_FILE": str(REPOSITORY / ".env.s21d2.local")}
+
+
+def _run(command: Command, *, shell_environment: dict[str, str] | None = None) -> dict[str, object]:
     if not _available(command.requires):
         return {
             "name": command.name,
@@ -227,7 +419,7 @@ def _run(command: Command) -> dict[str, object]:
             "exit_code": None,
             "seconds": 0.0,
         }
-    overrides = dict(command.environment)
+    overrides = dict(shell_environment or {}) | dict(command.environment)
     if command.store == "scratch":
         overrides |= _scratch_env()
     environment = {**os.environ, **overrides}
@@ -255,6 +447,18 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--print-migration-head", action="store_true")
+    parser.add_argument(
+        "--sprint",
+        choices=("21C3", "21D2"),
+        default="21C3",
+        help="which table to run; 21D2 appends its own rows and its not-opened list",
+    )
+    parser.add_argument(
+        "--selection-record",
+        type=Path,
+        default=REPOSITORY / "docs/sprints/sprint-21/evidence/sprint-21d2-learner-selection.json",
+        help="the record whose hash binds the 21D2 not-opened rows",
+    )
     arguments = parser.parse_args()
     if arguments.print_migration_head:
         print(_migration_head())
@@ -263,19 +467,25 @@ def main() -> int:
         print("refused: --output is required", file=sys.stderr)
         return 2
 
+    d2 = arguments.sprint == "21D2"
+    table = MATRIX + D2_MATRIX if d2 else MATRIX
+    stop = _stop_hash(arguments.selection_record) if d2 else None
+    before = _pair_fingerprints() if d2 else {}
+
+    shell = _shell_environment(arguments.sprint)
     results = []
-    for command in MATRIX:
-        result = _run(command)
+    for command in table:
+        result = _run(command, shell_environment=shell)
         results.append(result)
         marker = {"passed": "ok  ", "failed": "FAIL", "skipped": "skip"}[str(result["status"])]
         print(
             f"{marker} {result['name']:<32} {result['seconds']:>7}s  {result.get('last_line', '')}"
         )
 
-    evidence = {
-        "sprint": "21C3",
-        "wave": "W6",
-        "item": "S21C3-065",
+    evidence: dict[str, object] = {
+        "sprint": arguments.sprint,
+        "wave": "W9" if d2 else "W6",
+        "item": "S21D2-086" if d2 else "S21C3-065",
         "recorded_at": datetime.now(UTC).isoformat(),
         "migration_head": _migration_head(),
         # The database *name*, never the URL: this file is meant to be committed.
@@ -287,6 +497,16 @@ def main() -> int:
             str(item["name"]): item["reason"] for item in results if item["status"] == "skipped"
         },
     }
+    if d2:
+        evidence["not_opened"] = {
+            row.name: {"reason": row.reason, "stop_decision_hash": stop} for row in D2_NOT_OPENED
+        }
+        after = _pair_fingerprints()
+        evidence["artifact_pairs"] = {
+            "before": before,
+            "after": after,
+            "byte_identical_across_every_row": before == after,
+        }
     arguments.output.write_text(json.dumps(evidence, indent=2, sort_keys=True) + "\n")
     print(
         f"\n{arguments.output}: {evidence['passed']} passed, "

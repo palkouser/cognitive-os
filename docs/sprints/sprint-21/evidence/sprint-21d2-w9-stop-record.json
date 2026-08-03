@@ -1,0 +1,5 @@
+{
+  "content_hash": "274a7a932ce110d12892f3dab102f10308ad556c563483d414979cbc69950536",
+  "name": "candidate_selection",
+  "reason": "no setting in the pre-registered grid survived the selection filter. The strongest scored 0.9 against a baseline of 0.3, so the signal is present; every setting that found it also answered confidently and wrongly on a semantics-preserving perturbation, and every setting that avoided that answered no probe at all"
+}

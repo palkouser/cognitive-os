@@ -16,9 +16,11 @@ whether it hit is the hidden verifier's answer and lives in the outcome.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from difflib import unified_diff
 from hashlib import sha256
+from random import Random
 from uuid import UUID, uuid5
 
 from cognitive_os.domain.common import UtcDatetime
@@ -62,19 +64,65 @@ def candidate_id_for(task_id: UUID, strategy: RealityCandidateStrategy) -> UUID:
     return uuid5(REALITY_CANDIDATE_NAMESPACE, f"{task_id}:{strategy.value}")
 
 
+def opaque_candidate_id(task_id: UUID, *, campaign_seed: int, position: int) -> UUID:
+    """A candidate identity derived from its position, not from the recipe that built it.
+
+    S21D2-021. `candidate_id_for` derives the UUID from the strategy value, so a candidate ID
+    is a reversible encoding of the recipe: anyone holding the task ID can recompute all four
+    and read off which is which. That is harmless while the corpus makes no claim about its
+    recipes, and it is a leak the moment a ranker is fitted on the corpus — a per-task
+    constant that identifies the label without ever appearing in the feature schema.
+
+    Positions come from `shuffled_recipe_positions`, so the mapping is fixed and replayable
+    from a recorded seed but is not derivable from the identity alone.
+    """
+    if position < 0:
+        raise ValueError("a candidate position is a zero-based index")
+    return uuid5(REALITY_CANDIDATE_NAMESPACE, f"{task_id}:d2:{campaign_seed}:{position}")
+
+
+def shuffled_recipe_positions(
+    task_id: UUID,
+    recipes: Sequence[RealityCandidateStrategy],
+    *,
+    campaign_seed: int,
+) -> tuple[RealityCandidateStrategy, ...]:
+    """Deterministically permute the recipes for one task, from a recorded campaign seed.
+
+    Without this, position zero is the same recipe in every task and the ranker's first slot
+    carries a constant prior. `Random` is seeded per task so two tasks in one campaign shuffle
+    differently while either replays exactly.
+    """
+    if len(set(recipes)) != len(recipes):
+        raise ValueError("a task cannot generate the same recipe twice")
+    ordered = list(recipes)
+    # nosec B311 - a replayable permutation, not a secret. Cryptographic randomness would be
+    # the wrong tool here: the whole requirement is that a recorded seed reproduces the order.
+    Random(f"{task_id}:{campaign_seed}").shuffle(ordered)  # nosec B311
+    return tuple(ordered)
+
+
 def build_candidate(
-    task: RealityTaskManifest, strategy: RealityCandidateStrategy
+    task: RealityTaskManifest,
+    strategy: RealityCandidateStrategy,
+    *,
+    candidate_id: UUID | None = None,
 ) -> GeneratedCandidate:
     """Produce the diff from the task's baseline to one candidate, and check it applies.
 
     The check is not ceremony. A candidate whose diff does not reproduce its own declared
     source would be recorded as an executed outcome for source nobody ran, and the corpus
     would carry an answer that was never tested.
+
+    `candidate_id` overrides the derived identity, and D2 always supplies it: the sealed
+    catalogue named every candidate by its position before anything ran, and re-deriving one
+    from the recipe here would put the reversible C3 encoding back on top of the opaque ID the
+    seal committed to. Absent, the C3 derivation is unchanged.
     """
     item = template(_template_id_of(task))
-    path = next(iter(item.candidate_sources[strategy]))
+    path = next(iter(item.sources(strategy)))
     before = item.visible_files[path]
-    after = item.candidate_sources[strategy][path]
+    after = item.sources(strategy)[path]
     body = "".join(
         unified_diff(
             before.splitlines(keepends=True),
@@ -101,7 +149,7 @@ def build_candidate(
         )
     return GeneratedCandidate(
         task_id=task.task_id,
-        candidate_id=candidate_id_for(task.task_id, strategy),
+        candidate_id=candidate_id or candidate_id_for(task.task_id, strategy),
         strategy=strategy,
         path=path,
         unified_diff=diff,
@@ -135,7 +183,7 @@ def build_manifest(
 def candidate_source(task: RealityTaskManifest, strategy: RealityCandidateStrategy) -> str:
     """The full file text one candidate produces, for callers that write rather than patch."""
     item = template(_template_id_of(task))
-    return next(iter(item.candidate_sources[strategy].values()))
+    return next(iter(item.sources(strategy).values()))
 
 
 def baseline_source(task: RealityTaskManifest) -> str:
@@ -144,7 +192,14 @@ def baseline_source(task: RealityTaskManifest) -> str:
 
 
 def _source_path(item: TaskTemplate) -> str:
-    return next(iter(item.candidate_sources[RealityCandidateStrategy.CORRECT_NARROW]))
+    """The one file every candidate of this task replaces.
+
+    Read off whichever recipe comes first rather than off `correct_narrow`: a D2 template's
+    candidates are keyed by the neutral recipes, so naming a C3 strategy here would raise a
+    `KeyError` on half the corpus. Every candidate of a template patches the same path, which
+    `build_candidate` verifies per candidate, so the first one answers for all four.
+    """
+    return next(iter(next(iter(item.candidate_sources.values()))))
 
 
 def _template_id_of(task: RealityTaskManifest) -> str:

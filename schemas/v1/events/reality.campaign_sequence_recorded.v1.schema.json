@@ -1,0 +1,145 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/reality.campaign_sequence_recorded.v1.schema.json",
+  "additionalProperties": false,
+  "description": "The terminal record of one task's candidate sequence, Sprint 21D2.\n\nS21D2-054. A campaign that stops at the first verifier acceptance leaves candidates\ndeliberately unattempted, and \"deliberately unattempted\" is a third state that neither the\noutcome stream nor the plan can express: the outcome stream has no row for them, and the\nplan still lists them. A resume that reads only those two therefore re-runs work the\ncampaign already decided not to do, which is not a repeat — it is a different campaign.\n\nSo the sequence itself is the durable authority, appended once per task with\ncompare-and-set on the campaign stream. It records what the baseline order was, what the\nresolved order was, what was actually attempted and in which order, why it stopped, and\nwhich candidates were intentionally left alone.",
+  "properties": {
+    "accepted_candidate_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Accepted Candidate Id"
+    },
+    "accepted_event_id": {
+      "anyOf": [
+        {
+          "format": "uuid",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Accepted Event Id"
+    },
+    "accepted_position": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Accepted Position"
+    },
+    "attempted_order": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Attempted Order",
+      "type": "array"
+    },
+    "baseline_order": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Baseline Order",
+      "type": "array"
+    },
+    "campaign_id": {
+      "format": "uuid",
+      "title": "Campaign Id",
+      "type": "string"
+    },
+    "campaign_manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Campaign Manifest Hash",
+      "type": "string"
+    },
+    "intentionally_unattempted": {
+      "default": [],
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Intentionally Unattempted",
+      "type": "array"
+    },
+    "learned_ordering_used": {
+      "default": false,
+      "title": "Learned Ordering Used",
+      "type": "boolean"
+    },
+    "mode": {
+      "minLength": 1,
+      "title": "Mode",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "partition": {
+      "minLength": 1,
+      "title": "Partition",
+      "type": "string"
+    },
+    "resolved_order": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": "Resolved Order",
+      "type": "array"
+    },
+    "stop_reason": {
+      "minLength": 1,
+      "title": "Stop Reason",
+      "type": "string"
+    },
+    "task_id": {
+      "format": "uuid",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "verifier_evidence_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Verifier Evidence Hash"
+    }
+  },
+  "required": [
+    "campaign_id",
+    "task_id",
+    "partition",
+    "mode",
+    "campaign_manifest_hash",
+    "baseline_order",
+    "resolved_order",
+    "attempted_order",
+    "stop_reason",
+    "occurred_at"
+  ],
+  "title": "RealityCampaignSequenceRecorded",
+  "type": "object"
+}

@@ -1,0 +1,256 @@
+{
+  "arms": {
+    "exact_signature": {
+      "coverage": 0.0,
+      "every_result_carried_the_policy": true,
+      "max_latency_ms": 0.09,
+      "mean_candidates_considered": 78.25,
+      "mrr_at_10": 0.0,
+      "ndcg_at_10": 0.0,
+      "p50_latency_ms": 0.06,
+      "p95_latency_ms": 0.08,
+      "timeouts": 0,
+      "top_5_recall": 0.0,
+      "top_5_recall_by_domain": {
+        "coding": 0.0,
+        "logic": 0.0,
+        "mathematics": 0.0
+      },
+      "top_5_recall_by_tier": {
+        "1": 0.0,
+        "2": 0.0
+      }
+    },
+    "lexical": {
+      "coverage": 1.0,
+      "every_result_carried_the_policy": true,
+      "max_latency_ms": 1.7,
+      "mean_candidates_considered": 78.25,
+      "mrr_at_10": 0.4145,
+      "ndcg_at_10": 0.3327,
+      "p50_latency_ms": 1.16,
+      "p95_latency_ms": 1.51,
+      "timeouts": 0,
+      "top_5_recall": 0.525,
+      "top_5_recall_by_domain": {
+        "coding": 0.4333,
+        "logic": 0.8,
+        "mathematics": 0.8
+      },
+      "top_5_recall_by_tier": {
+        "1": 0.4242,
+        "2": 1.0
+      }
+    },
+    "minilm_shortlist_plus_bounded_ged": {
+      "coverage": 1.0,
+      "every_result_carried_the_policy": true,
+      "max_latency_ms": 1769.63,
+      "mean_candidates_considered": 20.0,
+      "mrr_at_10": 0.3634,
+      "ndcg_at_10": 0.2333,
+      "p50_latency_ms": 39.66,
+      "p95_latency_ms": 1764.75,
+      "timeouts": 0,
+      "top_5_recall": 0.5875,
+      "top_5_recall_by_domain": {
+        "coding": 0.65,
+        "logic": 0.8,
+        "mathematics": 0.0
+      },
+      "top_5_recall_by_tier": {
+        "1": 0.6212,
+        "2": 0.4286
+      }
+    },
+    "minilm_vector": {
+      "coverage": 1.0,
+      "every_result_carried_the_policy": true,
+      "max_latency_ms": 1030.58,
+      "mean_candidates_considered": 78.25,
+      "mrr_at_10": 0.4392,
+      "ndcg_at_10": 0.374,
+      "p50_latency_ms": 14.14,
+      "p95_latency_ms": 26.4,
+      "timeouts": 0,
+      "top_5_recall": 0.5375,
+      "top_5_recall_by_domain": {
+        "coding": 0.4,
+        "logic": 0.9,
+        "mathematics": 1.0
+      },
+      "top_5_recall_by_tier": {
+        "1": 0.4394,
+        "2": 1.0
+      }
+    },
+    "no_memory": {
+      "coverage": 0.0,
+      "every_result_carried_the_policy": true,
+      "max_latency_ms": 0.09,
+      "mean_candidates_considered": 0.0,
+      "mrr_at_10": 0.0,
+      "ndcg_at_10": 0.0,
+      "p50_latency_ms": 0.06,
+      "p95_latency_ms": 0.08,
+      "timeouts": 0,
+      "top_5_recall": 0.0,
+      "top_5_recall_by_domain": {
+        "coding": 0.0,
+        "logic": 0.0,
+        "mathematics": 0.0
+      },
+      "top_5_recall_by_tier": {
+        "1": 0.0,
+        "2": 0.0
+      }
+    }
+  },
+  "comparison_with_width_10": {
+    "exact_signature": {
+      "width_10": {
+        "mrr_at_10": 0.0,
+        "ndcg_at_10": 0.0,
+        "p95_latency_ms": 0.1,
+        "timeouts": 0,
+        "top_5_recall": 0
+      },
+      "width_20": {
+        "mrr_at_10": 0.0,
+        "ndcg_at_10": 0.0,
+        "p95_latency_ms": 0.08,
+        "timeouts": 0,
+        "top_5_recall": 0.0
+      }
+    },
+    "lexical": {
+      "width_10": {
+        "mrr_at_10": 0.4145,
+        "ndcg_at_10": 0.3327,
+        "p95_latency_ms": 1.78,
+        "timeouts": 0,
+        "top_5_recall": 0.525
+      },
+      "width_20": {
+        "mrr_at_10": 0.4145,
+        "ndcg_at_10": 0.3327,
+        "p95_latency_ms": 1.51,
+        "timeouts": 0,
+        "top_5_recall": 0.525
+      }
+    },
+    "minilm_shortlist_plus_bounded_ged": {
+      "width_10": {
+        "mrr_at_10": 0.4481,
+        "ndcg_at_10": 0.3438,
+        "p95_latency_ms": 1788.92,
+        "timeouts": 60,
+        "top_5_recall": 0.675
+      },
+      "width_20": {
+        "mrr_at_10": 0.3634,
+        "ndcg_at_10": 0.2333,
+        "p95_latency_ms": 1764.75,
+        "timeouts": 0,
+        "top_5_recall": 0.5875
+      }
+    },
+    "minilm_vector": {
+      "width_10": {
+        "mrr_at_10": 0.4392,
+        "ndcg_at_10": 0.374,
+        "p95_latency_ms": 27.46,
+        "timeouts": 0,
+        "top_5_recall": 0.5375
+      },
+      "width_20": {
+        "mrr_at_10": 0.4392,
+        "ndcg_at_10": 0.374,
+        "p95_latency_ms": 26.4,
+        "timeouts": 0,
+        "top_5_recall": 0.5375
+      }
+    },
+    "no_memory": {
+      "width_10": {
+        "mrr_at_10": 0.0,
+        "ndcg_at_10": 0.0,
+        "p95_latency_ms": 0.09,
+        "timeouts": 0,
+        "top_5_recall": 0
+      },
+      "width_20": {
+        "mrr_at_10": 0.0,
+        "ndcg_at_10": 0.0,
+        "p95_latency_ms": 0.08,
+        "timeouts": 0,
+        "top_5_recall": 0.0
+      }
+    }
+  },
+  "embedding": {
+    "dimension": 384,
+    "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+    "tree_digest": "98eb3ae4df320d0b721902aabef795cafb36c3a516f036e92e2b046f55ef4229"
+  },
+  "final_outcomes_inspected": false,
+  "findings": [
+    {
+      "consequence": "Nothing in Sprint 21D2 is decided by it. The primary surface is experience.correction_ranking and the retrieval floors belong to S21D2-033/034 on a holdout that does not exist yet. The finding is that a wider shortlist is not automatically a better one, and that the D1 bounded-GED figure should be read as a partial measurement.",
+      "id": "W5-F1",
+      "observed": "Widening the shortlist to twenty made the arm measurably worse on the same eighty queries: top-5 recall 0.5875 against 0.675, MRR 0.3628 against 0.4481, nDCG 0.2327 against 0.3438. The lexical, vector, signature and no-memory arms are unchanged to four decimal places, which is what says the difference is the shortlist and not the run.",
+      "status": "recorded_not_acted_on",
+      "subject": "the bounded graph arm under revision 2",
+      "why": "Timeouts went from sixty to zero, and that is the explanation rather than a second result. Ten pairs at 250 ms exceeds the two-second query budget, so revision 1 cut off sixty comparisons and scored each of them 0.0 \u2014 which happened to keep weak candidates out of the top ten. Twenty pairs at 90 ms fits inside the budget, so every comparison now completes and the ten extra candidates are ranked on their real graph distance. The revision 1 number was flattered by its own incompleteness."
+    }
+  ],
+  "graph_set": {
+    "access": "read_only",
+    "artifact_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d1",
+    "declared_pairs": 80,
+    "graph_set_id": "sprint-21d1-emg-root",
+    "intact": true,
+    "resolved_pairs": 80,
+    "root": "docs/sprints/sprint-21/evidence/sprint-21d1-emg-root.json",
+    "writes": 0
+  },
+  "immutability": {
+    "note": "The width-10 numbers were produced under resource policy revision 1 (4a7fe3b1\u2026) and remain the D1 record. This file is a second measurement, labelled development-only, and supersedes nothing.",
+    "old_evidence_modified": false,
+    "sprint_21d1_retrieval_benchmark_sha256": "7ca6b1c71872ddd70967a6b1bf5a012077814514d67682b4485788e8f7281510"
+  },
+  "items": [
+    "S21D2-031",
+    "S21D2-032"
+  ],
+  "label": "development_only",
+  "purpose": "Re-measure the frozen Sprint 21D1 eighty-query set under resource policy revision 2, so the width-20 shortlist S21D2-030 made real is described by a number rather than by an intention. It decides nothing: no D2 partition, learner, threshold or promotion reads it.",
+  "query_set": {
+    "file": "docs/sprints/sprint-21/evidence/sprint-21d1-graph-queries.json",
+    "frozen_in": "Sprint 21D1, before any ranking was produced",
+    "queries": 80,
+    "sha256": "0a82bfe390a9216f1017bbeb70a09e29ef4747519fb4b8fd6bcf0803efb6650a",
+    "unchanged_for_this_diagnostic": true
+  },
+  "recorded_at": "2026-08-02T05:54:25.881183+00:00",
+  "residual_types": {
+    "no_relevant_pair_in_top_five_despite_a_non_empty_pool": 33
+  },
+  "resource_policy": {
+    "chosen_from": "sprint-21d2-p-ged-probe.json",
+    "content_hash": "d0e8520e3d3bc3637ce75f632c79aa00c1f456a8af1a4956601dad359c8474ab",
+    "cross_task_similarity_neighbors": 3,
+    "edges_per_graph": 128,
+    "frozen_by": "sprint-21d2-pre-registration.json, revision 2",
+    "nodes_per_graph": 64,
+    "path_depth": 32,
+    "per_pair_ged_timeout_ms": 90,
+    "query_budget_seconds": 2,
+    "returned_results": 10,
+    "revision": 2,
+    "vector_shortlist": 20
+  },
+  "schema_version": 1,
+  "sprint": "21D2",
+  "wave": "W5"
+}

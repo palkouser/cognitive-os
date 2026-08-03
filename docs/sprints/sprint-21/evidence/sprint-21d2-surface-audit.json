@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "sprint": "21D2",
+  "wave": "W1",
+  "items": [
+    "S21D2-010"
+  ],
+  "recorded_at": "2026-08-01T07:32:40+00:00",
+  "revision": 2,
+  "surface": "experience.correction_ranking",
+  "final_outcomes_inspected": false,
+  "chronology": "Written in W1, before any D2 campaign exists and therefore before any D2 outcome, prediction or ranking could be read. The D1 evidence it cites is released, immutable and development-only.",
+  "d1_disposition": "deferred \u2014 the only balanced candidate, blocked on the 200-sample floor",
+  "axes": {
+    "label_authority": {
+      "label": "the independent hidden verifier's accepted/rejected outcome per candidate",
+      "measured": {
+        "d1_examples": 120,
+        "label_source": [
+          "independent_verifier"
+        ]
+      },
+      "verdict": "sound",
+      "note": "The label is produced by a verifier the candidate generator cannot see or influence. It is not derived from any recipe, score or declared intent."
+    },
+    "actionability": {
+      "decision_unit": "one task group with four pre-generated correction candidates",
+      "what_a_score_may_change": "the order candidates are attempted in, and nothing else",
+      "measured": {
+        "d1_changeable_task_rankings": 30,
+        "tasks_with_four_candidates": 30,
+        "accepted_per_task_histogram": {
+          "2": 30
+        }
+      },
+      "verdict": "sound",
+      "note": "Every task has exactly two accepted and two rejected candidates, so every task ranking is changeable: no ordering is forced and none is already optimal. This is the axis on which governed.outcome_triage failed with zero changeable decisions."
+    },
+    "balance": {
+      "measured": {
+        "accepted": 60,
+        "rejected": 60
+      },
+      "verdict": "sound",
+      "note": "60/60 at candidate level and exactly 2 of 4 at task level, by corpus recipe."
+    },
+    "group_structure": {
+      "measured": {
+        "d1_groups": 30,
+        "d1_tasks": 30,
+        "candidates_per_group": 4
+      },
+      "verdict": "sound but insufficient in size",
+      "note": "One group per task, four candidates inside it. The unit of both splitting and pairing is the group, so the four candidates of a task never straddle a split."
+    },
+    "attribution": {
+      "verdict": "direct",
+      "note": "The ranked candidate is the one attempted first, so a first-choice success or failure is attributable to the ranking without a counterfactual model."
+    },
+    "deterministic_headroom": {
+      "measured_baseline_first_choice_rate": 0.5,
+      "derivation": "Exactly two of four candidates are accepted in all 30 D1 tasks, so any label-blind ordering \u2014 positional, majority, group frequency \u2014 has an expected first-choice success of 2/4.",
+      "headroom_to_perfect": 0.5,
+      "verdict": "genuine headroom, and the floor is not a straw man",
+      "note": "The +5 point gate is 10% of the available headroom. Group frequency is anti-informative here because the 2-of-4 split is constant, which removes the shortcut rather than creating one."
+    },
+    "forbidden_oracle": {
+      "measured": {
+        "correct_narrow": {
+          "accepted": 30,
+          "rejected": 0
+        },
+        "correct_robust": {
+          "accepted": 30,
+          "rejected": 0
+        },
+        "incomplete_a": {
+          "accepted": 0,
+          "rejected": 30
+        },
+        "incomplete_b": {
+          "accepted": 0,
+          "rejected": 30
+        }
+      },
+      "verdict": "present in D1 and structurally excluded in D2",
+      "note": "candidate_strategy predicts the D1 label with no error on all 120 examples. D2 excludes it twice over: the fitted matrix forbids it (S21D2-012), and the candidate recipes themselves are replaced with outcome-neutral opaque identities so the enum family cannot reappear as provenance (S21D2-021). Opacity alone would not be enough \u2014 it prevents the oracle becoming a feature, it does not make the corpus less deterministic \u2014 which is why the recipe set is replaced and a contradictory hidden-verifier outcome is declared a valid label."
+    },
+    "data_roles": {
+      "verdict": "sound, and the binding constraint on selection",
+      "note": "All 120 D1 examples are REAL_GOVERNED_RUN and therefore development evidence only. D2 must fit on new SELF_PLAY groups and measure on new, separately sealed REAL_GOVERNED_RUN batches. No inherited example is reusable for fitting."
+    },
+    "decision_cost": {
+      "verdict": "sound",
+      "note": "Reordering costs at most the verifier attempts it saves or spends. Skipping the sandbox or the verifier is not an action the surface can take, so verification can never be assigned a greater cost than unsafe skipping."
+    }
+  },
+  "feasibility_of_the_fixed_minima": {
+    "rule": "Selection is permitted only if the planned self-play and final sets can meet 200/40/100/100 and at least 20 paired changed decisions without verifier bypass.",
+    "sample_minima": {
+      "training": {
+        "groups": 50,
+        "outcomes": 200,
+        "reachable": true
+      },
+      "calibration": {
+        "groups": 10,
+        "outcomes": 40,
+        "reachable": true
+      },
+      "final_a": {
+        "groups": 25,
+        "outcomes": 100,
+        "reachable": true
+      },
+      "final_b": {
+        "groups": 25,
+        "outcomes": 100,
+        "reachable": true
+      },
+      "canary": {
+        "groups": 5,
+        "slots": 20,
+        "reachable": true
+      },
+      "note": "Four candidates per group makes every outcome minimum a group minimum: 115 groups produce 460 candidate outcomes, above every floor at once."
+    },
+    "corpus_gap": {
+      "groups_required": 115,
+      "existing_templates_measured": 30,
+      "genuinely_new_required": 85,
+      "measured_source": "src/cognitive_os/coding/reality_task_specs.py, template_id count",
+      "cost_note": "The existing corpus is 30 specs in 3,121 lines, about 104 lines each: issue prose, expected behaviour, two edge cases, a baseline and four candidate variants, a visible test module and a hidden test module. The module docstring states the corpus is deliberately unparameterised because variants of one template share an AST shape and collapse into one near-clone group. Authoring 85 more is therefore the sprint's critical path and its dominant risk.",
+      "verdict": "reachable but unproven. S21D2-022's authoring is gated by a near-clone yield probe before the full 85 are committed to."
+    },
+    "changed_decision_floor": {
+      "required_changed_task_decisions": 20,
+      "planned_final_groups": 50,
+      "implied_disagreement_rate": 0.4,
+      "final_groups_required_at_various_disagreement_rates": {
+        "20%": 100,
+        "30%": 67,
+        "40%": 50,
+        "50%": 40,
+        "60%": 34
+      },
+      "verdict": "reachable, but it is the tightest of the fixed minima",
+      "note": "At the planned 50 final groups the learner must disagree with the strongest deterministic baseline on 40% of tasks. If the expected disagreement rate is 30%, 67 final groups are needed instead. S21D2-014 must size the final batches against this floor as well as against the bootstrap interval; it may raise the counts and may never lower them."
+    }
+  },
+  "risks_this_audit_raises": [
+    {
+      "id": "A1",
+      "risk": "The changed-decision floor and the benefit floor pull in opposite directions. Twenty changed decisions out of fifty tasks that produce only the minimum +5 points implies roughly eleven improvements against eight regressions.",
+      "consequence": "A learner tuned for precision passes the benefit gate and fails the change gate; one tuned for coverage does the reverse.",
+      "response": "S21D2-016 must declare coverage and changed-decision rate as calibration selection criteria alongside accuracy, not as reported-only secondaries."
+    },
+    {
+      "id": "A2",
+      "risk": "An abstention executes the deterministic ordering, so it is a fallback and not a changed decision. A tight OOD gate drives changed decisions towards zero while every safety metric looks perfect.",
+      "consequence": "A silent false negative that reads as a well-behaved model.",
+      "response": "Report coverage with an exact denominator at calibration and fail the pre-registered usefulness requirement when abstention starves the change floor."
+    },
+    {
+      "id": "A3",
+      "risk": "Reusing the D1 recipe shape would keep recipe identity a perfect oracle even under opaque IDs, because two candidates are built to be correct and two to be incomplete.",
+      "consequence": "Provenance would still determine the label, so any accidental leak of recipe identity into features or ordering would be a total leak.",
+      "response": "S21D2-021 forbids the correct_*/incomplete_* family, requires outcome-neutral recipes, and declares a hidden-verifier outcome that contradicts recipe intent to be a valid label. S21D2-041 scans the serialized fitted matrix rather than the declared schema."
+    }
+  ],
+  "decision": {
+    "verdict": "eligible for selection as the D2 primary surface",
+    "authority": "This audit establishes eligibility only. Selection itself happens in S21D2-017, and only once the protocol, feature, metric, group and power manifests exist.",
+    "conditions": [
+      "S21D2-022 must actually produce at least 115 disjoint groups, at least 85 of them genuinely new, verified by the near-clone detector rather than by count alone.",
+      "S21D2-014 must size the final batches against the 20-changed-decision floor as well as the bootstrap interval.",
+      "S21D2-021 must replace the label-predicting recipe family with outcome-neutral opaque candidates.",
+      "No inherited C3/D1 observation may enter fitting or calibration."
+    ],
+    "if_a_condition_fails": "The failure is a terminal design stop recorded in S21D2-017 as a null primary, with a transitive not-opened chain across every dependent experimental task. It is not a reason to lower a floor."
+  },
+  "secondary_surface": {
+    "surface": "experience.correction_context",
+    "d1_disposition": "selected secondary",
+    "d2_role": "unchanged: verified, advisory, non-required, non-pinned graph context with no execution or acceptance authority. It cannot close Gate L2 on its own."
+  }
+}

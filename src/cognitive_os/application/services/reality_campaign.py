@@ -22,6 +22,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from dataclasses import dataclass, field
+from enum import StrEnum
 from uuid import UUID
 
 from cognitive_os.application.ports.event_store import EventStorePort
@@ -31,7 +32,10 @@ from cognitive_os.domain.reality import (
     RealityOutcomeReference,
     RealityRunIdentity,
 )
-from cognitive_os.events.coding_events import CodingOutcomeRecorded
+from cognitive_os.events.coding_events import (
+    CodingOutcomeRecorded,
+    RealityCampaignSequenceRecorded,
+)
 
 
 class CampaignLedgerError(RuntimeError):
@@ -85,6 +89,76 @@ class ResumePlan:
     @property
     def is_complete(self) -> bool:
         return not self.remaining
+
+
+class ReceiptAction(StrEnum):
+    """What a resume must do about one task, once the sequence receipts have been read.
+
+    S21D2-054. Outcomes and plans between them cannot express "deliberately unattempted", so a
+    resume that reads only those two re-runs work the campaign decided not to do. These are the
+    four answers the receipt chain can give, and each one means something different for cost
+    and for correctness.
+    """
+
+    #: No receipt for this task. The plan stands as written.
+    RESUME_AS_PLANNED = "resume_as_planned"
+    #: A receipt that agrees with the outcomes. Nothing to run, including the unattempted.
+    SEALED_AND_CONSISTENT = "sealed_and_consistent"
+    #: Outcomes exist but no receipt sealed them: the sequence was interrupted before it ended.
+    #: The task is re-run from the start, because a half-sequence has no defensible prefix.
+    RERUN_UNSEALED_TASK = "rerun_unsealed_task"
+    #: The receipt says a candidate was attempted and no outcome carries it. The append was
+    #: lost between the sandbox and the event store, so that candidate alone is replayed.
+    REPLAY_MISSING_OUTCOME = "replay_missing_outcome"
+    #: An outcome exists for a candidate the receipt calls intentionally unattempted. The two
+    #: durable records disagree; that is a new campaign revision, not a resume.
+    REFUSE_CONTRADICTED_RECEIPT = "refuse_contradicted_receipt"
+
+
+@dataclass(frozen=True, slots=True)
+class TaskReceiptState:
+    """One task's reconciliation between its sequence receipt and its recorded outcomes."""
+
+    task_id: UUID
+    action: ReceiptAction
+    attempted: tuple[UUID, ...] = ()
+    intentionally_unattempted: tuple[UUID, ...] = ()
+    missing_outcomes: tuple[UUID, ...] = ()
+    contradicted: tuple[UUID, ...] = ()
+    stop_reason: str = ""
+
+
+@dataclass(frozen=True, slots=True)
+class ReceiptAwareResumePlan:
+    """A resume plan that knows about the third state, and refuses when the records disagree."""
+
+    plan: ResumePlan
+    tasks: tuple[TaskReceiptState, ...] = ()
+
+    @property
+    def refused(self) -> tuple[TaskReceiptState, ...]:
+        return tuple(
+            task for task in self.tasks if task.action is ReceiptAction.REFUSE_CONTRADICTED_RECEIPT
+        )
+
+    @property
+    def is_resumable(self) -> bool:
+        """A campaign with a contradicted receipt is not resumable at any cost."""
+        return not self.refused
+
+    @property
+    def candidates_to_replay(self) -> tuple[UUID, ...]:
+        return tuple(candidate_id for task in self.tasks for candidate_id in task.missing_outcomes)
+
+    @property
+    def candidates_left_alone(self) -> tuple[UUID, ...]:
+        """What the campaign decided not to do, and a resume must not undo."""
+        return tuple(
+            candidate_id
+            for task in self.tasks
+            if task.action is ReceiptAction.SEALED_AND_CONSISTENT
+            for candidate_id in task.intentionally_unattempted
+        )
 
 
 def count_outcomes(references: Iterable[RealityOutcomeReference]) -> OutcomeCount:
@@ -194,6 +268,103 @@ class RealityCampaignLedger:
             completed=completed,
             unplanned_keys=frozenset(keys - set(planned)),
         )
+
+    async def sequence_receipts(
+        self, campaign_id: UUID
+    ) -> dict[UUID, RealityCampaignSequenceRecorded]:
+        """The latest sealed sequence per task, read off the campaign stream.
+
+        Latest rather than first: a task may be re-sequenced under the same campaign revision
+        after an interruption, and the last seal is the one that describes what is now true.
+        """
+        latest: dict[UUID, RealityCampaignSequenceRecorded] = {}
+        for stored in await self._store.read_stream(campaign_id):
+            if stored.envelope.event_type != RealityCampaignSequenceRecorded.event_type:
+                continue
+            payload = RealityCampaignSequenceRecorded.model_validate(stored.envelope.payload)
+            latest[payload.task_id] = payload
+        return latest
+
+    async def _recorded_candidates(
+        self, task_run_ids: Iterable[UUID]
+    ) -> dict[UUID, frozenset[UUID]]:
+        """Every candidate that has a recorded outcome, grouped by the task it belonged to."""
+        found: dict[UUID, set[UUID]] = {}
+        for task_run_id in task_run_ids:
+            for stored in await self._store.read_stream(task_run_id):
+                if stored.envelope.event_type != CodingOutcomeRecorded.event_type:
+                    continue
+                payload = CodingOutcomeRecorded.model_validate(stored.envelope.payload)
+                if payload.candidate_id is None:
+                    continue
+                found.setdefault(payload.task_id, set()).add(payload.candidate_id)
+        return {task_id: frozenset(items) for task_id, items in found.items()}
+
+    async def plan_resume_with_receipts(
+        self,
+        manifest: RealityCampaignManifest,
+        *,
+        task_run_ids: Iterable[UUID],
+        campaign_id: UUID,
+    ) -> ReceiptAwareResumePlan:
+        """Resume against both durable records, not just the outcomes.
+
+        `plan_resume` alone cannot tell a candidate that was never run from a candidate the
+        campaign deliberately left alone, because the outcome stream has no row for either and
+        the plan still lists both. Under `stop_on_first_accepted` that difference is the whole
+        campaign: re-running the skipped candidates would produce a different experiment and
+        report it under the same identity.
+        """
+        run_ids = tuple(task_run_ids)
+        plan = await self.plan_resume(manifest, task_run_ids=run_ids)
+        receipts = await self.sequence_receipts(campaign_id)
+        # Read the candidate outcomes directly rather than through `completed_by_identity`:
+        # that one is keyed by run identity and drops anything recorded without one, which
+        # would make an interrupted candidate run look like a task nobody had touched.
+        by_task = await self._recorded_candidates(run_ids)
+        recorded_candidates = {
+            candidate_id for candidates in by_task.values() for candidate_id in candidates
+        }
+
+        tasks: list[TaskReceiptState] = []
+        for task_id in sorted({item.task_id for item in manifest.planned_runs}, key=str):
+            receipt = receipts.get(task_id)
+            observed = by_task.get(task_id, frozenset())
+            if receipt is None:
+                tasks.append(
+                    TaskReceiptState(
+                        task_id=task_id,
+                        action=(
+                            ReceiptAction.RERUN_UNSEALED_TASK
+                            if observed
+                            else ReceiptAction.RESUME_AS_PLANNED
+                        ),
+                    )
+                )
+                continue
+
+            attempted = tuple(receipt.attempted_order)
+            unattempted = tuple(receipt.intentionally_unattempted)
+            contradicted = tuple(item for item in unattempted if item in recorded_candidates)
+            missing = tuple(item for item in attempted if item not in observed)
+            if contradicted:
+                action = ReceiptAction.REFUSE_CONTRADICTED_RECEIPT
+            elif missing:
+                action = ReceiptAction.REPLAY_MISSING_OUTCOME
+            else:
+                action = ReceiptAction.SEALED_AND_CONSISTENT
+            tasks.append(
+                TaskReceiptState(
+                    task_id=task_id,
+                    action=action,
+                    attempted=attempted,
+                    intentionally_unattempted=unattempted,
+                    missing_outcomes=missing,
+                    contradicted=contradicted,
+                    stop_reason=receipt.stop_reason,
+                )
+            )
+        return ReceiptAwareResumePlan(plan=plan, tasks=tuple(tasks))
 
 
 def _require_consistent_with(

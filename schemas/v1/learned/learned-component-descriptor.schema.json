@@ -5,6 +5,7 @@
       "enum": [
         "safetensors",
         "joblib",
+        "json",
         "none"
       ],
       "title": "LearnedArtifactFormat",

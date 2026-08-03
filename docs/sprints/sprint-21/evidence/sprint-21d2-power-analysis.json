@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "sprint": "21D2",
+  "wave": "W1",
+  "items": [
+    "S21D2-014"
+  ],
+  "recorded_at": "2026-08-01T07:46:37+00:00",
+  "final_outcomes_inspected": false,
+  "purpose": "Size the final batches before any member manifest is sealed. A minimum may rise here and may never fall afterwards.",
+  "measured_inputs": {
+    "baseline_first_choice_rate": 0.5,
+    "derivation": "Every D1 task has exactly two accepted candidates of four, measured across all 30 tasks, so any label-blind ordering succeeds first-choice at 2/4.",
+    "d1_groups_available": 30
+  },
+  "assumptions": {
+    "disagreement_rate": "0.40",
+    "disagreement_rationale": "The learner and the strongest deterministic rung share pre-outcome content features, so their first choices are correlated. Forty percent is below the roughly fifty percent of tasks on which the baseline is wrong, and it is reduced further by any abstention.",
+    "retrieval_yield_per_group": "0.85",
+    "retrieval_yield_rationale": "A final group yields a condition-15 query only if its execution produced a usable failed and successful graph pair. D1 achieved this on every coding task, so 0.85 is a conservative allowance for timeouts, malformed runs and tasks whose baseline unexpectedly passes."
+  },
+  "decision": {
+    "final_groups": 60,
+    "final_groups_per_batch": 30,
+    "raised_from_backlog_minimum": true,
+    "backlog_minimum_per_batch": 25,
+    "why_raised": "The backlog's 25+25 fails both floors under conservative assumptions and the contract refuses it. Fifty final groups need a retrieval yield of exactly 1.00 to reach the 50 queries condition 15 requires \u2014 every group qualifying, zero losses \u2014 which section 4.10 explicitly warns is not guaranteed. Fifty groups at the assumed 40% disagreement also produce exactly 20 changed decisions, so one unusable group fails the gate on arithmetic rather than on evidence. Sixty groups yield 24 expected changed decisions and 51 expected queries.",
+    "expected_changed_decisions": 24,
+    "expected_qualifying_queries": 51,
+    "bootstrap": {
+      "seed": 21041,
+      "resamples": 2000,
+      "unit": "task group",
+      "note": "Four candidates of one task are correlated, so resampling candidate rows would understate the interval. The evaluator manifest refuses any other unit."
+    }
+  },
+  "consequence_for_the_corpus": {
+    "total_groups_required": 125,
+    "existing_d1_groups": 30,
+    "genuinely_new_groups_required": 95,
+    "change_against_the_backlog": "The backlog planned 115 groups and 85 new. Raising the final batches to 30+30 raises those to 125 and 95. That is roughly ten more authored task templates, about a thousand more lines of corpus, and about 140 more container runs. It is the price of the condition-15 query floor."
+  },
+  "sizing_envelope_considered": {
+    "50_groups_at_0.85_yield": "refused: 42 qualifying queries against the 50 required",
+    "56_groups_at_0.85_yield": "refused: 47 qualifying queries against the 50 required",
+    "60_groups_at_0.85_yield": "accepted: 51 queries and 24 changed decisions",
+    "68_groups_at_0.85_yield": "accepted with more margin, at a further authoring cost"
+  },
+  "contract_hash": "4b921f61ae435839ee69390cf4279665324a96cde9209a0e214700e126b6d53a"
+}

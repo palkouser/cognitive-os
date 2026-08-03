@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "sprint": "21D2",
+  "wave": "W1",
+  "items": [
+    "S21D2-011",
+    "S21D2-012",
+    "S21D2-013",
+    "S21D2-015",
+    "S21D2-016",
+    "S21D2-017"
+  ],
+  "recorded_at": "2026-08-01T07:46:37+00:00",
+  "revision": 2,
+  "supersedes": "Sprint 21D1 pre-registration revision 1, which selected no primary surface",
+  "final_outcomes_inspected": false,
+  "chronology": "Published in W1. No D2 campaign exists, therefore no D2 outcome, prediction, ranking or relevance judgement could be read before this bundle was written. Fitting and final evaluation code must reject a missing or mismatched bundle.",
+  "selection": {
+    "primary_surface": "experience.correction_ranking",
+    "secondary_surface": "experience.correction_context",
+    "authority": "docs/sprints/sprint-21/evidence/sprint-21d2-surface-audit.json",
+    "eligibility_conditions_carried_from_the_audit": [
+      "S21D2-022 must produce the full group count, verified by the near-clone detector",
+      "S21D2-021 must replace the label-predicting recipe family with neutral candidates",
+      "no inherited C3/D1 observation may enter fitting or calibration"
+    ],
+    "null_path": "If any condition fails, this bundle is superseded by a hash-bound null-primary decision and a transitive not-opened chain. A failed condition is never a reason to lower a floor."
+  },
+  "frozen_contracts": {
+    "surface_contract": {
+      "item": "S21D2-011",
+      "class": "CorrectionSurfaceContract",
+      "content_hash": "f2a15b8c523de24fe514d47ec13c2407074917a8c376e048b5038dd6d2d03ca6"
+    },
+    "feature_contract": {
+      "item": "S21D2-012",
+      "class": "CorrectionFeatureContract",
+      "encoder_version": "correction-ranking-v1",
+      "allowed_fields": 17,
+      "denied_fields": 39,
+      "content_hash": "550646d6a2b22852ef26e6ab4960c98aeea2541da1afa39104d5828a0b4165c8"
+    },
+    "group_policy": {
+      "item": "S21D2-013",
+      "class": "CorrectionGroupPolicy",
+      "content_hash": "90a99c983f0a0cce9ef98f3504d39a69580bf5e120ffacf02a6ab4dcf083ee56"
+    },
+    "power_analysis": {
+      "item": "S21D2-014",
+      "class": "CorrectionPowerAnalysis",
+      "content_hash": "4b921f61ae435839ee69390cf4279665324a96cde9209a0e214700e126b6d53a"
+    },
+    "campaign_protocol": {
+      "item": "S21D2-015",
+      "class": "CorrectionCampaignProtocol",
+      "content_hash": "5cfef09d69d4ebe6bbf13d2c5cb478b7445a9c733adb60628b884677d7280a7c"
+    },
+    "split_policy": {
+      "item": "S21D2-015",
+      "class": "CorrectionSplitPolicy",
+      "content_hash": "a6d5f06ae7761fe6af4f2ede24c1c48260b58ef90753a4de2ed259a81b461ed5"
+    },
+    "evaluator_manifest": {
+      "item": "S21D2-016",
+      "class": "CorrectionEvaluatorManifest",
+      "content_hash": "847910f2174f8e6975971df30ac74cb1c1775d65e24708313c4d5f95ac3c9388"
+    },
+    "graph_resource_policy_revision_2": {
+      "item": "S21D2-031",
+      "class": "GraphResourceLimits",
+      "vector_shortlist": 20,
+      "returned_results": 10,
+      "per_pair_ged_timeout_ms": 90,
+      "query_budget_seconds": 2,
+      "nodes_per_graph": 64,
+      "edges_per_graph": 128,
+      "path_depth": 32,
+      "content_hash": "d0e8520e3d3bc3637ce75f632c79aa00c1f456a8af1a4956601dad359c8474ab",
+      "chosen_from": "sprint-21d2-p-ged-probe.json"
+    }
+  },
+  "evidence_children": {
+    "surface_audit_sha256": "1390fd0d248480310a8e33b88bee401d395a035589b436b70f003e5782ef717d",
+    "p_ged_probe_sha256": "19b0a09eb3ea891eceee1a39c7dd7287968ba35063463881d98fa57f176b103c",
+    "power_analysis_sha256": "f6f67dd162d1443c092b478088b2c49b3a891c16af660e6c098b65a7370bfcf4"
+  },
+  "partitions": [
+    {
+      "partition": "training",
+      "minimum_groups": 50,
+      "minimum_outcomes": 200,
+      "provenance": "self_play",
+      "corpus_role": "training",
+      "mode": "label_all"
+    },
+    {
+      "partition": "calibration",
+      "minimum_groups": 10,
+      "minimum_outcomes": 40,
+      "provenance": "self_play",
+      "corpus_role": "training",
+      "mode": "label_all"
+    },
+    {
+      "partition": "final_a",
+      "minimum_groups": 30,
+      "minimum_outcomes": 120,
+      "provenance": "real_governed_run",
+      "corpus_role": "evaluation",
+      "mode": "label_all"
+    },
+    {
+      "partition": "final_b",
+      "minimum_groups": 30,
+      "minimum_outcomes": 120,
+      "provenance": "real_governed_run",
+      "corpus_role": "evaluation",
+      "mode": "label_all"
+    },
+    {
+      "partition": "canary",
+      "minimum_groups": 5,
+      "minimum_outcomes": 20,
+      "provenance": "real_governed_run",
+      "corpus_role": "evaluation",
+      "mode": "stop_on_first_accepted"
+    }
+  ],
+  "corpus_requirement": {
+    "minimum_distinct_groups": 125,
+    "minimum_new_groups_relative_to_d1": 95
+  },
+  "stop_rules": [
+    "No feature, label, grouping, baseline, candidate, hyperparameter, threshold, resource limit or metric definition may change after final batch A is opened.",
+    "One pre-final revision is permitted under section 3.4 and creates a new immutable revision 3; a second is refused.",
+    "A failing k-NN continues to the declared linear and tree rungs only, and never after either final batch has been accessed.",
+    "If every rung fails calibration, the final holdout is not opened at all.",
+    "Batch B is confirmation, never a repair set."
+  ],
+  "member_manifests": "This bundle freezes rules, not members: no D2 catalogue exists yet. S21D2-022 seals member manifests as hash-bound children of this bundle rather than as edits to it."
+}

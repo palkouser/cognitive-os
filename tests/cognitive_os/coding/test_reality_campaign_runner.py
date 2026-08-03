@@ -9,6 +9,7 @@ source is refused, and that the patch bytes a candidate names are actually store
 from __future__ import annotations
 
 from pathlib import Path
+from uuid import NAMESPACE_URL, uuid5
 
 import pytest
 
@@ -17,7 +18,8 @@ from cognitive_os.application.services.reality_campaign_runner import (
     WorkspaceIntegrityError,
 )
 from cognitive_os.coding.outcome_recording import CodingOutcomeRecorder
-from cognitive_os.coding.reality_tasks import available_templates
+from cognitive_os.coding.reality_candidates import candidate_id_for
+from cognitive_os.coding.reality_tasks import available_templates, d2_templates
 from cognitive_os.domain.reality import RealityCandidateStrategy, RealityRunKind
 from cognitive_os.events.coding_event_service import CodingEventService
 from cognitive_os.events.memory_store import MemoryEventStore
@@ -30,6 +32,7 @@ from .reality_fixtures import (
 )
 
 TEMPLATE_ID = available_templates()[0]
+D2_TEMPLATE_ID = d2_templates()[0]
 STRATEGIES = (RealityCandidateStrategy.INCOMPLETE_A, RealityCandidateStrategy.CORRECT_NARROW)
 
 
@@ -124,9 +127,10 @@ async def test_a_run_that_changed_the_pristine_workspace_is_refused(tmp_path: Pa
     runner = _runner(sandbox, artifacts)
     original = RealityCampaignRunner._require_untouched
 
-    def tamper(generated, pristine, control, *, label):  # type: ignore[no-untyped-def]
-        (generated.workspace / "src" / "smuggled.py").write_text("x = 1\n", encoding="utf-8")
-        original(generated, pristine, control, label=label)
+    def tamper(prepared, *, label):  # type: ignore[no-untyped-def]
+        workspace = prepared.generated.workspace
+        (workspace / "src" / "smuggled.py").write_text("x = 1\n", encoding="utf-8")
+        original(prepared, label=label)
 
     RealityCampaignRunner._require_untouched = staticmethod(tamper)  # type: ignore[method-assign]
     try:
@@ -149,7 +153,9 @@ async def test_every_candidate_run_stores_the_patch_it_names(tmp_path: Path) -> 
     )
 
     for strategy in STRATEGIES:
-        candidate = runs.candidates[strategy].step.candidate
+        run = runs.by_strategy(strategy)
+        assert run is not None
+        candidate = run.step.candidate
         assert candidate is not None
         stored = await artifacts.get_bytes(candidate.patch_artifact_id)
         assert stored.decode().startswith("diff --git ")
@@ -167,3 +173,57 @@ async def test_the_baseline_run_carries_no_candidate(tmp_path: Path) -> None:
     assert runs.baseline.identity.run_kind is RealityRunKind.BASELINE
     assert runs.baseline.step.candidate is None
     assert runs.baseline.identity.candidate_id is None
+
+
+@pytest.mark.asyncio
+async def test_the_recorded_control_bundle_is_what_makes_a_resume_a_resume(
+    tmp_path: Path,
+) -> None:
+    """W4-F2. The bundle artifact reaches the run identity through the task manifest.
+
+    `RealityTaskManifest` names its control bundle by artifact ID, the Artifact Store mints a
+    fresh row for identical bytes, and `RealityRunIdentity` hashes the manifest. So a resume
+    that lets `prepare_task` mint a new bundle produces a new identity for every run, matches
+    nothing, and silently re-executes the whole campaign while reporting a resume. The Sprint
+    21D2 self-play command did exactly that on its first resume and paid three hundred
+    containers to find out.
+    """
+    sandbox, artifacts = _CorpusShapedSandbox(), InMemoryArtifactStore()
+    runner = _runner(sandbox, artifacts)
+
+    first = await runner.prepare_task(TEMPLATE_ID, root=tmp_path / "a", generated_at=FIXTURE_TIME)
+    reused = await runner.prepare_task(
+        TEMPLATE_ID,
+        root=tmp_path / "b",
+        generated_at=FIXTURE_TIME,
+        bundle_artifact=first.bundle_artifact,
+    )
+    reminted = await runner.prepare_task(
+        TEMPLATE_ID, root=tmp_path / "c", generated_at=FIXTURE_TIME
+    )
+
+    assert reused.generated.manifest.content_hash == first.generated.manifest.content_hash
+    assert reminted.generated.manifest.content_hash != first.generated.manifest.content_hash
+
+
+@pytest.mark.asyncio
+async def test_a_d2_candidate_records_the_identity_the_seal_named(tmp_path: Path) -> None:
+    """The sealed catalogue names candidates by position before anything runs.
+
+    Re-deriving one from the recipe here would put C3's reversible encoding back on top of the
+    opaque identity the seal committed to, which is the whole reason the opaque one exists.
+    """
+    sandbox, artifacts = _CorpusShapedSandbox(), InMemoryArtifactStore()
+    runner = _runner(sandbox, artifacts)
+    sealed = uuid5(NAMESPACE_URL, "cognitive-os:test:sealed-candidate")
+
+    prepared = await runner.prepare_task(D2_TEMPLATE_ID, root=tmp_path, generated_at=FIXTURE_TIME)
+    executed = await runner.run_candidate(
+        prepared, RealityCandidateStrategy.RECIPE_ALPHA, candidate_id=sealed
+    )
+
+    assert executed.identity.candidate_id == sealed
+    assert executed.identity.strategy is RealityCandidateStrategy.RECIPE_ALPHA
+    assert executed.identity.candidate_id != candidate_id_for(
+        prepared.generated.manifest.task_id, RealityCandidateStrategy.RECIPE_ALPHA
+    )

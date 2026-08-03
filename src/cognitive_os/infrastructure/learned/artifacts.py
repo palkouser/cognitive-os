@@ -17,7 +17,7 @@ from __future__ import annotations
 from uuid import UUID
 
 from cognitive_os.domain.common import ArtifactRef, utc_now
-from cognitive_os.domain.learned import LearnedArtifactFormat
+from cognitive_os.domain.learned import UNSAFE_TO_DESERIALISE, LearnedArtifactFormat
 from cognitive_os.domain.learned_evidence import (
     LearnedArtifactLineage,
     LearnedArtifactRole,
@@ -27,10 +27,9 @@ from cognitive_os.domain.learned_evidence import (
 from cognitive_os.infrastructure.artifacts.service import ArtifactService
 from cognitive_os.infrastructure.errors import ArtifactIntegrityError, ArtifactNotFoundError
 
-#: Formats whose bytes are an executable object graph rather than inert data. They may be
-#: *referenced* — a legacy artifact still has a lineage — and are never loaded. The set is
-#: named so a future format that is also unsafe has an obvious place to be added.
-UNSAFE_TO_DESERIALISE = frozenset({LearnedArtifactFormat.JOBLIB})
+#: Re-exported from the domain, where the policy lives. Kept importable here because this is
+#: the module that enforces it and every existing caller reaches for it at this name.
+__all__ = ["UNSAFE_TO_DESERIALISE", "LearnedArtifactStore"]
 
 
 class LearnedArtifactStore:

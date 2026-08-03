@@ -65,6 +65,15 @@ class LearnedPersistenceConfiguration(ImmutableContractModel):
     #: uncontaminated corpus the system has to measure against.
     real_run_training_enabled: bool = False
 
+    #: Sprint 21D2 canary routing. Empty is the shipped state: an approved component is
+    #: active on its surface, and this narrows *where* the runtime consults it. Canary is a
+    #: hash-bound configuration subset of an already approved scope, not a lifecycle state —
+    #: so it lives here rather than in the approval contract, which has no field for it.
+    correction_ranking_groups: tuple[str, ...] = ()
+    #: The manifest those groups came from. Without it a group list is an assertion; with it
+    #: the resolver can refuse a routing set that does not match the sealed canary manifest.
+    correction_ranking_manifest_hash: str = ""
+
     @model_validator(mode="after")
     def reject_ungoverned_configuration(self) -> "LearnedPersistenceConfiguration":
         if self.artifact_deserialisation_enabled:
@@ -91,6 +100,16 @@ class LearnedPersistenceConfiguration(ImmutableContractModel):
             raise ValueError(
                 "activation is enabled with no authorised actor, which would either do "
                 "nothing or invite one to be added without review"
+            )
+        if self.correction_ranking_groups and not self.correction_ranking_manifest_hash:
+            raise ValueError(
+                "correction-ranking routing names groups without the manifest hash they came "
+                "from; an unbound routing set cannot be checked against the sealed canary"
+            )
+        if self.correction_ranking_manifest_hash and not self.correction_ranking_groups:
+            raise ValueError(
+                "correction-ranking routing declares a manifest but routes no group, which "
+                "reads as active while changing nothing"
             )
         return self
 

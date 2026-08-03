@@ -2,19 +2,18 @@
 
 Status: active execution plan
 
-Revision: 5
+Revision: 6
 
-Assessment date: 2026-07-30
+Assessment date: 2026-07-31
 
-Current protected predecessor release: `sprint-21c3-reality-baseline`
+Current protected predecessor release: `sprint-21d1-emg-baseline`
 
-Protected predecessor commit: `05809446c726444146d85aad22808e10ce87ca3e`
+Protected predecessor commit: `b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9`
 
 Current planning head: `origin/main` at
-`1856b8539b690528116816c105d82810e67f00d9`
+`1cadbabb5cdabb32bbd502f281d734fb25a229ff`
 
-Next execution sprint: Sprint 21D1 — Pre-registered Learning Surface and Experience
-Memory Graph Baseline
+Next execution sprint: Sprint 21D2 — Useful Learned Correction Ranking and Gate L2
 
 Primary scope: finish Sprint 21 correctly, execute Sprint 22, and define the evidence
 required before Sprint 23 alpha
@@ -29,6 +28,9 @@ Execution documents:
 - [Sprint 21C2 technical backlog](../sprint-21/sprint-21c2-technical-backlog.md)
 - [Sprint 21C3 technical backlog](../sprint-21/sprint-21c3-technical-backlog.md)
 - [Sprint 21D1 technical backlog](../sprint-21/sprint-21d1-technical-backlog.md)
+- [Sprint 21D2 technical backlog](../sprint-21/sprint-21d2-technical-backlog.md)
+- [Sprint 21D1 report](../sprint-21/sprint-21d1-report.md)
+- [Gate D1 assessment](../sprint-21/gate-d1-assessment.md)
 - [Sprint 21 Gate L assessment](../sprint-21/gate-l-assessment.md)
 - [Sprint 21 substrate report](../sprint-21/report.md)
 - [Sprint 21 technical plan](../sprint-21/technical-plan.md)
@@ -103,41 +105,42 @@ for the first learning gate.
 
 | Item | Verified state | Consequence |
 |---|---|---|
-| Current `origin/main` | `1856b8539b690528116816c105d82810e67f00d9` | Includes the C3 implementation and gate-close PR |
-| C3 release tag | Annotated `sprint-21c3-reality-baseline`, tag object `497f959bc55989541016a61bd9034e12523b8573`, peeled to `05809446c726444146d85aad22808e10ce87ca3e` | Protected D1 predecessor evidence |
-| Sprint 21C3 pull requests | `#215` implementation and `#216` gate-close documentation, merged | C3 behavior and final assessment are on `main` |
-| C3 release CI | Run `30571166301`, 29 of 29 jobs successful on the peeled release commit | Exact implementation-release evidence exists |
-| Latest `main` CI | Run `30572361952`, success on exact current `origin/main` | Gate-close planning head is green |
-| Alembic head | `0015_create_provider_output_governance.py` | D1 uses existing stores by default; `0016` requires measured need |
-| Next branch | `feature/sprint-21d1-learning-surface-emg` | Create from revalidated current `origin/main`, retaining gate-close documentation |
-| Gate state | Gate C3 passed; Gate L2 remains closed | Surface pre-registration and EMG baselining are next |
+| Current `origin/main` | `1cadbabb5cdabb32bbd502f281d734fb25a229ff` | Includes D1 implementation and gate-close PR `#218` |
+| D1 release tag | Annotated `sprint-21d1-emg-baseline`, tag object `a59977dbcf23df60a700385a6fc15b012bf6d142`, peeled to `b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9` | Protected D2 implementation predecessor evidence |
+| Sprint 21D1 pull requests | `#217` implementation and `#218` gate-close documentation, merged | D1 behavior and negative final assessment are on `main` |
+| D1 release CI | Run `30657167717`, 30 of 30 jobs successful on the peeled release commit | Exact implementation-release evidence exists |
+| Latest `main` CI | Run `30658256397`, 30 of 30 jobs successful on exact current `origin/main` | Gate-close planning head is green |
+| Alembic head | `0015_create_provider_output_governance.py` | D2 uses existing stores by default; `0016` requires measured need |
+| Next branch | `feature/sprint-21d2-useful-learned-activation` | Create from revalidated current `origin/main`, retaining gate-close documentation |
+| Gate state | Gate D1 does not pass: 17 met, one not applicable, conditions 6, 7 and 15 open; Gate L2 does not pass | D2 remediation and useful learned activation are next |
 
-Sprint 21R, Sprint 21C1, Sprint 21C2, and Sprint 21C3 are released. Sprint 21D1
-must revalidate the predecessor tag and current planning head separately, then open
-its draft pull request before bulk graph evidence is produced.
+Sprint 21R, Sprint 21C1, Sprint 21C2, Sprint 21C3, and the D1 implementation
+release are complete. D1's negative gate result is not a failed release and is not a
+passed gate. Sprint 21D2 must revalidate the predecessor tag and current planning head
+separately, then close the three open D1 conditions with new evidence before Gate L2.
 
-### 3.2 Final Sprint 21C3 verification
+### 3.2 Final Sprint 21D1 verification
 
-The C1, C2, and C3 reports and annotated tags retain the full commands, environments,
-hashes, and limitations. The latest release evidence includes:
+The C1, C2, C3, and D1 reports and annotated tags retain the full commands,
+environments, hashes, and limitations. The latest release evidence includes:
 
 | Check | Result |
 |---|---:|
-| C3 release CI | `29/29` jobs passed on `05809446c726444146d85aad22808e10ce87ca3e` |
-| Current gate-close CI | run `30572361952` succeeded on `1856b8539b690528116816c105d82810e67f00d9` |
-| Full local suite | `2293 passed, 75 skipped` |
-| Local evidence matrix | `19/19` commands passed, zero matrix rows skipped |
-| Unique executed outcomes | `214`: 150 offline coding plus 64 re-executed governed benchmark cases |
-| Correction trajectories | `60` across 30 coding tasks and four strategies |
-| Corpus items | `420`, group-aware, zero split crossing, zero training actions |
-| Learned observations | `896` accepted evaluation-only, `64` quarantined, zero real runs in training |
-| MiniLM retrieval | recall@5 `0.917`, MRR@10 `0.711`, frozen 384-dimensional model |
-| OpenRouter C3 campaign | `0/10` correct; failures retained at the governed boundary |
-| Migration | Remained at `0015`; 32.4% half-precision saving did not meet the 35% trigger |
+| D1 release CI | `30/30` jobs passed on `b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9` |
+| Current gate-close CI | run `30658256397` passed `30/30` on `1cadbabb5cdabb32bbd502f281d734fb25a229ff` |
+| Full non-integration local suite | `2310 passed, 3 skipped` |
+| Local evidence matrix | 22 rows reached their expected status in 306 seconds |
+| Canonical starting outcomes | `214`: 150 coding plus 64 governed benchmark cases |
+| Deferred ranking surface | 120 eligible real-run examples, balanced 60/60, 30 groups, 30 changeable rankings |
+| Graph evidence | 80 pairs, three domains, 50 groups, 100% source resolution and edit-path round-trip |
+| MiniLM vector retrieval | Recall@5 `0.5375`, MRR@10 `0.4392`, p95 `27.5 ms` |
+| Width-10 graph retrieval | Recall@5 `0.6750`, MRR@10 `0.4481`, p95 `1788.9 ms`, 60 cutoffs |
+| D1 gate | 17 met, one not applicable, conditions 6, 7 and 15 open |
+| Migration | Remained at `0015`; `0016` unallocated |
 
-Sprint 21D1 must preserve these controls and add surface pre-registration,
-cross-domain graph pairs, edit-path integrity, bounded retrieval, advisory context
-integration, and an evidence-backed FGW decision.
+Sprint 21D2 must preserve these controls, create new self-play fitting evidence and
+new final holdouts, apply the real width-20 retrieval lever, fit the bounded learner,
+and complete the governed activation sequence.
 
 ### 3.3 What the released substrate has completed
 
@@ -155,44 +158,60 @@ The released Sprint 21 substrate provides:
 - four domain pilots: logic, mathematics, physics, and coding;
 - coding fixtures with accepted and rejected cases;
 - PostgreSQL approximate vector indexes and a measured `10^5` retrieval envelope;
+- canonical failed/success action-decision graphs, verified edit paths, bounded EMG
+  retrieval, and an advisory Experience Graph Context source;
+- a hash-bound surface audit and pre-registration system that found and rejected a
+  perfect construction oracle rather than training on it;
 - a Gate L assessment that honestly recorded the original no-go result.
 
-The latest coding work creates measurable prediction headroom: the
-`requirements_available` rule scores approximately `0.9396` across the enlarged
-training set. This is useful diagnostic evidence, but it is not yet proof of useful
-agent learning.
+D1 identifies `experience.correction_ranking` as the only balanced deferred surface,
+with 120 eligible real-run examples and 30 changeable task rankings. This is useful
+development evidence, but real governed outcomes remain evaluation-only and it is not
+yet proof of useful agent learning.
 
 ### 3.4 Critical gaps
 
 1. No learned component is active because of demonstrated downstream benefit.
-2. The 214 outcomes have not yet been audited into an immutable, leakage-free,
-   actionable learning surface with a strongest deterministic baseline.
-3. No surface has yet proven at least 200 eligible held-out outcomes and 20 decisions
-   a later learned policy could change.
-4. The 60 coding correction manifests preserve their source evidence but cannot be
-   verified by recompilation because a legacy wall clock entered `created_at`; they
-   must not be rewritten.
-5. Failed-to-success experience graphs and verified graph edit paths do not yet
-   exist.
-6. The existing correction pairs cover coding only; D1 needs fresh, exactly
-   recompilable cross-domain pairs before making a robust EMG claim.
-7. The current Context Builder has no explicit Experience Graph source; correction
-   paths cannot yet enter it as bounded advisory candidates.
-8. Simple graph retrieval has not been compared with no-memory, text, exact-signature,
-   and frozen MiniLM baselines on the same unseen-task protocol.
-9. FGW has neither residual-error justification nor dependency/license approval.
-10. OpenRouter free remained unreliable in C3 (`0/10` correct) and is outside the D1
-    critical path.
+2. D1 selected no primary surface. Gate D1 conditions 6 and 7 remain open even though
+   correction ranking has 120 development examples and 30 changeable rankings.
+3. All C3/D1 outcomes are real governed evidence and cannot enter training or
+   calibration; D2 needs a new rights-cleared self-play corpus. Its five partitions
+   require at least 115 distinct groups, at least 85 genuinely new relative to D1.
+4. No separately sealed, group-disjoint D2 final holdout exists. At least 200 final
+   outcomes in two independent batches are required.
+5. No correction-ranker artifact, narrow safe loader, durable runtime resolver, or
+   actual correction-ordering integration exists. `CodingAgentFacade` proposes one
+   candidate at a time, while `RealityCampaignRunner` currently executes every candidate;
+   D2 therefore needs a bounded stop-on-first-verified campaign sequencer rather than a
+   decorative reorder.
+6. D1 graph retrieval is below its 0.70 Recall@5 and 0.50 MRR@10 floors. The measured
+   first lever is shortlist width 20.
+7. The current graph implementation truncates the vector result to ten before GED,
+   so a configuration-only width increase would not widen the real shortlist.
+8. The fitted-feature, paired material-benefit, cross-domain forgetting, OOD, shadow,
+   canary, kill-switch, restart, and rollback evidence required for activation does
+   not exist.
+9. FGW remains a no-go under ADR 0090; D2 may record a later hypothesis but may not
+   tune it on final D2 queries.
+10. OpenRouter remains outside the D2 critical path; final corpus completeness cannot
+    depend on a network or provider.
 11. The `10^6` capacity envelope, incremental maintenance, consolidation, and restore
     evidence do not exist.
-12. An NVIDIA RTX 5070 Ti is now visible through `nvidia-smi`, but no current gate
-    requires it. CPU-first execution remains the default until a measured workload
-    justifies and reproduces an accelerator path.
+12. No accelerator path is verified at the D2 planning head, and the D1 reference
+    evidence is CPU-only. CPU-first execution remains the default until a measured
+    workload justifies and reproduces an accelerator path.
 13. The inconsistent development Artifact Store pair remains intentionally
-    untouched; all C3 evidence must use an isolated consistent pair.
+    untouched; all D2 evidence must use a new isolated consistent pair.
 14. One collaborator means required approving reviews remain unavailable; the
     project retains 27 required checks and `enforce_admins` in accepted
     single-maintainer release mode.
+15. `RealityOutcomeHarvester` is fixed to `coding.repair` and
+    `REAL_GOVERNED_RUN`; D2 needs a separate manifest-role-bound projector for
+    `experience.correction_ranking`, without weakening the C3 path.
+16. Durable `CorpusRole` supports only `TRAINING` and `EVALUATION`, and explicit
+    observation selection currently truncates at 500 rows. D2 must represent five
+    partitions inside immutable manifests and page exact member resolution without a
+    migration.
 
 ## 4. Non-negotiable learning architecture
 
@@ -269,13 +288,17 @@ Every trained or fitted artifact must pass all of these controls:
    difficulty, source, tool, and time slice; aggregate accuracy alone is
    insufficient.
 7. **Staged artifacts:** training never mutates the active artifact. It creates a new
-   candidate with parent lineage.
+   candidate whose staging manifest records the parent artifact identity; lineage fields
+   retain their defined contract meaning.
 8. **Shadow and canary:** a candidate first runs in shadow, then in a bounded canary
    with a kill switch and deterministic fallback.
 9. **Rollback:** activation is a reversible pointer or governed status transition,
    not an in-place model replacement.
-10. **No unrestricted online weight updates:** runtime rows enter a quarantine and
-    replay pipeline. They do not update active weights directly.
+10. **No unrestricted online weight updates:** valid verifier-backed runtime rows enter
+    accepted evaluation-only replay intake; unresolved, invalid, or policy-ineligible
+    rows enter quarantine. Neither path updates active weights directly, and current
+    `REAL_GOVERNED_RUN` rows remain permanently training-ineligible unless a future
+    contract and policy revision creates newly eligible evidence.
 
 For later neural adapters, replay data, parameter isolation, regularization, and
 distillation may be compared. None of those techniques replaces the external frozen
@@ -298,6 +321,10 @@ pre-registered test:
 - low-confidence and out-of-distribution cases abstain and fall back;
 - benefit persists in at least two independent evaluation batches;
 - the complete artifact, corpus, evaluator, and decision record are reproducible.
+
+The large-LLM/cost alternative is a programme-level rule for workloads that actually use
+providers. It is non-applicable to D2's credential-free zero/zero campaign; Sprint 21D2
+can pass material benefit only through the fixed verified-success/error threshold.
 
 A parity-only tie-break can prove wiring and safety, but it cannot satisfy the
 mandatory-benefit rule.
@@ -867,6 +894,11 @@ Acceptance:
   bypass the independent verifier;
 - real governed runs remain evaluation-only.
 
+D1 result: no primary surface qualified. `experience.correction_ranking` was deferred
+with 120 eligible real-run examples and 30 changeable rankings. D2 creates revision 2,
+new self-play training/calibration data, and two untouched real-run final batches; the
+120 D1 examples remain development/evaluation-only.
+
 #### S21D-02 — Experience Memory Graph baseline
 
 Tasks:
@@ -896,6 +928,11 @@ Acceptance:
 - evaluation reports unseen tasks separately;
 - graph retrieval is compared with text and vector baselines.
 
+D1 result: all graph construction and advisory-context conditions passed, but the best
+bounded arm reached only 0.6750 Recall@5 and 0.4481 MRR@10. D2 first fixes the internal
+shortlist truncation defect, freezes width 20, and measures it on new unseen-task
+evidence.
+
 #### S21D-03 — Learner ladder
 
 Execution allocation: Sprint 21D2. Sprint 21D1 freezes its inputs and baselines but
@@ -903,12 +940,28 @@ does not fit a learner.
 
 Tasks:
 
+- preserve durable `CorpusRole.TRAINING/EVALUATION` and carry fit, calibration,
+  final A/B, and canary partitions in immutable campaign manifests;
+- add a role-bound correction observation projector and paginated explicit dataset
+  membership; bind the exact split-assignment digest into explicit dataset identity and
+  never make surface or provenance caller-selected;
+- build and seal four outcome-neutral candidates before any attempt, preserve their opaque
+  manifest order, and validate every reference before append-only outcome recording;
+- isolate final A/B and canary bodies in capability-separated roots/processes that fitting
+  and candidate selection cannot access;
+- expand to at least 115 disjoint groups across the five partitions, including at
+  least 85 genuinely new groups relative to D1;
+- fit on at least 200 rights-verified self-play observations and calibrate on at least
+  40 separate self-play observations;
+- keep all C3/D1 real governed outcomes outside fitting and calibration;
 - calibrate k-NN distance and OOD thresholds;
 - run logistic/SGD and small-tree candidates only where the primary surface needs
   them;
 - use fixed splits, seeds, feature versions, and artifact hashes;
 - evaluate per-domain and cross-domain transfer;
-- stop when one candidate passes all gates or the pre-registered ladder is exhausted.
+- stop when one candidate passes all gates or the pre-registered ladder is exhausted;
+- select at most one immutable artifact before either final evaluation batch is opened;
+  a null selection completes a protected negative result without opening final data.
 
 Acceptance:
 
@@ -916,51 +969,67 @@ Acceptance:
   provenance;
 - no evaluation split is used for feature or threshold selection;
 - a failed candidate remains recorded but cannot activate;
-- candidate can be replayed from persisted evidence.
+- candidate can be replayed from persisted evidence;
+- final evaluation contains at least two group-disjoint batches of 100 verifier-backed
+  outcomes each and at least 20 changed task rankings when final access is authorized;
+- a pre-registered stop produces immutable not-opened records rather than fabricated
+  downstream success.
 
 #### S21D-04 — FGW decision
 
 Tasks:
 
-- measure residual errors from simple graph retrieval;
-- estimate graph-size distribution and runtime budget;
-- perform dependency and license review;
-- approve a bounded Sprint 21D2 FGW comparison only if the previous evidence
-  justifies it; do not install an FGW dependency in D1.
+- preserve ADR 0090's D2 no-go and apply the measured width-20 shortlist lever first;
+- measure post-width-20 residual errors and graph runtime on new final evidence;
+- reopen only a future experiment when reranking error is dominant and a new holdout,
+  dependency, licence, benefit, and resource review are approved;
+- do not install or evaluate FGW on D2 final queries.
 
 Acceptance:
 
-- a written go/no-go decision names the simpler baseline, benefit threshold, resource
-  budget, and license result;
-- if implemented, FGW must improve the primary graph outcome materially within the
-  latency budget;
-- if rejected, no unused dependency remains;
+- the D2 continuation record names the simpler baseline, residual class, benefit
+  threshold, resource budget, and future evidence requirement;
+- no FGW dependency or implementation enters D2;
 - paper concepts are used clean-room and no CC BY-NC-SA code or assets are copied into
   the Apache-licensed repository.
 
 #### S21D-05 — Shadow, canary, and activation
 
-Execution allocation: Sprint 21D2. Gate L2 remains closed throughout Sprint 21D1.
+Execution allocation: Sprint 21D2. Gate L2 does not pass at the Sprint 21D1 handoff.
 
 Tasks:
 
-- run the best candidate in shadow against the active deterministic path;
+- register the selected component and enter SHADOW before any governed shadow run;
+- run `label_all` final evidence in deterministic baseline order while recording learned
+  order only;
 - classify disagreements and verifier outcomes;
-- canary only within the declared surface;
-- test kill switch, missing artifact, corrupt artifact, OOD input, and restart;
-- produce promotion and rollback decisions.
+- move SHADOW to VERIFIED only through a focused evidence-revalidating transition after
+  final, retrieval, forgetting, invariance, OOD, and promotion evidence pass; generic
+  state advancement cannot reach VERIFIED or ACTIVE;
+- use a bounded `RealityCampaignRunner` sequencer for canary/active execution, trying
+  learned order and stopping only after independent verifier acceptance;
+- persist a versioned sequence receipt with compare-and-set on the existing Event Store
+  campaign stream, and make `RealityCampaignLedger.plan_resume()` preserve actual
+  attempts, accepted stop, and intentionally unattempted candidates;
+- canary only within a separately hash-recorded fail-closed configuration subset of the
+  approved correction-sequencing campaign surface;
+- re-verify the exact promotion payload bytes inside activation, then test kill switch,
+  missing artifact, corrupt artifact, OOD input, and restart;
+- produce cause-bound disable and rollback decisions that structurally forbid restoration
+  after a failed canary.
 
 Acceptance:
 
 - one owned learned component satisfies the material-benefit rule;
 - cross-domain replay and all safety suites pass;
-- OOD false-confident action rate is at most `1%` on the declared adversarial set;
+- OOD false-confident action rate is at most `1%` for reporting and exactly zero for
+  promotion under the existing contract;
 - deterministic fallback is exercised successfully;
 - activation and rollback survive restart.
 
 #### Gate L2 — Sprint 21 learning gate
 
-Gate L2 closes only when:
+Gate L2 passes only when:
 
 1. the Sprint 21 substrate has a protected release baseline;
 2. the Learned Evidence Store and real-run harvester are operational;
@@ -1115,9 +1184,9 @@ Acceptance:
 
 #### Gate M — Sprint 22 scale and autonomy gate
 
-Gate M closes only when:
+Gate M passes only when:
 
-1. Gate L2 is closed;
+1. Gate L2 passes;
 2. Domain Registry v2 adds two domains without core branching;
 3. the `10^6` capacity, maintenance, backup, and restore envelope passes;
 4. three continual-learning cycles pass cross-domain anti-forgetting;
@@ -1236,32 +1305,51 @@ Every PR in this programme must include, as applicable:
 
 ## 16. Immediate next action
 
-Sprint 21R, Sprint 21C1, Sprint 21C2, and Sprint 21C3 are released. The immediate
-implementation action is **Sprint 21D1 — Pre-registered Learning Surface and
-Experience Memory Graph Baseline**:
+Sprint 21R, Sprint 21C1, Sprint 21C2, Sprint 21C3, and the Sprint 21D1
+implementation release are complete. The immediate implementation action is
+**Sprint 21D2 — Useful Learned Correction Ranking and Gate L2**:
 
 1. verify current `origin/main` at
-   `1856b8539b690528116816c105d82810e67f00d9` and separately verify the peeled
-   `sprint-21c3-reality-baseline` release at
-   `05809446c726444146d85aad22808e10ce87ca3e`;
+   `1cadbabb5cdabb32bbd502f281d734fb25a229ff` and separately verify the annotated
+   `sprint-21d1-emg-baseline` tag object and peeled release at
+   `b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9`;
 2. retain the existing 27 required checks and `enforce_admins`, while recording that a
    second eligible reviewer is still unavailable and does not justify release delay;
 3. keep the inconsistent development Artifact Store pair read-only and isolate every
-   D1 write in a fresh, internally consistent store;
-4. audit the four candidate learning surfaces and commit the primary/secondary
-   decision plus feature, label, action, group, baseline, metric, and resource
-   manifests before held-out evaluation;
-5. prove at least 200 unique eligible held-out outcomes and 20 changeable advisory
-   decisions without counting duplicate intake observations;
-6. resolve 60 historical coding pairs without rewriting them and add 20 fresh,
-   exactly recompilable logic/mathematics pairs;
-7. create 80 canonical action-decision graph pairs, verified edit paths, and one
-   artifact-backed EMG root using existing authority;
-8. compare no-memory, lexical, signature, MiniLM, and bounded graph retrieval on the
-   same unseen-task protocol, then record the FGW go/no-go decision;
-9. expose correction paths only as verified advisory Context Candidates;
-10. complete Gate D1 evidence, protected release, and the
-    `sprint-21d1-emg-baseline` tag while keeping Gate L2 closed.
+   D2 write in a fresh, internally consistent evidence/scratch store;
+4. publish surface pre-registration revision 2 for
+   `experience.correction_ranking`, with the exact fitted feature, label, group,
+   baseline, metric, learner, resource, and stop-rule contracts; if the renewed audit
+   rejects the surface, publish the null-primary decision and downstream not-opened root;
+5. implement split-identity-bound paginated manifest selection, a role-bound correction-
+   ranking projector, four neutral prebuilt candidates, capability-isolated holdouts, and
+   a two-mode `RealityCampaignRunner` sequencer with restart-safe receipts; retain the
+   existing C3 harvester and single-proposal `CodingAgentFacade` boundaries;
+6. expand and seal at least 115 disjoint groups, including at least 85 genuinely new
+   groups, then create at least 200 rights-verified `SELF_PLAY` training outcomes and 40
+   separate calibration outcomes with zero C3/D1 real-run members;
+7. seal two independent final batches of at least 25 new groups and 100 candidate slots
+   each before fitting, then select at most one artifact before opening them; a null
+   selection closes final access with immutable not-opened evidence;
+8. fix the internal-shortlist/public-result truncation defect and evaluate the
+   MiniLM vector and D2 revision-2 width-20 bounded-graph arms on new unseen-task
+   queries;
+9. fit bounded cosine k-NN first, follow logistic/SGD or a small tree only under the
+   pre-registered continuation rules, and persist the selected learner as inert,
+   canonical JSON;
+10. on the final path, prove at least 20 changed decisions, material benefit in both
+   final batches, a
+   positive paired-bootstrap lower bound, retained safety/domain performance, and OOD
+   fallback;
+11. register and enter SHADOW before final execution; only after all pre-activation
+    evidence passes, use the focused evidence-revalidating VERIFIED transition, record
+    exact human approval, re-verify promotion bytes inside activation with a separately
+    bound canary configuration, and exercise restart-safe stop-first verification, kill
+    switch, cause-bound disable, and rollback that cannot revive a failed canary;
+12. complete an outcome-appropriate protected release: success uses
+    `sprint-21-learning-baseline` and unblocks Sprint 22A only after the post-release Gate
+    L2 result; a valid negative uses `sprint-21d2-evidence-baseline`, keeps Gate L2 from
+    passing, and produces a remediation handoff.
 
 The implementation authority is the
-[Sprint 21D1 Technical Backlog](../sprint-21/sprint-21d1-technical-backlog.md).
+[Sprint 21D2 Technical Backlog](../sprint-21/sprint-21d2-technical-backlog.md).
