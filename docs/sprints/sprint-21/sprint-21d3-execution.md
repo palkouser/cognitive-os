@@ -100,10 +100,23 @@ Later evidence must carry the exact pre-registration file SHA and pass
 
 ## Publication and draft PR
 
-The first commit containing the exact pre-registration bytes is its publication authority.
-That commit SHA, the draft PR number, initial PR head, and the unchanged 27 required checks are
-recorded here immediately after the first push; they are external to the pre-registration to
-avoid a self-referential commit hash.
+The first commit containing the exact pre-registration bytes is
+`1c6bf106c85b5013bfcba25fed5e84475b855d4f`. Reading the file back from that commit reproduces
+the pre-registration SHA-256 above. Draft PR [#221](https://github.com/palkouser/cognitive-os/pull/221)
+was opened against `main` with initial head
+`1c6bf106c85b5013bfcba25fed5e84475b855d4f`; its initial CI run is `30805570230`. These external
+identities are recorded outside the pre-registration to avoid a self-referential commit hash.
+
+The unchanged strict required-check inventory contains 27 contexts:
+
+```text
+benchmark-regression, build, coding-agent, cognitive-controller, context-builder-core,
+controlled-changes-core, corpus-factory-core, cross-domain-pilot-core,
+experience-compiler-core, harness-proposals-core, inspect-adapter, memory-plane-core,
+migration, model-routing-core, optional-boundary, postgres-integration, provider-offline,
+quality, sandbox, security, semantic-memory-core, skill-engine-core, strategy-engine-core,
+test, tool-plane, verifier-domains, weakness-mining-core
+```
 
 ## Validation
 
