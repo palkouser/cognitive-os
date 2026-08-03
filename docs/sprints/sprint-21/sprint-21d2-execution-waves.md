@@ -5,7 +5,9 @@ It does not replace the backlog's `§6` wave table; it refines it against measur
 repository facts: two probes inserted, four epics resequenced, three waves split along
 real dependencies. Task numbering is unchanged (S21D2-000 … -095, 81 tasks in ten epics).
 
-Status: **W0 through W6 and W9 complete. Door D3 closed on an immutable null:** the bounded k-NN
+Status: **Sprint complete. W0–W6, W9 and W10 executed; W7 and W8 closed by the null. Released
+as `sprint-21d2-evidence-baseline`, Gate L2 does not pass. Door D3 closed on an immutable
+null:** the bounded k-NN
 ranks an accepted candidate first in nine of ten calibration groups against a 0.3 deterministic
 baseline, and reverses at full confidence under a semantics-preserving perturbation, so no
 candidate was selected and final access stays closed. W0 evidence:
@@ -567,9 +569,32 @@ because the natural next move is to go and migrate something. `artifact_recovery
 metadata into, so the row only ever proved that it prints its usage. The row was removed
 rather than repaired, because recovery is proven where it happens.
 
-### W10 — release (090–095)
-Not started; it waits on explicit permission. The release is
-`sprint-21d2-evidence-baseline` with Gate L2 `does not pass`.
+### W10 — release (090–095) — **complete**
+Evidence: [`sprint-21d2-release.json`](evidence/sprint-21d2-release.json),
+[`gate-l2-assessment.md`](gate-l2-assessment.md),
+[`sprint-21d2-report.md`](sprint-21d2-report.md),
+[`sprint-21d3-handoff.md`](sprint-21d3-handoff.md),
+[`correction-ranking.md`](../../operations/correction-ranking.md).
+
+PR `#219` squash-merged with no administrator bypass to `ecb5ea12…`, exact-head `main` CI run
+`30788129259` 30 of 30 success, and the annotated tag `sprint-21d2-evidence-baseline` created
+**once, after** that CI — object `3f3c00e2…`, identical on the remote, peeling to the same
+commit. `sprint-21-learning-baseline` is forbidden on this path and was not created.
+Protection unchanged at 27 required contexts with `enforce_admins`.
+
+**Gate L2 does not pass: fifteen conditions met, one met as a rejection, thirteen not opened.**
+The thirteen are marked not opened rather than failed or skipped, each naming the record that
+closed it, because a failed condition is a measurement that came out badly and a not-opened one
+is a measurement that was never authorised. Gate D1 conditions 6, 7 and 15 remain open and the
+null forfeits all three. Sprint 22A stays blocked; the handoff targets Sprint 21D3.
+
+**090 turned out to be W9-F1's real fix, and the finding's attribution was corrected.** W9-F1
+was recorded as a defect in `postgres_common.sh`. The mechanism was right and the attribution
+was not: the environment-file override is deliberate and documented — `learned-evidence.md`
+states that exporting the variables is not enough and that this is what stops a mis-scoped
+command reaching a real database — and both C3 and D1 document the correct invocation in their
+own operations guides. What D2 lacked was the operations document. No repository script was
+changed.
 
 ---
 
