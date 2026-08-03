@@ -776,6 +776,27 @@ Fused Gromov-Wasserstein dependency and adds no package at all. See the
 [architecture](docs/architecture/experience-memory-graph.md) and
 [operations guide](docs/operations/experience-memory-graph.md).
 
+## Useful Learned Correction Ranking (Sprint 21D2) — a measured negative result
+
+Cognitive OS can rank the candidate repairs for a failing task with a learned component
+fitted only on its own verified self-play, under features sealed and hash-bound *before the
+first container starts*. Sprint 21D2 built that surface, measured it against a deterministic
+baseline, and **did not activate it**. No component is registered, approved or active; the
+final holdout was never opened; Gate L2 does not pass.
+
+The result is reported as measured, and it is the reason. The bounded k-NN ranked an accepted
+candidate first in nine of ten calibration groups against a 0.3 deterministic baseline — the
+signal is real — and then answered confidently and *wrongly* when the same tasks were renamed
+in a way that changed no behaviour. Every setting in the pre-registered grid that found the
+signal also failed that perturbation, and every setting that avoided the failure answered no
+probe at all. A component that reverses under a rename has learned the corpus, not the task.
+
+Ordering is the only thing such a component could ever influence: acceptance is decided by an
+independent hidden verifier in every configuration, and no learned artifact is deserialised
+into code. See the [Sprint 21D2 report](docs/sprints/sprint-21/sprint-21d2-report.md), the
+[Gate L2 assessment](docs/sprints/sprint-21/gate-l2-assessment.md) and the
+[operations guide](docs/operations/correction-ranking.md).
+
 ---
 
 ## 📬 Contact Us

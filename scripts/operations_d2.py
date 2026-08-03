@@ -76,43 +76,54 @@ D2_ENV_FILE = REPOSITORY / ".env.s21d2.local"
 FINDINGS: list[dict[str, str]] = [
     {
         "id": "W9-F1",
-        "subject": "scripts/backup_event_store.sh under a sourced D2 environment",
-        "observed": (
-            "An operator who sources .env.s21d2.local and runs the backup script backs up the "
-            "*development* database. postgres_common.sh's load_postgres_environment() sources "
-            "$COGOS_POSTGRES_ENV_FILE — .env.postgres.local by default — inside `set -a`, so it "
-            "overwrites every exported D2 handle with the development one. The first run of "
-            "this command printed 'Backing up database: cognitive_os_dev' and wrote "
-            "20260802T185709Z-event-store.dump and -artifacts.tar.zst into the development "
-            "backup root before aborting in artifact_restore_verify.py. Nothing was written to "
-            "any evidence store and no manifest was produced, so the partial dump is inert: "
-            "restore_event_store.sh selects the newest *manifest* and there is none for that "
-            "timestamp. The two files are left where they are and named here rather than "
-            "deleted; removing them would make the run look cleaner than it was."
+        "subject": (
+            "D2 had no operations document, so nothing stated the shell scripts' prerequisite"
         ),
-        "class": (
-            "the same shape as C3 W6-F2 and F16: an isolation control that reads as satisfied "
-            "because the operator did the right thing and the script undid it"
+        "observed": (
+            "An operator who follows this sprint's own convention — `set -a && . "
+            "./.env.s21d2.local && set +a`, which every D2 command and every D2 evidence file "
+            "records — and then runs scripts/backup_event_store.sh backs up the *development* "
+            "database. The first run of this command printed 'Backing up database: "
+            "cognitive_os_dev' and wrote 20260802T185709Z-event-store.dump and "
+            "-artifacts.tar.zst into the development backup root before aborting in "
+            "artifact_restore_verify.py. Nothing was written to any evidence store and no "
+            "manifest was produced, so the partial dump is inert: restore_event_store.sh "
+            "selects the newest *manifest* and there is none for that timestamp. The two "
+            "files are left where they are and named here rather than deleted; removing them "
+            "would make the run look cleaner than it was."
+        ),
+        "first_attribution_was_wrong": (
+            "This was first recorded as a defect in postgres_common.sh, on the reasoning that "
+            "load_postgres_environment() re-sources $COGOS_POSTGRES_ENV_FILE inside `set -a` "
+            "and so overwrites exported handles. The mechanism is right and the attribution "
+            "was not. The override is deliberate and documented: "
+            "docs/operations/learned-evidence.md says in as many words that exporting the "
+            "variables is not enough and that it is what stops a mis-scoped command reaching "
+            "a real database. C3 and D1 both document the correct form — "
+            "`COGOS_POSTGRES_ENV_FILE=$PWD/.env.<sprint>.local ./scripts/backup_event_store.sh` "
+            "— in docs/operations/reality-inputs.md and "
+            "docs/operations/experience-memory-graph.md. "
+            "What D2 lacked was the operations document that would have said so. S21D2-090 "
+            "supplies it."
         ),
         "second_instance": (
             "It is not one script. The S21D2-086 matrix hit the same thing from the other "
             "side: postgres_migration_check.sh reported 'Database is not on all head "
             "revisions' — a true statement about cognitive_os_dev, made while the matrix was "
             "verifying the D2 release. Run against the D2 database the same command reports "
-            "no new upgrade operations. A defect that produces a *plausible failure* about "
-            "the wrong store is worse than one that crashes, because the natural next move is "
-            "to go and migrate something."
+            "no new upgrade operations. A gap that produces a *plausible failure about the "
+            "wrong store* is worse than one that crashes, because the natural next move is to "
+            "go and migrate something."
         ),
         "action": (
             "Every repository script this command runs, and every shell row of the matrix, is "
-            "given COGOS_POSTGRES_ENV_FILE pointing at .env.s21d2.local, so the file the "
-            "script re-sources is the D2 one. The backup path additionally refuses any "
-            "manifest that does not name the D2 database, so the workaround failing is a "
-            "refusal rather than a quiet substitution. The defect belongs to "
-            "postgres_common.sh and is not repaired here: changing how every sprint's scripts "
-            "resolve their environment is not a W9 change."
+            "given COGOS_POSTGRES_ENV_FILE pointing at .env.s21d2.local — the documented form, "
+            "not a workaround. The backup path additionally refuses any manifest that does not "
+            "name the D2 database, so a mis-scoped run is a refusal rather than a quiet "
+            "substitution. docs/operations/correction-ranking.md now states the prerequisite "
+            "for D2 the way the C3 and D1 documents state it for theirs."
         ),
-        "status": "worked around, reported, not fixed in D2",
+        "status": "documented and guarded; no repository script was changed",
     }
 ]
 

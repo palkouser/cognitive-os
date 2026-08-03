@@ -505,15 +505,26 @@ warning states plainly that two manifests were sealed three times each, so a dat
 store must select an explicit member list rather than every row. That warning is W4-D1 finally
 saying itself, in the report, instead of only in a deviation note.
 
-**W9-F1: the backup script backs up the development database.** An operator who sources
-`.env.s21d2.local` and runs `scripts/backup_event_store.sh` gets a dump of `cognitive_os_dev`,
-because `postgres_common.sh` re-sources `.env.postgres.local` inside `set -a` and overwrites
-every exported D2 handle. The first run of `scripts/operations_d2.py` did exactly that and
-wrote a partial dump into the development backup root before aborting. Same shape as C3's
-W6-F2 and this plan's F16: an isolation control that reads as satisfied because the operator
-did the right thing and the script undid it. Worked around by passing
-`COGOS_POSTGRES_ENV_FILE`, and guarded by refusing any backup manifest that does not name the
-D2 database. The defect belongs to `postgres_common.sh` and is not repaired in D2.
+**W9-F1: D2 had no operations document, so nothing stated the shell scripts' prerequisite.**
+An operator who follows this sprint's own convention — `set -a && . ./.env.s21d2.local && set
++a`, which every D2 command and evidence file records — and then runs
+`scripts/backup_event_store.sh` gets a dump of `cognitive_os_dev`. The first run of
+`scripts/operations_d2.py` did exactly that and wrote a partial dump into the development
+backup root before aborting. The matrix hit it from the other side:
+`postgres_migration_check.sh` reported "Database is not on all head revisions", true about the
+development database and alarming about the wrong one.
+
+**The first attribution was wrong and is corrected here.** This was recorded as a defect in
+`postgres_common.sh`, on the reasoning that `load_postgres_environment()` re-sources
+`$COGOS_POSTGRES_ENV_FILE` inside `set -a` and overwrites exported handles. The mechanism is
+right; the attribution was not. That override is deliberate and documented —
+`docs/operations/learned-evidence.md` says in as many words that exporting the variables is
+not enough and that this is what stops a mis-scoped command reaching a real database — and
+both C3 and D1 document the correct form, `COGOS_POSTGRES_ENV_FILE=$PWD/.env.<sprint>.local
+./scripts/backup_event_store.sh`, in their own operations guides. What D2 lacked was the
+operations document that would have said so, which is exactly what S21D2-090 was for. Guarded
+in addition by refusing any backup manifest that does not name the D2 database, so a
+mis-scoped run is a refusal rather than a quiet substitution. No repository script changed.
 
 **What 083 proves on a null path is an absence.** On the success path the assertion would be
 that the runtime resolves the same active model. There is none, so what has to survive the
