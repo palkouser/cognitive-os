@@ -965,6 +965,22 @@ jobs:
         run: uv run pytest tests/cognitive_os/learning -q
       - name: Correction candidate sequencing and receipts
         run: uv run pytest tests/cognitive_os/coding/test_correction_sequencer.py -q
+      # S21D2-085b. The wave plan reserved this for final-evidence coverage after S21D2-067.
+      # D2 stopped at the selection door with a null, so there is no final evidence and this
+      # lane owns the opposite guarantee: the integrity report's eight classes, including the
+      # two a lawful stop closed, and a guard over the published evidence so that a file which
+      # currently records "not opened" cannot quietly start recording "zero". Credential-free:
+      # every fixture is built in the test process and the evidence files are read off disk.
+      - name: Null-path integrity classes and not-opened guards
+        run: >-
+          uv run pytest tests/cognitive_os/learning/test_correction_integrity.py
+          tests/cognitive_os/learning/test_d2_null_evidence_guard.py -q
+      # The access guard itself, stated as a contract rather than as a convention: a selection
+      # record that says `selected: false` cannot also authorise the holdout.
+      - name: Selection never authorises final access
+        run: >-
+          uv run pytest tests/cognitive_os/learning/test_knn_calibration.py
+          -q -k "final_access or null"
       - name: Learned evidence schema drift
         run: uv run python -m cognitive_os.schemas.export --check
       - name: Learned table metadata imports without a live database

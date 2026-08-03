@@ -1,0 +1,277 @@
+{
+  "artifact_pairs": {
+    "after": {
+      "artifacts": {
+        "files": 5,
+        "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf"
+      },
+      "artifacts-s21c3": {
+        "files": 8503,
+        "path_and_size_fingerprint_sha256": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593"
+      },
+      "artifacts-s21d1": {
+        "files": 83,
+        "path_and_size_fingerprint_sha256": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f"
+      },
+      "artifacts-s21d2": {
+        "files": 1511,
+        "path_and_size_fingerprint_sha256": "39417f1a03f6824cfe6f9c4b7e6bd5a3cd34da8329fb95cff0a35595899438aa"
+      }
+    },
+    "before": {
+      "artifacts": {
+        "files": 5,
+        "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf"
+      },
+      "artifacts-s21c3": {
+        "files": 8503,
+        "path_and_size_fingerprint_sha256": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593"
+      },
+      "artifacts-s21d1": {
+        "files": 83,
+        "path_and_size_fingerprint_sha256": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f"
+      },
+      "artifacts-s21d2": {
+        "files": 1511,
+        "path_and_size_fingerprint_sha256": "39417f1a03f6824cfe6f9c4b7e6bd5a3cd34da8329fb95cff0a35595899438aa"
+      }
+    },
+    "byte_identical_across_every_row": true
+  },
+  "commands": [
+    {
+      "exit_code": 0,
+      "last_line": "All checks passed!",
+      "name": "ruff_check",
+      "seconds": 0.06,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "981 files already formatted",
+      "name": "ruff_format",
+      "seconds": 0.03,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "Success: no issues found in 602 source files",
+      "name": "mypy",
+      "seconds": 1.63,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "",
+      "name": "bandit",
+      "seconds": 4.21,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "Contract schema check passed.",
+      "name": "schema_drift",
+      "seconds": 1.79,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "Repository language check passed.",
+      "name": "repository_language",
+      "seconds": 0.04,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "3138 passed, 3 skipped in 212.73s (0:03:32)",
+      "name": "unit_suite",
+      "seconds": 213.97,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "65 passed in 2.35s",
+      "name": "contract_suite",
+      "seconds": 2.81,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "3324 passed, 74 skipped in 222.11s (0:03:42)",
+      "name": "full_suite",
+      "seconds": 223.93,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "67 passed in 184.85s (0:03:04)",
+      "name": "coding_docker_slice",
+      "seconds": 185.22,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "41 passed in 7.88s",
+      "name": "postgres_integration",
+      "seconds": 8.97,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "}",
+      "name": "reality_inputs_validate",
+      "seconds": 0.42,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "}",
+      "name": "reality_inputs_stats",
+      "seconds": 0.59,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "}",
+      "name": "reality_inputs_harvest",
+      "seconds": 0.56,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "}",
+      "name": "reality_inputs_verify",
+      "seconds": 1.1,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "Artifact filesystem verification passed.",
+      "name": "artifact_store_content",
+      "seconds": 8.59,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf  5 files  /home/palkouser/projekt/cognitive-os-data/artifacts",
+      "name": "development_pair_fingerprint",
+      "seconds": 0.35,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "0015_create_provider_output_governance",
+      "name": "migration_head",
+      "seconds": 0.03,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "Editable import OK: /home/palkouser/projekt/cognitive-os/src/cognitive_os/__init__.py",
+      "name": "editable_install",
+      "seconds": 1.27,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "695 passed in 103.13s (0:01:43)",
+      "name": "correction_ranking_spine",
+      "seconds": 103.71,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "525 passed in 44.24s",
+      "name": "correction_sequencing_and_receipts",
+      "seconds": 44.59,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "50 passed in 0.49s",
+      "name": "null_path_and_not_opened_guards",
+      "seconds": 0.77,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "No new upgrade operations detected.",
+      "name": "migration_check",
+      "seconds": 2.57,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "/tmp/s21d2-matrix-learned-ci/eab1a837-ba22-43c4-80b7-ce14522e8d50.json",
+      "name": "learned_evidence_benchmarks",
+      "seconds": 1.03,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "{\"checks\":[{\"detail\":\"calibration 06f83afe1dca over 40 slots; training 779bed086cda over 200 slots; 4 further seals found in the store and not hash-checked\",\"name\":\"every_sealed_feature_set_reproduces",
+      "name": "correction_integrity_cli",
+      "seconds": 0.72,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "{\"active_component_count\":0,\"append_only_trigger_count\":8,\"component_count\":0,\"controlled_function_count\":10,\"correlation_checked\":false,\"correlation_warnings\":[],\"healthy\":true,\"integrity_failures\":[",
+      "name": "learned_health",
+      "seconds": 0.9,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "{\"failed\":[],\"healthy\":true,\"verified\":4}",
+      "name": "learned_artifact_verify",
+      "seconds": 0.85,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593  8503 files  /home/palkouser/projekt/cognitive-os-data/artifacts-s21c3",
+      "name": "c3_pair_fingerprint",
+      "seconds": 0.69,
+      "status": "passed"
+    },
+    {
+      "exit_code": 0,
+      "last_line": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f  83 files  /home/palkouser/projekt/cognitive-os-data/artifacts-s21d1",
+      "name": "d1_pair_fingerprint",
+      "seconds": 0.36,
+      "status": "passed"
+    }
+  ],
+  "database": "cognitive_os_s21d2_test",
+  "failed": [],
+  "item": "S21D2-086",
+  "migration_head": "0015_create_provider_output_governance",
+  "not_opened": {
+    "activation_approval_and_canary": {
+      "reason": "S21D2-069 to -074 need an approved component; the surface has none",
+      "stop_decision_hash": "274a7a932ce110d12892f3dab102f10308ad556c563483d414979cbc69950536"
+    },
+    "benefit_forgetting_and_shadow_measurement": {
+      "reason": "S21D2-063 to -066 measure a selected candidate, and none was selected",
+      "stop_decision_hash": "274a7a932ce110d12892f3dab102f10308ad556c563483d414979cbc69950536"
+    },
+    "final_batch_a_and_b": {
+      "reason": "S21D2-060 was never authorised; the holdout was not opened",
+      "stop_decision_hash": "274a7a932ce110d12892f3dab102f10308ad556c563483d414979cbc69950536"
+    },
+    "governed_rollback_real_leg": {
+      "reason": "S21D2-075's real leg needs an active component; the scratch proof stands from W3c",
+      "stop_decision_hash": "274a7a932ce110d12892f3dab102f10308ad556c563483d414979cbc69950536"
+    },
+    "promotion_assessment": {
+      "reason": "S21D2-067 assesses a component that exists; none was registered",
+      "stop_decision_hash": "274a7a932ce110d12892f3dab102f10308ad556c563483d414979cbc69950536"
+    }
+  },
+  "passed": 29,
+  "recorded_at": "2026-08-03T05:07:06.177681+00:00",
+  "skipped": {},
+  "sprint": "21D2",
+  "wave": "W9"
+}

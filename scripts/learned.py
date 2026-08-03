@@ -60,7 +60,9 @@ async def _with_repository(action: Any) -> int:
 
 
 async def _health(_args: argparse.Namespace) -> int:
-    from cognitive_os.infrastructure.learned.postgres.health import PostgresLearnedHealthService
+    from cognitive_os.infrastructure.learned.postgres.health import (
+        PostgresLearnedHealthService,
+    )
 
     engine = _engine()
     try:
@@ -131,7 +133,9 @@ async def _artifact_verify(args: argparse.Namespace) -> int:
     """Re-hash the bytes behind learned lineage. Reads and hashes; never loads."""
     from pathlib import Path
 
-    from cognitive_os.infrastructure.artifacts.filesystem import ContentAddressedFilesystem
+    from cognitive_os.infrastructure.artifacts.filesystem import (
+        ContentAddressedFilesystem,
+    )
     from cognitive_os.infrastructure.artifacts.service import ArtifactService
     from cognitive_os.infrastructure.learned.artifacts import LearnedArtifactStore
     from cognitive_os.infrastructure.learned.postgres.repository import (
@@ -149,7 +153,8 @@ async def _artifact_verify(args: argparse.Namespace) -> int:
         repository = PostgresLearnedEvidenceRepository(engine)
         store = LearnedArtifactStore(
             ArtifactService(
-                ContentAddressedFilesystem(Path(root)), PostgresArtifactRepository(engine)
+                ContentAddressedFilesystem(Path(root)),
+                PostgresArtifactRepository(engine),
             )
         )
         if args.lineage_id is not None:
@@ -189,13 +194,18 @@ class PostgresLearnedHealthArtifacts:
     async def check(self, *, limit: int) -> dict[str, Any]:
         from sqlalchemy import select
 
-        from cognitive_os.infrastructure.learned.postgres.tables import learned_artifacts
+        from cognitive_os.infrastructure.learned.postgres.tables import (
+            learned_artifacts,
+        )
 
         async with self._engine.connect() as connection:
             rows = (
                 (
                     await connection.execute(
-                        select(learned_artifacts.c.lineage_id, learned_artifacts.c.artifact_id)
+                        select(
+                            learned_artifacts.c.lineage_id,
+                            learned_artifacts.c.artifact_id,
+                        )
                         .order_by(learned_artifacts.c.lineage_id)
                         .limit(limit)
                     )
@@ -363,9 +373,106 @@ async def _correction_runtime(args: argparse.Namespace) -> int:
     return await _with_repository(action)
 
 
+async def _correction_integrity(args: argparse.Namespace) -> int:
+    """S21D2-081. The eight-class integrity report over the correction-ranking evidence.
+
+    `--seals` names the campaign evidence file the sprint published, because the sealed
+    feature-set artifact ids and their hashes are the authority for every other check and
+    this command must not be free to invent them. `--stop-record` names the decision that
+    closed a class; without it, a class with nothing in it would be reported as a passing
+    zero, which is the one thing S21D2-081 forbids.
+    """
+    from datetime import datetime
+
+    from cognitive_os.coding.reality_integrity import IntegrityReport
+    from cognitive_os.infrastructure.artifacts.filesystem import (
+        ContentAddressedFilesystem,
+    )
+    from cognitive_os.infrastructure.artifacts.service import ArtifactService
+    from cognitive_os.infrastructure.postgres.artifact_repository import (
+        PostgresArtifactRepository,
+    )
+    from cognitive_os.learning import correction_integrity as ci
+
+    root = os.environ.get("COGOS_ARTIFACT_ROOT")
+    if not root:
+        raise SystemExit("COGOS_ARTIFACT_ROOT is required for the correction integrity report")
+    if not args.seals:
+        _emit({"error": "correction-integrity needs --seals naming the campaign evidence file"})
+        return 2
+
+    campaign = json.loads(Path(args.seals).read_text())
+    sources = [
+        ci.SealSource(
+            partition=partition["partition"],
+            campaign_manifest_hash=partition["campaign_manifest_hash"],
+            artifact_id=UUID(partition["feature_set_artifact_id"]),
+            feature_set_hash=partition["feature_set_hash"],
+            sealed_at=datetime.fromisoformat(partition["features_sealed_at"]),
+        )
+        for partition in campaign["partitions"]
+    ]
+    inherited: list[Any] = []
+    if args.inherited:
+        # `name -> {root, path_and_size_fingerprint_sha256, files}`, exactly the shape the
+        # W0 baseline evidence published. Given as a file rather than as flags so that the
+        # expected digests come from the record instead of from whoever typed the command.
+        declared = json.loads(Path(args.inherited).read_text())
+        inherited = [
+            ci.InheritedPair(
+                name=name,
+                root=Path(pair["root"]),
+                expected_digest=pair["path_and_size_fingerprint_sha256"],
+                expected_files=int(pair["files"]),
+            )
+            for name, pair in sorted(declared.items())
+        ]
+    stop = None
+    if args.stop_record:
+        record = json.loads(Path(args.stop_record).read_text())
+        stop = ci.StopRecord(
+            name=record["name"],
+            content_hash=record["content_hash"],
+            reason=record["reason"],
+        )
+
+    engine = _engine()
+    try:
+        store = ArtifactService(
+            ContentAddressedFilesystem(Path(root)), PostgresArtifactRepository(engine)
+        )
+        # Discovery first, because a campaign that was executed more than once sealed once
+        # per execution and the evidence file names only the last one. Without the earlier
+        # seals the chronology check reports rows written under them as out of order.
+        async with engine.connect() as connection:
+            candidates = await ci.seal_candidates(connection)
+        # Fetched with no connection held, because the store opens one per read and the
+        # report holds one for its whole pass.
+        payloads = {
+            artifact_id: await store.get_bytes(artifact_id)
+            for artifact_id in {*candidates, *(source.artifact_id for source in sources)}
+        }
+        sources.extend(ci.seals_from(payloads))
+        async with engine.connect() as connection:
+            evidence = await ci.load_correction_evidence(
+                connection,
+                seals=sources,
+                seal_payloads=payloads,
+                inherited=inherited,
+                selection_stop=stop,
+            )
+    finally:
+        await engine.dispose()
+
+    report = IntegrityReport(checks=ci.correction_checks(evidence))
+    _emit({"counts": ci.correction_counts(evidence), **report.as_dict()})
+    return 0 if report.healthy else 1
+
+
 _ACTIONS = {
     "health": _health,
     "correction-runtime": _correction_runtime,
+    "correction-integrity": _correction_integrity,
     "component-show": _component_show,
     "component-history": _component_history,
     "evidence-verify": _evidence_verify,
@@ -389,8 +496,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--group", help="task group to test routing for")
     parser.add_argument("--model-id", help="expected local embedding model identifier")
     parser.add_argument("--model-revision", help="expected local embedding model revision")
+    parser.add_argument("--seals", help="campaign evidence file naming the sealed feature sets")
+    parser.add_argument("--inherited", help="JSON of inherited artifact roots and their digests")
+    parser.add_argument("--stop-record", help="JSON naming the decision that closed a class")
     parser.add_argument(
-        "--status", choices=("accepted", "quarantined", "rejected"), help="observation status"
+        "--status",
+        choices=("accepted", "quarantined", "rejected"),
+        help="observation status",
     )
     parser.add_argument("--limit", type=int, default=100, help="maximum rows to return")
     parser.add_argument(

@@ -5,7 +5,7 @@ It does not replace the backlog's `§6` wave table; it refines it against measur
 repository facts: two probes inserted, four epics resequenced, three waves split along
 real dependencies. Task numbering is unchanged (S21D2-000 … -095, 81 tasks in ten epics).
 
-Status: **W0 through W6 complete. Door D3 closed on an immutable null:** the bounded k-NN
+Status: **W0 through W6 and W9 complete. Door D3 closed on an immutable null:** the bounded k-NN
 ranks an accepted candidate first in nine of ten calibration groups against a 0.3 deterministic
 baseline, and reverses at full confidence under a semantics-preserving perturbation, so no
 candidate was selected and final access stays closed. W0 evidence:
@@ -24,8 +24,16 @@ recipes, validation before the append), -020 (explicit paged group-aware selecti
 split digest in dataset identity), -040/-043 (encoder and bounded k-NN), -050/-052 (canonical
 JSON artifact and narrow loader), -029 (role-bound projector), -053/-055/-056 (runtime
 resolver, health reasons, default-off routing), -054 (two-mode sequencer and the
-compare-and-set campaign receipt), -080/-081/085a (CLI command, health output, focused CI
-coverage).
+compare-and-set campaign receipt), -080/085a (CLI command and focused CI coverage).
+
+**One further W2 item was not delivered in W2, and this line is a correction.** The paragraph
+above previously read `-080/-081/085a`. S21D2-081 — the unified integrity and health report
+over role crossing, chronology, manifest membership, artifact lineage, active state, receipt
+chain, model identity and store isolation — was in the W2 plan and is not in the W2 commit
+(`c3ceb23`, which names -029, -050, -052, -053, -054, -055, -056, -080, 085a). It landed in
+W9 instead, where S21D2-083 depends on it. The claim is corrected here rather than quietly
+dropped: a wave summary that lists an item nobody wrote is the kind of error that survives
+into a gate assessment.
 
 **One W2 deliverable is deferred with its reason.** S21D2-054 also asks
 `RealityCampaignLedger.plan_resume()` to consume the receipt stream and return a typed
@@ -113,7 +121,7 @@ with `0016` unallocated; `CorpusRole` is two-valued (`TRAINING`, `EVALUATION`);
 | **W7c** | 033, 034, 035 | retrieval closure | ‖ W7b | ≥50 new queries; one bounded arm ≥0.70 / ≥0.50, or negative |
 | **W7d** | **068 → 067** | assessment | after W7b + W7c | D1 remediation record; eligible **or** explicitly ineligible promotion assessment |
 | **W8** | 069–074, 075-real, 076, 077 | pass-conditional | none | VERIFIED, approval, canary, kill switch, restart, rollback, steady state |
-| **W9** | 083, 084, **085b**, 086 | mandatory on every path | none | recovery, corruption matrix, CI, full isolated matrix |
+| **W9** ✅ | **081**, 083, 084, **085b**, 086 | mandatory on every path | none | recovery, corruption matrix, CI, full isolated matrix — **met: 29/29 matrix rows, ten damage cases all failing closed, and the backup script stopped from backing up the wrong database (W9-F1)** |
 | **W10** | 090–095 | mandatory on every path | none | Gate L2 result, report, handoff, outcome-appropriate tag, gate-result PR |
 
 *Italic* tasks are P1 and open only on their stated continuation condition. **Bold** entries
@@ -473,9 +481,83 @@ Pass-conditional. 071/072 are the fifth one-way door. A failed canary at 073 dis
 with `rollback_permitted=false`, 074 reuses that receipt rather than issuing a second
 disable, and 075's real leg does not run — the scratch proof from W3c already stands.
 
-### W9/W10 — operations and release (083–086, 090–095)
-Mandatory on every outcome, including the earliest null. On a stopped path they validate the
-fixture/null/negative artifacts and common authorities, and the release is
+### W9 — operations (081, 083–086) — **complete**
+Mandatory on every outcome, including the earliest null. Evidence:
+[`sprint-21d2-operations.json`](evidence/sprint-21d2-operations.json) and
+[`sprint-21d2-verification-matrix.json`](evidence/sprint-21d2-verification-matrix.json).
+
+**081 arrives here rather than in W2, and its third state is what the null needed.** The
+report carries eight classes. Six could be measured. Two — activation state and model
+identity — have nothing behind them, because no component was ever registered, and a report
+that answered "0 wrongly-active components" would have been true and misleading at once. They
+are recorded as `not_opened`, each bound to the hash of the selection record that closed them.
+The state is not a way to skip a check: a component found on the stopped surface turns the
+not-opened claim straight into a failure, and S21D2-084's tampering row proves it does.
+
+**Running the chronology check for the first time reported half the store as out of order,
+and the check was wrong, not the store.** W4-F2 made the campaign execute the same 240
+candidates twice, and each execution sealed its own feature set. Measured against the one seal
+the campaign evidence names, the 240 rows from the earlier execution looked like outcomes that
+preceded their own features. They were nothing of the kind — each was pre-outcome under the
+seal it actually ran under, and that seal is still in the store. The check now discovers every
+seal a campaign manifest carries and measures each row against the earliest, and a separate
+warning states plainly that two manifests were sealed three times each, so a dataset over this
+store must select an explicit member list rather than every row. That warning is W4-D1 finally
+saying itself, in the report, instead of only in a deviation note.
+
+**W9-F1: the backup script backs up the development database.** An operator who sources
+`.env.s21d2.local` and runs `scripts/backup_event_store.sh` gets a dump of `cognitive_os_dev`,
+because `postgres_common.sh` re-sources `.env.postgres.local` inside `set -a` and overwrites
+every exported D2 handle. The first run of `scripts/operations_d2.py` did exactly that and
+wrote a partial dump into the development backup root before aborting. Same shape as C3's
+W6-F2 and this plan's F16: an isolation control that reads as satisfied because the operator
+did the right thing and the script undid it. Worked around by passing
+`COGOS_POSTGRES_ENV_FILE`, and guarded by refusing any backup manifest that does not name the
+D2 database. The defect belongs to `postgres_common.sh` and is not repaired in D2.
+
+**What 083 proves on a null path is an absence.** On the success path the assertion would be
+that the runtime resolves the same active model. There is none, so what has to survive the
+restore exactly is the inactive state — zero components, revisions, evidence records,
+approvals and activations — which is the easiest thing for a restore to get wrong in the
+safe-looking direction. Counts, the roll-up over every hashed row, all 1511 artifact blobs
+re-hashed, and every store-side input to `plan_resume_with_receipts` match between source and
+restore; the container was restarted between the two captures.
+
+**084's ten damage cases all fail closed, and two of them moved.** The poisoned feature record
+never reaches the seal check at all: the contract re-seals on load and refuses the bytes, which
+is a stronger refusal than the one the case was written to demonstrate, so it is recorded as
+what happened. That left the seal-hash check unexercised, so a second case was added for the
+attack poisoning cannot mount — a *valid* seal from another execution served under the declared
+artifact identity. Only the independently recorded hash catches that one.
+
+**085b covers a null instead of final evidence.** The plan reserved it for coverage after
+S21D2-067; there is no final evidence, so the lane owns the opposite guarantee — the eight
+integrity classes and a guard over the published evidence files, so that a record which now
+says "not opened" cannot quietly start saying "zero". The recorded CI steps are extracted from
+the workflow rather than transcribed, and a test fails if a step named in the evidence is no
+longer in the lane.
+
+**086 lists the rows a stop closed rather than omitting them.** Five conditional rows — the
+holdout, the benefit and forgetting measurements, the promotion assessment, approval and
+canary, and 075's real leg — carry the selection record's hash instead of an exit code, and
+the matrix refuses to record them that way at all if the selection record ever names a
+candidate. **29 of 29 rows passed, none failed, none skipped**, in 812 seconds: lint, format,
+typing, security, schema drift, language, the unit / contract / full suites, the Docker coding
+slice, the isolated PostgreSQL lane, packaging, migration head and check, benchmarks, the C3
+and D2 operator commands, and all four artifact pairs — development, C3, D1 and D2 — measured
+before and after and byte-identical across every destructive row.
+
+**Two matrix rows failed first and both were the matrix's fault, not the repository's.**
+`migration_check` reported "Database is not on all head revisions" — W9-F1 from the other
+side, a true statement about `cognitive_os_dev` made while verifying the D2 release. A defect
+that produces a *plausible failure about the wrong store* is worse than one that crashes,
+because the natural next move is to go and migrate something. `artifact_recovery` invoked
+`scripts/artifact_restore_verify.py` bare; it is a helper that `restore_event_store.sh` pipes
+metadata into, so the row only ever proved that it prints its usage. The row was removed
+rather than repaired, because recovery is proven where it happens.
+
+### W10 — release (090–095)
+Not started; it waits on explicit permission. The release is
 `sprint-21d2-evidence-baseline` with Gate L2 `does not pass`.
 
 ---

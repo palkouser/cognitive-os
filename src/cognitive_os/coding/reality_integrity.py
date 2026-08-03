@@ -32,6 +32,13 @@ from .reality_tasks import available_templates, build_manifest
 
 FAILURE = "failure"
 WARNING = "warning"
+#: A third state, added in Sprint 21D2 (S21D2-081). A class of evidence that a lawful stop
+#: never opened is neither sound nor damaged — it does not exist. Reporting it as a passing
+#: check with a zero count would be the report asserting something it never looked at, and an
+#: operator reading "0 activation failures" would reasonably conclude activation was checked.
+#: A `not_opened` check therefore carries the hash of the decision that closed the class, so
+#: the claim is traceable to the record that made it true rather than to this module's mood.
+NOT_OPENED = "not_opened"
 
 
 @dataclass(frozen=True, slots=True)
@@ -40,6 +47,17 @@ class IntegrityCheck:
     ok: bool
     severity: str
     detail: str
+    #: Required exactly when `severity` is `NOT_OPENED`, forbidden otherwise.
+    bound_hash: str | None = None
+
+    def __post_init__(self) -> None:
+        if self.severity == NOT_OPENED and not self.bound_hash:
+            raise ValueError(
+                f"{self.name} reports a class as not opened without naming the decision that "
+                "closed it; an unbound not-opened claim is indistinguishable from an omission"
+            )
+        if self.severity != NOT_OPENED and self.bound_hash is not None:
+            raise ValueError(f"{self.name} binds a stop hash to a check that was actually run")
 
 
 @dataclass(frozen=True, slots=True)
@@ -59,6 +77,11 @@ class IntegrityReport:
     def warnings(self) -> tuple[IntegrityCheck, ...]:
         return tuple(c for c in self.checks if not c.ok and c.severity == WARNING)
 
+    @property
+    def not_opened(self) -> tuple[IntegrityCheck, ...]:
+        """Classes a lawful stop closed. Listed apart from both passes and failures."""
+        return tuple(c for c in self.checks if c.severity == NOT_OPENED)
+
     def as_dict(self) -> dict[str, Any]:
         return {
             "healthy": self.healthy,
@@ -68,11 +91,17 @@ class IntegrityReport:
                     "ok": check.ok,
                     "severity": check.severity,
                     "detail": check.detail,
+                    **({} if check.bound_hash is None else {"bound_hash": check.bound_hash}),
                 }
                 for check in self.checks
             ],
             "failures": [check.name for check in self.failures],
             "warnings": [check.name for check in self.warnings],
+            "not_opened": {
+                check.name: check.bound_hash
+                for check in self.not_opened
+                if check.bound_hash is not None
+            },
         }
 
 
@@ -268,21 +297,27 @@ def task_generation_is_deterministic() -> IntegrityCheck:
     )
 
 
-def development_pair_is_untouched(
-    root: Path, *, expected_digest: str, expected_files: int
+def artifact_pair_is_untouched(
+    name: str, root: Path, *, expected_digest: str, expected_files: int
 ) -> IntegrityCheck:
-    """The inconsistent development Artifact Store must receive nothing from C3. §S21C3-003."""
+    """A store this sprint must not write to still has the shape it was fingerprinted with.
+
+    `name` becomes the check name, because an operator who is told only that "a store was
+    written to" has to go and find out which one. S21D2-081 runs this over three inherited
+    pairs rather than one, and three checks that all report under the same name would make
+    two of them invisible.
+    """
     if not root.is_dir():
         return IntegrityCheck(
-            name="development_pair_is_untouched",
+            name=name,
             ok=False,
             severity=FAILURE,
-            detail=f"the development artifact root {root} is not present to compare",
+            detail=f"the artifact root {root} is not present to compare",
         )
     digest, files = fingerprint(root)
     ok = digest == expected_digest and files == expected_files
     return IntegrityCheck(
-        name="development_pair_is_untouched",
+        name=name,
         ok=ok,
         severity=FAILURE,
         detail=(
@@ -290,6 +325,18 @@ def development_pair_is_untouched(
             if ok
             else f"{digest} over {files} files, expected {expected_digest} over {expected_files}"
         ),
+    )
+
+
+def development_pair_is_untouched(
+    root: Path, *, expected_digest: str, expected_files: int
+) -> IntegrityCheck:
+    """The inconsistent development Artifact Store must receive nothing from C3. §S21C3-003."""
+    return artifact_pair_is_untouched(
+        "development_pair_is_untouched",
+        root,
+        expected_digest=expected_digest,
+        expected_files=expected_files,
     )
 
 
