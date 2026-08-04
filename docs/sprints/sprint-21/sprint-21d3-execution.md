@@ -1,8 +1,8 @@
 # Sprint 21D3 execution log
 
 - **Branch:** `feature/sprint-21d3-invariant-correction-ranking`
-- **Wave:** W0 — baseline, reconciliation, isolation, and revision-3 pre-registration
-- **Status:** W0 implementation complete; publication commit and draft PR recorded below
+- **Wave:** W0 + W1 — pre-registration and invariant correction spine
+- **Status:** W0 and W1 implementation complete; draft PR validation recorded below
 - **Migration:** none; all isolated databases are at `0015`
 - **Pre-registration SHA-256:**
   `191b3757ded21a1c2c85459a34902f8dee3f2f35b0979b557f84c1a37fe6a191`
@@ -126,3 +126,80 @@ to create stream file descriptors. An unchanged-source retry of exactly those pr
 the permitted execution environment passed `87/87`; the full suite then passed `3058 passed,
 107 skipped` with zero failures. The required Ruff lint, Ruff format, repository-language,
 pre-registration integrity, and diff-whitespace checks also pass.
+
+## W1 invariant correction spine
+
+W1 implements S21D3-020 through S21D3-028 without changing the frozen revision-3
+pre-registration or any D2 artifact. The production Python 3.12 AST normaliser now assigns
+scope-aware lexical first-binding placeholders and preserves imports, attributes, builtins,
+magic names, and string literals. It refuses parse failures, reserved-prefix and mapping
+collisions, wildcard imports, reflective ambiguity, ambiguous function rebinding, and syntax
+whose binding semantics are not supported. Golden and metamorphic tests cover module, class,
+function, lambda, comprehension, exception, pattern, nested, global, and nonlocal scopes.
+
+`correction-ranking-v2` fits exactly six declared scalar features plus 384 semantically named
+canonical-source embedding dimensions. Raw diff counts, task embeddings, query/delta cosine,
+and every excluded input remain outside the fitted representation. Encoder-version dispatch
+preserves the D2 v1 byte contract and prevents mixed-version neighbour search. Matrix projection
+and validation inspect all 390 fitted dimensions for allowlist, finite/range, identity,
+duplicate/near-duplicate label, and perfect-separation violations.
+
+Explicit-selection identity revision 3 binds the feature schema, selection role, surface,
+campaign, transitive group mapping, exact member hashes, and canonical partition digest. The
+artifact-stored manifest extends the existing split-manifest role, refuses a mismatched existing
+dataset, leaves the D2 legacy identity readable, and requires no migration. The corrected OOD
+contracts bind every case to its source group, transformation/composition, seed, candidate set,
+and manifest. Decisions are now exactly answered plus abstained, while the four candidate
+outcomes per decision are reported separately with both all-decision and answered-only error
+rates.
+
+The versioned campaign receipt binds bundle identities and hashes, feature seal/root/schema,
+selected members, partition, mode, and exact candidate order. Replay validates these bindings
+against the current campaign. The single effective-remainder API excludes sealed skips from the
+ordinary remainder, reruns only exactly named missing outcomes, and reruns a whole unsealed task.
+Repeated resume is stable. The existing event payload and migration `0015` remain unchanged.
+The two new receipt contracts are included in the public reality schema export.
+
+## W1 diagnostic and continuation
+
+The frozen D2 diagnostic executed 60 cases with four independent candidate outcomes each and
+reproduced the released behavior: clean answered/abstained `9/1`, clean first-choice rate
+`0.9`, combined answered/abstained `8/2`, 20 accepted labels, and one confident error. All 240
+v1 feature-seal hashes reproduced. The evidence records every case, candidate, raw hash, scalar,
+all 384 named embedding dimensions, cosine, neighbour, ranking, confidence, abstention, and
+verifier label. It is development-only, derives no threshold, records zero D3
+calibration/final/canary access and zero D2 writes.
+
+The observed movement was confined to the pre-registered lexical, candidate-delta,
+query-cosine, and diff-shape channels. No structural or test-boundary failure occurred. The v2
+exact-invariance replay checked all 240 spent-D2 excluded-input cases with zero failures, so the
+typed S21D3-027 outcome is `proceed`; S21D3-028 and W2 preparation are open without an improvised
+feature branch.
+
+The seeded W4-F3 vertical fixture wrote real content-addressed artifact bytes and metadata,
+sealed v2 features at `09:00Z`, recorded the first outcome at `10:00Z`, and recorded the sequence
+receipt at `10:01Z`. A new post-outcome seal was refused. Restart replay reproduced the feature
+seal and dataset record, preserved the stored seal time, resolved identical receipt/dataset
+members, verified every artifact byte and lineage, and produced an empty effective remainder.
+
+## W1 evidence index
+
+- [per-channel diagnostic](evidence/sprint-21d3-channel-invariance-diagnostic.json) — SHA-256
+  `358f1361f0b168a825effd1c9b60a0aae787078e27d99127fcd35a7ed6e2f8f0`;
+- [typed continuation decision](evidence/sprint-21d3-diagnostic-continuation.json) — SHA-256
+  `cc17f9f6826e2cabfbb4c88c763e8d46dd5cbf4c9731b302f5340e23fbf6024a`;
+- [v2 seal and resume proof](evidence/sprint-21d3-v2-seal-resume.json) — SHA-256
+  `ba2a1983430149366f0f2abe6b0aa4f7360efac57f3f0c78c4de5c917b5f205e`.
+
+All three carry the immutable pre-registration SHA-256
+`191b3757ded21a1c2c85459a34902f8dee3f2f35b0979b557f84c1a37fe6a191`; the automated chronology
+check accepts all three.
+
+## W1 validation
+
+Focused final W1 validation passed `62` tests. The complete repository suite passed `3101 passed,
+107 skipped` in `216.02s` with zero failures in the permitted execution environment. Required
+Ruff lint and format checks, contract-schema export, repository-language, pre-registration
+integrity, three-file chronology, and diff-whitespace checks also pass. W1 added only the two
+public receipt JSON schemas; it changed no event field, database migration, predecessor artifact,
+calibration/final/canary body, and used no provider, network, credential, or GPU.

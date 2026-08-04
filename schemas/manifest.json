@@ -3989,6 +3989,11 @@
       "sha256": "b013f959d1f511b327c5925389bd77d344d82503c1762f4e20b6a5bc4f0c3dd4"
     },
     {
+      "file": "v1/reality/reality-campaign-receipt-manifest-v3.schema.json",
+      "model": "RealityCampaignReceiptManifestV3",
+      "sha256": "5f61a7f2b0f8c8527899f2cd02908f4a4d08b44f7a39e57a342fd6d3cbb434a1"
+    },
+    {
       "file": "v1/reality/reality-candidate-manifest.schema.json",
       "model": "RealityCandidateManifest",
       "sha256": "efa4c2fe941a8487be387a7d39edd7a5d9e6cca9af204997a915bc3408631fb9"
@@ -4012,6 +4017,11 @@
       "file": "v1/reality/reality-outcome-reference.schema.json",
       "model": "RealityOutcomeReference",
       "sha256": "2eb0235b1a101aac6181dcd0f378b843b695b541ae75eebe2cb064db6e122334"
+    },
+    {
+      "file": "v1/reality/reality-receipt-task-v3.schema.json",
+      "model": "RealityReceiptTaskV3",
+      "sha256": "e6d5acf13273dbdb0eb92fbc12c20a1da2a79eb4d061ad5167cd6da388fced69"
     },
     {
       "file": "v1/reality/reality-run-identity.schema.json",

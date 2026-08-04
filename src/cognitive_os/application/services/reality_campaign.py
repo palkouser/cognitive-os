@@ -28,6 +28,7 @@ from uuid import UUID
 from cognitive_os.application.ports.event_store import EventStorePort
 from cognitive_os.domain.reality import (
     RealityCampaignManifest,
+    RealityCampaignReceiptManifestV3,
     RealityOutcomeCountReason,
     RealityOutcomeReference,
     RealityRunIdentity,
@@ -126,6 +127,7 @@ class TaskReceiptState:
     missing_outcomes: tuple[UUID, ...] = ()
     contradicted: tuple[UUID, ...] = ()
     stop_reason: str = ""
+    effective_remaining: tuple[RealityRunIdentity, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -159,6 +161,11 @@ class ReceiptAwareResumePlan:
             if task.action is ReceiptAction.SEALED_AND_CONSISTENT
             for candidate_id in task.intentionally_unattempted
         )
+
+    @property
+    def effective_remainder(self) -> tuple[RealityRunIdentity, ...]:
+        """The only schedulable remainder after receipt reconciliation."""
+        return self.plan.remaining
 
 
 def count_outcomes(references: Iterable[RealityOutcomeReference]) -> OutcomeCount:
@@ -318,34 +325,43 @@ class RealityCampaignLedger:
         run_ids = tuple(task_run_ids)
         plan = await self.plan_resume(manifest, task_run_ids=run_ids)
         receipts = await self.sequence_receipts(campaign_id)
+        if isinstance(manifest, RealityCampaignReceiptManifestV3):
+            if campaign_id != manifest.campaign_id:
+                raise CampaignLedgerError("receipt manifest and requested campaign differ")
+            self._validate_v3_receipts(manifest, receipts)
         # Read the candidate outcomes directly rather than through `completed_by_identity`:
         # that one is keyed by run identity and drops anything recorded without one, which
         # would make an interrupted candidate run look like a task nobody had touched.
         by_task = await self._recorded_candidates(run_ids)
-        recorded_candidates = {
-            candidate_id for candidates in by_task.values() for candidate_id in candidates
-        }
-
         tasks: list[TaskReceiptState] = []
+        effective: list[RealityRunIdentity] = []
         for task_id in sorted({item.task_id for item in manifest.planned_runs}, key=str):
             receipt = receipts.get(task_id)
             observed = by_task.get(task_id, frozenset())
+            planned_for_task = tuple(
+                item for item in manifest.planned_runs if item.task_id == task_id
+            )
+            ordinary_remaining = tuple(item for item in plan.remaining if item.task_id == task_id)
             if receipt is None:
+                action = (
+                    ReceiptAction.RERUN_UNSEALED_TASK
+                    if observed
+                    else ReceiptAction.RESUME_AS_PLANNED
+                )
+                task_remaining = planned_for_task if observed else ordinary_remaining
+                effective.extend(task_remaining)
                 tasks.append(
                     TaskReceiptState(
                         task_id=task_id,
-                        action=(
-                            ReceiptAction.RERUN_UNSEALED_TASK
-                            if observed
-                            else ReceiptAction.RESUME_AS_PLANNED
-                        ),
+                        action=action,
+                        effective_remaining=task_remaining,
                     )
                 )
                 continue
 
             attempted = tuple(receipt.attempted_order)
             unattempted = tuple(receipt.intentionally_unattempted)
-            contradicted = tuple(item for item in unattempted if item in recorded_candidates)
+            contradicted = tuple(item for item in unattempted if item in observed)
             missing = tuple(item for item in attempted if item not in observed)
             if contradicted:
                 action = ReceiptAction.REFUSE_CONTRADICTED_RECEIPT
@@ -353,6 +369,19 @@ class RealityCampaignLedger:
                 action = ReceiptAction.REPLAY_MISSING_OUTCOME
             else:
                 action = ReceiptAction.SEALED_AND_CONSISTENT
+            if action is ReceiptAction.REPLAY_MISSING_OUTCOME:
+                task_remaining = tuple(
+                    item
+                    for item in planned_for_task
+                    if item.candidate_id is not None and item.candidate_id in set(missing)
+                )
+            elif action is ReceiptAction.RERUN_UNSEALED_TASK:
+                task_remaining = planned_for_task
+            elif action is ReceiptAction.RESUME_AS_PLANNED:
+                task_remaining = ordinary_remaining
+            else:
+                task_remaining = ()
+            effective.extend(task_remaining)
             tasks.append(
                 TaskReceiptState(
                     task_id=task_id,
@@ -362,9 +391,39 @@ class RealityCampaignLedger:
                     missing_outcomes=missing,
                     contradicted=contradicted,
                     stop_reason=receipt.stop_reason,
+                    effective_remaining=task_remaining,
                 )
             )
-        return ReceiptAwareResumePlan(plan=plan, tasks=tuple(tasks))
+        reconciled = ResumePlan(
+            remaining=tuple(effective),
+            completed=plan.completed,
+            unplanned_keys=plan.unplanned_keys,
+        )
+        return ReceiptAwareResumePlan(plan=reconciled, tasks=tuple(tasks))
+
+    @staticmethod
+    def _validate_v3_receipts(
+        manifest: RealityCampaignReceiptManifestV3,
+        receipts: dict[UUID, RealityCampaignSequenceRecorded],
+    ) -> None:
+        """Replay validates the hash-bound receipt against the current campaign authority."""
+        for task_id, receipt in receipts.items():
+            try:
+                task = manifest.receipt_for(task_id)
+            except KeyError as error:
+                raise CampaignLedgerError(
+                    f"sequence receipt names task {task_id} outside the current campaign"
+                ) from error
+            if receipt.campaign_id != manifest.campaign_id:
+                raise CampaignLedgerError("sequence receipt names another campaign")
+            if receipt.campaign_manifest_hash != manifest.content_hash:
+                raise CampaignLedgerError(
+                    "sequence receipt is bound to a stale or tampered manifest"
+                )
+            if receipt.partition != manifest.partition or receipt.mode != manifest.mode:
+                raise CampaignLedgerError("sequence receipt mode or partition changed")
+            if receipt.baseline_order != task.candidate_order:
+                raise CampaignLedgerError("sequence receipt candidate order changed")
 
 
 def _require_consistent_with(

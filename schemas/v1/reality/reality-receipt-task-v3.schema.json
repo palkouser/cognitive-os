@@ -1,0 +1,68 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/reality/reality-receipt-task-v3.schema.json",
+  "additionalProperties": false,
+  "description": "Exact task membership bound into a revision-3 campaign receipt authority.",
+  "properties": {
+    "bundle_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Bundle Hash",
+      "type": "string"
+    },
+    "bundle_id": {
+      "format": "uuid",
+      "title": "Bundle Id",
+      "type": "string"
+    },
+    "candidate_order": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "maxItems": 8,
+      "minItems": 1,
+      "title": "Candidate Order",
+      "type": "array"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "feature_seal_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Feature Seal Hash",
+      "type": "string"
+    },
+    "selected_member_hashes": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 8,
+      "minItems": 1,
+      "title": "Selected Member Hashes",
+      "type": "array"
+    },
+    "task_id": {
+      "format": "uuid",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "task_manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Task Manifest Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_id",
+    "task_manifest_hash",
+    "bundle_id",
+    "bundle_hash",
+    "feature_seal_hash",
+    "candidate_order",
+    "selected_member_hashes"
+  ],
+  "title": "RealityReceiptTaskV3",
+  "type": "object"
+}

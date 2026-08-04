@@ -1,0 +1,283 @@
+{
+  "$defs": {
+    "RealityCandidateSource": {
+      "description": "Who produced the patch. Not who decided whether it works — that is the verifier.",
+      "enum": [
+        "baseline",
+        "curated",
+        "codex_cli",
+        "claude_code",
+        "openrouter"
+      ],
+      "title": "RealityCandidateSource",
+      "type": "string"
+    },
+    "RealityCandidateStrategy": {
+      "description": "The four offline strategies of §4.6, plus what a provider returns.\n\n`PROVIDER_PROPOSED` deliberately has no declared correctness. A provider candidate's\nresult is whatever the hidden verifier says it is, and a strategy value that predicted\nit would be a label the corpus had assigned to itself.\n\nThe four `RECIPE_*` values are Sprint 21D2's, and they exist because the C3 four are a\nmeasured perfect oracle: on all 120 D1 correction-ranking examples `correct_*` passed and\n`incomplete_*` failed, without exception. A ranking surface fitted on a corpus whose\nrecipe name determines the label learns the name. So D2 generates its candidates under\noutcome-neutral recipes whose family is `UNDECLARED`, which means the corpus makes no\nclaim about them and a hidden-verifier result that contradicts the generator's intent is\na valid label rather than a corpus defect.",
+      "enum": [
+        "incomplete_a",
+        "correct_narrow",
+        "incomplete_b",
+        "correct_robust",
+        "provider_proposed",
+        "recipe_alpha",
+        "recipe_beta",
+        "recipe_gamma",
+        "recipe_delta"
+      ],
+      "title": "RealityCandidateStrategy",
+      "type": "string"
+    },
+    "RealityReceiptTaskV3": {
+      "additionalProperties": false,
+      "description": "Exact task membership bound into a revision-3 campaign receipt authority.",
+      "properties": {
+        "bundle_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Bundle Hash",
+          "type": "string"
+        },
+        "bundle_id": {
+          "format": "uuid",
+          "title": "Bundle Id",
+          "type": "string"
+        },
+        "candidate_order": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Candidate Order",
+          "type": "array"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "feature_seal_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Feature Seal Hash",
+          "type": "string"
+        },
+        "selected_member_hashes": {
+          "items": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Selected Member Hashes",
+          "type": "array"
+        },
+        "task_id": {
+          "format": "uuid",
+          "title": "Task Id",
+          "type": "string"
+        },
+        "task_manifest_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Task Manifest Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id",
+        "task_manifest_hash",
+        "bundle_id",
+        "bundle_hash",
+        "feature_seal_hash",
+        "candidate_order",
+        "selected_member_hashes"
+      ],
+      "title": "RealityReceiptTaskV3",
+      "type": "object"
+    },
+    "RealityRunIdentity": {
+      "additionalProperties": false,
+      "description": "What makes a planned campaign run the same run on resume, §4.14.\n\nEvery field that changes the executed work is in here. Resume skips an identity that has\nalready produced a counted outcome; the same identity presenting different content is a\nnew campaign revision, not an update.",
+      "properties": {
+        "campaign_version": {
+          "minimum": 1,
+          "title": "Campaign Version",
+          "type": "integer"
+        },
+        "candidate_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Candidate Id"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "generator_profile_id": {
+          "minLength": 1,
+          "title": "Generator Profile Id",
+          "type": "string"
+        },
+        "run_kind": {
+          "$ref": "#/$defs/RealityRunKind"
+        },
+        "source": {
+          "$ref": "#/$defs/RealityCandidateSource"
+        },
+        "strategy": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RealityCandidateStrategy"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "task_id": {
+          "format": "uuid",
+          "title": "Task Id",
+          "type": "string"
+        },
+        "task_manifest_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Task Manifest Hash",
+          "type": "string"
+        },
+        "verifier_profile_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Verifier Profile Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id",
+        "task_manifest_hash",
+        "run_kind",
+        "source",
+        "generator_profile_id",
+        "verifier_profile_hash",
+        "campaign_version"
+      ],
+      "title": "RealityRunIdentity",
+      "type": "object"
+    },
+    "RealityRunKind": {
+      "enum": [
+        "baseline",
+        "candidate"
+      ],
+      "title": "RealityRunKind",
+      "type": "string"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/reality/reality-campaign-receipt-manifest-v3.schema.json",
+  "additionalProperties": false,
+  "description": "Campaign revision plus the exact bundles, feature seals, and selected member order.",
+  "properties": {
+    "campaign_id": {
+      "format": "uuid",
+      "title": "Campaign Id",
+      "type": "string"
+    },
+    "campaign_version": {
+      "minimum": 1,
+      "title": "Campaign Version",
+      "type": "integer"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "feature_schema_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Feature Schema Hash",
+      "type": "string"
+    },
+    "feature_seal_root_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Feature Seal Root Hash",
+      "type": "string"
+    },
+    "live_providers_enabled": {
+      "default": false,
+      "title": "Live Providers Enabled",
+      "type": "boolean"
+    },
+    "mode": {
+      "minLength": 1,
+      "title": "Mode",
+      "type": "string"
+    },
+    "partition": {
+      "minLength": 1,
+      "title": "Partition",
+      "type": "string"
+    },
+    "planned_runs": {
+      "items": {
+        "$ref": "#/$defs/RealityRunIdentity"
+      },
+      "maxItems": 4096,
+      "minItems": 1,
+      "title": "Planned Runs",
+      "type": "array"
+    },
+    "receipt_revision": {
+      "default": 3,
+      "maximum": 3,
+      "minimum": 3,
+      "title": "Receipt Revision",
+      "type": "integer"
+    },
+    "receipt_tasks": {
+      "items": {
+        "$ref": "#/$defs/RealityReceiptTaskV3"
+      },
+      "minItems": 1,
+      "title": "Receipt Tasks",
+      "type": "array"
+    },
+    "selection_manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Selection Manifest Hash",
+      "type": "string"
+    },
+    "verifier_profile_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Verifier Profile Hash",
+      "type": "string"
+    }
+  },
+  "required": [
+    "campaign_id",
+    "campaign_version",
+    "planned_runs",
+    "verifier_profile_hash",
+    "created_at",
+    "partition",
+    "mode",
+    "selection_manifest_hash",
+    "feature_schema_hash",
+    "feature_seal_root_hash",
+    "receipt_tasks"
+  ],
+  "title": "RealityCampaignReceiptManifestV3",
+  "type": "object"
+}

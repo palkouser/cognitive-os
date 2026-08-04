@@ -31,6 +31,7 @@ from uuid import UUID
 
 from cognitive_os.domain.common import utc_now
 from cognitive_os.domain.enums import StreamType
+from cognitive_os.domain.reality import RealityCampaignReceiptManifestV3
 from cognitive_os.events.coding_event_service import CodingEventService
 from cognitive_os.events.coding_events import RealityCampaignSequenceRecorded
 
@@ -103,6 +104,7 @@ class CorrectionCandidateSequencer:
         attempt: AttemptRunner,
         resolved_order: Sequence[UUID] | None = None,
         learned_ordering_used: bool = False,
+        receipt_manifest: RealityCampaignReceiptManifestV3 | None = None,
     ) -> SequenceOutcome:
         """Execute one task's candidates. The mode decides how many of them run.
 
@@ -113,6 +115,20 @@ class CorrectionCandidateSequencer:
             raise SequencingError("a task with no candidates has no sequence to run")
         if len(set(baseline_order)) != len(baseline_order):
             raise SequencingError("the baseline order names a candidate twice")
+        if receipt_manifest is not None:
+            if (
+                receipt_manifest.campaign_id != campaign_id
+                or receipt_manifest.partition != partition
+                or receipt_manifest.mode != mode.value
+                or receipt_manifest.content_hash != campaign_manifest_hash
+            ):
+                raise SequencingError("the current campaign receipt manifest does not match")
+            try:
+                receipt_task = receipt_manifest.receipt_for(task_id)
+            except KeyError as error:
+                raise SequencingError("the task is absent from the receipt manifest") from error
+            if receipt_task.candidate_order != tuple(baseline_order):
+                raise SequencingError("the receipt manifest candidate order changed")
 
         resolved = tuple(resolved_order) if resolved_order is not None else tuple(baseline_order)
         if sorted(resolved, key=str) != sorted(baseline_order, key=str):
