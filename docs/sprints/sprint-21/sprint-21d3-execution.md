@@ -185,11 +185,11 @@ members, verified every artifact byte and lineage, and produced an empty effecti
 ## W1 evidence index
 
 - [per-channel diagnostic](evidence/sprint-21d3-channel-invariance-diagnostic.json) — SHA-256
-  `358f1361f0b168a825effd1c9b60a0aae787078e27d99127fcd35a7ed6e2f8f0`;
+  `5d0a8a95b37afb10d0154e5ba4592a904025ef69543f4452688907b11be35df5`;
 - [typed continuation decision](evidence/sprint-21d3-diagnostic-continuation.json) — SHA-256
-  `cc17f9f6826e2cabfbb4c88c763e8d46dd5cbf4c9731b302f5340e23fbf6024a`;
+  `5e37210f93670e2c4e24324487d2701aa7e92d0dbe884ed23c2a65839d666008`;
 - [v2 seal and resume proof](evidence/sprint-21d3-v2-seal-resume.json) — SHA-256
-  `ba2a1983430149366f0f2abe6b0aa4f7360efac57f3f0c78c4de5c917b5f205e`.
+  `2953cc7f9a80bc9f6bcd2d5ab43130fd5cc6111f66775af6ebcad3c93bf8d382`.
 
 All three carry the immutable pre-registration SHA-256
 `191b3757ded21a1c2c85459a34902f8dee3f2f35b0979b557f84c1a37fe6a191`; the automated chronology

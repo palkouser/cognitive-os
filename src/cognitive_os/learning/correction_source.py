@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import ast
 import re
+from collections.abc import Iterator
 from dataclasses import dataclass, field
 from hashlib import sha256
 
@@ -119,7 +120,7 @@ class _Binder(ast.NodeVisitor):
     def _declarations(self, body: list[ast.stmt]) -> None:
         # Declarations apply to the whole code block, so collect them before stores even when
         # their AST node appears later. Nested scopes are intentionally not descended into.
-        def local_nodes(node: ast.AST):
+        def local_nodes(node: ast.AST) -> Iterator[ast.AST]:
             yield node
             for child in ast.iter_child_nodes(node):
                 if isinstance(
@@ -171,9 +172,9 @@ class _Binder(ast.NodeVisitor):
         for argument in (*node.args.posonlyargs, *node.args.args, *node.args.kwonlyargs):
             if argument.annotation is not None:
                 self.visit(argument.annotation)
-        for argument in (node.args.vararg, node.args.kwarg):
-            if argument is not None and argument.annotation is not None:
-                self.visit(argument.annotation)
+        for optional_argument in (node.args.vararg, node.args.kwarg):
+            if optional_argument is not None and optional_argument.annotation is not None:
+                self.visit(optional_argument.annotation)
         for item in (*node.args.defaults, *node.args.kw_defaults):
             if item is not None:
                 self.visit(item)
@@ -296,7 +297,7 @@ class _Binder(ast.NodeVisitor):
         super().generic_visit(node)
 
     def validate(self) -> None:
-        def scopes(scope: _Scope):
+        def scopes(scope: _Scope) -> Iterator[_Scope]:
             yield scope
             for child in scope.children.values():
                 yield from scopes(child)
@@ -416,9 +417,9 @@ class _Normalizer(ast.NodeTransformer):
         for argument in (*node.args.posonlyargs, *node.args.args, *node.args.kwonlyargs):
             if argument.annotation is not None:
                 argument.annotation = self.visit(argument.annotation)
-        for argument in (node.args.vararg, node.args.kwarg):
-            if argument is not None and argument.annotation is not None:
-                argument.annotation = self.visit(argument.annotation)
+        for optional_argument in (node.args.vararg, node.args.kwarg):
+            if optional_argument is not None and optional_argument.annotation is not None:
+                optional_argument.annotation = self.visit(optional_argument.annotation)
         node.args.defaults = [self.visit(item) for item in node.args.defaults]
         node.args.kw_defaults = [
             None if item is None else self.visit(item) for item in node.args.kw_defaults
@@ -487,7 +488,11 @@ class _Normalizer(ast.NodeTransformer):
             raise SourceNormalizationError(
                 f"reflection-unsafe binding through {original_function}()"
             )
-        function_scope = None if resolved is None else resolved.functions.get(original_function)
+        function_scope = (
+            None
+            if resolved is None or original_function is None
+            else resolved.functions.get(original_function)
+        )
         node.func = self.visit(node.func)
         node.args = [self.visit(item) for item in node.args]
         for keyword in node.keywords:
