@@ -309,17 +309,12 @@ class ExplicitSelection:
                 "revision-3 selection authorities require identity_revision=3",
             )
         if self.identity_revision == 3:
-            if any(item is None for item in authorities):
-                raise LearnedRepositoryError(
-                    LearnedRepositoryConflict.EVIDENCE_MISMATCH,
-                    "revision-3 selection requires campaign, feature, outcome, and member hashes",
-                )
+            _, feature_hashes, outcome_hashes, member_hashes = self._v3_authorities()
             for label, mapping in (
-                ("feature record", self.feature_record_hashes),
-                ("outcome", self.outcome_hashes),
-                ("member content", self.member_content_hashes),
+                ("feature record", feature_hashes),
+                ("outcome", outcome_hashes),
+                ("member content", member_hashes),
             ):
-                assert mapping is not None  # narrowed by the authority check above
                 if set(mapping) != set(ids):
                     raise LearnedRepositoryError(
                         LearnedRepositoryConflict.EVIDENCE_MISMATCH,
@@ -334,42 +329,57 @@ class ExplicitSelection:
     def split_tuples(self) -> tuple[tuple[str, tuple[str, ...]], ...]:
         return tuple((name, tuple(members)) for name, members in sorted(self.splits.items()))
 
+    def _v3_authorities(
+        self,
+    ) -> tuple[str, Mapping[str, str], Mapping[str, str], Mapping[str, str]]:
+        if (
+            self.identity_revision != 3
+            or self.campaign_identity is None
+            or self.feature_record_hashes is None
+            or self.outcome_hashes is None
+            or self.member_content_hashes is None
+        ):
+            raise LearnedRepositoryError(
+                LearnedRepositoryConflict.EVIDENCE_MISMATCH,
+                "revision-3 selection requires campaign, feature, outcome, and member hashes",
+            )
+        return (
+            self.campaign_identity,
+            self.feature_record_hashes,
+            self.outcome_hashes,
+            self.member_content_hashes,
+        )
+
     @property
     def selection_partition_digest(self) -> str:
         if self.identity_revision != 3:
             raise ValueError("the D2 selection has no revision-3 partition digest")
-        assert self.campaign_identity is not None
-        assert self.feature_record_hashes is not None
-        assert self.outcome_hashes is not None
-        assert self.member_content_hashes is not None
+        campaign_identity, feature_hashes, outcome_hashes, member_hashes = self._v3_authorities()
         return explicit_selection_partition_digest(
-            campaign_identity=self.campaign_identity,
+            campaign_identity=campaign_identity,
             partition=self.partition,
             members=self.members,
             groups=self.groups,
             splits=self.splits,
-            feature_record_hashes=self.feature_record_hashes,
-            outcome_hashes=self.outcome_hashes,
-            member_content_hashes=self.member_content_hashes,
+            feature_record_hashes=feature_hashes,
+            outcome_hashes=outcome_hashes,
+            member_content_hashes=member_hashes,
         )
 
     @property
     def selected_members_v3(self) -> tuple[ExplicitSelectionMemberV3, ...]:
         if self.identity_revision != 3:
             raise ValueError("the D2 selection has no revision-3 member manifest")
-        assert self.campaign_identity is not None
-        assert self.feature_record_hashes is not None
-        assert self.outcome_hashes is not None
-        assert self.member_content_hashes is not None
+        campaign_identity, feature_hashes, outcome_hashes, member_hashes = self._v3_authorities()
         return tuple(
             ExplicitSelectionMemberV3(
-                campaign_identity=self.campaign_identity,
+                campaign_identity=campaign_identity,
                 partition=self.partition,
                 observation_id=observation_id,
                 group_id=self.groups[observation_id],
-                feature_record_hash=self.feature_record_hashes[observation_id],
-                outcome_hash=self.outcome_hashes[observation_id],
-                member_content_hash=self.member_content_hashes[observation_id],
+                feature_record_hash=feature_hashes[observation_id],
+                outcome_hash=outcome_hashes[observation_id],
+                member_content_hash=member_hashes[observation_id],
             )
             for observation_id, _ in sorted(self.members)
         )
@@ -480,8 +490,7 @@ class LearnedDatasetBuilder:
             created_at=created_at,
         )
         if selection is not None and selection.identity_revision == 3:
-            assert selection.campaign_identity is not None
-            assert selection_digest is not None
+            campaign_identity, _, _, _ = selection._v3_authorities()
             split_manifest: LearnedSplitManifest = ExplicitSelectionManifestV3(
                 dataset_id=dataset_id,
                 revision=revision,
@@ -491,9 +500,9 @@ class LearnedDatasetBuilder:
                 surface=surface,
                 corpus_role=corpus_role.value,
                 feature_schema_hash=feature_schema_hash,
-                campaign_identity=selection.campaign_identity,
+                campaign_identity=campaign_identity,
                 partition=selection.partition,
-                selection_partition_digest=selection_digest,
+                selection_partition_digest=selection.selection_partition_digest,
                 selected_members=selection.selected_members_v3,
             )
         else:

@@ -16,6 +16,7 @@ from __future__ import annotations
 
 from uuid import UUID
 
+from cognitive_os.application.ports.artifact_store import ArtifactStorePort
 from cognitive_os.domain.common import ArtifactRef, utc_now
 from cognitive_os.domain.learned import UNSAFE_TO_DESERIALISE, LearnedArtifactFormat
 from cognitive_os.domain.learned_evidence import (
@@ -24,7 +25,6 @@ from cognitive_os.domain.learned_evidence import (
     LearnedRepositoryConflict,
     LearnedRepositoryError,
 )
-from cognitive_os.infrastructure.artifacts.service import ArtifactService
 from cognitive_os.infrastructure.errors import ArtifactIntegrityError, ArtifactNotFoundError
 
 #: Re-exported from the domain, where the policy lives. Kept importable here because this is
@@ -40,7 +40,7 @@ class LearnedArtifactStore:
     recorded.
     """
 
-    def __init__(self, artifacts: ArtifactService) -> None:
+    def __init__(self, artifacts: ArtifactStorePort) -> None:
         self._artifacts = artifacts
 
     async def artifact_metadata(self, artifact_id: UUID) -> ArtifactRef | None:

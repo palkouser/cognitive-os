@@ -203,3 +203,12 @@ Ruff lint and format checks, contract-schema export, repository-language, pre-re
 integrity, three-file chronology, and diff-whitespace checks also pass. W1 added only the two
 public receipt JSON schemas; it changed no event field, database migration, predecessor artifact,
 calibration/final/canary body, and used no provider, network, credential, or GPU.
+
+Draft-PR CI then exposed two boundary defects that the dependency-complete local environment had
+masked. Bandit rejected assertion-based revision-3 authority narrowing, so the dataset service now
+uses an explicit runtime authority check that cannot disappear under `python -O`. The
+`experience-graph-core` lane also has no SQLAlchemy by design; `LearnedArtifactStore` had typed its
+dependency as the concrete PostgreSQL-backed `ArtifactService`, making a filesystem-only fixture
+import PostgreSQL transitively. It now depends on the existing `ArtifactStorePort`. The exact
+603-test experience/learning lane passes locally, and the W1 fixture also passes with every
+`sqlalchemy` import deliberately refused.

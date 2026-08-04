@@ -236,7 +236,7 @@ async def _run(output: Path) -> None:
 
     with tempfile.TemporaryDirectory(prefix="cogos-d3-w1-artifacts-") as directory:
         authority = _ArtifactAuthority(Path(directory))
-        artifacts = LearnedArtifactStore(authority)  # type: ignore[arg-type]
+        artifacts = LearnedArtifactStore(authority)
         repository = InMemoryLearnedEvidenceRepository()
         seal_reference = await artifacts.store(
             feature_seal.canonical_json().encode(), media_type="application/json"
@@ -398,7 +398,7 @@ async def _run(output: Path) -> None:
         restarted_builder = LearnedDatasetBuilder(
             repository,
             LearnedArtifactStore(authority),
-            clock=lambda: OUTCOME_AT + timedelta(days=1),  # type: ignore[arg-type]
+            clock=lambda: OUTCOME_AT + timedelta(days=1),
         )
         restarted_dataset = await restarted_builder.build(
             surface=SURFACE,
