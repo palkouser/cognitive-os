@@ -103,6 +103,24 @@ GRAPH_RESOURCE_POLICY_REVISION_2_HASH = (
     "d0e8520e3d3bc3637ce75f632c79aa00c1f456a8af1a4956601dad359c8474ab"
 )
 
+#: S21D3-040. Revision 1 is the class defaults, and that is precisely the problem: a benchmark
+#: that constructs `GraphResourceLimits()` gets it without naming it, which is how a Sprint 21D1
+#: measurement can be described as a revision-2 one. Naming it makes an operator say which
+#: policy a number was produced under, and makes the wrong answer a refusal rather than a
+#: silent default.
+GRAPH_RESOURCE_POLICY_REVISION_1 = GraphResourceLimits()
+
+GRAPH_RESOURCE_POLICY_REVISION_1_HASH = (
+    "4a7fe3b12ad9b25211fd05e95836080432d3fd94d0b04f64c289ea5407b66915"
+)
+
+#: Every policy a measurement may cite, by the hash it must declare. A hash outside this table
+#: names no frozen policy, so it cannot be a policy this repository measured under.
+FROZEN_GRAPH_RESOURCE_POLICIES: dict[str, GraphResourceLimits] = {
+    GRAPH_RESOURCE_POLICY_REVISION_1_HASH: GRAPH_RESOURCE_POLICY_REVISION_1,
+    GRAPH_RESOURCE_POLICY_REVISION_2_HASH: GRAPH_RESOURCE_POLICY_REVISION_2,
+}
+
 
 class ExperienceGraphNode(HashedExperienceContract):
     logical_id: NonEmptyStr
@@ -331,7 +349,14 @@ class ExperienceGraphResult(HashedExperienceContract):
     arm: NonEmptyStr
     entries: tuple[ExperienceGraphResultEntry, ...] = ()
     candidates_considered: int = Field(ge=0)
+    #: Comparisons the per-pair edit-distance timeout expired on.
     timed_out: int = Field(default=0, ge=0)
+    #: Comparisons the *query* budget refused to start. Counted apart from `timed_out`
+    #: because the remedies differ entirely: a timeout says one pair is too expensive to
+    #: compare, a cutoff says the shortlist is too wide for the budget. S21D1 reported
+    #: sixty of the second under the first's name, and S21D2's narrative then had to
+    #: explain in prose what the field should have said.
+    budget_cutoffs: int = Field(default=0, ge=0)
     limits: GraphResourceLimits = GraphResourceLimits()
 
     @model_validator(mode="after")

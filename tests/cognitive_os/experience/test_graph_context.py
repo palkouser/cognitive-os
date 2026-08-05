@@ -37,9 +37,14 @@ from cognitive_os.domain.experience_graph import (
     GraphResourceLimits,
 )
 from cognitive_os.domains.fixtures import FIXTURE_TIME
+from cognitive_os.experience import graph_retrieval
 from cognitive_os.experience.graph_context import ExperienceGraphContextRetriever
 from cognitive_os.experience.graph_projection import derive_edit_path
-from tests.cognitive_os.context.helpers import context_request, provider_profile
+from tests.cognitive_os.context.helpers import (
+    context_candidate,
+    context_request,
+    provider_profile,
+)
 
 HASH = "c" * 64
 ARTIFACT = UUID(int=7)
@@ -308,3 +313,110 @@ class TestTheAdvisoryBoundarySurvivesTheWidth20Policy:
         candidates = await retriever.retrieve(_subquery(), _repair_request("some failure"))
 
         assert len(candidates) <= 1
+
+
+class TestTheAdvisoryBoundarySurvivesTheFusionArm:
+    """S21D3-047. W3 adds a retrieval arm; it must add no authority.
+
+    The properties are the released ones, restated against the new arm rather than assumed
+    to carry over: an advisory candidate is never pinned, required or evidence, it never
+    carries an executable body, the mandatory part of a bundle is byte-identical whether or
+    not retrieval contributed, and an arm that fails leaves the deterministic path intact.
+    """
+
+    @pytest.mark.asyncio
+    async def test_the_context_retriever_never_calls_the_fusion_arm(self) -> None:
+        """It has no embedding provider at all, so it cannot have called a vector arm."""
+        retriever = ExperienceGraphContextRetriever(PAIRS)
+        candidates = await retriever.retrieve(_subquery(), _repair_request("some failure"))
+
+        assert candidates
+        assert {route.retriever_id for c in candidates for route in c.retrieval_routes} == {
+            "context.experience_graph"
+        }
+        assert graph_retrieval.RECIPROCAL_RANK_FUSION not in {
+            route.mode.value for c in candidates for route in c.retrieval_routes
+        }
+
+    @pytest.mark.asyncio
+    async def test_the_mandatory_path_is_byte_identical_with_and_without_retrieval(self) -> None:
+        """The hash comparison S21D3-047 asks for: advisory context cannot move it."""
+        retriever = ExperienceGraphContextRetriever(
+            PAIRS, artifact_ids={p.pair_id: ARTIFACT for p in PAIRS}, verifier=_ok
+        )
+        request = _repair_request("a failing logic step")
+        graph_candidates = await retriever.retrieve(_subquery(), request)
+        mandatory = context_candidate(
+            ContextSourceType.TASK_STATE, "the step under repair", required=True, pinned=True
+        )
+
+        advisory = {candidate.candidate_id for candidate in graph_candidates}
+
+        def mandatory_sections(candidates: tuple) -> dict[str, str]:
+            """Sections referencing no advisory candidate. Sectioning is by trust class, not
+            by source type, so a graph candidate can share a section heading with a mandatory
+            one — the candidate references are what say whose bytes are in there."""
+            bundle = assemble_bundle(
+                bundle_id=UUID(int=77),
+                revision=1,
+                previous_revision=None,
+                request=request,
+                candidates=candidates,
+                exclusions=(),
+                warnings=(),
+                ranking_profile=ranking_profile(ContextConfiguration()),
+                provider_profile=provider_profile(),
+                estimator=ConservativeUtf8TokenEstimator(),
+            )
+            return {
+                section.section_type: section.content_hash
+                for section in bundle.sections
+                if not advisory & set(section.candidate_references)
+            }
+
+        assert graph_candidates
+        without = mandatory_sections((mandatory,))
+        with_retrieval = mandatory_sections((mandatory, *graph_candidates))
+
+        assert without, "the mandatory path is not empty"
+        assert without == with_retrieval
+
+    @pytest.mark.asyncio
+    async def test_an_advisory_candidate_carries_no_authority_whatever_ranked_it(self) -> None:
+        retriever = ExperienceGraphContextRetriever(
+            PAIRS, artifact_ids={p.pair_id: ARTIFACT for p in PAIRS}, verifier=_ok
+        )
+
+        candidates = await retriever.retrieve(_subquery(), _repair_request("a failing step"))
+
+        assert candidates
+        for candidate in candidates:
+            assert not candidate.pinned
+            assert not candidate.required
+            assert not candidate.evidence
+            assert candidate.content is None
+            assert candidate.trust_class is ContextTrustClass.VERIFIED
+            assert candidate.provenance, "an advisory suggestion still names where it came from"
+
+    @pytest.mark.asyncio
+    async def test_a_failing_arm_leaves_the_deterministic_path_valid(self) -> None:
+        """No-memory is a result. A retrieval outage degrades the bundle, never the run."""
+        empty = ExperienceGraphContextRetriever(())
+
+        health = await empty.health_check()
+        candidates = await empty.retrieve(_subquery(), _repair_request("a failing step"))
+
+        assert health.status is ContextComponentStatus.DEGRADED
+        assert candidates == ()
+
+    @pytest.mark.asyncio
+    async def test_a_corrupt_store_cannot_promote_a_suggestion(self) -> None:
+        """A retrieval failure must not be able to raise trust; it can only lower it."""
+        retriever = ExperienceGraphContextRetriever(
+            PAIRS, artifact_ids={p.pair_id: ARTIFACT for p in PAIRS}, verifier=_corrupt
+        )
+
+        candidates = await retriever.retrieve(_subquery(), _repair_request("a failing step"))
+
+        assert candidates
+        assert {c.trust_class for c in candidates} == {ContextTrustClass.UNVERIFIED}

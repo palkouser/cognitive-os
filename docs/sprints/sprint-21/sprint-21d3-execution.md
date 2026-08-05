@@ -1,9 +1,10 @@
 # Sprint 21D3 execution log
 
 - **Branch:** `feature/sprint-21d3-invariant-correction-ranking`
-- **Wave:** W0 + W1 + W2 — pre-registration, invariant correction spine, fresh correction evidence
-- **Status:** W0, W1 and W2 complete; W2 ends in a null candidate selection and leaves the
-  independent retrieval branch open for W3
+- **Wave:** W0 + W1 + W2 + W3 — pre-registration, invariant correction spine, fresh correction
+  evidence, independent retrieval
+- **Status:** W0, W1, W2 and W3 complete. W2 ends in a null candidate selection; W3 ends in a
+  negative retrieval result. Both experiment branches are now closed and Gate L2 stays closed.
 - **Migration:** none; all isolated databases are at `0015`
 - **Pre-registration SHA-256:**
   `191b3757ded21a1c2c85459a34902f8dee3f2f35b0979b557f84c1a37fe6a191`
@@ -376,3 +377,212 @@ Artifact Store pairs received zero writes, and the campaign reports zero worktre
 Draft PR [#221](https://github.com/palkouser/cognitive-os/pull/221) carries the W2 commit at head
 `fa32c550f58c`; its CI run `30979833725` completed **30 of 30 jobs successfully**, so the lanes
 that caught W1's Bandit and SQLAlchemy boundaries are green on this wave without a follow-up fix.
+
+## W3 independent retrieval
+
+W3 executes S21D3-040 through S21D3-047. The benchmark surface is repaired, one fixed fusion
+arm is added, the frozen D1 set is replayed, and a new sixty-query unseen-task holdout is
+resolved, projected and read once. The result is a **negative retrieval result**: no arm
+reaches the pre-registered floors, so D1 condition 15 stays open and Gate L2 condition 24 is
+not met. Both D3 branches have now returned a negative, and both did so for a reason the
+evidence names.
+
+### The repaired benchmark boundary and the fixed fusion arm
+
+`scripts/experience.py graph-benchmark` now refuses to run without `--policy-hash`, resolves
+that hash against the two frozen policies rather than accepting a revision, and emits the
+complete pre-registered metric set: Recall@5, MRR@10, nDCG@10, p50/p95/max latency, coverage,
+candidate counts, timeouts, **budget cutoffs**, query/model/policy/root hashes, per-query
+rankings, and repeated-order agreement per arm. Its previous output was two numbers under
+whatever policy `GraphResourceLimits()` happened to be — which is revision 1, and is how a
+Sprint 21D1 measurement can be narrated as a revision-2 one.
+
+`timeouts` and `budget_cutoffs` are now separate fields. They were one field, and the D1
+record's "60 timeouts" were in fact 60 budget cutoffs — ten pairs at 250 ms against a
+two-second budget. `ExperienceGraphResult` gained one optional counter to say which happened;
+the remedies are opposite, so one name for both was a defect in the report rather than a
+shorthand.
+
+`reciprocal_rank_fusion` is implemented in the released retrieval module as
+`1/(60 + rank_lexical) + 1/(60 + rank_vector)` over the **complete** pool: `_lexical_scores`
+was extracted so both the lexical arm and the fusion read one scorer, zero-score lexical
+documents are absent from the lexical ranking rather than last in it, a missing arm
+contributes zero, ties fall back to the shared pair-id order, and truncation happens once,
+after fusion. No GED, no weight, no constant, no index, no dependency. The exact ordering is
+pinned against the frozen test vector S21D3-016 published (`b`, `a`, `c`), derived from
+`CorrectionRetrievalProtocolV3.fused_score` rather than from the arm's own arithmetic.
+
+### The frozen D1 replay
+
+| Arm | Recall@5 | MRR@10 | nDCG@10 | p95 ms | Reproducible |
+|---|---:|---:|---:|---:|:--:|
+| no_memory | 0.0000 | 0.0000 | 0.0000 | 0.1 | yes |
+| exact_signature | 0.0000 | 0.0000 | 0.0000 | 0.1 | yes |
+| lexical | 0.5250 | 0.4145 | 0.3327 | 1.1 | yes |
+| minilm_vector | 0.5375 | 0.4392 | 0.3740 | 33.6 | yes |
+| width-20 bounded GED | 0.5750 | 0.3505 | 0.2204 | 1767.8 | **no** |
+| reciprocal_rank_fusion | 0.7750 | 0.4478 | 0.3567 | 28.1 | yes |
+
+Every deterministic arm reproduces the authoritative values S21D3-001 fixed, to four decimal
+places, on all four fields. Zero writes reached the D1 store and no D1 or D2 evidence file was
+modified. The RRF row is recorded, not tuned: constant 60, equal weights, zero sweeps.
+
+Complementarity is real on this set. The lexical and vector arms answer 42 and 43 of 80
+queries, agreeing on 25; their union is 60 and the fusion answers 62 — it both gains seven
+queries neither input answered inside its own five and loses five that a single arm answered
+alone. A union of two top-five sets is not a ceiling on a fused top five: a pair ranked
+moderately by both outscores one ranked first by one arm and unranked by the other. Eleven
+queries are answered by no arm at all.
+
+### W3-F1 — the graph arm cannot reproduce itself
+
+The repaired benchmark's first real use found it. Two identical passes of the same command on
+the same host disagree on exactly one arm: `minilm_shortlist_plus_bounded_ged` returned
+0.5750/0.3505/0.2204 on the first pass and 0.5750/0.3489/0.2147 on the second, and three
+separate runs produced 0.5875/0.3600/0.2226, 0.5750/0.3475/0.2109 and the pair above. Every
+other arm, including the new fusion, agrees byte for byte across passes.
+
+The cause is not the benchmark. `networkx.graph_edit_distance` under a wall-clock `timeout` is
+an anytime search: it returns the best distance found before the clock expires, so how much
+search fits in 90 ms decides the score, and that depends on the host and the moment. The D1 and
+D2 records for this arm are therefore not reproducible by anyone, including on the machine that
+produced them.
+
+It is **not fixed in D3, deliberately.** Revision 3 froze the comparators unchanged and the
+resource policy at 90 ms per comparison; replacing the wall-clock budget with a deterministic
+one would change a frozen comparator mid-experiment and destroy comparability with D1 and D2.
+What W3 does instead is measure it, name it per arm, and record the second pass's own metrics
+beside the first. `repeated_ranking_agreement` is a per-arm field now precisely so one unstable
+arm is neither hidden by an aggregate nor allowed to condemn five stable ones.
+
+### The new holdout
+
+Sixty fresh retrieval groups were executed rather than declared: each group's failed state was
+run as the task baseline and its authored repair as the single candidate, 120 recorded runs
+through the released campaign runner and the same hidden verifier profile the correction
+campaign used. Every baseline failed its hidden suite and every repair passed it, which is what
+makes a pair causal evidence instead of two files that differ.
+
+The two runs form a **two-run repair path** — baseline rejected, then repair accepted.
+`TrajectoryPlan` gained an optional `incorrect` step for it: a §4.10 correction path still
+requires all three of its runs, and a path that declares no incorrect attempt must have exactly
+two. Authoring a third body per group to satisfy a three-step shape would have put a fictional
+"attempt that changed nothing" into sixty compiled trajectories.
+
+Projection is 60 of 60 on every check: sources resolve, edit paths round-trip, and the largest
+graph uses 5 of the 64 permitted nodes with at most 6 edit operations, so no bound had to move.
+Separation is clean — zero retrieval groups crossing any correction role, zero task signatures
+or query ids reused from D1, zero cross-group near clones over all 120 bodies. The queries and
+their relevance judgements were frozen and written to disk before the benchmark subprocess
+existed; every query excludes its own group, and all 60 qualify against the floor of 50.
+
+| Arm | Recall@5 | MRR@10 | nDCG@10 | p95 ms | Coverage |
+|---|---:|---:|---:|---:|---:|
+| no_memory | 0.0000 | 0.0000 | 0.0000 | 0.1 | 0.00 |
+| exact_signature | 0.0000 | 0.0000 | 0.0000 | 0.1 | 0.00 |
+| lexical | 0.4833 | 0.3042 | 0.1613 | 0.7 | 1.00 |
+| minilm_vector | **0.5333** | **0.3414** | 0.1619 | 21.3 | 1.00 |
+| width-20 bounded GED | 0.5000 | 0.3073 | 0.1648 | 47.6 | 1.00 |
+| reciprocal_rank_fusion | 0.5000 | 0.3004 | 0.1583 | 15.3 | 1.00 |
+| *uniformly random ranking* | *0.5768* | *0.3317* | — | — | — |
+
+Zero timeouts, zero budget cutoffs, and every arm reproducible across both passes. The floors
+are Recall@5 `>= 0.70` and MRR@10 `>= 0.50`; the first failed floor is `recall_at_5` and no arm
+clears it. **The strongest arm is at or below the chance baseline on recall.**
+
+### W3-F2 — the first resolution leaked its own judgement
+
+The first run of this holdout returned Recall@5 `1.0000` and MRR@10 `1.0000` for the vector arm.
+That is not a result, and it was treated as a defect rather than a finding.
+
+`ActionDecisionGraph.search_text()` puts the task signature in front of every arm, and the
+signature had been `d3r_boundary:batch_evenly` — the relevance judgement for this holdout is
+"same task family", so the family name was literally a substring of both the query and every
+relevant candidate. A sub-word encoder matches that prefix immediately; the lexical arm, which
+needs whole-token equality, was unaffected and scored 0.4833, which is what made the mechanism
+legible.
+
+The signature is now the executed task's own identity — the reality task id, a uuid5 over
+template and seed, which is exactly Sprint 21D1's convention. The sealed retrieval pool keeps
+the readable identity it sealed in W2, because separation and lineage are a different question
+from what a ranker may see; the D3 seal hash is unchanged. A fail-closed guard now refuses to
+rank any text containing its own family or group name, and the holdout was resolved and
+evaluated again from scratch under the fix. The leaked run's metrics decided nothing.
+
+### Why every arm is at chance
+
+The holdout records the reason rather than leaving it to be inferred from a flat table. All 60
+candidates have **one** distinct searchable body between them once the domain and the opaque
+signature are removed. `search_text()` is domain, task signature, node labels and edge kinds; it
+carries no repaired source, no issue text and no provenance hash. Sixty structurally identical
+repair paths are therefore one document to every arm, and the lexical arm degenerates exactly
+as that predicts — its ranking is the pair-id tie-break for all sixty queries.
+
+This is a property of the released projection, not of the corpus or of the fusion. D1 saw the
+same ceiling from the other side: its coding pairs scored 0.4333 lexical and 0.4000 vector,
+also at or below chance, while its 14 tier-2 queries scored 1.0000 because tier 2 was "same
+domain" and `domain` is in the searchable text — the same leak W3-F2 removed, in the
+predecessor. What the D3 holdout adds is that the ceiling is now measured against a stated
+chance baseline instead of being read as a middling score.
+
+No alternative fusion, width, weight, metric or holdout member was opened, per S21D3-046.
+
+### The advisory boundary
+
+S21D3-047 holds for this outcome as it does for any other, and is proved rather than asserted.
+The Context Builder retriever has no embedding provider and never calls an arm; the mandatory
+sections of a bundle are byte-identical whether or not retrieval contributed, compared by
+section content hash over the sections that reference no advisory candidate; an advisory
+candidate is never pinned, required or evidence and carries no executable body; an empty set is
+degraded rather than unavailable, so the deterministic path stays valid; and a corrupt store can
+only lower trust to `UNVERIFIED`, never raise it.
+
+### W3 findings
+
+| ID | Subject | Observed | Action |
+|---|---|---|---|
+| W3-F1 | `minilm_shortlist_plus_bounded_ged` | Two identical passes of one command on one host disagree on this arm alone, and four runs produced four different metric triples. `networkx.graph_edit_distance` under a wall-clock timeout is an anytime search, so the score depends on how much search fits in 90 ms. The D1 and D2 records for this arm are not reproducible by anyone. | Measured and reported per arm, with the second pass's own metrics recorded beside the first. Not repaired: revision 3 froze the comparator and the 90 ms policy, and a deterministic budget would change a frozen arm mid-experiment. |
+| W3-F2 | the first holdout resolution | The vector arm returned a perfect 1.0000/1.0000. The graph task signature spelled the task family, `search_text()` shows the signature to every arm, and the relevance judgement *is* the family — so the arm was reading its own label. | The signature is now the executed task's uuid5 identity, D1's convention. A fail-closed guard refuses to rank text naming its own family or group. The holdout was re-resolved and re-evaluated end to end; the leaked run decided nothing. |
+| W3-A1 | the D1 read-only check | The first version fingerprinted `docs/sprints/sprint-21`, which is the tree the command writes its own evidence into, so it reported "changed" unconditionally. | Replaced with D1's own file hashes and its Artifact Store fingerprint. The D1 retrieval benchmark hashes to `7ca6b1c7…`, the value the D2 diagnostic recorded, and the query set matches the published `0a82bfe3…`. |
+
+The reporting defect the split of `timeouts` and `budget_cutoffs` fixes is recorded above rather
+than in this table: it was found by reading the pre-registered metric list against the field
+that was supposed to carry two of them.
+
+### W3 evidence index
+
+| Evidence | SHA-256 |
+|---|---|
+| [D1 development replay](evidence/sprint-21d3-d1-retrieval-development.json) | `e8ca5615cd9a757f7e129502319b666c97c5f2c3f5c1822fe8865d7645559efe` |
+| [holdout graph root](evidence/sprint-21d3-retrieval-emg-root.json) | `28dc23b75f40255eff1beccab7cb5cd27285840781ccb6a60e1946e9d7e7bbdd` |
+| [holdout queries](evidence/sprint-21d3-retrieval-queries.json) | `4064d15793cdab7562623e29f7df3017bb87e4b6519abe4ecfecca31a3a1dcb0` |
+| [holdout result](evidence/sprint-21d3-retrieval-holdout-result.json) | `6a204f1e0665941c3b1337c7f9fea2d8fd10d4c0a23019ba194c084f213771bb` |
+
+Both chronology-bound files carry the pre-registration SHA-256
+`191b3757ded21a1c2c85459a34902f8dee3f2f35b0979b557f84c1a37fe6a191`, and `--check-chronology`
+accepts all ten D3 files. The benchmark payload hashes to
+`046f81970826f7a9ba778520efd2cdd54ee93eaaf74f85c73bd41a153a9acee3` and was executed once. The
+two operator commands are:
+
+```bash
+UV_CACHE_DIR=... uv run python scripts/retrieval_development_d3.py --model <frozen-minilm>
+set -a && . ./.env.s21d3.local && set +a
+UV_CACHE_DIR=... uv run python scripts/retrieval_holdout_d3.py --model <frozen-minilm>
+```
+
+### W3 validation
+
+The complete repository suite passes with zero failures — 3307 passed, 217 skipped — as do Ruff
+lint and format over `src tests scripts infra`, mypy over `src/cognitive_os`, Bandit with zero
+results, the contract-schema export check, the pre-registration integrity and ten-file
+chronology checks, the repository language check and the tracked-file secrets scan. Two focused
+modules were added or extended: `tests/cognitive_os/coding/test_d3_retrieval_holdout.py` pins
+the retrieval packages, the two-run repair path, the unchanged three-run rule and the leak
+guard, while the fusion arm, the policy boundary and the advisory boundary are pinned next to
+the released tests they extend.
+
+`ExperienceGraphResult` gained one optional field, so `v1/experience-graph/` was re-exported;
+nothing was removed and no other schema changed. W3 added no database migration, no event
+field, no corpus or artifact role, no dependency and no provider, network, credential or GPU
+call. Migration stays at `0015`. The D1 Artifact Store received zero writes and no D1 or D2
+evidence file was modified.

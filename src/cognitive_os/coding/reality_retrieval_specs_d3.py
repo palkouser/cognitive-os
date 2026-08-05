@@ -58,6 +58,27 @@ class D3RetrievalSpec:
         """The stable pair identity the graph projection and the holdout both address."""
         return self.template_id.replace(".", ":")
 
+    @property
+    def visible_test(self) -> str:
+        """The published suite, generated rather than authored. §S21D3-043.
+
+        A retrieval group's two states differ semantically and not syntactically, so this
+        suite passes on both — and that is the honest published signal, not a gap. Nothing
+        visible separates the failed state from its repair; the hidden bundle is what does.
+        Authoring sixty real published suites would buy a distinction no arm reads, since
+        retrieval ranks projected graphs and never a test result.
+        """
+        return _test_module(
+            self.module,
+            "The published suite: the module loads and exposes something to call.",
+            f"""
+def test_the_module_exposes_a_callable() -> None:
+    public = [name for name in dir({self.module}) if not name.startswith("_")]
+    assert any(callable(getattr({self.module}, name)) for name in public)
+""",
+            imports=f"import {self.module}\n",
+        )
+
 
 def _hidden(module: str, body: str, *, imports: str = "") -> str:
     return _test_module(module, "The contract the repair has to satisfy.", body, imports=imports)

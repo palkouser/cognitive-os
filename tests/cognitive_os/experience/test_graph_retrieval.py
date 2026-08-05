@@ -373,7 +373,10 @@ class TestTheFrozenResourcePolicy:
             query, pool, _graph(999), limits=limits, embed=embed
         )
 
-        assert result.timed_out == result.candidates_considered == 20
+        # S21D3-040: a cutoff is not a timeout. Nothing here ran long enough to expire; the
+        # budget refused to start twenty comparisons, and the field says which happened.
+        assert result.budget_cutoffs == result.candidates_considered == 20
+        assert result.timed_out == 0
 
     @needs_bounded_ged
     @pytest.mark.asyncio
@@ -397,4 +400,173 @@ class TestTheFrozenResourcePolicy:
 
         assert result.candidates_considered == 20
         assert len(result.entries) == 10
-        assert result.timed_out > 0
+        assert result.timed_out + result.budget_cutoffs > 0
+
+
+class TestTheFixedReciprocalRankFusionArm:
+    """S21D3-041: two frozen rank lists, equal weights, constant sixty, one truncation."""
+
+    @staticmethod
+    def _expected(
+        lexical_order: list[str], vector_order: list[str], pair_ids: list[str]
+    ) -> list[str]:
+        """The frozen formula, evaluated from the contract rather than from the arm.
+
+        `CorrectionRetrievalProtocolV3.fused_score` is what S21D3-016 published, exact
+        Decimals and all. Deriving the expectation from it makes this an oracle instead of
+        a restatement of `reciprocal_rank_fusion`'s own arithmetic.
+        """
+        from cognitive_os.learning.correction_protocol import CorrectionRetrievalProtocolV3
+
+        protocol = CorrectionRetrievalProtocolV3()
+        lexical_rank = {pair_id: rank for rank, pair_id in enumerate(lexical_order, start=1)}
+        vector_rank = {pair_id: rank for rank, pair_id in enumerate(vector_order, start=1)}
+        scored = [
+            (
+                pair_id,
+                protocol.fused_score(lexical_rank.get(pair_id), vector_rank.get(pair_id)),
+            )
+            for pair_id in pair_ids
+        ]
+        return [
+            pair_id
+            for pair_id, score in sorted(scored, key=lambda item: (-item[1], item[0]))
+            if score > 0
+        ]
+
+    def test_the_frozen_test_vector_orders_b_then_a_then_c(self) -> None:
+        """The exact example S21D3-016 published, including the arm-missing document."""
+        assert self._expected(["a", "b"], ["b", "c", "a"], ["a", "b", "c"]) == ["b", "a", "c"]
+
+    @pytest.mark.asyncio
+    async def test_the_published_order_is_the_fusion_of_both_complete_rank_lists(
+        self,
+        query: ExperienceGraphQuery,
+        pool: tuple[Candidate, ...],
+        embed: DeterministicEmbedding,
+    ) -> None:
+        """Ranks come from the whole pool, not from either arm's top ten."""
+        limits = GraphResourceLimits(returned_results=10)
+        lexical_order = [
+            pair_id
+            for pair_id, score in graph_retrieval._ranked(
+                graph_retrieval._lexical_scores(query, pool)
+            )
+            if score > 0
+        ]
+        vector_order = [
+            pair_id
+            for pair_id, _ in graph_retrieval._ranked(
+                await graph_retrieval._vector_scores(query, pool, embed=embed)
+            )
+        ]
+
+        fused = await graph_retrieval.reciprocal_rank_fusion(
+            query, pool, limits=limits, embed=embed
+        )
+
+        expected = self._expected(lexical_order, vector_order, [c.pair_id for c in pool])
+        assert [entry.pair_id for entry in fused.entries] == expected[:10]
+        assert len(vector_order) == POOL_SIZE
+        assert fused.candidates_considered == POOL_SIZE
+
+    @pytest.mark.asyncio
+    async def test_a_document_no_lexical_score_reached_is_ranked_by_the_other_arm_alone(
+        self,
+        pool: tuple[Candidate, ...],
+        embed: DeterministicEmbedding,
+    ) -> None:
+        """Missing membership contributes zero. It does not contribute a last place."""
+        query = ExperienceGraphQuery(
+            query_id="query-002",
+            query_text="wholly unrelated vocabulary nothing shares",
+            domain="coding",
+            task_signature="signature-999",
+            excluded_groups=("group-999",),
+        )
+        limits = GraphResourceLimits(returned_results=10)
+
+        assert all(score == 0.0 for _, score in graph_retrieval._lexical_scores(query, pool))
+
+        fused = await graph_retrieval.reciprocal_rank_fusion(
+            query, pool, limits=limits, embed=embed
+        )
+        vector = await graph_retrieval.minilm_vector(query, pool, limits=limits, embed=embed)
+
+        assert [e.pair_id for e in fused.entries] == [e.pair_id for e in vector.entries]
+        assert fused.entries[0].score == f"{1 / (graph_retrieval.FUSION_CONSTANT + 1):.6f}"
+
+    @pytest.mark.asyncio
+    async def test_ties_fall_back_to_the_pair_id_order_every_arm_shares(
+        self, embed: DeterministicEmbedding
+    ) -> None:
+        """Two candidates with one text hold one rank pair, so only the id can separate them."""
+        shared = _graph(1).search_text()
+        pool = tuple(
+            Candidate(
+                pair_id=pair_id,
+                group=f"group-{pair_id}",
+                domain="coding",
+                task_signature="signature-shared",
+                text=shared,
+                graph=_graph(1),
+            )
+            for pair_id in ("pair-b", "pair-a")
+        )
+        query = ExperienceGraphQuery(
+            query_id="query-003",
+            query_text=shared,
+            domain="coding",
+            task_signature="signature-query",
+            excluded_groups=("group-query",),
+        )
+
+        fused = await graph_retrieval.reciprocal_rank_fusion(
+            query, pool, limits=GraphResourceLimits(), embed=embed
+        )
+
+        assert [entry.pair_id for entry in fused.entries] == ["pair-a", "pair-b"]
+
+    @pytest.mark.asyncio
+    async def test_the_output_is_truncated_once_and_only_after_fusion(
+        self,
+        query: ExperienceGraphQuery,
+        pool: tuple[Candidate, ...],
+        embed: DeterministicEmbedding,
+    ) -> None:
+        """Both inputs see thirty candidates; the caller sees ten. §4.6's single truncation."""
+        limits = GraphResourceLimits(returned_results=10)
+
+        fused = await graph_retrieval.reciprocal_rank_fusion(
+            query, pool, limits=limits, embed=embed
+        )
+        wider = await graph_retrieval.reciprocal_rank_fusion(
+            query, pool, limits=GraphResourceLimits(returned_results=20), embed=embed
+        )
+
+        assert len(fused.entries) == 10
+        assert len(wider.entries) == 20
+        # Widening the output must not reorder it: a second truncation before fusion would.
+        assert [e.pair_id for e in wider.entries][:10] == [e.pair_id for e in fused.entries]
+
+    @pytest.mark.asyncio
+    async def test_the_input_arms_keep_their_own_evidence_identities(
+        self,
+        query: ExperienceGraphQuery,
+        pool: tuple[Candidate, ...],
+        embed: DeterministicEmbedding,
+    ) -> None:
+        """Fusion publishes its own arm name and leaves the comparators' results alone."""
+        limits = GraphResourceLimits(returned_results=10)
+
+        fused = await graph_retrieval.reciprocal_rank_fusion(
+            query, pool, limits=limits, embed=embed
+        )
+        vector = await graph_retrieval.minilm_vector(query, pool, limits=limits, embed=embed)
+        lexical = graph_retrieval.lexical(query, pool, limits=limits)
+
+        assert fused.arm == graph_retrieval.RECIPROCAL_RANK_FUSION
+        assert vector.arm == graph_retrieval.MINILM_VECTOR
+        assert lexical.arm == graph_retrieval.LEXICAL
+        assert {entry.arm for entry in fused.entries} == {graph_retrieval.RECIPROCAL_RANK_FUSION}
+        assert fused.timed_out == fused.budget_cutoffs == 0

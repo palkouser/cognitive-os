@@ -1,0 +1,1382 @@
+[
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-apply-migration"
+    ],
+    "query_hash": "1561e62133e0b7a3320850fafc28db5a6274762e6806748bd8a69924619999fb",
+    "query_id": "q:d3r-apply-migration",
+    "relevance_family": "state_idempotency",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-bump-revision",
+      "d3r-close-twice",
+      "d3r-drain-queue",
+      "d3r-forget-expired",
+      "d3r-increment-counter",
+      "d3r-register-once",
+      "d3r-release-lock",
+      "d3r-reserve-capacity",
+      "d3r-touch-entry"
+    ],
+    "seen_task": false,
+    "task_signature": "b64a3442-451d-5ef3-87af-0888c69aefac"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-batch-evenly"
+    ],
+    "query_hash": "121fe6a4425a8939695ab9a68e4dcf9df8ed9c5f19871408129344a0fe8c08ed",
+    "query_id": "q:d3r-batch-evenly",
+    "relevance_family": "boundary_collections",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-count-runs",
+      "d3r-drop-while-blank",
+      "d3r-last-index-of",
+      "d3r-longest-prefix",
+      "d3r-rotate-right",
+      "d3r-split-at-first",
+      "d3r-stride-take",
+      "d3r-take-between",
+      "d3r-without-none"
+    ],
+    "seen_task": false,
+    "task_signature": "ebfff82d-e5ba-5d06-8356-0743a680de99"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-bump-revision"
+    ],
+    "query_hash": "ccf16ef8e87e3ae50913717d60e53b1aeee89a7614f34dfcc58e3a2563dba9c0",
+    "query_id": "q:d3r-bump-revision",
+    "relevance_family": "state_idempotency",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-apply-migration",
+      "d3r-close-twice",
+      "d3r-drain-queue",
+      "d3r-forget-expired",
+      "d3r-increment-counter",
+      "d3r-register-once",
+      "d3r-release-lock",
+      "d3r-reserve-capacity",
+      "d3r-touch-entry"
+    ],
+    "seen_task": false,
+    "task_signature": "0b05a598-b157-5a05-8390-a1f565a5c604"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-ceil-divide"
+    ],
+    "query_hash": "ae63509b31929e4599330e3a9372b9a44fe86c46e12f2176675fec12c73af1e7",
+    "query_id": "q:d3r-ceil-divide",
+    "relevance_family": "numeric_logic",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-clamp-between",
+      "d3r-compound-growth",
+      "d3r-digit-sum",
+      "d3r-mean-of",
+      "d3r-median-of",
+      "d3r-percent-of",
+      "d3r-running-max",
+      "d3r-scale-series",
+      "d3r-sum-positive"
+    ],
+    "seen_task": false,
+    "task_signature": "d40a41da-82ce-504f-ae63-6c3bd3f582e0"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-clamp-between"
+    ],
+    "query_hash": "d6dc85b49de3987625c993f1d61ee99cb29d874bf98c70500fb09056628b6d8c",
+    "query_id": "q:d3r-clamp-between",
+    "relevance_family": "numeric_logic",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-ceil-divide",
+      "d3r-compound-growth",
+      "d3r-digit-sum",
+      "d3r-mean-of",
+      "d3r-median-of",
+      "d3r-percent-of",
+      "d3r-running-max",
+      "d3r-scale-series",
+      "d3r-sum-positive"
+    ],
+    "seen_task": false,
+    "task_signature": "93301579-657e-52be-9d15-02043443b05f"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-close-all-quietly"
+    ],
+    "query_hash": "85dc78301df775530e0fdc2d7eb29ba7195b857c62d266cae3bdc91e1eacf42b",
+    "query_id": "q:d3r-close-all-quietly",
+    "relevance_family": "error_handling",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-collect-errors",
+      "d3r-default-on-error",
+      "d3r-exit-status",
+      "d3r-guard-division",
+      "d3r-lookup-or-raise",
+      "d3r-require-fields",
+      "d3r-retry-with-backoff",
+      "d3r-split-results",
+      "d3r-wrap-timeout"
+    ],
+    "seen_task": false,
+    "task_signature": "bb3cbf9b-bdbb-5d03-9a9a-8ab855eedd5b"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-close-twice"
+    ],
+    "query_hash": "f13133c75d54a6005d84ec739beecc5c66b10b493d4575e6e4dfc092d265a108",
+    "query_id": "q:d3r-close-twice",
+    "relevance_family": "state_idempotency",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-apply-migration",
+      "d3r-bump-revision",
+      "d3r-drain-queue",
+      "d3r-forget-expired",
+      "d3r-increment-counter",
+      "d3r-register-once",
+      "d3r-release-lock",
+      "d3r-reserve-capacity",
+      "d3r-touch-entry"
+    ],
+    "seen_task": false,
+    "task_signature": "60561659-d3eb-5ecf-ba9b-de1306b78e77"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-collect-errors"
+    ],
+    "query_hash": "9532ac76f42fae860a7758d057f6aee988912cb58e449ca08fb5da95bd8a8252",
+    "query_id": "q:d3r-collect-errors",
+    "relevance_family": "error_handling",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-close-all-quietly",
+      "d3r-default-on-error",
+      "d3r-exit-status",
+      "d3r-guard-division",
+      "d3r-lookup-or-raise",
+      "d3r-require-fields",
+      "d3r-retry-with-backoff",
+      "d3r-split-results",
+      "d3r-wrap-timeout"
+    ],
+    "seen_task": false,
+    "task_signature": "f661d993-20ff-56af-a2bb-d5907e9bcc30"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-compound-growth"
+    ],
+    "query_hash": "c7149c0d5e67d4645fd9940031edb23ba059bbd73e03b7dcbcafd45105e105d9",
+    "query_id": "q:d3r-compound-growth",
+    "relevance_family": "numeric_logic",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-ceil-divide",
+      "d3r-clamp-between",
+      "d3r-digit-sum",
+      "d3r-mean-of",
+      "d3r-median-of",
+      "d3r-percent-of",
+      "d3r-running-max",
+      "d3r-scale-series",
+      "d3r-sum-positive"
+    ],
+    "seen_task": false,
+    "task_signature": "bfb957bd-c243-5de3-968f-8f0e8d1b408b"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-count-runs"
+    ],
+    "query_hash": "d848778b59d55887ff8ab4dd602a61ab2a17a472c938111337e636f7466e4ca6",
+    "query_id": "q:d3r-count-runs",
+    "relevance_family": "boundary_collections",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-batch-evenly",
+      "d3r-drop-while-blank",
+      "d3r-last-index-of",
+      "d3r-longest-prefix",
+      "d3r-rotate-right",
+      "d3r-split-at-first",
+      "d3r-stride-take",
+      "d3r-take-between",
+      "d3r-without-none"
+    ],
+    "seen_task": false,
+    "task_signature": "df7eeb07-1f7b-5540-86d3-dffd3260d355"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-dedupe-stable"
+    ],
+    "query_hash": "ce95a7c7b40379b51495fef8d4803595e273817546a595232fef6dd9ab03cbd4",
+    "query_id": "q:d3r-dedupe-stable",
+    "relevance_family": "data_transformation",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-flatten-nested",
+      "d3r-group-pairs",
+      "d3r-invert-mapping",
+      "d3r-merge-deep",
+      "d3r-order-by-rank",
+      "d3r-rename-columns",
+      "d3r-sum-by-key",
+      "d3r-to-columns",
+      "d3r-zip-records"
+    ],
+    "seen_task": false,
+    "task_signature": "f699f40c-6e9d-5ff1-89fe-304149d87b8a"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-default-on-error"
+    ],
+    "query_hash": "b9492b5d2ea4157619b3c9f5ab641c6e4725c0fe05ce289788d6a8e6e43e14da",
+    "query_id": "q:d3r-default-on-error",
+    "relevance_family": "error_handling",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-close-all-quietly",
+      "d3r-collect-errors",
+      "d3r-exit-status",
+      "d3r-guard-division",
+      "d3r-lookup-or-raise",
+      "d3r-require-fields",
+      "d3r-retry-with-backoff",
+      "d3r-split-results",
+      "d3r-wrap-timeout"
+    ],
+    "seen_task": false,
+    "task_signature": "a6aaad85-e834-5a27-9a8c-5145a92d0a17"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-digit-sum"
+    ],
+    "query_hash": "be254f9f6625de5a20c13315c57a1481e4ccea5410c07717c7d6b6fa839f16a3",
+    "query_id": "q:d3r-digit-sum",
+    "relevance_family": "numeric_logic",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-ceil-divide",
+      "d3r-clamp-between",
+      "d3r-compound-growth",
+      "d3r-mean-of",
+      "d3r-median-of",
+      "d3r-percent-of",
+      "d3r-running-max",
+      "d3r-scale-series",
+      "d3r-sum-positive"
+    ],
+    "seen_task": false,
+    "task_signature": "d81bd0ef-1a61-5210-a254-90f559ec4281"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-drain-queue"
+    ],
+    "query_hash": "f7976f0a1a003f81313d90fac271cbca04a1eb137e440d88910cbd8d59863c59",
+    "query_id": "q:d3r-drain-queue",
+    "relevance_family": "state_idempotency",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-apply-migration",
+      "d3r-bump-revision",
+      "d3r-close-twice",
+      "d3r-forget-expired",
+      "d3r-increment-counter",
+      "d3r-register-once",
+      "d3r-release-lock",
+      "d3r-reserve-capacity",
+      "d3r-touch-entry"
+    ],
+    "seen_task": false,
+    "task_signature": "893a3432-2fdb-5e96-8f5f-87929d0f54c4"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-drop-while-blank"
+    ],
+    "query_hash": "1f5a1af26584f66a7d3fff14a8c4226e29d13c2c1f9eba121251bbc9586b4c8e",
+    "query_id": "q:d3r-drop-while-blank",
+    "relevance_family": "boundary_collections",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-batch-evenly",
+      "d3r-count-runs",
+      "d3r-last-index-of",
+      "d3r-longest-prefix",
+      "d3r-rotate-right",
+      "d3r-split-at-first",
+      "d3r-stride-take",
+      "d3r-take-between",
+      "d3r-without-none"
+    ],
+    "seen_task": false,
+    "task_signature": "2575c160-b43b-5b61-b647-0cbf4c089e08"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-exit-status"
+    ],
+    "query_hash": "8dc6d5086531e2d18b24d4e86f082961bf12831270ad9e1e4e0bd862b012a8fb",
+    "query_id": "q:d3r-exit-status",
+    "relevance_family": "error_handling",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-close-all-quietly",
+      "d3r-collect-errors",
+      "d3r-default-on-error",
+      "d3r-guard-division",
+      "d3r-lookup-or-raise",
+      "d3r-require-fields",
+      "d3r-retry-with-backoff",
+      "d3r-split-results",
+      "d3r-wrap-timeout"
+    ],
+    "seen_task": false,
+    "task_signature": "61dba7dc-e0b2-5051-961a-dfbaab1bb4b1"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-expand-range-text"
+    ],
+    "query_hash": "03dfd518856ebb3ff57587e080c44842fcab8a9f17ff4dc8e2688b2918f6ab8d",
+    "query_id": "q:d3r-expand-range-text",
+    "relevance_family": "parsing_validation",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-is-identifier",
+      "d3r-normalise-case",
+      "d3r-parse-bool-word",
+      "d3r-parse-hex-byte",
+      "d3r-parse-key-list",
+      "d3r-parse-port",
+      "d3r-split-once-right",
+      "d3r-strip-quotes",
+      "d3r-trim-comment"
+    ],
+    "seen_task": false,
+    "task_signature": "e828cea8-1a08-5079-ad47-82784cb9c81a"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-flatten-nested"
+    ],
+    "query_hash": "86bf035b3128550d97de057aad8fe300e6678322fcb0c3a5f8c536464464f259",
+    "query_id": "q:d3r-flatten-nested",
+    "relevance_family": "data_transformation",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-dedupe-stable",
+      "d3r-group-pairs",
+      "d3r-invert-mapping",
+      "d3r-merge-deep",
+      "d3r-order-by-rank",
+      "d3r-rename-columns",
+      "d3r-sum-by-key",
+      "d3r-to-columns",
+      "d3r-zip-records"
+    ],
+    "seen_task": false,
+    "task_signature": "c65ff53e-37e3-5107-aa5c-08d7a80e4f7c"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-forget-expired"
+    ],
+    "query_hash": "7d637defc9d855353eb837a39ace623bb3ffd53fc390f522e0b571251d37e979",
+    "query_id": "q:d3r-forget-expired",
+    "relevance_family": "state_idempotency",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-apply-migration",
+      "d3r-bump-revision",
+      "d3r-close-twice",
+      "d3r-drain-queue",
+      "d3r-increment-counter",
+      "d3r-register-once",
+      "d3r-release-lock",
+      "d3r-reserve-capacity",
+      "d3r-touch-entry"
+    ],
+    "seen_task": false,
+    "task_signature": "edcb51e3-5b1f-5f1d-a979-b9699a9ca002"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-group-pairs"
+    ],
+    "query_hash": "2761c4fe7965865d2e1ebda76f2e76dc982d90a9638c4d85409d1d36b5eaa4b7",
+    "query_id": "q:d3r-group-pairs",
+    "relevance_family": "data_transformation",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-dedupe-stable",
+      "d3r-flatten-nested",
+      "d3r-invert-mapping",
+      "d3r-merge-deep",
+      "d3r-order-by-rank",
+      "d3r-rename-columns",
+      "d3r-sum-by-key",
+      "d3r-to-columns",
+      "d3r-zip-records"
+    ],
+    "seen_task": false,
+    "task_signature": "2ee99d18-812d-500e-8f3b-89b88a74abbb"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-guard-division"
+    ],
+    "query_hash": "d1052fd2eccd85ff10b7a7106ba3292b48745443c5bdbe3d5934ffa0f8c5e3f9",
+    "query_id": "q:d3r-guard-division",
+    "relevance_family": "error_handling",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-close-all-quietly",
+      "d3r-collect-errors",
+      "d3r-default-on-error",
+      "d3r-exit-status",
+      "d3r-lookup-or-raise",
+      "d3r-require-fields",
+      "d3r-retry-with-backoff",
+      "d3r-split-results",
+      "d3r-wrap-timeout"
+    ],
+    "seen_task": false,
+    "task_signature": "69e547e2-dce2-5d6d-b11e-70328ee02f52"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-increment-counter"
+    ],
+    "query_hash": "97353fd6ac08cf5cc08fce07080a6ab8a4f794259190516f46af4ec53ada814d",
+    "query_id": "q:d3r-increment-counter",
+    "relevance_family": "state_idempotency",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-apply-migration",
+      "d3r-bump-revision",
+      "d3r-close-twice",
+      "d3r-drain-queue",
+      "d3r-forget-expired",
+      "d3r-register-once",
+      "d3r-release-lock",
+      "d3r-reserve-capacity",
+      "d3r-touch-entry"
+    ],
+    "seen_task": false,
+    "task_signature": "3aa2ce67-a2c5-5aeb-8121-aa4a88640ad0"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-invert-mapping"
+    ],
+    "query_hash": "33a4f77f89ddd015d6264d6107b83f79535476a8d26e6a266df89761ad4612f9",
+    "query_id": "q:d3r-invert-mapping",
+    "relevance_family": "data_transformation",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-dedupe-stable",
+      "d3r-flatten-nested",
+      "d3r-group-pairs",
+      "d3r-merge-deep",
+      "d3r-order-by-rank",
+      "d3r-rename-columns",
+      "d3r-sum-by-key",
+      "d3r-to-columns",
+      "d3r-zip-records"
+    ],
+    "seen_task": false,
+    "task_signature": "0adfe1bb-ce6c-5c05-94c3-bf672865fab1"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-is-identifier"
+    ],
+    "query_hash": "48d66e3aa842a30e1d0adba645ca7bd982bbce33fcf9993ac03c74fd5a512b6d",
+    "query_id": "q:d3r-is-identifier",
+    "relevance_family": "parsing_validation",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-expand-range-text",
+      "d3r-normalise-case",
+      "d3r-parse-bool-word",
+      "d3r-parse-hex-byte",
+      "d3r-parse-key-list",
+      "d3r-parse-port",
+      "d3r-split-once-right",
+      "d3r-strip-quotes",
+      "d3r-trim-comment"
+    ],
+    "seen_task": false,
+    "task_signature": "882d1460-8e6a-572b-9929-3d7a7e3716f5"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-last-index-of"
+    ],
+    "query_hash": "68312ae340cab11f5d5902af79be9975100d6c94c35494b9a9c3096a5600e665",
+    "query_id": "q:d3r-last-index-of",
+    "relevance_family": "boundary_collections",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-batch-evenly",
+      "d3r-count-runs",
+      "d3r-drop-while-blank",
+      "d3r-longest-prefix",
+      "d3r-rotate-right",
+      "d3r-split-at-first",
+      "d3r-stride-take",
+      "d3r-take-between",
+      "d3r-without-none"
+    ],
+    "seen_task": false,
+    "task_signature": "ca3c9960-255d-54d3-bb41-655d8024a84c"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-longest-prefix"
+    ],
+    "query_hash": "f0016311472bd335461747df657f92ac7e8ece3ccbbe592c1d105639d69a3bdd",
+    "query_id": "q:d3r-longest-prefix",
+    "relevance_family": "boundary_collections",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-batch-evenly",
+      "d3r-count-runs",
+      "d3r-drop-while-blank",
+      "d3r-last-index-of",
+      "d3r-rotate-right",
+      "d3r-split-at-first",
+      "d3r-stride-take",
+      "d3r-take-between",
+      "d3r-without-none"
+    ],
+    "seen_task": false,
+    "task_signature": "200e68e4-a2a4-5ea0-bb3c-1df16da74d51"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-lookup-or-raise"
+    ],
+    "query_hash": "9355cb9b388b0a74be119f841bcf047ee896de88c4afe28af337bc0352d2827d",
+    "query_id": "q:d3r-lookup-or-raise",
+    "relevance_family": "error_handling",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-close-all-quietly",
+      "d3r-collect-errors",
+      "d3r-default-on-error",
+      "d3r-exit-status",
+      "d3r-guard-division",
+      "d3r-require-fields",
+      "d3r-retry-with-backoff",
+      "d3r-split-results",
+      "d3r-wrap-timeout"
+    ],
+    "seen_task": false,
+    "task_signature": "42c91b33-0dde-5e9f-b93d-a7eb3073f5c2"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-mean-of"
+    ],
+    "query_hash": "64d48a470566ed5d075e8cbfcb4040d9e4846abc0fb4bf35be1f7085287a6642",
+    "query_id": "q:d3r-mean-of",
+    "relevance_family": "numeric_logic",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-ceil-divide",
+      "d3r-clamp-between",
+      "d3r-compound-growth",
+      "d3r-digit-sum",
+      "d3r-median-of",
+      "d3r-percent-of",
+      "d3r-running-max",
+      "d3r-scale-series",
+      "d3r-sum-positive"
+    ],
+    "seen_task": false,
+    "task_signature": "9517bce5-5734-5b79-b718-89b833553616"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-median-of"
+    ],
+    "query_hash": "a9b094c9eee966c66846711e2eced4b0285aa7a11eebcfc0c24ed71ed3e5a853",
+    "query_id": "q:d3r-median-of",
+    "relevance_family": "numeric_logic",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-ceil-divide",
+      "d3r-clamp-between",
+      "d3r-compound-growth",
+      "d3r-digit-sum",
+      "d3r-mean-of",
+      "d3r-percent-of",
+      "d3r-running-max",
+      "d3r-scale-series",
+      "d3r-sum-positive"
+    ],
+    "seen_task": false,
+    "task_signature": "49a9e659-b9ea-5425-a0fa-50c4627383f6"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-merge-deep"
+    ],
+    "query_hash": "7c4a581fb21e7efc506dda8d4a872ce6c6498c36aa70445aa5039ddaeb9c3245",
+    "query_id": "q:d3r-merge-deep",
+    "relevance_family": "data_transformation",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-dedupe-stable",
+      "d3r-flatten-nested",
+      "d3r-group-pairs",
+      "d3r-invert-mapping",
+      "d3r-order-by-rank",
+      "d3r-rename-columns",
+      "d3r-sum-by-key",
+      "d3r-to-columns",
+      "d3r-zip-records"
+    ],
+    "seen_task": false,
+    "task_signature": "f83dfedd-35cd-501a-bba1-7e9da66f1050"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-normalise-case"
+    ],
+    "query_hash": "237f2b90bc8df0a7be3b8a751cc2c011cb0a01ea4a8e1f59cbebcb5ad3a2855b",
+    "query_id": "q:d3r-normalise-case",
+    "relevance_family": "parsing_validation",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-expand-range-text",
+      "d3r-is-identifier",
+      "d3r-parse-bool-word",
+      "d3r-parse-hex-byte",
+      "d3r-parse-key-list",
+      "d3r-parse-port",
+      "d3r-split-once-right",
+      "d3r-strip-quotes",
+      "d3r-trim-comment"
+    ],
+    "seen_task": false,
+    "task_signature": "8ed79967-35db-538b-b0bb-020219de1e4a"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-order-by-rank"
+    ],
+    "query_hash": "d2a044337916de1f3e1195890b0ff354d1ee8988134eaa932f309834a96fbe00",
+    "query_id": "q:d3r-order-by-rank",
+    "relevance_family": "data_transformation",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-dedupe-stable",
+      "d3r-flatten-nested",
+      "d3r-group-pairs",
+      "d3r-invert-mapping",
+      "d3r-merge-deep",
+      "d3r-rename-columns",
+      "d3r-sum-by-key",
+      "d3r-to-columns",
+      "d3r-zip-records"
+    ],
+    "seen_task": false,
+    "task_signature": "96c48c1f-d29f-53a1-be90-0def9f25d19c"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-parse-bool-word"
+    ],
+    "query_hash": "ae91e915f800b880c74dae2ced17293a7e6743dedeada736600bcdd9191cb7b1",
+    "query_id": "q:d3r-parse-bool-word",
+    "relevance_family": "parsing_validation",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-expand-range-text",
+      "d3r-is-identifier",
+      "d3r-normalise-case",
+      "d3r-parse-hex-byte",
+      "d3r-parse-key-list",
+      "d3r-parse-port",
+      "d3r-split-once-right",
+      "d3r-strip-quotes",
+      "d3r-trim-comment"
+    ],
+    "seen_task": false,
+    "task_signature": "3f76c4c3-a039-5706-a918-0d8d2c25e508"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-parse-hex-byte"
+    ],
+    "query_hash": "76be9ed42f07b66cb853d88006f10828976d5fa5b320e0da5425e068a157e5e8",
+    "query_id": "q:d3r-parse-hex-byte",
+    "relevance_family": "parsing_validation",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-expand-range-text",
+      "d3r-is-identifier",
+      "d3r-normalise-case",
+      "d3r-parse-bool-word",
+      "d3r-parse-key-list",
+      "d3r-parse-port",
+      "d3r-split-once-right",
+      "d3r-strip-quotes",
+      "d3r-trim-comment"
+    ],
+    "seen_task": false,
+    "task_signature": "eba745df-c2b3-590d-ba32-e1e6c9664fcc"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-parse-key-list"
+    ],
+    "query_hash": "b3afb29e9d83df8f218fe6540cd89cbd3a0f802610a7a19aa1c664870b9df673",
+    "query_id": "q:d3r-parse-key-list",
+    "relevance_family": "parsing_validation",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-expand-range-text",
+      "d3r-is-identifier",
+      "d3r-normalise-case",
+      "d3r-parse-bool-word",
+      "d3r-parse-hex-byte",
+      "d3r-parse-port",
+      "d3r-split-once-right",
+      "d3r-strip-quotes",
+      "d3r-trim-comment"
+    ],
+    "seen_task": false,
+    "task_signature": "5f6f6e05-f4e8-524c-95e3-2dda35bbfc8e"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-parse-port"
+    ],
+    "query_hash": "b57c0afe6aadb57201470a3faa214a58a809c398cd9dc41437abec9ee6b0f2d2",
+    "query_id": "q:d3r-parse-port",
+    "relevance_family": "parsing_validation",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-expand-range-text",
+      "d3r-is-identifier",
+      "d3r-normalise-case",
+      "d3r-parse-bool-word",
+      "d3r-parse-hex-byte",
+      "d3r-parse-key-list",
+      "d3r-split-once-right",
+      "d3r-strip-quotes",
+      "d3r-trim-comment"
+    ],
+    "seen_task": false,
+    "task_signature": "a387e9c6-8db6-5c85-8815-216cb341c679"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-percent-of"
+    ],
+    "query_hash": "296087df35b8f4e3cd28244a57e6b1d6d0af79458efed854514444eb224237a6",
+    "query_id": "q:d3r-percent-of",
+    "relevance_family": "numeric_logic",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-ceil-divide",
+      "d3r-clamp-between",
+      "d3r-compound-growth",
+      "d3r-digit-sum",
+      "d3r-mean-of",
+      "d3r-median-of",
+      "d3r-running-max",
+      "d3r-scale-series",
+      "d3r-sum-positive"
+    ],
+    "seen_task": false,
+    "task_signature": "757bf3b2-d6fa-5e08-a894-cebb8a6e4a97"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-register-once"
+    ],
+    "query_hash": "faed6e27c5f96f62c77ca4ddd61d32b25628e7422190ed675ec6a25903f34266",
+    "query_id": "q:d3r-register-once",
+    "relevance_family": "state_idempotency",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-apply-migration",
+      "d3r-bump-revision",
+      "d3r-close-twice",
+      "d3r-drain-queue",
+      "d3r-forget-expired",
+      "d3r-increment-counter",
+      "d3r-release-lock",
+      "d3r-reserve-capacity",
+      "d3r-touch-entry"
+    ],
+    "seen_task": false,
+    "task_signature": "3019a0a7-d8aa-572a-be72-d83ca42fca7e"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-release-lock"
+    ],
+    "query_hash": "2a8c2bd85ee66093a4c2abb9e29e48caf441bcf647437dab863f51e8481f76c2",
+    "query_id": "q:d3r-release-lock",
+    "relevance_family": "state_idempotency",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-apply-migration",
+      "d3r-bump-revision",
+      "d3r-close-twice",
+      "d3r-drain-queue",
+      "d3r-forget-expired",
+      "d3r-increment-counter",
+      "d3r-register-once",
+      "d3r-reserve-capacity",
+      "d3r-touch-entry"
+    ],
+    "seen_task": false,
+    "task_signature": "9a95509c-0719-59a4-a0db-27cf9151e023"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-rename-columns"
+    ],
+    "query_hash": "92c38a77cf940aae0a2c35b617679d91b0b11899bd179ba33bd769296383c8ed",
+    "query_id": "q:d3r-rename-columns",
+    "relevance_family": "data_transformation",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-dedupe-stable",
+      "d3r-flatten-nested",
+      "d3r-group-pairs",
+      "d3r-invert-mapping",
+      "d3r-merge-deep",
+      "d3r-order-by-rank",
+      "d3r-sum-by-key",
+      "d3r-to-columns",
+      "d3r-zip-records"
+    ],
+    "seen_task": false,
+    "task_signature": "a4f5a2b2-e598-5123-b0b7-835237860110"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-require-fields"
+    ],
+    "query_hash": "fafed8c0d21bdee40cc2cd3c41d15864761828973c2ad6f419fb7918694323e5",
+    "query_id": "q:d3r-require-fields",
+    "relevance_family": "error_handling",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-close-all-quietly",
+      "d3r-collect-errors",
+      "d3r-default-on-error",
+      "d3r-exit-status",
+      "d3r-guard-division",
+      "d3r-lookup-or-raise",
+      "d3r-retry-with-backoff",
+      "d3r-split-results",
+      "d3r-wrap-timeout"
+    ],
+    "seen_task": false,
+    "task_signature": "2b1a277f-4ccc-5c14-a1eb-acabdc16bb6b"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-reserve-capacity"
+    ],
+    "query_hash": "84f6491d8482c6b9274c5bace1b78eb94d403a1be719416b0a98803d71c2e7fa",
+    "query_id": "q:d3r-reserve-capacity",
+    "relevance_family": "state_idempotency",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-apply-migration",
+      "d3r-bump-revision",
+      "d3r-close-twice",
+      "d3r-drain-queue",
+      "d3r-forget-expired",
+      "d3r-increment-counter",
+      "d3r-register-once",
+      "d3r-release-lock",
+      "d3r-touch-entry"
+    ],
+    "seen_task": false,
+    "task_signature": "cb19777d-6430-54e0-9e13-bc1474cf13ec"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-retry-with-backoff"
+    ],
+    "query_hash": "ca33ad2641fecbe0fd313f6301feacaee5fb8b35f414d87363a0edd3bedcca5d",
+    "query_id": "q:d3r-retry-with-backoff",
+    "relevance_family": "error_handling",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-close-all-quietly",
+      "d3r-collect-errors",
+      "d3r-default-on-error",
+      "d3r-exit-status",
+      "d3r-guard-division",
+      "d3r-lookup-or-raise",
+      "d3r-require-fields",
+      "d3r-split-results",
+      "d3r-wrap-timeout"
+    ],
+    "seen_task": false,
+    "task_signature": "790da5a9-2813-584f-b604-c921b6521471"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-rotate-right"
+    ],
+    "query_hash": "7d5e7897e1c60024d31c3abf085b422e83005e3e20c6dad581a904df71adc255",
+    "query_id": "q:d3r-rotate-right",
+    "relevance_family": "boundary_collections",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-batch-evenly",
+      "d3r-count-runs",
+      "d3r-drop-while-blank",
+      "d3r-last-index-of",
+      "d3r-longest-prefix",
+      "d3r-split-at-first",
+      "d3r-stride-take",
+      "d3r-take-between",
+      "d3r-without-none"
+    ],
+    "seen_task": false,
+    "task_signature": "51b57d84-e45a-56c2-ac80-b4d441a12a9c"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-running-max"
+    ],
+    "query_hash": "119e20aba6b3c1c49f33f567d80ebaa23c9c7cac24a51e840ace7a28d79697e5",
+    "query_id": "q:d3r-running-max",
+    "relevance_family": "numeric_logic",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-ceil-divide",
+      "d3r-clamp-between",
+      "d3r-compound-growth",
+      "d3r-digit-sum",
+      "d3r-mean-of",
+      "d3r-median-of",
+      "d3r-percent-of",
+      "d3r-scale-series",
+      "d3r-sum-positive"
+    ],
+    "seen_task": false,
+    "task_signature": "29108837-ddfd-504b-8e7d-58c1814a187c"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-scale-series"
+    ],
+    "query_hash": "b4d4bede0a97adccccc06890a7e5d59633c0a2d9f2d8f95c999213caf0f252c0",
+    "query_id": "q:d3r-scale-series",
+    "relevance_family": "numeric_logic",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-ceil-divide",
+      "d3r-clamp-between",
+      "d3r-compound-growth",
+      "d3r-digit-sum",
+      "d3r-mean-of",
+      "d3r-median-of",
+      "d3r-percent-of",
+      "d3r-running-max",
+      "d3r-sum-positive"
+    ],
+    "seen_task": false,
+    "task_signature": "57f7d147-2fbc-58bd-bb03-4f86664ebe6f"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-split-at-first"
+    ],
+    "query_hash": "f15f22f6000127130f1407a719200f3ce3cd486c29e0f297e49942b42af11063",
+    "query_id": "q:d3r-split-at-first",
+    "relevance_family": "boundary_collections",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-batch-evenly",
+      "d3r-count-runs",
+      "d3r-drop-while-blank",
+      "d3r-last-index-of",
+      "d3r-longest-prefix",
+      "d3r-rotate-right",
+      "d3r-stride-take",
+      "d3r-take-between",
+      "d3r-without-none"
+    ],
+    "seen_task": false,
+    "task_signature": "ce067953-fbf1-5696-9301-62033d4cc703"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-split-once-right"
+    ],
+    "query_hash": "e6766fc7f30b0536275438530635b88f1d7a02f1957aea22689929bae839cf5c",
+    "query_id": "q:d3r-split-once-right",
+    "relevance_family": "parsing_validation",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-expand-range-text",
+      "d3r-is-identifier",
+      "d3r-normalise-case",
+      "d3r-parse-bool-word",
+      "d3r-parse-hex-byte",
+      "d3r-parse-key-list",
+      "d3r-parse-port",
+      "d3r-strip-quotes",
+      "d3r-trim-comment"
+    ],
+    "seen_task": false,
+    "task_signature": "dad79ad4-3501-578e-87e1-5562ee0552db"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-split-results"
+    ],
+    "query_hash": "59e25fbef5e424c67ecb22c7b8aabced04eafb6b7e49980bc2271f039ee25341",
+    "query_id": "q:d3r-split-results",
+    "relevance_family": "error_handling",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-close-all-quietly",
+      "d3r-collect-errors",
+      "d3r-default-on-error",
+      "d3r-exit-status",
+      "d3r-guard-division",
+      "d3r-lookup-or-raise",
+      "d3r-require-fields",
+      "d3r-retry-with-backoff",
+      "d3r-wrap-timeout"
+    ],
+    "seen_task": false,
+    "task_signature": "de8429e8-767f-5d51-b70a-85a53f47fbea"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-stride-take"
+    ],
+    "query_hash": "3f2de349802fd4ea22ce68c2d5a77570fb772044833930b9a10bbf9b168323a0",
+    "query_id": "q:d3r-stride-take",
+    "relevance_family": "boundary_collections",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-batch-evenly",
+      "d3r-count-runs",
+      "d3r-drop-while-blank",
+      "d3r-last-index-of",
+      "d3r-longest-prefix",
+      "d3r-rotate-right",
+      "d3r-split-at-first",
+      "d3r-take-between",
+      "d3r-without-none"
+    ],
+    "seen_task": false,
+    "task_signature": "306b02fe-15b7-5b85-8fcd-ec2d10b3d02a"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-strip-quotes"
+    ],
+    "query_hash": "0782ee1bc1fa5aeaa1e9ed25e0d2d10405b3edb0e18990b2dbd9278451fdd7c3",
+    "query_id": "q:d3r-strip-quotes",
+    "relevance_family": "parsing_validation",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-expand-range-text",
+      "d3r-is-identifier",
+      "d3r-normalise-case",
+      "d3r-parse-bool-word",
+      "d3r-parse-hex-byte",
+      "d3r-parse-key-list",
+      "d3r-parse-port",
+      "d3r-split-once-right",
+      "d3r-trim-comment"
+    ],
+    "seen_task": false,
+    "task_signature": "5cb2de2e-6b01-5107-ba4b-8f88d26142fb"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-sum-by-key"
+    ],
+    "query_hash": "42a29bf18749e20a2d82db2eb0719c3279cf687085ce54df0d420ab13057b73e",
+    "query_id": "q:d3r-sum-by-key",
+    "relevance_family": "data_transformation",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-dedupe-stable",
+      "d3r-flatten-nested",
+      "d3r-group-pairs",
+      "d3r-invert-mapping",
+      "d3r-merge-deep",
+      "d3r-order-by-rank",
+      "d3r-rename-columns",
+      "d3r-to-columns",
+      "d3r-zip-records"
+    ],
+    "seen_task": false,
+    "task_signature": "6d7d5396-7471-5bcd-859f-0c0ce332b9b3"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-sum-positive"
+    ],
+    "query_hash": "4d60f330edebb8965dd09f3dc4727473c8caae791f9ba3a6287f5898d1ece81f",
+    "query_id": "q:d3r-sum-positive",
+    "relevance_family": "numeric_logic",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-ceil-divide",
+      "d3r-clamp-between",
+      "d3r-compound-growth",
+      "d3r-digit-sum",
+      "d3r-mean-of",
+      "d3r-median-of",
+      "d3r-percent-of",
+      "d3r-running-max",
+      "d3r-scale-series"
+    ],
+    "seen_task": false,
+    "task_signature": "b9e4f1f4-2a32-5fdb-b8f3-4e8c8268b38c"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-take-between"
+    ],
+    "query_hash": "8591c640e6214ec2318bb7ff1942151eb771dfa4e7f705572f2408219733b59b",
+    "query_id": "q:d3r-take-between",
+    "relevance_family": "boundary_collections",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-batch-evenly",
+      "d3r-count-runs",
+      "d3r-drop-while-blank",
+      "d3r-last-index-of",
+      "d3r-longest-prefix",
+      "d3r-rotate-right",
+      "d3r-split-at-first",
+      "d3r-stride-take",
+      "d3r-without-none"
+    ],
+    "seen_task": false,
+    "task_signature": "d7359dfd-4959-5a4e-a760-42c0f02fdcdd"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-to-columns"
+    ],
+    "query_hash": "894c537f263d6cc54acda3f7f519fe06c9d5d3c61f6bb4bb804879e555ac2522",
+    "query_id": "q:d3r-to-columns",
+    "relevance_family": "data_transformation",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-dedupe-stable",
+      "d3r-flatten-nested",
+      "d3r-group-pairs",
+      "d3r-invert-mapping",
+      "d3r-merge-deep",
+      "d3r-order-by-rank",
+      "d3r-rename-columns",
+      "d3r-sum-by-key",
+      "d3r-zip-records"
+    ],
+    "seen_task": false,
+    "task_signature": "2209078b-ace9-5f0b-accd-5dd11085826b"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-touch-entry"
+    ],
+    "query_hash": "1fddfa8f57ba03afe030b15eb84e61f287498ce8030225a02be0a62690737232",
+    "query_id": "q:d3r-touch-entry",
+    "relevance_family": "state_idempotency",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-apply-migration",
+      "d3r-bump-revision",
+      "d3r-close-twice",
+      "d3r-drain-queue",
+      "d3r-forget-expired",
+      "d3r-increment-counter",
+      "d3r-register-once",
+      "d3r-release-lock",
+      "d3r-reserve-capacity"
+    ],
+    "seen_task": false,
+    "task_signature": "03f83faa-890e-5d6e-afa7-730d735f8a9a"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-trim-comment"
+    ],
+    "query_hash": "fdbcaa05ce5227052a90bb2910bedace8d21c65d9785dad8c70a4f9150a56096",
+    "query_id": "q:d3r-trim-comment",
+    "relevance_family": "parsing_validation",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-expand-range-text",
+      "d3r-is-identifier",
+      "d3r-normalise-case",
+      "d3r-parse-bool-word",
+      "d3r-parse-hex-byte",
+      "d3r-parse-key-list",
+      "d3r-parse-port",
+      "d3r-split-once-right",
+      "d3r-strip-quotes"
+    ],
+    "seen_task": false,
+    "task_signature": "048cd0f5-3acd-5e00-a847-058ebce67d7d"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-without-none"
+    ],
+    "query_hash": "59c3313a10a8b35384868aeb5d5b7b934a6f4b5878452b550345c030e462c085",
+    "query_id": "q:d3r-without-none",
+    "relevance_family": "boundary_collections",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-batch-evenly",
+      "d3r-count-runs",
+      "d3r-drop-while-blank",
+      "d3r-last-index-of",
+      "d3r-longest-prefix",
+      "d3r-rotate-right",
+      "d3r-split-at-first",
+      "d3r-stride-take",
+      "d3r-take-between"
+    ],
+    "seen_task": false,
+    "task_signature": "d82b7a5a-5071-51a6-97bd-2039c7efae03"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-wrap-timeout"
+    ],
+    "query_hash": "0d381e0f8077dfdd6633e42584d6a768f0c74bafc7e1a6e6920a63e07dd461a8",
+    "query_id": "q:d3r-wrap-timeout",
+    "relevance_family": "error_handling",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-close-all-quietly",
+      "d3r-collect-errors",
+      "d3r-default-on-error",
+      "d3r-exit-status",
+      "d3r-guard-division",
+      "d3r-lookup-or-raise",
+      "d3r-require-fields",
+      "d3r-retry-with-backoff",
+      "d3r-split-results"
+    ],
+    "seen_task": false,
+    "task_signature": "08136f11-c2d0-5d5b-9fa0-bd2191d6c25b"
+  },
+  {
+    "domain": "coding",
+    "excluded_groups": [
+      "d3r-zip-records"
+    ],
+    "query_hash": "28d0918b39dab4e3c1821de9246057513b930e5d80328e5cbc8cb70c9df51193",
+    "query_id": "q:d3r-zip-records",
+    "relevance_family": "data_transformation",
+    "relevance_tier": 1,
+    "relevant_pair_ids": [
+      "d3r-dedupe-stable",
+      "d3r-flatten-nested",
+      "d3r-group-pairs",
+      "d3r-invert-mapping",
+      "d3r-merge-deep",
+      "d3r-order-by-rank",
+      "d3r-rename-columns",
+      "d3r-sum-by-key",
+      "d3r-to-columns"
+    ],
+    "seen_task": false,
+    "task_signature": "cfa8c43a-3467-5f5f-be94-079b2e84d1a1"
+  }
+]

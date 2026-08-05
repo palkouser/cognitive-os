@@ -44,6 +44,7 @@ from cognitive_os.domain.reality import (
     RealityTaskProjection,
 )
 
+from .reality_retrieval_specs_d3 import D3_RETRIEVAL_SPECS, D3RetrievalSpec
 from .reality_task_specs import TASK_SPECS, TaskSpec
 from .reality_task_specs_d2 import (
     D2_TASK_SPECS,
@@ -222,6 +223,40 @@ def _expand_d2(spec: D2TaskSpec) -> TaskTemplate:
     )
 
 
+def _expand_retrieval(spec: D3RetrievalSpec) -> TaskTemplate:
+    """One retrieval source group as a task package: the failed state and its accepted repair.
+
+    Two bodies rather than four, because a retrieval group is evidence for one graph pair and
+    not a four-way ranking decision. The package layout, both conftests and the hidden bundle
+    are the correction corpus's, so the same runner records it and the same verifier decides
+    it — a retrieval pair is a *causal* claim only if the same machinery says so.
+    """
+    source_path = f"src/{spec.module}.py"
+    repair = {
+        RealityCandidateStrategy.CORRECT_NARROW: {source_path: spec.module_text(spec.repaired)}
+    }
+    return TaskTemplate(
+        template_id=spec.template_id,
+        family=spec.family,
+        repository_group=spec.repository_group,
+        difficulty=RealityTaskDifficulty.SINGLE_EDIT,
+        issue_description=spec.issue,
+        expected_behavior=spec.expected,
+        baseline_failure_reason=spec.failure_reason,
+        visible_files={
+            source_path: spec.module_text(spec.failed),
+            f"tests/test_{spec.module}.py": spec.visible_test,
+            "conftest.py": VISIBLE_CONFTEST,
+        },
+        control_files={
+            "conftest.py": CONTROL_CONFTEST,
+            f"test_hidden_{spec.module}.py": spec.hidden_test,
+        },
+        candidate_sources=repair,
+        neutral_candidate_sources=repair,
+    )
+
+
 _TEMPLATES: dict[str, TaskTemplate] = {spec.template_id: _expand(spec) for spec in TASK_SPECS}
 
 _D2_TEMPLATES: dict[str, TaskTemplate] = {
@@ -235,13 +270,27 @@ _D3_TEMPLATES: dict[str, TaskTemplate] = {
     spec.template_id: _expand_d2(spec) for spec in D3_TASK_SPECS
 }
 
-#: Every corpus under one lookup, because the runner, the candidate builder and the retrieval
-#: plane address a task by ID and should not have to know which sprint authored it. The three
-#: are still separate registries above: `available_templates()` is C3's campaign surface and
-#: must not silently grow by a hundred and sixteen tasks.
-_ALL_TEMPLATES: dict[str, TaskTemplate] = {**_TEMPLATES, **_D2_TEMPLATES, **_D3_TEMPLATES}
+#: D3's sixty retrieval source groups. Separate from `_D3_TEMPLATES` because they are a
+#: different role with a different shape: two bodies, evaluation only, and no place in any
+#: correction catalogue. `d3_templates()` must not grow by sixty groups no partition selected.
+_D3_RETRIEVAL_TEMPLATES: dict[str, TaskTemplate] = {
+    spec.template_id: _expand_retrieval(spec) for spec in D3_RETRIEVAL_SPECS
+}
 
-_REGISTERED = len(_TEMPLATES) + len(_D2_TEMPLATES) + len(_D3_TEMPLATES)
+#: Every corpus under one lookup, because the runner, the candidate builder and the retrieval
+#: plane address a task by ID and should not have to know which sprint authored it. The four
+#: are still separate registries above: `available_templates()` is C3's campaign surface and
+#: must not silently grow by a hundred and seventy-six tasks.
+_ALL_TEMPLATES: dict[str, TaskTemplate] = {
+    **_TEMPLATES,
+    **_D2_TEMPLATES,
+    **_D3_TEMPLATES,
+    **_D3_RETRIEVAL_TEMPLATES,
+}
+
+_REGISTERED = (
+    len(_TEMPLATES) + len(_D2_TEMPLATES) + len(_D3_TEMPLATES) + len(_D3_RETRIEVAL_TEMPLATES)
+)
 if len(_ALL_TEMPLATES) != _REGISTERED:  # pragma: no cover - import guard
     raise RuntimeError(
         "a template ID collides across two corpora; merging the registries would drop a task "
@@ -262,6 +311,11 @@ def d2_templates() -> tuple[str, ...]:
 def d3_templates() -> tuple[str, ...]:
     """D3's corpus, fixture included. The catalogue selects the twenty it scores."""
     return tuple(sorted(_D3_TEMPLATES))
+
+
+def d3_retrieval_templates() -> tuple[str, ...]:
+    """D3's retrieval source pool. Evaluation only: no correction role ever selects one."""
+    return tuple(sorted(_D3_RETRIEVAL_TEMPLATES))
 
 
 def template(template_id: str) -> TaskTemplate:
