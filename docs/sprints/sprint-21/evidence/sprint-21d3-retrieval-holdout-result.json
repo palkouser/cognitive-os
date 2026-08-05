@@ -251,7 +251,7 @@
     "root": "docs/sprints/sprint-21/evidence/sprint-21d3-retrieval-emg-root.json",
     "root_sha256": "28dc23b75f40255eff1beccab7cb5cd27285840781ccb6a60e1946e9d7e7bbdd"
   },
-  "integrity_content_hash": "fb904d4e889e3a6b50c3a2d22601ab26554b18d8ddefd45c6d6c7e3edb7fe8be",
+  "integrity_content_hash": "da25ea419345c893bac0d395e3c1d918cafbe1d6a4ed717682b69d718f5c921c",
   "items": [
     "S21D3-043",
     "S21D3-044",
@@ -9609,6 +9609,13 @@
         "verifier_bundle_passed": true
       }
     ],
+    "seeded_refusals": {
+      "all_three_refused": true,
+      "broken_link_refused": true,
+      "corrupt_bytes_refused": true,
+      "missing_bytes_refused": true,
+      "victim_pair": "d3r-apply-migration"
+    },
     "source_resolution": 60
   },
   "query_set": {

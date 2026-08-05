@@ -471,6 +471,10 @@ two. Authoring a third body per group to satisfy a three-step shape would have p
 
 Projection is 60 of 60 on every check: sources resolve, edit paths round-trip, and the largest
 graph uses 5 of the 64 permitted nodes with at most 6 edit operations, so no bound had to move.
+The integrity report is exercised against this set rather than only against a fixture: three
+seeded refusals — a missing blob, a broken authority link and tampered bytes — are each caught
+and named by the released graph store, all read-only, with the real root and the real blobs
+never written.
 Separation is clean — zero retrieval groups crossing any correction role, zero task signatures
 or query ids reused from D1, zero cross-group near clones over all 120 bodies. The queries and
 their relevance judgements were frozen and written to disk before the benchmark subprocess
@@ -557,7 +561,7 @@ that was supposed to carry two of them.
 | [D1 development replay](evidence/sprint-21d3-d1-retrieval-development.json) | `e8ca5615cd9a757f7e129502319b666c97c5f2c3f5c1822fe8865d7645559efe` |
 | [holdout graph root](evidence/sprint-21d3-retrieval-emg-root.json) | `28dc23b75f40255eff1beccab7cb5cd27285840781ccb6a60e1946e9d7e7bbdd` |
 | [holdout queries](evidence/sprint-21d3-retrieval-queries.json) | `4064d15793cdab7562623e29f7df3017bb87e4b6519abe4ecfecca31a3a1dcb0` |
-| [holdout result](evidence/sprint-21d3-retrieval-holdout-result.json) | `6a204f1e0665941c3b1337c7f9fea2d8fd10d4c0a23019ba194c084f213771bb` |
+| [holdout result](evidence/sprint-21d3-retrieval-holdout-result.json) | `b35beef5479fd61893f78b21f8e2b1760c2c018747130829b902974a18d17073` |
 
 Both chronology-bound files carry the pre-registration SHA-256
 `191b3757ded21a1c2c85459a34902f8dee3f2f35b0979b557f84c1a37fe6a191`, and `--check-chronology`
@@ -588,3 +592,8 @@ nothing was removed and no other schema changed. W3 added no database migration,
 field, no corpus or artifact role, no dependency and no provider, network, credential or GPU
 call. Migration stays at `0015`. The D1 Artifact Store received zero writes and no D1 or D2
 evidence file was modified.
+
+Draft PR [#221](https://github.com/palkouser/cognitive-os/pull/221) carries the W3 work. The
+first pushed head `5b6e88be0513` completed 29 of 30 jobs in run `30990394101`, failing only
+`coding-agent` on the import W3-A2 describes; head `42827cd` then completed run `30991106057`
+with **30 of 30 jobs successful**.

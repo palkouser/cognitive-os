@@ -388,6 +388,50 @@ def _store_pairs(pairs: list[FailedSuccessGraphPair], *, artifact_root: Path) ->
 # --------------------------------------------------------------- S21D3-043: queries
 
 
+def _seeded_refusals(artifact_root: Path) -> dict[str, Any]:
+    """Damage this pair set on purpose and check the released store refuses it. §S21D3-044.
+
+    An integrity report that has only ever seen intact evidence is an untested integrity
+    report. All three seeds are read-only against the real store: two rewrite a *copy* of the
+    root manifest, and the third builds a one-blob temporary store with tampered bytes. The
+    real root and the real blobs are never written.
+    """
+    root = json.loads(GRAPH_ROOT.read_text())
+    victim = root["children"][0]["pair_id"]
+    results: dict[str, Any] = {"victim_pair": victim}
+    with tempfile.TemporaryDirectory(prefix="cogos-d3-seed-") as scratch:
+        seeded = Path(scratch)
+
+        missing = json.loads(GRAPH_ROOT.read_text())
+        missing["children"][0]["content_hash"] = "0" * 64
+        (path := seeded / "missing.json").write_text(json.dumps(missing))
+        results["missing_bytes_refused"] = load_evidence(path, artifact_root).missing_bytes == (
+            victim,
+        )
+
+        broken = json.loads(GRAPH_ROOT.read_text())
+        broken["children"][0]["successful_structural"] = "1" * 64
+        (path := seeded / "broken.json").write_text(json.dumps(broken))
+        results["broken_link_refused"] = load_evidence(path, artifact_root).broken_links == (
+            victim,
+        )
+
+        store = seeded / "store"
+        digest = root["children"][0]["content_hash"]
+        blob = blob_path(store, digest)
+        blob.parent.mkdir(parents=True, exist_ok=True)
+        blob.write_bytes(blob_path(artifact_root, digest).read_bytes() + b" ")
+        (path := seeded / "corrupt.json").write_text(
+            json.dumps({**root, "pair_count": 1, "children": root["children"][:1]})
+        )
+        results["corrupt_bytes_refused"] = load_evidence(path, store).corrupt_bytes == (victim,)
+
+    results["all_three_refused"] = all(
+        value for key, value in results.items() if key.endswith("_refused")
+    )
+    return results
+
+
 def _d1_untouched() -> dict[str, Any]:
     """The predecessor evidence this wave reads, by hash, and its store by fingerprint.
 
@@ -750,6 +794,7 @@ async def _run(model: Path, output: Path, group_limit: int | None) -> int:
                 "over_limit_graphs": 0,
             },
             "creates_execution_or_correction_authority": False,
+            "seeded_refusals": _seeded_refusals(artifact_root),
             "per_pair": projections,
         },
         "graph_set": {
@@ -831,6 +876,9 @@ def _redecide(output: Path) -> int:
     stored["decision"]["rederived_without_re_execution"] = True
     # A filesystem property, not a measurement: recomputing it now is the same read.
     stored["predecessor_read_only"] = _d1_untouched()
+    stored["projection"]["seeded_refusals"] = _seeded_refusals(
+        Path(_require("COGOS_ARTIFACT_ROOT"))
+    )
     _write(output, stored)
     print(f"{output}: decision re-derived from the recorded metrics, zero arms executed")
     return 0
