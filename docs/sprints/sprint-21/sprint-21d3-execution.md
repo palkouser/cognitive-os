@@ -1028,3 +1028,7 @@ W7 added no database migration, no event field, no corpus or artifact role, no d
 no provider, network, credential or GPU call. Migration stays at `0015`. The four predecessor
 pairs are byte-identical before and after every command in this wave, and the D3 pair received
 no write outside the backup root, the restore database and the declared scratch root.
+
+Draft PR [#221](https://github.com/palkouser/cognitive-os/pull/221) carries the W7 work. Head
+`446050c5de36` completed run `31010052121` with **30 of 30 jobs successful**, including the two
+new credential-free steps.
