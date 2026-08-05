@@ -1,0 +1,104 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/learned/d3-runtime-configuration.schema.json",
+  "additionalProperties": false,
+  "description": "One canonical runtime configuration: the exact canary, or the bounded steady state.\n\nSealed as a document rather than assembled from settings at start-up, because the question\nan operator has to answer after the fact is \"which configuration produced this evidence\",\nand a set of environment variables cannot answer it.",
+  "properties": {
+    "activation_enabled": {
+      "title": "Activation Enabled",
+      "type": "boolean"
+    },
+    "component_id": {
+      "minLength": 1,
+      "title": "Component Id",
+      "type": "string"
+    },
+    "component_revision": {
+      "minimum": 1,
+      "title": "Component Revision",
+      "type": "integer"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "declared_limitations": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Declared Limitations",
+      "type": "array"
+    },
+    "fallback_on_refusal": {
+      "minLength": 1,
+      "title": "Fallback On Refusal",
+      "type": "string"
+    },
+    "kill_switch_enabled": {
+      "title": "Kill Switch Enabled",
+      "type": "boolean"
+    },
+    "maximum_inference_ms": {
+      "minimum": 1,
+      "title": "Maximum Inference Ms",
+      "type": "integer"
+    },
+    "maximum_tasks": {
+      "minimum": 1,
+      "title": "Maximum Tasks",
+      "type": "integer"
+    },
+    "name": {
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "persistence_enabled": {
+      "title": "Persistence Enabled",
+      "type": "boolean"
+    },
+    "routed_group_ids": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Routed Group Ids",
+      "type": "array"
+    },
+    "routing_manifest_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Routing Manifest Hash",
+      "type": "string"
+    },
+    "sequence_mode": {
+      "minLength": 1,
+      "title": "Sequence Mode",
+      "type": "string"
+    },
+    "surface": {
+      "minLength": 1,
+      "title": "Surface",
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "component_id",
+    "component_revision",
+    "surface",
+    "routed_group_ids",
+    "routing_manifest_hash",
+    "sequence_mode",
+    "persistence_enabled",
+    "activation_enabled",
+    "maximum_tasks",
+    "kill_switch_enabled",
+    "maximum_inference_ms",
+    "fallback_on_refusal"
+  ],
+  "title": "D3RuntimeConfiguration",
+  "type": "object"
+}

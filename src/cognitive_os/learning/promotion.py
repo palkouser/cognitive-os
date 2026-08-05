@@ -14,8 +14,10 @@ the deterministic rule in distribution, and answers confidently while wrong out 
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 from decimal import Decimal
+from enum import StrEnum
 from hashlib import sha256
 from uuid import NAMESPACE_URL, uuid5
 
@@ -34,6 +36,13 @@ from cognitive_os.domain.learned import (
     LearnedPromotionDecision,
     MandatoryPathInvariance,
     ProvenanceClass,
+)
+from cognitive_os.domain.promotion_payload import (
+    D3_PROMOTION_GATES,
+    CanaryToSteadyCondition,
+    D3PromotionPayload,
+    D3RuntimeConfiguration,
+    PromotionGateOutcome,
 )
 from cognitive_os.domains.fixtures import FIXTURE_TIME
 
@@ -237,4 +246,155 @@ def assess_promotion(
             else "every promotion gate passed"
         ),
         created_at=FIXTURE_TIME,
+    )
+
+
+# ------------------------------------------------------------------ S21D3-048: the D3 evaluator
+
+
+class D3PromotionVerdict(StrEnum):
+    """What the evaluator concluded about one payload. Four outcomes, all terminal."""
+
+    ELIGIBLE = "eligible"
+    #: A named gate reported `failed`.
+    GATE_FAILED = "gate_failed"
+    #: A named gate is absent or reported `not_measured`. Distinct from a failure because the
+    #: remedy is to run it, not to fix the component.
+    GATE_NOT_MEASURED = "gate_not_measured"
+    #: The payload is about a different component, revision, artifact, configuration, or
+    #: dependency revision than the one being promoted.
+    BINDING_MISMATCH = "binding_mismatch"
+
+
+@dataclass(frozen=True, slots=True)
+class D3PromotionBindings:
+    """What the caller believes is true right now, for the payload to be checked against.
+
+    Passed in rather than read: an evaluator that fetched its own expectations would compare
+    a payload against whatever the store happens to hold at evaluation time, which is the
+    time-of-check/time-of-use hole the whole verification path exists to close.
+    """
+
+    component_id: str
+    component_revision: int
+    surface: str
+    artifact_content_hash: str
+    artifact_size_bytes: int
+    canary_configuration: D3RuntimeConfiguration
+    steady_state_configuration: D3RuntimeConfiguration
+    canary_to_steady_condition: CanaryToSteadyCondition
+    dependency_hashes: Mapping[str, str]
+
+
+@dataclass(frozen=True, slots=True)
+class D3PromotionEvaluation:
+    """The verdict, the gate that decided it, and why. Nothing rounded in anyone's favour."""
+
+    verdict: D3PromotionVerdict
+    first_failed_gate: str | None
+    reason: str
+    #: Every gate that is not `passed`, in precedence order. The verdict names the first;
+    #: an operator fixing them needs the rest.
+    unmet_gates: tuple[str, ...]
+
+    @property
+    def eligible(self) -> bool:
+        return self.verdict is D3PromotionVerdict.ELIGIBLE
+
+
+def _binding_mismatches(
+    payload: D3PromotionPayload, bindings: D3PromotionBindings
+) -> tuple[str, ...]:
+    """Identity first: a payload about another component cannot fail a gate, it is irrelevant."""
+    mismatches = [
+        name
+        for name, found, expected in (
+            ("component_id", payload.component_id, bindings.component_id),
+            ("component_revision", payload.component_revision, bindings.component_revision),
+            ("surface", payload.surface, bindings.surface),
+            (
+                "artifact_content_hash",
+                payload.artifact.content_hash,
+                bindings.artifact_content_hash,
+            ),
+            ("artifact_size_bytes", payload.artifact.size_bytes, bindings.artifact_size_bytes),
+            (
+                "canary_configuration_hash",
+                payload.canary_configuration_hash,
+                bindings.canary_configuration.content_hash,
+            ),
+            (
+                "steady_state_configuration_hash",
+                payload.steady_state_configuration_hash,
+                bindings.steady_state_configuration.content_hash,
+            ),
+            (
+                "canary_to_steady_condition_hash",
+                payload.canary_to_steady_condition_hash,
+                bindings.canary_to_steady_condition.content_hash,
+            ),
+        )
+        if found != expected
+    ]
+    declared = {item.name: item.content_hash for item in payload.dependencies}
+    for name, expected in sorted(bindings.dependency_hashes.items()):
+        found = declared.get(name)
+        if found is None:
+            mismatches.append(f"dependency:{name}:missing")
+        elif found != expected:
+            mismatches.append(f"dependency:{name}:stale_or_wrong")
+    return tuple(sorted(mismatches))
+
+
+def evaluate_d3_promotion(
+    payload: D3PromotionPayload, *, bindings: D3PromotionBindings
+) -> D3PromotionEvaluation:
+    """The truth table. Eligible only when every gate passed and every binding holds.
+
+    Precedence is fixed by `D3_PROMOTION_GATES` rather than by whichever check runs first, so
+    a payload with three unmet gates always names the most fundamental one — and so two runs
+    over the same payload cannot disagree about which failure to report.
+    """
+    mismatches = _binding_mismatches(payload, bindings)
+    if mismatches:
+        return D3PromotionEvaluation(
+            verdict=D3PromotionVerdict.BINDING_MISMATCH,
+            first_failed_gate=None,
+            reason=f"the payload does not describe this promotion: {list(mismatches)}",
+            unmet_gates=(),
+        )
+
+    recorded = payload.gate
+    unmet = tuple(
+        name
+        for name in D3_PROMOTION_GATES
+        if name not in recorded or recorded[name].outcome is not PromotionGateOutcome.PASSED
+    )
+    if not unmet:
+        return D3PromotionEvaluation(
+            verdict=D3PromotionVerdict.ELIGIBLE,
+            first_failed_gate=None,
+            reason=f"all {len(D3_PROMOTION_GATES)} D3 promotion gates passed",
+            unmet_gates=(),
+        )
+
+    first = unmet[0]
+    gate = recorded.get(first)
+    if gate is None:
+        return D3PromotionEvaluation(
+            verdict=D3PromotionVerdict.GATE_NOT_MEASURED,
+            first_failed_gate=first,
+            reason=f"the payload records no {first!r} gate at all",
+            unmet_gates=unmet,
+        )
+    verdict = (
+        D3PromotionVerdict.GATE_FAILED
+        if gate.outcome is PromotionGateOutcome.FAILED
+        else D3PromotionVerdict.GATE_NOT_MEASURED
+    )
+    return D3PromotionEvaluation(
+        verdict=verdict,
+        first_failed_gate=first,
+        reason=f"{first} {gate.outcome.value}: {gate.detail}",
+        unmet_gates=unmet,
     )

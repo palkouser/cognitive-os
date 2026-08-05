@@ -55,6 +55,8 @@ class LifecycleHarness:
         self.service = self._service(activation_actors)
         self.assessment = fx.promotion_assessment()
         self.lineage = fx.lineage()
+        self.payload = fx.d3_payload()
+        self.d3_assessment = fx.d3_assessment(self.payload)
 
     def _service(self, activation_actors: frozenset[str]) -> LearnedEvidenceService:
         return LearnedEvidenceService(
@@ -121,16 +123,43 @@ class LifecycleHarness:
                 authority="operator",
                 reason=f"record {kind.value}",
             )
-        await self.service.advance_component(
-            fx.INERT.component_id,
-            LearnedComponentState.VERIFIED,
-            descriptor=fx.descriptor(),
+        await self.record_d3_promotion()
+        await self.verify()
+
+    async def record_d3_promotion(self) -> None:
+        """Store the D3 payload bytes and the assessment that names them. S21D3-048.
+
+        The evidence row's `payload_hash` is the assessment's own content hash and its
+        `payload_artifact_id` resolves the payload bytes — the two facts verification joins.
+        """
+        self.artifacts.add(fx.d3_payload_artifact(self.payload))
+        await self.service.record_evidence(
+            fx.evidence(
+                LearnedEvidenceKind.PROMOTION_ASSESSMENT,
+                self.d3_assessment.content_hash,
+                schema_version="2",
+                payload_artifact_id=fx.D3_PAYLOAD_ARTIFACT_ID,
+            ),
+            correlation_id=CORRELATION,
             actor=OPERATOR,
             authority="operator",
-            reason="evidence complete",
-            idempotency_key="to-verified",
-            correlation_id=CORRELATION,
+            reason="record the D3 promotion payload",
         )
+
+    async def verify(self, **overrides: object):  # type: ignore[no-untyped-def]
+        fields: dict[str, object] = {
+            "descriptor": fx.descriptor(),
+            "assessment": self.d3_assessment,
+            "payload": self.payload,
+            "bindings": fx.d3_bindings(),
+            "actor": OPERATOR,
+            "authority": "operator",
+            "reason": "evidence complete",
+            "idempotency_key": "to-verified",
+            "correlation_id": CORRELATION,
+        }
+        fields.update(overrides)
+        return await self.service.verify_component(fx.INERT.component_id, **fields)  # type: ignore[arg-type]
 
     async def approve(self, **overrides: object):  # type: ignore[no-untyped-def]
         approval = fx.approval(
@@ -290,16 +319,11 @@ class TestActivationWithoutExactEvidenceFails:
             idempotency_key="to-shadow",
             correlation_id=CORRELATION,
         )
-        await harness.service.advance_component(
-            fx.INERT.component_id,
-            LearnedComponentState.VERIFIED,
-            descriptor=fx.descriptor(),
-            actor=OPERATOR,
-            authority="operator",
-            reason="skip straight past the evidence",
-            idempotency_key="to-verified",
-            correlation_id=CORRELATION,
-        )
+        # Verified through the only path there is, but the *legacy* assessment this
+        # activation names was never stored. Reaching VERIFIED proves what the D3 payload
+        # covers and nothing about an assessment nobody recorded.
+        await harness.record_d3_promotion()
+        await harness.verify()
         approval = await harness.approve()
         with pytest.raises(LearnedRepositoryError, match="never recorded as evidence"):
             await harness.activate(approval)

@@ -1,0 +1,50 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/learned/canary-to-steady-condition.schema.json",
+  "additionalProperties": false,
+  "description": "What a canary must show before the bounded steady state may be entered, and its rollback.\n\nBoth halves in one document because they are one decision. A condition that named only the\nsuccess path would leave \"what happens otherwise\" to whoever is holding the pager.",
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "maximum_accepted_safety_regressions": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Maximum Accepted Safety Regressions",
+      "type": "integer"
+    },
+    "maximum_verifier_disagreements": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Maximum Verifier Disagreements",
+      "type": "integer"
+    },
+    "minimum_canary_tasks": {
+      "minimum": 1,
+      "title": "Minimum Canary Tasks",
+      "type": "integer"
+    },
+    "requires_intact_receipt_chain": {
+      "default": true,
+      "title": "Requires Intact Receipt Chain",
+      "type": "boolean"
+    },
+    "rollback_leaves_evidence_intact": {
+      "default": true,
+      "title": "Rollback Leaves Evidence Intact",
+      "type": "boolean"
+    },
+    "rollback_target_revision": {
+      "minimum": 1,
+      "title": "Rollback Target Revision",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "minimum_canary_tasks",
+    "rollback_target_revision"
+  ],
+  "title": "CanaryToSteadyCondition",
+  "type": "object"
+}

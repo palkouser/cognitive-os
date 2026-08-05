@@ -20,6 +20,7 @@ import yaml
 
 from cognitive_os.application.services.learned_runtime import (
     ActiveComponentState,
+    ArtifactAvailability,
     EmbeddingIdentity,
     LearnedRuntimeResolver,
     RoutingPolicy,
@@ -71,7 +72,7 @@ def _resolve(**overrides: object):
         "policy": _policy(),
         "active_states": [_state()],
         "group": "group-a",
-        "artifact_present": True,
+        "artifact": ArtifactAvailability(present=True),
         "local_embedding": MODEL,
     }
     fields.update(overrides)
@@ -109,7 +110,10 @@ class TestEveryDisagreementIsANamedFallback:
                 RuntimeHealthReason.COMPONENT_NOT_ALLOWLISTED,
             ),
             ({"group": "group-unrouted"}, RuntimeHealthReason.GROUP_NOT_ROUTED),
-            ({"artifact_present": False}, RuntimeHealthReason.ARTIFACT_MISSING),
+            (
+                {"artifact": ArtifactAvailability(present=False)},
+                RuntimeHealthReason.ARTIFACT_MISSING,
+            ),
             (
                 {"active_states": [_state(lineage_verified=False)]},
                 RuntimeHealthReason.ARTIFACT_UNVERIFIED,
@@ -157,7 +161,7 @@ class TestEveryDisagreementIsANamedFallback:
 class TestHealthNeverOverclaims:
     def test_a_fallback_reports_inactive_with_its_reason(self) -> None:
         resolver = _resolver()
-        resolved = _resolve(artifact_present=False)
+        resolved = _resolve(artifact=ArtifactAvailability(present=False))
 
         health = resolver.health(resolved, routed_groups=1)
 

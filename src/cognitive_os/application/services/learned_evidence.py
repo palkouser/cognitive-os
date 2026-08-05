@@ -26,6 +26,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from datetime import datetime, timedelta
+from hashlib import sha256
 from uuid import UUID, uuid5
 
 from cognitive_os.application.ports.learned_evidence import (
@@ -58,6 +59,11 @@ from cognitive_os.domain.learned_evidence import (
     LearnedRepositoryError,
     ObservationStatus,
 )
+from cognitive_os.domain.promotion_payload import (
+    D3PromotionAssessment,
+    D3PromotionPayload,
+    canonical_payload_bytes,
+)
 from cognitive_os.events.learned_event_service import LearnedCorrelationGap, LearnedEventService
 from cognitive_os.events.learned_events import (
     LearnedAccessRecorded,
@@ -80,6 +86,7 @@ from cognitive_os.events.learned_events import (
     LearnedShadowPredictionRecorded,
     LearnedSubjectEventPayload,
 )
+from cognitive_os.learning.promotion import D3PromotionBindings, evaluate_d3_promotion
 from cognitive_os.learning.registry import durable_transition_is_legal, transition_is_legal
 
 #: How long an artifact verification stays usable as activation evidence. An activation
@@ -194,15 +201,24 @@ class LearnedEvidenceService:
     ) -> LearnedComponentRevisionRecord:
         """One ordinary lifecycle step.
 
-        `ACTIVE` is refused here even when the transition table would allow it. Reaching
-        the active state requires evidence this method has no way to check, so it has a
-        method of its own; otherwise the evidence requirement would be advisory.
+        `ACTIVE` and `VERIFIED` are both refused here even when the transition table would
+        allow them. Reaching either requires evidence this method has no way to check, so
+        each has a method of its own; otherwise the evidence requirement would be advisory.
         """
         if target is LearnedComponentState.ACTIVE:
             raise LearnedRepositoryError(
                 LearnedRepositoryConflict.EVIDENCE_MISMATCH,
                 "activation is not an ordinary transition: use activate() or roll_back(), "
                 "which require the promotion assessment and approval that authorise it",
+            )
+        if target is LearnedComponentState.VERIFIED:
+            # S21D3-057. D2 left this reachable, so a component could be called verified by
+            # a caller that had verified nothing. Verification is a check, not a state change
+            # someone announces.
+            raise LearnedRepositoryError(
+                LearnedRepositoryConflict.EVIDENCE_MISMATCH,
+                "verification is not an ordinary transition: use verify_component(), which "
+                "reloads the stored promotion payload and rehashes the artifact bytes",
             )
         current = await self._require_component(component_id)
         self._require_descriptor_matches(descriptor, current)
@@ -220,6 +236,122 @@ class LearnedEvidenceService:
             state_after=target,
             descriptor_hash=descriptor.content_hash,
             artifact_lineage_id=current.artifact_lineage_id,
+            actor=actor,
+            authority=authority,
+            reason=reason,
+            idempotency_key=idempotency_key,
+            recorded_at=self._clock(),
+        )
+        stored = await self._repository.advance_component(
+            revision=revision, expected_revision=current.current_revision
+        )
+        await self._correlate_state(stored, correlation_id)
+        return stored
+
+    async def verify_component(
+        self,
+        component_id: str,
+        *,
+        descriptor: LearnedComponentDescriptor,
+        assessment: D3PromotionAssessment,
+        payload: D3PromotionPayload,
+        bindings: D3PromotionBindings,
+        actor: str,
+        authority: str,
+        reason: str,
+        idempotency_key: str,
+        correlation_id: UUID,
+    ) -> LearnedComponentRevisionRecord:
+        """The only `SHADOW -> VERIFIED` path. S21D3-057.
+
+        Everything is re-read rather than accepted. The assessment must be the one actually
+        recorded as evidence; the evidence record's payload artifact must resolve the exact
+        bytes the assessment names; the model artifact's metadata and bytes must be the ones
+        the payload binds; and every gate and dependency in the payload must pass the
+        deterministic evaluator against the bindings the caller believes are current.
+
+        No artifact is deserialised. The Artifact Store re-reads bytes and reports whether
+        they still hash to their record; that is the whole extent of the contact with them.
+        """
+        current = await self._require_component(component_id)
+        self._require_descriptor_matches(descriptor, current)
+        if not transition_is_legal(current.current_state, LearnedComponentState.VERIFIED):
+            raise LearnedRepositoryError(
+                LearnedRepositoryConflict.ILLEGAL_TRANSITION,
+                f"{component_id} is {current.current_state.value}; only a shadowing component "
+                "may be verified",
+            )
+        mismatches = [
+            name
+            for name, expected, found in (
+                ("component_id", component_id, assessment.component_id),
+                ("surface", current.surface, assessment.surface),
+                ("component_revision", current.current_revision, assessment.component_revision),
+                ("payload component_id", component_id, payload.component_id),
+                ("payload surface", current.surface, payload.surface),
+                # The assessment names the *byte* hash of the stored payload, so the payload
+                # handed in here is re-serialised and re-hashed rather than compared by its
+                # own content hash. That is the join the stored artifact is then checked
+                # against, and it closes without reading a single byte out of the store.
+                (
+                    "payload byte hash",
+                    assessment.payload_content_hash,
+                    sha256(canonical_payload_bytes(payload)).hexdigest(),
+                ),
+            )
+            if expected != found
+        ]
+        if mismatches:
+            raise LearnedRepositoryError(
+                LearnedRepositoryConflict.EVIDENCE_MISMATCH,
+                f"the assessment does not describe this component: {sorted(mismatches)}",
+            )
+
+        record = await self._stored_promotion_evidence(assessment)
+        if record.payload_artifact_id is None:
+            raise LearnedRepositoryError(
+                LearnedRepositoryConflict.EVIDENCE_MISMATCH,
+                "the stored promotion evidence resolves no payload artifact, so the bytes "
+                "behind the assessment cannot be re-read",
+            )
+        if record.payload_artifact_id != assessment.payload_artifact_id:
+            raise LearnedRepositoryError(
+                LearnedRepositoryConflict.EVIDENCE_MISMATCH,
+                "the stored promotion evidence names a different payload artifact than the "
+                "assessment does",
+            )
+        await self._revalidate_bytes(
+            record.payload_artifact_id,
+            expected_content_hash=assessment.payload_content_hash,
+            subject="promotion payload",
+        )
+        await self._revalidate_bytes(
+            payload.artifact.artifact_id,
+            expected_content_hash=payload.artifact.content_hash,
+            expected_media_type=payload.artifact.media_type,
+            expected_size_bytes=payload.artifact.size_bytes,
+            subject="model artifact",
+        )
+
+        evaluation = evaluate_d3_promotion(payload, bindings=bindings)
+        if not evaluation.eligible:
+            raise LearnedRepositoryError(
+                LearnedRepositoryConflict.EVIDENCE_MISMATCH,
+                f"the promotion payload is not eligible: {evaluation.reason}",
+            )
+
+        revision = LearnedComponentRevisionRecord(
+            component_id=component_id,
+            revision=current.current_revision + 1,
+            previous_revision=current.current_revision,
+            surface=current.surface,
+            state_before=current.current_state,
+            state_after=LearnedComponentState.VERIFIED,
+            descriptor_hash=descriptor.content_hash,
+            artifact_lineage_id=current.artifact_lineage_id,
+            # Recorded on the transition itself, so the ledger row names the evidence that
+            # justified it rather than leaving the two to be joined by whoever asks later.
+            promotion_assessment_hash=assessment.content_hash,
             actor=actor,
             authority=authority,
             reason=reason,
@@ -852,6 +984,79 @@ class LearnedEvidenceService:
                 "activation cannot be justified by it after the fact",
             )
 
+    async def _stored_promotion_evidence(
+        self, assessment: D3PromotionAssessment
+    ) -> LearnedEvidenceRecord:
+        """The evidence row whose `payload_hash` is exactly this assessment's content hash.
+
+        A missing row and a row for an older assessment are the same refusal from the store's
+        point of view and different problems for an operator, so the message says which.
+        """
+        stored = await self._repository.list_evidence(
+            component_id=assessment.component_id,
+            evidence_kind=LearnedEvidenceKind.PROMOTION_ASSESSMENT,
+            limit=1000,
+        )
+        for record in stored:
+            if record.payload_hash == assessment.content_hash:
+                return record
+        raise LearnedRepositoryError(
+            LearnedRepositoryConflict.EVIDENCE_MISMATCH,
+            (
+                "no promotion assessment is recorded for this component"
+                if not stored
+                else f"{len(stored)} promotion assessments are recorded and none is this one; "
+                "the assessment presented is stale or was never stored"
+            ),
+        )
+
+    async def _revalidate_bytes(
+        self,
+        artifact_id: UUID,
+        *,
+        expected_content_hash: str,
+        subject: str,
+        expected_media_type: str | None = None,
+        expected_size_bytes: int | None = None,
+    ) -> None:
+        """Re-read one artifact's metadata and re-hash its bytes. Never deserialise them.
+
+        S21D3-057 and S21D3-058 share this because they are the same check at two moments,
+        and two copies would let the later moment drift into trusting the earlier one. Which
+        is the failure it exists to prevent: an activation justified by a verification that
+        happened before the bytes changed.
+        """
+        if self._artifacts is None:
+            raise LearnedRepositoryError(
+                LearnedRepositoryConflict.EVIDENCE_MISMATCH,
+                f"the {subject} cannot be revalidated without an Artifact Store",
+            )
+        metadata = await self._artifacts.artifact_metadata(artifact_id)
+        if metadata is None:
+            raise LearnedRepositoryError(
+                LearnedRepositoryConflict.NOT_FOUND,
+                f"the {subject} {artifact_id} is not in the Artifact Store",
+            )
+        drift = [
+            name
+            for name, expected, found in (
+                ("content_hash", expected_content_hash, metadata.content_hash),
+                ("media_type", expected_media_type, metadata.media_type),
+                ("size_bytes", expected_size_bytes, metadata.size_bytes),
+            )
+            if expected is not None and expected != found
+        ]
+        if drift:
+            raise LearnedRepositoryError(
+                LearnedRepositoryConflict.EVIDENCE_MISMATCH,
+                f"the {subject} {artifact_id} no longer matches its record: {sorted(drift)}",
+            )
+        if not await self._artifacts.verify_artifact(artifact_id):
+            raise LearnedRepositoryError(
+                LearnedRepositoryConflict.INTEGRITY_FAILURE,
+                f"the {subject} {artifact_id} does not hash to its recorded content hash",
+            )
+
     async def _require_verified_lineage(
         self, lineage: LearnedArtifactLineage, component_id: str
     ) -> None:
@@ -878,6 +1083,18 @@ class LearnedEvidenceService:
                 f"artifact verification is {age} old, beyond the "
                 f"{self._max_verification_age} an activation may rely on",
             )
+        # S21D3-058. The age check bounds how stale the *record* may be; it says nothing about
+        # the bytes, which can be replaced a second after a successful read. So the bytes are
+        # re-hashed here, immediately before the state changes, and no earlier read is relied
+        # on. Metadata and size are compared too: a substituted artifact whose row was edited
+        # to match is caught by the rehash, and a substituted row by the metadata comparison.
+        await self._revalidate_bytes(
+            stored.artifact_id,
+            expected_content_hash=stored.declared_content_hash,
+            expected_media_type=stored.media_type,
+            expected_size_bytes=stored.size_bytes,
+            subject="model artifact",
+        )
 
     async def _require_positive_approval(
         self,

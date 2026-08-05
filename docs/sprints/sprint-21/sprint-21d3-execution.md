@@ -1,10 +1,12 @@
 # Sprint 21D3 execution log
 
 - **Branch:** `feature/sprint-21d3-invariant-correction-ranking`
-- **Wave:** W0 + W1 + W2 + W3 — pre-registration, invariant correction spine, fresh correction
-  evidence, independent retrieval
-- **Status:** W0, W1, W2 and W3 complete. W2 ends in a null candidate selection; W3 ends in a
-  negative retrieval result. Both experiment branches are now closed and Gate L2 stays closed.
+- **Wave:** W0 + W1 + W2 + W3 + W4 — pre-registration, invariant correction spine, fresh
+  correction evidence, independent retrieval, artifact and runtime
+- **Status:** W0 through W4 complete. W2 ends in a null candidate selection; W3 ends in a
+  negative retrieval result; W4 implements the promotion contract, the offline loader and the
+  verification path, and then refuses final access. Both experiment branches are closed, every
+  E06 and E07 task carries a typed not-opened record, and Gate L2 stays closed.
 - **Migration:** none; all isolated databases are at `0015`
 - **Pre-registration SHA-256:**
   `191b3757ded21a1c2c85459a34902f8dee3f2f35b0979b557f84c1a37fe6a191`
@@ -598,3 +600,239 @@ first pushed head `5b6e88be0513` completed 29 of 30 jobs in run `30990394101`, f
 `coding-agent` on the import W3-A2 describes. Head `42827cd` then completed run `30991106057`
 with 30 of 30 jobs successful, and the released head `1bb277a230f8` completed run
 `30992296060` with **30 of 30 jobs successful**.
+
+## W4 artifact and runtime
+
+W4 executes S21D3-048, S21D3-050 through S21D3-055, S21D3-057, S21D3-056, S21D3-058 and
+S21D3-059. Its exit is the one the wave table names: **promotion contract, offline loader,
+verification implementation before real SHADOW registration, then one pre-final access decision
+or bound not-opened chain.** W2's null selection decides which of the two it is. Every
+implementation item is built and proven; every item whose deliverable *is* the selected
+artifact is refused and recorded, and the checkpoint writes the not-opened map for all twenty
+dependent tasks against one stop hash.
+
+The distinction W4 has to hold, and does, is between building the machinery and claiming to
+have used it. `sprint-21d3-runtime-invariance.json` labels its subject
+`artifact_under_test: contract_fixture` in the first field a reader meets, because the artifact
+it exercises is one this wave built to satisfy the v2 schema — not a D3 model, which does not
+exist.
+
+### The versioned promotion payload and its evaluator
+
+S21D3-048. The v1 `LearnedPromotionAssessment` records six things; Gate L2 asks about twenty.
+D1 and D2 closed that gap with prose beside the record. `domain/promotion_payload.py` closes it
+with rows: **twenty named gates** in fixed first-failure precedence order, each carrying an
+outcome, the evidence hash it came from, and a detail string. `not_measured` is a distinct
+outcome from `failed` — the two refuse eligibility equally and need entirely different
+remedies, and a blank field in D2 could mean either.
+
+Three separations are load-bearing and are tested as such:
+
+- **the payload is not the assessment.** The payload is the bundle of measurements and lives in
+  the Artifact Store as inert bytes; the assessment is the decision and names the payload's
+  artifact ID and byte hash, so its own content hash commits to exactly which bytes were read.
+  A payload embedding its own artifact identity could not be hashed without first agreeing what
+  to exclude — the mistake the correction artifact already avoids.
+- **the configurations are sealed apart from the decision.** The exact canary and the bounded
+  steady state are two canonical documents with their own hashes, and the payload binds both
+  plus the canary-to-steady transition condition. `D3RuntimeConfiguration` refuses to validate
+  without a kill switch, and the payload refuses a canary and a steady state that hash alike.
+- **nothing in the payload decides anything.** `evaluate_d3_promotion` reads it. Identity is
+  checked before measurement: a payload about another component, revision, artifact, size,
+  configuration or dependency revision is a `binding_mismatch` and never a gate failure,
+  because a payload about something else cannot fail a gate — it is simply irrelevant.
+
+Precedence is fixed by the gate tuple, not by evaluation order, so a payload with three unmet
+gates always names the most fundamental one and two runs cannot disagree. Missing and stale
+dependencies are reported apart (`dependency:<name>:missing` against
+`dependency:<name>:stale_or_wrong`). Legacy payloads stay readable: `promotion_payload_version`
+dispatches on the schema *name* before any model is constructed, so v1 bytes are reported as
+version 1 rather than as a v2 document with fields missing.
+
+### The v2 artifact and the direct evaluation boundary
+
+S21D3-050 and S21D3-052. `CorrectionArtifactPayloadV2` carries what v1 could only imply. v1
+named an `encoder_version` string and left the reader to trust that the string meant the
+canonicaliser it thinks it means; v2 names the normaliser, the grammar, the canonical prefix
+hex, the payload expression and the frozen feature contract's own hash
+`492c90a5df420de9…`, so a replayed encoding is checkable rather than assumed. It also names the
+**390 channels in fitted order** — six scalars then 384 embedding components — because a bound
+set covering the right feature names proves nothing about the order the values were written in,
+and a reordered channel list is a silently different model. Selection and member manifest
+hashes join dataset and split, so lineage is complete rather than partial.
+
+Version confusion fails before anything is built. The schema-name check moved into the shared
+byte-level reader, so a v1 loader handed v2 bytes reports the name it read rather than
+whichever field the two shapes happen to disagree about first.
+
+The direct evaluation boundary is the other half. Calibration, the final batches and shadow all
+need a ranker before any resolver would hand one out, and the danger is that such a path becomes
+a way around the resolver. So it is not a flag: `DirectEvaluationCapability` names one artifact
+hash, one purpose, one lifecycle state and every identity the bytes must agree with, and
+`build_ranker_for_evaluation` **rehashes the bytes first** — every check after that is a
+statement about those bytes rather than about whatever the store handed over. The capability
+refuses to exist outside `REGISTERED` and `SHADOW`; the two states it accepts are the only two
+in the record. The resolver holds no capability, constructs none, and does not import the
+module, which is what "cannot be selected by the application runtime" means here.
+
+Eleven refusal cases were executed and all eleven refused: wrong artifact hash, wrong media
+type, oversized, corrupt bytes, empty exemplars, v1-reader-on-v2, v2-reader-on-v1, wrong
+descriptor, wrong split manifest, wrong member manifest, wrong selection manifest.
+
+### The runtime resolver and the mandatory path
+
+S21D3-052 and S21D3-055. The resolver gained five reason codes for the states D2 could not
+name: `lifecycle_not_active`, `component_not_approved`, `configuration_hash_mismatch`,
+`artifact_corrupt` and `artifact_oversized`. Lifecycle and approval are checked *before*
+routing, deliberately — reporting "group not routed" for a component a kill switch just
+disabled reads as a configuration choice rather than as the kill switch that fired. The
+artifact is no longer a boolean: `ArtifactAvailability` separates absent from oversized from
+failing-its-rehash, because those are a provisioning problem, a fitting problem and a
+corruption problem and an operator has to tell them apart.
+
+The matrix resolves **21 configurations** and reaches **every one of the 18 reason codes** —
+`unreached_reason_codes: []`. Two configurations permit learned ordering (the exact canary and
+the bounded steady state); the other nineteen fall back.
+
+The invariance proof executes rather than asserts. Under each of the 21 resolutions the
+sequencer runs the whole task and the attempted order is hashed. All nineteen fallback
+configurations produce the identical decision hash
+`9e8a2dd654d645c8bb5ac337a3a025433243a55f9228e541f2cb1e861b5cf349`, and only the two bounded
+campaign configurations differ. That is the only shape of this check that can fail: a resolver
+that permitted ordering where it should have refused would move one of the nineteen.
+
+Zero provider, network, GPU or credential calls are possible from the resolver — checked
+against its own source rather than counted, because a counter proves only that these particular
+21 resolutions made no call, and the claim is that no resolution can.
+
+### Sequencing through the receipt-aware remainder
+
+S21D3-053. `run_task` accepts S21D3-025's reconciled plan, and when it is given, that plan is
+the only authority on what may still be attempted. The plan is passed rather than a list of
+candidate IDs on purpose: a caller computing the remainder itself would be a second
+implementation of the rule that keeps `candidates_left_alone` alone, and the one that disagreed
+would be the one that paid for a container. A contradicted receipt makes the task unrunnable
+rather than partially runnable, and a remainder naming a candidate outside the task's order is
+refused.
+
+The learned ranking still decides what is tried first *among what is left*, and never widens
+what is left. In the recorded proof the resolved order is the full reverse permutation, the
+remainder is three of four candidates, the attempted order is the two the learned ranking put
+first, every attempt ran the hidden verifier, the already-recorded candidate did not re-enter,
+and the first acceptance stopped the rest.
+
+One thing was carried further than the item asked. `sequence_receipts` keeps only the latest
+seal per task, so a resume that recorded nothing would leave the chain saying *less* than it
+did before — "we deliberately skipped these" is the one fact the outcome stream cannot
+reconstruct. A resume now restates it.
+
+### Verification, and bytes read again immediately before
+
+S21D3-057 and S21D3-058. `advance_component` now refuses `VERIFIED` exactly as it refuses
+`ACTIVE`. D2 left it reachable, so a component could be called verified by a caller that had
+verified nothing; verification is a check, not a state change someone announces.
+
+`verify_component()` re-reads everything rather than accepting it: the assessment must be the
+one actually recorded as evidence (a missing row and a row for an older assessment are reported
+apart, because they are different problems), the evidence row's payload artifact must be the
+one the assessment names, the payload handed in is re-serialised and re-hashed to confirm it is
+the bytes the assessment commits to, the model artifact's media type, hash and size must be the
+ones the payload binds, both artifacts are rehashed by the store, and only then does the
+evaluator run. The transition records the assessment hash atomically, so the ledger row names
+the evidence that justified it rather than leaving the two to be joined later.
+
+S21D3-058 closes the time-of-check/time-of-use hole underneath activation. D2's `activate()`
+relied on a lineage record verified within the last week — a statement about a *record*, not
+about bytes that can be replaced a second after it was written. Both moments now call one
+shared `_revalidate_bytes`, so the later one cannot drift into trusting the earlier one. Bytes
+replaced after verification leave the component in `VERIFIED` with the surface unheld; a
+substituted metadata row is caught by the comparison; neither path deserialises anything, and
+the Artifact Store stub has no method that could.
+
+### The pre-final checkpoint, and what it refused
+
+S21D3-059 evaluates its preconditions in backlog order and stops at the first failure, which is
+the first the plan declares rather than whichever file was read first:
+
+| Precondition | Result |
+|---|---|
+| S21D3-039 selected one candidate | **failed** — null selection |
+| the diagnostic continuation permits correction work | passed (`proceed`) |
+| S21D3-051 stored one artifact | not opened |
+| S21D3-054 proved the selected-artifact vertical slice | not opened |
+| S21D3-056 registered the artifact and entered SHADOW | not opened |
+| the independent retrieval branch reached a result | failed — `winning_arm: null` |
+
+`authorised: false`. The stop hash is the W2 selection's own content hash
+`68ea06843d2136e390bf8a4ea0698414932987f5447887187907c45c0dcea876`, and all twenty dependent
+records carry that one hash: S21D3-051, -054, -056, the ten E06 items -060 through -069, and
+the seven E07 items -070 through -074, -076 and -077. S21D3-075 is deliberately absent from
+that map — the backlog names it the one unconditional substrate gate, and it runs against the
+isolated lifecycle fixture whether or not D3 activates.
+
+**Neither configuration is sealed.** Both exist as canonical documents with reproducible hashes
+— exact canary `942eb1996fba9892…` over one routed group and 20 tasks, bounded steady state
+`53160eae1e88965d…` over three groups and 200 tasks, transition condition
+`0c5e68c2c56fc432…` — but sealing happens at authorised final access, and access was not
+authorised. Sealed bytes bound to evidence nobody read would be a claim about a run that never
+happened.
+
+`final_or_canary_outcomes_inspected: 0`.
+
+### W4 findings
+
+| ID | Subject | Observed | Action |
+|---|---|---|---|
+| W4-F1 | `advance_component` | `SHADOW -> VERIFIED` was reachable through the generic transition, so the whole evidence-bound verification path was optional. The D2 lifecycle tests used exactly that route to reach `VERIFIED`, which is how it survived two sprints. | Refused, beside the identical refusal for `ACTIVE`. The shared lifecycle harness now reaches `VERIFIED` through `verify_component()` with a real payload, so the released path is exercised by every activation test rather than by one of its own. |
+| W4-F2 | `activate()` | Activation trusted `LearnedArtifactLineage.verified_at` being under a week old. That bounds how stale the *record* may be and says nothing about bytes, which can be replaced immediately after a successful read. | The bytes are rehashed immediately before the state changes, through the same narrow verifier authority S21D3-057 uses. One shared function, because two copies would let the later moment drift into trusting the earlier one. |
+| W4-A1 | the mandatory-path proof | The first version assigned one constant digest to every fallback configuration and then reported that they matched — a tautology, not a measurement, and it would have passed with the resolver removed. | Replaced with execution: each of the 21 resolutions drives the sequencer and the attempted order is hashed. Nineteen fallbacks agree on `9e8a2dd6…`, and only the two campaign configurations differ. |
+| W4-A2 | the resolver call counters | The first version instantiated a counter of provider, network, GPU and credential calls, incremented it nowhere, and reported four zeros. It proved that these particular resolutions made no call, which was never in doubt. | Replaced with a check against the resolver module's own source for anything that could reach a provider, the network, a GPU or a credential. `forbidden_references_found: []`. |
+| W4-A3 | the D3 assessment revision | The first fixture named revision 3, the revision the component reaches *after* verification, so verification refused its own assessment. | The assessment names the revision it is about — the one sitting in `SHADOW`. Recorded in the fixture as `D3_VERIFIED_REVISION` with the register/shadow/verified count spelled out, because the off-by-one is not obvious from the number alone. |
+
+W4-A1 and W4-A2 were both found by reading the evidence file against the question it claims to
+answer, which is the check that caught W3-A1 as well.
+
+### W4 evidence index
+
+| Evidence | SHA-256 |
+|---|---|
+| [runtime invariance](evidence/sprint-21d3-runtime-invariance.json) | `78ef8d39734fba7d4791156389bf1400f33162285d380d3a8b17ebf050923fde` |
+| [pre-final checkpoint](evidence/sprint-21d3-pre-final-checkpoint.json) | `0fc91be2d67ee12cd4c523ad1967c20e4349922b91117d2ec8c96455d9bb3c58` |
+
+Both carry the pre-registration SHA-256
+`191b3757ded21a1c2c85459a34902f8dee3f2f35b0979b557f84c1a37fe6a191`, and `--check-chronology`
+accepts all twelve bound D3 files. The contract fixture artifact hashes to
+`e6412a0dafe7876bed8141c0432944ae1e8aaffef0249153a1e6932801b4c353` over 27,030 bytes. The one
+operator command is:
+
+```bash
+UV_CACHE_DIR=/home/palkouser/projekt/cognitive-os/.cache/uv \
+  uv run python scripts/artifact_runtime_d3.py
+```
+
+It needs no database, no Artifact Store, no model and no network: everything it measures runs
+in process, and everything it decides is read from committed evidence.
+
+### W4 validation
+
+The complete repository suite passes with zero failures — 3393 passed, 217 skipped — as do Ruff
+lint and format over `src tests scripts infra`, mypy over `src/cognitive_os` (608 files), Bandit
+with zero results, the contract-schema export check, the pre-registration integrity and
+twelve-file chronology checks, the repository language check and the tracked-file secrets scan.
+
+Three focused modules were added:
+`tests/cognitive_os/learning/test_correction_artifact_v2.py` (26 cases) pins the v2 schema, both
+directions of version confusion, and every refusal of the direct evaluation boundary including
+its closure past `SHADOW`; `tests/cognitive_os/learned_evidence/test_d3_promotion_and_verification.py`
+(35 cases) pins the payload, the evaluator truth table, the only path to `VERIFIED` and the
+activation-time rehash; `tests/cognitive_os/learning/test_d3_artifact_and_runtime_goldens.py`
+(15 cases) pins the three schema golden hashes, the gate precedence order, and the completeness
+of the not-opened map against the backlog's own item headings. The runtime resolver, sequencer
+and vertical-slice suites were extended in place beside the released tests they cover.
+
+Four contracts were added to the schema export under `v1/learned/`: the D3 promotion payload
+and assessment, the runtime configuration, and the canary-to-steady condition. Nothing was
+removed and no existing schema changed. W4 added no database migration, no event field, no
+corpus or artifact role, no dependency, and no provider, network, credential or GPU call.
+Migration stays at `0015`. No Artifact Store — predecessor or D3 — received a write, no
+lifecycle component was registered, and no final, batch-B or canary body was opened.

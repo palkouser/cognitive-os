@@ -167,6 +167,36 @@ class ReceiptAwareResumePlan:
         """The only schedulable remainder after receipt reconciliation."""
         return self.plan.remaining
 
+    def remainder_for(self, task_id: UUID) -> tuple[UUID, ...]:
+        """The candidates one task may still attempt, in campaign order.
+
+        S21D3-053. The sequencer asks this rather than filtering `effective_remainder` itself,
+        because the two would then be two implementations of "what is left" and the one that
+        disagreed would be the one that scheduled a container. A task the plan does not
+        mention at all has nothing left to attempt — `candidates_left_alone` reaches this
+        function as an empty tuple, which is what stops an ordinary resume from undoing them.
+        """
+        return tuple(
+            item.candidate_id
+            for item in self.effective_remainder
+            if item.task_id == task_id and item.candidate_id is not None
+        )
+
+    def left_alone_for(self, task_id: UUID) -> tuple[UUID, ...]:
+        """What an earlier sequence of this task decided not to attempt.
+
+        Carried into the receipt a resume writes, because `sequence_receipts` keeps only the
+        latest seal per task: a replay that recorded nothing here would leave the chain saying
+        less than it did before, and "we deliberately skipped these" is the one fact the
+        outcome stream cannot reconstruct.
+        """
+        return tuple(
+            candidate_id
+            for task in self.tasks
+            if task.task_id == task_id
+            for candidate_id in task.intentionally_unattempted
+        )
+
 
 def count_outcomes(references: Iterable[RealityOutcomeReference]) -> OutcomeCount:
     """Count distinct executions, reporting every exclusion with its cause.

@@ -276,10 +276,11 @@ class TestTheLoaderRefusesEverythingElse:
             _load(json.dumps(document).encode())
 
     def test_an_unknown_schema_name_is_refused(self) -> None:
+        """S21D3-050 moved this refusal ahead of validation, so it names the schema it read."""
         document = json.loads(canonical_bytes(_payload()).decode())
         document["schema_name"] = "something-else"
 
-        with pytest.raises(CorrectionArtifactError, match="does not match the declared schema"):
+        with pytest.raises(CorrectionArtifactError, match="not 'correction-ranker-artifact'"):
             _load(json.dumps(document).encode())
 
 
