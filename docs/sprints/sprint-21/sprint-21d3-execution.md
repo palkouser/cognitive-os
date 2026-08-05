@@ -787,10 +787,14 @@ happened.
 | W4-F2 | `activate()` | Activation trusted `LearnedArtifactLineage.verified_at` being under a week old. That bounds how stale the *record* may be and says nothing about bytes, which can be replaced immediately after a successful read. | The bytes are rehashed immediately before the state changes, through the same narrow verifier authority S21D3-057 uses. One shared function, because two copies would let the later moment drift into trusting the earlier one. |
 | W4-A1 | the mandatory-path proof | The first version assigned one constant digest to every fallback configuration and then reported that they matched — a tautology, not a measurement, and it would have passed with the resolver removed. | Replaced with execution: each of the 21 resolutions drives the sequencer and the attempted order is hashed. Nineteen fallbacks agree on `9e8a2dd6…`, and only the two campaign configurations differ. |
 | W4-A2 | the resolver call counters | The first version instantiated a counter of provider, network, GPU and credential calls, incremented it nowhere, and reported four zeros. It proved that these particular resolutions made no call, which was never in doubt. | Replaced with a check against the resolver module's own source for anything that could reach a provider, the network, a GPU or a credential. `forbidden_references_found: []`. |
+| W4-F3 | the released lifecycle callers of `advance_component` | CI's `postgres-integration` and `learned-evidence-core` lanes failed on head `18c09e5`. Closing the generic `VERIFIED` transition broke every released caller that used it: the credential-free lifecycle smoke, and the Sprint 21C1 learned benchmark fixtures behind four of the sixteen CI gate cases. The `correction-runtime` CLI was separately broken by the resolver's `artifact_present` becoming `ArtifactAvailability`. None of the three has a unit test, which is why the local suite was green. | Both fixtures now reach `VERIFIED` through `verify_component()` with a real D3 payload — the smoke stores the payload bytes in the same Artifact Store the model bytes go to, so it exercises the released path end to end against PostgreSQL rather than a stub. The CLI passes `ArtifactAvailability(present=False)`. The two benchmark manifests return 16/16 and 48/48, and the smoke reports `healthy: true`, `replay_matches: true` and a rollback receipt naming its activation. |
 | W4-A3 | the D3 assessment revision | The first fixture named revision 3, the revision the component reaches *after* verification, so verification refused its own assessment. | The assessment names the revision it is about — the one sitting in `SHADOW`. Recorded in the fixture as `D3_VERIFIED_REVISION` with the register/shadow/verified count spelled out, because the off-by-one is not obvious from the number alone. |
 
 W4-A1 and W4-A2 were both found by reading the evidence file against the question it claims to
-answer, which is the check that caught W3-A1 as well.
+answer, which is the check that caught W3-A1 as well. W4-F3 was found by CI and not by the local
+suite, which is the honest reading of it: a guard that closes a released path has to be pushed
+through every lane that walks it, and three of those lanes are driven by scripts and benchmark
+manifests rather than by `pytest`.
 
 ### W4 evidence index
 
@@ -829,6 +833,13 @@ activation-time rehash; `tests/cognitive_os/learning/test_d3_artifact_and_runtim
 (15 cases) pins the three schema golden hashes, the gate precedence order, and the completeness
 of the not-opened map against the backlog's own item headings. The runtime resolver, sequencer
 and vertical-slice suites were extended in place beside the released tests they cover.
+
+Beyond the repository suite, the two learned benchmark manifests and the credential-free
+lifecycle smoke were run locally after W4-F3: `sprint21c1-learned-ci` returns 16 of 16,
+`sprint21c1-learned-seed` returns 48 of 48, and `scripts/learned.py smoke --confirm-isolated`
+reaches `active` at revision 6 with `healthy: true`, `replay_matches: true` and a rollback
+receipt naming its activation, against an isolated `*_test` database and a scratch artifact
+root.
 
 Four contracts were added to the schema export under `v1/learned/`: the D3 promotion payload
 and assessment, the runtime configuration, and the canary-to-steady condition. Nothing was

@@ -45,7 +45,21 @@ from cognitive_os.domain.learned_evidence import (
     LearnedReplayResult,
     ObservationAttribution,
 )
+from cognitive_os.domain.promotion_payload import (
+    D3_PROMOTION_GATES,
+    D3_PROMOTION_MEDIA_TYPE,
+    CanaryToSteadyCondition,
+    D3ArtifactBinding,
+    D3PromotionAssessment,
+    D3PromotionPayload,
+    D3RuntimeConfiguration,
+    PromotionDependency,
+    PromotionGateOutcome,
+    PromotionGateRecord,
+    canonical_payload_bytes,
+)
 from cognitive_os.infrastructure.learned.reference import AlwaysAbstainingRanker
+from cognitive_os.learning.promotion import D3PromotionBindings
 
 if TYPE_CHECKING:
     from cognitive_os.infrastructure.learned.artifacts import LearnedArtifactStore
@@ -58,6 +72,13 @@ SURFACE = "skill.selection"
 ARTIFACT_BYTES = b"learned benchmark fixture: inert bytes, referenced and never loaded\n"
 ARTIFACT_HASH = sha256(ARTIFACT_BYTES).hexdigest()
 ARTIFACT_ID = uuid5(NAMESPACE, "artifact")
+#: The D3 promotion payload is a second artifact, stored and re-read separately from the
+#: model bytes. S21D3-057 verification checks both, and they can drift independently.
+PAYLOAD_ARTIFACT_ID = uuid5(NAMESPACE, "d3-promotion-payload")
+#: The revision a promotion is about: the one sitting in SHADOW. Register is 1, SHADOW is 2,
+#: and VERIFIED becomes 3, so an assessment naming 3 would describe a state that does not
+#: exist until after the verification it authorises.
+VERIFIED_REVISION = 2
 COMPONENT = AlwaysAbstainingRanker()
 
 
@@ -74,6 +95,18 @@ class BenchmarkArtifactVerifier:
     async def artifact_metadata(self, artifact_id: UUID) -> ArtifactRef | None:
         if not self._known:
             return None
+        if artifact_id == PAYLOAD_ARTIFACT_ID:
+            # The payload is a different blob with a different hash, so a stub that answered
+            # with the model's metadata would let verification pass on bytes it never saw.
+            digest = payload_bytes_hash()
+            return ArtifactRef(
+                artifact_id=artifact_id,
+                media_type=D3_PROMOTION_MEDIA_TYPE,
+                content_hash=digest,
+                size_bytes=len(canonical_payload_bytes(promotion_payload_v2())),
+                storage_key=f"sha256/{digest[:2]}/{digest}",
+                created_at=FIXTURE_TIME,
+            )
         return ArtifactRef(
             artifact_id=artifact_id,
             media_type="application/octet-stream",
@@ -191,22 +224,21 @@ async def drive_to(service: Any, target: LearnedComponentState) -> Any:
         idempotency_key="bench-register",
         correlation_id=correlation,
     )
-    order = (LearnedComponentState.SHADOW, LearnedComponentState.VERIFIED)
-    for state in order:
-        if target is LearnedComponentState.REGISTERED:
-            break
+    if target is not LearnedComponentState.REGISTERED:
         await service.advance_component(
             COMPONENT.component_id,
-            state,
+            LearnedComponentState.SHADOW,
             descriptor=descriptor(),
             actor=OPERATOR,
             authority="operator",
-            reason=f"benchmark: advance to {state.value}",
-            idempotency_key=f"bench-{state.value}",
+            reason="benchmark: advance to shadow",
+            idempotency_key="bench-shadow",
             correlation_id=correlation,
         )
-        if state is target:
-            break
+        if target is not LearnedComponentState.SHADOW:
+            # S21D3-057: `VERIFIED` is not an ordinary transition any more, so every state
+            # past SHADOW is reached through the released verification path.
+            await verify(service)
     if target is LearnedComponentState.DISABLED:
         await service.advance_component(
             COMPONENT.component_id,
@@ -591,3 +623,138 @@ async def governance_check(name: str) -> bool:
             for state in LearnedComponentState
         )
     return False
+
+
+def runtime_configuration(name: str) -> D3RuntimeConfiguration:
+    return D3RuntimeConfiguration(
+        name=name,
+        component_id=COMPONENT.component_id,
+        component_revision=VERIFIED_REVISION,
+        surface=SURFACE,
+        routed_group_ids=("bench-group-a",) if name == "exact_canary" else ("bench-group-b",),
+        routing_manifest_hash="c" * 64,
+        sequence_mode="stop_on_first_accepted",
+        persistence_enabled=True,
+        activation_enabled=True,
+        maximum_tasks=20 if name == "exact_canary" else 200,
+        kill_switch_enabled=True,
+        maximum_inference_ms=250,
+        fallback_on_refusal="frozen deterministic baseline order",
+    )
+
+
+def transition_condition() -> CanaryToSteadyCondition:
+    return CanaryToSteadyCondition(minimum_canary_tasks=20, rollback_target_revision=1)
+
+
+#: Shape-only, exactly like `promotion_assessment`: every gate is recorded as passed so the
+#: benchmark can reach VERIFIED, and none of it is a claim that anything was measured.
+BENCHMARK_DEPENDENCIES: dict[str, str] = {"benchmark_fixture": "1" * 64}
+
+
+def promotion_payload_v2() -> D3PromotionPayload:
+    return D3PromotionPayload(
+        component_id=COMPONENT.component_id,
+        component_revision=VERIFIED_REVISION,
+        surface=SURFACE,
+        code_revision="learned-benchmark",
+        legacy_assessment_hash=promotion_assessment().content_hash,
+        legacy_decision=LearnedPromotionDecision.ELIGIBLE_FOR_OPERATOR_APPROVAL.value,
+        gates=tuple(
+            PromotionGateRecord(
+                name=name,
+                outcome=PromotionGateOutcome.PASSED,
+                evidence_hash=sha256(f"bench:{name}".encode()).hexdigest(),
+                detail=f"benchmark: {name} is shape-only and makes no accuracy claim",
+            )
+            for name in D3_PROMOTION_GATES
+        ),
+        dependencies=tuple(
+            PromotionDependency(name=name, content_hash=value)
+            for name, value in sorted(BENCHMARK_DEPENDENCIES.items())
+        ),
+        artifact=D3ArtifactBinding(
+            artifact_id=ARTIFACT_ID,
+            media_type="application/octet-stream",
+            schema_name="learned-benchmark-inert-bytes",
+            schema_version=1,
+            content_hash=ARTIFACT_HASH,
+            size_bytes=len(ARTIFACT_BYTES),
+        ),
+        canary_configuration_hash=runtime_configuration("exact_canary").content_hash,
+        steady_state_configuration_hash=runtime_configuration("bounded_steady_state").content_hash,
+        canary_to_steady_condition_hash=transition_condition().content_hash,
+        recorded_at=FIXTURE_TIME,
+    )
+
+
+def payload_bytes_hash() -> str:
+    return sha256(canonical_payload_bytes(promotion_payload_v2())).hexdigest()
+
+
+def promotion_assessment_v2() -> D3PromotionAssessment:
+    return D3PromotionAssessment(
+        assessment_id=uuid5(NAMESPACE, "d3-promotion"),
+        component_id=COMPONENT.component_id,
+        component_revision=VERIFIED_REVISION,
+        surface=SURFACE,
+        payload_artifact_id=PAYLOAD_ARTIFACT_ID,
+        payload_content_hash=payload_bytes_hash(),
+        decision="eligible",
+        reason="benchmark: every gate recorded as passed",
+        recorded_at=FIXTURE_TIME,
+    )
+
+
+def promotion_bindings() -> D3PromotionBindings:
+    return D3PromotionBindings(
+        component_id=COMPONENT.component_id,
+        component_revision=VERIFIED_REVISION,
+        surface=SURFACE,
+        artifact_content_hash=ARTIFACT_HASH,
+        artifact_size_bytes=len(ARTIFACT_BYTES),
+        canary_configuration=runtime_configuration("exact_canary"),
+        steady_state_configuration=runtime_configuration("bounded_steady_state"),
+        canary_to_steady_condition=transition_condition(),
+        dependency_hashes=dict(BENCHMARK_DEPENDENCIES),
+    )
+
+
+async def verify(service: Any) -> Any:
+    """Reach VERIFIED the only way there is: store the payload, then verify against it.
+
+    S21D3-057 closed the generic transition, so the benchmark now exercises the released
+    verification path on every case that needs a verified component — which is stronger than
+    what it replaced, because the path is the one production uses.
+    """
+    correlation = uuid5(NAMESPACE, "correlation")
+    assessment = promotion_assessment_v2()
+    await service.record_evidence(
+        LearnedEvidenceRecord(
+            evidence_id=uuid5(NAMESPACE, "d3-promotion-evidence"),
+            evidence_kind=LearnedEvidenceKind.PROMOTION_ASSESSMENT,
+            component_id=COMPONENT.component_id,
+            surface=SURFACE,
+            schema_version="2",
+            payload_hash=assessment.content_hash,
+            payload_artifact_id=PAYLOAD_ARTIFACT_ID,
+            recorded_by=OPERATOR,
+            recorded_at=FIXTURE_TIME,
+        ),
+        correlation_id=correlation,
+        actor=OPERATOR,
+        authority="operator",
+        reason="benchmark: record the D3 promotion payload",
+    )
+    return await service.verify_component(
+        COMPONENT.component_id,
+        descriptor=descriptor(),
+        assessment=assessment,
+        payload=promotion_payload_v2(),
+        bindings=promotion_bindings(),
+        actor=OPERATOR,
+        authority="operator",
+        reason="benchmark: verify against the stored payload",
+        idempotency_key="bench-verified",
+        correlation_id=correlation,
+    )

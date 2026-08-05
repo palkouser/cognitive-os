@@ -320,6 +320,7 @@ async def _correction_runtime(args: argparse.Namespace) -> int:
     """
     from cognitive_os.application.services.learned_runtime import (
         ActiveComponentState,
+        ArtifactAvailability,
         EmbeddingIdentity,
         LearnedRuntimeResolver,
         RoutingPolicy,
@@ -363,7 +364,7 @@ async def _correction_runtime(args: argparse.Namespace) -> int:
             policy=policy,
             active_states=states,
             group=args.group or "",
-            artifact_present=False,
+            artifact=ArtifactAvailability(present=False),
             local_embedding=expected,
         )
         health = resolver.health(resolved, routed_groups=len(policy.routed_groups))
