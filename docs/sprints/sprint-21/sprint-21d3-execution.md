@@ -1,12 +1,13 @@
 # Sprint 21D3 execution log
 
 - **Branch:** `feature/sprint-21d3-invariant-correction-ranking`
-- **Wave:** W0 + W1 + W2 + W3 + W4 — pre-registration, invariant correction spine, fresh
-  correction evidence, independent retrieval, artifact and runtime
-- **Status:** W0 through W4 complete. W2 ends in a null candidate selection; W3 ends in a
-  negative retrieval result; W4 implements the promotion contract, the offline loader and the
-  verification path, and then refuses final access. Both experiment branches are closed, every
-  E06 and E07 task carries a typed not-opened record, and Gate L2 stays closed.
+- **Wave:** W0 + W1 + W2 + W3 + W4 + W7 — pre-registration, invariant correction spine, fresh
+  correction evidence, independent retrieval, artifact and runtime, operations
+- **Status:** W0 through W4 and W7 complete; W5 and W6 are bound not-opened by W4's checkpoint.
+  W2 ends in a null candidate selection; W3 ends in a negative retrieval result; W4 implements
+  the promotion contract, the offline loader and the verification path, and then refuses final
+  access; W7 proves the operations surface over the stopped state. Both experiment branches are
+  closed, every E06 and E07 task carries a typed not-opened record, and Gate L2 stays closed.
 - **Migration:** none; all isolated databases are at `0015`
 - **Pre-registration SHA-256:**
   `191b3757ded21a1c2c85459a34902f8dee3f2f35b0979b557f84c1a37fe6a191`
@@ -857,3 +858,173 @@ first pushed head `18c09e59f4eb` completed 28 of 30 jobs in run `31001102327`, f
 `postgres-integration` and `learned-evidence-core` on the released callers W4-F3 describes. The
 released head `07057adb5ace` then completed run `31002251673` with **30 of 30 jobs
 successful**.
+
+## W7 operations
+
+W7 executes S21D3-080 through S21D3-086. Its exit is the one the wave table names: **CLI and
+health, isolated recovery and corruption proofs, complete local matrix.** All seven items are
+opened — §11.1 makes operations tasks unconditional, so the two stops that closed W5 and W6
+change what W7 has to prove about, not whether it runs.
+
+The wave's centre is a new report. D2's integrity report reads a database and an artifact
+store, and most of what D3 has to be able to prove is in neither: the corrected OOD
+denominators, whether the holdout was read once, whether the matrix scanned the embedding,
+whether a task that never ran carries a record saying so. Those live in the committed evidence,
+so `learning/integrity_d3.py` reads the evidence — which is why it can run in a CI lane that
+has no database, no store and no credential.
+
+### Eleven classes and four states
+
+S21D3-081. The report covers `explicit_member_selection`, `duplicate_executions_or_seals`,
+`chronology`, `feature_schema`, `matrix_embedding_scans`, `ood_units`, `holdout_access`,
+`retrieval_one_read`, `artifact_bytes`, `lifecycle` and `isolation`, in that fixed order, so a
+report that silently stopped covering one is a diff rather than an absence.
+
+Four states, not two, and the two extra ones carry the wave:
+
+- **`warning`** is what a class nobody checked reports. `artifact_bytes` needs a store and
+  `isolation` needs a data root; run without them, both warn rather than passing. This is the
+  same distinction `not_measured` makes in W4's promotion payload, and for the same reason.
+- **`not_opened`** is a decision rather than a gap. `lifecycle` is `not_opened` because the
+  pre-final checkpoint says so by hash, and it becomes `failed` the moment that record claims
+  otherwise.
+
+One rule decides between `failed` and `not_opened`, and it is the one the acceptance names: a
+stored state claiming a pass without its evidence fails closed. Deleting the file a class reads
+makes that class `failed` — never `clean`, and never `not_opened`.
+
+Against the committed evidence with every authority supplied: **10 clean, 1 not opened, 0
+failed, 0 unchecked.** Every one of the eleven has a seeded violation in
+`tests/cognitive_os/learning/test_d3_integrity.py`, because a class that cannot be made to fail
+proves nothing.
+
+### The command, and what it refuses
+
+S21D3-080. `scripts/learned.py d3-integrity` is read-only, offline by default, and prints one
+line of canonical sorted JSON. `--rehash-blobs` opens the D3 store; `--data-root` re-takes the
+predecessor fingerprints; without them the two classes warn.
+
+The environment boundary is checked on the *values*, before anything is opened. The failure it
+prevents is not a typo: it is an operator who sourced the D2 environment out of habit, where
+every variable is set, every value is valid, and every later check passes while reading the
+store this sprint may not touch. A database whose name lacks `s21d3` is refused, and so is each
+of the four predecessor roots by absolute path — `artifacts` and `artifacts-s21d3` differ by a
+suffix, and the first is the development store.
+
+### Provisioning, recovery, and the eighteen-case matrix
+
+S21D3-082, -083 and -084 run as one command against the isolated D3 authorities, because they
+are one question asked three times and running the third apart would exercise it against a
+store the second had proved nothing about.
+
+**Provisioning** reads only: migration head `0015`, no `0016` on disk, schema owned by
+`cogos_owner` with usage, `plpgsql` and `vector` installed, and `postgres_bootstrap_roles.sh`
+hashed and *not invoked* — the inherited NOSUPERUSER issue stays disclosed rather than quietly
+edited.
+
+**Recovery** backed up the D3 pair with the repository's own script (dump
+`c51b828106306b92…`, artifact archive `8bb54058d02e1f69…` over 1,679,871 bytes, 1,281 events
+and 2,754 artifacts at revision `0015`), restarted the container, and restored into
+`cognitive_os_s21d3_restore_test`. The restored copy reproduces the source exactly: counts
+match, the hashed-row roll-up matches, both resume inputs — sequence receipts and run identity
+keys — match, and all **2,077 blobs rehash to their content address**. The eleven-class report
+run against the restored artifact copy is itself clean.
+
+The stopped state restores as a stopped state: **zero components on
+`experience.correction_ranking`**. The check names the surface rather than counting learned
+rows, because the credential-free smoke legitimately registers an unrelated inert component on
+`skill.selection` and a count would have made that look like a D3 correction component.
+
+**The matrix** ran 18 damage cases and all 18 failed closed:
+
+| Group | Cases |
+|---|---|
+| store | tampered blob, missing blob |
+| artifact | missing, corrupt, oversized, schema-wrong, metadata substitution, byte substitution |
+| evidence | OOD unit forgery, holdout access claim, retrieval second read, dataset member mismatch, feature seal mismatch, stale assessment, wrong active revision |
+| retrieval | policy substitution, judgement substitution |
+| isolation | inherited store fingerprint |
+
+Every case is applied to the extracted copy or to a throwaway copy of the evidence directory,
+and every predecessor fingerprint is identical before and after.
+
+### CI and the release matrix
+
+S21D3-085 adds two steps to `learned-evidence-core`: the eleven-class tests with their seeded
+violations, and the released command over the committed evidence. Both are credential-free by
+construction — which is the point of the report reading files rather than a store, and the
+reason the lane cannot claim a check it did not run.
+
+S21D3-086 runs **27 rows, 26 passed, 0 skipped**. Negative rows refuse for their declared
+reason: a predecessor store path, a predecessor database name, and the smoke against a
+non-`_test` database. Five rows are recorded from W7's and W4's own evidence rather than re-run,
+and each names the file and key that decided it.
+
+**One row failed, and it is disclosed rather than fixed.** `pip-audit` reports five advisories
+against `cryptography` and `setuptools`. Neither is one of the five declared runtime
+dependencies, so the built wheel ships neither; both arrive through development and test
+tooling. `uv.lock` already pins `setuptools` at the fixed `83.0.0` — the `78.1.0` this matrix
+audited is what the installed extra set resolves to, so four of the five advisories are a
+property of this environment rather than of the lock. The fifth is `cryptography` 49.0.0
+against a fix in 50.0.0, reached through PyJWT, which is not in the security group's closure
+and is why the CI security lane installs it and does not see it. Clearing it means changing
+`uv.lock`, and §10.3 treats a change to the environment earlier evidence was produced in as
+invalidating the affected experiment. **That is a release decision, not an operations one**, so
+W7 records it with its reason and leaves the row red.
+
+### W7 findings
+
+| ID | Subject | Observed | Action |
+|---|---|---|---|
+| W7-A1 | the isolation fingerprint | The first version reimplemented the path-and-size hash from its description in the W0 record and produced a different digest for all four predecessor stores — which reads as "every predecessor was mutated" and is in fact "the check disagrees with the check". | Delegated to the released `reality_integrity.fingerprint`. A second implementation of a fingerprint is a second answer to the only question isolation asks. All four stores now reproduce their released digest, and a test pins that against the W0 record. |
+| W7-A2 | the migration check | `no_migration_0016` passed by globbing `infra/migrations/versions`, which does not exist. The list was empty and the check was vacuously true; it would have passed with a `0016` sitting on disk. | Points at `infra/postgres/alembic/versions` and refuses to run when the directory is absent or empty. It now reads `0013, 0014, 0015`. |
+| W7-A3 | the artifact-bytes class | The class rehashed the files present, so a store one blob smaller was reported perfectly clean — and a partial restore is exactly that shape of damage. The matrix's own `missing_blob` case is what surfaced it. | The class takes *declared address to observed hash*, with `None` where the store has a row and no bytes, and fails on either half. The matrix case now records both that the class catches it and that a plain rehash does not. |
+| W7-A4 | the release matrix's own commands | Three rows failed for reasons that said nothing about the release: the matrix had invented `pip-audit --strict`, `python -m build` and a bare `detect-secrets scan` instead of running the commands `.github/workflows/ci.yml` actually runs. A matrix that runs its own checks measures itself. | Every row is now the released command: `uv build`, `uv run pip-audit`, the `detect-secrets-hook` pipeline, and both distribution verifiers. |
+| W7-A5 | the D3 artifact store | Two blob rows in `cognitive_os_s21d3_test` had no bytes under `artifacts-s21d3`. The W4 smoke reproduction had been run with `COGOS_ARTIFACT_ROOT` pointed at a scratch directory while the database stayed D3's, so the rows and their bytes went to different places. Found by the W7 store survey before the backup, which is where it would otherwise have surfaced as a failed restore. | The two blobs were placed where their rows say they are; both hash to their content address. The store now resolves 1,952 of 1,952 blob rows. The `d3-integrity` command's environment boundary exists so this specific split cannot be made again. |
+
+W7-A1 through W7-A4 were all found by running the thing rather than by reading it, and three of
+the four were checks that passed while measuring nothing — the same class of defect as W4-A1
+and W4-A2.
+
+### W7 evidence index
+
+| Evidence | SHA-256 |
+|---|---|
+| [operations](evidence/sprint-21d3-operations.json) | `c626ba9a07361c33dc597abaf6268503049cc41dc7049e897cd4e418cd111e43` |
+| [verification matrix](evidence/sprint-21d3-verification-matrix.json) | `cacd67212ec93aaec45020511466f91de69367e13cf49d806f8dc4524bf154cd` |
+
+The two operator commands are:
+
+```bash
+set -a && . ./.env.s21d3.local && set +a
+UV_CACHE_DIR=... uv run python scripts/operations_d3.py
+UV_CACHE_DIR=... uv run python scripts/verification_matrix_d3.py
+```
+
+The read-only report needs neither:
+
+```bash
+COGOS_POSTGRES_DATABASE=cognitive_os_s21d3_test \
+  uv run python scripts/learned.py d3-integrity
+```
+
+### W7 validation
+
+The complete repository suite passes with zero failures, as do Ruff lint and format over
+`src tests scripts infra`, mypy over `src/cognitive_os`, Bandit with zero results, the
+contract-schema export check, the pre-registration integrity and twelve-file chronology checks,
+the repository language check, the tracked-file secrets scan, `uv build` with both distribution
+verifiers, and both learned benchmark manifests. All of those are rows in the S21D3-086 matrix
+with their measured durations and output hashes; the one red row is the disclosed dependency
+audit above.
+
+Two focused modules were added: `tests/cognitive_os/learning/test_d3_integrity.py` (27 cases —
+one seeded violation per class, the two unchecked states, and the fingerprint pinned against
+the W0 record) and `tests/cognitive_os/learning/test_d3_cli_boundary.py` (13 cases — every
+refused environment, the one accepted one, and the output contract including that no credential
+is rendered).
+
+W7 added no database migration, no event field, no corpus or artifact role, no dependency, and
+no provider, network, credential or GPU call. Migration stays at `0015`. The four predecessor
+pairs are byte-identical before and after every command in this wave, and the D3 pair received
+no write outside the backup root, the restore database and the declared scratch root.

@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import hashlib
 import json
 import os
 import sys
@@ -470,10 +471,89 @@ async def _correction_integrity(args: argparse.Namespace) -> int:
     return 0 if report.healthy else 1
 
 
+#: Every store this sprint must not open. Named as absolute roots, because the boundary a
+#: typo crosses is a path rather than a flag: `artifacts` and `artifacts-s21d3` differ by a
+#: suffix, and the first is the development store.
+_FORBIDDEN_ROOTS = (
+    "/home/palkouser/projekt/cognitive-os-data/artifacts",
+    "/home/palkouser/projekt/cognitive-os-data/artifacts-s21c3",
+    "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d1",
+    "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d2",
+)
+
+
+def _require_d3_environment(*, needs_store: bool) -> Path | None:
+    """Refuse a wrong or missing D3 environment before anything is opened.
+
+    S21D3-080. The check is first and it is on the *values*, not on whether they are set: an
+    operator who sourced the D2 environment by habit has a complete, valid configuration
+    pointing at a store this sprint may not write to, and every later check would pass while
+    reading the wrong evidence.
+    """
+    database = os.environ.get("COGOS_POSTGRES_DATABASE") or os.environ.get("COGOS_DATABASE_URL")
+    if database and "s21d3" not in database:
+        raise SystemExit(
+            f"refusing to run against {database!r}: the D3 commands require an s21d3 database"
+        )
+    root = os.environ.get("COGOS_ARTIFACT_ROOT")
+    if root is None:
+        if needs_store:
+            raise SystemExit("COGOS_ARTIFACT_ROOT is required to check artifact bytes")
+        return None
+    resolved = Path(root).resolve()
+    if str(resolved) in _FORBIDDEN_ROOTS:
+        raise SystemExit(f"refusing to open the predecessor store at {resolved}")
+    if "s21d3" not in resolved.name:
+        raise SystemExit(f"refusing to open {resolved}: the D3 commands require the D3 store")
+    return resolved
+
+
+async def _d3_integrity(args: argparse.Namespace) -> int:
+    """S21D3-080 and -081. The eleven-class D3 report, read-only and offline by default.
+
+    It reads the committed evidence directory and nothing else unless asked: `--rehash-blobs`
+    opens the D3 artifact store, and `--data-root` re-takes the predecessor fingerprints. Both
+    are opt-in because the report has to be runnable in a lane that has neither — and both are
+    reported as `warning` rather than `clean` when they are not run.
+    """
+    from cognitive_os.learning.integrity_d3 import d3_integrity, path_and_size_fingerprint
+
+    root = _require_d3_environment(needs_store=args.rehash_blobs)
+    evidence = Path(args.evidence or "docs/sprints/sprint-21/evidence")
+    if not evidence.is_dir():
+        raise SystemExit(f"{evidence} is not an evidence directory")
+
+    blobs: dict[str, str] | None = None
+    if args.rehash_blobs and root is not None:
+        blobs = {
+            path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in sorted(root.rglob("*"))
+            if path.is_file() and not path.name.startswith(".")
+        }
+    fingerprints: dict[str, str] | None = None
+    if args.data_root:
+        data = Path(args.data_root)
+        fingerprints = {
+            name: path_and_size_fingerprint(data / directory)
+            for name, directory in (
+                ("development", "artifacts"),
+                ("sprint_21c3", "artifacts-s21c3"),
+                ("sprint_21d1", "artifacts-s21d1"),
+                ("sprint_21d2", "artifacts-s21d2"),
+            )
+            if (data / directory).is_dir()
+        }
+
+    report = d3_integrity(evidence, blob_hashes=blobs, predecessor_fingerprints=fingerprints)
+    _emit(report.as_dict())
+    return 0 if report.healthy else 1
+
+
 _ACTIONS = {
     "health": _health,
     "correction-runtime": _correction_runtime,
     "correction-integrity": _correction_integrity,
+    "d3-integrity": _d3_integrity,
     "component-show": _component_show,
     "component-history": _component_history,
     "evidence-verify": _evidence_verify,
@@ -506,6 +586,16 @@ def main(argv: list[str] | None = None) -> int:
         help="observation status",
     )
     parser.add_argument("--limit", type=int, default=100, help="maximum rows to return")
+    parser.add_argument("--evidence", help="committed D3 evidence directory to report on")
+    parser.add_argument(
+        "--rehash-blobs",
+        action="store_true",
+        help="open the D3 artifact store and rehash every blob against its content address",
+    )
+    parser.add_argument(
+        "--data-root",
+        help="data root holding the predecessor stores, to re-take their fingerprints",
+    )
     parser.add_argument(
         "--confirm-isolated",
         action="store_true",
