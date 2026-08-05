@@ -845,5 +845,15 @@ Four contracts were added to the schema export under `v1/learned/`: the D3 promo
 and assessment, the runtime configuration, and the canary-to-steady condition. Nothing was
 removed and no existing schema changed. W4 added no database migration, no event field, no
 corpus or artifact role, no dependency, and no provider, network, credential or GPU call.
-Migration stays at `0015`. No Artifact Store — predecessor or D3 — received a write, no
-lifecycle component was registered, and no final, batch-B or canary body was opened.
+Migration stays at `0015`. No Artifact Store — predecessor or D3 — received a write, no D3
+correction component was registered, and no final, batch-B or canary body was opened. The one
+lifecycle write W4 performed is the credential-free smoke's, which registers and activates the
+inert abstaining reference component in the isolated `cognitive_os_s21d3_test` database exactly
+as it has since Sprint 21C1; it ran against a scratch artifact root, so the D3 Artifact Store
+is untouched by it.
+
+Draft PR [#221](https://github.com/palkouser/cognitive-os/pull/221) carries the W4 work. The
+first pushed head `18c09e59f4eb` completed 28 of 30 jobs in run `31001102327`, failing
+`postgres-integration` and `learned-evidence-core` on the released callers W4-F3 describes. The
+released head `07057adb5ace` then completed run `31002251673` with **30 of 30 jobs
+successful**.
