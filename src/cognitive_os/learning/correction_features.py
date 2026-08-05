@@ -25,10 +25,11 @@ statements, and the deepest nesting — which is what the correction's shape act
 from __future__ import annotations
 
 import ast
+from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import datetime
 from hashlib import sha256
-from math import isfinite
+from math import isfinite, sqrt
 from uuid import UUID
 
 from pydantic import Field, model_validator
@@ -62,6 +63,47 @@ DECLARED_PROBLEM_TYPE = "repair"
 
 #: The verifiers a generated task requires, as `build_manifest` records them.
 DECLARED_VERIFIER_CAPABILITIES: tuple[str, ...] = ("coding.hidden_pytest", "coding.pytest")
+
+#: W2-F1. The frozen MiniLM accepts 256 word-pieces and `ast.dump` output is dense: every one
+#: of the 280 D3 fitting and calibration candidates tokenises to between 284 and 1549 pieces,
+#: median 654. Fed whole, the model would read the module docstring, the function signature and
+#: perhaps the first statement, and discard the body — the part that decides whether a candidate
+#: repairs the contract. Every candidate in a group then embeds identically, which is exactly
+#: what the vertical slice measured.
+#:
+#: So the canonical bytes are embedded in windows and mean-pooled. The declared input, the model
+#: identity and revision, the channel names and the 384 dimensions are all unchanged; what
+#: changes is that the encoder now sees the input the contract says it embeds. The window is in
+#: characters because that is what can be bounded without a tokenizer at encode time: the densest
+#: canonical text measured 0.5437 pieces per character, so 400 characters cannot exceed 218
+#: pieces.
+CANONICAL_EMBEDDING_WINDOW_CHARACTERS = 400
+
+
+def canonical_embedding_windows(candidate_source: str) -> tuple[str, ...]:
+    """The canonical candidate source split into windows the frozen model reads whole."""
+    text = canonical_source_bytes(candidate_source).decode("utf-8")
+    width = CANONICAL_EMBEDDING_WINDOW_CHARACTERS
+    return tuple(text[start : start + width] for start in range(0, len(text), width)) or (text,)
+
+
+def pool_canonical_embedding(vectors: Sequence[Sequence[float]]) -> tuple[float, ...]:
+    """Mean-pool one candidate's window vectors, renormalised back onto the unit sphere.
+
+    Mean before normalisation, so a long candidate is not dominated by whichever window happens
+    to be last; renormalised after, so the pooled vector stays comparable with a single-window
+    one under the cosine the ranker uses.
+    """
+    if not vectors:
+        raise ValueError("a pooled embedding needs at least one window vector")
+    width = len(vectors[0])
+    if any(len(vector) != width for vector in vectors):
+        raise ValueError("window vectors must share one dimension")
+    mean = [sum(vector[index] for vector in vectors) / len(vectors) for index in range(width)]
+    norm = sqrt(sum(value * value for value in mean))
+    if not norm:
+        return tuple(mean)
+    return tuple(value / norm for value in mean)
 
 
 @dataclass(frozen=True, slots=True)

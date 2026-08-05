@@ -1,0 +1,114 @@
+{
+  "distinct_structures": {
+    "d3_calibration_groups": 20,
+    "d3_calibration_normalized_ast": 20,
+    "d3_retrieval_groups": 60,
+    "d3_retrieval_token_stream": 60,
+    "note": "Distinct normalised shapes per corpus; equal to the group count means no two groups share a shape."
+  },
+  "final_outcomes_inspected": false,
+  "groups_crossing_any_role": [],
+  "inherited_roles": {
+    "canary": {
+      "carried_from_d2_catalogue_hash": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7",
+      "d3_catalogue_hash": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7",
+      "groups": 5,
+      "identical": true
+    },
+    "final_a": {
+      "carried_from_d2_catalogue_hash": "69d5eedcaeccdfdcc183b050c89c3e4b49b709474a35511620c39f6f0292fb46",
+      "d3_catalogue_hash": "69d5eedcaeccdfdcc183b050c89c3e4b49b709474a35511620c39f6f0292fb46",
+      "groups": 30,
+      "identical": true
+    },
+    "final_b": {
+      "carried_from_d2_catalogue_hash": "06a0c2f6641e4bf330d2fd29a9fab54b636c77d689917976133bafc92bf22a33",
+      "d3_catalogue_hash": "06a0c2f6641e4bf330d2fd29a9fab54b636c77d689917976133bafc92bf22a33",
+      "groups": 30,
+      "identical": true
+    },
+    "training": {
+      "carried_from_d2_catalogue_hash": "37eb59f2c374a06f02764ffcd5a21a4e8b1923ee5a0c62af0093567b708dfda9",
+      "d3_catalogue_hash": "37eb59f2c374a06f02764ffcd5a21a4e8b1923ee5a0c62af0093567b708dfda9",
+      "groups": 50,
+      "identical": true
+    }
+  },
+  "integrity_content_hash": "912f464be8601f6139c4df9b1bfd1827a29127e89fff8e6853cb27697786ce62",
+  "items": [
+    "S21D3-031"
+  ],
+  "near_clone": {
+    "bodies_compared": 850,
+    "cross_group_collisions_touching_d3": [],
+    "detectors": [
+      "normalized_ast",
+      "token_stream"
+    ],
+    "intra_pair_note": "A retrieval group's failed and repaired states are two states of one task, not two tasks. Their structural closeness is the edit path the graph projection derives; the ceiling applies between groups.",
+    "intra_pair_structural_matches": 10,
+    "seeded_restatement_detected": true
+  },
+  "pairwise_role_overlap": {
+    "calibration|canary": [],
+    "calibration|final_a": [],
+    "calibration|final_b": [],
+    "calibration|retrieval": [],
+    "calibration|training": [],
+    "calibration|vertical_slice_fixture": [],
+    "canary|final_a": [],
+    "canary|final_b": [],
+    "canary|retrieval": [],
+    "canary|training": [],
+    "canary|vertical_slice_fixture": [],
+    "final_a|final_b": [],
+    "final_a|retrieval": [],
+    "final_a|training": [],
+    "final_a|vertical_slice_fixture": [],
+    "final_b|retrieval": [],
+    "final_b|training": [],
+    "final_b|vertical_slice_fixture": [],
+    "retrieval|training": [],
+    "retrieval|vertical_slice_fixture": [],
+    "training|vertical_slice_fixture": []
+  },
+  "pre_registration_sha256": "191b3757ded21a1c2c85459a34902f8dee3f2f35b0979b557f84c1a37fe6a191",
+  "purpose": "One transitive separation and rights report over every D3 role: the four carried from D2 by exact hash, the fresh calibration partition, and the retrieval pool.",
+  "recorded_at": "2026-08-04T17:36:40.968695Z",
+  "rights": {
+    "evaluation_rights": true,
+    "fresh_groups_covered": 81,
+    "licence": "Apache-2.0",
+    "origin": "first_party_authored_in_repository",
+    "self_play_rights": true,
+    "third_party_sources": 0
+  },
+  "role_group_counts": {
+    "calibration": 20,
+    "canary": 5,
+    "final_a": 30,
+    "final_b": 30,
+    "retrieval": 60,
+    "training": 50,
+    "vertical_slice_fixture": 1
+  },
+  "schema_version": 1,
+  "sprint": "21D3",
+  "transitive_grouping": {
+    "components": [
+      "task_identity",
+      "repository_identity",
+      "generator_template_lineage",
+      "normalized_source_similarity_cluster",
+      "source_lineage"
+    ],
+    "module_collisions": [
+      "nested_flattening",
+      "percentages",
+      "record_zipping",
+      "stride_sampling"
+    ],
+    "template_id_collisions": []
+  },
+  "wave": "W2"
+}

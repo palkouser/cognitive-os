@@ -1,8 +1,9 @@
 # Sprint 21D3 execution log
 
 - **Branch:** `feature/sprint-21d3-invariant-correction-ranking`
-- **Wave:** W0 + W1 — pre-registration and invariant correction spine
-- **Status:** W0 and W1 implementation complete; draft PR validation recorded below
+- **Wave:** W0 + W1 + W2 — pre-registration, invariant correction spine, fresh correction evidence
+- **Status:** W0, W1 and W2 complete; W2 ends in a null candidate selection and leaves the
+  independent retrieval branch open for W3
 - **Migration:** none; all isolated databases are at `0015`
 - **Pre-registration SHA-256:**
   `191b3757ded21a1c2c85459a34902f8dee3f2f35b0979b557f84c1a37fe6a191`
@@ -212,3 +213,162 @@ dependency as the concrete PostgreSQL-backed `ArtifactService`, making a filesys
 import PostgreSQL transitively. It now depends on the existing `ArtifactStorePort`. The exact
 603-test experience/learning lane passes locally, and the W1 fixture also passes with every
 `sqlalchemy` import deliberately refused.
+
+## W2 fresh correction evidence
+
+W2 executes S21D3-030 through S21D3-039. The corpora are new, the campaign is new, and the
+result is a **null selection**: the revised feature contract is exactly invariant on fresh
+evidence, and no setting in the frozen grid is selectable on it. Final A, final B and canary
+were never opened; the independent retrieval branch stays open for W3.
+
+### Authored corpora, separation, and the seal
+
+Twenty fresh four-candidate calibration groups and one vertical-slice fixture were authored in
+`reality_task_specs_d3.py`, plus an overproduced pool of sixty failed/success retrieval groups in
+`reality_retrieval_specs_d3.py`. Every body was executed rather than declared: 210 correction
+runs and 120 retrieval runs, all matching their declaration — 21 baselines pass their visible
+suites and fail their hidden ones, 42 declared repairs pass both, 42 partial fixes pass visible
+and fail hidden, and each of the sixty retrieval pairs has a failed state the verifier rejects
+and a repair it accepts.
+
+Separation is clean over all 850 candidate bodies of the C3, D2 and D3 corpora: zero cross-group
+near-clone collisions on either detector, zero groups crossing any role, and a seeded restatement
+is still caught. The ten intra-pair structural matches are a retrieval group's own two states,
+which is the edit path the graph projection derives rather than two tasks.
+
+The seal reuses D2's four released catalogues by carrying their objects, so the fitting, final A,
+final B and canary hashes are identical to the ones S21D3-004 bound rather than merely equal to
+them. Fresh calibration is sealed under D3's own seed and generator path.
+
+| Role | Groups | Slots | Origin |
+|---|---:|---:|---|
+| fitting | 50 | 200 | carried from D2 |
+| calibration | 20 | 80 | authored for D3 |
+| final A / final B | 30 / 30 | 120 / 120 | carried from D2, unopened |
+| canary | 5 | 20 | carried from D2, unopened |
+| retrieval pool | 60 | — | authored for D3, unopened |
+
+The two revision-3 transformation submanifests hold 120 calibration cases and 360 promotion
+cases — six for every one of the sixty final groups, so the reserve the manifest-order rule
+selects from at S21D3-060 is visible now rather than chosen later. D3 seal hash:
+`96d9937f8190d5ec63ab7037bff7cbf4cfaca99ff3b6441e8e472acd8b19db4c`.
+
+### Vertical slice, seals and campaigns
+
+The slice ran `d3_fixture.trim_suffix`, a group in no partition, from package through v2 feature
+seal, sandboxed self-play, hidden-verifier labels, receipt, role-bound observation, revision-3
+dataset identity, fitted matrix, k-NN ranking and restart replay. The ranker abstained
+(`below_confidence_floor`) and the deterministic order stood; the dataset rebuilt to the same
+identity and the receipt's effective remainder was empty.
+
+280 v2 feature records were sealed before the first container of their partition started, and
+both partitions then executed under `label_all`: 200 `SELF_PLAY` outcomes over the exact 50
+fitting groups and 80 over the exact 20 calibration groups, acceptance 0.5 in both, zero
+baselines passing hidden verification, zero `REAL_GOVERNED_RUN` rows anywhere.
+
+The campaign was then re-run as a receipt-aware resume. All 350 recorded run identities replayed
+without a new container, both feature seals reproduced their recorded hashes byte for byte, both
+dataset identities reproduced, and the effective remainder was zero on both partitions. That is
+S21D3-025's receipt boundary exercised on a real campaign rather than on a fixture.
+
+Two immutable revision-3 datasets were materialised — fitting `183a0c6d-1bdb-5eaa-9fde-4da1515f9335`
+and calibration `04fff167-542c-5285-b39d-8c4f0fc36ea0`, both rebuilt identically — and the fitted
+matrix was built from the fitting snapshot alone. All eleven scans pass over **390 fitted
+dimensions**: allowlist, finite/range on every scalar and all 384 embedding dimensions,
+chronology, source chain, group split, contradictions, near-duplicates (highest cross-split
+similarity 0.984172 against a 0.999 floor) and perfect separation on both splits.
+
+Both datasets carry `CorpusRole.TRAINING`. The released enum's other value is `evaluation`, which
+calibration is not; what separates them is revision-3 identity — partition, split and selection
+digest — so no new corpus role and therefore no migration is needed to keep them two datasets.
+
+### Fresh metamorphic set
+
+All 120 sealed calibration cases resolved: six per group over twenty groups, none inapplicable,
+480 transformed candidates executed against their own hidden suites, and **zero verifier label
+changes** — every transformation preserved every label it was supposed to preserve. Every
+transformed feature record was sealed before its transformed candidate ran.
+
+### Ladder, grid and selection
+
+The strongest deterministic rung is `lexical_similarity` at **0.5**. `frozen_minilm_cosine` is
+reported ineligible with its reason: v2 removes the query-to-candidate cosine from the fitted
+representation, so the channel that rung orders by does not exist under it. The graph rung stays
+ineligible for the released reason.
+
+All 24 frozen settings were measured. The intervention worked on the question it was designed
+for and failed on a different one:
+
+- **action preservation is 1.00 for every setting**, across all six transformation cases;
+- equivalence coverage never falls below clean coverage — maximum loss 0.00;
+- the strongest setting reaches **0.65** clean first-choice against the 0.5 baseline, with 0.95
+  coverage and 14 changed decisions, so the signal is real;
+- but every setting that answers is confidently wrong on some semantics-preserving case — 12 to
+  36 confident errors of 120 decisions — and the contract allows exactly zero.
+
+No setting survived. `decide_continuation` records `fail_and_stop` with failure kind
+`ood_deficient`, and S21D3-039 records an immutable null selection. Maximum measured inference
+was 34.267 ms against the 250 ms budget.
+
+This is not D2's finding repeated. D2 could say only that *something* moved under an opaque
+combined perturbation. D3 separates the two questions: the alpha-normalised source encoding is
+exactly invariant — the same contract spelled differently reaches the same first action every
+time — and what remains is absolute ranking accuracy, which at 0.65 cannot produce a
+zero-confident-error metamorphic set. A capacity residual, not an invariance one.
+
+Per §10.2 the null leaves final A, final B and canary unopened and opens no parametric rung. The
+`dependent_not_opened` list in the selection record names S21D3-051, -054, -056, -059, -060
+through -069 and -070 through -077. Retrieval continues independently in W3.
+
+### W2 findings
+
+| ID | Subject | Observed | Action |
+|---|---|---|---|
+| W2-F1 | the v2 canonical-source embedding | The frozen MiniLM reads 256 word-pieces; all 280 canonical `ast.dump` texts tokenise to 284–1549 pieces, median 654. Fed whole, the model saw the docstring and the signature and discarded the body, so eight distinct candidates produced three distinct embeddings and the vertical slice's matrix reported identical rows carrying both labels. | The canonical bytes are embedded in 400-character windows and mean-pooled, renormalised onto the unit sphere. Same declared input, same model identity and revision, same channels, same 384 dimensions — the encoder now receives the input the contract says it embeds. 16 distinct signatures on the same fixture afterwards. |
+| W2-F2 | the baseline ladder | `deterministic_static_ordering` read `added_line_count`, `ast_node_count` and `hunk_count`, and `frozen_minilm_cosine` read `query_to_candidate_cosine` — none of which exist in a v2 vector. Two of four eligible rungs would have raised on the D3 calibration matrix. | The ladder dispatches on encoder version: the static rung reads the v2 structural columns and keeps its "smallest edit first" prior, and the cosine rung is reported ineligible with its own reason instead of being scored on a column that is gone. |
+| W2-F3 | `calibration_ood._retoken` | The released token-stream rename also renamed the module part of `from step_gaps import step_gaps`, so a task whose module and function share a name was perturbed into `from q0 import q0` and its suite failed to collect. Sixteen of 480 transformed candidates changed label for that reason and none other. | The module path of an import is guarded like an attribute. Zero label changes afterwards. The metamorphic set was re-sealed and re-resolved under the fixed generator; the discarded resolution influenced nothing, because the selection rule is frozen and deterministic. |
+| W2-A5 | `calibration_ood._retoken` | The same primitive renamed attribute names, so a module binding a local called `items` and calling `counts.items()` was perturbed into a module that does not run — and would not have been the same canonical source either. | Attributes are skipped at the shared function. No D2 calibration group is affected, so the released W1 diagnostic still reproduces; six training, one final-A, one final-B and one canary group would perturb differently, and none of those has been perturbed yet. |
+
+Authoring defects W2-A1 through W2-A4 — a declared repair that handed the remainder to the wrong
+shares, a baseline whose second edge case was never actually broken, fourteen bodies colliding
+with C3 or D2 shapes, and two failed states that passed their own suites — are recorded in the
+corpus evidence's defect ledger. All were found by execution or by a detector, none by reading.
+
+### W2 evidence index
+
+| Evidence | SHA-256 |
+|---|---|
+| [corpus](evidence/sprint-21d3-corpus.json) | `60a9493e52e4fa68833dc659bd4afec4234c5674ba03d3ed839951550a5dcbfd` |
+| [separation](evidence/sprint-21d3-separation.json) | `e450634efee088e4fa30e141200d9b78ccca097800e67f07ed5b1e2f3f2dbd7a` |
+| [sealed manifests](evidence/sprint-21d3-sealed-manifests.json) | `5d267fe27538937dd07eb44b3622228b60084bdf5b0fa3004446a1efdb378ced` |
+| [vertical slice](evidence/sprint-21d3-vertical-slice.json) | `85b1aec2a64221b2d11af2e0ff805748857cfbef54c83c8fb7fa856b8f678c1d` |
+| [self-play campaign](evidence/sprint-21d3-self-play-campaign.json) | `ea48783e6d4e142afd8771a79f4b9a9dcb157f6094910fd34d4e49948ace1167` |
+| [calibration metamorphic](evidence/sprint-21d3-calibration-metamorphic.json) | `e3228af759388b05a8d9ff6516ea1d744d3026ceec37ed624f4a76c9686511c5` |
+| [learner selection](evidence/sprint-21d3-learner-selection.json) | `216b196f491af5f9f128ba93a6193831b0ab4ebb84ad9cbe4476df554d756b5f` |
+
+All five chronology-bound files carry the immutable pre-registration SHA-256
+`191b3757ded21a1c2c85459a34902f8dee3f2f35b0979b557f84c1a37fe6a191`, and
+`--check-chronology` accepts all five. The three operator commands are:
+
+```bash
+UV_CACHE_DIR=/home/palkouser/projekt/cognitive-os/.cache/uv uv run python scripts/corpus_d3.py
+UV_CACHE_DIR=... uv run python scripts/reality_campaign_d3.py --model <frozen-minilm> \
+  --output docs/.../sprint-21d3-self-play-campaign.json \
+  --vertical-slice-output docs/.../sprint-21d3-vertical-slice.json
+UV_CACHE_DIR=... uv run python scripts/learner_selection_d3.py \
+  --campaign docs/.../sprint-21d3-self-play-campaign.json --model <frozen-minilm>
+```
+
+### W2 validation
+
+The complete repository suite passes with zero failures, as do Ruff lint and format, the
+contract-schema export check, the pre-registration integrity and five-file chronology checks, and
+the tracked-file secrets scan. A new focused module,
+`tests/cognitive_os/learning/test_d3_corpus_and_transformations.py`, pins 37 cases: both
+`_retoken` guards, the two rename maps' independence, the hard-coded oracle, the six-case
+canonical invariance of all 21 authored groups, the embedding windows and pooling, the ladder's
+encoder dispatch, and the seal's counts, disjointness and reuse-by-hash.
+
+W2 added no database migration, no event field, no new corpus or artifact role, no dependency and
+no provider, network, credential or GPU call. Migration stays at `0015`. The four predecessor
+Artifact Store pairs received zero writes, and the campaign reports zero worktree mutations.

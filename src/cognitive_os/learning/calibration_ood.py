@@ -119,19 +119,60 @@ def rename_map(source: str) -> dict[str, str]:
 
 
 def _retoken(source: str, mapping: dict[str, str]) -> str:
-    """Apply a name mapping through the tokenizer, so only real names are touched."""
+    """Apply a name mapping through the tokenizer, so only real names are touched.
+
+    Two kinds of name are not this map's to rename, and both were found by executing perturbed
+    packages rather than by reading them.
+
+    *An attribute.* `counts.items()` reaches a method on `dict`; a module that also binds a
+    local called `items` would otherwise have the attribute renamed with it and stop running —
+    and the production canonicaliser leaves attributes alone, so a package perturbed that way
+    would not even be the same canonical source.
+
+    *A module path.* `from step_gaps import step_gaps` names a file and then a function. A task
+    whose module and function share a name would have the import rewritten to
+    `from q0 import q0`, and the suite would fail to collect — a "label change" that says
+    nothing about the candidate.
+
+    Both guards live here rather than in one caller because every caller renames through this
+    function.
+    """
     result: list[tokenize.TokenInfo] = []
+    after_dot = False
+    module_path = False
     for token in tokenize.generate_tokens(io.StringIO(source).readline):
-        if token.type == tokenize.NAME and token.string in mapping:
-            result.append(token._replace(string=mapping[token.string]))
-        else:
-            result.append(token)
+        keyword_name = token.type == tokenize.NAME and token.string in {"from", "import"}
+        renameable = (
+            token.type == tokenize.NAME
+            and token.string in mapping
+            and not after_dot
+            and not module_path
+            and not keyword_name
+        )
+        result.append(token._replace(string=mapping[token.string]) if renameable else token)
+        if token.type in {tokenize.NEWLINE, tokenize.NL}:
+            module_path = False
+        elif token.type == tokenize.NAME and token.string == "from":
+            module_path = True
+        elif token.type == tokenize.NAME and token.string == "import":
+            # `from x import y` ends the path here; a bare `import x.y` starts one.
+            module_path = not module_path
+        if token.type in {tokenize.NL, tokenize.NEWLINE, tokenize.COMMENT}:
+            continue
+        after_dot = token.type == tokenize.OP and token.string == "."
     return tokenize.untokenize(result)
 
 
-def rename_identifiers(module: str, *others: str) -> tuple[str, ...]:
-    """Rename what `module` defines, in `module` and in every source that imports from it."""
-    mapping = rename_map(module)
+def rename_identifiers(
+    module: str, *others: str, mapping: dict[str, str] | None = None
+) -> tuple[str, ...]:
+    """Rename what `module` defines, in `module` and in every source that imports from it.
+
+    `mapping` is the D3 addition: S21D3-015 needs two *independent* rename maps per group and
+    one function that applies whichever it is given, rather than two functions that could drift
+    apart in how they walk a token stream.
+    """
+    mapping = rename_map(module) if mapping is None else mapping
     if not mapping:
         raise PerturbationError("the module defines no name to rename")
     return tuple(_retoken(source, mapping) for source in (module, *others))

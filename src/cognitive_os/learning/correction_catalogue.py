@@ -425,33 +425,48 @@ def _slots_for(
     )
 
 
+def catalogue_group(entry: CorpusEntry, *, seed: int) -> CatalogueGroup:
+    """One corpus entry as a catalogue group. Public because D3's vertical slice needs one
+    group without a partition to put it in, and re-deriving the slot binding beside this
+    would be a second answer to which variant sits at which position."""
+    task_id = task_id_for(entry.template_id, seed=seed)
+    return CatalogueGroup(
+        template_id=entry.template_id,
+        repository_group=entry.repository_group,
+        family=entry.family,
+        task_id=task_id,
+        task_seed=seed,
+        inherited_from_d1=entry.inherited,
+        verifier_profile_hash=sha256(entry.hidden_verifier_source.encode()).hexdigest(),
+        slots=_slots_for(entry, task_id, campaign_seed=seed),
+    )
+
+
 def build_catalogue(
-    partition: CorrectionPartition, entries: Sequence[CorpusEntry]
+    partition: CorrectionPartition,
+    entries: Sequence[CorpusEntry],
+    *,
+    seed: int | None = None,
+    generator_path: str | None = None,
 ) -> SealedPartitionCatalogue:
-    """Seal one partition from the groups assigned to it."""
-    seed = PARTITION_SEED[partition]
+    """Seal one partition from the groups assigned to it.
+
+    `seed` and `generator_path` are the D3 additions. Sprint 21D3 seals a *second* calibration
+    partition from a fresh corpus, and it has to carry its own seed and its own generator path:
+    reusing D2's would say that two different sets of twenty and ten groups came out of one
+    draw. Both default to D2's table, so every released caller is unchanged.
+    """
+    seed = PARTITION_SEED[partition] if seed is None else seed
     mode = (
         CorrectionCampaignMode.STOP_ON_FIRST_ACCEPTED
         if partition is CorrectionPartition.CANARY
         else CorrectionCampaignMode.LABEL_ALL
     )
-    groups = tuple(
-        CatalogueGroup(
-            template_id=entry.template_id,
-            repository_group=entry.repository_group,
-            family=entry.family,
-            task_id=(task_id := task_id_for(entry.template_id, seed=seed)),
-            task_seed=seed,
-            inherited_from_d1=entry.inherited,
-            verifier_profile_hash=sha256(entry.hidden_verifier_source.encode()).hexdigest(),
-            slots=_slots_for(entry, task_id, campaign_seed=seed),
-        )
-        for entry in entries
-    )
+    groups = tuple(catalogue_group(entry, seed=seed) for entry in entries)
     return SealedPartitionCatalogue(
         partition=partition,
         campaign_seed=seed,
-        generator_path=PARTITION_GENERATOR_PATH[partition],
+        generator_path=generator_path or PARTITION_GENERATOR_PATH[partition],
         provenance=PARTITION_PROVENANCE[partition],
         corpus_role=PARTITION_CORPUS_ROLE[partition],
         mode=mode,
@@ -530,6 +545,43 @@ class SealedCorpusBundle:
         return frozenset(group.repository_group for group in self.catalogues[partition].groups)
 
 
+def campaign_manifest_from_groups(
+    groups: Sequence[CatalogueGroup],
+    *,
+    partition: CorrectionPartition,
+    manifest_hash: str,
+    campaign_id: UUID,
+    campaign_version: int,
+    feature_sealed_at: datetime,
+) -> SealedCampaignManifest:
+    """The projector's manifest, built from groups rather than from a whole catalogue.
+
+    Sprint 21D3's vertical slice runs one fixture group that belongs to no partition, so it
+    cannot produce a `SealedPartitionCatalogue` — the group floors exist precisely to stop a
+    one-group training partition from being sealed. It still needs the same manifest the real
+    partitions get, and building a second one beside this would be two definitions of what
+    binds an outcome to its seal.
+    """
+    members = {
+        slot.candidate_id: SealedCampaignMember(
+            candidate_id=slot.candidate_id,
+            task_id=group.task_id,
+            group=group.repository_group,
+            partition=partition,
+            campaign_id=campaign_id,
+            campaign_manifest_hash=manifest_hash,
+            campaign_version=campaign_version,
+            verifier_profile_hash=group.verifier_profile_hash,
+            feature_sealed_at=feature_sealed_at,
+        )
+        for group in groups
+        for slot in group.slots
+    }
+    return SealedCampaignManifest(
+        campaign_id=campaign_id, manifest_hash=manifest_hash, members=members
+    )
+
+
 def campaign_manifest_for(
     catalogue: SealedPartitionCatalogue,
     *,
@@ -544,25 +596,13 @@ def campaign_manifest_for(
     inventing three values to satisfy a shape. The projector takes only a manifest and an
     outcome, so this is the single point where a partition becomes a role.
     """
-    members = {
-        slot.candidate_id: SealedCampaignMember(
-            candidate_id=slot.candidate_id,
-            task_id=group.task_id,
-            group=group.repository_group,
-            partition=catalogue.partition,
-            campaign_id=campaign_id,
-            campaign_manifest_hash=catalogue.content_hash,
-            campaign_version=campaign_version,
-            verifier_profile_hash=group.verifier_profile_hash,
-            feature_sealed_at=feature_sealed_at,
-        )
-        for group in catalogue.groups
-        for slot in group.slots
-    }
-    return SealedCampaignManifest(
-        campaign_id=campaign_id,
+    return campaign_manifest_from_groups(
+        catalogue.groups,
+        partition=catalogue.partition,
         manifest_hash=catalogue.content_hash,
-        members=members,
+        campaign_id=campaign_id,
+        campaign_version=campaign_version,
+        feature_sealed_at=feature_sealed_at,
     )
 
 
