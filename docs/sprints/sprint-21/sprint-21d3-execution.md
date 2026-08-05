@@ -1145,6 +1145,19 @@ The operator command is:
 uv run python scripts/gate_assessment_d3.py --markdown
 ```
 
+### W8 validation
+
+The complete repository suite passes with zero failures — 3435 passed, 217 skipped — as do Ruff
+lint and format, mypy, Bandit, the contract-schema export check, the pre-registration integrity
+and **fifteen-file** chronology checks, the repository language check and the tracked-file
+secrets scan. The gate table is regenerated from the frozen manifest on every run, so a
+condition whose evidence changed shows up as a diff rather than as a stale claim.
+
+Draft PR [#221](https://github.com/palkouser/cognitive-os/pull/221) carries the W8 work. Head
+`35b47dd64202` completed run `31028619861` with 30 of 30 jobs successful — the dependency bump
+W7-F1 records — and head `a663bbc5bdba` completed run `31030347888` with **30 of 30 jobs
+successful**.
+
 ### What W8 has not done
 
 **S21D3-094 and S21D3-095 are held.** They merge the branch into protected `main` and create the
