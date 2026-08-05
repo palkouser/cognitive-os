@@ -372,3 +372,7 @@ encoder dispatch, and the seal's counts, disjointness and reuse-by-hash.
 W2 added no database migration, no event field, no new corpus or artifact role, no dependency and
 no provider, network, credential or GPU call. Migration stays at `0015`. The four predecessor
 Artifact Store pairs received zero writes, and the campaign reports zero worktree mutations.
+
+Draft PR [#221](https://github.com/palkouser/cognitive-os/pull/221) carries the W2 commit at head
+`fa32c550f58c`; its CI run `30979833725` completed **30 of 30 jobs successfully**, so the lanes
+that caught W1's Bandit and SQLAlchemy boundaries are green on this wave without a follow-up fix.
