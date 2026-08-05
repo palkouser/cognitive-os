@@ -1,13 +1,13 @@
 {
   "backup": {
     "alembic_revision": "0015",
-    "artifact_archive_bytes": 1679871,
-    "artifact_archive_sha256": "8bb54058d02e1f6993bbfb5da61d005cf033e15f43e008c90fbc7d87c7e2d427",
-    "artifact_count": 2754,
+    "artifact_archive_bytes": 1683401,
+    "artifact_archive_sha256": "ea6449ebefce79ee9ea7cb7f5ac84fbbef57712e4e87f8afa1cd0d7b8f7a2722",
+    "artifact_count": 3306,
     "database": "cognitive_os_s21d3_test",
-    "database_dump_sha256": "c51b828106306b92ca8d7c7c95b32e78f650785a9367775eac81f924c7dd17e0",
-    "event_count": 1281,
-    "manifest": "20260805T121957Z-backup-manifest.json"
+    "database_dump_sha256": "f68fea62bbb0dbbb2023ab3c93ca2a51126c92af88b286bd9639b46746f68f18",
+    "event_count": 1731,
+    "manifest": "20260805T170602Z-backup-manifest.json"
   },
   "ci_coverage": {
     "covered": {
@@ -29,7 +29,7 @@
       "expected": "the file no longer hashes to the name it is filed under",
       "observed": {
         "failed_closed": true,
-        "files_rehashed": 2077,
+        "files_rehashed": 2096,
         "reason": "content_hash_mismatches names 077f508d0f1b"
       }
     },
@@ -40,7 +40,7 @@
       "observed": {
         "a_rehash_of_what_remains_reports_it_clean": true,
         "failed_closed": true,
-        "files_rehashed": 2076,
+        "files_rehashed": 2095,
         "reason": "classes reporting failed: ['artifact_bytes']"
       }
     },
@@ -221,8 +221,8 @@
       "path_and_size_fingerprint_sha256": "39417f1a03f6824cfe6f9c4b7e6bd5a3cd34da8329fb95cff0a35595899438aa"
     },
     "artifacts-s21d3": {
-      "files": 2077,
-      "path_and_size_fingerprint_sha256": "6a85f0eab388a7cd2df6d048dfac5fbef027363767fc1c385cc8ca30892e17b8"
+      "files": 2096,
+      "path_and_size_fingerprint_sha256": "fcb0a044810b375f2933d4a3cf22c7448bfada9c90e104566a92125b08dcd0d3"
     }
   },
   "fingerprints_before": {
@@ -243,11 +243,11 @@
       "path_and_size_fingerprint_sha256": "39417f1a03f6824cfe6f9c4b7e6bd5a3cd34da8329fb95cff0a35595899438aa"
     },
     "artifacts-s21d3": {
-      "files": 2077,
-      "path_and_size_fingerprint_sha256": "6a85f0eab388a7cd2df6d048dfac5fbef027363767fc1c385cc8ca30892e17b8"
+      "files": 2096,
+      "path_and_size_fingerprint_sha256": "fcb0a044810b375f2933d4a3cf22c7448bfada9c90e104566a92125b08dcd0d3"
     }
   },
-  "integrity_content_hash": "910c4367c5b94b24ed3b36ecff2ea270ea4736873c6b89d6ca2cef83449ba95f",
+  "integrity_content_hash": "be293055f3eb5b8883f3b626b0d0d7bc6a6013c033f346c051dd627b9ba6c6d9",
   "isolation": {
     "changed": [],
     "d3_pair_unchanged": true,
@@ -259,7 +259,7 @@
     "S21D3-084",
     "S21D3-085"
   ],
-  "main_worktree_mutations": " M .github/workflows/ci.yml\n M scripts/learned.py\n?? docs/sprints/sprint-21/evidence/sprint-21d3-operations.json\n?? scripts/operations_d3.py\n?? scripts/verification_matrix_d3.py\n?? src/cognitive_os/learning/integrity_d3.py\n?? tests/cognitive_os/learning/test_d3_cli_boundary.py\n?? tests/cognitive_os/learning/test_d3_integrity.py\n",
+  "main_worktree_mutations": "M  .secrets.baseline\n M docs/sprints/sprint-21/evidence/sprint-21d3-verification-matrix.json\nM  scripts/verification_matrix_d3.py\nM  uv.lock\n",
   "pre_registration_sha256": "191b3757ded21a1c2c85459a34902f8dee3f2f35b0979b557f84c1a37fe6a191",
   "provisioning": {
     "bootstrap_roles_untouched": {
@@ -290,16 +290,16 @@
     "schema_usage": true
   },
   "purpose": "Verify D3 provisioning, prove the evidence survives backup, restart and an isolated restore, and demonstrate that damage to the moved copy is refused.",
-  "recorded_at": "2026-08-05T12:20:07.959203Z",
+  "recorded_at": "2026-08-05T17:06:13.690261Z",
   "restart": {
     "action": "compose-postgres-1 restarted; the D3 database answered again",
-    "history_sha256": "c106aa8ce919f3a70bdfaf45ece38e11d587fa749e3b47b2063a362fe62f4578",
+    "history_sha256": "10728f251a82527bf954b9f5e6ea351c6d7c9f1bd31699b17bf64f27d28b1b8d",
     "store_is_unchanged_across_the_restart": true
   },
   "restore": {
     "artifact_bytes": {
       "content_hash_mismatches": [],
-      "files_rehashed": 2077
+      "files_rehashed": 2096
     },
     "artifact_copy": "/home/palkouser/projekt/cognitive-os-data/scratch-s21d3/w7-operations/restored-artifacts",
     "counts_match": true,
@@ -325,7 +325,7 @@
         },
         {
           "class": "chronology",
-          "detail": "13 files bind 191b3757ded2 and follow it",
+          "detail": "14 files bind 191b3757ded2 and follow it",
           "evidence": [
             "sprint-21d3-pre-registration.json",
             "sprint-21d3-calibration-metamorphic.json",
@@ -340,7 +340,8 @@
             "sprint-21d3-runtime-invariance.json",
             "sprint-21d3-sealed-manifests.json",
             "sprint-21d3-separation.json",
-            "sprint-21d3-v2-seal-resume.json"
+            "sprint-21d3-v2-seal-resume.json",
+            "sprint-21d3-verification-matrix.json"
           ],
           "state": "clean"
         },
@@ -370,7 +371,7 @@
         },
         {
           "class": "holdout_access",
-          "detail": "10 files report zero final or canary access",
+          "detail": "11 files report zero final or canary access",
           "evidence": [
             "sprint-21d3-calibration-metamorphic.json",
             "sprint-21d3-corpus.json",
@@ -381,7 +382,8 @@
             "sprint-21d3-runtime-invariance.json",
             "sprint-21d3-sealed-manifests.json",
             "sprint-21d3-self-play-campaign.json",
-            "sprint-21d3-separation.json"
+            "sprint-21d3-separation.json",
+            "sprint-21d3-verification-matrix.json"
           ],
           "state": "clean"
         },
@@ -395,7 +397,7 @@
         },
         {
           "class": "artifact_bytes",
-          "detail": "1952 blobs rehash to their content address",
+          "detail": "1971 blobs rehash to their content address",
           "evidence": [],
           "state": "clean"
         },
@@ -453,19 +455,19 @@
       "campaign_receipts": 225,
       "components_on_the_correction_surface": 0,
       "counts": {
-        "artifact_blobs": 1952,
-        "artifacts": 2754,
+        "artifact_blobs": 1971,
+        "artifacts": 3306,
         "campaign_receipts": 225,
         "coding_outcomes": 716,
-        "events": 1281,
+        "events": 1731,
         "learned_activation_approvals": 1,
-        "learned_activation_history": 3,
-        "learned_artifacts": 1,
-        "learned_component_revisions": 6,
+        "learned_activation_history": 0,
+        "learned_artifacts": 0,
+        "learned_component_revisions": 3,
         "learned_components": 1,
-        "learned_evidence_records": 2
+        "learned_evidence_records": 0
       },
-      "history_sha256": "c106aa8ce919f3a70bdfaf45ece38e11d587fa749e3b47b2063a362fe62f4578",
+      "history_sha256": "10728f251a82527bf954b9f5e6ea351c6d7c9f1bd31699b17bf64f27d28b1b8d",
       "receipts_sha256": "1f59947a3741c4bbfb66a5211c3b920385027e45132e2f04b0b4f54c3c066980",
       "run_identity_keys": 716,
       "run_identity_keys_sha256": "f5738ceaf7718d1d805e23059243f9cd3907d9b4f6c8dc8df406b9592df77d3a"
@@ -478,19 +480,19 @@
       "campaign_receipts": 225,
       "components_on_the_correction_surface": 0,
       "counts": {
-        "artifact_blobs": 1952,
-        "artifacts": 2754,
+        "artifact_blobs": 1971,
+        "artifacts": 3306,
         "campaign_receipts": 225,
         "coding_outcomes": 716,
-        "events": 1281,
+        "events": 1731,
         "learned_activation_approvals": 1,
-        "learned_activation_history": 3,
-        "learned_artifacts": 1,
-        "learned_component_revisions": 6,
+        "learned_activation_history": 0,
+        "learned_artifacts": 0,
+        "learned_component_revisions": 3,
         "learned_components": 1,
-        "learned_evidence_records": 2
+        "learned_evidence_records": 0
       },
-      "history_sha256": "c106aa8ce919f3a70bdfaf45ece38e11d587fa749e3b47b2063a362fe62f4578",
+      "history_sha256": "10728f251a82527bf954b9f5e6ea351c6d7c9f1bd31699b17bf64f27d28b1b8d",
       "receipts_sha256": "1f59947a3741c4bbfb66a5211c3b920385027e45132e2f04b0b4f54c3c066980",
       "run_identity_keys": 716,
       "run_identity_keys_sha256": "f5738ceaf7718d1d805e23059243f9cd3907d9b4f6c8dc8df406b9592df77d3a"
@@ -505,6 +507,6 @@
   },
   "schema_version": 1,
   "sprint": "21D3",
-  "started_at": "2026-08-05T12:19:56.811261Z",
+  "started_at": "2026-08-05T17:06:01.994445Z",
   "wave": "W7"
 }

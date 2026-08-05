@@ -1,8 +1,7 @@
 {
   "disclosures": [
     {
-      "arrives_through": "development and test tooling (PyJWT, pytest, mypy, babel)",
-      "cryptography": "uv.lock pins 49.0.0 against a fix in 50.0.0. It arrives through PyJWT, is not a runtime dependency, and is not in the security group's closure, which is why the CI security lane installs neither and does not see it",
+      "action": "uv.lock upgraded cryptography 49.0.0 -> 50.0.0; the environment's setuptools was brought to the 83.0.0 the lock already pinned",
       "declared_runtime_dependencies": [
         "httpx>=0.28,<1",
         "jsonschema>=4.25,<5",
@@ -10,17 +9,10 @@
         "pydantic>=2.11,<3",
         "PyYAML>=6,<7"
       ],
-      "finding": "pip-audit reports five advisories against cryptography and setuptools",
-      "is_a_declared_runtime_dependency": false,
-      "not_done_here_because": "a lock change alters the environment every earlier wave's evidence was produced in, and section 10.3 treats that as invalidating the affected experiment; it is a decision for the release, not for an operations wave",
-      "packages": [
-        "cryptography",
-        "setuptools"
-      ],
+      "measurement_evidence_is_unaffected": "neither package is imported by the encoder, the campaign, the calibration set or the retrieval holdout, so no D3 measurement is re-derived under the new lock; what the bump changes is the release environment, and this matrix is the record of that environment",
+      "resolved": true,
       "row": "dependency_audit",
-      "setuptools": "uv.lock pins 83.0.0, which is the fixed version; the 78.1.0 this matrix audited is what the installed extra set resolves to, so four of the five advisories are a property of this environment rather than of the lock",
-      "what_would_clear_it": "cryptography >= 50.0.0 in uv.lock",
-      "why_the_release_is_not_blocked": "neither package is one of the five declared runtime dependencies, so the built wheel ships neither"
+      "was": "five advisories against cryptography 49.0.0 and setuptools 78.1.0, neither a declared runtime dependency, both reached through development tooling"
     }
   ],
   "environment": {
@@ -30,15 +22,13 @@
     "python": "3.12.13"
   },
   "every_row_decided": true,
-  "failed_rows": [
-    "dependency_audit"
-  ],
+  "failed_rows": [],
   "final_outcomes_inspected": false,
-  "integrity_content_hash": "d817a672540210be3be74b58818c505da50b29bb8a2bee0840cdeb32c8273b50",
+  "integrity_content_hash": "0f65b3dbd357da536623834b422aec950e8e9743b08cf84732bb25e2d0073d4e",
   "item": "S21D3-086",
   "pre_registration_sha256": "191b3757ded21a1c2c85459a34902f8dee3f2f35b0979b557f84c1a37fe6a191",
   "purpose": "Every check expected before release, run once, with its actual exit status. Negative rows must refuse for their declared reason; nothing is silently skipped.",
-  "recorded_at": "2026-08-05T13:17:03.561244Z",
+  "recorded_at": "2026-08-05T17:05:36.558997Z",
   "rows": [
     {
       "command": "uv run ruff check --config ruff.cognitive-os.toml src tests scripts infra",
@@ -69,7 +59,7 @@
     {
       "command": "uv run mypy src/cognitive_os",
       "detail": "",
-      "duration_seconds": 0.85,
+      "duration_seconds": 0.84,
       "environment_overrides": [],
       "exit_status": 0,
       "expect": "zero",
@@ -82,7 +72,7 @@
     {
       "command": "uv run bandit -q -r src/cognitive_os",
       "detail": "",
-      "duration_seconds": 4.49,
+      "duration_seconds": 4.4,
       "environment_overrides": [],
       "exit_status": 0,
       "expect": "zero",
@@ -95,53 +85,53 @@
     {
       "command": "uv run pytest -q --timeout=600",
       "detail": "",
-      "duration_seconds": 235.47,
+      "duration_seconds": 237.05,
       "environment_overrides": [],
       "exit_status": 0,
       "expect": "zero",
       "expected_reason": "",
       "kind": "command",
       "name": "full_suite",
-      "output_sha256": "5ab998dd21696389768b9e8d69ac413549f05d937e2c27daf5be5e63189cb8c4",
+      "output_sha256": "d65a489e11776d347de2763ed2d6d51d3ae05d4ea681e2f0ad5c9fb1ee17f040",
       "status": "passed"
     },
     {
       "command": "uv run pytest -q tests/cognitive_os/learning",
       "detail": "",
-      "duration_seconds": 106.65,
+      "duration_seconds": 109.36,
       "environment_overrides": [],
       "exit_status": 0,
       "expect": "zero",
       "expected_reason": "",
       "kind": "command",
       "name": "correction_slice",
-      "output_sha256": "632c8f1034e7dcff4b2784326b7cbf0acebee1740569114ef08a926b87428d7f",
+      "output_sha256": "ecfff55490054284c9a92428bf5dcb9d6a4d6d34d68000aba920dfb29cc330dc",
       "status": "passed"
     },
     {
       "command": "uv run pytest -q tests/cognitive_os/experience tests/cognitive_os/coding/test_d3_retrieval_holdout.py",
       "detail": "",
-      "duration_seconds": 12.26,
+      "duration_seconds": 12.68,
       "environment_overrides": [],
       "exit_status": 0,
       "expect": "zero",
       "expected_reason": "",
       "kind": "command",
       "name": "retrieval_slice",
-      "output_sha256": "e5a1a9f4c3f678043e493e7d7e813600ccd40a80b1f552950d410f6f2a602733",
+      "output_sha256": "9a22b4373dddca1e9a06a389064434d0f1b8a4e0856cc92f741008d3ddad418d",
       "status": "passed"
     },
     {
       "command": "uv run pytest -q tests/cognitive_os/learned_evidence",
       "detail": "",
-      "duration_seconds": 6.5,
+      "duration_seconds": 6.48,
       "environment_overrides": [],
       "exit_status": 0,
       "expect": "zero",
       "expected_reason": "",
       "kind": "command",
       "name": "lifecycle_slice",
-      "output_sha256": "41e75c77b57e40cd10c8a503c35944d569c7ef4cc1381116a5818509fb7682cf",
+      "output_sha256": "aebd402666787debe81c9936e7849d5722d90a5891ab576bd8c06bf412cadb8b",
       "status": "passed"
     },
     {
@@ -173,7 +163,7 @@
     {
       "command": "bash -c git ls-files -z | grep -zv sprint-21d3-verification-matrix.json | xargs -0 uv run detect-secrets-hook --baseline .secrets.baseline",
       "detail": "",
-      "duration_seconds": 71.28,
+      "duration_seconds": 72.85,
       "environment_overrides": [],
       "exit_status": 0,
       "expect": "zero",
@@ -185,60 +175,60 @@
     },
     {
       "command": "uv run pip-audit",
-      "detail": "Found 5 known vulnerabilities in 2 packages",
-      "duration_seconds": 1.1,
+      "detail": "",
+      "duration_seconds": 1.05,
       "environment_overrides": [],
-      "exit_status": 1,
+      "exit_status": 0,
       "expect": "zero",
       "expected_reason": "",
       "kind": "command",
       "name": "dependency_audit",
-      "output_sha256": "713d676960ec39f8f8d934128230f8ba328ba56fc41572b9c87412648c640180",
-      "status": "failed"
+      "output_sha256": "8b4a8d8df7fff88992ccd846a82aeeb1fdd171d8159de0afc7c0bed0db475d86",
+      "status": "passed"
     },
     {
       "command": "uv build",
       "detail": "",
-      "duration_seconds": 2.0,
+      "duration_seconds": 2.04,
       "environment_overrides": [],
       "exit_status": 0,
       "expect": "zero",
       "expected_reason": "",
       "kind": "command",
       "name": "packaging_build",
-      "output_sha256": "d8761aeef58551c466aa94103cb4a70ecea58da44832f6649da362db8908215b",
+      "output_sha256": "c11923e39eabcb26fba991601a1321b81d59e2d3bd18c98812cf1c32e1eb8556",
       "status": "passed"
     },
     {
       "command": "bash scripts/verify_distribution.sh",
       "detail": "",
-      "duration_seconds": 3.15,
+      "duration_seconds": 3.64,
       "environment_overrides": [],
       "exit_status": 0,
       "expect": "zero",
       "expected_reason": "",
       "kind": "command",
       "name": "wheel_installation",
-      "output_sha256": "23456562e893dea7868733dd748ec3c725b3f4d8871742d87e2e9efd54ee6d31",
+      "output_sha256": "37e1a8c49dc1290ed31629ec8328d56592399c484fdfb5b40b99a5ca68607332",
       "status": "passed"
     },
     {
       "command": "bash scripts/verify_editable_install.sh",
       "detail": "",
-      "duration_seconds": 0.75,
+      "duration_seconds": 0.8,
       "environment_overrides": [],
       "exit_status": 0,
       "expect": "zero",
       "expected_reason": "",
       "kind": "command",
       "name": "editable_installation",
-      "output_sha256": "50d5fef1ef31897a282955d228e42b535f8fa5c6a5a53f7db632c53a50cf01ab",
+      "output_sha256": "5cd0d80a7981cc5cb5ae44ef717ec32bb8bc6f2bde8d91f2de6f6f547c4e2e75",
       "status": "passed"
     },
     {
       "command": "uv run python scripts/pre_registration_d3.py --check",
       "detail": "",
-      "duration_seconds": 0.45,
+      "duration_seconds": 0.46,
       "environment_overrides": [],
       "exit_status": 0,
       "expect": "zero",
@@ -251,7 +241,7 @@
     {
       "command": "uv run python scripts/learned.py d3-integrity",
       "detail": "",
-      "duration_seconds": 0.53,
+      "duration_seconds": 0.51,
       "environment_overrides": [
         "COGOS_POSTGRES_DATABASE"
       ],
@@ -273,26 +263,26 @@
       "expected_reason": "",
       "kind": "command",
       "name": "benchmark_replay_ci",
-      "output_sha256": "d7e147a6bdb5e8fb1dc8400a88aeed156305e0318cf2cfcd375c94b108b3d920",
+      "output_sha256": "c5166b0d2affd9a0c0d735bf07da859b547389f3e5a0531bf04781e05438ecd3",
       "status": "passed"
     },
     {
       "command": "uv run python scripts/benchmark_run.py --manifest benchmarks/manifests/sprint21c1-learned-seed.yaml --mode learned-replay --report-directory /tmp/s21d3-matrix-seed",
       "detail": "",
-      "duration_seconds": 1.1,
+      "duration_seconds": 1.11,
       "environment_overrides": [],
       "exit_status": 0,
       "expect": "zero",
       "expected_reason": "",
       "kind": "command",
       "name": "benchmark_replay_seed",
-      "output_sha256": "574cebfb6e86af9dedb74a4b49dcea6b980fa21612140e11b922a0399a684253",
+      "output_sha256": "ddacd9d80d9528cb0aaefd25f1a80a1bfada8914a63820e0800957802a3edad7",
       "status": "passed"
     },
     {
       "command": "uv run python scripts/learned.py d3-integrity",
       "detail": "",
-      "duration_seconds": 0.45,
+      "duration_seconds": 0.46,
       "environment_overrides": [
         "COGOS_ARTIFACT_ROOT",
         "COGOS_POSTGRES_DATABASE"
@@ -323,7 +313,7 @@
     {
       "command": "uv run python scripts/learned.py smoke --confirm-isolated",
       "detail": "",
-      "duration_seconds": 1.04,
+      "duration_seconds": 1.05,
       "environment_overrides": [
         "COGOS_DATABASE_ADMIN_URL"
       ],
@@ -379,10 +369,10 @@
   "schema_version": 1,
   "skipped_rows": [],
   "sprint": "21D3",
-  "started_at": "2026-08-05T13:09:32.085219Z",
+  "started_at": "2026-08-05T16:57:58.386852Z",
   "totals": {
-    "failed": 1,
-    "passed": 26,
+    "failed": 0,
+    "passed": 27,
     "rows": 27,
     "skipped": 0
   },

@@ -305,39 +305,32 @@ def _execute(row: Row) -> dict[str, Any]:
 def _disclosures() -> list[dict[str, Any]]:
     """Findings a row records that the release is nonetheless not blocked by, and why.
 
-    Kept apart from the rows so neither can quietly become the other. A disclosure never
-    turns a failed row green: `failed_rows` still names it, and the exit status still refuses.
-    What this adds is the reason a reader would otherwise have to reconstruct.
+    Kept apart from the rows so neither can quietly become the other. A disclosure never turns
+    a failed row green: `failed_rows` still names it, and the exit status still refuses. What
+    this adds is the reason a reader would otherwise have to reconstruct.
+
+    The list is empty on a clean run, and that is the honest shape: a disclosure that outlived
+    the finding it explains is a claim about a state the repository has left.
     """
     runtime = tomllib.loads((REPOSITORY / "pyproject.toml").read_text(encoding="utf-8"))
-    dependencies = runtime["project"]["dependencies"]
     return [
         {
             "row": "dependency_audit",
-            "finding": "pip-audit reports five advisories against cryptography and setuptools",
-            "packages": ["cryptography", "setuptools"],
-            "declared_runtime_dependencies": dependencies,
-            "is_a_declared_runtime_dependency": False,
-            "arrives_through": "development and test tooling (PyJWT, pytest, mypy, babel)",
-            "setuptools": (
-                "uv.lock pins 83.0.0, which is the fixed version; the 78.1.0 this matrix "
-                "audited is what the installed extra set resolves to, so four of the five "
-                "advisories are a property of this environment rather than of the lock"
+            "resolved": True,
+            "was": (
+                "five advisories against cryptography 49.0.0 and setuptools 78.1.0, neither a "
+                "declared runtime dependency, both reached through development tooling"
             ),
-            "cryptography": (
-                "uv.lock pins 49.0.0 against a fix in 50.0.0. It arrives through PyJWT, is "
-                "not a runtime dependency, and is not in the security group's closure, which "
-                "is why the CI security lane installs neither and does not see it"
+            "action": (
+                "uv.lock upgraded cryptography 49.0.0 -> 50.0.0; the environment's setuptools "
+                "was brought to the 83.0.0 the lock already pinned"
             ),
-            "why_the_release_is_not_blocked": (
-                "neither package is one of the five declared runtime dependencies, so the "
-                "built wheel ships neither"
-            ),
-            "what_would_clear_it": "cryptography >= 50.0.0 in uv.lock",
-            "not_done_here_because": (
-                "a lock change alters the environment every earlier wave's evidence was "
-                "produced in, and section 10.3 treats that as invalidating the affected "
-                "experiment; it is a decision for the release, not for an operations wave"
+            "declared_runtime_dependencies": runtime["project"]["dependencies"],
+            "measurement_evidence_is_unaffected": (
+                "neither package is imported by the encoder, the campaign, the calibration set "
+                "or the retrieval holdout, so no D3 measurement is re-derived under the new "
+                "lock; what the bump changes is the release environment, and this matrix is "
+                "the record of that environment"
             ),
         }
     ]

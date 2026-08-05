@@ -955,27 +955,42 @@ violations, and the released command over the committed evidence. Both are crede
 construction — which is the point of the report reading files rather than a store, and the
 reason the lane cannot claim a check it did not run.
 
-S21D3-086 runs **27 rows, 26 passed, 0 skipped**. Negative rows refuse for their declared
+S21D3-086 runs **27 rows, 27 passed, 0 skipped**. Negative rows refuse for their declared
 reason: a predecessor store path, a predecessor database name, and the smoke against a
 non-`_test` database. Five rows are recorded from W7's and W4's own evidence rather than re-run,
 and each names the file and key that decided it.
 
-**One row failed, and it is disclosed rather than fixed.** `pip-audit` reports five advisories
-against `cryptography` and `setuptools`. Neither is one of the five declared runtime
-dependencies, so the built wheel ships neither; both arrive through development and test
-tooling. `uv.lock` already pins `setuptools` at the fixed `83.0.0` — the `78.1.0` this matrix
-audited is what the installed extra set resolves to, so four of the five advisories are a
-property of this environment rather than of the lock. The fifth is `cryptography` 49.0.0
-against a fix in 50.0.0, reached through PyJWT, which is not in the security group's closure
-and is why the CI security lane installs it and does not see it. Clearing it means changing
-`uv.lock`, and §10.3 treats a change to the environment earlier evidence was produced in as
-invalidating the affected experiment. **That is a release decision, not an operations one**, so
-W7 records it with its reason and leaves the row red.
+### W7-F1 — the dependency audit, raised and then cleared
+
+The first matrix run left one row red. `pip-audit` reported five advisories: four against
+`setuptools` 78.1.0 and one against `cryptography` 49.0.0. Neither package is one of the five
+declared runtime dependencies, so the built wheel ships neither; both arrive through
+development and test tooling, and `cryptography` reaches the tree through PyJWT, which is
+outside the security group's closure — which is why the CI security lane installs it and never
+saw the advisory.
+
+W7 raised it as a disclosure rather than fixing it, because clearing the `cryptography`
+advisory means editing `uv.lock`, and §10.3 treats a change to the environment earlier evidence
+was produced in as invalidating the affected experiment. **The release owner directed the
+bump**, and it was made:
+
+- `uv.lock` upgraded `cryptography` 49.0.0 → 50.0.0, the only lock change;
+- the environment's `setuptools` was brought to the **83.0.0 the lock already pinned**, so the
+  four advisories against it were environment drift rather than a lock defect.
+
+`pip-audit` now reports **no known vulnerabilities**, and the row is green.
+
+No D3 measurement is re-derived under the new lock, and none needs to be: neither package is
+imported by the encoder, the campaign, the calibration set or the retrieval holdout. What the
+bump changes is the *release* environment, and the S21D3-086 matrix is the record of that
+environment — so it was re-run in full afterwards, along with the complete suite, mypy, Bandit,
+Ruff and `uv build`, all of which pass under the new lock.
 
 ### W7 findings
 
 | ID | Subject | Observed | Action |
 |---|---|---|---|
+| W7-F1 | the dependency audit | Five advisories: four against `setuptools` 78.1.0 and one against `cryptography` 49.0.0. Neither is a declared runtime dependency; `cryptography` reaches the tree through PyJWT, outside the security group's closure, which is why the CI security lane never saw it. | Raised as a disclosure because clearing it edits `uv.lock` and §10.3 makes that a release decision. The release owner directed the bump: `cryptography` 49.0.0 → 50.0.0 in the lock, and the environment's `setuptools` brought to the 83.0.0 the lock already pinned. `pip-audit` now reports no known vulnerabilities; the full suite, mypy, Bandit, Ruff, `uv build` and the whole 27-row matrix were re-run under the new lock. |
 | W7-A1 | the isolation fingerprint | The first version reimplemented the path-and-size hash from its description in the W0 record and produced a different digest for all four predecessor stores — which reads as "every predecessor was mutated" and is in fact "the check disagrees with the check". | Delegated to the released `reality_integrity.fingerprint`. A second implementation of a fingerprint is a second answer to the only question isolation asks. All four stores now reproduce their released digest, and a test pins that against the W0 record. |
 | W7-A2 | the migration check | `no_migration_0016` passed by globbing `infra/migrations/versions`, which does not exist. The list was empty and the check was vacuously true; it would have passed with a `0016` sitting on disk. | Points at `infra/postgres/alembic/versions` and refuses to run when the directory is absent or empty. It now reads `0013, 0014, 0015`. |
 | W7-A3 | the artifact-bytes class | The class rehashed the files present, so a store one blob smaller was reported perfectly clean — and a partial restore is exactly that shape of damage. The matrix's own `missing_blob` case is what surfaced it. | The class takes *declared address to observed hash*, with `None` where the store has a row and no bytes, and fails on either half. The matrix case now records both that the class catches it and that a plain rehash does not. |
@@ -990,8 +1005,8 @@ and W4-A2.
 
 | Evidence | SHA-256 |
 |---|---|
-| [operations](evidence/sprint-21d3-operations.json) | `c626ba9a07361c33dc597abaf6268503049cc41dc7049e897cd4e418cd111e43` |
-| [verification matrix](evidence/sprint-21d3-verification-matrix.json) | `cacd67212ec93aaec45020511466f91de69367e13cf49d806f8dc4524bf154cd` |
+| [operations](evidence/sprint-21d3-operations.json) | `6a62743a9554a0738391c03602d6bd9f7d1999ab509e1af5a8e968be7c0c61cd` |
+| [verification matrix](evidence/sprint-21d3-verification-matrix.json) | `17a03cbcae8ec4b427a78f2d28ed8f6750b85df63ce2c93654c500487ac4c97c` |
 
 The two operator commands are:
 
@@ -1014,9 +1029,9 @@ The complete repository suite passes with zero failures, as do Ruff lint and for
 `src tests scripts infra`, mypy over `src/cognitive_os`, Bandit with zero results, the
 contract-schema export check, the pre-registration integrity and twelve-file chronology checks,
 the repository language check, the tracked-file secrets scan, `uv build` with both distribution
-verifiers, and both learned benchmark manifests. All of those are rows in the S21D3-086 matrix
-with their measured durations and output hashes; the one red row is the disclosed dependency
-audit above.
+verifiers, the dependency audit, and both learned benchmark manifests. All of those are rows in
+the S21D3-086 matrix with their measured durations and output hashes, and every one of the 27
+is green.
 
 Two focused modules were added: `tests/cognitive_os/learning/test_d3_integrity.py` (27 cases —
 one seeded violation per class, the two unchecked states, and the fingerprint pinned against
@@ -1024,8 +1039,9 @@ the W0 record) and `tests/cognitive_os/learning/test_d3_cli_boundary.py` (13 cas
 refused environment, the one accepted one, and the output contract including that no credential
 is rendered).
 
-W7 added no database migration, no event field, no corpus or artifact role, no dependency, and
-no provider, network, credential or GPU call. Migration stays at `0015`. The four predecessor
+W7 added no database migration, no event field, no corpus or artifact role and no new
+dependency, and made no provider, network, credential or GPU call. It changed one existing pin:
+`cryptography` 49.0.0 → 50.0.0, under W7-F1 above. Migration stays at `0015`. The four predecessor
 pairs are byte-identical before and after every command in this wave, and the D3 pair received
 no write outside the backup root, the restore database and the declared scratch root.
 
