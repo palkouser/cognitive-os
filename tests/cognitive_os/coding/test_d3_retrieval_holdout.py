@@ -15,6 +15,7 @@ from __future__ import annotations
 import pytest
 
 from cognitive_os.coding import reality_trajectories
+from cognitive_os.coding.reality_leakage import judgement_leaks
 from cognitive_os.coding.reality_retrieval_specs_d3 import D3_RETRIEVAL_SPECS
 from cognitive_os.coding.reality_tasks import (
     available_templates,
@@ -25,7 +26,6 @@ from cognitive_os.coding.reality_tasks import (
 )
 from cognitive_os.coding.reality_trajectories import CorrectionStep, TrajectoryBuildError
 from cognitive_os.domain.reality import RealityCandidateStrategy
-from scripts.retrieval_holdout_d3 import _judgement_leaks
 
 from .reality_fixtures import task_manifest
 from .test_reality_downstream import PATH_A, _path, _Recorded
@@ -126,41 +126,35 @@ def test_a_repair_path_whose_second_step_is_a_baseline_is_refused() -> None:
 # ------------------------------------------------------------------ the leak guard
 
 
-class _Graph:
-    """Only what `_judgement_leaks` reads: a searchable text."""
-
-    def __init__(self, text: str) -> None:
-        self._text = text
-
-    def search_text(self) -> str:
-        return self._text
-
-
-class _Pair:
-    def __init__(self, pair_id: str, group: str, text: str) -> None:
-        self.pair_id = pair_id
-        self.group = group
-        self.failed = _Graph(text)
-        self.successful = _Graph(text)
-
-
 def test_a_signature_that_names_its_own_family_is_caught() -> None:
-    spec = D3_RETRIEVAL_SPECS[0]
-    family = spec.family.value
-    leaky = _Pair(spec.repository_group, spec.repository_group, f"coding\nd3r_{family}:thing\n")
+    """W3-F2: `d3r_boundary:batch_evenly` spells `boundary_collections`'s family prefix."""
+    family = "boundary_collections"
+    leaks = judgement_leaks(
+        {"pair:failed": f"coding\nd3r_{family}:thing\nobservation status=completed\n"},
+        {"pair:failed": (family, "pair")},
+    )
 
-    leaks = _judgement_leaks([leaky], {spec.repository_group: spec})  # type: ignore[arg-type]
-
-    assert leaks
-    assert all(spec.repository_group in item for item in leaks)
+    assert leaks == (f"pair:failed:{family}",)
 
 
 def test_an_opaque_signature_leaks_nothing() -> None:
-    spec = D3_RETRIEVAL_SPECS[0]
-    opaque = _Pair(
-        spec.repository_group,
-        spec.repository_group,
-        "coding\n9f1c0a2e-4b6d-5f8a-9c3e-7d2b1a4e6f80\nobservation status=completed\n",
+    leaks = judgement_leaks(
+        {
+            "pair:failed": (
+                "coding\n9f1c0a2e-4b6d-5f8a-9c3e-7d2b1a4e6f80\nobservation status=completed\n"
+            )
+        },
+        {"pair:failed": ("boundary_collections", "d3r-batch-evenly")},
     )
 
-    assert _judgement_leaks([opaque], {spec.repository_group: spec}) == []  # type: ignore[arg-type]
+    assert leaks == ()
+
+
+def test_the_check_is_case_insensitive_and_deduplicated() -> None:
+    """A label is a label whatever its case, and one text repeating it is still one leak."""
+    leaks = judgement_leaks(
+        {"a": "Numeric_Logic and numeric_logic again", "b": "nothing to see"},
+        {"a": ("numeric_logic", "numeric_logic"), "b": ("numeric_logic",)},
+    )
+
+    assert leaks == ("a:numeric_logic",)

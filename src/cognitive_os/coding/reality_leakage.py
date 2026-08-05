@@ -159,6 +159,33 @@ def lookup_key_leaks(task: RealityTaskManifest, template_id: str) -> tuple[Contr
     )
 
 
+def judgement_leaks(
+    searchable: Mapping[str, str], labels: Mapping[str, Iterable[str]]
+) -> tuple[str, ...]:
+    """Searchable text that spells the relevance label it is being scored against. §S21D3-043.
+
+    A relevance judgement is usually a property name — a task family, a domain, a tier — and a
+    retrieval document that contains that name hands the ranker its own answer. This is the
+    same failure as `lookup_key_leaks` on the evaluation side: there, a projection that names
+    its template turns repair into lookup; here, a searchable text that names its family turns
+    retrieval into lookup.
+
+    Not hypothetical. The Sprint 21D3 retrieval holdout first scored a perfect 1.0000 on the
+    vector arm because the projected task signature began with the task family, and the
+    judgement for that holdout *was* the family.
+    """
+    return tuple(
+        sorted(
+            {
+                f"{key}:{label}"
+                for key, text in searchable.items()
+                for label in labels.get(key, ())
+                if label.casefold() in text.casefold()
+            }
+        )
+    )
+
+
 def normalized_structure_hash(source: str) -> str:
     """Hash the shape of the code with identifiers and literals erased.
 

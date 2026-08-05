@@ -544,6 +544,7 @@ only lower trust to `UNVERIFIED`, never raise it.
 | W3-F1 | `minilm_shortlist_plus_bounded_ged` | Two identical passes of one command on one host disagree on this arm alone, and four runs produced four different metric triples. `networkx.graph_edit_distance` under a wall-clock timeout is an anytime search, so the score depends on how much search fits in 90 ms. The D1 and D2 records for this arm are not reproducible by anyone. | Measured and reported per arm, with the second pass's own metrics recorded beside the first. Not repaired: revision 3 froze the comparator and the 90 ms policy, and a deterministic budget would change a frozen arm mid-experiment. |
 | W3-F2 | the first holdout resolution | The vector arm returned a perfect 1.0000/1.0000. The graph task signature spelled the task family, `search_text()` shows the signature to every arm, and the relevance judgement *is* the family — so the arm was reading its own label. | The signature is now the executed task's uuid5 identity, D1's convention. A fail-closed guard refuses to rank text naming its own family or group. The holdout was re-resolved and re-evaluated end to end; the leaked run decided nothing. |
 | W3-A1 | the D1 read-only check | The first version fingerprinted `docs/sprints/sprint-21`, which is the tree the command writes its own evidence into, so it reported "changed" unconditionally. | Replaced with D1's own file hashes and its Artifact Store fingerprint. The D1 retrieval benchmark hashes to `7ca6b1c7…`, the value the D2 diagnostic recorded, and the query set matches the published `0a82bfe3…`. |
+| W3-A2 | the leak guard's home | CI's `coding-agent` lane failed on `ModuleNotFoundError: No module named 'sqlalchemy'`: the new test module imported the holdout *script* to reach the guard, and that script opens a Postgres event store. The lane runs without the database extra, as it should. | The guard moved to `reality_leakage.judgement_leaks`, beside `lookup_key_leaks` — the same failure on the evaluation side, and a module that already exists to answer "what must not leak". The script and the test both call the production function; neither drags a store into a unit lane. |
 
 The reporting defect the split of `timeouts` and `budget_cutoffs` fixes is recorded above rather
 than in this table: it was found by reading the pre-registered metric list against the field
@@ -579,7 +580,8 @@ chronology checks, the repository language check and the tracked-file secrets sc
 modules were added or extended: `tests/cognitive_os/coding/test_d3_retrieval_holdout.py` pins
 the retrieval packages, the two-run repair path, the unchanged three-run rule and the leak
 guard, while the fusion arm, the policy boundary and the advisory boundary are pinned next to
-the released tests they extend.
+the released tests they extend. The first pushed head failed CI's `coding-agent` lane on an
+import; W3-A2 records the cause and the fix, and no check was dropped to make it pass.
 
 `ExperienceGraphResult` gained one optional field, so `v1/experience-graph/` was re-exported;
 nothing was removed and no other schema changed. W3 added no database migration, no event

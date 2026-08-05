@@ -49,7 +49,10 @@ from cognitive_os.application.services.reality_campaign_runner import (  # noqa:
 )
 from cognitive_os.coding.outcome_recording import CodingOutcomeRecorder  # noqa: E402
 from cognitive_os.coding.reality_integrity import fingerprint  # noqa: E402
-from cognitive_os.coding.reality_leakage import near_clone_pairs  # noqa: E402
+from cognitive_os.coding.reality_leakage import (  # noqa: E402
+    judgement_leaks,
+    near_clone_pairs,
+)
 from cognitive_os.coding.reality_retrieval_specs_d3 import (  # noqa: E402
     D3_RETRIEVAL_SPECS,
     D3RetrievalSpec,
@@ -410,22 +413,26 @@ def _d1_untouched() -> dict[str, Any]:
 def _judgement_leaks(
     pairs: list[FailedSuccessGraphPair], specs: dict[str, D3RetrievalSpec]
 ) -> list[str]:
-    """Text an arm ranks that spells the judgement it is being scored against. §S21D3-043.
+    """Every ranked text of this holdout, against the labels it is judged by. §S21D3-043.
 
     Relevance here is "same task family", so a family name anywhere in a searchable text is
-    the label itself. This is fail-closed rather than reported: the first version of this
-    holdout scored a perfect 1.0000 on the vector arm because the signature began with the
-    family, and a benchmark that can produce that number is not a benchmark.
+    the label itself. Fail-closed rather than reported: a benchmark that can return a perfect
+    1.0000 by reading its own judgement is not a benchmark.
     """
-    leaks = []
-    for pair in pairs:
-        family = specs[pair.pair_id].family.value
-        for side, graph in (("failed", pair.failed), ("successful", pair.successful)):
-            text = graph.search_text().casefold()
-            for token in (family, family.replace("_", " "), pair.group):
-                if token.casefold() in text:
-                    leaks.append(f"{pair.pair_id}:{side}:{token}")
-    return sorted(set(leaks))
+    searchable = {
+        f"{pair.pair_id}:{side}": graph.search_text()
+        for pair in pairs
+        for side, graph in (("failed", pair.failed), ("successful", pair.successful))
+    }
+    labels = {
+        key: (
+            specs[key.split(":")[0]].family.value,
+            specs[key.split(":")[0]].family.value.replace("_", " "),
+            key.split(":")[0],
+        )
+        for key in searchable
+    }
+    return list(judgement_leaks(searchable, labels))
 
 
 def _queries(pairs: list[FailedSuccessGraphPair], specs: dict[str, D3RetrievalSpec]) -> list[dict]:

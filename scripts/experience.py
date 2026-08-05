@@ -223,8 +223,10 @@ _ARMS = (
     "reciprocal_rank_fusion",
 )
 
-#: What can still be measured when no local model is available. The four MiniLM-free arms.
-_ARMS_WITHOUT_A_MODEL = tuple(arm for arm in _ARMS if "minilm" not in arm and "fusion" not in arm)
+#: What can still be measured when no local model is available. Listed rather than derived by
+#: sniffing arm names: an arm called `lexical_plus_fusion` would be silently dropped by a
+#: substring rule, and the set of model-free arms is three items that rarely change.
+_ARMS_WITHOUT_A_MODEL = ("no_memory", "exact_signature", "lexical")
 
 
 async def _run_arm(
@@ -320,9 +322,8 @@ def _benchmark(
     embed = _embedding_provider(args.model) if args.model else None
     cache: dict[str, tuple[float, ...]] = {}
 
-    async def one_pass() -> tuple[dict[str, list[dict[str, object]]], dict[str, list[str]]]:
+    async def one_pass() -> dict[str, list[dict[str, object]]]:
         rows: dict[str, list[dict[str, object]]] = {}
-        orders: dict[str, list[str]] = {}
         for record in manifest:
             relevant = set(record["relevant_pair_ids"])
             pair = by_id.get(record["query_id"].removeprefix("q:"))
@@ -342,7 +343,6 @@ def _benchmark(
                     arm, query, pool, pair, limits=limits, embed=embed, cache=cache
                 )
                 latency = (perf_counter() - started) * 1000
-                orders[f"{record['query_id']}|{arm}"] = [e.pair_id for e in result.entries]
                 rows.setdefault(arm, []).append(
                     {
                         "query_id": record["query_id"],
@@ -364,19 +364,19 @@ def _benchmark(
                         "ranked_pair_ids": [e.pair_id for e in result.entries],
                     }
                 )
-        return rows, orders
+        return rows
+
+    def _orderings(rows: dict[str, list[dict[str, object]]], arm: str) -> list[object]:
+        return [row["ranked_pair_ids"] for row in rows[arm]]
 
     async def both() -> tuple[
         dict[str, list[dict[str, object]]], dict[str, bool], dict[str, list[dict[str, object]]]
     ]:
-        rows, first = await one_pass()
-        repeat, second = await one_pass()
+        rows = await one_pass()
+        repeat = await one_pass()
         # Per arm, because one non-deterministic arm must not be reported as though the
         # whole benchmark were unstable — and a stable aggregate must not hide it either.
-        agreement = {
-            arm: all(first[key] == second[key] for key in first if key.rsplit("|", 1)[1] == arm)
-            for arm in rows
-        }
+        agreement = {arm: _orderings(rows, arm) == _orderings(repeat, arm) for arm in rows}
         return rows, agreement, {arm: repeat[arm] for arm in rows if not agreement[arm]}
 
     rows, agreement, unstable = asyncio.run(both())
