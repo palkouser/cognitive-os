@@ -595,5 +595,6 @@ evidence file was modified.
 
 Draft PR [#221](https://github.com/palkouser/cognitive-os/pull/221) carries the W3 work. The
 first pushed head `5b6e88be0513` completed 29 of 30 jobs in run `30990394101`, failing only
-`coding-agent` on the import W3-A2 describes; head `42827cd` then completed run `30991106057`
-with **30 of 30 jobs successful**.
+`coding-agent` on the import W3-A2 describes. Head `42827cd` then completed run `30991106057`
+with 30 of 30 jobs successful, and the released head `1bb277a230f8` completed run
+`30992296060` with **30 of 30 jobs successful**.
