@@ -1,9 +1,11 @@
 # Sprint 21D3 execution log
 
 - **Branch:** `feature/sprint-21d3-invariant-correction-ranking`
-- **Wave:** W0 + W1 + W2 + W3 + W4 + W7 — pre-registration, invariant correction spine, fresh
-  correction evidence, independent retrieval, artifact and runtime, operations
-- **Status:** W0 through W4 and W7 complete; W5 and W6 are bound not-opened by W4's checkpoint.
+- **Wave:** W0 + W1 + W2 + W3 + W4 + W7 + W8 — pre-registration, invariant correction spine,
+  fresh correction evidence, independent retrieval, artifact and runtime, operations,
+  documentation and gate
+- **Status:** W0 through W4, W7 and W8's documentation half complete; W5 and W6 are bound
+  not-opened by W4's checkpoint, and S21D3-094/-095 await an explicit release decision.
   W2 ends in a null candidate selection; W3 ends in a negative retrieval result; W4 implements
   the promotion contract, the offline loader and the verification path, and then refuses final
   access; W7 proves the operations surface over the stopped state. Both experiment branches are
@@ -1048,3 +1050,109 @@ no write outside the backup root, the restore database and the declared scratch 
 Draft PR [#221](https://github.com/palkouser/cognitive-os/pull/221) carries the W7 work. Head
 `446050c5de36` completed run `31010052121` with **30 of 30 jobs successful**, including the two
 new credential-free steps.
+
+## W8 documentation, gate, and release
+
+W8 executes S21D3-090 through S21D3-095. The first four are complete; the last two — the
+protected merge and the annotated tag — are outward-facing and irreversible, and are held for
+an explicit release decision.
+
+### The gate, decided rather than asserted
+
+S21D3-091 produces [`gate-l2-d3-assessment.md`](gate-l2-d3-assessment.md), a **versioned
+successor** that does not touch D2's historical [`gate-l2-assessment.md`](gate-l2-assessment.md).
+
+The condition table is generated, not written. `scripts/gate_assessment_d3.py` reads the frozen
+W0 gate manifest and, for each of the twenty-nine conditions, the produced evidence that bears
+on it — file, rule, and hash. A condition with no bearing evidence is `not_opened` bound to its
+stop hash, never `met`. The script cannot assert a pass; it can only read one, which is what
+"no unsupported pass" has to mean if it is to mean anything.
+
+**Fifteen met, one met as a rejection, thirteen not opened, none failed.**
+
+| State | Conditions |
+|---|---|
+| met | 1–9, 12, 17, 20, 22, 23, 28 |
+| met as rejection | 24 — the floors were measured on 60 unseen queries and no arm cleared them |
+| not opened | 10, 11, 13–16, 18, 19, 21, 25–27 (selection stop), 29 (release in progress) |
+| failed | — |
+
+Condition 24 needs its own state and gets one. The floors were measured, the answer was no, and
+the recorded no *is* the condition being satisfied as a condition while the gate fails as a
+gate. Collapsing it into either `met` or `failed` would lose exactly the distinction the
+condition exists to record.
+
+Gate D1 conditions 6, 7 and 15 are each `not_opened` with the stop that closed them: 15 by the
+retrieval stop, 6 and 7 by the selection stop, because the outcomes that would close them are
+final and canary outcomes that were never authorised.
+
+The assessment is **provisional**: condition 29 closes only on the protected merge, its
+exact-head post-merge `main` CI, and remote tag verification.
+
+### The report and the handoff
+
+S21D3-092 produces [`sprint-21d3-report.md`](sprint-21d3-report.md). Its central claim is the
+one the sprint exists to make: **the residual is capacity, not invariance.** D2 could say only
+that something moved under an opaque combined perturbation. D3 separates the two questions and
+answers both — the alpha-normalised encoding is exactly invariant, and what remains is absolute
+ranking accuracy that 0.65 cannot turn into a zero-confident-error metamorphic set.
+
+The report names four defects that were checks passing while measuring nothing, because that
+class recurred in three separate waves and a successor should expect it.
+
+S21D3-093 produces [`sprint-21d4-handoff.md`](sprint-21d4-handoff.md) — a bounded remediation
+handoff, not a Sprint 22A handoff. Its substantive content is the **exact next experiment**, and
+it is deliberately not "try a different learner":
+
+> D3 fitted 200 rows over 50 groups. Before proposing a different learner, establish the yield
+> curve — fit the same frozen k-NN on 400, 800 and 1600 rows and measure confident errors on a
+> fresh metamorphic set at each point. If they fall monotonically, the answer is a corpus
+> sprint. If they plateau above zero, the answer is a different hypothesis class, and *that* is
+> when a new learner is worth pre-registering.
+
+D2 and D3 each spent a sprint on a learner change, and neither established whether the learner
+was the binding constraint. The handoff says so.
+
+For retrieval it is equally specific: improving an arm cannot widen a surface, so closing D1
+condition 15 requires changing what `ActionDecisionGraph.search_text()` carries — a contract
+change to the graph, not a retrieval tuning exercise.
+
+### Operator documentation
+
+S21D3-090 extends the two released operations documents rather than adding a third. Every
+command shown was run against the D3 scratch state during W7, and the sections say what the
+evidence says, including the three things easiest to misread: that a `warning` class is not a
+pass, that `timeouts` and `budget_cutoffs` are different fields, and that a perfect score on a
+retrieval holdout is a leak until proven otherwise.
+
+No future capability is described as implemented. The W4 surfaces are documented as *built and
+proven against a contract fixture*, which is what they are.
+
+### W8 evidence index
+
+| Evidence | SHA-256 |
+|---|---|
+| [Gate L2 condition table](evidence/sprint-21d3-gate-l2.json) | `6af6efb4d9d186aa607bd542601d9530ce71e0dbde6ef8c419f163f3102d5d7f` |
+
+Documents: [Gate L2 assessment (D3)](gate-l2-d3-assessment.md),
+[Sprint 21D3 report](sprint-21d3-report.md), [Sprint 21D4 handoff](sprint-21d4-handoff.md),
+[correction-ranking operations](../../operations/correction-ranking.md),
+[Experience Memory Graph operations](../../operations/experience-memory-graph.md).
+
+The operator command is:
+
+```bash
+uv run python scripts/gate_assessment_d3.py --markdown
+```
+
+### What W8 has not done
+
+**S21D3-094 and S21D3-095 are held.** They merge the branch into protected `main` and create the
+one permitted annotated tag — actions that are outward-facing and not reversible by the same
+means that made them. The prior waves' contract was clean worktree, commit, push, CI green, and
+that is what every wave including this one has done. Merging and tagging is a further step and
+is left to an explicit release decision.
+
+What is ready for it: the permitted tag is `sprint-21d3-evidence-baseline`, because conditions
+1 through 28 do not all pass. The success tag `sprint-21-learning-baseline` must **not** be
+created, and its absence is itself part of what S21D3-095 asserts.
