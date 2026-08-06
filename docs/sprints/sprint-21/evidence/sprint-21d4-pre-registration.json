@@ -1,0 +1,51 @@
+{
+ "chronology": {
+  "d4_calibration_measurements": 0,
+  "d4_campaign_outcomes": 0,
+  "d4_retrieval_scores": 0,
+  "d4_threshold_derivations": 0,
+  "final_or_canary_outcomes_inspected": 0
+ },
+ "contract_hashes": {
+  "corpus_reallocation": "0e35388942a78c93ca82e98e39c0365ffe48b99b3a52065646a763aaa1b5cb9a",
+  "decision_independence": "d51ea79c44cdcbf0b2ec23ac09d7817ac5f935c64dab24549ca3b34e8f80d49f",
+  "gates_and_stops": "9e47bc618fc1eca8b66146eacdf1bd244fced79bb1c91f46f2c6ff4484bfd8a7",
+  "power_and_yield": "8a48c4d4d1410312f0900e53a773255cf0d579a3e0b709e0596b2c4d44f39892",
+  "retrieval": "b14effa00caf3401ab9d3a076ec7ab6992d263d0d798e314f54bd78a28af3855",
+  "searchable_surface": "fe3915fface80a6b75aa5f1a7f430ed0f439ebcdfd785f06d01979fd1ae7ebcf",
+  "selective_operating_point": "833768c630d03e7ac73c4d1044e87f7ce5e9e001ab0ed8552a50c86370ab2692",
+  "submanifests": "2aff870a62fc2143b17cbc7a35bb96c4841fe06a003fd0d68f235716a5647228"
+ },
+ "contracts_sha256": "bcab05107a838fd1a2c0739122ba3a7e51fa8386e83cffcf82e6e5263fb47354",
+ "decision_tree": [
+  "replay the D3 grid under corrected independence denominators; a failure to reproduce stops with reconciliation_not_reproducible",
+  "fit at 200 and at 320 rows and measure the risk-coverage curve on the fresh calibration set",
+  "a grid point reaching zero errors over at least 100 independent decisions at coverage at least 0.40 proceeds to selection",
+  "zero-error coverage above zero but below 0.40 at 320, and materially higher at 320 than at 200, stops with volume_bound",
+  "zero-error coverage at or near zero at both volumes and not improving with volume stops with hypothesis_class_bound"
+ ],
+ "evidence_children_sha256": {
+  "sprint-21d4-authority-isolation.json": "70a148d5747f9285808dd44d208e238fe8408fee3ada6f158bb5e3668883598f",
+  "sprint-21d4-baseline.json": "6b2330a8f80da158a332a4607f0a0986ba5a78e26eee952197a69ca36902dbb6",
+  "sprint-21d4-d3-reconciliation.json": "0fc00beac11cc7998ad8c3ae0b39d9065213a2d187114891c584ff52ea6bcf8e",
+  "sprint-21d4-finding-w0-f1.json": "c813aef57996aff58f731a35265510e06cfaf96f6defd9222a2f8002f244d51b",
+  "sprint-21d4-holdout-reuse-audit.json": "2f25dc1716dd5ccd340ccdf8720e7162dae9daf10dbaf5f9c349765f31ab6c81",
+  "sprint-21d4-predecessor-inventory.json": "589e47b312aec40e73fa0b95f729d399b51a1a015f86f6147c5ae76f31f7373b"
+ },
+ "integrity_content_hash": "63ffd3484559803208ef4981eaa5ff29948c8d8117dbc31c1aca0553e203c897",
+ "items": [
+  "S21D4-018"
+ ],
+ "later_evidence_must": "carry this file's sha256 as pre_registration_sha256 and be recorded after recorded_at",
+ "measured_values": 0,
+ "predecessor_release": {
+  "peeled_commit": "ef4388b1bf9cb842b25a06aa2255abd1042702c2",
+  "tag": "sprint-21d3-evidence-baseline",
+  "tag_object": "bcf2976dd0f063b1eb4ea16b388eea590e6172dd"
+ },
+ "recorded_at": "2026-08-06T07:56:13Z",
+ "revision": 4,
+ "schema_version": 1,
+ "sprint": "21D4",
+ "wave": "W0"
+}

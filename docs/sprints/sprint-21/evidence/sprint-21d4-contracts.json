@@ -1,0 +1,261 @@
+{
+ "contracts": {
+  "corpus_reallocation": {
+   "calibration": {
+    "groups": 100,
+    "minimum_families": 15,
+    "outcomes": 400
+   },
+   "content_hash": "0e35388942a78c93ca82e98e39c0365ffe48b99b3a52065646a763aaa1b5cb9a",
+   "fitting": {
+    "composition": {
+     "d2_calibration": 10,
+     "d2_training": 50,
+     "d3_calibration": 20
+    },
+    "every_group_is_a_package_to_re_execute": true,
+    "groups": 80,
+    "outcomes": 320,
+    "why": "D4-W0-F1: the D3 learned store holds no observations and no datasets, so no predecessor row can be inherited"
+   },
+   "invariance_regression": {
+    "cases_per_group": 2,
+    "sample_groups": 20
+   },
+   "item": "S21D4-012",
+   "promotion": {
+    "cases_per_group": 2,
+    "groups": 60,
+    "independent": 60
+   },
+   "sprint_21c3_corpus": {
+    "available_to_a_successor": true,
+    "cost": "a flat risk-coverage curve between 200 and 320 is weaker evidence for hypothesis_class_bound than a flat curve to 440 would have been; S21D4-039 must report that limitation rather than let a reader infer a stronger conclusion than the spacing supports",
+    "included": false,
+    "reason": "excluded by release-owner decision, not by failed audit; it would have carried the pool to about 110 groups and 440 outcomes only if roughly thirty of its groups cleared a rights and disjointness audit that has not been run"
+   },
+   "volume_points": [
+    200,
+    320
+   ]
+  },
+  "decision_independence": {
+   "content_hash": "d51ea79c44cdcbf0b2ec23ac09d7817ac5f935c64dab24549ca3b34e8f80d49f",
+   "d3_replay_expectation": {
+    "independent": 20,
+    "nominal": 120,
+    "replicated": 100
+   },
+   "definitions": {
+    "coverage": "answered independent decisions over all independent decisions",
+    "independent_ranking_decision": "one ranking decision whose fitted feature vector is distinct from every other counted decision in the same set",
+    "replicated_decision": "a counted decision whose fitted vector equals another's; valid invariance evidence, never an accuracy, error or coverage denominator"
+   },
+   "invariants": [
+    "nominal == independent + replicated",
+    "every reported rate names its denominator",
+    "accuracy, error and coverage rates use the independent denominator"
+   ],
+   "item": "S21D4-010",
+   "refusal": "schema validation refuses a decision set reporting an accuracy, error or coverage rate over the nominal denominator",
+   "why": "S21D4-001 recomputed, over all 24 D3 settings, that ood_answered was six times clean_answered and confident_ood_errors six times clean errors. The metamorphic set was 20 decisions replicated six times."
+  },
+  "gates_and_stops": {
+   "content_hash": "9e47bc618fc1eca8b66146eacdf1bd244fced79bb1c91f46f2c6ff4484bfd8a7",
+   "gate_d1_open": [
+    6,
+    7,
+    15
+   ],
+   "gate_l2_conditions": 29,
+   "gate_l2_thresholds_changed": 0,
+   "item": "S21D4-017",
+   "negative_tag": "sprint-21d4-evidence-baseline",
+   "non_silence_rules": {
+    "action_preservation_on_the_regression_sample": "1.00",
+    "changed_clean_decisions_minimum": 1,
+    "clean_coverage_floor": "0.40",
+    "confident_errors_among_answered": 0,
+    "every_grid_point_reported": true,
+    "first_choice_above_baseline": true,
+    "independent_clean_decisions": 100,
+    "projected_changed_final_decisions": 20
+   },
+   "not_opened_record": {
+    "fields": [
+     "item",
+     "status",
+     "stop_hash",
+     "stop_source",
+     "would_have"
+    ],
+    "status": "not_opened"
+   },
+   "success_tag": "sprint-21-learning-baseline",
+   "typed_stop_kinds": [
+    "reconciliation_not_reproducible",
+    "volume_bound",
+    "hypothesis_class_bound",
+    "invariance_regression",
+    "ood_deficient",
+    "feature_boundary_wrong"
+   ]
+  },
+  "power_and_yield": {
+   "changed_final_decisions_floor": 20,
+   "clean_coverage_floor": "0.40",
+   "content_hash": "8a48c4d4d1410312f0900e53a773255cf0d579a3e0b709e0596b2c4d44f39892",
+   "coverage_floor_justification": "0.40 over 60 final groups projects 24 answered decisions, which is the smallest coverage that can still satisfy condition 13's floor of 20 changed decisions",
+   "final_groups": 60,
+   "independent_calibration_decisions_floor": 100,
+   "item": "S21D4-014",
+   "why_0_80_was_wrong": "D3's 0.80 floor was a self-imposed rule, not a Gate L2 threshold. Combined with a zero-error requirement certified on 20 decisions it was unsatisfiable by construction: the grid offered coverage 0.95 with six clean errors or 0.50 with two, and nothing between. A selective ranker buys precision with coverage, and a floor forbidding the purchase forbids the mechanism.",
+   "zero_error_upper_bounds": {
+    "100": 0.029513,
+    "20": 0.139108,
+    "300": 0.009936,
+    "60": 0.048703
+   }
+  },
+  "retrieval": {
+   "arms": [
+    "no_memory",
+    "exact_signature",
+    "lexical",
+    "minilm_vector",
+    "minilm_shortlist_plus_bounded_ged",
+    "reciprocal_rank_fusion"
+   ],
+   "bounded_ged_decision": {
+    "criterion": "two identical passes must agree byte for byte on every arm; the arm is retired if a fixed budget cannot reproduce a stable ranking",
+    "d1_d2_d3_numbers": "stay marked irreproducible; nothing is back-filled",
+    "option_a": "a fixed iteration budget from networkx.optimize_graph_edit_distance, which is host-independent",
+    "option_b": "retirement from the frozen set, reported with its reason",
+    "problem": "networkx.graph_edit_distance under a wall-clock timeout is an anytime search, so the score depends on the host and the moment"
+   },
+   "content_hash": "b14effa00caf3401ab9d3a076ec7ab6992d263d0d798e314f54bd78a28af3855",
+   "floors": {
+    "mrr_at_10": "0.50",
+    "recall_at_5": "0.70"
+   },
+   "fusion": {
+    "constant": 60,
+    "tuned": false,
+    "weights": "equal"
+   },
+   "item": "S21D4-016",
+   "minimum_queries": 50,
+   "read_once": true,
+   "resource_policy": {
+    "edges_per_graph": 128,
+    "nodes_per_graph": 64,
+    "path_depth": 32,
+    "query_budget_seconds": 2,
+    "returned_results": 10,
+    "vector_shortlist": 20
+   },
+   "truncation": "once, after full-pool fusion"
+  },
+  "searchable_surface": {
+   "adds": "no new store, no new index, no dependency",
+   "content_hash": "fe3915fface80a6b75aa5f1a7f430ed0f439ebcdfd785f06d01979fd1ae7ebcf",
+   "derivation": [
+    "resolve each node's source blob through the released graph store",
+    "normalise with correction_source.canonical_source_bytes, the released alpha-normaliser",
+    "emit a bounded deterministic term list under the existing 1024-character attribute bound and the existing forbidden-marker guard"
+   ],
+   "excluded_from": [
+    "structural_hash",
+    "ExperienceGraphNode.label"
+   ],
+   "excluded_inputs": [
+    "unnormalised bodies",
+    "issue text",
+    "provenance hashes"
+   ],
+   "field": "ActionDecisionGraph.search_terms: tuple[str, ...] = ()",
+   "included_in": [
+    "content_hash",
+    "search_text()"
+   ],
+   "item": "S21D4-013",
+   "leak_guard": "reality_leakage.judgement_leaks must report nothing; a hit refuses the whole projection, fail-closed",
+   "why_excluded": "labelled graph-edit distance, edit-path round-tripping and every stored D1, D2 and D3 structural hash must stay byte-unchanged"
+  },
+  "selective_operating_point": {
+   "adds": "no model, no fit, no dependency, no new fitted channel",
+   "artifact_binding": "the derived threshold and its calibration provenance are part of the selected candidate's identity and are sealed before final access",
+   "content_hash": "833768c630d03e7ac73c4d1044e87f7ce5e9e001ab0ed8552a50c86370ab2692",
+   "derivation": [
+    "compute the score for every independent clean calibration decision",
+    "sort answered decisions by score descending",
+    "the zero-error point is the highest threshold at which every answered decision above it is correct",
+    "report its coverage and the Clopper-Pearson one-sided 95% upper bound on the true error rate, which for zero errors in n is 1 - 0.05 ** (1 / n)"
+   ],
+   "item": "S21D4-011",
+   "operating_point_grid": [
+    "0.55",
+    "0.70",
+    "derived_zero_error"
+   ],
+   "score": "the released bounded k-NN confidence for one ranking decision",
+   "selection_precedence": "a released fixed floor is preferred when it satisfies the non-silence rules; only if none does may the derived point be selected",
+   "single_shot": "exactly one derivation, from the declared calibration split only; a threshold derived from final, promotion or metamorphic data is invalid"
+  },
+  "submanifests": {
+   "calibration_invariance_sample": {
+    "cases": [
+     "identifier_rename_a",
+     "issue_rewrite_a"
+    ],
+    "expected_independent_count": 0,
+    "groups": 20,
+    "note": "the transformed set is a regression test, never an accuracy sample",
+    "transformed_decisions": 40
+   },
+   "content_hash": "2aff870a62fc2143b17cbc7a35bb96c4841fe06a003fd0d68f235716a5647228",
+   "frozen_before_measurement": [
+    "seeds",
+    "generator identity",
+    "hard-coded oracle",
+    "eligibility and applicability rules",
+    "case-id derivation",
+    "label authority",
+    "decision semantics",
+    "counting code"
+   ],
+   "item": "S21D4-015",
+   "promotion_set": {
+    "cases_per_group": 2,
+    "groups": 60,
+    "independent_decisions": 60,
+    "nominal_decisions": 120,
+    "reported_side_by_side": true
+   },
+   "semantic_mutation_controls": "seeded operator and branch-condition mutations remain mandatory and must change the canonical representation"
+  }
+ },
+ "integrity_content_hash": "9aa54f37a7ddc4d66d9589a7f21089e30c2c0158588d12b1e618f7d8c55a0adc",
+ "items": [
+  "S21D4-010",
+  "S21D4-011",
+  "S21D4-012",
+  "S21D4-013",
+  "S21D4-014",
+  "S21D4-015",
+  "S21D4-016",
+  "S21D4-017"
+ ],
+ "measured_values": 0,
+ "recorded_at": "2026-08-06T07:56:13Z",
+ "revision": 4,
+ "schema_version": 1,
+ "sprint": "21D4",
+ "unchanged_from_d3": {
+  "feature_contract": "492c90a5df420de9d1662d17155ac8b28713e69bbd4bbe56208415d6ca076362",
+  "fitted_channels": 390,
+  "normaliser": "cogos-python-alpha-normalizer-v2",
+  "note": "D4 changes no encoder, no normaliser and no fitted representation"
+ },
+ "wave": "W0"
+}
