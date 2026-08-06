@@ -3871,6 +3871,942 @@ def test_equal_bounds_are_a_bad_argument() -> None:
     ),
 )
 
+# ------------------------------------------------------------------------------ error handling
+
+_G041 = D2TaskSpec(
+    template_id="d4_errors.first_error_message",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d4-errors-first-error-message",
+    module="first_error",
+    module_doc="Finding the first error reported by a run.",
+    issue=(
+        "first_error_message() is documented to return the first error a run reported, or "
+        "nothing when it reported none. Callers report that a run with no results at all comes "
+        "back with an empty string instead of nothing, and that a result carrying no error field "
+        "raises a lookup error."
+    ),
+    expected=(
+        "first_error_message(results) returns the first non-empty error message, returns None "
+        "when there is none, and treats a result without an error field as carrying no error."
+    ),
+    baseline_reason=(
+        "the error field is indexed directly and the empty case falls through to a string"
+    ),
+    edge_cases=(
+        "no results at all reports nothing",
+        "a result without an error field carries no error",
+    ),
+    baseline="""def first_error_message(results):
+    \"\"\"Return the first error message among `results`, or nothing.\"\"\"
+    for result in results:
+        if result["error"]:
+            return result["error"]
+    return \"\"""",
+    variant_one="""def first_error_message(results):
+    \"\"\"Return the first error message among `results`, or nothing.\"\"\"
+    for result in results:
+        message = result.get("error")
+        if message:
+            return message
+    return None""",
+    variant_two="""def first_error_message(results):
+    \"\"\"Return the first error message among `results`, or nothing.\"\"\"
+    reported = [result.get("error") for result in results]
+    for message in reported:
+        if message:
+            return message
+    return None""",
+    variant_three="""def first_error_message(results):
+    \"\"\"Return the first error message among `results`, or nothing.\"\"\"
+    for result in results:
+        if result["error"]:
+            return result["error"]
+    return None""",
+    variant_four="""def first_error_message(results):
+    \"\"\"Return the first error message among `results`, or nothing.\"\"\"
+    for result in results:
+        message = result.get("error")
+        if message:
+            return message
+    return \"\"""",
+    visible_test=_test_module(
+        "first_error",
+        "Published contract for finding the first error.",
+        """
+def test_the_first_reported_error_is_returned() -> None:
+    assert first_error_message([{"error": ""}, {"error": "boom"}]) == "boom"
+
+
+def test_the_earliest_of_two_errors_wins() -> None:
+    assert first_error_message([{"error": "first"}, {"error": "second"}]) == "first"
+""",
+        imports="from first_error import first_error_message\n",
+    ),
+    hidden_test=_test_module(
+        "first_error",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_first_reported_error_is_returned() -> None:
+    assert first_error_message([{"error": ""}, {"error": "boom"}]) == "boom"
+
+
+def test_no_results_at_all_reports_nothing() -> None:
+    assert first_error_message([]) is None
+
+
+def test_a_result_without_an_error_field_carries_no_error() -> None:
+    assert first_error_message([{"ok": True}]) is None
+""",
+        imports="from first_error import first_error_message\n",
+    ),
+)
+
+_G042 = D2TaskSpec(
+    template_id="d4_errors.retry_delays",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d4-errors-retry-delays",
+    module="retry_delays",
+    module_doc="Working out how long to wait between retries.",
+    issue=(
+        "retry_delays() is documented to return one doubling delay per attempt, never longer "
+        "than a ceiling. Callers report that asking for no attempts still returns one delay, and "
+        "that the delays keep doubling past the ceiling."
+    ),
+    expected=(
+        "retry_delays(attempts, first, ceiling) returns one delay per attempt, each double the "
+        "one before but never above the ceiling, and returns nothing for zero attempts."
+    ),
+    baseline_reason="an empty schedule is replaced with a single delay and the ceiling is ignored",
+    edge_cases=(
+        "zero attempts wait for nothing",
+        "the delays stop doubling at the ceiling",
+    ),
+    baseline="""def retry_delays(attempts, first, ceiling):
+    \"\"\"Return the delay before each of `attempts` retries.\"\"\"
+    delays = []
+    delay = first
+    for _ in range(attempts):
+        delays.append(delay)
+        delay *= 2
+    return delays or [first]""",
+    variant_one="""def retry_delays(attempts, first, ceiling):
+    \"\"\"Return the delay before each of `attempts` retries.\"\"\"
+    delays = []
+    delay = first
+    for _ in range(attempts):
+        delays.append(min(delay, ceiling))
+        delay *= 2
+    return delays""",
+    variant_two="""def retry_delays(attempts, first, ceiling):
+    \"\"\"Return the delay before each of `attempts` retries.\"\"\"
+    schedule = []
+    for step in range(attempts):
+        wanted = first * (2**step)
+        schedule.append(ceiling if wanted > ceiling else wanted)
+    return schedule""",
+    variant_three="""def retry_delays(attempts, first, ceiling):
+    \"\"\"Return the delay before each of `attempts` retries.\"\"\"
+    delays = []
+    delay = first
+    for _ in range(attempts):
+        delays.append(delay)
+        delay *= 2
+    return delays""",
+    variant_four="""def retry_delays(attempts, first, ceiling):
+    \"\"\"Return the delay before each of `attempts` retries.\"\"\"
+    delays = []
+    delay = first
+    for _ in range(attempts):
+        delays.append(min(delay, ceiling))
+        delay *= 2
+    return delays or [first]""",
+    visible_test=_test_module(
+        "retry_delays",
+        "Published contract for a retry schedule.",
+        """
+def test_three_doubling_delays() -> None:
+    assert retry_delays(3, 1, 100) == [1, 2, 4]
+
+
+def test_two_delays_from_a_larger_start() -> None:
+    assert retry_delays(2, 5, 100) == [5, 10]
+""",
+        imports="from retry_delays import retry_delays\n",
+    ),
+    hidden_test=_test_module(
+        "retry_delays",
+        "The part of the contract the published tests do not state.",
+        """
+def test_three_doubling_delays() -> None:
+    assert retry_delays(3, 1, 100) == [1, 2, 4]
+
+
+def test_zero_attempts_wait_for_nothing() -> None:
+    assert retry_delays(0, 1, 100) == []
+
+
+def test_the_delays_stop_doubling_at_the_ceiling() -> None:
+    assert retry_delays(4, 10, 25) == [10, 20, 25, 25]
+""",
+        imports="from retry_delays import retry_delays\n",
+    ),
+)
+
+_G043 = D2TaskSpec(
+    template_id="d4_errors.root_cause",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d4-errors-root-cause",
+    module="cause_chain",
+    module_doc="Following a chain of causes to its root.",
+    issue=(
+        "root_cause() is documented to follow an error's causes to the root and report its "
+        "message. Callers report that an error recorded without a cause field raises a lookup "
+        "error, and that a chain that never ends walks for ever instead of being reported."
+    ),
+    expected=(
+        "root_cause(error) returns the message of the deepest cause, treats a missing cause "
+        "field as no cause, and raises ValueError once the chain passes ten links."
+    ),
+    baseline_reason="the cause field is indexed directly and the walk has no depth limit",
+    edge_cases=(
+        "an error without a cause field reports its own message",
+        "a chain longer than ten links is refused",
+    ),
+    baseline="""def root_cause(error):
+    \"\"\"Return the message of the deepest cause of `error`.\"\"\"
+    current = error
+    while current["cause"]:
+        current = current["cause"]
+    return current["message"]""",
+    variant_one="""def root_cause(error):
+    \"\"\"Return the message of the deepest cause of `error`.\"\"\"
+    current = error
+    depth = 0
+    while current.get("cause"):
+        depth += 1
+        if depth > 10:
+            raise ValueError("the cause chain is too long to follow")
+        current = current["cause"]
+    return current["message"]""",
+    variant_two="""def root_cause(error):
+    \"\"\"Return the message of the deepest cause of `error`.\"\"\"
+    current = error
+    for _ in range(11):
+        deeper = current.get("cause")
+        if not deeper:
+            return current["message"]
+        current = deeper
+    raise ValueError("the cause chain is too long to follow")""",
+    variant_three="""def root_cause(error):
+    \"\"\"Return the message of the deepest cause of `error`.\"\"\"
+    current = error
+    while current.get("cause"):
+        current = current["cause"]
+    return current["message"]""",
+    variant_four="""def root_cause(error):
+    \"\"\"Return the message of the deepest cause of `error`.\"\"\"
+    current = error
+    depth = 0
+    while current["cause"]:
+        depth += 1
+        if depth > 10:
+            raise ValueError("the cause chain is too long to follow")
+        current = current["cause"]
+    return current["message"]""",
+    visible_test=_test_module(
+        "cause_chain",
+        "Published contract for following a cause chain.",
+        """
+def test_a_chain_of_two() -> None:
+    error = {"message": "outer", "cause": {"message": "inner", "cause": None}}
+    assert root_cause(error) == "inner"
+
+
+def test_a_chain_of_three() -> None:
+    deepest = {"message": "root", "cause": None}
+    error = {"message": "outer", "cause": {"message": "middle", "cause": deepest}}
+    assert root_cause(error) == "root"
+""",
+        imports="from cause_chain import root_cause\n",
+    ),
+    hidden_test=_test_module(
+        "cause_chain",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_chain_of_two() -> None:
+    error = {"message": "outer", "cause": {"message": "inner", "cause": None}}
+    assert root_cause(error) == "inner"
+
+
+def test_an_error_without_a_cause_field_reports_its_own_message() -> None:
+    assert root_cause({"message": "solo"}) == "solo"
+
+
+def test_a_chain_longer_than_ten_links_is_refused() -> None:
+    error = {"message": "deepest", "cause": None}
+    for step in range(12):
+        error = {"message": f"link{step}", "cause": error}
+    with pytest.raises(ValueError):
+        root_cause(error)
+""",
+        imports="from cause_chain import root_cause\n",
+    ),
+)
+
+_G044 = D2TaskSpec(
+    template_id="d4_errors.group_by_prefix",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d4-errors-group-by-prefix",
+    module="error_tally",
+    module_doc="Tallying error messages by the subsystem that raised them.",
+    issue=(
+        "tally_by_subsystem() is documented to count messages by the subsystem named before the "
+        "colon. Callers report that a message with no colon is counted under its whole text "
+        "instead of under 'unknown', and that spacing around the subsystem name splits one "
+        "subsystem into two."
+    ),
+    expected=(
+        "tally_by_subsystem(messages) counts messages by the name before the first colon, "
+        "trimmed of spacing, and counts a message with no colon under 'unknown'."
+    ),
+    baseline_reason="the text before the colon is taken as it stands, colon or no colon",
+    edge_cases=(
+        "a message with no colon counts as unknown",
+        "spacing around the subsystem name is trimmed",
+    ),
+    baseline="""def tally_by_subsystem(messages):
+    \"\"\"Return how many messages each subsystem raised.\"\"\"
+    tally = {}
+    for message in messages:
+        name = message.split(":")[0]
+        tally[name] = tally.get(name, 0) + 1
+    return tally""",
+    variant_one="""def tally_by_subsystem(messages):
+    \"\"\"Return how many messages each subsystem raised.\"\"\"
+    tally = {}
+    for message in messages:
+        name = message.split(":")[0].strip() if ":" in message else "unknown"
+        tally[name] = tally.get(name, 0) + 1
+    return tally""",
+    variant_two="""def tally_by_subsystem(messages):
+    \"\"\"Return how many messages each subsystem raised.\"\"\"
+    tally = {}
+    for message in messages:
+        head, marker, _ = message.partition(":")
+        name = head.strip() if marker else "unknown"
+        if name not in tally:
+            tally[name] = 0
+        tally[name] += 1
+    return tally""",
+    variant_three="""def tally_by_subsystem(messages):
+    \"\"\"Return how many messages each subsystem raised.\"\"\"
+    tally = {}
+    for message in messages:
+        name = message.split(":")[0] if ":" in message else "unknown"
+        tally[name] = tally.get(name, 0) + 1
+    return tally""",
+    variant_four="""def tally_by_subsystem(messages):
+    \"\"\"Return how many messages each subsystem raised.\"\"\"
+    tally = {}
+    for message in messages:
+        name = message.split(":")[0].strip()
+        tally[name] = tally.get(name, 0) + 1
+    return tally""",
+    visible_test=_test_module(
+        "error_tally",
+        "Published contract for tallying by subsystem.",
+        """
+def test_two_messages_from_one_subsystem() -> None:
+    assert tally_by_subsystem(["db: down", "db: slow"]) == {"db": 2}
+
+
+def test_one_message_from_another_subsystem() -> None:
+    assert tally_by_subsystem(["net: lost"]) == {"net": 1}
+""",
+        imports="from error_tally import tally_by_subsystem\n",
+    ),
+    hidden_test=_test_module(
+        "error_tally",
+        "The part of the contract the published tests do not state.",
+        """
+def test_two_messages_from_one_subsystem() -> None:
+    assert tally_by_subsystem(["db: down", "db: slow"]) == {"db": 2}
+
+
+def test_a_message_with_no_colon_counts_as_unknown() -> None:
+    assert tally_by_subsystem(["boom"]) == {"unknown": 1}
+
+
+def test_spacing_around_the_subsystem_name_is_trimmed() -> None:
+    assert tally_by_subsystem([" db : down"]) == {"db": 1}
+""",
+        imports="from error_tally import tally_by_subsystem\n",
+    ),
+)
+
+_G045 = D2TaskSpec(
+    template_id="d4_errors.lookup_path",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d4-errors-lookup-path",
+    module="nested_lookup",
+    module_doc="Looking a value up by a dotted path.",
+    issue=(
+        "lookup_path() is documented to follow a dotted path and fall back to a default. Callers "
+        "report that a path continuing through a value that is not a mapping raises a type error "
+        "instead of falling back, and that an empty path raises instead of returning the whole "
+        "mapping."
+    ),
+    expected=(
+        "lookup_path(mapping, path, default) returns the value at the dotted path, returns the "
+        "whole mapping for an empty path, and returns the default when the path cannot be "
+        "followed."
+    ),
+    baseline_reason=(
+        "each step indexes whatever it reached, and the empty path becomes one blank step"
+    ),
+    edge_cases=(
+        "a path through a value that is not a mapping falls back",
+        "an empty path returns the whole mapping",
+    ),
+    baseline="""def lookup_path(mapping, path, default=None):
+    \"\"\"Return the value `path` names inside `mapping`, or `default`.\"\"\"
+    current = mapping
+    for step in path.split("."):
+        if step not in current:
+            return default
+        current = current[step]
+    return current""",
+    variant_one="""def lookup_path(mapping, path, default=None):
+    \"\"\"Return the value `path` names inside `mapping`, or `default`.\"\"\"
+    if not path:
+        return mapping
+    current = mapping
+    for step in path.split("."):
+        if not isinstance(current, dict) or step not in current:
+            return default
+        current = current[step]
+    return current""",
+    variant_two="""def lookup_path(mapping, path, default=None):
+    \"\"\"Return the value `path` names inside `mapping`, or `default`.\"\"\"
+    steps = [step for step in path.split(".") if step]
+    current = mapping
+    for step in steps:
+        try:
+            current = current[step]
+        except (KeyError, TypeError):
+            return default
+    return current""",
+    variant_three="""def lookup_path(mapping, path, default=None):
+    \"\"\"Return the value `path` names inside `mapping`, or `default`.\"\"\"
+    current = mapping
+    for step in path.split("."):
+        if not isinstance(current, dict) or step not in current:
+            return default
+        current = current[step]
+    return current""",
+    variant_four="""def lookup_path(mapping, path, default=None):
+    \"\"\"Return the value `path` names inside `mapping`, or `default`.\"\"\"
+    if not path:
+        return mapping
+    current = mapping
+    for step in path.split("."):
+        if step not in current:
+            return default
+        current = current[step]
+    return current""",
+    visible_test=_test_module(
+        "nested_lookup",
+        "Published contract for a dotted-path lookup.",
+        """
+def test_a_two_step_path() -> None:
+    assert lookup_path({"a": {"b": 1}}, "a.b") == 1
+
+
+def test_a_missing_step_falls_back() -> None:
+    assert lookup_path({"a": {"b": 1}}, "a.z", "none") == "none"
+""",
+        imports="from nested_lookup import lookup_path\n",
+    ),
+    hidden_test=_test_module(
+        "nested_lookup",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_two_step_path() -> None:
+    assert lookup_path({"a": {"b": 1}}, "a.b") == 1
+
+
+def test_a_path_through_a_plain_value_falls_back() -> None:
+    assert lookup_path({"a": 1}, "a.b", "none") == "none"
+
+
+def test_an_empty_path_returns_the_whole_mapping() -> None:
+    assert lookup_path({"a": 1}, "") == {"a": 1}
+""",
+        imports="from nested_lookup import lookup_path\n",
+    ),
+)
+
+_G046 = D2TaskSpec(
+    template_id="d4_errors.escalate_severity",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d4-errors-escalate-severity",
+    module="severity_ladder",
+    module_doc="Raising an alert up the severity ladder.",
+    issue=(
+        "escalate() is documented to raise a severity by a number of steps. Callers report that "
+        "escalating past the top of the ladder raises an index error instead of staying at the "
+        "top, and that an unrecognised severity raises a lookup error rather than a "
+        "bad-argument error."
+    ),
+    expected=(
+        "escalate(level, steps) returns the severity that many steps higher, stops at the top of "
+        "the ladder, and raises ValueError for an unrecognised severity."
+    ),
+    baseline_reason="the ladder is indexed past its end and the severity is looked up unchecked",
+    edge_cases=(
+        "escalating past the top stays at the top",
+        "an unrecognised severity is reported as a bad argument",
+    ),
+    baseline="""def escalate(level, steps):
+    \"\"\"Return the severity `steps` above `level`.\"\"\"
+    ladder = ["low", "medium", "high", "critical"]
+    places = {name: place for place, name in enumerate(ladder)}
+    return ladder[places[level] + steps]""",
+    variant_one="""def escalate(level, steps):
+    \"\"\"Return the severity `steps` above `level`.\"\"\"
+    ladder = ["low", "medium", "high", "critical"]
+    if level not in ladder:
+        raise ValueError(f"{level!r} is not a severity")
+    place = ladder.index(level) + steps
+    return ladder[min(place, len(ladder) - 1)]""",
+    variant_two="""def escalate(level, steps):
+    \"\"\"Return the severity `steps` above `level`.\"\"\"
+    ladder = ["low", "medium", "high", "critical"]
+    places = {name: place for place, name in enumerate(ladder)}
+    if level not in places:
+        raise ValueError(f"{level!r} is not a severity")
+    wanted = places[level] + steps
+    top = len(ladder) - 1
+    return ladder[top if wanted > top else wanted]""",
+    variant_three="""def escalate(level, steps):
+    \"\"\"Return the severity `steps` above `level`.\"\"\"
+    ladder = ["low", "medium", "high", "critical"]
+    places = {name: place for place, name in enumerate(ladder)}
+    wanted = places[level] + steps
+    return ladder[min(wanted, len(ladder) - 1)]""",
+    variant_four="""def escalate(level, steps):
+    \"\"\"Return the severity `steps` above `level`.\"\"\"
+    ladder = ["low", "medium", "high", "critical"]
+    if level not in ladder:
+        raise ValueError(f"{level!r} is not a severity")
+    return ladder[ladder.index(level) + steps]""",
+    visible_test=_test_module(
+        "severity_ladder",
+        "Published contract for escalating a severity.",
+        """
+def test_one_step_up_from_the_bottom() -> None:
+    assert escalate("low", 1) == "medium"
+
+
+def test_one_step_up_from_the_middle() -> None:
+    assert escalate("medium", 1) == "high"
+""",
+        imports="from severity_ladder import escalate\n",
+    ),
+    hidden_test=_test_module(
+        "severity_ladder",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_one_step_up_from_the_bottom() -> None:
+    assert escalate("low", 1) == "medium"
+
+
+def test_escalating_past_the_top_stays_at_the_top() -> None:
+    assert escalate("high", 2) == "critical"
+
+
+def test_an_unrecognised_severity_is_a_bad_argument() -> None:
+    with pytest.raises(ValueError):
+        escalate("bogus", 1)
+""",
+        imports="from severity_ladder import escalate\n",
+    ),
+)
+
+_G047 = D2TaskSpec(
+    template_id="d4_errors.shorten_message",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d4-errors-shorten-message",
+    module="message_shorten",
+    module_doc="Shortening a long message for a one-line log.",
+    issue=(
+        "shorten() is documented to shorten a message to a length, marking the cut with an "
+        "ellipsis. Callers report that a message already short enough gains an ellipsis it does "
+        "not need, and that a length too small to hold the ellipsis produces nonsense instead of "
+        "being refused."
+    ),
+    expected=(
+        "shorten(message, length) returns the message unchanged when it already fits, otherwise "
+        "cuts it so the result including the ellipsis is exactly that long, and raises "
+        "ValueError for a length below four."
+    ),
+    baseline_reason="the cut and the ellipsis are applied whatever the message and the length are",
+    edge_cases=(
+        "a message that already fits is unchanged",
+        "a length too small for the ellipsis is refused",
+    ),
+    baseline="""def shorten(message, length):
+    \"\"\"Return `message` shortened to `length` characters.\"\"\"
+    return message[: length - 3] + "..." """,
+    variant_one="""def shorten(message, length):
+    \"\"\"Return `message` shortened to `length` characters.\"\"\"
+    if length < 4:
+        raise ValueError("a shortened message needs room for the ellipsis")
+    if len(message) <= length:
+        return message
+    return message[: length - 3] + "..." """,
+    variant_two="""def shorten(message, length):
+    \"\"\"Return `message` shortened to `length` characters.\"\"\"
+    if not length >= 4:
+        raise ValueError("a shortened message needs room for the ellipsis")
+    return message if len(message) <= length else message[: length - 3] + "..." """,
+    variant_three="""def shorten(message, length):
+    \"\"\"Return `message` shortened to `length` characters.\"\"\"
+    if len(message) <= length:
+        return message
+    return message[: length - 3] + "..." """,
+    variant_four="""def shorten(message, length):
+    \"\"\"Return `message` shortened to `length` characters.\"\"\"
+    if length < 4:
+        raise ValueError("a shortened message needs room for the ellipsis")
+    return message[: length - 3] + "..." """,
+    visible_test=_test_module(
+        "message_shorten",
+        "Published contract for shortening a message.",
+        """
+def test_a_long_message_is_cut() -> None:
+    assert shorten("abcdefgh", 5) == "ab..."
+
+
+def test_a_longer_allowance_keeps_more() -> None:
+    assert shorten("hello world", 8) == "hello..."
+""",
+        imports="from message_shorten import shorten\n",
+    ),
+    hidden_test=_test_module(
+        "message_shorten",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_long_message_is_cut() -> None:
+    assert shorten("abcdefgh", 5) == "ab..."
+
+
+def test_a_message_that_already_fits_is_unchanged() -> None:
+    assert shorten("abc", 10) == "abc"
+
+
+def test_a_length_too_small_for_the_ellipsis_is_refused() -> None:
+    with pytest.raises(ValueError):
+        shorten("abcdefgh", 2)
+""",
+        imports="from message_shorten import shorten\n",
+    ),
+)
+
+_G048 = D2TaskSpec(
+    template_id="d4_errors.status_band",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d4-errors-status-band",
+    module="status_band",
+    module_doc="Naming the band a status code falls in.",
+    issue=(
+        "status_band() is documented to name the band a status code falls in. Callers report "
+        "that a code above the highest band is named as a server fault instead of being "
+        "refused, and that a negative code is named as informational."
+    ),
+    expected=(
+        "status_band(code) names the band for a code between 100 and 599, and raises ValueError "
+        "for any code outside that range."
+    ),
+    baseline_reason="the ladder of comparisons has no floor and no ceiling",
+    edge_cases=(
+        "a code above the highest band is refused",
+        "a code below the lowest band is refused",
+    ),
+    baseline="""def status_band(code):
+    \"\"\"Return the name of the band `code` falls in.\"\"\"
+    if code < 200:
+        return "informational"
+    if code < 300:
+        return "successful"
+    if code < 400:
+        return "redirect"
+    if code < 500:
+        return "client fault"
+    return "server fault\"""",
+    variant_one="""def status_band(code):
+    \"\"\"Return the name of the band `code` falls in.\"\"\"
+    if code < 100 or code > 599:
+        raise ValueError(f"{code} is not a status code")
+    if code < 200:
+        return "informational"
+    if code < 300:
+        return "successful"
+    if code < 400:
+        return "redirect"
+    if code < 500:
+        return "client fault"
+    return "server fault\"""",
+    variant_two="""def status_band(code):
+    \"\"\"Return the name of the band `code` falls in.\"\"\"
+    bands = (
+        (200, "informational"),
+        (300, "successful"),
+        (400, "redirect"),
+        (500, "client fault"),
+        (600, "server fault"),
+    )
+    if not 100 <= code <= 599:
+        raise ValueError(f"{code} is not a status code")
+    for boundary, name in bands:
+        if code < boundary:
+            return name
+    raise ValueError(f"{code} is not a status code")""",
+    variant_three="""def status_band(code):
+    \"\"\"Return the name of the band `code` falls in.\"\"\"
+    if code > 599:
+        raise ValueError(f"{code} is not a status code")
+    if code < 200:
+        return "informational"
+    if code < 300:
+        return "successful"
+    if code < 400:
+        return "redirect"
+    if code < 500:
+        return "client fault"
+    return "server fault\"""",
+    variant_four="""def status_band(code):
+    \"\"\"Return the name of the band `code` falls in.\"\"\"
+    if code < 100:
+        raise ValueError(f"{code} is not a status code")
+    if code < 200:
+        return "informational"
+    if code < 300:
+        return "successful"
+    if code < 400:
+        return "redirect"
+    if code < 500:
+        return "client fault"
+    return "server fault\"""",
+    visible_test=_test_module(
+        "status_band",
+        "Published contract for naming a status band.",
+        """
+def test_a_successful_code() -> None:
+    assert status_band(200) == "successful"
+
+
+def test_a_client_fault_code() -> None:
+    assert status_band(404) == "client fault"
+""",
+        imports="from status_band import status_band\n",
+    ),
+    hidden_test=_test_module(
+        "status_band",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_successful_code() -> None:
+    assert status_band(200) == "successful"
+
+
+def test_a_code_above_the_highest_band_is_refused() -> None:
+    with pytest.raises(ValueError):
+        status_band(900)
+
+
+def test_a_code_below_the_lowest_band_is_refused() -> None:
+    with pytest.raises(ValueError):
+        status_band(-1)
+""",
+        imports="from status_band import status_band\n",
+    ),
+)
+
+_G049 = D2TaskSpec(
+    template_id="d4_errors.retry_after",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d4-errors-retry-after",
+    module="retry_after",
+    module_doc="Reading how long a service asked us to wait.",
+    issue=(
+        "retry_after_seconds() is documented to read the wait a service asked for. Callers "
+        "report that the header is missed when the service spells its name with capitals, and "
+        "that a response carrying no such header raises a lookup error instead of reporting no "
+        "wait."
+    ),
+    expected=(
+        "retry_after_seconds(headers) returns the requested wait in seconds, matches the header "
+        "name regardless of case, and returns None when the header is absent."
+    ),
+    baseline_reason="the header is indexed by one exact spelling",
+    edge_cases=(
+        "the header name is matched regardless of case",
+        "an absent header reports no wait",
+    ),
+    baseline="""def retry_after_seconds(headers):
+    \"\"\"Return the wait in seconds the service asked for, or nothing.\"\"\"
+    return int(headers["retry-after"])""",
+    variant_one="""def retry_after_seconds(headers):
+    \"\"\"Return the wait in seconds the service asked for, or nothing.\"\"\"
+    for name, value in headers.items():
+        if name.lower() == "retry-after":
+            return int(value)
+    return None""",
+    variant_two="""def retry_after_seconds(headers):
+    \"\"\"Return the wait in seconds the service asked for, or nothing.\"\"\"
+    folded = {name.lower(): value for name, value in headers.items()}
+    if "retry-after" not in folded:
+        return None
+    return int(folded["retry-after"])""",
+    variant_three="""def retry_after_seconds(headers):
+    \"\"\"Return the wait in seconds the service asked for, or nothing.\"\"\"
+    for name, value in headers.items():
+        if name.lower() == "retry-after":
+            return int(value)
+    raise KeyError("retry-after")""",
+    variant_four="""def retry_after_seconds(headers):
+    \"\"\"Return the wait in seconds the service asked for, or nothing.\"\"\"
+    if "retry-after" not in headers:
+        return None
+    return int(headers["retry-after"])""",
+    visible_test=_test_module(
+        "retry_after",
+        "Published contract for reading a requested wait.",
+        """
+def test_a_wait_of_thirty_seconds() -> None:
+    assert retry_after_seconds({"retry-after": "30"}) == 30
+
+
+def test_a_wait_of_no_seconds() -> None:
+    assert retry_after_seconds({"retry-after": "0"}) == 0
+""",
+        imports="from retry_after import retry_after_seconds\n",
+    ),
+    hidden_test=_test_module(
+        "retry_after",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_wait_of_thirty_seconds() -> None:
+    assert retry_after_seconds({"retry-after": "30"}) == 30
+
+
+def test_the_header_name_is_matched_regardless_of_case() -> None:
+    assert retry_after_seconds({"Retry-After": "30"}) == 30
+
+
+def test_an_absent_header_reports_no_wait() -> None:
+    assert retry_after_seconds({}) is None
+""",
+        imports="from retry_after import retry_after_seconds\n",
+    ),
+)
+
+_G050 = D2TaskSpec(
+    template_id="d4_errors.abort_reason",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d4-errors-abort-reason",
+    module="abort_reason",
+    module_doc="Naming why a run stopped early.",
+    issue=(
+        "abort_reason() is documented to name why a run stopped, taking the most deliberate "
+        "reason when several hold at once. Callers report that a run both cancelled and failed "
+        "is reported as failed, and that a run that stopped for none of these reasons is "
+        "reported as an empty string instead of nothing."
+    ),
+    expected=(
+        "abort_reason(state) names the reason with the highest precedence -- cancelled, then "
+        "failed, then timed out -- and returns None when none of them holds."
+    ),
+    baseline_reason=(
+        "the reasons are checked in the order they were added, and no reason means a blank"
+    ),
+    edge_cases=(
+        "a cancelled run outranks a failed one",
+        "no reason at all reports nothing",
+    ),
+    baseline="""def abort_reason(state):
+    \"\"\"Return the most deliberate reason `state` stopped, or nothing.\"\"\"
+    for name in ("timed_out", "failed", "cancelled"):
+        if state.get(name):
+            return name
+    return \"\"""",
+    variant_one="""def abort_reason(state):
+    \"\"\"Return the most deliberate reason `state` stopped, or nothing.\"\"\"
+    for name in ("cancelled", "failed", "timed_out"):
+        if state.get(name):
+            return name
+    return None""",
+    variant_two="""def abort_reason(state):
+    \"\"\"Return the most deliberate reason `state` stopped, or nothing.\"\"\"
+    precedence = ("cancelled", "failed", "timed_out")
+    holding = [name for name in precedence if state.get(name)]
+    return holding[0] if holding else None""",
+    variant_three="""def abort_reason(state):
+    \"\"\"Return the most deliberate reason `state` stopped, or nothing.\"\"\"
+    for name in ("cancelled", "failed", "timed_out"):
+        if state.get(name):
+            return name
+    return \"\"""",
+    variant_four="""def abort_reason(state):
+    \"\"\"Return the most deliberate reason `state` stopped, or nothing.\"\"\"
+    for name in ("timed_out", "failed", "cancelled"):
+        if state.get(name):
+            return name
+    return None""",
+    visible_test=_test_module(
+        "abort_reason",
+        "Published contract for naming an abort reason.",
+        """
+def test_a_failed_run() -> None:
+    assert abort_reason({"failed": True}) == "failed"
+
+
+def test_a_run_that_timed_out() -> None:
+    assert abort_reason({"timed_out": True}) == "timed_out"
+""",
+        imports="from abort_reason import abort_reason\n",
+    ),
+    hidden_test=_test_module(
+        "abort_reason",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_failed_run() -> None:
+    assert abort_reason({"failed": True}) == "failed"
+
+
+def test_a_cancelled_run_outranks_a_failed_one() -> None:
+    assert abort_reason({"failed": True, "cancelled": True}) == "cancelled"
+
+
+def test_no_reason_at_all_reports_nothing() -> None:
+    assert abort_reason({}) is None
+""",
+        imports="from abort_reason import abort_reason\n",
+    ),
+)
+
 #: Authored so far. The tuple grows as batches are authored and executed;
 #: `corpus_d4.py` reads it rather than a count, so a partially authored corpus reports what it
 #: has instead of claiming what it does not.
@@ -3915,4 +4851,14 @@ D4_CALIBRATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G038,
     _G039,
     _G040,
+    _G041,
+    _G042,
+    _G043,
+    _G044,
+    _G045,
+    _G046,
+    _G047,
+    _G048,
+    _G049,
+    _G050,
 )
