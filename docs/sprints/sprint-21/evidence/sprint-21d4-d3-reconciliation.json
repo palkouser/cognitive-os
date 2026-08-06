@@ -1,0 +1,390 @@
+{
+ "d1_d2_d3_bytes_modified": 0,
+ "decision_independence": {
+  "both_identities_hold_for_every_setting": true,
+  "consequence": "D3's zero-confident-error requirement over 120 metamorphic decisions was equivalent to zero errors among answered clean decisions, of which there were 20. Observing zero errors in 20 bounds the true rate only at 13.9% with 95% confidence. Gate L2 condition 20's 1% ceiling is an observed-rate requirement; D4 reports the bound beside it rather than claiming the bound is met.",
+  "counts": {
+   "cases_per_group": 6,
+   "independent_decisions": 20,
+   "nominal_decisions": 120,
+   "replicated_decisions": 100,
+   "rule": "independence is equality of the fitted feature vector"
+  },
+  "identity_violations": [],
+  "per_setting": [
+   {
+    "clean_answered": 19,
+    "clean_correct": 13,
+    "clean_decisions": 20,
+    "clean_errors": 6,
+    "confident_errors_are_six_times_clean_errors": true,
+    "confident_ood_errors": 36,
+    "metamorphic_ranking_decisions": 120,
+    "ood_answered": 114,
+    "ood_answered_is_six_times_clean_answered": true,
+    "setting_identity": "k=3;similarity=0.30;agreement=0.60;confidence=0.55;embedding_weight=0.7"
+   },
+   {
+    "clean_answered": 13,
+    "clean_correct": 9,
+    "clean_decisions": 20,
+    "clean_errors": 4,
+    "confident_errors_are_six_times_clean_errors": true,
+    "confident_ood_errors": 24,
+    "metamorphic_ranking_decisions": 120,
+    "ood_answered": 78,
+    "ood_answered_is_six_times_clean_answered": true,
+    "setting_identity": "k=3;similarity=0.30;agreement=0.60;confidence=0.70;embedding_weight=0.7"
+   },
+   {
+    "clean_answered": 13,
+    "clean_correct": 9,
+    "clean_decisions": 20,
+    "clean_errors": 4,
+    "confident_errors_are_six_times_clean_errors": true,
+    "confident_ood_errors": 24,
+    "metamorphic_ranking_decisions": 120,
+    "ood_answered": 78,
+    "ood_answered_is_six_times_clean_answered": true,
+    "setting_identity": "k=3;similarity=0.30;agreement=0.80;confidence=0.55;embedding_weight=0.7"
+   },
+   {
+    "clean_answered": 13,
+    "clean_correct": 9,
+    "clean_decisions": 20,
+    "clean_errors": 4,
+    "confident_errors_are_six_times_clean_errors": true,
+    "confident_ood_errors": 24,
+    "metamorphic_ranking_decisions": 120,
+    "ood_answered": 78,
+    "ood_answered_is_six_times_clean_answered": true,
+    "setting_identity": "k=3;similarity=0.30;agreement=0.80;confidence=0.70;embedding_weight=0.7"
+   },
+   {
+    "clean_answered": 19,
+    "clean_correct": 13,
+    "clean_decisions": 20,
+    "clean_errors": 6,
+    "confident_errors_are_six_times_clean_errors": true,
+    "confident_ood_errors": 36,
+    "metamorphic_ranking_decisions": 120,
+    "ood_answered": 114,
+    "ood_answered_is_six_times_clean_answered": true,
+    "setting_identity": "k=3;similarity=0.50;agreement=0.60;confidence=0.55;embedding_weight=0.7"
+   },
+   {
+    "clean_answered": 13,
+    "clean_correct": 9,
+    "clean_decisions": 20,
+    "clean_errors": 4,
+    "confident_errors_are_six_times_clean_errors": true,
+    "confident_ood_errors": 24,
+    "metamorphic_ranking_decisions": 120,
+    "ood_answered": 78,
+    "ood_answered_is_six_times_clean_answered": true,
+    "setting_identity": "k=3;similarity=0.50;agreement=0.60;confidence=0.70;embedding_weight=0.7"
+   },
+   {
+    "clean_answered": 13,
+    "clean_correct": 9,
+    "clean_decisions": 20,
+    "clean_errors": 4,
+    "confident_errors_are_six_times_clean_errors": true,
+    "confident_ood_errors": 24,
+    "metamorphic_ranking_decisions": 120,
+    "ood_answered": 78,
+    "ood_answered_is_six_times_clean_answered": true,
+    "setting_identity": "k=3;similarity=0.50;agreement=0.80;confidence=0.55;embedding_weight=0.7"
+   },
+   {
+    "clean_answered": 13,
+    "clean_correct": 9,
+    "clean_decisions": 20,
+    "clean_errors": 4,
+    "confident_errors_are_six_times_clean_errors": true,
+    "confident_ood_errors": 24,
+    "metamorphic_ranking_decisions": 120,
+    "ood_answered": 78,
+    "ood_answered_is_six_times_clean_answered": true,
+    "setting_identity": "k=3;similarity=0.50;agreement=0.80;confidence=0.70;embedding_weight=0.7"
+   },
+   {
+    "clean_answered": 18,
+    "clean_correct": 13,
+    "clean_decisions": 20,
+    "clean_errors": 5,
+    "confident_errors_are_six_times_clean_errors": true,
+    "confident_ood_errors": 30,
+    "metamorphic_ranking_decisions": 120,
+    "ood_answered": 108,
+    "ood_answered_is_six_times_clean_answered": true,
+    "setting_identity": "k=5;similarity=0.30;agreement=0.60;confidence=0.55;embedding_weight=0.7"
+   },
+   {
+    "clean_answered": 16,
+    "clean_correct": 11,
+    "clean_decisions": 20,
+    "clean_errors": 5,
+    "confident_errors_are_six_times_clean_errors": true,
+    "confident_ood_errors": 30,
+    "metamorphic_ranking_decisions": 120,
+    "ood_answered": 96,
+    "ood_answered_is_six_times_clean_answered": true,
+    "setting_identity": "k=5;similarity=0.30;agreement=0.60;confidence=0.70;embedding_weight=0.7"
+   },
+   {
+    "clean_answered": 16,
+    "clean_correct": 11,
+    "clean_decisions": 20,
+    "clean_errors": 5,
+    "confident_errors_are_six_times_clean_errors": true,
+    "confident_ood_errors": 30,
+    "metamorphic_ranking_decisions": 120,
+    "ood_answered": 96,
+    "ood_answered_is_six_times_clean_answered": true,
+    "setting_identity": "k=5;similarity=0.30;agreement=0.80;confidence=0.55;embedding_weight=0.7"
+   },
+   {
+    "clean_answered": 16,
+    "clean_correct": 11,
+    "clean_decisions": 20,
+    "clean_errors": 5,
+    "confident_errors_are_six_times_clean_errors": true,
+    "confident_ood_errors": 30,
+    "metamorphic_ranking_decisions": 120,
+    "ood_answered": 96,
+    "ood_answered_is_six_times_clean_answered": true,
+    "setting_identity": "k=5;similarity=0.30;agreement=0.80;confidence=0.70;embedding_weight=0.7"
+   },
+   {
+    "clean_answered": 18,
+    "clean_correct": 13,
+    "clean_decisions": 20,
+    "clean_errors": 5,
+    "confident_errors_are_six_times_clean_errors": true,
+    "confident_ood_errors": 30,
+    "metamorphic_ranking_decisions": 120,
+    "ood_answered": 108,
+    "ood_answered_is_six_times_clean_answered": true,
+    "setting_identity": "k=5;similarity=0.50;agreement=0.60;confidence=0.55;embedding_weight=0.7"
+   },
+   {
+    "clean_answered": 16,
+    "clean_correct": 11,
+    "clean_decisions": 20,
+    "clean_errors": 5,
+    "confident_errors_are_six_times_clean_errors": true,
+    "confident_ood_errors": 30,
+    "metamorphic_ranking_decisions": 120,
+    "ood_answered": 96,
+    "ood_answered_is_six_times_clean_answered": true,
+    "setting_identity": "k=5;similarity=0.50;agreement=0.60;confidence=0.70;embedding_weight=0.7"
+   },
+   {
+    "clean_answered": 16,
+    "clean_correct": 11,
+    "clean_decisions": 20,
+    "clean_errors": 5,
+    "confident_errors_are_six_times_clean_errors": true,
+    "confident_ood_errors": 30,
+    "metamorphic_ranking_decisions": 120,
+    "ood_answered": 96,
+    "ood_answered_is_six_times_clean_answered": true,
+    "setting_identity": "k=5;similarity=0.50;agreement=0.80;confidence=0.55;embedding_weight=0.7"
+   },
+   {
+    "clean_answered": 16,
+    "clean_correct": 11,
+    "clean_decisions": 20,
+    "clean_errors": 5,
+    "confident_errors_are_six_times_clean_errors": true,
+    "confident_ood_errors": 30,
+    "metamorphic_ranking_decisions": 120,
+    "ood_answered": 96,
+    "ood_answered_is_six_times_clean_answered": true,
+    "setting_identity": "k=5;similarity=0.50;agreement=0.80;confidence=0.70;embedding_weight=0.7"
+   },
+   {
+    "clean_answered": 15,
+    "clean_correct": 11,
+    "clean_decisions": 20,
+    "clean_errors": 4,
+    "confident_errors_are_six_times_clean_errors": true,
+    "confident_ood_errors": 24,
+    "metamorphic_ranking_decisions": 120,
+    "ood_answered": 90,
+    "ood_answered_is_six_times_clean_answered": true,
+    "setting_identity": "k=7;similarity=0.30;agreement=0.60;confidence=0.55;embedding_weight=0.7"
+   },
+   {
+    "clean_answered": 15,
+    "clean_correct": 11,
+    "clean_decisions": 20,
+    "clean_errors": 4,
+    "confident_errors_are_six_times_clean_errors": true,
+    "confident_ood_errors": 24,
+    "metamorphic_ranking_decisions": 120,
+    "ood_answered": 90,
+    "ood_answered_is_six_times_clean_answered": true,
+    "setting_identity": "k=7;similarity=0.30;agreement=0.60;confidence=0.70;embedding_weight=0.7"
+   },
+   {
+    "clean_answered": 10,
+    "clean_correct": 8,
+    "clean_decisions": 20,
+    "clean_errors": 2,
+    "confident_errors_are_six_times_clean_errors": true,
+    "confident_ood_errors": 12,
+    "metamorphic_ranking_decisions": 120,
+    "ood_answered": 60,
+    "ood_answered_is_six_times_clean_answered": true,
+    "setting_identity": "k=7;similarity=0.30;agreement=0.80;confidence=0.55;embedding_weight=0.7"
+   },
+   {
+    "clean_answered": 10,
+    "clean_correct": 8,
+    "clean_decisions": 20,
+    "clean_errors": 2,
+    "confident_errors_are_six_times_clean_errors": true,
+    "confident_ood_errors": 12,
+    "metamorphic_ranking_decisions": 120,
+    "ood_answered": 60,
+    "ood_answered_is_six_times_clean_answered": true,
+    "setting_identity": "k=7;similarity=0.30;agreement=0.80;confidence=0.70;embedding_weight=0.7"
+   },
+   {
+    "clean_answered": 15,
+    "clean_correct": 11,
+    "clean_decisions": 20,
+    "clean_errors": 4,
+    "confident_errors_are_six_times_clean_errors": true,
+    "confident_ood_errors": 24,
+    "metamorphic_ranking_decisions": 120,
+    "ood_answered": 90,
+    "ood_answered_is_six_times_clean_answered": true,
+    "setting_identity": "k=7;similarity=0.50;agreement=0.60;confidence=0.55;embedding_weight=0.7"
+   },
+   {
+    "clean_answered": 15,
+    "clean_correct": 11,
+    "clean_decisions": 20,
+    "clean_errors": 4,
+    "confident_errors_are_six_times_clean_errors": true,
+    "confident_ood_errors": 24,
+    "metamorphic_ranking_decisions": 120,
+    "ood_answered": 90,
+    "ood_answered_is_six_times_clean_answered": true,
+    "setting_identity": "k=7;similarity=0.50;agreement=0.60;confidence=0.70;embedding_weight=0.7"
+   },
+   {
+    "clean_answered": 10,
+    "clean_correct": 8,
+    "clean_decisions": 20,
+    "clean_errors": 2,
+    "confident_errors_are_six_times_clean_errors": true,
+    "confident_ood_errors": 12,
+    "metamorphic_ranking_decisions": 120,
+    "ood_answered": 60,
+    "ood_answered_is_six_times_clean_answered": true,
+    "setting_identity": "k=7;similarity=0.50;agreement=0.80;confidence=0.55;embedding_weight=0.7"
+   },
+   {
+    "clean_answered": 10,
+    "clean_correct": 8,
+    "clean_decisions": 20,
+    "clean_errors": 2,
+    "confident_errors_are_six_times_clean_errors": true,
+    "confident_ood_errors": 12,
+    "metamorphic_ranking_decisions": 120,
+    "ood_answered": 60,
+    "ood_answered_is_six_times_clean_answered": true,
+    "setting_identity": "k=7;similarity=0.50;agreement=0.80;confidence=0.70;embedding_weight=0.7"
+   }
+  ],
+  "settings_examined": 24,
+  "source": {
+   "path": "sprint-21d3-learner-selection.json",
+   "sha256": "216b196f491af5f9f128ba93a6193831b0ab4ebb84ad9cbe4476df554d756b5f"
+  },
+  "zero_error_upper_bounds": {
+   "100": 0.029513,
+   "20": 0.139108,
+   "300": 0.009936,
+   "60": 0.048703
+  }
+ },
+ "integrity_content_hash": "b9976081c3284afd83d000829e1d9c5f8fb1388c0d9b6c3b780619f96b50eba5",
+ "items": [
+  "S21D4-001"
+ ],
+ "protected_objects_unchanged": true,
+ "purpose": "Establish the authoritative D3 denominators and recovery values for Sprint 21D4, without modifying any released byte.",
+ "recorded_at": "2026-08-06T06:31:04Z",
+ "schema_version": 1,
+ "sprint": "21D4",
+ "w7_recovery": {
+  "claims": [
+   {
+    "agrees": false,
+    "evidence_pointer": "backup.database_dump_sha256",
+    "evidence_value": "f68fea62bbb0dbbb2023ab3c93ca2a51126c92af88b286bd9639b46746f68f18",
+    "execution_log_narrative": "c51b828106306b92",
+    "value": "database dump sha256"
+   },
+   {
+    "agrees": false,
+    "evidence_pointer": "backup.artifact_archive_sha256",
+    "evidence_value": "ea6449ebefce79ee9ea7cb7f5ac84fbbef57712e4e87f8afa1cd0d7b8f7a2722",
+    "execution_log_narrative": "8bb54058d02e1f69",
+    "value": "artifact archive sha256"
+   },
+   {
+    "agrees": false,
+    "evidence_pointer": "backup.artifact_archive_bytes",
+    "evidence_value": 1683401,
+    "execution_log_narrative": "1679871",
+    "value": "artifact archive bytes"
+   },
+   {
+    "agrees": false,
+    "evidence_pointer": "backup.event_count",
+    "evidence_value": 1731,
+    "execution_log_narrative": "1281",
+    "value": "events backed up"
+   },
+   {
+    "agrees": false,
+    "evidence_pointer": "backup.artifact_count",
+    "evidence_value": 3306,
+    "execution_log_narrative": "2754",
+    "value": "artifacts backed up"
+   },
+   {
+    "agrees": false,
+    "evidence_pointer": "restore.artifact_bytes.files_rehashed",
+    "evidence_value": 2096,
+    "execution_log_narrative": "2077",
+    "value": "blobs rehashed on restore"
+   }
+  ],
+  "claims_agreeing": 0,
+  "claims_disagreeing": 6,
+  "conclusion": "A narrative restatement of counts, not a result. Nothing about the D3 outcome moves: the damage cases, matrix rows, store fingerprints and unopened final outcomes of that wave all reproduce. The paragraph is not corrected in place; the execution log carries an erratum and this record is the authority.",
+  "corroboration": "Two independent readings agree with the evidence and not with the log. The D3 report states 2,096, and the D3 Artifact Store fingerprinted at release time contains exactly 2,096 files (sprint-21d3-release.json).",
+  "source": {
+   "path": "sprint-21d3-operations.json",
+   "sha256": "6a62743a9554a0738391c03602d6bd9f7d1999ab509e1af5a8e968be7c0c61cd"
+  },
+  "structural_claims_reproduce": {
+   "damage_cases": 18,
+   "final_outcomes_inspected": false,
+   "fingerprints_unchanged": true
+  },
+  "w7_a5_blob_rows": {
+   "evidence_pointer": "restore.source.counts.artifact_blobs",
+   "evidence_value": 1971,
+   "execution_log_narrative": "1,952 of 1,952"
+  }
+ },
+ "wave": "W0"
+}

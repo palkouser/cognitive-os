@@ -1,0 +1,124 @@
+{
+ "authority": "committed D3 evidence plus read-only SQL counts over the D3 store",
+ "d2_store_counts_as_control": {
+  "artifact_blobs": 1511,
+  "artifacts": 2057,
+  "events": 1261,
+  "learned_accesses": 0,
+  "learned_activation_approvals": 0,
+  "learned_activation_history": 0,
+  "learned_artifacts": 4,
+  "learned_component_revisions": 0,
+  "learned_components": 0,
+  "learned_datasets": 2,
+  "learned_evidence_records": 0,
+  "learned_observations": 480
+ },
+ "d3_store_counts": {
+  "artifact_blobs": 1971,
+  "artifacts": 3306,
+  "events": 1731,
+  "learned_accesses": 0,
+  "learned_activation_approvals": 1,
+  "learned_activation_history": 0,
+  "learned_artifacts": 0,
+  "learned_component_revisions": 3,
+  "learned_components": 1,
+  "learned_datasets": 0,
+  "learned_evidence_records": 0,
+  "learned_observations": 0
+ },
+ "dependent_not_opened": {
+  "authorised": false,
+  "bound_to_one_stop_hash": true,
+  "count": 20,
+  "final_or_canary_outcomes_inspected": 0,
+  "items": [
+   "S21D3-051",
+   "S21D3-054",
+   "S21D3-056",
+   "S21D3-060",
+   "S21D3-061",
+   "S21D3-062",
+   "S21D3-063",
+   "S21D3-064",
+   "S21D3-065",
+   "S21D3-066",
+   "S21D3-067",
+   "S21D3-068",
+   "S21D3-069",
+   "S21D3-070",
+   "S21D3-071",
+   "S21D3-072",
+   "S21D3-073",
+   "S21D3-074",
+   "S21D3-076",
+   "S21D3-077"
+  ],
+  "stop_hashes": [
+   "68ea06843d2136e390bf8a4ea0698414932987f5447887187907c45c0dcea876"
+  ]
+ },
+ "evidence_claims": {
+  "partitions": {
+   "calibration": {
+    "dataset_id": null,
+    "groups": null,
+    "outcomes": null
+   },
+   "training": {
+    "dataset_id": null,
+    "groups": null,
+    "outcomes": null
+   }
+  },
+  "source": "sprint-21d3-self-play-campaign.json",
+  "source_sha256": "ea48783e6d4e142afd8771a79f4b9a9dcb157f6094910fd34d4e49948ace1167"
+ },
+ "finding": {
+  "campaign_demonstrably_ran_against_this_store": true,
+  "consequence_for_d4": "There are no D3 rows to reuse. Every D4 fitting exemplar must come from a campaign D4 executes itself under new run identities, which the D4 backlog already requires. S21D4-012's fitting pool is therefore a set of task packages to re-run, never a set of rows to read.",
+  "control_holds_its_documented_rows": true,
+  "does_not_disturb": "The D3 result stands. The learner selection is committed evidence and S21D4-001 recomputes its full 24-setting grid from that file without touching the store.",
+  "id": "D4-W0-F1",
+  "observed": "cognitive_os_s21d3_test contains 0 learned observations and 0 learned datasets while holding 3306 artifacts, 1971 artifact blobs and 1731 events. The D3 execution log records 280 ingested SELF_PLAY outcomes and two materialised revision-3 datasets. cognitive_os_s21d2_test, read as a control, holds its documented 480 observations and 2 datasets.",
+  "store_holds_no_learned_observations_or_datasets": true,
+  "subject": "the D3 learned store"
+ },
+ "integrity_content_hash": "2ef5bb29bd5023c37ed2df0f5876b6a8e30c989a918647376679972cc6d562ff",
+ "invalid_selection_patterns": [
+  "all observations on this surface",
+  "latest seal for this partition",
+  "every artifact in this store"
+ ],
+ "items": [
+  "S21D4-003"
+ ],
+ "protected_roles": {
+  "canary": {
+   "candidate_slots": 20,
+   "groups": 5,
+   "outcomes": 0
+  },
+  "final_a": {
+   "candidate_slots": 120,
+   "groups": 30,
+   "outcomes": 0
+  },
+  "final_b": {
+   "candidate_slots": 120,
+   "groups": 30,
+   "outcomes": 0
+  },
+  "source": "sprint-21d3-sealed-manifests.json"
+ },
+ "recorded_at": "2026-08-06T06:30:37Z",
+ "schema_version": 1,
+ "sprint": "21D4",
+ "stop_hashes": {
+  "correction_selection": "68ea06843d2136e390bf8a4ea0698414932987f5447887187907c45c0dcea876",
+  "retrieval_holdout": "f0b53912055223667c2cca9365b967c439b8599c60e47cbdeac78bfb23378824"
+ },
+ "wave": "W0",
+ "zero_predecessor_writes": true
+}
