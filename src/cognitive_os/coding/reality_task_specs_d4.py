@@ -4807,6 +4807,581 @@ def test_no_reason_at_all_reports_nothing() -> None:
     ),
 )
 
+# ------------------------------------------------------------------------- data transformation
+
+_G051 = D2TaskSpec(
+    template_id="d4_transform.rename_fields",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d4-transform-rename-fields",
+    module="field_rename",
+    module_doc="Renaming the fields of a record.",
+    issue=(
+        "rename_fields() is documented to rename the fields a record carries. Callers report "
+        "that asking to rename a field the record does not have raises a lookup error, and that "
+        "renaming a field onto a name already in use silently discards one of them."
+    ),
+    expected=(
+        "rename_fields(record, renames) returns the record with the named fields renamed, "
+        "ignores a rename for a field that is absent, and raises ValueError when a rename would "
+        "collide with a field already present."
+    ),
+    baseline_reason="each rename is read straight out of the record and written without checking",
+    edge_cases=(
+        "renaming an absent field is ignored",
+        "a rename colliding with an existing field is refused",
+    ),
+    baseline="""def rename_fields(record, renames):
+    \"\"\"Return `record` with its fields renamed according to `renames`.\"\"\"
+    renamed = {}
+    for old, new in renames.items():
+        renamed[new] = record[old]
+    for name, value in record.items():
+        if name not in renames:
+            renamed[name] = value
+    return renamed""",
+    variant_one="""def rename_fields(record, renames):
+    \"\"\"Return `record` with its fields renamed according to `renames`.\"\"\"
+    renamed = {}
+    for old, new in renames.items():
+        if old not in record:
+            continue
+        if new in record and new not in renames:
+            raise ValueError(f"{new!r} is already a field")
+        renamed[new] = record[old]
+    for name, value in record.items():
+        if name not in renames:
+            renamed[name] = value
+    return renamed""",
+    variant_two="""def rename_fields(record, renames):
+    \"\"\"Return `record` with its fields renamed according to `renames`.\"\"\"
+    renamed = {}
+    for name, value in record.items():
+        target = renames.get(name, name)
+        if target != name and target in record and target not in renames:
+            raise ValueError(f"{target!r} is already a field")
+        renamed[target] = value
+    return renamed""",
+    variant_three="""def rename_fields(record, renames):
+    \"\"\"Return `record` with its fields renamed according to `renames`.\"\"\"
+    renamed = {}
+    for old, new in renames.items():
+        if old not in record:
+            continue
+        renamed[new] = record[old]
+    for name, value in record.items():
+        if name not in renames:
+            renamed[name] = value
+    return renamed""",
+    variant_four="""def rename_fields(record, renames):
+    \"\"\"Return `record` with its fields renamed according to `renames`.\"\"\"
+    renamed = {}
+    for old, new in renames.items():
+        if new in record and new not in renames:
+            raise ValueError(f"{new!r} is already a field")
+        renamed[new] = record[old]
+    for name, value in record.items():
+        if name not in renames:
+            renamed[name] = value
+    return renamed""",
+    visible_test=_test_module(
+        "field_rename",
+        "Published contract for renaming fields.",
+        """
+def test_one_field_is_renamed() -> None:
+    assert rename_fields({"a": 1, "b": 2}, {"a": "x"}) == {"x": 1, "b": 2}
+
+
+def test_the_only_field_is_renamed() -> None:
+    assert rename_fields({"a": 1}, {"a": "z"}) == {"z": 1}
+""",
+        imports="from field_rename import rename_fields\n",
+    ),
+    hidden_test=_test_module(
+        "field_rename",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_one_field_is_renamed() -> None:
+    assert rename_fields({"a": 1, "b": 2}, {"a": "x"}) == {"x": 1, "b": 2}
+
+
+def test_renaming_an_absent_field_is_ignored() -> None:
+    assert rename_fields({"b": 2}, {"a": "x"}) == {"b": 2}
+
+
+def test_a_rename_colliding_with_an_existing_field_is_refused() -> None:
+    with pytest.raises(ValueError):
+        rename_fields({"a": 1, "b": 2}, {"a": "b"})
+""",
+        imports="from field_rename import rename_fields\n",
+    ),
+)
+
+_G052 = D2TaskSpec(
+    template_id="d4_transform.run_lengths",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d4-transform-run-lengths",
+    module="run_lengths",
+    module_doc="Describing a sequence as runs of repeated values.",
+    issue=(
+        "run_lengths() is documented to describe a sequence as consecutive runs. Callers report "
+        "that an empty sequence raises instead of describing nothing, and that a sequence made "
+        "of a single run comes back empty."
+    ),
+    expected=(
+        "run_lengths(values) returns one (value, length) pair per consecutive run, returns "
+        "nothing for an empty sequence, and describes a sequence of one run as that one run."
+    ),
+    baseline_reason=(
+        "the first value is read before the sequence is checked, and the final run is only "
+        "emitted when an earlier run already was"
+    ),
+    edge_cases=(
+        "an empty sequence describes nothing",
+        "a sequence of one run describes that run",
+    ),
+    baseline="""def run_lengths(values):
+    \"\"\"Return the consecutive runs of `values` as (value, length) pairs.\"\"\"
+    runs = []
+    current = values[0]
+    count = 0
+    for value in values:
+        if value == current:
+            count += 1
+        else:
+            runs.append((current, count))
+            current, count = value, 1
+    if runs:
+        runs.append((current, count))
+    return runs""",
+    variant_one="""def run_lengths(values):
+    \"\"\"Return the consecutive runs of `values` as (value, length) pairs.\"\"\"
+    collected = list(values)
+    if not collected:
+        return []
+    runs = []
+    current = collected[0]
+    count = 0
+    for value in collected:
+        if value == current:
+            count += 1
+        else:
+            runs.append((current, count))
+            current, count = value, 1
+    runs.append((current, count))
+    return runs""",
+    variant_two="""def run_lengths(values):
+    \"\"\"Return the consecutive runs of `values` as (value, length) pairs.\"\"\"
+    runs = []
+    for value in values:
+        if runs and runs[-1][0] == value:
+            runs[-1] = (value, runs[-1][1] + 1)
+        else:
+            runs.append((value, 1))
+    return runs""",
+    variant_three="""def run_lengths(values):
+    \"\"\"Return the consecutive runs of `values` as (value, length) pairs.\"\"\"
+    collected = list(values)
+    if not collected:
+        return []
+    runs = []
+    current = collected[0]
+    count = 0
+    for value in collected:
+        if value == current:
+            count += 1
+        else:
+            runs.append((current, count))
+            current, count = value, 1
+    if runs:
+        runs.append((current, count))
+    return runs""",
+    variant_four="""def run_lengths(values):
+    \"\"\"Return the consecutive runs of `values` as (value, length) pairs.\"\"\"
+    runs = []
+    current = values[0]
+    count = 0
+    for value in values:
+        if value == current:
+            count += 1
+        else:
+            runs.append((current, count))
+            current, count = value, 1
+    runs.append((current, count))
+    return runs""",
+    visible_test=_test_module(
+        "run_lengths",
+        "Published contract for describing runs.",
+        """
+def test_two_runs_of_different_lengths() -> None:
+    assert run_lengths([1, 1, 2]) == [(1, 2), (2, 1)]
+
+
+def test_two_runs_of_equal_length() -> None:
+    assert run_lengths([5, 5, 6, 6]) == [(5, 2), (6, 2)]
+""",
+        imports="from run_lengths import run_lengths\n",
+    ),
+    hidden_test=_test_module(
+        "run_lengths",
+        "The part of the contract the published tests do not state.",
+        """
+def test_two_runs_of_different_lengths() -> None:
+    assert run_lengths([1, 1, 2]) == [(1, 2), (2, 1)]
+
+
+def test_an_empty_sequence_describes_nothing() -> None:
+    assert run_lengths([]) == []
+
+
+def test_a_sequence_of_one_run_describes_that_run() -> None:
+    assert run_lengths([7, 7]) == [(7, 2)]
+""",
+        imports="from run_lengths import run_lengths\n",
+    ),
+)
+
+_G053 = D2TaskSpec(
+    template_id="d4_transform.invert_mapping",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d4-transform-invert-mapping",
+    module="mapping_invert",
+    module_doc="Turning a mapping inside out.",
+    issue=(
+        "invert() is documented to turn a mapping inside out. Callers report that two names "
+        "sharing a value silently lose one of them, and that a value that cannot be a key raises "
+        "a type error instead of a bad-argument error."
+    ),
+    expected=(
+        "invert(mapping) returns the mapping with names and values swapped, raises ValueError "
+        "when two names share a value, and raises ValueError when a value cannot be a key."
+    ),
+    baseline_reason="the comprehension overwrites duplicates and lets the type error escape",
+    edge_cases=(
+        "two names sharing a value is refused",
+        "a value that cannot be a key is refused",
+    ),
+    baseline="""def invert(mapping):
+    \"\"\"Return `mapping` with its names and values swapped.\"\"\"
+    return {value: name for name, value in mapping.items()}""",
+    variant_one="""def invert(mapping):
+    \"\"\"Return `mapping` with its names and values swapped.\"\"\"
+    inverted = {}
+    for name, value in mapping.items():
+        try:
+            already = value in inverted
+        except TypeError as error:
+            raise ValueError(f"{value!r} cannot be a name") from error
+        if already:
+            raise ValueError(f"{value!r} is shared by two names")
+        inverted[value] = name
+    return inverted""",
+    variant_two="""def invert(mapping):
+    \"\"\"Return `mapping` with its names and values swapped.\"\"\"
+    inverted = {}
+    for name, value in mapping.items():
+        if not isinstance(value, (str, int, float, bool, bytes, tuple, type(None))):
+            raise ValueError(f"{value!r} cannot be a name")
+        if value in inverted:
+            raise ValueError(f"{value!r} is shared by two names")
+        inverted[value] = name
+    return inverted""",
+    variant_three="""def invert(mapping):
+    \"\"\"Return `mapping` with its names and values swapped.\"\"\"
+    inverted = {}
+    for name, value in mapping.items():
+        if value in inverted:
+            raise ValueError(f"{value!r} is shared by two names")
+        inverted[value] = name
+    return inverted""",
+    variant_four="""def invert(mapping):
+    \"\"\"Return `mapping` with its names and values swapped.\"\"\"
+    inverted = {}
+    for name, value in mapping.items():
+        if not isinstance(value, (str, int, float, bool, bytes, tuple, type(None))):
+            raise ValueError(f"{value!r} cannot be a name")
+        inverted[value] = name
+    return inverted""",
+    visible_test=_test_module(
+        "mapping_invert",
+        "Published contract for inverting a mapping.",
+        """
+def test_two_distinct_pairs_are_swapped() -> None:
+    assert invert({"a": 1, "b": 2}) == {1: "a", 2: "b"}
+
+
+def test_an_empty_mapping_inverts_to_nothing() -> None:
+    assert invert({}) == {}
+""",
+        imports="from mapping_invert import invert\n",
+    ),
+    hidden_test=_test_module(
+        "mapping_invert",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_two_distinct_pairs_are_swapped() -> None:
+    assert invert({"a": 1, "b": 2}) == {1: "a", 2: "b"}
+
+
+def test_two_names_sharing_a_value_is_refused() -> None:
+    with pytest.raises(ValueError):
+        invert({"a": 1, "b": 1})
+
+
+def test_a_value_that_cannot_be_a_name_is_refused() -> None:
+    with pytest.raises(ValueError):
+        invert({"a": [1]})
+""",
+        imports="from mapping_invert import invert\n",
+    ),
+)
+
+_G054 = D2TaskSpec(
+    template_id="d4_transform.expand_ranges",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d4-transform-expand-ranges",
+    module="range_expand",
+    module_doc="Expanding a written list of numbers and spans.",
+    issue=(
+        "expand_ranges() is documented to expand a written selection such as '1-3,5'. Callers "
+        "report that a span written backwards silently expands to nothing, and that a stray "
+        "comma crashes the expansion instead of being ignored."
+    ),
+    expected=(
+        "expand_ranges(spec) returns the numbers the selection names, raises ValueError for a "
+        "span whose end is below its start, and ignores an empty fragment."
+    ),
+    baseline_reason="the span is handed to range() unchecked and an empty fragment reaches int()",
+    edge_cases=(
+        "a backwards span is refused",
+        "an empty fragment is ignored",
+    ),
+    baseline="""def expand_ranges(spec):
+    \"\"\"Return the numbers named by the selection `spec`.\"\"\"
+    numbers = []
+    for fragment in spec.split(","):
+        if "-" in fragment:
+            low, high = fragment.split("-")
+            numbers.extend(range(int(low), int(high) + 1))
+        else:
+            numbers.append(int(fragment))
+    return numbers""",
+    variant_one="""def expand_ranges(spec):
+    \"\"\"Return the numbers named by the selection `spec`.\"\"\"
+    numbers = []
+    for fragment in spec.split(","):
+        if not fragment.strip():
+            continue
+        if "-" in fragment:
+            low, high = fragment.split("-")
+            if int(high) < int(low):
+                raise ValueError(f"{fragment!r} runs backwards")
+            numbers.extend(range(int(low), int(high) + 1))
+        else:
+            numbers.append(int(fragment))
+    return numbers""",
+    variant_two="""def expand_ranges(spec):
+    \"\"\"Return the numbers named by the selection `spec`.\"\"\"
+    numbers = []
+    fragments = [item for item in spec.split(",") if item.strip()]
+    for fragment in fragments:
+        start, marker, stop = fragment.partition("-")
+        if not marker:
+            numbers.append(int(start))
+            continue
+        first, last = int(start), int(stop)
+        if last < first:
+            raise ValueError(f"{fragment!r} runs backwards")
+        numbers += list(range(first, last + 1))
+    return numbers""",
+    variant_three="""def expand_ranges(spec):
+    \"\"\"Return the numbers named by the selection `spec`.\"\"\"
+    numbers = []
+    for fragment in spec.split(","):
+        if "-" in fragment:
+            low, high = fragment.split("-")
+            if int(high) < int(low):
+                raise ValueError(f"{fragment!r} runs backwards")
+            numbers.extend(range(int(low), int(high) + 1))
+        else:
+            numbers.append(int(fragment))
+    return numbers""",
+    variant_four="""def expand_ranges(spec):
+    \"\"\"Return the numbers named by the selection `spec`.\"\"\"
+    numbers = []
+    for fragment in spec.split(","):
+        if not fragment.strip():
+            continue
+        if "-" in fragment:
+            low, high = fragment.split("-")
+            numbers.extend(range(int(low), int(high) + 1))
+        else:
+            numbers.append(int(fragment))
+    return numbers""",
+    visible_test=_test_module(
+        "range_expand",
+        "Published contract for expanding a selection.",
+        """
+def test_a_span_and_a_single_number() -> None:
+    assert expand_ranges("1-3,5") == [1, 2, 3, 5]
+
+
+def test_a_single_number_alone() -> None:
+    assert expand_ranges("2") == [2]
+""",
+        imports="from range_expand import expand_ranges\n",
+    ),
+    hidden_test=_test_module(
+        "range_expand",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_span_and_a_single_number() -> None:
+    assert expand_ranges("1-3,5") == [1, 2, 3, 5]
+
+
+def test_a_backwards_span_is_refused() -> None:
+    with pytest.raises(ValueError):
+        expand_ranges("5-3")
+
+
+def test_an_empty_fragment_is_ignored() -> None:
+    assert expand_ranges("1,,2") == [1, 2]
+""",
+        imports="from range_expand import expand_ranges\n",
+    ),
+)
+
+_G055 = D2TaskSpec(
+    template_id="d4_transform.nest_by_dot",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d4-transform-nest-by-dot",
+    module="dotted_nest",
+    module_doc="Turning dotted names into nested records.",
+    issue=(
+        "nest_by_dot() is documented to turn dotted names into nested records. Callers report "
+        "that a name which is both a value and a prefix of another name raises a type error "
+        "instead of being reported, and that a name with an empty segment quietly creates a "
+        "record under a blank name."
+    ),
+    expected=(
+        "nest_by_dot(flat) returns the nested record, raises ValueError when a name is used both "
+        "as a value and as a prefix, and raises ValueError for a name with an empty segment."
+    ),
+    baseline_reason="each segment is opened with setdefault, whatever is already sitting there",
+    edge_cases=(
+        "a name used as both value and prefix is refused",
+        "a name with an empty segment is refused",
+    ),
+    baseline="""def nest_by_dot(flat):
+    \"\"\"Return the nested record described by the dotted names of `flat`.\"\"\"
+    nested = {}
+    for path, value in flat.items():
+        parts = path.split(".")
+        current = nested
+        for part in parts[:-1]:
+            current = current.setdefault(part, {})
+        current[parts[-1]] = value
+    return nested""",
+    variant_one="""def nest_by_dot(flat):
+    \"\"\"Return the nested record described by the dotted names of `flat`.\"\"\"
+    nested = {}
+    for path, value in flat.items():
+        parts = path.split(".")
+        if any(not part for part in parts):
+            raise ValueError(f"{path!r} has an empty segment")
+        current = nested
+        for part in parts[:-1]:
+            existing = current.setdefault(part, {})
+            if not isinstance(existing, dict):
+                raise ValueError(f"{part!r} is both a value and a prefix")
+            current = existing
+        current[parts[-1]] = value
+    return nested""",
+    variant_two="""def nest_by_dot(flat):
+    \"\"\"Return the nested record described by the dotted names of `flat`.\"\"\"
+    nested = {}
+    for path in sorted(flat):
+        parts = path.split(".")
+        for part in parts:
+            if part == "":
+                raise ValueError(f"{path!r} has an empty segment")
+        current = nested
+        for part in parts[:-1]:
+            if part in current and not isinstance(current[part], dict):
+                raise ValueError(f"{part!r} is both a value and a prefix")
+            current = current.setdefault(part, {})
+        current[parts[-1]] = flat[path]
+    return nested""",
+    variant_three="""def nest_by_dot(flat):
+    \"\"\"Return the nested record described by the dotted names of `flat`.\"\"\"
+    nested = {}
+    for path, value in flat.items():
+        parts = path.split(".")
+        current = nested
+        for part in parts[:-1]:
+            existing = current.setdefault(part, {})
+            if not isinstance(existing, dict):
+                raise ValueError(f"{part!r} is both a value and a prefix")
+            current = existing
+        current[parts[-1]] = value
+    return nested""",
+    variant_four="""def nest_by_dot(flat):
+    \"\"\"Return the nested record described by the dotted names of `flat`.\"\"\"
+    nested = {}
+    for path, value in flat.items():
+        parts = path.split(".")
+        if any(not part for part in parts):
+            raise ValueError(f"{path!r} has an empty segment")
+        current = nested
+        for part in parts[:-1]:
+            current = current.setdefault(part, {})
+        current[parts[-1]] = value
+    return nested""",
+    visible_test=_test_module(
+        "dotted_nest",
+        "Published contract for nesting dotted names.",
+        """
+def test_a_two_part_name_nests() -> None:
+    assert nest_by_dot({"a.b": 1}) == {"a": {"b": 1}}
+
+
+def test_a_plain_name_stays_at_the_top() -> None:
+    assert nest_by_dot({"x": 2}) == {"x": 2}
+""",
+        imports="from dotted_nest import nest_by_dot\n",
+    ),
+    hidden_test=_test_module(
+        "dotted_nest",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_two_part_name_nests() -> None:
+    assert nest_by_dot({"a.b": 1}) == {"a": {"b": 1}}
+
+
+def test_a_name_used_as_both_value_and_prefix_is_refused() -> None:
+    with pytest.raises(ValueError):
+        nest_by_dot({"a": 1, "a.b": 2})
+
+
+def test_a_name_with_an_empty_segment_is_refused() -> None:
+    with pytest.raises(ValueError):
+        nest_by_dot({"a..b": 1})
+""",
+        imports="from dotted_nest import nest_by_dot\n",
+    ),
+)
+
 #: Authored so far. The tuple grows as batches are authored and executed;
 #: `corpus_d4.py` reads it rather than a count, so a partially authored corpus reports what it
 #: has instead of claiming what it does not.
@@ -4861,4 +5436,9 @@ D4_CALIBRATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G048,
     _G049,
     _G050,
+    _G051,
+    _G052,
+    _G053,
+    _G054,
+    _G055,
 )
