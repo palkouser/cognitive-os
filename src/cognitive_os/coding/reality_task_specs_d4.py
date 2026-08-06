@@ -1971,9 +1971,985 @@ def test_a_run_of_digits_is_kept_as_a_word() -> None:
     ),
 )
 
-#: Authored so far. The tuple grows as batches are authored and executed; `corpus_d4.py`
-#: reads it rather than a count, so a partially authored corpus reports what it has instead
-#: of claiming what it does not.
+# ------------------------------------------------------------------------- state and idempotency
+
+_G021 = D2TaskSpec(
+    template_id="d4_state.advance_offset",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d4-state-advance-offset",
+    module="stream_offset",
+    module_doc="Advancing a stored stream offset.",
+    issue=(
+        "advance_offset() is documented to move a stored offset forward. Callers report that a "
+        "replayed message rewinds the offset instead of leaving it alone, and that recording the "
+        "very first offset crashes because there is nothing stored yet."
+    ),
+    expected=(
+        "advance_offset(state, offset) returns state with the offset moved forward, leaves it "
+        "alone when the new offset is not ahead of the stored one, and accepts the first offset "
+        "against a state that has none."
+    ),
+    baseline_reason="the stored offset is read before it exists and overwritten without comparison",
+    edge_cases=(
+        "an offset behind the stored one leaves it alone",
+        "the first offset is accepted against an empty state",
+    ),
+    baseline="""def advance_offset(state, offset):
+    \"\"\"Return `state` with its stream offset advanced to `offset`.\"\"\"
+    current = state["offset"]
+    updated = dict(state)
+    updated["offset"] = offset
+    return updated""",
+    variant_one="""def advance_offset(state, offset):
+    \"\"\"Return `state` with its stream offset advanced to `offset`.\"\"\"
+    current = state.get("offset")
+    if current is not None and offset <= current:
+        return dict(state)
+    updated = dict(state)
+    updated["offset"] = offset
+    return updated""",
+    variant_two="""def advance_offset(state, offset):
+    \"\"\"Return `state` with its stream offset advanced to `offset`.\"\"\"
+    updated = dict(state)
+    if "offset" in updated:
+        updated["offset"] = max(updated["offset"], offset)
+    else:
+        updated["offset"] = offset
+    return updated""",
+    variant_three="""def advance_offset(state, offset):
+    \"\"\"Return `state` with its stream offset advanced to `offset`.\"\"\"
+    current = state["offset"]
+    updated = dict(state)
+    if offset > current:
+        updated["offset"] = offset
+    return updated""",
+    variant_four="""def advance_offset(state, offset):
+    \"\"\"Return `state` with its stream offset advanced to `offset`.\"\"\"
+    updated = dict(state)
+    updated["offset"] = offset
+    return updated""",
+    visible_test=_test_module(
+        "stream_offset",
+        "Published contract for advancing a stream offset.",
+        """
+def test_a_later_offset_moves_the_stored_one() -> None:
+    assert advance_offset({"offset": 5}, 7) == {"offset": 7}
+
+
+def test_advancing_from_zero() -> None:
+    assert advance_offset({"offset": 0}, 1) == {"offset": 1}
+""",
+        imports="from stream_offset import advance_offset\n",
+    ),
+    hidden_test=_test_module(
+        "stream_offset",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_later_offset_moves_the_stored_one() -> None:
+    assert advance_offset({"offset": 5}, 7) == {"offset": 7}
+
+
+def test_an_offset_behind_the_stored_one_leaves_it_alone() -> None:
+    assert advance_offset({"offset": 5}, 3) == {"offset": 5}
+
+
+def test_the_first_offset_is_accepted() -> None:
+    assert advance_offset({}, 4) == {"offset": 4}
+""",
+        imports="from stream_offset import advance_offset\n",
+    ),
+)
+
+_G022 = D2TaskSpec(
+    template_id="d4_state.bind_alias",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d4-state-bind-alias",
+    module="alias_registry",
+    module_doc="Binding a short alias to a target name.",
+    issue=(
+        "bind_alias() is documented to bind an alias to a target. Callers report that rebinding "
+        "an existing alias to a different target silently replaces it instead of being refused, "
+        "and that an alias pointing at itself is accepted."
+    ),
+    expected=(
+        "bind_alias(registry, alias, target) returns the registry with the binding added, raises "
+        "ValueError when the alias already points somewhere else, and raises ValueError when the "
+        "alias and the target are the same name."
+    ),
+    baseline_reason=(
+        "the binding is written without checking what is already there or what it names"
+    ),
+    edge_cases=(
+        "rebinding an alias to a different target is refused",
+        "an alias pointing at itself is refused",
+    ),
+    baseline="""def bind_alias(registry, alias, target):
+    \"\"\"Return `registry` with `alias` bound to `target`.\"\"\"
+    bound = dict(registry)
+    bound[alias] = target
+    return bound""",
+    variant_one="""def bind_alias(registry, alias, target):
+    \"\"\"Return `registry` with `alias` bound to `target`.\"\"\"
+    if alias == target:
+        raise ValueError(f"{alias!r} cannot alias itself")
+    existing = registry.get(alias)
+    if existing is not None and existing != target:
+        raise ValueError(f"{alias!r} already names {existing!r}")
+    bound = dict(registry)
+    bound[alias] = target
+    return bound""",
+    variant_two="""def bind_alias(registry, alias, target):
+    \"\"\"Return `registry` with `alias` bound to `target`.\"\"\"
+    conflicts = alias in registry and registry[alias] != target
+    if conflicts or alias == target:
+        raise ValueError(f"{alias!r} cannot be bound to {target!r}")
+    return {**registry, alias: target}""",
+    variant_three="""def bind_alias(registry, alias, target):
+    \"\"\"Return `registry` with `alias` bound to `target`.\"\"\"
+    existing = registry.get(alias)
+    if existing is not None and existing != target:
+        raise ValueError(f"{alias!r} already names {existing!r}")
+    bound = dict(registry)
+    bound[alias] = target
+    return bound""",
+    variant_four="""def bind_alias(registry, alias, target):
+    \"\"\"Return `registry` with `alias` bound to `target`.\"\"\"
+    if alias == target:
+        raise ValueError(f"{alias!r} cannot alias itself")
+    bound = dict(registry)
+    bound[alias] = target
+    return bound""",
+    visible_test=_test_module(
+        "alias_registry",
+        "Published contract for binding an alias.",
+        """
+def test_a_new_alias_is_bound() -> None:
+    assert bind_alias({}, "ls", "list") == {"ls": "list"}
+
+
+def test_rebinding_to_the_same_target_is_accepted() -> None:
+    assert bind_alias({"ls": "list"}, "ls", "list") == {"ls": "list"}
+""",
+        imports="from alias_registry import bind_alias\n",
+    ),
+    hidden_test=_test_module(
+        "alias_registry",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_new_alias_is_bound() -> None:
+    assert bind_alias({}, "ls", "list") == {"ls": "list"}
+
+
+def test_rebinding_to_a_different_target_is_refused() -> None:
+    with pytest.raises(ValueError):
+        bind_alias({"ls": "list"}, "ls", "show")
+
+
+def test_an_alias_pointing_at_itself_is_refused() -> None:
+    with pytest.raises(ValueError):
+        bind_alias({}, "ls", "ls")
+""",
+        imports="from alias_registry import bind_alias\n",
+    ),
+)
+
+_G023 = D2TaskSpec(
+    template_id="d4_state.mark_delivered",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d4-state-mark-delivered",
+    module="delivery_state",
+    module_doc="Marking a parcel as delivered.",
+    issue=(
+        "mark_delivered() is documented to record a delivery. Callers report that a duplicate "
+        "delivery notice overwrites the original delivery time, and that a cancelled parcel can "
+        "be marked delivered."
+    ),
+    expected=(
+        "mark_delivered(parcel, at) returns the parcel marked delivered, keeps the first "
+        "delivery time when it is already delivered, and raises ValueError for a cancelled "
+        "parcel."
+    ),
+    baseline_reason="the time is written unconditionally and the current status is never read",
+    edge_cases=(
+        "a repeated delivery keeps the first time",
+        "a cancelled parcel cannot be delivered",
+    ),
+    baseline="""def mark_delivered(parcel, at):
+    \"\"\"Return `parcel` marked delivered at `at`.\"\"\"
+    updated = dict(parcel)
+    updated["status"] = "delivered"
+    updated["delivered_at"] = at
+    return updated""",
+    variant_one="""def mark_delivered(parcel, at):
+    \"\"\"Return `parcel` marked delivered at `at`.\"\"\"
+    if parcel.get("status") == "cancelled":
+        raise ValueError("a cancelled parcel cannot be delivered")
+    if parcel.get("status") == "delivered":
+        return dict(parcel)
+    updated = dict(parcel)
+    updated["status"] = "delivered"
+    updated["delivered_at"] = at
+    return updated""",
+    variant_two="""def mark_delivered(parcel, at):
+    \"\"\"Return `parcel` marked delivered at `at`.\"\"\"
+    status = parcel.get("status")
+    if status == "cancelled":
+        raise ValueError("a cancelled parcel cannot be delivered")
+    updated = dict(parcel)
+    updated["status"] = "delivered"
+    updated.setdefault("delivered_at", at)
+    return updated""",
+    variant_three="""def mark_delivered(parcel, at):
+    \"\"\"Return `parcel` marked delivered at `at`.\"\"\"
+    if parcel.get("status") == "delivered":
+        return dict(parcel)
+    updated = dict(parcel)
+    updated["status"] = "delivered"
+    updated["delivered_at"] = at
+    return updated""",
+    variant_four="""def mark_delivered(parcel, at):
+    \"\"\"Return `parcel` marked delivered at `at`.\"\"\"
+    if parcel.get("status") == "cancelled":
+        raise ValueError("a cancelled parcel cannot be delivered")
+    updated = dict(parcel)
+    updated["status"] = "delivered"
+    updated["delivered_at"] = at
+    return updated""",
+    visible_test=_test_module(
+        "delivery_state",
+        "Published contract for marking a delivery.",
+        """
+def test_a_pending_parcel_is_delivered() -> None:
+    assert mark_delivered({"status": "pending"}, 10) == {
+        "status": "delivered",
+        "delivered_at": 10,
+    }
+
+
+def test_a_parcel_in_transit_is_delivered() -> None:
+    assert mark_delivered({"status": "in_transit"}, 4) == {
+        "status": "delivered",
+        "delivered_at": 4,
+    }
+""",
+        imports="from delivery_state import mark_delivered\n",
+    ),
+    hidden_test=_test_module(
+        "delivery_state",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_pending_parcel_is_delivered() -> None:
+    assert mark_delivered({"status": "pending"}, 10) == {
+        "status": "delivered",
+        "delivered_at": 10,
+    }
+
+
+def test_a_repeated_delivery_keeps_the_first_time() -> None:
+    already = {"status": "delivered", "delivered_at": 3}
+    assert mark_delivered(already, 9) == {"status": "delivered", "delivered_at": 3}
+
+
+def test_a_cancelled_parcel_cannot_be_delivered() -> None:
+    with pytest.raises(ValueError):
+        mark_delivered({"status": "cancelled"}, 5)
+""",
+        imports="from delivery_state import mark_delivered\n",
+    ),
+)
+
+_G024 = D2TaskSpec(
+    template_id="d4_state.join_barrier",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d4-state-join-barrier",
+    module="barrier_state",
+    module_doc="Registering participants at a release barrier.",
+    issue=(
+        "join_barrier() is documented to register a participant. Callers report that a "
+        "participant who retries is counted twice, and that a participant arriving after the "
+        "barrier has already released is accepted instead of being refused."
+    ),
+    expected=(
+        "join_barrier(barrier, name) returns the barrier with the participant registered once, "
+        "ignores a repeat registration, and raises ValueError once the barrier has released."
+    ),
+    baseline_reason=(
+        "the name is appended to a list without checking membership or the release flag"
+    ),
+    edge_cases=(
+        "a repeated registration is ignored",
+        "registering after release is refused",
+    ),
+    baseline="""def join_barrier(barrier, name):
+    \"\"\"Return `barrier` with `name` registered.\"\"\"
+    joined = dict(barrier)
+    joined["waiting"] = list(barrier.get("waiting", [])) + [name]
+    return joined""",
+    variant_one="""def join_barrier(barrier, name):
+    \"\"\"Return `barrier` with `name` registered.\"\"\"
+    if barrier.get("released"):
+        raise ValueError("the barrier has already released")
+    waiting = list(barrier.get("waiting", []))
+    if name in waiting:
+        return dict(barrier)
+    joined = dict(barrier)
+    joined["waiting"] = waiting + [name]
+    return joined""",
+    variant_two="""def join_barrier(barrier, name):
+    \"\"\"Return `barrier` with `name` registered.\"\"\"
+    if barrier.get("released") is True:
+        raise ValueError("the barrier has already released")
+    waiting = list(barrier.get("waiting", []))
+    joined = dict(barrier)
+    joined["waiting"] = waiting if name in waiting else waiting + [name]
+    return joined""",
+    variant_three="""def join_barrier(barrier, name):
+    \"\"\"Return `barrier` with `name` registered.\"\"\"
+    waiting = list(barrier.get("waiting", []))
+    if name in waiting:
+        return dict(barrier)
+    joined = dict(barrier)
+    joined["waiting"] = waiting + [name]
+    return joined""",
+    variant_four="""def join_barrier(barrier, name):
+    \"\"\"Return `barrier` with `name` registered.\"\"\"
+    if barrier.get("released"):
+        raise ValueError("the barrier has already released")
+    joined = dict(barrier)
+    joined["waiting"] = list(barrier.get("waiting", [])) + [name]
+    return joined""",
+    visible_test=_test_module(
+        "barrier_state",
+        "Published contract for joining a barrier.",
+        """
+def test_the_first_participant_is_registered() -> None:
+    assert join_barrier({}, "a") == {"waiting": ["a"]}
+
+
+def test_a_second_participant_is_registered() -> None:
+    assert join_barrier({"waiting": ["a"]}, "b") == {"waiting": ["a", "b"]}
+""",
+        imports="from barrier_state import join_barrier\n",
+    ),
+    hidden_test=_test_module(
+        "barrier_state",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_the_first_participant_is_registered() -> None:
+    assert join_barrier({}, "a") == {"waiting": ["a"]}
+
+
+def test_a_repeated_registration_is_ignored() -> None:
+    assert join_barrier({"waiting": ["a"]}, "a") == {"waiting": ["a"]}
+
+
+def test_registering_after_release_is_refused() -> None:
+    with pytest.raises(ValueError):
+        join_barrier({"waiting": [], "released": True}, "a")
+""",
+        imports="from barrier_state import join_barrier\n",
+    ),
+)
+
+_G025 = D2TaskSpec(
+    template_id="d4_state.apply_schema_step",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d4-state-apply-schema-step",
+    module="schema_step",
+    module_doc="Recording that a schema step has been applied.",
+    issue=(
+        "apply_step() is documented to record a schema step. Callers report that re-running a "
+        "step that is already applied appends it a second time, and that a step numbered below "
+        "the current one is accepted instead of being refused."
+    ),
+    expected=(
+        "apply_step(state, step) records the step and moves the version forward, ignores a step "
+        "already applied, and raises ValueError for a step numbered below the current version."
+    ),
+    baseline_reason="the step is appended and the version overwritten with no comparison at all",
+    edge_cases=(
+        "a step already applied is ignored",
+        "a step below the current version is refused",
+    ),
+    baseline="""def apply_step(state, step):
+    \"\"\"Return `state` with schema `step` recorded as applied.\"\"\"
+    updated = dict(state)
+    updated["applied"] = list(state.get("applied", [])) + [step]
+    updated["version"] = step
+    return updated""",
+    variant_one="""def apply_step(state, step):
+    \"\"\"Return `state` with schema `step` recorded as applied.\"\"\"
+    applied = list(state.get("applied", []))
+    if step in applied:
+        return dict(state)
+    if step < state.get("version", 0):
+        raise ValueError(f"step {step} is below the current version")
+    updated = dict(state)
+    updated["applied"] = applied + [step]
+    updated["version"] = step
+    return updated""",
+    variant_two="""def apply_step(state, step):
+    \"\"\"Return `state` with schema `step` recorded as applied.\"\"\"
+    applied = list(state.get("applied", []))
+    version = state.get("version", 0)
+    if step in applied:
+        return dict(state)
+    if not step >= version:
+        raise ValueError(f"step {step} is below the current version")
+    return {**state, "applied": applied + [step], "version": step}""",
+    variant_three="""def apply_step(state, step):
+    \"\"\"Return `state` with schema `step` recorded as applied.\"\"\"
+    applied = list(state.get("applied", []))
+    if step in applied:
+        return dict(state)
+    updated = dict(state)
+    updated["applied"] = applied + [step]
+    updated["version"] = step
+    return updated""",
+    variant_four="""def apply_step(state, step):
+    \"\"\"Return `state` with schema `step` recorded as applied.\"\"\"
+    if step < state.get("version", 0):
+        raise ValueError(f"step {step} is below the current version")
+    updated = dict(state)
+    updated["applied"] = list(state.get("applied", [])) + [step]
+    updated["version"] = step
+    return updated""",
+    visible_test=_test_module(
+        "schema_step",
+        "Published contract for applying a schema step.",
+        """
+def test_the_first_step_is_applied() -> None:
+    assert apply_step({}, 1) == {"applied": [1], "version": 1}
+
+
+def test_a_later_step_is_applied() -> None:
+    assert apply_step({"applied": [1], "version": 1}, 2) == {
+        "applied": [1, 2],
+        "version": 2,
+    }
+""",
+        imports="from schema_step import apply_step\n",
+    ),
+    hidden_test=_test_module(
+        "schema_step",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_the_first_step_is_applied() -> None:
+    assert apply_step({}, 1) == {"applied": [1], "version": 1}
+
+
+def test_a_step_already_applied_is_ignored() -> None:
+    state = {"applied": [1, 2], "version": 2}
+    assert apply_step(state, 2) == state
+
+
+def test_a_step_below_the_current_version_is_refused() -> None:
+    with pytest.raises(ValueError):
+        apply_step({"applied": [1, 5], "version": 5}, 3)
+""",
+        imports="from schema_step import apply_step\n",
+    ),
+)
+
+_G026 = D2TaskSpec(
+    template_id="d4_state.revoke_grant",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d4-state-revoke-grant",
+    module="grant_revocation",
+    module_doc="Revoking a permission grant.",
+    issue=(
+        "revoke_grant() is documented to revoke a grant. Callers report that revoking a grant "
+        "nobody holds crashes instead of doing nothing, and that a grant already revoked has its "
+        "revocation time rewritten by a retry."
+    ),
+    expected=(
+        "revoke_grant(grants, holder, at) returns the grants with the holder's grant revoked, "
+        "does nothing when the holder has no grant, and keeps the first revocation time."
+    ),
+    baseline_reason="the holder is indexed directly and the revocation time is always rewritten",
+    edge_cases=(
+        "revoking a grant nobody holds does nothing",
+        "a repeated revocation keeps the first time",
+    ),
+    baseline="""def revoke_grant(grants, holder, at):
+    \"\"\"Return `grants` with `holder`'s grant revoked at `at`.\"\"\"
+    revoked = dict(grants)
+    entry = dict(grants[holder])
+    entry["revoked_at"] = at
+    revoked[holder] = entry
+    return revoked""",
+    variant_one="""def revoke_grant(grants, holder, at):
+    \"\"\"Return `grants` with `holder`'s grant revoked at `at`.\"\"\"
+    if holder not in grants:
+        return dict(grants)
+    entry = dict(grants[holder])
+    if "revoked_at" in entry:
+        return dict(grants)
+    entry["revoked_at"] = at
+    revoked = dict(grants)
+    revoked[holder] = entry
+    return revoked""",
+    variant_two="""def revoke_grant(grants, holder, at):
+    \"\"\"Return `grants` with `holder`'s grant revoked at `at`.\"\"\"
+    existing = grants.get(holder)
+    if existing is None:
+        return dict(grants)
+    entry = dict(existing)
+    entry.setdefault("revoked_at", at)
+    return {**grants, holder: entry}""",
+    variant_three="""def revoke_grant(grants, holder, at):
+    \"\"\"Return `grants` with `holder`'s grant revoked at `at`.\"\"\"
+    if holder not in grants:
+        return dict(grants)
+    entry = dict(grants[holder])
+    entry["revoked_at"] = at
+    revoked = dict(grants)
+    revoked[holder] = entry
+    return revoked""",
+    variant_four="""def revoke_grant(grants, holder, at):
+    \"\"\"Return `grants` with `holder`'s grant revoked at `at`.\"\"\"
+    entry = dict(grants[holder])
+    if "revoked_at" in entry:
+        return dict(grants)
+    entry["revoked_at"] = at
+    revoked = dict(grants)
+    revoked[holder] = entry
+    return revoked""",
+    visible_test=_test_module(
+        "grant_revocation",
+        "Published contract for revoking a grant.",
+        """
+def test_a_held_grant_is_revoked() -> None:
+    grants = {"ann": {"scope": "read"}}
+    assert revoke_grant(grants, "ann", 7) == {"ann": {"scope": "read", "revoked_at": 7}}
+
+
+def test_other_holders_are_untouched() -> None:
+    grants = {"ann": {"scope": "read"}, "bo": {"scope": "write"}}
+    revoked = revoke_grant(grants, "ann", 7)
+    assert revoked["bo"] == {"scope": "write"}
+""",
+        imports="from grant_revocation import revoke_grant\n",
+    ),
+    hidden_test=_test_module(
+        "grant_revocation",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_held_grant_is_revoked() -> None:
+    grants = {"ann": {"scope": "read"}}
+    assert revoke_grant(grants, "ann", 7) == {"ann": {"scope": "read", "revoked_at": 7}}
+
+
+def test_revoking_a_grant_nobody_holds_does_nothing() -> None:
+    assert revoke_grant({"ann": {"scope": "read"}}, "zed", 7) == {"ann": {"scope": "read"}}
+
+
+def test_a_repeated_revocation_keeps_the_first_time() -> None:
+    grants = {"ann": {"scope": "read", "revoked_at": 2}}
+    assert revoke_grant(grants, "ann", 9) == {"ann": {"scope": "read", "revoked_at": 2}}
+""",
+        imports="from grant_revocation import revoke_grant\n",
+    ),
+)
+
+_G027 = D2TaskSpec(
+    template_id="d4_state.reserve_capacity",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d4-state-reserve-capacity",
+    module="capacity_pool",
+    module_doc="Reserving capacity from a shared pool.",
+    issue=(
+        "reserve_capacity() is documented to take capacity from a pool. Callers report that "
+        "reserving more than remains leaves the pool negative instead of being refused, and that "
+        "a reservation of zero still records a holder."
+    ),
+    expected=(
+        "reserve_capacity(pool, holder, amount) returns the pool with the amount reserved, "
+        "raises ValueError when the amount exceeds what remains, and records no holder for a "
+        "reservation of zero."
+    ),
+    baseline_reason="the remaining capacity is decremented with no check on the amount",
+    edge_cases=(
+        "reserving more than remains is refused",
+        "a reservation of zero records no holder",
+    ),
+    baseline="""def reserve_capacity(pool, holder, amount):
+    \"\"\"Return `pool` with `amount` reserved for `holder`.\"\"\"
+    updated = dict(pool)
+    updated["remaining"] = pool["remaining"] - amount
+    updated["holders"] = list(pool.get("holders", [])) + [holder]
+    return updated""",
+    variant_one="""def reserve_capacity(pool, holder, amount):
+    \"\"\"Return `pool` with `amount` reserved for `holder`.\"\"\"
+    if amount > pool["remaining"]:
+        raise ValueError("not enough capacity remains")
+    if amount == 0:
+        return dict(pool)
+    updated = dict(pool)
+    updated["remaining"] = pool["remaining"] - amount
+    updated["holders"] = list(pool.get("holders", [])) + [holder]
+    return updated""",
+    variant_two="""def reserve_capacity(pool, holder, amount):
+    \"\"\"Return `pool` with `amount` reserved for `holder`.\"\"\"
+    remaining = pool["remaining"]
+    if not amount <= remaining:
+        raise ValueError("not enough capacity remains")
+    if not amount:
+        return {**pool}
+    holders = list(pool.get("holders", []))
+    return {**pool, "remaining": remaining - amount, "holders": holders + [holder]}""",
+    variant_three="""def reserve_capacity(pool, holder, amount):
+    \"\"\"Return `pool` with `amount` reserved for `holder`.\"\"\"
+    if amount > pool["remaining"]:
+        raise ValueError("not enough capacity remains")
+    updated = dict(pool)
+    updated["remaining"] = pool["remaining"] - amount
+    updated["holders"] = list(pool.get("holders", [])) + [holder]
+    return updated""",
+    variant_four="""def reserve_capacity(pool, holder, amount):
+    \"\"\"Return `pool` with `amount` reserved for `holder`.\"\"\"
+    if amount == 0:
+        return dict(pool)
+    updated = dict(pool)
+    updated["remaining"] = pool["remaining"] - amount
+    updated["holders"] = list(pool.get("holders", [])) + [holder]
+    return updated""",
+    visible_test=_test_module(
+        "capacity_pool",
+        "Published contract for reserving capacity.",
+        """
+def test_capacity_is_reserved() -> None:
+    assert reserve_capacity({"remaining": 10}, "ann", 4) == {
+        "remaining": 6,
+        "holders": ["ann"],
+    }
+
+
+def test_reserving_everything_that_remains() -> None:
+    assert reserve_capacity({"remaining": 3}, "bo", 3) == {
+        "remaining": 0,
+        "holders": ["bo"],
+    }
+""",
+        imports="from capacity_pool import reserve_capacity\n",
+    ),
+    hidden_test=_test_module(
+        "capacity_pool",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_capacity_is_reserved() -> None:
+    assert reserve_capacity({"remaining": 10}, "ann", 4) == {
+        "remaining": 6,
+        "holders": ["ann"],
+    }
+
+
+def test_reserving_more_than_remains_is_refused() -> None:
+    with pytest.raises(ValueError):
+        reserve_capacity({"remaining": 2}, "ann", 5)
+
+
+def test_a_reservation_of_zero_records_no_holder() -> None:
+    assert reserve_capacity({"remaining": 5}, "ann", 0) == {"remaining": 5}
+""",
+        imports="from capacity_pool import reserve_capacity\n",
+    ),
+)
+
+_G028 = D2TaskSpec(
+    template_id="d4_state.transition_history",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d4-state-transition-history",
+    module="transition_history",
+    module_doc="Appending to a written transition history.",
+    issue=(
+        "record_transition() is documented to append a state to a history written as an "
+        "arrow-separated trail. Callers report that recording the state the trail already ends "
+        "in appends it again, and that a transition the machine does not allow is accepted."
+    ),
+    expected=(
+        "record_transition(trail, state) returns the trail with the state appended, leaves the "
+        "trail alone when it already ends in that state, and raises ValueError when the machine "
+        "does not allow the move."
+    ),
+    baseline_reason="the state is appended without reading the tail of the trail or the table",
+    edge_cases=(
+        "recording the current state leaves the trail alone",
+        "a transition the machine forbids is refused",
+    ),
+    baseline="""def record_transition(trail, state):
+    \"\"\"Return `trail` with `state` appended to the arrow-separated history.\"\"\"
+    if not trail:
+        return state
+    return trail + ">" + state""",
+    variant_one="""def record_transition(trail, state):
+    \"\"\"Return `trail` with `state` appended to the arrow-separated history.\"\"\"
+    allowed = {"new": ("ready",), "ready": ("running",), "running": ("done", "failed")}
+    if not trail:
+        return state
+    current = trail.split(">")[-1]
+    if current == state:
+        return trail
+    if state not in allowed.get(current, ()):
+        raise ValueError(f"{current!r} cannot move to {state!r}")
+    return trail + ">" + state""",
+    variant_two="""def record_transition(trail, state):
+    \"\"\"Return `trail` with `state` appended to the arrow-separated history.\"\"\"
+    allowed = {"new": ("ready",), "ready": ("running",), "running": ("done", "failed")}
+    steps = trail.split(">") if trail else []
+    if not steps:
+        return state
+    if steps[-1] == state:
+        return trail
+    if state not in allowed.get(steps[-1], ()):
+        raise ValueError(f"{steps[-1]!r} cannot move to {state!r}")
+    return ">".join(steps + [state])""",
+    variant_three="""def record_transition(trail, state):
+    \"\"\"Return `trail` with `state` appended to the arrow-separated history.\"\"\"
+    if not trail:
+        return state
+    if trail.split(">")[-1] == state:
+        return trail
+    return trail + ">" + state""",
+    variant_four="""def record_transition(trail, state):
+    \"\"\"Return `trail` with `state` appended to the arrow-separated history.\"\"\"
+    allowed = {"new": ("ready",), "ready": ("running",), "running": ("done", "failed")}
+    if not trail:
+        return state
+    current = trail.split(">")[-1]
+    if state not in allowed.get(current, ()):
+        raise ValueError(f"{current!r} cannot move to {state!r}")
+    return trail + ">" + state""",
+    visible_test=_test_module(
+        "transition_history",
+        "Published contract for recording a transition.",
+        """
+def test_the_first_state_starts_the_trail() -> None:
+    assert record_transition("", "new") == "new"
+
+
+def test_an_allowed_move_is_appended() -> None:
+    assert record_transition("new", "ready") == "new>ready"
+""",
+        imports="from transition_history import record_transition\n",
+    ),
+    hidden_test=_test_module(
+        "transition_history",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_the_first_state_starts_the_trail() -> None:
+    assert record_transition("", "new") == "new"
+
+
+def test_recording_the_current_state_leaves_the_trail_alone() -> None:
+    assert record_transition("new>ready", "ready") == "new>ready"
+
+
+def test_a_forbidden_transition_is_refused() -> None:
+    with pytest.raises(ValueError):
+        record_transition("new>ready", "done")
+""",
+        imports="from transition_history import record_transition\n",
+    ),
+)
+
+_G029 = D2TaskSpec(
+    template_id="d4_state.record_vote",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d4-state-record-vote",
+    module="ballot_box",
+    module_doc="Recording a vote in a ballot.",
+    issue=(
+        "record_vote() is documented to record one vote per voter. Callers report that a voter "
+        "changing their mind adds a second vote instead of replacing the first, and that a vote "
+        "cast after the ballot closed is accepted."
+    ),
+    expected=(
+        "record_vote(ballot, voter, choice) returns the ballot with the voter's single current "
+        "choice recorded, replacing any earlier one, and raises ValueError once the ballot is "
+        "closed."
+    ),
+    baseline_reason="votes are appended to a list and the closed flag is never read",
+    edge_cases=(
+        "a changed vote replaces the earlier one",
+        "a vote after closing is refused",
+    ),
+    baseline="""def record_vote(ballot, voter, choice):
+    \"\"\"Return `ballot` with `voter`'s `choice` recorded.\"\"\"
+    updated = dict(ballot)
+    updated["votes"] = list(ballot.get("votes", [])) + [(voter, choice)]
+    return updated""",
+    variant_one="""def record_vote(ballot, voter, choice):
+    \"\"\"Return `ballot` with `voter`'s `choice` recorded.\"\"\"
+    if ballot.get("closed"):
+        raise ValueError("the ballot is closed")
+    votes = [pair for pair in ballot.get("votes", []) if pair[0] != voter]
+    updated = dict(ballot)
+    updated["votes"] = votes + [(voter, choice)]
+    return updated""",
+    variant_two="""def record_vote(ballot, voter, choice):
+    \"\"\"Return `ballot` with `voter`'s `choice` recorded.\"\"\"
+    if ballot.get("closed") is True:
+        raise ValueError("the ballot is closed")
+    kept = []
+    for name, cast in ballot.get("votes", []):
+        if name != voter:
+            kept.append((name, cast))
+    return {**ballot, "votes": kept + [(voter, choice)]}""",
+    variant_three="""def record_vote(ballot, voter, choice):
+    \"\"\"Return `ballot` with `voter`'s `choice` recorded.\"\"\"
+    votes = [pair for pair in ballot.get("votes", []) if pair[0] != voter]
+    updated = dict(ballot)
+    updated["votes"] = votes + [(voter, choice)]
+    return updated""",
+    variant_four="""def record_vote(ballot, voter, choice):
+    \"\"\"Return `ballot` with `voter`'s `choice` recorded.\"\"\"
+    if ballot.get("closed"):
+        raise ValueError("the ballot is closed")
+    updated = dict(ballot)
+    updated["votes"] = list(ballot.get("votes", [])) + [(voter, choice)]
+    return updated""",
+    visible_test=_test_module(
+        "ballot_box",
+        "Published contract for recording a vote.",
+        """
+def test_a_first_vote_is_recorded() -> None:
+    assert record_vote({}, "ann", "yes") == {"votes": [("ann", "yes")]}
+
+
+def test_a_second_voter_is_recorded() -> None:
+    ballot = {"votes": [("ann", "yes")]}
+    assert record_vote(ballot, "bo", "no") == {
+        "votes": [("ann", "yes"), ("bo", "no")]
+    }
+""",
+        imports="from ballot_box import record_vote\n",
+    ),
+    hidden_test=_test_module(
+        "ballot_box",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_first_vote_is_recorded() -> None:
+    assert record_vote({}, "ann", "yes") == {"votes": [("ann", "yes")]}
+
+
+def test_a_changed_vote_replaces_the_earlier_one() -> None:
+    ballot = {"votes": [("ann", "yes"), ("bo", "no")]}
+    assert record_vote(ballot, "ann", "no") == {
+        "votes": [("bo", "no"), ("ann", "no")]
+    }
+
+
+def test_a_vote_after_closing_is_refused() -> None:
+    with pytest.raises(ValueError):
+        record_vote({"votes": [], "closed": True}, "ann", "yes")
+""",
+        imports="from ballot_box import record_vote\n",
+    ),
+)
+
+_G030 = D2TaskSpec(
+    template_id="d4_state.permission_mask",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d4-state-permission-mask",
+    module="permission_mask",
+    module_doc="Granting a permission held as a bit in a mask.",
+    issue=(
+        "grant_bit() is documented to grant a permission held as one bit of a mask. Callers "
+        "report that granting a permission somebody already holds corrupts the mask instead of "
+        "leaving it alone, and that a bit position outside the mask is accepted."
+    ),
+    expected=(
+        "grant_bit(mask, position) returns the mask with the bit set, leaves the mask unchanged "
+        "when the bit is already set, and raises ValueError for a position outside 0 to 31."
+    ),
+    baseline_reason="the bit is added rather than merged, and the position is never range-checked",
+    edge_cases=(
+        "granting a bit already set leaves the mask unchanged",
+        "a bit position outside the mask is refused",
+    ),
+    baseline="""def grant_bit(mask, position):
+    \"\"\"Return `mask` with the bit at `position` granted.\"\"\"
+    return mask + (1 << position)""",
+    variant_one="""def grant_bit(mask, position):
+    \"\"\"Return `mask` with the bit at `position` granted.\"\"\"
+    if position < 0 or position > 31:
+        raise ValueError(f"bit {position} is outside the mask")
+    return mask | (1 << position)""",
+    variant_two="""def grant_bit(mask, position):
+    \"\"\"Return `mask` with the bit at `position` granted.\"\"\"
+    if not 0 <= position <= 31:
+        raise ValueError(f"bit {position} is outside the mask")
+    bit = 1 << position
+    return mask if mask & bit else mask + bit""",
+    variant_three="""def grant_bit(mask, position):
+    \"\"\"Return `mask` with the bit at `position` granted.\"\"\"
+    return mask | (1 << position)""",
+    variant_four="""def grant_bit(mask, position):
+    \"\"\"Return `mask` with the bit at `position` granted.\"\"\"
+    if position < 0 or position > 31:
+        raise ValueError(f"bit {position} is outside the mask")
+    return mask + (1 << position)""",
+    visible_test=_test_module(
+        "permission_mask",
+        "Published contract for granting a permission bit.",
+        """
+def test_the_first_permission_is_granted() -> None:
+    assert grant_bit(0, 0) == 1
+
+
+def test_a_second_permission_is_granted() -> None:
+    assert grant_bit(1, 2) == 5
+""",
+        imports="from permission_mask import grant_bit\n",
+    ),
+    hidden_test=_test_module(
+        "permission_mask",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_the_first_permission_is_granted() -> None:
+    assert grant_bit(0, 0) == 1
+
+
+def test_granting_a_bit_already_set_leaves_the_mask_unchanged() -> None:
+    assert grant_bit(1, 0) == 1
+
+
+def test_a_bit_outside_the_mask_is_refused() -> None:
+    with pytest.raises(ValueError):
+        grant_bit(0, 64)
+""",
+        imports="from permission_mask import grant_bit\n",
+    ),
+)
+
+#: Authored so far. The tuple grows as batches are authored and executed;
+#: `corpus_d4.py` reads it rather than a count, so a partially authored corpus reports what it
+#: has instead of claiming what it does not.
 D4_CALIBRATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G001,
     _G002,
@@ -1995,4 +2971,14 @@ D4_CALIBRATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G018,
     _G019,
     _G020,
+    _G021,
+    _G022,
+    _G023,
+    _G024,
+    _G025,
+    _G026,
+    _G027,
+    _G028,
+    _G029,
+    _G030,
 )
