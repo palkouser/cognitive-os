@@ -7668,6 +7668,1091 @@ def test_the_undone_action_goes_to_the_front_of_the_list() -> None:
     ),
 )
 
+# ------------------------------------------------------------------------------- numeric logic
+
+_G076 = D2TaskSpec(
+    template_id="d4_numeric.make_change",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d4-numeric-make-change",
+    module="coin_change",
+    module_doc="Making an amount up out of the coins available.",
+    issue=(
+        "make_change() is documented to make an amount up out of the coins available, spending "
+        "the largest coins first. Callers report that handing the coins over in any order but "
+        "largest-first returns a fistful of small change, and that an amount the coins cannot "
+        "make exactly comes back short without a word."
+    ),
+    expected=(
+        "make_change(amount, coins) returns how many of each coin makes the amount, spending the "
+        "largest coins first whatever order they arrive in, and raises ValueError when the coins "
+        "cannot make the amount exactly."
+    ),
+    baseline_reason="it spends the coins in the order handed over and never checks what is left",
+    edge_cases=(
+        "the coins are spent largest first whatever order they arrive in",
+        "an amount the coins cannot make exactly is refused",
+    ),
+    baseline="""def make_change(amount, coins):
+    \"\"\"Return how many of each coin makes `amount`, largest coins first.\"\"\"
+    counts = {}
+    left = amount
+    for coin in coins:
+        if left >= coin:
+            counts[coin] = left // coin
+            left -= counts[coin] * coin
+    return counts""",
+    variant_one="""def make_change(amount, coins):
+    \"\"\"Return how many of each coin makes `amount`, largest coins first.\"\"\"
+    counts = {}
+    left = amount
+    for coin in sorted(coins, reverse=True):
+        if left >= coin:
+            counts[coin] = left // coin
+            left -= counts[coin] * coin
+    if left:
+        raise ValueError("those coins cannot make that amount exactly")
+    return counts""",
+    variant_two="""def make_change(amount, coins):
+    \"\"\"Return how many of each coin makes `amount`, largest coins first.\"\"\"
+    counts = {}
+    left = amount
+    for coin in sorted(coins, reverse=True):
+        spent = 0
+        while left >= coin:
+            left -= coin
+            spent += 1
+        if spent:
+            counts[coin] = spent
+    if left != 0:
+        raise ValueError("those coins cannot make that amount exactly")
+    return counts""",
+    variant_three="""def make_change(amount, coins):
+    \"\"\"Return how many of each coin makes `amount`, largest coins first.\"\"\"
+    counts = {}
+    left = amount
+    for coin in sorted(coins, reverse=True):
+        if left >= coin:
+            counts[coin] = left // coin
+            left -= counts[coin] * coin
+    return counts""",
+    variant_four="""def make_change(amount, coins):
+    \"\"\"Return how many of each coin makes `amount`, largest coins first.\"\"\"
+    counts = {}
+    left = amount
+    for coin in coins:
+        if left >= coin:
+            counts[coin] = left // coin
+            left -= counts[coin] * coin
+    if left:
+        raise ValueError("those coins cannot make that amount exactly")
+    return counts""",
+    visible_test=_test_module(
+        "coin_change",
+        "Published contract for making an amount out of coins.",
+        """
+def test_a_mixed_handful() -> None:
+    assert make_change(87, (25, 10, 5, 1)) == {25: 3, 10: 1, 1: 2}
+
+
+def test_an_amount_two_coins_make() -> None:
+    assert make_change(30, (25, 10, 5, 1)) == {25: 1, 5: 1}
+
+
+def test_no_amount_at_all_needs_no_coins() -> None:
+    assert make_change(0, (25, 10, 5, 1)) == {}
+""",
+        imports="from coin_change import make_change\n",
+    ),
+    hidden_test=_test_module(
+        "coin_change",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_mixed_handful() -> None:
+    assert make_change(87, (25, 10, 5, 1)) == {25: 3, 10: 1, 1: 2}
+
+
+def test_the_coins_are_spent_largest_first_whatever_order_they_arrive_in() -> None:
+    assert make_change(30, (5, 25, 10, 1)) == {25: 1, 5: 1}
+
+
+def test_an_amount_the_coins_cannot_make_exactly_is_refused() -> None:
+    with pytest.raises(ValueError):
+        make_change(3, (5, 2))
+""",
+        imports="from coin_change import make_change\n",
+    ),
+)
+
+_G077 = D2TaskSpec(
+    template_id="d4_numeric.turn_between",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d4-numeric-turn-between",
+    module="compass_turn",
+    module_doc="The shorter way round from one compass bearing to another.",
+    issue=(
+        "turn_between() is documented to report the shorter signed turn from one bearing to "
+        "another. Callers report that a turn of exactly half a circle comes back as minus one "
+        "hundred and eighty rather than plus, and that a bearing more than a whole circle away "
+        "from the other comes back as a turn no one could make."
+    ),
+    expected=(
+        "turn_between(start, finish) returns the shorter turn in degrees, positive clockwise, "
+        "reports an exact half circle as plus one hundred and eighty, and brings bearings more "
+        "than a whole circle apart into range before measuring."
+    ),
+    baseline_reason=(
+        "it corrects a turn only once, in whichever direction it is too long, and calls half a "
+        "circle too long"
+    ),
+    edge_cases=(
+        "an exact half circle is reported as plus one hundred and eighty",
+        "bearings more than a whole circle apart are brought into range first",
+    ),
+    baseline="""def turn_between(start, finish):
+    \"\"\"Return the shorter signed turn in degrees from `start` to `finish`.\"\"\"
+    difference = finish - start
+    if difference >= 180:
+        difference -= 360
+    elif difference < -180:
+        difference += 360
+    return difference""",
+    variant_one="""def turn_between(start, finish):
+    \"\"\"Return the shorter signed turn in degrees from `start` to `finish`.\"\"\"
+    difference = (finish - start) % 360
+    if difference > 180:
+        difference -= 360
+    return difference""",
+    variant_two="""def turn_between(start, finish):
+    \"\"\"Return the shorter signed turn in degrees from `start` to `finish`.\"\"\"
+    clockwise = (finish - start) % 360
+    return clockwise if clockwise <= 180 else clockwise - 360""",
+    variant_three="""def turn_between(start, finish):
+    \"\"\"Return the shorter signed turn in degrees from `start` to `finish`.\"\"\"
+    difference = finish - start
+    if difference > 180:
+        difference -= 360
+    elif difference < -180:
+        difference += 360
+    return difference""",
+    variant_four="""def turn_between(start, finish):
+    \"\"\"Return the shorter signed turn in degrees from `start` to `finish`.\"\"\"
+    difference = (finish - start) % 360
+    if difference >= 180:
+        difference -= 360
+    return difference""",
+    visible_test=_test_module(
+        "compass_turn",
+        "Published contract for the turn between two bearings.",
+        """
+def test_a_quarter_turn_clockwise() -> None:
+    assert turn_between(0, 90) == 90
+
+
+def test_a_quarter_turn_the_other_way() -> None:
+    assert turn_between(90, 0) == -90
+
+
+def test_a_turn_across_north() -> None:
+    assert turn_between(350, 10) == 20
+""",
+        imports="from compass_turn import turn_between\n",
+    ),
+    hidden_test=_test_module(
+        "compass_turn",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_quarter_turn_clockwise() -> None:
+    assert turn_between(0, 90) == 90
+
+
+def test_an_exact_half_circle_is_reported_as_plus_one_hundred_and_eighty() -> None:
+    assert turn_between(0, 180) == 180
+
+
+def test_bearings_more_than_a_whole_circle_apart_are_brought_into_range() -> None:
+    assert turn_between(0, 730) == 10
+""",
+        imports="from compass_turn import turn_between\n",
+    ),
+)
+
+_G078 = D2TaskSpec(
+    template_id="d4_numeric.compare_versions",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d4-numeric-compare-versions",
+    module="version_order",
+    module_doc="Ordering two dotted version numbers.",
+    issue=(
+        "compare_versions() is documented to order two dotted version numbers. Callers report "
+        "that version one point ten sorts before version one point nine, and that a version "
+        "written with fewer parts than the other is called equal to it whatever the extra parts "
+        "hold."
+    ),
+    expected=(
+        "compare_versions(left, right) returns -1, 0 or 1; each part is compared as a number "
+        "rather than as text, and a part the shorter version does not write counts as zero."
+    ),
+    baseline_reason=(
+        "it compares the parts as text and stops as soon as the shorter version runs out"
+    ),
+    edge_cases=(
+        "a part is compared as a number, not as text",
+        "a part the shorter version does not write counts as zero",
+    ),
+    baseline="""def compare_versions(left, right):
+    \"\"\"Return -1, 0 or 1 as `left` sorts before, with, or after `right`.\"\"\"
+    first = left.split(".")
+    second = right.split(".")
+    for one, other in zip(first, second):
+        if one != other:
+            return -1 if one < other else 1
+    return 0""",
+    variant_one="""def compare_versions(left, right):
+    \"\"\"Return -1, 0 or 1 as `left` sorts before, with, or after `right`.\"\"\"
+    first = [int(part) for part in left.split(".")]
+    second = [int(part) for part in right.split(".")]
+    while len(first) < len(second):
+        first.append(0)
+    while len(second) < len(first):
+        second.append(0)
+    for one, other in zip(first, second):
+        if one != other:
+            return -1 if one < other else 1
+    return 0""",
+    variant_two="""def compare_versions(left, right):
+    \"\"\"Return -1, 0 or 1 as `left` sorts before, with, or after `right`.\"\"\"
+    first = left.split(".")
+    second = right.split(".")
+    for index in range(max(len(first), len(second))):
+        one = int(first[index]) if index < len(first) else 0
+        other = int(second[index]) if index < len(second) else 0
+        if one != other:
+            return -1 if one < other else 1
+    return 0""",
+    variant_three="""def compare_versions(left, right):
+    \"\"\"Return -1, 0 or 1 as `left` sorts before, with, or after `right`.\"\"\"
+    first = [int(part) for part in left.split(".")]
+    second = [int(part) for part in right.split(".")]
+    for one, other in zip(first, second):
+        if one != other:
+            return -1 if one < other else 1
+    return 0""",
+    variant_four="""def compare_versions(left, right):
+    \"\"\"Return -1, 0 or 1 as `left` sorts before, with, or after `right`.\"\"\"
+    first = left.split(".")
+    second = right.split(".")
+    while len(first) < len(second):
+        first.append("0")
+    while len(second) < len(first):
+        second.append("0")
+    for one, other in zip(first, second):
+        if one != other:
+            return -1 if one < other else 1
+    return 0""",
+    visible_test=_test_module(
+        "version_order",
+        "Published contract for ordering two versions.",
+        """
+def test_an_earlier_version() -> None:
+    assert compare_versions("1.2.0", "1.3.0") == -1
+
+
+def test_a_later_version() -> None:
+    assert compare_versions("2.0.0", "1.9.9") == 1
+
+
+def test_the_same_version() -> None:
+    assert compare_versions("1.2.3", "1.2.3") == 0
+""",
+        imports="from version_order import compare_versions\n",
+    ),
+    hidden_test=_test_module(
+        "version_order",
+        "The part of the contract the published tests do not state.",
+        """
+def test_an_earlier_version() -> None:
+    assert compare_versions("1.2.0", "1.3.0") == -1
+
+
+def test_a_part_is_compared_as_a_number_not_as_text() -> None:
+    assert compare_versions("1.10", "1.9") == 1
+
+
+def test_a_part_the_shorter_version_does_not_write_counts_as_zero() -> None:
+    assert compare_versions("1.2", "1.2.0") == 0
+    assert compare_versions("1.2", "1.2.1") == -1
+""",
+        imports="from version_order import compare_versions\n",
+    ),
+)
+
+_G079 = D2TaskSpec(
+    template_id="d4_numeric.average_speed",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d4-numeric-average-speed",
+    module="journey_rate",
+    module_doc="The average speed over a journey made of legs.",
+    issue=(
+        "average_speed() is documented to report the average speed over a whole journey. "
+        "Callers report that a journey whose legs take different times comes back too fast, and "
+        "that a leg recorded as taking no time at all brings the call down."
+    ),
+    expected=(
+        "average_speed(legs) returns the total distance divided by the total time, which is not "
+        "the mean of the leg speeds unless the legs take equally long, and raises ValueError for "
+        "a leg that takes no time."
+    ),
+    baseline_reason="it works out each leg's speed and takes the mean of those",
+    edge_cases=(
+        "the average is over the totals, not the mean of the leg speeds",
+        "a leg that takes no time is refused",
+    ),
+    baseline="""def average_speed(legs):
+    \"\"\"Return the average speed over the whole journey.\"\"\"
+    speeds = [distance / time for distance, time in legs]
+    return sum(speeds) / len(speeds)""",
+    variant_one="""def average_speed(legs):
+    \"\"\"Return the average speed over the whole journey.\"\"\"
+    total_distance = 0
+    total_time = 0
+    for distance, time in legs:
+        if time <= 0:
+            raise ValueError("a leg must take some time")
+        total_distance += distance
+        total_time += time
+    return total_distance / total_time""",
+    variant_two="""def average_speed(legs):
+    \"\"\"Return the average speed over the whole journey.\"\"\"
+    if any(time <= 0 for _, time in legs):
+        raise ValueError("a leg must take some time")
+    return sum(distance for distance, _ in legs) / sum(time for _, time in legs)""",
+    variant_three="""def average_speed(legs):
+    \"\"\"Return the average speed over the whole journey.\"\"\"
+    total_distance = sum(distance for distance, _ in legs)
+    total_time = sum(time for _, time in legs)
+    return total_distance / total_time""",
+    variant_four="""def average_speed(legs):
+    \"\"\"Return the average speed over the whole journey.\"\"\"
+    if any(time <= 0 for _, time in legs):
+        raise ValueError("a leg must take some time")
+    speeds = [distance / time for distance, time in legs]
+    return sum(speeds) / len(speeds)""",
+    visible_test=_test_module(
+        "journey_rate",
+        "Published contract for the average speed of a journey.",
+        """
+def test_two_legs_of_the_same_length_in_time() -> None:
+    assert average_speed([(60, 1), (120, 1)]) == 90.0
+
+
+def test_two_longer_legs_of_the_same_length_in_time() -> None:
+    assert average_speed([(50, 2), (150, 2)]) == 50.0
+
+
+def test_a_single_leg() -> None:
+    assert average_speed([(100, 4)]) == 25.0
+""",
+        imports="from journey_rate import average_speed\n",
+    ),
+    hidden_test=_test_module(
+        "journey_rate",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_two_legs_of_the_same_length_in_time() -> None:
+    assert average_speed([(60, 1), (120, 1)]) == 90.0
+
+
+def test_the_average_is_over_the_totals_not_the_mean_of_the_leg_speeds() -> None:
+    assert average_speed([(60, 1), (60, 3)]) == 30.0
+
+
+def test_a_leg_that_takes_no_time_is_refused() -> None:
+    with pytest.raises(ValueError):
+        average_speed([(10, 0)])
+""",
+        imports="from journey_rate import average_speed\n",
+    ),
+)
+
+_G080 = D2TaskSpec(
+    template_id="d4_numeric.trimmed_mean",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d4-numeric-trimmed-mean",
+    module="trimmed_average",
+    module_doc="Averaging readings once the extremes at each end are dropped.",
+    issue=(
+        "trimmed_mean() is documented to average readings once a few at each end are dropped. "
+        "Callers report that asking to drop none of them brings the call down instead of "
+        "averaging them all, and that asking to drop more than there are brings it down as well "
+        "rather than saying so."
+    ),
+    expected=(
+        "trimmed_mean(values, trim) sorts the readings, drops `trim` from each end, and averages "
+        "what is left; a trim of zero averages every reading, and a trim that would leave "
+        "nothing raises ValueError."
+    ),
+    baseline_reason=(
+        "it takes the slice from `trim` to minus `trim`, which for a trim of zero is the empty "
+        "slice"
+    ),
+    edge_cases=(
+        "a trim of zero averages every reading",
+        "a trim that would leave nothing is refused",
+    ),
+    baseline="""def trimmed_mean(values, trim):
+    \"\"\"Average `values` once `trim` readings at each end are dropped.\"\"\"
+    ordered = sorted(values)
+    kept = ordered[trim:-trim]
+    return sum(kept) / len(kept)""",
+    variant_one="""def trimmed_mean(values, trim):
+    \"\"\"Average `values` once `trim` readings at each end are dropped.\"\"\"
+    ordered = sorted(values)
+    kept = ordered[trim : len(ordered) - trim]
+    if not kept:
+        raise ValueError("trimming that much leaves nothing to average")
+    return sum(kept) / len(kept)""",
+    variant_two="""def trimmed_mean(values, trim):
+    \"\"\"Average `values` once `trim` readings at each end are dropped.\"\"\"
+    ordered = sorted(values)
+    kept = [
+        value for index, value in enumerate(ordered) if trim <= index < len(ordered) - trim
+    ]
+    if not kept:
+        raise ValueError("trimming that much leaves nothing to average")
+    return sum(kept) / len(kept)""",
+    variant_three="""def trimmed_mean(values, trim):
+    \"\"\"Average `values` once `trim` readings at each end are dropped.\"\"\"
+    ordered = sorted(values)
+    kept = ordered[trim : len(ordered) - trim]
+    return sum(kept) / len(kept)""",
+    variant_four="""def trimmed_mean(values, trim):
+    \"\"\"Average `values` once `trim` readings at each end are dropped.\"\"\"
+    ordered = sorted(values)
+    kept = ordered[trim:-trim]
+    if not kept:
+        raise ValueError("trimming that much leaves nothing to average")
+    return sum(kept) / len(kept)""",
+    visible_test=_test_module(
+        "trimmed_average",
+        "Published contract for a trimmed average.",
+        """
+def test_dropping_one_from_each_end() -> None:
+    assert trimmed_mean([1, 2, 3, 4, 5], 1) == 3.0
+
+
+def test_the_readings_are_sorted_first() -> None:
+    assert trimmed_mean([10, 1, 5], 1) == 5.0
+
+
+def test_dropping_two_from_each_end() -> None:
+    assert trimmed_mean([1, 2, 3, 4, 5, 6], 2) == 3.5
+""",
+        imports="from trimmed_average import trimmed_mean\n",
+    ),
+    hidden_test=_test_module(
+        "trimmed_average",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_dropping_one_from_each_end() -> None:
+    assert trimmed_mean([1, 2, 3, 4, 5], 1) == 3.0
+
+
+def test_a_trim_of_zero_averages_every_reading() -> None:
+    assert trimmed_mean([1, 2, 3], 0) == 2.0
+
+
+def test_a_trim_that_would_leave_nothing_is_refused() -> None:
+    with pytest.raises(ValueError):
+        trimmed_mean([1, 2, 3], 2)
+""",
+        imports="from trimmed_average import trimmed_mean\n",
+    ),
+)
+
+# ------------------------------------------------------------------------- data transformation
+
+_G081 = D2TaskSpec(
+    template_id="d4_transform.melt_columns",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d4-transform-melt-columns",
+    module="wide_to_long",
+    module_doc="Turning one wide record into a row per measure.",
+    issue=(
+        "melt() is documented to turn one wide record into a row per measure. Callers report "
+        "that a measure recorded as nothing at all is left out entirely rather than reported as "
+        "nothing, and that the rows come back in alphabetical order rather than in the order the "
+        "record wrote them."
+    ),
+    expected=(
+        "melt(record, keep) returns one row per field outside `keep`, in the record's own field "
+        "order, each row carrying the kept fields alongside the field name and its value, "
+        "including a field holding nothing."
+    ),
+    baseline_reason="it walks the field names in sorted order and passes over the empty ones",
+    edge_cases=(
+        "a field holding nothing still makes a row",
+        "the rows follow the record's own field order",
+    ),
+    baseline="""def melt(record, keep):
+    \"\"\"Turn the wide `record` into one row per field outside `keep`.\"\"\"
+    kept = {name: record[name] for name in keep}
+    rows = []
+    for name in sorted(record):
+        if name in keep or record[name] is None:
+            continue
+        rows.append({**kept, "field": name, "value": record[name]})
+    return rows""",
+    variant_one="""def melt(record, keep):
+    \"\"\"Turn the wide `record` into one row per field outside `keep`.\"\"\"
+    kept = {name: record[name] for name in keep}
+    rows = []
+    for name, value in record.items():
+        if name in keep:
+            continue
+        rows.append({**kept, "field": name, "value": value})
+    return rows""",
+    variant_two="""def melt(record, keep):
+    \"\"\"Turn the wide `record` into one row per field outside `keep`.\"\"\"
+    kept = {name: record[name] for name in keep}
+    return [
+        dict(kept, field=name, value=value)
+        for name, value in record.items()
+        if name not in keep
+    ]""",
+    variant_three="""def melt(record, keep):
+    \"\"\"Turn the wide `record` into one row per field outside `keep`.\"\"\"
+    kept = {name: record[name] for name in keep}
+    rows = []
+    for name in sorted(record):
+        if name in keep:
+            continue
+        rows.append({**kept, "field": name, "value": record[name]})
+    return rows""",
+    variant_four="""def melt(record, keep):
+    \"\"\"Turn the wide `record` into one row per field outside `keep`.\"\"\"
+    kept = {name: record[name] for name in keep}
+    rows = []
+    for name, value in record.items():
+        if name in keep or value is None:
+            continue
+        rows.append({**kept, "field": name, "value": value})
+    return rows""",
+    visible_test=_test_module(
+        "wide_to_long",
+        "Published contract for melting a wide record.",
+        """
+def test_two_measures() -> None:
+    assert melt({"id": 1, "alpha": 10, "beta": 20}, ("id",)) == [
+        {"id": 1, "field": "alpha", "value": 10},
+        {"id": 1, "field": "beta", "value": 20},
+    ]
+
+
+def test_a_single_measure() -> None:
+    assert melt({"id": 7, "alpha": 3}, ("id",)) == [{"id": 7, "field": "alpha", "value": 3}]
+
+
+def test_two_kept_fields() -> None:
+    rows = melt({"id": 1, "day": "mon", "alpha": 10}, ("id", "day"))
+    assert rows == [{"id": 1, "day": "mon", "field": "alpha", "value": 10}]
+""",
+        imports="from wide_to_long import melt\n",
+    ),
+    hidden_test=_test_module(
+        "wide_to_long",
+        "The part of the contract the published tests do not state.",
+        """
+def test_two_measures() -> None:
+    assert melt({"id": 1, "alpha": 10, "beta": 20}, ("id",)) == [
+        {"id": 1, "field": "alpha", "value": 10},
+        {"id": 1, "field": "beta", "value": 20},
+    ]
+
+
+def test_a_field_holding_nothing_still_makes_a_row() -> None:
+    assert melt({"id": 1, "alpha": None}, ("id",)) == [
+        {"id": 1, "field": "alpha", "value": None}
+    ]
+
+
+def test_the_rows_follow_the_records_own_field_order() -> None:
+    rows = melt({"id": 1, "beta": 20, "alpha": 10}, ("id",))
+    assert [row["field"] for row in rows] == ["beta", "alpha"]
+""",
+        imports="from wide_to_long import melt\n",
+    ),
+)
+
+_G082 = D2TaskSpec(
+    template_id="d4_transform.first_value",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d4-transform-first-value",
+    module="first_present",
+    module_doc="Choosing the first field a record actually holds.",
+    issue=(
+        "first_value() is documented to return the first of several fields a record actually "
+        "holds. Callers report that a field holding the number zero is passed over as though it "
+        "were missing, and that a record holding none of the fields brings the call down instead "
+        "of falling back."
+    ),
+    expected=(
+        "first_value(record, names, fallback) returns the value of the first name the record "
+        "holds with anything other than None -- a zero counts -- and returns the fallback when "
+        "the record holds none of them."
+    ),
+    baseline_reason="it keeps the values that look like something and takes the first of them",
+    edge_cases=(
+        "a field holding zero counts as held",
+        "a record holding none of the names falls back",
+    ),
+    baseline="""def first_value(record, names, fallback):
+    \"\"\"Return the first of `names` that `record` actually holds.\"\"\"
+    found = [record[name] for name in names if record.get(name)]
+    return found[0]""",
+    variant_one="""def first_value(record, names, fallback):
+    \"\"\"Return the first of `names` that `record` actually holds.\"\"\"
+    for name in names:
+        if name in record and record[name] is not None:
+            return record[name]
+    return fallback""",
+    variant_two="""def first_value(record, names, fallback):
+    \"\"\"Return the first of `names` that `record` actually holds.\"\"\"
+    held = [record[name] for name in names if record.get(name, None) is not None]
+    return held[0] if held else fallback""",
+    variant_three="""def first_value(record, names, fallback):
+    \"\"\"Return the first of `names` that `record` actually holds.\"\"\"
+    found = [record[name] for name in names if record.get(name) is not None]
+    return found[0]""",
+    variant_four="""def first_value(record, names, fallback):
+    \"\"\"Return the first of `names` that `record` actually holds.\"\"\"
+    found = [record[name] for name in names if record.get(name)]
+    return found[0] if found else fallback""",
+    visible_test=_test_module(
+        "first_present",
+        "Published contract for choosing the first field held.",
+        """
+def test_the_first_name_wins() -> None:
+    assert first_value({"nickname": "ada", "name": "Ada"}, ("nickname", "name"), "?") == "ada"
+
+
+def test_a_name_the_record_does_not_have_is_passed_over() -> None:
+    assert first_value({"name": "Ada"}, ("nickname", "name"), "?") == "Ada"
+
+
+def test_a_name_the_record_holds_as_nothing_is_passed_over() -> None:
+    assert first_value({"nickname": None, "name": "Ada"}, ("nickname", "name"), "?") == "Ada"
+""",
+        imports="from first_present import first_value\n",
+    ),
+    hidden_test=_test_module(
+        "first_present",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_first_name_wins() -> None:
+    assert first_value({"nickname": "ada", "name": "Ada"}, ("nickname", "name"), "?") == "ada"
+
+
+def test_a_field_holding_zero_counts_as_held() -> None:
+    assert first_value({"count": 0, "total": 5}, ("count", "total"), -1) == 0
+
+
+def test_a_record_holding_none_of_the_names_falls_back() -> None:
+    assert first_value({}, ("nickname", "name"), "?") == "?"
+""",
+        imports="from first_present import first_value\n",
+    ),
+)
+
+_G083 = D2TaskSpec(
+    template_id="d4_transform.build_tree",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d4-transform-build-tree",
+    module="parent_tree",
+    module_doc="Building a tree out of records that name their parent.",
+    issue=(
+        "build_tree() is documented to build a tree out of records that name their parent. "
+        "Callers report that a record naming a parent that is not in the batch brings the call "
+        "down with a key error rather than being refused, and that the children of a node come "
+        "back sorted by id rather than in the order the records arrived."
+    ),
+    expected=(
+        "build_tree(records) returns the records with no parent as roots, each carrying its "
+        "children in the order the records arrived, and raises ValueError for a record naming a "
+        "parent that is not there."
+    ),
+    baseline_reason=(
+        "it walks the records in id order and reaches for the parent without looking first"
+    ),
+    edge_cases=(
+        "a record naming a parent that is not there is refused",
+        "the children keep the order the records arrived in",
+    ),
+    baseline="""def build_tree(records):
+    \"\"\"Return the roots of the tree the parent links describe.\"\"\"
+    nodes = {record["id"]: {**record, "children": []} for record in records}
+    roots = []
+    for record in sorted(records, key=lambda item: item["id"]):
+        node = nodes[record["id"]]
+        if record["parent"] is None:
+            roots.append(node)
+        else:
+            nodes[record["parent"]]["children"].append(node)
+    return roots""",
+    variant_one="""def build_tree(records):
+    \"\"\"Return the roots of the tree the parent links describe.\"\"\"
+    nodes = {record["id"]: {**record, "children": []} for record in records}
+    roots = []
+    for record in records:
+        node = nodes[record["id"]]
+        parent = record["parent"]
+        if parent is None:
+            roots.append(node)
+        elif parent in nodes:
+            nodes[parent]["children"].append(node)
+        else:
+            raise ValueError("a record names a parent that is not there")
+    return roots""",
+    variant_two="""def build_tree(records):
+    \"\"\"Return the roots of the tree the parent links describe.\"\"\"
+    known = {record["id"] for record in records}
+    for record in records:
+        if record["parent"] is not None and record["parent"] not in known:
+            raise ValueError("a record names a parent that is not there")
+    nodes = {record["id"]: dict(record, children=[]) for record in records}
+    for record in records:
+        if record["parent"] is not None:
+            nodes[record["parent"]]["children"].append(nodes[record["id"]])
+    return [nodes[record["id"]] for record in records if record["parent"] is None]""",
+    variant_three="""def build_tree(records):
+    \"\"\"Return the roots of the tree the parent links describe.\"\"\"
+    nodes = {record["id"]: {**record, "children": []} for record in records}
+    roots = []
+    for record in sorted(records, key=lambda item: item["id"]):
+        node = nodes[record["id"]]
+        parent = record["parent"]
+        if parent is None:
+            roots.append(node)
+        elif parent in nodes:
+            nodes[parent]["children"].append(node)
+        else:
+            raise ValueError("a record names a parent that is not there")
+    return roots""",
+    variant_four="""def build_tree(records):
+    \"\"\"Return the roots of the tree the parent links describe.\"\"\"
+    nodes = {record["id"]: {**record, "children": []} for record in records}
+    roots = []
+    for record in records:
+        node = nodes[record["id"]]
+        if record["parent"] is None:
+            roots.append(node)
+        else:
+            nodes[record["parent"]]["children"].append(node)
+    return roots""",
+    visible_test=_test_module(
+        "parent_tree",
+        "Published contract for building a tree from parent links.",
+        """
+def test_a_root_with_two_children() -> None:
+    roots = build_tree(
+        [
+            {"id": 1, "parent": None},
+            {"id": 2, "parent": 1},
+            {"id": 3, "parent": 1},
+        ]
+    )
+    assert len(roots) == 1
+    assert [child["id"] for child in roots[0]["children"]] == [2, 3]
+
+
+def test_a_single_record() -> None:
+    roots = build_tree([{"id": 1, "parent": None}])
+    assert roots[0]["children"] == []
+
+
+def test_a_grandchild() -> None:
+    roots = build_tree(
+        [
+            {"id": 1, "parent": None},
+            {"id": 2, "parent": 1},
+            {"id": 3, "parent": 2},
+        ]
+    )
+    assert roots[0]["children"][0]["children"][0]["id"] == 3
+""",
+        imports="from parent_tree import build_tree\n",
+    ),
+    hidden_test=_test_module(
+        "parent_tree",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_root_with_two_children() -> None:
+    roots = build_tree(
+        [
+            {"id": 1, "parent": None},
+            {"id": 2, "parent": 1},
+            {"id": 3, "parent": 1},
+        ]
+    )
+    assert [child["id"] for child in roots[0]["children"]] == [2, 3]
+
+
+def test_a_record_naming_a_parent_that_is_not_there_is_refused() -> None:
+    with pytest.raises(ValueError):
+        build_tree([{"id": 1, "parent": None}, {"id": 2, "parent": 9}])
+
+
+def test_the_children_keep_the_order_the_records_arrived_in() -> None:
+    roots = build_tree(
+        [
+            {"id": 1, "parent": None},
+            {"id": 3, "parent": 1},
+            {"id": 2, "parent": 1},
+        ]
+    )
+    assert [child["id"] for child in roots[0]["children"]] == [3, 2]
+""",
+        imports="from parent_tree import build_tree\n",
+    ),
+)
+
+_G084 = D2TaskSpec(
+    template_id="d4_transform.compact_record",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d4-transform-compact-record",
+    module="record_compaction",
+    module_doc="Dropping the fields of a record that hold nothing.",
+    issue=(
+        "compact() is documented to drop the fields of a record that hold nothing. Callers "
+        "report that a field holding the number zero or an empty string is dropped as well, and "
+        "that a section nested inside the record keeps its empty fields."
+    ),
+    expected=(
+        "compact(record) returns the record without the fields holding None, keeps a field "
+        "holding zero, False or an empty string, and compacts a nested section the same way."
+    ),
+    baseline_reason="it keeps the fields that look like something and never looks inside one",
+    edge_cases=(
+        "a field holding zero or an empty string is kept",
+        "a nested section is compacted too",
+    ),
+    baseline="""def compact(record):
+    \"\"\"Return `record` without the fields that hold nothing.\"\"\"
+    return {name: value for name, value in record.items() if value}""",
+    variant_one="""def compact(record):
+    \"\"\"Return `record` without the fields that hold nothing.\"\"\"
+    compacted = {}
+    for name, value in record.items():
+        if value is None:
+            continue
+        compacted[name] = compact(value) if isinstance(value, dict) else value
+    return compacted""",
+    variant_two="""def compact(record):
+    \"\"\"Return `record` without the fields that hold nothing.\"\"\"
+    kept = [(name, value) for name, value in record.items() if value is not None]
+    return dict(
+        (name, compact(value)) if isinstance(value, dict) else (name, value)
+        for name, value in kept
+    )""",
+    variant_three="""def compact(record):
+    \"\"\"Return `record` without the fields that hold nothing.\"\"\"
+    return {name: value for name, value in record.items() if value is not None}""",
+    variant_four="""def compact(record):
+    \"\"\"Return `record` without the fields that hold nothing.\"\"\"
+    compacted = {}
+    for name, value in record.items():
+        if not value:
+            continue
+        compacted[name] = compact(value) if isinstance(value, dict) else value
+    return compacted""",
+    visible_test=_test_module(
+        "record_compaction",
+        "Published contract for dropping the empty fields of a record.",
+        """
+def test_one_empty_field() -> None:
+    assert compact({"a": 1, "b": None, "c": "x"}) == {"a": 1, "c": "x"}
+
+
+def test_a_record_with_nothing_to_drop() -> None:
+    assert compact({"a": 1, "b": "x"}) == {"a": 1, "b": "x"}
+
+
+def test_a_record_that_is_all_empty() -> None:
+    assert compact({"a": None, "b": None}) == {}
+""",
+        imports="from record_compaction import compact\n",
+    ),
+    hidden_test=_test_module(
+        "record_compaction",
+        "The part of the contract the published tests do not state.",
+        """
+def test_one_empty_field() -> None:
+    assert compact({"a": 1, "b": None, "c": "x"}) == {"a": 1, "c": "x"}
+
+
+def test_a_field_holding_zero_or_an_empty_string_is_kept() -> None:
+    assert compact({"a": 0, "b": "", "c": None}) == {"a": 0, "b": ""}
+
+
+def test_a_nested_section_is_compacted_too() -> None:
+    assert compact({"outer": {"a": 1, "b": None}}) == {"outer": {"a": 1}}
+""",
+        imports="from record_compaction import compact\n",
+    ),
+)
+
+_G085 = D2TaskSpec(
+    template_id="d4_transform.merge_sorted",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d4-transform-merge-sorted",
+    module="sorted_merge",
+    module_doc="Merging two already-sorted streams of records into one.",
+    issue=(
+        "merge_sorted() is documented to merge two already-sorted streams into one. Callers "
+        "report that where a record from each side ties on the key the right-hand one is taken "
+        "first, and that a record without the key at all brings the call down rather than "
+        "sorting after the records that have one."
+    ),
+    expected=(
+        "merge_sorted(left, right, key) returns the two streams merged in key order, takes the "
+        "left record first where two tie, and sorts a record without the key after every record "
+        "that has one."
+    ),
+    baseline_reason=(
+        "it takes the left record only when it is strictly smaller, and reads the key straight "
+        "off every record"
+    ),
+    edge_cases=(
+        "a tie takes the left record first",
+        "a record without the key sorts after the ones that have it",
+    ),
+    baseline="""def merge_sorted(left, right, key):
+    \"\"\"Merge two streams already sorted by `key` into one.\"\"\"
+    merged = []
+    first = 0
+    second = 0
+    while first < len(left) and second < len(right):
+        if left[first][key] < right[second][key]:
+            merged.append(left[first])
+            first += 1
+        else:
+            merged.append(right[second])
+            second += 1
+    merged.extend(left[first:])
+    merged.extend(right[second:])
+    return merged""",
+    variant_one="""def merge_sorted(left, right, key):
+    \"\"\"Merge two streams already sorted by `key` into one.\"\"\"
+    merged = []
+    first = 0
+    second = 0
+    while first < len(left) and second < len(right):
+        ahead = left[first]
+        behind = right[second]
+        ahead_rank = (0, ahead[key]) if key in ahead else (1,)
+        behind_rank = (0, behind[key]) if key in behind else (1,)
+        if behind_rank < ahead_rank:
+            merged.append(behind)
+            second += 1
+        else:
+            merged.append(ahead)
+            first += 1
+    merged.extend(left[first:])
+    merged.extend(right[second:])
+    return merged""",
+    variant_two="""def merge_sorted(left, right, key):
+    \"\"\"Merge two streams already sorted by `key` into one.\"\"\"
+    combined = [*left, *right]
+    return sorted(
+        combined, key=lambda record: (0, record[key]) if key in record else (1,)
+    )""",
+    variant_three="""def merge_sorted(left, right, key):
+    \"\"\"Merge two streams already sorted by `key` into one.\"\"\"
+    merged = []
+    first = 0
+    second = 0
+    while first < len(left) and second < len(right):
+        if right[second][key] < left[first][key]:
+            merged.append(right[second])
+            second += 1
+        else:
+            merged.append(left[first])
+            first += 1
+    merged.extend(left[first:])
+    merged.extend(right[second:])
+    return merged""",
+    variant_four="""def merge_sorted(left, right, key):
+    \"\"\"Merge two streams already sorted by `key` into one.\"\"\"
+    merged = []
+    first = 0
+    second = 0
+    while first < len(left) and second < len(right):
+        ahead = left[first]
+        behind = right[second]
+        ahead_rank = (0, ahead[key]) if key in ahead else (1,)
+        behind_rank = (0, behind[key]) if key in behind else (1,)
+        if ahead_rank < behind_rank:
+            merged.append(ahead)
+            first += 1
+        else:
+            merged.append(behind)
+            second += 1
+    merged.extend(left[first:])
+    merged.extend(right[second:])
+    return merged""",
+    visible_test=_test_module(
+        "sorted_merge",
+        "Published contract for merging two sorted streams.",
+        """
+def test_two_streams_that_interleave() -> None:
+    left = [{"n": 1}, {"n": 3}]
+    right = [{"n": 2}, {"n": 4}]
+    assert [record["n"] for record in merge_sorted(left, right, "n")] == [1, 2, 3, 4]
+
+
+def test_one_stream_empty() -> None:
+    assert merge_sorted([], [{"n": 1}], "n") == [{"n": 1}]
+
+
+def test_one_record_on_each_side() -> None:
+    assert [record["n"] for record in merge_sorted([{"n": 1}], [{"n": 5}], "n")] == [1, 5]
+""",
+        imports="from sorted_merge import merge_sorted\n",
+    ),
+    hidden_test=_test_module(
+        "sorted_merge",
+        "The part of the contract the published tests do not state.",
+        """
+def test_two_streams_that_interleave() -> None:
+    left = [{"n": 1}, {"n": 3}]
+    right = [{"n": 2}, {"n": 4}]
+    assert [record["n"] for record in merge_sorted(left, right, "n")] == [1, 2, 3, 4]
+
+
+def test_a_tie_takes_the_left_record_first() -> None:
+    merged = merge_sorted([{"id": "L", "n": 2}], [{"id": "R", "n": 2}], "n")
+    assert [record["id"] for record in merged] == ["L", "R"]
+
+
+def test_a_record_without_the_key_sorts_after_the_ones_that_have_it() -> None:
+    merged = merge_sorted([{"id": "a", "n": 1}, {"id": "z"}], [{"id": "b", "n": 2}], "n")
+    assert [record["id"] for record in merged] == ["a", "b", "z"]
+""",
+        imports="from sorted_merge import merge_sorted\n",
+    ),
+)
+
 #: Authored so far. The tuple grows as batches are authored and executed;
 #: `corpus_d4.py` reads it rather than a count, so a partially authored corpus reports what it
 #: has instead of claiming what it does not.
@@ -7747,4 +8832,14 @@ D4_CALIBRATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G073,
     _G074,
     _G075,
+    _G076,
+    _G077,
+    _G078,
+    _G079,
+    _G080,
+    _G081,
+    _G082,
+    _G083,
+    _G084,
+    _G085,
 )
