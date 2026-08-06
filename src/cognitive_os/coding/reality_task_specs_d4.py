@@ -2947,6 +2947,930 @@ def test_a_bit_outside_the_mask_is_refused() -> None:
     ),
 )
 
+# ------------------------------------------------------------------------------- numeric logic
+
+_G031 = D2TaskSpec(
+    template_id="d4_numeric.positive_remainder",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d4-numeric-positive-remainder",
+    module="positive_remainder",
+    module_doc="Taking a remainder that is never negative.",
+    issue=(
+        "positive_remainder() is documented to return a remainder in the range zero to just "
+        "below the modulus. Callers report that a negative input gives the remainder of its "
+        "magnitude instead, and that a modulus of zero raises an arithmetic error rather than "
+        "being reported as a bad argument."
+    ),
+    expected=(
+        "positive_remainder(value, modulus) returns a remainder between zero and the modulus for "
+        "any sign of value, and raises ValueError when the modulus is zero."
+    ),
+    baseline_reason="the sign is thrown away before the division and the modulus is never checked",
+    edge_cases=(
+        "a negative value still gives a non-negative remainder",
+        "a modulus of zero is reported as a bad argument",
+    ),
+    baseline="""def positive_remainder(value, modulus):
+    \"\"\"Return the non-negative remainder of `value` divided by `modulus`.\"\"\"
+    return abs(value) % modulus""",
+    variant_one="""def positive_remainder(value, modulus):
+    \"\"\"Return the non-negative remainder of `value` divided by `modulus`.\"\"\"
+    if modulus == 0:
+        raise ValueError("the modulus cannot be zero")
+    return value % modulus""",
+    variant_two="""def positive_remainder(value, modulus):
+    \"\"\"Return the non-negative remainder of `value` divided by `modulus`.\"\"\"
+    if not modulus:
+        raise ValueError("the modulus cannot be zero")
+    remainder = value - (value // modulus) * modulus
+    while remainder < 0:
+        remainder += modulus
+    return remainder""",
+    variant_three="""def positive_remainder(value, modulus):
+    \"\"\"Return the non-negative remainder of `value` divided by `modulus`.\"\"\"
+    return value % modulus""",
+    variant_four="""def positive_remainder(value, modulus):
+    \"\"\"Return the non-negative remainder of `value` divided by `modulus`.\"\"\"
+    if modulus == 0:
+        raise ValueError("the modulus cannot be zero")
+    return abs(value) % modulus""",
+    visible_test=_test_module(
+        "positive_remainder",
+        "Published contract for a non-negative remainder.",
+        """
+def test_a_plain_remainder() -> None:
+    assert positive_remainder(7, 3) == 1
+
+
+def test_an_exact_multiple_has_no_remainder() -> None:
+    assert positive_remainder(9, 3) == 0
+""",
+        imports="from positive_remainder import positive_remainder\n",
+    ),
+    hidden_test=_test_module(
+        "positive_remainder",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_plain_remainder() -> None:
+    assert positive_remainder(7, 3) == 1
+
+
+def test_a_negative_value_gives_a_non_negative_remainder() -> None:
+    assert positive_remainder(-7, 3) == 2
+
+
+def test_a_modulus_of_zero_is_a_bad_argument() -> None:
+    with pytest.raises(ValueError):
+        positive_remainder(7, 0)
+""",
+        imports="from positive_remainder import positive_remainder\n",
+    ),
+)
+
+_G032 = D2TaskSpec(
+    template_id="d4_numeric.rounded_up_division",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d4-numeric-rounded-up-division",
+    module="page_count",
+    module_doc="Counting how many pages a number of rows needs.",
+    issue=(
+        "pages_needed() is documented to count the pages a number of rows needs. Callers report "
+        "that a row count filling its pages exactly gets one page too many, and that a page size "
+        "of zero raises an arithmetic error instead of a bad-argument error."
+    ),
+    expected=(
+        "pages_needed(rows, size) returns the number of pages needed, adds no extra page when "
+        "the rows divide exactly, and raises ValueError for a page size of zero."
+    ),
+    baseline_reason="a page is always added after the floor division, and the size is not checked",
+    edge_cases=(
+        "an exact fit needs no extra page",
+        "a page size of zero is reported as a bad argument",
+    ),
+    baseline="""def pages_needed(rows, size):
+    \"\"\"Return how many pages of `size` rows are needed for `rows` rows.\"\"\"
+    return rows // size + 1""",
+    variant_one="""def pages_needed(rows, size):
+    \"\"\"Return how many pages of `size` rows are needed for `rows` rows.\"\"\"
+    if size == 0:
+        raise ValueError("a page cannot hold zero rows")
+    return -(-rows // size)""",
+    variant_two="""def pages_needed(rows, size):
+    \"\"\"Return how many pages of `size` rows are needed for `rows` rows.\"\"\"
+    if size == 0:
+        raise ValueError("a page cannot hold zero rows")
+    whole, left_over = divmod(rows, size)
+    return whole + 1 if left_over else whole""",
+    variant_three="""def pages_needed(rows, size):
+    \"\"\"Return how many pages of `size` rows are needed for `rows` rows.\"\"\"
+    whole, left_over = divmod(rows, size)
+    return whole + 1 if left_over else whole""",
+    variant_four="""def pages_needed(rows, size):
+    \"\"\"Return how many pages of `size` rows are needed for `rows` rows.\"\"\"
+    if size == 0:
+        raise ValueError("a page cannot hold zero rows")
+    return rows // size + 1""",
+    visible_test=_test_module(
+        "page_count",
+        "Published contract for counting pages.",
+        """
+def test_rows_that_overflow_a_page() -> None:
+    assert pages_needed(7, 3) == 3
+
+
+def test_fewer_rows_than_one_page() -> None:
+    assert pages_needed(1, 3) == 1
+""",
+        imports="from page_count import pages_needed\n",
+    ),
+    hidden_test=_test_module(
+        "page_count",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_rows_that_overflow_a_page() -> None:
+    assert pages_needed(7, 3) == 3
+
+
+def test_an_exact_fit_needs_no_extra_page() -> None:
+    assert pages_needed(6, 3) == 2
+
+
+def test_a_page_size_of_zero_is_a_bad_argument() -> None:
+    with pytest.raises(ValueError):
+        pages_needed(5, 0)
+""",
+        imports="from page_count import pages_needed\n",
+    ),
+)
+
+_G033 = D2TaskSpec(
+    template_id="d4_numeric.lowest_common_multiple",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d4-numeric-lowest-common-multiple",
+    module="common_multiple",
+    module_doc="Finding the lowest multiple two numbers share.",
+    issue=(
+        "lowest_common_multiple() is documented to return the smallest positive multiple two "
+        "numbers share. Callers report that a negative argument yields a negative multiple, and "
+        "that two zeros raise an arithmetic error instead of being reported as bad arguments."
+    ),
+    expected=(
+        "lowest_common_multiple(first, second) returns the smallest positive shared multiple "
+        "regardless of sign, and raises ValueError when both arguments are zero."
+    ),
+    baseline_reason=(
+        "the signs are carried through the product and the all-zero case is not checked"
+    ),
+    edge_cases=(
+        "a negative argument still yields a positive multiple",
+        "two zeros are reported as bad arguments",
+    ),
+    baseline="""def lowest_common_multiple(first, second):
+    \"\"\"Return the smallest positive multiple shared by `first` and `second`.\"\"\"
+    left, right = first, second
+    while right:
+        left, right = right, left % right
+    return first * second // left""",
+    variant_one="""def lowest_common_multiple(first, second):
+    \"\"\"Return the smallest positive multiple shared by `first` and `second`.\"\"\"
+    if first == 0 and second == 0:
+        raise ValueError("two zeros share no positive multiple")
+    left, right = abs(first), abs(second)
+    while right:
+        left, right = right, left % right
+    return abs(first * second) // left""",
+    variant_two="""def lowest_common_multiple(first, second):
+    \"\"\"Return the smallest positive multiple shared by `first` and `second`.\"\"\"
+    if not first and not second:
+        raise ValueError("two zeros share no positive multiple")
+    larger = max(abs(first), abs(second))
+    smaller = min(abs(first), abs(second))
+    while smaller:
+        larger, smaller = smaller, larger % smaller
+    return abs(first) // larger * abs(second)""",
+    variant_three="""def lowest_common_multiple(first, second):
+    \"\"\"Return the smallest positive multiple shared by `first` and `second`.\"\"\"
+    left, right = abs(first), abs(second)
+    while right:
+        left, right = right, left % right
+    return abs(first * second) // left""",
+    variant_four="""def lowest_common_multiple(first, second):
+    \"\"\"Return the smallest positive multiple shared by `first` and `second`.\"\"\"
+    if first == 0 and second == 0:
+        raise ValueError("two zeros share no positive multiple")
+    left, right = first, second
+    while right:
+        left, right = right, left % right
+    return first * second // left""",
+    visible_test=_test_module(
+        "common_multiple",
+        "Published contract for the lowest common multiple.",
+        """
+def test_two_numbers_sharing_a_factor() -> None:
+    assert lowest_common_multiple(4, 6) == 12
+
+
+def test_two_numbers_sharing_nothing() -> None:
+    assert lowest_common_multiple(3, 5) == 15
+""",
+        imports="from common_multiple import lowest_common_multiple\n",
+    ),
+    hidden_test=_test_module(
+        "common_multiple",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_two_numbers_sharing_a_factor() -> None:
+    assert lowest_common_multiple(4, 6) == 12
+
+
+def test_a_negative_argument_still_yields_a_positive_multiple() -> None:
+    assert lowest_common_multiple(-4, 6) == 12
+
+
+def test_two_zeros_are_bad_arguments() -> None:
+    with pytest.raises(ValueError):
+        lowest_common_multiple(0, 0)
+""",
+        imports="from common_multiple import lowest_common_multiple\n",
+    ),
+)
+
+_G034 = D2TaskSpec(
+    template_id="d4_numeric.share_out",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d4-numeric-share-out",
+    module="share_out",
+    module_doc="Sharing a whole number out into equal parts.",
+    issue=(
+        "share_out() is documented to share a total into parts as evenly as possible. Callers "
+        "report that the remainder is silently dropped so the parts no longer add up to the "
+        "total, and that asking for zero parts raises an arithmetic error."
+    ),
+    expected=(
+        "share_out(total, parts) returns that many shares adding up to the total, giving the "
+        "earlier shares the extra unit, and raises ValueError when parts is zero."
+    ),
+    baseline_reason="every share gets the floor and the leftover is never handed out",
+    edge_cases=(
+        "the shares add up to the total",
+        "zero parts is reported as a bad argument",
+    ),
+    baseline="""def share_out(total, parts):
+    \"\"\"Return `parts` shares of `total`, as evenly as possible.\"\"\"
+    return [total // parts] * parts""",
+    variant_one="""def share_out(total, parts):
+    \"\"\"Return `parts` shares of `total`, as evenly as possible.\"\"\"
+    if parts == 0:
+        raise ValueError("a total cannot be shared into zero parts")
+    each, left_over = divmod(total, parts)
+    return [each + 1 if index < left_over else each for index in range(parts)]""",
+    variant_two="""def share_out(total, parts):
+    \"\"\"Return `parts` shares of `total`, as evenly as possible.\"\"\"
+    if parts == 0:
+        raise ValueError("a total cannot be shared into zero parts")
+    shares = []
+    remaining = total
+    for place in range(parts, 0, -1):
+        piece = -(-remaining // place)
+        shares.append(piece)
+        remaining -= piece
+    return shares""",
+    variant_three="""def share_out(total, parts):
+    \"\"\"Return `parts` shares of `total`, as evenly as possible.\"\"\"
+    each, left_over = divmod(total, parts)
+    return [each + 1 if index < left_over else each for index in range(parts)]""",
+    variant_four="""def share_out(total, parts):
+    \"\"\"Return `parts` shares of `total`, as evenly as possible.\"\"\"
+    if parts == 0:
+        raise ValueError("a total cannot be shared into zero parts")
+    return [total // parts] * parts""",
+    visible_test=_test_module(
+        "share_out",
+        "Published contract for sharing a total.",
+        """
+def test_a_total_that_divides_evenly() -> None:
+    assert share_out(6, 3) == [2, 2, 2]
+
+
+def test_a_larger_even_share() -> None:
+    assert share_out(10, 5) == [2, 2, 2, 2, 2]
+""",
+        imports="from share_out import share_out\n",
+    ),
+    hidden_test=_test_module(
+        "share_out",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_total_that_divides_evenly() -> None:
+    assert share_out(6, 3) == [2, 2, 2]
+
+
+def test_the_shares_add_up_to_the_total() -> None:
+    assert share_out(7, 3) == [3, 2, 2]
+
+
+def test_zero_parts_is_a_bad_argument() -> None:
+    with pytest.raises(ValueError):
+        share_out(5, 0)
+""",
+        imports="from share_out import share_out\n",
+    ),
+)
+
+_G035 = D2TaskSpec(
+    template_id="d4_numeric.approach_target",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d4-numeric-approach-target",
+    module="approach_target",
+    module_doc="Moving a value toward a target by a bounded step.",
+    issue=(
+        "approach() is documented to move a value toward a target by at most one step. Callers "
+        "report that a step larger than the remaining distance overshoots the target, and that a "
+        "negative step is accepted and moves the value backwards."
+    ),
+    expected=(
+        "approach(current, target, step) moves current toward target by at most step, never past "
+        "the target, and raises ValueError for a negative step."
+    ),
+    baseline_reason="the step is added or subtracted whole, and its sign is never checked",
+    edge_cases=(
+        "a step larger than the distance stops at the target",
+        "a negative step is reported as a bad argument",
+    ),
+    baseline="""def approach(current, target, step):
+    \"\"\"Return `current` moved toward `target` by at most `step`.\"\"\"
+    if target > current:
+        return current + step
+    return current - step""",
+    variant_one="""def approach(current, target, step):
+    \"\"\"Return `current` moved toward `target` by at most `step`.\"\"\"
+    if step < 0:
+        raise ValueError("a step cannot be negative")
+    if target > current:
+        return min(current + step, target)
+    return max(current - step, target)""",
+    variant_two="""def approach(current, target, step):
+    \"\"\"Return `current` moved toward `target` by at most `step`.\"\"\"
+    if step < 0:
+        raise ValueError("a step cannot be negative")
+    distance = target - current
+    if abs(distance) <= step:
+        return target
+    return current + step if distance > 0 else current - step""",
+    variant_three="""def approach(current, target, step):
+    \"\"\"Return `current` moved toward `target` by at most `step`.\"\"\"
+    if target > current:
+        return min(current + step, target)
+    return max(current - step, target)""",
+    variant_four="""def approach(current, target, step):
+    \"\"\"Return `current` moved toward `target` by at most `step`.\"\"\"
+    if step < 0:
+        raise ValueError("a step cannot be negative")
+    if target > current:
+        return current + step
+    return current - step""",
+    visible_test=_test_module(
+        "approach_target",
+        "Published contract for a bounded approach.",
+        """
+def test_moving_up_toward_a_distant_target() -> None:
+    assert approach(0, 10, 3) == 3
+
+
+def test_moving_down_toward_a_distant_target() -> None:
+    assert approach(10, 0, 4) == 6
+""",
+        imports="from approach_target import approach\n",
+    ),
+    hidden_test=_test_module(
+        "approach_target",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_moving_up_toward_a_distant_target() -> None:
+    assert approach(0, 10, 3) == 3
+
+
+def test_a_step_larger_than_the_distance_stops_at_the_target() -> None:
+    assert approach(0, 2, 5) == 2
+
+
+def test_a_negative_step_is_a_bad_argument() -> None:
+    with pytest.raises(ValueError):
+        approach(0, 10, -1)
+""",
+        imports="from approach_target import approach\n",
+    ),
+)
+
+_G036 = D2TaskSpec(
+    template_id="d4_numeric.weighted_score",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d4-numeric-weighted-score",
+    module="weighted_score",
+    module_doc="Combining scores under their weights.",
+    issue=(
+        "weighted_score() is documented to combine scores under matching weights. Callers report "
+        "that a short weight list silently ignores the trailing scores, and that weights adding "
+        "up to zero raise an arithmetic error rather than being reported as bad arguments."
+    ),
+    expected=(
+        "weighted_score(scores, weights) returns the weighted average, raises ValueError when "
+        "the two lists differ in length, and raises ValueError when the weights add up to zero."
+    ),
+    baseline_reason="zip stops at the shorter list and the divisor is never inspected",
+    edge_cases=(
+        "lists of different lengths are reported as bad arguments",
+        "weights adding up to zero are reported as bad arguments",
+    ),
+    baseline="""def weighted_score(scores, weights):
+    \"\"\"Return the average of `scores` under `weights`.\"\"\"
+    paired = zip(scores, weights)
+    return sum(score * weight for score, weight in paired) / sum(weights)""",
+    variant_one="""def weighted_score(scores, weights):
+    \"\"\"Return the average of `scores` under `weights`.\"\"\"
+    if len(scores) != len(weights):
+        raise ValueError("every score needs exactly one weight")
+    total_weight = sum(weights)
+    if total_weight == 0:
+        raise ValueError("the weights cannot add up to zero")
+    paired = zip(scores, weights)
+    return sum(score * weight for score, weight in paired) / total_weight""",
+    variant_two="""def weighted_score(scores, weights):
+    \"\"\"Return the average of `scores` under `weights`.\"\"\"
+    values = list(scores)
+    shares = list(weights)
+    if len(values) != len(shares):
+        raise ValueError("every score needs exactly one weight")
+    running = 0
+    divisor = 0
+    for place, value in enumerate(values):
+        running += value * shares[place]
+        divisor += shares[place]
+    if not divisor:
+        raise ValueError("the weights cannot add up to zero")
+    return running / divisor""",
+    variant_three="""def weighted_score(scores, weights):
+    \"\"\"Return the average of `scores` under `weights`.\"\"\"
+    if len(scores) != len(weights):
+        raise ValueError("every score needs exactly one weight")
+    paired = zip(scores, weights)
+    return sum(score * weight for score, weight in paired) / sum(weights)""",
+    variant_four="""def weighted_score(scores, weights):
+    \"\"\"Return the average of `scores` under `weights`.\"\"\"
+    total_weight = sum(weights)
+    if total_weight == 0:
+        raise ValueError("the weights cannot add up to zero")
+    paired = zip(scores, weights)
+    return sum(score * weight for score, weight in paired) / total_weight""",
+    visible_test=_test_module(
+        "weighted_score",
+        "Published contract for a weighted score.",
+        """
+def test_two_equally_weighted_scores() -> None:
+    assert weighted_score([1, 2], [1, 1]) == 1.5
+
+
+def test_a_single_score() -> None:
+    assert weighted_score([10], [2]) == 10.0
+""",
+        imports="from weighted_score import weighted_score\n",
+    ),
+    hidden_test=_test_module(
+        "weighted_score",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_two_equally_weighted_scores() -> None:
+    assert weighted_score([1, 2], [1, 1]) == 1.5
+
+
+def test_lists_of_different_lengths_are_bad_arguments() -> None:
+    with pytest.raises(ValueError):
+        weighted_score([1, 2], [1])
+
+
+def test_weights_adding_up_to_zero_are_bad_arguments() -> None:
+    with pytest.raises(ValueError):
+        weighted_score([1, 2], [0, 0])
+""",
+        imports="from weighted_score import weighted_score\n",
+    ),
+)
+
+_G037 = D2TaskSpec(
+    template_id="d4_numeric.render_in_base",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d4-numeric-render-in-base",
+    module="base_render",
+    module_doc="Writing a number out in another base.",
+    issue=(
+        "render_in_base() is documented to write a number in a base between two and thirty-six. "
+        "Callers report that zero comes back as an empty string, and that a base beyond "
+        "thirty-six is accepted and produces nonsense."
+    ),
+    expected=(
+        "render_in_base(number, base) returns the number written in that base, writes zero as "
+        "'0', and raises ValueError for a base outside two to thirty-six."
+    ),
+    baseline_reason="the loop never runs for zero, and the base is trusted to be in range",
+    edge_cases=(
+        "zero is written as a single nought",
+        "a base outside two to thirty-six is refused",
+    ),
+    baseline="""def render_in_base(number, base):
+    \"\"\"Return `number` written in `base`.\"\"\"
+    digits = "0123456789abcdefghijklmnopqrstuvwxyz"
+    written = ""
+    remaining = number
+    while remaining:
+        written = digits[remaining % base] + written
+        remaining //= base
+    return written""",
+    variant_one="""def render_in_base(number, base):
+    \"\"\"Return `number` written in `base`.\"\"\"
+    digits = "0123456789abcdefghijklmnopqrstuvwxyz"
+    if base < 2 or base > 36:
+        raise ValueError("the base must be between two and thirty-six")
+    if number == 0:
+        return "0"
+    written = ""
+    remaining = number
+    while remaining:
+        written = digits[remaining % base] + written
+        remaining //= base
+    return written""",
+    variant_two="""def render_in_base(number, base):
+    \"\"\"Return `number` written in `base`.\"\"\"
+    digits = "0123456789abcdefghijklmnopqrstuvwxyz"
+    if not 2 <= base <= 36:
+        raise ValueError("the base must be between two and thirty-six")
+    places = []
+    remaining = number
+    while remaining:
+        remaining, place = divmod(remaining, base)
+        places.append(digits[place])
+    return "".join(reversed(places)) or "0" """,
+    variant_three="""def render_in_base(number, base):
+    \"\"\"Return `number` written in `base`.\"\"\"
+    digits = "0123456789abcdefghijklmnopqrstuvwxyz"
+    if number == 0:
+        return "0"
+    written = ""
+    remaining = number
+    while remaining:
+        written = digits[remaining % base] + written
+        remaining //= base
+    return written""",
+    variant_four="""def render_in_base(number, base):
+    \"\"\"Return `number` written in `base`.\"\"\"
+    digits = "0123456789abcdefghijklmnopqrstuvwxyz"
+    if base < 2 or base > 36:
+        raise ValueError("the base must be between two and thirty-six")
+    written = ""
+    remaining = number
+    while remaining:
+        written = digits[remaining % base] + written
+        remaining //= base
+    return written""",
+    visible_test=_test_module(
+        "base_render",
+        "Published contract for writing a number in another base.",
+        """
+def test_ten_in_binary() -> None:
+    assert render_in_base(10, 2) == "1010"
+
+
+def test_two_hundred_and_fifty_five_in_hexadecimal() -> None:
+    assert render_in_base(255, 16) == "ff"
+""",
+        imports="from base_render import render_in_base\n",
+    ),
+    hidden_test=_test_module(
+        "base_render",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_ten_in_binary() -> None:
+    assert render_in_base(10, 2) == "1010"
+
+
+def test_zero_is_written_as_a_single_nought() -> None:
+    assert render_in_base(0, 2) == "0"
+
+
+def test_a_base_beyond_thirty_six_is_refused() -> None:
+    with pytest.raises(ValueError):
+        render_in_base(10, 40)
+""",
+        imports="from base_render import render_in_base\n",
+    ),
+)
+
+_G038 = D2TaskSpec(
+    template_id="d4_numeric.overlap_length",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d4-numeric-overlap-length",
+    module="interval_overlap",
+    module_doc="Measuring how far two inclusive intervals overlap.",
+    issue=(
+        "overlap_length() is documented to measure how far two inclusive intervals overlap. "
+        "Callers report that two intervals that do not meet report a negative overlap, and that "
+        "an interval written with its bounds the wrong way round is accepted."
+    ),
+    expected=(
+        "overlap_length(first, second) returns how many whole positions the two inclusive "
+        "intervals share, reports zero when they do not meet, and raises ValueError when either "
+        "interval has its bounds reversed."
+    ),
+    baseline_reason="the difference is returned as computed, and neither interval is checked",
+    edge_cases=(
+        "intervals that do not meet overlap by nothing",
+        "an interval with reversed bounds is refused",
+    ),
+    baseline="""def overlap_length(first, second):
+    \"\"\"Return how many positions the inclusive intervals `first` and `second` share.\"\"\"
+    low = max(first[0], second[0])
+    high = min(first[1], second[1])
+    return high - low + 1""",
+    variant_one="""def overlap_length(first, second):
+    \"\"\"Return how many positions the inclusive intervals `first` and `second` share.\"\"\"
+    for interval in (first, second):
+        if interval[0] > interval[1]:
+            raise ValueError(f"{interval!r} has its bounds reversed")
+    low = max(first[0], second[0])
+    high = min(first[1], second[1])
+    return max(0, high - low + 1)""",
+    variant_two="""def overlap_length(first, second):
+    \"\"\"Return how many positions the inclusive intervals `first` and `second` share.\"\"\"
+    if first[0] > first[1] or second[0] > second[1]:
+        raise ValueError("an interval cannot have its bounds reversed")
+    low = max(first[0], second[0])
+    high = min(first[1], second[1])
+    return high - low + 1 if high >= low else 0""",
+    variant_three="""def overlap_length(first, second):
+    \"\"\"Return how many positions the inclusive intervals `first` and `second` share.\"\"\"
+    low = max(first[0], second[0])
+    high = min(first[1], second[1])
+    return max(0, high - low + 1)""",
+    variant_four="""def overlap_length(first, second):
+    \"\"\"Return how many positions the inclusive intervals `first` and `second` share.\"\"\"
+    for interval in (first, second):
+        if interval[0] > interval[1]:
+            raise ValueError(f"{interval!r} has its bounds reversed")
+    low = max(first[0], second[0])
+    high = min(first[1], second[1])
+    return high - low + 1""",
+    visible_test=_test_module(
+        "interval_overlap",
+        "Published contract for measuring an overlap.",
+        """
+def test_two_partly_overlapping_intervals() -> None:
+    assert overlap_length((1, 5), (3, 8)) == 3
+
+
+def test_one_interval_inside_another() -> None:
+    assert overlap_length((1, 10), (2, 4)) == 3
+""",
+        imports="from interval_overlap import overlap_length\n",
+    ),
+    hidden_test=_test_module(
+        "interval_overlap",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_two_partly_overlapping_intervals() -> None:
+    assert overlap_length((1, 5), (3, 8)) == 3
+
+
+def test_intervals_that_do_not_meet_overlap_by_nothing() -> None:
+    assert overlap_length((1, 2), (5, 6)) == 0
+
+
+def test_an_interval_with_reversed_bounds_is_refused() -> None:
+    with pytest.raises(ValueError):
+        overlap_length((5, 1), (2, 3))
+""",
+        imports="from interval_overlap import overlap_length\n",
+    ),
+)
+
+_G039 = D2TaskSpec(
+    template_id="d4_numeric.roman_value",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d4-numeric-roman-value",
+    module="roman_value",
+    module_doc="Reading the value of a Roman numeral.",
+    issue=(
+        "roman_value() is documented to read a Roman numeral. Callers report that a subtractive "
+        "pair such as IV is read as six rather than four, and that an unrecognised letter raises "
+        "a lookup error instead of a bad-argument error."
+    ),
+    expected=(
+        "roman_value(numeral) returns the value of the numeral, reads a smaller letter before a "
+        "larger one as a subtraction, and raises ValueError for an unrecognised letter."
+    ),
+    baseline_reason="every letter is added, and the lookup table is indexed without checking",
+    edge_cases=(
+        "a smaller letter before a larger one subtracts",
+        "an unrecognised letter is reported as a bad argument",
+    ),
+    baseline="""def roman_value(numeral):
+    \"\"\"Return the value of the Roman numeral `numeral`.\"\"\"
+    letters = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
+    total = 0
+    for letter in numeral:
+        total += letters[letter]
+    return total""",
+    variant_one="""def roman_value(numeral):
+    \"\"\"Return the value of the Roman numeral `numeral`.\"\"\"
+    letters = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
+    total = 0
+    for place, letter in enumerate(numeral):
+        if letter not in letters:
+            raise ValueError(f"{letter!r} is not a Roman letter")
+        value = letters[letter]
+        following = numeral[place + 1 :]
+        if following and letters.get(following[0], 0) > value:
+            total -= value
+        else:
+            total += value
+    return total""",
+    variant_two="""def roman_value(numeral):
+    \"\"\"Return the value of the Roman numeral `numeral`.\"\"\"
+    letters = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
+    values = []
+    for letter in numeral:
+        if letter not in letters:
+            raise ValueError(f"{letter!r} is not a Roman letter")
+        values.append(letters[letter])
+    total = 0
+    for place, value in enumerate(values):
+        after = values[place + 1 :]
+        total += -value if after and after[0] > value else value
+    return total""",
+    variant_three="""def roman_value(numeral):
+    \"\"\"Return the value of the Roman numeral `numeral`.\"\"\"
+    letters = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
+    total = 0
+    for place, letter in enumerate(numeral):
+        value = letters[letter]
+        following = numeral[place + 1 :]
+        if following and letters.get(following[0], 0) > value:
+            total -= value
+        else:
+            total += value
+    return total""",
+    variant_four="""def roman_value(numeral):
+    \"\"\"Return the value of the Roman numeral `numeral`.\"\"\"
+    letters = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000}
+    total = 0
+    for letter in numeral:
+        if letter not in letters:
+            raise ValueError(f"{letter!r} is not a Roman letter")
+        total += letters[letter]
+    return total""",
+    visible_test=_test_module(
+        "roman_value",
+        "Published contract for reading a Roman numeral.",
+        """
+def test_three_ones() -> None:
+    assert roman_value("III") == 3
+
+
+def test_a_five_followed_by_a_one() -> None:
+    assert roman_value("VI") == 6
+""",
+        imports="from roman_value import roman_value\n",
+    ),
+    hidden_test=_test_module(
+        "roman_value",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_three_ones() -> None:
+    assert roman_value("III") == 3
+
+
+def test_a_smaller_letter_before_a_larger_one_subtracts() -> None:
+    assert roman_value("IV") == 4
+
+
+def test_an_unrecognised_letter_is_a_bad_argument() -> None:
+    with pytest.raises(ValueError):
+        roman_value("Q")
+""",
+        imports="from roman_value import roman_value\n",
+    ),
+)
+
+_G040 = D2TaskSpec(
+    template_id="d4_numeric.normalised_position",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d4-numeric-normalised-position",
+    module="normalised_position",
+    module_doc="Placing a reading on a nought-to-one scale.",
+    issue=(
+        "normalised_position() is documented to place a reading between two bounds on a scale "
+        "from nought to one. Callers report that a reading outside the bounds lands outside the "
+        "scale, and that equal bounds raise an arithmetic error."
+    ),
+    expected=(
+        "normalised_position(reading, low, high) returns where the reading sits between the "
+        "bounds, clamped to the nought-to-one scale, and raises ValueError when the bounds are "
+        "equal."
+    ),
+    baseline_reason="the span is divided into without clamping the result or checking the span",
+    edge_cases=(
+        "a reading outside the bounds is clamped to the scale",
+        "equal bounds are reported as a bad argument",
+    ),
+    baseline="""def normalised_position(reading, low, high):
+    \"\"\"Return where `reading` sits between `low` and `high`, from nought to one.\"\"\"
+    return (reading - low) / (high - low)""",
+    variant_one="""def normalised_position(reading, low, high):
+    \"\"\"Return where `reading` sits between `low` and `high`, from nought to one.\"\"\"
+    if high == low:
+        raise ValueError("the bounds cannot be equal")
+    placed = (reading - low) / (high - low)
+    return max(0.0, min(1.0, placed))""",
+    variant_two="""def normalised_position(reading, low, high):
+    \"\"\"Return where `reading` sits between `low` and `high`, from nought to one.\"\"\"
+    span = high - low
+    if span == 0:
+        raise ValueError("the bounds cannot be equal")
+    if reading <= low:
+        return 0.0
+    if reading >= high:
+        return 1.0
+    return (reading - low) / span""",
+    variant_three="""def normalised_position(reading, low, high):
+    \"\"\"Return where `reading` sits between `low` and `high`, from nought to one.\"\"\"
+    placed = (reading - low) / (high - low)
+    return max(0.0, min(1.0, placed))""",
+    variant_four="""def normalised_position(reading, low, high):
+    \"\"\"Return where `reading` sits between `low` and `high`, from nought to one.\"\"\"
+    if high == low:
+        raise ValueError("the bounds cannot be equal")
+    return (reading - low) / (high - low)""",
+    visible_test=_test_module(
+        "normalised_position",
+        "Published contract for placing a reading on a scale.",
+        """
+def test_a_reading_in_the_middle() -> None:
+    assert normalised_position(5, 0, 10) == 0.5
+
+
+def test_a_reading_at_the_lower_bound() -> None:
+    assert normalised_position(0, 0, 10) == 0.0
+""",
+        imports="from normalised_position import normalised_position\n",
+    ),
+    hidden_test=_test_module(
+        "normalised_position",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_reading_in_the_middle() -> None:
+    assert normalised_position(5, 0, 10) == 0.5
+
+
+def test_a_reading_outside_the_bounds_is_clamped() -> None:
+    assert normalised_position(15, 0, 10) == 1.0
+
+
+def test_equal_bounds_are_a_bad_argument() -> None:
+    with pytest.raises(ValueError):
+        normalised_position(5, 4, 4)
+""",
+        imports="from normalised_position import normalised_position\n",
+    ),
+)
+
 #: Authored so far. The tuple grows as batches are authored and executed;
 #: `corpus_d4.py` reads it rather than a count, so a partially authored corpus reports what it
 #: has instead of claiming what it does not.
@@ -2981,4 +3905,14 @@ D4_CALIBRATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G028,
     _G029,
     _G030,
+    _G031,
+    _G032,
+    _G033,
+    _G034,
+    _G035,
+    _G036,
+    _G037,
+    _G038,
+    _G039,
+    _G040,
 )
