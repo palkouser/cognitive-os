@@ -133,11 +133,19 @@ async def _require_erasable(connection: Any) -> None:
     prevents is irreversible data loss rather than an incorrect result. Repeated smoke runs stay
     idempotent: the reference component's own rows are the one thing allowed to be here.
     """
+    # Spelled out rather than looped over a table name. The names are hard-coded either way, so
+    # nothing was injectable, but SQL assembled by interpolation is a shape worth not having in
+    # a path that decides whether a store gets erased -- and two literals are shorter than the
+    # suppression comment the alternative needs.
     findings: list[str] = []
-    for table in ("learned_observations", "learned_datasets"):
-        count = await connection.scalar(text(f"SELECT count(*) FROM cognitive_os.{table}"))
-        if count:
-            findings.append(f"{count} row(s) in {table}")
+    observations = await connection.scalar(
+        text("SELECT count(*) FROM cognitive_os.learned_observations")
+    )
+    if observations:
+        findings.append(f"{observations} row(s) in learned_observations")
+    datasets = await connection.scalar(text("SELECT count(*) FROM cognitive_os.learned_datasets"))
+    if datasets:
+        findings.append(f"{datasets} row(s) in learned_datasets")
     foreign = await connection.scalar(
         text("SELECT count(*) FROM cognitive_os.learned_components WHERE component_id <> :own"),
         {"own": AlwaysAbstainingRanker.component_id},
