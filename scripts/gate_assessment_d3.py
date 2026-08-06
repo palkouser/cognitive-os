@@ -60,7 +60,7 @@ def _campaign(document: dict[str, Any]) -> dict[str, Any]:
 
 def _bearings() -> dict[int, Bearing]:
     """Condition number to the evidence that decides it. Absent means no evidence bears."""
-    return {
+    bearings: dict[int, Bearing] = {
         1: Bearing(
             "sprint-21d3-baseline.json",
             "the branch descends from the frozen baseline and the D2 release is re-read",
@@ -164,6 +164,26 @@ def _bearings() -> dict[int, Bearing]:
             lambda d: not d["failed_rows"] and d["every_row_decided"],
         ),
     }
+    # S21D3-095. Condition 29 bears only once the release record exists. Before that it stays
+    # in _PENDING and reads `not opened`, which is what a release in progress is. Adding the
+    # bearing unconditionally would report `failed` on every pre-release run, and a condition
+    # that fails because the work has not happened yet is not a failed condition.
+    if (EVIDENCE / "sprint-21d3-release.json").is_file():
+        bearings[29] = Bearing(
+            "sprint-21d3-release.json",
+            "the protected merge, its exact-head post-merge main CI and the remote tag agree",
+            lambda d: (
+                d["release"]["implementation_merge_commit"]
+                == d["release"]["peeled_commit"]
+                == d["release"]["remote_main"]
+                == d["release"]["exact_head_main_ci_head_sha"]
+                and d["release"]["exact_head_main_ci_conclusion"] == "success"
+                and d["release"]["tag_object"] == d["release"]["remote_tag_object"]
+                and d["release"]["tag_type"] == "tag"
+                and d["branch_protection_after_release"]["unchanged_from_the_w0_reading"]
+            ),
+        )
+    return bearings
 
 
 #: Conditions closed by a stop rather than by evidence, and which stop closed each. The two

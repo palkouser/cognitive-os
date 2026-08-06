@@ -1158,14 +1158,79 @@ Draft PR [#221](https://github.com/palkouser/cognitive-os/pull/221) carries the 
 W7-F1 records — and head `a663bbc5bdba` completed run `31030347888` with **30 of 30 jobs
 successful**.
 
-### What W8 has not done
+## W10 release
 
-**S21D3-094 and S21D3-095 are held.** They merge the branch into protected `main` and create the
-one permitted annotated tag — actions that are outward-facing and not reversible by the same
-means that made them. The prior waves' contract was clean worktree, commit, push, CI green, and
-that is what every wave including this one has done. Merging and tagging is a further step and
-is left to an explicit release decision.
+S21D3-094 and S21D3-095 are complete. The two items W8 held for an explicit release decision
+were executed under that decision, in the order the backlog fixes.
 
-What is ready for it: the permitted tag is `sprint-21d3-evidence-baseline`, because conditions
-1 through 28 do not all pass. The success tag `sprint-21-learning-baseline` must **not** be
-created, and its absence is itself part of what S21D3-095 asserts.
+PR [#221](https://github.com/palkouser/cognitive-os/pull/221) was taken out of draft and
+squash-merged into protected `main` at `2026-08-06T04:53:46Z`, producing release commit
+`ef4388b1bf9cb842b25a06aa2255abd1042702c2`. No administrator bypass was used and no protection
+setting was changed. Its own head `4e4fa76d4649f9621e1d667ad6f53ea8be5eb3f9` had completed run
+`31031716153` with 30 of 30 jobs successful, and `mergeStateStatus` was `CLEAN` with all 27
+required contexts green.
+
+The exact-head post-merge `main` CI run is `31072527026`: `success`, **30 of 30 jobs**, on
+`ef4388b1bf9cb842b25a06aa2255abd1042702c2`, completed `05:08:59Z`.
+
+Only then was the annotated tag created. `sprint-21d3-evidence-baseline` is object
+`bcf2976dd0f063b1eb4ea16b388eea590e6172dd`, peeling to
+`ef4388b1bf9cb842b25a06aa2255abd1042702c2`, created at `05:27:44Z` — after the CI that
+justifies it, which is the ordering S21D3-095 asserts and the one D2's release also holds. The
+local and remote objects match. **`sprint-21-learning-baseline` does not exist**, and its
+absence was verified against the remote rather than assumed.
+
+Branch protection after the release is byte-identical to the W0 reading: 27 strict required
+contexts, `enforce_admins`, conversation resolution, no force-push, no deletion, and no
+approving-review requirement. The four predecessor Artifact Store pairs reproduce their W0
+fingerprints exactly, computed through the released `reality_integrity.fingerprint` rather than
+a second implementation. D3's own pair holds 2,096 files at
+`fcb0a044810b375f2933d4a3cf22c7448bfada9c90e104566a92125b08dcd0d3`.
+
+Gate L2 condition 29 is now `met`, read from
+[the release record](evidence/sprint-21d3-release.json) rather than asserted:
+`scripts/gate_assessment_d3.py` gained one bearing that compares the merge commit, the peeled
+commit, remote `main` and the CI head to each other, the CI conclusion to `success`, and the
+local tag object to the remote one. The bearing exists only when that record does, so a
+pre-release run still reports condition 29 as `not opened` rather than as failed. The condition
+table is therefore **16 met, one met as a rejection, 12 not opened, none failed**.
+
+**Gate L2 still does not pass.** Twelve conditions were never authorised to be measured, Gate D1
+conditions 6, 7 and 15 remain open, and Sprint 22A remains blocked.
+
+### W7 recovery erratum
+
+Found while preparing the tag, by reading this log's numbers against the evidence they claim to
+restate. **The W7 recovery paragraph above disagrees with
+[`sprint-21d3-operations.json`](evidence/sprint-21d3-operations.json) on every value it
+states.** The evidence is authoritative; this paragraph is not corrected in place, for the same
+reason D3 did not correct D2's retrieval narrative in place.
+
+| Value | This log states | The evidence records |
+|---|---|---|
+| database dump SHA-256 | `c51b828106306b92…` | `f68fea62bbb0dbbb…` |
+| artifact archive SHA-256 | `8bb54058d02e1f69…` | `ea6449ebefce79ee…` |
+| artifact archive bytes | 1,679,871 | 1,683,401 |
+| events backed up | 1,281 | 1,731 |
+| artifacts backed up | 2,754 | 3,306 |
+| blobs rehashed on restore | **2,077** | **2,096** |
+
+The W7-A5 finding's "1,952 of 1,952 blob rows" is likewise absent from the evidence, which
+records 1,971 blob rows.
+
+Two independent readings settle it. The [D3 report](sprint-21d3-report.md) already states 2,096,
+so the report and the machine-readable evidence agree and only this log dissents. And the D3
+Artifact Store root, fingerprinted at release time through the released authority, contains
+exactly **2,096 files** — the number the restore rehashed.
+
+Every value in one paragraph wrong, all of them low, reads as text written from a rehearsal run
+and never refreshed from the final one. Nothing about the D3 result moves: the structural claims
+of that wave all reproduce — 18 damage cases present and all failing closed, 27 of 27
+verification-matrix rows passed, `fingerprints_before == fingerprints_after`, and
+`final_outcomes_inspected: false`. What is wrong is a narrative restatement of counts, which is
+the same defect class this sprint recorded against D2 and the same one the report names as
+recurring.
+
+Sprint 21D4 carries the reconciliation. Its S21D4-001 records the evidence value, the narrative
+value and the JSON pointer for each of the seven numbers, alongside the decision-independence
+erratum.

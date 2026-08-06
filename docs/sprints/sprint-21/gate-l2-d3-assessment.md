@@ -7,10 +7,13 @@
   `3f3c00e216879b4d1443ca20ac3e5f14c1bc0e29`, peeled to
   `ecb5ea128c26d49af0661c5e2c3fe5a125f1cec5`
 - Migration head: `0015`, unchanged. `0016` remains unallocated.
-- Revision: 3 — **provisional**. Condition 29 closes only on the protected merge, its
-  exact-head post-merge `main` CI, and remote tag verification.
+- Revision: 3 — **final**. Condition 29 closed on the protected merge of `#221`, its exact-head
+  post-merge `main` CI run `31072527026` (30 of 30 success on
+  `ef4388b1bf9cb842b25a06aa2255abd1042702c2`), and remote verification of the annotated tag
+  `sprint-21d3-evidence-baseline`, object `bcf2976dd0f063b1eb4ea16b388eea590e6172dd`.
 - Machine-readable form: [`sprint-21d3-gate-l2.json`](evidence/sprint-21d3-gate-l2.json),
-  integrity `e2d1dffad6aec317…`
+  integrity `e16c07d3b8ecbdd9…`
+- Release record: [`sprint-21d3-release.json`](evidence/sprint-21d3-release.json)
 
 This document does **not** replace [`gate-l2-assessment.md`](gate-l2-assessment.md), which is
 Sprint 21D2's historical assessment and stays exactly as it was written.
@@ -19,11 +22,11 @@ Sprint 21D2's historical assessment and stays exactly as it was written.
 
 **Gate L2 does not pass.**
 
-Twenty-nine conditions. **Fifteen are met**, one is met as a rejection, thirteen are **not
+Twenty-nine conditions. **Sixteen are met**, one is met as a rejection, twelve are **not
 opened**, and **none failed**.
 
 The gate does not pass on met conditions. It passes only when *every applicable* condition is
-met, and thirteen were never authorised to be measured — the outcome §0.4 and §11.3 define as a
+met, and twelve were never authorised to be measured — the outcome §0.4 and §11.3 define as a
 valid negative completion rather than a shortfall.
 
 D3 stopped twice, on two independent branches, and both stops are recorded with their own hash.
@@ -103,7 +106,7 @@ no bearing evidence is `not opened` bound to its stop hash, never `met`.
 | 26 | restart-safe lifecycle, disable, restore and rollback | **not opened** | closed by the selection stop before it could be measured (S21D3-039 null candidate selection) |
 | 27 | exact human approval authority and no self-approval | **not opened** | closed by the selection stop before it could be measured (S21D3-039 null candidate selection) |
 | 28 | isolated recovery and complete validation matrix | **met** | every required isolated and repository check ran and passed, none skipped (sprint-21d3-verification-matrix.json) |
-| 29 | protected release, exact-head CI, documents and verified tag | **not opened** | in progress: the protected implementation release and its post-merge CI (—) |
+| 29 | protected release, exact-head CI, documents and verified tag | **met** | the protected merge, its exact-head post-merge main CI and the remote tag agree (sprint-21d3-release.json) |
 
 ## Gate D1's three open conditions
 
@@ -113,12 +116,23 @@ no bearing evidence is `not opened` bound to its stop hash, never `met`.
 | 7 | at least 20 primary-surface examples change advisory action | **not opened** | closed by the selection stop: the outcomes that would close it are final and canary outcomes, which were never authorised |
 | 15 | new unseen-task retrieval holdout independently clears both floors | **not opened** | D3 was condition 15's remediation route. The holdout was executed once on 60 unseen queries and no arm cleared either floor, so the condition remains_open |
 
-## What is provisional
+## The release, and what closed condition 29
 
-Condition 29 is the only condition still moving. It closes when the protected implementation
-release merges without a protection bypass, its exact-head post-merge `main` CI succeeds, and
-the annotated tag is verified against the remote. Until then this assessment is revision 3
-**pre-release**, and no reader should treat condition 29 as anything but in progress.
+Condition 29 was the only condition still moving when this assessment was first written. It is
+now closed on evidence rather than on assertion. PR `#221` merged into protected `main` by
+squash at `2026-08-06T04:53:46Z` with no administrator bypass and no protection change; the
+exact-head post-merge `main` CI run `31072527026` completed `success`, 30 of 30 jobs, on
+`ef4388b1bf9cb842b25a06aa2255abd1042702c2` at `05:08:59Z`; and the annotated tag was created
+once, afterwards, at `05:27:44Z`, and verified against the remote. Branch protection is
+byte-identical to the W0 reading — 27 strict contexts, `enforce_admins`, conversation
+resolution, no force-push, no deletion, no approving-review requirement. All four predecessor
+Artifact Store pairs reproduce their W0 fingerprints after the release.
+
+`scripts/gate_assessment_d3.py` gained no ability to assert this. It gained one bearing that
+reads [`sprint-21d3-release.json`](evidence/sprint-21d3-release.json) and compares the merge
+commit, the peeled commit, remote `main` and the CI head to each other, the CI conclusion to
+`success`, and the local tag object to the remote one. The bearing exists only when that record
+exists, so a pre-release run still reports condition 29 as `not opened` rather than as failed.
 
 Because conditions 1 through 28 do not all pass, the permitted tag is
 `sprint-21d3-evidence-baseline`. The success tag `sprint-21-learning-baseline` is **not**
