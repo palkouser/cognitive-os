@@ -9729,6 +9729,494 @@ def test_the_next_position_comes_back_round() -> None:
     ),
 )
 
+# ------------------------------------------------------------------------------- numeric logic
+
+_G096 = D2TaskSpec(
+    template_id="d4_numeric.next_power_of_two",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d4-numeric-next-power-of-two",
+    module="power_of_two",
+    module_doc="Rounding a size up to a power of two.",
+    issue=(
+        "next_power_of_two() is documented to round a size up to a power of two. Callers report "
+        "that a size that is already a power of two is rounded up to the next one anyway, and "
+        "that a size of zero comes back as one instead of being refused."
+    ),
+    expected=(
+        "next_power_of_two(value) returns the smallest power of two that is at least `value`, "
+        "returns a value that is already a power of two unchanged, and raises ValueError for a "
+        "value of zero or below."
+    ),
+    baseline_reason="it doubles until it is past the value rather than until it has reached it",
+    edge_cases=(
+        "a value already a power of two comes back unchanged",
+        "a value of zero or below is refused",
+    ),
+    baseline="""def next_power_of_two(value):
+    \"\"\"Return the smallest power of two that is at least `value`.\"\"\"
+    power = 1
+    while power <= value:
+        power *= 2
+    return power""",
+    variant_one="""def next_power_of_two(value):
+    \"\"\"Return the smallest power of two that is at least `value`.\"\"\"
+    if value <= 0:
+        raise ValueError("a power of two is a positive number")
+    power = 1
+    while power < value:
+        power *= 2
+    return power""",
+    variant_two="""def next_power_of_two(value):
+    \"\"\"Return the smallest power of two that is at least `value`.\"\"\"
+    if value <= 0:
+        raise ValueError("a power of two is a positive number")
+    if value & (value - 1) == 0:
+        return value
+    return 1 << value.bit_length()""",
+    variant_three="""def next_power_of_two(value):
+    \"\"\"Return the smallest power of two that is at least `value`.\"\"\"
+    power = 1
+    while power < value:
+        power *= 2
+    return power""",
+    variant_four="""def next_power_of_two(value):
+    \"\"\"Return the smallest power of two that is at least `value`.\"\"\"
+    if value <= 0:
+        raise ValueError("a power of two is a positive number")
+    power = 1
+    while power <= value:
+        power *= 2
+    return power""",
+    visible_test=_test_module(
+        "power_of_two",
+        "Published contract for rounding up to a power of two.",
+        """
+def test_a_size_between_four_and_eight() -> None:
+    assert next_power_of_two(5) == 8
+
+
+def test_a_size_between_sixty_four_and_a_hundred_and_twenty_eight() -> None:
+    assert next_power_of_two(100) == 128
+
+
+def test_a_size_of_three() -> None:
+    assert next_power_of_two(3) == 4
+""",
+        imports="from power_of_two import next_power_of_two\n",
+    ),
+    hidden_test=_test_module(
+        "power_of_two",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_size_between_four_and_eight() -> None:
+    assert next_power_of_two(5) == 8
+
+
+def test_a_value_already_a_power_of_two_comes_back_unchanged() -> None:
+    assert next_power_of_two(8) == 8
+    assert next_power_of_two(1) == 1
+
+
+def test_a_value_of_zero_or_below_is_refused() -> None:
+    with pytest.raises(ValueError):
+        next_power_of_two(0)
+    with pytest.raises(ValueError):
+        next_power_of_two(-4)
+""",
+        imports="from power_of_two import next_power_of_two\n",
+    ),
+)
+
+_G097 = D2TaskSpec(
+    template_id="d4_numeric.fee_for",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d4-numeric-fee-for",
+    module="fee_schedule",
+    module_doc="Working out the fee charged on an amount.",
+    issue=(
+        "fee_for() is documented to charge a rate on an amount, with a smallest and a largest "
+        "fee. Callers report that a small amount is charged less than the smallest fee, and "
+        "that a large amount is charged more than the largest."
+    ),
+    expected=(
+        "fee_for(amount, basis_points, floor, cap) returns the rate charged on the amount, "
+        "rounded to the nearest penny, but never below the floor and never above the cap."
+    ),
+    baseline_reason="it works the rate out and hands it back without looking at either limit",
+    edge_cases=(
+        "a small amount pays the floor rather than less",
+        "a large amount pays the cap rather than more",
+    ),
+    baseline="""def fee_for(amount, basis_points, floor, cap):
+    \"\"\"Return the fee charged on `amount`.\"\"\"
+    return round(amount * basis_points / 10000, 2)""",
+    variant_one="""def fee_for(amount, basis_points, floor, cap):
+    \"\"\"Return the fee charged on `amount`.\"\"\"
+    charged = round(amount * basis_points / 10000, 2)
+    return min(max(charged, floor), cap)""",
+    variant_two="""def fee_for(amount, basis_points, floor, cap):
+    \"\"\"Return the fee charged on `amount`.\"\"\"
+    charged = round(amount * basis_points / 10000, 2)
+    if charged < floor:
+        return floor
+    if charged > cap:
+        return cap
+    return charged""",
+    variant_three="""def fee_for(amount, basis_points, floor, cap):
+    \"\"\"Return the fee charged on `amount`.\"\"\"
+    return max(round(amount * basis_points / 10000, 2), floor)""",
+    variant_four="""def fee_for(amount, basis_points, floor, cap):
+    \"\"\"Return the fee charged on `amount`.\"\"\"
+    return min(round(amount * basis_points / 10000, 2), cap)""",
+    visible_test=_test_module(
+        "fee_schedule",
+        "Published contract for the fee charged on an amount.",
+        """
+def test_a_thousand_at_two_percent() -> None:
+    assert fee_for(1000, 200, 5, 50) == 20.0
+
+
+def test_five_hundred_at_two_percent() -> None:
+    assert fee_for(500, 200, 5, 50) == 10.0
+
+
+def test_seven_hundred_and_fifty_at_two_percent() -> None:
+    assert fee_for(750, 200, 5, 50) == 15.0
+""",
+        imports="from fee_schedule import fee_for\n",
+    ),
+    hidden_test=_test_module(
+        "fee_schedule",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_thousand_at_two_percent() -> None:
+    assert fee_for(1000, 200, 5, 50) == 20.0
+
+
+def test_a_small_amount_pays_the_floor_rather_than_less() -> None:
+    assert fee_for(100, 200, 5, 50) == 5
+
+
+def test_a_large_amount_pays_the_cap_rather_than_more() -> None:
+    assert fee_for(5000, 200, 5, 50) == 50
+""",
+        imports="from fee_schedule import fee_for\n",
+    ),
+)
+
+# ------------------------------------------------------------------ boundary and collections
+
+_G098 = D2TaskSpec(
+    template_id="d4_boundary.overlapping_windows",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d4-boundary-overlapping-windows",
+    module="overlapping_windows",
+    module_doc="Cutting a sequence into windows that overlap one another.",
+    issue=(
+        "windows() is documented to cut a sequence into windows that overlap. Callers report "
+        "that the last few items go missing whenever they do not fill a whole window, and that "
+        "asking for an overlap as wide as the window itself comes back empty rather than being "
+        "refused."
+    ),
+    expected=(
+        "windows(items, size, overlap) returns windows of `size` items, each starting `size` "
+        "less `overlap` items after the one before, returns a final short window when items are "
+        "left over, and raises ValueError for an overlap that leaves the window standing still."
+    ),
+    baseline_reason=(
+        "it stops at the last window that fills completely and never asks whether the window "
+        "moves on at all"
+    ),
+    edge_cases=(
+        "a final short window is still returned",
+        "an overlap that leaves the window standing still is refused",
+    ),
+    baseline="""def windows(items, size, overlap):
+    \"\"\"Return the overlapping windows of `items`.\"\"\"
+    step = size - overlap
+    return [items[start : start + size] for start in range(0, len(items) - size + 1, step)]""",
+    variant_one="""def windows(items, size, overlap):
+    \"\"\"Return the overlapping windows of `items`.\"\"\"
+    if overlap >= size:
+        raise ValueError("a window must move on by at least one item")
+    step = size - overlap
+    cut = []
+    start = 0
+    while start < len(items):
+        cut.append(items[start : start + size])
+        if start + size >= len(items):
+            break
+        start += step
+    return cut""",
+    variant_two="""def windows(items, size, overlap):
+    \"\"\"Return the overlapping windows of `items`.\"\"\"
+    if overlap >= size:
+        raise ValueError("a window must move on by at least one item")
+    if not items:
+        return []
+    step = size - overlap
+    beyond = len(items) - size
+    last = -(-beyond // step) if beyond > 0 else 0
+    return [items[index * step : index * step + size] for index in range(last + 1)]""",
+    variant_three="""def windows(items, size, overlap):
+    \"\"\"Return the overlapping windows of `items`.\"\"\"
+    step = size - overlap
+    cut = []
+    start = 0
+    while 0 <= start < len(items):
+        cut.append(items[start : start + size])
+        if start + size >= len(items):
+            break
+        start += step
+    return cut""",
+    variant_four="""def windows(items, size, overlap):
+    \"\"\"Return the overlapping windows of `items`.\"\"\"
+    if overlap >= size:
+        raise ValueError("a window must move on by at least one item")
+    step = size - overlap
+    return [items[start : start + size] for start in range(0, len(items) - size + 1, step)]""",
+    visible_test=_test_module(
+        "overlapping_windows",
+        "Published contract for cutting a sequence into windows.",
+        """
+def test_windows_that_do_not_overlap() -> None:
+    assert windows([1, 2, 3, 4], 2, 0) == [[1, 2], [3, 4]]
+
+
+def test_windows_that_share_an_item() -> None:
+    assert windows([1, 2, 3, 4, 5], 3, 1) == [[1, 2, 3], [3, 4, 5]]
+
+
+def test_a_sequence_exactly_one_window_long() -> None:
+    assert windows([1, 2], 2, 0) == [[1, 2]]
+""",
+        imports="from overlapping_windows import windows\n",
+    ),
+    hidden_test=_test_module(
+        "overlapping_windows",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_windows_that_do_not_overlap() -> None:
+    assert windows([1, 2, 3, 4], 2, 0) == [[1, 2], [3, 4]]
+
+
+def test_a_final_short_window_is_still_returned() -> None:
+    assert windows([1, 2, 3, 4, 5], 2, 0) == [[1, 2], [3, 4], [5]]
+
+
+def test_an_overlap_that_leaves_the_window_standing_still_is_refused() -> None:
+    with pytest.raises(ValueError):
+        windows([1, 2, 3, 4], 2, 3)
+""",
+        imports="from overlapping_windows import windows\n",
+    ),
+)
+
+_G099 = D2TaskSpec(
+    template_id="d4_boundary.remove_at_positions",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d4-boundary-remove-at-positions",
+    module="positional_removal",
+    module_doc="Dropping the items at a set of positions.",
+    issue=(
+        "remove_at() is documented to drop the items at a set of positions. Callers report that "
+        "handing the positions over in rising order drops the wrong items, because each removal "
+        "shifts the ones after it, and that a position past the end of the sequence brings the "
+        "call down instead of being ignored."
+    ),
+    expected=(
+        "remove_at(items, positions) returns a new list without the items at those positions, "
+        "whatever order the positions arrive in, and ignores a position outside the sequence."
+    ),
+    baseline_reason=(
+        "it takes the positions in the order handed over, and each removal moves the rest along"
+    ),
+    edge_cases=(
+        "positions arriving in rising order still drop the right items",
+        "a position outside the sequence is ignored",
+    ),
+    baseline="""def remove_at(items, positions):
+    \"\"\"Return `items` without the ones standing at `positions`.\"\"\"
+    kept = list(items)
+    for position in positions:
+        kept.pop(position)
+    return kept""",
+    variant_one="""def remove_at(items, positions):
+    \"\"\"Return `items` without the ones standing at `positions`.\"\"\"
+    dropped = {position for position in positions if 0 <= position < len(items)}
+    return [item for index, item in enumerate(items) if index not in dropped]""",
+    variant_two="""def remove_at(items, positions):
+    \"\"\"Return `items` without the ones standing at `positions`.\"\"\"
+    kept = list(items)
+    for position in sorted(positions, reverse=True):
+        if 0 <= position < len(items):
+            kept.pop(position)
+    return kept""",
+    variant_three="""def remove_at(items, positions):
+    \"\"\"Return `items` without the ones standing at `positions`.\"\"\"
+    kept = list(items)
+    for position in sorted(positions, reverse=True):
+        kept.pop(position)
+    return kept""",
+    variant_four="""def remove_at(items, positions):
+    \"\"\"Return `items` without the ones standing at `positions`.\"\"\"
+    kept = list(items)
+    for position in positions:
+        if 0 <= position < len(kept):
+            kept.pop(position)
+    return kept""",
+    visible_test=_test_module(
+        "positional_removal",
+        "Published contract for dropping items by position.",
+        """
+def test_dropping_one_item() -> None:
+    assert remove_at([1, 2, 3, 4], [2]) == [1, 2, 4]
+
+
+def test_dropping_two_from_the_back_forwards() -> None:
+    assert remove_at([1, 2, 3, 4], [3, 1]) == [1, 3]
+
+
+def test_dropping_nothing_at_all() -> None:
+    assert remove_at([1, 2, 3], []) == [1, 2, 3]
+""",
+        imports="from positional_removal import remove_at\n",
+    ),
+    hidden_test=_test_module(
+        "positional_removal",
+        "The part of the contract the published tests do not state.",
+        """
+def test_dropping_one_item() -> None:
+    assert remove_at([1, 2, 3, 4], [2]) == [1, 2, 4]
+
+
+def test_positions_arriving_in_rising_order_still_drop_the_right_items() -> None:
+    assert remove_at([1, 2, 3, 4, 5], [1, 3]) == [1, 3, 5]
+
+
+def test_a_position_outside_the_sequence_is_ignored() -> None:
+    assert remove_at([1, 2, 3], [9]) == [1, 2, 3]
+""",
+        imports="from positional_removal import remove_at\n",
+    ),
+)
+
+_G100 = D2TaskSpec(
+    template_id="d4_boundary.into_columns",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d4-boundary-into-columns",
+    module="column_fill",
+    module_doc="Laying a list out down a fixed number of columns.",
+    issue=(
+        "into_columns() is documented to lay a list out down a fixed number of columns. Callers "
+        "report that the last few items vanish whenever the list does not divide evenly, and "
+        "that asking for no columns at all brings the call down on a division by zero rather "
+        "than being refused."
+    ),
+    expected=(
+        "into_columns(items, columns) returns that many columns, filling each one before "
+        "starting the next, giving the earlier columns the items left over, and raises "
+        "ValueError for a column count of zero or below."
+    ),
+    baseline_reason=(
+        "it divides the length by the columns and gives every column that many, losing the "
+        "remainder"
+    ),
+    edge_cases=(
+        "the items left over go to the earlier columns",
+        "a column count of zero or below is refused",
+    ),
+    baseline="""def into_columns(items, columns):
+    \"\"\"Lay `items` out down `columns` columns, filling each before the next.\"\"\"
+    height = len(items) // columns
+    return [items[index * height : (index + 1) * height] for index in range(columns)]""",
+    variant_one="""def into_columns(items, columns):
+    \"\"\"Lay `items` out down `columns` columns, filling each before the next.\"\"\"
+    if columns <= 0:
+        raise ValueError("there must be at least one column")
+    base, extra = divmod(len(items), columns)
+    laid = []
+    start = 0
+    for index in range(columns):
+        height = base + (1 if index < extra else 0)
+        laid.append(items[start : start + height])
+        start += height
+    return laid""",
+    variant_two="""def into_columns(items, columns):
+    \"\"\"Lay `items` out down `columns` columns, filling each before the next.\"\"\"
+    if columns <= 0:
+        raise ValueError("there must be at least one column")
+    base = len(items) // columns
+    extra = len(items) % columns
+    heights = [base + 1] * extra + [base] * (columns - extra)
+    laid = []
+    taken = 0
+    for height in heights:
+        laid.append(items[taken : taken + height])
+        taken += height
+    return laid""",
+    variant_three="""def into_columns(items, columns):
+    \"\"\"Lay `items` out down `columns` columns, filling each before the next.\"\"\"
+    base, extra = divmod(len(items), columns)
+    laid = []
+    start = 0
+    for index in range(columns):
+        height = base + (1 if index < extra else 0)
+        laid.append(items[start : start + height])
+        start += height
+    return laid""",
+    variant_four="""def into_columns(items, columns):
+    \"\"\"Lay `items` out down `columns` columns, filling each before the next.\"\"\"
+    if columns <= 0:
+        raise ValueError("there must be at least one column")
+    height = len(items) // columns
+    return [items[index * height : (index + 1) * height] for index in range(columns)]""",
+    visible_test=_test_module(
+        "column_fill",
+        "Published contract for laying items out in columns.",
+        """
+def test_six_items_in_three_columns() -> None:
+    assert into_columns([1, 2, 3, 4, 5, 6], 3) == [[1, 2], [3, 4], [5, 6]]
+
+
+def test_four_items_in_two_columns() -> None:
+    assert into_columns([1, 2, 3, 4], 2) == [[1, 2], [3, 4]]
+
+
+def test_everything_in_one_column() -> None:
+    assert into_columns([1, 2, 3], 1) == [[1, 2, 3]]
+""",
+        imports="from column_fill import into_columns\n",
+    ),
+    hidden_test=_test_module(
+        "column_fill",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_six_items_in_three_columns() -> None:
+    assert into_columns([1, 2, 3, 4, 5, 6], 3) == [[1, 2], [3, 4], [5, 6]]
+
+
+def test_the_items_left_over_go_to_the_earlier_columns() -> None:
+    assert into_columns([1, 2, 3, 4, 5, 6, 7], 3) == [[1, 2, 3], [4, 5], [6, 7]]
+
+
+def test_a_column_count_of_zero_is_refused() -> None:
+    with pytest.raises(ValueError):
+        into_columns([1, 2, 3], 0)
+""",
+        imports="from column_fill import into_columns\n",
+    ),
+)
+
 #: Authored so far. The tuple grows as batches are authored and executed;
 #: `corpus_d4.py` reads it rather than a count, so a partially authored corpus reports what it
 #: has instead of claiming what it does not.
@@ -9828,4 +10316,9 @@ D4_CALIBRATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G093,
     _G094,
     _G095,
+    _G096,
+    _G097,
+    _G098,
+    _G099,
+    _G100,
 )
