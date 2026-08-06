@@ -26,12 +26,13 @@ fitted channel — the score is the released bounded k-NN confidence, unchanged.
     threshold = the highest score among answered decisions that are wrong
     admitted   = answered decisions scoring strictly above the threshold
 
-The contract sentence reads "the highest threshold at which every answered decision above it is
-correct". Read literally that set has no highest member — every larger threshold also admits
-only correct decisions, up to admitting nothing at all — so the point it names is the boundary
-of that set: the smallest threshold with zero errors, which is the one that admits the most
-decisions and the only one whose coverage is worth reporting. `derivation_reading` records that
-in the evidence rather than leaving a reader to guess which end of the interval was taken.
+Revision 4 originally said "the highest threshold at which every answered decision above it is
+correct", which names no point: the thresholds satisfying that condition are an upward-closed
+set, so every larger one satisfies it too, up to the one that admits nothing at all. Amendment 1
+replaces the word before any threshold was derived and before the calibration set was resolved —
+see `evidence/sprint-21d4-contracts-amendment-1.json`, which is bound to the unchanged hash of
+the sealed original. `AMENDED_DERIVATION_STEP` below is the operative sentence, and the amendment
+record carries its digest so the contract and this module cannot drift apart.
 """
 
 from __future__ import annotations
@@ -54,18 +55,31 @@ from cognitive_os.learning.correction_protocol import (
 #: The only split a threshold may be derived from.
 CALIBRATION_SPLIT = "calibration"
 
+#: The sentence S21D4-011 froze, kept verbatim so the amendment can name what it replaced.
+SEALED_DERIVATION_STEP = (
+    "the zero-error point is the highest threshold at which every answered decision above it is "
+    "correct"
+)
+
+#: Amendment 1's replacement. It names one point instead of an unbounded family of them.
+AMENDED_DERIVATION_STEP = (
+    "the zero-error point is the lowest threshold at which every answered decision strictly "
+    "above it is correct, equivalently the highest score among answered decisions that are "
+    "wrong; it is the boundary of the zero-error region and the only member of it whose "
+    "coverage is worth reporting, because every higher threshold admits a strict subset"
+)
+
 DERIVATION_RULE = (
     "score every independent clean calibration decision with the released bounded k-NN "
-    "confidence; sort the answered ones by score descending; take the boundary of the zero-error "
-    "region, that is the highest score among answered decisions that are wrong; admit the "
-    "answered decisions scoring strictly above it; report coverage over independent decisions "
-    "and the Clopper-Pearson one-sided 95% upper bound on the true error rate"
+    f"confidence; sort the answered ones by score descending; {AMENDED_DERIVATION_STEP}; admit "
+    "the answered decisions scoring strictly above it; report coverage over independent "
+    "decisions and the Clopper-Pearson one-sided 95% upper bound on the true error rate"
 )
 
 DERIVATION_READING = (
-    "the smallest threshold whose admitted set has zero errors, which is the one that admits the "
-    "most decisions; the literal 'highest' has no maximum, since every larger threshold also "
-    "admits only correct decisions and eventually admits nothing"
+    "amendment 1: the sealed wording said 'highest', which names no point, because the "
+    "thresholds admitting only correct decisions are upward-closed and the largest of them "
+    "admits nothing. The operative rule takes the boundary of that set"
 )
 
 

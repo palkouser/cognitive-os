@@ -6,12 +6,18 @@ correctness has to be taken on trust is a threshold rule that can quietly move.
 
 from __future__ import annotations
 
+import hashlib
+import json
 from datetime import UTC, datetime
 from decimal import Decimal
+from pathlib import Path
 
 import pytest
 
 from cognitive_os.learning.selective_operating_point import (
+    AMENDED_DERIVATION_STEP,
+    DERIVATION_RULE,
+    SEALED_DERIVATION_STEP,
     OperatingPointError,
     OperatingPointV4,
     ScoredDecision,
@@ -21,6 +27,8 @@ from cognitive_os.learning.selective_operating_point import (
 
 DERIVED_AT = datetime(2026, 8, 6, 12, tzinfo=UTC)
 SOURCE = "a" * 64
+EVIDENCE = Path(__file__).resolve().parents[3] / "docs/sprints/sprint-21/evidence"
+AMENDMENT = EVIDENCE / "sprint-21d4-contracts-amendment-1.json"
 
 
 def _decisions(*rows: tuple[str, bool, bool]) -> tuple[ScoredDecision, ...]:
@@ -189,3 +197,35 @@ def test_stored_bytes_claiming_another_split_are_refused_too() -> None:
     body["split"] = "final_a"
     with pytest.raises(ValueError, match="fitted to a holdout"):
         OperatingPointV4.model_validate(body)
+
+
+def test_amendment_one_is_the_operative_derivation_step() -> None:
+    """The contract record and this module must not drift: the amendment carries the digest."""
+    amendment = json.loads(AMENDMENT.read_text())
+    assert amendment["amends"]["contract"] == "selective_operating_point"
+    assert amendment["amends"]["bytes_modified"] == 0
+    assert amendment["defect"]["sealed_sentence"] == SEALED_DERIVATION_STEP
+    assert amendment["amended_sentence"] == AMENDED_DERIVATION_STEP
+    assert amendment["operative_rule"] == DERIVATION_RULE
+    assert (
+        amendment["operative_rule_sha256"]
+        == hashlib.sha256(DERIVATION_RULE.encode("utf-8")).hexdigest()
+    )
+    assert AMENDED_DERIVATION_STEP in DERIVATION_RULE
+    assert SEALED_DERIVATION_STEP not in DERIVATION_RULE
+
+
+def test_amendment_one_predates_every_number_it_governs() -> None:
+    chronology = json.loads(AMENDMENT.read_text())["chronology"]
+    assert chronology["d4_threshold_derivations_at_amendment_time"] == 0
+    assert chronology["d4_calibration_measurements_at_amendment_time"] == 0
+    assert chronology["fresh_calibration_set_resolved"] is False
+
+
+def test_the_amended_rule_is_the_one_the_derivation_actually_applies() -> None:
+    """Lowest threshold with a clean admitted set, not the largest one that admits nothing."""
+    rows = _decisions(("0.9", True, True), ("0.8", True, True), ("0.6", True, False))
+    point = _derive(rows)
+    assert point.derivation_rule == DERIVATION_RULE
+    assert point.threshold == "0.6"
+    assert point.admitted_decisions == 2  # not 0, which the sealed wording also permitted

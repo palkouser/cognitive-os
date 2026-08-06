@@ -19,6 +19,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -30,6 +31,14 @@ OUTPUTS = {
     "contracts": EVIDENCE / "sprint-21d4-contracts.json",
     "pre_registration": EVIDENCE / "sprint-21d4-pre-registration.json",
 }
+
+#: Amendments, in order. A sealed contract is never edited in place — that is what the W0-F1
+#: refusal was for — so a defect in the *wording* of one is answered by a record that names the
+#: unchanged original by hash, states what it replaces, and proves it predates every number the
+#: contract governs. `--check` verifies the chain and would fail if the original had been
+#: touched. The window is not open indefinitely: Section 3 forbids a threshold change once the
+#: fresh calibration set is resolved, so an amendment after S21D4-032 is not an amendment.
+AMENDMENTS = (EVIDENCE / "sprint-21d4-contracts-amendment-1.json",)
 
 #: W0 records that must exist before revision 4 is published. They establish authority; they do
 #: not measure the experiment.
@@ -421,6 +430,134 @@ def _write() -> None:
     )
 
 
+def _write_amendment_one() -> None:
+    """S21D4-011 amendment 1: the derivation step named a family of thresholds, not a point."""
+    sys.path.insert(0, str(REPO / "src"))
+    from cognitive_os.learning.selective_operating_point import (
+        AMENDED_DERIVATION_STEP,
+        DERIVATION_RULE,
+        SEALED_DERIVATION_STEP,
+    )
+
+    contracts = json.loads(OUTPUTS["contracts"].read_text())
+    sealed = contracts["contracts"]["selective_operating_point"]
+    if SEALED_DERIVATION_STEP not in sealed["derivation"]:
+        raise SystemExit("the sealed contract does not contain the sentence being amended")
+
+    body = {key: value for key, value in sealed.items() if key != "content_hash"}
+    if _sha256(_canonical(body)) != sealed["content_hash"]:
+        raise SystemExit("the sealed contract no longer reproduces its frozen hash")
+
+    pre = json.loads(OUTPUTS["pre_registration"].read_text())
+    record = {
+        "schema_version": 1,
+        "sprint": "21D4",
+        "wave": "W2",
+        "amendment": 1,
+        "items": ["S21D4-011"],
+        "recorded_at": datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+        "pre_registration_sha256": _sha256(OUTPUTS["pre_registration"].read_bytes()),
+        "amends": {
+            "contract": "selective_operating_point",
+            "frozen_content_hash": sealed["content_hash"],
+            "contracts_sha256": _sha256(OUTPUTS["contracts"].read_bytes()),
+            "bytes_modified": 0,
+        },
+        "defect": {
+            "sealed_sentence": SEALED_DERIVATION_STEP,
+            "why_it_names_no_point": (
+                "the thresholds admitting only correct answered decisions are upward-closed: if "
+                "every answered decision above t is correct, the same holds for every t' > t, up "
+                "to the threshold that admits nothing at all. The sealed sentence therefore "
+                "picks out an unbounded family, and its largest member has coverage zero, which "
+                "is the opposite of the quantity the contract goes on to require be reported."
+            ),
+            "found_by": (
+                "implementing it at S21D4-021; the implementation had to choose an end of the "
+                "interval and recorded the choice in derivation_reading rather than leave it "
+                "implicit"
+            ),
+        },
+        "amended_sentence": AMENDED_DERIVATION_STEP,
+        "operative_rule": DERIVATION_RULE,
+        "operative_rule_sha256": _sha256(DERIVATION_RULE.encode("utf-8")),
+        "unchanged_by_this_amendment": [
+            "the score, which is the released bounded k-NN confidence",
+            "calibration-split-only derivation",
+            "the single-derivation rule",
+            "the operating-point grid and the selection precedence",
+            "the Clopper-Pearson reporting requirement",
+            "every other contract, and every threshold or floor in Section 2.3",
+        ],
+        "chronology": {
+            "d4_threshold_derivations_at_amendment_time": 0,
+            "d4_calibration_measurements_at_amendment_time": 0,
+            "fresh_calibration_set_resolved": False,
+            "why_this_matters": (
+                "pre-registration exists to stop a rule being chosen after its result is known. "
+                "No D4 threshold has been derived and no D4 calibration outcome exists, so this "
+                "amendment cannot have been steered by one. Section 3 closes the window at "
+                "S21D4-032, when the fresh calibration set is sealed."
+            ),
+        },
+        "why_not_an_in_place_edit": (
+            "a sealed record is not edited after publication. The original bytes are unchanged "
+            "and still reproduce their frozen hash, which --check verifies; this record "
+            "supersedes one sentence and names what it replaced, exactly as S21D4-001 handled "
+            "the D3 erratum."
+        ),
+    }
+    record["integrity_content_hash"] = _sha256(_canonical(record))
+    AMENDMENTS[0].write_text(json.dumps(record, indent=1, sort_keys=True) + "\n", encoding="utf-8")
+    print(
+        json.dumps(
+            {
+                "output": AMENDMENTS[0].name,
+                "amends": "selective_operating_point",
+                "frozen_contract_hash_unchanged": sealed["content_hash"]
+                == pre["contract_hashes"]["selective_operating_point"],
+                "contract_bytes_modified": 0,
+                "thresholds_derived_before_amendment": 0,
+                "integrity_content_hash": record["integrity_content_hash"],
+            },
+            indent=1,
+            sort_keys=True,
+        )
+    )
+
+
+def _check_amendments(documents: dict[str, Any]) -> list[dict[str, Any]]:
+    """Every amendment must leave the record it amends byte-identical, and follow it in time."""
+    pre = documents["pre_registration"]
+    published = datetime.fromisoformat(pre["recorded_at"].replace("Z", "+00:00"))
+    checked: list[dict[str, Any]] = []
+    for path in AMENDMENTS:
+        if not path.is_file():
+            continue
+        amendment = json.loads(path.read_text())
+        _verify_seal(path, amendment)
+        name = amendment["amends"]["contract"]
+        if amendment["amends"]["frozen_content_hash"] != pre["contract_hashes"][name]:
+            raise SystemExit(f"{path.name} amends a contract hash the pre-registration never had")
+        if amendment["amends"]["contracts_sha256"] != _sha256(OUTPUTS["contracts"].read_bytes()):
+            raise SystemExit(f"{path.name}: the contracts file changed after the amendment")
+        if amendment["pre_registration_sha256"] != _sha256(
+            OUTPUTS["pre_registration"].read_bytes()
+        ):
+            raise SystemExit(f"{path.name} does not carry the pre-registration sha256")
+        recorded = datetime.fromisoformat(amendment["recorded_at"].replace("Z", "+00:00"))
+        if recorded < published:
+            raise SystemExit(f"{path.name} predates the pre-registration it amends")
+        governed = (
+            "d4_threshold_derivations_at_amendment_time",
+            "d4_calibration_measurements_at_amendment_time",
+        )
+        if any(amendment["chronology"][key] for key in governed):
+            raise SystemExit(f"{path.name} was recorded after the numbers it governs")
+        checked.append({"amendment": amendment["amendment"], "contract": name})
+    return checked
+
+
 def _verify_seal(path: Path, document: dict[str, Any]) -> None:
     body = {key: value for key, value in document.items() if key != "integrity_content_hash"}
     if _sha256(_canonical(body)) != document.get("integrity_content_hash"):
@@ -445,12 +582,15 @@ def _check() -> None:
     if any(pre["chronology"].values()) or pre["measured_values"]:
         raise SystemExit("the pre-registration contains measured values")
 
+    amendments = _check_amendments(documents)
+
     print(
         json.dumps(
             {
                 "checked": sorted(OUTPUTS),
                 "contracts_verified": len(pre["contract_hashes"]),
                 "w0_children_verified": len(pre["evidence_children_sha256"]),
+                "amendments_verified": amendments,
                 "pre_registration_sha256": _sha256(OUTPUTS["pre_registration"].read_bytes()),
                 "measured_values_before_publication": 0,
             },
@@ -492,10 +632,17 @@ def main() -> None:
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--check-chronology", action="store_true")
     parser.add_argument("--later-evidence", nargs="*", default=[])
+    parser.add_argument(
+        "--amend-one",
+        action="store_true",
+        help="write amendment 1 to the selective_operating_point derivation step",
+    )
     arguments = parser.parse_args()
 
     if arguments.check_chronology:
         _check_chronology(tuple(Path(item) for item in arguments.later_evidence))
+    elif arguments.amend_one:
+        _write_amendment_one()
     elif arguments.check:
         _check()
     else:
