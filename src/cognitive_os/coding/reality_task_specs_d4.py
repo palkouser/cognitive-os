@@ -6529,6 +6529,1145 @@ def test_an_empty_sequence_answers_zero() -> None:
     ),
 )
 
+# ------------------------------------------------------------------------ parsing and validation
+
+_G066 = D2TaskSpec(
+    template_id="d4_parsing.percent_escapes",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d4-parsing-percent-escapes",
+    module="percent_escapes",
+    module_doc="Decoding the percent escapes in an encoded string.",
+    issue=(
+        "decode_percent() is documented to decode the percent escapes in a string. Callers "
+        "report that a percent sign the encoder never meant as an escape brings the whole call "
+        "down, and that an escape written with lowercase hex digits is refused rather than "
+        "decoded."
+    ),
+    expected=(
+        "decode_percent(text) replaces every percent sign followed by two hex digits with the "
+        "character they name, reads those digits in either case, and leaves a percent sign that "
+        "is not followed by two hex digits exactly as it was written."
+    ),
+    baseline_reason=(
+        "it accepts only the uppercase digits it knows and refuses everything else outright"
+    ),
+    edge_cases=(
+        "a percent sign that is not an escape is left as written",
+        "hex digits written in lowercase are decoded too",
+    ),
+    baseline="""def decode_percent(text):
+    \"\"\"Decode the percent escapes in `text`.\"\"\"
+    digits = "0123456789ABCDEF"
+    decoded = []
+    index = 0
+    while index < len(text):
+        letter = text[index]
+        if letter != "%":
+            decoded.append(letter)
+            index += 1
+            continue
+        code = text[index + 1 : index + 3]
+        if len(code) == 2 and all(digit in digits for digit in code):
+            decoded.append(chr(int(code, 16)))
+            index += 3
+        else:
+            raise ValueError("a percent sign must be followed by two hex digits")
+    return "".join(decoded)""",
+    variant_one="""def decode_percent(text):
+    \"\"\"Decode the percent escapes in `text`.\"\"\"
+    digits = "0123456789abcdefABCDEF"
+    decoded = []
+    index = 0
+    while index < len(text):
+        letter = text[index]
+        if letter != "%":
+            decoded.append(letter)
+            index += 1
+            continue
+        code = text[index + 1 : index + 3]
+        if len(code) == 2 and all(digit in digits for digit in code):
+            decoded.append(chr(int(code, 16)))
+            index += 3
+        else:
+            decoded.append(letter)
+            index += 1
+    return "".join(decoded)""",
+    variant_two="""def decode_percent(text):
+    \"\"\"Decode the percent escapes in `text`.\"\"\"
+    pieces = text.split("%")
+    decoded = [pieces[0]]
+    for piece in pieces[1:]:
+        head = piece[:2]
+        if len(head) == 2 and all(digit in "0123456789abcdefABCDEF" for digit in head):
+            decoded.append(chr(int(head, 16)) + piece[2:])
+        else:
+            decoded.append("%" + piece)
+    return "".join(decoded)""",
+    variant_three="""def decode_percent(text):
+    \"\"\"Decode the percent escapes in `text`.\"\"\"
+    digits = "0123456789ABCDEF"
+    decoded = []
+    index = 0
+    while index < len(text):
+        letter = text[index]
+        if letter != "%":
+            decoded.append(letter)
+            index += 1
+            continue
+        code = text[index + 1 : index + 3]
+        if len(code) == 2 and all(digit in digits for digit in code):
+            decoded.append(chr(int(code, 16)))
+            index += 3
+        else:
+            decoded.append(letter)
+            index += 1
+    return "".join(decoded)""",
+    variant_four="""def decode_percent(text):
+    \"\"\"Decode the percent escapes in `text`.\"\"\"
+    digits = "0123456789abcdefABCDEF"
+    decoded = []
+    index = 0
+    while index < len(text):
+        letter = text[index]
+        if letter != "%":
+            decoded.append(letter)
+            index += 1
+            continue
+        code = text[index + 1 : index + 3]
+        if len(code) == 2 and all(digit in digits for digit in code):
+            decoded.append(chr(int(code, 16)))
+            index += 3
+        else:
+            raise ValueError("a percent sign must be followed by two hex digits")
+    return "".join(decoded)""",
+    visible_test=_test_module(
+        "percent_escapes",
+        "Published contract for decoding percent escapes.",
+        """
+def test_a_space() -> None:
+    assert decode_percent("a%20b") == "a b"
+
+
+def test_a_percent_sign_of_its_own() -> None:
+    assert decode_percent("100%25") == "100%"
+
+
+def test_a_string_with_nothing_to_decode() -> None:
+    assert decode_percent("plain") == "plain"
+""",
+        imports="from percent_escapes import decode_percent\n",
+    ),
+    hidden_test=_test_module(
+        "percent_escapes",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_space() -> None:
+    assert decode_percent("a%20b") == "a b"
+
+
+def test_a_percent_sign_that_is_not_an_escape_is_left_as_written() -> None:
+    assert decode_percent("50% off") == "50% off"
+    assert decode_percent("a%zzb") == "a%zzb"
+
+
+def test_hex_digits_written_in_lowercase_are_decoded_too() -> None:
+    assert decode_percent("a%2fb") == "a/b"
+""",
+        imports="from percent_escapes import decode_percent\n",
+    ),
+)
+
+_G067 = D2TaskSpec(
+    template_id="d4_parsing.version_constraint",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d4-parsing-version-constraint",
+    module="constraint_syntax",
+    module_doc="Reading a version constraint as an operator and a version.",
+    issue=(
+        "parse_constraint() is documented to read a version constraint as an operator and a "
+        "version. Callers report that a bare version comes back with no operator at all, and "
+        "that a constraint written with a two-character operator comes back with the first "
+        "character as the operator and the second stuck to the front of the version."
+    ),
+    expected=(
+        "parse_constraint(text) returns (operator, version); a bare version means equality, and "
+        "a two-character operator is read whole rather than one character at a time."
+    ),
+    baseline_reason="it tries the one-character operators first and settles for no operator at all",
+    edge_cases=(
+        "a bare version means equality",
+        "a two-character operator is read whole",
+    ),
+    baseline="""def parse_constraint(text):
+    \"\"\"Split a version constraint into its operator and its version.\"\"\"
+    trimmed = text.strip()
+    for operator in ("<", ">", "=="):
+        if trimmed.startswith(operator):
+            return operator, trimmed[len(operator) :].strip()
+    return "", trimmed""",
+    variant_one="""def parse_constraint(text):
+    \"\"\"Split a version constraint into its operator and its version.\"\"\"
+    trimmed = text.strip()
+    for operator in (">=", "<=", "==", ">", "<"):
+        if trimmed.startswith(operator):
+            return operator, trimmed[len(operator) :].strip()
+    return "==", trimmed""",
+    variant_two="""def parse_constraint(text):
+    \"\"\"Split a version constraint into its operator and its version.\"\"\"
+    trimmed = text.strip()
+    cut = 0
+    while cut < len(trimmed) and trimmed[cut] in "<>=":
+        cut += 1
+    return trimmed[:cut] or "==", trimmed[cut:].strip()""",
+    variant_three="""def parse_constraint(text):
+    \"\"\"Split a version constraint into its operator and its version.\"\"\"
+    trimmed = text.strip()
+    for operator in ("<", ">", "=="):
+        if trimmed.startswith(operator):
+            return operator, trimmed[len(operator) :].strip()
+    return "==", trimmed""",
+    variant_four="""def parse_constraint(text):
+    \"\"\"Split a version constraint into its operator and its version.\"\"\"
+    trimmed = text.strip()
+    for operator in (">=", "<=", "==", ">", "<"):
+        if trimmed.startswith(operator):
+            return operator, trimmed[len(operator) :].strip()
+    return "", trimmed""",
+    visible_test=_test_module(
+        "constraint_syntax",
+        "Published contract for reading a version constraint.",
+        """
+def test_greater_than() -> None:
+    assert parse_constraint(">1.2") == (">", "1.2")
+
+
+def test_equal_to() -> None:
+    assert parse_constraint("==2.0") == ("==", "2.0")
+
+
+def test_less_than_with_room_around_it() -> None:
+    assert parse_constraint(" < 3 ") == ("<", "3")
+""",
+        imports="from constraint_syntax import parse_constraint\n",
+    ),
+    hidden_test=_test_module(
+        "constraint_syntax",
+        "The part of the contract the published tests do not state.",
+        """
+def test_greater_than() -> None:
+    assert parse_constraint(">1.2") == (">", "1.2")
+
+
+def test_a_bare_version_means_equality() -> None:
+    assert parse_constraint("1.2.3") == ("==", "1.2.3")
+
+
+def test_a_two_character_operator_is_read_whole() -> None:
+    assert parse_constraint(">=1.2") == (">=", "1.2")
+    assert parse_constraint("<=4") == ("<=", "4")
+""",
+        imports="from constraint_syntax import parse_constraint\n",
+    ),
+)
+
+_G068 = D2TaskSpec(
+    template_id="d4_parsing.strip_quotes",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d4-parsing-strip-quotes",
+    module="quote_stripping",
+    module_doc="Taking the surrounding quotes off a quoted value.",
+    issue=(
+        "strip_quotes() is documented to take one matching pair of surrounding quotes off a "
+        "value. Callers report that a value opening with one kind of quote and closing with the "
+        "other is stripped anyway, and that a value that is nothing but a single quote "
+        "character comes back empty."
+    ),
+    expected=(
+        "strip_quotes(text) removes the outer pair only when the value opens and closes with the "
+        "same quote character and is long enough to hold a pair; anything else comes back "
+        "exactly as it was."
+    ),
+    baseline_reason=(
+        "it checks that each end is a quote without checking that they are the same one"
+    ),
+    edge_cases=(
+        "ends that do not match are left alone",
+        "a lone quote character is not a pair",
+    ),
+    baseline="""def strip_quotes(text):
+    \"\"\"Remove one matching pair of surrounding quotes from `text`.\"\"\"
+    if text[:1] in ("'", '"') and text[-1:] in ("'", '"'):
+        return text[1:-1]
+    return text""",
+    variant_one="""def strip_quotes(text):
+    \"\"\"Remove one matching pair of surrounding quotes from `text`.\"\"\"
+    if len(text) >= 2 and text[0] == text[-1] and text[0] in ("'", '"'):
+        return text[1:-1]
+    return text""",
+    variant_two="""def strip_quotes(text):
+    \"\"\"Remove one matching pair of surrounding quotes from `text`.\"\"\"
+    for quote in ("'", '"'):
+        if len(text) > 1 and text.startswith(quote) and text.endswith(quote):
+            return text[1:-1]
+    return text""",
+    variant_three="""def strip_quotes(text):
+    \"\"\"Remove one matching pair of surrounding quotes from `text`.\"\"\"
+    if text[:1] in ("'", '"') and text[:1] == text[-1:]:
+        return text[1:-1]
+    return text""",
+    variant_four="""def strip_quotes(text):
+    \"\"\"Remove one matching pair of surrounding quotes from `text`.\"\"\"
+    if len(text) >= 2 and text[0] in ("'", '"') and text[-1] in ("'", '"'):
+        return text[1:-1]
+    return text""",
+    visible_test=_test_module(
+        "quote_stripping",
+        "Published contract for taking the quotes off a value.",
+        """
+def test_double_quotes() -> None:
+    assert strip_quotes('"abc"') == "abc"
+
+
+def test_single_quotes() -> None:
+    assert strip_quotes("'abc'") == "abc"
+
+
+def test_a_value_with_no_quotes_at_all() -> None:
+    assert strip_quotes("abc") == "abc"
+""",
+        imports="from quote_stripping import strip_quotes\n",
+    ),
+    hidden_test=_test_module(
+        "quote_stripping",
+        "The part of the contract the published tests do not state.",
+        """
+def test_double_quotes() -> None:
+    assert strip_quotes('"abc"') == "abc"
+
+
+def test_ends_that_do_not_match_are_left_alone() -> None:
+    mixed = '"abc' + "'"
+    assert strip_quotes(mixed) == mixed
+
+
+def test_a_lone_quote_character_is_not_a_pair() -> None:
+    assert strip_quotes('"') == '"'
+    assert strip_quotes("'") == "'"
+""",
+        imports="from quote_stripping import strip_quotes\n",
+    ),
+)
+
+_G069 = D2TaskSpec(
+    template_id="d4_parsing.split_top_level",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d4-parsing-split-top-level",
+    module="depth_split",
+    module_doc="Splitting an argument list at its top-level separators.",
+    issue=(
+        "split_top_level() is documented to split a list at the commas that are not inside "
+        "brackets. Callers report that a call nested inside another call is split in the middle, "
+        "and that a list with a bracket left open comes back split rather than refused."
+    ),
+    expected=(
+        "split_top_level(text) returns the trimmed pieces between the commas that stand outside "
+        "every bracket, counts nested brackets properly, and raises ValueError when the brackets "
+        "do not balance."
+    ),
+    baseline_reason=(
+        "it remembers only whether it is inside brackets, not how deep, and never checks the "
+        "brackets balance"
+    ),
+    edge_cases=(
+        "a comma inside a nested bracket does not split",
+        "a bracket left open is refused",
+    ),
+    baseline="""def split_top_level(text):
+    \"\"\"Split `text` at the commas that stand outside every bracket.\"\"\"
+    pieces = []
+    current = ""
+    inside = False
+    for letter in text:
+        if letter == "(":
+            inside = True
+        elif letter == ")":
+            inside = False
+        if letter == "," and not inside:
+            pieces.append(current.strip())
+            current = ""
+        else:
+            current += letter
+    pieces.append(current.strip())
+    return pieces""",
+    variant_one="""def split_top_level(text):
+    \"\"\"Split `text` at the commas that stand outside every bracket.\"\"\"
+    pieces = []
+    current = ""
+    depth = 0
+    for letter in text:
+        if letter == "(":
+            depth += 1
+        elif letter == ")":
+            depth -= 1
+            if depth < 0:
+                raise ValueError("a bracket closes that never opened")
+        if letter == "," and depth == 0:
+            pieces.append(current.strip())
+            current = ""
+        else:
+            current += letter
+    if depth != 0:
+        raise ValueError("a bracket opens that never closes")
+    pieces.append(current.strip())
+    return pieces""",
+    variant_two="""def split_top_level(text):
+    \"\"\"Split `text` at the commas that stand outside every bracket.\"\"\"
+    pieces = []
+    current = ""
+    index = 0
+    while index < len(text):
+        letter = text[index]
+        if letter == "(":
+            depth = 0
+            opened = index
+            while index < len(text):
+                if text[index] == "(":
+                    depth += 1
+                elif text[index] == ")":
+                    depth -= 1
+                    if depth == 0:
+                        break
+                index += 1
+            if depth != 0:
+                raise ValueError("a bracket opens that never closes")
+            current += text[opened : index + 1]
+        elif letter == ")":
+            raise ValueError("a bracket closes that never opened")
+        elif letter == ",":
+            pieces.append(current.strip())
+            current = ""
+        else:
+            current += letter
+        index += 1
+    pieces.append(current.strip())
+    return pieces""",
+    variant_three="""def split_top_level(text):
+    \"\"\"Split `text` at the commas that stand outside every bracket.\"\"\"
+    pieces = []
+    current = ""
+    depth = 0
+    for letter in text:
+        if letter == "(":
+            depth += 1
+        elif letter == ")":
+            depth -= 1
+        if letter == "," and depth == 0:
+            pieces.append(current.strip())
+            current = ""
+        else:
+            current += letter
+    pieces.append(current.strip())
+    return pieces""",
+    variant_four="""def split_top_level(text):
+    \"\"\"Split `text` at the commas that stand outside every bracket.\"\"\"
+    if text.count("(") != text.count(")"):
+        raise ValueError("the brackets do not balance")
+    pieces = []
+    current = ""
+    inside = False
+    for letter in text:
+        if letter == "(":
+            inside = True
+        elif letter == ")":
+            inside = False
+        if letter == "," and not inside:
+            pieces.append(current.strip())
+            current = ""
+        else:
+            current += letter
+    pieces.append(current.strip())
+    return pieces""",
+    visible_test=_test_module(
+        "depth_split",
+        "Published contract for splitting at top-level separators.",
+        """
+def test_a_plain_list() -> None:
+    assert split_top_level("a, b, c") == ["a", "b", "c"]
+
+
+def test_a_comma_inside_one_bracket_does_not_split() -> None:
+    assert split_top_level("a, f(x, y), b") == ["a", "f(x, y)", "b"]
+
+
+def test_a_single_item() -> None:
+    assert split_top_level("only") == ["only"]
+""",
+        imports="from depth_split import split_top_level\n",
+    ),
+    hidden_test=_test_module(
+        "depth_split",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_plain_list() -> None:
+    assert split_top_level("a, b, c") == ["a", "b", "c"]
+
+
+def test_a_comma_inside_a_nested_bracket_does_not_split() -> None:
+    assert split_top_level("f(g(a,b),c)") == ["f(g(a,b),c)"]
+
+
+def test_a_bracket_left_open_is_refused() -> None:
+    with pytest.raises(ValueError):
+        split_top_level("a, f(x")
+""",
+        imports="from depth_split import split_top_level\n",
+    ),
+)
+
+_G070 = D2TaskSpec(
+    template_id="d4_parsing.parse_ordinal",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d4-parsing-ordinal",
+    module="ordinal_number",
+    module_doc="Reading the number written as an ordinal.",
+    issue=(
+        "parse_ordinal() is documented to read the number written as an ordinal. Callers report "
+        "that the eleventh, twelfth and thirteenth are refused outright, and that an ordinal "
+        "with a space around it is refused as well."
+    ),
+    expected=(
+        "parse_ordinal(text) returns the number, ignores the room around it, refuses a suffix "
+        "that does not fit the number, and knows that eleven, twelve and thirteen take th "
+        "whatever their last digit is."
+    ),
+    baseline_reason=(
+        "it picks the suffix from the last digit alone and reads the text exactly as given"
+    ),
+    edge_cases=(
+        "eleven, twelve and thirteen take th",
+        "room around the ordinal is ignored",
+    ),
+    baseline="""def parse_ordinal(text):
+    \"\"\"Return the number written as an ordinal in `text`.\"\"\"
+    number = int(text[:-2])
+    wanted = {1: "st", 2: "nd", 3: "rd"}.get(number % 10, "th")
+    if text[-2:] != wanted:
+        raise ValueError("the suffix does not fit the number")
+    return number""",
+    variant_one="""def parse_ordinal(text):
+    \"\"\"Return the number written as an ordinal in `text`.\"\"\"
+    trimmed = text.strip()
+    number = int(trimmed[:-2])
+    if number % 100 in (11, 12, 13):
+        wanted = "th"
+    else:
+        wanted = {1: "st", 2: "nd", 3: "rd"}.get(number % 10, "th")
+    if trimmed[-2:] != wanted:
+        raise ValueError("the suffix does not fit the number")
+    return number""",
+    variant_two="""def parse_ordinal(text):
+    \"\"\"Return the number written as an ordinal in `text`.\"\"\"
+    trimmed = text.strip()
+    number = int(trimmed[:-2])
+    wanted = "th"
+    if number % 100 not in (11, 12, 13):
+        for suffix, last in (("st", 1), ("nd", 2), ("rd", 3)):
+            if number % 10 == last:
+                wanted = suffix
+                break
+    if trimmed[-2:] != wanted:
+        raise ValueError("the suffix does not fit the number")
+    return number""",
+    variant_three="""def parse_ordinal(text):
+    \"\"\"Return the number written as an ordinal in `text`.\"\"\"
+    number = int(text[:-2])
+    if number % 100 in (11, 12, 13):
+        wanted = "th"
+    else:
+        wanted = {1: "st", 2: "nd", 3: "rd"}.get(number % 10, "th")
+    if text[-2:] != wanted:
+        raise ValueError("the suffix does not fit the number")
+    return number""",
+    variant_four="""def parse_ordinal(text):
+    \"\"\"Return the number written as an ordinal in `text`.\"\"\"
+    trimmed = text.strip()
+    number = int(trimmed[:-2])
+    wanted = {1: "st", 2: "nd", 3: "rd"}.get(number % 10, "th")
+    if trimmed[-2:] != wanted:
+        raise ValueError("the suffix does not fit the number")
+    return number""",
+    visible_test=_test_module(
+        "ordinal_number",
+        "Published contract for reading an ordinal.",
+        """
+import pytest
+
+
+def test_the_first() -> None:
+    assert parse_ordinal("1st") == 1
+
+
+def test_the_twenty_second() -> None:
+    assert parse_ordinal("22nd") == 22
+
+
+def test_a_suffix_that_does_not_fit_is_refused() -> None:
+    with pytest.raises(ValueError):
+        parse_ordinal("4st")
+""",
+        imports="from ordinal_number import parse_ordinal\n",
+    ),
+    hidden_test=_test_module(
+        "ordinal_number",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_first() -> None:
+    assert parse_ordinal("1st") == 1
+
+
+def test_eleven_twelve_and_thirteen_take_th() -> None:
+    assert parse_ordinal("11th") == 11
+    assert parse_ordinal("113th") == 113
+
+
+def test_room_around_the_ordinal_is_ignored() -> None:
+    assert parse_ordinal(" 2nd ") == 2
+""",
+        imports="from ordinal_number import parse_ordinal\n",
+    ),
+)
+
+# ------------------------------------------------------------------------- state and idempotency
+
+_G071 = D2TaskSpec(
+    template_id="d4_state.rotate_key",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d4-state-rotate-key",
+    module="credential_rotation",
+    module_doc="Rotating the active signing key of a store.",
+    issue=(
+        "rotate_key() is documented to make a key active and keep the one it replaced. Callers "
+        "report that rotating to the key that is already active records a rotation that never "
+        "happened, and that the retired list grows without end instead of holding the one key "
+        "just replaced."
+    ),
+    expected=(
+        "rotate_key(store, key, at) returns the store with `key` active, the key it replaced as "
+        "the only retired one and the rotation stamped at `at`; rotating to the key already "
+        "active returns the store exactly as it was."
+    ),
+    baseline_reason=(
+        "it appends to whatever was retired before and never asks whether the key changed"
+    ),
+    edge_cases=(
+        "rotating to the key already active changes nothing",
+        "only the key just replaced stays retired",
+    ),
+    baseline="""def rotate_key(store, key, at):
+    \"\"\"Return `store` with `key` made active.\"\"\"
+    rotated = dict(store)
+    rotated["retired"] = [*store.get("retired", []), store["active"]]
+    rotated["active"] = key
+    rotated["rotated_at"] = at
+    return rotated""",
+    variant_one="""def rotate_key(store, key, at):
+    \"\"\"Return `store` with `key` made active.\"\"\"
+    if store["active"] == key:
+        return dict(store)
+    rotated = dict(store)
+    rotated["retired"] = [store["active"]]
+    rotated["active"] = key
+    rotated["rotated_at"] = at
+    return rotated""",
+    variant_two="""def rotate_key(store, key, at):
+    \"\"\"Return `store` with `key` made active.\"\"\"
+    if store["active"] == key:
+        return {name: value for name, value in store.items()}
+    replaced = store["active"]
+    fresh = {name: value for name, value in store.items() if name != "retired"}
+    fresh["retired"] = [replaced]
+    fresh["active"] = key
+    fresh["rotated_at"] = at
+    return fresh""",
+    variant_three="""def rotate_key(store, key, at):
+    \"\"\"Return `store` with `key` made active.\"\"\"
+    if store["active"] == key:
+        return dict(store)
+    rotated = dict(store)
+    rotated["retired"] = [*store.get("retired", []), store["active"]]
+    rotated["active"] = key
+    rotated["rotated_at"] = at
+    return rotated""",
+    variant_four="""def rotate_key(store, key, at):
+    \"\"\"Return `store` with `key` made active.\"\"\"
+    rotated = dict(store)
+    rotated["retired"] = [store["active"]]
+    rotated["active"] = key
+    rotated["rotated_at"] = at
+    return rotated""",
+    visible_test=_test_module(
+        "credential_rotation",
+        "Published contract for rotating a signing key.",
+        """
+def test_a_first_rotation() -> None:
+    store = {"active": "k1", "rotated_at": 0}
+    assert rotate_key(store, "k2", 5) == {
+        "active": "k2",
+        "retired": ["k1"],
+        "rotated_at": 5,
+    }
+
+
+def test_the_caller_store_is_not_changed() -> None:
+    store = {"active": "k1", "rotated_at": 0}
+    rotate_key(store, "k2", 5)
+    assert store == {"active": "k1", "rotated_at": 0}
+
+
+def test_other_settings_are_carried_over() -> None:
+    store = {"active": "k1", "rotated_at": 0, "owner": "billing"}
+    assert rotate_key(store, "k2", 5)["owner"] == "billing"
+""",
+        imports="from credential_rotation import rotate_key\n",
+    ),
+    hidden_test=_test_module(
+        "credential_rotation",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_first_rotation() -> None:
+    store = {"active": "k1", "rotated_at": 0}
+    assert rotate_key(store, "k2", 5)["active"] == "k2"
+
+
+def test_rotating_to_the_key_already_active_changes_nothing() -> None:
+    store = {"active": "k1", "rotated_at": 0}
+    assert rotate_key(store, "k1", 9) == store
+
+
+def test_only_the_key_just_replaced_stays_retired() -> None:
+    once = rotate_key({"active": "k1", "rotated_at": 0}, "k2", 5)
+    twice = rotate_key(once, "k3", 6)
+    assert twice["retired"] == ["k2"]
+""",
+        imports="from credential_rotation import rotate_key\n",
+    ),
+)
+
+_G072 = D2TaskSpec(
+    template_id="d4_state.rename_stage",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d4-state-rename-stage",
+    module="stage_rename",
+    module_doc="Renaming a stage of a pipeline without disturbing the order.",
+    issue=(
+        "rename_stage() is documented to rename a stage of a pipeline. Callers report that a "
+        "renamed stage is moved to the end of the pipeline instead of staying where it was, and "
+        "that renaming a stage to the name it already has is refused as a clash with itself."
+    ),
+    expected=(
+        "rename_stage(pipeline, old, new) returns the pipeline with the stage renamed in place, "
+        "returns it unchanged when the two names are the same, and raises ValueError for a stage "
+        "that is not there or a name another stage already holds."
+    ),
+    baseline_reason="it drops the stage and puts it back, which puts it back at the end",
+    edge_cases=(
+        "the renamed stage keeps its place in the order",
+        "renaming a stage to the name it already has changes nothing",
+    ),
+    baseline="""def rename_stage(pipeline, old, new):
+    \"\"\"Return `pipeline` with the stage `old` renamed to `new`.\"\"\"
+    if old not in pipeline:
+        raise ValueError("no such stage")
+    if new in pipeline:
+        raise ValueError("that name is taken")
+    renamed = {name: settings for name, settings in pipeline.items() if name != old}
+    renamed[new] = pipeline[old]
+    return renamed""",
+    variant_one="""def rename_stage(pipeline, old, new):
+    \"\"\"Return `pipeline` with the stage `old` renamed to `new`.\"\"\"
+    if old not in pipeline:
+        raise ValueError("no such stage")
+    if old == new:
+        return dict(pipeline)
+    if new in pipeline:
+        raise ValueError("that name is taken")
+    return {(new if name == old else name): settings for name, settings in pipeline.items()}""",
+    variant_two="""def rename_stage(pipeline, old, new):
+    \"\"\"Return `pipeline` with the stage `old` renamed to `new`.\"\"\"
+    if old not in pipeline:
+        raise ValueError("no such stage")
+    if old == new:
+        return dict(pipeline)
+    if new in pipeline:
+        raise ValueError("that name is taken")
+    names = list(pipeline)
+    names[names.index(old)] = new
+    settings = dict(pipeline)
+    settings[new] = settings.pop(old)
+    return {name: settings[name] for name in names}""",
+    variant_three="""def rename_stage(pipeline, old, new):
+    \"\"\"Return `pipeline` with the stage `old` renamed to `new`.\"\"\"
+    if old not in pipeline:
+        raise ValueError("no such stage")
+    if new in pipeline:
+        raise ValueError("that name is taken")
+    return {(new if name == old else name): settings for name, settings in pipeline.items()}""",
+    variant_four="""def rename_stage(pipeline, old, new):
+    \"\"\"Return `pipeline` with the stage `old` renamed to `new`.\"\"\"
+    if old not in pipeline:
+        raise ValueError("no such stage")
+    if old == new:
+        return dict(pipeline)
+    if new in pipeline:
+        raise ValueError("that name is taken")
+    renamed = {name: settings for name, settings in pipeline.items() if name != old}
+    renamed[new] = pipeline[old]
+    return renamed""",
+    visible_test=_test_module(
+        "stage_rename",
+        "Published contract for renaming a pipeline stage.",
+        """
+import pytest
+
+
+def test_renaming_the_last_stage() -> None:
+    assert rename_stage({"fetch": 1, "load": 2}, "load", "store") == {"fetch": 1, "store": 2}
+
+
+def test_a_stage_that_is_not_there() -> None:
+    with pytest.raises(ValueError):
+        rename_stage({"fetch": 1}, "load", "store")
+
+
+def test_a_name_another_stage_already_holds() -> None:
+    with pytest.raises(ValueError):
+        rename_stage({"fetch": 1, "load": 2}, "fetch", "load")
+""",
+        imports="from stage_rename import rename_stage\n",
+    ),
+    hidden_test=_test_module(
+        "stage_rename",
+        "The part of the contract the published tests do not state.",
+        """
+def test_renaming_the_last_stage() -> None:
+    assert rename_stage({"fetch": 1, "load": 2}, "load", "store") == {"fetch": 1, "store": 2}
+
+
+def test_the_renamed_stage_keeps_its_place_in_the_order() -> None:
+    renamed = rename_stage({"fetch": 1, "clean": 2, "load": 3}, "fetch", "collect")
+    assert list(renamed) == ["collect", "clean", "load"]
+
+
+def test_renaming_a_stage_to_the_name_it_already_has_changes_nothing() -> None:
+    assert rename_stage({"fetch": 1, "load": 2}, "load", "load") == {"fetch": 1, "load": 2}
+""",
+        imports="from stage_rename import rename_stage\n",
+    ),
+)
+
+_G073 = D2TaskSpec(
+    template_id="d4_state.enrol_member",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d4-state-enrol-member",
+    module="enrolment",
+    module_doc="Enrolling a member in a group that has a waiting list.",
+    issue=(
+        "enrol() is documented to enrol a member in a group, or to put them on the waiting list "
+        "when the group is full. Callers report that a member already waiting is enrolled a "
+        "second time, and that a full group takes the member anyway instead of putting them on "
+        "the list."
+    ),
+    expected=(
+        "enrol(group, member) returns the group with the member enrolled while there is room, "
+        "on the waiting list once there is not, and unchanged when the member is already "
+        "enrolled or already waiting."
+    ),
+    baseline_reason="it looks only at the members and never at the waiting list or the capacity",
+    edge_cases=(
+        "a member already waiting is not enrolled as well",
+        "a full group puts the member on the waiting list",
+    ),
+    baseline="""def enrol(group, member):
+    \"\"\"Return `group` with `member` enrolled, or waiting if there is no room.\"\"\"
+    if member in group["members"]:
+        return dict(group)
+    joined = dict(group)
+    joined["members"] = [*group["members"], member]
+    return joined""",
+    variant_one="""def enrol(group, member):
+    \"\"\"Return `group` with `member` enrolled, or waiting if there is no room.\"\"\"
+    if member in group["members"] or member in group["waiting"]:
+        return dict(group)
+    joined = dict(group)
+    if len(group["members"]) < group["capacity"]:
+        joined["members"] = [*group["members"], member]
+    else:
+        joined["waiting"] = [*group["waiting"], member]
+    return joined""",
+    variant_two="""def enrol(group, member):
+    \"\"\"Return `group` with `member` enrolled, or waiting if there is no room.\"\"\"
+    members = list(group["members"])
+    waiting = list(group["waiting"])
+    if member not in members and member not in waiting:
+        if len(members) < group["capacity"]:
+            members.append(member)
+        else:
+            waiting.append(member)
+    return {**group, "members": members, "waiting": waiting}""",
+    variant_three="""def enrol(group, member):
+    \"\"\"Return `group` with `member` enrolled, or waiting if there is no room.\"\"\"
+    if member in group["members"] or member in group["waiting"]:
+        return dict(group)
+    joined = dict(group)
+    joined["members"] = [*group["members"], member]
+    return joined""",
+    variant_four="""def enrol(group, member):
+    \"\"\"Return `group` with `member` enrolled, or waiting if there is no room.\"\"\"
+    if member in group["members"]:
+        return dict(group)
+    joined = dict(group)
+    if len(group["members"]) < group["capacity"]:
+        joined["members"] = [*group["members"], member]
+    else:
+        joined["waiting"] = [*group["waiting"], member]
+    return joined""",
+    visible_test=_test_module(
+        "enrolment",
+        "Published contract for enrolling a member.",
+        """
+def test_a_group_with_room() -> None:
+    group = {"members": ["ada"], "waiting": [], "capacity": 3}
+    assert enrol(group, "bo")["members"] == ["ada", "bo"]
+
+
+def test_a_member_already_enrolled_is_not_enrolled_twice() -> None:
+    group = {"members": ["ada"], "waiting": [], "capacity": 3}
+    assert enrol(group, "ada") == group
+
+
+def test_the_caller_group_is_not_changed() -> None:
+    group = {"members": ["ada"], "waiting": [], "capacity": 3}
+    enrol(group, "bo")
+    assert group["members"] == ["ada"]
+""",
+        imports="from enrolment import enrol\n",
+    ),
+    hidden_test=_test_module(
+        "enrolment",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_group_with_room() -> None:
+    group = {"members": ["ada"], "waiting": [], "capacity": 3}
+    assert enrol(group, "bo")["members"] == ["ada", "bo"]
+
+
+def test_a_member_already_waiting_is_not_enrolled_as_well() -> None:
+    group = {"members": ["ada"], "waiting": ["bo"], "capacity": 3}
+    assert enrol(group, "bo") == group
+
+
+def test_a_full_group_puts_the_member_on_the_waiting_list() -> None:
+    group = {"members": ["ada", "bo"], "waiting": [], "capacity": 2}
+    joined = enrol(group, "cy")
+    assert joined["members"] == ["ada", "bo"]
+    assert joined["waiting"] == ["cy"]
+""",
+        imports="from enrolment import enrol\n",
+    ),
+)
+
+_G074 = D2TaskSpec(
+    template_id="d4_state.record_heartbeat",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d4-state-record-heartbeat",
+    module="heartbeat_log",
+    module_doc="Keeping the latest heartbeat seen from each node.",
+    issue=(
+        "record_heartbeat() is documented to keep the latest heartbeat seen from each node. "
+        "Callers report that a heartbeat that arrives late, stamped earlier than the one already "
+        "recorded, overwrites it, and that the first heartbeat from a new node brings the call "
+        "down."
+    ),
+    expected=(
+        "record_heartbeat(nodes, name, at) returns the log with the node's stamp moved forward "
+        "to `at`, leaves it alone when `at` is no later than the stamp already there, and "
+        "records a node it has not seen before."
+    ),
+    baseline_reason=(
+        "it compares the two stamps for difference rather than for order, and assumes "
+        "the node is known"
+    ),
+    edge_cases=(
+        "a heartbeat stamped earlier than the one recorded is ignored",
+        "a node not seen before is recorded",
+    ),
+    baseline="""def record_heartbeat(nodes, name, at):
+    \"\"\"Return `nodes` with `name` beating at `at`.\"\"\"
+    seen = dict(nodes)
+    if at != seen[name]:
+        seen[name] = at
+    return seen""",
+    variant_one="""def record_heartbeat(nodes, name, at):
+    \"\"\"Return `nodes` with `name` beating at `at`.\"\"\"
+    seen = dict(nodes)
+    if name not in seen or at > seen[name]:
+        seen[name] = at
+    return seen""",
+    variant_two="""def record_heartbeat(nodes, name, at):
+    \"\"\"Return `nodes` with `name` beating at `at`.\"\"\"
+    latest = max(at, nodes[name]) if name in nodes else at
+    return {**nodes, name: latest}""",
+    variant_three="""def record_heartbeat(nodes, name, at):
+    \"\"\"Return `nodes` with `name` beating at `at`.\"\"\"
+    seen = dict(nodes)
+    if at > seen[name]:
+        seen[name] = at
+    return seen""",
+    variant_four="""def record_heartbeat(nodes, name, at):
+    \"\"\"Return `nodes` with `name` beating at `at`.\"\"\"
+    seen = dict(nodes)
+    if name not in seen or at != seen[name]:
+        seen[name] = at
+    return seen""",
+    visible_test=_test_module(
+        "heartbeat_log",
+        "Published contract for recording a heartbeat.",
+        """
+def test_a_later_heartbeat_moves_the_stamp_forward() -> None:
+    assert record_heartbeat({"alpha": 10}, "alpha", 20) == {"alpha": 20}
+
+
+def test_the_same_stamp_again_changes_nothing() -> None:
+    assert record_heartbeat({"alpha": 10}, "alpha", 10) == {"alpha": 10}
+
+
+def test_the_other_nodes_are_left_alone() -> None:
+    assert record_heartbeat({"alpha": 10, "beta": 3}, "alpha", 20) == {"alpha": 20, "beta": 3}
+""",
+        imports="from heartbeat_log import record_heartbeat\n",
+    ),
+    hidden_test=_test_module(
+        "heartbeat_log",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_later_heartbeat_moves_the_stamp_forward() -> None:
+    assert record_heartbeat({"alpha": 10}, "alpha", 20) == {"alpha": 20}
+
+
+def test_a_heartbeat_stamped_earlier_than_the_one_recorded_is_ignored() -> None:
+    assert record_heartbeat({"alpha": 20}, "alpha", 10) == {"alpha": 20}
+
+
+def test_a_node_not_seen_before_is_recorded() -> None:
+    assert record_heartbeat({"alpha": 20}, "beta", 5) == {"alpha": 20, "beta": 5}
+""",
+        imports="from heartbeat_log import record_heartbeat\n",
+    ),
+)
+
+_G075 = D2TaskSpec(
+    template_id="d4_state.undo_last",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d4-state-undo-last",
+    module="undo_stack",
+    module_doc="Undoing the last action of an editing history.",
+    issue=(
+        "undo_last() is documented to undo the last action of a history. Callers report that "
+        "undoing a history with nothing done brings the call down instead of reporting that "
+        "there was nothing to undo, and that redoing after two undos replays them the wrong way "
+        "round."
+    ),
+    expected=(
+        "undo_last(history) returns (history, action) with the last done action moved to the "
+        "front of the undone list, and returns the history unchanged with no action at all when "
+        "nothing has been done."
+    ),
+    baseline_reason=(
+        "it pops the last action without looking first and files it at the back of the undone list"
+    ),
+    edge_cases=(
+        "undoing nothing reports no action rather than raising",
+        "the undone action goes to the front of the list",
+    ),
+    baseline="""def undo_last(history):
+    \"\"\"Return `history` with its last action undone, and the action itself.\"\"\"
+    done = list(history["done"])
+    action = done.pop()
+    return {"done": done, "undone": [*history["undone"], action]}, action""",
+    variant_one="""def undo_last(history):
+    \"\"\"Return `history` with its last action undone, and the action itself.\"\"\"
+    done = list(history["done"])
+    if not done:
+        return {"done": done, "undone": list(history["undone"])}, None
+    action = done.pop()
+    return {"done": done, "undone": [action, *history["undone"]]}, action""",
+    variant_two="""def undo_last(history):
+    \"\"\"Return `history` with its last action undone, and the action itself.\"\"\"
+    done = history["done"]
+    undone = list(history["undone"])
+    if not done:
+        return {"done": list(done), "undone": undone}, None
+    action = done[-1]
+    return {"done": list(done[:-1]), "undone": [action] + undone}, action""",
+    variant_three="""def undo_last(history):
+    \"\"\"Return `history` with its last action undone, and the action itself.\"\"\"
+    done = list(history["done"])
+    if not done:
+        return {"done": done, "undone": list(history["undone"])}, None
+    action = done.pop()
+    return {"done": done, "undone": [*history["undone"], action]}, action""",
+    variant_four="""def undo_last(history):
+    \"\"\"Return `history` with its last action undone, and the action itself.\"\"\"
+    done = list(history["done"])
+    action = done.pop()
+    return {"done": done, "undone": [action, *history["undone"]]}, action""",
+    visible_test=_test_module(
+        "undo_stack",
+        "Published contract for undoing the last action.",
+        """
+def test_the_last_action_comes_off() -> None:
+    history, action = undo_last({"done": ["type", "bold"], "undone": []})
+    assert action == "bold"
+    assert history == {"done": ["type"], "undone": ["bold"]}
+
+
+def test_the_caller_history_is_not_changed() -> None:
+    history = {"done": ["type"], "undone": []}
+    undo_last(history)
+    assert history == {"done": ["type"], "undone": []}
+
+
+def test_a_single_action() -> None:
+    assert undo_last({"done": ["type"], "undone": []}) == ({"done": [], "undone": ["type"]}, "type")
+""",
+        imports="from undo_stack import undo_last\n",
+    ),
+    hidden_test=_test_module(
+        "undo_stack",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_last_action_comes_off() -> None:
+    history, action = undo_last({"done": ["type", "bold"], "undone": []})
+    assert action == "bold"
+
+
+def test_undoing_nothing_reports_no_action() -> None:
+    history, action = undo_last({"done": [], "undone": []})
+    assert action is None
+    assert history == {"done": [], "undone": []}
+
+
+def test_the_undone_action_goes_to_the_front_of_the_list() -> None:
+    history, _ = undo_last({"done": ["type"], "undone": ["bold"]})
+    assert history["undone"] == ["type", "bold"]
+""",
+        imports="from undo_stack import undo_last\n",
+    ),
+)
+
 #: Authored so far. The tuple grows as batches are authored and executed;
 #: `corpus_d4.py` reads it rather than a count, so a partially authored corpus reports what it
 #: has instead of claiming what it does not.
@@ -6598,4 +7737,14 @@ D4_CALIBRATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G063,
     _G064,
     _G065,
+    _G066,
+    _G067,
+    _G068,
+    _G069,
+    _G070,
+    _G071,
+    _G072,
+    _G073,
+    _G074,
+    _G075,
 )
