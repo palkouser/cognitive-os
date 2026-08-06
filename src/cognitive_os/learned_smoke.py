@@ -3,9 +3,15 @@
 Drives the inert reference component through its whole governed lifecycle against a real
 database — register, lineage, evidence, verify, approve, activate, disable, roll back —
 and then replays history and checks health. It is the one learned code path that writes,
-so it is fenced twice: it refuses any database whose name does not end in `_test`, and it
-uses the abstaining reference component, which cannot change a decision even if something
+and it starts by truncating every learned evidence table, so it is fenced four times: the
+database name must end in `_test`, `COGOS_TRUNCATABLE_DATABASE` must nominate that exact
+database, the learned store must hold nothing this smoke did not create, and the component
+it drives is the abstaining reference one, which cannot change a decision even if something
 did activate it.
+
+The two middle fences were added late, after this smoke erased Sprint 21D3's committed
+campaign. A `_test` suffix is shared by every sprint's evidence database, so the name check
+alone consented to nothing. See `_require_nomination` and `_require_erasable`.
 
 The component it activates is never a shipped default. Nothing here demonstrates that the
 system learns anything; it demonstrates that the record of an activation survives a
@@ -81,6 +87,72 @@ def _require_isolated(url: str) -> None:
         )
 
 
+def _require_nomination(database: str) -> None:
+    """The database must be nominated for erasure by name, in the environment. D4-W0-F1.
+
+    This is `tests/integration/postgres/conftest.py`'s rule, not a new one. That fixture
+    truncates the whole schema and learned the same lesson at W6-F2: "ends with `_test`" is a
+    naming convention, not consent, because every sprint's *evidence* database ends in `_test`
+    too. It answered by requiring `COGOS_TRUNCATABLE_DATABASE` to name the connected database.
+
+    This smoke truncates nine tables and was never given the same treatment, so on 2026-08-05 it
+    erased Sprint 21D3's 280 committed self-play observations and both of its materialised
+    revision-3 datasets -- two minutes before the W7 backup meant to preserve them, which is why
+    that restore proof verified matching counts of nothing. Nothing was recoverable, because
+    every backup was taken after the erasure.
+
+    One rule for both truncating paths, deliberately. A second mechanism answering the same
+    question differently is how an operator ends up knowing one fence and meeting the other.
+    """
+    nominated = os.environ.get("COGOS_TRUNCATABLE_DATABASE")
+    if nominated is None:
+        raise SmokeRefused(
+            "the learned smoke truncates every learned evidence table, so the database must be "
+            "nominated for erasure: set COGOS_TRUNCATABLE_DATABASE to the database you mean. "
+            "It must never name a store that holds evidence."
+        )
+    if nominated != database:
+        raise SmokeRefused(
+            f"refusing to truncate {database}: COGOS_TRUNCATABLE_DATABASE names {nominated}. "
+            "Nominating one database and connecting to another is a misconfiguration, and the "
+            "next statement would have been a TRUNCATE."
+        )
+
+
+async def _require_erasable(connection: Any) -> None:
+    """Second fence: refuse a nominated store that still holds evidence. D4-W0-F1.
+
+    Nomination is consent, and consent can be given by mistake -- an operator following a
+    runbook against the wrong sprint's environment nominates exactly the database that must not
+    be erased. So the store is also asked what it holds. Observations and datasets are the
+    record of executed runs and no later backup can bring them back; this smoke writes neither,
+    so one row of either means the database belongs to somebody else. A component that is not
+    the inert reference one means the same.
+
+    Kept deliberately, against the usual rule about second mechanisms, because the failure it
+    prevents is irreversible data loss rather than an incorrect result. Repeated smoke runs stay
+    idempotent: the reference component's own rows are the one thing allowed to be here.
+    """
+    findings: list[str] = []
+    for table in ("learned_observations", "learned_datasets"):
+        count = await connection.scalar(text(f"SELECT count(*) FROM cognitive_os.{table}"))
+        if count:
+            findings.append(f"{count} row(s) in {table}")
+    foreign = await connection.scalar(
+        text("SELECT count(*) FROM cognitive_os.learned_components WHERE component_id <> :own"),
+        {"own": AlwaysAbstainingRanker.component_id},
+    )
+    if foreign:
+        findings.append(f"{foreign} learned component(s) other than the reference one")
+    if findings:
+        raise SmokeRefused(
+            "refusing to truncate a learned store that holds evidence this smoke did not "
+            f"create: {'; '.join(findings)}. It was nominated by COGOS_TRUNCATABLE_DATABASE, so "
+            "check that the nomination names the scratch database you meant rather than a "
+            "sprint's evidence store."
+        )
+
+
 async def run_learned_smoke() -> dict[str, Any]:
     """Run the full lifecycle and return a JSON-serialisable report."""
     database_url = os.environ.get("COGOS_DATABASE_ADMIN_URL") or os.environ.get(
@@ -99,7 +171,9 @@ async def run_learned_smoke() -> dict[str, Any]:
             name = str(await connection.scalar(text("SELECT current_database()")))
         if not name.endswith("_test"):
             raise SmokeRefused(f"refusing to write learned smoke evidence to {name}")
+        _require_nomination(name)
         async with engine.begin() as connection:
+            await _require_erasable(connection)
             tables = ", ".join(f"cognitive_os.{table.name}" for table in LEARNED_EVIDENCE_TABLES)
             await connection.execute(text(f"TRUNCATE {tables} RESTART IDENTITY CASCADE"))
 

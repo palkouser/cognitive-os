@@ -1,0 +1,140 @@
+{
+ "answer": "persisted and committed, then removed by TRUNCATE",
+ "consequences": {
+  "d3_result_disturbed": false,
+  "irrecoverable": "every backup of the D3 store was taken after the erasure, so the observations and the two materialised revision-3 datasets cannot be restored",
+  "w7_restore_proof_is_vacuous_for_learned_tables": "the restore verified matching counts between a source and a copy whose learned tables were both already empty",
+  "why_not": "the learner selection is committed evidence and S21D4-001 recomputes its full 24-setting grid from that file without reading the store"
+ },
+ "finding": "D4-W0-F1",
+ "integrity_content_hash": "3043d05e165caed79140c7a2b8527924c928d64d7877433176b6592e4f7e5474",
+ "items": [
+  "S21D4-003"
+ ],
+ "mechanism": {
+  "callable": "cognitive_os.learned_smoke.run_learned_smoke",
+  "fence_before_this_sprint": "the database name had to end in _test",
+  "precedent": "postgres_provision_evidence.sh records that the same _test-suffix guard is how the C3 evidence store was truncated twice; W6-F2 answered it for the integration suite by giving that suite its own database. This code path never got the same treatment.",
+  "statement": "TRUNCATE <LEARNED_EVIDENCE_TABLES> RESTART IDENTITY CASCADE",
+  "why_the_fence_failed": "every sprint's evidence database also ends in _test, so the name check passed"
+ },
+ "question": "Were the Sprint 21D3 learned observations and datasets never persisted, or persisted and later removed?",
+ "reasoning": {
+  "learned_tables_were_rewritten": true,
+  "no_delete_statement_ever_ran": true,
+  "persisted_and_committed": true,
+  "why_truncate_and_not_delete": "n_tup_del is 0 on learned_observations. DELETE would have counted.",
+  "why_truncate_and_not_rollback": "A rollback leaves no committed events, and this store holds 340 committed learned.observation_recorded events. A rollback also does not assign a new relfilenode; TRUNCATE does, and does not increment n_tup_del, which is exactly the pattern observed."
+ },
+ "recorded_at": "2026-08-06T07:35:34Z",
+ "remedy": {
+  "change": "cognitive_os.learned_smoke._require_erasable",
+  "item": "S21D4-003 finding fix, this sprint",
+  "primary_fence": {
+   "callers_already_compliant": [
+    ".github/workflows/ci.yml postgres-integration lane",
+    "scripts/verification_matrix.py"
+   ],
+   "callers_updated": [
+    "scripts/learned_restart_smoke.sh",
+    "docs/operations/learned-evidence.md"
+   ],
+   "change": "cognitive_os.learned_smoke._require_nomination",
+   "rule": "COGOS_TRUNCATABLE_DATABASE must name the connected database",
+   "why_this_one": "it is the released convention, not a new one: the PostgreSQL integration fixture has required the same variable since W6-F2 for the same reason. A second mechanism answering the same question differently is how an operator ends up knowing one fence and meeting the other."
+  },
+  "regression_test": "tests/cognitive_os/learned_evidence/test_learned_smoke_guard.py",
+  "rule": "refuse when the learned store holds an observation, a dataset, or a component other than the inert reference one",
+  "why_this_second_fence_exists": "nomination is consent, and consent can be given by mistake -- an operator following a runbook against the wrong sprint's environment nominates exactly the database that must not be erased. Kept against the usual rule about second mechanisms because the failure it prevents is irreversible data loss."
+ },
+ "schema_version": 1,
+ "signals": {
+  "committed_observation_events": {
+   "committed_events": 340,
+   "first": "2026-08-04 16:59:29.201492+00",
+   "last": "2026-08-04 17:14:26.683588+00"
+  },
+  "table_rewrites": {
+   "control": {
+    "every_rewritten_table_is_a_learned_table": true,
+    "rewritten": [],
+    "rewritten_count": 0,
+    "untouched_count": 114
+   },
+   "subject": {
+    "every_rewritten_table_is_a_learned_table": true,
+    "rewritten": [
+     "learned_accesses",
+     "learned_activation_approvals",
+     "learned_activation_history",
+     "learned_artifacts",
+     "learned_component_revisions",
+     "learned_components",
+     "learned_datasets",
+     "learned_evidence_records",
+     "learned_observations",
+     "provider_output_records"
+    ],
+    "rewritten_count": 10,
+    "untouched_count": 104
+   }
+  },
+  "tuple_statistics": {
+   "control": {
+    "artifacts": {
+     "dead": 0,
+     "deleted": 0,
+     "inserted": 2057,
+     "live": 2057
+    },
+    "events": {
+     "dead": 0,
+     "deleted": 0,
+     "inserted": 1261,
+     "live": 1261
+    },
+    "learned_datasets": {
+     "dead": 0,
+     "deleted": 0,
+     "inserted": 2,
+     "live": 2
+    },
+    "learned_observations": {
+     "dead": 0,
+     "deleted": 0,
+     "inserted": 480,
+     "live": 480
+    }
+   },
+   "subject": {
+    "artifacts": {
+     "dead": 0,
+     "deleted": 0,
+     "inserted": 3306,
+     "live": 3306
+    },
+    "events": {
+     "dead": 0,
+     "deleted": 0,
+     "inserted": 1731,
+     "live": 1731
+    },
+    "learned_datasets": {
+     "dead": 0,
+     "deleted": 13,
+     "inserted": 27,
+     "live": 0
+    },
+    "learned_observations": {
+     "dead": 0,
+     "deleted": 0,
+     "inserted": 418,
+     "live": 0
+    }
+   }
+  }
+ },
+ "sprint": "21D4",
+ "wave": "W0",
+ "zero_predecessor_writes": true
+}
