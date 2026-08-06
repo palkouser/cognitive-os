@@ -5382,6 +5382,1153 @@ def test_a_name_with_an_empty_segment_is_refused() -> None:
     ),
 )
 
+_G056 = D2TaskSpec(
+    template_id="d4_transform.merge_defaults",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d4-transform-merge-defaults",
+    module="default_overlay",
+    module_doc="Overlaying a caller's settings on a set of defaults.",
+    issue=(
+        "merge_defaults() is documented to overlay a caller's settings on a set of defaults. "
+        "Callers report that overriding one entry of a nested section silently discards the "
+        "rest of that section, and that an override written as None is ignored rather than "
+        "applied."
+    ),
+    expected=(
+        "merge_defaults(defaults, overrides) returns a new mapping in which a nested section is "
+        "merged key by key, and every key the caller wrote wins, including one written as None."
+    ),
+    baseline_reason=(
+        "it copies the defaults, then assigns each override that looks like it has a value"
+    ),
+    edge_cases=(
+        "a nested section keeps the default keys the override does not mention",
+        "an override written as None still replaces the default",
+    ),
+    baseline="""def merge_defaults(defaults, overrides):
+    \"\"\"Overlay `overrides` on `defaults`, merging nested sections.\"\"\"
+    merged = dict(defaults)
+    for key, value in overrides.items():
+        if value is not None:
+            merged[key] = value
+    return merged""",
+    variant_one="""def merge_defaults(defaults, overrides):
+    \"\"\"Overlay `overrides` on `defaults`, merging nested sections.\"\"\"
+    merged = dict(defaults)
+    for key, value in overrides.items():
+        beneath = merged.get(key)
+        if isinstance(beneath, dict) and isinstance(value, dict):
+            merged[key] = merge_defaults(beneath, value)
+        else:
+            merged[key] = value
+    return merged""",
+    variant_two="""def merge_defaults(defaults, overrides):
+    \"\"\"Overlay `overrides` on `defaults`, merging nested sections.\"\"\"
+    merged = dict(defaults)
+    pending = [(merged, overrides)]
+    while pending:
+        target, source = pending.pop()
+        for key, value in source.items():
+            beneath = target.get(key)
+            if isinstance(beneath, dict) and isinstance(value, dict):
+                copied = dict(beneath)
+                target[key] = copied
+                pending.append((copied, value))
+            else:
+                target[key] = value
+    return merged""",
+    variant_three="""def merge_defaults(defaults, overrides):
+    \"\"\"Overlay `overrides` on `defaults`, merging nested sections.\"\"\"
+    merged = dict(defaults)
+    for key, value in overrides.items():
+        if value is None:
+            continue
+        beneath = merged.get(key)
+        if isinstance(beneath, dict) and isinstance(value, dict):
+            merged[key] = merge_defaults(beneath, value)
+        else:
+            merged[key] = value
+    return merged""",
+    variant_four="""def merge_defaults(defaults, overrides):
+    \"\"\"Overlay `overrides` on `defaults`, merging nested sections.\"\"\"
+    return {**defaults, **overrides}""",
+    visible_test=_test_module(
+        "default_overlay",
+        "Published contract for overlaying settings on defaults.",
+        """
+def test_an_override_wins() -> None:
+    assert merge_defaults({"host": "local", "port": 80}, {"port": 8080}) == {
+        "host": "local",
+        "port": 8080,
+    }
+
+
+def test_a_key_the_defaults_do_not_have_is_added() -> None:
+    assert merge_defaults({"host": "local"}, {"debug": True}) == {
+        "host": "local",
+        "debug": True,
+    }
+
+
+def test_no_overrides_leaves_the_defaults_alone() -> None:
+    assert merge_defaults({"host": "local"}, {}) == {"host": "local"}
+""",
+        imports="from default_overlay import merge_defaults\n",
+    ),
+    hidden_test=_test_module(
+        "default_overlay",
+        "The part of the contract the published tests do not state.",
+        """
+def test_an_override_wins() -> None:
+    assert merge_defaults({"host": "local", "port": 80}, {"port": 8080}) == {
+        "host": "local",
+        "port": 8080,
+    }
+
+
+def test_a_nested_section_keeps_the_keys_the_override_does_not_mention() -> None:
+    defaults = {"log": {"level": "info", "path": "/var/log"}}
+    assert merge_defaults(defaults, {"log": {"level": "debug"}}) == {
+        "log": {"level": "debug", "path": "/var/log"}
+    }
+
+
+def test_an_override_written_as_none_still_replaces_the_default() -> None:
+    assert merge_defaults({"proxy": "corp"}, {"proxy": None}) == {"proxy": None}
+""",
+        imports="from default_overlay import merge_defaults\n",
+    ),
+)
+
+_G057 = D2TaskSpec(
+    template_id="d4_transform.tabulate_rows",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d4-transform-tabulate-rows",
+    module="record_table",
+    module_doc="Laying records out as a header and rows.",
+    issue=(
+        "tabulate_rows() is documented to lay a list of records out as a header and one row per "
+        "record. Callers report that a field which first appears in a later record gets no "
+        "column at all, and that a record missing a field renders the word None in that cell."
+    ),
+    expected=(
+        "tabulate_rows(records) returns (header, rows); the header holds every field any record "
+        "has, in the order it was first seen, and a record missing a field renders an empty cell."
+    ),
+    baseline_reason=(
+        "it reads the column names off the first record and stringifies whatever it finds"
+    ),
+    edge_cases=(
+        "a field that first appears in a later record still gets a column",
+        "a record missing a field renders an empty cell",
+    ),
+    baseline="""def tabulate_rows(records):
+    \"\"\"Return (header, rows) for `records`, one row per record.\"\"\"
+    if not records:
+        return [], []
+    header = list(records[0])
+    rows = [[str(record.get(name)) for name in header] for record in records]
+    return header, rows""",
+    variant_one="""def tabulate_rows(records):
+    \"\"\"Return (header, rows) for `records`, one row per record.\"\"\"
+    header = []
+    for record in records:
+        for name in record:
+            if name not in header:
+                header.append(name)
+    rows = [
+        [str(record[name]) if name in record else "" for name in header] for record in records
+    ]
+    return header, rows""",
+    variant_two="""def tabulate_rows(records):
+    \"\"\"Return (header, rows) for `records`, one row per record.\"\"\"
+    columns = {}
+    for record in records:
+        columns.update(dict.fromkeys(record))
+    header = list(columns)
+    rows = []
+    for record in records:
+        row = []
+        for name in header:
+            row.append("" if name not in record else str(record[name]))
+        rows.append(row)
+    return header, rows""",
+    variant_three="""def tabulate_rows(records):
+    \"\"\"Return (header, rows) for `records`, one row per record.\"\"\"
+    header = []
+    for record in records:
+        for name in record:
+            if name not in header:
+                header.append(name)
+    rows = [[str(record.get(name)) for name in header] for record in records]
+    return header, rows""",
+    variant_four="""def tabulate_rows(records):
+    \"\"\"Return (header, rows) for `records`, one row per record.\"\"\"
+    if not records:
+        return [], []
+    header = list(records[0])
+    rows = [
+        [str(record[name]) if name in record else "" for name in header] for record in records
+    ]
+    return header, rows""",
+    visible_test=_test_module(
+        "record_table",
+        "Published contract for laying records out as a table.",
+        """
+def test_records_that_share_their_fields() -> None:
+    header, rows = tabulate_rows([{"id": 1, "name": "ada"}, {"id": 2, "name": "bo"}])
+    assert header == ["id", "name"]
+    assert rows == [["1", "ada"], ["2", "bo"]]
+
+
+def test_a_single_record() -> None:
+    assert tabulate_rows([{"id": 7}]) == (["id"], [["7"]])
+
+
+def test_no_records_at_all() -> None:
+    assert tabulate_rows([]) == ([], [])
+""",
+        imports="from record_table import tabulate_rows\n",
+    ),
+    hidden_test=_test_module(
+        "record_table",
+        "The part of the contract the published tests do not state.",
+        """
+def test_records_that_share_their_fields() -> None:
+    header, rows = tabulate_rows([{"id": 1, "name": "ada"}, {"id": 2, "name": "bo"}])
+    assert header == ["id", "name"]
+    assert rows == [["1", "ada"], ["2", "bo"]]
+
+
+def test_a_field_first_seen_in_a_later_record_still_gets_a_column() -> None:
+    header, rows = tabulate_rows([{"id": 1}, {"id": 2, "note": "late"}])
+    assert header == ["id", "note"]
+    assert rows == [["1", ""], ["2", "late"]]
+
+
+def test_a_record_missing_a_field_renders_an_empty_cell() -> None:
+    header, rows = tabulate_rows([{"id": 1, "name": "ada"}, {"id": 2}])
+    assert header == ["id", "name"]
+    assert rows == [["1", "ada"], ["2", ""]]
+""",
+        imports="from record_table import tabulate_rows\n",
+    ),
+)
+
+_G058 = D2TaskSpec(
+    template_id="d4_transform.camel_to_snake",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d4-transform-camel-to-snake",
+    module="name_convention",
+    module_doc="Rewriting identifiers from one naming convention to another.",
+    issue=(
+        "camel_to_snake() is documented to rewrite an identifier in snake_case. Callers report "
+        "that a run of capitals comes back with an underscore between every letter, and that a "
+        "name beginning with a capital comes back with a leading underscore."
+    ),
+    expected=(
+        "camel_to_snake(name) lower-cases the name and separates its words with underscores, "
+        "treating a run of capitals as one word and never opening the result with an underscore."
+    ),
+    baseline_reason="it opens an underscore in front of every capital letter it meets",
+    edge_cases=(
+        "a run of capitals is one word",
+        "a name beginning with a capital gains no leading underscore",
+    ),
+    baseline="""def camel_to_snake(name):
+    \"\"\"Return `name` written in snake_case.\"\"\"
+    letters = []
+    for letter in name:
+        if letter.isupper():
+            letters.append("_")
+            letters.append(letter.lower())
+        else:
+            letters.append(letter)
+    return "".join(letters)""",
+    variant_one="""def camel_to_snake(name):
+    \"\"\"Return `name` written in snake_case.\"\"\"
+    letters = []
+    for index, letter in enumerate(name):
+        if not letter.isupper():
+            letters.append(letter)
+            continue
+        after_lower = index > 0 and name[index - 1].islower()
+        before_lower = index + 1 < len(name) and name[index + 1].islower()
+        if index > 0 and (after_lower or before_lower):
+            letters.append("_")
+        letters.append(letter.lower())
+    return "".join(letters)""",
+    variant_two="""def camel_to_snake(name):
+    \"\"\"Return `name` written in snake_case.\"\"\"
+    words = []
+    current = ""
+    for index, letter in enumerate(name):
+        following = name[index + 1] if index + 1 < len(name) else ""
+        opens_word = (
+            letter.isupper() and current and (current[-1].islower() or following.islower())
+        )
+        if opens_word:
+            words.append(current)
+            current = letter
+        else:
+            current += letter
+    if current:
+        words.append(current)
+    return "_".join(word.lower() for word in words)""",
+    variant_three="""def camel_to_snake(name):
+    \"\"\"Return `name` written in snake_case.\"\"\"
+    letters = []
+    for index, letter in enumerate(name):
+        if not letter.isupper():
+            letters.append(letter)
+            continue
+        after_lower = index > 0 and name[index - 1].islower()
+        before_lower = index + 1 < len(name) and name[index + 1].islower()
+        if after_lower or before_lower:
+            letters.append("_")
+        letters.append(letter.lower())
+    return "".join(letters)""",
+    variant_four="""def camel_to_snake(name):
+    \"\"\"Return `name` written in snake_case.\"\"\"
+    letters = []
+    for index, letter in enumerate(name):
+        if letter.isupper():
+            if index > 0:
+                letters.append("_")
+            letters.append(letter.lower())
+        else:
+            letters.append(letter)
+    return "".join(letters)""",
+    visible_test=_test_module(
+        "name_convention",
+        "Published contract for rewriting an identifier in snake_case.",
+        """
+def test_a_two_word_name() -> None:
+    assert camel_to_snake("userName") == "user_name"
+
+
+def test_a_three_word_name() -> None:
+    assert camel_to_snake("totalItemCount") == "total_item_count"
+
+
+def test_a_name_that_is_already_one_word() -> None:
+    assert camel_to_snake("value") == "value"
+""",
+        imports="from name_convention import camel_to_snake\n",
+    ),
+    hidden_test=_test_module(
+        "name_convention",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_two_word_name() -> None:
+    assert camel_to_snake("userName") == "user_name"
+
+
+def test_a_run_of_capitals_is_one_word() -> None:
+    assert camel_to_snake("parseHTTPResponse") == "parse_http_response"
+
+
+def test_a_name_beginning_with_a_capital_gains_no_leading_underscore() -> None:
+    assert camel_to_snake("UserName") == "user_name"
+""",
+        imports="from name_convention import camel_to_snake\n",
+    ),
+)
+
+_G059 = D2TaskSpec(
+    template_id="d4_transform.fill_forward",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d4-transform-fill-forward",
+    module="forward_fill",
+    module_doc="Carrying the last known reading over the gaps in a column.",
+    issue=(
+        "fill_forward() is documented to carry the last known reading over the gaps in a column "
+        "of readings. Callers report that a column beginning with a gap comes back opening at "
+        "zero rather than still unknown, and that the list they handed in comes back changed."
+    ),
+    expected=(
+        "fill_forward(values) returns a new list in which every gap holds the nearest reading "
+        "before it, a gap with no reading before it stays a gap, and the caller's own list is "
+        "left as it was."
+    ),
+    baseline_reason=(
+        "it patches the gaps in place, starting from zero because nothing has been read yet"
+    ),
+    edge_cases=(
+        "a column opening with a gap stays open",
+        "the caller's list is left as it was",
+    ),
+    baseline="""def fill_forward(values):
+    \"\"\"Carry the last known reading forward over the gaps.\"\"\"
+    last = 0
+    for index, value in enumerate(values):
+        if value is None:
+            values[index] = last
+        else:
+            last = value
+    return values""",
+    variant_one="""def fill_forward(values):
+    \"\"\"Carry the last known reading forward over the gaps.\"\"\"
+    filled = []
+    last = None
+    for value in values:
+        if value is None:
+            filled.append(last)
+        else:
+            last = value
+            filled.append(value)
+    return filled""",
+    variant_two="""def fill_forward(values):
+    \"\"\"Carry the last known reading forward over the gaps.\"\"\"
+    filled = list(values)
+    for index in range(1, len(filled)):
+        if filled[index] is None:
+            filled[index] = filled[index - 1]
+    return filled""",
+    variant_three="""def fill_forward(values):
+    \"\"\"Carry the last known reading forward over the gaps.\"\"\"
+    last = None
+    for index, value in enumerate(values):
+        if value is None:
+            values[index] = last
+        else:
+            last = value
+    return values""",
+    variant_four="""def fill_forward(values):
+    \"\"\"Carry the last known reading forward over the gaps.\"\"\"
+    filled = list(values)
+    last = 0
+    for index, value in enumerate(filled):
+        if value is None:
+            filled[index] = last
+        else:
+            last = value
+    return filled""",
+    visible_test=_test_module(
+        "forward_fill",
+        "Published contract for carrying a reading over the gaps.",
+        """
+def test_one_reading_covers_the_gaps_after_it() -> None:
+    assert fill_forward([1, None, None, 4]) == [1, 1, 1, 4]
+
+
+def test_a_column_with_no_gaps_at_all() -> None:
+    assert fill_forward([2, 3, 5]) == [2, 3, 5]
+
+
+def test_a_gap_at_the_very_end() -> None:
+    assert fill_forward([5, None]) == [5, 5]
+""",
+        imports="from forward_fill import fill_forward\n",
+    ),
+    hidden_test=_test_module(
+        "forward_fill",
+        "The part of the contract the published tests do not state.",
+        """
+def test_one_reading_covers_the_gaps_after_it() -> None:
+    assert fill_forward([1, None, None, 4]) == [1, 1, 1, 4]
+
+
+def test_a_column_opening_with_a_gap_stays_open() -> None:
+    assert fill_forward([None, None, 3]) == [None, None, 3]
+
+
+def test_the_callers_list_is_left_as_it_was() -> None:
+    readings = [1, None, 3]
+    fill_forward(readings)
+    assert readings == [1, None, 3]
+""",
+        imports="from forward_fill import fill_forward\n",
+    ),
+)
+
+_G060 = D2TaskSpec(
+    template_id="d4_transform.join_on_key",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d4-transform-join-on-key",
+    module="record_join",
+    module_doc="Joining one list of records onto another on a shared field.",
+    issue=(
+        "join_on_key() is documented to bring a second list of records alongside a first on a "
+        "shared field. Callers report that a record with nothing to join to disappears from the "
+        "result, and that where both sides carry the same field the second side's value is the "
+        "one that survives."
+    ),
+    expected=(
+        "join_on_key(left, right, key) returns one record per left record, in the left order, "
+        "carrying the matching right record's fields where there is one, and the left record's "
+        "own value wherever both sides carry the same field."
+    ),
+    baseline_reason=(
+        "it indexes the right side, skips a left record that misses, and merges the match on top"
+    ),
+    edge_cases=(
+        "a left record with nothing to join to is still returned",
+        "the left record's value wins a field both sides carry",
+    ),
+    baseline="""def join_on_key(left, right, key):
+    \"\"\"Join `right` onto `left` on `key`, keeping every left record.\"\"\"
+    index = {record[key]: record for record in right}
+    joined = []
+    for record in left:
+        match = index.get(record[key])
+        if match is None:
+            continue
+        joined.append({**record, **match})
+    return joined""",
+    variant_one="""def join_on_key(left, right, key):
+    \"\"\"Join `right` onto `left` on `key`, keeping every left record.\"\"\"
+    index = {record[key]: record for record in right}
+    joined = []
+    for record in left:
+        merged = dict(index.get(record[key], {}))
+        merged.update(record)
+        joined.append(merged)
+    return joined""",
+    variant_two="""def join_on_key(left, right, key):
+    \"\"\"Join `right` onto `left` on `key`, keeping every left record.\"\"\"
+    joined = []
+    for record in left:
+        merged = dict(record)
+        for other in right:
+            if other[key] == record[key]:
+                for name, value in other.items():
+                    merged.setdefault(name, value)
+                break
+        joined.append(merged)
+    return joined""",
+    variant_three="""def join_on_key(left, right, key):
+    \"\"\"Join `right` onto `left` on `key`, keeping every left record.\"\"\"
+    index = {record[key]: record for record in right}
+    joined = []
+    for record in left:
+        match = index.get(record[key], {})
+        joined.append({**record, **match})
+    return joined""",
+    variant_four="""def join_on_key(left, right, key):
+    \"\"\"Join `right` onto `left` on `key`, keeping every left record.\"\"\"
+    index = {record[key]: record for record in right}
+    joined = []
+    for record in left:
+        match = index.get(record[key])
+        if match is None:
+            continue
+        joined.append({**match, **record})
+    return joined""",
+    visible_test=_test_module(
+        "record_join",
+        "Published contract for joining records on a shared field.",
+        """
+def test_every_record_finds_its_match() -> None:
+    left = [{"id": 1, "name": "ada"}, {"id": 2, "name": "bo"}]
+    right = [{"id": 2, "city": "oslo"}, {"id": 1, "city": "kyiv"}]
+    assert join_on_key(left, right, "id") == [
+        {"id": 1, "name": "ada", "city": "kyiv"},
+        {"id": 2, "name": "bo", "city": "oslo"},
+    ]
+
+
+def test_the_left_order_is_kept() -> None:
+    left = [{"id": 2}, {"id": 1}]
+    right = [{"id": 1, "city": "kyiv"}, {"id": 2, "city": "oslo"}]
+    assert [record["id"] for record in join_on_key(left, right, "id")] == [2, 1]
+
+
+def test_a_single_record_on_each_side() -> None:
+    assert join_on_key([{"id": 1}], [{"id": 1, "city": "oslo"}], "id") == [
+        {"id": 1, "city": "oslo"}
+    ]
+""",
+        imports="from record_join import join_on_key\n",
+    ),
+    hidden_test=_test_module(
+        "record_join",
+        "The part of the contract the published tests do not state.",
+        """
+def test_every_record_finds_its_match() -> None:
+    left = [{"id": 1, "name": "ada"}]
+    right = [{"id": 1, "city": "kyiv"}]
+    assert join_on_key(left, right, "id") == [{"id": 1, "name": "ada", "city": "kyiv"}]
+
+
+def test_a_left_record_with_nothing_to_join_to_is_still_returned() -> None:
+    left = [{"id": 1, "name": "ada"}, {"id": 9, "name": "zoe"}]
+    right = [{"id": 1, "city": "kyiv"}]
+    assert join_on_key(left, right, "id") == [
+        {"id": 1, "name": "ada", "city": "kyiv"},
+        {"id": 9, "name": "zoe"},
+    ]
+
+
+def test_the_left_value_wins_a_field_both_sides_carry() -> None:
+    left = [{"id": 1, "city": "kyiv"}]
+    right = [{"id": 1, "city": "oslo"}]
+    assert join_on_key(left, right, "id") == [{"id": 1, "city": "kyiv"}]
+""",
+        imports="from record_join import join_on_key\n",
+    ),
+)
+
+_G061 = D2TaskSpec(
+    template_id="d4_transform.unfold_multi_values",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d4-transform-unfold-multi-values",
+    module="multi_value_unfold",
+    module_doc="Expanding a record whose field holds several values.",
+    issue=(
+        "unfold_multi_values() is documented to expand a record whose field holds several values "
+        "into one record per value. Callers report that a record whose list is empty vanishes "
+        "from the result, and that a record whose field holds a plain string comes back as one "
+        "record per letter."
+    ),
+    expected=(
+        "unfold_multi_values(records, field) yields one record per value of `field`, yields a "
+        "single record carrying None for an empty list, and leaves a record whose field is not a "
+        "list untouched."
+    ),
+    baseline_reason="it loops over whatever the field holds, which a string obligingly allows",
+    edge_cases=(
+        "an empty list still yields one record",
+        "a field holding a plain value is not taken apart",
+    ),
+    baseline="""def unfold_multi_values(records, field):
+    \"\"\"Expand `field` so that every record holds one value.\"\"\"
+    expanded = []
+    for record in records:
+        for value in record[field]:
+            copied = dict(record)
+            copied[field] = value
+            expanded.append(copied)
+    return expanded""",
+    variant_one="""def unfold_multi_values(records, field):
+    \"\"\"Expand `field` so that every record holds one value.\"\"\"
+    expanded = []
+    for record in records:
+        held = record[field]
+        if not isinstance(held, list):
+            expanded.append(dict(record))
+            continue
+        if not held:
+            blank = dict(record)
+            blank[field] = None
+            expanded.append(blank)
+            continue
+        for value in held:
+            copied = dict(record)
+            copied[field] = value
+            expanded.append(copied)
+    return expanded""",
+    variant_two="""def unfold_multi_values(records, field):
+    \"\"\"Expand `field` so that every record holds one value.\"\"\"
+    expanded = []
+    for record in records:
+        held = record[field]
+        if not isinstance(held, list):
+            spread = [held]
+        elif held:
+            spread = held
+        else:
+            spread = [None]
+        expanded.extend({**record, field: value} for value in spread)
+    return expanded""",
+    variant_three="""def unfold_multi_values(records, field):
+    \"\"\"Expand `field` so that every record holds one value.\"\"\"
+    expanded = []
+    for record in records:
+        held = record[field] or [None]
+        for value in held:
+            copied = dict(record)
+            copied[field] = value
+            expanded.append(copied)
+    return expanded""",
+    variant_four="""def unfold_multi_values(records, field):
+    \"\"\"Expand `field` so that every record holds one value.\"\"\"
+    expanded = []
+    for record in records:
+        held = record[field]
+        if not isinstance(held, list):
+            expanded.append(dict(record))
+            continue
+        for value in held:
+            copied = dict(record)
+            copied[field] = value
+            expanded.append(copied)
+    return expanded""",
+    visible_test=_test_module(
+        "multi_value_unfold",
+        "Published contract for expanding a record's repeated field.",
+        """
+def test_a_record_with_two_values() -> None:
+    assert unfold_multi_values([{"id": 1, "tag": ["a", "b"]}], "tag") == [
+        {"id": 1, "tag": "a"},
+        {"id": 1, "tag": "b"},
+    ]
+
+
+def test_a_record_with_one_value() -> None:
+    assert unfold_multi_values([{"id": 1, "tag": ["a"]}], "tag") == [{"id": 1, "tag": "a"}]
+
+
+def test_two_records_expand_in_order() -> None:
+    records = [{"id": 1, "tag": ["a"]}, {"id": 2, "tag": ["b", "c"]}]
+    assert [record["id"] for record in unfold_multi_values(records, "tag")] == [1, 2, 2]
+""",
+        imports="from multi_value_unfold import unfold_multi_values\n",
+    ),
+    hidden_test=_test_module(
+        "multi_value_unfold",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_record_with_two_values() -> None:
+    assert unfold_multi_values([{"id": 1, "tag": ["a", "b"]}], "tag") == [
+        {"id": 1, "tag": "a"},
+        {"id": 1, "tag": "b"},
+    ]
+
+
+def test_an_empty_list_still_yields_one_record() -> None:
+    assert unfold_multi_values([{"id": 1, "tag": []}], "tag") == [{"id": 1, "tag": None}]
+
+
+def test_a_field_holding_a_plain_value_is_not_taken_apart() -> None:
+    assert unfold_multi_values([{"id": 1, "tag": "ab"}], "tag") == [{"id": 1, "tag": "ab"}]
+""",
+        imports="from multi_value_unfold import unfold_multi_values\n",
+    ),
+)
+
+# ------------------------------------------------------------------ boundary and collections
+
+_G062 = D2TaskSpec(
+    template_id="d4_boundary.merge_intervals",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d4-boundary-merge-intervals",
+    module="interval_merge",
+    module_doc="Reducing closed intervals to the fewest that cover the same points.",
+    issue=(
+        "merge_intervals() is documented to reduce a set of closed intervals to the fewest that "
+        "cover the same points. Callers report that two intervals meeting exactly at a point "
+        "come back separate, and that intervals handed over out of order come back merged into "
+        "nonsense."
+    ),
+    expected=(
+        "merge_intervals(intervals) returns the merged intervals in ascending order, joining two "
+        "that meet at a single point, and does not require the caller to sort them first."
+    ),
+    baseline_reason=(
+        "it folds the intervals in the order given and only joins one that starts strictly inside"
+    ),
+    edge_cases=(
+        "intervals that meet at a single point are joined",
+        "intervals handed over out of order are merged all the same",
+    ),
+    baseline="""def merge_intervals(intervals):
+    \"\"\"Reduce closed `intervals` to the fewest that cover the same points.\"\"\"
+    merged = []
+    for start, end in intervals:
+        if merged and start < merged[-1][1]:
+            opened, closed = merged[-1]
+            merged[-1] = (opened, max(closed, end))
+        else:
+            merged.append((start, end))
+    return merged""",
+    variant_one="""def merge_intervals(intervals):
+    \"\"\"Reduce closed `intervals` to the fewest that cover the same points.\"\"\"
+    merged = []
+    for start, end in sorted(intervals):
+        if merged and start <= merged[-1][1]:
+            opened, closed = merged[-1]
+            merged[-1] = (opened, max(closed, end))
+        else:
+            merged.append((start, end))
+    return merged""",
+    variant_two="""def merge_intervals(intervals):
+    \"\"\"Reduce closed `intervals` to the fewest that cover the same points.\"\"\"
+    merged = []
+    current = None
+    for start, end in sorted(intervals):
+        if current is None:
+            current = [start, end]
+        elif start <= current[1]:
+            current[1] = max(current[1], end)
+        else:
+            merged.append((current[0], current[1]))
+            current = [start, end]
+    if current is not None:
+        merged.append((current[0], current[1]))
+    return merged""",
+    variant_three="""def merge_intervals(intervals):
+    \"\"\"Reduce closed `intervals` to the fewest that cover the same points.\"\"\"
+    merged = []
+    for start, end in intervals:
+        if merged and start <= merged[-1][1]:
+            opened, closed = merged[-1]
+            merged[-1] = (opened, max(closed, end))
+        else:
+            merged.append((start, end))
+    return merged""",
+    variant_four="""def merge_intervals(intervals):
+    \"\"\"Reduce closed `intervals` to the fewest that cover the same points.\"\"\"
+    merged = []
+    for start, end in sorted(intervals):
+        if merged and start < merged[-1][1]:
+            opened, closed = merged[-1]
+            merged[-1] = (opened, max(closed, end))
+        else:
+            merged.append((start, end))
+    return merged""",
+    visible_test=_test_module(
+        "interval_merge",
+        "Published contract for merging closed intervals.",
+        """
+def test_two_intervals_that_overlap() -> None:
+    assert merge_intervals([(1, 5), (3, 8)]) == [(1, 8)]
+
+
+def test_intervals_that_stay_apart() -> None:
+    assert merge_intervals([(1, 2), (5, 6)]) == [(1, 2), (5, 6)]
+
+
+def test_one_interval_swallowing_another() -> None:
+    assert merge_intervals([(1, 9), (3, 4)]) == [(1, 9)]
+""",
+        imports="from interval_merge import merge_intervals\n",
+    ),
+    hidden_test=_test_module(
+        "interval_merge",
+        "The part of the contract the published tests do not state.",
+        """
+def test_two_intervals_that_overlap() -> None:
+    assert merge_intervals([(1, 5), (3, 8)]) == [(1, 8)]
+
+
+def test_intervals_that_meet_at_a_single_point_are_joined() -> None:
+    assert merge_intervals([(1, 3), (3, 5)]) == [(1, 5)]
+
+
+def test_intervals_handed_over_out_of_order_are_merged_all_the_same() -> None:
+    assert merge_intervals([(5, 8), (1, 2)]) == [(1, 2), (5, 8)]
+""",
+        imports="from interval_merge import merge_intervals\n",
+    ),
+)
+
+_G063 = D2TaskSpec(
+    template_id="d4_boundary.split_at_indices",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d4-boundary-split-at-indices",
+    module="cut_points",
+    module_doc="Cutting a sequence at a set of positions.",
+    issue=(
+        "split_at_indices() is documented to cut a sequence at a set of positions. Callers "
+        "report that positions handed over out of order produce empty pieces in the middle, and "
+        "that a position past the end leaves an empty piece hanging off the back."
+    ),
+    expected=(
+        "split_at_indices(items, cuts) returns the pieces between the cuts in order, accepts the "
+        "cuts in any order, and ignores a cut at or before the start or at or past the end."
+    ),
+    baseline_reason=(
+        "it walks the cuts exactly as handed over and slices from the last one to the end"
+    ),
+    edge_cases=(
+        "cuts handed over out of order still cut in order",
+        "a cut past the end leaves no empty piece",
+    ),
+    baseline="""def split_at_indices(items, cuts):
+    \"\"\"Cut `items` into the pieces between `cuts`.\"\"\"
+    pieces = []
+    start = 0
+    for cut in cuts:
+        pieces.append(items[start:cut])
+        start = cut
+    pieces.append(items[start:])
+    return pieces""",
+    variant_one="""def split_at_indices(items, cuts):
+    \"\"\"Cut `items` into the pieces between `cuts`.\"\"\"
+    pieces = []
+    start = 0
+    for cut in sorted(cut for cut in cuts if 0 < cut < len(items)):
+        pieces.append(items[start:cut])
+        start = cut
+    pieces.append(items[start:])
+    return pieces""",
+    variant_two="""def split_at_indices(items, cuts):
+    \"\"\"Cut `items` into the pieces between `cuts`.\"\"\"
+    inside = sorted(cut for cut in cuts if 0 < cut < len(items))
+    bounds = [0, *inside, len(items)]
+    return [items[bounds[index] : bounds[index + 1]] for index in range(len(bounds) - 1)]""",
+    variant_three="""def split_at_indices(items, cuts):
+    \"\"\"Cut `items` into the pieces between `cuts`.\"\"\"
+    pieces = []
+    start = 0
+    for cut in sorted(cuts):
+        pieces.append(items[start:cut])
+        start = cut
+    pieces.append(items[start:])
+    return pieces""",
+    variant_four="""def split_at_indices(items, cuts):
+    \"\"\"Cut `items` into the pieces between `cuts`.\"\"\"
+    pieces = []
+    start = 0
+    for cut in cuts:
+        if not 0 < cut < len(items):
+            continue
+        pieces.append(items[start:cut])
+        start = cut
+    pieces.append(items[start:])
+    return pieces""",
+    visible_test=_test_module(
+        "cut_points",
+        "Published contract for cutting a sequence at positions.",
+        """
+def test_one_cut() -> None:
+    assert split_at_indices([1, 2, 3, 4, 5], [2]) == [[1, 2], [3, 4, 5]]
+
+
+def test_two_cuts_in_order() -> None:
+    assert split_at_indices([1, 2, 3, 4, 5, 6], [2, 4]) == [[1, 2], [3, 4], [5, 6]]
+
+
+def test_no_cuts_at_all() -> None:
+    assert split_at_indices([1, 2, 3], []) == [[1, 2, 3]]
+""",
+        imports="from cut_points import split_at_indices\n",
+    ),
+    hidden_test=_test_module(
+        "cut_points",
+        "The part of the contract the published tests do not state.",
+        """
+def test_one_cut() -> None:
+    assert split_at_indices([1, 2, 3, 4, 5], [2]) == [[1, 2], [3, 4, 5]]
+
+
+def test_cuts_handed_over_out_of_order_still_cut_in_order() -> None:
+    assert split_at_indices([1, 2, 3, 4, 5, 6], [4, 2]) == [[1, 2], [3, 4], [5, 6]]
+
+
+def test_a_cut_past_the_end_leaves_no_empty_piece() -> None:
+    assert split_at_indices([1, 2, 3, 4], [2, 9]) == [[1, 2], [3, 4]]
+""",
+        imports="from cut_points import split_at_indices\n",
+    ),
+)
+
+_G064 = D2TaskSpec(
+    template_id="d4_boundary.sample_evenly",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d4-boundary-sample-evenly",
+    module="even_sampling",
+    module_doc="Taking a fixed number of items spread across a sequence.",
+    issue=(
+        "sample_evenly() is documented to take a fixed number of items spread across a sequence, "
+        "keeping both ends. Callers report that asking for one item raises, and that asking for "
+        "more items than the sequence holds returns the same item several times over."
+    ),
+    expected=(
+        "sample_evenly(items, count) returns `count` items spread evenly across the sequence "
+        "including both ends, returns the first item alone when one is asked for, and returns "
+        "the whole sequence when more are asked for than it holds."
+    ),
+    baseline_reason="it divides the span by one fewer than the count and trusts the count to fit",
+    edge_cases=(
+        "asking for one item returns the first",
+        "asking for more than the sequence holds returns all of it",
+    ),
+    baseline="""def sample_evenly(items, count):
+    \"\"\"Take `count` items spread evenly across `items`, keeping both ends.\"\"\"
+    step = (len(items) - 1) / (count - 1)
+    return [items[int(index * step + 0.5)] for index in range(count)]""",
+    variant_one="""def sample_evenly(items, count):
+    \"\"\"Take `count` items spread evenly across `items`, keeping both ends.\"\"\"
+    if count <= 0 or not items:
+        return []
+    if count == 1:
+        return [items[0]]
+    if count >= len(items):
+        return list(items)
+    step = (len(items) - 1) / (count - 1)
+    return [items[int(index * step + 0.5)] for index in range(count)]""",
+    variant_two="""def sample_evenly(items, count):
+    \"\"\"Take `count` items spread evenly across `items`, keeping both ends.\"\"\"
+    if count <= 0 or not items:
+        return []
+    if count >= len(items):
+        return list(items)
+    if count == 1:
+        return [items[0]]
+    span = len(items) - 1
+    picked = []
+    for index in range(count):
+        picked.append(items[(index * span + (count - 1) // 2) // (count - 1)])
+    return picked""",
+    variant_three="""def sample_evenly(items, count):
+    \"\"\"Take `count` items spread evenly across `items`, keeping both ends.\"\"\"
+    if count == 1:
+        return [items[0]]
+    step = (len(items) - 1) / (count - 1)
+    return [items[int(index * step + 0.5)] for index in range(count)]""",
+    variant_four="""def sample_evenly(items, count):
+    \"\"\"Take `count` items spread evenly across `items`, keeping both ends.\"\"\"
+    if count >= len(items):
+        return list(items)
+    step = (len(items) - 1) / (count - 1)
+    return [items[int(index * step + 0.5)] for index in range(count)]""",
+    visible_test=_test_module(
+        "even_sampling",
+        "Published contract for sampling a sequence evenly.",
+        """
+def test_three_of_five() -> None:
+    assert sample_evenly([1, 2, 3, 4, 5], 3) == [1, 3, 5]
+
+
+def test_both_ends_and_nothing_else() -> None:
+    assert sample_evenly([1, 2, 3, 4, 5], 2) == [1, 5]
+
+
+def test_four_of_five() -> None:
+    assert sample_evenly([1, 2, 3, 4, 5], 4) == [1, 2, 4, 5]
+""",
+        imports="from even_sampling import sample_evenly\n",
+    ),
+    hidden_test=_test_module(
+        "even_sampling",
+        "The part of the contract the published tests do not state.",
+        """
+def test_three_of_five() -> None:
+    assert sample_evenly([1, 2, 3, 4, 5], 3) == [1, 3, 5]
+
+
+def test_asking_for_one_item_returns_the_first() -> None:
+    assert sample_evenly([1, 2, 3, 4, 5], 1) == [1]
+
+
+def test_asking_for_more_than_the_sequence_holds_returns_all_of_it() -> None:
+    assert sample_evenly([1, 2, 3], 5) == [1, 2, 3]
+""",
+        imports="from even_sampling import sample_evenly\n",
+    ),
+)
+
+_G065 = D2TaskSpec(
+    template_id="d4_boundary.first_at_least",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d4-boundary-first-at-least",
+    module="lower_bound_search",
+    module_doc="Finding where a value belongs in a sorted sequence.",
+    issue=(
+        "first_at_least() is documented to report the first position in a sorted sequence whose "
+        "value reaches a target. Callers report that a target beyond everything in the sequence "
+        "answers minus one rather than the length, and that an empty sequence raises instead of "
+        "answering zero."
+    ),
+    expected=(
+        "first_at_least(items, target) returns the index of the first item that is at least "
+        "`target`, returns the length of the sequence when no item reaches it, and returns zero "
+        "for an empty sequence."
+    ),
+    baseline_reason=(
+        "it settles the hopeless case by peeking at the last item and answering minus one"
+    ),
+    edge_cases=(
+        "a target beyond everything answers the length",
+        "an empty sequence answers zero",
+    ),
+    baseline="""def first_at_least(items, target):
+    \"\"\"Return the first index in sorted `items` whose value is at least `target`.\"\"\"
+    if items[-1] < target:
+        return -1
+    low = 0
+    high = len(items) - 1
+    while low < high:
+        middle = (low + high) // 2
+        if items[middle] < target:
+            low = middle + 1
+        else:
+            high = middle
+    return low""",
+    variant_one="""def first_at_least(items, target):
+    \"\"\"Return the first index in sorted `items` whose value is at least `target`.\"\"\"
+    low = 0
+    high = len(items)
+    while low < high:
+        middle = (low + high) // 2
+        if items[middle] < target:
+            low = middle + 1
+        else:
+            high = middle
+    return low""",
+    variant_two="""def first_at_least(items, target):
+    \"\"\"Return the first index in sorted `items` whose value is at least `target`.\"\"\"
+    for index, value in enumerate(items):
+        if value >= target:
+            return index
+    return len(items)""",
+    variant_three="""def first_at_least(items, target):
+    \"\"\"Return the first index in sorted `items` whose value is at least `target`.\"\"\"
+    if items[-1] < target:
+        return len(items)
+    low = 0
+    high = len(items) - 1
+    while low < high:
+        middle = (low + high) // 2
+        if items[middle] < target:
+            low = middle + 1
+        else:
+            high = middle
+    return low""",
+    variant_four="""def first_at_least(items, target):
+    \"\"\"Return the first index in sorted `items` whose value is at least `target`.\"\"\"
+    if not items:
+        return 0
+    if items[-1] < target:
+        return -1
+    low = 0
+    high = len(items) - 1
+    while low < high:
+        middle = (low + high) // 2
+        if items[middle] < target:
+            low = middle + 1
+        else:
+            high = middle
+    return low""",
+    visible_test=_test_module(
+        "lower_bound_search",
+        "Published contract for finding where a value belongs.",
+        """
+def test_a_value_that_is_present() -> None:
+    assert first_at_least([1, 3, 5, 7], 3) == 1
+
+
+def test_a_value_that_falls_between_two() -> None:
+    assert first_at_least([1, 3, 5, 7], 4) == 2
+
+
+def test_a_value_at_or_below_the_first() -> None:
+    assert first_at_least([1, 3, 5, 7], 1) == 0
+    assert first_at_least([1, 3, 5, 7], 0) == 0
+""",
+        imports="from lower_bound_search import first_at_least\n",
+    ),
+    hidden_test=_test_module(
+        "lower_bound_search",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_value_that_is_present() -> None:
+    assert first_at_least([1, 3, 5, 7], 3) == 1
+
+
+def test_a_target_beyond_everything_answers_the_length() -> None:
+    assert first_at_least([1, 3, 5, 7], 9) == 4
+
+
+def test_an_empty_sequence_answers_zero() -> None:
+    assert first_at_least([], 3) == 0
+""",
+        imports="from lower_bound_search import first_at_least\n",
+    ),
+)
+
 #: Authored so far. The tuple grows as batches are authored and executed;
 #: `corpus_d4.py` reads it rather than a count, so a partially authored corpus reports what it
 #: has instead of claiming what it does not.
@@ -5441,4 +6588,14 @@ D4_CALIBRATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G053,
     _G054,
     _G055,
+    _G056,
+    _G057,
+    _G058,
+    _G059,
+    _G060,
+    _G061,
+    _G062,
+    _G063,
+    _G064,
+    _G065,
 )
