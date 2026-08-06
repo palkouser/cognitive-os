@@ -1212,89 +1212,92 @@ def test_a_negative_lower_bound_is_kept() -> None:
 )
 
 _G013 = D2TaskSpec(
-    template_id="d4_parsing.release_number",
+    template_id="d4_parsing.utc_offset",
     family=RealityTaskFamily.PARSING_VALIDATION,
-    repository_group="d4-parsing-release-number",
-    module="release_number",
-    module_doc="Reading a three-part release number.",
+    repository_group="d4-parsing-utc-offset",
+    module="utc_offset",
+    module_doc="Reading a time-zone offset as a number of minutes.",
     issue=(
-        "parse_release() is documented to read a three-part release number. Callers report that "
-        "a two-part number comes back with two parts instead of a zero-filled third, and that a "
-        "four-part number is accepted rather than rejected."
+        "parse_offset() is documented to read a time-zone offset as a signed number of minutes. "
+        "Callers report that an offset behind the meridian comes back with its minutes counted "
+        "forwards instead of back, and that the letter Z, which every timestamp west of nothing "
+        "uses to mean no offset at all, is refused outright."
     ),
     expected=(
-        "parse_release(text) returns exactly three integers, filling missing trailing parts with "
-        "zero, and raises ValueError for more than three parts."
+        "parse_offset(text) returns the offset in minutes, applies the sign to the minutes as "
+        "well as the hours, and reads Z as no offset."
     ),
-    baseline_reason="the parts are converted as they come, with no padding and no length check",
+    baseline_reason=(
+        "it reads the sign, applies it to the hours, and adds the minutes on afterwards"
+    ),
     edge_cases=(
-        "a missing trailing part is filled with zero",
-        "more than three parts is rejected",
+        "the sign applies to the minutes as well as the hours",
+        "the letter Z means no offset",
     ),
-    baseline="""def parse_release(text):
-    \"\"\"Return the three integer parts of the release number in `text`.\"\"\"
-    return tuple(int(part) for part in text.split("."))""",
-    variant_one="""def parse_release(text):
-    \"\"\"Return the three integer parts of the release number in `text`.\"\"\"
-    parts = text.split(".")
-    if len(parts) > 3:
-        raise ValueError("a release number has at most three parts")
-    numbers = [int(part) for part in parts]
-    while len(numbers) < 3:
-        numbers.append(0)
-    return tuple(numbers)""",
-    variant_two="""def parse_release(text):
-    \"\"\"Return the three integer parts of the release number in `text`.\"\"\"
-    parts = text.split(".")
-    if len(parts) not in (1, 2, 3):
-        raise ValueError("a release number has at most three parts")
-    padded = parts + ["0"] * (3 - len(parts))
-    return tuple(int(part) for part in padded)""",
-    variant_three="""def parse_release(text):
-    \"\"\"Return the three integer parts of the release number in `text`.\"\"\"
-    numbers = [int(part) for part in text.split(".")]
-    while len(numbers) < 3:
-        numbers.append(0)
-    return tuple(numbers)""",
-    variant_four="""def parse_release(text):
-    \"\"\"Return the three integer parts of the release number in `text`.\"\"\"
-    parts = text.split(".")
-    if len(parts) > 3:
-        raise ValueError("a release number has at most three parts")
-    return tuple(int(part) for part in parts)""",
+    baseline="""def parse_offset(text):
+    \"\"\"Return the offset `text` describes, in minutes.\"\"\"
+    sign = -1 if text[0] == "-" else 1
+    hours, _, minutes = text[1:].partition(":")
+    return sign * int(hours) * 60 + int(minutes)""",
+    variant_one="""def parse_offset(text):
+    \"\"\"Return the offset `text` describes, in minutes.\"\"\"
+    if text.upper() == "Z":
+        return 0
+    sign = -1 if text[0] == "-" else 1
+    hours, _, minutes = text[1:].partition(":")
+    return sign * (int(hours) * 60 + int(minutes))""",
+    variant_two="""def parse_offset(text):
+    \"\"\"Return the offset `text` describes, in minutes.\"\"\"
+    if text.upper() == "Z":
+        return 0
+    parts = text[1:].split(":")
+    away = int(parts[0]) * 60 + int(parts[1])
+    return -away if text.startswith("-") else away""",
+    variant_three="""def parse_offset(text):
+    \"\"\"Return the offset `text` describes, in minutes.\"\"\"
+    sign = -1 if text[0] == "-" else 1
+    hours, _, minutes = text[1:].partition(":")
+    return sign * (int(hours) * 60 + int(minutes))""",
+    variant_four="""def parse_offset(text):
+    \"\"\"Return the offset `text` describes, in minutes.\"\"\"
+    if text.upper() == "Z":
+        return 0
+    sign = -1 if text[0] == "-" else 1
+    hours, _, minutes = text[1:].partition(":")
+    return sign * int(hours) * 60 + int(minutes)""",
     visible_test=_test_module(
-        "release_number",
-        "Published contract for reading a release number.",
+        "utc_offset",
+        "Published contract for reading a time-zone offset.",
         """
-def test_a_three_part_number() -> None:
-    assert parse_release("1.2.3") == (1, 2, 3)
+def test_an_offset_ahead_of_the_meridian() -> None:
+    assert parse_offset("+05:30") == 330
 
 
-def test_a_zero_release() -> None:
-    assert parse_release("0.0.1") == (0, 0, 1)
+def test_an_offset_of_whole_hours_behind() -> None:
+    assert parse_offset("-08:00") == -480
+
+
+def test_no_offset_written_out() -> None:
+    assert parse_offset("+00:00") == 0
 """,
-        imports="from release_number import parse_release\n",
+        imports="from utc_offset import parse_offset\n",
     ),
     hidden_test=_test_module(
-        "release_number",
+        "utc_offset",
         "The part of the contract the published tests do not state.",
         """
-import pytest
+def test_an_offset_ahead_of_the_meridian() -> None:
+    assert parse_offset("+05:30") == 330
 
 
-def test_a_three_part_number() -> None:
-    assert parse_release("1.2.3") == (1, 2, 3)
+def test_the_sign_applies_to_the_minutes_as_well() -> None:
+    assert parse_offset("-03:30") == -210
 
 
-def test_a_missing_trailing_part_is_filled_with_zero() -> None:
-    assert parse_release("1.2") == (1, 2, 0)
-
-
-def test_more_than_three_parts_is_rejected() -> None:
-    with pytest.raises(ValueError):
-        parse_release("1.2.3.4")
+def test_the_letter_z_means_no_offset() -> None:
+    assert parse_offset("Z") == 0
 """,
-        imports="from release_number import parse_release\n",
+        imports="from utc_offset import parse_offset\n",
     ),
 )
 
@@ -2085,9 +2088,7 @@ _G022 = D2TaskSpec(
     ),
     baseline="""def bind_alias(registry, alias, target):
     \"\"\"Return `registry` with `alias` bound to `target`.\"\"\"
-    bound = dict(registry)
-    bound[alias] = target
-    return bound""",
+    return {**registry, alias: target}""",
     variant_one="""def bind_alias(registry, alias, target):
     \"\"\"Return `registry` with `alias` bound to `target`.\"\"\"
     if alias == target:
@@ -3205,87 +3206,99 @@ def test_two_zeros_are_bad_arguments() -> None:
 )
 
 _G034 = D2TaskSpec(
-    template_id="d4_numeric.share_out",
+    template_id="d4_numeric.check_digit",
     family=RealityTaskFamily.NUMERIC_LOGIC,
-    repository_group="d4-numeric-share-out",
-    module="share_out",
-    module_doc="Sharing a whole number out into equal parts.",
+    repository_group="d4-numeric-check-digit",
+    module="weighted_check",
+    module_doc="Working out the check digit that closes a weighted code.",
     issue=(
-        "share_out() is documented to share a total into parts as evenly as possible. Callers "
-        "report that the remainder is silently dropped so the parts no longer add up to the "
-        "total, and that asking for zero parts raises an arithmetic error."
+        "check_digit() is documented to work out the digit that closes a weighted code. Callers "
+        "report that the one code in eleven whose remainder comes to ten comes back as the "
+        "two-character string it cannot be, and that a weights list too short for the digits is "
+        "used anyway, silently ignoring the digits it does not reach."
     ),
     expected=(
-        "share_out(total, parts) returns that many shares adding up to the total, giving the "
-        "earlier shares the extra unit, and raises ValueError when parts is zero."
+        "check_digit(digits, weights) returns the character that makes the weighted sum a whole "
+        "number of elevens, writing a remainder of ten as X, and raises ValueError when the "
+        "weights do not cover the digits."
     ),
-    baseline_reason="every share gets the floor and the leftover is never handed out",
+    baseline_reason=(
+        "it writes the remainder out as a number and lets zip stop at whichever list runs out"
+    ),
     edge_cases=(
-        "the shares add up to the total",
-        "zero parts is reported as a bad argument",
+        "a remainder of ten is written as X",
+        "a weights list that does not cover the digits is refused",
     ),
-    baseline="""def share_out(total, parts):
-    \"\"\"Return `parts` shares of `total`, as evenly as possible.\"\"\"
-    return [total // parts] * parts""",
-    variant_one="""def share_out(total, parts):
-    \"\"\"Return `parts` shares of `total`, as evenly as possible.\"\"\"
-    if parts == 0:
-        raise ValueError("a total cannot be shared into zero parts")
-    each, left_over = divmod(total, parts)
-    return [each + 1 if index < left_over else each for index in range(parts)]""",
-    variant_two="""def share_out(total, parts):
-    \"\"\"Return `parts` shares of `total`, as evenly as possible.\"\"\"
-    if parts == 0:
-        raise ValueError("a total cannot be shared into zero parts")
-    shares = []
-    remaining = total
-    for place in range(parts, 0, -1):
-        piece = -(-remaining // place)
-        shares.append(piece)
-        remaining -= piece
-    return shares""",
-    variant_three="""def share_out(total, parts):
-    \"\"\"Return `parts` shares of `total`, as evenly as possible.\"\"\"
-    each, left_over = divmod(total, parts)
-    return [each + 1 if index < left_over else each for index in range(parts)]""",
-    variant_four="""def share_out(total, parts):
-    \"\"\"Return `parts` shares of `total`, as evenly as possible.\"\"\"
-    if parts == 0:
-        raise ValueError("a total cannot be shared into zero parts")
-    return [total // parts] * parts""",
+    baseline="""def check_digit(digits, weights):
+    \"\"\"Return the character that closes the weighted code.\"\"\"
+    total = sum(digit * weight for digit, weight in zip(digits, weights))
+    return str((11 - total % 11) % 11)""",
+    variant_one="""def check_digit(digits, weights):
+    \"\"\"Return the character that closes the weighted code.\"\"\"
+    if len(weights) < len(digits):
+        raise ValueError("the weights do not cover the digits")
+    total = sum(digit * weight for digit, weight in zip(digits, weights))
+    remainder = (11 - total % 11) % 11
+    return "X" if remainder == 10 else str(remainder)""",
+    variant_two="""def check_digit(digits, weights):
+    \"\"\"Return the character that closes the weighted code.\"\"\"
+    if len(weights) < len(digits):
+        raise ValueError("the weights do not cover the digits")
+    total = 0
+    for index, digit in enumerate(digits):
+        total += digit * weights[index]
+    remainder = (11 - total % 11) % 11
+    return "0123456789X"[remainder]""",
+    variant_three="""def check_digit(digits, weights):
+    \"\"\"Return the character that closes the weighted code.\"\"\"
+    total = sum(digit * weight for digit, weight in zip(digits, weights))
+    remainder = (11 - total % 11) % 11
+    return "X" if remainder == 10 else str(remainder)""",
+    variant_four="""def check_digit(digits, weights):
+    \"\"\"Return the character that closes the weighted code.\"\"\"
+    if len(weights) < len(digits):
+        raise ValueError("the weights do not cover the digits")
+    total = sum(digit * weight for digit, weight in zip(digits, weights))
+    return str((11 - total % 11) % 11)""",
     visible_test=_test_module(
-        "share_out",
-        "Published contract for sharing a total.",
+        "weighted_check",
+        "Published contract for a weighted check digit.",
         """
-def test_a_total_that_divides_evenly() -> None:
-    assert share_out(6, 3) == [2, 2, 2]
+def test_a_code_closing_on_a_single_digit() -> None:
+    assert check_digit([1, 2, 3], [3, 2, 1]) == "1"
 
 
-def test_a_larger_even_share() -> None:
-    assert share_out(10, 5) == [2, 2, 2, 2, 2]
+def test_a_code_already_closed() -> None:
+    assert check_digit([1, 1, 1], [4, 4, 3]) == "0"
+
+
+def test_another_code() -> None:
+    assert check_digit([2, 0, 4], [3, 2, 1]) == "1"
 """,
-        imports="from share_out import share_out\n",
+        imports="from weighted_check import check_digit\n",
     ),
     hidden_test=_test_module(
-        "share_out",
+        "weighted_check",
         "The part of the contract the published tests do not state.",
         """
 import pytest
 
-
-def test_a_total_that_divides_evenly() -> None:
-    assert share_out(6, 3) == [2, 2, 2]
+from weighted_check import check_digit
 
 
-def test_the_shares_add_up_to_the_total() -> None:
-    assert share_out(7, 3) == [3, 2, 2]
+def test_a_code_closing_on_a_single_digit() -> None:
+    assert check_digit([1, 2, 3], [3, 2, 1]) == "1"
 
 
-def test_zero_parts_is_a_bad_argument() -> None:
+def test_a_remainder_of_ten_is_written_as_x() -> None:
+    assert check_digit([1, 0, 0], [1, 1, 1]) == "X"
+
+
+def test_weights_that_do_not_cover_the_digits_are_refused() -> None:
     with pytest.raises(ValueError):
-        share_out(5, 0)
+        check_digit([1, 2, 3], [3, 2])
 """,
-        imports="from share_out import share_out\n",
+        imports="",
     ),
 )
 
@@ -5044,100 +5057,132 @@ def test_a_sequence_of_one_run_describes_that_run() -> None:
 )
 
 _G053 = D2TaskSpec(
-    template_id="d4_transform.invert_mapping",
+    template_id="d4_transform.numbered_outline",
     family=RealityTaskFamily.DATA_TRANSFORMATION,
-    repository_group="d4-transform-invert-mapping",
-    module="mapping_invert",
-    module_doc="Turning a mapping inside out.",
+    repository_group="d4-transform-numbered-outline",
+    module="outline_numbering",
+    module_doc="Numbering the headings of an outline by their depth.",
     issue=(
-        "invert() is documented to turn a mapping inside out. Callers report that two names "
-        "sharing a value silently lose one of them, and that a value that cannot be a key raises "
-        "a type error instead of a bad-argument error."
+        "number_outline() is documented to number the headings of an outline. Callers report "
+        "that coming back out to a shallower heading carries on from the deeper numbers instead "
+        "of starting them again, and that a heading that skips a level is numbered as though the "
+        "level it skipped were there."
     ),
     expected=(
-        "invert(mapping) returns the mapping with names and values swapped, raises ValueError "
-        "when two names share a value, and raises ValueError when a value cannot be a key."
+        "number_outline(headings) returns one number per heading, such as 1.2.1; returning to a "
+        "shallower depth starts the deeper numbers again, and a heading more than one level "
+        "below the one before it raises ValueError."
     ),
-    baseline_reason="the comprehension overwrites duplicates and lets the type error escape",
+    baseline_reason=(
+        "it keeps one counter per depth and bumps whichever the heading names, without clearing "
+        "the deeper ones or checking the step"
+    ),
     edge_cases=(
-        "two names sharing a value is refused",
-        "a value that cannot be a key is refused",
+        "returning to a shallower depth starts the deeper numbers again",
+        "a heading that skips a level is refused",
     ),
-    baseline="""def invert(mapping):
-    \"\"\"Return `mapping` with its names and values swapped.\"\"\"
-    return {value: name for name, value in mapping.items()}""",
-    variant_one="""def invert(mapping):
-    \"\"\"Return `mapping` with its names and values swapped.\"\"\"
-    inverted = {}
-    for name, value in mapping.items():
-        try:
-            already = value in inverted
-        except TypeError as error:
-            raise ValueError(f"{value!r} cannot be a name") from error
-        if already:
-            raise ValueError(f"{value!r} is shared by two names")
-        inverted[value] = name
-    return inverted""",
-    variant_two="""def invert(mapping):
-    \"\"\"Return `mapping` with its names and values swapped.\"\"\"
-    inverted = {}
-    for name, value in mapping.items():
-        if not isinstance(value, (str, int, float, bool, bytes, tuple, type(None))):
-            raise ValueError(f"{value!r} cannot be a name")
-        if value in inverted:
-            raise ValueError(f"{value!r} is shared by two names")
-        inverted[value] = name
-    return inverted""",
-    variant_three="""def invert(mapping):
-    \"\"\"Return `mapping` with its names and values swapped.\"\"\"
-    inverted = {}
-    for name, value in mapping.items():
-        if value in inverted:
-            raise ValueError(f"{value!r} is shared by two names")
-        inverted[value] = name
-    return inverted""",
-    variant_four="""def invert(mapping):
-    \"\"\"Return `mapping` with its names and values swapped.\"\"\"
-    inverted = {}
-    for name, value in mapping.items():
-        if not isinstance(value, (str, int, float, bool, bytes, tuple, type(None))):
-            raise ValueError(f"{value!r} cannot be a name")
-        inverted[value] = name
-    return inverted""",
+    baseline="""def number_outline(headings):
+    \"\"\"Return the number each heading carries, deepest part last.\"\"\"
+    counters = []
+    numbers = []
+    for depth, _title in headings:
+        while len(counters) <= depth:
+            counters.append(0)
+        counters[depth] += 1
+        numbers.append(".".join(str(count) for count in counters[: depth + 1]))
+    return numbers""",
+    variant_one="""def number_outline(headings):
+    \"\"\"Return the number each heading carries, deepest part last.\"\"\"
+    counters = []
+    numbers = []
+    for depth, _title in headings:
+        if depth > len(counters):
+            raise ValueError("a heading may not skip a level")
+        if depth == len(counters):
+            counters.append(1)
+        else:
+            del counters[depth + 1 :]
+            counters[depth] += 1
+        numbers.append(".".join(str(count) for count in counters))
+    return numbers""",
+    variant_two="""def number_outline(headings):
+    \"\"\"Return the number each heading carries, deepest part last.\"\"\"
+    counters = []
+    numbers = []
+    for depth, _title in headings:
+        if depth > len(counters):
+            raise ValueError("a heading may not skip a level")
+        kept = counters[: depth + 1]
+        while len(kept) <= depth:
+            kept.append(0)
+        kept[depth] += 1
+        counters = kept
+        numbers.append(".".join(str(count) for count in counters))
+    return numbers""",
+    variant_three="""def number_outline(headings):
+    \"\"\"Return the number each heading carries, deepest part last.\"\"\"
+    counters = []
+    numbers = []
+    for depth, _title in headings:
+        if depth == len(counters):
+            counters.append(1)
+        else:
+            del counters[depth + 1 :]
+            counters[depth] += 1
+        numbers.append(".".join(str(count) for count in counters))
+    return numbers""",
+    variant_four="""def number_outline(headings):
+    \"\"\"Return the number each heading carries, deepest part last.\"\"\"
+    counters = []
+    numbers = []
+    for depth, _title in headings:
+        if depth > len(counters):
+            raise ValueError("a heading may not skip a level")
+        while len(counters) <= depth:
+            counters.append(0)
+        counters[depth] += 1
+        numbers.append(".".join(str(count) for count in counters[: depth + 1]))
+    return numbers""",
     visible_test=_test_module(
-        "mapping_invert",
-        "Published contract for inverting a mapping.",
+        "outline_numbering",
+        "Published contract for numbering an outline.",
         """
-def test_two_distinct_pairs_are_swapped() -> None:
-    assert invert({"a": 1, "b": 2}) == {1: "a", 2: "b"}
+def test_headings_all_at_the_top_level() -> None:
+    assert number_outline([(0, "a"), (0, "b")]) == ["1", "2"]
 
 
-def test_an_empty_mapping_inverts_to_nothing() -> None:
-    assert invert({}) == {}
+def test_going_one_level_deeper() -> None:
+    assert number_outline([(0, "a"), (1, "a.a"), (1, "a.b")]) == ["1", "1.1", "1.2"]
+
+
+def test_a_single_heading() -> None:
+    assert number_outline([(0, "only")]) == ["1"]
 """,
-        imports="from mapping_invert import invert\n",
+        imports="from outline_numbering import number_outline\n",
     ),
     hidden_test=_test_module(
-        "mapping_invert",
+        "outline_numbering",
         "The part of the contract the published tests do not state.",
         """
 import pytest
 
-
-def test_two_distinct_pairs_are_swapped() -> None:
-    assert invert({"a": 1, "b": 2}) == {1: "a", 2: "b"}
+from outline_numbering import number_outline
 
 
-def test_two_names_sharing_a_value_is_refused() -> None:
+def test_headings_all_at_the_top_level() -> None:
+    assert number_outline([(0, "a"), (0, "b")]) == ["1", "2"]
+
+
+def test_returning_to_a_shallower_depth_starts_the_deeper_numbers_again() -> None:
+    outline = [(0, "a"), (1, "a.a"), (0, "b"), (1, "b.a")]
+    assert number_outline(outline) == ["1", "1.1", "2", "2.1"]
+
+
+def test_a_heading_that_skips_a_level_is_refused() -> None:
     with pytest.raises(ValueError):
-        invert({"a": 1, "b": 1})
-
-
-def test_a_value_that_cannot_be_a_name_is_refused() -> None:
-    with pytest.raises(ValueError):
-        invert({"a": [1]})
+        number_outline([(0, "a"), (2, "too deep")])
 """,
-        imports="from mapping_invert import invert\n",
+        imports="",
     ),
 )
 
@@ -5383,120 +5428,116 @@ def test_a_name_with_an_empty_segment_is_refused() -> None:
 )
 
 _G056 = D2TaskSpec(
-    template_id="d4_transform.merge_defaults",
+    template_id="d4_transform.fill_gaps",
     family=RealityTaskFamily.DATA_TRANSFORMATION,
-    repository_group="d4-transform-merge-defaults",
-    module="default_overlay",
-    module_doc="Overlaying a caller's settings on a set of defaults.",
+    repository_group="d4-transform-fill-gaps",
+    module="gap_filling",
+    module_doc="Filling in the readings a numbered series never recorded.",
     issue=(
-        "merge_defaults() is documented to overlay a caller's settings on a set of defaults. "
-        "Callers report that overriding one entry of a nested section silently discards the "
-        "rest of that section, and that an override written as None is ignored rather than "
-        "applied."
+        "fill_gaps() is documented to fill in the readings a numbered series never recorded. "
+        "Callers report that a gap of more than one number is filled at one end only, and that "
+        "a series whose readings did not arrive in order comes back in that same order with the "
+        "gaps in the wrong places."
     ),
     expected=(
-        "merge_defaults(defaults, overrides) returns a new mapping in which a nested section is "
-        "merged key by key, and every key the caller wrote wins, including one written as None."
+        "fill_gaps(readings) returns one (number, value) pair for every number from the smallest "
+        "recorded to the largest, in order, carrying None where nothing was recorded, whatever "
+        "order the readings arrived in."
     ),
     baseline_reason=(
-        "it copies the defaults, then assigns each override that looks like it has a value"
+        "it walks the readings as they came and puts one blank between neighbours that do not meet"
     ),
     edge_cases=(
-        "a nested section keeps the default keys the override does not mention",
-        "an override written as None still replaces the default",
+        "a gap of more than one number is filled at every step",
+        "readings that did not arrive in order are still filled in order",
     ),
-    baseline="""def merge_defaults(defaults, overrides):
-    \"\"\"Overlay `overrides` on `defaults`, merging nested sections.\"\"\"
-    merged = dict(defaults)
-    for key, value in overrides.items():
-        if value is not None:
-            merged[key] = value
-    return merged""",
-    variant_one="""def merge_defaults(defaults, overrides):
-    \"\"\"Overlay `overrides` on `defaults`, merging nested sections.\"\"\"
-    merged = dict(defaults)
-    for key, value in overrides.items():
-        beneath = merged.get(key)
-        if isinstance(beneath, dict) and isinstance(value, dict):
-            merged[key] = merge_defaults(beneath, value)
-        else:
-            merged[key] = value
-    return merged""",
-    variant_two="""def merge_defaults(defaults, overrides):
-    \"\"\"Overlay `overrides` on `defaults`, merging nested sections.\"\"\"
-    merged = dict(defaults)
-    pending = [(merged, overrides)]
-    while pending:
-        target, source = pending.pop()
-        for key, value in source.items():
-            beneath = target.get(key)
-            if isinstance(beneath, dict) and isinstance(value, dict):
-                copied = dict(beneath)
-                target[key] = copied
-                pending.append((copied, value))
-            else:
-                target[key] = value
-    return merged""",
-    variant_three="""def merge_defaults(defaults, overrides):
-    \"\"\"Overlay `overrides` on `defaults`, merging nested sections.\"\"\"
-    merged = dict(defaults)
-    for key, value in overrides.items():
-        if value is None:
-            continue
-        beneath = merged.get(key)
-        if isinstance(beneath, dict) and isinstance(value, dict):
-            merged[key] = merge_defaults(beneath, value)
-        else:
-            merged[key] = value
-    return merged""",
-    variant_four="""def merge_defaults(defaults, overrides):
-    \"\"\"Overlay `overrides` on `defaults`, merging nested sections.\"\"\"
-    return {**defaults, **overrides}""",
+    baseline="""def fill_gaps(readings):
+    \"\"\"Return every number from the smallest recorded to the largest.\"\"\"
+    filled = []
+    for index, (number, value) in enumerate(readings):
+        if index and number > readings[index - 1][0] + 1:
+            filled.append((readings[index - 1][0] + 1, None))
+        filled.append((number, value))
+    return filled""",
+    variant_one="""def fill_gaps(readings):
+    \"\"\"Return every number from the smallest recorded to the largest.\"\"\"
+    if not readings:
+        return []
+    recorded = dict(readings)
+    return [
+        (number, recorded.get(number))
+        for number in range(min(recorded), max(recorded) + 1)
+    ]""",
+    variant_two="""def fill_gaps(readings):
+    \"\"\"Return every number from the smallest recorded to the largest.\"\"\"
+    if not readings:
+        return []
+    ordered = sorted(readings)
+    filled = []
+    number = ordered[0][0]
+    for recorded, value in ordered:
+        while number < recorded:
+            filled.append((number, None))
+            number += 1
+        filled.append((recorded, value))
+        number = recorded + 1
+    return filled""",
+    variant_three="""def fill_gaps(readings):
+    \"\"\"Return every number from the smallest recorded to the largest.\"\"\"
+    filled = []
+    for index, (number, value) in enumerate(readings):
+        if index:
+            for missing in range(readings[index - 1][0] + 1, number):
+                filled.append((missing, None))
+        filled.append((number, value))
+    return filled""",
+    variant_four="""def fill_gaps(readings):
+    \"\"\"Return every number from the smallest recorded to the largest.\"\"\"
+    filled = []
+    ordered = sorted(readings)
+    for index, (number, value) in enumerate(ordered):
+        if index and number > ordered[index - 1][0] + 1:
+            filled.append((ordered[index - 1][0] + 1, None))
+        filled.append((number, value))
+    return filled""",
     visible_test=_test_module(
-        "default_overlay",
-        "Published contract for overlaying settings on defaults.",
+        "gap_filling",
+        "Published contract for filling the gaps in a series.",
         """
-def test_an_override_wins() -> None:
-    assert merge_defaults({"host": "local", "port": 80}, {"port": 8080}) == {
-        "host": "local",
-        "port": 8080,
-    }
+def test_a_series_with_no_gaps() -> None:
+    assert fill_gaps([(1, "a"), (2, "b")]) == [(1, "a"), (2, "b")]
 
 
-def test_a_key_the_defaults_do_not_have_is_added() -> None:
-    assert merge_defaults({"host": "local"}, {"debug": True}) == {
-        "host": "local",
-        "debug": True,
-    }
+def test_a_gap_of_one_number() -> None:
+    assert fill_gaps([(1, "a"), (3, "c")]) == [(1, "a"), (2, None), (3, "c")]
 
 
-def test_no_overrides_leaves_the_defaults_alone() -> None:
-    assert merge_defaults({"host": "local"}, {}) == {"host": "local"}
+def test_a_single_reading() -> None:
+    assert fill_gaps([(4, "d")]) == [(4, "d")]
 """,
-        imports="from default_overlay import merge_defaults\n",
+        imports="from gap_filling import fill_gaps\n",
     ),
     hidden_test=_test_module(
-        "default_overlay",
+        "gap_filling",
         "The part of the contract the published tests do not state.",
         """
-def test_an_override_wins() -> None:
-    assert merge_defaults({"host": "local", "port": 80}, {"port": 8080}) == {
-        "host": "local",
-        "port": 8080,
-    }
+def test_a_gap_of_one_number() -> None:
+    assert fill_gaps([(1, "a"), (3, "c")]) == [(1, "a"), (2, None), (3, "c")]
 
 
-def test_a_nested_section_keeps_the_keys_the_override_does_not_mention() -> None:
-    defaults = {"log": {"level": "info", "path": "/var/log"}}
-    assert merge_defaults(defaults, {"log": {"level": "debug"}}) == {
-        "log": {"level": "debug", "path": "/var/log"}
-    }
+def test_a_gap_of_more_than_one_number_is_filled_at_every_step() -> None:
+    assert fill_gaps([(1, "a"), (4, "d")]) == [
+        (1, "a"),
+        (2, None),
+        (3, None),
+        (4, "d"),
+    ]
 
 
-def test_an_override_written_as_none_still_replaces_the_default() -> None:
-    assert merge_defaults({"proxy": "corp"}, {"proxy": None}) == {"proxy": None}
+def test_readings_out_of_order_are_still_filled_in_order() -> None:
+    assert fill_gaps([(3, "c"), (1, "a")]) == [(1, "a"), (2, None), (3, "c")]
 """,
-        imports="from default_overlay import merge_defaults\n",
+        imports="from gap_filling import fill_gaps\n",
     ),
 )
 
