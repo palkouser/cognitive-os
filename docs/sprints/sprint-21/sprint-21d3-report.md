@@ -156,7 +156,7 @@ skipped**.
 
 ## 8. Gate verdict and release route
 
-**Gate L2 does not pass.** Fifteen conditions met, one met as a rejection, thirteen not opened,
+**Gate L2 does not pass.** Sixteen conditions met, one met as a rejection, twelve not opened,
 none failed. Gate D1 conditions 6, 7 and 15 remain open.
 
 Under §11.3 this is a **valid negative completion**: the first failed pre-registered condition
@@ -164,8 +164,14 @@ and every opened result are immutable, no forbidden downstream data was opened a
 every dependent task carries typed not-opened evidence, and the independent branch was completed
 while it was still valid.
 
-The permitted tag is `sprint-21d3-evidence-baseline`. The success tag
-`sprint-21-learning-baseline` is not created, and its absence is asserted rather than assumed.
+The permitted tag is `sprint-21d3-evidence-baseline`, and it now exists: object
+`bcf2976dd0f063b1eb4ea16b388eea590e6172dd`, peeling to release commit
+`ef4388b1bf9cb842b25a06aa2255abd1042702c2`. PR `#221` merged into protected `main` without a
+bypass, its exact-head post-merge `main` CI run `31072527026` completed 30 of 30 successful, and
+the tag was created once, afterwards. Condition 29 closed on that evidence.
+
+The success tag `sprint-21-learning-baseline` is not created, and its absence is verified against
+the remote rather than assumed.
 
 ## 9. Canonical evidence
 
@@ -184,3 +190,4 @@ The permitted tag is `sprint-21d3-evidence-baseline`. The success tag
 | [operations](evidence/sprint-21d3-operations.json) | backup, restore, corruption matrix |
 | [verification matrix](evidence/sprint-21d3-verification-matrix.json) | the release rows |
 | [Gate L2](evidence/sprint-21d3-gate-l2.json) | the condition table |
+| [release](evidence/sprint-21d3-release.json) | merge, exact-head CI, tag and post-release fingerprints |

@@ -2,9 +2,9 @@
   "counts": {
     "carried": 0,
     "failed": 0,
-    "met": 15,
+    "met": 16,
     "met_as_rejection": 1,
-    "not_opened": 13
+    "not_opened": 12
   },
   "final_outcomes_inspected": false,
   "gate_d1_open": [
@@ -368,21 +368,23 @@
     {
       "condition": 29,
       "declared_handle": "sprint-21d3-release.json",
-      "detail": "in progress: the protected implementation release and its post-merge CI",
+      "detail": "the protected merge, its exact-head post-merge main CI and the remote tag agree",
+      "evidence": "sprint-21d3-release.json",
+      "evidence_sha256": "754418d414967dea3aa78918604872cc58cefc3e8138ba64f0be5ffcf912dd57",
       "floor_or_rule": "protected merge, post-merge main CI and annotated remote tag",
       "frozen_content_hash": "3d33abd5c74b900e70e340172011df9f4a0f0f415098aada18f6a0e65d1cfff7",
       "metric_or_invariant": "protected release, exact-head CI, documents and verified tag",
-      "provisional": true,
-      "state": "not_opened"
+      "rule": "the protected merge, its exact-head post-merge main CI and the remote tag agree",
+      "state": "met"
     }
   ],
   "gate_manifest_hash": "45a8e9b07fbb2f08033bfbe55b486c7a11a8c2f6f473cc62af98180aca5a439e",
-  "integrity_content_hash": "e2d1dffad6aec31721e0965aa03ee2b1f210466d01f2cada8020299af8250e50",
+  "integrity_content_hash": "e16c07d3b8ecbdd9848b9a674df1960f4c7f37984edbbaedbe7e95e22da2ef37",
   "item": "S21D3-091",
   "pre_registration_sha256": "191b3757ded21a1c2c85459a34902f8dee3f2f35b0979b557f84c1a37fe6a191",
   "provisional_until": "the protected merge, its exact-head post-merge main CI, and remote tag verification",
   "purpose": "The twenty-nine Gate L2 conditions and Gate D1's three open ones, each decided by the evidence that bears on it. No condition may be asserted; every row names its file and rule, or the stop hash that closed it.",
-  "recorded_at": "2026-08-05T17:14:03.026702Z",
+  "recorded_at": "2026-08-06T05:34:56.162140Z",
   "schema_version": 1,
   "sprint": "21D3",
   "stops": {
@@ -396,6 +398,6 @@
     }
   },
   "verdict": "gate_l2_does_not_pass",
-  "verdict_reason": "the gate passes only when every applicable condition is met; 13 were never opened and condition 24 is met as a rejection",
+  "verdict_reason": "the gate passes only when every applicable condition is met; 12 were never opened and condition 24 is met as a rejection",
   "wave": "W8"
 }

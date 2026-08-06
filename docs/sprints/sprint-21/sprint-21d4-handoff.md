@@ -12,6 +12,12 @@ experiment, not Sprint 22A, and nothing here may be read as unblocking it.
 
 Outcome condition hash: `5f5a8b639c640ce9f306664fb8bb37ff0eb8619f528db1dd5274263dd81fcea5`
 
+D3 is released. Tag `sprint-21d3-evidence-baseline`, object
+`bcf2976dd0f063b1eb4ea16b388eea590e6172dd`, peels to `ef4388b1bf9cb842b25a06aa2255abd1042702c2`;
+PR `#221`; exact-head post-merge `main` CI run `31072527026`, 30 of 30 success. Gate L2 condition
+29 is met and the gate still does not pass. A successor branches from the verified current
+`origin/main` and treats the tag as immutable release evidence.
+
 Authority for what D3 did: [Sprint 21D3 Technical Backlog](sprint-21d3-technical-backlog.md).
 Gate status: [Gate L2 assessment (D3)](gate-l2-d3-assessment.md). Results:
 [Sprint 21D3 report](sprint-21d3-report.md). Execution: [execution log](sprint-21d3-execution.md).

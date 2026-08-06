@@ -1,0 +1,94 @@
+{
+ "branch_protection_after_release": {
+  "allow_deletions": false,
+  "allow_force_pushes": false,
+  "enforce_admins": true,
+  "required_conversation_resolution": true,
+  "required_pull_request_reviews": null,
+  "required_status_check_contexts": 27,
+  "strict_status_checks": true,
+  "unchanged_from_the_w0_reading": true
+ },
+ "component_state": {
+  "activations": 0,
+  "active_components": 0,
+  "approvals": 0,
+  "artifact_written": false,
+  "learned_components": 0,
+  "note": "S21D3-039 recorded a null and S21D3-059 refused final access; nothing was registered, approved or activated on experience.correction_ranking. Source: sprint-21d3-pre-final-checkpoint.json, authorised false."
+ },
+ "d1_conditions_still_open": [
+  6,
+  7,
+  15
+ ],
+ "final_outcomes_inspected": 0,
+ "gate_l2": "does not pass",
+ "items": [
+  "S21D3-094",
+  "S21D3-095"
+ ],
+ "migration_head": "0015",
+ "next_available_migration": "0016 (unallocated)",
+ "outcome": "negative",
+ "recorded_at": "2026-08-06T05:30:40.122672Z",
+ "release": {
+  "chronology": "#221 merge 04:53:46Z -> exact-head main CI 31072527026 complete 05:08:59Z -> annotated tag created 05:27:44Z, once and after that CI",
+  "exact_head_main_ci_completed_at": "2026-08-06T05:08:59Z",
+  "exact_head_main_ci_conclusion": "success",
+  "exact_head_main_ci_head_sha": "ef4388b1bf9cb842b25a06aa2255abd1042702c2",
+  "exact_head_main_ci_jobs": "30 of 30 success",
+  "exact_head_main_ci_run": 31072527026,
+  "implementation_merge_commit": "ef4388b1bf9cb842b25a06aa2255abd1042702c2",
+  "implementation_merged_at": "2026-08-06T04:53:46Z",
+  "implementation_pull_request": 221,
+  "merge_method": "squash, no administrator bypass",
+  "peeled_commit": "ef4388b1bf9cb842b25a06aa2255abd1042702c2",
+  "pull_request_head_ci_head_sha": "4e4fa76d4649f9621e1d667ad6f53ea8be5eb3f9",
+  "pull_request_head_ci_jobs": "30 of 30 success",
+  "pull_request_head_ci_run": 31031716153,
+  "remote_main": "ef4388b1bf9cb842b25a06aa2255abd1042702c2",
+  "remote_tag_object": "bcf2976dd0f063b1eb4ea16b388eea590e6172dd",
+  "success_tag_forbidden_and_not_created": "sprint-21-learning-baseline",
+  "tag": "sprint-21d3-evidence-baseline",
+  "tag_created_at": "2026-08-06T05:27:44Z",
+  "tag_object": "bcf2976dd0f063b1eb4ea16b388eea590e6172dd",
+  "tag_type": "tag"
+ },
+ "schema_version": 1,
+ "sprint": "21D3",
+ "sprint_22a": "blocked; the handoff targets a bounded remediation sprint",
+ "stop_hashes": {
+  "correction_selection": "68ea06843d2136e390bf8a4ea0698414932987f5447887187907c45c0dcea876",
+  "retrieval_holdout": "f0b53912055223667c2cca9365b967c439b8599c60e47cbdeac78bfb23378824"
+ },
+ "store_fingerprints_after_release": {
+  "artifacts": {
+   "files": 5,
+   "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf",
+   "unchanged_from_the_w0_reading": true
+  },
+  "artifacts-s21c3": {
+   "files": 8503,
+   "path_and_size_fingerprint_sha256": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593",
+   "unchanged_from_the_w0_reading": true
+  },
+  "artifacts-s21d1": {
+   "files": 83,
+   "path_and_size_fingerprint_sha256": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f",
+   "unchanged_from_the_w0_reading": true
+  },
+  "artifacts-s21d2": {
+   "files": 1511,
+   "path_and_size_fingerprint_sha256": "39417f1a03f6824cfe6f9c4b7e6bd5a3cd34da8329fb95cff0a35595899438aa",
+   "unchanged_from_the_w0_reading": true
+  },
+  "artifacts-s21d3": {
+   "files": 2096,
+   "note": "D3's own isolated pair, recorded so a successor can prove it unchanged. Its 2096 files corroborate restore.artifact_bytes.files_rehashed in sprint-21d3-operations.json.",
+   "path_and_size_fingerprint_sha256": "fcb0a044810b375f2933d4a3cf22c7448bfada9c90e104566a92125b08dcd0d3"
+  }
+ },
+ "fingerprint_authority": "cognitive_os.coding.reality_integrity.fingerprint, the released function, not a reimplementation",
+ "wave": "W10"
+}
