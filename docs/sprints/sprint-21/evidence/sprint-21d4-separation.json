@@ -1,0 +1,76 @@
+{
+ "final_outcomes_inspected": false,
+ "integrity_content_hash": "9f5c8278585fa09e8376f3cdd949636a9d6931451159d7355de8d813f5874fef",
+ "items": [
+  "S21D4-031"
+ ],
+ "lineage": {
+  "d4_repository_groups": 160,
+  "d4_template_ids": 160,
+  "repository_groups_reused_from_a_predecessor": [],
+  "task_signatures_reused_from_a_predecessor": [],
+  "template_ids_reused_from_a_predecessor": []
+ },
+ "near_clone": {
+  "bodies_compared": 1470,
+  "cross_group_collisions_touching_d4": [],
+  "detectors": [
+   "normalized_ast",
+   "token_stream"
+  ],
+  "hashed": "whole module text, as corpus_d3.py hashes it",
+  "intra_group_note": "A calibration group's four candidates are the same task under four repairs, and a retrieval group's two states are one task before and after one. Their structural closeness is the edit path the graph projection derives; the ceiling applies between groups.",
+  "intra_group_structural_matches": 39,
+  "pool": [
+   "c3",
+   "d2",
+   "d3",
+   "d3_retrieval",
+   "d4",
+   "d4_retrieval"
+  ],
+  "seeded_restatement_detected": true,
+  "seeded_restatement_pairs": 2
+ },
+ "pre_registration_sha256": "526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9",
+ "purpose": "Prove that no D4 group crosses a role, that nothing D4 authored restates a task any predecessor published, and that the detector which says so is running.",
+ "recorded_at": "2026-08-06T15:43:49Z",
+ "role_separation": {
+  "all_pairwise_disjoint": true,
+  "fitting_composition": {
+   "d2_calibration": 10,
+   "d2_training": 50,
+   "d3_calibration": 20,
+   "read_off_the_released_catalogues": true
+  },
+  "group_counts": {
+   "calibration": 100,
+   "canary": 5,
+   "final_a": 30,
+   "final_b": 30,
+   "fitting": 80,
+   "retrieval": 60
+  },
+  "groups_crossing_a_role": [],
+  "pairs_sharing_a_group": {
+   "calibration|canary": 0,
+   "calibration|final_a": 0,
+   "calibration|final_b": 0,
+   "calibration|fitting": 0,
+   "calibration|retrieval": 0,
+   "canary|final_a": 0,
+   "canary|final_b": 0,
+   "canary|fitting": 0,
+   "canary|retrieval": 0,
+   "final_a|final_b": 0,
+   "final_a|fitting": 0,
+   "final_a|retrieval": 0,
+   "final_b|fitting": 0,
+   "final_b|retrieval": 0,
+   "fitting|retrieval": 0
+  }
+ },
+ "schema_version": 1,
+ "sprint": "21D4",
+ "wave": "W2"
+}
