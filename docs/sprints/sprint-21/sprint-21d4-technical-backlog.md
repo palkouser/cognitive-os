@@ -119,8 +119,8 @@ D4 must not add by default:
 
 | Evidence | Permitted D4 use | Prohibited use |
 |---|---|---|
-| D3 fitting campaign (50 groups / 200 `SELF_PLAY`) | re-fitting under revision 4 as part of the enlarged fitting pool | calibration, threshold choice, final claim |
-| D3 calibration set (20 groups / 80 `SELF_PLAY`) | **fitting exemplars only**, declared in revision 4 before any D4 number | any D4 selection, threshold, or coverage decision |
+| D3 fitting task packages (50 groups) | re-execution under revision 4 as part of the enlarged fitting pool | calibration, threshold choice, final claim |
+| D3 calibration task packages (20 groups) | **re-executed as fitting exemplars only**, declared in revision 4 before any D4 number | any D4 selection, threshold, or coverage decision |
 | D3 calibration metamorphic set | frozen replay for the independence erratum and invariance regression | D4 candidate selection, threshold choice |
 | D3 retrieval holdout and query set | read-only diagnosis of the searchable-surface cause | any D4 retrieval score or floor decision |
 | D2 and D1 development evidence | historical comparison only | any D4 decision |
@@ -131,9 +131,14 @@ D4 must not add by default:
 | new unseen-task retrieval holdout | one final comparison of frozen retrieval arms | correction selection, retrieval tuning, weight selection |
 | canary `REAL_GOVERNED_RUN` | bounded post-approval runtime proof | fitting or replacement of final evidence |
 
-Promoting D3's spent calibration groups to D4 fitting exemplars is permitted **only** because
-they are declared as fitting in revision 4 before any D4 measurement, and because D4's own
-selection reads a calibration set those groups are transitively disjoint from. A D4 snapshot
+Every row above names a task package, not a stored observation. D4-W0-F1 established that the
+D3 learned store holds no observations and no datasets, so nothing is inherited in place and
+every exemplar is produced by a campaign D4 runs itself under new run identities after fresh
+feature seals.
+
+Promoting D3's and D2's spent calibration groups to D4 fitting exemplars is permitted **only**
+because they are declared as fitting in revision 4 before any D4 measurement, and because D4's
+own selection reads a calibration set those groups are transitively disjoint from. A D4 snapshot
 must name every included observation and feature record. Queries such as "all observations on
 this surface" or "latest seal for this partition" remain invalid evidence selection.
 
@@ -224,6 +229,38 @@ case uses disposable copies.
 - Twenty dependent tasks carry typed `not_opened` records bound to the selection stop.
 - Final A, final B and canary remain sealed, unopened, with zero outcomes and zero
   body-access receipts.
+
+### 1.3.1 The D3 learned store is empty, and why that is settled
+
+D4-W0-F1, established at S21D4-003 and recorded in
+[`sprint-21d4-finding-w0-f1.json`](evidence/sprint-21d4-finding-w0-f1.json).
+
+`cognitive_os_s21d3_test` holds **no learned observations and no explicit datasets**, while
+holding the 3,306 artifacts, 1,971 artifact blobs and 1,731 events that prove the campaign ran
+against that exact database. Sprint 21D2's store, read as a control, holds its documented 480
+observations and 2 datasets.
+
+The data was **persisted and committed, then removed by TRUNCATE**. Three independent signals
+agree, and each rules out a different alternative: the append-only Event Store holds 340
+committed `learned.observation_recorded` events, so a rollback is excluded; `n_tup_del` is zero
+on `learned_observations`, so a `DELETE` is excluded; and all nine `learned_*` tables carry
+`relfilenode != oid` in one contiguous block while every other table in the database does not,
+which is what a rewrite by `TRUNCATE` looks like and also why the delete counter shows nothing.
+
+The mechanism was `run_learned_smoke`, which truncates exactly those nine tables and was fenced
+only by the database name ending in `_test` -- a suffix every sprint's evidence database also
+carries. It fired at `17:04:08` on 2026-08-05, 114 seconds before the W7 backup manifest, which
+is why that restore proof compared matching counts of nothing. Nothing is recoverable, because
+every backup postdates the erasure.
+
+This sprint closed the path: the smoke now requires `COGOS_TRUNCATABLE_DATABASE` to nominate the
+connected database, which is the rule the PostgreSQL integration fixture has enforced since
+W6-F2, and additionally refuses any store still holding an observation, a dataset, or a
+component other than the inert reference one.
+
+**The D3 result is undisturbed.** Its selection is committed evidence and S21D4-001 recomputes
+the full 24-setting grid from that file without reading the store. What changes for D4 is only
+that no predecessor row can be inherited, which Section 4.3 already required.
 
 ### 1.4 Mandatory D3 decision-independence correction
 
@@ -396,7 +433,7 @@ D3 met as infrastructure claims must be re-evidenced against D4's own authoritie
 | 5 | verifier remains label and acceptance authority; prediction only orders attempts |
 | 6 | revision-4 fitted matrix contains no forbidden, identity, outcome, or answer field |
 | 7 | transitive task/repository/template/clone/source groups do not cross any D4 role |
-| 8 | at least 200 fitting observations/50 groups and 40 calibration observations/10 groups; D4 targets 440/110 and 400/100 |
+| 8 | at least 200 fitting observations/50 groups and 40 calibration observations/10 groups; D4 targets 320/80 and 400/100 |
 | 9 | zero `REAL_GOVERNED_RUN` observations in fitting and calibration |
 | 10 | final A and B each contain 120 new verifier-backed outcomes over 30 groups |
 | 11 | final manifests inaccessible to fitting and one artifact selected before final access |
@@ -465,11 +502,11 @@ corruption tests; they are not ranking decisions and cannot inflate any denomina
 - exact baseline, store, seal, and decision-independence reconciliation;
 - revision-4 pre-registration with the counting rule, the selective operating-point rule, the
   corpus reallocation, and the widened retrieval surface all frozen before measurement;
-- a fitting pool enlarged to 110 groups / 440 outcomes **from rights-cleared existing task
+- a fitting pool enlarged to 80 groups / 320 outcomes **from rights-cleared existing task
   packages**, re-executed as a new campaign under new run identities;
 - 100 newly authored calibration groups / 400 outcomes, group-, clone- and source-disjoint
   from every other role;
-- a fitting-volume probe at 200 and 440 rows, reported as the yield curve the D3 handoff asked
+- a fitting-volume probe at 200 and 320 rows, reported as the yield curve the D3 handoff asked
   for, produced as a by-product of the reallocation at zero additional authoring cost;
 - a 20-group invariance-regression sample with two transformation cases, replacing D3's
   six-case set on all groups;
@@ -505,12 +542,12 @@ Revision 4 must publish this response before reading any D4 calibration number:
    reproduce D3's recorded values from D3's own evidence, stop with
    `reconciliation_not_reproducible` — the erratum in Section 1.4 is then unproven and nothing
    downstream may rely on it.
-2. Fit at 200 and at 440 rows and measure the risk–coverage curve of the frozen grid on the
+2. Fit at 200 and at 320 rows and measure the risk–coverage curve of the frozen grid on the
    fresh calibration set. Record coverage-at-zero-error at both volumes.
 3. If some grid point and operating point reach zero errors on at least 100 independent
    decisions at coverage at least 0.40, proceed to selection.
-4. If zero-error coverage is above zero but below 0.40 at 440 rows *and* materially higher at
-   440 than at 200, stop with `volume_bound`: the residual is evidence volume, the yield curve
+4. If zero-error coverage is above zero but below 0.40 at 320 rows *and* materially higher at
+   320 than at 200, stop with `volume_bound`: the residual is evidence volume, the yield curve
    is the deliverable, and the successor sprint is a corpus sprint with a named target volume.
 5. If zero-error coverage is at or near zero at both volumes and does not improve with volume,
    stop with `hypothesis_class_bound`: the frozen k-NN cannot separate its own errors, and
@@ -597,7 +634,7 @@ distinct groups.
 
 | Role | D4 target | Provenance | Authoring cost |
 |---|---:|---|---|
-| fitting | 110 groups / 440 outcomes | 50 D3 fitting + 20 D3 calibration + spare D2 sealed + rights-cleared C3, re-run as a new campaign | none |
+| fitting | 80 groups / 320 outcomes | 50 D2 training + 10 D2 calibration + 20 D3 calibration, all re-executed as a new campaign | none |
 | calibration | 100 groups / 400 outcomes | authored for D4 | the wave's main deliverable |
 | invariance regression | 20-group sample, 2 cases, 40 transformed decisions | generated | 160 executed candidates, down from D3's 480 |
 | final A | 30 groups / 120 outcomes | carried, sealed, unopened | none |
@@ -606,11 +643,26 @@ distinct groups.
 | canary | 5 groups / 20 slots | carried, sealed, unopened | none |
 | retrieval | at least 60 new disjoint groups until at least 50 queries qualify | authored for D4 | as D3 |
 
-The exact fitting composition is an audit result, not an assumption: S21D4-012 enumerates every
-rights-cleared, role-disjoint group actually available and records the achieved count. If fewer
-than 110 are eligible, the fitting pool is what is eligible and the volume probe reports the
-volumes it actually measured. A planned number that survives contact with an audit is evidence;
-one that does not is a target, and the evidence records the difference.
+**Sprint 21C3's corpus is deliberately excluded.** It would have carried the pool to roughly
+110 groups and 440 outcomes, but only if around thirty of its groups cleared a rights and
+role-disjointness audit that has not been run. The release owner chose the certain pool over
+the larger one, so the probe measures 200 and 320 rather than 200 and 440. The smaller upper
+point weakens the volume arm of Section 3.3 and the record says so: a flat curve between 200
+and 320 is weaker evidence for `hypothesis_class_bound` than a flat curve to 440 would have
+been, and S21D4-039 must report that limitation rather than let the reader infer a stronger
+conclusion than the spacing supports. C3 remains available to a successor if the volume arm is
+the one that fires.
+
+The exact fitting composition is still an audit result, not an assumption: S21D4-012 enumerates
+every rights-cleared, role-disjoint group actually available and records the achieved count. If
+fewer than 80 are eligible, the fitting pool is what is eligible and the volume probe reports
+the volumes it actually measured. A planned number that survives contact with an audit is
+evidence; one that does not is a target, and the evidence records the difference.
+
+**No row of it is inherited.** D4-W0-F1 established that the D3 learned store holds no
+observations and no datasets, so every group named above is a task *package to re-execute*,
+never a row to read. That was already the contract -- new run identities after fresh feature
+seals -- but it is now the only possibility rather than the disciplined choice.
 
 Promotion decisions over the 60 final groups are 60 independent and 120 nominal. Condition 20's
 fixed threshold is met on the nominal count exactly as it is written, the independent count is
@@ -853,10 +905,12 @@ the minimal isolated lifecycle fixture when no real D4 activation exists.
 - **Deliverable:** `evidence/sprint-21d4-fitting-pool.json` and the revision-4 role table.
 - **Acceptance:** enumerates every rights-cleared task group available for fitting with its
   provenance sprint, its rights record, and its disjointness from calibration, final A, final B,
-  canary and retrieval; records the achieved fitting group and outcome count; declares D3's
-  spent calibration groups as fitting exemplars **before** any D4 measurement; and declares the
-  two volume points the probe will use. If fewer than 110 groups are eligible, the record states
-  the achieved number and the volume points are set from it.
+  canary and retrieval; records the achieved fitting group and outcome count; declares D3's and
+  D2's spent calibration groups as fitting exemplars **before** any D4 measurement; declares the
+  two volume points as 200 and 320; and records that Sprint 21C3's corpus is excluded by
+  decision rather than by failed audit. Every group is recorded as a package to re-execute, with
+  the D4-W0-F1 reference, because no predecessor row survives. If fewer than 80 groups are
+  eligible, the record states the achieved number and the volume points are set from it.
 - **Evidence:** per-group provenance and rights table, achieved counts, transitive disjointness
   proof, contract hash.
 - **Dependencies:** S21D4-003, S21D4-010.
@@ -875,7 +929,7 @@ the minimal isolated lifecycle fixture when no real D4 activation exists.
 ### S21D4-014 — Complete power and yield analysis
 
 - **Deliverable:** `evidence/sprint-21d4-power-and-yield.json` produced without outcome access.
-- **Acceptance:** justifies 110/440 fitting, 100/400 calibration, the 100-independent-decision
+- **Acceptance:** justifies 80/320 fitting, 100/400 calibration, the 100-independent-decision
   floor, the 0.40 coverage floor and its link to condition 13's 20 changed decisions over 60
   final groups, the 20-group invariance sample, and retrieval overproduction sufficient for 50
   qualifying queries. Reports the binomial upper bound on a zero-error rate at n = 20, 60 and
@@ -1476,7 +1530,7 @@ the minimal isolated lifecycle fixture when no real D4 activation exists.
 |---|---|---|
 | W0 — authority and design | 000–018 | D3 release verified, independence erratum published, isolated roots, revision 4 committed before measurement |
 | W1 — independence and threshold spine | 020–024 | counting rule, operating-point rule, D3 grid replayed under corrected denominators, typed continuation |
-| W2 — fresh evidence at scale | 030–039 | 100 authored calibration groups sealed first, 440-row fitting, risk–coverage curve at two volumes, one candidate or a typed null |
+| W2 — fresh evidence at scale | 030–039 | 100 authored calibration groups sealed first, 320-row fitting, risk–coverage curve at two volumes, one candidate or a typed null |
 | W3 — retrieval surface | 040–047 | widened surface with unchanged structural hashes, comparator decided, 50+ new queries, D1 condition-15 decision |
 | W4 — artifact and runtime | 048, 050–055, 057, 056, 058–059 | the D3-built surface exercised against a real artifact, then one pre-final access decision |
 | W5 — final evidence | 060–069 | final A/B, benefit, retention, promotion OOD, shadow, assessment, VERIFIED or negative stop |
@@ -1557,7 +1611,7 @@ annotated tag.
 | data roles | exact fitting/calibration/final/canary/retrieval manifests and transitive groups | fitting and evaluation overlap |
 | chronology | features and final predictions predate their outcomes | post-outcome leakage |
 | campaign resume | manifest, mode, order, bundle and seal bound; only exact missing work repeats | restart fabricates or duplicates evidence |
-| sample | 110/440 fitting, 100/400 calibration, 120/30 each final, 5/20 canary | underpowered or role-ineligible result |
+| sample | 80/320 fitting, 100/400 calibration, 120/30 each final, 5/20 canary | underpowered or role-ineligible result |
 | operating point | derived once, from the calibration split only, sealed into the candidate | threshold chosen after seeing an outcome |
 | calibration certificate | zero confident errors over at least 100 independent decisions, with its binomial bound | zero-error claim is unsupported by its sample |
 | non-silence | coverage floor and projected changed-decision count | abstention passes by avoiding the test |
@@ -1610,7 +1664,7 @@ dependency.
 
 ### 8.1 Dataset and separation
 
-- fitting: the audited eligible group set, target 110 groups and 440 new `SELF_PLAY` outcomes;
+- fitting: the audited eligible group set, 80 groups and 320 new `SELF_PLAY` outcomes;
 - calibration: 100 fresh groups and 400 new `SELF_PLAY` outcomes, at least 15 template families;
 - final A and B: exact reused 30 groups / 120 outcomes each, or a fully replaced role at no
   less than the same target; never below 25/100;
