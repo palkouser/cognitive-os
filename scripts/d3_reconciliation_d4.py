@@ -28,11 +28,18 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 REPO = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO / "src"))
+
+from cognitive_os.learning.selective_operating_point import (  # noqa: E402
+    zero_error_upper_bound,
+)
+
 EVIDENCE = REPO / "docs/sprints/sprint-21/evidence"
 SELECTION = EVIDENCE / "sprint-21d3-learner-selection.json"
 OPERATIONS = EVIDENCE / "sprint-21d3-operations.json"
@@ -50,11 +57,6 @@ NARRATIVE_CLAIMS: tuple[tuple[str, str, str], ...] = (
     ("artifacts backed up", "2754", "backup.artifact_count"),
     ("blobs rehashed on restore", "2077", "restore.artifact_bytes.files_rehashed"),
 )
-
-
-def zero_error_upper_bound(n: int, alpha: float = 0.05) -> float:
-    """One-sided 95% upper bound on the true error rate after observing zero errors in n."""
-    return float(1.0 - alpha ** (1.0 / n))
 
 
 def _hash_file(path: Path) -> str:

@@ -3499,6 +3499,11 @@
       "sha256": "583215c671ac3ad2c0a7d4872475dfa4d93e1fc3b0a145c517776999c1a3dcaf"
     },
     {
+      "file": "v1/learned/correction-decision-set-v4.schema.json",
+      "model": "CorrectionDecisionSetV4",
+      "sha256": "fd11ddb88082bedb5036ff9f3f70794a85b0b042eeb9c03f7024b2bfc5c18ac0"
+    },
+    {
       "file": "v1/learned/counterfactual-label.schema.json",
       "model": "CounterfactualLabel",
       "sha256": "348faeb7a2de6310c79b3890c24c23d823aa28444baf5d03c81ce800d8f86fae"
@@ -3517,6 +3522,11 @@
       "file": "v1/learned/d3-runtime-configuration.schema.json",
       "model": "D3RuntimeConfiguration",
       "sha256": "3c256186e66e1dcd745b7a27ead779e814a82d9b862b0069da1763897c25c1bd"
+    },
+    {
+      "file": "v1/learned/decision-census-v4.schema.json",
+      "model": "DecisionCensusV4",
+      "sha256": "d060c23fb49311b7cc1fcc941438bded14db5c819567e43da4b11414bcf5306c"
     },
     {
       "file": "v1/learned/distribution-comparison.schema.json",

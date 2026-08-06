@@ -1,0 +1,237 @@
+{
+ "artifact_bytes": {
+  "blobs": 1446,
+  "every_stored_blob_rehashed": true
+ },
+ "fixture": "two-partition v2 feature seal, explicit dataset, receipt-bound execution and restart, at Sprint 21D4's campaign sizes",
+ "integrity_content_hash": "ab6e88422d3ab17305923576864c4c69a9d6ca830acdca0fbad8bccd08319996",
+ "items": [
+  "S21D4-023"
+ ],
+ "migration_required": false,
+ "partitions": [
+  {
+   "artifact_lineage": {
+    "example_manifest": {
+     "artifact_id": "ebcbcbc7-f8c8-5c0e-aad9-10b21e9f56fb",
+     "component_id": null,
+     "content_hash": "a78bbb62cc97611ea07fbc98dbeef08a0a2c93eacd152dfbdfdc65057f581462",
+     "dataset_id": "e19ea367-2dd5-5540-a044-b684c39c45f5",
+     "declared_content_hash": "e2a6e29b4a5bdce8564daf63e3e23fc17b18c7e26100b1548aa3b9df69ae6e48",
+     "declared_format": "json",
+     "lineage_id": "84ee8084-0e43-533a-9777-13d95d5eeee0",
+     "media_type": "application/json",
+     "observed_content_hash": "e2a6e29b4a5bdce8564daf63e3e23fc17b18c7e26100b1548aa3b9df69ae6e48",
+     "producing_evidence_hash": null,
+     "role": "example_manifest",
+     "size_bytes": 34828,
+     "verified_at": "2026-08-06T09:05:49.747866Z",
+     "verified_by": "learned-dataset-builder"
+    },
+    "feature_seal": {
+     "artifact_id": "4135b67d-fe71-57aa-85ea-76d9b09403ef",
+     "component_id": "learned.knn.correction_ranking",
+     "content_hash": "7072fcf8df5258d27a860c0666d0b5ec2df6144e968a5d01c55bf222753d5288",
+     "dataset_id": null,
+     "declared_content_hash": "eee3766cfbce3f17f6f29948bd14ba6e3a847cd407a83b0a4d78d693538af2d2",
+     "declared_format": "json",
+     "lineage_id": "87ce06bc-8520-5c20-8166-3113ab335ae8",
+     "media_type": "application/json",
+     "observed_content_hash": "eee3766cfbce3f17f6f29948bd14ba6e3a847cd407a83b0a4d78d693538af2d2",
+     "producing_evidence_hash": "fa2b1066011ddbdba5cab6baefdc7fde21758375c3b282ded6529fdd532c189e",
+     "role": "report",
+     "size_bytes": 777596,
+     "verified_at": "2026-08-06T09:05:49.613128Z",
+     "verified_by": "s21d4-w1-fixture"
+    },
+    "split_manifest": {
+     "artifact_id": "1763a42f-4e9d-5d8b-924c-26118a991f2c",
+     "component_id": null,
+     "content_hash": "5bebe55709a44a835eec779b7e7c6aa57a68bdf405ba88b31b241ef8cf8ebf2a",
+     "dataset_id": "e19ea367-2dd5-5540-a044-b684c39c45f5",
+     "declared_content_hash": "170fcc34bb5212aa2178e091da018186731aede6436e9b5c878d82ad2814959e",
+     "declared_format": "json",
+     "lineage_id": "f4013221-9748-57b2-b9c6-6c1ec5ea76d0",
+     "media_type": "application/json",
+     "observed_content_hash": "170fcc34bb5212aa2178e091da018186731aede6436e9b5c878d82ad2814959e",
+     "producing_evidence_hash": null,
+     "role": "split_manifest",
+     "size_bytes": 164458,
+     "verified_at": "2026-08-06T09:05:49.748113Z",
+     "verified_by": "learned-dataset-builder"
+    }
+   },
+   "candidate_outcomes": 320,
+   "census": {
+    "independent_decisions": 320,
+    "nominal_decisions": 320,
+    "rate_denominator": "independent_decisions",
+    "replicated_decisions": 0,
+    "revision": 4
+   },
+   "chronology": {
+    "base_manifest_created_at": "2026-08-06T08:55:00+00:00",
+    "features_sealed_at": "2026-08-06T09:00:00+00:00",
+    "first_outcome_at": "2026-08-06T10:00:00+00:00",
+    "post_outcome_seal_refusal": "v2 feature records must be sealed strictly before every outcome",
+    "stored_seal_time_preserved": true,
+    "strictly_pre_outcome": true
+   },
+   "corpus_role": "training",
+   "events": {
+    "campaign_stream_version": 80,
+    "outcome_events": 320,
+    "sequence_receipts": 80
+   },
+   "fixture_group_prefix": "d4-w1-fixture-group-training-",
+   "groups": 80,
+   "hashes": {
+    "base_campaign_manifest": "05b48807588c128f1bf4aa4930e80d8ad9bb783f752db399761a434e35093077",
+    "dataset": "b4307afaf2cd4e378702c11520f91c1e8b3952655fb021d2e16c33878db0236c",
+    "example_manifest": "a738294979fcd7ff392cd104b2365fbe85efcf399b72d393923b2a0d1f7470df",
+    "feature_contract": "492c90a5df420de9d1662d17155ac8b28713e69bbd4bbe56208415d6ca076362",
+    "feature_seal": "fa2b1066011ddbdba5cab6baefdc7fde21758375c3b282ded6529fdd532c189e",
+    "feature_seal_artifact": "eee3766cfbce3f17f6f29948bd14ba6e3a847cd407a83b0a4d78d693538af2d2",
+    "receipt_campaign_manifest": "441601b3f22cd848cee0c6c4b7b4fe798a7e01e3ce467b93306deceaf299570c",
+    "selection_partition_digest": "62acb71d44aeb0110f31ea033abb6e24ead47891f2d08f929c76cc82f70fef50",
+    "split_manifest": "c0150eaacd2102e4a10843a8a964e8d872af92c81de866691fbee25b0c7bf550"
+   },
+   "members": {
+    "distinct_feature_record_hashes": 320,
+    "distinct_member_content_hashes": 320,
+    "member_digest": "0cddda80cefd1478525c48c603d13625ef1a543439dc666db45a583e1316a129",
+    "observations": 320
+   },
+   "partition": "training",
+   "restart": {
+    "dataset_record_reproduced": true,
+    "example_manifest_reproduced": true,
+    "feature_seal_hash_reproduced": true,
+    "receipt_effective_remainder": 0,
+    "receipt_members_match_dataset_members": true,
+    "split_manifest_reproduced": true
+   }
+  },
+  {
+   "artifact_lineage": {
+    "example_manifest": {
+     "artifact_id": "9d57790a-0a11-53ae-9fb5-de938992f56f",
+     "component_id": null,
+     "content_hash": "d253d2aabe5e7ca61e1961244b234caf1c12dbd14e2bd80edd14bf9efc55c694",
+     "dataset_id": "03fe2ed2-1c7f-5f05-ab78-2ee0957f87b9",
+     "declared_content_hash": "58204905014e851d4afb6164cbfc9b6fac50b9f82413ce08c15b63b6a6a3e63d",
+     "declared_format": "json",
+     "lineage_id": "6e1527dc-1d83-5f0c-a9a9-88f4fe6db8bd",
+     "media_type": "application/json",
+     "observed_content_hash": "58204905014e851d4afb6164cbfc9b6fac50b9f82413ce08c15b63b6a6a3e63d",
+     "producing_evidence_hash": null,
+     "role": "example_manifest",
+     "size_bytes": 43470,
+     "verified_at": "2026-08-06T09:05:50.858742Z",
+     "verified_by": "learned-dataset-builder"
+    },
+    "feature_seal": {
+     "artifact_id": "d5458bc2-cbc4-5b25-8fb3-e47cb0bbd83e",
+     "component_id": "learned.knn.correction_ranking",
+     "content_hash": "678d8f881183f1b8f4e10a302ae653ef40164fa103fe274f316dc9ab6a2f2a62",
+     "dataset_id": null,
+     "declared_content_hash": "5989274e5a9301c035132899e64cc45ec764ec3c703f7fb0a0e332ed96c555f6",
+     "declared_format": "json",
+     "lineage_id": "39c9d332-7fe6-5bee-97ea-0a7737f2aa8d",
+     "media_type": "application/json",
+     "observed_content_hash": "5989274e5a9301c035132899e64cc45ec764ec3c703f7fb0a0e332ed96c555f6",
+     "producing_evidence_hash": "51d0c9577b50d110f3b5871184343f208472c543755cee849454fe29d45c5579",
+     "role": "report",
+     "size_bytes": 972893,
+     "verified_at": "2026-08-06T09:05:50.700572Z",
+     "verified_by": "s21d4-w1-fixture"
+    },
+    "split_manifest": {
+     "artifact_id": "014618fc-1acc-595f-a97e-e8f3acc838be",
+     "component_id": null,
+     "content_hash": "49e0ced5a3fec68ce482f9a476392e83e7231dff1ad36915f3c197b0662a21f6",
+     "dataset_id": "03fe2ed2-1c7f-5f05-ab78-2ee0957f87b9",
+     "declared_content_hash": "6f5248730adde3ec41d254999684834cd1a194eb5897089f02489e22c36e9bff",
+     "declared_format": "json",
+     "lineage_id": "32d9d5c4-165e-5683-bc09-fad6036d6e81",
+     "media_type": "application/json",
+     "observed_content_hash": "6f5248730adde3ec41d254999684834cd1a194eb5897089f02489e22c36e9bff",
+     "producing_evidence_hash": null,
+     "role": "split_manifest",
+     "size_bytes": 207823,
+     "verified_at": "2026-08-06T09:05:50.859001Z",
+     "verified_by": "learned-dataset-builder"
+    }
+   },
+   "candidate_outcomes": 400,
+   "census": {
+    "independent_decisions": 400,
+    "nominal_decisions": 400,
+    "rate_denominator": "independent_decisions",
+    "replicated_decisions": 0,
+    "revision": 4
+   },
+   "chronology": {
+    "base_manifest_created_at": "2026-08-06T08:55:00+00:00",
+    "features_sealed_at": "2026-08-06T09:00:00+00:00",
+    "first_outcome_at": "2026-08-06T10:00:00+00:00",
+    "post_outcome_seal_refusal": "v2 feature records must be sealed strictly before every outcome",
+    "stored_seal_time_preserved": true,
+    "strictly_pre_outcome": true
+   },
+   "corpus_role": "evaluation",
+   "events": {
+    "campaign_stream_version": 100,
+    "outcome_events": 400,
+    "sequence_receipts": 100
+   },
+   "fixture_group_prefix": "d4-w1-fixture-group-calibration-",
+   "groups": 100,
+   "hashes": {
+    "base_campaign_manifest": "b1fe05081bf6116f6622d4ef5ead9af9af5a2ea16991fd32cc79c31c8437c2ec",
+    "dataset": "7776c0410be8876c74c88de73ed4a9428223ba2cb3cb0f49878f553557cd6ba5",
+    "example_manifest": "049bf901e18fff7f36c3fdb108d4d3abbd57b71f65c443d203abc32baa5e2b01",
+    "feature_contract": "492c90a5df420de9d1662d17155ac8b28713e69bbd4bbe56208415d6ca076362",
+    "feature_seal": "51d0c9577b50d110f3b5871184343f208472c543755cee849454fe29d45c5579",
+    "feature_seal_artifact": "5989274e5a9301c035132899e64cc45ec764ec3c703f7fb0a0e332ed96c555f6",
+    "receipt_campaign_manifest": "665b47fb532e4eb24cdaa342293ae30e4a8244ba4c36dec68f7c90b0af241ada",
+    "selection_partition_digest": "2acb9583b8e8a1ba0a4c41e69a41052cefbaceea97891f1495dfe631c498dffb",
+    "split_manifest": "ed3593de35cce0d7ee258a466d5017aa77519d4fcab5bfbaacc53b7452e829ce"
+   },
+   "members": {
+    "distinct_feature_record_hashes": 400,
+    "distinct_member_content_hashes": 400,
+    "member_digest": "6cfd43b4e07fae174c44c10a4844e7c9a67ba44420a4ed81010c45af0c025f15",
+    "observations": 400
+   },
+   "partition": "calibration",
+   "restart": {
+    "dataset_record_reproduced": true,
+    "example_manifest_reproduced": true,
+    "feature_seal_hash_reproduced": true,
+    "receipt_effective_remainder": 0,
+    "receipt_members_match_dataset_members": true,
+    "split_manifest_reproduced": true
+   }
+  }
+ ],
+ "pre_registration_sha256": "526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9",
+ "recorded_at": "2026-08-06T09:05:48Z",
+ "role_boundary": {
+  "d4_calibration_groups_used": 0,
+  "d4_final_or_canary_groups_used": 0,
+  "d4_fitting_groups_used": 0,
+  "every_group_is_a_fixture_group": true,
+  "why": "a spine proof that borrowed a real group would spend it; the identifiers name the fixture so an auditor does not have to trust the claim"
+ },
+ "schema_version": 1,
+ "shape": {
+  "artifacts_stored": 1446,
+  "candidate_outcomes": 720,
+  "code_revision": "5e29072bc9ff4ffcc3ce46992b4f75cf5722a5bd2937228407dbe218a1792bab",
+  "groups": 180,
+  "partitions": 2
+ },
+ "sprint": "21D4",
+ "wave": "W1"
+}
