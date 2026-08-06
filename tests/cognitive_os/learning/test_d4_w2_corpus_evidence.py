@@ -22,6 +22,8 @@ REPOSITORY = Path(__file__).resolve().parents[3]
 EVIDENCE = REPOSITORY / "docs/sprints/sprint-21/evidence"
 CORPUS = EVIDENCE / "sprint-21d4-corpus.json"
 SEPARATION = EVIDENCE / "sprint-21d4-separation.json"
+SEALED = EVIDENCE / "sprint-21d4-sealed-manifests.json"
+D3_SEALED = EVIDENCE / "sprint-21d3-sealed-manifests.json"
 PRE_REGISTRATION = EVIDENCE / "sprint-21d4-pre-registration.json"
 
 
@@ -37,7 +39,7 @@ def _canonical(value: Any) -> bytes:
     return json.dumps(value, indent=1, sort_keys=True, ensure_ascii=False).encode("utf-8")
 
 
-@pytest.mark.parametrize("path", [CORPUS, SEPARATION])
+@pytest.mark.parametrize("path", [CORPUS, SEPARATION, SEALED])
 def test_each_w2_record_reproduces_its_integrity_hash(path: Path) -> None:
     """One canonicalisation across D4: the bytes hashed are the bytes written."""
     document = _load(path)
@@ -45,7 +47,7 @@ def test_each_w2_record_reproduces_its_integrity_hash(path: Path) -> None:
     assert _sha256(_canonical(body)) == document["integrity_content_hash"]
 
 
-@pytest.mark.parametrize("path", [CORPUS, SEPARATION])
+@pytest.mark.parametrize("path", [CORPUS, SEPARATION, SEALED])
 def test_each_w2_record_is_bound_to_the_pre_registration(path: Path) -> None:
     document = _load(path)
     assert document["pre_registration_sha256"] == _sha256(PRE_REGISTRATION.read_bytes())
@@ -139,3 +141,53 @@ def test_the_detector_that_says_so_is_running() -> None:
     assert near_clone["seeded_restatement_pairs"] >= 1
     # A group's own candidates are meant to be structurally close; that is the edit path.
     assert near_clone["intra_group_structural_matches"] > 0
+
+
+def test_the_seal_names_every_role_and_no_outcome() -> None:
+    sealed = _load(SEALED)
+    seal = sealed["seal"]
+    assert seal["outcomes_present"] is False
+    assert seal["corpus_authoring_capability_revoked"] is True
+    assert sealed["capability_revocation"]["revoked"] is True
+    counts = {name: row["groups"] for name, row in sealed["catalogues"].items()}
+    assert counts == {
+        "training": 80,
+        "calibration": 100,
+        "final_a": 30,
+        "final_b": 30,
+        "canary": 5,
+        "retrieval": 60,
+    }
+    assert sealed["role_disjointness"]["all_pairwise_disjoint"] is True
+
+
+def test_the_carried_roles_are_the_bytes_d3_released() -> None:
+    """Identical to what S21D3 bound, not merely equal to a fresh derivation of it."""
+    carried = _load(SEALED)["carried_roles"]
+    released = _load(D3_SEALED)["catalogues"]
+    assert carried["all_identical"] is True
+    assert carried["d3_evidence_sha256"] == _sha256(D3_SEALED.read_bytes())
+    for role, row in carried["roles"].items():
+        assert row["identical"] is True
+        assert row["d3_released_hash"] == released[role]["content_hash"]
+        assert row["s21d4_004_decision"] == "reuse"
+
+
+def test_the_submanifests_count_replicas_as_replicas() -> None:
+    """The W1 erratum reaches the seal, or the hundred-decision floor is met by counting twice."""
+    submanifests = _load(SEALED)["transformation_submanifests"]
+    invariance = submanifests["calibration_invariance"]
+    assert invariance["sample_groups"] == 20
+    assert invariance["transformed_decisions"] == 40
+    assert invariance["independent_decisions"] == 0
+    assert len(invariance["sample_groups_named"]) == 20
+    promotion = submanifests["promotion"]
+    assert promotion["nominal_decisions"] == 120
+    assert promotion["independent_decisions"] == 60
+    assert promotion["reported_side_by_side"] is True
+
+
+def test_the_seal_is_bound_to_the_corpus_it_seals() -> None:
+    bound = _load(SEALED)["bound_evidence"]
+    assert bound["corpus"]["sha256"] == _sha256(CORPUS.read_bytes())
+    assert bound["separation"]["sha256"] == _sha256(SEPARATION.read_bytes())
