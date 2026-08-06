@@ -1024,6 +1024,953 @@ def test_a_sequence_without_a_sentinel_is_whole() -> None:
     ),
 )
 
+# ------------------------------------------------------------------------ parsing and validation
+
+_G011 = D2TaskSpec(
+    template_id="d4_parsing.key_values",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d4-parsing-key-values",
+    module="settings_line",
+    module_doc="Reading a semicolon-separated settings line.",
+    issue=(
+        "parse_key_values() is documented to read a settings line into a mapping. Callers report "
+        "that a fragment carrying no equals sign crashes the parse instead of being skipped, and "
+        "that spaces around a name or a value end up inside them."
+    ),
+    expected=(
+        "parse_key_values(line) returns a mapping of names to values, skips any fragment without "
+        "an equals sign, and strips surrounding whitespace from both sides."
+    ),
+    baseline_reason="every fragment is unpacked as a pair, and neither side is stripped",
+    edge_cases=(
+        "a fragment without an equals sign is skipped",
+        "whitespace around a name or value is removed",
+    ),
+    baseline="""def parse_key_values(line):
+    \"\"\"Return the settings in `line` as a mapping of names to values.\"\"\"
+    settings = {}
+    for fragment in line.split(";"):
+        if not fragment:
+            continue
+        name, value = fragment.split("=")
+        settings[name] = value
+    return settings""",
+    variant_one="""def parse_key_values(line):
+    \"\"\"Return the settings in `line` as a mapping of names to values.\"\"\"
+    settings = {}
+    for fragment in line.split(";"):
+        if "=" not in fragment:
+            continue
+        name, _, value = fragment.partition("=")
+        settings[name.strip()] = value.strip()
+    return settings""",
+    variant_two="""def parse_key_values(line):
+    \"\"\"Return the settings in `line` as a mapping of names to values.\"\"\"
+    settings = {}
+    for fragment in line.split(";"):
+        pieces = fragment.split("=", 1)
+        if len(pieces) != 2:
+            continue
+        settings[pieces[0].strip()] = pieces[1].strip()
+    return settings""",
+    variant_three="""def parse_key_values(line):
+    \"\"\"Return the settings in `line` as a mapping of names to values.\"\"\"
+    settings = {}
+    for fragment in line.split(";"):
+        if "=" not in fragment:
+            continue
+        name, _, value = fragment.partition("=")
+        settings[name] = value
+    return settings""",
+    variant_four="""def parse_key_values(line):
+    \"\"\"Return the settings in `line` as a mapping of names to values.\"\"\"
+    settings = {}
+    for fragment in line.split(";"):
+        if not fragment:
+            continue
+        name, value = fragment.split("=")
+        settings[name.strip()] = value.strip()
+    return settings""",
+    visible_test=_test_module(
+        "settings_line",
+        "Published contract for reading a settings line.",
+        """
+def test_two_settings_are_read() -> None:
+    assert parse_key_values("a=1;b=2") == {"a": "1", "b": "2"}
+
+
+def test_a_single_setting_is_read() -> None:
+    assert parse_key_values("mode=fast") == {"mode": "fast"}
+""",
+        imports="from settings_line import parse_key_values\n",
+    ),
+    hidden_test=_test_module(
+        "settings_line",
+        "The part of the contract the published tests do not state.",
+        """
+def test_two_settings_are_read() -> None:
+    assert parse_key_values("a=1;b=2") == {"a": "1", "b": "2"}
+
+
+def test_a_fragment_without_an_equals_sign_is_skipped() -> None:
+    assert parse_key_values("a=1;broken;b=2") == {"a": "1", "b": "2"}
+
+
+def test_whitespace_around_a_name_or_value_is_removed() -> None:
+    assert parse_key_values(" a = 1 ") == {"a": "1"}
+""",
+        imports="from settings_line import parse_key_values\n",
+    ),
+)
+
+_G012 = D2TaskSpec(
+    template_id="d4_parsing.span_bounds",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d4-parsing-span-bounds",
+    module="span_text",
+    module_doc="Reading an inclusive numeric span written as text.",
+    issue=(
+        "parse_span() is documented to read a span such as '3-7'. Callers report that a bare "
+        "number crashes instead of describing a span of one, and that a span starting below zero "
+        "is split at its own minus sign."
+    ),
+    expected=(
+        "parse_span(text) returns (low, high); a bare number describes the span containing only "
+        "itself; a leading minus belongs to the lower bound rather than separating the two."
+    ),
+    baseline_reason="the text is split on every minus sign and two pieces are assumed",
+    edge_cases=(
+        "a bare number is a span of one",
+        "a negative lower bound is not treated as a separator",
+    ),
+    baseline="""def parse_span(text):
+    \"\"\"Return the inclusive (low, high) bounds written in `text`.\"\"\"
+    trimmed = text.strip()
+    low, high = trimmed.split("-")
+    return int(low), int(high)""",
+    variant_one="""def parse_span(text):
+    \"\"\"Return the inclusive (low, high) bounds written in `text`.\"\"\"
+    trimmed = text.strip()
+    position = trimmed.find("-", 1)
+    if position == -1:
+        only = int(trimmed)
+        return only, only
+    return int(trimmed[:position]), int(trimmed[position + 1 :])""",
+    variant_two="""def parse_span(text):
+    \"\"\"Return the inclusive (low, high) bounds written in `text`.\"\"\"
+    trimmed = text.strip()
+    head = trimmed[:1]
+    rest = trimmed[1:]
+    if "-" not in rest:
+        only = int(trimmed)
+        return only, only
+    first, _, second = rest.partition("-")
+    return int(head + first), int(second)""",
+    variant_three="""def parse_span(text):
+    \"\"\"Return the inclusive (low, high) bounds written in `text`.\"\"\"
+    trimmed = text.strip()
+    if "-" not in trimmed:
+        only = int(trimmed)
+        return only, only
+    low, high = trimmed.split("-")
+    return int(low), int(high)""",
+    variant_four="""def parse_span(text):
+    \"\"\"Return the inclusive (low, high) bounds written in `text`.\"\"\"
+    trimmed = text.strip()
+    position = trimmed.find("-", 1)
+    return int(trimmed[:position]), int(trimmed[position + 1 :])""",
+    visible_test=_test_module(
+        "span_text",
+        "Published contract for reading a span.",
+        """
+def test_a_simple_span() -> None:
+    assert parse_span("3-7") == (3, 7)
+
+
+def test_a_wider_span() -> None:
+    assert parse_span("10-20") == (10, 20)
+""",
+        imports="from span_text import parse_span\n",
+    ),
+    hidden_test=_test_module(
+        "span_text",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_simple_span() -> None:
+    assert parse_span("3-7") == (3, 7)
+
+
+def test_a_bare_number_is_a_span_of_one() -> None:
+    assert parse_span("5") == (5, 5)
+
+
+def test_a_negative_lower_bound_is_kept() -> None:
+    assert parse_span("-2-4") == (-2, 4)
+""",
+        imports="from span_text import parse_span\n",
+    ),
+)
+
+_G013 = D2TaskSpec(
+    template_id="d4_parsing.release_number",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d4-parsing-release-number",
+    module="release_number",
+    module_doc="Reading a three-part release number.",
+    issue=(
+        "parse_release() is documented to read a three-part release number. Callers report that "
+        "a two-part number comes back with two parts instead of a zero-filled third, and that a "
+        "four-part number is accepted rather than rejected."
+    ),
+    expected=(
+        "parse_release(text) returns exactly three integers, filling missing trailing parts with "
+        "zero, and raises ValueError for more than three parts."
+    ),
+    baseline_reason="the parts are converted as they come, with no padding and no length check",
+    edge_cases=(
+        "a missing trailing part is filled with zero",
+        "more than three parts is rejected",
+    ),
+    baseline="""def parse_release(text):
+    \"\"\"Return the three integer parts of the release number in `text`.\"\"\"
+    return tuple(int(part) for part in text.split("."))""",
+    variant_one="""def parse_release(text):
+    \"\"\"Return the three integer parts of the release number in `text`.\"\"\"
+    parts = text.split(".")
+    if len(parts) > 3:
+        raise ValueError("a release number has at most three parts")
+    numbers = [int(part) for part in parts]
+    while len(numbers) < 3:
+        numbers.append(0)
+    return tuple(numbers)""",
+    variant_two="""def parse_release(text):
+    \"\"\"Return the three integer parts of the release number in `text`.\"\"\"
+    parts = text.split(".")
+    if len(parts) not in (1, 2, 3):
+        raise ValueError("a release number has at most three parts")
+    padded = parts + ["0"] * (3 - len(parts))
+    return tuple(int(part) for part in padded)""",
+    variant_three="""def parse_release(text):
+    \"\"\"Return the three integer parts of the release number in `text`.\"\"\"
+    numbers = [int(part) for part in text.split(".")]
+    while len(numbers) < 3:
+        numbers.append(0)
+    return tuple(numbers)""",
+    variant_four="""def parse_release(text):
+    \"\"\"Return the three integer parts of the release number in `text`.\"\"\"
+    parts = text.split(".")
+    if len(parts) > 3:
+        raise ValueError("a release number has at most three parts")
+    return tuple(int(part) for part in parts)""",
+    visible_test=_test_module(
+        "release_number",
+        "Published contract for reading a release number.",
+        """
+def test_a_three_part_number() -> None:
+    assert parse_release("1.2.3") == (1, 2, 3)
+
+
+def test_a_zero_release() -> None:
+    assert parse_release("0.0.1") == (0, 0, 1)
+""",
+        imports="from release_number import parse_release\n",
+    ),
+    hidden_test=_test_module(
+        "release_number",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_three_part_number() -> None:
+    assert parse_release("1.2.3") == (1, 2, 3)
+
+
+def test_a_missing_trailing_part_is_filled_with_zero() -> None:
+    assert parse_release("1.2") == (1, 2, 0)
+
+
+def test_more_than_three_parts_is_rejected() -> None:
+    with pytest.raises(ValueError):
+        parse_release("1.2.3.4")
+""",
+        imports="from release_number import parse_release\n",
+    ),
+)
+
+_G014 = D2TaskSpec(
+    template_id="d4_parsing.hex_colour",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d4-parsing-hex-colour",
+    module="hex_colour",
+    module_doc="Reading a colour written as hexadecimal channels.",
+    issue=(
+        "parse_colour() is documented to read a hexadecimal colour. Callers report that the "
+        "three-digit shorthand crashes instead of expanding to full channels, and that a colour "
+        "written without its leading hash is accepted rather than rejected."
+    ),
+    expected=(
+        "parse_colour(text) returns the (red, green, blue) channels, expands the three-digit "
+        "shorthand by doubling each digit, and raises ValueError when the leading hash is absent."
+    ),
+    baseline_reason=(
+        "the body is sliced in fixed pairs, and the hash is stripped rather than required"
+    ),
+    edge_cases=(
+        "the three-digit shorthand expands to full channels",
+        "a colour without a leading hash is rejected",
+    ),
+    baseline="""def parse_colour(text):
+    \"\"\"Return the (red, green, blue) channels written in `text`.\"\"\"
+    body = text.lstrip("#")
+    return int(body[0:2], 16), int(body[2:4], 16), int(body[4:6], 16)""",
+    variant_one="""def parse_colour(text):
+    \"\"\"Return the (red, green, blue) channels written in `text`.\"\"\"
+    if not text.startswith("#"):
+        raise ValueError(f"{text!r} is missing its leading hash")
+    body = text[1:]
+    if len(body) == 3:
+        body = "".join(digit * 2 for digit in body)
+    return int(body[0:2], 16), int(body[2:4], 16), int(body[4:6], 16)""",
+    variant_two="""def parse_colour(text):
+    \"\"\"Return the (red, green, blue) channels written in `text`.\"\"\"
+    if text[:1] != "#":
+        raise ValueError(f"{text!r} is missing its leading hash")
+    body = text[1:]
+    width = 1 if len(body) == 3 else 2
+    channels = [body[start : start + width] for start in range(0, len(body), width)]
+    return tuple(int(channel * (3 - width), 16) for channel in channels[:3])""",
+    variant_three="""def parse_colour(text):
+    \"\"\"Return the (red, green, blue) channels written in `text`.\"\"\"
+    body = text.lstrip("#")
+    if len(body) == 3:
+        body = "".join(digit * 2 for digit in body)
+    return int(body[0:2], 16), int(body[2:4], 16), int(body[4:6], 16)""",
+    variant_four="""def parse_colour(text):
+    \"\"\"Return the (red, green, blue) channels written in `text`.\"\"\"
+    if not text.startswith("#"):
+        raise ValueError(f"{text!r} is missing its leading hash")
+    body = text[1:]
+    return int(body[0:2], 16), int(body[2:4], 16), int(body[4:6], 16)""",
+    visible_test=_test_module(
+        "hex_colour",
+        "Published contract for reading a hexadecimal colour.",
+        """
+def test_a_full_colour_is_read() -> None:
+    assert parse_colour("#1a2b3c") == (26, 43, 60)
+
+
+def test_black_is_all_zeros() -> None:
+    assert parse_colour("#000000") == (0, 0, 0)
+""",
+        imports="from hex_colour import parse_colour\n",
+    ),
+    hidden_test=_test_module(
+        "hex_colour",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_full_colour_is_read() -> None:
+    assert parse_colour("#1a2b3c") == (26, 43, 60)
+
+
+def test_the_shorthand_expands_to_full_channels() -> None:
+    assert parse_colour("#abc") == (170, 187, 204)
+
+
+def test_a_colour_without_a_leading_hash_is_rejected() -> None:
+    with pytest.raises(ValueError):
+        parse_colour("1a2b3c")
+""",
+        imports="from hex_colour import parse_colour\n",
+    ),
+)
+
+_G015 = D2TaskSpec(
+    template_id="d4_parsing.truth_word",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d4-parsing-truth-word",
+    module="truth_word",
+    module_doc="Reading a written yes-or-no answer.",
+    issue=(
+        "parse_truth() is documented to read a written answer. Callers report that an answer in "
+        "capitals is read as false, and that an answer nobody recognises is quietly read as "
+        "false instead of being rejected."
+    ),
+    expected=(
+        "parse_truth(word) recognises yes and no answers regardless of case, and raises "
+        "ValueError for a word it does not recognise."
+    ),
+    baseline_reason=(
+        "membership is tested against lowercase spellings and anything else falls through"
+    ),
+    edge_cases=(
+        "an answer in capitals is recognised",
+        "an unrecognised answer is rejected",
+    ),
+    baseline="""def parse_truth(word):
+    \"\"\"Return the boolean written in `word`.\"\"\"
+    return word in ("true", "yes", "on", "1")""",
+    variant_one="""def parse_truth(word):
+    \"\"\"Return the boolean written in `word`.\"\"\"
+    spelled = word.strip().lower()
+    if spelled in ("true", "yes", "on", "1"):
+        return True
+    if spelled in ("false", "no", "off", "0"):
+        return False
+    raise ValueError(f"unrecognised answer {word!r}")""",
+    variant_two="""def parse_truth(word):
+    \"\"\"Return the boolean written in `word`.\"\"\"
+    answers = {
+        "true": True,
+        "yes": True,
+        "on": True,
+        "1": True,
+        "false": False,
+        "no": False,
+        "off": False,
+        "0": False,
+    }
+    spelled = word.strip().lower()
+    if spelled not in answers:
+        raise ValueError(f"unrecognised answer {word!r}")
+    return answers[spelled]""",
+    variant_three="""def parse_truth(word):
+    \"\"\"Return the boolean written in `word`.\"\"\"
+    return word.strip().lower() in ("true", "yes", "on", "1")""",
+    variant_four="""def parse_truth(word):
+    \"\"\"Return the boolean written in `word`.\"\"\"
+    if word in ("true", "yes", "on", "1"):
+        return True
+    if word in ("false", "no", "off", "0"):
+        return False
+    raise ValueError(f"unrecognised answer {word!r}")""",
+    visible_test=_test_module(
+        "truth_word",
+        "Published contract for reading a written answer.",
+        """
+def test_a_positive_answer() -> None:
+    assert parse_truth("yes") is True
+
+
+def test_a_negative_answer() -> None:
+    assert parse_truth("no") is False
+""",
+        imports="from truth_word import parse_truth\n",
+    ),
+    hidden_test=_test_module(
+        "truth_word",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_positive_answer() -> None:
+    assert parse_truth("yes") is True
+
+
+def test_an_answer_in_capitals_is_recognised() -> None:
+    assert parse_truth("YES") is True
+
+
+def test_an_unrecognised_answer_is_rejected() -> None:
+    with pytest.raises(ValueError):
+        parse_truth("maybe")
+""",
+        imports="from truth_word import parse_truth\n",
+    ),
+)
+
+_G016 = D2TaskSpec(
+    template_id="d4_parsing.option_tokens",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d4-parsing-option-tokens",
+    module="option_tokens",
+    module_doc="Reading the options named by a command-line token.",
+    issue=(
+        "parse_option() is documented to read the options a token names. Callers report that a "
+        "long option comes back as its individual letters, and that a token carrying no leading "
+        "dash is accepted as if it were one."
+    ),
+    expected=(
+        "parse_option(token) returns the letters of a short token, the single whole name of a "
+        "long token, and raises ValueError for a token that does not begin with a dash."
+    ),
+    baseline_reason="the dashes are stripped and whatever is left is spread into letters",
+    edge_cases=(
+        "a long option is one whole name",
+        "a token without a leading dash is rejected",
+    ),
+    baseline="""def parse_option(token):
+    \"\"\"Return the options named by `token`.\"\"\"
+    return list(token.lstrip("-"))""",
+    variant_one="""def parse_option(token):
+    \"\"\"Return the options named by `token`.\"\"\"
+    if not token.startswith("-"):
+        raise ValueError(f"{token!r} is not an option")
+    if token.startswith("--"):
+        return [token[2:]]
+    return list(token[1:])""",
+    variant_two="""def parse_option(token):
+    \"\"\"Return the options named by `token`.\"\"\"
+    dashes = len(token) - len(token.lstrip("-"))
+    if dashes == 0:
+        raise ValueError(f"{token!r} is not an option")
+    body = token[dashes:]
+    return [body] if dashes >= 2 else list(body)""",
+    variant_three="""def parse_option(token):
+    \"\"\"Return the options named by `token`.\"\"\"
+    if token.startswith("--"):
+        return [token[2:]]
+    return list(token.lstrip("-"))""",
+    variant_four="""def parse_option(token):
+    \"\"\"Return the options named by `token`.\"\"\"
+    if not token.startswith("-"):
+        raise ValueError(f"{token!r} is not an option")
+    return list(token.lstrip("-"))""",
+    visible_test=_test_module(
+        "option_tokens",
+        "Published contract for reading an option token.",
+        """
+def test_a_short_token_names_each_letter() -> None:
+    assert parse_option("-abc") == ["a", "b", "c"]
+
+
+def test_a_single_letter_token() -> None:
+    assert parse_option("-x") == ["x"]
+""",
+        imports="from option_tokens import parse_option\n",
+    ),
+    hidden_test=_test_module(
+        "option_tokens",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_short_token_names_each_letter() -> None:
+    assert parse_option("-abc") == ["a", "b", "c"]
+
+
+def test_a_long_token_is_one_whole_name() -> None:
+    assert parse_option("--verbose") == ["verbose"]
+
+
+def test_a_token_without_a_dash_is_rejected() -> None:
+    with pytest.raises(ValueError):
+        parse_option("abc")
+""",
+        imports="from option_tokens import parse_option\n",
+    ),
+)
+
+_G017 = D2TaskSpec(
+    template_id="d4_parsing.tidy_route",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d4-parsing-tidy-route",
+    module="route_tidy",
+    module_doc="Tidying a slash-separated route.",
+    issue=(
+        "tidy_route() is documented to resolve the current-directory and parent steps in a "
+        "route. Callers report that a parent step at the very start escapes above the root "
+        "instead of being dropped, and that a trailing slash leaves an empty final step."
+    ),
+    expected=(
+        "tidy_route(route) resolves '.' and '..' steps, drops a parent step that would escape "
+        "above the root, and ignores empty steps left by repeated or trailing slashes."
+    ),
+    baseline_reason="the parent step pops unconditionally and empty steps are kept",
+    edge_cases=(
+        "a parent step at the root is dropped",
+        "a trailing slash leaves no empty step",
+    ),
+    baseline="""def tidy_route(route):
+    \"\"\"Return `route` with current-directory and parent steps resolved.\"\"\"
+    steps = []
+    for step in route.split("/"):
+        if step == ".":
+            continue
+        if step == "..":
+            steps.pop()
+        else:
+            steps.append(step)
+    return "/".join(steps)""",
+    variant_one="""def tidy_route(route):
+    \"\"\"Return `route` with current-directory and parent steps resolved.\"\"\"
+    steps = []
+    for step in route.split("/"):
+        if step in (".", ""):
+            continue
+        if step == "..":
+            if steps:
+                steps.pop()
+            continue
+        steps.append(step)
+    return "/".join(steps)""",
+    variant_two="""def tidy_route(route):
+    \"\"\"Return `route` with current-directory and parent steps resolved.\"\"\"
+    steps = []
+    for step in [item for item in route.split("/") if item and item != "."]:
+        if step == "..":
+            steps = steps[:-1]
+        else:
+            steps = steps + [step]
+    return "/".join(steps)""",
+    variant_three="""def tidy_route(route):
+    \"\"\"Return `route` with current-directory and parent steps resolved.\"\"\"
+    steps = []
+    for step in route.split("/"):
+        if step == ".":
+            continue
+        if step == "..":
+            if steps:
+                steps.pop()
+            continue
+        steps.append(step)
+    return "/".join(steps)""",
+    variant_four="""def tidy_route(route):
+    \"\"\"Return `route` with current-directory and parent steps resolved.\"\"\"
+    steps = []
+    for step in route.split("/"):
+        if step in (".", ""):
+            continue
+        if step == "..":
+            steps.pop()
+        else:
+            steps.append(step)
+    return "/".join(steps)""",
+    visible_test=_test_module(
+        "route_tidy",
+        "Published contract for tidying a route.",
+        """
+def test_a_plain_route_is_unchanged() -> None:
+    assert tidy_route("a/b") == "a/b"
+
+
+def test_a_current_directory_step_is_dropped() -> None:
+    assert tidy_route("a/./b") == "a/b"
+""",
+        imports="from route_tidy import tidy_route\n",
+    ),
+    hidden_test=_test_module(
+        "route_tidy",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_plain_route_is_unchanged() -> None:
+    assert tidy_route("a/b") == "a/b"
+
+
+def test_a_parent_step_at_the_root_is_dropped() -> None:
+    assert tidy_route("../a") == "a"
+
+
+def test_a_trailing_slash_leaves_no_empty_step() -> None:
+    assert tidy_route("a/b/") == "a/b"
+""",
+        imports="from route_tidy import tidy_route\n",
+    ),
+)
+
+_G018 = D2TaskSpec(
+    template_id="d4_parsing.column_label",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d4-parsing-column-label",
+    module="column_label",
+    module_doc="Turning a spreadsheet column label into its number.",
+    issue=(
+        "column_number() is documented to turn a column label into its one-based number. Callers "
+        "report that a label written in lowercase produces a wildly wrong number, and that an "
+        "empty label comes back as zero instead of being rejected."
+    ),
+    expected=(
+        "column_number(label) returns the one-based column number, accepts a label in either "
+        "case, and raises ValueError for an empty label."
+    ),
+    baseline_reason=(
+        "each letter is offset from capital A, and an empty label never enters the loop"
+    ),
+    edge_cases=(
+        "a label in lowercase is accepted",
+        "an empty label is rejected",
+    ),
+    baseline="""def column_number(label):
+    \"\"\"Return the one-based column number named by `label`.\"\"\"
+    total = 0
+    for character in label:
+        total = total * 26 + (ord(character) - ord("A") + 1)
+    return total""",
+    variant_one="""def column_number(label):
+    \"\"\"Return the one-based column number named by `label`.\"\"\"
+    if not label:
+        raise ValueError("a column label cannot be empty")
+    total = 0
+    for character in label.upper():
+        total = total * 26 + (ord(character) - ord("A") + 1)
+    return total""",
+    variant_two="""def column_number(label):
+    \"\"\"Return the one-based column number named by `label`.\"\"\"
+    letters = label.upper()
+    if len(letters) == 0:
+        raise ValueError("a column label cannot be empty")
+    total = 0
+    for place, character in enumerate(reversed(letters)):
+        total += (ord(character) - 64) * (26**place)
+    return total""",
+    variant_three="""def column_number(label):
+    \"\"\"Return the one-based column number named by `label`.\"\"\"
+    total = 0
+    for character in label.upper():
+        total = total * 26 + (ord(character) - ord("A") + 1)
+    return total""",
+    variant_four="""def column_number(label):
+    \"\"\"Return the one-based column number named by `label`.\"\"\"
+    if not label:
+        raise ValueError("a column label cannot be empty")
+    total = 0
+    for character in label:
+        total = total * 26 + (ord(character) - ord("A") + 1)
+    return total""",
+    visible_test=_test_module(
+        "column_label",
+        "Published contract for reading a column label.",
+        """
+def test_the_first_column() -> None:
+    assert column_number("A") == 1
+
+
+def test_the_first_two_letter_column() -> None:
+    assert column_number("AA") == 27
+""",
+        imports="from column_label import column_number\n",
+    ),
+    hidden_test=_test_module(
+        "column_label",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_the_first_column() -> None:
+    assert column_number("A") == 1
+
+
+def test_a_lowercase_label_is_accepted() -> None:
+    assert column_number("aa") == 27
+
+
+def test_an_empty_label_is_rejected() -> None:
+    with pytest.raises(ValueError):
+        column_number("")
+""",
+        imports="from column_label import column_number\n",
+    ),
+)
+
+_G019 = D2TaskSpec(
+    template_id="d4_parsing.bracketed_body",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d4-parsing-bracketed-body",
+    module="bracket_body",
+    module_doc="Reading the text inside a bracketed call.",
+    issue=(
+        "bracketed_body() is documented to return the text between the outermost brackets. "
+        "Callers report that a nested bracket ends the text early, and that a call with no "
+        "brackets at all crashes instead of returning nothing."
+    ),
+    expected=(
+        "bracketed_body(text) returns the text between the outermost matching brackets, keeps "
+        "nested brackets inside it, and returns an empty string when there are no brackets."
+    ),
+    baseline_reason="it cuts at the first closing bracket and assumes an opening one exists",
+    edge_cases=(
+        "a nested bracket does not end the text",
+        "text without brackets returns nothing",
+    ),
+    baseline="""def bracketed_body(text):
+    \"\"\"Return the text between the outermost brackets of `text`.\"\"\"
+    start = text.index("(")
+    end = text.index(")")
+    return text[start + 1 : end]""",
+    variant_one="""def bracketed_body(text):
+    \"\"\"Return the text between the outermost brackets of `text`.\"\"\"
+    body = ""
+    if "(" not in text:
+        return body
+    start = text.index("(")
+    depth = 0
+    for position in range(start, len(text)):
+        if text[position] == "(":
+            depth += 1
+        elif text[position] == ")":
+            depth -= 1
+            if depth == 0:
+                body = text[start + 1 : position]
+                break
+    return body""",
+    variant_two="""def bracketed_body(text):
+    \"\"\"Return the text between the outermost brackets of `text`.\"\"\"
+    if "(" not in text or ")" not in text:
+        return ""
+    start = text.index("(")
+    end = text.rindex(")")
+    return text[start + 1 : end]""",
+    variant_three="""def bracketed_body(text):
+    \"\"\"Return the text between the outermost brackets of `text`.\"\"\"
+    start = text.index("(")
+    end = text.rindex(")")
+    return text[start + 1 : end]""",
+    variant_four="""def bracketed_body(text):
+    \"\"\"Return the text between the outermost brackets of `text`.\"\"\"
+    if "(" not in text:
+        return ""
+    start = text.index("(")
+    end = text.index(")")
+    return text[start + 1 : end]""",
+    visible_test=_test_module(
+        "bracket_body",
+        "Published contract for reading a bracketed body.",
+        """
+def test_a_simple_call() -> None:
+    assert bracketed_body("f(a)") == "a"
+
+
+def test_a_call_with_two_arguments() -> None:
+    assert bracketed_body("g(x, y)") == "x, y"
+""",
+        imports="from bracket_body import bracketed_body\n",
+    ),
+    hidden_test=_test_module(
+        "bracket_body",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_simple_call() -> None:
+    assert bracketed_body("f(a)") == "a"
+
+
+def test_a_nested_bracket_does_not_end_the_text() -> None:
+    assert bracketed_body("f(a, g(b))") == "a, g(b)"
+
+
+def test_text_without_brackets_returns_nothing() -> None:
+    assert bracketed_body("plain") == ""
+""",
+        imports="from bracket_body import bracketed_body\n",
+    ),
+)
+
+_G020 = D2TaskSpec(
+    template_id="d4_parsing.word_tokens",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d4-parsing-word-tokens",
+    module="word_tokens",
+    module_doc="Breaking a sentence into lowercase words.",
+    issue=(
+        "tokenize_words() is documented to break a sentence into lowercase words. Callers report "
+        "that an apostrophe inside a word splits it in two, and that a number is dropped instead "
+        "of being kept as a word of its own."
+    ),
+    expected=(
+        "tokenize_words(sentence) returns the lowercase words of a sentence, keeps an apostrophe "
+        "inside a word, and keeps a run of digits as a word."
+    ),
+    baseline_reason="every character that is not a letter is treated as a separator",
+    edge_cases=(
+        "an apostrophe stays inside a word",
+        "a run of digits is kept as a word",
+    ),
+    baseline="""def tokenize_words(sentence):
+    \"\"\"Return the lowercase words of `sentence`.\"\"\"
+    words = []
+    current = []
+    for character in sentence.lower():
+        if character.isalpha():
+            current.append(character)
+        elif current:
+            words.append("".join(current))
+            current = []
+    if current:
+        words.append("".join(current))
+    return words""",
+    variant_one="""def tokenize_words(sentence):
+    \"\"\"Return the lowercase words of `sentence`.\"\"\"
+    words = []
+    current = []
+    for character in sentence.lower():
+        if character.isalnum() or (character == "'" and current):
+            current.append(character)
+        elif current:
+            words.append("".join(current))
+            current = []
+    if current:
+        words.append("".join(current))
+    return words""",
+    variant_two="""def tokenize_words(sentence):
+    \"\"\"Return the lowercase words of `sentence`.\"\"\"
+    softened = []
+    for position, character in enumerate(sentence.lower()):
+        keeps = character.isalnum() or (character == "'" and 0 < position)
+        softened.append(character if keeps else " ")
+    return [word for word in "".join(softened).split(" ") if word]""",
+    variant_three="""def tokenize_words(sentence):
+    \"\"\"Return the lowercase words of `sentence`.\"\"\"
+    words = []
+    current = []
+    for character in sentence.lower():
+        if character.isalpha() or (character == "'" and current):
+            current.append(character)
+        elif current:
+            words.append("".join(current))
+            current = []
+    if current:
+        words.append("".join(current))
+    return words""",
+    variant_four="""def tokenize_words(sentence):
+    \"\"\"Return the lowercase words of `sentence`.\"\"\"
+    words = []
+    current = []
+    for character in sentence.lower():
+        if character.isalnum():
+            current.append(character)
+        elif current:
+            words.append("".join(current))
+            current = []
+    if current:
+        words.append("".join(current))
+    return words""",
+    visible_test=_test_module(
+        "word_tokens",
+        "Published contract for breaking a sentence into words.",
+        """
+def test_punctuation_separates_words() -> None:
+    assert tokenize_words("Hello, world!") == ["hello", "world"]
+
+
+def test_a_pair_of_plain_words() -> None:
+    assert tokenize_words("Alpha Beta") == ["alpha", "beta"]
+""",
+        imports="from word_tokens import tokenize_words\n",
+    ),
+    hidden_test=_test_module(
+        "word_tokens",
+        "The part of the contract the published tests do not state.",
+        """
+def test_punctuation_separates_words() -> None:
+    assert tokenize_words("Hello, world!") == ["hello", "world"]
+
+
+def test_an_apostrophe_stays_inside_a_word() -> None:
+    assert tokenize_words("don't stop") == ["don't", "stop"]
+
+
+def test_a_run_of_digits_is_kept_as_a_word() -> None:
+    assert tokenize_words("top 5 hits") == ["top", "5", "hits"]
+""",
+        imports="from word_tokens import tokenize_words\n",
+    ),
+)
+
 #: Authored so far. The tuple grows as batches are authored and executed; `corpus_d4.py`
 #: reads it rather than a count, so a partially authored corpus reports what it has instead
 #: of claiming what it does not.
@@ -1038,4 +1985,14 @@ D4_CALIBRATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G008,
     _G009,
     _G010,
+    _G011,
+    _G012,
+    _G013,
+    _G014,
+    _G015,
+    _G016,
+    _G017,
+    _G018,
+    _G019,
+    _G020,
 )
