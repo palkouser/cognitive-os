@@ -1,0 +1,166 @@
+{
+  "absolute_roots": {
+    "artifact": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d3",
+    "backup": "/home/palkouser/projekt/cognitive-os-data/backups-s21d3",
+    "evidence": "/home/palkouser/projekt/cognitive-os/docs/sprints/sprint-21/evidence",
+    "scratch": "/home/palkouser/projekt/cognitive-os-data/scratch-s21d3"
+  },
+  "databases": {
+    "cognitive_os_s21d3_integration_test": {
+      "activations": 0,
+      "app_events_select": true,
+      "app_schema_usage": true,
+      "approvals": 0,
+      "components": 0,
+      "migration": "0015",
+      "observations": 0,
+      "owner": "cogos_owner",
+      "owner_schema_usage": true
+    },
+    "cognitive_os_s21d3_restore_test": {
+      "activations": 0,
+      "app_events_select": true,
+      "app_schema_usage": true,
+      "approvals": 0,
+      "components": 0,
+      "migration": "0015",
+      "observations": 0,
+      "owner": "cogos_owner",
+      "owner_schema_usage": true
+    },
+    "cognitive_os_s21d3_test": {
+      "activations": 0,
+      "app_events_select": true,
+      "app_schema_usage": true,
+      "approvals": 0,
+      "components": 0,
+      "migration": "0015",
+      "observations": 0,
+      "owner": "cogos_owner",
+      "owner_schema_usage": true
+    }
+  },
+  "environment": {
+    "explicit_for_every_shell_operation": "COGOS_POSTGRES_ENV_FILE",
+    "file": ".env.s21d3.local",
+    "mode": "0o600",
+    "present_keys": [
+      "COGOS_ARTIFACT_ROOT",
+      "COGOS_BACKUP_ROOT",
+      "COGOS_CONTAINER_DATABASE_ADMIN_URL",
+      "COGOS_CONTAINER_RESTORE_DATABASE_URL",
+      "COGOS_DATABASE_ADMIN_URL",
+      "COGOS_DATABASE_BOOTSTRAP_URL",
+      "COGOS_DATABASE_URL",
+      "COGOS_EVIDENCE_DATABASE_PREFIX",
+      "COGOS_INTEGRATION_DATABASE_ADMIN_URL",
+      "COGOS_INTEGRATION_DATABASE_URL",
+      "COGOS_POSTGRES_APP_PASSWORD",
+      "COGOS_POSTGRES_APP_USER",
+      "COGOS_POSTGRES_DATABASE",
+      "COGOS_POSTGRES_OWNER_PASSWORD",
+      "COGOS_POSTGRES_OWNER_USER",
+      "COGOS_POSTGRES_PORT",
+      "COGOS_POSTGRES_TOOL_CONTAINER",
+      "COGOS_RESTORE_DATABASE_NAME",
+      "COGOS_RESTORE_DATABASE_URL",
+      "COGOS_TEST_DATABASE_URL"
+    ],
+    "values_recorded": false
+  },
+  "integrity_content_hash": "023694b86ffd4c7cd5c832f3793e60f4fe15413a5050fddb12c2751872439fe9",
+  "items": [
+    "S21D3-002"
+  ],
+  "provisioning": {
+    "command": "COGOS_POSTGRES_ENV_FILE=.env.s21d3.local ./scripts/postgres_provision_evidence.sh cognitive_os_s21d3_test cognitive_os_s21d3_integration_test cognitive_os_s21d3_restore_test",
+    "databases": [
+      "cognitive_os_s21d3_test",
+      "cognitive_os_s21d3_integration_test",
+      "cognitive_os_s21d3_restore_test"
+    ],
+    "existing_owner_superuser_note_retained": true,
+    "first_run": "three created",
+    "outside_prefix_guard": {
+      "exit_status": 1,
+      "result": "refused outside prefix cognitive_os_s21d3",
+      "target": "cognitive_os_dev"
+    },
+    "postgres_bootstrap_roles_invoked": false,
+    "role_changes": 0,
+    "second_run": "three existed; idempotent"
+  },
+  "recorded_at": "2026-08-03T10:07:42Z",
+  "root_modes": {
+    "artifact": "0o775",
+    "backup": "0o775",
+    "scratch": "0o775"
+  },
+  "schema_version": 1,
+  "sprint": "21D3",
+  "wave": "W0",
+  "writable_root_policy": {
+    "d3_artifact_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d3",
+    "predecessor_fingerprints_after": {
+      "development": {
+        "absolute_root": "/home/palkouser/projekt/cognitive-os-data/artifacts",
+        "access": "read_only_zero_write_fingerprint",
+        "files": 5,
+        "matches_expected": true,
+        "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf"
+      },
+      "sprint_21c3": {
+        "absolute_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21c3",
+        "access": "read_only_zero_write_fingerprint",
+        "files": 8503,
+        "matches_expected": true,
+        "path_and_size_fingerprint_sha256": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593"
+      },
+      "sprint_21d1": {
+        "absolute_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d1",
+        "access": "read_only_zero_write_fingerprint",
+        "files": 83,
+        "matches_expected": true,
+        "path_and_size_fingerprint_sha256": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f"
+      },
+      "sprint_21d2": {
+        "absolute_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d2",
+        "access": "read_only_zero_write_fingerprint",
+        "files": 1511,
+        "matches_expected": true,
+        "path_and_size_fingerprint_sha256": "39417f1a03f6824cfe6f9c4b7e6bd5a3cd34da8329fb95cff0a35595899438aa"
+      }
+    },
+    "predecessor_fingerprints_before": {
+      "development": {
+        "absolute_root": "/home/palkouser/projekt/cognitive-os-data/artifacts",
+        "access": "read_only_zero_write_fingerprint",
+        "files": 5,
+        "matches_expected": true,
+        "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf"
+      },
+      "sprint_21c3": {
+        "absolute_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21c3",
+        "access": "read_only_zero_write_fingerprint",
+        "files": 8503,
+        "matches_expected": true,
+        "path_and_size_fingerprint_sha256": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593"
+      },
+      "sprint_21d1": {
+        "absolute_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d1",
+        "access": "read_only_zero_write_fingerprint",
+        "files": 83,
+        "matches_expected": true,
+        "path_and_size_fingerprint_sha256": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f"
+      },
+      "sprint_21d2": {
+        "absolute_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d2",
+        "access": "read_only_zero_write_fingerprint",
+        "files": 1511,
+        "matches_expected": true,
+        "path_and_size_fingerprint_sha256": "39417f1a03f6824cfe6f9c4b7e6bd5a3cd34da8329fb95cff0a35595899438aa"
+      }
+    },
+    "predecessor_roots_writable_by_d3": []
+  }
+}

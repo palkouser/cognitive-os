@@ -1,0 +1,207 @@
+{
+  "authoring_defect_ledger": [
+    {
+      "detail": "The incremental route handed the remainder to the last shares rather than the earliest, so a declared repair failed the contract it was supposed to repair.",
+      "found_by": "executed hidden suite",
+      "id": "W2-A1",
+      "subject": "d3_numeric.share_amount variant_two"
+    },
+    {
+      "detail": "The baseline sliced with an explicit length rather than a negative offset, so the empty-suffix edge case was never broken and variant_three repaired both.",
+      "found_by": "executed hidden suite",
+      "id": "W2-A2",
+      "subject": "d3_fixture.trim_suffix"
+    },
+    {
+      "detail": "Normalised-AST and token-stream collisions against C3 and D2 candidates: the same shape under new names is a restated task, not a new one.",
+      "found_by": "near-clone detector",
+      "id": "W2-A3",
+      "subject": "fourteen bodies across both corpora"
+    },
+    {
+      "detail": "Two failed states passed their own suites: a zero contributes nothing to a sum, and KeyError already satisfies a bare pytest.raises(LookupError).",
+      "found_by": "executed hidden suite",
+      "id": "W2-A4",
+      "subject": "d3r_numeric.sum_positive and d3r_errors.lookup_or_raise"
+    },
+    {
+      "detail": "The released token-stream rename also renamed attribute names, so a module binding a local called `items` and calling `counts.items()` was perturbed into a module that does not run. Fixed at the shared function; no D2 calibration group is affected, so the released diagnostic still reproduces.",
+      "found_by": "v2 canonical-source comparison",
+      "id": "W2-A5",
+      "subject": "calibration_ood._retoken"
+    }
+  ],
+  "calibration_corpus": {
+    "candidates_per_group": 4,
+    "families": {
+      "boundary_collections": 4,
+      "data_transformation": 3,
+      "error_handling": 3,
+      "numeric_logic": 3,
+      "parsing_validation": 4,
+      "state_idempotency": 3
+    },
+    "groups": 20,
+    "required_groups": 20,
+    "source_file_sha256": "3ce6e692bd27a9088b27fb40a6ea1517461ecbd48052b1b32374e61ae722e5a1"
+  },
+  "canonical_source_failures": [],
+  "corpus_authoring_validator": {
+    "artifact_store_writes": 0,
+    "capability": "isolated_corpus_authoring_validator",
+    "event_store_writes": 0,
+    "learned_store_writes": 0,
+    "metric_writes": 0,
+    "never_reports": [
+      "candidate_scores",
+      "verifier_labels_per_candidate",
+      "package_bodies",
+      "suitability_metrics"
+    ],
+    "package_hashes": {
+      "d3_boundary.centre_window": "484ed1a046fb8bcad5bc53f04c1a5bf477554f2d0faf939d9746445b5b262848",
+      "d3_boundary.head_within": "9d4d5d9ced6d7b47f7a5e53c09881c2879e42ad1acef30059bccbdfb34a82ac1",
+      "d3_boundary.step_gaps": "132af689d3fe0e7e623605755dbf0759dee247aa2a46c8d0949c03c0c2a4ce69",
+      "d3_boundary.tail_after": "f11b7227dc047ef1dd64a3c332edd086b9b1c2e27e951ba158f3e61434977121",
+      "d3_errors.attempt_times": "1fcf852c03ebbf3b8ac0f3e00796d6dacf94e88fe5201db2335bb12af245e343",
+      "d3_errors.first_passing": "bb60c5b94ae6ae60257d771c74fbb609c2eb93fb87ea12931e01c1346bf2a66c",
+      "d3_errors.merge_optional": "ce2bbeff30064e16123a1ea30c0532abeb44c80020a6b9cd13ec29d2054f438a",
+      "d3_fixture.trim_suffix": "c8e03814a3a5142c5a10a1a96af34b710bdf7b0a90f3331645067f47b92603dc",
+      "d3_numeric.round_to_step": "161fb884b47ff6f844977400a1973dd51eb46c174ef14562294205ec45b31bdc",
+      "d3_numeric.safe_share": "6dd70ddecd166ba8095f5a518d930d2fc2bfced91e5252f26fafc1f44f45b923",
+      "d3_numeric.share_amount": "883f1e2e735eaddb2ad3982bdfae41fceb61f7fd79d9ae4700f17729973f34eb",
+      "d3_parsing.parse_pair": "d0248d0966b92aba39a845ea530d87c75e6b600c2fb64820bf213d08d74d30c1",
+      "d3_parsing.parse_ratio": "4827920d2f5607bf050c230f40b8bea5ab4a15404fe26cce485c3fbc91667854",
+      "d3_parsing.parse_signed": "71c1161db739c7bf878068e8a31fe8f118b484e3372d4148c9b007ff7ab38864",
+      "d3_parsing.tidy_route": "db6b4138fb822c1fc4535f9b77d88b876b186cccf4a754d5c85661e5edac6de3",
+      "d3_state.claim_slot": "3ac06f34d64bfce6ca70d678dfe711e9521d985e333061228a31d9939cb23f2d",
+      "d3_state.expire_before": "3cd292b8641c68eb8c2198c2e6f428ab0dab5f12fed0f375a2124c59d1981d27",
+      "d3_state.keep_recent": "4cdc1030ea827c9d36afa9afb2be3707ea770b7f77c8803dc0ae347e58ce10fa",
+      "d3_transform.pick_fields": "5d539c329fd471a37e3dbb954ee9ec7a257ba2d2a7ea58ac4c478f8be3e4b189",
+      "d3_transform.split_text": "5f431aef37b716f62a2775144e643ea8c1522f25d7c11ad91dec1d55648262ee",
+      "d3_transform.tally_by": "5c059770d7c5dd608de9401d513fc4f4c640cd4916fd40fb0733e6d405feb7cb",
+      "d3r_boundary.batch_evenly": "4c46d70e8d51b0a868c710d65eccadd0d85d7115aab16dc5f1afc52ede2aa4cb",
+      "d3r_boundary.count_runs": "c9e807428a34e7b60a04b13abde05f829917eb018810f992e2970bbfb19b9e27",
+      "d3r_boundary.drop_while_blank": "aafd24347e4412bfa93870c347670579ea8d34d1007add322b644e20b2d2ae62",
+      "d3r_boundary.last_index_of": "52a34e95edc588e844fbd854fa7348d4b745a845bf54c24b5fcb5476d3783f60",
+      "d3r_boundary.longest_prefix": "d7c53b08552fe5fae9acff36f32f240a44e108bba31e299d4e4cc6f46d1f97d1",
+      "d3r_boundary.rotate_right": "f88f5509d789791109ddace2b5d8cc486f9d44ddd9b070b65b3a1053953d3752",
+      "d3r_boundary.split_at_first": "b6ebe427f2829d97aa6797ce553a0e97905413634862191397c5deea81c00950",
+      "d3r_boundary.stride_take": "9ccd464858952ecb933988defaa5f38c02866e7da72f25e714ab5694b3d1146a",
+      "d3r_boundary.take_between": "26f707f917508fa68dd5387936a7e7105b921b205880dfb3ecf80504c5f6c9b5",
+      "d3r_boundary.without_none": "97f12f2585417d2e9cdd87a4abf8cca932655c7db7e1064ebbe91c17c5d9d0fa",
+      "d3r_errors.close_all_quietly": "95870c92f0c77613583cf5c98122685c79750aa32f73af5b6639a711eb7e9914",
+      "d3r_errors.collect_errors": "e4bb112130e59837c74625b39f2135a96a2a3e61832039986f5c19bb296d94b5",
+      "d3r_errors.default_on_error": "0516e380f4dec9c783c6f3762d468e0afba50a619b2e13cc45c597d998c3c7ef",
+      "d3r_errors.exit_status": "f11fe060a8d9d89cbd1b72a1bc8b74ca8925e93943b5c92c5869fe123f86fe97",
+      "d3r_errors.guard_division": "66d372bfc90d1a28237e6a8bb2cbd284c2bdd995ccb26c93eadbce0c50f34f73",
+      "d3r_errors.lookup_or_raise": "08d63534ec7b5eed12b9c8e98b347d9e877f35086c82544a5a2ae01fb2448f1b",
+      "d3r_errors.require_fields": "560b9e2d82e04272d525dd5a8ae4b4a135c40b368aa986bcbd0a8c94d4ca9ece",
+      "d3r_errors.retry_with_backoff": "1142cd6827876d939054768d7e0a28362445d826ecda874b67c1f77efee2091a",
+      "d3r_errors.split_results": "0494dff9eff8064d86932781e7407adac41dd246a9e6be37b184ddd44e8787b5",
+      "d3r_errors.wrap_timeout": "0a15cee6cdb94d3671bae024638eb8731633d378b360a9aadf8fe1bb50166a07",
+      "d3r_numeric.ceil_divide": "ebaa623fa990f6116faa1957592842b807145b337c381f649639b33e8acd8622",
+      "d3r_numeric.clamp_between": "785b347055c0226ed7aa89896cbc383d0a78d8d88dbda17074386b5df6bba922",
+      "d3r_numeric.compound_growth": "91c5f11ba4972af3a908edbf35d2822cdd6944fa79b6a20919e574377bb8ee41",
+      "d3r_numeric.digit_sum": "fb6c33ceb6af9ebbebff2e9476a8749b5dcc5a20a5e6dd5b59f0938ce59d1f34",
+      "d3r_numeric.mean_of": "03f521c9e22d39c1a16d9a0cac20242db46359f2ed3ae1305842ce8c9e8705fa",
+      "d3r_numeric.median_of": "bdd9495aad8c763f0a418ef7ca74fc5e5cc66d37d42a5fe34eadcfe8db7c5fee",
+      "d3r_numeric.percent_of": "460a285ac81c09222911c5a7f4e63c19cd4539142a3fb9b350964e72cff41350",
+      "d3r_numeric.running_max": "c056a72ce78219d281816b4d4776194cdf6697221e432b90bd798e0e0a726d7b",
+      "d3r_numeric.scale_series": "cd77697ef21c62e0151961d2f03655c84a9f2aed48f5d08b8a7d8844f123c37f",
+      "d3r_numeric.sum_positive": "f988cc1d71e317a2fa191939f605816eeb048e66a7c881603b43b5e92ec9c323",
+      "d3r_parsing.expand_range_text": "a1d50b3b5eb9ca7ef350a2e245d0b7dfd5007956fd03b891e20bdfb14363d273",
+      "d3r_parsing.is_identifier": "d203ffc4a5334078963558e007600050cc3eae466007b35a4303b427594ecdd2",
+      "d3r_parsing.normalise_case": "98c67f75d8e66f6aded3544da3ecaf106cd48149a738384025af47398a55ead2",
+      "d3r_parsing.parse_bool_word": "95377d487311b906edb1b6b3c40dcbb4a37964389e5e41b11379568932e80958",
+      "d3r_parsing.parse_hex_byte": "7e115630b09c81960b05ebb439ee7f8839a7dc91c2e818d34abd3eb6cbea903d",
+      "d3r_parsing.parse_key_list": "dcec2d567681bd72422df260e7c4244a1300144e1c690f5c75da72b880283dbf",
+      "d3r_parsing.parse_port": "ae9fb04f5c1c695714e4f9ac0e07bf3aa44c25a6e2dcb005673228c66bbc209e",
+      "d3r_parsing.split_once_right": "219399469fd2fe07322ee96e6e0c838a7c43a6128e48d0dc98d70386149ec13e",
+      "d3r_parsing.strip_quotes": "90f14f42ef3dae9285d63f31e68cbaae896b200275e2d9c9b240b353862725cd",
+      "d3r_parsing.trim_comment": "7b17ba9ef0ce40e91d9339c38aeb11c24b9dbd40a62231ed1ea6580f7d67376e",
+      "d3r_state.apply_migration": "d82a52eb56f59afb3c7637dbe610501d83e5d85f84a7dedd2f33f42cc2bbeb73",
+      "d3r_state.bump_revision": "aa3fbeb0b51f489ea83e951df6f8f0033a72e60eed616d212ab4314dbfa730c0",
+      "d3r_state.close_twice": "9ca57765aec3808616fdf6c09916ceb0a8faf3441a1acbbb3bacef20ec403c6f",
+      "d3r_state.drain_queue": "bc1f0daf8bdc7de2b8c10323b54d1a32d9d3de61e142ed6db00c591556784f77",
+      "d3r_state.forget_expired": "86b37bcd5612ef7b944f9cb8d13f856cfa7e19e04d2b6beaf79c9c412b07ca4f",
+      "d3r_state.increment_counter": "a2dcef8e338f6de5b688101b7524b618d4e59ec0c557d12f9a91b4f48b7b08f7",
+      "d3r_state.register_once": "a793258a3b60ee9bd7ef4cbbb003f81ef5ca5fbc1b1a64454175aa3b3a1ee056",
+      "d3r_state.release_lock": "c9f984e621d6e47b6576b4361848d12b54811b7f6b273721e54d91b326b2c581",
+      "d3r_state.reserve_capacity": "89699f4e98fd3f3ab5d3d22c3be4ee9527019cd160a02152a9a938aebfca4da6",
+      "d3r_state.touch_entry": "68db406aeec72f52c5d94be3237a386d22af609daf22853669d4035d40861201",
+      "d3r_transform.dedupe_stable": "abb561332a2604f749cb5226a3df5edf5095f264d63c663e60483a84e6d99ae4",
+      "d3r_transform.flatten_nested": "396fd28b2d9c94d021c307a583f20e04008a89591973230af27719e95380cb15",
+      "d3r_transform.group_pairs": "c6a7526dde95d2281da3c7681ca2e0cfc1a831cd3dd67fbcfa7edaa62ca711cb",
+      "d3r_transform.invert_mapping": "b09423f33f2f51a988028758dda05738b06cd27cf58518846578aba3f0c265e9",
+      "d3r_transform.merge_deep": "b4e923645715eb6c6327eab614ddd6664b4cbd093252047d805e525ee63decc3",
+      "d3r_transform.order_by_rank": "3df5b84ea68e0e520b60eb82b57904b2a432cbf9dec0ad2f053e32967459bf67",
+      "d3r_transform.rename_columns": "85a4d13d7ab61779b1faded54516bec9bdf32a1025ec4417865c5f4841d94b87",
+      "d3r_transform.sum_by_key": "7a468e3b8b74cfe406953c2b59ac4edcaec7dadfdca11fee9bd42a665e29dfe5",
+      "d3r_transform.to_columns": "6bba54de9c0c8c6a527ff212c5e7d83b2166d38b038ea31fa0c9a4e148df1b87",
+      "d3r_transform.zip_records": "7d91f56abbf19a32b6f7b0e7bfa3fc811d21546f5a70f2d19051f0cec4698682"
+    },
+    "reports": [
+      "package_hash",
+      "parse_and_execute_pass_fail"
+    ]
+  },
+  "declaration_mismatches_remaining": [],
+  "executed_verification": {
+    "baselines_failing_their_hidden_tests": 21,
+    "baselines_passing_their_visible_tests": 21,
+    "correction_runs": 210,
+    "declaration_mismatches": [],
+    "note": "Every verdict is an executed pytest run in a throwaway directory.",
+    "retrieval_failed_states_rejected_by_the_verifier": 60,
+    "retrieval_repairs_accepted_by_the_verifier": 60,
+    "retrieval_runs": 120,
+    "variants_matching_their_declaration": 84,
+    "variants_passing_their_visible_tests": 84
+  },
+  "final_outcomes_inspected": false,
+  "integrity_content_hash": "fe43b272cd6f75a35b99eb0cc0517ba22527f3557b6f8dbc6559c7d46a381509",
+  "items": [
+    "S21D3-030"
+  ],
+  "pre_registration_sha256": "191b3757ded21a1c2c85459a34902f8dee3f2f35b0979b557f84c1a37fe6a191",
+  "purpose": "Record the authored D3 corpora and that every body was executed rather than declared: twenty fresh four-candidate calibration groups, one vertical-slice fixture outside every role, and an overproduced pool of sixty failed/success retrieval groups.",
+  "recorded_at": "2026-08-04T17:36:40.968695Z",
+  "retrieval_pool": {
+    "families": {
+      "boundary_collections": 10,
+      "data_transformation": 10,
+      "error_handling": 10,
+      "numeric_logic": 10,
+      "parsing_validation": 10,
+      "state_idempotency": 10
+    },
+    "minimum_qualifying_queries": 50,
+    "required_source_groups": 60,
+    "shape": "one failed state and one accepted repair per group",
+    "source_file_sha256": "19adb6b31b0314f40a86562399784ca19c9972ba42bd6e13ef1c9b8300556dab",
+    "source_groups": 60
+  },
+  "schema_version": 1,
+  "six_case_eligibility": {
+    "eligible_groups": 21,
+    "generator_code_hash": "bd8e2f0419c5766f2bd494d2c041f9041e268fc531e0775348698a270e79c397",
+    "hard_coded_oracle_hash": "619dd385a0bf6035a1cbc7155a05b83ffc028bd64e61be7c450bef4182fd952c",
+    "ineligible_groups": [],
+    "rule": "both independent rename maps exist, neither collides with an existing name or a call keyword, and the two disagree on every name"
+  },
+  "sprint": "21D3",
+  "vertical_slice_fixture": {
+    "in_any_partition": false,
+    "reason": "§6.1 forbids the slice from spending a scored member of any role",
+    "repository_group": "d3-fixture-trim-suffix",
+    "template_id": "d3_fixture.trim_suffix"
+  },
+  "wave": "W2",
+  "whole_role_replacements": {
+    "authority": "S21D3-004 recorded reuse for all three roles",
+    "canary": "not_required",
+    "final_a": "not_required",
+    "final_b": "not_required"
+  }
+}

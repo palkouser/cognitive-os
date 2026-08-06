@@ -30,6 +30,7 @@ from cognitive_os.application.services.correction_ranking_observations import (
 )
 from cognitive_os.application.services.learned_runtime import (
     ActiveComponentState,
+    ArtifactAvailability,
     EmbeddingIdentity,
     LearnedRuntimeResolver,
     RoutingPolicy,
@@ -505,7 +506,7 @@ class TestStepEightFallbackWhenTheArtifactIsNotThere:
             policy=self._policy(bundle),
             active_states=[self._state()],
             group=bundle.canary_routing.routed_groups[0],
-            artifact_present=False,
+            artifact=ArtifactAvailability(present=False),
             local_embedding=self.EMBEDDING,
         )
 
@@ -518,7 +519,7 @@ class TestStepEightFallbackWhenTheArtifactIsNotThere:
             policy=self._policy(bundle),
             active_states=[self._state(lineage_verified=False)],
             group=bundle.canary_routing.routed_groups[0],
-            artifact_present=True,
+            artifact=ArtifactAvailability(present=True),
             local_embedding=self.EMBEDDING,
         )
 
@@ -541,7 +542,7 @@ class TestStepEightFallbackWhenTheArtifactIsNotThere:
             policy=self._policy(bundle),
             active_states=[self._state()],
             group="a-group-that-is-not-routed",
-            artifact_present=True,
+            artifact=ArtifactAvailability(present=True),
             local_embedding=self.EMBEDDING,
         )
 
@@ -554,7 +555,7 @@ class TestStepEightFallbackWhenTheArtifactIsNotThere:
             policy=self._policy(bundle, activation_enabled=False),
             active_states=[self._state()],
             group=bundle.canary_routing.routed_groups[0],
-            artifact_present=True,
+            artifact=ArtifactAvailability(present=True),
             local_embedding=self.EMBEDDING,
         )
 
@@ -565,7 +566,7 @@ class TestStepEightFallbackWhenTheArtifactIsNotThere:
             policy=self._policy(bundle),
             active_states=[self._state()],
             group=bundle.canary_routing.routed_groups[0],
-            artifact_present=True,
+            artifact=ArtifactAvailability(present=True),
             local_embedding=EmbeddingIdentity(model_id="fixture", revision="1", available=False),
         )
 

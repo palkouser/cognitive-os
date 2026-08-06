@@ -34,6 +34,12 @@ LEXICAL = "lexical"
 EXACT_SIGNATURE = "exact_signature"
 MINILM_VECTOR = "minilm_vector"
 BOUNDED_GED = "minilm_shortlist_plus_bounded_ged"
+RECIPROCAL_RANK_FUSION = "reciprocal_rank_fusion"
+
+#: S21D3-016 froze it before the holdout existed: exactly two arms, equal weights, constant
+#: sixty. It is a module constant rather than a parameter because a fusion constant a caller
+#: can pass is a sweep, and revision 3 forbids one.
+FUSION_CONSTANT = 60
 
 
 @dataclass(frozen=True, slots=True)
@@ -88,6 +94,7 @@ def _result(
     considered: int,
     limits: GraphResourceLimits,
     timed_out: int = 0,
+    budget_cutoffs: int = 0,
 ) -> ExperienceGraphResult:
     """Rank, break ties by pair id, and truncate to the declared bound."""
     ordered = _ranked(scored)[: limits.returned_results]
@@ -100,6 +107,7 @@ def _result(
         ),
         candidates_considered=considered,
         timed_out=timed_out,
+        budget_cutoffs=budget_cutoffs,
         limits=limits,
     )
 
@@ -109,21 +117,44 @@ def no_memory(query: ExperienceGraphQuery, *, limits: GraphResourceLimits) -> Ex
     return _result(query, NO_MEMORY, (), considered=0, limits=limits)
 
 
-def lexical(
-    query: ExperienceGraphQuery, pool: Sequence[Candidate], *, limits: GraphResourceLimits
-) -> ExperienceGraphResult:
-    """Jaccard overlap on tokens. No index, no dependency, deterministic ties."""
+def _lexical_scores(
+    query: ExperienceGraphQuery, pool: Sequence[Candidate]
+) -> list[tuple[str, float]]:
+    """Jaccard overlap over the whole pool. Untruncated, like `_vector_scores`.
+
+    Fusion needs the rank a document holds in the *complete* lexical ordering, and a scorer
+    that truncated would hand it ranks from a top-ten list instead.
+    """
     wanted = _tokens(query.query_text)
     scored = []
     for candidate in pool:
         tokens = _tokens(candidate.text)
         union = wanted | tokens
         scored.append((candidate.pair_id, len(wanted & tokens) / len(union) if union else 0.0))
-    return _result(query, LEXICAL, scored, considered=len(pool), limits=limits)
+    return scored
+
+
+def lexical(
+    query: ExperienceGraphQuery,
+    pool: Sequence[Candidate],
+    *,
+    limits: GraphResourceLimits,
+) -> ExperienceGraphResult:
+    """Jaccard overlap on tokens. No index, no dependency, deterministic ties."""
+    return _result(
+        query,
+        LEXICAL,
+        _lexical_scores(query, pool),
+        considered=len(pool),
+        limits=limits,
+    )
 
 
 def exact_signature(
-    query: ExperienceGraphQuery, pool: Sequence[Candidate], *, limits: GraphResourceLimits
+    query: ExperienceGraphQuery,
+    pool: Sequence[Candidate],
+    *,
+    limits: GraphResourceLimits,
 ) -> ExperienceGraphResult:
     """Task-signature equality. Precise where it fires, silent everywhere else."""
     scored = [(c.pair_id, 1.0 if c.task_signature == query.task_signature else 0.0) for c in pool]
@@ -210,6 +241,61 @@ async def minilm_vector(
     return _result(query, MINILM_VECTOR, scored, considered=len(pool), limits=limits)
 
 
+def _ranks(scored: Sequence[tuple[str, float]]) -> dict[str, int]:
+    """Pair id to its one-based position in the shared ordering."""
+    return {pair_id: rank for rank, (pair_id, _) in enumerate(_ranked(scored), start=1)}
+
+
+async def reciprocal_rank_fusion(
+    query: ExperienceGraphQuery,
+    pool: Sequence[Candidate],
+    *,
+    limits: GraphResourceLimits,
+    embed: EmbeddingProviderPort,
+    cache: dict[str, tuple[float, ...]] | None = None,
+) -> ExperienceGraphResult:
+    """Equal-weight RRF over the lexical and MiniLM rank lists. S21D3-041.
+
+    `1/(60 + rank_lexical) + 1/(60 + rank_vector)`, and the two ranks come from the complete
+    pool rather than from either arm's published top ten — fusing truncated lists would rank
+    by whatever survived truncation, which is a different arm than the one that was frozen.
+
+    A zero-score lexical document is *absent* from the lexical ranking rather than last in it.
+    Jaccard returns zero for every candidate sharing no token with the query, and ordering
+    those by pair id would turn an identifier into evidence. Absence contributes zero, so such
+    a document is ranked by the vector arm alone.
+
+    This calls the two scorers; it does not call `lexical` or `minilm_vector`. Those publish
+    results under their own arm names, and an evidence identity is not something a fusion gets
+    to reuse.
+    """
+    lexical_ranks = _ranks([item for item in _lexical_scores(query, pool) if item[1] > 0])
+    vector_ranks = _ranks(await _vector_scores(query, pool, embed=embed, cache=cache))
+    scored = [
+        (
+            candidate.pair_id,
+            sum(
+                1 / (FUSION_CONSTANT + rank)
+                for rank in (
+                    lexical_ranks.get(candidate.pair_id),
+                    vector_ranks.get(candidate.pair_id),
+                )
+                if rank is not None
+            ),
+        )
+        for candidate in pool
+    ]
+    # `_result` truncates once, here, after the full-pool fusion. That is the single output
+    # limit revision 3 declares.
+    return _result(
+        query,
+        RECIPROCAL_RANK_FUSION,
+        [item for item in scored if item[1] > 0],
+        considered=len(pool),
+        limits=limits,
+    )
+
+
 async def bounded_ged(
     query: ExperienceGraphQuery,
     pool: Sequence[Candidate],
@@ -236,6 +322,7 @@ async def bounded_ged(
     left = _as_nx(query_graph)
     scored: list[tuple[str, float]] = []
     timed_out = 0
+    cut_off = 0
     for pair_id in shortlist_ids:
         # The declared per-pair timeout multiplied by the shortlist length already exceeds
         # the total query budget, so the budget has to be enforced here as well or the
@@ -246,7 +333,7 @@ async def bounded_ged(
         # overshoots the budget by up to that timeout and is not a budget at all.
         remaining = limits.query_budget_seconds - (perf_counter() - started)
         if remaining <= limits.per_pair_ged_timeout_ms / 1000:
-            timed_out += 1
+            cut_off += 1
             scored.append((pair_id, 0.0))
             continue
         right = _as_nx(by_id[pair_id].graph)
@@ -273,6 +360,7 @@ async def bounded_ged(
         considered=len(shortlist_ids),
         limits=limits,
         timed_out=timed_out,
+        budget_cutoffs=cut_off,
     )
 
 

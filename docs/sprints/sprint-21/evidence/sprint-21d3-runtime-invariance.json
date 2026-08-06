@@ -1,0 +1,357 @@
+{
+  "artifact_under_test": "contract_fixture",
+  "artifact_under_test_note": "S21D3-039 selected no candidate, so no D3 artifact exists. Every artifact here is built by this script to satisfy the v2 schema, and proves the contract rather than the D3 lifecycle projection.",
+  "configurations": {
+    "bounded_steady_state": {
+      "content_hash": "53160eae1e88965d0ccc17896cc565b33ea85d2a556ce70d8f8b60d074c96dbb",
+      "document": {
+        "activation_enabled": true,
+        "component_id": "learned.knn.correction_ranking",
+        "component_revision": 2,
+        "content_hash": "53160eae1e88965d0ccc17896cc565b33ea85d2a556ce70d8f8b60d074c96dbb",
+        "declared_limitations": [
+          "bounded by task count rather than by time: a steady state with no bound is an activation nobody has to revisit"
+        ],
+        "fallback_on_refusal": "frozen deterministic baseline order",
+        "kill_switch_enabled": true,
+        "maximum_inference_ms": 250,
+        "maximum_tasks": 200,
+        "name": "bounded_steady_state",
+        "persistence_enabled": true,
+        "routed_group_ids": [
+          "d3-canary-group-01",
+          "d3-steady-group-01",
+          "d3-steady-group-02"
+        ],
+        "routing_manifest_hash": "436c19908f97f8c66dd6b07918e3d9d281ced37658b7c5ef68a8bf93867b590e",
+        "sequence_mode": "stop_on_first_accepted",
+        "surface": "experience.correction_ranking"
+      }
+    },
+    "exact_canary": {
+      "content_hash": "942eb1996fba9892fc65c56905ac58ec1f9865752c7f4b6f970242220663e2f1",
+      "document": {
+        "activation_enabled": true,
+        "component_id": "learned.knn.correction_ranking",
+        "component_revision": 2,
+        "content_hash": "942eb1996fba9892fc65c56905ac58ec1f9865752c7f4b6f970242220663e2f1",
+        "declared_limitations": [
+          "one routed group and twenty tasks: the smallest set that could show a safety or verifier regression at all"
+        ],
+        "fallback_on_refusal": "frozen deterministic baseline order",
+        "kill_switch_enabled": true,
+        "maximum_inference_ms": 250,
+        "maximum_tasks": 20,
+        "name": "exact_canary",
+        "persistence_enabled": true,
+        "routed_group_ids": [
+          "d3-canary-group-01"
+        ],
+        "routing_manifest_hash": "436c19908f97f8c66dd6b07918e3d9d281ced37658b7c5ef68a8bf93867b590e",
+        "sequence_mode": "stop_on_first_accepted",
+        "surface": "experience.correction_ranking"
+      }
+    }
+  },
+  "creates_lifecycle_state": false,
+  "direct_loader": {
+    "accepted_exactly_one_artifact": {
+      "artifact_hash": "e6412a0dafe7876bed8141c0432944ae1e8aaffef0249153a1e6932801b4c353",
+      "class": "CorrectionKnn",
+      "feature_channels": 390,
+      "lifecycle_state": "shadow",
+      "media_type": "application/vnd.cognitive-os.correction-ranker+json",
+      "purpose": "shadow",
+      "schema": "correction-ranking-artifact-v2"
+    },
+    "capability_states": {
+      "active": "the direct evaluation boundary is closed in active: an approved component is read through the runtime resolver",
+      "disabled": "the direct evaluation boundary is closed in disabled: an approved component is read through the runtime resolver",
+      "registered": "OPEN",
+      "retracted": "the direct evaluation boundary is closed in retracted: an approved component is read through the runtime resolver",
+      "shadow": "OPEN",
+      "verified": "the direct evaluation boundary is closed in verified: an approved component is read through the runtime resolver"
+    },
+    "every_case_refused": true,
+    "open_states": [
+      "registered",
+      "shadow"
+    ],
+    "refusals": {
+      "corrupt_bytes": "artifact bytes are not JSON",
+      "empty_exemplars": "artifact does not match the declared schema: 1 validation error for CorrectionArtifactPayloadV2\nexemplars\n  Tuple should have at least 1 item after validation, not 0 [type=too_short, input_value=[], input_type=list]\n    For further information visit https://errors.pydantic.dev/2.13/v/too_short",
+      "oversized": "artifact is 27030 bytes, above the 16-byte bound",
+      "v1_reader_on_v2_bytes": "artifact declares schema 'correction-ranking-artifact-v2', not 'correction-ranker-artifact'",
+      "v2_reader_on_v1_bytes": "artifact declares schema 'correction-ranker-artifact', not 'correction-ranking-artifact-v2'",
+      "wrong_artifact_hash": "artifact bytes hash to e6412a0dafe7876bed8141c0432944ae1e8aaffef0249153a1e6932801b4c353, not the d9298a10d1b0735837dc4bd85dac641b0f3cef27a47e5d53a54f2f3f5b2fcffa this capability authorises",
+      "wrong_descriptor": "artifact descriptor is 'de697e11047bcc6a6a7ea448a33d112eaf5671f54faae55d14f857bc94ba4f70', not the expected '8aca4f36774f82a67c507cb9c96679482e2cc767f2d38502269557a566b092fb'",
+      "wrong_media_type": "media type 'application/octet-stream' is not 'application/vnd.cognitive-os.correction-ranker+json'",
+      "wrong_member_manifest": "artifact member manifest is '067e0e60a31239afc3c3880459f7ae7ef60cdb759b20aa7b993222b4dea16c65', not the expected '8aca4f36774f82a67c507cb9c96679482e2cc767f2d38502269557a566b092fb'",
+      "wrong_selection_manifest": "artifact selection manifest is '6b3894c295046d64384464a7c553087a16df3885535959f9d3e455884611f3c1', not the expected '8aca4f36774f82a67c507cb9c96679482e2cc767f2d38502269557a566b092fb'",
+      "wrong_split_manifest": "artifact split manifest is '3d156774c62daa7ea51391ad79b90f785d777878774e1b6795774422701ad4ce', not the expected '8aca4f36774f82a67c507cb9c96679482e2cc767f2d38502269557a566b092fb'"
+    }
+  },
+  "final_outcomes_inspected": false,
+  "fixture_artifact_bytes": 27030,
+  "fixture_artifact_sha256": "e6412a0dafe7876bed8141c0432944ae1e8aaffef0249153a1e6932801b4c353",
+  "integrity_content_hash": "5ea1fa3036bbd9602cae6c84cec629f8582ca1a47b8e8fa31965d4b029ddd29d",
+  "items": [
+    "S21D3-052",
+    "S21D3-053",
+    "S21D3-055"
+  ],
+  "mandatory_path_invariance": {
+    "campaign_configurations": [
+      "bounded_steady_state",
+      "exact_canary"
+    ],
+    "case_count": 4,
+    "case_set_hash": "9e8a2dd654d645c8bb5ac337a3a025433243a55f9228e541f2cb1e861b5cf349",
+    "configurations_compared": [
+      "another_approval",
+      "artifact_unverified_lineage",
+      "component_absent",
+      "component_not_allowlisted",
+      "descriptor_revision_mismatch",
+      "disabled_by_kill_switch",
+      "embedding_identity_mismatch",
+      "embedding_unavailable",
+      "group_not_routed",
+      "loader_refused_corrupt",
+      "loader_refused_missing",
+      "loader_refused_oversized",
+      "persistence_disabled",
+      "present_but_disabled",
+      "present_in_shadow",
+      "routing_manifest_mismatch",
+      "two_active_revisions",
+      "unapproved",
+      "wrong_configuration"
+    ],
+    "decision_hash_by_configuration": {
+      "another_approval": "9e8a2dd654d645c8bb5ac337a3a025433243a55f9228e541f2cb1e861b5cf349",
+      "artifact_unverified_lineage": "9e8a2dd654d645c8bb5ac337a3a025433243a55f9228e541f2cb1e861b5cf349",
+      "bounded_steady_state": "d4315670fc236f069931e5e3769ed4ba4f6459d80d419201436ebdab26db9f1e",
+      "component_absent": "9e8a2dd654d645c8bb5ac337a3a025433243a55f9228e541f2cb1e861b5cf349",
+      "component_not_allowlisted": "9e8a2dd654d645c8bb5ac337a3a025433243a55f9228e541f2cb1e861b5cf349",
+      "descriptor_revision_mismatch": "9e8a2dd654d645c8bb5ac337a3a025433243a55f9228e541f2cb1e861b5cf349",
+      "disabled_by_kill_switch": "9e8a2dd654d645c8bb5ac337a3a025433243a55f9228e541f2cb1e861b5cf349",
+      "embedding_identity_mismatch": "9e8a2dd654d645c8bb5ac337a3a025433243a55f9228e541f2cb1e861b5cf349",
+      "embedding_unavailable": "9e8a2dd654d645c8bb5ac337a3a025433243a55f9228e541f2cb1e861b5cf349",
+      "exact_canary": "d4315670fc236f069931e5e3769ed4ba4f6459d80d419201436ebdab26db9f1e",
+      "group_not_routed": "9e8a2dd654d645c8bb5ac337a3a025433243a55f9228e541f2cb1e861b5cf349",
+      "loader_refused_corrupt": "9e8a2dd654d645c8bb5ac337a3a025433243a55f9228e541f2cb1e861b5cf349",
+      "loader_refused_missing": "9e8a2dd654d645c8bb5ac337a3a025433243a55f9228e541f2cb1e861b5cf349",
+      "loader_refused_oversized": "9e8a2dd654d645c8bb5ac337a3a025433243a55f9228e541f2cb1e861b5cf349",
+      "persistence_disabled": "9e8a2dd654d645c8bb5ac337a3a025433243a55f9228e541f2cb1e861b5cf349",
+      "present_but_disabled": "9e8a2dd654d645c8bb5ac337a3a025433243a55f9228e541f2cb1e861b5cf349",
+      "present_in_shadow": "9e8a2dd654d645c8bb5ac337a3a025433243a55f9228e541f2cb1e861b5cf349",
+      "routing_manifest_mismatch": "9e8a2dd654d645c8bb5ac337a3a025433243a55f9228e541f2cb1e861b5cf349",
+      "two_active_revisions": "9e8a2dd654d645c8bb5ac337a3a025433243a55f9228e541f2cb1e861b5cf349",
+      "unapproved": "9e8a2dd654d645c8bb5ac337a3a025433243a55f9228e541f2cb1e861b5cf349",
+      "wrong_configuration": "9e8a2dd654d645c8bb5ac337a3a025433243a55f9228e541f2cb1e861b5cf349"
+    },
+    "identical": true,
+    "mandatory_decision_hash": "9e8a2dd654d645c8bb5ac337a3a025433243a55f9228e541f2cb1e861b5cf349",
+    "only_a_bounded_campaign_may_reorder": true
+  },
+  "pre_registration_sha256": "191b3757ded21a1c2c85459a34902f8dee3f2f35b0979b557f84c1a37fe6a191",
+  "recorded_at": "2026-08-05T11:10:19.439744Z",
+  "resolver_matrix": {
+    "cases": {
+      "another_approval": {
+        "detail": "the active revision carries another approval",
+        "learned_ordering_permitted": false,
+        "reason": "component_not_approved"
+      },
+      "artifact_unverified_lineage": {
+        "detail": "",
+        "learned_ordering_permitted": false,
+        "reason": "artifact_unverified"
+      },
+      "bounded_steady_state": {
+        "detail": "",
+        "learned_ordering_permitted": true,
+        "reason": "active"
+      },
+      "component_absent": {
+        "detail": "",
+        "learned_ordering_permitted": false,
+        "reason": "no_active_revision"
+      },
+      "component_not_allowlisted": {
+        "detail": "",
+        "learned_ordering_permitted": false,
+        "reason": "component_not_allowlisted"
+      },
+      "descriptor_revision_mismatch": {
+        "detail": "descriptor 3 against active 2",
+        "learned_ordering_permitted": false,
+        "reason": "descriptor_revision_mismatch"
+      },
+      "disabled_by_kill_switch": {
+        "detail": "the ledger has it disabled",
+        "learned_ordering_permitted": false,
+        "reason": "lifecycle_not_active"
+      },
+      "embedding_identity_mismatch": {
+        "detail": "the local model is not the one the artifact was fitted against",
+        "learned_ordering_permitted": false,
+        "reason": "embedding_identity_mismatch"
+      },
+      "embedding_unavailable": {
+        "detail": "",
+        "learned_ordering_permitted": false,
+        "reason": "embedding_unavailable"
+      },
+      "exact_canary": {
+        "detail": "",
+        "learned_ordering_permitted": true,
+        "reason": "active"
+      },
+      "group_not_routed": {
+        "detail": "",
+        "learned_ordering_permitted": false,
+        "reason": "group_not_routed"
+      },
+      "loader_refused_corrupt": {
+        "detail": "",
+        "learned_ordering_permitted": false,
+        "reason": "artifact_corrupt"
+      },
+      "loader_refused_missing": {
+        "detail": "",
+        "learned_ordering_permitted": false,
+        "reason": "artifact_missing"
+      },
+      "loader_refused_oversized": {
+        "detail": "1073741824 bytes above 67108864",
+        "learned_ordering_permitted": false,
+        "reason": "artifact_oversized"
+      },
+      "persistence_disabled": {
+        "detail": "",
+        "learned_ordering_permitted": false,
+        "reason": "persistence_disabled"
+      },
+      "present_but_disabled": {
+        "detail": "",
+        "learned_ordering_permitted": false,
+        "reason": "activation_disabled"
+      },
+      "present_in_shadow": {
+        "detail": "the ledger has it shadow",
+        "learned_ordering_permitted": false,
+        "reason": "lifecycle_not_active"
+      },
+      "routing_manifest_mismatch": {
+        "detail": "",
+        "learned_ordering_permitted": false,
+        "reason": "routing_manifest_mismatch"
+      },
+      "two_active_revisions": {
+        "detail": "2 active revisions on experience.correction_ranking",
+        "learned_ordering_permitted": false,
+        "reason": "multiple_active_revisions"
+      },
+      "unapproved": {
+        "detail": "the active revision carries no approval",
+        "learned_ordering_permitted": false,
+        "reason": "component_not_approved"
+      },
+      "wrong_configuration": {
+        "detail": "",
+        "learned_ordering_permitted": false,
+        "reason": "configuration_hash_mismatch"
+      }
+    },
+    "deterministic_fallback_cases": [
+      "another_approval",
+      "artifact_unverified_lineage",
+      "component_absent",
+      "component_not_allowlisted",
+      "descriptor_revision_mismatch",
+      "disabled_by_kill_switch",
+      "embedding_identity_mismatch",
+      "embedding_unavailable",
+      "group_not_routed",
+      "loader_refused_corrupt",
+      "loader_refused_missing",
+      "loader_refused_oversized",
+      "persistence_disabled",
+      "present_but_disabled",
+      "present_in_shadow",
+      "routing_manifest_mismatch",
+      "two_active_revisions",
+      "unapproved",
+      "wrong_configuration"
+    ],
+    "distinct_reasons": [
+      "activation_disabled",
+      "active",
+      "artifact_corrupt",
+      "artifact_missing",
+      "artifact_oversized",
+      "artifact_unverified",
+      "component_not_allowlisted",
+      "component_not_approved",
+      "configuration_hash_mismatch",
+      "descriptor_revision_mismatch",
+      "embedding_identity_mismatch",
+      "embedding_unavailable",
+      "group_not_routed",
+      "lifecycle_not_active",
+      "multiple_active_revisions",
+      "no_active_revision",
+      "persistence_disabled",
+      "routing_manifest_mismatch"
+    ],
+    "every_reason_code_is_reachable": true,
+    "permitted_cases": [
+      "bounded_steady_state",
+      "exact_canary"
+    ],
+    "purity": {
+      "every_input_is_passed_in": true,
+      "forbidden_references_found": [],
+      "module": "cognitive_os.application.services.learned_runtime",
+      "provider_network_gpu_or_credential_calls_possible": false
+    },
+    "unreached_reason_codes": []
+  },
+  "schema_version": 1,
+  "sequencer": {
+    "already_recorded_candidate_did_not_re_enter": true,
+    "attempted_order": [
+      "eb642e81-dfc6-51cf-9f2f-ba2ef71a22e8",
+      "c4a52415-61cb-5f56-b576-d8c70e341a6f"
+    ],
+    "baseline_order": [
+      "2441d1b4-0bef-593d-b543-ed3b536e2f24",
+      "828c7f1e-10f5-5dce-9a63-50d23d898aa3",
+      "c4a52415-61cb-5f56-b576-d8c70e341a6f",
+      "eb642e81-dfc6-51cf-9f2f-ba2ef71a22e8"
+    ],
+    "effective_remainder": [
+      "828c7f1e-10f5-5dce-9a63-50d23d898aa3",
+      "c4a52415-61cb-5f56-b576-d8c70e341a6f",
+      "eb642e81-dfc6-51cf-9f2f-ba2ef71a22e8"
+    ],
+    "every_attempt_ran_the_hidden_verifier": true,
+    "intentionally_unattempted": [
+      "828c7f1e-10f5-5dce-9a63-50d23d898aa3"
+    ],
+    "learned_order_changed_attempt_order_only": true,
+    "resolved_order": [
+      "eb642e81-dfc6-51cf-9f2f-ba2ef71a22e8",
+      "c4a52415-61cb-5f56-b576-d8c70e341a6f",
+      "828c7f1e-10f5-5dce-9a63-50d23d898aa3",
+      "2441d1b4-0bef-593d-b543-ed3b536e2f24"
+    ],
+    "stop_reason": "verifier_accepted",
+    "stopped_at_first_acceptance": true
+  },
+  "sprint": "21D3",
+  "wave": "W4",
+  "writes_to_any_artifact_store": false
+}

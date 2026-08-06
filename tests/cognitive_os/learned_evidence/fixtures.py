@@ -42,7 +42,21 @@ from cognitive_os.domain.learned_evidence import (
     ObservationStatus,
     ProvenanceClass,
 )
+from cognitive_os.domain.promotion_payload import (
+    D3_PROMOTION_GATES,
+    D3_PROMOTION_MEDIA_TYPE,
+    CanaryToSteadyCondition,
+    D3ArtifactBinding,
+    D3PromotionAssessment,
+    D3PromotionPayload,
+    D3RuntimeConfiguration,
+    PromotionDependency,
+    PromotionGateOutcome,
+    PromotionGateRecord,
+    canonical_payload_bytes,
+)
 from cognitive_os.infrastructure.learned.reference import AlwaysAbstainingRanker, ConstantClassifier
+from cognitive_os.learning.promotion import D3PromotionBindings
 
 FIXTURE_NOW = datetime(2026, 7, 26, 12, 0, tzinfo=UTC)
 FIXTURE_NAMESPACE = UUID("0f8c1d2e-3a4b-5c6d-8e9f-0a1b2c3d4e5f")
@@ -59,6 +73,13 @@ ARTIFACT_BYTES = b"inert reference component: this artifact is data and is never
 ARTIFACT_HASH = sha256(ARTIFACT_BYTES).hexdigest()
 ARTIFACT_SIZE = len(ARTIFACT_BYTES)
 ARTIFACT_ID = uuid5(FIXTURE_NAMESPACE, "model-artifact")
+#: The D3 promotion payload lives in the store as its own artifact, separate from the model.
+#: Separate because verification re-reads both and they can drift independently.
+D3_PAYLOAD_ARTIFACT_ID = uuid5(FIXTURE_NAMESPACE, "d3-promotion-payload-artifact")
+#: The lifecycle revision a D3 promotion is about: the one sitting in SHADOW when it is
+#: verified. Register is 1, SHADOW is 2, and VERIFIED becomes 3 — so an assessment that named
+#: 3 would be about a state that does not exist until after the verification it authorises.
+D3_VERIFIED_REVISION = 2
 
 
 def descriptor() -> LearnedComponentDescriptor:
@@ -197,6 +218,136 @@ def promotion_assessment(**overrides: object) -> LearnedPromotionAssessment:
     return LearnedPromotionAssessment(**fields)  # type: ignore[arg-type]
 
 
+def runtime_configuration(name: str, **overrides: object) -> D3RuntimeConfiguration:
+    fields: dict[str, object] = {
+        "name": name,
+        "component_id": INERT.component_id,
+        "component_revision": D3_VERIFIED_REVISION,
+        "surface": surface(),
+        "routed_group_ids": ("group-a",) if name == "exact_canary" else ("group-a", "group-b"),
+        "routing_manifest_hash": "c" * 64,
+        "sequence_mode": "stop_on_first_accepted",
+        "persistence_enabled": True,
+        "activation_enabled": True,
+        "maximum_tasks": 20 if name == "exact_canary" else 200,
+        "kill_switch_enabled": True,
+        "maximum_inference_ms": 250,
+        "fallback_on_refusal": "frozen deterministic baseline order",
+    }
+    fields.update(overrides)
+    return D3RuntimeConfiguration(**fields)  # type: ignore[arg-type]
+
+
+def transition_condition(**overrides: object) -> CanaryToSteadyCondition:
+    fields: dict[str, object] = {
+        "minimum_canary_tasks": 20,
+        "rollback_target_revision": 1,
+    }
+    fields.update(overrides)
+    return CanaryToSteadyCondition(**fields)  # type: ignore[arg-type]
+
+
+#: The dependency set a D3 promotion is downstream of. Fixture values, but a complete set:
+#: the evaluator's refusal for a missing dependency is only meaningful against a full one.
+D3_DEPENDENCIES: dict[str, str] = {
+    "feature_contract": "1" * 64,
+    "dataset_snapshot": "2" * 64,
+    "campaign_manifest": "3" * 64,
+    "calibration_manifest": "4" * 64,
+    "retrieval_protocol": "5" * 64,
+}
+
+
+def d3_payload(**overrides: object) -> D3PromotionPayload:
+    """Every gate passed. Individual tests fail one gate at a time from this baseline."""
+    fields: dict[str, object] = {
+        "component_id": INERT.component_id,
+        "component_revision": D3_VERIFIED_REVISION,
+        "surface": surface(),
+        "code_revision": "21d3-fixture",
+        "legacy_assessment_hash": promotion_assessment().content_hash,
+        "legacy_decision": LearnedPromotionDecision.ELIGIBLE_FOR_OPERATOR_APPROVAL.value,
+        "gates": tuple(
+            PromotionGateRecord(
+                name=name,
+                outcome=PromotionGateOutcome.PASSED,
+                evidence_hash=sha256(name.encode()).hexdigest(),
+                detail=f"fixture: {name} measured and passed",
+            )
+            for name in D3_PROMOTION_GATES
+        ),
+        "dependencies": tuple(
+            PromotionDependency(name=name, content_hash=value)
+            for name, value in sorted(D3_DEPENDENCIES.items())
+        ),
+        "artifact": D3ArtifactBinding(
+            artifact_id=ARTIFACT_ID,
+            media_type="application/octet-stream",
+            schema_name="correction-ranking-artifact-v2",
+            schema_version=2,
+            content_hash=ARTIFACT_HASH,
+            size_bytes=ARTIFACT_SIZE,
+        ),
+        "canary_configuration_hash": runtime_configuration("exact_canary").content_hash,
+        "steady_state_configuration_hash": runtime_configuration(
+            "bounded_steady_state"
+        ).content_hash,
+        "canary_to_steady_condition_hash": transition_condition().content_hash,
+        "recorded_at": FIXTURE_NOW,
+    }
+    fields.update(overrides)
+    return D3PromotionPayload(**fields)  # type: ignore[arg-type]
+
+
+def d3_payload_bytes(payload: D3PromotionPayload | None = None) -> bytes:
+    return canonical_payload_bytes(payload or d3_payload())
+
+
+def d3_payload_artifact(payload: D3PromotionPayload | None = None) -> ArtifactRef:
+    data = d3_payload_bytes(payload)
+    digest = sha256(data).hexdigest()
+    return artifact_ref(
+        artifact_id=D3_PAYLOAD_ARTIFACT_ID,
+        media_type=D3_PROMOTION_MEDIA_TYPE,
+        content_hash=digest,
+        size_bytes=len(data),
+        storage_key=f"{digest[:2]}/{digest[2:4]}/{digest}",
+    )
+
+
+def d3_assessment(payload: D3PromotionPayload | None = None, **overrides: object):
+    resolved = payload or d3_payload()
+    fields: dict[str, object] = {
+        "assessment_id": uuid5(FIXTURE_NAMESPACE, "d3-promotion"),
+        "component_id": INERT.component_id,
+        "component_revision": D3_VERIFIED_REVISION,
+        "surface": surface(),
+        "payload_artifact_id": D3_PAYLOAD_ARTIFACT_ID,
+        "payload_content_hash": sha256(canonical_payload_bytes(resolved)).hexdigest(),
+        "decision": "eligible",
+        "reason": "fixture assessment: every gate recorded as passed",
+        "recorded_at": FIXTURE_NOW,
+    }
+    fields.update(overrides)
+    return D3PromotionAssessment(**fields)  # type: ignore[arg-type]
+
+
+def d3_bindings(**overrides: object) -> D3PromotionBindings:
+    fields: dict[str, object] = {
+        "component_id": INERT.component_id,
+        "component_revision": D3_VERIFIED_REVISION,
+        "surface": surface(),
+        "artifact_content_hash": ARTIFACT_HASH,
+        "artifact_size_bytes": ARTIFACT_SIZE,
+        "canary_configuration": runtime_configuration("exact_canary"),
+        "steady_state_configuration": runtime_configuration("bounded_steady_state"),
+        "canary_to_steady_condition": transition_condition(),
+        "dependency_hashes": dict(D3_DEPENDENCIES),
+    }
+    fields.update(overrides)
+    return D3PromotionBindings(**fields)  # type: ignore[arg-type]
+
+
 def evidence(
     kind: LearnedEvidenceKind, payload_hash: str, **overrides: object
 ) -> LearnedEvidenceRecord:
@@ -298,6 +449,14 @@ class StubArtifactVerifier:
         self._known = known if known is not None else {ARTIFACT_ID: artifact_ref()}
         self._verifies = verifies
         self.verify_calls: list[UUID] = []
+
+    def corrupt(self) -> None:
+        """Every subsequent rehash fails, as it would if the bytes were replaced on disk."""
+        self._verifies = False
+
+    def add(self, ref: ArtifactRef) -> None:
+        """Put one more artifact in the store. Metadata only; there are still no bytes here."""
+        self._known[ref.artifact_id] = ref
 
     async def artifact_metadata(self, artifact_id: UUID) -> ArtifactRef | None:
         return self._known.get(artifact_id)

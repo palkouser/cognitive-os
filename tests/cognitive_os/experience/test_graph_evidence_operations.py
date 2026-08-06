@@ -27,6 +27,8 @@ from cognitive_os.coding.reality_integrity import (
     fingerprint,
 )
 from cognitive_os.domain.experience_graph import (
+    GRAPH_RESOURCE_POLICY_REVISION_1_HASH,
+    GRAPH_RESOURCE_POLICY_REVISION_2_HASH,
     ActionDecisionGraph,
     ExperienceGraphEdge,
     ExperienceGraphEdgeKind,
@@ -37,6 +39,7 @@ from cognitive_os.domain.experience_graph import (
 from cognitive_os.domains.fixtures import FIXTURE_TIME
 from cognitive_os.experience.graph_projection import derive_edit_path
 from cognitive_os.experience.graph_store import blob_path, load_evidence
+from scripts.experience import BENCHMARK_SCHEMA_VERSION
 
 REPOSITORY = Path(__file__).resolve().parents[3]
 CLI = REPOSITORY / "scripts" / "experience.py"
@@ -350,24 +353,39 @@ class TestOperatorCommands:
         assert done.returncode != 0
         assert "--model is required" in done.stderr
 
-    def test_the_benchmark_runs_the_model_free_arms_without_a_model(
+
+def _queries(tmp_path: Path) -> Path:
+    queries = tmp_path / "queries.json"
+    queries.write_text(
+        json.dumps(
+            [
+                {
+                    "query_id": "q:alpha",
+                    "domain": "logic",
+                    "task_signature": "alpha",
+                    "relevance_tier": 1,
+                    "excluded_groups": ["g.alpha"],
+                    "relevant_pair_ids": ["beta"],
+                }
+            ]
+        )
+    )
+    return queries
+
+
+class TestTheBenchmarkNamesThePolicyItRanUnder:
+    """S21D3-040. A benchmark that takes the defaults publishes revision-1 numbers silently.
+
+    That is not hypothetical: Sprint 21D1's stored results were produced under the class
+    defaults, and Sprint 21D2's narrative then described the same surface as revision 2. The
+    repair is that the measurement surface has to say which policy it used, and be refused
+    when the answer is not one this repository froze.
+    """
+
+    def test_it_refuses_to_run_without_a_policy(
         self, tmp_path: Path, healthy: tuple[Path, Path]
     ) -> None:
         manifest, artifacts = healthy
-        queries = tmp_path / "queries.json"
-        queries.write_text(
-            json.dumps(
-                [
-                    {
-                        "query_id": "q:alpha",
-                        "domain": "logic",
-                        "task_signature": "alpha",
-                        "excluded_groups": ["g.alpha"],
-                        "relevant_pair_ids": ["beta"],
-                    }
-                ]
-            )
-        )
         done = _cli(
             "graph-benchmark",
             "--graph-root",
@@ -375,9 +393,92 @@ class TestOperatorCommands:
             "--artifact-root",
             str(artifacts),
             "--queries",
-            str(queries),
+            str(_queries(tmp_path)),
+        )
+        assert done.returncode != 0
+        assert "needs --policy-hash" in done.stderr
+
+    def test_it_refuses_a_hash_that_names_no_frozen_policy(
+        self, tmp_path: Path, healthy: tuple[Path, Path]
+    ) -> None:
+        manifest, artifacts = healthy
+        done = _cli(
+            "graph-benchmark",
+            "--graph-root",
+            str(manifest),
+            "--artifact-root",
+            str(artifacts),
+            "--queries",
+            str(_queries(tmp_path)),
+            "--policy-hash",
+            "0" * 64,
+        )
+        assert done.returncode != 0
+        assert "names no frozen resource policy" in done.stderr
+
+    def test_the_named_policy_is_the_one_the_measurement_ran_under(
+        self, tmp_path: Path, healthy: tuple[Path, Path]
+    ) -> None:
+        manifest, artifacts = healthy
+        done = _cli(
+            "graph-benchmark",
+            "--graph-root",
+            str(manifest),
+            "--artifact-root",
+            str(artifacts),
+            "--queries",
+            str(_queries(tmp_path)),
+            "--policy-hash",
+            GRAPH_RESOURCE_POLICY_REVISION_2_HASH,
         )
         assert done.returncode == 0, done.stderr
         payload = json.loads(done.stdout)
+
+        assert payload["resource_policy"]["content_hash"] == GRAPH_RESOURCE_POLICY_REVISION_2_HASH
+        assert payload["resource_policy"]["vector_shortlist"] == 20
         assert payload["arms_without_a_model"] is True
         assert set(payload["arms"]) == {"no_memory", "lexical", "exact_signature"}
+
+    def test_it_emits_the_complete_pre_registered_metric_set(
+        self, tmp_path: Path, healthy: tuple[Path, Path]
+    ) -> None:
+        """Every metric S21D3-016 declared, plus the identities that make one comparable."""
+        manifest, artifacts = healthy
+        done = _cli(
+            "graph-benchmark",
+            "--graph-root",
+            str(manifest),
+            "--artifact-root",
+            str(artifacts),
+            "--queries",
+            str(_queries(tmp_path)),
+            "--policy-hash",
+            GRAPH_RESOURCE_POLICY_REVISION_1_HASH,
+        )
+        assert done.returncode == 0, done.stderr
+        payload = json.loads(done.stdout)
+
+        assert payload["schema_version"] == BENCHMARK_SCHEMA_VERSION
+        assert len(payload["content_hash"]) == 64
+        assert payload["repeated_ranking_agreement"] is True
+        assert (
+            payload["query_manifest"]["sha256"]
+            == sha256(_queries(tmp_path).read_bytes()).hexdigest()
+        )
+        assert payload["graph_set"]["resolved_pairs"] == 2
+        assert payload["model"] is None
+        assert set(payload["arms"]["lexical"]) >= {
+            "top_5_recall",
+            "mrr_at_10",
+            "ndcg_at_10",
+            "coverage",
+            "p50_latency_ms",
+            "p95_latency_ms",
+            "max_latency_ms",
+            "timeouts",
+            "budget_cutoffs",
+            "mean_candidates_considered",
+            "top_5_recall_by_domain",
+            "top_5_recall_by_tier",
+        }
+        assert payload["per_query"]["lexical"][0]["query_id"] == "q:alpha"

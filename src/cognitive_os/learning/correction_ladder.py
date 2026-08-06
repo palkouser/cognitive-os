@@ -34,6 +34,7 @@ from pydantic import Field
 from cognitive_os.domain.common import NonEmptyStr, Sha256Hex, UtcDatetime
 from cognitive_os.domain.experience import HashedExperienceContract
 from cognitive_os.learning.correction_matrix import FittedMatrix, FittedRow
+from cognitive_os.learning.correction_ranking import ENCODER_VERSION_V2
 
 FIXED_INPUT_ORDER = "fixed_input_order"
 DETERMINISTIC_STATIC_ORDERING = "deterministic_static_ordering"
@@ -90,6 +91,18 @@ def _fixed_input_order(group: TaskGroupCandidates) -> tuple[str, ...]:
     return group.ordered_candidate_ids
 
 
+#: The columns "smallest edit first" reads, per encoder. v2 removed the diff-shape counts the
+#: v1 rung ordered by, so under v2 the same prior is expressed in the structural columns that
+#: exist: fewest AST nodes, then the smallest statement graph. The prior is unchanged; what
+#: changed is which numbers describe the candidate.
+_V1_STATIC_COLUMNS: tuple[str, ...] = ("added_line_count", "ast_node_count", "hunk_count")
+_V2_STATIC_COLUMNS: tuple[str, ...] = (
+    "candidate_source_ast_node_count",
+    "statement_graph_node_count",
+    "statement_graph_edge_count",
+)
+
+
 def _static_ordering(group: TaskGroupCandidates) -> tuple[str, ...]:
     """Smallest edit first, by the pre-outcome counts, ties by the frozen order.
 
@@ -97,7 +110,10 @@ def _static_ordering(group: TaskGroupCandidates) -> tuple[str, ...]:
     the minimal repair is the one a careful author writes first.
     """
     position = {item: index for index, item in enumerate(group.ordered_candidate_ids)}
-    names = ("added_line_count", "ast_node_count", "hunk_count")
+    first = group.rows[group.ordered_candidate_ids[0]].vector
+    names = (
+        _V2_STATIC_COLUMNS if first.encoder_version == ENCODER_VERSION_V2 else _V1_STATIC_COLUMNS
+    )
 
     def key(candidate_id: str) -> tuple[float, ...]:
         vector = dict(group.rows[candidate_id].vector.values)
@@ -157,6 +173,23 @@ _ELIGIBLE_RUNGS: dict[str, RungOrdering] = {
     LEXICAL_SIMILARITY: _lexical,
     FROZEN_MINILM_COSINE: _by_column("query_to_candidate_cosine"),
 }
+
+#: Why the cosine rung cannot run under v2. `correction-ranking-v2` removes the
+#: query-to-candidate cosine from the fitted representation on purpose — it was one of the
+#: channels the D2 diagnostic found moving under a semantics-preserving rename — so the rung is
+#: reported ineligible with its reason rather than silently scored on a column that is gone.
+V2_COSINE_RUNG_INELIGIBLE = (
+    "correction-ranking-v2 removes query_to_candidate_cosine from the fitted representation, so "
+    "the channel this rung orders by does not exist under it"
+)
+
+
+def eligible_rungs(encoder_version: str) -> dict[str, RungOrdering]:
+    """The rungs that can be scored against one encoder's columns."""
+    rungs = dict(_ELIGIBLE_RUNGS)
+    if encoder_version == ENCODER_VERSION_V2:
+        del rungs[FROZEN_MINILM_COSINE]
+    return rungs
 
 
 class LadderRung(HashedExperienceContract):
@@ -270,9 +303,11 @@ def build_ladder(
         requirement_texts=requirement_texts,
         delta_texts=delta_texts,
     )
+    encoder_version = matrix.rows[0].vector.encoder_version
+    available = eligible_rungs(encoder_version)
     rungs: list[LadderRung] = []
     for name in LADDER_RUNGS:
-        ordering = _ELIGIBLE_RUNGS.get(name)
+        ordering = available.get(name)
         if ordering is None:
             rungs.append(
                 LadderRung(
@@ -280,7 +315,11 @@ def build_ladder(
                     kind="deterministic",
                     eligible=False,
                     groups_scored=0,
-                    ineligible_reason=GRAPH_RUNG_INELIGIBLE,
+                    ineligible_reason=(
+                        V2_COSINE_RUNG_INELIGIBLE
+                        if name == FROZEN_MINILM_COSINE
+                        else GRAPH_RUNG_INELIGIBLE
+                    ),
                 )
             )
             continue

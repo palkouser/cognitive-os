@@ -89,16 +89,27 @@ class CorrectionStep:
 
 @dataclass(frozen=True, slots=True)
 class TrajectoryPlan:
-    """One of the two paths §4.10 plans for a task, before anything is compiled."""
+    """One of the two paths §4.10 plans for a task, before anything is compiled.
+
+    `incorrect` is `None` for a repair path — baseline rejected, then repair accepted — which
+    is the shape a Sprint 21D3 retrieval source group has: two authored states of one task and
+    no third body to attempt in between. The claim such a path makes is smaller than §4.10's
+    and is exactly as causal: the verifier refused this, then accepted that.
+    """
 
     task_id: UUID
-    incorrect: RealityCandidateStrategy
+    incorrect: RealityCandidateStrategy | None
     correct: RealityCandidateStrategy
     steps: tuple[CorrectionStep, ...]
 
     @property
     def compilation_id(self) -> UUID:
         return trajectory_identity(self.task_id, self.steps)
+
+    @property
+    def strategy_revision(self) -> str:
+        """The strategies this path walked, in order. Names the patch source it resolves."""
+        return "+".join(item.value for item in (self.incorrect, self.correct) if item is not None)
 
 
 def trajectory_identity(task_id: UUID, steps: tuple[CorrectionStep, ...]) -> UUID:
@@ -150,6 +161,20 @@ def plan_paths(
     return tuple(plans)
 
 
+def plan_repair_path(
+    *, task_id: UUID, baseline: CorrectionStep, repair: CorrectionStep
+) -> TrajectoryPlan:
+    """The two-run path: the state the verifier refused, then the one it accepted. §S21D3-044."""
+    if repair.candidate is None:
+        raise TrajectoryBuildError("a repair path's second step is a candidate, not a baseline")
+    return TrajectoryPlan(
+        task_id=task_id,
+        incorrect=None,
+        correct=repair.candidate.strategy,
+        steps=(baseline, repair),
+    )
+
+
 async def build_request(
     plan: TrajectoryPlan,
     *,
@@ -183,7 +208,7 @@ async def build_request(
         entry_type=TimelineEntryType.PLAN,
         event_type="reality.correction_path_planned",
         status=ExperienceStepStatus.COMPLETED,
-        summary=f"Ordered correction path: baseline, {plan.incorrect.value}, {plan.correct.value}",
+        summary=f"Ordered correction path: baseline, {plan.strategy_revision.replace('+', ', ')}",
         evidence=(sha256(controller_payload).hexdigest(),),
         created_at=created_at,
     )
@@ -210,7 +235,7 @@ async def build_request(
         plan,
         TrajectorySourceType.CODING_TRAJECTORY,
         b"".join(patch_payloads),
-        f"{plan.incorrect.value}+{plan.correct.value}",
+        plan.strategy_revision,
     )
     verifier_ref = _reference(
         plan, TrajectorySourceType.VERIFIER, b"".join(verifier_payloads), "hidden"
@@ -346,15 +371,21 @@ def compiler_profile() -> CompilerProfile:
 
 
 def _require_well_formed(plan: TrajectoryPlan, task: RealityTaskManifest) -> None:
-    if len(plan.steps) != 3:
-        raise TrajectoryBuildError("a correction path is baseline, incorrect, correct")
-    baseline, incorrect, correct = plan.steps
+    expected = 2 if plan.incorrect is None else 3
+    if len(plan.steps) != expected:
+        raise TrajectoryBuildError(
+            "a correction path is baseline, incorrect, correct; a repair path is baseline, correct"
+        )
+    baseline, *attempts = plan.steps
     if baseline.candidate is not None:
         raise TrajectoryBuildError("the first step of a correction path is the baseline")
-    if incorrect.strategy is not plan.incorrect or correct.strategy is not plan.correct:
+    if plan.incorrect is not None:
+        if attempts[0].strategy is not plan.incorrect:
+            raise TrajectoryBuildError("recorded steps do not match the declared strategies")
+        if plan.incorrect.family is not RealityStrategyFamily.INCORRECT:
+            raise TrajectoryBuildError(f"{plan.incorrect.value} is not an incorrect strategy")
+    if attempts[-1].strategy is not plan.correct:
         raise TrajectoryBuildError("recorded steps do not match the declared strategies")
-    if plan.incorrect.family is not RealityStrategyFamily.INCORRECT:
-        raise TrajectoryBuildError(f"{plan.incorrect.value} is not an incorrect strategy")
     if plan.correct.family is not RealityStrategyFamily.CORRECT:
         raise TrajectoryBuildError(f"{plan.correct.value} is not a correct strategy")
     for step in plan.steps:

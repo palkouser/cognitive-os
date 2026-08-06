@@ -24,10 +24,13 @@ import pytest_asyncio
 from cognitive_os.application.services.learned_datasets import (
     DEFAULT_SPLIT_POLICY,
     EXPLICIT_SPLIT_POLICY,
+    EXPLICIT_SPLIT_POLICY_V3,
     LISTING_PAGE_SIZE,
     ExplicitSelection,
+    ExplicitSelectionManifestV3,
     LearnedDatasetBuilder,
     dataset_id_for,
+    explicit_selection_partition_digest,
     split_assignment_digest,
 )
 from cognitive_os.domain.common import ArtifactRef
@@ -120,6 +123,27 @@ def _selection(records: list[object], *, fit: int, **overrides: object) -> Expli
     return ExplicitSelection(**fields)  # type: ignore[arg-type]
 
 
+def _selection_v3(records: list[object], *, fit: int, **overrides: object) -> ExplicitSelection:
+    ids = [str(item.observation_id) for item in records]  # type: ignore[attr-defined]
+    fields: dict[str, object] = {
+        "partition": "training",
+        "members": tuple(
+            (str(item.observation_id), item.source_payload_hash)  # type: ignore[attr-defined]
+            for item in records
+        ),
+        "groups": {observation_id: f"group-{index}" for index, observation_id in enumerate(ids)},
+        "splits": {"fit": tuple(ids[:fit]), "calibration": tuple(ids[fit:])},
+        "allowed_provenance": ProvenanceClass.SELF_PLAY,
+        "identity_revision": 3,
+        "campaign_identity": "campaign-v3",
+        "feature_record_hashes": {item: f"{index + 100:064x}" for index, item in enumerate(ids)},
+        "outcome_hashes": {item: f"{index + 200:064x}" for index, item in enumerate(ids)},
+        "member_content_hashes": {item: f"{index + 300:064x}" for index, item in enumerate(ids)},
+    }
+    fields.update(overrides)
+    return ExplicitSelection(**fields)  # type: ignore[arg-type]
+
+
 class TestSplitAssignmentIsPartOfIdentity:
     def test_the_same_members_split_differently_get_different_identities(self) -> None:
         members = (("a", "1" * 64), ("b", "2" * 64), ("c", "3" * 64))
@@ -166,6 +190,86 @@ class TestSplitAssignmentIsPartOfIdentity:
             members=members,
             assignment_digest=None,
         )
+
+
+class TestRevisionThreeIdentity:
+    def test_feature_schema_role_and_surface_are_identity_inputs(self) -> None:
+        members = (("a", "1" * 64),)
+        digest = explicit_selection_partition_digest(
+            campaign_identity="campaign",
+            partition="training",
+            members=members,
+            groups={"a": "group-a"},
+            splits={"fit": ("a",)},
+            feature_record_hashes={"a": "2" * 64},
+            outcome_hashes={"a": "3" * 64},
+            member_content_hashes={"a": "4" * 64},
+        )
+
+        def identity(surface: str, role: CorpusRole, schema: str) -> UUID:
+            return dataset_id_for(
+                surface=surface,
+                corpus_role=role,
+                revision=3,
+                split_policy=EXPLICIT_SPLIT_POLICY_V3,
+                members=members,
+                feature_schema_hash=schema,
+                selection_partition_digest=digest,
+            )
+
+        base = identity("surface-a", CorpusRole.TRAINING, "5" * 64)
+        assert base != identity("surface-a", CorpusRole.TRAINING, "6" * 64)
+        assert base != identity("surface-a", CorpusRole.EVALUATION, "5" * 64)
+        assert base != identity("surface-b", CorpusRole.TRAINING, "5" * 64)
+
+    def test_equivalent_mapping_and_member_order_produce_one_digest(self) -> None:
+        common = {
+            "campaign_identity": "campaign",
+            "partition": "training",
+            "groups": {"a": "g-a", "b": "g-b"},
+            "feature_record_hashes": {"a": "1" * 64, "b": "2" * 64},
+            "outcome_hashes": {"a": "3" * 64, "b": "4" * 64},
+            "member_content_hashes": {"a": "5" * 64, "b": "6" * 64},
+        }
+        left = explicit_selection_partition_digest(
+            **common,
+            members=(("a", "7" * 64), ("b", "8" * 64)),
+            splits={"fit": ("a", "b")},
+        )
+        right = explicit_selection_partition_digest(
+            **common,
+            members=(("b", "8" * 64), ("a", "7" * 64)),
+            splits={"fit": ("b", "a")},
+        )
+        assert left == right
+
+    def test_selection_manifest_extends_the_existing_split_contract(self) -> None:
+        manifest = ExplicitSelectionManifestV3(
+            dataset_id=UUID(int=1),
+            revision=3,
+            policy=EXPLICIT_SPLIT_POLICY_V3,
+            splits=(("fit", ("observation",)),),
+            created_at=fx.FIXTURE_NOW,
+            surface="experience.correction_ranking",
+            corpus_role="training",
+            feature_schema_hash="1" * 64,
+            campaign_identity="campaign",
+            partition="training",
+            selection_partition_digest="2" * 64,
+            selected_members=(
+                {
+                    "campaign_identity": "campaign",
+                    "partition": "training",
+                    "observation_id": "observation",
+                    "group_id": "group",
+                    "feature_record_hash": "3" * 64,
+                    "outcome_hash": "4" * 64,
+                    "member_content_hash": "5" * 64,
+                },
+            ),
+        )
+        assert manifest.policy == EXPLICIT_SPLIT_POLICY_V3
+        assert manifest.selected_members[0].group_id == "group"
 
 
 class TestTheSelectionRefusesAnIncoherentPlan:
@@ -291,6 +395,54 @@ class TestExplicitBuildResolvesExactlyWhatWasSealed:
 
         assert first.dataset_id != second.dataset_id
         assert first.split_manifest_hash != second.split_manifest_hash
+
+    async def test_v3_schema_and_partition_digest_drive_identity_and_restart(
+        self, builder: tuple[LearnedDatasetBuilder, object]
+    ) -> None:
+        service, repository = builder
+        records = await _seed(repository, 6)
+        selection = _selection_v3(records, fit=4)
+
+        first = await service.build(
+            surface=fx.surface(),
+            corpus_role=CorpusRole.TRAINING,
+            feature_schema_hash=SCHEMA_HASH,
+            revision=3,
+            selection=selection,
+        )
+        replay = await service.build(
+            surface=fx.surface(),
+            corpus_role=CorpusRole.TRAINING,
+            feature_schema_hash=SCHEMA_HASH,
+            revision=3,
+            selection=selection,
+        )
+        other_schema = await service.build(
+            surface=fx.surface(),
+            corpus_role=CorpusRole.TRAINING,
+            feature_schema_hash="6" * 64,
+            revision=3,
+            selection=selection,
+        )
+        reordered = _selection_v3(
+            list(reversed(records)),
+            fit=2,
+            groups=selection.groups,
+            splits={name: tuple(reversed(items)) for name, items in selection.splits.items()},
+            feature_record_hashes=selection.feature_record_hashes,
+            outcome_hashes=selection.outcome_hashes,
+            member_content_hashes=selection.member_content_hashes,
+        )
+        equivalent = await service.build(
+            surface=fx.surface(),
+            corpus_role=CorpusRole.TRAINING,
+            feature_schema_hash=SCHEMA_HASH,
+            revision=3,
+            selection=reordered,
+        )
+
+        assert first.dataset_id == replay.dataset_id == equivalent.dataset_id
+        assert first.dataset_id != other_schema.dataset_id
 
     async def test_rebuilding_the_identical_selection_returns_the_same_snapshot(
         self, builder: tuple[LearnedDatasetBuilder, object]

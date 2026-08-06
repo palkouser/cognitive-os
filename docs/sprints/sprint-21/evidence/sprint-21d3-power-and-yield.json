@@ -1,0 +1,58 @@
+{
+  "assumptions": {
+    "changed_decision_rate": "0.40 conservative planning assumption",
+    "no_member_or_outcome_read": true,
+    "retrieval_qualification_yield": "0.85 conservative planning assumption"
+  },
+  "contract": {
+    "assumed_final_changed_decision_rate": "0.40",
+    "assumed_retrieval_yield": "0.85",
+    "bootstrap_resamples": 2000,
+    "bootstrap_seed": 21041,
+    "calibration_groups": 20,
+    "calibration_outcomes": 80,
+    "canary_candidate_slots": 20,
+    "canary_groups": 5,
+    "candidates_per_group": 4,
+    "content_hash": "8d20e2627d57bc2da1e35aa796701b63906847159c8ea77cff51fc6db2a8abb9",
+    "final_groups_per_batch": 30,
+    "final_outcomes_per_batch": 120,
+    "fitting_groups": 50,
+    "fitting_outcomes": 200,
+    "metamorphic_groups_per_stage": 20,
+    "minimum_candidate_outcomes_per_stage": 400,
+    "minimum_qualifying_queries": 50,
+    "minimum_valid_decisions_per_stage": 100,
+    "nominal_decisions_per_stage": 120,
+    "required_final_changed_decisions": 20,
+    "retrieval_source_groups": 60,
+    "target_absolute_improvement": "0.05",
+    "transformation_cases_per_group": 6
+  },
+  "formulas": {
+    "calibration": "20 groups * 4 = 80 outcomes",
+    "canary": "5 groups * 4 = 20 sealed candidate slots",
+    "conservative_changed_decision_yield": "60 final groups * 0.40 = 24, above the fixed floor of 20",
+    "final_each": "30 groups * 4 = 120 outcomes",
+    "fitting": "50 groups * 4 = 200 outcomes",
+    "metamorphic_each_stage": "20 groups * 6 cases = 120 nominal decisions; 100 valid decisions * 4 = 400 candidate outcomes",
+    "metamorphic_reserve": "120 nominal - 100 required = 20 decisions",
+    "retrieval_yield": "60 overproduced groups * 0.85 = 51 qualifying queries, above the floor of 50"
+  },
+  "integrity_content_hash": "e2fd94c98c421a1d86e4a3175763c868a720727303e22384f8d3e827d3230847",
+  "items": [
+    "S21D3-014"
+  ],
+  "outcome_access": 0,
+  "paired_effect_envelope": {
+    "claim": "pre-registered gate envelope, not an observed or retrospective power estimate",
+    "detectable_registered_effect": "at least 0.05 absolute gain or 0.20 relative error reduction",
+    "minimum_changed_decisions": 20,
+    "paired_unit": "task_group",
+    "uncertainty_rule": "seed 21041, 2000 paired group bootstrap resamples, 95% lower bound above zero"
+  },
+  "recorded_at": "2026-08-03T10:07:42Z",
+  "schema_version": 1,
+  "sprint": "21D3",
+  "wave": "W0"
+}

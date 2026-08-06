@@ -3281,7 +3281,7 @@
     {
       "file": "v1/experience-graph/experience-graph-result.schema.json",
       "model": "ExperienceGraphResult",
-      "sha256": "7cdb9f7528e096a8a1ad1e8b9224ac1cb77fe8eb8b33e4ada3c8f6d626c17ba7"
+      "sha256": "dee7433b30a7bf4fa2f06f010dbff98a0fae5dfc32d0ddaa37057626c5bc6092"
     },
     {
       "file": "v1/experience-graph/failed-success-graph-pair.schema.json",
@@ -3494,9 +3494,29 @@
       "sha256": "cfbcce8136b52e8ed2edf0fb1b478f0337ef0773cf21ebc23ecb4c8e21997af9"
     },
     {
+      "file": "v1/learned/canary-to-steady-condition.schema.json",
+      "model": "CanaryToSteadyCondition",
+      "sha256": "583215c671ac3ad2c0a7d4872475dfa4d93e1fc3b0a145c517776999c1a3dcaf"
+    },
+    {
       "file": "v1/learned/counterfactual-label.schema.json",
       "model": "CounterfactualLabel",
       "sha256": "348faeb7a2de6310c79b3890c24c23d823aa28444baf5d03c81ce800d8f86fae"
+    },
+    {
+      "file": "v1/learned/d3-promotion-assessment.schema.json",
+      "model": "D3PromotionAssessment",
+      "sha256": "26fa6f246c7a894110d96ceabe376e0b7312b6acfa669efc1ba17fc1ddbdaf4a"
+    },
+    {
+      "file": "v1/learned/d3-promotion-payload.schema.json",
+      "model": "D3PromotionPayload",
+      "sha256": "239a51576d714aa5f700551381f56b3da436df03f6cc91020127cc798dd40b32"
+    },
+    {
+      "file": "v1/learned/d3-runtime-configuration.schema.json",
+      "model": "D3RuntimeConfiguration",
+      "sha256": "3c256186e66e1dcd745b7a27ead779e814a82d9b862b0069da1763897c25c1bd"
     },
     {
       "file": "v1/learned/distribution-comparison.schema.json",
@@ -3989,6 +4009,11 @@
       "sha256": "b013f959d1f511b327c5925389bd77d344d82503c1762f4e20b6a5bc4f0c3dd4"
     },
     {
+      "file": "v1/reality/reality-campaign-receipt-manifest-v3.schema.json",
+      "model": "RealityCampaignReceiptManifestV3",
+      "sha256": "5f61a7f2b0f8c8527899f2cd02908f4a4d08b44f7a39e57a342fd6d3cbb434a1"
+    },
+    {
       "file": "v1/reality/reality-candidate-manifest.schema.json",
       "model": "RealityCandidateManifest",
       "sha256": "efa4c2fe941a8487be387a7d39edd7a5d9e6cca9af204997a915bc3408631fb9"
@@ -4012,6 +4037,11 @@
       "file": "v1/reality/reality-outcome-reference.schema.json",
       "model": "RealityOutcomeReference",
       "sha256": "2eb0235b1a101aac6181dcd0f378b843b695b541ae75eebe2cb064db6e122334"
+    },
+    {
+      "file": "v1/reality/reality-receipt-task-v3.schema.json",
+      "model": "RealityReceiptTaskV3",
+      "sha256": "e6d5acf13273dbdb0eb92fbc12c20a1da2a79eb4d061ad5167cd6da388fced69"
     },
     {
       "file": "v1/reality/reality-run-identity.schema.json",

@@ -25,9 +25,15 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from decimal import Decimal
 from hashlib import sha256
-from math import sqrt
+from math import isfinite, sqrt
 
-from cognitive_os.learning.correction_protocol import CorrectionFeatureContract
+from cognitive_os.learning.correction_protocol import (
+    FITTED_FEATURE_V2_EMBEDDING,
+    FITTED_FEATURE_V2_SCALARS,
+    CorrectionFeatureContract,
+    CorrectionFeatureContractV2,
+)
+from cognitive_os.learning.correction_source import CANONICAL_PREFIX
 
 #: The bounded numeric features, in the fixed order the artifact records them. Adding one is a
 #: new encoder version, because an exemplar fitted under a different order is a different
@@ -44,6 +50,7 @@ NUMERIC_FEATURE_NAMES: tuple[str, ...] = (
 )
 
 ENCODER_VERSION = "correction-ranking-v1"
+ENCODER_VERSION_V2 = "correction-ranking-v2"
 
 
 class CorrectionEncodingError(ValueError):
@@ -119,6 +126,64 @@ class NumericBounds:
 
 
 @dataclass(frozen=True, slots=True)
+class NumericBoundsV2:
+    """Training-only clip-and-scale parameters for the six v2 structural channels."""
+
+    lower: Mapping[str, float]
+    upper: Mapping[str, float]
+
+    def __post_init__(self) -> None:
+        expected = set(FITTED_FEATURE_V2_SCALARS)
+        if set(self.lower) != expected or set(self.upper) != expected:
+            raise CorrectionEncodingError("v2 numeric bounds must name exactly six scalars")
+        for name in FITTED_FEATURE_V2_SCALARS:
+            low, high = self.lower[name], self.upper[name]
+            if not isfinite(low) or not isfinite(high) or low > high:
+                raise CorrectionEncodingError(f"invalid numeric bounds for {name!r}")
+
+    @classmethod
+    def from_training(cls, rows: Sequence[Mapping[str, float]]) -> NumericBoundsV2:
+        if not rows:
+            raise CorrectionEncodingError("numeric bounds cannot be fitted on an empty corpus")
+        expected = set(FITTED_FEATURE_V2_SCALARS)
+        if any(set(row) != expected for row in rows):
+            raise CorrectionEncodingError("a v2 numeric row must contain exactly six scalars")
+        if any(not isfinite(float(row[name])) for row in rows for name in expected):
+            raise CorrectionEncodingError("v2 numeric training rows must be finite")
+        return cls(
+            lower={name: min(row[name] for row in rows) for name in FITTED_FEATURE_V2_SCALARS},
+            upper={name: max(row[name] for row in rows) for name in FITTED_FEATURE_V2_SCALARS},
+        )
+
+    def scale(self, name: str, value: float) -> float:
+        low, high = self.lower[name], self.upper[name]
+        if not all(isfinite(item) for item in (low, high, value)) or low > high:
+            raise CorrectionEncodingError(f"invalid numeric bounds or value for {name!r}")
+        clipped = min(max(float(value), low), high)
+        return 0.0 if high == low else (clipped - low) / (high - low)
+
+    def canonical(self) -> dict[str, dict[str, float]]:
+        return {
+            "lower": {name: self.lower[name] for name in FITTED_FEATURE_V2_SCALARS},
+            "upper": {name: self.upper[name] for name in FITTED_FEATURE_V2_SCALARS},
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class CorrectionFeatureInputV2:
+    """The complete v2 fitted input, with every excluded channel absent by construction."""
+
+    canonical_candidate_source: bytes
+    canonical_candidate_source_embedding: tuple[float, ...]
+    candidate_source_ast_node_count: int
+    statement_graph_node_count: int
+    statement_graph_edge_count: int
+    statement_graph_path_count: int
+    declared_verifier_capability_count: int
+    missing_value_indicators: int = 0
+
+
+@dataclass(frozen=True, slots=True)
 class CorrectionFeatureVector:
     """One encoded candidate. Carries no identity, by construction rather than by review."""
 
@@ -135,6 +200,24 @@ class CorrectionFeatureVector:
     @property
     def numbers(self) -> tuple[float, ...]:
         return tuple(value for _, value in self.values)
+
+    @property
+    def fitted_names(self) -> tuple[str, ...]:
+        """Every actual fitted dimension, named for matrix validation.
+
+        The released v1 projection exposed only scalar names. Keeping that dispatch exact is
+        what preserves its serialized matrix and report behaviour while v2 audits all 384
+        embedding dimensions.
+        """
+        if self.encoder_version == ENCODER_VERSION_V2:
+            return (*self.names, *FITTED_FEATURE_V2_EMBEDDING)
+        return self.names
+
+    @property
+    def fitted_numbers(self) -> tuple[float, ...]:
+        if self.encoder_version == ENCODER_VERSION_V2:
+            return (*self.numbers, *self.embedding)
+        return self.numbers
 
     def canonical_bytes(self) -> bytes:
         parts = [self.encoder_version]
@@ -197,6 +280,44 @@ class CorrectionEncoder:
             encoder_version=self.version,
             values=tuple(values),
             embedding=tuple(features.candidate_delta_embedding),
+        )
+
+
+class CorrectionEncoderV2:
+    """Encode canonical candidate source and six structural scalars, and nothing else."""
+
+    version = ENCODER_VERSION_V2
+
+    def __init__(
+        self,
+        bounds: NumericBoundsV2,
+        *,
+        contract: CorrectionFeatureContractV2 | None = None,
+    ) -> None:
+        self._bounds = bounds
+        self._contract = contract or CorrectionFeatureContractV2()
+
+    def encode(self, features: CorrectionFeatureInputV2) -> CorrectionFeatureVector:
+        if not features.canonical_candidate_source.startswith(CANONICAL_PREFIX):
+            raise CorrectionEncodingError("v2 source does not carry the canonical AST prefix")
+        embedding = tuple(float(item) for item in features.canonical_candidate_source_embedding)
+        if len(embedding) != self._contract.embedding_dimensions:
+            raise CorrectionEncodingError(
+                f"v2 requires {self._contract.embedding_dimensions} embedding dimensions"
+            )
+        if any(not isfinite(item) or not -1.0 <= item <= 1.0 for item in embedding):
+            raise CorrectionEncodingError("v2 embedding dimensions must be finite in [-1, 1]")
+        raw = {name: float(getattr(features, name)) for name in FITTED_FEATURE_V2_SCALARS}
+        values = tuple(
+            (name, self._bounds.scale(name, raw[name])) for name in FITTED_FEATURE_V2_SCALARS
+        )
+        fitted_names = (*[name for name, _ in values], *FITTED_FEATURE_V2_EMBEDDING)
+        if tuple(fitted_names) != tuple(self._contract.allowlist):
+            raise CorrectionEncodingError("v2 encoder output does not match its fitted allowlist")
+        return CorrectionFeatureVector(
+            encoder_version=self.version,
+            values=values,
+            embedding=embedding,
         )
 
 
@@ -326,7 +447,7 @@ class CorrectionKnn:
         §4.4 requires the weighting to be frozen before calibration rather than emerging from
         whatever scale the counts happen to have.
         """
-        if left.names != right.names:
+        if left.encoder_version != right.encoder_version or left.names != right.names:
             raise CorrectionEncodingError("exemplar and query were encoded differently")
         text = _cosine(left.embedding, right.embedding)
         static = _cosine(left.numbers, right.numbers)

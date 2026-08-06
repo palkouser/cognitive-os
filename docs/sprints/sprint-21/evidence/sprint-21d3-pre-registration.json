@@ -1,0 +1,147 @@
+{
+  "automated_check": "uv run python scripts/pre_registration_d3.py --check",
+  "chronology": {
+    "canary_outcomes_inspected": 0,
+    "correction_final_outcomes_inspected": 0,
+    "d3_campaigns_started": 0,
+    "d3_candidate_settings_scored": 0,
+    "d3_channel_measurements": 0,
+    "d3_development_scores": 0,
+    "d3_feature_implementation_results": 0,
+    "immutable_d2_reconciliation_replays": 1,
+    "retrieval_holdout_queries_resolved": 0,
+    "retrieval_scores": 0
+  },
+  "contract_hashes": {
+    "dataset_v3": "170df51806520af633163f6be7c60795909abb22e7eea0f2c1b924bfcb6b5d3f",
+    "diagnostic": "f36ad969623b210341a7e8a44e0c5ce6e011bb3299458777dd76f6ea4081529d",
+    "feature_v2": "492c90a5df420de9d1662d17155ac8b28713e69bbd4bbe56208415d6ca076362",
+    "ranking_units": "6ab4d81abe264f726d5c8fb38b0aa043ded239a6034927846c55763ee963c8a9",
+    "retrieval_v3": "0233bc5deae303fb895724415211c1ad28bc86c2c47fa71222f6b35103eeb10c",
+    "transformations_v3": "bdcdc923e103b5a1c879407f7307d027cde55bd555ff0be60121b799e42b81d0"
+  },
+  "data_roles": {
+    "calibration": "20 fresh groups / 80 SELF_PLAY outcomes",
+    "calibration_metamorphic": "120 nominal / at least 100 decisions",
+    "canary": "5 groups / 20 presealed slots",
+    "final_a": "30 groups / 120 REAL_GOVERNED_RUN outcomes",
+    "final_b": "30 groups / 120 REAL_GOVERNED_RUN outcomes",
+    "fitting": "50 groups / 200 new SELF_PLAY outcomes",
+    "promotion_metamorphic": "120 nominal / at least 100 decisions",
+    "retrieval": "at least 60 source groups until at least 50 queries qualify"
+  },
+  "evidence_children_sha256": {
+    "baseline": "f190771f9d6729c04d5bc7756fc084964d3ab4815280d9d3e24a96dffbe8923e",
+    "contracts": "0448cb70956b79a86ee0624f4f88c8bf455b262e9ab3f6c51fe420be7c1a65b3",
+    "gates": "6ae6a0f80283f58be03ad86b7c187c029c7947ec001a42b4cd7cf541ed1cb068",
+    "inventory": "080cdf60fe4e9c105d8d6ac2c7e33aa8ac6e62d8ccfe0bd6fadf22ec3ab44bb0",
+    "isolation": "10c0f5904bd83cd52c8a625ed831c935ea35642f244ac8ca472a0394f79d57e7",
+    "power": "54db2248f1eeda3281616233f4350ba0441b03c9bc7419637371d00aa777be1f",
+    "reconciliation": "a0716fe92bd1ae8bb727d67a1ba614169985e7780b751937af7e77aebb0f1e6b",
+    "reuse": "3367747e29a0302f2be5f914a60b9e88ebb3fa08ab382e429ee8a0e120535cca"
+  },
+  "exits": {
+    "negative": "first failed condition, complete not_opened chain, Gate L2 stays closed, sprint-21d3-evidence-baseline only",
+    "positive": "all fixed conditions pass, existing governed lifecycle completes, sprint-21-learning-baseline becomes eligible"
+  },
+  "final_and_canary_reuse": {
+    "audit_sha256": "3367747e29a0302f2be5f914a60b9e88ebb3fa08ab382e429ee8a0e120535cca",
+    "bound_role_hashes": {
+      "canary": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7",
+      "final_a": "69d5eedcaeccdfdcc183b050c89c3e4b49b709474a35511620c39f6f0292fb46",
+      "final_b": "06a0c2f6641e4bf330d2fd29a9fab54b636c77d689917976133bafc92bf22a33"
+    },
+    "conditional_whole_role_replacement": {
+      "authoring_exception": "isolated throwaway validation only; no learned, event, artifact, or metric write",
+      "counts": {
+        "canary": {
+          "candidate_slots": 20,
+          "groups": 5
+        },
+        "final_a": {
+          "candidate_slots": 120,
+          "groups": 30
+        },
+        "final_b": {
+          "candidate_slots": 120,
+          "groups": 30
+        }
+      },
+      "partial_reuse_allowed": false,
+      "procedure": "S21D3-030 authors the complete role, S21D3-031 proves separation, S21D3-032 seals it before measurement",
+      "trigger": "any later mismatch in role/root/source/access/child binding"
+    },
+    "decisions": {
+      "canary": "reuse",
+      "final_a": "reuse",
+      "final_b": "reuse"
+    },
+    "not_yet_authored_members_claimed": false
+  },
+  "holdout_stop_lines": [
+    "no feature, grid, threshold, eligibility, or member change after fresh calibration resolution",
+    "no fit, refit, threshold, artifact, or final-manifest change after candidate selection",
+    "final B confirms final A and never repairs it",
+    "retrieval arms, resources, queries, judgements, and metric code freeze before the one holdout read",
+    "first failure creates typed not_opened children and selects the negative release route"
+  ],
+  "integrity_content_hash": "7706fa89d6c617d7970829754706c5932bd751bb08d30899d5b43ab9cac44aa7",
+  "intervention": {
+    "feature": "correction-ranking-v2 alpha-normalised candidate-source embedding",
+    "learner": "existing bounded pure-Python k-NN only",
+    "migration": null,
+    "parametric_rung": false,
+    "retrieval": "equal-weight lexical plus MiniLM reciprocal-rank fusion with constant 60",
+    "second_feature_variant": false
+  },
+  "items": [
+    "S21D3-018"
+  ],
+  "knn_grid": {
+    "agreement_floor": [
+      "0.60",
+      "0.80"
+    ],
+    "confidence_floor": [
+      "0.55",
+      "0.70"
+    ],
+    "embedding_weight": "0.7",
+    "k": [
+      3,
+      5,
+      7
+    ],
+    "similarity_floor": [
+      "0.30",
+      "0.50"
+    ]
+  },
+  "later_evidence_check": "uv run python scripts/pre_registration_d3.py --check-chronology --later-evidence <path>",
+  "non_silence": {
+    "clean_coverage_floor": "0.80",
+    "clean_first_choice_above_strongest_baseline": true,
+    "confident_equivalence_errors_allowed": 0,
+    "covered_action_preservation": "1.00",
+    "equivalence_coverage_floor": "0.80",
+    "maximum_equivalence_coverage_loss": "0.05",
+    "minimum_changed_clean_decisions": 1
+  },
+  "predecessor": {
+    "base_commit": "9fe03cea3975e81bbae57b870e7bc50d8cc29f49",
+    "d2_reconciliation_is_baseline_only_exception": true,
+    "d2_release_commit": "ecb5ea128c26d49af0661c5e2c3fe5a125f1cec5",
+    "d2_tag_object": "3f3c00e216879b4d1443ca20ac3e5f14c1bc0e29"
+  },
+  "publication_binding": {
+    "post_publication_edits_allowed": false,
+    "pre_registration_blob_sha256": "resolved after this file is written and before any later measurement",
+    "rule": "the first Git commit containing these exact bytes is the publication commit; its SHA is recorded in the execution log because a commit cannot contain its own SHA"
+  },
+  "recorded_at": "2026-08-03T10:07:42Z",
+  "revision": 3,
+  "schema_version": 1,
+  "sprint": "21D3",
+  "supersedes": "revision 2 without modifying it",
+  "wave": "W0"
+}

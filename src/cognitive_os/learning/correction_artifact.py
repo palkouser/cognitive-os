@@ -23,7 +23,10 @@ from __future__ import annotations
 
 import json
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 from decimal import Decimal
+from enum import StrEnum
+from hashlib import sha256
 from math import isfinite
 from typing import Any
 from uuid import UUID
@@ -32,8 +35,14 @@ from pydantic import Field, model_validator
 
 from cognitive_os.domain.base import ImmutableContractModel
 from cognitive_os.domain.common import NonEmptyStr, Sha256Hex
-from cognitive_os.domain.learned import LearnedArtifactFormat
+from cognitive_os.domain.learned import LearnedArtifactFormat, LearnedComponentState
+from cognitive_os.learning.correction_protocol import (
+    FITTED_FEATURE_V2_ALLOWLIST,
+    FITTED_FEATURE_V2_SCALARS,
+    CorrectionFeatureContractV2,
+)
 from cognitive_os.learning.correction_ranking import (
+    ENCODER_VERSION_V2,
     NUMERIC_FEATURE_NAMES,
     CorrectionFeatureVector,
     CorrectionKnn,
@@ -43,6 +52,13 @@ from cognitive_os.learning.correction_ranking import (
 CORRECTION_ARTIFACT_MEDIA_TYPE = "application/vnd.cognitive-os.correction-ranker+json"
 CORRECTION_ARTIFACT_SCHEMA = "correction-ranker-artifact"
 CORRECTION_ARTIFACT_SCHEMA_VERSION = 1
+
+#: S21D3-050. The v2 schema is a second name, not a second version number under the first.
+#: A v1 reader handed v2 bytes must fail on the name it does not know rather than on a
+#: field it happens to be missing, because the second failure depends on which fields the
+#: two shapes happen to share and the first does not.
+CORRECTION_ARTIFACT_SCHEMA_V2 = "correction-ranking-artifact-v2"
+CORRECTION_ARTIFACT_SCHEMA_V2_VERSION = 2
 
 #: A bound, not a target. An exemplar set larger than this is a corpus, and a corpus loaded
 #: into every runtime task is a latency budget nobody agreed to.
@@ -149,7 +165,114 @@ class CorrectionArtifactPayload(ImmutableContractModel):
         return self
 
 
-def canonical_bytes(payload: CorrectionArtifactPayload) -> bytes:
+class CorrectionArtifactPayloadV2(ImmutableContractModel):
+    """The v2 ranker as bytes: the canonicaliser that produced it, and what it was fitted on.
+
+    Everything v1 could not say. v1 named an `encoder_version` string and left the reader to
+    trust that the string meant the canonicaliser it thinks it means; v2 names the normaliser,
+    the grammar, the canonical prefix and the payload expression, so a replayed encoding is
+    checkable rather than assumed. It also names the channels in order, because a bound set
+    that covers the right feature *names* proves nothing about the order the values were
+    written in, and a reordered channel list is a silently different model.
+
+    Still deliberately absent, exactly as in v1: any hash of itself, any class or import
+    path, any dataset body, any candidate or task identity, any label.
+    """
+
+    schema_name: NonEmptyStr = CORRECTION_ARTIFACT_SCHEMA_V2
+    schema_version: int = Field(default=CORRECTION_ARTIFACT_SCHEMA_V2_VERSION, ge=2)
+
+    component_id: NonEmptyStr
+    component_revision: int = Field(ge=1)
+    surface: NonEmptyStr
+    learner_kind: NonEmptyStr
+    #: The descriptor these bytes were fitted for. Lineage the loader can check without
+    #: reaching for the ledger, so a v2 artifact cannot be read against another component's
+    #: descriptor and still look valid.
+    descriptor_hash: Sha256Hex
+    code_revision: NonEmptyStr
+
+    #: The v2 canonicaliser, spelled out rather than referenced.
+    encoder_version: NonEmptyStr = ENCODER_VERSION_V2
+    normalizer_version: NonEmptyStr
+    python_grammar: NonEmptyStr
+    canonical_prefix_hex: NonEmptyStr
+    canonical_payload: NonEmptyStr
+    feature_contract_hash: Sha256Hex
+
+    #: Named channels in fitted order: six scalars then 384 embedding components.
+    feature_channels: tuple[NonEmptyStr, ...] = Field(min_length=1)
+
+    training_dataset_id: UUID
+    calibration_dataset_id: UUID
+    example_manifest_hash: Sha256Hex
+    split_manifest_hash: Sha256Hex
+    selection_manifest_hash: Sha256Hex
+    member_manifest_hash: Sha256Hex
+    feature_schema_hash: Sha256Hex
+
+    embedding_model_id: NonEmptyStr
+    embedding_revision: NonEmptyStr
+    embedding_tree_digest: NonEmptyStr
+    embedding_dimension: int = Field(ge=1)
+
+    numeric_lower: tuple[tuple[NonEmptyStr, float], ...]
+    numeric_upper: tuple[tuple[NonEmptyStr, float], ...]
+
+    exemplars: tuple[ExemplarPayload, ...] = Field(min_length=1, max_length=MAXIMUM_EXEMPLARS)
+
+    #: The frozen grid point this artifact is. Named so two artifacts fitted from the same
+    #: rows under different settings cannot be confused for one another.
+    setting_identity: Sha256Hex
+    k: int = Field(ge=1)
+    embedding_weight: Decimal
+    similarity_floor: Decimal
+    agreement_floor: Decimal
+    confidence_floor: Decimal
+
+    maximum_inference_ms: int = Field(ge=1)
+    declared_limitations: tuple[NonEmptyStr, ...] = ()
+
+    @model_validator(mode="after")
+    def the_payload_is_internally_consistent(self) -> CorrectionArtifactPayloadV2:
+        if self.schema_name != CORRECTION_ARTIFACT_SCHEMA_V2:
+            raise ValueError(f"unknown artifact schema {self.schema_name!r}")
+        if self.encoder_version != ENCODER_VERSION_V2:
+            raise ValueError(f"a v2 artifact carries {ENCODER_VERSION_V2!r}, not its predecessor")
+        for name, value in (
+            ("embedding_weight", self.embedding_weight),
+            ("similarity_floor", self.similarity_floor),
+            ("agreement_floor", self.agreement_floor),
+            ("confidence_floor", self.confidence_floor),
+        ):
+            if not Decimal("0") <= value <= Decimal("1"):
+                raise ValueError(f"{name} must be a proportion in [0, 1]")
+
+        if self.feature_channels != FITTED_FEATURE_V2_ALLOWLIST:
+            raise ValueError("the stored channels are not the v2 fitted allowlist in fitted order")
+        bound_names = tuple(name for name, _ in self.numeric_lower)
+        if bound_names != FITTED_FEATURE_V2_SCALARS:
+            raise ValueError("the stored numeric bounds are not the six v2 scalars in order")
+        if tuple(name for name, _ in self.numeric_upper) != bound_names:
+            raise ValueError("the lower and upper bounds describe different features")
+
+        shapes = {
+            (len(item.embedding), tuple(n for n, _ in item.values)) for item in self.exemplars
+        }
+        if len(shapes) != 1:
+            raise ValueError("exemplars were not all encoded the same way")
+        dimension, names = next(iter(shapes))
+        if dimension != self.embedding_dimension:
+            raise ValueError(
+                f"exemplars carry {dimension}-dimensional embeddings but the artifact declares "
+                f"{self.embedding_dimension}"
+            )
+        if names != FITTED_FEATURE_V2_SCALARS:
+            raise ValueError("exemplar scalars are not the six v2 channels in fitted order")
+        return self
+
+
+def canonical_bytes(payload: CorrectionArtifactPayload | CorrectionArtifactPayloadV2) -> bytes:
     """The exact bytes the Artifact Store hashes. Sorted keys, no whitespace, UTF-8.
 
     Canonical rather than merely valid: two builds of the same model must produce the same
@@ -171,22 +294,12 @@ def _rebuild_vector(payload: ExemplarPayload, encoder_version: str) -> Correctio
     )
 
 
-def load_correction_ranker(
-    data: bytes,
-    *,
-    expected_component_id: str,
-    expected_revision: int,
-    expected_surface: str,
-    media_type: str = CORRECTION_ARTIFACT_MEDIA_TYPE,
-    maximum_bytes: int = MAXIMUM_ARTIFACT_BYTES,
-) -> tuple[CorrectionKnn, CorrectionArtifactPayload]:
-    """Read verified bytes into a `CorrectionKnn`, or refuse. Never anything else.
+def _document(data: bytes, *, media_type: str, maximum_bytes: int, schema: str) -> dict[str, Any]:
+    """The byte-level refusals, shared by both schema versions.
 
-    Every check is a refusal to hand back something that looks like a model: wrong media
-    type, oversized, not UTF-8, not JSON, not this schema, the wrong component, the wrong
-    revision, the wrong surface, or numbers that are not numbers. The caller has already
-    verified the bytes against their lineage hash; this verifies that they *say* what the
-    lineage claims.
+    The schema name is checked here rather than left to the model, so v1/v2 confusion is
+    reported as what it is instead of as whichever field the two shapes disagree about
+    first — and so it is reported before any payload is constructed at all.
     """
     if media_type != CORRECTION_ARTIFACT_MEDIA_TYPE:
         raise CorrectionArtifactError(
@@ -208,7 +321,33 @@ def load_correction_ranker(
         raise CorrectionArtifactError(
             "the payload must not embed its own hash; the Artifact Store is the authority"
         )
+    if document.get("schema_name") != schema:
+        raise CorrectionArtifactError(
+            f"artifact declares schema {document.get('schema_name')!r}, not {schema!r}"
+        )
+    return document
 
+
+def load_correction_ranker(
+    data: bytes,
+    *,
+    expected_component_id: str,
+    expected_revision: int,
+    expected_surface: str,
+    media_type: str = CORRECTION_ARTIFACT_MEDIA_TYPE,
+    maximum_bytes: int = MAXIMUM_ARTIFACT_BYTES,
+) -> tuple[CorrectionKnn, CorrectionArtifactPayload]:
+    """Read verified v1 bytes into a `CorrectionKnn`, or refuse. Never anything else.
+
+    Every check is a refusal to hand back something that looks like a model: wrong media
+    type, oversized, not UTF-8, not JSON, not this schema, the wrong component, the wrong
+    revision, the wrong surface, or numbers that are not numbers. The caller has already
+    verified the bytes against their lineage hash; this verifies that they *say* what the
+    lineage claims.
+    """
+    document = _document(
+        data, media_type=media_type, maximum_bytes=maximum_bytes, schema=CORRECTION_ARTIFACT_SCHEMA
+    )
     try:
         payload = CorrectionArtifactPayload.model_validate(document)
     except Exception as error:  # pydantic raises its own type; the verdict is the same
@@ -243,6 +382,149 @@ def load_correction_ranker(
         confidence_floor=payload.confidence_floor,
     )
     return ranker, payload
+
+
+def load_correction_ranker_v2(
+    data: bytes,
+    *,
+    expected_component_id: str,
+    expected_revision: int,
+    expected_surface: str,
+    expected_descriptor_hash: str,
+    contract: CorrectionFeatureContractV2 | None = None,
+    media_type: str = CORRECTION_ARTIFACT_MEDIA_TYPE,
+    maximum_bytes: int = MAXIMUM_ARTIFACT_BYTES,
+) -> tuple[CorrectionKnn, CorrectionArtifactPayloadV2]:
+    """Read verified v2 bytes into a `CorrectionKnn`, or refuse before building anything.
+
+    Beyond v1's refusals, the lineage is mandatory rather than declarative: the descriptor
+    hash the caller expects, and the canonicaliser identity the frozen v2 feature contract
+    declares, both have to be the ones in the bytes. An artifact that names the right
+    component under the wrong normaliser is a different model with the same label.
+    """
+    declared = contract or CorrectionFeatureContractV2()
+    document = _document(
+        data,
+        media_type=media_type,
+        maximum_bytes=maximum_bytes,
+        schema=CORRECTION_ARTIFACT_SCHEMA_V2,
+    )
+    try:
+        payload = CorrectionArtifactPayloadV2.model_validate(document)
+    except Exception as error:  # pydantic raises its own type; the verdict is the same
+        raise CorrectionArtifactError(
+            f"artifact does not match the declared schema: {error}"
+        ) from error
+
+    for label, found, expected in (
+        ("component", payload.component_id, expected_component_id),
+        ("revision", payload.component_revision, expected_revision),
+        ("surface", payload.surface, expected_surface),
+        ("descriptor", payload.descriptor_hash, expected_descriptor_hash),
+        ("normaliser", payload.normalizer_version, declared.normalizer_version),
+        ("grammar", payload.python_grammar, declared.python_grammar),
+        ("canonical prefix", payload.canonical_prefix_hex, declared.canonical_prefix_hex),
+        ("canonical payload", payload.canonical_payload, declared.canonical_payload),
+        ("feature contract", payload.feature_contract_hash, declared.content_hash),
+        ("embedding model", payload.embedding_model_id, declared.embedding_model),
+        ("embedding tree", payload.embedding_tree_digest, declared.embedding_tree_digest),
+        ("embedding dimension", payload.embedding_dimension, declared.embedding_dimensions),
+    ):
+        if found != expected:
+            raise CorrectionArtifactError(
+                f"artifact {label} is {found!r}, not the expected {expected!r}"
+            )
+    if payload.component_id != CorrectionKnn.component_id:
+        raise CorrectionArtifactError("artifact does not describe the correction ranker")
+
+    ranker = CorrectionKnn(
+        [
+            Exemplar(vector=_rebuild_vector(item, payload.encoder_version), accepted=item.accepted)
+            for item in payload.exemplars
+        ],
+        k=payload.k,
+        embedding_weight=payload.embedding_weight,
+        similarity_floor=payload.similarity_floor,
+        agreement_floor=payload.agreement_floor,
+        confidence_floor=payload.confidence_floor,
+    )
+    return ranker, payload
+
+
+def build_payload_v2(
+    *,
+    component_revision: int,
+    descriptor_hash: str,
+    code_revision: str,
+    ranker: CorrectionKnn,
+    exemplars: Sequence[Exemplar],
+    training_dataset_id: UUID,
+    calibration_dataset_id: UUID,
+    example_manifest_hash: str,
+    split_manifest_hash: str,
+    selection_manifest_hash: str,
+    member_manifest_hash: str,
+    feature_schema_hash: str,
+    embedding_revision: str,
+    numeric_lower: Mapping[str, float],
+    numeric_upper: Mapping[str, float],
+    setting_identity: str,
+    contract: CorrectionFeatureContractV2 | None = None,
+    maximum_inference_ms: int = 250,
+    declared_limitations: Sequence[str] = (),
+) -> CorrectionArtifactPayloadV2:
+    """Assemble a v2 payload from a fitted ranker, taking the canonicaliser from the contract.
+
+    The canonicaliser fields are copied rather than passed: a builder that let a caller name
+    its own normaliser would let the loader's identity check pass on an artifact nobody fitted
+    under the frozen contract.
+    """
+    declared = contract or CorrectionFeatureContractV2()
+    return CorrectionArtifactPayloadV2(
+        component_id=CorrectionKnn.component_id,
+        component_revision=component_revision,
+        surface=CorrectionKnn.surface,
+        learner_kind="bounded_cosine_knn",
+        descriptor_hash=descriptor_hash,
+        code_revision=code_revision,
+        normalizer_version=declared.normalizer_version,
+        python_grammar=declared.python_grammar,
+        canonical_prefix_hex=declared.canonical_prefix_hex,
+        canonical_payload=declared.canonical_payload,
+        feature_contract_hash=declared.content_hash,
+        feature_channels=FITTED_FEATURE_V2_ALLOWLIST,
+        training_dataset_id=training_dataset_id,
+        calibration_dataset_id=calibration_dataset_id,
+        example_manifest_hash=example_manifest_hash,
+        split_manifest_hash=split_manifest_hash,
+        selection_manifest_hash=selection_manifest_hash,
+        member_manifest_hash=member_manifest_hash,
+        feature_schema_hash=feature_schema_hash,
+        embedding_model_id=declared.embedding_model,
+        embedding_revision=embedding_revision,
+        embedding_tree_digest=declared.embedding_tree_digest,
+        embedding_dimension=declared.embedding_dimensions,
+        numeric_lower=tuple(
+            (name, float(numeric_lower[name])) for name in FITTED_FEATURE_V2_SCALARS
+        ),
+        numeric_upper=tuple(
+            (name, float(numeric_upper[name])) for name in FITTED_FEATURE_V2_SCALARS
+        ),
+        exemplars=tuple(
+            ExemplarPayload(
+                values=item.vector.values, embedding=item.vector.embedding, accepted=item.accepted
+            )
+            for item in exemplars
+        ),
+        setting_identity=setting_identity,
+        k=ranker.k,
+        embedding_weight=ranker.embedding_weight,
+        similarity_floor=ranker.similarity_floor,
+        agreement_floor=ranker.agreement_floor,
+        confidence_floor=ranker.confidence_floor,
+        maximum_inference_ms=maximum_inference_ms,
+        declared_limitations=tuple(declared_limitations),
+    )
 
 
 def build_payload(
@@ -301,3 +583,104 @@ def build_payload(
 
 #: Named so a caller cannot accidentally hand the loader a format it must never read.
 LOADABLE_FORMATS = frozenset({LearnedArtifactFormat.JSON})
+
+
+# --------------------------------------------------------------- the direct evaluation boundary
+
+
+class EvaluationPurpose(StrEnum):
+    """The three reads an unapproved artifact is allowed to serve. Routing is not among them."""
+
+    CALIBRATION = "calibration"
+    FINAL = "final"
+    SHADOW = "shadow"
+
+
+#: The only lifecycle states the direct builder will read an artifact in. A component past
+#: SHADOW has a resolver, an approval and a configuration; giving it a second way in would
+#: make all three optional.
+DIRECT_EVALUATION_STATES = frozenset(
+    {LearnedComponentState.REGISTERED, LearnedComponentState.SHADOW}
+)
+
+
+@dataclass(frozen=True, slots=True)
+class DirectEvaluationCapability:
+    """Authority to turn one exact artifact into a ranker, outside the runtime.
+
+    S21D3-052. Controlled evaluation needs a model before any resolver would hand one out:
+    calibration and the final batches read it while the component is unapproved, and shadow
+    reads it while the component is in SHADOW. The danger is that such a path becomes a way
+    around the resolver, so this is not a flag — it is a capability naming one artifact hash,
+    one purpose, and one lifecycle state, and every identity the bytes must agree with.
+
+    `LearnedRuntimeResolver` neither holds nor constructs one of these. That is the boundary:
+    the application runtime cannot select this path, because nothing on it has the authority
+    to say which artifact would be read.
+    """
+
+    purpose: EvaluationPurpose
+    component_state: LearnedComponentState
+    artifact_hash: str
+    component_id: str
+    component_revision: int
+    surface: str
+    descriptor_hash: str
+    training_dataset_id: UUID
+    split_manifest_hash: str
+    member_manifest_hash: str
+    selection_manifest_hash: str
+
+    def __post_init__(self) -> None:
+        if self.component_state not in DIRECT_EVALUATION_STATES:
+            raise CorrectionArtifactError(
+                f"the direct evaluation boundary is closed in {self.component_state.value}: "
+                "an approved component is read through the runtime resolver"
+            )
+
+
+def build_ranker_for_evaluation(
+    data: bytes,
+    *,
+    capability: DirectEvaluationCapability,
+    contract: CorrectionFeatureContractV2 | None = None,
+    media_type: str = CORRECTION_ARTIFACT_MEDIA_TYPE,
+    maximum_bytes: int = MAXIMUM_ARTIFACT_BYTES,
+) -> tuple[CorrectionKnn, CorrectionArtifactPayloadV2]:
+    """Rehash the exact bytes, check every declared identity, then build. In that order.
+
+    The rehash comes first because every check after it is a statement about *these* bytes.
+    Validating a payload and then trusting that the store handed over the artifact the
+    capability named is the time-of-check/time-of-use hole this exists to close.
+    """
+    digest = sha256(data).hexdigest()
+    if digest != capability.artifact_hash:
+        raise CorrectionArtifactError(
+            f"artifact bytes hash to {digest}, not the {capability.artifact_hash} this "
+            "capability authorises"
+        )
+    ranker, payload = load_correction_ranker_v2(
+        data,
+        expected_component_id=capability.component_id,
+        expected_revision=capability.component_revision,
+        expected_surface=capability.surface,
+        expected_descriptor_hash=capability.descriptor_hash,
+        contract=contract,
+        media_type=media_type,
+        maximum_bytes=maximum_bytes,
+    )
+    for label, found, expected in (
+        ("training dataset", payload.training_dataset_id, capability.training_dataset_id),
+        ("split manifest", payload.split_manifest_hash, capability.split_manifest_hash),
+        ("member manifest", payload.member_manifest_hash, capability.member_manifest_hash),
+        (
+            "selection manifest",
+            payload.selection_manifest_hash,
+            capability.selection_manifest_hash,
+        ),
+    ):
+        if found != expected:
+            raise CorrectionArtifactError(
+                f"artifact {label} is {found!r}, not the expected {expected!r}"
+            )
+    return ranker, payload

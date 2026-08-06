@@ -38,15 +38,22 @@ from dataclasses import dataclass
 from datetime import datetime
 from hashlib import sha256
 from itertools import product
-from math import sqrt
+from math import isfinite, sqrt
 from uuid import UUID
 
 from pydantic import Field
 
 from cognitive_os.domain.common import NonEmptyStr, Sha256Hex, UtcDatetime
 from cognitive_os.domain.experience import HashedExperienceContract
-from cognitive_os.learning.correction_protocol import CorrectionFeatureContract
-from cognitive_os.learning.correction_ranking import CorrectionFeatureVector
+from cognitive_os.learning.correction_protocol import (
+    FITTED_FEATURE_V2_EMBEDDING,
+    CorrectionFeatureContract,
+    CorrectionFeatureContractV2,
+)
+from cognitive_os.learning.correction_ranking import (
+    ENCODER_VERSION_V2,
+    CorrectionFeatureVector,
+)
 
 #: Two rows this similar are the same example wearing two candidate identities. Declared here
 #: rather than chosen from the observed distribution, and the observed maximum is reported
@@ -89,7 +96,7 @@ class FittedMatrix:
 
     @property
     def column_names(self) -> tuple[str, ...]:
-        return self.rows[0].vector.names if self.rows else ()
+        return self.rows[0].vector.fitted_names if self.rows else ()
 
     def canonical_bytes(self) -> bytes:
         ordered = sorted(self.rows, key=lambda row: str(row.candidate_id))
@@ -105,7 +112,7 @@ class FittedMatrix:
 
     def column(self, name: str) -> tuple[float, ...]:
         index = self.column_names.index(name)
-        return tuple(row.vector.numbers[index] for row in self.rows)
+        return tuple(row.vector.fitted_numbers[index] for row in self.rows)
 
     @property
     def labels(self) -> tuple[bool, ...]:
@@ -175,7 +182,9 @@ def separation(values: Sequence[float], labels: Sequence[bool]) -> float:
     return max(area, 1.0 - area)
 
 
-def _forbidden_fields(matrix: FittedMatrix, contract: CorrectionFeatureContract) -> MatrixScan:
+def _forbidden_fields(
+    matrix: FittedMatrix, contract: CorrectionFeatureContract | CorrectionFeatureContractV2
+) -> MatrixScan:
     offenders = tuple(name for name in matrix.column_names if contract.rejects(name))
     return MatrixScan(
         name="no_forbidden_field_reaches_the_matrix",
@@ -307,23 +316,77 @@ def _label_derived(matrix: FittedMatrix) -> MatrixScan:
     )
 
 
+def _finite_and_in_range(matrix: FittedMatrix) -> MatrixScan:
+    """Every v2 scalar is in [0, 1], every MiniLM channel in [-1, 1], and all are finite."""
+    embedding = set(FITTED_FEATURE_V2_EMBEDDING)
+    offenders: list[str] = []
+    for name in matrix.column_names:
+        low = -1.0 if name in embedding else 0.0
+        for index, value in enumerate(matrix.column(name)):
+            if not isfinite(value) or not low <= value <= 1.0:
+                offenders.append(f"{name}[{index}]")
+    return MatrixScan(
+        name="every_fitted_dimension_is_finite_and_in_range",
+        passed=not offenders,
+        detail=(
+            f"all {len(matrix.column_names)} fitted dimensions are finite and in range"
+            if not offenders
+            else f"{len(offenders)} fitted value(s) are non-finite or out of range"
+        ),
+        offenders=tuple(offenders),
+    )
+
+
+def _encoder_identity(rows: Sequence[FittedRow], expected: str) -> MatrixScan:
+    offenders = tuple(
+        str(row.candidate_id) for row in rows if row.vector.encoder_version != expected
+    )
+    return MatrixScan(
+        name="every_row_has_one_encoder_identity",
+        passed=not offenders,
+        detail=(
+            f"all {len(rows)} rows use {expected}"
+            if not offenders
+            else f"{len(offenders)} row(s) use another encoder"
+        ),
+        offenders=offenders,
+    )
+
+
 def scan_matrices(
     fit: FittedMatrix,
     calibration: FittedMatrix,
     *,
     created_at: datetime,
-    contract: CorrectionFeatureContract | None = None,
+    contract: CorrectionFeatureContract | CorrectionFeatureContractV2 | None = None,
     near_duplicate_threshold: float = NEAR_DUPLICATE_SIMILARITY,
 ) -> FittedMatrixReport:
     """Run every scan over the serialized matrices and record what each one found."""
     if not fit.rows or not calibration.rows:
         raise ValueError("a matrix scan needs both splits; an empty one cannot be checked")
+    encoder_version = fit.rows[0].vector.encoder_version
+    if any(row.vector.encoder_version != encoder_version for row in (*fit.rows, *calibration.rows)):
+        raise ValueError("every fitted row must use the same encoder version")
+    expected_columns = fit.rows[0].vector.fitted_names
+    if any(
+        row.vector.fitted_names != expected_columns
+        or len(row.vector.fitted_numbers) != len(expected_columns)
+        for row in (*fit.rows, *calibration.rows)
+    ):
+        raise ValueError("every fitted row must use the same ordered columns")
     if fit.column_names != calibration.column_names:
         raise ValueError("the two splits were encoded differently and cannot be compared")
-    feature_contract = contract or CorrectionFeatureContract()
+    if contract is None:
+        feature_contract = (
+            CorrectionFeatureContractV2()
+            if encoder_version == ENCODER_VERSION_V2
+            else CorrectionFeatureContract()
+        )
+    else:
+        feature_contract = contract
     combined = fit.rows + calibration.rows
     near_duplicate, highest = _near_duplicates(fit, calibration, threshold=near_duplicate_threshold)
-    scans = (
+    scans: tuple[MatrixScan, ...] = (
         _forbidden_fields(fit, feature_contract),
         _chronology(combined),
         _source_chain(combined),
@@ -333,8 +396,16 @@ def scan_matrices(
         _label_derived(fit),
         _label_derived(calibration),
     )
+    if encoder_version == ENCODER_VERSION_V2:
+        scans = (
+            scans[0],
+            _finite_and_in_range(fit),
+            _finite_and_in_range(calibration),
+            _encoder_identity(combined, encoder_version),
+            *scans[1:],
+        )
     return FittedMatrixReport(
-        encoder_version=fit.rows[0].vector.encoder_version,
+        encoder_version=encoder_version,
         feature_contract_hash=feature_contract.content_hash,
         fit_matrix_hash=fit.content_hash,
         calibration_matrix_hash=calibration.content_hash,

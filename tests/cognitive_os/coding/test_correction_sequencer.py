@@ -19,7 +19,19 @@ from cognitive_os.application.services.correction_candidate_sequencer import (
     SequenceMode,
     SequencingError,
 )
+from cognitive_os.application.services.reality_campaign import (
+    ReceiptAction,
+    ReceiptAwareResumePlan,
+    ResumePlan,
+    TaskReceiptState,
+)
 from cognitive_os.domain.enums import StreamType
+from cognitive_os.domain.reality import (
+    RealityCandidateSource,
+    RealityCandidateStrategy,
+    RealityRunIdentity,
+    RealityRunKind,
+)
 from cognitive_os.events.coding_event_service import CodingEventService
 from cognitive_os.events.coding_events import RealityCampaignSequenceRecorded
 from cognitive_os.events.memory_store import MemoryEventStore
@@ -293,3 +305,156 @@ class TestTheSequencerRefusesBadInput:
                 baseline_order=CANDIDATES,
                 attempt=wrong,
             )
+
+
+# ------------------------------------------------------ S21D3-053: the receipt-aware remainder
+
+
+def _resume(
+    *,
+    remaining: tuple[UUID, ...],
+    left_alone: tuple[UUID, ...] = (),
+    action: ReceiptAction = ReceiptAction.REPLAY_MISSING_OUTCOME,
+) -> ReceiptAwareResumePlan:
+    """A reconciled plan for `TASK`, built directly rather than replayed from a store.
+
+    The reconciliation itself is S21D3-025's and is tested there. What is under test here is
+    that the sequencer consults it and nothing else.
+    """
+    identities = tuple(
+        RealityRunIdentity(
+            task_id=TASK,
+            task_manifest_hash=MANIFEST,
+            run_kind=RealityRunKind.CANDIDATE,
+            candidate_id=candidate_id,
+            strategy=RealityCandidateStrategy.CORRECT_NARROW,
+            source=RealityCandidateSource.CURATED,
+            generator_profile_id="reality.tasks",
+            verifier_profile_hash=EVIDENCE,
+            campaign_version=1,
+        )
+        for candidate_id in remaining
+    )
+    return ReceiptAwareResumePlan(
+        plan=ResumePlan(remaining=identities),
+        tasks=(
+            TaskReceiptState(
+                task_id=TASK,
+                action=action,
+                attempted=tuple(item for item in CANDIDATES if item not in left_alone),
+                intentionally_unattempted=left_alone,
+                effective_remaining=identities,
+            ),
+        ),
+    )
+
+
+async def _resumed(resume: ReceiptAwareResumePlan, *, accepting: set[UUID]):
+    sequencer, _ = _sequencer()
+    attempt, seen = _runner(accepting)
+    outcome = await sequencer.run_task(
+        campaign_id=CAMPAIGN,
+        task_id=TASK,
+        partition="canary",
+        mode=SequenceMode.STOP_ON_FIRST_ACCEPTED,
+        campaign_manifest_hash=MANIFEST,
+        baseline_order=CANDIDATES,
+        attempt=attempt,
+        resume=resume,
+    )
+    return outcome, seen
+
+
+class TestTheRemainderIsTheOnlySchedulableSet:
+    @pytest.mark.asyncio
+    async def test_only_the_named_missing_outcome_is_replayed(self) -> None:
+        outcome, seen = await _resumed(
+            _resume(remaining=(CANDIDATES[1],), left_alone=CANDIDATES[2:]), accepting=set()
+        )
+
+        assert seen == [CANDIDATES[1]]
+        assert outcome.attempted_order == (CANDIDATES[1],)
+
+    @pytest.mark.asyncio
+    async def test_candidates_left_alone_never_re_enter(self) -> None:
+        """The whole reason the receipt exists: an ordinary plan would list these as remaining."""
+        outcome, seen = await _resumed(
+            _resume(
+                remaining=(),
+                left_alone=CANDIDATES[2:],
+                action=ReceiptAction.SEALED_AND_CONSISTENT,
+            ),
+            accepting=set(),
+        )
+
+        assert seen == []
+        assert outcome.attempted_order == ()
+        assert set(outcome.intentionally_unattempted) == set(CANDIDATES[2:])
+
+    @pytest.mark.asyncio
+    async def test_a_resume_restates_what_an_earlier_sequence_left_alone(self) -> None:
+        """`sequence_receipts` keeps the latest seal only, so the new one must say it again."""
+        outcome, _ = await _resumed(
+            _resume(remaining=(CANDIDATES[1],), left_alone=CANDIDATES[2:]), accepting=set()
+        )
+
+        assert set(outcome.intentionally_unattempted) == set(CANDIDATES[2:])
+
+    @pytest.mark.asyncio
+    async def test_the_first_acceptance_still_stops_the_rest_of_the_remainder(self) -> None:
+        outcome, seen = await _resumed(_resume(remaining=CANDIDATES[1:]), accepting={CANDIDATES[2]})
+
+        assert seen == [CANDIDATES[1], CANDIDATES[2]]
+        assert outcome.accepted_candidate_id == CANDIDATES[2]
+        assert outcome.intentionally_unattempted == (CANDIDATES[3],)
+
+    @pytest.mark.asyncio
+    async def test_a_repeated_resume_with_nothing_left_runs_nothing(self) -> None:
+        outcome, seen = await _resumed(
+            _resume(remaining=(), action=ReceiptAction.SEALED_AND_CONSISTENT), accepting=set()
+        )
+
+        assert seen == []
+        assert outcome.stop_reason == "exhausted_without_acceptance"
+
+    @pytest.mark.asyncio
+    async def test_a_contradicted_receipt_makes_the_task_unrunnable(self) -> None:
+        with pytest.raises(SequencingError, match="not resumable"):
+            await _resumed(
+                _resume(remaining=CANDIDATES, action=ReceiptAction.REFUSE_CONTRADICTED_RECEIPT),
+                accepting=set(),
+            )
+
+    @pytest.mark.asyncio
+    async def test_a_remainder_naming_a_stranger_is_refused(self) -> None:
+        with pytest.raises(SequencingError, match="outside this task's order"):
+            await _resumed(_resume(remaining=(uuid4(),)), accepting=set())
+
+    @pytest.mark.asyncio
+    async def test_a_learned_order_reorders_the_remainder_and_never_widens_it(self) -> None:
+        sequencer, _ = _sequencer()
+        attempt, seen = _runner(set())
+
+        outcome = await sequencer.run_task(
+            campaign_id=CAMPAIGN,
+            task_id=TASK,
+            partition="canary",
+            mode=SequenceMode.STOP_ON_FIRST_ACCEPTED,
+            campaign_manifest_hash=MANIFEST,
+            baseline_order=CANDIDATES,
+            attempt=attempt,
+            resolved_order=tuple(reversed(CANDIDATES)),
+            learned_ordering_used=True,
+            resume=_resume(remaining=(CANDIDATES[0], CANDIDATES[2])),
+        )
+
+        assert seen == [CANDIDATES[2], CANDIDATES[0]]
+        assert outcome.resolved_order == tuple(reversed(CANDIDATES))
+
+    @pytest.mark.asyncio
+    async def test_without_a_resume_the_full_order_still_runs(self) -> None:
+        """The parameter is optional, and a fresh campaign has no receipt to consult."""
+        outcome, seen, _, _ = await _run(SequenceMode.STOP_ON_FIRST_ACCEPTED, accepting=set())
+
+        assert seen == list(CANDIDATES)
+        assert outcome.attempted_order == CANDIDATES

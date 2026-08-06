@@ -1,0 +1,30 @@
+{
+  "diagnostic_integrity_content_hash": "0388540cef99c6e8a245b8b0c5a48e33bcc853861d33fedb3715bf1bec10a678",
+  "diagnostic_sha256": "5d0a8a95b37afb10d0154e5ba4592a904025ef69543f4452688907b11be35df5",
+  "improvised_feature_branch": false,
+  "integrity_content_hash": "5d24c7135a0b677694e80fc562e7f1727f4edeb6ed692a5bbfaf76caa7d25d30",
+  "items": [
+    "S21D3-027"
+  ],
+  "not_opened": [],
+  "opened": [
+    "S21D3-028",
+    "S21D3-030",
+    "S21D3-031",
+    "S21D3-032"
+  ],
+  "outcome": "proceed",
+  "pre_registration_sha256": "191b3757ded21a1c2c85459a34902f8dee3f2f35b0979b557f84c1a37fe6a191",
+  "reason": "only the pre-registered lexical, candidate-delta, query-cosine, and diff-shape channels moved; v2 is exact across all spent-D2 excluded-input cases",
+  "recorded_at": "2026-08-04T06:23:35.666745Z",
+  "rule_trace": {
+    "d2_reproduced": true,
+    "response": "correction-ranking-v2 only",
+    "structural_or_test_boundary_failure": false,
+    "unregistered_action_reversals": [],
+    "v2_invariant_failures": []
+  },
+  "schema_version": 1,
+  "sprint": "21D3",
+  "wave": "W1"
+}

@@ -1,0 +1,76 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/learned/d3-promotion-assessment.schema.json",
+  "additionalProperties": false,
+  "description": "The decision, bound to the exact payload bytes that justify it.\n\nThis is what the evidence record's `payload_hash` equals, and it names the artifact its\n`payload_artifact_id` must resolve to. Verification can therefore check that the stored\nevidence, the stored bytes, and the decision are all about one another without loading\nanything.",
+  "properties": {
+    "assessment_id": {
+      "format": "uuid",
+      "title": "Assessment Id",
+      "type": "string"
+    },
+    "component_id": {
+      "minLength": 1,
+      "title": "Component Id",
+      "type": "string"
+    },
+    "component_revision": {
+      "minimum": 1,
+      "title": "Component Revision",
+      "type": "integer"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "decision": {
+      "minLength": 1,
+      "title": "Decision",
+      "type": "string"
+    },
+    "payload_artifact_id": {
+      "format": "uuid",
+      "title": "Payload Artifact Id",
+      "type": "string"
+    },
+    "payload_content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Payload Content Hash",
+      "type": "string"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "recorded_at": {
+      "format": "date-time",
+      "title": "Recorded At",
+      "type": "string"
+    },
+    "schema_version": {
+      "default": 2,
+      "minimum": 2,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "surface": {
+      "minLength": 1,
+      "title": "Surface",
+      "type": "string"
+    }
+  },
+  "required": [
+    "assessment_id",
+    "component_id",
+    "component_revision",
+    "surface",
+    "payload_artifact_id",
+    "payload_content_hash",
+    "decision",
+    "reason",
+    "recorded_at"
+  ],
+  "title": "D3PromotionAssessment",
+  "type": "object"
+}

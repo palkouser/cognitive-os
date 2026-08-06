@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import os
 from datetime import UTC, datetime
+from hashlib import sha256
 from pathlib import Path
 from typing import Any
 from uuid import UUID, uuid4, uuid5
@@ -35,6 +36,19 @@ from cognitive_os.domain.learned_evidence import (
     LearnedEvidenceKind,
     LearnedEvidenceRecord,
 )
+from cognitive_os.domain.promotion_payload import (
+    D3_PROMOTION_GATES,
+    D3_PROMOTION_MEDIA_TYPE,
+    CanaryToSteadyCondition,
+    D3ArtifactBinding,
+    D3PromotionAssessment,
+    D3PromotionPayload,
+    D3RuntimeConfiguration,
+    PromotionDependency,
+    PromotionGateOutcome,
+    PromotionGateRecord,
+    canonical_payload_bytes,
+)
 from cognitive_os.events.learned_event_service import LearnedEventService
 from cognitive_os.events.memory_store import MemoryEventStore
 from cognitive_os.infrastructure.artifacts.filesystem import ContentAddressedFilesystem
@@ -48,6 +62,7 @@ from cognitive_os.infrastructure.learned.postgres.tables import LEARNED_EVIDENCE
 from cognitive_os.infrastructure.learned.reference import AlwaysAbstainingRanker
 from cognitive_os.infrastructure.postgres.artifact_repository import PostgresArtifactRepository
 from cognitive_os.infrastructure.postgres.engine import create_postgres_engine
+from cognitive_os.learning.promotion import D3PromotionBindings
 
 SMOKE_NAMESPACE = UUID("7e2b5c98-40a1-5d37-8f6b-1c94ae30d752")
 SMOKE_OPERATOR = "learned-smoke-operator"
@@ -143,17 +158,65 @@ async def _drive(
         reason="learned smoke: link the verified artifact",
     )
 
-    for target in (LearnedComponentState.SHADOW, LearnedComponentState.VERIFIED):
-        await service.advance_component(
-            descriptor.component_id,
-            target,
-            descriptor=descriptor,
-            actor=SMOKE_OPERATOR,
-            authority="operator",
-            reason=f"learned smoke: advance to {target.value}",
-            idempotency_key=f"smoke-{target.value}",
-            correlation_id=correlation,
-        )
+    await service.advance_component(
+        descriptor.component_id,
+        LearnedComponentState.SHADOW,
+        descriptor=descriptor,
+        actor=SMOKE_OPERATOR,
+        authority="operator",
+        reason="learned smoke: advance to shadow",
+        idempotency_key="smoke-shadow",
+        correlation_id=correlation,
+    )
+
+    # S21D3-057. `VERIFIED` is no longer an ordinary transition, so the smoke stores a real
+    # D3 promotion payload and verifies against it. That is a better smoke than the one it
+    # replaces: the payload bytes go through the same Artifact Store the model bytes did, and
+    # verification re-reads both rather than trusting this function's word for either.
+    payload = _promotion_payload(descriptor, reference)
+    payload_reference = await artifacts.store(
+        canonical_payload_bytes(payload), media_type=D3_PROMOTION_MEDIA_TYPE
+    )
+    d3_assessment = D3PromotionAssessment(
+        assessment_id=uuid5(SMOKE_NAMESPACE, "d3-assessment"),
+        component_id=descriptor.component_id,
+        component_revision=2,
+        surface=descriptor.surface,
+        payload_artifact_id=payload_reference.artifact_id,
+        payload_content_hash=payload_reference.content_hash,
+        decision="eligible",
+        reason="learned smoke: shape-only payload, every gate recorded as passed",
+        recorded_at=SMOKE_TIME,
+    )
+    await service.record_evidence(
+        LearnedEvidenceRecord(
+            evidence_id=uuid5(SMOKE_NAMESPACE, "d3-promotion-evidence"),
+            evidence_kind=LearnedEvidenceKind.PROMOTION_ASSESSMENT,
+            component_id=descriptor.component_id,
+            surface=descriptor.surface,
+            schema_version="2",
+            payload_hash=d3_assessment.content_hash,
+            payload_artifact_id=payload_reference.artifact_id,
+            recorded_by=SMOKE_OPERATOR,
+            recorded_at=SMOKE_TIME,
+        ),
+        correlation_id=correlation,
+        actor=SMOKE_OPERATOR,
+        authority="operator",
+        reason="learned smoke: record the D3 promotion payload",
+    )
+    await service.verify_component(
+        descriptor.component_id,
+        descriptor=descriptor,
+        assessment=d3_assessment,
+        payload=payload,
+        bindings=_promotion_bindings(descriptor, reference),
+        actor=SMOKE_OPERATOR,
+        authority="operator",
+        reason="learned smoke: verify against the stored payload",
+        idempotency_key="smoke-verified",
+        correlation_id=correlation,
+    )
 
     assessment = _assessment(descriptor)
     await service.record_evidence(
@@ -335,4 +398,83 @@ def _assessment(descriptor: Any) -> LearnedPromotionAssessment:
         decision=LearnedPromotionDecision.ELIGIBLE_FOR_OPERATOR_APPROVAL,
         reason="learned smoke: shape only, no accuracy claim is made",
         created_at=SMOKE_TIME,
+    )
+
+
+def _runtime_configuration(name: str, descriptor: Any) -> D3RuntimeConfiguration:
+    return D3RuntimeConfiguration(
+        name=name,
+        component_id=descriptor.component_id,
+        component_revision=2,
+        surface=descriptor.surface,
+        routed_group_ids=("smoke-group-a",) if name == "exact_canary" else ("smoke-group-b",),
+        routing_manifest_hash="c" * 64,
+        sequence_mode="stop_on_first_accepted",
+        persistence_enabled=True,
+        activation_enabled=True,
+        maximum_tasks=20 if name == "exact_canary" else 200,
+        kill_switch_enabled=True,
+        maximum_inference_ms=250,
+        fallback_on_refusal="frozen deterministic baseline order",
+    )
+
+
+def _transition_condition() -> CanaryToSteadyCondition:
+    return CanaryToSteadyCondition(minimum_canary_tasks=20, rollback_target_revision=1)
+
+
+#: Shape-only, exactly like `_assessment`: every gate is recorded as passed so the smoke can
+#: reach `VERIFIED`, and nothing here is a claim that anything was measured.
+_SMOKE_DEPENDENCIES: dict[str, str] = {"smoke_fixture": "1" * 64}
+
+
+def _promotion_payload(descriptor: Any, reference: Any) -> D3PromotionPayload:
+    return D3PromotionPayload(
+        component_id=descriptor.component_id,
+        component_revision=2,
+        surface=descriptor.surface,
+        code_revision="learned-smoke",
+        legacy_assessment_hash=_assessment(descriptor).content_hash,
+        legacy_decision="eligible_for_operator_approval",
+        gates=tuple(
+            PromotionGateRecord(
+                name=name,
+                outcome=PromotionGateOutcome.PASSED,
+                evidence_hash=sha256(f"smoke:{name}".encode()).hexdigest(),
+                detail=f"learned smoke: {name} is shape-only and makes no accuracy claim",
+            )
+            for name in D3_PROMOTION_GATES
+        ),
+        dependencies=tuple(
+            PromotionDependency(name=name, content_hash=value)
+            for name, value in sorted(_SMOKE_DEPENDENCIES.items())
+        ),
+        artifact=D3ArtifactBinding(
+            artifact_id=reference.artifact_id,
+            media_type=reference.media_type,
+            schema_name="learned-smoke-inert-bytes",
+            schema_version=1,
+            content_hash=reference.content_hash,
+            size_bytes=reference.size_bytes,
+        ),
+        canary_configuration_hash=_runtime_configuration("exact_canary", descriptor).content_hash,
+        steady_state_configuration_hash=_runtime_configuration(
+            "bounded_steady_state", descriptor
+        ).content_hash,
+        canary_to_steady_condition_hash=_transition_condition().content_hash,
+        recorded_at=SMOKE_TIME,
+    )
+
+
+def _promotion_bindings(descriptor: Any, reference: Any) -> D3PromotionBindings:
+    return D3PromotionBindings(
+        component_id=descriptor.component_id,
+        component_revision=2,
+        surface=descriptor.surface,
+        artifact_content_hash=reference.content_hash,
+        artifact_size_bytes=reference.size_bytes,
+        canary_configuration=_runtime_configuration("exact_canary", descriptor),
+        steady_state_configuration=_runtime_configuration("bounded_steady_state", descriptor),
+        canary_to_steady_condition=_transition_condition(),
+        dependency_hashes=dict(_SMOKE_DEPENDENCIES),
     )

@@ -1,0 +1,401 @@
+{
+  "counts": {
+    "carried": 0,
+    "failed": 0,
+    "met": 15,
+    "met_as_rejection": 1,
+    "not_opened": 13
+  },
+  "final_outcomes_inspected": false,
+  "gate_d1_open": [
+    {
+      "closure_rule": "at least 200 unique eligible verifier-backed primary-surface outcomes",
+      "condition": 6,
+      "declared_handle": "sprint-21d3-d1-condition-6.json",
+      "detail": "closed by the selection stop: the outcomes that would close it are final and canary outcomes, which were never authorised",
+      "frozen_content_hash": "497119ec4c1666e9c8392e5414c1abd59a562e9ef1b3ea7fa78c541eb2519a6e",
+      "state": "not_opened",
+      "stop_hash": "68ea06843d2136e390bf8a4ea0698414932987f5447887187907c45c0dcea876",
+      "stop_source": "S21D3-039 null candidate selection"
+    },
+    {
+      "closure_rule": "at least 20 primary-surface examples change advisory action",
+      "condition": 7,
+      "declared_handle": "sprint-21d3-d1-condition-7.json",
+      "detail": "closed by the selection stop: the outcomes that would close it are final and canary outcomes, which were never authorised",
+      "frozen_content_hash": "76224d117cc6fb5ec988241ac20b63f205769dddc1dc112ff9f66038fe65acec",
+      "state": "not_opened",
+      "stop_hash": "68ea06843d2136e390bf8a4ea0698414932987f5447887187907c45c0dcea876",
+      "stop_source": "S21D3-039 null candidate selection"
+    },
+    {
+      "closure_rule": "new unseen-task retrieval holdout independently clears both floors",
+      "condition": 15,
+      "declared_handle": "sprint-21d3-retrieval-holdout-result.json",
+      "detail": "D3 was condition 15's remediation route. The holdout was executed once on 60 unseen queries and no arm cleared either floor, so the condition remains_open",
+      "evidence": "sprint-21d3-retrieval-holdout-result.json",
+      "frozen_content_hash": "05e25dc5c410f31b8c4e1a987939c8c3cce98980ba6c9a032da7c8afce52a1b3",
+      "state": "not_opened",
+      "stop_hash": "f0b53912055223667c2cca9365b967c439b8599c60e47cbdeac78bfb23378824",
+      "stop_source": "S21D3-045 negative retrieval result"
+    }
+  ],
+  "gate_l2": [
+    {
+      "condition": 1,
+      "declared_handle": "sprint-21d3-baseline.json",
+      "detail": "the branch descends from the frozen baseline and the D2 release is re-read",
+      "evidence": "sprint-21d3-baseline.json",
+      "evidence_sha256": "f190771f9d6729c04d5bc7756fc084964d3ab4815280d9d3e24a96dffbe8923e",
+      "floor_or_rule": "fresh local and remote reads",
+      "frozen_content_hash": "e5783d4de53156f4d41820addb9dbb68a333e50a9f4792eb072f0dd17e200725",
+      "metric_or_invariant": "current baseline and exact predecessor release",
+      "rule": "the branch descends from the frozen baseline and the D2 release is re-read",
+      "state": "met"
+    },
+    {
+      "condition": 2,
+      "declared_handle": "sprint-21d3-d2-reconciliation.json",
+      "detail": "all four predecessor store fingerprints reproduce",
+      "evidence": "sprint-21d3-baseline.json",
+      "evidence_sha256": "f190771f9d6729c04d5bc7756fc084964d3ab4815280d9d3e24a96dffbe8923e",
+      "floor_or_rule": "four fingerprints unchanged",
+      "frozen_content_hash": "05c3a8aa3ce88c20daf9aab46bab969edb6ceb856ff6997258cef5abfa13d0f8",
+      "metric_or_invariant": "immutable predecessor stores and negative D2 release",
+      "rule": "all four predecessor store fingerprints reproduce",
+      "state": "met"
+    },
+    {
+      "condition": 3,
+      "declared_handle": "sprint-21d3-d2-reconciliation.json",
+      "detail": "the D2 denominator and retrieval reconciliation is published and immutable",
+      "evidence": "sprint-21d3-d2-reconciliation.json",
+      "evidence_sha256": "a0716fe92bd1ae8bb727d67a1ba614169985e7780b751937af7e77aebb0f1e6b",
+      "floor_or_rule": "ten D2 OOD decisions and canonical D2 retrieval values",
+      "frozen_content_hash": "bbf9f5cd3b6c641a23278592b59e4c35431d8abc23ab2d3e4dcb036c3b692f0b",
+      "metric_or_invariant": "unit and retrieval reconciliation",
+      "rule": "the D2 denominator and retrieval reconciliation is published and immutable",
+      "state": "met"
+    },
+    {
+      "condition": 4,
+      "declared_handle": "sprint-21d3-pre-registration.json",
+      "detail": "zero D3 measurements precede publication",
+      "evidence": "sprint-21d3-pre-registration.json",
+      "evidence_sha256": "191b3757ded21a1c2c85459a34902f8dee3f2f35b0979b557f84c1a37fe6a191",
+      "floor_or_rule": "zero D3 measurements before publication",
+      "frozen_content_hash": "6bb21ed822a1cd9adf9e2a94fe0069b1033dc3481fddd7fb185dd743989a8645",
+      "metric_or_invariant": "revision-3 pre-registration chronology",
+      "rule": "zero D3 measurements precede publication",
+      "state": "met"
+    },
+    {
+      "condition": 5,
+      "declared_handle": "sprint-21d3-gate-l2-condition-5.json",
+      "detail": "the mandatory decision is identical under every fallback configuration, and only a bounded campaign configuration reorders",
+      "evidence": "sprint-21d3-runtime-invariance.json",
+      "evidence_sha256": "78ef8d39734fba7d4791156389bf1400f33162285d380d3a8b17ebf050923fde",
+      "floor_or_rule": "prediction may only order attempts",
+      "frozen_content_hash": "91cf61883ad79cf4a44820c2ad68a55a107527ffefc3d7f2d8c46ba9f3b93a27",
+      "metric_or_invariant": "verifier remains label and acceptance authority",
+      "rule": "the mandatory decision is identical under every fallback configuration, and only a bounded campaign configuration reorders",
+      "state": "met"
+    },
+    {
+      "condition": 6,
+      "declared_handle": "sprint-21d3-gate-l2-condition-6.json",
+      "detail": "the fitted matrix scans all 390 v2 columns and carries no forbidden field",
+      "evidence": "sprint-21d3-vertical-slice.json",
+      "evidence_sha256": "85b1aec2a64221b2d11af2e0ff805748857cfbef54c83c8fb7fa856b8f678c1d",
+      "floor_or_rule": "zero forbidden, identity, outcome or answer fields",
+      "frozen_content_hash": "a45d2722b683cda9a7a7bea4093fa52898babcab7a3eab7505dd89a9cb643615",
+      "metric_or_invariant": "v2 fitted matrix contains no forbidden field",
+      "rule": "the fitted matrix scans all 390 v2 columns and carries no forbidden field",
+      "state": "met"
+    },
+    {
+      "condition": 7,
+      "declared_handle": "sprint-21d3-gate-l2-condition-7.json",
+      "detail": "zero groups cross a role and no near clone survives",
+      "evidence": "sprint-21d3-separation.json",
+      "evidence_sha256": "e450634efee088e4fa30e141200d9b78ccca097800e67f07ed5b1e2f3f2dbd7a",
+      "floor_or_rule": "zero cross-role groups or near clones",
+      "frozen_content_hash": "75f92bb716d6dba9332e46360f3e4e33c666d6561380ffa0d94b58ca81cf994e",
+      "metric_or_invariant": "transitive groups never cross roles",
+      "rule": "zero groups cross a role and no near clone survives",
+      "state": "met"
+    },
+    {
+      "condition": 8,
+      "declared_handle": "sprint-21d3-gate-l2-condition-8.json",
+      "detail": "200 fitting outcomes over 50 groups and 80 calibration over 20",
+      "evidence": "sprint-21d3-self-play-campaign.json",
+      "evidence_sha256": "ea48783e6d4e142afd8771a79f4b9a9dcb157f6094910fd34d4e49948ace1167",
+      "floor_or_rule": "fit 200/50 and calibration 80/20 target",
+      "frozen_content_hash": "ea1d7b9d7889d02e2aa680988792b23c0667f6e28749ccdbce66a5a51ed27075",
+      "metric_or_invariant": "minimum fit and calibration counts",
+      "rule": "200 fitting outcomes over 50 groups and 80 calibration over 20",
+      "state": "met"
+    },
+    {
+      "condition": 9,
+      "declared_handle": "sprint-21d3-gate-l2-condition-9.json",
+      "detail": "zero real governed runs entered fitting or calibration",
+      "evidence": "sprint-21d3-self-play-campaign.json",
+      "evidence_sha256": "ea48783e6d4e142afd8771a79f4b9a9dcb157f6094910fd34d4e49948ace1167",
+      "floor_or_rule": "exactly zero",
+      "frozen_content_hash": "97d687fe124d6883a3c686b9fa5f2a93ae18286f2e245997b10cb67186018fd4",
+      "metric_or_invariant": "zero real governed runs in fit or calibration",
+      "rule": "zero real governed runs entered fitting or calibration",
+      "state": "met"
+    },
+    {
+      "condition": 10,
+      "declared_handle": "sprint-21d3-gate-l2-condition-10.json",
+      "detail": "closed by the selection stop before it could be measured",
+      "floor_or_rule": "120 outcomes over 30 groups in each batch",
+      "frozen_content_hash": "d6b93e598e015212264bf14d84e27bac0dd78a20ab7ab6dcf3749945973560db",
+      "metric_or_invariant": "two exact independent final batches",
+      "state": "not_opened",
+      "stop_hash": "68ea06843d2136e390bf8a4ea0698414932987f5447887187907c45c0dcea876",
+      "stop_source": "S21D3-039 null candidate selection"
+    },
+    {
+      "condition": 11,
+      "declared_handle": "sprint-21d3-gate-l2-condition-11.json",
+      "detail": "closed by the selection stop before it could be measured",
+      "floor_or_rule": "exact artifact and prediction seals before access",
+      "frozen_content_hash": "fd98501b41494f96bfb2aeb3b48ee1c6d84462e43b47947594ac7fe25bcda694",
+      "metric_or_invariant": "holdout inaccessible and candidate selected before access",
+      "state": "not_opened",
+      "stop_hash": "68ea06843d2136e390bf8a4ea0698414932987f5447887187907c45c0dcea876",
+      "stop_source": "S21D3-039 null candidate selection"
+    },
+    {
+      "condition": 12,
+      "declared_handle": "sprint-21d3-gate-l2-condition-12.json",
+      "detail": "every attempted rung is retained on the ladder and every frozen setting measured",
+      "evidence": "sprint-21d3-learner-selection.json",
+      "evidence_sha256": "216b196f491af5f9f128ba93a6193831b0ab4ebb84ad9cbe4476df554d756b5f",
+      "floor_or_rule": "all attempted rungs retained",
+      "frozen_content_hash": "0abc9c78be05f28d78566321899ca8cd5012e486989527304043d56f266960c7",
+      "metric_or_invariant": "strongest deterministic baseline and revised k-NN first",
+      "rule": "every attempted rung is retained on the ladder and every frozen setting measured",
+      "state": "met"
+    },
+    {
+      "condition": 13,
+      "declared_handle": "sprint-21d3-gate-l2-condition-13.json",
+      "detail": "closed by the selection stop before it could be measured",
+      "floor_or_rule": "at least 20",
+      "frozen_content_hash": "c3fdb42af5e0fb042268a6f1c2e930940b5faed5a854f2b6263788775189181b",
+      "metric_or_invariant": "at least twenty changed final group decisions",
+      "state": "not_opened",
+      "stop_hash": "68ea06843d2136e390bf8a4ea0698414932987f5447887187907c45c0dcea876",
+      "stop_source": "S21D3-039 null candidate selection"
+    },
+    {
+      "condition": 14,
+      "declared_handle": "sprint-21d3-gate-l2-condition-14.json",
+      "detail": "closed by the selection stop before it could be measured",
+      "floor_or_rule": "at least 0.05 absolute or 0.20 relative error reduction",
+      "frozen_content_hash": "018f8acb391d887f325c256ad407cd9bc492641c1450ddd0a585d464fd65c966",
+      "metric_or_invariant": "absolute or relative benefit floor",
+      "state": "not_opened",
+      "stop_hash": "68ea06843d2136e390bf8a4ea0698414932987f5447887187907c45c0dcea876",
+      "stop_source": "S21D3-039 null candidate selection"
+    },
+    {
+      "condition": 15,
+      "declared_handle": "sprint-21d3-gate-l2-condition-15.json",
+      "detail": "closed by the selection stop before it could be measured",
+      "floor_or_rule": "seed 21041, 2000 resamples, 95% lower bound above zero",
+      "frozen_content_hash": "2bc0f58e358c44766f47cd10436b48d747bfee9692b5c9cbf225a8e247ce7075",
+      "metric_or_invariant": "paired group bootstrap lower bound above zero",
+      "state": "not_opened",
+      "stop_hash": "68ea06843d2136e390bf8a4ea0698414932987f5447887187907c45c0dcea876",
+      "stop_source": "S21D3-039 null candidate selection"
+    },
+    {
+      "condition": 16,
+      "declared_handle": "sprint-21d3-gate-l2-condition-16.json",
+      "detail": "closed by the selection stop before it could be measured",
+      "floor_or_rule": "strictly positive in each batch",
+      "frozen_content_hash": "7130c2eb0de43d3c7004c51ccc20f00b41eaf3246f11156fcdc7f386b14f26a7",
+      "metric_or_invariant": "positive direction in final A and final B",
+      "state": "not_opened",
+      "stop_hash": "68ea06843d2136e390bf8a4ea0698414932987f5447887187907c45c0dcea876",
+      "stop_source": "S21D3-039 null candidate selection"
+    },
+    {
+      "condition": 17,
+      "declared_handle": "sprint-21d3-gate-l2-condition-17.json",
+      "detail": "ranking decisions and candidate outcomes are counted apart",
+      "evidence": "sprint-21d3-calibration-metamorphic.json",
+      "evidence_sha256": "e3228af759388b05a8d9ff6516ea1d744d3026ceec37ed624f4a76c9686511c5",
+      "floor_or_rule": "every rate names numerator and denominator units",
+      "frozen_content_hash": "e5e25ad97f779e049390fbeecbc164ff39a93013c63f005bd7ac071a79d41d42",
+      "metric_or_invariant": "unit-correct operational denominators",
+      "rule": "ranking decisions and candidate outcomes are counted apart",
+      "state": "met"
+    },
+    {
+      "condition": 18,
+      "declared_handle": "sprint-21d3-gate-l2-condition-18.json",
+      "detail": "closed by the selection stop before it could be measured",
+      "floor_or_rule": "zero",
+      "frozen_content_hash": "648e9241230fd6fc2282c0476dd0908e299ec3b2f7c92105f468546c237d1bc2",
+      "metric_or_invariant": "zero accepted safety or governance regressions",
+      "state": "not_opened",
+      "stop_hash": "68ea06843d2136e390bf8a4ea0698414932987f5447887187907c45c0dcea876",
+      "stop_source": "S21D3-039 null candidate selection"
+    },
+    {
+      "condition": 19,
+      "declared_handle": "sprint-21d3-gate-l2-condition-19.json",
+      "detail": "closed by the selection stop before it could be measured",
+      "floor_or_rule": "domain loss at most 0.02 and aggregate loss at most 0.01",
+      "frozen_content_hash": "6ec3e48deefdd56930ff53acfd998eaf6884392702b9e30835190d03c8b5e1f2",
+      "metric_or_invariant": "retention floors by domain and aggregate",
+      "state": "not_opened",
+      "stop_hash": "68ea06843d2136e390bf8a4ea0698414932987f5447887187907c45c0dcea876",
+      "stop_source": "S21D3-039 null candidate selection"
+    },
+    {
+      "condition": 20,
+      "declared_handle": "sprint-21d3-gate-l2-condition-20.json",
+      "detail": "at least 100 ranking decisions over at least 10 groups",
+      "evidence": "sprint-21d3-calibration-metamorphic.json",
+      "evidence_sha256": "e3228af759388b05a8d9ff6516ea1d744d3026ceec37ed624f4a76c9686511c5",
+      "floor_or_rule": "at least 100 decisions/10 groups, report <=0.01, promotion zero errors",
+      "frozen_content_hash": "35c125d4842f3378bd477a0e0c0b740a1e8be2a94d117317767b3e60af7b01cc",
+      "metric_or_invariant": "one hundred promotion metamorphic decisions with safety ceiling",
+      "rule": "at least 100 ranking decisions over at least 10 groups",
+      "state": "met"
+    },
+    {
+      "condition": 21,
+      "declared_handle": "sprint-21d3-gate-l2-condition-21.json",
+      "detail": "closed by the selection stop before it could be measured",
+      "floor_or_rule": "zero executed changes",
+      "frozen_content_hash": "5d68e2bf1d477eca2e410819b8f0cedf2c85f6be1a9e7106fecf3d03608dfa87",
+      "metric_or_invariant": "shadow executes no changed decision",
+      "state": "not_opened",
+      "stop_hash": "68ea06843d2136e390bf8a4ea0698414932987f5447887187907c45c0dcea876",
+      "stop_source": "S21D3-039 null candidate selection"
+    },
+    {
+      "condition": 22,
+      "declared_handle": "sprint-21d3-gate-l2-condition-22.json",
+      "detail": "the artifact is canonical JSON and every unsafe or wrong-schema load refuses",
+      "evidence": "sprint-21d3-runtime-invariance.json",
+      "evidence_sha256": "78ef8d39734fba7d4791156389bf1400f33162285d380d3a8b17ebf050923fde",
+      "floor_or_rule": "canonical JSON only; unsafe loaders refuse",
+      "frozen_content_hash": "806d72a56ceec8cf914ca89032b75f5617ad42bb64301be0536aee7a4d3fa938",
+      "metric_or_invariant": "canonical inert JSON artifact with complete lineage",
+      "rule": "the artifact is canonical JSON and every unsafe or wrong-schema load refuses",
+      "state": "met"
+    },
+    {
+      "condition": 23,
+      "declared_handle": "sprint-21d3-gate-l2-condition-23.json",
+      "detail": "every runtime reason code is reachable and each falls back deterministically",
+      "evidence": "sprint-21d3-runtime-invariance.json",
+      "evidence_sha256": "78ef8d39734fba7d4791156389bf1400f33162285d380d3a8b17ebf050923fde",
+      "floor_or_rule": "immediate fallback with reason",
+      "frozen_content_hash": "3d6a64f95b7d0e3c2d6a5077c1813482c347bebf3646900f86c7921103d5e9fc",
+      "metric_or_invariant": "structured deterministic fallback on every failure",
+      "rule": "every runtime reason code is reachable and each falls back deterministically",
+      "state": "met"
+    },
+    {
+      "condition": 24,
+      "declared_handle": "sprint-21d3-retrieval-holdout-result.json",
+      "detail": "the floors were measured on 60 unseen queries and no arm cleared them; the first failed floor is recall_at_5",
+      "evidence": "sprint-21d3-retrieval-holdout-result.json",
+      "evidence_sha256": "b35beef5479fd61893f78b21f8e2b1760c2c018747130829b902974a18d17073",
+      "floor_or_rule": "Recall@5 >=0.70 and MRR@10 >=0.50 on at least 50 queries",
+      "frozen_content_hash": "39ac4180291905998d37534a1c800895020e357cc519bdf3795c1f4eef3f576b",
+      "metric_or_invariant": "new retrieval holdout clears recall and MRR floors",
+      "rule": "Recall@5 >= 0.70 and MRR@10 >= 0.50 on at least 50 distinct unseen queries",
+      "state": "met_as_rejection"
+    },
+    {
+      "condition": 25,
+      "declared_handle": "sprint-21d3-gate-l2-condition-25.json",
+      "detail": "closed by the selection stop before it could be measured",
+      "floor_or_rule": "exact canary manifest and immediate kill switch",
+      "frozen_content_hash": "2943fe7f687745d40c787be48ebe8608b0a56624f87118818a19382a0baa8ea2",
+      "metric_or_invariant": "hash-bound canary with verifier and kill switch",
+      "state": "not_opened",
+      "stop_hash": "68ea06843d2136e390bf8a4ea0698414932987f5447887187907c45c0dcea876",
+      "stop_source": "S21D3-039 null candidate selection"
+    },
+    {
+      "condition": 26,
+      "declared_handle": "sprint-21d3-gate-l2-condition-26.json",
+      "detail": "closed by the selection stop before it could be measured",
+      "floor_or_rule": "all transitions reproduce after restart",
+      "frozen_content_hash": "f9c0443848732ffa5021f0bd0bcd9836d0dd7b7bbab07205591932426d13ab6b",
+      "metric_or_invariant": "restart-safe lifecycle, disable, restore and rollback",
+      "state": "not_opened",
+      "stop_hash": "68ea06843d2136e390bf8a4ea0698414932987f5447887187907c45c0dcea876",
+      "stop_source": "S21D3-039 null candidate selection"
+    },
+    {
+      "condition": 27,
+      "declared_handle": "sprint-21d3-gate-l2-condition-27.json",
+      "detail": "closed by the selection stop before it could be measured",
+      "floor_or_rule": "existing eleven approval fields and human operator",
+      "frozen_content_hash": "100a164cfea5825a82f9c5fd7aab055ef6be8553c0c068e66ebbe586a8b7ccd6",
+      "metric_or_invariant": "exact human approval authority and no self-approval",
+      "state": "not_opened",
+      "stop_hash": "68ea06843d2136e390bf8a4ea0698414932987f5447887187907c45c0dcea876",
+      "stop_source": "S21D3-039 null candidate selection"
+    },
+    {
+      "condition": 28,
+      "declared_handle": "sprint-21d3-gate-l2-condition-28.json",
+      "detail": "every required isolated and repository check ran and passed, none skipped",
+      "evidence": "sprint-21d3-verification-matrix.json",
+      "evidence_sha256": "17a03cbcae8ec4b427a78f2d28ed8f6750b85df63ce2c93654c500487ac4c97c",
+      "floor_or_rule": "all required isolated and repository checks pass",
+      "frozen_content_hash": "54b8004bd77451281c20460961f55bc0259bf050febe77c8902510da6127f09d",
+      "metric_or_invariant": "isolated recovery and complete validation matrix",
+      "rule": "every required isolated and repository check ran and passed, none skipped",
+      "state": "met"
+    },
+    {
+      "condition": 29,
+      "declared_handle": "sprint-21d3-release.json",
+      "detail": "in progress: the protected implementation release and its post-merge CI",
+      "floor_or_rule": "protected merge, post-merge main CI and annotated remote tag",
+      "frozen_content_hash": "3d33abd5c74b900e70e340172011df9f4a0f0f415098aada18f6a0e65d1cfff7",
+      "metric_or_invariant": "protected release, exact-head CI, documents and verified tag",
+      "provisional": true,
+      "state": "not_opened"
+    }
+  ],
+  "gate_manifest_hash": "45a8e9b07fbb2f08033bfbe55b486c7a11a8c2f6f473cc62af98180aca5a439e",
+  "integrity_content_hash": "e2d1dffad6aec31721e0965aa03ee2b1f210466d01f2cada8020299af8250e50",
+  "item": "S21D3-091",
+  "pre_registration_sha256": "191b3757ded21a1c2c85459a34902f8dee3f2f35b0979b557f84c1a37fe6a191",
+  "provisional_until": "the protected merge, its exact-head post-merge main CI, and remote tag verification",
+  "purpose": "The twenty-nine Gate L2 conditions and Gate D1's three open ones, each decided by the evidence that bears on it. No condition may be asserted; every row names its file and rule, or the stop hash that closed it.",
+  "recorded_at": "2026-08-05T17:14:03.026702Z",
+  "schema_version": 1,
+  "sprint": "21D3",
+  "stops": {
+    "retrieval": {
+      "hash": "f0b53912055223667c2cca9365b967c439b8599c60e47cbdeac78bfb23378824",
+      "source": "S21D3-045 negative retrieval result"
+    },
+    "selection": {
+      "hash": "68ea06843d2136e390bf8a4ea0698414932987f5447887187907c45c0dcea876",
+      "source": "S21D3-039 null candidate selection"
+    }
+  },
+  "verdict": "gate_l2_does_not_pass",
+  "verdict_reason": "the gate passes only when every applicable condition is met; 13 were never opened and condition 24 is met as a rejection",
+  "wave": "W8"
+}

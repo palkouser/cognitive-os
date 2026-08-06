@@ -2,18 +2,19 @@
 
 Status: active execution plan
 
-Revision: 6
+Revision: 7
 
-Assessment date: 2026-07-31
+Assessment date: 2026-08-03
 
-Current protected predecessor release: `sprint-21d1-emg-baseline`
+Current protected predecessor release: `sprint-21d2-evidence-baseline` (negative)
 
-Protected predecessor commit: `b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9`
+Protected predecessor commit: `ecb5ea128c26d49af0661c5e2c3fe5a125f1cec5`
 
 Current planning head: `origin/main` at
-`1cadbabb5cdabb32bbd502f281d734fb25a229ff`
+`9fe03cea3975e81bbae57b870e7bc50d8cc29f49`
 
-Next execution sprint: Sprint 21D2 — Useful Learned Correction Ranking and Gate L2
+Next execution sprint: Sprint 21D3 — Invariant Correction Ranking, Independent Retrieval
+Closure, and Gate L2
 
 Primary scope: finish Sprint 21 correctly, execute Sprint 22, and define the evidence
 required before Sprint 23 alpha
@@ -29,6 +30,9 @@ Execution documents:
 - [Sprint 21C3 technical backlog](../sprint-21/sprint-21c3-technical-backlog.md)
 - [Sprint 21D1 technical backlog](../sprint-21/sprint-21d1-technical-backlog.md)
 - [Sprint 21D2 technical backlog](../sprint-21/sprint-21d2-technical-backlog.md)
+- [Sprint 21D3 technical backlog](../sprint-21/sprint-21d3-technical-backlog.md)
+- [Sprint 21D2 report](../sprint-21/sprint-21d2-report.md)
+- [Sprint 21D3 handoff](../sprint-21/sprint-21d3-handoff.md)
 - [Sprint 21D1 report](../sprint-21/sprint-21d1-report.md)
 - [Gate D1 assessment](../sprint-21/gate-d1-assessment.md)
 - [Sprint 21 Gate L assessment](../sprint-21/gate-l-assessment.md)
@@ -105,42 +109,48 @@ for the first learning gate.
 
 | Item | Verified state | Consequence |
 |---|---|---|
-| Current `origin/main` | `1cadbabb5cdabb32bbd502f281d734fb25a229ff` | Includes D1 implementation and gate-close PR `#218` |
-| D1 release tag | Annotated `sprint-21d1-emg-baseline`, tag object `a59977dbcf23df60a700385a6fc15b012bf6d142`, peeled to `b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9` | Protected D2 implementation predecessor evidence |
-| Sprint 21D1 pull requests | `#217` implementation and `#218` gate-close documentation, merged | D1 behavior and negative final assessment are on `main` |
-| D1 release CI | Run `30657167717`, 30 of 30 jobs successful on the peeled release commit | Exact implementation-release evidence exists |
-| Latest `main` CI | Run `30658256397`, 30 of 30 jobs successful on exact current `origin/main` | Gate-close planning head is green |
-| Alembic head | `0015_create_provider_output_governance.py` | D2 uses existing stores by default; `0016` requires measured need |
-| Next branch | `feature/sprint-21d2-useful-learned-activation` | Create from revalidated current `origin/main`, retaining gate-close documentation |
-| Gate state | Gate D1 does not pass: 17 met, one not applicable, conditions 6, 7 and 15 open; Gate L2 does not pass | D2 remediation and useful learned activation are next |
+| Current `origin/main` | `9fe03cea3975e81bbae57b870e7bc50d8cc29f49` | Includes D2 implementation and gate-close PR `#220` |
+| D2 release tag | Annotated negative `sprint-21d2-evidence-baseline`, tag object `3f3c00e216879b4d1443ca20ac3e5f14c1bc0e29`, peeled to `ecb5ea128c26d49af0661c5e2c3fe5a125f1cec5` | Immutable D3 implementation predecessor evidence |
+| Sprint 21D2 pull requests | `#219` implementation and `#220` gate-close documentation, merged | D2 behavior, negative assessment, report, and remediation handoff are on `main` |
+| D2 release CI | Run `30788129259`, 30 of 30 jobs successful on the peeled release commit | Exact implementation-release evidence exists |
+| Latest `main` CI | Run `30789985887`, 30 of 30 jobs successful on exact current `origin/main` | Gate-close planning head is green |
+| Alembic head | `0015_create_provider_output_governance.py` | D3 uses existing stores by default; `0016` requires measured need |
+| Next branch | `feature/sprint-21d3-invariant-correction-ranking` | Create from revalidated current `origin/main`, retaining gate-close documentation |
+| Gate state | Gate D1 conditions 6, 7 and 15 open; Gate L2 does not pass; Sprint 22A blocked | D3 invariant-feature and independent-retrieval remediation is next |
 
-Sprint 21R, Sprint 21C1, Sprint 21C2, Sprint 21C3, and the D1 implementation
-release are complete. D1's negative gate result is not a failed release and is not a
-passed gate. Sprint 21D2 must revalidate the predecessor tag and current planning head
-separately, then close the three open D1 conditions with new evidence before Gate L2.
+Sprint 21R, Sprint 21C1, Sprint 21C2, Sprint 21C3, D1, and D2 are complete releases.
+D2 is a valid negative experiment, not a passed gate: its k-NN found clean calibration signal
+but failed semantics-preserving OOD, selected no artifact, opened no final holdout, and activated
+nothing. Sprint 21D3 must preserve that result, correct the OOD denominator and retrieval
+evidence discrepancies, run one pre-registered invariant feature revision on fresh evidence,
+and close retrieval independently before Gate L2 can pass.
 
-### 3.2 Final Sprint 21D1 verification
+### 3.2 Final Sprint 21D2 verification
 
-The C1, C2, C3, and D1 reports and annotated tags retain the full commands,
+The C1, C2, C3, D1, and D2 reports and annotated tags retain the full commands,
 environments, hashes, and limitations. The latest release evidence includes:
 
 | Check | Result |
 |---|---:|
-| D1 release CI | `30/30` jobs passed on `b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9` |
-| Current gate-close CI | run `30658256397` passed `30/30` on `1cadbabb5cdabb32bbd502f281d734fb25a229ff` |
-| Full non-integration local suite | `2310 passed, 3 skipped` |
-| Local evidence matrix | 22 rows reached their expected status in 306 seconds |
-| Canonical starting outcomes | `214`: 150 coding plus 64 governed benchmark cases |
-| Deferred ranking surface | 120 eligible real-run examples, balanced 60/60, 30 groups, 30 changeable rankings |
-| Graph evidence | 80 pairs, three domains, 50 groups, 100% source resolution and edit-path round-trip |
-| MiniLM vector retrieval | Recall@5 `0.5375`, MRR@10 `0.4392`, p95 `27.5 ms` |
-| Width-10 graph retrieval | Recall@5 `0.6750`, MRR@10 `0.4481`, p95 `1788.9 ms`, 60 cutoffs |
-| D1 gate | 17 met, one not applicable, conditions 6, 7 and 15 open |
+| D2 release CI | `30/30` jobs passed on `ecb5ea128c26d49af0661c5e2c3fe5a125f1cec5` |
+| Current gate-close CI | run `30789985887` passed `30/30` on `9fe03cea3975e81bbae57b870e7bc50d8cc29f49` |
+| Full local suite | `3324 passed, 74 skipped` |
+| Local evidence matrix | 29 of 29 rows reached their expected status |
+| Correction corpus | 125 disjoint groups, 500 candidate slots, 95 groups authored for D2 |
+| Fitting/calibration | 200/50 and 40/10 `SELF_PLAY`; zero `REAL_GOVERNED_RUN` fitted |
+| Clean calibration | k-NN `0.9` at `0.9` coverage versus strongest deterministic `0.3` |
+| D2 OOD result | zero eligible settings; confident errors or complete silence; selection is null |
+| Untouched correction roles | final A 30/120, final B 30/120, canary 5/20; no outcomes |
+| Corrected D2 graph development baseline | width-20 Recall@5 `0.5875`, MRR@10 `0.3634`; zero cutoffs |
+| MiniLM vector development baseline | Recall@5 `0.5375`, MRR@10 `0.4392` |
+| Gate state | D1 conditions 6, 7 and 15 open; Gate L2 does not pass |
 | Migration | Remained at `0015`; `0016` unallocated |
 
-Sprint 21D2 must preserve these controls, create new self-play fitting evidence and
-new final holdouts, apply the real width-20 retrieval lever, fit the bounded learner,
-and complete the governed activation sequence.
+Sprint 21D3 preserves these controls, publishes revision 3 before any D3
+candidate/development/holdout measurement, changes the unstable feature boundary once, creates
+fresh calibration and retrieval evidence, and either completes the existing governed activation
+sequence or releases the first failed condition. Immutable D2 reconciliation replay is the
+baseline-only chronology exception.
 
 ### 3.3 What the released substrate has completed
 
@@ -162,7 +172,12 @@ The released Sprint 21 substrate provides:
   retrieval, and an advisory Experience Graph Context source;
 - a hash-bound surface audit and pre-registration system that found and rejected a
   perfect construction oracle rather than training on it;
-- a Gate L assessment that honestly recorded the original no-go result.
+- a Gate L assessment that honestly recorded the original no-go result;
+- an oracle-free 125-group correction corpus, pre-outcome feature seals, explicit snapshots,
+  bounded correction k-NN, canonical JSON artifact/loader/runtime contracts, restart-safe
+  campaign receipts, and a valid negative selection result;
+- width-20 bounded graph retrieval measured without cutoffs, including the evidence that the
+  wider shortlist is worse rather than a near-pass.
 
 D1 identifies `experience.correction_ranking` as the only balanced deferred surface,
 with 120 eligible real-run examples and 30 changeable task rankings. This is useful
@@ -172,46 +187,40 @@ yet proof of useful agent learning.
 ### 3.4 Critical gaps
 
 1. No learned component is active because of demonstrated downstream benefit.
-2. D1 selected no primary surface. Gate D1 conditions 6 and 7 remain open even though
-   correction ranking has 120 development examples and 30 changeable rankings.
-3. All C3/D1 outcomes are real governed evidence and cannot enter training or
-   calibration; D2 needs a new rights-cleared self-play corpus. Its five partitions
-   require at least 115 distinct groups, at least 85 genuinely new relative to D1.
-4. No separately sealed, group-disjoint D2 final holdout exists. At least 200 final
-   outcomes in two independent batches are required.
-5. No correction-ranker artifact, narrow safe loader, durable runtime resolver, or
-   actual correction-ordering integration exists. `CodingAgentFacade` proposes one
-   candidate at a time, while `RealityCampaignRunner` currently executes every candidate;
-   D2 therefore needs a bounded stop-on-first-verified campaign sequencer rather than a
-   decorative reorder.
-6. D1 graph retrieval is below its 0.70 Recall@5 and 0.50 MRR@10 floors. The measured
-   first lever is shortlist width 20.
-7. The current graph implementation truncates the vector result to ten before GED,
-   so a configuration-only width increase would not widen the real shortlist.
-8. The fitted-feature, paired material-benefit, cross-domain forgetting, OOD, shadow,
-   canary, kill-switch, restart, and rollback evidence required for activation does
-   not exist.
-9. FGW remains a no-go under ADR 0090; D2 may record a later hypothesis but may not
-   tune it on final D2 queries.
-10. OpenRouter remains outside the D2 critical path; final corpus completeness cannot
-    depend on a network or provider.
-11. The `10^6` capacity envelope, incremental maintenance, consolidation, and restore
+2. The D2 ranker is dominated by a raw candidate-diff embedding and a duplicated
+   requirement/delta cosine. It reverses confidently under semantics-preserving change.
+3. D2 counted four candidate labels as four OOD decisions although the ranker made one
+   group-level action; D3 needs at least 100 actual decisions, not slots.
+4. The fitted-matrix audits name 11 scalar columns but do not expose the 384 fitted embedding
+   dimensions as inspected columns; D3 must close that audit boundary.
+5. Existing explicit dataset identity does not include feature-schema and canonical partition
+   selection, so v2 could silently resolve the D2/v1 dataset.
+6. D2 calibration/OOD evidence is spent. D3 requires fresh self-play calibration and a new
+   metamorphic/OOD selection set after revision-3 feature seals.
+7. The 65 unexecuted D2 correction groups are numerically sufficient for exact final A/B and
+   canary reuse only after a body/outcome/access/hash audit.
+8. A separate retrieval holdout does not exist. At least 50 new group-disjoint unseen queries
+   are required; final A/B cannot serve both experiments.
+9. Width-20 graph retrieval is below the 0.70/0.50 floors at 0.5875/0.3634. D3 evaluates one
+   fixed equal-weight lexical+MiniLM reciprocal-rank fusion and does not tune it on the holdout.
+10. Final benefit, retention, promotion-scale OOD, shadow, approval, canary, kill-switch,
+    restart, activation, and rollback evidence remains unopened.
+11. Receipt-aware resume does not yet bind every campaign hash/mode/order or prevent callers
+    from consulting the ordinary remainder for intentionally skipped candidates.
+12. Generic lifecycle advancement must be prevented from reaching VERIFIED; focused
+    verification and activation must rehash the exact payload artifact bytes.
+13. OpenRouter remains outside the D3 critical path; evidence completeness cannot depend on a
+    network or provider.
+14. The `10^6` capacity envelope, incremental maintenance, consolidation, and restore
     evidence do not exist.
-12. No accelerator path is verified at the D2 planning head, and the D1 reference
+15. No accelerator path is verified at the D3 planning head, and the D1/D2 reference
     evidence is CPU-only. CPU-first execution remains the default until a measured
     workload justifies and reproduces an accelerator path.
-13. The inconsistent development Artifact Store pair remains intentionally
-    untouched; all D2 evidence must use a new isolated consistent pair.
-14. One collaborator means required approving reviews remain unavailable; the
+16. The inconsistent development Artifact Store pair remains intentionally untouched; all D3
+    evidence must use a new isolated consistent pair, while the D2 pair also becomes read-only.
+17. One collaborator means required approving reviews remain unavailable; the
     project retains 27 required checks and `enforce_admins` in accepted
     single-maintainer release mode.
-15. `RealityOutcomeHarvester` is fixed to `coding.repair` and
-    `REAL_GOVERNED_RUN`; D2 needs a separate manifest-role-bound projector for
-    `experience.correction_ranking`, without weakening the C3 path.
-16. Durable `CorpusRole` supports only `TRAINING` and `EVALUATION`, and explicit
-    observation selection currently truncates at 500 rows. D2 must represent five
-    partitions inside immutable manifests and page exact member resolution without a
-    migration.
 
 ## 4. Non-negotiable learning architecture
 
@@ -323,8 +332,9 @@ pre-registered test:
 - the complete artifact, corpus, evaluator, and decision record are reproducible.
 
 The large-LLM/cost alternative is a programme-level rule for workloads that actually use
-providers. It is non-applicable to D2's credential-free zero/zero campaign; Sprint 21D2
-can pass material benefit only through the fixed verified-success/error threshold.
+providers. It was non-applicable to D2's credential-free zero/zero campaign and remains
+non-applicable to D3; D3 can pass material benefit only through the fixed verified-success/
+error threshold.
 
 A parity-only tie-break can prove wiring and safety, but it cannot satisfy the
 mandatory-benefit rule.
@@ -895,9 +905,10 @@ Acceptance:
 - real governed runs remain evaluation-only.
 
 D1 result: no primary surface qualified. `experience.correction_ranking` was deferred
-with 120 eligible real-run examples and 30 changeable rankings. D2 creates revision 2,
-new self-play training/calibration data, and two untouched real-run final batches; the
-120 D1 examples remain development/evaluation-only.
+with 120 eligible real-run examples and 30 changeable rankings. D2 created revision 2,
+200/50 self-play fitting and 40/10 calibration evidence, but its candidate failed OOD and final
+access remained closed. D3 creates revision 3 and fresh calibration; all inherited real-run
+examples remain development/evaluation-only.
 
 #### S21D-02 — Experience Memory Graph baseline
 
@@ -929,36 +940,39 @@ Acceptance:
 - graph retrieval is compared with text and vector baselines.
 
 D1 result: all graph construction and advisory-context conditions passed, but the best
-bounded arm reached only 0.6750 Recall@5 and 0.4481 MRR@10. D2 first fixes the internal
-shortlist truncation defect, freezes width 20, and measures it on new unseen-task
-evidence.
+bounded arm reached only 0.6750 Recall@5 and 0.4481 MRR@10 with 60 cutoffs. D2 fixed the
+shortlist truncation, froze width 20, and measured 0.5875/0.3634 with zero cutoffs on D1
+development evidence; its separate unseen-task holdout never opened. D3 freezes one simple RRF
+candidate and evaluates it once on a distinct 50-query minimum holdout.
 
 #### S21D-03 — Learner ladder
 
-Execution allocation: Sprint 21D2. Sprint 21D1 freezes its inputs and baselines but
-does not fit a learner.
+Execution allocation: D2 completed the original ladder with a null OOD result; Sprint 21D3
+executes one invariant feature revision and the existing bounded k-NN only.
 
 Tasks:
 
-- preserve durable `CorpusRole.TRAINING/EVALUATION` and carry fit, calibration,
-  final A/B, and canary partitions in immutable campaign manifests;
-- add a role-bound correction observation projector and paginated explicit dataset
-  membership; bind the exact split-assignment digest into explicit dataset identity and
-  never make surface or provenance caller-selected;
-- build and seal four outcome-neutral candidates before any attempt, preserve their opaque
-  manifest order, and validate every reference before append-only outcome recording;
-- isolate final A/B and canary bodies in capability-separated roots/processes that fitting
-  and candidate selection cannot access;
-- expand to at least 115 disjoint groups across the five partitions, including at
-  least 85 genuinely new groups relative to D1;
-- fit on at least 200 rights-verified self-play observations and calibrate on at least
-  40 separate self-play observations;
-- keep all C3/D1 real governed outcomes outside fitting and calibration;
-- calibrate k-NN distance and OOD thresholds;
-- run logistic/SGD and small-tree candidates only where the primary surface needs
-  them;
+- preserve durable `CorpusRole.TRAINING/EVALUATION`, immutable campaign partitions, the
+  role-bound projector, four neutral candidates, and capability-isolated holdouts;
+- revise explicit dataset identity to bind feature schema, canonical partition selection,
+  campaign, and observation-to-group membership;
+- publish `correction-ranking-v2` before D3 measurement, alpha-normalise candidate source with
+  an exact Python 3.12 AST grammar tested by an independent perturbation oracle, remove unstable
+  issue/diff channels, and scan every fitted scalar and embedding dimension;
+- audit final A/B/canary catalogue/root/access identities without resolving protected bodies,
+  freeze a complete whole-role replacement branch with isolated throwaway authoring validation
+  and capability revocation, add 20 fresh calibration groups, and create a separate retrieval
+  corpus yielding at least 50 unseen queries;
+- execute a new v2-sealed 200/50 fitting campaign and 80 outcomes over 20 fresh calibration
+  groups;
+- keep all C3/D1/D2 real governed outcomes outside fitting and calibration;
+- resolve at least 100 fresh metamorphic selection decisions with unit-correct denominators,
+  non-silence, action-preservation, and zero-confident-error rules;
+- calibrate the unchanged bounded k-NN grid;
+- do not open logistic/SGD or a tree inside D3; a fresh capacity residual may name one
+  successor rung without opening final data;
 - use fixed splits, seeds, feature versions, and artifact hashes;
-- evaluate per-domain and cross-domain transfer;
+- evaluate per-domain and cross-domain retention;
 - stop when one candidate passes all gates or the pre-registered ladder is exhausted;
 - select at most one immutable artifact before either final evaluation batch is opened;
   a null selection completes a protected negative result without opening final data.
@@ -966,12 +980,12 @@ Tasks:
 Acceptance:
 
 - result bundle contains predictions, confidence, abstentions, errors, latency, and
-  provenance;
+  provenance with ranking decisions separated from candidate outcomes;
 - no evaluation split is used for feature or threshold selection;
 - a failed candidate remains recorded but cannot activate;
 - candidate can be replayed from persisted evidence;
-- final evaluation contains at least two group-disjoint batches of 100 verifier-backed
-  outcomes each and at least 20 changed task rankings when final access is authorized;
+- final evaluation contains exact 30-group/120-outcome A and B batches when reusable, plus at
+  least 20 changed task rankings when final access is authorised;
 - a pre-registered stop produces immutable not-opened records rather than fabricated
   downstream success.
 
@@ -979,23 +993,25 @@ Acceptance:
 
 Tasks:
 
-- preserve ADR 0090's D2 no-go and apply the measured width-20 shortlist lever first;
-- measure post-width-20 residual errors and graph runtime on new final evidence;
+- preserve ADR 0090's no-go and D2's measured width-20 negative result;
+- measure the pre-registered equal-weight RRF and existing comparators on new D3 retrieval
+  evidence;
 - reopen only a future experiment when reranking error is dominant and a new holdout,
   dependency, licence, benefit, and resource review are approved;
-- do not install or evaluate FGW on D2 final queries.
+- do not install or evaluate FGW on D3 holdout queries.
 
 Acceptance:
 
-- the D2 continuation record names the simpler baseline, residual class, benefit
+- the D3 continuation record names the simpler baseline, residual class, benefit
   threshold, resource budget, and future evidence requirement;
-- no FGW dependency or implementation enters D2;
+- no FGW dependency or implementation enters D3;
 - paper concepts are used clean-room and no CC BY-NC-SA code or assets are copied into
   the Apache-licensed repository.
 
 #### S21D-05 — Shadow, canary, and activation
 
-Execution allocation: Sprint 21D2. Gate L2 does not pass at the Sprint 21D1 handoff.
+Execution allocation: D2 stopped before this lifecycle opened; Sprint 21D3 inherits it
+unchanged after Gate L2 remained closed.
 
 Tasks:
 
@@ -1013,7 +1029,8 @@ Tasks:
   attempts, accepted stop, and intentionally unattempted candidates;
 - canary only within a separately hash-recorded fail-closed configuration subset of the
   approved correction-sequencing campaign surface;
-- re-verify the exact promotion payload bytes inside activation, then test kill switch,
+- bind canary and bounded steady configuration hashes plus their transition condition inside the
+  versioned promotion payload, re-verify its exact bytes inside activation, then test kill switch,
   missing artifact, corrupt artifact, OOD input, and restart;
 - produce cause-bound disable and rollback decisions that structurally forbid restoration
   after a failed canary.
@@ -1305,51 +1322,41 @@ Every PR in this programme must include, as applicable:
 
 ## 16. Immediate next action
 
-Sprint 21R, Sprint 21C1, Sprint 21C2, Sprint 21C3, and the Sprint 21D1
-implementation release are complete. The immediate implementation action is
-**Sprint 21D2 — Useful Learned Correction Ranking and Gate L2**:
+Sprint 21R, Sprint 21C1, Sprint 21C2, Sprint 21C3, Sprint 21D1, and Sprint 21D2 are
+complete releases. The immediate implementation action is **Sprint 21D3 — Invariant
+Correction Ranking, Independent Retrieval Closure, and Gate L2**:
 
-1. verify current `origin/main` at
-   `1cadbabb5cdabb32bbd502f281d734fb25a229ff` and separately verify the annotated
-   `sprint-21d1-emg-baseline` tag object and peeled release at
-   `b46c2fcd77d568148ce2046f3ec7c4369bd4a8b9`;
-2. retain the existing 27 required checks and `enforce_admins`, while recording that a
-   second eligible reviewer is still unavailable and does not justify release delay;
-3. keep the inconsistent development Artifact Store pair read-only and isolate every
-   D2 write in a fresh, internally consistent evidence/scratch store;
-4. publish surface pre-registration revision 2 for
-   `experience.correction_ranking`, with the exact fitted feature, label, group,
-   baseline, metric, learner, resource, and stop-rule contracts; if the renewed audit
-   rejects the surface, publish the null-primary decision and downstream not-opened root;
-5. implement split-identity-bound paginated manifest selection, a role-bound correction-
-   ranking projector, four neutral prebuilt candidates, capability-isolated holdouts, and
-   a two-mode `RealityCampaignRunner` sequencer with restart-safe receipts; retain the
-   existing C3 harvester and single-proposal `CodingAgentFacade` boundaries;
-6. expand and seal at least 115 disjoint groups, including at least 85 genuinely new
-   groups, then create at least 200 rights-verified `SELF_PLAY` training outcomes and 40
-   separate calibration outcomes with zero C3/D1 real-run members;
-7. seal two independent final batches of at least 25 new groups and 100 candidate slots
-   each before fitting, then select at most one artifact before opening them; a null
-   selection closes final access with immutable not-opened evidence;
-8. fix the internal-shortlist/public-result truncation defect and evaluate the
-   MiniLM vector and D2 revision-2 width-20 bounded-graph arms on new unseen-task
-   queries;
-9. fit bounded cosine k-NN first, follow logistic/SGD or a small tree only under the
-   pre-registered continuation rules, and persist the selected learner as inert,
-   canonical JSON;
-10. on the final path, prove at least 20 changed decisions, material benefit in both
-   final batches, a
-   positive paired-bootstrap lower bound, retained safety/domain performance, and OOD
-   fallback;
-11. register and enter SHADOW before final execution; only after all pre-activation
-    evidence passes, use the focused evidence-revalidating VERIFIED transition, record
-    exact human approval, re-verify promotion bytes inside activation with a separately
-    bound canary configuration, and exercise restart-safe stop-first verification, kill
-    switch, cause-bound disable, and rollback that cannot revive a failed canary;
+1. verify current `origin/main` at `9fe03cea3975e81bbae57b870e7bc50d8cc29f49`
+   and separately verify the annotated negative D2 tag object and peeled release;
+2. retain the 27 required checks and `enforce_admins`, record the one-collaborator review
+   reality, keep development/C3/D1/D2 stores read-only, and isolate every D3 write;
+3. publish a non-destructive D2 reconciliation: one group ranking is one decision, while four
+   candidate labels are outcomes; replay and reconcile the inconsistent retrieval narrative;
+4. publish pre-registration revision 3 before any D3 channel/development/holdout measurement,
+   feature result, campaign, or retrieval score, with one fixed diagnostic response and no
+   open-ended tuning; immutable D2 reconciliation replay remains baseline-only;
+5. implement `correction-ranking-v2`: alpha-normalised candidate-source embedding, no issue or
+   raw-diff input, complete scalar/embedding matrix scans, and feature/partition-sensitive
+   explicit dataset identity;
+6. run the frozen per-channel diagnostic on spent D2 evidence for diagnosis only, then stop if
+   the result lies outside the registered response;
+7. seal v2 features before a new 200/50 fitting campaign, execute 80 outcomes over 20 fresh
+   calibration groups, and resolve at least 100 fresh metamorphic selection decisions;
+8. calibrate the unchanged 24-setting bounded k-NN grid, enforce non-silence and exact
+   equivalence rules, and select at most one artifact before final access;
+9. independently implement one fixed equal-weight lexical+MiniLM reciprocal-rank fusion and
+   evaluate all frozen arms once on at least 50 new group-disjoint unseen-task queries;
+10. if the correction checkpoint passes, execute exact final A/B (30 groups/120 outcomes each),
+    prove paired material benefit, retention, 100+ correctly counted promotion OOD decisions,
+    shadow, artifact lineage, and the three D1 conditions;
+11. only on a complete pass, use a versioned promotion payload, exact existing human-approval
+    fields with transitive configuration binding, focused evidence-bound verification,
+    activation-time byte rehash, canary, cause-bound disable, receipt-selected rollback/refusal,
+    and bounded steady state;
 12. complete an outcome-appropriate protected release: success uses
-    `sprint-21-learning-baseline` and unblocks Sprint 22A only after the post-release Gate
-    L2 result; a valid negative uses `sprint-21d2-evidence-baseline`, keeps Gate L2 from
-    passing, and produces a remediation handoff.
+    `sprint-21-learning-baseline` and unblocks Sprint 22A only after gate-close CI; any first
+    failure uses `sprint-21d3-evidence-baseline`, keeps Gate L2 closed, and publishes the smallest
+    evidence-backed remediation handoff.
 
 The implementation authority is the
-[Sprint 21D2 Technical Backlog](../sprint-21/sprint-21d2-technical-backlog.md).
+[Sprint 21D3 Technical Backlog](../sprint-21/sprint-21d3-technical-backlog.md).

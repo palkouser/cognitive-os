@@ -1,0 +1,131 @@
+{
+  "artifact_lineage": {
+    "all_bytes_verified": true,
+    "example_manifest": {
+      "artifact_id": "5919a5ba-cf9e-5125-93ff-36cc3a1c5a66",
+      "component_id": null,
+      "content_hash": "57521e10dec3ad0877d9a3659d322334c42b4091898fe1442bcf31374b28e15c",
+      "dataset_id": "63cbbac4-1f0a-54dd-a0d5-82158d805018",
+      "declared_content_hash": "bf765a9ddb33de6aeaebc65a5c0019e7db101ddbee20c3443a70e84ef3264fb7",
+      "declared_format": "json",
+      "lineage_id": "674b7df7-88b6-5145-966d-97aa0ea8bf03",
+      "media_type": "application/json",
+      "observed_content_hash": "bf765a9ddb33de6aeaebc65a5c0019e7db101ddbee20c3443a70e84ef3264fb7",
+      "producing_evidence_hash": null,
+      "role": "example_manifest",
+      "size_bytes": 700,
+      "verified_at": "2026-08-04T06:22:51.783496Z",
+      "verified_by": "learned-dataset-builder"
+    },
+    "feature_seal": {
+      "artifact_id": "9f46d310-06ac-58dc-9bcb-f2299a8c1144",
+      "component_id": "learned.knn.correction_ranking",
+      "content_hash": "6a67e212e9f7754b0c224e250febcf0d3a69bb36e293bd7d00e98d4c67b05fe0",
+      "dataset_id": null,
+      "declared_content_hash": "13ce7721cb8cf3da1cddc5e5e2d15138ddf353ed9651678813c829a13237a9f0",
+      "declared_format": "json",
+      "lineage_id": "987e7604-c7c8-5063-ad4b-acedfa09267b",
+      "media_type": "application/json",
+      "observed_content_hash": "13ce7721cb8cf3da1cddc5e5e2d15138ddf353ed9651678813c829a13237a9f0",
+      "producing_evidence_hash": "0e3e0a73cfdf4a3d0e78e63f250f0f3ce5d177d9f716f858c68f418febb9e814",
+      "role": "report",
+      "size_bytes": 10935,
+      "verified_at": "2026-08-04T06:22:51.780711Z",
+      "verified_by": "s21d3-w1-fixture"
+    },
+    "split_manifest": {
+      "artifact_id": "9d5b8d4d-00b5-55bb-bdea-a90f77253f78",
+      "component_id": null,
+      "content_hash": "2577f35b9ef9ac0d9585763f67ec08cc3c7821d1077f65595b54ef3c557ffa87",
+      "dataset_id": "63cbbac4-1f0a-54dd-a0d5-82158d805018",
+      "declared_content_hash": "b1afa308cb8a7f38e0b02a25c7060f0e87cbfe2918ea81ea3ed4307421a8a4ce",
+      "declared_format": "json",
+      "lineage_id": "46862460-e7a9-5d9a-9401-3f668ff467d1",
+      "media_type": "application/json",
+      "observed_content_hash": "b1afa308cb8a7f38e0b02a25c7060f0e87cbfe2918ea81ea3ed4307421a8a4ce",
+      "producing_evidence_hash": null,
+      "role": "split_manifest",
+      "size_bytes": 2658,
+      "verified_at": "2026-08-04T06:22:51.783647Z",
+      "verified_by": "learned-dataset-builder"
+    }
+  },
+  "chronology": {
+    "base_manifest_created_at": "2026-08-04T08:55:00+00:00",
+    "features_sealed_at": "2026-08-04T09:00:00+00:00",
+    "first_outcome_at": "2026-08-04T10:00:00+00:00",
+    "post_outcome_seal_refusal": "v2 feature records must be sealed strictly before every outcome",
+    "sequence_receipt_at": "2026-08-04T10:01:00+00:00",
+    "stored_seal_time_preserved": true,
+    "strictly_pre_outcome": true
+  },
+  "events": {
+    "campaign_stream_version": 1,
+    "outcome_event_ids": [
+      "4ed70984-eb9c-43b9-95ee-912da282a616",
+      "8dc29cd6-256d-4e68-a788-a645a785aeae",
+      "7fb8abf2-c05c-44c7-b432-ac2dd49b91fe",
+      "386c0865-7d49-47cc-ab94-d7bc79c9c4ca"
+    ],
+    "sequence_event_id": "0ebf8da8-8a80-4a84-90c8-81814f3717bd"
+  },
+  "fixture": "seeded W4-F3 pre-outcome feature-seal and receipt restart regression",
+  "hashes": {
+    "base_campaign_manifest": "ab745ad8d8ff475090eff97ff2f676849eb09df82a2f12318d9a43ecb22396d1",
+    "dataset": "490669a32648ce717e31928e9477673c34f7d2f07f18a59fe9db3426448aef84",
+    "example_manifest": "af97119f7de7c74cf1af9755c928777d5f207f69665e1e374168e3e55e7c0946",
+    "feature_contract": "492c90a5df420de9d1662d17155ac8b28713e69bbd4bbe56208415d6ca076362",
+    "feature_seal": "0e3e0a73cfdf4a3d0e78e63f250f0f3ce5d177d9f716f858c68f418febb9e814",
+    "feature_seal_artifact": "13ce7721cb8cf3da1cddc5e5e2d15138ddf353ed9651678813c829a13237a9f0",
+    "implementation_tree": "cbbc9a7fd28d693b05f0800b2a62388fa66a6e7d9705c7a34b4527f06c2f5dda",
+    "receipt_campaign_manifest": "5a913a9cba2b21ecadb38df91748070edbbcf8137d0318ba74dfc44bfe905176",
+    "selection_partition_digest": "23bcd2f947d07bd5ab9f111397bcad61e644c3b4de500fd867f905c5658cb228",
+    "split_manifest": "07abdccc72670ae03e5163a39bc5cddf856a9ec22249fe43a3b8244e4e2227af"
+  },
+  "integrity_content_hash": "a89ed30a9e8ca8718e97c2f2979e73cffc83baef052a247f971edf4d7ce46ca1",
+  "items": [
+    "S21D3-028"
+  ],
+  "members": [
+    {
+      "candidate_id": "07fb1e2a-1fd0-5c34-b92a-7e4e05237eb0",
+      "feature_record_hash": "cea4b9ae9f818daaab8ea698f7e14c555f4a208c3654c71bc4008cdb693d9427",
+      "member_content_hash": "e30827b0c8e89276aae392d734340fda33fc09e056acebf71e9ad6a2587ec98d",
+      "observation_id": "31c70bd7-44f8-54a2-bef1-4852131bf2ec",
+      "outcome_hash": "9dd142d363a54a456b40613a30185a8d367ce89ea2618d14b0c52bf1adb19b9e"
+    },
+    {
+      "candidate_id": "f0e872e9-cec0-54db-b458-07f0301037a7",
+      "feature_record_hash": "72c32409501d648b23a4eb404ebe2a1c450b046b560caaa3b66d227cc81894ff",
+      "member_content_hash": "4fcd53330f5072c266b4d36d005effd2ea476529dc99189f49d656aa1467cdd3",
+      "observation_id": "a6ecf25b-2fb2-5b32-8da7-24d6f6775bcb",
+      "outcome_hash": "4d031228952142bf21cb360329f013c9a091df37a81f234fc3661fa70350ae4b"
+    },
+    {
+      "candidate_id": "1d60e5c1-9efe-5e59-9d9e-bbc87f53efb6",
+      "feature_record_hash": "73ef1aa494320dd4934ab7b71be13adbf83532c262fd4019d5bc1324cc085550",
+      "member_content_hash": "1d0bb51ae44ac09762715d4ec64e40e0dd9ce16eeebd52bdbff7957f951a28e6",
+      "observation_id": "3e7dce0c-f7d5-5918-abfc-0e36086217da",
+      "outcome_hash": "9537e3deeb269ffbe2de0547215d03302234d97870de70067744311e3513d494"
+    },
+    {
+      "candidate_id": "99053052-be01-5864-ae48-45d1a928474b",
+      "feature_record_hash": "012b15e06e3358f9854e5acd23eb38cdb8a3bec01f092accef6cebe6a7b6a415",
+      "member_content_hash": "353a420f6951e168235c9c3d49b2ddb31af1be410cf4fd68d2bad3a1cb0963de",
+      "observation_id": "c82d8644-a078-5e0f-9b06-a0a53d9c713b",
+      "outcome_hash": "64874978b1d1375401f0633834dca74b57d6f89e40b74c2a3378a48786c33d0a"
+    }
+  ],
+  "migration_required": false,
+  "pre_registration_sha256": "191b3757ded21a1c2c85459a34902f8dee3f2f35b0979b557f84c1a37fe6a191",
+  "recorded_at": "2026-08-04T06:22:51.769426Z",
+  "restart": {
+    "dataset_record_reproduced": true,
+    "feature_seal_hash_reproduced": true,
+    "receipt_effective_remainder": [],
+    "receipt_members_match_dataset_members": true
+  },
+  "schema_version": 1,
+  "sprint": "21D3",
+  "wave": "W1"
+}

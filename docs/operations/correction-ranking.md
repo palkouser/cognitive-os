@@ -189,3 +189,178 @@ of ten calibration groups against a 0.3 deterministic baseline, and then reverse
 confidence under a rename that changed no behaviour. Gate L2 does not pass. See the
 [Gate L2 assessment](../sprints/sprint-21/gate-l2-assessment.md) and the
 [Sprint 21D2 report](../sprints/sprint-21/sprint-21d2-report.md).
+
+---
+
+# Sprint 21D3: the v2 encoder, and the second null
+
+Sprint 21D3 rebuilt the feature representation, re-ran the campaign on fresh evidence, and
+stopped again — for a different reason. Everything above still describes D2's evidence, which
+is immutable. This section describes D3's, which lives in a different pair.
+
+**What D3 changed, and what it did not.** The encoder changed; the answer did not. The
+alpha-normalised v2 encoding is exactly invariant — the same contract spelled differently
+reaches the same first action every time, and action preservation is 1.00 for all twenty-four
+frozen settings. What remains is absolute ranking accuracy, and that is a capacity residual no
+encoding change reaches. Do not read the D3 evidence as "the same result again": D2 could not
+tell the two apart, and D3 can.
+
+## Prerequisites
+
+```bash
+set -a && . ./.env.s21d3.local && set +a      # the isolated D3 pair, never a predecessor
+```
+
+The shell-script caveat above applies unchanged, with the D3 file:
+
+```bash
+COGOS_POSTGRES_ENV_FILE=$PWD/.env.s21d3.local ./scripts/backup_event_store.sh
+```
+
+The D3 Python commands additionally **refuse a wrong environment before opening anything**. A
+database whose name lacks `s21d3`, or an artifact root that is one of the four predecessor
+stores, is rejected on the value rather than on a failure later:
+
+```console
+$ COGOS_ARTIFACT_ROOT=/…/artifacts-s21d2 uv run python scripts/learned.py d3-integrity
+refusing to open the predecessor store at /…/artifacts-s21d2
+```
+
+That check exists because `artifacts` and `artifacts-s21d3` differ by a suffix, and the first is
+the development store.
+
+## The one report that covers everything
+
+```bash
+uv run python scripts/learned.py d3-integrity                      # offline, no store needed
+uv run python scripts/learned.py d3-integrity --rehash-blobs \
+  --data-root /home/palkouser/projekt/cognitive-os-data            # every authority
+```
+
+Eleven classes, four states. The states are the point:
+
+| State | Means |
+|---|---|
+| `clean` | the evidence exists and the rule holds |
+| `failed` | the evidence exists and the rule does not hold |
+| `warning` | **this run could not check it.** Not a pass |
+| `not_opened` | a stop closed it, and the row carries the stop hash |
+
+Run without `--rehash-blobs` and `--data-root`, the artifact and isolation classes report
+`warning` rather than `clean`. That is deliberate and it is the most important thing in this
+document: **a class nobody checked is never reported as passing.** A report showing eleven
+green rows from a command that opened no store would be a report about the command.
+
+On the committed evidence with every authority supplied: 10 clean, 1 not opened, 0 failed.
+
+## What the v2 encoder records, and what it removed
+
+The frozen contract hashes to `492c90a5df420de9…` and declares **390 fitted channels**: six
+structural scalars then 384 embedding components, in that fixed order. A reordered channel list
+is a different model and the artifact loader refuses it.
+
+Seven v1 inputs are **removed**, not deprecated: `changed_file_count`, `hunk_count`,
+`added_line_count`, `removed_line_count`, `task_requirement_embedding`,
+`candidate_delta_embedding` and `query_to_candidate_cosine`. Two baseline rungs read those
+columns, so the ladder now dispatches on encoder version and reports `frozen_minilm_cosine` as
+**ineligible with its reason** rather than scoring it on a column that no longer exists.
+
+The matrix scan covers all 390 columns, embedding included. `fitted_columns: 390` in the
+vertical-slice evidence is what the `matrix_embedding_scans` class checks.
+
+## Counting units, and the correction that made them honest
+
+D2 reported forty ranking decisions where there were ten. The corrected contract counts **one
+ranking decision per case** and four independently verified candidate labels under it. D3's
+calibration metamorphic set is therefore **120 decisions over 480 candidate outcomes**, and the
+`ood_units` integrity class fails if those two numbers are ever equal.
+
+When you read any rate in the D3 evidence, check which denominator it names. The two are not
+interchangeable and one of them is four times the other.
+
+## The retrieval arm and its policy
+
+The fixed fusion arm is equal-weight lexical + MiniLM reciprocal-rank fusion, constant 60, one
+post-fusion truncation, no sweeps. The benchmark **refuses to run without `--policy-hash`** and
+resolves that hash against the two frozen graph resource policies; a revision name is not
+accepted, and an unfrozen hash has no entry to resolve.
+
+```bash
+uv run python scripts/experience.py graph-benchmark --graph-root <root> \
+  --artifact-root <store> --queries <manifest> --model <frozen-minilm> \
+  --policy-hash d0e8520e3d3bc3637ce75f632c79aa00c1f456a8af1a4956601dad359c8474ab
+```
+
+Two things to know before reading a benchmark result:
+
+- **`timeouts` and `budget_cutoffs` are different fields.** D1 reported sixty of the second
+  under the first's name. A timeout is a comparison that ran out of time; a cutoff is one the
+  query budget refused to start, and the remedies differ entirely.
+- **`minilm_shortlist_plus_bounded_ged` does not reproduce itself.** `graph_edit_distance`
+  under a wall-clock timeout is an anytime search, so its score depends on how much search fits
+  in 90 ms. Four identical runs produced four different metric triples. Its D1 and D2 numbers
+  are not reproducible by anyone, and the benchmark now reports agreement per arm rather than
+  for the run.
+
+## Final access, and the checkpoint that refused it
+
+There is no final-batch, canary or activation procedure for D3 either — for the same reason as
+D2, recorded differently. The pre-final checkpoint evaluates every precondition in backlog
+order, stops at the first failure, and writes the not-opened map:
+
+```bash
+uv run python scripts/artifact_runtime_d3.py     # writes the checkpoint and the invariance record
+```
+
+`authorised: false`, first failed precondition *S21D3-039 selected one candidate*, twenty
+dependent tasks bound to one stop hash. **Neither runtime configuration is sealed** — sealing
+happens at authorised access, and access was not authorised. Two canonical configuration
+documents exist with reproducible hashes; they are declared, not in force.
+
+## Artifact verification, and the two boundaries
+
+D3 has two ways to read a correction artifact, and they are deliberately not the same door:
+
+1. **the direct evaluation boundary** — for calibration, final and shadow reads while the
+   component is unapproved or in SHADOW. It rehashes the exact bytes *before* reading a field,
+   accepts only one named artifact hash, and **refuses to exist past SHADOW**;
+2. **the runtime resolver** — for canary and steady routing. It is ACTIVE, configuration and
+   approval gated, holds no capability for the first boundary, and does not import it.
+
+Verification never deserialises anything. The Artifact Store re-reads bytes and reports whether
+they still hash to their record; that is the whole extent of the contact.
+
+## Recovery and damage, on the D3 pair
+
+```bash
+set -a && . ./.env.s21d3.local && set +a
+uv run python scripts/operations_d3.py           # provisioning, backup, restart, restore, matrix
+uv run python scripts/verification_matrix_d3.py  # every release check, with its exit status
+```
+
+The first writes to the backup root, the restore database and the declared scratch root, and
+**nothing else**. Every damage case is applied to the extracted copy or to a throwaway copy of
+the evidence directory. Predecessor fingerprints are taken before and after and both are
+recorded.
+
+What the restore has to reproduce, and did: counts, the hashed-row roll-up, both resume inputs,
+2,077 blob rehashes, and the **stopped state** — zero components on
+`experience.correction_ranking`. That last one is checked by surface rather than by counting
+learned rows, because the credential-free smoke legitimately registers an unrelated inert
+component on `skill.selection` and a count would have made that look like a D3 component.
+
+One damage case is worth reading in full. Removing a blob leaves every remaining file hashing
+correctly, so a rehash reports a store one blob smaller as perfectly clean. What catches it is
+the declared-versus-observed comparison, and the matrix records both facts side by side.
+
+## Prohibitions that do not expire, for D3
+
+Everything in [*Prohibitions that do not expire*](#prohibitions-that-do-not-expire) applies,
+plus three that are D3's own:
+
+- **The D3 calibration and metamorphic evidence is spent.** It selected nothing, but a selection
+  rule read it. It may not decide anything again.
+- **The D3 retrieval holdout was read once**, which is all the protocol allows. There is no
+  second read, and no re-decision on it.
+- **No parametric rung, threshold revision, refit or encoder revision opens on D3's evidence.**
+  §10.2 closes all four, and the capacity residual is D4's input rather than D3's to chase.

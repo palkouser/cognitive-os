@@ -1,0 +1,326 @@
+{
+  "benefit_and_retention_budgets": {
+    "absolute_gain": "0.05",
+    "maximum_aggregate_loss": "0.01",
+    "maximum_domain_loss": "0.02",
+    "relative_error_reduction": "0.20",
+    "retrieval_mrr_at_10": "0.50",
+    "retrieval_recall_at_5": "0.70"
+  },
+  "first_failure_rule": "the first applicable failure seals one stop hash; every dependent item records typed not_opened against it",
+  "integrity_content_hash": "192c97addf81e3e6f3ec5f8c642bc9746e3da47d9ebbe6942bfabf9cb0752553",
+  "items": [
+    "S21D3-017"
+  ],
+  "manifest": {
+    "action_preservation_floor": "1.00",
+    "bootstrap_resamples": 2000,
+    "bootstrap_seed": 21041,
+    "calibration_confident_equivalence_errors_allowed": 0,
+    "clean_coverage_floor": "0.80",
+    "content_hash": "45a8e9b07fbb2f08033bfbe55b486c7a11a8c2f6f473cc62af98180aca5a439e",
+    "equivalence_coverage_floor": "0.80",
+    "first_failure_precedence": true,
+    "gate_d1_open": [
+      {
+        "closure_rule": "at least 200 unique eligible verifier-backed primary-surface outcomes",
+        "condition": 6,
+        "content_hash": "497119ec4c1666e9c8392e5414c1abd59a562e9ef1b3ea7fa78c541eb2519a6e",
+        "evidence_handle": "sprint-21d3-d1-condition-6.json",
+        "status": "open"
+      },
+      {
+        "closure_rule": "at least 20 primary-surface examples change advisory action",
+        "condition": 7,
+        "content_hash": "76224d117cc6fb5ec988241ac20b63f205769dddc1dc112ff9f66038fe65acec",
+        "evidence_handle": "sprint-21d3-d1-condition-7.json",
+        "status": "open"
+      },
+      {
+        "closure_rule": "new unseen-task retrieval holdout independently clears both floors",
+        "condition": 15,
+        "content_hash": "05e25dc5c410f31b8c4e1a987939c8c3cce98980ba6c9a032da7c8afce52a1b3",
+        "evidence_handle": "sprint-21d3-retrieval-holdout-result.json",
+        "status": "open"
+      }
+    ],
+    "gate_l2": [
+      {
+        "condition": 1,
+        "content_hash": "e5783d4de53156f4d41820addb9dbb68a333e50a9f4792eb072f0dd17e200725",
+        "evidence_handle": "sprint-21d3-baseline.json",
+        "floor_or_rule": "fresh local and remote reads",
+        "metric_or_invariant": "current baseline and exact predecessor release",
+        "predecessor_reuse": true,
+        "stop_status": "w0_evidence_complete"
+      },
+      {
+        "condition": 2,
+        "content_hash": "05c3a8aa3ce88c20daf9aab46bab969edb6ceb856ff6997258cef5abfa13d0f8",
+        "evidence_handle": "sprint-21d3-d2-reconciliation.json",
+        "floor_or_rule": "four fingerprints unchanged",
+        "metric_or_invariant": "immutable predecessor stores and negative D2 release",
+        "predecessor_reuse": true,
+        "stop_status": "w0_evidence_complete"
+      },
+      {
+        "condition": 3,
+        "content_hash": "bbf9f5cd3b6c641a23278592b59e4c35431d8abc23ab2d3e4dcb036c3b692f0b",
+        "evidence_handle": "sprint-21d3-d2-reconciliation.json",
+        "floor_or_rule": "ten D2 OOD decisions and canonical D2 retrieval values",
+        "metric_or_invariant": "unit and retrieval reconciliation",
+        "predecessor_reuse": false,
+        "stop_status": "w0_evidence_complete"
+      },
+      {
+        "condition": 4,
+        "content_hash": "6bb21ed822a1cd9adf9e2a94fe0069b1033dc3481fddd7fb185dd743989a8645",
+        "evidence_handle": "sprint-21d3-pre-registration.json",
+        "floor_or_rule": "zero D3 measurements before publication",
+        "metric_or_invariant": "revision-3 pre-registration chronology",
+        "predecessor_reuse": false,
+        "stop_status": "w0_evidence_complete"
+      },
+      {
+        "condition": 5,
+        "content_hash": "91cf61883ad79cf4a44820c2ad68a55a107527ffefc3d7f2d8c46ba9f3b93a27",
+        "evidence_handle": "sprint-21d3-gate-l2-condition-5.json",
+        "floor_or_rule": "prediction may only order attempts",
+        "metric_or_invariant": "verifier remains label and acceptance authority",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      },
+      {
+        "condition": 6,
+        "content_hash": "a45d2722b683cda9a7a7bea4093fa52898babcab7a3eab7505dd89a9cb643615",
+        "evidence_handle": "sprint-21d3-gate-l2-condition-6.json",
+        "floor_or_rule": "zero forbidden, identity, outcome or answer fields",
+        "metric_or_invariant": "v2 fitted matrix contains no forbidden field",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      },
+      {
+        "condition": 7,
+        "content_hash": "75f92bb716d6dba9332e46360f3e4e33c666d6561380ffa0d94b58ca81cf994e",
+        "evidence_handle": "sprint-21d3-gate-l2-condition-7.json",
+        "floor_or_rule": "zero cross-role groups or near clones",
+        "metric_or_invariant": "transitive groups never cross roles",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      },
+      {
+        "condition": 8,
+        "content_hash": "ea1d7b9d7889d02e2aa680988792b23c0667f6e28749ccdbce66a5a51ed27075",
+        "evidence_handle": "sprint-21d3-gate-l2-condition-8.json",
+        "floor_or_rule": "fit 200/50 and calibration 80/20 target",
+        "metric_or_invariant": "minimum fit and calibration counts",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      },
+      {
+        "condition": 9,
+        "content_hash": "97d687fe124d6883a3c686b9fa5f2a93ae18286f2e245997b10cb67186018fd4",
+        "evidence_handle": "sprint-21d3-gate-l2-condition-9.json",
+        "floor_or_rule": "exactly zero",
+        "metric_or_invariant": "zero real governed runs in fit or calibration",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      },
+      {
+        "condition": 10,
+        "content_hash": "d6b93e598e015212264bf14d84e27bac0dd78a20ab7ab6dcf3749945973560db",
+        "evidence_handle": "sprint-21d3-gate-l2-condition-10.json",
+        "floor_or_rule": "120 outcomes over 30 groups in each batch",
+        "metric_or_invariant": "two exact independent final batches",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      },
+      {
+        "condition": 11,
+        "content_hash": "fd98501b41494f96bfb2aeb3b48ee1c6d84462e43b47947594ac7fe25bcda694",
+        "evidence_handle": "sprint-21d3-gate-l2-condition-11.json",
+        "floor_or_rule": "exact artifact and prediction seals before access",
+        "metric_or_invariant": "holdout inaccessible and candidate selected before access",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      },
+      {
+        "condition": 12,
+        "content_hash": "0abc9c78be05f28d78566321899ca8cd5012e486989527304043d56f266960c7",
+        "evidence_handle": "sprint-21d3-gate-l2-condition-12.json",
+        "floor_or_rule": "all attempted rungs retained",
+        "metric_or_invariant": "strongest deterministic baseline and revised k-NN first",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      },
+      {
+        "condition": 13,
+        "content_hash": "c3fdb42af5e0fb042268a6f1c2e930940b5faed5a854f2b6263788775189181b",
+        "evidence_handle": "sprint-21d3-gate-l2-condition-13.json",
+        "floor_or_rule": "at least 20",
+        "metric_or_invariant": "at least twenty changed final group decisions",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      },
+      {
+        "condition": 14,
+        "content_hash": "018f8acb391d887f325c256ad407cd9bc492641c1450ddd0a585d464fd65c966",
+        "evidence_handle": "sprint-21d3-gate-l2-condition-14.json",
+        "floor_or_rule": "at least 0.05 absolute or 0.20 relative error reduction",
+        "metric_or_invariant": "absolute or relative benefit floor",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      },
+      {
+        "condition": 15,
+        "content_hash": "2bc0f58e358c44766f47cd10436b48d747bfee9692b5c9cbf225a8e247ce7075",
+        "evidence_handle": "sprint-21d3-gate-l2-condition-15.json",
+        "floor_or_rule": "seed 21041, 2000 resamples, 95% lower bound above zero",
+        "metric_or_invariant": "paired group bootstrap lower bound above zero",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      },
+      {
+        "condition": 16,
+        "content_hash": "7130c2eb0de43d3c7004c51ccc20f00b41eaf3246f11156fcdc7f386b14f26a7",
+        "evidence_handle": "sprint-21d3-gate-l2-condition-16.json",
+        "floor_or_rule": "strictly positive in each batch",
+        "metric_or_invariant": "positive direction in final A and final B",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      },
+      {
+        "condition": 17,
+        "content_hash": "e5e25ad97f779e049390fbeecbc164ff39a93013c63f005bd7ac071a79d41d42",
+        "evidence_handle": "sprint-21d3-gate-l2-condition-17.json",
+        "floor_or_rule": "every rate names numerator and denominator units",
+        "metric_or_invariant": "unit-correct operational denominators",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      },
+      {
+        "condition": 18,
+        "content_hash": "648e9241230fd6fc2282c0476dd0908e299ec3b2f7c92105f468546c237d1bc2",
+        "evidence_handle": "sprint-21d3-gate-l2-condition-18.json",
+        "floor_or_rule": "zero",
+        "metric_or_invariant": "zero accepted safety or governance regressions",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      },
+      {
+        "condition": 19,
+        "content_hash": "6ec3e48deefdd56930ff53acfd998eaf6884392702b9e30835190d03c8b5e1f2",
+        "evidence_handle": "sprint-21d3-gate-l2-condition-19.json",
+        "floor_or_rule": "domain loss at most 0.02 and aggregate loss at most 0.01",
+        "metric_or_invariant": "retention floors by domain and aggregate",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      },
+      {
+        "condition": 20,
+        "content_hash": "35c125d4842f3378bd477a0e0c0b740a1e8be2a94d117317767b3e60af7b01cc",
+        "evidence_handle": "sprint-21d3-gate-l2-condition-20.json",
+        "floor_or_rule": "at least 100 decisions/10 groups, report <=0.01, promotion zero errors",
+        "metric_or_invariant": "one hundred promotion metamorphic decisions with safety ceiling",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      },
+      {
+        "condition": 21,
+        "content_hash": "5d68e2bf1d477eca2e410819b8f0cedf2c85f6be1a9e7106fecf3d03608dfa87",
+        "evidence_handle": "sprint-21d3-gate-l2-condition-21.json",
+        "floor_or_rule": "zero executed changes",
+        "metric_or_invariant": "shadow executes no changed decision",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      },
+      {
+        "condition": 22,
+        "content_hash": "806d72a56ceec8cf914ca89032b75f5617ad42bb64301be0536aee7a4d3fa938",
+        "evidence_handle": "sprint-21d3-gate-l2-condition-22.json",
+        "floor_or_rule": "canonical JSON only; unsafe loaders refuse",
+        "metric_or_invariant": "canonical inert JSON artifact with complete lineage",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      },
+      {
+        "condition": 23,
+        "content_hash": "3d6a64f95b7d0e3c2d6a5077c1813482c347bebf3646900f86c7921103d5e9fc",
+        "evidence_handle": "sprint-21d3-gate-l2-condition-23.json",
+        "floor_or_rule": "immediate fallback with reason",
+        "metric_or_invariant": "structured deterministic fallback on every failure",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      },
+      {
+        "condition": 24,
+        "content_hash": "39ac4180291905998d37534a1c800895020e357cc519bdf3795c1f4eef3f576b",
+        "evidence_handle": "sprint-21d3-retrieval-holdout-result.json",
+        "floor_or_rule": "Recall@5 >=0.70 and MRR@10 >=0.50 on at least 50 queries",
+        "metric_or_invariant": "new retrieval holdout clears recall and MRR floors",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      },
+      {
+        "condition": 25,
+        "content_hash": "2943fe7f687745d40c787be48ebe8608b0a56624f87118818a19382a0baa8ea2",
+        "evidence_handle": "sprint-21d3-gate-l2-condition-25.json",
+        "floor_or_rule": "exact canary manifest and immediate kill switch",
+        "metric_or_invariant": "hash-bound canary with verifier and kill switch",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      },
+      {
+        "condition": 26,
+        "content_hash": "f9c0443848732ffa5021f0bd0bcd9836d0dd7b7bbab07205591932426d13ab6b",
+        "evidence_handle": "sprint-21d3-gate-l2-condition-26.json",
+        "floor_or_rule": "all transitions reproduce after restart",
+        "metric_or_invariant": "restart-safe lifecycle, disable, restore and rollback",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      },
+      {
+        "condition": 27,
+        "content_hash": "100a164cfea5825a82f9c5fd7aab055ef6be8553c0c068e66ebbe586a8b7ccd6",
+        "evidence_handle": "sprint-21d3-gate-l2-condition-27.json",
+        "floor_or_rule": "existing eleven approval fields and human operator",
+        "metric_or_invariant": "exact human approval authority and no self-approval",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      },
+      {
+        "condition": 28,
+        "content_hash": "54b8004bd77451281c20460961f55bc0259bf050febe77c8902510da6127f09d",
+        "evidence_handle": "sprint-21d3-gate-l2-condition-28.json",
+        "floor_or_rule": "all required isolated and repository checks pass",
+        "metric_or_invariant": "isolated recovery and complete validation matrix",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      },
+      {
+        "condition": 29,
+        "content_hash": "3d33abd5c74b900e70e340172011df9f4a0f0f415098aada18f6a0e65d1cfff7",
+        "evidence_handle": "sprint-21d3-release.json",
+        "floor_or_rule": "protected merge, post-merge main CI and annotated remote tag",
+        "metric_or_invariant": "protected release, exact-head CI, documents and verified tag",
+        "predecessor_reuse": false,
+        "stop_status": "future_required"
+      }
+    ],
+    "maximum_equivalence_coverage_loss": "0.05",
+    "minimum_changed_clean_decisions": 1,
+    "revision": 3,
+    "typed_not_opened_required_fields": [
+      "status",
+      "item",
+      "parent_stop_hash",
+      "reason",
+      "recorded_at",
+      "content_hash"
+    ]
+  },
+  "recorded_at": "2026-08-03T10:07:42Z",
+  "schema_version": 1,
+  "sprint": "21D3",
+  "wave": "W0"
+}

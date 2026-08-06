@@ -7,6 +7,7 @@ import asyncio
 import json
 import os
 from pathlib import Path
+from time import perf_counter
 
 from cognitive_os.domain.experience import ExperienceCandidateStatus
 from cognitive_os.experience.compiler import ExperienceCompiler
@@ -82,16 +83,39 @@ def _embedding_provider(model: Path | None) -> object:
     )
 
 
+def _resource_policy(args: argparse.Namespace) -> object:
+    """The frozen policy this command measures under, named by hash. §S21D3-040.
+
+    `graph-benchmark` must name one. The class defaults are revision 1, so a benchmark that
+    accepted them silently would publish revision-1 numbers under whatever revision the
+    surrounding narrative happened to claim — which is exactly what the D2 retrieval
+    reconciliation had to unpick afterwards.
+    """
+    from cognitive_os.domain.experience_graph import (
+        FROZEN_GRAPH_RESOURCE_POLICIES,
+        GRAPH_RESOURCE_POLICY_REVISION_1,
+    )
+
+    if args.policy_hash is None:
+        if args.action == "graph-benchmark":
+            raise SystemExit(
+                "graph-benchmark needs --policy-hash. The frozen policies are:\n"
+                + "\n".join(f"    {digest}" for digest in sorted(FROZEN_GRAPH_RESOURCE_POLICIES))
+            )
+        return GRAPH_RESOURCE_POLICY_REVISION_1
+    policy = FROZEN_GRAPH_RESOURCE_POLICIES.get(args.policy_hash)
+    if policy is None:
+        raise SystemExit(f"{args.policy_hash} names no frozen resource policy")
+    return policy
+
+
 def _graph(args: argparse.Namespace) -> int:
     """The Experience Graph operator commands. Every one of them only reads. §S21D1-063."""
-    from cognitive_os.domain.experience_graph import (
-        ExperienceGraphQuery,
-        GraphResourceLimits,
-    )
+    from cognitive_os.domain.experience_graph import ExperienceGraphQuery
     from cognitive_os.experience import graph_retrieval as retrieval
     from cognitive_os.experience.graph_store import load_evidence
 
-    limits = GraphResourceLimits()
+    limits = _resource_policy(args)
 
     if args.action == "graph-build":
         from cognitive_os.experience.graph_projection import project
@@ -166,24 +190,13 @@ def _graph(args: argparse.Namespace) -> int:
             excluded_groups=tuple(args.exclude_group) or ((pair.group,) if pair else ("cli",)),
         )
         pool = retrieval.eligible_pool(candidates, query)
-        if args.arm == retrieval.LEXICAL:
-            result = retrieval.lexical(query, pool, limits=limits)
-        elif args.arm == retrieval.EXACT_SIGNATURE:
-            result = retrieval.exact_signature(query, pool, limits=limits)
-        elif args.arm == retrieval.NO_MEMORY:
-            result = retrieval.no_memory(query, limits=limits)
-        elif args.arm == retrieval.MINILM_VECTOR:
-            embed = _embedding_provider(args.model)
-            result = asyncio.run(retrieval.minilm_vector(query, pool, limits=limits, embed=embed))
-        else:
-            if pair is None:
-                raise SystemExit(
-                    "--pair-id is required for the graph arm; it supplies the query graph"
-                )
-            embed = _embedding_provider(args.model)
-            result = asyncio.run(
-                retrieval.bounded_ged(query, pool, pair.failed, limits=limits, embed=embed)
-            )
+        needs_model = args.arm not in {
+            retrieval.NO_MEMORY,
+            retrieval.LEXICAL,
+            retrieval.EXACT_SIGNATURE,
+        }
+        embed = _embedding_provider(args.model) if needs_model else None
+        result = asyncio.run(_run_arm(args.arm, query, pool, pair, limits=limits, embed=embed))
         print(_json(result.model_dump(mode="json")))
         return 0
 
@@ -196,22 +209,121 @@ def _graph(args: argparse.Namespace) -> int:
     raise AssertionError(args.action)
 
 
+#: Bumped when the emitted payload's shape changes, so a stored benchmark says which reader
+#: understands it. Revision 1 was the two-metric summary S21D3-040 replaced.
+BENCHMARK_SCHEMA_VERSION = 2
+
+#: The comparators plus the one S21D3-041 candidate, in the order they are reported.
+_ARMS = (
+    "no_memory",
+    "exact_signature",
+    "lexical",
+    "minilm_vector",
+    "minilm_shortlist_plus_bounded_ged",
+    "reciprocal_rank_fusion",
+)
+
+#: What can still be measured when no local model is available. Listed rather than derived by
+#: sniffing arm names: an arm called `lexical_plus_fusion` would be silently dropped by a
+#: substring rule, and the set of model-free arms is three items that rarely change.
+_ARMS_WITHOUT_A_MODEL = ("no_memory", "exact_signature", "lexical")
+
+
+async def _run_arm(
+    arm: str,
+    query: object,
+    pool: object,
+    pair: object,
+    *,
+    limits: object,
+    embed: object,
+    cache: dict[str, tuple[float, ...]] | None = None,
+) -> object:
+    """One arm, one query. The single dispatch `graph-query` and `graph-benchmark` share."""
+    from cognitive_os.experience import graph_retrieval as retrieval
+
+    if arm == retrieval.NO_MEMORY:
+        return retrieval.no_memory(query, limits=limits)
+    if arm == retrieval.LEXICAL:
+        return retrieval.lexical(query, pool, limits=limits)
+    if arm == retrieval.EXACT_SIGNATURE:
+        return retrieval.exact_signature(query, pool, limits=limits)
+    if embed is None:
+        raise SystemExit(f"--model is required for the {arm} arm")
+    if arm == retrieval.MINILM_VECTOR:
+        return await retrieval.minilm_vector(query, pool, limits=limits, embed=embed, cache=cache)
+    if arm == retrieval.RECIPROCAL_RANK_FUSION:
+        return await retrieval.reciprocal_rank_fusion(
+            query, pool, limits=limits, embed=embed, cache=cache
+        )
+    if pair is None:
+        raise SystemExit("--pair-id is required for the graph arm; it supplies the query graph")
+    return await retrieval.bounded_ged(
+        query, pool, pair.failed, limits=limits, embed=embed, cache=cache
+    )
+
+
+def _percentile(values: list[float], fraction: float) -> float:
+    ordered = sorted(values)
+    return round(ordered[min(len(ordered) - 1, int(len(ordered) * fraction))], 3)
+
+
+def _arm_metrics(rows: list[dict[str, object]]) -> dict[str, object]:
+    """One arm's complete pre-registered metric set, from its own per-query records."""
+    from statistics import fmean
+
+    latencies = [float(row["latency_ms"]) for row in rows]
+
+    def by(key: str) -> dict[str, float]:
+        groups: dict[str, list[float]] = {}
+        for row in rows:
+            groups.setdefault(str(row[key]), []).append(float(row["recall_at_5"]))
+        return {name: round(fmean(values), 4) for name, values in sorted(groups.items())}
+
+    return {
+        "top_5_recall": round(fmean(float(row["recall_at_5"]) for row in rows), 4),
+        "mrr_at_10": round(fmean(float(row["reciprocal_rank"]) for row in rows), 4),
+        "ndcg_at_10": round(fmean(float(row["ndcg_at_10"]) for row in rows), 4),
+        "coverage": round(fmean(1.0 if row["returned"] else 0.0 for row in rows), 4),
+        "p50_latency_ms": _percentile(latencies, 0.5),
+        "p95_latency_ms": _percentile(latencies, 0.95),
+        "max_latency_ms": round(max(latencies), 3),
+        "timeouts": sum(int(row["timed_out"]) for row in rows),
+        "budget_cutoffs": sum(int(row["budget_cutoffs"]) for row in rows),
+        "mean_candidates_considered": round(
+            fmean(float(row["candidates_considered"]) for row in rows), 4
+        ),
+        "top_5_recall_by_domain": by("domain"),
+        "top_5_recall_by_tier": by("tier"),
+        "queries_with_no_relevant_pair_in_top_five": sum(
+            1 for row in rows if not int(row["recall_at_5"]) and int(row["candidates_considered"])
+        ),
+    }
+
+
 def _benchmark(
     args: argparse.Namespace, evidence: object, candidates: object, limits: object
 ) -> dict[str, object]:
-    """Every arm over a frozen query manifest, reported together. Read-only throughout."""
-    from statistics import mean
+    """Every arm over a frozen query manifest, reported together. Read-only throughout.
+
+    Two identical passes run before any metric is read. The second is not a second
+    measurement: it is the only way `repeated_ranking_agreement` can be a measured fact
+    rather than an assertion about determinism nobody checked.
+    """
+    from hashlib import sha256
 
     from cognitive_os.domain.experience_graph import ExperienceGraphQuery
     from cognitive_os.experience import graph_retrieval as retrieval
+    from cognitive_os.infrastructure.embeddings import minilm
 
-    manifest = json.loads(args.queries.read_text())
+    manifest_bytes = args.queries.read_bytes()
+    manifest = json.loads(manifest_bytes)
     by_id = {pair.pair_id: pair for pair in evidence.pairs}  # type: ignore[attr-defined]
     embed = _embedding_provider(args.model) if args.model else None
     cache: dict[str, tuple[float, ...]] = {}
-    scored: dict[str, list[tuple[int, float]]] = {}
 
-    async def run() -> None:
+    async def one_pass() -> dict[str, list[dict[str, object]]]:
+        rows: dict[str, list[dict[str, object]]] = {}
         for record in manifest:
             relevant = set(record["relevant_pair_ids"])
             pair = by_id.get(record["query_id"].removeprefix("q:"))
@@ -225,38 +337,95 @@ def _benchmark(
                 excluded_groups=tuple(record["excluded_groups"]),
             )
             pool = retrieval.eligible_pool(candidates, query)  # type: ignore[arg-type]
-            results = {
-                retrieval.NO_MEMORY: retrieval.no_memory(query, limits=limits),
-                retrieval.LEXICAL: retrieval.lexical(query, pool, limits=limits),
-                retrieval.EXACT_SIGNATURE: retrieval.exact_signature(query, pool, limits=limits),
-            }
-            if embed is not None:
-                results[retrieval.MINILM_VECTOR] = await retrieval.minilm_vector(
-                    query, pool, limits=limits, embed=embed, cache=cache
+            for arm in _ARMS if embed is not None else _ARMS_WITHOUT_A_MODEL:
+                started = perf_counter()
+                result = await _run_arm(
+                    arm, query, pool, pair, limits=limits, embed=embed, cache=cache
                 )
-                results[retrieval.BOUNDED_GED] = await retrieval.bounded_ged(
-                    query, pool, pair.failed, limits=limits, embed=embed, cache=cache
+                latency = (perf_counter() - started) * 1000
+                rows.setdefault(arm, []).append(
+                    {
+                        "query_id": record["query_id"],
+                        "domain": record["domain"],
+                        "tier": record.get("relevance_tier", 1),
+                        "latency_ms": round(latency, 3),
+                        "returned": len(result.entries),
+                        "candidates_considered": result.candidates_considered,
+                        "timed_out": result.timed_out,
+                        "budget_cutoffs": result.budget_cutoffs,
+                        "recall_at_5": retrieval.recall_at(result, relevant, k=5),
+                        "reciprocal_rank": float(retrieval.reciprocal_rank(result, relevant)),
+                        "ndcg_at_10": float(retrieval.ndcg_at(result, relevant, k=10)),
+                        "first_relevant_rank": next(
+                            (e.rank for e in result.entries if e.pair_id in relevant), 0
+                        ),
+                        # The ranking itself, so a residual or a complementarity analysis
+                        # reads what the arm returned rather than re-running it.
+                        "ranked_pair_ids": [e.pair_id for e in result.entries],
+                    }
                 )
-            for arm, result in results.items():
-                scored.setdefault(arm, []).append(
-                    (
-                        retrieval.recall_at(result, relevant, k=5),
-                        float(retrieval.reciprocal_rank(result, relevant)),
-                    )
-                )
+        return rows
 
-    asyncio.run(run())
-    return {
+    def _orderings(rows: dict[str, list[dict[str, object]]], arm: str) -> list[object]:
+        return [row["ranked_pair_ids"] for row in rows[arm]]
+
+    async def both() -> tuple[
+        dict[str, list[dict[str, object]]], dict[str, bool], dict[str, list[dict[str, object]]]
+    ]:
+        rows = await one_pass()
+        repeat = await one_pass()
+        # Per arm, because one non-deterministic arm must not be reported as though the
+        # whole benchmark were unstable — and a stable aggregate must not hide it either.
+        agreement = {arm: _orderings(rows, arm) == _orderings(repeat, arm) for arm in rows}
+        return rows, agreement, {arm: repeat[arm] for arm in rows if not agreement[arm]}
+
+    rows, agreement, unstable = asyncio.run(both())
+    model = minilm.read_manifest(args.model) if args.model else None
+    payload: dict[str, object] = {
+        "schema_version": BENCHMARK_SCHEMA_VERSION,
         "queries": len(manifest),
         "arms_without_a_model": embed is None,
-        "arms": {
-            arm: {
-                "top_5_recall": round(mean(recall for recall, _ in rows), 4),
-                "mrr_at_10": round(mean(rank for _, rank in rows), 4),
-            }
-            for arm, rows in sorted(scored.items())
+        "repeated_ranking_agreement": all(agreement.values()),
+        "repeated_ranking_agreement_by_arm": dict(sorted(agreement.items())),
+        # The second pass's own metrics, for the arms that disagreed with the first. An
+        # unstable arm should be reported with the size of its instability, not just a flag.
+        "repeat_pass_arms": {
+            arm: _arm_metrics(records) for arm, records in sorted(unstable.items())
         },
+        "resource_policy": {
+            "content_hash": limits.content_hash,  # type: ignore[attr-defined]
+            **limits.model_dump(mode="json"),  # type: ignore[attr-defined]
+        },
+        "query_manifest": {
+            "path": str(args.queries),
+            "sha256": sha256(manifest_bytes).hexdigest(),
+            "queries": len(manifest),
+        },
+        "graph_set": {
+            "graph_set_id": evidence.graph_set_id,  # type: ignore[attr-defined]
+            "declared_pairs": evidence.declared_pairs,  # type: ignore[attr-defined]
+            "resolved_pairs": len(evidence.pairs),  # type: ignore[attr-defined]
+            "intact": evidence.intact,  # type: ignore[attr-defined]
+            "root_sha256": sha256(args.graph_root.read_bytes()).hexdigest(),
+            "eligible_candidates": len(candidates),  # type: ignore[arg-type]
+        },
+        "model": (
+            None
+            if model is None
+            else {
+                "model_id": minilm.MODEL_ID,
+                "revision": minilm.REVISION,
+                "dimension": minilm.DIMENSION,
+                "tree_digest": model["tree_digest"],
+            }
+        ),
+        "arms": {arm: _arm_metrics(records) for arm, records in sorted(rows.items())},
+        "per_query": {arm: records for arm, records in sorted(rows.items())},
     }
+    payload["content_hash"] = sha256(
+        json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+    return payload
 
 
 def _run(args: argparse.Namespace) -> int:
@@ -406,6 +575,10 @@ def main() -> int:
     parser.add_argument("--artifact-root", type=Path, help="the content-addressed store to read")
     parser.add_argument("--model", type=Path, help="the frozen local embedding model directory")
     parser.add_argument("--queries", type=Path, help="a frozen query manifest for the benchmark")
+    parser.add_argument(
+        "--policy-hash",
+        help="the frozen resource policy this measurement runs under; required by graph-benchmark",
+    )
     parser.add_argument("--query-text")
     parser.add_argument("--pair-id")
     parser.add_argument("--domain")
@@ -414,13 +587,7 @@ def main() -> int:
     parser.add_argument(
         "--arm",
         default="lexical",
-        choices=(
-            "no_memory",
-            "lexical",
-            "exact_signature",
-            "minilm_vector",
-            "minilm_shortlist_plus_bounded_ged",
-        ),
+        choices=_ARMS,
     )
     args = parser.parse_args()
     if args.action == "health" and args.database:

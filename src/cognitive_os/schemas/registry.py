@@ -109,6 +109,7 @@ from cognitive_os.domain.experience_graph import PUBLIC_EXPERIENCE_GRAPH_CONTRAC
 from cognitive_os.domain.learned import PUBLIC_LEARNED_CONTRACTS
 from cognitive_os.domain.learned_evidence import PUBLIC_LEARNED_EVIDENCE_CONTRACTS
 from cognitive_os.domain.memory import PUBLIC_MEMORY_CONTRACTS
+from cognitive_os.domain.promotion_payload import PUBLIC_PROMOTION_PAYLOAD_CONTRACTS
 from cognitive_os.domain.proposals import PUBLIC_PROPOSAL_CONTRACTS
 from cognitive_os.domain.provider_output import PUBLIC_PROVIDER_OUTPUT_CONTRACTS
 from cognitive_os.domain.reality import PUBLIC_REALITY_CONTRACTS
@@ -220,6 +221,18 @@ DOMAIN_SCHEMAS: tuple[tuple[type[BaseModel], str], ...] = (
             + ".schema.json",
         )
         for model in PUBLIC_LEARNED_EVIDENCE_CONTRACTS
+    ),
+    *tuple(
+        (
+            model,
+            "v1/learned/"
+            + "".join(
+                ("-" + character.lower()) if character.isupper() else character
+                for character in model.__name__
+            ).lstrip("-")
+            + ".schema.json",
+        )
+        for model in PUBLIC_PROMOTION_PAYLOAD_CONTRACTS
     ),
     *tuple(
         (

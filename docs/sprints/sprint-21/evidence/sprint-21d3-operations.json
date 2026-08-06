@@ -1,0 +1,512 @@
+{
+  "backup": {
+    "alembic_revision": "0015",
+    "artifact_archive_bytes": 1683401,
+    "artifact_archive_sha256": "ea6449ebefce79ee9ea7cb7f5ac84fbbef57712e4e87f8afa1cd0d7b8f7a2722",
+    "artifact_count": 3306,
+    "database": "cognitive_os_s21d3_test",
+    "database_dump_sha256": "f68fea62bbb0dbbb2023ab3c93ca2a51126c92af88b286bd9639b46746f68f18",
+    "event_count": 1731,
+    "manifest": "20260805T170602Z-backup-manifest.json"
+  },
+  "ci_coverage": {
+    "covered": {
+      "artifact_verification": true,
+      "benchmark_replay": true,
+      "d3_evidence_schemas": true,
+      "lifecycle": true,
+      "v2_normalisation_and_matrix": true
+    },
+    "uncovered": [],
+    "uses_live_provider_or_network": false,
+    "uses_predecessor_store": false,
+    "workflow_sha256": "7758c4ee027e5c3c5f2c5e4bdc21f91288be12924b7d1e9b435efb24aae554fc"
+  },
+  "corruption_matrix": [
+    {
+      "case": "tampered_blob",
+      "damage": "appended one byte to 077f508d0f1b in the extracted copy",
+      "expected": "the file no longer hashes to the name it is filed under",
+      "observed": {
+        "failed_closed": true,
+        "files_rehashed": 2096,
+        "reason": "content_hash_mismatches names 077f508d0f1b"
+      }
+    },
+    {
+      "case": "missing_blob",
+      "damage": "removed 077f508d0f1b from the extracted copy",
+      "expected": "artifact_bytes fails on a declared blob with no bytes, which a rehash of what remains cannot see",
+      "observed": {
+        "a_rehash_of_what_remains_reports_it_clean": true,
+        "failed_closed": true,
+        "files_rehashed": 2095,
+        "reason": "classes reporting failed: ['artifact_bytes']"
+      }
+    },
+    {
+      "case": "missing_artifact",
+      "damage": "the capability's artifact hash against empty bytes",
+      "expected": "the rehash refuses before the payload is parsed",
+      "observed": {
+        "failed_closed": true,
+        "reason": "CorrectionArtifactError: artifact bytes hash to e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855, not the e6412a0dafe7876bed8141c0432944ae1e8aaffef0249153a1e6932801b4c353 this capabili"
+      }
+    },
+    {
+      "case": "corrupt_artifact",
+      "damage": "one byte appended to the authorised bytes",
+      "expected": "the rehash refuses; the payload is never read",
+      "observed": {
+        "failed_closed": true,
+        "reason": "CorrectionArtifactError: artifact bytes hash to 818293b50264ba7c92e4c07ef4c7b2faa7a26aeee24e883cd70f1667c129efed, not the e6412a0dafe7876bed8141c0432944ae1e8aaffef0249153a1e6932801b4c353 this capabili"
+      }
+    },
+    {
+      "case": "oversized_artifact",
+      "damage": "the authorised bytes against a 16-byte bound",
+      "expected": "the size bound refuses before parsing",
+      "observed": {
+        "failed_closed": true,
+        "reason": "CorrectionArtifactError: artifact is 27030 bytes, above the 16-byte bound"
+      }
+    },
+    {
+      "case": "schema_wrong_artifact",
+      "damage": "v2 bytes relabelled with the v1 schema name",
+      "expected": "the schema name is checked before any model is constructed",
+      "observed": {
+        "failed_closed": true,
+        "reason": "CorrectionArtifactError: artifact declares schema 'correction-ranker-artifact', not 'correction-ranking-artifact-v2'"
+      }
+    },
+    {
+      "case": "metadata_substitution",
+      "damage": "a valid artifact presented under another descriptor's identity",
+      "expected": "the declared descriptor is compared and refused",
+      "observed": {
+        "failed_closed": true,
+        "reason": "CorrectionArtifactError: artifact descriptor is 'de697e11047bcc6a6a7ea448a33d112eaf5671f54faae55d14f857bc94ba4f70', not the expected '9999999999999999999999999999999999999999999999999999999999999999'"
+      }
+    },
+    {
+      "case": "byte_substitution",
+      "damage": "a differently-fitted but internally valid artifact under the authorised hash",
+      "expected": "the rehash refuses: the capability names one artifact, not one shape",
+      "observed": {
+        "failed_closed": true,
+        "reason": "CorrectionArtifactError: artifact bytes hash to 8abfce21da6d5da2a5f74457dad3070ea3a0cb95547dff65680397e6e93de3b7, not the e6412a0dafe7876bed8141c0432944ae1e8aaffef0249153a1e6932801b4c353 this capabili"
+      }
+    },
+    {
+      "case": "ood_unit_forgery",
+      "damage": "the metamorphic record's decisions set equal to its candidate outcomes",
+      "expected": "ood_units fails: one number cannot be both denominators",
+      "observed": {
+        "failed_closed": true,
+        "healthy": false,
+        "reason": "classes reporting failed: ['ood_units']"
+      }
+    },
+    {
+      "case": "holdout_access_claim",
+      "damage": "one evidence file claiming a final outcome was inspected",
+      "expected": "holdout_access fails and names the file",
+      "observed": {
+        "failed_closed": true,
+        "healthy": false,
+        "reason": "classes reporting failed: ['holdout_access']"
+      }
+    },
+    {
+      "case": "retrieval_second_read",
+      "damage": "the holdout benchmark recorded as executed twice",
+      "expected": "retrieval_one_read fails: the protocol allows one read",
+      "observed": {
+        "failed_closed": true,
+        "healthy": false,
+        "reason": "classes reporting failed: ['retrieval_one_read']"
+      }
+    },
+    {
+      "case": "dataset_member_mismatch",
+      "damage": "a campaign dataset that no longer rebuilds identically",
+      "expected": "explicit_member_selection fails",
+      "observed": {
+        "failed_closed": true,
+        "healthy": false,
+        "reason": "classes reporting failed: ['explicit_member_selection']"
+      }
+    },
+    {
+      "case": "feature_seal_mismatch",
+      "damage": "a campaign partition whose receipt is contradicted",
+      "expected": "duplicate_executions_or_seals fails",
+      "observed": {
+        "failed_closed": true,
+        "healthy": false,
+        "reason": "classes reporting failed: ['duplicate_executions_or_seals']"
+      }
+    },
+    {
+      "case": "stale_assessment",
+      "damage": "the pre-final checkpoint claiming final access was authorised",
+      "expected": "lifecycle fails: no later evidence supports it",
+      "observed": {
+        "failed_closed": true,
+        "healthy": false,
+        "reason": "classes reporting failed: ['lifecycle']"
+      }
+    },
+    {
+      "case": "wrong_active_revision",
+      "damage": "two different stop hashes across the not-opened map",
+      "expected": "lifecycle fails: dependents must bind one stop",
+      "observed": {
+        "failed_closed": true,
+        "healthy": false,
+        "reason": "classes reporting failed: ['lifecycle']"
+      }
+    },
+    {
+      "case": "retrieval_policy_substitution",
+      "damage": "a graph resource policy hash that was never frozen",
+      "expected": "the frozen policy table has no entry, so the benchmark cannot name one",
+      "observed": {
+        "failed_closed": true,
+        "frozen_policies": [
+          "4a7fe3b12ad9b25211fd05e95836080432d3fd94d0b04f64c289ea5407b66915",
+          "d0e8520e3d3bc3637ce75f632c79aa00c1f456a8af1a4956601dad359c8474ab"
+        ],
+        "reason": "FROZEN_GRAPH_RESOURCE_POLICIES resolves only the two revisions",
+        "revision_2_resolves": true
+      }
+    },
+    {
+      "case": "retrieval_judgement_substitution",
+      "damage": "a searchable body spelling the task family it is judged on",
+      "expected": "the production leak guard names the pair and the label",
+      "observed": {
+        "failed_closed": true,
+        "reason": "judgement_leaks reports ['pair:failed:boundary_collections']"
+      }
+    },
+    {
+      "case": "inherited_store_isolation",
+      "damage": "the D2 pair checked against a fingerprint that is not its own",
+      "expected": "the isolation class names the store and refuses",
+      "observed": {
+        "failed_closed": true,
+        "reason": "isolation fails when a declared fingerprint does not reproduce"
+      }
+    }
+  ],
+  "final_outcomes_inspected": false,
+  "findings": [],
+  "fingerprints_after": {
+    "artifacts": {
+      "files": 5,
+      "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf"
+    },
+    "artifacts-s21c3": {
+      "files": 8503,
+      "path_and_size_fingerprint_sha256": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593"
+    },
+    "artifacts-s21d1": {
+      "files": 83,
+      "path_and_size_fingerprint_sha256": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f"
+    },
+    "artifacts-s21d2": {
+      "files": 1511,
+      "path_and_size_fingerprint_sha256": "39417f1a03f6824cfe6f9c4b7e6bd5a3cd34da8329fb95cff0a35595899438aa"
+    },
+    "artifacts-s21d3": {
+      "files": 2096,
+      "path_and_size_fingerprint_sha256": "fcb0a044810b375f2933d4a3cf22c7448bfada9c90e104566a92125b08dcd0d3"
+    }
+  },
+  "fingerprints_before": {
+    "artifacts": {
+      "files": 5,
+      "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf"
+    },
+    "artifacts-s21c3": {
+      "files": 8503,
+      "path_and_size_fingerprint_sha256": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593"
+    },
+    "artifacts-s21d1": {
+      "files": 83,
+      "path_and_size_fingerprint_sha256": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f"
+    },
+    "artifacts-s21d2": {
+      "files": 1511,
+      "path_and_size_fingerprint_sha256": "39417f1a03f6824cfe6f9c4b7e6bd5a3cd34da8329fb95cff0a35595899438aa"
+    },
+    "artifacts-s21d3": {
+      "files": 2096,
+      "path_and_size_fingerprint_sha256": "fcb0a044810b375f2933d4a3cf22c7448bfada9c90e104566a92125b08dcd0d3"
+    }
+  },
+  "integrity_content_hash": "be293055f3eb5b8883f3b626b0d0d7bc6a6013c033f346c051dd627b9ba6c6d9",
+  "isolation": {
+    "changed": [],
+    "d3_pair_unchanged": true,
+    "predecessor_pairs_unchanged": true
+  },
+  "items": [
+    "S21D3-082",
+    "S21D3-083",
+    "S21D3-084",
+    "S21D3-085"
+  ],
+  "main_worktree_mutations": "M  .secrets.baseline\n M docs/sprints/sprint-21/evidence/sprint-21d3-verification-matrix.json\nM  scripts/verification_matrix_d3.py\nM  uv.lock\n",
+  "pre_registration_sha256": "191b3757ded21a1c2c85459a34902f8dee3f2f35b0979b557f84c1a37fe6a191",
+  "provisioning": {
+    "bootstrap_roles_untouched": {
+      "invoked_by_this_command": false,
+      "script": "postgres_bootstrap_roles.sh",
+      "sha256": "68024d34d5520973ecf2b3c5fa863b18bbf1242b292d28ef26c81b7f189b6ab5"
+    },
+    "database": "cognitive_os_s21d3_test",
+    "database_is_isolated": true,
+    "extensions": [
+      "plpgsql",
+      "vector"
+    ],
+    "migration_head": "0015",
+    "migration_is_expected": true,
+    "migration_versions_on_disk": [
+      "0013",
+      "0014",
+      "0015"
+    ],
+    "no_migration_0016": true,
+    "operations_examples_name_the_env_file": {
+      "env_file": ".env.s21d3.local",
+      "env_file_present": true,
+      "operations_script_sets_it": true
+    },
+    "schema_owner": "cogos_owner",
+    "schema_usage": true
+  },
+  "purpose": "Verify D3 provisioning, prove the evidence survives backup, restart and an isolated restore, and demonstrate that damage to the moved copy is refused.",
+  "recorded_at": "2026-08-05T17:06:13.690261Z",
+  "restart": {
+    "action": "compose-postgres-1 restarted; the D3 database answered again",
+    "history_sha256": "10728f251a82527bf954b9f5e6ea351c6d7c9f1bd31699b17bf64f27d28b1b8d",
+    "store_is_unchanged_across_the_restart": true
+  },
+  "restore": {
+    "artifact_bytes": {
+      "content_hash_mismatches": [],
+      "files_rehashed": 2096
+    },
+    "artifact_copy": "/home/palkouser/projekt/cognitive-os-data/scratch-s21d3/w7-operations/restored-artifacts",
+    "counts_match": true,
+    "evidence_report_on_the_restored_copy": {
+      "classes": [
+        {
+          "class": "explicit_member_selection",
+          "detail": "2 datasets rebuild identically from 5 sealed catalogues",
+          "evidence": [
+            "sprint-21d3-sealed-manifests.json",
+            "sprint-21d3-self-play-campaign.json",
+            "sprint-21d3-learner-selection.json"
+          ],
+          "state": "clean"
+        },
+        {
+          "class": "duplicate_executions_or_seals",
+          "detail": "2 partitions sealed once, no receipt contradicted, nothing remaining",
+          "evidence": [
+            "sprint-21d3-self-play-campaign.json"
+          ],
+          "state": "clean"
+        },
+        {
+          "class": "chronology",
+          "detail": "14 files bind 191b3757ded2 and follow it",
+          "evidence": [
+            "sprint-21d3-pre-registration.json",
+            "sprint-21d3-calibration-metamorphic.json",
+            "sprint-21d3-channel-invariance-diagnostic.json",
+            "sprint-21d3-corpus.json",
+            "sprint-21d3-d1-retrieval-development.json",
+            "sprint-21d3-diagnostic-continuation.json",
+            "sprint-21d3-learner-selection.json",
+            "sprint-21d3-operations.json",
+            "sprint-21d3-pre-final-checkpoint.json",
+            "sprint-21d3-retrieval-holdout-result.json",
+            "sprint-21d3-runtime-invariance.json",
+            "sprint-21d3-sealed-manifests.json",
+            "sprint-21d3-separation.json",
+            "sprint-21d3-v2-seal-resume.json",
+            "sprint-21d3-verification-matrix.json"
+          ],
+          "state": "clean"
+        },
+        {
+          "class": "feature_schema",
+          "detail": "the released v2 feature contract still hashes to the frozen 492c90a5df42",
+          "evidence": [
+            "sprint-21d3-contracts.json"
+          ],
+          "state": "clean"
+        },
+        {
+          "class": "matrix_embedding_scans",
+          "detail": "all 390 fitted columns are in the scanned matrix, embedding included",
+          "evidence": [
+            "sprint-21d3-vertical-slice.json"
+          ],
+          "state": "clean"
+        },
+        {
+          "class": "ood_units",
+          "detail": "120 ranking decisions and 480 candidate outcomes, counted apart",
+          "evidence": [
+            "sprint-21d3-calibration-metamorphic.json"
+          ],
+          "state": "clean"
+        },
+        {
+          "class": "holdout_access",
+          "detail": "11 files report zero final or canary access",
+          "evidence": [
+            "sprint-21d3-calibration-metamorphic.json",
+            "sprint-21d3-corpus.json",
+            "sprint-21d3-learner-selection.json",
+            "sprint-21d3-operations.json",
+            "sprint-21d3-pre-final-checkpoint.json",
+            "sprint-21d3-retrieval-holdout-result.json",
+            "sprint-21d3-runtime-invariance.json",
+            "sprint-21d3-sealed-manifests.json",
+            "sprint-21d3-self-play-campaign.json",
+            "sprint-21d3-separation.json",
+            "sprint-21d3-verification-matrix.json"
+          ],
+          "state": "clean"
+        },
+        {
+          "class": "retrieval_one_read",
+          "detail": "read once; winning arm None, first failed floor 'recall_at_5'",
+          "evidence": [
+            "sprint-21d3-retrieval-holdout-result.json"
+          ],
+          "state": "clean"
+        },
+        {
+          "class": "artifact_bytes",
+          "detail": "1971 blobs rehash to their content address",
+          "evidence": [],
+          "state": "clean"
+        },
+        {
+          "class": "lifecycle",
+          "detail": "no component was registered; 20 dependent tasks bound to stop 68ea06843d21",
+          "evidence": [
+            "sprint-21d3-pre-final-checkpoint.json"
+          ],
+          "state": "not_opened"
+        },
+        {
+          "class": "isolation",
+          "detail": "all 4 predecessor stores reproduce their released fingerprint",
+          "evidence": [
+            "sprint-21d3-baseline.json"
+          ],
+          "state": "clean"
+        }
+      ],
+      "clean": [
+        "explicit_member_selection",
+        "duplicate_executions_or_seals",
+        "chronology",
+        "feature_schema",
+        "matrix_embedding_scans",
+        "ood_units",
+        "holdout_access",
+        "retrieval_one_read",
+        "artifact_bytes",
+        "isolation"
+      ],
+      "covered": [
+        "explicit_member_selection",
+        "duplicate_executions_or_seals",
+        "chronology",
+        "feature_schema",
+        "matrix_embedding_scans",
+        "ood_units",
+        "holdout_access",
+        "retrieval_one_read",
+        "artifact_bytes",
+        "lifecycle",
+        "isolation"
+      ],
+      "failed": [],
+      "healthy": true,
+      "not_opened": [
+        "lifecycle"
+      ],
+      "warnings": []
+    },
+    "hashed_rows_match": true,
+    "restored": {
+      "campaign_receipts": 225,
+      "components_on_the_correction_surface": 0,
+      "counts": {
+        "artifact_blobs": 1971,
+        "artifacts": 3306,
+        "campaign_receipts": 225,
+        "coding_outcomes": 716,
+        "events": 1731,
+        "learned_activation_approvals": 1,
+        "learned_activation_history": 0,
+        "learned_artifacts": 0,
+        "learned_component_revisions": 3,
+        "learned_components": 1,
+        "learned_evidence_records": 0
+      },
+      "history_sha256": "10728f251a82527bf954b9f5e6ea351c6d7c9f1bd31699b17bf64f27d28b1b8d",
+      "receipts_sha256": "1f59947a3741c4bbfb66a5211c3b920385027e45132e2f04b0b4f54c3c066980",
+      "run_identity_keys": 716,
+      "run_identity_keys_sha256": "f5738ceaf7718d1d805e23059243f9cd3907d9b4f6c8dc8df406b9592df77d3a"
+    },
+    "resume_inputs_match": {
+      "run_identity_keys": true,
+      "sequence_receipts": true
+    },
+    "source": {
+      "campaign_receipts": 225,
+      "components_on_the_correction_surface": 0,
+      "counts": {
+        "artifact_blobs": 1971,
+        "artifacts": 3306,
+        "campaign_receipts": 225,
+        "coding_outcomes": 716,
+        "events": 1731,
+        "learned_activation_approvals": 1,
+        "learned_activation_history": 0,
+        "learned_artifacts": 0,
+        "learned_component_revisions": 3,
+        "learned_components": 1,
+        "learned_evidence_records": 0
+      },
+      "history_sha256": "10728f251a82527bf954b9f5e6ea351c6d7c9f1bd31699b17bf64f27d28b1b8d",
+      "receipts_sha256": "1f59947a3741c4bbfb66a5211c3b920385027e45132e2f04b0b4f54c3c066980",
+      "run_identity_keys": 716,
+      "run_identity_keys_sha256": "f5738ceaf7718d1d805e23059243f9cd3907d9b4f6c8dc8df406b9592df77d3a"
+    },
+    "stopped_state": {
+      "checked_surface": "experience.correction_ranking",
+      "components_on_the_correction_surface": 0,
+      "no_correction_component_was_registered": true,
+      "note": "the credential-free lifecycle smoke registers an unrelated inert component on skill.selection; it is not a D3 correction component and is expected to restore"
+    },
+    "target_database": "cognitive_os_s21d3_restore_test"
+  },
+  "schema_version": 1,
+  "sprint": "21D3",
+  "started_at": "2026-08-05T17:06:01.994445Z",
+  "wave": "W7"
+}

@@ -521,6 +521,64 @@ class RealityCampaignManifest(HashedExperienceContract):
         return self
 
 
+class RealityReceiptTaskV3(HashedExperienceContract):
+    """Exact task membership bound into a revision-3 campaign receipt authority."""
+
+    task_id: UUID
+    task_manifest_hash: Sha256Hex
+    bundle_id: UUID
+    bundle_hash: Sha256Hex
+    feature_seal_hash: Sha256Hex
+    candidate_order: Annotated[tuple[UUID, ...], Field(min_length=1, max_length=8)]
+    selected_member_hashes: Annotated[tuple[Sha256Hex, ...], Field(min_length=1, max_length=8)]
+
+    @model_validator(mode="after")
+    def order_and_members_are_one_to_one(self) -> RealityReceiptTaskV3:
+        if len(self.candidate_order) != len(set(self.candidate_order)):
+            raise ValueError("a receipt task cannot repeat a candidate")
+        if len(self.candidate_order) != len(self.selected_member_hashes):
+            raise ValueError("every selected candidate needs one ordered member hash")
+        return self
+
+
+class RealityCampaignReceiptManifestV3(RealityCampaignManifest):
+    """Campaign revision plus the exact bundles, feature seals, and selected member order."""
+
+    receipt_revision: int = Field(default=3, ge=3, le=3)
+    partition: NonEmptyStr
+    mode: NonEmptyStr
+    selection_manifest_hash: Sha256Hex
+    feature_schema_hash: Sha256Hex
+    feature_seal_root_hash: Sha256Hex
+    receipt_tasks: Annotated[tuple[RealityReceiptTaskV3, ...], Field(min_length=1)]
+
+    @model_validator(mode="after")
+    def receipt_tasks_match_the_planned_campaign(self) -> RealityCampaignReceiptManifestV3:
+        if self.mode not in {"label_all", "stop_on_first_accepted"}:
+            raise ValueError("receipt campaign mode is not supported")
+        planned_candidates = [
+            item for item in self.planned_runs if item.run_kind is RealityRunKind.CANDIDATE
+        ]
+        planned_task_ids = {item.task_id for item in planned_candidates}
+        if {item.task_id for item in self.receipt_tasks} != planned_task_ids:
+            raise ValueError("receipt task membership does not match the planned campaign")
+        if len({item.task_id for item in self.receipt_tasks}) != len(self.receipt_tasks):
+            raise ValueError("a campaign receipt cannot repeat a task")
+        for receipt in self.receipt_tasks:
+            planned = [item for item in planned_candidates if item.task_id == receipt.task_id]
+            if {item.task_manifest_hash for item in planned} != {receipt.task_manifest_hash}:
+                raise ValueError("receipt task manifest differs from its planned runs")
+            if tuple(item.candidate_id for item in planned) != receipt.candidate_order:
+                raise ValueError("receipt candidate order differs from the planned member order")
+        return self
+
+    def receipt_for(self, task_id: UUID) -> RealityReceiptTaskV3:
+        for receipt in self.receipt_tasks:
+            if receipt.task_id == task_id:
+                return receipt
+        raise KeyError(f"task {task_id} is absent from the campaign receipt manifest")
+
+
 class RealityCountBreakdown(HashedExperienceContract):
     """A count that carries its own denominator. §8 asks for no bare percentages."""
 
@@ -567,6 +625,8 @@ PUBLIC_REALITY_CONTRACTS: tuple[type[HashedExperienceContract], ...] = (
     CorrectionTrajectoryManifest,
     RealityRunIdentity,
     RealityCampaignManifest,
+    RealityReceiptTaskV3,
+    RealityCampaignReceiptManifestV3,
     RealityCountBreakdown,
     RealityCorpusStatistics,
 )
