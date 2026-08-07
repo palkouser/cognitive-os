@@ -10,7 +10,12 @@ import pytest_asyncio
 from sqlalchemy import text
 
 from cognitive_os.events.base import EventEnvelope
-from cognitive_os.infrastructure.postgres.engine import create_postgres_engine
+from cognitive_os.infrastructure.postgres.engine import (
+    TruncationNotNominated,
+    TruncationRefused,
+    create_postgres_engine,
+    require_nominated_for_truncation,
+)
 
 
 def pytest_collection_modifyitems(items) -> None:
@@ -41,19 +46,19 @@ async def engines(database_urls) -> AsyncIterator[tuple[object, object]]:
         # Pointing the release matrix at it erased a campaign. So the database has to be
         # nominated for erasure by name, in the environment, by whoever meant it — "ends with
         # _test" is a naming convention, and this fixture needs consent.
-        nominated = os.environ.get("COGOS_TRUNCATABLE_DATABASE")
-        if nominated is None:
-            # Nobody nominated a database, so nobody asked for this. Skipping with a reason,
-            # like every other opt-in integration test here, keeps a whole-repository run from
-            # erasing a store it was never pointed at on purpose.
-            pytest.skip("no database is nominated by COGOS_TRUNCATABLE_DATABASE")
-        if nominated != database_name:
-            # Nominated one database and connected to another. That is a misconfiguration and
-            # it must be loud: the next thing this fixture does is TRUNCATE.
-            pytest.fail(
-                f"refusing to TRUNCATE {database_name}: COGOS_TRUNCATABLE_DATABASE names "
-                f"{nominated}"
-            )
+        # W7-F1 moved the rule itself into `infrastructure.postgres.engine`, because five other
+        # modules truncated the same tables behind the older suffix fence and a rule with six
+        # copies is a rule with six chances to be the outdated one. The two outcomes are
+        # unchanged: nobody nominated anything, so nobody asked for this — skip, like every
+        # other opt-in integration test here; or one database was nominated and another is
+        # connected, which is a misconfiguration and has to be loud, because the next thing this
+        # fixture does is TRUNCATE.
+        try:
+            require_nominated_for_truncation(database_name)
+        except TruncationNotNominated as reason:
+            pytest.skip(str(reason))
+        except TruncationRefused as reason:
+            pytest.fail(str(reason))
     async with admin.begin() as connection:
         await connection.execute(
             text(

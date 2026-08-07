@@ -31,7 +31,12 @@ from cognitive_os.infrastructure.learned.postgres.provider_output_health import 
 from cognitive_os.infrastructure.learned.postgres.provider_output_repository import (
     PostgresProviderOutputRepository,
 )
-from cognitive_os.infrastructure.postgres.engine import create_postgres_engine
+from cognitive_os.infrastructure.postgres.engine import (
+    TruncationNotNominated,
+    TruncationRefused,
+    create_postgres_engine,
+    require_nominated_for_truncation,
+)
 
 from . import fixtures as fx
 
@@ -55,6 +60,17 @@ async def engines() -> AsyncIterator[tuple[AsyncEngine, AsyncEngine]]:
         name = await connection.scalar(text("SELECT current_database()"))
         if not str(name).endswith("_test"):
             pytest.fail(f"refusing governance health tests against database: {name}")
+        # W7-F1. "Ends with `_test`" is a naming convention, not consent: every sprint's
+        # evidence database ends in `_test` too, and on 2026-08-07 a release-matrix run with the
+        # D4 environment sourced put one in front of this fixture, which truncated 1,076
+        # committed observations. The rule is the one W6-F2 and D4-W0-F1 already established,
+        # reached through its single implementation rather than copied beside a sixth TRUNCATE.
+        try:
+            require_nominated_for_truncation(str(name))
+        except TruncationNotNominated as reason:
+            pytest.skip(str(reason))
+        except TruncationRefused as reason:
+            pytest.fail(str(reason))
     async with admin.begin() as connection:
         await connection.execute(
             text("TRUNCATE cognitive_os.provider_output_records RESTART IDENTITY CASCADE")

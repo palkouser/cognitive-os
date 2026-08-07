@@ -508,6 +508,42 @@ def _require_d3_environment(*, needs_store: bool) -> Path | None:
     return resolved
 
 
+#: D4 inherits one more predecessor than D3 did, and the one it inherits is the store D3 itself
+#: wrote. `artifacts-s21d3` is not on D3's own forbidden list for the obvious reason.
+_FORBIDDEN_ROOTS_D4 = (
+    *_FORBIDDEN_ROOTS,
+    "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d3",
+)
+
+
+def _require_d4_environment(*, needs_store: bool) -> Path | None:
+    """S21D4-080. Refuse a wrong or missing D4 environment before anything is opened.
+
+    Same boundary as D3's and for the same reason, over five predecessor roots rather than
+    four. It is checked on the *values*: an operator who sourced `.env.s21d3.local` out of habit
+    has a complete, valid configuration pointing at a store this sprint may not write to, and
+    every later check would pass while reading the wrong evidence. W7-A5 in D3 is what that
+    looks like when it happens — a database and an artifact root that belonged to different
+    sprints, discovered only because a store survey ran before the backup.
+    """
+    database = os.environ.get("COGOS_POSTGRES_DATABASE") or os.environ.get("COGOS_DATABASE_URL")
+    if database and "s21d4" not in database:
+        raise SystemExit(
+            f"refusing to run against {database!r}: the D4 commands require an s21d4 database"
+        )
+    root = os.environ.get("COGOS_ARTIFACT_ROOT")
+    if root is None:
+        if needs_store:
+            raise SystemExit("COGOS_ARTIFACT_ROOT is required to check artifact bytes")
+        return None
+    resolved = Path(root).resolve()
+    if str(resolved) in _FORBIDDEN_ROOTS_D4:
+        raise SystemExit(f"refusing to open the predecessor store at {resolved}")
+    if "s21d4" not in resolved.name:
+        raise SystemExit(f"refusing to open {resolved}: the D4 commands require the D4 store")
+    return resolved
+
+
 async def _d3_integrity(args: argparse.Namespace) -> int:
     """S21D3-080 and -081. The eleven-class D3 report, read-only and offline by default.
 
@@ -549,11 +585,57 @@ async def _d3_integrity(args: argparse.Namespace) -> int:
     return 0 if report.healthy else 1
 
 
+async def _d4_integrity(args: argparse.Namespace) -> int:
+    """S21D4-080 and -081. The twelve-class D4 report, read-only and offline by default.
+
+    The eleven released classes over D4's own evidence plus `decision_independence`, which is
+    the one D3 could not have had: it fails when any committed file takes a rate over the
+    counted decisions rather than the distinct ones.
+
+    Offline by default and opt-in for both authorities, exactly as the D3 command is, because
+    the point of a report that reads files is that a lane with no database, no store and no
+    credential can run it — and can never claim a check it did not make.
+    """
+    from cognitive_os.learning.integrity_d4 import d4_integrity, path_and_size_fingerprint
+
+    root = _require_d4_environment(needs_store=args.rehash_blobs)
+    evidence = Path(args.evidence or "docs/sprints/sprint-21/evidence")
+    if not evidence.is_dir():
+        raise SystemExit(f"{evidence} is not an evidence directory")
+
+    blobs: dict[str, str] | None = None
+    if args.rehash_blobs and root is not None:
+        blobs = {
+            path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in sorted(root.rglob("*"))
+            if path.is_file() and not path.name.startswith(".")
+        }
+    fingerprints: dict[str, str] | None = None
+    if args.data_root:
+        data = Path(args.data_root)
+        fingerprints = {
+            name: path_and_size_fingerprint(data / directory)
+            for name, directory in (
+                ("development", "artifacts"),
+                ("sprint_21c3", "artifacts-s21c3"),
+                ("sprint_21d1", "artifacts-s21d1"),
+                ("sprint_21d2", "artifacts-s21d2"),
+                ("sprint_21d3", "artifacts-s21d3"),
+            )
+            if (data / directory).is_dir()
+        }
+
+    report = d4_integrity(evidence, blob_hashes=blobs, predecessor_fingerprints=fingerprints)
+    _emit(report.as_dict())
+    return 0 if report.healthy else 1
+
+
 _ACTIONS = {
     "health": _health,
     "correction-runtime": _correction_runtime,
     "correction-integrity": _correction_integrity,
     "d3-integrity": _d3_integrity,
+    "d4-integrity": _d4_integrity,
     "component-show": _component_show,
     "component-history": _component_history,
     "evidence-verify": _evidence_verify,
@@ -586,7 +668,7 @@ def main(argv: list[str] | None = None) -> int:
         help="observation status",
     )
     parser.add_argument("--limit", type=int, default=100, help="maximum rows to return")
-    parser.add_argument("--evidence", help="committed D3 evidence directory to report on")
+    parser.add_argument("--evidence", help="committed evidence directory to report on")
     parser.add_argument(
         "--rehash-blobs",
         action="store_true",

@@ -21,6 +21,7 @@ from typing import Any
 import pytest
 
 from cognitive_os.infrastructure.learned.reference import AlwaysAbstainingRanker
+from cognitive_os.infrastructure.postgres.engine import TRUNCATABLE_DATABASE
 from cognitive_os.learned_smoke import SmokeRefused, _require_erasable, _require_nomination
 
 
@@ -47,10 +48,21 @@ def test_a_matching_nomination_is_accepted(monkeypatch: pytest.MonkeyPatch) -> N
     _require_nomination("cognitive_os_test")
 
 
-def test_the_smoke_uses_the_same_nomination_variable_as_the_integration_fixture() -> None:
-    """One rule for both truncating paths. Two names would teach an operator only one of them."""
+def test_the_smoke_uses_the_same_nomination_rule_as_every_other_truncating_path() -> None:
+    """One rule for every truncating path, reached through one implementation.
+
+    This test used to check that the integration fixture mentioned the same environment
+    variable. That was true and insufficient: W7-F1 found nine more truncating paths, five of
+    which erased 1,076 committed observations. Matching names across two files is not the
+    property — reaching the same function is, so that is what is asserted now, and
+    `test_truncation_fence.py` is where the whole list is held.
+    """
     fixture = Path("tests/integration/postgres/conftest.py").read_text(encoding="utf-8")
-    assert "COGOS_TRUNCATABLE_DATABASE" in fixture
+    smoke = Path("src/cognitive_os/learned_smoke.py").read_text(encoding="utf-8")
+
+    assert "require_nominated_for_truncation" in fixture
+    assert "require_nominated_for_truncation" in smoke
+    assert TRUNCATABLE_DATABASE == "COGOS_TRUNCATABLE_DATABASE"
 
 
 class _StubConnection:

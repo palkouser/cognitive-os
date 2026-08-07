@@ -68,7 +68,12 @@ from cognitive_os.infrastructure.learned.postgres.repository import (
 from cognitive_os.infrastructure.learned.postgres.tables import LEARNED_EVIDENCE_TABLES
 from cognitive_os.infrastructure.learned.reference import AlwaysAbstainingRanker
 from cognitive_os.infrastructure.postgres.artifact_repository import PostgresArtifactRepository
-from cognitive_os.infrastructure.postgres.engine import create_postgres_engine
+from cognitive_os.infrastructure.postgres.engine import (
+    TruncationNotNominated,
+    TruncationRefused,
+    create_postgres_engine,
+    require_nominated_for_truncation,
+)
 from cognitive_os.learning.correction_protocol import DecisionCensusV4
 from cognitive_os.learning.promotion import D3PromotionBindings, condition_20_gate
 
@@ -105,20 +110,22 @@ def _require_nomination(database: str) -> None:
 
     One rule for both truncating paths, deliberately. A second mechanism answering the same
     question differently is how an operator ends up knowing one fence and meeting the other.
+
+    W7-F1 found that "both" was never the whole list -- five test modules truncated the same
+    nine tables behind the older `_test` fence -- so the rule moved to
+    `infrastructure.postgres.engine`, where every path that connects can reach it, and this
+    function is now one of its callers rather than one of its implementations.
     """
-    nominated = os.environ.get("COGOS_TRUNCATABLE_DATABASE")
-    if nominated is None:
+    try:
+        require_nominated_for_truncation(database)
+    except TruncationNotNominated as reason:
         raise SmokeRefused(
             "the learned smoke truncates every learned evidence table, so the database must be "
             "nominated for erasure: set COGOS_TRUNCATABLE_DATABASE to the database you mean. "
             "It must never name a store that holds evidence."
-        )
-    if nominated != database:
-        raise SmokeRefused(
-            f"refusing to truncate {database}: COGOS_TRUNCATABLE_DATABASE names {nominated}. "
-            "Nominating one database and connecting to another is a misconfiguration, and the "
-            "next statement would have been a TRUNCATE."
-        )
+        ) from reason
+    except TruncationRefused as reason:
+        raise SmokeRefused(str(reason)) from reason
 
 
 async def _require_erasable(connection: Any) -> None:

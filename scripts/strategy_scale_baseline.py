@@ -15,7 +15,12 @@ from time import perf_counter
 
 from sqlalchemy import text
 
-from cognitive_os.infrastructure.postgres.engine import create_postgres_engine
+from cognitive_os.infrastructure.postgres.engine import (
+    TruncationNotNominated,
+    TruncationRefused,
+    create_postgres_engine,
+    require_nominated_for_truncation,
+)
 
 COUNTS = {
     "strategy_identities": 1_000,
@@ -238,6 +243,13 @@ async def run(output: Path, iterations: int, *, cleanup: bool) -> None:
             database = str(await connection.scalar(text("SELECT current_database()")))
             if not database.endswith("_test"):
                 raise RuntimeError("strategy scale baseline requires an isolated _test database")
+            # W7-F1. The `_test` suffix is a naming convention, not consent: every sprint's
+            # evidence database ends in `_test`. This baseline truncates before it fixtures, so
+            # it asks the same question every other truncating path asks, in the same place.
+            try:
+                require_nominated_for_truncation(database)
+            except (TruncationNotNominated, TruncationRefused) as reason:
+                raise RuntimeError(str(reason)) from reason
             await _fixture(connection)
         measurements = {}
         plans = {}

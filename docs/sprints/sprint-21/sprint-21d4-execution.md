@@ -2,13 +2,15 @@
 
 - **Branch:** `feature/sprint-21d4-selective-correction-ranking`
 - **Waves:** W0 + W1 — authority and design; W2 — fresh evidence at scale; W3 — retrieval
-  surface; W4 — artifact and runtime
-- **Status:** W0 through W4 complete. Both experiment branches have now returned their own
-  hash-bound results, and both are negative: the correction branch selected no candidate
-  (S21D4-039, `hypothesis_class_bound`) and the retrieval branch met no floor (S21D4-046, first
-  failed floor `mrr_at_10`). W4 refused final access at S21D4-059 and bound twenty-six dependent
-  tasks to that one stop. No D4 final, promotion or canary outcome has been read, no threshold
-  has been derived, and no candidate has been selected.
+  surface; W4 — artifact and runtime; W7 — operations
+- **Status:** W0 through W4 and W7 complete; W5 and W6 are bound not-opened by W4's checkpoint.
+  Both experiment branches have returned their own hash-bound results, and both are negative:
+  the correction branch selected no candidate (S21D4-039, `hypothesis_class_bound`) and the
+  retrieval branch met no floor (S21D4-046, first failed floor `mrr_at_10`). W4 refused final
+  access at S21D4-059 and bound twenty-six dependent tasks to that one stop. W7 verified
+  provisioning, recovery and twenty-two damage cases, and found W7-F1. No D4 final, promotion or
+  canary outcome has been read, no threshold has been derived, and no candidate has been
+  selected.
 - **Migration:** none; the D4 authorities are provisioned at the released revision
 - **Pre-registration SHA-256:**
   `526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9`
@@ -329,6 +331,201 @@ No configuration was sealed: sealing happens at authorised final access, and S21
 item that would have done it. `final_or_canary_outcomes_inspected: 0`, no store opened, no
 lifecycle state created.
 
+## W7 outcome — operations, and the fence that was never finished
+
+W7 executes S21D4-080 through S21D4-086. §11.1 makes operations tasks unconditional, so the two
+stops that closed W5 and W6 change what W7 has to prove *about*, not whether it runs.
+
+### Twelve classes, and the one D3 could not have had
+
+S21D4-081. The eleven released classes read D4's own evidence, and `decision_independence` is
+new. It fails when any committed file takes a rate over the counted decisions rather than the
+distinct ones — the erratum, turned into a check that runs. Three ways it can fire: a named
+nominal denominator, a census whose triple does not add up, and a record claiming more distinct
+decisions than it counted. A fourth would have made it worthless, so it is guarded: a
+denominator scan that found no denominators reports `failed`, not `clean`.
+
+Against the committed evidence with both authorities supplied: **11 clean, 1 not opened, 0
+warnings, 0 failed**, over 177 decision counts and 29 named denominators across ten files.
+Offline — the shape a CI lane sees — `artifact_bytes` and `isolation` report `warning` rather
+than passing, which is the distinction the whole sprint keeps re-learning.
+
+`ood_units` asks D4's sharper version of D3's question. D3 asked whether decisions and candidate
+outcomes were counted apart; D4 asks the invariance record whether forty transformed decisions
+were named as replicas of twenty clean ones. They were: 320 counted, 80 distinct, 240 replicas.
+
+Every class has a seeded violation in `tests/cognitive_os/learning/test_d4_integrity.py` (37
+cases), because a class that cannot be made to fail proves nothing. One of those seeds had to be
+rewritten: emptying the `contracts` block does not break `feature_schema`, because the frozen
+hash also appears in the record's `unchanged_from_d3` block and the check reads the whole
+document. The seed is now drift — every occurrence replaced — which is the failure the class
+exists for.
+
+### The command, and the five roots it refuses
+
+S21D4-080. `scripts/learned.py d4-integrity` is read-only, offline by default, and prints one
+line of canonical sorted JSON. The boundary is checked on the *values*, before anything is
+opened, over **five** predecessor roots rather than D3's four. The fifth is `artifacts-s21d3` —
+the store the previous sprint wrote, and therefore the one an operator is most likely to still
+have exported.
+
+### Provisioning, recovery, and twenty-two damage cases
+
+S21D4-082, -083 and -084 run as one command, because they are one question asked three times.
+
+**Provisioning** reads only: migration head `0015`, no `0016` on disk, schema owned by
+`cogos_owner` with usage, `plpgsql` and `vector` installed, and `postgres_bootstrap_roles.sh`
+hashed at `68024d34d5520973…` and *not invoked*.
+
+**Recovery** backed up the D4 pair with the repository's own script (dump
+`146ec99d8859d204…`, artifact archive `999c71df28b999a7…` over 6,478,091 bytes, 2,812 events and
+5,598 artifacts at revision `0015`), restarted the container, and restored into
+`cognitive_os_s21d4_restore_test`. The restored copy reproduces the source exactly: counts match,
+the hashed-row roll-up matches, both resume inputs match, and all **3,990 blobs rehash to their
+content address**. The twelve-class report run against the restored artifact copy is itself
+clean. The stopped state restores as a stopped state: **zero components on
+`experience.correction_ranking`**.
+
+**The matrix** ran 22 damage cases and all 22 failed closed — D3's eighteen, the two S21D4-084
+names, and two more the twelfth class made cheap:
+
+| Group | Cases |
+|---|---|
+| store | tampered blob, missing blob |
+| artifact | missing, corrupt, oversized, schema-wrong, metadata substitution, byte substitution |
+| evidence | OOD unit forgery, holdout access claim, retrieval second read, retrieval alternative reopened, dataset member mismatch, feature seal mismatch, stale assessment, wrong active revision |
+| independence | forged independent-decision count, rate over a nominal denominator, threshold derived off calibration |
+| retrieval | policy substitution, judgement substitution |
+| isolation | inherited store fingerprint |
+
+The artifact group damages D3's committed contract fixture and the record says so in its first
+field — `artifact_under_test: d3_contract_fixture`. D4 fitted nothing, and building a second
+fixture would have given the two sprints two artifacts equal only by inspection.
+
+### Finding W7-F1 — one rule, eleven copies, nine of them stale
+
+This is the wave's real result, and W7 found it by causing it.
+
+The release matrix was run the way D3's evidence index documents: `set -a && . ./.env.s21d4.local
+&& set +a`, then the matrix. Its `full_suite` row therefore ran `pytest` with
+`COGOS_DATABASE_URL` and `COGOS_DATABASE_ADMIN_URL` pointing at `cognitive_os_s21d4_test`, and
+five test modules under `tests/cognitive_os/` **truncated the D4 evidence store**:
+
+```text
+learned_observations   1,076 -> 0
+learned_datasets           9 -> 0
+learned_artifacts         18 -> 0
+```
+
+All nine `learned_*` tables showed `relfilenode != oid` with no deletes — the same forensic
+signature D4-W0-F1 recorded for D3, produced by a different path.
+
+D4-W0-F1 fixed this mechanism in two places and wrote "one rule for both truncating paths,
+deliberately". **There were eleven.** The other nine kept the older fence, "the database name
+ends in `_test`" — which is a naming convention rather than consent, because every sprint's
+*evidence* database ends in `_test` too. Three of the nine are scale baselines, and
+`semantic_scale_baseline.py` truncates `events`, `artifacts` and `artifact_blobs`: the
+append-only store itself.
+
+The rule now has one implementation,
+`infrastructure.postgres.engine.require_nominated_for_truncation`, and all eleven paths call it.
+`tests/cognitive_os/learning/test_truncation_fence.py` proves both halves: the rule refuses an
+unnominated database and a mismatched one, and a scan of every `TRUNCATE` in the repository
+requires its module to reach the fence. That scan is what found three of the eleven — the first
+version of the list had eight and excluded two scale baselines on an assumption.
+
+**The store was fully recovered**, which is the only difference between this finding and W0-F1's.
+The backup taken at 18:42 UTC — three minutes before the erasure, dump `9b5a561361b3ab92…`,
+matching what the clean operations run had already recorded — was restored over the evidence
+database through the released `restore_event_store.sh`. Afterwards: 1,076 observations, 9
+datasets, 18 artifact lineages, 2,812 events, 3,990 blobs, zero components, and a twelve-class
+report that is clean with both authorities supplied. Seventy-nine content-addressed files that
+no row declared were moved out of the store rather than deleted. D3's loss was irrecoverable
+because every backup was taken after the erasure; D4's was not, because W7's own backup step ran
+first.
+
+Two smaller things belong to the same finding. The matrix's own environment was the mechanism, so
+S21D4-086 now runs **without a sourced environment** — every row that needs a database names one
+itself, and the record's `environment` block says `not set` rather than claiming a D4 handle it
+did not need. And the two adapted W7 scripts were moved onto D4's canonical evidence form: D3's
+originals hash a compact serialisation and write an indented one, so the seal inside the file is
+not a hash of the file. Twenty D4 records verify one way; two verifying another way would be a
+trap for whoever recomputes them.
+
+### The release matrix, and three defects it found in its own wave
+
+S21D4-086 runs **30 rows, 30 passed, 0 skipped**. Negative rows refuse for their declared reason:
+a predecessor store path, `artifacts-s21d3` by itself, a predecessor database name, and the
+smoke against a non-`_test` database. Six rows are recorded from W7's, W4's and W2's own evidence
+rather than re-run, and each names the file and the key that decided it.
+
+Getting there cost three corrections, and two of them were W7's own work.
+
+**W7-A1 — a Bandit finding in the new module.** `assert campaign is not None`, written to satisfy
+mypy, is `B101`. Rewritten so the absent case is impossible by construction; mypy narrows through
+the comprehension instead of trusting an assertion that `-O` would remove.
+
+**W7-A2 — a negative row that refused for the wrong reason.**
+`smoke_refuses_a_non_test_database` claims to prove that `cognitive_os_dev` is refused. Without a
+sourced environment it refused for a missing `COGOS_ARTIFACT_ROOT` instead, which says nothing
+about the database name. The row supplies its own artifact root now. D3's row only ever
+demonstrated what it claimed because the environment happened to be sourced.
+
+**W7-A3 — a test that made the release command non-idempotent.** The matrix's structural checks
+began as a test class, and the matrix runs the whole suite as one of its own rows — so the suite
+read the *previous* record and the command needed two runs to go green. A release command that is
+not idempotent is a defect in the command, so the checks moved into
+`verification_matrix_d4._structural_findings`, where they fold into the exit status: every
+command row measured a cost, every negative row exists and refused, every recorded row binds the
+bytes it read.
+
+All three are the same class as W4's tautological precedence check and W3's `all()` over an empty
+set — a check that passes without touching its question — and all three were found by running the
+thing rather than by reading it.
+
+### W7 evidence index
+
+| Evidence | SHA-256 of the file | Seal |
+|---|---|---|
+| [operations](evidence/sprint-21d4-operations.json) | `47a5c701d7f98eb3c3cdf4a3b12c2bb90dfcb9ba9bd2c4d9b1af866c2a7017af` | `f12d0cb4229955b887060bcc168c4aaa56534dc8c23cc89a3a66e4bc7bfbd0f7` |
+| [verification matrix](evidence/sprint-21d4-verification-matrix.json) | `643ea217f72870ead0794782fd5def72f84b1149194c5ae1eb83ea6986e7fbba` | `f0663d76029ef141396765f43f70f175170d84c2caaeff276e77026ea1cf44c9` |
+
+The two operator commands are:
+
+```bash
+set -a && . ./.env.s21d4.local && set +a
+UV_CACHE_DIR=.cache/uv uv run python scripts/operations_d4.py
+```
+
+```bash
+UV_CACHE_DIR=.cache/uv uv run python scripts/verification_matrix_d4.py
+```
+
+The second one deliberately takes no environment, which is W7-F1's operational half. The
+read-only report needs neither:
+
+```bash
+COGOS_POSTGRES_DATABASE=cognitive_os_s21d4_test \
+  uv run python scripts/learned.py d4-integrity
+```
+
+### W7 validation
+
+Every check is a row of the S21D4-086 matrix with its measured duration and output hash, and all
+30 are green: Ruff lint and format over `src tests scripts infra`, mypy over `src/cognitive_os`
+(615 files), Bandit with zero results, the full suite, three focused slices, the contract-schema
+export check, the repository language check, the tracked-file secrets scan, the dependency audit,
+`uv build` with both distribution verifiers, the pre-registration integrity check, both
+integrity reports, and both learned benchmark manifests.
+
+Five focused modules were added: `test_d4_integrity.py` (37 cases — one seeded violation per
+class, plus the vacuity guard the twelfth class needs), `test_d4_cli_boundary.py` (17 cases —
+five predecessor roots and the output contract), `test_d4_operations_evidence.py` (10 cases),
+`test_truncation_fence.py` (17 cases — W7-F1's proof, including the scan that fails on a twelfth
+`TRUNCATE`), and `test_d4_pre_final_checkpoint_evidence.py` from W4. One released test was
+rewritten rather than deleted: `test_the_smoke_uses_the_same_nomination_variable_as_the_integration_fixture`
+checked that two files mentioned the same environment variable, which was true and insufficient.
+
 ## Evidence handles
 
 | Record | SHA-256 of the file | Seal (`integrity_content_hash`) |
@@ -349,6 +546,8 @@ lifecycle state created.
 | `sprint-21d4-retrieval-decision.json` | `f5c19fa0cc290a335d5e250b80c009409cbb509e92e7f2210946c49982d8322f` | `c4ad4b73ff2b8a2b82fb0edb4702d6a7a4d896d742681148f87aa4fbe93c3c52` |
 | `sprint-21d4-advisory-boundary.json` | `5d3efbd584dc270a89a834ac104b1e815ac4beb8d545462fa0ae9a2d0d5c7177` | `1dca4f21cf88957b4bf2458475d7e7d8694b619362d237b115c5d9bac45b48f6` |
 | `sprint-21d4-pre-final-checkpoint.json` | `fdc1f9f16bda948506604c9f2c9ffc2cc700c51750d4cdcb77a1ef449c57f314` | `87c5473f61c177fe5db5aa1a5971759451c1f7a82b7364e9ac8dc3da99e9c6b1` |
+| `sprint-21d4-operations.json` | `47a5c701d7f98eb3c3cdf4a3b12c2bb90dfcb9ba9bd2c4d9b1af866c2a7017af` | `f12d0cb4229955b887060bcc168c4aaa56534dc8c23cc89a3a66e4bc7bfbd0f7` |
+| `sprint-21d4-verification-matrix.json` | `643ea217f72870ead0794782fd5def72f84b1149194c5ae1eb83ea6986e7fbba` | `f0663d76029ef141396765f43f70f175170d84c2caaeff276e77026ea1cf44c9` |
 
 Two hashes, because two things are addressed: the file, which is what another record cites
 as `pre_registration_sha256` or `..._sha256`, and the seal inside it, which is what a record
@@ -378,6 +577,13 @@ result, and neither authorises what comes next:
 - **Gate L2 condition 20's payload is stricter than it was**, which is the one thing W4 moved
   forward rather than closed. The row cannot claim a decision count again without naming how
   many of those decisions were distinct.
+- **The substrate is release-graded and the evidence survives being moved.** W7's provisioning,
+  recovery and twenty-two-case damage matrix all pass, the twelve-class report is clean with
+  both authorities, and every predecessor store reproduces its released fingerprint.
+
+One item outside W7's list remains open and is deliberately not in the not-opened map:
+**S21D4-075**, receipt-selected rollback restoration and refusal, which §11.1 makes
+unconditional and which runs against the isolated lifecycle fixture whether or not D4 activates.
 
 What W2 and W3 leave behind is not a guess about why. The correction stop is a measured
 hypothesis-class bound over 100 independent decisions, and the retrieval stop is a measured
