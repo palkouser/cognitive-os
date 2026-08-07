@@ -1,10 +1,12 @@
 # Sprint 21D4 execution log
 
 - **Branch:** `feature/sprint-21d4-selective-correction-ranking`
-- **Waves:** W0 + W1 — authority and design; independence and threshold spine
-- **Status:** W0 and W1 complete. The correction branch is open at W2 on a typed `proceed`; the
-  retrieval branch is open and independent of it. No D4 calibration, final, promotion or canary
-  outcome has been read, no threshold has been derived, and no candidate has been selected.
+- **Waves:** W0 + W1 — authority and design; W2 — fresh evidence at scale; W3 — retrieval surface
+- **Status:** W0 through W3 complete. Both experiment branches have now returned their own
+  hash-bound results, and both are negative: the correction branch selected no candidate
+  (S21D4-039, `hypothesis_class_bound`) and the retrieval branch met no floor (S21D4-046, first
+  failed floor `mrr_at_10`). No D4 final, promotion or canary outcome has been read, no threshold
+  has been derived, and no candidate has been selected.
 - **Migration:** none; the D4 authorities are provisioned at the released revision
 - **Pre-registration SHA-256:**
   `526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9`
@@ -168,23 +170,128 @@ The decision authorises W2 to author the fresh corpus. It does not authorise rea
 calibration, final, promotion or canary outcome, deriving the operating point, or selecting a
 candidate.
 
+## W2 outcome — the correction branch answers, and the answer is null
+
+W2 authored 100 calibration groups, sealed 720 feature records before the first container
+started, executed both campaigns, materialised two explicit snapshots, resolved the invariance
+sample, and measured the risk–coverage curve at two volumes. It reached the floor the wave
+exists for: **100 independent decisions, 0 replicated**.
+
+The grid carries signal and cannot be made selective. All 144 cells — 24 settings × 3 operating
+points × 2 volumes — beat the strongest deterministic baseline (0.52), at 0.56 to 0.73. Not one
+of them reaches zero confident errors, so all 48 zero-error derivations return no point, and the
+selection is a typed null under §3.3 step 5.
+
+|  | 200 rows / 50 groups | 320 rows / 80 groups |
+|---|---|---|
+| best first-choice | 0.735 | 0.712 |
+| median first-choice | 0.680 | 0.622 |
+| cells beating the baseline | 72/72 | 72/72 |
+| fewest confident errors | 13 | 17 |
+| zero-error coverage | 0 | 0 |
+
+The stop is `hypothesis_class_bound` rather than `volume_bound` because zero-error coverage is
+exactly zero at both volumes: there is no non-zero coverage that more evidence could grow.
+
+W2 also found ten defects, none of them in a measured number: a tautological assertion, `"None"`
+written as a threshold string, a CLI branch that was never dispatched, a slot/variant mix-up
+that produced 92 phantom label changes, batch-dependent MiniLM embeddings (W2-D9, real and
+measured at 6.7e-08 — enough to move a vector hash), and a re-encode claim that checked less
+than it said (W2-D10, amended rather than edited).
+
+## W3 outcome — the retrieval branch answers, and the answer is a near miss
+
+W3 made the contract change D3 named and deliberately did not make, decided the comparator D3
+left irreproducible, and resolved a fresh sixty-group holdout.
+
+**The surface widened, and the number moved.** D3 measured
+`distinct_after_removing_domain_and_signature: 1` over sixty candidates. Under one additive
+field — excluded from `structural_hash` and from `ExperienceGraphNode.label`, filled from
+canonical terms resolved out of the artifact store — the D4 pool measures **41 of 60**. Ninety-four
+of 120 graphs carry terms and 38 of 60 pairs carry different terms on their two sides. Ten
+candidates still carry none: repairs written in pure arithmetic over their own parameters, which
+the released alpha-normaliser leaves nothing of.
+
+**The comparator is deterministic now.** The released bounded-GED arm returns 28.0 under a 90 ms
+clock and 29.0 under a 5 ms clock on the same two graphs — measured on all eight of the largest
+stored pairs, which is why three sprints of numbers for that arm cannot be replayed. Under a
+fixed iteration budget of one, 140 comparisons agreed with themselves across two passes. The
+budget is one because the second distance costs 75 ms where the first costs 4.6, the third 387,
+and the fourth did not arrive inside a two-minute ceiling.
+
+**No arm met the floors.**
+
+| arm | Recall@5 | MRR@10 |
+|---|---:|---:|
+| no_memory | 0.0000 | 0.0000 |
+| exact_signature | 0.0000 | 0.0000 |
+| lexical | 0.6833 | 0.4954 |
+| minilm_vector | 0.6500 | 0.4153 |
+| minilm_shortlist_plus_bounded_ged | 0.5833 | 0.3278 |
+| **reciprocal_rank_fusion** | **0.7500** | 0.4911 |
+| chance baseline | 0.5768 | 0.3317 |
+| **floor** | **0.70** | **0.50** |
+
+The fusion clears the recall floor and misses the MRR floor by **0.0089**. Under first-failure
+precedence that is a near miss, not a pass. Nothing was reopened to close it: fusion variants 0,
+widths 0, weights 0, metrics 0, holdout members added 0.
+
+Beside D3's holdout every arm moved up — fusion from 0.5000 to 0.7500 on recall and 0.3004 to
+0.4911 on MRR — and D3's arms all sat at or below a uniformly random ranking where D4's clear it.
+**This is not a controlled comparison and must not be read as one:** the pool is different, the
+comparator changed, and the surface widened, all at once. No ablation was run, because the
+holdout is read once.
+
+The advisory boundary was proved anyway, which is the point of proving it: six mandatory bundle
+sections are byte-identical whether or not retrieval contributed, no advisory candidate is
+pinned, required or evidence, none carries an executable body, an empty set degrades rather than
+fails, and all four ways of breaking the store end at `UNVERIFIED` without raising.
+
+W3 found two more defects, both in what a record claimed rather than in what it measured. W3-D1:
+the frozen `searchable_surface` contract cannot mean both of its sentences, because a field
+unconditionally inside `content_hash` makes every graph stored before it unloadable — measured
+on the real blob, `a8db90af88181437` → `399a7fc9276870c5`, 140 pairs. Amendment 2 records it.
+W3-F1: §4.5 calls the widened surface "the minimum that makes sixty repair trajectories sixty
+documents"; it makes 41, and the shortfall is named rather than rounded away.
+
 ## Evidence handles
 
-| Record | SHA-256 |
-|---|---|
-| `sprint-21d4-pre-registration.json` | `526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9` |
-| `sprint-21d4-contracts.json` | `bcab05107a838fd1a2c0739122ba3a7e51fa8386e83cffcf82e6e5263fb47354` |
-| `sprint-21d4-d3-grid-replay.json` | `202b82db8194bd456a1e06929c2342a33a1355a45c0d31757bec3f0418396f16` |
-| `sprint-21d4-seal-resume.json` | `e37a37e7fb8fd102d8b6baaaa7d91233675bccaa739058f2accdccd1a214d6bd` |
-| `sprint-21d4-continuation.json` | `805761ecc142a9f8b0f71d8c2bc17da559d6cf82164fbfad78e5e62bbe0322d9` |
+| Record | SHA-256 of the file | Seal (`integrity_content_hash`) |
+|---|---|---|
+| `sprint-21d4-pre-registration.json` | `526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9` | `63ffd3484559803208ef4981eaa5ff29948c8d8117dbc31c1aca0553e203c897` |
+| `sprint-21d4-contracts.json` | `bcab05107a838fd1a2c0739122ba3a7e51fa8386e83cffcf82e6e5263fb47354` | `9aa54f37a7ddc4d66d9589a7f21089e30c2c0158588d12b1e618f7d8c55a0adc` |
+| `sprint-21d4-d3-grid-replay.json` | `202b82db8194bd456a1e06929c2342a33a1355a45c0d31757bec3f0418396f16` | `d1b8115ade6553585aa06a39c647dc1bf2e09ff18b6f87df536bbb37bc7d9fdd` |
+| `sprint-21d4-seal-resume.json` | `e37a37e7fb8fd102d8b6baaaa7d91233675bccaa739058f2accdccd1a214d6bd` | `ab6e88422d3ab17305923576864c4c69a9d6ca830acdca0fbad8bccd08319996` |
+| `sprint-21d4-continuation.json` | `805761ecc142a9f8b0f71d8c2bc17da559d6cf82164fbfad78e5e62bbe0322d9` | `62dd1aa76136491e5eaf4af06ced3f4350f2baf1855c57d0272977488328eff5` |
+| `sprint-21d4-learner-selection.json` | `f1f746af1ed89044b7ae8e768ee3b8386c908fba13e1305d5482356dffb720ed` | `5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e` |
+| `sprint-21d4-surface.json` | `4f48312d47d83c862816cee3b5eb928862d55cbb5774b50aa04243107d688309` | `11f81209d28436553d0dff36828f4775275ac7d410ab9c22cc0da2addf2cdb05` |
+| `sprint-21d4-contracts-amendment-2.json` | `d7dd6b727cf2ac051317164c3cc4e1606eed3948674c42ec28e3119cb74af775` | `6bf0734808b67d9380837e670383c8b92b573017be4c2db6f3bafb863c34b89c` |
+| `sprint-21d4-ged-decision.json` | `352f237bc6c27fbb01d482e0cbd39b794e72f3db25e4fbdbabcfad16852d6e13` | `47f88c4c51bca9c863c737673a71e7348c3adf3047ec2a89025c81cdb0e9b4b8` |
+| `sprint-21d4-retrieval-development.json` | `56b644c5d4a23c3062c8bffac8d2be8537b17f885c89f4075bb22abc1c77af5e` | `88052aba0ce1700c53ffeace6d98ed341ae6fd3cc3bd2c697a62e0a886ac5279` |
+| `sprint-21d4-retrieval-emg-projection.json` | `435edcc8719d0f32b340d45ef7b89bdd000112886a9615384524cc34104f2143` | `5d6108c4385d98902b20367d8b9c9774d63f68157e19398515642c77c752612b` |
+| `sprint-21d4-retrieval-query-set.json` | `2302d5378c749c8763d57e3cd57fee84ae8ae7587f2383a3fa0359c39aaa2c84` | `75c7c7cc19a8be4984ce8eda019bd0bbba926b45a716d9408f2006296e6cdd9e` |
+| `sprint-21d4-retrieval-holdout-result.json` | `81c41d17205a220023d8356180f7e98cf3e36c9bf1266be89767713ff6a62ff7` | `2cf3cb8a3974c6a49e1426eed4706f125e37e706dfc16aa3478ef325a933c745` |
+| `sprint-21d4-retrieval-decision.json` | `f5c19fa0cc290a335d5e250b80c009409cbb509e92e7f2210946c49982d8322f` | `c4ad4b73ff2b8a2b82fb0edb4702d6a7a4d896d742681148f87aa4fbe93c3c52` |
+| `sprint-21d4-advisory-boundary.json` | `5d3efbd584dc270a89a834ac104b1e815ac4beb8d545462fa0ae9a2d0d5c7177` | `1dca4f21cf88957b4bf2458475d7e7d8694b619362d237b115c5d9bac45b48f6` |
 
-All three W1 records carry the pre-registration SHA-256 and pass
+Two hashes, because two things are addressed: the file, which is what another record cites
+as `pre_registration_sha256` or `..._sha256`, and the seal inside it, which is what a record
+recomputes to prove it was not edited. Every W1, W2 and W3 record carries the
+pre-registration SHA-256, and the W1 records pass
 `pre_registration_d4.py --check-chronology`.
 
 ## Gate state
 
-Gate L2 remains closed and Sprint 22A remains blocked. Nothing measurable has been opened. The
-next wave is W2 — items 030 through 039 — which authors the 100 calibration groups and the
-retrieval pool, fits at 200 and at 320 rows, and measures the risk–coverage curve. Under §2.3,
-authoring fewer than 100 groups is answered by recording the achieved independent-decision count
-and letting the floor decide, not by lowering the floor or reinstating replicated decisions.
+Gate L2 remains closed and Sprint 22A remains blocked. Both branches have now returned a
+result, and neither authorises what comes next:
+
+- **Gate L2 condition 24 — not met.** No arm reached both retrieval floors.
+- **Gate D1 condition 15 — remains open**, on the same evidence.
+- **The correction branch selected no candidate**, so S21D4-050 through -058 have nothing to
+  fit, store or register, and the pre-final access checkpoint at S21D4-059 evaluates its
+  preconditions in backlog order and stops at the first one that fails.
+
+What W2 and W3 leave behind is not a guess about why. The correction stop is a measured
+hypothesis-class bound over 100 independent decisions, and the retrieval stop is a measured
+0.0089 on a widened surface whose widening is itself measured. A successor sprint that wants to
+move either number now has a residual to work against rather than a hunch.
