@@ -1,0 +1,146 @@
+{
+ "calibration_campaign_sha256": "e2454b1bc6f2a74bc5d16e92e5b54b00e9ece2f7fe6936a6adcd0796dafd70dc",
+ "chronology": {
+  "bounds_fitted_on": "the clean bodies of the sample, never on the transformed set",
+  "every_transformed_seal_precedes_its_execution": true,
+  "features_sealed_at": "2026-08-07T07:57:50.477864+00:00",
+  "first_transformed_execution_at": "2026-08-07T07:57:58.299602+00:00"
+ },
+ "entered_any_dataset": false,
+ "final_or_canary_access": 0,
+ "final_outcomes_inspected": false,
+ "findings": [
+  {
+   "consequence": "a sealed v2 feature vector is reproducible from its candidate source, the fitting bounds *and the exact batch it was encoded in*. The first two alone are not enough, and any check that re-encodes under different batching will disagree with the seal",
+   "detail": "the frozen MiniLM is batch-composition dependent. The same text embedded on its own and embedded alongside a longer sequence differ, because the shorter one is padded to the batch's length. The difference is around 1e-7 -- invisible to a cosine, fatal to a hash",
+   "found_by": "the first run of this regression, which reported 62 changed vectors including 7 for a case that does not touch the candidate source",
+   "how_this_record_avoids_it": "every source here is embedded window by window on its own, so a difference between a clean and a transformed vector can only come from the transformation",
+   "id": "W2-D9",
+   "measured": {
+    "hash_changes": true,
+    "how": "the same text embedded on its own, then as the second member of a batch whose first member is longer, so it is padded to the longer length",
+    "identical": false,
+    "maximum_absolute_difference": "6.706e-08"
+   },
+   "what_it_does_not_invalidate": "the seals themselves, which are records of the bytes that were actually encoded, and every scan and threshold that compares vectors by distance rather than by hash"
+  },
+  {
+   "affects_any_number": false,
+   "correction": "read that field as 're-seals identically from the same encoded records'. Given W2-D9 the stronger claim its name makes is false: re-embedding under different batching would not reproduce the seal",
+   "detail": "sprint-21d4-feature-seals.json reports `reencodes_identically_from_source_alone: true` for both partitions. The check behind it re-ran the sealing function over the same PendingFeatureV2 records, which already carry their embeddings, so it never re-embedded anything. It proves the sealing function is deterministic given identical inputs, which is worth knowing and is not what the field name says",
+   "found_by": "reading S21D4-034's re-encode proof while investigating W2-D9",
+   "id": "W2-D10",
+   "sealed_record_amended_not_edited": true
+  }
+ ],
+ "first_action": {
+  "cases_compared": 40,
+  "changed": [],
+  "changes": 0,
+  "reading": "with no fitted ranker in force the first action is the head of the baseline order; this compares the body the system would act on first by its canonical identity. The ranker-dependent form belongs to S21D4-039"
+ },
+ "fitted": false,
+ "independence": {
+  "candidate_vectors_compared": 160,
+  "census_over_clean_and_transformed": {
+   "independent_decisions": 80,
+   "nominal_decisions": 320,
+   "rate_denominator": "independent_decisions",
+   "replicated_decisions": 240,
+   "revision": 4
+  },
+  "changed": [],
+  "distinct_clean_vectors": 80,
+  "independent_decisions": 0,
+  "reading": "160 transformed candidate vectors, every one identical to its clean counterpart, so the forty transformed decisions repeat twenty clean ones and add none. This is the number S21D4-032 sealed as zero and the property the regression tests",
+  "transformed_decisions": 40,
+  "vectors_changed": 0,
+  "vectors_unchanged": 160
+ },
+ "integrity_content_hash": "ed1bb2e6fc200f71a696765e6aaa59e126c01d053e7397aa42f0ec52288b1081",
+ "items": [
+  "S21D4-038"
+ ],
+ "pre_registration_sha256": "526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9",
+ "purpose": "execute the claim S21D4-032 sealed: a transformation repeats its source group's fitted feature vector, so it adds no independent decision",
+ "recorded_at": "2026-08-07T07:57:58Z",
+ "schema_version": 1,
+ "sealed_manifests_sha256": "5d1e90bd6acd435b3c77d7a26a6776b0b14d31c4d1b25bb971311999192e5264",
+ "semantic_mutation_control": {
+  "all_changed_the_canonical_representation": true,
+  "distinct_canonical_hashes": 5,
+  "mutations": [
+   {
+    "canonical_hash": "bcc7ee37809d5152de7d89180658c5fb2f17342e6b1d4ee3fe6e7eabd861766c",
+    "canonical_hash_changed": true,
+    "mutation": "comparison_flipped"
+   },
+   {
+    "canonical_hash": "c2cbddb47096f9d4b920df27349c96dc8eeee4eeb9b6ce5852dad3d951c0b6fd",
+    "canonical_hash_changed": true,
+    "mutation": "bound_swapped"
+   },
+   {
+    "canonical_hash": "bb5c0b8e8849b9fe2a92e26ee82be3121dddf598169942ebadacb5eb2787540f",
+    "canonical_hash_changed": true,
+    "mutation": "branch_removed"
+   },
+   {
+    "canonical_hash": "6d3f1d81afc2431410b4be7f49edf5aa8650fa4debc8b3196e6d552543d57dcf",
+    "canonical_hash_changed": true,
+    "mutation": "constant_introduced"
+   }
+  ],
+  "probe_canonical_hash": "22b55ee22f0dbeb40f27815e4aa0f6ddd3762f90db5e9c43d740244f51a1eb37",
+  "why": "the invariance result above says a rename does not move the canonical bytes. This says a changed meaning does. Without it, a canonicaliser that mapped every program to one value would satisfy the first claim completely"
+ },
+ "sprint": "21D4",
+ "stops": [],
+ "submanifest": {
+  "applicable_cases": 40,
+  "cases_by_name": {
+   "identifier_rename_a": 20,
+   "issue_rewrite_a": 20
+  },
+  "fitted": false,
+  "generator_code_hash": "bd8e2f0419c5766f2bd494d2c041f9041e268fc531e0775348698a270e79c397",
+  "hard_coded_oracle_hash": "619dd385a0bf6035a1cbc7155a05b83ffc028bd64e61be7c450bef4182fd952c",
+  "hash": "e85f0261e16483e6ed29ff79000e0db09d8790662dca263d69b2377153e6d85c",
+  "nominal_cases": 40,
+  "not_applicable": [],
+  "sample_groups_named": [
+   "d4-boundary-batch-by-size",
+   "d4-transform-build-tree",
+   "d4-errors-abort-reason",
+   "d4-numeric-approach-target",
+   "d4-parsing-bracketed-body",
+   "d4-state-advance-offset",
+   "d4-boundary-common-prefix",
+   "d4-transform-camel-to-snake",
+   "d4-errors-escalate-severity",
+   "d4-numeric-average-speed",
+   "d4-parsing-column-label",
+   "d4-state-apply-schema-step",
+   "d4-boundary-first-at-least",
+   "d4-transform-compact-record",
+   "d4-errors-explain-missing",
+   "d4-numeric-check-digit",
+   "d4-parsing-hex-colour",
+   "d4-state-assign-reviewer",
+   "d4-boundary-into-columns",
+   "d4-transform-expand-ranges"
+  ],
+  "sample_matches_the_seal": true,
+  "source_groups": 20,
+  "stage": "calibration_invariance"
+ },
+ "verifier": {
+  "accepted": 80,
+  "candidate_outcomes_executed": 160,
+  "changed": [],
+  "governed_runs": 0,
+  "how": "plain pytest in a scratch directory. A precheck that wrote governed outcomes would put transformed rows in the store the clean campaign owns",
+  "label_changes": 0
+ },
+ "wave": "W2"
+}
