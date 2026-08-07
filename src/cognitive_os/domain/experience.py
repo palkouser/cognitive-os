@@ -45,7 +45,11 @@ class ExperienceContract(ImmutableContractModel):
 #: Deliberately a named list rather than a general "drop every empty value" rule. That rule
 #: would silently move the hash of every stored contract with an empty tuple field -- every
 #: `GraphEditPath` with no operations, for one -- which is the opposite of the intent.
-CANONICAL_ABSENT_WHEN_EMPTY = ("search_terms",)
+#: S21D4-048 adds `decision_counts` for the same reason and under the same measurement: the D3
+#: promotion payload already has stored instances -- the credential-free lifecycle smoke writes
+#: one into the Artifact Store on every run -- and a gate row that gained an always-present key
+#: would change the identity of every one of them.
+CANONICAL_ABSENT_WHEN_EMPTY = ("search_terms", "decision_counts")
 
 
 def _canonicalize(value: object) -> object:

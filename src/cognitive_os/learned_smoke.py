@@ -43,6 +43,7 @@ from cognitive_os.domain.learned_evidence import (
     LearnedEvidenceRecord,
 )
 from cognitive_os.domain.promotion_payload import (
+    CONDITION_20_GATE,
     D3_PROMOTION_GATES,
     D3_PROMOTION_MEDIA_TYPE,
     CanaryToSteadyCondition,
@@ -68,7 +69,8 @@ from cognitive_os.infrastructure.learned.postgres.tables import LEARNED_EVIDENCE
 from cognitive_os.infrastructure.learned.reference import AlwaysAbstainingRanker
 from cognitive_os.infrastructure.postgres.artifact_repository import PostgresArtifactRepository
 from cognitive_os.infrastructure.postgres.engine import create_postgres_engine
-from cognitive_os.learning.promotion import D3PromotionBindings
+from cognitive_os.learning.correction_protocol import DecisionCensusV4
+from cognitive_os.learning.promotion import D3PromotionBindings, condition_20_gate
 
 SMOKE_NAMESPACE = UUID("7e2b5c98-40a1-5d37-8f6b-1c94ae30d752")
 SMOKE_OPERATOR = "learned-smoke-operator"
@@ -510,6 +512,34 @@ def _transition_condition() -> CanaryToSteadyCondition:
 _SMOKE_DEPENDENCIES: dict[str, str] = {"smoke_fixture": "1" * 64}
 
 
+def _smoke_gate(name: str) -> PromotionGateRecord:
+    """One shape-only gate row, and condition 20's denominators when it is that row.
+
+    S21D4-048 refuses a measured metamorphic/OOD row that does not name how many decisions it
+    counted and how many of them were distinct. The smoke has no decisions, so its census says
+    so: twenty fixture decisions, none replicated, under a fixture certificate. The detail
+    string carries the same disclaimer every other row here carries.
+    """
+    evidence_hash = sha256(f"smoke:{name}".encode()).hexdigest()
+    detail = f"learned smoke: {name} is shape-only and makes no accuracy claim"
+    if name != CONDITION_20_GATE:
+        return PromotionGateRecord(
+            name=name,
+            outcome=PromotionGateOutcome.PASSED,
+            evidence_hash=evidence_hash,
+            detail=detail,
+        )
+    return condition_20_gate(
+        outcome=PromotionGateOutcome.PASSED,
+        evidence_hash=evidence_hash,
+        detail=detail,
+        census=DecisionCensusV4.from_feature_hashes(
+            [sha256(f"smoke:decision:{index}".encode()).hexdigest() for index in range(20)]
+        ),
+        calibration_certificate_hash=sha256(b"smoke:calibration-certificate").hexdigest(),
+    )
+
+
 def _promotion_payload(descriptor: Any, reference: Any) -> D3PromotionPayload:
     return D3PromotionPayload(
         component_id=descriptor.component_id,
@@ -518,15 +548,7 @@ def _promotion_payload(descriptor: Any, reference: Any) -> D3PromotionPayload:
         code_revision="learned-smoke",
         legacy_assessment_hash=_assessment(descriptor).content_hash,
         legacy_decision="eligible_for_operator_approval",
-        gates=tuple(
-            PromotionGateRecord(
-                name=name,
-                outcome=PromotionGateOutcome.PASSED,
-                evidence_hash=sha256(f"smoke:{name}".encode()).hexdigest(),
-                detail=f"learned smoke: {name} is shape-only and makes no accuracy claim",
-            )
-            for name in D3_PROMOTION_GATES
-        ),
+        gates=tuple(_smoke_gate(name) for name in D3_PROMOTION_GATES),
         dependencies=tuple(
             PromotionDependency(name=name, content_hash=value)
             for name, value in sorted(_SMOKE_DEPENDENCIES.items())

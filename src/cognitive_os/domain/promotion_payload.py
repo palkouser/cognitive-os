@@ -98,6 +98,40 @@ D3_PROMOTION_GATES: tuple[str, ...] = (
 )
 
 
+#: Gate L2 condition 20, by the name it wears in the tuple above. Spelled once so the validator
+#: below and the builder in `learning.promotion` cannot come to mean different rows.
+CONDITION_20_GATE = "metamorphic_ood"
+
+
+class PromotionDecisionCounts(ImmutableContractModel):
+    """S21D4-048: condition 20's two denominators, and the certificate its threshold came from.
+
+    D3 recorded 120 metamorphic ranking decisions and condition 20 read them as 120. They were
+    20 decisions replicated six times, because six semantics-preserving transformations of one
+    group encode to one fitted vector. Nothing in the D3 payload could have caught that: the row
+    named one number, so there was no second number for it to disagree with.
+
+    Both are named here, and the rates are over the independent one. The certificate hash binds
+    the operating point the confident-error count was measured at, so "zero confident errors"
+    cannot be read apart from the threshold that decided which decisions were answered.
+
+    The census rule itself lives in `learning.correction_protocol.DecisionCensusV4` and is not
+    restated here — `learning.promotion.condition_20_gate` is how these fields get filled, and it
+    takes a census rather than three integers.
+    """
+
+    nominal_decisions: int = Field(ge=0)
+    independent_decisions: int = Field(ge=0)
+    #: The `OperatingPointV4` this gate's answered set was decided by.
+    calibration_certificate_hash: Sha256Hex
+
+    @model_validator(mode="after")
+    def independence_cannot_exceed_what_was_counted(self) -> PromotionDecisionCounts:
+        if self.independent_decisions > self.nominal_decisions:
+            raise ValueError("more independent decisions than counted decisions")
+        return self
+
+
 class PromotionGateRecord(ImmutableContractModel):
     """One gate's measured result, and the evidence hash it is derived from."""
 
@@ -107,6 +141,9 @@ class PromotionGateRecord(ImmutableContractModel):
     #: without a locatable measurement is an opinion.
     evidence_hash: Sha256Hex
     detail: NonEmptyStr
+    #: Required on condition 20's row when it was measured, refused on any row that was not.
+    #: Absent from the canonical form when unset, so a D3 payload's bytes hash as they did.
+    decision_counts: PromotionDecisionCounts | None = None
 
 
 class PromotionDependency(ImmutableContractModel):
@@ -232,6 +269,17 @@ class D3PromotionPayload(HashedExperienceContract):
         unknown = sorted(set(names) - set(D3_PROMOTION_GATES))
         if unknown:
             raise ValueError(f"the payload records gates that do not exist: {unknown}")
+        for gate in self.gates:
+            measured = gate.outcome is not PromotionGateOutcome.NOT_MEASURED
+            if not measured and gate.decision_counts is not None:
+                raise ValueError(
+                    f"the {gate.name!r} gate was not measured, so it counted no decisions"
+                )
+            if gate.name == CONDITION_20_GATE and measured and gate.decision_counts is None:
+                raise ValueError(
+                    f"a measured {CONDITION_20_GATE!r} gate names its nominal and independent "
+                    "decision counts and the calibration certificate they were answered under"
+                )
         dependency_names = tuple(item.name for item in self.dependencies)
         if len(set(dependency_names)) != len(dependency_names):
             raise ValueError("a dependency is recorded twice")
@@ -274,9 +322,20 @@ class D3PromotionAssessment(HashedExperienceContract):
 
 
 def canonical_payload_bytes(payload: D3PromotionPayload | D3PromotionAssessment) -> bytes:
-    """Sorted keys, no whitespace, UTF-8. The exact bytes the Artifact Store hashes."""
+    """Sorted keys, no whitespace, UTF-8. The exact bytes the Artifact Store hashes.
+
+    `exclude_none` is what keeps S21D4-048 additive here. Verification re-serialises a payload
+    and compares the hash to the one the assessment committed to, so a new key serialising as
+    `null` would make every payload stored before it fail its own verification — the same
+    breakage `CANONICAL_ABSENT_WHEN_EMPTY` prevents one layer down, arriving through a different
+    door. Measured rather than assumed: with it, a payload carrying no counts reproduces the
+    bytes the D3 code produced, and it is the only optional field in this shape.
+
+    It does mean a field whose null is meaningful cannot be added here without changing this
+    line, which is the right way round: that field would be new evidence, not absent evidence.
+    """
     return json.dumps(
-        json.loads(payload.model_dump_json()),
+        json.loads(payload.model_dump_json(exclude_none=True)),
         sort_keys=True,
         separators=(",", ":"),
         ensure_ascii=False,

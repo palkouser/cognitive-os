@@ -63,11 +63,20 @@ class TestTheGoldenSchemas:
     def test_the_d3_promotion_payload_schema_is_the_one_the_evidence_was_written_under(
         self,
     ) -> None:
+        """S21D4-048 moved this pin once, additively, and the version deliberately did not move.
+
+        The shape gained one optional field: condition 20's `decision_counts`. The name and the
+        version stay at `d3-promotion-payload` v2 because bumping them would make every D3
+        payload unreadable through `load_promotion_payload`, which is the opposite of what the
+        item asks for. What the old pin actually protected — that bytes written under D3 still
+        hash to what they hashed then — is asserted directly in
+        `TestTheD4GateCensusIsAdditive`, which is a stronger check than a schema digest.
+        """
         assert D3_PROMOTION_SCHEMA == "d3-promotion-payload"
         assert D3_PROMOTION_SCHEMA_VERSION == 2
         assert (
             _schema_hash(D3PromotionPayload)
-            == "3d44b33fef639b80e3437594b45fe8d7483da497526060c0e38da63bf6dd329e"
+            == "5f2da986a6df0c8fdda3d7b6fea1c270467a3a841ec9028d0f3daa33a8dd21db"
         )
 
     def test_the_v2_correction_artifact_schema_is_the_one_the_loader_was_written_for(self) -> None:

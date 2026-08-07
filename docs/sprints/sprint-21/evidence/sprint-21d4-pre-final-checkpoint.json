@@ -1,0 +1,363 @@
+{
+ "artifact_contract": {
+  "canonical_prefix_hex": "636f676f732d636f7272656374696f6e2d736f757263652d6173742d76320a707974686f6e2d6772616d6d61723d332e31320a",
+  "embedding_dimensions": 384,
+  "feature_channels": 390,
+  "feature_channels_unchanged": true,
+  "feature_contract_hash": "492c90a5df420de9d1662d17155ac8b28713e69bbd4bbe56208415d6ca076362",
+  "feature_contract_hash_unchanged": true,
+  "media_type": "application/vnd.cognitive-os.correction-ranker+json",
+  "normaliser": "cogos-python-alpha-normalizer-v2",
+  "normaliser_and_grammar_unchanged": true,
+  "python_grammar": "3.12",
+  "scalar_channels": 6,
+  "schema": "correction-ranking-artifact-v2",
+  "selected_artifact_exists": false,
+  "threshold_binding_not_opened_because": "S21D4-039 derived no operating point at either volume, so there is no threshold, derivation rule instance, calibration split identity or certificate to bind",
+  "threshold_bound_into_the_artifact": false
+ },
+ "configurations_sealed": 0,
+ "configurations_sealed_reason": "sealing happens at authorised final access; access was not authorised, and S21D4-070 is the item that would have sealed them",
+ "created_any_lifecycle_state": false,
+ "decision": {
+  "authorised": false,
+  "capability_granted": null,
+  "first_failed_precondition": "S21D4-039 selected one candidate",
+  "opens_no_parametric_rung": true,
+  "reading": "the sixth precondition is read as D3 read it -- a result that names a winning arm. The retrieval branch did reach a hash-bound result and it is negative, which the detail says rather than leaving the word 'result' to carry it. The decision does not turn on the reading: the first failure is the first precondition",
+  "reason": "null: hypothesis_class_bound -- step 5: zero-error coverage does not reach 0.40 and does not improve with volume, so the frozen k-NN cannot separate its own errors on this representation",
+  "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+  "stop_source": "S21D4-039 candidate selection"
+ },
+ "final_or_canary_outcomes_inspected": 0,
+ "final_outcomes_inspected": false,
+ "independent_branch": {
+  "item": "S21D4-040 through S21D4-047",
+  "note": "the retrieval branch reached its own hash-bound negative result in W3 and is bound to its own stop, not to this one",
+  "status": "completed"
+ },
+ "integrity_content_hash": "87c5473f61c177fe5db5aa1a5971759451c1f7a82b7364e9ac8dc3da99e9c6b1",
+ "items": [
+  "S21D4-048",
+  "S21D4-050",
+  "S21D4-051",
+  "S21D4-052",
+  "S21D4-053",
+  "S21D4-054",
+  "S21D4-055",
+  "S21D4-056",
+  "S21D4-057",
+  "S21D4-058",
+  "S21D4-059"
+ ],
+ "not_opened": [
+  {
+   "item": "S21D4-050",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "bind the derived threshold and its provenance into the artifact"
+  },
+  {
+   "item": "S21D4-051",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "fit and store the selected artifact"
+  },
+  {
+   "item": "S21D4-052",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "prove the loader and resolver against the real artifact"
+  },
+  {
+   "item": "S21D4-053",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "route sequencing through the receipt-aware remainder"
+  },
+  {
+   "item": "S21D4-054",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "prove the selected-artifact vertical slice"
+  },
+  {
+   "item": "S21D4-055",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "re-prove mandatory-path and configuration invariance"
+  },
+  {
+   "item": "S21D4-056",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "register the exact artifact and enter SHADOW"
+  },
+  {
+   "item": "S21D4-057",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "exercise evidence-bound verification"
+  },
+  {
+   "item": "S21D4-058",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "revalidate artifact bytes immediately before activation"
+  },
+  {
+   "item": "S21D4-060",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "seal final features and predictions before execution"
+  },
+  {
+   "item": "S21D4-061",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "execute final batch A without replacement"
+  },
+  {
+   "item": "S21D4-062",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "execute final batch B as independent confirmation"
+  },
+  {
+   "item": "S21D4-063",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "compute paired material benefit"
+  },
+  {
+   "item": "S21D4-064",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "run safety and cross-domain anti-forgetting replay"
+  },
+  {
+   "item": "S21D4-065",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "execute promotion-scale metamorphic and OOD evaluation"
+  },
+  {
+   "item": "S21D4-066",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "run true shadow mode against final evidence"
+  },
+  {
+   "item": "S21D4-067",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "build the strengthened promotion assessment"
+  },
+  {
+   "item": "S21D4-068",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "assess the three open Gate D1 conditions"
+  },
+  {
+   "item": "S21D4-069",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "advance through evidence-bound verification"
+  },
+  {
+   "item": "S21D4-070",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "prepare the exact activation bundle"
+  },
+  {
+   "item": "S21D4-071",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "record explicit human approval"
+  },
+  {
+   "item": "S21D4-072",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "activate canary-only routing atomically"
+  },
+  {
+   "item": "S21D4-073",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "execute the governed canary with stop-first semantics"
+  },
+  {
+   "item": "S21D4-074",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "exercise kill switch, disable, and fallback after restart"
+  },
+  {
+   "item": "S21D4-076",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "promote from canary routing to bounded steady state"
+  },
+  {
+   "item": "S21D4-077",
+   "status": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 candidate selection",
+   "would_have": "prove final active state and replacement readiness"
+  }
+ ],
+ "opened_any_store": false,
+ "pre_registration_sha256": "526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9",
+ "preconditions": [
+  {
+   "detail": "null: hypothesis_class_bound -- step 5: zero-error coverage does not reach 0.40 and does not improve with volume, so the frozen k-NN cannot separate its own errors on this representation",
+   "evidence": "sprint-21d4-learner-selection.json",
+   "evidence_sha256": "f1f746af1ed89044b7ae8e768ee3b8386c908fba13e1305d5482356dffb720ed",
+   "name": "S21D4-039 selected one candidate",
+   "passed": false
+  },
+  {
+   "detail": "proceed: authorises W2 to author the corpus, and nothing past it",
+   "evidence": "sprint-21d4-continuation.json",
+   "evidence_sha256": "805761ecc142a9f8b0f71d8c2bc17da559d6cf82164fbfad78e5e62bbe0322d9",
+   "name": "the continuation permits correction work",
+   "passed": true
+  },
+  {
+   "detail": "not opened: an artifact can only be fitted for a selected candidate",
+   "evidence": "sprint-21d4-learner-selection.json",
+   "evidence_sha256": "f1f746af1ed89044b7ae8e768ee3b8386c908fba13e1305d5482356dffb720ed",
+   "name": "S21D4-051 stored one artifact",
+   "passed": false
+  },
+  {
+   "detail": "not opened: the slice runs the selected artifact, which does not exist",
+   "evidence": "sprint-21d4-learner-selection.json",
+   "evidence_sha256": "f1f746af1ed89044b7ae8e768ee3b8386c908fba13e1305d5482356dffb720ed",
+   "name": "S21D4-054 proved the selected-artifact vertical slice",
+   "passed": false
+  },
+  {
+   "detail": "not opened: registration binds an artifact hash that was never produced",
+   "evidence": "sprint-21d4-learner-selection.json",
+   "evidence_sha256": "f1f746af1ed89044b7ae8e768ee3b8386c908fba13e1305d5482356dffb720ed",
+   "name": "S21D4-056 registered the artifact and entered SHADOW",
+   "passed": false
+  },
+  {
+   "detail": "a result was reached and it is negative: first failed floor mrr_at_10, winning_arm null",
+   "evidence": "sprint-21d4-retrieval-decision.json",
+   "evidence_sha256": "f5c19fa0cc290a335d5e250b80c009409cbb509e92e7f2210946c49982d8322f",
+   "name": "the independent retrieval branch reached a result",
+   "passed": false
+  }
+ ],
+ "promotion_contract": {
+  "a_measured_row_without_counts_is_refused": "a measured 'metamorphic_ood' gate names its nominal and independent decision counts and the calibration certificate they were answered under",
+  "additive": {
+   "a_payload_without_counts_reproduces_the_d3_bytes": true,
+   "canonical_form_omits_the_absent_key": true,
+   "carrying_counts_is_a_different_identity": true,
+   "content_hash_with_counts": "08a5be8c8ea29cba39f71e6e63b5086343e2dc6fd995f3383f555b19751ce3c0",
+   "content_hash_without_counts": "cbac5f88d60daaaf9b36749a7b7c9c97df317a7d31936609265bb4e70901d5f5",
+   "d3_byte_sha256": "82eb3fd40aa8a19883ecd3bf82cd31ada342476ee78837e16a85efe03ab1158d",
+   "d4_byte_sha256": "82eb3fd40aa8a19883ecd3bf82cd31ada342476ee78837e16a85efe03ab1158d"
+  },
+  "an_unmeasured_row_carrying_counts_is_refused": "the 'metamorphic_ood' gate was not measured, so it counted no decisions",
+  "counts_come_from": "learning.correction_protocol.DecisionCensusV4",
+  "dispatch": {
+   "d3_bytes_report_version": 2,
+   "legacy_bytes_report_version": 1,
+   "legacy_schema": "learned-promotion-assessment",
+   "legacy_version_is_unchanged": true,
+   "schema": "d3-promotion-payload",
+   "schema_version": 2
+  },
+  "gate": "metamorphic_ood",
+  "gate_count": 20,
+  "gates": [
+   "feature_contract",
+   "dataset_identity",
+   "split_identity",
+   "member_identity",
+   "matrix",
+   "calibration",
+   "metamorphic_ood",
+   "benefit",
+   "paired_interval",
+   "independent_batch_direction",
+   "safety",
+   "retention",
+   "shadow",
+   "retrieval",
+   "resource",
+   "fallback",
+   "artifact",
+   "canary_configuration",
+   "steady_state_configuration",
+   "canary_to_steady_transition"
+  ],
+  "media_type": "application/vnd.cognitive-os.d3-promotion-payload+json",
+  "not_measured_is_still_distinct_from_failed": true,
+  "precedence": {
+   "a_failed_row_still_carries_its_denominators": true,
+   "first_failed_gate": "metamorphic_ood",
+   "names_the_gate_the_tuple_puts_first": true,
+   "rows_supplied_in": "reverse gate-tuple order",
+   "unmet_gates": [
+    "metamorphic_ood",
+    "retention"
+   ],
+   "verdict": "gate_failed"
+  },
+  "row_carries": [
+   "nominal_decisions",
+   "independent_decisions",
+   "calibration_certificate_hash"
+  ],
+  "the_errata_shape": {
+   "independent_decisions": 20,
+   "nominal_decisions": 120,
+   "replicated_decisions": 100
+  }
+ },
+ "recorded_at": "2026-08-07T17:42:14Z",
+ "schema_version": 1,
+ "sprint": "21D4",
+ "unconditional": [
+  {
+   "item": "S21D4-075",
+   "runs": "receipt-selected rollback restoration and refusal, on the isolated fixture",
+   "status": "open"
+  }
+ ],
+ "wave": "W4"
+}

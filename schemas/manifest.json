@@ -3516,7 +3516,7 @@
     {
       "file": "v1/learned/d3-promotion-payload.schema.json",
       "model": "D3PromotionPayload",
-      "sha256": "239a51576d714aa5f700551381f56b3da436df03f6cc91020127cc798dd40b32"
+      "sha256": "af2d7f2c78619b54d21c17ff315176cee1d30511390d66c0e11d7df3dfd10e42"
     },
     {
       "file": "v1/learned/d3-runtime-configuration.schema.json",

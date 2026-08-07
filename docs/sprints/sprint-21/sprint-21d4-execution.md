@@ -1,11 +1,13 @@
 # Sprint 21D4 execution log
 
 - **Branch:** `feature/sprint-21d4-selective-correction-ranking`
-- **Waves:** W0 + W1 — authority and design; W2 — fresh evidence at scale; W3 — retrieval surface
-- **Status:** W0 through W3 complete. Both experiment branches have now returned their own
+- **Waves:** W0 + W1 — authority and design; W2 — fresh evidence at scale; W3 — retrieval
+  surface; W4 — artifact and runtime
+- **Status:** W0 through W4 complete. Both experiment branches have now returned their own
   hash-bound results, and both are negative: the correction branch selected no candidate
   (S21D4-039, `hypothesis_class_bound`) and the retrieval branch met no floor (S21D4-046, first
-  failed floor `mrr_at_10`). No D4 final, promotion or canary outcome has been read, no threshold
+  failed floor `mrr_at_10`). W4 refused final access at S21D4-059 and bound twenty-six dependent
+  tasks to that one stop. No D4 final, promotion or canary outcome has been read, no threshold
   has been derived, and no candidate has been selected.
 - **Migration:** none; the D4 authorities are provisioned at the released revision
 - **Pre-registration SHA-256:**
@@ -254,6 +256,79 @@ on the real blob, `a8db90af88181437` → `399a7fc9276870c5`, 140 pairs. Amendmen
 W3-F1: §4.5 calls the widened surface "the minimum that makes sixty repair trajectories sixty
 documents"; it makes 41, and the shortfall is named rather than rounded away.
 
+## W4 outcome — the artifact wave has no artifact, and says so once
+
+W4's exit in the wave table is "the D3-built surface exercised against a real artifact, then one
+pre-final access decision". There is no real artifact, so the wave is the second half of that
+sentence plus the one item that never depended on the first.
+
+**S21D4-050 through -058 are not opened.** Every one of them is downstream of a selected
+candidate: there is nothing to bind a threshold into, nothing to fit, nothing to load, sequence,
+register, verify or revalidate. The temptation here is the one D3 already answered — D3 built
+this machinery against a contract fixture and proved it there. Building a *second* fixture and
+measuring it again would produce a record that passes without touching the question the item
+asks, which is the defect class the backlog names and which W2 and W3 each hit twice. So they
+are refused and recorded rather than performed.
+
+**S21D4-048 is not downstream of anything, and it is the wave's one piece of new contract.**
+Gate L2 condition 20 requires at least 100 nominal decisions with at most 1% confident errors.
+D3 gave it 120 and the erratum showed those 120 were 20 decisions replicated six times. Nothing
+in the D3 payload could have caught it: the metamorphic/OOD row named one number, so there was
+no second number for it to disagree with. The row now carries `decision_counts` — nominal,
+independent, and the hash of the calibration certificate the answered set was decided under —
+and `learning.promotion.condition_20_gate` fills it from a `DecisionCensusV4` rather than from
+two integers a caller computed, so a row claiming 120 distinct decisions can only exist if
+something hashed 120 distinct fitted vectors. A **measured** row without the counts is refused,
+and an **unmeasured** row carrying them is refused too: `not_measured` and `failed` stay
+different outcomes, and only one of them has a denominator.
+
+The addition had to move no stored payload, and that is measured rather than claimed. The field
+is named in `CANONICAL_ABSENT_WHEN_EMPTY`, so a row without counts is absent from the canonical
+form, and `canonical_payload_bytes` excludes nulls, so verification — which re-serialises a
+payload and compares the hash the assessment committed to — still sees the bytes D3 wrote. Both
+directions are in the record: `d3_byte_sha256 == d4_byte_sha256` for a payload carrying no
+counts, and a different `content_hash` for one that does.
+
+**Finding W4-D1.** One payload shape does stop loading, deliberately. A D3 payload asserting
+`metamorphic_ood: passed` without denominators is asserting exactly the claim the erratum
+disproved, and it is now refused at load. The refusal is the census rule, not a hash mismatch
+and not a schema misread: the bytes still verify their own seal and the dispatch still reports
+them as `d3-promotion-payload` version 2. The version deliberately did *not* move — bumping it
+would make every D3 payload unreadable through `load_promotion_payload`, which is the opposite
+of what the item asks. The golden schema pin moved once, additively, and what it used to protect
+is now asserted directly against reconstructed D3 bytes instead of against a digest.
+
+**S21D4-050's unchanged clause is checkable without a candidate, and it holds.** 390 channels,
+six scalars and 384 embedding dimensions, feature contract hash `492c90a5df420de9…`, normaliser
+`cogos-python-alpha-normalizer-v2`, grammar 3.12 — none of them drifted during W2's campaigns or
+W3's surface change. The binding half of the item is recorded as not opened, because there is no
+derived threshold, derivation instance, split identity or certificate to bind.
+
+**S21D4-059 refused final access.** The preconditions are evaluated in backlog order and the
+first failure is the first one:
+
+| Precondition | Result |
+|---|---|
+| S21D4-039 selected one candidate | **failed** — null, `hypothesis_class_bound` |
+| the continuation permits correction work | passed (`proceed`) |
+| S21D4-051 stored one artifact | not opened |
+| S21D4-054 proved the selected-artifact vertical slice | not opened |
+| S21D4-056 registered the artifact and entered SHADOW | not opened |
+| the independent retrieval branch reached a result | failed — `winning_arm: null` |
+
+`authorised: false`, `capability_granted: null`. The stop hash is the W2 selection's own seal
+`5caa48970898d180…`, and all twenty-six dependent records carry that one hash: the nine E05
+items -050 through -058, the ten E06 items -060 through -069, and the seven E07 items -070
+through -074, -076 and -077. S21D4-075 is deliberately absent — the backlog names it the one
+unconditional substrate gate, and it runs against the isolated lifecycle fixture whether or not
+D4 activates. The last precondition is read as D3 read it, a result that names a winning arm;
+the retrieval branch did reach a hash-bound result and it is negative, which the record says in
+words rather than leaving to the word "result". The decision does not turn on the reading.
+
+No configuration was sealed: sealing happens at authorised final access, and S21D4-070 is the
+item that would have done it. `final_or_canary_outcomes_inspected: 0`, no store opened, no
+lifecycle state created.
+
 ## Evidence handles
 
 | Record | SHA-256 of the file | Seal (`integrity_content_hash`) |
@@ -273,12 +348,20 @@ documents"; it makes 41, and the shortfall is named rather than rounded away.
 | `sprint-21d4-retrieval-holdout-result.json` | `81c41d17205a220023d8356180f7e98cf3e36c9bf1266be89767713ff6a62ff7` | `2cf3cb8a3974c6a49e1426eed4706f125e37e706dfc16aa3478ef325a933c745` |
 | `sprint-21d4-retrieval-decision.json` | `f5c19fa0cc290a335d5e250b80c009409cbb509e92e7f2210946c49982d8322f` | `c4ad4b73ff2b8a2b82fb0edb4702d6a7a4d896d742681148f87aa4fbe93c3c52` |
 | `sprint-21d4-advisory-boundary.json` | `5d3efbd584dc270a89a834ac104b1e815ac4beb8d545462fa0ae9a2d0d5c7177` | `1dca4f21cf88957b4bf2458475d7e7d8694b619362d237b115c5d9bac45b48f6` |
+| `sprint-21d4-pre-final-checkpoint.json` | `fdc1f9f16bda948506604c9f2c9ffc2cc700c51750d4cdcb77a1ef449c57f314` | `87c5473f61c177fe5db5aa1a5971759451c1f7a82b7364e9ac8dc3da99e9c6b1` |
 
 Two hashes, because two things are addressed: the file, which is what another record cites
 as `pre_registration_sha256` or `..._sha256`, and the seal inside it, which is what a record
-recomputes to prove it was not edited. Every W1, W2 and W3 record carries the
+recomputes to prove it was not edited. Every W1, W2, W3 and W4 record carries the
 pre-registration SHA-256, and the W1 records pass
 `pre_registration_d4.py --check-chronology`.
+
+The W4 record is produced by one credential-free command that needs no database, no Artifact
+Store, no model and no network:
+
+```bash
+UV_CACHE_DIR=.cache/uv uv run python scripts/artifact_runtime_d4.py
+```
 
 ## Gate state
 
@@ -287,9 +370,14 @@ result, and neither authorises what comes next:
 
 - **Gate L2 condition 24 — not met.** No arm reached both retrieval floors.
 - **Gate D1 condition 15 — remains open**, on the same evidence.
-- **The correction branch selected no candidate**, so S21D4-050 through -058 have nothing to
-  fit, store or register, and the pre-final access checkpoint at S21D4-059 evaluates its
-  preconditions in backlog order and stops at the first one that fails.
+- **The correction branch selected no candidate**, so S21D4-050 through -058 had nothing to
+  fit, store or register. The pre-final access checkpoint at S21D4-059 evaluated its
+  preconditions in backlog order, stopped at the first failure, and refused access:
+  `authorised: false`, twenty-six dependent tasks bound to one stop hash, zero configurations
+  sealed.
+- **Gate L2 condition 20's payload is stricter than it was**, which is the one thing W4 moved
+  forward rather than closed. The row cannot claim a decision count again without naming how
+  many of those decisions were distinct.
 
 What W2 and W3 leave behind is not a guess about why. The correction stop is a measured
 hypothesis-class bound over 100 independent decisions, and the retrieval stop is a measured

@@ -46,6 +46,7 @@ from cognitive_os.domain.learned_evidence import (
     ObservationAttribution,
 )
 from cognitive_os.domain.promotion_payload import (
+    CONDITION_20_GATE,
     D3_PROMOTION_GATES,
     D3_PROMOTION_MEDIA_TYPE,
     CanaryToSteadyCondition,
@@ -59,7 +60,8 @@ from cognitive_os.domain.promotion_payload import (
     canonical_payload_bytes,
 )
 from cognitive_os.infrastructure.learned.reference import AlwaysAbstainingRanker
-from cognitive_os.learning.promotion import D3PromotionBindings
+from cognitive_os.learning.correction_protocol import DecisionCensusV4
+from cognitive_os.learning.promotion import D3PromotionBindings, condition_20_gate
 
 if TYPE_CHECKING:
     from cognitive_os.infrastructure.learned.artifacts import LearnedArtifactStore
@@ -652,6 +654,33 @@ def transition_condition() -> CanaryToSteadyCondition:
 BENCHMARK_DEPENDENCIES: dict[str, str] = {"benchmark_fixture": "1" * 64}
 
 
+def _benchmark_gate(name: str) -> PromotionGateRecord:
+    """One shape-only gate row, and condition 20's denominators when it is that row.
+
+    S21D4-048 refuses a measured metamorphic/OOD row that does not name how many decisions it
+    counted and how many of them were distinct. This benchmark counts none, so its census says
+    twenty fixture decisions with no replicas, under a fixture certificate.
+    """
+    evidence_hash = sha256(f"bench:{name}".encode()).hexdigest()
+    detail = f"benchmark: {name} is shape-only and makes no accuracy claim"
+    if name != CONDITION_20_GATE:
+        return PromotionGateRecord(
+            name=name,
+            outcome=PromotionGateOutcome.PASSED,
+            evidence_hash=evidence_hash,
+            detail=detail,
+        )
+    return condition_20_gate(
+        outcome=PromotionGateOutcome.PASSED,
+        evidence_hash=evidence_hash,
+        detail=detail,
+        census=DecisionCensusV4.from_feature_hashes(
+            [sha256(f"bench:decision:{index}".encode()).hexdigest() for index in range(20)]
+        ),
+        calibration_certificate_hash=sha256(b"bench:calibration-certificate").hexdigest(),
+    )
+
+
 def promotion_payload_v2() -> D3PromotionPayload:
     return D3PromotionPayload(
         component_id=COMPONENT.component_id,
@@ -660,15 +689,7 @@ def promotion_payload_v2() -> D3PromotionPayload:
         code_revision="learned-benchmark",
         legacy_assessment_hash=promotion_assessment().content_hash,
         legacy_decision=LearnedPromotionDecision.ELIGIBLE_FOR_OPERATOR_APPROVAL.value,
-        gates=tuple(
-            PromotionGateRecord(
-                name=name,
-                outcome=PromotionGateOutcome.PASSED,
-                evidence_hash=sha256(f"bench:{name}".encode()).hexdigest(),
-                detail=f"benchmark: {name} is shape-only and makes no accuracy claim",
-            )
-            for name in D3_PROMOTION_GATES
-        ),
+        gates=tuple(_benchmark_gate(name) for name in D3_PROMOTION_GATES),
         dependencies=tuple(
             PromotionDependency(name=name, content_hash=value)
             for name, value in sorted(BENCHMARK_DEPENDENCIES.items())
