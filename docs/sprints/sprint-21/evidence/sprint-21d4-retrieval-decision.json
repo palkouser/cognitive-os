@@ -1,0 +1,101 @@
+{
+ "chance_baseline": {
+  "mrr_at_10": 0.3317,
+  "recall_at_5": 0.5768
+ },
+ "dependants_already_bound_to_an_earlier_stop": "sprint-21d4-learner-selection.json, S21D4-039 null selection",
+ "dependent_not_opened": [],
+ "final_or_canary_outcomes_inspected": 0,
+ "final_outcomes_inspected": false,
+ "first_failed_floor": "mrr_at_10",
+ "gate_d1_condition_15": "remains_open",
+ "gate_l2_condition_24": "not_met",
+ "holdout_result_sha256": "81c41d17205a220023d8356180f7e98cf3e36c9bf1266be89767713ff6a62ff7",
+ "immutable": true,
+ "integrity_content_hash": "c4ad4b73ff2b8a2b82fb0edb4702d6a7a4d896d742681148f87aa4fbe93c3c52",
+ "items": [
+  "S21D4-046"
+ ],
+ "minimum_queries_met": true,
+ "negative_retrieval_result": true,
+ "no_alternative_opened": {
+  "fusion_variants": 0,
+  "holdout_members_added": 0,
+  "metrics": 0,
+  "weights": 0,
+  "widths": 0
+ },
+ "passed": false,
+ "pre_registration_sha256": "526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9",
+ "queries": 60,
+ "recorded_at": "2026-08-07T13:36:49.635236Z",
+ "rule": "one arm reaches Recall@5 >= 0.7 and MRR@10 >= 0.5 on at least 50 unseen-task queries, inside all fixed budgets",
+ "s21d4_047_runs_on_every_outcome": true,
+ "schema_version": 1,
+ "sprint": "21D4",
+ "stop_hash": "bf929d85f1544b6d4c3508107dd3610134bcc399f728893b5f510e673ccbc818",
+ "trace": [
+  {
+   "arm": "no_memory",
+   "first_failed_floor": "recall_at_5",
+   "mrr_at_10": 0.0,
+   "mrr_at_10_floor_met": false,
+   "recall_at_5": 0.0,
+   "recall_at_5_floor_met": false,
+   "reproducible": true,
+   "within_budgets": true
+  },
+  {
+   "arm": "exact_signature",
+   "first_failed_floor": "recall_at_5",
+   "mrr_at_10": 0.0,
+   "mrr_at_10_floor_met": false,
+   "recall_at_5": 0.0,
+   "recall_at_5_floor_met": false,
+   "reproducible": true,
+   "within_budgets": true
+  },
+  {
+   "arm": "lexical",
+   "first_failed_floor": "recall_at_5",
+   "mrr_at_10": 0.4954,
+   "mrr_at_10_floor_met": false,
+   "recall_at_5": 0.6833,
+   "recall_at_5_floor_met": false,
+   "reproducible": true,
+   "within_budgets": true
+  },
+  {
+   "arm": "minilm_vector",
+   "first_failed_floor": "recall_at_5",
+   "mrr_at_10": 0.4153,
+   "mrr_at_10_floor_met": false,
+   "recall_at_5": 0.65,
+   "recall_at_5_floor_met": false,
+   "reproducible": true,
+   "within_budgets": true
+  },
+  {
+   "arm": "minilm_shortlist_plus_bounded_ged",
+   "first_failed_floor": "recall_at_5",
+   "mrr_at_10": 0.3278,
+   "mrr_at_10_floor_met": false,
+   "recall_at_5": 0.5833,
+   "recall_at_5_floor_met": false,
+   "reproducible": true,
+   "within_budgets": true
+  },
+  {
+   "arm": "reciprocal_rank_fusion",
+   "first_failed_floor": "mrr_at_10",
+   "mrr_at_10": 0.4911,
+   "mrr_at_10_floor_met": false,
+   "recall_at_5": 0.75,
+   "recall_at_5_floor_met": true,
+   "reproducible": true,
+   "within_budgets": true
+  }
+ ],
+ "wave": "W3",
+ "winning_arm": null
+}
