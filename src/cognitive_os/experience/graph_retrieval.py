@@ -41,6 +41,24 @@ RECIPROCAL_RANK_FUSION = "reciprocal_rank_fusion"
 #: can pass is a sweep, and revision 3 forbids one.
 FUSION_CONSTANT = 60
 
+#: S21D4-041. How many successively-better distances the anytime search may consume per pair.
+#:
+#: `nx.graph_edit_distance(..., timeout=)` is an anytime search under a wall clock, so its
+#: score depends on the host and the moment -- D1, D2 and D3 all measured this arm that way and
+#: none of those numbers can be replayed by anyone. A fixed count of yields is host-independent:
+#: the same two graphs consume the same iterations and produce the same distance on a fast host
+#: and a slow one.
+#:
+#: One, because the second yield is not affordable and the fourth is not reachable. Measured on
+#: the largest stored pair, 30 nodes against 21: the first distance arrives in 4.5 ms, the
+#: second costs a further 70 ms, the third a further 306 ms, and the fourth did not arrive in
+#: five minutes. Any budget above one is therefore an unbounded budget wearing a number, which
+#: is the same defect as a wall clock with extra steps.
+#:
+#: The number was chosen against cost, never against a ranking: S21D4-041 measured the yield
+#: profile and the frozen 90 ms per-pair allowance, and read no retrieval result at all.
+GED_ITERATION_BUDGET = 1
+
 
 @dataclass(frozen=True, slots=True)
 class Candidate:
@@ -305,12 +323,17 @@ async def bounded_ged(
     embed: EmbeddingProviderPort,
     cache: dict[str, tuple[float, ...]] | None = None,
 ) -> ExperienceGraphResult:
-    """MiniLM shortlist, then labelled graph edit distance with a per-pair timeout.
+    """MiniLM shortlist, then labelled graph edit distance under a fixed iteration budget.
 
     The score is a similarity in [0, 1] derived from the edit distance normalised by the
-    larger graph, so it composes with the other arms. A pair that exhausts its timeout
+    larger graph, so it composes with the other arms. A pair the budget leaves unscored
     keeps its shortlist position and is counted, which is the bounded result the resource
     policy requires instead of a silent omission.
+
+    S21D4-041 replaced the per-pair wall clock with `GED_ITERATION_BUDGET`. The query budget
+    below is still wall-clock, and deliberately so: it decides how many comparisons are
+    attempted, not what any one of them returns. `budget_cutoffs` is what makes that visible,
+    and a run that reports one is a run whose ranking a slower host could not reproduce.
     """
     import networkx as nx  # type: ignore[import-untyped]
 
@@ -340,14 +363,24 @@ async def bounded_ged(
         ceiling = max(left.number_of_nodes(), right.number_of_nodes()) + max(
             left.number_of_edges(), right.number_of_edges()
         )
-        distance = nx.graph_edit_distance(
-            left,
-            right,
-            node_match=lambda a, b: a["label"] == b["label"],
-            edge_match=lambda a, b: a["label"] == b["label"],
-            timeout=limits.per_pair_ged_timeout_ms / 1000,
-            upper_bound=ceiling,
-        )
+        # S21D4-041. The anytime search under a fixed iteration budget, not under a clock.
+        # `timed_out` keeps its name and its place in the released result contract, and now
+        # counts the one thing that can still leave a pair unscored: a budget that produced no
+        # value at all. That is a property of the two graphs, not of the host.
+        distance = None
+        for consumed, value in enumerate(
+            nx.optimize_graph_edit_distance(
+                left,
+                right,
+                node_match=lambda a, b: a["label"] == b["label"],
+                edge_match=lambda a, b: a["label"] == b["label"],
+                upper_bound=ceiling,
+            ),
+            start=1,
+        ):
+            distance = value
+            if consumed >= GED_ITERATION_BUDGET:
+                break
         if distance is None:
             timed_out += 1
             scored.append((pair_id, 0.0))
