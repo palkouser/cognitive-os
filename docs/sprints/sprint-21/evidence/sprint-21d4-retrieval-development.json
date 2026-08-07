@@ -1,0 +1,783 @@
+{
+ "changed_arm": "minilm_shortlist_plus_bounded_ged",
+ "d4_retrieval_pool_read": false,
+ "every_arm_reproduces_its_own_ranking": true,
+ "every_unchanged_arm_reproduced": true,
+ "expectation_declared_before_the_run": "Every arm except the one whose comparator W3 decided reproduces its predecessor value exactly. The changed arm may move, and must now reproduce its own ranking across two passes.",
+ "final_or_canary_outcomes_inspected": 0,
+ "final_outcomes_inspected": false,
+ "gating": false,
+ "ged_decision_sha256": "352f237bc6c27fbb01d482e0cbd39b794e72f3db25e4fbdbabcfad16852d6e13",
+ "ged_iteration_budget": 1,
+ "integrity_content_hash": "88052aba0ce1700c53ffeace6d98ed341ae6fd3cc3bd2c697a62e0a886ac5279",
+ "items": [
+  "S21D4-042"
+ ],
+ "label": "development_only",
+ "pools": {
+  "d1_eighty_query_development_set": {
+   "access": "read_only",
+   "against_the_predecessor": {
+    "every_unchanged_arm_reproduced": true,
+    "per_arm": {
+     "exact_signature": {
+      "arm_was_changed_in_w3": false,
+      "budget_cutoffs": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "coverage": {
+       "measured": 0.0,
+       "recorded": 0.0
+      },
+      "mrr_at_10": {
+       "measured": 0.0,
+       "recorded": 0.0
+      },
+      "ndcg_at_10": {
+       "measured": 0.0,
+       "recorded": 0.0
+      },
+      "reproduced": true,
+      "timeouts": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "top_5_recall": {
+       "measured": 0.0,
+       "recorded": 0.0
+      }
+     },
+     "lexical": {
+      "arm_was_changed_in_w3": false,
+      "budget_cutoffs": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "coverage": {
+       "measured": 1.0,
+       "recorded": 1.0
+      },
+      "mrr_at_10": {
+       "measured": 0.4145,
+       "recorded": 0.4145
+      },
+      "ndcg_at_10": {
+       "measured": 0.3327,
+       "recorded": 0.3327
+      },
+      "reproduced": true,
+      "timeouts": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "top_5_recall": {
+       "measured": 0.525,
+       "recorded": 0.525
+      }
+     },
+     "minilm_shortlist_plus_bounded_ged": {
+      "arm_was_changed_in_w3": true,
+      "budget_cutoffs": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "coverage": {
+       "measured": 1.0,
+       "recorded": 1.0
+      },
+      "mrr_at_10": {
+       "measured": 0.3628,
+       "recorded": 0.3505
+      },
+      "ndcg_at_10": {
+       "measured": 0.2336,
+       "recorded": 0.2204
+      },
+      "reproduced": false,
+      "timeouts": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "top_5_recall": {
+       "measured": 0.5875,
+       "recorded": 0.575
+      }
+     },
+     "minilm_vector": {
+      "arm_was_changed_in_w3": false,
+      "budget_cutoffs": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "coverage": {
+       "measured": 1.0,
+       "recorded": 1.0
+      },
+      "mrr_at_10": {
+       "measured": 0.4392,
+       "recorded": 0.4392
+      },
+      "ndcg_at_10": {
+       "measured": 0.374,
+       "recorded": 0.374
+      },
+      "reproduced": true,
+      "timeouts": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "top_5_recall": {
+       "measured": 0.5375,
+       "recorded": 0.5375
+      }
+     },
+     "no_memory": {
+      "arm_was_changed_in_w3": false,
+      "budget_cutoffs": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "coverage": {
+       "measured": 0.0,
+       "recorded": 0.0
+      },
+      "mrr_at_10": {
+       "measured": 0.0,
+       "recorded": 0.0
+      },
+      "ndcg_at_10": {
+       "measured": 0.0,
+       "recorded": 0.0
+      },
+      "reproduced": true,
+      "timeouts": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "top_5_recall": {
+       "measured": 0.0,
+       "recorded": 0.0
+      }
+     },
+     "reciprocal_rank_fusion": {
+      "arm_was_changed_in_w3": false,
+      "budget_cutoffs": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "coverage": {
+       "measured": 1.0,
+       "recorded": 1.0
+      },
+      "mrr_at_10": {
+       "measured": 0.4478,
+       "recorded": 0.4478
+      },
+      "ndcg_at_10": {
+       "measured": 0.3567,
+       "recorded": 0.3567
+      },
+      "reproduced": true,
+      "timeouts": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "top_5_recall": {
+       "measured": 0.775,
+       "recorded": 0.775
+      }
+     }
+    },
+    "predecessor": "docs/sprints/sprint-21/evidence/sprint-21d3-d1-retrieval-development.json",
+    "predecessor_sha256": "e8ca5615cd9a757f7e129502319b666c97c5f2c3f5c1822fe8865d7645559efe",
+    "the_changed_arm_moved": true,
+    "unchanged_arms_that_moved": []
+   },
+   "arms": {
+    "exact_signature": {
+     "budget_cutoffs": 0,
+     "coverage": 0.0,
+     "max_latency_ms": 0.116,
+     "mean_candidates_considered": 78.25,
+     "mrr_at_10": 0.0,
+     "ndcg_at_10": 0.0,
+     "p50_latency_ms": 0.06,
+     "p95_latency_ms": 0.073,
+     "queries_with_no_relevant_pair_in_top_five": 80,
+     "timeouts": 0,
+     "top_5_recall": 0.0,
+     "top_5_recall_by_domain": {
+      "coding": 0.0,
+      "logic": 0.0,
+      "mathematics": 0.0
+     },
+     "top_5_recall_by_tier": {
+      "1": 0.0,
+      "2": 0.0
+     }
+    },
+    "lexical": {
+     "budget_cutoffs": 0,
+     "coverage": 1.0,
+     "max_latency_ms": 1.317,
+     "mean_candidates_considered": 78.25,
+     "mrr_at_10": 0.4145,
+     "ndcg_at_10": 0.3327,
+     "p50_latency_ms": 1.063,
+     "p95_latency_ms": 1.197,
+     "queries_with_no_relevant_pair_in_top_five": 38,
+     "timeouts": 0,
+     "top_5_recall": 0.525,
+     "top_5_recall_by_domain": {
+      "coding": 0.4333,
+      "logic": 0.8,
+      "mathematics": 0.8
+     },
+     "top_5_recall_by_tier": {
+      "1": 0.4242,
+      "2": 1.0
+     }
+    },
+    "minilm_shortlist_plus_bounded_ged": {
+     "budget_cutoffs": 0,
+     "coverage": 1.0,
+     "max_latency_ms": 140.37,
+     "mean_candidates_considered": 20.0,
+     "mrr_at_10": 0.3628,
+     "ndcg_at_10": 0.2336,
+     "p50_latency_ms": 34.854,
+     "p95_latency_ms": 128.918,
+     "queries_with_no_relevant_pair_in_top_five": 33,
+     "timeouts": 0,
+     "top_5_recall": 0.5875,
+     "top_5_recall_by_domain": {
+      "coding": 0.65,
+      "logic": 0.8,
+      "mathematics": 0.0
+     },
+     "top_5_recall_by_tier": {
+      "1": 0.6212,
+      "2": 0.4286
+     }
+    },
+    "minilm_vector": {
+     "budget_cutoffs": 0,
+     "coverage": 1.0,
+     "max_latency_ms": 1053.436,
+     "mean_candidates_considered": 78.25,
+     "mrr_at_10": 0.4392,
+     "ndcg_at_10": 0.374,
+     "p50_latency_ms": 13.152,
+     "p95_latency_ms": 33.472,
+     "queries_with_no_relevant_pair_in_top_five": 37,
+     "timeouts": 0,
+     "top_5_recall": 0.5375,
+     "top_5_recall_by_domain": {
+      "coding": 0.4,
+      "logic": 0.9,
+      "mathematics": 1.0
+     },
+     "top_5_recall_by_tier": {
+      "1": 0.4394,
+      "2": 1.0
+     }
+    },
+    "no_memory": {
+     "budget_cutoffs": 0,
+     "coverage": 0.0,
+     "max_latency_ms": 0.077,
+     "mean_candidates_considered": 0.0,
+     "mrr_at_10": 0.0,
+     "ndcg_at_10": 0.0,
+     "p50_latency_ms": 0.061,
+     "p95_latency_ms": 0.074,
+     "queries_with_no_relevant_pair_in_top_five": 0,
+     "timeouts": 0,
+     "top_5_recall": 0.0,
+     "top_5_recall_by_domain": {
+      "coding": 0.0,
+      "logic": 0.0,
+      "mathematics": 0.0
+     },
+     "top_5_recall_by_tier": {
+      "1": 0.0,
+      "2": 0.0
+     }
+    },
+    "reciprocal_rank_fusion": {
+     "budget_cutoffs": 0,
+     "coverage": 1.0,
+     "max_latency_ms": 28.619,
+     "mean_candidates_considered": 78.25,
+     "mrr_at_10": 0.4478,
+     "ndcg_at_10": 0.3567,
+     "p50_latency_ms": 16.578,
+     "p95_latency_ms": 26.545,
+     "queries_with_no_relevant_pair_in_top_five": 18,
+     "timeouts": 0,
+     "top_5_recall": 0.775,
+     "top_5_recall_by_domain": {
+      "coding": 0.7167,
+      "logic": 0.9,
+      "mathematics": 1.0
+     },
+     "top_5_recall_by_tier": {
+      "1": 0.7273,
+      "2": 1.0
+     }
+    }
+   },
+   "artifact_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d1",
+   "benchmark_content_hash": "a73d43c8180cee0a22c9d6489efab458fdbcb43368c693dda651dd65096518da",
+   "benchmark_schema_version": 2,
+   "frozen_in": "Sprint 21D1, before any ranking was produced",
+   "graph_set": {
+    "declared_pairs": 80,
+    "eligible_candidates": 80,
+    "graph_set_id": "sprint-21d1-emg-root",
+    "intact": true,
+    "resolved_pairs": 80,
+    "root_sha256": "25b89bc8316c7b3d2f556e4e1aca4ff9619702a8bf1306fbe346cef2362f90ae"
+   },
+   "model": {
+    "dimension": 384,
+    "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+    "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+    "tree_digest": "98eb3ae4df320d0b721902aabef795cafb36c3a516f036e92e2b046f55ef4229"
+   },
+   "query_set": {
+    "path": "docs/sprints/sprint-21/evidence/sprint-21d1-graph-queries.json",
+    "queries": 80,
+    "sha256": "0a82bfe390a9216f1017bbeb70a09e29ef4747519fb4b8fd6bcf0803efb6650a"
+   },
+   "repeated_ranking_agreement": {
+    "arms_that_do_not_reproduce_their_own_ranking": [],
+    "every_arm_reproduces_its_own_ranking": true,
+    "measured": {
+     "exact_signature": true,
+     "lexical": true,
+     "minilm_shortlist_plus_bounded_ged": true,
+     "minilm_vector": true,
+     "no_memory": true,
+     "reciprocal_rank_fusion": true
+    },
+    "recorded": {
+     "exact_signature": true,
+     "lexical": true,
+     "minilm_shortlist_plus_bounded_ged": false,
+     "minilm_vector": true,
+     "no_memory": true,
+     "reciprocal_rank_fusion": true
+    },
+    "the_changed_arm_did_not_before": true,
+    "the_changed_arm_now_reproduces_itself": true
+   },
+   "resource_policy": {
+    "content_hash": "d0e8520e3d3bc3637ce75f632c79aa00c1f456a8af1a4956601dad359c8474ab",
+    "cross_task_similarity_neighbors": 3,
+    "edges_per_graph": 128,
+    "nodes_per_graph": 64,
+    "path_depth": 32,
+    "per_pair_ged_timeout_ms": 90,
+    "query_budget_seconds": 2,
+    "returned_results": 10,
+    "vector_shortlist": 20
+   },
+   "root": "docs/sprints/sprint-21/evidence/sprint-21d1-emg-root.json",
+   "widened_surface": {
+    "graphs": 160,
+    "graphs_carrying_terms": 0,
+    "reading": "Projected before the field existed, so the widened surface contributes no term here and any movement in these numbers comes from somewhere else."
+   }
+  },
+  "d3_spent_retrieval_holdout": {
+   "access": "read_only",
+   "against_the_predecessor": {
+    "every_unchanged_arm_reproduced": true,
+    "per_arm": {
+     "exact_signature": {
+      "arm_was_changed_in_w3": false,
+      "budget_cutoffs": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "coverage": {
+       "measured": 0.0,
+       "recorded": 0.0
+      },
+      "mrr_at_10": {
+       "measured": 0.0,
+       "recorded": 0.0
+      },
+      "ndcg_at_10": {
+       "measured": 0.0,
+       "recorded": 0.0
+      },
+      "reproduced": true,
+      "timeouts": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "top_5_recall": {
+       "measured": 0.0,
+       "recorded": 0.0
+      }
+     },
+     "lexical": {
+      "arm_was_changed_in_w3": false,
+      "budget_cutoffs": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "coverage": {
+       "measured": 1.0,
+       "recorded": 1.0
+      },
+      "mrr_at_10": {
+       "measured": 0.3042,
+       "recorded": 0.3042
+      },
+      "ndcg_at_10": {
+       "measured": 0.1613,
+       "recorded": 0.1613
+      },
+      "reproduced": true,
+      "timeouts": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "top_5_recall": {
+       "measured": 0.4833,
+       "recorded": 0.4833
+      }
+     },
+     "minilm_shortlist_plus_bounded_ged": {
+      "arm_was_changed_in_w3": true,
+      "budget_cutoffs": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "coverage": {
+       "measured": 1.0,
+       "recorded": 1.0
+      },
+      "mrr_at_10": {
+       "measured": 0.3073,
+       "recorded": 0.3073
+      },
+      "ndcg_at_10": {
+       "measured": 0.1648,
+       "recorded": 0.1648
+      },
+      "reproduced": true,
+      "timeouts": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "top_5_recall": {
+       "measured": 0.5,
+       "recorded": 0.5
+      }
+     },
+     "minilm_vector": {
+      "arm_was_changed_in_w3": false,
+      "budget_cutoffs": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "coverage": {
+       "measured": 1.0,
+       "recorded": 1.0
+      },
+      "mrr_at_10": {
+       "measured": 0.3414,
+       "recorded": 0.3414
+      },
+      "ndcg_at_10": {
+       "measured": 0.1619,
+       "recorded": 0.1619
+      },
+      "reproduced": true,
+      "timeouts": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "top_5_recall": {
+       "measured": 0.5333,
+       "recorded": 0.5333
+      }
+     },
+     "no_memory": {
+      "arm_was_changed_in_w3": false,
+      "budget_cutoffs": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "coverage": {
+       "measured": 0.0,
+       "recorded": 0.0
+      },
+      "mrr_at_10": {
+       "measured": 0.0,
+       "recorded": 0.0
+      },
+      "ndcg_at_10": {
+       "measured": 0.0,
+       "recorded": 0.0
+      },
+      "reproduced": true,
+      "timeouts": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "top_5_recall": {
+       "measured": 0.0,
+       "recorded": 0.0
+      }
+     },
+     "reciprocal_rank_fusion": {
+      "arm_was_changed_in_w3": false,
+      "budget_cutoffs": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "coverage": {
+       "measured": 1.0,
+       "recorded": 1.0
+      },
+      "mrr_at_10": {
+       "measured": 0.3004,
+       "recorded": 0.3004
+      },
+      "ndcg_at_10": {
+       "measured": 0.1583,
+       "recorded": 0.1583
+      },
+      "reproduced": true,
+      "timeouts": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "top_5_recall": {
+       "measured": 0.5,
+       "recorded": 0.5
+      }
+     }
+    },
+    "predecessor": "docs/sprints/sprint-21/evidence/sprint-21d3-retrieval-holdout-result.json",
+    "predecessor_sha256": "b35beef5479fd61893f78b21f8e2b1760c2c018747130829b902974a18d17073",
+    "the_changed_arm_moved": false,
+    "unchanged_arms_that_moved": []
+   },
+   "arms": {
+    "exact_signature": {
+     "budget_cutoffs": 0,
+     "coverage": 0.0,
+     "max_latency_ms": 0.097,
+     "mean_candidates_considered": 59.0,
+     "mrr_at_10": 0.0,
+     "ndcg_at_10": 0.0,
+     "p50_latency_ms": 0.065,
+     "p95_latency_ms": 0.078,
+     "queries_with_no_relevant_pair_in_top_five": 60,
+     "timeouts": 0,
+     "top_5_recall": 0.0,
+     "top_5_recall_by_domain": {
+      "coding": 0.0
+     },
+     "top_5_recall_by_tier": {
+      "1": 0.0
+     }
+    },
+    "lexical": {
+     "budget_cutoffs": 0,
+     "coverage": 1.0,
+     "max_latency_ms": 0.927,
+     "mean_candidates_considered": 59.0,
+     "mrr_at_10": 0.3042,
+     "ndcg_at_10": 0.1613,
+     "p50_latency_ms": 0.685,
+     "p95_latency_ms": 0.876,
+     "queries_with_no_relevant_pair_in_top_five": 31,
+     "timeouts": 0,
+     "top_5_recall": 0.4833,
+     "top_5_recall_by_domain": {
+      "coding": 0.4833
+     },
+     "top_5_recall_by_tier": {
+      "1": 0.4833
+     }
+    },
+    "minilm_shortlist_plus_bounded_ged": {
+     "budget_cutoffs": 0,
+     "coverage": 1.0,
+     "max_latency_ms": 111.562,
+     "mean_candidates_considered": 20.0,
+     "mrr_at_10": 0.3073,
+     "ndcg_at_10": 0.1648,
+     "p50_latency_ms": 33.17,
+     "p95_latency_ms": 45.785,
+     "queries_with_no_relevant_pair_in_top_five": 30,
+     "timeouts": 0,
+     "top_5_recall": 0.5,
+     "top_5_recall_by_domain": {
+      "coding": 0.5
+     },
+     "top_5_recall_by_tier": {
+      "1": 0.5
+     }
+    },
+    "minilm_vector": {
+     "budget_cutoffs": 0,
+     "coverage": 1.0,
+     "max_latency_ms": 467.214,
+     "mean_candidates_considered": 59.0,
+     "mrr_at_10": 0.3414,
+     "ndcg_at_10": 0.1619,
+     "p50_latency_ms": 11.413,
+     "p95_latency_ms": 14.019,
+     "queries_with_no_relevant_pair_in_top_five": 28,
+     "timeouts": 0,
+     "top_5_recall": 0.5333,
+     "top_5_recall_by_domain": {
+      "coding": 0.5333
+     },
+     "top_5_recall_by_tier": {
+      "1": 0.5333
+     }
+    },
+    "no_memory": {
+     "budget_cutoffs": 0,
+     "coverage": 0.0,
+     "max_latency_ms": 0.082,
+     "mean_candidates_considered": 0.0,
+     "mrr_at_10": 0.0,
+     "ndcg_at_10": 0.0,
+     "p50_latency_ms": 0.063,
+     "p95_latency_ms": 0.078,
+     "queries_with_no_relevant_pair_in_top_five": 0,
+     "timeouts": 0,
+     "top_5_recall": 0.0,
+     "top_5_recall_by_domain": {
+      "coding": 0.0
+     },
+     "top_5_recall_by_tier": {
+      "1": 0.0
+     }
+    },
+    "reciprocal_rank_fusion": {
+     "budget_cutoffs": 0,
+     "coverage": 1.0,
+     "max_latency_ms": 19.895,
+     "mean_candidates_considered": 59.0,
+     "mrr_at_10": 0.3004,
+     "ndcg_at_10": 0.1583,
+     "p50_latency_ms": 14.24,
+     "p95_latency_ms": 17.155,
+     "queries_with_no_relevant_pair_in_top_five": 30,
+     "timeouts": 0,
+     "top_5_recall": 0.5,
+     "top_5_recall_by_domain": {
+      "coding": 0.5
+     },
+     "top_5_recall_by_tier": {
+      "1": 0.5
+     }
+    }
+   },
+   "artifact_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d3",
+   "benchmark_content_hash": "fbc4bcef7fb95ca2140c24e17c8d0f5c70059dc4379c9071b2efed38dd99374e",
+   "benchmark_schema_version": 2,
+   "frozen_in": "Sprint 21D3, before the holdout was resolved; spent",
+   "graph_set": {
+    "declared_pairs": 60,
+    "eligible_candidates": 60,
+    "graph_set_id": "sprint-21d3-retrieval-holdout",
+    "intact": true,
+    "resolved_pairs": 60,
+    "root_sha256": "28dc23b75f40255eff1beccab7cb5cd27285840781ccb6a60e1946e9d7e7bbdd"
+   },
+   "model": {
+    "dimension": 384,
+    "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+    "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+    "tree_digest": "98eb3ae4df320d0b721902aabef795cafb36c3a516f036e92e2b046f55ef4229"
+   },
+   "query_set": {
+    "path": "docs/sprints/sprint-21/evidence/sprint-21d3-retrieval-queries.json",
+    "queries": 60,
+    "sha256": "4064d15793cdab7562623e29f7df3017bb87e4b6519abe4ecfecca31a3a1dcb0"
+   },
+   "repeated_ranking_agreement": {
+    "arms_that_do_not_reproduce_their_own_ranking": [],
+    "every_arm_reproduces_its_own_ranking": true,
+    "measured": {
+     "exact_signature": true,
+     "lexical": true,
+     "minilm_shortlist_plus_bounded_ged": true,
+     "minilm_vector": true,
+     "no_memory": true,
+     "reciprocal_rank_fusion": true
+    },
+    "recorded": {
+     "exact_signature": true,
+     "lexical": true,
+     "minilm_shortlist_plus_bounded_ged": true,
+     "minilm_vector": true,
+     "no_memory": true,
+     "reciprocal_rank_fusion": true
+    },
+    "the_changed_arm_did_not_before": false,
+    "the_changed_arm_now_reproduces_itself": true
+   },
+   "resource_policy": {
+    "content_hash": "d0e8520e3d3bc3637ce75f632c79aa00c1f456a8af1a4956601dad359c8474ab",
+    "cross_task_similarity_neighbors": 3,
+    "edges_per_graph": 128,
+    "nodes_per_graph": 64,
+    "path_depth": 32,
+    "per_pair_ged_timeout_ms": 90,
+    "query_budget_seconds": 2,
+    "returned_results": 10,
+    "vector_shortlist": 20
+   },
+   "root": "docs/sprints/sprint-21/evidence/sprint-21d3-retrieval-emg-root.json",
+   "widened_surface": {
+    "graphs": 120,
+    "graphs_carrying_terms": 0,
+    "reading": "Projected before the field existed, so the widened surface contributes no term here and any movement in these numbers comes from somewhere else."
+   }
+  }
+ },
+ "pre_registration_sha256": "526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9",
+ "purpose": "Measure the widened searchable surface and the decided bounded-GED comparator on two query sets whose answers are already published. It closes no gate: D1 condition 15 and Gate L2 condition 24 are decided only by the D4 unseen-task holdout, which this command does not read.",
+ "recorded_at": "2026-08-07T11:14:56.660173Z",
+ "schema_version": 1,
+ "sprint": "21D4",
+ "store_writes": {
+  "fingerprints_after": {
+   "d1_eighty_query_development_set": [
+    "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f",
+    83
+   ],
+   "d3_spent_retrieval_holdout": [
+    "fcb0a044810b375f2933d4a3cf22c7448bfada9c90e104566a92125b08dcd0d3",
+    2096
+   ]
+  },
+  "fingerprints_before": {
+   "d1_eighty_query_development_set": [
+    "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f",
+    83
+   ],
+   "d3_spent_retrieval_holdout": [
+    "fcb0a044810b375f2933d4a3cf22c7448bfada9c90e104566a92125b08dcd0d3",
+    2096
+   ]
+  },
+  "unchanged": true
+ },
+ "surface_sha256": "4f48312d47d83c862816cee3b5eb928862d55cbb5774b50aa04243107d688309",
+ "wave": "W3"
+}
