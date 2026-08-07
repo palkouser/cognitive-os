@@ -1,0 +1,319 @@
+{
+ "artifact": {
+  "artifact_bytes": 44243,
+  "artifact_hash": "d67237821a561a9426807ff03e4f37a8df000d6310ea32a658d62ce5a5b6caef",
+  "artifact_id": "adc8b99e-462e-47d3-8fb3-8ef5411049fc",
+  "declared_limitations": [
+   "fitted on one fixture group; every number here is a wiring proof, not a learned claim",
+   "the exemplars are the fixture group's own later rows, so the ranking is not held out"
+  ],
+  "exemplars": 3,
+  "feature_channels": 390,
+  "refusals": [
+   {
+    "action": "reload an artifact the capability does not name",
+    "error": "CorrectionArtifactError: artifact bytes hash to b1a1cc24b3f473e5f7ef26ad64f03e52b4a497b8a2f96ff7e091ff9016755c15, not the d67237821a561a9426807ff03e4f37a8df000d6310ea32a658d62ce5a5b6caef this capability authorises",
+    "refused": "true"
+   },
+   {
+    "action": "reload truncated artifact bytes the capability does name",
+    "error": "CorrectionArtifactError: artifact bytes are not JSON",
+    "refused": "true"
+   },
+   {
+    "action": "reload oversized artifact bytes the capability does name",
+    "error": "CorrectionArtifactError: artifact is 67108880 bytes, above the 67108864-byte bound",
+    "refused": "true"
+   }
+  ],
+  "reload_reproduced_the_payload": true,
+  "reload_reproduced_the_ranking": true,
+  "store_returned_the_bytes_written": true
+ },
+ "authoring_defect_ledger": [
+  {
+   "contract_changed": false,
+   "d4_threshold_derivations_before_the_fix": 0,
+   "detail": "derive_zero_error_point recorded Python's repr of the absent threshold -- the string \"None\" -- into OperatingPointV4.threshold and into derivation_hash whenever no answered decision was wrong. A reader would have parsed it as a number or crashed on it, and the test covering the all-correct case asserted `threshold is None or zero_error_point_exists`, which passes on either branch",
+   "fix": "a typed null plus every_answered_decision_was_correct, so 'nothing was wrong' and 'nothing was admitted' cannot be read as the same record; the assertion that missed it is now the one that would have failed",
+   "found_by": "deriving the fixture's operating point in this slice",
+   "id": "W2-D7",
+   "why_no_amendment": "the operative rule already names 'the highest score among answered decisions that are wrong', which in this case is no score at all. The sentence was right and the implementation wrote a repr where the sentence names nothing"
+  },
+  {
+   "contract_changed": false,
+   "detail": "reality_task_specs_d4.py's docstring says the fixture group is at the bottom of that module. It is not: the module's SHA-256 was sealed into sprint-21d4-corpus.json by S21D4-030 before S21D4-033 authored the fixture, and a sealed record is amended rather than edited",
+   "fix": "the fixture lives in reality_fixture_spec_d4.py, whose docstring says why, and reality_tasks joins the two registries",
+   "found_by": "authoring the fixture group",
+   "id": "W2-D8"
+  }
+ ],
+ "campaign_id": "1f97188a-4053-5816-93dd-24aac6f39528",
+ "capabilities": {
+  "canary_capability_present": false,
+  "final_capability_present": false,
+  "refusals": [
+   {
+    "action": "derive a threshold from the final A split",
+    "error": "OperatingPointError: the operating point is derived from the calibration split only; 'final_a' is final, promotion or metamorphic evidence",
+    "refused": "true"
+   },
+   {
+    "action": "derive a threshold from the final B split",
+    "error": "OperatingPointError: the operating point is derived from the calibration split only; 'final_b' is final, promotion or metamorphic evidence",
+    "refused": "true"
+   },
+   {
+    "action": "derive a threshold from the retrieval split",
+    "error": "OperatingPointError: the operating point is derived from the calibration split only; 'retrieval' is final, promotion or metamorphic evidence",
+    "refused": "true"
+   },
+   {
+    "action": "open the direct evaluation boundary for a final read on an approved component",
+    "error": "CorrectionArtifactError: the direct evaluation boundary is closed in active: an approved component is read through the runtime resolver",
+    "refused": "true"
+   },
+   {
+    "action": "seal the fixture's features again with an outcome already in hand",
+    "error": "ValueError: v2 feature records must be sealed strictly before every outcome",
+    "refused": "true"
+   }
+  ],
+  "retrieval_capability_present": false
+ },
+ "code_revision": "873494ec7c14f1b478b07f5d03e5c95cf1f48c449028c4eb5ef2be64615ab286",
+ "dataset": {
+  "dataset_id": "e34b04ad-39e8-5648-9d17-785fa7bb7787",
+  "every_scan_ran": 11,
+  "example_manifest_hash": "daec66f8f80c59eb70b8637775dab591d180fad536f00b3d80a474b190fd7229",
+  "fitted_columns": 390,
+  "fitted_matrix_hash": "0782922c69a25b8e919ea9eb69aa33451c048f5e30800513ba04a50f30d94c8b",
+  "fitted_rows": 4,
+  "identity_revision": 3,
+  "latest_seal_selection": false,
+  "note": "the slice scans the fixture matrix against itself, so the cross-split scans compare identical rows and are expected to report a maximum similarity of one; the campaign scans two disjoint splits, and that is where the number means something",
+  "observation_count": 4,
+  "provenance_counts": {
+   "self_play": 4
+  },
+  "real_governed_runs": 0,
+  "rebuilt_identically": true,
+  "scan_report_hash": "3559e1554b289645b964750ca85cc66550b4c0f5f2aa7a61a827b2fee833dc22",
+  "scans": [
+   {
+    "detail": "390 columns, all on the correction-ranking-v2 allowlist",
+    "name": "no_forbidden_field_reaches_the_matrix",
+    "passed": true
+   },
+   {
+    "detail": "all 390 fitted dimensions are finite and in range",
+    "name": "every_fitted_dimension_is_finite_and_in_range",
+    "passed": true
+   },
+   {
+    "detail": "all 390 fitted dimensions are finite and in range",
+    "name": "every_fitted_dimension_is_finite_and_in_range",
+    "passed": true
+   },
+   {
+    "detail": "all 8 rows use correction-ranking-v2",
+    "name": "every_row_has_one_encoder_identity",
+    "passed": true
+   },
+   {
+    "detail": "8 rows were sealed before the verifier ran",
+    "name": "every_feature_record_precedes_its_outcome",
+    "passed": true
+   },
+   {
+    "detail": "4 row(s) are duplicated or do not reproduce their seal",
+    "name": "every_row_resolves_to_one_pre_outcome_source_chain",
+    "passed": false
+   },
+   {
+    "detail": "1 group(s) appear in both splits",
+    "name": "no_group_crosses_the_split",
+    "passed": false
+   },
+   {
+    "detail": "4 distinct feature signatures, none labelled both ways",
+    "name": "no_identical_row_carries_two_labels",
+    "passed": true
+   },
+   {
+    "detail": "4 pair(s) at or above 0.999",
+    "name": "no_near_duplicate_crosses_the_split",
+    "passed": false
+   },
+   {
+    "detail": "91 column(s) separate the labels perfectly",
+    "name": "no_column_derives_the_label",
+    "passed": false
+   },
+   {
+    "detail": "91 column(s) separate the labels perfectly",
+    "name": "no_column_derives_the_label",
+    "passed": false
+   }
+  ],
+  "selection_partition_digest": "d663f182e279304071ffbe0ddaa852e3a2ec4d66940cfc62b0b3a18b3418bec2",
+  "split_manifest_hash": "cd3825dbac0e5dd8c73b4ac0e39fa70c216f7743d5f78d82428be750eebf85d9",
+  "store_wide_selection": false,
+  "usage_rights_verified": true
+ },
+ "embedding_model_id": "sentence-transformers/all-MiniLM-L6-v2",
+ "embedding_tree_digest": "98eb3ae4df320d0b721902aabef795cafb36c3a516f036e92e2b046f55ef4229",
+ "execution": {
+  "accepted_candidates": 2,
+  "attempted": 4,
+  "baseline_is_expected_to_fail_hidden": true,
+  "baseline_passed_hidden_verification": false,
+  "baselines_executed": 1,
+  "candidates_executed": 4,
+  "code_revision": "873494ec7c14f1b478b07f5d03e5c95cf1f48c449028c4eb5ef2be64615ab286",
+  "containers_started": 5,
+  "encoder_version": "correction-ranking-v2",
+  "every_feature_record_precedes_its_outcome": true,
+  "feature_seal_artifact_id": "d18374d3-fa80-4ae5-a5f8-9c3c619e5749",
+  "feature_seal_hash": "48be6bfcd8a42a1da9ad2c4e2ad064e1b50cfcbfce2dfd5b1be4bf8cc640893b",
+  "feature_seal_reserialises_identically": true,
+  "features_sealed_at": "2026-08-07T05:58:20.094155+00:00",
+  "first_outcome_at": "2026-08-07T05:58:21.666104+00:00",
+  "intentionally_unattempted": 0,
+  "mode": "label_all",
+  "normalizer_version": "cogos-python-alpha-normalizer-v2",
+  "observations_carry_the_sealing_partition": true,
+  "observations_projected": 4,
+  "receipt_manifest_hash": "a085e8b7312481759c41ac028845a2de074cd70c726f4e4ef0e9b199c5c167d1",
+  "runs_replayed_from_the_receipt": 0,
+  "sandbox_image": "cognitive-os-sandbox:sprint-5",
+  "sandboxed": true,
+  "stop_reason": "all_candidates_labelled",
+  "task_run_ids": [
+   "2cb60503-4d95-44d9-8aab-11325b6c18f3",
+   "3d92f7ad-9881-4163-9392-8dbbe59f25b5",
+   "69bedcc3-6a91-4305-b817-b0e601a673a4",
+   "7b95c9b8-6e78-4c09-9574-66f186ff488b",
+   "be62a2a4-1483-47bc-8d08-b9acd0701510"
+  ],
+  "verifier_decided_every_label": true
+ },
+ "final_outcomes_inspected": false,
+ "fixture_manifest_hash": "755413ac0c29a29a8e4c8430581b982f48f54495b5df7897e7909f3ad3bf3f31",
+ "integrity_content_hash": "2eb959ac822b47d32a971b34e324b54273b514b7111b0e93d69ff33e33b8e9af",
+ "items": [
+  "S21D4-033"
+ ],
+ "package": {
+  "base_repository_manifest_hash": "a82788031dc6e392fe1ed4d727cc1d77c842344b3a1dda25c26bc605dce3af74",
+  "bundle_artifact_id": "5b46b907-0af4-469c-baf2-a62a66255f92",
+  "bundle_hash": "6a1e071fc85789519430cce5724179cb41affb39ba85d3af2854cc63eeb954f6",
+  "candidate_slots": 4,
+  "control_material_manifest_hash": "a9490642dd07018e5835f2e571138a282b3704801decfd884811a8d30002df14",
+  "hidden_suite_is_not_the_visible_suite": true,
+  "hidden_verifier_bundle_hash": "6a1e071fc85789519430cce5724179cb41affb39ba85d3af2854cc63eeb954f6",
+  "licence_identifier": "Apache-2.0",
+  "rights_evidence_hash": "09a1b529f8ca79a8e41a094c3323296471f4d841e40ceda83d4bb8c1a892e2c8",
+  "rights_verified": true,
+  "source_identity": "cognitive-os:generated:d4_fixture.wrap_words",
+  "task_id": "e82f7ea8-bf01-5991-b61b-ba1d61fd7732",
+  "task_manifest_hash": "974114474d49a9d8c74ed6886405a3c551f72b629d17c50cbdf80e6da067bfbe",
+  "visible_files": 3
+ },
+ "pre_registration_sha256": "526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9",
+ "ranking": {
+  "abstained": true,
+  "baseline_first_choice": "982bf509-86e8-57ee-8c48-d67dfd1603f4",
+  "confidence": "0",
+  "fell_back_to_the_baseline_order": true,
+  "first_choice": "982bf509-86e8-57ee-8c48-d67dfd1603f4",
+  "operating_point": {
+   "admitted_decisions": 0,
+   "coverage": null,
+   "derivation_hash": "0d3578a63af23115f16e87f3b168f8433fc7b9b4d23d27c8a1506c001f1606da",
+   "derived_from": "the fixture group's four candidates, each held out against the other three",
+   "every_answered_decision_was_correct": false,
+   "independent_decisions": 4,
+   "is_the_d4_operating_point": false,
+   "nominal_decisions": 4,
+   "reading": "no point on this fixture: the two decisions the ranker answered were both wrong, so the zero-error region is empty and the rule correctly names nothing. That is the derivation working, not failing -- a threshold invented here would be a threshold over four candidates and three exemplars. What the slice proves is that the number the ranking runs against comes out of scores this run produced",
+   "reproduced_after_a_second_derivation": true,
+   "scored_decisions": [
+    {
+     "answered": false,
+     "correct": true,
+     "decision_id": "982bf509-86e8-57ee-8c48-d67dfd1603f4",
+     "score": "0"
+    },
+    {
+     "answered": true,
+     "correct": false,
+     "decision_id": "6d325938-98a0-5978-81cb-cca2c6feed8f",
+     "score": "0.636624"
+    },
+    {
+     "answered": true,
+     "correct": false,
+     "decision_id": "179332ef-7fb1-5b11-bff2-2c14a9fb4ebe",
+     "score": "0.656253"
+    },
+    {
+     "answered": false,
+     "correct": true,
+     "decision_id": "8520a852-beab-5ca3-a77b-5f6faeda2c5c",
+     "score": "0"
+    }
+   ],
+   "split": "calibration",
+   "the_group_ranking_was_admitted": false,
+   "threshold": null,
+   "why": "D4's operating point is derived once, in S21D4-039, from the fresh calibration split. This one is the fixture's, and it exists to show that the ranking runs at a derived point rather than at a constant somebody typed",
+   "zero_error_point_exists": false,
+   "zero_error_upper_bound_95": null
+  },
+  "order_equals_baseline": true,
+  "prediction_accepted_nothing": true,
+  "reason": "below_confidence_floor"
+ },
+ "recorded_at": "2026-08-07T05:58:24Z",
+ "restart": {
+  "containers_started_on_the_replay": 0,
+  "dataset_record_reproduced": true,
+  "example_manifest_reproduced": true,
+  "feature_seal_hash_reproduced": true,
+  "fresh_services_over_the_same_durable_authorities": true,
+  "no_container_ran_on_the_replay": true,
+  "note": "the first pass started five containers and the second started none; both counts are in this record because either one alone reads as the other",
+  "receipt_effective_remainder": [],
+  "receipt_is_resumable": true,
+  "replayed_outcomes_are_the_recorded_ones": true,
+  "run_identities_resolved_from_the_receipt": 5,
+  "runs_replayed": 5,
+  "split_manifest_reproduced": true,
+  "stored_seal_time_preserved": true,
+  "task_manifest_hash_reproduced": true
+ },
+ "role_boundary": {
+  "calibration_cases_spent": 0,
+  "canary_members_spent": 0,
+  "checked_against_seal": "b69b4cc672cf3ec5b1ba793ef9b19b3eeb5ccf0ed98360a0c01b7f471c58cfea",
+  "final_members_spent": 0,
+  "in_any_scored_role": false,
+  "repository_group": "d4-fixture-wrap-words",
+  "retrieval_judgements_spent": 0,
+  "roles_checked": [
+   "calibration",
+   "canary",
+   "final_a",
+   "final_b",
+   "retrieval",
+   "training"
+  ],
+  "roles_containing_this_group": [],
+  "template_id": "d4_fixture.wrap_words",
+  "why": "Section 6.1 requires the slice to spend nothing, so the group is checked against the sealed manifest rather than declared outside it"
+ },
+ "schema_version": 1,
+ "sprint": "21D4",
+ "wave": "W2"
+}

@@ -26,6 +26,15 @@ fitted channel — the score is the released bounded k-NN confidence, unchanged.
     threshold = the highest score among answered decisions that are wrong
     admitted   = answered decisions scoring strictly above the threshold
 
+When nothing answered is wrong that first line names no score, and the point admits every
+answered decision without a threshold at all. S21D4-033 found the first implementation writing
+Python's `repr` of the absent value — the string `"None"` — into `threshold` and into
+`derivation_hash`, where a reader would have parsed it as a number or crashed on it. The record
+now carries a typed null and `every_answered_decision_was_correct`, because "no error was seen"
+and "here is the confidence that separates error from no error" are different claims and only
+the second is a threshold. No contract sentence changed: the rule already named a score that,
+in this case, does not exist.
+
 Revision 4 originally said "the highest threshold at which every answered decision above it is
 correct", which names no point: the thresholds satisfying that condition are an upward-closed
 set, so every larger one satisfies it too, up to the one that admits nothing at all. Amendment 1
@@ -123,9 +132,16 @@ class OperatingPointV4(HashedExperienceContract):
     rate_denominator: NonEmptyStr = INDEPENDENT_DENOMINATOR
 
     zero_error_point_exists: bool
-    #: `None` when no threshold admits anything — every answered decision was wrong, or none was
-    #: answered at all. A null is the honest record; a threshold above every score is not.
+    #: `None` in two different situations, which the flag below tells apart. Either no threshold
+    #: admits anything — every answered decision was wrong, or none was answered at all — or
+    #: nothing answered was wrong, so the rule's "highest score among answered decisions that are
+    #: wrong" names no score and the point admits everything. A null is the honest record in both;
+    #: a threshold above every score is not, and neither is the string "None".
     threshold: str | None = None
+    #: Set when the answered decisions contained no error at all. Then the zero-error region is
+    #: not bounded below by any observed score, the point exists, and it admits every answered
+    #: decision — which is a much weaker claim than a threshold, and has to read as one.
+    every_answered_decision_was_correct: bool = False
     admitted_decisions: int = Field(default=0, ge=0)
     errors_above_threshold: int = Field(default=0, ge=0)
     coverage: str | None = None
@@ -147,11 +163,21 @@ class OperatingPointV4(HashedExperienceContract):
             raise ValueError("a zero-error operating point admits no error")
         present = (self.threshold, self.coverage, self.zero_error_upper_bound_95)
         if self.zero_error_point_exists:
-            if any(item is None for item in present) or not self.admitted_decisions:
+            required = present[1:] if self.every_answered_decision_was_correct else present
+            if any(item is None for item in required) or not self.admitted_decisions:
                 raise ValueError(
                     "an existing operating point names its threshold, coverage and bound"
                 )
-        elif any(item is not None for item in present) or self.admitted_decisions:
+            if self.every_answered_decision_was_correct and self.threshold is not None:
+                raise ValueError(
+                    "no answered decision was wrong, so the rule names no threshold; a value "
+                    "here would be a number the derivation did not produce"
+                )
+        elif (
+            any(item is not None for item in present)
+            or self.admitted_decisions
+            or self.every_answered_decision_was_correct
+        ):
             raise ValueError("a point that does not exist admits nothing")
         return self
 
@@ -192,6 +218,9 @@ def derive_zero_error_point(
     admitted = [item for item in answered if threshold is None or item.score > threshold]
 
     exists = bool(admitted)
+    #: `None` in both directions that matter: no point at all, and a point with nothing wrong
+    #: below it. `every_answered_decision_was_correct` is what tells the two apart.
+    recorded_threshold = str(threshold) if exists and threshold is not None else None
     coverage = (
         Decimal(len(admitted)) / Decimal(census.independent_decisions)
         if exists and census.independent_decisions
@@ -205,7 +234,7 @@ def derive_zero_error_point(
         "rule": DERIVATION_RULE,
         "nominal_decisions": census.nominal_decisions,
         "independent_decisions": census.independent_decisions,
-        "threshold": str(threshold) if exists else None,
+        "threshold": recorded_threshold,
         "admitted_decisions": len(admitted),
         "coverage": str(coverage) if coverage is not None else None,
         "zero_error_upper_bound_95": str(bound) if bound is not None else None,
@@ -219,7 +248,8 @@ def derive_zero_error_point(
         calibration_source_hash=calibration_source_hash,
         census=census,
         zero_error_point_exists=exists,
-        threshold=str(threshold) if exists else None,
+        threshold=recorded_threshold,
+        every_answered_decision_was_correct=exists and threshold is None,
         admitted_decisions=len(admitted),
         coverage=str(coverage) if coverage is not None else None,
         zero_error_upper_bound_95=str(bound) if bound is not None else None,

@@ -13,6 +13,7 @@ from decimal import Decimal
 from pathlib import Path
 
 import pytest
+from pydantic import ValidationError
 
 from cognitive_os.learning.selective_operating_point import (
     AMENDED_DERIVATION_STEP,
@@ -91,11 +92,36 @@ def test_a_wrong_answer_tied_with_correct_ones_excludes_the_whole_tie() -> None:
 
 
 def test_all_correct_admits_every_answered_decision() -> None:
+    """No answered decision is wrong, so the rule names no score and the record says so.
+
+    The first assertion here was `threshold is None or zero_error_point_exists`, which passes
+    on either branch and passed while `threshold` held the string `"None"`. S21D4-033 hit that
+    on the vertical slice; the assertion is now the one that would have failed.
+    """
     point = _derive(_decisions(("0.9", True, True), ("0.5", True, True), ("0.1", False, False)))
-    assert point.threshold is None or point.zero_error_point_exists
+    assert point.zero_error_point_exists
+    assert point.threshold is None
+    assert point.every_answered_decision_was_correct
     assert point.admitted_decisions == 2
     assert point.coverage == str(Decimal(2) / Decimal(3))
     assert point.zero_error_upper_bound_95 == "0.776393"
+
+
+def test_a_point_without_a_threshold_must_say_why_it_has_none() -> None:
+    """`threshold=None` alone cannot tell "nothing was wrong" from "nothing was admitted"."""
+    point = _derive(_decisions(("0.9", True, True), ("0.5", True, True), ("0.1", False, False)))
+    body = point.model_dump(mode="json", exclude={"content_hash"})
+    body["every_answered_decision_was_correct"] = False
+    with pytest.raises(ValidationError, match="names its threshold"):
+        OperatingPointV4.model_validate(body)
+
+
+def test_a_zero_error_point_that_names_a_threshold_it_did_not_derive_is_refused() -> None:
+    point = _derive(_decisions(("0.9", True, True), ("0.5", True, True), ("0.1", False, False)))
+    body = point.model_dump(mode="json", exclude={"content_hash"})
+    body["threshold"] = "0.4"
+    with pytest.raises(ValidationError, match="names no threshold"):
+        OperatingPointV4.model_validate(body)
 
 
 def test_all_wrong_derives_no_point_at_all() -> None:

@@ -44,7 +44,9 @@ from cognitive_os.domain.reality import (
     RealityTaskProjection,
 )
 
+from .reality_fixture_spec_d4 import D4_FIXTURE_SPEC
 from .reality_retrieval_specs_d3 import D3_RETRIEVAL_SPECS, D3RetrievalSpec
+from .reality_retrieval_specs_d4 import D4_RETRIEVAL_SPECS
 from .reality_task_specs import TASK_SPECS, TaskSpec
 from .reality_task_specs_d2 import (
     D2_TASK_SPECS,
@@ -55,6 +57,7 @@ from .reality_task_specs_d2 import (
 )
 from .reality_task_specs_d2 import module_source as d2_module_source
 from .reality_task_specs_d3 import D3_TASK_SPECS
+from .reality_task_specs_d4 import D4_CALIBRATION_SPECS
 
 #: Fixed forever: it is what makes a regenerated task the same task.
 REALITY_TASK_NAMESPACE = UUID("6f2a1c94-8d3b-5e17-a4c0-2b9d7e5f83a1")
@@ -277,19 +280,40 @@ _D3_RETRIEVAL_TEMPLATES: dict[str, TaskTemplate] = {
     spec.template_id: _expand_retrieval(spec) for spec in D3_RETRIEVAL_SPECS
 }
 
+#: D4's hundred fresh calibration groups plus its vertical-slice fixture. The fixture comes
+#: from a sibling module because `reality_task_specs_d4.py` was hashed into
+#: `evidence/sprint-21d4-corpus.json` before S21D4-033 authored it; here is where the two
+#: belong together, since the registry addresses a task by ID and not by source file.
+_D4_TEMPLATES: dict[str, TaskTemplate] = {
+    spec.template_id: _expand_d2(spec) for spec in (*D4_CALIBRATION_SPECS, D4_FIXTURE_SPEC)
+}
+
+#: D4's sixty retrieval source groups, on D3's retrieval shape and through D3's expander,
+#: because they are D3 retrieval specs — the same two-body, evaluation-only role.
+_D4_RETRIEVAL_TEMPLATES: dict[str, TaskTemplate] = {
+    spec.template_id: _expand_retrieval(spec) for spec in D4_RETRIEVAL_SPECS
+}
+
 #: Every corpus under one lookup, because the runner, the candidate builder and the retrieval
-#: plane address a task by ID and should not have to know which sprint authored it. The four
+#: plane address a task by ID and should not have to know which sprint authored it. The six
 #: are still separate registries above: `available_templates()` is C3's campaign surface and
-#: must not silently grow by a hundred and seventy-six tasks.
+#: must not silently grow by four hundred and thirty-seven tasks.
 _ALL_TEMPLATES: dict[str, TaskTemplate] = {
     **_TEMPLATES,
     **_D2_TEMPLATES,
     **_D3_TEMPLATES,
     **_D3_RETRIEVAL_TEMPLATES,
+    **_D4_TEMPLATES,
+    **_D4_RETRIEVAL_TEMPLATES,
 }
 
 _REGISTERED = (
-    len(_TEMPLATES) + len(_D2_TEMPLATES) + len(_D3_TEMPLATES) + len(_D3_RETRIEVAL_TEMPLATES)
+    len(_TEMPLATES)
+    + len(_D2_TEMPLATES)
+    + len(_D3_TEMPLATES)
+    + len(_D3_RETRIEVAL_TEMPLATES)
+    + len(_D4_TEMPLATES)
+    + len(_D4_RETRIEVAL_TEMPLATES)
 )
 if len(_ALL_TEMPLATES) != _REGISTERED:  # pragma: no cover - import guard
     raise RuntimeError(
@@ -316,6 +340,16 @@ def d3_templates() -> tuple[str, ...]:
 def d3_retrieval_templates() -> tuple[str, ...]:
     """D3's retrieval source pool. Evaluation only: no correction role ever selects one."""
     return tuple(sorted(_D3_RETRIEVAL_TEMPLATES))
+
+
+def d4_templates() -> tuple[str, ...]:
+    """D4's corpus, fixture included. The catalogue selects the hundred it scores."""
+    return tuple(sorted(_D4_TEMPLATES))
+
+
+def d4_retrieval_templates() -> tuple[str, ...]:
+    """D4's retrieval source pool. Evaluation only: no correction role ever selects one."""
+    return tuple(sorted(_D4_RETRIEVAL_TEMPLATES))
 
 
 def template(template_id: str) -> TaskTemplate:
