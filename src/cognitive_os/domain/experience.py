@@ -34,9 +34,27 @@ class ExperienceContract(ImmutableContractModel):
         return sha256(self.canonical_json(exclude=exclude).encode()).hexdigest()
 
 
+#: S21D4-040, W3-D1. Additive fields whose *empty* value is absent from the canonical form.
+#:
+#: `seal_content` recomputes a contract's canonical hash on load and refuses a mismatch, so an
+#: optional field added to a contract that already has stored instances changes their identity
+#: and they stop loading. Naming the field here is what lets the widened searchable surface be
+#: both things its frozen contract requires: a graph carrying terms is new bytes, and a graph
+#: carrying none hashes exactly as it did before the field existed.
+#:
+#: Deliberately a named list rather than a general "drop every empty value" rule. That rule
+#: would silently move the hash of every stored contract with an empty tuple field -- every
+#: `GraphEditPath` with no operations, for one -- which is the opposite of the intent.
+CANONICAL_ABSENT_WHEN_EMPTY = ("search_terms",)
+
+
 def _canonicalize(value: object) -> object:
     if isinstance(value, dict):
-        return {str(key): _canonicalize(item) for key, item in sorted(value.items())}
+        return {
+            str(key): _canonicalize(item)
+            for key, item in sorted(value.items())
+            if item or key not in CANONICAL_ABSENT_WHEN_EMPTY
+        }
     if isinstance(value, (set, frozenset)):
         items = (_canonicalize(item) for item in value)
         return sorted(items, key=lambda item: json.dumps(item, sort_keys=True))

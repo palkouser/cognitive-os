@@ -1,0 +1,676 @@
+{
+ "contracts_sha256": "bcab05107a838fd1a2c0739122ba3a7e51fa8386e83cffcf82e6e5263fb47354",
+ "derivation": [
+  "the source behind the trajectory, resolved by the caller through the released store",
+  "normalised by correction_source.canonical_source_bytes, the released v2 normaliser",
+  "identifiers preserved by that normaliser, placeholders dropped, sorted and unique",
+  "bounded at 1024 characters, the node-attribute bound",
+  "refused whole when reality_leakage.judgement_leaks reports a hit"
+ ],
+ "document_surface": {
+  "a_termless_graph_keeps_its_bytes": true,
+  "candidates": 60,
+  "character_bound": 1024,
+  "colliding_term_sets": 5,
+  "cross_family_collisions": [
+   [
+    "d3r-bump-revision",
+    "d3r-close-twice",
+    "d3r-exit-status",
+    "d3r-increment-counter",
+    "d3r-sum-by-key"
+   ],
+   [
+    "d3r-ceil-divide",
+    "d3r-guard-division",
+    "d3r-percent-of",
+    "d3r-release-lock",
+    "d3r-reserve-capacity",
+    "d3r-split-results",
+    "d3r-without-none"
+   ],
+   [
+    "d3r-collect-errors",
+    "d3r-register-once"
+   ],
+   [
+    "d3r-dedupe-stable",
+    "d3r-stride-take"
+   ]
+  ],
+  "d4_retrieval_pool_read": false,
+  "distinct_after_removing_domain_and_signature_after": 47,
+  "distinct_after_removing_domain_and_signature_before": 1,
+  "distinct_documents_after": 60,
+  "distinct_documents_before": 60,
+  "every_graph_that_gained_a_term_is_new_bytes": true,
+  "groups_in_a_collision": 18,
+  "groups_with_no_terms": [
+   "d3r-ceil-divide",
+   "d3r-guard-division",
+   "d3r-percent-of",
+   "d3r-release-lock",
+   "d3r-reserve-capacity",
+   "d3r-split-results",
+   "d3r-without-none"
+  ],
+  "measured_on": "sprint-21d3-retrieval-holdout, spent",
+  "per_pair": [
+   {
+    "characters": 3,
+    "content_hash_moved": true,
+    "family": "state_idempotency",
+    "pair_id": "d3r-apply-migration",
+    "term_key": "add",
+    "terms": 1
+   },
+   {
+    "characters": 17,
+    "content_hash_moved": true,
+    "family": "boundary_collections",
+    "pair_id": "d3r-batch-evenly",
+    "term_key": "append list range",
+    "terms": 3
+   },
+   {
+    "characters": 3,
+    "content_hash_moved": true,
+    "family": "state_idempotency",
+    "pair_id": "d3r-bump-revision",
+    "term_key": "get",
+    "terms": 1
+   },
+   {
+    "characters": 0,
+    "content_hash_moved": false,
+    "family": "numeric_logic",
+    "pair_id": "d3r-ceil-divide",
+    "term_key": "",
+    "terms": 0
+   },
+   {
+    "characters": 14,
+    "content_hash_moved": true,
+    "family": "numeric_logic",
+    "pair_id": "d3r-clamp-between",
+    "term_key": "max min sorted",
+    "terms": 3
+   },
+   {
+    "characters": 15,
+    "content_hash_moved": true,
+    "family": "error_handling",
+    "pair_id": "d3r-close-all-quietly",
+    "term_key": "Exception close",
+    "terms": 2
+   },
+   {
+    "characters": 3,
+    "content_hash_moved": true,
+    "family": "state_idempotency",
+    "pair_id": "d3r-close-twice",
+    "term_key": "get",
+    "terms": 1
+   },
+   {
+    "characters": 6,
+    "content_hash_moved": true,
+    "family": "error_handling",
+    "pair_id": "d3r-collect-errors",
+    "term_key": "append",
+    "terms": 1
+   },
+   {
+    "characters": 5,
+    "content_hash_moved": true,
+    "family": "numeric_logic",
+    "pair_id": "d3r-compound-growth",
+    "term_key": "range",
+    "terms": 1
+   },
+   {
+    "characters": 8,
+    "content_hash_moved": true,
+    "family": "boundary_collections",
+    "pair_id": "d3r-count-runs",
+    "term_key": "list zip",
+    "terms": 2
+   },
+   {
+    "characters": 4,
+    "content_hash_moved": true,
+    "family": "data_transformation",
+    "pair_id": "d3r-dedupe-stable",
+    "term_key": "list",
+    "terms": 1
+   },
+   {
+    "characters": 9,
+    "content_hash_moved": true,
+    "family": "error_handling",
+    "pair_id": "d3r-default-on-error",
+    "term_key": "Exception",
+    "terms": 1
+   },
+   {
+    "characters": 11,
+    "content_hash_moved": true,
+    "family": "numeric_logic",
+    "pair_id": "d3r-digit-sum",
+    "term_key": "abs int str",
+    "terms": 3
+   },
+   {
+    "characters": 10,
+    "content_hash_moved": true,
+    "family": "state_idempotency",
+    "pair_id": "d3r-drain-queue",
+    "term_key": "clear list",
+    "terms": 2
+   },
+   {
+    "characters": 14,
+    "content_hash_moved": true,
+    "family": "boundary_collections",
+    "pair_id": "d3r-drop-while-blank",
+    "term_key": "list pop strip",
+    "terms": 3
+   },
+   {
+    "characters": 3,
+    "content_hash_moved": true,
+    "family": "error_handling",
+    "pair_id": "d3r-exit-status",
+    "term_key": "get",
+    "terms": 1
+   },
+   {
+    "characters": 20,
+    "content_hash_moved": true,
+    "family": "parsing_validation",
+    "pair_id": "d3r-expand-range-text",
+    "term_key": "int list range split",
+    "terms": 4
+   },
+   {
+    "characters": 35,
+    "content_hash_moved": true,
+    "family": "data_transformation",
+    "pair_id": "d3r-flatten-nested",
+    "term_key": "append extend isinstance list tuple",
+    "terms": 5
+   },
+   {
+    "characters": 5,
+    "content_hash_moved": true,
+    "family": "state_idempotency",
+    "pair_id": "d3r-forget-expired",
+    "term_key": "items",
+    "terms": 1
+   },
+   {
+    "characters": 17,
+    "content_hash_moved": true,
+    "family": "data_transformation",
+    "pair_id": "d3r-group-pairs",
+    "term_key": "append setdefault",
+    "terms": 2
+   },
+   {
+    "characters": 0,
+    "content_hash_moved": false,
+    "family": "error_handling",
+    "pair_id": "d3r-guard-division",
+    "term_key": "",
+    "terms": 0
+   },
+   {
+    "characters": 3,
+    "content_hash_moved": true,
+    "family": "state_idempotency",
+    "pair_id": "d3r-increment-counter",
+    "term_key": "get",
+    "terms": 1
+   },
+   {
+    "characters": 16,
+    "content_hash_moved": true,
+    "family": "data_transformation",
+    "pair_id": "d3r-invert-mapping",
+    "term_key": "items setdefault",
+    "terms": 2
+   },
+   {
+    "characters": 19,
+    "content_hash_moved": true,
+    "family": "parsing_validation",
+    "pair_id": "d3r-is-identifier",
+    "term_key": "all isalnum isdigit",
+    "terms": 3
+   },
+   {
+    "characters": 9,
+    "content_hash_moved": true,
+    "family": "boundary_collections",
+    "pair_id": "d3r-last-index-of",
+    "term_key": "enumerate",
+    "terms": 1
+   },
+   {
+    "characters": 15,
+    "content_hash_moved": true,
+    "family": "boundary_collections",
+    "pair_id": "d3r-longest-prefix",
+    "term_key": "append join zip",
+    "terms": 3
+   },
+   {
+    "characters": 20,
+    "content_hash_moved": true,
+    "family": "error_handling",
+    "pair_id": "d3r-lookup-or-raise",
+    "term_key": "KeyError LookupError",
+    "terms": 2
+   },
+   {
+    "characters": 12,
+    "content_hash_moved": true,
+    "family": "numeric_logic",
+    "pair_id": "d3r-mean-of",
+    "term_key": "len list sum",
+    "terms": 3
+   },
+   {
+    "characters": 10,
+    "content_hash_moved": true,
+    "family": "numeric_logic",
+    "pair_id": "d3r-median-of",
+    "term_key": "len sorted",
+    "terms": 2
+   },
+   {
+    "characters": 25,
+    "content_hash_moved": true,
+    "family": "data_transformation",
+    "pair_id": "d3r-merge-deep",
+    "term_key": "dict get isinstance items",
+    "terms": 4
+   },
+   {
+    "characters": 8,
+    "content_hash_moved": true,
+    "family": "parsing_validation",
+    "pair_id": "d3r-normalise-case",
+    "term_key": "casefold",
+    "terms": 1
+   },
+   {
+    "characters": 18,
+    "content_hash_moved": true,
+    "family": "data_transformation",
+    "pair_id": "d3r-order-by-rank",
+    "term_key": "get key len sorted",
+    "terms": 4
+   },
+   {
+    "characters": 22,
+    "content_hash_moved": true,
+    "family": "parsing_validation",
+    "pair_id": "d3r-parse-bool-word",
+    "term_key": "ValueError lower strip",
+    "terms": 3
+   },
+   {
+    "characters": 18,
+    "content_hash_moved": true,
+    "family": "parsing_validation",
+    "pair_id": "d3r-parse-hex-byte",
+    "term_key": "ValueError int len",
+    "terms": 3
+   },
+   {
+    "characters": 11,
+    "content_hash_moved": true,
+    "family": "parsing_validation",
+    "pair_id": "d3r-parse-key-list",
+    "term_key": "split strip",
+    "terms": 2
+   },
+   {
+    "characters": 14,
+    "content_hash_moved": true,
+    "family": "parsing_validation",
+    "pair_id": "d3r-parse-port",
+    "term_key": "ValueError int",
+    "terms": 2
+   },
+   {
+    "characters": 0,
+    "content_hash_moved": false,
+    "family": "numeric_logic",
+    "pair_id": "d3r-percent-of",
+    "term_key": "",
+    "terms": 0
+   },
+   {
+    "characters": 6,
+    "content_hash_moved": true,
+    "family": "state_idempotency",
+    "pair_id": "d3r-register-once",
+    "term_key": "append",
+    "terms": 1
+   },
+   {
+    "characters": 0,
+    "content_hash_moved": false,
+    "family": "state_idempotency",
+    "pair_id": "d3r-release-lock",
+    "term_key": "",
+    "terms": 0
+   },
+   {
+    "characters": 9,
+    "content_hash_moved": true,
+    "family": "data_transformation",
+    "pair_id": "d3r-rename-columns",
+    "term_key": "get items",
+    "terms": 2
+   },
+   {
+    "characters": 22,
+    "content_hash_moved": true,
+    "family": "error_handling",
+    "pair_id": "d3r-require-fields",
+    "term_key": "ValueError join sorted",
+    "terms": 3
+   },
+   {
+    "characters": 0,
+    "content_hash_moved": false,
+    "family": "state_idempotency",
+    "pair_id": "d3r-reserve-capacity",
+    "term_key": "",
+    "terms": 0
+   },
+   {
+    "characters": 22,
+    "content_hash_moved": true,
+    "family": "error_handling",
+    "pair_id": "d3r-retry-with-backoff",
+    "term_key": "Exception append range",
+    "terms": 3
+   },
+   {
+    "characters": 8,
+    "content_hash_moved": true,
+    "family": "boundary_collections",
+    "pair_id": "d3r-rotate-right",
+    "term_key": "len list",
+    "terms": 2
+   },
+   {
+    "characters": 10,
+    "content_hash_moved": true,
+    "family": "numeric_logic",
+    "pair_id": "d3r-running-max",
+    "term_key": "append max",
+    "terms": 2
+   },
+   {
+    "characters": 12,
+    "content_hash_moved": true,
+    "family": "numeric_logic",
+    "pair_id": "d3r-scale-series",
+    "term_key": "list max min",
+    "terms": 3
+   },
+   {
+    "characters": 10,
+    "content_hash_moved": true,
+    "family": "boundary_collections",
+    "pair_id": "d3r-split-at-first",
+    "term_key": "index list",
+    "terms": 2
+   },
+   {
+    "characters": 10,
+    "content_hash_moved": true,
+    "family": "parsing_validation",
+    "pair_id": "d3r-split-once-right",
+    "term_key": "rpartition",
+    "terms": 1
+   },
+   {
+    "characters": 0,
+    "content_hash_moved": false,
+    "family": "error_handling",
+    "pair_id": "d3r-split-results",
+    "term_key": "",
+    "terms": 0
+   },
+   {
+    "characters": 4,
+    "content_hash_moved": true,
+    "family": "boundary_collections",
+    "pair_id": "d3r-stride-take",
+    "term_key": "list",
+    "terms": 1
+   },
+   {
+    "characters": 23,
+    "content_hash_moved": true,
+    "family": "parsing_validation",
+    "pair_id": "d3r-strip-quotes",
+    "term_key": "endswith len startswith",
+    "terms": 3
+   },
+   {
+    "characters": 3,
+    "content_hash_moved": true,
+    "family": "data_transformation",
+    "pair_id": "d3r-sum-by-key",
+    "term_key": "get",
+    "terms": 1
+   },
+   {
+    "characters": 3,
+    "content_hash_moved": true,
+    "family": "numeric_logic",
+    "pair_id": "d3r-sum-positive",
+    "term_key": "sum",
+    "terms": 1
+   },
+   {
+    "characters": 10,
+    "content_hash_moved": true,
+    "family": "boundary_collections",
+    "pair_id": "d3r-take-between",
+    "term_key": "index list",
+    "terms": 2
+   },
+   {
+    "characters": 22,
+    "content_hash_moved": true,
+    "family": "data_transformation",
+    "pair_id": "d3r-to-columns",
+    "term_key": "dict fromkeys get list",
+    "terms": 4
+   },
+   {
+    "characters": 10,
+    "content_hash_moved": true,
+    "family": "state_idempotency",
+    "pair_id": "d3r-touch-entry",
+    "term_key": "setdefault",
+    "terms": 1
+   },
+   {
+    "characters": 16,
+    "content_hash_moved": true,
+    "family": "parsing_validation",
+    "pair_id": "d3r-trim-comment",
+    "term_key": "enumerate rstrip",
+    "terms": 2
+   },
+   {
+    "characters": 0,
+    "content_hash_moved": false,
+    "family": "boundary_collections",
+    "pair_id": "d3r-without-none",
+    "term_key": "",
+    "terms": 0
+   },
+   {
+    "characters": 20,
+    "content_hash_moved": true,
+    "family": "error_handling",
+    "pair_id": "d3r-wrap-timeout",
+    "term_key": "OSError TimeoutError",
+    "terms": 2
+   },
+   {
+    "characters": 18,
+    "content_hash_moved": true,
+    "family": "data_transformation",
+    "pair_id": "d3r-zip-records",
+    "term_key": "ValueError len zip",
+    "terms": 3
+   }
+  ],
+  "terms_maximum": 5,
+  "terms_median": 2,
+  "terms_minimum": 0,
+  "written_back": false
+ },
+ "excluded_from": [
+  "structural_hash",
+  "ExperienceGraphNode.label"
+ ],
+ "field": "ActionDecisionGraph.search_terms: tuple[str, ...] = ()",
+ "final_or_canary_outcomes_inspected": 0,
+ "final_outcomes_inspected": false,
+ "findings": [
+  {
+   "affects_any_published_number": false,
+   "contract_amended_not_edited": true,
+   "hash_as_stored": "a8db90af88181437ef6633b653d0b6cc7ed1b0506ebc51594ac1c9d7c2d4cbc7",
+   "hash_if_the_empty_field_were_included": "399a7fc9276870c512864e0f7d00bd9587237dcba2df6d93d934fd230be9c526",
+   "id": "W3-D1",
+   "identical": false,
+   "measured_on": "d3r-apply-migration:failed",
+   "reproduces_the_stored_content_hash": true,
+   "resolution": "An empty term list is absent from the canonical form at every nesting depth, named once in domain.experience.CANONICAL_ABSENT_WHEN_EMPTY. A graph carrying terms is new bytes, as the contract requires; a graph carrying none hashes exactly as it did before the field existed, as the contract also requires. No other reading satisfies both.",
+   "resolution_placed_in": "the hashing path, not the serializer. A model serializer that dropped the empty key collapsed the exported JSON Schema for ActionDecisionGraph and FailedSuccessGraphPair from 258 lines to 4, because pydantic cannot infer a serialization schema through a wrap serializer. The published schema gains eight additive lines instead.",
+   "stored_pairs_that_would_stop_loading": 140,
+   "the_two_sentences": [
+    "included_in: content_hash",
+    "old stored graphs deserialise unchanged under the default"
+   ],
+   "where": "sprint-21d4-contracts.json, searchable_surface",
+   "why_they_conflict": "HashedExperienceContract.seal_content recomputes the canonical hash on load and refuses a mismatch, so a field that is unconditionally part of that hash makes every graph stored before it unloadable."
+  },
+  {
+   "affects_any_published_number": false,
+   "id": "W3-F1",
+   "kind": "measured_limitation",
+   "measured": {
+    "colliding_term_sets": 5,
+    "cross_family_collisions": 4,
+    "distinct_documents_after_removing_domain_and_signature": 47,
+    "groups_with_no_terms": 7,
+    "of_candidates": 60
+   },
+   "measured_on": "the spent D3 holdout, not the D4 pool",
+   "not_repaired_here": "Widening the extraction past the frozen derivation after seeing which groups collide would be tuning a retrieval surface on a measurement of that surface. The derivation stands as pre-registered; S21D4-044 measures the D4 pool, which is the pool the holdout result is read from.",
+   "the_claim": "This is the minimum that makes sixty repair trajectories sixty documents.",
+   "where": "backlog section 4.5",
+   "why": "The frozen derivation preserves imports, attributes, builtins and magic names and replaces every local binding with a placeholder. A repair written in pure arithmetic over its own parameters therefore has nothing left to preserve, and seven of D3's sixty groups produce no term at all -- exactly as indistinguishable as they were before the field existed."
+  }
+ ],
+ "guards": {
+  "a_clean_list_is_accepted": true,
+  "a_module_scope_name_never_reaches_the_surface": true,
+  "all_guards_fired": true,
+  "forbidden_marker_refused": true,
+  "judgement_leak_message": "projected terms name their own judgement: ('search_terms:parsing_validation',)",
+  "judgement_leak_refused": true,
+  "over_bound_list_refused": true,
+  "repeated_term_refused": true,
+  "uncanonical_order_refused": true
+ },
+ "included_in": [
+  "content_hash when non-empty",
+  "search_text()"
+ ],
+ "integrity_content_hash": "11f81209d28436553d0dff36828f4775275ac7d410ab9c22cc0da2addf2cdb05",
+ "items": [
+  "S21D4-040"
+ ],
+ "pre_registration_sha256": "526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9",
+ "recorded_at": "2026-08-07T10:15:56.911779Z",
+ "schema_version": 1,
+ "sprint": "21D4",
+ "store_writes": {
+  "fingerprints_after": {
+   "sprint-21d1": [
+    "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f",
+    83
+   ],
+   "sprint-21d3": [
+    "fcb0a044810b375f2933d4a3cf22c7448bfada9c90e104566a92125b08dcd0d3",
+    2096
+   ]
+  },
+  "fingerprints_before": {
+   "sprint-21d1": [
+    "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f",
+    83
+   ],
+   "sprint-21d3": [
+    "fcb0a044810b375f2933d4a3cf22c7448bfada9c90e104566a92125b08dcd0d3",
+    2096
+   ]
+  },
+  "unchanged": true
+ },
+ "stored_graphs": {
+  "d2_note": "Sprint 21D2 wrote no graph root. Its retrieval diagnostic measured on the D1 root read-only, so 'every D1, D2 and D3 stored graph' is these two roots.",
+  "d2_stored_graph_roots": 0,
+  "every_stored_hash_unchanged": true,
+  "graphs_total": 280,
+  "pairs_total": 140,
+  "roots": {
+   "sprint-21d1": {
+    "all_declared_pairs_loaded": true,
+    "artifact_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d1",
+    "broken_links": [],
+    "corrupt_bytes": [],
+    "declared_pairs": 80,
+    "edit_paths_that_stopped_round_tripping": [],
+    "graphs_checked": 160,
+    "graphs_whose_label_or_structure_moved_under_terms": [],
+    "intact": true,
+    "missing_bytes": [],
+    "pairs_deserialised": 80,
+    "pairs_whose_declared_hashes_moved": [],
+    "root": "docs/sprints/sprint-21/evidence/sprint-21d1-emg-root.json"
+   },
+   "sprint-21d3": {
+    "all_declared_pairs_loaded": true,
+    "artifact_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d3",
+    "broken_links": [],
+    "corrupt_bytes": [],
+    "declared_pairs": 60,
+    "edit_paths_that_stopped_round_tripping": [],
+    "graphs_checked": 120,
+    "graphs_whose_label_or_structure_moved_under_terms": [],
+    "intact": true,
+    "missing_bytes": [],
+    "pairs_deserialised": 60,
+    "pairs_whose_declared_hashes_moved": [],
+    "root": "docs/sprints/sprint-21/evidence/sprint-21d3-retrieval-emg-root.json"
+   }
+  }
+ },
+ "wave": "W3"
+}

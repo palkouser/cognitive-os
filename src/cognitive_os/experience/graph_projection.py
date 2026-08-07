@@ -14,12 +14,15 @@ graph exactly, and `apply_edit_path` is what proves it.
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+import re
+from collections.abc import Iterable, Mapping, Sequence
 from itertools import pairwise
 from typing import Any
 
+from cognitive_os.coding.reality_leakage import judgement_leaks
 from cognitive_os.domain.experience import ExecutionSegmentType, ExperienceStepStatus
 from cognitive_os.domain.experience_graph import (
+    SEARCH_TERMS_CHARACTER_BOUND,
     ActionDecisionGraph,
     ExperienceGraphEdge,
     ExperienceGraphEdgeKind,
@@ -31,6 +34,7 @@ from cognitive_os.domain.experience_graph import (
     GraphResourceLimits,
 )
 from cognitive_os.experience.compiler import ExperienceCompilationResult
+from cognitive_os.learning.correction_source import canonical_source_bytes
 
 #: Segment type to node kind. Anything unmapped is an observation, which is the honest
 #: default: the compiler saw a step and this projection does not claim to know more.
@@ -46,6 +50,51 @@ _SEGMENT_KIND = {
     ExecutionSegmentType.FALLBACK: ExperienceGraphNodeKind.CORRECTION,
     ExecutionSegmentType.ACCEPTANCE: ExperienceGraphNodeKind.ACCEPTED_OUTCOME,
 }
+
+
+#: Identifier-bearing fields of the normalised AST dump. Everything else in that dump is
+#: either structure the arms already see or a literal the surface deliberately excludes, so
+#: the capture is restricted to an identifier shape and string constants can never match.
+_CANONICAL_TERM = re.compile(r"(?:id|attr|arg|asname|module|name)='([A-Za-z_][A-Za-z0-9_]*)'")
+
+#: What the released alpha-normaliser rewrites local bindings to. A placeholder is the same
+#: token in every task by construction, so it is noise in a retrieval document, not a term.
+_PLACEHOLDER_PREFIX = "__cogos_"
+
+
+class SearchSurfaceLeak(ValueError):
+    """A projected term names the relevance label the graph will be scored against."""
+
+
+def search_terms_from_source(
+    source: str, *, judgement_labels: Iterable[str] = ()
+) -> tuple[str, ...]:
+    """The canonical terms of one source, bounded, guarded and deterministic. §S21D4-040.
+
+    The terms are read off `canonical_source_bytes`, the released v2 alpha-normaliser, rather
+    than off the raw text: local bindings are already placeholders there while imports,
+    attributes, builtins and magic names survive. That is what keeps this from becoming
+    lookup — two tasks in a family share preserved names and structure, not spelling.
+
+    Fails closed rather than filtering when a term spells a relevance label. A benchmark that
+    can read its own judgement out of the document is not a benchmark, and dropping the
+    offending term would leave the rest of a leaking projection in place.
+    """
+    dump = canonical_source_bytes(source).decode()
+    terms = sorted(
+        {term for term in _CANONICAL_TERM.findall(dump) if not term.startswith(_PLACEHOLDER_PREFIX)}
+    )
+    bounded: list[str] = []
+    for term in terms:
+        if len(" ".join([*bounded, term])) > SEARCH_TERMS_CHARACTER_BOUND:
+            break
+        bounded.append(term)
+    labels = tuple(judgement_labels)
+    if labels:
+        leaks = judgement_leaks({"search_terms": " ".join(bounded)}, {"search_terms": labels})
+        if leaks:
+            raise SearchSurfaceLeak(f"projected terms name their own judgement: {leaks}")
+    return tuple(bounded)
 
 
 def _segment_for(sequence: int, result: ExperienceCompilationResult) -> ExecutionSegmentType | None:
@@ -201,6 +250,9 @@ def project_correction(
     task_signature: str,
     source_manifest_hash: str,
     limits: GraphResourceLimits | None = None,
+    failed_source: str | None = None,
+    repaired_source: str | None = None,
+    judgement_labels: Iterable[str] = (),
 ) -> tuple[ActionDecisionGraph, ActionDecisionGraph]:
     """Split one historical C3 correction trajectory into a failed and a successful graph.
 
@@ -214,6 +266,12 @@ def project_correction(
     These graphs are never recompiled. The legacy manifests carry a wall-clock
     `created_at`, so their pairs stay marked `legacy_recompilation_unavailable` and are
     verified by resolving sources instead.
+
+    S21D4-040 adds the two optional sources behind the trajectory. Given them, the failed
+    graph carries the failing state's canonical terms and the successful graph the repaired
+    state's — which is the retrieval question the widened surface exists to answer: find a
+    repair for a bug shaped like mine. Omitted, both graphs keep the empty default and every
+    hash this projection produces is the one D3 produced.
     """
     limits = limits or GraphResourceLimits()
     nodes = _nodes_from(assessments, segment="correction_trajectory")
@@ -229,6 +287,7 @@ def project_correction(
         raise ValueError("a correction trajectory must record at least one rejected step")
 
     failed_nodes = tuple(nodes[: last_rejected + 1])
+    labels = tuple(judgement_labels)
     return (
         _graph(
             failed_nodes,
@@ -239,6 +298,11 @@ def project_correction(
             accepted=False,
             limits=limits,
             source_manifest_hash=source_manifest_hash,
+            search_terms=(
+                search_terms_from_source(failed_source, judgement_labels=labels)
+                if failed_source is not None
+                else ()
+            ),
         ),
         _graph(
             tuple(nodes),
@@ -249,6 +313,11 @@ def project_correction(
             accepted=True,
             limits=limits,
             source_manifest_hash=source_manifest_hash,
+            search_terms=(
+                search_terms_from_source(repaired_source, judgement_labels=labels)
+                if repaired_source is not None
+                else ()
+            ),
         ),
     )
 
@@ -263,6 +332,7 @@ def _graph(
     accepted: bool,
     limits: GraphResourceLimits,
     source_manifest_hash: str,
+    search_terms: tuple[str, ...] = (),
 ) -> ActionDecisionGraph:
     edges = tuple(
         ExperienceGraphEdge(
@@ -280,6 +350,7 @@ def _graph(
         edges=tuple(sorted(edges, key=lambda e: e.key)),
         limits=limits,
         source_manifest_hash=source_manifest_hash,
+        search_terms=search_terms,
     )
 
 

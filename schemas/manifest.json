@@ -3256,7 +3256,7 @@
     {
       "file": "v1/experience-graph/action-decision-graph.schema.json",
       "model": "ActionDecisionGraph",
-      "sha256": "232ad2188f3350285ec899d35515640eaac6d2fa585e6aa97d0d08f1bb524b3f"
+      "sha256": "5debef4a642adc1691bb3ffdfce6efb9627a354d8f12dae9fe110a67daffad6c"
     },
     {
       "file": "v1/experience-graph/experience-graph-edge.schema.json",
@@ -3286,7 +3286,7 @@
     {
       "file": "v1/experience-graph/failed-success-graph-pair.schema.json",
       "model": "FailedSuccessGraphPair",
-      "sha256": "f47cc86e8f5d68a83fe27a499d47cc400c8bd1f2ed2db1e562891b208d37581b"
+      "sha256": "60bb10db5d40fd9bb8c69f4244eaec82da6c343de1bace4013bd46d0d4ad9dbb"
     },
     {
       "file": "v1/experience-graph/graph-edit-operation.schema.json",
