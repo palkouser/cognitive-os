@@ -1,0 +1,163 @@
+{
+ "calibration_campaign_sha256": "e2454b1bc6f2a74bc5d16e92e5b54b00e9ece2f7fe6936a6adcd0796dafd70dc",
+ "datasets": [
+  {
+   "corpus_role": "training",
+   "dataset_content_hash": "c9a62df8cbeab60356139ffc45feb9f2d1874f925d6dfdd452ea659526d30ddc",
+   "dataset_id": "4f1cc500-1a73-5ffe-b688-1372205fb649",
+   "example_manifest_hash": "a538c94b947ce53ab5fc043cfe2c54033a84926daedcb9c4c727a384cbb15cf7",
+   "feature_seal_hash": "b05ba9853579e3cf6ebc795f478a7b870eaf0bd8ba283cd7d3f47497b3ec54d8",
+   "groups": 80,
+   "identity_revision": 3,
+   "immutable": true,
+   "labels_read_from": "the durable outcome ledger, not the campaign report",
+   "latest_seal_selection": false,
+   "members": 320,
+   "observation_count": 320,
+   "partition": "training",
+   "provenance_counts": {
+    "self_play": 320
+   },
+   "real_governed_runs": 0,
+   "rebuilt_identically": true,
+   "selection_partition_digest": "5da97da5f0f177e50284325b616a9a6322c9935fbcb34b5c36eb276d5a294d4d",
+   "split": "fit",
+   "split_manifest_hash": "36b78fc2f8c58bc9f108e366cf51fe5c22f30acb3907578ca81488197d596fa7",
+   "store_wide_selection": false,
+   "usage_rights_verified": true,
+   "vectors_read_from": "the sealed feature record set in the artifact store"
+  },
+  {
+   "corpus_role": "evaluation",
+   "dataset_content_hash": "e593ffc01244b97f26a754f104317f1644cd78ecdb57b251d19728969a4fdca3",
+   "dataset_id": "f7c11639-d852-573f-93bf-e60241f81bd0",
+   "example_manifest_hash": "a815dd9c69d5da516a6eafbbf700f92599a3aa8a3b314d1278e69576ab5032c7",
+   "feature_seal_hash": "a4e10bd564e0802d9a51b61ca210a82d3ccc2618a4a31f78a943c910dd3dcc3e",
+   "groups": 100,
+   "identity_revision": 3,
+   "immutable": true,
+   "labels_read_from": "the durable outcome ledger, not the campaign report",
+   "latest_seal_selection": false,
+   "members": 400,
+   "observation_count": 400,
+   "partition": "calibration",
+   "provenance_counts": {
+    "self_play": 400
+   },
+   "real_governed_runs": 0,
+   "rebuilt_identically": true,
+   "selection_partition_digest": "6c18d5be920d698569e362050128032b672814c3b1d83eb23824edd2745c2709",
+   "split": "calibration",
+   "split_manifest_hash": "fb6c306657a083b205c1184477b04e4d2786c45d0f0718fd9aea55d15169240f",
+   "store_wide_selection": false,
+   "usage_rights_verified": true,
+   "vectors_read_from": "the sealed feature record set in the artifact store"
+  }
+ ],
+ "feature_contract_hash": "492c90a5df420de9d1662d17155ac8b28713e69bbd4bbe56208415d6ca076362",
+ "feature_seals_sha256": "9ba0683c64671d26cdcb785f49c3084b059cb956e1ddb40cf2481e9e6b75158e",
+ "final_outcomes_inspected": false,
+ "fitted_matrix": {
+  "built_from": "the fitting snapshot alone",
+  "calibration_groups": 100,
+  "calibration_matrix_hash": "28248f8370196a565dc8f8ff2207d67c6bf5eabe4aae0b542cce8609ec371d67",
+  "calibration_rows": 400,
+  "clean": true,
+  "encoder_version": "correction-ranking-v2",
+  "feature_contract_hash": "492c90a5df420de9d1662d17155ac8b28713e69bbd4bbe56208415d6ca076362",
+  "fit_and_calibration_share_no_group": true,
+  "fit_groups": 80,
+  "fit_matrix_hash": "7202686c9a8d1cd20b6266fd0d6f085b498685cc6c5916f0ff6204b5c55cb78d",
+  "fit_rows": 320,
+  "fitted_dimensions": 390,
+  "maximum_cross_split_similarity": "0.992945",
+  "near_duplicate_threshold": "0.999",
+  "report_hash": "9cf74d51cacb6b7e0284a0e07f2e859a2899f6858305094c3099ce41b46fc621",
+  "why": "a matrix carrying calibration rows would fit the ranker on the split it is later scored against"
+ },
+ "fitting_campaign_sha256": "4296d78514d5ea826cda5a9b79f1ed9f72269146c88e0dadf4aa7668e8c8c1e7",
+ "integrity_content_hash": "ba563934d9bdf95933b7c6b1ee8ac2cfe76908b612fd4fbbb61e7005697e36c4",
+ "items": [
+  "S21D4-037"
+ ],
+ "pre_registration_sha256": "526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9",
+ "recorded_at": "2026-08-07T07:42:13Z",
+ "scans": {
+  "all_passed": true,
+  "count": 11,
+  "failed": [],
+  "required": 11,
+  "results": [
+   {
+    "detail": "390 columns, all on the correction-ranking-v2 allowlist",
+    "name": "no_forbidden_field_reaches_the_matrix",
+    "passed": true
+   },
+   {
+    "detail": "all 390 fitted dimensions are finite and in range",
+    "name": "every_fitted_dimension_is_finite_and_in_range",
+    "passed": true
+   },
+   {
+    "detail": "all 390 fitted dimensions are finite and in range",
+    "name": "every_fitted_dimension_is_finite_and_in_range",
+    "passed": true
+   },
+   {
+    "detail": "all 720 rows use correction-ranking-v2",
+    "name": "every_row_has_one_encoder_identity",
+    "passed": true
+   },
+   {
+    "detail": "720 rows were sealed before the verifier ran",
+    "name": "every_feature_record_precedes_its_outcome",
+    "passed": true
+   },
+   {
+    "detail": "720 rows, each reproducing the feature hash its seal recorded",
+    "name": "every_row_resolves_to_one_pre_outcome_source_chain",
+    "passed": true
+   },
+   {
+    "detail": "80 fit groups and 100 calibration groups share none",
+    "name": "no_group_crosses_the_split",
+    "passed": true
+   },
+   {
+    "detail": "720 distinct feature signatures, none labelled both ways",
+    "name": "no_identical_row_carries_two_labels",
+    "passed": true
+   },
+   {
+    "detail": "highest cross-split similarity 0.992945 against a floor of 0.999",
+    "name": "no_near_duplicate_crosses_the_split",
+    "passed": true
+   },
+   {
+    "detail": "no column of 390 separates the labels without exception",
+    "name": "no_column_derives_the_label",
+    "passed": true
+   },
+   {
+    "detail": "no column of 390 separates the labels without exception",
+    "name": "no_column_derives_the_label",
+    "passed": true
+   }
+  ]
+ },
+ "schema_version": 1,
+ "sprint": "21D4",
+ "store_state": {
+  "explicit_selection_is_why_this_is_survivable": true,
+  "observations_named_by_the_two_datasets": 720,
+  "observations_on_the_correction_surface": 1076,
+  "unreferenced_by_campaign_manifest": {
+   "755413ac0c29a29a": 28,
+   "921a39de99bbcde4": 328
+  },
+  "unreferenced_row_provenance": "every unreferenced row carries the fitting catalogue's manifest hash or the vertical-slice fixture's, is self_play, and belongs to a run this wave already accounts for: the duplicate fitting campaign, the two-group smoke test, and the slice's repeated invocations",
+  "unreferenced_rows": 356,
+  "why_the_store_holds_more_than_the_datasets_name": "S21D4-037's first invocation did not dispatch: --stage snapshot was a valid argparse choice with no branch behind it, so the command fell through to the execute stage and ran the fitting campaign a second time. That recorded a second set of 320 candidate outcomes and 80 baselines under fresh run identities, and overwrote the committed fitting campaign record, which was restored from git. No number moved: an explicit selection names its members by observation id, so a dataset cannot grow because the store did. This block is the measurement that says so"
+ },
+ "wave": "W2"
+}

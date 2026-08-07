@@ -54,7 +54,12 @@ from cognitive_os.application.services.correction_candidate_sequencer import (  
     SequenceMode,
 )
 from cognitive_os.application.services.correction_ranking_observations import (  # noqa: E402
+    CORRECTION_SURFACE,
     CorrectionRankingObservationProjector,
+)
+from cognitive_os.application.services.learned_datasets import (  # noqa: E402
+    ExplicitSelection,
+    LearnedDatasetBuilder,
 )
 from cognitive_os.application.services.learned_evidence import (  # noqa: E402
     LearnedEvidenceService,
@@ -71,6 +76,7 @@ from cognitive_os.coding.outcome_recording import CodingOutcomeRecorder  # noqa:
 from cognitive_os.coding.reality_tasks import GENERATOR_PROFILE_ID  # noqa: E402
 from cognitive_os.config.memory_config import EmbeddingProviderConfiguration  # noqa: E402
 from cognitive_os.domain.common import utc_now  # noqa: E402
+from cognitive_os.domain.learned import CorpusRole, ProvenanceClass  # noqa: E402
 from cognitive_os.domain.reality import (  # noqa: E402
     RealityCampaignReceiptManifestV3,
     RealityCandidateSource,
@@ -88,6 +94,7 @@ from cognitive_os.infrastructure.artifacts.filesystem import (  # noqa: E402
 )
 from cognitive_os.infrastructure.artifacts.service import ArtifactService  # noqa: E402
 from cognitive_os.infrastructure.embeddings import build_embedding_provider, minilm  # noqa: E402
+from cognitive_os.infrastructure.learned.artifacts import LearnedArtifactStore  # noqa: E402
 from cognitive_os.infrastructure.learned.postgres.repository import (  # noqa: E402
     PostgresLearnedEvidenceRepository,
 )
@@ -114,11 +121,19 @@ from cognitive_os.learning.correction_features import (  # noqa: E402
     raw_numeric_row_v2,
     seal_feature_records_v2,
 )
+from cognitive_os.learning.correction_matrix import (  # noqa: E402
+    FittedMatrix,
+    FittedRow,
+    scan_matrices,
+)
 from cognitive_os.learning.correction_protocol import (  # noqa: E402
     CorrectionFeatureContractV2,
     CorrectionPartition,
 )
-from cognitive_os.learning.correction_ranking import NumericBoundsV2  # noqa: E402
+from cognitive_os.learning.correction_ranking import (  # noqa: E402
+    CorrectionFeatureVector,
+    NumericBoundsV2,
+)
 from cognitive_os.tools.sandbox.lifecycle import DockerSandbox  # noqa: E402
 
 EVIDENCE = REPOSITORY / "docs/sprints/sprint-21/evidence"
@@ -132,6 +147,7 @@ CAMPAIGN_RECORD = {
     CorrectionPartition.TRAINING: EVIDENCE / "sprint-21d4-self-play-campaign.json",
     CorrectionPartition.CALIBRATION: EVIDENCE / "sprint-21d4-calibration-campaign.json",
 }
+SNAPSHOT_RECORD = EVIDENCE / "sprint-21d4-snapshots.json"
 SANDBOX_IMAGE = os.environ.get("COGOS_SANDBOX_IMAGE", "cognitive-os-sandbox:sprint-5")
 
 #: Fixed forever: it is what makes a resumed D4 campaign the same campaign. Shared with the
@@ -1001,9 +1017,353 @@ async def _stage_execute(output: Path, partition: CorrectionPartition, limit: in
     return 0
 
 
+# ------------------------------------------------------------------------------- S21D4-037
+
+
+def _selection(
+    partition: CorrectionPartition,
+    rows: list[dict[str, Any]],
+    *,
+    manifest_hash: str,
+    split: str,
+) -> ExplicitSelection:
+    """A revision-3 explicit selection: exact members, exact hashes, one campaign.
+
+    Explicit rather than a store query. "Every observation on this surface" would grow a
+    dataset every time anything else wrote to the store, and a dataset whose membership
+    depends on when it was built is not a dataset anybody can rebuild.
+    """
+    identifiers = tuple(str(row["observation_id"]) for row in rows)
+    return ExplicitSelection(
+        partition=partition.value,
+        members=tuple((str(row["observation_id"]), str(row["payload_hash"])) for row in rows),
+        groups={str(row["observation_id"]): str(row["group"]) for row in rows},
+        splits={split: identifiers},
+        allowed_provenance=ProvenanceClass.SELF_PLAY,
+        identity_revision=3,
+        campaign_identity=manifest_hash,
+        feature_record_hashes={
+            str(row["observation_id"]): str(row["feature_vector_hash"]) for row in rows
+        },
+        outcome_hashes={str(row["observation_id"]): str(row["outcome_hash"]) for row in rows},
+        member_content_hashes={
+            str(row["observation_id"]): _digest(
+                f"{row['observation_id']}:{row['payload_hash']}:{row['outcome_hash']}"
+            )
+            for row in rows
+        },
+    )
+
+
+def _fitted_matrix(
+    *,
+    split: str,
+    partition: CorrectionPartition,
+    rows: list[dict[str, Any]],
+    seal: SealedFeatureRecordSetV2,
+    outcomes: dict[UUID, Any],
+) -> FittedMatrix:
+    """The rows the scans read, rebuilt from the sealed records and the recorded outcomes.
+
+    Neither half comes from the campaign report: the vectors come out of the seal the store
+    holds and the labels out of the ledger. A matrix assembled from a report is a matrix that
+    agrees with the report by construction.
+    """
+    fitted: list[FittedRow] = []
+    for row in rows:
+        candidate_id = UUID(str(row["candidate_id"]))
+        record = seal.record_for(candidate_id)
+        outcome = outcomes[candidate_id]
+        fitted.append(
+            FittedRow(
+                candidate_id=candidate_id,
+                task_id=UUID(str(row["task_id"])),
+                group=str(row["group"]),
+                partition=partition.value,
+                vector=CorrectionFeatureVector(
+                    encoder_version=record.encoder_version,
+                    values=record.values,
+                    embedding=record.embedding,
+                ),
+                accepted=outcome.hidden_verification_passed,
+                sealed_at=seal.sealed_at,
+                outcome_at=outcome.occurred_at,
+                observation_id=UUID(str(row["observation_id"])),
+                sealed_feature_hash=record.feature_vector_hash,
+            )
+        )
+    return FittedMatrix(split=split, rows=tuple(fitted))
+
+
+async def _stage_snapshot(output: Path) -> int:
+    """S21D4-037: two immutable datasets, one fitted matrix, eleven scans."""
+    database_url = _require("COGOS_DATABASE_URL")
+    artifact_root = Path(_require("COGOS_ARTIFACT_ROOT"))
+    for forbidden in ("cognitive_os_dev", "s21c3", "s21d1", "s21d2", "s21d3"):
+        if forbidden in database_url or forbidden in artifact_root.name:
+            raise SystemExit(f"refusing to run against {forbidden}; D4 writes only to its own pair")
+
+    sealed = json.loads(SEAL_RECORD.read_text(encoding="utf-8"))
+    campaigns = {
+        name: json.loads(CAMPAIGN_RECORD[name].read_text(encoding="utf-8")) for name in _ORDER
+    }
+    splits = {CorrectionPartition.TRAINING: "fit", CorrectionPartition.CALIBRATION: "calibration"}
+    roles = {
+        CorrectionPartition.TRAINING: CorpusRole.TRAINING,
+        CorrectionPartition.CALIBRATION: CorpusRole.EVALUATION,
+    }
+
+    engine = create_postgres_engine(database_url)
+    contract = CorrectionFeatureContractV2()
+    try:
+        artifacts = ArtifactService(
+            ContentAddressedFilesystem(artifact_root), PostgresArtifactRepository(engine)
+        )
+        events = PostgresEventStore(engine, build_default_event_catalog())
+        ledger = RealityCampaignLedger(events)
+        repository = PostgresLearnedEvidenceRepository(engine)
+        builder = LearnedDatasetBuilder(repository, LearnedArtifactStore(artifacts))
+        learned = LearnedEvidenceService(repository, events=LearnedEventService(events))
+
+        # How many rows the surface actually holds, counted rather than assumed. The store is
+        # allowed to hold more than any dataset names -- that is the whole point of an explicit
+        # selection -- but a record that never looked cannot say so.
+        surface_rows: list[Any] = []
+        page = 0
+        while True:
+            batch = await learned.list_observations(
+                surface=CORRECTION_SURFACE, limit=500, offset=page * 500
+            )
+            surface_rows.extend(batch)
+            if len(batch) < 500:
+                break
+            page += 1
+        on_the_surface = len(surface_rows)
+
+        datasets: dict[CorrectionPartition, Any] = {}
+        matrices: dict[CorrectionPartition, FittedMatrix] = {}
+        reports: list[dict[str, Any]] = []
+
+        for name in _ORDER:
+            campaign = campaigns[name]
+            row = next(item for item in sealed["partitions"] if item["partition"] == name.value)
+            seal_bytes = await artifacts.get_bytes(UUID(row["feature_seal_artifact_id"]))
+            seal = SealedFeatureRecordSetV2.model_validate_json(seal_bytes.decode())
+            if seal.content_hash != row["feature_seal_hash"]:
+                raise SystemExit(f"{name.value}: the stored seal is not the one S21D4-034 recorded")
+
+            recorded = await ledger.completed_by_identity(
+                [UUID(item) for item in campaign["task_run_ids"]]
+            )
+            outcomes = {
+                reference.candidate_id: reference
+                for reference in recorded.values()
+                if reference.candidate_id is not None
+            }
+            members = list(campaign["candidate_outcomes"])
+            missing = [
+                item["candidate_id"]
+                for item in members
+                if UUID(str(item["candidate_id"])) not in outcomes
+            ]
+            if missing:
+                raise SystemExit(
+                    f"{name.value}: {len(missing)} candidates have no recorded outcome in the "
+                    f"ledger, starting with {missing[0]}"
+                )
+
+            selection = _selection(
+                name, members, manifest_hash=row["campaign_manifest_hash"], split=splits[name]
+            )
+            dataset = await builder.build(
+                surface=CORRECTION_SURFACE,
+                corpus_role=roles[name],
+                feature_schema_hash=contract.content_hash,
+                revision=3,
+                selection=selection,
+            )
+            # Fresh application services over the same durable authorities. A rebuild that
+            # reused the warm builder would prove the builder is deterministic, not the record.
+            rebuilt = await LearnedDatasetBuilder(
+                PostgresLearnedEvidenceRepository(engine),
+                LearnedArtifactStore(
+                    ArtifactService(
+                        ContentAddressedFilesystem(artifact_root),
+                        PostgresArtifactRepository(engine),
+                    )
+                ),
+            ).build(
+                surface=CORRECTION_SURFACE,
+                corpus_role=roles[name],
+                feature_schema_hash=contract.content_hash,
+                revision=3,
+                selection=selection,
+            )
+            datasets[name] = dataset
+            matrices[name] = _fitted_matrix(
+                split=splits[name],
+                partition=name,
+                rows=members,
+                seal=seal,
+                outcomes=outcomes,
+            )
+            reports.append(
+                {
+                    "partition": name.value,
+                    "split": splits[name],
+                    "corpus_role": roles[name].value,
+                    "dataset_id": str(dataset.dataset_id),
+                    "identity_revision": 3,
+                    "observation_count": dataset.observation_count,
+                    "provenance_counts": dataset.provenance_counts,
+                    "real_governed_runs": dataset.provenance_counts.get("real_governed_run", 0),
+                    "usage_rights_verified": dataset.usage_rights_verified,
+                    "dataset_content_hash": dataset.content_hash,
+                    "split_manifest_hash": dataset.split_manifest_hash,
+                    "example_manifest_hash": dataset.example_manifest_hash,
+                    "selection_partition_digest": selection.selection_partition_digest,
+                    "members": len(selection.members),
+                    "groups": len(set(selection.groups.values())),
+                    "store_wide_selection": False,
+                    "latest_seal_selection": False,
+                    "rebuilt_identically": str(rebuilt.dataset_id) == str(dataset.dataset_id)
+                    and rebuilt.content_hash == dataset.content_hash
+                    and rebuilt.split_manifest_hash == dataset.split_manifest_hash
+                    and rebuilt.example_manifest_hash == dataset.example_manifest_hash,
+                    "immutable": dataset.content_hash == rebuilt.content_hash,
+                    "feature_seal_hash": seal.content_hash,
+                    "labels_read_from": "the durable outcome ledger, not the campaign report",
+                    "vectors_read_from": "the sealed feature record set in the artifact store",
+                }
+            )
+    finally:
+        await engine.dispose()
+
+    named = {
+        str(row["observation_id"])
+        for campaign in campaigns.values()
+        for row in campaign["candidate_outcomes"]
+    }
+    unreferenced_by_campaign = dict(
+        sorted(
+            Counter(
+                str(row.idempotency_key).split(":")[0][:16]
+                for row in surface_rows
+                if str(row.observation_id) not in named
+            ).items()
+        )
+    )
+
+    fit = matrices[CorrectionPartition.TRAINING]
+    calibration = matrices[CorrectionPartition.CALIBRATION]
+    report = scan_matrices(fit, calibration, created_at=utc_now(), contract=contract)
+    failed = [scan.name for scan in report.scans if not scan.passed]
+
+    evidence = _seal(
+        {
+            "schema_version": 1,
+            "sprint": "21D4",
+            "wave": "W2",
+            "items": ["S21D4-037"],
+            "recorded_at": utc_now().strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "pre_registration_sha256": _digest(PRE_REGISTRATION.read_bytes()),
+            "feature_seals_sha256": _digest(SEAL_RECORD.read_bytes()),
+            "fitting_campaign_sha256": _digest(
+                CAMPAIGN_RECORD[CorrectionPartition.TRAINING].read_bytes()
+            ),
+            "calibration_campaign_sha256": _digest(
+                CAMPAIGN_RECORD[CorrectionPartition.CALIBRATION].read_bytes()
+            ),
+            "final_outcomes_inspected": False,
+            "feature_contract_hash": contract.content_hash,
+            "datasets": reports,
+            "store_state": {
+                "observations_on_the_correction_surface": on_the_surface,
+                "unreferenced_by_campaign_manifest": unreferenced_by_campaign,
+                "observations_named_by_the_two_datasets": sum(
+                    int(item["members"]) for item in reports
+                ),
+                "unreferenced_rows": on_the_surface - sum(int(item["members"]) for item in reports),
+                "why_the_store_holds_more_than_the_datasets_name": (
+                    "S21D4-037's first invocation did not dispatch: --stage snapshot was a "
+                    "valid argparse choice with no branch behind it, so the command fell "
+                    "through to the execute stage and ran the fitting campaign a second time. "
+                    "That recorded a second set of 320 candidate outcomes and 80 baselines "
+                    "under fresh run identities, and overwrote the committed fitting campaign "
+                    "record, which was restored from git. No number moved: an explicit "
+                    "selection names its members by observation id, so a dataset cannot grow "
+                    "because the store did. This block is the measurement that says so"
+                ),
+                "unreferenced_row_provenance": (
+                    "every unreferenced row carries the fitting catalogue's manifest hash or "
+                    "the vertical-slice fixture's, is self_play, and belongs to a run this "
+                    "wave already accounts for: the duplicate fitting campaign, the two-group "
+                    "smoke test, and the slice's repeated invocations"
+                ),
+                "explicit_selection_is_why_this_is_survivable": True,
+            },
+            "fitted_matrix": {
+                "built_from": "the fitting snapshot alone",
+                "why": (
+                    "a matrix carrying calibration rows would fit the ranker on the split it is "
+                    "later scored against"
+                ),
+                "fit_matrix_hash": report.fit_matrix_hash,
+                "calibration_matrix_hash": report.calibration_matrix_hash,
+                "fit_rows": report.fit_rows,
+                "calibration_rows": report.calibration_rows,
+                "fit_groups": report.fit_groups,
+                "calibration_groups": report.calibration_groups,
+                "fitted_dimensions": len(report.column_names),
+                "encoder_version": report.encoder_version,
+                "feature_contract_hash": report.feature_contract_hash,
+                "near_duplicate_threshold": report.near_duplicate_threshold,
+                "maximum_cross_split_similarity": report.maximum_cross_split_similarity,
+                "clean": report.clean,
+                "report_hash": report.content_hash,
+                "fit_and_calibration_share_no_group": not (fit.groups & calibration.groups),
+            },
+            "scans": {
+                "count": len(report.scans),
+                "required": 11,
+                "all_passed": not failed,
+                "failed": failed,
+                "results": [
+                    {"name": scan.name, "passed": scan.passed, "detail": scan.detail}
+                    for scan in report.scans
+                ],
+            },
+        }
+    )
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(
+        json.dumps(evidence, indent=1, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+    print(
+        json.dumps(
+            {
+                "output": output.name,
+                "datasets": {str(item["partition"]): str(item["dataset_id"]) for item in reports},
+                "rebuilt_identically": all(bool(item["rebuilt_identically"]) for item in reports),
+                "fit_rows": report.fit_rows,
+                "calibration_rows": report.calibration_rows,
+                "fitted_dimensions": len(report.column_names),
+                "scans": len(report.scans),
+                "scans_passed": len(report.scans) - len(failed),
+                "failed_scans": failed,
+                "maximum_cross_split_similarity": report.maximum_cross_split_similarity,
+                "integrity_content_hash": evidence["integrity_content_hash"],
+            },
+            indent=1,
+            sort_keys=True,
+        )
+    )
+    return 1 if failed else 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--stage", choices=("seal", "execute"), default="seal")
+    parser.add_argument("--stage", choices=("seal", "execute", "snapshot"), default="seal")
     parser.add_argument("--model", type=Path)
     parser.add_argument("--partition", choices=[name.value for name in _ORDER], default="training")
     parser.add_argument("--groups", type=int, default=None, help="smoke-test limit")
@@ -1013,6 +1373,8 @@ def main() -> int:
         if arguments.model is None:
             parser.error("--model is required to seal")
         return asyncio.run(_stage_seal(arguments.output or SEAL_RECORD, arguments.model))
+    if arguments.stage == "snapshot":
+        return asyncio.run(_stage_snapshot(arguments.output or SNAPSHOT_RECORD))
     partition = CorrectionPartition(arguments.partition)
     return asyncio.run(
         _stage_execute(arguments.output or CAMPAIGN_RECORD[partition], partition, arguments.groups)
