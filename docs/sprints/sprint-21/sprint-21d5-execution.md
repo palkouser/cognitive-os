@@ -2,8 +2,8 @@
 
 - Branch: `feature/sprint-21d5-pairwise-selective-ranking`
 - Backlog: [Sprint 21D5 Technical Backlog](sprint-21d5-technical-backlog.md)
-- **Status: W0 complete. W1 in progress — S21D5-020 and S21D5-021 closed: 100 calibration
-  groups and 60 retrieval groups authored and validated.**
+- **Status: W0 complete. W1 in progress — S21D5-020, S21D5-021 and S21D5-022 closed: both
+  corpora authored, validated and proven separated.**
   W2 through W8 not started.
 - Pre-registration: revision 5, SHA-256
   `ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a`
@@ -741,9 +741,72 @@ two-line retrieval body lands on an existing correction body once in twelve. Dro
 would have been the dishonest way to a clean report; enforcing it would have been the dishonest
 way to a strict one.
 
+## S21D5-022 — separation, and a rule read rather than assumed
+
+[`sprint-21d5-corpus-separation.json`](evidence/sprint-21d5-corpus-separation.json), integrity
+`a17479daa959dd79…`, produced by `scripts/separation_d5.py`. W0 could not run this and said so:
+`sprint-21d5-reuse-audit.json` carries
+`disjointness_check_deferred_to: "S21D5-022, after W1 authors the corpus"`. Two of the seven
+roles did not exist then. Both do now.
+
+| Separation | Result |
+|---|---|
+| group-disjoint, 21 pairs over 7 roles | **465 groups, 465 distinct, 0 pairs sharing one** |
+| source-disjoint, every body hashed | **1,965 bodies, 1,965 distinct hashes, 0 shared** |
+| `cross_group_collisions_touching_21d5` | **`[]`** over 1,730 calibration and 120 retrieval bodies |
+| calibration ∩ spent-for-selection | **∅** — the contract's additional clause |
+| D5 authoring into a protected role | **none** |
+| lineage: every W0 digest recomputed | **6 of 6 unchanged** |
+| protected task identities intact | **65**, 0 bodies resolved |
+
+### Finding S21D5-W1-F1 — the literal seven-role clone rule is already false of the carried roles
+
+The sealed contract asks for "seven roles, pairwise group-, clone- and source-disjoint". Group
+and source come back clean. Clone does not: the released detectors report **20 cross-role
+near-clone pairs** over all seven roles.
+
+Four of the twenty decide how the rule has to be read, because **D5 authored neither side of
+them**:
+
+| pair | roles |
+|---|---|
+| `d2-numeric-rounding:baseline` ↔ `d2-errors-divmod:baseline` | final_b ↔ fitting |
+| `d2-parsing-range:baseline` ↔ `d2-parsing-coordinate:baseline` | final_b ↔ fitting |
+
+Both are D2 groups, sealed by D3 and carried unopened through D4 into D5. §3.2 forbids D5 from
+authoring into final A, final B or canary at all. So the literal reading — *no near-clone pair
+may span two roles* — was **already violated before this sprint began**, and cannot be satisfied
+without re-authoring roles the sprint is explicitly barred from touching.
+
+A rule the inherited roles cannot satisfy is not the operative rule. The operative one is stated
+in the same sealed object, in its own `near_clone_rule` field: *"normalized_structure_hash and
+token_stream_hash run every batch, scoped to cross-group pairs against every released corpus; a
+collision withdraws the whole group."* That is a rule about the **authored** corpora, it is what
+`corpus_d5.py` and `retrieval_d5.py` have enforced on every batch of this wave, and it reports
+**zero** — which is the acceptance criterion the backlog actually names for this item.
+
+The remaining 16 pairs touch a D5-authored role and are reported in full rather than filtered.
+They are the same saturation S21D5-021 measured: across 465 groups the small-function space is
+spent enough that short bodies coincide. None of them is a group collision, none is a byte
+collision, and none is in scope for the rule the contract enforces.
+
+**Nothing was weakened to reach this verdict.** The stricter reading was computed first, its four
+decisive pairs were named, and the contract was then read to see which rule it states. The record
+carries both numbers so a reader can disagree with the reading without having to re-run anything.
+
+### The lineage check caught its own recipe
+
+The first run reported all three carried digests drifting. They had not. W0 digested the carried
+roles by each group's **`content_hash`**, not by its name, and this check recomputed names. The
+two are different quantities, and the content-hash one is stronger — it sees a body drift under
+an unchanged name, which a name digest cannot. Recomputed the way W0 recorded it, all three
+reproduce.
+
+Worth keeping because the check failed in the safe direction: a mismatched recipe reported a
+drift that was not there, rather than agreeing by accident with a drift that was.
+
 ### What W1 still owes
 
-- the separation, rights and lineage evidence record (S21D5-022);
 - sealed campaign and holdout manifests (S21D5-023);
 - pre-execution feature seals and both campaigns, 720 fitting and 400 calibration outcomes
   (S21D5-025, S21D5-026).
