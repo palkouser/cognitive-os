@@ -195,8 +195,10 @@ place is what makes the ordering stop mattering.
 
 ## 9. Outcome
 
-Gate L2 does not pass: 12 met, 1 met as a rejection, 15 not opened, 1 pending the release, **0
-failed**. Gate D1 conditions 6 and 7 are closed by the selection stop; condition 15 remains open
+Gate L2 does not pass: 13 met, 1 met as a rejection, 15 not opened, **0 failed**. Condition 29
+is among the met — the release happened and was verified from the remote — which is the shape a
+negative release takes: every process condition satisfied, and the gate still closed on the
+measurements. Gate D1 conditions 6 and 7 are closed by the selection stop; condition 15 remains open
 on its own evidence. Sprint 22A stays blocked.
 
 Both branches returned a hash-bound negative result, and neither is a guess about why. The

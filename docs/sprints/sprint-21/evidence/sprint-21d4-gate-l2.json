@@ -2,10 +2,10 @@
  "counts": {
   "carried": 0,
   "failed": 0,
-  "met": 12,
+  "met": 13,
   "met_as_rejection": 1,
   "not_opened": 15,
-  "pending": 1
+  "pending": 0
  },
  "final_outcomes_inspected": false,
  "gate_contract_hash": "9e47bc618fc1eca8b66146eacdf1bd244fced79bb1c91f46f2c6ff4484bfd8a7",
@@ -293,20 +293,21 @@
   },
   {
    "condition": 29,
-   "detail": "the protected merge, its exact-head post-merge main CI, the annotated tag and the remote verification. The gate-close regeneration is what decides this row",
-   "evidence": null,
+   "detail": "PR #223 squash-merged into protected main at 2026-08-08T07:08:05Z, exact-head main CI run 31245482819 30 of 30 success, and the annotated tag sprint-21d4-evidence-baseline object 0f1e4c897c72cedc peels to 18564a55e65f7b33",
+   "evidence": "sprint-21d4-release.json",
+   "evidence_sha256": "01fa805d993a832d3c307339da518ebcb5de178e958fa0c38755d2682a156ea7",
    "rule": "protected merge, post-merge exact-head CI, annotated tag, remote read",
-   "state": "pending"
+   "state": "met"
   }
  ],
  "gate_l2_conditions": 29,
- "integrity_content_hash": "6111bc14d835a80a4ec87e91fa6e1e5f0b6fad5ea6d34b6cf46b81d30c2248e2",
+ "integrity_content_hash": "815fcc47709faadb181af869d5fc09c27025d5e32120f2f5bdeb313297c14da1",
  "item": "S21D4-091",
  "no_condition_is_carried_from_d3": true,
  "pre_registration_sha256": "526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9",
  "provisional_until": "the protected merge, its exact-head post-merge main CI, and remote tag verification",
  "purpose": "The twenty-nine Gate L2 conditions and Gate D1's three open ones, each decided by the evidence that bears on it. No condition may be asserted; every row names its file and rule, or the stop hash that closed it.",
- "recorded_at": "2026-08-08T06:48:16.500819Z",
+ "recorded_at": "2026-08-08T07:24:49.032347Z",
  "schema_version": 1,
  "sprint": "21D4",
  "stops": {
@@ -321,6 +322,6 @@
  },
  "thresholds_changed": 0,
  "verdict": "gate_l2_does_not_pass",
- "verdict_reason": "the gate passes only when every applicable condition is met; 15 were never opened, condition 24 is met as a rejection, and 1 awaits the protected release",
+ "verdict_reason": "the gate passes only when every applicable condition is met; 15 were never opened, condition 24 is met as a rejection, and 0 awaits the protected release",
  "wave": "W8"
 }

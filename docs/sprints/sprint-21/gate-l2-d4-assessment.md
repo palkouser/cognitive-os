@@ -7,12 +7,14 @@
   `bcf2976dd0f063b1eb4ea16b388eea590e6172dd`, peeled to
   `ef4388b1bf9cb842b25a06aa2255abd1042702c2`
 - Migration head: `0015`, unchanged. `0016` remains unallocated.
-- Revision: 4 — **provisional**. Condition 29 is `pending` until the protected merge, its
-  exact-head post-merge `main` CI, and remote verification of the annotated tag
-  `sprint-21d4-evidence-baseline`.
+- Revision: 4 — **final**. Condition 29 closed on the protected merge of `#223`, its exact-head
+  post-merge `main` CI run `31245482819` (30 of 30 success on
+  `18564a55e65f7b331bc73fc334ee1ab085cf0836`), and remote verification of the annotated tag
+  `sprint-21d4-evidence-baseline`, object `0f1e4c897c72cedc530bb599c4d7af8e647b2774`.
 - Frozen gate contract: `9e47bc618fc1eca8b66146eacdf1bd244fced79bb1c91f46f2c6ff4484bfd8a7`,
   29 conditions, 0 thresholds changed
 - Machine-readable form: [`sprint-21d4-gate-l2.json`](evidence/sprint-21d4-gate-l2.json)
+- Release record: [`sprint-21d4-release.json`](evidence/sprint-21d4-release.json)
 
 This document does **not** replace [`gate-l2-assessment.md`](gate-l2-assessment.md) or
 [`gate-l2-d3-assessment.md`](gate-l2-d3-assessment.md). Those are Sprint 21D2's and Sprint 21D3's
@@ -24,16 +26,15 @@ historical assessments and stay exactly as they were written.
 
 | State | Conditions |
 |---|---:|
-| `met` | 12 |
+| `met` | 13 |
 | `met_as_rejection` | 1 |
 | `not_opened` | 15 |
-| `pending` | 1 |
+| `pending` | 0 |
 | `failed` | **0** |
 | `carried` | **0** |
 
 Zero failures and no pass are not in tension. The gate passes when every applicable condition is
-met; fifteen were never opened, one was measured and rejected, and one waits on the release that
-publishes this document.
+met; fifteen were never opened and one was measured and rejected.
 
 `carried` is zero on purpose. §2.2 is explicit that D4 inherits no pass from D3 — the fifteen
 conditions D3 met as infrastructure claims had to be re-evidenced against D4's own authorities or
@@ -98,7 +99,7 @@ script has no path that asserts a pass — it can only read one.
 | 26 | `not_opened` | `sprint-21d4-learner-selection.json` | would have measured activation, loading, disable, restoration and rollback surviving restart on a real activation. The rollback and refusal halves were proved on the isolated fixture by S21D4-075; no real activation existed to prove the rest against |
 | 27 | `not_opened` | `sprint-21d4-learner-selection.json` | would have measured an exact human approval over the existing fields, with no self-approval |
 | 28 | `met` | `sprint-21d4-verification-matrix.json` | 30 of 30 release-matrix rows passed, 0 skipped, 0 structural findings |
-| 29 | `pending` | `—` | the protected merge, its exact-head post-merge main CI, the annotated tag and the remote verification. The gate-close regeneration is what decides this row |
+| 29 | `met` | `sprint-21d4-release.json` | PR #223 squash-merged into protected main at 2026-08-08T07:08:05Z, exact-head main CI run 31245482819 30 of 30 success, and the annotated tag sprint-21d4-evidence-baseline object 0f1e4c897c72cedc peels to 18564a55e65f7b33 |
 
 | Gate D1 | State | Closure rule | Detail |
 |---:|---|---|---|
@@ -121,3 +122,24 @@ branches independently.
 - It does not reinterpret a D3 pass into a D4 one.
 - It asserts nothing. Every `met` row names a file, a rule and a measured value, and every closed
   row names the hash of the record that closed it.
+
+## The release this assessment was closed on
+
+Condition 29 is the only row this document could not decide when it was first written, because
+its evidence is created by the release that publishes it. It is decided now, from
+[`sprint-21d4-release.json`](evidence/sprint-21d4-release.json), which reads every handle back
+from the remote rather than from prose:
+
+- PR `#223`, squash-merged into protected `main` at `2026-08-08T07:08:05Z`, no administrator
+  bypass; release commit `18564a55e65f7b331bc73fc334ee1ab085cf0836`;
+- exact-head post-merge `main` CI run `31245482819`, **30 of 30 jobs successful**, completed
+  `2026-08-08T07:23:36Z`;
+- annotated tag `sprint-21d4-evidence-baseline`, object
+  `0f1e4c897c72cedc530bb599c4d7af8e647b2774`, peeling to the release commit, created once and
+  after that CI;
+- branch protection unchanged: administrators enforced, 27 required checks, strict, no force
+  pushes, no deletions;
+- the success tag `sprint-21-learning-baseline` **does not exist**, checked rather than assumed.
+
+The tag is never moved or recreated. If a later sprint needs a different release commit, it
+creates a different tag.

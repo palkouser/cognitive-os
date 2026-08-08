@@ -104,7 +104,7 @@ def test_the_verdict_follows_from_the_counts() -> None:
     assert counts["failed"] == 0
     assert counts["not_opened"] > 0
     assert counts["met_as_rejection"] == 1, "condition 24 is the measured rejection"
-    assert counts["pending"] == 1, "condition 29 waits on the release"
+    assert counts["pending"] == 0, "the release happened, so nothing is still waiting on it"
     assert document["verdict"] == "gate_l2_does_not_pass"
 
 
@@ -119,13 +119,23 @@ def test_condition_24_is_the_measured_rejection_and_not_a_pass() -> None:
     assert decision["first_failed_floor"] in row["detail"]
 
 
-def test_condition_29_is_pending_rather_than_met_or_closed() -> None:
-    """The release has not happened. `pending` is neither a stop nor a pass."""
-    row = next(item for item in _load()["gate_l2"] if item["condition"] == 29)
+def test_condition_29_is_decided_by_the_release_and_never_by_a_stop() -> None:
+    """It was `pending` while the release had not happened; a stop must never close it.
 
-    assert row["state"] == "pending"
-    assert row["evidence"] is None
+    Condition 29 is the only row whose evidence is created by the release that publishes this
+    assessment. `pending` is neither a stop nor a pass, and the gate-close regeneration is what
+    turns it into one — so what this pins is that the turn happened through the release record
+    and not through the selection stop that closed fifteen other rows.
+    """
+    row = next(item for item in _load()["gate_l2"] if item["condition"] == 29)
+    release = json.loads((EVIDENCE / "sprint-21d4-release.json").read_text(encoding="utf-8"))
+
+    assert row["state"] == "met"
+    assert row["evidence"] == "sprint-21d4-release.json"
     assert "stop_hash" not in row
+    assert release["findings"] == []
+    assert release["release"]["peeled_commit"] == release["release"]["implementation_merge_commit"]
+    assert release["release"]["success_tag_exists"] is False
 
 
 def test_gate_d1_condition_15_stays_open_on_its_own_evidence() -> None:
