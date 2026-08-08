@@ -2,7 +2,7 @@
 
 - Branch: `feature/sprint-21d5-pairwise-selective-ranking`
 - Backlog: [Sprint 21D5 Technical Backlog](sprint-21d5-technical-backlog.md)
-- **Status: W0 complete. W1 in progress — 54 of 100 calibration groups authored and validated.**
+- **Status: W0 complete. W1 in progress — 66 of 100 calibration groups authored and validated.**
   W2 through W8 not started.
 - Pre-registration: revision 5, SHA-256
   `ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a`
@@ -487,9 +487,60 @@ Measured over the whole authored corpus: 54 groups, 270 bodies, **540 suite runs
 defects**, **0 cross-group collisions** against 1,500 released and D5 bodies, families balanced
 **9/9/9/9/9/9**.
 
+### Batch six, and a defect the validator caught that arithmetic could not
+
+Twelve more, taking the corpus to sixty-six at **11/11/11/11/11/11**.
+
+| Group | Family | The two independent edge cases |
+|---|---|---|
+| `d5-boundary-cartesian-rows` | boundary_collections | no groups gives the single empty combination; the last group turns fastest |
+| `d5-boundary-cluster-by-gap` | boundary_collections | a step exactly the gap keeps readings together; no readings gives no groups |
+| `d5-numeric-integer-root` | numeric_logic | an exact power returns its whole root; a negative value or degree below one is refused |
+| `d5-numeric-geometric-mean` | numeric_logic | a run containing a zero averages to zero; no readings is refused |
+| `d5-parsing-name-initials` | parsing_validation | both sides of a hyphen give an initial; a lowercase particle is left out |
+| `d5-parsing-entity-unescape` | parsing_validation | a numeric entity decodes; an escaped ampersand is not decoded twice |
+| `d5-transform-compose-pipeline` | data_transformation | the steps run in reading order; the list is read once when the pipeline is built |
+| `d5-transform-longest-match` | data_transformation | the longest matching prefix wins; no match returns the default |
+| `d5-state-journal-replay` | state_idempotency | an entry at or below the cursor is skipped; a gap in the sequence is refused |
+| `d5-state-snapshot-restore` | state_idempotency | an unsaved name is refused; the working copy does not reach back into the saved one |
+| `d5-error-degrade-mode` | error_handling | the standby is not asked when the primary answers; the primary's failure is the one raised |
+| `d5-error-required-fields` | error_handling | a field holding None counts as missing; an unnamed field is ignored |
+
+**The validator caught one, and the reason matters.** `d5-boundary-cartesian-rows`'s
+`variant_four` passed the hidden suite when it must fail it. The cause was not entangled edge
+cases: `variant_four` is supposed to fix the ordering only, and it was written as
+`rows = [(option,) for option in groups[0]] if groups else [()]` — the trailing guard
+**accidentally fixed the other edge case too**, so a body meant to be half-repaired was whole.
+Removing the guard restored it.
+
+That is worth recording because the validator's own reading was wrong about the cause. The row
+`variant_four` / `hidden` / `passes` is labelled *failure mode 1 — the two hidden tests probe one
+defect*, and here it was an authoring slip in a single expression instead. **The reading names the
+usual cause of a row, not the only one.** Two batches of arithmetic-at-the-design-table cannot
+catch this class: the edge cases genuinely were independent, and the fault was in the body that
+was supposed to demonstrate it. Only executing all five bodies against both suites finds it.
+
+**Two more groups withdrawn at the design table**, both for entangled edge cases, both proved
+rather than run:
+
+- A *failure latch* — "the first failure is kept when a second arrives" and "a success does not
+  clear a remembered failure". One rule, *keep the first failure whatever arrives*, satisfies
+  both, so no partial fix can separate them.
+- A *memoiser* — "a cached value is not recomputed" and "a cached None is still a hit". The
+  second edge case presupposes a cache read, which is the first, so nothing can fix the second
+  alone.
+
+That makes four design-table withdrawals across six batches, against one defect the validator had
+to find. The arithmetic catches entanglement; only execution catches a body that does not do what
+its label says.
+
+Measured over the whole authored corpus: 66 groups, 330 bodies, **660 suite runs, 0 contract
+defects**, **0 cross-group collisions** against 1,560 released and D5 bodies, families balanced
+**11/11/11/11/11/11**.
+
 ### What W1 still owes
 
-- 46 further calibration groups, family-balanced, each validated by the loop above;
+- 34 further calibration groups, family-balanced, each validated by the loop above;
 - 60 retrieval groups yielding at least 50 qualifying queries (S21D5-021);
 - the separation, rights and lineage evidence record (S21D5-022);
 - sealed campaign and holdout manifests (S21D5-023);
