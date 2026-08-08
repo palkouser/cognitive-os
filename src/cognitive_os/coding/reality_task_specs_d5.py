@@ -4755,6 +4755,1400 @@ def test_a_failing_cleanup_does_not_stop_the_ones_after_it() -> None:
     ),
 )
 
+# ------------------------------------------------------------------ boundary and collections
+
+_G043 = D2TaskSpec(
+    template_id="d5_boundary.unzip_pairs",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d5-boundary-unzip-pairs",
+    module="unzip_pairs",
+    module_doc="Taking a list of pairs apart into the two columns it was built from.",
+    issue=(
+        "unzip() is documented to take a list of pairs apart into two columns. Callers report "
+        "that an empty list raises about unpacking instead of coming back with two empty "
+        "columns, and that a row carrying a third entry is quietly taken apart as though the "
+        "third were not there."
+    ),
+    expected=(
+        "unzip(pairs) returns (firsts, seconds), the two columns of the pairs in order. An "
+        "empty list gives two empty columns, and a row that is not exactly two long is refused "
+        "with ValueError."
+    ),
+    baseline_reason=(
+        "it unpacks the transposed rows straight into two names, which has nothing to unpack "
+        "for an empty list and quietly drops the surplus of a longer row"
+    ),
+    edge_cases=(
+        "an empty list gives two empty columns",
+        "a row that is not exactly two long is refused",
+    ),
+    baseline='''def unzip(pairs):
+    """Return the two columns of `pairs`."""
+    firsts, seconds = zip(*pairs)
+    return list(firsts), list(seconds)''',
+    variant_one='''def unzip(pairs):
+    """Return the two columns of `pairs`."""
+    firsts = []
+    seconds = []
+    for row in pairs:
+        entries = tuple(row)
+        if len(entries) != 2:
+            raise ValueError(f"expected a pair, found a row of {len(entries)}")
+        firsts.append(entries[0])
+        seconds.append(entries[1])
+    return firsts, seconds''',
+    variant_two='''def unzip(pairs):
+    """Return the two columns of `pairs`."""
+    rows = [tuple(row) for row in pairs]
+    wrong = [len(row) for row in rows if len(row) != 2]
+    if wrong:
+        raise ValueError(f"expected pairs, found rows of {wrong}")
+    if not rows:
+        return [], []
+    columns = list(zip(*rows))
+    return list(columns[0]), list(columns[1])''',
+    variant_three='''def unzip(pairs):
+    """Return the two columns of `pairs`."""
+    rows = list(pairs)
+    if not rows:
+        return [], []
+    firsts, seconds = zip(*rows)
+    return list(firsts), list(seconds)''',
+    variant_four='''def unzip(pairs):
+    """Return the two columns of `pairs`."""
+    rows = [tuple(row) for row in pairs]
+    for row in rows:
+        if len(row) != 2:
+            raise ValueError(f"expected a pair, found a row of {len(row)}")
+    firsts, seconds = zip(*rows)
+    return list(firsts), list(seconds)''',
+    visible_test=_test_module(
+        "unzip_pairs",
+        "Published contract for taking a list of pairs apart.",
+        """
+def test_the_two_columns_come_back_in_order() -> None:
+    assert unzip([("a", 1), ("b", 2)]) == (["a", "b"], [1, 2])
+
+
+def test_a_single_pair_gives_two_columns_of_one() -> None:
+    assert unzip([("a", 1)]) == (["a"], [1])
+""",
+        imports="from unzip_pairs import unzip\n",
+    ),
+    hidden_test=_test_module(
+        "unzip_pairs",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_the_two_columns_come_back_in_order() -> None:
+    assert unzip([("a", 1), ("b", 2)]) == (["a", "b"], [1, 2])
+
+
+def test_an_empty_list_gives_two_empty_columns() -> None:
+    assert unzip([]) == ([], [])
+
+
+def test_a_row_that_is_not_a_pair_is_refused() -> None:
+    with pytest.raises(ValueError):
+        unzip([("a", 1), ("b", 2, 3)])
+""",
+        imports="from unzip_pairs import unzip\n",
+    ),
+)
+
+
+_G044 = D2TaskSpec(
+    template_id="d5_boundary.sparse_expand",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d5-boundary-sparse-expand",
+    module="sparse_expand",
+    module_doc="Filling a run of slots from the few positions that were actually given.",
+    issue=(
+        "expand() is documented to fill a run of slots from the positions given, everything "
+        "else taking a default. Callers report that a position outside the run either writes "
+        "at the wrong end or fails with an IndexError rather than being refused, and that "
+        "filling with a list as the default hands every slot the same list."
+    ),
+    expected=(
+        "expand(entries, length, default) returns a run of `length` slots, each named position "
+        "holding its value and every other slot holding its own copy of the default, and "
+        "raises ValueError for a position outside the run."
+    ),
+    baseline_reason=(
+        "it builds the run by repeating the one default object, so every untouched slot is the "
+        "same object, and it writes by plain indexing, which wraps for a negative position and "
+        "raises an IndexError past the end"
+    ),
+    edge_cases=(
+        "a position outside the run is refused",
+        "each untouched slot holds its own copy of the default",
+    ),
+    imports="import copy\n",
+    baseline='''def expand(entries, length, default):
+    """Return a run of `length` slots filled from `entries`."""
+    slots = [default] * length
+    for index, value in entries:
+        slots[index] = value
+    return slots''',
+    variant_one='''def expand(entries, length, default):
+    """Return a run of `length` slots filled from `entries`."""
+    slots = [copy.deepcopy(default) for _ in range(length)]
+    for index, value in entries:
+        if not 0 <= index < length:
+            raise ValueError(f"position {index} is outside a run of {length}")
+        slots[index] = value
+    return slots''',
+    variant_two='''def expand(entries, length, default):
+    """Return a run of `length` slots filled from `entries`."""
+    placed = {}
+    for index, value in entries:
+        if not 0 <= index < length:
+            raise ValueError(f"position {index} is outside a run of {length}")
+        placed[index] = value
+    return [
+        placed[index] if index in placed else copy.deepcopy(default)
+        for index in range(length)
+    ]''',
+    variant_three='''def expand(entries, length, default):
+    """Return a run of `length` slots filled from `entries`."""
+    slots = [default] * length
+    for index, value in entries:
+        if not 0 <= index < length:
+            raise ValueError(f"position {index} is outside a run of {length}")
+        slots[index] = value
+    return slots''',
+    variant_four='''def expand(entries, length, default):
+    """Return a run of `length` slots filled from `entries`."""
+    slots = [copy.deepcopy(default) for _ in range(length)]
+    for index, value in entries:
+        slots[index] = value
+    return slots''',
+    visible_test=_test_module(
+        "sparse_expand",
+        "Published contract for filling a run of slots.",
+        """
+def test_named_positions_hold_their_values() -> None:
+    assert expand([(0, "a"), (2, "c")], 3, "-") == ["a", "-", "c"]
+
+
+def test_no_positions_at_all_is_all_default() -> None:
+    assert expand([], 2, 0) == [0, 0]
+""",
+        imports="from sparse_expand import expand\n",
+    ),
+    hidden_test=_test_module(
+        "sparse_expand",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_named_positions_hold_their_values() -> None:
+    assert expand([(0, "a"), (2, "c")], 3, "-") == ["a", "-", "c"]
+
+
+def test_a_position_outside_the_run_is_refused() -> None:
+    with pytest.raises(ValueError):
+        expand([(3, "x")], 3, "-")
+    with pytest.raises(ValueError):
+        expand([(-1, "x")], 3, "-")
+
+
+def test_each_slot_holds_its_own_copy_of_the_default() -> None:
+    slots = expand([], 3, [])
+    slots[0].append("x")
+    assert slots == [["x"], [], []]
+""",
+        imports="from sparse_expand import expand\n",
+    ),
+)
+
+# ---------------------------------------------------------------------------- numeric logic
+
+_G045 = D2TaskSpec(
+    template_id="d5_numeric.simplify_ratio",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d5-numeric-simplify-ratio",
+    module="simplify_ratio",
+    module_doc="Reducing a ratio to the smallest whole numbers that say the same thing.",
+    issue=(
+        "simplify() is documented to reduce a ratio to lowest terms. Callers report that a "
+        "ratio written with a negative below the line comes back with the minus sign still "
+        "below the line, and that a denominator of zero comes back as a ratio rather than "
+        "being refused."
+    ),
+    expected=(
+        "simplify(numerator, denominator) returns the ratio in lowest terms as a pair, with "
+        "the sign carried by the numerator and the denominator always positive, and raises "
+        "ValueError for a denominator of zero."
+    ),
+    baseline_reason=(
+        "it divides both sides by their common divisor and hands them back as they came, so a "
+        "negative denominator keeps its sign, and it never checks the denominator is not zero"
+    ),
+    edge_cases=(
+        "the sign is carried by the numerator, never by the denominator",
+        "a denominator of zero is refused",
+    ),
+    imports="import math\n",
+    baseline='''def simplify(numerator, denominator):
+    """Return the ratio in lowest terms with the sign on the numerator."""
+    divisor = math.gcd(numerator, denominator)
+    return numerator // divisor, denominator // divisor''',
+    variant_one='''def simplify(numerator, denominator):
+    """Return the ratio in lowest terms with the sign on the numerator."""
+    if denominator == 0:
+        raise ValueError("a ratio cannot have a denominator of zero")
+    divisor = math.gcd(numerator, denominator)
+    sign = -1 if denominator < 0 else 1
+    return (sign * numerator) // divisor, (sign * denominator) // divisor''',
+    variant_two='''def simplify(numerator, denominator):
+    """Return the ratio in lowest terms with the sign on the numerator."""
+    if denominator == 0:
+        raise ValueError("a ratio cannot have a denominator of zero")
+    top, bottom = numerator, denominator
+    if bottom < 0:
+        top, bottom = -top, -bottom
+    divisor = math.gcd(abs(top), bottom)
+    return top // divisor, bottom // divisor''',
+    variant_three='''def simplify(numerator, denominator):
+    """Return the ratio in lowest terms with the sign on the numerator."""
+    top, bottom = numerator, denominator
+    if bottom < 0:
+        top, bottom = -top, -bottom
+    divisor = math.gcd(abs(top), bottom)
+    return top // divisor, bottom // divisor''',
+    variant_four='''def simplify(numerator, denominator):
+    """Return the ratio in lowest terms with the sign on the numerator."""
+    if denominator == 0:
+        raise ValueError("a ratio cannot have a denominator of zero")
+    divisor = math.gcd(numerator, denominator)
+    return numerator // divisor, denominator // divisor''',
+    visible_test=_test_module(
+        "simplify_ratio",
+        "Published contract for reducing a ratio.",
+        """
+def test_a_ratio_reduces_by_its_common_divisor() -> None:
+    assert simplify(6, 8) == (3, 4)
+
+
+def test_a_negative_above_the_line_stays_there() -> None:
+    assert simplify(-6, 8) == (-3, 4)
+
+
+def test_a_ratio_of_equals_is_one_to_one() -> None:
+    assert simplify(5, 5) == (1, 1)
+""",
+        imports="from simplify_ratio import simplify\n",
+    ),
+    hidden_test=_test_module(
+        "simplify_ratio",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_ratio_reduces_by_its_common_divisor() -> None:
+    assert simplify(6, 8) == (3, 4)
+
+
+def test_the_sign_moves_above_the_line() -> None:
+    assert simplify(1, -2) == (-1, 2)
+    assert simplify(-4, -6) == (2, 3)
+
+
+def test_a_denominator_of_zero_is_refused() -> None:
+    with pytest.raises(ValueError):
+        simplify(4, 0)
+""",
+        imports="from simplify_ratio import simplify\n",
+    ),
+)
+
+
+_G046 = D2TaskSpec(
+    template_id="d5_numeric.month_length",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d5-numeric-month-length",
+    module="month_length",
+    module_doc="Saying how many days a given month of a given year runs to.",
+    issue=(
+        "days_in() is documented to say how long a month runs. Schedulers report that February "
+        "1900 comes back as twenty-nine days, and that a month number nobody has heard of "
+        "comes back with an answer instead of being refused."
+    ),
+    expected=(
+        "days_in(year, month) returns the number of days in that month. February has "
+        "twenty-nine days in a leap year, where a year divisible by one hundred is a leap year "
+        "only when it is also divisible by four hundred, and a month outside one to twelve is "
+        "refused with ValueError."
+    ),
+    baseline_reason=(
+        "it takes every fourth year as a leap year without the hundred-and-four-hundred rule, "
+        "and it indexes the table of lengths without checking the month is on it"
+    ),
+    edge_cases=(
+        "a century year is a leap year only when it divides by four hundred",
+        "a month outside one to twelve is refused",
+    ),
+    baseline='''def days_in(year, month):
+    """Return the number of days in `month` of `year`."""
+    lengths = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+    if month == 2 and year % 4 == 0:
+        return 29
+    return lengths[month - 1]''',
+    variant_one='''def days_in(year, month):
+    """Return the number of days in `month` of `year`."""
+    lengths = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+    if not 1 <= month <= 12:
+        raise ValueError(f"there is no month {month}")
+    leap = year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+    if month == 2 and leap:
+        return 29
+    return lengths[month - 1]''',
+    variant_two='''def days_in(year, month):
+    """Return the number of days in `month` of `year`."""
+    if not 1 <= month <= 12:
+        raise ValueError(f"there is no month {month}")
+    short = {4, 6, 9, 11}
+    if month != 2:
+        return 30 if month in short else 31
+    if year % 400 == 0:
+        return 29
+    if year % 100 == 0:
+        return 28
+    return 29 if year % 4 == 0 else 28''',
+    variant_three='''def days_in(year, month):
+    """Return the number of days in `month` of `year`."""
+    lengths = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+    leap = year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+    if month == 2 and leap:
+        return 29
+    return lengths[month - 1]''',
+    variant_four='''def days_in(year, month):
+    """Return the number of days in `month` of `year`."""
+    lengths = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+    if not 1 <= month <= 12:
+        raise ValueError(f"there is no month {month}")
+    if month == 2 and year % 4 == 0:
+        return 29
+    return lengths[month - 1]''',
+    visible_test=_test_module(
+        "month_length",
+        "Published contract for the length of a month.",
+        """
+def test_february_in_an_ordinary_leap_year() -> None:
+    assert days_in(2024, 2) == 29
+
+
+def test_february_in_a_year_that_is_not_a_leap_year() -> None:
+    assert days_in(2023, 2) == 28
+
+
+def test_a_month_of_thirty_days() -> None:
+    assert days_in(2023, 4) == 30
+""",
+        imports="from month_length import days_in\n",
+    ),
+    hidden_test=_test_module(
+        "month_length",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_february_in_an_ordinary_leap_year() -> None:
+    assert days_in(2024, 2) == 29
+
+
+def test_a_century_year_needs_four_hundred_to_be_a_leap_year() -> None:
+    assert days_in(1900, 2) == 28
+    assert days_in(2000, 2) == 29
+
+
+def test_a_month_nobody_has_heard_of_is_refused() -> None:
+    with pytest.raises(ValueError):
+        days_in(2023, 13)
+    with pytest.raises(ValueError):
+        days_in(2023, 0)
+""",
+        imports="from month_length import days_in\n",
+    ),
+)
+
+# ----------------------------------------------------------------------- parsing and validation
+
+_G047 = D2TaskSpec(
+    template_id="d5_parsing.morse_decode",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d5-parsing-morse-decode",
+    module="morse_decode",
+    module_doc="Reading a keyed signal back into the letters it was sent as.",
+    issue=(
+        "decode() is documented to read a keyed signal back into letters, with a wider gap "
+        "between words. Operators report that a signal carrying two words comes back as one "
+        "run of nonsense, and that a symbol the table does not know fails with a KeyError "
+        "rather than saying what was wrong."
+    ),
+    expected=(
+        "decode(signal) returns the letters of the signal. Symbols are separated by one space "
+        "and words by three, so a word gap becomes a single space in the answer, and a symbol "
+        "the table does not know is refused with ValueError."
+    ),
+    baseline_reason=(
+        "it splits on every single space, which turns a word gap into empty symbols, and it "
+        "looks each symbol up straight in the table"
+    ),
+    edge_cases=(
+        "three spaces are a word gap and become one space in the answer",
+        "a symbol the table does not know is refused",
+    ),
+    baseline='''def decode(signal):
+    """Return the letters `signal` was keyed as."""
+    table = {
+        ".-": "a", "-...": "b", "-.-.": "c", "-..": "d",
+        ".": "e", "..-.": "f", "--.": "g", "....": "h",
+    }
+    return "".join(table[symbol] for symbol in signal.split(" "))''',
+    variant_one='''def decode(signal):
+    """Return the letters `signal` was keyed as."""
+    table = {
+        ".-": "a", "-...": "b", "-.-.": "c", "-..": "d",
+        ".": "e", "..-.": "f", "--.": "g", "....": "h",
+    }
+    words = []
+    for word in signal.split("   "):
+        letters = []
+        for symbol in word.split(" "):
+            if symbol not in table:
+                raise ValueError(f"{symbol!r} is not a symbol this table knows")
+            letters.append(table[symbol])
+        words.append("".join(letters))
+    return " ".join(words)''',
+    variant_two='''def decode(signal):
+    """Return the letters `signal` was keyed as."""
+    table = {
+        ".-": "a", "-...": "b", "-.-.": "c", "-..": "d",
+        ".": "e", "..-.": "f", "--.": "g", "....": "h",
+    }
+    out = []
+    for word in signal.split("   "):
+        for symbol in word.split(" "):
+            try:
+                out.append(table[symbol])
+            except KeyError:
+                raise ValueError(f"{symbol!r} is not a symbol this table knows") from None
+        out.append(" ")
+    return "".join(out[:-1])''',
+    variant_three='''def decode(signal):
+    """Return the letters `signal` was keyed as."""
+    table = {
+        ".-": "a", "-...": "b", "-.-.": "c", "-..": "d",
+        ".": "e", "..-.": "f", "--.": "g", "....": "h",
+    }
+    return " ".join(
+        "".join(table[symbol] for symbol in word.split(" "))
+        for word in signal.split("   ")
+    )''',
+    variant_four='''def decode(signal):
+    """Return the letters `signal` was keyed as."""
+    table = {
+        ".-": "a", "-...": "b", "-.-.": "c", "-..": "d",
+        ".": "e", "..-.": "f", "--.": "g", "....": "h",
+    }
+    letters = []
+    for symbol in signal.split(" "):
+        if symbol not in table:
+            raise ValueError(f"{symbol!r} is not a symbol this table knows")
+        letters.append(table[symbol])
+    return "".join(letters)''',
+    visible_test=_test_module(
+        "morse_decode",
+        "Published contract for reading a keyed signal.",
+        """
+def test_a_run_of_symbols_reads_as_a_word() -> None:
+    assert decode(".... .") == "he"
+
+
+def test_a_single_symbol_reads_as_its_letter() -> None:
+    assert decode(".-") == "a"
+""",
+        imports="from morse_decode import decode\n",
+    ),
+    hidden_test=_test_module(
+        "morse_decode",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_run_of_symbols_reads_as_a_word() -> None:
+    assert decode(".... .") == "he"
+
+
+def test_three_spaces_are_a_word_gap() -> None:
+    assert decode(".-   -...") == "a b"
+
+
+def test_a_symbol_the_table_does_not_know_is_refused() -> None:
+    with pytest.raises(ValueError):
+        decode(".-.-.-.-.-")
+""",
+        imports="from morse_decode import decode\n",
+    ),
+)
+
+
+_G048 = D2TaskSpec(
+    template_id="d5_parsing.locale_tag",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d5-parsing-locale-tag",
+    module="locale_tag",
+    module_doc="Putting a language tag into the casing the registry writes it in.",
+    issue=(
+        "normalise() is documented to put a language tag into its registry casing. Callers "
+        "report that a tag naming a script comes back shouting the script in capitals, and "
+        "that a tag with a subtag missing between two hyphens comes back reshaped rather than "
+        "being refused."
+    ),
+    expected=(
+        "normalise(tag) returns the tag with its subtags in registry casing: the language "
+        "lowercase, a four-letter script in title case, and any other following subtag "
+        "uppercase, joined by hyphens. A tag with an empty subtag is refused with ValueError."
+    ),
+    baseline_reason=(
+        "it uppercases every subtag after the language, which shouts a script that should be "
+        "in title case, and it never notices a subtag with nothing in it"
+    ),
+    edge_cases=(
+        "a four-letter script subtag takes title case, not capitals",
+        "a tag with an empty subtag is refused",
+    ),
+    baseline='''def normalise(tag):
+    """Return `tag` in registry casing."""
+    parts = tag.split("-")
+    shaped = [parts[0].lower()]
+    for part in parts[1:]:
+        shaped.append(part.upper())
+    return "-".join(shaped)''',
+    variant_one='''def normalise(tag):
+    """Return `tag` in registry casing."""
+    parts = tag.split("-")
+    if any(not part for part in parts):
+        raise ValueError(f"{tag!r} has an empty subtag")
+    shaped = [parts[0].lower()]
+    for part in parts[1:]:
+        shaped.append(part.title() if len(part) == 4 else part.upper())
+    return "-".join(shaped)''',
+    variant_two='''def normalise(tag):
+    """Return `tag` in registry casing."""
+    parts = tag.split("-")
+    if "" in parts:
+        raise ValueError(f"{tag!r} has an empty subtag")
+
+    def shape(place, part):
+        if place == 0:
+            return part.lower()
+        if len(part) == 4:
+            return part[:1].upper() + part[1:].lower()
+        return part.upper()
+
+    return "-".join(shape(place, part) for place, part in enumerate(parts))''',
+    variant_three='''def normalise(tag):
+    """Return `tag` in registry casing."""
+    parts = tag.split("-")
+    shaped = [parts[0].lower()]
+    for part in parts[1:]:
+        shaped.append(part.title() if len(part) == 4 else part.upper())
+    return "-".join(shaped)''',
+    variant_four='''def normalise(tag):
+    """Return `tag` in registry casing."""
+    parts = tag.split("-")
+    if any(not part for part in parts):
+        raise ValueError(f"{tag!r} has an empty subtag")
+    shaped = [parts[0].lower()]
+    for part in parts[1:]:
+        shaped.append(part.upper())
+    return "-".join(shaped)''',
+    visible_test=_test_module(
+        "locale_tag",
+        "Published contract for the casing of a language tag.",
+        """
+def test_a_language_and_region_take_their_casing() -> None:
+    assert normalise("en-gb") == "en-GB"
+
+
+def test_a_language_on_its_own_goes_lowercase() -> None:
+    assert normalise("FR") == "fr"
+""",
+        imports="from locale_tag import normalise\n",
+    ),
+    hidden_test=_test_module(
+        "locale_tag",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_language_and_region_take_their_casing() -> None:
+    assert normalise("en-gb") == "en-GB"
+
+
+def test_a_script_subtag_takes_title_case() -> None:
+    assert normalise("zh-hans-cn") == "zh-Hans-CN"
+
+
+def test_an_empty_subtag_is_refused() -> None:
+    with pytest.raises(ValueError):
+        normalise("en--gb")
+""",
+        imports="from locale_tag import normalise\n",
+    ),
+)
+
+# ------------------------------------------------------------------------- data transformation
+
+_G049 = D2TaskSpec(
+    template_id="d5_transform.prune_empty",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d5-transform-prune-empty",
+    module="prune_empty",
+    module_doc="Clearing the entries that hold nothing out of a settings tree.",
+    issue=(
+        "prune() is documented to clear out the entries that hold nothing. Callers report that "
+        "a reading of zero is cleared out along with them even though zero is a reading, and "
+        "that a branch whose own entries were all cleared is left behind as an empty branch."
+    ),
+    expected=(
+        "prune(nested) returns the mapping with every entry dropped whose value is None, an "
+        "empty mapping or an empty list, applied to nested branches as well so a branch left "
+        "with nothing is dropped in its turn. A value that merely reads as false -- zero, "
+        "False, an empty string -- is kept."
+    ),
+    baseline_reason=(
+        "it keeps an entry only when its value reads as true, which throws away zero and False "
+        "along with the empties and never looks inside a branch at all"
+    ),
+    edge_cases=(
+        "a branch left with nothing after its own pruning is dropped",
+        "a value that merely reads as false is kept",
+    ),
+    baseline='''def prune(nested):
+    """Return `nested` with the entries that hold nothing cleared out."""
+    out = {}
+    for key, value in nested.items():
+        if value:
+            out[key] = value
+    return out''',
+    variant_one='''def prune(nested):
+    """Return `nested` with the entries that hold nothing cleared out."""
+    out = {}
+    for key, value in nested.items():
+        if isinstance(value, dict):
+            value = prune(value)
+        if value is None or value == {} or value == []:
+            continue
+        out[key] = value
+    return out''',
+    variant_two='''def prune(nested):
+    """Return `nested` with the entries that hold nothing cleared out."""
+
+    def holds_nothing(value):
+        return value is None or (isinstance(value, (dict, list)) and len(value) == 0)
+
+    cleaned = {}
+    for key, value in nested.items():
+        shrunk = prune(value) if isinstance(value, dict) else value
+        if not holds_nothing(shrunk):
+            cleaned[key] = shrunk
+    return cleaned''',
+    variant_three='''def prune(nested):
+    """Return `nested` with the entries that hold nothing cleared out."""
+    out = {}
+    for key, value in nested.items():
+        if isinstance(value, dict):
+            value = prune(value)
+        if value:
+            out[key] = value
+    return out''',
+    variant_four='''def prune(nested):
+    """Return `nested` with the entries that hold nothing cleared out."""
+    out = {}
+    for key, value in nested.items():
+        if value is None or value == {} or value == []:
+            continue
+        out[key] = value
+    return out''',
+    visible_test=_test_module(
+        "prune_empty",
+        "Published contract for clearing empty entries out of a settings tree.",
+        """
+def test_an_entry_holding_nothing_is_cleared() -> None:
+    assert prune({"a": 1, "b": None}) == {"a": 1}
+
+
+def test_an_empty_list_is_cleared_too() -> None:
+    assert prune({"a": 1, "b": []}) == {"a": 1}
+
+
+def test_a_mapping_with_nothing_in_it_prunes_to_nothing() -> None:
+    assert prune({}) == {}
+""",
+        imports="from prune_empty import prune\n",
+    ),
+    hidden_test=_test_module(
+        "prune_empty",
+        "The part of the contract the published tests do not state.",
+        """
+def test_an_entry_holding_nothing_is_cleared() -> None:
+    assert prune({"a": 1, "b": None}) == {"a": 1}
+
+
+def test_a_branch_left_with_nothing_is_dropped_in_its_turn() -> None:
+    assert prune({"a": {"b": None}, "c": 1}) == {"c": 1}
+
+
+def test_a_value_that_merely_reads_as_false_is_kept() -> None:
+    assert prune({"a": 0, "b": False, "c": ""}) == {"a": 0, "b": False, "c": ""}
+""",
+        imports="from prune_empty import prune\n",
+    ),
+)
+
+
+_G050 = D2TaskSpec(
+    template_id="d5_transform.top_per_group",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d5-transform-top-per-group",
+    module="top_per_group",
+    module_doc="Keeping the best few of every group and throwing the rest away.",
+    issue=(
+        "top_per_group() is documented to keep the best few records of every group. Callers "
+        "report that the groups come back in alphabetical order rather than the order the "
+        "records introduced them, and that a record with no score at all brings the whole run "
+        "down with a KeyError."
+    ),
+    expected=(
+        "top_per_group(records, group_key, score_key, count) returns a mapping from group to "
+        "its highest-scoring records, at most `count` of them and highest first, the groups "
+        "in the order the records first introduced them, and a record carrying no score left "
+        "out rather than raising."
+    ),
+    baseline_reason=(
+        "it walks the groups in sorted order rather than the order it met them, and it reads "
+        "each score without checking the record carries one"
+    ),
+    edge_cases=(
+        "the groups come back in the order the records first introduced them",
+        "a record carrying no score is left out",
+    ),
+    baseline='''def top_per_group(records, group_key, score_key, count):
+    """Return the best `count` records of each group, best first."""
+    grouped = {}
+    for record in records:
+        grouped.setdefault(record[group_key], []).append(record)
+    out = {}
+    for group in sorted(grouped):
+        ranked = sorted(grouped[group], key=lambda record: record[score_key], reverse=True)
+        out[group] = ranked[:count]
+    return out''',
+    variant_one='''def top_per_group(records, group_key, score_key, count):
+    """Return the best `count` records of each group, best first."""
+    grouped = {}
+    for record in records:
+        if score_key not in record:
+            continue
+        grouped.setdefault(record[group_key], []).append(record)
+    return {
+        group: sorted(entries, key=lambda record: record[score_key], reverse=True)[:count]
+        for group, entries in grouped.items()
+    }''',
+    variant_two='''def top_per_group(records, group_key, score_key, count):
+    """Return the best `count` records of each group, best first."""
+    scored = [record for record in records if score_key in record]
+    order = []
+    for record in scored:
+        if record[group_key] not in order:
+            order.append(record[group_key])
+    out = {}
+    for group in order:
+        entries = [record for record in scored if record[group_key] == group]
+        entries.sort(key=lambda record: record[score_key], reverse=True)
+        out[group] = entries[:count]
+    return out''',
+    variant_three='''def top_per_group(records, group_key, score_key, count):
+    """Return the best `count` records of each group, best first."""
+    grouped = {}
+    for record in records:
+        grouped.setdefault(record[group_key], []).append(record)
+    return {
+        group: sorted(entries, key=lambda record: record[score_key], reverse=True)[:count]
+        for group, entries in grouped.items()
+    }''',
+    variant_four='''def top_per_group(records, group_key, score_key, count):
+    """Return the best `count` records of each group, best first."""
+    grouped = {}
+    for record in records:
+        if score_key not in record:
+            continue
+        grouped.setdefault(record[group_key], []).append(record)
+    out = {}
+    for group in sorted(grouped):
+        ranked = sorted(grouped[group], key=lambda record: record[score_key], reverse=True)
+        out[group] = ranked[:count]
+    return out''',
+    visible_test=_test_module(
+        "top_per_group",
+        "Published contract for keeping the best few of every group.",
+        """
+def test_each_group_keeps_its_best() -> None:
+    records = [
+        {"team": "a", "score": 1},
+        {"team": "a", "score": 5},
+        {"team": "b", "score": 3},
+    ]
+    assert top_per_group(records, "team", "score", 1) == {
+        "a": [{"team": "a", "score": 5}],
+        "b": [{"team": "b", "score": 3}],
+    }
+
+
+def test_a_group_with_fewer_than_the_count_keeps_them_all() -> None:
+    records = [{"team": "a", "score": 1}]
+    assert top_per_group(records, "team", "score", 3) == {"a": [{"team": "a", "score": 1}]}
+""",
+        imports="from top_per_group import top_per_group\n",
+    ),
+    hidden_test=_test_module(
+        "top_per_group",
+        "The part of the contract the published tests do not state.",
+        """
+def test_each_group_keeps_its_best() -> None:
+    records = [
+        {"team": "a", "score": 1},
+        {"team": "a", "score": 5},
+        {"team": "b", "score": 3},
+    ]
+    assert top_per_group(records, "team", "score", 1) == {
+        "a": [{"team": "a", "score": 5}],
+        "b": [{"team": "b", "score": 3}],
+    }
+
+
+def test_the_groups_keep_the_order_the_records_introduced_them() -> None:
+    records = [{"team": "b", "score": 1}, {"team": "a", "score": 2}]
+    assert list(top_per_group(records, "team", "score", 1)) == ["b", "a"]
+
+
+def test_a_record_carrying_no_score_is_left_out() -> None:
+    records = [{"team": "a", "score": 1}, {"team": "a"}]
+    assert top_per_group(records, "team", "score", 3) == {"a": [{"team": "a", "score": 1}]}
+""",
+        imports="from top_per_group import top_per_group\n",
+    ),
+)
+
+# ---------------------------------------------------------------------- state and idempotency
+
+_G051 = D2TaskSpec(
+    template_id="d5_state.idempotent_transfer",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d5-state-idempotent-transfer",
+    module="idempotent_transfer",
+    module_doc="Moving money between accounts so that a repeated instruction moves it once.",
+    issue=(
+        "apply_transfer() is documented to move money once per instruction. Reconciliation "
+        "reports that an instruction resent after a timeout moves the money a second time, and "
+        "that an instruction larger than the source account holds leaves that account below "
+        "zero instead of being refused."
+    ),
+    expected=(
+        "apply_transfer(ledger, transfer) returns a new ledger with the amount moved from one "
+        "account to the other and the instruction's id recorded as applied. An instruction "
+        "whose id is already recorded changes nothing, an instruction the source cannot cover "
+        "is refused with ValueError, and the caller's ledger is left as it was."
+    ),
+    baseline_reason=(
+        "it moves the money for every instruction it is handed without looking at what has "
+        "already been applied, and it debits the source without checking the balance covers it"
+    ),
+    edge_cases=(
+        "an instruction whose id is already recorded changes nothing",
+        "an instruction the source cannot cover is refused",
+    ),
+    baseline='''def apply_transfer(ledger, transfer):
+    """Return `ledger` with `transfer` applied once."""
+    balances = dict(ledger["balances"])
+    balances[transfer["from"]] -= transfer["amount"]
+    balances[transfer["to"]] = balances.get(transfer["to"], 0) + transfer["amount"]
+    return {"balances": balances, "applied": [*ledger["applied"], transfer["id"]]}''',
+    variant_one='''def apply_transfer(ledger, transfer):
+    """Return `ledger` with `transfer` applied once."""
+    if transfer["id"] in ledger["applied"]:
+        return {"balances": dict(ledger["balances"]), "applied": list(ledger["applied"])}
+    balances = dict(ledger["balances"])
+    if balances.get(transfer["from"], 0) < transfer["amount"]:
+        raise ValueError(f"{transfer['from']!r} cannot cover {transfer['amount']}")
+    balances[transfer["from"]] -= transfer["amount"]
+    balances[transfer["to"]] = balances.get(transfer["to"], 0) + transfer["amount"]
+    return {"balances": balances, "applied": [*ledger["applied"], transfer["id"]]}''',
+    variant_two='''def apply_transfer(ledger, transfer):
+    """Return `ledger` with `transfer` applied once."""
+    settled = {
+        "balances": dict(ledger["balances"]),
+        "applied": list(ledger["applied"]),
+    }
+    if transfer["id"] in settled["applied"]:
+        return settled
+    source = settled["balances"].get(transfer["from"], 0)
+    if source < transfer["amount"]:
+        raise ValueError(f"{transfer['from']!r} cannot cover {transfer['amount']}")
+    settled["balances"][transfer["from"]] = source - transfer["amount"]
+    target = settled["balances"].get(transfer["to"], 0)
+    settled["balances"][transfer["to"]] = target + transfer["amount"]
+    settled["applied"].append(transfer["id"])
+    return settled''',
+    variant_three='''def apply_transfer(ledger, transfer):
+    """Return `ledger` with `transfer` applied once."""
+    if transfer["id"] in ledger["applied"]:
+        return {"balances": dict(ledger["balances"]), "applied": list(ledger["applied"])}
+    balances = dict(ledger["balances"])
+    balances[transfer["from"]] -= transfer["amount"]
+    balances[transfer["to"]] = balances.get(transfer["to"], 0) + transfer["amount"]
+    return {"balances": balances, "applied": [*ledger["applied"], transfer["id"]]}''',
+    variant_four='''def apply_transfer(ledger, transfer):
+    """Return `ledger` with `transfer` applied once."""
+    balances = dict(ledger["balances"])
+    if balances.get(transfer["from"], 0) < transfer["amount"]:
+        raise ValueError(f"{transfer['from']!r} cannot cover {transfer['amount']}")
+    balances[transfer["from"]] -= transfer["amount"]
+    balances[transfer["to"]] = balances.get(transfer["to"], 0) + transfer["amount"]
+    return {"balances": balances, "applied": [*ledger["applied"], transfer["id"]]}''',
+    visible_test=_test_module(
+        "idempotent_transfer",
+        "Published contract for moving money between accounts.",
+        """
+def test_the_money_moves_and_the_instruction_is_recorded() -> None:
+    ledger = {"balances": {"a": 10, "b": 0}, "applied": []}
+    transfer = {"id": "t1", "from": "a", "to": "b", "amount": 4}
+    assert apply_transfer(ledger, transfer) == {
+        "balances": {"a": 6, "b": 4},
+        "applied": ["t1"],
+    }
+
+
+def test_the_callers_ledger_is_left_alone() -> None:
+    ledger = {"balances": {"a": 10, "b": 0}, "applied": []}
+    apply_transfer(ledger, {"id": "t1", "from": "a", "to": "b", "amount": 4})
+    assert ledger == {"balances": {"a": 10, "b": 0}, "applied": []}
+""",
+        imports="from idempotent_transfer import apply_transfer\n",
+    ),
+    hidden_test=_test_module(
+        "idempotent_transfer",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_the_money_moves_and_the_instruction_is_recorded() -> None:
+    ledger = {"balances": {"a": 10, "b": 0}, "applied": []}
+    transfer = {"id": "t1", "from": "a", "to": "b", "amount": 4}
+    assert apply_transfer(ledger, transfer) == {
+        "balances": {"a": 6, "b": 4},
+        "applied": ["t1"],
+    }
+
+
+def test_an_instruction_already_applied_changes_nothing() -> None:
+    ledger = {"balances": {"a": 6, "b": 4}, "applied": ["t1"]}
+    transfer = {"id": "t1", "from": "a", "to": "b", "amount": 4}
+    assert apply_transfer(ledger, transfer) == {
+        "balances": {"a": 6, "b": 4},
+        "applied": ["t1"],
+    }
+
+
+def test_an_instruction_the_source_cannot_cover_is_refused() -> None:
+    ledger = {"balances": {"a": 3, "b": 0}, "applied": []}
+    with pytest.raises(ValueError):
+        apply_transfer(ledger, {"id": "t2", "from": "a", "to": "b", "amount": 4})
+""",
+        imports="from idempotent_transfer import apply_transfer\n",
+    ),
+)
+
+
+_G052 = D2TaskSpec(
+    template_id="d5_state.reentrancy_guard",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d5-state-reentrancy-guard",
+    module="reentrancy_guard",
+    module_doc="Letting a named piece of work run, but never twice at the same time.",
+    issue=(
+        "run_guarded() is documented to run a named piece of work and refuse a second run of "
+        "the same name while the first is still going. Operators report that a name is never "
+        "refused at all, and that a run which fails leaves its name marked as running for "
+        "ever after."
+    ),
+    expected=(
+        "run_guarded(active, key, body) marks the key as running, runs the body and returns "
+        "what it returned, and takes the mark off again whatever happened, including when the "
+        "body raised. A key already marked as running is refused with RuntimeError and its "
+        "body is not run."
+    ),
+    baseline_reason=(
+        "it marks the key and clears it on the line after the body, which never runs when the "
+        "body raises, and it never looks at whether the key is already marked"
+    ),
+    edge_cases=(
+        "a key already marked as running is refused and its body is not run",
+        "the mark comes off even when the body raises",
+    ),
+    baseline='''def run_guarded(active, key, body):
+    """Run `body` with `key` marked as running."""
+    active.add(key)
+    result = body()
+    active.discard(key)
+    return result''',
+    variant_one='''def run_guarded(active, key, body):
+    """Run `body` with `key` marked as running."""
+    if key in active:
+        raise RuntimeError(f"{key!r} is already running")
+    active.add(key)
+    try:
+        return body()
+    finally:
+        active.discard(key)''',
+    variant_two='''def run_guarded(active, key, body):
+    """Run `body` with `key` marked as running."""
+    if key in active:
+        raise RuntimeError(f"{key!r} is already running")
+    active.add(key)
+    outcome = None
+    failure = None
+    try:
+        outcome = body()
+    except Exception as error:
+        failure = error
+    active.discard(key)
+    if failure is not None:
+        raise failure
+    return outcome''',
+    variant_three='''def run_guarded(active, key, body):
+    """Run `body` with `key` marked as running."""
+    if key in active:
+        raise RuntimeError(f"{key!r} is already running")
+    active.add(key)
+    result = body()
+    active.discard(key)
+    return result''',
+    variant_four='''def run_guarded(active, key, body):
+    """Run `body` with `key` marked as running."""
+    active.add(key)
+    try:
+        return body()
+    finally:
+        active.discard(key)''',
+    visible_test=_test_module(
+        "reentrancy_guard",
+        "Published contract for running a named piece of work.",
+        """
+def test_the_body_runs_and_the_mark_comes_off() -> None:
+    active = set()
+    assert run_guarded(active, "a", lambda: 7) == 7
+    assert active == set()
+
+
+def test_two_different_names_may_run_one_after_the_other() -> None:
+    active = set()
+    run_guarded(active, "a", lambda: 1)
+    assert run_guarded(active, "b", lambda: 2) == 2
+    assert active == set()
+""",
+        imports="from reentrancy_guard import run_guarded\n",
+    ),
+    hidden_test=_test_module(
+        "reentrancy_guard",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def _explode():
+    raise ValueError("the body refused")
+
+
+def test_the_body_runs_and_the_mark_comes_off() -> None:
+    active = set()
+    assert run_guarded(active, "a", lambda: 7) == 7
+    assert active == set()
+
+
+def test_a_name_already_running_is_refused_and_its_body_is_not_run() -> None:
+    active = {"a"}
+    ran = []
+    with pytest.raises(RuntimeError):
+        run_guarded(active, "a", lambda: ran.append("went"))
+    assert ran == []
+
+
+def test_the_mark_comes_off_even_when_the_body_raises() -> None:
+    active = set()
+    with pytest.raises(ValueError):
+        run_guarded(active, "a", _explode)
+    assert active == set()
+""",
+        imports="from reentrancy_guard import run_guarded\n",
+    ),
+)
+
+# --------------------------------------------------------------------------- error handling
+
+_G053 = D2TaskSpec(
+    template_id="d5_error.partial_flush",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d5-error-partial-flush",
+    module="partial_flush",
+    module_doc="Writing a backlog out in batches and saying honestly how far it got.",
+    issue=(
+        "flush() is documented to write a backlog out in batches and report how much of it "
+        "landed. Operators report that the count includes the batch that failed, so the "
+        "figure is larger than what was written, and that the batches after a failure are "
+        "attempted anyway."
+    ),
+    expected=(
+        "flush(items, write, size) writes the items out in batches of `size` and returns "
+        "(written, failure). Written counts only the items a write actually accepted, failure "
+        "is the text of the first write that raised or None, and no batch is attempted after "
+        "one has failed."
+    ),
+    baseline_reason=(
+        "it adds the batch to the count before handing it to the write, and it records the "
+        "failure without leaving the loop"
+    ),
+    edge_cases=(
+        "the count leaves out the batch that failed",
+        "no batch is attempted after one has failed",
+    ),
+    baseline='''def flush(items, write, size):
+    """Write `items` out in batches, returning (written, failure)."""
+    entries = list(items)
+    written = 0
+    failure = None
+    for start in range(0, len(entries), size):
+        batch = entries[start : start + size]
+        written += len(batch)
+        try:
+            write(batch)
+        except Exception as error:
+            failure = str(error)
+    return written, failure''',
+    variant_one='''def flush(items, write, size):
+    """Write `items` out in batches, returning (written, failure)."""
+    entries = list(items)
+    written = 0
+    for start in range(0, len(entries), size):
+        batch = entries[start : start + size]
+        try:
+            write(batch)
+        except Exception as error:
+            return written, str(error)
+        written += len(batch)
+    return written, None''',
+    variant_two='''def flush(items, write, size):
+    """Write `items` out in batches, returning (written, failure)."""
+    entries = list(items)
+    batches = [entries[start : start + size] for start in range(0, len(entries), size)]
+    written = 0
+    failure = None
+    for batch in batches:
+        if failure is not None:
+            break
+        try:
+            write(batch)
+            written += len(batch)
+        except Exception as error:
+            failure = str(error)
+    return written, failure''',
+    variant_three='''def flush(items, write, size):
+    """Write `items` out in batches, returning (written, failure)."""
+    entries = list(items)
+    written = 0
+    failure = None
+    for start in range(0, len(entries), size):
+        batch = entries[start : start + size]
+        try:
+            write(batch)
+            written += len(batch)
+        except Exception as error:
+            failure = str(error)
+    return written, failure''',
+    variant_four='''def flush(items, write, size):
+    """Write `items` out in batches, returning (written, failure)."""
+    entries = list(items)
+    written = 0
+    for start in range(0, len(entries), size):
+        batch = entries[start : start + size]
+        written += len(batch)
+        try:
+            write(batch)
+        except Exception as error:
+            return written, str(error)
+    return written, None''',
+    visible_test=_test_module(
+        "partial_flush",
+        "Published contract for writing a backlog out in batches.",
+        """
+def test_a_backlog_that_all_lands_is_counted_in_full() -> None:
+    seen = []
+    assert flush([1, 2, 3], seen.append, 2) == (3, None)
+    assert seen == [[1, 2], [3]]
+
+
+def test_an_empty_backlog_writes_nothing() -> None:
+    seen = []
+    assert flush([], seen.append, 2) == (0, None)
+    assert seen == []
+""",
+        imports="from partial_flush import flush\n",
+    ),
+    hidden_test=_test_module(
+        "partial_flush",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_backlog_that_all_lands_is_counted_in_full() -> None:
+    seen = []
+    assert flush([1, 2, 3], seen.append, 2) == (3, None)
+    assert seen == [[1, 2], [3]]
+
+
+def test_the_count_leaves_out_the_batch_that_failed() -> None:
+    def write(batch):
+        if 3 in batch:
+            raise RuntimeError("the store refused")
+
+    assert flush([1, 2, 3, 4], write, 2) == (2, "the store refused")
+
+
+def test_no_batch_is_attempted_after_one_has_failed() -> None:
+    seen = []
+
+    def write(batch):
+        seen.append(batch)
+        raise RuntimeError("the store refused")
+
+    flush([1, 2, 3], write, 1)
+    assert seen == [[1]]
+""",
+        imports="from partial_flush import flush\n",
+    ),
+)
+
+
+_G054 = D2TaskSpec(
+    template_id="d5_error.admit_limit",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d5-error-admit-limit",
+    module="admit_limit",
+    module_doc="Letting a request through only while there is room left for it.",
+    issue=(
+        "admit() is documented to let a request through while there is room. Callers report "
+        "that a request filling the allowance exactly is turned away as though it had "
+        "overflowed, and that a request for a negative amount is let through and quietly "
+        "gives room back."
+    ),
+    expected=(
+        "admit(used, request, limit) returns the new usage when the request fits, where a "
+        "request that fills the allowance exactly does fit, raises ValueError naming the "
+        "overrun when it does not, and raises ValueError for a request below zero."
+    ),
+    baseline_reason=(
+        "it turns away anything that reaches the limit rather than anything that passes it, "
+        "and it never checks the request is not negative"
+    ),
+    edge_cases=(
+        "a request that fills the allowance exactly is let through",
+        "a request below zero is refused",
+    ),
+    baseline='''def admit(used, request, limit):
+    """Return the new usage, or refuse the request."""
+    if used + request >= limit:
+        raise ValueError(f"over the allowance by {used + request - limit}")
+    return used + request''',
+    variant_one='''def admit(used, request, limit):
+    """Return the new usage, or refuse the request."""
+    if request < 0:
+        raise ValueError(f"a request cannot be negative, got {request}")
+    if used + request > limit:
+        raise ValueError(f"over the allowance by {used + request - limit}")
+    return used + request''',
+    variant_two='''def admit(used, request, limit):
+    """Return the new usage, or refuse the request."""
+    if request < 0:
+        raise ValueError(f"a request cannot be negative, got {request}")
+    room = limit - used
+    if request > room:
+        raise ValueError(f"over the allowance by {request - room}")
+    return used + request''',
+    variant_three='''def admit(used, request, limit):
+    """Return the new usage, or refuse the request."""
+    if used + request > limit:
+        raise ValueError(f"over the allowance by {used + request - limit}")
+    return used + request''',
+    variant_four='''def admit(used, request, limit):
+    """Return the new usage, or refuse the request."""
+    if request < 0:
+        raise ValueError(f"a request cannot be negative, got {request}")
+    if used + request >= limit:
+        raise ValueError(f"over the allowance by {used + request - limit}")
+    return used + request''',
+    visible_test=_test_module(
+        "admit_limit",
+        "Published contract for letting a request through.",
+        """
+import pytest
+
+
+def test_a_request_with_room_to_spare_is_let_through() -> None:
+    assert admit(2, 3, 10) == 5
+
+
+def test_the_first_request_is_let_through() -> None:
+    assert admit(0, 1, 10) == 1
+
+
+def test_a_request_past_the_allowance_is_refused() -> None:
+    with pytest.raises(ValueError):
+        admit(9, 5, 10)
+""",
+        imports="from admit_limit import admit\n",
+    ),
+    hidden_test=_test_module(
+        "admit_limit",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_request_with_room_to_spare_is_let_through() -> None:
+    assert admit(2, 3, 10) == 5
+
+
+def test_a_request_filling_the_allowance_exactly_is_let_through() -> None:
+    assert admit(7, 3, 10) == 10
+
+
+def test_a_request_below_zero_is_refused() -> None:
+    with pytest.raises(ValueError):
+        admit(5, -2, 10)
+""",
+        imports="from admit_limit import admit\n",
+    ),
+)
+
 #: The authored calibration groups, in template-id order. The target is 100; the achieved count
 #: is what `scripts/corpus_d5.py` reports and what S21D5-035 divides by. A shortfall is recorded
 #: rather than papered over — Section 6.2 of the backlog forbids lowering a floor to meet it.
@@ -4801,4 +6195,16 @@ D5_CALIBRATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G040,
     _G041,
     _G042,
+    _G043,
+    _G044,
+    _G045,
+    _G046,
+    _G047,
+    _G048,
+    _G049,
+    _G050,
+    _G051,
+    _G052,
+    _G053,
+    _G054,
 )

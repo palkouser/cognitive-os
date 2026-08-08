@@ -2,7 +2,7 @@
 
 - Branch: `feature/sprint-21d5-pairwise-selective-ranking`
 - Backlog: [Sprint 21D5 Technical Backlog](sprint-21d5-technical-backlog.md)
-- **Status: W0 complete. W1 in progress — 42 of 100 calibration groups authored and validated.**
+- **Status: W0 complete. W1 in progress — 54 of 100 calibration groups authored and validated.**
   W2 through W8 not started.
 - Pre-registration: revision 5, SHA-256
   `ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a`
@@ -449,9 +449,47 @@ Measured over the whole authored corpus: 42 groups, 210 bodies, **420 suite runs
 defects**, **0 cross-group collisions** against 1,440 released and D5 bodies, families balanced
 **7/7/7/7/7/7**.
 
+### Batch five, and the loop at steady state
+
+Twelve more, taking the corpus to fifty-four at **9/9/9/9/9/9**, clean on the first run again —
+0 contract defects, 0 collisions. Thirty-nine ideas were probed; the occupied ones this time were
+median, MAC addresses, state machines, ratios-as-percentages, prefixes, feature flags, severity
+ladders, guarded division and the `top`/`written`/`port` families, all dropped at the probe.
+
+| Group | Family | The two independent edge cases |
+|---|---|---|
+| `d5-boundary-unzip-pairs` | boundary_collections | an empty list gives two empty columns; a row that is not a pair is refused |
+| `d5-boundary-sparse-expand` | boundary_collections | a position outside the run is refused; each slot holds its own copy of the default |
+| `d5-numeric-simplify-ratio` | numeric_logic | the sign moves above the line; a denominator of zero is refused |
+| `d5-numeric-month-length` | numeric_logic | a century year needs four hundred; a month outside one to twelve is refused |
+| `d5-parsing-morse-decode` | parsing_validation | three spaces are a word gap; an unknown symbol is refused |
+| `d5-parsing-locale-tag` | parsing_validation | a four-letter script takes title case; an empty subtag is refused |
+| `d5-transform-prune-empty` | data_transformation | a branch left with nothing is dropped in its turn; a falsy-but-not-empty value is kept |
+| `d5-transform-top-per-group` | data_transformation | groups keep first-seen order; a record with no score is left out |
+| `d5-state-idempotent-transfer` | state_idempotency | a repeated instruction changes nothing; an uncovered instruction is refused |
+| `d5-state-reentrancy-guard` | state_idempotency | a name already running is refused; the mark comes off even when the body raises |
+| `d5-error-partial-flush` | error_handling | the count leaves out the failed batch; no batch is attempted after a failure |
+| `d5-error-admit-limit` | error_handling | a request filling the allowance exactly is let through; a negative request is refused |
+
+Two things are worth recording about the isolation of the edge cases, because both were designed
+around rather than discovered:
+
+- `d5-transform-top-per-group` returns a mapping, and **mapping equality ignores order**, so the
+  first-seen-order edge case cannot be tested with `==` at all. Its hidden test asserts
+  `list(result) == ["b", "a"]` instead. An edge case that the natural assertion cannot see is
+  indistinguishable from an edge case that does not exist.
+- `d5-error-partial-flush`'s two edge cases would entangle if the same scenario tested both. The
+  count test uses exactly two batches, so stopping early cannot change the answer; the
+  stopping test asserts only the write log, so the count cannot change the answer. Each test is
+  blind to the other defect by construction.
+
+Measured over the whole authored corpus: 54 groups, 270 bodies, **540 suite runs, 0 contract
+defects**, **0 cross-group collisions** against 1,500 released and D5 bodies, families balanced
+**9/9/9/9/9/9**.
+
 ### What W1 still owes
 
-- 58 further calibration groups, family-balanced, each validated by the loop above;
+- 46 further calibration groups, family-balanced, each validated by the loop above;
 - 60 retrieval groups yielding at least 50 qualifying queries (S21D5-021);
 - the separation, rights and lineage evidence record (S21D5-022);
 - sealed campaign and holdout manifests (S21D5-023);
