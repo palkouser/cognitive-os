@@ -1,0 +1,190 @@
+{
+ "branch": {
+  "commits_ahead_at_baseline": 2,
+  "descends_from_current_origin_main": true,
+  "local_head": "f07f506edeead6af8dc7dc7e0f44d49396276e0a",
+  "merge_base_with_origin_main": "fe8a9cf025e6549e9fa474f6404bf791eb9acea5",
+  "name": "feature/sprint-21d5-pairwise-selective-ranking",
+  "origin_main": "fe8a9cf025e6549e9fa474f6404bf791eb9acea5"
+ },
+ "ci_runs": [
+  {
+   "branch": "feature/sprint-21d4-selective-correction-ranking",
+   "conclusion": "success",
+   "event": "pull_request",
+   "head_sha": "7620f710a8daa5672c28c93a82490efd799b58e9",
+   "jobs": 30,
+   "jobs_successful": 30,
+   "label": "d4 implementation pr head",
+   "run_id": 31244781354
+  },
+  {
+   "branch": "main",
+   "conclusion": "success",
+   "event": "push",
+   "head_sha": "18564a55e65f7b331bc73fc334ee1ab085cf0836",
+   "jobs": 30,
+   "jobs_successful": 30,
+   "label": "d4 implementation post-merge main",
+   "run_id": 31245482819
+  }
+ ],
+ "commands": [
+  "gh api repos/palkouser/cognitive-os/actions/runs/31244781354",
+  "gh api repos/palkouser/cognitive-os/actions/runs/31244781354/jobs?per_page=100",
+  "gh api repos/palkouser/cognitive-os/actions/runs/31245482819",
+  "gh api repos/palkouser/cognitive-os/actions/runs/31245482819/jobs?per_page=100",
+  "gh api repos/palkouser/cognitive-os/branches/main/protection",
+  "git cat-file -t 0f1e4c897c72cedc530bb599c4d7af8e647b2774",
+  "git ls-remote origin refs/heads/main",
+  "git ls-remote origin refs/tags/sprint-21-learning-baseline",
+  "git ls-remote origin refs/tags/sprint-21d4-evidence-baseline*",
+  "git merge-base HEAD origin/main",
+  "git rev-list --count origin/main..HEAD",
+  "git rev-parse HEAD",
+  "git rev-parse sprint-21d4-evidence-baseline",
+  "git rev-parse sprint-21d4-evidence-baseline^{}"
+ ],
+ "d4_release": {
+  "local_and_remote_agree": true,
+  "local_peeled_commit": "18564a55e65f7b331bc73fc334ee1ab085cf0836",
+  "local_tag_object": "0f1e4c897c72cedc530bb599c4d7af8e647b2774",
+  "remote": "https://github.com/palkouser/cognitive-os",
+  "remote_peeled_commit": "18564a55e65f7b331bc73fc334ee1ab085cf0836",
+  "remote_tag_object": "0f1e4c897c72cedc530bb599c4d7af8e647b2774",
+  "tag": "sprint-21d4-evidence-baseline",
+  "tag_type": "tag"
+ },
+ "d5_authorities": {
+  "artifact_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d5",
+  "artifact_root_exists": false,
+  "artifact_root_files": 0,
+  "artifact_root_fingerprint_sha256": null,
+  "backup_root": "/home/palkouser/projekt/cognitive-os-data/backups-s21d5",
+  "databases": [
+   "cognitive_os_s21d5_test",
+   "cognitive_os_s21d5_integration_test",
+   "cognitive_os_s21d5_restore_test"
+  ],
+  "evidence_database_prefix": "cognitive_os_s21d5",
+  "outside_every_predecessor_pair": true
+ },
+ "gate_state_at_baseline": {
+  "gate_d1_open": [
+   6,
+   7,
+   15
+  ],
+  "gate_l2": "does not pass",
+  "learned_components_on_experience_correction_ranking": 0,
+  "source": "sprint-21d4-gate-l2.json and sprint-21d4-release.json",
+  "sprint_22a": "blocked"
+ },
+ "groundwork_already_merged": {
+  "diagnostic": "sprint-21d5-hypothesis-class-diagnostic.json",
+  "hypothesis_class": "pairwise-contrastive-linear-v1",
+  "note": "the class and the completed surface are implemented; neither has decided anything, and no D5 measurement has been taken",
+  "pull_request": 225
+ },
+ "integrity_content_hash": "37c2a646cf15e3ae7cdc5db1a0e267b359ff334182735fa9fa6328ec82c8ab07",
+ "items": [
+  "S21D5-000",
+  "S21D5-002"
+ ],
+ "main_protection": {
+  "allow_deletions": false,
+  "allow_force_pushes": false,
+  "enforce_admins": true,
+  "queried_json_sha256": "80197b683484a7ede84c4a4554851a4ec43c10a5fe209ceae6410882976d2b88",
+  "required_context_count": 27,
+  "required_contexts": [
+   "benchmark-regression",
+   "build",
+   "coding-agent",
+   "cognitive-controller",
+   "context-builder-core",
+   "controlled-changes-core",
+   "corpus-factory-core",
+   "cross-domain-pilot-core",
+   "experience-compiler-core",
+   "harness-proposals-core",
+   "inspect-adapter",
+   "memory-plane-core",
+   "migration",
+   "model-routing-core",
+   "optional-boundary",
+   "postgres-integration",
+   "provider-offline",
+   "quality",
+   "sandbox",
+   "security",
+   "semantic-memory-core",
+   "skill-engine-core",
+   "strategy-engine-core",
+   "test",
+   "tool-plane",
+   "verifier-domains",
+   "weakness-mining-core"
+  ],
+  "required_conversation_resolution": true,
+  "required_pull_request_reviews": null,
+  "strict": true
+ },
+ "migration": {
+  "planned_d5_migration": null,
+  "repository_head": "0015"
+ },
+ "phase": "before",
+ "predecessor_artifact_stores": {
+  "development": {
+   "expected_from": "sprint-21d4-authority-isolation.json",
+   "files": 5,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts",
+   "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf"
+  },
+  "sprint_21c3": {
+   "expected_from": "sprint-21d4-authority-isolation.json",
+   "files": 8503,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21c3",
+   "path_and_size_fingerprint_sha256": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593"
+  },
+  "sprint_21d1": {
+   "expected_from": "sprint-21d4-authority-isolation.json",
+   "files": 83,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d1",
+   "path_and_size_fingerprint_sha256": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f"
+  },
+  "sprint_21d2": {
+   "expected_from": "sprint-21d4-authority-isolation.json",
+   "files": 1511,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d2",
+   "path_and_size_fingerprint_sha256": "39417f1a03f6824cfe6f9c4b7e6bd5a3cd34da8329fb95cff0a35595899438aa"
+  },
+  "sprint_21d3": {
+   "expected_from": "sprint-21d4-authority-isolation.json",
+   "files": 2096,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d3",
+   "path_and_size_fingerprint_sha256": "fcb0a044810b375f2933d4a3cf22c7448bfada9c90e104566a92125b08dcd0d3"
+  },
+  "sprint_21d4": {
+   "expected_from": "first observation at the D5 baseline; no released expectation exists",
+   "files": 4006,
+   "matches_expected": null,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d4",
+   "path_and_size_fingerprint_sha256": "3d09732ef59c8e9a36ceabc9619d6a139a7f48437ab0d67e07931720c75f7b47"
+  }
+ },
+ "predecessor_stores_match_expectation": true,
+ "read_policy": "fresh local and remote reads; no remote mutation",
+ "recorded_at": "2026-08-08T13:15:19Z",
+ "schema_version": 1,
+ "sprint": "21D5",
+ "success_tag_absent": true,
+ "success_tag_name": "sprint-21-learning-baseline",
+ "wave": "W0"
+}

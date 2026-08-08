@@ -1,0 +1,49 @@
+{
+ "amendments": [],
+ "chronology": {
+  "artifacts_fitted": 0,
+  "calibration_decisions_read": 0,
+  "final_or_canary_outcomes_inspected": 0,
+  "retrieval_holdout_queries_read": 0,
+  "thresholds_derived": 0
+ },
+ "contract_hashes": {
+  "artifact_v3": "e6f1ca9588dbea6037e863a7daa12724ca139ebecbed377309c86cc1cb898ea2",
+  "corpus_submanifests": "03c30e4a785ad4c6486817fff2d1a86c6ef7a01ef4f01049ccad0c978b1f95ba",
+  "decision_tree": "af10009fc714627dd1bbb222150b5b294a654ab0790e53b715d0dc0ff41b9101",
+  "fitting_composition": "c922d1c95e7641746c402fa9ae3aac477ec98c54aa566e2088e68d1def70b903",
+  "hypothesis_class": "3bea6e2201c4ec9bb2d52e93acad9a11a6c72a25a588875fbee3f795b33af45b",
+  "power_and_yield": "c3af5bad0fa2b759d3ebf7976997940c18caa0066f41e63044862671cc82eb45",
+  "retrieval": "7d94adc6641135e14957b166fc198131e5d9b762229f03b60deb6a073e15b3d5",
+  "selection_rule": "2233389d31e90d2fa8f6f1db8f77f4d87963126b9b396e4ab7661326ea29f611"
+ },
+ "contracts_sha256": "bee8bafca8c3a33043d9001930a47e37291a4c2a7519f0fec9e653a92487f725",
+ "evidence_children_sha256": {
+  "sprint-21d5-baseline.json": "adf504379c7d8b20e332c628292e44562e6f7abdeb706173b978440f4a7f93ff",
+  "sprint-21d5-hypothesis-class-diagnostic.json": "0559a99b4c52db3f976c50c2f34ea6c5a8dd945a0de032ac2cf2f8e6debf4387",
+  "sprint-21d5-provisioning.json": "3a17dd16ca6035cadc226343fb80e946511aa9f91b18fb1343b0a71b00679106",
+  "sprint-21d5-reuse-audit.json": "d7ef009e7eb18269481d5c52b847eba306df3550d58ef1c4a4535bf70732c493"
+ },
+ "integrity_content_hash": "a23780406cbcf149b87e2f73ac70a03385861245ab114f05f8fbd9abe37b4c09",
+ "items": [
+  "S21D5-016"
+ ],
+ "measured_values": 0,
+ "recorded_at": "2026-08-08T13:36:19Z",
+ "revision": 5,
+ "schema_version": 1,
+ "sprint": "21D5",
+ "supersedes": {
+  "for": "Sprint 21D5 only; revision 4 remains the authority for every D4 record",
+  "revision": 4,
+  "sha256": "526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9"
+ },
+ "wave": "W0",
+ "what_this_publication_forbids": [
+  "re-choosing the hypothesis class, its regulariser or its confidence definition",
+  "moving any Gate L2 or D1 threshold, or the bootstrap seed",
+  "reusing any spent D4 calibration or retrieval evidence for a decision",
+  "authoring final, batch-B or canary bodies unless a whole role fails its audit",
+  "reading the D5 calibration set before it is authored, separated and sealed"
+ ]
+}

@@ -61,13 +61,40 @@ _CANONICAL_TERM = re.compile(r"(?:id|attr|arg|asname|module|name)='([A-Za-z_][A-
 #: token in every task by construction, so it is noise in a retrieval document, not a term.
 _PLACEHOLDER_PREFIX = "__cogos_"
 
+#: AST node constructors in the canonical dump: the word immediately before an opening
+#: parenthesis. Field names never match — `annotate_fields=True` prints them before `=`.
+_STRUCTURE_NODE = re.compile(r"([A-Za-z_][A-Za-z0-9_]*)\(")
+
+#: Bookkeeping nodes present in essentially every canonical dump. As fallback terms they
+#: would say "this is Python", which every document in the pool already is. Operators,
+#: control flow, calls and attributes stay in, because those are what distinguish one
+#: arithmetic repair from another.
+_STRUCTURE_BOOKKEEPING = frozenset(
+    {
+        "Module",
+        "Expr",
+        "Load",
+        "Store",
+        "Del",
+        "Name",
+        "Constant",
+        "arguments",
+        "arg",
+        "alias",
+        "keyword",
+    }
+)
+
 
 class SearchSurfaceLeak(ValueError):
     """A projected term names the relevance label the graph will be scored against."""
 
 
 def search_terms_from_source(
-    source: str, *, judgement_labels: Iterable[str] = ()
+    source: str,
+    *,
+    judgement_labels: Iterable[str] = (),
+    structure_fallback: bool = False,
 ) -> tuple[str, ...]:
     """The canonical terms of one source, bounded, guarded and deterministic. §S21D4-040.
 
@@ -75,6 +102,14 @@ def search_terms_from_source(
     than off the raw text: local bindings are already placeholders there while imports,
     attributes, builtins and magic names survive. That is what keeps this from becoming
     lookup — two tasks in a family share preserved names and structure, not spelling.
+
+    `structure_fallback` is the S21D4 residual made operative: ten of D4's sixty holdout
+    candidates were repairs in pure arithmetic over their own parameters, the normaliser
+    left nothing of them, and an empty document cannot be found by any arm. With the flag
+    set, a source whose identifier terms come up empty falls back to its lowercased AST
+    node-type names from the same canonical dump — operators, control flow, calls — minus
+    the bookkeeping nodes every dump carries. Deterministic, still literal-free, and off by
+    default so every released call site keeps producing its exact recorded bytes.
 
     Fails closed rather than filtering when a term spells a relevance label. A benchmark that
     can read its own judgement out of the document is not a benchmark, and dropping the
@@ -84,6 +119,14 @@ def search_terms_from_source(
     terms = sorted(
         {term for term in _CANONICAL_TERM.findall(dump) if not term.startswith(_PLACEHOLDER_PREFIX)}
     )
+    if not terms and structure_fallback:
+        terms = sorted(
+            {
+                match.lower()
+                for match in _STRUCTURE_NODE.findall(dump)
+                if match not in _STRUCTURE_BOOKKEEPING
+            }
+        )
     bounded: list[str] = []
     for term in terms:
         if len(" ".join([*bounded, term])) > SEARCH_TERMS_CHARACTER_BOUND:
@@ -253,6 +296,7 @@ def project_correction(
     failed_source: str | None = None,
     repaired_source: str | None = None,
     judgement_labels: Iterable[str] = (),
+    structure_fallback: bool = False,
 ) -> tuple[ActionDecisionGraph, ActionDecisionGraph]:
     """Split one historical C3 correction trajectory into a failed and a successful graph.
 
@@ -299,7 +343,11 @@ def project_correction(
             limits=limits,
             source_manifest_hash=source_manifest_hash,
             search_terms=(
-                search_terms_from_source(failed_source, judgement_labels=labels)
+                search_terms_from_source(
+                    failed_source,
+                    judgement_labels=labels,
+                    structure_fallback=structure_fallback,
+                )
                 if failed_source is not None
                 else ()
             ),
@@ -314,7 +362,11 @@ def project_correction(
             limits=limits,
             source_manifest_hash=source_manifest_hash,
             search_terms=(
-                search_terms_from_source(repaired_source, judgement_labels=labels)
+                search_terms_from_source(
+                    repaired_source,
+                    judgement_labels=labels,
+                    structure_fallback=structure_fallback,
+                )
                 if repaired_source is not None
                 else ()
             ),
