@@ -10083,6 +10083,1038 @@ def test_an_argument_that_was_not_supplied_is_refused() -> None:
     ),
 )
 
+# ------------------------------------------------------------------ boundary and collections
+
+_G091 = D2TaskSpec(
+    template_id="d5_boundary.zigzag_rows",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d5-boundary-zigzag-rows",
+    module="zigzag_rows",
+    module_doc="Dealing items into rows that turn back on themselves at each end.",
+    issue=(
+        "zigzag() is documented to deal items into rows that turn back at each end, so the "
+        "outer rows are reached half as often as the inner ones. Callers report that the deal "
+        "wraps straight round from the last row to the first instead of turning back, and that "
+        "asking for no rows at all fails with a division error rather than being refused."
+    ),
+    expected=(
+        "zigzag(items, rows) deals the items into `rows` rows, running down to the last row "
+        "and then back up to the first and so on, and raises ValueError for fewer than one row."
+    ),
+    baseline_reason=(
+        "it places each item by its position taken round the row count, which wraps from the "
+        "bottom back to the top instead of turning back, and dividing by no rows at all fails "
+        "on its own terms"
+    ),
+    edge_cases=(
+        "the deal turns back at the last row rather than wrapping round",
+        "fewer than one row is refused",
+    ),
+    baseline='''def zigzag(items, rows):
+    """Deal `items` into `rows` rows, turning back at each end."""
+    return [
+        [item for place, item in enumerate(items) if place % rows == row]
+        for row in range(rows)
+    ]''',
+    variant_one='''def zigzag(items, rows):
+    """Deal `items` into `rows` rows, turning back at each end."""
+    if rows < 1:
+        raise ValueError(f"cannot deal into {rows} rows")
+    lines = [[] for _ in range(rows)]
+    row, step = 0, 1
+    for item in items:
+        lines[row].append(item)
+        if rows > 1:
+            if row + step < 0 or row + step >= rows:
+                step = -step
+            row += step
+    return lines''',
+    variant_two='''def zigzag(items, rows):
+    """Deal `items` into `rows` rows, turning back at each end."""
+    if rows < 1:
+        raise ValueError(f"cannot deal into {rows} rows")
+    lines = [[] for _ in range(rows)]
+    cycle = 1 if rows == 1 else 2 * rows - 2
+    for place, item in enumerate(items):
+        within = place % cycle
+        lines[within if within < rows else cycle - within].append(item)
+    return lines''',
+    variant_three='''def zigzag(items, rows):
+    """Deal `items` into `rows` rows, turning back at each end."""
+    lines = [[] for _ in range(rows)]
+    cycle = 1 if rows == 1 else 2 * rows - 2
+    for place, item in enumerate(items):
+        within = place % cycle
+        lines[within if within < rows else cycle - within].append(item)
+    return lines''',
+    variant_four='''def zigzag(items, rows):
+    """Deal `items` into `rows` rows, turning back at each end."""
+    if rows < 1:
+        raise ValueError(f"cannot deal into {rows} rows")
+    return [
+        [item for place, item in enumerate(items) if place % rows == row]
+        for row in range(rows)
+    ]''',
+    visible_test=_test_module(
+        "zigzag_rows",
+        "Published contract for dealing items into turning rows.",
+        """
+def test_two_rows_take_alternate_items() -> None:
+    assert zigzag(["a", "b", "c", "d"], 2) == [["a", "c"], ["b", "d"]]
+
+
+def test_one_row_takes_everything() -> None:
+    assert zigzag(["a", "b"], 1) == [["a", "b"]]
+""",
+        imports="from zigzag_rows import zigzag\n",
+    ),
+    hidden_test=_test_module(
+        "zigzag_rows",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_two_rows_take_alternate_items() -> None:
+    assert zigzag(["a", "b", "c", "d"], 2) == [["a", "c"], ["b", "d"]]
+
+
+def test_the_deal_turns_back_at_the_last_row() -> None:
+    assert zigzag(["a", "b", "c", "d", "e"], 3) == [["a", "e"], ["b", "d"], ["c"]]
+
+
+def test_fewer_than_one_row_is_refused() -> None:
+    with pytest.raises(ValueError):
+        zigzag(["a"], 0)
+""",
+        imports="from zigzag_rows import zigzag\n",
+    ),
+)
+
+
+_G092 = D2TaskSpec(
+    template_id="d5_boundary.first_duplicate",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d5-boundary-first-duplicate",
+    module="first_duplicate",
+    module_doc="Finding the point at which a stream first repeats itself.",
+    issue=(
+        "first_duplicate() is documented to report the entry whose repeat comes earliest. "
+        "Callers report that it names the earliest entry that repeats anywhere rather than the "
+        "one whose repeat arrives first, and that a stream with no repeat at all raises "
+        "instead of reporting nothing."
+    ),
+    expected=(
+        "first_duplicate(items) returns the entry whose second appearance is earliest in the "
+        "stream, which is not always the earliest entry that repeats, and returns None when "
+        "nothing repeats."
+    ),
+    baseline_reason=(
+        "it walks the stream and names the first entry that appears more than once anywhere, "
+        "which reads the earliest repeating entry rather than the earliest repeat, and it "
+        "raises when nothing repeats"
+    ),
+    edge_cases=(
+        "the entry named is the one whose second appearance is earliest",
+        "a stream with no repeat reports nothing",
+    ),
+    baseline='''def first_duplicate(items):
+    """Return the entry whose second appearance is earliest in `items`."""
+    entries = list(items)
+    for item in entries:
+        if entries.count(item) > 1:
+            return item
+    raise ValueError("nothing repeats")''',
+    variant_one='''def first_duplicate(items):
+    """Return the entry whose second appearance is earliest in `items`."""
+    seen = []
+    for item in items:
+        if item in seen:
+            return item
+        seen.append(item)
+    return None''',
+    variant_two='''def first_duplicate(items):
+    """Return the entry whose second appearance is earliest in `items`."""
+    entries = list(items)
+    seconds = {}
+    for place, item in enumerate(entries):
+        if item in seconds:
+            continue
+        if entries[:place].count(item):
+            seconds[item] = place
+    if not seconds:
+        return None
+    return min(seconds, key=lambda item: seconds[item])''',
+    variant_three='''def first_duplicate(items):
+    """Return the entry whose second appearance is earliest in `items`."""
+    seen = []
+    for item in items:
+        if item in seen:
+            return item
+        seen.append(item)
+    raise ValueError("nothing repeats")''',
+    variant_four='''def first_duplicate(items):
+    """Return the entry whose second appearance is earliest in `items`."""
+    entries = list(items)
+    for item in entries:
+        if entries.count(item) > 1:
+            return item
+    return None''',
+    visible_test=_test_module(
+        "first_duplicate",
+        "Published contract for finding where a stream repeats.",
+        """
+def test_an_entry_repeated_at_the_end_is_named() -> None:
+    assert first_duplicate(["a", "b", "a"]) == "a"
+
+
+def test_an_adjacent_repeat_is_named() -> None:
+    assert first_duplicate(["a", "b", "b"]) == "b"
+""",
+        imports="from first_duplicate import first_duplicate\n",
+    ),
+    hidden_test=_test_module(
+        "first_duplicate",
+        "The part of the contract the published tests do not state.",
+        """
+def test_an_entry_repeated_at_the_end_is_named() -> None:
+    assert first_duplicate(["a", "b", "a"]) == "a"
+
+
+def test_the_earliest_repeat_wins_over_the_earliest_repeater() -> None:
+    assert first_duplicate(["a", "b", "b", "a"]) == "b"
+
+
+def test_a_stream_with_no_repeat_reports_nothing() -> None:
+    assert first_duplicate(["a", "b"]) is None
+""",
+        imports="from first_duplicate import first_duplicate\n",
+    ),
+)
+
+# ---------------------------------------------------------------------------- numeric logic
+
+_G093 = D2TaskSpec(
+    template_id="d5_numeric.scientific_mantissa",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d5-numeric-scientific-mantissa",
+    module="scientific_mantissa",
+    module_doc="Splitting a measurement into the digits and the power of ten they sit on.",
+    issue=(
+        "to_mantissa() is documented to split a measurement into its digits and the power of "
+        "ten they sit on. Instrument code reports that a reading of exactly zero fails with a "
+        "maths domain error, and that a reading below zero fails the same way instead of "
+        "keeping its sign on the digits."
+    ),
+    expected=(
+        "to_mantissa(value) returns (mantissa, exponent) where the mantissa is at least one "
+        "and below ten in size and the exponent is the power of ten it sits on. A reading of "
+        "zero is (0.0, 0), and a reading below zero keeps its sign on the mantissa."
+    ),
+    baseline_reason=(
+        "it takes the base-ten logarithm of the reading itself, which has no answer at zero "
+        "and none below it either"
+    ),
+    edge_cases=(
+        "a reading of exactly zero splits to (0.0, 0)",
+        "a reading below zero keeps its sign on the mantissa",
+    ),
+    imports="import math\n",
+    baseline='''def to_mantissa(value):
+    """Return (mantissa, exponent) for `value`."""
+    exponent = int(math.floor(math.log10(value)))
+    return value / 10**exponent, exponent''',
+    variant_one='''def to_mantissa(value):
+    """Return (mantissa, exponent) for `value`."""
+    if value == 0:
+        return 0.0, 0
+    exponent = int(math.floor(math.log10(abs(value))))
+    return value / 10**exponent, exponent''',
+    variant_two='''def to_mantissa(value):
+    """Return (mantissa, exponent) for `value`."""
+    if value == 0:
+        return 0.0, 0
+    sign = -1.0 if value < 0 else 1.0
+    size = abs(value)
+    exponent = 0
+    while size >= 10:
+        size /= 10
+        exponent += 1
+    while size < 1:
+        size *= 10
+        exponent -= 1
+    return sign * size, exponent''',
+    variant_three='''def to_mantissa(value):
+    """Return (mantissa, exponent) for `value`."""
+    if value == 0:
+        return 0.0, 0
+    exponent = int(math.floor(math.log10(value)))
+    return value / 10**exponent, exponent''',
+    variant_four='''def to_mantissa(value):
+    """Return (mantissa, exponent) for `value`."""
+    exponent = int(math.floor(math.log10(abs(value))))
+    return value / 10**exponent, exponent''',
+    visible_test=_test_module(
+        "scientific_mantissa",
+        "Published contract for splitting a measurement into digits and a power of ten.",
+        """
+import pytest
+
+
+def test_a_reading_above_one_splits_on_a_positive_power() -> None:
+    assert to_mantissa(1234.0) == pytest.approx((1.234, 3))
+
+
+def test_a_reading_below_one_splits_on_a_negative_power() -> None:
+    assert to_mantissa(0.05) == pytest.approx((5.0, -2))
+""",
+        imports="from scientific_mantissa import to_mantissa\n",
+    ),
+    hidden_test=_test_module(
+        "scientific_mantissa",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_reading_above_one_splits_on_a_positive_power() -> None:
+    assert to_mantissa(1234.0) == pytest.approx((1.234, 3))
+
+
+def test_a_reading_of_exactly_zero_splits_to_zero() -> None:
+    assert to_mantissa(0.0) == (0.0, 0)
+
+
+def test_a_reading_below_zero_keeps_its_sign() -> None:
+    assert to_mantissa(-1234.0) == pytest.approx((-1.234, 3))
+""",
+        imports="from scientific_mantissa import to_mantissa\n",
+    ),
+)
+
+
+_G094 = D2TaskSpec(
+    template_id="d5_numeric.temperature_convert",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d5-numeric-temperature-convert",
+    module="temperature_convert",
+    module_doc="Converting a temperature between the scales a mixed fleet of sensors reports in.",
+    issue=(
+        "convert() is documented to convert a temperature between scales. Operators report "
+        "that converting a reading to the scale it is already in comes back very slightly "
+        "changed, which makes a stored reading drift every time it passes through, and that a "
+        "scale nobody has heard of fails with a KeyError rather than being refused."
+    ),
+    expected=(
+        "convert(value, source, target) returns the temperature in the target scale, where the "
+        "scales are 'C', 'F' and 'K'. Converting to the scale a reading is already in returns "
+        "it exactly unchanged, and a scale outside the three is refused with ValueError."
+    ),
+    baseline_reason=(
+        "it always converts through Celsius, so a reading already in the target scale makes a "
+        "round trip that does not land exactly where it started, and it looks the scales up "
+        "straight in its tables"
+    ),
+    edge_cases=(
+        "converting to the scale a reading is already in changes nothing at all",
+        "a scale outside the three is refused",
+    ),
+    baseline='''def convert(value, source, target):
+    """Return `value` converted from the `source` scale to the `target` scale."""
+    to_celsius = {"C": lambda v: v, "F": lambda v: (v - 32) * 5 / 9, "K": lambda v: v - 273.15}
+    from_celsius = {"C": lambda v: v, "F": lambda v: v * 9 / 5 + 32, "K": lambda v: v + 273.15}
+    return from_celsius[target](to_celsius[source](value))''',
+    variant_one='''def convert(value, source, target):
+    """Return `value` converted from the `source` scale to the `target` scale."""
+    to_celsius = {"C": lambda v: v, "F": lambda v: (v - 32) * 5 / 9, "K": lambda v: v - 273.15}
+    from_celsius = {"C": lambda v: v, "F": lambda v: v * 9 / 5 + 32, "K": lambda v: v + 273.15}
+    for scale in (source, target):
+        if scale not in to_celsius:
+            raise ValueError(f"{scale!r} is not a scale this knows")
+    if source == target:
+        return value
+    return from_celsius[target](to_celsius[source](value))''',
+    variant_two='''def convert(value, source, target):
+    """Return `value` converted from the `source` scale to the `target` scale."""
+    known = ("C", "F", "K")
+    if source not in known or target not in known:
+        raise ValueError(f"{source!r} to {target!r} is not a conversion this knows")
+    if source == target:
+        return value
+    celsius = value
+    if source == "F":
+        celsius = (value - 32) * 5 / 9
+    elif source == "K":
+        celsius = value - 273.15
+    if target == "F":
+        return celsius * 9 / 5 + 32
+    if target == "K":
+        return celsius + 273.15
+    return celsius''',
+    variant_three='''def convert(value, source, target):
+    """Return `value` converted from the `source` scale to the `target` scale."""
+    to_celsius = {"C": lambda v: v, "F": lambda v: (v - 32) * 5 / 9, "K": lambda v: v - 273.15}
+    from_celsius = {"C": lambda v: v, "F": lambda v: v * 9 / 5 + 32, "K": lambda v: v + 273.15}
+    if source == target:
+        return value
+    return from_celsius[target](to_celsius[source](value))''',
+    variant_four='''def convert(value, source, target):
+    """Return `value` converted from the `source` scale to the `target` scale."""
+    to_celsius = {"C": lambda v: v, "F": lambda v: (v - 32) * 5 / 9, "K": lambda v: v - 273.15}
+    from_celsius = {"C": lambda v: v, "F": lambda v: v * 9 / 5 + 32, "K": lambda v: v + 273.15}
+    for scale in (source, target):
+        if scale not in to_celsius:
+            raise ValueError(f"{scale!r} is not a scale this knows")
+    return from_celsius[target](to_celsius[source](value))''',
+    visible_test=_test_module(
+        "temperature_convert",
+        "Published contract for converting between temperature scales.",
+        """
+import pytest
+
+
+def test_boiling_water_in_fahrenheit() -> None:
+    assert convert(100, "C", "F") == pytest.approx(212.0)
+
+
+def test_freezing_water_in_kelvin() -> None:
+    assert convert(0, "C", "K") == pytest.approx(273.15)
+
+
+def test_freezing_water_from_fahrenheit() -> None:
+    assert convert(32, "F", "C") == pytest.approx(0.0)
+""",
+        imports="from temperature_convert import convert\n",
+    ),
+    hidden_test=_test_module(
+        "temperature_convert",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_boiling_water_in_fahrenheit() -> None:
+    assert convert(100, "C", "F") == pytest.approx(212.0)
+
+
+def test_converting_to_the_same_scale_changes_nothing_at_all() -> None:
+    assert convert(25.3, "K", "K") == 25.3
+
+
+def test_a_scale_nobody_has_heard_of_is_refused() -> None:
+    with pytest.raises(ValueError):
+        convert(1, "C", "X")
+""",
+        imports="from temperature_convert import convert\n",
+    ),
+)
+
+# ----------------------------------------------------------------------- parsing and validation
+
+_G095 = D2TaskSpec(
+    template_id="d5_parsing.user_agent",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d5-parsing-user-agent",
+    module="user_agent",
+    module_doc="Reading the leading product and version out of a client's identification.",
+    issue=(
+        "first_product() is documented to read the leading product and version out of a "
+        "client's identification. Callers report that a client naming no version at all brings "
+        "the read down instead of coming back with no version, and that a string with a space "
+        "in front of it reads an empty product."
+    ),
+    expected=(
+        "first_product(text) returns (product, version) read from the leading token, where the "
+        "version is whatever follows the slash. A token carrying no slash has no version and "
+        "comes back with None in its place, and whitespace in front of the token is ignored."
+    ),
+    baseline_reason=(
+        "it splits the token on a slash into exactly two names, which a token with no slash "
+        "cannot fill, and it takes the leading token by cutting at the first space, which is "
+        "empty when the string begins with one"
+    ),
+    edge_cases=(
+        "a token carrying no slash comes back with no version",
+        "whitespace in front of the token is ignored",
+    ),
+    baseline='''def first_product(text):
+    """Return (product, version) from the leading token of `text`."""
+    token = text.split(" ")[0]
+    name, version = token.split("/")
+    return name, version''',
+    variant_one='''def first_product(text):
+    """Return (product, version) from the leading token of `text`."""
+    token = text.split()[0]
+    name, slash, version = token.partition("/")
+    return name, version if slash else None''',
+    variant_two='''def first_product(text):
+    """Return (product, version) from the leading token of `text`."""
+    token = text.strip().split(" ")[0]
+    if "/" not in token:
+        return token, None
+    name, _, version = token.partition("/")
+    return name, version''',
+    variant_three='''def first_product(text):
+    """Return (product, version) from the leading token of `text`."""
+    token = text.split(" ")[0]
+    name, slash, version = token.partition("/")
+    return name, version if slash else None''',
+    variant_four='''def first_product(text):
+    """Return (product, version) from the leading token of `text`."""
+    token = text.split()[0]
+    name, version = token.split("/")
+    return name, version''',
+    visible_test=_test_module(
+        "user_agent",
+        "Published contract for reading a client's leading product.",
+        """
+def test_a_product_with_a_version_and_a_comment() -> None:
+    assert first_product("Mozilla/5.0 (X11)") == ("Mozilla", "5.0")
+
+
+def test_a_product_on_its_own() -> None:
+    assert first_product("curl/8.1.2") == ("curl", "8.1.2")
+""",
+        imports="from user_agent import first_product\n",
+    ),
+    hidden_test=_test_module(
+        "user_agent",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_product_with_a_version_and_a_comment() -> None:
+    assert first_product("Mozilla/5.0 (X11)") == ("Mozilla", "5.0")
+
+
+def test_a_token_with_no_slash_has_no_version() -> None:
+    assert first_product("SomeBot") == ("SomeBot", None)
+
+
+def test_whitespace_in_front_of_the_token_is_ignored() -> None:
+    assert first_product("  curl/8.1.2") == ("curl", "8.1.2")
+""",
+        imports="from user_agent import first_product\n",
+    ),
+)
+
+
+_G096 = D2TaskSpec(
+    template_id="d5_parsing.algebraic_square",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d5-parsing-algebraic-square",
+    module="algebraic_square",
+    module_doc="Reading a named board square into the two indices the board is stored by.",
+    issue=(
+        "to_indices() is documented to read a named square into file and rank indices. Callers "
+        "report that a square written with a capital file letter comes back with a nonsense "
+        "file index, and that a square naming a file or rank that is not on the board is read "
+        "as though it were."
+    ),
+    expected=(
+        "to_indices(square) returns (file, rank) counting from zero, so 'a1' is (0, 0) and "
+        "'h8' is (7, 7). The file letter is read whatever its case, and a square outside files "
+        "a to h or ranks one to eight is refused with ValueError."
+    ),
+    baseline_reason=(
+        "it takes the file letter's distance from a lowercase 'a', which is far off for a "
+        "capital, and it converts both halves without checking either lands on the board"
+    ),
+    edge_cases=(
+        "the file letter is read whatever its case",
+        "a square that is not on the board is refused",
+    ),
+    baseline='''def to_indices(square):
+    """Return (file, rank) for the named `square`."""
+    return ord(square[0]) - ord("a"), int(square[1]) - 1''',
+    variant_one='''def to_indices(square):
+    """Return (file, rank) for the named `square`."""
+    if len(square) != 2:
+        raise ValueError(f"{square!r} does not name a square")
+    file_index = ord(square[0].lower()) - ord("a")
+    if not square[1].isdigit():
+        raise ValueError(f"{square!r} does not name a square")
+    rank_index = int(square[1]) - 1
+    if not 0 <= file_index <= 7 or not 0 <= rank_index <= 7:
+        raise ValueError(f"{square!r} is not on the board")
+    return file_index, rank_index''',
+    variant_two='''def to_indices(square):
+    """Return (file, rank) for the named `square`."""
+    files = "abcdefgh"
+    ranks = "12345678"
+    if len(square) != 2 or square[0].lower() not in files or square[1] not in ranks:
+        raise ValueError(f"{square!r} is not on the board")
+    return files.index(square[0].lower()), ranks.index(square[1])''',
+    variant_three='''def to_indices(square):
+    """Return (file, rank) for the named `square`."""
+    return ord(square[0].lower()) - ord("a"), int(square[1]) - 1''',
+    variant_four='''def to_indices(square):
+    """Return (file, rank) for the named `square`."""
+    files = "abcdefgh"
+    ranks = "12345678"
+    if len(square) != 2 or square[0] not in files or square[1] not in ranks:
+        raise ValueError(f"{square!r} is not on the board")
+    return files.index(square[0]), ranks.index(square[1])''',
+    visible_test=_test_module(
+        "algebraic_square",
+        "Published contract for reading a named board square.",
+        """
+def test_the_bottom_left_square_is_the_origin() -> None:
+    assert to_indices("a1") == (0, 0)
+
+
+def test_a_square_in_the_middle() -> None:
+    assert to_indices("e4") == (4, 3)
+
+
+def test_the_top_right_square() -> None:
+    assert to_indices("h8") == (7, 7)
+""",
+        imports="from algebraic_square import to_indices\n",
+    ),
+    hidden_test=_test_module(
+        "algebraic_square",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_the_bottom_left_square_is_the_origin() -> None:
+    assert to_indices("a1") == (0, 0)
+
+
+def test_a_capital_file_letter_reads_the_same() -> None:
+    assert to_indices("E4") == (4, 3)
+
+
+def test_a_square_that_is_not_on_the_board_is_refused() -> None:
+    with pytest.raises(ValueError):
+        to_indices("z9")
+""",
+        imports="from algebraic_square import to_indices\n",
+    ),
+)
+
+# ------------------------------------------------------------------------- data transformation
+
+_G097 = D2TaskSpec(
+    template_id="d5_transform.summarise_columns",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d5-transform-summarise-columns",
+    module="summarise_columns",
+    module_doc="Reporting the smallest, largest and average reading of each measured column.",
+    issue=(
+        "summarise() is documented to report the smallest, largest and average of each column. "
+        "Analysts report that a column no record carries any reading for brings the whole "
+        "report down, and that a column holding True and False is averaged as though those "
+        "were readings of one and zero."
+    ),
+    expected=(
+        "summarise(records, columns) returns a mapping from column to (smallest, largest, "
+        "average) over the numeric readings that column carries. A boolean is not a reading, "
+        "and a column carrying no readings at all is left out of the report rather than "
+        "reported as anything."
+    ),
+    baseline_reason=(
+        "it takes every value the column carries as a reading, booleans included, and it "
+        "reports on a column with no readings by asking for the smallest of nothing"
+    ),
+    edge_cases=(
+        "a column carrying no readings is left out of the report",
+        "a boolean is not counted as a reading",
+    ),
+    baseline='''def summarise(records, columns):
+    """Return (smallest, largest, average) for each of `columns`."""
+    out = {}
+    for column in columns:
+        values = [record[column] for record in records if column in record]
+        out[column] = (min(values), max(values), sum(values) / len(values))
+    return out''',
+    variant_one='''def summarise(records, columns):
+    """Return (smallest, largest, average) for each of `columns`."""
+    out = {}
+    for column in columns:
+        values = [
+            record[column]
+            for record in records
+            if column in record
+            and isinstance(record[column], (int, float))
+            and not isinstance(record[column], bool)
+        ]
+        if not values:
+            continue
+        out[column] = (min(values), max(values), sum(values) / len(values))
+    return out''',
+    variant_two='''def summarise(records, columns):
+    """Return (smallest, largest, average) for each of `columns`."""
+
+    def readings(column):
+        for record in records:
+            value = record.get(column)
+            if type(value) in (int, float):
+                yield value
+
+    out = {}
+    for column in columns:
+        values = list(readings(column))
+        if values:
+            out[column] = (min(values), max(values), sum(values) / len(values))
+    return out''',
+    variant_three='''def summarise(records, columns):
+    """Return (smallest, largest, average) for each of `columns`."""
+    out = {}
+    for column in columns:
+        values = [record[column] for record in records if column in record]
+        if not values:
+            continue
+        out[column] = (min(values), max(values), sum(values) / len(values))
+    return out''',
+    variant_four='''def summarise(records, columns):
+    """Return (smallest, largest, average) for each of `columns`."""
+    out = {}
+    for column in columns:
+        values = [
+            record[column]
+            for record in records
+            if column in record
+            and isinstance(record[column], (int, float))
+            and not isinstance(record[column], bool)
+        ]
+        out[column] = (min(values), max(values), sum(values) / len(values))
+    return out''',
+    visible_test=_test_module(
+        "summarise_columns",
+        "Published contract for summarising measured columns.",
+        """
+def test_a_column_of_readings_is_summarised() -> None:
+    assert summarise([{"a": 1}, {"a": 3}], ["a"]) == {"a": (1, 3, 2.0)}
+
+
+def test_two_columns_are_summarised_apart() -> None:
+    records = [{"a": 1, "b": 10}, {"a": 3, "b": 20}]
+    assert summarise(records, ["a", "b"]) == {"a": (1, 3, 2.0), "b": (10, 20, 15.0)}
+""",
+        imports="from summarise_columns import summarise\n",
+    ),
+    hidden_test=_test_module(
+        "summarise_columns",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_column_of_readings_is_summarised() -> None:
+    assert summarise([{"a": 1}, {"a": 3}], ["a"]) == {"a": (1, 3, 2.0)}
+
+
+def test_a_column_carrying_no_readings_is_left_out() -> None:
+    assert summarise([{"a": 1}], ["a", "b"]) == {"a": (1, 1, 1.0)}
+
+
+def test_a_boolean_is_not_a_reading() -> None:
+    assert summarise([{"a": 5}, {"a": True}], ["a"]) == {"a": (5, 5, 5.0)}
+""",
+        imports="from summarise_columns import summarise\n",
+    ),
+)
+
+
+_G098 = D2TaskSpec(
+    template_id="d5_transform.normalise_weights",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d5-transform-normalise-weights",
+    module="normalise_weights",
+    module_doc="Turning a set of weights into the shares of a whole that they stand for.",
+    issue=(
+        "normalise() is documented to turn weights into shares of a whole. Callers report that "
+        "a set of weights that are all zero fails with a division error rather than being "
+        "refused, and that a weight below zero is turned into a negative share instead of "
+        "being refused."
+    ),
+    expected=(
+        "normalise(weights) returns each weight as its share of the total, so the shares sum "
+        "to one. Weights that total zero are refused with ValueError because there is no whole "
+        "to take a share of, and a weight below zero is refused because a share cannot be "
+        "negative."
+    ),
+    baseline_reason=(
+        "it divides each weight by the total without checking either that the total is "
+        "something to divide by or that the weights are all positive"
+    ),
+    edge_cases=(
+        "weights totalling zero are refused",
+        "a weight below zero is refused",
+    ),
+    baseline='''def normalise(weights):
+    """Return each weight of `weights` as its share of the total."""
+    total = sum(weights.values())
+    return {name: weight / total for name, weight in weights.items()}''',
+    variant_one='''def normalise(weights):
+    """Return each weight of `weights` as its share of the total."""
+    for name, weight in weights.items():
+        if weight < 0:
+            raise ValueError(f"{name!r} has a weight of {weight}")
+    total = sum(weights.values())
+    if total == 0:
+        raise ValueError("the weights total nothing to take a share of")
+    return {name: weight / total for name, weight in weights.items()}''',
+    variant_two='''def normalise(weights):
+    """Return each weight of `weights` as its share of the total."""
+    negative = sorted(name for name, weight in weights.items() if weight < 0)
+    if negative:
+        raise ValueError(f"these weights are below zero: {negative}")
+    total = sum(weights.values())
+    if not total:
+        raise ValueError("the weights total nothing to take a share of")
+    return {name: weight / total for name, weight in weights.items()}''',
+    variant_three='''def normalise(weights):
+    """Return each weight of `weights` as its share of the total."""
+    total = sum(weights.values())
+    if total == 0:
+        raise ValueError("the weights total nothing to take a share of")
+    return {name: weight / total for name, weight in weights.items()}''',
+    variant_four='''def normalise(weights):
+    """Return each weight of `weights` as its share of the total."""
+    for name, weight in weights.items():
+        if weight < 0:
+            raise ValueError(f"{name!r} has a weight of {weight}")
+    total = sum(weights.values())
+    return {name: weight / total for name, weight in weights.items()}''',
+    visible_test=_test_module(
+        "normalise_weights",
+        "Published contract for turning weights into shares.",
+        """
+def test_two_weights_become_their_shares() -> None:
+    assert normalise({"a": 1, "b": 3}) == {"a": 0.25, "b": 0.75}
+
+
+def test_a_single_weight_takes_the_whole_share() -> None:
+    assert normalise({"a": 5}) == {"a": 1.0}
+""",
+        imports="from normalise_weights import normalise\n",
+    ),
+    hidden_test=_test_module(
+        "normalise_weights",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_two_weights_become_their_shares() -> None:
+    assert normalise({"a": 1, "b": 3}) == {"a": 0.25, "b": 0.75}
+
+
+def test_weights_totalling_zero_are_refused() -> None:
+    with pytest.raises(ValueError):
+        normalise({"a": 0, "b": 0})
+
+
+def test_a_weight_below_zero_is_refused() -> None:
+    with pytest.raises(ValueError):
+        normalise({"a": 2, "b": -1})
+""",
+        imports="from normalise_weights import normalise\n",
+    ),
+)
+
+# ---------------------------------------------------------------------- state and idempotency
+
+_G099 = D2TaskSpec(
+    template_id="d5_state.reload_rollback",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d5-state-reload-rollback",
+    module="reload_rollback",
+    module_doc="Taking on a new configuration only when it is fit to be taken on.",
+    issue=(
+        "reload() is documented to take on a new configuration only when it passes its check. "
+        "Operators report that a configuration which fails the check is taken on anyway and "
+        "the service comes up broken, and that a check which itself falls over takes the "
+        "reload down with it instead of counting as a failed check."
+    ),
+    expected=(
+        "reload(state, candidate, validate) returns the state carrying the candidate as its "
+        "configuration when the check passes, meaning it returned nothing. When the check "
+        "objects the configuration in use is kept and the objection is recorded as the reason, "
+        "and a check that falls over counts as an objection whose reason is what it raised."
+    ),
+    baseline_reason=(
+        "it records whatever the check said and takes the candidate on regardless, and it "
+        "lets a check that raises escape rather than reading it as an objection"
+    ),
+    edge_cases=(
+        "a candidate that fails the check is not taken on",
+        "a check that falls over counts as an objection",
+    ),
+    baseline='''def reload(state, candidate, validate):
+    """Return `state` carrying `candidate` when it passes `validate`."""
+    reason = validate(candidate)
+    return {"config": candidate, "reason": reason}''',
+    variant_one='''def reload(state, candidate, validate):
+    """Return `state` carrying `candidate` when it passes `validate`."""
+    try:
+        reason = validate(candidate)
+    except Exception as error:
+        reason = str(error)
+    if reason:
+        return {"config": state["config"], "reason": reason}
+    return {"config": candidate, "reason": None}''',
+    variant_two='''def reload(state, candidate, validate):
+    """Return `state` carrying `candidate` when it passes `validate`."""
+    settled = dict(state)
+    try:
+        objection = validate(candidate)
+    except Exception as error:
+        objection = str(error)
+    settled["reason"] = objection or None
+    if not objection:
+        settled["config"] = candidate
+    return settled''',
+    variant_three='''def reload(state, candidate, validate):
+    """Return `state` carrying `candidate` when it passes `validate`."""
+    reason = validate(candidate)
+    if reason:
+        return {"config": state["config"], "reason": reason}
+    return {"config": candidate, "reason": None}''',
+    variant_four='''def reload(state, candidate, validate):
+    """Return `state` carrying `candidate` when it passes `validate`."""
+    try:
+        reason = validate(candidate)
+    except Exception as error:
+        reason = str(error)
+    return {"config": candidate, "reason": reason}''',
+    visible_test=_test_module(
+        "reload_rollback",
+        "Published contract for taking on a new configuration.",
+        """
+def test_a_candidate_that_passes_is_taken_on() -> None:
+    state = {"config": {"a": 1}, "reason": None}
+    assert reload(state, {"a": 2}, lambda candidate: None) == {
+        "config": {"a": 2},
+        "reason": None,
+    }
+
+
+def test_the_callers_state_is_left_alone() -> None:
+    state = {"config": {"a": 1}, "reason": None}
+    reload(state, {"a": 2}, lambda candidate: None)
+    assert state == {"config": {"a": 1}, "reason": None}
+""",
+        imports="from reload_rollback import reload\n",
+    ),
+    hidden_test=_test_module(
+        "reload_rollback",
+        "The part of the contract the published tests do not state.",
+        """
+def _fall_over(candidate):
+    raise RuntimeError("the check itself broke")
+
+
+def test_a_candidate_that_passes_is_taken_on() -> None:
+    state = {"config": {"a": 1}, "reason": None}
+    assert reload(state, {"a": 2}, lambda candidate: None) == {
+        "config": {"a": 2},
+        "reason": None,
+    }
+
+
+def test_a_candidate_that_fails_the_check_is_not_taken_on() -> None:
+    state = {"config": {"a": 1}, "reason": None}
+    assert reload(state, {"a": 2}, lambda candidate: "bad") == {
+        "config": {"a": 1},
+        "reason": "bad",
+    }
+
+
+def test_a_check_that_falls_over_counts_as_an_objection() -> None:
+    state = {"config": {"a": 1}, "reason": None}
+    assert reload(state, {"a": 2}, _fall_over)["reason"] == "the check itself broke"
+""",
+        imports="from reload_rollback import reload\n",
+    ),
+)
+
+# --------------------------------------------------------------------------- error handling
+
+_G100 = D2TaskSpec(
+    template_id="d5_error.summarise_failures",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d5-error-summarise-failures",
+    module="summarise_failures",
+    module_doc="Writing the one line about a run's failures that goes into the alert.",
+    issue=(
+        "summarise() is documented to write one line naming what failed. On-call report that a "
+        "component failing twice is named twice and counted twice, which makes a small outage "
+        "read as a large one, and that a run in which nothing failed produces a line saying "
+        "nought failed followed by nothing at all."
+    ),
+    expected=(
+        "summarise(failures) returns one line naming the distinct components that failed, "
+        "sorted and counted once each however many times they failed, and returns the words "
+        "'none failed' for a run in which nothing did."
+    ),
+    baseline_reason=(
+        "it counts and names the failures rather than the components, so a repeat is counted "
+        "twice, and it writes the same shape of line for a run with no failures at all"
+    ),
+    edge_cases=(
+        "a component failing more than once is named and counted once",
+        "a run in which nothing failed says so in words",
+    ),
+    baseline='''def summarise(failures):
+    """Return the one line naming what failed."""
+    names = [name for name, _ in failures]
+    return f"{len(names)} failed: {', '.join(sorted(names))}"''',
+    variant_one='''def summarise(failures):
+    """Return the one line naming what failed."""
+    names = sorted({name for name, _ in failures})
+    if not names:
+        return "none failed"
+    return f"{len(names)} failed: {', '.join(names)}"''',
+    variant_two='''def summarise(failures):
+    """Return the one line naming what failed."""
+    names = []
+    for name, _ in failures:
+        if name not in names:
+            names.append(name)
+    names.sort()
+    return f"{len(names)} failed: {', '.join(names)}" if names else "none failed"''',
+    variant_three='''def summarise(failures):
+    """Return the one line naming what failed."""
+    names = sorted({name for name, _ in failures})
+    return f"{len(names)} failed: {', '.join(names)}"''',
+    variant_four='''def summarise(failures):
+    """Return the one line naming what failed."""
+    names = [name for name, _ in failures]
+    if not names:
+        return "none failed"
+    return f"{len(names)} failed: {', '.join(sorted(names))}"''',
+    visible_test=_test_module(
+        "summarise_failures",
+        "Published contract for the one line naming what failed.",
+        """
+def test_two_components_are_named_in_order() -> None:
+    assert summarise([("b", "down"), ("a", "slow")]) == "2 failed: a, b"
+
+
+def test_one_component_is_named_alone() -> None:
+    assert summarise([("a", "down")]) == "1 failed: a"
+""",
+        imports="from summarise_failures import summarise\n",
+    ),
+    hidden_test=_test_module(
+        "summarise_failures",
+        "The part of the contract the published tests do not state.",
+        """
+def test_two_components_are_named_in_order() -> None:
+    assert summarise([("b", "down"), ("a", "slow")]) == "2 failed: a, b"
+
+
+def test_a_component_failing_twice_is_named_once() -> None:
+    assert summarise([("a", "down"), ("a", "still down")]) == "1 failed: a"
+
+
+def test_a_run_with_nothing_failed_says_so_in_words() -> None:
+    assert summarise([]) == "none failed"
+""",
+        imports="from summarise_failures import summarise\n",
+    ),
+)
+
 #: The authored calibration groups, in template-id order. The target is 100; the achieved count
 #: is what `scripts/corpus_d5.py` reports and what S21D5-035 divides by. A shortfall is recorded
 #: rather than papered over — Section 6.2 of the backlog forbids lowering a floor to meet it.
@@ -10177,4 +11209,14 @@ D5_CALIBRATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G088,
     _G089,
     _G090,
+    _G091,
+    _G092,
+    _G093,
+    _G094,
+    _G095,
+    _G096,
+    _G097,
+    _G098,
+    _G099,
+    _G100,
 )

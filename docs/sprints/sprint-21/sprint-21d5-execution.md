@@ -2,7 +2,8 @@
 
 - Branch: `feature/sprint-21d5-pairwise-selective-ranking`
 - Backlog: [Sprint 21D5 Technical Backlog](sprint-21d5-technical-backlog.md)
-- **Status: W0 complete. W1 in progress — 90 of 100 calibration groups authored and validated.**
+- **Status: W0 complete. W1 in progress — S21D5-020 closed: 100 of 100 calibration
+  groups authored and validated.**
   W2 through W8 not started.
 - Pre-registration: revision 5, SHA-256
   `ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a`
@@ -614,18 +615,80 @@ Measured over the whole authored corpus: 90 groups, 450 bodies, **900 suite runs
 defects**, **0 cross-group collisions** against 1,680 released and D5 bodies, families balanced
 **15/15/15/15/15/15**.
 
+### Batch nine — S21D5-020 closed at a hundred
+
+Ten more, taking the corpus to **one hundred** at 17/17/17/17/16/16. One hundred does not divide
+by six, so that is the closest balance the target allows; the two families short a group are
+`error_handling` and `state_idempotency`, chosen arbitrarily and recorded here so the choice is
+not mistaken for a finding.
+
+| Group | Family | The two independent edge cases |
+|---|---|---|
+| `d5-boundary-zigzag-rows` | boundary_collections | the deal turns back at the last row; fewer than one row is refused |
+| `d5-boundary-first-duplicate` | boundary_collections | the earliest repeat wins over the earliest repeater; no repeat reports nothing |
+| `d5-numeric-scientific-mantissa` | numeric_logic | a reading of zero splits to (0.0, 0); a negative keeps its sign |
+| `d5-numeric-temperature-convert` | numeric_logic | same-scale conversion changes nothing at all; an unknown scale is refused |
+| `d5-parsing-user-agent` | parsing_validation | a token with no slash has no version; leading whitespace is ignored |
+| `d5-parsing-algebraic-square` | parsing_validation | a capital file letter reads the same; a square off the board is refused |
+| `d5-transform-summarise-columns` | data_transformation | an empty column is left out; a boolean is not a reading |
+| `d5-transform-normalise-weights` | data_transformation | weights totalling zero are refused; a weight below zero is refused |
+| `d5-state-reload-rollback` | state_idempotency | a failing candidate is not taken on; a check that falls over is an objection |
+| `d5-error-summarise-failures` | error_handling | a component failing twice is named once; nothing failed says so in words |
+
+**The validator caught three, and two of them were tests that could not see their own edge case.**
+This is the same class as the `top_per_group` problem in batch five, but found by execution rather
+than by inspection, and it is the most valuable thing this batch produced.
+
+- `d5-numeric-temperature-convert`'s edge case is "converting to the scale a reading is already in
+  changes nothing at all", written against `convert(98.6, "F", "F")`. The Fahrenheit round trip
+  `(v - 32) * 5 / 9 * 9 / 5 + 32` turns out to be **exact in binary floating point** for 98.6 —
+  and for 100.0, 37.5, 212.0, 68.0, 99.9 and 451.0, every value tried. The Kelvin round trip is
+  not: `25.3 - 273.15 + 273.15` is `25.30000000000001`. The test now uses Kelvin.
+- `d5-transform-summarise-columns`'s edge case is "a boolean is not a reading", written against
+  `[{"a": 1}, {"a": True}]`. Since `True == 1`, the minimum, maximum and mean are the same whether
+  the boolean is counted or skipped. Beside a reading of 5 they are not, and the test now uses 5.
+
+In both cases the *edge case was real and the fix was correct*; what failed was the data chosen to
+demonstrate it. A test that cannot distinguish the repaired body from the broken one is worth
+nothing, and neither arithmetic at the design table nor a reading of the body would have found
+either — only running variant three and variant four against the hidden suite does.
+
+The third was a body-level clone: `d5-boundary-zigzag-rows`'s baseline was byte-for-byte
+`d2-boundary-even-split:variant_three`, because the naive way to deal items into rows is the
+round-robin `place % rows` loop and somebody has already written it. The baseline and its
+half-repair were re-authored as per-row comprehensions, carrying the same two defects in a
+different shape.
+
+**S21D5-020 is closed.** Measured over the whole corpus: 100 groups, 500 bodies, **1,000 suite
+runs, 0 contract defects**, **0 cross-group collisions** against 1,730 released and D5 bodies,
+`shortfall: 0`.
+
+### What the nine batches cost, and where the defects were caught
+
+| Caught by | Count | What it cost |
+|---|---:|---|
+| The `--search` pre-check, before authoring | 40 ideas | nothing |
+| Arithmetic at the design table | 4 groups | nothing |
+| Re-scoped at the design table | 2 groups | nothing |
+| The validator, after five bodies existed | 4 defects | one group re-authored each |
+| The near-clone detector | 3 collisions | one group withdrawn, two bodies re-authored |
+
+The four the validator caught divide into two kinds, and the distinction is the one W1 did not
+know at the start. Two were **bodies that did not do what their label said** — a half-repair that
+accidentally repaired both edge cases. Two were **tests that could not see their own edge case** —
+correct bodies, correct edge cases, data that made the two indistinguishable. Nothing short of
+executing all five bodies against both suites finds either.
+
 ### What W1 still owes
 
-- 10 further calibration groups. One hundred does not divide by six, so the final balance will be
-  17/17/17/17/16/16 rather than an even split;
 - 60 retrieval groups yielding at least 50 qualifying queries (S21D5-021);
 - the separation, rights and lineage evidence record (S21D5-022);
 - sealed campaign and holdout manifests (S21D5-023);
 - pre-execution feature seals and both campaigns, 720 fitting and 400 calibration outcomes
   (S21D5-025, S21D5-026).
 
-Section 6.2 of the backlog governs a shortfall and is unchanged: if W1 cannot reach 100 groups,
-the honest response is to author fewer, record the achieved independent-decision count and let
-§2.3's floor decide the outcome — never to lower the floor, and never to reinstate replicated
-decisions to reach it. The floor is not lowered here, and the achieved count is reported by the
-validator on every run.
+Section 6.2 of the backlog governs a shortfall: if W1 could not reach 100 groups, the honest
+response was to author fewer, record the achieved independent-decision count and let §2.3's floor
+decide the outcome — never to lower the floor, and never to reinstate replicated decisions to
+reach it. **The provision did not have to be used.** The corpus reached 100 with no floor touched,
+no threshold changed and `shortfall: 0` on the validator's own report.
