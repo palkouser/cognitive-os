@@ -39,6 +39,7 @@ sys.path.insert(0, str(REPOSITORY / "src"))
 from cognitive_os.coding.reality_leakage import near_clone_pairs  # noqa: E402
 from cognitive_os.coding.reality_retrieval_specs_d3 import D3_RETRIEVAL_SPECS  # noqa: E402
 from cognitive_os.coding.reality_retrieval_specs_d4 import D4_RETRIEVAL_SPECS  # noqa: E402
+from cognitive_os.coding.reality_retrieval_specs_d5 import D5_RETRIEVAL_SPECS  # noqa: E402
 from cognitive_os.coding.reality_task_specs import TASK_SPECS  # noqa: E402
 from cognitive_os.coding.reality_task_specs_d2 import (  # noqa: E402
     D2_TASK_SPECS,
@@ -193,6 +194,12 @@ def _sources() -> dict[str, str]:
     for spec in D5_CALIBRATION_SPECS:
         for label in LABELS:
             out[f"{spec.repository_group}:{label}"] = module_source(spec, getattr(spec, label))
+    # The D5 retrieval pool is *not* read here. S21D4-043 scopes retrieval separation to the
+    # retrieval pool against itself and says why in its own words: a cross-group collision
+    # "would be two queries whose answers are the same code". A retrieval body coinciding with
+    # a calibration body is not that -- the two never answer the same question, live in
+    # different roles and reach different stores. `retrieval_d5.py` runs the released rule and
+    # reports the cross-role coincidences beside it as an observation.
     return out
 
 
@@ -235,6 +242,10 @@ def _search(words: tuple[str, ...]) -> int:
         *D4_CALIBRATION_SPECS,
         *D3_RETRIEVAL_SPECS,
         *D4_RETRIEVAL_SPECS,
+        # D5's own corpora count as occupied ground the moment they are authored: the retrieval
+        # pool has to be disjoint from the calibration corpus, not only from the predecessors.
+        *D5_CALIBRATION_SPECS,
+        *D5_RETRIEVAL_SPECS,
     )
     wanted = tuple(word.lower() for word in words)
     hits = []

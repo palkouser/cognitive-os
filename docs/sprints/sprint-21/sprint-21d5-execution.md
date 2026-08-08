@@ -2,8 +2,8 @@
 
 - Branch: `feature/sprint-21d5-pairwise-selective-ranking`
 - Backlog: [Sprint 21D5 Technical Backlog](sprint-21d5-technical-backlog.md)
-- **Status: W0 complete. W1 in progress — S21D5-020 closed: 100 of 100 calibration
-  groups authored and validated.**
+- **Status: W0 complete. W1 in progress — S21D5-020 and S21D5-021 closed: 100 calibration
+  groups and 60 retrieval groups authored and validated.**
   W2 through W8 not started.
 - Pre-registration: revision 5, SHA-256
   `ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a`
@@ -679,9 +679,70 @@ accidentally repaired both edge cases. Two were **tests that could not see their
 correct bodies, correct edge cases, data that made the two indistinguishable. Nothing short of
 executing all five bodies against both suites finds either.
 
+## S21D5-021 — the retrieval pool, and a rule that was not widened to make it pass
+
+Sixty groups in `reality_retrieval_specs_d5.py`, ten per family, validated by
+`scripts/retrieval_d5.py`. A retrieval group is one defect and its repair, not four candidates
+around two independent edge cases, so it has fewer ways to be wrong — and one the calibration
+corpus does not have at all.
+
+| Check | Result |
+|---|---|
+| pairs executed, failed body fails hidden and repair passes it | **120 bodies, 0 pair defects** |
+| both sides project a non-empty searchable surface | **0 sides with no terms** |
+| the two sides project *different* documents | **0 identical pairs** |
+| a term spelling the relevance label | **0** |
+| cross-group collisions inside the pool | **0** over 120 bodies |
+| queries that would qualify | **60**, against a floor of 50 |
+| family balance | 10 / 10 / 10 / 10 / 10 / 10 |
+
+### The surface check is new, and it earned its place
+
+D4's pool reached 41 of 60 because ten repairs were pure arithmetic over their own parameters:
+the normaliser left nothing of them and an empty document cannot be found by any arm.
+`structure_fallback` answers that, and this wave is the first time it has been pointed at a live
+corpus. **27 of 120 sides needed it** — they carry no identifier at all and would have projected
+empty under the released extraction. That is the D4 residual, measured rather than argued.
+
+The fallback alone is not enough, and the second half of the check is what found the real
+problem. A pair whose two sides project the *same* document is worse than an empty one: it is
+retrievable and uninformative, and it drags MRR down while looking healthy. Nothing in D4
+measured this per pair. Here it caught **nine pairs**, and eight of them shared one cause:
+
+> **A guard-only repair carries no new name.** The normaliser reads identifiers — builtins,
+> methods, modules, exception classes. Wrapping the same call in `if` adds control flow and no
+> identifier, so `out.append(x)` and `if x not in out: out.append(x)` project the identical
+> document. Five of the sixty repairs were guard-only, and three more differed only by an
+> operator or by the order of two operands.
+
+Each was re-authored to reach for one name of its own — `dict.fromkeys` instead of a membership
+guard, `divmod` instead of a second `len`, `str(error)` inside the wrapped message. The defect
+and the repair are unchanged in what they *do*; what changed is that an arm can now tell them
+apart.
+
+### The separation rule was checked against its released scope, not widened
+
+Folding the retrieval pool into `corpus_d5.py`'s corpus-wide separation reported **34
+collisions**. Before repairing any of them, the released rule was read. S21D4-043 scopes
+retrieval separation to the retrieval pool against itself and states its reason in its own
+words: a cross-group collision "would be two queries whose answers are the same code". A
+retrieval body coinciding with a *calibration* body is not that — the two never answer the same
+question, sit in different roles and reach different stores.
+
+So the corpus-wide comparison was an obligation this session invented, and it was withdrawn.
+`corpus_d5.py` returns to the calibration corpus; `retrieval_d5.py` runs S21D4-043's rule at
+S21D4-043's scope. Under the released rule the pool had **15 collisions across 8 pairs**, every
+one of them real, and all eight were re-authored.
+
+The 10 remaining coincidences with a correction body are **reported beside the result and not
+folded into it**. They break no contract, and they measure something worth knowing: the
+small-function space the programme has spent across 466 groups is saturated enough that a
+two-line retrieval body lands on an existing correction body once in twelve. Dropping the number
+would have been the dishonest way to a clean report; enforcing it would have been the dishonest
+way to a strict one.
+
 ### What W1 still owes
 
-- 60 retrieval groups yielding at least 50 qualifying queries (S21D5-021);
 - the separation, rights and lineage evidence record (S21D5-022);
 - sealed campaign and holdout manifests (S21D5-023);
 - pre-execution feature seals and both campaigns, 720 fitting and 400 calibration outcomes
