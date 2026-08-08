@@ -2,7 +2,8 @@
 
 - Branch: `feature/sprint-21d5-pairwise-selective-ranking`
 - Backlog: [Sprint 21D5 Technical Backlog](sprint-21d5-technical-backlog.md)
-- **Status: W0 complete.** W1 through W8 not started.
+- **Status: W0 complete. W1 in progress — 6 of 100 calibration groups authored and validated.**
+  W2 through W8 not started.
 - Pre-registration: revision 5, SHA-256
   `ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a`
 - Migration head: `0015`, unchanged. `0016` remains unallocated.
@@ -245,3 +246,79 @@ changed a frozen hash, and checking is cheaper than assuming it cannot.
 - It authored no corpus, executed no campaign and fitted no direction.
 - It read no calibration decision, no retrieval query and no final or canary body.
 - It changed no released code, no encoder, no normaliser and no gate threshold.
+
+---
+
+## W1 progress — the authoring loop, proved on six groups
+
+**W1 is not complete.** Six of one hundred calibration groups are authored and validated; the
+sixty retrieval groups are not started. What is complete is the loop the remaining authoring
+runs in, and one measurement that changes the estimate for it.
+
+### The validator is the tool, not the report
+
+`scripts/corpus_d5.py` executes every body against both suites and computes cross-group
+near-clone separation over the whole released corpus. It is run *while* authoring rather than
+after it, because all three known failure modes are invisible without execution, and each one
+now surfaces as a named row:
+
+| Observation | `reading` |
+|---|---|
+| `variant_three` or `variant_four` passes hidden | failure mode 1 — the two hidden tests probe one defect wearing two descriptions |
+| `baseline` fails visible | failure mode 2 — the baseline is broken past its own visible suite |
+| a cross-group pair in `collisions` | failure mode 3 — a near-clone at the level of the task |
+
+`--groups` narrows execution to a batch, which is what makes per-batch authoring affordable.
+Separation is always computed over the whole corpus, because a collision is a property of a
+pair and a batch cannot see the pair it collides with.
+
+### Batch one
+
+Six groups, one per family, all six contract rows correct on the first validated run:
+
+| Group | Family | The two independent edge cases |
+|---|---|---|
+| `d5-boundary-column-widths` | boundary_collections | a longer row extends the result; a non-text cell is measured as rendered |
+| `d5-numeric-nearest-rank` | numeric_logic | a fraction between ranks takes the upper one; an empty series raises `ValueError` |
+| `d5-parsing-csv-quoting` | parsing_validation | a contained quote is doubled; padding forces quoting |
+| `d5-transform-key-difference` | data_transformation | the lists are sorted; a value that became `None` is changed, not removed |
+| `d5-state-partition-offsets` | state_idempotency | a late report does not move an offset backwards; an unknown partition is added |
+| `d5-error-batch-outcome` | error_handling | a batch where nothing succeeded is failed, not partial; an empty batch succeeded |
+
+Measured: 30 bodies executed, 60 suite runs, **0 contract defects**, **0 cross-group collisions**
+against 1,260 released and D5 bodies, families balanced 1/1/1/1/1/1.
+
+### The finding that changes the W1 estimate
+
+**Eight of eight first-draft task ideas collided with the released corpus, at the level of the
+task rather than the code.** Merging intervals, key-value parsing, tag addition, averaging,
+describing an exception, renaming fields, finding the first gap and splitting an amount are all
+already released — as `interval_merge`, `pair_syntax`, `tag_addition`, `arithmetic_mean`,
+`error_description`, `field_rename`, `gap_finding` and `amount_shares`. All eight were withdrawn
+before a body was written.
+
+That is the real cost of W1, and it is not typing. Across C3, D2, D3 and D4 the released corpus
+occupies **331 distinct module-level task ideas** in the small-pure-function repair space. Every
+further group has to be novel against all of them *and* carry two genuinely independent defects,
+and the second constraint rules out most of what is left, because the easiest novel tasks are
+the ones with a single concern.
+
+The practical consequence, recorded so the successor does not rediscover it: **check a proposed
+task against the released module list before authoring its bodies.** D4 discovered its
+collisions after writing them and had to withdraw whole groups; the pre-check turns that rework
+into a lookup.
+
+### What W1 still owes
+
+- 94 further calibration groups, family-balanced, each validated by the loop above;
+- 60 retrieval groups yielding at least 50 qualifying queries (S21D5-021);
+- the separation, rights and lineage evidence record (S21D5-022);
+- sealed campaign and holdout manifests (S21D5-023);
+- pre-execution feature seals and both campaigns, 720 fitting and 400 calibration outcomes
+  (S21D5-025, S21D5-026).
+
+Section 6.2 of the backlog governs a shortfall and is unchanged: if W1 cannot reach 100 groups,
+the honest response is to author fewer, record the achieved independent-decision count and let
+§2.3's floor decide the outcome — never to lower the floor, and never to reinstate replicated
+decisions to reach it. The floor is not lowered here, and the achieved count is reported by the
+validator on every run.
