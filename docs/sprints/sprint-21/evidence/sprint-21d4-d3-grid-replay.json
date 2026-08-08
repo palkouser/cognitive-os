@@ -1,0 +1,965 @@
+{
+ "boundary": {
+  "d4_calibration_decisions_read": 0,
+  "d4_canary_outcomes_read": 0,
+  "d4_final_outcomes_read": 0,
+  "database_connections_opened": 0,
+  "development_only": true,
+  "inputs": "two committed JSON files, read-only",
+  "predecessor_store_writes": 0,
+  "selection_authority": false,
+  "thresholds_derived": 0
+ },
+ "integrity_content_hash": "d1b8115ade6553585aa06a39c647dc1bf2e09ff18b6f87df536bbb37bc7d9fdd",
+ "items": [
+  "S21D4-022"
+ ],
+ "observations": {
+  "confident_errors_over_twenty_independent_decisions": {
+   "maximum": 6,
+   "minimum": 2
+  },
+  "every_setting_collapses_six_into_one": true,
+  "settings_with_zero_confident_errors_over_independent_decisions": [],
+  "what_this_means": "the corrected denominator does not rescue D3. No setting in the grid reached zero confident errors even over its twenty independent decisions, so D3's stop was not an artefact of counting replicas. What D3 never had was a per-decision operating point: the grid's confidence_floor is a setting-level constant, and the zero-error point S21D4-021 derives is chosen from the scores themselves. That is the intervention D4 tests, and this replay does not test it."
+ },
+ "per_setting": [
+  {
+   "d3_ineligible_reason": "36 confident out-of-distribution error(s) against a contract that allows 0",
+   "effective_first_choice": {
+    "answered_and_correct": 13,
+    "at_most_answered_correct_plus_abstentions": 14,
+    "definition": "an abstention executes the deterministic baseline order, and the metamorphic block credits it when that order was right; the setting's own first_choice_rate does not",
+    "divides_by_six_exactly": true,
+    "effective_first_choice_correct": 14,
+    "within_bound": true
+   },
+   "eligible_in_d3": false,
+   "new": {
+    "accuracy": "0.6842105263157894736842105263",
+    "answered_decisions": 19,
+    "census": {
+     "independent_decisions": 20,
+     "nominal_decisions": 120,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 100,
+     "revision": 4
+    },
+    "confident_error_rate": "0.3157894736842105263157894737",
+    "confident_errors": 6,
+    "correct_decisions": 13,
+    "coverage": "0.95",
+    "denominator": "independent_decisions",
+    "zero_error_upper_bound_95_if_it_had_been_clean": 0.145869
+   },
+   "old": {
+    "answered_decisions": 114,
+    "confident_error_rate_all_decisions": "0.3",
+    "confident_error_rate_answered_decisions": "0.3157894736842105263157894737",
+    "confident_errors": 36,
+    "denominator": "nominal_decisions",
+    "ranking_decisions": 120
+   },
+   "setting_identity": "k=3;similarity=0.30;agreement=0.60;confidence=0.55;embedding_weight=0.7"
+  },
+  {
+   "d3_ineligible_reason": "24 confident out-of-distribution error(s) against a contract that allows 0",
+   "effective_first_choice": {
+    "answered_and_correct": 9,
+    "at_most_answered_correct_plus_abstentions": 16,
+    "definition": "an abstention executes the deterministic baseline order, and the metamorphic block credits it when that order was right; the setting's own first_choice_rate does not",
+    "divides_by_six_exactly": true,
+    "effective_first_choice_correct": 11,
+    "within_bound": true
+   },
+   "eligible_in_d3": false,
+   "new": {
+    "accuracy": "0.6923076923076923076923076923",
+    "answered_decisions": 13,
+    "census": {
+     "independent_decisions": 20,
+     "nominal_decisions": 120,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 100,
+     "revision": 4
+    },
+    "confident_error_rate": "0.3076923076923076923076923077",
+    "confident_errors": 4,
+    "correct_decisions": 9,
+    "coverage": "0.65",
+    "denominator": "independent_decisions",
+    "zero_error_upper_bound_95_if_it_had_been_clean": 0.205817
+   },
+   "old": {
+    "answered_decisions": 78,
+    "confident_error_rate_all_decisions": "0.2",
+    "confident_error_rate_answered_decisions": "0.3076923076923076923076923077",
+    "confident_errors": 24,
+    "denominator": "nominal_decisions",
+    "ranking_decisions": 120
+   },
+   "setting_identity": "k=3;similarity=0.30;agreement=0.60;confidence=0.70;embedding_weight=0.7"
+  },
+  {
+   "d3_ineligible_reason": "24 confident out-of-distribution error(s) against a contract that allows 0",
+   "effective_first_choice": {
+    "answered_and_correct": 9,
+    "at_most_answered_correct_plus_abstentions": 16,
+    "definition": "an abstention executes the deterministic baseline order, and the metamorphic block credits it when that order was right; the setting's own first_choice_rate does not",
+    "divides_by_six_exactly": true,
+    "effective_first_choice_correct": 11,
+    "within_bound": true
+   },
+   "eligible_in_d3": false,
+   "new": {
+    "accuracy": "0.6923076923076923076923076923",
+    "answered_decisions": 13,
+    "census": {
+     "independent_decisions": 20,
+     "nominal_decisions": 120,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 100,
+     "revision": 4
+    },
+    "confident_error_rate": "0.3076923076923076923076923077",
+    "confident_errors": 4,
+    "correct_decisions": 9,
+    "coverage": "0.65",
+    "denominator": "independent_decisions",
+    "zero_error_upper_bound_95_if_it_had_been_clean": 0.205817
+   },
+   "old": {
+    "answered_decisions": 78,
+    "confident_error_rate_all_decisions": "0.2",
+    "confident_error_rate_answered_decisions": "0.3076923076923076923076923077",
+    "confident_errors": 24,
+    "denominator": "nominal_decisions",
+    "ranking_decisions": 120
+   },
+   "setting_identity": "k=3;similarity=0.30;agreement=0.80;confidence=0.55;embedding_weight=0.7"
+  },
+  {
+   "d3_ineligible_reason": "24 confident out-of-distribution error(s) against a contract that allows 0",
+   "effective_first_choice": {
+    "answered_and_correct": 9,
+    "at_most_answered_correct_plus_abstentions": 16,
+    "definition": "an abstention executes the deterministic baseline order, and the metamorphic block credits it when that order was right; the setting's own first_choice_rate does not",
+    "divides_by_six_exactly": true,
+    "effective_first_choice_correct": 11,
+    "within_bound": true
+   },
+   "eligible_in_d3": false,
+   "new": {
+    "accuracy": "0.6923076923076923076923076923",
+    "answered_decisions": 13,
+    "census": {
+     "independent_decisions": 20,
+     "nominal_decisions": 120,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 100,
+     "revision": 4
+    },
+    "confident_error_rate": "0.3076923076923076923076923077",
+    "confident_errors": 4,
+    "correct_decisions": 9,
+    "coverage": "0.65",
+    "denominator": "independent_decisions",
+    "zero_error_upper_bound_95_if_it_had_been_clean": 0.205817
+   },
+   "old": {
+    "answered_decisions": 78,
+    "confident_error_rate_all_decisions": "0.2",
+    "confident_error_rate_answered_decisions": "0.3076923076923076923076923077",
+    "confident_errors": 24,
+    "denominator": "nominal_decisions",
+    "ranking_decisions": 120
+   },
+   "setting_identity": "k=3;similarity=0.30;agreement=0.80;confidence=0.70;embedding_weight=0.7"
+  },
+  {
+   "d3_ineligible_reason": "36 confident out-of-distribution error(s) against a contract that allows 0",
+   "effective_first_choice": {
+    "answered_and_correct": 13,
+    "at_most_answered_correct_plus_abstentions": 14,
+    "definition": "an abstention executes the deterministic baseline order, and the metamorphic block credits it when that order was right; the setting's own first_choice_rate does not",
+    "divides_by_six_exactly": true,
+    "effective_first_choice_correct": 14,
+    "within_bound": true
+   },
+   "eligible_in_d3": false,
+   "new": {
+    "accuracy": "0.6842105263157894736842105263",
+    "answered_decisions": 19,
+    "census": {
+     "independent_decisions": 20,
+     "nominal_decisions": 120,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 100,
+     "revision": 4
+    },
+    "confident_error_rate": "0.3157894736842105263157894737",
+    "confident_errors": 6,
+    "correct_decisions": 13,
+    "coverage": "0.95",
+    "denominator": "independent_decisions",
+    "zero_error_upper_bound_95_if_it_had_been_clean": 0.145869
+   },
+   "old": {
+    "answered_decisions": 114,
+    "confident_error_rate_all_decisions": "0.3",
+    "confident_error_rate_answered_decisions": "0.3157894736842105263157894737",
+    "confident_errors": 36,
+    "denominator": "nominal_decisions",
+    "ranking_decisions": 120
+   },
+   "setting_identity": "k=3;similarity=0.50;agreement=0.60;confidence=0.55;embedding_weight=0.7"
+  },
+  {
+   "d3_ineligible_reason": "24 confident out-of-distribution error(s) against a contract that allows 0",
+   "effective_first_choice": {
+    "answered_and_correct": 9,
+    "at_most_answered_correct_plus_abstentions": 16,
+    "definition": "an abstention executes the deterministic baseline order, and the metamorphic block credits it when that order was right; the setting's own first_choice_rate does not",
+    "divides_by_six_exactly": true,
+    "effective_first_choice_correct": 11,
+    "within_bound": true
+   },
+   "eligible_in_d3": false,
+   "new": {
+    "accuracy": "0.6923076923076923076923076923",
+    "answered_decisions": 13,
+    "census": {
+     "independent_decisions": 20,
+     "nominal_decisions": 120,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 100,
+     "revision": 4
+    },
+    "confident_error_rate": "0.3076923076923076923076923077",
+    "confident_errors": 4,
+    "correct_decisions": 9,
+    "coverage": "0.65",
+    "denominator": "independent_decisions",
+    "zero_error_upper_bound_95_if_it_had_been_clean": 0.205817
+   },
+   "old": {
+    "answered_decisions": 78,
+    "confident_error_rate_all_decisions": "0.2",
+    "confident_error_rate_answered_decisions": "0.3076923076923076923076923077",
+    "confident_errors": 24,
+    "denominator": "nominal_decisions",
+    "ranking_decisions": 120
+   },
+   "setting_identity": "k=3;similarity=0.50;agreement=0.60;confidence=0.70;embedding_weight=0.7"
+  },
+  {
+   "d3_ineligible_reason": "24 confident out-of-distribution error(s) against a contract that allows 0",
+   "effective_first_choice": {
+    "answered_and_correct": 9,
+    "at_most_answered_correct_plus_abstentions": 16,
+    "definition": "an abstention executes the deterministic baseline order, and the metamorphic block credits it when that order was right; the setting's own first_choice_rate does not",
+    "divides_by_six_exactly": true,
+    "effective_first_choice_correct": 11,
+    "within_bound": true
+   },
+   "eligible_in_d3": false,
+   "new": {
+    "accuracy": "0.6923076923076923076923076923",
+    "answered_decisions": 13,
+    "census": {
+     "independent_decisions": 20,
+     "nominal_decisions": 120,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 100,
+     "revision": 4
+    },
+    "confident_error_rate": "0.3076923076923076923076923077",
+    "confident_errors": 4,
+    "correct_decisions": 9,
+    "coverage": "0.65",
+    "denominator": "independent_decisions",
+    "zero_error_upper_bound_95_if_it_had_been_clean": 0.205817
+   },
+   "old": {
+    "answered_decisions": 78,
+    "confident_error_rate_all_decisions": "0.2",
+    "confident_error_rate_answered_decisions": "0.3076923076923076923076923077",
+    "confident_errors": 24,
+    "denominator": "nominal_decisions",
+    "ranking_decisions": 120
+   },
+   "setting_identity": "k=3;similarity=0.50;agreement=0.80;confidence=0.55;embedding_weight=0.7"
+  },
+  {
+   "d3_ineligible_reason": "24 confident out-of-distribution error(s) against a contract that allows 0",
+   "effective_first_choice": {
+    "answered_and_correct": 9,
+    "at_most_answered_correct_plus_abstentions": 16,
+    "definition": "an abstention executes the deterministic baseline order, and the metamorphic block credits it when that order was right; the setting's own first_choice_rate does not",
+    "divides_by_six_exactly": true,
+    "effective_first_choice_correct": 11,
+    "within_bound": true
+   },
+   "eligible_in_d3": false,
+   "new": {
+    "accuracy": "0.6923076923076923076923076923",
+    "answered_decisions": 13,
+    "census": {
+     "independent_decisions": 20,
+     "nominal_decisions": 120,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 100,
+     "revision": 4
+    },
+    "confident_error_rate": "0.3076923076923076923076923077",
+    "confident_errors": 4,
+    "correct_decisions": 9,
+    "coverage": "0.65",
+    "denominator": "independent_decisions",
+    "zero_error_upper_bound_95_if_it_had_been_clean": 0.205817
+   },
+   "old": {
+    "answered_decisions": 78,
+    "confident_error_rate_all_decisions": "0.2",
+    "confident_error_rate_answered_decisions": "0.3076923076923076923076923077",
+    "confident_errors": 24,
+    "denominator": "nominal_decisions",
+    "ranking_decisions": 120
+   },
+   "setting_identity": "k=3;similarity=0.50;agreement=0.80;confidence=0.70;embedding_weight=0.7"
+  },
+  {
+   "d3_ineligible_reason": "30 confident out-of-distribution error(s) against a contract that allows 0",
+   "effective_first_choice": {
+    "answered_and_correct": 13,
+    "at_most_answered_correct_plus_abstentions": 15,
+    "definition": "an abstention executes the deterministic baseline order, and the metamorphic block credits it when that order was right; the setting's own first_choice_rate does not",
+    "divides_by_six_exactly": true,
+    "effective_first_choice_correct": 14,
+    "within_bound": true
+   },
+   "eligible_in_d3": false,
+   "new": {
+    "accuracy": "0.7222222222222222222222222222",
+    "answered_decisions": 18,
+    "census": {
+     "independent_decisions": 20,
+     "nominal_decisions": 120,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 100,
+     "revision": 4
+    },
+    "confident_error_rate": "0.2777777777777777777777777778",
+    "confident_errors": 5,
+    "correct_decisions": 13,
+    "coverage": "0.9",
+    "denominator": "independent_decisions",
+    "zero_error_upper_bound_95_if_it_had_been_clean": 0.153318
+   },
+   "old": {
+    "answered_decisions": 108,
+    "confident_error_rate_all_decisions": "0.25",
+    "confident_error_rate_answered_decisions": "0.2777777777777777777777777778",
+    "confident_errors": 30,
+    "denominator": "nominal_decisions",
+    "ranking_decisions": 120
+   },
+   "setting_identity": "k=5;similarity=0.30;agreement=0.60;confidence=0.55;embedding_weight=0.7"
+  },
+  {
+   "d3_ineligible_reason": "30 confident out-of-distribution error(s) against a contract that allows 0",
+   "effective_first_choice": {
+    "answered_and_correct": 11,
+    "at_most_answered_correct_plus_abstentions": 15,
+    "definition": "an abstention executes the deterministic baseline order, and the metamorphic block credits it when that order was right; the setting's own first_choice_rate does not",
+    "divides_by_six_exactly": true,
+    "effective_first_choice_correct": 13,
+    "within_bound": true
+   },
+   "eligible_in_d3": false,
+   "new": {
+    "accuracy": "0.6875",
+    "answered_decisions": 16,
+    "census": {
+     "independent_decisions": 20,
+     "nominal_decisions": 120,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 100,
+     "revision": 4
+    },
+    "confident_error_rate": "0.3125",
+    "confident_errors": 5,
+    "correct_decisions": 11,
+    "coverage": "0.8",
+    "denominator": "independent_decisions",
+    "zero_error_upper_bound_95_if_it_had_been_clean": 0.17075
+   },
+   "old": {
+    "answered_decisions": 96,
+    "confident_error_rate_all_decisions": "0.25",
+    "confident_error_rate_answered_decisions": "0.3125",
+    "confident_errors": 30,
+    "denominator": "nominal_decisions",
+    "ranking_decisions": 120
+   },
+   "setting_identity": "k=5;similarity=0.30;agreement=0.60;confidence=0.70;embedding_weight=0.7"
+  },
+  {
+   "d3_ineligible_reason": "30 confident out-of-distribution error(s) against a contract that allows 0",
+   "effective_first_choice": {
+    "answered_and_correct": 11,
+    "at_most_answered_correct_plus_abstentions": 15,
+    "definition": "an abstention executes the deterministic baseline order, and the metamorphic block credits it when that order was right; the setting's own first_choice_rate does not",
+    "divides_by_six_exactly": true,
+    "effective_first_choice_correct": 13,
+    "within_bound": true
+   },
+   "eligible_in_d3": false,
+   "new": {
+    "accuracy": "0.6875",
+    "answered_decisions": 16,
+    "census": {
+     "independent_decisions": 20,
+     "nominal_decisions": 120,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 100,
+     "revision": 4
+    },
+    "confident_error_rate": "0.3125",
+    "confident_errors": 5,
+    "correct_decisions": 11,
+    "coverage": "0.8",
+    "denominator": "independent_decisions",
+    "zero_error_upper_bound_95_if_it_had_been_clean": 0.17075
+   },
+   "old": {
+    "answered_decisions": 96,
+    "confident_error_rate_all_decisions": "0.25",
+    "confident_error_rate_answered_decisions": "0.3125",
+    "confident_errors": 30,
+    "denominator": "nominal_decisions",
+    "ranking_decisions": 120
+   },
+   "setting_identity": "k=5;similarity=0.30;agreement=0.80;confidence=0.55;embedding_weight=0.7"
+  },
+  {
+   "d3_ineligible_reason": "30 confident out-of-distribution error(s) against a contract that allows 0",
+   "effective_first_choice": {
+    "answered_and_correct": 11,
+    "at_most_answered_correct_plus_abstentions": 15,
+    "definition": "an abstention executes the deterministic baseline order, and the metamorphic block credits it when that order was right; the setting's own first_choice_rate does not",
+    "divides_by_six_exactly": true,
+    "effective_first_choice_correct": 13,
+    "within_bound": true
+   },
+   "eligible_in_d3": false,
+   "new": {
+    "accuracy": "0.6875",
+    "answered_decisions": 16,
+    "census": {
+     "independent_decisions": 20,
+     "nominal_decisions": 120,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 100,
+     "revision": 4
+    },
+    "confident_error_rate": "0.3125",
+    "confident_errors": 5,
+    "correct_decisions": 11,
+    "coverage": "0.8",
+    "denominator": "independent_decisions",
+    "zero_error_upper_bound_95_if_it_had_been_clean": 0.17075
+   },
+   "old": {
+    "answered_decisions": 96,
+    "confident_error_rate_all_decisions": "0.25",
+    "confident_error_rate_answered_decisions": "0.3125",
+    "confident_errors": 30,
+    "denominator": "nominal_decisions",
+    "ranking_decisions": 120
+   },
+   "setting_identity": "k=5;similarity=0.30;agreement=0.80;confidence=0.70;embedding_weight=0.7"
+  },
+  {
+   "d3_ineligible_reason": "30 confident out-of-distribution error(s) against a contract that allows 0",
+   "effective_first_choice": {
+    "answered_and_correct": 13,
+    "at_most_answered_correct_plus_abstentions": 15,
+    "definition": "an abstention executes the deterministic baseline order, and the metamorphic block credits it when that order was right; the setting's own first_choice_rate does not",
+    "divides_by_six_exactly": true,
+    "effective_first_choice_correct": 14,
+    "within_bound": true
+   },
+   "eligible_in_d3": false,
+   "new": {
+    "accuracy": "0.7222222222222222222222222222",
+    "answered_decisions": 18,
+    "census": {
+     "independent_decisions": 20,
+     "nominal_decisions": 120,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 100,
+     "revision": 4
+    },
+    "confident_error_rate": "0.2777777777777777777777777778",
+    "confident_errors": 5,
+    "correct_decisions": 13,
+    "coverage": "0.9",
+    "denominator": "independent_decisions",
+    "zero_error_upper_bound_95_if_it_had_been_clean": 0.153318
+   },
+   "old": {
+    "answered_decisions": 108,
+    "confident_error_rate_all_decisions": "0.25",
+    "confident_error_rate_answered_decisions": "0.2777777777777777777777777778",
+    "confident_errors": 30,
+    "denominator": "nominal_decisions",
+    "ranking_decisions": 120
+   },
+   "setting_identity": "k=5;similarity=0.50;agreement=0.60;confidence=0.55;embedding_weight=0.7"
+  },
+  {
+   "d3_ineligible_reason": "30 confident out-of-distribution error(s) against a contract that allows 0",
+   "effective_first_choice": {
+    "answered_and_correct": 11,
+    "at_most_answered_correct_plus_abstentions": 15,
+    "definition": "an abstention executes the deterministic baseline order, and the metamorphic block credits it when that order was right; the setting's own first_choice_rate does not",
+    "divides_by_six_exactly": true,
+    "effective_first_choice_correct": 13,
+    "within_bound": true
+   },
+   "eligible_in_d3": false,
+   "new": {
+    "accuracy": "0.6875",
+    "answered_decisions": 16,
+    "census": {
+     "independent_decisions": 20,
+     "nominal_decisions": 120,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 100,
+     "revision": 4
+    },
+    "confident_error_rate": "0.3125",
+    "confident_errors": 5,
+    "correct_decisions": 11,
+    "coverage": "0.8",
+    "denominator": "independent_decisions",
+    "zero_error_upper_bound_95_if_it_had_been_clean": 0.17075
+   },
+   "old": {
+    "answered_decisions": 96,
+    "confident_error_rate_all_decisions": "0.25",
+    "confident_error_rate_answered_decisions": "0.3125",
+    "confident_errors": 30,
+    "denominator": "nominal_decisions",
+    "ranking_decisions": 120
+   },
+   "setting_identity": "k=5;similarity=0.50;agreement=0.60;confidence=0.70;embedding_weight=0.7"
+  },
+  {
+   "d3_ineligible_reason": "30 confident out-of-distribution error(s) against a contract that allows 0",
+   "effective_first_choice": {
+    "answered_and_correct": 11,
+    "at_most_answered_correct_plus_abstentions": 15,
+    "definition": "an abstention executes the deterministic baseline order, and the metamorphic block credits it when that order was right; the setting's own first_choice_rate does not",
+    "divides_by_six_exactly": true,
+    "effective_first_choice_correct": 13,
+    "within_bound": true
+   },
+   "eligible_in_d3": false,
+   "new": {
+    "accuracy": "0.6875",
+    "answered_decisions": 16,
+    "census": {
+     "independent_decisions": 20,
+     "nominal_decisions": 120,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 100,
+     "revision": 4
+    },
+    "confident_error_rate": "0.3125",
+    "confident_errors": 5,
+    "correct_decisions": 11,
+    "coverage": "0.8",
+    "denominator": "independent_decisions",
+    "zero_error_upper_bound_95_if_it_had_been_clean": 0.17075
+   },
+   "old": {
+    "answered_decisions": 96,
+    "confident_error_rate_all_decisions": "0.25",
+    "confident_error_rate_answered_decisions": "0.3125",
+    "confident_errors": 30,
+    "denominator": "nominal_decisions",
+    "ranking_decisions": 120
+   },
+   "setting_identity": "k=5;similarity=0.50;agreement=0.80;confidence=0.55;embedding_weight=0.7"
+  },
+  {
+   "d3_ineligible_reason": "30 confident out-of-distribution error(s) against a contract that allows 0",
+   "effective_first_choice": {
+    "answered_and_correct": 11,
+    "at_most_answered_correct_plus_abstentions": 15,
+    "definition": "an abstention executes the deterministic baseline order, and the metamorphic block credits it when that order was right; the setting's own first_choice_rate does not",
+    "divides_by_six_exactly": true,
+    "effective_first_choice_correct": 13,
+    "within_bound": true
+   },
+   "eligible_in_d3": false,
+   "new": {
+    "accuracy": "0.6875",
+    "answered_decisions": 16,
+    "census": {
+     "independent_decisions": 20,
+     "nominal_decisions": 120,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 100,
+     "revision": 4
+    },
+    "confident_error_rate": "0.3125",
+    "confident_errors": 5,
+    "correct_decisions": 11,
+    "coverage": "0.8",
+    "denominator": "independent_decisions",
+    "zero_error_upper_bound_95_if_it_had_been_clean": 0.17075
+   },
+   "old": {
+    "answered_decisions": 96,
+    "confident_error_rate_all_decisions": "0.25",
+    "confident_error_rate_answered_decisions": "0.3125",
+    "confident_errors": 30,
+    "denominator": "nominal_decisions",
+    "ranking_decisions": 120
+   },
+   "setting_identity": "k=5;similarity=0.50;agreement=0.80;confidence=0.70;embedding_weight=0.7"
+  },
+  {
+   "d3_ineligible_reason": "24 confident out-of-distribution error(s) against a contract that allows 0",
+   "effective_first_choice": {
+    "answered_and_correct": 11,
+    "at_most_answered_correct_plus_abstentions": 16,
+    "definition": "an abstention executes the deterministic baseline order, and the metamorphic block credits it when that order was right; the setting's own first_choice_rate does not",
+    "divides_by_six_exactly": true,
+    "effective_first_choice_correct": 12,
+    "within_bound": true
+   },
+   "eligible_in_d3": false,
+   "new": {
+    "accuracy": "0.7333333333333333333333333333",
+    "answered_decisions": 15,
+    "census": {
+     "independent_decisions": 20,
+     "nominal_decisions": 120,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 100,
+     "revision": 4
+    },
+    "confident_error_rate": "0.2666666666666666666666666667",
+    "confident_errors": 4,
+    "correct_decisions": 11,
+    "coverage": "0.75",
+    "denominator": "independent_decisions",
+    "zero_error_upper_bound_95_if_it_had_been_clean": 0.181036
+   },
+   "old": {
+    "answered_decisions": 90,
+    "confident_error_rate_all_decisions": "0.2",
+    "confident_error_rate_answered_decisions": "0.2666666666666666666666666667",
+    "confident_errors": 24,
+    "denominator": "nominal_decisions",
+    "ranking_decisions": 120
+   },
+   "setting_identity": "k=7;similarity=0.30;agreement=0.60;confidence=0.55;embedding_weight=0.7"
+  },
+  {
+   "d3_ineligible_reason": "24 confident out-of-distribution error(s) against a contract that allows 0",
+   "effective_first_choice": {
+    "answered_and_correct": 11,
+    "at_most_answered_correct_plus_abstentions": 16,
+    "definition": "an abstention executes the deterministic baseline order, and the metamorphic block credits it when that order was right; the setting's own first_choice_rate does not",
+    "divides_by_six_exactly": true,
+    "effective_first_choice_correct": 12,
+    "within_bound": true
+   },
+   "eligible_in_d3": false,
+   "new": {
+    "accuracy": "0.7333333333333333333333333333",
+    "answered_decisions": 15,
+    "census": {
+     "independent_decisions": 20,
+     "nominal_decisions": 120,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 100,
+     "revision": 4
+    },
+    "confident_error_rate": "0.2666666666666666666666666667",
+    "confident_errors": 4,
+    "correct_decisions": 11,
+    "coverage": "0.75",
+    "denominator": "independent_decisions",
+    "zero_error_upper_bound_95_if_it_had_been_clean": 0.181036
+   },
+   "old": {
+    "answered_decisions": 90,
+    "confident_error_rate_all_decisions": "0.2",
+    "confident_error_rate_answered_decisions": "0.2666666666666666666666666667",
+    "confident_errors": 24,
+    "denominator": "nominal_decisions",
+    "ranking_decisions": 120
+   },
+   "setting_identity": "k=7;similarity=0.30;agreement=0.60;confidence=0.70;embedding_weight=0.7"
+  },
+  {
+   "d3_ineligible_reason": "12 confident out-of-distribution error(s) against a contract that allows 0",
+   "effective_first_choice": {
+    "answered_and_correct": 8,
+    "at_most_answered_correct_plus_abstentions": 18,
+    "definition": "an abstention executes the deterministic baseline order, and the metamorphic block credits it when that order was right; the setting's own first_choice_rate does not",
+    "divides_by_six_exactly": true,
+    "effective_first_choice_correct": 11,
+    "within_bound": true
+   },
+   "eligible_in_d3": false,
+   "new": {
+    "accuracy": "0.8",
+    "answered_decisions": 10,
+    "census": {
+     "independent_decisions": 20,
+     "nominal_decisions": 120,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 100,
+     "revision": 4
+    },
+    "confident_error_rate": "0.2",
+    "confident_errors": 2,
+    "correct_decisions": 8,
+    "coverage": "0.5",
+    "denominator": "independent_decisions",
+    "zero_error_upper_bound_95_if_it_had_been_clean": 0.258866
+   },
+   "old": {
+    "answered_decisions": 60,
+    "confident_error_rate_all_decisions": "0.1",
+    "confident_error_rate_answered_decisions": "0.2",
+    "confident_errors": 12,
+    "denominator": "nominal_decisions",
+    "ranking_decisions": 120
+   },
+   "setting_identity": "k=7;similarity=0.30;agreement=0.80;confidence=0.55;embedding_weight=0.7"
+  },
+  {
+   "d3_ineligible_reason": "12 confident out-of-distribution error(s) against a contract that allows 0",
+   "effective_first_choice": {
+    "answered_and_correct": 8,
+    "at_most_answered_correct_plus_abstentions": 18,
+    "definition": "an abstention executes the deterministic baseline order, and the metamorphic block credits it when that order was right; the setting's own first_choice_rate does not",
+    "divides_by_six_exactly": true,
+    "effective_first_choice_correct": 11,
+    "within_bound": true
+   },
+   "eligible_in_d3": false,
+   "new": {
+    "accuracy": "0.8",
+    "answered_decisions": 10,
+    "census": {
+     "independent_decisions": 20,
+     "nominal_decisions": 120,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 100,
+     "revision": 4
+    },
+    "confident_error_rate": "0.2",
+    "confident_errors": 2,
+    "correct_decisions": 8,
+    "coverage": "0.5",
+    "denominator": "independent_decisions",
+    "zero_error_upper_bound_95_if_it_had_been_clean": 0.258866
+   },
+   "old": {
+    "answered_decisions": 60,
+    "confident_error_rate_all_decisions": "0.1",
+    "confident_error_rate_answered_decisions": "0.2",
+    "confident_errors": 12,
+    "denominator": "nominal_decisions",
+    "ranking_decisions": 120
+   },
+   "setting_identity": "k=7;similarity=0.30;agreement=0.80;confidence=0.70;embedding_weight=0.7"
+  },
+  {
+   "d3_ineligible_reason": "24 confident out-of-distribution error(s) against a contract that allows 0",
+   "effective_first_choice": {
+    "answered_and_correct": 11,
+    "at_most_answered_correct_plus_abstentions": 16,
+    "definition": "an abstention executes the deterministic baseline order, and the metamorphic block credits it when that order was right; the setting's own first_choice_rate does not",
+    "divides_by_six_exactly": true,
+    "effective_first_choice_correct": 12,
+    "within_bound": true
+   },
+   "eligible_in_d3": false,
+   "new": {
+    "accuracy": "0.7333333333333333333333333333",
+    "answered_decisions": 15,
+    "census": {
+     "independent_decisions": 20,
+     "nominal_decisions": 120,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 100,
+     "revision": 4
+    },
+    "confident_error_rate": "0.2666666666666666666666666667",
+    "confident_errors": 4,
+    "correct_decisions": 11,
+    "coverage": "0.75",
+    "denominator": "independent_decisions",
+    "zero_error_upper_bound_95_if_it_had_been_clean": 0.181036
+   },
+   "old": {
+    "answered_decisions": 90,
+    "confident_error_rate_all_decisions": "0.2",
+    "confident_error_rate_answered_decisions": "0.2666666666666666666666666667",
+    "confident_errors": 24,
+    "denominator": "nominal_decisions",
+    "ranking_decisions": 120
+   },
+   "setting_identity": "k=7;similarity=0.50;agreement=0.60;confidence=0.55;embedding_weight=0.7"
+  },
+  {
+   "d3_ineligible_reason": "24 confident out-of-distribution error(s) against a contract that allows 0",
+   "effective_first_choice": {
+    "answered_and_correct": 11,
+    "at_most_answered_correct_plus_abstentions": 16,
+    "definition": "an abstention executes the deterministic baseline order, and the metamorphic block credits it when that order was right; the setting's own first_choice_rate does not",
+    "divides_by_six_exactly": true,
+    "effective_first_choice_correct": 12,
+    "within_bound": true
+   },
+   "eligible_in_d3": false,
+   "new": {
+    "accuracy": "0.7333333333333333333333333333",
+    "answered_decisions": 15,
+    "census": {
+     "independent_decisions": 20,
+     "nominal_decisions": 120,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 100,
+     "revision": 4
+    },
+    "confident_error_rate": "0.2666666666666666666666666667",
+    "confident_errors": 4,
+    "correct_decisions": 11,
+    "coverage": "0.75",
+    "denominator": "independent_decisions",
+    "zero_error_upper_bound_95_if_it_had_been_clean": 0.181036
+   },
+   "old": {
+    "answered_decisions": 90,
+    "confident_error_rate_all_decisions": "0.2",
+    "confident_error_rate_answered_decisions": "0.2666666666666666666666666667",
+    "confident_errors": 24,
+    "denominator": "nominal_decisions",
+    "ranking_decisions": 120
+   },
+   "setting_identity": "k=7;similarity=0.50;agreement=0.60;confidence=0.70;embedding_weight=0.7"
+  },
+  {
+   "d3_ineligible_reason": "12 confident out-of-distribution error(s) against a contract that allows 0",
+   "effective_first_choice": {
+    "answered_and_correct": 8,
+    "at_most_answered_correct_plus_abstentions": 18,
+    "definition": "an abstention executes the deterministic baseline order, and the metamorphic block credits it when that order was right; the setting's own first_choice_rate does not",
+    "divides_by_six_exactly": true,
+    "effective_first_choice_correct": 11,
+    "within_bound": true
+   },
+   "eligible_in_d3": false,
+   "new": {
+    "accuracy": "0.8",
+    "answered_decisions": 10,
+    "census": {
+     "independent_decisions": 20,
+     "nominal_decisions": 120,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 100,
+     "revision": 4
+    },
+    "confident_error_rate": "0.2",
+    "confident_errors": 2,
+    "correct_decisions": 8,
+    "coverage": "0.5",
+    "denominator": "independent_decisions",
+    "zero_error_upper_bound_95_if_it_had_been_clean": 0.258866
+   },
+   "old": {
+    "answered_decisions": 60,
+    "confident_error_rate_all_decisions": "0.1",
+    "confident_error_rate_answered_decisions": "0.2",
+    "confident_errors": 12,
+    "denominator": "nominal_decisions",
+    "ranking_decisions": 120
+   },
+   "setting_identity": "k=7;similarity=0.50;agreement=0.80;confidence=0.55;embedding_weight=0.7"
+  },
+  {
+   "d3_ineligible_reason": "12 confident out-of-distribution error(s) against a contract that allows 0",
+   "effective_first_choice": {
+    "answered_and_correct": 8,
+    "at_most_answered_correct_plus_abstentions": 18,
+    "definition": "an abstention executes the deterministic baseline order, and the metamorphic block credits it when that order was right; the setting's own first_choice_rate does not",
+    "divides_by_six_exactly": true,
+    "effective_first_choice_correct": 11,
+    "within_bound": true
+   },
+   "eligible_in_d3": false,
+   "new": {
+    "accuracy": "0.8",
+    "answered_decisions": 10,
+    "census": {
+     "independent_decisions": 20,
+     "nominal_decisions": 120,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 100,
+     "revision": 4
+    },
+    "confident_error_rate": "0.2",
+    "confident_errors": 2,
+    "correct_decisions": 8,
+    "coverage": "0.5",
+    "denominator": "independent_decisions",
+    "zero_error_upper_bound_95_if_it_had_been_clean": 0.258866
+   },
+   "old": {
+    "answered_decisions": 60,
+    "confident_error_rate_all_decisions": "0.1",
+    "confident_error_rate_answered_decisions": "0.2",
+    "confident_errors": 12,
+    "denominator": "nominal_decisions",
+    "ranking_decisions": 120
+   },
+   "setting_identity": "k=7;similarity=0.50;agreement=0.80;confidence=0.70;embedding_weight=0.7"
+  }
+ ],
+ "pre_registration_sha256": "526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9",
+ "purpose": "Reproduce every Sprint 21D3 recorded value from Sprint 21D3 evidence, then restate each setting over independent decisions.",
+ "recorded_at": "2026-08-06T08:50:03Z",
+ "reproduction": {
+  "derived_values_checked": 408,
+  "derived_values_checked_per_setting": 17,
+  "effective_rate_bounds_checked": 24,
+  "reproduced": true,
+  "settings_examined": 24,
+  "settings_that_did_not_reproduce": [],
+  "stop_kind_if_it_had_failed": "reconciliation_not_reproducible"
+ },
+ "schema_version": 1,
+ "sources": {
+  "reconciliation": {
+   "path": "sprint-21d4-d3-reconciliation.json",
+   "sha256": "0fc00beac11cc7998ad8c3ae0b39d9065213a2d187114891c584ff52ea6bcf8e"
+  },
+  "selection": {
+   "path": "sprint-21d3-learner-selection.json",
+   "sha256": "216b196f491af5f9f128ba93a6193831b0ab4ebb84ad9cbe4476df554d756b5f"
+  }
+ },
+ "sprint": "21D4",
+ "wave": "W1"
+}

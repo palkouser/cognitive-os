@@ -1,0 +1,199 @@
+{
+ "arm": "minilm_shortlist_plus_bounded_ged",
+ "contracts_sha256": "bcab05107a838fd1a2c0739122ba3a7e51fa8386e83cffcf82e6e5263fb47354",
+ "criterion": "two identical passes must agree byte for byte on every arm; the arm is retired if a fixed budget cannot reproduce a stable ranking",
+ "decision": {
+  "budget": 1,
+  "budget_not_chosen_by_its_effect": "One is the only budget the yield-cost profile leaves standing: the second distance costs more than the first arrival and the fourth did not arrive at all. The number was read off cost, and no retrieval result was consulted.",
+  "immutable": true,
+  "option": "a",
+  "outcome": "deterministic_budget",
+  "why": "Two passes over every stored pair agreed on every distance, no pair was left unscored, and the worst per-pair cost is inside the allowance the frozen policy already declares."
+ },
+ "final_or_canary_outcomes_inspected": 0,
+ "final_outcomes_inspected": false,
+ "fixed_budget_determinism": {
+  "agreement": 1.0,
+  "budget": 1,
+  "budget_bound_any_comparison": true,
+  "comparisons": 140,
+  "first_comparison_of_the_process_ms": 220.488,
+  "pairs_that_disagreed_between_passes": [],
+  "passes": 2,
+  "per_pair_ms_max": 220.488,
+  "per_pair_ms_p50": 0.625,
+  "per_pair_ms_p95": 4.584,
+  "steady_state_ms_max": 49.846,
+  "the_maximum_is_the_first_comparison": true,
+  "unscored_pairs": [],
+  "yields_consumed_maximum": 1,
+  "yields_consumed_minimum": 1
+ },
+ "frozen_policy": {
+  "first_comparison_exceeds_the_allowance": true,
+  "first_comparison_of_the_process_ms": 220.488,
+  "first_comparison_reading": "A one-off cost inside networkx, paid once per process rather than once per pair, and paid by the wall-clock comparator too. It is reported rather than warmed away because an operator's first query does pay it.",
+  "inside_the_per_pair_allowance": true,
+  "inside_the_query_budget": true,
+  "per_pair_allowance_ms": 90,
+  "per_pair_ged_timeout_ms_now_unread_by_the_arm": true,
+  "policy_hash": "d0e8520e3d3bc3637ce75f632c79aa00c1f456a8af1a4956601dad359c8474ab",
+  "policy_is_frozen_and_unchanged": true,
+  "query_budget_ms": 2000,
+  "shortlist": 20,
+  "why_the_field_stays": "The resource policy is frozen and hash-checked; removing a field would change the hash every D1, D2 and D3 measurement cites. The arm no longer reads it as a per-pair clock, and the query-budget reserve still uses it as a conservative allowance for one more comparison.",
+  "worst_measured_per_pair_ms": 220.488,
+  "worst_measured_query_ms": 1167.562,
+  "worst_measured_steady_state_ms": 49.846
+ },
+ "gating": false,
+ "integrity_content_hash": "47f88c4c51bca9c863c737673a71e7348c3adf3047ec2a89025c81cdb0e9b4b8",
+ "items": [
+  "S21D4-041"
+ ],
+ "label": "development_only",
+ "measured_on": {
+  "access": "read_only",
+  "d4_retrieval_pool_read": false,
+  "pairs": 140,
+  "roots": [
+   "docs/sprints/sprint-21/evidence/sprint-21d1-emg-root.json",
+   "docs/sprints/sprint-21/evidence/sprint-21d3-retrieval-emg-root.json"
+  ]
+ },
+ "options": {
+  "a": "a fixed iteration budget from networkx.optimize_graph_edit_distance",
+  "b": "retirement from the frozen set, reported with its reason"
+ },
+ "pre_registration_sha256": "526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9",
+ "predecessor_numbers": {
+  "back_filled": false,
+  "d1_d2_d3_for_this_arm": "irreproducible",
+  "recomputed": false,
+  "why": "They were produced by an anytime search under a wall clock. A deterministic comparator cannot reconstruct what a different host reached before its clock stopped, and recomputing them now would publish new numbers under old dates."
+ },
+ "recorded_at": "2026-08-07T11:04:04.239644Z",
+ "schema_version": 1,
+ "sprint": "21D4",
+ "wall_clock_instability": {
+  "pairs": 8,
+  "pairs_whose_value_depends_on_the_clock": [
+   "d1:logic:affirming-consequent",
+   "d1:logic:consistency",
+   "d1:logic:constraint",
+   "d1:logic:counterexample",
+   "d1:logic:hypotheses",
+   "d1:logic:modus-ponens",
+   "d1:logic:sat",
+   "d1:logic:sequence-arithmetic"
+  ],
+  "per_pair": [
+   {
+    "5": 29.0,
+    "5_ms_elapsed": 6.194,
+    "90": 28.0,
+    "90_ms_elapsed": 91.268,
+    "candidate_nodes": 21,
+    "pair": "d1:logic:affirming-consequent",
+    "query_nodes": 30
+   },
+   {
+    "5": 29.0,
+    "5_ms_elapsed": 6.196,
+    "90": 28.0,
+    "90_ms_elapsed": 91.19,
+    "candidate_nodes": 21,
+    "pair": "d1:logic:consistency",
+    "query_nodes": 30
+   },
+   {
+    "5": 29.0,
+    "5_ms_elapsed": 6.216,
+    "90": 28.0,
+    "90_ms_elapsed": 91.166,
+    "candidate_nodes": 21,
+    "pair": "d1:logic:constraint",
+    "query_nodes": 30
+   },
+   {
+    "5": 29.0,
+    "5_ms_elapsed": 6.276,
+    "90": 28.0,
+    "90_ms_elapsed": 91.183,
+    "candidate_nodes": 21,
+    "pair": "d1:logic:counterexample",
+    "query_nodes": 30
+   },
+   {
+    "5": 29.0,
+    "5_ms_elapsed": 6.297,
+    "90": 28.0,
+    "90_ms_elapsed": 91.155,
+    "candidate_nodes": 21,
+    "pair": "d1:logic:hypotheses",
+    "query_nodes": 30
+   },
+   {
+    "5": 29.0,
+    "5_ms_elapsed": 6.225,
+    "90": 28.0,
+    "90_ms_elapsed": 91.228,
+    "candidate_nodes": 21,
+    "pair": "d1:logic:modus-ponens",
+    "query_nodes": 30
+   },
+   {
+    "5": 29.0,
+    "5_ms_elapsed": 6.234,
+    "90": 28.0,
+    "90_ms_elapsed": 91.192,
+    "candidate_nodes": 21,
+    "pair": "d1:logic:sat",
+    "query_nodes": 30
+   },
+   {
+    "5": 29.0,
+    "5_ms_elapsed": 6.235,
+    "90": 28.0,
+    "90_ms_elapsed": 91.235,
+    "candidate_nodes": 21,
+    "pair": "d1:logic:sequence-arithmetic",
+    "query_nodes": 30
+   }
+  ],
+  "probe": "the released wall-clock comparator at two clock speeds",
+  "the_clock_decides_the_score": true,
+  "timeouts_ms": [
+   90,
+   5
+  ]
+ },
+ "wave": "W3",
+ "yield_cost_profile": {
+  "candidate_nodes": 21,
+  "pair": "d1:logic:affirming-consequent",
+  "probe_ceiling_seconds": 120,
+  "probe_ceiling_yields": 6,
+  "profile": [
+   {
+    "distance": 29.0,
+    "elapsed_ms": 4.596,
+    "yield": 1
+   },
+   {
+    "distance": 28.0,
+    "elapsed_ms": 75.751,
+    "yield": 2
+   },
+   {
+    "distance": 26.0,
+    "elapsed_ms": 387.019,
+    "yield": 3
+   }
+  ],
+  "query_nodes": 30,
+  "reading": "Each further yield costs more than every previous one together, and the fourth was not reached inside the probe ceiling. A budget above one is an unbounded budget with a number written on it.",
+  "stopped_by": "the time ceiling, with the next distance still unfinished",
+  "yields_reached": 3
+ }
+}

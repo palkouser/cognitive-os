@@ -1,0 +1,51 @@
+{
+ "affects_any_published_number": false,
+ "amended_sentence": "search_terms is included in content_hash when it carries a term and absent from the canonical dump when it is empty, at every nesting depth",
+ "amendment": 2,
+ "amends": {
+  "bytes_modified": 0,
+  "contract": "searchable_surface",
+  "contracts_sha256": "bcab05107a838fd1a2c0739122ba3a7e51fa8386e83cffcf82e6e5263fb47354",
+  "frozen_content_hash": "fe3915fface80a6b75aa5f1a7f430ed0f439ebcdfd785f06d01979fd1ae7ebcf"
+ },
+ "chronology": {
+  "d4_retrieval_holdout_resolved": false,
+  "d4_retrieval_measurements_at_amendment_time": 0,
+  "d4_retrieval_pool_read": false,
+  "why_this_matters": "Pre-registration exists to stop a rule being chosen after its result is known. No D4 retrieval holdout exists yet and no arm has ranked anything under the widened surface, so this amendment cannot have been steered by a ranking."
+ },
+ "defect": {
+  "found_by": "implementing it at S21D4-040; the stored D3 blob was rehashed both ways before the field was written, rather than after a benchmark failed to load its root",
+  "id": "W3-D1",
+  "measured": {
+   "graph": "d3r-apply-migration:failed",
+   "hash_as_stored": "a8db90af88181437ef6633b653d0b6cc7ed1b0506ebc51594ac1c9d7c2d4cbc7",
+   "hash_if_the_empty_field_were_included": "a8db90af88181437ef6633b653d0b6cc7ed1b0506ebc51594ac1c9d7c2d4cbc7",
+   "stored_pairs_that_would_stop_loading": 140
+  },
+  "sealed_sentences": [
+   "included_in: content_hash",
+   "old stored graphs deserialise unchanged under the default"
+  ],
+  "why_they_cannot_both_hold_as_written": "HashedExperienceContract.seal_content recomputes the canonical hash of every contract on load and refuses a mismatch. A field that is unconditionally part of that hash therefore changes the identity of every graph stored before it existed, and those graphs stop loading rather than deserialising unchanged."
+ },
+ "integrity_content_hash": "6bf0734808b67d9380837e670383c8b92b573017be4c2db6f3bafb863c34b89c",
+ "items": [
+  "S21D4-013",
+  "S21D4-040"
+ ],
+ "operative_rule": "A graph that carries search terms is new bytes and hashes differently from the graph it was derived from, which is what the sealed contract's inclusion clause exists to guarantee. A graph that carries none serialises, and therefore hashes, exactly as it did before the field existed, which is what the sealed contract's deserialisation clause exists to guarantee. Everything else in the contract — the exclusion from structural_hash and from ExperienceGraphNode.label, the derivation through canonical_source_bytes, the character bound, the forbidden-marker guard and the fail-closed judgement-leak guard — is unchanged.",
+ "recorded_at": "2026-08-07T10:11:10.574422Z",
+ "schema_version": 1,
+ "sealed_record_amended_not_edited": true,
+ "sprint": "21D4",
+ "surface_evidence_sha256": "d54929d87e7dc31abdb15f826c9a8ec70a0ecbab74a24aa7360b699e2904ed8a",
+ "wave": "W3",
+ "what_this_does_not_change": [
+  "the excluded_from list",
+  "the derivation",
+  "the excluded_inputs list",
+  "the leak_guard",
+  "any number published by D1, D2 or D3"
+ ]
+}

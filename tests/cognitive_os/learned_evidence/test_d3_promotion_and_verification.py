@@ -47,13 +47,14 @@ from .test_inert_lifecycle import CORRELATION, OPERATOR, LifecycleHarness
 
 
 def _with_gate(name: str, outcome: PromotionGateOutcome) -> D3PromotionPayload:
+    """Rebuild through `fx.d3_gate` rather than field by field.
+
+    Copying the fields would drop condition 20's census when that row is the one being moved,
+    and S21D4-048 refuses a measured metamorphic/OOD row without it — a refusal that would show
+    up here as an unrelated test failing to construct its own input.
+    """
     gates = tuple(
-        PromotionGateRecord(
-            name=item.name,
-            outcome=outcome if item.name == name else item.outcome,
-            evidence_hash=item.evidence_hash,
-            detail=item.detail,
-        )
+        fx.d3_gate(item.name, outcome if item.name == name else item.outcome)
         for item in fx.d3_payload().gates
     )
     return fx.d3_payload(gates=gates)
@@ -174,15 +175,13 @@ class TestTheEvaluatorTruthTable:
         """`benefit` precedes `retention`, whatever order the gates appear in the payload."""
         payload = fx.d3_payload(
             gates=tuple(
-                PromotionGateRecord(
-                    name=item.name,
-                    outcome=(
+                fx.d3_gate(
+                    item.name,
+                    (
                         PromotionGateOutcome.FAILED
                         if item.name in {"retention", "benefit"}
                         else item.outcome
                     ),
-                    evidence_hash=item.evidence_hash,
-                    detail=item.detail,
                 )
                 for item in reversed(fx.d3_payload().gates)
             )

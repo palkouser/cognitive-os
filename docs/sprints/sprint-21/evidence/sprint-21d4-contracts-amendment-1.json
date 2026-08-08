@@ -1,0 +1,41 @@
+{
+ "amended_sentence": "the zero-error point is the lowest threshold at which every answered decision strictly above it is correct, equivalently the highest score among answered decisions that are wrong; it is the boundary of the zero-error region and the only member of it whose coverage is worth reporting, because every higher threshold admits a strict subset",
+ "amendment": 1,
+ "amends": {
+  "bytes_modified": 0,
+  "contract": "selective_operating_point",
+  "contracts_sha256": "bcab05107a838fd1a2c0739122ba3a7e51fa8386e83cffcf82e6e5263fb47354",
+  "frozen_content_hash": "833768c630d03e7ac73c4d1044e87f7ce5e9e001ab0ed8552a50c86370ab2692"
+ },
+ "chronology": {
+  "d4_calibration_measurements_at_amendment_time": 0,
+  "d4_threshold_derivations_at_amendment_time": 0,
+  "fresh_calibration_set_resolved": false,
+  "why_this_matters": "pre-registration exists to stop a rule being chosen after its result is known. No D4 threshold has been derived and no D4 calibration outcome exists, so this amendment cannot have been steered by one. Section 3 closes the window at S21D4-032, when the fresh calibration set is sealed."
+ },
+ "defect": {
+  "found_by": "implementing it at S21D4-021; the implementation had to choose an end of the interval and recorded the choice in derivation_reading rather than leave it implicit",
+  "sealed_sentence": "the zero-error point is the highest threshold at which every answered decision above it is correct",
+  "why_it_names_no_point": "the thresholds admitting only correct answered decisions are upward-closed: if every answered decision above t is correct, the same holds for every t' > t, up to the threshold that admits nothing at all. The sealed sentence therefore picks out an unbounded family, and its largest member has coverage zero, which is the opposite of the quantity the contract goes on to require be reported."
+ },
+ "integrity_content_hash": "ec474f30e5ce5aacfe9310189f9ddaa992fdaf497bb9f7ff03116097e3b78b13",
+ "items": [
+  "S21D4-011"
+ ],
+ "operative_rule": "score every independent clean calibration decision with the released bounded k-NN confidence; sort the answered ones by score descending; the zero-error point is the lowest threshold at which every answered decision strictly above it is correct, equivalently the highest score among answered decisions that are wrong; it is the boundary of the zero-error region and the only member of it whose coverage is worth reporting, because every higher threshold admits a strict subset; admit the answered decisions scoring strictly above it; report coverage over independent decisions and the Clopper-Pearson one-sided 95% upper bound on the true error rate",
+ "operative_rule_sha256": "d8c4e7a58e57ccb07f56ae0fe0f7e0425f10836b30db2b9269013ae316c98a59",
+ "pre_registration_sha256": "526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9",
+ "recorded_at": "2026-08-06T09:53:15Z",
+ "schema_version": 1,
+ "sprint": "21D4",
+ "unchanged_by_this_amendment": [
+  "the score, which is the released bounded k-NN confidence",
+  "calibration-split-only derivation",
+  "the single-derivation rule",
+  "the operating-point grid and the selection precedence",
+  "the Clopper-Pearson reporting requirement",
+  "every other contract, and every threshold or floor in Section 2.3"
+ ],
+ "wave": "W2",
+ "why_not_an_in_place_edit": "a sealed record is not edited after publication. The original bytes are unchanged and still reproduce their frozen hash, which --check verifies; this record supersedes one sentence and names what it replaced, exactly as S21D4-001 handled the D3 erratum."
+}

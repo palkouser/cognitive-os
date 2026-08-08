@@ -1,0 +1,111 @@
+{
+ "boundary_held": true,
+ "decision_sha256": "f5c19fa0cc290a335d5e250b80c009409cbb509e92e7f2210946c49982d8322f",
+ "final_or_canary_outcomes_inspected": 0,
+ "final_outcomes_inspected": false,
+ "graph_root_sha256": "0960818f07981523ef2656d14e9e423b6ce35907a5db9b6a99d232dc9669ffd9",
+ "holdout_result_sha256": "81c41d17205a220023d8356180f7e98cf3e36c9bf1266be89767713ff6a62ff7",
+ "integrity_content_hash": "1dca4f21cf88957b4bf2458475d7e7d8694b619362d237b115c5d9bac45b48f6",
+ "items": [
+  "S21D4-047"
+ ],
+ "measured": {
+  "advisory_properties": {
+   "carries_an_executable_body": false,
+   "evidence": [
+    false
+   ],
+   "never_pinned_required_or_evidence": true,
+   "pinned": [
+    false
+   ],
+   "required": [
+    false
+   ],
+   "summary_says_advisory": true,
+   "unsafe_exclusions": 0
+  },
+  "candidates_returned": 10,
+  "creates_execution_or_correction_authority": false,
+  "empty_set": {
+   "candidates": 0,
+   "component_status": "degraded",
+   "degraded_rather_than_unavailable": true,
+   "raised": false
+  },
+  "graphs_carrying_terms": 94,
+  "mandatory_sections": {
+   "a_comparison_over_nothing_is_not_a_pass": "The claim requires at least one mandatory section to compare. An empty intersection reports false here rather than passing vacuously.",
+   "byte_identical": [
+    "current_task_and_step:Current Task And Step",
+    "disputed_or_unverified_information:Disputed Or Unverified Information",
+    "recent_task_trajectory:Recent Task Trajectory",
+    "relevant_code_context:Relevant Code Context",
+    "supported_semantic_knowledge:Supported Semantic Knowledge",
+    "user_corrections:User Corrections"
+   ],
+   "every_mandatory_section_is_byte_identical": true,
+   "mandatory_sections": [
+    "current_task_and_step:Current Task And Step",
+    "disputed_or_unverified_information:Disputed Or Unverified Information",
+    "recent_task_trajectory:Recent Task Trajectory",
+    "relevant_code_context:Relevant Code Context",
+    "supported_semantic_knowledge:Supported Semantic Knowledge",
+    "user_corrections:User Corrections"
+   ],
+   "mandatory_sections_compared": 6,
+   "moved": [],
+   "sections_carrying_a_graph_reference": 2,
+   "sections_with_graph": 8,
+   "sections_without_graph": 8
+  },
+  "non_advisory_purpose": {
+   "candidates": 0,
+   "gets_nothing": true,
+   "purpose": "planning"
+  },
+  "opened_any_store_for_writing": false,
+  "pairs": 60,
+  "trust_degradation": {
+   "no_artifact_id": {
+    "candidates": 10,
+    "only_unverified": true,
+    "raised": false,
+    "trust_classes": [
+     "unverified"
+    ]
+   },
+   "no_verifier": {
+    "candidates": 10,
+    "only_unverified": true,
+    "raised": false,
+    "trust_classes": [
+     "unverified"
+    ]
+   },
+   "verifier_raises": {
+    "candidates": 10,
+    "only_unverified": true,
+    "raised": false,
+    "trust_classes": [
+     "unverified"
+    ]
+   },
+   "verifier_says_no": {
+    "candidates": 10,
+    "only_unverified": true,
+    "raised": false,
+    "trust_classes": [
+     "unverified"
+    ]
+   }
+  },
+  "widened_surface_reached_the_advisory_path": true
+ },
+ "pre_registration_sha256": "526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9",
+ "recorded_at": "2026-08-07T13:50:50.209181Z",
+ "runs_on_every_outcome": "The retrieval holdout returned a negative result. The advisory boundary is proved here anyway: it governs what retrieved history may do, not whether retrieval scored well, and an unproved boundary over a losing arm is still an unproved boundary.",
+ "schema_version": 1,
+ "sprint": "21D4",
+ "wave": "W3"
+}

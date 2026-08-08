@@ -997,6 +997,31 @@ jobs:
         run: uv run python scripts/learned.py d3-integrity
         env:
           COGOS_POSTGRES_DATABASE: cognitive_os_s21d3_test
+      # S21D4-085. The twelve-class D4 report, its seeded violations, and the CLI boundary over
+      # five predecessor roots rather than four. The twelfth class is `decision_independence`,
+      # and it is the one this lane exists to run: it fails when any committed file takes a
+      # rate over the counted decisions rather than the distinct ones, which is the erratum
+      # that made D3's condition-20 sample six times smaller than it looked. Credential-free by
+      # construction — the report reads the evidence directory and nothing else.
+      - name: D4 evidence integrity classes, independence and CLI boundary
+        run: >-
+          uv run pytest tests/cognitive_os/learning/test_d4_integrity.py
+          tests/cognitive_os/learning/test_d4_cli_boundary.py
+          tests/cognitive_os/learning/test_d4_pre_final_checkpoint_evidence.py
+          tests/cognitive_os/learning/test_d4_operations_evidence.py -q
+      # W7-F1. Eleven paths truncate `cognitive_os` tables and D4-W0-F1 fenced two of them. One
+      # of the other nine erased 1,076 committed observations on 2026-08-07. This step is the
+      # proof that the rule now has one implementation and that every path reaches it — including
+      # the scan that fails when a twelfth `TRUNCATE` appears without one.
+      - name: Every truncating path reaches one fence
+        run: uv run pytest tests/cognitive_os/learning/test_truncation_fence.py -q
+      # The released command itself, over the committed evidence. The two classes that need a
+      # store and a data root report `warning` here rather than `clean`, which is the point:
+      # this lane must not be able to claim a check it did not run.
+      - name: D4 evidence report over the committed evidence
+        run: uv run python scripts/learned.py d4-integrity
+        env:
+          COGOS_POSTGRES_DATABASE: cognitive_os_s21d4_test
       - name: Learned evidence schema drift
         run: uv run python -m cognitive_os.schemas.export --check
       - name: Learned table metadata imports without a live database

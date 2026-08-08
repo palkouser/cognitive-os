@@ -207,12 +207,27 @@ See [event-store-backup.md](event-store-backup.md) and
 
 ## Isolated environments only
 
-Two commands write, and both refuse a database whose name does not end in `_test`:
+Two commands write. Both refuse a database whose name does not end in `_test`, and both
+**truncate every learned evidence table**, so both also require the database to be nominated
+for erasure by name:
 
 ```bash
-uv run python scripts/learned.py smoke --confirm-isolated
-COGOS_POSTGRES_ENV_FILE="$PWD/.env.s21c1.local" ./scripts/learned_restart_smoke.sh
+COGOS_TRUNCATABLE_DATABASE=cognitive_os_scratch_test \
+  uv run python scripts/learned.py smoke --confirm-isolated
+COGOS_POSTGRES_ENV_FILE="$PWD/.env.s21c1.local" \
+  COGOS_TRUNCATABLE_DATABASE=cognitive_os_scratch_test \
+  ./scripts/learned_restart_smoke.sh
 ```
+
+`COGOS_TRUNCATABLE_DATABASE` must name the connected database, or the command refuses. This is
+the same variable and the same rule the PostgreSQL integration fixture has used since W6-F2, and
+it exists because a `_test` suffix is a naming convention rather than consent: **every sprint's
+evidence database ends in `_test` too.** Running the smoke against one erased Sprint 21D3's
+committed campaign -- 280 self-play observations and both materialised revision-3 datasets --
+two minutes before the backup that was meant to preserve them, and nothing was recoverable
+because every backup was taken afterwards. Never nominate a store that holds evidence. The smoke
+additionally refuses any store that already holds an observation, a dataset, or a component
+other than the inert reference one.
 
 `smoke` drives the inert reference component through its whole governed lifecycle. The
 component abstains unconditionally, so it cannot change a decision even if something did

@@ -1,0 +1,1382 @@
+[
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-acknowledge-all"
+  ],
+  "query_hash": "3104b8bca7e73abe9d76f43c5bbe3b85d99cc722ebd1acb45234bcbe6f3ea7c3",
+  "query_id": "q:d4r-acknowledge-all",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-add-tag",
+   "d4r-append-capped",
+   "d4r-claim-ticket",
+   "d4r-disable-feature",
+   "d4r-mark-read",
+   "d4r-move-between-queues",
+   "d4r-pin-version",
+   "d4r-remove-member",
+   "d4r-set-default"
+  ],
+  "seen_task": false,
+  "task_signature": "e3c71b71-b3c2-592a-b0d8-dc49fc0339c7"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-add-tag"
+  ],
+  "query_hash": "9262469179bedadbff99436cac2cadec8be2e3ed20ffa6f575b894024daec511",
+  "query_id": "q:d4r-add-tag",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-acknowledge-all",
+   "d4r-append-capped",
+   "d4r-claim-ticket",
+   "d4r-disable-feature",
+   "d4r-mark-read",
+   "d4r-move-between-queues",
+   "d4r-pin-version",
+   "d4r-remove-member",
+   "d4r-set-default"
+  ],
+  "seen_task": false,
+  "task_signature": "f5ccdd49-23c9-58b1-8a1b-0e8cbcf580e9"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-append-capped"
+  ],
+  "query_hash": "4d51ac0ac391e67f8f53988f7e203a664843bd94618886377872686c610e06eb",
+  "query_id": "q:d4r-append-capped",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-acknowledge-all",
+   "d4r-add-tag",
+   "d4r-claim-ticket",
+   "d4r-disable-feature",
+   "d4r-mark-read",
+   "d4r-move-between-queues",
+   "d4r-pin-version",
+   "d4r-remove-member",
+   "d4r-set-default"
+  ],
+  "seen_task": false,
+  "task_signature": "b688ad5d-5ad3-5975-8901-eae2638d3745"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-apply-discount"
+  ],
+  "query_hash": "28ab07a33ceabae6d725b1ef0b4972f8024af667eecfd8c9134e31d24813f9fe",
+  "query_id": "q:d4r-apply-discount",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-count-multiples",
+   "d4r-cumulative-share",
+   "d4r-mean-absolute-error",
+   "d4r-minutes-to-clock",
+   "d4r-next-multiple-at-least",
+   "d4r-sign-of",
+   "d4r-spread-of",
+   "d4r-truncate-to",
+   "d4r-within-tolerance"
+  ],
+  "seen_task": false,
+  "task_signature": "0aa00cc6-55ea-55bf-9dbc-6659d1c24445"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-apply-to-values"
+  ],
+  "query_hash": "5ca3c408e9baf31b42299e7595dd9de99f5e0917358fbb0d7551fb25e2c780c0",
+  "query_id": "q:d4r-apply-to-values",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-drop-columns",
+   "d4r-max-by",
+   "d4r-normalise-booleans",
+   "d4r-partition-by",
+   "d4r-pluck-nested",
+   "d4r-reverse-index",
+   "d4r-sort-records-by",
+   "d4r-split-field",
+   "d4r-stringify-keys"
+  ],
+  "seen_task": false,
+  "task_signature": "805eb137-1e6a-5ae4-953c-d2f0f0614705"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-claim-ticket"
+  ],
+  "query_hash": "42d1c9602650579340e6ef1dc91b6cf532004242308287b9d5369c7f62dec267",
+  "query_id": "q:d4r-claim-ticket",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-acknowledge-all",
+   "d4r-add-tag",
+   "d4r-append-capped",
+   "d4r-disable-feature",
+   "d4r-mark-read",
+   "d4r-move-between-queues",
+   "d4r-pin-version",
+   "d4r-remove-member",
+   "d4r-set-default"
+  ],
+  "seen_task": false,
+  "task_signature": "5ebcca8e-b32b-5267-a977-203bcc119baa"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-count-multiples"
+  ],
+  "query_hash": "d45ebe48bb27fbbc2876436d48f7c0ad360cdc75388cf9c9050752d9f3cb1bc8",
+  "query_id": "q:d4r-count-multiples",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-apply-discount",
+   "d4r-cumulative-share",
+   "d4r-mean-absolute-error",
+   "d4r-minutes-to-clock",
+   "d4r-next-multiple-at-least",
+   "d4r-sign-of",
+   "d4r-spread-of",
+   "d4r-truncate-to",
+   "d4r-within-tolerance"
+  ],
+  "seen_task": false,
+  "task_signature": "9d87a17f-9c97-5ef6-ab32-818872f741ca"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-cumulative-share"
+  ],
+  "query_hash": "68b2562942b862d8de2ff38c7e5eca9b4d00e1d8cde3801244928f71d2816af6",
+  "query_id": "q:d4r-cumulative-share",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-apply-discount",
+   "d4r-count-multiples",
+   "d4r-mean-absolute-error",
+   "d4r-minutes-to-clock",
+   "d4r-next-multiple-at-least",
+   "d4r-sign-of",
+   "d4r-spread-of",
+   "d4r-truncate-to",
+   "d4r-within-tolerance"
+  ],
+  "seen_task": false,
+  "task_signature": "3d905db3-c03c-5805-b708-f77c67fe6e1a"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-describe-exception"
+  ],
+  "query_hash": "4c6c72dfd06915b76f7d830b2485d90dbc4fc84a34d202e65061c390a2d1ef30",
+  "query_id": "q:d4r-describe-exception",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-drop-noise",
+   "d4r-exit-code-for-report",
+   "d4r-first-failure",
+   "d4r-has-blocking-error",
+   "d4r-is-retryable-status",
+   "d4r-reraise-as",
+   "d4r-safe-get",
+   "d4r-time-left",
+   "d4r-warn-once"
+  ],
+  "seen_task": false,
+  "task_signature": "4d6fc6a4-59bc-5c23-8e99-21ed6ff5f8c1"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-disable-feature"
+  ],
+  "query_hash": "72717f2eea3e0c1995055cfce88333bc83c27eb71d16f7721a2d97eccb922ca4",
+  "query_id": "q:d4r-disable-feature",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-acknowledge-all",
+   "d4r-add-tag",
+   "d4r-append-capped",
+   "d4r-claim-ticket",
+   "d4r-mark-read",
+   "d4r-move-between-queues",
+   "d4r-pin-version",
+   "d4r-remove-member",
+   "d4r-set-default"
+  ],
+  "seen_task": false,
+  "task_signature": "57fabcc3-ee50-56fd-ab3e-4b14dc59fec4"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-drop-columns"
+  ],
+  "query_hash": "bd43dd6d88ef29d788082a589e6e4dda7e4045ca68f13d8c3128972e1459bd8a",
+  "query_id": "q:d4r-drop-columns",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-apply-to-values",
+   "d4r-max-by",
+   "d4r-normalise-booleans",
+   "d4r-partition-by",
+   "d4r-pluck-nested",
+   "d4r-reverse-index",
+   "d4r-sort-records-by",
+   "d4r-split-field",
+   "d4r-stringify-keys"
+  ],
+  "seen_task": false,
+  "task_signature": "1b80f87c-12ae-5213-8f94-9cfcde9782eb"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-drop-noise"
+  ],
+  "query_hash": "c58c2dbc55f0e98ab8d9c30f7bd9a630d0f4973064fa81a1153d1e0377f1287f",
+  "query_id": "q:d4r-drop-noise",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-describe-exception",
+   "d4r-exit-code-for-report",
+   "d4r-first-failure",
+   "d4r-has-blocking-error",
+   "d4r-is-retryable-status",
+   "d4r-reraise-as",
+   "d4r-safe-get",
+   "d4r-time-left",
+   "d4r-warn-once"
+  ],
+  "seen_task": false,
+  "task_signature": "e0989515-ae7c-5906-abb8-203292245c2a"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-drop-trailing"
+  ],
+  "query_hash": "13ec656c82df26f08299ed7be4cf3a8229b7988cedf77d04c67b6419f7f5f737",
+  "query_id": "q:d4r-drop-trailing",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-first-missing-positive",
+   "d4r-last-n",
+   "d4r-middle-item",
+   "d4r-nth-from-end",
+   "d4r-positions-of",
+   "d4r-second-largest",
+   "d4r-split-in-half",
+   "d4r-starts-with",
+   "d4r-take-while-rising"
+  ],
+  "seen_task": false,
+  "task_signature": "e16a09af-c4eb-58d2-9546-5ac0aa613ab1"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-exit-code-for-report"
+  ],
+  "query_hash": "249143662e3cfebe20f03554dcff5b7db949c6101cd6a5090011df808aa6b952",
+  "query_id": "q:d4r-exit-code-for-report",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-describe-exception",
+   "d4r-drop-noise",
+   "d4r-first-failure",
+   "d4r-has-blocking-error",
+   "d4r-is-retryable-status",
+   "d4r-reraise-as",
+   "d4r-safe-get",
+   "d4r-time-left",
+   "d4r-warn-once"
+  ],
+  "seen_task": false,
+  "task_signature": "1e4c890b-37ae-5a2b-bee2-9ff43ddc5665"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-first-failure"
+  ],
+  "query_hash": "1f3ae36fa9bb5a14a7cc525a7420d6d892c4cb530468427707cde6b70d2afedb",
+  "query_id": "q:d4r-first-failure",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-describe-exception",
+   "d4r-drop-noise",
+   "d4r-exit-code-for-report",
+   "d4r-has-blocking-error",
+   "d4r-is-retryable-status",
+   "d4r-reraise-as",
+   "d4r-safe-get",
+   "d4r-time-left",
+   "d4r-warn-once"
+  ],
+  "seen_task": false,
+  "task_signature": "6a89300b-23f3-5145-9a1c-5e699c85cb23"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-first-missing-positive"
+  ],
+  "query_hash": "c37156da9898d3350429a4dbc841f077a7166ca1d811e77b0a4c117ff4db8d6d",
+  "query_id": "q:d4r-first-missing-positive",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-drop-trailing",
+   "d4r-last-n",
+   "d4r-middle-item",
+   "d4r-nth-from-end",
+   "d4r-positions-of",
+   "d4r-second-largest",
+   "d4r-split-in-half",
+   "d4r-starts-with",
+   "d4r-take-while-rising"
+  ],
+  "seen_task": false,
+  "task_signature": "319cef85-c74b-52c3-8a0b-e00bc68461da"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-has-blocking-error"
+  ],
+  "query_hash": "e80945ba0512b76ca694db90280bb80ec63cfd446e492419670b200d1a80f105",
+  "query_id": "q:d4r-has-blocking-error",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-describe-exception",
+   "d4r-drop-noise",
+   "d4r-exit-code-for-report",
+   "d4r-first-failure",
+   "d4r-is-retryable-status",
+   "d4r-reraise-as",
+   "d4r-safe-get",
+   "d4r-time-left",
+   "d4r-warn-once"
+  ],
+  "seen_task": false,
+  "task_signature": "a6605118-80b0-53c4-a4bf-7a105a56b14c"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-is-retryable-status"
+  ],
+  "query_hash": "7f5a644cbce652b4077437384164da18046d675d50fd57f5951356ec9a93d85a",
+  "query_id": "q:d4r-is-retryable-status",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-describe-exception",
+   "d4r-drop-noise",
+   "d4r-exit-code-for-report",
+   "d4r-first-failure",
+   "d4r-has-blocking-error",
+   "d4r-reraise-as",
+   "d4r-safe-get",
+   "d4r-time-left",
+   "d4r-warn-once"
+  ],
+  "seen_task": false,
+  "task_signature": "f9bcf47a-63e4-5e89-b73e-e8b60341623a"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-join-path"
+  ],
+  "query_hash": "35c168b49eb47dd178455f544fed93357ad50d7c015ecb2b1ceabe275ea35287",
+  "query_id": "q:d4r-join-path",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-normalise-whitespace",
+   "d4r-parse-dotted-name",
+   "d4r-parse-flag-value",
+   "d4r-parse-grouped-number",
+   "d4r-parse-int-or-none",
+   "d4r-parse-mac-address",
+   "d4r-strip-prefix-once",
+   "d4r-title-from-slug",
+   "d4r-trailing-number"
+  ],
+  "seen_task": false,
+  "task_signature": "ac5294ca-43d8-5e28-9e6e-f525bdbf1422"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-last-n"
+  ],
+  "query_hash": "4bb516fd759fb89abcea29de3748bc8c49440e19916261e4c4d8d476d228112c",
+  "query_id": "q:d4r-last-n",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-drop-trailing",
+   "d4r-first-missing-positive",
+   "d4r-middle-item",
+   "d4r-nth-from-end",
+   "d4r-positions-of",
+   "d4r-second-largest",
+   "d4r-split-in-half",
+   "d4r-starts-with",
+   "d4r-take-while-rising"
+  ],
+  "seen_task": false,
+  "task_signature": "c07d3324-82a1-51ed-b5f1-82e3f5fd6e24"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-mark-read"
+  ],
+  "query_hash": "625fa4c906b7d977030108f4f4db3f2db9b28620ce2e6bc8500befb46c681db7",
+  "query_id": "q:d4r-mark-read",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-acknowledge-all",
+   "d4r-add-tag",
+   "d4r-append-capped",
+   "d4r-claim-ticket",
+   "d4r-disable-feature",
+   "d4r-move-between-queues",
+   "d4r-pin-version",
+   "d4r-remove-member",
+   "d4r-set-default"
+  ],
+  "seen_task": false,
+  "task_signature": "8aeec03c-cc41-5b2d-828e-e54407ad576e"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-max-by"
+  ],
+  "query_hash": "d913f4c1f338bb985102f301c2a2ca146f4ef0761ef9d432f2e4f1872687eb23",
+  "query_id": "q:d4r-max-by",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-apply-to-values",
+   "d4r-drop-columns",
+   "d4r-normalise-booleans",
+   "d4r-partition-by",
+   "d4r-pluck-nested",
+   "d4r-reverse-index",
+   "d4r-sort-records-by",
+   "d4r-split-field",
+   "d4r-stringify-keys"
+  ],
+  "seen_task": false,
+  "task_signature": "50d237b9-af81-5a0e-80ff-45266d0c1c3e"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-mean-absolute-error"
+  ],
+  "query_hash": "971f5eed497fc3e54169df5b7a60e7584396a8c4ec14e2547e02154a523642d9",
+  "query_id": "q:d4r-mean-absolute-error",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-apply-discount",
+   "d4r-count-multiples",
+   "d4r-cumulative-share",
+   "d4r-minutes-to-clock",
+   "d4r-next-multiple-at-least",
+   "d4r-sign-of",
+   "d4r-spread-of",
+   "d4r-truncate-to",
+   "d4r-within-tolerance"
+  ],
+  "seen_task": false,
+  "task_signature": "17b329c9-0628-5953-aa3f-83a16a6fae8a"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-middle-item"
+  ],
+  "query_hash": "58db3abc53e3c52e2370d29ffbfe4a0333e79dc14d6abd56d66c9d059611b411",
+  "query_id": "q:d4r-middle-item",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-drop-trailing",
+   "d4r-first-missing-positive",
+   "d4r-last-n",
+   "d4r-nth-from-end",
+   "d4r-positions-of",
+   "d4r-second-largest",
+   "d4r-split-in-half",
+   "d4r-starts-with",
+   "d4r-take-while-rising"
+  ],
+  "seen_task": false,
+  "task_signature": "b190df51-d8bf-5144-9675-65e48ebb2ef8"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-minutes-to-clock"
+  ],
+  "query_hash": "32e6d9f3d82d8722a2de9faaa7d74a3e22bb0f605f360d655ab6b531c58a63eb",
+  "query_id": "q:d4r-minutes-to-clock",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-apply-discount",
+   "d4r-count-multiples",
+   "d4r-cumulative-share",
+   "d4r-mean-absolute-error",
+   "d4r-next-multiple-at-least",
+   "d4r-sign-of",
+   "d4r-spread-of",
+   "d4r-truncate-to",
+   "d4r-within-tolerance"
+  ],
+  "seen_task": false,
+  "task_signature": "70dc0e1d-866f-5c8d-8aae-e7ee92ab13b1"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-move-between-queues"
+  ],
+  "query_hash": "4bd0ea89c4ffcf726323951357c80dd195adaa63254ce8497a6920c1b8c03271",
+  "query_id": "q:d4r-move-between-queues",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-acknowledge-all",
+   "d4r-add-tag",
+   "d4r-append-capped",
+   "d4r-claim-ticket",
+   "d4r-disable-feature",
+   "d4r-mark-read",
+   "d4r-pin-version",
+   "d4r-remove-member",
+   "d4r-set-default"
+  ],
+  "seen_task": false,
+  "task_signature": "b76b1829-b8af-5e27-9dd3-d72fc46effa5"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-next-multiple-at-least"
+  ],
+  "query_hash": "1c8a97aa40c99e0f90170ba8d7ae45381053c6d25e5bebef82542ca33cd8f6ad",
+  "query_id": "q:d4r-next-multiple-at-least",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-apply-discount",
+   "d4r-count-multiples",
+   "d4r-cumulative-share",
+   "d4r-mean-absolute-error",
+   "d4r-minutes-to-clock",
+   "d4r-sign-of",
+   "d4r-spread-of",
+   "d4r-truncate-to",
+   "d4r-within-tolerance"
+  ],
+  "seen_task": false,
+  "task_signature": "38dee9b5-a029-50e4-9d1c-fc3483d05078"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-normalise-booleans"
+  ],
+  "query_hash": "42b40a2c32d78f9b7f6594bdb3f4c6ee770531ea4b64329fb76f3ad34a9edb9b",
+  "query_id": "q:d4r-normalise-booleans",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-apply-to-values",
+   "d4r-drop-columns",
+   "d4r-max-by",
+   "d4r-partition-by",
+   "d4r-pluck-nested",
+   "d4r-reverse-index",
+   "d4r-sort-records-by",
+   "d4r-split-field",
+   "d4r-stringify-keys"
+  ],
+  "seen_task": false,
+  "task_signature": "990df81b-1a87-5386-ab78-e8516af5c70b"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-normalise-whitespace"
+  ],
+  "query_hash": "e8cf7fe4dc295fe0e6fe93b520beac921ef7d25656a45e256d4cd27436381bfe",
+  "query_id": "q:d4r-normalise-whitespace",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-join-path",
+   "d4r-parse-dotted-name",
+   "d4r-parse-flag-value",
+   "d4r-parse-grouped-number",
+   "d4r-parse-int-or-none",
+   "d4r-parse-mac-address",
+   "d4r-strip-prefix-once",
+   "d4r-title-from-slug",
+   "d4r-trailing-number"
+  ],
+  "seen_task": false,
+  "task_signature": "3de09103-2cd2-51cf-a30e-f80034684240"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-nth-from-end"
+  ],
+  "query_hash": "9c1e6a37d380793540ec2a9bdc2a7e30447164f672d54f0d4f3ee269ab49a96e",
+  "query_id": "q:d4r-nth-from-end",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-drop-trailing",
+   "d4r-first-missing-positive",
+   "d4r-last-n",
+   "d4r-middle-item",
+   "d4r-positions-of",
+   "d4r-second-largest",
+   "d4r-split-in-half",
+   "d4r-starts-with",
+   "d4r-take-while-rising"
+  ],
+  "seen_task": false,
+  "task_signature": "a7c16741-967c-57e2-b550-65bc5ef9a808"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-parse-dotted-name"
+  ],
+  "query_hash": "51a194e5a4d85a48cd9e314c92de0ab405a08cea206d729a9e32869f6f4201cc",
+  "query_id": "q:d4r-parse-dotted-name",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-join-path",
+   "d4r-normalise-whitespace",
+   "d4r-parse-flag-value",
+   "d4r-parse-grouped-number",
+   "d4r-parse-int-or-none",
+   "d4r-parse-mac-address",
+   "d4r-strip-prefix-once",
+   "d4r-title-from-slug",
+   "d4r-trailing-number"
+  ],
+  "seen_task": false,
+  "task_signature": "5fd80540-06fc-525e-9c57-1d9c71d1309c"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-parse-flag-value"
+  ],
+  "query_hash": "6acee4fc8df42ce22e492eff81f457d173f66674457e2102ae154826b7528e36",
+  "query_id": "q:d4r-parse-flag-value",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-join-path",
+   "d4r-normalise-whitespace",
+   "d4r-parse-dotted-name",
+   "d4r-parse-grouped-number",
+   "d4r-parse-int-or-none",
+   "d4r-parse-mac-address",
+   "d4r-strip-prefix-once",
+   "d4r-title-from-slug",
+   "d4r-trailing-number"
+  ],
+  "seen_task": false,
+  "task_signature": "1625a560-5a5f-51dc-bb62-d996a5e6add0"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-parse-grouped-number"
+  ],
+  "query_hash": "cf4b9ef774ad5c0167ae3947f72cc3ceab318325efe875f4891bcdc9141e11d8",
+  "query_id": "q:d4r-parse-grouped-number",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-join-path",
+   "d4r-normalise-whitespace",
+   "d4r-parse-dotted-name",
+   "d4r-parse-flag-value",
+   "d4r-parse-int-or-none",
+   "d4r-parse-mac-address",
+   "d4r-strip-prefix-once",
+   "d4r-title-from-slug",
+   "d4r-trailing-number"
+  ],
+  "seen_task": false,
+  "task_signature": "2f42c069-1e4a-5973-95e7-31595d07ac1e"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-parse-int-or-none"
+  ],
+  "query_hash": "6cb7e08de775c114d853778c49e14c3910cc2507d9a7b9d676e4b1dec3d2d24b",
+  "query_id": "q:d4r-parse-int-or-none",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-join-path",
+   "d4r-normalise-whitespace",
+   "d4r-parse-dotted-name",
+   "d4r-parse-flag-value",
+   "d4r-parse-grouped-number",
+   "d4r-parse-mac-address",
+   "d4r-strip-prefix-once",
+   "d4r-title-from-slug",
+   "d4r-trailing-number"
+  ],
+  "seen_task": false,
+  "task_signature": "4760b838-4869-5d16-a844-1d81ace88519"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-parse-mac-address"
+  ],
+  "query_hash": "fd2e795a78e6caf81667a00c9fb4d4e00e4e1e2be984bbc9344569d1c37810c4",
+  "query_id": "q:d4r-parse-mac-address",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-join-path",
+   "d4r-normalise-whitespace",
+   "d4r-parse-dotted-name",
+   "d4r-parse-flag-value",
+   "d4r-parse-grouped-number",
+   "d4r-parse-int-or-none",
+   "d4r-strip-prefix-once",
+   "d4r-title-from-slug",
+   "d4r-trailing-number"
+  ],
+  "seen_task": false,
+  "task_signature": "ad0fdfce-c3c2-599f-a109-9109bca9b8d8"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-partition-by"
+  ],
+  "query_hash": "f958f5ffd78a9a9be05213c61dba74207289a73b6c6f160e16c91a71d1ae6b6c",
+  "query_id": "q:d4r-partition-by",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-apply-to-values",
+   "d4r-drop-columns",
+   "d4r-max-by",
+   "d4r-normalise-booleans",
+   "d4r-pluck-nested",
+   "d4r-reverse-index",
+   "d4r-sort-records-by",
+   "d4r-split-field",
+   "d4r-stringify-keys"
+  ],
+  "seen_task": false,
+  "task_signature": "68103b32-4a4a-5891-97f5-b5d1e7ac3722"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-pin-version"
+  ],
+  "query_hash": "ff2995ff4ef1e89d11abeee24565a64868f226d9d13691cc4954cad2d58e858c",
+  "query_id": "q:d4r-pin-version",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-acknowledge-all",
+   "d4r-add-tag",
+   "d4r-append-capped",
+   "d4r-claim-ticket",
+   "d4r-disable-feature",
+   "d4r-mark-read",
+   "d4r-move-between-queues",
+   "d4r-remove-member",
+   "d4r-set-default"
+  ],
+  "seen_task": false,
+  "task_signature": "f984c7cc-18a9-5a18-9933-f29b7f86fc8a"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-pluck-nested"
+  ],
+  "query_hash": "7c941095567e585dc09b0c32443b89662c7b3aeb67d108fb7d41726d3e78cefe",
+  "query_id": "q:d4r-pluck-nested",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-apply-to-values",
+   "d4r-drop-columns",
+   "d4r-max-by",
+   "d4r-normalise-booleans",
+   "d4r-partition-by",
+   "d4r-reverse-index",
+   "d4r-sort-records-by",
+   "d4r-split-field",
+   "d4r-stringify-keys"
+  ],
+  "seen_task": false,
+  "task_signature": "adc9d073-5fde-50c6-9310-d5ce56e15651"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-positions-of"
+  ],
+  "query_hash": "e96a334f662072e1ce5baa955c81b2ddf85083f60a7cd7fe3b67b0535f67f51b",
+  "query_id": "q:d4r-positions-of",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-drop-trailing",
+   "d4r-first-missing-positive",
+   "d4r-last-n",
+   "d4r-middle-item",
+   "d4r-nth-from-end",
+   "d4r-second-largest",
+   "d4r-split-in-half",
+   "d4r-starts-with",
+   "d4r-take-while-rising"
+  ],
+  "seen_task": false,
+  "task_signature": "691a31a8-a87d-5c0e-8f95-04fb78856737"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-remove-member"
+  ],
+  "query_hash": "f6a4cf09a0e2a28b4929b18d19394ce922da3a143f32f42c39c6fcc351e7bb81",
+  "query_id": "q:d4r-remove-member",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-acknowledge-all",
+   "d4r-add-tag",
+   "d4r-append-capped",
+   "d4r-claim-ticket",
+   "d4r-disable-feature",
+   "d4r-mark-read",
+   "d4r-move-between-queues",
+   "d4r-pin-version",
+   "d4r-set-default"
+  ],
+  "seen_task": false,
+  "task_signature": "44e3b3ba-47cb-5744-9734-045c30a86c82"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-reraise-as"
+  ],
+  "query_hash": "a5fd54989c31c0d4eb6f7ef9774566e682593ef76805eb676fd81869e7402696",
+  "query_id": "q:d4r-reraise-as",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-describe-exception",
+   "d4r-drop-noise",
+   "d4r-exit-code-for-report",
+   "d4r-first-failure",
+   "d4r-has-blocking-error",
+   "d4r-is-retryable-status",
+   "d4r-safe-get",
+   "d4r-time-left",
+   "d4r-warn-once"
+  ],
+  "seen_task": false,
+  "task_signature": "9602aca9-8c7e-557d-921e-cab4cfb7e8bc"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-reverse-index"
+  ],
+  "query_hash": "1c61bb04dd611096c87ffe98a65239450d8dba50914c15d8ab5221babcb2e97d",
+  "query_id": "q:d4r-reverse-index",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-apply-to-values",
+   "d4r-drop-columns",
+   "d4r-max-by",
+   "d4r-normalise-booleans",
+   "d4r-partition-by",
+   "d4r-pluck-nested",
+   "d4r-sort-records-by",
+   "d4r-split-field",
+   "d4r-stringify-keys"
+  ],
+  "seen_task": false,
+  "task_signature": "37f6522f-68ac-5d93-9a2c-bbf1d2ef8d7a"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-safe-get"
+  ],
+  "query_hash": "31ce88f41a2ea3012150a40fc083c11899aabf3cff77a2e5ce7ab656cd4741af",
+  "query_id": "q:d4r-safe-get",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-describe-exception",
+   "d4r-drop-noise",
+   "d4r-exit-code-for-report",
+   "d4r-first-failure",
+   "d4r-has-blocking-error",
+   "d4r-is-retryable-status",
+   "d4r-reraise-as",
+   "d4r-time-left",
+   "d4r-warn-once"
+  ],
+  "seen_task": false,
+  "task_signature": "29fb62dc-2af4-5e95-87f8-7c93465e4dee"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-second-largest"
+  ],
+  "query_hash": "91639a8bdcc8cefd76c047dcba0132d4fafe3fbade71c7fa56b7bf3d1f9c2b25",
+  "query_id": "q:d4r-second-largest",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-drop-trailing",
+   "d4r-first-missing-positive",
+   "d4r-last-n",
+   "d4r-middle-item",
+   "d4r-nth-from-end",
+   "d4r-positions-of",
+   "d4r-split-in-half",
+   "d4r-starts-with",
+   "d4r-take-while-rising"
+  ],
+  "seen_task": false,
+  "task_signature": "ff16abfd-1be1-51a7-b786-7b684f2ae11e"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-set-default"
+  ],
+  "query_hash": "45fd2e351200e85b713f1aec9cacc31a0fab7726672f742f59e3bdbf31d798dc",
+  "query_id": "q:d4r-set-default",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-acknowledge-all",
+   "d4r-add-tag",
+   "d4r-append-capped",
+   "d4r-claim-ticket",
+   "d4r-disable-feature",
+   "d4r-mark-read",
+   "d4r-move-between-queues",
+   "d4r-pin-version",
+   "d4r-remove-member"
+  ],
+  "seen_task": false,
+  "task_signature": "ebc84ab6-ffa0-54be-afb9-a7703dfdf650"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-sign-of"
+  ],
+  "query_hash": "6126a72ed6d02349d8b095c781ffe3b42fd313fd1f4290bb033f6270e49b29a0",
+  "query_id": "q:d4r-sign-of",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-apply-discount",
+   "d4r-count-multiples",
+   "d4r-cumulative-share",
+   "d4r-mean-absolute-error",
+   "d4r-minutes-to-clock",
+   "d4r-next-multiple-at-least",
+   "d4r-spread-of",
+   "d4r-truncate-to",
+   "d4r-within-tolerance"
+  ],
+  "seen_task": false,
+  "task_signature": "8f4145d1-bb40-5935-9b53-9eb266adcc9e"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-sort-records-by"
+  ],
+  "query_hash": "d5425cd38095cede89f80ced9f3f715630841c7991e9483167958f37096c87eb",
+  "query_id": "q:d4r-sort-records-by",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-apply-to-values",
+   "d4r-drop-columns",
+   "d4r-max-by",
+   "d4r-normalise-booleans",
+   "d4r-partition-by",
+   "d4r-pluck-nested",
+   "d4r-reverse-index",
+   "d4r-split-field",
+   "d4r-stringify-keys"
+  ],
+  "seen_task": false,
+  "task_signature": "5998ad62-00c2-513b-8730-bdc09533f5cd"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-split-field"
+  ],
+  "query_hash": "5bcbc81d1e9f4bda91d2013bd84024b8dc3950329c1d68eed6c6499d6f340618",
+  "query_id": "q:d4r-split-field",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-apply-to-values",
+   "d4r-drop-columns",
+   "d4r-max-by",
+   "d4r-normalise-booleans",
+   "d4r-partition-by",
+   "d4r-pluck-nested",
+   "d4r-reverse-index",
+   "d4r-sort-records-by",
+   "d4r-stringify-keys"
+  ],
+  "seen_task": false,
+  "task_signature": "a36d050d-92b0-5f44-a212-9fc8c06f6fcf"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-split-in-half"
+  ],
+  "query_hash": "72b39e45a74284851662121464197b606161b8c1b1268e92d9c8d7154d2d4a6b",
+  "query_id": "q:d4r-split-in-half",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-drop-trailing",
+   "d4r-first-missing-positive",
+   "d4r-last-n",
+   "d4r-middle-item",
+   "d4r-nth-from-end",
+   "d4r-positions-of",
+   "d4r-second-largest",
+   "d4r-starts-with",
+   "d4r-take-while-rising"
+  ],
+  "seen_task": false,
+  "task_signature": "cc065ba5-492e-5f42-abff-1de73a0301bd"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-spread-of"
+  ],
+  "query_hash": "1e1b689a93cd7226cd7a71b9997ca61b75028529327feadbedb1bb702bf057c2",
+  "query_id": "q:d4r-spread-of",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-apply-discount",
+   "d4r-count-multiples",
+   "d4r-cumulative-share",
+   "d4r-mean-absolute-error",
+   "d4r-minutes-to-clock",
+   "d4r-next-multiple-at-least",
+   "d4r-sign-of",
+   "d4r-truncate-to",
+   "d4r-within-tolerance"
+  ],
+  "seen_task": false,
+  "task_signature": "e476a83d-e3f1-5e17-a091-cf3d3f8f1b0b"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-starts-with"
+  ],
+  "query_hash": "ce3365f05b1481c18c8273dab4b30d2780d3cb04554467913f98a166315d4ba2",
+  "query_id": "q:d4r-starts-with",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-drop-trailing",
+   "d4r-first-missing-positive",
+   "d4r-last-n",
+   "d4r-middle-item",
+   "d4r-nth-from-end",
+   "d4r-positions-of",
+   "d4r-second-largest",
+   "d4r-split-in-half",
+   "d4r-take-while-rising"
+  ],
+  "seen_task": false,
+  "task_signature": "4b5ace00-bae0-51fa-bb8b-9c9cbb7d9f08"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-stringify-keys"
+  ],
+  "query_hash": "d28c57ba119c9cc39cf869392a4323a10a95551b9d352bdab6403cb62e5c4343",
+  "query_id": "q:d4r-stringify-keys",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-apply-to-values",
+   "d4r-drop-columns",
+   "d4r-max-by",
+   "d4r-normalise-booleans",
+   "d4r-partition-by",
+   "d4r-pluck-nested",
+   "d4r-reverse-index",
+   "d4r-sort-records-by",
+   "d4r-split-field"
+  ],
+  "seen_task": false,
+  "task_signature": "5e546188-fa20-50a2-b053-3211d6305ae9"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-strip-prefix-once"
+  ],
+  "query_hash": "26fbab6145707f0dc5d6fab74af7c54bada61d2bb5b56a90d1ea8c989d83c65b",
+  "query_id": "q:d4r-strip-prefix-once",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-join-path",
+   "d4r-normalise-whitespace",
+   "d4r-parse-dotted-name",
+   "d4r-parse-flag-value",
+   "d4r-parse-grouped-number",
+   "d4r-parse-int-or-none",
+   "d4r-parse-mac-address",
+   "d4r-title-from-slug",
+   "d4r-trailing-number"
+  ],
+  "seen_task": false,
+  "task_signature": "caf808f6-e80a-5875-b292-2f64c33b25f7"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-take-while-rising"
+  ],
+  "query_hash": "1bba80599c78e28c3d2a904e3fe33a9e3f7ea8012a48446b41a5db35d8472197",
+  "query_id": "q:d4r-take-while-rising",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-drop-trailing",
+   "d4r-first-missing-positive",
+   "d4r-last-n",
+   "d4r-middle-item",
+   "d4r-nth-from-end",
+   "d4r-positions-of",
+   "d4r-second-largest",
+   "d4r-split-in-half",
+   "d4r-starts-with"
+  ],
+  "seen_task": false,
+  "task_signature": "4a642f6e-fad3-5ee4-a709-88266c34ec77"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-time-left"
+  ],
+  "query_hash": "bafe998fbd9c06c9d020c1a2bb4a5ec11ef09ac35ada0e2d642f3391de8b9020",
+  "query_id": "q:d4r-time-left",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-describe-exception",
+   "d4r-drop-noise",
+   "d4r-exit-code-for-report",
+   "d4r-first-failure",
+   "d4r-has-blocking-error",
+   "d4r-is-retryable-status",
+   "d4r-reraise-as",
+   "d4r-safe-get",
+   "d4r-warn-once"
+  ],
+  "seen_task": false,
+  "task_signature": "0a85cb8c-2494-5bf7-b7c0-d816d999ddf5"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-title-from-slug"
+  ],
+  "query_hash": "36592b23ef37a6b90fbe4f7f7752474d8309511242ae12a049b4dbceec4906de",
+  "query_id": "q:d4r-title-from-slug",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-join-path",
+   "d4r-normalise-whitespace",
+   "d4r-parse-dotted-name",
+   "d4r-parse-flag-value",
+   "d4r-parse-grouped-number",
+   "d4r-parse-int-or-none",
+   "d4r-parse-mac-address",
+   "d4r-strip-prefix-once",
+   "d4r-trailing-number"
+  ],
+  "seen_task": false,
+  "task_signature": "8f83f1a8-cd08-5ea5-b863-46848fbdd590"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-trailing-number"
+  ],
+  "query_hash": "db85798f5a59e6b5dfb728fd91bcd44c6b72edc3e8ec57cc4ebfae278ac5e89c",
+  "query_id": "q:d4r-trailing-number",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-join-path",
+   "d4r-normalise-whitespace",
+   "d4r-parse-dotted-name",
+   "d4r-parse-flag-value",
+   "d4r-parse-grouped-number",
+   "d4r-parse-int-or-none",
+   "d4r-parse-mac-address",
+   "d4r-strip-prefix-once",
+   "d4r-title-from-slug"
+  ],
+  "seen_task": false,
+  "task_signature": "eedf0624-3db3-5a6a-b624-eda738fef8a3"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-truncate-to"
+  ],
+  "query_hash": "022d99855156ef21494721d7ba9edf008eaeb7a110fe81391dc2ed44297b5b8e",
+  "query_id": "q:d4r-truncate-to",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-apply-discount",
+   "d4r-count-multiples",
+   "d4r-cumulative-share",
+   "d4r-mean-absolute-error",
+   "d4r-minutes-to-clock",
+   "d4r-next-multiple-at-least",
+   "d4r-sign-of",
+   "d4r-spread-of",
+   "d4r-within-tolerance"
+  ],
+  "seen_task": false,
+  "task_signature": "df9dd683-7296-5aa9-9f1b-e4065fe1300b"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-warn-once"
+  ],
+  "query_hash": "37c56e9b7c102f5cc9874a48453af4bd8f5a4b98fa813292d1356d82d108ea43",
+  "query_id": "q:d4r-warn-once",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-describe-exception",
+   "d4r-drop-noise",
+   "d4r-exit-code-for-report",
+   "d4r-first-failure",
+   "d4r-has-blocking-error",
+   "d4r-is-retryable-status",
+   "d4r-reraise-as",
+   "d4r-safe-get",
+   "d4r-time-left"
+  ],
+  "seen_task": false,
+  "task_signature": "7074b598-9c3d-5f19-ac95-586150336205"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d4r-within-tolerance"
+  ],
+  "query_hash": "c165154ba644b9a482dd32ae2f75187391b8a5bcb1d09a34f7989a81b601e6a7",
+  "query_id": "q:d4r-within-tolerance",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d4r-apply-discount",
+   "d4r-count-multiples",
+   "d4r-cumulative-share",
+   "d4r-mean-absolute-error",
+   "d4r-minutes-to-clock",
+   "d4r-next-multiple-at-least",
+   "d4r-sign-of",
+   "d4r-spread-of",
+   "d4r-truncate-to"
+  ],
+  "seen_task": false,
+  "task_signature": "74ed45d4-3a82-58c4-8248-1f377e516e80"
+ }
+]

@@ -1,0 +1,107 @@
+{
+  "$defs": {
+    "DecisionCensusV4": {
+      "additionalProperties": false,
+      "description": "How many decisions were counted, how many were distinct, and how many were replicas.",
+      "properties": {
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "independence_rule": {
+          "default": "two counted decisions are the same decision when their fitted feature vectors are equal; independence is equality of the fitted vector, not of the task, the seed or the transform",
+          "minLength": 1,
+          "title": "Independence Rule",
+          "type": "string"
+        },
+        "independent_decisions": {
+          "minimum": 0,
+          "title": "Independent Decisions",
+          "type": "integer"
+        },
+        "nominal_decisions": {
+          "minimum": 0,
+          "title": "Nominal Decisions",
+          "type": "integer"
+        },
+        "rate_denominator": {
+          "default": "independent_decisions",
+          "minLength": 1,
+          "title": "Rate Denominator",
+          "type": "string"
+        },
+        "replicated_decisions": {
+          "minimum": 0,
+          "title": "Replicated Decisions",
+          "type": "integer"
+        },
+        "revision": {
+          "default": 4,
+          "title": "Revision",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "nominal_decisions",
+        "independent_decisions",
+        "replicated_decisions"
+      ],
+      "title": "DecisionCensusV4",
+      "type": "object"
+    }
+  },
+  "$id": "https://cognitive-os.local/schemas/v1/learned/correction-decision-set-v4.schema.json",
+  "additionalProperties": false,
+  "description": "One measured decision set. Every rate below is over the independent denominator.\n\nThe counts are of *independent* decisions throughout. A replica is invariance evidence — it\nsays the encoder did not move when the source was renamed — and it is reported as such by the\ncensus, but it never enlarges a numerator or a denominator here.",
+  "properties": {
+    "answered_decisions": {
+      "minimum": 0,
+      "title": "Answered Decisions",
+      "type": "integer"
+    },
+    "census": {
+      "$ref": "#/$defs/DecisionCensusV4"
+    },
+    "changed_actions": {
+      "minimum": 0,
+      "title": "Changed Actions",
+      "type": "integer"
+    },
+    "confident_errors": {
+      "minimum": 0,
+      "title": "Confident Errors",
+      "type": "integer"
+    },
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "correct_decisions": {
+      "minimum": 0,
+      "title": "Correct Decisions",
+      "type": "integer"
+    },
+    "label": {
+      "minLength": 1,
+      "title": "Label",
+      "type": "string"
+    },
+    "revision": {
+      "default": 4,
+      "title": "Revision",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "label",
+    "census",
+    "answered_decisions",
+    "correct_decisions",
+    "confident_errors",
+    "changed_actions"
+  ],
+  "title": "CorrectionDecisionSetV4",
+  "type": "object"
+}

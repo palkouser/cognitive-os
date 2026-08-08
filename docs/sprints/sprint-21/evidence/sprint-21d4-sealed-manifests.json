@@ -1,0 +1,221 @@
+{
+ "bound_evidence": {
+  "corpus": {
+   "file": "sprint-21d4-corpus.json",
+   "sha256": "a15fc8f8d58ccf236df4b8fed5703df974109d81f36219bc2c626498fe9f9a52"
+  },
+  "separation": {
+   "file": "sprint-21d4-separation.json",
+   "sha256": "eaaf2827f64602ad57924d74d9d29782c7d5ad9f7669da6b43fff5d6289dcc68"
+  }
+ },
+ "capability_revocation": {
+  "capability": "isolated_corpus_authoring_validator",
+  "revoked": true,
+  "when": "at this seal, before any D4 outcome exists",
+  "why": "the capability that wrote the hundred groups has no business outliving them; an authoring validator still open once outcomes exist is a channel from a role into the corpus that describes it"
+ },
+ "carried_roles": {
+  "all_identical": true,
+  "d3_evidence": "sprint-21d3-sealed-manifests.json",
+  "d3_evidence_sha256": "5d267fe27538937dd07eb44b3622228b60084bdf5b0fa3004446a1efdb378ced",
+  "d3_seal_hash": "96d9937f8190d5ec63ab7037bff7cbf4cfaca99ff3b6441e8e472acd8b19db4c",
+  "roles": {
+   "canary": {
+    "d3_released_hash": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7",
+    "d4_catalogue_hash": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7",
+    "identical": true,
+    "obtained_by": "seal_d3_corpus(), carried; not re-derived from the specs",
+    "s21d4_004_decision": "reuse"
+   },
+   "final_a": {
+    "d3_released_hash": "69d5eedcaeccdfdcc183b050c89c3e4b49b709474a35511620c39f6f0292fb46",
+    "d4_catalogue_hash": "69d5eedcaeccdfdcc183b050c89c3e4b49b709474a35511620c39f6f0292fb46",
+    "identical": true,
+    "obtained_by": "seal_d3_corpus(), carried; not re-derived from the specs",
+    "s21d4_004_decision": "reuse"
+   },
+   "final_b": {
+    "d3_released_hash": "06a0c2f6641e4bf330d2fd29a9fab54b636c77d689917976133bafc92bf22a33",
+    "d4_catalogue_hash": "06a0c2f6641e4bf330d2fd29a9fab54b636c77d689917976133bafc92bf22a33",
+    "identical": true,
+    "obtained_by": "seal_d3_corpus(), carried; not re-derived from the specs",
+    "s21d4_004_decision": "reuse"
+   }
+  },
+  "why_not_re_derived": "a re-derivation from the same specs would produce the same number whether or not the released catalogue had moved underneath it, so it could not tell reuse from coincidence"
+ },
+ "catalogues": {
+  "calibration": {
+   "campaign_seed": 21040101,
+   "candidate_slots": 400,
+   "content_hash": "43f9fc22320ee455be637fbb6b73614b00c592be643b36d6ada0eb9c1daaee25",
+   "corpus_role": "training",
+   "generator_path": "correction_catalogue_d4.seal_d4_corpus:calibration",
+   "groups": 100,
+   "outcomes_present": false,
+   "provenance": "self_play"
+  },
+  "canary": {
+   "campaign_seed": 21028505,
+   "candidate_slots": 20,
+   "content_hash": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7",
+   "corpus_role": "evaluation",
+   "generator_path": "correction_catalogue.seal_corpus:canary",
+   "groups": 5,
+   "outcomes_present": false,
+   "provenance": "real_governed_run"
+  },
+  "final_a": {
+   "campaign_seed": 21026303,
+   "candidate_slots": 120,
+   "content_hash": "69d5eedcaeccdfdcc183b050c89c3e4b49b709474a35511620c39f6f0292fb46",
+   "corpus_role": "evaluation",
+   "generator_path": "correction_catalogue.seal_corpus:final_a",
+   "groups": 30,
+   "outcomes_present": false,
+   "provenance": "real_governed_run"
+  },
+  "final_b": {
+   "campaign_seed": 21027404,
+   "candidate_slots": 120,
+   "content_hash": "06a0c2f6641e4bf330d2fd29a9fab54b636c77d689917976133bafc92bf22a33",
+   "corpus_role": "evaluation",
+   "generator_path": "correction_catalogue.seal_corpus:final_b_independent",
+   "groups": 30,
+   "outcomes_present": false,
+   "provenance": "real_governed_run"
+  },
+  "retrieval": {
+   "content_hash": "d4aa9cdd281eb4ab9b5afd7499524921363c4ddde4b0628b5b6a3544ddd0da46",
+   "groups": 60,
+   "minimum_qualifying_queries": 50,
+   "minimum_source_groups": 60,
+   "queries_resolved": false
+  },
+  "training": {
+   "campaign_seed": 21040202,
+   "candidate_slots": 320,
+   "content_hash": "921a39de99bbcde44b2a1bb2c5e2be7c2a8b92175afbf867c97e19a08727a4bb",
+   "corpus_role": "training",
+   "generator_path": "correction_catalogue_d4.seal_d4_corpus:fitting",
+   "groups": 80,
+   "outcomes_present": false,
+   "provenance": "self_play"
+  }
+ },
+ "eligibility": {
+  "calibration_groups": 100,
+  "eligible_calibration_groups": 100,
+  "ineligible": [],
+  "rule": "both D4 cases apply: the rename map exists and the issue rewrite lands"
+ },
+ "final_outcomes_inspected": false,
+ "integrity_content_hash": "1c3527cc390db566d72f90f0d63c60b85256409190963276e44d487349c40e37",
+ "items": [
+  "S21D4-032"
+ ],
+ "pre_registration_sha256": "526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9",
+ "purpose": "Seal the fitting, calibration, final A, final B, canary and retrieval manifests before any outcome exists, carrying the three roles S21D4-004 recorded as reuse rather than re-deriving them, and close the corpus-authoring capability.",
+ "recorded_at": "2026-08-06T18:16:43Z",
+ "role_disjointness": {
+  "all_pairwise_disjoint": true,
+  "pairs_sharing_a_group": {
+   "calibration|canary": 0,
+   "calibration|final_a": 0,
+   "calibration|final_b": 0,
+   "calibration|retrieval": 0,
+   "calibration|training": 0,
+   "canary|final_a": 0,
+   "canary|final_b": 0,
+   "canary|retrieval": 0,
+   "canary|training": 0,
+   "final_a|final_b": 0,
+   "final_a|retrieval": 0,
+   "final_a|training": 0,
+   "final_b|retrieval": 0,
+   "final_b|training": 0,
+   "retrieval|training": 0
+  }
+ },
+ "schema_version": 1,
+ "seal": {
+  "calibration_catalogue_hash": "43f9fc22320ee455be637fbb6b73614b00c592be643b36d6ada0eb9c1daaee25",
+  "canary_catalogue_hash": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7",
+  "candidate_slots": 980,
+  "content_hash": "b69b4cc672cf3ec5b1ba793ef9b19b3eeb5ccf0ed98360a0c01b7f471c58cfea",
+  "corpus_authoring_capability_revoked": true,
+  "final_a_catalogue_hash": "69d5eedcaeccdfdcc183b050c89c3e4b49b709474a35511620c39f6f0292fb46",
+  "final_b_catalogue_hash": "06a0c2f6641e4bf330d2fd29a9fab54b636c77d689917976133bafc92bf22a33",
+  "fitting_catalogue_hash": "921a39de99bbcde44b2a1bb2c5e2be7c2a8b92175afbf867c97e19a08727a4bb",
+  "invariance_submanifest_hash": "e85f0261e16483e6ed29ff79000e0db09d8790662dca263d69b2377153e6d85c",
+  "outcomes_present": false,
+  "promotion_submanifest_hash": "72bbb5a9e7ccd1573fe8b4577adf0a9e1407f855cc2c306337803fe4e3bb8c3e",
+  "retrieval_pool_hash": "d4aa9cdd281eb4ab9b5afd7499524921363c4ddde4b0628b5b6a3544ddd0da46",
+  "revision": 4
+ },
+ "seeds": {
+  "calibration": 21040101,
+  "distinct_from_every_predecessor_seed": true,
+  "fitting": 21040202,
+  "invariance": 21048303,
+  "promotion": 21045404
+ },
+ "sprint": "21D4",
+ "transformation_submanifests": {
+  "calibration_invariance": {
+   "cases": [
+    "identifier_rename_a",
+    "issue_rewrite_a"
+   ],
+   "content_hash": "e85f0261e16483e6ed29ff79000e0db09d8790662dca263d69b2377153e6d85c",
+   "generator_code_hash": "bd8e2f0419c5766f2bd494d2c041f9041e268fc531e0775348698a270e79c397",
+   "hard_coded_oracle_hash": "619dd385a0bf6035a1cbc7155a05b83ffc028bd64e61be7c450bef4182fd952c",
+   "independent_decisions": 0,
+   "sample_groups": 20,
+   "sample_groups_named": [
+    "d4-boundary-batch-by-size",
+    "d4-transform-build-tree",
+    "d4-errors-abort-reason",
+    "d4-numeric-approach-target",
+    "d4-parsing-bracketed-body",
+    "d4-state-advance-offset",
+    "d4-boundary-common-prefix",
+    "d4-transform-camel-to-snake",
+    "d4-errors-escalate-severity",
+    "d4-numeric-average-speed",
+    "d4-parsing-column-label",
+    "d4-state-apply-schema-step",
+    "d4-boundary-first-at-least",
+    "d4-transform-compact-record",
+    "d4-errors-explain-missing",
+    "d4-numeric-check-digit",
+    "d4-parsing-hex-colour",
+    "d4-state-assign-reviewer",
+    "d4-boundary-into-columns",
+    "d4-transform-expand-ranges"
+   ],
+   "sample_selection_rule": "the first twenty groups of the family-interleaved calibration manifest, so the choice can be checked against the sealed catalogue afterwards",
+   "seed": 21048303,
+   "source_manifest_hash": "43f9fc22320ee455be637fbb6b73614b00c592be643b36d6ada0eb9c1daaee25",
+   "transformed_decisions": 40,
+   "why_zero_independent": "a transformation of a group repeats that group's fitted feature vector, so it repeats a decision; the transformed set is a regression test and never an accuracy sample"
+  },
+  "promotion": {
+   "cases": [
+    "identifier_rename_a",
+    "issue_rewrite_a"
+   ],
+   "content_hash": "72bbb5a9e7ccd1573fe8b4577adf0a9e1407f855cc2c306337803fe4e3bb8c3e",
+   "generator_code_hash": "bd8e2f0419c5766f2bd494d2c041f9041e268fc531e0775348698a270e79c397",
+   "groups": 60,
+   "hard_coded_oracle_hash": "619dd385a0bf6035a1cbc7155a05b83ffc028bd64e61be7c450bef4182fd952c",
+   "independent_decisions": 60,
+   "nominal_decisions": 120,
+   "reported_side_by_side": true,
+   "seed": 21045404,
+   "source_manifest_hash": "13ad903fb6a9b9fa393f50c7a1297fcfffddb96fe2d5f978c457073de7bca6b4"
+  }
+ },
+ "wave": "W2"
+}

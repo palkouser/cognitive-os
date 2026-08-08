@@ -1,0 +1,101 @@
+{
+ "access_and_outcome_authority": {
+  "canary_opened": false,
+  "d3_selection_authorises_final_access": false,
+  "d3_selection_hash": "68ea06843d2136e390bf8a4ea0698414932987f5447887187907c45c0dcea876",
+  "final_a_opened": false,
+  "final_b_opened": false,
+  "note": "the D3 learned store is empty for the reason D4-W0-F1 records, so its zero counts are not by themselves proof that these roles were never opened; the D3 audit's own zero-access record and the untouched catalogue hashes are",
+  "store_counts": {
+   "cognitive_os_s21d2_test": {
+    "accesses": 0,
+    "evidence_records": 0,
+    "observations_for_protected_roles": 0,
+    "observations_total": 480
+   },
+   "cognitive_os_s21d3_test": {
+    "accesses": 0,
+    "evidence_records": 0,
+    "observations_for_protected_roles": 0,
+    "observations_total": 0
+   }
+  },
+  "zero_outcomes_predictions_or_receipts": true
+ },
+ "audit_surface": "sealed catalogue, root and access identities only",
+ "compared_against_the_d3_audit": {
+  "d3_decisions": {
+   "canary": "reuse",
+   "final_a": "reuse",
+   "final_b": "reuse"
+  },
+  "d3_protected_bodies_resolved": 0,
+  "source": "sprint-21d3-holdout-reuse-audit.json",
+  "source_sha256": "3367747e29a0302f2be5f914a60b9e88ebb3fa08ab382e429ee8a0e120535cca"
+ },
+ "eligible_for_reuse": true,
+ "group_disjointness": {
+  "all_pairwise_disjoint": true,
+  "pairs_sharing_a_group": {
+   "canary|final_a": 0,
+   "canary|final_b": 0,
+   "final_a|final_b": 0
+  }
+ },
+ "individual_body_hashes_resolved": 0,
+ "integrity_content_hash": "fb951824d7e0a1bcdd078ec9a8e3c6b32b8911ebdd1f44a2e9ae9cc290fa455f",
+ "items": [
+  "S21D4-004"
+ ],
+ "protected_bodies_resolved": 0,
+ "protected_task_identities": 65,
+ "recorded_at": "2026-08-06T07:50:52Z",
+ "roles": {
+  "canary": {
+   "candidate_slots": 20,
+   "catalogue_name": "canary",
+   "decision": "reuse",
+   "group_digest": "f7eb9589e1fd45086175c1494b93bc8b1ffd720ca0a3200d6949869601fc88fe",
+   "groups": 5,
+   "matches_expected_shape": true
+  },
+  "final_a": {
+   "candidate_slots": 120,
+   "catalogue_name": "final_a",
+   "decision": "reuse",
+   "group_digest": "dcb7427b6f5a1b47078df0b4d694809abdf13b18c3b87618452dcb8c7a8d2469",
+   "groups": 30,
+   "matches_expected_shape": true
+  },
+  "final_b": {
+   "candidate_slots": 120,
+   "catalogue_name": "final_b",
+   "decision": "reuse",
+   "group_digest": "5dddfa582db27f7cf7e5bc1a1121ff430398bfcbb3883692c77abf14d0ce0193",
+   "groups": 30,
+   "matches_expected_shape": true
+  }
+ },
+ "schema_version": 1,
+ "sprint": "21D4",
+ "wave": "W0",
+ "whole_role_replacement_contract": {
+  "counts": {
+   "canary": {
+    "candidate_slots": 20,
+    "groups": 5
+   },
+   "final_a": {
+    "candidate_slots": 120,
+    "groups": 30
+   },
+   "final_b": {
+    "candidate_slots": 120,
+    "groups": 30
+   }
+  },
+  "partial_reuse_allowed": false,
+  "procedure": "author the whole affected role at S21D4-030, prove separation at S21D4-031 and seal it at S21D4-032, before any measurement",
+  "trigger": "any role failing shape, disjointness or zero-access"
+ }
+}

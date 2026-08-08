@@ -14,6 +14,7 @@ Nothing here fits, encodes or evaluates anything. The encoder (S21D2-040), the r
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from decimal import Decimal
 from enum import StrEnum
 
@@ -1032,3 +1033,125 @@ class D3GateManifest(HashedExperienceContract):
         if "parent_stop_hash" not in self.typed_not_opened_required_fields:
             raise ValueError("a not-opened child without its parent stop hash is untraceable")
         return self
+
+
+# Revision 4 is additive for the same reason revision 3 was: D4 reads D3's evidence through the
+# revision-3 classes above, so their serialisation and hashes stay byte-identical. What follows
+# is S21D4-010's counting rule, and it exists because D3 counted 120 ranking decisions that were
+# 20 decisions replicated six times. Nothing above it could have refused that, because nothing
+# above it asked how many of the counted decisions were distinct.
+
+
+#: The one field name every revision-4 rate is divided by. It is spelled once, here, so a
+#: payload cannot name a denominator it did not use.
+INDEPENDENT_DENOMINATOR = "independent_decisions"
+
+INDEPENDENCE_RULE = (
+    "two counted decisions are the same decision when their fitted feature vectors are equal; "
+    "independence is equality of the fitted vector, not of the task, the seed or the transform"
+)
+
+
+def decision_census(feature_hashes: Sequence[str]) -> tuple[int, int, int]:
+    """`(nominal, independent, replicated)` for one decision set.
+
+    The caller passes one hash of the *fitted* feature vector per counted decision, because that
+    is what the rule is about. A set of six semantics-preserving transformations of one group
+    encodes to one vector six times over and is therefore one decision with five replicas, which
+    is exactly what S21D4-001 found in D3's grid.
+    """
+    nominal = len(feature_hashes)
+    independent = len(set(feature_hashes))
+    return nominal, independent, nominal - independent
+
+
+class DecisionCensusV4(HashedExperienceContract):
+    """How many decisions were counted, how many were distinct, and how many were replicas."""
+
+    revision: int = 4
+    nominal_decisions: int = Field(ge=0)
+    independent_decisions: int = Field(ge=0)
+    replicated_decisions: int = Field(ge=0)
+    independence_rule: NonEmptyStr = INDEPENDENCE_RULE
+    #: Named in the payload rather than only in the code, so a reader of the stored bytes can
+    #: see which denominator produced the rates without consulting the producer.
+    rate_denominator: NonEmptyStr = INDEPENDENT_DENOMINATOR
+
+    @model_validator(mode="after")
+    def the_triple_must_add_up_and_name_its_denominator(self) -> DecisionCensusV4:
+        if self.nominal_decisions != self.independent_decisions + self.replicated_decisions:
+            raise ValueError("nominal decisions must equal independent plus replicated decisions")
+        if self.rate_denominator != INDEPENDENT_DENOMINATOR:
+            raise ValueError(
+                f"revision 4 rates are taken over {INDEPENDENT_DENOMINATOR}; a set reporting a "
+                f"rate over {self.rate_denominator!r} is reporting a replicated denominator"
+            )
+        return self
+
+    @classmethod
+    def from_feature_hashes(cls, feature_hashes: Sequence[str]) -> DecisionCensusV4:
+        nominal, independent, replicated = decision_census(feature_hashes)
+        return cls(
+            nominal_decisions=nominal,
+            independent_decisions=independent,
+            replicated_decisions=replicated,
+        )
+
+
+class CorrectionDecisionSetV4(HashedExperienceContract):
+    """One measured decision set. Every rate below is over the independent denominator.
+
+    The counts are of *independent* decisions throughout. A replica is invariance evidence — it
+    says the encoder did not move when the source was renamed — and it is reported as such by the
+    census, but it never enlarges a numerator or a denominator here.
+    """
+
+    revision: int = 4
+    label: NonEmptyStr
+    census: DecisionCensusV4
+    answered_decisions: int = Field(ge=0)
+    correct_decisions: int = Field(ge=0)
+    confident_errors: int = Field(ge=0)
+    changed_actions: int = Field(ge=0)
+
+    @model_validator(mode="after")
+    def no_count_may_exceed_the_independent_set(self) -> CorrectionDecisionSetV4:
+        if self.answered_decisions > self.census.independent_decisions:
+            raise ValueError("more answered decisions than independent decisions")
+        for name in ("correct_decisions", "confident_errors", "changed_actions"):
+            if getattr(self, name) > self.answered_decisions:
+                raise ValueError(f"{name} counts an abstention as an answer")
+        if self.correct_decisions + self.confident_errors > self.answered_decisions:
+            raise ValueError("an answered decision is either correct or a confident error")
+        return self
+
+    def _over_independent(self, numerator: int) -> Decimal | None:
+        denominator = self.census.independent_decisions
+        return Decimal(numerator) / Decimal(denominator) if denominator else None
+
+    @property
+    def coverage(self) -> Decimal | None:
+        """Answered independent decisions over all independent decisions."""
+        return self._over_independent(self.answered_decisions)
+
+    @property
+    def accuracy(self) -> Decimal | None:
+        """Correct answers over answered independent decisions."""
+        answered = self.answered_decisions
+        return Decimal(self.correct_decisions) / Decimal(answered) if answered else None
+
+    @property
+    def confident_error_rate(self) -> Decimal | None:
+        """Confident errors over answered independent decisions."""
+        answered = self.answered_decisions
+        return Decimal(self.confident_errors) / Decimal(answered) if answered else None
+
+
+#: Exported for schema generation. They live in `cognitive_os.learning` rather than
+#: `cognitive_os.domain`, and are exported anyway, because the acceptance for S21D4-020 is that
+#: the published schema refuses a decision payload that omits the triple — a refusal that only
+#: exists if the triple is in the published schema.
+PUBLIC_CORRECTION_COUNTING_CONTRACTS: tuple[type[HashedExperienceContract], ...] = (
+    DecisionCensusV4,
+    CorrectionDecisionSetV4,
+)

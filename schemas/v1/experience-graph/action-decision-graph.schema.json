@@ -233,6 +233,14 @@
       "title": "Nodes",
       "type": "array"
     },
+    "search_terms": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Search Terms",
+      "type": "array"
+    },
     "source_manifest_hash": {
       "pattern": "^[0-9a-f]{64}$",
       "title": "Source Manifest Hash",

@@ -3256,7 +3256,7 @@
     {
       "file": "v1/experience-graph/action-decision-graph.schema.json",
       "model": "ActionDecisionGraph",
-      "sha256": "232ad2188f3350285ec899d35515640eaac6d2fa585e6aa97d0d08f1bb524b3f"
+      "sha256": "5debef4a642adc1691bb3ffdfce6efb9627a354d8f12dae9fe110a67daffad6c"
     },
     {
       "file": "v1/experience-graph/experience-graph-edge.schema.json",
@@ -3286,7 +3286,7 @@
     {
       "file": "v1/experience-graph/failed-success-graph-pair.schema.json",
       "model": "FailedSuccessGraphPair",
-      "sha256": "f47cc86e8f5d68a83fe27a499d47cc400c8bd1f2ed2db1e562891b208d37581b"
+      "sha256": "60bb10db5d40fd9bb8c69f4244eaec82da6c343de1bace4013bd46d0d4ad9dbb"
     },
     {
       "file": "v1/experience-graph/graph-edit-operation.schema.json",
@@ -3499,6 +3499,11 @@
       "sha256": "583215c671ac3ad2c0a7d4872475dfa4d93e1fc3b0a145c517776999c1a3dcaf"
     },
     {
+      "file": "v1/learned/correction-decision-set-v4.schema.json",
+      "model": "CorrectionDecisionSetV4",
+      "sha256": "fd11ddb88082bedb5036ff9f3f70794a85b0b042eeb9c03f7024b2bfc5c18ac0"
+    },
+    {
       "file": "v1/learned/counterfactual-label.schema.json",
       "model": "CounterfactualLabel",
       "sha256": "348faeb7a2de6310c79b3890c24c23d823aa28444baf5d03c81ce800d8f86fae"
@@ -3511,12 +3516,17 @@
     {
       "file": "v1/learned/d3-promotion-payload.schema.json",
       "model": "D3PromotionPayload",
-      "sha256": "239a51576d714aa5f700551381f56b3da436df03f6cc91020127cc798dd40b32"
+      "sha256": "af2d7f2c78619b54d21c17ff315176cee1d30511390d66c0e11d7df3dfd10e42"
     },
     {
       "file": "v1/learned/d3-runtime-configuration.schema.json",
       "model": "D3RuntimeConfiguration",
       "sha256": "3c256186e66e1dcd745b7a27ead779e814a82d9b862b0069da1763897c25c1bd"
+    },
+    {
+      "file": "v1/learned/decision-census-v4.schema.json",
+      "model": "DecisionCensusV4",
+      "sha256": "d060c23fb49311b7cc1fcc941438bded14db5c819567e43da4b11414bcf5306c"
     },
     {
       "file": "v1/learned/distribution-comparison.schema.json",

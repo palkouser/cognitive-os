@@ -1,0 +1,67 @@
+{
+ "arms_can_read_judgements": false,
+ "by_domain": {
+  "coding": 60
+ },
+ "by_family": {
+  "boundary_collections": 10,
+  "data_transformation": 10,
+  "error_handling": 10,
+  "numeric_logic": 10,
+  "parsing_validation": 10,
+  "state_idempotency": 10
+ },
+ "by_tier": {
+  "1": 60
+ },
+ "chance_baseline": {
+  "mrr_at_10": 0.3317,
+  "recall_at_5": 0.5768
+ },
+ "contracts_sha256": "bcab05107a838fd1a2c0739122ba3a7e51fa8386e83cffcf82e6e5263fb47354",
+ "every_query_excludes_its_own_group": true,
+ "final_or_canary_outcomes_inspected": 0,
+ "final_outcomes_inspected": false,
+ "frozen_before_any_arm_ran": true,
+ "groups_executed": 60,
+ "integrity_content_hash": "75c7c7cc19a8be4984ce8eda019bd0bbba926b45a716d9408f2006296e6cdd9e",
+ "items": [
+  "S21D4-043"
+ ],
+ "leak_guard_ran_over_the_widened_text": true,
+ "minimum_queries": 50,
+ "minimum_queries_met": true,
+ "path": "docs/sprints/sprint-21/evidence/sprint-21d4-retrieval-queries.json",
+ "pre_registration_sha256": "526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9",
+ "projection_record_sha256": "435edcc8719d0f32b340d45ef7b89bdd000112886a9615384524cc34104f2143",
+ "queries": 60,
+ "recorded_at": "2026-08-07T13:28:06.718512Z",
+ "relevance_rule": "Sprint 21D1 tier 1: same task family, own group always excluded",
+ "schema_version": 1,
+ "searchable_text_naming_its_own_judgement": [],
+ "seen_task_queries": 0,
+ "separation": {
+  "correction_groups_by_role": {
+   "calibration": 100,
+   "canary": 5,
+   "final_a": 30,
+   "final_b": 30,
+   "training": 80
+  },
+  "cross_group_near_clones": [],
+  "d4_seal_hash": "b69b4cc672cf3ec5b1ba793ef9b19b3eeb5ccf0ed98360a0c01b7f471c58cfea",
+  "predecessor_query_sets": {
+   "sprint-21d1-graph-queries.json": "0a82bfe390a9216f1017bbeb70a09e29ef4747519fb4b8fd6bcf0803efb6650a",
+   "sprint-21d3-retrieval-queries.json": "4064d15793cdab7562623e29f7df3017bb87e4b6519abe4ecfecca31a3a1dcb0"
+  },
+  "query_ids_reused_from_a_predecessor": [],
+  "retrieval_crossing_a_correction_role": [],
+  "retrieval_groups": 60,
+  "sealed_pool_hash": "d4aa9cdd281eb4ab9b5afd7499524921363c4ddde4b0628b5b6a3544ddd0da46",
+  "task_signatures_reused_from_a_predecessor": []
+ },
+ "sha256": "2881ea7c62dd13de427dd0641e8ad144f30ff53605e893e595d957ea91145051",
+ "sprint": "21D4",
+ "wave": "W3",
+ "written_before_the_benchmark_subprocess_exists": true
+}

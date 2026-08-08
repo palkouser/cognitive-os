@@ -1,0 +1,101 @@
+{
+ "bootstrap_roles_script": {
+  "invoked": false,
+  "path": "scripts/postgres_bootstrap_roles.sh",
+  "sha256": "68024d34d5520973ecf2b3c5fa863b18bbf1242b292d28ef26c81b7f189b6ab5",
+  "why": "it demotes a superuser owner on first run and aborts on every run after"
+ },
+ "environment_manifest_redacted": {
+  "artifact_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d4",
+  "backup_root": "/home/palkouser/projekt/cognitive-os-data/backups-s21d4",
+  "databases": [
+   "cognitive_os_s21d4_test",
+   "cognitive_os_s21d4_integration_test",
+   "cognitive_os_s21d4_restore_test"
+  ],
+  "env_file": ".env.s21d4.local",
+  "evidence_database_prefix": "cognitive_os_s21d4",
+  "note": "credentials are never rendered into evidence",
+  "scratch_root": "/home/palkouser/projekt/cognitive-os-data/scratch-s21d4",
+  "tracked_by_git": false
+ },
+ "extensions": [
+  "plpgsql",
+  "vector"
+ ],
+ "guard": {
+  "exit_code": 1,
+  "exited_non_zero": true,
+  "reason_recorded": "Refusing to create cognitive_os_s21d3_test: outside prefix cognitive_os_s21d4",
+  "refused": true,
+  "refused_database": "cognitive_os_s21d3_test",
+  "why_it_matters": "the refused name ends in _test, so require_test_database would not have stopped it"
+ },
+ "idempotent_rerun": {
+  "already_present": [
+   "cognitive_os_s21d4_test",
+   "cognitive_os_s21d4_integration_test",
+   "cognitive_os_s21d4_restore_test"
+  ],
+  "created": [],
+  "exit_code": 0
+ },
+ "integrity_content_hash": "ec97e564fb1fc95a5ed0a14e947e6b17aee169aa4dc22f1c06f45c8bb875565e",
+ "items": [
+  "S21D4-002"
+ ],
+ "migration_heads": {
+  "cognitive_os_s21d4_integration_test": "0015",
+  "cognitive_os_s21d4_test": "0015"
+ },
+ "no_d4_process_has_a_predecessor_root_as_its_writable_root": true,
+ "predecessor_fingerprints_after": {
+  "artifacts": {
+   "files": 5,
+   "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf"
+  },
+  "artifacts-s21c3": {
+   "files": 8503,
+   "path_and_size_fingerprint_sha256": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593"
+  },
+  "artifacts-s21d1": {
+   "files": 83,
+   "path_and_size_fingerprint_sha256": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f"
+  },
+  "artifacts-s21d2": {
+   "files": 1511,
+   "path_and_size_fingerprint_sha256": "39417f1a03f6824cfe6f9c4b7e6bd5a3cd34da8329fb95cff0a35595899438aa"
+  },
+  "artifacts-s21d3": {
+   "files": 2096,
+   "path_and_size_fingerprint_sha256": "fcb0a044810b375f2933d4a3cf22c7448bfada9c90e104566a92125b08dcd0d3"
+  }
+ },
+ "predecessor_fingerprints_before": {
+  "artifacts": {
+   "files": 5,
+   "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf"
+  },
+  "artifacts-s21c3": {
+   "files": 8503,
+   "path_and_size_fingerprint_sha256": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593"
+  },
+  "artifacts-s21d1": {
+   "files": 83,
+   "path_and_size_fingerprint_sha256": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f"
+  },
+  "artifacts-s21d2": {
+   "files": 1511,
+   "path_and_size_fingerprint_sha256": "39417f1a03f6824cfe6f9c4b7e6bd5a3cd34da8329fb95cff0a35595899438aa"
+  },
+  "artifacts-s21d3": {
+   "files": 2096,
+   "path_and_size_fingerprint_sha256": "fcb0a044810b375f2933d4a3cf22c7448bfada9c90e104566a92125b08dcd0d3"
+  }
+ },
+ "recorded_at": "2026-08-06T06:36:44Z",
+ "schema_version": 1,
+ "sprint": "21D4",
+ "wave": "W0",
+ "zero_predecessor_writes": true
+}

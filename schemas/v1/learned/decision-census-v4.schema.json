@@ -1,0 +1,51 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/learned/decision-census-v4.schema.json",
+  "additionalProperties": false,
+  "description": "How many decisions were counted, how many were distinct, and how many were replicas.",
+  "properties": {
+    "content_hash": {
+      "default": "",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "independence_rule": {
+      "default": "two counted decisions are the same decision when their fitted feature vectors are equal; independence is equality of the fitted vector, not of the task, the seed or the transform",
+      "minLength": 1,
+      "title": "Independence Rule",
+      "type": "string"
+    },
+    "independent_decisions": {
+      "minimum": 0,
+      "title": "Independent Decisions",
+      "type": "integer"
+    },
+    "nominal_decisions": {
+      "minimum": 0,
+      "title": "Nominal Decisions",
+      "type": "integer"
+    },
+    "rate_denominator": {
+      "default": "independent_decisions",
+      "minLength": 1,
+      "title": "Rate Denominator",
+      "type": "string"
+    },
+    "replicated_decisions": {
+      "minimum": 0,
+      "title": "Replicated Decisions",
+      "type": "integer"
+    },
+    "revision": {
+      "default": 4,
+      "title": "Revision",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "nominal_decisions",
+    "independent_decisions",
+    "replicated_decisions"
+  ],
+  "title": "DecisionCensusV4",
+  "type": "object"
+}

@@ -46,6 +46,34 @@
       "title": "D3ArtifactBinding",
       "type": "object"
     },
+    "PromotionDecisionCounts": {
+      "additionalProperties": false,
+      "description": "S21D4-048: condition 20's two denominators, and the certificate its threshold came from.\n\nD3 recorded 120 metamorphic ranking decisions and condition 20 read them as 120. They were\n20 decisions replicated six times, because six semantics-preserving transformations of one\ngroup encode to one fitted vector. Nothing in the D3 payload could have caught that: the row\nnamed one number, so there was no second number for it to disagree with.\n\nBoth are named here, and the rates are over the independent one. The certificate hash binds\nthe operating point the confident-error count was measured at, so \"zero confident errors\"\ncannot be read apart from the threshold that decided which decisions were answered.\n\nThe census rule itself lives in `learning.correction_protocol.DecisionCensusV4` and is not\nrestated here — `learning.promotion.condition_20_gate` is how these fields get filled, and it\ntakes a census rather than three integers.",
+      "properties": {
+        "calibration_certificate_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Calibration Certificate Hash",
+          "type": "string"
+        },
+        "independent_decisions": {
+          "minimum": 0,
+          "title": "Independent Decisions",
+          "type": "integer"
+        },
+        "nominal_decisions": {
+          "minimum": 0,
+          "title": "Nominal Decisions",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "nominal_decisions",
+        "independent_decisions",
+        "calibration_certificate_hash"
+      ],
+      "title": "PromotionDecisionCounts",
+      "type": "object"
+    },
     "PromotionDependency": {
       "additionalProperties": false,
       "description": "One thing this promotion is downstream of, and the exact revision of it that was used.",
@@ -82,6 +110,17 @@
       "additionalProperties": false,
       "description": "One gate's measured result, and the evidence hash it is derived from.",
       "properties": {
+        "decision_counts": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PromotionDecisionCounts"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
         "detail": {
           "minLength": 1,
           "title": "Detail",

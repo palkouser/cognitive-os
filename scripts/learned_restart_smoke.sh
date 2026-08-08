@@ -10,7 +10,13 @@ set -euo pipefail
 # shellcheck source=scripts/postgres_common.sh
 source "$(dirname "${BASH_SOURCE[0]}")/postgres_common.sh"
 load_postgres_environment
-for name in COGOS_DATABASE_ADMIN_URL COGOS_ARTIFACT_ROOT; do require_value "$name"; done
+# D4-W0-F1: the smoke this script drives TRUNCATEs every learned evidence table, and a
+# `_test` suffix is a naming convention rather than consent -- every sprint's evidence
+# database has one too. The database must be nominated by name, exactly as the integration
+# fixture has required since W6-F2.
+for name in COGOS_DATABASE_ADMIN_URL COGOS_ARTIFACT_ROOT COGOS_TRUNCATABLE_DATABASE; do
+  require_value "$name"
+done
 
 database_name="$(psql "${COGOS_DATABASE_ADMIN_URL/postgresql+asyncpg/postgresql}" -Atqc 'SELECT current_database()')"
 case "$database_name" in

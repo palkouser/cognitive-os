@@ -43,6 +43,7 @@ from cognitive_os.domain.learned_evidence import (
     ProvenanceClass,
 )
 from cognitive_os.domain.promotion_payload import (
+    CONDITION_20_GATE,
     D3_PROMOTION_GATES,
     D3_PROMOTION_MEDIA_TYPE,
     CanaryToSteadyCondition,
@@ -56,7 +57,8 @@ from cognitive_os.domain.promotion_payload import (
     canonical_payload_bytes,
 )
 from cognitive_os.infrastructure.learned.reference import AlwaysAbstainingRanker, ConstantClassifier
-from cognitive_os.learning.promotion import D3PromotionBindings
+from cognitive_os.learning.correction_protocol import DecisionCensusV4
+from cognitive_os.learning.promotion import D3PromotionBindings, condition_20_gate
 
 FIXTURE_NOW = datetime(2026, 7, 26, 12, 0, tzinfo=UTC)
 FIXTURE_NAMESPACE = UUID("0f8c1d2e-3a4b-5c6d-8e9f-0a1b2c3d4e5f")
@@ -258,6 +260,31 @@ D3_DEPENDENCIES: dict[str, str] = {
 }
 
 
+def d3_gate(name: str, outcome: PromotionGateOutcome = PromotionGateOutcome.PASSED):
+    """One gate row at the fixture baseline, carrying condition 20's census when it is that row.
+
+    S21D4-048 makes the metamorphic/OOD row unbuildable without its two denominators once it
+    claims a measurement, so the row a test wants to move has to be built rather than copied
+    field by field. A `not_measured` outcome drops the census, because that is the distinction
+    the payload validator enforces.
+    """
+    evidence_hash = sha256(name.encode()).hexdigest()
+    detail = f"fixture: {name} measured and passed"
+    if name != CONDITION_20_GATE or outcome is PromotionGateOutcome.NOT_MEASURED:
+        return PromotionGateRecord(
+            name=name, outcome=outcome, evidence_hash=evidence_hash, detail=detail
+        )
+    return condition_20_gate(
+        outcome=outcome,
+        evidence_hash=evidence_hash,
+        detail=detail,
+        census=DecisionCensusV4.from_feature_hashes(
+            [sha256(f"fixture:decision:{index}".encode()).hexdigest() for index in range(20)]
+        ),
+        calibration_certificate_hash=sha256(b"fixture:calibration-certificate").hexdigest(),
+    )
+
+
 def d3_payload(**overrides: object) -> D3PromotionPayload:
     """Every gate passed. Individual tests fail one gate at a time from this baseline."""
     fields: dict[str, object] = {
@@ -267,15 +294,7 @@ def d3_payload(**overrides: object) -> D3PromotionPayload:
         "code_revision": "21d3-fixture",
         "legacy_assessment_hash": promotion_assessment().content_hash,
         "legacy_decision": LearnedPromotionDecision.ELIGIBLE_FOR_OPERATOR_APPROVAL.value,
-        "gates": tuple(
-            PromotionGateRecord(
-                name=name,
-                outcome=PromotionGateOutcome.PASSED,
-                evidence_hash=sha256(name.encode()).hexdigest(),
-                detail=f"fixture: {name} measured and passed",
-            )
-            for name in D3_PROMOTION_GATES
-        ),
+        "gates": tuple(d3_gate(name) for name in D3_PROMOTION_GATES),
         "dependencies": tuple(
             PromotionDependency(name=name, content_hash=value)
             for name, value in sorted(D3_DEPENDENCIES.items())

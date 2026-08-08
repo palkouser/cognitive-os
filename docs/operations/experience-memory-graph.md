@@ -202,3 +202,62 @@ if leaks:
 ```
 
 A perfect score on a retrieval holdout is a leak until proven otherwise.
+
+## Sprint 21D4: the widened surface, and a comparator with a budget instead of a clock
+
+D3 measured `distinct_after_removing_domain_and_signature: 1` over sixty candidates and
+concluded that improving an arm cannot widen a surface. D4 made the contract change D3 named.
+
+### One additive field, and why its hash did not move
+
+`ActionDecisionGraph.search_terms` is a bounded tuple of canonical identifiers resolved out of
+the artifact store through the released alpha-normaliser. It is **excluded** from
+`structural_hash` and from `ExperienceGraphNode.label`, and included in `content_hash` and
+`search_text()`.
+
+A field unconditionally inside `content_hash` makes every graph stored before it unloadable —
+measured on the real blob, `a8db90af88181437` → `399a7fc9276870c5` over 140 pairs. So the field
+name is listed in `domain.experience.CANONICAL_ABSENT_WHEN_EMPTY`: a graph carrying terms is new
+bytes, and a graph carrying none hashes exactly as it did before the field existed. If you add
+another optional field to a stored contract, do the same thing or expect the same breakage.
+
+### A widened surface is a leak until the guard proves otherwise
+
+The projection fails closed on `reality_leakage.judgement_leaks`, refuses a term list that is
+uncanonical, repeated, empty or over the 1024-character bound, and applies the released
+forbidden-marker guard. Run the leak guard over the *widened* text, not over the old text:
+
+```python
+leaks = judgement_leaks(widened_searchable_by_pair, labels_by_pair)
+if leaks:
+    raise SystemExit(f"the widened surface names its own judgement: {leaks[:5]}")
+```
+
+The measured effect: 41 of 60 candidates became distinct, not 60. Ninety-four of 120 graphs
+carry terms and ten candidates carry none — repairs written in pure arithmetic over their own
+parameters, which the normaliser leaves nothing of. §4.5 called the change "the minimum that
+makes sixty repair trajectories sixty documents"; it makes 41, and that shortfall is the number
+to quote, not the sixty.
+
+### The bounded-GED arm has a budget now
+
+`nx.graph_edit_distance(timeout=)` returns whatever the wall clock allowed. On the eight largest
+stored pairs the same two graphs return **28.0 under a 90 ms clock and 29.0 under a 5 ms clock**,
+which is why three sprints of numbers for that arm cannot be replayed by anyone.
+
+`GED_ITERATION_BUDGET = 1` replaces the clock: the arm takes the first distance
+`nx.optimize_graph_edit_distance` yields and stops. Under it, 140 comparisons agreed with
+themselves across two passes. The budget is one because the second distance costs 75 ms where
+the first costs 4.6, the third 387, and the fourth did not arrive inside a two-minute ceiling.
+`timed_out` stays in the released result contract and now means "the budget produced no value at
+all".
+
+### What the D4 holdout says, and what it does not
+
+Sixty distinct unseen queries, read once. Reciprocal rank fusion reached Recall@5 0.7500 against
+a floor of 0.70 and MRR@10 0.4911 against a floor of 0.50 — short by 0.0089. Gate D1 condition 15
+remains open.
+
+Every arm scores higher than it did on D3's holdout, and **that comparison is not controlled**:
+the pool is different, the comparator changed, and the surface widened, all at once. No ablation
+was run, because the holdout is read once and an ablation would have been a second read.

@@ -1,0 +1,1564 @@
+{
+ "contracts_sha256": "bcab05107a838fd1a2c0739122ba3a7e51fa8386e83cffcf82e6e5263fb47354",
+ "d4_measurements_opened": 0,
+ "disjointness": {
+  "keys_compared": {
+   "calibration": [
+    "repository_group",
+    "task_id",
+    "template_id"
+   ],
+   "canary": [
+    "repository_group",
+    "task_id",
+    "template_id"
+   ],
+   "final_a": [
+    "repository_group",
+    "task_id",
+    "template_id"
+   ],
+   "final_b": [
+    "repository_group",
+    "task_id",
+    "template_id"
+   ],
+   "retrieval": [
+    "repository_group",
+    "template_id"
+   ]
+  },
+  "overlaps": {},
+  "roles_compared": [
+   "calibration",
+   "canary",
+   "final_a",
+   "final_b",
+   "retrieval"
+  ],
+  "transitively_disjoint": true,
+  "why_every_key": "a pool disjoint by group name and overlapping by task id spends a holdout while reporting that it did not; a retrieval source group has no task id, so that role is compared on the two keys it has rather than passed vacuously on a third"
+ },
+ "final_outcomes_inspected": false,
+ "fitting_pool": {
+  "achieved_groups": 80,
+  "achieved_outcomes": 320,
+  "catalogue_hash": "921a39de99bbcde44b2a1bb2c5e2be7c2a8b92175afbf867c97e19a08727a4bb",
+  "checked_against_seal": "b69b4cc672cf3ec5b1ba793ef9b19b3eeb5ccf0ed98360a0c01b7f471c58cfea",
+  "composition_names_released_partitions": true,
+  "composition_reading": "ten D2 calibration, fifty D2 training and twenty D3 calibration are three released partitions taken whole. Their sizes are 10, 50 and 20 as released, which is where the eighty comes from; the provenance counts above are what those partitions turn out to contain",
+  "declared_composition": {
+   "d2_calibration": 10,
+   "d2_training": 50,
+   "d3_calibration": 20
+  },
+  "declared_groups": 80,
+  "declared_outcomes": 320,
+  "every_group_is_a_package_to_re_execute": true,
+  "finding_w0_f1_sha256": "c813aef57996aff58f731a35265510e06cfaf96f6defd9222a2f8002f244d51b",
+  "meets_the_declared_pool": true,
+  "provenance_counts": {
+   "21C3": 30,
+   "21D2": 30,
+   "21D3": 20
+  },
+  "why": "D4-W0-F1: the D3 learned store holds no observations and no datasets, so no predecessor row can be inherited and every group is re-executed under D4 run identities"
+ },
+ "integrity_content_hash": "4f1d36a3eccc6bda0021a229d124fb9378fe24b7abf4452544ce00baf73f94fe",
+ "items": [
+  "S21D4-012"
+ ],
+ "per_group": [
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "boundary-chunking",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "f2fc4bfd83a4fc332834a64249e9d65b0b431da4c47be3e7ad7341ebda4e2ec8",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "593a542b58a491b0573b60635fa43c8e0d4ff47fe02f17b9a2882735da2f08ce",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:boundary_collections.chunk"
+   },
+   "task_id": "7c6eab46-777e-5830-815c-7d9659cc3ea8",
+   "task_seed": 21040202,
+   "template_id": "boundary_collections.chunk"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-transform-chunk-mapping",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "dd8f5b90d2a5ab248df541f7ef2096e6ea0919a1d3bdb421b44aeeeb9d488a87",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "15865ed438c4cbe2f306ffca2f4e379f6253feacde59358d8f2afd308088e361",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_transform.chunk_mapping"
+   },
+   "task_id": "351b54ac-4b06-5109-b9b8-ff2ea8a40f58",
+   "task_seed": 21040202,
+   "template_id": "d2_transform.chunk_mapping"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-errors-type-check",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "9072515eb3b270b6a0745f9ce104224aa3402f40ea8b06eb137719628d510a48",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "f079b6d6bbd56a30841048e224ccd4c1a3f79716765ffc93321837b82920e3ab",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_errors.as_type"
+   },
+   "task_id": "79e3f3f1-e801-599a-a359-c772b36b8993",
+   "task_seed": 21040202,
+   "template_id": "d2_errors.as_type"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-numeric-present-average",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "cd0ad54c7142d0da10380ee5eae9b947186cdd24cc7ef9591655428ecd9028dc",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "f3c7fe7ab1654648c18d039d243289637e41c44e2c66cd4e91466e763fe66807",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_numeric.average_present"
+   },
+   "task_id": "d131f3b7-0ee1-5440-9d48-d78e29499855",
+   "task_seed": 21040202,
+   "template_id": "d2_numeric.average_present"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-parsing-checksum",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "18bfac5c0062f448edae234540aaca5ceb693703c13612d7cde59825a3afd2f5",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "138707896f0bc775ca8d2c950c9fa808731343d1d3cd884b803ed94d4d4cc6fb",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_parsing.is_valid_code"
+   },
+   "task_id": "77bf9e74-35cb-5a6f-92ad-41a10aa03f3c",
+   "task_seed": 21040202,
+   "template_id": "d2_parsing.is_valid_code"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-state-apply-once",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "8c780f3cb59f15abe2312cb8163dd8ed6ad071edcb119007c904b9bbf600a1dd",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "240170988ae128da08ba378ab0022a02ea2a65313a84dba03494ce2f26f57b41",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_state.apply_once"
+   },
+   "task_id": "4470d3dd-a1e4-5764-9dd0-5113557f3267",
+   "task_seed": 21040202,
+   "template_id": "d2_state.apply_once"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "boundary-deduplication",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "2ca9164c5d6aa002a81fd6f2cf398fcd6da2083ba108090449ce5d91312b01de",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "4543e05c0068cfa70913e9302ed4475d8b8040ace81bc9d68c4b7f9f0044c900",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:boundary_collections.dedupe"
+   },
+   "task_id": "6af88987-e9d6-5752-8a99-549c25a30498",
+   "task_seed": 21040202,
+   "template_id": "boundary_collections.dedupe"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-transform-record-dedupe",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "6787e4eae90c39ce5c6e6a93c3f66a1a013a3d5d7db89450bfb162cbbc378a63",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "d96e8097683ae816d8b05b61cbdd71356a278f89a7ddf10c1870f36902306a8d",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_transform.dedupe_records"
+   },
+   "task_id": "d708c88a-5940-5a55-bd0e-0295bf9a9fd6",
+   "task_seed": 21040202,
+   "template_id": "d2_transform.dedupe_records"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-errors-uniqueness",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "14db782c88de7602996395470dce534d9389ea3962359eb028201ad4b179db7a",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "7393c45585d984ad6f9d4ed69aab8faf252029f1f1fbb1584951b4e43126ff36",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_errors.assert_unique"
+   },
+   "task_id": "b2dd13c9-06b8-57ae-8f3e-7579e0241a62",
+   "task_seed": 21040202,
+   "template_id": "d2_errors.assert_unique"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-numeric-digit-root",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "16c7080d0b83658fa013426a58292cd12c75880b020398124490417d34a799d4",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "2b860e6e74d425bb20b222a79a5b2df3a143f2e20ca3f0fcfbccde288c6e7a3e",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_numeric.digit_root"
+   },
+   "task_id": "961bcf3c-3c14-5cbb-8e6c-9acea2d5dc80",
+   "task_seed": 21040202,
+   "template_id": "d2_numeric.digit_root"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-parsing-name",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "4d9f0b3e990f9c883ac9d1f9f033c3e87bd155da7534b8567d0eacb5627d9dee",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "d3aea682843eae57ec0a19f4aad4dfa8ddc2625d84a07e572f731ccbf0700be5",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_parsing.is_valid_name"
+   },
+   "task_id": "a7e44021-dedc-5f4b-adef-5341d716562e",
+   "task_seed": 21040202,
+   "template_id": "d2_parsing.is_valid_name"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-state-bump",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "6aa71f8dfda95cc0c3fe3b7217142d66b33f9eeacac1d208e852a5137cd81921",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "f851bb788a8ab5b2ef781569ec69144925ac3295798b92a677c1783b12b89a0c",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_state.bump_version"
+   },
+   "task_id": "5cd4560f-fa35-5018-a970-a0f3616f749e",
+   "task_seed": 21040202,
+   "template_id": "d2_state.bump_version"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "boundary-sequence-head",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "92f3baef50af6b0ae8a4526bc457f1e383facd3de5b95038f89e777eab61e177",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "1d008452264f7cba3d9485a2643767e2aa9a220d240590d3aa507918137f4e3f",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:boundary_collections.first_match"
+   },
+   "task_id": "777fa577-60ef-5300-885c-ee840699467f",
+   "task_seed": 21040202,
+   "template_id": "boundary_collections.first_match"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-transform-flatten-mapping",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "ac1082823d76a7a90779d5bc72348c1d57e949e9776b081555349d9f79fe57d5",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "edc03f0856623769d2f50e6f159b12da879422d1f5ec879bf654abe2a8c7e103",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_transform.flatten_mapping"
+   },
+   "task_id": "07bc2e7c-4448-5f90-a66a-3e2f332d2177",
+   "task_seed": 21040202,
+   "template_id": "d2_transform.flatten_mapping"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-errors-divmod",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "4bd11bbf8c43e548db26c3cca28d300cb7de317cfe3f81a5191ba51f89589606",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "e21c25a7ab79eab652c4d49c3d1bfe842cceac6bb05c1ef5dbdf9aa2e2b0a16d",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_errors.checked_divmod"
+   },
+   "task_id": "ebc5f22f-fdf8-5466-8184-ef69c166ef34",
+   "task_seed": 21040202,
+   "template_id": "d2_errors.checked_divmod"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-numeric-factorial",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "6f1b233c6e81da828820189331814519fff9cd4b9c5cc190c98dad6f26afe68e",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "5c57ae2406ef1f822cc33d0b591cb25f615ce794fe718f876873d14bec4c6ca7",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_numeric.factorial"
+   },
+   "task_id": "5004994b-22b6-521a-b0c4-ccf87d9cf07d",
+   "task_seed": 21040202,
+   "template_id": "d2_numeric.factorial"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-parsing-path",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "bcb04f29b8ef9da9ff099ec1828bf4f1ad8f9d47e405d52bceed6d9875206a4a",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "24da17c87b0077b3c5978b3f69c3f05c4ffd3b784f2682782f146cc885b90713",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_parsing.normalize_slashes"
+   },
+   "task_id": "1e1138ff-05a8-5ee8-a817-75570b1b7768",
+   "task_seed": 21040202,
+   "template_id": "d2_parsing.normalize_slashes"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-state-session-close",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "70c35c2b86e3b6ddb07cbbad4c66c713365498fefd43fb6a0de296842081f877",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "61b806240a70a564d9ae6f80c8533fb537aa97c5ba17c8800127a7549c42b145",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_state.close_session"
+   },
+   "task_id": "c2ad212a-1ba9-5ab2-9ede-df448af343ba",
+   "task_seed": 21040202,
+   "template_id": "d2_state.close_session"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "boundary-sequence-tail",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "3f9fdbc1c670cdb9a5ed602626ab542ac2cf2f8f6f019f1ad7a262a95c3cb57e",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "662297b42f43a265ffa549a3c25438b90b5736e6f99d6f8904d277ca979e6a12",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:boundary_collections.take_last"
+   },
+   "task_id": "921e4c11-d0be-5b4b-9e3b-caf277369b09",
+   "task_seed": 21040202,
+   "template_id": "boundary_collections.take_last"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-transform-index",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "60343e313fb9c46445797ed801556333533d98538c6463fd1e01e51c1d76d9c4",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "106c42125f21f8205d7397d2bdb8f52991222babca6a7e6d3e17a00979ba1dc4",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_transform.index_by"
+   },
+   "task_id": "f1be92df-b601-5fa5-9dfb-a9fa9668c360",
+   "task_seed": 21040202,
+   "template_id": "d2_transform.index_by"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-errors-collect",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "53aa3ad60d44519fc65fc737bd86cdde46d41b5c1330e0de5abf50b98847be6a",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "0070977a98306ca58bd0f7efd5225017d917532f48a997933f1ff1898cd04ff5",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_errors.collect_failures"
+   },
+   "task_id": "1955d59a-f98c-5bc5-bfb1-1624ec20cd91",
+   "task_seed": 21040202,
+   "template_id": "d2_errors.collect_failures"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-numeric-gcd",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "fc488c2374539ee80e9b28c5f97c0ee2d94186a0e900bebaf16baefe9f81b9cb",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "6015616140b4ec4849c1c85a2f8e8b2d8424e4a8a261309fca13b5e031a137e0",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_numeric.gcd_all"
+   },
+   "task_id": "c98edbd5-8f1d-5131-a959-d37a00c6d376",
+   "task_seed": 21040202,
+   "template_id": "d2_numeric.gcd_all"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-parsing-coordinate",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "a620fb78a4e983e1edb6090830db230ce8522cee98ff30540f3fd5afd868e467",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "7cb56aedeaa03397e4205cbfea30690b44704ee675eefd897807350713676c59",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_parsing.parse_coordinate"
+   },
+   "task_id": "e6db1c9d-a677-5ed2-9879-382167f732dd",
+   "task_seed": 21040202,
+   "template_id": "d2_parsing.parse_coordinate"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-state-deactivate",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "cf53398b9cb3cbaf0b4b1fe9fbbdc2011c28e710202c9f7ff6d9283af1a91674",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "a232f2a8614c43f911b6c4aac7a1996428f56faa6bd6591998fb07861afd7947",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_state.deactivate_all"
+   },
+   "task_id": "56188c5b-d223-50e3-8c7e-3e062028e432",
+   "task_seed": 21040202,
+   "template_id": "d2_state.deactivate_all"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "boundary-windowing",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "85282aecf2b4bee4de6983e162247f4b58ed2159317c42e46d8948c3ef00aef8",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "3998a8cc24d6f3e59c9dd3d69eb2da26c5148db8976157366b40e800211a2fc6",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:boundary_collections.window_pairs"
+   },
+   "task_id": "a71073bb-468c-5000-9b01-00c3b2a7cb54",
+   "task_seed": 21040202,
+   "template_id": "boundary_collections.window_pairs"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-transform-merge-lists",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "f78eeeda245b95ea54ff32b1149c6721b0b0a26bd634f2d020d88b437e96e8e5",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "456294fc83b5dd6550d807fc971b58d09482d2e04752f688543353e24535c452",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_transform.merge_lists"
+   },
+   "task_id": "6886bfb2-d5f4-5d3c-a7a2-0ff18f5d317a",
+   "task_seed": 21040202,
+   "template_id": "d2_transform.merge_lists"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-errors-range-guard",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "4258006be1b93e7c06bdd50b7e0753127d24d3a9fafba70b8ed6ff3be0b86f31",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "0feddc532528b837c2ca8fd6d095d614aeea78aeb366f4ee67da02cd707893cb",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_errors.ensure_range"
+   },
+   "task_id": "2aa8f73f-c0b7-5831-b4ca-f18296ee38de",
+   "task_seed": 21040202,
+   "template_id": "d2_errors.ensure_range"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-numeric-human-size",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "8df7c3ded412b8a81137e584b8ab547ea405918a4f99459890b6fad254f0cec8",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "1feafc33ec2603b47c581ef3c4b26333936df0819bdd8fc2f9e9cc75be049975",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_numeric.human_size"
+   },
+   "task_id": "e375e50b-8636-5513-bea9-0ff7d6fc6a52",
+   "task_seed": 21040202,
+   "template_id": "d2_numeric.human_size"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-parsing-csv-row",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "205398457d281be60f42cd47c2e129644c6fa8b71a950498cf1651b25aa799d7",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "1d50a189bbb542c7ec5c06f4f2544060e0e586632835d64912fa558e71fbba80",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_parsing.parse_csv_row"
+   },
+   "task_id": "33bbd3d2-b181-5283-9c98-f03d92997ad8",
+   "task_seed": 21040202,
+   "template_id": "d2_parsing.parse_csv_row"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-state-drain",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "aa3906b8a1960cf14d06fdb82062f51ee0220404a2fbe00d3df053307e514ab3",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "54d45a93955523c1316fc62cd38b7cb9ca47df16fb25a3ef79f3cc502497ad57",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_state.drain"
+   },
+   "task_id": "09a59a29-ea74-51fe-9ac6-a48dfc191aa1",
+   "task_seed": 21040202,
+   "template_id": "d2_state.drain"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-boundary-halves",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "c2c02ad32e4a2d500e169ddef78707c5363f4cf70314fe4cce90d29bc048d523",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "cc30f35d65a96ecb6f238129c9f22473a8c751e082630b8251119a23f6354d1b",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_boundary.balanced_halves"
+   },
+   "task_id": "6eb7ced3-2d14-5eeb-965e-a72c48653735",
+   "task_seed": 21040202,
+   "template_id": "d2_boundary.balanced_halves"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D3",
+   "repository_group": "d3-transform-pick-fields",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "77b429b383c954b0bcd436381e55c8ba3c6fd4582fba0ecc51adc7099ba60351",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "682e892dff4bdcc697b1bb96d25b409c88f101b009a7008ce4d3d3008b6710f4",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d3_transform.pick_fields"
+   },
+   "task_id": "02d4888d-a07b-59a9-a164-607f673d4464",
+   "task_seed": 21040202,
+   "template_id": "d3_transform.pick_fields"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D3",
+   "repository_group": "d3-errors-attempt-times",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "66d79a91dcfcbc8e69dfa51cb3cb03c42cbc090e3aa1e834b80e94c0f1944778",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "8b67c0f75e0cb905c32c3bf194b0b4ef9b88388a7d8408f3e57de2d1cd44c701",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d3_errors.attempt_times"
+   },
+   "task_id": "3ec8efb6-48ff-55a0-a205-c0a85f01029c",
+   "task_seed": 21040202,
+   "template_id": "d3_errors.attempt_times"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D3",
+   "repository_group": "d3-numeric-round-to-step",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "d10a3c40a66716582bbfbcca5776857cc9c5e429ae13cac9e2e87038008c9a91",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "64734cbbf05e1addde5da8a059962a465ec8a808d3932a3251f2d0a48c9f7a4c",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d3_numeric.round_to_step"
+   },
+   "task_id": "1fcf12ae-87ad-5f41-870c-dafcf205b02f",
+   "task_seed": 21040202,
+   "template_id": "d3_numeric.round_to_step"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D3",
+   "repository_group": "d3-parsing-pair",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "67f1ee86bb34ab0aa66eeaf4d9b5d4121a6f51643c8ecae2cbd0db4c2ba3ab74",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "66c4e077ec7fe8b0b5c2ffb9cbf30ee5bd794ab50306cd601bc7b15bc6a3a796",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d3_parsing.parse_pair"
+   },
+   "task_id": "85c5a09d-0888-5dca-999b-7eaacf724e84",
+   "task_seed": 21040202,
+   "template_id": "d3_parsing.parse_pair"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D3",
+   "repository_group": "d3-state-claim-slot",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "e59c8340f7b2ac9b7ea136477e7a925d36274b771dc4ed2ed6b061bebc4eeafd",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "6a711972dde87665004dbc39df62a931306717ecaa52921df997bdd205be5502",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d3_state.claim_slot"
+   },
+   "task_id": "9ca51200-489e-5362-91f9-0e65ad35cd56",
+   "task_seed": 21040202,
+   "template_id": "d3_state.claim_slot"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-boundary-extent",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "f5d16b2fd4a71803bea2ab8f8ec10f377fe0e20b25f6af3d3bf0da20861f60a1",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "6899765475710c50e75fd6fbe01f9fbaa0be131272e9f9b6ac2672f4e98027fc",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_boundary.bounds"
+   },
+   "task_id": "c63cc890-9de7-5cea-879f-43abf9fe40e5",
+   "task_seed": 21040202,
+   "template_id": "d2_boundary.bounds"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D3",
+   "repository_group": "d3-transform-split-text",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "5ceb301d7b987468c05d94361a5c3fb4ecc3ed762cbcf738cae7f2312c943e31",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "b5094dacedff5369b26b2a46aceaf8276a3dec0760bdb4c0b5525d43ba151991",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d3_transform.split_text"
+   },
+   "task_id": "4ce4db3b-1e00-5f29-8b2c-646c580d121c",
+   "task_seed": 21040202,
+   "template_id": "d3_transform.split_text"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D3",
+   "repository_group": "d3-errors-first-passing",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "52e37ab959fa2d6d4bec18171de2dd5a337f0324add8d84b348726ecf628b623",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "94c7b5d80f85faa92e00756fb694287c4813a4b7eceeec29880c7c353cf3c3f7",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d3_errors.first_passing"
+   },
+   "task_id": "fc51008c-d015-5bd7-90b6-f4b0a1ff5889",
+   "task_seed": 21040202,
+   "template_id": "d3_errors.first_passing"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D3",
+   "repository_group": "d3-numeric-safe-share",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "71fcece62bfb28f6430e6d061517811ebca3d6b726e21e8c2634888140ae8f54",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "40bc0368e849ae33d1fc7fcdfa45f69af79631ce3086e249f1b3f05f581c585d",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d3_numeric.safe_share"
+   },
+   "task_id": "f0446d64-0f91-5a83-83a3-2acd3ce33841",
+   "task_seed": 21040202,
+   "template_id": "d3_numeric.safe_share"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D3",
+   "repository_group": "d3-parsing-ratio",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "06d82de858ecd7f4a56073479f94fa8df3a62bdcf86c013ec89983ae57ab1d85",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "5d1a502b018486aa1c1714028d82d512d3bd62c4646fdedaccca8cb059bcc85a",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d3_parsing.parse_ratio"
+   },
+   "task_id": "5d944954-56f3-5ffb-9a88-b27fc0871656",
+   "task_seed": 21040202,
+   "template_id": "d3_parsing.parse_ratio"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D3",
+   "repository_group": "d3-state-expire-before",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "36580d71533ba980b14be69e6c34994f08320e2abcebf1781482bd4a73c7eb06",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "745adaa087d9033c6250cfbe4eddbba22702fc041f1ce01661704d5e33b2ecf3",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d3_state.expire_before"
+   },
+   "task_id": "8564521e-e745-51a7-963d-394eec9842f8",
+   "task_seed": 21040202,
+   "template_id": "d3_state.expire_before"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-boundary-adjacent-dedupe",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "775e290da8eaee0a0c4d1a88dc8c4d87996bb72da03edbce580aa9aa62737d22",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "69dbd3fee0a41ffa2d65c608f74241a8c01597ca8868c57e3b7dfe2761ca9f2d",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_boundary.dedupe_adjacent"
+   },
+   "task_id": "cea86548-d606-5bed-be2a-9f96bfe90ce3",
+   "task_seed": 21040202,
+   "template_id": "d2_boundary.dedupe_adjacent"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D3",
+   "repository_group": "d3-transform-tally-by",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "f9d7107ea8ac26d9bcfd3d8b5832053b2553f553f7ef03f3a423368cbb59a66b",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "3608f51e9c3e4ff63331120ba7a9d580f7dc44a5663683fbe0f54decae3279cb",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d3_transform.tally_by"
+   },
+   "task_id": "a6d8c4ea-64aa-51c2-93b0-89236cea13a0",
+   "task_seed": 21040202,
+   "template_id": "d3_transform.tally_by"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D3",
+   "repository_group": "d3-errors-merge-optional",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "6adecb43eabad459cc7f0a95576d2a5f4453e609ab46580b49dfa8bb4662c652",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "a363e726fee300a1cd5febcba26b78bd73318004ab8392792aade40455a5fd07",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d3_errors.merge_optional"
+   },
+   "task_id": "3c439f35-f89b-5413-97f2-53e324d04514",
+   "task_seed": 21040202,
+   "template_id": "d3_errors.merge_optional"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D3",
+   "repository_group": "d3-numeric-share-amount",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "8bf6ece30aeacefc975e2732bdb6857af4b3137ed22499510f1d98c704c9ecd2",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "9d8446fc9c56cea5f75172ff7e82529c5376e1b81fa3d3e97df3bcbdf07dda90",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d3_numeric.share_amount"
+   },
+   "task_id": "a08901c1-588c-5e3a-94a0-dbe95a17d0a1",
+   "task_seed": 21040202,
+   "template_id": "d3_numeric.share_amount"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D3",
+   "repository_group": "d3-parsing-signed",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "7c72ed59f58df50d575ca06911b55004922a2f1baba8c3b9918492deb8af06eb",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "547e57a472cf9c26f2f1d69b6422781897cb04813c07804920a4f8ce3e407399",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d3_parsing.parse_signed"
+   },
+   "task_id": "3b2543d3-f388-569e-8612-4d6a76cc754a",
+   "task_seed": 21040202,
+   "template_id": "d3_parsing.parse_signed"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D3",
+   "repository_group": "d3-state-keep-recent",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "340ffcadb2632b7b21cf078d0289d95752bd5bf31e58b980101b9381dc01a538",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "38eca1a8f576bf1963fba80888f1d4e048bb57c99297a945eba43c842504e955",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d3_state.keep_recent"
+   },
+   "task_id": "cfcc4ce2-e0d6-52c0-b8e2-2427d0489b07",
+   "task_seed": 21040202,
+   "template_id": "d3_state.keep_recent"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-boundary-leading-blanks",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "ac2e0ad2dda7bbf421bbc3fd21dff53f67037091b81fa29d1a27b2a6445f71b9",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "86eec4f5cc4eb3f73246675b2be8e44dd959555b37197b0b65173a495f6938eb",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_boundary.drop_leading_blanks"
+   },
+   "task_id": "ba1fe599-4d45-50e2-befb-81b3b556a8e4",
+   "task_seed": 21040202,
+   "template_id": "d2_boundary.drop_leading_blanks"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "transform-grouping",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "916eb892bcb47a556719a1c417c05a64992be2a621e82b3f02515031f8d6c79a",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "8e3b1b73c98097df8fe89fa8b6e7051459b755f8e20caf8646077c741b0b1d25",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:data_transformation.group_by"
+   },
+   "task_id": "64bc385e-a879-5dd8-aaf5-45f8afe29f2a",
+   "task_seed": 21040202,
+   "template_id": "data_transformation.group_by"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "errors-bulk-cleanup",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "49c6251be6723d39ba148719f00a8bbc4c489c02dbc370505a737dec03eb6584",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "f86e4bacacaa1732bdab891e3ebb066e96a1ca25a2838d3f6064bb135aac6c80",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:error_handling.close_all"
+   },
+   "task_id": "6fce4348-7d00-5cc1-893e-e291c3f4d15b",
+   "task_seed": 21040202,
+   "template_id": "error_handling.close_all"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "numeric-clamping",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "234341f4ef5788f96fdaab0b0acbcf75478cb22d667f091cf1cb89ed9a68d553",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "f5494f6fffbd3be2d1b78aef8dcece5b52dca992983791495deb0cdbc91da5b0",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:numeric_logic.clamp"
+   },
+   "task_id": "d9851383-70f3-5367-b918-28bbd8919d8c",
+   "task_seed": 21040202,
+   "template_id": "numeric_logic.clamp"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D3",
+   "repository_group": "d3-parsing-route",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "387c2c6fb9606d5345a075c3ab8cc33ba8f3826b3d56b9907e1ea066c416fbb0",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "356440181848c225a1bf800b52d2b05117bc450c2dae60e7c9ad74debbbea503",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d3_parsing.tidy_route"
+   },
+   "task_id": "0854aad4-d7ec-5bf5-963a-4468442f1ac3",
+   "task_seed": 21040202,
+   "template_id": "d3_parsing.tidy_route"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "state-slot-allocation",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "0bde03b7143b030d668dfe4007d928eb6f8ad8dcb46e95499e36e782b4dc44e3",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "acc1c7d62910bf8865b5b6bfce647c6f0c158dba88115afe5768b0c4fef3b64e",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:state_idempotency.acquire_slot"
+   },
+   "task_id": "22a25729-c464-5c45-801a-22bcd0587e28",
+   "task_seed": 21040202,
+   "template_id": "state_idempotency.acquire_slot"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D2",
+   "repository_group": "d2-boundary-stride",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "e46eeda6f9bb79bf13ce0cc5cfad0d1f06865ef0ba054142cd0993e8b821ffde",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "cf2ba2563011ff2128bc06b7f94b2eb6742f84045648016fd9493d2aa9d33d7d",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d2_boundary.every_nth"
+   },
+   "task_id": "7fafacda-a642-5938-ac76-e7990afa2549",
+   "task_seed": 21040202,
+   "template_id": "d2_boundary.every_nth"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "transform-inversion",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "5cbe48c99c1b5f18e307583ef5a8af39e03d6a82a8e0fe05a08c867070341cf2",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "a314bb73d3746cf4b4c7bac5271e2317c1f75f583e21cb78be0b59b3b9a2372d",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:data_transformation.invert"
+   },
+   "task_id": "5ce25594-9242-5629-bf4c-628746fa5d8d",
+   "task_seed": 21040202,
+   "template_id": "data_transformation.invert"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "errors-fallback-chain",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "aee2dde34d1742f81e0697038e8dfd600c9e1c851ddf67d47f6d7174f5ce1f6c",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "485e08de3b5af66c6d5216791d00d0476317a68006b967edd7b0717ba27841eb",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:error_handling.first_success"
+   },
+   "task_id": "e72789aa-2df3-5061-b32e-6457440b8e81",
+   "task_seed": 21040202,
+   "template_id": "error_handling.first_success"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "numeric-compounding",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "493399893bc95f8bd285e088d6359bce0aea055afab8d78a6f279c56647f134f",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "b29aa751041bc3368de09b23f81cf1fd7169fd6ae6edd38cc4196f938394e0a0",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:numeric_logic.compound"
+   },
+   "task_id": "21269dfa-6047-558f-92ca-292432b4cbac",
+   "task_seed": 21040202,
+   "template_id": "numeric_logic.compound"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "parsing-key-values",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "721f19e33fd727b52a3c783e88448b4552a9b920d3b004028e7de245a22e94e3",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "43c75bb503aa4cc236d893d7fbd5daef7ff62c43bc020a89fae595e137beb791",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:parsing_validation.key_values"
+   },
+   "task_id": "f699b1de-4b41-5941-a440-3d12ad522ac8",
+   "task_seed": 21040202,
+   "template_id": "parsing_validation.key_values"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "state-machine",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "59dd96761713ae6458c643ec889decb611eff55a5c83eeb70a0095c4b9be1f6d",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "844aa8ccccb1df491dfe607b75f82d285a0931d97c37a3c565b0e3ba9fbbaa8e",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:state_idempotency.advance"
+   },
+   "task_id": "151c9148-35ef-5901-9f90-c231c12347b0",
+   "task_seed": 21040202,
+   "template_id": "state_idempotency.advance"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D3",
+   "repository_group": "d3-boundary-centre-window",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "0e11894e929676bc8f93d241b4c45ec206413045fab7f8e3ab3c75bf4c60c6ed",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "babd1fe0a8959215f74bddd788f33c60f5aa9e362cc6c460f569469e7d3081a0",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d3_boundary.centre_window"
+   },
+   "task_id": "f482f01c-9d1a-5f06-83bd-55472e884755",
+   "task_seed": 21040202,
+   "template_id": "d3_boundary.centre_window"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "transform-key-renaming",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "db2683582883785e144b8eb1e0dbfb852363e89286f9ae961436fe0207f7e213",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "198ef60372437a6a9cea12e5f8984bccabe4b37d6bc17b029013e037e977123b",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:data_transformation.rename_keys"
+   },
+   "task_id": "b8476fa0-cce6-5c9f-abd5-1f37dce266ab",
+   "task_seed": 21040202,
+   "template_id": "data_transformation.rename_keys"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "errors-nested-lookup",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "423b7e3ddcf99f05fe664a37bc0ba3bdf9688704cc26e16fce1a2bb1a8737a12",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "71b521dd3471b5a964224a62f551db457240bd0e3d079316e47ecfe8984edeef",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:error_handling.lookup"
+   },
+   "task_id": "ab51099e-5e8c-5837-8ffb-27eb24835be5",
+   "task_seed": 21040202,
+   "template_id": "error_handling.lookup"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "numeric-distribution",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "4a70325cc4639c039d136149caf0fce5d899e732e17efb7923b3898fe1f3937b",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "a6bccd0cf5a1630f62d55ba92dca2b0b33c6bd7f5300881c0f07b522aab68d7e",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:numeric_logic.divide_evenly"
+   },
+   "task_id": "9d52d8e8-f776-5a25-a485-f76dc4aceb25",
+   "task_seed": 21040202,
+   "template_id": "numeric_logic.divide_evenly"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "parsing-header-names",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "5ad6e902f24e673b61c942d486033c5a1803d2d6c2623db87e525d3fad54b822",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "2c699122a04dba8190b6aaec7884cc6c37f4b4eace11d21519d469c8dbe445e9",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:parsing_validation.normalize_header"
+   },
+   "task_id": "8081a681-38c1-5fc2-8476-6d9938169f5b",
+   "task_seed": 21040202,
+   "template_id": "parsing_validation.normalize_header"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "state-checkpoint-history",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "40fc5c50c92148bfbfe452f0b9ab19a9e8aeda0d4a156bcf372cba80c90ef0f1",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "ecf97c40be1eb905de2ebb95c94481894a9d1f3671dbd49de7d77f1bc6f399b0",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:state_idempotency.checkpoint"
+   },
+   "task_id": "620a225a-565b-5165-97cc-d24bba023b12",
+   "task_seed": 21040202,
+   "template_id": "state_idempotency.checkpoint"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D3",
+   "repository_group": "d3-boundary-head-within",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "306de4504c5fc40b810d57ba6e5bb92836a8a489cbede84a0f90254c9256c6e0",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "1972d3a887b2d11acd44691077847dfb2e15603c6f8686e60f6be62d52f19a68",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d3_boundary.head_within"
+   },
+   "task_id": "d955e1d3-9d3b-5047-bbcb-87ef137ff843",
+   "task_seed": 21040202,
+   "template_id": "d3_boundary.head_within"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "transform-summaries",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "6522d2eee5d472bed04012e6a24da7904acc932d5ed32d41981a5faaddefd855",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "b1ed9f9199f47ac8c8ffead61e13662b0459991a8a9b912bb7c33eccb8ada668",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:data_transformation.summarize"
+   },
+   "task_id": "22e85c71-0a66-524e-80ca-9b2c424fa89d",
+   "task_seed": 21040202,
+   "template_id": "data_transformation.summarize"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "errors-lenient-parsing",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "13ef4decf550589bd606d4ae799e1561243691554a85d85875d1fa6092dd2f07",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "6c907e6e69627878daa18f559f0a4cd05102a78c1d6ee84289d9f17dc4d0905e",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:error_handling.parse_or_default"
+   },
+   "task_id": "4df8d8ff-6fa2-5a27-9781-85b8016e1a87",
+   "task_seed": 21040202,
+   "template_id": "error_handling.parse_or_default"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "numeric-averages",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "07bc968f6b1e580122fea328b0811b91be6f88603be263db157c3761e34dd428",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "7f88d6a746490aeb0b49237ecb755120456faa055191a86bab43e3fb2fd1e7e6",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:numeric_logic.mean"
+   },
+   "task_id": "4248a294-19b8-5709-8563-9c41ab089fbb",
+   "task_seed": 21040202,
+   "template_id": "numeric_logic.mean"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "parsing-booleans",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "aa217153cef7df8919e37c568e82d125370cade8b057e6bca72f64351e46ff64",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "16c1bfe91401502e33876f0c80825811786cb705385a62d5a2735434bc75e870",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:parsing_validation.parse_bool"
+   },
+   "task_id": "b3d2e70d-38ad-5d18-af18-df2af33abfd5",
+   "task_seed": 21040202,
+   "template_id": "parsing_validation.parse_bool"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "state-settings-merge",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "ab5e64562e57702706d0b45952a0bee4fd2dc5d23f0ef12825dc131e64e8d687",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "339eb9d5747e83f5ce12c33ed80d3d7d9732a95b32722c25e4a311b434da2df2",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:state_idempotency.merge_settings"
+   },
+   "task_id": "094f19ba-0b79-5ec0-bed6-3480eb62ed71",
+   "task_seed": 21040202,
+   "template_id": "state_idempotency.merge_settings"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D3",
+   "repository_group": "d3-boundary-step-gaps",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "1849a72e2394d1081b3ec2b4647a8c681a2e75c9fadd21d16e8c029c77b19ad4",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "9abde285d22d7e0f6dcbbc1f07ae7af92c9617f17de3901e8423f9dadf26bdf5",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d3_boundary.step_gaps"
+   },
+   "task_id": "31657921-18f6-5bab-b139-070ef2150565",
+   "task_seed": 21040202,
+   "template_id": "d3_boundary.step_gaps"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "transform-columns-to-rows",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "417c4cb6472554e35a8dd4e06fdc2af64154414f4a894390c1b8e78fa4ad4317",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "7bb5930ecf66a5c5f12c1e018107790e2cd49504c0ea77b54cf7331585c245c9",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:data_transformation.to_records"
+   },
+   "task_id": "55b8b167-33e7-5ad7-8606-c8571d0e01ff",
+   "task_seed": 21040202,
+   "template_id": "data_transformation.to_records"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "errors-preconditions",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "6e92b7f03d0fd4b0690d36ed43ac9ca316faecd5f40dfa71c8fd7f7a434be3ed",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "6e7b0ef936b33dd6aeefbe422b856cb283a4ba44fe6d5c8d632a3b79654da65d",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:error_handling.require"
+   },
+   "task_id": "1ae50cb1-0e6b-5be2-9c73-5295ae1f05d7",
+   "task_seed": 21040202,
+   "template_id": "error_handling.require"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "numeric-percentages",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "233d7161c9f0a4f9fa1d9174a4a6e1f2701551a3764a94d24477bcfb55ce0d58",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "2dfcf714242051ec7dfb87effade938ea11b86eb1aae9412f9db1be39e6022aa",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:numeric_logic.percentage"
+   },
+   "task_id": "b65a137f-993c-5fa5-b2bb-3e43977e4ebb",
+   "task_seed": 21040202,
+   "template_id": "numeric_logic.percentage"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "parsing-versions",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "10d18dc0b3a9f5220af5b9d7d2ab9df32eae872d87ba7b1326f1d046f8d83880",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "b4b84837a7b4a4d2e271f05115f9913f48e5849d368dc643706602349b4760e2",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:parsing_validation.parse_version"
+   },
+   "task_id": "8334fc06-ed60-54de-a7b5-8d7c2136d6b3",
+   "task_seed": 21040202,
+   "template_id": "parsing_validation.parse_version"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "state-registry",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "ffd688d97246266624b45f70e1752590e448d4d92736071f1c9254dcaebe7184",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "475c2838e0bcb1aa64d9630137d372300972cbea6a06ada9debf7f9081edc186",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:state_idempotency.register"
+   },
+   "task_id": "b848e9e1-770e-5a4f-8b58-8c37bde509a9",
+   "task_seed": 21040202,
+   "template_id": "state_idempotency.register"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21D3",
+   "repository_group": "d3-boundary-tail-after",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "606a4763ddbf126dfc044910d1cd99b84bcfe58e15fb692d3e63d07a8b98d2ff",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "a147582637c7cedd7848864301cd5c5117bcb72852d7936bb1a8c1d5a8621ae5",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:d3_boundary.tail_after"
+   },
+   "task_id": "29ab23a5-904d-5d08-aba1-ab174e1290a0",
+   "task_seed": 21040202,
+   "template_id": "d3_boundary.tail_after"
+  },
+  {
+   "candidate_slots": 4,
+   "package_to_re_execute": true,
+   "provenance_sprint": "21C3",
+   "repository_group": "parsing-delimited-fields",
+   "rights": {
+    "attribution": "Cognitive OS project, generated task package",
+    "content_hash": "61fdcb8c1445db76ce3fe9d44cf0894c81e6ab98fc660f41c38eb70d8229a7d5",
+    "licence_identifier": "Apache-2.0",
+    "rights_evidence_hash": "aab9009dac2377d76fa39100409f081ca9e64fb6cdebd515798de6d5de70976d",
+    "rights_verified": true,
+    "sensitivity": "public",
+    "source_identity": "cognitive-os:generated:parsing_validation.split_fields"
+   },
+   "task_id": "c353faf8-c0c8-529d-853d-6a55effe62d0",
+   "task_seed": 21040202,
+   "template_id": "parsing_validation.split_fields"
+  }
+ ],
+ "pre_registration_sha256": "526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9",
+ "recorded_at": "2026-08-07T06:40:00Z",
+ "recorded_late": {
+  "actual_wave": "W2",
+  "planned_wave": "W1",
+  "what_it_changes": "nothing sealed: the pool the audit describes is the one S21D4-032 already sealed, and the record confirms rather than revises it",
+  "why": "the audit was not run in W1. S21D4-032 sealed the fitting catalogue and S21D4-033 passed without it, and the gap surfaced only when S21D4-034 went to seal 720 feature records against a pool nobody had enumerated"
+ },
+ "rights": {
+  "all_verified": true,
+  "groups_with_a_verified_rights_record": 80,
+  "groups_without_one": [],
+  "licences": [
+   "Apache-2.0"
+  ],
+  "read_from": "the RealityTaskManifest the campaign itself carries, with the generated task id asserted against the sealed catalogue, so the rights belong to the audited group"
+ },
+ "schema_version": 1,
+ "spent_calibration_groups_as_fitting_exemplars": {
+  "d2_calibration_groups": 10,
+  "d3_calibration_groups": 20,
+  "declared_before_any_d4_measurement": true,
+  "declared_d2_calibration_groups": 10,
+  "declared_d3_calibration_groups": 20,
+  "matches_the_declared_composition": true,
+  "the_rest_are_the_d2_training_partition": 50,
+  "why": "a group whose calibration role is spent may be an exemplar and may never be a D4 holdout member; the disjointness proof below is what enforces the second half"
+ },
+ "sprint": "21D4",
+ "sprint_21c3_corpus": {
+  "c3_groups_available_outside_it": 0,
+  "c3_groups_inside_the_released_d2_training_partition": 30,
+  "contract_arithmetic_that_does_not_close": "sprint-21d4-contracts.json says including C3 'would have carried the pool to about 110 groups and 440 outcomes' on the strength of 'roughly thirty of its groups'. C3 has exactly thirty groups and all thirty are already inside the eighty, so no thirty remain to carry it to a hundred and ten. The number is wrong in the sealed record; the decision it accompanies is not affected, and a sealed record is amended rather than edited",
+  "excluded_by": "release-owner decision, not by failed audit",
+  "included_as_an_additional_source": false,
+  "limitation_s21d4_039_must_report": "the volume probe spans 200 to 320 rather than 200 to 440, so a flat risk-coverage curve across it is weaker evidence for hypothesis_class_bound than a wider span would have been",
+  "reading": "the frozen composition names three released partitions, and D2's training partition contains thirty C3-authored groups by construction. Sprint 21D3 fitted on exactly the same fifty. The exclusion therefore means no further C3 material is recruited into the pool, which is a decision with nothing left to act on: every C3 group is already inside a released partition"
+ },
+ "volume_points": {
+  "achieved": [
+   200,
+   320
+  ],
+  "declared": [
+   200,
+   320
+  ],
+  "rows_at_the_upper_point": 320,
+  "set_from_the_achieved_pool": false
+ },
+ "wave": "W2"
+}

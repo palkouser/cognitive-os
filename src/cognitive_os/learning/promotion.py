@@ -38,15 +38,19 @@ from cognitive_os.domain.learned import (
     ProvenanceClass,
 )
 from cognitive_os.domain.promotion_payload import (
+    CONDITION_20_GATE,
     D3_PROMOTION_GATES,
     CanaryToSteadyCondition,
     D3PromotionPayload,
     D3RuntimeConfiguration,
+    PromotionDecisionCounts,
     PromotionGateOutcome,
+    PromotionGateRecord,
 )
 from cognitive_os.domains.fixtures import FIXTURE_TIME
 
 from .baselines import LadderReport
+from .correction_protocol import DecisionCensusV4
 from .features import feature_schema
 from .selfplay import SURFACE
 
@@ -246,6 +250,44 @@ def assess_promotion(
             else "every promotion gate passed"
         ),
         created_at=FIXTURE_TIME,
+    )
+
+
+# ------------------------------------------------------- S21D4-048: condition 20's denominators
+
+
+def condition_20_gate(
+    *,
+    outcome: PromotionGateOutcome,
+    evidence_hash: str,
+    detail: str,
+    census: DecisionCensusV4,
+    calibration_certificate_hash: str,
+) -> PromotionGateRecord:
+    """Build the metamorphic/OOD row from a census rather than from a caller's arithmetic.
+
+    The counts are taken from `DecisionCensusV4`, which is the one place the independence rule
+    is implemented, so a row saying "120 decisions" can only exist if something actually hashed
+    120 distinct fitted vectors. A builder that accepted two integers would let the same
+    replicated set through again wearing a different field name.
+
+    `NOT_MEASURED` is not accepted here at all: this function fills a measurement, and a gate
+    nobody ran has none. Record that row directly — the payload validator keeps the two apart.
+    """
+    if outcome is PromotionGateOutcome.NOT_MEASURED:
+        raise ValueError(
+            "a gate nobody ran has no census; record the not_measured row without counts"
+        )
+    return PromotionGateRecord(
+        name=CONDITION_20_GATE,
+        outcome=outcome,
+        evidence_hash=evidence_hash,
+        detail=detail,
+        decision_counts=PromotionDecisionCounts(
+            nominal_decisions=census.nominal_decisions,
+            independent_decisions=census.independent_decisions,
+            calibration_certificate_hash=calibration_certificate_hash,
+        ),
     )
 
 

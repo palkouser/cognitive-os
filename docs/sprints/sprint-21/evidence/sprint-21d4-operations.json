@@ -1,0 +1,603 @@
+{
+ "artifact_under_test": "d3_contract_fixture",
+ "backup": {
+  "alembic_revision": "0015",
+  "artifact_archive_bytes": 6478091,
+  "artifact_archive_sha256": "999c71df28b999a702b9dd7f590dfc125796c2c0d1a223ca5c0a9034f88dbec7",
+  "artifact_count": 5598,
+  "database": "cognitive_os_s21d4_test",
+  "database_dump_sha256": "146ec99d8859d204e80be4adc73689fedbb57a6d150da20f69f14cdb702ace96",
+  "event_count": 2812,
+  "manifest": "20260807T190533Z-backup-manifest.json"
+ },
+ "ci_coverage": {
+  "covered": {
+   "artifact_verification": true,
+   "benchmark_replay": true,
+   "d3_evidence_schemas": true,
+   "d4_evidence_schemas": true,
+   "decision_independence": true,
+   "lifecycle": true,
+   "v2_normalisation_and_matrix": true
+  },
+  "uncovered": [],
+  "uses_live_provider_or_network": false,
+  "uses_predecessor_store": false,
+  "workflow_sha256": "45ecb6335a63ffe4032b1fd1612a0ef3650754e391c62f9e4b3e29ad39680e22"
+ },
+ "corruption_matrix": [
+  {
+   "case": "tampered_blob",
+   "damage": "appended one byte to c1cb30d676c0 in the extracted copy",
+   "expected": "the file no longer hashes to the name it is filed under",
+   "observed": {
+    "failed_closed": true,
+    "files_rehashed": 3990,
+    "reason": "content_hash_mismatches names c1cb30d676c0"
+   }
+  },
+  {
+   "case": "missing_blob",
+   "damage": "removed c1cb30d676c0 from the extracted copy",
+   "expected": "artifact_bytes fails on a declared blob with no bytes, which a rehash of what remains cannot see",
+   "observed": {
+    "a_rehash_of_what_remains_reports_it_clean": true,
+    "failed_closed": true,
+    "files_rehashed": 3989,
+    "reason": "classes reporting failed: ['artifact_bytes']"
+   }
+  },
+  {
+   "case": "missing_artifact",
+   "damage": "the capability's artifact hash against empty bytes",
+   "expected": "the rehash refuses before the payload is parsed",
+   "observed": {
+    "failed_closed": true,
+    "reason": "CorrectionArtifactError: artifact bytes hash to e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855, not the e6412a0dafe7876bed8141c0432944ae1e8aaffef0249153a1e6932801b4c353 this capabili"
+   }
+  },
+  {
+   "case": "corrupt_artifact",
+   "damage": "one byte appended to the authorised bytes",
+   "expected": "the rehash refuses; the payload is never read",
+   "observed": {
+    "failed_closed": true,
+    "reason": "CorrectionArtifactError: artifact bytes hash to 818293b50264ba7c92e4c07ef4c7b2faa7a26aeee24e883cd70f1667c129efed, not the e6412a0dafe7876bed8141c0432944ae1e8aaffef0249153a1e6932801b4c353 this capabili"
+   }
+  },
+  {
+   "case": "oversized_artifact",
+   "damage": "the authorised bytes against a 16-byte bound",
+   "expected": "the size bound refuses before parsing",
+   "observed": {
+    "failed_closed": true,
+    "reason": "CorrectionArtifactError: artifact is 27030 bytes, above the 16-byte bound"
+   }
+  },
+  {
+   "case": "schema_wrong_artifact",
+   "damage": "v2 bytes relabelled with the v1 schema name",
+   "expected": "the schema name is checked before any model is constructed",
+   "observed": {
+    "failed_closed": true,
+    "reason": "CorrectionArtifactError: artifact declares schema 'correction-ranker-artifact', not 'correction-ranking-artifact-v2'"
+   }
+  },
+  {
+   "case": "metadata_substitution",
+   "damage": "a valid artifact presented under another descriptor's identity",
+   "expected": "the declared descriptor is compared and refused",
+   "observed": {
+    "failed_closed": true,
+    "reason": "CorrectionArtifactError: artifact descriptor is 'de697e11047bcc6a6a7ea448a33d112eaf5671f54faae55d14f857bc94ba4f70', not the expected '9999999999999999999999999999999999999999999999999999999999999999'"
+   }
+  },
+  {
+   "case": "byte_substitution",
+   "damage": "a differently-fitted but internally valid artifact under the authorised hash",
+   "expected": "the rehash refuses: the capability names one artifact, not one shape",
+   "observed": {
+    "failed_closed": true,
+    "reason": "CorrectionArtifactError: artifact bytes hash to 8abfce21da6d5da2a5f74457dad3070ea3a0cb95547dff65680397e6e93de3b7, not the e6412a0dafe7876bed8141c0432944ae1e8aaffef0249153a1e6932801b4c353 this capabili"
+   }
+  },
+  {
+   "case": "ood_unit_forgery",
+   "damage": "the invariance census reporting every transformed case as a distinct decision",
+   "expected": "ood_units fails: a semantics-preserving transform that adds a decision is the collapse the erratum measured",
+   "observed": {
+    "failed_closed": true,
+    "healthy": false,
+    "reason": "classes reporting failed: ['ood_units']"
+   }
+  },
+  {
+   "case": "holdout_access_claim",
+   "damage": "one evidence file claiming a final outcome was inspected",
+   "expected": "holdout_access fails and names the file",
+   "observed": {
+    "failed_closed": true,
+    "healthy": false,
+    "reason": "classes reporting failed: ['holdout_access']"
+   }
+  },
+  {
+   "case": "retrieval_second_read",
+   "damage": "the holdout benchmark recorded as executed twice",
+   "expected": "retrieval_one_read fails: the protocol allows one read",
+   "observed": {
+    "failed_closed": true,
+    "healthy": false,
+    "reason": "classes reporting failed: ['retrieval_one_read']"
+   }
+  },
+  {
+   "case": "retrieval_alternative_reopened",
+   "damage": "a fusion variant opened after the holdout returned a negative result",
+   "expected": "retrieval_one_read fails: reading once and then tuning is the same failure, later",
+   "observed": {
+    "failed_closed": true,
+    "healthy": false,
+    "reason": "classes reporting failed: ['retrieval_one_read']"
+   }
+  },
+  {
+   "case": "dataset_member_mismatch",
+   "damage": "a materialised snapshot that no longer rebuilds identically",
+   "expected": "explicit_member_selection fails",
+   "observed": {
+    "failed_closed": true,
+    "healthy": false,
+    "reason": "classes reporting failed: ['explicit_member_selection']"
+   }
+  },
+  {
+   "case": "feature_seal_mismatch",
+   "damage": "a campaign partition whose receipt is contradicted",
+   "expected": "duplicate_executions_or_seals fails",
+   "observed": {
+    "failed_closed": true,
+    "healthy": false,
+    "reason": "classes reporting failed: ['duplicate_executions_or_seals']"
+   }
+  },
+  {
+   "case": "stale_assessment",
+   "damage": "the pre-final checkpoint claiming final access was authorised",
+   "expected": "lifecycle fails: no later evidence supports it",
+   "observed": {
+    "failed_closed": true,
+    "healthy": false,
+    "reason": "classes reporting failed: ['lifecycle']"
+   }
+  },
+  {
+   "case": "wrong_active_revision",
+   "damage": "two different stop hashes across the not-opened map",
+   "expected": "lifecycle fails: dependents must bind one stop",
+   "observed": {
+    "failed_closed": true,
+    "healthy": false,
+    "reason": "classes reporting failed: ['lifecycle']"
+   }
+  },
+  {
+   "case": "forged_independent_decision_count",
+   "damage": "a stored census claiming more distinct decisions than it counted",
+   "expected": "decision_independence fails: independence is a partition of what was counted",
+   "observed": {
+    "failed_closed": true,
+    "healthy": false,
+    "reason": "classes reporting failed: ['decision_independence']"
+   }
+  },
+  {
+   "case": "rate_over_a_nominal_denominator",
+   "damage": "a stored rate naming the counted decisions as its denominator",
+   "expected": "decision_independence fails: the denominator is named in the bytes, so it can be read rather than inferred",
+   "observed": {
+    "failed_closed": true,
+    "healthy": false,
+    "reason": "classes reporting failed: ['decision_independence']"
+   }
+  },
+  {
+   "case": "threshold_derived_off_calibration",
+   "damage": "the zero-error operating point asked for from the final split",
+   "expected": "the derivation refuses by name; a threshold fitted to a holdout is not a threshold",
+   "observed": {
+    "failed_closed": true,
+    "reason": "OperatingPointError: the operating point is derived from the calibration split only; 'final' is final, promotion or metamorphic evidence"
+   }
+  },
+  {
+   "case": "retrieval_policy_substitution",
+   "damage": "a graph resource policy hash that was never frozen",
+   "expected": "the frozen policy table has no entry, so the benchmark cannot name one",
+   "observed": {
+    "failed_closed": true,
+    "frozen_policies": [
+     "4a7fe3b12ad9b25211fd05e95836080432d3fd94d0b04f64c289ea5407b66915",
+     "d0e8520e3d3bc3637ce75f632c79aa00c1f456a8af1a4956601dad359c8474ab"
+    ],
+    "reason": "FROZEN_GRAPH_RESOURCE_POLICIES resolves only the two revisions",
+    "revision_2_resolves": true
+   }
+  },
+  {
+   "case": "retrieval_judgement_substitution",
+   "damage": "a searchable body spelling the task family it is judged on",
+   "expected": "the production leak guard names the pair and the label",
+   "observed": {
+    "failed_closed": true,
+    "reason": "judgement_leaks reports ['pair:failed:boundary_collections']"
+   }
+  },
+  {
+   "case": "inherited_store_isolation",
+   "damage": "the D3 pair checked against a fingerprint that is not its own",
+   "expected": "the isolation class names the store and refuses",
+   "observed": {
+    "failed_closed": true,
+    "reason": "isolation fails when a declared fingerprint does not reproduce"
+   }
+  }
+ ],
+ "final_outcomes_inspected": false,
+ "findings": [],
+ "fingerprints_after": {
+  "artifacts": {
+   "files": 5,
+   "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf"
+  },
+  "artifacts-s21c3": {
+   "files": 8503,
+   "path_and_size_fingerprint_sha256": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593"
+  },
+  "artifacts-s21d1": {
+   "files": 83,
+   "path_and_size_fingerprint_sha256": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f"
+  },
+  "artifacts-s21d2": {
+   "files": 1511,
+   "path_and_size_fingerprint_sha256": "39417f1a03f6824cfe6f9c4b7e6bd5a3cd34da8329fb95cff0a35595899438aa"
+  },
+  "artifacts-s21d3": {
+   "files": 2096,
+   "path_and_size_fingerprint_sha256": "fcb0a044810b375f2933d4a3cf22c7448bfada9c90e104566a92125b08dcd0d3"
+  },
+  "artifacts-s21d4": {
+   "files": 3990,
+   "path_and_size_fingerprint_sha256": "e140bab46f5c3e683ad1f2c0ab0ca1c3e40de6013871c25f4c0f6f7075740a9b"
+  }
+ },
+ "fingerprints_before": {
+  "artifacts": {
+   "files": 5,
+   "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf"
+  },
+  "artifacts-s21c3": {
+   "files": 8503,
+   "path_and_size_fingerprint_sha256": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593"
+  },
+  "artifacts-s21d1": {
+   "files": 83,
+   "path_and_size_fingerprint_sha256": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f"
+  },
+  "artifacts-s21d2": {
+   "files": 1511,
+   "path_and_size_fingerprint_sha256": "39417f1a03f6824cfe6f9c4b7e6bd5a3cd34da8329fb95cff0a35595899438aa"
+  },
+  "artifacts-s21d3": {
+   "files": 2096,
+   "path_and_size_fingerprint_sha256": "fcb0a044810b375f2933d4a3cf22c7448bfada9c90e104566a92125b08dcd0d3"
+  },
+  "artifacts-s21d4": {
+   "files": 3990,
+   "path_and_size_fingerprint_sha256": "e140bab46f5c3e683ad1f2c0ab0ca1c3e40de6013871c25f4c0f6f7075740a9b"
+  }
+ },
+ "integrity_content_hash": "f12d0cb4229955b887060bcc168c4aaa56534dc8c23cc89a3a66e4bc7bfbd0f7",
+ "isolation": {
+  "changed": [],
+  "d4_pair_unchanged": true,
+  "predecessor_pairs_unchanged": true
+ },
+ "items": [
+  "S21D4-082",
+  "S21D4-083",
+  "S21D4-084",
+  "S21D4-085"
+ ],
+ "main_worktree_mutations": " M .github/workflows/ci.yml\n M docs/sprints/sprint-21/sprint-21d4-execution.md\n M scripts/learned.py\n M scripts/semantic_scale_baseline.py\n M scripts/skill_scale_baseline.py\n M scripts/strategy_scale_baseline.py\n M src/cognitive_os/infrastructure/postgres/engine.py\n M src/cognitive_os/learned_smoke.py\n M tests/cognitive_os/learned_evidence/test_artifact_lineage.py\n M tests/cognitive_os/learned_evidence/test_learned_smoke_guard.py\n M tests/cognitive_os/learned_evidence/test_postgres_health.py\n M tests/cognitive_os/learned_evidence/test_postgres_repository.py\n M tests/cognitive_os/provider_output/test_postgres_controlled_function.py\n M tests/cognitive_os/provider_output/test_postgres_health.py\n M tests/cognitive_os/provider_output/test_postgres_repository.py\n M tests/integration/postgres/conftest.py\n?? docs/sprints/sprint-21/evidence/sprint-21d4-operations.json\n?? scripts/operations_d4.py\n?? scripts/verification_matrix_d4.py\n?? src/cognitive_os/learning/integrity_d4.py\n?? tests/cognitive_os/learning/test_d4_cli_boundary.py\n?? tests/cognitive_os/learning/test_d4_integrity.py\n?? tests/cognitive_os/learning/test_d4_operations_evidence.py\n?? tests/cognitive_os/learning/test_truncation_fence.py\n",
+ "pre_registration_sha256": "526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9",
+ "provisioning": {
+  "bootstrap_roles_untouched": {
+   "invoked_by_this_command": false,
+   "script": "postgres_bootstrap_roles.sh",
+   "sha256": "68024d34d5520973ecf2b3c5fa863b18bbf1242b292d28ef26c81b7f189b6ab5"
+  },
+  "database": "cognitive_os_s21d4_test",
+  "database_is_isolated": true,
+  "extensions": [
+   "plpgsql",
+   "vector"
+  ],
+  "migration_head": "0015",
+  "migration_is_expected": true,
+  "migration_versions_on_disk": [
+   "0013",
+   "0014",
+   "0015"
+  ],
+  "no_migration_0016": true,
+  "operations_examples_name_the_env_file": {
+   "env_file": ".env.s21d4.local",
+   "env_file_present": true,
+   "operations_script_sets_it": true
+  },
+  "schema_owner": "cogos_owner",
+  "schema_usage": true
+ },
+ "purpose": "Verify D4 provisioning, prove the evidence survives backup, restart and an isolated restore, and demonstrate that damage to the moved copy is refused.",
+ "recorded_at": "2026-08-07T19:05:44.979096Z",
+ "restart": {
+  "action": "compose-postgres-1 restarted; the D4 database answered again",
+  "history_sha256": "38f738bf5f15aaefac33d691d86034a154fd56afd5b27ee96461feae0ce8d7ec",
+  "store_is_unchanged_across_the_restart": true
+ },
+ "restore": {
+  "artifact_bytes": {
+   "content_hash_mismatches": [],
+   "files_rehashed": 3990
+  },
+  "artifact_copy": "/home/palkouser/projekt/cognitive-os-data/scratch-s21d4/w7-operations/restored-artifacts",
+  "counts_match": true,
+  "evidence_report_on_the_restored_copy": {
+   "classes": [
+    {
+     "class": "explicit_member_selection",
+     "detail": "2 datasets rebuild identically from 6 sealed catalogues",
+     "evidence": [
+      "sprint-21d4-snapshots.json",
+      "sprint-21d4-sealed-manifests.json"
+     ],
+     "state": "clean"
+    },
+    {
+     "class": "duplicate_executions_or_seals",
+     "detail": "2 partitions sealed once; 900 runs replayed from receipts with nothing remaining and no container started",
+     "evidence": [
+      "sprint-21d4-self-play-campaign.json",
+      "sprint-21d4-calibration-campaign.json"
+     ],
+     "state": "clean"
+    },
+    {
+     "class": "chronology",
+     "detail": "25 files bind 526d48f83d69 and follow it",
+     "evidence": [
+      "sprint-21d4-pre-registration.json",
+      "sprint-21d4-advisory-boundary.json",
+      "sprint-21d4-calibration-campaign.json",
+      "sprint-21d4-continuation.json",
+      "sprint-21d4-contracts-amendment-1.json",
+      "sprint-21d4-corpus.json",
+      "sprint-21d4-d3-grid-replay.json",
+      "sprint-21d4-feature-seals.json",
+      "sprint-21d4-fitting-pool.json",
+      "sprint-21d4-ged-decision.json",
+      "sprint-21d4-invariance-regression.json",
+      "sprint-21d4-learner-selection.json",
+      "sprint-21d4-operations.json",
+      "sprint-21d4-pre-final-checkpoint.json",
+      "sprint-21d4-retrieval-decision.json",
+      "sprint-21d4-retrieval-development.json",
+      "sprint-21d4-retrieval-emg-projection.json",
+      "sprint-21d4-retrieval-holdout-result.json",
+      "sprint-21d4-retrieval-query-set.json",
+      "sprint-21d4-seal-resume.json",
+      "sprint-21d4-sealed-manifests.json",
+      "sprint-21d4-self-play-campaign.json",
+      "sprint-21d4-separation.json",
+      "sprint-21d4-snapshots.json",
+      "sprint-21d4-surface.json",
+      "sprint-21d4-vertical-slice.json"
+     ],
+     "state": "clean"
+    },
+    {
+     "class": "feature_schema",
+     "detail": "the released v2 feature contract still hashes to the frozen 492c90a5df42",
+     "evidence": [
+      "sprint-21d4-contracts.json"
+     ],
+     "state": "clean"
+    },
+    {
+     "class": "matrix_embedding_scans",
+     "detail": "all 390 fitted dimensions are in the scanned matrix, embedding included, and 11 scans passed",
+     "evidence": [
+      "sprint-21d4-snapshots.json"
+     ],
+     "state": "clean"
+    },
+    {
+     "class": "ood_units",
+     "detail": "320 counted decisions over 80 distinct fitted vectors, 240 named as replicas",
+     "evidence": [
+      "sprint-21d4-invariance-regression.json"
+     ],
+     "state": "clean"
+    },
+    {
+     "class": "holdout_access",
+     "detail": "21 files report zero final or canary access",
+     "evidence": [
+      "sprint-21d4-advisory-boundary.json",
+      "sprint-21d4-calibration-campaign.json",
+      "sprint-21d4-corpus.json",
+      "sprint-21d4-feature-seals.json",
+      "sprint-21d4-fitting-pool.json",
+      "sprint-21d4-ged-decision.json",
+      "sprint-21d4-invariance-regression.json",
+      "sprint-21d4-learner-selection.json",
+      "sprint-21d4-operations.json",
+      "sprint-21d4-pre-final-checkpoint.json",
+      "sprint-21d4-retrieval-decision.json",
+      "sprint-21d4-retrieval-development.json",
+      "sprint-21d4-retrieval-emg-projection.json",
+      "sprint-21d4-retrieval-holdout-result.json",
+      "sprint-21d4-retrieval-query-set.json",
+      "sprint-21d4-sealed-manifests.json",
+      "sprint-21d4-self-play-campaign.json",
+      "sprint-21d4-separation.json",
+      "sprint-21d4-snapshots.json",
+      "sprint-21d4-surface.json",
+      "sprint-21d4-vertical-slice.json"
+     ],
+     "state": "clean"
+    },
+    {
+     "class": "retrieval_one_read",
+     "detail": "read once; winning arm None, first failed floor 'mrr_at_10', 5 classes of alternative reopened zero times",
+     "evidence": [
+      "sprint-21d4-retrieval-holdout-result.json",
+      "sprint-21d4-retrieval-decision.json"
+     ],
+     "state": "clean"
+    },
+    {
+     "class": "artifact_bytes",
+     "detail": "3990 blobs rehash to their content address",
+     "evidence": [],
+     "state": "clean"
+    },
+    {
+     "class": "lifecycle",
+     "detail": "no component was registered; 26 dependent tasks bound to stop 5caa48970898",
+     "evidence": [
+      "sprint-21d4-pre-final-checkpoint.json"
+     ],
+     "state": "not_opened"
+    },
+    {
+     "class": "isolation",
+     "detail": "all 5 predecessor stores reproduce their released fingerprint",
+     "evidence": [
+      "sprint-21d4-baseline.json"
+     ],
+     "state": "clean"
+    },
+    {
+     "class": "decision_independence",
+     "detail": "177 decision counts and 29 named denominators across 10 files, every rate over independent_decisions",
+     "evidence": [
+      "sprint-21d4-continuation.json",
+      "sprint-21d4-contracts.json",
+      "sprint-21d4-d3-grid-replay.json",
+      "sprint-21d4-d3-reconciliation.json",
+      "sprint-21d4-invariance-regression.json",
+      "sprint-21d4-learner-selection.json",
+      "sprint-21d4-pre-final-checkpoint.json",
+      "sprint-21d4-seal-resume.json",
+      "sprint-21d4-sealed-manifests.json",
+      "sprint-21d4-vertical-slice.json"
+     ],
+     "state": "clean"
+    }
+   ],
+   "clean": [
+    "explicit_member_selection",
+    "duplicate_executions_or_seals",
+    "chronology",
+    "feature_schema",
+    "matrix_embedding_scans",
+    "ood_units",
+    "holdout_access",
+    "retrieval_one_read",
+    "artifact_bytes",
+    "isolation",
+    "decision_independence"
+   ],
+   "covered": [
+    "explicit_member_selection",
+    "duplicate_executions_or_seals",
+    "chronology",
+    "feature_schema",
+    "matrix_embedding_scans",
+    "ood_units",
+    "holdout_access",
+    "retrieval_one_read",
+    "artifact_bytes",
+    "lifecycle",
+    "isolation",
+    "decision_independence"
+   ],
+   "failed": [],
+   "healthy": true,
+   "not_opened": [
+    "lifecycle"
+   ],
+   "warnings": []
+  },
+  "hashed_rows_match": true,
+  "restored": {
+   "campaign_receipts": 271,
+   "components_on_the_correction_surface": 0,
+   "counts": {
+    "artifact_blobs": 3990,
+    "artifacts": 5598,
+    "campaign_receipts": 271,
+    "coding_outcomes": 1465,
+    "events": 2812,
+    "learned_activation_approvals": 0,
+    "learned_activation_history": 0,
+    "learned_artifacts": 18,
+    "learned_component_revisions": 0,
+    "learned_components": 0,
+    "learned_evidence_records": 0
+   },
+   "history_sha256": "38f738bf5f15aaefac33d691d86034a154fd56afd5b27ee96461feae0ce8d7ec",
+   "receipts_sha256": "3b8696dae4ee2c04a098bac453bebf29c2b3057a89b221ea5c8866d879d532f9",
+   "run_identity_keys": 1055,
+   "run_identity_keys_sha256": "e1f70124bba14db09a6173983878346890ff5756abf1f757ba0d31b22f17e234"
+  },
+  "resume_inputs_match": {
+   "run_identity_keys": true,
+   "sequence_receipts": true
+  },
+  "source": {
+   "campaign_receipts": 271,
+   "components_on_the_correction_surface": 0,
+   "counts": {
+    "artifact_blobs": 3990,
+    "artifacts": 5598,
+    "campaign_receipts": 271,
+    "coding_outcomes": 1465,
+    "events": 2812,
+    "learned_activation_approvals": 0,
+    "learned_activation_history": 0,
+    "learned_artifacts": 18,
+    "learned_component_revisions": 0,
+    "learned_components": 0,
+    "learned_evidence_records": 0
+   },
+   "history_sha256": "38f738bf5f15aaefac33d691d86034a154fd56afd5b27ee96461feae0ce8d7ec",
+   "receipts_sha256": "3b8696dae4ee2c04a098bac453bebf29c2b3057a89b221ea5c8866d879d532f9",
+   "run_identity_keys": 1055,
+   "run_identity_keys_sha256": "e1f70124bba14db09a6173983878346890ff5756abf1f757ba0d31b22f17e234"
+  },
+  "stopped_state": {
+   "checked_surface": "experience.correction_ranking",
+   "components_on_the_correction_surface": 0,
+   "no_correction_component_was_registered": true,
+   "note": "the credential-free lifecycle smoke registers an unrelated inert component on skill.selection; it is not a D4 correction component and is expected to restore"
+  },
+  "target_database": "cognitive_os_s21d4_restore_test"
+ },
+ "schema_version": 1,
+ "sprint": "21D4",
+ "started_at": "2026-08-07T19:05:32.440238Z",
+ "wave": "W7"
+}

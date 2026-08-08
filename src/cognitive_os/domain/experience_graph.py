@@ -57,6 +57,11 @@ class GraphEditOperationKind(StrEnum):
     RELABEL_EDGE = "relabel_edge"
 
 
+#: S21D4-040. The bound the widened surface emits under: the same 1024 characters a node
+#: attribute value is allowed, applied to the joined term list. A retrieval document that can
+#: grow without limit is an unbounded index by another name.
+SEARCH_TERMS_CHARACTER_BOUND = 1024
+
 #: Markers that must never reach a graph attribute. Everything in a graph is retrievable.
 #: These are a denylist of strings to *refuse*, not paths this module ever writes to.
 FORBIDDEN_ATTRIBUTE_MARKERS = (
@@ -179,6 +184,11 @@ class ActionDecisionGraph(HashedExperienceContract):
     edges: tuple[ExperienceGraphEdge, ...] = ()
     limits: GraphResourceLimits = GraphResourceLimits()
     source_manifest_hash: Sha256Hex
+    #: S21D4-040. The one additive field of revision 4: canonical terms from the sources this
+    #: graph's nodes were projected from. Excluded from `structural_hash` and from
+    #: `ExperienceGraphNode.label`, so labelled graph-edit distance, edit-path round-tripping
+    #: and every stored D1/D2/D3 structural hash are byte-unchanged.
+    search_terms: tuple[str, ...] = ()
 
     @model_validator(mode="after")
     def structure_is_canonical_bounded_and_acyclic(self) -> ActionDecisionGraph:
@@ -201,7 +211,34 @@ class ActionDecisionGraph(HashedExperienceContract):
         if len(keys) != len(set(keys)):
             raise ValueError("duplicate edge")
         self._refuse_cycles_and_depth()
+        self._refuse_unsafe_search_terms()
         return self
+
+    def _refuse_unsafe_search_terms(self) -> None:
+        """The same guard node attributes get, because this is the same retrieval surface.
+
+        Canonical order and uniqueness are required rather than repaired: a caller that hands
+        over an unordered list is describing a different term set than the one it thinks it is,
+        and silently sorting it would hide that.
+        """
+        terms = list(self.search_terms)
+        if terms != sorted(terms):
+            raise ValueError("search terms must be in canonical order")
+        if len(terms) != len(set(terms)):
+            raise ValueError("search terms repeat a term")
+        # Padding is not checked here: the contract base strips it before a validator runs, so
+        # a padded-term branch would be a branch nothing can reach.
+        if any(not term for term in terms):
+            raise ValueError("a search term must be a non-empty token")
+        if len(" ".join(terms)) > SEARCH_TERMS_CHARACTER_BOUND:
+            raise ValueError(
+                f"search terms exceed the {SEARCH_TERMS_CHARACTER_BOUND}-character bound"
+            )
+        for term in terms:
+            lowered = term.lower()
+            for marker in FORBIDDEN_ATTRIBUTE_MARKERS:
+                if marker in lowered:
+                    raise ValueError(f"search term {term!r} carries {marker!r}")
 
     def _refuse_cycles_and_depth(self) -> None:
         """Kahn's algorithm, then the longest path along the resulting topological order.
@@ -268,6 +305,8 @@ class ActionDecisionGraph(HashedExperienceContract):
             rendered = " ".join(f"{k}={v}" for k, v in node.attributes)
             parts.append(f"{node.kind.value} {rendered}")
         parts += [f"{e.kind.value}" for e in self.edges]
+        if self.search_terms:
+            parts.append(" ".join(self.search_terms))
         return "\n".join(parts)
 
 

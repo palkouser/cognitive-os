@@ -3,9 +3,15 @@
 Drives the inert reference component through its whole governed lifecycle against a real
 database — register, lineage, evidence, verify, approve, activate, disable, roll back —
 and then replays history and checks health. It is the one learned code path that writes,
-so it is fenced twice: it refuses any database whose name does not end in `_test`, and it
-uses the abstaining reference component, which cannot change a decision even if something
+and it starts by truncating every learned evidence table, so it is fenced four times: the
+database name must end in `_test`, `COGOS_TRUNCATABLE_DATABASE` must nominate that exact
+database, the learned store must hold nothing this smoke did not create, and the component
+it drives is the abstaining reference one, which cannot change a decision even if something
 did activate it.
+
+The two middle fences were added late, after this smoke erased Sprint 21D3's committed
+campaign. A `_test` suffix is shared by every sprint's evidence database, so the name check
+alone consented to nothing. See `_require_nomination` and `_require_erasable`.
 
 The component it activates is never a shipped default. Nothing here demonstrates that the
 system learns anything; it demonstrates that the record of an activation survives a
@@ -37,6 +43,7 @@ from cognitive_os.domain.learned_evidence import (
     LearnedEvidenceRecord,
 )
 from cognitive_os.domain.promotion_payload import (
+    CONDITION_20_GATE,
     D3_PROMOTION_GATES,
     D3_PROMOTION_MEDIA_TYPE,
     CanaryToSteadyCondition,
@@ -62,7 +69,13 @@ from cognitive_os.infrastructure.learned.postgres.tables import LEARNED_EVIDENCE
 from cognitive_os.infrastructure.learned.reference import AlwaysAbstainingRanker
 from cognitive_os.infrastructure.postgres.artifact_repository import PostgresArtifactRepository
 from cognitive_os.infrastructure.postgres.engine import create_postgres_engine
-from cognitive_os.learning.promotion import D3PromotionBindings
+from cognitive_os.infrastructure.postgres.truncation import (
+    TruncationNotNominated,
+    TruncationRefused,
+    require_nominated_for_truncation,
+)
+from cognitive_os.learning.correction_protocol import DecisionCensusV4
+from cognitive_os.learning.promotion import D3PromotionBindings, condition_20_gate
 
 SMOKE_NAMESPACE = UUID("7e2b5c98-40a1-5d37-8f6b-1c94ae30d752")
 SMOKE_OPERATOR = "learned-smoke-operator"
@@ -78,6 +91,82 @@ def _require_isolated(url: str) -> None:
     if "_test" not in url:
         raise SmokeRefused(
             "the learned smoke writes, so it only runs against an isolated *_test database"
+        )
+
+
+def _require_nomination(database: str) -> None:
+    """The database must be nominated for erasure by name, in the environment. D4-W0-F1.
+
+    This is `tests/integration/postgres/conftest.py`'s rule, not a new one. That fixture
+    truncates the whole schema and learned the same lesson at W6-F2: "ends with `_test`" is a
+    naming convention, not consent, because every sprint's *evidence* database ends in `_test`
+    too. It answered by requiring `COGOS_TRUNCATABLE_DATABASE` to name the connected database.
+
+    This smoke truncates nine tables and was never given the same treatment, so on 2026-08-05 it
+    erased Sprint 21D3's 280 committed self-play observations and both of its materialised
+    revision-3 datasets -- two minutes before the W7 backup meant to preserve them, which is why
+    that restore proof verified matching counts of nothing. Nothing was recoverable, because
+    every backup was taken after the erasure.
+
+    One rule for both truncating paths, deliberately. A second mechanism answering the same
+    question differently is how an operator ends up knowing one fence and meeting the other.
+
+    W7-F1 found that "both" was never the whole list -- five test modules truncated the same
+    nine tables behind the older `_test` fence -- so the rule moved to
+    `infrastructure.postgres.engine`, where every path that connects can reach it, and this
+    function is now one of its callers rather than one of its implementations.
+    """
+    try:
+        require_nominated_for_truncation(database)
+    except TruncationNotNominated as reason:
+        raise SmokeRefused(
+            "the learned smoke truncates every learned evidence table, so the database must be "
+            "nominated for erasure: set COGOS_TRUNCATABLE_DATABASE to the database you mean. "
+            "It must never name a store that holds evidence."
+        ) from reason
+    except TruncationRefused as reason:
+        raise SmokeRefused(str(reason)) from reason
+
+
+async def _require_erasable(connection: Any) -> None:
+    """Second fence: refuse a nominated store that still holds evidence. D4-W0-F1.
+
+    Nomination is consent, and consent can be given by mistake -- an operator following a
+    runbook against the wrong sprint's environment nominates exactly the database that must not
+    be erased. So the store is also asked what it holds. Observations and datasets are the
+    record of executed runs and no later backup can bring them back; this smoke writes neither,
+    so one row of either means the database belongs to somebody else. A component that is not
+    the inert reference one means the same.
+
+    Kept deliberately, against the usual rule about second mechanisms, because the failure it
+    prevents is irreversible data loss rather than an incorrect result. Repeated smoke runs stay
+    idempotent: the reference component's own rows are the one thing allowed to be here.
+    """
+    # Spelled out rather than looped over a table name. The names are hard-coded either way, so
+    # nothing was injectable, but SQL assembled by interpolation is a shape worth not having in
+    # a path that decides whether a store gets erased -- and two literals are shorter than the
+    # suppression comment the alternative needs.
+    findings: list[str] = []
+    observations = await connection.scalar(
+        text("SELECT count(*) FROM cognitive_os.learned_observations")
+    )
+    if observations:
+        findings.append(f"{observations} row(s) in learned_observations")
+    datasets = await connection.scalar(text("SELECT count(*) FROM cognitive_os.learned_datasets"))
+    if datasets:
+        findings.append(f"{datasets} row(s) in learned_datasets")
+    foreign = await connection.scalar(
+        text("SELECT count(*) FROM cognitive_os.learned_components WHERE component_id <> :own"),
+        {"own": AlwaysAbstainingRanker.component_id},
+    )
+    if foreign:
+        findings.append(f"{foreign} learned component(s) other than the reference one")
+    if findings:
+        raise SmokeRefused(
+            "refusing to truncate a learned store that holds evidence this smoke did not "
+            f"create: {'; '.join(findings)}. It was nominated by COGOS_TRUNCATABLE_DATABASE, so "
+            "check that the nomination names the scratch database you meant rather than a "
+            "sprint's evidence store."
         )
 
 
@@ -99,7 +188,9 @@ async def run_learned_smoke() -> dict[str, Any]:
             name = str(await connection.scalar(text("SELECT current_database()")))
         if not name.endswith("_test"):
             raise SmokeRefused(f"refusing to write learned smoke evidence to {name}")
+        _require_nomination(name)
         async with engine.begin() as connection:
+            await _require_erasable(connection)
             tables = ", ".join(f"cognitive_os.{table.name}" for table in LEARNED_EVIDENCE_TABLES)
             await connection.execute(text(f"TRUNCATE {tables} RESTART IDENTITY CASCADE"))
 
@@ -428,6 +519,34 @@ def _transition_condition() -> CanaryToSteadyCondition:
 _SMOKE_DEPENDENCIES: dict[str, str] = {"smoke_fixture": "1" * 64}
 
 
+def _smoke_gate(name: str) -> PromotionGateRecord:
+    """One shape-only gate row, and condition 20's denominators when it is that row.
+
+    S21D4-048 refuses a measured metamorphic/OOD row that does not name how many decisions it
+    counted and how many of them were distinct. The smoke has no decisions, so its census says
+    so: twenty fixture decisions, none replicated, under a fixture certificate. The detail
+    string carries the same disclaimer every other row here carries.
+    """
+    evidence_hash = sha256(f"smoke:{name}".encode()).hexdigest()
+    detail = f"learned smoke: {name} is shape-only and makes no accuracy claim"
+    if name != CONDITION_20_GATE:
+        return PromotionGateRecord(
+            name=name,
+            outcome=PromotionGateOutcome.PASSED,
+            evidence_hash=evidence_hash,
+            detail=detail,
+        )
+    return condition_20_gate(
+        outcome=PromotionGateOutcome.PASSED,
+        evidence_hash=evidence_hash,
+        detail=detail,
+        census=DecisionCensusV4.from_feature_hashes(
+            [sha256(f"smoke:decision:{index}".encode()).hexdigest() for index in range(20)]
+        ),
+        calibration_certificate_hash=sha256(b"smoke:calibration-certificate").hexdigest(),
+    )
+
+
 def _promotion_payload(descriptor: Any, reference: Any) -> D3PromotionPayload:
     return D3PromotionPayload(
         component_id=descriptor.component_id,
@@ -436,15 +555,7 @@ def _promotion_payload(descriptor: Any, reference: Any) -> D3PromotionPayload:
         code_revision="learned-smoke",
         legacy_assessment_hash=_assessment(descriptor).content_hash,
         legacy_decision="eligible_for_operator_approval",
-        gates=tuple(
-            PromotionGateRecord(
-                name=name,
-                outcome=PromotionGateOutcome.PASSED,
-                evidence_hash=sha256(f"smoke:{name}".encode()).hexdigest(),
-                detail=f"learned smoke: {name} is shape-only and makes no accuracy claim",
-            )
-            for name in D3_PROMOTION_GATES
-        ),
+        gates=tuple(_smoke_gate(name) for name in D3_PROMOTION_GATES),
         dependencies=tuple(
             PromotionDependency(name=name, content_hash=value)
             for name, value in sorted(_SMOKE_DEPENDENCIES.items())

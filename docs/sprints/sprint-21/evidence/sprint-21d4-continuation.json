@@ -1,0 +1,126 @@
+{
+ "bound_hashes": {
+  "contracts": "bcab05107a838fd1a2c0739122ba3a7e51fa8386e83cffcf82e6e5263fb47354",
+  "d3_grid_replay": "202b82db8194bd456a1e06929c2342a33a1355a45c0d31757bec3f0418396f16",
+  "holdout_reuse_audit": "2f25dc1716dd5ccd340ccdf8720e7162dae9daf10dbaf5f9c349765f31ab6c81",
+  "pre_registration": "526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9",
+  "seal_resume": "e37a37e7fb8fd102d8b6baaaa7d91233675bccaa739058f2accdccd1a214d6bd"
+ },
+ "carried_forward": {
+  "note": "no D3 setting reached zero confident errors even over its twenty independent decisions. Proceeding tests the per-decision operating point, which D3 never had; it does not assume the corrected denominator would have rescued D3.",
+  "settings_with_zero_confident_errors_over_independent_decisions": 0
+ },
+ "conditions": [
+  {
+   "condition": "the D3 grid replays under the corrected denominators",
+   "derived_values_checked": 408,
+   "evidence": "sprint-21d4-d3-grid-replay.json",
+   "integrity_hash_matches": true,
+   "satisfied": true,
+   "settings_examined": 24,
+   "settings_that_did_not_reproduce": 0,
+   "sha256": "202b82db8194bd456a1e06929c2342a33a1355a45c0d31757bec3f0418396f16",
+   "stop_kind_if_unsatisfied": "reconciliation_not_reproducible",
+   "thresholds_derived": 0
+  },
+  {
+   "condition": "the independent counting rule is in force",
+   "contract_hash": "d51ea79c44cdcbf0b2ec23ac09d7817ac5f935c64dab24549ca3b34e8f80d49f",
+   "declared_expectation": {
+    "independent": 20,
+    "nominal": 120,
+    "replicated": 100
+   },
+   "published_schema_requires_the_triple": true,
+   "rate_denominator": "independent_decisions",
+   "refuses_a_census_that_does_not_add_up": true,
+   "refuses_a_nominal_denominator": true,
+   "satisfied": true,
+   "six_into_one_collapse_reproduces_the_frozen_expectation": true,
+   "stop_kind_if_unsatisfied": "feature_boundary_wrong"
+  },
+  {
+   "all_pairwise_disjoint": true,
+   "condition": "the fitting pool and protected roles are resolved",
+   "every_role_matches_its_expected_shape": true,
+   "evidence": "sprint-21d4-holdout-reuse-audit.json",
+   "fitting_pool": {
+    "every_group_is_a_package_to_re_execute": true,
+    "groups": 80,
+    "outcomes": 320,
+    "volume_points": [
+     200,
+     320
+    ]
+   },
+   "role_decisions": {
+    "canary": "reuse",
+    "final_a": "reuse",
+    "final_b": "reuse"
+   },
+   "satisfied": true,
+   "sha256": "2f25dc1716dd5ccd340ccdf8720e7162dae9daf10dbaf5f9c349765f31ab6c81",
+   "stop_kind_if_unsatisfied": "volume_bound",
+   "zero_outcomes_predictions_or_receipts": true
+  },
+  {
+   "candidate_outcomes": 720,
+   "condition": "the seal, receipt and restart spine holds at D4's campaign shape",
+   "datasets_reproduced_after_restart": true,
+   "effective_remainder": 0,
+   "every_stored_blob_rehashed": true,
+   "evidence": "sprint-21d4-seal-resume.json",
+   "groups": 180,
+   "satisfied": true,
+   "sha256": "e37a37e7fb8fd102d8b6baaaa7d91233675bccaa739058f2accdccd1a214d6bd",
+   "stop_kind_if_unsatisfied": "reconciliation_not_reproducible"
+  }
+ ],
+ "decision": {
+  "kind": "proceed",
+  "reason": "the D3 grid reproduces from D3 evidence, the independent counting rule is in force and refuses both a broken census and a nominal denominator, the fitting pool and the three protected roles are resolved, and the seal-receipt-restart spine holds at 180 groups and 720 candidate outcomes. W2 may author the fresh corpus.",
+  "stop_kind": null
+ },
+ "dependent_tasks": {
+  "correction_branch": [
+   "S21D4-030",
+   "S21D4-031",
+   "S21D4-032",
+   "S21D4-033",
+   "S21D4-034",
+   "S21D4-035",
+   "S21D4-036",
+   "S21D4-037",
+   "S21D4-038",
+   "S21D4-039"
+  ],
+  "status": "open"
+ },
+ "integrity_content_hash": "62dd1aa76136491e5eaf4af06ced3f4350f2baf1855c57d0272977488328eff5",
+ "items": [
+  "S21D4-024"
+ ],
+ "measurements_opened": 0,
+ "pre_registration_sha256": "526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9",
+ "recorded_at": "2026-08-06T09:05:51Z",
+ "retrieval_branch": {
+  "status": "open",
+  "tasks": [
+   "S21D4-040",
+   "S21D4-041",
+   "S21D4-042",
+   "S21D4-043",
+   "S21D4-044",
+   "S21D4-047"
+  ],
+  "why": "a correction stop does not cancel the retrieval branch: it reads its own holdout, closes Gate D1 condition 15 on its own evidence, and no part of its verdict depends on the correction result"
+ },
+ "schema_version": 1,
+ "sprint": "21D4",
+ "wave": "W1",
+ "what_this_decision_does_not_authorise": [
+  "reading any D4 calibration, final, promotion or canary outcome",
+  "deriving the selective operating point",
+  "selecting a candidate"
+ ]
+}
