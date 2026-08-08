@@ -41,10 +41,10 @@ _TRUNCATE = ", ".join(f"cognitive_os.{table.name}" for table in LEARNED_EVIDENCE
 
 @pytest_asyncio.fixture
 async def engines() -> AsyncIterator[tuple[AsyncEngine, AsyncEngine]]:
-    from cognitive_os.infrastructure.postgres.engine import (
+    from cognitive_os.infrastructure.postgres.engine import create_postgres_engine
+    from cognitive_os.infrastructure.postgres.truncation import (
         TruncationNotNominated,
         TruncationRefused,
-        create_postgres_engine,
         require_nominated_for_truncation,
     )
 

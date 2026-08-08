@@ -31,10 +31,10 @@ from cognitive_os.infrastructure.learned.postgres.provider_output_health import 
 from cognitive_os.infrastructure.learned.postgres.provider_output_repository import (
     PostgresProviderOutputRepository,
 )
-from cognitive_os.infrastructure.postgres.engine import (
+from cognitive_os.infrastructure.postgres.engine import create_postgres_engine
+from cognitive_os.infrastructure.postgres.truncation import (
     TruncationNotNominated,
     TruncationRefused,
-    create_postgres_engine,
     require_nominated_for_truncation,
 )
 

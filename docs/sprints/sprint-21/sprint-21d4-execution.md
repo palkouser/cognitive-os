@@ -483,12 +483,30 @@ All three are the same class as W4's tautological precedence check and W3's `all
 set — a check that passes without touching its question — and all three were found by running the
 thing rather than by reading it.
 
+### Finding W7-F2 — the fence was unreachable where it mattered least, and CI said so
+
+The first version of W7-F1's rule lived in `infrastructure/postgres/engine.py`, beside the
+callers that needed it. That module imports SQLAlchemy at module scope, and the
+`experience-graph-core` lane runs the learning suite **without the PostgreSQL extra** — so
+`test_truncation_fence.py` could not be collected there at all, and the lane failed on head
+`f077d64` with `ModuleNotFoundError: No module named 'sqlalchemy'`.
+
+The rule is a question about the environment. It has no database dependency, and putting it
+behind a driver import made a pure check unreachable wherever the driver is absent. It now lives
+in `infrastructure/postgres/truncation.py`, which imports `os` and nothing else, and a test
+parses that module's AST and fails if it ever gains a dependency. Verified the other way too, by
+importing it in a process with SQLAlchemy blocked on the meta path — the condition the lane
+actually has.
+
+This is D3's W4-F3 again in a different costume: a guard that closes a path has to be pushed
+through every lane that walks it, and the local suite is not those lanes.
+
 ### W7 evidence index
 
 | Evidence | SHA-256 of the file | Seal |
 |---|---|---|
 | [operations](evidence/sprint-21d4-operations.json) | `47a5c701d7f98eb3c3cdf4a3b12c2bb90dfcb9ba9bd2c4d9b1af866c2a7017af` | `f12d0cb4229955b887060bcc168c4aaa56534dc8c23cc89a3a66e4bc7bfbd0f7` |
-| [verification matrix](evidence/sprint-21d4-verification-matrix.json) | `643ea217f72870ead0794782fd5def72f84b1149194c5ae1eb83ea6986e7fbba` | `f0663d76029ef141396765f43f70f175170d84c2caaeff276e77026ea1cf44c9` |
+| [verification matrix](evidence/sprint-21d4-verification-matrix.json) | `dc9b6f7570ae69b22c75baf6165455bf2e271164cc06d68ae435ac04d671fcd0` | `584fd9636813b99b5d1d9118ba552ce58ab284a33f49aab034264da53e82cf9b` |
 
 The two operator commands are:
 
@@ -547,7 +565,7 @@ checked that two files mentioned the same environment variable, which was true a
 | `sprint-21d4-advisory-boundary.json` | `5d3efbd584dc270a89a834ac104b1e815ac4beb8d545462fa0ae9a2d0d5c7177` | `1dca4f21cf88957b4bf2458475d7e7d8694b619362d237b115c5d9bac45b48f6` |
 | `sprint-21d4-pre-final-checkpoint.json` | `fdc1f9f16bda948506604c9f2c9ffc2cc700c51750d4cdcb77a1ef449c57f314` | `87c5473f61c177fe5db5aa1a5971759451c1f7a82b7364e9ac8dc3da99e9c6b1` |
 | `sprint-21d4-operations.json` | `47a5c701d7f98eb3c3cdf4a3b12c2bb90dfcb9ba9bd2c4d9b1af866c2a7017af` | `f12d0cb4229955b887060bcc168c4aaa56534dc8c23cc89a3a66e4bc7bfbd0f7` |
-| `sprint-21d4-verification-matrix.json` | `643ea217f72870ead0794782fd5def72f84b1149194c5ae1eb83ea6986e7fbba` | `f0663d76029ef141396765f43f70f175170d84c2caaeff276e77026ea1cf44c9` |
+| `sprint-21d4-verification-matrix.json` | `dc9b6f7570ae69b22c75baf6165455bf2e271164cc06d68ae435ac04d671fcd0` | `584fd9636813b99b5d1d9118ba552ce58ab284a33f49aab034264da53e82cf9b` |
 
 Two hashes, because two things are addressed: the file, which is what another record cites
 as `pre_registration_sha256` or `..._sha256`, and the seal inside it, which is what a record

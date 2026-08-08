@@ -20,12 +20,13 @@ rule with eleven chances to be the outdated one.
 
 from __future__ import annotations
 
+import ast
 import re
 from pathlib import Path
 
 import pytest
 
-from cognitive_os.infrastructure.postgres.engine import (
+from cognitive_os.infrastructure.postgres.truncation import (
     TRUNCATABLE_DATABASE,
     TruncationNotNominated,
     TruncationRefused,
@@ -96,6 +97,27 @@ class TestTheRuleItself:
         monkeypatch.setenv(TRUNCATABLE_DATABASE, "cognitive_os_scratch_test")
 
         require_nominated_for_truncation("cognitive_os_scratch_test")
+
+
+def test_the_rule_imports_nothing_a_credential_free_lane_might_not_have() -> None:
+    """W7-F1's second half, and CI found it: the fence lived behind a SQLAlchemy import.
+
+    `experience-graph-core` runs the learning suite without the PostgreSQL extra, so importing
+    this pure environment check through `engine.py` made the whole module uncollectable there —
+    a guard nobody can import is a guard nobody calls. The rule now lives in its own module and
+    this asserts why it stays there.
+    """
+    module = REPOSITORY / "src/cognitive_os/infrastructure/postgres/truncation.py"
+    tree = ast.parse(module.read_text(encoding="utf-8"))
+
+    imported = {
+        node.module.split(".")[0] if isinstance(node, ast.ImportFrom) and node.module else name
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Import | ast.ImportFrom)
+        for name in ([alias.name.split(".")[0] for alias in node.names] or [""])
+    }
+
+    assert imported <= {"os", "__future__"}, f"the fence gained a dependency: {sorted(imported)}"
 
 
 class TestEveryTruncatingPathReachesIt:

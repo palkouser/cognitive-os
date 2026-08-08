@@ -10,10 +10,10 @@ import pytest_asyncio
 from sqlalchemy import text
 
 from cognitive_os.events.base import EventEnvelope
-from cognitive_os.infrastructure.postgres.engine import (
+from cognitive_os.infrastructure.postgres.engine import create_postgres_engine
+from cognitive_os.infrastructure.postgres.truncation import (
     TruncationNotNominated,
     TruncationRefused,
-    create_postgres_engine,
     require_nominated_for_truncation,
 )
 

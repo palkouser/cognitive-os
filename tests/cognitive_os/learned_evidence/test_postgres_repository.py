@@ -27,10 +27,10 @@ from cognitive_os.infrastructure.learned.postgres.repository import (
     PostgresLearnedEvidenceRepository,
 )
 from cognitive_os.infrastructure.learned.postgres.tables import LEARNED_EVIDENCE_TABLES
-from cognitive_os.infrastructure.postgres.engine import (
+from cognitive_os.infrastructure.postgres.engine import create_postgres_engine
+from cognitive_os.infrastructure.postgres.truncation import (
     TruncationNotNominated,
     TruncationRefused,
-    create_postgres_engine,
     require_nominated_for_truncation,
 )
 from cognitive_os.learning.registry import durable_transition_is_legal

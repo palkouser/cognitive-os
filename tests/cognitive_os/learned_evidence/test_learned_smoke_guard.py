@@ -21,7 +21,7 @@ from typing import Any
 import pytest
 
 from cognitive_os.infrastructure.learned.reference import AlwaysAbstainingRanker
-from cognitive_os.infrastructure.postgres.engine import TRUNCATABLE_DATABASE
+from cognitive_os.infrastructure.postgres.truncation import TRUNCATABLE_DATABASE
 from cognitive_os.learned_smoke import SmokeRefused, _require_erasable, _require_nomination
 
 
