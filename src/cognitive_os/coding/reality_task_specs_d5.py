@@ -7488,6 +7488,1332 @@ def test_a_field_the_schema_never_named_is_ignored() -> None:
     ),
 )
 
+# ------------------------------------------------------------------ boundary and collections
+
+_G067 = D2TaskSpec(
+    template_id="d5_boundary.missing_numbers",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d5-boundary-missing-numbers",
+    module="missing_numbers",
+    module_doc="Saying which numbers of an expected run never turned up.",
+    issue=(
+        "missing() is documented to report which numbers of an expected run are absent. "
+        "Callers report that the last number of the run is never reported missing even when "
+        "it is, and that a run written back to front comes back saying nothing is missing "
+        "rather than being refused."
+    ),
+    expected=(
+        "missing(present, first, last) returns the numbers from `first` to `last` inclusive "
+        "that do not appear in `present`, in ascending order, and raises ValueError when "
+        "`first` is above `last`."
+    ),
+    baseline_reason=(
+        "it walks a range that stops before `last`, so the last number is never examined, and "
+        "a backwards run makes that range empty rather than an error"
+    ),
+    edge_cases=(
+        "the run includes its last number",
+        "a run whose first is above its last is refused",
+    ),
+    baseline='''def missing(present, first, last):
+    """Return the numbers from `first` to `last` that `present` does not carry."""
+    known = set(present)
+    return [number for number in range(first, last) if number not in known]''',
+    variant_one='''def missing(present, first, last):
+    """Return the numbers from `first` to `last` that `present` does not carry."""
+    if first > last:
+        raise ValueError(f"the run from {first} to {last} runs backwards")
+    known = set(present)
+    return [number for number in range(first, last + 1) if number not in known]''',
+    variant_two='''def missing(present, first, last):
+    """Return the numbers from `first` to `last` that `present` does not carry."""
+    if first > last:
+        raise ValueError(f"the run from {first} to {last} runs backwards")
+    wanted = set(range(first, last + 1))
+    return sorted(wanted - set(present))''',
+    variant_three='''def missing(present, first, last):
+    """Return the numbers from `first` to `last` that `present` does not carry."""
+    known = set(present)
+    return [number for number in range(first, last + 1) if number not in known]''',
+    variant_four='''def missing(present, first, last):
+    """Return the numbers from `first` to `last` that `present` does not carry."""
+    if first > last:
+        raise ValueError(f"the run from {first} to {last} runs backwards")
+    known = set(present)
+    return [number for number in range(first, last) if number not in known]''',
+    visible_test=_test_module(
+        "missing_numbers",
+        "Published contract for finding the gaps in an expected run.",
+        """
+def test_a_gap_in_the_middle_is_reported() -> None:
+    assert missing([1, 2, 4], 1, 4) == [3]
+
+
+def test_a_run_of_one_that_turned_up_reports_nothing() -> None:
+    assert missing([5], 5, 5) == []
+""",
+        imports="from missing_numbers import missing\n",
+    ),
+    hidden_test=_test_module(
+        "missing_numbers",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_gap_in_the_middle_is_reported() -> None:
+    assert missing([1, 2, 4], 1, 4) == [3]
+
+
+def test_the_last_number_of_the_run_can_be_missing_too() -> None:
+    assert missing([1], 1, 3) == [2, 3]
+
+
+def test_a_run_that_goes_backwards_is_refused() -> None:
+    with pytest.raises(ValueError):
+        missing([], 5, 2)
+""",
+        imports="from missing_numbers import missing\n",
+    ),
+)
+
+
+_G068 = D2TaskSpec(
+    template_id="d5_boundary.knight_moves",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d5-boundary-knight-moves",
+    module="knight_moves",
+    module_doc="Listing the squares a knight can reach from where it stands.",
+    issue=(
+        "moves() is documented to list the squares a knight can reach, in order. Callers "
+        "report that a knight standing in a corner is offered squares off the edge of the "
+        "board, and that the squares come back in whatever order the move table happens to "
+        "be written in."
+    ),
+    expected=(
+        "moves(square, size) returns the squares a knight at `square` can reach on a board "
+        "`size` by `size`, as (row, column) pairs, leaving out anything off the board and "
+        "returning them in ascending order."
+    ),
+    baseline_reason=(
+        "it adds every move of its table to the square without checking the result lands on "
+        "the board, and it hands them back in table order"
+    ),
+    edge_cases=(
+        "a move landing off the board is left out",
+        "the squares come back in ascending order",
+    ),
+    baseline='''def moves(square, size):
+    """Return the squares a knight at `square` can reach on a `size` board."""
+    row, column = square
+    steps = ((1, 2), (2, 1), (-1, 2), (-2, 1), (1, -2), (2, -1), (-1, -2), (-2, -1))
+    return [(row + down, column + across) for down, across in steps]''',
+    variant_one='''def moves(square, size):
+    """Return the squares a knight at `square` can reach on a `size` board."""
+    row, column = square
+    steps = ((1, 2), (2, 1), (-1, 2), (-2, 1), (1, -2), (2, -1), (-1, -2), (-2, -1))
+    landed = [(row + down, column + across) for down, across in steps]
+    return sorted(
+        (place for place in landed if 0 <= place[0] < size and 0 <= place[1] < size)
+    )''',
+    variant_two='''def moves(square, size):
+    """Return the squares a knight at `square` can reach on a `size` board."""
+    row, column = square
+    reached = []
+    for down in (-2, -1, 1, 2):
+        for across in (-2, -1, 1, 2):
+            if abs(down) == abs(across):
+                continue
+            place = (row + down, column + across)
+            if 0 <= place[0] < size and 0 <= place[1] < size:
+                reached.append(place)
+    reached.sort()
+    return reached''',
+    variant_three='''def moves(square, size):
+    """Return the squares a knight at `square` can reach on a `size` board."""
+    row, column = square
+    steps = ((1, 2), (2, 1), (-1, 2), (-2, 1), (1, -2), (2, -1), (-1, -2), (-2, -1))
+    landed = [(row + down, column + across) for down, across in steps]
+    return [place for place in landed if 0 <= place[0] < size and 0 <= place[1] < size]''',
+    variant_four='''def moves(square, size):
+    """Return the squares a knight at `square` can reach on a `size` board."""
+    row, column = square
+    steps = ((1, 2), (2, 1), (-1, 2), (-2, 1), (1, -2), (2, -1), (-1, -2), (-2, -1))
+    return sorted((row + down, column + across) for down, across in steps)''',
+    visible_test=_test_module(
+        "knight_moves",
+        "Published contract for the squares a knight can reach.",
+        """
+def test_a_knight_in_the_middle_reaches_eight_squares() -> None:
+    assert set(moves((4, 4), 8)) == {
+        (5, 6),
+        (6, 5),
+        (3, 6),
+        (2, 5),
+        (5, 2),
+        (6, 3),
+        (3, 2),
+        (2, 3),
+    }
+
+
+def test_a_knight_in_the_middle_reaches_exactly_eight() -> None:
+    assert len(moves((4, 4), 8)) == 8
+""",
+        imports="from knight_moves import moves\n",
+    ),
+    hidden_test=_test_module(
+        "knight_moves",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_knight_in_the_middle_reaches_exactly_eight() -> None:
+    assert len(moves((4, 4), 8)) == 8
+
+
+def test_a_knight_in_the_corner_is_offered_nothing_off_the_board() -> None:
+    assert moves((0, 0), 8) == [(1, 2), (2, 1)]
+
+
+def test_the_squares_come_back_in_ascending_order() -> None:
+    assert moves((4, 4), 8) == [
+        (2, 3),
+        (2, 5),
+        (3, 2),
+        (3, 6),
+        (5, 2),
+        (5, 6),
+        (6, 3),
+        (6, 5),
+    ]
+""",
+        imports="from knight_moves import moves\n",
+    ),
+)
+
+# ---------------------------------------------------------------------------- numeric logic
+
+_G069 = D2TaskSpec(
+    template_id="d5_numeric.twos_complement",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d5-numeric-twos-complement",
+    module="twos_complement",
+    module_doc="Reading a fixed-width register value as the signed number it stands for.",
+    issue=(
+        "signed() is documented to read a fixed-width register value as a signed number. "
+        "Firmware reports that the most negative value of the range reads back as a large "
+        "positive one, and that a value too wide for the register is read as though it fitted."
+    ),
+    expected=(
+        "signed(value, bits) returns the signed number a `bits`-wide register holding `value` "
+        "stands for, so anything from half the range upwards is negative, and raises "
+        "ValueError for a value that does not fit in `bits` bits."
+    ),
+    baseline_reason=(
+        "it treats only values strictly above the halfway point as negative, which leaves the "
+        "halfway point itself positive, and it never checks the value fits the register"
+    ),
+    edge_cases=(
+        "the halfway value is the most negative number, not a positive one",
+        "a value too wide for the register is refused",
+    ),
+    baseline='''def signed(value, bits):
+    """Return the signed number a `bits`-wide register holding `value` stands for."""
+    if value > 2 ** (bits - 1):
+        return value - 2**bits
+    return value''',
+    variant_one='''def signed(value, bits):
+    """Return the signed number a `bits`-wide register holding `value` stands for."""
+    if not 0 <= value < 2**bits:
+        raise ValueError(f"{value} does not fit in {bits} bits")
+    if value >= 2 ** (bits - 1):
+        return value - 2**bits
+    return value''',
+    variant_two='''def signed(value, bits):
+    """Return the signed number a `bits`-wide register holding `value` stands for."""
+    span = 2**bits
+    if value < 0 or value >= span:
+        raise ValueError(f"{value} does not fit in {bits} bits")
+    return (value + span // 2) % span - span // 2''',
+    variant_three='''def signed(value, bits):
+    """Return the signed number a `bits`-wide register holding `value` stands for."""
+    if value >= 2 ** (bits - 1):
+        return value - 2**bits
+    return value''',
+    variant_four='''def signed(value, bits):
+    """Return the signed number a `bits`-wide register holding `value` stands for."""
+    if not 0 <= value < 2**bits:
+        raise ValueError(f"{value} does not fit in {bits} bits")
+    if value > 2 ** (bits - 1):
+        return value - 2**bits
+    return value''',
+    visible_test=_test_module(
+        "twos_complement",
+        "Published contract for reading a register as a signed number.",
+        """
+def test_a_small_value_reads_as_itself() -> None:
+    assert signed(5, 8) == 5
+
+
+def test_a_value_in_the_upper_half_reads_as_negative() -> None:
+    assert signed(200, 8) == -56
+
+
+def test_zero_reads_as_zero() -> None:
+    assert signed(0, 8) == 0
+""",
+        imports="from twos_complement import signed\n",
+    ),
+    hidden_test=_test_module(
+        "twos_complement",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_small_value_reads_as_itself() -> None:
+    assert signed(5, 8) == 5
+
+
+def test_the_halfway_value_is_the_most_negative_number() -> None:
+    assert signed(128, 8) == -128
+
+
+def test_a_value_too_wide_for_the_register_is_refused() -> None:
+    with pytest.raises(ValueError):
+        signed(300, 8)
+""",
+        imports="from twos_complement import signed\n",
+    ),
+)
+
+
+_G070 = D2TaskSpec(
+    template_id="d5_numeric.triangle_kind",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d5-numeric-triangle-kind",
+    module="triangle_kind",
+    module_doc="Naming what kind of triangle three measured sides make.",
+    issue=(
+        "classify() is documented to name the kind of triangle three sides make. Surveyors "
+        "report that a triangle whose two equal sides are not the first two is called scalene, "
+        "and that three lengths which could never close into a triangle are named as though "
+        "they could."
+    ),
+    expected=(
+        "classify(first, second, third) returns 'equilateral' when all three sides are equal, "
+        "'isosceles' when exactly two are, whichever two they are, and 'scalene' when none "
+        "are, and raises ValueError when the sides cannot close into a triangle."
+    ),
+    baseline_reason=(
+        "it compares only the first two sides when looking for a matching pair, and it never "
+        "checks that the two shorter sides together reach past the longest"
+    ),
+    edge_cases=(
+        "two equal sides are found whichever two they are",
+        "sides that cannot close into a triangle are refused",
+    ),
+    baseline='''def classify(first, second, third):
+    """Return the kind of triangle `first`, `second` and `third` make."""
+    if first == second == third:
+        return "equilateral"
+    if first == second:
+        return "isosceles"
+    return "scalene"''',
+    variant_one='''def classify(first, second, third):
+    """Return the kind of triangle `first`, `second` and `third` make."""
+    sides = sorted((first, second, third))
+    if sides[0] + sides[1] <= sides[2]:
+        raise ValueError(f"{sides} cannot close into a triangle")
+    if sides[0] == sides[2]:
+        return "equilateral"
+    if sides[0] == sides[1] or sides[1] == sides[2]:
+        return "isosceles"
+    return "scalene"''',
+    variant_two='''def classify(first, second, third):
+    """Return the kind of triangle `first`, `second` and `third` make."""
+    sides = sorted((first, second, third))
+    if sides[0] + sides[1] <= sides[2]:
+        raise ValueError(f"{sides} cannot close into a triangle")
+    distinct = len(set(sides))
+    if distinct == 1:
+        return "equilateral"
+    if distinct == 2:
+        return "isosceles"
+    return "scalene"''',
+    variant_three='''def classify(first, second, third):
+    """Return the kind of triangle `first`, `second` and `third` make."""
+    sides = sorted((first, second, third))
+    if sides[0] == sides[2]:
+        return "equilateral"
+    if sides[0] == sides[1] or sides[1] == sides[2]:
+        return "isosceles"
+    return "scalene"''',
+    variant_four='''def classify(first, second, third):
+    """Return the kind of triangle `first`, `second` and `third` make."""
+    sides = sorted((first, second, third))
+    if sides[0] + sides[1] <= sides[2]:
+        raise ValueError(f"{sides} cannot close into a triangle")
+    if first == second == third:
+        return "equilateral"
+    if first == second:
+        return "isosceles"
+    return "scalene"''',
+    visible_test=_test_module(
+        "triangle_kind",
+        "Published contract for naming a triangle.",
+        """
+def test_three_equal_sides_are_equilateral() -> None:
+    assert classify(3, 3, 3) == "equilateral"
+
+
+def test_the_first_two_sides_equal_is_isosceles() -> None:
+    assert classify(3, 3, 4) == "isosceles"
+
+
+def test_three_different_sides_are_scalene() -> None:
+    assert classify(3, 4, 5) == "scalene"
+""",
+        imports="from triangle_kind import classify\n",
+    ),
+    hidden_test=_test_module(
+        "triangle_kind",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_three_equal_sides_are_equilateral() -> None:
+    assert classify(3, 3, 3) == "equilateral"
+
+
+def test_the_equal_pair_is_found_whichever_two_it_is() -> None:
+    assert classify(3, 4, 3) == "isosceles"
+    assert classify(4, 3, 3) == "isosceles"
+
+
+def test_sides_that_cannot_close_are_refused() -> None:
+    with pytest.raises(ValueError):
+        classify(1, 2, 10)
+""",
+        imports="from triangle_kind import classify\n",
+    ),
+)
+
+# ----------------------------------------------------------------------- parsing and validation
+
+_G071 = D2TaskSpec(
+    template_id="d5_parsing.subtitle_timestamp",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d5-parsing-subtitle-timestamp",
+    module="subtitle_timestamp",
+    module_doc="Reading a subtitle cue time into the milliseconds the player counts in.",
+    issue=(
+        "to_millis() is documented to read a subtitle cue time into milliseconds. Editors "
+        "report that a file written with a full stop before the milliseconds instead of a "
+        "comma fails outright, and that a nonsense time with seventy-five minutes in it is "
+        "read as though it were fine."
+    ),
+    expected=(
+        "to_millis(stamp) returns the cue time in milliseconds. The milliseconds are "
+        "separated by either a comma or a full stop, hours may run past twenty-four because a "
+        "cue time is a duration, and minutes or seconds of sixty or more are refused with "
+        "ValueError."
+    ),
+    baseline_reason=(
+        "it splits the milliseconds off at a comma only, so a full stop leaves nothing to read "
+        "them from, and it converts the fields without checking any of them are in range"
+    ),
+    edge_cases=(
+        "a full stop before the milliseconds reads the same as a comma",
+        "minutes or seconds of sixty or more are refused",
+    ),
+    baseline='''def to_millis(stamp):
+    """Return the cue time `stamp` in milliseconds."""
+    clock, _, millis = stamp.partition(",")
+    hours, minutes, seconds = clock.split(":")
+    return ((int(hours) * 60 + int(minutes)) * 60 + int(seconds)) * 1000 + int(millis)''',
+    variant_one='''def to_millis(stamp):
+    """Return the cue time `stamp` in milliseconds."""
+    clock, _, millis = stamp.replace(".", ",").partition(",")
+    hours, minutes, seconds = (int(field) for field in clock.split(":"))
+    if minutes >= 60 or seconds >= 60:
+        raise ValueError(f"{stamp!r} has a field of sixty or more")
+    return ((hours * 60 + minutes) * 60 + seconds) * 1000 + int(millis)''',
+    variant_two='''def to_millis(stamp):
+    """Return the cue time `stamp` in milliseconds."""
+    for mark in (",", "."):
+        clock, found, millis = stamp.partition(mark)
+        if found:
+            break
+    fields = [int(field) for field in clock.split(":")]
+    for field in fields[1:]:
+        if field >= 60:
+            raise ValueError(f"{stamp!r} has a field of sixty or more")
+    total = 0
+    for field in fields:
+        total = total * 60 + field
+    return total * 1000 + int(millis)''',
+    variant_three='''def to_millis(stamp):
+    """Return the cue time `stamp` in milliseconds."""
+    clock, _, millis = stamp.replace(".", ",").partition(",")
+    hours, minutes, seconds = clock.split(":")
+    return ((int(hours) * 60 + int(minutes)) * 60 + int(seconds)) * 1000 + int(millis)''',
+    variant_four='''def to_millis(stamp):
+    """Return the cue time `stamp` in milliseconds."""
+    clock, _, millis = stamp.partition(",")
+    hours, minutes, seconds = (int(field) for field in clock.split(":"))
+    if minutes >= 60 or seconds >= 60:
+        raise ValueError(f"{stamp!r} has a field of sixty or more")
+    return ((hours * 60 + minutes) * 60 + seconds) * 1000 + int(millis)''',
+    visible_test=_test_module(
+        "subtitle_timestamp",
+        "Published contract for reading a subtitle cue time.",
+        """
+def test_a_second_and_a_half_reads_as_its_milliseconds() -> None:
+    assert to_millis("00:00:01,500") == 1500
+
+
+def test_a_full_cue_time_reads_every_field() -> None:
+    assert to_millis("01:02:03,004") == 3723004
+""",
+        imports="from subtitle_timestamp import to_millis\n",
+    ),
+    hidden_test=_test_module(
+        "subtitle_timestamp",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_second_and_a_half_reads_as_its_milliseconds() -> None:
+    assert to_millis("00:00:01,500") == 1500
+
+
+def test_a_full_stop_reads_the_same_as_a_comma() -> None:
+    assert to_millis("00:00:01.500") == 1500
+
+
+def test_a_field_of_sixty_or_more_is_refused() -> None:
+    with pytest.raises(ValueError):
+        to_millis("00:75:00,000")
+""",
+        imports="from subtitle_timestamp import to_millis\n",
+    ),
+)
+
+
+_G072 = D2TaskSpec(
+    template_id="d5_parsing.mime_type",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d5-parsing-mime-type",
+    module="mime_type",
+    module_doc="Taking a content type header apart into its type and its parameters.",
+    issue=(
+        "parse_mime() is documented to take a content type apart. Callers report that a "
+        "parameter written in quotes keeps its quotes in the value, and that a parameter value "
+        "which is meant to be case-sensitive, such as a multipart boundary, comes back "
+        "flattened to lowercase."
+    ),
+    expected=(
+        "parse_mime(text) returns (type, subtype, parameters). The type and subtype are "
+        "lowercased because they are case-insensitive, a parameter name is lowercased for the "
+        "same reason, and a parameter value keeps the case it was written in with any "
+        "surrounding quotes removed."
+    ),
+    baseline_reason=(
+        "it lowercases the parameter value along with everything else, and it takes the value "
+        "exactly as written including the quotes around it"
+    ),
+    edge_cases=(
+        "a quoted parameter value loses its quotes",
+        "a parameter value keeps the case it was written in",
+    ),
+    baseline='''def parse_mime(text):
+    """Return (type, subtype, parameters) for the content type `text`."""
+    head, _, rest = text.partition(";")
+    kind, _, subtype = head.strip().partition("/")
+    parameters = {}
+    for part in rest.split(";"):
+        if not part.strip():
+            continue
+        name, _, value = part.strip().partition("=")
+        parameters[name.lower()] = value.lower()
+    return kind.lower(), subtype.lower(), parameters''',
+    variant_one='''def parse_mime(text):
+    """Return (type, subtype, parameters) for the content type `text`."""
+    head, _, rest = text.partition(";")
+    kind, _, subtype = head.strip().partition("/")
+    parameters = {}
+    for part in rest.split(";"):
+        if not part.strip():
+            continue
+        name, _, value = part.strip().partition("=")
+        parameters[name.lower()] = value.strip(chr(34))
+    return kind.lower(), subtype.lower(), parameters''',
+    variant_two='''def parse_mime(text):
+    """Return (type, subtype, parameters) for the content type `text`."""
+    pieces = [piece.strip() for piece in text.split(";")]
+    kind, _, subtype = pieces[0].partition("/")
+    quote = chr(34)
+    parameters = {}
+    for piece in pieces[1:]:
+        if not piece:
+            continue
+        name, _, value = piece.partition("=")
+        if len(value) >= 2 and value[0] == quote and value[-1] == quote:
+            value = value[1:-1]
+        parameters[name.lower()] = value
+    return kind.lower(), subtype.lower(), parameters''',
+    variant_three='''def parse_mime(text):
+    """Return (type, subtype, parameters) for the content type `text`."""
+    head, _, rest = text.partition(";")
+    kind, _, subtype = head.strip().partition("/")
+    parameters = {}
+    for part in rest.split(";"):
+        if not part.strip():
+            continue
+        name, _, value = part.strip().partition("=")
+        parameters[name.lower()] = value.strip(chr(34)).lower()
+    return kind.lower(), subtype.lower(), parameters''',
+    variant_four='''def parse_mime(text):
+    """Return (type, subtype, parameters) for the content type `text`."""
+    head, _, rest = text.partition(";")
+    kind, _, subtype = head.strip().partition("/")
+    parameters = {}
+    for part in rest.split(";"):
+        if not part.strip():
+            continue
+        name, _, value = part.strip().partition("=")
+        parameters[name.lower()] = value
+    return kind.lower(), subtype.lower(), parameters''',
+    visible_test=_test_module(
+        "mime_type",
+        "Published contract for taking a content type apart.",
+        """
+def test_a_bare_content_type_has_no_parameters() -> None:
+    assert parse_mime("text/html") == ("text", "html", {})
+
+
+def test_the_type_and_subtype_are_lowercased() -> None:
+    assert parse_mime("Text/HTML; charset=utf-8") == ("text", "html", {"charset": "utf-8"})
+""",
+        imports="from mime_type import parse_mime\n",
+    ),
+    hidden_test=_test_module(
+        "mime_type",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_bare_content_type_has_no_parameters() -> None:
+    assert parse_mime("text/html") == ("text", "html", {})
+
+
+def test_a_quoted_value_loses_its_quotes() -> None:
+    quoted = "text/plain; name=" + chr(34) + "a b" + chr(34)
+    assert parse_mime(quoted) == ("text", "plain", {"name": "a b"})
+
+
+def test_a_parameter_value_keeps_its_case() -> None:
+    assert parse_mime("text/plain; boundary=AbC") == ("text", "plain", {"boundary": "AbC"})
+""",
+        imports="from mime_type import parse_mime\n",
+    ),
+)
+
+# ------------------------------------------------------------------------- data transformation
+
+_G073 = D2TaskSpec(
+    template_id="d5_transform.fill_template",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d5-transform-fill-template",
+    module="fill_template",
+    module_doc="Filling the named holes in a message template from a set of values.",
+    issue=(
+        "fill() is documented to fill the named holes in a template. Callers report that a "
+        "hole nobody supplied a value for brings the whole render down instead of being left "
+        "as written, and that a doubled brace, which is how the template writes a literal "
+        "brace, is read as the start of a hole."
+    ),
+    expected=(
+        "fill(template, values) returns the template with each {name} hole replaced by its "
+        "value. A doubled brace stands for one literal brace and opens no hole, and a hole "
+        "nobody supplied a value for is left exactly as written."
+    ),
+    baseline_reason=(
+        "it reaches for every name straight out of the values, and it treats the first brace "
+        "of a doubled pair as opening a hole"
+    ),
+    edge_cases=(
+        "a hole with no value supplied is left as written",
+        "a doubled brace stands for one literal brace",
+    ),
+    baseline='''def fill(template, values):
+    """Return `template` with its named holes filled from `values`."""
+    out = []
+    rest = template
+    while "{" in rest:
+        before, _, after = rest.partition("{")
+        name, _, tail = after.partition("}")
+        out.append(before)
+        out.append(str(values[name]))
+        rest = tail
+    out.append(rest)
+    return "".join(out)''',
+    variant_one='''def fill(template, values):
+    """Return `template` with its named holes filled from `values`."""
+    out = []
+    position = 0
+    while position < len(template):
+        letter = template[position]
+        if letter in "{}" and template[position : position + 2] == letter * 2:
+            out.append(letter)
+            position += 2
+            continue
+        if letter != "{":
+            out.append(letter)
+            position += 1
+            continue
+        end = template.find("}", position)
+        if end < 0:
+            out.append(letter)
+            position += 1
+            continue
+        name = template[position + 1 : end]
+        out.append(str(values[name]) if name in values else template[position : end + 1])
+        position = end + 1
+    return "".join(out)''',
+    variant_two='''def fill(template, values):
+    """Return `template` with its named holes filled from `values`."""
+    pieces = []
+    for chunk in template.split("{{"):
+        rendered = []
+        for part in chunk.split("}}"):
+            out = []
+            rest = part
+            while "{" in rest:
+                before, _, after = rest.partition("{")
+                name, closed, tail = after.partition("}")
+                out.append(before)
+                if not closed:
+                    out.append("{" + name)
+                    rest = ""
+                    break
+                out.append(str(values[name]) if name in values else "{" + name + "}")
+                rest = tail
+            out.append(rest)
+            rendered.append("".join(out))
+        pieces.append("}".join(rendered))
+    return "{".join(pieces)''',
+    variant_three='''def fill(template, values):
+    """Return `template` with its named holes filled from `values`."""
+    out = []
+    rest = template
+    while "{" in rest:
+        before, _, after = rest.partition("{")
+        name, _, tail = after.partition("}")
+        out.append(before)
+        out.append(str(values[name]) if name in values else "{" + name + "}")
+        rest = tail
+    out.append(rest)
+    return "".join(out)''',
+    variant_four='''def fill(template, values):
+    """Return `template` with its named holes filled from `values`."""
+    out = []
+    position = 0
+    while position < len(template):
+        letter = template[position]
+        if letter in "{}" and template[position : position + 2] == letter * 2:
+            out.append(letter)
+            position += 2
+            continue
+        if letter != "{":
+            out.append(letter)
+            position += 1
+            continue
+        end = template.find("}", position)
+        if end < 0:
+            out.append(letter)
+            position += 1
+            continue
+        name = template[position + 1 : end]
+        out.append(str(values[name]))
+        position = end + 1
+    return "".join(out)''',
+    visible_test=_test_module(
+        "fill_template",
+        "Published contract for filling a message template.",
+        """
+def test_a_named_hole_is_filled() -> None:
+    assert fill("hi {name}", {"name": "ada"}) == "hi ada"
+
+
+def test_a_template_with_no_holes_comes_back_as_written() -> None:
+    assert fill("no fields", {}) == "no fields"
+""",
+        imports="from fill_template import fill\n",
+    ),
+    hidden_test=_test_module(
+        "fill_template",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_named_hole_is_filled() -> None:
+    assert fill("hi {name}", {"name": "ada"}) == "hi ada"
+
+
+def test_a_hole_with_no_value_is_left_as_written() -> None:
+    assert fill("hi {who}", {}) == "hi {who}"
+
+
+def test_a_doubled_brace_stands_for_one_literal_brace() -> None:
+    assert fill("a {{b}} c", {}) == "a {b} c"
+""",
+        imports="from fill_template import fill\n",
+    ),
+)
+
+
+_G074 = D2TaskSpec(
+    template_id="d5_transform.explode_delimited",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d5-transform-explode-delimited",
+    module="explode_delimited",
+    module_doc="Turning one record whose field lists several values into one record each.",
+    issue=(
+        "explode() is documented to turn a record whose field lists several values into one "
+        "record per value. Callers report that a list written with a space after each "
+        "separator keeps that space in the value, and that a record which simply does not "
+        "carry the field brings the whole run down with a KeyError."
+    ),
+    expected=(
+        "explode(records, field, separator) returns one record per value of the named field, "
+        "each carrying the record's other fields unchanged, with the surrounding whitespace "
+        "trimmed off every value, and passes a record that does not carry the field through "
+        "unchanged."
+    ),
+    baseline_reason=(
+        "it splits on the separator and keeps whatever whitespace was written around each "
+        "value, and it reaches for the field without checking the record carries it"
+    ),
+    edge_cases=(
+        "the whitespace around each value is trimmed off",
+        "a record not carrying the field passes through unchanged",
+    ),
+    baseline='''def explode(records, field, separator):
+    """Return one record per value of `field`."""
+    out = []
+    for record in records:
+        for value in record[field].split(separator):
+            out.append({**record, field: value})
+    return out''',
+    variant_one='''def explode(records, field, separator):
+    """Return one record per value of `field`."""
+    out = []
+    for record in records:
+        if field not in record:
+            out.append(record)
+            continue
+        for value in record[field].split(separator):
+            out.append({**record, field: value.strip()})
+    return out''',
+    variant_two='''def explode(records, field, separator):
+    """Return one record per value of `field`."""
+    return [
+        {**record, field: value.strip()}
+        if field in record
+        else record
+        for record in records
+        for value in (record[field].split(separator) if field in record else [None])
+    ]''',
+    variant_three='''def explode(records, field, separator):
+    """Return one record per value of `field`."""
+    out = []
+    for record in records:
+        for value in record[field].split(separator):
+            out.append({**record, field: value.strip()})
+    return out''',
+    variant_four='''def explode(records, field, separator):
+    """Return one record per value of `field`."""
+    out = []
+    for record in records:
+        if field not in record:
+            out.append(record)
+            continue
+        for value in record[field].split(separator):
+            out.append({**record, field: value})
+    return out''',
+    visible_test=_test_module(
+        "explode_delimited",
+        "Published contract for turning a listed field into one record per value.",
+        """
+def test_a_two_value_field_gives_two_records() -> None:
+    assert explode([{"id": 1, "tags": "a,b"}], "tags", ",") == [
+        {"id": 1, "tags": "a"},
+        {"id": 1, "tags": "b"},
+    ]
+
+
+def test_no_records_gives_no_records() -> None:
+    assert explode([], "tags", ",") == []
+""",
+        imports="from explode_delimited import explode\n",
+    ),
+    hidden_test=_test_module(
+        "explode_delimited",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_two_value_field_gives_two_records() -> None:
+    assert explode([{"id": 1, "tags": "a,b"}], "tags", ",") == [
+        {"id": 1, "tags": "a"},
+        {"id": 1, "tags": "b"},
+    ]
+
+
+def test_the_space_after_a_separator_is_trimmed_off() -> None:
+    assert explode([{"id": 1, "tags": "a, b"}], "tags", ",") == [
+        {"id": 1, "tags": "a"},
+        {"id": 1, "tags": "b"},
+    ]
+
+
+def test_a_record_without_the_field_passes_through() -> None:
+    assert explode([{"id": 1}], "tags", ",") == [{"id": 1}]
+""",
+        imports="from explode_delimited import explode\n",
+    ),
+)
+
+# ---------------------------------------------------------------------- state and idempotency
+
+_G075 = D2TaskSpec(
+    template_id="d5_state.leader_lease",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d5-state-leader-lease",
+    module="leader_lease",
+    module_doc="Handing leadership to one node at a time and taking it back when it lapses.",
+    issue=(
+        "renew() is documented to hand leadership to one node at a time. Operators report that "
+        "a node which died still holds the lease for ever because nobody may take a lease that "
+        "has already run out, and that the node currently holding it cannot renew its own "
+        "lease before it lapses."
+    ),
+    expected=(
+        "renew(state, node, now, term) returns the state with `node` holding the lease until "
+        "now plus term. Leadership is free when nobody holds it or when the lease has run out "
+        "at `now`, the node already holding it may always renew, and any other node asking "
+        "while the lease is live is refused with RuntimeError."
+    ),
+    baseline_reason=(
+        "it refuses whenever a holder is recorded at all, without looking at whether the lease "
+        "has run out or at whether the asker is the holder"
+    ),
+    edge_cases=(
+        "a lease that has run out may be taken by another node",
+        "the node holding a live lease may renew it",
+    ),
+    baseline='''def renew(state, node, now, term):
+    """Return `state` with `node` holding the lease until `now` plus `term`."""
+    if state["holder"] is not None:
+        raise RuntimeError(f"{state['holder']!r} holds the lease")
+    return {"holder": node, "until": now + term}''',
+    variant_one='''def renew(state, node, now, term):
+    """Return `state` with `node` holding the lease until `now` plus `term`."""
+    holder = state["holder"]
+    live = holder is not None and state["until"] > now
+    if live and holder != node:
+        raise RuntimeError(f"{holder!r} holds the lease")
+    return {"holder": node, "until": now + term}''',
+    variant_two='''def renew(state, node, now, term):
+    """Return `state` with `node` holding the lease until `now` plus `term`."""
+    holder = state["holder"]
+    if holder == node or holder is None or state["until"] <= now:
+        return {"holder": node, "until": now + term}
+    raise RuntimeError(f"{holder!r} holds the lease")''',
+    variant_three='''def renew(state, node, now, term):
+    """Return `state` with `node` holding the lease until `now` plus `term`."""
+    holder = state["holder"]
+    if holder is not None and state["until"] > now:
+        raise RuntimeError(f"{holder!r} holds the lease")
+    return {"holder": node, "until": now + term}''',
+    variant_four='''def renew(state, node, now, term):
+    """Return `state` with `node` holding the lease until `now` plus `term`."""
+    holder = state["holder"]
+    if holder is not None and holder != node:
+        raise RuntimeError(f"{holder!r} holds the lease")
+    return {"holder": node, "until": now + term}''',
+    visible_test=_test_module(
+        "leader_lease",
+        "Published contract for handing out leadership.",
+        """
+import pytest
+
+
+def test_a_free_lease_is_taken() -> None:
+    assert renew({"holder": None, "until": 0}, "a", 5, 10) == {"holder": "a", "until": 15}
+
+
+def test_another_node_is_refused_while_the_lease_is_live() -> None:
+    with pytest.raises(RuntimeError):
+        renew({"holder": "a", "until": 100}, "b", 5, 10)
+""",
+        imports="from leader_lease import renew\n",
+    ),
+    hidden_test=_test_module(
+        "leader_lease",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_free_lease_is_taken() -> None:
+    assert renew({"holder": None, "until": 0}, "a", 5, 10) == {"holder": "a", "until": 15}
+
+
+def test_a_lease_that_has_run_out_may_be_taken() -> None:
+    assert renew({"holder": "a", "until": 3}, "b", 5, 10) == {"holder": "b", "until": 15}
+
+
+def test_the_holder_may_renew_a_live_lease() -> None:
+    assert renew({"holder": "a", "until": 100}, "a", 5, 10) == {"holder": "a", "until": 15}
+""",
+        imports="from leader_lease import renew\n",
+    ),
+)
+
+
+_G076 = D2TaskSpec(
+    template_id="d5_state.reference_count",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d5-state-reference-count",
+    module="reference_count",
+    module_doc="Letting go of a shared handle and clearing it away when nobody holds it.",
+    issue=(
+        "release() is documented to let go of one hold on a shared handle. Callers report that "
+        "a handle nobody holds any more is left behind with a count of zero rather than being "
+        "cleared away, and that letting go of something never held drives the count below zero "
+        "instead of being refused."
+    ),
+    expected=(
+        "release(counts, name) returns the counts with one hold on `name` let go. A handle "
+        "whose last hold is let go is cleared away rather than left at zero, letting go of a "
+        "handle nobody holds is refused with ValueError, and the caller's counts are left "
+        "alone."
+    ),
+    baseline_reason=(
+        "it subtracts one from whatever it finds, defaulting to zero, so the last hold leaves "
+        "a zero behind and a handle nobody holds goes to minus one"
+    ),
+    edge_cases=(
+        "letting go of the last hold clears the handle away",
+        "letting go of a handle nobody holds is refused",
+    ),
+    baseline='''def release(counts, name):
+    """Return `counts` with one hold on `name` let go."""
+    updated = dict(counts)
+    updated[name] = updated.get(name, 0) - 1
+    return updated''',
+    variant_one='''def release(counts, name):
+    """Return `counts` with one hold on `name` let go."""
+    if name not in counts:
+        raise ValueError(f"nobody holds {name!r}")
+    updated = dict(counts)
+    updated[name] -= 1
+    if updated[name] == 0:
+        del updated[name]
+    return updated''',
+    variant_two='''def release(counts, name):
+    """Return `counts` with one hold on `name` let go."""
+    held = counts.get(name)
+    if held is None:
+        raise ValueError(f"nobody holds {name!r}")
+    return {
+        key: (held - 1 if key == name else value)
+        for key, value in counts.items()
+        if key != name or held > 1
+    }''',
+    variant_three='''def release(counts, name):
+    """Return `counts` with one hold on `name` let go."""
+    updated = dict(counts)
+    updated[name] = updated.get(name, 0) - 1
+    if updated[name] == 0:
+        del updated[name]
+    return updated''',
+    variant_four='''def release(counts, name):
+    """Return `counts` with one hold on `name` let go."""
+    if name not in counts:
+        raise ValueError(f"nobody holds {name!r}")
+    updated = dict(counts)
+    updated[name] -= 1
+    return updated''',
+    visible_test=_test_module(
+        "reference_count",
+        "Published contract for letting go of a shared handle.",
+        """
+def test_one_hold_of_several_is_let_go() -> None:
+    assert release({"a": 2}, "a") == {"a": 1}
+
+
+def test_the_other_handles_are_left_alone() -> None:
+    assert release({"a": 3, "b": 1}, "a") == {"a": 2, "b": 1}
+
+
+def test_the_callers_counts_are_left_alone() -> None:
+    counts = {"a": 2}
+    release(counts, "a")
+    assert counts == {"a": 2}
+""",
+        imports="from reference_count import release\n",
+    ),
+    hidden_test=_test_module(
+        "reference_count",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_one_hold_of_several_is_let_go() -> None:
+    assert release({"a": 2}, "a") == {"a": 1}
+
+
+def test_letting_go_of_the_last_hold_clears_the_handle_away() -> None:
+    assert release({"a": 1}, "a") == {}
+
+
+def test_letting_go_of_a_handle_nobody_holds_is_refused() -> None:
+    with pytest.raises(ValueError):
+        release({"a": 1}, "b")
+""",
+        imports="from reference_count import release\n",
+    ),
+)
+
+# --------------------------------------------------------------------------- error handling
+
+_G077 = D2TaskSpec(
+    template_id="d5_error.quorum_outcome",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d5-error-quorum-outcome",
+    module="quorum_outcome",
+    module_doc="Deciding whether enough members answered for the group to act.",
+    issue=(
+        "decide() is documented to let the group act once enough members have answered. "
+        "Operators report that a run answering exactly the number needed is turned down, and "
+        "that one member answering twice is counted as two members."
+    ),
+    expected=(
+        "decide(results, needed) returns True when at least `needed` distinct members "
+        "answered successfully, counting a member that answered more than once only once, and "
+        "otherwise raises ValueError naming every member that failed, sorted."
+    ),
+    baseline_reason=(
+        "it demands strictly more successes than the number needed rather than at least that "
+        "many, and it counts answers rather than members"
+    ),
+    edge_cases=(
+        "exactly the number needed is enough",
+        "a member answering more than once counts once",
+    ),
+    baseline='''def decide(results, needed):
+    """Return True when enough distinct members answered successfully."""
+    good = [name for name, ok, _ in results if ok]
+    if len(good) > needed:
+        return True
+    bad = [name for name, ok, _ in results if not ok]
+    raise ValueError(f"quorum not reached, failing: {sorted(set(bad))}")''',
+    variant_one='''def decide(results, needed):
+    """Return True when enough distinct members answered successfully."""
+    good = {name for name, ok, _ in results if ok}
+    if len(good) >= needed:
+        return True
+    bad = {name for name, ok, _ in results if not ok}
+    raise ValueError(f"quorum not reached, failing: {sorted(bad)}")''',
+    variant_two='''def decide(results, needed):
+    """Return True when enough distinct members answered successfully."""
+    answered = {}
+    for name, ok, _ in results:
+        answered[name] = answered.get(name, False) or ok
+    if sum(1 for ok in answered.values() if ok) >= needed:
+        return True
+    failing = sorted(name for name, ok in answered.items() if not ok)
+    raise ValueError(f"quorum not reached, failing: {failing}")''',
+    variant_three='''def decide(results, needed):
+    """Return True when enough distinct members answered successfully."""
+    good = [name for name, ok, _ in results if ok]
+    if len(good) >= needed:
+        return True
+    bad = [name for name, ok, _ in results if not ok]
+    raise ValueError(f"quorum not reached, failing: {sorted(set(bad))}")''',
+    variant_four='''def decide(results, needed):
+    """Return True when enough distinct members answered successfully."""
+    good = {name for name, ok, _ in results if ok}
+    if len(good) > needed:
+        return True
+    bad = {name for name, ok, _ in results if not ok}
+    raise ValueError(f"quorum not reached, failing: {sorted(bad)}")''',
+    visible_test=_test_module(
+        "quorum_outcome",
+        "Published contract for deciding whether the group may act.",
+        """
+import pytest
+
+
+def test_more_than_enough_members_lets_the_group_act() -> None:
+    results = [("a", True, ""), ("b", True, ""), ("c", True, "")]
+    assert decide(results, 2) is True
+
+
+def test_too_few_members_is_refused() -> None:
+    with pytest.raises(ValueError):
+        decide([("a", False, "down")], 1)
+""",
+        imports="from quorum_outcome import decide\n",
+    ),
+    hidden_test=_test_module(
+        "quorum_outcome",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_more_than_enough_members_lets_the_group_act() -> None:
+    results = [("a", True, ""), ("b", True, ""), ("c", True, "")]
+    assert decide(results, 2) is True
+
+
+def test_exactly_the_number_needed_is_enough() -> None:
+    assert decide([("a", True, ""), ("b", True, "")], 2) is True
+
+
+def test_one_member_answering_three_times_is_still_one_member() -> None:
+    results = [("a", True, ""), ("a", True, ""), ("a", True, "")]
+    with pytest.raises(ValueError):
+        decide(results, 2)
+""",
+        imports="from quorum_outcome import decide\n",
+    ),
+)
+
+
+_G078 = D2TaskSpec(
+    template_id="d5_error.suppress_expected",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d5-error-suppress-expected",
+    module="suppress_expected",
+    module_doc="Running a step and swallowing only the failures that were expected.",
+    issue=(
+        "run_ignoring() is documented to swallow only the failures listed and answer with the "
+        "fallback. Callers report that a narrower error derived from a listed one is not "
+        "swallowed, and that a step which legitimately answers with nothing is treated as "
+        "though it had failed and gets the fallback instead."
+    ),
+    expected=(
+        "run_ignoring(body, ignored, fallback) returns what the body returned, including None "
+        "when that is genuinely the answer. A failure of any listed kind, or of a kind derived "
+        "from one, is swallowed and the fallback returned instead; anything else is raised on."
+    ),
+    baseline_reason=(
+        "it compares the failure's exact type against the list rather than asking whether it "
+        "is one of them, and it treats an answer of None as a failure worth replacing"
+    ),
+    edge_cases=(
+        "a failure derived from a listed kind is swallowed too",
+        "an answer of None is the answer, not a reason for the fallback",
+    ),
+    baseline='''def run_ignoring(body, ignored, fallback):
+    """Run `body`, swallowing the listed failures and answering with `fallback`."""
+    try:
+        result = body()
+    except Exception as error:
+        if type(error) in ignored:
+            return fallback
+        raise
+    return result if result is not None else fallback''',
+    variant_one='''def run_ignoring(body, ignored, fallback):
+    """Run `body`, swallowing the listed failures and answering with `fallback`."""
+    try:
+        return body()
+    except Exception as error:
+        if isinstance(error, tuple(ignored)):
+            return fallback
+        raise''',
+    variant_two='''def run_ignoring(body, ignored, fallback):
+    """Run `body`, swallowing the listed failures and answering with `fallback`."""
+    kinds = tuple(ignored)
+    try:
+        return body()
+    except kinds:
+        return fallback''',
+    variant_three='''def run_ignoring(body, ignored, fallback):
+    """Run `body`, swallowing the listed failures and answering with `fallback`."""
+    try:
+        result = body()
+    except Exception as error:
+        if isinstance(error, tuple(ignored)):
+            return fallback
+        raise
+    return result if result is not None else fallback''',
+    variant_four='''def run_ignoring(body, ignored, fallback):
+    """Run `body`, swallowing the listed failures and answering with `fallback`."""
+    try:
+        return body()
+    except Exception as error:
+        if type(error) in ignored:
+            return fallback
+        raise''',
+    visible_test=_test_module(
+        "suppress_expected",
+        "Published contract for swallowing only the expected failures.",
+        """
+import pytest
+
+
+def _refuse():
+    raise ValueError("expected")
+
+
+def _refuse_differently():
+    raise RuntimeError("not expected")
+
+
+def test_a_step_that_works_answers_with_its_result() -> None:
+    assert run_ignoring(lambda: 7, (ValueError,), 0) == 7
+
+
+def test_a_listed_failure_is_swallowed() -> None:
+    assert run_ignoring(_refuse, (ValueError,), 0) == 0
+
+
+def test_a_failure_that_is_not_listed_is_raised_on() -> None:
+    with pytest.raises(RuntimeError):
+        run_ignoring(_refuse_differently, (ValueError,), 0)
+""",
+        imports="from suppress_expected import run_ignoring\n",
+    ),
+    hidden_test=_test_module(
+        "suppress_expected",
+        "The part of the contract the published tests do not state.",
+        """
+class Narrower(ValueError):
+    pass
+
+
+def _refuse_narrowly():
+    raise Narrower("derived from the listed kind")
+
+
+def test_a_step_that_works_answers_with_its_result() -> None:
+    assert run_ignoring(lambda: 7, (ValueError,), 0) == 7
+
+
+def test_a_failure_derived_from_a_listed_kind_is_swallowed() -> None:
+    assert run_ignoring(_refuse_narrowly, (ValueError,), 0) == 0
+
+
+def test_an_answer_of_nothing_is_the_answer() -> None:
+    assert run_ignoring(lambda: None, (ValueError,), 0) is None
+""",
+        imports="from suppress_expected import run_ignoring\n",
+    ),
+)
+
 #: The authored calibration groups, in template-id order. The target is 100; the achieved count
 #: is what `scripts/corpus_d5.py` reports and what S21D5-035 divides by. A shortfall is recorded
 #: rather than papered over — Section 6.2 of the backlog forbids lowering a floor to meet it.
@@ -7558,4 +8884,16 @@ D5_CALIBRATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G064,
     _G065,
     _G066,
+    _G067,
+    _G068,
+    _G069,
+    _G070,
+    _G071,
+    _G072,
+    _G073,
+    _G074,
+    _G075,
+    _G076,
+    _G077,
+    _G078,
 )

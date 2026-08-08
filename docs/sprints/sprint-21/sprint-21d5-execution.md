@@ -2,7 +2,7 @@
 
 - Branch: `feature/sprint-21d5-pairwise-selective-ranking`
 - Backlog: [Sprint 21D5 Technical Backlog](sprint-21d5-technical-backlog.md)
-- **Status: W0 complete. W1 in progress — 66 of 100 calibration groups authored and validated.**
+- **Status: W0 complete. W1 in progress — 78 of 100 calibration groups authored and validated.**
   W2 through W8 not started.
 - Pre-registration: revision 5, SHA-256
   `ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a`
@@ -538,9 +538,48 @@ Measured over the whole authored corpus: 66 groups, 330 bodies, **660 suite runs
 defects**, **0 cross-group collisions** against 1,560 released and D5 bodies, families balanced
 **11/11/11/11/11/11**.
 
+### Batch seven
+
+Twelve more, taking the corpus to seventy-eight at **13/13/13/13/13/13**. Clean on the first run:
+0 contract defects, 0 collisions.
+
+| Group | Family | The two independent edge cases |
+|---|---|---|
+| `d5-boundary-missing-numbers` | boundary_collections | the run includes its last number; a backwards run is refused |
+| `d5-boundary-knight-moves` | boundary_collections | a move off the board is left out; the squares come back ascending |
+| `d5-numeric-twos-complement` | numeric_logic | the halfway value is the most negative; a value too wide is refused |
+| `d5-numeric-triangle-kind` | numeric_logic | the equal pair is found whichever two it is; sides that cannot close are refused |
+| `d5-parsing-subtitle-timestamp` | parsing_validation | a full stop reads like a comma; a field of sixty or more is refused |
+| `d5-parsing-mime-type` | parsing_validation | a quoted value loses its quotes; a parameter value keeps its case |
+| `d5-transform-fill-template` | data_transformation | an unsupplied hole is left as written; a doubled brace is one literal brace |
+| `d5-transform-explode-delimited` | data_transformation | the space after a separator is trimmed; a record without the field passes through |
+| `d5-state-leader-lease` | state_idempotency | a lapsed lease may be taken; the holder may renew a live one |
+| `d5-state-reference-count` | state_idempotency | the last hold clears the handle away; releasing an unheld handle is refused |
+| `d5-error-quorum-outcome` | error_handling | exactly the number needed is enough; one member answering thrice is one member |
+| `d5-error-suppress-expected` | error_handling | a derived failure is swallowed too; an answer of None is the answer |
+
+Two of these needed their isolation arranged rather than assumed, and the arrangement is worth
+naming because it is the same trick both times: **put the second edge case where the first cannot
+reach it.**
+
+- `d5-boundary-knight-moves` has "off-board moves are dropped" and "the squares come back
+  ascending". The corner test would exercise both at once, except that a corner knight's two legal
+  moves are `(1, 2)` and `(2, 1)` — already ascending in the move table's own order. A body fixing
+  only the first passes it; a body fixing only the ordering keeps the negatives and fails. The
+  ordering test then uses a central square where nothing is off the board.
+- `d5-error-quorum-outcome` has "exactly the number needed is enough" and "a repeated answer
+  counts once". The repetition test uses three answers from one member: a body counting answers
+  sees three, clears the bar, and returns True where a refusal is required — while a body that
+  only relaxes the comparison to `>=` still counts three and still fails. Two duplicate answers
+  would not have separated them, because both readings land on the same side of the bar.
+
+Measured over the whole authored corpus: 78 groups, 390 bodies, **780 suite runs, 0 contract
+defects**, **0 cross-group collisions** against 1,620 released and D5 bodies, families balanced
+**13/13/13/13/13/13**.
+
 ### What W1 still owes
 
-- 34 further calibration groups, family-balanced, each validated by the loop above;
+- 22 further calibration groups, family-balanced, each validated by the loop above;
 - 60 retrieval groups yielding at least 50 qualifying queries (S21D5-021);
 - the separation, rights and lineage evidence record (S21D5-022);
 - sealed campaign and holdout manifests (S21D5-023);
