@@ -8,7 +8,8 @@
   the correction branch selected no candidate (S21D4-039, `hypothesis_class_bound`) and the
   retrieval branch met no floor (S21D4-046, first failed floor `mrr_at_10`). W4 refused final
   access at S21D4-059 and bound twenty-six dependent tasks to that one stop. W7 verified
-  provisioning, recovery and twenty-two damage cases, and found W7-F1. No D4 final, promotion or
+  provisioning, recovery and twenty-two damage cases, and found W7-F1. S21D4-075, the one
+  unconditional E07 item, ran on the isolated lifecycle fixture. No D4 final, promotion or
   canary outcome has been read, no threshold has been derived, and no candidate has been
   selected.
 - **Migration:** none; the D4 authorities are provisioned at the released revision
@@ -544,6 +545,40 @@ five predecessor roots and the output contract), `test_d4_operations_evidence.py
 rewritten rather than deleted: `test_the_smoke_uses_the_same_nomination_variable_as_the_integration_fixture`
 checked that two files mentioned the same environment variable, which was true and insufficient.
 
+## S21D4-075 — the one unconditional item in E07
+
+The backlog calls it unconditional and says so in the item itself: receipt-selected rollback
+restoration and refusal "runs against the isolated lifecycle fixture whether or not D4
+activates". D4 activated nothing, so it ran there — the released inert component, no database,
+no store.
+
+Three of the four properties were already proved by the released `test_inert_lifecycle.py`: a
+previously approval-bound state restores, a `rollback_permitted=false` disable is structurally
+non-restorable, and an unauthorised caller cannot roll back. Two of the acceptance's clauses had
+nothing checking them, and `tests/cognitive_os/learned_evidence/test_d4_rollback_receipt_chain.py`
+adds them plus one that follows:
+
+- **it survives restart** — the harness discards its service and builds a new one over the same
+  durable state; the restored `ACTIVE` projection keeps its revision and content hash, the
+  surface is still held, and the rollback receipt still names the activation it restored;
+- **it deletes no evidence** — written as "every identity that existed still resolves" rather
+  than as a row count, and through the repository's public reads only: three distinct receipts
+  each rehash to their issued bytes, the evidence set only grows, `component_history` is a strict
+  append with no earlier revision moved, and the approval that authorised the original activation
+  is the one the rollback names;
+- **a refusal survives restart too** — the failed-canary refusal lives on the durable chain, so a
+  process boundary must not soften it into a permission.
+
+The fourth clause is structural rather than behavioural and is asserted as such: `roll_back()`
+has no `target`, `target_receipt_id`, `revision` or `to_revision` parameter, so there is nothing
+for a caller to select a target with. The target is read from the chain, and the receipt says
+which one it read.
+
+Nothing here claims a real activation. The component is the released abstaining reference one,
+which cannot change a decision even if something did activate it, and D4 registered no
+correction component on `experience.correction_ranking` — which W7's restore proof independently
+confirms.
+
 ## Evidence handles
 
 | Record | SHA-256 of the file | Seal (`integrity_content_hash`) |
@@ -599,9 +634,10 @@ result, and neither authorises what comes next:
   recovery and twenty-two-case damage matrix all pass, the twelve-class report is clean with
   both authorities, and every predecessor store reproduces its released fingerprint.
 
-One item outside W7's list remains open and is deliberately not in the not-opened map:
-**S21D4-075**, receipt-selected rollback restoration and refusal, which §11.1 makes
-unconditional and which runs against the isolated lifecycle fixture whether or not D4 activates.
+**S21D4-075 is complete**, not open. It is the one item the backlog declares unconditional, it
+is deliberately absent from the not-opened map, and it ran against the isolated lifecycle
+fixture: restoration survives a restart, the failed-canary refusal survives one too, the
+rollback deletes no evidence, and the target is not a parameter a caller could pass.
 
 What W2 and W3 leave behind is not a guess about why. The correction stop is a measured
 hypothesis-class bound over 100 independent decisions, and the retrieval stop is a measured
