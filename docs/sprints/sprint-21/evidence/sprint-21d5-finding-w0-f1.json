@@ -1,0 +1,37 @@
+{
+ "classification": "operator error against documented behaviour, not a code defect",
+ "corrective_action": "every D5 shell invocation passes COGOS_POSTGRES_ENV_FILE=$PWD/.env.s21d5.local. The D5 databases were then migrated correctly and cognitive_os_s21d5_test reports alembic head 0015, 114 cognitive_os tables, and 'No new upgrade operations detected' from alembic check.",
+ "damage": {
+  "alembic_after": "0015",
+  "alembic_before": "0013",
+  "d5_evidence_store_touched": false,
+  "database": "cognitive_os_dev",
+  "evidence_stores_touched": 0,
+  "learned_observations_after": 0,
+  "migration_kind": "additive; both create tables and neither drops or rewrites one",
+  "migrations_applied": [
+   "0014_create_learned_evidence_store",
+   "0015_create_provider_output_governance"
+  ],
+  "predecessor_artifact_stores_touched": 0,
+  "provider_output_records_after": 0,
+  "rows_deleted": 0,
+  "rows_written": 0
+ },
+ "finding": "S21D5-W0-F1",
+ "integrity_content_hash": "7f22968bb52ccc152692ead6a1e7dc042e4d68661fc7d211ac6f55b38b2c4480",
+ "items": [
+  "S21D5-001"
+ ],
+ "not_rolled_back": "deliberate. cognitive_os_dev is the development database, holds no evidence for any sprint, and was stale at 0013 against a repository head of 0015. The two applied migrations are additive and their tables are empty. A downgrade would be a second unintended write, executing DROP statements against a database that is now simply current. The state is recorded rather than reversed.",
+ "recorded_at": "2026-08-08T15:31:00Z",
+ "released_code_changed": 0,
+ "schema_version": 1,
+ "sprint": "21D5",
+ "subject": "the D5 migration was first applied to the development database",
+ "superseded_reading": "the first migration-check failure of this wave reported a TEXT versus Numeric(5,4) drift on cognitive_os.experience_step_assessments.confidence. That drift belongs to cognitive_os_dev alone. cognitive_os_s21d4_test and cognitive_os_s21d5_test both report numeric(5,4), which is what the model declares, so neither the D4 release nor the D5 provisioning carries the drift.",
+ "wave": "W0",
+ "what_a_reader_should_take_from_it": "the loader's stated purpose is to stop a mis-scoped command reaching a real database. In this instance it redirected a mis-scoped command into a different real database instead, silently. That is an observation about the fallback target, not a request to change a deliberate design; the release owner decides whether a mis-scoped invocation should be refused rather than redirected.",
+ "what_happened": "S21D5-001 invoked scripts/postgres_migrate.sh and scripts/postgres_migration_check.sh with the D5 environment exported into the shell (set -a; . ./.env.s21d5.local; set +a). scripts/postgres_common.sh re-reads .env.postgres.local under set -a and overrides exported values, so both commands targeted cognitive_os_dev rather than cognitive_os_s21d5_test. The development database was upgraded from alembic 0013 to 0015.",
+ "why_not_a_defect": "docs/operations/learned-evidence.md lines 238 to 240 state the override explicitly and call it deliberate: 'Exporting the variables directly is not enough - the shared loader re-reads its own file and will override them, which is deliberate: it is what stops a mis-scoped command reaching a real database.' The released convention is COGOS_POSTGRES_ENV_FILE=$PWD/.env.<sprint>.local and every released operations document uses it. The loader behaved as designed and as documented; the invocation did not follow the document."
+}

@@ -1,0 +1,215 @@
+{
+ "contracts": {
+  "artifact_v3": {
+   "carried_from_v2": "every lineage, encoder, channel, dataset, split, manifest, embedding-model and numeric-bound field, plus the operating point, its derivation rule and the calibration certificate hash",
+   "content_hash": "e6f1ca9588dbea6037e863a7daa12724ca139ebecbed377309c86cc1cb898ea2",
+   "dispatch": "on schema_name, beside v1 and v2, which stay byte-identical",
+   "inference_dependency": "none beyond the standard library; numpy is a fitting dependency only",
+   "item": "S21D5-013",
+   "refusals": [
+    "a weight vector that is not 390 long or not finite",
+    "a channel list that is not the v2 allowlist in fitted order",
+    "a non-positive ridge",
+    "a negative margin floor",
+    "a hypothesis_class the loader does not implement",
+    "a schema_name the loader does not know"
+   ],
+   "replacing_the_exemplar_set": [
+    "weights, 390 floats in FITTED_FEATURE_V2_ALLOWLIST order",
+    "regularization",
+    "fitted_group_count",
+    "fitted_pair_count",
+    "margin_floor",
+    "hypothesis_class"
+   ],
+   "schema_name": "correction-ranking-artifact-v3",
+   "why_not_additive_on_v2": "v2 declares exemplars with min_length 1 and three proportion floors. Making them optional would let an exemplar-free v2 artifact load, which is the check-that-passes-without-touching-its-question defect the D4 report catalogued twelve times"
+  },
+  "corpus_submanifests": {
+   "authored_for_d5": {
+    "calibration": {
+     "groups": 100,
+     "outcomes": 400
+    },
+    "retrieval": {
+     "groups": 60,
+     "qualifying_queries_minimum": 50
+    }
+   },
+   "authoring_shape": "baseline passes visible and fails hidden; variants one and two pass both; variant three repairs edge case 1 only; variant four repairs edge case 2 only",
+   "carried_unopened": {
+    "canary": {
+     "groups": 5,
+     "slots": 20
+    },
+    "final_a": {
+     "groups": 30,
+     "outcomes": 120
+    },
+    "final_b": {
+     "groups": 30,
+     "outcomes": 120
+    }
+   },
+   "content_hash": "03c30e4a785ad4c6486817fff2d1a86c6ef7a01ef4f01049ccad0c978b1f95ba",
+   "generated": {
+    "invariance_regression": {
+     "cases": 2,
+     "decisions": 40,
+     "groups": 20
+    },
+    "promotion_metamorphic_ood": {
+     "independent": 60,
+     "nominal": 120,
+     "over_final_groups": 60
+    }
+   },
+   "item": "S21D5-012",
+   "near_clone_rule": "normalized_structure_hash and token_stream_hash run every batch, scoped to cross-group pairs against every released corpus; a collision withdraws the whole group rather than rewriting a variant",
+   "retrieval_overproduction": "60 authored against a floor of 50: a near-clone withdrawal at exactly the floor turns one defect into a sprint-arithmetic failure",
+   "separation_rule": "seven roles, pairwise group-, clone- and source-disjoint; the authored calibration corpus must additionally be disjoint from the spent-for-selection digest sealed in sprint-21d5-reuse-audit.json"
+  },
+  "decision_tree": {
+   "content_hash": "af10009fc714627dd1bbb222150b5b294a654ab0790e53b715d0dc0ff41b9101",
+   "endings_are_four_different_sprints": true,
+   "item": "S21D5-016",
+   "must_not_be_guessed_in_advance": true,
+   "published_before": "any D5 calibration number is read",
+   "section": "3.3",
+   "step_1": "fit the direction at 320 and at 720 exemplar rows and measure the risk-coverage curve on the fresh calibration set; record coverage-at-zero-error at both volumes",
+   "step_3_select": "some volume reaches zero confident errors on at least 100 independent decisions at coverage at least 0.40, projecting at least 20 changed final decisions, above the strongest deterministic baseline",
+   "step_4_volume_bound": "zero-error coverage above zero and below 0.40 at 720 rows and materially higher at 720 than at 320: the residual is evidence volume, the yield curve is the deliverable, and the successor is a corpus sprint with a target volume derived from it",
+   "step_5_selective_margin_bound": "coverage above zero, below 0.40, flat across both volumes, with first-choice rate still above the baseline: the direction ranks and the margin cannot certify enough of what it ranks. The successor pre-registers a different confidence construction over the same ranker, split-conformal over the margin being the obvious candidate, not a different ranker and not a larger corpus",
+   "step_6_hypothesis_class_bound": "coverage at or near zero at both volumes. This contradicts the spent-evidence diagnostic and the record must say so in those words: the estimate did not transfer to a fresh corpus, and the next question is why the authored distributions differ, not which class comes third"
+  },
+  "fitting_composition": {
+   "authority": "sprint-21d5-handoff.md section 2: the spent calibration set remains valid fitting and diagnostic evidence",
+   "composition": {
+    "d4_calibration_groups": 100,
+    "d4_training_groups": 80
+   },
+   "content_hash": "c922d1c95e7641746c402fa9ae3aac477ec98c54aa566e2088e68d1def70b903",
+   "groups": 180,
+   "item": "S21D5-011",
+   "outcomes": 720,
+   "re_execution": "every group is a task package re-executed as a new campaign under new run identities after fresh feature seals; no row is read from a predecessor store",
+   "volume_points": [
+    320,
+    720
+   ],
+   "volume_span": "2.25x, against D4's 1.6x. S21D4-039 recorded its narrow 200-to-320 span as a limitation on its own volume arm; this span is the repair, and it costs no authoring because the pool is evidence that already exists",
+   "whole_groups_only": "a volume point never lands inside a group; fitting on three of a group's four candidates would put the fourth's siblings in the exemplar set and call the result a volume effect"
+  },
+  "hypothesis_class": {
+   "abstention": "below the margin floor the ranker declines and the caller runs the deterministic order; an abstention is never a changed decision and never a correct prediction",
+   "confidence_quantity": "the projection margin between the top two candidates of a group",
+   "content_hash": "3bea6e2201c4ec9bb2d52e93acad9a11a6c72a25a588875fbee3f795b33af45b",
+   "fit_rule": "collect every within-group accepted-minus-rejected difference of fitted feature vectors over the declared fitting groups in sorted group order; fit one linear direction by ridge-regularised logistic regression on the antisymmetric pair set (no intercept, zero start, Newton iterations to convergence); rank a group's candidates by their projection onto the direction with ties broken on the baseline order; the decision's confidence is the projection margin between the top two candidates",
+   "item": "S21D5-010",
+   "module": "src/cognitive_os/learning/pairwise_contrastive.py",
+   "name": "pairwise-contrastive-linear-v1",
+   "regularization": "1",
+   "regularization_chosen_on": "fitting-pool-internal leave-group-out evidence alone, recorded in sprint-21d5-hypothesis-class-diagnostic.json before this contract was sealed and before any D5 corpus existed",
+   "regularization_may_be_rechosen": false,
+   "tie_break": "the frozen baseline order, never candidate identity",
+   "unchanged_from_d4": {
+    "encoder_version": "correction-ranking-v2",
+    "feature_contract_hash": "492c90a5df420de9d1662d17155ac8b28713e69bbd4bbe56208415d6ca076362",
+    "fitted_channels": 390,
+    "normaliser": "cogos-python-alpha-normalizer-v2",
+    "note": "D5 changes no encoder, no normaliser, no channel and no fitted representation; it changes the function fitted on top of them"
+   },
+   "why_this_class": "S21D4-039 measured the frozen k-NN ranking above the strongest deterministic baseline everywhere and separating its own errors nowhere. Its confidence is the top candidate's absolute neighbourhood acceptance mass, and among four deliberate near-clones that mass barely moves between a right ordering and a wrong one. The failing quantity is within-group contrast, so this class fits within-group contrast and confides only in it"
+  },
+  "power_and_yield": {
+   "clopper_pearson_upper_bound_95": {
+    "at_100_admitted": "0.029513",
+    "at_20_admitted": "0.139108",
+    "at_40_admitted": "0.072158"
+   },
+   "content_hash": "c3af5bad0fa2b759d3ebf7976997940c18caa0066f41e63044862671cc82eb45",
+   "denominator": "every accuracy, error and coverage rate divides by the independent decision count and names it in the stored bytes; the published schema refuses a payload that omits the nominal/independent/replicated triple",
+   "diagnostic_estimate_is_not_a_prediction": "the spent-evidence diagnostic measured 0.22 and 0.32 zero-error coverage against a 0.40 floor. Those are estimates on authored data this class has already seen. They justify running the experiment; they do not forecast it",
+   "independence_rule": "a ranking decision is identified by its four fitted feature vectors in slot order; two groups sharing one would be one decision counted twice",
+   "item": "S21D5-015",
+   "reading": "at the 0.40 coverage floor, 40 admitted decisions with zero errors bound the true error rate at about 7.2%, not at zero. The floor is a floor on what may be claimed, not a claim of perfection, and the sprint report must state the bound beside the rate exactly as D4's erratum required",
+   "rule": "score every independent clean calibration decision with the released bounded k-NN confidence; sort the answered ones by score descending; the zero-error point is the lowest threshold at which every answered decision strictly above it is correct, equivalently the highest score among answered decisions that are wrong; it is the boundary of the zero-error region and the only member of it whose coverage is worth reporting, because every higher threshold admits a strict subset; admit the answered decisions scoring strictly above it; report coverage over independent decisions and the Clopper-Pearson one-sided 95% upper bound on the true error rate",
+   "what_zero_errors_certifies": "zero errors is not evidence of a zero rate, it is evidence of a rate below the Clopper-Pearson one-sided 95% upper bound at the admitted count"
+  },
+  "retrieval": {
+   "arms": [
+    "no_memory",
+    "exact_signature",
+    "lexical",
+    "minilm_vector",
+    "minilm_shortlist_plus_bounded_ged",
+    "reciprocal_rank_fusion"
+   ],
+   "chance_baseline_reported_beside_every_arm": true,
+   "comparator_budget": "bounded GED under the fixed iteration budget of one that S21D4-041 decided; anything measured under a wall clock before D4 stays unreplayable and no back-fill is attempted",
+   "content_hash": "7d94adc6641135e14957b166fc198131e5d9b762229f03b60deb6a073e15b3d5",
+   "first_failure_precedence": "the first floor that fails decides the outcome; a near miss is not a pass and nothing is reopened to close it",
+   "floors": {
+    "mrr_at_10": "0.50",
+    "recall_at_5": "0.70"
+   },
+   "floors_unchanged_from": "Gate L2 condition 24, frozen contract",
+   "holdout_reads": 1,
+   "item": "S21D5-014",
+   "leak_guard": "reality_leakage.judgement_leaks over whatever the surface ends up carrying, fail-closed on the whole projection rather than filtering a term",
+   "minimum_queries": 50,
+   "surface": "the released widened searchable surface with structure_fallback enabled: a source whose identifier terms come up empty falls back to its lowercased AST node-type terms from the same canonical dump, minus bookkeeping nodes",
+   "surface_excluded_from": [
+    "structural_hash",
+    "ExperienceGraphNode.label"
+   ]
+  },
+  "selection_rule": {
+   "bootstrap": {
+    "lower_bound_above": 0,
+    "resamples": 2000,
+    "seed": 21041
+   },
+   "confident_errors_allowed": 0,
+   "content_hash": "2233389d31e90d2fa8f6f1db8f77f4d87963126b9b396e4ab7661326ea29f611",
+   "every_grid_point_reported": "including filtered and fully abstaining points",
+   "final_groups": 60,
+   "first_action_preservation_on_the_invariance_sample": "100%",
+   "first_choice_rate_must_exceed": "the strongest deterministic baseline measured on the same decisions",
+   "inference_budget_ms": "250",
+   "inherited_verbatim_from": "Sprint 21D4 backlog section 2.3",
+   "item": "S21D5-016",
+   "minimum_changed_clean_decisions": 1,
+   "minimum_clean_coverage": "0.40",
+   "minimum_independent_decisions": 100,
+   "minimum_projected_changed_final_decisions": 20,
+   "the_only_substitution": "the admission signal is the top-two projection margin rather than the k-NN's absolute neighbourhood acceptance mass. derive_zero_error_point treats a confidence as an opaque ordered score, so the certification spine, the independence census, the Clopper-Pearson bound and the single-derivation rule are inherited without a line of new code",
+   "thresholds_changed": 0
+  }
+ },
+ "integrity_content_hash": "098070131ecc820708afee601bf0ee3b4fff9722be446963a30ae8ae864982b4",
+ "items": [
+  "S21D5-010",
+  "S21D5-011",
+  "S21D5-012",
+  "S21D5-013",
+  "S21D5-014",
+  "S21D5-015",
+  "S21D5-016"
+ ],
+ "measured_values": 0,
+ "recorded_at": "2026-08-08T13:36:19Z",
+ "revision": 5,
+ "schema_version": 1,
+ "sprint": "21D5",
+ "unchanged_from_d4": {
+  "feature_contract": "492c90a5df420de9d1662d17155ac8b28713e69bbd4bbe56208415d6ca076362",
+  "fitted_channels": 390,
+  "gate_conditions": 29,
+  "gate_contract": "9e47bc618fc1eca8b66146eacdf1bd244fced79bb1c91f46f2c6ff4484bfd8a7",
+  "normaliser": "cogos-python-alpha-normalizer-v2",
+  "note": "D5 changes no encoder, no normaliser, no fitted representation and no gate threshold; it changes the hypothesis class fitted on top of them",
+  "thresholds_changed": 0
+ },
+ "wave": "W0"
+}
