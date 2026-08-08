@@ -2,7 +2,7 @@
 
 - Branch: `feature/sprint-21d5-pairwise-selective-ranking`
 - Backlog: [Sprint 21D5 Technical Backlog](sprint-21d5-technical-backlog.md)
-- **Status: W0 complete. W1 in progress — 18 of 100 calibration groups authored and validated.**
+- **Status: W0 complete. W1 in progress — 30 of 100 calibration groups authored and validated.**
   W2 through W8 not started.
 - Pre-registration: revision 5, SHA-256
   `ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a`
@@ -352,9 +352,64 @@ repair one and leave the other, which is failure mode 1 by construction rather t
 That is worth recording because it is the cheap version of the same discovery: the validator
 catches this defect after five bodies are written, and arithmetic catches it before any are.
 
+### Batch three, and the two collisions the run caught
+
+Twelve more groups, taking the corpus to thirty and the family balance to **5/5/5/5/5/5**. The
+pre-check disposed of twelve ideas before any body existed — `run-length`, `semver`, `duration`,
+`query string`, `byte size`, `weighted average`, `flatten nested`, `left join`, `invert mapping`,
+`fallback chain`, `key=value with continuation`, and `collect all errors` were all occupied.
+
+| Group | Family | The two independent edge cases |
+|---|---|---|
+| `d5-boundary-word-wrap` | boundary_collections | a run of spaces separates as one; an over-long word takes its own line |
+| `d5-boundary-ring-read` | boundary_collections | a span past the end continues from the front; a count above the buffer is refused |
+| `d5-numeric-half-even` | numeric_logic | a tie goes to the even digit; a float is read at its literal, not its binary expansion |
+| `d5-numeric-prime-factors` | numeric_logic | a prime factor above the square root is collected; a number below two is refused |
+| `d5-parsing-line-continuation` | parsing_validation | a continuation open at EOF still yields its line; an indented continuation loses its indent |
+| `d5-parsing-accept-quality` | parsing_validation | no explicit q means quality one; q=0 is left out |
+| `d5-transform-collate-values` | data_transformation | a label coming back later keeps what it gathered; readings keep arrival order |
+| `d5-transform-sequence-diff` | data_transformation | multiplicity, not set membership; reading order, not sorted |
+| `d5-state-token-bucket` | state_idempotency | a long idle fills only to capacity; a reading before the stamp gains nothing |
+| `d5-state-config-patch` | state_idempotency | a null removes the setting, absent or not; a section is laid over, not replaced |
+| `d5-error-rollback-steps` | error_handling | the applied steps are undone backwards; the step that raised is not undone |
+| `d5-error-redact-secrets` | error_handling | every occurrence is scrubbed; a contained secret leaves nothing behind |
+
+All twelve satisfied the authoring contract on the **first** run — 60 bodies, 120 suite runs, 0
+contract defects. Separation did not, and the two collisions it reported are different in kind:
+
+**`d5-transform-pivot-sum` ≡ `d2-transform-pivot`, at the level of the task.** The released
+group's contract reads *"pivot(records, row_key, column_key, value_key) totals every record that
+lands in a cell, and treats a record without the measure as contributing zero"* — the same four
+parameters and the same two edge cases as the group just authored. That is failure mode 3, and
+rewriting a variant cannot repair it. The group was **withdrawn** and `d5-transform-collate-values`
+authored in its place.
+
+The pre-check had the answer and the reading of it was wrong. Searching `pivot` alone returns
+exactly one hit, `d2-transform-pivot`, with its contract in the row. The query that was actually
+run was `pivot aggregate group`; the extra words matched a dozen unrelated groups on `group`, the
+hits are ranked by *how many* words matched, and with every hit tied at one the ranking fell back
+to module name — pushing `pair_pivoting` out of the window that got read. **A multi-word query
+dilutes the ranking; the check is read by contract, not by hit count.** One-word queries were used
+for the replacement, and found the ground clear.
+
+**`d5-state-config-patch:baseline` ≡ `d5-state-partition-offsets:variant_four`, at the level of
+the body.** Both were `updated = dict(x)`, a loop assigning every item, `return updated` —
+identical normalised AST, but the *tasks* are unrelated (stream offsets against a settings
+overlay). Nothing had to be withdrawn: the baseline was re-authored as `return {**config, **patch}`,
+which carries both declared defects unchanged, is what the naive implementation actually looks
+like, and is three tokens rather than thirty.
+
+The distinction matters for the remaining seventy groups. A task collision costs the group; a body
+collision costs one body. Only the first is worth a pre-check, which is why the pre-check reads
+contracts and the detector reads bodies.
+
+Measured over the whole authored corpus: 30 groups, 150 bodies, **300 suite runs, 0 contract
+defects**, **0 cross-group collisions** against 1,380 released and D5 bodies, families balanced
+**5/5/5/5/5/5**.
+
 ### What W1 still owes
 
-- 82 further calibration groups, family-balanced, each validated by the loop above;
+- 70 further calibration groups, family-balanced, each validated by the loop above;
 - 60 retrieval groups yielding at least 50 qualifying queries (S21D5-021);
 - the separation, rights and lineage evidence record (S21D5-022);
 - sealed campaign and holdout manifests (S21D5-023);

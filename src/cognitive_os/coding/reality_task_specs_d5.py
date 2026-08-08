@@ -1917,6 +1917,1394 @@ def test_trailing_whitespace_does_not_distinguish_messages() -> None:
     ),
 )
 
+# ------------------------------------------------------------------ boundary and collections
+
+_G019 = D2TaskSpec(
+    template_id="d5_boundary.word_wrap",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d5-boundary-word-wrap",
+    module="word_wrap",
+    module_doc="Folding a run of prose into lines that fit a column.",
+    issue=(
+        "wrap_words() is documented to fold text into lines no wider than a column. Callers "
+        "report that a word longer than the column disappears from the output entirely, and "
+        "that text typed with two spaces between sentences comes back with the gap intact."
+    ),
+    expected=(
+        "wrap_words(text, width) returns the lines of the text in order, each no longer than "
+        "`width` except where a single word is already longer, in which case that word takes a "
+        "line of its own. Words are separated by a single space however many the input had."
+    ),
+    baseline_reason=(
+        "it only starts a new line for a word that would fit on one, and it separates words by "
+        "splitting on a single space rather than on runs of whitespace"
+    ),
+    edge_cases=(
+        "a run of several spaces separates two words exactly as one space would",
+        "a word longer than the width takes a line of its own instead of being dropped",
+    ),
+    baseline='''def wrap_words(text, width):
+    """Return `text` folded into lines no wider than `width`."""
+    lines = []
+    current = ""
+    for word in text.split(" "):
+        candidate = f"{current} {word}" if current else word
+        if len(candidate) <= width:
+            current = candidate
+        elif len(word) <= width:
+            lines.append(current)
+            current = word
+    if current:
+        lines.append(current)
+    return lines''',
+    variant_one='''def wrap_words(text, width):
+    """Return `text` folded into lines no wider than `width`."""
+    lines = []
+    current = ""
+    for word in text.split():
+        if not current:
+            current = word
+        elif len(current) + 1 + len(word) <= width:
+            current = f"{current} {word}"
+        else:
+            lines.append(current)
+            current = word
+    if current:
+        lines.append(current)
+    return lines''',
+    variant_two='''def wrap_words(text, width):
+    """Return `text` folded into lines no wider than `width`."""
+    words = [word for word in text.split(" ") if word]
+    lines = []
+    start = 0
+    while start < len(words):
+        stop = start + 1
+        length = len(words[start])
+        while stop < len(words) and length + 1 + len(words[stop]) <= width:
+            length += 1 + len(words[stop])
+            stop += 1
+        lines.append(" ".join(words[start:stop]))
+        start = stop
+    return lines''',
+    variant_three='''def wrap_words(text, width):
+    """Return `text` folded into lines no wider than `width`."""
+    lines = []
+    current = ""
+    for word in text.split():
+        candidate = f"{current} {word}" if current else word
+        if len(candidate) <= width:
+            current = candidate
+        elif len(word) <= width:
+            lines.append(current)
+            current = word
+    if current:
+        lines.append(current)
+    return lines''',
+    variant_four='''def wrap_words(text, width):
+    """Return `text` folded into lines no wider than `width`."""
+    lines = []
+    current = ""
+    for word in text.split(" "):
+        candidate = f"{current} {word}" if current else word
+        if not current or len(candidate) <= width:
+            current = candidate
+        else:
+            lines.append(current)
+            current = word
+    if current:
+        lines.append(current)
+    return lines''',
+    visible_test=_test_module(
+        "word_wrap",
+        "Published contract for folding prose into a column.",
+        """
+def test_words_fill_a_line_before_the_next_one_starts() -> None:
+    assert wrap_words("the quick brown fox", 9) == ["the quick", "brown fox"]
+
+
+def test_text_shorter_than_the_column_stays_on_one_line() -> None:
+    assert wrap_words("one two", 20) == ["one two"]
+""",
+        imports="from word_wrap import wrap_words\n",
+    ),
+    hidden_test=_test_module(
+        "word_wrap",
+        "The part of the contract the published tests do not state.",
+        """
+def test_words_fill_a_line_before_the_next_one_starts() -> None:
+    assert wrap_words("the quick brown fox", 9) == ["the quick", "brown fox"]
+
+
+def test_a_run_of_spaces_separates_words_as_one_space_would() -> None:
+    assert wrap_words("alpha   beta", 20) == ["alpha beta"]
+
+
+def test_a_word_longer_than_the_column_takes_a_line_of_its_own() -> None:
+    assert wrap_words("hi disproportionately ok", 6) == ["hi", "disproportionately", "ok"]
+""",
+        imports="from word_wrap import wrap_words\n",
+    ),
+)
+
+
+_G020 = D2TaskSpec(
+    template_id="d5_boundary.ring_read",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d5-boundary-ring-read",
+    module="ring_read",
+    module_doc="Reading a span of entries out of a circular buffer.",
+    issue=(
+        "read_ring() is documented to hand back a span of entries from a circular buffer. "
+        "Callers report that a span starting near the end comes back short instead of "
+        "continuing from the front, and that asking for more entries than the buffer holds "
+        "quietly returns whatever was there."
+    ),
+    expected=(
+        "read_ring(buffer, start, count) returns `count` entries beginning at `start`, "
+        "continuing from the front of the buffer once it runs past the end, and raises "
+        "ValueError when `count` is larger than the buffer."
+    ),
+    baseline_reason="it reads the span as a plain slice, which neither wraps nor complains",
+    edge_cases=(
+        "a span running past the end continues from the front",
+        "a count larger than the buffer is refused",
+    ),
+    baseline='''def read_ring(buffer, start, count):
+    """Return `count` entries of `buffer` beginning at `start`, wrapping round."""
+    items = list(buffer)
+    return items[start : start + count]''',
+    variant_one='''def read_ring(buffer, start, count):
+    """Return `count` entries of `buffer` beginning at `start`, wrapping round."""
+    items = list(buffer)
+    if count > len(items):
+        raise ValueError(f"cannot read {count} entries from a ring of {len(items)}")
+    return [items[(start + step) % len(items)] for step in range(count)]''',
+    variant_two='''def read_ring(buffer, start, count):
+    """Return `count` entries of `buffer` beginning at `start`, wrapping round."""
+    items = list(buffer)
+    size = len(items)
+    if count > size:
+        raise ValueError(f"cannot read {count} entries from a ring of {size}")
+    doubled = items + items
+    return doubled[start : start + count]''',
+    variant_three='''def read_ring(buffer, start, count):
+    """Return `count` entries of `buffer` beginning at `start`, wrapping round."""
+    items = list(buffer)
+    return [items[(start + step) % len(items)] for step in range(count)]''',
+    variant_four='''def read_ring(buffer, start, count):
+    """Return `count` entries of `buffer` beginning at `start`, wrapping round."""
+    items = list(buffer)
+    if count > len(items):
+        raise ValueError(f"cannot read {count} entries from a ring of {len(items)}")
+    return items[start : start + count]''',
+    visible_test=_test_module(
+        "ring_read",
+        "Published contract for reading a span out of a ring.",
+        """
+def test_a_span_inside_the_buffer_reads_straight_through() -> None:
+    assert read_ring(("a", "b", "c", "d"), 1, 2) == ["b", "c"]
+
+
+def test_a_span_covering_the_whole_buffer_reads_it_all() -> None:
+    assert read_ring(("a", "b", "c"), 0, 3) == ["a", "b", "c"]
+""",
+        imports="from ring_read import read_ring\n",
+    ),
+    hidden_test=_test_module(
+        "ring_read",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_span_inside_the_buffer_reads_straight_through() -> None:
+    assert read_ring(("a", "b", "c", "d"), 1, 2) == ["b", "c"]
+
+
+def test_a_span_running_past_the_end_continues_from_the_front() -> None:
+    assert read_ring(("a", "b", "c", "d"), 3, 3) == ["d", "a", "b"]
+
+
+def test_a_count_larger_than_the_buffer_is_refused() -> None:
+    with pytest.raises(ValueError):
+        read_ring(("a", "b", "c", "d"), 0, 5)
+""",
+        imports="from ring_read import read_ring\n",
+    ),
+)
+
+# ---------------------------------------------------------------------------- numeric logic
+
+_G021 = D2TaskSpec(
+    template_id="d5_numeric.half_even",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d5-numeric-half-even",
+    module="half_even",
+    module_doc="Rounding a measurement the way a settlement report has to.",
+    issue=(
+        "round_half_even() is documented to round to a number of places with a tie going to "
+        "the even digit. Auditors report that a value landing exactly halfway rounds upwards "
+        "instead, and that a value such as 2.675 rounds down when the report says 2.68."
+    ),
+    expected=(
+        "round_half_even(value, places) returns the value as a Decimal rounded to `places` "
+        "decimal places, a value landing exactly halfway going to the even digit, and a float "
+        "read at the value its decimal literal names rather than at its binary expansion."
+    ),
+    baseline_reason=(
+        "it rounds half away from zero and builds the Decimal straight from the float, which "
+        "carries the binary expansion rather than the literal"
+    ),
+    edge_cases=(
+        "a value landing exactly halfway goes to the even digit",
+        "a float is read at the value its decimal literal names",
+    ),
+    imports="from decimal import ROUND_HALF_EVEN, ROUND_HALF_UP, Decimal\n",
+    baseline='''def round_half_even(value, places):
+    """Return `value` rounded to `places` places with a tie going to the even digit."""
+    step = Decimal(1).scaleb(-places)
+    return Decimal(value).quantize(step, rounding=ROUND_HALF_UP)''',
+    variant_one='''def round_half_even(value, places):
+    """Return `value` rounded to `places` places with a tie going to the even digit."""
+    step = Decimal(1).scaleb(-places)
+    return Decimal(str(value)).quantize(step, rounding=ROUND_HALF_EVEN)''',
+    variant_two='''def round_half_even(value, places):
+    """Return `value` rounded to `places` places with a tie going to the even digit."""
+    exact = Decimal(str(value)).scaleb(places)
+    return exact.to_integral_value(rounding=ROUND_HALF_EVEN).scaleb(-places)''',
+    variant_three='''def round_half_even(value, places):
+    """Return `value` rounded to `places` places with a tie going to the even digit."""
+    step = Decimal(1).scaleb(-places)
+    return Decimal(value).quantize(step, rounding=ROUND_HALF_EVEN)''',
+    variant_four='''def round_half_even(value, places):
+    """Return `value` rounded to `places` places with a tie going to the even digit."""
+    step = Decimal(1).scaleb(-places)
+    return Decimal(str(value)).quantize(step, rounding=ROUND_HALF_UP)''',
+    visible_test=_test_module(
+        "half_even",
+        "Published contract for rounding a settlement figure.",
+        """
+from decimal import Decimal
+
+
+def test_a_value_below_the_midpoint_rounds_down() -> None:
+    assert round_half_even(1.234, 2) == Decimal("1.23")
+
+
+def test_a_value_above_the_midpoint_rounds_up() -> None:
+    assert round_half_even(1.236, 2) == Decimal("1.24")
+
+
+def test_a_whole_number_keeps_its_value() -> None:
+    assert round_half_even(3.0, 0) == Decimal("3")
+""",
+        imports="from half_even import round_half_even\n",
+    ),
+    hidden_test=_test_module(
+        "half_even",
+        "The part of the contract the published tests do not state.",
+        """
+from decimal import Decimal
+
+
+def test_a_value_below_the_midpoint_rounds_down() -> None:
+    assert round_half_even(1.234, 2) == Decimal("1.23")
+
+
+def test_a_tie_goes_to_the_even_digit() -> None:
+    assert round_half_even(2.5, 0) == Decimal("2")
+    assert round_half_even(3.5, 0) == Decimal("4")
+
+
+def test_a_float_is_read_at_the_value_its_literal_names() -> None:
+    assert round_half_even(2.675, 2) == Decimal("2.68")
+""",
+        imports="from half_even import round_half_even\n",
+    ),
+)
+
+
+_G022 = D2TaskSpec(
+    template_id="d5_numeric.prime_factors",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d5-numeric-prime-factors",
+    module="prime_factors",
+    module_doc="Breaking a whole number into the primes that multiply to it.",
+    issue=(
+        "prime_factors() is documented to return the primes whose product is the number. "
+        "Callers report that the factors of 14 come back as just [2], and that a number below "
+        "two comes back as an empty list rather than being refused."
+    ),
+    expected=(
+        "prime_factors(number) returns the prime factors of the number in ascending order with "
+        "each repeated as often as it divides, so their product is the number, and raises "
+        "ValueError for a number below two."
+    ),
+    baseline_reason=(
+        "it trials divisors only up to the square root of the original number and never "
+        "collects what is left over, and it treats a number below two as having no factors"
+    ),
+    edge_cases=(
+        "a prime factor above the square root is still collected",
+        "a number below two is refused",
+    ),
+    baseline='''def prime_factors(number):
+    """Return the ascending prime factors of `number` with their multiplicities."""
+    factors = []
+    remaining = number
+    limit = int(remaining**0.5)
+    for candidate in range(2, limit + 1):
+        while remaining % candidate == 0:
+            factors.append(candidate)
+            remaining //= candidate
+    return factors''',
+    variant_one='''def prime_factors(number):
+    """Return the ascending prime factors of `number` with their multiplicities."""
+    if number < 2:
+        raise ValueError(f"prime factors are undefined for {number}")
+    factors = []
+    remaining = number
+    candidate = 2
+    while candidate * candidate <= remaining:
+        while remaining % candidate == 0:
+            factors.append(candidate)
+            remaining //= candidate
+        candidate += 1
+    if remaining > 1:
+        factors.append(remaining)
+    return factors''',
+    variant_two='''def prime_factors(number):
+    """Return the ascending prime factors of `number` with their multiplicities."""
+    if number < 2:
+        raise ValueError(f"prime factors are undefined for {number}")
+    factors = []
+    remaining = number
+    while remaining > 1:
+        divisor = next(
+            (
+                candidate
+                for candidate in range(2, int(remaining**0.5) + 1)
+                if remaining % candidate == 0
+            ),
+            remaining,
+        )
+        factors.append(divisor)
+        remaining //= divisor
+    return factors''',
+    variant_three='''def prime_factors(number):
+    """Return the ascending prime factors of `number` with their multiplicities."""
+    factors = []
+    remaining = number
+    candidate = 2
+    while candidate * candidate <= remaining:
+        while remaining % candidate == 0:
+            factors.append(candidate)
+            remaining //= candidate
+        candidate += 1
+    if remaining > 1:
+        factors.append(remaining)
+    return factors''',
+    variant_four='''def prime_factors(number):
+    """Return the ascending prime factors of `number` with their multiplicities."""
+    if number < 2:
+        raise ValueError(f"prime factors are undefined for {number}")
+    factors = []
+    remaining = number
+    limit = int(remaining**0.5)
+    for candidate in range(2, limit + 1):
+        while remaining % candidate == 0:
+            factors.append(candidate)
+            remaining //= candidate
+    return factors''',
+    visible_test=_test_module(
+        "prime_factors",
+        "Published contract for factorising a whole number.",
+        """
+def test_a_number_with_repeated_factors_repeats_them() -> None:
+    assert prime_factors(12) == [2, 2, 3]
+
+
+def test_a_power_of_two_is_all_twos() -> None:
+    assert prime_factors(8) == [2, 2, 2]
+
+
+def test_a_square_factorises_in_pairs() -> None:
+    assert prime_factors(36) == [2, 2, 3, 3]
+""",
+        imports="from prime_factors import prime_factors\n",
+    ),
+    hidden_test=_test_module(
+        "prime_factors",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_number_with_repeated_factors_repeats_them() -> None:
+    assert prime_factors(12) == [2, 2, 3]
+
+
+def test_a_prime_factor_above_the_square_root_is_collected() -> None:
+    assert prime_factors(14) == [2, 7]
+    assert prime_factors(97) == [97]
+
+
+def test_a_number_below_two_is_refused() -> None:
+    with pytest.raises(ValueError):
+        prime_factors(1)
+""",
+        imports="from prime_factors import prime_factors\n",
+    ),
+)
+
+# ----------------------------------------------------------------------- parsing and validation
+
+_G023 = D2TaskSpec(
+    template_id="d5_parsing.line_continuation",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d5-parsing-line-continuation",
+    module="line_continuation",
+    module_doc="Rejoining physical lines that an author split across a continuation marker.",
+    issue=(
+        "join_continuations() is documented to rejoin lines split across a continuation marker. "
+        "Callers report that a file whose last line is still continued loses that line "
+        "altogether, and that an indented continuation carries its indentation into the middle "
+        "of the joined text."
+    ),
+    expected=(
+        "join_continuations(lines) returns the logical lines in order. A line ending in '&' "
+        "continues onto the next with the marker removed, the continuation's leading "
+        "whitespace is dropped before joining, and a continuation still open at the end of the "
+        "input yields its logical line all the same."
+    ),
+    baseline_reason=(
+        "it throws away whatever is still buffered when the input ends, and it appends the "
+        "continuation exactly as written rather than trimming its indentation"
+    ),
+    edge_cases=(
+        "a continuation still open at the end of the input yields its line",
+        "an indented continuation is joined without its indentation",
+    ),
+    baseline='''def join_continuations(lines):
+    """Return the logical lines of `lines`, rejoining continuations."""
+    joined = []
+    buffer = ""
+    for line in lines:
+        if line.endswith("&"):
+            buffer += line[:-1]
+            continue
+        joined.append(buffer + line)
+        buffer = ""
+    return joined''',
+    variant_one='''def join_continuations(lines):
+    """Return the logical lines of `lines`, rejoining continuations."""
+    joined = []
+    buffer = ""
+    for line in lines:
+        piece = line.lstrip() if buffer else line
+        if piece.endswith("&"):
+            buffer += piece[:-1]
+            continue
+        joined.append(buffer + piece)
+        buffer = ""
+    if buffer:
+        joined.append(buffer)
+    return joined''',
+    variant_two='''def join_continuations(lines):
+    """Return the logical lines of `lines`, rejoining continuations."""
+    joined = []
+    parts = []
+    for line in lines:
+        continued = line.endswith("&")
+        text = line[:-1] if continued else line
+        parts.append(text.lstrip() if parts else text)
+        if not continued:
+            joined.append("".join(parts))
+            parts = []
+    if parts:
+        joined.append("".join(parts))
+    return joined''',
+    variant_three='''def join_continuations(lines):
+    """Return the logical lines of `lines`, rejoining continuations."""
+    joined = []
+    buffer = ""
+    for line in lines:
+        if line.endswith("&"):
+            buffer += line[:-1]
+            continue
+        joined.append(buffer + line)
+        buffer = ""
+    if buffer:
+        joined.append(buffer)
+    return joined''',
+    variant_four='''def join_continuations(lines):
+    """Return the logical lines of `lines`, rejoining continuations."""
+    joined = []
+    buffer = ""
+    for line in lines:
+        piece = line.lstrip() if buffer else line
+        if piece.endswith("&"):
+            buffer += piece[:-1]
+            continue
+        joined.append(buffer + piece)
+        buffer = ""
+    return joined''',
+    visible_test=_test_module(
+        "line_continuation",
+        "Published contract for rejoining continued lines.",
+        """
+def test_a_marked_line_joins_the_one_after_it() -> None:
+    assert join_continuations(["alpha&", "beta", "gamma"]) == ["alphabeta", "gamma"]
+
+
+def test_plain_lines_pass_through_unchanged() -> None:
+    assert join_continuations(["one", "two"]) == ["one", "two"]
+""",
+        imports="from line_continuation import join_continuations\n",
+    ),
+    hidden_test=_test_module(
+        "line_continuation",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_marked_line_joins_the_one_after_it() -> None:
+    assert join_continuations(["alpha&", "beta", "gamma"]) == ["alphabeta", "gamma"]
+
+
+def test_a_continuation_open_at_the_end_still_yields_its_line() -> None:
+    assert join_continuations(["alpha&", "beta&"]) == ["alphabeta"]
+
+
+def test_an_indented_continuation_loses_its_indentation() -> None:
+    assert join_continuations(["first&", "    second"]) == ["firstsecond"]
+""",
+        imports="from line_continuation import join_continuations\n",
+    ),
+)
+
+
+_G024 = D2TaskSpec(
+    template_id="d5_parsing.accept_quality",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d5-parsing-accept-quality",
+    module="accept_quality",
+    module_doc="Reading which representations a client would rather be sent.",
+    issue=(
+        "preferred_types() is documented to order the media types of an Accept header by "
+        "preference. Callers report that a type offered without an explicit weight sinks to "
+        "the bottom of the order, and that a type the client explicitly refused is still "
+        "offered back."
+    ),
+    expected=(
+        "preferred_types(header) returns the media types in descending order of quality, a "
+        "type carrying no explicit q taking quality one, a type carrying q=0 being left out "
+        "altogether, and types of equal quality keeping the order the header gave them."
+    ),
+    baseline_reason=(
+        "it takes a missing q as zero rather than one, and it ranks a refused type instead of "
+        "dropping it"
+    ),
+    edge_cases=(
+        "a type with no explicit q takes quality one",
+        "a type with q=0 is left out",
+    ),
+    baseline='''def preferred_types(header):
+    """Return the media types of `header` in descending order of preference."""
+    ranked = []
+    for position, part in enumerate(header.split(",")):
+        pieces = [piece.strip() for piece in part.split(";")]
+        media = pieces[0]
+        quality = 0.0
+        for piece in pieces[1:]:
+            if piece.startswith("q="):
+                quality = float(piece[2:])
+        ranked.append((-quality, position, media))
+    ranked.sort()
+    return [media for _, _, media in ranked]''',
+    variant_one='''def preferred_types(header):
+    """Return the media types of `header` in descending order of preference."""
+    ranked = []
+    for position, part in enumerate(header.split(",")):
+        pieces = [piece.strip() for piece in part.split(";")]
+        media = pieces[0]
+        quality = 1.0
+        for piece in pieces[1:]:
+            if piece.startswith("q="):
+                quality = float(piece[2:])
+        if quality == 0.0:
+            continue
+        ranked.append((-quality, position, media))
+    ranked.sort()
+    return [media for _, _, media in ranked]''',
+    variant_two='''def preferred_types(header):
+    """Return the media types of `header` in descending order of preference."""
+    entries = []
+    for part in header.split(","):
+        media, _, parameters = part.strip().partition(";")
+        quality = 1.0
+        for parameter in parameters.split(";"):
+            name, sign, value = parameter.strip().partition("=")
+            if sign and name == "q":
+                quality = float(value)
+        if quality > 0.0:
+            entries.append((media.strip(), quality))
+    order = sorted(range(len(entries)), key=lambda index: (-entries[index][1], index))
+    return [entries[index][0] for index in order]''',
+    variant_three='''def preferred_types(header):
+    """Return the media types of `header` in descending order of preference."""
+    ranked = []
+    for position, part in enumerate(header.split(",")):
+        pieces = [piece.strip() for piece in part.split(";")]
+        media = pieces[0]
+        quality = 1.0
+        for piece in pieces[1:]:
+            if piece.startswith("q="):
+                quality = float(piece[2:])
+        ranked.append((-quality, position, media))
+    ranked.sort()
+    return [media for _, _, media in ranked]''',
+    variant_four='''def preferred_types(header):
+    """Return the media types of `header` in descending order of preference."""
+    ranked = []
+    for position, part in enumerate(header.split(",")):
+        pieces = [piece.strip() for piece in part.split(";")]
+        media = pieces[0]
+        quality = 0.0
+        for piece in pieces[1:]:
+            if piece.startswith("q="):
+                quality = float(piece[2:])
+        if quality == 0.0:
+            continue
+        ranked.append((-quality, position, media))
+    ranked.sort()
+    return [media for _, _, media in ranked]''',
+    visible_test=_test_module(
+        "accept_quality",
+        "Published contract for ordering a client's accepted types.",
+        """
+def test_the_heavier_weight_is_offered_first() -> None:
+    header = "text/html;q=0.8, application/json;q=0.9"
+    assert preferred_types(header) == ["application/json", "text/html"]
+
+
+def test_equal_weights_keep_the_order_of_the_header() -> None:
+    assert preferred_types("a/b;q=0.5, c/d;q=0.5") == ["a/b", "c/d"]
+
+
+def test_a_single_weighted_type_is_returned_alone() -> None:
+    assert preferred_types("a/b;q=0.5") == ["a/b"]
+""",
+        imports="from accept_quality import preferred_types\n",
+    ),
+    hidden_test=_test_module(
+        "accept_quality",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_heavier_weight_is_offered_first() -> None:
+    header = "text/html;q=0.8, application/json;q=0.9"
+    assert preferred_types(header) == ["application/json", "text/html"]
+
+
+def test_a_type_with_no_weight_is_wanted_most() -> None:
+    assert preferred_types("text/plain, text/html;q=0.5") == ["text/plain", "text/html"]
+
+
+def test_a_refused_type_is_left_out() -> None:
+    assert preferred_types("a/b;q=0.9, c/d;q=0") == ["a/b"]
+""",
+        imports="from accept_quality import preferred_types\n",
+    ),
+)
+
+# ------------------------------------------------------------------------- data transformation
+
+_G025 = D2TaskSpec(
+    template_id="d5_transform.collate_values",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d5-transform-collate-values",
+    module="collate_values",
+    module_doc="Gathering a stream of labelled readings under the labels that carried them.",
+    issue=(
+        "collate() is documented to gather a stream of (label, reading) pairs under their "
+        "labels. Callers report that a label reappearing later in the stream loses the "
+        "readings it carried earlier on, and that the readings under a label come back "
+        "ascending rather than in the order they arrived."
+    ),
+    expected=(
+        "collate(pairs) returns a mapping from label to the list of readings that label "
+        "carried, labels in the order they were first seen, readings in the order they "
+        "arrived, and a label reappearing later in the stream extending the list it already "
+        "has rather than starting a new one."
+    ),
+    baseline_reason=(
+        "it gathers only runs of adjacent pairs, so a label that comes back later overwrites "
+        "what it gathered before, and it sorts each run instead of keeping arrival order"
+    ),
+    edge_cases=(
+        "a label reappearing later extends the readings it already has",
+        "the readings keep the order they arrived in",
+    ),
+    imports="from itertools import groupby\n",
+    baseline='''def collate(pairs):
+    """Return the readings of `pairs` gathered under their labels."""
+    collated = {}
+    for label, group in groupby(pairs, key=lambda pair: pair[0]):
+        collated[label] = sorted(reading for _, reading in group)
+    return collated''',
+    variant_one='''def collate(pairs):
+    """Return the readings of `pairs` gathered under their labels."""
+    collated = {}
+    for label, reading in pairs:
+        collated.setdefault(label, []).append(reading)
+    return collated''',
+    variant_two='''def collate(pairs):
+    """Return the readings of `pairs` gathered under their labels."""
+    ordered = list(pairs)
+    labels = []
+    for label, _ in ordered:
+        if label not in labels:
+            labels.append(label)
+    return {
+        label: [reading for other, reading in ordered if other == label] for label in labels
+    }''',
+    variant_three='''def collate(pairs):
+    """Return the readings of `pairs` gathered under their labels."""
+    collated = {}
+    for label, reading in pairs:
+        collated.setdefault(label, []).append(reading)
+    return {label: sorted(readings) for label, readings in collated.items()}''',
+    variant_four='''def collate(pairs):
+    """Return the readings of `pairs` gathered under their labels."""
+    collated = {}
+    for label, group in groupby(pairs, key=lambda pair: pair[0]):
+        collated[label] = [reading for _, reading in group]
+    return collated''',
+    visible_test=_test_module(
+        "collate_values",
+        "Published contract for gathering readings under their labels.",
+        """
+def test_readings_gather_under_the_label_that_carried_them() -> None:
+    assert collate([("a", 1), ("a", 2), ("b", 3)]) == {"a": [1, 2], "b": [3]}
+
+
+def test_an_empty_stream_gathers_nothing() -> None:
+    assert collate([]) == {}
+""",
+        imports="from collate_values import collate\n",
+    ),
+    hidden_test=_test_module(
+        "collate_values",
+        "The part of the contract the published tests do not state.",
+        """
+def test_readings_gather_under_the_label_that_carried_them() -> None:
+    assert collate([("a", 1), ("a", 2), ("b", 3)]) == {"a": [1, 2], "b": [3]}
+
+
+def test_a_label_coming_back_later_keeps_what_it_gathered_before() -> None:
+    assert collate([("a", 1), ("b", 2), ("a", 3)]) == {"a": [1, 3], "b": [2]}
+
+
+def test_the_readings_keep_the_order_they_arrived_in() -> None:
+    assert collate([("a", 3), ("a", 1)]) == {"a": [3, 1]}
+""",
+        imports="from collate_values import collate\n",
+    ),
+)
+
+
+_G026 = D2TaskSpec(
+    template_id="d5_transform.sequence_diff",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d5-transform-sequence-diff",
+    module="sequence_diff",
+    module_doc="Saying what a listing gained and lost between two readings.",
+    issue=(
+        "diff_sequences() is documented to say what a listing gained and lost. Callers report "
+        "that a second copy of an entry that was only there once before is not reported as "
+        "gained, and that the report comes back alphabetically rather than in the order the "
+        "listing reads."
+    ),
+    expected=(
+        "diff_sequences(old, new) returns (added, removed). Added holds the entries of `new` "
+        "that `old` does not account for, in the order `new` gives them, removed holds the "
+        "entries of `old` that `new` does not account for, in the order `old` gives them, and "
+        "an entry appearing more often on one side is reported for the surplus only."
+    ),
+    baseline_reason=(
+        "it compares the two listings as sets, which forgets how often an entry appears, and "
+        "it sorts what is left instead of keeping the reading order"
+    ),
+    edge_cases=(
+        "an entry appearing more often on one side is reported for the surplus",
+        "the report keeps the order the listing reads rather than sorting",
+    ),
+    baseline='''def diff_sequences(old, new):
+    """Return (added, removed) between the `old` and `new` listings."""
+    added = sorted(set(new) - set(old))
+    removed = sorted(set(old) - set(new))
+    return added, removed''',
+    variant_one='''def diff_sequences(old, new):
+    """Return (added, removed) between the `old` and `new` listings."""
+    remaining = list(old)
+    added = []
+    for entry in new:
+        if entry in remaining:
+            remaining.remove(entry)
+        else:
+            added.append(entry)
+    kept = list(new)
+    removed = []
+    for entry in old:
+        if entry in kept:
+            kept.remove(entry)
+        else:
+            removed.append(entry)
+    return added, removed''',
+    variant_two='''def diff_sequences(old, new):
+    """Return (added, removed) between the `old` and `new` listings."""
+    surplus = {}
+    for entry in old:
+        surplus[entry] = surplus.get(entry, 0) - 1
+    for entry in new:
+        surplus[entry] = surplus.get(entry, 0) + 1
+    budget = dict(surplus)
+    added = []
+    for entry in new:
+        if budget.get(entry, 0) > 0:
+            budget[entry] -= 1
+            added.append(entry)
+    shortfall = dict(surplus)
+    removed = []
+    for entry in old:
+        if shortfall.get(entry, 0) < 0:
+            shortfall[entry] += 1
+            removed.append(entry)
+    return added, removed''',
+    variant_three='''def diff_sequences(old, new):
+    """Return (added, removed) between the `old` and `new` listings."""
+    remaining = list(old)
+    added = []
+    for entry in new:
+        if entry in remaining:
+            remaining.remove(entry)
+        else:
+            added.append(entry)
+    kept = list(new)
+    removed = []
+    for entry in old:
+        if entry in kept:
+            kept.remove(entry)
+        else:
+            removed.append(entry)
+    return sorted(added), sorted(removed)''',
+    variant_four='''def diff_sequences(old, new):
+    """Return (added, removed) between the `old` and `new` listings."""
+    known = set(old)
+    seen = set(new)
+    added = [entry for entry in new if entry not in known]
+    removed = [entry for entry in old if entry not in seen]
+    return added, removed''',
+    visible_test=_test_module(
+        "sequence_diff",
+        "Published contract for reporting what a listing gained and lost.",
+        """
+def test_one_entry_gained_and_one_lost() -> None:
+    assert diff_sequences(["a", "b", "c"], ["a", "c", "d"]) == (["d"], ["b"])
+
+
+def test_an_unchanged_listing_reports_nothing() -> None:
+    assert diff_sequences(["x"], ["x"]) == ([], [])
+""",
+        imports="from sequence_diff import diff_sequences\n",
+    ),
+    hidden_test=_test_module(
+        "sequence_diff",
+        "The part of the contract the published tests do not state.",
+        """
+def test_one_entry_gained_and_one_lost() -> None:
+    assert diff_sequences(["a", "b", "c"], ["a", "c", "d"]) == (["d"], ["b"])
+
+
+def test_a_second_copy_of_an_entry_counts_as_gained() -> None:
+    assert diff_sequences(["a"], ["a", "a"]) == (["a"], [])
+
+
+def test_the_report_keeps_the_order_the_listing_reads() -> None:
+    assert diff_sequences(["m"], ["z", "b"]) == (["z", "b"], ["m"])
+""",
+        imports="from sequence_diff import diff_sequences\n",
+    ),
+)
+
+# ---------------------------------------------------------------------- state and idempotency
+
+_G027 = D2TaskSpec(
+    template_id="d5_state.token_bucket",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d5-state-token-bucket",
+    module="token_bucket",
+    module_doc="Deciding whether a caller may spend against a bucket that refills over time.",
+    issue=(
+        "spend() is documented to refill a bucket by the time that has passed and then grant "
+        "the spend if the bucket can cover it. Operators report that a caller idle overnight "
+        "comes back with far more than the bucket holds, and that a node whose clock steps "
+        "backwards is refused for readings it should have covered."
+    ),
+    expected=(
+        "spend(state, now, cost) returns (granted, state). The bucket first gains rate tokens "
+        "for every unit of time since its stamp but never passes its capacity, a reading "
+        "earlier than the stamp gains nothing and leaves the stamp where it was, the spend is "
+        "granted only when the bucket covers the cost, and the caller's state is left alone."
+    ),
+    baseline_reason=(
+        "it adds the whole refill without looking at the capacity, and it computes the elapsed "
+        "time as a plain subtraction that goes negative when the clock steps backwards"
+    ),
+    edge_cases=(
+        "a long idle fills the bucket no further than its capacity",
+        "a reading earlier than the stamp gains nothing and keeps the stamp",
+    ),
+    baseline='''def spend(state, now, cost):
+    """Return (granted, state) after refilling the bucket up to `now` and spending `cost`."""
+    tokens = state["tokens"] + (now - state["stamp"]) * state["rate"]
+    granted = tokens >= cost
+    if granted:
+        tokens -= cost
+    return granted, {**state, "tokens": tokens, "stamp": now}''',
+    variant_one='''def spend(state, now, cost):
+    """Return (granted, state) after refilling the bucket up to `now` and spending `cost`."""
+    elapsed = max(now - state["stamp"], 0)
+    tokens = min(state["tokens"] + elapsed * state["rate"], state["capacity"])
+    granted = tokens >= cost
+    if granted:
+        tokens -= cost
+    return granted, {**state, "tokens": tokens, "stamp": max(state["stamp"], now)}''',
+    variant_two='''def spend(state, now, cost):
+    """Return (granted, state) after refilling the bucket up to `now` and spending `cost`."""
+    updated = dict(state)
+    if now > updated["stamp"]:
+        gained = (now - updated["stamp"]) * updated["rate"]
+        headroom = updated["capacity"] - updated["tokens"]
+        updated["tokens"] += min(gained, max(headroom, 0))
+        updated["stamp"] = now
+    if updated["tokens"] < cost:
+        return False, updated
+    updated["tokens"] -= cost
+    return True, updated''',
+    variant_three='''def spend(state, now, cost):
+    """Return (granted, state) after refilling the bucket up to `now` and spending `cost`."""
+    gained = (now - state["stamp"]) * state["rate"]
+    tokens = min(state["tokens"] + gained, state["capacity"])
+    granted = tokens >= cost
+    if granted:
+        tokens -= cost
+    return granted, {**state, "tokens": tokens, "stamp": now}''',
+    variant_four='''def spend(state, now, cost):
+    """Return (granted, state) after refilling the bucket up to `now` and spending `cost`."""
+    elapsed = max(now - state["stamp"], 0)
+    tokens = state["tokens"] + elapsed * state["rate"]
+    granted = tokens >= cost
+    if granted:
+        tokens -= cost
+    return granted, {**state, "tokens": tokens, "stamp": max(state["stamp"], now)}''',
+    visible_test=_test_module(
+        "token_bucket",
+        "Published contract for spending against a refilling bucket.",
+        """
+def test_a_spend_the_refilled_bucket_covers_is_granted() -> None:
+    state = {"tokens": 2, "stamp": 0, "capacity": 10, "rate": 1}
+    assert spend(state, 3, 4) == (True, {"tokens": 1, "stamp": 3, "capacity": 10, "rate": 1})
+
+
+def test_a_spend_the_bucket_cannot_cover_is_refused() -> None:
+    state = {"tokens": 2, "stamp": 0, "capacity": 10, "rate": 1}
+    assert spend(state, 1, 5) == (False, {"tokens": 3, "stamp": 1, "capacity": 10, "rate": 1})
+
+
+def test_the_callers_state_is_left_alone() -> None:
+    state = {"tokens": 2, "stamp": 0, "capacity": 10, "rate": 1}
+    spend(state, 3, 1)
+    assert state == {"tokens": 2, "stamp": 0, "capacity": 10, "rate": 1}
+""",
+        imports="from token_bucket import spend\n",
+    ),
+    hidden_test=_test_module(
+        "token_bucket",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_spend_the_refilled_bucket_covers_is_granted() -> None:
+    state = {"tokens": 2, "stamp": 0, "capacity": 10, "rate": 1}
+    assert spend(state, 3, 4) == (True, {"tokens": 1, "stamp": 3, "capacity": 10, "rate": 1})
+
+
+def test_a_long_idle_fills_no_further_than_the_capacity() -> None:
+    state = {"tokens": 2, "stamp": 0, "capacity": 10, "rate": 1}
+    assert spend(state, 100, 1) == (
+        True,
+        {"tokens": 9, "stamp": 100, "capacity": 10, "rate": 1},
+    )
+
+
+def test_a_reading_from_before_the_stamp_gains_nothing() -> None:
+    state = {"tokens": 5, "stamp": 10, "capacity": 10, "rate": 1}
+    assert spend(state, 4, 1) == (True, {"tokens": 4, "stamp": 10, "capacity": 10, "rate": 1})
+""",
+        imports="from token_bucket import spend\n",
+    ),
+)
+
+
+_G028 = D2TaskSpec(
+    template_id="d5_state.config_patch",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d5-state-config-patch",
+    module="config_patch",
+    module_doc="Laying an overlay over stored settings without losing what it does not mention.",
+    issue=(
+        "apply_patch() is documented to lay an overlay over stored settings. Operators report "
+        "that a setting they meant to clear comes back holding a null instead of being gone, "
+        "and that overriding one entry of a nested section wipes out the rest of the section."
+    ),
+    expected=(
+        "apply_patch(config, patch) returns a new mapping with the patch laid over the "
+        "settings. A value of None removes the setting and removing one that was never there "
+        "is not an error, a mapping value is laid over the mapping already stored rather than "
+        "replacing it, and the caller's mapping is left as it was."
+    ),
+    baseline_reason=(
+        "it merges the two mappings wholesale, so a null is stored rather than removing the "
+        "setting and a nested section is replaced rather than overlaid"
+    ),
+    edge_cases=(
+        "a value of None removes the setting, absent or not",
+        "a mapping value is laid over the section already stored",
+    ),
+    baseline='''def apply_patch(config, patch):
+    """Return `config` with `patch` laid over it."""
+    return {**config, **patch}''',
+    variant_one='''def apply_patch(config, patch):
+    """Return `config` with `patch` laid over it."""
+    updated = dict(config)
+    for key, value in patch.items():
+        if value is None:
+            updated.pop(key, None)
+        elif isinstance(value, dict) and isinstance(updated.get(key), dict):
+            updated[key] = apply_patch(updated[key], value)
+        else:
+            updated[key] = value
+    return updated''',
+    variant_two='''def apply_patch(config, patch):
+    """Return `config` with `patch` laid over it."""
+    updated = {}
+    fresh = [key for key in patch if key not in config]
+    for key in list(config) + fresh:
+        if key not in patch:
+            updated[key] = config[key]
+            continue
+        value = patch[key]
+        if value is None:
+            continue
+        if isinstance(value, dict) and isinstance(config.get(key), dict):
+            value = apply_patch(config[key], value)
+        updated[key] = value
+    return updated''',
+    variant_three='''def apply_patch(config, patch):
+    """Return `config` with `patch` laid over it."""
+    updated = dict(config)
+    for key, value in patch.items():
+        if value is None:
+            updated.pop(key, None)
+        else:
+            updated[key] = value
+    return updated''',
+    variant_four='''def apply_patch(config, patch):
+    """Return `config` with `patch` laid over it."""
+    updated = dict(config)
+    for key, value in patch.items():
+        if isinstance(value, dict) and isinstance(updated.get(key), dict):
+            updated[key] = apply_patch(updated[key], value)
+        else:
+            updated[key] = value
+    return updated''',
+    visible_test=_test_module(
+        "config_patch",
+        "Published contract for laying an overlay over stored settings.",
+        """
+def test_the_overlay_replaces_and_adds() -> None:
+    assert apply_patch({"a": 1, "b": 2}, {"b": 3, "c": 4}) == {"a": 1, "b": 3, "c": 4}
+
+
+def test_an_empty_overlay_changes_nothing() -> None:
+    assert apply_patch({"a": 1}, {}) == {"a": 1}
+
+
+def test_the_callers_mapping_is_left_alone() -> None:
+    config = {"a": 1}
+    apply_patch(config, {"b": 2})
+    assert config == {"a": 1}
+""",
+        imports="from config_patch import apply_patch\n",
+    ),
+    hidden_test=_test_module(
+        "config_patch",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_overlay_replaces_and_adds() -> None:
+    assert apply_patch({"a": 1, "b": 2}, {"b": 3, "c": 4}) == {"a": 1, "b": 3, "c": 4}
+
+
+def test_a_null_removes_the_setting_whether_or_not_it_was_there() -> None:
+    assert apply_patch({"a": 1, "b": 2}, {"b": None, "z": None}) == {"a": 1}
+
+
+def test_a_section_is_laid_over_rather_than_replaced() -> None:
+    stored = {"limits": {"cpu": 1, "mem": 2}}
+    assert apply_patch(stored, {"limits": {"mem": 5}}) == {"limits": {"cpu": 1, "mem": 5}}
+""",
+        imports="from config_patch import apply_patch\n",
+    ),
+)
+
+# --------------------------------------------------------------------------- error handling
+
+_G029 = D2TaskSpec(
+    template_id="d5_error.rollback_steps",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d5-error-rollback-steps",
+    module="rollback_steps",
+    module_doc="Running a sequence of steps and unwinding it when one of them fails.",
+    issue=(
+        "run_steps() is documented to unwind the steps it has already applied when one fails. "
+        "Callers report that the unwinding runs in the order the steps were applied rather "
+        "than backwards, and that the step which raised is unwound even though it never took "
+        "effect."
+    ),
+    expected=(
+        "run_steps(steps) applies each (apply, undo) pair in order and returns what the applies "
+        "returned. When an apply raises, the steps that did take effect are undone in the "
+        "reverse of the order they were applied, the step that raised is not undone because it "
+        "never took effect, and the original exception is raised on."
+    ),
+    baseline_reason=(
+        "it records a step's undo before running its apply and replays the recorded undos "
+        "forwards, so the failing step is unwound and the order is back to front"
+    ),
+    edge_cases=(
+        "the steps that took effect are undone in reverse order",
+        "the step that raised is not undone",
+    ),
+    baseline='''def run_steps(steps):
+    """Apply every step, unwinding the ones that took effect if one raises."""
+    results = []
+    done = []
+    for apply_step, undo_step in steps:
+        done.append(undo_step)
+        try:
+            results.append(apply_step())
+        except Exception:
+            for undo in done:
+                undo()
+            raise
+    return results''',
+    variant_one='''def run_steps(steps):
+    """Apply every step, unwinding the ones that took effect if one raises."""
+    results = []
+    done = []
+    for apply_step, undo_step in steps:
+        try:
+            results.append(apply_step())
+        except Exception:
+            for undo in reversed(done):
+                undo()
+            raise
+        done.append(undo_step)
+    return results''',
+    variant_two='''def run_steps(steps):
+    """Apply every step, unwinding the ones that took effect if one raises."""
+    ordered = list(steps)
+    results = []
+    for position, pair in enumerate(ordered):
+        try:
+            results.append(pair[0]())
+        except Exception:
+            for earlier in range(position - 1, -1, -1):
+                ordered[earlier][1]()
+            raise
+    return results''',
+    variant_three='''def run_steps(steps):
+    """Apply every step, unwinding the ones that took effect if one raises."""
+    results = []
+    done = []
+    for apply_step, undo_step in steps:
+        done.append(undo_step)
+        try:
+            results.append(apply_step())
+        except Exception:
+            for undo in reversed(done):
+                undo()
+            raise
+    return results''',
+    variant_four='''def run_steps(steps):
+    """Apply every step, unwinding the ones that took effect if one raises."""
+    results = []
+    done = []
+    for apply_step, undo_step in steps:
+        try:
+            results.append(apply_step())
+        except Exception:
+            for undo in done:
+                undo()
+            raise
+        done.append(undo_step)
+    return results''',
+    visible_test=_test_module(
+        "rollback_steps",
+        "Published contract for running a sequence of steps.",
+        """
+def test_every_step_that_succeeds_returns_its_result() -> None:
+    steps = [(lambda: 1, lambda: None), (lambda: 2, lambda: None)]
+    assert run_steps(steps) == [1, 2]
+
+
+def test_no_steps_at_all_returns_nothing() -> None:
+    assert run_steps([]) == []
+""",
+        imports="from rollback_steps import run_steps\n",
+    ),
+    hidden_test=_test_module(
+        "rollback_steps",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def _boom():
+    raise RuntimeError("the third step refuses")
+
+
+def test_every_step_that_succeeds_returns_its_result() -> None:
+    steps = [(lambda: 1, lambda: None), (lambda: 2, lambda: None)]
+    assert run_steps(steps) == [1, 2]
+
+
+def test_the_steps_that_took_effect_are_undone_backwards() -> None:
+    log = []
+    steps = [
+        (lambda: log.append("a"), lambda: log.append("undo-a")),
+        (lambda: log.append("b"), lambda: log.append("undo-b")),
+        (_boom, lambda: None),
+    ]
+    with pytest.raises(RuntimeError):
+        run_steps(steps)
+    assert log == ["a", "b", "undo-b", "undo-a"]
+
+
+def test_the_step_that_raised_is_not_undone() -> None:
+    log = []
+    with pytest.raises(RuntimeError):
+        run_steps([(_boom, lambda: log.append("undo-the-failure"))])
+    assert log == []
+""",
+        imports="from rollback_steps import run_steps\n",
+    ),
+)
+
+
+_G030 = D2TaskSpec(
+    template_id="d5_error.redact_secrets",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d5-error-redact-secrets",
+    module="redact_secrets",
+    module_doc="Scrubbing the credentials out of a failure before anything writes it down.",
+    issue=(
+        "redact_error() is documented to scrub every known credential out of a failure before "
+        "it is logged. Reviewers report that a credential quoted twice in one message is only "
+        "scrubbed the first time, and that when one credential is the opening of another the "
+        "tail of the longer one is left in the log."
+    ),
+    expected=(
+        "redact_error(error, secrets) returns the text of the error with every occurrence of "
+        "every secret replaced by '***', the longer secrets being scrubbed first so that a "
+        "secret contained in another cannot leave the rest of it behind."
+    ),
+    baseline_reason=(
+        "it replaces one occurrence per secret and works through the secrets in the order it "
+        "was handed them rather than longest first"
+    ),
+    edge_cases=(
+        "every occurrence of a secret is scrubbed, not only the first",
+        "a secret contained in a longer one does not leave the rest behind",
+    ),
+    imports="import re\n",
+    baseline='''def redact_error(error, secrets):
+    """Return the text of `error` with every known secret scrubbed out."""
+    text = str(error)
+    for secret in secrets:
+        text = text.replace(secret, "***", 1)
+    return text''',
+    variant_one='''def redact_error(error, secrets):
+    """Return the text of `error` with every known secret scrubbed out."""
+    text = str(error)
+    for secret in sorted(secrets, key=len, reverse=True):
+        text = text.replace(secret, "***")
+    return text''',
+    variant_two='''def redact_error(error, secrets):
+    """Return the text of `error` with every known secret scrubbed out."""
+    ordered = sorted(secrets, key=len, reverse=True)
+    if not ordered:
+        return str(error)
+    pattern = "|".join(re.escape(secret) for secret in ordered)
+    return re.sub(pattern, "***", str(error))''',
+    variant_three='''def redact_error(error, secrets):
+    """Return the text of `error` with every known secret scrubbed out."""
+    text = str(error)
+    for secret in secrets:
+        text = text.replace(secret, "***")
+    return text''',
+    variant_four='''def redact_error(error, secrets):
+    """Return the text of `error` with every known secret scrubbed out."""
+    text = str(error)
+    for secret in sorted(secrets, key=len, reverse=True):
+        text = text.replace(secret, "***", 1)
+    return text''',
+    visible_test=_test_module(
+        "redact_secrets",
+        "Published contract for scrubbing a failure before it is logged.",
+        """
+def test_the_credential_is_scrubbed_out() -> None:
+    assert redact_error(ValueError("login failed for hunter2"), ["hunter2"]) == (
+        "login failed for ***"
+    )
+
+
+def test_two_separate_credentials_are_both_scrubbed() -> None:
+    assert redact_error(ValueError("a=alpha b=beta"), ["alpha", "beta"]) == "a=*** b=***"
+
+
+def test_a_message_holding_no_credential_is_untouched() -> None:
+    assert redact_error(ValueError("no secrets here"), ["abc"]) == "no secrets here"
+""",
+        imports="from redact_secrets import redact_error\n",
+    ),
+    hidden_test=_test_module(
+        "redact_secrets",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_credential_is_scrubbed_out() -> None:
+    assert redact_error(ValueError("login failed for hunter2"), ["hunter2"]) == (
+        "login failed for ***"
+    )
+
+
+def test_every_occurrence_is_scrubbed_not_only_the_first() -> None:
+    assert redact_error(ValueError("hunter2 then hunter2"), ["hunter2"]) == "*** then ***"
+
+
+def test_a_secret_contained_in_a_longer_one_leaves_nothing_behind() -> None:
+    assert redact_error(ValueError("token=pw123"), ["pw", "pw123"]) == "token=***"
+""",
+        imports="from redact_secrets import redact_error\n",
+    ),
+)
 
 #: The authored calibration groups, in template-id order. The target is 100; the achieved count
 #: is what `scripts/corpus_d5.py` reports and what S21D5-035 divides by. A shortfall is recorded
@@ -1940,4 +3328,16 @@ D5_CALIBRATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G016,
     _G017,
     _G018,
+    _G019,
+    _G020,
+    _G021,
+    _G022,
+    _G023,
+    _G024,
+    _G025,
+    _G026,
+    _G027,
+    _G028,
+    _G029,
+    _G030,
 )
