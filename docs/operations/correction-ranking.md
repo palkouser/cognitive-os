@@ -364,3 +364,100 @@ plus three that are D3's own:
   second read, and no re-decision on it.
 - **No parametric rung, threshold revision, refit or encoder revision opens on D3's evidence.**
   §10.2 closes all four, and the capacity residual is D4's input rather than D3's to chase.
+
+## Sprint 21D4: independent decisions, the twelfth integrity class, and one fence
+
+D4 changed three things an operator has to know about, and none of them is a model.
+
+### A replicated decision is not a decision
+
+This is the one that cost a sprint. D3 recorded 120 metamorphic ranking decisions; six
+semantics-preserving transformations of one group encode to **one** fitted vector, so those 120
+were 20 decisions repeated six times, and every rate in that sprint divided by the wrong number.
+Zero errors in 20 decisions bounds the true rate at 13.9%, not at zero.
+
+Revision 4's rule: a decision set reports `nominal_decisions`, `independent_decisions` and
+`replicated_decisions`, independence is equality of the fitted vector, and every accuracy, error
+and coverage rate divides by the independent count and says so in its own bytes. When you read
+any D4 number, read the denominator beside it.
+
+### The twelve-class report, and its two commands
+
+```bash
+COGOS_POSTGRES_DATABASE=cognitive_os_s21d4_test \
+  uv run python scripts/learned.py d4-integrity
+```
+
+Read-only and offline. It reads the committed evidence directory and nothing else, which is why
+a CI lane with no database, no store and no credential can run it. Two classes need an authority
+this form does not have, and they say so:
+
+```bash
+set -a && . ./.env.s21d4.local && set +a
+COGOS_POSTGRES_DATABASE=cognitive_os_s21d4_test \
+  uv run python scripts/learned.py d4-integrity \
+  --rehash-blobs --data-root /home/palkouser/projekt/cognitive-os-data
+```
+
+**A `warning` class is not a pass.** `artifact_bytes` warns when no store was opened;
+`isolation` warns when no data root was given to re-take the predecessor fingerprints. Neither
+means clean. The offline form reports 9 clean, 2 warnings and 1 not opened; the full form reports
+11 clean and 1 not opened, and only the second is a statement about the store.
+
+`not_opened` is not a soft pass either. `lifecycle` is `not_opened` because the pre-final
+checkpoint says so by hash, and it becomes `failed` the moment that record claims otherwise.
+
+The twelfth class is `decision_independence`. It scans every committed file for a rate taken
+over the counted decisions rather than the distinct ones, for a census that does not add up, and
+for a record claiming more distinct decisions than it counted. It also fails when it finds
+*nothing* to scan — a denominator check over zero denominators is worth nothing.
+
+The environment boundary is checked on the values before anything is opened, over five
+predecessor roots. `artifacts` and `artifacts-s21d3` differ by a suffix; the first is the
+development store and the second is the previous sprint's.
+
+### One fence for every path that truncates
+
+Eleven paths in this repository issue a `TRUNCATE` against the `cognitive_os` schema. All eleven
+call `infrastructure.postgres.truncation.require_nominated_for_truncation`, and none of them
+accepts "the database name ends in `_test`" as consent — every sprint's *evidence* database ends
+in `_test` too.
+
+```bash
+COGOS_TRUNCATABLE_DATABASE=<the scratch database you mean> \
+  uv run python scripts/learned.py smoke --confirm-isolated
+```
+
+Nominate the database you actually mean. Nominating one and connecting to another is refused
+loudly, because the next statement would have been a `TRUNCATE`. Nominating nothing skips rather
+than fails, so a whole-repository run cannot erase a store it was never pointed at on purpose.
+
+Three of those eleven are scale baselines and one of them truncates `events`, `artifacts` and
+`artifact_blobs` — the append-only store itself. Treat every scale baseline as destructive.
+
+### The two W7 commands, and the one that takes no environment
+
+```bash
+set -a && . ./.env.s21d4.local && set +a
+UV_CACHE_DIR=.cache/uv uv run python scripts/operations_d4.py
+```
+
+Provisioning, backup, container restart, restore into the D4 restore database, and 22 damage
+cases. It writes to the backup root, the restore database and a scratch directory, and to
+nothing else; every predecessor fingerprint is taken before and after.
+
+```bash
+UV_CACHE_DIR=.cache/uv uv run python scripts/verification_matrix_d4.py
+```
+
+**Deliberately no sourced environment.** Every row that needs a database names one itself. A
+release matrix run with an evidence environment exported puts that evidence database in front of
+whatever its rows run, which is how a full-suite row came to truncate one.
+
+### What D4 did not do, and does not claim
+
+D4 fitted no artifact. S21D4-039 selected no candidate, so nothing was loaded, sequenced,
+registered, verified or activated against a real model, and no D4 surface below the selection is
+described here as exercised. The rollback and refusal paths were proved on the isolated lifecycle
+fixture with the abstaining reference component, which is what S21D4-075 asks for and all it
+claims.

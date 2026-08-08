@@ -2,7 +2,7 @@
 
 - **Branch:** `feature/sprint-21d4-selective-correction-ranking`
 - **Waves:** W0 + W1 — authority and design; W2 — fresh evidence at scale; W3 — retrieval
-  surface; W4 — artifact and runtime; W7 — operations
+  surface; W4 — artifact and runtime; W7 — operations; W8 — documentation, gate and release
 - **Status:** W0 through W4 and W7 complete; W5 and W6 are bound not-opened by W4's checkpoint.
   Both experiment branches have returned their own hash-bound results, and both are negative:
   the correction branch selected no candidate (S21D4-039, `hypothesis_class_bound`) and the
@@ -600,6 +600,7 @@ confirms.
 | `sprint-21d4-advisory-boundary.json` | `5d3efbd584dc270a89a834ac104b1e815ac4beb8d545462fa0ae9a2d0d5c7177` | `1dca4f21cf88957b4bf2458475d7e7d8694b619362d237b115c5d9bac45b48f6` |
 | `sprint-21d4-pre-final-checkpoint.json` | `fdc1f9f16bda948506604c9f2c9ffc2cc700c51750d4cdcb77a1ef449c57f314` | `87c5473f61c177fe5db5aa1a5971759451c1f7a82b7364e9ac8dc3da99e9c6b1` |
 | `sprint-21d4-operations.json` | `47a5c701d7f98eb3c3cdf4a3b12c2bb90dfcb9ba9bd2c4d9b1af866c2a7017af` | `f12d0cb4229955b887060bcc168c4aaa56534dc8c23cc89a3a66e4bc7bfbd0f7` |
+| `sprint-21d4-gate-l2.json` | `52c7943957389a157f2a23d061c2e5b56efd91d52c6b0d33c9c0bab2a58c1ac2` | `6111bc14d835a80a4ec87e91fa6e1e5f0b6fad5ea6d34b6cf46b81d30c2248e2` |
 | `sprint-21d4-verification-matrix.json` | `dc9b6f7570ae69b22c75baf6165455bf2e271164cc06d68ae435ac04d671fcd0` | `584fd9636813b99b5d1d9118ba552ce58ab284a33f49aab034264da53e82cf9b` |
 
 Two hashes, because two things are addressed: the file, which is what another record cites

@@ -1,0 +1,326 @@
+{
+ "counts": {
+  "carried": 0,
+  "failed": 0,
+  "met": 12,
+  "met_as_rejection": 1,
+  "not_opened": 15,
+  "pending": 1
+ },
+ "final_outcomes_inspected": false,
+ "gate_contract_hash": "9e47bc618fc1eca8b66146eacdf1bd244fced79bb1c91f46f2c6ff4484bfd8a7",
+ "gate_d1_open": [
+  {
+   "closure_rule": "at least 200 unique eligible verifier-backed primary-surface outcomes",
+   "condition": 6,
+   "detail": "closed by the selection stop: the outcomes that would close it are final and canary outcomes, and neither was authorised",
+   "state": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 null candidate selection"
+  },
+  {
+   "closure_rule": "at least 20 primary-surface examples change the advisory action",
+   "condition": 7,
+   "detail": "closed by the selection stop: condition 13's evidence read against the D1 contract, and condition 13 never opened",
+   "state": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 null candidate selection"
+  },
+  {
+   "closure_rule": "a new retrieval holdout reaches both floors",
+   "condition": 15,
+   "detail": "measured and not reached: the fusion arm cleared Recall@5 at 0.7500 and missed MRR@10 at 0.4911 against a floor of 0.50",
+   "evidence": "sprint-21d4-retrieval-decision.json",
+   "evidence_sha256": "f5c19fa0cc290a335d5e250b80c009409cbb509e92e7f2210946c49982d8322f",
+   "first_failed_floor": "mrr_at_10",
+   "state": "remains_open"
+  }
+ ],
+ "gate_l2": [
+  {
+   "condition": 1,
+   "detail": "the D3 tag object bcf2976dd0f063b1 peels to ef4388b1bf9cb842, and the local and remote handles agree",
+   "evidence": "sprint-21d4-baseline.json",
+   "evidence_sha256": "6b2330a8f80da158a332a4607f0a0986ba5a78e26eee952197a69ca36902dbb6",
+   "rule": "the D3 release verified from live handles",
+   "state": "met"
+  },
+  {
+   "condition": 2,
+   "detail": "5 predecessor stores fingerprinted before and after; unchanged",
+   "evidence": "sprint-21d4-authority-isolation.json",
+   "evidence_sha256": "70a148d5747f9285808dd44d208e238fe8408fee3ada6f158bb5e3668883598f",
+   "rule": "every predecessor store reproduces its fingerprint before and after",
+   "state": "met"
+  },
+  {
+   "condition": 3,
+   "detail": "D3's 120 metamorphic decisions recomputed as 20 independent and 100 replicated, from D3's own evidence",
+   "evidence": "sprint-21d4-d3-reconciliation.json",
+   "evidence_sha256": "0fc00beac11cc7998ad8c3ae0b39d9065213a2d187114891c584ff52ea6bcf8e",
+   "rule": "D3's replica identity recomputed from D3's own evidence",
+   "state": "met"
+  },
+  {
+   "condition": 4,
+   "detail": "revision 4 published with measured_values: 0",
+   "evidence": "sprint-21d4-pre-registration.json",
+   "evidence_sha256": "526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9",
+   "rule": "revision 4 published before any D4 measurement",
+   "state": "met"
+  },
+  {
+   "condition": 5,
+   "detail": "all 400 candidate runs carry an independent hidden-verifier label",
+   "evidence": "sprint-21d4-calibration-campaign.json",
+   "evidence_sha256": "e2454b1bc6f2a74bc5d16e92e5b54b00e9ece2f7fe6936a6adcd0796dafd70dc",
+   "rule": "every attempted candidate carries an independent hidden-verifier label",
+   "state": "met"
+  },
+  {
+   "condition": 6,
+   "detail": "390 columns, all on the correction-ranking-v2 allowlist; 11 of 11 scans passed",
+   "evidence": "sprint-21d4-snapshots.json",
+   "evidence_sha256": "61ee21d42c11a842e8c985bab86717a9d63d0c2f72f4402ead9efdfda30221d9",
+   "rule": "no forbidden, identity, outcome or answer field reaches the fitted matrix",
+   "state": "met"
+  },
+  {
+   "condition": 7,
+   "detail": "6 roles, all pairwise disjoint; 15 role pairs share zero groups",
+   "evidence": "sprint-21d4-separation.json",
+   "evidence_sha256": "eaaf2827f64602ad57924d74d9d29782c7d5ad9f7669da6b43fff5d6289dcc68",
+   "rule": "no transitive group crosses a D4 role",
+   "state": "met"
+  },
+  {
+   "condition": 8,
+   "detail": "320 fitting observations over 80 groups and 400 calibration observations over 100 groups",
+   "evidence": "sprint-21d4-snapshots.json",
+   "evidence_sha256": "61ee21d42c11a842e8c985bab86717a9d63d0c2f72f4402ead9efdfda30221d9",
+   "rule": "at least 200/50 fitting and 40/10 calibration",
+   "state": "met"
+  },
+  {
+   "condition": 9,
+   "detail": "zero REAL_GOVERNED_RUN observations in fitting and calibration: {'training': 0, 'calibration': 0}",
+   "evidence": "sprint-21d4-snapshots.json",
+   "evidence_sha256": "61ee21d42c11a842e8c985bab86717a9d63d0c2f72f4402ead9efdfda30221d9",
+   "rule": "zero REAL_GOVERNED_RUN observations in fitting and calibration",
+   "state": "met"
+  },
+  {
+   "condition": 10,
+   "detail": "would have measured final A and B, each 120 new verifier-backed outcomes over 30 groups",
+   "evidence": "sprint-21d4-learner-selection.json",
+   "evidence_sha256": "f1f746af1ed89044b7ae8e768ee3b8386c908fba13e1305d5482356dffb720ed",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 null candidate selection"
+  },
+  {
+   "condition": 11,
+   "detail": "would have measured one artifact selected before final access, with final manifests inaccessible to fitting",
+   "evidence": "sprint-21d4-learner-selection.json",
+   "evidence_sha256": "f1f746af1ed89044b7ae8e768ee3b8386c908fba13e1305d5482356dffb720ed",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 null candidate selection"
+  },
+  {
+   "condition": 12,
+   "detail": "the strongest deterministic rung is lexical_similarity, measured on the same decisions, and all 144 of 144 frozen cells are reported",
+   "evidence": "sprint-21d4-learner-selection.json",
+   "evidence_sha256": "f1f746af1ed89044b7ae8e768ee3b8386c908fba13e1305d5482356dffb720ed",
+   "rule": "the strongest deterministic baseline and every frozen rung are recorded",
+   "state": "met"
+  },
+  {
+   "condition": 13,
+   "detail": "would have measured at least 20 final group decisions differing from the strongest baseline",
+   "evidence": "sprint-21d4-learner-selection.json",
+   "evidence_sha256": "f1f746af1ed89044b7ae8e768ee3b8386c908fba13e1305d5482356dffb720ed",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 null candidate selection"
+  },
+  {
+   "condition": 14,
+   "detail": "would have measured at least 5 absolute points or 20% relative error reduction on final evidence",
+   "evidence": "sprint-21d4-learner-selection.json",
+   "evidence_sha256": "f1f746af1ed89044b7ae8e768ee3b8386c908fba13e1305d5482356dffb720ed",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 null candidate selection"
+  },
+  {
+   "condition": 15,
+   "detail": "would have measured the paired group bootstrap at seed 21041 over 2,000 resamples",
+   "evidence": "sprint-21d4-learner-selection.json",
+   "evidence_sha256": "f1f746af1ed89044b7ae8e768ee3b8386c908fba13e1305d5482356dffb720ed",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 null candidate selection"
+  },
+  {
+   "condition": 16,
+   "detail": "would have measured a positive learned-minus-baseline direction in both final batches",
+   "evidence": "sprint-21d4-learner-selection.json",
+   "evidence_sha256": "f1f746af1ed89044b7ae8e768ee3b8386c908fba13e1305d5482356dffb720ed",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 null candidate selection"
+  },
+  {
+   "condition": 17,
+   "detail": "177 decision counts and 29 named denominators across 10 files, every rate over independent_decisions",
+   "evidence": "sprint-21d4-operations.json",
+   "evidence_sha256": "47a5c701d7f98eb3c3cdf4a3b12c2bb90dfcb9ba9bd2c4d9b1af866c2a7017af",
+   "rule": "every rate names its denominator and uses the independent one",
+   "state": "met"
+  },
+  {
+   "condition": 18,
+   "detail": "would have measured zero accepted-to-rejected safety, governance, permission, secret or destructive changes",
+   "evidence": "sprint-21d4-learner-selection.json",
+   "evidence_sha256": "f1f746af1ed89044b7ae8e768ee3b8386c908fba13e1305d5482356dffb720ed",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 null candidate selection"
+  },
+  {
+   "condition": 19,
+   "detail": "would have measured no retained domain losing more than 2 points and aggregate loss at most 1 point",
+   "evidence": "sprint-21d4-learner-selection.json",
+   "evidence_sha256": "f1f746af1ed89044b7ae8e768ee3b8386c908fba13e1305d5482356dffb720ed",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 null candidate selection"
+  },
+  {
+   "condition": 20,
+   "detail": "would have measured at least 100 pre-registered promotion metamorphic/OOD ranking decisions with exactly zero confident errors. Its own precondition was measured and returned nothing: the zero-error operating point was derived over 100 independent calibration decisions at both volumes and no cell reached zero confident errors on a non-empty admitted set, which is the stop that closed everything below it",
+   "evidence": "sprint-21d4-learner-selection.json",
+   "evidence_sha256": "f1f746af1ed89044b7ae8e768ee3b8386c908fba13e1305d5482356dffb720ed",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 null candidate selection"
+  },
+  {
+   "condition": 21,
+   "detail": "would have measured shadow mode changing zero executed decisions against final evidence",
+   "evidence": "sprint-21d4-learner-selection.json",
+   "evidence_sha256": "f1f746af1ed89044b7ae8e768ee3b8386c908fba13e1305d5482356dffb720ed",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 null candidate selection"
+  },
+  {
+   "condition": 22,
+   "detail": "would have measured the selected artifact as canonical inert JSON with complete lineage. D3 met this against a contract fixture it built; W4 declined to build a second one, because a record about a fixture is not a record about a candidate and §2.2 gives D4 no pass to inherit",
+   "evidence": "sprint-21d4-learner-selection.json",
+   "evidence_sha256": "f1f746af1ed89044b7ae8e768ee3b8386c908fba13e1305d5482356dffb720ed",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 null candidate selection"
+  },
+  {
+   "condition": 23,
+   "detail": "would have measured the runtime resolver reaching every reason code against the real artifact, each with an immediate deterministic fallback. S21D4-075 proved restoration and rollback on the isolated lifecycle fixture, which is a different claim and is recorded as one",
+   "evidence": "sprint-21d4-learner-selection.json",
+   "evidence_sha256": "f1f746af1ed89044b7ae8e768ee3b8386c908fba13e1305d5482356dffb720ed",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 null candidate selection"
+  },
+  {
+   "condition": 24,
+   "detail": "the floors were measured on 60 unseen queries and no arm cleared them; the first failed floor is mrr_at_10, and nothing was reopened to close it",
+   "evidence": "sprint-21d4-retrieval-decision.json",
+   "evidence_sha256": "f5c19fa0cc290a335d5e250b80c009409cbb509e92e7f2210946c49982d8322f",
+   "rule": "Recall@5 >= 0.70 and MRR@10 >= 0.50 on at least 50 distinct unseen queries",
+   "state": "met_as_rejection"
+  },
+  {
+   "condition": 25,
+   "detail": "would have measured a hash-bound canary manifest with the verifier mandatory and the kill switch immediate",
+   "evidence": "sprint-21d4-learner-selection.json",
+   "evidence_sha256": "f1f746af1ed89044b7ae8e768ee3b8386c908fba13e1305d5482356dffb720ed",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 null candidate selection"
+  },
+  {
+   "condition": 26,
+   "detail": "would have measured activation, loading, disable, restoration and rollback surviving restart on a real activation. The rollback and refusal halves were proved on the isolated fixture by S21D4-075; no real activation existed to prove the rest against",
+   "evidence": "sprint-21d4-learner-selection.json",
+   "evidence_sha256": "f1f746af1ed89044b7ae8e768ee3b8386c908fba13e1305d5482356dffb720ed",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 null candidate selection"
+  },
+  {
+   "condition": 27,
+   "detail": "would have measured an exact human approval over the existing fields, with no self-approval",
+   "evidence": "sprint-21d4-learner-selection.json",
+   "evidence_sha256": "f1f746af1ed89044b7ae8e768ee3b8386c908fba13e1305d5482356dffb720ed",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "stop_source": "S21D4-039 null candidate selection"
+  },
+  {
+   "condition": 28,
+   "detail": "30 of 30 release-matrix rows passed, 0 skipped, 0 structural findings",
+   "evidence": "sprint-21d4-verification-matrix.json",
+   "evidence_sha256": "dc9b6f7570ae69b22c75baf6165455bf2e271164cc06d68ae435ac04d671fcd0",
+   "rule": "every required isolated and repository check ran and passed, none skipped",
+   "state": "met"
+  },
+  {
+   "condition": 29,
+   "detail": "the protected merge, its exact-head post-merge main CI, the annotated tag and the remote verification. The gate-close regeneration is what decides this row",
+   "evidence": null,
+   "rule": "protected merge, post-merge exact-head CI, annotated tag, remote read",
+   "state": "pending"
+  }
+ ],
+ "gate_l2_conditions": 29,
+ "integrity_content_hash": "6111bc14d835a80a4ec87e91fa6e1e5f0b6fad5ea6d34b6cf46b81d30c2248e2",
+ "item": "S21D4-091",
+ "no_condition_is_carried_from_d3": true,
+ "pre_registration_sha256": "526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9",
+ "provisional_until": "the protected merge, its exact-head post-merge main CI, and remote tag verification",
+ "purpose": "The twenty-nine Gate L2 conditions and Gate D1's three open ones, each decided by the evidence that bears on it. No condition may be asserted; every row names its file and rule, or the stop hash that closed it.",
+ "recorded_at": "2026-08-08T06:48:16.500819Z",
+ "schema_version": 1,
+ "sprint": "21D4",
+ "stops": {
+  "retrieval": {
+   "first_failed_floor": "mrr_at_10",
+   "source": "S21D4-046 negative retrieval decision"
+  },
+  "selection": {
+   "hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+   "source": "S21D4-039 null candidate selection"
+  }
+ },
+ "thresholds_changed": 0,
+ "verdict": "gate_l2_does_not_pass",
+ "verdict_reason": "the gate passes only when every applicable condition is met; 15 were never opened, condition 24 is met as a rejection, and 1 awaits the protected release",
+ "wave": "W8"
+}
