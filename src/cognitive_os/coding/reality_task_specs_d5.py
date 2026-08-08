@@ -8814,6 +8814,1275 @@ def test_an_answer_of_nothing_is_the_answer() -> None:
     ),
 )
 
+# ------------------------------------------------------------------ boundary and collections
+
+_G079 = D2TaskSpec(
+    template_id="d5_boundary.diagonal_read",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d5-boundary-diagonal-read",
+    module="diagonal_read",
+    module_doc="Reading the leading diagonal off a grid of rows.",
+    issue=(
+        "diagonal() is documented to read the leading diagonal off a grid. Callers report that "
+        "a grid with more rows than columns runs off the end of a row, and that a grid whose "
+        "rows are not all the same width is read as though it were rectangular."
+    ),
+    expected=(
+        "diagonal(grid) returns the cells of the leading diagonal in order, stopping at the "
+        "shorter of the two sides so a grid taller than it is wide simply runs out, and raises "
+        "ValueError when the rows are not all the same width."
+    ),
+    baseline_reason=(
+        "it walks one step per row and indexes that far into each one, which passes the end of "
+        "a short row, and it never compares the widths of the rows to each other"
+    ),
+    edge_cases=(
+        "a grid taller than it is wide stops at the shorter side",
+        "rows that are not all the same width are refused",
+    ),
+    baseline='''def diagonal(grid):
+    """Return the cells of the leading diagonal of `grid`."""
+    return [grid[step][step] for step in range(len(grid))]''',
+    variant_one='''def diagonal(grid):
+    """Return the cells of the leading diagonal of `grid`."""
+    widths = {len(row) for row in grid}
+    if len(widths) > 1:
+        raise ValueError(f"the rows are of widths {sorted(widths)}")
+    reach = min(len(grid), widths.pop()) if grid else 0
+    return [grid[step][step] for step in range(reach)]''',
+    variant_two='''def diagonal(grid):
+    """Return the cells of the leading diagonal of `grid`."""
+    cells = []
+    width = None
+    for step, row in enumerate(grid):
+        if width is None:
+            width = len(row)
+        elif len(row) != width:
+            raise ValueError(f"row {step} is {len(row)} wide, not {width}")
+        if step < len(row):
+            cells.append(row[step])
+    return cells''',
+    variant_three='''def diagonal(grid):
+    """Return the cells of the leading diagonal of `grid`."""
+    reach = min(len(grid), len(grid[0])) if grid else 0
+    return [grid[step][step] for step in range(reach)]''',
+    variant_four='''def diagonal(grid):
+    """Return the cells of the leading diagonal of `grid`."""
+    widths = {len(row) for row in grid}
+    if len(widths) > 1:
+        raise ValueError(f"the rows are of widths {sorted(widths)}")
+    return [grid[step][step] for step in range(len(grid))]''',
+    visible_test=_test_module(
+        "diagonal_read",
+        "Published contract for reading a grid's leading diagonal.",
+        """
+def test_a_square_grid_reads_corner_to_corner() -> None:
+    assert diagonal([[1, 2], [3, 4]]) == [1, 4]
+
+
+def test_a_grid_of_one_cell_is_its_own_diagonal() -> None:
+    assert diagonal([[5]]) == [5]
+""",
+        imports="from diagonal_read import diagonal\n",
+    ),
+    hidden_test=_test_module(
+        "diagonal_read",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_square_grid_reads_corner_to_corner() -> None:
+    assert diagonal([[1, 2], [3, 4]]) == [1, 4]
+
+
+def test_a_grid_taller_than_it_is_wide_stops_at_the_shorter_side() -> None:
+    assert diagonal([[1, 2], [3, 4], [5, 6]]) == [1, 4]
+
+
+def test_rows_of_different_widths_are_refused() -> None:
+    with pytest.raises(ValueError):
+        diagonal([[1, 2], [3]])
+""",
+        imports="from diagonal_read import diagonal\n",
+    ),
+)
+
+
+_G080 = D2TaskSpec(
+    template_id="d5_boundary.increasing_runs",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d5-boundary-increasing-runs",
+    module="increasing_runs",
+    module_doc="Cutting a series wherever it stops climbing.",
+    issue=(
+        "runs() is documented to cut a series into the stretches over which it climbs. "
+        "Analysts report that a repeated reading is treated as though the series were still "
+        "climbing, and that a series with no readings at all raises."
+    ),
+    expected=(
+        "runs(values) returns the series cut into stretches over which each reading is strictly "
+        "above the one before it, so a repeat starts a new stretch, and returns no stretches "
+        "at all for no readings."
+    ),
+    baseline_reason=(
+        "it keeps a reading in the current stretch when it merely reaches the one before, and "
+        "it opens the first stretch from the first reading without checking there is one"
+    ),
+    edge_cases=(
+        "a repeated reading starts a new stretch",
+        "no readings at all gives no stretches",
+    ),
+    baseline='''def runs(values):
+    """Return `values` cut into strictly climbing stretches."""
+    out = []
+    current = [values[0]]
+    for previous, value in zip(values, values[1:]):
+        if value >= previous:
+            current.append(value)
+        else:
+            out.append(current)
+            current = [value]
+    out.append(current)
+    return out''',
+    variant_one='''def runs(values):
+    """Return `values` cut into strictly climbing stretches."""
+    readings = list(values)
+    if not readings:
+        return []
+    out = [[readings[0]]]
+    for previous, value in zip(readings, readings[1:]):
+        if value > previous:
+            out[-1].append(value)
+        else:
+            out.append([value])
+    return out''',
+    variant_two='''def runs(values):
+    """Return `values` cut into strictly climbing stretches."""
+    readings = list(values)
+    cuts = [
+        place + 1
+        for place, value in enumerate(readings[1:])
+        if value <= readings[place]
+    ]
+    bounds = [0, *cuts, len(readings)]
+    return [
+        readings[start:stop] for start, stop in zip(bounds, bounds[1:]) if stop > start
+    ]''',
+    variant_three='''def runs(values):
+    """Return `values` cut into strictly climbing stretches."""
+    out = []
+    current = [values[0]]
+    for previous, value in zip(values, values[1:]):
+        if value > previous:
+            current.append(value)
+        else:
+            out.append(current)
+            current = [value]
+    out.append(current)
+    return out''',
+    variant_four='''def runs(values):
+    """Return `values` cut into strictly climbing stretches."""
+    readings = list(values)
+    if not readings:
+        return []
+    out = []
+    current = [readings[0]]
+    for previous, value in zip(readings, readings[1:]):
+        if value >= previous:
+            current.append(value)
+        else:
+            out.append(current)
+            current = [value]
+    out.append(current)
+    return out''',
+    visible_test=_test_module(
+        "increasing_runs",
+        "Published contract for cutting a series where it stops climbing.",
+        """
+def test_a_fall_cuts_the_series() -> None:
+    assert runs([1, 2, 1, 3]) == [[1, 2], [1, 3]]
+
+
+def test_a_single_reading_is_a_stretch_of_its_own() -> None:
+    assert runs([5]) == [[5]]
+""",
+        imports="from increasing_runs import runs\n",
+    ),
+    hidden_test=_test_module(
+        "increasing_runs",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_fall_cuts_the_series() -> None:
+    assert runs([1, 2, 1, 3]) == [[1, 2], [1, 3]]
+
+
+def test_a_repeated_reading_starts_a_new_stretch() -> None:
+    assert runs([1, 1, 2]) == [[1], [1, 2]]
+
+
+def test_no_readings_at_all_gives_no_stretches() -> None:
+    assert runs([]) == []
+""",
+        imports="from increasing_runs import runs\n",
+    ),
+)
+
+# ---------------------------------------------------------------------------- numeric logic
+
+_G081 = D2TaskSpec(
+    template_id="d5_numeric.modular_inverse",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d5-numeric-modular-inverse",
+    module="modular_inverse",
+    module_doc="Finding the number that multiplies back to one under a modulus.",
+    issue=(
+        "inverse() is documented to return the number that multiplies `value` back to one "
+        "under the modulus. Callers report that a value sharing a factor with the modulus, "
+        "which has no inverse at all, comes back with a number anyway, and that the answer is "
+        "sometimes negative where the caller wants it inside the modulus."
+    ),
+    expected=(
+        "inverse(value, modulus) returns the number in the range zero up to the modulus that "
+        "multiplies `value` back to one under that modulus, and raises ValueError when the "
+        "value and the modulus share a factor, because then no such number exists."
+    ),
+    baseline_reason=(
+        "it hands back the coefficient the extended algorithm leaves it with, which can be "
+        "negative, and it never looks at the divisor the algorithm arrived at"
+    ),
+    edge_cases=(
+        "a value sharing a factor with the modulus is refused",
+        "the answer is brought inside the modulus rather than left negative",
+    ),
+    baseline='''def inverse(value, modulus):
+    """Return the number that multiplies `value` back to one under `modulus`."""
+    old_remainder, remainder = value, modulus
+    old_factor, factor = 1, 0
+    while remainder != 0:
+        quotient = old_remainder // remainder
+        old_remainder, remainder = remainder, old_remainder - quotient * remainder
+        old_factor, factor = factor, old_factor - quotient * factor
+    return old_factor''',
+    variant_one='''def inverse(value, modulus):
+    """Return the number that multiplies `value` back to one under `modulus`."""
+    old_remainder, remainder = value, modulus
+    old_factor, factor = 1, 0
+    while remainder != 0:
+        quotient = old_remainder // remainder
+        old_remainder, remainder = remainder, old_remainder - quotient * remainder
+        old_factor, factor = factor, old_factor - quotient * factor
+    if old_remainder != 1:
+        raise ValueError(f"{value} and {modulus} share a factor, so there is no inverse")
+    return old_factor % modulus''',
+    variant_two='''def inverse(value, modulus):
+    """Return the number that multiplies `value` back to one under `modulus`."""
+    for candidate in range(modulus):
+        if value * candidate % modulus == 1:
+            return candidate
+    raise ValueError(f"{value} and {modulus} share a factor, so there is no inverse")''',
+    variant_three='''def inverse(value, modulus):
+    """Return the number that multiplies `value` back to one under `modulus`."""
+    old_remainder, remainder = value, modulus
+    old_factor, factor = 1, 0
+    while remainder != 0:
+        quotient = old_remainder // remainder
+        old_remainder, remainder = remainder, old_remainder - quotient * remainder
+        old_factor, factor = factor, old_factor - quotient * factor
+    if old_remainder != 1:
+        raise ValueError(f"{value} and {modulus} share a factor, so there is no inverse")
+    return old_factor''',
+    variant_four='''def inverse(value, modulus):
+    """Return the number that multiplies `value` back to one under `modulus`."""
+    old_remainder, remainder = value, modulus
+    old_factor, factor = 1, 0
+    while remainder != 0:
+        quotient = old_remainder // remainder
+        old_remainder, remainder = remainder, old_remainder - quotient * remainder
+        old_factor, factor = factor, old_factor - quotient * factor
+    return old_factor % modulus''',
+    visible_test=_test_module(
+        "modular_inverse",
+        "Published contract for the inverse under a modulus.",
+        """
+def test_five_inverts_under_seven() -> None:
+    assert inverse(5, 7) == 3
+
+
+def test_three_inverts_under_eleven() -> None:
+    assert inverse(3, 11) == 4
+""",
+        imports="from modular_inverse import inverse\n",
+    ),
+    hidden_test=_test_module(
+        "modular_inverse",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_five_inverts_under_seven() -> None:
+    assert inverse(5, 7) == 3
+
+
+def test_a_shared_factor_means_there_is_no_inverse() -> None:
+    with pytest.raises(ValueError):
+        inverse(4, 8)
+
+
+def test_the_answer_is_brought_inside_the_modulus() -> None:
+    assert inverse(3, 7) == 5
+""",
+        imports="from modular_inverse import inverse\n",
+    ),
+)
+
+
+_G082 = D2TaskSpec(
+    template_id="d5_numeric.business_days",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d5-numeric-business-days",
+    module="business_days",
+    module_doc="Counting how many working days a stretch of calendar days covers.",
+    issue=(
+        "working_days() is documented to count the working days in a stretch of calendar days. "
+        "Schedulers report that a stretch beginning at the weekend is counted as though the "
+        "week never came round again, and that a stretch of negative length comes back with a "
+        "negative count instead of being refused."
+    ),
+    expected=(
+        "working_days(start_weekday, total_days) returns how many of the days are working "
+        "days, counting Monday as weekday zero and treating weekdays five and six as the "
+        "weekend, wrapping round the week as many times as the stretch runs, and raises "
+        "ValueError for a stretch shorter than nothing."
+    ),
+    baseline_reason=(
+        "it counts the days left over after the whole weeks by adding the offset to the "
+        "starting weekday without bringing it back round the week, and it never checks the "
+        "stretch is not negative"
+    ),
+    edge_cases=(
+        "the days left over wrap round the week",
+        "a stretch shorter than nothing is refused",
+    ),
+    baseline='''def working_days(start_weekday, total_days):
+    """Return how many working days a stretch of `total_days` covers."""
+    weeks, left_over = divmod(total_days, 7)
+    count = weeks * 5
+    for offset in range(left_over):
+        if start_weekday + offset < 5:
+            count += 1
+    return count''',
+    variant_one='''def working_days(start_weekday, total_days):
+    """Return how many working days a stretch of `total_days` covers."""
+    if total_days < 0:
+        raise ValueError(f"a stretch cannot run for {total_days} days")
+    weeks, left_over = divmod(total_days, 7)
+    count = weeks * 5
+    for offset in range(left_over):
+        if (start_weekday + offset) % 7 < 5:
+            count += 1
+    return count''',
+    variant_two='''def working_days(start_weekday, total_days):
+    """Return how many working days a stretch of `total_days` covers."""
+    if total_days < 0:
+        raise ValueError(f"a stretch cannot run for {total_days} days")
+    return sum(
+        1 for offset in range(total_days) if (start_weekday + offset) % 7 not in (5, 6)
+    )''',
+    variant_three='''def working_days(start_weekday, total_days):
+    """Return how many working days a stretch of `total_days` covers."""
+    weeks, left_over = divmod(total_days, 7)
+    count = weeks * 5
+    for offset in range(left_over):
+        if (start_weekday + offset) % 7 < 5:
+            count += 1
+    return count''',
+    variant_four='''def working_days(start_weekday, total_days):
+    """Return how many working days a stretch of `total_days` covers."""
+    if total_days < 0:
+        raise ValueError(f"a stretch cannot run for {total_days} days")
+    weeks, left_over = divmod(total_days, 7)
+    count = weeks * 5
+    for offset in range(left_over):
+        if start_weekday + offset < 5:
+            count += 1
+    return count''',
+    visible_test=_test_module(
+        "business_days",
+        "Published contract for counting working days.",
+        """
+def test_a_working_week_from_monday() -> None:
+    assert working_days(0, 5) == 5
+
+
+def test_a_whole_week_from_monday_is_five_working_days() -> None:
+    assert working_days(0, 7) == 5
+
+
+def test_two_whole_weeks_from_monday() -> None:
+    assert working_days(0, 14) == 10
+""",
+        imports="from business_days import working_days\n",
+    ),
+    hidden_test=_test_module(
+        "business_days",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_working_week_from_monday() -> None:
+    assert working_days(0, 5) == 5
+
+
+def test_a_stretch_beginning_at_the_weekend_wraps_round() -> None:
+    assert working_days(5, 3) == 1
+
+
+def test_a_stretch_shorter_than_nothing_is_refused() -> None:
+    with pytest.raises(ValueError):
+        working_days(0, -1)
+""",
+        imports="from business_days import working_days\n",
+    ),
+)
+
+# ----------------------------------------------------------------------- parsing and validation
+
+_G083 = D2TaskSpec(
+    template_id="d5_parsing.email_parts",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d5-parsing-email-parts",
+    module="email_parts",
+    module_doc="Splitting an address into the part before the at sign and the part after.",
+    issue=(
+        "split_address() is documented to split an address into its two parts. Callers report "
+        "that an address carrying more than one at sign, or none at all, is split anyway "
+        "instead of being refused, and that the part before the at sign comes back flattened "
+        "to lowercase even though it is case-sensitive."
+    ),
+    expected=(
+        "split_address(text) returns (local, domain). The domain is lowercased because it is "
+        "case-insensitive, the local part keeps the case it was written in, and an address "
+        "that does not carry exactly one at sign is refused with ValueError."
+    ),
+    baseline_reason=(
+        "it splits at the first at sign whatever else the address holds, and it lowercases "
+        "both halves rather than only the domain"
+    ),
+    edge_cases=(
+        "an address without exactly one at sign is refused",
+        "the local part keeps the case it was written in",
+    ),
+    baseline='''def split_address(text):
+    """Return (local, domain) for the address `text`."""
+    local, _, domain = text.partition("@")
+    return local.lower(), domain.lower()''',
+    variant_one='''def split_address(text):
+    """Return (local, domain) for the address `text`."""
+    if text.count("@") != 1:
+        raise ValueError(f"{text!r} does not carry exactly one at sign")
+    local, _, domain = text.partition("@")
+    return local, domain.lower()''',
+    variant_two='''def split_address(text):
+    """Return (local, domain) for the address `text`."""
+    parts = text.split("@")
+    if len(parts) != 2:
+        raise ValueError(f"{text!r} does not carry exactly one at sign")
+    return parts[0], parts[1].lower()''',
+    variant_three='''def split_address(text):
+    """Return (local, domain) for the address `text`."""
+    if text.count("@") != 1:
+        raise ValueError(f"{text!r} does not carry exactly one at sign")
+    local, _, domain = text.partition("@")
+    return local.lower(), domain.lower()''',
+    variant_four='''def split_address(text):
+    """Return (local, domain) for the address `text`."""
+    local, _, domain = text.partition("@")
+    return local, domain.lower()''',
+    visible_test=_test_module(
+        "email_parts",
+        "Published contract for splitting an address.",
+        """
+def test_an_ordinary_address_splits_in_two() -> None:
+    assert split_address("ada@example.com") == ("ada", "example.com")
+
+
+def test_the_domain_is_lowercased() -> None:
+    assert split_address("ada@Example.COM") == ("ada", "example.com")
+""",
+        imports="from email_parts import split_address\n",
+    ),
+    hidden_test=_test_module(
+        "email_parts",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_an_ordinary_address_splits_in_two() -> None:
+    assert split_address("ada@example.com") == ("ada", "example.com")
+
+
+def test_an_address_without_exactly_one_at_sign_is_refused() -> None:
+    with pytest.raises(ValueError):
+        split_address("a@b@c")
+    with pytest.raises(ValueError):
+        split_address("nobody")
+
+
+def test_the_local_part_keeps_its_case() -> None:
+    assert split_address("Ada@example.com") == ("Ada", "example.com")
+""",
+        imports="from email_parts import split_address\n",
+    ),
+)
+
+
+_G084 = D2TaskSpec(
+    template_id="d5_parsing.wildcard_host",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d5-parsing-wildcard-host",
+    module="wildcard_host",
+    module_doc="Deciding whether a hostname is covered by a wildcard certificate pattern.",
+    issue=(
+        "matches() is documented to say whether a hostname is covered by a wildcard pattern. "
+        "Security report that a pattern covering one level is matched by a host buried several "
+        "levels deeper, and that a host written in capitals is not matched at all even though "
+        "hostnames do not care about case."
+    ),
+    expected=(
+        "matches(pattern, host) says whether the host is covered by the pattern. A leading "
+        "'*.' stands for exactly one label, so a host with further labels in front of the "
+        "matched one is not covered, and the comparison ignores case on both sides."
+    ),
+    baseline_reason=(
+        "it asks only whether the host ends with the rest of the pattern, which any depth of "
+        "label satisfies, and it compares the two exactly as written"
+    ),
+    edge_cases=(
+        "a wildcard stands for exactly one label, not several",
+        "the comparison ignores case on both sides",
+    ),
+    baseline='''def matches(pattern, host):
+    """Say whether `host` is covered by `pattern`."""
+    if pattern.startswith("*."):
+        return host.endswith(pattern[1:])
+    return host == pattern''',
+    variant_one='''def matches(pattern, host):
+    """Say whether `host` is covered by `pattern`."""
+    wanted = pattern.lower()
+    given = host.lower()
+    if not wanted.startswith("*."):
+        return given == wanted
+    labels = given.split(".")
+    return len(labels) == len(wanted.split(".")) and labels[1:] == wanted.split(".")[1:]''',
+    variant_two='''def matches(pattern, host):
+    """Say whether `host` is covered by `pattern`."""
+    wanted = pattern.lower().split(".")
+    given = host.lower().split(".")
+    if len(wanted) != len(given):
+        return False
+    return all(
+        piece == "*" or piece == label for piece, label in zip(wanted, given)
+    )''',
+    variant_three='''def matches(pattern, host):
+    """Say whether `host` is covered by `pattern`."""
+    if not pattern.startswith("*."):
+        return host == pattern
+    labels = host.split(".")
+    return len(labels) == len(pattern.split(".")) and labels[1:] == pattern.split(".")[1:]''',
+    variant_four='''def matches(pattern, host):
+    """Say whether `host` is covered by `pattern`."""
+    wanted = pattern.lower()
+    given = host.lower()
+    if wanted.startswith("*."):
+        return given.endswith(wanted[1:])
+    return given == wanted''',
+    visible_test=_test_module(
+        "wildcard_host",
+        "Published contract for matching a host against a wildcard pattern.",
+        """
+def test_one_label_under_the_wildcard_matches() -> None:
+    assert matches("*.example.com", "a.example.com") is True
+
+
+def test_a_different_domain_does_not_match() -> None:
+    assert matches("*.example.com", "a.other.com") is False
+
+
+def test_a_pattern_with_no_wildcard_matches_only_itself() -> None:
+    assert matches("example.com", "example.com") is True
+""",
+        imports="from wildcard_host import matches\n",
+    ),
+    hidden_test=_test_module(
+        "wildcard_host",
+        "The part of the contract the published tests do not state.",
+        """
+def test_one_label_under_the_wildcard_matches() -> None:
+    assert matches("*.example.com", "a.example.com") is True
+
+
+def test_a_wildcard_stands_for_exactly_one_label() -> None:
+    assert matches("*.example.com", "a.b.example.com") is False
+
+
+def test_the_comparison_ignores_case() -> None:
+    assert matches("*.EXAMPLE.com", "a.example.COM") is True
+""",
+        imports="from wildcard_host import matches\n",
+    ),
+)
+
+# ------------------------------------------------------------------------- data transformation
+
+_G085 = D2TaskSpec(
+    template_id="d5_transform.fixed_width",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d5-transform-fixed-width",
+    module="fixed_width",
+    module_doc="Laying records out as fixed-width lines for a system that counts columns.",
+    issue=(
+        "render() is documented to lay records out in columns of a fixed width. The receiving "
+        "system reports that a value longer than its column pushes every column after it out "
+        "of place, and that a record simply missing one of the fields brings the whole render "
+        "down with a KeyError."
+    ),
+    expected=(
+        "render(records, columns) returns one line per record, each field padded on the right "
+        "to its declared width, a value longer than its column cut down to that width so the "
+        "line never grows, and a field the record does not carry rendered as blanks."
+    ),
+    baseline_reason=(
+        "it pads a value up to the width but never cuts one down, and it reaches for each "
+        "field without checking the record carries it"
+    ),
+    edge_cases=(
+        "a value longer than its column is cut down to the width",
+        "a field the record does not carry is rendered as blanks",
+    ),
+    baseline='''def render(records, columns):
+    """Return one fixed-width line per record."""
+    lines = []
+    for record in records:
+        lines.append("".join(str(record[field]).ljust(width) for field, width in columns))
+    return lines''',
+    variant_one='''def render(records, columns):
+    """Return one fixed-width line per record."""
+    lines = []
+    for record in records:
+        cells = []
+        for field, width in columns:
+            text = str(record[field]) if field in record else ""
+            cells.append(text[:width].ljust(width))
+        lines.append("".join(cells))
+    return lines''',
+    variant_two='''def render(records, columns):
+    """Return one fixed-width line per record."""
+    return [
+        "".join(
+            f"{str(record.get(field, '')):<{width}}"[:width] for field, width in columns
+        )
+        for record in records
+    ]''',
+    variant_three='''def render(records, columns):
+    """Return one fixed-width line per record."""
+    lines = []
+    for record in records:
+        lines.append(
+            "".join(str(record[field])[:width].ljust(width) for field, width in columns)
+        )
+    return lines''',
+    variant_four='''def render(records, columns):
+    """Return one fixed-width line per record."""
+    lines = []
+    for record in records:
+        cells = []
+        for field, width in columns:
+            text = str(record[field]) if field in record else ""
+            cells.append(text.ljust(width))
+        lines.append("".join(cells))
+    return lines''',
+    visible_test=_test_module(
+        "fixed_width",
+        "Published contract for laying records out in fixed columns.",
+        """
+def test_each_field_is_padded_to_its_column() -> None:
+    assert render([{"a": "x", "b": "yy"}], [("a", 3), ("b", 4)]) == ["x  yy  "]
+
+
+def test_no_records_renders_no_lines() -> None:
+    assert render([], [("a", 3)]) == []
+""",
+        imports="from fixed_width import render\n",
+    ),
+    hidden_test=_test_module(
+        "fixed_width",
+        "The part of the contract the published tests do not state.",
+        """
+def test_each_field_is_padded_to_its_column() -> None:
+    assert render([{"a": "x", "b": "yy"}], [("a", 3), ("b", 4)]) == ["x  yy  "]
+
+
+def test_a_value_longer_than_its_column_is_cut_down() -> None:
+    assert render([{"a": "toolong"}], [("a", 3)]) == ["too"]
+
+
+def test_a_field_the_record_does_not_carry_is_blanks() -> None:
+    assert render([{}], [("a", 3)]) == ["   "]
+""",
+        imports="from fixed_width import render\n",
+    ),
+)
+
+
+_G086 = D2TaskSpec(
+    template_id="d5_transform.page_cursor",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d5-transform-page-cursor",
+    module="page_cursor",
+    module_doc="Handing out one page of results together with where to carry on from.",
+    issue=(
+        "page() is documented to hand out one page and where to carry on from. Clients report "
+        "that the last page comes back with a place to carry on from that is past the end, so "
+        "they ask for a page that does not exist, and that a cursor below zero quietly reads "
+        "backwards from the end instead of being refused."
+    ),
+    expected=(
+        "page(records, cursor, size) returns (rows, next_cursor). Rows are the records from "
+        "`cursor` onwards, at most `size` of them, next_cursor is where the following page "
+        "begins or None when this page reached the end, and a cursor below zero is refused "
+        "with ValueError."
+    ),
+    baseline_reason=(
+        "it always hands back the cursor advanced by the page size, even off the end, and it "
+        "slices with the cursor as given, which reads from the far end when it is negative"
+    ),
+    edge_cases=(
+        "the last page carries on from nowhere",
+        "a cursor below zero is refused",
+    ),
+    baseline='''def page(records, cursor, size):
+    """Return one page of `records` and where to carry on from."""
+    rows = records[cursor : cursor + size]
+    return rows, cursor + size''',
+    variant_one='''def page(records, cursor, size):
+    """Return one page of `records` and where to carry on from."""
+    if cursor < 0:
+        raise ValueError(f"a cursor cannot be {cursor}")
+    rows = records[cursor : cursor + size]
+    following = cursor + size
+    return rows, following if following < len(records) else None''',
+    variant_two='''def page(records, cursor, size):
+    """Return one page of `records` and where to carry on from."""
+    if cursor < 0:
+        raise ValueError(f"a cursor cannot be {cursor}")
+    remaining = len(records) - cursor - size
+    rows = records[cursor : cursor + size]
+    return rows, None if remaining <= 0 else cursor + size''',
+    variant_three='''def page(records, cursor, size):
+    """Return one page of `records` and where to carry on from."""
+    rows = records[cursor : cursor + size]
+    following = cursor + size
+    return rows, following if following < len(records) else None''',
+    variant_four='''def page(records, cursor, size):
+    """Return one page of `records` and where to carry on from."""
+    if cursor < 0:
+        raise ValueError(f"a cursor cannot be {cursor}")
+    rows = records[cursor : cursor + size]
+    return rows, cursor + size''',
+    visible_test=_test_module(
+        "page_cursor",
+        "Published contract for handing out one page of results.",
+        """
+def test_the_first_page_carries_on_from_the_page_size() -> None:
+    assert page(["a", "b", "c", "d", "e"], 0, 2) == (["a", "b"], 2)
+
+
+def test_a_page_from_the_middle_carries_on_after_it() -> None:
+    assert page(["a", "b", "c", "d", "e"], 1, 2) == (["b", "c"], 3)
+""",
+        imports="from page_cursor import page\n",
+    ),
+    hidden_test=_test_module(
+        "page_cursor",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_the_first_page_carries_on_from_the_page_size() -> None:
+    assert page(["a", "b", "c", "d", "e"], 0, 2) == (["a", "b"], 2)
+
+
+def test_the_last_page_carries_on_from_nowhere() -> None:
+    assert page(["a", "b", "c"], 2, 2) == (["c"], None)
+
+
+def test_a_cursor_below_zero_is_refused() -> None:
+    with pytest.raises(ValueError):
+        page(["a", "b", "c"], -1, 2)
+""",
+        imports="from page_cursor import page\n",
+    ),
+)
+
+# ---------------------------------------------------------------------- state and idempotency
+
+_G087 = D2TaskSpec(
+    template_id="d5_state.shelf_slots",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d5-state-shelf-slots",
+    module="shelf_slots",
+    module_doc="Giving an item a numbered place, reusing the ones that have been given up.",
+    issue=(
+        "assign() is documented to give an item the lowest free numbered place. Storekeepers "
+        "report that an item already on the shelf is given a second place of its own, and that "
+        "a place given up in the middle is never reused, so the numbering climbs for ever."
+    ),
+    expected=(
+        "assign(slots, item) returns (number, slots) with the item in the lowest free place, "
+        "numbering from one. An item already on the shelf keeps the place it has, and a place "
+        "given up earlier is filled before a new one is opened."
+    ),
+    baseline_reason=(
+        "it opens a place one above the highest in use whatever else is going on, without "
+        "looking for the item or for a gap below"
+    ),
+    edge_cases=(
+        "an item already on the shelf keeps the place it has",
+        "a place given up earlier is filled before a new one is opened",
+    ),
+    baseline='''def assign(slots, item):
+    """Return (number, slots) with `item` in the lowest free place."""
+    number = max(slots, default=0) + 1
+    return number, {**slots, number: item}''',
+    variant_one='''def assign(slots, item):
+    """Return (number, slots) with `item` in the lowest free place."""
+    for number, held in slots.items():
+        if held == item:
+            return number, dict(slots)
+    number = 1
+    while number in slots:
+        number += 1
+    return number, {**slots, number: item}''',
+    variant_two='''def assign(slots, item):
+    """Return (number, slots) with `item` in the lowest free place."""
+    held = {value: number for number, value in slots.items()}
+    if item in held:
+        return held[item], dict(slots)
+    taken = set(slots)
+    number = next(place for place in range(1, len(taken) + 2) if place not in taken)
+    return number, {**slots, number: item}''',
+    variant_three='''def assign(slots, item):
+    """Return (number, slots) with `item` in the lowest free place."""
+    for number, held in slots.items():
+        if held == item:
+            return number, dict(slots)
+    number = max(slots, default=0) + 1
+    return number, {**slots, number: item}''',
+    variant_four='''def assign(slots, item):
+    """Return (number, slots) with `item` in the lowest free place."""
+    number = 1
+    while number in slots:
+        number += 1
+    return number, {**slots, number: item}''',
+    visible_test=_test_module(
+        "shelf_slots",
+        "Published contract for giving an item a numbered place.",
+        """
+def test_the_first_item_takes_the_first_place() -> None:
+    assert assign({}, "a") == (1, {1: "a"})
+
+
+def test_the_next_item_takes_the_place_after() -> None:
+    assert assign({1: "a"}, "b") == (2, {1: "a", 2: "b"})
+""",
+        imports="from shelf_slots import assign\n",
+    ),
+    hidden_test=_test_module(
+        "shelf_slots",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_first_item_takes_the_first_place() -> None:
+    assert assign({}, "a") == (1, {1: "a"})
+
+
+def test_an_item_already_on_the_shelf_keeps_its_place() -> None:
+    assert assign({1: "a", 2: "b"}, "a") == (1, {1: "a", 2: "b"})
+
+
+def test_a_place_given_up_earlier_is_filled_first() -> None:
+    assert assign({2: "b"}, "c") == (1, {1: "c", 2: "b"})
+""",
+        imports="from shelf_slots import assign\n",
+    ),
+)
+
+
+_G088 = D2TaskSpec(
+    template_id="d5_state.upsert_version",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d5-state-upsert-version",
+    module="upsert_version",
+    module_doc="Writing a record only when the writer knows the version it is replacing.",
+    issue=(
+        "upsert() is documented to accept a write only when it follows the stored version. "
+        "Callers report that a write resent after a timeout, carrying the same version and the "
+        "same value, is refused as a conflict even though it is the write that already landed, "
+        "and that a write skipping several versions is accepted as though nothing were missing."
+    ),
+    expected=(
+        "upsert(store, key, version, value) returns the store with the record written when the "
+        "version is exactly one above the stored one, or one for a key nobody has written yet. "
+        "A write repeating the stored version with the same value is the write that already "
+        "landed and changes nothing, and anything else is refused with ValueError."
+    ),
+    baseline_reason=(
+        "it refuses any version at or below the stored one without looking at whether the "
+        "value is the one already stored, and it accepts any version above it however far"
+    ),
+    edge_cases=(
+        "a write repeating the stored version with the same value changes nothing",
+        "a write skipping a version is refused",
+    ),
+    baseline='''def upsert(store, key, version, value):
+    """Return `store` with `key` written at `version`."""
+    current = store.get(key)
+    if current is not None and version <= current["version"]:
+        raise ValueError(f"{key!r} is already at version {current['version']}")
+    updated = dict(store)
+    updated[key] = {"version": version, "value": value}
+    return updated''',
+    variant_one='''def upsert(store, key, version, value):
+    """Return `store` with `key` written at `version`."""
+    current = store.get(key)
+    stored = 0 if current is None else current["version"]
+    if current is not None and version == stored and current["value"] == value:
+        return dict(store)
+    if version != stored + 1:
+        raise ValueError(f"{key!r} is at version {stored}, not ready for {version}")
+    updated = dict(store)
+    updated[key] = {"version": version, "value": value}
+    return updated''',
+    variant_two='''def upsert(store, key, version, value):
+    """Return `store` with `key` written at `version`."""
+    written = {"version": version, "value": value}
+    current = store.get(key)
+    if current == written:
+        return dict(store)
+    stored = 0 if current is None else current["version"]
+    if version - stored != 1:
+        raise ValueError(f"{key!r} is at version {stored}, not ready for {version}")
+    return {**store, key: written}''',
+    variant_three='''def upsert(store, key, version, value):
+    """Return `store` with `key` written at `version`."""
+    current = store.get(key)
+    if current is not None and version <= current["version"]:
+        if current["value"] == value and version == current["version"]:
+            return dict(store)
+        raise ValueError(f"{key!r} is already at version {current['version']}")
+    updated = dict(store)
+    updated[key] = {"version": version, "value": value}
+    return updated''',
+    variant_four='''def upsert(store, key, version, value):
+    """Return `store` with `key` written at `version`."""
+    current = store.get(key)
+    stored = 0 if current is None else current["version"]
+    if version != stored + 1:
+        raise ValueError(f"{key!r} is at version {stored}, not ready for {version}")
+    updated = dict(store)
+    updated[key] = {"version": version, "value": value}
+    return updated''',
+    visible_test=_test_module(
+        "upsert_version",
+        "Published contract for writing a record at a known version.",
+        """
+import pytest
+
+
+def test_a_key_nobody_has_written_starts_at_one() -> None:
+    assert upsert({}, "a", 1, "x") == {"a": {"version": 1, "value": "x"}}
+
+
+def test_the_next_version_replaces_the_stored_one() -> None:
+    store = {"a": {"version": 1, "value": "x"}}
+    assert upsert(store, "a", 2, "y") == {"a": {"version": 2, "value": "y"}}
+
+
+def test_repeating_the_stored_version_with_a_different_value_is_refused() -> None:
+    store = {"a": {"version": 2, "value": "y"}}
+    with pytest.raises(ValueError):
+        upsert(store, "a", 2, "different")
+""",
+        imports="from upsert_version import upsert\n",
+    ),
+    hidden_test=_test_module(
+        "upsert_version",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_key_nobody_has_written_starts_at_one() -> None:
+    assert upsert({}, "a", 1, "x") == {"a": {"version": 1, "value": "x"}}
+
+
+def test_the_write_that_already_landed_changes_nothing() -> None:
+    store = {"a": {"version": 2, "value": "y"}}
+    assert upsert(store, "a", 2, "y") == {"a": {"version": 2, "value": "y"}}
+
+
+def test_a_write_skipping_a_version_is_refused() -> None:
+    store = {"a": {"version": 1, "value": "x"}}
+    with pytest.raises(ValueError):
+        upsert(store, "a", 5, "z")
+""",
+        imports="from upsert_version import upsert\n",
+    ),
+)
+
+# --------------------------------------------------------------------------- error handling
+
+_G089 = D2TaskSpec(
+    template_id="d5_error.short_circuit",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d5-error-short-circuit",
+    module="short_circuit",
+    module_doc="Running the checks in order and stopping at the first one that objects.",
+    issue=(
+        "first_failure() is documented to stop at the first check that objects. Callers report "
+        "that every check runs anyway, so an expensive check runs even after a cheap one has "
+        "already ruled the value out, and that a check which raises brings the whole run down "
+        "instead of counting as an objection."
+    ),
+    expected=(
+        "first_failure(checks, value) runs the named checks in order and returns (name, "
+        "message) for the first one that objects, running none of the checks after it, and "
+        "returns None when they all pass. A check that raises counts as an objection whose "
+        "message is the text of what it raised."
+    ),
+    baseline_reason=(
+        "it runs every check and picks the first objection afterwards, and it lets a check "
+        "that raises escape rather than reading it as an objection"
+    ),
+    edge_cases=(
+        "no check after the first objection is run",
+        "a check that raises counts as an objection",
+    ),
+    baseline='''def first_failure(checks, value):
+    """Return (name, message) for the first check that objects to `value`."""
+    objections = []
+    for name, check in checks:
+        message = check(value)
+        if message:
+            objections.append((name, message))
+    return objections[0] if objections else None''',
+    variant_one='''def first_failure(checks, value):
+    """Return (name, message) for the first check that objects to `value`."""
+    for name, check in checks:
+        try:
+            message = check(value)
+        except Exception as error:
+            return name, str(error)
+        if message:
+            return name, message
+    return None''',
+    variant_two='''def first_failure(checks, value):
+    """Return (name, message) for the first check that objects to `value`."""
+
+    def look(name, check):
+        try:
+            return check(value)
+        except Exception as error:
+            return str(error)
+
+    return next(
+        ((name, message) for name, check in checks if (message := look(name, check))),
+        None,
+    )''',
+    variant_three='''def first_failure(checks, value):
+    """Return (name, message) for the first check that objects to `value`."""
+    for name, check in checks:
+        message = check(value)
+        if message:
+            return name, message
+    return None''',
+    variant_four='''def first_failure(checks, value):
+    """Return (name, message) for the first check that objects to `value`."""
+    objections = []
+    for name, check in checks:
+        try:
+            message = check(value)
+        except Exception as error:
+            message = str(error)
+        if message:
+            objections.append((name, message))
+    return objections[0] if objections else None''',
+    visible_test=_test_module(
+        "short_circuit",
+        "Published contract for running checks in order.",
+        """
+def test_checks_that_all_pass_report_nothing() -> None:
+    checks = [("a", lambda value: None), ("b", lambda value: None)]
+    assert first_failure(checks, 1) is None
+
+
+def test_the_objection_is_reported_with_its_name() -> None:
+    checks = [("a", lambda value: None), ("b", lambda value: "too big")]
+    assert first_failure(checks, 1) == ("b", "too big")
+""",
+        imports="from short_circuit import first_failure\n",
+    ),
+    hidden_test=_test_module(
+        "short_circuit",
+        "The part of the contract the published tests do not state.",
+        """
+def _explode(value):
+    raise RuntimeError("the check itself broke")
+
+
+def test_checks_that_all_pass_report_nothing() -> None:
+    checks = [("a", lambda value: None), ("b", lambda value: None)]
+    assert first_failure(checks, 1) is None
+
+
+def test_no_check_after_the_first_objection_is_run() -> None:
+    ran = []
+
+    def later(value):
+        ran.append("later")
+        return None
+
+    checks = [("a", lambda value: "no"), ("b", later)]
+    assert first_failure(checks, 1) == ("a", "no")
+    assert ran == []
+
+
+def test_a_check_that_raises_counts_as_an_objection() -> None:
+    assert first_failure([("a", _explode)], 1) == ("a", "the check itself broke")
+""",
+        imports="from short_circuit import first_failure\n",
+    ),
+)
+
+
+_G090 = D2TaskSpec(
+    template_id="d5_error.guard_argument_types",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d5-error-guard-argument-types",
+    module="guard_argument_types",
+    module_doc="Refusing a call whose arguments are not the kinds the handler expects.",
+    issue=(
+        "check_types() is documented to refuse a call whose arguments are the wrong kind. "
+        "Callers report that a True or False slips through where a whole number is expected, "
+        "because a boolean counts as one, and that an argument the caller simply left out "
+        "fails with a KeyError instead of the TypeError the handler catches."
+    ),
+    expected=(
+        "check_types(values, expected) returns the values when each named argument is of the "
+        "kind expected. A boolean does not count as a whole number, an argument the caller did "
+        "not supply is as wrong as one of the wrong kind, and either is refused with TypeError."
+    ),
+    baseline_reason=(
+        "it asks whether the value is an instance of the kind, which a boolean satisfies for a "
+        "whole number, and it reaches for each name without checking it was supplied"
+    ),
+    edge_cases=(
+        "a boolean does not count as a whole number",
+        "an argument that was not supplied is refused with TypeError",
+    ),
+    baseline='''def check_types(values, expected):
+    """Return `values` when each named argument is of the kind expected."""
+    for name, kind in expected.items():
+        if not isinstance(values[name], kind):
+            raise TypeError(f"{name} should be {kind.__name__}")
+    return values''',
+    variant_one='''def check_types(values, expected):
+    """Return `values` when each named argument is of the kind expected."""
+    for name, kind in expected.items():
+        if name not in values:
+            raise TypeError(f"{name} was not supplied")
+        given = values[name]
+        if kind is int and isinstance(given, bool):
+            raise TypeError(f"{name} should be {kind.__name__}, not a boolean")
+        if not isinstance(given, kind):
+            raise TypeError(f"{name} should be {kind.__name__}")
+    return values''',
+    variant_two='''def check_types(values, expected):
+    """Return `values` when each named argument is of the kind expected."""
+    absent = sorted(name for name in expected if name not in values)
+    if absent:
+        raise TypeError(f"not supplied: {absent}")
+    wrong = sorted(
+        name
+        for name, kind in expected.items()
+        if type(values[name]) is not kind and not isinstance(values[name], kind)
+        or (kind is int and type(values[name]) is bool)
+    )
+    if wrong:
+        raise TypeError(f"wrong kind: {wrong}")
+    return values''',
+    variant_three='''def check_types(values, expected):
+    """Return `values` when each named argument is of the kind expected."""
+    for name, kind in expected.items():
+        given = values[name]
+        if kind is int and isinstance(given, bool):
+            raise TypeError(f"{name} should be {kind.__name__}, not a boolean")
+        if not isinstance(given, kind):
+            raise TypeError(f"{name} should be {kind.__name__}")
+    return values''',
+    variant_four='''def check_types(values, expected):
+    """Return `values` when each named argument is of the kind expected."""
+    for name, kind in expected.items():
+        if name not in values:
+            raise TypeError(f"{name} was not supplied")
+        if not isinstance(values[name], kind):
+            raise TypeError(f"{name} should be {kind.__name__}")
+    return values''',
+    visible_test=_test_module(
+        "guard_argument_types",
+        "Published contract for refusing arguments of the wrong kind.",
+        """
+import pytest
+
+
+def test_arguments_of_the_right_kinds_come_back() -> None:
+    assert check_types({"a": 1, "b": "x"}, {"a": int, "b": str}) == {"a": 1, "b": "x"}
+
+
+def test_an_argument_of_the_wrong_kind_is_refused() -> None:
+    with pytest.raises(TypeError):
+        check_types({"a": "x"}, {"a": int})
+""",
+        imports="from guard_argument_types import check_types\n",
+    ),
+    hidden_test=_test_module(
+        "guard_argument_types",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_arguments_of_the_right_kinds_come_back() -> None:
+    assert check_types({"a": 1, "b": "x"}, {"a": int, "b": str}) == {"a": 1, "b": "x"}
+
+
+def test_a_boolean_does_not_count_as_a_whole_number() -> None:
+    with pytest.raises(TypeError):
+        check_types({"a": True}, {"a": int})
+
+
+def test_an_argument_that_was_not_supplied_is_refused() -> None:
+    with pytest.raises(TypeError):
+        check_types({}, {"a": int})
+""",
+        imports="from guard_argument_types import check_types\n",
+    ),
+)
+
 #: The authored calibration groups, in template-id order. The target is 100; the achieved count
 #: is what `scripts/corpus_d5.py` reports and what S21D5-035 divides by. A shortfall is recorded
 #: rather than papered over — Section 6.2 of the backlog forbids lowering a floor to meet it.
@@ -8896,4 +10165,16 @@ D5_CALIBRATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G076,
     _G077,
     _G078,
+    _G079,
+    _G080,
+    _G081,
+    _G082,
+    _G083,
+    _G084,
+    _G085,
+    _G086,
+    _G087,
+    _G088,
+    _G089,
+    _G090,
 )

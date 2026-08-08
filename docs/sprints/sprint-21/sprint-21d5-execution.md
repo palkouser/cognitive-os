@@ -2,7 +2,7 @@
 
 - Branch: `feature/sprint-21d5-pairwise-selective-ranking`
 - Backlog: [Sprint 21D5 Technical Backlog](sprint-21d5-technical-backlog.md)
-- **Status: W0 complete. W1 in progress — 78 of 100 calibration groups authored and validated.**
+- **Status: W0 complete. W1 in progress — 90 of 100 calibration groups authored and validated.**
   W2 through W8 not started.
 - Pre-registration: revision 5, SHA-256
   `ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a`
@@ -577,9 +577,47 @@ Measured over the whole authored corpus: 78 groups, 390 bodies, **780 suite runs
 defects**, **0 cross-group collisions** against 1,620 released and D5 bodies, families balanced
 **13/13/13/13/13/13**.
 
+### Batch eight
+
+Twelve more, taking the corpus to ninety at **15/15/15/15/15/15**. Clean on the first run:
+0 contract defects, 0 collisions.
+
+| Group | Family | The two independent edge cases |
+|---|---|---|
+| `d5-boundary-diagonal-read` | boundary_collections | a grid taller than wide stops at the shorter side; ragged rows are refused |
+| `d5-boundary-increasing-runs` | boundary_collections | a repeated reading starts a new stretch; no readings gives no stretches |
+| `d5-numeric-modular-inverse` | numeric_logic | a shared factor means no inverse; the answer is brought inside the modulus |
+| `d5-numeric-business-days` | numeric_logic | the left-over days wrap round the week; a negative stretch is refused |
+| `d5-parsing-email-parts` | parsing_validation | not exactly one at sign is refused; the local part keeps its case |
+| `d5-parsing-wildcard-host` | parsing_validation | a wildcard is exactly one label; the comparison ignores case |
+| `d5-transform-fixed-width` | data_transformation | an over-long value is cut to the column; a missing field renders as blanks |
+| `d5-transform-page-cursor` | data_transformation | the last page carries on from nowhere; a cursor below zero is refused |
+| `d5-state-shelf-slots` | state_idempotency | an item on the shelf keeps its place; a given-up place is filled first |
+| `d5-state-upsert-version` | state_idempotency | the write that already landed changes nothing; a skipped version is refused |
+| `d5-error-short-circuit` | error_handling | no check runs after the first objection; a raising check is an objection |
+| `d5-error-guard-argument-types` | error_handling | a boolean is not a whole number; an unsupplied argument is refused |
+
+Two groups here were re-scoped at the design table rather than withdrawn, which is a cheaper
+outcome than either a withdrawal or a validator catch and worth distinguishing from both.
+
+- A *take-from-both-ends* group was designed with "an odd count does not repeat the middle item"
+  and "a count above the length is refused". The first edge case turned out to be **unobservable
+  under the second**: the duplicated middle always lands last in the built list, so the `count`
+  slice removes it in every case the contract allows. The group was rebuilt as
+  `d5-boundary-diagonal-read`, whose two edge cases sit on different axes of the same grid.
+- A *one-of-these-fields* error group was dropped for colliding with `d5-error-required-fields`
+  at the level of the task — same payload-and-field framing, and its first edge case was the same
+  "a field holding None counts as missing" clause. `d5-error-guard-argument-types` replaced it,
+  and it collides with nothing because the thing being checked is the *kind*, not the presence.
+
+Measured over the whole authored corpus: 90 groups, 450 bodies, **900 suite runs, 0 contract
+defects**, **0 cross-group collisions** against 1,680 released and D5 bodies, families balanced
+**15/15/15/15/15/15**.
+
 ### What W1 still owes
 
-- 22 further calibration groups, family-balanced, each validated by the loop above;
+- 10 further calibration groups. One hundred does not divide by six, so the final balance will be
+  17/17/17/17/16/16 rather than an even split;
 - 60 retrieval groups yielding at least 50 qualifying queries (S21D5-021);
 - the separation, rights and lineage evidence record (S21D5-022);
 - sealed campaign and holdout manifests (S21D5-023);
