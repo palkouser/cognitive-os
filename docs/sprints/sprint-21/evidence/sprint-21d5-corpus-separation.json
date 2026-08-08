@@ -34,7 +34,7 @@
    "spent_retrieval": 60
   }
  },
- "integrity_content_hash": "a17479daa959dd790ea87091de5ded23882ccd074b8215fccf9bf6335a127da3",
+ "integrity_content_hash": "fdd6a2375dc176ec69a5e2fa43bb4af2de664032e94421a42d96f85eafbbe734",
  "items": [
   "S21D5-022"
  ],
@@ -82,7 +82,7 @@
   "reuse_audit_integrity_content_hash": "a880c5c586184b8501dc0c39dcd56a2f8f0c365731869ed1734f7babc6ecf046",
   "reuse_audit_read": "sprint-21d5-reuse-audit.json"
  },
- "recorded_at": "2026-08-08T18:58:01Z",
+ "recorded_at": "2026-08-08T19:46:00Z",
  "rights": {
   "authored_calibration_disjoint_from_spent_for_selection": {
    "disjoint": true,

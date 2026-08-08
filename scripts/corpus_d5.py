@@ -48,6 +48,10 @@ from cognitive_os.coding.reality_task_specs_d2 import (  # noqa: E402
 from cognitive_os.coding.reality_task_specs_d3 import D3_TASK_SPECS  # noqa: E402
 from cognitive_os.coding.reality_task_specs_d4 import D4_CALIBRATION_SPECS  # noqa: E402
 from cognitive_os.coding.reality_task_specs_d5 import D5_CALIBRATION_SPECS  # noqa: E402
+from cognitive_os.learning.correction_source import (  # noqa: E402
+    SourceNormalizationError,
+    canonical_source_bytes,
+)
 
 #: What the corpus contract says each body must do against each suite. A body that disagrees is
 #: an authoring defect, and the run is what decides which of the two it is.
@@ -290,6 +294,44 @@ def _search(words: tuple[str, ...]) -> int:
     return 0
 
 
+def _encodable() -> dict[str, Any]:
+    """Every body must survive the v2 source normaliser, or no campaign can encode it.
+
+    Added after S21D5-025 hit it on the eighty-first calibration group: `d5_error.short_circuit`
+    reached variant two with a walrus in a comprehension. The body was correct Python, passed
+    both suites by a materially different route, and was clone-clean — and the normaliser
+    refuses assignment expressions, so the group could never have been sealed.
+
+    Nothing before this asked the question. The five-body execution check runs pytest, which
+    accepts every construct Python accepts; the near-clone detectors read the AST but do not
+    normalise it. The first thing in the programme that reads a body through the encoder is the
+    feature seal, which is two waves and one campaign after the body is authored.
+    """
+    refused: list[dict[str, str]] = []
+    checked = 0
+    for spec in D5_CALIBRATION_SPECS:
+        for label in LABELS:
+            checked += 1
+            try:
+                canonical_source_bytes(module_source(spec, getattr(spec, label)))
+            except SourceNormalizationError as error:
+                refused.append({"group": spec.repository_group, "body": label, "error": str(error)})
+    for retrieval in D5_RETRIEVAL_SPECS:
+        for side in ("failed", "repaired"):
+            checked += 1
+            try:
+                canonical_source_bytes(retrieval.module_text(getattr(retrieval, side)))
+            except SourceNormalizationError as error:
+                refused.append(
+                    {"group": retrieval.repository_group, "body": side, "error": str(error)}
+                )
+    return {
+        "bodies_checked": checked,
+        "bodies_the_normaliser_refuses": refused,
+        "every_body_can_be_encoded": not refused,
+    }
+
+
 def _families() -> dict[str, int]:
     counts: dict[str, int] = {}
     for spec in D5_CALIBRATION_SPECS:
@@ -313,6 +355,7 @@ def main() -> int:
 
     execution = _execute(tuple(arguments.groups))
     separation = _separation()
+    encodable = _encodable()
     report = {
         "sprint": "21D5",
         "items": ["S21D5-020", "S21D5-022"],
@@ -321,8 +364,13 @@ def main() -> int:
         "shortfall": CALIBRATION_TARGET - len(D5_CALIBRATION_SPECS),
         "families": _families(),
         "execution": execution,
+        "encodability": encodable,
         "separation": separation,
-        "ready": execution["every_body_matches_the_contract"] and separation["separated"],
+        "ready": (
+            execution["every_body_matches_the_contract"]
+            and separation["separated"]
+            and encodable["every_body_can_be_encoded"]
+        ),
     }
     print(json.dumps(report, indent=1, sort_keys=True))
     return 0 if report["ready"] else 1

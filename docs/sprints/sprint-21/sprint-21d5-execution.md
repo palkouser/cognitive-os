@@ -2,8 +2,8 @@
 
 - Branch: `feature/sprint-21d5-pairwise-selective-ranking`
 - Backlog: [Sprint 21D5 Technical Backlog](sprint-21d5-technical-backlog.md)
-- **Status: W0 complete. W1 in progress — S21D5-020 through S21D5-023 closed: both corpora
-  authored, validated, proven separated and sealed.**
+- **Status: W0 complete. W1 in progress — S21D5-020 through S21D5-023 and S21D5-025 closed: both
+  corpora authored, validated, proven separated, sealed, and 1,120 features sealed pre-outcome.**
   W2 through W8 not started.
 - Pre-registration: revision 5, SHA-256
   `ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a`
@@ -882,10 +882,90 @@ The check itself stays, because the rule it guards is real: the sample is the fi
 manifest by a frozen rule, not the first twenty *eligible* ones. An ineligible group inside it
 would quietly shrink the regression rather than fail it.
 
+## S21D5-025 — the feature seals, and two defects only execution could find
+
+`scripts/reality_campaign_d5.py --stage seal` → `evidence/sprint-21d5-feature-seals.json`,
+integrity `1961fc37387e190f…`. **1,120 v2 feature records sealed before any container**: 720
+fitting and 400 calibration, every one of them a distinct vector.
+
+| partition | groups | records | feature seal | stream version before the seal |
+|---|---:|---:|---|---:|
+| fitting | 180 | 720 | `182adf2e1ca18055…` | 0 |
+| calibration | 100 | 400 | `211de7dc53b1fd70…` | 0 |
+
+Bounds fitted on the fitting rows and reused for calibration — refitting per partition would
+carry calibration statistics into the encoder, which no feature-name check would catch, because
+the names would all still be right. Both partitions re-encode identically from source alone and
+reserialise to the same hash. Containers started: **0**. Learned observations written: **0**.
+
+The chronology refusal is executed, not described: sealing either partition again with an outcome
+in hand raises `v2 feature records must be sealed strictly before every outcome`. Two seeded
+refusals, two `ValueError`s.
+
+### The 180 re-executed groups take D5 identities, and that is checked
+
+D5's fitting pool is D4's two partitions **by body**. The contract calls for re-execution under
+new run identities, and the catalogue seed reaches candidate identity, so this is a checkable
+claim rather than a promise: of 1,120 D5 candidate identities, **zero** coincide with a D4 one,
+and no D5 task identity does either. Asserting the seeds differ would only have restated the
+input.
+
+### Defect 1 — a hundred and sixty specs no runner could address
+
+The first run died on the first calibration package: `KeyError: 'd5_boundary.bin_packing'`.
+
+S21D5-020 and S21D5-021 authored both spec modules, validated every body by execution, proved
+them separated and sealed them — and **never registered them in `_ALL_TEMPLATES`**. The one line
+that publishes a corpus to the task registry lives in `reality_tasks.py`, a different file from
+the spec module, and nothing between authoring and the first `prepare_task` call asks whether a
+`template_id` resolves. Every D5 validator reads the spec tuples directly, so all of them were
+green against a corpus no campaign could run.
+
+Registered both, plus `d5_templates()` and `d5_retrieval_templates()`. The root-cause fix is
+`tests/cognitive_os/coding/test_reality_task_registry.py`: every authored spec in every released
+corpus must resolve to a template, parameterised over all eight corpora rather than written for
+D5. The gap is structural and the next sprint would have walked into it too.
+
+### Defect 2 — a body that is valid Python and cannot be encoded
+
+The second run died at calibration 81/100:
+`SourceNormalizationError: unsupported syntax: assignment expression`.
+
+`d5_error.short_circuit:variant_two` used a walrus inside a comprehension condition. The body was
+correct, passed both suites, took a materially different route from variant one, and was
+clone-clean. The v2 source normaliser refuses assignment expressions, so the group could never
+have been encoded — and **nothing in the authoring loop asked**. The five-body execution check
+runs pytest, which accepts every construct Python accepts; the near-clone detectors read the AST
+but do not normalise it. The first thing in the programme that reads a body through the encoder
+is the feature seal, two items later.
+
+Re-authored without the walrus, keeping the generator-and-`next` route distinct from variant
+one's explicit loop. Then the root-cause fix, and the part worth keeping: rather than fix the one
+crash and restart, **every D5 body was run through the normaliser first** — 620 bodies, exactly
+one refused. `scripts/corpus_d5.py` now carries that as an `encodability` gate in `ready`, so the
+question is asked at authoring time instead of two waves later.
+
+This is failure mode 6 for the D4 authoring ledger: *a body the encoder cannot read*. Like modes
+4 and 5 it is invisible to every check that only runs the code.
+
+### What the body change did and did not move
+
+Re-authoring a variant changes the bodies but not the catalogue: `CatalogueGroup` hashes the
+template, the task identity and the **hidden verifier**, not the four variant sources. So the D5
+corpus seal is still `4e73f290728aad42…` and S21D5-023 needed no re-seal.
+
+The separation record does hash every body, so it was regenerated (`243867bb67cf1379…`, still
+`accepted: true`, still zero cross-group collisions), and the sealed-manifests record after it,
+because it binds the separation file by hash. Both bindings in the feature-seal record were
+verified against the files on disk rather than assumed.
+
 ### What W1 still owes
 
-- pre-execution feature seals and both campaigns, 720 fitting and 400 calibration outcomes
-  (S21D5-025, S21D5-026).
+- both campaigns, 720 fitting and 400 calibration outcomes (S21D5-026).
+
+**One ordering note.** §6.1 puts the vertical slice *before* the bulk campaigns, and S21D5-024
+depends on S21D5-050 — the v3 artifact module, a W4 item whose own dependency (013) closed in W0.
+So the honest order for the rest of W1 is 050 → 024 → 026, not 026 next.
 
 Section 6.2 of the backlog governs a shortfall: if W1 could not reach 100 groups, the honest
 response was to author fewer, record the achieved independent-decision count and let §2.3's floor

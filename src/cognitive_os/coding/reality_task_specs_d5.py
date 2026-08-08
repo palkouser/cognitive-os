@@ -9895,14 +9895,12 @@ _G089 = D2TaskSpec(
 
     def look(name, check):
         try:
-            return check(value)
+            return name, check(value)
         except Exception as error:
-            return str(error)
+            return name, str(error)
 
-    return next(
-        ((name, message) for name, check in checks if (message := look(name, check))),
-        None,
-    )''',
+    reported = (look(name, check) for name, check in checks)
+    return next((report for report in reported if report[1]), None)''',
     variant_three='''def first_failure(checks, value):
     """Return (name, message) for the first check that objects to `value`."""
     for name, check in checks:

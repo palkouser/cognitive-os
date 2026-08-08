@@ -47,6 +47,7 @@ from cognitive_os.domain.reality import (
 from .reality_fixture_spec_d4 import D4_FIXTURE_SPEC
 from .reality_retrieval_specs_d3 import D3_RETRIEVAL_SPECS, D3RetrievalSpec
 from .reality_retrieval_specs_d4 import D4_RETRIEVAL_SPECS
+from .reality_retrieval_specs_d5 import D5_RETRIEVAL_SPECS
 from .reality_task_specs import TASK_SPECS, TaskSpec
 from .reality_task_specs_d2 import (
     D2_TASK_SPECS,
@@ -58,6 +59,7 @@ from .reality_task_specs_d2 import (
 from .reality_task_specs_d2 import module_source as d2_module_source
 from .reality_task_specs_d3 import D3_TASK_SPECS
 from .reality_task_specs_d4 import D4_CALIBRATION_SPECS
+from .reality_task_specs_d5 import D5_CALIBRATION_SPECS
 
 #: Fixed forever: it is what makes a regenerated task the same task.
 REALITY_TASK_NAMESPACE = UUID("6f2a1c94-8d3b-5e17-a4c0-2b9d7e5f83a1")
@@ -294,10 +296,21 @@ _D4_RETRIEVAL_TEMPLATES: dict[str, TaskTemplate] = {
     spec.template_id: _expand_retrieval(spec) for spec in D4_RETRIEVAL_SPECS
 }
 
+#: D5's hundred fresh calibration groups. Same D2 shape and the same expander again; no
+#: fixture yet, because S21D5-024 authors it and the registry addresses a task by ID.
+_D5_TEMPLATES: dict[str, TaskTemplate] = {
+    spec.template_id: _expand_d2(spec) for spec in D5_CALIBRATION_SPECS
+}
+
+#: D5's sixty retrieval source groups, on the same two-body evaluation-only shape as D3's.
+_D5_RETRIEVAL_TEMPLATES: dict[str, TaskTemplate] = {
+    spec.template_id: _expand_retrieval(spec) for spec in D5_RETRIEVAL_SPECS
+}
+
 #: Every corpus under one lookup, because the runner, the candidate builder and the retrieval
-#: plane address a task by ID and should not have to know which sprint authored it. The six
+#: plane address a task by ID and should not have to know which sprint authored it. The eight
 #: are still separate registries above: `available_templates()` is C3's campaign surface and
-#: must not silently grow by four hundred and thirty-seven tasks.
+#: must not silently grow by five hundred and ninety-seven tasks.
 _ALL_TEMPLATES: dict[str, TaskTemplate] = {
     **_TEMPLATES,
     **_D2_TEMPLATES,
@@ -305,6 +318,8 @@ _ALL_TEMPLATES: dict[str, TaskTemplate] = {
     **_D3_RETRIEVAL_TEMPLATES,
     **_D4_TEMPLATES,
     **_D4_RETRIEVAL_TEMPLATES,
+    **_D5_TEMPLATES,
+    **_D5_RETRIEVAL_TEMPLATES,
 }
 
 _REGISTERED = (
@@ -314,6 +329,8 @@ _REGISTERED = (
     + len(_D3_RETRIEVAL_TEMPLATES)
     + len(_D4_TEMPLATES)
     + len(_D4_RETRIEVAL_TEMPLATES)
+    + len(_D5_TEMPLATES)
+    + len(_D5_RETRIEVAL_TEMPLATES)
 )
 if len(_ALL_TEMPLATES) != _REGISTERED:  # pragma: no cover - import guard
     raise RuntimeError(
@@ -350,6 +367,16 @@ def d4_templates() -> tuple[str, ...]:
 def d4_retrieval_templates() -> tuple[str, ...]:
     """D4's retrieval source pool. Evaluation only: no correction role ever selects one."""
     return tuple(sorted(_D4_RETRIEVAL_TEMPLATES))
+
+
+def d5_templates() -> tuple[str, ...]:
+    """D5's corpus. The catalogue selects the hundred it scores."""
+    return tuple(sorted(_D5_TEMPLATES))
+
+
+def d5_retrieval_templates() -> tuple[str, ...]:
+    """D5's retrieval source pool. Evaluation only: no correction role ever selects one."""
+    return tuple(sorted(_D5_RETRIEVAL_TEMPLATES))
 
 
 def template(template_id: str) -> TaskTemplate:

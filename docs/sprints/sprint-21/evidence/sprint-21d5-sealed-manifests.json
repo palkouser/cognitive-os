@@ -14,7 +14,7 @@
   },
   "separation": {
    "file": "sprint-21d5-corpus-separation.json",
-   "sha256": "9c795bfa1e795087dab159053898469acaa7c0d76ff4705ac0a58317df3344bb"
+   "sha256": "243867bb67cf1379cc78f25ddd6fe566ff65277769a452f7fc11749f6ea6cfb7"
   }
  },
  "capability_revocation": {
@@ -132,7 +132,7 @@
    "reading": "the seed reaches candidate identity, so the 180 groups carry D5 candidate ids and are re-executed under new run identities rather than read from a store"
   }
  },
- "integrity_content_hash": "9b411b07729cbca948fbb00cbb274f8bd58d851ac6e14c248b3fe50c5f941ff8",
+ "integrity_content_hash": "107312fc5e68db250c9b0f09b4afed0ab01f05dc95e67ba20e7f054561c0332b",
  "items": [
   "S21D5-023"
  ],
@@ -171,7 +171,7 @@
   "why_not_re_derived": "a re-derivation from the same specs would produce the same number whether or not the released catalogue had moved underneath it, so it could not tell reuse from coincidence"
  },
  "purpose": "Seal the fitting, calibration, final A, final B, canary and retrieval manifests before any outcome exists: carrying the three protected roles S21D5-004 recorded as reuse rather than re-deriving them, proving the 180-group fitting pool both by membership and by body, and closing the corpus-authoring capability.",
- "recorded_at": "2026-08-08T19:31:56Z",
+ "recorded_at": "2026-08-08T19:46:09Z",
  "role_disjointness": {
   "all_pairwise_disjoint": true,
   "pairs_sharing_a_group": {
