@@ -9,9 +9,10 @@
   retrieval branch met no floor (S21D4-046, first failed floor `mrr_at_10`). W4 refused final
   access at S21D4-059 and bound twenty-six dependent tasks to that one stop. W7 verified
   provisioning, recovery and twenty-two damage cases, and found W7-F1. S21D4-075, the one
-  unconditional E07 item, ran on the isolated lifecycle fixture. No D4 final, promotion or
-  canary outcome has been read, no threshold has been derived, and no candidate has been
-  selected.
+  unconditional E07 item, ran on the isolated lifecycle fixture. W8 released: PR #223 merged into
+  protected `main` at `18564a55`, exact-head post-merge CI 30 of 30, and the annotated tag
+  `sprint-21d4-evidence-baseline` created once at that commit. No D4 final, promotion or canary
+  outcome has been read, no threshold has been derived, and no candidate has been selected.
 - **Migration:** none; the D4 authorities are provisioned at the released revision
 - **Pre-registration SHA-256:**
   `526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9`
@@ -600,7 +601,8 @@ confirms.
 | `sprint-21d4-advisory-boundary.json` | `5d3efbd584dc270a89a834ac104b1e815ac4beb8d545462fa0ae9a2d0d5c7177` | `1dca4f21cf88957b4bf2458475d7e7d8694b619362d237b115c5d9bac45b48f6` |
 | `sprint-21d4-pre-final-checkpoint.json` | `fdc1f9f16bda948506604c9f2c9ffc2cc700c51750d4cdcb77a1ef449c57f314` | `87c5473f61c177fe5db5aa1a5971759451c1f7a82b7364e9ac8dc3da99e9c6b1` |
 | `sprint-21d4-operations.json` | `47a5c701d7f98eb3c3cdf4a3b12c2bb90dfcb9ba9bd2c4d9b1af866c2a7017af` | `f12d0cb4229955b887060bcc168c4aaa56534dc8c23cc89a3a66e4bc7bfbd0f7` |
-| `sprint-21d4-gate-l2.json` | `52c7943957389a157f2a23d061c2e5b56efd91d52c6b0d33c9c0bab2a58c1ac2` | `6111bc14d835a80a4ec87e91fa6e1e5f0b6fad5ea6d34b6cf46b81d30c2248e2` |
+| `sprint-21d4-gate-l2.json` | `8c8f383fb03edab266ddd4654af2cb32ab74d366849595e385091e45d4d87ecd` | `815fcc47709faadb181af869d5fc09c27025d5e32120f2f5bdeb313297c14da1` |
+| `sprint-21d4-release.json` | `01fa805d993a832d3c307339da518ebcb5de178e958fa0c38755d2682a156ea7` | `bfaa1edd221bd0a592546a889605e77d13b45aa70370151d0a7405f47d8d1725` |
 | `sprint-21d4-verification-matrix.json` | `dc9b6f7570ae69b22c75baf6165455bf2e271164cc06d68ae435ac04d671fcd0` | `584fd9636813b99b5d1d9118ba552ce58ab284a33f49aab034264da53e82cf9b` |
 
 Two hashes, because two things are addressed: the file, which is what another record cites
@@ -634,6 +636,9 @@ result, and neither authorises what comes next:
 - **The substrate is release-graded and the evidence survives being moved.** W7's provisioning,
   recovery and twenty-two-case damage matrix all pass, the twelve-class report is clean with
   both authorities, and every predecessor store reproduces its released fingerprint.
+- **Condition 29 is met and the gate still does not pass.** The release happened, was verified
+  from the remote, and closed the one condition that was still moving. Thirteen met, one met as
+  a rejection, fifteen never opened, zero failed.
 
 **S21D4-075 is complete**, not open. It is the one item the backlog declares unconditional, it
 is deliberately absent from the not-opened map, and it ran against the isolated lifecycle

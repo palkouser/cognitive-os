@@ -1,0 +1,117 @@
+{
+ "branch_protection_after_release": {
+  "allow_deletions": false,
+  "allow_force_pushes": false,
+  "enforce_admins": true,
+  "required_conversation_resolution": true,
+  "required_pull_request_reviews": null,
+  "required_status_check_contexts": 27,
+  "strict_status_checks": true
+ },
+ "component_state": {
+  "activations": 0,
+  "active_components": 0,
+  "approvals": 0,
+  "artifact_written": false,
+  "learned_components": 0,
+  "note": "S21D4-039 recorded a null and S21D4-059 refused final access; nothing was registered, approved or activated on experience.correction_ranking. Source: sprint-21d4-pre-final-checkpoint.json, authorised False"
+ },
+ "d1_conditions_still_open": [
+  6,
+  7,
+  15
+ ],
+ "documents": {
+  "assessment": "gate-l2-d4-assessment.md",
+  "execution_log": "sprint-21d4-execution.md",
+  "handoff": "sprint-21d5-handoff.md",
+  "report": "sprint-21d4-report.md"
+ },
+ "final_outcomes_inspected": 0,
+ "findings": [],
+ "gate_l2": "does not pass",
+ "integrity_content_hash": "bfaa1edd221bd0a592546a889605e77d13b45aa70370151d0a7405f47d8d1725",
+ "items": [
+  "S21D4-094",
+  "S21D4-095"
+ ],
+ "migration_head": "0015",
+ "next_available_migration": "0016 (unallocated)",
+ "outcome": "negative",
+ "pre_registration_sha256": "526d48f83d696290f3ccbb7d06002026d4aa7c05b65c33d95f87c362f83461a9",
+ "recorded_at": "2026-08-08T07:24:36.223505Z",
+ "release": {
+  "chronology": "#223 merge 2026-08-08T07:08:05Z -> exact-head main CI 31245482819 complete 2026-08-08T07:23:36Z -> annotated tag created 2026-08-08T07:24:05Z, once and after that CI",
+  "exact_head_main_ci": {
+   "completed_at": "2026-08-08T07:23:36Z",
+   "conclusion": "success",
+   "every_job_succeeded": true,
+   "head_sha": "18564a55e65f7b331bc73fc334ee1ab085cf0836",
+   "jobs": "30 of 30 success",
+   "run": 31245482819,
+   "status": "completed"
+  },
+  "implementation_merge_commit": "18564a55e65f7b331bc73fc334ee1ab085cf0836",
+  "implementation_merged_at": "2026-08-08T07:08:05Z",
+  "implementation_pull_request": 223,
+  "merge_method": "squash, no administrator bypass",
+  "message_first_line": "sprint-21d4-evidence-baseline",
+  "peeled_commit": "18564a55e65f7b331bc73fc334ee1ab085cf0836",
+  "pull_request_head_ci": {
+   "completed_at": "2026-08-08T07:04:42Z",
+   "conclusion": "success",
+   "every_job_succeeded": true,
+   "head_sha": "7620f710a8daa5672c28c93a82490efd799b58e9",
+   "jobs": "30 of 30 success",
+   "run": 31244781354,
+   "status": "completed"
+  },
+  "remote_main": "18564a55e65f7b331bc73fc334ee1ab085cf0836",
+  "success_tag_exists": false,
+  "success_tag_forbidden_and_not_created": "sprint-21-learning-baseline",
+  "tag": "sprint-21d4-evidence-baseline",
+  "tag_created_at": "2026-08-08T07:24:05Z",
+  "tag_object": "0f1e4c897c72cedc530bb599c4d7af8e647b2774",
+  "tag_type": "tag",
+  "tags_on_the_remote": [
+   "refs/tags/sprint-0-baseline",
+   "refs/tags/sprint-1-baseline",
+   "refs/tags/sprint-10-baseline",
+   "refs/tags/sprint-11-baseline",
+   "refs/tags/sprint-12-baseline",
+   "refs/tags/sprint-13-baseline",
+   "refs/tags/sprint-14-baseline",
+   "refs/tags/sprint-15-baseline",
+   "refs/tags/sprint-16-baseline",
+   "refs/tags/sprint-17-baseline",
+   "refs/tags/sprint-18-baseline",
+   "refs/tags/sprint-19-baseline",
+   "refs/tags/sprint-2-baseline",
+   "refs/tags/sprint-20-baseline",
+   "refs/tags/sprint-21-substrate-baseline",
+   "refs/tags/sprint-21c1-evidence-baseline",
+   "refs/tags/sprint-21c2-provider-baseline",
+   "refs/tags/sprint-21c3-reality-baseline",
+   "refs/tags/sprint-21d1-emg-baseline",
+   "refs/tags/sprint-21d2-evidence-baseline",
+   "refs/tags/sprint-21d3-evidence-baseline",
+   "refs/tags/sprint-21d4-evidence-baseline",
+   "refs/tags/sprint-3-baseline",
+   "refs/tags/sprint-4-baseline",
+   "refs/tags/sprint-5-baseline",
+   "refs/tags/sprint-6-baseline",
+   "refs/tags/sprint-7-baseline",
+   "refs/tags/sprint-8-baseline",
+   "refs/tags/sprint-9-baseline"
+  ]
+ },
+ "schema_version": 1,
+ "sprint": "21D4",
+ "sprint_22a": "blocked; the handoff targets one bounded successor experiment",
+ "stop_hashes": {
+  "correction_selection": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+  "retrieval_holdout": "bf929d85f1544b6d4c3508107dd3610134bcc399f728893b5f510e673ccbc818"
+ },
+ "store_fingerprints_unchanged": true,
+ "wave": "W8"
+}

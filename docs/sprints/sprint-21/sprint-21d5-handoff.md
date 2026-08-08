@@ -12,6 +12,13 @@ strongest deterministic baseline and not one of them can separate its own errors
 **Gate L2 does not pass. Sprint 22A remains blocked.** This handoff targets one bounded successor
 experiment, not Sprint 22A, and nothing here may be read as unblocking it.
 
+D4 is released. Tag `sprint-21d4-evidence-baseline`, object
+`0f1e4c897c72cedc530bb599c4d7af8e647b2774`, peels to
+`18564a55e65f7b331bc73fc334ee1ab085cf0836`; PR `#223`; exact-head post-merge `main` CI run
+`31245482819`, 30 of 30 success. Gate L2 condition 29 is met and the gate still does not pass. A
+successor branches from the verified current `origin/main` and treats the tag as immutable
+release evidence.
+
 Authority for what D4 did: [Sprint 21D4 Technical Backlog](sprint-21d4-technical-backlog.md).
 Gate status: [Gate L2 assessment (D4)](gate-l2-d4-assessment.md). Results:
 [Sprint 21D4 report](sprint-21d4-report.md). Execution:

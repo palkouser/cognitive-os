@@ -236,6 +236,24 @@ def _condition_24(document: dict[str, Any]) -> tuple[str, str]:
     )
 
 
+def _condition_29(document: dict[str, Any]) -> tuple[str, str]:
+    """Read from the release record, which reads it from the remote. S21D4-095.
+
+    Absent until the protected release happens, which is why this condition is `pending` in the
+    provisional assessment and decided here only in the gate-close regeneration.
+    """
+    release = document["release"]
+    if document["findings"]:
+        return _no(f"the release record carries findings: {document['findings']}")
+    return _yes(
+        f"PR #{release['implementation_pull_request']} squash-merged into protected main at "
+        f"{release['implementation_merged_at']}, exact-head main CI run "
+        f"{release['exact_head_main_ci']['run']} {release['exact_head_main_ci']['jobs']}, and the "
+        f"annotated tag {release['tag']} object {str(release['tag_object'])[:16]} peels to "
+        f"{str(release['peeled_commit'])[:16]}"
+    )
+
+
 def _condition_28(document: dict[str, Any]) -> tuple[str, str]:
     totals = document["totals"]
     clean = not document["failed_rows"] and not document["skipped_rows"]
@@ -311,6 +329,11 @@ BEARINGS: dict[int, Bearing] = {
         "sprint-21d4-verification-matrix.json",
         "every required isolated and repository check ran and passed, none skipped",
         _condition_28,
+    ),
+    29: Bearing(
+        "sprint-21d4-release.json",
+        "protected merge, post-merge exact-head CI, annotated tag, remote read",
+        _condition_29,
     ),
 }
 
@@ -395,6 +418,19 @@ def _rows() -> list[dict[str, Any]]:
         if condition in BEARINGS:
             bearing = BEARINGS[condition]
             document = _read(bearing.source)
+            if document is None and condition in PENDING_CONDITIONS:
+                # The release has not happened yet. `pending` is neither a stop nor a pass, and
+                # the gate-close regeneration is what turns it into one.
+                rows.append(
+                    {
+                        "condition": condition,
+                        "state": PENDING,
+                        "rule": bearing.rule,
+                        "evidence": None,
+                        "detail": PENDING_CONDITIONS[condition],
+                    }
+                )
+                continue
             if document is None:
                 rows.append(
                     {
@@ -415,16 +451,6 @@ def _rows() -> list[dict[str, Any]]:
                     "evidence": bearing.source,
                     "evidence_sha256": _sha256(bearing.source),
                     "detail": detail,
-                }
-            )
-        elif condition in PENDING_CONDITIONS:
-            rows.append(
-                {
-                    "condition": condition,
-                    "state": PENDING,
-                    "rule": "protected merge, post-merge exact-head CI, annotated tag, remote read",
-                    "evidence": None,
-                    "detail": PENDING_CONDITIONS[condition],
                 }
             )
         else:
