@@ -220,6 +220,65 @@ def _separation() -> dict[str, Any]:
     }
 
 
+def _search(words: tuple[str, ...]) -> int:
+    """The pre-check: does any released group already do this?
+
+    Failure mode 3 is a collision at the level of the *task*, and rewriting a variant cannot
+    repair it — the group is withdrawn and the authoring effort is lost. D4 discovered its
+    collisions after writing the bodies. Asking first turns that rework into a lookup, and the
+    question is answerable because every spec states its contract in prose it already carries.
+    """
+    released = (
+        *TASK_SPECS,
+        *D2_TASK_SPECS,
+        *D3_TASK_SPECS,
+        *D4_CALIBRATION_SPECS,
+        *D3_RETRIEVAL_SPECS,
+        *D4_RETRIEVAL_SPECS,
+    )
+    wanted = tuple(word.lower() for word in words)
+    hits = []
+    for spec in released:
+        haystack = " ".join(
+            (
+                spec.module,
+                spec.repository_group,
+                spec.template_id,
+                getattr(spec, "issue", ""),
+                getattr(spec, "expected", ""),
+            )
+        ).lower()
+        matched = [word for word in wanted if word in haystack]
+        if matched:
+            hits.append(
+                {
+                    "module": spec.module,
+                    "group": spec.repository_group,
+                    "matched": matched,
+                    "expected": getattr(spec, "expected", "")[:160],
+                }
+            )
+    hits.sort(key=lambda item: (-len(item["matched"]), item["module"]))
+    print(
+        json.dumps(
+            {
+                "searched": list(wanted),
+                "released_groups": len(released),
+                "hits": len(hits),
+                "closest": hits[:12],
+                "reading": (
+                    "a hit is not automatically a collision, but a hit whose 'expected' states "
+                    "the same contract is one, and it is cheaper to read it now than to author "
+                    "five bodies and withdraw them"
+                ),
+            },
+            indent=1,
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
 def _families() -> dict[str, int]:
     counts: dict[str, int] = {}
     for spec in D5_CALIBRATION_SPECS:
@@ -230,7 +289,16 @@ def _families() -> dict[str, int]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--groups", nargs="*", default=[])
+    parser.add_argument(
+        "--search",
+        nargs="*",
+        default=[],
+        help="report released groups whose contract mentions these words, before authoring",
+    )
     arguments = parser.parse_args()
+
+    if arguments.search:
+        return _search(tuple(arguments.search))
 
     execution = _execute(tuple(arguments.groups))
     separation = _separation()

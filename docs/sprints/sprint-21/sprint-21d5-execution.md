@@ -2,7 +2,7 @@
 
 - Branch: `feature/sprint-21d5-pairwise-selective-ranking`
 - Backlog: [Sprint 21D5 Technical Backlog](sprint-21d5-technical-backlog.md)
-- **Status: W0 complete. W1 in progress — 6 of 100 calibration groups authored and validated.**
+- **Status: W0 complete. W1 in progress — 18 of 100 calibration groups authored and validated.**
   W2 through W8 not started.
 - Pre-registration: revision 5, SHA-256
   `ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a`
@@ -251,8 +251,8 @@ changed a frozen hash, and checking is cheaper than assuming it cannot.
 
 ## W1 progress — the authoring loop, proved on six groups
 
-**W1 is not complete.** Six of one hundred calibration groups are authored and validated; the
-sixty retrieval groups are not started. What is complete is the loop the remaining authoring
+**W1 is not complete.** Eighteen of one hundred calibration groups are authored and validated;
+the sixty retrieval groups are not started. What is complete is the loop the remaining authoring
 runs in, and one measurement that changes the estimate for it.
 
 ### The validator is the tool, not the report
@@ -308,9 +308,53 @@ task against the released module list before authoring its bodies.** D4 discover
 collisions after writing them and had to withdraw whole groups; the pre-check turns that rework
 into a lookup.
 
+### Batch two, and the pre-check made operative
+
+The finding above said to check a task against the released corpus before authoring its bodies.
+`scripts/corpus_d5.py --search` is that check: it reports every released group whose module,
+group, template id, `issue` or `expected` mentions the given words, so an idea is answered by a
+lookup instead of by five bodies and a withdrawal.
+
+It changed the hit rate immediately. Of eighteen ideas checked, `transpose`, `roman`,
+`thousands separator` and `leading zero` came back occupied — `row_transposition`,
+`roman_value`, `grouped_numbers`, `clock_rendering` — and were dropped before any body existed.
+The other fourteen came back clean, and twelve became batch two.
+
+| Group | Family | The two independent edge cases |
+|---|---|---|
+| `d5-boundary-round-robin` | boundary_collections | a shorter queue drops out of the rotation; no queues at all yields nothing |
+| `d5-boundary-bin-packing` | boundary_collections | a bin may be filled exactly; a weight above the capacity is refused |
+| `d5-parsing-ipv4-octets` | parsing_validation | a leading zero is refused; an octet above 255 is refused |
+| `d5-parsing-glob-match` | parsing_validation | the pattern must match the whole name; a full stop is literal |
+| `d5-numeric-luhn-check` | numeric_logic | grouping separators are ignored; a number with no digits is invalid |
+| `d5-numeric-significant-figures` | numeric_logic | zero rounds to zero; a negative keeps its sign |
+| `d5-transform-value-histogram` | data_transformation | all-equal readings fall in the first bucket; an empty series counts nothing |
+| `d5-transform-topological-order` | data_transformation | a step named only as a prerequisite is included; a cycle raises |
+| `d5-state-debounce-window` | state_idempotency | the first action for a key is allowed; exactly one window later is allowed |
+| `d5-state-replica-reconcile` | state_idempotency | a remote-only key is adopted; an equal version keeps the local entry |
+| `d5-error-circuit-breaker` | error_handling | below the minimum it never trips; exactly on the threshold it trips |
+| `d5-error-duplicate-suppression` | error_handling | first-seen order, not sorted; trailing whitespace does not distinguish |
+
+Measured over the whole authored corpus: 18 groups, 90 bodies, **180 suite runs, 0 contract
+defects**, **0 cross-group collisions** against 1,320 released and D5 bodies, families balanced
+**3/3/3/3/3/3**.
+
+### One group withdrawn at the design table
+
+A sliding-median smoother was designed, and then withdrawn before a body was written, because
+its two edge cases **cannot** be independent. The candidate pair was "a window running past the
+end repeats the final value" and "an even window takes the lower of the two middle values". For
+a window truncated to two elements the lower middle *is* the minimum, and padding with the final
+value gives the final value; the two rules therefore agree exactly when the final value is the
+smaller one, and where they disagree the baseline is already correct. No partial fix could
+repair one and leave the other, which is failure mode 1 by construction rather than by accident.
+
+That is worth recording because it is the cheap version of the same discovery: the validator
+catches this defect after five bodies are written, and arithmetic catches it before any are.
+
 ### What W1 still owes
 
-- 94 further calibration groups, family-balanced, each validated by the loop above;
+- 82 further calibration groups, family-balanced, each validated by the loop above;
 - 60 retrieval groups yielding at least 50 qualifying queries (S21D5-021);
 - the separation, rights and lineage evidence record (S21D5-022);
 - sealed campaign and holdout manifests (S21D5-023);
