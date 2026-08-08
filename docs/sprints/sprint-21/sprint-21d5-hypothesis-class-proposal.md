@@ -69,6 +69,9 @@ is left open.
 
 ## 4. What a D5 must still do, in order
 
+Detailed as work items, waves and stop rules in the
+[Sprint 21D5 Technical Backlog](sprint-21d5-technical-backlog.md); summarised here.
+
 1. **Pre-register** revision 5: this class by name, λ = 1 (chosen on fitting-pool-internal
    leave-group-out evidence, recorded before any fresh number), the margin as the
    confidence, the unchanged §2.3 floors and §3.3-style decision tree, the combined spent
