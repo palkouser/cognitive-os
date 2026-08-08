@@ -2,7 +2,7 @@
 
 - Branch: `feature/sprint-21d5-pairwise-selective-ranking`
 - Backlog: [Sprint 21D5 Technical Backlog](sprint-21d5-technical-backlog.md)
-- **Status: W0 complete. W1 in progress — 30 of 100 calibration groups authored and validated.**
+- **Status: W0 complete. W1 in progress — 42 of 100 calibration groups authored and validated.**
   W2 through W8 not started.
 - Pre-registration: revision 5, SHA-256
   `ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a`
@@ -407,9 +407,51 @@ Measured over the whole authored corpus: 30 groups, 150 bodies, **300 suite runs
 defects**, **0 cross-group collisions** against 1,380 released and D5 bodies, families balanced
 **5/5/5/5/5/5**.
 
+### Batch four, and what a clean run costs
+
+Twelve more groups, taking the corpus to forty-two at **7/7/7/7/7/7**. This is the first batch to
+clear both the contract and separation on the **first** run — 60 bodies, 120 suite runs, 0 contract
+defects, 0 collisions — and the cost of that shows up entirely before any body was written.
+
+Thirty-two ideas were probed one word at a time. Sixteen came back occupied and were dropped at
+once: sliding windows (`d4-boundary-overlapping-windows`), unpivot (`d4-transform-melt-columns`),
+URL dot-segments (`d4-parsing-tidy-route`), exception-type to exit code (`d2-errors-exit-codes`),
+error wrapping (`d2-errors-wrapping`), fill-forward, fill-gaps, coalesce, rotate, longest run,
+stride, pad, cumulative, bearings, interpolation and claim-a-slot. Reading the *contract* of each
+hit rather than counting hits is what made the difference from batch three.
+
+| Group | Family | The two independent edge cases |
+|---|---|---|
+| `d5-boundary-spiral-order` | boundary_collections | a ring one row deep is read once; a grid with no rows returns nothing |
+| `d5-boundary-split-on-marker` | boundary_collections | a stream opening on a marker has nothing in front of it; an empty stream yields no sections |
+| `d5-numeric-reading-spread` | numeric_logic | a mean that is not whole is not truncated; no readings is refused |
+| `d5-numeric-proportional-allocate` | numeric_logic | the parts sum to exactly the total; zero total weight is refused |
+| `d5-parsing-markdown-links` | parsing_validation | an image is not a link; a link with an empty target is left out |
+| `d5-parsing-postcode-format` | parsing_validation | an internal space is removed too; anything under five characters is refused |
+| `d5-transform-secondary-order` | data_transformation | ties settle on the secondary descending; a record lacking it comes last |
+| `d5-transform-swap-levels` | data_transformation | an inner key under several outer keys keeps them all; a non-mapping is refused |
+| `d5-state-recent-cache` | state_idempotency | a key in use moves rather than repeats; the oldest is dropped at the limit |
+| `d5-state-inflight-claim` | state_idempotency | a hold that has run out counts as free; a finished piece is never handed out |
+| `d5-error-quarantine-batch` | error_handling | the reason is the error's text; an interruption is raised on, not quarantined |
+| `d5-error-cleanup-suppressed` | error_handling | a failing cleanup does not replace the body's failure, nor stop the ones after it |
+
+**A second group withdrawn at the design table.** A union-of-columns transformer was designed and
+dropped before a body existed, on the same kind of proof as the sliding-median group in batch two.
+Its candidate pair was "the field list is the union across all records" and "a record missing a
+field takes the default" — but a later record can only *add* a field by the earlier ones lacking
+it, so the first edge case cannot be exercised without the second. Failure mode 1 by construction.
+`d5-transform-swap-levels` was authored instead.
+
+Two design-table withdrawals in four batches is the loop working as intended: the arithmetic is
+free, the validator costs five bodies, and the near-clone detector costs a whole group.
+
+Measured over the whole authored corpus: 42 groups, 210 bodies, **420 suite runs, 0 contract
+defects**, **0 cross-group collisions** against 1,440 released and D5 bodies, families balanced
+**7/7/7/7/7/7**.
+
 ### What W1 still owes
 
-- 70 further calibration groups, family-balanced, each validated by the loop above;
+- 58 further calibration groups, family-balanced, each validated by the loop above;
 - 60 retrieval groups yielding at least 50 qualifying queries (S21D5-021);
 - the separation, rights and lineage evidence record (S21D5-022);
 - sealed campaign and holdout manifests (S21D5-023);

@@ -3306,6 +3306,1455 @@ def test_a_secret_contained_in_a_longer_one_leaves_nothing_behind() -> None:
     ),
 )
 
+# ------------------------------------------------------------------ boundary and collections
+
+_G031 = D2TaskSpec(
+    template_id="d5_boundary.spiral_order",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d5-boundary-spiral-order",
+    module="spiral_order",
+    module_doc="Reading a rectangular grid inwards, one ring at a time.",
+    issue=(
+        "spiral() is documented to read a grid inwards ring by ring, each cell once. Callers "
+        "report that a grid whose innermost ring is a single row reads part of that row twice, "
+        "and that a grid with no rows at all raises instead of coming back empty."
+    ),
+    expected=(
+        "spiral(grid) returns the cells of the grid read clockwise from the top left inwards, "
+        "each cell exactly once, and returns nothing for a grid with no rows."
+    ),
+    baseline_reason=(
+        "it always walks all four sides of a ring, so a ring only one row deep is walked back "
+        "along, and it reads the width off the first row without checking there is one"
+    ),
+    edge_cases=(
+        "a ring only one row deep is read once, not back along as well",
+        "a grid with no rows returns nothing",
+    ),
+    baseline='''def spiral(grid):
+    """Return the cells of `grid` read clockwise inwards."""
+    rows = [list(row) for row in grid]
+    out = []
+    top, bottom = 0, len(rows) - 1
+    left, right = 0, len(rows[0]) - 1
+    while top <= bottom and left <= right:
+        for column in range(left, right + 1):
+            out.append(rows[top][column])
+        for row in range(top + 1, bottom + 1):
+            out.append(rows[row][right])
+        for column in range(right - 1, left - 1, -1):
+            out.append(rows[bottom][column])
+        for row in range(bottom - 1, top, -1):
+            out.append(rows[row][left])
+        top, bottom = top + 1, bottom - 1
+        left, right = left + 1, right - 1
+    return out''',
+    variant_one='''def spiral(grid):
+    """Return the cells of `grid` read clockwise inwards."""
+    rows = [list(row) for row in grid]
+    if not rows:
+        return []
+    out = []
+    top, bottom = 0, len(rows) - 1
+    left, right = 0, len(rows[0]) - 1
+    while top <= bottom and left <= right:
+        for column in range(left, right + 1):
+            out.append(rows[top][column])
+        for row in range(top + 1, bottom + 1):
+            out.append(rows[row][right])
+        if top < bottom:
+            for column in range(right - 1, left - 1, -1):
+                out.append(rows[bottom][column])
+        if left < right:
+            for row in range(bottom - 1, top, -1):
+                out.append(rows[row][left])
+        top, bottom = top + 1, bottom - 1
+        left, right = left + 1, right - 1
+    return out''',
+    variant_two='''def spiral(grid):
+    """Return the cells of `grid` read clockwise inwards."""
+    rows = [list(row) for row in grid]
+    if not rows or not rows[0]:
+        return []
+    height, width = len(rows), len(rows[0])
+    headings = ((0, 1), (1, 0), (0, -1), (-1, 0))
+    seen = set()
+    out = []
+    row = column = facing = 0
+    for _ in range(height * width):
+        out.append(rows[row][column])
+        seen.add((row, column))
+        for turn in range(4):
+            step = headings[(facing + turn) % 4]
+            ahead = (row + step[0], column + step[1])
+            inside = 0 <= ahead[0] < height and 0 <= ahead[1] < width
+            if inside and ahead not in seen:
+                facing = (facing + turn) % 4
+                row, column = ahead
+                break
+    return out''',
+    variant_three='''def spiral(grid):
+    """Return the cells of `grid` read clockwise inwards."""
+    rows = [list(row) for row in grid]
+    out = []
+    top, bottom = 0, len(rows) - 1
+    left, right = 0, len(rows[0]) - 1
+    while top <= bottom and left <= right:
+        for column in range(left, right + 1):
+            out.append(rows[top][column])
+        for row in range(top + 1, bottom + 1):
+            out.append(rows[row][right])
+        if top < bottom:
+            for column in range(right - 1, left - 1, -1):
+                out.append(rows[bottom][column])
+        if left < right:
+            for row in range(bottom - 1, top, -1):
+                out.append(rows[row][left])
+        top, bottom = top + 1, bottom - 1
+        left, right = left + 1, right - 1
+    return out''',
+    variant_four='''def spiral(grid):
+    """Return the cells of `grid` read clockwise inwards."""
+    rows = [list(row) for row in grid]
+    if not rows:
+        return []
+    out = []
+    top, bottom = 0, len(rows) - 1
+    left, right = 0, len(rows[0]) - 1
+    while top <= bottom and left <= right:
+        for column in range(left, right + 1):
+            out.append(rows[top][column])
+        for row in range(top + 1, bottom + 1):
+            out.append(rows[row][right])
+        for column in range(right - 1, left - 1, -1):
+            out.append(rows[bottom][column])
+        for row in range(bottom - 1, top, -1):
+            out.append(rows[row][left])
+        top, bottom = top + 1, bottom - 1
+        left, right = left + 1, right - 1
+    return out''',
+    visible_test=_test_module(
+        "spiral_order",
+        "Published contract for reading a grid inwards.",
+        """
+def test_a_two_by_two_grid_reads_round_once() -> None:
+    assert spiral([[1, 2], [3, 4]]) == [1, 2, 4, 3]
+
+
+def test_a_two_row_grid_reads_along_and_back() -> None:
+    assert spiral([[1, 2, 3, 4], [5, 6, 7, 8]]) == [1, 2, 3, 4, 8, 7, 6, 5]
+""",
+        imports="from spiral_order import spiral\n",
+    ),
+    hidden_test=_test_module(
+        "spiral_order",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_two_by_two_grid_reads_round_once() -> None:
+    assert spiral([[1, 2], [3, 4]]) == [1, 2, 4, 3]
+
+
+def test_a_ring_one_row_deep_is_read_once() -> None:
+    grid = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]
+    assert spiral(grid) == [1, 2, 3, 4, 8, 12, 11, 10, 9, 5, 6, 7]
+
+
+def test_a_grid_with_no_rows_reads_nothing() -> None:
+    assert spiral([]) == []
+""",
+        imports="from spiral_order import spiral\n",
+    ),
+)
+
+
+_G032 = D2TaskSpec(
+    template_id="d5_boundary.split_on_marker",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d5-boundary-split-on-marker",
+    module="split_on_marker",
+    module_doc="Cutting a stream into sections, each opened by the entry that marks it.",
+    issue=(
+        "split_sections() is documented to cut a stream into sections, each opened by a marker "
+        "and carrying it. Callers report that a stream opening on a marker comes back with an "
+        "empty section in front of it, and that an empty stream comes back holding one empty "
+        "section rather than none at all."
+    ),
+    expected=(
+        "split_sections(items, is_marker) returns the sections of the stream in order, each "
+        "one opened by the marker that introduced it and carrying it, whatever comes before "
+        "the first marker forming a section of its own, and no empty section ever produced."
+    ),
+    baseline_reason=(
+        "it closes the section in hand whenever a marker arrives and again when the stream "
+        "ends, without checking either time that the section holds anything"
+    ),
+    edge_cases=(
+        "a stream opening on a marker has no empty section in front of it",
+        "an empty stream produces no sections at all",
+    ),
+    baseline='''def split_sections(items, is_marker):
+    """Return the sections of `items`, each opened by a marker."""
+    sections = []
+    current = []
+    for item in items:
+        if is_marker(item):
+            sections.append(current)
+            current = [item]
+        else:
+            current.append(item)
+    sections.append(current)
+    return sections''',
+    variant_one='''def split_sections(items, is_marker):
+    """Return the sections of `items`, each opened by a marker."""
+    sections = []
+    current = []
+    for item in items:
+        if is_marker(item):
+            if current:
+                sections.append(current)
+            current = [item]
+        else:
+            current.append(item)
+    if current:
+        sections.append(current)
+    return sections''',
+    variant_two='''def split_sections(items, is_marker):
+    """Return the sections of `items`, each opened by a marker."""
+    entries = list(items)
+    if not entries:
+        return []
+    opens = [position for position, item in enumerate(entries) if is_marker(item)]
+    bounds = opens if opens and opens[0] == 0 else [0, *opens]
+    sections = []
+    for place, start in enumerate(bounds):
+        stop = bounds[place + 1] if place + 1 < len(bounds) else len(entries)
+        sections.append(entries[start:stop])
+    return sections''',
+    variant_three='''def split_sections(items, is_marker):
+    """Return the sections of `items`, each opened by a marker."""
+    sections = []
+    current = []
+    for item in items:
+        if is_marker(item):
+            if current:
+                sections.append(current)
+            current = [item]
+        else:
+            current.append(item)
+    sections.append(current)
+    return sections''',
+    variant_four='''def split_sections(items, is_marker):
+    """Return the sections of `items`, each opened by a marker."""
+    sections = []
+    current = []
+    for item in items:
+        if is_marker(item):
+            sections.append(current)
+            current = [item]
+        else:
+            current.append(item)
+    if current:
+        sections.append(current)
+    return sections''',
+    visible_test=_test_module(
+        "split_on_marker",
+        "Published contract for cutting a stream into marked sections.",
+        """
+def test_a_marker_opens_the_section_it_belongs_to() -> None:
+    assert split_sections(["a", "M", "b"], lambda item: item == "M") == [["a"], ["M", "b"]]
+
+
+def test_a_stream_with_no_marker_is_one_section() -> None:
+    assert split_sections(["a", "b"], lambda item: item == "M") == [["a", "b"]]
+""",
+        imports="from split_on_marker import split_sections\n",
+    ),
+    hidden_test=_test_module(
+        "split_on_marker",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_marker_opens_the_section_it_belongs_to() -> None:
+    assert split_sections(["a", "M", "b"], lambda item: item == "M") == [["a"], ["M", "b"]]
+
+
+def test_a_stream_opening_on_a_marker_has_nothing_in_front_of_it() -> None:
+    assert split_sections(["M", "a"], lambda item: item == "M") == [["M", "a"]]
+
+
+def test_an_empty_stream_produces_no_sections() -> None:
+    assert split_sections([], lambda item: item == "M") == []
+""",
+        imports="from split_on_marker import split_sections\n",
+    ),
+)
+
+# ---------------------------------------------------------------------------- numeric logic
+
+_G033 = D2TaskSpec(
+    template_id="d5_numeric.reading_spread",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d5-numeric-reading-spread",
+    module="reading_spread",
+    module_doc="Measuring how far a set of readings sits from its own middle.",
+    issue=(
+        "variance() is documented to return the mean of the squared deviations. Analysts "
+        "report that a set whose mean is not a whole number comes back with the wrong spread, "
+        "and that an empty set raises a division error rather than saying what is wrong."
+    ),
+    expected=(
+        "variance(readings) returns the mean of the squared deviations of the readings from "
+        "their mean, and raises ValueError when there are no readings."
+    ),
+    baseline_reason=(
+        "it takes the mean with a floor division, so a mean that is not whole is truncated "
+        "before the deviations are measured, and it never checks there are readings at all"
+    ),
+    edge_cases=(
+        "a mean that is not a whole number is not truncated",
+        "no readings at all is refused",
+    ),
+    baseline='''def variance(readings):
+    """Return the mean squared deviation of `readings` from their mean."""
+    values = list(readings)
+    mean = sum(values) // len(values)
+    return sum((value - mean) ** 2 for value in values) / len(values)''',
+    variant_one='''def variance(readings):
+    """Return the mean squared deviation of `readings` from their mean."""
+    values = list(readings)
+    if not values:
+        raise ValueError("variance needs at least one reading")
+    mean = sum(values) / len(values)
+    return sum((value - mean) ** 2 for value in values) / len(values)''',
+    variant_two='''def variance(readings):
+    """Return the mean squared deviation of `readings` from their mean."""
+    values = list(readings)
+    count = len(values)
+    if count == 0:
+        raise ValueError("variance needs at least one reading")
+    total = sum(values)
+    squares = sum(value * value for value in values)
+    return squares / count - (total / count) ** 2''',
+    variant_three='''def variance(readings):
+    """Return the mean squared deviation of `readings` from their mean."""
+    values = list(readings)
+    mean = sum(values) / len(values)
+    return sum((value - mean) ** 2 for value in values) / len(values)''',
+    variant_four='''def variance(readings):
+    """Return the mean squared deviation of `readings` from their mean."""
+    values = list(readings)
+    if not values:
+        raise ValueError("variance needs at least one reading")
+    mean = sum(values) // len(values)
+    return sum((value - mean) ** 2 for value in values) / len(values)''',
+    visible_test=_test_module(
+        "reading_spread",
+        "Published contract for measuring the spread of a set of readings.",
+        """
+def test_readings_that_are_all_equal_have_no_spread() -> None:
+    assert variance([5, 5, 5]) == 0.0
+
+
+def test_readings_around_a_whole_mean() -> None:
+    assert variance([2, 4, 6]) == pytest.approx(8 / 3)
+
+
+def test_a_single_reading_has_no_spread() -> None:
+    assert variance([7]) == 0.0
+""",
+        imports="import pytest\n\nfrom reading_spread import variance\n",
+    ),
+    hidden_test=_test_module(
+        "reading_spread",
+        "The part of the contract the published tests do not state.",
+        """
+def test_readings_that_are_all_equal_have_no_spread() -> None:
+    assert variance([5, 5, 5]) == 0.0
+
+
+def test_a_mean_that_is_not_whole_is_not_truncated() -> None:
+    assert variance([1, 2]) == pytest.approx(0.25)
+
+
+def test_no_readings_at_all_is_refused() -> None:
+    with pytest.raises(ValueError):
+        variance([])
+""",
+        imports="import pytest\n\nfrom reading_spread import variance\n",
+    ),
+)
+
+
+_G034 = D2TaskSpec(
+    template_id="d5_numeric.proportional_allocate",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d5-numeric-proportional-allocate",
+    module="proportional_allocate",
+    module_doc="Dividing a whole total across claimants in proportion to their weights.",
+    issue=(
+        "allocate() is documented to divide a whole total across weighted claimants. "
+        "Accounting reports that the parts sometimes come to less than the total, and that "
+        "weights that are all zero raise a division error rather than being refused."
+    ),
+    expected=(
+        "allocate(total, weights) returns one whole part per weight, proportional to the "
+        "weights and summing to exactly the total, whatever is left over after the "
+        "proportional shares going to the largest fractions first and to the earliest "
+        "claimant on a tie, and raises ValueError when the weights sum to zero."
+    ),
+    baseline_reason=(
+        "it floors each proportional share and hands back what is left of the total to nobody, "
+        "and it divides by the total weight without checking there is any"
+    ),
+    edge_cases=(
+        "the parts sum to exactly the total",
+        "weights summing to zero are refused",
+    ),
+    baseline='''def allocate(total, weights):
+    """Return whole parts of `total` proportional to `weights`."""
+    share = sum(weights)
+    return [total * weight // share for weight in weights]''',
+    variant_one='''def allocate(total, weights):
+    """Return whole parts of `total` proportional to `weights`."""
+    share = sum(weights)
+    if share == 0:
+        raise ValueError("the weights must not sum to zero")
+    parts = [total * weight // share for weight in weights]
+    fractions = [(total * weight) % share for weight in weights]
+    order = sorted(range(len(weights)), key=lambda index: (-fractions[index], index))
+    for index in order[: total - sum(parts)]:
+        parts[index] += 1
+    return parts''',
+    variant_two='''def allocate(total, weights):
+    """Return whole parts of `total` proportional to `weights`."""
+    share = sum(weights)
+    if share == 0:
+        raise ValueError("the weights must not sum to zero")
+    parts = []
+    fractions = []
+    for weight in weights:
+        exact = total * weight
+        whole = exact // share
+        parts.append(whole)
+        fractions.append(exact - whole * share)
+    for _ in range(total - sum(parts)):
+        best = 0
+        for index in range(1, len(fractions)):
+            if fractions[index] > fractions[best]:
+                best = index
+        parts[best] += 1
+        fractions[best] = -1
+    return parts''',
+    variant_three='''def allocate(total, weights):
+    """Return whole parts of `total` proportional to `weights`."""
+    share = sum(weights)
+    parts = [total * weight // share for weight in weights]
+    fractions = [(total * weight) % share for weight in weights]
+    order = sorted(range(len(weights)), key=lambda index: (-fractions[index], index))
+    for index in order[: total - sum(parts)]:
+        parts[index] += 1
+    return parts''',
+    variant_four='''def allocate(total, weights):
+    """Return whole parts of `total` proportional to `weights`."""
+    share = sum(weights)
+    if share == 0:
+        raise ValueError("the weights must not sum to zero")
+    return [total * weight // share for weight in weights]''',
+    visible_test=_test_module(
+        "proportional_allocate",
+        "Published contract for dividing a total across weighted claimants.",
+        """
+def test_equal_weights_divide_evenly() -> None:
+    assert allocate(100, [1, 1]) == [50, 50]
+
+
+def test_weights_that_divide_exactly_need_nothing_carried() -> None:
+    assert allocate(90, [1, 2]) == [30, 60]
+""",
+        imports="from proportional_allocate import allocate\n",
+    ),
+    hidden_test=_test_module(
+        "proportional_allocate",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_equal_weights_divide_evenly() -> None:
+    assert allocate(100, [1, 1]) == [50, 50]
+
+
+def test_the_parts_sum_to_exactly_the_total() -> None:
+    assert allocate(10, [1, 1, 1]) == [4, 3, 3]
+
+
+def test_weights_summing_to_zero_are_refused() -> None:
+    with pytest.raises(ValueError):
+        allocate(10, [0, 0])
+""",
+        imports="from proportional_allocate import allocate\n",
+    ),
+)
+
+# ----------------------------------------------------------------------- parsing and validation
+
+_G035 = D2TaskSpec(
+    template_id="d5_parsing.markdown_links",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d5-parsing-markdown-links",
+    module="markdown_links",
+    module_doc="Picking the inline links out of a piece of marked-up prose.",
+    issue=(
+        "links() is documented to pick the inline links out of marked-up prose. Reviewers "
+        "report that an inline image is reported as though it were a link, and that a link "
+        "left with nothing to point at is reported with an empty target."
+    ),
+    expected=(
+        "links(text) returns the inline links of the text in order as (label, target) pairs. "
+        "An image, which is the same shape introduced by an exclamation mark, is not a link, "
+        "and a link whose target is empty is left out."
+    ),
+    baseline_reason=(
+        "it takes every label-and-target shape it finds without looking at the character in "
+        "front of it or at whether the target holds anything"
+    ),
+    edge_cases=(
+        "an image is not reported as a link",
+        "a link with an empty target is left out",
+    ),
+    baseline='''def links(text):
+    """Return the (label, target) pairs of the inline links in `text`."""
+    found = []
+    position = 0
+    while True:
+        opened = text.find("[", position)
+        if opened < 0:
+            break
+        closed = text.find("]", opened)
+        if closed < 0 or text[closed + 1 : closed + 2] != "(":
+            position = opened + 1
+            continue
+        ends = text.find(")", closed)
+        found.append((text[opened + 1 : closed], text[closed + 2 : ends]))
+        position = ends + 1
+    return found''',
+    variant_one='''def links(text):
+    """Return the (label, target) pairs of the inline links in `text`."""
+    found = []
+    position = 0
+    while True:
+        opened = text.find("[", position)
+        if opened < 0:
+            break
+        closed = text.find("]", opened)
+        if closed < 0 or text[closed + 1 : closed + 2] != "(":
+            position = opened + 1
+            continue
+        ends = text.find(")", closed)
+        target = text[closed + 2 : ends]
+        image = opened > 0 and text[opened - 1] == "!"
+        if target and not image:
+            found.append((text[opened + 1 : closed], target))
+        position = ends + 1
+    return found''',
+    variant_two='''def links(text):
+    """Return the (label, target) pairs of the inline links in `text`."""
+    found = []
+    rest = text
+    while "](" in rest:
+        head, _, rest = rest.partition("](")
+        opened = head.rfind("[")
+        if opened < 0:
+            continue
+        target, closed, remainder = rest.partition(")")
+        if not closed:
+            break
+        rest = remainder
+        image = opened > 0 and head[opened - 1] == "!"
+        if target and not image:
+            found.append((head[opened + 1 :], target))
+    return found''',
+    variant_three='''def links(text):
+    """Return the (label, target) pairs of the inline links in `text`."""
+    found = []
+    position = 0
+    while True:
+        opened = text.find("[", position)
+        if opened < 0:
+            break
+        closed = text.find("]", opened)
+        if closed < 0 or text[closed + 1 : closed + 2] != "(":
+            position = opened + 1
+            continue
+        ends = text.find(")", closed)
+        image = opened > 0 and text[opened - 1] == "!"
+        if not image:
+            found.append((text[opened + 1 : closed], text[closed + 2 : ends]))
+        position = ends + 1
+    return found''',
+    variant_four='''def links(text):
+    """Return the (label, target) pairs of the inline links in `text`."""
+    found = []
+    position = 0
+    while True:
+        opened = text.find("[", position)
+        if opened < 0:
+            break
+        closed = text.find("]", opened)
+        if closed < 0 or text[closed + 1 : closed + 2] != "(":
+            position = opened + 1
+            continue
+        ends = text.find(")", closed)
+        target = text[closed + 2 : ends]
+        if target:
+            found.append((text[opened + 1 : closed], target))
+        position = ends + 1
+    return found''',
+    visible_test=_test_module(
+        "markdown_links",
+        "Published contract for picking links out of prose.",
+        """
+def test_the_links_come_back_in_order() -> None:
+    text = "see [docs](http://a) and [more](http://b)"
+    assert links(text) == [("docs", "http://a"), ("more", "http://b")]
+
+
+def test_prose_with_no_links_yields_nothing() -> None:
+    assert links("nothing to follow here") == []
+""",
+        imports="from markdown_links import links\n",
+    ),
+    hidden_test=_test_module(
+        "markdown_links",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_links_come_back_in_order() -> None:
+    text = "see [docs](http://a) and [more](http://b)"
+    assert links(text) == [("docs", "http://a"), ("more", "http://b")]
+
+
+def test_an_image_is_not_a_link() -> None:
+    assert links("![shot](pic.png) and [docs](http://a)") == [("docs", "http://a")]
+
+
+def test_a_link_with_an_empty_target_is_left_out() -> None:
+    assert links("[empty]() and [docs](http://a)") == [("docs", "http://a")]
+""",
+        imports="from markdown_links import links\n",
+    ),
+)
+
+
+_G036 = D2TaskSpec(
+    template_id="d5_parsing.postcode_format",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d5-parsing-postcode-format",
+    module="postcode_format",
+    module_doc="Putting a postcode into the shape the address file expects.",
+    issue=(
+        "normalise() is documented to put a postcode into its printed shape. Callers report "
+        "that a code typed with its own space comes back with two spaces in it, and that "
+        "something far too short to be a postcode comes back reshaped instead of refused."
+    ),
+    expected=(
+        "normalise(text) returns the postcode uppercased with every space in the input "
+        "removed and a single space put back before the last three characters, and raises "
+        "ValueError for anything shorter than five characters once the spaces are gone."
+    ),
+    baseline_reason=(
+        "it only trims the spaces at the two ends rather than removing all of them, and it "
+        "reshapes whatever it is given without checking the length"
+    ),
+    edge_cases=(
+        "a space inside the code is removed, not just the ones at the ends",
+        "anything shorter than five characters is refused",
+    ),
+    baseline='''def normalise(text):
+    """Return `text` as a printed postcode."""
+    packed = text.strip().upper()
+    return f"{packed[:-3]} {packed[-3:]}"''',
+    variant_one='''def normalise(text):
+    """Return `text` as a printed postcode."""
+    packed = "".join(text.split()).upper()
+    if len(packed) < 5:
+        raise ValueError(f"a postcode needs at least five characters, got {text!r}")
+    return f"{packed[:-3]} {packed[-3:]}"''',
+    variant_two='''def normalise(text):
+    """Return `text` as a printed postcode."""
+    packed = "".join(letter for letter in text.upper() if not letter.isspace())
+    if len(packed) < 5:
+        raise ValueError(f"a postcode needs at least five characters, got {text!r}")
+    cut = len(packed) - 3
+    return packed[:cut] + " " + packed[cut:]''',
+    variant_three='''def normalise(text):
+    """Return `text` as a printed postcode."""
+    packed = "".join(text.split()).upper()
+    return f"{packed[:-3]} {packed[-3:]}"''',
+    variant_four='''def normalise(text):
+    """Return `text` as a printed postcode."""
+    packed = text.strip().upper()
+    if len(packed) < 5:
+        raise ValueError(f"a postcode needs at least five characters, got {text!r}")
+    return f"{packed[:-3]} {packed[-3:]}"''',
+    visible_test=_test_module(
+        "postcode_format",
+        "Published contract for printing a postcode.",
+        """
+def test_a_packed_code_gains_its_space() -> None:
+    assert normalise("ec1a1bb") == "EC1A 1BB"
+
+
+def test_padding_at_the_ends_is_trimmed() -> None:
+    assert normalise("  m11ae  ") == "M1 1AE"
+""",
+        imports="from postcode_format import normalise\n",
+    ),
+    hidden_test=_test_module(
+        "postcode_format",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_packed_code_gains_its_space() -> None:
+    assert normalise("ec1a1bb") == "EC1A 1BB"
+
+
+def test_a_space_inside_the_code_is_removed_too() -> None:
+    assert normalise("sw1a 1aa") == "SW1A 1AA"
+
+
+def test_something_too_short_to_be_a_postcode_is_refused() -> None:
+    with pytest.raises(ValueError):
+        normalise("ab1")
+""",
+        imports="from postcode_format import normalise\n",
+    ),
+)
+
+# ------------------------------------------------------------------------- data transformation
+
+_G037 = D2TaskSpec(
+    template_id="d5_transform.secondary_order",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d5-transform-secondary-order",
+    module="secondary_order",
+    module_doc="Ordering a table on one field, and settling the ties on another.",
+    issue=(
+        "order_records() is documented to order on a primary field and settle ties on a "
+        "secondary one, highest first. Callers report that the ties come out lowest first, "
+        "and that a record which simply does not carry the secondary field brings the whole "
+        "sort down with a KeyError."
+    ),
+    expected=(
+        "order_records(records, primary, secondary) returns the records ordered by the "
+        "primary field ascending and, among records sharing a primary value, by the secondary "
+        "field descending. A record that does not carry the secondary field comes after those "
+        "that do, in the order it arrived."
+    ),
+    baseline_reason=(
+        "it sorts on the pair of fields at once, which orders the secondary ascending like the "
+        "primary, and it reads the secondary without checking the record carries it"
+    ),
+    edge_cases=(
+        "records sharing a primary value are ordered by the secondary descending",
+        "a record not carrying the secondary comes last, in arrival order",
+    ),
+    baseline='''def order_records(records, primary, secondary):
+    """Return `records` ordered on `primary`, ties settled on `secondary`."""
+    return sorted(records, key=lambda record: (record[primary], record[secondary]))''',
+    variant_one='''def order_records(records, primary, secondary):
+    """Return `records` ordered on `primary`, ties settled on `secondary`."""
+    entries = list(records)
+    carrying = [record for record in entries if secondary in record]
+    lacking = [record for record in entries if secondary not in record]
+    carrying.sort(key=lambda record: record[secondary], reverse=True)
+    ordered = carrying + lacking
+    ordered.sort(key=lambda record: record[primary])
+    return ordered''',
+    variant_two='''def order_records(records, primary, secondary):
+    """Return `records` ordered on `primary`, ties settled on `secondary`."""
+    entries = list(records)
+    scale = sorted(
+        {record[secondary] for record in entries if secondary in record}, reverse=True
+    )
+
+    def place(record):
+        if secondary not in record:
+            return (1, 0)
+        return (0, scale.index(record[secondary]))
+
+    return sorted(entries, key=lambda record: (record[primary], place(record)))''',
+    variant_three='''def order_records(records, primary, secondary):
+    """Return `records` ordered on `primary`, ties settled on `secondary`."""
+    entries = list(records)
+    entries.sort(key=lambda record: record[secondary], reverse=True)
+    entries.sort(key=lambda record: record[primary])
+    return entries''',
+    variant_four='''def order_records(records, primary, secondary):
+    """Return `records` ordered on `primary`, ties settled on `secondary`."""
+    entries = list(records)
+    carrying = [record for record in entries if secondary in record]
+    lacking = [record for record in entries if secondary not in record]
+    carrying.sort(key=lambda record: record[secondary])
+    ordered = carrying + lacking
+    ordered.sort(key=lambda record: record[primary])
+    return ordered''',
+    visible_test=_test_module(
+        "secondary_order",
+        "Published contract for ordering a table on two fields.",
+        """
+def test_records_come_back_ordered_on_the_primary() -> None:
+    records = [
+        {"team": "b", "score": 1},
+        {"team": "a", "score": 2},
+        {"team": "c", "score": 3},
+    ]
+    assert order_records(records, "team", "score") == [
+        {"team": "a", "score": 2},
+        {"team": "b", "score": 1},
+        {"team": "c", "score": 3},
+    ]
+
+
+def test_a_single_record_comes_back_alone() -> None:
+    assert order_records([{"team": "a", "score": 1}], "team", "score") == [
+        {"team": "a", "score": 1}
+    ]
+""",
+        imports="from secondary_order import order_records\n",
+    ),
+    hidden_test=_test_module(
+        "secondary_order",
+        "The part of the contract the published tests do not state.",
+        """
+def test_records_come_back_ordered_on_the_primary() -> None:
+    records = [
+        {"team": "b", "score": 1},
+        {"team": "a", "score": 2},
+        {"team": "c", "score": 3},
+    ]
+    assert order_records(records, "team", "score") == [
+        {"team": "a", "score": 2},
+        {"team": "b", "score": 1},
+        {"team": "c", "score": 3},
+    ]
+
+
+def test_a_shared_primary_is_settled_on_the_secondary_descending() -> None:
+    records = [
+        {"team": "a", "score": 1},
+        {"team": "a", "score": 3},
+        {"team": "a", "score": 2},
+    ]
+    assert order_records(records, "team", "score") == [
+        {"team": "a", "score": 3},
+        {"team": "a", "score": 2},
+        {"team": "a", "score": 1},
+    ]
+
+
+def test_a_record_without_the_secondary_comes_last() -> None:
+    records = [{"team": "a", "score": 2}, {"team": "a"}]
+    assert order_records(records, "team", "score") == [{"team": "a", "score": 2}, {"team": "a"}]
+""",
+        imports="from secondary_order import order_records\n",
+    ),
+)
+
+
+_G038 = D2TaskSpec(
+    template_id="d5_transform.swap_levels",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d5-transform-swap-levels",
+    module="swap_levels",
+    module_doc="Turning a two-level mapping inside out so the inner keys sit on the outside.",
+    issue=(
+        "swap_levels() is documented to turn a two-level mapping inside out. Callers report "
+        "that an inner key appearing under more than one outer key keeps only the last one, "
+        "and that an outer key holding something other than a mapping fails with an "
+        "AttributeError rather than saying what was wrong."
+    ),
+    expected=(
+        "swap_levels(nested) returns the mapping with its two levels exchanged, so every "
+        "inner key becomes an outer one holding every outer key that carried it, and raises "
+        "ValueError when an outer key does not hold a mapping."
+    ),
+    baseline_reason=(
+        "it assigns a fresh single-entry mapping for each inner key rather than adding to what "
+        "is already there, and it walks the inner mapping without checking there is one"
+    ),
+    edge_cases=(
+        "an inner key under several outer keys keeps all of them",
+        "an outer key not holding a mapping is refused",
+    ),
+    baseline='''def swap_levels(nested):
+    """Return `nested` with its two levels exchanged."""
+    swapped = {}
+    for outer, inner in nested.items():
+        for key, value in inner.items():
+            swapped[key] = {outer: value}
+    return swapped''',
+    variant_one='''def swap_levels(nested):
+    """Return `nested` with its two levels exchanged."""
+    swapped = {}
+    for outer, inner in nested.items():
+        if not isinstance(inner, dict):
+            raise ValueError(f"{outer!r} does not hold a mapping")
+        for key, value in inner.items():
+            swapped.setdefault(key, {})[outer] = value
+    return swapped''',
+    variant_two='''def swap_levels(nested):
+    """Return `nested` with its two levels exchanged."""
+    for outer, inner in nested.items():
+        if not isinstance(inner, dict):
+            raise ValueError(f"{outer!r} does not hold a mapping")
+    keys = []
+    for inner in nested.values():
+        for key in inner:
+            if key not in keys:
+                keys.append(key)
+    return {
+        key: {outer: inner[key] for outer, inner in nested.items() if key in inner}
+        for key in keys
+    }''',
+    variant_three='''def swap_levels(nested):
+    """Return `nested` with its two levels exchanged."""
+    swapped = {}
+    for outer, inner in nested.items():
+        for key, value in inner.items():
+            swapped.setdefault(key, {})[outer] = value
+    return swapped''',
+    variant_four='''def swap_levels(nested):
+    """Return `nested` with its two levels exchanged."""
+    swapped = {}
+    for outer, inner in nested.items():
+        if not isinstance(inner, dict):
+            raise ValueError(f"{outer!r} does not hold a mapping")
+        for key, value in inner.items():
+            swapped[key] = {outer: value}
+    return swapped''',
+    visible_test=_test_module(
+        "swap_levels",
+        "Published contract for turning a two-level mapping inside out.",
+        """
+def test_the_two_levels_change_places() -> None:
+    assert swap_levels({"a": {"x": 1}, "b": {"y": 2}}) == {"x": {"a": 1}, "y": {"b": 2}}
+
+
+def test_an_empty_mapping_swaps_to_nothing() -> None:
+    assert swap_levels({}) == {}
+""",
+        imports="from swap_levels import swap_levels\n",
+    ),
+    hidden_test=_test_module(
+        "swap_levels",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_the_two_levels_change_places() -> None:
+    assert swap_levels({"a": {"x": 1}, "b": {"y": 2}}) == {"x": {"a": 1}, "y": {"b": 2}}
+
+
+def test_an_inner_key_under_several_outer_keys_keeps_them_all() -> None:
+    assert swap_levels({"a": {"x": 1}, "b": {"x": 2}}) == {"x": {"a": 1, "b": 2}}
+
+
+def test_an_outer_key_not_holding_a_mapping_is_refused() -> None:
+    with pytest.raises(ValueError):
+        swap_levels({"a": 5})
+""",
+        imports="from swap_levels import swap_levels\n",
+    ),
+)
+
+# ---------------------------------------------------------------------- state and idempotency
+
+_G039 = D2TaskSpec(
+    template_id="d5_state.recent_cache",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d5-state-recent-cache",
+    module="recent_cache",
+    module_doc="Keeping the keys most recently reached for, oldest first, up to a limit.",
+    issue=(
+        "record() is documented to keep the keys most recently reached for. Callers report "
+        "that a key reached for twice appears twice in the list, and that the list grows "
+        "past the limit it was given instead of dropping the oldest key."
+    ),
+    expected=(
+        "record(order, key, limit) returns the keys in use oldest first after `key` has been "
+        "reached for. A key already in use moves to the end rather than appearing twice, and "
+        "once the limit would be passed the oldest keys are dropped until it is not."
+    ),
+    baseline_reason=(
+        "it appends the key to a copy of the list without looking for it first and without "
+        "looking at the limit at all"
+    ),
+    edge_cases=(
+        "a key already in use moves to the end rather than appearing twice",
+        "the list is trimmed to the limit by dropping the oldest",
+    ),
+    baseline='''def record(order, key, limit):
+    """Return the keys in use, oldest first, after `key` is reached for."""
+    return list(order) + [key]''',
+    variant_one='''def record(order, key, limit):
+    """Return the keys in use, oldest first, after `key` is reached for."""
+    keys = [entry for entry in order if entry != key]
+    keys.append(key)
+    del keys[: max(len(keys) - limit, 0)]
+    return keys''',
+    variant_two='''def record(order, key, limit):
+    """Return the keys in use, oldest first, after `key` is reached for."""
+    keys = list(order)
+    if key in keys:
+        keys.remove(key)
+    keys.append(key)
+    while len(keys) > limit:
+        keys.pop(0)
+    return keys''',
+    variant_three='''def record(order, key, limit):
+    """Return the keys in use, oldest first, after `key` is reached for."""
+    keys = [entry for entry in order if entry != key]
+    keys.append(key)
+    return keys''',
+    variant_four='''def record(order, key, limit):
+    """Return the keys in use, oldest first, after `key` is reached for."""
+    keys = list(order) + [key]
+    del keys[: max(len(keys) - limit, 0)]
+    return keys''',
+    visible_test=_test_module(
+        "recent_cache",
+        "Published contract for keeping the keys most recently reached for.",
+        """
+def test_a_fresh_key_joins_the_end() -> None:
+    assert record(["a", "b"], "c", 5) == ["a", "b", "c"]
+
+
+def test_the_first_key_starts_the_list() -> None:
+    assert record([], "a", 5) == ["a"]
+""",
+        imports="from recent_cache import record\n",
+    ),
+    hidden_test=_test_module(
+        "recent_cache",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_fresh_key_joins_the_end() -> None:
+    assert record(["a", "b"], "c", 5) == ["a", "b", "c"]
+
+
+def test_a_key_already_in_use_moves_rather_than_repeats() -> None:
+    assert record(["a", "b"], "a", 5) == ["b", "a"]
+
+
+def test_the_oldest_key_is_dropped_at_the_limit() -> None:
+    assert record(["a", "b"], "c", 2) == ["b", "c"]
+""",
+        imports="from recent_cache import record\n",
+    ),
+)
+
+
+_G040 = D2TaskSpec(
+    template_id="d5_state.inflight_claim",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d5-state-inflight-claim",
+    module="inflight_claim",
+    module_doc="Handing out the next piece of work and holding it for the worker who took it.",
+    issue=(
+        "next_claim() is documented to hand out the next piece of work nobody is holding. "
+        "Operators report that a piece whose holder never came back stays out of circulation "
+        "for ever, and that a piece already finished is handed out again."
+    ),
+    expected=(
+        "next_claim(items, now, timeout) returns (id, items) for the first piece of work that "
+        "is not finished and is not currently held, marking it held until now plus timeout. A "
+        "hold that has run out counts as not held, a finished piece is never handed out, "
+        "(None, items) comes back when there is nothing to hand out, and the caller's list is "
+        "left alone."
+    ),
+    baseline_reason=(
+        "it treats any hold at all as current however long ago it ran out, and it never looks "
+        "at whether the piece is already finished"
+    ),
+    edge_cases=(
+        "a hold that has run out counts as not held",
+        "a finished piece is never handed out",
+    ),
+    baseline='''def next_claim(items, now, timeout):
+    """Return (id, items) for the next piece of work to hand out."""
+    entries = [dict(item) for item in items]
+    for entry in entries:
+        if entry["held_until"] is None:
+            entry["held_until"] = now + timeout
+            return entry["id"], entries
+    return None, entries''',
+    variant_one='''def next_claim(items, now, timeout):
+    """Return (id, items) for the next piece of work to hand out."""
+    entries = [dict(item) for item in items]
+    for entry in entries:
+        if entry["done"]:
+            continue
+        held = entry["held_until"]
+        if held is None or held <= now:
+            entry["held_until"] = now + timeout
+            return entry["id"], entries
+    return None, entries''',
+    variant_two='''def next_claim(items, now, timeout):
+    """Return (id, items) for the next piece of work to hand out."""
+    entries = [dict(item) for item in items]
+    free = [
+        place
+        for place, entry in enumerate(entries)
+        if not entry["done"] and (entry["held_until"] is None or entry["held_until"] <= now)
+    ]
+    if not free:
+        return None, entries
+    taken = entries[free[0]]
+    taken["held_until"] = now + timeout
+    return taken["id"], entries''',
+    variant_three='''def next_claim(items, now, timeout):
+    """Return (id, items) for the next piece of work to hand out."""
+    entries = [dict(item) for item in items]
+    for entry in entries:
+        held = entry["held_until"]
+        if held is None or held <= now:
+            entry["held_until"] = now + timeout
+            return entry["id"], entries
+    return None, entries''',
+    variant_four='''def next_claim(items, now, timeout):
+    """Return (id, items) for the next piece of work to hand out."""
+    entries = [dict(item) for item in items]
+    for entry in entries:
+        if entry["done"]:
+            continue
+        if entry["held_until"] is None:
+            entry["held_until"] = now + timeout
+            return entry["id"], entries
+    return None, entries''',
+    visible_test=_test_module(
+        "inflight_claim",
+        "Published contract for handing out the next piece of work.",
+        """
+def test_a_free_piece_is_handed_out_and_held() -> None:
+    items = [{"id": "a", "held_until": None, "done": False}]
+    assert next_claim(items, 5, 10) == ("a", [{"id": "a", "held_until": 15, "done": False}])
+
+
+def test_a_piece_held_by_somebody_else_is_not_handed_out() -> None:
+    items = [{"id": "a", "held_until": 100, "done": False}]
+    assert next_claim(items, 5, 10) == (None, [{"id": "a", "held_until": 100, "done": False}])
+
+
+def test_the_callers_list_is_left_alone() -> None:
+    items = [{"id": "a", "held_until": None, "done": False}]
+    next_claim(items, 5, 10)
+    assert items == [{"id": "a", "held_until": None, "done": False}]
+""",
+        imports="from inflight_claim import next_claim\n",
+    ),
+    hidden_test=_test_module(
+        "inflight_claim",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_free_piece_is_handed_out_and_held() -> None:
+    items = [{"id": "a", "held_until": None, "done": False}]
+    assert next_claim(items, 5, 10) == ("a", [{"id": "a", "held_until": 15, "done": False}])
+
+
+def test_a_hold_that_has_run_out_counts_as_free() -> None:
+    items = [{"id": "a", "held_until": 3, "done": False}]
+    assert next_claim(items, 5, 10) == ("a", [{"id": "a", "held_until": 15, "done": False}])
+
+
+def test_a_finished_piece_is_never_handed_out() -> None:
+    items = [{"id": "a", "held_until": None, "done": True}]
+    assert next_claim(items, 5, 10) == (None, [{"id": "a", "held_until": None, "done": True}])
+""",
+        imports="from inflight_claim import next_claim\n",
+    ),
+)
+
+# --------------------------------------------------------------------------- error handling
+
+_G041 = D2TaskSpec(
+    template_id="d5_error.quarantine_batch",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d5-error-quarantine-batch",
+    module="quarantine_batch",
+    module_doc="Working through a batch and setting aside the records that will not go through.",
+    issue=(
+        "process() is documented to work through a batch, setting aside the records that "
+        "raise. Operators report that the quarantine file holds exception objects rather than "
+        "anything readable, and that cancelling the run leaves the cancellation sitting in the "
+        "quarantine file instead of stopping the batch."
+    ),
+    expected=(
+        "process(records, handle) returns (results, quarantined). Results holds what the "
+        "handler returned for the records it accepted, quarantined holds (record, reason) for "
+        "the ones that raised with the reason being the text of the error, both in the order "
+        "the records arrived, and anything that is not an ordinary error is raised on rather "
+        "than quarantined."
+    ),
+    baseline_reason=(
+        "it stores the exception object itself as the reason, and it catches every "
+        "interruption there is rather than only ordinary errors"
+    ),
+    edge_cases=(
+        "the reason recorded is the text of the error, not the error itself",
+        "an interruption that is not an ordinary error is raised on",
+    ),
+    baseline='''def process(records, handle):
+    """Return (results, quarantined) after working through `records`."""
+    results = []
+    quarantined = []
+    for record in records:
+        try:
+            results.append(handle(record))
+        except BaseException as error:
+            quarantined.append((record, error))
+    return results, quarantined''',
+    variant_one='''def process(records, handle):
+    """Return (results, quarantined) after working through `records`."""
+    results = []
+    quarantined = []
+    for record in records:
+        try:
+            results.append(handle(record))
+        except Exception as error:
+            quarantined.append((record, str(error)))
+    return results, quarantined''',
+    variant_two='''def process(records, handle):
+    """Return (results, quarantined) after working through `records`."""
+    outcomes = []
+    for record in records:
+        try:
+            outcomes.append((True, record, handle(record)))
+        except Exception as error:
+            outcomes.append((False, record, str(error)))
+    results = [value for accepted, _, value in outcomes if accepted]
+    quarantined = [(record, why) for accepted, record, why in outcomes if not accepted]
+    return results, quarantined''',
+    variant_three='''def process(records, handle):
+    """Return (results, quarantined) after working through `records`."""
+    results = []
+    quarantined = []
+    for record in records:
+        try:
+            results.append(handle(record))
+        except BaseException as error:
+            quarantined.append((record, str(error)))
+    return results, quarantined''',
+    variant_four='''def process(records, handle):
+    """Return (results, quarantined) after working through `records`."""
+    results = []
+    quarantined = []
+    for record in records:
+        try:
+            results.append(handle(record))
+        except Exception as error:
+            quarantined.append((record, error))
+    return results, quarantined''',
+    visible_test=_test_module(
+        "quarantine_batch",
+        "Published contract for working through a batch.",
+        """
+def test_a_batch_that_all_goes_through_quarantines_nothing() -> None:
+    assert process([1, 2], lambda number: number * 2) == ([2, 4], [])
+
+
+def test_an_empty_batch_yields_nothing_either_way() -> None:
+    assert process([], lambda number: number) == ([], [])
+""",
+        imports="from quarantine_batch import process\n",
+    ),
+    hidden_test=_test_module(
+        "quarantine_batch",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def _refuse_three(number):
+    if number == 3:
+        raise ValueError("three is not allowed")
+    return number * 2
+
+
+def _cancel(number):
+    raise KeyboardInterrupt
+
+
+def test_a_batch_that_all_goes_through_quarantines_nothing() -> None:
+    assert process([1, 2], lambda number: number * 2) == ([2, 4], [])
+
+
+def test_the_reason_recorded_is_the_text_of_the_error() -> None:
+    assert process([1, 3], _refuse_three) == ([2], [(3, "three is not allowed")])
+
+
+def test_an_interruption_stops_the_batch_rather_than_being_quarantined() -> None:
+    with pytest.raises(KeyboardInterrupt):
+        process([1], _cancel)
+""",
+        imports="from quarantine_batch import process\n",
+    ),
+)
+
+
+_G042 = D2TaskSpec(
+    template_id="d5_error.cleanup_suppressed",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d5-error-cleanup-suppressed",
+    module="cleanup_suppressed",
+    module_doc="Running the tidying up without letting it hide what actually went wrong.",
+    issue=(
+        "run_with_cleanup() is documented to tidy up whatever happens without hiding the "
+        "original failure. Callers report that when the tidying up itself fails the original "
+        "error disappears and the tidying-up error is reported instead, and that the tidying "
+        "up stops at the first handler that fails so the rest never run."
+    ),
+    expected=(
+        "run_with_cleanup(body, cleanups) runs the body, then runs every cleanup in order "
+        "whatever happened. If the body failed, that failure is the one raised and no cleanup "
+        "failure replaces it. If the body succeeded and a cleanup failed, the first cleanup "
+        "failure is raised once the remaining cleanups have run."
+    ),
+    baseline_reason=(
+        "it runs the cleanups in a finally block, where a cleanup that raises both replaces "
+        "the failure already in flight and abandons the cleanups after it"
+    ),
+    edge_cases=(
+        "a failing cleanup does not replace the failure the body raised",
+        "a failing cleanup does not stop the cleanups after it",
+    ),
+    baseline='''def run_with_cleanup(body, cleanups):
+    """Run `body`, then every cleanup, without losing what actually went wrong."""
+    try:
+        return body()
+    finally:
+        for cleanup in cleanups:
+            cleanup()''',
+    variant_one='''def run_with_cleanup(body, cleanups):
+    """Run `body`, then every cleanup, without losing what actually went wrong."""
+    failure = None
+    result = None
+    try:
+        result = body()
+    except Exception as error:
+        failure = error
+    later = None
+    for cleanup in cleanups:
+        try:
+            cleanup()
+        except Exception as error:
+            if later is None:
+                later = error
+    if failure is not None:
+        raise failure
+    if later is not None:
+        raise later
+    return result''',
+    variant_two='''def run_with_cleanup(body, cleanups):
+    """Run `body`, then every cleanup, without losing what actually went wrong."""
+    produced = []
+    failures = []
+    try:
+        produced.append(body())
+    except Exception as error:
+        failures.append(error)
+    for cleanup in cleanups:
+        try:
+            cleanup()
+        except Exception as error:
+            failures.append(error)
+    if failures:
+        raise failures[0]
+    return produced[0]''',
+    variant_three='''def run_with_cleanup(body, cleanups):
+    """Run `body`, then every cleanup, without losing what actually went wrong."""
+    failure = None
+    result = None
+    try:
+        result = body()
+    except Exception as error:
+        failure = error
+    try:
+        for cleanup in cleanups:
+            cleanup()
+    except Exception as error:
+        if failure is None:
+            failure = error
+    if failure is not None:
+        raise failure
+    return result''',
+    variant_four='''def run_with_cleanup(body, cleanups):
+    """Run `body`, then every cleanup, without losing what actually went wrong."""
+    try:
+        return body()
+    finally:
+        last = None
+        for cleanup in cleanups:
+            try:
+                cleanup()
+            except Exception as error:
+                last = error
+        if last is not None:
+            raise last''',
+    visible_test=_test_module(
+        "cleanup_suppressed",
+        "Published contract for tidying up after a piece of work.",
+        """
+def test_the_body_result_comes_back_and_the_cleanups_run() -> None:
+    log = []
+    result = run_with_cleanup(lambda: 7, [lambda: log.append("one"), lambda: log.append("two")])
+    assert result == 7
+    assert log == ["one", "two"]
+
+
+def test_no_cleanups_at_all_is_fine() -> None:
+    assert run_with_cleanup(lambda: 7, []) == 7
+""",
+        imports="from cleanup_suppressed import run_with_cleanup\n",
+    ),
+    hidden_test=_test_module(
+        "cleanup_suppressed",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def _body_fails():
+    raise RuntimeError("the body refused")
+
+
+def _cleanup_fails():
+    raise ValueError("the cleanup refused")
+
+
+def test_the_body_result_comes_back_and_the_cleanups_run() -> None:
+    log = []
+    result = run_with_cleanup(lambda: 7, [lambda: log.append("one"), lambda: log.append("two")])
+    assert result == 7
+    assert log == ["one", "two"]
+
+
+def test_a_failing_cleanup_does_not_replace_the_bodys_failure() -> None:
+    with pytest.raises(RuntimeError):
+        run_with_cleanup(_body_fails, [_cleanup_fails])
+
+
+def test_a_failing_cleanup_does_not_stop_the_ones_after_it() -> None:
+    log = []
+    with pytest.raises(ValueError):
+        run_with_cleanup(lambda: 7, [_cleanup_fails, lambda: log.append("after")])
+    assert log == ["after"]
+""",
+        imports="from cleanup_suppressed import run_with_cleanup\n",
+    ),
+)
+
 #: The authored calibration groups, in template-id order. The target is 100; the achieved count
 #: is what `scripts/corpus_d5.py` reports and what S21D5-035 divides by. A shortfall is recorded
 #: rather than papered over — Section 6.2 of the backlog forbids lowering a floor to meet it.
@@ -3340,4 +4789,16 @@ D5_CALIBRATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G028,
     _G029,
     _G030,
+    _G031,
+    _G032,
+    _G033,
+    _G034,
+    _G035,
+    _G036,
+    _G037,
+    _G038,
+    _G039,
+    _G040,
+    _G041,
+    _G042,
 )
