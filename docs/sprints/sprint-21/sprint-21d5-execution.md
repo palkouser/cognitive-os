@@ -2,8 +2,8 @@
 
 - Branch: `feature/sprint-21d5-pairwise-selective-ranking`
 - Backlog: [Sprint 21D5 Technical Backlog](sprint-21d5-technical-backlog.md)
-- **Status: W0 complete. W1 in progress — S21D5-020, S21D5-021 and S21D5-022 closed: both
-  corpora authored, validated and proven separated.**
+- **Status: W0 complete. W1 in progress — S21D5-020 through S21D5-023 closed: both corpora
+  authored, validated, proven separated and sealed.**
   W2 through W8 not started.
 - Pre-registration: revision 5, SHA-256
   `ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a`
@@ -805,9 +805,85 @@ reproduce.
 Worth keeping because the check failed in the safe direction: a mismatched recipe reported a
 drift that was not there, rather than agreeing by accident with a drift that was.
 
+## S21D5-023 — the seal, and a pool that needed proving twice
+
+`scripts/sealed_manifests_d5.py` → `evidence/sprint-21d5-sealed-manifests.json`, integrity
+`5cc9fbb27020bd06…`. The D5 corpus seal is
+`4e73f290728aad42f3a665b2f2026971524ffe2e3919df26feb190e4b667a75e`, revision 5, and it is the
+point at which the corpus stops being editable and starts being spent.
+
+| role | groups | catalogue hash | how it got here |
+|---|---:|---|---|
+| fitting | 180 | `e07691bd53df5e84…` | D4's fitting and calibration partitions, re-interleaved |
+| calibration | 100 | `f4f9d86f701e70ac…` | authored at S21D5-020 |
+| retrieval | 60 | `2785ca8075ed6500…` | authored at S21D5-021 |
+| final A | 30 | `69d5eedcaeccdfdc…` | carried unopened, third sprint running |
+| final B | 30 | `06a0c2f6641e4bf3…` | carried unopened, third sprint running |
+| canary | 5 | `027f2d78500a14b3…` | carried unopened, third sprint running |
+
+1,380 candidate slots. Invariance: 40 transformed decisions, **0 independent**. Promotion: 120
+nominal, 60 independent. No outcome present, corpus authoring revoked, and `scripts/corpus_d5.py`
+and `scripts/retrieval_d5.py` named as what the revocation closes.
+
+### The fitting pool is the one thing D5 had to prove twice
+
+The three protected roles are proved the way D4 proved its: compared against the bytes
+`sprint-21d4-sealed-manifests.json` published, not against a re-derivation. A re-derivation from
+the same specs returns the same number whether or not the released catalogue moved underneath it.
+
+The 180-group fitting pool could not be proved that way, because W0 digested it **by group name**.
+A name digest fixes *which* 180 groups the pool is and is blind to a body edited under an
+unchanged name — and the bodies are the whole point here, since every one of those groups is being
+re-executed rather than read from a store. So the seal carries two proofs:
+
+| claim | how | result |
+|---|---|---|
+| the pool is the 180 groups W0 named | `names_digest` against the reuse audit | reproduces |
+| no body drifted under its name | D4's two catalogue hashes against the released D4 bytes | both identical |
+
+The second is available only because D5's fitting pool *is* two released D4 partitions, so the
+released D4 evidence is a body-level record of it. It cost one comparison and closes the half of
+the claim W0's recipe cannot reach.
+
+### Two refusals the seal has that D4's did not
+
+Both come from the volume arm, which is new in D5:
+
+- **A volume point that does not land on a whole group is refused.** 320 and 720 outcomes are 80
+  and 180 groups exactly. Fitting on three of a group's four candidates would put the fourth's
+  siblings in the exemplar set and then call the difference a volume effect. The top rung must
+  also be the whole pool, or the ladder measures a span nobody declared.
+- **A seal whose retrieval pool is D4's is refused.** D4's pool was read once and is spent;
+  measuring retrieval against it again measures recall of an answer already seen. The two hashes
+  must differ and the two pools must share no group. Both hold.
+
+One more collision was worth checking rather than assuming: D4 and D5 transform the **same** sixty
+final groups under the **same** two released cases, so the seed is the only thing separating their
+case identities. The 120 D5 promotion case ids and the 120 D4 ones intersect in zero — asserted in
+the test suite, not in prose.
+
+### What the seal reuses instead of restating
+
+`build_d4_retrieval_pool` and its D3 twin were the same seventeen lines over a different spec
+tuple, and both submanifest builders were the same construction over a different seed. Factored to
+`retrieval_pool_of(specs)` and `submanifest_of(...)`; D5 calls them rather than carrying a third
+copy. The released D3 and D4 seal hashes are byte-identical before and after — checked explicitly,
+because a refactor of a sealed-manifest generator is only safe if the manifest does not move.
+
+### One defect, mine, caught by the script's own stop
+
+The first `--check` reported `sealed_manifests_ineligible_group_inside_the_invariance_sample`.
+There was no ineligible group. The invariance sample names **repository groups** and the
+eligibility list names **template ids**; subtracting one from the other reports every sampled group
+as ineligible. Fixed by translating before subtracting. All 100 D5 calibration groups are eligible
+for both transformation cases, and the 20 in the sample are among them.
+
+The check itself stays, because the rule it guards is real: the sample is the first twenty of the
+manifest by a frozen rule, not the first twenty *eligible* ones. An ineligible group inside it
+would quietly shrink the regression rather than fail it.
+
 ### What W1 still owes
 
-- sealed campaign and holdout manifests (S21D5-023);
 - pre-execution feature seals and both campaigns, 720 fitting and 400 calibration outcomes
   (S21D5-025, S21D5-026).
 

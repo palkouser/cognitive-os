@@ -25,7 +25,6 @@ reason and with both numbers reported side by side.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from hashlib import sha256
 
 from pydantic import Field, model_validator
 
@@ -47,10 +46,10 @@ from cognitive_os.learning.correction_catalogue import (
     build_catalogue,
 )
 from cognitive_os.learning.correction_catalogue_d3 import (
-    RetrievalSourceGroup,
     SealedRetrievalPool,
     d3_calibration_entries,
     paired_manifest_hash,
+    retrieval_pool_of,
     seal_d3_corpus,
 )
 from cognitive_os.learning.correction_protocol import CorrectionPartition
@@ -164,22 +163,8 @@ def build_d4_calibration_catalogue() -> SealedPartitionCatalogue:
 
 
 def build_d4_retrieval_pool() -> SealedRetrievalPool:
-    """Seal the sixty authored retrieval groups. Content hashes only: no query is chosen here."""
-    return SealedRetrievalPool(
-        groups=tuple(
-            RetrievalSourceGroup(
-                template_id=spec.template_id,
-                repository_group=spec.repository_group,
-                family=spec.family.value,
-                task_signature=spec.task_signature,
-                module=spec.module,
-                failed_source_hash=sha256(spec.module_text(spec.failed).encode()).hexdigest(),
-                repaired_source_hash=sha256(spec.module_text(spec.repaired).encode()).hexdigest(),
-                hidden_verifier_hash=sha256(spec.hidden_test.encode()).hexdigest(),
-            )
-            for spec in D4_RETRIEVAL_SPECS
-        )
-    )
+    """Seal D4's sixty authored retrieval groups."""
+    return retrieval_pool_of(D4_RETRIEVAL_SPECS)
 
 
 def _cases_for(
@@ -228,21 +213,47 @@ def invariance_sample_groups(calibration: SealedPartitionCatalogue) -> tuple[str
     return tuple(group.repository_group for group in calibration.groups[:INVARIANCE_SAMPLE_GROUPS])
 
 
-def invariance_submanifest(calibration: SealedPartitionCatalogue) -> OodSubmanifestV3:
-    """Forty transformed decisions over twenty groups, which count as zero independent ones."""
+def submanifest_of(
+    catalogues: tuple[SealedPartitionCatalogue, ...],
+    *,
+    stage: str,
+    seed: int,
+    cases: tuple[str, ...],
+    groups_limit: int | None = None,
+) -> OodSubmanifestV3:
+    """One hash-bound transformation set, under the generator and oracle D3 released.
+
+    The set is bound to the catalogue it names, or to the paired hash of both when it spans two:
+    a submanifest over two catalogues that named only one of them would look intact after the
+    other drifted.
+    """
+    source_manifest_hash = (
+        catalogues[0].content_hash if len(catalogues) == 1 else paired_manifest_hash(*catalogues)
+    )
     return OodSubmanifestV3(
-        stage=INVARIANCE_STAGE,
-        source_manifest_hash=calibration.content_hash,
+        stage=stage,
+        source_manifest_hash=source_manifest_hash,
         generator_code_hash=transformations_d3.generator_code_hash(),
         hard_coded_oracle_hash=transformations_d3.hard_coded_oracle_hash(),
         cases=_cases_for(
-            (calibration,),
-            stage=INVARIANCE_STAGE,
-            seed=INVARIANCE_TRANSFORM_SEED,
-            source_manifest_hash=calibration.content_hash,
-            cases=D4_CASES,
-            groups_limit=INVARIANCE_SAMPLE_GROUPS,
+            catalogues,
+            stage=stage,
+            seed=seed,
+            source_manifest_hash=source_manifest_hash,
+            cases=cases,
+            groups_limit=groups_limit,
         ),
+    )
+
+
+def invariance_submanifest(calibration: SealedPartitionCatalogue) -> OodSubmanifestV3:
+    """Forty transformed decisions over twenty groups, which count as zero independent ones."""
+    return submanifest_of(
+        (calibration,),
+        stage=INVARIANCE_STAGE,
+        seed=INVARIANCE_TRANSFORM_SEED,
+        cases=D4_CASES,
+        groups_limit=INVARIANCE_SAMPLE_GROUPS,
     )
 
 
@@ -250,19 +261,8 @@ def promotion_submanifest(
     final_a: SealedPartitionCatalogue, final_b: SealedPartitionCatalogue
 ) -> OodSubmanifestV3:
     """Two cases for every one of the sixty final groups: 120 nominal, 60 independent."""
-    paired = paired_manifest_hash(final_a, final_b)
-    return OodSubmanifestV3(
-        stage=PROMOTION_STAGE,
-        source_manifest_hash=paired,
-        generator_code_hash=transformations_d3.generator_code_hash(),
-        hard_coded_oracle_hash=transformations_d3.hard_coded_oracle_hash(),
-        cases=_cases_for(
-            (final_a, final_b),
-            stage=PROMOTION_STAGE,
-            seed=PROMOTION_TRANSFORM_SEED,
-            source_manifest_hash=paired,
-            cases=D4_CASES,
-        ),
+    return submanifest_of(
+        (final_a, final_b), stage=PROMOTION_STAGE, seed=PROMOTION_TRANSFORM_SEED, cases=D4_CASES
     )
 
 
