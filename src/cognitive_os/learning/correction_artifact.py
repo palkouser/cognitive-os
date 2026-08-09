@@ -48,6 +48,12 @@ from cognitive_os.learning.correction_ranking import (
     CorrectionKnn,
     Exemplar,
 )
+from cognitive_os.learning.pairwise_contrastive import (
+    HYPOTHESIS_CLASS,
+    PairwiseContrastiveModel,
+    PairwiseContrastiveRanker,
+)
+from cognitive_os.learning.selective_operating_point import DERIVATION_RULE
 
 CORRECTION_ARTIFACT_MEDIA_TYPE = "application/vnd.cognitive-os.correction-ranker+json"
 CORRECTION_ARTIFACT_SCHEMA = "correction-ranker-artifact"
@@ -59,6 +65,19 @@ CORRECTION_ARTIFACT_SCHEMA_VERSION = 1
 #: two shapes happen to share and the first does not.
 CORRECTION_ARTIFACT_SCHEMA_V2 = "correction-ranking-artifact-v2"
 CORRECTION_ARTIFACT_SCHEMA_V2_VERSION = 2
+
+#: S21D5-050. A third name for the same reason the second one exists. v2 is k-NN-shaped by
+#: construction — `exemplars` with `min_length=1`, `k`, `embedding_weight` and three proportion
+#: floors — and a direction has none of those. Relaxing them so a direction could reuse the
+#: schema would let an exemplar-free v2 artifact load, which is exactly the
+#: check-that-passes-without-touching-its-question defect the D4 report catalogued twelve times.
+CORRECTION_ARTIFACT_SCHEMA_V3 = "correction-ranking-artifact-v3"
+CORRECTION_ARTIFACT_SCHEMA_V3_VERSION = 3
+
+#: The hypothesis classes this loader can build. A payload naming anything else is refused
+#: before construction: an artifact whose class the reader does not implement is not a model
+#: the reader can be wrong about, it is bytes it cannot read at all.
+IMPLEMENTED_HYPOTHESIS_CLASSES = frozenset({HYPOTHESIS_CLASS})
 
 #: A bound, not a target. An exemplar set larger than this is a corpus, and a corpus loaded
 #: into every runtime task is a latency budget nobody agreed to.
@@ -272,7 +291,143 @@ class CorrectionArtifactPayloadV2(ImmutableContractModel):
         return self
 
 
-def canonical_bytes(payload: CorrectionArtifactPayload | CorrectionArtifactPayloadV2) -> bytes:
+class CorrectionArtifactPayloadV3(ImmutableContractModel):
+    """The v3 ranker as bytes: a fitted direction where v2 carried an exemplar set.
+
+    Everything v2 says about *how the features were made* is here unchanged and checked the
+    same way — normaliser, grammar, canonical prefix and payload, feature contract, the 390
+    channels in fitted order, the six numeric bounds, the embedding model and its tree digest.
+    D5 changes no encoder, no channel and no fitted representation; it changes the function
+    fitted on top of them.
+
+    What replaces the exemplar set is one direction: 390 weights in allowlist order, the ridge
+    that regularised them, the pair and group counts they were fitted from, and the margin
+    floor below which the ranker declines. Where a v2 artifact grows with its fitting pool —
+    one 390-channel vector per row, 720 of them at D5's size — a v3 artifact is the same 390
+    floats whatever it was fitted on.
+
+    The operating point comes in with S21D4-050's fields: the derived point's identity, the
+    derivation rule and the calibration certificate hash. The rule is checked against the
+    released constant, not merely stored, because a model carrying its own account of how its
+    threshold was derived can say anything. Its wording names the k-NN confidence, and that is
+    correct: §S21D5-016's only substitution is the *quantity* scored — the top-two projection
+    margin instead of neighbourhood acceptance mass — and `derive_zero_error_point` treats a
+    confidence as an opaque ordered score, so the certification spine is inherited rather than
+    rewritten. Which quantity was scored is named by `hypothesis_class`.
+
+    Still deliberately absent, exactly as in v1 and v2: any hash of itself, any class or import
+    path, any dataset body, any candidate or task identity, any label.
+    """
+
+    schema_name: NonEmptyStr = CORRECTION_ARTIFACT_SCHEMA_V3
+    schema_version: int = Field(default=CORRECTION_ARTIFACT_SCHEMA_V3_VERSION, ge=3)
+
+    component_id: NonEmptyStr
+    component_revision: int = Field(ge=1)
+    surface: NonEmptyStr
+    learner_kind: NonEmptyStr
+    descriptor_hash: Sha256Hex
+    code_revision: NonEmptyStr
+
+    #: The v2 canonicaliser, carried verbatim. A v3 artifact under another normaliser would be
+    #: a different model reading different numbers under the same channel names.
+    encoder_version: NonEmptyStr = ENCODER_VERSION_V2
+    normalizer_version: NonEmptyStr
+    python_grammar: NonEmptyStr
+    canonical_prefix_hex: NonEmptyStr
+    canonical_payload: NonEmptyStr
+    feature_contract_hash: Sha256Hex
+
+    feature_channels: tuple[NonEmptyStr, ...] = Field(min_length=1)
+
+    training_dataset_id: UUID
+    calibration_dataset_id: UUID
+    example_manifest_hash: Sha256Hex
+    split_manifest_hash: Sha256Hex
+    selection_manifest_hash: Sha256Hex
+    member_manifest_hash: Sha256Hex
+    feature_schema_hash: Sha256Hex
+
+    embedding_model_id: NonEmptyStr
+    embedding_revision: NonEmptyStr
+    embedding_tree_digest: NonEmptyStr
+    embedding_dimension: int = Field(ge=1)
+
+    numeric_lower: tuple[tuple[NonEmptyStr, float], ...]
+    numeric_upper: tuple[tuple[NonEmptyStr, float], ...]
+
+    #: The direction. One weight per fitted channel, in `FITTED_FEATURE_V2_ALLOWLIST` order —
+    #: the names are not repeated here because `feature_channels` already carries them and two
+    #: orderings of one list is a way for them to disagree.
+    weights: tuple[float, ...] = Field(min_length=1)
+    regularization: Decimal
+    fitted_group_count: int = Field(ge=1)
+    fitted_pair_count: int = Field(ge=1)
+    hypothesis_class: NonEmptyStr
+
+    #: The operating point, S21D4-050's fields. `margin_floor` is the derived threshold itself.
+    margin_floor: Decimal
+    operating_point_hash: Sha256Hex
+    operating_point_derivation_rule: NonEmptyStr
+    calibration_certificate_hash: Sha256Hex
+
+    #: The frozen grid point this artifact is, so two directions fitted from the same rows
+    #: under different ridges cannot be confused for one another.
+    setting_identity: Sha256Hex
+
+    maximum_inference_ms: int = Field(ge=1)
+    declared_limitations: tuple[NonEmptyStr, ...] = ()
+
+    @model_validator(mode="after")
+    def the_payload_is_internally_consistent(self) -> CorrectionArtifactPayloadV3:
+        if self.schema_name != CORRECTION_ARTIFACT_SCHEMA_V3:
+            raise ValueError(f"unknown artifact schema {self.schema_name!r}")
+        if self.encoder_version != ENCODER_VERSION_V2:
+            raise ValueError(
+                f"a v3 artifact carries {ENCODER_VERSION_V2!r}: D5 changes the fitted function, "
+                "not the encoder"
+            )
+        if self.hypothesis_class not in IMPLEMENTED_HYPOTHESIS_CLASSES:
+            raise ValueError(
+                f"hypothesis class {self.hypothesis_class!r} is not one this loader implements; "
+                f"known: {sorted(IMPLEMENTED_HYPOTHESIS_CLASSES)}"
+            )
+        if self.operating_point_derivation_rule != DERIVATION_RULE:
+            raise ValueError(
+                "the artifact states a derivation rule that is not the released one; a model "
+                "may not carry its own account of how its threshold was derived"
+            )
+
+        if self.feature_channels != FITTED_FEATURE_V2_ALLOWLIST:
+            raise ValueError("the stored channels are not the v2 fitted allowlist in fitted order")
+        if len(self.weights) != len(FITTED_FEATURE_V2_ALLOWLIST):
+            raise ValueError(
+                f"the direction carries {len(self.weights)} weights against "
+                f"{len(FITTED_FEATURE_V2_ALLOWLIST)} fitted channels"
+            )
+        if any(not isfinite(weight) for weight in self.weights):
+            raise ValueError("a fitted weight must be a finite number")
+        if self.regularization <= 0:
+            raise ValueError("the ridge term must be positive; zero is a different class")
+        if self.margin_floor < 0:
+            raise ValueError("a negative margin floor admits decisions the model disowns")
+
+        bound_names = tuple(name for name, _ in self.numeric_lower)
+        if bound_names != FITTED_FEATURE_V2_SCALARS:
+            raise ValueError("the stored numeric bounds are not the six v2 scalars in order")
+        if tuple(name for name, _ in self.numeric_upper) != bound_names:
+            raise ValueError("the lower and upper bounds describe different features")
+        return self
+
+
+#: Every artifact shape this module can read. Named so a dispatcher can be typed without
+#: widening to `object`, and so adding a fourth is a change here rather than in every caller.
+AnyCorrectionArtifactPayload = (
+    CorrectionArtifactPayload | CorrectionArtifactPayloadV2 | CorrectionArtifactPayloadV3
+)
+
+
+def canonical_bytes(payload: AnyCorrectionArtifactPayload) -> bytes:
     """The exact bytes the Artifact Store hashes. Sorted keys, no whitespace, UTF-8.
 
     Canonical rather than merely valid: two builds of the same model must produce the same
@@ -449,6 +604,234 @@ def load_correction_ranker_v2(
         confidence_floor=payload.confidence_floor,
     )
     return ranker, payload
+
+
+def load_correction_ranker_v3(
+    data: bytes,
+    *,
+    expected_component_id: str,
+    expected_revision: int,
+    expected_surface: str,
+    expected_descriptor_hash: str,
+    contract: CorrectionFeatureContractV2 | None = None,
+    media_type: str = CORRECTION_ARTIFACT_MEDIA_TYPE,
+    maximum_bytes: int = MAXIMUM_ARTIFACT_BYTES,
+) -> tuple[PairwiseContrastiveRanker, CorrectionArtifactPayloadV3]:
+    """Read verified v3 bytes into a `PairwiseContrastiveRanker`, or refuse before building.
+
+    Exactly as strict as v2 and in the same order: the byte-level refusals, then the schema,
+    then every declared identity against what the caller expected and what the frozen feature
+    contract declares. This loader can build one class and no other, which is the property that
+    makes a tampered artifact a refusal or a wrong ranker and never a different kind of thing.
+    """
+    declared = contract or CorrectionFeatureContractV2()
+    document = _document(
+        data,
+        media_type=media_type,
+        maximum_bytes=maximum_bytes,
+        schema=CORRECTION_ARTIFACT_SCHEMA_V3,
+    )
+    try:
+        payload = CorrectionArtifactPayloadV3.model_validate(document)
+    except Exception as error:  # pydantic raises its own type; the verdict is the same
+        raise CorrectionArtifactError(
+            f"artifact does not match the declared schema: {error}"
+        ) from error
+
+    for label, found, expected in (
+        ("component", payload.component_id, expected_component_id),
+        ("revision", payload.component_revision, expected_revision),
+        ("surface", payload.surface, expected_surface),
+        ("descriptor", payload.descriptor_hash, expected_descriptor_hash),
+        ("normaliser", payload.normalizer_version, declared.normalizer_version),
+        ("grammar", payload.python_grammar, declared.python_grammar),
+        ("canonical prefix", payload.canonical_prefix_hex, declared.canonical_prefix_hex),
+        ("canonical payload", payload.canonical_payload, declared.canonical_payload),
+        ("feature contract", payload.feature_contract_hash, declared.content_hash),
+        ("embedding model", payload.embedding_model_id, declared.embedding_model),
+        ("embedding tree", payload.embedding_tree_digest, declared.embedding_tree_digest),
+        ("embedding dimension", payload.embedding_dimension, declared.embedding_dimensions),
+    ):
+        if found != expected:
+            raise CorrectionArtifactError(
+                f"artifact {label} is {found!r}, not the expected {expected!r}"
+            )
+    if payload.component_id != PairwiseContrastiveRanker.component_id:
+        raise CorrectionArtifactError("artifact does not describe the correction ranker")
+
+    try:
+        model = PairwiseContrastiveModel(
+            encoder_version=payload.encoder_version,
+            feature_names=tuple(payload.feature_channels),
+            weights=tuple(payload.weights),
+            regularization=str(payload.regularization),
+            fitted_group_count=payload.fitted_group_count,
+            fitted_pair_count=payload.fitted_pair_count,
+        )
+    except ValueError as error:
+        raise CorrectionArtifactError(f"the stored direction is not a model: {error}") from error
+    return PairwiseContrastiveRanker(model, margin_floor=payload.margin_floor), payload
+
+
+def correction_artifact_schema(data: bytes) -> str:
+    """The schema name the bytes declare, or a refusal. Reads nothing else.
+
+    Separate from the loaders because a caller holding unknown bytes should be able to learn
+    which reader they are for without running one and catching its refusal.
+    """
+    try:
+        document: Any = json.loads(data.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise CorrectionArtifactError("artifact bytes are not UTF-8 JSON") from error
+    if not isinstance(document, dict):
+        raise CorrectionArtifactError("a correction artifact is a JSON object")
+    name = document.get("schema_name")
+    if not isinstance(name, str) or not name:
+        raise CorrectionArtifactError("the artifact declares no schema name")
+    return name
+
+
+def load_correction_ranker_any(
+    data: bytes,
+    *,
+    expected_component_id: str,
+    expected_revision: int,
+    expected_surface: str,
+    expected_descriptor_hash: str | None = None,
+    contract: CorrectionFeatureContractV2 | None = None,
+    media_type: str = CORRECTION_ARTIFACT_MEDIA_TYPE,
+    maximum_bytes: int = MAXIMUM_ARTIFACT_BYTES,
+) -> tuple[CorrectionKnn | PairwiseContrastiveRanker, AnyCorrectionArtifactPayload]:
+    """Route bytes to the one reader their `schema_name` names. Never guesses.
+
+    The descriptor is required for v2 and v3 and refused for v1, rather than ignored where it
+    does not apply: a caller that passes a descriptor hash believes it is being checked, and a
+    schema with no descriptor field would silently not check it. That asymmetry is the whole
+    reason this dispatcher exists as one function instead of a caller trying each loader until
+    one stops raising — which would report the last refusal rather than the real one.
+    """
+    schema = correction_artifact_schema(data)
+    if schema == CORRECTION_ARTIFACT_SCHEMA:
+        if expected_descriptor_hash is not None:
+            raise CorrectionArtifactError(
+                "a v1 artifact carries no descriptor hash, so one cannot be checked against it"
+            )
+        return load_correction_ranker(
+            data,
+            expected_component_id=expected_component_id,
+            expected_revision=expected_revision,
+            expected_surface=expected_surface,
+            media_type=media_type,
+            maximum_bytes=maximum_bytes,
+        )
+    if schema in (CORRECTION_ARTIFACT_SCHEMA_V2, CORRECTION_ARTIFACT_SCHEMA_V3):
+        if expected_descriptor_hash is None:
+            raise CorrectionArtifactError(
+                f"{schema!r} binds a descriptor hash; loading one without the descriptor to "
+                "check against would drop a lineage check the schema exists to carry"
+            )
+        loader = (
+            load_correction_ranker_v2
+            if schema == CORRECTION_ARTIFACT_SCHEMA_V2
+            else load_correction_ranker_v3
+        )
+        return loader(
+            data,
+            expected_component_id=expected_component_id,
+            expected_revision=expected_revision,
+            expected_surface=expected_surface,
+            expected_descriptor_hash=expected_descriptor_hash,
+            contract=contract,
+            media_type=media_type,
+            maximum_bytes=maximum_bytes,
+        )
+    known = sorted(
+        (
+            CORRECTION_ARTIFACT_SCHEMA,
+            CORRECTION_ARTIFACT_SCHEMA_V2,
+            CORRECTION_ARTIFACT_SCHEMA_V3,
+        )
+    )
+    raise CorrectionArtifactError(
+        f"artifact declares schema {schema!r}, which this loader does not know; known: {known}"
+    )
+
+
+def build_payload_v3(
+    *,
+    component_revision: int,
+    descriptor_hash: str,
+    code_revision: str,
+    ranker: PairwiseContrastiveRanker,
+    training_dataset_id: UUID,
+    calibration_dataset_id: UUID,
+    example_manifest_hash: str,
+    split_manifest_hash: str,
+    selection_manifest_hash: str,
+    member_manifest_hash: str,
+    feature_schema_hash: str,
+    embedding_revision: str,
+    numeric_lower: Mapping[str, float],
+    numeric_upper: Mapping[str, float],
+    setting_identity: str,
+    operating_point_hash: str,
+    calibration_certificate_hash: str,
+    contract: CorrectionFeatureContractV2 | None = None,
+    maximum_inference_ms: int = 250,
+    declared_limitations: Sequence[str] = (),
+) -> CorrectionArtifactPayloadV3:
+    """Assemble a v3 payload from a fitted ranker, taking the canonicaliser from the contract.
+
+    The canonicaliser fields and the derivation rule are copied from their frozen sources
+    rather than passed in, for the same reason v2 copies its: a builder that let a caller name
+    its own normaliser — or its own account of how the threshold was derived — would let the
+    loader's identity check pass on an artifact nobody fitted under the frozen contract.
+    """
+    declared = contract or CorrectionFeatureContractV2()
+    model = ranker.model
+    return CorrectionArtifactPayloadV3(
+        component_id=PairwiseContrastiveRanker.component_id,
+        component_revision=component_revision,
+        surface=PairwiseContrastiveRanker.surface,
+        learner_kind="pairwise_contrastive_linear",
+        descriptor_hash=descriptor_hash,
+        code_revision=code_revision,
+        normalizer_version=declared.normalizer_version,
+        python_grammar=declared.python_grammar,
+        canonical_prefix_hex=declared.canonical_prefix_hex,
+        canonical_payload=declared.canonical_payload,
+        feature_contract_hash=declared.content_hash,
+        feature_channels=FITTED_FEATURE_V2_ALLOWLIST,
+        training_dataset_id=training_dataset_id,
+        calibration_dataset_id=calibration_dataset_id,
+        example_manifest_hash=example_manifest_hash,
+        split_manifest_hash=split_manifest_hash,
+        selection_manifest_hash=selection_manifest_hash,
+        member_manifest_hash=member_manifest_hash,
+        feature_schema_hash=feature_schema_hash,
+        embedding_model_id=declared.embedding_model,
+        embedding_revision=embedding_revision,
+        embedding_tree_digest=declared.embedding_tree_digest,
+        embedding_dimension=declared.embedding_dimensions,
+        numeric_lower=tuple(
+            (name, float(numeric_lower[name])) for name in FITTED_FEATURE_V2_SCALARS
+        ),
+        numeric_upper=tuple(
+            (name, float(numeric_upper[name])) for name in FITTED_FEATURE_V2_SCALARS
+        ),
+        weights=tuple(model.weights),
+        regularization=Decimal(model.regularization),
+        fitted_group_count=model.fitted_group_count,
+        fitted_pair_count=model.fitted_pair_count,
+        hypothesis_class=HYPOTHESIS_CLASS,
+        margin_floor=ranker.margin_floor,
+        operating_point_hash=operating_point_hash,
+        operating_point_derivation_rule=DERIVATION_RULE,
+        calibration_certificate_hash=calibration_certificate_hash,
+        setting_identity=setting_identity,
+        maximum_inference_ms=maximum_inference_ms,
+        declared_limitations=tuple(declared_limitations),
+    )
 
 
 def build_payload_v2(

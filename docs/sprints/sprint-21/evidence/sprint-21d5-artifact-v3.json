@@ -1,0 +1,140 @@
+{
+ "contracts_sha256": "bee8bafca8c3a33043d9001930a47e37291a4c2a7519f0fec9e653a92487f725",
+ "dispatch": {
+  "asymmetry_cases": [
+   {
+    "action": "load a v3 artifact with no descriptor to check it against",
+    "error": "'correction-ranking-artifact-v3' binds a descriptor hash; loading one without the descriptor to check against would drop a lineage check the schema exists to ca",
+    "refused": true
+   },
+   {
+    "action": "load a v1 artifact while passing a descriptor it has no field for",
+    "error": "a v1 artifact carries no descriptor hash, so one cannot be checked against it",
+    "refused": true
+   }
+  ],
+  "both_directions_refuse": true,
+  "known_schemas": [
+   "correction-ranker-artifact",
+   "correction-ranking-artifact-v2",
+   "correction-ranking-artifact-v3"
+  ],
+  "schema_read_without_running_a_loader": "correction-ranking-artifact-v3",
+  "v3_payload_type": "CorrectionArtifactPayloadV3",
+  "v3_routes_to": "PairwiseContrastiveRanker",
+  "why": "a caller passing a descriptor believes it is being checked, and a caller omitting one for a schema that binds it has dropped a lineage check. Trying each loader until one stops raising would report the last refusal rather than the real one"
+ },
+ "final_outcomes_inspected": false,
+ "fitted_on_a_d5_role": false,
+ "implemented_hypothesis_classes": [
+  "pairwise-contrastive-linear-v1"
+ ],
+ "integrity_content_hash": "06d3771a7014906dc8c027edbb145e9255b69ee19a3078386fec7b24d09e3653",
+ "items": [
+  "S21D5-050"
+ ],
+ "pre_registration_sha256": "ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a",
+ "predecessors_untouched": {
+  "identical": true,
+  "source_of_the_golden": "tests/cognitive_os/learning/test_d3_artifact_and_runtime_goldens.py",
+  "v2_schema_digest": "f009a5f90fba7bc15cfeeee03bf5df68f09ed43a50014bd43676bed50195d518",
+  "v2_schema_golden": "f009a5f90fba7bc15cfeeee03bf5df68f09ed43a50014bd43676bed50195d518",
+  "why": "every artifact hash in D3's and D4's evidence is a hash of bytes written under this shape; a shape that drifted would leave those hashes describing nothing"
+ },
+ "purpose": "Prove CorrectionArtifactPayloadV3 and its schema-name dispatch by executing them: the round trip into one class, every frozen refusal, and the descriptor asymmetry the dispatcher exists to enforce. Nothing here is fitted on a D5 role.",
+ "recorded_at": "2026-08-09T06:18:30Z",
+ "refusals": {
+  "cases": [
+   {
+    "error": "artifact does not match the declared schema: 1 validation error for CorrectionArtifactPayloadV3\n  Value error, the direction carries 389 weights against 390 fitted channels [type=value_error, input_va",
+    "refused": true,
+    "refuses": "a weight vector that is not 390 long"
+   },
+   {
+    "error": "artifact does not match the declared schema: 1 validation error for CorrectionArtifactPayloadV3\n  Value error, a fitted weight must be a finite number [type=value_error, input_value={'calibration_cert",
+    "refused": true,
+    "refuses": "a weight vector that is not finite"
+   },
+   {
+    "error": "artifact does not match the declared schema: 1 validation error for CorrectionArtifactPayloadV3\n  Value error, the stored channels are not the v2 fitted allowlist in fitted order [type=value_error, in",
+    "refused": true,
+    "refuses": "a channel list that is not the v2 allowlist in fitted order"
+   },
+   {
+    "error": "artifact does not match the declared schema: 1 validation error for CorrectionArtifactPayloadV3\n  Value error, the ridge term must be positive; zero is a different class [type=value_error, input_value",
+    "refused": true,
+    "refuses": "a non-positive ridge"
+   },
+   {
+    "error": "artifact does not match the declared schema: 1 validation error for CorrectionArtifactPayloadV3\n  Value error, a negative margin floor admits decisions the model disowns [type=value_error, input_value",
+    "refused": true,
+    "refuses": "a negative margin floor"
+   },
+   {
+    "error": "artifact does not match the declared schema: 1 validation error for CorrectionArtifactPayloadV3\n  Value error, hypothesis class 'pairwise-contrastive-linear-v2' is not one this loader implements; know",
+    "refused": true,
+    "refuses": "a hypothesis_class the loader does not implement"
+   },
+   {
+    "error": "artifact declares schema 'correction-ranking-artifact-v9', which this loader does not know; known: ['correction-ranker-artifact', 'correction-ranking-artifact-v2', 'correction-ranking-artifact-v3']",
+    "refused": true,
+    "refuses": "a schema_name the loader does not know"
+   }
+  ],
+  "declared_in_the_contract": 6,
+  "every_declared_refusal_refuses": true,
+  "executed": 7
+ },
+ "round_trip": {
+  "artifact_bytes": 22951,
+  "artifact_sha256": "f064acf21328e5db3d5e6c2e496b5e1e96334556c7b2e8238f06c95c98f8af47",
+  "built_class": "PairwiseContrastiveRanker",
+  "carries_no_hash_of_itself": true,
+  "carries_no_import_path": true,
+  "channels_are_the_v2_allowlist_in_order": true,
+  "encoder_version": "correction-ranking-v2",
+  "hypothesis_class": "pairwise-contrastive-linear-v1",
+  "margin_floor": "0.25",
+  "model_hash_in": "f4b116a4bec6e438c7e6542f4b918eb386f7e6bcdf3a30cb2dbba4e6b97843c5",
+  "model_hash_out": "f4b116a4bec6e438c7e6542f4b918eb386f7e6bcdf3a30cb2dbba4e6b97843c5",
+  "model_survives_the_round_trip": true,
+  "operating_point": {
+   "calibration_certificate_hash": "9999999999999999999999999999999999999999999999999999999999999999",
+   "derivation_rule_is_the_released_constant": true,
+   "margin_floor": "0.25",
+   "operating_point_hash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+   "reading": "the rule's wording names the k-NN confidence and that is correct: S21D5-016's only substitution is the quantity scored -- the top-two projection margin -- and derive_zero_error_point treats a confidence as an opaque ordered score, so the certification spine is inherited rather than rewritten"
+  },
+  "schema_name": "correction-ranking-artifact-v3",
+  "schema_version": 3,
+  "weights": 390
+ },
+ "schema_version": 1,
+ "size": {
+  "asserted": false,
+  "d5_fitting_rows": 720,
+  "inference": "one dot product per candidate over 390 channels, against a scan over the whole exemplar set",
+  "maximum_exemplars_cap": 5000,
+  "measured_for_real_at": "S21D5-052, on the fitted artifact",
+  "one_exemplar_bytes": 4871,
+  "projected_exemplar_set_bytes_at_d5_pool_size": 3530071,
+  "ratio": 153.8,
+  "v3_direction_bytes": 22951
+ },
+ "spends": {
+  "calibration_cases": 0,
+  "canary_members": 0,
+  "final_members": 0,
+  "retrieval_judgements": 0
+ },
+ "sprint": "21D5",
+ "unchanged_from_v2": {
+  "encoder_version": "correction-ranking-v2",
+  "feature_contract_hash": "492c90a5df420de9d1662d17155ac8b28713e69bbd4bbe56208415d6ca076362",
+  "fitted_channels": 390,
+  "normalizer_version": "cogos-python-alpha-normalizer-v2",
+  "reading": "D5 changes no encoder, no normaliser, no channel and no fitted representation; it changes the function fitted on top of them"
+ },
+ "wave": "W1",
+ "why_a_third_schema": "v2 declares exemplars with min_length 1 and three proportion floors. Making them optional would let an exemplar-free v2 artifact load, which is the check-that-passes-without-touching-its-question defect the D4 report catalogued twelve times"
+}

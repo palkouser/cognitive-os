@@ -2,9 +2,10 @@
 
 - Branch: `feature/sprint-21d5-pairwise-selective-ranking`
 - Backlog: [Sprint 21D5 Technical Backlog](sprint-21d5-technical-backlog.md)
-- **Status: W0 complete. W1 in progress — S21D5-020 through S21D5-023 and S21D5-025 closed: both
-  corpora authored, validated, proven separated, sealed, and 1,120 features sealed pre-outcome.**
-  W2 through W8 not started.
+- **Status: W0 complete. W1 in progress — S21D5-020 through S21D5-023, S21D5-025 and S21D5-050
+  closed: both corpora authored, validated, proven separated, sealed, 1,120 features sealed
+  pre-outcome, and the v3 artifact built and proved.**
+  W2 through W8 otherwise not started.
 - Pre-registration: revision 5, SHA-256
   `ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a`
 - Migration head: `0015`, unchanged. `0016` remains unallocated.
@@ -959,13 +960,61 @@ The separation record does hash every body, so it was regenerated (`243867bb67cf
 because it binds the separation file by hash. Both bindings in the feature-seal record were
 verified against the files on disk rather than assumed.
 
+## S21D5-050 — the v3 artifact, pulled forward out of W4
+
+§6.1 puts the vertical slice before the bulk campaigns, S21D5-024 depends on S21D5-050, and
+S21D5-050's own dependency (013) closed in W0. So the artifact module is built here, ahead of its
+wave, rather than leaving W1 unable to finish in the order its own §6.1 requires.
+
+`scripts/artifact_v3_d5.py` → `evidence/sprint-21d5-artifact-v3.json`, integrity
+`06d3771a7014906d…`.
+
+### Why a third schema rather than a relaxed second
+
+`CorrectionArtifactPayloadV2` is k-NN-shaped by construction: `exemplars` with `min_length=1`,
+`k`, `embedding_weight` and three proportion floors. A direction has none of them. Making them
+optional would let an exemplar-free v2 artifact load — the *check-that-passes-without-touching-
+its-question* defect the D4 report catalogued twelve times. So `correction-ranking-artifact-v3`
+is a third name, and v1 and v2 stay exactly as strict.
+
+Carried from v2 unchanged: normaliser, grammar, canonical prefix and payload, feature contract
+hash, the 390 channels in fitted order, the six numeric bounds, the embedding model and its tree
+digest. **D5 changes no encoder, no channel and no fitted representation; it changes the function
+fitted on top of them.** Replacing the exemplar set: 390 weights, the ridge, the pair and group
+counts, the margin floor, and the hypothesis class. Plus S21D4-050's operating-point fields —
+the derived point's identity, the derivation rule and the calibration certificate hash.
+
+| executed | result |
+|---|---|
+| round trip into exactly one class | `PairwiseContrastiveRanker`, model hash unchanged |
+| frozen refusals driven with bytes breaking one rule each | **7 executed, 7 refuse** |
+| dispatch: descriptor required where the schema binds one, refused where it does not | both refuse |
+| released v2 schema digest still the D3 golden | unmoved |
+| direction vs. exemplar set at D5's 720 fitting rows | **153.8× smaller**, measured not asserted |
+
+### Two decisions worth naming
+
+**The derivation rule is checked, not stored.** A model carrying its own account of how its
+threshold was derived can say anything, so `build_payload_v3` copies the released constant and
+the loader refuses anything else. Its wording names the *k-NN* confidence, and that is correct:
+§S21D5-016's only substitution is the quantity scored — the top-two projection margin instead of
+neighbourhood acceptance mass — and `derive_zero_error_point` treats a confidence as an opaque
+ordered score. The certification spine is inherited, not rewritten. Which quantity was scored is
+named by `hypothesis_class`.
+
+**The dispatcher enforces an asymmetry rather than ignoring a field.** v2 and v3 bind a
+descriptor hash; v1 has no field for one. So `load_correction_ranker_any` *requires* the
+descriptor for v2/v3 and *refuses* it for v1. A caller passing a descriptor believes it is being
+checked; silently accepting it against a schema with nowhere to check it is a lineage check that
+never happened. Both directions are executed in the record.
+
+Nothing here is fitted on a D5 role: 0 calibration cases, 0 final members, 0 canary members, 0
+retrieval judgements. The first fitted artifact is S21D5-052's, after a candidate is selected.
+
 ### What W1 still owes
 
+- the vertical slice on a fixture group outside every role (S21D5-024);
 - both campaigns, 720 fitting and 400 calibration outcomes (S21D5-026).
-
-**One ordering note.** §6.1 puts the vertical slice *before* the bulk campaigns, and S21D5-024
-depends on S21D5-050 — the v3 artifact module, a W4 item whose own dependency (013) closed in W0.
-So the honest order for the rest of W1 is 050 → 024 → 026, not 026 next.
 
 Section 6.2 of the backlog governs a shortfall: if W1 could not reach 100 groups, the honest
 response was to author fewer, record the achieved independent-decision count and let §2.3's floor
