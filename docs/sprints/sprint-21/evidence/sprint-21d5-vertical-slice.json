@@ -1,0 +1,365 @@
+{
+ "artifact": {
+  "artifact_bytes": 28459,
+  "artifact_hash": "cfc7e50e507a061b0f8ae7c6e3c2aa25f43a8561995d91a47c43f43d5cf5560f",
+  "artifact_id": "dd6c1f70-1698-49d2-a595-5d986763f8b0",
+  "backup_and_restore": {
+   "backup_path_sha256": "cfc7e50e507a061b0f8ae7c6e3c2aa25f43a8561995d91a47c43f43d5cf5560f",
+   "event_store_backup_and_restore_belongs_to": "S21D5-082, the isolated recovery item",
+   "restored_bytes_are_the_stored_bytes": true,
+   "restored_payload_reproduced": true,
+   "restored_ranking_reproduced": true,
+   "scope": "the artifact this slice produced, not the event store"
+  },
+  "declared_limitations": [
+   "fitted on one group's four candidates, which is a wiring proof and not a model",
+   "the direction is fitted on the same group it then ranks"
+  ],
+  "feature_channels": 390,
+  "hypothesis_class": "pairwise-contrastive-linear-v1",
+  "margin_floor": "0",
+  "refusals": [
+   {
+    "action": "reload an artifact the capability does not name",
+    "error": "CorrectionArtifactError: artifact bytes hash to 4217461e82eaabd2e69d793a31920c665653170ec12efdcf8eba83c4ba1e2386, not the cfc7e50e507a061b0f8ae7c6e3c2aa25f43a8561995d91a47c43f43d5cf5560f this capability authorises",
+    "refused": "true"
+   },
+   {
+    "action": "reload truncated artifact bytes the capability does name",
+    "error": "CorrectionArtifactError: artifact bytes are not JSON",
+    "refused": "true"
+   },
+   {
+    "action": "reload oversized artifact bytes the capability does name",
+    "error": "CorrectionArtifactError: artifact is 67108880 bytes, above the 67108864-byte bound",
+    "refused": "true"
+   }
+  ],
+  "reload_reproduced_the_payload": true,
+  "reload_reproduced_the_ranking": true,
+  "schema_name": "correction-ranking-artifact-v3",
+  "store_returned_the_bytes_written": true,
+  "weights": 390
+ },
+ "campaign_id": "431a8669-4a75-57d4-be84-dae8f2b117b1",
+ "capabilities": {
+  "canary_capability_present": false,
+  "final_capability_present": false,
+  "refusals": [
+   {
+    "action": "derive a threshold from the final A split",
+    "error": "OperatingPointError: the operating point is derived from the calibration split only; 'final_a' is final, promotion or metamorphic evidence",
+    "refused": "true"
+   },
+   {
+    "action": "derive a threshold from the final B split",
+    "error": "OperatingPointError: the operating point is derived from the calibration split only; 'final_b' is final, promotion or metamorphic evidence",
+    "refused": "true"
+   },
+   {
+    "action": "derive a threshold from the retrieval split",
+    "error": "OperatingPointError: the operating point is derived from the calibration split only; 'retrieval' is final, promotion or metamorphic evidence",
+    "refused": "true"
+   },
+   {
+    "action": "open the direct evaluation boundary for a final read on an approved component",
+    "error": "CorrectionArtifactError: the direct evaluation boundary is closed in active: an approved component is read through the runtime resolver",
+    "refused": "true"
+   },
+   {
+    "action": "seal the fixture's features again with an outcome already in hand",
+    "error": "ValueError: v2 feature records must be sealed strictly before every outcome",
+    "refused": "true"
+   }
+  ],
+  "retrieval_capability_present": false
+ },
+ "code_revision": "49aef20d28782173c5e8bf025003ca5b62e0ff7a1391dbfb9cb216b2fe906fee",
+ "dataset": {
+  "dataset_id": "61a8c3fc-a6b1-5000-9998-fa44266cf572",
+  "every_scan_ran": 11,
+  "example_manifest_hash": "ffea1d936826de803a1012f8a5299a7d413b4ea3985f4d329e6618ce49158b7d",
+  "fitted_columns": 390,
+  "fitted_matrix_hash": "822cdff2c9ee678eff61af136f403dabb1722de80f88c94dd09dcadca2425045",
+  "fitted_rows": 4,
+  "identity_revision": 3,
+  "latest_seal_selection": false,
+  "observation_count": 4,
+  "provenance_counts": {
+   "self_play": 4
+  },
+  "real_governed_runs": 0,
+  "rebuilt_identically": true,
+  "scan_report_hash": "8dcff7b62ac9656f8711969d118c62f42bd08d728c1de8375dff769897e28f1f",
+  "scans": [
+   {
+    "detail": "390 columns, all on the correction-ranking-v2 allowlist",
+    "name": "no_forbidden_field_reaches_the_matrix",
+    "passed": true
+   },
+   {
+    "detail": "all 390 fitted dimensions are finite and in range",
+    "name": "every_fitted_dimension_is_finite_and_in_range",
+    "passed": true
+   },
+   {
+    "detail": "all 390 fitted dimensions are finite and in range",
+    "name": "every_fitted_dimension_is_finite_and_in_range",
+    "passed": true
+   },
+   {
+    "detail": "all 8 rows use correction-ranking-v2",
+    "name": "every_row_has_one_encoder_identity",
+    "passed": true
+   },
+   {
+    "detail": "8 rows were sealed before the verifier ran",
+    "name": "every_feature_record_precedes_its_outcome",
+    "passed": true
+   },
+   {
+    "detail": "4 row(s) are duplicated or do not reproduce their seal",
+    "name": "every_row_resolves_to_one_pre_outcome_source_chain",
+    "passed": false
+   },
+   {
+    "detail": "1 group(s) appear in both splits",
+    "name": "no_group_crosses_the_split",
+    "passed": false
+   },
+   {
+    "detail": "4 distinct feature signatures, none labelled both ways",
+    "name": "no_identical_row_carries_two_labels",
+    "passed": true
+   },
+   {
+    "detail": "4 pair(s) at or above 0.999",
+    "name": "no_near_duplicate_crosses_the_split",
+    "passed": false
+   },
+   {
+    "detail": "128 column(s) separate the labels perfectly",
+    "name": "no_column_derives_the_label",
+    "passed": false
+   },
+   {
+    "detail": "128 column(s) separate the labels perfectly",
+    "name": "no_column_derives_the_label",
+    "passed": false
+   }
+  ],
+  "scans_that_did_not_pass": [
+   "every_row_resolves_to_one_pre_outcome_source_chain",
+   "no_group_crosses_the_split",
+   "no_near_duplicate_crosses_the_split",
+   "no_column_derives_the_label",
+   "no_column_derives_the_label"
+  ],
+  "selection_partition_digest": "f0478f34af451d5ad87027613f747ddddc6856c583d11e73712c98af241c7f45",
+  "split_manifest_hash": "d6f871d5f4f6cb061014b2c2747f5a66b60f45e64216e2d54cf0c1702e30dda2",
+  "store_wide_selection": false,
+  "usage_rights_verified": true,
+  "why_those_scans_cannot_pass_here": {
+   "cause": "the slice has one matrix, so it is scanned against itself. Every cross-split scan is therefore comparing a row with a copy of itself, and every one of them is answering a question the slice is not in a position to ask",
+   "every_row_resolves_to_one_pre_outcome_source_chain": "each row appears twice because the same matrix is passed as both splits",
+   "identical_to_the_d4_slice": true,
+   "no_column_derives_the_label": "four rows carry two labels, so a column separating them perfectly is what four points usually do; the scan means something over hundreds of rows",
+   "no_group_crosses_the_split": "the fixture's one group is in both splits, because both splits are it",
+   "no_near_duplicate_crosses_the_split": "each row's nearest neighbour across the split is itself, at similarity one",
+   "where_it_is_asked_for_real": "S21D5-030 scans the fitting and calibration matrices, which are disjoint and hold 720 and 400 rows. A red row there is a finding; here it is arithmetic"
+  }
+ },
+ "embedding_model_id": "sentence-transformers/all-MiniLM-L6-v2",
+ "embedding_tree_digest": "98eb3ae4df320d0b721902aabef795cafb36c3a516f036e92e2b046f55ef4229",
+ "execution": {
+  "accepted_candidates": 2,
+  "attempted": 4,
+  "baseline_is_expected_to_fail_hidden": true,
+  "baseline_passed_hidden_verification": false,
+  "baselines_executed": 1,
+  "candidates_executed": 4,
+  "code_revision": "49aef20d28782173c5e8bf025003ca5b62e0ff7a1391dbfb9cb216b2fe906fee",
+  "containers_started": 5,
+  "encoder_version": "correction-ranking-v2",
+  "every_feature_record_precedes_its_outcome": true,
+  "feature_seal_artifact_id": "8b79e046-6d61-4551-9709-05dda6d1aaa0",
+  "feature_seal_hash": "d2c87c299d3ee34f845593fb1e60993629bd31d6e862f6ac626b7e556195ade1",
+  "feature_seal_reserialises_identically": true,
+  "features_sealed_at": "2026-08-09T06:49:25.267245+00:00",
+  "first_outcome_at": "2026-08-09T06:49:26.824693+00:00",
+  "intentionally_unattempted": 0,
+  "mode": "label_all",
+  "normalizer_version": "cogos-python-alpha-normalizer-v2",
+  "observations_carry_the_sealing_partition": true,
+  "observations_projected": 4,
+  "receipt_manifest_hash": "883594e8ef68a244a2398ee7829226f77c31a5fdc43335a19545453e4d5ed46e",
+  "runs_replayed_from_the_receipt": 0,
+  "sandbox_image": "cognitive-os-sandbox:sprint-5",
+  "sandboxed": true,
+  "stop_reason": "all_candidates_labelled",
+  "task_run_ids": [
+   "05da0f09-6220-4a2b-8f3f-74e41f3f428f",
+   "6726fccf-7fd5-4479-8d6e-84832c7cebc2",
+   "72a5c4a9-95f6-4aff-8b82-adde78e02dad",
+   "950e814a-3aad-4dd2-a24e-671ffb81a620",
+   "fdfe1eb2-f3d8-4b78-9467-cc6706274fe3"
+  ],
+  "verifier_decided_every_label": true
+ },
+ "final_outcomes_inspected": false,
+ "fixture_manifest_hash": "d8a94f61def04be1f5e72c4d74e01db67e8d39554891cd77a8b36e5d4077f9e4",
+ "integrity_content_hash": "ead53a551c3ce924c72e37c3c5cae44924ee965985eb561fa1b506616b1b3996",
+ "items": [
+  "S21D5-024"
+ ],
+ "package": {
+  "base_repository_manifest_hash": "97dd6c275dabe93d5e57db1c3ba71234d500d67ed9b2542f2ec29d282661c1f4",
+  "bundle_artifact_id": "25fcbf5a-a145-4297-833e-05f2d7824f9f",
+  "bundle_hash": "5696b180ccfbdea781f197d580fb49d86238f223a732005691f393794961f3a0",
+  "candidate_slots": 4,
+  "control_material_manifest_hash": "297ddbf802d0deece59b82dde9e171e803b6412dd0f21ce60daf9a80868865d8",
+  "hidden_suite_is_not_the_visible_suite": true,
+  "hidden_verifier_bundle_hash": "5696b180ccfbdea781f197d580fb49d86238f223a732005691f393794961f3a0",
+  "licence_identifier": "Apache-2.0",
+  "rights_evidence_hash": "d150beadc5024dcd4d7524a62d718d3b3c6ef22a8781e0c3a56b285dc9bddf29",
+  "rights_verified": true,
+  "source_identity": "cognitive-os:generated:d5_fixture.render_duration",
+  "task_id": "ce90d406-62e1-5e82-8a67-8dc4e02e08c6",
+  "task_manifest_hash": "1f34f2ddf21839a7fe98f727b9b53a5d565c399632905b0bfcfae6a114c55adb",
+  "visible_files": 3
+ },
+ "pre_registration_sha256": "ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a",
+ "ranking": {
+  "abstained": false,
+  "baseline_first_choice": "d43d6c50-7580-533b-a353-246b50d9c9dd",
+  "confidence": "0.197353",
+  "confidence_quantity": "the projection margin between the top two candidates",
+  "direction": {
+   "fitted_group_count": 1,
+   "fitted_on_the_group_it_ranks": true,
+   "fitted_pair_count": 4,
+   "model_hash": "a1d45b98d9bd9b94fa0a99f2dfb1f370b446c0fef386f3131edd4e280e0f920d",
+   "regularization": "1",
+   "weights": 390,
+   "why_that_is_said_rather_than_hidden": "one group cannot both fit and evaluate a direction honestly. The slice proves the wiring -- that a direction is fitted, sealed, stored, reloaded and ranked with -- and S21D5-032 fits the one that is measured"
+  },
+  "fell_back_to_the_baseline_order": false,
+  "first_choice": "87811bcd-a112-53c9-aedd-6f2c41914120",
+  "hypothesis_class": "pairwise-contrastive-linear-v1",
+  "operating_point": {
+   "admitted_decisions": 4,
+   "coverage": "1",
+   "derivation_hash": "9a9e11e2c380a43b95fafaf296dbdb8e2c9dd4ead4d65bc7306cf81d21b551f6",
+   "derivation_rule": "score every independent clean calibration decision with the released bounded k-NN confidence; sort the answered ones by score descending; the zero-error point is the lowest threshold at which every answered decision strictly above it is correct, equivalently the highest score among answered decisions that are wrong; it is the boundary of the zero-error region and the only member of it whose coverage is worth reporting, because every higher threshold admits a strict subset; admit the answered decisions scoring strictly above it; report coverage over independent decisions and the Clopper-Pearson one-sided 95% upper bound on the true error rate",
+   "derived_from": "the fixture group ranked four times under four leave-one-candidate-out directions; each fold is one within-group ordering decision",
+   "every_answered_decision_was_correct": true,
+   "folds": [
+    {
+     "first_choice_accepted": true,
+     "fitted": true,
+     "held_out": "d43d6c50-7580-533b-a353-246b50d9c9dd",
+     "margin": "0.507716"
+    },
+    {
+     "first_choice_accepted": true,
+     "fitted": true,
+     "held_out": "87811bcd-a112-53c9-aedd-6f2c41914120",
+     "margin": "0.516681"
+    },
+    {
+     "first_choice_accepted": true,
+     "fitted": true,
+     "held_out": "e7b61de7-bdb9-57de-9ade-c62dfb44380d",
+     "margin": "1.065079"
+    },
+    {
+     "first_choice_accepted": true,
+     "fitted": true,
+     "held_out": "1c7459f8-a7d9-5a3f-bd24-473d2bd95349",
+     "margin": "0.691809"
+    }
+   ],
+   "independent_decisions": 4,
+   "is_the_d5_operating_point": false,
+   "margin_floor_the_ranking_ran_at": "0",
+   "nominal_decisions": 4,
+   "reading": "every fold answered and every fold was right, so the rule names no threshold -- there is no wrong answered decision for it to sit above -- the point admits everything, and the ranking runs at a floor of zero. That is the every_answered_decision_was_correct branch behaving as W2-D7 rebuilt it, and it is emphatically not evidence that the class ranks well: four decisions from a direction fitted on the same four candidates is a wiring proof. The Clopper-Pearson bound beside it says the same thing in a number -- after four clean decisions the true error rate is bounded only below 0.53",
+   "reproduced_after_a_second_derivation": true,
+   "scored_decisions": [
+    {
+     "answered": true,
+     "correct": true,
+     "decision_id": "d43d6c50-7580-533b-a353-246b50d9c9dd",
+     "score": "0.507716"
+    },
+    {
+     "answered": true,
+     "correct": true,
+     "decision_id": "87811bcd-a112-53c9-aedd-6f2c41914120",
+     "score": "0.516681"
+    },
+    {
+     "answered": true,
+     "correct": true,
+     "decision_id": "e7b61de7-bdb9-57de-9ade-c62dfb44380d",
+     "score": "1.065079"
+    },
+    {
+     "answered": true,
+     "correct": true,
+     "decision_id": "1c7459f8-a7d9-5a3f-bd24-473d2bd95349",
+     "score": "0.691809"
+    }
+   ],
+   "split": "calibration",
+   "threshold": null,
+   "why": "D5's operating point is derived once, at S21D5-034, from the fresh calibration split. This one is the fixture's, and it exists to show that the ranking runs at a derived point rather than at a constant somebody typed",
+   "zero_error_point_exists": true,
+   "zero_error_upper_bound_95": "0.527129"
+  },
+  "order_equals_baseline": false,
+  "prediction_accepted_nothing": true,
+  "reason": "ranked"
+ },
+ "recorded_at": "2026-08-09T06:49:29Z",
+ "restart": {
+  "containers_started_on_the_replay": 0,
+  "dataset_record_reproduced": true,
+  "example_manifest_reproduced": true,
+  "feature_seal_hash_reproduced": true,
+  "fresh_services_over_the_same_durable_authorities": true,
+  "note": "the first pass started five containers and the second started none; both counts are in this record because either one alone reads as the other",
+  "receipt_effective_remainder": [],
+  "receipt_is_resumable": true,
+  "replayed_outcomes_are_the_recorded_ones": true,
+  "run_identities_resolved_from_the_receipt": 5,
+  "runs_replayed": 5,
+  "split_manifest_reproduced": true,
+  "stored_seal_time_preserved": true,
+  "task_manifest_hash_reproduced": true
+ },
+ "role_boundary": {
+  "calibration_cases_spent": 0,
+  "canary_members_spent": 0,
+  "checked_against_seal": "4e73f290728aad42f3a665b2f2026971524ffe2e3919df26feb190e4b667a75e",
+  "final_members_spent": 0,
+  "in_any_scored_role": false,
+  "repository_group": "d5-fixture-render-duration",
+  "retrieval_judgements_spent": 0,
+  "roles_checked": [
+   "calibration",
+   "canary",
+   "final_a",
+   "final_b",
+   "retrieval",
+   "training"
+  ],
+  "roles_containing_this_group": [],
+  "template_id": "d5_fixture.render_duration",
+  "why": "Section 6.1 requires the slice to spend nothing, so the group is checked against the sealed manifest rather than declared outside it"
+ },
+ "schema_version": 1,
+ "sealed_manifests_sha256": "32dd0b0698c86acfd34aafd499eff5b89de0b20b7412a7de11ab48fa81cb36dc",
+ "sprint": "21D5",
+ "wave": "W1"
+}

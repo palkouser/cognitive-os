@@ -1052,6 +1052,15 @@ def build_ranker_for_evaluation(
         media_type=media_type,
         maximum_bytes=maximum_bytes,
     )
+    _evaluation_lineage(payload, capability)
+    return ranker, payload
+
+
+def _evaluation_lineage(
+    payload: CorrectionArtifactPayloadV2 | CorrectionArtifactPayloadV3,
+    capability: DirectEvaluationCapability,
+) -> None:
+    """The four dataset identities the capability names, checked against the payload's own."""
     for label, found, expected in (
         ("training dataset", payload.training_dataset_id, capability.training_dataset_id),
         ("split manifest", payload.split_manifest_hash, capability.split_manifest_hash),
@@ -1066,4 +1075,38 @@ def build_ranker_for_evaluation(
             raise CorrectionArtifactError(
                 f"artifact {label} is {found!r}, not the expected {expected!r}"
             )
+
+
+def build_ranker_for_evaluation_v3(
+    data: bytes,
+    *,
+    capability: DirectEvaluationCapability,
+    contract: CorrectionFeatureContractV2 | None = None,
+    media_type: str = CORRECTION_ARTIFACT_MEDIA_TYPE,
+    maximum_bytes: int = MAXIMUM_ARTIFACT_BYTES,
+) -> tuple[PairwiseContrastiveRanker, CorrectionArtifactPayloadV3]:
+    """The v3 door through the same boundary, in the same order: rehash, then read, then check.
+
+    A separate function rather than a widened `build_ranker_for_evaluation`, because that one's
+    return type is `CorrectionKnn` and every released caller depends on getting exactly that.
+    A caller holding bytes of unknown schema uses `load_correction_ranker_any`; a caller opening
+    the evaluation boundary already knows which model it authorised.
+    """
+    digest = sha256(data).hexdigest()
+    if digest != capability.artifact_hash:
+        raise CorrectionArtifactError(
+            f"artifact bytes hash to {digest}, not the {capability.artifact_hash} this "
+            "capability authorises"
+        )
+    ranker, payload = load_correction_ranker_v3(
+        data,
+        expected_component_id=capability.component_id,
+        expected_revision=capability.component_revision,
+        expected_surface=capability.surface,
+        expected_descriptor_hash=capability.descriptor_hash,
+        contract=contract,
+        media_type=media_type,
+        maximum_bytes=maximum_bytes,
+    )
+    _evaluation_lineage(payload, capability)
     return ranker, payload

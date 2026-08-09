@@ -2,9 +2,9 @@
 
 - Branch: `feature/sprint-21d5-pairwise-selective-ranking`
 - Backlog: [Sprint 21D5 Technical Backlog](sprint-21d5-technical-backlog.md)
-- **Status: W0 complete. W1 in progress — S21D5-020 through S21D5-023, S21D5-025 and S21D5-050
-  closed: both corpora authored, validated, proven separated, sealed, 1,120 features sealed
-  pre-outcome, and the v3 artifact built and proved.**
+- **Status: W0 complete. W1 in progress — S21D5-020 through S21D5-025 and S21D5-050 closed:
+  both corpora authored, validated, proven separated, sealed, 1,120 features sealed pre-outcome,
+  the v3 artifact built and proved, and the vertical slice run end to end. S21D5-026 open.**
   W2 through W8 otherwise not started.
 - Pre-registration: revision 5, SHA-256
   `ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a`
@@ -1011,9 +1011,71 @@ never happened. Both directions are executed in the record.
 Nothing here is fitted on a D5 role: 0 calibration cases, 0 final members, 0 canary members, 0
 retrieval judgements. The first fitted artifact is S21D5-052's, after a candidate is selected.
 
+## S21D5-024 — the vertical slice, on a group nobody may count
+
+`scripts/vertical_slice_d5.py` → `evidence/sprint-21d5-vertical-slice.json`, integrity
+`ead53a551c3ce924…`. Fixture: `d5_fixture.render_duration`, checked against the sealed
+S21D5-023 bundle before anything ran — **0 calibration cases, 0 final members, 0 canary members,
+0 retrieval judgements spent.**
+
+The corpus parses durations in four released groups; none renders one. Two independent defects at
+different sites: the all-zero fallback (one decision after the parts exist) and the per-unit
+filter (one decision per unit while they are built). Validated the way every D5 group was —
+ten suite runs, no contract defect; encodable; **no near-clone collision across 1,740 bodies.**
+
+| step | result |
+|---|---|
+| 1. package | rights-clean, 4 candidate slots, hidden suite ≠ visible suite |
+| 2. canonical v2 bytes | 390 channels from the frozen local model |
+| 3. seal before the first outcome | **true**, receipt bound at seal time |
+| 4. self-play | 5 containers, verifier decided every label, 2 of 4 accepted, baseline failed hidden |
+| 5. dataset + matrix | revision-3 identity, rebuilt identically, 0 `real_governed_run`, 390 columns |
+| 6. pairwise ranking | 390-weight direction, 4 pairs, ridge 1; margin `0.197353`; did not abstain |
+| 7. v3 artifact | 28,459 bytes, reloaded from its own bytes, payload and ranking reproduced |
+| 8. refusals + restart + restore | 3 artifact refusals; replay **0 containers**, remainder empty; backup restored and re-ranked |
+| 9. capabilities | 5 refusals executed, each naming the exception the released code raised |
+
+### The operating point exists, and that is worth reading carefully
+
+Four leave-one-candidate-out folds, each a real within-group ordering decision with its own
+margin. All four answered and all four were right — so the rule names **no threshold** (there is
+no wrong answered decision for one to sit above), the point admits everything, and the ranking
+runs at a floor of zero. That is the `every_answered_decision_was_correct` branch behaving as
+D4's W2-D7 rebuilt it.
+
+It is **not** evidence the class ranks well. Four decisions from a direction fitted on the same
+four candidates is a wiring proof, and the Clopper-Pearson bound beside it says so in a number:
+after four clean decisions the true error rate is bounded only below **0.53**.
+
+### Five scans report `passed: false`, and the record now says why for each
+
+D4's slice had the identical five, for the identical reason: the slice holds one matrix, so it is
+scanned against itself, and every cross-split scan is answering a question the slice cannot ask.
+Each row appears twice because both splits are the same matrix; the one group is in both splits;
+each row's nearest cross-split neighbour is itself at similarity one; and four rows carrying two
+labels are separated perfectly by many columns, as four points usually are.
+
+D4's record explained one of the five in a single note. This one names all five and where the
+question is asked for real — S21D5-030, over 720 and 400 disjoint rows, where a red row is a
+finding rather than arithmetic.
+
+### Backup and restore, at the level the slice owns
+
+§6.1 lists "backup and restore" among the slice's obligations. The event store's own dump and
+reload is a whole-database operation, and running it here would tear down the store this wave is
+writing into — so the slice proves the artifact it produced survives a round trip through the
+backup root and still rebuilds the same ranker from the restored bytes. Recorded with its scope
+named and with the item that owns the wider proof (S21D5-082). D4's slice did neither.
+
+### One module change the slice needed
+
+`build_ranker_for_evaluation` returns a `CorrectionKnn`, and every released caller depends on
+getting exactly that, so v3 got its own door: `build_ranker_for_evaluation_v3`, same order —
+rehash, then read, then check the four dataset identities — over a shared lineage helper.
+S21D5-057 and S21D5-058 need it too.
+
 ### What W1 still owes
 
-- the vertical slice on a fixture group outside every role (S21D5-024);
 - both campaigns, 720 fitting and 400 calibration outcomes (S21D5-026).
 
 Section 6.2 of the backlog governs a shortfall: if W1 could not reach 100 groups, the honest

@@ -45,6 +45,7 @@ from cognitive_os.domain.reality import (
 )
 
 from .reality_fixture_spec_d4 import D4_FIXTURE_SPEC
+from .reality_fixture_spec_d5 import D5_FIXTURE_SPEC
 from .reality_retrieval_specs_d3 import D3_RETRIEVAL_SPECS, D3RetrievalSpec
 from .reality_retrieval_specs_d4 import D4_RETRIEVAL_SPECS
 from .reality_retrieval_specs_d5 import D5_RETRIEVAL_SPECS
@@ -296,10 +297,13 @@ _D4_RETRIEVAL_TEMPLATES: dict[str, TaskTemplate] = {
     spec.template_id: _expand_retrieval(spec) for spec in D4_RETRIEVAL_SPECS
 }
 
-#: D5's hundred fresh calibration groups. Same D2 shape and the same expander again; no
-#: fixture yet, because S21D5-024 authors it and the registry addresses a task by ID.
+#: D5's hundred fresh calibration groups plus its vertical-slice fixture. Same D2 shape and the
+#: same expander again. The fixture comes from a sibling module because `reality_task_specs_d5.py`
+#: was hashed into the corpus, separation and seal records before S21D5-024 authored it; here is
+#: where the two belong together, since the registry addresses a task by ID and not by source
+#: file.
 _D5_TEMPLATES: dict[str, TaskTemplate] = {
-    spec.template_id: _expand_d2(spec) for spec in D5_CALIBRATION_SPECS
+    spec.template_id: _expand_d2(spec) for spec in (*D5_CALIBRATION_SPECS, D5_FIXTURE_SPEC)
 }
 
 #: D5's sixty retrieval source groups, on the same two-body evaluation-only shape as D3's.
