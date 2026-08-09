@@ -1,0 +1,71 @@
+{
+ "arms_can_read_judgements": false,
+ "by_domain": {
+  "coding": 60
+ },
+ "by_family": {
+  "boundary_collections": 10,
+  "data_transformation": 10,
+  "error_handling": 10,
+  "numeric_logic": 10,
+  "parsing_validation": 10,
+  "state_idempotency": 10
+ },
+ "by_tier": {
+  "1": 60
+ },
+ "chance_baseline": {
+  "mrr_at_10": 0.3317,
+  "recall_at_5": 0.5768
+ },
+ "contracts_sha256": "bee8bafca8c3a33043d9001930a47e37291a4c2a7519f0fec9e653a92487f725",
+ "every_query_excludes_its_own_group": true,
+ "final_or_canary_outcomes_inspected": 0,
+ "final_outcomes_inspected": false,
+ "frozen_before_any_arm_ran": true,
+ "groups_executed": 60,
+ "integrity_content_hash": "54cd52274ba16436fa62eaf381beae6293248c5e97d1cb72002a0ebbdd06ad3a",
+ "items": [
+  "S21D5-043"
+ ],
+ "leak_guard_ran_over_the_complete_text": true,
+ "minimum_queries": 50,
+ "minimum_queries_met": true,
+ "path": "docs/sprints/sprint-21/evidence/sprint-21d5-retrieval-queries.json",
+ "pre_registration_sha256": "ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a",
+ "projection_record_sha256": "b27bc305edddd9588b48e8dac17e5d1b3a7ff174dc16c39e039cc90add7c3a6c",
+ "queries": 60,
+ "recorded_at": "2026-08-09T09:36:25.082076Z",
+ "relevance_rule": "Sprint 21D1 tier 1: same task family, own group always excluded",
+ "schema_version": 1,
+ "searchable_text_naming_its_own_judgement": [],
+ "seen_task_queries": 0,
+ "separation": {
+  "correction_groups_by_role": {
+   "calibration": 100,
+   "canary": 5,
+   "final_a": 30,
+   "final_b": 30,
+   "training": 180
+  },
+  "cross_group_near_clones": [],
+  "d5_seal_hash": "4e73f290728aad42f3a665b2f2026971524ffe2e3919df26feb190e4b667a75e",
+  "predecessor_queries_compared_against": 200,
+  "predecessor_query_sets": {
+   "sprint-21d1-graph-queries.json": "0a82bfe390a9216f1017bbeb70a09e29ef4747519fb4b8fd6bcf0803efb6650a",
+   "sprint-21d3-retrieval-queries.json": "4064d15793cdab7562623e29f7df3017bb87e4b6519abe4ecfecca31a3a1dcb0",
+   "sprint-21d4-retrieval-queries.json": "2881ea7c62dd13de427dd0641e8ad144f30ff53605e893e595d957ea91145051"
+  },
+  "query_ids_reused_from_a_predecessor": [],
+  "retrieval_crossing_a_correction_role": [],
+  "retrieval_groups": 60,
+  "sealed_pool_hash": "2785ca8075ed6500d63f36473318576e9c32f4176ba9b68b4fb59e75a86ec3ff",
+  "spent_pool_hash": "d4aa9cdd281eb4ab9b5afd7499524921363c4ddde4b0628b5b6a3544ddd0da46",
+  "task_signatures_reused_from_a_predecessor": [],
+  "the_d5_pool_is_not_the_spent_one": true
+ },
+ "sha256": "27cb21c01fce65c70d3649e42aa8d1ee42a4379c9617102bcfecdab916ddfd45",
+ "sprint": "21D5",
+ "wave": "W3",
+ "written_before_the_benchmark_subprocess_exists": true
+}

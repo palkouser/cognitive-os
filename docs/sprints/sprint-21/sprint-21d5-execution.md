@@ -2,12 +2,14 @@
 
 - Branch: `feature/sprint-21d5-pairwise-selective-ranking`
 - Backlog: [Sprint 21D5 Technical Backlog](sprint-21d5-technical-backlog.md)
-- **Status: W0, W1 and W2 complete — S21D5-020 through S21D5-037 and S21D5-050 closed. The
-  correction branch has answered: the fitted direction ranks at 0.91 and 0.88 first-choice
-  against a 0.42 deterministic baseline, and certifies 0.26 and 0.27 zero-error coverage against
-  a 0.40 floor, flat across a 2.25× volume span. §3.3 step 5, `selective_margin_bound`; no
-  candidate selected; 26 dependent items and 15 Gate L2 conditions recorded as not opened.**
-  W3 through W8 not started; the retrieval branch is untouched by this result.
+- **Status: W0 through W3 complete — S21D5-020 through S21D5-047 and S21D5-050 closed. Both
+  branches have answered, and they answered differently. Correction: the fitted direction ranks
+  at 0.91 and 0.88 first-choice against a 0.42 baseline and certifies 0.26 and 0.27 zero-error
+  coverage against a 0.40 floor, flat across a 2.25× volume span — §3.3 step 5,
+  `selective_margin_bound`, no candidate, 26 dependent items and 15 conditions not opened.
+  Retrieval: the `lexical` arm reaches Recall@5 0.7500 and MRR@10 0.5389 on sixty unseen-task
+  queries read once, so **Gate L2 condition 24 is met and Gate D1 condition 15 closes**.**
+  W4 through W8 not started; W4 to W6 stay closed behind the correction stop.
 - Pre-registration: revision 5, SHA-256
   `ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a`
 - Migration head: `0015`, unchanged. `0016` remains unallocated.
@@ -1437,3 +1439,202 @@ additively for the v3 class.
 `selective_margin_bound`. The retrieval branch (W3, S21D5-040 through 047) is untouched by this
 result and still owes condition 24 and Gate D1 condition 15 an answer on its own freshly authored
 holdout.
+
+---
+
+## W3 outcome — the retrieval branch answers, and the answer is a pass
+
+Eight items, four new scripts, one finding about released evidence, and the first D5 gate
+condition that closes. D4 measured a **near miss**: fusion cleared the recall floor and missed
+MRR@10 by 0.0089. D5 turned the complete surface on, authored a fresh sixty-group pool, read it
+once, and one arm cleared both floors.
+
+| arm | Recall@5 | MRR@10 | first failed floor |
+|---|---:|---:|---|
+| no_memory | 0.0000 | 0.0000 | recall_at_5 |
+| exact_signature | 0.0000 | 0.0000 | recall_at_5 |
+| **lexical** | **0.7500** | **0.5389** | **none** |
+| minilm_vector | 0.7833 | 0.4286 | mrr_at_10 |
+| minilm_shortlist_plus_bounded_ged | 0.5667 | 0.3296 | recall_at_5 |
+| reciprocal_rank_fusion | 0.7167 | 0.4674 | mrr_at_10 |
+| chance baseline | 0.5768 | 0.3317 | — |
+| **floor** | **0.70** | **0.50** | — |
+
+Sixty unseen-task queries against a floor of fifty. Every arm inside the two-second query budget,
+every arm reproducing its own ranking across two passes, zero timeouts.
+
+**Gate L2 condition 24: met. Gate D1 condition 15: closed.**
+
+### S21D5-040 and S21D5-041 — the complete surface, on D5's corpus
+
+[`sprint-21d5-surface.json`](evidence/sprint-21d5-surface.json), integrity `caf3293baae9cde5…`.
+
+| measurement | D5 | D4, for context |
+|---|---:|---:|
+| sides carrying terms | **120 of 120** | 94 of 120 |
+| sides that needed the structural fallback | **27** | not available |
+| candidates with no terms | **0** | 10 |
+| distinct candidate term sets | 55 of 60 | — |
+
+Every one of the 120 sides is projected twice — with the flag and without it — because "the
+fallback answered D4's residual" is a claim about a difference, and a record that only ran the
+flag on has no second number to show it. 27 sides carry no identifier at all under the released
+extraction and would have projected empty; under the complete surface none does.
+
+Five collisions of term sets remain, two of them cross-family. A shared term set inside a family
+costs nothing — both documents are relevant to the same query — while across families it is a
+document the wrong query can reach. Both counts are recorded; the searchable document also
+carries domain and task signature, so a shared term set is not a shared document.
+
+The exclusions and the guards were executed rather than read off a field list: a graph carrying
+terms and the same graph without them agree on `structural_hash` and on every node label, and a
+judgement leak, an over-bound list, an uncanonical list, a repeated term and a forbidden marker
+were each refused — including a leak planted in a *fallback* term, since the fallback puts text
+in front of the guard that D4 never gave it.
+
+### Finding S21D5-W3-F1 — a released graph set whose bytes are gone
+
+`sprint-21d4-retrieval-emg-root.json` declares sixty pairs and **none of their blobs resolves**.
+The root file is byte-identical to the one S21D4-044 recorded (`0960818f07981523…`), and that
+record reports `resolved_pairs: 60, intact: true`, so the bytes existed when D4 wrote them. Every
+file under `cognitive-os-data` — backups included — was searched by all five hashes each root
+child declares: **0 of 60 found under any of them**.
+
+When it happened is not determinable from evidence. D4 released no fingerprint of its own
+artifact store; `sprint-21d4-operations.json` recorded `artifacts-s21d4` at 3,990 files before
+and after W7, and the D5 baseline's first observation is 4,006 with "no released expectation
+exists". Neither count can be decomposed into which files they were.
+
+The consequence is bounded and stated rather than worked around: D4's pool cannot serve as a
+development replay pool and its numbers cannot be re-derived from its graphs. Its released
+result record remains valid evidence of what was measured; it is simply no longer re-runnable.
+Nothing was reconstructed — regenerating the blobs would mean re-executing D4's sixty groups
+under D5's runner and calling the result D4's evidence. D5's own pairs are unaffected: they are
+projected, stored and read back in D5's own store, and S21D5-044 verifies them there.
+
+### S21D5-042 — the development replay, and a prediction that held
+
+[`sprint-21d5-retrieval-development.json`](evidence/sprint-21d5-retrieval-development.json),
+integrity `bd09e347c8f99f6b…`.
+
+D4's replay excused one arm, because W3 had just given the bounded-GED comparator a fixed
+iteration budget. **D5 changed no arm, no comparator, no weight and no fusion constant**, so the
+prediction declared before the run was stronger: *every* arm reproduces its predecessor value
+exactly, on every pool that resolves. It did — six arms on D1's eighty-query set and six on D3's
+spent holdout, `arms_that_moved: none` on both, every arm reproducing its own ranking, zero store
+writes. The D4 pool is recorded as not replayable with the failed load beside it rather than
+omitted.
+
+Both replayed pools carry 0 graphs with terms, which is the point: they were projected before the
+surface field existed, so the complete surface contributes nothing there and any movement would
+have come from somewhere this wave believed it had not touched.
+
+### S21D5-043 and S21D5-044 — sixty pairs executed, projected and sealed
+
+[`sprint-21d5-retrieval-emg-projection.json`](evidence/sprint-21d5-retrieval-emg-projection.json)
+(`54ee47bc5db2efcf…`) and
+[`sprint-21d5-retrieval-query-set.json`](evidence/sprint-21d5-retrieval-query-set.json)
+(`54cd52274ba16436…`).
+
+Separation first, before a container starts: zero retrieval groups crossing a correction role,
+zero task signatures and zero query ids reused from **three** predecessor query sets — D1's, D3's
+and D4's, 200 queries in total — zero cross-group near clones, and the sealed pool hash differing
+from the spent D4 one.
+
+| | result |
+|---|---|
+| groups executed, not declared | **60** |
+| baselines that failed their hidden suite | **60** |
+| repairs that passed their hidden suite | **60** |
+| edit-path round trips | **60 of 60** |
+| source hashes resolved from the store | **60 of 60** |
+| graphs over the resource bounds | **0** |
+| seeded refusals (missing, broken link, corrupt) | **3 of 3 refused** |
+| graphs carrying terms | **120 of 120** |
+| pairs whose two sides differ in terms | **60 of 60** |
+| structural hash unmoved by the flag | **true, all 60** |
+| **distinct documents, domain and signature removed** | **55 of 60** |
+| queries qualifying | **60**, floor 50, ten per family |
+| searchable text naming its own judgement | **[]** |
+
+55 of 60 is the number that is comparable across sprints, taken the same way in all three: D3
+measured 1, D4 measured 41. It is not a controlled comparison — three pools, three sets of
+bodies, and the fallback only on here — and it is the measurement the D3 finding asked for.
+
+### S21D5-045 and S21D5-046 — read once, decided by the frozen floors
+
+[`sprint-21d5-retrieval-holdout-result.json`](evidence/sprint-21d5-retrieval-holdout-result.json)
+(`92a553d9f19afa90…`) and
+[`sprint-21d5-retrieval-decision.json`](evidence/sprint-21d5-retrieval-decision.json)
+(`ccc666c70833d27c…`).
+
+One execution, no rerun after the metrics were known, the queries on disk before the benchmark
+subprocess existed, the GED budget inherited from S21D4-041 and not re-decided. The decision is a
+separate record that reads the sealed result by hash, under first-failure precedence: a pass
+needs one arm to clear *both* floors.
+
+`lexical` clears both, so it is the winning arm under the frozen order. `minilm_vector` has the
+better recall (0.7833) and misses MRR; fusion sits between them and misses MRR. Nothing was
+reopened to reach the result: fusion variants 0, widths 0, weights 0, metrics 0, holdout members
+added 0.
+
+**Three things this result is not.** It is not a controlled comparison with D4's near miss — a
+different corpus, a complete surface, and one read of each holdout. It is not an ablation: no
+run was made with the fallback off, because the holdout is read once and §3.4 says so. And it is
+not a claim that the ranking is good in general — 0.7500 recall against a 0.5768 chance baseline
+on sixty queries is a floor cleared, not a wide margin, and the honest reading is that a lexical
+arm over structurally complete documents is enough for *this* corpus at *these* floors.
+
+Worth naming explicitly, because it is the mechanism: relevance here is the task family, and the
+27 sides that needed the fallback carry AST node-type terms. Same-family tasks share structure by
+construction of the corpus, so structural terms are a legitimate signal for the relevance rule
+rather than a leak — the family label itself never appears, and the leak guard ran over the
+complete text of all 120 documents and found nothing.
+
+### S21D5-047 — the boundary, re-proved over more text than it has ever seen
+
+[`sprint-21d5-advisory-boundary.json`](evidence/sprint-21d5-advisory-boundary.json), integrity
+`79269a9d1d03d2d6…`. **Boundary held.**
+
+| property | result |
+|---|---|
+| mandatory bundle sections byte-identical with and without retrieval | **6 of 6 compared** |
+| advisory candidates pinned, required or evidence | **none** |
+| advisory candidate carrying an executable body | **none** |
+| empty set | **degraded**, not unavailable |
+| store-breakage paths ending at `UNVERIFIED` | **4 of 4** |
+| a non-advisory purpose | **gets nothing** |
+
+A positive retrieval result is as much a reason to run this as a negative one, and D5 has a
+second reason D4 did not: under the complete surface all 120 graphs carry terms, where D4 stored
+26 that carried none. The boundary is proved over the text the advisory path is actually handed,
+and that text is larger on every graph than anything D1 or D4 proved it against.
+
+### W3 evidence index
+
+| Item | Record | Integrity hash |
+|---|---|---|
+| S21D5-040, -041 | `sprint-21d5-surface.json` | `caf3293baae9cde5…` |
+| S21D5-042 | `sprint-21d5-retrieval-development.json` | `bd09e347c8f99f6b…` |
+| S21D5-043 | `sprint-21d5-retrieval-query-set.json` | `54cd52274ba16436…` |
+| S21D5-044 | `sprint-21d5-retrieval-emg-projection.json` | `54ee47bc5db2efcf…` |
+| S21D5-045 | `sprint-21d5-retrieval-holdout-result.json` | `92a553d9f19afa90…` |
+| S21D5-046 | `sprint-21d5-retrieval-decision.json` | `ccc666c70833d27c…` |
+| S21D5-047 | `sprint-21d5-advisory-boundary.json` | `79269a9d1d03d2d6…` |
+
+The graph set and the query manifest are `sprint-21d5-retrieval-emg-root.json`
+(`92fb4c9ffaa03ecf…`) and `sprint-21d5-retrieval-queries.json`.
+
+### W3 is closed
+
+S21D5-040 through S21D5-047. The complete surface projected and measured on D5's own corpus; the
+development benchmarks replayed with every arm reproducing; sixty pairs executed, projected,
+stored and verified; sixty queries frozen before any arm ran; six arms evaluated exactly once;
+the frozen floors applied under first-failure precedence; and the advisory boundary re-proved.
+
+**Gate L2 still does not pass, and Sprint 22A stays blocked.** One condition of twenty-nine
+closed here. The correction branch remains stopped at `selective_margin_bound`, which leaves
+conditions 10, 11, 13–16 and 18–23 and 25–27 not opened, and §8.1 requires all twenty-nine.
+What W3 changes is that the sprint now has one branch with a positive result to release:
+condition 24 is met on a freshly authored holdout read once, and Gate D1 condition 15 closes on
+D5's own evidence rather than staying open behind the correction stop.
