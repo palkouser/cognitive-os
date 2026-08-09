@@ -110,7 +110,7 @@ measures a *slope* that D5's two points did not show.
 **Must not assume:**
 
 - **that any Gate L2 condition is inherited.** §2.2 has held for three sprints: each re-evidences
-  all of them against its own authorities. Thirteen met here are thirteen met *here*;
+  all of them against its own authorities. Fourteen met here are fourteen met *here*;
 - **that condition 24 stays closed for free.** It is met on D5's holdout. A successor that changes
   the surface, the arms or the comparator has changed the thing that was measured;
 - **that the 0.91 means the ranker is good.** The baseline it beats is near chance;
@@ -128,8 +128,9 @@ measures a *slope* that D5's two points did not show.
 
 Sprint 22A's own objective — the data-driven domain registry and its two pilot domains — was never
 in D5's scope and is not what blocks it. What blocks it is §8.1: all twenty-nine Gate L2
-conditions met. The tally is **one of twenty-nine closed in this sprint**, fifteen closed behind a
-typed stop, and thirteen met and re-evidenced.
+conditions met. The tally is **one of twenty-nine newly closed in this sprint** — condition 24,
+where D4 had a rejection — with fifteen closed behind a typed stop and the other thirteen met and
+re-evidenced against D5's own authorities.
 
 The unblocking path is not a documentation change. It runs through a selected candidate, a v3
 artifact bound to a derived operating point, final A/B evidence, promotion, shadow, canary and a
@@ -146,7 +147,8 @@ question in the affirmative reopens all fifteen at once.
 | `sprint-21d5-learner-selection.json` | see the W2 index | `4d45fc00188c00ca…` |
 | `sprint-21d5-continuation.json` | see the W2 index | stop `7b59897d8d83…` |
 | `sprint-21d5-retrieval-decision.json` | see the W3 index | `ccc666c70833d27c…` |
-| `sprint-21d5-gate-l2.json` | regenerated at gate close | see the record |
+| `sprint-21d5-gate-l2.json` | regenerated at gate close | 14 met, 15 not opened, 0 failed |
+| `sprint-21d5-release.json` | the remote-derived release handles | tag `799190c06497f22e…` |
 
 The per-wave evidence indexes in [`sprint-21d5-execution.md`](sprint-21d5-execution.md) carry both
 hashes for every record; this table names only the four a successor's pre-registration has to

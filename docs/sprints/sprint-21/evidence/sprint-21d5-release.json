@@ -1,0 +1,135 @@
+{
+ "branch_protection_after_release": {
+  "allow_deletions": false,
+  "allow_force_pushes": false,
+  "enforce_admins": true,
+  "required_conversation_resolution": true,
+  "required_pull_request_reviews": null,
+  "required_status_check_contexts": 27,
+  "strict_status_checks": true
+ },
+ "component_state": {
+  "activations": 0,
+  "active_components": 0,
+  "approvals": 0,
+  "artifact_written": false,
+  "learned_components": 0,
+  "note": "S21D5-035 recorded a null under §3.3 step 5; nothing was registered, approved or activated on experience.correction_ranking. Source: sprint-21d5-continuation.json, stop kind 'selective_margin_bound', 26 dependent items bound to one hash. W7's restore proof independently confirms zero components on that surface"
+ },
+ "d1_conditions_closed_here": [
+  15
+ ],
+ "d1_conditions_still_open": [
+  6,
+  7
+ ],
+ "documents": {
+  "assessment": "gate-l2-d5-assessment.md",
+  "execution_log": "sprint-21d5-execution.md",
+  "handoff": "sprint-21d6-handoff.md",
+  "report": "sprint-21d5-report.md"
+ },
+ "final_outcomes_inspected": 0,
+ "findings": [],
+ "gate_l2": "gate_l2_does_not_pass",
+ "gate_l2_counts": {
+  "carried": 0,
+  "failed": 0,
+  "met": 13,
+  "met_as_rejection": 0,
+  "not_opened": 15,
+  "pending": 1
+ },
+ "integrity_content_hash": "ed0e7ea13f32d379e8d61d51d254ef53bb7fc8282824ba9bb23494a447356ab6",
+ "items": [
+  "S21D5-094",
+  "S21D5-095"
+ ],
+ "migration_head": "0015",
+ "next_available_migration": "0016 (unallocated)",
+ "outcome": "negative on the correction branch, positive on the retrieval branch",
+ "pre_registration_sha256": "ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a",
+ "recorded_at": "2026-08-09T18:33:25.554441Z",
+ "release": {
+  "chronology": "#225 merge 2026-08-09T18:16:34Z -> exact-head main CI 31328614887 complete 2026-08-09T18:32:25Z -> annotated tag created 2026-08-09T18:33:09Z, once and after that CI",
+  "exact_head_main_ci": {
+   "completed_at": "2026-08-09T18:32:25Z",
+   "conclusion": "success",
+   "every_job_succeeded": true,
+   "head_sha": "53cd7579096537cd1cef0e060335ad1c98088285",
+   "jobs": "30 of 30 success",
+   "run": 31328614887,
+   "status": "completed"
+  },
+  "implementation_merge_commit": "53cd7579096537cd1cef0e060335ad1c98088285",
+  "implementation_merged_at": "2026-08-09T18:16:34Z",
+  "implementation_pull_request": 225,
+  "merge_method": "squash, no administrator bypass",
+  "message_first_line": "Sprint 21D5: pairwise contrastive selective ranking and the completed",
+  "peeled_commit": "53cd7579096537cd1cef0e060335ad1c98088285",
+  "pull_request_head_ci": {
+   "completed_at": "2026-08-09T18:15:50Z",
+   "conclusion": "success",
+   "every_job_succeeded": true,
+   "head_sha": "3f5f09b78ef7ab795daf36a953395e07bd660bcd",
+   "jobs": "30 of 30 success",
+   "run": 31327874931,
+   "status": "completed"
+  },
+  "remote_main": "53cd7579096537cd1cef0e060335ad1c98088285",
+  "success_tag_exists": false,
+  "success_tag_forbidden_and_not_created": "sprint-21-learning-baseline",
+  "tag": "sprint-21d5-evidence-baseline",
+  "tag_created_at": "2026-08-09T18:33:09Z",
+  "tag_object": "799190c06497f22edd6ec6c1eb690c511ce23bb7",
+  "tag_type": "tag",
+  "tags_on_the_remote": [
+   "refs/tags/sprint-0-baseline",
+   "refs/tags/sprint-1-baseline",
+   "refs/tags/sprint-10-baseline",
+   "refs/tags/sprint-11-baseline",
+   "refs/tags/sprint-12-baseline",
+   "refs/tags/sprint-13-baseline",
+   "refs/tags/sprint-14-baseline",
+   "refs/tags/sprint-15-baseline",
+   "refs/tags/sprint-16-baseline",
+   "refs/tags/sprint-17-baseline",
+   "refs/tags/sprint-18-baseline",
+   "refs/tags/sprint-19-baseline",
+   "refs/tags/sprint-2-baseline",
+   "refs/tags/sprint-20-baseline",
+   "refs/tags/sprint-21-substrate-baseline",
+   "refs/tags/sprint-21c1-evidence-baseline",
+   "refs/tags/sprint-21c2-provider-baseline",
+   "refs/tags/sprint-21c3-reality-baseline",
+   "refs/tags/sprint-21d1-emg-baseline",
+   "refs/tags/sprint-21d2-evidence-baseline",
+   "refs/tags/sprint-21d3-evidence-baseline",
+   "refs/tags/sprint-21d4-evidence-baseline",
+   "refs/tags/sprint-21d5-evidence-baseline",
+   "refs/tags/sprint-3-baseline",
+   "refs/tags/sprint-4-baseline",
+   "refs/tags/sprint-5-baseline",
+   "refs/tags/sprint-6-baseline",
+   "refs/tags/sprint-7-baseline",
+   "refs/tags/sprint-8-baseline",
+   "refs/tags/sprint-9-baseline"
+  ]
+ },
+ "retrieval_branch": {
+  "gate_d1_condition_15": "closed",
+  "gate_l2_condition_24": "met",
+  "note": "§8.2 requires a valid independent retrieval result to be retained whichever way the correction branch went. It is, and it is the sprint's one closed condition",
+  "winning_arm": "lexical"
+ },
+ "schema_version": 1,
+ "sprint": "21D5",
+ "sprint_22a": "blocked; the handoff targets one bounded successor experiment",
+ "stop_hashes": {
+  "continuation": "7b59897d8d83a51be3d8fb5c65e4208ddb07d813884eb99ccdb36b73236fec59",
+  "correction_selection": "4d45fc00188c00cafd7a95fe4bad8c338150a6d203b2d2c5cf10aa1d413c8ae2",
+  "correction_stop_kind": "selective_margin_bound"
+ },
+ "store_fingerprints_unchanged": true,
+ "wave": "W8"
+}
