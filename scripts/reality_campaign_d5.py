@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""S21D5-025. Seal every fitting and calibration v2 feature before any container starts.
+"""S21D5-025 and S21D5-026. Seal every feature before any container, then run both campaigns.
 
 The order is the evidence. If the encoder runs after the verifier, the features have seen the
 label and every number downstream is a number about a leak. So this command does one thing and
@@ -25,10 +25,20 @@ the D5 sealed catalogue names, and no candidate identity may coincide with a D4 
 Storage is the isolated D5 pair from S21D5-002 (`COGOS_DATABASE_URL`, `COGOS_ARTIFACT_ROOT`).
 No predecessor store is opened and no learned observation is written: sealing is not measuring.
 
-    COGOS_POSTGRES_ENV_FILE=$PWD/.env.s21d5.local
+The execute stage is S21D5-026 and runs one partition at a time under `label_all`: 720 fitting
+outcomes over 180 groups, then 400 calibration outcomes over 100. It reloads the seal out of the
+artifact store rather than rebuilding it -- a campaign that re-derives its seal executes against
+whatever the encoder produces today -- and refuses to start if any task manifest no longer hashes
+to what the seal was bound to. After the runs it replays every identity off the durable receipt,
+and a replay that starts a container is a resume that pays for its work twice.
+
     set -a && . ./.env.s21d5.local && set +a
     UV_CACHE_DIR=.cache/uv uv run python scripts/reality_campaign_d5.py \
         --model /home/palkouser/projekt/cognitive-os-data/models/all-MiniLM-L6-v2
+    UV_CACHE_DIR=.cache/uv uv run python scripts/reality_campaign_d5.py \
+        --stage execute --partition training
+    UV_CACHE_DIR=.cache/uv uv run python scripts/reality_campaign_d5.py \
+        --stage execute --partition calibration
 """
 
 from __future__ import annotations
@@ -49,22 +59,49 @@ from uuid import UUID, uuid5
 REPOSITORY = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPOSITORY / "src"))
 
+from cognitive_os.application.services.correction_candidate_sequencer import (  # noqa: E402
+    AttemptResult,
+    CorrectionCandidateSequencer,
+    SequenceMode,
+)
+from cognitive_os.application.services.correction_ranking_observations import (  # noqa: E402
+    CorrectionRankingObservationProjector,
+)
+from cognitive_os.application.services.learned_evidence import (  # noqa: E402
+    LearnedEvidenceService,
+)
+from cognitive_os.application.services.reality_campaign import (  # noqa: E402
+    RealityCampaignLedger,
+    count_outcomes,
+)
 from cognitive_os.application.services.reality_campaign_runner import (  # noqa: E402
     RealityCampaignRunner,
 )
 from cognitive_os.coding import reality_candidates  # noqa: E402
 from cognitive_os.coding.outcome_recording import CodingOutcomeRecorder  # noqa: E402
+from cognitive_os.coding.reality_tasks import GENERATOR_PROFILE_ID  # noqa: E402
 from cognitive_os.config.memory_config import EmbeddingProviderConfiguration  # noqa: E402
 from cognitive_os.domain.common import utc_now  # noqa: E402
-from cognitive_os.domain.reality import RealityCandidateStrategy  # noqa: E402
+from cognitive_os.domain.reality import (  # noqa: E402
+    RealityCampaignReceiptManifestV3,
+    RealityCandidateSource,
+    RealityCandidateStrategy,
+    RealityReceiptTaskV3,
+    RealityRunIdentity,
+    RealityRunKind,
+)
 from cognitive_os.domain.sandbox import SandboxLimits  # noqa: E402
 from cognitive_os.events.catalog import build_default_event_catalog  # noqa: E402
 from cognitive_os.events.coding_event_service import CodingEventService  # noqa: E402
+from cognitive_os.events.learned_event_service import LearnedEventService  # noqa: E402
 from cognitive_os.infrastructure.artifacts.filesystem import (  # noqa: E402
     ContentAddressedFilesystem,
 )
 from cognitive_os.infrastructure.artifacts.service import ArtifactService  # noqa: E402
 from cognitive_os.infrastructure.embeddings import build_embedding_provider, minilm  # noqa: E402
+from cognitive_os.infrastructure.learned.postgres.repository import (  # noqa: E402
+    PostgresLearnedEvidenceRepository,
+)
 from cognitive_os.infrastructure.postgres.artifact_repository import (  # noqa: E402
     PostgresArtifactRepository,
 )
@@ -73,7 +110,10 @@ from cognitive_os.infrastructure.postgres.event_store import PostgresEventStore 
 from cognitive_os.learning.correction_artifact import (  # noqa: E402
     FITTED_FEATURE_V2_ALLOWLIST,
 )
-from cognitive_os.learning.correction_catalogue import CatalogueGroup  # noqa: E402
+from cognitive_os.learning.correction_catalogue import (  # noqa: E402
+    CatalogueGroup,
+    campaign_manifest_from_groups,
+)
 from cognitive_os.learning.correction_catalogue_d4 import seal_d4_corpus  # noqa: E402
 from cognitive_os.learning.correction_catalogue_d5 import seal_d5_corpus  # noqa: E402
 from cognitive_os.learning.correction_features import (  # noqa: E402
@@ -109,6 +149,16 @@ D5_VERIFIER_PROFILE_HASH = uuid5(D5_CAMPAIGN_NAMESPACE, "coding.hidden_pytest:v1
 GENERATION_EPOCH = datetime(2026, 8, 8, tzinfo=UTC)
 
 FEATURE_SET_MEDIA_TYPE = "application/json"
+
+#: S21D5-026 names one item for both partitions, and each run writes its own record, or the
+#: second would overwrite the first campaign's.
+CAMPAIGN_RECORD = {
+    CorrectionPartition.TRAINING: EVIDENCE / "sprint-21d5-self-play-campaign.json",
+    CorrectionPartition.CALIBRATION: EVIDENCE / "sprint-21d5-calibration-campaign.json",
+}
+
+ACTOR = "reality-campaign-d5"
+AUTHORITY = "S21D5-026"
 
 #: The only two partitions this command may open, in the order it opens them. Final A, final B
 #: and canary stay closed, and no package is resolved for them.
@@ -616,13 +666,406 @@ async def _stage_seal(output: Path, model: Path, limit: int | None) -> int:
     return 0
 
 
+# ------------------------------------------------------------------------------- S21D5-026
+
+
+def _receipt_manifest(
+    *,
+    groups: tuple[CatalogueGroup, ...],
+    partition: CorrectionPartition,
+    campaign_id: UUID,
+    seal: SealedFeatureRecordSetV2,
+    manifest_hash: str,
+    task_manifest_hashes: dict[str, str],
+    bundles: dict[str, str],
+) -> RealityCampaignReceiptManifestV3:
+    """The durable receipt, bound at the seal's time rather than at execution's.
+
+    `created_at` is the seal time on purpose: a receipt written when the containers start
+    records what happened, and what this needs to record is what was planned before they did.
+    """
+    planned: list[RealityRunIdentity] = []
+    for group in groups:
+        manifest_hash_of_task = task_manifest_hashes[group.template_id]
+        for slot in sorted(group.slots, key=lambda item: item.position):
+            planned.append(
+                RealityRunIdentity(
+                    task_id=group.task_id,
+                    task_manifest_hash=manifest_hash_of_task,
+                    run_kind=RealityRunKind.CANDIDATE,
+                    candidate_id=slot.candidate_id,
+                    strategy=RealityCandidateStrategy(slot.recipe),
+                    source=RealityCandidateSource.CURATED,
+                    generator_profile_id=GENERATOR_PROFILE_ID,
+                    verifier_profile_hash=D5_VERIFIER_PROFILE_HASH,
+                    campaign_version=D5_CAMPAIGN_VERSION,
+                )
+            )
+        planned.append(
+            RealityRunIdentity(
+                task_id=group.task_id,
+                task_manifest_hash=manifest_hash_of_task,
+                run_kind=RealityRunKind.BASELINE,
+                source=RealityCandidateSource.BASELINE,
+                generator_profile_id=GENERATOR_PROFILE_ID,
+                verifier_profile_hash=D5_VERIFIER_PROFILE_HASH,
+                campaign_version=D5_CAMPAIGN_VERSION,
+            )
+        )
+    return RealityCampaignReceiptManifestV3(
+        campaign_id=campaign_id,
+        campaign_version=D5_CAMPAIGN_VERSION,
+        planned_runs=tuple(planned),
+        verifier_profile_hash=D5_VERIFIER_PROFILE_HASH,
+        created_at=seal.sealed_at,
+        partition=partition.value,
+        mode="label_all",
+        selection_manifest_hash=manifest_hash,
+        feature_schema_hash=seal.feature_contract_hash,
+        feature_seal_root_hash=seal.content_hash,
+        receipt_tasks=tuple(
+            RealityReceiptTaskV3(
+                task_id=group.task_id,
+                task_manifest_hash=task_manifest_hashes[group.template_id],
+                bundle_id=UUID(bundles[group.template_id]),
+                bundle_hash=_digest(bundles[group.template_id]),
+                feature_seal_hash=seal.content_hash,
+                candidate_order=tuple(
+                    slot.candidate_id for slot in sorted(group.slots, key=lambda s: s.position)
+                ),
+                selected_member_hashes=tuple(
+                    seal.record_for(slot.candidate_id).feature_vector_hash
+                    for slot in sorted(group.slots, key=lambda s: s.position)
+                ),
+            )
+            for group in groups
+        ),
+    )
+
+
+async def _stage_execute(output: Path, partition: CorrectionPartition, limit: int | None) -> int:
+    """Run one partition under `label_all`, project role-bound, then replay off the receipt."""
+    database_url = _require("COGOS_DATABASE_URL")
+    artifact_root = Path(_require("COGOS_ARTIFACT_ROOT"))
+    for forbidden in ("cognitive_os_dev", "s21c3", "s21d1", "s21d2", "s21d3", "s21d4"):
+        if forbidden in database_url or forbidden in artifact_root.name:
+            raise SystemExit(f"refusing to run against {forbidden}; D5 writes only to its own pair")
+
+    sealed = json.loads(SEAL_RECORD.read_text(encoding="utf-8"))
+    row = next(item for item in sealed["partitions"] if item["partition"] == partition.value)
+    catalogue = seal_d5_corpus().catalogues[partition]
+    groups = catalogue.groups[: limit or len(catalogue.groups)]
+
+    engine = create_postgres_engine(database_url)
+    contract = CorrectionFeatureContractV2()
+    try:
+        artifacts = ArtifactService(
+            ContentAddressedFilesystem(artifact_root), PostgresArtifactRepository(engine)
+        )
+        events = PostgresEventStore(engine, build_default_event_catalog())
+        coding_events = CodingEventService(events)
+        repository = PostgresLearnedEvidenceRepository(engine)
+        learned = LearnedEvidenceService(repository, events=LearnedEventService(events))
+        ledger = RealityCampaignLedger(events)
+        sequencer = CorrectionCandidateSequencer(coding_events)
+        runner = RealityCampaignRunner(
+            sandbox=DockerSandbox(SANDBOX_IMAGE),
+            artifacts=artifacts,
+            recorder=CodingOutcomeRecorder(artifacts, coding_events, events),
+            harvester=None,
+            limits=LIMITS,
+            image_digest=SANDBOX_IMAGE,
+            verifier_profile_hash=D5_VERIFIER_PROFILE_HASH,
+            campaign_version=D5_CAMPAIGN_VERSION,
+        )
+
+        # The seal comes back out of the artifact store rather than being rebuilt. A campaign
+        # that re-derives its seal would execute against whatever the encoder produces today.
+        seal_bytes = await artifacts.get_bytes(UUID(row["feature_seal_artifact_id"]))
+        seal = SealedFeatureRecordSetV2.model_validate_json(seal_bytes.decode())
+        if seal.content_hash != row["feature_seal_hash"]:
+            raise SystemExit(
+                f"the stored feature seal hashes to {seal.content_hash}, not the "
+                f"{row['feature_seal_hash']} S21D5-025 recorded"
+            )
+
+        campaign_id = uuid5(D5_CAMPAIGN_NAMESPACE, f"d5:{partition.value}")
+        prepared_of = {}
+        with tempfile.TemporaryDirectory(prefix="cogos-d5-run-") as scratch:
+            for index, group in enumerate(groups, start=1):
+                print(
+                    f"[prepare {partition.value} {index}/{len(groups)}] {group.template_id}",
+                    file=sys.stderr,
+                )
+                prepared = await runner.prepare_task(
+                    group.template_id,
+                    root=Path(scratch) / group.template_id.replace(".", "_"),
+                    seed=group.task_seed,
+                    generated_at=GENERATION_EPOCH,
+                    bundle_artifact=await artifacts.describe(
+                        UUID(row["bundle_artifacts"][group.template_id])
+                    ),
+                )
+                recorded_hash = row["task_manifest_hashes"][group.template_id]
+                if prepared.generated.manifest.content_hash != recorded_hash:
+                    raise SystemExit(
+                        f"{group.template_id}: the task manifest hashes to "
+                        f"{prepared.generated.manifest.content_hash}, not the {recorded_hash} the "
+                        "seal was bound to; every planned run identity would differ"
+                    )
+                prepared_of[group.template_id] = prepared
+
+            receipt = _receipt_manifest(
+                groups=groups,
+                partition=partition,
+                campaign_id=campaign_id,
+                seal=seal,
+                manifest_hash=row["campaign_manifest_hash"],
+                task_manifest_hashes=row["task_manifest_hashes"],
+                bundles=row["bundle_artifacts"],
+            )
+            manifest = campaign_manifest_from_groups(
+                groups,
+                partition=partition,
+                manifest_hash=row["campaign_manifest_hash"],
+                campaign_id=campaign_id,
+                campaign_version=D5_CAMPAIGN_VERSION,
+                feature_sealed_at=seal.sealed_at,
+            )
+            projector = CorrectionRankingObservationProjector(manifest)
+
+            runs: dict[UUID, Any] = {}
+            baselines: list[Any] = []
+            observations: list[dict[str, Any]] = []
+            sequences: list[dict[str, Any]] = []
+
+            def _attempt(prepared: Any, recipe_of: dict[UUID, RealityCandidateStrategy]) -> Any:
+                async def attempt(candidate_id: UUID) -> AttemptResult:
+                    run = await runner.run_candidate(
+                        prepared, recipe_of[candidate_id], completed={}, candidate_id=candidate_id
+                    )
+                    runs[candidate_id] = run
+                    reference = run.step.reference
+                    return AttemptResult(
+                        candidate_id=candidate_id,
+                        accepted=reference.hidden_verification_passed,
+                        event_id=reference.source_event_id,
+                        verifier_evidence_hash=reference.hidden_evidence_hash,
+                    )
+
+                return attempt
+
+            for index, group in enumerate(groups, start=1):
+                print(
+                    f"[run {partition.value} {index}/{len(groups)}] {group.template_id}",
+                    file=sys.stderr,
+                )
+                prepared = prepared_of[group.template_id]
+                ordered = sorted(group.slots, key=lambda item: item.position)
+                recipe_of = {
+                    slot.candidate_id: RealityCandidateStrategy(slot.recipe) for slot in ordered
+                }
+                baselines.append(await runner.run_baseline(prepared, completed={}))
+                sequence = await sequencer.run_task(
+                    campaign_id=campaign_id,
+                    task_id=group.task_id,
+                    partition=partition.value,
+                    mode=SequenceMode.LABEL_ALL,
+                    campaign_manifest_hash=receipt.content_hash,
+                    baseline_order=tuple(slot.candidate_id for slot in ordered),
+                    attempt=_attempt(prepared, recipe_of),
+                )
+                await sequencer.record(sequence, correlation_id=group.task_id)
+                sequences.append(
+                    {
+                        "task_id": str(group.task_id),
+                        "attempted": len(sequence.attempted_order),
+                        "intentionally_unattempted": len(sequence.intentionally_unattempted),
+                        "stop_reason": sequence.stop_reason,
+                    }
+                )
+                for slot in ordered:
+                    run = runs[slot.candidate_id]
+                    stored = await learned.record_observation(
+                        projector.project(
+                            run.step.reference,
+                            campaign_version=D5_CAMPAIGN_VERSION,
+                            verifier_profile_hash=group.verifier_profile_hash,
+                            usage_rights_verified=group.usage_rights_verified,
+                        ),
+                        correlation_id=run.step.reference.task_run_id,
+                        actor=ACTOR,
+                        authority=AUTHORITY,
+                    )
+                    observations.append(
+                        {
+                            "observation_id": str(stored.observation_id),
+                            "candidate_id": str(slot.candidate_id),
+                            "group": group.repository_group,
+                            "task_id": str(group.task_id),
+                            "accepted": run.step.reference.hidden_verification_passed,
+                            "provenance_class": str(stored.provenance_class),
+                            "verifier_status": stored.verifier_status,
+                            "outcome_hash": run.step.reference.outcome_hash,
+                            "payload_hash": stored.source_payload_hash,
+                            "feature_vector_hash": seal.record_for(
+                                slot.candidate_id
+                            ).feature_vector_hash,
+                        }
+                    )
+
+            # The replay. A second pass over the same identities that starts no container is
+            # what "receipt-aware" means; asserting resumability without re-running proves the
+            # ledger can be queried, not that the campaign can be resumed.
+            references = [run.step.reference for run in runs.values()]
+            task_run_ids = [item.task_run_id for item in references] + [
+                run.step.reference.task_run_id for run in baselines
+            ]
+            recorded = dict(await ledger.completed_by_identity(task_run_ids))
+            replayed: list[Any] = []
+            for group in groups:
+                prepared = prepared_of[group.template_id]
+                replayed.append(await runner.run_baseline(prepared, completed=recorded))
+                for slot in sorted(group.slots, key=lambda item: item.position):
+                    replayed.append(
+                        await runner.run_candidate(
+                            prepared,
+                            RealityCandidateStrategy(slot.recipe),
+                            completed=recorded,
+                            candidate_id=slot.candidate_id,
+                        )
+                    )
+            resumed = await ledger.plan_resume_with_receipts(
+                receipt, task_run_ids=task_run_ids, campaign_id=campaign_id
+            )
+    finally:
+        await engine.dispose()
+
+    count = count_outcomes(references)
+    provenance = Counter(str(item["provenance_class"]) for item in observations)
+    accepted_by_recipe: Counter[str] = Counter()
+    by_recipe: Counter[str] = Counter()
+    for reference in references:
+        label = "" if reference.strategy is None else reference.strategy.value
+        by_recipe[label] += 1
+        if reference.hidden_verification_passed:
+            accepted_by_recipe[label] += 1
+
+    evidence = _seal(
+        {
+            "schema_version": 1,
+            "sprint": "21D5",
+            "wave": "W1",
+            "items": ["S21D5-026"],
+            "recorded_at": utc_now().strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "pre_registration_sha256": _digest(PRE_REGISTRATION.read_bytes()),
+            "feature_seals_sha256": _digest(SEAL_RECORD.read_bytes()),
+            "sealed_manifests_sha256": _digest(SEALED_MANIFESTS.read_bytes()),
+            "final_outcomes_inspected": False,
+            "partition": partition.value,
+            "campaign_id": str(campaign_id),
+            "campaign_manifest_hash": row["campaign_manifest_hash"],
+            "receipt_manifest_hash": receipt.content_hash,
+            "feature_seal_hash": seal.content_hash,
+            "feature_seal_reloaded_from_the_artifact_store": True,
+            "feature_contract_hash": contract.content_hash,
+            "mode": "label_all",
+            "execution": {
+                "groups": len(groups),
+                "candidate_runs": len(references),
+                "baselines": len(baselines),
+                "containers_started": len(references) + len(baselines),
+                "unique_outcomes": count.unique,
+                "duplicates_excluded": count.duplicates_excluded,
+                "hidden_passed": count.passed,
+                "hidden_failed": count.failed,
+                "baselines_passing_hidden_verification": sum(
+                    1 for run in baselines if run.hidden_passed
+                ),
+                "candidates_left_unattempted": sum(
+                    int(item["intentionally_unattempted"]) for item in sequences
+                ),
+                "sequences_recorded": len(sequences),
+                "stop_reasons": dict(Counter(str(item["stop_reason"]) for item in sequences)),
+                "acceptance_by_recipe": {
+                    name: round(accepted_by_recipe[name] / by_recipe[name], 4)
+                    for name in sorted(by_recipe)
+                },
+                "every_outcome_follows_the_seal": all(
+                    item.occurred_at > seal.sealed_at for item in references
+                ),
+            },
+            "observations": {
+                "recorded": len(observations),
+                "provenance_counts": dict(sorted(provenance.items())),
+                "real_governed_runs": provenance.get("ProvenanceClass.REAL_GOVERNED_RUN", 0)
+                + provenance.get("real_governed_run", 0),
+                "distinct_feature_vector_hashes": len(
+                    {str(item["feature_vector_hash"]) for item in observations}
+                ),
+                "groups": len({str(item["group"]) for item in observations}),
+            },
+            "resume": {
+                "run_identities_resolved_from_the_receipt": len(recorded),
+                "runs_replayed": sum(1 for run in replayed if run.replayed),
+                "containers_started_on_the_replay": sum(1 for run in replayed if not run.replayed),
+                "receipt_is_resumable": resumed.is_resumable,
+                "receipt_effective_remainder": [str(item) for item in resumed.effective_remainder],
+            },
+            "task_run_ids": sorted(str(item) for item in task_run_ids),
+            "candidate_outcomes": observations,
+            "sequences": sequences,
+        }
+    )
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(
+        json.dumps(evidence, indent=1, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+    print(
+        json.dumps(
+            {
+                "output": output.name,
+                "partition": partition.value,
+                "groups": len(groups),
+                "candidate_runs": len(references),
+                "hidden_passed": count.passed,
+                "baselines_passing_hidden": evidence["execution"][
+                    "baselines_passing_hidden_verification"
+                ],
+                "real_governed_runs": evidence["observations"]["real_governed_runs"],
+                "observations": len(observations),
+                "containers_on_the_replay": evidence["resume"]["containers_started_on_the_replay"],
+                "effective_remainder": len(evidence["resume"]["receipt_effective_remainder"]),
+                "integrity_content_hash": evidence["integrity_content_hash"],
+            },
+            indent=1,
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--stage", choices=("seal",), default="seal")
-    parser.add_argument("--model", type=Path, required=True)
-    parser.add_argument("--groups", type=int, default=None, help="smoke-test limit per partition")
+    parser.add_argument("--stage", choices=("seal", "execute"), default="seal")
+    parser.add_argument("--model", type=Path)
+    parser.add_argument("--partition", choices=[name.value for name in _ORDER], default="training")
+    parser.add_argument("--groups", type=int, default=None, help="smoke-test limit")
     parser.add_argument("--output", type=Path)
     arguments = parser.parse_args()
+
+    if arguments.stage == "execute":
+        partition = CorrectionPartition(arguments.partition)
+        if arguments.groups is not None and arguments.output is None:
+            raise SystemExit("--groups writes a partial record; give it an --output of its own")
+        return asyncio.run(
+            _stage_execute(
+                arguments.output or CAMPAIGN_RECORD[partition], partition, arguments.groups
+            )
+        )
+
+    if arguments.model is None:
+        raise SystemExit("--stage seal needs --model")
     if arguments.groups is not None and arguments.output is None:
         raise SystemExit("--groups writes a partial record; give it an --output of its own")
     return asyncio.run(

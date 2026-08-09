@@ -2,9 +2,10 @@
 
 - Branch: `feature/sprint-21d5-pairwise-selective-ranking`
 - Backlog: [Sprint 21D5 Technical Backlog](sprint-21d5-technical-backlog.md)
-- **Status: W0 complete. W1 in progress — S21D5-020 through S21D5-025 and S21D5-050 closed:
-  both corpora authored, validated, proven separated, sealed, 1,120 features sealed pre-outcome,
-  the v3 artifact built and proved, and the vertical slice run end to end. S21D5-026 open.**
+- **Status: W0 and W1 complete — S21D5-020 through S21D5-026 and S21D5-050 closed: both corpora
+  authored, validated, proven separated and sealed; 1,120 features sealed pre-outcome; the v3
+  artifact built and proved; the vertical slice run end to end; both campaigns executed and
+  ingested, 720 fitting and 400 calibration outcomes, zero `REAL_GOVERNED_RUN` in either.**
   W2 through W8 otherwise not started.
 - Pre-registration: revision 5, SHA-256
   `ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a`
@@ -1074,9 +1075,80 @@ getting exactly that, so v3 got its own door: `build_ranker_for_evaluation_v3`, 
 rehash, then read, then check the four dataset identities — over a shared lineage helper.
 S21D5-057 and S21D5-058 need it too.
 
-### What W1 still owes
+## S21D5-026 — both campaigns executed and ingested
 
-- both campaigns, 720 fitting and 400 calibration outcomes (S21D5-026).
+`scripts/reality_campaign_d5.py --stage execute`, one partition at a time.
+`evidence/sprint-21d5-self-play-campaign.json` (`2baa476759c37c16…`) and
+`evidence/sprint-21d5-calibration-campaign.json` (`b8d56397395c84d7…`).
+
+| | fitting | calibration |
+|---|---:|---:|
+| groups | 180 | 100 |
+| candidate runs | **720** | **400** |
+| unique outcomes / duplicates excluded | 720 / 0 | 400 / 0 |
+| hidden passed / failed | 360 / 360 | 200 / 200 |
+| baselines passing hidden verification | **0** | **0** |
+| candidates left unattempted | 0 | 0 |
+| every outcome follows the seal | true | true |
+| observations recorded | 720 | 400 |
+| distinct sealed feature vectors | 720 | 400 |
+| **`REAL_GOVERNED_RUN` observations** | **0** | **0** |
+| replay: identities resolved / replayed / containers | 900 / 900 / **0** | 500 / 500 / **0** |
+| receipt resumable, effective remainder | true, empty | true, empty |
+
+1,120 outcomes, which is the contract's number exactly, all `self_play`, none of them a governed
+run. Every group reported `all_candidates_labelled`: nothing was left unattempted and no
+sequence stopped early.
+
+### The seal is reloaded, not rebuilt
+
+The execute stage reads the feature seal back out of the artifact store by the artifact id
+S21D5-025 recorded, and refuses if it does not hash to the recorded value. A campaign that
+re-derived its seal would execute against whatever the encoder produces today, which is a
+different model wearing the same lineage. It also re-prepares each task package and refuses if
+the manifest no longer hashes to what the seal was bound to — because every planned run identity
+would differ from the receipt's, and the resume would silently pay for its containers twice.
+
+### The pass rate is exactly half, and that is the corpus, not a coincidence
+
+360 of 720 and 200 of 400. The authoring contract puts two full repairs and two half-repairs in
+every group, so half of every group's candidates pass the hidden suite by construction. The
+number confirms the corpus is the one that was authored; it is not a measurement of anything.
+
+What *is* worth reading is acceptance **by recipe**, because the recipe-to-variant binding is
+shuffled per group and a recipe that predicted the label would be a leak the feature channels
+never see:
+
+| | alpha | beta | gamma | delta |
+|---|---:|---:|---:|---:|
+| fitting | 0.544 | 0.450 | 0.467 | 0.539 |
+| calibration | 0.330 | 0.600 | 0.530 | 0.540 |
+
+Spread around a half, and the ordering does not agree between the two partitions. A recipe
+sitting near 0 or 1 in both would have meant the shuffle was not shuffling.
+
+### Sixteen observations in the store that no campaign recorded
+
+The store holds 1,136 observations; the two campaigns recorded 1,120. The difference is eight
+from the two vertical-slice runs and eight from a two-group smoke test of the execute stage,
+which re-ran `boundary_collections.chunk` and `d2_transform.chunk_mapping` before the full
+campaign did.
+
+They are left in place rather than deleted: the learned store is append-only, and quietly
+removing rows to make a total match is the opposite of what an evidence store is for. They cannot
+reach a dataset — S21D5-030 builds an **explicit** selection from the campaign records' own
+observation ids, so membership is named rather than queried. Recorded here so the count
+difference is a sentence somebody wrote rather than a discrepancy somebody finds.
+
+### W1 is closed
+
+S21D5-020 through S21D5-026 and S21D5-050. Both corpora authored, validated, separated and
+sealed; 1,120 features sealed before any container; the v3 artifact built and proved; the
+vertical slice run end to end on a group in no role; both campaigns executed and ingested under
+new run identities.
+
+**Gate L2 does not pass and Sprint 22A remains blocked.** W1 measures nothing about the
+hypothesis: the first number that bears on it is W2's risk–coverage curve at 320 and 720 rows.
 
 Section 6.2 of the backlog governs a shortfall: if W1 could not reach 100 groups, the honest
 response was to author fewer, record the achieved independent-decision count and let §2.3's floor
