@@ -63,20 +63,22 @@ class TestTheGoldenSchemas:
     def test_the_d3_promotion_payload_schema_is_the_one_the_evidence_was_written_under(
         self,
     ) -> None:
-        """S21D4-048 moved this pin once, additively, and the version deliberately did not move.
+        """S21D4-048 and S21D5-037 moved this pin, additively, and the version did not move.
 
-        The shape gained one optional field: condition 20's `decision_counts`. The name and the
-        version stay at `d3-promotion-payload` v2 because bumping them would make every D3
-        payload unreadable through `load_promotion_payload`, which is the opposite of what the
-        item asks for. What the old pin actually protected — that bytes written under D3 still
-        hash to what they hashed then — is asserted directly in
-        `TestTheD4GateCensusIsAdditive`, which is a stronger check than a schema digest.
+        The shape gained two optional fields: condition 20's `decision_counts`, and inside it
+        the `hypothesis_class` that produced the confidences the certificate thresholded. The
+        name and the version stay at `d3-promotion-payload` v2 because bumping them would make
+        every D3 and D4 payload unreadable through `load_promotion_payload`, which is the
+        opposite of what both items ask for. What the old pin actually protected — that bytes
+        written under D3 and D4 still hash to what they hashed then — is asserted directly in
+        `TestTheD4GateCensusIsAdditive` and `TestTheExtensionIsAdditive`, which is a stronger
+        check than a schema digest.
         """
         assert D3_PROMOTION_SCHEMA == "d3-promotion-payload"
         assert D3_PROMOTION_SCHEMA_VERSION == 2
         assert (
             _schema_hash(D3PromotionPayload)
-            == "5f2da986a6df0c8fdda3d7b6fea1c270467a3a841ec9028d0f3daa33a8dd21db"
+            == "f81aefbdbb7215a733c708b483f3c88e162a8379f72ce70aa8a8e03af70c1912"
         )
 
     def test_the_v2_correction_artifact_schema_is_the_one_the_loader_was_written_for(self) -> None:

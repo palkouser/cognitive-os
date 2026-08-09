@@ -124,6 +124,12 @@ class PromotionDecisionCounts(ImmutableContractModel):
     independent_decisions: int = Field(ge=0)
     #: The `OperatingPointV4` this gate's answered set was decided by.
     calibration_certificate_hash: Sha256Hex
+    #: S21D5-037: which hypothesis class produced the confidences the certificate thresholds.
+    #: Optional so a D4 payload's bytes hash as they did — the same `exclude_none` discipline
+    #: S21D4-048 relied on one field up. Which class names are implemented is decided in
+    #: `learning.promotion.condition_20_gate`, beside the artifact loader that has to load one;
+    #: a domain model that owned that list would be a second place for it to go stale.
+    hypothesis_class: NonEmptyStr | None = None
 
     @model_validator(mode="after")
     def independence_cannot_exceed_what_was_counted(self) -> PromotionDecisionCounts:

@@ -49,7 +49,15 @@ class ExperienceContract(ImmutableContractModel):
 #: promotion payload already has stored instances -- the credential-free lifecycle smoke writes
 #: one into the Artifact Store on every run -- and a gate row that gained an always-present key
 #: would change the identity of every one of them.
-CANONICAL_ABSENT_WHEN_EMPTY = ("search_terms", "decision_counts")
+#:
+#: S21D5-037 adds `hypothesis_class` one level further in, inside `PromotionDecisionCounts`. The
+#: D4 counts row is stored and its identity must not move, and the D5 test that caught this is
+#: the reason the entry exists rather than a second reading of the D4 note: `exclude_none` keeps
+#: `canonical_payload_bytes` stable and does nothing for `canonical_json`, which is what the
+#: contract hashes. The field is required and non-empty wherever it is a real claim -- the v3
+#: artifact refuses a class no loader implements -- so dropping it when falsy can only drop an
+#: absence.
+CANONICAL_ABSENT_WHEN_EMPTY = ("search_terms", "decision_counts", "hypothesis_class")
 
 
 def _canonicalize(value: object) -> object:

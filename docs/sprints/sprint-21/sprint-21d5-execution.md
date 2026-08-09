@@ -2,11 +2,12 @@
 
 - Branch: `feature/sprint-21d5-pairwise-selective-ranking`
 - Backlog: [Sprint 21D5 Technical Backlog](sprint-21d5-technical-backlog.md)
-- **Status: W0 and W1 complete — S21D5-020 through S21D5-026 and S21D5-050 closed: both corpora
-  authored, validated, proven separated and sealed; 1,120 features sealed pre-outcome; the v3
-  artifact built and proved; the vertical slice run end to end; both campaigns executed and
-  ingested, 720 fitting and 400 calibration outcomes, zero `REAL_GOVERNED_RUN` in either.**
-  W2 through W8 otherwise not started.
+- **Status: W0, W1 and W2 complete — S21D5-020 through S21D5-037 and S21D5-050 closed. The
+  correction branch has answered: the fitted direction ranks at 0.91 and 0.88 first-choice
+  against a 0.42 deterministic baseline, and certifies 0.26 and 0.27 zero-error coverage against
+  a 0.40 floor, flat across a 2.25× volume span. §3.3 step 5, `selective_margin_bound`; no
+  candidate selected; 26 dependent items and 15 Gate L2 conditions recorded as not opened.**
+  W3 through W8 not started; the retrieval branch is untouched by this result.
 - Pre-registration: revision 5, SHA-256
   `ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a`
 - Migration head: `0015`, unchanged. `0016` remains unallocated.
@@ -1155,3 +1156,284 @@ response was to author fewer, record the achieved independent-decision count and
 decide the outcome — never to lower the floor, and never to reinstate replicated decisions to
 reach it. **The provision did not have to be used.** The corpus reached 100 with no floor touched,
 no threshold changed and `shortfall: 0` on the validator's own report.
+
+---
+
+## W2 outcome — the correction branch answers, and the answer is a margin that ranks but cannot certify
+
+Eight items, two new scripts, one extended contract, and the first D5 numbers that bear on the
+hypothesis. The wave ends at **§3.3 step 5, `selective_margin_bound`**: the fitted direction
+ranks far above the strongest deterministic baseline, and the projection margin cannot certify
+enough of what it ranks to reach the 0.40 coverage floor at either volume.
+
+| | 320 rows | 720 rows |
+|---|---:|---:|
+| fitting groups / pairs | 80 / 320 | 180 / 720 |
+| first-choice rate over all 100 answered | **0.91** | **0.88** |
+| strongest deterministic baseline, same decisions | 0.42 | 0.42 |
+| derived zero-error threshold | 0.651587 | 1.071794 |
+| admitted at that point | 26 | 27 |
+| **zero-error coverage** | **0.26** | **0.27** |
+| confident errors among admitted | 0 | 0 |
+| Clopper-Pearson 95% upper bound at that count | 0.10883 | 0.105019 |
+| projected changed final decisions | 50.8 | 46.7 |
+| maximum inference, per candidate | 0.080 ms | 0.067 ms |
+
+Both cells fail **exactly one** §2.3 condition — `clean_coverage_below_0.40` — and satisfy the
+other seven, including the one D4 could never reach: zero confident errors on a non-empty
+admitted set.
+
+### S21D5-030 — the snapshots, and two matrices that can be scanned against each other
+
+`scripts/reality_campaign_d5.py --stage snapshot`, `evidence/sprint-21d5-snapshots.json`
+(`ec85be4212ac86c8…`).
+
+Two explicit revision-3 selections naming the 1,120 recorded observation ids, each dataset built
+twice through **fresh** application services over the same durable authorities, and both rebuilt
+identically. 720 fitting rows over 180 groups, 400 calibration rows over 100, 390 fitted
+dimensions, the channel list equal to the v2 allowlist in order, and no group crossing the split.
+
+**Eleven scans, eleven passed.** S21D5-024's five red rows were the consequence of a slice that
+had only one matrix to give and had to scan it against itself; here the two matrices are genuinely
+different sets, which is the condition those scans were written for. Maximum cross-split
+similarity is 0.990806 against a near-duplicate threshold of 0.999.
+
+The labels are read from the durable outcome ledger, not from the campaign reports, and the stage
+refuses if any of the 1,120 disagrees with what the campaign recorded. Nothing disagreed. Both
+matrix hashes are recorded, and every later stage in this wave refuses to score rows whose matrix
+does not hash to one of them — the fitting matrix is `2d86677c44b9cdd7…` and the calibration
+matrix `106061126df83261…`.
+
+The store holds 1,136 observations to the datasets' 1,120. Each unreferenced prefix is resolved
+against a manifest this sprint released rather than described: eight under the S21D5-024 fixture
+manifest, eight under the fitting campaign manifest from the two-group smoke test.
+
+### S21D5-031 — invariance, measured on D5's own bodies
+
+`scripts/invariance_regression_d5.py`, `evidence/sprint-21d5-invariance-regression.json`
+(`2543558f322d8cf4…`).
+
+Forty transformed cases over twenty of the hundred freshly authored calibration groups, two cases
+per group, 160 candidate vectors compared:
+
+- **0 vectors changed.** Every transformed feature vector is identical to its clean counterpart,
+  so the forty transformed decisions repeat twenty clean ones and add none — the zero S21D5-023
+  sealed, now executed on D5's own corpus rather than inherited from D4's.
+- **0 verifier label changes** across 160 transformed candidates run under plain pytest in a
+  scratch directory. No governed run, no observation, no dataset growth.
+- **0 first-action changes**, so §2.3's 100% preservation condition holds.
+- The semantic-mutation control changed the canonical representation in all four cases, which is
+  what keeps the first result from being satisfied by a canonicaliser that erased everything.
+
+**The ranker-dependent form is an implication, not a second run.** A ranker whose input is four
+vectors and a slot order cannot move when neither moves, and both premises are measured here:
+every transformed vector equals its clean one, and the slot order the tie-break uses is
+catalogue-fixed. Re-ranking the sample under the fitted direction would reproduce the same
+ordering by construction and report it as though it were an observation. S21D5-035 reads the two
+premises instead.
+
+W2-D9 is re-measured on this model copy rather than cited: every source is embedded window by
+window on its own, so a difference between a clean and a transformed vector can only come from the
+transformation. The record also states what it therefore cannot claim — these vector hashes are
+not the S21D5-025 seals, because the campaign encoded in batches of 64 under the fitting bounds
+and this encodes one window at a time under bounds fitted on the sample.
+
+### S21D5-032 — two directions, sealed before any calibration label is read
+
+`scripts/learner_selection_d5.py --stage fit`, `evidence/sprint-21d5-direction-fit.json`
+(`1f2d9b615d3c8b1d…`).
+
+The stage loads the fitting matrix and nothing else, which is what makes "sealed before any
+calibration decision is scored" checkable rather than asserted. Two directions, 390 weights each,
+stored in the artifact store as round-trippable bytes:
+
+| | 320 rows | 720 rows |
+|---|---|---|
+| model hash | `5b15f4af06a2b08d…` | `9fd297fb40701537…` |
+| fitted groups / pairs | 80 / 320 | 180 / 720 |
+| stored bytes | 27,099 | 27,040 |
+| largest / median absolute weight | 3.42547 / 0.207676 | 6.35684 / 0.273668 |
+
+A refit in the same process reproduces each hash, and a reload from the store reproduces it too.
+That says the solver is deterministic on this machine; it does not say the weights are
+bit-identical on another BLAS, which is why every later stage reloads the stored bytes instead of
+refitting.
+
+### S21D5-033 — the baseline, and an honest note about how weak a bar it is
+
+`scripts/learner_selection_d5.py --stage baseline`,
+`evidence/sprint-21d5-baseline-ladder.json` (`6cd373eea06988c9…`). No model is loaded; the
+baseline is a property of the corpus.
+
+| rung | eligible | first-choice rate |
+|---|---|---:|
+| `fixed_input_order` | yes | **0.42** |
+| `lexical_similarity` | yes | 0.41 |
+| `deterministic_static_ordering` | yes | 0.09 |
+| `frozen_minilm_cosine` | no | — |
+| `width_20_bounded_graph` | no | — |
+
+Both ineligible rungs are recorded with the reason: v2 removed the channel the cosine rung orders
+by, and a four-candidate task makes a twenty-wide shortlist the entire pool.
+
+**0.42 is at chance and the record should say so.** Two of every four candidates repair the
+contract, so a rung that cannot read the code picks a correct one about half the time, and the
+recipe-to-variant shuffle is designed to keep it there. Reading 0.91 against 0.42 as a large
+margin over a strong opponent would overstate it: what §2.3 asks is that the learner beat the best
+thing available that does not learn, and the best thing available that does not learn is close to
+a coin. The number that matters for the sprint is the coverage, not this gap.
+
+### S21D5-034 and S21D5-035 — derived once, reproduced across a restart, and typed
+
+`--stage point` → `evidence/sprint-21d5-operating-point.json` (`b978c57d0f4ccf1a…`), then
+`--stage select` → `evidence/sprint-21d5-learner-selection.json` (`4d45fc00188c00ca…`) in a
+**separate process**, which reloads each sealed `OperatingPointV4` and passes it back to
+`derive_zero_error_point` as `previous`. A different threshold raises `OperatingPointError` there
+rather than being written. Both derivations reproduced.
+
+The two gates stay distinct. The margin floor decides abstention and is held at **0** throughout —
+a floor chosen against these decisions would be a threshold fitted to the certification set, which
+is what §3.4 forbids. The operating point decides admission and is derived, never chosen. D4's
+released floors 0.55 and 0.70 are deliberately absent: they are proportions of a k-NN
+neighbourhood's acceptance mass, and a projection margin is not a proportion.
+
+**The grid is two cells.** D4 crossed a pre-registered 24-setting k-NN grid with three operating
+points; revision 5 pre-registers one class, one regulariser and one confidence, so the only free
+coordinate left is the volume point. Everything a reader might otherwise want from a grid is in
+the **sweep**: every distinct margin at each volume, 200 points, each marked `selectable: false`,
+because choosing one would be the search §3.4 forbids.
+
+The sweep is where the result is legible:
+
+| admitted | errors at 320 | errors at 720 |
+|---:|---:|---:|
+| 20 | 0 | 0 |
+| 26 | 0 | 0 |
+| 27 | 1 | **0** |
+| 30 | 1 | 1 |
+| 40 | 2 | 1 |
+| 50 | 3 | **1** |
+| 60 | 3 | 2 |
+| 100 | 9 | 12 |
+
+At 720 rows the margin ordering admits 50 of 100 decisions with a single error. The zero-error
+rule stops at 27 because the 28th-ranked decision is wrong, and the rule admits nothing below its
+first error. That gap — 0.27 certified against 0.50 at one error — is the whole content of the
+stop.
+
+### Why the ending is step 5 and not step 4 or step 6
+
+§3.3 says "materially higher" and "at or near zero" and quantifies neither. Both readings are
+made operational from the power contract rather than from the measurement: five admitted decisions
+of a hundred is 0.05 coverage, and zero errors in five decisions bounds the true error rate at
+45%, which certifies nothing anybody would act on. So *near zero* is coverage at or below 0.05,
+and *material* is a volume difference of at least 0.05. Every raw number is in the record, so a
+reader who prefers another reading can apply it without re-running anything.
+
+- Not **step 6**: 0.26 and 0.27 are nowhere near zero. D4's k-NN measured exactly zero at both
+  volumes; this class has a real zero-error region on a fresh corpus.
+- Not **step 4**: 0.27 − 0.26 = 0.01. A 2.25× volume increase moved the certified boundary by one
+  decision. There is no yield curve here for a corpus sprint to extrapolate.
+- **Step 5**: coverage above zero, below 0.40, flat across the span, with first-choice rate far
+  above the baseline at both volumes. The direction ranks; the margin cannot certify enough of
+  what it ranks.
+
+The successor named by the stop kind is therefore a sprint that pre-registers **a different
+confidence construction over this same ranker** — split-conformal over the margin being the
+obvious candidate — not a different ranker, not a third hypothesis class, and not a larger corpus.
+
+### What volume did and did not do, read both ways
+
+More fitting evidence made the top of the ranking better and the whole ranking slightly worse:
+at 720 rows the first 50 admitted decisions carry one error against three at 320, while the
+first-choice rate over all 100 answered falls from 0.91 to 0.88. Both directions are in the
+record. The honest summary is that the extra 100 groups sharpened the margin's ordering where the
+margin is large and cost a little accuracy where it is small, and neither effect is large enough
+to move the certified boundary by more than one decision.
+
+### The spent-evidence diagnostic transferred, partly
+
+S21D5-010 justified the class on a diagnostic over spent evidence that measured zero-error
+coverage at **0.22** on a disjoint 80-group pool and **0.32** on a combined 179-group pool. The
+fresh measurement is **0.26** at 80 groups and **0.27** at 180. The small-pool estimate transferred
+well; the large-pool one did not. The pre-registration called those estimates "on authored data
+this class has already seen — they justify running the experiment; they do not forecast it", and
+that wording held up: the experiment was worth running, and the forecast for the larger pool was
+1.2× optimistic.
+
+### S21D5-036 — the typed continuation, and 26 items that stay closed
+
+`scripts/continuation_d5.py`, `evidence/sprint-21d5-continuation.json` (`306b9121d84a3466…`),
+stop hash `7b59897d8d83a51b…`.
+
+The decision is read from the selection record rather than restated: `stop`, kind
+`selective_margin_bound`, with **26 named items not opened** — S21D5-051 through 059, 060 through
+069, and 070 through 074, 076 and 077 — and **15 Gate L2 conditions** left unopened (10, 11,
+13–16, 18–23, 25–27). Absence is a claim, and a list is what makes it checkable: an item that is
+later opened has to be removed from a named set rather than reinterpreted out of a phrase.
+
+Four things the stop explicitly does **not** cancel, each with its reason in the record: the
+retrieval branch and its condition-24 and D1-condition-15 decisions, which share no input with
+this measurement; S21D5-037, which depends on the pre-registration; S21D5-075, which the backlog
+marks unconditional; and operations, release and the gate-close record, because §8.2 is explicit
+that a negative release is a complete release rather than an abandoned one.
+
+### S21D5-037 — condition 20 names the class that produced its confidences
+
+`scripts/promotion_payload_d5.py`, `evidence/sprint-21d5-promotion-payload.json`
+(`d5c3ea4d43079501…`).
+
+D4 made the metamorphic/OOD row carry two denominators and the certificate its answered set was
+decided under. That says how many decisions were counted and which threshold answered them, and
+not *what* was thresholded — and after D5 a stored payload could be about either a k-NN
+neighbourhood's acceptance mass or a projection margin. So the row names the class:
+`PromotionDecisionCounts.hypothesis_class`, optional, checked in `condition_20_gate` against the
+classes the artifact loader actually implements.
+
+Where the check lives is a decision: the domain model accepts any non-empty string and the
+builder refuses a class no loader implements. A domain model owning that list would be a second
+place for it to go stale, and the refusal belongs beside the loader that has to load one — before
+the bytes are stored, not at activation.
+
+`d3-promotion-payload` stays at v2 and the dispatch is unchanged. Three shapes were dispatched and
+reloaded to their recorded identity: the legacy v1 assessment, a D4-shaped payload carrying counts
+and no class, and a D5 payload naming the class. Five refusals were exercised rather than
+described. One behaviour is recorded as deliberately *not* a refusal: a JSON object with no
+`schema_name` at all reads as version 1, because the legacy shape predates the field.
+
+**A defect this item's own test found.** `canonical_payload_bytes` excludes nulls, which is what
+kept S21D4-048 additive — and it does nothing for `canonical_json`, which is what the contract
+hashes. The first version of the extension left the stored bytes stable and silently moved the
+`content_hash` of every payload already holding a counts row. The fix is the mechanism D4 built
+for exactly this: `hypothesis_class` joins `CANONICAL_ABSENT_WHEN_EMPTY`. Both halves are now
+measured — a D4-shaped payload hashes as it did, and naming the class is new bytes and a new
+identity. The `D3PromotionPayload` schema pin moves once, additively, to
+`f81aefbdbb7215a7…`, with the docstring saying which two items moved it and why the version
+did not.
+
+### W2 evidence index
+
+| Item | Record | Integrity hash |
+|---|---|---|
+| S21D5-030 | `sprint-21d5-snapshots.json` | `ec85be4212ac86c8…` |
+| S21D5-031 | `sprint-21d5-invariance-regression.json` | `2543558f322d8cf4…` |
+| S21D5-032 | `sprint-21d5-direction-fit.json` | `1f2d9b615d3c8b1d…` |
+| S21D5-033 | `sprint-21d5-baseline-ladder.json` | `6cd373eea06988c9…` |
+| S21D5-034 | `sprint-21d5-operating-point.json` | `b978c57d0f4ccf1a…` |
+| S21D5-035 | `sprint-21d5-learner-selection.json` | `4d45fc00188c00ca…` |
+| S21D5-036 | `sprint-21d5-continuation.json` | `306b9121d84a3466…` |
+| S21D5-037 | `sprint-21d5-promotion-payload.json` | `d5c3ea4d43079501…` |
+
+### W2 is closed
+
+S21D5-030 through S21D5-037. Snapshots materialised and every scan passed; the invariance sample
+resolved with no drift of any kind; the direction fitted and sealed at both volumes before a
+calibration label was read; the baseline measured on the same decisions; the operating point
+derived once per volume and reproduced across a restart; the risk–coverage curve reported in full;
+one typed stop recorded with a complete not-opened map; and the promotion contract extended
+additively for the v3 class.
+
+**Gate L2 does not pass and Sprint 22A remains blocked.** The correction branch is closed at
+`selective_margin_bound`. The retrieval branch (W3, S21D5-040 through 047) is untouched by this
+result and still owes condition 24 and Gate D1 condition 15 an answer on its own freshly authored
+holdout.

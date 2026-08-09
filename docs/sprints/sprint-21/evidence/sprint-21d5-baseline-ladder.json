@@ -1,0 +1,79 @@
+{
+ "calibration_campaign_sha256": "d50add4a1188f82db7056f4db2ff89a744019a8576ac0fd105db53697bf90cfe",
+ "calibration_matrix_hash": "106061126df8326128a5fea97b3690f5f02465c16805e6742c09cd5e3e7c7ca4",
+ "decisions": {
+  "census": {
+   "independent_decisions": 100,
+   "nominal_decisions": 100,
+   "rate_denominator": "independent_decisions",
+   "replicated_decisions": 0,
+   "revision": 4
+  },
+  "groups": 100,
+  "independent_decisions": 100
+ },
+ "final_outcomes_inspected": false,
+ "integrity_content_hash": "6cd373eea06988c93d9f41242b327a6d2d04833a34ff0151ec40bfe770ac269a",
+ "items": [
+  "S21D5-033"
+ ],
+ "ladder": {
+  "hash": "b70078ca784d04f0fcaff9978544fd00b5fa4ebd68de7eb67c8ca6e16eb6ee45",
+  "measured_on": "the same calibration decisions the direction is measured on",
+  "no_model_loaded": true,
+  "rungs": [
+   {
+    "eligible": true,
+    "first_choice_rate": "0.42",
+    "groups_scored": 100,
+    "ineligible_reason": null,
+    "kind": "deterministic",
+    "name": "fixed_input_order"
+   },
+   {
+    "eligible": true,
+    "first_choice_rate": "0.09",
+    "groups_scored": 100,
+    "ineligible_reason": null,
+    "kind": "deterministic",
+    "name": "deterministic_static_ordering"
+   },
+   {
+    "eligible": true,
+    "first_choice_rate": "0.41",
+    "groups_scored": 100,
+    "ineligible_reason": null,
+    "kind": "deterministic",
+    "name": "lexical_similarity"
+   },
+   {
+    "eligible": false,
+    "first_choice_rate": null,
+    "groups_scored": 0,
+    "ineligible_reason": "correction-ranking-v2 removes query_to_candidate_cosine from the fitted representation, so the channel this rung orders by does not exist under it",
+    "kind": "deterministic",
+    "name": "frozen_minilm_cosine"
+   },
+   {
+    "eligible": false,
+    "first_choice_rate": null,
+    "groups_scored": 0,
+    "ineligible_reason": "a correction-ranking task presents exactly four candidates, so a twenty-wide shortlist is the entire pool and the rung reduces to its own tie-break; it meets no resource contract it does not already trivially satisfy",
+    "kind": "deterministic",
+    "name": "width_20_bounded_graph"
+   }
+  ],
+  "rungs_declared": 5,
+  "rungs_eligible": 3,
+  "rungs_ineligible": 2,
+  "strongest_deterministic_rate": "0.42",
+  "strongest_deterministic_rung": "fixed_input_order"
+ },
+ "pre_registration_sha256": "ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a",
+ "recorded_at": "2026-08-09T08:32:57Z",
+ "schema_version": 1,
+ "snapshots_sha256": "3c48eddfa11c3ada6e7578aeafedcd22e8ac5b07a90e348f730a5b6bb872bae7",
+ "sprint": "21D5",
+ "wave": "W2",
+ "why_every_rung_including_the_ineligible_ones": "the selection rule compares the learner against the strongest deterministic baseline, and 'strongest' is only meaningful if the weaker rungs are on the record too. An ineligible rung is recorded with the reason it is ineligible, so a reader can see that the comparison was not narrowed to a rung the learner happens to beat"
+}
