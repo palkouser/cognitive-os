@@ -461,3 +461,106 @@ registered, verified or activated against a real model, and no D4 surface below 
 described here as exercised. The rollback and refusal paths were proved on the isolated lifecycle
 fixture with the abstaining reference component, which is what S21D4-075 asks for and all it
 claims.
+
+## Sprint 21D5: a fitted direction, a margin that ranks but cannot certify, and nine shared classes
+
+D5 fitted a model. That is the first thing an operator has to know, because every earlier
+paragraph on this page describes a plane that had never carried one.
+
+### The class, and what it changed about the confidence
+
+`pairwise-contrastive-linear-v1` (`src/cognitive_os/learning/pairwise_contrastive.py`) fits one
+linear direction on within-group accepted-minus-rejected differences of the **unchanged** v2
+fitted representation — same encoder, same normaliser, same 390 channels. What changed is the
+quantity a decision is confident in: D4's k-NN reported the top candidate's absolute
+neighbourhood acceptance mass, and D5 reports the **projection margin between the top two
+candidates of the group**. Below the margin floor the ranker declines and the caller runs the
+deterministic order; an abstention is never a changed decision and never a correct prediction.
+
+Two gates, and they are not the same gate. The **margin floor** decides abstention and was held
+at zero all sprint. The **derived operating point** decides admission and is derived once, from
+calibration only, by `derive_zero_error_point`. A second derivation that does not reproduce the
+first is refused — pass the sealed point back as `previous=` and the rule is enforced across a
+process restart, which is the only place a threshold can quietly be searched.
+
+### What was measured, and what it means for anyone reading a D5 number
+
+On 100 freshly authored independent calibration decisions, at 320 and 720 fitting rows: the
+direction ranks at **0.91 and 0.88 first-choice** against a 0.42 deterministic baseline, and
+certifies **0.26 and 0.27 zero-error coverage** against §2.3's floor of 0.40, with **zero
+confident errors** in both cells. The direction ranks. The margin cannot certify enough of what
+it ranks. No candidate was selected.
+
+Read the baseline honestly: 0.42 is near chance, because two of four candidates repair in this
+corpus. The 0.91 is a real number and the gap over that particular opponent is not the
+achievement it looks like.
+
+### The twelve-class report, and the nine classes it shares
+
+```bash
+COGOS_POSTGRES_DATABASE=cognitive_os_s21d5_test \
+  uv run python scripts/learned.py d5-integrity
+```
+
+Read-only and offline: 9 clean, 2 warnings, 1 not opened. With both authorities:
+
+```bash
+set -a && . ./.env.s21d5.local && set +a
+COGOS_POSTGRES_DATABASE=cognitive_os_s21d5_test \
+  uv run python scripts/learned.py d5-integrity \
+  --rehash-blobs --data-root /home/palkouser/projekt/cognitive-os-data
+```
+
+11 clean and 1 not opened. Everything the D4 section says about `warning` and `not_opened` still
+holds: neither is a pass.
+
+Nine of the twelve classes are the **released D4 implementations**, reading a D5 prefix.
+`integrity_d4.Evidence` addresses a file by its suffix and `integrity_d5` supplies the prefix, so
+a change to a shared class changes both reports — which is the point, and is why the D4 report
+was verified byte-identical after the refactor. Three classes are D5's own: `feature_schema` also
+requires the sealed hypothesis class to be one a loader implements, `matrix_embedding_scans`
+reads two fitted matrices and requires them to share no group, and `lifecycle` reads a **typed**
+stop and refuses an ending outside the four §3.3 published.
+
+The environment boundary is checked on the values before anything is opened, over **six**
+predecessor roots. `artifacts-s21d4` is on the list for the reason `artifacts-s21d3` was on D4's:
+it is the store the previous sprint wrote and the one you are most likely to still have exported.
+
+### The two W7 commands
+
+```bash
+set -a && . ./.env.s21d5.local && set +a
+UV_CACHE_DIR=.cache/uv uv run python scripts/operations_d5.py
+```
+
+Provisioning, backup, container restart, restore into the D5 restore database, and 28 damage
+cases beside 2 controls. **The backup runs before anything is damaged** — that ordering is what
+separates D4-W7-F1's full recovery from D4-W0-F1's permanent loss, and it is asserted in the
+record rather than left to the reader.
+
+```bash
+UV_CACHE_DIR=.cache/uv uv run python scripts/verification_matrix_d5.py
+```
+
+**Deliberately no sourced environment**, for the reason the D4 section gives. 32 rows, all
+passing, nothing skipped.
+
+### Two damage cases worth knowing by name
+
+`operating_point_second_derivation` — a second derivation over different decisions, handed the
+first one back, is refused. If you ever need to re-derive a threshold, you are not re-deriving
+it; you are choosing a new one, and the record has to say so.
+
+`certificate_names_an_unimplemented_class` — a condition-20 certificate naming a hypothesis class
+no loader implements is refused by `condition_20_gate`. The class is a checked field now, not a
+label. Where the sealed *contract* names one, `feature_schema` refuses it instead.
+
+### What D5 did not do, and does not claim
+
+D5 selected no candidate, so nothing below the selection ran: no v3 artifact was built, stored,
+loaded, sequenced, registered, verified, promoted, shadowed, activated or rolled back against a
+real model. `CorrectionArtifactPayloadV3` and its loader are released and exercised by tests, and
+that is a different claim. The damage matrix's loader cases still operate on D3's committed
+contract fixture, and the record labels them `d3_contract_fixture` in its first field. What D5
+can say about its own fitted bytes it says about the sealed direction, read back out of the
+restored copy and rehashed.

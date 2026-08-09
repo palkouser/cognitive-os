@@ -261,3 +261,50 @@ remains open.
 Every arm scores higher than it did on D3's holdout, and **that comparison is not controlled**:
 the pool is different, the comparator changed, and the surface widened, all at once. No ablation
 was run, because the holdout is read once and an ablation would have been a second read.
+
+## Sprint 21D5: the surface completed, and the floors reached
+
+D4 widened the searchable surface and measured 41 of 60 candidates distinct, missing MRR@10 by
+0.0089. D5 completed the widening D4 named and re-measured on its own corpus.
+
+### The fallback, and the 27 sides that needed it
+
+`search_terms_from_source(source, *, judgement_labels=(), structure_fallback=False)` gains one
+flag. With it, a source whose identifier terms come up empty falls back to lowercased AST
+**node-type** names. D4's shortfall was exactly this case: repairs written in pure arithmetic
+over their own parameters leave the normaliser nothing to resolve.
+
+Measured on D5's corpus: **120 of 120 sides carry terms**, 27 of them through the fallback, and
+distinct documents reach **55 of 60** against D3's 1 and D4's 41.
+
+The flag changes no hash. `search_terms` stays excluded from `structural_hash` and from
+`ExperienceGraphNode.label`, and stays in `CANONICAL_ABSENT_WHEN_EMPTY`, so a side that resolves
+no terms with the flag on hashes exactly as it did with the flag off. That is asserted per pair
+rather than assumed — the projection records
+`structural_hash_is_the_same_with_and_without_the_flag` for all sixty.
+
+The leak guard runs over the **complete** text, including fallback terms, and a leak planted in a
+fallback term is one of the six refusals S21D5-040 exercises.
+
+### What the D5 holdout says
+
+Sixty freshly authored unseen-task queries, read once. The **`lexical` arm** reached Recall@5
+**0.7500** against a floor of 0.70 and MRR@10 **0.5389** against a floor of 0.50, past a chance
+baseline of 0.5768 / 0.3317. **Gate L2 condition 24 is met and Gate D1 condition 15 is closed.**
+
+The mechanism, stated rather than glossed: relevance is the task family, and same-family tasks
+share structure by construction, so the 27 fallback sides carry a legitimate signal rather than a
+leak. The family label never appears in any document and the guard ran over all 120. No ablation
+was run — the holdout is read once, and an ablation is a second read.
+
+### The predecessor graph set whose bytes are gone
+
+`sprint-21d4-retrieval-emg-root.json` declares 60 pairs and **none of their blobs resolves** under
+`cognitive-os-data`, backups included, searched by all five declared hashes. The root is
+byte-identical to what S21D4-044 recorded with `intact: true`, and D4 published no fingerprint of
+its own store, so when they went cannot be determined. This is finding **S21D5-W3-F1**: recorded,
+not reconstructed. Regenerating them would mean running D4's groups under D5's runner and calling
+the result D4's evidence. D5's own sixty pairs resolve and rehash.
+
+If you are auditing a predecessor graph set, check that its blobs resolve before you trust a root
+that says `intact`. A root records what was true when it was written.

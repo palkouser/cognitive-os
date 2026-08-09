@@ -11,8 +11,10 @@
   MRR@10 0.5389 on sixty unseen-task queries read once, so **Gate L2 condition 24 is met and
   Gate D1 condition 15 closes**. Operations: twelve integrity classes clean with both
   authorities against a restored copy, 28 damage cases and 2 controls all holding, and a
-  32-row release matrix with nothing skipped.**
-  W8 not started; W4 to W6 stay closed behind the correction stop.
+  32-row release matrix with nothing skipped. Gate: 13 met, 15 not opened, 0 failed, 0 carried,
+  condition 29 pending until the protected release.**
+  W8 items S21D5-090 through -093 are complete; -094 and -095 are the release itself. W4 to W6
+  stay closed behind the correction stop.
 - Pre-registration: revision 5, SHA-256
   `ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a`
 - Migration head: `0015`, unchanged. `0016` remains unallocated.
@@ -1406,7 +1408,8 @@ and no class, and a D5 payload naming the class. Five refusals were exercised ra
 described. One behaviour is recorded as deliberately *not* a refusal: a JSON object with no
 `schema_name` at all reads as version 1, because the legacy shape predates the field.
 
-**A defect this item's own test found.** `canonical_payload_bytes` excludes nulls, which is what
+**Finding S21D5-W2-A1 — a defect this item's own test found.** `canonical_payload_bytes`
+excludes nulls, which is what
 kept S21D4-048 additive — and it does nothing for `canonical_json`, which is what the contract
 hashes. The first version of the extension left the stored bytes stable and silently moved the
 `content_hash` of every payload already holding a counts row. The fix is the mechanism D4 built
@@ -1872,3 +1875,92 @@ condition — and the sprint's tally is unchanged at one condition of twenty-nin
 is that the negative release §8.2 requires is now a release that can actually be made: the
 evidence survives being moved, damage to it is refused, and every check the release needs has been
 run once with its exit status recorded.
+
+---
+
+## W8 outcome — the release a stop still has to make
+
+W8 executes S21D5-090 through S21D5-095. §8.2 is the wave's whole premise: *a negative release is
+a complete release, not an abandoned one.* Everything below happens exactly as it would on a pass,
+with one substitution — the outcome tag is `sprint-21d5-evidence-baseline` rather than
+`sprint-21-learning-baseline`, and the assessment it ships says the gate does not pass.
+
+### S21D5-090 — two operator documents, and every command in them was run
+
+`docs/operations/correction-ranking.md` gains the D5 section: the class and what it did not change,
+the two gates kept apart, the measured numbers with the honest note about how weak the 0.42
+baseline is, the twelve-class report in both forms, the six refused predecessor roots, the two W7
+commands, and two damage cases named because an operator will meet them —
+`operating_point_second_derivation` and `certificate_names_an_unimplemented_class`.
+
+`docs/operations/experience-memory-graph.md` gains the surface section: the fallback flag, the 27
+sides that needed it, the proof that it moves no hash, the holdout result, and finding
+S21D5-W3-F1 written as operational advice — *check the bytes, not the root that claims `intact`.*
+
+Every command shown was run. The offline report returns 9 clean, 2 warnings and 1 not opened; the
+both-authorities form returns 11 clean and 1 not opened; `operations_d5.py` and
+`verification_matrix_d5.py` are the W7 runs recorded above.
+
+**`ci.yml` is deliberately untouched by this wave.** The W7 operations record binds the workflow's
+SHA-256 and `test_d5_operations_evidence` asserts the binding against the file on disk, so a
+documentation wave that edited the workflow would make a sealed record stale to add a focused lane
+for a test the general `test` lane already runs.
+
+### S21D5-091 — an assessment that can only read a pass
+
+`scripts/gate_assessment_d5.py` decides all twenty-nine conditions and Gate D1's three from the
+produced evidence. The clause the backlog puts in bold is checked two ways: the string `"met"`
+occurs exactly once in the generator, as the constant, and every row that carries it came out of a
+`decide` callable that was handed a parsed document —
+`test_d5_gate_assessment_evidence` parses the source and asserts both.
+
+The result, provisional until the release:
+
+| State | Conditions |
+|---|---:|
+| `met` | 13 |
+| `met_as_rejection` | **0** |
+| `not_opened` | 15 |
+| `pending` | 1 |
+| `failed` | **0** |
+| `carried` | **0** |
+
+Two counts moved against D4 and both moved because something was measured. `met_as_rejection` is
+zero because condition 24 was measured again and cleared; `not_opened` is still fifteen and it is
+the same fifteen, closed by a different stop with the same dependents.
+
+**The closed set is not this assessment's to choose.** S21D5-036 wrote which fifteen conditions
+the stop closed; the generator reads that list out of `sprint-21d5-continuation.json` and
+`raise SystemExit`s if its own map disagrees. An assessment that picked its own scope would be the
+same defect as a check with nothing to be false about, one level up.
+
+One decider was wrong on its first draft and the run caught it. Condition 3 reads the reuse audit,
+and the first version required `protected_bodies_resolved` and `individual_body_hashes_resolved`
+to be non-zero. Both are **zero on purpose**: the audit's declared surface is "sealed catalogue,
+root and access identities only", and opening a protected body is exactly what it must not do. The
+row would have failed on the correct state. It now asserts the zeros, names the surface, and reads
+the three carried roles' bundle digests against D4's own released audit.
+
+### S21D5-092 and S21D5-093 — the report and the successor
+
+[`sprint-21d5-report.md`](sprint-21d5-report.md) states the outcome, both branch results with
+their numbers, all six findings with IDs, and seven limitations. Five of the six findings share
+one shape — a check that passes without touching its question — and the report says so rather than
+listing them as unrelated incidents.
+
+[`sprint-21d6-handoff.md`](sprint-21d6-handoff.md) names the one successor the stop kind licenses
+and the three it does not. The successor is **split-conformal over the same margin, over the same
+sealed directions**: keep the encoder, the class, λ and the two fitted directions
+(`5b15f4af06a2b08d` at 320 rows, `9fd297fb40701537` at 720), and change only the map from a ranked
+group to an admit decision. Its pre-registration has one question to answer in the contract before
+any measurement: whether §2.3's "exactly zero confident errors" is the right admission rule, or a
+stated distribution-free bound at a pre-registered α is. The handoff is explicit that a successor
+must not run split-conformal and then argue its α is what zero always meant.
+
+The three refusals: not a different ranker (the direction reaches 0.91), not a third hypothesis
+class (the axis being searched would be the wrong one), and not a larger corpus (0.26 → 0.27
+across a 2.25× span).
+
+Sprint 22A stays blocked, and the handoff names what blocks it: §8.1 requires all twenty-nine
+conditions, the tally is one closed here, and the unblocking path runs through the fifteen the
+stop closed rather than through any document.
