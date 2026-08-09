@@ -630,12 +630,95 @@ async def _d4_integrity(args: argparse.Namespace) -> int:
     return 0 if report.healthy else 1
 
 
+#: D5 inherits six, and the sixth is the store D4 wrote. Every sprint's list is the previous
+#: one plus the predecessor an operator is most likely to still have exported.
+_FORBIDDEN_ROOTS_D5 = (
+    *_FORBIDDEN_ROOTS_D4,
+    "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d4",
+)
+
+#: The predecessor pairs D5's isolation class re-fingerprints, in the order the baseline
+#: declares them.
+_D5_PREDECESSORS = (
+    ("development", "artifacts"),
+    ("sprint_21c3", "artifacts-s21c3"),
+    ("sprint_21d1", "artifacts-s21d1"),
+    ("sprint_21d2", "artifacts-s21d2"),
+    ("sprint_21d3", "artifacts-s21d3"),
+    ("sprint_21d4", "artifacts-s21d4"),
+)
+
+
+def _require_d5_environment(*, needs_store: bool) -> Path | None:
+    """S21D5-080. Refuse a wrong or missing D5 environment before anything is opened.
+
+    The same boundary as D3's and D4's, over six predecessor roots rather than five, and
+    checked on the *values* rather than on whether they are set. An operator who sourced
+    `.env.s21d4.local` out of habit has a complete, valid configuration pointing at the store
+    the last sprint wrote, and every later check would pass while reading the wrong evidence.
+    """
+    database = os.environ.get("COGOS_POSTGRES_DATABASE") or os.environ.get("COGOS_DATABASE_URL")
+    if database and "s21d5" not in database:
+        raise SystemExit(
+            f"refusing to run against {database!r}: the D5 commands require an s21d5 database"
+        )
+    root = os.environ.get("COGOS_ARTIFACT_ROOT")
+    if root is None:
+        if needs_store:
+            raise SystemExit("COGOS_ARTIFACT_ROOT is required to check artifact bytes")
+        return None
+    resolved = Path(root).resolve()
+    if str(resolved) in _FORBIDDEN_ROOTS_D5:
+        raise SystemExit(f"refusing to open the predecessor store at {resolved}")
+    if "s21d5" not in resolved.name:
+        raise SystemExit(f"refusing to open {resolved}: the D5 commands require the D5 store")
+    return resolved
+
+
+async def _d5_integrity(args: argparse.Namespace) -> int:
+    """S21D5-080 and -081. The twelve-class D5 report, read-only and offline by default.
+
+    Nine of the twelve are the released D4 implementations reading D5's prefix; three read
+    different bytes and are written in `integrity_d5`. Offline by default and opt-in for both
+    authorities, for the reason the D4 command records: a lane with no database, no store and
+    no credential must be able to run it, and must never be able to claim a check it did not
+    make.
+    """
+    from cognitive_os.learning.integrity_d5 import d5_integrity, path_and_size_fingerprint
+
+    root = _require_d5_environment(needs_store=args.rehash_blobs)
+    evidence = Path(args.evidence or "docs/sprints/sprint-21/evidence")
+    if not evidence.is_dir():
+        raise SystemExit(f"{evidence} is not an evidence directory")
+
+    blobs: dict[str, str] | None = None
+    if args.rehash_blobs and root is not None:
+        blobs = {
+            path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in sorted(root.rglob("*"))
+            if path.is_file() and not path.name.startswith(".")
+        }
+    fingerprints: dict[str, str] | None = None
+    if args.data_root:
+        data = Path(args.data_root)
+        fingerprints = {
+            name: path_and_size_fingerprint(data / directory)
+            for name, directory in _D5_PREDECESSORS
+            if (data / directory).is_dir()
+        }
+
+    report = d5_integrity(evidence, blob_hashes=blobs, predecessor_fingerprints=fingerprints)
+    _emit(report.as_dict())
+    return 0 if report.healthy else 1
+
+
 _ACTIONS = {
     "health": _health,
     "correction-runtime": _correction_runtime,
     "correction-integrity": _correction_integrity,
     "d3-integrity": _d3_integrity,
     "d4-integrity": _d4_integrity,
+    "d5-integrity": _d5_integrity,
     "component-show": _component_show,
     "component-history": _component_history,
     "evidence-verify": _evidence_verify,

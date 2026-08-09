@@ -2,14 +2,17 @@
 
 - Branch: `feature/sprint-21d5-pairwise-selective-ranking`
 - Backlog: [Sprint 21D5 Technical Backlog](sprint-21d5-technical-backlog.md)
-- **Status: W0 through W3 complete — S21D5-020 through S21D5-047 and S21D5-050 closed. Both
-  branches have answered, and they answered differently. Correction: the fitted direction ranks
-  at 0.91 and 0.88 first-choice against a 0.42 baseline and certifies 0.26 and 0.27 zero-error
-  coverage against a 0.40 floor, flat across a 2.25× volume span — §3.3 step 5,
-  `selective_margin_bound`, no candidate, 26 dependent items and 15 conditions not opened.
-  Retrieval: the `lexical` arm reaches Recall@5 0.7500 and MRR@10 0.5389 on sixty unseen-task
-  queries read once, so **Gate L2 condition 24 is met and Gate D1 condition 15 closes**.**
-  W4 through W8 not started; W4 to W6 stay closed behind the correction stop.
+- **Status: W0 through W3 and W7 complete — S21D5-020 through S21D5-047, S21D5-050 and
+  S21D5-080 through S21D5-086 closed. Both branches have answered, and they answered
+  differently. Correction: the fitted direction ranks at 0.91 and 0.88 first-choice against a
+  0.42 baseline and certifies 0.26 and 0.27 zero-error coverage against a 0.40 floor, flat
+  across a 2.25× volume span — §3.3 step 5, `selective_margin_bound`, no candidate, 26 dependent
+  items and 15 conditions not opened. Retrieval: the `lexical` arm reaches Recall@5 0.7500 and
+  MRR@10 0.5389 on sixty unseen-task queries read once, so **Gate L2 condition 24 is met and
+  Gate D1 condition 15 closes**. Operations: twelve integrity classes clean with both
+  authorities against a restored copy, 28 damage cases and 2 controls all holding, and a
+  32-row release matrix with nothing skipped.**
+  W8 not started; W4 to W6 stay closed behind the correction stop.
 - Pre-registration: revision 5, SHA-256
   `ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a`
 - Migration head: `0015`, unchanged. `0016` remains unallocated.
@@ -1638,3 +1641,234 @@ conditions 10, 11, 13–16 and 18–23 and 25–27 not opened, and §8.1 require
 What W3 changes is that the sprint now has one branch with a positive result to release:
 condition 24 is met on a freshly authored holdout read once, and Gate D1 condition 15 closes on
 D5's own evidence rather than staying open behind the correction stop.
+
+---
+
+## W7 outcome — operations, and two checks that could not have failed
+
+W7 executes S21D5-080 through S21D5-086. §11.1 makes operations tasks unconditional, so the stop
+that closed the correction branch changes what W7 has to prove *about*, not whether it runs. What
+is different this time is that there are two things to prove about: a store holding a stop, and a
+store holding the sprint's one passing result.
+
+### Nine classes shared, three written, and the D4 report byte-identical afterwards
+
+S21D5-081. D5's evidence is written by D4's snapshot writer, D4's campaign runner and D4's seal
+machinery under a different prefix, so nine of the twelve classes differed from D4's by four
+characters of a sprint name. Copying them would have given the two sprints twelve checks that
+agree only by inspection, so `integrity_d4.Evidence` now addresses a file by its suffix and
+`integrity_d5` supplies the prefix. Nine checks are imported; three are written here because they
+read genuinely different bytes.
+
+The refactor touches a released report, so it was verified the way a refactor of released code has
+to be: `learned.py d4-integrity` was run before and after and the two outputs are byte-identical,
+and D3's and D4's own suites — 83 cases — still pass.
+
+The three D5 wrote:
+
+- **`feature_schema`** asks D4's question and one more. The encoder did not move, so the frozen v2
+  contract must still hash to `492c90a5df42…`; but D5's whole subject is a new function fitted on
+  top of it, so the class the sealed contract names must be one a loader implements and must still
+  be the module's constant. That is S21D5-037's question asked of the contract instead of the
+  certificate.
+- **`matrix_embedding_scans`** reads two matrices rather than one: both carry all 390 contract
+  dimensions, the channels are the allowlist in order, and the fitting and calibration matrices
+  share no group.
+- **`lifecycle`** reads a *typed* stop rather than an unauthorised access. `selective_margin_bound`
+  is one of the four endings §3.3 published; twenty-six dependent items and fifteen Gate L2
+  conditions are bound to stop `7b59897d8d83…`; and an item bound to a stop has to say what the
+  stop cost it.
+
+Offline the report is nine clean, one not opened and two warnings — `artifact_bytes` and
+`isolation` are the classes that need an authority, and a lane without one reports `warning`
+rather than a pass. With both authorities supplied, against the *restored* copy: **eleven clean,
+one not opened, zero warnings, zero failed.**
+
+### Finding S21D5-W7-A1 — the required-scan count that would have come from the record
+
+The first version of `matrix_embedding_scans` was D4's, ported. D4's snapshot record declares
+`scans.required: 11` beside `scans.count: 11`, and the check compares them. D5's snapshot record
+declares no `required` — so the port fell back to `count`, and `ran < required` became `11 < 11`,
+a comparison that cannot be false. A record claiming three scans and calling them all of them
+would have passed.
+
+The class now names the nine scans `scan_matrices` emits and requires all nine, and
+`test_d5_integrity` drives it against a record with three. This is the same shape as W3's `all()`
+over an empty set and W2's tautological precedence check, and it was found the same way — by
+writing the test that has to make the class fail.
+
+### The command, and the six roots it refuses
+
+S21D5-080. `scripts/learned.py d5-integrity` is read-only, offline by default, and prints one line
+of canonical sorted JSON. The boundary is checked on the *values*, before anything is opened, over
+**six** predecessor roots rather than D4's five. The sixth is `artifacts-s21d4` — the store the
+previous sprint wrote, and therefore the one an operator is most likely to still have exported.
+`test_d5_cli_boundary` also asserts the list of refused roots is the same list the isolation class
+re-fingerprints: one list, two uses, so a store D5 must not open is a store D5 must find unchanged.
+
+### Provisioning, recovery, and twenty-eight damage cases
+
+S21D5-082, -083 and -084 run as one command, because they are one question asked three times.
+
+**Provisioning** reads only: migration head `0015`, no `0016` on disk, schema owned by
+`cogos_owner` with usage, `plpgsql` and `vector` installed, and `postgres_bootstrap_roles.sh`
+hashed at `68024d34d5520973…` and *not invoked*.
+
+**Recovery** backed up the D5 pair with the repository's own script **before anything was
+damaged** — dump `adb5b425c2c16fd3…`, artifact archive `15b9b56b21a8a258…` over 8,352,103 bytes,
+2,964 events and 6,054 artifacts at revision `0015` — restarted the container, and restored into
+`cognitive_os_s21d5_restore_test`. The restored copy reproduces the source exactly: counts match,
+the hashed-row roll-up matches, both resume inputs match, and all **4,695 files rehash to their
+content address** against 4,633 declared blobs. The twelve-class report over the restored copy is
+clean with both authorities. The stopped state restores as a stopped state: **zero components on
+`experience.correction_ranking`**.
+
+The order of those two steps is the finding, not a preference. D4-W0-F1 lost 1,076 committed
+observations because every backup was taken after the erasure; D4-W7-F1 recovered from the same
+class of accident only because W7's own backup had run three minutes earlier.
+
+**The matrix** ran **28 damage cases and 2 controls, and all 30 rows held** — D4's twenty-two
+adapted to D5's documents, plus five this sprint is the first able to run and one it inherits:
+
+| Group | Cases |
+|---|---|
+| store | tampered blob, missing blob |
+| artifact | missing, corrupt, oversized, schema-wrong, metadata substitution, byte substitution |
+| direction | nudged direction at 320 and 720 rows, each beside its control |
+| evidence | OOD unit forgery, holdout access claim, retrieval second read, retrieval alternative reopened, dataset member mismatch, feature seal mismatch, dropped matrix scan, unimplemented sealed hypothesis class, stop kind outside the published four, dependent item with no reason |
+| independence | forged independent-decision count, rate over a nominal denominator |
+| threshold | derived off calibration, second derivation not reproducing the first, certificate naming an unimplemented class |
+| retrieval | policy substitution, judgement substitution |
+| isolation | inherited store fingerprint |
+
+Two rows in that table break nothing, and the record says so in its own field. The `direction`
+group rebuilds the direction S21D5-032 fitted **out of the restored copy** — the committed record
+carries the hashes and the channel count, not the 390 weights, so the store is the only place the
+direction exists — and asserts it still rehashes to the sealed hash before nudging one weight by
+1e-9. A rehash that refuses a nudged weight proves nothing unless the unnudged one is accepted, so
+the control is what makes the damage row readable; counting it as a damage case would have
+inflated the number by two. `matrix_shape` reports 28 and 2 apart.
+
+The artifact group still damages D3's committed contract fixture and the record says so in its
+first field. D5 fitted a direction, but S21D5-051 — the item that would bind a derived threshold
+into a v3 artifact — is one of the twenty-six the continuation record closed, so building a v3
+artifact here would be W4's work done in W7 against a record saying it was not done. What 084 asks
+of the loader is whether damage arriving through an operations path is refused; what D5 can ask of
+its own fitted bytes it asks in the `direction` group instead.
+
+`retrieval_alternative_reopened` is the one case whose *meaning* changed. D4 seeded a fusion
+variant opened after a negative holdout. D5 seeds one opened after a **passing** holdout, which is
+the same failure and the easier one to excuse.
+
+### Finding S21D5-W7-F1 — two of D4's recorded rows were decided by nothing
+
+Porting the release matrix surfaced a defect in the released one. `_from_evidence` decides a
+recorded row like this:
+
+```python
+passed = bool(value) if not isinstance(value, str) else True
+```
+
+A missing key fails, and **any string passes**. Two of D4's six recorded rows read strings:
+`learner_selection_null` read `selection.stop_kind` and `retrieval_holdout_decision` read
+`first_failed_floor`. Both would have passed just as happily on a record reporting the opposite
+result — `first_failed_floor: "nothing failed"` is a string.
+
+D5's matrix gives a recorded row a `wanted` value and compares it, and the four string-valued rows
+name what they expect: `selective_margin_bound`, the stop hash
+`7b59897d8d83a51be3d8fb5c65e4208ddb07d813884eb99ccdb36b73236fec59`, `lexical`, and `met`.
+`_structural_findings` then refuses any recorded row that reads a string and names nothing, so the
+next sprint's copy cannot reintroduce it quietly.
+
+`scripts/verification_matrix_d4.py` is left as it was released. Its record is published and will
+not be regenerated, so editing the script would change a released command without changing
+anything it ever produced; the fix belongs in the copy that runs.
+
+### S21D5-085 — the credential-free lane, and the import that has to stay absent
+
+Two steps added to `learned-evidence`: the four D5 test modules, and the released
+`learned.py d5-integrity` over the committed evidence, where `artifact_bytes` and `isolation`
+report `warning` rather than clean. Ten surfaces are recorded as covered and none as uncovered,
+and `test_d5_operations_evidence` binds `ci.yml`'s SHA-256 so the claim is about the workflow on
+disk rather than about a list someone typed.
+
+W7-F2 is why the import clause is asserted rather than assumed. D4 put the truncation fence behind
+a SQLAlchemy import and `experience-graph-core` — which runs the learning suite without the
+PostgreSQL extra — could not collect it at all. So `integrity_d5` is parsed for driver imports,
+and the report is then run in a subprocess with `sqlalchemy` blocked on the meta path, which is
+the condition that lane actually has. It returns nine clean classes there.
+
+### S21D5-086 — the release matrix, thirty-two rows, no environment
+
+**32 rows, 32 passed, 0 skipped, 0 structural findings.** Negative rows refuse for their declared
+reason: a predecessor store path, `artifacts-s21d4` by itself, a predecessor database name, and
+the smoke against a non-`_test` database. Twenty-five rows ran a command and recorded its measured
+cost and output hash; seven are recorded from committed evidence and each binds the bytes it read.
+
+The command takes no sourced environment, which is D4-W7-F1's operational half: every row that
+needs a database or a store names one itself, and the `environment` block records `not set` rather
+than claiming a handle it did not use. The full suite ran as one of those rows — 238.92 s — with
+no `COGOS_*` variable in scope, and the released truncation fence is what stood between it and any
+store that was not nominated for erasure. Every predecessor pair fingerprinted identically before
+and after the whole wave.
+
+Two rows are new for D5 beyond the D4 set: the D4 report is re-run over its own evidence, because
+D5 refactored it and "the predecessor's report still reports" is a claim about this release; and
+the two branch answers are recorded separately, because D4 had one ending to record and D5 has
+two.
+
+### W7 evidence index
+
+| Evidence | SHA-256 of the file | Seal |
+|---|---|---|
+| [operations](evidence/sprint-21d5-operations.json) | `9bfbac252bf3b03c5d852b83040c6bb3f27d7c954d1025398759f4a20820a0e8` | `58e8ee2bde071e72a186317e7db18d195da18068c304cdd79da33561a00120b2` |
+| [verification matrix](evidence/sprint-21d5-verification-matrix.json) | `eb516141b34ea6444de14fccc61cbea8a46b2fdd5ddb38ec702b8207217aaf7e` | `5a8234c5208baae31f8997b84234c4f2a3b7129c04d0cf58205849c90052618f` |
+
+The two operator commands are:
+
+```bash
+set -a && . ./.env.s21d5.local && set +a
+UV_CACHE_DIR=.cache/uv uv run python scripts/operations_d5.py
+```
+
+```bash
+UV_CACHE_DIR=.cache/uv uv run python scripts/verification_matrix_d5.py
+```
+
+The second one deliberately takes no environment. The read-only report needs neither:
+
+```bash
+COGOS_POSTGRES_DATABASE=cognitive_os_s21d5_test \
+  uv run python scripts/learned.py d5-integrity
+```
+
+### W7 validation
+
+Every check is a row of the S21D5-086 matrix with its measured duration and output hash, and all
+32 are green: Ruff lint and format over `src tests scripts infra`, mypy over `src/cognitive_os`
+(622 files), Bandit with zero results, the full suite, three focused slices, the contract-schema
+export check, the repository language check, the tracked-file secrets scan, the dependency audit,
+`uv build` with both distribution verifiers, the pre-registration integrity check, all three
+integrity reports, and both learned benchmark manifests.
+
+Three focused modules were added: `test_d5_integrity.py` (31 cases — one seeded violation per
+class, the three D5 wrote broken both ways, and the four scans that could pass over nothing),
+`test_d5_cli_boundary.py` (19 cases — six predecessor roots and the output contract), and
+`test_d5_operations_evidence.py` (18 cases — the record's own shape, the control/damage split, and
+the credential-free clause).
+
+### W7 is closed
+
+S21D5-080 through S21D5-086. The narrow evidence CLI refusing six predecessor roots; twelve
+classes clean with both authorities against a restored copy; provisioning at `0015` with no
+`0016`; backup before damage, restart, and an isolated restore reproducing counts, hashed rows,
+both resume inputs and every blob rehash; twenty-eight damage cases and two controls, all holding;
+a credential-free lane that cannot claim a check it did not run; and a thirty-two-row release
+matrix with nothing skipped.
+
+**Gate L2 still does not pass, and Sprint 22A stays blocked.** W7 closes no Gate L2 condition —
+operations evidence is what §7's verification matrix calls the `operations` row, not a gate
+condition — and the sprint's tally is unchanged at one condition of twenty-nine. What W7 changes
+is that the negative release §8.2 requires is now a release that can actually be made: the
+evidence survives being moved, damage to it is refused, and every check the release needs has been
+run once with its exit status recorded.

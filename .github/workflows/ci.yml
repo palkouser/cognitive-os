@@ -1022,6 +1022,22 @@ jobs:
         run: uv run python scripts/learned.py d4-integrity
         env:
           COGOS_POSTGRES_DATABASE: cognitive_os_s21d4_test
+      # S21D5-085. The same twelve classes over D5's evidence. Nine of them are the released D4
+      # implementations reading a D5 prefix, so what this step adds is the three D5 wrote — the
+      # sealed hypothesis class, the two fitted matrices, and a typed stop — plus the CLI
+      # boundary over six predecessor roots rather than five. Credential-free by construction,
+      # and W7-F2 is why that is asserted rather than assumed: a check that needs SQLAlchemy to
+      # be collected is a check this lane silently does not run.
+      - name: D5 evidence integrity classes, hypothesis class and CLI boundary
+        run: >-
+          uv run pytest tests/cognitive_os/learning/test_d5_integrity.py
+          tests/cognitive_os/learning/test_d5_cli_boundary.py
+          tests/cognitive_os/learning/test_d5_operations_evidence.py
+          tests/cognitive_os/learned_evidence/test_d5_condition_20_hypothesis_class.py -q
+      - name: D5 evidence report over the committed evidence
+        run: uv run python scripts/learned.py d5-integrity
+        env:
+          COGOS_POSTGRES_DATABASE: cognitive_os_s21d5_test
       - name: Learned evidence schema drift
         run: uv run python -m cognitive_os.schemas.export --check
       - name: Learned table metadata imports without a live database
