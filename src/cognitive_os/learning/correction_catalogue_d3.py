@@ -18,12 +18,13 @@ only twenty now would mean choosing them while their eligibility could still be 
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from hashlib import sha256
 
 from pydantic import Field, model_validator
 
-from cognitive_os.coding.reality_retrieval_specs_d3 import D3_RETRIEVAL_SPECS
+from cognitive_os.coding.reality_retrieval_specs_d3 import D3_RETRIEVAL_SPECS, D3RetrievalSpec
 from cognitive_os.coding.reality_task_specs_d2 import module_source
 from cognitive_os.coding.reality_task_specs_d3 import D3_CALIBRATION_SPECS
 from cognitive_os.domain.common import NonEmptyStr, Sha256Hex
@@ -155,8 +156,12 @@ class SealedRetrievalPool(HashedExperienceContract):
         return self
 
 
-def build_retrieval_pool() -> SealedRetrievalPool:
-    """Seal the sixty authored retrieval groups. Content hashes only: no query is chosen here."""
+def retrieval_pool_of(specs: Sequence[D3RetrievalSpec]) -> SealedRetrievalPool:
+    """Seal an authored retrieval pool. Content hashes only: no query is chosen here.
+
+    Every sprint from D3 on authors its own sixty and seals them the same way, so the pool a
+    sprint names is the only thing that differs between them.
+    """
     return SealedRetrievalPool(
         groups=tuple(
             RetrievalSourceGroup(
@@ -169,9 +174,14 @@ def build_retrieval_pool() -> SealedRetrievalPool:
                 repaired_source_hash=sha256(spec.module_text(spec.repaired).encode()).hexdigest(),
                 hidden_verifier_hash=sha256(spec.hidden_test.encode()).hexdigest(),
             )
-            for spec in D3_RETRIEVAL_SPECS
+            for spec in specs
         )
     )
+
+
+def build_retrieval_pool() -> SealedRetrievalPool:
+    """Seal D3's sixty authored retrieval groups."""
+    return retrieval_pool_of(D3_RETRIEVAL_SPECS)
 
 
 def _cases_for(

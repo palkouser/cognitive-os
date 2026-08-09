@@ -1,0 +1,251 @@
+{
+ "bound_hashes": {
+  "sprint-21d5-baseline-ladder.json": "4095cc5d27cf7b0d965646ac9634a048337b870a82ff6c674af3f4a3adb76536",
+  "sprint-21d5-contracts.json": "bee8bafca8c3a33043d9001930a47e37291a4c2a7519f0fec9e653a92487f725",
+  "sprint-21d5-direction-fit.json": "fa822052d8fea9148b78ba1f9d1e1198f36beaefbaadc16a136cd0d01e86eb2c",
+  "sprint-21d5-invariance-regression.json": "d8b37dd7869bdc7cde27938aa6256d27d5454f2bb4f16c80264d21fa299a618a",
+  "sprint-21d5-learner-selection.json": "ac6b3015f8ea456bbfc26112a2a638551621c582b7890a66450f19470ef89e73",
+  "sprint-21d5-operating-point.json": "8d67a1e7b13c8d876611627cdb4757205ebe15c341436e092e2cc7bb71f17893",
+  "sprint-21d5-pre-registration.json": "ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a",
+  "sprint-21d5-snapshots.json": "3c48eddfa11c3ada6e7578aeafedcd22e8ac5b07a90e348f730a5b6bb872bae7"
+ },
+ "decision": {
+  "kind": "stop",
+  "opens": [],
+  "reason": "step 5: zero-error coverage is above zero, below 0.40, and flat across the two volumes (0.26 at 320 rows, 0.27 at 720). The direction ranks and the margin cannot certify enough of what it ranks, so the successor pre-registers a different confidence construction over the same ranker",
+  "stop_kind": "selective_margin_bound"
+ },
+ "final_or_canary_outcomes_inspected": 0,
+ "immutable": true,
+ "integrity_content_hash": "306b9121d84a3466b0989b4d1cf17be064ccb8c57da42f5b3c001141281bd667",
+ "items": [
+  "S21D5-036"
+ ],
+ "measured": {
+  "baseline_first_choice_rate": "0.42",
+  "confident_errors_at_the_derived_point": {
+   "320": 0,
+   "720": 0
+  },
+  "eligible_cells": 0,
+  "first_choice_rate_over_all_answered": {
+   "320": "0.91",
+   "720": "0.88"
+  },
+  "independent_decisions": 100,
+  "ineligibility_counts": {
+   "clean_coverage_below_0.40": 2
+  },
+  "strongest_deterministic_rung": "fixed_input_order",
+  "zero_error_coverage": {
+   "320": "0.26",
+   "720": "0.27"
+  }
+ },
+ "measurements_opened": 0,
+ "not_cancelled_by_this_stop": {
+  "d1_condition_15": "decidable by S21D5-046 on retrieval evidence even though S21D5-068, which would have assessed it through the promotion gate, stays closed",
+  "operations_release_and_gate_close": {
+   "items": [
+    "S21D5-080",
+    "S21D5-081",
+    "S21D5-082",
+    "S21D5-083",
+    "S21D5-084",
+    "S21D5-085",
+    "S21D5-086",
+    "S21D5-090",
+    "S21D5-091",
+    "S21D5-092",
+    "S21D5-093",
+    "S21D5-094",
+    "S21D5-095"
+   ],
+   "why": "Section 8.2: a negative release is a complete release, not an abandoned one. The evidence baseline is protected and verified from the remote exactly as a passing release would be"
+  },
+  "retrieval_branch": {
+   "items": [
+    "S21D5-040",
+    "S21D5-041",
+    "S21D5-042",
+    "S21D5-043",
+    "S21D5-044",
+    "S21D5-045"
+   ],
+   "plus": [
+    "S21D5-046",
+    "S21D5-047"
+   ],
+   "why": "the two branches are independent after W0. The retrieval branch reads its own freshly authored holdout, decides Gate L2 condition 24 and Gate D1 condition 15 on that evidence, and shares no input with the correction measurement. Section 8.2 requires the retrieval result to be retained when it is valid, whichever way this branch went"
+  },
+  "s21d5_037": "the promotion payload schema extension depends on S21D5-016, not on a selection; it is a contract, and a contract with no payload to carry is still the contract the successor sprint inherits",
+  "s21d5_075": "the backlog marks receipt-selected rollback unconditional"
+ },
+ "not_opened": {
+  "count": 26,
+  "gate_l2_conditions": [
+   10,
+   11,
+   13,
+   14,
+   15,
+   16,
+   18,
+   19,
+   20,
+   21,
+   22,
+   23,
+   25,
+   26,
+   27
+  ],
+  "items": [
+   {
+    "item": "S21D5-051",
+    "wave": "W4",
+    "why": "binds a derived threshold into the artifact; no candidate names one; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-052",
+    "wave": "W4",
+    "why": "fits and stores the selected artifact; nothing was selected; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-053",
+    "wave": "W4",
+    "why": "proves the loader and resolver against the real artifact; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-054",
+    "wave": "W4",
+    "why": "routes sequencing through the receipt-aware remainder; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-055",
+    "wave": "W4",
+    "why": "the selected-artifact vertical slice; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-056",
+    "wave": "W4",
+    "why": "re-proves mandatory-path and configuration invariance; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-057",
+    "wave": "W4",
+    "why": "registers the exact artifact and enters SHADOW; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-058",
+    "wave": "W4",
+    "why": "evidence-bound verification and byte revalidation; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-059",
+    "wave": "W4",
+    "why": "the pre-final access checkpoint; there is nothing to authorise; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-060",
+    "wave": "W5",
+    "why": "seals final features and predictions before execution; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-061",
+    "wave": "W5",
+    "why": "executes final batch A; the final roles stay sealed and unopened; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-062",
+    "wave": "W5",
+    "why": "executes final batch B; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-063",
+    "wave": "W5",
+    "why": "paired material benefit at bootstrap seed 21041; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-064",
+    "wave": "W5",
+    "why": "safety and cross-domain anti-forgetting replay; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-065",
+    "wave": "W5",
+    "why": "promotion-scale metamorphic and OOD evaluation; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-066",
+    "wave": "W5",
+    "why": "true shadow mode; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-067",
+    "wave": "W5",
+    "why": "the strengthened promotion assessment; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-068",
+    "wave": "W5",
+    "why": "assesses Gate D1 conditions 6, 7 and 15 through the promotion gate; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-069",
+    "wave": "W5",
+    "why": "advances SHADOW to VERIFIED; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-070",
+    "wave": "W6",
+    "why": "prepares the activation bundle; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-071",
+    "wave": "W6",
+    "why": "records human approval; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-072",
+    "wave": "W6",
+    "why": "activates canary-only routing; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-073",
+    "wave": "W6",
+    "why": "executes the governed canary; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-074",
+    "wave": "W6",
+    "why": "kill switch and cause-bound disable; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-076",
+    "wave": "W6",
+    "why": "bounded steady state; S21D5-035 selected no candidate"
+   },
+   {
+    "item": "S21D5-077",
+    "wave": "W6",
+    "why": "final active state and replacement readiness; S21D5-035 selected no candidate"
+   }
+  ],
+  "why_a_list_and_not_a_sentence": "absence is what a list makes checkable. A later record that opens one of these has to remove it from a named set rather than reinterpret a phrase"
+ },
+ "pre_registration_sha256": "ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a",
+ "recorded_at": "2026-08-09T08:39:42Z",
+ "schema_version": 1,
+ "sprint": "21D5",
+ "stop_hash": "7b59897d8d83a51be3d8fb5c65e4208ddb07d813884eb99ccdb36b73236fec59",
+ "successor_experiment": "a sprint that pre-registers a different confidence construction over this same ranker -- split-conformal over the margin is the obvious candidate -- and not a different ranker, not a third hypothesis class and not a larger corpus. The direction ranks; the margin is what cannot certify enough of what it ranks",
+ "wave": "W2",
+ "what_this_decision_does_not_authorise": [
+  "reading any D5 final, promotion or canary outcome",
+  "re-deriving the operating point or re-fitting either direction",
+  "lowering the 0.40 coverage floor or any other Section 2.3 threshold",
+  "re-choosing the hypothesis class, its regulariser or its confidence",
+  "claiming Gate L2 passes, or unblocking Sprint 22A"
+ ]
+}

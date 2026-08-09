@@ -1,0 +1,105 @@
+{
+ "chance_baseline": {
+  "mrr_at_10": 0.3317,
+  "recall_at_5": 0.5768
+ },
+ "d4_decided_this_as_a_near_miss": {
+  "reading": "D4's fusion arm cleared the recall floor and missed MRR by 0.0089. That decision is not reopened and is not evidence about this pool: a different corpus, a complete surface, and a holdout read once",
+  "record": "sprint-21d4-retrieval-decision.json"
+ },
+ "dependants_already_bound_to_an_earlier_stop": "",
+ "dependent_not_opened": [],
+ "final_or_canary_outcomes_inspected": 0,
+ "final_outcomes_inspected": false,
+ "first_failed_floor": null,
+ "gate_d1_condition_15": "closed",
+ "gate_l2_condition_24": "met",
+ "holdout_result_sha256": "b0ee41f44785da084c3568c0dede3df8e2337b1f4ca740b76f61111bc60948d9",
+ "immutable": true,
+ "integrity_content_hash": "ccc666c70833d27ca0d51b90ab7a05c99e30e14c4302af47b220b42b82bfe184",
+ "items": [
+  "S21D5-046"
+ ],
+ "minimum_queries_met": true,
+ "negative_retrieval_result": false,
+ "no_alternative_opened": {
+  "fusion_variants": 0,
+  "holdout_members_added": 0,
+  "metrics": 0,
+  "weights": 0,
+  "widths": 0
+ },
+ "passed": true,
+ "pre_registration_sha256": "ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a",
+ "queries": 60,
+ "recorded_at": "2026-08-09T09:37:20.207286Z",
+ "rule": "one arm reaches Recall@5 >= 0.7 and MRR@10 >= 0.5 on at least 50 unseen-task queries, inside all fixed budgets",
+ "s21d5_047_runs_on_every_outcome": true,
+ "schema_version": 1,
+ "sprint": "21D5",
+ "stop_hash": null,
+ "trace": [
+  {
+   "arm": "no_memory",
+   "first_failed_floor": "recall_at_5",
+   "mrr_at_10": 0.0,
+   "mrr_at_10_floor_met": false,
+   "recall_at_5": 0.0,
+   "recall_at_5_floor_met": false,
+   "reproducible": true,
+   "within_budgets": true
+  },
+  {
+   "arm": "exact_signature",
+   "first_failed_floor": "recall_at_5",
+   "mrr_at_10": 0.0,
+   "mrr_at_10_floor_met": false,
+   "recall_at_5": 0.0,
+   "recall_at_5_floor_met": false,
+   "reproducible": true,
+   "within_budgets": true
+  },
+  {
+   "arm": "lexical",
+   "first_failed_floor": null,
+   "mrr_at_10": 0.5389,
+   "mrr_at_10_floor_met": true,
+   "recall_at_5": 0.75,
+   "recall_at_5_floor_met": true,
+   "reproducible": true,
+   "within_budgets": true
+  },
+  {
+   "arm": "minilm_vector",
+   "first_failed_floor": "mrr_at_10",
+   "mrr_at_10": 0.4286,
+   "mrr_at_10_floor_met": false,
+   "recall_at_5": 0.7833,
+   "recall_at_5_floor_met": true,
+   "reproducible": true,
+   "within_budgets": true
+  },
+  {
+   "arm": "minilm_shortlist_plus_bounded_ged",
+   "first_failed_floor": "recall_at_5",
+   "mrr_at_10": 0.3296,
+   "mrr_at_10_floor_met": false,
+   "recall_at_5": 0.5667,
+   "recall_at_5_floor_met": false,
+   "reproducible": true,
+   "within_budgets": true
+  },
+  {
+   "arm": "reciprocal_rank_fusion",
+   "first_failed_floor": "mrr_at_10",
+   "mrr_at_10": 0.4674,
+   "mrr_at_10_floor_met": false,
+   "recall_at_5": 0.7167,
+   "recall_at_5_floor_met": true,
+   "reproducible": true,
+   "within_budgets": true
+  }
+ ],
+ "wave": "W3",
+ "winning_arm": "lexical"
+}

@@ -50,6 +50,7 @@ from cognitive_os.domain.promotion_payload import (
 from cognitive_os.domains.fixtures import FIXTURE_TIME
 
 from .baselines import LadderReport
+from .correction_artifact import IMPLEMENTED_HYPOTHESIS_CLASSES
 from .correction_protocol import DecisionCensusV4
 from .features import feature_schema
 from .selfplay import SURFACE
@@ -263,6 +264,7 @@ def condition_20_gate(
     detail: str,
     census: DecisionCensusV4,
     calibration_certificate_hash: str,
+    hypothesis_class: str | None = None,
 ) -> PromotionGateRecord:
     """Build the metamorphic/OOD row from a census rather than from a caller's arithmetic.
 
@@ -273,10 +275,21 @@ def condition_20_gate(
 
     `NOT_MEASURED` is not accepted here at all: this function fills a measurement, and a gate
     nobody ran has none. Record that row directly — the payload validator keeps the two apart.
+
+    S21D5-037: `hypothesis_class` names which class produced the confidences the certificate
+    thresholded, and it is checked against the classes the artifact loader actually implements.
+    Optional, because the D3 and D4 payloads predate it and stay readable and byte-identical;
+    a class the loader cannot load is refused here rather than at activation, where the bytes
+    would already be stored.
     """
     if outcome is PromotionGateOutcome.NOT_MEASURED:
         raise ValueError(
             "a gate nobody ran has no census; record the not_measured row without counts"
+        )
+    if hypothesis_class is not None and hypothesis_class not in IMPLEMENTED_HYPOTHESIS_CLASSES:
+        raise ValueError(
+            f"condition 20 names hypothesis class {hypothesis_class!r}, which no loader "
+            f"implements; known: {sorted(IMPLEMENTED_HYPOTHESIS_CLASSES)}"
         )
     return PromotionGateRecord(
         name=CONDITION_20_GATE,
@@ -287,6 +300,7 @@ def condition_20_gate(
             nominal_decisions=census.nominal_decisions,
             independent_decisions=census.independent_decisions,
             calibration_certificate_hash=calibration_certificate_hash,
+            hypothesis_class=hypothesis_class,
         ),
     )
 

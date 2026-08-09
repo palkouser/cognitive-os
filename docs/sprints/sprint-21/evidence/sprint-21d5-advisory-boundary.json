@@ -1,0 +1,119 @@
+{
+ "boundary_held": true,
+ "decision_sha256": "8c8f58fb1f5cff2945ee00943f70c8a75bdaf7ec3115cfd53c85d8ba5372288b",
+ "final_or_canary_outcomes_inspected": 0,
+ "final_outcomes_inspected": false,
+ "graph_root_sha256": "92fb4c9ffaa03ecfe4f49647e4074a587e155f04bf94547ad260c8fb4dfc3bb6",
+ "holdout_result_sha256": "b0ee41f44785da084c3568c0dede3df8e2337b1f4ca740b76f61111bc60948d9",
+ "integrity_content_hash": "79269a9d1d03d2d6d56b9cf6ddeab98b98625d65fc1e4e11ba9ba7050c33f181",
+ "items": [
+  "S21D5-047"
+ ],
+ "measured": {
+  "advisory_properties": {
+   "carries_an_executable_body": false,
+   "evidence": [
+    false
+   ],
+   "never_pinned_required_or_evidence": true,
+   "pinned": [
+    false
+   ],
+   "required": [
+    false
+   ],
+   "summary_says_advisory": true,
+   "unsafe_exclusions": 0
+  },
+  "candidates_returned": 10,
+  "complete_surface_reached_the_advisory_path": {
+   "d4_stored_graphs_carrying_no_terms": 26,
+   "every_graph_carries_terms": true,
+   "why_it_matters_here": "the boundary is proved over the text the advisory path is actually handed. Under the complete surface that text is larger on every graph than anything D1 or D4 proved this boundary against, which is why it is re-proved rather than inherited"
+  },
+  "creates_execution_or_correction_authority": false,
+  "empty_set": {
+   "candidates": 0,
+   "component_status": "degraded",
+   "degraded_rather_than_unavailable": true,
+   "raised": false
+  },
+  "graphs": 120,
+  "graphs_carrying_no_terms": 0,
+  "graphs_carrying_terms": 120,
+  "mandatory_sections": {
+   "a_comparison_over_nothing_is_not_a_pass": "The claim requires at least one mandatory section to compare. An empty intersection reports false here rather than passing vacuously.",
+   "byte_identical": [
+    "current_task_and_step:Current Task And Step",
+    "disputed_or_unverified_information:Disputed Or Unverified Information",
+    "recent_task_trajectory:Recent Task Trajectory",
+    "relevant_code_context:Relevant Code Context",
+    "supported_semantic_knowledge:Supported Semantic Knowledge",
+    "user_corrections:User Corrections"
+   ],
+   "every_mandatory_section_is_byte_identical": true,
+   "mandatory_sections": [
+    "current_task_and_step:Current Task And Step",
+    "disputed_or_unverified_information:Disputed Or Unverified Information",
+    "recent_task_trajectory:Recent Task Trajectory",
+    "relevant_code_context:Relevant Code Context",
+    "supported_semantic_knowledge:Supported Semantic Knowledge",
+    "user_corrections:User Corrections"
+   ],
+   "mandatory_sections_compared": 6,
+   "moved": [],
+   "sections_carrying_a_graph_reference": 2,
+   "sections_with_graph": 8,
+   "sections_without_graph": 8
+  },
+  "non_advisory_purpose": {
+   "candidates": 0,
+   "gets_nothing": true,
+   "purpose": "planning"
+  },
+  "opened_any_store_for_writing": false,
+  "pairs": 60,
+  "trust_degradation": {
+   "no_artifact_id": {
+    "candidates": 10,
+    "only_unverified": true,
+    "raised": false,
+    "trust_classes": [
+     "unverified"
+    ]
+   },
+   "no_verifier": {
+    "candidates": 10,
+    "only_unverified": true,
+    "raised": false,
+    "trust_classes": [
+     "unverified"
+    ]
+   },
+   "verifier_raises": {
+    "candidates": 10,
+    "only_unverified": true,
+    "raised": false,
+    "trust_classes": [
+     "unverified"
+    ]
+   },
+   "verifier_says_no": {
+    "candidates": 10,
+    "only_unverified": true,
+    "raised": false,
+    "trust_classes": [
+     "unverified"
+    ]
+   }
+  }
+ },
+ "pre_registration_sha256": "ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a",
+ "recorded_at": "2026-08-09T09:37:48Z",
+ "retrieval_outcome_this_ran_against": "passed",
+ "runs_on_every_outcome": "the advisory boundary governs what retrieved history may do, not whether retrieval scored well. An unproved boundary over a losing arm is still an unproved boundary, and over a winning one it is the thing that keeps a win advisory",
+ "schema_version": 1,
+ "sprint": "21D5",
+ "surface_sha256": "d63b64bba65b6572db0d010e6a28dc96c3eba894cf75243bbf625ef6879184f8",
+ "wave": "W3"
+}

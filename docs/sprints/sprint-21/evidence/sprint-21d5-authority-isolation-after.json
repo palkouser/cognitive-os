@@ -1,0 +1,74 @@
+{
+ "commands": [],
+ "compared_against": "sprint-21d5-baseline.json",
+ "compared_against_sha256": "adf504379c7d8b20e332c628292e44562e6f7abdeb706173b978440f4a7f93ff",
+ "d5_authorities": {
+  "artifact_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d5",
+  "artifact_root_exists": true,
+  "artifact_root_files": 0,
+  "artifact_root_fingerprint_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "backup_root": "/home/palkouser/projekt/cognitive-os-data/backups-s21d5",
+  "databases": [
+   "cognitive_os_s21d5_test",
+   "cognitive_os_s21d5_integration_test",
+   "cognitive_os_s21d5_restore_test"
+  ],
+  "evidence_database_prefix": "cognitive_os_s21d5",
+  "outside_every_predecessor_pair": true
+ },
+ "drifted_stores": {},
+ "integrity_content_hash": "2cab4eed45bb96dcee75f99a489bf7643d873a6784ae98f9ab9706b6e6fbb040",
+ "items": [
+  "S21D5-002"
+ ],
+ "phase": "after",
+ "predecessor_artifact_stores": {
+  "development": {
+   "expected_from": "sprint-21d4-authority-isolation.json",
+   "files": 5,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts",
+   "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf"
+  },
+  "sprint_21c3": {
+   "expected_from": "sprint-21d4-authority-isolation.json",
+   "files": 8503,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21c3",
+   "path_and_size_fingerprint_sha256": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593"
+  },
+  "sprint_21d1": {
+   "expected_from": "sprint-21d4-authority-isolation.json",
+   "files": 83,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d1",
+   "path_and_size_fingerprint_sha256": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f"
+  },
+  "sprint_21d2": {
+   "expected_from": "sprint-21d4-authority-isolation.json",
+   "files": 1511,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d2",
+   "path_and_size_fingerprint_sha256": "39417f1a03f6824cfe6f9c4b7e6bd5a3cd34da8329fb95cff0a35595899438aa"
+  },
+  "sprint_21d3": {
+   "expected_from": "sprint-21d4-authority-isolation.json",
+   "files": 2096,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d3",
+   "path_and_size_fingerprint_sha256": "fcb0a044810b375f2933d4a3cf22c7448bfada9c90e104566a92125b08dcd0d3"
+  },
+  "sprint_21d4": {
+   "expected_from": "first observation at the D5 baseline; no released expectation exists",
+   "files": 4006,
+   "matches_expected": null,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d4",
+   "path_and_size_fingerprint_sha256": "3d09732ef59c8e9a36ceabc9619d6a139a7f48437ab0d67e07931720c75f7b47"
+  }
+ },
+ "recorded_at": "2026-08-08T13:41:15Z",
+ "schema_version": 1,
+ "sprint": "21D5",
+ "wave": "W0",
+ "zero_predecessor_writes": true
+}

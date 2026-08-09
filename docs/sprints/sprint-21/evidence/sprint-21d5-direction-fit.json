@@ -1,0 +1,60 @@
+{
+ "calibration_campaign_opened": false,
+ "calibration_decisions_scored": 0,
+ "contracts_sha256": "bee8bafca8c3a33043d9001930a47e37291a4c2a7519f0fec9e653a92487f725",
+ "final_outcomes_inspected": false,
+ "fit_matrix_hash": "2d86677c44b9cdd76a98a60fa8c12e6f5164d51cf1eb4de11eac663b4105d4c5",
+ "fit_rule": "collect every within-group accepted-minus-rejected difference of fitted feature vectors over the declared fitting groups in sorted group order; fit one linear direction by ridge-regularised logistic regression on the antisymmetric pair set (no intercept, zero start, Newton iterations to convergence); rank a group's candidates by their projection onto the direction with ties broken on the baseline order; the decision's confidence is the projection margin between the top two candidates",
+ "fitting_campaign_sha256": "17f2e838979d569e6b87bcd3297ed734bf15c2b6ff1dcc8153c6d6a732cebc6f",
+ "hypothesis_class": "pairwise-contrastive-linear-v1",
+ "integrity_content_hash": "1f2d9b615d3c8b1defb93b4f55dcb6df2a8bce649fe773d08da3d9e0f84b896e",
+ "items": [
+  "S21D5-032"
+ ],
+ "models": [
+  {
+   "artifact_id": "fd67abfc-f79b-49ff-bb51-b1ccd406faf1",
+   "channels_are_the_encoder_s_fitted_names": true,
+   "fitted_group_count": 80,
+   "fitted_pair_count": 320,
+   "largest_absolute_weight": "3.42547",
+   "median_absolute_weight": "0.207676",
+   "model_hash": "5b15f4af06a2b08d0d8269b59f47127bf97d610a22c12c645f8fbde9fa0f47cd",
+   "refit_in_process_reproduces_the_hash": true,
+   "reload_from_the_store_reproduces_the_hash": true,
+   "stored_bytes": 27099,
+   "volume_groups": 80,
+   "volume_rows": 320,
+   "weights": 390
+  },
+  {
+   "artifact_id": "237a8bf5-bcc1-475d-a18c-08b171954083",
+   "channels_are_the_encoder_s_fitted_names": true,
+   "fitted_group_count": 180,
+   "fitted_pair_count": 720,
+   "largest_absolute_weight": "6.35684",
+   "median_absolute_weight": "0.273668",
+   "model_hash": "9fd297fb407015374485e8f7ef8fbb557e6f89f7ac3286e2572769fdab937d74",
+   "refit_in_process_reproduces_the_hash": true,
+   "reload_from_the_store_reproduces_the_hash": true,
+   "stored_bytes": 27040,
+   "volume_groups": 180,
+   "volume_rows": 720,
+   "weights": 390
+  }
+ ],
+ "pre_registration_sha256": "ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a",
+ "recorded_at": "2026-08-09T08:31:01Z",
+ "regularization": "1",
+ "regularization_rechosen": false,
+ "schema_version": 1,
+ "snapshots_sha256": "3c48eddfa11c3ada6e7578aeafedcd22e8ac5b07a90e348f730a5b6bb872bae7",
+ "sprint": "21D5",
+ "volume_points": [
+  320,
+  720
+ ],
+ "wave": "W2",
+ "whole_groups_only": true,
+ "why_that_matters": "this stage loads the fitting matrix and nothing else. Both directions are sealed by content hash here, before any stage has read a calibration label, which is the chronology S21D5-032 asks for and the reason the later stages reload these bytes rather than refit"
+}

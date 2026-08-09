@@ -55,6 +55,19 @@
           "title": "Calibration Certificate Hash",
           "type": "string"
         },
+        "hypothesis_class": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hypothesis Class"
+        },
         "independent_decisions": {
           "minimum": 0,
           "title": "Independent Decisions",

@@ -1,0 +1,147 @@
+{
+ "batch_composition_dependence": {
+  "finding": "D4 W2-D9, re-measured on this model copy rather than cited",
+  "how_this_record_avoids_it": "every source here is embedded window by window on its own, so a difference between a clean and a transformed vector can only come from the transformation",
+  "measured": {
+   "hash_changes": true,
+   "how": "the same text embedded on its own, then as the second member of a batch whose first member is longer, so it is padded to the longer length",
+   "identical": false,
+   "maximum_absolute_difference": "6.706e-08"
+  },
+  "why_the_hashes_here_are_not_the_sealed_ones": "the campaign encoded in batches of 64 under the fitting bounds; this encodes one window at a time under bounds fitted on the sample. Both halves of every comparison are encoded the same way, which is what the comparison needs, and neither is comparable to a S21D5-025 seal"
+ },
+ "calibration_campaign_sha256": "d50add4a1188f82db7056f4db2ff89a744019a8576ac0fd105db53697bf90cfe",
+ "chronology": {
+  "bounds_fitted_on": "the clean bodies of the sample, never on the transformed set",
+  "every_transformed_seal_precedes_its_execution": true,
+  "features_sealed_at": "2026-08-09T08:23:48.203968+00:00",
+  "first_transformed_execution_at": "2026-08-09T08:23:55.645381+00:00"
+ },
+ "embedding_tree_digest": "98eb3ae4df320d0b721902aabef795cafb36c3a516f036e92e2b046f55ef4229",
+ "entered_any_dataset": false,
+ "final_or_canary_access": 0,
+ "final_outcomes_inspected": false,
+ "first_action": {
+  "cases_compared": 40,
+  "changed": [],
+  "changes": 0,
+  "preservation": "100%",
+  "ranker_dependent_form": {
+   "holds_by_implication": true,
+   "measured_here": false,
+   "premises": {
+    "every_transformed_vector_equals_its_clean_one": true,
+    "the_ranker_is_a_deterministic_function_of_the_four_vectors": "pairwise-contrastive-linear-v1 projects each candidate onto one direction and breaks ties on the baseline order",
+    "the_slot_order_the_tie_break_uses_is_catalogue_fixed": true
+   },
+   "why_not_a_second_run": "a ranker whose input is four vectors and a slot order cannot move when neither moves. Re-ranking the transformed sample under the fitted direction would produce the same ordering by construction and would report it as if it were an observation. S21D5-035 reads the two premises above rather than a re-run"
+  },
+  "reading": "with no fitted ranker in force the first action is the head of the baseline order; this compares the body the system would act on first by its canonical identity"
+ },
+ "fitted": false,
+ "independence": {
+  "candidate_vectors_compared": 160,
+  "census_over_clean_and_transformed": {
+   "independent_decisions": 80,
+   "nominal_decisions": 320,
+   "rate_denominator": "independent_decisions",
+   "replicated_decisions": 240,
+   "revision": 4
+  },
+  "changed": [],
+  "distinct_clean_vectors": 80,
+  "independent_decisions": 0,
+  "reading": "160 transformed candidate vectors, every one identical to its clean counterpart, so the 40 transformed decisions repeat 20 clean ones and add none. This is the number S21D5-023 sealed as zero and the property this regression tests",
+  "transformed_decisions": 40,
+  "vectors_changed": 0,
+  "vectors_unchanged": 160
+ },
+ "integrity_content_hash": "2543558f322d8cf43e6471557447d679d401bee5b6360b32f81c605ea3d27f8d",
+ "items": [
+  "S21D5-031"
+ ],
+ "pre_registration_sha256": "ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a",
+ "purpose": "execute the claim S21D5-023 sealed about D5's own calibration corpus: a transformation repeats its source group's fitted feature vector, so it adds no independent decision",
+ "recorded_at": "2026-08-09T08:23:55Z",
+ "schema_version": 1,
+ "sealed_manifests_sha256": "32dd0b0698c86acfd34aafd499eff5b89de0b20b7412a7de11ab48fa81cb36dc",
+ "semantic_mutation_control": {
+  "all_changed_the_canonical_representation": true,
+  "distinct_canonical_hashes": 5,
+  "mutations": [
+   {
+    "canonical_hash": "bcc7ee37809d5152de7d89180658c5fb2f17342e6b1d4ee3fe6e7eabd861766c",
+    "canonical_hash_changed": true,
+    "mutation": "comparison_flipped"
+   },
+   {
+    "canonical_hash": "c2cbddb47096f9d4b920df27349c96dc8eeee4eeb9b6ce5852dad3d951c0b6fd",
+    "canonical_hash_changed": true,
+    "mutation": "bound_swapped"
+   },
+   {
+    "canonical_hash": "bb5c0b8e8849b9fe2a92e26ee82be3121dddf598169942ebadacb5eb2787540f",
+    "canonical_hash_changed": true,
+    "mutation": "branch_removed"
+   },
+   {
+    "canonical_hash": "6d3f1d81afc2431410b4be7f49edf5aa8650fa4debc8b3196e6d552543d57dcf",
+    "canonical_hash_changed": true,
+    "mutation": "constant_introduced"
+   }
+  ],
+  "probe_canonical_hash": "22b55ee22f0dbeb40f27815e4aa0f6ddd3762f90db5e9c43d740244f51a1eb37",
+  "why": "the invariance result above says a rename does not move the canonical bytes. This says a changed meaning does. Without it, a canonicaliser that mapped every program to one value would satisfy the first claim completely"
+ },
+ "snapshots_sha256": "3c48eddfa11c3ada6e7578aeafedcd22e8ac5b07a90e348f730a5b6bb872bae7",
+ "sprint": "21D5",
+ "stops": [],
+ "submanifest": {
+  "applicable_cases": 40,
+  "cases_by_name": {
+   "identifier_rename_a": 20,
+   "issue_rewrite_a": 20
+  },
+  "fitted": false,
+  "generator_code_hash": "bd8e2f0419c5766f2bd494d2c041f9041e268fc531e0775348698a270e79c397",
+  "hard_coded_oracle_hash": "619dd385a0bf6035a1cbc7155a05b83ffc028bd64e61be7c450bef4182fd952c",
+  "hash": "bd8c2582d59e5afb4dd98112b72962b949625c97826d5deda5f39d9f40cbe6cb",
+  "nominal_cases": 40,
+  "not_applicable": [],
+  "sample_groups_named": [
+   "d5-boundary-bin-packing",
+   "d5-boundary-cartesian-rows",
+   "d5-boundary-cluster-by-gap",
+   "d5-boundary-column-widths",
+   "d5-error-admit-limit",
+   "d5-error-batch-outcome",
+   "d5-error-circuit-breaker",
+   "d5-numeric-business-days",
+   "d5-numeric-geometric-mean",
+   "d5-numeric-half-even",
+   "d5-parsing-accept-quality",
+   "d5-parsing-algebraic-square",
+   "d5-parsing-csv-quoting",
+   "d5-state-config-patch",
+   "d5-state-debounce-window",
+   "d5-state-idempotent-transfer",
+   "d5-transform-collate-values",
+   "d5-transform-compose-pipeline",
+   "d5-transform-explode-delimited",
+   "d5-transform-fill-template"
+  ],
+  "sample_is_drawn_from": "the D5 calibration catalogue — twenty of the hundred groups authored for this sprint, so the property is measured on the corpus the selection will be certified on rather than on a predecessor's",
+  "sample_matches_the_seal": true,
+  "source_groups": 20,
+  "stage": "calibration_invariance"
+ },
+ "verifier": {
+  "accepted": 80,
+  "candidate_outcomes_executed": 160,
+  "changed": [],
+  "governed_runs": 0,
+  "how": "plain pytest in a scratch directory. A precheck that wrote governed outcomes would put transformed rows in the store the clean campaign owns",
+  "label_changes": 0
+ },
+ "wave": "W2"
+}

@@ -1,0 +1,180 @@
+{
+ "access_and_outcome_authority": {
+  "canary_opened": false,
+  "d4_selection_authorises_final_access": false,
+  "d4_selection_stop_hash": "5caa48970898d180ce1f339771399f42af74555a91af2f87e97d1f36c6086c8e",
+  "final_a_opened": false,
+  "final_b_opened": false,
+  "note": "the D2 and D3 stores are empty for the reasons D4-W0-F1 records, so their zero counts are not by themselves proof these roles were never opened; D4's store holds a complete campaign and its zero count for protected task identities is",
+  "store_counts": {
+   "cognitive_os_s21d2_test": {
+    "accesses": 0,
+    "evidence_records": 0,
+    "observations_for_protected_roles": 0,
+    "observations_total": 480
+   },
+   "cognitive_os_s21d3_test": {
+    "accesses": 0,
+    "evidence_records": 0,
+    "observations_for_protected_roles": 0,
+    "observations_total": 0
+   },
+   "cognitive_os_s21d4_test": {
+    "accesses": 0,
+    "evidence_records": 0,
+    "observations_for_protected_roles": 0,
+    "observations_total": 1076
+   }
+  },
+  "zero_outcomes_predictions_or_receipts": true
+ },
+ "audit_surface": "sealed catalogue, root and access identities only",
+ "carried_roles_agree_across_released_generators": {
+  "canary": {
+   "d2_bundle_digest": "f7eb9589e1fd45086175c1494b93bc8b1ffd720ca0a3200d6949869601fc88fe",
+   "d4_bundle_digest": "f7eb9589e1fd45086175c1494b93bc8b1ffd720ca0a3200d6949869601fc88fe",
+   "identical": true
+  },
+  "final_a": {
+   "d2_bundle_digest": "dcb7427b6f5a1b47078df0b4d694809abdf13b18c3b87618452dcb8c7a8d2469",
+   "d4_bundle_digest": "dcb7427b6f5a1b47078df0b4d694809abdf13b18c3b87618452dcb8c7a8d2469",
+   "identical": true
+  },
+  "final_b": {
+   "d2_bundle_digest": "5dddfa582db27f7cf7e5bc1a1121ff430398bfcbb3883692c77abf14d0ce0193",
+   "d4_bundle_digest": "5dddfa582db27f7cf7e5bc1a1121ff430398bfcbb3883692c77abf14d0ce0193",
+   "identical": true
+  }
+ },
+ "compared_against_the_d4_audit": {
+  "d4_decisions": {
+   "canary": "reuse",
+   "final_a": "reuse",
+   "final_b": "reuse"
+  },
+  "source": "sprint-21d4-holdout-reuse-audit.json",
+  "source_sha256": "2f25dc1716dd5ccd340ccdf8720e7162dae9daf10dbaf5f9c349765f31ab6c81"
+ },
+ "eligible_for_reuse": true,
+ "group_disjointness": {
+  "all_pairwise_disjoint": true,
+  "pairs_sharing_a_group": {
+   "canary|final_a": 0,
+   "canary|final_b": 0,
+   "final_a|final_b": 0
+  }
+ },
+ "individual_body_hashes_resolved": 0,
+ "integrity_content_hash": "a880c5c586184b8501dc0c39dcd56a2f8f0c365731869ed1734f7babc6ecf046",
+ "items": [
+  "S21D5-003",
+  "S21D5-004"
+ ],
+ "protected_bodies_resolved": 0,
+ "protected_task_identities": 65,
+ "recorded_at": "2026-08-08T13:31:56Z",
+ "role_transition": {
+  "d5_calibration_corpus_present": false,
+  "disjointness_check_deferred_to": "S21D5-022, after W1 authors the corpus",
+  "fitting_pool": {
+   "composition": {
+    "d4_calibration_groups": 100,
+    "d4_training_groups": 80
+   },
+   "groups": 180,
+   "names_digest": "92c3117173a66ce73325b2dfddd62db3dd65bcf1704b0687f74ded4bce0cdb21",
+   "outcomes": 720,
+   "volume_points": [
+    320,
+    720
+   ],
+   "volume_span_note": "320 to 720 rows, a 2.25x span against D4's 200 to 320, which is the limitation S21D4-039 recorded against its own volume arm"
+  },
+  "map": {
+   "calibration": {
+    "d5_role": "fitting",
+    "rule": "handoff section 2: spent for selection, still valid fitting and diagnostic evidence"
+   },
+   "canary": {
+    "d5_role": "canary",
+    "rule": "carried unopened; S21D5-004 re-proves eligibility"
+   },
+   "final_a": {
+    "d5_role": "final_a",
+    "rule": "carried unopened; S21D5-004 re-proves eligibility"
+   },
+   "final_b": {
+    "d5_role": "final_b",
+    "rule": "carried unopened; S21D5-004 re-proves eligibility"
+   },
+   "training": {
+    "d5_role": "fitting",
+    "rule": "handoff section 2: the fitting pool was never a selection input and stays one"
+   }
+  },
+  "spent_entirely": {
+   "d5_role": "none",
+   "groups": 60,
+   "names_digest": "6781f4f28932226b900f0566a44f1883255b1bb75d86921d83a913b570bf1d06",
+   "rule": "handoff section 2: the 60-group retrieval pool and its 60 queries were read once and are spent; handoff section 6 authorises no reuse of spent evidence for a new decision, and unlike the calibration set no fitting role exists for a holdout"
+  },
+  "spent_for_selection": {
+   "forbidden_in_d5": "any selection, threshold or coverage decision; W1's authored calibration corpus must be disjoint from this digest and S21D5-022 proves it",
+   "groups": 100,
+   "names_digest": "96968802c7c22acea6d53d8229c77465218d139e5af504e194237f619ee96cd1",
+   "read_by": [
+    "S21D4-039, the frozen k-NN grid selection",
+    "the S21D5 hypothesis-class diagnostic on spent evidence"
+   ],
+   "role": "d4 calibration"
+  }
+ },
+ "roles": {
+  "canary": {
+   "candidate_slots": 20,
+   "catalogue_name": "canary",
+   "decision": "reuse",
+   "group_digest": "f7eb9589e1fd45086175c1494b93bc8b1ffd720ca0a3200d6949869601fc88fe",
+   "groups": 5,
+   "matches_expected_shape": true
+  },
+  "final_a": {
+   "candidate_slots": 120,
+   "catalogue_name": "final_a",
+   "decision": "reuse",
+   "group_digest": "dcb7427b6f5a1b47078df0b4d694809abdf13b18c3b87618452dcb8c7a8d2469",
+   "groups": 30,
+   "matches_expected_shape": true
+  },
+  "final_b": {
+   "candidate_slots": 120,
+   "catalogue_name": "final_b",
+   "decision": "reuse",
+   "group_digest": "5dddfa582db27f7cf7e5bc1a1121ff430398bfcbb3883692c77abf14d0ce0193",
+   "groups": 30,
+   "matches_expected_shape": true
+  }
+ },
+ "schema_version": 1,
+ "sprint": "21D5",
+ "wave": "W0",
+ "whole_role_replacement_contract": {
+  "counts": {
+   "canary": {
+    "candidate_slots": 20,
+    "groups": 5
+   },
+   "final_a": {
+    "candidate_slots": 120,
+    "groups": 30
+   },
+   "final_b": {
+    "candidate_slots": 120,
+    "groups": 30
+   }
+  },
+  "partial_reuse_allowed": false,
+  "procedure": "author the whole affected role at S21D5-020, prove separation at S21D5-022 and seal it at S21D5-023, before any measurement",
+  "trigger": "any role failing shape, disjointness, generator agreement or zero-access"
+ }
+}

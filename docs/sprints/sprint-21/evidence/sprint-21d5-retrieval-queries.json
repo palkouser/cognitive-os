@@ -1,0 +1,1382 @@
+[
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-adjacent-pairs"
+  ],
+  "query_hash": "1523d8bab70c7fe9bdb2818dea570621a1350565610f95137cead75381c3e3ef",
+  "query_id": "q:d5r-adjacent-pairs",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-count-within",
+   "d5r-drop-both-ends",
+   "d5r-every-other",
+   "d5r-insert-in-order",
+   "d5r-largest-three",
+   "d5r-pad-to-length",
+   "d5r-position-of",
+   "d5r-shortest-row",
+   "d5r-split-in-half"
+  ],
+  "seen_task": false,
+  "task_signature": "8c73b451-71e4-5b0e-973b-87bec2c07bc1"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-advance-stage"
+  ],
+  "query_hash": "92a838ae5685f6a2b26576d9c6649757bf84d426e6e599619b10a9cc5759ea77",
+  "query_id": "q:d5r-advance-stage",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-apply-once-by-key",
+   "d5r-bump-counter",
+   "d5r-close-once",
+   "d5r-forget-after",
+   "d5r-latest-wins",
+   "d5r-mark-seen",
+   "d5r-release-hold",
+   "d5r-reset-between-runs",
+   "d5r-take-slot"
+  ],
+  "seen_task": false,
+  "task_signature": "0f318e2a-e798-51a9-994a-579cbb864efd"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-apply-once-by-key"
+  ],
+  "query_hash": "27ab468c0254325df40a6dea08e6d46afa031bf1b728cb74980d3d4769ea97a7",
+  "query_id": "q:d5r-apply-once-by-key",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-advance-stage",
+   "d5r-bump-counter",
+   "d5r-close-once",
+   "d5r-forget-after",
+   "d5r-latest-wins",
+   "d5r-mark-seen",
+   "d5r-release-hold",
+   "d5r-reset-between-runs",
+   "d5r-take-slot"
+  ],
+  "seen_task": false,
+  "task_signature": "7f97d819-735f-5d68-96af-60433b3ebb7c"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-attempt-with-default"
+  ],
+  "query_hash": "061c0f54104752edceaa76881efb8bae6375d2adf513623ab664a6edfa238396",
+  "query_id": "q:d5r-attempt-with-default",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-close-every-handle",
+   "d5r-count-failures",
+   "d5r-exit-status-for",
+   "d5r-first-objection",
+   "d5r-name-the-kind",
+   "d5r-reason-text",
+   "d5r-require-positive",
+   "d5r-retry-budget-left",
+   "d5r-wrap-with-context"
+  ],
+  "seen_task": false,
+  "task_signature": "905995df-dbda-583b-aa77-1299076d1a8b"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-average-reading"
+  ],
+  "query_hash": "f73e00f3364c9cbc7cb20b2bf3871e4201344e861e9e1ffefba54cd5f4e2d3e1",
+  "query_id": "q:d5r-average-reading",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-clamp-reading",
+   "d5r-digit-count",
+   "d5r-distance-apart",
+   "d5r-growth-factor",
+   "d5r-is-multiple",
+   "d5r-percentage-of",
+   "d5r-round-to-step",
+   "d5r-split-pence",
+   "d5r-truncate-to-step"
+  ],
+  "seen_task": false,
+  "task_signature": "c8e15d1a-40b4-59f0-a9a0-f016b45f9b3d"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-bump-counter"
+  ],
+  "query_hash": "8447a4c6e645f3c12879147f2e2cee09746b557e08d380a94a2501d672b858f7",
+  "query_id": "q:d5r-bump-counter",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-advance-stage",
+   "d5r-apply-once-by-key",
+   "d5r-close-once",
+   "d5r-forget-after",
+   "d5r-latest-wins",
+   "d5r-mark-seen",
+   "d5r-release-hold",
+   "d5r-reset-between-runs",
+   "d5r-take-slot"
+  ],
+  "seen_task": false,
+  "task_signature": "293ae442-acc1-5a8e-87bd-ce2dfc597ad1"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-clamp-reading"
+  ],
+  "query_hash": "d21f59e30648d2685b35e270ffa3ad975ab41be9e76afefcbd8be2f59e0ebb10",
+  "query_id": "q:d5r-clamp-reading",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-average-reading",
+   "d5r-digit-count",
+   "d5r-distance-apart",
+   "d5r-growth-factor",
+   "d5r-is-multiple",
+   "d5r-percentage-of",
+   "d5r-round-to-step",
+   "d5r-split-pence",
+   "d5r-truncate-to-step"
+  ],
+  "seen_task": false,
+  "task_signature": "d8a7cee4-5928-5369-8224-d30b2c8177a7"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-close-every-handle"
+  ],
+  "query_hash": "cbc9133bf4172d8bbd81d02ac19b806cda6f170bf7d76d3eb6a21689c999e8c3",
+  "query_id": "q:d5r-close-every-handle",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-attempt-with-default",
+   "d5r-count-failures",
+   "d5r-exit-status-for",
+   "d5r-first-objection",
+   "d5r-name-the-kind",
+   "d5r-reason-text",
+   "d5r-require-positive",
+   "d5r-retry-budget-left",
+   "d5r-wrap-with-context"
+  ],
+  "seen_task": false,
+  "task_signature": "09e77534-0c08-53d5-9854-a233beb8a497"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-close-once"
+  ],
+  "query_hash": "560d64900902ec1e866ace98f397356682fce9338a1366a2aed3ea66d2f95680",
+  "query_id": "q:d5r-close-once",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-advance-stage",
+   "d5r-apply-once-by-key",
+   "d5r-bump-counter",
+   "d5r-forget-after",
+   "d5r-latest-wins",
+   "d5r-mark-seen",
+   "d5r-release-hold",
+   "d5r-reset-between-runs",
+   "d5r-take-slot"
+  ],
+  "seen_task": false,
+  "task_signature": "94486c0e-6035-5ba2-95a7-5f66494b4e12"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-count-by-field"
+  ],
+  "query_hash": "7cce509afa6a75c21b879a373480112a497123131ae2cc37510ba2212a0d60d7",
+  "query_id": "q:d5r-count-by-field",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-drop-fields",
+   "d5r-field-totals",
+   "d5r-keys-with-value",
+   "d5r-longest-field-value",
+   "d5r-merge-defaults",
+   "d5r-rename-one-field",
+   "d5r-reorder-fields",
+   "d5r-stack-rows",
+   "d5r-values-in-order"
+  ],
+  "seen_task": false,
+  "task_signature": "3be7c6e0-ddf9-5509-8691-46e4088c8699"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-count-failures"
+  ],
+  "query_hash": "82d1b0917f2ebff42e5e9a6bab73cc2ec283b1158c8ccc026539b55dee21cbdd",
+  "query_id": "q:d5r-count-failures",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-attempt-with-default",
+   "d5r-close-every-handle",
+   "d5r-exit-status-for",
+   "d5r-first-objection",
+   "d5r-name-the-kind",
+   "d5r-reason-text",
+   "d5r-require-positive",
+   "d5r-retry-budget-left",
+   "d5r-wrap-with-context"
+  ],
+  "seen_task": false,
+  "task_signature": "6d9661db-a6b4-5161-9508-3363acd9ac95"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-count-within"
+  ],
+  "query_hash": "220503c4d3c8d91d0a201f4ffa58f2bac5c25d48a5efdc5b550d22c74b25548d",
+  "query_id": "q:d5r-count-within",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-adjacent-pairs",
+   "d5r-drop-both-ends",
+   "d5r-every-other",
+   "d5r-insert-in-order",
+   "d5r-largest-three",
+   "d5r-pad-to-length",
+   "d5r-position-of",
+   "d5r-shortest-row",
+   "d5r-split-in-half"
+  ],
+  "seen_task": false,
+  "task_signature": "23f49d24-0dee-5afe-a4b1-23421c6fade8"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-decimal-places"
+  ],
+  "query_hash": "049011ef88003db3641cfbf2cdfcfe508bac8656bb2f3e66fdda16e343f49767",
+  "query_id": "q:d5r-decimal-places",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-header-continuation",
+   "d5r-leading-number",
+   "d5r-protocol-port",
+   "d5r-quoted-inner",
+   "d5r-read-flag",
+   "d5r-split-name-pair",
+   "d5r-strip-scheme",
+   "d5r-trim-comment",
+   "d5r-two-letter-code"
+  ],
+  "seen_task": false,
+  "task_signature": "f09bdd31-1bf1-5dbc-8416-bdaafc5d3e21"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-digit-count"
+  ],
+  "query_hash": "70f22533f83375524168c15ab10eabb3531fe8b922d34eba797dd21e19e5de67",
+  "query_id": "q:d5r-digit-count",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-average-reading",
+   "d5r-clamp-reading",
+   "d5r-distance-apart",
+   "d5r-growth-factor",
+   "d5r-is-multiple",
+   "d5r-percentage-of",
+   "d5r-round-to-step",
+   "d5r-split-pence",
+   "d5r-truncate-to-step"
+  ],
+  "seen_task": false,
+  "task_signature": "53fc70a2-208e-5450-94f7-a44bf7c0c57c"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-distance-apart"
+  ],
+  "query_hash": "ac98da788d0adddbfcc2ec3a06db54a0dbb5cac883aadffcb2080298ec09be3e",
+  "query_id": "q:d5r-distance-apart",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-average-reading",
+   "d5r-clamp-reading",
+   "d5r-digit-count",
+   "d5r-growth-factor",
+   "d5r-is-multiple",
+   "d5r-percentage-of",
+   "d5r-round-to-step",
+   "d5r-split-pence",
+   "d5r-truncate-to-step"
+  ],
+  "seen_task": false,
+  "task_signature": "9f9c636b-9b1e-5930-a57c-8c903cccead1"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-drop-both-ends"
+  ],
+  "query_hash": "38648342b22b28c712696dc6df632eeb3069a7256a070527db350dfb621e28b4",
+  "query_id": "q:d5r-drop-both-ends",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-adjacent-pairs",
+   "d5r-count-within",
+   "d5r-every-other",
+   "d5r-insert-in-order",
+   "d5r-largest-three",
+   "d5r-pad-to-length",
+   "d5r-position-of",
+   "d5r-shortest-row",
+   "d5r-split-in-half"
+  ],
+  "seen_task": false,
+  "task_signature": "5cfe5adb-6cbb-546d-806b-8c8e04f7b873"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-drop-fields"
+  ],
+  "query_hash": "6e78e40c5d233f30e00510e3e39fa3a72ed353ad396b38d05dece2b812a79795",
+  "query_id": "q:d5r-drop-fields",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-count-by-field",
+   "d5r-field-totals",
+   "d5r-keys-with-value",
+   "d5r-longest-field-value",
+   "d5r-merge-defaults",
+   "d5r-rename-one-field",
+   "d5r-reorder-fields",
+   "d5r-stack-rows",
+   "d5r-values-in-order"
+  ],
+  "seen_task": false,
+  "task_signature": "42a8bca5-18fe-5f2c-aa12-f2140e3308ba"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-every-other"
+  ],
+  "query_hash": "ac6ad66032e067de29713252411eaff858616b4fcce82c412d36c1064f83526e",
+  "query_id": "q:d5r-every-other",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-adjacent-pairs",
+   "d5r-count-within",
+   "d5r-drop-both-ends",
+   "d5r-insert-in-order",
+   "d5r-largest-three",
+   "d5r-pad-to-length",
+   "d5r-position-of",
+   "d5r-shortest-row",
+   "d5r-split-in-half"
+  ],
+  "seen_task": false,
+  "task_signature": "20471cb6-65c3-5e18-9938-babf7aa524ae"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-exit-status-for"
+  ],
+  "query_hash": "9a2aad1878521636221dfaeb1aa273a20b4ba28ebda5a1b7a9caaa2451605af4",
+  "query_id": "q:d5r-exit-status-for",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-attempt-with-default",
+   "d5r-close-every-handle",
+   "d5r-count-failures",
+   "d5r-first-objection",
+   "d5r-name-the-kind",
+   "d5r-reason-text",
+   "d5r-require-positive",
+   "d5r-retry-budget-left",
+   "d5r-wrap-with-context"
+  ],
+  "seen_task": false,
+  "task_signature": "109deb50-8b0e-54b6-ae0e-d58a88ee9d5d"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-field-totals"
+  ],
+  "query_hash": "a03afd4ea5789a98828b24e641c2e11fac0568bd1e3b7666208fa5c76320f6e3",
+  "query_id": "q:d5r-field-totals",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-count-by-field",
+   "d5r-drop-fields",
+   "d5r-keys-with-value",
+   "d5r-longest-field-value",
+   "d5r-merge-defaults",
+   "d5r-rename-one-field",
+   "d5r-reorder-fields",
+   "d5r-stack-rows",
+   "d5r-values-in-order"
+  ],
+  "seen_task": false,
+  "task_signature": "3a2657d9-7fe8-52dc-873c-eaeab1a4dbc2"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-first-objection"
+  ],
+  "query_hash": "ebbfc6777121255dd302bd8fa68663a0e4bfc385cfd918877ff36da31512d588",
+  "query_id": "q:d5r-first-objection",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-attempt-with-default",
+   "d5r-close-every-handle",
+   "d5r-count-failures",
+   "d5r-exit-status-for",
+   "d5r-name-the-kind",
+   "d5r-reason-text",
+   "d5r-require-positive",
+   "d5r-retry-budget-left",
+   "d5r-wrap-with-context"
+  ],
+  "seen_task": false,
+  "task_signature": "0fc80b03-302f-5af3-8b99-c5fb4ebae7e9"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-forget-after"
+  ],
+  "query_hash": "0633c7a59987a4478362614a9cdeb71b6f29a98d8474c7125e78d5e593039ae5",
+  "query_id": "q:d5r-forget-after",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-advance-stage",
+   "d5r-apply-once-by-key",
+   "d5r-bump-counter",
+   "d5r-close-once",
+   "d5r-latest-wins",
+   "d5r-mark-seen",
+   "d5r-release-hold",
+   "d5r-reset-between-runs",
+   "d5r-take-slot"
+  ],
+  "seen_task": false,
+  "task_signature": "3ee0d628-a903-56a4-a8a4-c930b5dff513"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-growth-factor"
+  ],
+  "query_hash": "25e46d463c4c7b781ce80e995a4d7617026ceff1df81646a6acfc08ce6df54c1",
+  "query_id": "q:d5r-growth-factor",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-average-reading",
+   "d5r-clamp-reading",
+   "d5r-digit-count",
+   "d5r-distance-apart",
+   "d5r-is-multiple",
+   "d5r-percentage-of",
+   "d5r-round-to-step",
+   "d5r-split-pence",
+   "d5r-truncate-to-step"
+  ],
+  "seen_task": false,
+  "task_signature": "fea4419d-4dff-53e2-9608-49a7ae58fdfc"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-header-continuation"
+  ],
+  "query_hash": "d9e16d66fac02ecc3250a146e989ab50ea6b99e97b1bd320826ca5c912426b2e",
+  "query_id": "q:d5r-header-continuation",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-decimal-places",
+   "d5r-leading-number",
+   "d5r-protocol-port",
+   "d5r-quoted-inner",
+   "d5r-read-flag",
+   "d5r-split-name-pair",
+   "d5r-strip-scheme",
+   "d5r-trim-comment",
+   "d5r-two-letter-code"
+  ],
+  "seen_task": false,
+  "task_signature": "500c74c8-3f2a-5e6c-bf23-29a77600a370"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-insert-in-order"
+  ],
+  "query_hash": "15934fcf5eb43e1ee3b89b0238c9cec5fb0ba3569abfa2f15d1fb80509ceb5e0",
+  "query_id": "q:d5r-insert-in-order",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-adjacent-pairs",
+   "d5r-count-within",
+   "d5r-drop-both-ends",
+   "d5r-every-other",
+   "d5r-largest-three",
+   "d5r-pad-to-length",
+   "d5r-position-of",
+   "d5r-shortest-row",
+   "d5r-split-in-half"
+  ],
+  "seen_task": false,
+  "task_signature": "e10375b5-5f64-5a3f-b333-c139ed9dca42"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-is-multiple"
+  ],
+  "query_hash": "3b26aa379f7c7accef73160cd30e5028f38e659ad196e293fd98e2763a89ad82",
+  "query_id": "q:d5r-is-multiple",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-average-reading",
+   "d5r-clamp-reading",
+   "d5r-digit-count",
+   "d5r-distance-apart",
+   "d5r-growth-factor",
+   "d5r-percentage-of",
+   "d5r-round-to-step",
+   "d5r-split-pence",
+   "d5r-truncate-to-step"
+  ],
+  "seen_task": false,
+  "task_signature": "e73115b3-9887-59b3-8c0f-bd031b4c3759"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-keys-with-value"
+  ],
+  "query_hash": "11729146d427b66c2852e8cb0fafcb23316f726961236aba561de3dc6404ebef",
+  "query_id": "q:d5r-keys-with-value",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-count-by-field",
+   "d5r-drop-fields",
+   "d5r-field-totals",
+   "d5r-longest-field-value",
+   "d5r-merge-defaults",
+   "d5r-rename-one-field",
+   "d5r-reorder-fields",
+   "d5r-stack-rows",
+   "d5r-values-in-order"
+  ],
+  "seen_task": false,
+  "task_signature": "5ceea337-5332-5893-8e3a-eadc7acd834e"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-largest-three"
+  ],
+  "query_hash": "f42bb227fd13cacc7e7c05430f8bd0b1b3492f56f2ea4efbbc8901503e5cb3a6",
+  "query_id": "q:d5r-largest-three",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-adjacent-pairs",
+   "d5r-count-within",
+   "d5r-drop-both-ends",
+   "d5r-every-other",
+   "d5r-insert-in-order",
+   "d5r-pad-to-length",
+   "d5r-position-of",
+   "d5r-shortest-row",
+   "d5r-split-in-half"
+  ],
+  "seen_task": false,
+  "task_signature": "08e15f6b-9f6e-5d99-8e6d-77939b7a558b"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-latest-wins"
+  ],
+  "query_hash": "8f2196fcff341dae7b94c7137263becf3b58ee178349334d81040aa9d7668e58",
+  "query_id": "q:d5r-latest-wins",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-advance-stage",
+   "d5r-apply-once-by-key",
+   "d5r-bump-counter",
+   "d5r-close-once",
+   "d5r-forget-after",
+   "d5r-mark-seen",
+   "d5r-release-hold",
+   "d5r-reset-between-runs",
+   "d5r-take-slot"
+  ],
+  "seen_task": false,
+  "task_signature": "62a1fdfb-9d54-5eb0-8167-3f09c9f5e8fe"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-leading-number"
+  ],
+  "query_hash": "ee5dcb47d7d24ca8d7b50418b34d6c6ebf1e6710f1a08d07f4219b7d6722eb00",
+  "query_id": "q:d5r-leading-number",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-decimal-places",
+   "d5r-header-continuation",
+   "d5r-protocol-port",
+   "d5r-quoted-inner",
+   "d5r-read-flag",
+   "d5r-split-name-pair",
+   "d5r-strip-scheme",
+   "d5r-trim-comment",
+   "d5r-two-letter-code"
+  ],
+  "seen_task": false,
+  "task_signature": "497a7590-9c0e-5d45-9e8d-935c21c6b93a"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-longest-field-value"
+  ],
+  "query_hash": "1a1a53bd11f6f1ff4918c3d4fb3a0f0dccfe10caf3925c73b4ecca20e61503fc",
+  "query_id": "q:d5r-longest-field-value",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-count-by-field",
+   "d5r-drop-fields",
+   "d5r-field-totals",
+   "d5r-keys-with-value",
+   "d5r-merge-defaults",
+   "d5r-rename-one-field",
+   "d5r-reorder-fields",
+   "d5r-stack-rows",
+   "d5r-values-in-order"
+  ],
+  "seen_task": false,
+  "task_signature": "fbfed104-d8da-5b1f-b248-27d9997b5e4e"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-mark-seen"
+  ],
+  "query_hash": "e02365ab01955960bee29d30ee191e8e6b7f69ac1c35fc94968500f61cc8885e",
+  "query_id": "q:d5r-mark-seen",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-advance-stage",
+   "d5r-apply-once-by-key",
+   "d5r-bump-counter",
+   "d5r-close-once",
+   "d5r-forget-after",
+   "d5r-latest-wins",
+   "d5r-release-hold",
+   "d5r-reset-between-runs",
+   "d5r-take-slot"
+  ],
+  "seen_task": false,
+  "task_signature": "8834172f-d466-5362-96d8-ab7d46a2f869"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-merge-defaults"
+  ],
+  "query_hash": "c65b22d698c6f9b8e27dba18fe0ffbbe1c87780ff608d683b445f483640433e2",
+  "query_id": "q:d5r-merge-defaults",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-count-by-field",
+   "d5r-drop-fields",
+   "d5r-field-totals",
+   "d5r-keys-with-value",
+   "d5r-longest-field-value",
+   "d5r-rename-one-field",
+   "d5r-reorder-fields",
+   "d5r-stack-rows",
+   "d5r-values-in-order"
+  ],
+  "seen_task": false,
+  "task_signature": "5e250157-976b-51a4-8e08-fb8fa9785726"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-name-the-kind"
+  ],
+  "query_hash": "3cf5119f544de8c2932fbea938ba3a2d5735bfe4a83d1ccd03adbca299a8f72b",
+  "query_id": "q:d5r-name-the-kind",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-attempt-with-default",
+   "d5r-close-every-handle",
+   "d5r-count-failures",
+   "d5r-exit-status-for",
+   "d5r-first-objection",
+   "d5r-reason-text",
+   "d5r-require-positive",
+   "d5r-retry-budget-left",
+   "d5r-wrap-with-context"
+  ],
+  "seen_task": false,
+  "task_signature": "b4bc2c9f-9c96-5116-a686-e51c3131b17e"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-pad-to-length"
+  ],
+  "query_hash": "0c4d0b7eb9c9565c63b58ae8776134a2ce814e21db90c7fb7a7d0231786dae07",
+  "query_id": "q:d5r-pad-to-length",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-adjacent-pairs",
+   "d5r-count-within",
+   "d5r-drop-both-ends",
+   "d5r-every-other",
+   "d5r-insert-in-order",
+   "d5r-largest-three",
+   "d5r-position-of",
+   "d5r-shortest-row",
+   "d5r-split-in-half"
+  ],
+  "seen_task": false,
+  "task_signature": "1cf45a89-03a4-5352-975b-d7ec7597355a"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-percentage-of"
+  ],
+  "query_hash": "f8a47b20960594197ffdc4dd4a2c4950102f6f0809b8b92bf3f0576d16f690c4",
+  "query_id": "q:d5r-percentage-of",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-average-reading",
+   "d5r-clamp-reading",
+   "d5r-digit-count",
+   "d5r-distance-apart",
+   "d5r-growth-factor",
+   "d5r-is-multiple",
+   "d5r-round-to-step",
+   "d5r-split-pence",
+   "d5r-truncate-to-step"
+  ],
+  "seen_task": false,
+  "task_signature": "bb2b116e-249d-5145-8e26-55d2c9431b07"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-position-of"
+  ],
+  "query_hash": "a9f68fcda2e2eaf0cb0cab6e286dc964cfff0de5f9793556d497f36ff14eb57c",
+  "query_id": "q:d5r-position-of",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-adjacent-pairs",
+   "d5r-count-within",
+   "d5r-drop-both-ends",
+   "d5r-every-other",
+   "d5r-insert-in-order",
+   "d5r-largest-three",
+   "d5r-pad-to-length",
+   "d5r-shortest-row",
+   "d5r-split-in-half"
+  ],
+  "seen_task": false,
+  "task_signature": "4378ebd8-a453-52bc-80af-e10f713879f8"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-protocol-port"
+  ],
+  "query_hash": "e599fd88e4be36cb5b11f34b372244a1b3f2b86d220500a56461ec182db1e592",
+  "query_id": "q:d5r-protocol-port",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-decimal-places",
+   "d5r-header-continuation",
+   "d5r-leading-number",
+   "d5r-quoted-inner",
+   "d5r-read-flag",
+   "d5r-split-name-pair",
+   "d5r-strip-scheme",
+   "d5r-trim-comment",
+   "d5r-two-letter-code"
+  ],
+  "seen_task": false,
+  "task_signature": "e7bb5916-196d-5b02-8553-69b54992fca0"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-quoted-inner"
+  ],
+  "query_hash": "a4b108a33078d0f82cabd96b9af6031e706ae7c7b2ef0bf12cdb5b1697409314",
+  "query_id": "q:d5r-quoted-inner",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-decimal-places",
+   "d5r-header-continuation",
+   "d5r-leading-number",
+   "d5r-protocol-port",
+   "d5r-read-flag",
+   "d5r-split-name-pair",
+   "d5r-strip-scheme",
+   "d5r-trim-comment",
+   "d5r-two-letter-code"
+  ],
+  "seen_task": false,
+  "task_signature": "4084bdd8-68eb-581d-9c32-8830a3b9588a"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-read-flag"
+  ],
+  "query_hash": "c0d91630f69a038f84923532ca16fbadc497df6841e910a1a141f757901ce157",
+  "query_id": "q:d5r-read-flag",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-decimal-places",
+   "d5r-header-continuation",
+   "d5r-leading-number",
+   "d5r-protocol-port",
+   "d5r-quoted-inner",
+   "d5r-split-name-pair",
+   "d5r-strip-scheme",
+   "d5r-trim-comment",
+   "d5r-two-letter-code"
+  ],
+  "seen_task": false,
+  "task_signature": "332c7a63-ea15-5281-88a4-91edca2a3e53"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-reason-text"
+  ],
+  "query_hash": "3c0ba98200cb7960298ddf3b5bd370730b35ae2b8d8adeffd0921e86e4838a21",
+  "query_id": "q:d5r-reason-text",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-attempt-with-default",
+   "d5r-close-every-handle",
+   "d5r-count-failures",
+   "d5r-exit-status-for",
+   "d5r-first-objection",
+   "d5r-name-the-kind",
+   "d5r-require-positive",
+   "d5r-retry-budget-left",
+   "d5r-wrap-with-context"
+  ],
+  "seen_task": false,
+  "task_signature": "471700bf-1b6b-541a-8ca0-b5672000fb3a"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-release-hold"
+  ],
+  "query_hash": "d4b3daaae8b0f9db6a9cdb46562bf6360e56f47bd5dfb343bad9d6c63b88852c",
+  "query_id": "q:d5r-release-hold",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-advance-stage",
+   "d5r-apply-once-by-key",
+   "d5r-bump-counter",
+   "d5r-close-once",
+   "d5r-forget-after",
+   "d5r-latest-wins",
+   "d5r-mark-seen",
+   "d5r-reset-between-runs",
+   "d5r-take-slot"
+  ],
+  "seen_task": false,
+  "task_signature": "43e79b70-048d-5128-93b9-0e59be0792c7"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-rename-one-field"
+  ],
+  "query_hash": "75f40360f52948083371ca76e5840ad4fae1cf06430e579ad9c12eaea24dde30",
+  "query_id": "q:d5r-rename-one-field",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-count-by-field",
+   "d5r-drop-fields",
+   "d5r-field-totals",
+   "d5r-keys-with-value",
+   "d5r-longest-field-value",
+   "d5r-merge-defaults",
+   "d5r-reorder-fields",
+   "d5r-stack-rows",
+   "d5r-values-in-order"
+  ],
+  "seen_task": false,
+  "task_signature": "33efb3e5-8bf2-5fea-b581-7c996f89766f"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-reorder-fields"
+  ],
+  "query_hash": "6946b4ff9046e7e828990daba605da16d04421df0f87ba46ffc62db4edf7e2a0",
+  "query_id": "q:d5r-reorder-fields",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-count-by-field",
+   "d5r-drop-fields",
+   "d5r-field-totals",
+   "d5r-keys-with-value",
+   "d5r-longest-field-value",
+   "d5r-merge-defaults",
+   "d5r-rename-one-field",
+   "d5r-stack-rows",
+   "d5r-values-in-order"
+  ],
+  "seen_task": false,
+  "task_signature": "589ba16a-984e-5c22-8e7f-a7e4d9825a3d"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-require-positive"
+  ],
+  "query_hash": "4b662cc0ca2de66c96564c13b69a1787e0871774eb92fc579ae85ac3a3dee7b2",
+  "query_id": "q:d5r-require-positive",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-attempt-with-default",
+   "d5r-close-every-handle",
+   "d5r-count-failures",
+   "d5r-exit-status-for",
+   "d5r-first-objection",
+   "d5r-name-the-kind",
+   "d5r-reason-text",
+   "d5r-retry-budget-left",
+   "d5r-wrap-with-context"
+  ],
+  "seen_task": false,
+  "task_signature": "10a6bab7-1a31-5748-abe0-377bfe37ce2d"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-reset-between-runs"
+  ],
+  "query_hash": "9dfd0ec6c2c0dbece80aeef7964b4d862f8d8ca8ce7a309ca72dff8a2e37d58f",
+  "query_id": "q:d5r-reset-between-runs",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-advance-stage",
+   "d5r-apply-once-by-key",
+   "d5r-bump-counter",
+   "d5r-close-once",
+   "d5r-forget-after",
+   "d5r-latest-wins",
+   "d5r-mark-seen",
+   "d5r-release-hold",
+   "d5r-take-slot"
+  ],
+  "seen_task": false,
+  "task_signature": "8ad99997-9345-5a04-9ea9-0cfd89ecfff4"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-retry-budget-left"
+  ],
+  "query_hash": "5677ac92b3f6b1f6d4478305123ce275406b5f7e4f0fdf197502fcf2215ced5f",
+  "query_id": "q:d5r-retry-budget-left",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-attempt-with-default",
+   "d5r-close-every-handle",
+   "d5r-count-failures",
+   "d5r-exit-status-for",
+   "d5r-first-objection",
+   "d5r-name-the-kind",
+   "d5r-reason-text",
+   "d5r-require-positive",
+   "d5r-wrap-with-context"
+  ],
+  "seen_task": false,
+  "task_signature": "3da85c74-4604-5707-9436-c6e437b7d7ac"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-round-to-step"
+  ],
+  "query_hash": "22eba36c540e51033322401b41e7d5613486df63ad9734c1ea959e08f43c0faf",
+  "query_id": "q:d5r-round-to-step",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-average-reading",
+   "d5r-clamp-reading",
+   "d5r-digit-count",
+   "d5r-distance-apart",
+   "d5r-growth-factor",
+   "d5r-is-multiple",
+   "d5r-percentage-of",
+   "d5r-split-pence",
+   "d5r-truncate-to-step"
+  ],
+  "seen_task": false,
+  "task_signature": "f27cacab-b0e5-5a64-8547-97e3d344d800"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-shortest-row"
+  ],
+  "query_hash": "affe7d544379f961cb764a6b02fc7704dcd68c4e2a7af4ef88c18df0f6c1b6d9",
+  "query_id": "q:d5r-shortest-row",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-adjacent-pairs",
+   "d5r-count-within",
+   "d5r-drop-both-ends",
+   "d5r-every-other",
+   "d5r-insert-in-order",
+   "d5r-largest-three",
+   "d5r-pad-to-length",
+   "d5r-position-of",
+   "d5r-split-in-half"
+  ],
+  "seen_task": false,
+  "task_signature": "217955ba-fc7d-5643-bc07-8c081bad0717"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-split-in-half"
+  ],
+  "query_hash": "e7fd277af608faf1f02259a1325e292c73f5d3e237915758f8368cd97dfb8dca",
+  "query_id": "q:d5r-split-in-half",
+  "relevance_family": "boundary_collections",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-adjacent-pairs",
+   "d5r-count-within",
+   "d5r-drop-both-ends",
+   "d5r-every-other",
+   "d5r-insert-in-order",
+   "d5r-largest-three",
+   "d5r-pad-to-length",
+   "d5r-position-of",
+   "d5r-shortest-row"
+  ],
+  "seen_task": false,
+  "task_signature": "387a519c-ebe7-5203-a680-ebf05238be24"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-split-name-pair"
+  ],
+  "query_hash": "983e1cc6366db62b1c787383550af2bb8f4b9a40bfd37ced35f8e4b77255ded5",
+  "query_id": "q:d5r-split-name-pair",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-decimal-places",
+   "d5r-header-continuation",
+   "d5r-leading-number",
+   "d5r-protocol-port",
+   "d5r-quoted-inner",
+   "d5r-read-flag",
+   "d5r-strip-scheme",
+   "d5r-trim-comment",
+   "d5r-two-letter-code"
+  ],
+  "seen_task": false,
+  "task_signature": "f2dcbe34-ac3b-55bb-8477-cd02e5473890"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-split-pence"
+  ],
+  "query_hash": "287130bb8c1828f23f39747cea220188e071084aa87dedd4c8a3f3bdcabdd30e",
+  "query_id": "q:d5r-split-pence",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-average-reading",
+   "d5r-clamp-reading",
+   "d5r-digit-count",
+   "d5r-distance-apart",
+   "d5r-growth-factor",
+   "d5r-is-multiple",
+   "d5r-percentage-of",
+   "d5r-round-to-step",
+   "d5r-truncate-to-step"
+  ],
+  "seen_task": false,
+  "task_signature": "28f73dfa-f1e6-5050-8407-2c693426ca2b"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-stack-rows"
+  ],
+  "query_hash": "4c52db838e06e95cf8de43b3bcedd70be2529ce2611143faeb93700e0389199b",
+  "query_id": "q:d5r-stack-rows",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-count-by-field",
+   "d5r-drop-fields",
+   "d5r-field-totals",
+   "d5r-keys-with-value",
+   "d5r-longest-field-value",
+   "d5r-merge-defaults",
+   "d5r-rename-one-field",
+   "d5r-reorder-fields",
+   "d5r-values-in-order"
+  ],
+  "seen_task": false,
+  "task_signature": "7fc247c3-9efe-5680-b460-5c29ee78202a"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-strip-scheme"
+  ],
+  "query_hash": "e0190f740f91e570d7b7ed2dac4f70f477e9bfaf6848cca89c188c86ef7e1c76",
+  "query_id": "q:d5r-strip-scheme",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-decimal-places",
+   "d5r-header-continuation",
+   "d5r-leading-number",
+   "d5r-protocol-port",
+   "d5r-quoted-inner",
+   "d5r-read-flag",
+   "d5r-split-name-pair",
+   "d5r-trim-comment",
+   "d5r-two-letter-code"
+  ],
+  "seen_task": false,
+  "task_signature": "d3eccf08-fb2f-5b87-9937-82d7fc98ef60"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-take-slot"
+  ],
+  "query_hash": "de51fc926c5658c51715b2589b0073d1156ce0f402d49cc1f3010a42fa7eab09",
+  "query_id": "q:d5r-take-slot",
+  "relevance_family": "state_idempotency",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-advance-stage",
+   "d5r-apply-once-by-key",
+   "d5r-bump-counter",
+   "d5r-close-once",
+   "d5r-forget-after",
+   "d5r-latest-wins",
+   "d5r-mark-seen",
+   "d5r-release-hold",
+   "d5r-reset-between-runs"
+  ],
+  "seen_task": false,
+  "task_signature": "9a2adb72-129a-5c6a-abbd-3d5c2e7499a1"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-trim-comment"
+  ],
+  "query_hash": "16578fc9946135221a1e6ae29d0007bd074e366246ff3060ca6e9658a344a643",
+  "query_id": "q:d5r-trim-comment",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-decimal-places",
+   "d5r-header-continuation",
+   "d5r-leading-number",
+   "d5r-protocol-port",
+   "d5r-quoted-inner",
+   "d5r-read-flag",
+   "d5r-split-name-pair",
+   "d5r-strip-scheme",
+   "d5r-two-letter-code"
+  ],
+  "seen_task": false,
+  "task_signature": "fe0dc5c3-5d6d-50ff-a57d-8c5ec7475957"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-truncate-to-step"
+  ],
+  "query_hash": "3ed410509a9e36029b0f7d4b3a01b26767bbd2ac9c9a171d0be76b101f516d68",
+  "query_id": "q:d5r-truncate-to-step",
+  "relevance_family": "numeric_logic",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-average-reading",
+   "d5r-clamp-reading",
+   "d5r-digit-count",
+   "d5r-distance-apart",
+   "d5r-growth-factor",
+   "d5r-is-multiple",
+   "d5r-percentage-of",
+   "d5r-round-to-step",
+   "d5r-split-pence"
+  ],
+  "seen_task": false,
+  "task_signature": "3d94fb0d-b16a-5ac3-ad76-5bb848b71299"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-two-letter-code"
+  ],
+  "query_hash": "031b0d4a3965526872d99f763558b560b8034048a691fe9a896ea46adf9ef597",
+  "query_id": "q:d5r-two-letter-code",
+  "relevance_family": "parsing_validation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-decimal-places",
+   "d5r-header-continuation",
+   "d5r-leading-number",
+   "d5r-protocol-port",
+   "d5r-quoted-inner",
+   "d5r-read-flag",
+   "d5r-split-name-pair",
+   "d5r-strip-scheme",
+   "d5r-trim-comment"
+  ],
+  "seen_task": false,
+  "task_signature": "c8cf6669-64ce-50c8-8ece-6afbb94357a6"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-values-in-order"
+  ],
+  "query_hash": "a32c692702d83f0491153f8c1e913ff901c32ed317b1ee8af822cc5c2b95fe76",
+  "query_id": "q:d5r-values-in-order",
+  "relevance_family": "data_transformation",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-count-by-field",
+   "d5r-drop-fields",
+   "d5r-field-totals",
+   "d5r-keys-with-value",
+   "d5r-longest-field-value",
+   "d5r-merge-defaults",
+   "d5r-rename-one-field",
+   "d5r-reorder-fields",
+   "d5r-stack-rows"
+  ],
+  "seen_task": false,
+  "task_signature": "7ddc974b-3d49-5650-a2ab-945d8a06896e"
+ },
+ {
+  "domain": "coding",
+  "excluded_groups": [
+   "d5r-wrap-with-context"
+  ],
+  "query_hash": "dc48402864d792bf10bfd53f0b0bccb7232695a16e2ed617669c594f83b4f669",
+  "query_id": "q:d5r-wrap-with-context",
+  "relevance_family": "error_handling",
+  "relevance_tier": 1,
+  "relevant_pair_ids": [
+   "d5r-attempt-with-default",
+   "d5r-close-every-handle",
+   "d5r-count-failures",
+   "d5r-exit-status-for",
+   "d5r-first-objection",
+   "d5r-name-the-kind",
+   "d5r-reason-text",
+   "d5r-require-positive",
+   "d5r-retry-budget-left"
+  ],
+  "seen_task": false,
+  "task_signature": "d60704eb-b464-55d2-9426-2c84ee1eadd0"
+ }
+]

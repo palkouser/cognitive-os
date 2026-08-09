@@ -1,0 +1,136 @@
+{
+ "calibration_campaign_sha256": "d50add4a1188f82db7056f4db2ff89a744019a8576ac0fd105db53697bf90cfe",
+ "calibration_matrix_hash": "106061126df8326128a5fea97b3690f5f02465c16805e6742c09cd5e3e7c7ca4",
+ "derivation_rule": "score every independent clean calibration decision with the released bounded k-NN confidence; sort the answered ones by score descending; the zero-error point is the lowest threshold at which every answered decision strictly above it is correct, equivalently the highest score among answered decisions that are wrong; it is the boundary of the zero-error region and the only member of it whose coverage is worth reporting, because every higher threshold admits a strict subset; admit the answered decisions scoring strictly above it; report coverage over independent decisions and the Clopper-Pearson one-sided 95% upper bound on the true error rate",
+ "derivations": [
+  {
+   "answered_decisions": 100,
+   "maximum_inference_ms_per_candidate": "0.042",
+   "model_artifact_id": "fd67abfc-f79b-49ff-bb51-b1ccd406faf1",
+   "model_hash": "5b15f4af06a2b08d0d8269b59f47127bf97d610a22c12c645f8fbde9fa0f47cd",
+   "point": {
+    "admitted_decisions": 26,
+    "calibration_source_hash": "106061126df8326128a5fea97b3690f5f02465c16805e6742c09cd5e3e7c7ca4",
+    "canonical": {
+     "admitted_decisions": 26,
+     "calibration_source_hash": "106061126df8326128a5fea97b3690f5f02465c16805e6742c09cd5e3e7c7ca4",
+     "census": {
+      "content_hash": "7ac5cc937f688cd7dba7c56578a917237a60c75189a622556f4ee25f37e334ec",
+      "independence_rule": "two counted decisions are the same decision when their fitted feature vectors are equal; independence is equality of the fitted vector, not of the task, the seed or the transform",
+      "independent_decisions": 100,
+      "nominal_decisions": 100,
+      "rate_denominator": "independent_decisions",
+      "replicated_decisions": 0,
+      "revision": 4
+     },
+     "content_hash": "9c84cbaa431ff2ef009b51be05e136f40db9e46945c9ae076ecc20ca1cb13199",
+     "coverage": "0.26",
+     "derivation_hash": "150ccba446a0320fa25fbfdd480964531571c375cec8a5f993d546a9d53c008f",
+     "derivation_reading": "amendment 1: the sealed wording said 'highest', which names no point, because the thresholds admitting only correct decisions are upward-closed and the largest of them admits nothing. The operative rule takes the boundary of that set",
+     "derivation_rule": "score every independent clean calibration decision with the released bounded k-NN confidence; sort the answered ones by score descending; the zero-error point is the lowest threshold at which every answered decision strictly above it is correct, equivalently the highest score among answered decisions that are wrong; it is the boundary of the zero-error region and the only member of it whose coverage is worth reporting, because every higher threshold admits a strict subset; admit the answered decisions scoring strictly above it; report coverage over independent decisions and the Clopper-Pearson one-sided 95% upper bound on the true error rate",
+     "derived_at": "2026-08-09T08:33:32.129436Z",
+     "errors_above_threshold": 0,
+     "every_answered_decision_was_correct": false,
+     "rate_denominator": "independent_decisions",
+     "revision": 4,
+     "split": "calibration",
+     "threshold": "0.651587",
+     "zero_error_point_exists": true,
+     "zero_error_upper_bound_95": "0.10883"
+    },
+    "census": {
+     "independence_rule": "two counted decisions are the same decision when their fitted feature vectors are equal; independence is equality of the fitted vector, not of the task, the seed or the transform",
+     "independent_decisions": 100,
+     "nominal_decisions": 100,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 0,
+     "revision": 4
+    },
+    "coverage": "0.26",
+    "derivation_hash": "150ccba446a0320fa25fbfdd480964531571c375cec8a5f993d546a9d53c008f",
+    "derived_at": "2026-08-09T08:33:32.129436+00:00",
+    "every_answered_decision_was_correct": false,
+    "exists": true,
+    "split": "calibration",
+    "threshold": "0.651587",
+    "zero_error_upper_bound_95": "0.10883"
+   },
+   "volume_rows": 320
+  },
+  {
+   "answered_decisions": 100,
+   "maximum_inference_ms_per_candidate": "0.15425",
+   "model_artifact_id": "237a8bf5-bcc1-475d-a18c-08b171954083",
+   "model_hash": "9fd297fb407015374485e8f7ef8fbb557e6f89f7ac3286e2572769fdab937d74",
+   "point": {
+    "admitted_decisions": 27,
+    "calibration_source_hash": "106061126df8326128a5fea97b3690f5f02465c16805e6742c09cd5e3e7c7ca4",
+    "canonical": {
+     "admitted_decisions": 27,
+     "calibration_source_hash": "106061126df8326128a5fea97b3690f5f02465c16805e6742c09cd5e3e7c7ca4",
+     "census": {
+      "content_hash": "7ac5cc937f688cd7dba7c56578a917237a60c75189a622556f4ee25f37e334ec",
+      "independence_rule": "two counted decisions are the same decision when their fitted feature vectors are equal; independence is equality of the fitted vector, not of the task, the seed or the transform",
+      "independent_decisions": 100,
+      "nominal_decisions": 100,
+      "rate_denominator": "independent_decisions",
+      "replicated_decisions": 0,
+      "revision": 4
+     },
+     "content_hash": "18d3d13822b22ae3d51aef76fac84e1b9b072a48b53f8be6a0a9bb9f33a0946e",
+     "coverage": "0.27",
+     "derivation_hash": "eb48bb1b34bd7355027947cf83bf78ef3cf8aa3d50e156bc4ecf8958513fd998",
+     "derivation_reading": "amendment 1: the sealed wording said 'highest', which names no point, because the thresholds admitting only correct decisions are upward-closed and the largest of them admits nothing. The operative rule takes the boundary of that set",
+     "derivation_rule": "score every independent clean calibration decision with the released bounded k-NN confidence; sort the answered ones by score descending; the zero-error point is the lowest threshold at which every answered decision strictly above it is correct, equivalently the highest score among answered decisions that are wrong; it is the boundary of the zero-error region and the only member of it whose coverage is worth reporting, because every higher threshold admits a strict subset; admit the answered decisions scoring strictly above it; report coverage over independent decisions and the Clopper-Pearson one-sided 95% upper bound on the true error rate",
+     "derived_at": "2026-08-09T08:33:32.166102Z",
+     "errors_above_threshold": 0,
+     "every_answered_decision_was_correct": false,
+     "rate_denominator": "independent_decisions",
+     "revision": 4,
+     "split": "calibration",
+     "threshold": "1.071794",
+     "zero_error_point_exists": true,
+     "zero_error_upper_bound_95": "0.105019"
+    },
+    "census": {
+     "independence_rule": "two counted decisions are the same decision when their fitted feature vectors are equal; independence is equality of the fitted vector, not of the task, the seed or the transform",
+     "independent_decisions": 100,
+     "nominal_decisions": 100,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 0,
+     "revision": 4
+    },
+    "coverage": "0.27",
+    "derivation_hash": "eb48bb1b34bd7355027947cf83bf78ef3cf8aa3d50e156bc4ecf8958513fd998",
+    "derived_at": "2026-08-09T08:33:32.166102+00:00",
+    "every_answered_decision_was_correct": false,
+    "exists": true,
+    "split": "calibration",
+    "threshold": "1.071794",
+    "zero_error_upper_bound_95": "0.105019"
+   },
+   "volume_rows": 720
+  }
+ ],
+ "direction_fit_sha256": "fa822052d8fea9148b78ba1f9d1e1198f36beaefbaadc16a136cd0d01e86eb2c",
+ "final_outcomes_inspected": false,
+ "independent_decisions": 100,
+ "integrity_content_hash": "b978c57d0f4ccf1ad9e9d94eedeca3f0ca8be34107a495a7e063082a1620bf87",
+ "items": [
+  "S21D5-034"
+ ],
+ "margin_floor_at_measurement": "0",
+ "pre_registration_sha256": "ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a",
+ "recorded_at": "2026-08-09T08:33:32Z",
+ "schema_version": 1,
+ "single_derivation": {
+  "derived_here": 2,
+  "enforced_across_restart_by": "S21D5-035, a separate process, which reloads these derivations and passes each back to derive_zero_error_point as `previous`; a different threshold raises OperatingPointError there rather than being written here",
+  "one_per_volume": true,
+  "why_two_derivations_are_not_two_thresholds": "the rule is one derivation per (model, calibration split) pair. Two volumes are two models, so each derives its own point once; neither is a second attempt at the other's"
+ },
+ "snapshots_sha256": "3c48eddfa11c3ada6e7578aeafedcd22e8ac5b07a90e348f730a5b6bb872bae7",
+ "split": "calibration",
+ "sprint": "21D5",
+ "wave": "W2"
+}

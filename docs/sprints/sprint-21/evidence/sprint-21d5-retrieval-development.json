@@ -1,0 +1,794 @@
+{
+ "arms_changed_in_this_sprint": [],
+ "contracts_sha256": "bee8bafca8c3a33043d9001930a47e37291a4c2a7519f0fec9e653a92487f725",
+ "d5_retrieval_pool_read": false,
+ "every_arm_reproduced": true,
+ "every_arm_reproduces_its_own_ranking": true,
+ "expectation_declared_before_the_run": "every arm reproduces its predecessor value exactly, on every pool that resolves. D5 changed no arm, no comparator, no weight and no fusion constant, and structure_fallback is a projection flag that no stored development graph was projected under. An arm that moves is a defect in something this wave believed it had not touched",
+ "final_or_canary_outcomes_inspected": 0,
+ "final_outcomes_inspected": false,
+ "gating": false,
+ "ged_iteration_budget": 1,
+ "integrity_content_hash": "bd09e347c8f99f6b92f6dfd8516d176143b78df8314693de7e6ab8469ffe8229",
+ "items": [
+  "S21D5-042"
+ ],
+ "label": "development_only",
+ "pools": {
+  "d1_eighty_query_development_set": {
+   "access": "read_only",
+   "against_the_predecessor": {
+    "arms_that_moved": [],
+    "every_arm_reproduced": true,
+    "no_arm_was_exempt": "D4's replay excused one arm because W3 had just decided its comparator. D5 changed no arm, so every one of the six is held to its recorded value",
+    "per_arm": {
+     "exact_signature": {
+      "budget_cutoffs": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "coverage": {
+       "measured": 0.0,
+       "recorded": 0.0
+      },
+      "mrr_at_10": {
+       "measured": 0.0,
+       "recorded": 0.0
+      },
+      "ndcg_at_10": {
+       "measured": 0.0,
+       "recorded": 0.0
+      },
+      "reproduced": true,
+      "timeouts": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "top_5_recall": {
+       "measured": 0.0,
+       "recorded": 0.0
+      }
+     },
+     "lexical": {
+      "budget_cutoffs": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "coverage": {
+       "measured": 1.0,
+       "recorded": 1.0
+      },
+      "mrr_at_10": {
+       "measured": 0.4145,
+       "recorded": 0.4145
+      },
+      "ndcg_at_10": {
+       "measured": 0.3327,
+       "recorded": 0.3327
+      },
+      "reproduced": true,
+      "timeouts": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "top_5_recall": {
+       "measured": 0.525,
+       "recorded": 0.525
+      }
+     },
+     "minilm_shortlist_plus_bounded_ged": {
+      "budget_cutoffs": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "coverage": {
+       "measured": 1.0,
+       "recorded": 1.0
+      },
+      "mrr_at_10": {
+       "measured": 0.3628,
+       "recorded": 0.3628
+      },
+      "ndcg_at_10": {
+       "measured": 0.2336,
+       "recorded": 0.2336
+      },
+      "reproduced": true,
+      "timeouts": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "top_5_recall": {
+       "measured": 0.5875,
+       "recorded": 0.5875
+      }
+     },
+     "minilm_vector": {
+      "budget_cutoffs": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "coverage": {
+       "measured": 1.0,
+       "recorded": 1.0
+      },
+      "mrr_at_10": {
+       "measured": 0.4392,
+       "recorded": 0.4392
+      },
+      "ndcg_at_10": {
+       "measured": 0.374,
+       "recorded": 0.374
+      },
+      "reproduced": true,
+      "timeouts": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "top_5_recall": {
+       "measured": 0.5375,
+       "recorded": 0.5375
+      }
+     },
+     "no_memory": {
+      "budget_cutoffs": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "coverage": {
+       "measured": 0.0,
+       "recorded": 0.0
+      },
+      "mrr_at_10": {
+       "measured": 0.0,
+       "recorded": 0.0
+      },
+      "ndcg_at_10": {
+       "measured": 0.0,
+       "recorded": 0.0
+      },
+      "reproduced": true,
+      "timeouts": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "top_5_recall": {
+       "measured": 0.0,
+       "recorded": 0.0
+      }
+     },
+     "reciprocal_rank_fusion": {
+      "budget_cutoffs": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "coverage": {
+       "measured": 1.0,
+       "recorded": 1.0
+      },
+      "mrr_at_10": {
+       "measured": 0.4478,
+       "recorded": 0.4478
+      },
+      "ndcg_at_10": {
+       "measured": 0.3567,
+       "recorded": 0.3567
+      },
+      "reproduced": true,
+      "timeouts": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "top_5_recall": {
+       "measured": 0.775,
+       "recorded": 0.775
+      }
+     }
+    },
+    "predecessor": "docs/sprints/sprint-21/evidence/sprint-21d4-retrieval-development.json",
+    "predecessor_path": [
+     "pools",
+     "d1_eighty_query_development_set",
+     "arms"
+    ],
+    "predecessor_sha256": "56b644c5d4a23c3062c8bffac8d2be8537b17f885c89f4075bb22abc1c77af5e"
+   },
+   "arms": {
+    "exact_signature": {
+     "budget_cutoffs": 0,
+     "coverage": 0.0,
+     "max_latency_ms": 0.108,
+     "mean_candidates_considered": 78.25,
+     "mrr_at_10": 0.0,
+     "ndcg_at_10": 0.0,
+     "p50_latency_ms": 0.059,
+     "p95_latency_ms": 0.081,
+     "queries_with_no_relevant_pair_in_top_five": 80,
+     "timeouts": 0,
+     "top_5_recall": 0.0,
+     "top_5_recall_by_domain": {
+      "coding": 0.0,
+      "logic": 0.0,
+      "mathematics": 0.0
+     },
+     "top_5_recall_by_tier": {
+      "1": 0.0,
+      "2": 0.0
+     }
+    },
+    "lexical": {
+     "budget_cutoffs": 0,
+     "coverage": 1.0,
+     "max_latency_ms": 1.408,
+     "mean_candidates_considered": 78.25,
+     "mrr_at_10": 0.4145,
+     "ndcg_at_10": 0.3327,
+     "p50_latency_ms": 0.981,
+     "p95_latency_ms": 1.223,
+     "queries_with_no_relevant_pair_in_top_five": 38,
+     "timeouts": 0,
+     "top_5_recall": 0.525,
+     "top_5_recall_by_domain": {
+      "coding": 0.4333,
+      "logic": 0.8,
+      "mathematics": 0.8
+     },
+     "top_5_recall_by_tier": {
+      "1": 0.4242,
+      "2": 1.0
+     }
+    },
+    "minilm_shortlist_plus_bounded_ged": {
+     "budget_cutoffs": 0,
+     "coverage": 1.0,
+     "max_latency_ms": 142.052,
+     "mean_candidates_considered": 20.0,
+     "mrr_at_10": 0.3628,
+     "ndcg_at_10": 0.2336,
+     "p50_latency_ms": 32.942,
+     "p95_latency_ms": 135.11,
+     "queries_with_no_relevant_pair_in_top_five": 33,
+     "timeouts": 0,
+     "top_5_recall": 0.5875,
+     "top_5_recall_by_domain": {
+      "coding": 0.65,
+      "logic": 0.8,
+      "mathematics": 0.0
+     },
+     "top_5_recall_by_tier": {
+      "1": 0.6212,
+      "2": 0.4286
+     }
+    },
+    "minilm_vector": {
+     "budget_cutoffs": 0,
+     "coverage": 1.0,
+     "max_latency_ms": 998.707,
+     "mean_candidates_considered": 78.25,
+     "mrr_at_10": 0.4392,
+     "ndcg_at_10": 0.374,
+     "p50_latency_ms": 13.146,
+     "p95_latency_ms": 32.626,
+     "queries_with_no_relevant_pair_in_top_five": 37,
+     "timeouts": 0,
+     "top_5_recall": 0.5375,
+     "top_5_recall_by_domain": {
+      "coding": 0.4,
+      "logic": 0.9,
+      "mathematics": 1.0
+     },
+     "top_5_recall_by_tier": {
+      "1": 0.4394,
+      "2": 1.0
+     }
+    },
+    "no_memory": {
+     "budget_cutoffs": 0,
+     "coverage": 0.0,
+     "max_latency_ms": 0.092,
+     "mean_candidates_considered": 0.0,
+     "mrr_at_10": 0.0,
+     "ndcg_at_10": 0.0,
+     "p50_latency_ms": 0.058,
+     "p95_latency_ms": 0.072,
+     "queries_with_no_relevant_pair_in_top_five": 0,
+     "timeouts": 0,
+     "top_5_recall": 0.0,
+     "top_5_recall_by_domain": {
+      "coding": 0.0,
+      "logic": 0.0,
+      "mathematics": 0.0
+     },
+     "top_5_recall_by_tier": {
+      "1": 0.0,
+      "2": 0.0
+     }
+    },
+    "reciprocal_rank_fusion": {
+     "budget_cutoffs": 0,
+     "coverage": 1.0,
+     "max_latency_ms": 28.242,
+     "mean_candidates_considered": 78.25,
+     "mrr_at_10": 0.4478,
+     "ndcg_at_10": 0.3567,
+     "p50_latency_ms": 16.021,
+     "p95_latency_ms": 26.916,
+     "queries_with_no_relevant_pair_in_top_five": 18,
+     "timeouts": 0,
+     "top_5_recall": 0.775,
+     "top_5_recall_by_domain": {
+      "coding": 0.7167,
+      "logic": 0.9,
+      "mathematics": 1.0
+     },
+     "top_5_recall_by_tier": {
+      "1": 0.7273,
+      "2": 1.0
+     }
+    }
+   },
+   "artifact_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d1",
+   "benchmark_content_hash": "669b84789d819bf08f0475cf29cb443bef4de895929ad89e03d7805abafebe70",
+   "benchmark_schema_version": 2,
+   "every_arm_reproduces_its_own_ranking": true,
+   "frozen_in": "Sprint 21D1, before any ranking was produced",
+   "graph_resolution": {
+    "declared_pairs": 80,
+    "graphs": 160,
+    "graphs_carrying_terms": 0,
+    "intact": true,
+    "missing_bytes": 0,
+    "reading": "these graphs were projected before structure_fallback existed and before the surface field existed at all, so the complete surface contributes no term here and any movement in the numbers below comes from somewhere else",
+    "resolved_pairs": 80
+   },
+   "graph_set": {
+    "declared_pairs": 80,
+    "eligible_candidates": 80,
+    "graph_set_id": "sprint-21d1-emg-root",
+    "intact": true,
+    "resolved_pairs": 80,
+    "root_sha256": "25b89bc8316c7b3d2f556e4e1aca4ff9619702a8bf1306fbe346cef2362f90ae"
+   },
+   "model": {
+    "dimension": 384,
+    "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+    "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+    "tree_digest": "98eb3ae4df320d0b721902aabef795cafb36c3a516f036e92e2b046f55ef4229"
+   },
+   "query_set": {
+    "path": "docs/sprints/sprint-21/evidence/sprint-21d1-graph-queries.json",
+    "queries": 80,
+    "sha256": "0a82bfe390a9216f1017bbeb70a09e29ef4747519fb4b8fd6bcf0803efb6650a"
+   },
+   "repeated_ranking_agreement_by_arm": {
+    "exact_signature": true,
+    "lexical": true,
+    "minilm_shortlist_plus_bounded_ged": true,
+    "minilm_vector": true,
+    "no_memory": true,
+    "reciprocal_rank_fusion": true
+   },
+   "replayed": true,
+   "resource_policy": {
+    "content_hash": "d0e8520e3d3bc3637ce75f632c79aa00c1f456a8af1a4956601dad359c8474ab",
+    "cross_task_similarity_neighbors": 3,
+    "edges_per_graph": 128,
+    "nodes_per_graph": 64,
+    "path_depth": 32,
+    "per_pair_ged_timeout_ms": 90,
+    "query_budget_seconds": 2,
+    "returned_results": 10,
+    "vector_shortlist": 20
+   },
+   "root": "docs/sprints/sprint-21/evidence/sprint-21d1-emg-root.json"
+  },
+  "d3_spent_retrieval_holdout": {
+   "access": "read_only",
+   "against_the_predecessor": {
+    "arms_that_moved": [],
+    "every_arm_reproduced": true,
+    "no_arm_was_exempt": "D4's replay excused one arm because W3 had just decided its comparator. D5 changed no arm, so every one of the six is held to its recorded value",
+    "per_arm": {
+     "exact_signature": {
+      "budget_cutoffs": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "coverage": {
+       "measured": 0.0,
+       "recorded": 0.0
+      },
+      "mrr_at_10": {
+       "measured": 0.0,
+       "recorded": 0.0
+      },
+      "ndcg_at_10": {
+       "measured": 0.0,
+       "recorded": 0.0
+      },
+      "reproduced": true,
+      "timeouts": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "top_5_recall": {
+       "measured": 0.0,
+       "recorded": 0.0
+      }
+     },
+     "lexical": {
+      "budget_cutoffs": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "coverage": {
+       "measured": 1.0,
+       "recorded": 1.0
+      },
+      "mrr_at_10": {
+       "measured": 0.3042,
+       "recorded": 0.3042
+      },
+      "ndcg_at_10": {
+       "measured": 0.1613,
+       "recorded": 0.1613
+      },
+      "reproduced": true,
+      "timeouts": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "top_5_recall": {
+       "measured": 0.4833,
+       "recorded": 0.4833
+      }
+     },
+     "minilm_shortlist_plus_bounded_ged": {
+      "budget_cutoffs": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "coverage": {
+       "measured": 1.0,
+       "recorded": 1.0
+      },
+      "mrr_at_10": {
+       "measured": 0.3073,
+       "recorded": 0.3073
+      },
+      "ndcg_at_10": {
+       "measured": 0.1648,
+       "recorded": 0.1648
+      },
+      "reproduced": true,
+      "timeouts": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "top_5_recall": {
+       "measured": 0.5,
+       "recorded": 0.5
+      }
+     },
+     "minilm_vector": {
+      "budget_cutoffs": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "coverage": {
+       "measured": 1.0,
+       "recorded": 1.0
+      },
+      "mrr_at_10": {
+       "measured": 0.3414,
+       "recorded": 0.3414
+      },
+      "ndcg_at_10": {
+       "measured": 0.1619,
+       "recorded": 0.1619
+      },
+      "reproduced": true,
+      "timeouts": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "top_5_recall": {
+       "measured": 0.5333,
+       "recorded": 0.5333
+      }
+     },
+     "no_memory": {
+      "budget_cutoffs": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "coverage": {
+       "measured": 0.0,
+       "recorded": 0.0
+      },
+      "mrr_at_10": {
+       "measured": 0.0,
+       "recorded": 0.0
+      },
+      "ndcg_at_10": {
+       "measured": 0.0,
+       "recorded": 0.0
+      },
+      "reproduced": true,
+      "timeouts": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "top_5_recall": {
+       "measured": 0.0,
+       "recorded": 0.0
+      }
+     },
+     "reciprocal_rank_fusion": {
+      "budget_cutoffs": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "coverage": {
+       "measured": 1.0,
+       "recorded": 1.0
+      },
+      "mrr_at_10": {
+       "measured": 0.3004,
+       "recorded": 0.3004
+      },
+      "ndcg_at_10": {
+       "measured": 0.1583,
+       "recorded": 0.1583
+      },
+      "reproduced": true,
+      "timeouts": {
+       "measured": 0,
+       "recorded": 0
+      },
+      "top_5_recall": {
+       "measured": 0.5,
+       "recorded": 0.5
+      }
+     }
+    },
+    "predecessor": "docs/sprints/sprint-21/evidence/sprint-21d4-retrieval-development.json",
+    "predecessor_path": [
+     "pools",
+     "d3_spent_retrieval_holdout",
+     "arms"
+    ],
+    "predecessor_sha256": "56b644c5d4a23c3062c8bffac8d2be8537b17f885c89f4075bb22abc1c77af5e"
+   },
+   "arms": {
+    "exact_signature": {
+     "budget_cutoffs": 0,
+     "coverage": 0.0,
+     "max_latency_ms": 0.105,
+     "mean_candidates_considered": 59.0,
+     "mrr_at_10": 0.0,
+     "ndcg_at_10": 0.0,
+     "p50_latency_ms": 0.065,
+     "p95_latency_ms": 0.077,
+     "queries_with_no_relevant_pair_in_top_five": 60,
+     "timeouts": 0,
+     "top_5_recall": 0.0,
+     "top_5_recall_by_domain": {
+      "coding": 0.0
+     },
+     "top_5_recall_by_tier": {
+      "1": 0.0
+     }
+    },
+    "lexical": {
+     "budget_cutoffs": 0,
+     "coverage": 1.0,
+     "max_latency_ms": 0.84,
+     "mean_candidates_considered": 59.0,
+     "mrr_at_10": 0.3042,
+     "ndcg_at_10": 0.1613,
+     "p50_latency_ms": 0.67,
+     "p95_latency_ms": 0.835,
+     "queries_with_no_relevant_pair_in_top_five": 31,
+     "timeouts": 0,
+     "top_5_recall": 0.4833,
+     "top_5_recall_by_domain": {
+      "coding": 0.4833
+     },
+     "top_5_recall_by_tier": {
+      "1": 0.4833
+     }
+    },
+    "minilm_shortlist_plus_bounded_ged": {
+     "budget_cutoffs": 0,
+     "coverage": 1.0,
+     "max_latency_ms": 93.426,
+     "mean_candidates_considered": 20.0,
+     "mrr_at_10": 0.3073,
+     "ndcg_at_10": 0.1648,
+     "p50_latency_ms": 32.107,
+     "p95_latency_ms": 40.183,
+     "queries_with_no_relevant_pair_in_top_five": 30,
+     "timeouts": 0,
+     "top_5_recall": 0.5,
+     "top_5_recall_by_domain": {
+      "coding": 0.5
+     },
+     "top_5_recall_by_tier": {
+      "1": 0.5
+     }
+    },
+    "minilm_vector": {
+     "budget_cutoffs": 0,
+     "coverage": 1.0,
+     "max_latency_ms": 448.297,
+     "mean_candidates_considered": 59.0,
+     "mrr_at_10": 0.3414,
+     "ndcg_at_10": 0.1619,
+     "p50_latency_ms": 11.576,
+     "p95_latency_ms": 14.025,
+     "queries_with_no_relevant_pair_in_top_five": 28,
+     "timeouts": 0,
+     "top_5_recall": 0.5333,
+     "top_5_recall_by_domain": {
+      "coding": 0.5333
+     },
+     "top_5_recall_by_tier": {
+      "1": 0.5333
+     }
+    },
+    "no_memory": {
+     "budget_cutoffs": 0,
+     "coverage": 0.0,
+     "max_latency_ms": 0.081,
+     "mean_candidates_considered": 0.0,
+     "mrr_at_10": 0.0,
+     "ndcg_at_10": 0.0,
+     "p50_latency_ms": 0.063,
+     "p95_latency_ms": 0.076,
+     "queries_with_no_relevant_pair_in_top_five": 0,
+     "timeouts": 0,
+     "top_5_recall": 0.0,
+     "top_5_recall_by_domain": {
+      "coding": 0.0
+     },
+     "top_5_recall_by_tier": {
+      "1": 0.0
+     }
+    },
+    "reciprocal_rank_fusion": {
+     "budget_cutoffs": 0,
+     "coverage": 1.0,
+     "max_latency_ms": 17.685,
+     "mean_candidates_considered": 59.0,
+     "mrr_at_10": 0.3004,
+     "ndcg_at_10": 0.1583,
+     "p50_latency_ms": 14.284,
+     "p95_latency_ms": 17.273,
+     "queries_with_no_relevant_pair_in_top_five": 30,
+     "timeouts": 0,
+     "top_5_recall": 0.5,
+     "top_5_recall_by_domain": {
+      "coding": 0.5
+     },
+     "top_5_recall_by_tier": {
+      "1": 0.5
+     }
+    }
+   },
+   "artifact_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d3",
+   "benchmark_content_hash": "8df4508949d5fa46ff8165de0eaf51af7fcb5aecdc4631ca76371a4a8ad26993",
+   "benchmark_schema_version": 2,
+   "every_arm_reproduces_its_own_ranking": true,
+   "frozen_in": "Sprint 21D3, before the holdout was resolved; spent",
+   "graph_resolution": {
+    "declared_pairs": 60,
+    "graphs": 120,
+    "graphs_carrying_terms": 0,
+    "intact": true,
+    "missing_bytes": 0,
+    "reading": "these graphs were projected before structure_fallback existed and before the surface field existed at all, so the complete surface contributes no term here and any movement in the numbers below comes from somewhere else",
+    "resolved_pairs": 60
+   },
+   "graph_set": {
+    "declared_pairs": 60,
+    "eligible_candidates": 60,
+    "graph_set_id": "sprint-21d3-retrieval-holdout",
+    "intact": true,
+    "resolved_pairs": 60,
+    "root_sha256": "28dc23b75f40255eff1beccab7cb5cd27285840781ccb6a60e1946e9d7e7bbdd"
+   },
+   "model": {
+    "dimension": 384,
+    "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+    "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+    "tree_digest": "98eb3ae4df320d0b721902aabef795cafb36c3a516f036e92e2b046f55ef4229"
+   },
+   "query_set": {
+    "path": "docs/sprints/sprint-21/evidence/sprint-21d3-retrieval-queries.json",
+    "queries": 60,
+    "sha256": "4064d15793cdab7562623e29f7df3017bb87e4b6519abe4ecfecca31a3a1dcb0"
+   },
+   "repeated_ranking_agreement_by_arm": {
+    "exact_signature": true,
+    "lexical": true,
+    "minilm_shortlist_plus_bounded_ged": true,
+    "minilm_vector": true,
+    "no_memory": true,
+    "reciprocal_rank_fusion": true
+   },
+   "replayed": true,
+   "resource_policy": {
+    "content_hash": "d0e8520e3d3bc3637ce75f632c79aa00c1f456a8af1a4956601dad359c8474ab",
+    "cross_task_similarity_neighbors": 3,
+    "edges_per_graph": 128,
+    "nodes_per_graph": 64,
+    "path_depth": 32,
+    "per_pair_ged_timeout_ms": 90,
+    "query_budget_seconds": 2,
+    "returned_results": 10,
+    "vector_shortlist": 20
+   },
+   "root": "docs/sprints/sprint-21/evidence/sprint-21d3-retrieval-emg-root.json"
+  },
+  "d4_spent_retrieval_holdout": {
+   "access": "read_only",
+   "artifact_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d4",
+   "frozen_in": "Sprint 21D4, before its holdout was resolved; spent",
+   "graph_resolution": {
+    "declared_pairs": 60,
+    "graphs": 0,
+    "graphs_carrying_terms": 0,
+    "intact": false,
+    "missing_bytes": 60,
+    "reading": "these graphs were projected before structure_fallback existed and before the surface field existed at all, so the complete surface contributes no term here and any movement in the numbers below comes from somewhere else",
+    "resolved_pairs": 0
+   },
+   "replayed": false,
+   "root": "docs/sprints/sprint-21/evidence/sprint-21d4-retrieval-emg-root.json",
+   "why_not": "the root declares pairs whose blobs are in no store; see S21D5-W3-F1 in sprint-21d5-surface.json. Recorded with the failed load rather than omitted"
+  }
+ },
+ "pools_replayed": 2,
+ "pools_that_could_not_be_replayed": [
+  "d4_spent_retrieval_holdout"
+ ],
+ "pre_registration_sha256": "ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a",
+ "purpose": "measure the released arms on query sets whose answers are already published, before the D5 holdout is resolved. It closes no gate: Gate D1 condition 15 and Gate L2 condition 24 are decided only by the D5 unseen-task holdout, which this command does not read",
+ "recorded_at": "2026-08-09T09:27:41Z",
+ "schema_version": 1,
+ "sprint": "21D5",
+ "store_writes": {
+  "fingerprints_after": {
+   "d1_eighty_query_development_set": [
+    "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f",
+    83
+   ],
+   "d3_spent_retrieval_holdout": [
+    "fcb0a044810b375f2933d4a3cf22c7448bfada9c90e104566a92125b08dcd0d3",
+    2096
+   ],
+   "d4_spent_retrieval_holdout": [
+    "3d09732ef59c8e9a36ceabc9619d6a139a7f48437ab0d67e07931720c75f7b47",
+    4006
+   ]
+  },
+  "fingerprints_before": {
+   "d1_eighty_query_development_set": [
+    "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f",
+    83
+   ],
+   "d3_spent_retrieval_holdout": [
+    "fcb0a044810b375f2933d4a3cf22c7448bfada9c90e104566a92125b08dcd0d3",
+    2096
+   ],
+   "d4_spent_retrieval_holdout": [
+    "3d09732ef59c8e9a36ceabc9619d6a139a7f48437ab0d67e07931720c75f7b47",
+    4006
+   ]
+  },
+  "unchanged": true
+ },
+ "surface_sha256": "d63b64bba65b6572db0d010e6a28dc96c3eba894cf75243bbf625ef6879184f8",
+ "wave": "W3"
+}

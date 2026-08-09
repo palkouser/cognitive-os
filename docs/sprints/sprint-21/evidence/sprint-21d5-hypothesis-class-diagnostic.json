@@ -1,0 +1,77 @@
+{
+ "authorisation": "sprint-21d5-handoff.md section 2: the spent calibration set remains valid fitting and diagnostic evidence; section 3: no new corpus is needed to test whether a different class has a zero-error region",
+ "calibration_campaign_sha256": "e2454b1bc6f2a74bc5d16e92e5b54b00e9ece2f7fe6936a6adcd0796dafd70dc",
+ "correction_branch": {
+  "baseline_first_choice_rate": "0.52",
+  "combined_pool_logo": {
+   "admitted_decisions": 32,
+   "decisions": 100,
+   "first_choice_rate_over_all": "0.84",
+   "fitted_groups": 179,
+   "margin_depth": {
+    "errors_in_top_20_by_margin": 0,
+    "errors_in_top_30_by_margin": 0,
+    "errors_in_top_40_by_margin": 1,
+    "errors_in_top_50_by_margin": 3
+   },
+   "projected_changed_final_decisions": "45.000",
+   "zero_error_coverage": "0.32"
+  },
+  "disjoint_pool": {
+   "admitted_decisions": 22,
+   "decisions": 100,
+   "first_choice_rate_over_all": "0.79",
+   "fitted_groups": 80,
+   "fitted_pairs": 320,
+   "margin_depth": {
+    "errors_in_top_20_by_margin": 0,
+    "errors_in_top_30_by_margin": 2,
+    "errors_in_top_40_by_margin": 3,
+    "errors_in_top_50_by_margin": 4
+   },
+   "projected_changed_final_decisions": "46.364",
+   "zero_error_coverage": "0.22"
+  },
+  "logo_runtime_seconds": 7.6,
+  "residual_answered": "S21D4-039 measured the frozen k-NN's zero-error coverage at exactly zero at both volumes; this class has a non-empty zero-error region on every estimate below, so the residual is the class, not the corpus",
+  "volume_trend": "zero-error coverage rises with fitting volume under this class — disjoint 80-group pool against combined 179-group pools above — where the frozen k-NN measured flat zero; the D5 certification set must still be freshly authored, because both numbers here read spent bytes"
+ },
+ "feature_seals_sha256": "9ba0683c64671d26cdcb785f49c3084b059cb956e1ddb40cf2481e9e6b75158e",
+ "final_or_canary_outcomes_inspected": 0,
+ "fitting_campaign_sha256": "4296d78514d5ea826cda5a9b79f1ed9f72269146c88e0dadf4aa7668e8c8c1e7",
+ "floors_unchanged": {
+  "confident_errors_allowed": 0,
+  "minimum_clean_coverage": "0.40",
+  "minimum_independent_decisions": 100
+ },
+ "handoff_sha256": "8257dce9e22900e0bdea6c36ac7c850ab44a9c9e5ec013d142a1a49114048198",
+ "hypothesis_class": {
+  "disjoint_model_hash": "949bcc302335bace7a424d8cd63765c4d1f0cb972f533aea7e5f02e3bbd2c088",
+  "fit_rule": "collect every within-group accepted-minus-rejected difference of fitted feature vectors over the declared fitting groups in sorted group order; fit one linear direction by ridge-regularised logistic regression on the antisymmetric pair set (no intercept, zero start, Newton iterations to convergence); rank a group's candidates by their projection onto the direction with ties broken on the baseline order; the decision's confidence is the projection margin between the top two candidates",
+  "module": "src/cognitive_os/learning/pairwise_contrastive.py",
+  "name": "pairwise-contrastive-linear-v1",
+  "regularization": "1",
+  "regularization_chosen_on": "fitting-pool-internal leave-group-out evidence only, before any calibration decision was read under this class"
+ },
+ "integrity_content_hash": "d9027c71dc5f6fc5de58f7120ab885f9a54a707ad88ac19c3aa0fc92eaeafbd9",
+ "learner_selection_sha256": "f1f746af1ed89044b7ae8e768ee3b8386c908fba13e1305d5482356dffb720ed",
+ "purpose": "hypothesis-class diagnostic on spent evidence, per the D4 handoff",
+ "recorded_at": "2026-08-08T08:46:52Z",
+ "retrieval_branch": {
+  "floor_question_still_open": "whether a complete surface closes the 0.0089 MRR@10 gap is a measurement that needs a freshly authored holdout; nothing here re-decides the D4 result",
+  "surface_completion": {
+   "empty_under_released_extraction": 26,
+   "fallback_repaired_documents": 10,
+   "fallback_repaired_documents_distinct": 10,
+   "graph_sides": 120,
+   "reached_by_structure_fallback": 26,
+   "reads": "corpus definitions only; no holdout judgement or result was opened",
+   "still_empty": 0
+  }
+ },
+ "retrieval_holdout_result_inspected": false,
+ "schema_version": 1,
+ "selection_made": false,
+ "sprint": "21D5",
+ "threshold_derived_for_reuse": false
+}

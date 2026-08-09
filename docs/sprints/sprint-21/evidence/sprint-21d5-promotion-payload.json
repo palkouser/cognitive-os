@@ -1,0 +1,121 @@
+{
+ "additive": {
+  "a_d4_shaped_payload_hashes_as_it_did": true,
+  "canonical_absent_when_empty": [
+   "search_terms",
+   "decision_counts",
+   "hypothesis_class"
+  ],
+  "d4_shaped_bytes_sha256": "b69cc48197b12ce2516be926ea7965ec25e8b4408330a1a5ecf7ae6ef3130822",
+  "how_the_identity_is_kept_stable": "canonical_payload_bytes excludes nulls, which keeps the stored bytes stable and does nothing for canonical_json, which is what the contract hashes. hypothesis_class is named in CANONICAL_ABSENT_WHEN_EMPTY for the second half. The D5 test that measures this is what found the difference",
+  "naming_the_class_is_a_new_identity": true,
+  "naming_the_class_is_new_bytes": true,
+  "reconstructed_without_the_key_sha256": "b69cc48197b12ce2516be926ea7965ec25e8b4408330a1a5ecf7ae6ef3130822",
+  "released_benchmark_bytes_sha256": "99f386983d849f0626dc3d97ea012da3727ebecbfe5ad6f84515f1107bd49231",
+  "released_benchmark_payload_hash": "ce6d2fb2253f88fc4a238384e2f17219cd0a34e7e29561b91c42e82848f560e6"
+ },
+ "artifact_v3_sha256": "0b808ac79681809e8fbf21e196ea353f72f510cd0f05cca0e46d2bc61040a03c",
+ "candidate_promoted": null,
+ "condition_20_row": {
+  "carries": [
+   "nominal_decisions",
+   "independent_decisions",
+   "calibration_certificate_hash",
+   "hypothesis_class"
+  ],
+  "class_checked_against": "the classes the artifact loader implements, so a class nobody can load is refused where the row is built rather than at activation, where the bytes would already be stored",
+  "counts_come_from": "DecisionCensusV4, the one place the independence rule is implemented; a builder taking two integers would let a replicated set through wearing a different field name",
+  "gate": "metamorphic_ood",
+  "hypothesis_class": "pairwise-contrastive-linear-v1",
+  "implemented_classes": [
+   "pairwise-contrastive-linear-v1"
+  ],
+  "independent_decisions": 60,
+  "nominal_decisions": 120
+ },
+ "contracts_sha256": "bee8bafca8c3a33043d9001930a47e37291a4c2a7519f0fec9e653a92487f725",
+ "dispatch": [
+  {
+   "expected": 1,
+   "schema_name": "learned-promotion-assessment",
+   "shape": "legacy v1 assessment",
+   "version_reported": 1
+  },
+  {
+   "expected": 2,
+   "hypothesis_class_after_reload": null,
+   "reloads_to_its_recorded_identity": true,
+   "schema_name": "d3-promotion-payload",
+   "shape": "D3/D4 payload with no hypothesis class",
+   "version_reported": 2
+  },
+  {
+   "expected": 2,
+   "hypothesis_class_after_reload": "pairwise-contrastive-linear-v1",
+   "reloads_to_its_recorded_identity": true,
+   "schema_name": "d3-promotion-payload",
+   "shape": "D5 payload naming the class",
+   "version_reported": 2
+  }
+ ],
+ "every_refusal_refused": true,
+ "final_outcomes_inspected": false,
+ "gates_evaluated": 0,
+ "integrity_content_hash": "d5c3ea4d43079501ea899e37510444a294d645cd90517238bfb46d1c8560bd03",
+ "items": [
+  "S21D5-037"
+ ],
+ "not_a_refusal_and_deliberately_so": {
+  "case": "a JSON object carrying no schema_name at all",
+  "version_reported": 1,
+  "why": "the legacy shape predates the field, so an object without one is read as version 1 rather than rejected. That is released behaviour and the reason the D3 loader refuses it a step later, by version, instead of here"
+ },
+ "payloads_stored": 0,
+ "pre_registration_sha256": "ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a",
+ "recorded_at": "2026-08-09T08:46:49Z",
+ "refusals": [
+  {
+   "case": "a class no loader implements",
+   "error": "condition 20 names hypothesis class 'graph-neural-ranker-v1', which no loader implements; known: ['pairwise-contrastive-linear-v1']",
+   "refused": true
+  },
+  {
+   "case": "an empty class name",
+   "error": "condition 20 names hypothesis class '', which no loader implements; known: ['pairwise-contrastive-linear-v1']",
+   "refused": true
+  },
+  {
+   "case": "a census on a row nobody measured",
+   "error": "a gate nobody ran has no census; record the not_measured row without counts",
+   "refused": true
+  },
+  {
+   "case": "bytes declaring a schema nobody publishes",
+   "error": "unknown promotion payload schema 'd9-promotion-payload'",
+   "refused": true
+  },
+  {
+   "case": "bytes that are not JSON",
+   "error": "promotion payload bytes are not JSON",
+   "refused": true
+  },
+  {
+   "case": "legacy bytes read through the D3 loader",
+   "error": "these are schema version 1 bytes; read them through the legacy assessment contract, not the D3 payload",
+   "refused": true
+  }
+ ],
+ "schema": {
+  "manifest_sha256": "e014dc6816a4246e194121da71be931edab392c64dee3534fc050deb1011c0ce",
+  "model_schema_hash": "f81aefbdbb7215a733c708b483f3c88e162a8379f72ce70aa8a8e03af70c1912",
+  "name": "d3-promotion-payload",
+  "published_file_sha256": "c98ef3007a2f43f96c437905bdc4d0466140160054f0e4bce058f2d507c74f39",
+  "version": 2,
+  "version_moved": false,
+  "why_the_version_does_not_move": "bumping the name or the version would make every D3 and D4 payload unreadable through load_promotion_payload, which is the opposite of what this item asks for. The field is additive and optional; the dispatch is unchanged"
+ },
+ "schema_version": 1,
+ "sprint": "21D5",
+ "wave": "W2",
+ "what_this_does_not_claim": "no D5 promotion payload exists. S21D5-035 selected no candidate, so there is nothing to promote and S21D5-067, which would build the real payload, stays closed. This is the shape a successor writes into, measured now because it depends on the pre-registration rather than on a result"
+}

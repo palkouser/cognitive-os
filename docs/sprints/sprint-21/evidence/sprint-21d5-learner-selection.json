@@ -1,0 +1,2286 @@
+{
+ "baseline": {
+  "first_choice_rate": "0.42",
+  "ladder_hash": "5f9ab9cbe77a183d7dcbeefe29febd5032170ecd261f503f46aaa96c45ce5a0c",
+  "measured_on": "the same 100 calibration decisions the direction is measured on",
+  "record": "sprint-21d5-baseline-ladder.json",
+  "rungs": [
+   {
+    "eligible": true,
+    "first_choice_rate": "0.42",
+    "groups_scored": 100,
+    "ineligible_reason": null,
+    "kind": "deterministic",
+    "name": "fixed_input_order"
+   },
+   {
+    "eligible": true,
+    "first_choice_rate": "0.09",
+    "groups_scored": 100,
+    "ineligible_reason": null,
+    "kind": "deterministic",
+    "name": "deterministic_static_ordering"
+   },
+   {
+    "eligible": true,
+    "first_choice_rate": "0.41",
+    "groups_scored": 100,
+    "ineligible_reason": null,
+    "kind": "deterministic",
+    "name": "lexical_similarity"
+   },
+   {
+    "eligible": false,
+    "first_choice_rate": null,
+    "groups_scored": 0,
+    "ineligible_reason": "correction-ranking-v2 removes query_to_candidate_cosine from the fitted representation, so the channel this rung orders by does not exist under it",
+    "kind": "deterministic",
+    "name": "frozen_minilm_cosine"
+   },
+   {
+    "eligible": false,
+    "first_choice_rate": null,
+    "groups_scored": 0,
+    "ineligible_reason": "a correction-ranking task presents exactly four candidates, so a twenty-wide shortlist is the entire pool and the rung reduces to its own tie-break; it meets no resource contract it does not already trivially satisfy",
+    "kind": "deterministic",
+    "name": "width_20_bounded_graph"
+   }
+  ],
+  "strongest_deterministic_rung": "fixed_input_order"
+ },
+ "baseline_ladder_sha256": "4095cc5d27cf7b0d965646ac9634a048337b870a82ff6c674af3f4a3adb76536",
+ "calibration_campaign_sha256": "d50add4a1188f82db7056f4db2ff89a744019a8576ac0fd105db53697bf90cfe",
+ "cells": [
+  {
+   "admitted_decisions": 26,
+   "answered_decisions": 100,
+   "baseline_first_choice_rate": "0.42",
+   "beats_the_baseline": true,
+   "changed_decisions": 22,
+   "confident_errors": 0,
+   "coverage": "0.26",
+   "coverage_denominator": "independent_decisions",
+   "filtered_no_changed_decision": false,
+   "first_choice_rate_over_admitted": "1",
+   "fully_abstaining": false,
+   "independent_decisions": 100,
+   "ineligible_reasons": [
+    "clean_coverage_below_0.40"
+   ],
+   "maximum_inference_ms": "0.08",
+   "model_hash": "5b15f4af06a2b08d0d8269b59f47127bf97d610a22c12c645f8fbde9fa0f47cd",
+   "nominal_decisions": 100,
+   "operating_point": "zero_error",
+   "operating_point_derivation": {
+    "admitted_decisions": 26,
+    "calibration_source_hash": "106061126df8326128a5fea97b3690f5f02465c16805e6742c09cd5e3e7c7ca4",
+    "census": {
+     "independence_rule": "two counted decisions are the same decision when their fitted feature vectors are equal; independence is equality of the fitted vector, not of the task, the seed or the transform",
+     "independent_decisions": 100,
+     "nominal_decisions": 100,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 0,
+     "revision": 4
+    },
+    "coverage": "0.26",
+    "derivation_hash": "150ccba446a0320fa25fbfdd480964531571c375cec8a5f993d546a9d53c008f",
+    "derived_at": "2026-08-09T08:34:16.772914+00:00",
+    "every_answered_decision_was_correct": false,
+    "exists": true,
+    "split": "calibration",
+    "threshold": "0.651587",
+    "zero_error_upper_bound_95": "0.10883"
+   },
+   "projected_changed_final_decisions": "50.769",
+   "threshold": "0.651587",
+   "volume_rows": 320,
+   "within_inference_budget": true,
+   "zero_error_upper_bound_95": "0.10883"
+  },
+  {
+   "admitted_decisions": 27,
+   "answered_decisions": 100,
+   "baseline_first_choice_rate": "0.42",
+   "beats_the_baseline": true,
+   "changed_decisions": 21,
+   "confident_errors": 0,
+   "coverage": "0.27",
+   "coverage_denominator": "independent_decisions",
+   "filtered_no_changed_decision": false,
+   "first_choice_rate_over_admitted": "1",
+   "fully_abstaining": false,
+   "independent_decisions": 100,
+   "ineligible_reasons": [
+    "clean_coverage_below_0.40"
+   ],
+   "maximum_inference_ms": "0.067",
+   "model_hash": "9fd297fb407015374485e8f7ef8fbb557e6f89f7ac3286e2572769fdab937d74",
+   "nominal_decisions": 100,
+   "operating_point": "zero_error",
+   "operating_point_derivation": {
+    "admitted_decisions": 27,
+    "calibration_source_hash": "106061126df8326128a5fea97b3690f5f02465c16805e6742c09cd5e3e7c7ca4",
+    "census": {
+     "independence_rule": "two counted decisions are the same decision when their fitted feature vectors are equal; independence is equality of the fitted vector, not of the task, the seed or the transform",
+     "independent_decisions": 100,
+     "nominal_decisions": 100,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 0,
+     "revision": 4
+    },
+    "coverage": "0.27",
+    "derivation_hash": "eb48bb1b34bd7355027947cf83bf78ef3cf8aa3d50e156bc4ecf8958513fd998",
+    "derived_at": "2026-08-09T08:34:16.810374+00:00",
+    "every_answered_decision_was_correct": false,
+    "exists": true,
+    "split": "calibration",
+    "threshold": "1.071794",
+    "zero_error_upper_bound_95": "0.105019"
+   },
+   "projected_changed_final_decisions": "46.667",
+   "threshold": "1.071794",
+   "volume_rows": 720,
+   "within_inference_budget": true,
+   "zero_error_upper_bound_95": "0.105019"
+  }
+ ],
+ "contracts_sha256": "bee8bafca8c3a33043d9001930a47e37291a4c2a7519f0fec9e653a92487f725",
+ "decision_tree": {
+  "endings_are_four_different_sprints": true,
+  "material_coverage_difference": "0.05",
+  "near_zero_coverage_reading": "0.05",
+  "reading": "step 5: zero-error coverage is above zero, below 0.40, and flat across the two volumes (0.26 at 320 rows, 0.27 at 720). The direction ranks and the margin cannot certify enough of what it ranks, so the successor pre-registers a different confidence construction over the same ranker",
+  "section": "3.3",
+  "stop": "selective_margin_bound",
+  "why_those_two_numbers": "§3.3 says 'materially higher' and 'at or near zero' and quantifies neither. Both readings here come from the power contract, not from the measurement: five admitted decisions of a hundred is 0.05 coverage, and zero errors in five decisions bounds the true error rate at 45%, which certifies nothing. Every raw number is in this record, so another reading can be applied without re-running anything"
+ },
+ "decisions": {
+  "calibration_matrix_hash": "106061126df8326128a5fea97b3690f5f02465c16805e6742c09cd5e3e7c7ca4",
+  "census": {
+   "independent_decisions": 100,
+   "nominal_decisions": 100,
+   "rate_denominator": "independent_decisions",
+   "replicated_decisions": 0,
+   "revision": 4
+  },
+  "identity_rule": "a ranking decision is identified by its four fitted feature vectors in slot order; two groups sharing one would be one decision counted twice",
+  "independent_decisions": 100,
+  "matrices_are_the_scanned_ones": true
+ },
+ "direction_fit_sha256": "fa822052d8fea9148b78ba1f9d1e1198f36beaefbaadc16a136cd0d01e86eb2c",
+ "final_or_canary_outcomes_inspected": 0,
+ "final_outcomes_inspected": false,
+ "fitting_campaign_sha256": "17f2e838979d569e6b87bcd3297ed734bf15c2b6ff1dcc8153c6d6a732cebc6f",
+ "grid": {
+  "cells_reported": 2,
+  "filtered_no_changed_decision": 0,
+  "fully_abstaining_cells": 0,
+  "operating_points": [
+   "zero_error"
+  ],
+  "selectable_cells": 2,
+  "sweep_points_reported": 200,
+  "volume_points": [
+   320,
+   720
+  ],
+  "why_the_grid_is_two_cells_and_not_a_search": "D4 crossed a pre-registered 24-setting k-NN grid with three operating points. Revision 5 pre-registers one class, one regulariser and one confidence, so the only free coordinate is the volume point. Everything else a reader might want to see is in the sweep, reported and not selectable"
+ },
+ "hypothesis_class": "pairwise-contrastive-linear-v1",
+ "integrity_content_hash": "4d45fc00188c00cafd7a95fe4bad8c338150a6d203b2d2c5cf10aa1d413c8ae2",
+ "invariance_regression_sha256": "d8b37dd7869bdc7cde27938aa6256d27d5454f2bb4f16c80264d21fa299a618a",
+ "items": [
+  "S21D5-035"
+ ],
+ "operating_point_sha256": "8d67a1e7b13c8d876611627cdb4757205ebe15c341436e092e2cc7bb71f17893",
+ "pre_registration_sha256": "ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a",
+ "recorded_at": "2026-08-09T08:34:16Z",
+ "risk_coverage_curve": {
+  "320": {
+   "answered_decisions": 100,
+   "baseline_first_choice_rate": "0.42",
+   "best_first_choice_rate_over_admitted": "1",
+   "changed_decisions_over_all_answered": 81,
+   "confident_errors_at_the_derived_point": 0,
+   "deepest_error_free_prefix_by_margin": 26,
+   "errors_among_all_answered": 9,
+   "exemplar_groups": 80,
+   "exemplar_rows": 320,
+   "first_choice_rate_over_all_answered": "0.91",
+   "fitted_pair_count": 320,
+   "model_hash": "5b15f4af06a2b08d0d8269b59f47127bf97d610a22c12c645f8fbde9fa0f47cd",
+   "sweep": [
+    {
+     "admitted_decisions": 1,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 1,
+     "confident_errors": 0,
+     "coverage": "0.01",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "2.819532"
+    },
+    {
+     "admitted_decisions": 2,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 2,
+     "confident_errors": 0,
+     "coverage": "0.02",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.871652"
+    },
+    {
+     "admitted_decisions": 3,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 3,
+     "confident_errors": 0,
+     "coverage": "0.03",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.64132"
+    },
+    {
+     "admitted_decisions": 4,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 4,
+     "confident_errors": 0,
+     "coverage": "0.04",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.371845"
+    },
+    {
+     "admitted_decisions": 5,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 5,
+     "confident_errors": 0,
+     "coverage": "0.05",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.364899"
+    },
+    {
+     "admitted_decisions": 6,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 6,
+     "confident_errors": 0,
+     "coverage": "0.06",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.314264"
+    },
+    {
+     "admitted_decisions": 7,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 6,
+     "confident_errors": 0,
+     "coverage": "0.07",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.285498"
+    },
+    {
+     "admitted_decisions": 8,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 7,
+     "confident_errors": 0,
+     "coverage": "0.08",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.267295"
+    },
+    {
+     "admitted_decisions": 9,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 7,
+     "confident_errors": 0,
+     "coverage": "0.09",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.211677"
+    },
+    {
+     "admitted_decisions": 10,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 7,
+     "confident_errors": 0,
+     "coverage": "0.1",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.134022"
+    },
+    {
+     "admitted_decisions": 11,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 7,
+     "confident_errors": 0,
+     "coverage": "0.11",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.086405"
+    },
+    {
+     "admitted_decisions": 12,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 8,
+     "confident_errors": 0,
+     "coverage": "0.12",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.034636"
+    },
+    {
+     "admitted_decisions": 13,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 9,
+     "confident_errors": 0,
+     "coverage": "0.13",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.021406"
+    },
+    {
+     "admitted_decisions": 14,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 10,
+     "confident_errors": 0,
+     "coverage": "0.14",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "0.974246"
+    },
+    {
+     "admitted_decisions": 15,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 11,
+     "confident_errors": 0,
+     "coverage": "0.15",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "0.945442"
+    },
+    {
+     "admitted_decisions": 16,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 12,
+     "confident_errors": 0,
+     "coverage": "0.16",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "0.830636"
+    },
+    {
+     "admitted_decisions": 17,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 13,
+     "confident_errors": 0,
+     "coverage": "0.17",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "0.82015"
+    },
+    {
+     "admitted_decisions": 18,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 14,
+     "confident_errors": 0,
+     "coverage": "0.18",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "0.810441"
+    },
+    {
+     "admitted_decisions": 19,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 15,
+     "confident_errors": 0,
+     "coverage": "0.19",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "0.795093"
+    },
+    {
+     "admitted_decisions": 20,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 16,
+     "confident_errors": 0,
+     "coverage": "0.2",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "0.785834"
+    },
+    {
+     "admitted_decisions": 21,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 17,
+     "confident_errors": 0,
+     "coverage": "0.21",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "0.768215"
+    },
+    {
+     "admitted_decisions": 22,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 18,
+     "confident_errors": 0,
+     "coverage": "0.22",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "0.766193"
+    },
+    {
+     "admitted_decisions": 23,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 19,
+     "confident_errors": 0,
+     "coverage": "0.23",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "0.716754"
+    },
+    {
+     "admitted_decisions": 24,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 20,
+     "confident_errors": 0,
+     "coverage": "0.24",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "0.694854"
+    },
+    {
+     "admitted_decisions": 25,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 21,
+     "confident_errors": 0,
+     "coverage": "0.25",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "0.677016"
+    },
+    {
+     "admitted_decisions": 26,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 22,
+     "confident_errors": 0,
+     "coverage": "0.26",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "0.665512"
+    },
+    {
+     "admitted_decisions": 27,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 23,
+     "confident_errors": 1,
+     "coverage": "0.27",
+     "first_choice_rate_over_admitted": "0.9629629629629629629629629630",
+     "selectable": false,
+     "threshold": "0.651587"
+    },
+    {
+     "admitted_decisions": 28,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 24,
+     "confident_errors": 1,
+     "coverage": "0.28",
+     "first_choice_rate_over_admitted": "0.9642857142857142857142857143",
+     "selectable": false,
+     "threshold": "0.646881"
+    },
+    {
+     "admitted_decisions": 29,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 24,
+     "confident_errors": 1,
+     "coverage": "0.29",
+     "first_choice_rate_over_admitted": "0.9655172413793103448275862069",
+     "selectable": false,
+     "threshold": "0.637252"
+    },
+    {
+     "admitted_decisions": 30,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 24,
+     "confident_errors": 1,
+     "coverage": "0.3",
+     "first_choice_rate_over_admitted": "0.9666666666666666666666666667",
+     "selectable": false,
+     "threshold": "0.613821"
+    },
+    {
+     "admitted_decisions": 31,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 25,
+     "confident_errors": 1,
+     "coverage": "0.31",
+     "first_choice_rate_over_admitted": "0.9677419354838709677419354839",
+     "selectable": false,
+     "threshold": "0.609863"
+    },
+    {
+     "admitted_decisions": 32,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 25,
+     "confident_errors": 1,
+     "coverage": "0.32",
+     "first_choice_rate_over_admitted": "0.96875",
+     "selectable": false,
+     "threshold": "0.608476"
+    },
+    {
+     "admitted_decisions": 33,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 26,
+     "confident_errors": 2,
+     "coverage": "0.33",
+     "first_choice_rate_over_admitted": "0.9393939393939393939393939394",
+     "selectable": false,
+     "threshold": "0.599892"
+    },
+    {
+     "admitted_decisions": 34,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 27,
+     "confident_errors": 2,
+     "coverage": "0.34",
+     "first_choice_rate_over_admitted": "0.9411764705882352941176470588",
+     "selectable": false,
+     "threshold": "0.59983"
+    },
+    {
+     "admitted_decisions": 35,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 28,
+     "confident_errors": 2,
+     "coverage": "0.35",
+     "first_choice_rate_over_admitted": "0.9428571428571428571428571429",
+     "selectable": false,
+     "threshold": "0.575712"
+    },
+    {
+     "admitted_decisions": 36,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 29,
+     "confident_errors": 2,
+     "coverage": "0.36",
+     "first_choice_rate_over_admitted": "0.9444444444444444444444444444",
+     "selectable": false,
+     "threshold": "0.570724"
+    },
+    {
+     "admitted_decisions": 37,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 30,
+     "confident_errors": 2,
+     "coverage": "0.37",
+     "first_choice_rate_over_admitted": "0.9459459459459459459459459459",
+     "selectable": false,
+     "threshold": "0.518133"
+    },
+    {
+     "admitted_decisions": 38,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 31,
+     "confident_errors": 2,
+     "coverage": "0.38",
+     "first_choice_rate_over_admitted": "0.9473684210526315789473684211",
+     "selectable": false,
+     "threshold": "0.510456"
+    },
+    {
+     "admitted_decisions": 39,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 32,
+     "confident_errors": 2,
+     "coverage": "0.39",
+     "first_choice_rate_over_admitted": "0.9487179487179487179487179487",
+     "selectable": false,
+     "threshold": "0.500693"
+    },
+    {
+     "admitted_decisions": 40,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 33,
+     "confident_errors": 2,
+     "coverage": "0.4",
+     "first_choice_rate_over_admitted": "0.95",
+     "selectable": false,
+     "threshold": "0.496415"
+    },
+    {
+     "admitted_decisions": 41,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 33,
+     "confident_errors": 2,
+     "coverage": "0.41",
+     "first_choice_rate_over_admitted": "0.9512195121951219512195121951",
+     "selectable": false,
+     "threshold": "0.494525"
+    },
+    {
+     "admitted_decisions": 42,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 34,
+     "confident_errors": 2,
+     "coverage": "0.42",
+     "first_choice_rate_over_admitted": "0.9523809523809523809523809524",
+     "selectable": false,
+     "threshold": "0.474161"
+    },
+    {
+     "admitted_decisions": 43,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 35,
+     "confident_errors": 2,
+     "coverage": "0.43",
+     "first_choice_rate_over_admitted": "0.9534883720930232558139534884",
+     "selectable": false,
+     "threshold": "0.470586"
+    },
+    {
+     "admitted_decisions": 44,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 36,
+     "confident_errors": 2,
+     "coverage": "0.44",
+     "first_choice_rate_over_admitted": "0.9545454545454545454545454545",
+     "selectable": false,
+     "threshold": "0.469693"
+    },
+    {
+     "admitted_decisions": 45,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 37,
+     "confident_errors": 2,
+     "coverage": "0.45",
+     "first_choice_rate_over_admitted": "0.9555555555555555555555555556",
+     "selectable": false,
+     "threshold": "0.46683"
+    },
+    {
+     "admitted_decisions": 46,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 38,
+     "confident_errors": 3,
+     "coverage": "0.46",
+     "first_choice_rate_over_admitted": "0.9347826086956521739130434783",
+     "selectable": false,
+     "threshold": "0.466184"
+    },
+    {
+     "admitted_decisions": 47,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 39,
+     "confident_errors": 3,
+     "coverage": "0.47",
+     "first_choice_rate_over_admitted": "0.9361702127659574468085106383",
+     "selectable": false,
+     "threshold": "0.447802"
+    },
+    {
+     "admitted_decisions": 48,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 40,
+     "confident_errors": 3,
+     "coverage": "0.48",
+     "first_choice_rate_over_admitted": "0.9375",
+     "selectable": false,
+     "threshold": "0.44031"
+    },
+    {
+     "admitted_decisions": 49,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 40,
+     "confident_errors": 3,
+     "coverage": "0.49",
+     "first_choice_rate_over_admitted": "0.9387755102040816326530612245",
+     "selectable": false,
+     "threshold": "0.427631"
+    },
+    {
+     "admitted_decisions": 50,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 41,
+     "confident_errors": 3,
+     "coverage": "0.5",
+     "first_choice_rate_over_admitted": "0.94",
+     "selectable": false,
+     "threshold": "0.393464"
+    },
+    {
+     "admitted_decisions": 51,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 42,
+     "confident_errors": 3,
+     "coverage": "0.51",
+     "first_choice_rate_over_admitted": "0.9411764705882352941176470588",
+     "selectable": false,
+     "threshold": "0.37746"
+    },
+    {
+     "admitted_decisions": 52,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 43,
+     "confident_errors": 3,
+     "coverage": "0.52",
+     "first_choice_rate_over_admitted": "0.9423076923076923076923076923",
+     "selectable": false,
+     "threshold": "0.371677"
+    },
+    {
+     "admitted_decisions": 53,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 44,
+     "confident_errors": 3,
+     "coverage": "0.53",
+     "first_choice_rate_over_admitted": "0.9433962264150943396226415094",
+     "selectable": false,
+     "threshold": "0.342722"
+    },
+    {
+     "admitted_decisions": 54,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 45,
+     "confident_errors": 3,
+     "coverage": "0.54",
+     "first_choice_rate_over_admitted": "0.9444444444444444444444444444",
+     "selectable": false,
+     "threshold": "0.337775"
+    },
+    {
+     "admitted_decisions": 55,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 46,
+     "confident_errors": 3,
+     "coverage": "0.55",
+     "first_choice_rate_over_admitted": "0.9454545454545454545454545455",
+     "selectable": false,
+     "threshold": "0.336261"
+    },
+    {
+     "admitted_decisions": 56,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 47,
+     "confident_errors": 3,
+     "coverage": "0.56",
+     "first_choice_rate_over_admitted": "0.9464285714285714285714285714",
+     "selectable": false,
+     "threshold": "0.333074"
+    },
+    {
+     "admitted_decisions": 57,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 48,
+     "confident_errors": 3,
+     "coverage": "0.57",
+     "first_choice_rate_over_admitted": "0.9473684210526315789473684211",
+     "selectable": false,
+     "threshold": "0.328369"
+    },
+    {
+     "admitted_decisions": 58,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 49,
+     "confident_errors": 3,
+     "coverage": "0.58",
+     "first_choice_rate_over_admitted": "0.9482758620689655172413793103",
+     "selectable": false,
+     "threshold": "0.313659"
+    },
+    {
+     "admitted_decisions": 59,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 49,
+     "confident_errors": 3,
+     "coverage": "0.59",
+     "first_choice_rate_over_admitted": "0.9491525423728813559322033898",
+     "selectable": false,
+     "threshold": "0.304907"
+    },
+    {
+     "admitted_decisions": 60,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 50,
+     "confident_errors": 3,
+     "coverage": "0.6",
+     "first_choice_rate_over_admitted": "0.95",
+     "selectable": false,
+     "threshold": "0.268763"
+    },
+    {
+     "admitted_decisions": 61,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 51,
+     "confident_errors": 3,
+     "coverage": "0.61",
+     "first_choice_rate_over_admitted": "0.9508196721311475409836065574",
+     "selectable": false,
+     "threshold": "0.262905"
+    },
+    {
+     "admitted_decisions": 62,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 52,
+     "confident_errors": 3,
+     "coverage": "0.62",
+     "first_choice_rate_over_admitted": "0.9516129032258064516129032258",
+     "selectable": false,
+     "threshold": "0.261427"
+    },
+    {
+     "admitted_decisions": 63,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 53,
+     "confident_errors": 4,
+     "coverage": "0.63",
+     "first_choice_rate_over_admitted": "0.9365079365079365079365079365",
+     "selectable": false,
+     "threshold": "0.260322"
+    },
+    {
+     "admitted_decisions": 64,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 54,
+     "confident_errors": 4,
+     "coverage": "0.64",
+     "first_choice_rate_over_admitted": "0.9375",
+     "selectable": false,
+     "threshold": "0.246883"
+    },
+    {
+     "admitted_decisions": 65,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 54,
+     "confident_errors": 4,
+     "coverage": "0.65",
+     "first_choice_rate_over_admitted": "0.9384615384615384615384615385",
+     "selectable": false,
+     "threshold": "0.219307"
+    },
+    {
+     "admitted_decisions": 66,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 55,
+     "confident_errors": 4,
+     "coverage": "0.66",
+     "first_choice_rate_over_admitted": "0.9393939393939393939393939394",
+     "selectable": false,
+     "threshold": "0.214206"
+    },
+    {
+     "admitted_decisions": 67,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 56,
+     "confident_errors": 4,
+     "coverage": "0.67",
+     "first_choice_rate_over_admitted": "0.9402985074626865671641791045",
+     "selectable": false,
+     "threshold": "0.204332"
+    },
+    {
+     "admitted_decisions": 68,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 57,
+     "confident_errors": 4,
+     "coverage": "0.68",
+     "first_choice_rate_over_admitted": "0.9411764705882352941176470588",
+     "selectable": false,
+     "threshold": "0.203063"
+    },
+    {
+     "admitted_decisions": 69,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 58,
+     "confident_errors": 5,
+     "coverage": "0.69",
+     "first_choice_rate_over_admitted": "0.9275362318840579710144927536",
+     "selectable": false,
+     "threshold": "0.199638"
+    },
+    {
+     "admitted_decisions": 70,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 58,
+     "confident_errors": 5,
+     "coverage": "0.7",
+     "first_choice_rate_over_admitted": "0.9285714285714285714285714286",
+     "selectable": false,
+     "threshold": "0.192172"
+    },
+    {
+     "admitted_decisions": 71,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 59,
+     "confident_errors": 5,
+     "coverage": "0.71",
+     "first_choice_rate_over_admitted": "0.9295774647887323943661971831",
+     "selectable": false,
+     "threshold": "0.169751"
+    },
+    {
+     "admitted_decisions": 72,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 60,
+     "confident_errors": 5,
+     "coverage": "0.72",
+     "first_choice_rate_over_admitted": "0.9305555555555555555555555556",
+     "selectable": false,
+     "threshold": "0.160453"
+    },
+    {
+     "admitted_decisions": 73,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 61,
+     "confident_errors": 5,
+     "coverage": "0.73",
+     "first_choice_rate_over_admitted": "0.9315068493150684931506849315",
+     "selectable": false,
+     "threshold": "0.138213"
+    },
+    {
+     "admitted_decisions": 74,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 62,
+     "confident_errors": 5,
+     "coverage": "0.74",
+     "first_choice_rate_over_admitted": "0.9324324324324324324324324324",
+     "selectable": false,
+     "threshold": "0.135796"
+    },
+    {
+     "admitted_decisions": 75,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 63,
+     "confident_errors": 5,
+     "coverage": "0.75",
+     "first_choice_rate_over_admitted": "0.9333333333333333333333333333",
+     "selectable": false,
+     "threshold": "0.121152"
+    },
+    {
+     "admitted_decisions": 76,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 64,
+     "confident_errors": 5,
+     "coverage": "0.76",
+     "first_choice_rate_over_admitted": "0.9342105263157894736842105263",
+     "selectable": false,
+     "threshold": "0.1169"
+    },
+    {
+     "admitted_decisions": 77,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 64,
+     "confident_errors": 5,
+     "coverage": "0.77",
+     "first_choice_rate_over_admitted": "0.9350649350649350649350649351",
+     "selectable": false,
+     "threshold": "0.112809"
+    },
+    {
+     "admitted_decisions": 78,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 65,
+     "confident_errors": 6,
+     "coverage": "0.78",
+     "first_choice_rate_over_admitted": "0.9230769230769230769230769231",
+     "selectable": false,
+     "threshold": "0.10345"
+    },
+    {
+     "admitted_decisions": 79,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 65,
+     "confident_errors": 6,
+     "coverage": "0.79",
+     "first_choice_rate_over_admitted": "0.9240506329113924050632911392",
+     "selectable": false,
+     "threshold": "0.093259"
+    },
+    {
+     "admitted_decisions": 80,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 65,
+     "confident_errors": 6,
+     "coverage": "0.8",
+     "first_choice_rate_over_admitted": "0.925",
+     "selectable": false,
+     "threshold": "0.092629"
+    },
+    {
+     "admitted_decisions": 81,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 65,
+     "confident_errors": 6,
+     "coverage": "0.81",
+     "first_choice_rate_over_admitted": "0.9259259259259259259259259259",
+     "selectable": false,
+     "threshold": "0.09022"
+    },
+    {
+     "admitted_decisions": 82,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 66,
+     "confident_errors": 7,
+     "coverage": "0.82",
+     "first_choice_rate_over_admitted": "0.9146341463414634146341463415",
+     "selectable": false,
+     "threshold": "0.087571"
+    },
+    {
+     "admitted_decisions": 83,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 67,
+     "confident_errors": 7,
+     "coverage": "0.83",
+     "first_choice_rate_over_admitted": "0.9156626506024096385542168675",
+     "selectable": false,
+     "threshold": "0.086966"
+    },
+    {
+     "admitted_decisions": 84,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 68,
+     "confident_errors": 7,
+     "coverage": "0.84",
+     "first_choice_rate_over_admitted": "0.9166666666666666666666666667",
+     "selectable": false,
+     "threshold": "0.084123"
+    },
+    {
+     "admitted_decisions": 85,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 69,
+     "confident_errors": 7,
+     "coverage": "0.85",
+     "first_choice_rate_over_admitted": "0.9176470588235294117647058824",
+     "selectable": false,
+     "threshold": "0.083887"
+    },
+    {
+     "admitted_decisions": 86,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 70,
+     "confident_errors": 7,
+     "coverage": "0.86",
+     "first_choice_rate_over_admitted": "0.9186046511627906976744186047",
+     "selectable": false,
+     "threshold": "0.082614"
+    },
+    {
+     "admitted_decisions": 87,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 71,
+     "confident_errors": 8,
+     "coverage": "0.87",
+     "first_choice_rate_over_admitted": "0.9080459770114942528735632184",
+     "selectable": false,
+     "threshold": "0.081291"
+    },
+    {
+     "admitted_decisions": 88,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 71,
+     "confident_errors": 8,
+     "coverage": "0.88",
+     "first_choice_rate_over_admitted": "0.9090909090909090909090909091",
+     "selectable": false,
+     "threshold": "0.076999"
+    },
+    {
+     "admitted_decisions": 89,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 72,
+     "confident_errors": 8,
+     "coverage": "0.89",
+     "first_choice_rate_over_admitted": "0.9101123595505617977528089888",
+     "selectable": false,
+     "threshold": "0.070656"
+    },
+    {
+     "admitted_decisions": 90,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 72,
+     "confident_errors": 8,
+     "coverage": "0.9",
+     "first_choice_rate_over_admitted": "0.9111111111111111111111111111",
+     "selectable": false,
+     "threshold": "0.06939"
+    },
+    {
+     "admitted_decisions": 91,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 73,
+     "confident_errors": 8,
+     "coverage": "0.91",
+     "first_choice_rate_over_admitted": "0.9120879120879120879120879121",
+     "selectable": false,
+     "threshold": "0.063016"
+    },
+    {
+     "admitted_decisions": 92,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 74,
+     "confident_errors": 9,
+     "coverage": "0.92",
+     "first_choice_rate_over_admitted": "0.9021739130434782608695652174",
+     "selectable": false,
+     "threshold": "0.053322"
+    },
+    {
+     "admitted_decisions": 93,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 75,
+     "confident_errors": 9,
+     "coverage": "0.93",
+     "first_choice_rate_over_admitted": "0.9032258064516129032258064516",
+     "selectable": false,
+     "threshold": "0.050334"
+    },
+    {
+     "admitted_decisions": 94,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 76,
+     "confident_errors": 9,
+     "coverage": "0.94",
+     "first_choice_rate_over_admitted": "0.9042553191489361702127659574",
+     "selectable": false,
+     "threshold": "0.04203"
+    },
+    {
+     "admitted_decisions": 95,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 77,
+     "confident_errors": 9,
+     "coverage": "0.95",
+     "first_choice_rate_over_admitted": "0.9052631578947368421052631579",
+     "selectable": false,
+     "threshold": "0.041951"
+    },
+    {
+     "admitted_decisions": 96,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 77,
+     "confident_errors": 9,
+     "coverage": "0.96",
+     "first_choice_rate_over_admitted": "0.90625",
+     "selectable": false,
+     "threshold": "0.017424"
+    },
+    {
+     "admitted_decisions": 97,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 78,
+     "confident_errors": 9,
+     "coverage": "0.97",
+     "first_choice_rate_over_admitted": "0.9072164948453608247422680412",
+     "selectable": false,
+     "threshold": "0.017103"
+    },
+    {
+     "admitted_decisions": 98,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 79,
+     "confident_errors": 9,
+     "coverage": "0.98",
+     "first_choice_rate_over_admitted": "0.9081632653061224489795918367",
+     "selectable": false,
+     "threshold": "0.009517"
+    },
+    {
+     "admitted_decisions": 99,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 80,
+     "confident_errors": 9,
+     "coverage": "0.99",
+     "first_choice_rate_over_admitted": "0.9090909090909090909090909091",
+     "selectable": false,
+     "threshold": "0.007882"
+    },
+    {
+     "admitted_decisions": 100,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 81,
+     "confident_errors": 9,
+     "coverage": "1",
+     "first_choice_rate_over_admitted": "0.91",
+     "selectable": false,
+     "threshold": "0.001971"
+    }
+   ],
+   "sweep_points": 100,
+   "zero_error_coverage": "0.26",
+   "zero_error_threshold": "0.651587"
+  },
+  "720": {
+   "answered_decisions": 100,
+   "baseline_first_choice_rate": "0.42",
+   "best_first_choice_rate_over_admitted": "1",
+   "changed_decisions_over_all_answered": 82,
+   "confident_errors_at_the_derived_point": 0,
+   "deepest_error_free_prefix_by_margin": 27,
+   "errors_among_all_answered": 12,
+   "exemplar_groups": 180,
+   "exemplar_rows": 720,
+   "first_choice_rate_over_all_answered": "0.88",
+   "fitted_pair_count": 720,
+   "model_hash": "9fd297fb407015374485e8f7ef8fbb557e6f89f7ac3286e2572769fdab937d74",
+   "sweep": [
+    {
+     "admitted_decisions": 1,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 1,
+     "confident_errors": 0,
+     "coverage": "0.01",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "3.665856"
+    },
+    {
+     "admitted_decisions": 2,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 2,
+     "confident_errors": 0,
+     "coverage": "0.02",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "3.23366"
+    },
+    {
+     "admitted_decisions": 3,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 3,
+     "confident_errors": 0,
+     "coverage": "0.03",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "2.324977"
+    },
+    {
+     "admitted_decisions": 4,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 4,
+     "confident_errors": 0,
+     "coverage": "0.04",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "2.183201"
+    },
+    {
+     "admitted_decisions": 5,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 5,
+     "confident_errors": 0,
+     "coverage": "0.05",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "2.028496"
+    },
+    {
+     "admitted_decisions": 6,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 5,
+     "confident_errors": 0,
+     "coverage": "0.06",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.870347"
+    },
+    {
+     "admitted_decisions": 7,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 5,
+     "confident_errors": 0,
+     "coverage": "0.07",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.851753"
+    },
+    {
+     "admitted_decisions": 8,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 6,
+     "confident_errors": 0,
+     "coverage": "0.08",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.795419"
+    },
+    {
+     "admitted_decisions": 9,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 7,
+     "confident_errors": 0,
+     "coverage": "0.09",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.721195"
+    },
+    {
+     "admitted_decisions": 10,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 8,
+     "confident_errors": 0,
+     "coverage": "0.1",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.688456"
+    },
+    {
+     "admitted_decisions": 11,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 8,
+     "confident_errors": 0,
+     "coverage": "0.11",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.669419"
+    },
+    {
+     "admitted_decisions": 12,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 9,
+     "confident_errors": 0,
+     "coverage": "0.12",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.64935"
+    },
+    {
+     "admitted_decisions": 13,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 10,
+     "confident_errors": 0,
+     "coverage": "0.13",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.619133"
+    },
+    {
+     "admitted_decisions": 14,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 10,
+     "confident_errors": 0,
+     "coverage": "0.14",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.535013"
+    },
+    {
+     "admitted_decisions": 15,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 11,
+     "confident_errors": 0,
+     "coverage": "0.15",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.526795"
+    },
+    {
+     "admitted_decisions": 16,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 12,
+     "confident_errors": 0,
+     "coverage": "0.16",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.414757"
+    },
+    {
+     "admitted_decisions": 17,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 13,
+     "confident_errors": 0,
+     "coverage": "0.17",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.413248"
+    },
+    {
+     "admitted_decisions": 18,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 13,
+     "confident_errors": 0,
+     "coverage": "0.18",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.397361"
+    },
+    {
+     "admitted_decisions": 19,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 14,
+     "confident_errors": 0,
+     "coverage": "0.19",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.393256"
+    },
+    {
+     "admitted_decisions": 20,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 15,
+     "confident_errors": 0,
+     "coverage": "0.2",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.30148"
+    },
+    {
+     "admitted_decisions": 21,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 16,
+     "confident_errors": 0,
+     "coverage": "0.21",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.189151"
+    },
+    {
+     "admitted_decisions": 22,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 17,
+     "confident_errors": 0,
+     "coverage": "0.22",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.15043"
+    },
+    {
+     "admitted_decisions": 23,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 18,
+     "confident_errors": 0,
+     "coverage": "0.23",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.113829"
+    },
+    {
+     "admitted_decisions": 24,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 19,
+     "confident_errors": 0,
+     "coverage": "0.24",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.105942"
+    },
+    {
+     "admitted_decisions": 25,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 19,
+     "confident_errors": 0,
+     "coverage": "0.25",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.095046"
+    },
+    {
+     "admitted_decisions": 26,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 20,
+     "confident_errors": 0,
+     "coverage": "0.26",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.09419"
+    },
+    {
+     "admitted_decisions": 27,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 21,
+     "confident_errors": 0,
+     "coverage": "0.27",
+     "first_choice_rate_over_admitted": "1",
+     "selectable": false,
+     "threshold": "1.07955"
+    },
+    {
+     "admitted_decisions": 28,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 22,
+     "confident_errors": 1,
+     "coverage": "0.28",
+     "first_choice_rate_over_admitted": "0.9642857142857142857142857143",
+     "selectable": false,
+     "threshold": "1.071794"
+    },
+    {
+     "admitted_decisions": 29,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 23,
+     "confident_errors": 1,
+     "coverage": "0.29",
+     "first_choice_rate_over_admitted": "0.9655172413793103448275862069",
+     "selectable": false,
+     "threshold": "1.071022"
+    },
+    {
+     "admitted_decisions": 30,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 24,
+     "confident_errors": 1,
+     "coverage": "0.3",
+     "first_choice_rate_over_admitted": "0.9666666666666666666666666667",
+     "selectable": false,
+     "threshold": "1.011359"
+    },
+    {
+     "admitted_decisions": 31,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 25,
+     "confident_errors": 1,
+     "coverage": "0.31",
+     "first_choice_rate_over_admitted": "0.9677419354838709677419354839",
+     "selectable": false,
+     "threshold": "1.004486"
+    },
+    {
+     "admitted_decisions": 32,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 25,
+     "confident_errors": 1,
+     "coverage": "0.32",
+     "first_choice_rate_over_admitted": "0.96875",
+     "selectable": false,
+     "threshold": "0.987408"
+    },
+    {
+     "admitted_decisions": 33,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 26,
+     "confident_errors": 1,
+     "coverage": "0.33",
+     "first_choice_rate_over_admitted": "0.9696969696969696969696969697",
+     "selectable": false,
+     "threshold": "0.986786"
+    },
+    {
+     "admitted_decisions": 34,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 27,
+     "confident_errors": 1,
+     "coverage": "0.34",
+     "first_choice_rate_over_admitted": "0.9705882352941176470588235294",
+     "selectable": false,
+     "threshold": "0.952747"
+    },
+    {
+     "admitted_decisions": 35,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 28,
+     "confident_errors": 1,
+     "coverage": "0.35",
+     "first_choice_rate_over_admitted": "0.9714285714285714285714285714",
+     "selectable": false,
+     "threshold": "0.935666"
+    },
+    {
+     "admitted_decisions": 36,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 29,
+     "confident_errors": 1,
+     "coverage": "0.36",
+     "first_choice_rate_over_admitted": "0.9722222222222222222222222222",
+     "selectable": false,
+     "threshold": "0.900994"
+    },
+    {
+     "admitted_decisions": 37,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 30,
+     "confident_errors": 1,
+     "coverage": "0.37",
+     "first_choice_rate_over_admitted": "0.9729729729729729729729729730",
+     "selectable": false,
+     "threshold": "0.891611"
+    },
+    {
+     "admitted_decisions": 38,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 31,
+     "confident_errors": 1,
+     "coverage": "0.38",
+     "first_choice_rate_over_admitted": "0.9736842105263157894736842105",
+     "selectable": false,
+     "threshold": "0.816185"
+    },
+    {
+     "admitted_decisions": 39,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 31,
+     "confident_errors": 1,
+     "coverage": "0.39",
+     "first_choice_rate_over_admitted": "0.9743589743589743589743589744",
+     "selectable": false,
+     "threshold": "0.796985"
+    },
+    {
+     "admitted_decisions": 40,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 32,
+     "confident_errors": 1,
+     "coverage": "0.4",
+     "first_choice_rate_over_admitted": "0.975",
+     "selectable": false,
+     "threshold": "0.794335"
+    },
+    {
+     "admitted_decisions": 41,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 33,
+     "confident_errors": 1,
+     "coverage": "0.41",
+     "first_choice_rate_over_admitted": "0.9756097560975609756097560976",
+     "selectable": false,
+     "threshold": "0.769459"
+    },
+    {
+     "admitted_decisions": 42,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 34,
+     "confident_errors": 1,
+     "coverage": "0.42",
+     "first_choice_rate_over_admitted": "0.9761904761904761904761904762",
+     "selectable": false,
+     "threshold": "0.765475"
+    },
+    {
+     "admitted_decisions": 43,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 34,
+     "confident_errors": 1,
+     "coverage": "0.43",
+     "first_choice_rate_over_admitted": "0.9767441860465116279069767442",
+     "selectable": false,
+     "threshold": "0.754905"
+    },
+    {
+     "admitted_decisions": 44,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 35,
+     "confident_errors": 1,
+     "coverage": "0.44",
+     "first_choice_rate_over_admitted": "0.9772727272727272727272727273",
+     "selectable": false,
+     "threshold": "0.754481"
+    },
+    {
+     "admitted_decisions": 45,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 35,
+     "confident_errors": 1,
+     "coverage": "0.45",
+     "first_choice_rate_over_admitted": "0.9777777777777777777777777778",
+     "selectable": false,
+     "threshold": "0.753631"
+    },
+    {
+     "admitted_decisions": 46,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 36,
+     "confident_errors": 1,
+     "coverage": "0.46",
+     "first_choice_rate_over_admitted": "0.9782608695652173913043478261",
+     "selectable": false,
+     "threshold": "0.735546"
+    },
+    {
+     "admitted_decisions": 47,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 37,
+     "confident_errors": 1,
+     "coverage": "0.47",
+     "first_choice_rate_over_admitted": "0.9787234042553191489361702128",
+     "selectable": false,
+     "threshold": "0.729606"
+    },
+    {
+     "admitted_decisions": 48,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 38,
+     "confident_errors": 1,
+     "coverage": "0.48",
+     "first_choice_rate_over_admitted": "0.9791666666666666666666666667",
+     "selectable": false,
+     "threshold": "0.687106"
+    },
+    {
+     "admitted_decisions": 49,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 39,
+     "confident_errors": 1,
+     "coverage": "0.49",
+     "first_choice_rate_over_admitted": "0.9795918367346938775510204082",
+     "selectable": false,
+     "threshold": "0.669224"
+    },
+    {
+     "admitted_decisions": 50,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 40,
+     "confident_errors": 1,
+     "coverage": "0.5",
+     "first_choice_rate_over_admitted": "0.98",
+     "selectable": false,
+     "threshold": "0.659861"
+    },
+    {
+     "admitted_decisions": 51,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 41,
+     "confident_errors": 1,
+     "coverage": "0.51",
+     "first_choice_rate_over_admitted": "0.9803921568627450980392156863",
+     "selectable": false,
+     "threshold": "0.657541"
+    },
+    {
+     "admitted_decisions": 52,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 42,
+     "confident_errors": 1,
+     "coverage": "0.52",
+     "first_choice_rate_over_admitted": "0.9807692307692307692307692308",
+     "selectable": false,
+     "threshold": "0.656437"
+    },
+    {
+     "admitted_decisions": 53,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 43,
+     "confident_errors": 1,
+     "coverage": "0.53",
+     "first_choice_rate_over_admitted": "0.9811320754716981132075471698",
+     "selectable": false,
+     "threshold": "0.654839"
+    },
+    {
+     "admitted_decisions": 54,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 44,
+     "confident_errors": 1,
+     "coverage": "0.54",
+     "first_choice_rate_over_admitted": "0.9814814814814814814814814815",
+     "selectable": false,
+     "threshold": "0.627734"
+    },
+    {
+     "admitted_decisions": 55,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 45,
+     "confident_errors": 1,
+     "coverage": "0.55",
+     "first_choice_rate_over_admitted": "0.9818181818181818181818181818",
+     "selectable": false,
+     "threshold": "0.614707"
+    },
+    {
+     "admitted_decisions": 56,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 46,
+     "confident_errors": 1,
+     "coverage": "0.56",
+     "first_choice_rate_over_admitted": "0.9821428571428571428571428571",
+     "selectable": false,
+     "threshold": "0.59956"
+    },
+    {
+     "admitted_decisions": 57,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 47,
+     "confident_errors": 1,
+     "coverage": "0.57",
+     "first_choice_rate_over_admitted": "0.9824561403508771929824561404",
+     "selectable": false,
+     "threshold": "0.572587"
+    },
+    {
+     "admitted_decisions": 58,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 48,
+     "confident_errors": 1,
+     "coverage": "0.58",
+     "first_choice_rate_over_admitted": "0.9827586206896551724137931034",
+     "selectable": false,
+     "threshold": "0.448987"
+    },
+    {
+     "admitted_decisions": 59,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 49,
+     "confident_errors": 2,
+     "coverage": "0.59",
+     "first_choice_rate_over_admitted": "0.9661016949152542372881355932",
+     "selectable": false,
+     "threshold": "0.448554"
+    },
+    {
+     "admitted_decisions": 60,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 49,
+     "confident_errors": 2,
+     "coverage": "0.6",
+     "first_choice_rate_over_admitted": "0.9666666666666666666666666667",
+     "selectable": false,
+     "threshold": "0.446918"
+    },
+    {
+     "admitted_decisions": 61,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 50,
+     "confident_errors": 2,
+     "coverage": "0.61",
+     "first_choice_rate_over_admitted": "0.9672131147540983606557377049",
+     "selectable": false,
+     "threshold": "0.441643"
+    },
+    {
+     "admitted_decisions": 62,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 51,
+     "confident_errors": 2,
+     "coverage": "0.62",
+     "first_choice_rate_over_admitted": "0.9677419354838709677419354839",
+     "selectable": false,
+     "threshold": "0.424603"
+    },
+    {
+     "admitted_decisions": 63,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 51,
+     "confident_errors": 2,
+     "coverage": "0.63",
+     "first_choice_rate_over_admitted": "0.9682539682539682539682539683",
+     "selectable": false,
+     "threshold": "0.42193"
+    },
+    {
+     "admitted_decisions": 64,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 52,
+     "confident_errors": 2,
+     "coverage": "0.64",
+     "first_choice_rate_over_admitted": "0.96875",
+     "selectable": false,
+     "threshold": "0.382042"
+    },
+    {
+     "admitted_decisions": 65,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 53,
+     "confident_errors": 2,
+     "coverage": "0.65",
+     "first_choice_rate_over_admitted": "0.9692307692307692307692307692",
+     "selectable": false,
+     "threshold": "0.380271"
+    },
+    {
+     "admitted_decisions": 66,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 54,
+     "confident_errors": 2,
+     "coverage": "0.66",
+     "first_choice_rate_over_admitted": "0.9696969696969696969696969697",
+     "selectable": false,
+     "threshold": "0.379559"
+    },
+    {
+     "admitted_decisions": 67,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 55,
+     "confident_errors": 2,
+     "coverage": "0.67",
+     "first_choice_rate_over_admitted": "0.9701492537313432835820895522",
+     "selectable": false,
+     "threshold": "0.374485"
+    },
+    {
+     "admitted_decisions": 68,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 56,
+     "confident_errors": 3,
+     "coverage": "0.68",
+     "first_choice_rate_over_admitted": "0.9558823529411764705882352941",
+     "selectable": false,
+     "threshold": "0.367557"
+    },
+    {
+     "admitted_decisions": 69,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 57,
+     "confident_errors": 3,
+     "coverage": "0.69",
+     "first_choice_rate_over_admitted": "0.9565217391304347826086956522",
+     "selectable": false,
+     "threshold": "0.362661"
+    },
+    {
+     "admitted_decisions": 70,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 57,
+     "confident_errors": 3,
+     "coverage": "0.7",
+     "first_choice_rate_over_admitted": "0.9571428571428571428571428571",
+     "selectable": false,
+     "threshold": "0.358925"
+    },
+    {
+     "admitted_decisions": 71,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 58,
+     "confident_errors": 3,
+     "coverage": "0.71",
+     "first_choice_rate_over_admitted": "0.9577464788732394366197183099",
+     "selectable": false,
+     "threshold": "0.306672"
+    },
+    {
+     "admitted_decisions": 72,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 59,
+     "confident_errors": 3,
+     "coverage": "0.72",
+     "first_choice_rate_over_admitted": "0.9583333333333333333333333333",
+     "selectable": false,
+     "threshold": "0.282172"
+    },
+    {
+     "admitted_decisions": 73,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 59,
+     "confident_errors": 3,
+     "coverage": "0.73",
+     "first_choice_rate_over_admitted": "0.9589041095890410958904109589",
+     "selectable": false,
+     "threshold": "0.271912"
+    },
+    {
+     "admitted_decisions": 74,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 60,
+     "confident_errors": 4,
+     "coverage": "0.74",
+     "first_choice_rate_over_admitted": "0.9459459459459459459459459459",
+     "selectable": false,
+     "threshold": "0.239599"
+    },
+    {
+     "admitted_decisions": 75,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 61,
+     "confident_errors": 4,
+     "coverage": "0.75",
+     "first_choice_rate_over_admitted": "0.9466666666666666666666666667",
+     "selectable": false,
+     "threshold": "0.202507"
+    },
+    {
+     "admitted_decisions": 76,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 62,
+     "confident_errors": 5,
+     "coverage": "0.76",
+     "first_choice_rate_over_admitted": "0.9342105263157894736842105263",
+     "selectable": false,
+     "threshold": "0.197887"
+    },
+    {
+     "admitted_decisions": 77,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 63,
+     "confident_errors": 5,
+     "coverage": "0.77",
+     "first_choice_rate_over_admitted": "0.9350649350649350649350649351",
+     "selectable": false,
+     "threshold": "0.196792"
+    },
+    {
+     "admitted_decisions": 78,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 64,
+     "confident_errors": 6,
+     "coverage": "0.78",
+     "first_choice_rate_over_admitted": "0.9230769230769230769230769231",
+     "selectable": false,
+     "threshold": "0.19371"
+    },
+    {
+     "admitted_decisions": 79,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 65,
+     "confident_errors": 6,
+     "coverage": "0.79",
+     "first_choice_rate_over_admitted": "0.9240506329113924050632911392",
+     "selectable": false,
+     "threshold": "0.157952"
+    },
+    {
+     "admitted_decisions": 80,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 66,
+     "confident_errors": 6,
+     "coverage": "0.8",
+     "first_choice_rate_over_admitted": "0.925",
+     "selectable": false,
+     "threshold": "0.157458"
+    },
+    {
+     "admitted_decisions": 81,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 66,
+     "confident_errors": 6,
+     "coverage": "0.81",
+     "first_choice_rate_over_admitted": "0.9259259259259259259259259259",
+     "selectable": false,
+     "threshold": "0.153536"
+    },
+    {
+     "admitted_decisions": 82,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 67,
+     "confident_errors": 6,
+     "coverage": "0.82",
+     "first_choice_rate_over_admitted": "0.9268292682926829268292682927",
+     "selectable": false,
+     "threshold": "0.144904"
+    },
+    {
+     "admitted_decisions": 83,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 68,
+     "confident_errors": 6,
+     "coverage": "0.83",
+     "first_choice_rate_over_admitted": "0.9277108433734939759036144578",
+     "selectable": false,
+     "threshold": "0.116377"
+    },
+    {
+     "admitted_decisions": 84,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 69,
+     "confident_errors": 6,
+     "coverage": "0.84",
+     "first_choice_rate_over_admitted": "0.9285714285714285714285714286",
+     "selectable": false,
+     "threshold": "0.100899"
+    },
+    {
+     "admitted_decisions": 85,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 70,
+     "confident_errors": 6,
+     "coverage": "0.85",
+     "first_choice_rate_over_admitted": "0.9294117647058823529411764706",
+     "selectable": false,
+     "threshold": "0.095592"
+    },
+    {
+     "admitted_decisions": 86,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 71,
+     "confident_errors": 7,
+     "coverage": "0.86",
+     "first_choice_rate_over_admitted": "0.9186046511627906976744186047",
+     "selectable": false,
+     "threshold": "0.087326"
+    },
+    {
+     "admitted_decisions": 87,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 71,
+     "confident_errors": 7,
+     "coverage": "0.87",
+     "first_choice_rate_over_admitted": "0.9195402298850574712643678161",
+     "selectable": false,
+     "threshold": "0.086287"
+    },
+    {
+     "admitted_decisions": 88,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 71,
+     "confident_errors": 7,
+     "coverage": "0.88",
+     "first_choice_rate_over_admitted": "0.9204545454545454545454545455",
+     "selectable": false,
+     "threshold": "0.082698"
+    },
+    {
+     "admitted_decisions": 89,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 72,
+     "confident_errors": 7,
+     "coverage": "0.89",
+     "first_choice_rate_over_admitted": "0.9213483146067415730337078652",
+     "selectable": false,
+     "threshold": "0.079123"
+    },
+    {
+     "admitted_decisions": 90,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 72,
+     "confident_errors": 7,
+     "coverage": "0.9",
+     "first_choice_rate_over_admitted": "0.9222222222222222222222222222",
+     "selectable": false,
+     "threshold": "0.073576"
+    },
+    {
+     "admitted_decisions": 91,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 73,
+     "confident_errors": 8,
+     "coverage": "0.91",
+     "first_choice_rate_over_admitted": "0.9120879120879120879120879121",
+     "selectable": false,
+     "threshold": "0.063795"
+    },
+    {
+     "admitted_decisions": 92,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 74,
+     "confident_errors": 8,
+     "coverage": "0.92",
+     "first_choice_rate_over_admitted": "0.9130434782608695652173913043",
+     "selectable": false,
+     "threshold": "0.054444"
+    },
+    {
+     "admitted_decisions": 93,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 75,
+     "confident_errors": 8,
+     "coverage": "0.93",
+     "first_choice_rate_over_admitted": "0.9139784946236559139784946237",
+     "selectable": false,
+     "threshold": "0.053902"
+    },
+    {
+     "admitted_decisions": 94,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 76,
+     "confident_errors": 9,
+     "coverage": "0.94",
+     "first_choice_rate_over_admitted": "0.9042553191489361702127659574",
+     "selectable": false,
+     "threshold": "0.048536"
+    },
+    {
+     "admitted_decisions": 95,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 77,
+     "confident_errors": 9,
+     "coverage": "0.95",
+     "first_choice_rate_over_admitted": "0.9052631578947368421052631579",
+     "selectable": false,
+     "threshold": "0.034561"
+    },
+    {
+     "admitted_decisions": 96,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 78,
+     "confident_errors": 10,
+     "coverage": "0.96",
+     "first_choice_rate_over_admitted": "0.8958333333333333333333333333",
+     "selectable": false,
+     "threshold": "0.024925"
+    },
+    {
+     "admitted_decisions": 97,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 79,
+     "confident_errors": 11,
+     "coverage": "0.97",
+     "first_choice_rate_over_admitted": "0.8865979381443298969072164948",
+     "selectable": false,
+     "threshold": "0.015222"
+    },
+    {
+     "admitted_decisions": 98,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 80,
+     "confident_errors": 11,
+     "coverage": "0.98",
+     "first_choice_rate_over_admitted": "0.8877551020408163265306122449",
+     "selectable": false,
+     "threshold": "0.012992"
+    },
+    {
+     "admitted_decisions": 99,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 81,
+     "confident_errors": 12,
+     "coverage": "0.99",
+     "first_choice_rate_over_admitted": "0.8787878787878787878787878788",
+     "selectable": false,
+     "threshold": "0.007397"
+    },
+    {
+     "admitted_decisions": 100,
+     "baseline_first_choice_rate": "0.42",
+     "changed_decisions": 82,
+     "confident_errors": 12,
+     "coverage": "1",
+     "first_choice_rate_over_admitted": "0.88",
+     "selectable": false,
+     "threshold": "0.006818"
+    }
+   ],
+   "sweep_points": 100,
+   "zero_error_coverage": "0.27",
+   "zero_error_threshold": "1.071794"
+  }
+ },
+ "schema_version": 1,
+ "section_2_3": {
+  "confident_errors_allowed": 0,
+  "eligible_cells": 0,
+  "final_groups": 60,
+  "first_action_preservation_on_the_invariance_sample": true,
+  "ineligibility_counts": {
+   "clean_coverage_below_0.40": 2
+  },
+  "inference_budget_ms": "250",
+  "minimum_clean_coverage": "0.40",
+  "minimum_independent_decisions": 100,
+  "minimum_projected_changed_final_decisions": 20,
+  "thresholds_changed": 0
+ },
+ "selection": {
+  "dependent_not_opened": [
+   "final A bodies, outcomes and manifest",
+   "final B bodies, outcomes and manifest",
+   "canary bodies, outcomes and manifest",
+   "the promotion metamorphic submanifest's 120 nominal decisions",
+   "the paired group bootstrap at seed 21041",
+   "artifact promotion, activation, shadow and canary lifecycle",
+   "Gate L2 conditions 13 through 16 and 21 through 27",
+   "Sprint 22A domain expansion"
+  ],
+  "immutable": true,
+  "outcome": "null",
+  "reading": "step 5: zero-error coverage is above zero, below 0.40, and flat across the two volumes (0.26 at 320 rows, 0.27 at 720). The direction ranks and the margin cannot certify enough of what it ranks, so the successor pre-registers a different confidence construction over the same ranker",
+  "stop_kind": "selective_margin_bound",
+  "why_a_null_and_not_a_weaker_candidate": "Section 2.3's conditions are the selection rule, not a preference. A cell that fails one is not a worse candidate, it is not a candidate"
+ },
+ "single_derivation_across_restart": {
+  "derivations_reproduced": 2,
+  "how": "each sealed OperatingPointV4 from S21D5-034 is passed back to derive_zero_error_point as `previous` in this separate process; a different derivation hash raises OperatingPointError instead of writing a second threshold",
+  "sealed_derivation_hashes": {
+   "320": "150ccba446a0320fa25fbfdd480964531571c375cec8a5f993d546a9d53c008f",
+   "720": "eb48bb1b34bd7355027947cf83bf78ef3cf8aa3d50e156bc4ecf8958513fd998"
+  }
+ },
+ "snapshots_sha256": "3c48eddfa11c3ada6e7578aeafedcd22e8ac5b07a90e348f730a5b6bb872bae7",
+ "sprint": "21D5",
+ "two_gates": {
+  "abstention": "the margin floor, held at 0 throughout. It is not searched: a floor chosen against these decisions would be a threshold fitted to the certification set",
+  "admission": "the derived zero-error operating point, one per volume, derived in S21D5-034 and reproduced here across a process restart",
+  "why_d4_s_released_floors_are_absent": "0.55 and 0.70 are proportions of a k-NN neighbourhood's acceptance mass. A projection margin is not a proportion and has no upper bound of one, so carrying those numbers across would compare two different quantities and call the result a comparator"
+ },
+ "wave": "W2"
+}

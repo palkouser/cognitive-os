@@ -1,0 +1,306 @@
+{
+ "bound_evidence": {
+  "contracts": {
+   "file": "sprint-21d5-contracts.json",
+   "sha256": "bee8bafca8c3a33043d9001930a47e37291a4c2a7519f0fec9e653a92487f725"
+  },
+  "d4_sealed_manifests": {
+   "file": "sprint-21d4-sealed-manifests.json",
+   "sha256": "5d1e90bd6acd435b3c77d7a26a6776b0b14d31c4d1b25bb971311999192e5264"
+  },
+  "reuse_audit": {
+   "file": "sprint-21d5-reuse-audit.json",
+   "sha256": "d7ef009e7eb18269481d5c52b847eba306df3550d58ef1c4a4535bf70732c493"
+  },
+  "separation": {
+   "file": "sprint-21d5-corpus-separation.json",
+   "sha256": "243867bb67cf1379cc78f25ddd6fe566ff65277769a452f7fc11749f6ea6cfb7"
+  }
+ },
+ "capability_revocation": {
+  "capability": "isolated_corpus_authoring_validator",
+  "revoked": true,
+  "what_it_closes": [
+   "scripts/corpus_d5.py",
+   "scripts/retrieval_d5.py"
+  ],
+  "when": "at this seal, before any D5 outcome exists",
+  "why": "the capability that wrote the hundred calibration and sixty retrieval groups has no business outliving them; an authoring validator still open once outcomes exist is a channel from a role into the corpus that describes it"
+ },
+ "catalogues": {
+  "calibration": {
+   "campaign_seed": 21050101,
+   "candidate_slots": 400,
+   "content_hash": "f4f9d86f701e70ac60e1bddb86c46936e89ffed6bf1b03543ba81c8f2015d4e7",
+   "corpus_role": "training",
+   "generator_path": "correction_catalogue_d5.seal_d5_corpus:calibration",
+   "groups": 100,
+   "outcomes_present": false,
+   "provenance": "self_play"
+  },
+  "canary": {
+   "campaign_seed": 21028505,
+   "candidate_slots": 20,
+   "content_hash": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7",
+   "corpus_role": "evaluation",
+   "generator_path": "correction_catalogue.seal_corpus:canary",
+   "groups": 5,
+   "outcomes_present": false,
+   "provenance": "real_governed_run"
+  },
+  "final_a": {
+   "campaign_seed": 21026303,
+   "candidate_slots": 120,
+   "content_hash": "69d5eedcaeccdfdcc183b050c89c3e4b49b709474a35511620c39f6f0292fb46",
+   "corpus_role": "evaluation",
+   "generator_path": "correction_catalogue.seal_corpus:final_a",
+   "groups": 30,
+   "outcomes_present": false,
+   "provenance": "real_governed_run"
+  },
+  "final_b": {
+   "campaign_seed": 21027404,
+   "candidate_slots": 120,
+   "content_hash": "06a0c2f6641e4bf330d2fd29a9fab54b636c77d689917976133bafc92bf22a33",
+   "corpus_role": "evaluation",
+   "generator_path": "correction_catalogue.seal_corpus:final_b_independent",
+   "groups": 30,
+   "outcomes_present": false,
+   "provenance": "real_governed_run"
+  },
+  "retrieval": {
+   "content_hash": "2785ca8075ed6500d63f36473318576e9c32f4176ba9b68b4fb59e75a86ec3ff",
+   "groups": 60,
+   "minimum_qualifying_queries": 50,
+   "minimum_source_groups": 60,
+   "queries_resolved": false
+  },
+  "training": {
+   "campaign_seed": 21050202,
+   "candidate_slots": 720,
+   "content_hash": "e07691bd53df5e84bb2bb25bfed64712274da34573fd21694d7b0da67758a82e",
+   "corpus_role": "training",
+   "generator_path": "correction_catalogue_d5.seal_d5_corpus:fitting",
+   "groups": 180,
+   "outcomes_present": false,
+   "provenance": "self_play"
+  }
+ },
+ "eligibility": {
+  "calibration_groups": 100,
+  "eligible_calibration_groups": 100,
+  "ineligible": [],
+  "ineligible_inside_the_invariance_sample": [],
+  "rule": "both D5 cases apply: the rename map exists and the issue rewrite lands",
+  "why_the_sample_is_checked_separately": "the sample is the first twenty of the manifest by a frozen rule, not the first twenty eligible ones; an ineligible group inside it would silently shrink the regression rather than fail it"
+ },
+ "final_outcomes_inspected": false,
+ "fitting_pool": {
+  "authority": "sprint-21d5-handoff.md section 2: a group that decided a D4 threshold is spent as a calibration sample and untouched as a task package, so it stays valid fitting and diagnostic evidence",
+  "bodies": {
+   "all_identical": true,
+   "proves": "every fitting body in D5 is the byte the released D4 catalogues hold, which is the half of the claim the name digest cannot reach",
+   "sources": {
+    "d4_calibration": {
+     "d4_catalogue_hash": "43f9fc22320ee455be637fbb6b73614b00c592be643b36d6ada0eb9c1daaee25",
+     "d4_released_hash": "43f9fc22320ee455be637fbb6b73614b00c592be643b36d6ada0eb9c1daaee25",
+     "identical": true
+    },
+    "d4_fitting": {
+     "d4_catalogue_hash": "921a39de99bbcde44b2a1bb2c5e2be7c2a8b92175afbf867c97e19a08727a4bb",
+     "d4_released_hash": "921a39de99bbcde44b2a1bb2c5e2be7c2a8b92175afbf867c97e19a08727a4bb",
+     "identical": true
+    }
+   }
+  },
+  "composition": {
+   "d4_calibration_groups": 100,
+   "d4_training_groups": 80
+  },
+  "groups": 180,
+  "membership": {
+   "cannot_prove": "that a body has not drifted under an unchanged group name",
+   "identical": true,
+   "names_digest": "92c3117173a66ce73325b2dfddd62db3dd65bcf1704b0687f74ded4bce0cdb21",
+   "proves": "which 180 groups the pool is",
+   "w0_names_digest": "92c3117173a66ce73325b2dfddd62db3dd65bcf1704b0687f74ded4bce0cdb21"
+  },
+  "outcomes": 720,
+  "re_executed_not_inherited": {
+   "d5_fitting_seed": 21050202,
+   "distinct_from_every_predecessor_seed": true,
+   "reading": "the seed reaches candidate identity, so the 180 groups carry D5 candidate ids and are re-executed under new run identities rather than read from a store"
+  }
+ },
+ "integrity_content_hash": "107312fc5e68db250c9b0f09b4afed0ab01f05dc95e67ba20e7f054561c0332b",
+ "items": [
+  "S21D5-023"
+ ],
+ "pre_registration_sha256": "ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a",
+ "protected_roles": {
+  "all_identical": true,
+  "d4_evidence": "sprint-21d4-sealed-manifests.json",
+  "d4_evidence_sha256": "5d1e90bd6acd435b3c77d7a26a6776b0b14d31c4d1b25bb971311999192e5264",
+  "d4_seal_hash": "b69b4cc672cf3ec5b1ba793ef9b19b3eeb5ccf0ed98360a0c01b7f471c58cfea",
+  "roles": {
+   "canary": {
+    "carried_for": "the third sprint running: D2 authored them, D3 and D4 carried them",
+    "d4_released_hash": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7",
+    "d5_catalogue_hash": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7",
+    "identical": true,
+    "obtained_by": "seal_d4_corpus(), carried; not re-derived from the specs",
+    "s21d5_004_decision": "reuse"
+   },
+   "final_a": {
+    "carried_for": "the third sprint running: D2 authored them, D3 and D4 carried them",
+    "d4_released_hash": "69d5eedcaeccdfdcc183b050c89c3e4b49b709474a35511620c39f6f0292fb46",
+    "d5_catalogue_hash": "69d5eedcaeccdfdcc183b050c89c3e4b49b709474a35511620c39f6f0292fb46",
+    "identical": true,
+    "obtained_by": "seal_d4_corpus(), carried; not re-derived from the specs",
+    "s21d5_004_decision": "reuse"
+   },
+   "final_b": {
+    "carried_for": "the third sprint running: D2 authored them, D3 and D4 carried them",
+    "d4_released_hash": "06a0c2f6641e4bf330d2fd29a9fab54b636c77d689917976133bafc92bf22a33",
+    "d5_catalogue_hash": "06a0c2f6641e4bf330d2fd29a9fab54b636c77d689917976133bafc92bf22a33",
+    "identical": true,
+    "obtained_by": "seal_d4_corpus(), carried; not re-derived from the specs",
+    "s21d5_004_decision": "reuse"
+   }
+  },
+  "why_not_re_derived": "a re-derivation from the same specs would produce the same number whether or not the released catalogue had moved underneath it, so it could not tell reuse from coincidence"
+ },
+ "purpose": "Seal the fitting, calibration, final A, final B, canary and retrieval manifests before any outcome exists: carrying the three protected roles S21D5-004 recorded as reuse rather than re-deriving them, proving the 180-group fitting pool both by membership and by body, and closing the corpus-authoring capability.",
+ "recorded_at": "2026-08-08T19:46:09Z",
+ "role_disjointness": {
+  "all_pairwise_disjoint": true,
+  "pairs_sharing_a_group": {
+   "calibration|canary": 0,
+   "calibration|final_a": 0,
+   "calibration|final_b": 0,
+   "calibration|retrieval": 0,
+   "calibration|training": 0,
+   "canary|final_a": 0,
+   "canary|final_b": 0,
+   "canary|retrieval": 0,
+   "canary|training": 0,
+   "final_a|final_b": 0,
+   "final_a|retrieval": 0,
+   "final_a|training": 0,
+   "final_b|retrieval": 0,
+   "final_b|training": 0,
+   "retrieval|training": 0
+  },
+  "proved_at": "S21D5-022, over all seven roles including the two spent ones",
+  "separation_accepted": true
+ },
+ "schema_version": 1,
+ "seal": {
+  "calibration_catalogue_hash": "f4f9d86f701e70ac60e1bddb86c46936e89ffed6bf1b03543ba81c8f2015d4e7",
+  "canary_catalogue_hash": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7",
+  "candidate_slots": 1380,
+  "content_hash": "4e73f290728aad42f3a665b2f2026971524ffe2e3919df26feb190e4b667a75e",
+  "corpus_authoring_capability_revoked": true,
+  "final_a_catalogue_hash": "69d5eedcaeccdfdcc183b050c89c3e4b49b709474a35511620c39f6f0292fb46",
+  "final_b_catalogue_hash": "06a0c2f6641e4bf330d2fd29a9fab54b636c77d689917976133bafc92bf22a33",
+  "fitting_catalogue_hash": "e07691bd53df5e84bb2bb25bfed64712274da34573fd21694d7b0da67758a82e",
+  "invariance_submanifest_hash": "bd8c2582d59e5afb4dd98112b72962b949625c97826d5deda5f39d9f40cbe6cb",
+  "outcomes_present": false,
+  "promotion_submanifest_hash": "8d68092b6c3f1d9d81e6036c6aa428510eaba1736fff9c19c5c6b88c569d2424",
+  "retrieval_pool_hash": "2785ca8075ed6500d63f36473318576e9c32f4176ba9b68b4fb59e75a86ec3ff",
+  "revision": 5,
+  "spent_retrieval_pool_hash": "d4aa9cdd281eb4ab9b5afd7499524921363c4ddde4b0628b5b6a3544ddd0da46",
+  "volume_points": [
+   320,
+   720
+  ]
+ },
+ "seeds": {
+  "calibration": 21050101,
+  "distinct_from_every_predecessor_seed": true,
+  "fitting": 21050202,
+  "invariance": 21058303,
+  "promotion": 21055404
+ },
+ "spent_retrieval_pool": {
+  "d4_spent_pool_hash": "d4aa9cdd281eb4ab9b5afd7499524921363c4ddde4b0628b5b6a3544ddd0da46",
+  "d5_pool_hash": "2785ca8075ed6500d63f36473318576e9c32f4176ba9b68b4fb59e75a86ec3ff",
+  "d5_role_of_the_d4_pool": "none",
+  "distinct": true,
+  "groups_shared": [],
+  "why": "a pool read once has had its queries answered; measuring retrieval against it again measures recall of a seen answer"
+ },
+ "sprint": "21D5",
+ "transformation_submanifests": {
+  "calibration_invariance": {
+   "cases": [
+    "identifier_rename_a",
+    "issue_rewrite_a"
+   ],
+   "content_hash": "bd8c2582d59e5afb4dd98112b72962b949625c97826d5deda5f39d9f40cbe6cb",
+   "generator_code_hash": "bd8e2f0419c5766f2bd494d2c041f9041e268fc531e0775348698a270e79c397",
+   "hard_coded_oracle_hash": "619dd385a0bf6035a1cbc7155a05b83ffc028bd64e61be7c450bef4182fd952c",
+   "independent_decisions": 0,
+   "sample_groups": 20,
+   "sample_groups_named": [
+    "d5-boundary-bin-packing",
+    "d5-transform-collate-values",
+    "d5-error-admit-limit",
+    "d5-numeric-business-days",
+    "d5-parsing-accept-quality",
+    "d5-state-config-patch",
+    "d5-boundary-cartesian-rows",
+    "d5-transform-compose-pipeline",
+    "d5-error-batch-outcome",
+    "d5-numeric-geometric-mean",
+    "d5-parsing-algebraic-square",
+    "d5-state-debounce-window",
+    "d5-boundary-cluster-by-gap",
+    "d5-transform-explode-delimited",
+    "d5-error-circuit-breaker",
+    "d5-numeric-half-even",
+    "d5-parsing-csv-quoting",
+    "d5-state-idempotent-transfer",
+    "d5-boundary-column-widths",
+    "d5-transform-fill-template"
+   ],
+   "sample_selection_rule": "the first twenty groups of the family-interleaved calibration manifest, so the choice can be checked against the sealed catalogue afterwards",
+   "seed": 21058303,
+   "source_manifest_hash": "f4f9d86f701e70ac60e1bddb86c46936e89ffed6bf1b03543ba81c8f2015d4e7",
+   "transformed_decisions": 40,
+   "why_zero_independent": "a transformation of a group repeats that group's fitted feature vector, so it repeats a decision; the transformed set is a regression test and never an accuracy sample"
+  },
+  "promotion": {
+   "cases": [
+    "identifier_rename_a",
+    "issue_rewrite_a"
+   ],
+   "content_hash": "8d68092b6c3f1d9d81e6036c6aa428510eaba1736fff9c19c5c6b88c569d2424",
+   "distinct_from_the_d4_promotion_set_by_seed": "D4 and D5 transform the same sixty final groups under the same two released cases, so the seed is the only thing separating their case identities; it is D5's own and the two sets share no case id",
+   "generator_code_hash": "bd8e2f0419c5766f2bd494d2c041f9041e268fc531e0775348698a270e79c397",
+   "groups": 60,
+   "hard_coded_oracle_hash": "619dd385a0bf6035a1cbc7155a05b83ffc028bd64e61be7c450bef4182fd952c",
+   "independent_decisions": 60,
+   "nominal_decisions": 120,
+   "reported_side_by_side": true,
+   "seed": 21055404,
+   "source_manifest_hash": "13ad903fb6a9b9fa393f50c7a1297fcfffddb96fe2d5f978c457073de7bca6b4"
+  }
+ },
+ "volume_ladder": {
+  "against_d4": "S21D4-039 recorded its 200-to-320 span as a limitation on its own volume arm; this ladder is the repair and it costs no authoring, because the pool already exists",
+  "every_point_lands_on_a_whole_group": true,
+  "points": [
+   320,
+   720
+  ],
+  "points_in_groups": [
+   80,
+   180
+  ],
+  "span": "2.25x",
+  "top_point_is_the_whole_pool": true,
+  "why_whole_groups": "fitting on three of a group's four candidates puts the fourth's siblings in the exemplar set, and the difference that produces is not a volume effect"
+ },
+ "wave": "W1"
+}

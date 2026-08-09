@@ -179,3 +179,45 @@ def test_a_leaking_term_refuses_the_whole_projection() -> None:
 def test_the_derived_terms_satisfy_the_contract_they_are_written_into() -> None:
     """The derivation and the field's validator must not disagree about what is legal."""
     assert _graph(search_terms=search_terms_from_source(SOURCE)).search_terms
+
+
+ARITHMETIC = "def repair(a, b):\n    return (a + b) % (b - 1)\n"
+
+
+def test_an_arithmetic_source_stays_empty_unless_the_fallback_is_asked_for() -> None:
+    """The released behaviour is the default: S21D4's surface proof asserts the empty tuple,
+    and a call site that does not opt in must keep producing its exact recorded bytes."""
+    assert search_terms_from_source(ARITHMETIC) == ()
+    terms = search_terms_from_source(ARITHMETIC, structure_fallback=True)
+    assert terms
+    # Operators survive; every term is a lowercased node-type name, never a binding.
+    assert {"add", "mod", "sub", "binop"} <= set(terms)
+    assert list(terms) == sorted(set(terms))
+    assert all(not term.startswith("__cogos_") for term in terms)
+
+
+def test_the_fallback_never_replaces_identifier_terms() -> None:
+    """Structure terms are a floor for empty documents, not a second channel for full ones."""
+    assert search_terms_from_source(SOURCE, structure_fallback=True) == (
+        search_terms_from_source(SOURCE)
+    )
+
+
+def test_fallback_terms_exclude_bookkeeping_nodes() -> None:
+    terms = search_terms_from_source(ARITHMETIC, structure_fallback=True)
+    assert not {"module", "expr", "load", "store", "name", "constant", "arguments", "arg"} & (
+        set(terms)
+    )
+
+
+def test_fallback_terms_are_deterministic_and_satisfy_the_graph_contract() -> None:
+    first = search_terms_from_source(ARITHMETIC, structure_fallback=True)
+    second = search_terms_from_source(ARITHMETIC, structure_fallback=True)
+    assert first == second
+    assert _graph(search_terms=first).search_terms == first
+
+
+def test_the_leak_guard_reads_fallback_terms_too() -> None:
+    """Fail-closed applies to whatever the surface ends up carrying."""
+    with pytest.raises(SearchSurfaceLeak):
+        search_terms_from_source(ARITHMETIC, judgement_labels=("binop",), structure_fallback=True)
