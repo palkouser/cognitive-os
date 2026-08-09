@@ -2,8 +2,8 @@
 
 - Branch: `feature/sprint-21d5-pairwise-selective-ranking`
 - Backlog: [Sprint 21D5 Technical Backlog](sprint-21d5-technical-backlog.md)
-- **Status: W0 through W3 and W7 complete — S21D5-020 through S21D5-047, S21D5-050 and
-  S21D5-080 through S21D5-086 closed. Both branches have answered, and they answered
+- **Status: complete — S21D5-020 through S21D5-047, S21D5-050, S21D5-080 through S21D5-086 and
+  S21D5-090 through S21D5-095 closed. Both branches have answered, and they answered
   differently. Correction: the fitted direction ranks at 0.91 and 0.88 first-choice against a
   0.42 baseline and certifies 0.26 and 0.27 zero-error coverage against a 0.40 floor, flat
   across a 2.25× volume span — §3.3 step 5, `selective_margin_bound`, no candidate, 26 dependent
@@ -11,10 +11,10 @@
   MRR@10 0.5389 on sixty unseen-task queries read once, so **Gate L2 condition 24 is met and
   Gate D1 condition 15 closes**. Operations: twelve integrity classes clean with both
   authorities against a restored copy, 28 damage cases and 2 controls all holding, and a
-  32-row release matrix with nothing skipped. Gate: 13 met, 15 not opened, 0 failed, 0 carried,
-  condition 29 pending until the protected release.**
-  W8 items S21D5-090 through -093 are complete; -094 and -095 are the release itself. W4 to W6
-  stay closed behind the correction stop.
+  32-row release matrix with nothing skipped. Gate L2: 14 met, 15 not opened, 0 failed, 0
+  carried, 0 met as a rejection — the gate does not pass and Sprint 22A stays blocked.**
+  **The sprint is complete: W0 through W3, W7 and W8 closed, released under
+  `sprint-21d5-evidence-baseline`.** W4 to W6 stay closed behind the correction stop.
 - Pre-registration: revision 5, SHA-256
   `ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a`
 - Migration head: `0015`, unchanged. `0016` remains unallocated.
@@ -1964,3 +1964,55 @@ across a 2.25× span).
 Sprint 22A stays blocked, and the handoff names what blocks it: §8.1 requires all twenty-nine
 conditions, the tally is one closed here, and the unblocking path runs through the fifteen the
 stop closed rather than through any document.
+
+### S21D5-094 and S21D5-095 — the release, read back from the remote
+
+PR #225 was squash-merged into protected `main` at **2026-08-09T18:16:34Z** as
+`53cd7579096537cd1cef0e060335ad1c98088285`, with no administrator bypass and the protection state
+unchanged: `enforce_admins` on, 27 required contexts, strict, force pushes and deletions refused,
+conversation resolution required. The context list is byte-for-byte the one W0 recorded.
+
+Its **exact-head post-merge `main` CI run 31328614887 succeeded 30 of 30** at 18:32:25Z. Only then
+was the annotated tag created:
+
+- `sprint-21d5-evidence-baseline`, object `799190c06497f22edd6ec6c1eb690c511ce23bb7`
+- peels to `53cd7579096537cd1cef0e060335ad1c98088285`, which is the release commit and
+  `origin/main`
+
+Created once and never moved. **`sprint-21-learning-baseline` does not exist**, and its absence is
+read from the remote's tag list rather than assumed — §8.2's tag on a stop is the evidence
+baseline, and a success tag beside a failing gate would contradict every other record in the
+sprint.
+
+`scripts/release_d5.py` writes `sprint-21d5-release.json` from live handles: `origin/main`, the
+merge commit and its timestamp, both CI runs with their job tallies, the annotated tag object and
+the commit it peels to, and the branch protection state. It creates nothing — no merge, no tag, no
+push — and it refuses a tag whose peel disagrees with the merge commit. Zero findings.
+
+Condition 29 moved from `pending` to `met` on that record, and only on it. The final tally:
+
+| State | Conditions |
+|---|---:|
+| `met` | **14** |
+| `met_as_rejection` | 0 |
+| `not_opened` | 15 |
+| `pending` | 0 |
+| `failed` | **0** |
+| `carried` | **0** |
+
+### W8 is closed, and so is the sprint
+
+S21D5-090 through S21D5-095. Two operator documents extended with commands that were run; a gate
+assessment that can only read a pass and reads that there is not one; a report with both branch
+results, six findings and seven limitations; a handoff naming one successor and refusing three;
+a protected merge with exact-head CI green; one annotated tag; and a gate-close record derived
+from the remote.
+
+**Gate L2 does not pass. Sprint 22A remains blocked.** Fourteen conditions met, fifteen never
+opened behind one typed stop, zero failed, zero carried, zero met as a rejection. One condition —
+24 — is newly closed against D4, on a measurement rather than on a refusal to reopen, and Gate D1
+condition 15 closes with it.
+
+§8.2 asked for a negative release that is a complete release. This is one: every process condition
+satisfied, every record sealed, every stop bound to one hash, and the gate still closed on the
+measurements.

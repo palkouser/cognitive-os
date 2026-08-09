@@ -182,9 +182,10 @@ inert component.
 
 ## 8. Outcome
 
-**Gate L2 does not pass. Sprint 22A remains blocked.** Thirteen conditions met, fifteen never
-opened behind one typed stop, zero failed, zero carried, and condition 29 decided by the release.
-No threshold was relaxed and no condition is met against a fixture.
+**Gate L2 does not pass. Sprint 22A remains blocked.** Fourteen conditions met, fifteen never
+opened behind one typed stop, zero failed, zero carried, zero met as a rejection. Condition 29 is
+among the met — the release happened, was verified from the remote and closed the one condition
+still moving. No threshold was relaxed and no condition is met against a fixture.
 
 Two branches asked two questions and got two different answers, and both answers are measurements
 rather than absences. The correction branch has a residual to work against: not "the class is
