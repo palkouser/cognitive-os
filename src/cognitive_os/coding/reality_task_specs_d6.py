@@ -9784,6 +9784,1008 @@ def test_a_part_level_indent_is_refused() -> None:
     ),
 )
 
+_G101 = D2TaskSpec(
+    template_id="d6_boundary.edge_counts",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d6-boundary-edge-counts",
+    module="edge_counts",
+    module_doc="Counting how a series steps from one reading to the next.",
+    issue=(
+        "edge_counts() is documented to count how a series steps from one reading to the next. "
+        "Callers report that a step between two equal readings is counted as a rise, and that a "
+        "series with nothing in it brings the call down with an IndexError instead of counting "
+        "nothing three ways."
+    ),
+    expected=(
+        "edge_counts(values) returns how many steps rise, fall and stay level, always naming "
+        "all three. A step between two equal readings is level, not a rise. A series of fewer "
+        "than two readings has no steps at all."
+    ),
+    baseline_reason=(
+        "it counts anything that does not fall as a rise, and it reads the first value before "
+        "asking whether there is one"
+    ),
+    edge_cases=(
+        "a step between equal readings is level",
+        "an empty series counts nothing three ways",
+    ),
+    baseline="""def edge_counts(values):
+    \"\"\"Count how `values` steps from one reading to the next.\"\"\"
+    previous = values[0]
+    counts = {"rising": 0, "falling": 0, "level": 0}
+    for value in values[1:]:
+        if value < previous:
+            counts["falling"] += 1
+        else:
+            counts["rising"] += 1
+        previous = value
+    return counts""",
+    variant_one="""def edge_counts(values):
+    \"\"\"Count how `values` steps from one reading to the next.\"\"\"
+    counts = {"rising": 0, "falling": 0, "level": 0}
+    for position in range(1, len(values)):
+        earlier = values[position - 1]
+        later = values[position]
+        if later > earlier:
+            counts["rising"] += 1
+        elif later < earlier:
+            counts["falling"] += 1
+        else:
+            counts["level"] += 1
+    return counts""",
+    variant_two="""def edge_counts(values):
+    \"\"\"Count how `values` steps from one reading to the next.\"\"\"
+    steps = [later - earlier for earlier, later in zip(values, values[1:])]
+    return {
+        "rising": sum(1 for step in steps if step > 0),
+        "falling": sum(1 for step in steps if step < 0),
+        "level": sum(1 for step in steps if step == 0),
+    }""",
+    variant_three="""def edge_counts(values):
+    \"\"\"Count how `values` steps from one reading to the next.\"\"\"
+    previous = values[0]
+    counts = {"rising": 0, "falling": 0, "level": 0}
+    for value in values[1:]:
+        if value < previous:
+            counts["falling"] += 1
+        elif value > previous:
+            counts["rising"] += 1
+        else:
+            counts["level"] += 1
+        previous = value
+    return counts""",
+    variant_four="""def edge_counts(values):
+    \"\"\"Count how `values` steps from one reading to the next.\"\"\"
+    counts = {"rising": 0, "falling": 0, "level": 0}
+    for position in range(1, len(values)):
+        if values[position] < values[position - 1]:
+            counts["falling"] += 1
+        else:
+            counts["rising"] += 1
+    return counts""",
+    visible_test=_test_module(
+        "edge_counts",
+        "Published contract for counting the steps of a series.",
+        """
+def test_a_rising_series_counts_rises() -> None:
+    assert edge_counts([1, 2, 3]) == {"rising": 2, "falling": 0, "level": 0}
+
+
+def test_a_falling_series_counts_falls() -> None:
+    assert edge_counts([3, 2, 1]) == {"rising": 0, "falling": 2, "level": 0}
+""",
+        imports="from edge_counts import edge_counts\n",
+    ),
+    hidden_test=_test_module(
+        "edge_counts",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_rising_series_counts_rises() -> None:
+    assert edge_counts([1, 2, 3]) == {"rising": 2, "falling": 0, "level": 0}
+
+
+def test_a_step_between_equal_readings_is_level() -> None:
+    assert edge_counts([1, 2, 2]) == {"rising": 1, "falling": 0, "level": 1}
+
+
+def test_an_empty_series_counts_nothing_three_ways() -> None:
+    assert edge_counts([]) == {"rising": 0, "falling": 0, "level": 0}
+""",
+        imports="from edge_counts import edge_counts\n",
+    ),
+)
+
+_G102 = D2TaskSpec(
+    template_id="d6_transform.sectionise",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d6-transform-sectionise",
+    module="sectionise",
+    module_doc="Breaking a run of lines into the sections their headings announce.",
+    issue=(
+        "sectionise() is documented to break lines into the sections their headings announce. "
+        "Callers report that a heading with nothing under it disappears rather than standing "
+        "empty, and that the lines written before the first heading are thrown away."
+    ),
+    expected=(
+        "sectionise(lines) returns (heading, lines) pairs in the order they appear, where a "
+        "heading is a line ending in a colon and is not itself one of its lines. A heading with "
+        "nothing under it stands with no lines. Lines before the first heading stand under None."
+    ),
+    baseline_reason=(
+        "it writes a section out only when it has lines to write, and it starts collecting only "
+        "once it has seen a heading"
+    ),
+    edge_cases=(
+        "a heading with nothing under it stands empty",
+        "lines before the first heading stand under None",
+    ),
+    baseline="""def sectionise(lines):
+    \"\"\"Break `lines` into the sections their headings announce.\"\"\"
+    sections = []
+    heading = None
+    gathered = []
+    for line in lines:
+        if line.endswith(":"):
+            if gathered:
+                sections.append((heading, gathered))
+            heading = line[:-1]
+            gathered = []
+        elif heading is not None:
+            gathered.append(line)
+    if gathered:
+        sections.append((heading, gathered))
+    return sections""",
+    variant_one="""def sectionise(lines):
+    \"\"\"Break `lines` into the sections their headings announce.\"\"\"
+    sections = []
+    heading = None
+    gathered = []
+    started = False
+    for line in lines:
+        if line.endswith(":"):
+            if started or gathered:
+                sections.append((heading, gathered))
+            heading = line[:-1]
+            gathered = []
+            started = True
+        else:
+            gathered.append(line)
+    if started or gathered:
+        sections.append((heading, gathered))
+    return sections""",
+    variant_two="""def sectionise(lines):
+    \"\"\"Break `lines` into the sections their headings announce.\"\"\"
+    sections = []
+    current = (None, [])
+    opened = False
+    for line in lines:
+        if line.endswith(":"):
+            if opened or current[1]:
+                sections.append(current)
+            current = (line[:-1], [])
+            opened = True
+        else:
+            current[1].append(line)
+    if opened or current[1]:
+        sections.append(current)
+    return sections""",
+    variant_three="""def sectionise(lines):
+    \"\"\"Break `lines` into the sections their headings announce.\"\"\"
+    sections = []
+    heading = None
+    gathered = []
+    started = False
+    for line in lines:
+        if line.endswith(":"):
+            if started:
+                sections.append((heading, gathered))
+            heading = line[:-1]
+            gathered = []
+            started = True
+        elif started:
+            gathered.append(line)
+    if started:
+        sections.append((heading, gathered))
+    return sections""",
+    variant_four="""def sectionise(lines):
+    \"\"\"Break `lines` into the sections their headings announce.\"\"\"
+    sections = []
+    heading = None
+    gathered = []
+    for line in lines:
+        if line.endswith(":"):
+            if gathered:
+                sections.append((heading, gathered))
+            heading = line[:-1]
+            gathered = []
+        else:
+            gathered.append(line)
+    if gathered:
+        sections.append((heading, gathered))
+    return sections""",
+    visible_test=_test_module(
+        "sectionise",
+        "Published contract for breaking lines into sections.",
+        """
+def test_each_heading_takes_the_lines_under_it() -> None:
+    assert sectionise(["a:", "x", "b:", "y"]) == [("a", ["x"]), ("b", ["y"])]
+
+
+def test_no_lines_make_no_sections() -> None:
+    assert sectionise([]) == []
+""",
+        imports="from sectionise import sectionise\n",
+    ),
+    hidden_test=_test_module(
+        "sectionise",
+        "The part of the contract the published tests do not state.",
+        """
+def test_each_heading_takes_the_lines_under_it() -> None:
+    assert sectionise(["a:", "x", "b:", "y"]) == [("a", ["x"]), ("b", ["y"])]
+
+
+def test_a_heading_with_nothing_under_it_stands_empty() -> None:
+    assert sectionise(["a:", "x", "b:"]) == [("a", ["x"]), ("b", [])]
+
+
+def test_lines_before_the_first_heading_stand_under_nothing() -> None:
+    assert sectionise(["intro", "a:", "x"]) == [(None, ["intro"]), ("a", ["x"])]
+""",
+        imports="from sectionise import sectionise\n",
+    ),
+)
+
+_G103 = D2TaskSpec(
+    template_id="d6_error.reconcile_totals",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d6-error-reconcile-totals",
+    module="reconcile_totals",
+    module_doc="Objecting when a counted total drifts too far from the declared one.",
+    issue=(
+        "reconcile() is documented to object when a counted total drifts too far from what was "
+        "declared. Callers report that a shortfall is never objected to however large it is, "
+        "and that a tolerance below zero is accepted as though it meant something."
+    ),
+    expected=(
+        "reconcile(declared, counted, tolerance) returns None while the two differ by no more "
+        "than the tolerance in either direction, and raises RuntimeError beyond it. A tolerance "
+        "below zero raises ValueError."
+    ),
+    baseline_reason=(
+        "it measures the drift as a signed difference, so a shortfall comes out negative and "
+        "never trips the tolerance, and it never looks at whether the tolerance makes sense"
+    ),
+    edge_cases=(
+        "a shortfall is objected to as readily as an excess",
+        "a tolerance below zero is refused",
+    ),
+    baseline="""def reconcile(declared, counted, tolerance):
+    \"\"\"Object when `counted` drifts too far from `declared`.\"\"\"
+    drift = counted - declared
+    if drift > tolerance:
+        raise RuntimeError(f"drifted by {drift}")
+    return None""",
+    variant_one="""def reconcile(declared, counted, tolerance):
+    \"\"\"Object when `counted` drifts too far from `declared`.\"\"\"
+    if tolerance < 0:
+        raise ValueError("a tolerance below zero tolerates nothing")
+    drift = abs(counted - declared)
+    if drift > tolerance:
+        raise RuntimeError(f"drifted by {drift}")
+    return None""",
+    variant_two="""def reconcile(declared, counted, tolerance):
+    \"\"\"Object when `counted` drifts too far from `declared`.\"\"\"
+    if not tolerance >= 0:
+        raise ValueError("a tolerance below zero tolerates nothing")
+    low = declared - tolerance
+    high = declared + tolerance
+    if not low <= counted <= high:
+        raise RuntimeError(f"drifted by {abs(counted - declared)}")
+    return None""",
+    variant_three="""def reconcile(declared, counted, tolerance):
+    \"\"\"Object when `counted` drifts too far from `declared`.\"\"\"
+    drift = abs(counted - declared)
+    if drift > tolerance:
+        raise RuntimeError(f"drifted by {drift}")
+    return None""",
+    variant_four="""def reconcile(declared, counted, tolerance):
+    \"\"\"Object when `counted` drifts too far from `declared`.\"\"\"
+    if tolerance < 0:
+        raise ValueError("a tolerance below zero tolerates nothing")
+    drift = counted - declared
+    if drift > tolerance:
+        raise RuntimeError(f"drifted by {drift}")
+    return None""",
+    visible_test=_test_module(
+        "reconcile_totals",
+        "Published contract for objecting to a drifting total.",
+        """
+import pytest
+
+from reconcile_totals import reconcile
+
+
+def test_a_drift_within_the_tolerance_passes() -> None:
+    assert reconcile(100, 103, 5) is None
+
+
+def test_an_excess_beyond_the_tolerance_objects() -> None:
+    with pytest.raises(RuntimeError):
+        reconcile(100, 110, 5)
+""",
+    ),
+    hidden_test=_test_module(
+        "reconcile_totals",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from reconcile_totals import reconcile
+
+
+def test_a_drift_within_the_tolerance_passes() -> None:
+    assert reconcile(100, 103, 5) is None
+
+
+def test_a_shortfall_objects_as_readily_as_an_excess() -> None:
+    with pytest.raises(RuntimeError):
+        reconcile(100, 90, 5)
+
+
+def test_a_tolerance_below_zero_is_refused() -> None:
+    with pytest.raises(ValueError):
+        reconcile(100, 100, -1)
+""",
+    ),
+)
+
+_G104 = D2TaskSpec(
+    template_id="d6_numeric.average_gap",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d6-numeric-average-gap",
+    module="average_gap",
+    module_doc="Measuring how far apart a set of readings sits on average.",
+    issue=(
+        "average_gap() is documented to measure how far apart readings sit on average. Callers "
+        "report that two readings at the same place are treated as one, so the gap of nothing "
+        "between them never counts, and that a single reading brings the call down with a "
+        "ZeroDivisionError."
+    ),
+    expected=(
+        "average_gap(values) returns the mean distance between neighbouring readings once they "
+        "are in order, to three places. Two readings at the same place are a gap of zero and "
+        "count like any other. Fewer than two readings returns None."
+    ),
+    baseline_reason=(
+        "it puts the readings through a set before sorting them, which loses the repeats, and "
+        "it divides by the number of gaps without asking whether there are any"
+    ),
+    edge_cases=(
+        "two readings at the same place are a gap of zero",
+        "fewer than two readings returns nothing",
+    ),
+    baseline="""def average_gap(values):
+    \"\"\"Return the mean distance between neighbouring readings.\"\"\"
+    ordered = sorted(set(values))
+    gaps = [later - earlier for earlier, later in zip(ordered, ordered[1:])]
+    return round(sum(gaps) / len(gaps), 3)""",
+    variant_one="""def average_gap(values):
+    \"\"\"Return the mean distance between neighbouring readings.\"\"\"
+    if len(values) < 2:
+        return None
+    ordered = sorted(values)
+    gaps = [later - earlier for earlier, later in zip(ordered, ordered[1:])]
+    return round(sum(gaps) / len(gaps), 3)""",
+    variant_two="""def average_gap(values):
+    \"\"\"Return the mean distance between neighbouring readings.\"\"\"
+    if not len(values) >= 2:
+        return None
+    ordered = sorted(values)
+    total = 0
+    for position in range(1, len(ordered)):
+        total += ordered[position] - ordered[position - 1]
+    return round(total / (len(ordered) - 1), 3)""",
+    variant_three="""def average_gap(values):
+    \"\"\"Return the mean distance between neighbouring readings.\"\"\"
+    ordered = sorted(values)
+    gaps = [later - earlier for earlier, later in zip(ordered, ordered[1:])]
+    return round(sum(gaps) / len(gaps), 3)""",
+    variant_four="""def average_gap(values):
+    \"\"\"Return the mean distance between neighbouring readings.\"\"\"
+    if len(values) < 2:
+        return None
+    ordered = sorted(set(values))
+    gaps = [later - earlier for earlier, later in zip(ordered, ordered[1:])]
+    return round(sum(gaps) / len(gaps), 3)""",
+    visible_test=_test_module(
+        "average_gap",
+        "Published contract for how far apart readings sit.",
+        """
+def test_the_gaps_average_out() -> None:
+    assert average_gap([1, 3, 7]) == 3.0
+
+
+def test_readings_out_of_order_are_put_in_order_first() -> None:
+    assert average_gap([7, 1, 3]) == 3.0
+""",
+        imports="from average_gap import average_gap\n",
+    ),
+    hidden_test=_test_module(
+        "average_gap",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_gaps_average_out() -> None:
+    assert average_gap([1, 3, 7]) == 3.0
+
+
+def test_two_readings_at_the_same_place_are_a_gap_of_zero() -> None:
+    assert average_gap([1, 1, 4]) == 1.5
+
+
+def test_fewer_than_two_readings_returns_nothing() -> None:
+    assert average_gap([5]) is None
+""",
+        imports="from average_gap import average_gap\n",
+    ),
+)
+
+_G105 = D2TaskSpec(
+    template_id="d6_numeric.leap_years_between",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d6-numeric-leap-years-between",
+    module="leap_years_between",
+    module_doc="Counting the leap years from one year to another.",
+    issue=(
+        "leap_years_between() is documented to count the leap years from one year to another, "
+        "both included. Callers report that a century which is not a leap year is counted as "
+        "one, and that a range whose last year is a leap year comes back one short."
+    ),
+    expected=(
+        "leap_years_between(first, last) counts the leap years from first to last, both "
+        "included. A year divisible by four is a leap year unless it is divisible by a hundred "
+        "and not by four hundred."
+    ),
+    baseline_reason=(
+        "it takes every fourth year for a leap year without the hundred and four hundred rule, "
+        "and it stops before the last year rather than at it"
+    ),
+    edge_cases=(
+        "a century not divisible by four hundred is not a leap year",
+        "the last year of the range is counted",
+    ),
+    baseline="""def leap_years_between(first, last):
+    \"\"\"Count the leap years from `first` to `last`, both included.\"\"\"
+    counted = 0
+    for year in range(first, last):
+        if year % 4 == 0:
+            counted += 1
+    return counted""",
+    variant_one="""def leap_years_between(first, last):
+    \"\"\"Count the leap years from `first` to `last`, both included.\"\"\"
+    counted = 0
+    for year in range(first, last + 1):
+        if year % 4:
+            continue
+        if year % 100 == 0 and year % 400:
+            continue
+        counted += 1
+    return counted""",
+    variant_two="""def _is_leap(year):
+    if year % 400 == 0:
+        return True
+    if year % 100 == 0:
+        return False
+    return year % 4 == 0
+
+
+def leap_years_between(first, last):
+    \"\"\"Count the leap years from `first` to `last`, both included.\"\"\"
+    return sum(1 for year in range(first, last + 1) if _is_leap(year))""",
+    variant_three="""def leap_years_between(first, last):
+    \"\"\"Count the leap years from `first` to `last`, both included.\"\"\"
+    counted = 0
+    for year in range(first, last):
+        if year % 4:
+            continue
+        if year % 100 == 0 and year % 400:
+            continue
+        counted += 1
+    return counted""",
+    variant_four="""def leap_years_between(first, last):
+    \"\"\"Count the leap years from `first` to `last`, both included.\"\"\"
+    counted = 0
+    for year in range(first, last + 1):
+        if year % 4 == 0:
+            counted += 1
+    return counted""",
+    visible_test=_test_module(
+        "leap_years_between",
+        "Published contract for counting leap years in a range.",
+        """
+def test_the_leap_years_of_a_range_are_counted() -> None:
+    assert leap_years_between(1996, 2003) == 2
+
+
+def test_a_range_with_no_leap_year_counts_none() -> None:
+    assert leap_years_between(2001, 2003) == 0
+""",
+        imports="from leap_years_between import leap_years_between\n",
+    ),
+    hidden_test=_test_module(
+        "leap_years_between",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_leap_years_of_a_range_are_counted() -> None:
+    assert leap_years_between(1996, 2003) == 2
+
+
+def test_a_century_not_divisible_by_four_hundred_is_not_a_leap_year() -> None:
+    assert leap_years_between(1900, 1901) == 0
+
+
+def test_the_last_year_of_the_range_is_counted() -> None:
+    assert leap_years_between(2000, 2004) == 2
+""",
+        imports="from leap_years_between import leap_years_between\n",
+    ),
+)
+
+_G106 = D2TaskSpec(
+    template_id="d6_parsing.sentence_split",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d6-parsing-sentence-split",
+    module="sentence_split",
+    module_doc="Breaking a passage into sentences without breaking its abbreviations.",
+    issue=(
+        "split_sentences() is documented to break a passage into sentences. Callers report that "
+        "a passage whose last sentence has no full stop loses that sentence, and that an "
+        "abbreviation written with full stops is broken in the middle."
+    ),
+    expected=(
+        "split_sentences(text) returns the sentences of a passage, each keeping its full stop. "
+        "A passage breaks after a full stop only when a space and a capital follow it, so an "
+        "abbreviation followed by a lower-case word stays whole. A last sentence with no full "
+        "stop is a sentence."
+    ),
+    baseline_reason=(
+        "it writes the last sentence out only when the passage ends in a full stop, and it "
+        "breaks after any full stop that has a space behind it"
+    ),
+    edge_cases=(
+        "a last sentence with no full stop is kept",
+        "an abbreviation followed by a lower-case word stays whole",
+    ),
+    baseline="""def split_sentences(text):
+    \"\"\"Break `text` into its sentences.\"\"\"
+    sentences = []
+    start = 0
+    at = 0
+    while at < len(text):
+        if text[at] == "." and text[at + 1 : at + 2] == " ":
+            sentences.append(text[start : at + 1])
+            start = at + 2
+            at += 2
+            continue
+        at += 1
+    if start < len(text) and text.endswith("."):
+        sentences.append(text[start:])
+    return sentences""",
+    variant_one="""def split_sentences(text):
+    \"\"\"Break `text` into its sentences.\"\"\"
+    sentences = []
+    start = 0
+    at = 0
+    while at < len(text):
+        ends = text[at] == "."
+        spaced = text[at + 1 : at + 2] == " "
+        capital = text[at + 2 : at + 3].isupper()
+        if ends and spaced and capital:
+            sentences.append(text[start : at + 1])
+            start = at + 2
+            at += 2
+            continue
+        at += 1
+    if start < len(text):
+        sentences.append(text[start:])
+    return sentences""",
+    variant_two="""def split_sentences(text):
+    \"\"\"Break `text` into its sentences.\"\"\"
+    breaks = [
+        at
+        for at in range(len(text) - 2)
+        if text[at] == "." and text[at + 1] == " " and text[at + 2].isupper()
+    ]
+    sentences = []
+    start = 0
+    for at in breaks:
+        sentences.append(text[start : at + 1])
+        start = at + 2
+    if start < len(text):
+        sentences.append(text[start:])
+    return sentences""",
+    variant_three="""def split_sentences(text):
+    \"\"\"Break `text` into its sentences.\"\"\"
+    sentences = []
+    start = 0
+    at = 0
+    while at < len(text):
+        if text[at] == "." and text[at + 1 : at + 2] == " ":
+            sentences.append(text[start : at + 1])
+            start = at + 2
+            at += 2
+            continue
+        at += 1
+    if start < len(text):
+        sentences.append(text[start:])
+    return sentences""",
+    variant_four="""def split_sentences(text):
+    \"\"\"Break `text` into its sentences.\"\"\"
+    sentences = []
+    start = 0
+    at = 0
+    while at < len(text):
+        ends = text[at] == "."
+        spaced = text[at + 1 : at + 2] == " "
+        capital = text[at + 2 : at + 3].isupper()
+        if ends and spaced and capital:
+            sentences.append(text[start : at + 1])
+            start = at + 2
+            at += 2
+            continue
+        at += 1
+    if start < len(text) and text.endswith("."):
+        sentences.append(text[start:])
+    return sentences""",
+    visible_test=_test_module(
+        "sentence_split",
+        "Published contract for breaking a passage into sentences.",
+        """
+def test_a_passage_breaks_into_its_sentences() -> None:
+    assert split_sentences("One. Two.") == ["One.", "Two."]
+
+
+def test_a_single_sentence_stays_whole() -> None:
+    assert split_sentences("Only one.") == ["Only one."]
+""",
+        imports="from sentence_split import split_sentences\n",
+    ),
+    hidden_test=_test_module(
+        "sentence_split",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_passage_breaks_into_its_sentences() -> None:
+    assert split_sentences("One. Two.") == ["One.", "Two."]
+
+
+def test_a_last_sentence_with_no_full_stop_is_kept() -> None:
+    assert split_sentences("One. Two") == ["One.", "Two"]
+
+
+def test_an_abbreviation_before_a_lower_case_word_stays_whole() -> None:
+    assert split_sentences("See e.g. this.") == ["See e.g. this."]
+""",
+        imports="from sentence_split import split_sentences\n",
+    ),
+)
+
+_G107 = D2TaskSpec(
+    template_id="d6_parsing.enum_member",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d6-parsing-enum-member",
+    module="enum_member",
+    module_doc="Reading a written enumeration member into its type and its name.",
+    issue=(
+        "read_member() is documented to read a written enumeration member into its type and its "
+        "name. Callers report that a name written in lower case is accepted although members "
+        "are written in capitals, and that a reference carrying two dots is split at the first "
+        "of them instead of being refused."
+    ),
+    expected=(
+        "read_member(text) returns (type, name) from a reference written as a type, a dot and a "
+        "member name in capitals. A name that is not in capitals raises ValueError, and so does "
+        "a reference carrying anything other than exactly one dot."
+    ),
+    baseline_reason=(
+        "it never checks the case of the name, and it splits at the first dot rather than "
+        "counting them"
+    ),
+    edge_cases=(
+        "a name not in capitals is refused",
+        "a reference carrying two dots is refused",
+    ),
+    baseline="""def read_member(text):
+    \"\"\"Return the (type, name) an enumeration reference names.\"\"\"
+    holder, dot, name = text.partition(".")
+    if not dot or not holder or not name:
+        raise ValueError(text)
+    return holder, name""",
+    variant_one="""def read_member(text):
+    \"\"\"Return the (type, name) an enumeration reference names.\"\"\"
+    if text.count(".") != 1:
+        raise ValueError(text)
+    holder, _dot, name = text.partition(".")
+    if not holder or not name:
+        raise ValueError(text)
+    if not name.isupper():
+        raise ValueError(text)
+    return holder, name""",
+    variant_two="""def read_member(text):
+    \"\"\"Return the (type, name) an enumeration reference names.\"\"\"
+    parts = text.split(".")
+    if len(parts) != 2:
+        raise ValueError(text)
+    holder, name = parts
+    if not holder or not name or name != name.upper():
+        raise ValueError(text)
+    return holder, name""",
+    variant_three="""def read_member(text):
+    \"\"\"Return the (type, name) an enumeration reference names.\"\"\"
+    holder, dot, name = text.partition(".")
+    if not dot or not holder or not name:
+        raise ValueError(text)
+    if not name.isupper():
+        raise ValueError(text)
+    return holder, name""",
+    variant_four="""def read_member(text):
+    \"\"\"Return the (type, name) an enumeration reference names.\"\"\"
+    if text.count(".") != 1:
+        raise ValueError(text)
+    holder, _dot, name = text.partition(".")
+    if not holder or not name:
+        raise ValueError(text)
+    return holder, name""",
+    visible_test=_test_module(
+        "enum_member",
+        "Published contract for reading an enumeration reference.",
+        """
+import pytest
+
+from enum_member import read_member
+
+
+def test_a_reference_reads_into_its_parts() -> None:
+    assert read_member("Colour.RED") == ("Colour", "RED")
+
+
+def test_a_reference_with_no_dot_is_refused() -> None:
+    with pytest.raises(ValueError):
+        read_member("Colour")
+""",
+    ),
+    hidden_test=_test_module(
+        "enum_member",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from enum_member import read_member
+
+
+def test_a_reference_reads_into_its_parts() -> None:
+    assert read_member("Colour.RED") == ("Colour", "RED")
+
+
+def test_a_name_not_in_capitals_is_refused() -> None:
+    with pytest.raises(ValueError):
+        read_member("Colour.red")
+
+
+def test_a_reference_carrying_two_dots_is_refused() -> None:
+    with pytest.raises(ValueError):
+        read_member("a.B.C")
+""",
+    ),
+)
+
+_G108 = D2TaskSpec(
+    template_id="d6_state.merge_window",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d6-state-merge-window",
+    module="merge_window",
+    module_doc="Collapsing the events of one window, keeping the first word and the latest hour.",
+    issue=(
+        "merge() is documented to collapse the events of a window, keeping what the first event "
+        "said and how late the last one arrived. Callers report that a later event overwrites "
+        "what the first one said, and that the hour recorded for the window never moves on."
+    ),
+    expected=(
+        "merge(windows, event) returns the windows with this event folded into its own. The "
+        "payload is the one the first event of that window carried; the time is that of the "
+        "latest event to arrive."
+    ),
+    baseline_reason=(
+        "it writes the arriving event's payload over the standing one, and it leaves the time "
+        "as the first event set it"
+    ),
+    edge_cases=(
+        "the payload of the first event stands",
+        "the time moves on to the latest event",
+    ),
+    baseline="""def merge(windows, event):
+    \"\"\"Fold `event` into its window.\"\"\"
+    folded = {key: dict(value) for key, value in windows.items()}
+    key = event["window"]
+    if key not in folded:
+        folded[key] = {"payload": event["payload"], "at": event["at"]}
+        return folded
+    folded[key]["payload"] = event["payload"]
+    return folded""",
+    variant_one="""def merge(windows, event):
+    \"\"\"Fold `event` into its window.\"\"\"
+    folded = {key: dict(value) for key, value in windows.items()}
+    key = event["window"]
+    if key not in folded:
+        folded[key] = {"payload": event["payload"], "at": event["at"]}
+        return folded
+    folded[key]["at"] = max(folded[key]["at"], event["at"])
+    return folded""",
+    variant_two="""def merge(windows, event):
+    \"\"\"Fold `event` into its window.\"\"\"
+    folded = {key: dict(value) for key, value in windows.items()}
+    key = event["window"]
+    standing = folded.get(key)
+    if standing is None:
+        folded[key] = {"payload": event["payload"], "at": event["at"]}
+    else:
+        latest = standing["at"] if standing["at"] > event["at"] else event["at"]
+        folded[key] = {"payload": standing["payload"], "at": latest}
+    return folded""",
+    variant_three="""def merge(windows, event):
+    \"\"\"Fold `event` into its window.\"\"\"
+    folded = {key: dict(value) for key, value in windows.items()}
+    key = event["window"]
+    if key not in folded:
+        folded[key] = {"payload": event["payload"], "at": event["at"]}
+        return folded
+    return folded""",
+    variant_four="""def merge(windows, event):
+    \"\"\"Fold `event` into its window.\"\"\"
+    folded = {key: dict(value) for key, value in windows.items()}
+    key = event["window"]
+    if key not in folded:
+        folded[key] = {"payload": event["payload"], "at": event["at"]}
+        return folded
+    folded[key]["payload"] = event["payload"]
+    folded[key]["at"] = max(folded[key]["at"], event["at"])
+    return folded""",
+    visible_test=_test_module(
+        "merge_window",
+        "Published contract for collapsing the events of a window.",
+        """
+def test_the_first_event_opens_its_window() -> None:
+    event = {"window": 1, "payload": "a", "at": 10}
+    assert merge({}, event) == {1: {"payload": "a", "at": 10}}
+
+
+def test_events_of_different_windows_stand_apart() -> None:
+    windows = {1: {"payload": "a", "at": 10}}
+    event = {"window": 2, "payload": "b", "at": 11}
+    assert merge(windows, event)[2] == {"payload": "b", "at": 11}
+""",
+        imports="from merge_window import merge\n",
+    ),
+    hidden_test=_test_module(
+        "merge_window",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_first_event_opens_its_window() -> None:
+    event = {"window": 1, "payload": "a", "at": 10}
+    assert merge({}, event) == {1: {"payload": "a", "at": 10}}
+
+
+def test_the_payload_of_the_first_event_stands() -> None:
+    windows = {1: {"payload": "a", "at": 10}}
+    event = {"window": 1, "payload": "b", "at": 12}
+    assert merge(windows, event)[1]["payload"] == "a"
+
+
+def test_the_time_moves_on_to_the_latest_event() -> None:
+    windows = {1: {"payload": "a", "at": 10}}
+    event = {"window": 1, "payload": "b", "at": 12}
+    assert merge(windows, event)[1]["at"] == 12
+""",
+        imports="from merge_window import merge\n",
+    ),
+)
+
+_G109 = D2TaskSpec(
+    template_id="d6_state.retry_state",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d6-state-retry-state",
+    module="retry_state",
+    module_doc="Keeping the run of failures and the count of attempts a worker has made.",
+    issue=(
+        "note() is documented to keep the run of failures and the count of attempts a worker "
+        "has made. Callers report that a success wipes out the count of attempts along with the "
+        "run of failures, and that an outcome nobody recognises is folded in without complaint."
+    ),
+    expected=(
+        "note(state, outcome) returns the state with one more attempt counted. A failure "
+        "lengthens the run of failures; a success ends it. The count of attempts only ever "
+        "rises. An outcome that is neither raises ValueError."
+    ),
+    baseline_reason=(
+        "it starts the state afresh on a success rather than only ending the run, and it lets "
+        "an outcome it does not recognise fall through untouched"
+    ),
+    edge_cases=(
+        "a success ends the run without wiping the attempts",
+        "an outcome nobody recognises is refused",
+    ),
+    baseline="""def note(state, outcome):
+    \"\"\"Note an `outcome` against the worker's state.\"\"\"
+    if outcome == "failure":
+        return {"attempts": state["attempts"] + 1, "run": state["run"] + 1}
+    if outcome == "success":
+        return {"attempts": 0, "run": 0}
+    return dict(state)""",
+    variant_one="""def note(state, outcome):
+    \"\"\"Note an `outcome` against the worker's state.\"\"\"
+    if outcome == "failure":
+        return {"attempts": state["attempts"] + 1, "run": state["run"] + 1}
+    if outcome == "success":
+        return {"attempts": state["attempts"] + 1, "run": 0}
+    raise ValueError(outcome)""",
+    variant_two="""OUTCOMES = ("failure", "success")
+
+
+def note(state, outcome):
+    \"\"\"Note an `outcome` against the worker's state.\"\"\"
+    if outcome not in OUTCOMES:
+        raise ValueError(outcome)
+    run = state["run"] + 1 if outcome == "failure" else 0
+    return {"attempts": state["attempts"] + 1, "run": run}""",
+    variant_three="""def note(state, outcome):
+    \"\"\"Note an `outcome` against the worker's state.\"\"\"
+    if outcome == "failure":
+        return {"attempts": state["attempts"] + 1, "run": state["run"] + 1}
+    if outcome == "success":
+        return {"attempts": state["attempts"] + 1, "run": 0}
+    return dict(state)""",
+    variant_four="""def note(state, outcome):
+    \"\"\"Note an `outcome` against the worker's state.\"\"\"
+    if outcome == "failure":
+        return {"attempts": state["attempts"] + 1, "run": state["run"] + 1}
+    if outcome == "success":
+        return {"attempts": 0, "run": 0}
+    raise ValueError(outcome)""",
+    visible_test=_test_module(
+        "retry_state",
+        "Published contract for a worker's run of failures.",
+        """
+def test_a_failure_lengthens_the_run() -> None:
+    assert note({"attempts": 0, "run": 0}, "failure") == {"attempts": 1, "run": 1}
+
+
+def test_a_second_failure_lengthens_it_again() -> None:
+    assert note({"attempts": 1, "run": 1}, "failure") == {"attempts": 2, "run": 2}
+""",
+        imports="from retry_state import note\n",
+    ),
+    hidden_test=_test_module(
+        "retry_state",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from retry_state import note
+
+
+def test_a_failure_lengthens_the_run() -> None:
+    assert note({"attempts": 0, "run": 0}, "failure") == {"attempts": 1, "run": 1}
+
+
+def test_a_success_ends_the_run_without_wiping_the_attempts() -> None:
+    assert note({"attempts": 3, "run": 2}, "success") == {"attempts": 4, "run": 0}
+
+
+def test_an_outcome_nobody_recognises_is_refused() -> None:
+    with pytest.raises(ValueError):
+        note({"attempts": 0, "run": 0}, "maybe")
+""",
+    ),
+)
+
 D6_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G001,
     _G002,
@@ -9876,4 +10878,13 @@ D6_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G100,
     _G097,
     _G098,
+    _G101,
+    _G102,
+    _G103,
+    _G104,
+    _G105,
+    _G106,
+    _G107,
+    _G108,
+    _G109,
 )
