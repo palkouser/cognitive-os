@@ -228,3 +228,134 @@ published.
 The one thing that would stop D6 now is a withdrawal of amendment 2. While no D6 measurement
 exists — the state the chronology proves — that withdrawal costs one record and the sprint ends at
 §3.4 branch 0, `admission_contract_refused`. After W1's corpus is sealed it costs the corpus too.
+
+---
+
+# W1 — the chain, proven end to end on 15 groups
+
+W1 authors 100 certification groups. Before it authors 85 more, every stage below the corpus was
+driven on the 15 that exist, under `--provisional`, so that a defect in the spine is found on a
+corpus that can still be edited rather than on one that has been sealed. Every record this
+produced says `provisional: true` in its own bytes and carries no outcome that a gate row reads.
+
+## The chain
+
+| Stage | Producer | Result |
+|---|---|---|
+| authoring, both suites, encodability | `corpus_d6.py` | 15 groups, 75 bodies, 150 suite runs, 0 defects |
+| eight-role separation | `separation_d6.py` | 28 pairs, all disjoint; 0 collisions touching D6 |
+| manifest seal | `sealed_manifests_d6.py --provisional` | 0 stops; every proof against D5's released bytes |
+| feature seal | `reality_campaign_d6.py --stage seal` | 60 records, 60 distinct vectors, 0 containers |
+| execution | `reality_campaign_d6.py --stage execute` | 60 runs, 30 hidden-passing, 0 baselines through |
+| vertical slice | `vertical_slice_d6.py` | 5 containers, 12 refusals, artifact bound and restored |
+| snapshot | `reality_campaign_d6.py --stage snapshot` | **11 of 11 scans passed** |
+
+## S21D6-022: eight roles, and the one D6 authors
+
+D5 separated seven roles and authored two of them. D6 separates eight and authors one. The eighth
+is arithmetic rather than growth: D5's retrieval pool joins D4's, both spent, neither replaced —
+which is what the condition-24 ruling bought. The pool-against-itself check S21D4-043 introduced
+is recorded as `applicable: false` with its reason rather than dropped, because a missing check
+and an inapplicable one read identically in a diff.
+
+D5's additional clause was that its authored corpus stay clear of the groups that had already
+decided a D4 threshold. D6's is one step sharper, and it is why the sprint authors a corpus at
+all: **the half that places the bar may not be the half measured against it.** Both that and
+disjointness from the fitting pool are recomputed here rather than inherited from the seal.
+
+## S21D6-023: what the seal proves, and against what
+
+Every claim is checked against `sprint-21d5-sealed-manifests.json` — the released bytes — rather
+than re-derived from the same specs, because a re-derivation produces the same number whether or
+not the released catalogue moved underneath it.
+
+- three protected roles identical to D5's, carried for the fourth sprint running;
+- the 180-group fitting pool by membership *and* by body, with `re_executed: false` — the claim
+  that separates D6 from every predecessor, which re-executed its inherited pool;
+- the 100-group conformal half by membership and by body, because a drifted body is a drifted
+  margin and therefore a different threshold under the same pre-registered alpha;
+- `retrieval_groups_authored: 0`, the inherited pool named by hash, the ruling bound by hash.
+
+## S21D6-024: the same fixture, the opposite answer
+
+The slice runs D5's fixture group — outside every one of D6's eight roles, which the seal check
+proves rather than declares — under D6's own identities in D6's own store. Steps 1 through 5 and
+7 through 9 are D5's slice with D6's identities, deliberately: a spine proof that changed the
+parts it is not testing would not be a proof of the parts it is.
+
+Step 6 is the sprint. On four candidates the fixture yields four leave-one-out ordering decisions,
+split into two halves of two by alternating position — a rule fixed before the margins were read.
+Both folds were correct, so the conformal half holds **zero wrong margins**, and:
+
+> at alpha = 0.20 the finite-sample rank `ceil(0.8 × (0+1))` is **1**, which exceeds the zero
+> margins available. **No quantile exists. The component admits nothing.**
+
+D5's slice met the same four clean decisions and its zero-error prefix rule took the
+`every_answered_decision_was_correct` branch, **admitted everything, and ran at a floor of zero.**
+That difference, on identical fixture data, is the sprint's change executed rather than argued.
+No alpha rescues it either — with no wrong decision there is no wrong-margin distribution to take
+a quantile from — so the artifact is bound at a floor above every margin the fixture produced and
+the ranker abstains, which is what a component without a bar must do.
+
+Twelve refusals executed, including the one that matters most: a second derivation at another
+alpha, with the first in hand, is refused by name. The bar also reproduces across the restart.
+
+## S21D6-030: which two matrices, and why
+
+D6 executes one partition, so the snapshot cannot scan a fitting matrix against a calibration one
+out of a single store. The pair is the one the experiment rests on: **D5's conformal half against
+D6's certification half.** A shared group or a near-duplicate across *that* boundary is what would
+break the exchangeability §6 names as the risk the evidence cannot retire, and it is the only
+boundary where a leak would flatter the result.
+
+The conformal rows are rebuilt from D5's released bytes, read-only — vectors from its sealed
+calibration record, labels from its released campaign record — and the reconstruction proves
+itself: `canonical_line` serialises the scaled values, the embedding and the label and nothing
+else, so an equal matrix hash means every vector and every label came back intact. It equals D5's
+published `106061126df8…` exactly.
+
+One thing cannot be rebuilt. D5's per-row outcome times live in D5's database, which D6 does not
+open; they reach no scan but the chronology one, so both timestamps are set to D5's seal time and
+that half's chronology is recorded as **inherited** from D5's released campaign record rather than
+recomputed. A scan that passes on substituted data is not a scan, and the record says so.
+
+Result: 11 of 11 scans passed. The halves share no group (100 against 15), and the highest
+cross-split similarity is **0.989369** against a 0.999 floor. The store holds 64 observations, 60
+named by the dataset and 4 belonging to the slice's fixture group, all accounted for.
+
+## W1 findings
+
+Four defects, all found by execution and all fixed inside the wave.
+
+1. **The store guard named the wrong sprint.** Copied from D5, its forbidden list ran to `s21d4`
+   and stopped. D6 reads its numeric envelope and its fitted direction out of D5's released seal,
+   so a mistyped environment variable could have opened for writing the store the conformal bar
+   is computed from. There were three identical copies; there is now one `_isolated_pair()`, and
+   the refusal is executed rather than assumed.
+2. **The seal claimed a revocation it did not have.** `corpus_authoring_capability_revoked` was
+   unconditionally true while 85 groups remained to be written. It is now `not provisional` — the
+   validator had already been written for that branch, which is why the field permits it.
+3. **The seal record indexed a partition D6 never opens.** The `counts` block still described
+   D5's two-partition run and raised `KeyError: TRAINING`.
+4. **The template registry did not carry the D6 corpus,** so the runner could not resolve the
+   first task. Found in the previous session and recorded here for completeness.
+
+Two further things the run corrected without a defect being present: the conformal matrix must
+carry D5's own split label, because `canonical_bytes` prefixes the rows with it and a relabelled
+matrix could not be checked against D5's published hash; and `detect-secrets scan --baseline`
+rewrites its baseline in place restricted to the paths given, which empties every other entry —
+the six new evidence files were merged in surgically, with 0 existing entries lost or altered.
+
+## W1 validation
+
+- `ruff check` and `ruff format --check` with `--config ruff.cognitive-os.toml`;
+- `tests/cognitive_os/learning` and `tests/cognitive_os/coding`: **1,897 passed**;
+- `sealed_manifests_d6.py --check --provisional`: 0 stops; the same command without
+  `--provisional` refuses at 15 groups against a frozen target of 100.
+
+## What W1 has not done
+
+The corpus is **15 of 100**. Every record above is provisional, no coverage or error rate has
+been measured, no bar has been derived from the sealed conformal half, and Gate L2 stands where
+D5 left it. What W1 has established is that nothing between the corpus and the snapshot will
+surprise the wave — which was the point of driving it before authoring the remaining 85 groups.

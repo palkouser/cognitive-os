@@ -1,0 +1,164 @@
+{
+ "certification_campaign_sha256": "7dae1f80135e8d49d7e0bd61f1a5a5c65a3ec75dfa2d86f3d65db89f705655e7",
+ "conformal_half": {
+  "chronology_is_inherited_not_recomputed": {
+   "d5_certified": true,
+   "reading": "the chronology scan's verdict over this half is not independent evidence; the claim it would test was certified in the bound D5 record above",
+   "why": "D5's per-row outcome times live in D5's database, which D6 does not open. They reach no scan but the chronology one, so both timestamps here are D5's seal time"
+  },
+  "d5_published_matrix_hash": "106061126df8326128a5fea97b3690f5f02465c16805e6742c09cd5e3e7c7ca4",
+  "groups": 100,
+  "identical_to_the_published_matrix": true,
+  "matrix_hash": "106061126df8326128a5fea97b3690f5f02465c16805e6742c09cd5e3e7c7ca4",
+  "re_executed": false,
+  "rebuilt_from": {
+   "calibration_campaign_sha256": "d50add4a1188f82db7056f4db2ff89a744019a8576ac0fd105db53697bf90cfe",
+   "d5_snapshots_sha256": "3c48eddfa11c3ada6e7578aeafedcd22e8ac5b07a90e348f730a5b6bb872bae7",
+   "feature_seal_hash": "211de7dc53b1fd70179729d0adfb5a16f1f114092e145a7ecccda332ca43e0aa",
+   "labels": "sprint-21d5-calibration-campaign.json",
+   "vectors": "D5's sealed calibration feature record set, read-only from its store"
+  },
+  "role": "d5 calibration, carried into the bar-setting role",
+  "rows": 400,
+  "what_the_hash_proves": "canonical_line serialises the scaled values, the embedding and the label and nothing else, so an equal hash means every vector and every label came back intact"
+ },
+ "datasets": [
+  {
+   "campaign_manifest_hash": "e04abd3dcba94d0d7222b320492e30837b1ca4d831070c757d9461f87cc22e58",
+   "corpus_role": "evaluation",
+   "dataset_content_hash": "61f68680fc8bc65d24b5b6b5c352de5cfe660881ab6f36e10b3407bc64900c55",
+   "dataset_id": "1a37b96d-15a2-5704-a18a-388f306c8384",
+   "example_manifest_hash": "5fa1b9de699ac756bad1bfcdc097c3066d2f6e2683667298e35e3329212bb2dc",
+   "feature_seal_hash": "adfb7f0a9e2d613441dc905b2e968c63c8b2d2a1d0703ecb144751798515e8a9",
+   "groups": 15,
+   "identity_revision": 3,
+   "immutable": true,
+   "labels_agree_with_the_campaign_record": true,
+   "labels_read_from": "the durable outcome ledger, not the campaign report",
+   "latest_seal_selection": false,
+   "members": 60,
+   "observation_count": 60,
+   "partition": "calibration",
+   "provenance_counts": {
+    "self_play": 60
+   },
+   "real_governed_runs": 0,
+   "rebuilt_identically": true,
+   "selection_partition_digest": "a7c0ea26df799367253129e66dc935c2f3e446f23bcfcd41f132f807932d4ee4",
+   "split": "calibration",
+   "split_manifest_hash": "7e4bce62ed219a57fe8da1b757ab50f07a1ada01a4f297986e8ff1c8cb78894e",
+   "store_wide_selection": false,
+   "usage_rights_verified": true,
+   "vectors_read_from": "the sealed feature record set in the artifact store"
+  }
+ ],
+ "feature_contract_hash": "492c90a5df420de9d1662d17155ac8b28713e69bbd4bbe56208415d6ca076362",
+ "feature_seals_sha256": "cabd6ff5946eafd900daa8d2207701b35685eff7885be4510edffdb3eafcb4a7",
+ "final_outcomes_inspected": false,
+ "fitted_matrices": {
+  "certification_groups": 15,
+  "certification_matrix_hash": "4bf56f4e44edb9901f68967da7f10dbbc7a1efa813c85a94484116905724ffc6",
+  "certification_rows": 60,
+  "channels_are_the_v2_allowlist_in_order": true,
+  "clean": true,
+  "conformal_groups": 100,
+  "conformal_matrix_hash": "106061126df8326128a5fea97b3690f5f02465c16805e6742c09cd5e3e7c7ca4",
+  "conformal_rows": 400,
+  "encoder_version": "correction-ranking-v2",
+  "feature_contract_hash": "492c90a5df420de9d1662d17155ac8b28713e69bbd4bbe56208415d6ca076362",
+  "fitted_dimensions": 390,
+  "fitted_dimensions_expected": 390,
+  "halves_share_no_group": true,
+  "maximum_cross_split_similarity": "0.989369",
+  "near_duplicate_threshold": "0.999",
+  "report_hash": "d6f159745521c335e41f203c4dd1139ccfe241ea6f46f06748e58a712afaf6e5",
+  "the_two_halves_come_from_different_sprints": "the conformal rows are D5's, rebuilt from its released bytes and unexecuted here; the certification rows are D6's own. Their only shared machinery is the clip-and-scale envelope, which is deliberate and is what makes the two sets of margins comparable at all",
+  "why_this_pair": "D6 executes one partition, so the pair cannot be a fitting and a calibration matrix out of one store. The two halves scanned here are the ones the experiment rests on: the conformal half places the bar and the certification half is measured against it. A shared group or a near-duplicate across that boundary is exactly what would break the exchangeability section 6 names as the risk the evidence cannot retire, and it is the only boundary where a leak would flatter the result"
+ },
+ "integrity_content_hash": "7d6988623fcf45b59fb9e0e9f6c8f6ce4a1477304f80b04e5a69208d313abc46",
+ "items": [
+  "S21D6-030"
+ ],
+ "pre_registration_sha256": "e1e4e1d76e51bb53ea845e3a9b9e0e631903921e8b3887d289048ff7eccd6022",
+ "recorded_at": "2026-08-10T06:59:06Z",
+ "scans": {
+  "all_passed": true,
+  "count": 11,
+  "failed": [],
+  "results": [
+   {
+    "detail": "390 columns, all on the correction-ranking-v2 allowlist",
+    "name": "no_forbidden_field_reaches_the_matrix",
+    "passed": true
+   },
+   {
+    "detail": "all 390 fitted dimensions are finite and in range",
+    "name": "every_fitted_dimension_is_finite_and_in_range",
+    "passed": true
+   },
+   {
+    "detail": "all 390 fitted dimensions are finite and in range",
+    "name": "every_fitted_dimension_is_finite_and_in_range",
+    "passed": true
+   },
+   {
+    "detail": "all 460 rows use correction-ranking-v2",
+    "name": "every_row_has_one_encoder_identity",
+    "passed": true
+   },
+   {
+    "detail": "460 rows were sealed before the verifier ran",
+    "name": "every_feature_record_precedes_its_outcome",
+    "passed": true
+   },
+   {
+    "detail": "460 rows, each reproducing the feature hash its seal recorded",
+    "name": "every_row_resolves_to_one_pre_outcome_source_chain",
+    "passed": true
+   },
+   {
+    "detail": "100 fit groups and 15 calibration groups share none",
+    "name": "no_group_crosses_the_split",
+    "passed": true
+   },
+   {
+    "detail": "460 distinct feature signatures, none labelled both ways",
+    "name": "no_identical_row_carries_two_labels",
+    "passed": true
+   },
+   {
+    "detail": "highest cross-split similarity 0.989369 against a floor of 0.999",
+    "name": "no_near_duplicate_crosses_the_split",
+    "passed": true
+   },
+   {
+    "detail": "no column of 390 separates the labels without exception",
+    "name": "no_column_derives_the_label",
+    "passed": true
+   },
+   {
+    "detail": "no column of 390 separates the labels without exception",
+    "name": "no_column_derives_the_label",
+    "passed": true
+   }
+  ]
+ },
+ "schema_version": 1,
+ "sealed_manifests_sha256": "c6585231d0607322e8a8eb093cf67c97a26a81cba4442fc17f9bd3c6ef2aa5a0",
+ "sprint": "21D6",
+ "store_state": {
+  "every_unreferenced_row_is_accounted_for": true,
+  "observations_named_by_the_datasets": 60,
+  "observations_on_the_correction_surface": 64,
+  "unreferenced_by_campaign_manifest": {
+   "b743931bcbdead61": {
+    "manifest": "the S21D6-024 fixture group, outside every role",
+    "rows": 4
+   }
+  },
+  "unreferenced_rows": 4,
+  "why_the_store_holds_more_than_the_datasets_name": "S21D6-024 ran the vertical slice against the fixture group, which is outside every role and therefore in no dataset. It was left in place rather than deleted: an append-only evidence store that a wave prunes to make a count come out is a store nobody can audit",
+  "why_unreferenced_rows_cannot_reach_a_dataset": "an explicit selection names its members by observation id, so a dataset cannot grow because the store did"
+ },
+ "wave": "W2"
+}

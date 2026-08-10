@@ -226,10 +226,30 @@ def _require(name: str) -> str:
     value = os.environ.get(name)
     if not value:
         raise SystemExit(
-            f"{name} is required. Source the isolated D5 environment first:\n"
+            f"{name} is required. Source the isolated D6 environment first:\n"
             f"    set -a && . ./.env.s21d6.local && set +a"
         )
     return value
+
+
+#: Every store a predecessor wrote. D5's is on the list for a reason the others are not: D6 reads
+#: its numeric envelope and its fitted direction out of D5's released seal, so a D6 run that
+#: opened D5's pair for writing could move the bytes the conformal bar is computed from. The
+#: sprint that reads a predecessor's evidence is exactly the sprint that must not be able to
+#: touch it.
+FORBIDDEN_STORES = ("cognitive_os_dev", "s21c3", "s21d1", "s21d2", "s21d3", "s21d4", "s21d5")
+
+
+def _isolated_pair() -> tuple[str, Path]:
+    """The database and artifact root, refused unless both are D6's own."""
+    database_url = _require("COGOS_DATABASE_URL")
+    artifact_root = Path(_require("COGOS_ARTIFACT_ROOT"))
+    for forbidden in FORBIDDEN_STORES:
+        if forbidden in database_url or forbidden in artifact_root.name:
+            raise SystemExit(f"refusing to run against {forbidden}; D6 writes only to its own pair")
+    if artifact_root.name == "artifacts":
+        raise SystemExit("refusing to run against the inconsistent development pair")
+    return database_url, artifact_root
 
 
 def _embedding_provider(model: Path) -> tuple[Any, str]:
@@ -338,11 +358,46 @@ async def _encode(
         )
 
 
-#: D5's released training seal: the artifact whose bounds produced every margin the conformal
-#: bar will be read off. Named by identity rather than searched for, so a D5 store that no longer
-#: holds it fails loudly instead of falling back to a fit.
+#: D5's released seals: the training artifact whose bounds produced every margin the conformal
+#: bar will be read off, and the calibration artifact whose rows *are* the conformal half. Named
+#: by identity rather than searched for, so a D5 store that no longer holds them fails loudly
+#: instead of falling back to a fit.
 D5_FEATURE_SEALS = EVIDENCE / "sprint-21d5-feature-seals.json"
+D5_CALIBRATION_CAMPAIGN = EVIDENCE / "sprint-21d5-calibration-campaign.json"
+D5_SNAPSHOTS = EVIDENCE / "sprint-21d5-snapshots.json"
 D5_ARTIFACT_ROOT = Path("/home/palkouser/projekt/cognitive-os-data/artifacts-s21d5")
+
+
+def _d5_sealed_records(partition: str) -> tuple[dict[str, Any], dict[str, Any]]:
+    """One of D5's released feature seals, resolved out of D5's artifact store, read-only.
+
+    Resolved by the content hash D5 published, never by re-deriving: a re-derivation that
+    happened to agree would be a coincidence rather than the same bytes. Two callers want this —
+    the bounds the certification half is encoded under, and the conformal rows themselves — and
+    a second copy of the resolution would be a second place for the fallback to creep back in.
+    """
+    released = json.loads(D5_FEATURE_SEALS.read_text(encoding="utf-8"))
+    row = next(item for item in released["partitions"] if item["partition"] == partition)
+    matches = list(D5_ARTIFACT_ROOT.rglob(f"*{row['feature_seal_artifact_id']}*"))
+    if not matches:
+        # The store is content-addressed, so the artifact id is a database key, not a path.
+        needle = (f'"partition":"{partition}"'.encode(), f'"partition": "{partition}"'.encode())
+        matches = [
+            path
+            for path in D5_ARTIFACT_ROOT.rglob("*")
+            if path.is_file()
+            and len(path.name) == 64
+            and any(item in path.read_bytes()[:4096] for item in needle)
+        ]
+    for path in matches:
+        candidate = json.loads(path.read_text(encoding="utf-8"))
+        if candidate.get("content_hash") == row["feature_seal_hash"]:
+            return candidate, row
+    raise SystemExit(
+        f"D5's released {partition} feature seal does not resolve in its artifact store; the "
+        "evidence D6 inherits from it cannot be read, and re-deriving it here would replace a "
+        "predecessor's sealed bytes with this sprint's opinion of them"
+    )
 
 
 def _inherited_bounds() -> tuple[NumericBoundsV2, dict[str, Any]]:
@@ -352,32 +407,7 @@ def _inherited_bounds() -> tuple[NumericBoundsV2, dict[str, Any]]:
     agree would be a coincidence rather than the same envelope, and one that did not agree would
     rescale this half against a different one with every feature name still correct.
     """
-    released = json.loads(D5_FEATURE_SEALS.read_text(encoding="utf-8"))
-    training = next(row for row in released["partitions"] if row["partition"] == "training")
-    matches = list(D5_ARTIFACT_ROOT.rglob(f"*{training['feature_seal_artifact_id']}*"))
-    if not matches:
-        # The store is content-addressed, so the artifact id is a database key, not a path.
-        matches = [
-            path for path in D5_ARTIFACT_ROOT.rglob("*") if path.is_file() and len(path.name) == 64
-        ]
-        matches = [
-            path
-            for path in matches
-            if b'"partition":"training"' in path.read_bytes()[:4096]
-            or b'"partition": "training"' in path.read_bytes()[:4096]
-        ]
-    sealed = None
-    for path in matches:
-        candidate = json.loads(path.read_text(encoding="utf-8"))
-        if candidate.get("content_hash") == training["feature_seal_hash"]:
-            sealed = candidate
-            break
-    if sealed is None:
-        raise SystemExit(
-            "D5's released training feature seal does not resolve in its artifact store; the "
-            "bounds this campaign must reuse cannot be read, and fitting new ones would rescale "
-            "the certification half against a different envelope"
-        )
+    sealed, training = _d5_sealed_records("training")
     bounds = NumericBoundsV2(
         lower={name: float(value) for name, value in sealed["numeric_lower"]},
         upper={name: float(value) for name, value in sealed["numeric_upper"]},
@@ -522,13 +552,7 @@ def _refusal(action: str, call: Any) -> dict[str, str]:
 async def _stage_seal(
     output: Path, model: Path, limit: int | None, *, provisional: bool = False
 ) -> int:
-    database_url = _require("COGOS_DATABASE_URL")
-    artifact_root = Path(_require("COGOS_ARTIFACT_ROOT"))
-    for forbidden in ("cognitive_os_dev", "s21c3", "s21d1", "s21d2", "s21d3", "s21d4"):
-        if forbidden in database_url or forbidden in artifact_root.name:
-            raise SystemExit(f"refusing to run against {forbidden}; D5 writes only to its own pair")
-    if artifact_root.name == "artifacts":
-        raise SystemExit("refusing to run against the inconsistent development pair")
+    database_url, artifact_root = _isolated_pair()
 
     engine = create_postgres_engine(database_url)
     code_revision = _implementation_digest()
@@ -692,15 +716,19 @@ async def _stage_seal(
             "counts": {
                 "feature_records_sealed": total,
                 "partitions_opened": [name.value for name in _ORDER],
-                "fitting_candidate_slots": len(partitions[CorrectionPartition.TRAINING].pending),
-                "calibration_candidate_slots": len(
+                "certification_candidate_slots": len(
                     partitions[CorrectionPartition.CALIBRATION].pending
                 ),
                 "reading": (
-                    "the two partitions this wave executes hold 720 fitting and 400 calibration "
-                    f"candidate slots, which is {total}. No final or canary partition is opened; "
-                    "sealing one's features here would be the first step of opening it"
+                    "one partition, not D5's two. The certification half holds the "
+                    f"{total} candidate slots this wave executes, and it is the only role D6 "
+                    "opens: the fitting pool is read through a sealed direction rather than run, "
+                    "the conformal half through a sealed matrix, and no final or canary partition "
+                    "is touched -- sealing one's features here would be the first step of "
+                    "opening it"
                 ),
+                "fitting_slots_not_sealed": 720,
+                "conformal_slots_not_sealed": 400,
                 "final_and_canary_slots_not_sealed": 260,
                 "family_distribution": dict(sorted(families.items())),
             },
@@ -829,11 +857,7 @@ async def _stage_execute(
     provisional: bool = False,
 ) -> int:
     """Run one partition under `label_all`, project role-bound, then replay off the receipt."""
-    database_url = _require("COGOS_DATABASE_URL")
-    artifact_root = Path(_require("COGOS_ARTIFACT_ROOT"))
-    for forbidden in ("cognitive_os_dev", "s21c3", "s21d1", "s21d2", "s21d3", "s21d4"):
-        if forbidden in database_url or forbidden in artifact_root.name:
-            raise SystemExit(f"refusing to run against {forbidden}; D5 writes only to its own pair")
+    database_url, artifact_root = _isolated_pair()
 
     sealed = json.loads(SEAL_RECORD.read_text(encoding="utf-8"))
     row = next(item for item in sealed["partitions"] if item["partition"] == partition.value)
@@ -1208,13 +1232,106 @@ def _fitted_matrix(
     return FittedMatrix(split=split, rows=tuple(fitted))
 
 
+def _conformal_matrix() -> tuple[FittedMatrix, dict[str, Any]]:
+    """D5's calibration rows, rebuilt from its released bytes, as the half that places the bar.
+
+    D6 executes one partition, so the pair the scans read cannot be a fitting and a calibration
+    matrix out of one store. The gate owner's pairing is the one the experiment is actually
+    about: the conformal half that places the bar against the certification half measured over
+    it. Near-duplicates or a shared group across *that* boundary is what would break the
+    exchangeability section 6 names as the risk the evidence cannot retire — a leak between two
+    halves D6 never executes together would otherwise go unlooked-at.
+
+    Rebuilt rather than re-executed: the vectors come out of D5's sealed calibration record and
+    the labels out of D5's released campaign record, both read-only from a store D6 may not
+    write. The reconstruction proves itself — `canonical_line` serialises the scaled values, the
+    embedding and the label and nothing else, so the matrix hash equals D5's published
+    `calibration_matrix_hash` exactly when every vector and every label came back intact.
+
+    The two timestamps are the one thing that cannot be rebuilt: D5's per-row outcome times live
+    in D5's database, which this sprint does not open. They reach neither the hash nor any scan
+    but the chronology one, so both are set to D5's seal time and the chronology of this half is
+    *inherited* from D5's released campaign record rather than recomputed here. The record says
+    so in as many words, because a scan that passes on substituted data is not a scan.
+    """
+    sealed, released_row = _d5_sealed_records("calibration")
+    seal = SealedFeatureRecordSetV2.model_validate_json(json.dumps(sealed))
+    campaign = json.loads(D5_CALIBRATION_CAMPAIGN.read_text(encoding="utf-8"))
+    if campaign["feature_seal_hash"] != released_row["feature_seal_hash"]:
+        raise SystemExit(
+            "D5's calibration campaign ran against a different seal than the one its feature-seal "
+            "record publishes; the conformal half cannot be rebuilt from two disagreeing records"
+        )
+    rows = tuple(
+        FittedRow(
+            candidate_id=UUID(str(row["candidate_id"])),
+            task_id=UUID(str(row["task_id"])),
+            group=str(row["group"]),
+            partition="conformal",
+            vector=CorrectionFeatureVector(
+                encoder_version=seal.record_for(UUID(str(row["candidate_id"]))).encoder_version,
+                values=seal.record_for(UUID(str(row["candidate_id"]))).values,
+                embedding=seal.record_for(UUID(str(row["candidate_id"]))).embedding,
+            ),
+            accepted=bool(row["accepted"]),
+            sealed_at=seal.sealed_at,
+            outcome_at=seal.sealed_at,
+            observation_id=UUID(str(row["observation_id"])),
+            sealed_feature_hash=seal.record_for(UUID(str(row["candidate_id"]))).feature_vector_hash,
+        )
+        for row in campaign["candidate_outcomes"]
+    )
+    # The split label is D5's, not "conformal", and it has to be: `canonical_bytes` prefixes the
+    # rows with it, so a relabelled matrix hashes differently and could not be checked against
+    # the bytes D5 published. It is the only field of the matrix outside the rows themselves, and
+    # no scan reads it — the role this half plays in D6 is stated in the record below instead.
+    matrix = FittedMatrix(split="calibration", rows=rows)
+    published = json.loads(D5_SNAPSHOTS.read_text(encoding="utf-8"))["fitted_matrices"]
+    if matrix.content_hash != published["calibration_matrix_hash"]:
+        raise SystemExit(
+            "the rebuilt conformal matrix is not the one D5 published: "
+            f"{matrix.content_hash} against {published['calibration_matrix_hash']}. Either a "
+            "vector or a label did not survive the round trip, and a bar placed by drifted "
+            "margins is not the bar the pre-registration named"
+        )
+    return matrix, {
+        "role": "d5 calibration, carried into the bar-setting role",
+        "rows": len(rows),
+        "groups": len(matrix.groups),
+        "rebuilt_from": {
+            "vectors": "D5's sealed calibration feature record set, read-only from its store",
+            "labels": D5_CALIBRATION_CAMPAIGN.name,
+            "feature_seal_hash": released_row["feature_seal_hash"],
+            "calibration_campaign_sha256": _digest(D5_CALIBRATION_CAMPAIGN.read_bytes()),
+            "d5_snapshots_sha256": _digest(D5_SNAPSHOTS.read_bytes()),
+        },
+        "re_executed": False,
+        "matrix_hash": matrix.content_hash,
+        "d5_published_matrix_hash": published["calibration_matrix_hash"],
+        "identical_to_the_published_matrix": True,
+        "what_the_hash_proves": (
+            "canonical_line serialises the scaled values, the embedding and the label and "
+            "nothing else, so an equal hash means every vector and every label came back intact"
+        ),
+        "chronology_is_inherited_not_recomputed": {
+            "why": (
+                "D5's per-row outcome times live in D5's database, which D6 does not open. They "
+                "reach no scan but the chronology one, so both timestamps here are D5's seal time"
+            ),
+            "d5_certified": json.loads(D5_CALIBRATION_CAMPAIGN.read_text(encoding="utf-8"))[
+                "execution"
+            ]["every_outcome_follows_the_seal"],
+            "reading": (
+                "the chronology scan's verdict over this half is not independent evidence; the "
+                "claim it would test was certified in the bound D5 record above"
+            ),
+        },
+    }
+
+
 async def _stage_snapshot(output: Path) -> int:
-    """S21D6-030: two immutable datasets, two fitted matrices, every scan read."""
-    database_url = _require("COGOS_DATABASE_URL")
-    artifact_root = Path(_require("COGOS_ARTIFACT_ROOT"))
-    for forbidden in ("cognitive_os_dev", "s21c3", "s21d1", "s21d2", "s21d3", "s21d4"):
-        if forbidden in database_url or forbidden in artifact_root.name:
-            raise SystemExit(f"refusing to run against {forbidden}; D5 writes only to its own pair")
+    """S21D6-030: the certification dataset, and the conformal half it is scanned against."""
+    database_url, artifact_root = _isolated_pair()
 
     sealed = json.loads(SEAL_RECORD.read_text(encoding="utf-8"))
     campaigns = {
@@ -1398,9 +1515,9 @@ async def _stage_snapshot(output: Path) -> int:
         )
     }
 
-    fit = matrices[CorrectionPartition.TRAINING]
-    calibration = matrices[CorrectionPartition.CALIBRATION]
-    report = scan_matrices(fit, calibration, created_at=utc_now(), contract=contract)
+    conformal, conformal_provenance = _conformal_matrix()
+    certification = matrices[CorrectionPartition.CALIBRATION]
+    report = scan_matrices(conformal, certification, created_at=utc_now(), contract=contract)
     failed = [scan.name for scan in report.scans if not scan.passed]
     channels = len(report.column_names)
 
@@ -1414,10 +1531,7 @@ async def _stage_snapshot(output: Path) -> int:
             "pre_registration_sha256": _digest(PRE_REGISTRATION.read_bytes()),
             "feature_seals_sha256": _digest(SEAL_RECORD.read_bytes()),
             "sealed_manifests_sha256": _digest(SEALED_MANIFESTS.read_bytes()),
-            "fitting_campaign_sha256": _digest(
-                CAMPAIGN_RECORD[CorrectionPartition.TRAINING].read_bytes()
-            ),
-            "calibration_campaign_sha256": _digest(
+            "certification_campaign_sha256": _digest(
                 CAMPAIGN_RECORD[CorrectionPartition.CALIBRATION].read_bytes()
             ),
             "final_outcomes_inspected": False,
@@ -1426,34 +1540,35 @@ async def _stage_snapshot(output: Path) -> int:
             "store_state": {
                 "observations_on_the_correction_surface": on_the_surface,
                 "unreferenced_by_campaign_manifest": unreferenced_by_campaign,
-                "observations_named_by_the_two_datasets": sum(
-                    int(item["members"]) for item in reports
-                ),
+                "observations_named_by_the_datasets": sum(int(item["members"]) for item in reports),
                 "unreferenced_rows": on_the_surface - sum(int(item["members"]) for item in reports),
                 "every_unreferenced_row_is_accounted_for": all(
                     item["manifest"] != "unaccounted for"
                     for item in unreferenced_by_campaign.values()
                 ),
                 "why_the_store_holds_more_than_the_datasets_name": (
-                    "S21D6-024 ran the vertical slice twice against the fixture group, and "
-                    "S21D6-026 ran a two-group execute smoke test under the fitting manifest "
-                    "before the full campaign. They were left in place rather than deleted: an "
-                    "append-only evidence store that a wave prunes to make a count come out is "
-                    "a store nobody can audit"
+                    "S21D6-024 ran the vertical slice against the fixture group, which is outside "
+                    "every role and therefore in no dataset. It was left in place rather than "
+                    "deleted: an append-only evidence store that a wave prunes to make a count "
+                    "come out is a store nobody can audit"
                 ),
                 "why_unreferenced_rows_cannot_reach_a_dataset": (
                     "an explicit selection names its members by observation id, so a dataset "
-                    "cannot grow because the store did. The two datasets below name exactly "
-                    "the 1,120 the campaigns recorded"
+                    "cannot grow because the store did"
                 ),
             },
+            "conformal_half": conformal_provenance,
             "fitted_matrices": {
-                "fit_matrix_hash": report.fit_matrix_hash,
-                "calibration_matrix_hash": report.calibration_matrix_hash,
-                "fit_rows": report.fit_rows,
-                "calibration_rows": report.calibration_rows,
-                "fit_groups": report.fit_groups,
-                "calibration_groups": report.calibration_groups,
+                # `fit` and `calibration` are the scan API's names for its two sides, kept so a
+                # reader can line this record up against D4's and D5's. What sits on each side is
+                # named below, because for D6 they are not a fitting and a calibration split:
+                # nothing is fitted here at all.
+                "conformal_matrix_hash": report.fit_matrix_hash,
+                "certification_matrix_hash": report.calibration_matrix_hash,
+                "conformal_rows": report.fit_rows,
+                "certification_rows": report.calibration_rows,
+                "conformal_groups": report.fit_groups,
+                "certification_groups": report.calibration_groups,
                 "fitted_dimensions": channels,
                 "fitted_dimensions_expected": len(FITTED_FEATURE_V2_ALLOWLIST),
                 "channels_are_the_v2_allowlist_in_order": (
@@ -1465,11 +1580,21 @@ async def _stage_snapshot(output: Path) -> int:
                 "maximum_cross_split_similarity": report.maximum_cross_split_similarity,
                 "clean": report.clean,
                 "report_hash": report.content_hash,
-                "fit_and_calibration_share_no_group": not (fit.groups & calibration.groups),
-                "why_two_matrices": (
-                    "the fitting rows and the calibration rows are scanned against each other "
-                    "rather than each against itself; S21D6-024's five red scans were the "
-                    "consequence of a slice that had only one matrix to give"
+                "halves_share_no_group": not (conformal.groups & certification.groups),
+                "why_this_pair": (
+                    "D6 executes one partition, so the pair cannot be a fitting and a calibration "
+                    "matrix out of one store. The two halves scanned here are the ones the "
+                    "experiment rests on: the conformal half places the bar and the certification "
+                    "half is measured against it. A shared group or a near-duplicate across that "
+                    "boundary is exactly what would break the exchangeability section 6 names as "
+                    "the risk the evidence cannot retire, and it is the only boundary where a "
+                    "leak would flatter the result"
+                ),
+                "the_two_halves_come_from_different_sprints": (
+                    "the conformal rows are D5's, rebuilt from its released bytes and unexecuted "
+                    "here; the certification rows are D6's own. Their only shared machinery is "
+                    "the clip-and-scale envelope, which is deliberate and is what makes the two "
+                    "sets of margins comparable at all"
                 ),
             },
             "scans": {
@@ -1493,8 +1618,11 @@ async def _stage_snapshot(output: Path) -> int:
                 "output": output.name,
                 "datasets": {str(item["partition"]): str(item["dataset_id"]) for item in reports},
                 "rebuilt_identically": all(bool(item["rebuilt_identically"]) for item in reports),
-                "fit_rows": report.fit_rows,
-                "calibration_rows": report.calibration_rows,
+                "conformal_rows": report.fit_rows,
+                "certification_rows": report.calibration_rows,
+                "conformal_matrix_is_d5s_published_one": conformal_provenance[
+                    "identical_to_the_published_matrix"
+                ],
                 "fitted_dimensions": channels,
                 "scans": len(report.scans),
                 "scans_passed": len(report.scans) - len(failed),

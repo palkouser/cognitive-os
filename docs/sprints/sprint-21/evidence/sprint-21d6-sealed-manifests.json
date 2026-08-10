@@ -1,0 +1,328 @@
+{
+ "bound_evidence": {
+  "amendment_2": {
+   "file": "sprint-21d6-contracts-amendment-2.json",
+   "sha256": "9ba7fc1f516c238d2545f258517fdf96a62bb096c48ce718e207571247dba593"
+  },
+  "condition_24_ruling": {
+   "file": "sprint-21d6-condition-24-ruling.json",
+   "sha256": "1e2d7c4a18001550cdd8c13400d37711794d04cdf3630ffa4629a3bbbb45d510"
+  },
+  "contracts": {
+   "file": "sprint-21d6-contracts.json",
+   "sha256": "6d1b1e6614ac52a2b2984aa354b452d6ed9a6aa1116fae5ba12d0736401f81ee"
+  },
+  "d5_sealed_manifests": {
+   "file": "sprint-21d5-sealed-manifests.json",
+   "sha256": "32dd0b0698c86acfd34aafd499eff5b89de0b20b7412a7de11ab48fa81cb36dc"
+  },
+  "reuse_audit": {
+   "file": "sprint-21d6-reuse-audit.json",
+   "sha256": "518dedfdaee8c1e2a3407f18a7efe8441f40001e9a6ffdcc6a66f3ffd728b8af"
+  },
+  "separation": {
+   "file": "sprint-21d6-corpus-separation.json",
+   "sha256": "9324561b7d895d55e8e2350e87c841573e4bb695bc0707411a5335e40f46f38b"
+  }
+ },
+ "capability_revocation": {
+  "capability": "isolated_corpus_authoring_validator",
+  "no_retrieval_authoring_to_close": "D5 also closed scripts/retrieval_d5.py here. D6 never opened an equivalent, because condition 24 is inherited rather than re-measured",
+  "revoked": false,
+  "what_it_closes": [
+   "scripts/corpus_d6.py"
+  ],
+  "when": "not yet: the certification corpus is unfinished and this seal is provisional",
+  "why": "the capability that wrote the hundred certification groups has no business outliving them; an authoring validator still open once outcomes exist is a channel from a role into the corpus that describes it"
+ },
+ "catalogues": {
+  "calibration": {
+   "campaign_seed": 21060101,
+   "candidate_slots": 60,
+   "content_hash": "e04abd3dcba94d0d7222b320492e30837b1ca4d831070c757d9461f87cc22e58",
+   "corpus_role": "training",
+   "generator_path": "correction_catalogue_d6.seal_d6_corpus:certification",
+   "groups": 15,
+   "outcomes_present": false,
+   "provenance": "self_play"
+  },
+  "canary": {
+   "campaign_seed": 21028505,
+   "candidate_slots": 20,
+   "content_hash": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7",
+   "corpus_role": "evaluation",
+   "generator_path": "correction_catalogue.seal_corpus:canary",
+   "groups": 5,
+   "outcomes_present": false,
+   "provenance": "real_governed_run"
+  },
+  "conformal": {
+   "campaign_seed": 21050101,
+   "candidate_slots": 400,
+   "content_hash": "f4f9d86f701e70ac60e1bddb86c46936e89ffed6bf1b03543ba81c8f2015d4e7",
+   "generator_path": "correction_catalogue_d5.seal_d5_corpus:calibration",
+   "groups": 100,
+   "shares_the_calibration_partition_with": "certification, under the key `calibration`"
+  },
+  "final_a": {
+   "campaign_seed": 21026303,
+   "candidate_slots": 120,
+   "content_hash": "69d5eedcaeccdfdcc183b050c89c3e4b49b709474a35511620c39f6f0292fb46",
+   "corpus_role": "evaluation",
+   "generator_path": "correction_catalogue.seal_corpus:final_a",
+   "groups": 30,
+   "outcomes_present": false,
+   "provenance": "real_governed_run"
+  },
+  "final_b": {
+   "campaign_seed": 21027404,
+   "candidate_slots": 120,
+   "content_hash": "06a0c2f6641e4bf330d2fd29a9fab54b636c77d689917976133bafc92bf22a33",
+   "corpus_role": "evaluation",
+   "generator_path": "correction_catalogue.seal_corpus:final_b_independent",
+   "groups": 30,
+   "outcomes_present": false,
+   "provenance": "real_governed_run"
+  },
+  "inherited_retrieval": {
+   "authored_by": "S21D5-021",
+   "content_hash": "2785ca8075ed6500d63f36473318576e9c32f4176ba9b68b4fb59e75a86ec3ff",
+   "groups_authored_by_d6": 0
+  },
+  "training": {
+   "campaign_seed": 21050202,
+   "candidate_slots": 720,
+   "content_hash": "e07691bd53df5e84bb2bb25bfed64712274da34573fd21694d7b0da67758a82e",
+   "corpus_role": "training",
+   "generator_path": "correction_catalogue_d5.seal_d5_corpus:fitting",
+   "groups": 180,
+   "outcomes_present": false,
+   "provenance": "self_play"
+  }
+ },
+ "conformal_half": {
+  "bodies": {
+   "d5_released_hash": "f4f9d86f701e70ac60e1bddb86c46936e89ffed6bf1b03543ba81c8f2015d4e7",
+   "d6_catalogue_hash": "f4f9d86f701e70ac60e1bddb86c46936e89ffed6bf1b03543ba81c8f2015d4e7",
+   "identical": true,
+   "why_it_matters_here": "the bar is a quantile of these groups' margins; a drifted body is a drifted margin and therefore a different threshold under the same pre-registered alpha"
+  },
+  "demotion_rule": "backlog section 4.1: a spent calibration role is licensed for threshold-setting and never for certifying. D4's calibration became D5's fitting pool under the same principle, one step earlier along the same ladder",
+  "forbidden_in_d6": "any coverage, error-rate or selection claim; W1's authored certification corpus must be disjoint from this digest and S21D6-022 proves it",
+  "groups": 100,
+  "membership": {
+   "identical": true,
+   "names_digest": "f64c41d55acd6e417ad3ecd2070623b9682ab40c7412a7f7c96380a6bc39539c",
+   "w0_names_digest": "f64c41d55acd6e417ad3ecd2070623b9682ab40c7412a7f7c96380a6bc39539c"
+  },
+  "re_executed": false,
+  "read_through": {
+   "calibration_matrix": "106061126df8326128a5fea97b3690f5f02465c16805e6742c09cd5e3e7c7ca4",
+   "direction": "9fd297fb407015374485e8f7ef8fbb557e6f89f7ac3286e2572769fdab937d74",
+   "fitting_rows": 720,
+   "refitted": false
+  },
+  "use": "the margins of its wrong answered decisions place the conformal bar, and nothing else. It certifies no coverage, no error rate and no candidate",
+  "was": "d5 calibration"
+ },
+ "eligibility": {
+  "certification_groups": 15,
+  "eligible_certification_groups": 15,
+  "ineligible": [],
+  "ineligible_inside_the_invariance_sample": [],
+  "rule": "both D6 cases apply: the rename map exists and the issue rewrite lands",
+  "why_the_sample_is_checked_separately": "the sample is the first twenty of the manifest by a frozen rule, not the first twenty eligible ones; an ineligible group inside it would silently shrink the regression rather than fail it"
+ },
+ "final_outcomes_inspected": false,
+ "fitting_pool": {
+  "bodies": {
+   "d5_released_hash": "e07691bd53df5e84bb2bb25bfed64712274da34573fd21694d7b0da67758a82e",
+   "d6_catalogue_hash": "e07691bd53df5e84bb2bb25bfed64712274da34573fd21694d7b0da67758a82e",
+   "identical": true,
+   "proves": "the pool D6 names is byte-for-byte the one the released D5 seal holds, which is the half of the claim the name digest cannot reach"
+  },
+  "d6_use": "none directly; the direction fitted on it is read out of the sealed matrices and rehashed, and no row of it is re-executed",
+  "groups": 180,
+  "membership": {
+   "cannot_prove": "that a body has not drifted under an unchanged group name",
+   "identical": true,
+   "names_digest": "92c3117173a66ce73325b2dfddd62db3dd65bcf1704b0687f74ded4bce0cdb21",
+   "proves": "which 180 groups the pool is",
+   "w0_names_digest": "92c3117173a66ce73325b2dfddd62db3dd65bcf1704b0687f74ded4bce0cdb21"
+  },
+  "outcomes_if_executed": 720,
+  "re_executed": false,
+  "reading": "D5 re-executed this pool under its own seed because it refitted on it. D6 refits nothing: the direction was fitted here, sealed here, and is read out of the released matrices by hash. No row of these 180 groups is executed by this sprint, so the pool contributes no candidate identity and no outcome, and the seal claims none"
+ },
+ "inherited_retrieval": {
+  "condition_24": {
+   "authored_groups_saved": 60,
+   "record": "sprint-21d6-condition-24-ruling.json",
+   "record_sha256": "1e2d7c4a18001550cdd8c13400d37711794d04cdf3630ffa4629a3bbbb45d510",
+   "ruling": "inherited from D5's sealed measurement, conditionally"
+  },
+  "d5_released_hash": "2785ca8075ed6500d63f36473318576e9c32f4176ba9b68b4fb59e75a86ec3ff",
+  "identical_to_the_released_d5_pool": true,
+  "inherited_pool_hash": "2785ca8075ed6500d63f36473318576e9c32f4176ba9b68b4fb59e75a86ec3ff",
+  "retrieval_groups_authored": 0,
+  "spent_pools": {
+   "d4": {
+    "d6_role": "none",
+    "hash": "d4aa9cdd281eb4ab9b5afd7499524921363c4ddde4b0628b5b6a3544ddd0da46",
+    "read_once_by": "S21D4-043"
+   },
+   "d5": {
+    "d6_role": "none",
+    "hash": "2785ca8075ed6500d63f36473318576e9c32f4176ba9b68b4fb59e75a86ec3ff",
+    "read_once_by": "S21D5-046"
+   }
+  },
+  "why_no_fresh_pool": "a pool read once has had its queries answered, so neither spent pool can be measured against again -- and D6 authors no replacement because the gate owner ruled condition 24 inherited rather than re-measured. The seal names the inherited pool so that the measurement being carried has an identity a reader can check"
+ },
+ "integrity_content_hash": "681dd23640e5db1ba0b29dde772110cf074102be2e1b5281f8c61d658d3ec56c",
+ "items": [
+  "S21D6-023"
+ ],
+ "pre_registration_sha256": "e1e4e1d76e51bb53ea845e3a9b9e0e631903921e8b3887d289048ff7eccd6022",
+ "protected_roles": {
+  "all_identical": true,
+  "d5_evidence": "sprint-21d5-sealed-manifests.json",
+  "d5_evidence_sha256": "32dd0b0698c86acfd34aafd499eff5b89de0b20b7412a7de11ab48fa81cb36dc",
+  "d5_seal_hash": "4e73f290728aad42f3a665b2f2026971524ffe2e3919df26feb190e4b667a75e",
+  "roles": {
+   "canary": {
+    "carried_for": "the fourth sprint running: D2 authored them, D3, D4 and D5 carried",
+    "d5_released_hash": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7",
+    "d6_catalogue_hash": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7",
+    "identical": true,
+    "obtained_by": "seal_d5_corpus(), carried; not re-derived from the specs",
+    "s21d6_004_decision": "reuse"
+   },
+   "final_a": {
+    "carried_for": "the fourth sprint running: D2 authored them, D3, D4 and D5 carried",
+    "d5_released_hash": "69d5eedcaeccdfdcc183b050c89c3e4b49b709474a35511620c39f6f0292fb46",
+    "d6_catalogue_hash": "69d5eedcaeccdfdcc183b050c89c3e4b49b709474a35511620c39f6f0292fb46",
+    "identical": true,
+    "obtained_by": "seal_d5_corpus(), carried; not re-derived from the specs",
+    "s21d6_004_decision": "reuse"
+   },
+   "final_b": {
+    "carried_for": "the fourth sprint running: D2 authored them, D3, D4 and D5 carried",
+    "d5_released_hash": "06a0c2f6641e4bf330d2fd29a9fab54b636c77d689917976133bafc92bf22a33",
+    "d6_catalogue_hash": "06a0c2f6641e4bf330d2fd29a9fab54b636c77d689917976133bafc92bf22a33",
+    "identical": true,
+    "obtained_by": "seal_d5_corpus(), carried; not re-derived from the specs",
+    "s21d6_004_decision": "reuse"
+   }
+  },
+  "why_not_re_derived": "a re-derivation from the same specs would produce the same number whether or not the released catalogue had moved underneath it, so it could not tell reuse from coincidence"
+ },
+ "provisional": true,
+ "purpose": "Seal the fitting, conformal, certification, final A, final B and canary manifests before any outcome exists: carrying the three protected roles S21D6-004 recorded as reuse rather than re-deriving them, proving the 180-group fitting pool and the 100-group conformal half both by membership and by body against the released D5 bytes, naming the inherited retrieval pool D6 does not author, and closing the corpus-authoring capability.",
+ "recorded_at": "2026-08-10T06:30:35Z",
+ "role_disjointness": {
+  "all_pairwise_disjoint": true,
+  "pairs_sharing_a_group": {
+   "calibration|canary": 0,
+   "calibration|conformal": 0,
+   "calibration|final_a": 0,
+   "calibration|final_b": 0,
+   "calibration|training": 0,
+   "canary|conformal": 0,
+   "canary|final_a": 0,
+   "canary|final_b": 0,
+   "canary|training": 0,
+   "conformal|final_a": 0,
+   "conformal|final_b": 0,
+   "conformal|training": 0,
+   "final_a|final_b": 0,
+   "final_a|training": 0,
+   "final_b|training": 0
+  },
+  "proved_at": "S21D6-022, over all eight roles including the two spent ones",
+  "separation_accepted": true,
+  "separation_covered_groups": 15
+ },
+ "schema_version": 1,
+ "seal": {
+  "canary_catalogue_hash": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7",
+  "candidate_slots": 1040,
+  "certification_catalogue_hash": "e04abd3dcba94d0d7222b320492e30837b1ca4d831070c757d9461f87cc22e58",
+  "conformal_catalogue_hash": "f4f9d86f701e70ac60e1bddb86c46936e89ffed6bf1b03543ba81c8f2015d4e7",
+  "content_hash": "8d5adc15cfc22de650d876454b4508574cdacb75595ac63df56c1d6ad7fcc370",
+  "corpus_authoring_capability_revoked": false,
+  "final_a_catalogue_hash": "69d5eedcaeccdfdcc183b050c89c3e4b49b709474a35511620c39f6f0292fb46",
+  "final_b_catalogue_hash": "06a0c2f6641e4bf330d2fd29a9fab54b636c77d689917976133bafc92bf22a33",
+  "fitting_catalogue_hash": "e07691bd53df5e84bb2bb25bfed64712274da34573fd21694d7b0da67758a82e",
+  "inherited_retrieval_pool_hash": "2785ca8075ed6500d63f36473318576e9c32f4176ba9b68b4fb59e75a86ec3ff",
+  "invariance_submanifest_hash": "025d97a4f404118450541eaf33c639d5a448f505862420747e984d54f367fa32",
+  "outcomes_present": false,
+  "promotion_submanifest_hash": "6e6878d16acf34ccab7d18344f0d28075e3ac0ce7fac28ca8bec4f86c411d48e",
+  "provisional": true,
+  "retrieval_groups_authored": 0,
+  "revision": 6,
+  "volume_point": 720
+ },
+ "seeds": {
+  "certification": 21060101,
+  "distinct_from_every_predecessor_seed": true,
+  "invariance": 21068303,
+  "no_fitting_seed": "D6 fits nothing, so it has no fitting seed to be distinct from; the pool carries D5's candidate identities and D6 adds none",
+  "promotion": 21065404
+ },
+ "sprint": "21D6",
+ "transformation_submanifests": {
+  "certification_invariance": {
+   "cases": 2,
+   "content_hash": "025d97a4f404118450541eaf33c639d5a448f505862420747e984d54f367fa32",
+   "generator_code_hash": "bd8e2f0419c5766f2bd494d2c041f9041e268fc531e0775348698a270e79c397",
+   "hard_coded_oracle_hash": "619dd385a0bf6035a1cbc7155a05b83ffc028bd64e61be7c450bef4182fd952c",
+   "independent_decisions": 0,
+   "sample_groups": 20,
+   "sample_groups_named": [
+    "d6-boundary-first-gap",
+    "d6-transform-column-pivot",
+    "d6-error-checked-cast",
+    "d6-numeric-bounded-average",
+    "d6-parsing-duration-words",
+    "d6-state-ack-once",
+    "d6-boundary-stable-top",
+    "d6-error-deadline-guard",
+    "d6-numeric-digit-carries",
+    "d6-parsing-tag-pairs",
+    "d6-state-draft-publishing",
+    "d6-boundary-window-starts",
+    "d6-error-required-fields",
+    "d6-numeric-share-rounding",
+    "d6-state-lease-renewal"
+   ],
+   "sample_selection_rule": "the first twenty groups of the family-interleaved certification manifest, so the choice can be checked against the sealed catalogue afterwards",
+   "seed": 21068303,
+   "source_manifest_hash": "e04abd3dcba94d0d7222b320492e30837b1ca4d831070c757d9461f87cc22e58",
+   "transformed_decisions": 30,
+   "why_zero_independent": "a transformation of a group repeats that group's fitted feature vector, so it repeats a decision; the transformed set is a regression test and never an accuracy sample"
+  },
+  "promotion": {
+   "cases": 2,
+   "content_hash": "6e6878d16acf34ccab7d18344f0d28075e3ac0ce7fac28ca8bec4f86c411d48e",
+   "distinct_from_every_predecessor_promotion_set_by_seed": "D4, D5 and D6 transform the same sixty final groups under the same two released cases, so the seed is the only thing separating their case identities; it is D6's own and the three sets share no case id",
+   "generator_code_hash": "bd8e2f0419c5766f2bd494d2c041f9041e268fc531e0775348698a270e79c397",
+   "groups": 60,
+   "hard_coded_oracle_hash": "619dd385a0bf6035a1cbc7155a05b83ffc028bd64e61be7c450bef4182fd952c",
+   "independent_decisions": 60,
+   "nominal_decisions": 120,
+   "reported_side_by_side": true,
+   "seed": 21065404,
+   "source_manifest_hash": "13ad903fb6a9b9fa393f50c7a1297fcfffddb96fe2d5f978c457073de7bca6b4"
+  }
+ },
+ "volume": {
+  "is_the_whole_fitting_pool": true,
+  "lands_on_a_whole_group": true,
+  "point": 720,
+  "point_in_groups": 180,
+  "why_one_point": "S21D5-011's ladder answered the volume question -- coverage moved one point across a 2.25x span -- so D6 carries the single point the selected direction was fitted at. A second point here would be a search the pre-registration forbids, not a replication",
+  "why_whole_groups": "fitting on three of a group's four candidates puts the fourth's siblings in the exemplar set, and the difference that produces is not a volume effect"
+ },
+ "wave": "W1"
+}

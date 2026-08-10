@@ -337,6 +337,11 @@ def seal_d6_corpus(*, provisional: bool = False) -> D6CorpusBundle:
         promotion_independent_decisions=len(promotion.cases) // len(D6_CASES),
         volume_point=D6_VOLUME_POINT,
         candidate_slots=sum(catalogue.candidate_slots for catalogue in catalogues.values()),
+        # A provisional seal is taken while groups remain to be authored, so the capability that
+        # writes them is still open and the record has to say so. Claiming a revocation here
+        # would be the one thing a seal cannot get wrong: the field exists to state that no
+        # further body can enter the corpus, and under `provisional` more of them will.
+        corpus_authoring_capability_revoked=not provisional,
         provisional=provisional,
     )
     return D6CorpusBundle(
