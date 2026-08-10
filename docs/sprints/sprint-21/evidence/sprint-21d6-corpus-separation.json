@@ -1,7 +1,7 @@
 {
  "accepted": true,
  "authored_corpus_separation": {
-  "certification_bodies_compared": 1805,
+  "certification_bodies_compared": 2230,
   "cross_group_collisions_touching_21d6": [],
   "retrieval_pool_check": {
    "applicable": false,
@@ -13,8 +13,8 @@
   "separated": true
  },
  "certification_corpus": {
-  "complete": false,
-  "groups_authored": 15,
+  "complete": true,
+  "groups_authored": 100,
   "groups_targeted": 100,
   "reading": "separation is a property of the bodies that exist, so it is checkable before the corpus is finished and has to be rechecked after; an incomplete corpus that separates cleanly is a passing check over fewer groups and never a closed one"
  },
@@ -47,13 +47,13 @@
  },
  "group_separation": {
   "all_pairwise_disjoint": true,
-  "distinct_groups": 480,
-  "groups_total": 480,
+  "distinct_groups": 565,
+  "groups_total": 565,
   "pairs_checked": 28,
   "pairs_sharing_a_group": {},
   "roles": {
    "canary": 5,
-   "certification": 15,
+   "certification": 100,
    "conformal": 100,
    "final_a": 30,
    "final_b": 30,
@@ -62,7 +62,7 @@
    "spent_retrieval_d5": 60
   }
  },
- "integrity_content_hash": "f598e5fde4a7d613e0bdee05b524205dc3029df45cf8c279790e120e6f2ebde4",
+ "integrity_content_hash": "df5f9a3e8b1bc76e96b46611f7ae21ba16e0bf5cc1c451bf959f65dd0efed634",
  "items": [
   "S21D6-022"
  ],
@@ -110,10 +110,10 @@
   "reuse_audit_integrity_content_hash": "7b90d535a2acdbb6c699d2ab9dc6a0ebf3f279786abcba8e3689ebfc9be23cd7",
   "reuse_audit_read": "sprint-21d6-reuse-audit.json"
  },
- "recorded_at": "2026-08-10T06:28:31Z",
+ "recorded_at": "2026-08-10T09:30:05Z",
  "rights": {
   "certification_disjoint_from_the_conformal_half": {
-   "certification_groups": 15,
+   "certification_groups": 100,
    "conformal_groups": 100,
    "disjoint": true,
    "rule": "the amended selection rule measures 100 independent decisions against a bar the conformal half placed; a group on both sides would be certified against a threshold its own margin helped set",
@@ -155,8 +155,8 @@
  "schema_version": 1,
  "source_separation": {
   "bodies_byte_identical_across_two_roles": {},
-  "bodies_hashed": 2040,
-  "distinct_body_hashes": 2040,
+  "bodies_hashed": 2465,
+  "distinct_body_hashes": 2465,
   "source_disjoint": true
  },
  "sprint": "21D6",

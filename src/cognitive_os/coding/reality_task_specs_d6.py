@@ -2274,7 +2274,8 @@ _G028 = D2TaskSpec(
     return counted""",
     variant_three="""def beats_within(total, cadence):
     \"\"\"Count the beats of `cadence` that fall inside `total`.\"\"\"
-    return total // cadence""",
+    whole, _left_over = divmod(total, cadence)
+    return whole""",
     variant_four="""def beats_within(total, cadence):
     \"\"\"Count the beats of `cadence` that fall inside `total`.\"\"\"
     if cadence <= 0:

@@ -173,14 +173,16 @@ def _c3_module_source(spec: Any, body: str) -> str:
 def _sources() -> dict[str, str]:
     """Every released and D5 body, keyed by group and label, for cross-group collision."""
     out: dict[str, str] = {}
+    # The retrieval pools are deliberately absent from this tuple. They used to sit in it and
+    # contribute nothing, because a retrieval spec names its two bodies `failed` and `repaired`
+    # and this loop reads D2's five labels, so every retrieval body was skipped in silence. The
+    # exclusion below is the one S21D4-043 intends; leaving the specs in a list that cannot read
+    # them made an intended scope look like an oversight, which is worse than either.
     released = (
         *D2_TASK_SPECS,
         *D3_TASK_SPECS,
         *D4_CALIBRATION_SPECS,
         *D5_CALIBRATION_SPECS,
-        *D3_RETRIEVAL_SPECS,
-        *D4_RETRIEVAL_SPECS,
-        *D5_RETRIEVAL_SPECS,
     )
     for spec in released:
         for label in LABELS:

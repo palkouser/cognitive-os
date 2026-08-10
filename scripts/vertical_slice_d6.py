@@ -294,7 +294,14 @@ def _role_boundary(group_name: str, template_id: str) -> dict[str, Any]:
     partition cannot hold both. A slice that checked only `bundle.catalogues` would miss exactly
     the hundred groups whose margins place the bar.
     """
-    bundle = seal_d6_corpus(provisional=True)
+    # Whichever seal the corpus can currently carry. The slice is meant to run *before* the
+    # corpus is finished, and it is also meant to run again once it is; a hard-coded provisional
+    # flag makes the second impossible, because a provisional seal over a complete corpus is
+    # refused by design. Which one was checked against is recorded below rather than assumed.
+    try:
+        bundle = seal_d6_corpus()
+    except ValueError:
+        bundle = seal_d6_corpus(provisional=True)
     roles = {
         partition.value: sorted(bundle.groups_of(partition)) for partition in bundle.catalogues
     }
@@ -309,6 +316,8 @@ def _role_boundary(group_name: str, template_id: str) -> dict[str, Any]:
         "template_id": template_id,
         "repository_group": group_name,
         "checked_against_seal": bundle.seal.content_hash,
+        "seal_was_provisional": bundle.seal.provisional,
+        "certification_groups_at_that_seal": bundle.seal.certification_groups,
         "roles_checked": sorted(roles),
         "roles_containing_this_group": found,
         "in_any_scored_role": False,

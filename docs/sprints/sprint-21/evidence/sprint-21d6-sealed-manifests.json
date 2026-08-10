@@ -22,27 +22,27 @@
   },
   "separation": {
    "file": "sprint-21d6-corpus-separation.json",
-   "sha256": "9324561b7d895d55e8e2350e87c841573e4bb695bc0707411a5335e40f46f38b"
+   "sha256": "64f28af7d60cbe9b295056c995a8d5a6da80fc48cc0fddef41ae3914f0cf87c3"
   }
  },
  "capability_revocation": {
   "capability": "isolated_corpus_authoring_validator",
   "no_retrieval_authoring_to_close": "D5 also closed scripts/retrieval_d5.py here. D6 never opened an equivalent, because condition 24 is inherited rather than re-measured",
-  "revoked": false,
+  "revoked": true,
   "what_it_closes": [
    "scripts/corpus_d6.py"
   ],
-  "when": "not yet: the certification corpus is unfinished and this seal is provisional",
+  "when": "at this seal, before any D6 outcome exists",
   "why": "the capability that wrote the hundred certification groups has no business outliving them; an authoring validator still open once outcomes exist is a channel from a role into the corpus that describes it"
  },
  "catalogues": {
   "calibration": {
    "campaign_seed": 21060101,
-   "candidate_slots": 60,
-   "content_hash": "e04abd3dcba94d0d7222b320492e30837b1ca4d831070c757d9461f87cc22e58",
+   "candidate_slots": 400,
+   "content_hash": "82a9b28243c3a3454a75c8419599ac0b67d144cef37792ebcfbb12f2aca8b5c0",
    "corpus_role": "training",
    "generator_path": "correction_catalogue_d6.seal_d6_corpus:certification",
-   "groups": 15,
+   "groups": 100,
    "outcomes_present": false,
    "provenance": "self_play"
   },
@@ -126,8 +126,8 @@
   "was": "d5 calibration"
  },
  "eligibility": {
-  "certification_groups": 15,
-  "eligible_certification_groups": 15,
+  "certification_groups": 100,
+  "eligible_certification_groups": 100,
   "ineligible": [],
   "ineligible_inside_the_invariance_sample": [],
   "rule": "both D6 cases apply: the rename map exists and the issue rewrite lands",
@@ -179,7 +179,7 @@
   },
   "why_no_fresh_pool": "a pool read once has had its queries answered, so neither spent pool can be measured against again -- and D6 authors no replacement because the gate owner ruled condition 24 inherited rather than re-measured. The seal names the inherited pool so that the measurement being carried has an identity a reader can check"
  },
- "integrity_content_hash": "681dd23640e5db1ba0b29dde772110cf074102be2e1b5281f8c61d658d3ec56c",
+ "integrity_content_hash": "4a192e713b415332fda6baa83340fe5df625cf0becb71a62bdfa3a68e99623b4",
  "items": [
   "S21D6-023"
  ],
@@ -217,9 +217,9 @@
   },
   "why_not_re_derived": "a re-derivation from the same specs would produce the same number whether or not the released catalogue had moved underneath it, so it could not tell reuse from coincidence"
  },
- "provisional": true,
+ "provisional": false,
  "purpose": "Seal the fitting, conformal, certification, final A, final B and canary manifests before any outcome exists: carrying the three protected roles S21D6-004 recorded as reuse rather than re-deriving them, proving the 180-group fitting pool and the 100-group conformal half both by membership and by body against the released D5 bytes, naming the inherited retrieval pool D6 does not author, and closing the corpus-authoring capability.",
- "recorded_at": "2026-08-10T06:30:35Z",
+ "recorded_at": "2026-08-10T09:30:12Z",
  "role_disjointness": {
   "all_pairwise_disjoint": true,
   "pairs_sharing_a_group": {
@@ -241,24 +241,24 @@
   },
   "proved_at": "S21D6-022, over all eight roles including the two spent ones",
   "separation_accepted": true,
-  "separation_covered_groups": 15
+  "separation_covered_groups": 100
  },
  "schema_version": 1,
  "seal": {
   "canary_catalogue_hash": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7",
-  "candidate_slots": 1040,
-  "certification_catalogue_hash": "e04abd3dcba94d0d7222b320492e30837b1ca4d831070c757d9461f87cc22e58",
+  "candidate_slots": 1380,
+  "certification_catalogue_hash": "82a9b28243c3a3454a75c8419599ac0b67d144cef37792ebcfbb12f2aca8b5c0",
   "conformal_catalogue_hash": "f4f9d86f701e70ac60e1bddb86c46936e89ffed6bf1b03543ba81c8f2015d4e7",
-  "content_hash": "8d5adc15cfc22de650d876454b4508574cdacb75595ac63df56c1d6ad7fcc370",
-  "corpus_authoring_capability_revoked": false,
+  "content_hash": "13ee63c718fa50aae9a9789bfc0d03bff991d3ee550bf6d84148a77ce37294fa",
+  "corpus_authoring_capability_revoked": true,
   "final_a_catalogue_hash": "69d5eedcaeccdfdcc183b050c89c3e4b49b709474a35511620c39f6f0292fb46",
   "final_b_catalogue_hash": "06a0c2f6641e4bf330d2fd29a9fab54b636c77d689917976133bafc92bf22a33",
   "fitting_catalogue_hash": "e07691bd53df5e84bb2bb25bfed64712274da34573fd21694d7b0da67758a82e",
   "inherited_retrieval_pool_hash": "2785ca8075ed6500d63f36473318576e9c32f4176ba9b68b4fb59e75a86ec3ff",
-  "invariance_submanifest_hash": "025d97a4f404118450541eaf33c639d5a448f505862420747e984d54f367fa32",
+  "invariance_submanifest_hash": "606a0932253972b2402305579bba5b8bf673c3d3ef3072ec8766ac0ede35ca0b",
   "outcomes_present": false,
   "promotion_submanifest_hash": "6e6878d16acf34ccab7d18344f0d28075e3ac0ce7fac28ca8bec4f86c411d48e",
-  "provisional": true,
+  "provisional": false,
   "retrieval_groups_authored": 0,
   "revision": 6,
   "volume_point": 720
@@ -274,32 +274,37 @@
  "transformation_submanifests": {
   "certification_invariance": {
    "cases": 2,
-   "content_hash": "025d97a4f404118450541eaf33c639d5a448f505862420747e984d54f367fa32",
+   "content_hash": "606a0932253972b2402305579bba5b8bf673c3d3ef3072ec8766ac0ede35ca0b",
    "generator_code_hash": "bd8e2f0419c5766f2bd494d2c041f9041e268fc531e0775348698a270e79c397",
    "hard_coded_oracle_hash": "619dd385a0bf6035a1cbc7155a05b83ffc028bd64e61be7c450bef4182fd952c",
    "independent_decisions": 0,
    "sample_groups": 20,
    "sample_groups_named": [
-    "d6-boundary-first-gap",
-    "d6-transform-column-pivot",
+    "d6-boundary-anchor-spans",
+    "d6-transform-accumulate-by-key",
+    "d6-error-abort-ladder",
+    "d6-numeric-average-gap",
+    "d6-parsing-chord-notes",
+    "d6-state-ack-once",
+    "d6-boundary-ballast-trim",
+    "d6-transform-bucket-by-prefix",
     "d6-error-checked-cast",
+    "d6-numeric-base-digits",
+    "d6-parsing-citation-key",
+    "d6-state-budget-hold",
+    "d6-boundary-crest-positions",
+    "d6-transform-column-pivot",
+    "d6-error-deadline-guard",
     "d6-numeric-bounded-average",
     "d6-parsing-duration-words",
-    "d6-state-ack-once",
-    "d6-boundary-stable-top",
-    "d6-error-deadline-guard",
-    "d6-numeric-digit-carries",
-    "d6-parsing-tag-pairs",
-    "d6-state-draft-publishing",
-    "d6-boundary-window-starts",
-    "d6-error-required-fields",
-    "d6-numeric-share-rounding",
-    "d6-state-lease-renewal"
+    "d6-state-counter-ceiling",
+    "d6-boundary-edge-counts",
+    "d6-transform-crosswalk-codes"
    ],
    "sample_selection_rule": "the first twenty groups of the family-interleaved certification manifest, so the choice can be checked against the sealed catalogue afterwards",
    "seed": 21068303,
-   "source_manifest_hash": "e04abd3dcba94d0d7222b320492e30837b1ca4d831070c757d9461f87cc22e58",
-   "transformed_decisions": 30,
+   "source_manifest_hash": "82a9b28243c3a3454a75c8419599ac0b67d144cef37792ebcfbb12f2aca8b5c0",
+   "transformed_decisions": 40,
    "why_zero_independent": "a transformation of a group repeats that group's fitted feature vector, so it repeats a decision; the transformed set is a regression test and never an accuracy sample"
   },
   "promotion": {
