@@ -2509,6 +2509,738 @@ def test_a_rota_missing_a_shift_is_returned_unchanged() -> None:
     ),
 )
 
+_G024 = D2TaskSpec(
+    template_id="d7_error.invoice_lookup",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-invoice-lookup",
+    module="invoice_lookup",
+    module_doc="Finding an invoice, and saying which of the two things went wrong.",
+    issue=(
+        "find_invoice() is documented to tell a number nobody has apart from a number that is "
+        "not an invoice number at all. Callers report both arriving as the same error, so a "
+        "retry cannot tell a typo from an invoice that has not been raised yet, and a badly "
+        "formed number that somehow reached the ledger is handed back instead of refused."
+    ),
+    expected=(
+        "find_invoice(invoices, number) returns the invoice recorded under the number. A number "
+        "that is not well formed - anything that is not 'INV-' followed by something - raises "
+        "ValueError whether or not the ledger holds it, and a well formed number the ledger "
+        "does not hold raises LookupError."
+    ),
+    baseline_reason=(
+        "it looks the number up before asking whether the number is well formed, and it reports "
+        "a number nobody has with the error reserved for a malformed one"
+    ),
+    edge_cases=(
+        "a malformed number recorded in the ledger is refused rather than returned",
+        "a well formed number nobody has raises LookupError",
+    ),
+    baseline="""def find_invoice(invoices, number):
+    \"\"\"Return the invoice recorded under a number.\"\"\"
+    if number in invoices:
+        return invoices[number]
+    if not number.startswith("INV-") or not number[4:]:
+        raise ValueError("malformed invoice number: " + number)
+    raise ValueError("no invoice on file: " + number)""",
+    variant_one="""def find_invoice(invoices, number):
+    \"\"\"Return the invoice recorded under a number.\"\"\"
+    if not number.startswith("INV-") or not number[4:]:
+        raise ValueError("malformed invoice number: " + number)
+    if number not in invoices:
+        raise LookupError("no invoice on file: " + number)
+    return invoices[number]""",
+    variant_two="""def find_invoice(invoices, number):
+    \"\"\"Return the invoice recorded under a number.\"\"\"
+    prefix, _, tail = number.partition("-")
+    if prefix != "INV" or not tail:
+        raise ValueError("malformed invoice number: " + number)
+    try:
+        return invoices[number]
+    except KeyError as missing:
+        raise LookupError("no invoice on file: " + number) from missing""",
+    variant_three="""def find_invoice(invoices, number):
+    \"\"\"Return the invoice recorded under a number.\"\"\"
+    if not number.startswith("INV-") or not number[4:]:
+        raise ValueError("malformed invoice number: " + number)
+    if number in invoices:
+        return invoices[number]
+    raise ValueError("no invoice on file: " + number)""",
+    variant_four="""def find_invoice(invoices, number):
+    \"\"\"Return the invoice recorded under a number.\"\"\"
+    if number in invoices:
+        return invoices[number]
+    if not number.startswith("INV-") or not number[4:]:
+        raise ValueError("malformed invoice number: " + number)
+    raise LookupError("no invoice on file: " + number)""",
+    visible_test=_test_module(
+        "invoice_lookup",
+        "Published contract for looking an invoice up.",
+        """
+import pytest
+
+
+def test_a_recorded_invoice_comes_back() -> None:
+    assert find_invoice({"INV-1": {"total": 10}}, "INV-1") == {"total": 10}
+
+
+def test_a_number_that_is_not_an_invoice_number_is_refused() -> None:
+    with pytest.raises(ValueError):
+        find_invoice({"INV-1": {"total": 10}}, "2024-11")
+""",
+        imports="from invoice_lookup import find_invoice\n",
+    ),
+    hidden_test=_test_module(
+        "invoice_lookup",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_recorded_invoice_comes_back() -> None:
+    assert find_invoice({"INV-1": {"total": 10}}, "INV-1") == {"total": 10}
+
+
+def test_a_malformed_number_in_the_ledger_is_still_refused() -> None:
+    with pytest.raises(ValueError):
+        find_invoice({"2024-11": {"total": 10}}, "2024-11")
+
+
+def test_a_well_formed_number_nobody_has_is_a_lookup_failure() -> None:
+    with pytest.raises(LookupError):
+        find_invoice({"INV-1": {"total": 10}}, "INV-2")
+""",
+        imports="from invoice_lookup import find_invoice\n",
+    ),
+)
+
+_G025 = D2TaskSpec(
+    template_id="d7_error.password_policy",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-password-policy",
+    module="password_policy",
+    module_doc="Reporting everything wrong with a password rather than the first thing.",
+    issue=(
+        "check() is documented to report every rule a password breaks, so somebody fixing one "
+        "does not come straight back with the next. Callers report being told one thing at a "
+        "time, and a password of exactly the stated minimum length being called too short."
+    ),
+    expected=(
+        "check(password) returns the names of every rule the password breaks, in the order "
+        "too_short, no_digit, no_upper, and an empty result when it breaks none. A password of "
+        "exactly eight characters is long enough."
+    ),
+    baseline_reason=(
+        "it returns at the first rule that fails instead of collecting them, and its length "
+        "test refuses the minimum length itself"
+    ),
+    edge_cases=(
+        "every broken rule is reported, not only the first",
+        "a password of exactly the minimum length is long enough",
+    ),
+    baseline="""def check(password):
+    \"\"\"Report the rules a password breaks.\"\"\"
+    if len(password) <= 8:
+        return ("too_short",)
+    if not any(character.isdigit() for character in password):
+        return ("no_digit",)
+    if not any(character.isupper() for character in password):
+        return ("no_upper",)
+    return ()""",
+    variant_one="""def check(password):
+    \"\"\"Report the rules a password breaks.\"\"\"
+    broken = []
+    if len(password) < 8:
+        broken.append("too_short")
+    if not any(character.isdigit() for character in password):
+        broken.append("no_digit")
+    if not any(character.isupper() for character in password):
+        broken.append("no_upper")
+    return tuple(broken)""",
+    variant_two="""def check(password):
+    \"\"\"Report the rules a password breaks.\"\"\"
+    rules = (
+        ("too_short", lambda text: len(text) >= 8),
+        ("no_digit", lambda text: any(character.isdigit() for character in text)),
+        ("no_upper", lambda text: any(character.isupper() for character in text)),
+    )
+    return tuple(name for name, holds in rules if not holds(password))""",
+    variant_three="""def check(password):
+    \"\"\"Report the rules a password breaks.\"\"\"
+    broken = []
+    if len(password) <= 8:
+        broken.append("too_short")
+    if not any(character.isdigit() for character in password):
+        broken.append("no_digit")
+    if not any(character.isupper() for character in password):
+        broken.append("no_upper")
+    return tuple(broken)""",
+    variant_four="""def check(password):
+    \"\"\"Report the rules a password breaks.\"\"\"
+    if len(password) < 8:
+        return ("too_short",)
+    if not any(character.isdigit() for character in password):
+        return ("no_digit",)
+    if not any(character.isupper() for character in password):
+        return ("no_upper",)
+    return ()""",
+    visible_test=_test_module(
+        "password_policy",
+        "Published contract for the password rules.",
+        """
+def test_a_password_missing_a_digit_is_reported() -> None:
+    assert check("longenoughA") == ("no_digit",)
+
+
+def test_a_password_breaking_nothing_reports_nothing() -> None:
+    assert check("longenoughA1") == ()
+""",
+        imports="from password_policy import check\n",
+    ),
+    hidden_test=_test_module(
+        "password_policy",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_password_missing_a_digit_is_reported() -> None:
+    assert check("longenoughA") == ("no_digit",)
+
+
+def test_every_broken_rule_is_reported() -> None:
+    assert check("abcdefghi") == ("no_digit", "no_upper")
+
+
+def test_exactly_the_minimum_length_is_long_enough() -> None:
+    assert check("Abcdefg1") == ()
+""",
+        imports="from password_policy import check\n",
+    ),
+)
+
+# ------------------------------------------------------------------ data transformation
+
+_G026 = D2TaskSpec(
+    template_id="d7_transform.enrich_rows",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-enrich-rows",
+    module="enrich_rows",
+    module_doc="Attaching a label to every row, including the rows nobody labelled.",
+    issue=(
+        "enrich() is documented to return one row out for every row in, in the order they "
+        "arrived. Callers report rows disappearing from the result when the label table does "
+        "not mention them, and the rows that survive coming back in the table's order rather "
+        "than their own."
+    ),
+    expected=(
+        "enrich(rows, labels) returns one new row per row, in the order the rows arrived, each "
+        "carrying its own fields together with a 'label' taken from the table under the row's "
+        "'id'. A row the table does not mention is labelled 'unknown'."
+    ),
+    baseline_reason=(
+        "it walks the label table and looks for rows inside it, so a row nobody labelled is "
+        "never reached at all and the rows that are reached come back in the table's order"
+    ),
+    edge_cases=(
+        "a row the table does not mention is labelled unknown",
+        "the rows come back in their own order",
+    ),
+    baseline="""def enrich(rows, labels):
+    \"\"\"Attach a label to every row.\"\"\"
+    enriched = []
+    for identifier, label in labels.items():
+        for row in rows:
+            if row["id"] == identifier:
+                enriched.append({**row, "label": label})
+    return enriched""",
+    variant_one="""def enrich(rows, labels):
+    \"\"\"Attach a label to every row.\"\"\"
+    return [{**row, "label": labels.get(row["id"], "unknown")} for row in rows]""",
+    variant_two="""def enrich(rows, labels):
+    \"\"\"Attach a label to every row.\"\"\"
+    enriched = []
+    for row in rows:
+        labelled = dict(row)
+        if row["id"] in labels:
+            labelled["label"] = labels[row["id"]]
+        else:
+            labelled["label"] = "unknown"
+        enriched.append(labelled)
+    return enriched""",
+    variant_three="""def enrich(rows, labels):
+    \"\"\"Attach a label to every row.\"\"\"
+    enriched = []
+    for row in rows:
+        for identifier, label in labels.items():
+            if row["id"] == identifier:
+                enriched.append({**row, "label": label})
+    return enriched""",
+    variant_four="""def enrich(rows, labels):
+    \"\"\"Attach a label to every row.\"\"\"
+    enriched = []
+    for identifier, label in labels.items():
+        for row in rows:
+            if row["id"] == identifier:
+                enriched.append({**row, "label": label})
+    for row in rows:
+        if row["id"] not in labels:
+            enriched.append({**row, "label": "unknown"})
+    return enriched""",
+    visible_test=_test_module(
+        "enrich_rows",
+        "Published contract for labelling rows.",
+        """
+def test_every_labelled_row_carries_its_label() -> None:
+    assert enrich([{"id": 1}, {"id": 2}], {1: "a", 2: "b"}) == [
+        {"id": 1, "label": "a"},
+        {"id": 2, "label": "b"},
+    ]
+
+
+def test_a_rows_own_fields_are_kept() -> None:
+    assert enrich([{"id": 7, "name": "x"}], {7: "seven"}) == [
+        {"id": 7, "name": "x", "label": "seven"}
+    ]
+""",
+        imports="from enrich_rows import enrich\n",
+    ),
+    hidden_test=_test_module(
+        "enrich_rows",
+        "The part of the contract the published tests do not state.",
+        """
+def test_every_labelled_row_carries_its_label() -> None:
+    assert enrich([{"id": 1}, {"id": 2}], {1: "a", 2: "b"}) == [
+        {"id": 1, "label": "a"},
+        {"id": 2, "label": "b"},
+    ]
+
+
+def test_a_row_the_table_does_not_mention_is_labelled_unknown() -> None:
+    assert enrich([{"id": 1}, {"id": 9}], {1: "a"}) == [
+        {"id": 1, "label": "a"},
+        {"id": 9, "label": "unknown"},
+    ]
+
+
+def test_the_rows_come_back_in_their_own_order() -> None:
+    assert enrich([{"id": 2}, {"id": 1}], {1: "a", 2: "b"}) == [
+        {"id": 2, "label": "b"},
+        {"id": 1, "label": "a"},
+    ]
+""",
+        imports="from enrich_rows import enrich\n",
+    ),
+)
+
+_G027 = D2TaskSpec(
+    template_id="d7_transform.apply_defaults",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-apply-defaults",
+    module="apply_defaults",
+    module_doc="Filling in the settings nobody chose, and only those.",
+    issue=(
+        "apply() is documented to fill in what the settings do not say and to leave what they "
+        "do say alone. Callers report a setting deliberately turned off coming back on, and the "
+        "mapping they passed in coming back changed under them."
+    ),
+    expected=(
+        "apply(settings, defaults) returns the settings with every default the settings do not "
+        "hold filled in. A setting the settings hold is kept whatever its value, including zero "
+        "or an empty string, and the caller's mappings are left as they were."
+    ),
+    baseline_reason=(
+        "it decides a setting is missing by asking whether its value is falsy, and it writes the "
+        "defaults into the caller's own mapping"
+    ),
+    edge_cases=(
+        "a setting held with a falsy value is a choice, not a gap",
+        "the caller's settings are not modified",
+    ),
+    baseline="""def apply(settings, defaults):
+    \"\"\"Fill in the settings that were not chosen.\"\"\"
+    for key, value in defaults.items():
+        if not settings.get(key):
+            settings[key] = value
+    return settings""",
+    variant_one="""def apply(settings, defaults):
+    \"\"\"Fill in the settings that were not chosen.\"\"\"
+    filled = dict(settings)
+    for key, value in defaults.items():
+        if key not in filled:
+            filled[key] = value
+    return filled""",
+    variant_two="""def apply(settings, defaults):
+    \"\"\"Fill in the settings that were not chosen.\"\"\"
+    filled = dict(settings)
+    for key in defaults:
+        filled.setdefault(key, defaults[key])
+    return filled""",
+    variant_three="""def apply(settings, defaults):
+    \"\"\"Fill in the settings that were not chosen.\"\"\"
+    for key, value in defaults.items():
+        if key not in settings:
+            settings[key] = value
+    return settings""",
+    variant_four="""def apply(settings, defaults):
+    \"\"\"Fill in the settings that were not chosen.\"\"\"
+    filled = dict(settings)
+    for key, value in defaults.items():
+        if not filled.get(key):
+            filled[key] = value
+    return filled""",
+    visible_test=_test_module(
+        "apply_defaults",
+        "Published contract for filling in defaults.",
+        """
+def test_a_setting_nobody_chose_is_filled_in() -> None:
+    assert apply({"a": 1}, {"b": 2}) == {"a": 1, "b": 2}
+
+
+def test_a_setting_that_was_chosen_is_kept() -> None:
+    assert apply({"a": 1}, {"a": 9}) == {"a": 1}
+""",
+        imports="from apply_defaults import apply\n",
+    ),
+    hidden_test=_test_module(
+        "apply_defaults",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_setting_nobody_chose_is_filled_in() -> None:
+    assert apply({"a": 1}, {"b": 2}) == {"a": 1, "b": 2}
+
+
+def test_a_setting_turned_off_stays_off() -> None:
+    assert apply({"retries": 0}, {"retries": 3}) == {"retries": 0}
+
+
+def test_the_callers_settings_are_left_alone() -> None:
+    settings = {"a": 1}
+    apply(settings, {"b": 2})
+    assert settings == {"a": 1}
+""",
+        imports="from apply_defaults import apply\n",
+    ),
+)
+
+# ------------------------------------------------------------------ parsing and validation
+
+_G028 = D2TaskSpec(
+    template_id="d7_parsing.coupon_value",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-coupon-value",
+    module="coupon_value",
+    module_doc="Reading a coupon into what it takes off and how it takes it.",
+    issue=(
+        "parse_coupon() is documented to ignore the spaces people type around a coupon and to "
+        "refuse a percentage larger than the whole. Callers report a coupon pasted with spaces "
+        "being rejected outright, and a coupon of '120%' being accepted and then taking more "
+        "off an order than the order is worth."
+    ),
+    expected=(
+        "parse_coupon(text) returns (code, kind, amount) for a coupon written as a code, a "
+        "colon and an amount. An amount ending in '%' is of kind 'percent' and any other is "
+        "'fixed'. Spaces around either part are ignored, a percent above one hundred raises "
+        "ValueError, and so does a text with no colon in it."
+    ),
+    baseline_reason=(
+        "it reads the two parts exactly as they were typed, spaces and all, and it converts a "
+        "percentage without ever asking how large it is"
+    ),
+    edge_cases=(
+        "spaces around the code and the amount are ignored",
+        "a percent above the whole is refused",
+    ),
+    baseline="""def parse_coupon(text):
+    \"\"\"Read a coupon into its code, its kind and its amount.\"\"\"
+    code, separator, amount = text.partition(":")
+    if not separator:
+        raise ValueError("not a coupon: " + text)
+    if amount.endswith("%"):
+        return code, "percent", int(amount[:-1])
+    return code, "fixed", int(amount)""",
+    variant_one="""def parse_coupon(text):
+    \"\"\"Read a coupon into its code, its kind and its amount.\"\"\"
+    code, separator, amount = text.partition(":")
+    if not separator:
+        raise ValueError("not a coupon: " + text)
+    code = code.strip()
+    amount = amount.strip()
+    if amount.endswith("%"):
+        percent = int(amount[:-1])
+        if percent > 100:
+            raise ValueError("percent above the whole: " + text)
+        return code, "percent", percent
+    return code, "fixed", int(amount)""",
+    variant_two="""def parse_coupon(text):
+    \"\"\"Read a coupon into its code, its kind and its amount.\"\"\"
+    if ":" not in text:
+        raise ValueError("not a coupon: " + text)
+    head, _, tail = text.partition(":")
+    amount = tail.strip()
+    kind = "percent" if amount[-1:] == "%" else "fixed"
+    value = int(amount.rstrip("%"))
+    if kind == "percent" and value > 100:
+        raise ValueError("percent above the whole: " + text)
+    return head.strip(), kind, value""",
+    variant_three="""def parse_coupon(text):
+    \"\"\"Read a coupon into its code, its kind and its amount.\"\"\"
+    code, separator, amount = text.partition(":")
+    if not separator:
+        raise ValueError("not a coupon: " + text)
+    code = code.strip()
+    amount = amount.strip()
+    if amount.endswith("%"):
+        return code, "percent", int(amount[:-1])
+    return code, "fixed", int(amount)""",
+    variant_four="""def parse_coupon(text):
+    \"\"\"Read a coupon into its code, its kind and its amount.\"\"\"
+    code, separator, amount = text.partition(":")
+    if not separator:
+        raise ValueError("not a coupon: " + text)
+    if amount.endswith("%"):
+        percent = int(amount[:-1])
+        if percent > 100:
+            raise ValueError("percent above the whole: " + text)
+        return code, "percent", percent
+    return code, "fixed", int(amount)""",
+    visible_test=_test_module(
+        "coupon_value",
+        "Published contract for reading a coupon.",
+        """
+import pytest
+
+
+def test_a_fixed_coupon_reads_as_its_amount() -> None:
+    assert parse_coupon("SAVE:250") == ("SAVE", "fixed", 250)
+
+
+def test_a_percentage_coupon_reads_as_a_percent() -> None:
+    assert parse_coupon("SAVE:20%") == ("SAVE", "percent", 20)
+
+
+def test_a_text_with_no_colon_is_refused() -> None:
+    with pytest.raises(ValueError):
+        parse_coupon("SAVE20")
+""",
+        imports="from coupon_value import parse_coupon\n",
+    ),
+    hidden_test=_test_module(
+        "coupon_value",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_percentage_coupon_reads_as_a_percent() -> None:
+    assert parse_coupon("SAVE:20%") == ("SAVE", "percent", 20)
+
+
+def test_the_spaces_people_type_are_ignored() -> None:
+    assert parse_coupon(" SAVE : 20% ") == ("SAVE", "percent", 20)
+
+
+def test_a_percent_above_the_whole_is_refused() -> None:
+    with pytest.raises(ValueError):
+        parse_coupon("SAVE:120%")
+""",
+        imports="from coupon_value import parse_coupon\n",
+    ),
+)
+
+_G029 = D2TaskSpec(
+    template_id="d7_parsing.timezone_offset",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-timezone-offset",
+    module="timezone_offset",
+    module_doc="Reading a zone offset into the minutes it stands for.",
+    issue=(
+        "parse_offset() is documented to read an offset such as '-08:30' into signed minutes. "
+        "Callers report offsets west of the meridian coming back with their minutes pointing "
+        "the other way, and 'Z' being refused although it is the offset of no offset at all."
+    ),
+    expected=(
+        "parse_offset(text) returns the offset in minutes: '+05:30' is 330, '-08:30' is -510, "
+        "and 'Z' is 0. The sign applies to the whole offset, not only to its hours, and an "
+        "offset whose minutes are sixty or more raises ValueError."
+    ),
+    baseline_reason=(
+        "it applies the sign to the hours and then adds the minutes on top, so a negative "
+        "offset lands short of where it should by twice its minutes, and it has no reading "
+        "for 'Z' at all"
+    ),
+    edge_cases=(
+        "a negative offset carries its sign into its minutes",
+        "'Z' reads as no offset",
+    ),
+    baseline="""def parse_offset(text):
+    \"\"\"Read a zone offset into signed minutes.\"\"\"
+    sign = -1 if text[0] == "-" else 1
+    hours, _, minutes = text[1:].partition(":")
+    if int(minutes) >= 60:
+        raise ValueError("minutes out of range: " + text)
+    return sign * int(hours) * 60 + int(minutes)""",
+    variant_one="""def parse_offset(text):
+    \"\"\"Read a zone offset into signed minutes.\"\"\"
+    if text == "Z":
+        return 0
+    sign = -1 if text[0] == "-" else 1
+    hours, _, minutes = text[1:].partition(":")
+    if int(minutes) >= 60:
+        raise ValueError("minutes out of range: " + text)
+    return sign * (int(hours) * 60 + int(minutes))""",
+    variant_two="""def parse_offset(text):
+    \"\"\"Read a zone offset into signed minutes.\"\"\"
+    if text.upper() == "Z":
+        return 0
+    head, _, tail = text.partition(":")
+    minutes = int(tail)
+    if minutes >= 60:
+        raise ValueError("minutes out of range: " + text)
+    hours = int(head)
+    total = abs(hours) * 60 + minutes
+    return -total if head.startswith("-") else total""",
+    variant_three="""def parse_offset(text):
+    \"\"\"Read a zone offset into signed minutes.\"\"\"
+    sign = -1 if text[0] == "-" else 1
+    hours, _, minutes = text[1:].partition(":")
+    if int(minutes) >= 60:
+        raise ValueError("minutes out of range: " + text)
+    return sign * (int(hours) * 60 + int(minutes))""",
+    variant_four="""def parse_offset(text):
+    \"\"\"Read a zone offset into signed minutes.\"\"\"
+    if text == "Z":
+        return 0
+    sign = -1 if text[0] == "-" else 1
+    hours, _, minutes = text[1:].partition(":")
+    if int(minutes) >= 60:
+        raise ValueError("minutes out of range: " + text)
+    return sign * int(hours) * 60 + int(minutes)""",
+    visible_test=_test_module(
+        "timezone_offset",
+        "Published contract for reading a zone offset.",
+        """
+import pytest
+
+
+def test_an_offset_east_reads_as_minutes() -> None:
+    assert parse_offset("+05:30") == 330
+
+
+def test_minutes_beyond_the_hour_are_refused() -> None:
+    with pytest.raises(ValueError):
+        parse_offset("+05:60")
+""",
+        imports="from timezone_offset import parse_offset\n",
+    ),
+    hidden_test=_test_module(
+        "timezone_offset",
+        "The part of the contract the published tests do not state.",
+        """
+def test_an_offset_east_reads_as_minutes() -> None:
+    assert parse_offset("+05:30") == 330
+
+
+def test_an_offset_west_carries_its_sign_into_its_minutes() -> None:
+    assert parse_offset("-08:30") == -510
+
+
+def test_the_zone_of_no_offset_reads_as_zero() -> None:
+    assert parse_offset("Z") == 0
+""",
+        imports="from timezone_offset import parse_offset\n",
+    ),
+)
+
+# ------------------------------------------------------------------ state and idempotency
+
+_G030 = D2TaskSpec(
+    template_id="d7_state.seat_checkout",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-seat-checkout",
+    module="seat_checkout",
+    module_doc="Taking a seat, once, and refusing somebody else's.",
+    issue=(
+        "checkout() is documented to be safe to send twice: the same holder taking the same "
+        "seat again is not an error. Callers report the retry of a request that already "
+        "succeeded being refused, and a seat somebody else holds being taken from them."
+    ),
+    expected=(
+        "checkout(seats, seat, holder) returns the seats with the seat held by the holder. The "
+        "same holder taking a seat they already hold changes nothing, a seat somebody else "
+        "holds raises ValueError, and the caller's mapping is left as it was."
+    ),
+    baseline_reason=(
+        "it writes the holder in without asking who is already there, and it writes into the "
+        "caller's own mapping"
+    ),
+    edge_cases=(
+        "a seat somebody else holds is refused",
+        "the caller's mapping is not modified",
+    ),
+    baseline="""def checkout(seats, seat, holder):
+    \"\"\"Record a seat as held by a holder.\"\"\"
+    seats[seat] = holder
+    return seats""",
+    variant_one="""def checkout(seats, seat, holder):
+    \"\"\"Record a seat as held by a holder.\"\"\"
+    held = seats.get(seat)
+    if held is not None and held != holder:
+        raise ValueError("seat already held: " + str(seat))
+    taken = dict(seats)
+    taken[seat] = holder
+    return taken""",
+    variant_two="""def checkout(seats, seat, holder):
+    \"\"\"Record a seat as held by a holder.\"\"\"
+    if seat in seats and seats[seat] != holder:
+        raise ValueError("seat already held: " + str(seat))
+    return {**seats, seat: holder}""",
+    variant_three="""def checkout(seats, seat, holder):
+    \"\"\"Record a seat as held by a holder.\"\"\"
+    held = seats.get(seat)
+    if held is not None and held != holder:
+        raise ValueError("seat already held: " + str(seat))
+    seats[seat] = holder
+    return seats""",
+    variant_four="""def checkout(seats, seat, holder):
+    \"\"\"Record a seat as held by a holder.\"\"\"
+    taken = {other: who for other, who in seats.items() if other != seat}
+    taken[seat] = holder
+    return taken""",
+    visible_test=_test_module(
+        "seat_checkout",
+        "Published contract for taking a seat.",
+        """
+def test_a_free_seat_is_taken() -> None:
+    assert checkout({}, "12B", "ann") == {"12B": "ann"}
+
+
+def test_taking_a_seat_twice_changes_nothing() -> None:
+    assert checkout({"12B": "ann"}, "12B", "ann") == {"12B": "ann"}
+""",
+        imports="from seat_checkout import checkout\n",
+    ),
+    hidden_test=_test_module(
+        "seat_checkout",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_free_seat_is_taken() -> None:
+    assert checkout({}, "12B", "ann") == {"12B": "ann"}
+
+
+def test_a_seat_somebody_else_holds_is_refused() -> None:
+    with pytest.raises(ValueError):
+        checkout({"12B": "ann"}, "12B", "bo")
+
+
+def test_the_callers_mapping_is_left_alone() -> None:
+    seats = {"1A": "cy"}
+    checkout(seats, "12B", "ann")
+    assert seats == {"1A": "cy"}
+""",
+        imports="from seat_checkout import checkout\n",
+    ),
+)
+
 D7_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G001,
     _G002,
@@ -2533,6 +3265,13 @@ D7_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G021,
     _G022,
     _G023,
+    _G024,
+    _G025,
+    _G026,
+    _G027,
+    _G028,
+    _G029,
+    _G030,
 )
 
 __all__ = ["D7_CERTIFICATION_SPECS", "D2TaskSpec", "RealityTaskFamily", "_test_module"]

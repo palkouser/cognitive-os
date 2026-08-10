@@ -233,11 +233,26 @@ def _separation() -> dict[str, Any]:
         if left_group not in d7_groups and right_group not in d7_groups:
             continue
         collisions.append({"left": pair.left, "right": pair.right, "reason": pair.reason})
+    # A group authored twice is not a near-clone pair: the second spec never reaches the
+    # comparison at all, because the template registry is a mapping and the later spec simply
+    # replaces the earlier one under the same key. The count above is the only trace it leaves,
+    # so the names are reported rather than left to be read out of a discrepancy.
+    reused = sorted(
+        {
+            spec.repository_group
+            for spec in D7_CERTIFICATION_SPECS
+            if sum(
+                other.repository_group == spec.repository_group for other in D7_CERTIFICATION_SPECS
+            )
+            > 1
+        }
+    )
     return {
         "bodies_compared": len(sources),
         "d7_groups": len(d7_groups),
+        "groups_authored_twice": reused,
         "cross_group_collisions_touching_21d7": collisions,
-        "separated": not collisions,
+        "separated": not collisions and not reused,
     }
 
 
@@ -287,17 +302,27 @@ def _search(words: tuple[str, ...]) -> int:
                 }
             )
     hits.sort(key=lambda item: (-len(item["matched"]), item["module"]))
+    # `closest` is ranked by how many of the searched words a group matched, which is the wrong
+    # ranking for the question actually being asked. A word searched alongside seven others gets
+    # one match each and sinks below the multi-word hits, so truncating the list can drop every
+    # group that matched it and leave the word looking unoccupied. `by_word` is not truncated:
+    # a word with hits must never be able to print as free, whatever else was searched with it.
+    by_word = {
+        word: sorted(hit["group"] for hit in hits if word in hit["matched"]) for word in wanted
+    }
     print(
         json.dumps(
             {
                 "searched": list(wanted),
                 "released_groups": len(released),
                 "hits": len(hits),
+                "by_word": by_word,
                 "closest": hits[:12],
                 "reading": (
                     "a hit is not automatically a collision, but a hit whose 'expected' states "
                     "the same contract is one, and it is cheaper to read it now than to author "
-                    "five bodies and withdraw them"
+                    "five bodies and withdraw them; a word whose 'by_word' list is empty is the "
+                    "only kind of free, and 'closest' is a ranked sample rather than the answer"
                 ),
             },
             indent=1,
