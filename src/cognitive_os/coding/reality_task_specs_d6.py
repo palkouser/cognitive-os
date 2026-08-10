@@ -3402,6 +3402,970 @@ def test_walking_backwards_gives_a_positive_leg() -> None:
     ),
 )
 
+_G041 = D2TaskSpec(
+    template_id="d6_transform.crosswalk_codes",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d6-transform-crosswalk-codes",
+    module="crosswalk_codes",
+    module_doc="Translating codes through a crosswalk and reporting the ones it cannot.",
+    issue=(
+        "crosswalk() is documented to translate each row's code and to report the codes it does "
+        "not know. Callers report that a code the crosswalk does not carry is blanked out of the "
+        "row, and that the report lists the same unknown code once for every row that used it."
+    ),
+    expected=(
+        "crosswalk(rows, mapping) returns the rows with each known code replaced by its "
+        "translation, leaving an unknown code exactly as it was, together with the distinct "
+        "unknown codes in sorted order."
+    ),
+    baseline_reason=(
+        "it looks the code up with a default of None and it collects the unknown codes without "
+        "removing repeats or sorting them"
+    ),
+    edge_cases=(
+        "an unknown code is left in the row as it was",
+        "the report names each unknown code once, in order",
+    ),
+    baseline="""def crosswalk(rows, mapping):
+    \"\"\"Translate each row's code and report the ones the crosswalk lacks.\"\"\"
+    translated = []
+    unknown = []
+    for row in rows:
+        code = row["code"]
+        if code not in mapping:
+            unknown.append(code)
+        translated.append({**row, "code": mapping.get(code)})
+    return translated, unknown""",
+    variant_one="""def crosswalk(rows, mapping):
+    \"\"\"Translate each row's code and report the ones the crosswalk lacks.\"\"\"
+    translated = []
+    unknown = set()
+    for row in rows:
+        code = row["code"]
+        if code in mapping:
+            translated.append({**row, "code": mapping[code]})
+        else:
+            unknown.add(code)
+            translated.append({**row, "code": code})
+    return translated, sorted(unknown)""",
+    variant_two="""def crosswalk(rows, mapping):
+    \"\"\"Translate each row's code and report the ones the crosswalk lacks.\"\"\"
+    translated = [{**row, "code": mapping.get(row["code"], row["code"])} for row in rows]
+    unknown = []
+    for row in rows:
+        code = row["code"]
+        if code not in mapping and code not in unknown:
+            unknown.append(code)
+    unknown.sort()
+    return translated, unknown""",
+    variant_three="""def crosswalk(rows, mapping):
+    \"\"\"Translate each row's code and report the ones the crosswalk lacks.\"\"\"
+    translated = []
+    unknown = []
+    for row in rows:
+        code = row["code"]
+        if code not in mapping:
+            unknown.append(code)
+        translated.append({**row, "code": mapping.get(code, code)})
+    return translated, unknown""",
+    variant_four="""def crosswalk(rows, mapping):
+    \"\"\"Translate each row's code and report the ones the crosswalk lacks.\"\"\"
+    translated = []
+    unknown = set()
+    for row in rows:
+        code = row["code"]
+        if code not in mapping:
+            unknown.add(code)
+        translated.append({**row, "code": mapping.get(code)})
+    return translated, sorted(unknown)""",
+    visible_test=_test_module(
+        "crosswalk_codes",
+        "Published contract for translating codes through a crosswalk.",
+        """
+def test_known_codes_are_translated() -> None:
+    rows = [{"code": "a"}, {"code": "b"}]
+    assert crosswalk(rows, {"a": "A", "b": "B"})[0] == [{"code": "A"}, {"code": "B"}]
+
+
+def test_a_crosswalk_that_knows_everything_reports_nothing() -> None:
+    assert crosswalk([{"code": "a"}], {"a": "A"})[1] == []
+""",
+        imports="from crosswalk_codes import crosswalk\n",
+    ),
+    hidden_test=_test_module(
+        "crosswalk_codes",
+        "The part of the contract the published tests do not state.",
+        """
+def test_known_codes_are_translated() -> None:
+    rows = [{"code": "a"}, {"code": "b"}]
+    assert crosswalk(rows, {"a": "A", "b": "B"})[0] == [{"code": "A"}, {"code": "B"}]
+
+
+def test_an_unknown_code_is_left_as_it_was() -> None:
+    assert crosswalk([{"code": "z"}], {})[0] == [{"code": "z"}]
+
+
+def test_each_unknown_code_is_reported_once_in_order() -> None:
+    rows = [{"code": "q"}, {"code": "p"}, {"code": "q"}]
+    assert crosswalk(rows, {})[1] == ["p", "q"]
+""",
+        imports="from crosswalk_codes import crosswalk\n",
+    ),
+)
+
+_G042 = D2TaskSpec(
+    template_id="d6_transform.drift_report",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d6-transform-drift-report",
+    module="drift_report",
+    module_doc="Reporting where consecutive readings moved further than a tolerance allows.",
+    issue=(
+        "drift_report() is documented to report every consecutive pair of readings that moved "
+        "further than a tolerance. Callers report that a reading which falls is never reported "
+        "however far it falls, and that a move of exactly the tolerance is reported although the "
+        "tolerance is meant to be allowed."
+    ),
+    expected=(
+        "drift_report(readings, tolerance) returns one (position, distance) pair for every "
+        "consecutive pair whose reading moved strictly further than tolerance, where position "
+        "is that of the later reading and distance is how far it moved, in either direction."
+    ),
+    baseline_reason=(
+        "it measures the move as a signed change and it reports a move equal to the tolerance"
+    ),
+    edge_cases=(
+        "a falling reading is reported by how far it fell",
+        "a move of exactly the tolerance is allowed",
+    ),
+    baseline="""def drift_report(readings, tolerance):
+    \"\"\"Report the consecutive pairs that moved further than `tolerance`.\"\"\"
+    drifted = []
+    for position in range(1, len(readings)):
+        distance = readings[position] - readings[position - 1]
+        if distance >= tolerance:
+            drifted.append((position, distance))
+    return drifted""",
+    variant_one="""def drift_report(readings, tolerance):
+    \"\"\"Report the consecutive pairs that moved further than `tolerance`.\"\"\"
+    drifted = []
+    for position in range(1, len(readings)):
+        distance = abs(readings[position] - readings[position - 1])
+        if distance > tolerance:
+            drifted.append((position, distance))
+    return drifted""",
+    variant_two="""def drift_report(readings, tolerance):
+    \"\"\"Report the consecutive pairs that moved further than `tolerance`.\"\"\"
+    pairs = zip(readings, readings[1:])
+    measured = [abs(later - earlier) for earlier, later in pairs]
+    return [
+        (position + 1, distance)
+        for position, distance in enumerate(measured)
+        if distance > tolerance
+    ]""",
+    variant_three="""def drift_report(readings, tolerance):
+    \"\"\"Report the consecutive pairs that moved further than `tolerance`.\"\"\"
+    drifted = []
+    for position in range(1, len(readings)):
+        distance = abs(readings[position] - readings[position - 1])
+        if distance >= tolerance:
+            drifted.append((position, distance))
+    return drifted""",
+    variant_four="""def drift_report(readings, tolerance):
+    \"\"\"Report the consecutive pairs that moved further than `tolerance`.\"\"\"
+    drifted = []
+    for position in range(1, len(readings)):
+        distance = readings[position] - readings[position - 1]
+        if distance > tolerance:
+            drifted.append((position, distance))
+    return drifted""",
+    visible_test=_test_module(
+        "drift_report",
+        "Published contract for reporting readings that drifted.",
+        """
+def test_a_move_beyond_the_tolerance_is_reported() -> None:
+    assert drift_report([10, 14, 15], 2) == [(1, 4)]
+
+
+def test_readings_that_hold_still_are_not_reported() -> None:
+    assert drift_report([5, 5, 5], 1) == []
+""",
+        imports="from drift_report import drift_report\n",
+    ),
+    hidden_test=_test_module(
+        "drift_report",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_move_beyond_the_tolerance_is_reported() -> None:
+    assert drift_report([10, 14, 15], 2) == [(1, 4)]
+
+
+def test_a_falling_reading_is_reported_by_how_far_it_fell() -> None:
+    assert drift_report([10, 4], 2) == [(1, 6)]
+
+
+def test_a_move_of_exactly_the_tolerance_is_allowed() -> None:
+    assert drift_report([10, 12], 2) == []
+""",
+        imports="from drift_report import drift_report\n",
+    ),
+)
+
+_G043 = D2TaskSpec(
+    template_id="d6_transform.tag_ladder",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d6-transform-tag-ladder",
+    module="tag_ladder",
+    module_doc="Building the ladder of ancestors a slash-separated tag stands on.",
+    issue=(
+        "tag_ladder() is documented to build the ladder of ancestors a tag stands on. Callers "
+        "report that a tag written with a leading slash gains an empty rung at the bottom, and "
+        "that a tag written with a trailing slash repeats its top rung."
+    ),
+    expected=(
+        "tag_ladder(tag) returns each ancestor of the tag from the shortest to the tag itself, "
+        "joined by slashes. A slash at either end separates nothing and contributes no rung."
+    ),
+    baseline_reason=(
+        "it splits on the separator without discarding the empty parts a leading or trailing "
+        "slash produces"
+    ),
+    edge_cases=(
+        "a leading slash adds no empty rung",
+        "a trailing slash repeats no rung",
+    ),
+    baseline="""def tag_ladder(tag):
+    \"\"\"Return the ladder of ancestors `tag` stands on.\"\"\"
+    parts = tag.split("/")
+    return ["/".join(parts[: depth + 1]) for depth in range(len(parts))]""",
+    variant_one="""def tag_ladder(tag):
+    \"\"\"Return the ladder of ancestors `tag` stands on.\"\"\"
+    parts = [part for part in tag.split("/") if part]
+    return ["/".join(parts[: depth + 1]) for depth in range(len(parts))]""",
+    variant_two="""def tag_ladder(tag):
+    \"\"\"Return the ladder of ancestors `tag` stands on.\"\"\"
+    rungs = []
+    standing = ""
+    for part in tag.split("/"):
+        if not part:
+            continue
+        standing = f"{standing}/{part}" if standing else part
+        rungs.append(standing)
+    return rungs""",
+    variant_three="""def tag_ladder(tag):
+    \"\"\"Return the ladder of ancestors `tag` stands on.\"\"\"
+    parts = tag.split("/")
+    while parts and not parts[0]:
+        parts = parts[1:]
+    return ["/".join(parts[: depth + 1]) for depth in range(len(parts))]""",
+    variant_four="""def tag_ladder(tag):
+    \"\"\"Return the ladder of ancestors `tag` stands on.\"\"\"
+    parts = tag.split("/")
+    while parts and not parts[-1]:
+        parts = parts[:-1]
+    return ["/".join(parts[: depth + 1]) for depth in range(len(parts))]""",
+    visible_test=_test_module(
+        "tag_ladder",
+        "Published contract for the ladder of ancestors a tag stands on.",
+        """
+def test_a_tag_stands_on_its_ancestors() -> None:
+    assert tag_ladder("a/b/c") == ["a", "a/b", "a/b/c"]
+
+
+def test_a_tag_with_no_separator_stands_alone() -> None:
+    assert tag_ladder("only") == ["only"]
+""",
+        imports="from tag_ladder import tag_ladder\n",
+    ),
+    hidden_test=_test_module(
+        "tag_ladder",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_tag_stands_on_its_ancestors() -> None:
+    assert tag_ladder("a/b/c") == ["a", "a/b", "a/b/c"]
+
+
+def test_a_leading_slash_adds_no_empty_rung() -> None:
+    assert tag_ladder("/a/b") == ["a", "a/b"]
+
+
+def test_a_trailing_slash_repeats_no_rung() -> None:
+    assert tag_ladder("a/b/") == ["a", "a/b"]
+""",
+        imports="from tag_ladder import tag_ladder\n",
+    ),
+)
+
+_G044 = D2TaskSpec(
+    template_id="d6_transform.ledger_fold",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d6-transform-ledger-fold",
+    module="ledger_fold",
+    module_doc="Folding ledger entries into the balance each account is left holding.",
+    issue=(
+        "fold_entries() is documented to fold a ledger into a balance per account. Callers "
+        "report that an entry of a kind nobody recognises is folded in silently, and that an "
+        "account whose withdrawals outrun its deposits comes back at zero instead of overdrawn."
+    ),
+    expected=(
+        "fold_entries(entries) returns the balance each account is left holding, where a deposit "
+        "adds and a withdrawal subtracts. A balance is allowed to be negative. An entry of any "
+        "other kind raises ValueError."
+    ),
+    baseline_reason=(
+        "it ignores an entry whose kind it does not recognise and it floors every balance at zero"
+    ),
+    edge_cases=(
+        "an unrecognised kind is refused",
+        "a balance is allowed to be negative",
+    ),
+    baseline="""def fold_entries(entries):
+    \"\"\"Fold ledger entries into a balance per account.\"\"\"
+    balances = {}
+    for entry in entries:
+        account = entry["account"]
+        standing = balances.get(account, 0)
+        if entry["kind"] == "deposit":
+            standing += entry["amount"]
+        elif entry["kind"] == "withdrawal":
+            standing -= entry["amount"]
+        balances[account] = max(0, standing)
+    return balances""",
+    variant_one="""def fold_entries(entries):
+    \"\"\"Fold ledger entries into a balance per account.\"\"\"
+    balances = {}
+    for entry in entries:
+        account = entry["account"]
+        standing = balances.get(account, 0)
+        if entry["kind"] == "deposit":
+            standing += entry["amount"]
+        elif entry["kind"] == "withdrawal":
+            standing -= entry["amount"]
+        else:
+            raise ValueError(entry["kind"])
+        balances[account] = standing
+    return balances""",
+    variant_two="""SIGNS = {"deposit": 1, "withdrawal": -1}
+
+
+def fold_entries(entries):
+    \"\"\"Fold ledger entries into a balance per account.\"\"\"
+    balances = {}
+    for entry in entries:
+        kind = entry["kind"]
+        if kind not in SIGNS:
+            raise ValueError(kind)
+        account = entry["account"]
+        balances[account] = balances.get(account, 0) + SIGNS[kind] * entry["amount"]
+    return balances""",
+    variant_three="""def fold_entries(entries):
+    \"\"\"Fold ledger entries into a balance per account.\"\"\"
+    balances = {}
+    for entry in entries:
+        account = entry["account"]
+        standing = balances.get(account, 0)
+        if entry["kind"] == "deposit":
+            standing += entry["amount"]
+        elif entry["kind"] == "withdrawal":
+            standing -= entry["amount"]
+        else:
+            raise ValueError(entry["kind"])
+        balances[account] = max(0, standing)
+    return balances""",
+    variant_four="""def fold_entries(entries):
+    \"\"\"Fold ledger entries into a balance per account.\"\"\"
+    balances = {}
+    for entry in entries:
+        account = entry["account"]
+        standing = balances.get(account, 0)
+        if entry["kind"] == "deposit":
+            standing += entry["amount"]
+        elif entry["kind"] == "withdrawal":
+            standing -= entry["amount"]
+        balances[account] = standing
+    return balances""",
+    visible_test=_test_module(
+        "ledger_fold",
+        "Published contract for folding a ledger into balances.",
+        """
+def test_deposits_and_withdrawals_fold_together() -> None:
+    entries = [
+        {"account": "a", "kind": "deposit", "amount": 10},
+        {"account": "a", "kind": "withdrawal", "amount": 4},
+    ]
+    assert fold_entries(entries) == {"a": 6}
+
+
+def test_each_account_is_folded_separately() -> None:
+    entries = [
+        {"account": "a", "kind": "deposit", "amount": 3},
+        {"account": "b", "kind": "deposit", "amount": 5},
+    ]
+    assert fold_entries(entries) == {"a": 3, "b": 5}
+""",
+        imports="from ledger_fold import fold_entries\n",
+    ),
+    hidden_test=_test_module(
+        "ledger_fold",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from ledger_fold import fold_entries
+
+
+def test_deposits_and_withdrawals_fold_together() -> None:
+    entries = [
+        {"account": "a", "kind": "deposit", "amount": 10},
+        {"account": "a", "kind": "withdrawal", "amount": 4},
+    ]
+    assert fold_entries(entries) == {"a": 6}
+
+
+def test_an_unrecognised_kind_is_refused() -> None:
+    with pytest.raises(ValueError):
+        fold_entries([{"account": "a", "kind": "gift", "amount": 5}])
+
+
+def test_a_balance_is_allowed_to_be_negative() -> None:
+    entries = [{"account": "a", "kind": "withdrawal", "amount": 3}]
+    assert fold_entries(entries) == {"a": -3}
+""",
+    ),
+)
+
+_G045 = D2TaskSpec(
+    template_id="d6_error.abort_ladder",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d6-error-abort-ladder",
+    module="abort_ladder",
+    module_doc="Keeping the first few objections and saying how many were dropped.",
+    issue=(
+        "keep_first() is documented to keep the first few objections and to say how many it "
+        "dropped. Callers report that the count of dropped objections never rises above one "
+        "however many were dropped, and that a negative limit is quietly treated as none."
+    ),
+    expected=(
+        "keep_first(objections, limit) returns the first limit objections together with how many "
+        "were dropped. A limit of zero keeps none and drops them all. A limit below zero raises "
+        "ValueError, because there is no such thing as keeping fewer than none."
+    ),
+    baseline_reason=(
+        "it records that something was dropped rather than how many, and it clamps a negative "
+        "limit to zero"
+    ),
+    edge_cases=(
+        "the count of dropped objections is a count",
+        "a limit below zero is refused",
+    ),
+    baseline="""def keep_first(objections, limit):
+    \"\"\"Keep the first `limit` objections and count the rest.\"\"\"
+    ceiling = max(0, limit)
+    kept = list(objections[:ceiling])
+    dropped = 1 if len(objections) > ceiling else 0
+    return kept, dropped""",
+    variant_one="""def keep_first(objections, limit):
+    \"\"\"Keep the first `limit` objections and count the rest.\"\"\"
+    if limit < 0:
+        raise ValueError("a limit below zero keeps fewer than none")
+    kept = list(objections[:limit])
+    return kept, len(objections) - len(kept)""",
+    variant_two="""def keep_first(objections, limit):
+    \"\"\"Keep the first `limit` objections and count the rest.\"\"\"
+    if not limit >= 0:
+        raise ValueError("a limit below zero keeps fewer than none")
+    kept = []
+    dropped = 0
+    for objection in objections:
+        if len(kept) < limit:
+            kept.append(objection)
+        else:
+            dropped += 1
+    return kept, dropped""",
+    variant_three="""def keep_first(objections, limit):
+    \"\"\"Keep the first `limit` objections and count the rest.\"\"\"
+    ceiling = max(0, limit)
+    kept = list(objections[:ceiling])
+    return kept, len(objections) - len(kept)""",
+    variant_four="""def keep_first(objections, limit):
+    \"\"\"Keep the first `limit` objections and count the rest.\"\"\"
+    if limit < 0:
+        raise ValueError("a limit below zero keeps fewer than none")
+    kept = list(objections[:limit])
+    dropped = 1 if len(objections) > limit else 0
+    return kept, dropped""",
+    visible_test=_test_module(
+        "abort_ladder",
+        "Published contract for keeping the first few objections.",
+        """
+def test_the_first_objections_are_kept() -> None:
+    assert keep_first(["a", "b", "c"], 2) == (["a", "b"], 1)
+
+
+def test_nothing_is_dropped_when_everything_fits() -> None:
+    assert keep_first(["a"], 3) == (["a"], 0)
+""",
+        imports="from abort_ladder import keep_first\n",
+    ),
+    hidden_test=_test_module(
+        "abort_ladder",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from abort_ladder import keep_first
+
+
+def test_the_first_objections_are_kept() -> None:
+    assert keep_first(["a", "b", "c"], 2) == (["a", "b"], 1)
+
+
+def test_the_count_of_dropped_objections_is_a_count() -> None:
+    assert keep_first(["a", "b", "c", "d"], 1) == (["a"], 3)
+
+
+def test_a_limit_below_zero_is_refused() -> None:
+    with pytest.raises(ValueError):
+        keep_first(["a"], -1)
+""",
+    ),
+)
+
+_G046 = D2TaskSpec(
+    template_id="d6_error.deadline_split",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d6-error-deadline-split",
+    module="deadline_split",
+    module_doc="Setting aside a reserve out of a budget, and refusing the splits that cannot be.",
+    issue=(
+        "split_budget() is documented to set a reserve aside out of a budget. Callers report "
+        "that reserving the whole budget is refused although it leaves a working part of "
+        "nothing, and that a negative reserve is accepted and hands back more than the budget."
+    ),
+    expected=(
+        "split_budget(total, reserve) returns (working, reserve) where working is what is left "
+        "after the reserve. Reserving the whole budget is allowed and leaves nothing to work "
+        "with. A reserve above the total or below zero raises ValueError."
+    ),
+    baseline_reason=(
+        "it refuses a reserve equal to the total and it never checks for a negative reserve"
+    ),
+    edge_cases=(
+        "reserving the whole budget is allowed",
+        "a negative reserve is refused",
+    ),
+    baseline="""def split_budget(total, reserve):
+    \"\"\"Set `reserve` aside out of `total`.\"\"\"
+    if reserve >= total:
+        raise ValueError("the reserve does not fit the budget")
+    return total - reserve, reserve""",
+    variant_one="""def split_budget(total, reserve):
+    \"\"\"Set `reserve` aside out of `total`.\"\"\"
+    if reserve > total:
+        raise ValueError("the reserve does not fit the budget")
+    if reserve < 0:
+        raise ValueError("a reserve below zero reserves nothing")
+    return total - reserve, reserve""",
+    variant_two="""def split_budget(total, reserve):
+    \"\"\"Set `reserve` aside out of `total`.\"\"\"
+    if not 0 <= reserve <= total:
+        raise ValueError("the reserve does not fit the budget")
+    return total - reserve, reserve""",
+    variant_three="""def split_budget(total, reserve):
+    \"\"\"Set `reserve` aside out of `total`.\"\"\"
+    if reserve > total:
+        raise ValueError("the reserve does not fit the budget")
+    return total - reserve, reserve""",
+    variant_four="""def split_budget(total, reserve):
+    \"\"\"Set `reserve` aside out of `total`.\"\"\"
+    if reserve >= total:
+        raise ValueError("the reserve does not fit the budget")
+    if reserve < 0:
+        raise ValueError("a reserve below zero reserves nothing")
+    return total - reserve, reserve""",
+    visible_test=_test_module(
+        "deadline_split",
+        "Published contract for setting a reserve aside.",
+        """
+import pytest
+
+from deadline_split import split_budget
+
+
+def test_a_reserve_is_taken_out_of_the_budget() -> None:
+    assert split_budget(10, 3) == (7, 3)
+
+
+def test_a_reserve_above_the_budget_is_refused() -> None:
+    with pytest.raises(ValueError):
+        split_budget(5, 9)
+""",
+    ),
+    hidden_test=_test_module(
+        "deadline_split",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from deadline_split import split_budget
+
+
+def test_a_reserve_is_taken_out_of_the_budget() -> None:
+    assert split_budget(10, 3) == (7, 3)
+
+
+def test_reserving_the_whole_budget_is_allowed() -> None:
+    assert split_budget(5, 5) == (0, 5)
+
+
+def test_a_negative_reserve_is_refused() -> None:
+    with pytest.raises(ValueError):
+        split_budget(10, -2)
+""",
+    ),
+)
+
+_G047 = D2TaskSpec(
+    template_id="d6_error.objection_codes",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d6-error-objection-codes",
+    module="objection_codes",
+    module_doc="Gathering the distinct codes a batch of objections carries.",
+    issue=(
+        "gather_codes() is documented to gather the distinct codes a batch of objections "
+        "carries. Callers report that an objection carrying no code at all is passed over in "
+        "silence, and that a code raised twice is reported twice."
+    ),
+    expected=(
+        "gather_codes(objections) returns the distinct codes in sorted order. An objection with "
+        "no code raises KeyError, because an objection nobody can name is not something to "
+        "quietly drop."
+    ),
+    baseline_reason=(
+        "it reaches the code through a lookup that tolerates its absence and it never removes "
+        "repeats"
+    ),
+    edge_cases=(
+        "an objection with no code is refused",
+        "a code raised twice is reported once",
+    ),
+    baseline="""def gather_codes(objections):
+    \"\"\"Gather the distinct codes a batch of objections carries.\"\"\"
+    codes = []
+    for objection in objections:
+        code = objection.get("code")
+        if code is not None:
+            codes.append(code)
+    return sorted(codes)""",
+    variant_one="""def gather_codes(objections):
+    \"\"\"Gather the distinct codes a batch of objections carries.\"\"\"
+    codes = set()
+    for objection in objections:
+        codes.add(objection["code"])
+    return sorted(codes)""",
+    variant_two="""def gather_codes(objections):
+    \"\"\"Gather the distinct codes a batch of objections carries.\"\"\"
+    codes = []
+    for objection in objections:
+        code = objection["code"]
+        if code not in codes:
+            codes.append(code)
+    codes.sort()
+    return codes""",
+    variant_three="""def gather_codes(objections):
+    \"\"\"Gather the distinct codes a batch of objections carries.\"\"\"
+    codes = []
+    for objection in objections:
+        codes.append(objection["code"])
+    return sorted(codes)""",
+    variant_four="""def gather_codes(objections):
+    \"\"\"Gather the distinct codes a batch of objections carries.\"\"\"
+    codes = set()
+    for objection in objections:
+        code = objection.get("code")
+        if code is not None:
+            codes.add(code)
+    return sorted(codes)""",
+    visible_test=_test_module(
+        "objection_codes",
+        "Published contract for gathering objection codes.",
+        """
+def test_codes_come_back_sorted() -> None:
+    assert gather_codes([{"code": "E2"}, {"code": "E1"}]) == ["E1", "E2"]
+
+
+def test_no_objections_carry_no_codes() -> None:
+    assert gather_codes([]) == []
+""",
+        imports="from objection_codes import gather_codes\n",
+    ),
+    hidden_test=_test_module(
+        "objection_codes",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from objection_codes import gather_codes
+
+
+def test_codes_come_back_sorted() -> None:
+    assert gather_codes([{"code": "E2"}, {"code": "E1"}]) == ["E1", "E2"]
+
+
+def test_an_objection_with_no_code_is_refused() -> None:
+    with pytest.raises(KeyError):
+        gather_codes([{"note": "unnamed"}])
+
+
+def test_a_code_raised_twice_is_reported_once() -> None:
+    assert gather_codes([{"code": "E1"}, {"code": "E1"}]) == ["E1"]
+""",
+    ),
+)
+
+_G049 = D2TaskSpec(
+    template_id="d6_parsing.quantity_phrase",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d6-parsing-quantity-phrase",
+    module="quantity_phrase",
+    module_doc="Reading a packaging phrase such as three of two hundred and fifty millilitres.",
+    issue=(
+        "read_quantity() is documented to read a packaging phrase into a count, a size and a "
+        "unit. Callers report that a phrase naming no count comes back with a count of zero "
+        "rather than the single item it describes, and that a phrase written without spaces "
+        "around the multiplier is refused outright."
+    ),
+    expected=(
+        "read_quantity(text) returns (count, size, unit). A phrase with no multiplier describes "
+        "one item. The spaces around the multiplier are optional. A phrase that fits neither "
+        "shape raises ValueError."
+    ),
+    baseline_reason=(
+        "it substitutes zero for an absent count and its pattern demands a space on each side "
+        "of the multiplier"
+    ),
+    edge_cases=(
+        "a phrase with no multiplier describes one item",
+        "the spaces around the multiplier are optional",
+    ),
+    baseline="""import re
+
+PATTERN = re.compile(r"^(?:(\\d+) x )?(\\d+)([a-z]+)$")
+
+
+def read_quantity(text):
+    \"\"\"Return the (count, size, unit) a packaging phrase describes.\"\"\"
+    found = PATTERN.match(text)
+    if not found:
+        raise ValueError(text)
+    return int(found.group(1) or 0), int(found.group(2)), found.group(3)""",
+    variant_one="""import re
+
+PATTERN = re.compile(r"^(?:(\\d+) ?x ?)?(\\d+)([a-z]+)$")
+
+
+def read_quantity(text):
+    \"\"\"Return the (count, size, unit) a packaging phrase describes.\"\"\"
+    found = PATTERN.match(text)
+    if not found:
+        raise ValueError(text)
+    return int(found.group(1) or 1), int(found.group(2)), found.group(3)""",
+    variant_two="""import re
+
+SIZE = re.compile(r"^(\\d+)([a-z]+)$")
+
+
+def read_quantity(text):
+    \"\"\"Return the (count, size, unit) a packaging phrase describes.\"\"\"
+    count = 1
+    remainder = text
+    if "x" in text:
+        head, _, remainder = text.partition("x")
+        head = head.strip()
+        remainder = remainder.strip()
+        if not head.isdigit():
+            raise ValueError(text)
+        count = int(head)
+    found = SIZE.match(remainder)
+    if not found:
+        raise ValueError(text)
+    return count, int(found.group(1)), found.group(2)""",
+    variant_three="""import re
+
+PATTERN = re.compile(r"^(?:(\\d+) x )?(\\d+)([a-z]+)$")
+
+
+def read_quantity(text):
+    \"\"\"Return the (count, size, unit) a packaging phrase describes.\"\"\"
+    found = PATTERN.match(text)
+    if not found:
+        raise ValueError(text)
+    return int(found.group(1) or 1), int(found.group(2)), found.group(3)""",
+    variant_four="""import re
+
+PATTERN = re.compile(r"^(?:(\\d+) ?x ?)?(\\d+)([a-z]+)$")
+
+
+def read_quantity(text):
+    \"\"\"Return the (count, size, unit) a packaging phrase describes.\"\"\"
+    found = PATTERN.match(text)
+    if not found:
+        raise ValueError(text)
+    return int(found.group(1) or 0), int(found.group(2)), found.group(3)""",
+    visible_test=_test_module(
+        "quantity_phrase",
+        "Published contract for reading a packaging phrase.",
+        """
+import pytest
+
+from quantity_phrase import read_quantity
+
+
+def test_a_multiplied_phrase_is_read() -> None:
+    assert read_quantity("3 x 250ml") == (3, 250, "ml")
+
+
+def test_a_phrase_of_neither_shape_is_refused() -> None:
+    with pytest.raises(ValueError):
+        read_quantity("a crate")
+""",
+    ),
+    hidden_test=_test_module(
+        "quantity_phrase",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from quantity_phrase import read_quantity
+
+
+def test_a_multiplied_phrase_is_read() -> None:
+    assert read_quantity("3 x 250ml") == (3, 250, "ml")
+
+
+def test_a_phrase_with_no_multiplier_describes_one_item() -> None:
+    assert read_quantity("250ml") == (1, 250, "ml")
+
+
+def test_the_spaces_around_the_multiplier_are_optional() -> None:
+    assert read_quantity("3x250ml") == (3, 250, "ml")
+""",
+    ),
+)
+
+_G050 = D2TaskSpec(
+    template_id="d6_state.promotion_gate",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d6-state-promotion-gate",
+    module="promotion_gate",
+    module_doc="Promoting a candidate once, and only a candidate.",
+    issue=(
+        "promote() is documented to move a candidate onto the promoted list exactly once. "
+        "Callers report that promoting somebody already promoted lists them a second time, and "
+        "that promoting somebody who was never a candidate simply invents them."
+    ),
+    expected=(
+        "promote(state, name) moves name out of candidates and onto promoted. Somebody already "
+        "promoted is left alone, because a repeated promotion is the same promotion. Somebody "
+        "who is neither a candidate nor already promoted raises KeyError."
+    ),
+    baseline_reason=(
+        "it appends to the promoted list without looking whether the name is there, and it "
+        "never checks that the name was a candidate"
+    ),
+    edge_cases=(
+        "promoting somebody already promoted changes nothing",
+        "promoting somebody who was never a candidate is refused",
+    ),
+    baseline="""def promote(state, name):
+    \"\"\"Move `name` from the candidates onto the promoted list.\"\"\"
+    candidates = [person for person in state.get("candidates", []) if person != name]
+    promoted = [*state.get("promoted", []), name]
+    return {"candidates": candidates, "promoted": promoted}""",
+    variant_one="""def promote(state, name):
+    \"\"\"Move `name` from the candidates onto the promoted list.\"\"\"
+    candidates = list(state.get("candidates", []))
+    promoted = list(state.get("promoted", []))
+    if name in promoted:
+        return {"candidates": candidates, "promoted": promoted}
+    if name not in candidates:
+        raise KeyError(name)
+    candidates.remove(name)
+    promoted.append(name)
+    return {"candidates": candidates, "promoted": promoted}""",
+    variant_two="""def promote(state, name):
+    \"\"\"Move `name` from the candidates onto the promoted list.\"\"\"
+    candidates = list(state.get("candidates", []))
+    promoted = list(state.get("promoted", []))
+    already = name in promoted
+    standing = name in candidates
+    if not already and not standing:
+        raise KeyError(name)
+    if already:
+        return {"candidates": candidates, "promoted": promoted}
+    return {
+        "candidates": [person for person in candidates if person != name],
+        "promoted": [*promoted, name],
+    }""",
+    variant_three="""def promote(state, name):
+    \"\"\"Move `name` from the candidates onto the promoted list.\"\"\"
+    candidates = list(state.get("candidates", []))
+    promoted = list(state.get("promoted", []))
+    if name in promoted:
+        return {"candidates": candidates, "promoted": promoted}
+    return {
+        "candidates": [person for person in candidates if person != name],
+        "promoted": [*promoted, name],
+    }""",
+    variant_four="""def promote(state, name):
+    \"\"\"Move `name` from the candidates onto the promoted list.\"\"\"
+    candidates = list(state.get("candidates", []))
+    promoted = list(state.get("promoted", []))
+    if name not in candidates:
+        raise KeyError(name)
+    candidates.remove(name)
+    promoted.append(name)
+    return {"candidates": candidates, "promoted": promoted}""",
+    visible_test=_test_module(
+        "promotion_gate",
+        "Published contract for promoting a candidate.",
+        """
+def test_a_candidate_is_promoted() -> None:
+    state = {"candidates": ["a"], "promoted": []}
+    assert promote(state, "a") == {"candidates": [], "promoted": ["a"]}
+
+
+def test_the_other_candidates_stay_where_they_are() -> None:
+    state = {"candidates": ["a", "b"], "promoted": []}
+    assert promote(state, "a")["candidates"] == ["b"]
+""",
+        imports="from promotion_gate import promote\n",
+    ),
+    hidden_test=_test_module(
+        "promotion_gate",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from promotion_gate import promote
+
+
+def test_a_candidate_is_promoted() -> None:
+    state = {"candidates": ["a"], "promoted": []}
+    assert promote(state, "a") == {"candidates": [], "promoted": ["a"]}
+
+
+def test_promoting_somebody_already_promoted_changes_nothing() -> None:
+    state = {"candidates": [], "promoted": ["a"]}
+    assert promote(state, "a") == {"candidates": [], "promoted": ["a"]}
+
+
+def test_promoting_somebody_who_was_never_a_candidate_is_refused() -> None:
+    with pytest.raises(KeyError):
+        promote({"candidates": ["a"], "promoted": []}, "z")
+""",
+    ),
+)
+
 D6_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G001,
     _G002,
@@ -3436,4 +4400,13 @@ D6_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G037,
     _G038,
     _G040,
+    _G041,
+    _G042,
+    _G043,
+    _G044,
+    _G045,
+    _G046,
+    _G047,
+    _G049,
+    _G050,
 )
