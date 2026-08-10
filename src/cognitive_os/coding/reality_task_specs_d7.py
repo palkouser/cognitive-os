@@ -3953,111 +3953,96 @@ def test_a_window_that_does_not_run_forwards_is_refused() -> None:
 )
 
 _G038 = D2TaskSpec(
-    template_id="d7_error.stall_fallback",
+    template_id="d7_error.required_fields",
     family=RealityTaskFamily.ERROR_HANDLING,
-    repository_group="d7-error-stall-fallback",
-    module="stall_fallback",
-    module_doc="Falling back to the second source, for the one reason that justifies it.",
+    repository_group="d7-error-required-fields",
+    module="required_fields",
+    module_doc="Naming every field a payload is missing, in one go.",
     issue=(
-        "read() is documented to fall back only when the first source cannot find the thing. "
-        "Callers report the fallback hiding faults that have nothing to do with a missing "
-        "record, and an answer of 'nothing' from the first source being overridden by the "
-        "second although 'nothing' was the answer."
+        "check() is documented to name every required field a payload does not carry, so a "
+        "caller fixing one does not come straight back missing the next. Callers report being "
+        "told about one field at a time, and a field they deliberately sent empty being "
+        "reported as though they had not sent it at all."
     ),
     expected=(
-        "read(primary, backup) returns what the primary source answers. Only a LookupError from "
-        "the primary sends the question to the backup; any other error is the caller's to see, "
-        "and an empty answer is still the primary's answer."
+        "check(payload, required) raises ValueError naming every required field the payload "
+        "does not carry, sorted, in one message. A field the payload carries is present "
+        "whatever its value, an empty one included, and a payload missing nothing raises "
+        "nothing."
     ),
     baseline_reason=(
-        "it catches every error the primary can raise rather than the one it knows how to "
-        "survive, and it treats an empty answer as no answer at all"
+        "it raises at the first field it finds missing, so the message names one field of "
+        "however many, and it decides presence by the value rather than by the field being there"
     ),
     edge_cases=(
-        "an empty answer is still the primary's answer",
-        "an error that is not a lookup failure reaches the caller",
+        "every missing field is named at once",
+        "a field carried but empty is present",
     ),
-    baseline="""def read(primary, backup):
-    \"\"\"Read from the primary source, falling back to the backup.\"\"\"
-    try:
-        value = primary()
-    except Exception:
-        return backup()
-    if not value:
-        return backup()
-    return value""",
-    variant_one="""def read(primary, backup):
-    \"\"\"Read from the primary source, falling back to the backup.\"\"\"
-    try:
-        return primary()
-    except LookupError:
-        return backup()""",
-    variant_two="""def read(primary, backup):
-    \"\"\"Read from the primary source, falling back to the backup.\"\"\"
-    answered = False
-    value = None
-    try:
-        value = primary()
-        answered = True
-    except LookupError:
-        answered = False
-    return value if answered else backup()""",
-    variant_three="""def read(primary, backup):
-    \"\"\"Read from the primary source, falling back to the backup.\"\"\"
-    try:
-        value = primary()
-    except LookupError:
-        return backup()
-    if not value:
-        return backup()
-    return value""",
-    variant_four="""def read(primary, backup):
-    \"\"\"Read from the primary source, falling back to the backup.\"\"\"
-    try:
-        return primary()
-    except Exception:
-        return backup()""",
+    baseline="""def check(payload, required):
+    \"\"\"Refuse a payload that is missing required fields.\"\"\"
+    for field in required:
+        if not payload.get(field):
+            raise ValueError("missing: " + field)""",
+    variant_one="""def check(payload, required):
+    \"\"\"Refuse a payload that is missing required fields.\"\"\"
+    missing = sorted(field for field in required if field not in payload)
+    if missing:
+        raise ValueError("missing: " + ", ".join(missing))""",
+    variant_two="""def check(payload, required):
+    \"\"\"Refuse a payload that is missing required fields.\"\"\"
+    missing = []
+    for field in required:
+        if field not in payload:
+            missing.append(field)
+    if missing:
+        raise ValueError("missing: " + ", ".join(sorted(missing)))""",
+    variant_three="""def check(payload, required):
+    \"\"\"Refuse a payload that is missing required fields.\"\"\"
+    missing = sorted(field for field in required if not payload.get(field))
+    if missing:
+        raise ValueError("missing: " + ", ".join(missing))""",
+    variant_four="""def check(payload, required):
+    \"\"\"Refuse a payload that is missing required fields.\"\"\"
+    for field in required:
+        if field not in payload:
+            raise ValueError("missing: " + field)""",
     visible_test=_test_module(
-        "stall_fallback",
-        "Published contract for reading with a fallback.",
+        "required_fields",
+        "Published contract for the required fields.",
         """
-def _missing():
-    raise LookupError("no record")
+import pytest
 
 
-def test_the_primary_answer_is_the_answer() -> None:
-    assert read(lambda: "first", lambda: "second") == "first"
+def test_a_payload_missing_nothing_is_accepted() -> None:
+    assert check({"a": 1, "b": 2}, ["a", "b"]) is None
 
 
-def test_a_missing_record_goes_to_the_backup() -> None:
-    assert read(_missing, lambda: "second") == "second"
+def test_a_payload_missing_a_field_is_refused() -> None:
+    with pytest.raises(ValueError):
+        check({"a": 1}, ["a", "b"])
 """,
-        imports="from stall_fallback import read\n",
+        imports="from required_fields import check\n",
     ),
     hidden_test=_test_module(
-        "stall_fallback",
+        "required_fields",
         "The part of the contract the published tests do not state.",
         """
 import pytest
 
 
-def _broken():
-    raise ValueError("the source is on fire")
+def test_a_payload_missing_nothing_is_accepted() -> None:
+    assert check({"a": 1, "b": 2}, ["a", "b"]) is None
 
 
-def test_the_primary_answer_is_the_answer() -> None:
-    assert read(lambda: "first", lambda: "second") == "first"
+def test_every_missing_field_is_named_at_once() -> None:
+    with pytest.raises(ValueError, match="b, c"):
+        check({"a": 1}, ["c", "b"])
 
 
-def test_an_empty_answer_is_still_the_primarys_answer() -> None:
-    assert read(lambda: "", lambda: "second") == ""
-
-
-def test_an_error_that_is_not_a_lookup_failure_reaches_the_caller() -> None:
-    with pytest.raises(ValueError):
-        read(_broken, lambda: "second")
+def test_a_field_carried_but_empty_is_present() -> None:
+    assert check({"a": ""}, ["a"]) is None
 """,
-        imports="from stall_fallback import read\n",
+        imports="from required_fields import check\n",
     ),
 )
 
@@ -6524,6 +6509,593 @@ def test_a_handover_to_the_same_shift_moves_nothing() -> None:
     ),
 )
 
+_G064 = D2TaskSpec(
+    template_id="d7_boundary.pair_ends",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-pair-ends",
+    module="pair_ends",
+    module_doc="Pairing the smallest with the largest, and saying what was left over.",
+    issue=(
+        "pair_ends() is documented to pair from the two ends inwards, so that the heaviest goes "
+        "with the lightest. Callers report neighbouring values being paired instead, which is "
+        "the opposite of balanced, and an odd value simply vanishing rather than being handed "
+        "back as the one nobody could be paired with."
+    ),
+    expected=(
+        "pair_ends(values) sorts the values and returns (pairs, leftover): the smallest paired "
+        "with the largest, the next smallest with the next largest, and so on inwards. An odd "
+        "count leaves the middle value over; an even count leaves None."
+    ),
+    baseline_reason=(
+        "it walks the sorted values two at a time, which pairs each with its neighbour rather "
+        "than with its opposite end, and it reports no leftover whatever it was given"
+    ),
+    edge_cases=(
+        "the smallest is paired with the largest",
+        "an odd value is handed back as the leftover",
+    ),
+    baseline="""def pair_ends(values):
+    \"\"\"Pair the values from both ends inwards.\"\"\"
+    ordered = sorted(values)
+    pairs = []
+    for index in range(0, len(ordered) - 1, 2):
+        pairs.append((ordered[index], ordered[index + 1]))
+    return pairs, None""",
+    variant_one="""def pair_ends(values):
+    \"\"\"Pair the values from both ends inwards.\"\"\"
+    ordered = sorted(values)
+    pairs = []
+    low = 0
+    high = len(ordered) - 1
+    while low < high:
+        pairs.append((ordered[low], ordered[high]))
+        low += 1
+        high -= 1
+    return pairs, ordered[low] if low == high else None""",
+    variant_two="""def pair_ends(values):
+    \"\"\"Pair the values from both ends inwards.\"\"\"
+    ordered = sorted(values)
+    count = len(ordered) // 2
+    pairs = [(ordered[index], ordered[-1 - index]) for index in range(count)]
+    leftover = ordered[count] if len(ordered) % 2 else None
+    return pairs, leftover""",
+    variant_three="""def pair_ends(values):
+    \"\"\"Pair the values from both ends inwards.\"\"\"
+    ordered = sorted(values)
+    pairs = []
+    low = 0
+    high = len(ordered) - 1
+    while low < high:
+        pairs.append((ordered[low], ordered[high]))
+        low += 1
+        high -= 1
+    return pairs, None""",
+    variant_four="""def pair_ends(values):
+    \"\"\"Pair the values from both ends inwards.\"\"\"
+    ordered = sorted(values)
+    pairs = []
+    for index in range(0, len(ordered) - 1, 2):
+        pairs.append((ordered[index], ordered[index + 1]))
+    leftover = ordered[-1] if len(ordered) % 2 else None
+    return pairs, leftover""",
+    visible_test=_test_module(
+        "pair_ends",
+        "Published contract for pairing from the ends.",
+        """
+def test_two_values_make_one_pair() -> None:
+    assert pair_ends([1, 9]) == ([(1, 9)], None)
+
+
+def test_nothing_pairs_into_nothing() -> None:
+    assert pair_ends([]) == ([], None)
+""",
+        imports="from pair_ends import pair_ends\n",
+    ),
+    hidden_test=_test_module(
+        "pair_ends",
+        "The part of the contract the published tests do not state.",
+        """
+def test_two_values_make_one_pair() -> None:
+    assert pair_ends([1, 9]) == ([(1, 9)], None)
+
+
+def test_the_smallest_is_paired_with_the_largest() -> None:
+    assert pair_ends([1, 2, 8, 9]) == ([(1, 9), (2, 8)], None)
+
+
+def test_an_odd_value_is_handed_back_as_the_leftover() -> None:
+    assert pair_ends([7]) == ([], 7)
+""",
+        imports="from pair_ends import pair_ends\n",
+    ),
+)
+
+_G065 = D2TaskSpec(
+    template_id="d7_numeric.worked_minutes",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-worked-minutes",
+    module="worked_minutes",
+    module_doc="Counting the paid minutes of a shift, including the ones after midnight.",
+    issue=(
+        "worked() is documented to count a shift that runs past midnight and to deduct the "
+        "unpaid break from a shift long enough to earn one. Callers on nights report negative "
+        "shifts, and callers on a shift exactly the length that earns a break report being paid "
+        "for the break as well."
+    ),
+    expected=(
+        "worked(start, end, break_minutes, break_after) returns the paid minutes of a shift "
+        "given in minutes past midnight. An end before the start means the shift ran past "
+        "midnight and the span wraps by a day. A shift at least break_after long has the unpaid "
+        "break deducted, and a shift exactly that long is long enough."
+    ),
+    baseline_reason=(
+        "it subtracts the start from the end without noticing a shift that ran past midnight, "
+        "and its length test excludes the very length that earns the break"
+    ),
+    edge_cases=(
+        "a shift running past midnight wraps into the next day",
+        "a shift exactly long enough earns the break",
+    ),
+    baseline="""def worked(start, end, break_minutes, break_after):
+    \"\"\"Return the paid minutes of a shift.\"\"\"
+    span = end - start
+    if span > break_after:
+        return span - break_minutes
+    return span""",
+    variant_one="""def worked(start, end, break_minutes, break_after):
+    \"\"\"Return the paid minutes of a shift.\"\"\"
+    span = end - start
+    if span < 0:
+        span += 24 * 60
+    if span >= break_after:
+        return span - break_minutes
+    return span""",
+    variant_two="""def worked(start, end, break_minutes, break_after):
+    \"\"\"Return the paid minutes of a shift.\"\"\"
+    span = (end - start) % (24 * 60)
+    return span if span < break_after else span - break_minutes""",
+    variant_three="""def worked(start, end, break_minutes, break_after):
+    \"\"\"Return the paid minutes of a shift.\"\"\"
+    span = end - start
+    if span < 0:
+        span += 24 * 60
+    if span > break_after:
+        return span - break_minutes
+    return span""",
+    variant_four="""def worked(start, end, break_minutes, break_after):
+    \"\"\"Return the paid minutes of a shift.\"\"\"
+    span = end - start
+    if span >= break_after:
+        return span - break_minutes
+    return span""",
+    visible_test=_test_module(
+        "worked_minutes",
+        "Published contract for the paid minutes of a shift.",
+        """
+def test_a_long_shift_has_its_break_deducted() -> None:
+    assert worked(540, 1020, 30, 360) == 450
+
+
+def test_a_short_shift_earns_no_break() -> None:
+    assert worked(540, 600, 30, 360) == 60
+""",
+        imports="from worked_minutes import worked\n",
+    ),
+    hidden_test=_test_module(
+        "worked_minutes",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_long_shift_has_its_break_deducted() -> None:
+    assert worked(540, 1020, 30, 360) == 450
+
+
+def test_a_shift_running_past_midnight_wraps() -> None:
+    assert worked(1320, 300, 30, 360) == 390
+
+
+def test_a_shift_exactly_long_enough_earns_the_break() -> None:
+    assert worked(540, 900, 30, 360) == 330
+""",
+        imports="from worked_minutes import worked\n",
+    ),
+)
+
+_G066 = D2TaskSpec(
+    template_id="d7_transform.fold_key_case",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-fold-key-case",
+    module="fold_key_case",
+    module_doc="Adding up counts filed under the same name typed two different ways.",
+    issue=(
+        "fold() is documented to add together the counts filed under names that differ only in "
+        "case, and to keep the spelling the name was first written in. Callers report every "
+        "name coming back flattened to lower case, which is nobody's spelling, and names whose "
+        "counts add up to nothing still taking up a line in the report."
+    ),
+    expected=(
+        "fold(counts) returns the counts with names that differ only in case added together, "
+        "each name in the spelling it first appeared in. A name whose counts add up to nothing "
+        "is dropped."
+    ),
+    baseline_reason=(
+        "it files everything under the lower-cased name, which is the name it then reports, and "
+        "it reports a name whose total came to nothing like any other"
+    ),
+    edge_cases=(
+        "a name keeps the spelling it first appeared in",
+        "a name that totals nothing is dropped",
+    ),
+    baseline="""def fold(counts):
+    \"\"\"Add up the counts of names differing only in case.\"\"\"
+    merged = {}
+    for key, count in counts.items():
+        lowered = key.lower()
+        merged[lowered] = merged.get(lowered, 0) + count
+    return merged""",
+    variant_one="""def fold(counts):
+    \"\"\"Add up the counts of names differing only in case.\"\"\"
+    totals = {}
+    spelling = {}
+    for key, count in counts.items():
+        lowered = key.lower()
+        if lowered not in spelling:
+            spelling[lowered] = key
+        totals[lowered] = totals.get(lowered, 0) + count
+    return {spelling[lowered]: total for lowered, total in totals.items() if total}""",
+    variant_two="""def fold(counts):
+    \"\"\"Add up the counts of names differing only in case.\"\"\"
+    merged = {}
+    for key, count in counts.items():
+        lowered = key.lower()
+        for seen in merged:
+            if seen.lower() == lowered:
+                merged[seen] += count
+                break
+        else:
+            merged[key] = count
+    return {name: total for name, total in merged.items() if total != 0}""",
+    variant_three="""def fold(counts):
+    \"\"\"Add up the counts of names differing only in case.\"\"\"
+    totals = {}
+    spelling = {}
+    for key, count in counts.items():
+        lowered = key.lower()
+        if lowered not in spelling:
+            spelling[lowered] = key
+        totals[lowered] = totals.get(lowered, 0) + count
+    return {spelling[lowered]: total for lowered, total in totals.items()}""",
+    variant_four="""def fold(counts):
+    \"\"\"Add up the counts of names differing only in case.\"\"\"
+    merged = {}
+    for key, count in counts.items():
+        lowered = key.lower()
+        merged[lowered] = merged.get(lowered, 0) + count
+    return {name: total for name, total in merged.items() if total}""",
+    visible_test=_test_module(
+        "fold_key_case",
+        "Published contract for folding the counts.",
+        """
+def test_names_that_do_not_clash_are_left_as_they_are() -> None:
+    assert fold({"a": 1, "b": 2}) == {"a": 1, "b": 2}
+
+
+def test_no_counts_fold_into_no_counts() -> None:
+    assert fold({}) == {}
+""",
+        imports="from fold_key_case import fold\n",
+    ),
+    hidden_test=_test_module(
+        "fold_key_case",
+        "The part of the contract the published tests do not state.",
+        """
+def test_names_that_do_not_clash_are_left_as_they_are() -> None:
+    assert fold({"a": 1, "b": 2}) == {"a": 1, "b": 2}
+
+
+def test_a_name_keeps_the_spelling_it_first_appeared_in() -> None:
+    assert fold({"Apple": 1, "apple": 2}) == {"Apple": 3}
+
+
+def test_a_name_that_totals_nothing_is_dropped() -> None:
+    assert fold({"a": 0}) == {}
+""",
+        imports="from fold_key_case import fold\n",
+    ),
+)
+
+_G067 = D2TaskSpec(
+    template_id="d7_error.redact_secrets",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-redact-secrets",
+    module="redact_secrets",
+    module_doc="Taking the secrets out of a message before anybody else reads it.",
+    issue=(
+        "redact() is documented to take out every occurrence of a secret, and to ignore a "
+        "secret that is empty because an empty secret is in every message everywhere. Callers "
+        "report the second mention of a token surviving into the log, and an empty entry in the "
+        "secrets list turning a message into stars."
+    ),
+    expected=(
+        "redact(message, secrets) returns the message with every occurrence of every secret "
+        "replaced by '***'. A secret that is empty is ignored, because it matches everywhere "
+        "and hides nothing."
+    ),
+    baseline_reason=(
+        "it replaces one occurrence of each secret rather than all of them, and it hands an "
+        "empty secret to the replacement like any other"
+    ),
+    edge_cases=(
+        "every occurrence of a secret is taken out",
+        "an empty secret takes nothing out",
+    ),
+    baseline="""def redact(message, secrets):
+    \"\"\"Take the secrets out of a message.\"\"\"
+    for secret in secrets:
+        message = message.replace(secret, "***", 1)
+    return message""",
+    variant_one="""def redact(message, secrets):
+    \"\"\"Take the secrets out of a message.\"\"\"
+    for secret in secrets:
+        if secret:
+            message = message.replace(secret, "***")
+    return message""",
+    variant_two="""def redact(message, secrets):
+    \"\"\"Take the secrets out of a message.\"\"\"
+    cleaned = message
+    for secret in secrets:
+        if not secret:
+            continue
+        cleaned = "***".join(cleaned.split(secret))
+    return cleaned""",
+    variant_three="""def redact(message, secrets):
+    \"\"\"Take the secrets out of a message.\"\"\"
+    for secret in secrets:
+        message = message.replace(secret, "***")
+    return message""",
+    variant_four="""def redact(message, secrets):
+    \"\"\"Take the secrets out of a message.\"\"\"
+    for secret in secrets:
+        if secret:
+            message = message.replace(secret, "***", 1)
+    return message""",
+    visible_test=_test_module(
+        "redact_secrets",
+        "Published contract for redacting a message.",
+        """
+def test_a_secret_is_taken_out() -> None:
+    assert redact("token abc123 here", ["abc123"]) == "token *** here"
+
+
+def test_a_message_with_no_secrets_is_left_alone() -> None:
+    assert redact("nothing to hide", []) == "nothing to hide"
+""",
+        imports="from redact_secrets import redact\n",
+    ),
+    hidden_test=_test_module(
+        "redact_secrets",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_secret_is_taken_out() -> None:
+    assert redact("token abc123 here", ["abc123"]) == "token *** here"
+
+
+def test_every_occurrence_of_a_secret_is_taken_out() -> None:
+    assert redact("abc and abc", ["abc"]) == "*** and ***"
+
+
+def test_an_empty_secret_takes_nothing_out() -> None:
+    assert redact("abc", [""]) == "abc"
+""",
+        imports="from redact_secrets import redact\n",
+    ),
+)
+
+_G068 = D2TaskSpec(
+    template_id="d7_parsing.twelve_hour_clock",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-twelve-hour-clock",
+    module="twelve_hour_clock",
+    module_doc="Reading the clock people write, in which twelve comes before one.",
+    issue=(
+        "to_minutes() is documented to read a time written on the twelve hour clock, where the "
+        "twelve hour is the one before the one hour rather than after the eleven. Callers "
+        "report half past midnight reading as half past noon, and a time typed in capitals "
+        "reading twelve hours early."
+    ),
+    expected=(
+        "to_minutes(text) reads a time such as '7:05 pm' and returns minutes past midnight. "
+        "Twelve at night is the start of the day and twelve at midday is halfway through it, "
+        "and the suffix may be written in any case."
+    ),
+    baseline_reason=(
+        "it adds twelve hours to an afternoon time without folding the twelve hour down to "
+        "nothing first, and it recognises the suffix only in lower case"
+    ),
+    edge_cases=(
+        "twelve at night is the start of the day",
+        "the suffix may be written in any case",
+    ),
+    baseline="""def to_minutes(text):
+    \"\"\"Read a twelve hour time into minutes past midnight.\"\"\"
+    body, _, suffix = text.partition(" ")
+    hours, _, minutes = body.partition(":")
+    total = int(hours) * 60 + int(minutes)
+    if suffix == "pm":
+        total += 12 * 60
+    return total""",
+    variant_one="""def to_minutes(text):
+    \"\"\"Read a twelve hour time into minutes past midnight.\"\"\"
+    body, _, suffix = text.partition(" ")
+    hours, _, minutes = body.partition(":")
+    hour = int(hours) % 12
+    if suffix.lower() == "pm":
+        hour += 12
+    return hour * 60 + int(minutes)""",
+    variant_two="""def to_minutes(text):
+    \"\"\"Read a twelve hour time into minutes past midnight.\"\"\"
+    body, _, suffix = text.partition(" ")
+    hours, _, minutes = body.partition(":")
+    total = (int(hours) % 12) * 60 + int(minutes)
+    return total + 720 if suffix.upper() == "PM" else total""",
+    variant_three="""def to_minutes(text):
+    \"\"\"Read a twelve hour time into minutes past midnight.\"\"\"
+    body, _, suffix = text.partition(" ")
+    hours, _, minutes = body.partition(":")
+    hour = int(hours) % 12
+    if suffix == "pm":
+        hour += 12
+    return hour * 60 + int(minutes)""",
+    variant_four="""def to_minutes(text):
+    \"\"\"Read a twelve hour time into minutes past midnight.\"\"\"
+    body, _, suffix = text.partition(" ")
+    hours, _, minutes = body.partition(":")
+    total = int(hours) * 60 + int(minutes)
+    if suffix.lower() == "pm":
+        total += 12 * 60
+    return total""",
+    visible_test=_test_module(
+        "twelve_hour_clock",
+        "Published contract for the twelve hour clock.",
+        """
+def test_a_morning_time_reads_as_itself() -> None:
+    assert to_minutes("7:05 am") == 425
+
+
+def test_an_afternoon_time_reads_twelve_hours_later() -> None:
+    assert to_minutes("7:05 pm") == 1145
+""",
+        imports="from twelve_hour_clock import to_minutes\n",
+    ),
+    hidden_test=_test_module(
+        "twelve_hour_clock",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_morning_time_reads_as_itself() -> None:
+    assert to_minutes("7:05 am") == 425
+
+
+def test_twelve_at_night_is_the_start_of_the_day() -> None:
+    assert to_minutes("12:30 am") == 30
+
+
+def test_the_suffix_may_be_written_in_any_case() -> None:
+    assert to_minutes("7:05 PM") == 1145
+""",
+        imports="from twelve_hour_clock import to_minutes\n",
+    ),
+)
+
+_G069 = D2TaskSpec(
+    template_id="d7_state.close_account",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-close-account",
+    module="close_account",
+    module_doc="Closing an account, which is safe to ask for twice and not safe with money in it.",
+    issue=(
+        "close() is documented to be safe to send twice and to refuse an account that still has "
+        "money in it. Callers report the retry of a closure that already succeeded failing, and "
+        "accounts being closed with a balance still sitting in them, which loses the money "
+        "rather than returning it."
+    ),
+    expected=(
+        "close(accounts, name) returns the accounts with the named one closed. An account that "
+        "is already closed leaves the accounts as they were, an account whose balance is not "
+        "empty raises ValueError, and an account nobody holds raises KeyError."
+    ),
+    baseline_reason=(
+        "it treats an account that is already closed as an error rather than as a closure that "
+        "has already happened, and it closes an account without looking at its balance"
+    ),
+    edge_cases=(
+        "closing an account that is already closed changes nothing",
+        "an account with money in it is not closed",
+    ),
+    baseline="""def close(accounts, name):
+    \"\"\"Close an account.\"\"\"
+    account = accounts[name]
+    if account["state"] == "closed":
+        raise ValueError("already closed: " + str(name))
+    updated = dict(accounts)
+    updated[name] = {**account, "state": "closed"}
+    return updated""",
+    variant_one="""def close(accounts, name):
+    \"\"\"Close an account.\"\"\"
+    account = accounts[name]
+    if account["state"] == "closed":
+        return dict(accounts)
+    if account["balance"] != 0:
+        raise ValueError("balance is not empty: " + str(name))
+    updated = dict(accounts)
+    updated[name] = {**account, "state": "closed"}
+    return updated""",
+    variant_two="""def close(accounts, name):
+    \"\"\"Close an account.\"\"\"
+    account = accounts[name]
+    if account["state"] != "closed" and account["balance"]:
+        raise ValueError("balance is not empty: " + str(name))
+    closed = {**account, "state": "closed"}
+    return {key: closed if key == name else value for key, value in accounts.items()}""",
+    variant_three="""def close(accounts, name):
+    \"\"\"Close an account.\"\"\"
+    account = accounts[name]
+    if account["state"] == "closed":
+        return dict(accounts)
+    updated = dict(accounts)
+    updated[name] = {**account, "state": "closed"}
+    return updated""",
+    variant_four="""def close(accounts, name):
+    \"\"\"Close an account.\"\"\"
+    account = accounts[name]
+    if account["state"] == "closed":
+        raise ValueError("already closed: " + str(name))
+    if account["balance"] != 0:
+        raise ValueError("balance is not empty: " + str(name))
+    updated = dict(accounts)
+    updated[name] = {**account, "state": "closed"}
+    return updated""",
+    visible_test=_test_module(
+        "close_account",
+        "Published contract for closing an account.",
+        """
+import pytest
+
+
+def test_an_empty_open_account_closes() -> None:
+    accounts = {"a": {"state": "open", "balance": 0}}
+    assert close(accounts, "a") == {"a": {"state": "closed", "balance": 0}}
+
+
+def test_an_account_nobody_holds_is_refused() -> None:
+    with pytest.raises(KeyError):
+        close({"a": {"state": "open", "balance": 0}}, "b")
+""",
+        imports="from close_account import close\n",
+    ),
+    hidden_test=_test_module(
+        "close_account",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_an_empty_open_account_closes() -> None:
+    accounts = {"a": {"state": "open", "balance": 0}}
+    assert close(accounts, "a") == {"a": {"state": "closed", "balance": 0}}
+
+
+def test_closing_an_account_already_closed_changes_nothing() -> None:
+    accounts = {"a": {"state": "closed", "balance": 0}}
+    assert close(accounts, "a") == {"a": {"state": "closed", "balance": 0}}
+
+
+def test_an_account_with_money_in_it_is_not_closed() -> None:
+    with pytest.raises(ValueError):
+        close({"a": {"state": "open", "balance": 5}}, "a")
+""",
+        imports="from close_account import close\n",
+    ),
+)
+
 D7_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G001,
     _G002,
@@ -6588,6 +7160,12 @@ D7_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G061,
     _G062,
     _G063,
+    _G064,
+    _G065,
+    _G066,
+    _G067,
+    _G068,
+    _G069,
 )
 
 __all__ = ["D7_CERTIFICATION_SPECS", "D2TaskSpec", "RealityTaskFamily", "_test_module"]
