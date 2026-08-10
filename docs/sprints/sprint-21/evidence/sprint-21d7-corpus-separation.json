@@ -1,7 +1,7 @@
 {
  "accepted": true,
  "authored_corpus_separation": {
-  "certification_bodies_compared": 2605,
+  "certification_bodies_compared": 2640,
   "cross_group_collisions_touching_21d7": [],
   "retrieval_pool_check": {
    "applicable": false,
@@ -14,12 +14,12 @@
  },
  "certification_corpus": {
   "complete": false,
-  "groups_authored": 75,
+  "groups_authored": 82,
   "groups_targeted": 100,
   "reading": "separation is a property of the bodies that exist, so it is checkable before the corpus is finished and has to be rechecked after; an incomplete corpus that separates cleanly is a passing check over fewer groups and never a closed one"
  },
  "clone_separation": {
-  "cross_role_near_clone_pairs": 20,
+  "cross_role_near_clone_pairs": 21,
   "pairs_between_two_carried_roles_predating_d7": [
    "final_a::d2-errors-budget:baseline|spent_retrieval_d5::d5r-distance-apart:failed|normalized_ast",
    "final_a::d2-numeric-snap:baseline|spent_retrieval_d5::d5r-round-to-step:repaired|normalized_ast",
@@ -42,18 +42,18 @@
    "spent_retrieval_d4::d4r-time-left:failed|spent_retrieval_d5::d5r-distance-apart:repaired|normalized_ast",
    "spent_retrieval_d4::d4r-time-left:failed|spent_retrieval_d5::d5r-distance-apart:repaired|token_stream"
   ],
-  "pairs_touching_the_role_d7_authored": 0,
+  "pairs_touching_the_role_d7_authored": 1,
   "reading": "the literal reading of 'clone-disjoint across eight roles' is already false of the carried roles before D6 authored anything: final_b and fitting collide on released D2 groups, and section 4.1 forbids D6 from authoring into either. A rule the inherited roles cannot satisfy is not the operative rule. The operative one is the one the same sealed contract states in its own near_clone_rule field -- cross-group pairs against every released corpus, applied to the authored corpus -- and that is what corpus_d6.py enforces every batch. D5 recorded this finding at S21D5-022 and nothing in D6 changes the bodies it is about"
  },
  "group_separation": {
   "all_pairwise_disjoint": true,
-  "distinct_groups": 640,
-  "groups_total": 640,
+  "distinct_groups": 647,
+  "groups_total": 647,
   "pairs_checked": 36,
   "pairs_sharing_a_group": {},
   "roles": {
    "canary": 5,
-   "certification": 75,
+   "certification": 82,
    "conformal": 100,
    "final_a": 30,
    "final_b": 30,
@@ -63,7 +63,7 @@
    "spent_retrieval_d5": 60
   }
  },
- "integrity_content_hash": "9e6698f82efd2e2e3994ecf5960835c560cdda8f476655178f36fc5759421b57",
+ "integrity_content_hash": "30f4c39197011992a834af0b355399cdf39ddcec6374ad5c881a5365e3498dbd",
  "items": [
   "S21D7-022"
  ],
@@ -111,10 +111,10 @@
   "reuse_audit_integrity_content_hash": "8dd2fd1744cb08200af296baaca2eaf7382dbf2454eb29d2e5cc919a9390b57a",
   "reuse_audit_read": "sprint-21d7-reuse-audit.json"
  },
- "recorded_at": "2026-08-10T16:55:09Z",
+ "recorded_at": "2026-08-10T17:02:29Z",
  "rights": {
   "certification_disjoint_from_the_conformal_half": {
-   "certification_groups": 75,
+   "certification_groups": 82,
    "conformal_groups": 100,
    "disjoint": true,
    "rule": "the amended selection rule measures 100 independent decisions against a bar the conformal half placed; a group on both sides would be certified against a threshold its own margin helped set",
@@ -156,8 +156,8 @@
  "schema_version": 1,
  "source_separation": {
   "bodies_byte_identical_across_two_roles": {},
-  "bodies_hashed": 2840,
-  "distinct_body_hashes": 2840,
+  "bodies_hashed": 2875,
+  "distinct_body_hashes": 2875,
   "source_disjoint": true
  },
  "sprint": "21D7",
