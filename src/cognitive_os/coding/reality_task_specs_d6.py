@@ -8596,6 +8596,1194 @@ def test_resuming_a_worker_nobody_paused_is_refused() -> None:
     ),
 )
 
+_G091 = D2TaskSpec(
+    template_id="d6_boundary.first_mismatch",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d6-boundary-first-mismatch",
+    module="first_mismatch",
+    module_doc="Finding the outermost pair that spoils a series read from both ends.",
+    issue=(
+        "first_mismatch() is documented to find the outermost pair that differs when a series "
+        "is read from both ends. Callers report that it names the innermost such pair instead, "
+        "and that a series which reads the same both ways comes back as a pair of nothings "
+        "rather than nothing at all."
+    ),
+    expected=(
+        "first_mismatch(values) returns the positions of the outermost pair whose readings "
+        "differ when the series is read from both ends inwards. A series reading the same both "
+        "ways returns None."
+    ),
+    baseline_reason=(
+        "it keeps looking after it has found a differing pair, so the innermost one wins, and "
+        "it returns a pair of nothings when it finds none"
+    ),
+    edge_cases=(
+        "the outermost differing pair is named",
+        "a series reading the same both ways returns nothing",
+    ),
+    baseline="""def first_mismatch(values):
+    \"\"\"Return the outermost pair of positions whose readings differ.\"\"\"
+    found = (None, None)
+    left = 0
+    right = len(values) - 1
+    while left < right:
+        if values[left] != values[right]:
+            found = (left, right)
+        left += 1
+        right -= 1
+    return found""",
+    variant_one="""def first_mismatch(values):
+    \"\"\"Return the outermost pair of positions whose readings differ.\"\"\"
+    left = 0
+    right = len(values) - 1
+    while left < right:
+        if values[left] != values[right]:
+            return left, right
+        left += 1
+        right -= 1
+    return None""",
+    variant_two="""def first_mismatch(values):
+    \"\"\"Return the outermost pair of positions whose readings differ.\"\"\"
+    pairs = [
+        (left, len(values) - 1 - left)
+        for left in range(len(values) // 2)
+        if values[left] != values[len(values) - 1 - left]
+    ]
+    return pairs[0] if pairs else None""",
+    variant_three="""def first_mismatch(values):
+    \"\"\"Return the outermost pair of positions whose readings differ.\"\"\"
+    found = (None, None)
+    left = 0
+    right = len(values) - 1
+    while left < right:
+        if values[left] != values[right]:
+            return left, right
+        left += 1
+        right -= 1
+    return found""",
+    variant_four="""def first_mismatch(values):
+    \"\"\"Return the outermost pair of positions whose readings differ.\"\"\"
+    found = None
+    left = 0
+    right = len(values) - 1
+    while left < right:
+        if values[left] != values[right]:
+            found = (left, right)
+        left += 1
+        right -= 1
+    return found""",
+    visible_test=_test_module(
+        "first_mismatch",
+        "Published contract for the pair that spoils a series read both ways.",
+        """
+def test_a_single_differing_pair_is_named() -> None:
+    assert first_mismatch([1, 2, 9]) == (0, 2)
+
+
+def test_a_short_series_that_differs_is_named() -> None:
+    assert first_mismatch([1, 2, 3]) == (0, 2)
+""",
+        imports="from first_mismatch import first_mismatch\n",
+    ),
+    hidden_test=_test_module(
+        "first_mismatch",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_single_differing_pair_is_named() -> None:
+    assert first_mismatch([1, 2, 9]) == (0, 2)
+
+
+def test_the_outermost_differing_pair_is_named() -> None:
+    assert first_mismatch([1, 5, 6, 9]) == (0, 3)
+
+
+def test_a_series_reading_the_same_both_ways_returns_nothing() -> None:
+    assert first_mismatch([1, 2, 1]) is None
+""",
+        imports="from first_mismatch import first_mismatch\n",
+    ),
+)
+
+_G092 = D2TaskSpec(
+    template_id="d6_transform.pivot_flags",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d6-transform-pivot-flags",
+    module="pivot_flags",
+    module_doc="Turning rows that carry flags into the rows each flag was carried by.",
+    issue=(
+        "by_flag() is documented to turn rows carrying flags into the rows each flag was "
+        "carried by. Callers report that a flag carried by two rows keeps only the later of "
+        "them, and that a row whose flags were written as one string is taken apart letter by "
+        "letter instead of being refused."
+    ),
+    expected=(
+        "by_flag(rows) returns (flag, ids) pairs sorted by flag, the ids in the order their "
+        "rows arrived. A row whose flags are not a list raises TypeError, because a string of "
+        "flags is not a flag each."
+    ),
+    baseline_reason=(
+        "it assigns the row's id to the flag rather than adding to it, and it iterates the "
+        "flags without checking that they came as a list"
+    ),
+    edge_cases=(
+        "a flag carried by two rows keeps both",
+        "flags written as one string are refused",
+    ),
+    baseline="""def by_flag(rows):
+    \"\"\"Return the rows each flag was carried by.\"\"\"
+    carried = {}
+    for row in rows:
+        for flag in row["flags"]:
+            carried[flag] = [row["id"]]
+    return sorted(carried.items())""",
+    variant_one="""def by_flag(rows):
+    \"\"\"Return the rows each flag was carried by.\"\"\"
+    carried = {}
+    for row in rows:
+        flags = row["flags"]
+        if not isinstance(flags, list):
+            raise TypeError("flags come as a list")
+        for flag in flags:
+            carried.setdefault(flag, []).append(row["id"])
+    return sorted(carried.items())""",
+    variant_two="""def by_flag(rows):
+    \"\"\"Return the rows each flag was carried by.\"\"\"
+    for row in rows:
+        if not isinstance(row["flags"], list):
+            raise TypeError("flags come as a list")
+    names = sorted({flag for row in rows for flag in row["flags"]})
+    return [
+        (name, [row["id"] for row in rows if name in row["flags"]]) for name in names
+    ]""",
+    variant_three="""def by_flag(rows):
+    \"\"\"Return the rows each flag was carried by.\"\"\"
+    carried = {}
+    for row in rows:
+        for flag in row["flags"]:
+            carried.setdefault(flag, []).append(row["id"])
+    return sorted(carried.items())""",
+    variant_four="""def by_flag(rows):
+    \"\"\"Return the rows each flag was carried by.\"\"\"
+    carried = {}
+    for row in rows:
+        flags = row["flags"]
+        if not isinstance(flags, list):
+            raise TypeError("flags come as a list")
+        for flag in flags:
+            carried[flag] = [row["id"]]
+    return sorted(carried.items())""",
+    visible_test=_test_module(
+        "pivot_flags",
+        "Published contract for turning flagged rows inside out.",
+        """
+def test_each_flag_names_the_row_that_carried_it() -> None:
+    rows = [{"id": 1, "flags": ["a"]}, {"id": 2, "flags": ["b"]}]
+    assert by_flag(rows) == [("a", [1]), ("b", [2])]
+
+
+def test_no_rows_carry_no_flags() -> None:
+    assert by_flag([]) == []
+""",
+        imports="from pivot_flags import by_flag\n",
+    ),
+    hidden_test=_test_module(
+        "pivot_flags",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from pivot_flags import by_flag
+
+
+def test_each_flag_names_the_row_that_carried_it() -> None:
+    rows = [{"id": 1, "flags": ["a"]}, {"id": 2, "flags": ["b"]}]
+    assert by_flag(rows) == [("a", [1]), ("b", [2])]
+
+
+def test_a_flag_carried_by_two_rows_keeps_both() -> None:
+    rows = [{"id": 1, "flags": ["a"]}, {"id": 2, "flags": ["a"]}]
+    assert by_flag(rows) == [("a", [1, 2])]
+
+
+def test_flags_written_as_one_string_are_refused() -> None:
+    with pytest.raises(TypeError):
+        by_flag([{"id": 1, "flags": "ab"}])
+""",
+    ),
+)
+
+_G093 = D2TaskSpec(
+    template_id="d6_transform.weave_updates",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d6-transform-weave-updates",
+    module="weave_updates",
+    module_doc="Applying updates over a set of rows and saying which of them were new.",
+    issue=(
+        "weave() is documented to apply updates over a set of rows and to say which ids were "
+        "new. Callers report that a new id is added to the rows but never named as new, and "
+        "that when the same id is updated twice the first update wins rather than the last."
+    ),
+    expected=(
+        "weave(rows, updates) returns the rows with each update applied, the ones for ids that "
+        "were not there appended in the order they arrived, together with the sorted ids that "
+        "were new. When an id is updated more than once the last update stands."
+    ),
+    baseline_reason=(
+        "it appends a new id without recording it, and it applies an update only to an id it "
+        "has not already applied one to"
+    ),
+    edge_cases=(
+        "an id that was not there is reported as new",
+        "the last of two updates to one id stands",
+    ),
+    baseline="""def weave(rows, updates):
+    \"\"\"Apply `updates` over `rows` and say which ids were new.\"\"\"
+    woven = [dict(row) for row in rows]
+    by_id = {row["id"]: row for row in woven}
+    applied = set()
+    for update in updates:
+        key = update["id"]
+        if key in applied:
+            continue
+        applied.add(key)
+        if key in by_id:
+            by_id[key].update(update)
+        else:
+            fresh = dict(update)
+            woven.append(fresh)
+            by_id[key] = fresh
+    return woven, []""",
+    variant_one="""def weave(rows, updates):
+    \"\"\"Apply `updates` over `rows` and say which ids were new.\"\"\"
+    woven = [dict(row) for row in rows]
+    by_id = {row["id"]: row for row in woven}
+    new = set()
+    for update in updates:
+        key = update["id"]
+        if key in by_id:
+            by_id[key].update(update)
+        else:
+            fresh = dict(update)
+            woven.append(fresh)
+            by_id[key] = fresh
+            new.add(key)
+    return woven, sorted(new)""",
+    variant_two="""def weave(rows, updates):
+    \"\"\"Apply `updates` over `rows` and say which ids were new.\"\"\"
+    known = {row["id"] for row in rows}
+    woven = [dict(row) for row in rows]
+    by_id = {row["id"]: row for row in woven}
+    for update in updates:
+        key = update["id"]
+        if key not in by_id:
+            by_id[key] = dict(update)
+            woven.append(by_id[key])
+        else:
+            by_id[key].update(update)
+    new = sorted({update["id"] for update in updates} - known)
+    return woven, new""",
+    variant_three="""def weave(rows, updates):
+    \"\"\"Apply `updates` over `rows` and say which ids were new.\"\"\"
+    woven = [dict(row) for row in rows]
+    by_id = {row["id"]: row for row in woven}
+    applied = set()
+    new = set()
+    for update in updates:
+        key = update["id"]
+        if key in applied:
+            continue
+        applied.add(key)
+        if key in by_id:
+            by_id[key].update(update)
+        else:
+            fresh = dict(update)
+            woven.append(fresh)
+            by_id[key] = fresh
+            new.add(key)
+    return woven, sorted(new)""",
+    variant_four="""def weave(rows, updates):
+    \"\"\"Apply `updates` over `rows` and say which ids were new.\"\"\"
+    woven = [dict(row) for row in rows]
+    by_id = {row["id"]: row for row in woven}
+    for update in updates:
+        key = update["id"]
+        if key in by_id:
+            by_id[key].update(update)
+        else:
+            fresh = dict(update)
+            woven.append(fresh)
+            by_id[key] = fresh
+    return woven, []""",
+    visible_test=_test_module(
+        "weave_updates",
+        "Published contract for applying updates over rows.",
+        """
+def test_an_update_lands_on_its_row() -> None:
+    assert weave([{"id": 1, "v": 1}], [{"id": 1, "v": 9}]) == ([{"id": 1, "v": 9}], [])
+
+
+def test_no_updates_leave_the_rows_alone() -> None:
+    assert weave([{"id": 1, "v": 1}], []) == ([{"id": 1, "v": 1}], [])
+""",
+        imports="from weave_updates import weave\n",
+    ),
+    hidden_test=_test_module(
+        "weave_updates",
+        "The part of the contract the published tests do not state.",
+        """
+def test_an_update_lands_on_its_row() -> None:
+    assert weave([{"id": 1, "v": 1}], [{"id": 1, "v": 9}]) == ([{"id": 1, "v": 9}], [])
+
+
+def test_an_id_that_was_not_there_is_reported_as_new() -> None:
+    assert weave([], [{"id": 2, "v": 5}]) == ([{"id": 2, "v": 5}], [2])
+
+
+def test_the_last_of_two_updates_to_one_id_stands() -> None:
+    rows = [{"id": 1, "v": 1}]
+    updates = [{"id": 1, "v": 8}, {"id": 1, "v": 9}]
+    assert weave(rows, updates) == ([{"id": 1, "v": 9}], [])
+""",
+        imports="from weave_updates import weave\n",
+    ),
+)
+
+_G094 = D2TaskSpec(
+    template_id="d6_error.settle_conflicts",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d6-error-settle-conflicts",
+    module="settle_conflicts",
+    module_doc="Settling two claims on one slot in favour of whoever asked first.",
+    issue=(
+        "settle() is documented to settle competing claims in favour of whoever asked first. "
+        "Callers report that the later claimant takes the slot and the earlier one is the "
+        "rejected one, and that a claim naming no slot at all is passed over in silence."
+    ),
+    expected=(
+        "settle(claims) returns the slot each went to, the earliest claim winning, together "
+        "with the claimants turned away in the order they asked. A claim naming no slot raises "
+        "KeyError."
+    ),
+    baseline_reason=(
+        "it lets each claim overwrite the slot, so the last one stands, and it reaches for the "
+        "slot with a lookup that tolerates its absence"
+    ),
+    edge_cases=(
+        "the earliest claim on a slot wins",
+        "a claim naming no slot is refused",
+    ),
+    baseline="""def settle(claims):
+    \"\"\"Settle competing claims in favour of whoever asked first.\"\"\"
+    taken = {}
+    turned_away = []
+    for claim in claims:
+        slot = claim.get("slot")
+        if slot is None:
+            continue
+        if slot in taken:
+            turned_away.append(taken[slot])
+        taken[slot] = claim["who"]
+    return taken, turned_away""",
+    variant_one="""def settle(claims):
+    \"\"\"Settle competing claims in favour of whoever asked first.\"\"\"
+    taken = {}
+    turned_away = []
+    for claim in claims:
+        slot = claim["slot"]
+        if slot in taken:
+            turned_away.append(claim["who"])
+        else:
+            taken[slot] = claim["who"]
+    return taken, turned_away""",
+    variant_two="""def settle(claims):
+    \"\"\"Settle competing claims in favour of whoever asked first.\"\"\"
+    taken = {}
+    turned_away = []
+    for claim in claims:
+        if "slot" not in claim:
+            raise KeyError("slot")
+        if claim["slot"] not in taken:
+            taken[claim["slot"]] = claim["who"]
+        else:
+            turned_away.append(claim["who"])
+    return taken, turned_away""",
+    variant_three="""def settle(claims):
+    \"\"\"Settle competing claims in favour of whoever asked first.\"\"\"
+    taken = {}
+    turned_away = []
+    for claim in claims:
+        slot = claim.get("slot")
+        if slot is None:
+            continue
+        if slot in taken:
+            turned_away.append(claim["who"])
+        else:
+            taken[slot] = claim["who"]
+    return taken, turned_away""",
+    variant_four="""def settle(claims):
+    \"\"\"Settle competing claims in favour of whoever asked first.\"\"\"
+    taken = {}
+    turned_away = []
+    for claim in claims:
+        slot = claim["slot"]
+        if slot in taken:
+            turned_away.append(taken[slot])
+        taken[slot] = claim["who"]
+    return taken, turned_away""",
+    visible_test=_test_module(
+        "settle_conflicts",
+        "Published contract for settling competing claims.",
+        """
+def test_an_uncontested_claim_takes_its_slot() -> None:
+    assert settle([{"slot": 1, "who": "a"}]) == ({1: "a"}, [])
+
+
+def test_claims_on_different_slots_all_stand() -> None:
+    claims = [{"slot": 1, "who": "a"}, {"slot": 2, "who": "b"}]
+    assert settle(claims) == ({1: "a", 2: "b"}, [])
+""",
+        imports="from settle_conflicts import settle\n",
+    ),
+    hidden_test=_test_module(
+        "settle_conflicts",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from settle_conflicts import settle
+
+
+def test_an_uncontested_claim_takes_its_slot() -> None:
+    assert settle([{"slot": 1, "who": "a"}]) == ({1: "a"}, [])
+
+
+def test_the_earliest_claim_on_a_slot_wins() -> None:
+    claims = [{"slot": 1, "who": "a"}, {"slot": 1, "who": "b"}]
+    assert settle(claims) == ({1: "a"}, ["b"])
+
+
+def test_a_claim_naming_no_slot_is_refused() -> None:
+    with pytest.raises(KeyError):
+        settle([{"who": "a"}])
+""",
+    ),
+)
+
+_G095 = D2TaskSpec(
+    template_id="d6_error.guard_chain",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d6-error-guard-chain",
+    module="guard_chain",
+    module_doc="Running a chain of guards until one objects, and saying which ones ran.",
+    issue=(
+        "run_guards() is documented to run a chain of guards until one objects, and to say "
+        "which ones ran. Callers report that the guard which objected is left out of that list "
+        "although it plainly ran, and that a guard which never says whether it passed is "
+        "treated as though it had."
+    ),
+    expected=(
+        "run_guards(guards) returns the name of the first guard to object, or 'ok' when none "
+        "does, together with the names of the guards that ran, the objecting one included. A "
+        "guard that does not say whether it passed raises KeyError."
+    ),
+    baseline_reason=(
+        "it records a guard as having run only after it has passed, and it reaches for the "
+        "verdict with a lookup that supplies a pass when there is none"
+    ),
+    edge_cases=(
+        "the objecting guard is among those that ran",
+        "a guard with no verdict is refused",
+    ),
+    baseline="""def run_guards(guards):
+    \"\"\"Run guards until one objects, and say which ones ran.\"\"\"
+    ran = []
+    for guard in guards:
+        if not guard.get("ok", True):
+            return guard["name"], ran
+        ran.append(guard["name"])
+    return "ok", ran""",
+    variant_one="""def run_guards(guards):
+    \"\"\"Run guards until one objects, and say which ones ran.\"\"\"
+    ran = []
+    for guard in guards:
+        ran.append(guard["name"])
+        if not guard["ok"]:
+            return guard["name"], ran
+    return "ok", ran""",
+    variant_two="""def run_guards(guards):
+    \"\"\"Run guards until one objects, and say which ones ran.\"\"\"
+    ran = []
+    verdict = "ok"
+    for guard in guards:
+        ran.append(guard["name"])
+        passed = guard["ok"]
+        if not passed:
+            verdict = guard["name"]
+            break
+    return verdict, ran""",
+    variant_three="""def run_guards(guards):
+    \"\"\"Run guards until one objects, and say which ones ran.\"\"\"
+    ran = []
+    for guard in guards:
+        ran.append(guard["name"])
+        if not guard.get("ok", True):
+            return guard["name"], ran
+    return "ok", ran""",
+    variant_four="""def run_guards(guards):
+    \"\"\"Run guards until one objects, and say which ones ran.\"\"\"
+    ran = []
+    for guard in guards:
+        if not guard["ok"]:
+            return guard["name"], ran
+        ran.append(guard["name"])
+    return "ok", ran""",
+    visible_test=_test_module(
+        "guard_chain",
+        "Published contract for running a chain of guards.",
+        """
+def test_a_chain_that_all_passes_is_ok() -> None:
+    guards = [{"name": "a", "ok": True}, {"name": "b", "ok": True}]
+    assert run_guards(guards) == ("ok", ["a", "b"])
+
+
+def test_an_empty_chain_is_ok() -> None:
+    assert run_guards([]) == ("ok", [])
+""",
+        imports="from guard_chain import run_guards\n",
+    ),
+    hidden_test=_test_module(
+        "guard_chain",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from guard_chain import run_guards
+
+
+def test_a_chain_that_all_passes_is_ok() -> None:
+    guards = [{"name": "a", "ok": True}, {"name": "b", "ok": True}]
+    assert run_guards(guards) == ("ok", ["a", "b"])
+
+
+def test_the_objecting_guard_is_among_those_that_ran() -> None:
+    guards = [{"name": "a", "ok": True}, {"name": "b", "ok": False}]
+    assert run_guards(guards) == ("b", ["a", "b"])
+
+
+def test_a_guard_with_no_verdict_is_refused() -> None:
+    with pytest.raises(KeyError):
+        run_guards([{"name": "a"}])
+""",
+    ),
+)
+
+_G096 = D2TaskSpec(
+    template_id="d6_numeric.weight_balance",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d6-numeric-weight-balance",
+    module="weight_balance",
+    module_doc="Saying which pan of a balance goes down, and by how much.",
+    issue=(
+        "balance() is documented to say which pan goes down and by how much. Callers report "
+        "that two pans of equal weight are reported as the left one going down, and that a "
+        "weight below zero is added in as though a thing could weigh less than nothing."
+    ),
+    expected=(
+        "balance(left, right) returns ('left', difference), ('right', difference) or "
+        "('level', 0), where the difference is always positive. A weight below zero raises "
+        "ValueError."
+    ),
+    baseline_reason=(
+        "it decides the side with a comparison that puts equal weights on the left, and it sums "
+        "the weights without looking at them"
+    ),
+    edge_cases=(
+        "two pans of equal weight are level",
+        "a weight below zero is refused",
+    ),
+    baseline="""def balance(left, right):
+    \"\"\"Say which pan goes down, and by how much.\"\"\"
+    heavier = sum(left)
+    lighter = sum(right)
+    if heavier >= lighter:
+        return "left", heavier - lighter
+    return "right", lighter - heavier""",
+    variant_one="""def balance(left, right):
+    \"\"\"Say which pan goes down, and by how much.\"\"\"
+    for weight in list(left) + list(right):
+        if weight < 0:
+            raise ValueError("nothing weighs less than nothing")
+    on_left = sum(left)
+    on_right = sum(right)
+    if on_left == on_right:
+        return "level", 0
+    if on_left > on_right:
+        return "left", on_left - on_right
+    return "right", on_right - on_left""",
+    variant_two="""def balance(left, right):
+    \"\"\"Say which pan goes down, and by how much.\"\"\"
+    if any(weight < 0 for weight in (*left, *right)):
+        raise ValueError("nothing weighs less than nothing")
+    difference = sum(left) - sum(right)
+    if difference == 0:
+        return "level", 0
+    side = "left" if difference > 0 else "right"
+    return side, abs(difference)""",
+    variant_three="""def balance(left, right):
+    \"\"\"Say which pan goes down, and by how much.\"\"\"
+    on_left = sum(left)
+    on_right = sum(right)
+    if on_left == on_right:
+        return "level", 0
+    if on_left > on_right:
+        return "left", on_left - on_right
+    return "right", on_right - on_left""",
+    variant_four="""def balance(left, right):
+    \"\"\"Say which pan goes down, and by how much.\"\"\"
+    for weight in list(left) + list(right):
+        if weight < 0:
+            raise ValueError("nothing weighs less than nothing")
+    heavier = sum(left)
+    lighter = sum(right)
+    if heavier >= lighter:
+        return "left", heavier - lighter
+    return "right", lighter - heavier""",
+    visible_test=_test_module(
+        "weight_balance",
+        "Published contract for which pan of a balance goes down.",
+        """
+def test_the_heavier_pan_goes_down() -> None:
+    assert balance([3, 4], [5]) == ("left", 2)
+
+
+def test_the_other_pan_goes_down_when_it_is_heavier() -> None:
+    assert balance([1], [5]) == ("right", 4)
+""",
+        imports="from weight_balance import balance\n",
+    ),
+    hidden_test=_test_module(
+        "weight_balance",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from weight_balance import balance
+
+
+def test_the_heavier_pan_goes_down() -> None:
+    assert balance([3, 4], [5]) == ("left", 2)
+
+
+def test_two_pans_of_equal_weight_are_level() -> None:
+    assert balance([2], [2]) == ("level", 0)
+
+
+def test_a_weight_below_zero_is_refused() -> None:
+    with pytest.raises(ValueError):
+        balance([-1], [0])
+""",
+    ),
+)
+
+_G099 = D2TaskSpec(
+    template_id="d6_state.phase_advance",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d6-state-phase-advance",
+    module="phase_advance",
+    module_doc="Moving a piece of work through its phases, one at a time and forwards only.",
+    issue=(
+        "advance() is documented to move work through its phases one at a time. Callers report "
+        "that declaring the phase the work is already in is treated as a skipped phase, and "
+        "that naming an earlier phase is refused with the same complaint as skipping one "
+        "although going back is a different mistake."
+    ),
+    expected=(
+        "advance(state, phase) returns the state in the named phase. Naming the phase the work "
+        "is already in changes nothing. Skipping a phase raises ValueError. Naming an earlier "
+        "phase raises RuntimeError, because work does not go back."
+    ),
+    baseline_reason=(
+        "it measures the distance between the phases and objects to anything other than one, so "
+        "standing still and going back both look like a skip"
+    ),
+    edge_cases=(
+        "naming the phase the work is already in changes nothing",
+        "naming an earlier phase is refused as going back",
+    ),
+    baseline="""PHASES = ("draft", "review", "approved", "released")
+
+
+def advance(state, phase):
+    \"\"\"Move the work into `phase`.\"\"\"
+    if phase not in PHASES:
+        raise ValueError(phase)
+    standing = PHASES.index(state["phase"])
+    wanted = PHASES.index(phase)
+    if wanted - standing != 1:
+        raise ValueError("phases move one at a time")
+    return {"phase": phase}""",
+    variant_one="""PHASES = ("draft", "review", "approved", "released")
+
+
+def advance(state, phase):
+    \"\"\"Move the work into `phase`.\"\"\"
+    if phase not in PHASES:
+        raise ValueError(phase)
+    standing = PHASES.index(state["phase"])
+    wanted = PHASES.index(phase)
+    if wanted == standing:
+        return {"phase": phase}
+    if wanted < standing:
+        raise RuntimeError("work does not go back")
+    if wanted - standing != 1:
+        raise ValueError("phases move one at a time")
+    return {"phase": phase}""",
+    variant_two="""PHASES = ("draft", "review", "approved", "released")
+
+
+def advance(state, phase):
+    \"\"\"Move the work into `phase`.\"\"\"
+    if phase not in PHASES:
+        raise ValueError(phase)
+    standing = PHASES.index(state["phase"])
+    wanted = PHASES.index(phase)
+    step = wanted - standing
+    if step < 0:
+        raise RuntimeError("work does not go back")
+    if step > 1:
+        raise ValueError("phases move one at a time")
+    return {"phase": phase}""",
+    variant_three="""PHASES = ("draft", "review", "approved", "released")
+
+
+def advance(state, phase):
+    \"\"\"Move the work into `phase`.\"\"\"
+    if phase not in PHASES:
+        raise ValueError(phase)
+    standing = PHASES.index(state["phase"])
+    wanted = PHASES.index(phase)
+    if wanted == standing:
+        return {"phase": phase}
+    if wanted - standing != 1:
+        raise ValueError("phases move one at a time")
+    return {"phase": phase}""",
+    variant_four="""PHASES = ("draft", "review", "approved", "released")
+
+
+def advance(state, phase):
+    \"\"\"Move the work into `phase`.\"\"\"
+    if phase not in PHASES:
+        raise ValueError(phase)
+    standing = PHASES.index(state["phase"])
+    wanted = PHASES.index(phase)
+    if wanted < standing:
+        raise RuntimeError("work does not go back")
+    if wanted - standing != 1:
+        raise ValueError("phases move one at a time")
+    return {"phase": phase}""",
+    visible_test=_test_module(
+        "phase_advance",
+        "Published contract for moving work through its phases.",
+        """
+import pytest
+
+from phase_advance import advance
+
+
+def test_work_moves_to_the_next_phase() -> None:
+    assert advance({"phase": "draft"}, "review") == {"phase": "review"}
+
+
+def test_skipping_a_phase_is_refused() -> None:
+    with pytest.raises(ValueError):
+        advance({"phase": "draft"}, "approved")
+""",
+    ),
+    hidden_test=_test_module(
+        "phase_advance",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from phase_advance import advance
+
+
+def test_work_moves_to_the_next_phase() -> None:
+    assert advance({"phase": "draft"}, "review") == {"phase": "review"}
+
+
+def test_naming_the_standing_phase_changes_nothing() -> None:
+    assert advance({"phase": "review"}, "review") == {"phase": "review"}
+
+
+def test_naming_an_earlier_phase_is_going_back() -> None:
+    with pytest.raises(RuntimeError):
+        advance({"phase": "review"}, "draft")
+""",
+    ),
+)
+
+_G100 = D2TaskSpec(
+    template_id="d6_state.counter_ceiling",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d6-state-counter-ceiling",
+    module="counter_ceiling",
+    module_doc="Counting up to a ceiling and staying there once it is reached.",
+    issue=(
+        "bump() is documented to count up to a ceiling and stay there. Callers report that the "
+        "count passes the ceiling by one before it stops, and that the mark saying the ceiling "
+        "was reached appears one bump late."
+    ),
+    expected=(
+        "bump(state) returns the state with the count one higher, never above the ceiling. The "
+        "bump that brings the count to the ceiling is the one that marks it saturated, and a "
+        "bump beyond it changes nothing at all."
+    ),
+    baseline_reason=(
+        "it stops once the count is already past the ceiling rather than at it, and it marks "
+        "the saturation only when the count has gone beyond"
+    ),
+    edge_cases=(
+        "the count never passes the ceiling",
+        "the bump that reaches the ceiling marks it saturated",
+    ),
+    baseline="""def bump(state):
+    \"\"\"Count one higher, up to the ceiling.\"\"\"
+    ceiling = state["ceiling"]
+    count = state["count"]
+    if count > ceiling:
+        return dict(state)
+    return {"ceiling": ceiling, "count": count + 1, "saturated": count + 1 > ceiling}""",
+    variant_one="""def bump(state):
+    \"\"\"Count one higher, up to the ceiling.\"\"\"
+    ceiling = state["ceiling"]
+    count = state["count"]
+    if count >= ceiling:
+        return {"ceiling": ceiling, "count": count, "saturated": True}
+    raised = count + 1
+    return {"ceiling": ceiling, "count": raised, "saturated": raised >= ceiling}""",
+    variant_two="""def bump(state):
+    \"\"\"Count one higher, up to the ceiling.\"\"\"
+    ceiling = state["ceiling"]
+    raised = min(state["count"] + 1, ceiling)
+    return {"ceiling": ceiling, "count": raised, "saturated": raised == ceiling}""",
+    variant_three="""def bump(state):
+    \"\"\"Count one higher, up to the ceiling.\"\"\"
+    ceiling = state["ceiling"]
+    count = state["count"]
+    if count >= ceiling:
+        return dict(state)
+    return {"ceiling": ceiling, "count": count + 1, "saturated": count + 1 > ceiling}""",
+    variant_four="""def bump(state):
+    \"\"\"Count one higher, up to the ceiling.\"\"\"
+    ceiling = state["ceiling"]
+    count = state["count"]
+    if count > ceiling:
+        return dict(state)
+    return {"ceiling": ceiling, "count": count + 1, "saturated": count + 1 >= ceiling}""",
+    visible_test=_test_module(
+        "counter_ceiling",
+        "Published contract for counting up to a ceiling.",
+        """
+def test_a_bump_below_the_ceiling_counts_up() -> None:
+    state = {"ceiling": 3, "count": 0, "saturated": False}
+    assert bump(state) == {"ceiling": 3, "count": 1, "saturated": False}
+
+
+def test_a_second_bump_counts_up_again() -> None:
+    state = {"ceiling": 3, "count": 1, "saturated": False}
+    assert bump(state) == {"ceiling": 3, "count": 2, "saturated": False}
+""",
+        imports="from counter_ceiling import bump\n",
+    ),
+    hidden_test=_test_module(
+        "counter_ceiling",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_bump_below_the_ceiling_counts_up() -> None:
+    state = {"ceiling": 3, "count": 0, "saturated": False}
+    assert bump(state) == {"ceiling": 3, "count": 1, "saturated": False}
+
+
+def test_the_count_never_passes_the_ceiling() -> None:
+    state = {"ceiling": 3, "count": 3, "saturated": True}
+    assert bump(state) == {"ceiling": 3, "count": 3, "saturated": True}
+
+
+def test_the_bump_that_reaches_the_ceiling_marks_it() -> None:
+    state = {"ceiling": 3, "count": 2, "saturated": False}
+    assert bump(state) == {"ceiling": 3, "count": 3, "saturated": True}
+""",
+        imports="from counter_ceiling import bump\n",
+    ),
+)
+
+_G097 = D2TaskSpec(
+    template_id="d6_parsing.escape_pairs",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d6-parsing-escape-pairs",
+    module="escape_pairs",
+    module_doc="Reading the escapes in a field back into the characters they stand for.",
+    issue=(
+        "unescape() is documented to read tilde escapes back into the characters they stand "
+        "for. Callers report that an escape nobody declared loses its tilde instead of being "
+        "left alone, and that a field ending in a lone tilde quietly loses it rather than being "
+        "called out."
+    ),
+    expected=(
+        "unescape(text) returns the text with each declared escape replaced by the character it "
+        "stands for: a tilde and p for a pipe, a tilde and c for a comma, and two tildes for "
+        "one. An escape nobody declared is left exactly as written, tilde included. A tilde "
+        "with nothing after it raises ValueError."
+    ),
+    baseline_reason=(
+        "it falls back to the escaped character alone when it does not know the escape, and it "
+        "steps over a trailing tilde"
+    ),
+    edge_cases=(
+        "an escape nobody declared is left as written",
+        "a trailing tilde is refused",
+    ),
+    baseline="""ESCAPES = {"p": "|", "c": ",", "~": "~"}
+
+
+def unescape(text):
+    \"\"\"Read the tilde escapes in `text` back into their characters.\"\"\"
+    read = []
+    at = 0
+    while at < len(text):
+        character = text[at]
+        if character != "~":
+            read.append(character)
+            at += 1
+            continue
+        following = text[at + 1 : at + 2]
+        if not following:
+            at += 1
+            continue
+        read.append(ESCAPES.get(following, following))
+        at += 2
+    return "".join(read)""",
+    variant_one="""ESCAPES = {"p": "|", "c": ",", "~": "~"}
+
+
+def unescape(text):
+    \"\"\"Read the tilde escapes in `text` back into their characters.\"\"\"
+    read = []
+    at = 0
+    while at < len(text):
+        character = text[at]
+        if character != "~":
+            read.append(character)
+            at += 1
+            continue
+        following = text[at + 1 : at + 2]
+        if not following:
+            raise ValueError("a tilde with nothing after it")
+        read.append(ESCAPES.get(following, "~" + following))
+        at += 2
+    return "".join(read)""",
+    variant_two="""ESCAPES = {"p": "|", "c": ",", "~": "~"}
+
+
+def unescape(text):
+    \"\"\"Read the tilde escapes in `text` back into their characters.\"\"\"
+    read = []
+    skip = False
+    for at, character in enumerate(text):
+        if skip:
+            skip = False
+            continue
+        if character != "~":
+            read.append(character)
+            continue
+        if at + 1 >= len(text):
+            raise ValueError("a tilde with nothing after it")
+        following = text[at + 1]
+        read.append(ESCAPES[following] if following in ESCAPES else character + following)
+        skip = True
+    return "".join(read)""",
+    variant_three="""ESCAPES = {"p": "|", "c": ",", "~": "~"}
+
+
+def unescape(text):
+    \"\"\"Read the tilde escapes in `text` back into their characters.\"\"\"
+    read = []
+    at = 0
+    while at < len(text):
+        character = text[at]
+        if character != "~":
+            read.append(character)
+            at += 1
+            continue
+        following = text[at + 1 : at + 2]
+        if not following:
+            at += 1
+            continue
+        read.append(ESCAPES.get(following, "~" + following))
+        at += 2
+    return "".join(read)""",
+    variant_four="""ESCAPES = {"p": "|", "c": ",", "~": "~"}
+
+
+def unescape(text):
+    \"\"\"Read the tilde escapes in `text` back into their characters.\"\"\"
+    read = []
+    at = 0
+    while at < len(text):
+        character = text[at]
+        if character != "~":
+            read.append(character)
+            at += 1
+            continue
+        following = text[at + 1 : at + 2]
+        if not following:
+            raise ValueError("a tilde with nothing after it")
+        read.append(ESCAPES.get(following, following))
+        at += 2
+    return "".join(read)""",
+    visible_test=_test_module(
+        "escape_pairs",
+        "Published contract for reading escapes back into characters.",
+        """
+def test_a_declared_escape_stands_for_its_character() -> None:
+    assert unescape("a~pb") == "a|b"
+
+
+def test_a_field_with_no_escapes_is_unchanged() -> None:
+    assert unescape("plain") == "plain"
+""",
+        imports="from escape_pairs import unescape\n",
+    ),
+    hidden_test=_test_module(
+        "escape_pairs",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from escape_pairs import unescape
+
+
+def test_a_declared_escape_stands_for_its_character() -> None:
+    assert unescape("a~pb") == "a|b"
+
+
+def test_an_undeclared_escape_is_left_as_written() -> None:
+    assert unescape("a~qb") == "a~qb"
+
+
+def test_a_trailing_tilde_is_refused() -> None:
+    with pytest.raises(ValueError):
+        unescape("ab~")
+""",
+    ),
+)
+
+_G098 = D2TaskSpec(
+    template_id="d6_parsing.indent_level",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d6-parsing-indent-level",
+    module="indent_level",
+    module_doc="Reading how deeply a line is indented, and what it says.",
+    issue=(
+        "read_indent() is documented to read how deeply a line is indented. Callers report that "
+        "a line indented with tabs comes back a level short, and that an indent which is not a "
+        "whole number of levels is rounded down instead of being called out."
+    ),
+    expected=(
+        "read_indent(line, width) returns (level, text), where a tab stands for a whole width "
+        "of spaces and the level is the indent divided by the width. An indent that is not a "
+        "whole number of levels raises ValueError."
+    ),
+    baseline_reason=(
+        "it counts a tab as a single column and it divides the columns by the width without "
+        "checking that they divide"
+    ),
+    edge_cases=(
+        "a tab stands for a whole width of spaces",
+        "an indent that is not a whole number of levels is refused",
+    ),
+    baseline="""def read_indent(line, width):
+    \"\"\"Return how deeply `line` is indented, and what it says.\"\"\"
+    columns = 0
+    at = 0
+    while at < len(line) and line[at] in " \\t":
+        columns += 1
+        at += 1
+    return columns // width, line[at:]""",
+    variant_one="""def read_indent(line, width):
+    \"\"\"Return how deeply `line` is indented, and what it says.\"\"\"
+    columns = 0
+    at = 0
+    while at < len(line) and line[at] in " \\t":
+        columns += width if line[at] == "\\t" else 1
+        at += 1
+    if columns % width:
+        raise ValueError("the indent is not a whole number of levels")
+    return columns // width, line[at:]""",
+    variant_two="""def read_indent(line, width):
+    \"\"\"Return how deeply `line` is indented, and what it says.\"\"\"
+    text = line.lstrip(" \\t")
+    indent = line[: len(line) - len(text)]
+    columns = sum(width if character == "\\t" else 1 for character in indent)
+    if columns % width != 0:
+        raise ValueError("the indent is not a whole number of levels")
+    return columns // width, text""",
+    variant_three="""def read_indent(line, width):
+    \"\"\"Return how deeply `line` is indented, and what it says.\"\"\"
+    columns = 0
+    at = 0
+    while at < len(line) and line[at] in " \\t":
+        columns += width if line[at] == "\\t" else 1
+        at += 1
+    return columns // width, line[at:]""",
+    variant_four="""def read_indent(line, width):
+    \"\"\"Return how deeply `line` is indented, and what it says.\"\"\"
+    columns = 0
+    at = 0
+    while at < len(line) and line[at] in " \\t":
+        columns += 1
+        at += 1
+    if columns % width:
+        raise ValueError("the indent is not a whole number of levels")
+    return columns // width, line[at:]""",
+    visible_test=_test_module(
+        "indent_level",
+        "Published contract for reading how deeply a line is indented.",
+        """
+def test_spaces_count_towards_the_level() -> None:
+    assert read_indent("    a", 2) == (2, "a")
+
+
+def test_a_line_with_no_indent_is_at_the_top_level() -> None:
+    assert read_indent("a", 2) == (0, "a")
+""",
+        imports="from indent_level import read_indent\n",
+    ),
+    hidden_test=_test_module(
+        "indent_level",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from indent_level import read_indent
+
+
+def test_spaces_count_towards_the_level() -> None:
+    assert read_indent("    a", 2) == (2, "a")
+
+
+def test_a_tab_stands_for_a_whole_width() -> None:
+    assert read_indent("\\t\\ta", 2) == (2, "a")
+
+
+def test_a_part_level_indent_is_refused() -> None:
+    with pytest.raises(ValueError):
+        read_indent("   a", 2)
+""",
+    ),
+)
+
 D6_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G001,
     _G002,
@@ -8678,4 +9866,14 @@ D6_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G088,
     _G089,
     _G090,
+    _G091,
+    _G092,
+    _G093,
+    _G094,
+    _G095,
+    _G096,
+    _G099,
+    _G100,
+    _G097,
+    _G098,
 )
