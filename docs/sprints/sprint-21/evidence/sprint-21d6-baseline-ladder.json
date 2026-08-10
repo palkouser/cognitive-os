@@ -1,0 +1,80 @@
+{
+ "certification_campaign_sha256": "4ffcfdebf9ff84443f3f44ba4f873de11c72b2f313fe16e53ce3003c176e8875",
+ "certification_matrix_hash": "747eb9664bbcfd3b0abb0859b74e58ec7fb46b9153bab904094b91cded3dcefc",
+ "decisions": {
+  "census": {
+   "independent_decisions": 100,
+   "nominal_decisions": 100,
+   "rate_denominator": "independent_decisions",
+   "replicated_decisions": 0,
+   "revision": 4
+  },
+  "groups": 100,
+  "independent_decisions": 100
+ },
+ "final_outcomes_inspected": false,
+ "integrity_content_hash": "9c87b2392445d16530da2a2766e89c05a5869c3e797346dbe96165129f79bf04",
+ "items": [
+  "S21D6-033"
+ ],
+ "ladder": {
+  "hash": "7a2edee038920c8c6a573d20103260a48803f7781ffdf945403aeb23fcac55e5",
+  "measured_on": "the same certification decisions the direction is measured on",
+  "no_direction_loaded": true,
+  "rungs": [
+   {
+    "eligible": true,
+    "first_choice_rate": "0.42",
+    "groups_scored": 100,
+    "ineligible_reason": null,
+    "kind": "deterministic",
+    "name": "fixed_input_order"
+   },
+   {
+    "eligible": true,
+    "first_choice_rate": "0.16",
+    "groups_scored": 100,
+    "ineligible_reason": null,
+    "kind": "deterministic",
+    "name": "deterministic_static_ordering"
+   },
+   {
+    "eligible": true,
+    "first_choice_rate": "0.62",
+    "groups_scored": 100,
+    "ineligible_reason": null,
+    "kind": "deterministic",
+    "name": "lexical_similarity"
+   },
+   {
+    "eligible": false,
+    "first_choice_rate": null,
+    "groups_scored": 0,
+    "ineligible_reason": "correction-ranking-v2 removes query_to_candidate_cosine from the fitted representation, so the channel this rung orders by does not exist under it",
+    "kind": "deterministic",
+    "name": "frozen_minilm_cosine"
+   },
+   {
+    "eligible": false,
+    "first_choice_rate": null,
+    "groups_scored": 0,
+    "ineligible_reason": "a correction-ranking task presents exactly four candidates, so a twenty-wide shortlist is the entire pool and the rung reduces to its own tie-break; it meets no resource contract it does not already trivially satisfy",
+    "kind": "deterministic",
+    "name": "width_20_bounded_graph"
+   }
+  ],
+  "rungs_declared": 5,
+  "rungs_eligible": 3,
+  "rungs_ineligible": 2,
+  "strongest_deterministic_rate": "0.62",
+  "strongest_deterministic_rung": "lexical_similarity"
+ },
+ "pre_registration_sha256": "e1e4e1d76e51bb53ea845e3a9b9e0e631903921e8b3887d289048ff7eccd6022",
+ "recorded_at": "2026-08-10T10:06:26Z",
+ "schema_version": 1,
+ "snapshots_sha256": "8ec9e614013771ef4560baca9837b7831eb735d7a0d2af9af57884f02cddba5b",
+ "sprint": "21D6",
+ "wave": "W2",
+ "why_every_rung_including_the_ineligible_ones": "the selection rule compares the learner against the strongest deterministic baseline, and 'strongest' is only meaningful if the weaker rungs are on the record too. An ineligible rung is recorded with the reason it is ineligible, so a reader can see that the comparison was not narrowed to a rung the learner happens to beat",
+ "why_the_baseline_is_measured_on_the_certification_half": "the conformal half places the bar and certifies nothing, so a baseline over it would compare the learner against a rung on decisions nobody is certifying"
+}

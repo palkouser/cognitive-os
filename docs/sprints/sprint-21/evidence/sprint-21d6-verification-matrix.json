@@ -1,0 +1,494 @@
+{
+ "disclosures": [],
+ "environment": {
+  "artifact_root": "not set",
+  "database": "not set",
+  "platform": "linux",
+  "python": "3.12.13"
+ },
+ "every_row_decided": true,
+ "failed_rows": [],
+ "final_outcomes_inspected": false,
+ "integrity_content_hash": "f713099536f8725af252c49fb5a41920effdbe9361defdc518722f1c4a7fbf2b",
+ "item": "S21D6-086",
+ "not_carried_from_d5": {
+  "rows": [
+   "postgres_backup_restart_restore",
+   "corruption_and_isolation_matrix",
+   "provisioning_and_migration",
+   "d6_evidence_report"
+  ],
+  "what_stands_in_their_place": [
+   "pre_registration_d6 --check and sealed_manifests_d6 --check, D6's own validators",
+   "corpus_complete, the hundred-group corpus validator",
+   "the three predecessor integrity reports, which still report over their evidence",
+   "campaign_refuses_the_d5_store, W1's most serious finding executed as a refusal"
+  ],
+  "why": "the first three read D5's W7 operations record and D6's backlog allocates no operations wave, so there is no evidence for them to read; the fourth would run a learned.py d6-integrity report, and no such command exists because the backlog is explicit that D6 runs code that already exists. Naming them is the point: this matrix is a smaller claim than D5's and a reader should not have to count rows to discover that"
+ },
+ "pre_registration_sha256": "e1e4e1d76e51bb53ea845e3a9b9e0e631903921e8b3887d289048ff7eccd6022",
+ "purpose": "Every check expected before release, run once, with its actual exit status. Negative rows must refuse for their declared reason; nothing is silently skipped.",
+ "recorded_at": "2026-08-10T10:59:11.832183Z",
+ "rows": [
+  {
+   "command": "uv run ruff check --config ruff.cognitive-os.toml src tests scripts infra",
+   "detail": "",
+   "duration_seconds": 0.04,
+   "environment_overrides": [],
+   "exit_status": 0,
+   "expect": "zero",
+   "expected_reason": "",
+   "kind": "command",
+   "name": "ruff_check",
+   "output_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+   "status": "passed"
+  },
+  {
+   "command": "uv run ruff format --check --config ruff.cognitive-os.toml src tests scripts infra",
+   "detail": "",
+   "duration_seconds": 0.05,
+   "environment_overrides": [],
+   "exit_status": 0,
+   "expect": "zero",
+   "expected_reason": "",
+   "kind": "command",
+   "name": "ruff_format",
+   "output_sha256": "c48943cd687376f5f792d51c4e5b9c02dbda127944136e7831d7be4606462a96",
+   "status": "passed"
+  },
+  {
+   "command": "uv run mypy src/cognitive_os",
+   "detail": "",
+   "duration_seconds": 0.83,
+   "environment_overrides": [],
+   "exit_status": 0,
+   "expect": "zero",
+   "expected_reason": "",
+   "kind": "command",
+   "name": "mypy",
+   "output_sha256": "5bf384ed4872e3c940713caf9a6d266d6b0c99cf8471cfe0851aca7472ff0ca6",
+   "status": "passed"
+  },
+  {
+   "command": "uv run bandit -q -r src/cognitive_os",
+   "detail": "",
+   "duration_seconds": 4.82,
+   "environment_overrides": [],
+   "exit_status": 0,
+   "expect": "zero",
+   "expected_reason": "",
+   "kind": "command",
+   "name": "bandit",
+   "output_sha256": "b2881eba0210883f12bc045e543f8bf961551eda89ccd747ac67b10e3655d9b1",
+   "status": "passed"
+  },
+  {
+   "command": "uv run pytest -q --timeout=600",
+   "detail": "",
+   "duration_seconds": 237.25,
+   "environment_overrides": [],
+   "exit_status": 0,
+   "expect": "zero",
+   "expected_reason": "",
+   "kind": "command",
+   "name": "full_suite",
+   "output_sha256": "4aa39928fdbe513da1bf778d954b4782fe03b7fad618ec75f5cc5e3204b3e081",
+   "status": "passed"
+  },
+  {
+   "command": "uv run pytest -q tests/cognitive_os/learning",
+   "detail": "",
+   "duration_seconds": 117.97,
+   "environment_overrides": [],
+   "exit_status": 0,
+   "expect": "zero",
+   "expected_reason": "",
+   "kind": "command",
+   "name": "correction_slice",
+   "output_sha256": "657fff13b8412db880fee2102be44f15dd8154c15e784d6bb486804b8d60a442",
+   "status": "passed"
+  },
+  {
+   "command": "uv run pytest -q tests/cognitive_os/coding",
+   "detail": "",
+   "duration_seconds": 48.5,
+   "environment_overrides": [],
+   "exit_status": 0,
+   "expect": "zero",
+   "expected_reason": "",
+   "kind": "command",
+   "name": "corpus_slice",
+   "output_sha256": "bc4c22583191522ea68c6ddc87cd72c62c35adbd46210a5666936e8846a1215b",
+   "status": "passed"
+  },
+  {
+   "command": "uv run pytest -q tests/cognitive_os/learned_evidence",
+   "detail": "",
+   "duration_seconds": 2.24,
+   "environment_overrides": [],
+   "exit_status": 0,
+   "expect": "zero",
+   "expected_reason": "",
+   "kind": "command",
+   "name": "lifecycle_slice",
+   "output_sha256": "3f88c99ba78eb671c0f171200aa44e267d90581a908b836b9c73e723f5bf7a7f",
+   "status": "passed"
+  },
+  {
+   "command": "uv run python -m cognitive_os.schemas.export --check",
+   "detail": "",
+   "duration_seconds": 1.71,
+   "environment_overrides": [],
+   "exit_status": 0,
+   "expect": "zero",
+   "expected_reason": "",
+   "kind": "command",
+   "name": "schema_export",
+   "output_sha256": "34eb39124469e55728fada9b71ca53d69e92b1470a00a84bd72c80b340be0c17",
+   "status": "passed"
+  },
+  {
+   "command": "bash scripts/check_repository_language.sh",
+   "detail": "",
+   "duration_seconds": 0.02,
+   "environment_overrides": [],
+   "exit_status": 0,
+   "expect": "zero",
+   "expected_reason": "",
+   "kind": "command",
+   "name": "repository_language",
+   "output_sha256": "32ceeb368be689ed87e40b748dabc5fc9f94e22139b9ad766194589d69654ee3",
+   "status": "passed"
+  },
+  {
+   "command": "bash -c git ls-files -z | grep -zv sprint-21d6-verification-matrix.json | xargs -0 uv run detect-secrets-hook --baseline .secrets.baseline",
+   "detail": "",
+   "duration_seconds": 95.29,
+   "environment_overrides": [],
+   "exit_status": 0,
+   "expect": "zero",
+   "expected_reason": "",
+   "kind": "command",
+   "name": "secrets_scan",
+   "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": "passed"
+  },
+  {
+   "command": "uv run pip-audit",
+   "detail": "",
+   "duration_seconds": 0.97,
+   "environment_overrides": [],
+   "exit_status": 0,
+   "expect": "zero",
+   "expected_reason": "",
+   "kind": "command",
+   "name": "dependency_audit",
+   "output_sha256": "8b4a8d8df7fff88992ccd846a82aeeb1fdd171d8159de0afc7c0bed0db475d86",
+   "status": "passed"
+  },
+  {
+   "command": "uv build",
+   "detail": "",
+   "duration_seconds": 2.07,
+   "environment_overrides": [],
+   "exit_status": 0,
+   "expect": "zero",
+   "expected_reason": "",
+   "kind": "command",
+   "name": "packaging_build",
+   "output_sha256": "6a7f4f3b78240908d1e8b02fe04d15461e7b32317aa88f559933983f5f19b73f",
+   "status": "passed"
+  },
+  {
+   "command": "bash scripts/verify_distribution.sh",
+   "detail": "",
+   "duration_seconds": 3.07,
+   "environment_overrides": [],
+   "exit_status": 0,
+   "expect": "zero",
+   "expected_reason": "",
+   "kind": "command",
+   "name": "wheel_installation",
+   "output_sha256": "27349ec2f5507f11ac22bd43e9115f50ca4ed52b110d244449aebeac5f0acb2a",
+   "status": "passed"
+  },
+  {
+   "command": "bash scripts/verify_editable_install.sh",
+   "detail": "",
+   "duration_seconds": 0.76,
+   "environment_overrides": [],
+   "exit_status": 0,
+   "expect": "zero",
+   "expected_reason": "",
+   "kind": "command",
+   "name": "editable_installation",
+   "output_sha256": "f58855e801525b5f798a8dad5c8054a1ed53e4f0e9a8bb3b677f11f937551026",
+   "status": "passed"
+  },
+  {
+   "command": "uv run python scripts/pre_registration_d6.py --check",
+   "detail": "",
+   "duration_seconds": 0.35,
+   "environment_overrides": [],
+   "exit_status": 0,
+   "expect": "zero",
+   "expected_reason": "",
+   "kind": "command",
+   "name": "pre_registration",
+   "output_sha256": "2e1f3dee58aef92006508520151985960f670485d1a73d66253a590d70c232c8",
+   "status": "passed"
+  },
+  {
+   "command": "uv run python scripts/sealed_manifests_d6.py --check",
+   "detail": "",
+   "duration_seconds": 1.42,
+   "environment_overrides": [],
+   "exit_status": 0,
+   "expect": "zero",
+   "expected_reason": "",
+   "kind": "command",
+   "name": "sealed_manifests",
+   "output_sha256": "e6eafb4ad01e55f8dfd6754a806781ad962f56ffcb06a721e3d986f1d0b10e1e",
+   "status": "passed"
+  },
+  {
+   "command": "uv run python scripts/corpus_d6.py",
+   "detail": "",
+   "duration_seconds": 46.43,
+   "environment_overrides": [],
+   "exit_status": 0,
+   "expect": "zero",
+   "expected_reason": "",
+   "kind": "command",
+   "name": "corpus_complete",
+   "output_sha256": "6bf98ade693acd2c550c9166eb8a3d9291072ef780a8b5323404e9a34fc733b9",
+   "status": "passed"
+  },
+  {
+   "command": "uv run python scripts/learned.py d5-integrity",
+   "detail": "",
+   "duration_seconds": 0.51,
+   "environment_overrides": [
+    "COGOS_POSTGRES_DATABASE"
+   ],
+   "exit_status": 0,
+   "expect": "zero",
+   "expected_reason": "",
+   "kind": "command",
+   "name": "d5_evidence_report_still_green",
+   "output_sha256": "745dd5f8ea988d29996bb8d07c8bed0c309644e118c24832b178007ec4891f49",
+   "status": "passed"
+  },
+  {
+   "command": "uv run python scripts/learned.py d4-integrity",
+   "detail": "",
+   "duration_seconds": 0.47,
+   "environment_overrides": [
+    "COGOS_POSTGRES_DATABASE"
+   ],
+   "exit_status": 0,
+   "expect": "zero",
+   "expected_reason": "",
+   "kind": "command",
+   "name": "d4_evidence_report_still_green",
+   "output_sha256": "253c85838de06a412c0bba2c6bb300b3fc720204b8a55a00adcd155a3fab89f9",
+   "status": "passed"
+  },
+  {
+   "command": "uv run python scripts/learned.py d3-integrity",
+   "detail": "",
+   "duration_seconds": 0.48,
+   "environment_overrides": [
+    "COGOS_POSTGRES_DATABASE"
+   ],
+   "exit_status": 0,
+   "expect": "zero",
+   "expected_reason": "",
+   "kind": "command",
+   "name": "d3_evidence_report_still_green",
+   "output_sha256": "6ff81a1b111be00c97556c18bb48aba9cbc647a7c6cfde44d7b74040f2b5f6e0",
+   "status": "passed"
+  },
+  {
+   "command": "uv run python scripts/benchmark_run.py --manifest benchmarks/manifests/sprint21c1-learned-ci.yaml --mode learned-replay --report-directory /tmp/s21d6-matrix-ci",
+   "detail": "",
+   "duration_seconds": 1.0,
+   "environment_overrides": [],
+   "exit_status": 0,
+   "expect": "zero",
+   "expected_reason": "",
+   "kind": "command",
+   "name": "benchmark_replay_ci",
+   "output_sha256": "189c72eaf4b85b78a8348b5254e192abb19b294d261c4456f582a4fb16923ebc",
+   "status": "passed"
+  },
+  {
+   "command": "uv run python scripts/benchmark_run.py --manifest benchmarks/manifests/sprint21c1-learned-seed.yaml --mode learned-replay --report-directory /tmp/s21d6-matrix-seed",
+   "detail": "",
+   "duration_seconds": 1.05,
+   "environment_overrides": [],
+   "exit_status": 0,
+   "expect": "zero",
+   "expected_reason": "",
+   "kind": "command",
+   "name": "benchmark_replay_seed",
+   "output_sha256": "1f2cf18eabd154c9a32ee8ebe1a6ac697e3fc1001a79e469360a819de0133e12",
+   "status": "passed"
+  },
+  {
+   "command": "uv run python scripts/learned.py d5-integrity",
+   "detail": "",
+   "duration_seconds": 0.46,
+   "environment_overrides": [
+    "COGOS_ARTIFACT_ROOT",
+    "COGOS_POSTGRES_DATABASE"
+   ],
+   "exit_status": 1,
+   "expect": "nonzero",
+   "expected_reason": "refusing to open",
+   "kind": "command",
+   "name": "predecessor_store_refused",
+   "output_sha256": "2b0876de2ba787d78b11e70501d3c915f91137bb8d62772e6f60968c912b82d3",
+   "status": "passed"
+  },
+  {
+   "command": "uv run python scripts/learned.py d5-integrity",
+   "detail": "",
+   "duration_seconds": 0.46,
+   "environment_overrides": [
+    "COGOS_POSTGRES_DATABASE"
+   ],
+   "exit_status": 1,
+   "expect": "nonzero",
+   "expected_reason": "require an s21d5 database",
+   "kind": "command",
+   "name": "predecessor_database_refused",
+   "output_sha256": "d976e24720225be49fda32e65230bfcf4ff2d1d274559b1007bf751e9682e3cf",
+   "status": "passed"
+  },
+  {
+   "command": "uv run python scripts/learned.py smoke --confirm-isolated",
+   "detail": "",
+   "duration_seconds": 0.99,
+   "environment_overrides": [
+    "COGOS_ARTIFACT_ROOT",
+    "COGOS_DATABASE_ADMIN_URL"
+   ],
+   "exit_status": 1,
+   "expect": "nonzero",
+   "expected_reason": "isolated *_test database",
+   "kind": "command",
+   "name": "smoke_refuses_a_non_test_database",
+   "output_sha256": "c2f2432e00f1ef03a322a8b089103dca6ab4766d5809c3985e59293cee9398fd",
+   "status": "passed"
+  },
+  {
+   "command": "uv run python scripts/reality_campaign_d6.py --stage snapshot",
+   "detail": "",
+   "duration_seconds": 1.06,
+   "environment_overrides": [
+    "COGOS_ARTIFACT_ROOT",
+    "COGOS_DATABASE_URL"
+   ],
+   "exit_status": 1,
+   "expect": "nonzero",
+   "expected_reason": "refusing to run against s21d5",
+   "kind": "command",
+   "name": "campaign_refuses_the_d5_store",
+   "output_sha256": "69ef5126eb02fc412f9b5295f4f070cf868aa7d003e7859caf1ec82689d9941b",
+   "status": "passed"
+  },
+  {
+   "command": "uv run python scripts/reality_campaign_d6.py --stage snapshot",
+   "detail": "",
+   "duration_seconds": 1.06,
+   "environment_overrides": [
+    "COGOS_ARTIFACT_ROOT",
+    "COGOS_DATABASE_URL"
+   ],
+   "exit_status": 1,
+   "expect": "nonzero",
+   "expected_reason": "inconsistent development pair",
+   "kind": "command",
+   "name": "campaign_refuses_the_development_pair",
+   "output_sha256": "eca71098c94c68ac42b4ef9c29cf9f2b7ad56a78b1f97191356e2059e3165e1e",
+   "status": "passed"
+  },
+  {
+   "detail": "selection.stop_kind='leak_budget_exceeded', expected 'leak_budget_exceeded'",
+   "evidence": "sprint-21d6-learner-selection.json",
+   "evidence_sha256": "13bf161848f0a57acedac3b295b987460e383491297774ef85f19cc141f4e01b",
+   "kind": "recorded",
+   "name": "correction_branch_stop",
+   "status": "passed"
+  },
+  {
+   "detail": "stop_hash='981bb130d03a45ba512ee3a758abb48db0d45c4b53a35a99bca79238c76e3fcd', expected '981bb130d03a45ba512ee3a758abb48db0d45c4b53a35a99bca79238c76e3fcd'",
+   "evidence": "sprint-21d6-continuation.json",
+   "evidence_sha256": "a333686a6ffc099e6cc207bb8d3a71620a990ed93812081e19df346c2ba7cea4",
+   "kind": "recorded",
+   "name": "continuation_binds_one_stop",
+   "status": "passed"
+  },
+  {
+   "detail": "alpha='0.20', expected '0.20'",
+   "evidence": "sprint-21d6-conformal-point.json",
+   "evidence_sha256": "ebbc1b920b9555957a841fda3549b51a4ef4199ce7828ad7d6eb5bd431e20187",
+   "kind": "recorded",
+   "name": "conformal_bar_derived_at_the_preregistered_alpha",
+   "status": "passed"
+  },
+  {
+   "detail": "fitted_here=False, expected 'False'",
+   "evidence": "sprint-21d6-directions.json",
+   "evidence_sha256": "5ce90a641b205a491e07a3e40a9f2c197671f5adb23c329efcdaf56f86b1e4f4",
+   "kind": "recorded",
+   "name": "directions_were_not_refitted",
+   "status": "passed"
+  },
+  {
+   "detail": "conformal_half.identical_to_the_published_matrix=True",
+   "evidence": "sprint-21d6-snapshots.json",
+   "evidence_sha256": "8ec9e614013771ef4560baca9837b7831eb735d7a0d2af9af57884f02cddba5b",
+   "kind": "recorded",
+   "name": "conformal_half_is_d5s_published_matrix",
+   "status": "passed"
+  },
+  {
+   "detail": "fitted_matrices.halves_share_no_group=True",
+   "evidence": "sprint-21d6-snapshots.json",
+   "evidence_sha256": "8ec9e614013771ef4560baca9837b7831eb735d7a0d2af9af57884f02cddba5b",
+   "kind": "recorded",
+   "name": "halves_share_no_group",
+   "status": "passed"
+  },
+  {
+   "detail": "first_action.preservation='100%', expected '100%'",
+   "evidence": "sprint-21d6-invariance-regression.json",
+   "evidence_sha256": "44faa8842c68b46e8a63e92705b364a93b5d7ee14cbb71e5eaf711e5a557b095",
+   "kind": "recorded",
+   "name": "first_action_preserved_on_the_invariance_sample",
+   "status": "passed"
+  },
+  {
+   "detail": "gate_l2_condition_24_recorded_as='met by inheritance, with the source hash bound', expected 'met by inheritance, with the source hash bound'",
+   "evidence": "sprint-21d6-condition-24-ruling.json",
+   "evidence_sha256": "1e2d7c4a18001550cdd8c13400d37711794d04cdf3630ffa4629a3bbbb45d510",
+   "kind": "recorded",
+   "name": "gate_l2_condition_24_inherited",
+   "status": "passed"
+  }
+ ],
+ "schema_version": 1,
+ "skipped_rows": [],
+ "sprint": "21D6",
+ "started_at": "2026-08-10T10:49:40.481216Z",
+ "structural_findings": [],
+ "totals": {
+  "failed": 0,
+  "passed": 36,
+  "rows": 36,
+  "skipped": 0
+ },
+ "wave": "W3"
+}

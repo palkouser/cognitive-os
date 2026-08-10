@@ -1,0 +1,142 @@
+{
+ "contracts": {
+  "admission_rule": {
+   "alpha": "0.20",
+   "alpha_bounds": "the leak rate P(admitted | the decision is wrong), not the error rate among admitted decisions",
+   "alpha_floor_below_which_the_bar_is_the_failed_rule": "0.1538",
+   "alpha_may_be_rechosen": false,
+   "authorised_by": "sprint-21d6-contracts-amendment-2.json",
+   "content_hash": "7a58d7739bf0dece3b856ecda2870ed309c7ff2d68deb9eae90b741b2d4c9a02",
+   "derivation_reading": "split conformal replaces the zero-error prefix: the bar is a quantile of the wrong decisions' margin distribution rather than the position of the single highest-scoring error, so coverage degrades smoothly with alpha instead of being hostage to one point; what it buys costs the zero — the record states an error budget and a bound, never a claimed zero rate. Alpha bounds the leak rate P(admitted | the decision is wrong), not the error rate among admitted decisions: the bar is a quantile of the margins of errors, so a fresh error clears it with probability at most alpha. The second quantity is the one §2.3 cares about, it is roughly the first times the error rate over the coverage, and it is measured on the certification half rather than guaranteed here — errors_admitted counts it and error_upper_bound_95 bounds it. Both readings hold only if the two halves are exchangeable, which is a claim about how the corpus was authored and not something this module can check",
+   "derivation_rule": "score every independent clean calibration decision with the sealed pairwise-contrastive margin; split the calibration groups into a conformal half and a certification half with no shared fitted vector; take the margins of the answered decisions the ranker got wrong in the conformal half, sort them ascending, and set the threshold to the ceil((1-alpha)*(m+1))-th smallest of the m wrong margins; admit the certification decisions scoring strictly above it; report coverage over independent certification decisions, the errors among admitted decisions, and the Clopper-Pearson one-sided 95% upper bound on the true error rate among admitted decisions",
+   "item": "S21D6-012",
+   "module": "src/cognitive_os/learning/conformal_operating_point.py",
+   "name": "split-conformal-margin-v1",
+   "rank_at_this_alpha": 11,
+   "single_derivation": "one bar, derived once from the conformal half; a second derivation that does not reproduce the first is refused across a process restart by the `previous=` rule, alpha included in the derivation hash",
+   "why_this_rule": "D5's zero-error prefix rule walks the margin ordering to the first wrong decision and stops, so one badly-placed error truncates everything below it. Its coverage is decided by the position of one error, which is variance rather than a bound. The conformal bar is a quantile of the wrong decisions' margins, so coverage degrades smoothly with alpha",
+   "wrong_decisions_in_the_conformal_half": 12,
+   "wrong_margins_left_above_the_bar": 1
+  },
+  "candidate_cell": {
+   "content_hash": "75af307023d7f0d789d1d36b04eecef60335a9835d2f2be4070f7fa9697fe731",
+   "encoder": "cogos-python-alpha-normalizer-v2",
+   "fitted_channels": 390,
+   "hypothesis_class": "pairwise-contrastive-linear-v1",
+   "item": "S21D6-013",
+   "lambda": "1",
+   "margin_floor": "0",
+   "read_from": "the sealed D5 matrices, rehashed on load",
+   "refitted": false,
+   "reported_but_not_selectable": {
+    "direction": "5b15f4af06a2b08d0d8269b59f47127bf97d610a22c12c645f8fbde9fa0f47cd",
+    "fitting_rows": 320,
+    "why_not_selectable": "one cell, chosen a priori as the larger fit on a question D5 answered: coverage moved one point across a 2.25x span, so there is no volume slope to exploit. Two selectable cells would be a search",
+    "why_reported": "§2.3 requires every cell and sweep point reported"
+   },
+   "selected_direction": "9fd297fb407015374485e8f7ef8fbb557e6f89f7ac3286e2572769fdab937d74",
+   "selected_direction_fitting_rows": 720,
+   "tie_break": "the baseline order"
+  },
+  "corpus_roles": {
+   "carried_roles": {
+    "audited": "sprint-21d6-reuse-audit.json, decision reuse, zero bodies opened",
+    "canary": 5,
+    "final_a": 30,
+    "final_b": 30
+   },
+   "certification_half": {
+    "authored_by": "S21D6-020, freshly, in W1",
+    "groups": 100,
+    "outcomes": 400,
+    "read_before_the_bar_exists": false
+   },
+   "conformal_half": {
+    "audited_in": "sprint-21d6-reuse-audit.json",
+    "re_executed": false,
+    "source": "the 100 spent D5 calibration groups, 400 outcomes",
+    "use": "places the bar and certifies nothing"
+   },
+   "content_hash": "e5907a6b2b5d6113ee6ad720267b9fa6e931107aa9d9101ddb5ec637c54d6211",
+   "disjointness": "no fitted vector may appear in both halves; S21D6-022 proves it",
+   "item": "S21D6-014",
+   "retrieval": {
+    "authored": 0,
+    "condition_24": "inherited under sprint-21d6-condition-24-ruling.json"
+   },
+   "why_not_a_50_50_split_of_d5": "§2.3 requires 100 independent decisions in the measured set; a 50/50 split certifies 50 and fails a condition the amendment does not touch",
+   "why_not_certify_on_d5": "its full sweep is published; a holdout that has been read is spent"
+  },
+  "decision_tree": {
+   "content_hash": "0bc61f7d0addcd21b9815305a74c10418c99e68101e4b561a64e56a1e8fd5357",
+   "endings": {
+    "0_admission_contract_refused": "the amendment is refused; Gate L2 is unclosable with this ranker at these volumes and the successor question leaves the confidence axis",
+    "1_select": "all conditions hold; bind the artifact, run the lifecycle, close the gate, unblock Sprint 22A",
+    "2_leak_budget_exceeded": "coverage at least 0.40 and the bound above the ceiling; the bar held its leak guarantee and admitted precision missed. A tighter alpha needs more than 12 wrong decisions in the conformal half, which is a volume question and the first measured reason this programme would have to author more",
+    "3_margin_coverage_bound": "coverage below 0.40 at the pre-registered alpha; the margin does not concentrate errors at low margins on unread evidence. The confidence construction has then been varied twice and failed twice, and the next axis is §3.3 step 6, hypothesis_class_bound",
+    "4_no_quantile": "unreachable by construction: the rank at this alpha is 11 and the conformal half has 12 wrong decisions. If it happens the derivation is wrong, not the evidence"
+   },
+   "endings_are_four_different_sprints": true,
+   "evaluated_on": "the fresh certification set only, once",
+   "item": "S21D6-016",
+   "no_ending_may_be_chosen_after_the_measurement": true
+  },
+  "selection_rule": {
+   "a_cell_failing_one_condition_is_not_a_candidate": true,
+   "bound_at_the_expected_coverage": {
+    "0": 0.050339,
+    "1": 0.079198,
+    "2": 0.104597,
+    "3": 0.128293,
+    "4": 0.150908
+   },
+   "ceiling_c": "0.15",
+   "conditions": [
+    "at least 100 independent clean ranking decisions in the certification set",
+    "admission by the split-conformal bar at alpha, and a Clopper-Pearson one-sided 95% upper bound at most 0.15 on the error rate among admitted independent decisions",
+    "clean coverage at least 0.40",
+    "at least 20 projected changed decisions over the 60 final groups",
+    "clean first-choice rate over admitted decisions strictly above the strongest deterministic baseline on the same decisions",
+    "at least one changed clean decision",
+    "100% first-action preservation on the invariance-regression sample",
+    "every cell and sweep point reported, filtered and abstaining ones included",
+    "maximum inference within the 250 ms budget"
+   ],
+   "content_hash": "e408b1c748861ca7c054a8f6b2e979f7d2dda19b323d384615c4b2a5d482ce31",
+   "item": "S21D6-015",
+   "section": "§2.3 as amended by amendment 2",
+   "what_the_ceiling_replaces": "zero confident errors in 27 admitted decisions, which bounded the same quantity at 0.105 by the same Clopper-Pearson"
+  }
+ },
+ "integrity_content_hash": "c79ea0f1fec53ef3e4fdebf686eccf3968e87e7c80e8cf3299cae848cbadaf5d",
+ "items": [
+  "S21D6-012",
+  "S21D6-013",
+  "S21D6-014",
+  "S21D6-015",
+  "S21D6-016"
+ ],
+ "measured_values": 0,
+ "recorded_at": "2026-08-10T05:26:22Z",
+ "revision": 6,
+ "schema_version": 1,
+ "sprint": "21D6",
+ "thresholds_changed": {
+  "authorised_by": "sprint-21d6-contracts-amendment-2.json",
+  "count": 1,
+  "every_other_threshold": "unchanged, including the 0.40 coverage floor",
+  "which": "§2.3's admission clause, condition 14"
+ },
+ "unchanged_from_d5": {
+  "counting_rule": "revision 5, the independence census and the independent denominator",
+  "directions_refitted": 0,
+  "feature_contract": "492c90a5df420de9d1662d17155ac8b28713e69bbd4bbe56208415d6ca076362",
+  "fitted_channels": 390,
+  "gate_conditions": 29,
+  "gate_contract": "9e47bc618fc1eca8b66146eacdf1bd244fced79bb1c91f46f2c6ff4484bfd8a7",
+  "hypothesis_class": "pairwise-contrastive-linear-v1",
+  "normaliser": "cogos-python-alpha-normalizer-v2",
+  "note": "D6 changes no encoder, no normaliser, no fitted representation, no hypothesis class and no direction; it changes the admission rule fitted on top of them"
+ },
+ "wave": "W0"
+}

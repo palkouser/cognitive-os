@@ -1,0 +1,355 @@
+{
+ "closed_set_read_from_the_continuation_record": {
+  "conditions": [
+   10,
+   11,
+   13,
+   14,
+   15,
+   16,
+   18,
+   19,
+   20,
+   21,
+   22,
+   23,
+   25,
+   26,
+   27
+  ],
+  "source": "sprint-21d6-continuation.json",
+  "source_sha256": "a333686a6ffc099e6cc207bb8d3a71620a990ed93812081e19df346c2ba7cea4",
+  "stop_hash": "981bb130d03a45ba512ee3a758abb48db0d45c4b53a35a99bca79238c76e3fcd",
+  "stop_kind": "leak_budget_exceeded"
+ },
+ "counts": {
+  "carried": 0,
+  "failed": 0,
+  "met": 13,
+  "met_as_rejection": 0,
+  "not_opened": 15,
+  "pending": 1
+ },
+ "final_outcomes_inspected": false,
+ "gate_contract_hash": "9e47bc618fc1eca8b66146eacdf1bd244fced79bb1c91f46f2c6ff4484bfd8a7",
+ "gate_d1": [
+  {
+   "closure_rule": "at least 200 unique eligible verifier-backed primary-surface outcomes",
+   "condition": 6,
+   "detail": "closed by the selection stop: the outcomes that would close it are final and canary outcomes, and neither was authorised",
+   "state": "not_opened",
+   "stop_hash": "981bb130d03a45ba512ee3a758abb48db0d45c4b53a35a99bca79238c76e3fcd",
+   "stop_source": "S21D6-035 null candidate selection under §3.4 step 2, leak_budget_exceeded"
+  },
+  {
+   "closure_rule": "at least 20 primary-surface examples change the advisory action",
+   "condition": 7,
+   "detail": "closed by the selection stop: condition 13's evidence read against the D1 contract, and condition 13 never opened",
+   "state": "not_opened",
+   "stop_hash": "981bb130d03a45ba512ee3a758abb48db0d45c4b53a35a99bca79238c76e3fcd",
+   "stop_source": "S21D6-035 null candidate selection under §3.4 step 2, leak_budget_exceeded"
+  },
+  {
+   "closure_rule": "a new retrieval holdout reaches both floors",
+   "condition": 15,
+   "detail": "inherited from D5's sealed measurement under the W0 ruling, with all three voiding identities recomputed at gate close and unmoved",
+   "evidence": "sprint-21d6-condition-24-ruling.json",
+   "evidence_sha256": "1e2d7c4a18001550cdd8c13400d37711794d04cdf3630ffa4629a3bbbb45d510",
+   "first_failed_floor": null,
+   "gate_l2_condition_24_state": "met",
+   "inherited_from": "sprint-21d5-retrieval-decision.json",
+   "recorded_as": "closed by inheritance, re-checked at gate close",
+   "state": "closed",
+   "winning_arm": "lexical"
+  }
+ ],
+ "gate_l2": [
+  {
+   "condition": 1,
+   "detail": "the D5 tag object 799190c06497f22e peels to 53cd7579096537cd, and the local and remote handles agree",
+   "evidence": "sprint-21d6-baseline.json",
+   "evidence_sha256": "ac71f63aa037790624b80c929a2bbfe5b3a22bb4ebe203deb2602960167748f3",
+   "rule": "the D5 release verified from live handles",
+   "state": "met"
+  },
+  {
+   "condition": 2,
+   "detail": "7 predecessor stores re-fingerprinted after the wave against sprint-21d6-baseline.json; none drifted and zero writes reached one",
+   "evidence": "sprint-21d6-authority-isolation-after.json",
+   "evidence_sha256": "7826a3824c9e8a3d6e93e52008bfb03359faea62c82560b5d68355330110759e",
+   "rule": "every predecessor store reproduces its fingerprint after the wave, with zero writes",
+   "state": "met"
+  },
+  {
+   "condition": 3,
+   "detail": "3 carried roles reproduce their released bundle digests, read from sprint-21d5-reuse-audit.json at d7ef009e7eb1; 65 protected task identities were resolved by identity alone, and zero protected bodies were opened",
+   "evidence": "sprint-21d6-reuse-audit.json",
+   "evidence_sha256": "518dedfdaee8c1e2a3407f18a7efe8441f40001e9a6ffdcc6a66f3ffd728b8af",
+   "rule": "every carried role read out of the predecessor's released audit, bodies unopened",
+   "state": "met"
+  },
+  {
+   "condition": 4,
+   "detail": "revision 6 published with measured_values: 0",
+   "evidence": "sprint-21d6-pre-registration.json",
+   "evidence_sha256": "e1e4e1d76e51bb53ea845e3a9b9e0e631903921e8b3887d289048ff7eccd6022",
+   "rule": "revision 6 published before any D6 measurement",
+   "state": "met"
+  },
+  {
+   "condition": 5,
+   "detail": "all 400 candidate runs carry an independent hidden-verifier label",
+   "evidence": "sprint-21d6-certification-campaign.json",
+   "evidence_sha256": "4ffcfdebf9ff84443f3f44ba4f873de11c72b2f313fe16e53ce3003c176e8875",
+   "rule": "every attempted candidate carries an independent hidden-verifier label",
+   "state": "met"
+  },
+  {
+   "condition": 6,
+   "detail": "390 columns, all on the correction-ranking-v2 allowlist; all 9 required scans passed over 11 runs across the two halves",
+   "evidence": "sprint-21d6-snapshots.json",
+   "evidence_sha256": "8ec9e614013771ef4560baca9837b7831eb735d7a0d2af9af57884f02cddba5b",
+   "rule": "no forbidden, identity, outcome or answer field reaches the fitted matrices",
+   "state": "met"
+  },
+  {
+   "condition": 7,
+   "detail": "8 roles over 565 groups, all pairwise disjoint; 28 role pairs share zero groups",
+   "evidence": "sprint-21d6-corpus-separation.json",
+   "evidence_sha256": "64f28af7d60cbe9b295056c995a8d5a6da80fc48cc0fddef41ae3914f0cf87c3",
+   "rule": "no transitive group crosses a D6 role",
+   "state": "met"
+  },
+  {
+   "condition": 8,
+   "detail": "400 certification observations over 100 groups in D6's own store, and the fitting floor met by D5's sealed 720 rows over 180 groups, carried unrefitted and proved byte-for-byte identical to the released pool by S21D6-023",
+   "evidence": "sprint-21d6-snapshots.json",
+   "evidence_sha256": "8ec9e614013771ef4560baca9837b7831eb735d7a0d2af9af57884f02cddba5b",
+   "rule": "at least 200/50 fitting and 40/10 certification",
+   "state": "met"
+  },
+  {
+   "condition": 9,
+   "detail": "zero REAL_GOVERNED_RUN observations in the certification dataset: {'calibration': 0}",
+   "evidence": "sprint-21d6-snapshots.json",
+   "evidence_sha256": "8ec9e614013771ef4560baca9837b7831eb735d7a0d2af9af57884f02cddba5b",
+   "rule": "zero REAL_GOVERNED_RUN observations in the fitted splits",
+   "state": "met"
+  },
+  {
+   "condition": 10,
+   "detail": "would have measured final A and B, each 120 new verifier-backed outcomes over 30 groups",
+   "evidence": "sprint-21d6-learner-selection.json",
+   "evidence_sha256": "13bf161848f0a57acedac3b295b987460e383491297774ef85f19cc141f4e01b",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "981bb130d03a45ba512ee3a758abb48db0d45c4b53a35a99bca79238c76e3fcd",
+   "stop_source": "S21D6-035 null candidate selection under §3.4 step 2, leak_budget_exceeded"
+  },
+  {
+   "condition": 11,
+   "detail": "would have measured one artifact selected before final access, with final manifests inaccessible to fitting",
+   "evidence": "sprint-21d6-learner-selection.json",
+   "evidence_sha256": "13bf161848f0a57acedac3b295b987460e383491297774ef85f19cc141f4e01b",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "981bb130d03a45ba512ee3a758abb48db0d45c4b53a35a99bca79238c76e3fcd",
+   "stop_source": "S21D6-035 null candidate selection under §3.4 step 2, leak_budget_exceeded"
+  },
+  {
+   "condition": 12,
+   "detail": "the strongest deterministic rung is lexical_similarity at 0.62, measured on the same decisions; all 2 cells and 200 sweep points are reported, including the one that is not selectable",
+   "evidence": "sprint-21d6-learner-selection.json",
+   "evidence_sha256": "13bf161848f0a57acedac3b295b987460e383491297774ef85f19cc141f4e01b",
+   "rule": "the strongest deterministic baseline and every grid and sweep point are recorded",
+   "state": "met"
+  },
+  {
+   "condition": 13,
+   "detail": "would have measured at least 20 final group decisions differing from the strongest baseline",
+   "evidence": "sprint-21d6-learner-selection.json",
+   "evidence_sha256": "13bf161848f0a57acedac3b295b987460e383491297774ef85f19cc141f4e01b",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "981bb130d03a45ba512ee3a758abb48db0d45c4b53a35a99bca79238c76e3fcd",
+   "stop_source": "S21D6-035 null candidate selection under §3.4 step 2, leak_budget_exceeded"
+  },
+  {
+   "condition": 14,
+   "detail": "would have measured at least 5 absolute points or 20% relative error reduction on final evidence",
+   "evidence": "sprint-21d6-learner-selection.json",
+   "evidence_sha256": "13bf161848f0a57acedac3b295b987460e383491297774ef85f19cc141f4e01b",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "981bb130d03a45ba512ee3a758abb48db0d45c4b53a35a99bca79238c76e3fcd",
+   "stop_source": "S21D6-035 null candidate selection under §3.4 step 2, leak_budget_exceeded"
+  },
+  {
+   "condition": 15,
+   "detail": "would have measured the paired group bootstrap over the final batches",
+   "evidence": "sprint-21d6-learner-selection.json",
+   "evidence_sha256": "13bf161848f0a57acedac3b295b987460e383491297774ef85f19cc141f4e01b",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "981bb130d03a45ba512ee3a758abb48db0d45c4b53a35a99bca79238c76e3fcd",
+   "stop_source": "S21D6-035 null candidate selection under §3.4 step 2, leak_budget_exceeded"
+  },
+  {
+   "condition": 16,
+   "detail": "would have measured a positive learned-minus-baseline direction in both final batches",
+   "evidence": "sprint-21d6-learner-selection.json",
+   "evidence_sha256": "13bf161848f0a57acedac3b295b987460e383491297774ef85f19cc141f4e01b",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "981bb130d03a45ba512ee3a758abb48db0d45c4b53a35a99bca79238c76e3fcd",
+   "stop_source": "S21D6-035 null candidate selection under §3.4 step 2, leak_budget_exceeded"
+  },
+  {
+   "condition": 17,
+   "detail": "2 cells, every coverage over `independent_decisions` and every one of them the same 100 the census fixed; 0 replicated decisions of 100 nominal",
+   "evidence": "sprint-21d6-learner-selection.json",
+   "evidence_sha256": "13bf161848f0a57acedac3b295b987460e383491297774ef85f19cc141f4e01b",
+   "rule": "every rate names its denominator and uses the independent one",
+   "state": "met"
+  },
+  {
+   "condition": 18,
+   "detail": "would have measured zero accepted-to-rejected safety, governance, permission, secret or destructive changes",
+   "evidence": "sprint-21d6-learner-selection.json",
+   "evidence_sha256": "13bf161848f0a57acedac3b295b987460e383491297774ef85f19cc141f4e01b",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "981bb130d03a45ba512ee3a758abb48db0d45c4b53a35a99bca79238c76e3fcd",
+   "stop_source": "S21D6-035 null candidate selection under §3.4 step 2, leak_budget_exceeded"
+  },
+  {
+   "condition": 19,
+   "detail": "would have measured no retained domain losing more than 2 points and aggregate loss at most 1 point",
+   "evidence": "sprint-21d6-learner-selection.json",
+   "evidence_sha256": "13bf161848f0a57acedac3b295b987460e383491297774ef85f19cc141f4e01b",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "981bb130d03a45ba512ee3a758abb48db0d45c4b53a35a99bca79238c76e3fcd",
+   "stop_source": "S21D6-035 null candidate selection under §3.4 step 2, leak_budget_exceeded"
+  },
+  {
+   "condition": 20,
+   "detail": "would have measured at least 100 pre-registered promotion metamorphic/OOD ranking decisions inside the admission budget. Its own precondition was measured and did not clear: over 100 independent fresh certification decisions the split-conformal bar at alpha 0.20 admits 0.40 of them with 6 errors, and the Clopper-Pearson 95% upper bound on the error rate among those admitted is 0.2747 against the pre-registered ceiling of 0.15",
+   "evidence": "sprint-21d6-learner-selection.json",
+   "evidence_sha256": "13bf161848f0a57acedac3b295b987460e383491297774ef85f19cc141f4e01b",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "981bb130d03a45ba512ee3a758abb48db0d45c4b53a35a99bca79238c76e3fcd",
+   "stop_source": "S21D6-035 null candidate selection under §3.4 step 2, leak_budget_exceeded"
+  },
+  {
+   "condition": 21,
+   "detail": "would have measured shadow mode changing zero executed decisions against final evidence",
+   "evidence": "sprint-21d6-learner-selection.json",
+   "evidence_sha256": "13bf161848f0a57acedac3b295b987460e383491297774ef85f19cc141f4e01b",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "981bb130d03a45ba512ee3a758abb48db0d45c4b53a35a99bca79238c76e3fcd",
+   "stop_source": "S21D6-035 null candidate selection under §3.4 step 2, leak_budget_exceeded"
+  },
+  {
+   "condition": 22,
+   "detail": "would have measured the selected artifact as canonical inert JSON with complete lineage. `CorrectionArtifactPayloadV3` and its loader are released and were exercised on a fixture in S21D6-024, but no candidate names a conformal bar to bind into one, and a record about a fixture is not a record about a candidate",
+   "evidence": "sprint-21d6-learner-selection.json",
+   "evidence_sha256": "13bf161848f0a57acedac3b295b987460e383491297774ef85f19cc141f4e01b",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "981bb130d03a45ba512ee3a758abb48db0d45c4b53a35a99bca79238c76e3fcd",
+   "stop_source": "S21D6-035 null candidate selection under §3.4 step 2, leak_budget_exceeded"
+  },
+  {
+   "condition": 23,
+   "detail": "would have measured the runtime resolver reaching every reason code against the real artifact, each with an immediate deterministic fallback",
+   "evidence": "sprint-21d6-learner-selection.json",
+   "evidence_sha256": "13bf161848f0a57acedac3b295b987460e383491297774ef85f19cc141f4e01b",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "981bb130d03a45ba512ee3a758abb48db0d45c4b53a35a99bca79238c76e3fcd",
+   "stop_source": "S21D6-035 null candidate selection under §3.4 step 2, leak_budget_exceeded"
+  },
+  {
+   "condition": 24,
+   "detail": "inherited under sprint-21d6-condition-24-ruling.json: the lexical arm cleared Recall@5 >= 0.70 and MRR@10 >= 0.50 on 60 unseen queries in D5, and all three voiding identities were recomputed here and are unmoved -- D6 authored 0 retrieval groups, opened no arm, and changed neither the surface nor the comparator",
+   "evidence": "sprint-21d6-condition-24-ruling.json",
+   "evidence_sha256": "1e2d7c4a18001550cdd8c13400d37711794d04cdf3630ffa4629a3bbbb45d510",
+   "rule": "Recall@5 >= 0.70 and MRR@10 >= 0.50 on at least 50 unseen queries",
+   "state": "met"
+  },
+  {
+   "condition": 25,
+   "detail": "would have measured a hash-bound canary manifest with the verifier mandatory and the kill switch immediate",
+   "evidence": "sprint-21d6-learner-selection.json",
+   "evidence_sha256": "13bf161848f0a57acedac3b295b987460e383491297774ef85f19cc141f4e01b",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "981bb130d03a45ba512ee3a758abb48db0d45c4b53a35a99bca79238c76e3fcd",
+   "stop_source": "S21D6-035 null candidate selection under §3.4 step 2, leak_budget_exceeded"
+  },
+  {
+   "condition": 26,
+   "detail": "would have measured activation, loading, disable, restoration and rollback surviving restart on a real one",
+   "evidence": "sprint-21d6-learner-selection.json",
+   "evidence_sha256": "13bf161848f0a57acedac3b295b987460e383491297774ef85f19cc141f4e01b",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "981bb130d03a45ba512ee3a758abb48db0d45c4b53a35a99bca79238c76e3fcd",
+   "stop_source": "S21D6-035 null candidate selection under §3.4 step 2, leak_budget_exceeded"
+  },
+  {
+   "condition": 27,
+   "detail": "would have measured an exact human approval over the existing fields, with no self-approval",
+   "evidence": "sprint-21d6-learner-selection.json",
+   "evidence_sha256": "13bf161848f0a57acedac3b295b987460e383491297774ef85f19cc141f4e01b",
+   "rule": "closed by a typed stop; the row binds the stop hash rather than a measurement",
+   "state": "not_opened",
+   "stop_hash": "981bb130d03a45ba512ee3a758abb48db0d45c4b53a35a99bca79238c76e3fcd",
+   "stop_source": "S21D6-035 null candidate selection under §3.4 step 2, leak_budget_exceeded"
+  },
+  {
+   "condition": 28,
+   "detail": "36 of 36 release-matrix rows passed, 0 skipped, 0 structural findings",
+   "evidence": "sprint-21d6-verification-matrix.json",
+   "evidence_sha256": "ed47c1065ce3955eb716689e521f494966fd48d6f93aba458155fb87b4fbbbd7",
+   "rule": "every required isolated and repository check ran and passed, none skipped",
+   "state": "met"
+  },
+  {
+   "condition": 29,
+   "detail": "the protected merge, its exact-head post-merge main CI, the annotated tag and the remote verification. The gate-close regeneration is what decides this row",
+   "evidence": null,
+   "rule": "protected merge, post-merge exact-head CI, annotated tag, remote read",
+   "state": "pending"
+  }
+ ],
+ "gate_l2_conditions": 29,
+ "integrity_content_hash": "19f302ddea36702a165c399863bbd412acb5345df95f37c5d60e1f91abda2dbf",
+ "item": "S21D6-091",
+ "no_condition_is_carried_from_d5": true,
+ "pre_registration_sha256": "e1e4e1d76e51bb53ea845e3a9b9e0e631903921e8b3887d289048ff7eccd6022",
+ "provisional_until": "the protected merge, its exact-head post-merge main CI, and remote tag verification",
+ "purpose": "The twenty-nine Gate L2 conditions and Gate D1's three, each decided by the evidence that bears on it. No condition may be asserted; every row names its file and rule, or the stop hash that closed it.",
+ "recorded_at": "2026-08-10T10:59:23.286218Z",
+ "schema_version": 1,
+ "sprint": "21D6",
+ "stops": {
+  "selection": {
+   "hash": "981bb130d03a45ba512ee3a758abb48db0d45c4b53a35a99bca79238c76e3fcd",
+   "source": "S21D6-035 null candidate selection under §3.4 step 2, leak_budget_exceeded"
+  }
+ },
+ "the_one_clause_that_changed": {
+  "amendment": "sprint-21d6-contracts-amendment-2.json",
+  "amendment_sha256": "9ba7fc1f516c238d2545f258517fdf96a62bb096c48ce718e207571247dba593",
+  "granted_before_any_d6_measurement": true,
+  "what": "§2.3's admission clause: 'exactly zero confident errors' struck, replaced by a split-conformal bar at the pre-registered alpha with a Clopper-Pearson 95% upper bound at most C. Every other §2.3 condition and every Gate L2 threshold is unchanged"
+ },
+ "verdict": "gate_l2_does_not_pass",
+ "verdict_reason": "the gate passes only when every applicable condition is met; 15 never opened, 1 awaiting the protected release",
+ "wave": "W3",
+ "what_inherited_is_not": "condition 24 is `met`, not `carried`. A carried condition would be a predecessor's verdict reused; this one is a predecessor's *measurement* whose three voiding identities were recomputed from D6's tree at gate close, under a ruling the gate owner granted in W0 before any D6 measurement existed"
+}
