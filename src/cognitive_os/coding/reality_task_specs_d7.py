@@ -1186,6 +1186,1329 @@ def test_only_the_first_standby_is_promoted() -> None:
     ),
 )
 
+
+_G011 = D2TaskSpec(
+    template_id="d7_boundary.queue_positions",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-queue-positions",
+    module="queue_positions",
+    module_doc="Telling callers where they stand in a queue.",
+    issue=(
+        "positions() is documented to report the earliest place an id holds and to report "
+        "nothing for an id that is not queued at all. Callers report that somebody who joined "
+        "twice is told the later place, and that asking about an id that has already been "
+        "served fails outright instead of answering."
+    ),
+    expected=(
+        "positions(queue, wanted) returns one place per wanted id, in the order asked, counting "
+        "from one. An id appearing more than once takes its earliest place, and an id that is "
+        "not in the queue gets None."
+    ),
+    baseline_reason=(
+        "it overwrites each id's place as it walks the queue, so the last one wins, and it "
+        "looks the place up in a way that has no answer for an id that never appeared"
+    ),
+    edge_cases=(
+        "an id queued twice takes its earliest place",
+        "an id that is not queued gets None",
+    ),
+    baseline="""def positions(queue, wanted):
+    \"\"\"Report where each wanted id stands in `queue`.\"\"\"
+    places = {}
+    for index, item in enumerate(queue):
+        places[item] = index + 1
+    return [places[item] for item in wanted]""",
+    variant_one="""def positions(queue, wanted):
+    \"\"\"Report where each wanted id stands in `queue`.\"\"\"
+    places = {}
+    for index, item in enumerate(queue):
+        places.setdefault(item, index + 1)
+    return [places.get(item) for item in wanted]""",
+    variant_two="""def positions(queue, wanted):
+    \"\"\"Report where each wanted id stands in `queue`.\"\"\"
+    out = []
+    for item in wanted:
+        place = None
+        for index, queued in enumerate(queue):
+            if queued == item:
+                place = index + 1
+                break
+        out.append(place)
+    return out""",
+    variant_three="""def positions(queue, wanted):
+    \"\"\"Report where each wanted id stands in `queue`.\"\"\"
+    places = {}
+    for index, item in enumerate(queue):
+        places.setdefault(item, index + 1)
+    return [places[item] for item in wanted]""",
+    variant_four="""def positions(queue, wanted):
+    \"\"\"Report where each wanted id stands in `queue`.\"\"\"
+    places = {}
+    for index, item in enumerate(queue):
+        places[item] = index + 1
+    return [places.get(item) for item in wanted]""",
+    visible_test=_test_module(
+        "queue_positions",
+        "Published contract for reporting a place in the queue.",
+        """
+def test_a_place_counts_from_one() -> None:
+    assert positions(["ann", "bo"], ["bo"]) == [2]
+
+
+def test_the_head_of_the_queue_is_first() -> None:
+    assert positions(["ann"], ["ann"]) == [1]
+""",
+        imports="from queue_positions import positions\n",
+    ),
+    hidden_test=_test_module(
+        "queue_positions",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_place_counts_from_one() -> None:
+    assert positions(["ann", "bo"], ["bo"]) == [2]
+
+
+def test_an_id_queued_twice_takes_its_earliest_place() -> None:
+    assert positions(["ann", "bo", "ann"], ["ann"]) == [1]
+
+
+def test_an_id_that_is_not_queued_has_no_place() -> None:
+    assert positions(["ann"], ["zoe"]) == [None]
+""",
+        imports="from queue_positions import positions\n",
+    ),
+)
+
+_G012 = D2TaskSpec(
+    template_id="d7_transform.mask_fields",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-mask-fields",
+    module="mask_fields",
+    module_doc="Hiding named fields before a record is shown to anybody.",
+    issue=(
+        "mask() is documented to hide exactly the fields it is given. Callers report that a "
+        "field whose name merely begins with a named one is hidden as well, so 'token_kind' "
+        "disappears along with 'token', and that a record which never carried the field comes "
+        "back carrying it with a masked value."
+    ),
+    expected=(
+        "mask(rows, fields) returns the rows in order, each with the value of every named field "
+        "replaced by '***'. Field names match exactly, never as a prefix, and a row that does "
+        "not carry a named field is returned unchanged."
+    ),
+    baseline_reason=(
+        "it compares field names with a prefix test, and it fills in every named field it did "
+        "not find rather than leaving the row alone"
+    ),
+    edge_cases=(
+        "a field whose name merely begins with a named one is left alone",
+        "a row without the named field is returned unchanged",
+    ),
+    baseline="""def mask(rows, fields):
+    \"\"\"Hide the named fields in every row.\"\"\"
+    hidden = []
+    for row in rows:
+        shown = dict(row)
+        for name in list(shown):
+            for field in fields:
+                if name.startswith(field):
+                    shown[name] = "***"
+        for field in fields:
+            shown.setdefault(field, "***")
+        hidden.append(shown)
+    return hidden""",
+    variant_one="""def mask(rows, fields):
+    \"\"\"Hide the named fields in every row.\"\"\"
+    hidden = []
+    for row in rows:
+        shown = dict(row)
+        for field in fields:
+            if field in shown:
+                shown[field] = "***"
+        hidden.append(shown)
+    return hidden""",
+    variant_two="""def mask(rows, fields):
+    \"\"\"Hide the named fields in every row.\"\"\"
+    wanted = set(fields)
+    return [
+        {name: ("***" if name in wanted else value) for name, value in row.items()}
+        for row in rows
+    ]""",
+    variant_three="""def mask(rows, fields):
+    \"\"\"Hide the named fields in every row.\"\"\"
+    hidden = []
+    for row in rows:
+        shown = dict(row)
+        for name in list(shown):
+            for field in fields:
+                if name == field:
+                    shown[name] = "***"
+        for field in fields:
+            shown.setdefault(field, "***")
+        hidden.append(shown)
+    return hidden""",
+    variant_four="""def mask(rows, fields):
+    \"\"\"Hide the named fields in every row.\"\"\"
+    hidden = []
+    for row in rows:
+        shown = dict(row)
+        for name in list(shown):
+            for field in fields:
+                if name.startswith(field):
+                    shown[name] = "***"
+        hidden.append(shown)
+    return hidden""",
+    visible_test=_test_module(
+        "mask_fields",
+        "Published contract for hiding named fields.",
+        """
+def test_a_named_field_is_hidden() -> None:
+    assert mask([{"token": "abc"}], ["token"]) == [{"token": "***"}]
+
+
+def test_naming_no_fields_changes_nothing() -> None:
+    assert mask([{"name": "ann"}], []) == [{"name": "ann"}]
+""",
+        imports="from mask_fields import mask\n",
+    ),
+    hidden_test=_test_module(
+        "mask_fields",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_named_field_is_hidden() -> None:
+    assert mask([{"token": "abc"}], ["token"]) == [{"token": "***"}]
+
+
+def test_a_field_that_merely_begins_with_a_named_one_is_left_alone() -> None:
+    assert mask([{"token_kind": "bearer"}], ["token"]) == [{"token_kind": "bearer"}]
+
+
+def test_a_row_without_the_field_is_returned_unchanged() -> None:
+    assert mask([{"name": "ann"}], ["token"]) == [{"name": "ann"}]
+""",
+        imports="from mask_fields import mask\n",
+    ),
+)
+
+_G013 = D2TaskSpec(
+    template_id="d7_error.dead_letter",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-dead-letter",
+    module="dead_letter",
+    module_doc="Setting aside the messages that have been tried too often.",
+    issue=(
+        "route() is documented to set a message aside once its attempts have reached the "
+        "limit. Callers report that a message sitting exactly on the limit is retried forever, "
+        "and that a message which has never been attempted fails the routing outright instead "
+        "of being treated as fresh."
+    ),
+    expected=(
+        "route(messages, limit) takes (id, attempts) pairs and returns (live, dead): an id "
+        "whose attempts have reached the limit is dead, and one below it is live, both in "
+        "arrival order. Attempts recorded as None count as none at all."
+    ),
+    baseline_reason=(
+        "it compares the attempts with a strict test, so the limit itself is never reached, and "
+        "it compares without asking whether any attempts were recorded"
+    ),
+    edge_cases=(
+        "a message whose attempts have reached the limit is set aside",
+        "attempts recorded as None count as none at all",
+    ),
+    baseline="""def route(messages, limit):
+    \"\"\"Split messages into the live ones and the ones tried too often.\"\"\"
+    live = []
+    dead = []
+    for identifier, attempts in messages:
+        if attempts > limit:
+            dead.append(identifier)
+        else:
+            live.append(identifier)
+    return live, dead""",
+    variant_one="""def route(messages, limit):
+    \"\"\"Split messages into the live ones and the ones tried too often.\"\"\"
+    live = []
+    dead = []
+    for identifier, attempts in messages:
+        tried = attempts or 0
+        if tried >= limit:
+            dead.append(identifier)
+        else:
+            live.append(identifier)
+    return live, dead""",
+    variant_two="""def route(messages, limit):
+    \"\"\"Split messages into the live ones and the ones tried too often.\"\"\"
+    counted = [
+        (identifier, 0 if attempts is None else attempts) for identifier, attempts in messages
+    ]
+    live = [identifier for identifier, tried in counted if tried < limit]
+    dead = [identifier for identifier, tried in counted if tried >= limit]
+    return live, dead""",
+    variant_three="""def route(messages, limit):
+    \"\"\"Split messages into the live ones and the ones tried too often.\"\"\"
+    live = []
+    dead = []
+    for identifier, attempts in messages:
+        if attempts >= limit:
+            dead.append(identifier)
+        else:
+            live.append(identifier)
+    return live, dead""",
+    variant_four="""def route(messages, limit):
+    \"\"\"Split messages into the live ones and the ones tried too often.\"\"\"
+    live = []
+    dead = []
+    for identifier, attempts in messages:
+        tried = attempts or 0
+        if tried > limit:
+            dead.append(identifier)
+        else:
+            live.append(identifier)
+    return live, dead""",
+    visible_test=_test_module(
+        "dead_letter",
+        "Published contract for setting messages aside.",
+        """
+def test_a_fresh_message_stays_live() -> None:
+    assert route([("a", 0)], 3) == (["a"], [])
+
+
+def test_a_message_well_past_the_limit_is_set_aside() -> None:
+    assert route([("b", 5)], 3) == ([], ["b"])
+""",
+        imports="from dead_letter import route\n",
+    ),
+    hidden_test=_test_module(
+        "dead_letter",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_fresh_message_stays_live() -> None:
+    assert route([("a", 0)], 3) == (["a"], [])
+
+
+def test_a_message_that_has_reached_the_limit_is_set_aside() -> None:
+    assert route([("a", 3)], 3) == ([], ["a"])
+
+
+def test_attempts_recorded_as_none_count_as_none_at_all() -> None:
+    assert route([("a", None)], 3) == (["a"], [])
+""",
+        imports="from dead_letter import route\n",
+    ),
+)
+
+_G014 = D2TaskSpec(
+    template_id="d7_error.escalate_unacked",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-escalate-unacked",
+    module="escalate_unacked",
+    module_doc="Escalating the alerts nobody has picked up.",
+    issue=(
+        "escalate() is documented to escalate only what nobody has acknowledged, and to name "
+        "each alert once. Callers report being paged about alerts they had already taken, and "
+        "receiving the same alert twice when it was reported more than once while waiting."
+    ),
+    expected=(
+        "escalate(alerts, patience) takes (id, waited, acknowledged) triples and returns the "
+        "ids to escalate, in the order they first appear: those that have waited at least "
+        "`patience` and have not been acknowledged, each named once."
+    ),
+    baseline_reason=(
+        "it never looks at whether the alert was acknowledged, and it appends without asking "
+        "whether that alert is already on the list"
+    ),
+    edge_cases=(
+        "an acknowledged alert is never escalated",
+        "an alert reported twice is escalated once",
+    ),
+    baseline="""def escalate(alerts, patience):
+    \"\"\"Return the alerts that should be escalated.\"\"\"
+    out = []
+    for identifier, waited, acknowledged in alerts:
+        if waited < patience:
+            continue
+        out.append(identifier)
+    return out""",
+    variant_one="""def escalate(alerts, patience):
+    \"\"\"Return the alerts that should be escalated.\"\"\"
+    out = []
+    for identifier, waited, acknowledged in alerts:
+        if waited < patience or acknowledged:
+            continue
+        if identifier not in out:
+            out.append(identifier)
+    return out""",
+    variant_two="""def escalate(alerts, patience):
+    \"\"\"Return the alerts that should be escalated.\"\"\"
+    waiting = [
+        identifier
+        for identifier, waited, acknowledged in alerts
+        if waited >= patience and not acknowledged
+    ]
+    seen = set()
+    out = []
+    for identifier in waiting:
+        if identifier not in seen:
+            seen.add(identifier)
+            out.append(identifier)
+    return out""",
+    variant_three="""def escalate(alerts, patience):
+    \"\"\"Return the alerts that should be escalated.\"\"\"
+    out = []
+    for identifier, waited, acknowledged in alerts:
+        if waited < patience or acknowledged:
+            continue
+        out.append(identifier)
+    return out""",
+    variant_four="""def escalate(alerts, patience):
+    \"\"\"Return the alerts that should be escalated.\"\"\"
+    out = []
+    for identifier, waited, acknowledged in alerts:
+        if waited < patience:
+            continue
+        if identifier not in out:
+            out.append(identifier)
+    return out""",
+    visible_test=_test_module(
+        "escalate_unacked",
+        "Published contract for escalating alerts.",
+        """
+def test_a_long_wait_is_escalated() -> None:
+    assert escalate([("a", 5, False)], 3) == ["a"]
+
+
+def test_a_short_wait_is_left_alone() -> None:
+    assert escalate([("b", 1, False)], 3) == []
+""",
+        imports="from escalate_unacked import escalate\n",
+    ),
+    hidden_test=_test_module(
+        "escalate_unacked",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_long_wait_is_escalated() -> None:
+    assert escalate([("a", 5, False)], 3) == ["a"]
+
+
+def test_an_acknowledged_alert_is_never_escalated() -> None:
+    assert escalate([("a", 5, True)], 3) == []
+
+
+def test_an_alert_reported_twice_is_escalated_once() -> None:
+    assert escalate([("a", 5, False), ("a", 6, False)], 3) == ["a"]
+""",
+        imports="from escalate_unacked import escalate\n",
+    ),
+)
+
+_G015 = D2TaskSpec(
+    template_id="d7_numeric.overtime_pay",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-overtime-pay",
+    module="overtime_pay",
+    module_doc="Paying the hours beyond a threshold at the higher rate.",
+    issue=(
+        "pay() is documented to pay the plain rate up to the threshold and half as much again "
+        "beyond it. Callers report short weeks being underpaid, as though the unworked hours "
+        "were deducted, and a negative number of hours producing a negative wage instead of "
+        "being refused."
+    ),
+    expected=(
+        "pay(hours, rate, threshold) returns the wage rounded to two decimals: every hour up to "
+        "the threshold at `rate`, and every hour beyond it at one and a half times `rate`. "
+        "Hours below zero raise ValueError."
+    ),
+    baseline_reason=(
+        "it adds the overtime supplement without flooring the overtime at zero, so a short "
+        "week subtracts one instead, and it never checks that the hours are not negative"
+    ),
+    edge_cases=(
+        "hours below the threshold are paid at the plain rate",
+        "hours below zero raise ValueError",
+    ),
+    baseline="""def pay(hours, rate, threshold):
+    \"\"\"Return the wage for `hours` worked.\"\"\"
+    overtime = hours - threshold
+    return round(hours * rate + overtime * rate * 0.5, 2)""",
+    variant_one="""def pay(hours, rate, threshold):
+    \"\"\"Return the wage for `hours` worked.\"\"\"
+    if hours < 0:
+        raise ValueError("hours worked cannot be negative")
+    overtime = max(hours - threshold, 0)
+    return round(hours * rate + overtime * rate * 0.5, 2)""",
+    variant_two="""def pay(hours, rate, threshold):
+    \"\"\"Return the wage for `hours` worked.\"\"\"
+    if hours < 0:
+        raise ValueError("hours worked cannot be negative")
+    if hours <= threshold:
+        return round(hours * rate, 2)
+    plain = threshold * rate
+    extra = (hours - threshold) * rate * 1.5
+    return round(plain + extra, 2)""",
+    variant_three="""def pay(hours, rate, threshold):
+    \"\"\"Return the wage for `hours` worked.\"\"\"
+    overtime = max(hours - threshold, 0)
+    return round(hours * rate + overtime * rate * 0.5, 2)""",
+    variant_four="""def pay(hours, rate, threshold):
+    \"\"\"Return the wage for `hours` worked.\"\"\"
+    if hours < 0:
+        raise ValueError("hours worked cannot be negative")
+    overtime = hours - threshold
+    return round(hours * rate + overtime * rate * 0.5, 2)""",
+    visible_test=_test_module(
+        "overtime_pay",
+        "Published contract for paying a week's hours.",
+        """
+def test_a_full_week_is_paid_at_the_plain_rate() -> None:
+    assert pay(40, 10, 40) == 400.0
+
+
+def test_hours_beyond_the_threshold_are_paid_higher() -> None:
+    assert pay(45, 10, 40) == 475.0
+""",
+        imports="from overtime_pay import pay\n",
+    ),
+    hidden_test=_test_module(
+        "overtime_pay",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_hours_beyond_the_threshold_are_paid_higher() -> None:
+    assert pay(45, 10, 40) == 475.0
+
+
+def test_a_short_week_is_paid_at_the_plain_rate() -> None:
+    assert pay(30, 10, 40) == 300.0
+
+
+def test_negative_hours_are_refused() -> None:
+    with pytest.raises(ValueError):
+        pay(-1, 10, 40)
+""",
+        imports="from overtime_pay import pay\n",
+    ),
+)
+
+_G016 = D2TaskSpec(
+    template_id="d7_parsing.hashtag_list",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-hashtag-list",
+    module="hashtag_list",
+    module_doc="Reading the tags out of a message body.",
+    issue=(
+        "tags() is documented to report each distinct tag once, folded to lower case, without "
+        "whatever punctuation followed it. Callers report the same tag listed twice when it was "
+        "written in different cases, and tags coming back with a trailing comma or full stop "
+        "attached."
+    ),
+    expected=(
+        "tags(text) returns the tags of a message, each without its leading '#', folded to "
+        "lower case, in order of first appearance and without repeats. Punctuation following a "
+        "tag is not part of it, and a bare '#' is not a tag."
+    ),
+    baseline_reason=(
+        "it takes the word after the hash exactly as written, so case distinguishes two "
+        "spellings of one tag, and it never trims the punctuation that follows"
+    ),
+    edge_cases=(
+        "tags differing only in case are one tag",
+        "punctuation following a tag is not part of it",
+    ),
+    baseline="""def tags(text):
+    \"\"\"Return the tags of a message.\"\"\"
+    found = []
+    for word in text.split():
+        if word.startswith("#") and len(word) > 1:
+            tag = word[1:]
+            if tag not in found:
+                found.append(tag)
+    return found""",
+    variant_one="""def tags(text):
+    \"\"\"Return the tags of a message.\"\"\"
+    found = []
+    for word in text.split():
+        if word.startswith("#") and len(word) > 1:
+            tag = word[1:].strip(".,;:!?").lower()
+            if tag and tag not in found:
+                found.append(tag)
+    return found""",
+    variant_two="""def tags(text):
+    \"\"\"Return the tags of a message.\"\"\"
+    found = []
+    seen = set()
+    for word in text.split():
+        if not word.startswith("#"):
+            continue
+        letters = ""
+        for character in word[1:]:
+            if character.isalnum() or character == "_":
+                letters += character
+            else:
+                break
+        tag = letters.lower()
+        if tag and tag not in seen:
+            seen.add(tag)
+            found.append(tag)
+    return found""",
+    variant_three="""def tags(text):
+    \"\"\"Return the tags of a message.\"\"\"
+    found = []
+    for word in text.split():
+        if word.startswith("#") and len(word) > 1:
+            tag = word[1:].lower()
+            if tag not in found:
+                found.append(tag)
+    return found""",
+    variant_four="""def tags(text):
+    \"\"\"Return the tags of a message.\"\"\"
+    found = []
+    for word in text.split():
+        if word.startswith("#") and len(word) > 1:
+            tag = word[1:].strip(".,;:!?")
+            if tag and tag not in found:
+                found.append(tag)
+    return found""",
+    visible_test=_test_module(
+        "hashtag_list",
+        "Published contract for reading tags out of a message.",
+        """
+def test_a_tag_loses_its_hash() -> None:
+    assert tags("hello #run today") == ["run"]
+
+
+def test_a_message_without_tags_has_none() -> None:
+    assert tags("no tags here") == []
+""",
+        imports="from hashtag_list import tags\n",
+    ),
+    hidden_test=_test_module(
+        "hashtag_list",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_tag_loses_its_hash() -> None:
+    assert tags("hello #run today") == ["run"]
+
+
+def test_two_spellings_of_one_tag_are_one_tag() -> None:
+    assert tags("#Run and #run") == ["run"]
+
+
+def test_punctuation_after_a_tag_is_not_part_of_it() -> None:
+    assert tags("#run, then #swim.") == ["run", "swim"]
+""",
+        imports="from hashtag_list import tags\n",
+    ),
+)
+
+_G017 = D2TaskSpec(
+    template_id="d7_state.maintenance_window",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-maintenance-window",
+    module="maintenance_window",
+    module_doc="Opening and closing a maintenance window without losing when it started.",
+    issue=(
+        "window() is documented to leave an open window alone when it is opened again, and to "
+        "refuse a close that matches no open window. Callers report the start time being reset "
+        "by a repeated open, so the window looks shorter than it was, and stray closes "
+        "recording a window that began at nothing."
+    ),
+    expected=(
+        "window(state, event, at) returns the state after the event. 'enter' records the start "
+        "unless one is already recorded, in which case the state is unchanged; 'leave' appends "
+        "(start, at) to the history and clears the start. A 'leave' with no window open raises "
+        "ValueError."
+    ),
+    baseline_reason=(
+        "it writes the start time on every open, and it closes whatever it finds without "
+        "checking that a window was open"
+    ),
+    edge_cases=(
+        "opening an already-open window keeps the original start",
+        "closing with no window open raises ValueError",
+    ),
+    baseline="""def window(state, event, at):
+    \"\"\"Apply a maintenance-window event to `state`.\"\"\"
+    updated = dict(state)
+    history = list(updated.get("history", []))
+    if event == "enter":
+        updated["started_at"] = at
+        updated["history"] = history
+        return updated
+    history.append((updated.get("started_at"), at))
+    updated["started_at"] = None
+    updated["history"] = history
+    return updated""",
+    variant_one="""def window(state, event, at):
+    \"\"\"Apply a maintenance-window event to `state`.\"\"\"
+    updated = dict(state)
+    history = list(updated.get("history", []))
+    started = updated.get("started_at")
+    if event == "enter":
+        if started is None:
+            updated["started_at"] = at
+        updated["history"] = history
+        return updated
+    if started is None:
+        raise ValueError("no maintenance window is open")
+    history.append((started, at))
+    updated["started_at"] = None
+    updated["history"] = history
+    return updated""",
+    variant_two="""def window(state, event, at):
+    \"\"\"Apply a maintenance-window event to `state`.\"\"\"
+    started = state.get("started_at")
+    history = list(state.get("history", []))
+    if event == "enter":
+        opened = at if started is None else started
+        return {"started_at": opened, "history": history}
+    if not started:
+        raise ValueError("no maintenance window is open")
+    return {"started_at": None, "history": [*history, (started, at)]}""",
+    variant_three="""def window(state, event, at):
+    \"\"\"Apply a maintenance-window event to `state`.\"\"\"
+    updated = dict(state)
+    history = list(updated.get("history", []))
+    started = updated.get("started_at")
+    if event == "enter":
+        if started is None:
+            updated["started_at"] = at
+        updated["history"] = history
+        return updated
+    history.append((started, at))
+    updated["started_at"] = None
+    updated["history"] = history
+    return updated""",
+    variant_four="""def window(state, event, at):
+    \"\"\"Apply a maintenance-window event to `state`.\"\"\"
+    updated = dict(state)
+    history = list(updated.get("history", []))
+    started = updated.get("started_at")
+    if event == "enter":
+        updated["started_at"] = at
+        updated["history"] = history
+        return updated
+    if started is None:
+        raise ValueError("no maintenance window is open")
+    history.append((started, at))
+    updated["started_at"] = None
+    updated["history"] = history
+    return updated""",
+    visible_test=_test_module(
+        "maintenance_window",
+        "Published contract for opening and closing a maintenance window.",
+        """
+def test_opening_records_the_start() -> None:
+    assert window({}, "enter", 1) == {"started_at": 1, "history": []}
+
+
+def test_closing_records_the_window() -> None:
+    opened = window({}, "enter", 1)
+    assert window(opened, "leave", 4) == {"started_at": None, "history": [(1, 4)]}
+""",
+        imports="from maintenance_window import window\n",
+    ),
+    hidden_test=_test_module(
+        "maintenance_window",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_opening_records_the_start() -> None:
+    assert window({}, "enter", 1) == {"started_at": 1, "history": []}
+
+
+def test_opening_an_open_window_keeps_the_original_start() -> None:
+    opened = window({}, "enter", 1)
+    assert window(opened, "enter", 5)["started_at"] == 1
+
+
+def test_closing_with_nothing_open_is_refused() -> None:
+    with pytest.raises(ValueError):
+        window({}, "leave", 5)
+""",
+        imports="from maintenance_window import window\n",
+    ),
+)
+
+
+_G018 = D2TaskSpec(
+    template_id="d7_numeric.receipt_total",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-receipt-total",
+    module="receipt_total",
+    module_doc="Totalling a receipt so the tax lands on the whole of it.",
+    issue=(
+        "total() is documented to add the lines up first and tax the sum. Callers report totals "
+        "a penny or two out against the same receipt totalled by hand, and a line entered with "
+        "a negative quantity quietly reducing the bill instead of being refused."
+    ),
+    expected=(
+        "total(lines, tax_rate) takes (quantity, price) pairs and returns the amount due, "
+        "rounded to two decimals once at the end: the sum of quantity times price, plus that "
+        "sum times the rate. A negative quantity raises ValueError."
+    ),
+    baseline_reason=(
+        "it rounds each line as it goes, so the roundings accumulate, and it adds every line up "
+        "without checking the quantity"
+    ),
+    edge_cases=(
+        "the rounding happens once, on the total, not on each line",
+        "a negative quantity raises ValueError",
+    ),
+    baseline="""def total(lines, tax_rate):
+    \"\"\"Return the amount due for a receipt.\"\"\"
+    running = 0.0
+    for quantity, price in lines:
+        running += round(quantity * price, 2)
+    return round(running + round(running * tax_rate, 2), 2)""",
+    variant_one="""def total(lines, tax_rate):
+    \"\"\"Return the amount due for a receipt.\"\"\"
+    running = 0.0
+    for quantity, price in lines:
+        if quantity < 0:
+            raise ValueError("a receipt line cannot carry a negative quantity")
+        running += quantity * price
+    return round(running * (1 + tax_rate), 2)""",
+    variant_two="""def total(lines, tax_rate):
+    \"\"\"Return the amount due for a receipt.\"\"\"
+    quantities = [quantity for quantity, _ in lines]
+    if any(quantity < 0 for quantity in quantities):
+        raise ValueError("a receipt line cannot carry a negative quantity")
+    subtotal = sum(quantity * price for quantity, price in lines)
+    return round(subtotal + subtotal * tax_rate, 2)""",
+    variant_three="""def total(lines, tax_rate):
+    \"\"\"Return the amount due for a receipt.\"\"\"
+    running = 0.0
+    for quantity, price in lines:
+        running += quantity * price
+    return round(running * (1 + tax_rate), 2)""",
+    variant_four="""def total(lines, tax_rate):
+    \"\"\"Return the amount due for a receipt.\"\"\"
+    running = 0.0
+    for quantity, price in lines:
+        if quantity < 0:
+            raise ValueError("a receipt line cannot carry a negative quantity")
+        running += round(quantity * price, 2)
+    return round(running + round(running * tax_rate, 2), 2)""",
+    visible_test=_test_module(
+        "receipt_total",
+        "Published contract for totalling a receipt.",
+        """
+def test_one_round_line_totals_exactly() -> None:
+    assert total([(2, 10.0)], 0.1) == 22.0
+
+
+def test_an_empty_receipt_is_free() -> None:
+    assert total([], 0.2) == 0.0
+""",
+        imports="from receipt_total import total\n",
+    ),
+    hidden_test=_test_module(
+        "receipt_total",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_one_round_line_totals_exactly() -> None:
+    assert total([(2, 10.0)], 0.1) == 22.0
+
+
+def test_the_rounding_happens_once_on_the_total() -> None:
+    assert total([(1, 0.005), (1, 0.005)], 0.0) == 0.01
+
+
+def test_a_negative_quantity_is_refused() -> None:
+    with pytest.raises(ValueError):
+        total([(-1, 10.0)], 0.1)
+""",
+        imports="from receipt_total import total\n",
+    ),
+)
+
+_G019 = D2TaskSpec(
+    template_id="d7_numeric.net_from_gross",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-net-from-gross",
+    module="net_from_gross",
+    module_doc="Taking the tax back out of a price that already includes it.",
+    issue=(
+        "net_of() is documented to divide the tax back out of an inclusive price. Callers "
+        "report it subtracting the rate from the gross instead, which is only right when the "
+        "rate is zero, and a rate of exactly minus one hundred percent producing a division by "
+        "zero rather than a refusal."
+    ),
+    expected=(
+        "net_of(gross, rate) returns the amount before tax, rounded to two decimals: the gross "
+        "divided by one plus the rate. A rate of -1 or below raises ValueError, because no "
+        "inclusive price can be recovered from it."
+    ),
+    baseline_reason=(
+        "it multiplies the gross by one minus the rate, which is a different quantity, and it "
+        "never checks the rate before using it"
+    ),
+    edge_cases=(
+        "the tax is divided out rather than subtracted",
+        "a rate of -1 or below raises ValueError",
+    ),
+    baseline="""def net_of(gross, rate):
+    \"\"\"Return the amount before tax.\"\"\"
+    return round(gross * (1 - rate), 2)""",
+    variant_one="""def net_of(gross, rate):
+    \"\"\"Return the amount before tax.\"\"\"
+    if rate <= -1:
+        raise ValueError("no inclusive price can be recovered at this rate")
+    return round(gross / (1 + rate), 2)""",
+    variant_two="""def net_of(gross, rate):
+    \"\"\"Return the amount before tax.\"\"\"
+    divisor = 1 + rate
+    if divisor <= 0:
+        raise ValueError("no inclusive price can be recovered at this rate")
+    net = gross / divisor
+    return round(net, 2)""",
+    variant_three="""def net_of(gross, rate):
+    \"\"\"Return the amount before tax.\"\"\"
+    return round(gross / (1 + rate), 2)""",
+    variant_four="""def net_of(gross, rate):
+    \"\"\"Return the amount before tax.\"\"\"
+    if rate <= -1:
+        raise ValueError("no inclusive price can be recovered at this rate")
+    return round(gross * (1 - rate), 2)""",
+    visible_test=_test_module(
+        "net_from_gross",
+        "Published contract for removing tax from an inclusive price.",
+        """
+def test_a_rate_of_nothing_leaves_the_price_alone() -> None:
+    assert net_of(100.0, 0.0) == 100.0
+
+
+def test_the_net_is_below_the_gross() -> None:
+    assert net_of(110.0, 0.1) < 110.0
+""",
+        imports="from net_from_gross import net_of\n",
+    ),
+    hidden_test=_test_module(
+        "net_from_gross",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_rate_of_nothing_leaves_the_price_alone() -> None:
+    assert net_of(100.0, 0.0) == 100.0
+
+
+def test_the_tax_is_divided_out_rather_than_subtracted() -> None:
+    assert net_of(110.0, 0.1) == 100.0
+
+
+def test_a_rate_that_cannot_be_undone_is_refused() -> None:
+    with pytest.raises(ValueError):
+        net_of(100.0, -1)
+""",
+        imports="from net_from_gross import net_of\n",
+    ),
+)
+
+_G020 = D2TaskSpec(
+    template_id="d7_state.refund_once",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-refund-once",
+    module="refund_once",
+    module_doc="Refunding an order without refunding it twice.",
+    issue=(
+        "refund() is documented to pay a refund once per order and to refuse more than the "
+        "order was worth. Callers report a retried request paying out a second time, and a "
+        "refund larger than the order itself being accepted because only the running total was "
+        "checked."
+    ),
+    expected=(
+        "refund(state, order, amount) returns the state with the refund recorded under the "
+        "order. An order already refunded is returned unchanged, whatever amount is asked for, "
+        "and an amount above *that order's* value raises ValueError -- refunds paid on other "
+        "orders do not reduce what this one may be refunded. `state` maps an order to its value "
+        "and carries the refunds already paid."
+    ),
+    baseline_reason=(
+        "it records the refund without asking whether one is already recorded, and it compares "
+        "the amount against what is left across every order rather than against this order's "
+        "own value, so an unrelated refund shrinks this one"
+    ),
+    edge_cases=(
+        "an order already refunded is returned unchanged",
+        "a refund paid on another order does not shrink this one",
+    ),
+    baseline="""def refund(state, order, amount):
+    \"\"\"Record a refund against `order`.\"\"\"
+    values = state["values"]
+    refunds = dict(state["refunds"])
+    if amount > values[order] - sum(refunds.values()):
+        raise ValueError("the refund is larger than what is left")
+    refunds[order] = amount
+    return {"values": values, "refunds": refunds}""",
+    variant_one="""def refund(state, order, amount):
+    \"\"\"Record a refund against `order`.\"\"\"
+    values = state["values"]
+    refunds = dict(state["refunds"])
+    if order in refunds:
+        return {"values": values, "refunds": refunds}
+    if amount > values[order]:
+        raise ValueError("the refund is larger than the order")
+    refunds[order] = amount
+    return {"values": values, "refunds": refunds}""",
+    variant_two="""def refund(state, order, amount):
+    \"\"\"Record a refund against `order`.\"\"\"
+    values = state["values"]
+    refunds = state["refunds"]
+    already = refunds.get(order)
+    if already is not None:
+        return {"values": values, "refunds": dict(refunds)}
+    if values[order] < amount:
+        raise ValueError("the refund is larger than the order")
+    return {"values": values, "refunds": {**refunds, order: amount}}""",
+    variant_three="""def refund(state, order, amount):
+    \"\"\"Record a refund against `order`.\"\"\"
+    values = state["values"]
+    refunds = dict(state["refunds"])
+    if order in refunds:
+        return {"values": values, "refunds": refunds}
+    if amount > values[order] - sum(refunds.values()):
+        raise ValueError("the refund is larger than what is left")
+    refunds[order] = amount
+    return {"values": values, "refunds": refunds}""",
+    variant_four="""def refund(state, order, amount):
+    \"\"\"Record a refund against `order`.\"\"\"
+    values = state["values"]
+    refunds = dict(state["refunds"])
+    if amount > values[order]:
+        raise ValueError("the refund is larger than the order")
+    refunds[order] = amount
+    return {"values": values, "refunds": refunds}""",
+    visible_test=_test_module(
+        "refund_once",
+        "Published contract for refunding an order.",
+        """
+def test_a_refund_is_recorded() -> None:
+    state = {"values": {"a": 10}, "refunds": {}}
+    assert refund(state, "a", 4) == {"values": {"a": 10}, "refunds": {"a": 4}}
+
+
+def test_a_refund_larger_than_the_order_is_refused() -> None:
+    state = {"values": {"a": 10}, "refunds": {}}
+    with pytest.raises(ValueError):
+        refund(state, "a", 11)
+""",
+        imports="import pytest\n\nfrom refund_once import refund\n",
+    ),
+    hidden_test=_test_module(
+        "refund_once",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_refund_is_recorded() -> None:
+    state = {"values": {"a": 10}, "refunds": {}}
+    assert refund(state, "a", 4) == {"values": {"a": 10}, "refunds": {"a": 4}}
+
+
+def test_an_order_already_refunded_is_returned_unchanged() -> None:
+    state = {"values": {"a": 10}, "refunds": {"a": 4}}
+    assert refund(state, "a", 9)["refunds"] == {"a": 4}
+
+
+def test_another_orders_refund_does_not_shrink_this_one() -> None:
+    state = {"values": {"a": 10, "b": 8}, "refunds": {"b": 6}}
+    assert refund(state, "a", 9)["refunds"] == {"b": 6, "a": 9}
+""",
+        imports="from refund_once import refund\n",
+    ),
+)
+
+_G021 = D2TaskSpec(
+    template_id="d7_parsing.plate_format",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-plate-format",
+    module="plate_format",
+    module_doc="Reading a vehicle plate into its parts, however it was typed.",
+    issue=(
+        "split_plate() is documented to accept a plate however it was spaced and to insist on "
+        "the shape itself. Callers report plates typed with a space in the middle being "
+        "rejected, and plates whose letter block is the wrong length being accepted as long as "
+        "the total length came out right."
+    ),
+    expected=(
+        "split_plate(text) returns (letters, digits) for a plate of exactly three letters "
+        "followed by exactly three digits. Spaces anywhere are ignored and the letters come "
+        "back in upper case. Anything else raises ValueError."
+    ),
+    baseline_reason=(
+        "it splits at a fixed offset without removing the spaces first, and it checks only the "
+        "overall length rather than the two blocks"
+    ),
+    edge_cases=(
+        "spaces anywhere in the plate are ignored",
+        "a plate whose blocks are the wrong shape raises ValueError",
+    ),
+    baseline="""def split_plate(text):
+    \"\"\"Split a plate into its letters and its digits.\"\"\"
+    if len(text) != 6:
+        raise ValueError("a plate is three letters and three digits")
+    return text[:3].upper(), text[3:]""",
+    variant_one="""def split_plate(text):
+    \"\"\"Split a plate into its letters and its digits.\"\"\"
+    packed = text.replace(" ", "")
+    letters = packed[:3]
+    digits = packed[3:]
+    if len(packed) != 6 or not letters.isalpha() or not digits.isdigit():
+        raise ValueError("a plate is three letters and three digits")
+    return letters.upper(), digits""",
+    variant_two="""def split_plate(text):
+    \"\"\"Split a plate into its letters and its digits.\"\"\"
+    packed = "".join(character for character in text if character != " ")
+    letters = "".join(character for character in packed if character.isalpha())
+    digits = "".join(character for character in packed if character.isdigit())
+    if len(letters) != 3 or len(digits) != 3 or letters + digits != packed:
+        raise ValueError("a plate is three letters and three digits")
+    return letters.upper(), digits""",
+    variant_three="""def split_plate(text):
+    \"\"\"Split a plate into its letters and its digits.\"\"\"
+    packed = text.replace(" ", "")
+    if len(packed) != 6:
+        raise ValueError("a plate is three letters and three digits")
+    return packed[:3].upper(), packed[3:]""",
+    variant_four="""def split_plate(text):
+    \"\"\"Split a plate into its letters and its digits.\"\"\"
+    letters = text[:3]
+    digits = text[3:]
+    if len(text) != 6 or not letters.isalpha() or not digits.isdigit():
+        raise ValueError("a plate is three letters and three digits")
+    return letters.upper(), digits""",
+    visible_test=_test_module(
+        "plate_format",
+        "Published contract for reading a vehicle plate.",
+        """
+def test_a_plain_plate_splits_into_its_blocks() -> None:
+    assert split_plate("ABC123") == ("ABC", "123")
+
+
+def test_the_letters_come_back_in_upper_case() -> None:
+    assert split_plate("abc123") == ("ABC", "123")
+""",
+        imports="from plate_format import split_plate\n",
+    ),
+    hidden_test=_test_module(
+        "plate_format",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_plain_plate_splits_into_its_blocks() -> None:
+    assert split_plate("ABC123") == ("ABC", "123")
+
+
+def test_spaces_in_the_plate_are_ignored() -> None:
+    assert split_plate("ABC 123") == ("ABC", "123")
+
+
+def test_blocks_of_the_wrong_shape_are_refused() -> None:
+    with pytest.raises(ValueError):
+        split_plate("AB1123")
+""",
+        imports="from plate_format import split_plate\n",
+    ),
+)
+
+_G022 = D2TaskSpec(
+    template_id="d7_transform.milestone_progress",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-milestone-progress",
+    module="milestone_progress",
+    module_doc="Reporting how far a plan has got, milestone by milestone.",
+    issue=(
+        "progress() is documented to weigh each milestone by its size and to report a plan with "
+        "nothing in it as nothing done. Callers report a plan of one large and one tiny "
+        "milestone reading fifty percent when only the tiny one is finished, and an empty plan "
+        "failing outright instead of reporting zero."
+    ),
+    expected=(
+        "progress(milestones) takes (size, done) pairs and returns the share of the total size "
+        "that is finished, as a percentage rounded to one decimal. A plan with no milestones, "
+        "or one whose sizes add to zero, reports 0.0."
+    ),
+    baseline_reason=(
+        "it counts milestones rather than weighing them by size, and it divides by the count "
+        "without checking that there is one"
+    ),
+    edge_cases=(
+        "milestones are weighed by their size, not counted",
+        "a plan with nothing in it reports zero",
+    ),
+    baseline="""def progress(milestones):
+    \"\"\"Return the percentage of the plan that is finished.\"\"\"
+    done = sum(1 for _size, finished in milestones if finished)
+    return round(100.0 * done / len(milestones), 1)""",
+    variant_one="""def progress(milestones):
+    \"\"\"Return the percentage of the plan that is finished.\"\"\"
+    total = sum(size for size, _finished in milestones)
+    if total == 0:
+        return 0.0
+    done = sum(size for size, finished in milestones if finished)
+    return round(100.0 * done / total, 1)""",
+    variant_two="""def progress(milestones):
+    \"\"\"Return the percentage of the plan that is finished.\"\"\"
+    total = 0
+    done = 0
+    for size, finished in milestones:
+        total += size
+        if finished:
+            done += size
+    if not total:
+        return 0.0
+    return round(100.0 * done / total, 1)""",
+    variant_three="""def progress(milestones):
+    \"\"\"Return the percentage of the plan that is finished.\"\"\"
+    total = sum(size for size, _finished in milestones)
+    done = sum(size for size, finished in milestones if finished)
+    return round(100.0 * done / total, 1)""",
+    variant_four="""def progress(milestones):
+    \"\"\"Return the percentage of the plan that is finished.\"\"\"
+    if not milestones:
+        return 0.0
+    done = sum(1 for _size, finished in milestones if finished)
+    return round(100.0 * done / len(milestones), 1)""",
+    visible_test=_test_module(
+        "milestone_progress",
+        "Published contract for reporting progress through a plan.",
+        """
+def test_equal_milestones_split_the_plan_evenly() -> None:
+    assert progress([(1, True), (1, False)]) == 50.0
+
+
+def test_a_finished_plan_is_complete() -> None:
+    assert progress([(3, True)]) == 100.0
+""",
+        imports="from milestone_progress import progress\n",
+    ),
+    hidden_test=_test_module(
+        "milestone_progress",
+        "The part of the contract the published tests do not state.",
+        """
+def test_equal_milestones_split_the_plan_evenly() -> None:
+    assert progress([(1, True), (1, False)]) == 50.0
+
+
+def test_milestones_are_weighed_by_their_size() -> None:
+    assert progress([(9, False), (1, True)]) == 10.0
+
+
+def test_a_plan_with_nothing_in_it_reports_zero() -> None:
+    assert progress([]) == 0.0
+""",
+        imports="from milestone_progress import progress\n",
+    ),
+)
+
+_G023 = D2TaskSpec(
+    template_id="d7_boundary.rota_swap",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-rota-swap",
+    module="rota_swap",
+    module_doc="Swapping two shifts on a rota without disturbing the rest of it.",
+    issue=(
+        "swap() is documented to exchange the two named shifts and to leave a rota that does "
+        "not hold both of them exactly as it was. Callers report the whole rota coming back "
+        "reordered when only two entries should have moved, and a swap naming a shift nobody "
+        "is on silently moving somebody else."
+    ),
+    expected=(
+        "swap(rota, first, second) returns the rota with the entries at the two named shifts "
+        "exchanged, every other entry in its place. A rota that does not hold both shifts is "
+        "returned unchanged, and swapping a shift with itself changes nothing."
+    ),
+    baseline_reason=(
+        "it rebuilds the rota in sorted order rather than in place, and it looks the shifts up "
+        "without checking that both are on the rota"
+    ),
+    edge_cases=(
+        "every other entry keeps its place",
+        "a rota missing one of the shifts is returned unchanged",
+    ),
+    baseline="""def swap(rota, first, second):
+    \"\"\"Exchange the entries at two shifts.\"\"\"
+    entries = dict(rota)
+    held = entries.get(first)
+    entries[first] = entries.get(second)
+    entries[second] = held
+    return dict(sorted(entries.items()))""",
+    variant_one="""def swap(rota, first, second):
+    \"\"\"Exchange the entries at two shifts.\"\"\"
+    if first not in rota or second not in rota:
+        return dict(rota)
+    entries = dict(rota)
+    entries[first], entries[second] = entries[second], entries[first]
+    return entries""",
+    variant_two="""def swap(rota, first, second):
+    \"\"\"Exchange the entries at two shifts.\"\"\"
+    if not (first in rota and second in rota):
+        return {shift: person for shift, person in rota.items()}
+    swapped = {}
+    for shift, person in rota.items():
+        if shift == first:
+            swapped[shift] = rota[second]
+        elif shift == second:
+            swapped[shift] = rota[first]
+        else:
+            swapped[shift] = person
+    return swapped""",
+    variant_three="""def swap(rota, first, second):
+    \"\"\"Exchange the entries at two shifts.\"\"\"
+    entries = dict(rota)
+    held = entries.get(first)
+    entries[first] = entries.get(second)
+    entries[second] = held
+    return entries""",
+    variant_four="""def swap(rota, first, second):
+    \"\"\"Exchange the entries at two shifts.\"\"\"
+    if first not in rota or second not in rota:
+        return dict(sorted(rota.items()))
+    entries = dict(rota)
+    entries[first], entries[second] = entries[second], entries[first]
+    return dict(sorted(entries.items()))""",
+    visible_test=_test_module(
+        "rota_swap",
+        "Published contract for swapping two shifts.",
+        """
+def test_two_shifts_exchange_their_people() -> None:
+    assert swap({"mon": "ann", "tue": "bo"}, "mon", "tue") == {"mon": "bo", "tue": "ann"}
+
+
+def test_swapping_a_shift_with_itself_changes_nothing() -> None:
+    assert swap({"mon": "ann"}, "mon", "mon") == {"mon": "ann"}
+""",
+        imports="from rota_swap import swap\n",
+    ),
+    hidden_test=_test_module(
+        "rota_swap",
+        "The part of the contract the published tests do not state.",
+        """
+def test_two_shifts_exchange_their_people() -> None:
+    assert swap({"mon": "ann", "tue": "bo"}, "mon", "tue") == {"mon": "bo", "tue": "ann"}
+
+
+def test_every_other_entry_keeps_its_place() -> None:
+    rota = {"tue": "bo", "mon": "ann", "wed": "cy"}
+    assert list(swap(rota, "mon", "wed")) == ["tue", "mon", "wed"]
+
+
+def test_a_rota_missing_a_shift_is_returned_unchanged() -> None:
+    assert swap({"mon": "ann"}, "mon", "sun") == {"mon": "ann"}
+""",
+        imports="from rota_swap import swap\n",
+    ),
+)
+
 D7_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G001,
     _G002,
@@ -1197,6 +2520,19 @@ D7_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G008,
     _G009,
     _G010,
+    _G011,
+    _G012,
+    _G013,
+    _G014,
+    _G015,
+    _G016,
+    _G017,
+    _G018,
+    _G019,
+    _G020,
+    _G021,
+    _G022,
+    _G023,
 )
 
 __all__ = ["D7_CERTIFICATION_SPECS", "D2TaskSpec", "RealityTaskFamily", "_test_module"]
