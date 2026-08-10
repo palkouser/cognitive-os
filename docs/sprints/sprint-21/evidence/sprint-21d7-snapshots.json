@@ -1,5 +1,5 @@
 {
- "certification_campaign_sha256": "b191caf0a28caa6fa5d4b7c0a453bd5d5d88e31814854bea478ae5eefc14fdbb",
+ "certification_campaign_sha256": "32ffeafe34155f08a7be0754b60128b43f07aaf2cc283445bce8a3c5c9e9078a",
  "conformal_half": {
   "chronology_is_inherited_not_recomputed": {
    "d6_certified": true,
@@ -24,41 +24,41 @@
  },
  "datasets": [
   {
-   "campaign_manifest_hash": "1ced15e3e8e7483f5f00072b36c736f22bbe57adc3ce240e09a3770f71ca942a",
+   "campaign_manifest_hash": "32245ce11ae8a2cb815e793d8e68c4402776d3b9a3814d0c55c5731016e8c1d9",
    "corpus_role": "evaluation",
-   "dataset_content_hash": "79a9fabb5b48f5128211a8aa0634814d6120cd673ed2c3436ffe2a62fa7f15aa",
-   "dataset_id": "39a8bbe1-036f-55ae-a1ef-86c25b089a50",
-   "example_manifest_hash": "023afc4492088c0e2be9bb8d02259704298300b9ac63eb13bce2e4323ebbc621",
-   "feature_seal_hash": "584d0b949508cfe7fbaf2b17e0148fc0f1e18cba99fe19c0ef047459ba49d7cd",
-   "groups": 10,
+   "dataset_content_hash": "40aab8e3f4b81b533311e7615719145ce0267d129c0e5f07cebd43a84cb0382e",
+   "dataset_id": "7fac8bca-31a7-55e3-b364-b1c68cc55962",
+   "example_manifest_hash": "b89dbeff900571333549b55f24e2a13429f5feca4ade50344fa47294329538a9",
+   "feature_seal_hash": "b934d3ce659ec0ae72920c67f833a4f6733cf6f585b2c91646ea0cca4118daee",
+   "groups": 100,
    "identity_revision": 3,
    "immutable": true,
    "labels_agree_with_the_campaign_record": true,
    "labels_read_from": "the durable outcome ledger, not the campaign report",
    "latest_seal_selection": false,
-   "members": 40,
-   "observation_count": 40,
+   "members": 400,
+   "observation_count": 400,
    "partition": "calibration",
    "provenance_counts": {
-    "self_play": 40
+    "self_play": 400
    },
    "real_governed_runs": 0,
    "rebuilt_identically": true,
-   "selection_partition_digest": "b71b11b87de90b485afa0cb36f508724729f02f6bdac0712fecd7910c52d3074",
+   "selection_partition_digest": "a29f5d56c975e850e948fe2310f97f8db61ec9f1892388297aafba3b4b92fdb0",
    "split": "calibration",
-   "split_manifest_hash": "b6c693aef3b1f6bd0ec0ba6d2772a8205df1c13562e70c03ccd874e8acb8733c",
+   "split_manifest_hash": "e4f45bb2fc72aa8fa61eb8165d9b1f46fb8e3a7c70781537ff877c11d6036fa0",
    "store_wide_selection": false,
    "usage_rights_verified": true,
    "vectors_read_from": "the sealed feature record set in the artifact store"
   }
  ],
  "feature_contract_hash": "492c90a5df420de9d1662d17155ac8b28713e69bbd4bbe56208415d6ca076362",
- "feature_seals_sha256": "341d6fe6b3602d67a174cdd762f62134977e69be17d2fef4082a287d8dac60b4",
+ "feature_seals_sha256": "bb6028e753598b583e8c7054024a1f2c01e6873a448ce10f37d866c7f0b2eed4",
  "final_outcomes_inspected": false,
  "fitted_matrices": {
-  "certification_groups": 10,
-  "certification_matrix_hash": "28592f6ff7c1ad948f15c0219068439411b59973fe9a3f677b8f2a5108b1cc8b",
-  "certification_rows": 40,
+  "certification_groups": 100,
+  "certification_matrix_hash": "1a0f9e6511e2d1a659a973c38e6e9cfbc1a6adbdabc46deab2668e7368a2c26b",
+  "certification_rows": 400,
   "channels_are_the_v2_allowlist_in_order": true,
   "clean": true,
   "conformal_groups": 100,
@@ -69,18 +69,18 @@
   "fitted_dimensions": 390,
   "fitted_dimensions_expected": 390,
   "halves_share_no_group": true,
-  "maximum_cross_split_similarity": "0.985567",
+  "maximum_cross_split_similarity": "0.989324",
   "near_duplicate_threshold": "0.999",
-  "report_hash": "4f954ba366e51993e859b261aaae36de2ddeb72de4e5347aa66f1fd7a5d87247",
+  "report_hash": "83ead953e686551a6544940130adc9fbcd4f73ff719f84e4ea0d384c9e3eb4b3",
   "the_two_halves_come_from_different_sprints": "the conformal rows are D5's, rebuilt from its released bytes and unexecuted here; the certification rows are D6's own. Their only shared machinery is the clip-and-scale envelope, which is deliberate and is what makes the two sets of margins comparable at all",
   "why_this_pair": "D6 executes one partition, so the pair cannot be a fitting and a calibration matrix out of one store. The two halves scanned here are the ones the experiment rests on: the conformal half places the bar and the certification half is measured against it. A shared group or a near-duplicate across that boundary is exactly what would break the exchangeability section 6 names as the risk the evidence cannot retire, and it is the only boundary where a leak would flatter the result"
  },
- "integrity_content_hash": "e84cc7f35ea7413e0ea421ec56ca1664b067dc93e1e9d9a556347e7ecac6630c",
+ "integrity_content_hash": "63018e898725331083991d809c00ecec3a3668fd827b06ecc4a74361e5c63511",
  "items": [
   "S21D6-030"
  ],
  "pre_registration_sha256": "984a21f012cddb1e2a2b5608e36debbc7769351c5363be940e9fab7e19505496",
- "recorded_at": "2026-08-10T15:35:09Z",
+ "recorded_at": "2026-08-10T17:31:48Z",
  "scans": {
   "all_passed": true,
   "count": 11,
@@ -102,32 +102,32 @@
     "passed": true
    },
    {
-    "detail": "all 440 rows use correction-ranking-v2",
+    "detail": "all 800 rows use correction-ranking-v2",
     "name": "every_row_has_one_encoder_identity",
     "passed": true
    },
    {
-    "detail": "440 rows were sealed before the verifier ran",
+    "detail": "800 rows were sealed before the verifier ran",
     "name": "every_feature_record_precedes_its_outcome",
     "passed": true
    },
    {
-    "detail": "440 rows, each reproducing the feature hash its seal recorded",
+    "detail": "800 rows, each reproducing the feature hash its seal recorded",
     "name": "every_row_resolves_to_one_pre_outcome_source_chain",
     "passed": true
    },
    {
-    "detail": "100 fit groups and 10 calibration groups share none",
+    "detail": "100 fit groups and 100 calibration groups share none",
     "name": "no_group_crosses_the_split",
     "passed": true
    },
    {
-    "detail": "440 distinct feature signatures, none labelled both ways",
+    "detail": "800 distinct feature signatures, none labelled both ways",
     "name": "no_identical_row_carries_two_labels",
     "passed": true
    },
    {
-    "detail": "highest cross-split similarity 0.985567 against a floor of 0.999",
+    "detail": "highest cross-split similarity 0.989324 against a floor of 0.999",
     "name": "no_near_duplicate_crosses_the_split",
     "passed": true
    },
@@ -144,12 +144,12 @@
   ]
  },
  "schema_version": 1,
- "sealed_manifests_sha256": "205f33fe93f25611f1cc8a586d2f35174d006b8aa78b996dd5b464017ee556df",
+ "sealed_manifests_sha256": "e7a3ab02da9da9e2571a0f5cd0eb4779ac0a4cba4aa691e0ee38244704e2f4b3",
  "sprint": "21D7",
  "store_state": {
   "every_unreferenced_row_is_accounted_for": true,
-  "observations_named_by_the_datasets": 40,
-  "observations_on_the_correction_surface": 44,
+  "observations_named_by_the_datasets": 400,
+  "observations_on_the_correction_surface": 404,
   "unreferenced_by_campaign_manifest": {
    "33aa30ecc0a9eb8d": {
     "manifest": "the S21D6-024 fixture group, outside every role",

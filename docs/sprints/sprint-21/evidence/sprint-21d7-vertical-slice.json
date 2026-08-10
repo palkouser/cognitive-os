@@ -1,10 +1,10 @@
 {
  "artifact": {
   "artifact_bytes": 3903,
-  "artifact_hash": "07c672dbddcc0fad49456df77fc46faa73dbd96833fd27c9fb907d9a7f85039f",
-  "artifact_id": "b0b8ab32-be60-4a3a-9426-c2a0a760cc86",
+  "artifact_hash": "a9abe3376cc74d27500825dfcba07601a0461ac675f56be963a2c0bb1495d246",
+  "artifact_id": "38672489-30aa-4aa3-bc68-0ad2f767fd6c",
   "backup_and_restore": {
-   "backup_path_sha256": "07c672dbddcc0fad49456df77fc46faa73dbd96833fd27c9fb907d9a7f85039f",
+   "backup_path_sha256": "a9abe3376cc74d27500825dfcba07601a0461ac675f56be963a2c0bb1495d246",
    "event_store_backup_and_restore_belongs_to": "S21D6-082, the isolated recovery item",
    "restored_bytes_are_the_stored_bytes": true,
    "restored_payload_reproduced": true,
@@ -24,7 +24,7 @@
   "refusals": [
    {
     "action": "reload an artifact the capability does not name",
-    "error": "CorrectionArtifactError: artifact bytes hash to 773692786a3f58e6e7e6ee241ef4394d9345787185a9e63deea5e104f3d0819b, not the 07c672dbddcc0fad49456df77fc46faa73dbd96833fd27c9fb907d9a7f85039f this capability authorises",
+    "error": "CorrectionArtifactError: artifact bytes hash to 58c4e01f8d8766f6e25313a2abd80b1553d8c9558e56d20685971d9d32839c4b, not the a9abe3376cc74d27500825dfcba07601a0461ac675f56be963a2c0bb1495d246 this capability authorises",
     "refused": "true"
    },
    {
@@ -99,9 +99,9 @@
  },
  "code_revision": "a05d024aa72f81f70c22e8090c78e5b394092f173a7d536cdf5fc7fffd4fc818",
  "dataset": {
-  "dataset_id": "d8c1dae4-7b41-59e2-9f49-1adb2f6aec09",
+  "dataset_id": "cf745201-9d06-5ca7-9d63-5e1609bd8964",
   "every_scan_ran": 11,
-  "example_manifest_hash": "f31ea5aba00bb088dbc3e8a6ea659a69783a34719b74149e4ad5777d9cad32ab",
+  "example_manifest_hash": "42c0dceb00efec50c1c393bc3cd981d318a75a350c1389bb5f71b657a9e14537",
   "fitted_columns": 390,
   "fitted_matrix_hash": "7c3719d96237d8e2459efa25c985326f1ab5a847eb730c1fa00386eb725206ec",
   "fitted_rows": 4,
@@ -113,7 +113,7 @@
   },
   "real_governed_runs": 0,
   "rebuilt_identically": true,
-  "scan_report_hash": "4d3dc3f00a138bd2febd98bd7811f39c4f5dccf17a266b6460e1664f6b5934f4",
+  "scan_report_hash": "2b165a44ffcab09bf497d5d3860d6ab9b761670f972f523d63dc5ab26a791a84",
   "scans": [
    {
     "detail": "390 columns, all on the correction-ranking-v2 allowlist",
@@ -178,8 +178,8 @@
    "no_column_derives_the_label",
    "no_column_derives_the_label"
   ],
-  "selection_partition_digest": "53a861a153643f8f3e32be5147dc0322d7e8f7ac52305b3d80638f3ee82fb2de",
-  "split_manifest_hash": "96dd8887e00dc4ff66b61bcd618d1270728eea5d6b96bc3a3b7a6c36bbede5d2",
+  "selection_partition_digest": "3c4ed2661c37e623f86c73622bf411f5322b22cbd3ee6a4115f6fcd5dec43f4f",
+  "split_manifest_hash": "c6f9f948896484450be1f8a7d98d4c9260a488c473ee9d9e83eb88bf1bb588cb",
   "store_wide_selection": false,
   "usage_rights_verified": true,
   "why_those_scans_cannot_pass_here": {
@@ -201,39 +201,39 @@
   "containers_started": 5,
   "encoder_version": "correction-ranking-v2",
   "every_feature_record_precedes_its_outcome": true,
-  "feature_seal_artifact_id": "f50ee982-33e3-4507-98ad-17e6b10d0ccc",
-  "feature_seal_hash": "2519429e89d4e71638bec17a98d9815e03ecc4d5dd17a880119a61a1172af009",
+  "feature_seal_artifact_id": "1d614f45-0607-4f9a-ae40-c195f0c92a09",
+  "feature_seal_hash": "50a5af26939104218d5e9729b2a37049fb84d8c184f58c13750f99c5d2ce40c8",
   "feature_seal_reserialises_identically": true,
-  "features_sealed_at": "2026-08-10T15:34:19.311101+00:00",
-  "first_outcome_at": "2026-08-10T15:34:20.827694+00:00",
+  "features_sealed_at": "2026-08-10T17:23:56.974189+00:00",
+  "first_outcome_at": "2026-08-10T17:23:58.489419+00:00",
   "intentionally_unattempted": 0,
   "mode": "label_all",
   "normalizer_version": "cogos-python-alpha-normalizer-v2",
   "observations_carry_the_sealing_partition": true,
   "observations_projected": 4,
-  "receipt_manifest_hash": "43c199a7f31b17db0d57c0e86839c736120456426f2a7f8963407dbd642b45c1",
+  "receipt_manifest_hash": "08056805e82640b7e1f789861078f66d276c5ad9d065fabf01ba73d47bf16328",
   "runs_replayed_from_the_receipt": 0,
   "sandbox_image": "cognitive-os-sandbox:sprint-5",
   "sandboxed": true,
   "stop_reason": "all_candidates_labelled",
   "task_run_ids": [
-   "3b7f05ba-7e07-4777-ae1f-9af59208758f",
-   "3b888984-4ef4-4719-8c0f-0c67d626c16c",
-   "b2c52697-b722-4650-a853-dcdf5bcdc37b",
-   "d3abd6e6-a580-420b-9b42-d93f835fb8bd",
-   "e9459a4d-473b-47a6-83db-1e2f7f4d47e1"
+   "8127cdee-3ba4-4ab3-95d4-1a26f8574370",
+   "86cbc773-f7e7-4a2c-951b-a446d6ce42a6",
+   "aaaffdf9-433b-40e7-b5fa-60bb447aed27",
+   "e0ec14f9-cabc-400e-9739-bfc399b0d863",
+   "ebb3aff0-c268-4734-b3f7-5c98321186f4"
   ],
   "verifier_decided_every_label": true
  },
  "final_outcomes_inspected": false,
  "fixture_manifest_hash": "33aa30ecc0a9eb8de902b68b3f37664f755d884c0c8b295e7782847d10f8c0ec",
- "integrity_content_hash": "669386692731f73ab276d50359d50aa46e8c42a46cd888fb18c9fabbd94b805e",
+ "integrity_content_hash": "c79e372cab420a556d56cf4a72c501b023f769b37804cdcb1cc0b7ddaaceee39",
  "items": [
   "S21D7-024"
  ],
  "package": {
   "base_repository_manifest_hash": "97dd6c275dabe93d5e57db1c3ba71234d500d67ed9b2542f2ec29d282661c1f4",
-  "bundle_artifact_id": "d8efb14f-c2da-418b-a446-ecbacf616c25",
+  "bundle_artifact_id": "04275769-0f5e-4da6-99a4-f0b089b123f4",
   "bundle_hash": "04aac7d44691b2bfc067d88265a5750ca88df066664e4cb70ad1f85927422dbf",
   "candidate_slots": 4,
   "control_material_manifest_hash": "297ddbf802d0deece59b82dde9e171e803b6412dd0f21ce60daf9a80868865d8",
@@ -244,7 +244,7 @@
   "rights_verified": true,
   "source_identity": "cognitive-os:generated:d5_fixture.render_duration",
   "task_id": "212da7f1-0693-56f9-923c-322b136c12ec",
-  "task_manifest_hash": "d8b03719be656ef547f988fed90f29017425265d80aa67f043c26797184c5492",
+  "task_manifest_hash": "9166117b75a7a30ec82bd766b2b97eee4c56977fbcbcb6fbcce1d6d916092f5b",
   "visible_files": 3
  },
  "pre_registration_sha256": "984a21f012cddb1e2a2b5608e36debbc7769351c5363be940e9fab7e19505496",
@@ -547,7 +547,7 @@
    "shares_inside_the_unit_interval": true
   }
  },
- "recorded_at": "2026-08-10T15:34:23Z",
+ "recorded_at": "2026-08-10T17:24:01Z",
  "restart": {
   "conformal_bar_reproduced_across_the_restart": true,
   "containers_started_on_the_replay": 0,
@@ -569,8 +569,8 @@
   "authored_by": "S21D5-024, as D5's fixture; outside every D7 role and re-run under D7 identities in D7's own store",
   "canary_members_spent": 0,
   "certification_cases_spent": 0,
-  "certification_groups_at_that_seal": 10,
-  "checked_against_seal": "4fd749d8ebc034d90c26b71b903d1578f6e0a4937b178179a2c84a2870a7a819",
+  "certification_groups_at_that_seal": 100,
+  "checked_against_seal": "4b946104b71a276daf71402316cb81266161c35eb7840442bb442e61e239feb0",
   "conformal_cases_spent": 0,
   "final_members_spent": 0,
   "in_any_scored_role": false,
@@ -585,12 +585,12 @@
    "training"
   ],
   "roles_containing_this_group": [],
-  "seal_was_provisional": true,
+  "seal_was_provisional": false,
   "template_id": "d5_fixture.render_duration",
   "why": "Section 6.1 requires the slice to spend nothing, so the group is checked against the sealed manifest rather than declared outside it"
  },
  "schema_version": 1,
- "sealed_manifests_sha256": "205f33fe93f25611f1cc8a586d2f35174d006b8aa78b996dd5b464017ee556df",
+ "sealed_manifests_sha256": "e7a3ab02da9da9e2571a0f5cd0eb4779ac0a4cba4aa691e0ee38244704e2f4b3",
  "sprint": "21D7",
  "wave": "W1"
 }

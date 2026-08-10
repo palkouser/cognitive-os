@@ -2,7 +2,10 @@
 
 - Branch: `sprint-21d7-groundwork`
 - Backlog: [Sprint 21D7 Technical Backlog](sprint-21d7-technical-backlog.md)
-- **Status: W0 closed.** S21D7-000 through S21D7-005 and S21D7-010 through S21D7-019 are done.
+- **Status: W1 closed.** S21D7-000 through S21D7-005, S21D7-010 through S21D7-019 and
+  S21D7-020 through S21D7-024 are done. The certification corpus is complete at 100 groups and
+  sealed non-provisionally; the measured campaign has run. **W0 detail follows first.**
+- **W0 closed.** S21D7-000 through S21D7-005 and S21D7-010 through S21D7-019 are done.
   The three governance rulings W0 exists to obtain were all taken and the condition-24
   inheritance was renewed. Revision 7 is published with `measured_values: 0`, and **no threshold
   moved**.
@@ -276,3 +279,149 @@ The one thing that would stop D7 now is a withdrawal of one of the three rulings
 measurement exists — the state the chronology proves — that withdrawal costs one record and the
 sprint ends at §3.4 branch 0, `successor_contract_refused`. After W1's corpus is sealed it costs
 the corpus too.
+
+---
+
+# W1 closed — the corpus, and the measured run
+
+- **Status: W1 closed.** S21D7-020 through S21D7-024 are done. The certification corpus is
+  complete at **100 groups**, sealed non-provisionally, and the measured campaign has been run
+  in a store of its own.
+- Corpus seal: `4b946104b71a276daf71402316cb81266161c35eb7840442bb442e61e239feb0`,
+  `provisional: false`, revision 7, 1380 candidate slots, volume point 720.
+- Migration head: `0015`, unchanged.
+- Gate L2 still does not pass. W1 measures the corpus, not the bar: no operating point has been
+  derived, no margin has been read, and §2.3 is untouched. The bar belongs to W2.
+
+## The corpus
+
+Sixteen batches, seven groups withdrawn, twenty-four further ideas rejected before a body was
+written. The result is exactly the shape the backlog asks for:
+
+| family | groups | | family | groups |
+|---|---|---|---|---|
+| boundary and collections | 17 | | numeric logic | 17 |
+| data transformation | 17 | | parsing and validation | 16 |
+| error handling | 17 | | state and idempotency | 16 |
+
+`certification_corpus_complete` is true and the shortfall is zero. The whole corpus was then run
+rather than the last batch: **500 bodies against both suites, 1000 suite runs, 0 contract
+defects**, every body encodable by the canonicaliser. Separation holds over all nine roles — 36
+pairs, all disjoint, **0 cross-group collisions touching D7**, and no group authored twice.
+
+## W1 findings
+
+### W1-F1 — the pre-check could report occupied ground as free
+
+`corpus_d7.py --search` printed the twelve *closest* hits, ranked by how many of the searched
+words a group matched. A word searched alongside seven others matches once and sinks below every
+multi-word hit, so the ranking discards precisely the groups that answer the question being
+asked. `rename` reported free with `d4-transform-rename-fields` seventh in its own list; `seat`
+reported free with D7's own `_G009` in it. Both were authored a second time, and the duplicate
+template ID did not fail — it replaced the first under the same key in the registry mapping, and
+the only trace was a group count one short of the spec count.
+
+Fixed inside the wave, in the tool rather than in the bodies: `--search` now reports `by_word`,
+untruncated, so a word with hits cannot print as free whatever else was searched beside it; and
+separation reports `groups_authored_twice`, because a group authored twice is not a near-clone
+pair — the second spec never reaches the comparison at all.
+
+### W1-F2 — two task-level duplicates, one of them already committed
+
+`d7-parsing-timezone-offset` is `d4-parsing-utc-offset`: the same function name, the same two
+edge cases — the sign applied to the minutes as well as the hours, and Z read as no offset — and
+the same baseline reason. Its bodies were written independently enough that the near-clone
+detector never flagged them, and the two contracts share no vocabulary the prose search could
+match, so it sat in the corpus through two commits until a search for a different group
+surfaced the released one.
+
+`d7-error-stall-fallback` went the same way. Reading `d5-error-suppress-expected` to condemn a
+*new* group condemned that one too: both carry the same two distinguishing clauses — the
+fallback belongs to one named failure, and a falsy answer is still an answer.
+
+Both are withdrawn and replaced. The general statement is worth keeping: **a task-level
+collision is invisible to the near-clone detector whenever the bodies were written
+independently, and invisible to the prose search whenever the two contracts use different
+vocabulary.** What catches it is reading the closest released contract in full, before the
+bodies. That is now where most of the authoring effort goes, and it is the cheapest part of the
+wave.
+
+### W1-F3 — a hidden test written in the direction the defect does not run
+
+`refund-once`'s second hidden case asked for a *refusal* that both readings give. The buggy
+comparison — the amount against the allowance left across all orders, rather than against the
+order's own value — is strictly harsher than the contract: it never accepts what the contract
+refuses, only refuses what the contract accepts. A hidden test written in the refusing direction
+therefore separated nothing, and `variant_three` passed the hidden suite. The case is now
+written in the direction the defect actually runs, and the clause both readings agree on moved
+to the visible suite, where a case both candidates satisfy belongs.
+
+This is failure mode 1 in the disguise the pre-check cannot see, and only execution reveals it.
+
+### W1-F4 — the released registry did not carry the corpus
+
+`reality_tasks.py` addressed no D7 template, so the first campaign run failed on
+`KeyError: 'd7_boundary.escort_pairs'`. This is D6's W1 finding #4 repeating on the wave that
+inherited the file: registering the corpus is a step the corpus module cannot take for itself.
+`_D7_TEMPLATES` is registered and the arithmetic guard updated; the guard is what would have
+caught a template ID colliding across corpora, and it is now the only thing that does.
+
+## The measured run needed a store of its own
+
+The seal stage refuses to run where the campaign stream already carries events, and after the
+provisional trial it does. The guard is right: in that store the seal does not precede the first
+container. `cognitive_os_s21d7_measured` and `artifacts-s21d7-measured` were provisioned at head
+`0015` — 115 tables, identical to the trial pair — and the §5.1 vertical slice re-run there
+first. The trial store keeps the trial's record; nothing was pruned to make a count come out.
+
+## The measured chain
+
+| stage | result |
+|---|---|
+| vertical slice | 5 containers, 12 refusals, artifact bound and restored, bar reproduced across a restart, 0 containers on the replay |
+| feature seal | **400 records, 400 distinct vectors, 0 containers started**, 2 refusals |
+| v3 relational assembly | 100 groups, 377 distinct relational vectors, content hash `943ac1f086a7d8d3` |
+| execute | **400 runs, 200 hidden-passing, 0 baselines through hidden**, 0 containers on the replay |
+| snapshot | **11 of 11 scans passed**, maximum cross-split similarity `0.989324` against the 0.999 floor |
+
+200 of 400 passing the hidden suite is the authoring contract at scale: exactly the two full
+repairs per group, and not one of the hundred baselines got through.
+
+The snapshot rebuilds D6's certification matrix from its released bytes and proves it against
+the hash D6 published — `conformal_matrix_is_d6s_published_one: true`, `rebuilt_identically:
+true`. Those bytes are resolved out of the `-measured` store that W0-F1 put under the freeze;
+without that finding the bar-setting half would have been rebuilt from bytes no released record
+fingerprints.
+
+## W1 evidence index
+
+| record | integrity hash |
+|---|---|
+| `sprint-21d7-corpus-separation.json` | `bf27eaea142e0560` |
+| `sprint-21d7-sealed-manifests.json` | `bd1c45c3c0d5b390` |
+| `sprint-21d7-vertical-slice.json` | `c79e372cab420a55` |
+| `sprint-21d7-feature-seals.json` | `ac3bd37c684b2b70` |
+| `sprint-21d7-certification-campaign.json` | `65c44ed9634569bf` |
+| `sprint-21d7-snapshots.json` | `63018e8987253310` |
+
+## W1 validation
+
+- `scripts/corpus_d7.py` — 100 groups, 1000 suite runs, 0 contract defects, 500 of 500 bodies
+  encodable, `ready: true`, shortfall 0.
+- `scripts/separation_d7.py` — 9 roles, 36 pairs, all pairwise disjoint, 0 collisions touching
+  D7, `certification_corpus_complete: true`, every predecessor digest unchanged.
+- `scripts/sealed_manifests_d7.py` — `provisional: false`, protected roles identical to D6,
+  fitting pool membership and body both true and **not re-executed**, conformal half membership
+  and body both true, 0 retrieval groups authored by D7.
+- ruff, ruff format, mypy over `src/cognitive_os` — clean.
+- 1952 coding and learning tests green.
+
+## What W1 did not do
+
+- It derived **no operating point** and read **no conformal margin**. `quantile_exists_at_alpha_0_20`
+  is false on the slice fixture and no margin was taken over the sealed bar-setting half at all.
+- It moved **no gate threshold**, amended **no §2.3 sentence**, and changed no released code,
+  encoder, normaliser or released hypothesis class.
+- It wrote **nothing** to any predecessor store. D5's and D6's stores were read for the envelope
+  and the bar-setting half's bytes, by artifact identity, read-only.
+- It authored **no retrieval groups**: the retrieval pool is inherited whole.
