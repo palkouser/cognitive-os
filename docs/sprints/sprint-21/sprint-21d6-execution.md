@@ -359,3 +359,146 @@ The corpus is **15 of 100**. Every record above is provisional, no coverage or e
 been measured, no bar has been derived from the sealed conformal half, and Gate L2 stands where
 D5 left it. What W1 has established is that nothing between the corpus and the snapshot will
 surprise the wave — which was the point of driving it before authoring the remaining 85 groups.
+
+---
+
+# W1 closed — the corpus, and the measured run
+
+## S21D6-020: the certification corpus, 100 groups
+
+Nine batches, 89 groups authored, 85 kept. Families land exactly on the target:
+boundary 17, transform 17, error 17, numeric 17, parsing 16, state 16. The corpus executes
+clean: **500 bodies, 1,000 suite runs, no contract defect, no collision, every body encodable**,
+2,230 bodies compared for separation.
+
+| batch | authored | kept | withdrawn |
+|---|---:|---:|---|
+| 1 | 10 | 10 | — |
+| 2 | 10 | 8 | manifest_diff, cohort_split |
+| 3 | 10 | 9 | checked_merge |
+| 4 | 10 | 10 | — |
+| 5 | 10 | 10 | — |
+| 6 | 10 | 10 | — |
+| 7 | 10 | 9 | rekey_by_position |
+| 8 | 10 | 10 | — |
+| 9 | 9 | 9 | — |
+
+**Every withdrawal was failure mode 3, and every one had the same tell.** `manifest_diff` was a
+task-level clone of `d5-transform-key-difference`, `checked_merge` of `d5-state-config-patch`,
+`cohort_split` of fixed-size chunking, `rekey_by_position` of `d2-transform-zip-records`. In each
+case the *body carrying the defect* reduced to a textbook one-liner. `cohort_split` is the one
+that taught it: only its defective variant collided, which looked like a code-level coincidence a
+rewrite could clear — and rewriting the comprehension as a loop moved the collision to two other
+released groups instead. A task whose core step is a saturated primitive collides however it is
+written.
+
+**What the pre-check can and cannot do.** `--search` screens the words a contract uses. It killed
+a cause-chain walker in batch five before a line of it existed, because D2's `cause_chain` already
+publishes "the message of the deepest cause … raises ValueError once the chain passes ten links" —
+the same task down to the depth guard. It cannot see saturation, which is why batches two, three
+and seven each paid for one group. After the heuristic was written down, retention ran 57 of 60.
+
+**Three authoring findings that only execution produces.**
+
+*A visible case has to be one both readings agree on.* `digit_positions` is about which end of a
+number you count from, so almost every input separates the candidates. Its visible case asserted
+`digit_positions(1234, 4) == [0]` — the answer from the units — which the baseline, counting from
+the other end, fails. The baseline broke its own visible suite. Now `digit_positions(7, 7) == [0]`.
+
+*An accidental repair looks like the careful way to write it.* `outer_fence` turns on
+`values[-count:]` returning the whole series when count is zero. Writing the overlap fix I reached
+for `values[len(values) - count:]`, which repairs the overlap **and silently repairs the zero case
+too**, so variant three passed the hidden suite and the validator called it: two hidden tests
+probing one defect.
+
+*Escape only where the escape must survive into the generated module.* Every body lives in a plain
+triple-quoted string, so Python resolves its escapes at import. A group built on backslash escapes
+has to double each one twice over; the first `escape_pairs` did not, and its module came out an
+unterminated string literal. It now escapes with a tilde and carries no backslash at all. The same
+layering then put a literal backslash-n on the end of `indent_level`'s import line and failed all
+five of its bodies against their own visible suite.
+
+## S21D6-022 and 023, re-taken on the complete corpus
+
+Both records are now non-provisional. The seal that had refused every call since it was written
+takes: 100 certification groups, 40 invariance cases, 120 promotion cases over 60 independent
+ones, 1,380 candidate slots, corpus authoring revoked. Seal `13ee63c718fa50aa`.
+
+Running the complete corpus through checks that had only seen an unfinished one produced two
+repairs of its own.
+
+*The validator was under-checking, and looked as though it meant to.* Its body set listed the
+three retrieval pools and read them with D2's five label names, which a retrieval spec does not
+carry, so every retrieval body was skipped in silence. S21D4-043 does scope retrieval separation
+out — the behaviour was the intended one — but a list that cannot read what it contains makes an
+intended scope look like an oversight. The specs are gone and the comment carries the reason;
+`bodies_compared` is unchanged at 2,230, which is the proof that nothing was being read.
+
+*One near-clone pair touched the role D6 authored.* `separation_d6.py` reads retrieval bodies
+properly and found `cadence_beats:variant_three` — the one-line `total // cadence` — matching a
+spent D4 retrieval body. Not an operative collision, and not against the conformal half or the
+fitting pool, so not the leak that would flatter anything; but the first such pair D6 itself
+created, where the record's explanation only covers inherited ones. Rewritten with `divmod`.
+Cross-role pairs are back to **20, every one predating D6**.
+
+## The measured run needed a store of its own
+
+The seal stage refuses to run where the campaign stream already carries events. After the
+provisional trial it does, and the guard is right: in that store the seal does not precede the
+first container. `cognitive_os_s21d6_measured` and `artifacts-s21d6-measured` were provisioned at
+head 0015 — 114 tables, identical to the trial pair — and the vertical slice re-run there first,
+as §5.1 asks. The trial store keeps the trial's record. **Nothing was pruned to make a count come
+out.**
+
+The slice had `provisional=True` hard-coded in its role-boundary check, which made it unrunnable
+the moment the corpus was complete. It now takes whichever seal the corpus can carry and records
+which one, and how many groups that seal held.
+
+## The measured chain
+
+| stage | result |
+|---|---|
+| vertical slice | 5 containers, 12 refusals, artifact bound and restored, bar reproduced across a restart |
+| feature seal | **400 records, 400 distinct vectors, 0 containers started** |
+| execute | **400 runs, 200 hidden-passing, 0 baselines through hidden, 0 containers on the replay** |
+| snapshot | **11 of 11 scans passed** |
+
+200 of 400 passing the hidden suite is the authoring contract at scale: exactly the two full
+repairs per group, and not one of the hundred baselines got through.
+
+The snapshot scans D5's conformal half against D6's certification half — the pairing the gate
+owner ruled and the only boundary where a leak would flatter the result. The conformal matrix was
+rebuilt read-only from D5's released bytes and comes back as `106061126df8…`, the hash D5
+published, so every vector and every label survived the round trip. 800 rows, 100 groups against
+100 sharing none, 800 distinct feature signatures with none labelled both ways, and the highest
+cross-split similarity **0.993313 against a floor of 0.999**.
+
+The store holds 404 observations: the 400 the dataset names and the slice's four fixture rows,
+which are outside every role and accounted for by name.
+
+## W1 findings
+
+Beyond the authoring findings above, four defects in the machinery, all fixed inside the wave.
+The one that mattered: **the store guard was copied from D5 and its forbidden list stopped at
+`s21d4`**, so D6 could have opened for writing the very store its conformal bar is computed from.
+Three copies became one `_isolated_pair()`, and the refusal is executed rather than assumed. Also:
+the seal claimed `corpus_authoring_capability_revoked` while 85 groups remained; the seal record's
+counts block indexed a partition D6 never opens; the template registry did not carry the D6 corpus.
+
+Two hazards worth carrying forward: `detect-secrets scan --baseline F P` rewrites F in place
+restricted to P, emptying every other entry — the baseline was merged surgically each time and
+verified at zero entries lost; and everything must be linted with `--config ruff.cognitive-os.toml`.
+
+## W1 validation
+
+- `ruff check` and `ruff format --check` under the project config;
+- `scripts/corpus_d6.py`: 100 groups, ready, 0 shortfall;
+- `scripts/separation_d6.py`: accepted, 28 pairs disjoint, 0 collisions touching D6;
+- `scripts/sealed_manifests_d6.py --check`: 0 stops, non-provisional;
+- `tests/cognitive_os/learning` and `tests/cognitive_os/coding`: 1,897 passed.
+
+## What W1 has not done
+
+No coverage, no error rate and no bar. The conformal point is derived once, at S21D6-034, from the
+sealed conformal half, and nothing in this wave has read a certification margin. **Gate L2 stands
+exactly where D5 left it.**
