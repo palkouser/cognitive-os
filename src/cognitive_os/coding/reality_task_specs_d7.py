@@ -8343,6 +8343,575 @@ def test_a_message_beyond_the_cutoff_keeps_the_state_it_had() -> None:
     ),
 )
 
+_G083 = D2TaskSpec(
+    template_id="d7_boundary.bracketing_span",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-bracketing-span",
+    module="bracketing_span",
+    module_doc="Finding which span of marks a point falls in, and saying when it falls in none.",
+    issue=(
+        "span_for() is documented to give a point landing exactly on a mark to the span that "
+        "starts there. Callers report such a point being given to the span that ends there "
+        "instead, which puts every boundary reading in the wrong bucket, and a point outside "
+        "the marks altogether coming back as nothing rather than being refused."
+    ),
+    expected=(
+        "span_for(marks, point) takes ascending marks and returns the (start, end) pair "
+        "bracketing the point. A point exactly on a mark belongs to the span that starts there, "
+        "and a point before the first mark or at or after the last raises ValueError."
+    ),
+    baseline_reason=(
+        "its comparison closes each span at its end rather than at its start, and it answers "
+        "with nothing at all for a point no span holds"
+    ),
+    edge_cases=(
+        "a point exactly on a mark starts the next span",
+        "a point outside the marks is refused",
+    ),
+    baseline="""def span_for(marks, point):
+    \"\"\"Return the span of marks bracketing a point.\"\"\"
+    for index in range(len(marks) - 1):
+        if marks[index] < point <= marks[index + 1]:
+            return marks[index], marks[index + 1]
+    return None""",
+    variant_one="""def span_for(marks, point):
+    \"\"\"Return the span of marks bracketing a point.\"\"\"
+    for index in range(len(marks) - 1):
+        if marks[index] <= point < marks[index + 1]:
+            return marks[index], marks[index + 1]
+    raise ValueError("point is outside the marks: " + str(point))""",
+    variant_two="""def span_for(marks, point):
+    \"\"\"Return the span of marks bracketing a point.\"\"\"
+    for start, end in zip(marks, marks[1:]):
+        if start <= point < end:
+            return start, end
+    raise ValueError("point is outside the marks: " + str(point))""",
+    variant_three="""def span_for(marks, point):
+    \"\"\"Return the span of marks bracketing a point.\"\"\"
+    for index in range(len(marks) - 1):
+        if marks[index] <= point < marks[index + 1]:
+            return marks[index], marks[index + 1]
+    return None""",
+    variant_four="""def span_for(marks, point):
+    \"\"\"Return the span of marks bracketing a point.\"\"\"
+    for index in range(len(marks) - 1):
+        if marks[index] < point <= marks[index + 1]:
+            return marks[index], marks[index + 1]
+    raise ValueError("point is outside the marks: " + str(point))""",
+    visible_test=_test_module(
+        "bracketing_span",
+        "Published contract for the bracketing span.",
+        """
+def test_a_point_inside_a_span_finds_it() -> None:
+    assert span_for([0, 10, 20], 5) == (0, 10)
+
+
+def test_a_point_in_the_second_span_finds_that() -> None:
+    assert span_for([0, 10, 20], 15) == (10, 20)
+""",
+        imports="from bracketing_span import span_for\n",
+    ),
+    hidden_test=_test_module(
+        "bracketing_span",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_point_inside_a_span_finds_it() -> None:
+    assert span_for([0, 10, 20], 5) == (0, 10)
+
+
+def test_a_point_exactly_on_a_mark_starts_the_next_span() -> None:
+    assert span_for([0, 10, 20], 10) == (10, 20)
+
+
+def test_a_point_outside_the_marks_is_refused() -> None:
+    with pytest.raises(ValueError):
+        span_for([0, 10], 50)
+""",
+        imports="from bracketing_span import span_for\n",
+    ),
+)
+
+_G084 = D2TaskSpec(
+    template_id="d7_numeric.volumetric_weight",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-volumetric-weight",
+    module="volumetric_weight",
+    module_doc="Charging a parcel for its size when its size costs more than its weight.",
+    issue=(
+        "chargeable() is documented to round the volumetric weight up, because a part of a "
+        "kilogram of space is a kilogram of space nobody else can use. Callers report parcels "
+        "being charged a kilogram light, and a divisor of zero taking the whole calculation "
+        "down rather than being refused."
+    ),
+    expected=(
+        "chargeable(actual, length, width, height, divisor) returns the greater of the actual "
+        "weight and the volumetric weight, where the volumetric weight is the volume divided by "
+        "the divisor and rounded up. A divisor of nothing or less raises ValueError."
+    ),
+    baseline_reason=(
+        "its division rounds down, which undercharges every parcel that does not divide "
+        "exactly, and it divides before asking whether the divisor divides anything"
+    ),
+    edge_cases=(
+        "the volumetric weight is rounded up",
+        "a divisor of nothing is refused",
+    ),
+    baseline="""def chargeable(actual, length, width, height, divisor):
+    \"\"\"Return the weight a parcel is charged for.\"\"\"
+    volumetric = (length * width * height) // divisor
+    return max(actual, volumetric)""",
+    variant_one="""def chargeable(actual, length, width, height, divisor):
+    \"\"\"Return the weight a parcel is charged for.\"\"\"
+    if divisor <= 0:
+        raise ValueError("a divisor must be more than nothing")
+    volumetric = -(-(length * width * height) // divisor)
+    return max(actual, volumetric)""",
+    variant_two="""def chargeable(actual, length, width, height, divisor):
+    \"\"\"Return the weight a parcel is charged for.\"\"\"
+    if not divisor > 0:
+        raise ValueError("a divisor must be more than nothing")
+    volume = length * width * height
+    volumetric = volume // divisor
+    if volume % divisor:
+        volumetric += 1
+    return volumetric if volumetric > actual else actual""",
+    variant_three="""def chargeable(actual, length, width, height, divisor):
+    \"\"\"Return the weight a parcel is charged for.\"\"\"
+    volumetric = -(-(length * width * height) // divisor)
+    return max(actual, volumetric)""",
+    variant_four="""def chargeable(actual, length, width, height, divisor):
+    \"\"\"Return the weight a parcel is charged for.\"\"\"
+    if divisor <= 0:
+        raise ValueError("a divisor must be more than nothing")
+    volumetric = (length * width * height) // divisor
+    return max(actual, volumetric)""",
+    visible_test=_test_module(
+        "volumetric_weight",
+        "Published contract for the chargeable weight.",
+        """
+def test_a_volume_dividing_exactly_is_the_volumetric_weight() -> None:
+    assert chargeable(2, 10, 10, 10, 500) == 2
+
+
+def test_a_heavy_parcel_is_charged_for_its_weight() -> None:
+    assert chargeable(9, 10, 10, 10, 500) == 9
+""",
+        imports="from volumetric_weight import chargeable\n",
+    ),
+    hidden_test=_test_module(
+        "volumetric_weight",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_heavy_parcel_is_charged_for_its_weight() -> None:
+    assert chargeable(9, 10, 10, 10, 500) == 9
+
+
+def test_the_volumetric_weight_is_rounded_up() -> None:
+    assert chargeable(1, 10, 10, 10, 300) == 4
+
+
+def test_a_divisor_of_nothing_is_refused() -> None:
+    with pytest.raises(ValueError):
+        chargeable(1, 1, 1, 1, 0)
+""",
+        imports="from volumetric_weight import chargeable\n",
+    ),
+)
+
+_G085 = D2TaskSpec(
+    template_id="d7_numeric.backoff_wait",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-backoff-wait",
+    module="backoff_wait",
+    module_doc="Working out how long to wait before an attempt, and how long is long enough.",
+    issue=(
+        "wait_for() is documented to double the wait with each attempt already made, and never "
+        "to go past the cap. Callers report the wait growing by a fixed step rather than "
+        "doubling, which never backs off far enough, and no cap being applied when it finally "
+        "does grow."
+    ),
+    expected=(
+        "wait_for(attempt, base, cap) returns how long to wait before an attempt, counting "
+        "attempts already made from nothing. The wait is the base doubled once per attempt "
+        "made, and never more than the cap."
+    ),
+    baseline_reason=(
+        "it multiplies the base by the attempt count rather than doubling it, and it hands back "
+        "whatever that comes to without looking at the cap"
+    ),
+    edge_cases=(
+        "each attempt doubles the wait",
+        "the wait never passes the cap",
+    ),
+    baseline="""def wait_for(attempt, base, cap):
+    \"\"\"Return the wait before an attempt.\"\"\"
+    return base * (attempt + 1)""",
+    variant_one="""def wait_for(attempt, base, cap):
+    \"\"\"Return the wait before an attempt.\"\"\"
+    return min(base * (2**attempt), cap)""",
+    variant_two="""def wait_for(attempt, base, cap):
+    \"\"\"Return the wait before an attempt.\"\"\"
+    wait = base
+    for _ in range(attempt):
+        wait = wait * 2
+    return wait if wait < cap else cap""",
+    variant_three="""def wait_for(attempt, base, cap):
+    \"\"\"Return the wait before an attempt.\"\"\"
+    return base * (2**attempt)""",
+    variant_four="""def wait_for(attempt, base, cap):
+    \"\"\"Return the wait before an attempt.\"\"\"
+    return min(base * (attempt + 1), cap)""",
+    visible_test=_test_module(
+        "backoff_wait",
+        "Published contract for the backoff wait.",
+        """
+def test_the_first_attempt_waits_the_base() -> None:
+    assert wait_for(0, 100, 10000) == 100
+
+
+def test_the_second_attempt_waits_twice_the_base() -> None:
+    assert wait_for(1, 100, 10000) == 200
+""",
+        imports="from backoff_wait import wait_for\n",
+    ),
+    hidden_test=_test_module(
+        "backoff_wait",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_first_attempt_waits_the_base() -> None:
+    assert wait_for(0, 100, 10000) == 100
+
+
+def test_each_attempt_doubles_the_wait() -> None:
+    assert wait_for(3, 100, 10000) == 800
+
+
+def test_the_wait_never_passes_the_cap() -> None:
+    assert wait_for(5, 100, 300) == 300
+""",
+        imports="from backoff_wait import wait_for\n",
+    ),
+)
+
+_G086 = D2TaskSpec(
+    template_id="d7_error.two_step_confirm",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-two-step-confirm",
+    module="two_step_confirm",
+    module_doc="Telling a wrong confirmation apart from one that simply took too long.",
+    issue=(
+        "confirm() is documented to raise different errors for a confirmation that does not "
+        "match and one that has expired, because one means try again and the other means start "
+        "again. Callers report both arriving as the same error, and a confirmation used at the "
+        "very moment it expires being accepted."
+    ),
+    expected=(
+        "confirm(pending, token, now) returns True when the token matches and the confirmation "
+        "has not expired. A token that does not match raises ValueError; a matching token used "
+        "at or after the moment it expires raises TimeoutError."
+    ),
+    baseline_reason=(
+        "it tests the token and the expiry in one condition, so both come back as the same "
+        "error, and its expiry test lets the expiring moment itself through"
+    ),
+    edge_cases=(
+        "an expired confirmation is not a mismatch",
+        "the moment it expires it has expired",
+    ),
+    baseline="""def confirm(pending, token, now):
+    \"\"\"Confirm a pending action.\"\"\"
+    if pending["token"] != token or now > pending["expires"]:
+        raise ValueError("cannot confirm")
+    return True""",
+    variant_one="""def confirm(pending, token, now):
+    \"\"\"Confirm a pending action.\"\"\"
+    if pending["token"] != token:
+        raise ValueError("the confirmation does not match")
+    if now >= pending["expires"]:
+        raise TimeoutError("the confirmation has expired")
+    return True""",
+    variant_two="""def confirm(pending, token, now):
+    \"\"\"Confirm a pending action.\"\"\"
+    matches = pending["token"] == token
+    if not matches:
+        raise ValueError("the confirmation does not match")
+    if not now < pending["expires"]:
+        raise TimeoutError("the confirmation has expired")
+    return True""",
+    variant_three="""def confirm(pending, token, now):
+    \"\"\"Confirm a pending action.\"\"\"
+    if pending["token"] != token:
+        raise ValueError("the confirmation does not match")
+    if now > pending["expires"]:
+        raise TimeoutError("the confirmation has expired")
+    return True""",
+    variant_four="""def confirm(pending, token, now):
+    \"\"\"Confirm a pending action.\"\"\"
+    if pending["token"] != token or now >= pending["expires"]:
+        raise ValueError("cannot confirm")
+    return True""",
+    visible_test=_test_module(
+        "two_step_confirm",
+        "Published contract for confirming an action.",
+        """
+import pytest
+
+
+def test_a_matching_confirmation_in_time_is_accepted() -> None:
+    assert confirm({"token": "abc", "expires": 100}, "abc", 50) is True
+
+
+def test_a_confirmation_that_does_not_match_is_refused() -> None:
+    with pytest.raises(ValueError):
+        confirm({"token": "abc", "expires": 100}, "xyz", 50)
+""",
+        imports="from two_step_confirm import confirm\n",
+    ),
+    hidden_test=_test_module(
+        "two_step_confirm",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_matching_confirmation_in_time_is_accepted() -> None:
+    assert confirm({"token": "abc", "expires": 100}, "abc", 50) is True
+
+
+def test_an_expired_confirmation_is_not_a_mismatch() -> None:
+    with pytest.raises(TimeoutError):
+        confirm({"token": "abc", "expires": 100}, "abc", 150)
+
+
+def test_the_moment_it_expires_it_has_expired() -> None:
+    with pytest.raises((ValueError, TimeoutError)):
+        confirm({"token": "abc", "expires": 100}, "abc", 100)
+""",
+        imports="from two_step_confirm import confirm\n",
+    ),
+)
+
+_G087 = D2TaskSpec(
+    template_id="d7_parsing.negated_flag",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-negated-flag",
+    module="negated_flag",
+    module_doc="Reading a flag and its negation, without negating flags nobody negated.",
+    issue=(
+        "read_flag() is documented to read '--no-' as a negation and to leave alone a flag "
+        "whose name merely starts with those two letters. Callers report '--nothing' arriving "
+        "as a negated '--thing', and a bare '--no-' with no flag after it being accepted as a "
+        "negation of nothing at all."
+    ),
+    expected=(
+        "read_flag(text) returns (name, value) for a flag written as '--name', which is true, "
+        "or '--no-name', which is false. The negation is only the prefix 'no-' followed by a "
+        "name; a flag whose name merely begins with those letters is not negated, and text "
+        "that is not a flag raises ValueError."
+    ),
+    baseline_reason=(
+        "after failing to find the prefix with its dash it falls back to the two letters on "
+        "their own, and it accepts a negation with no flag left after the prefix"
+    ),
+    edge_cases=(
+        "a name merely beginning with those letters is not a negation",
+        "a negation with no flag after it is not a flag",
+    ),
+    baseline="""def read_flag(text):
+    \"\"\"Read a flag and whether it is negated.\"\"\"
+    if not text.startswith("--"):
+        raise ValueError("not a flag: " + text)
+    name = text[2:]
+    if name.startswith("no-"):
+        return name[3:], False
+    if name.startswith("no"):
+        return name[2:], False
+    return name, True""",
+    variant_one="""def read_flag(text):
+    \"\"\"Read a flag and whether it is negated.\"\"\"
+    if not text.startswith("--"):
+        raise ValueError("not a flag: " + text)
+    name = text[2:]
+    if not name:
+        raise ValueError("not a flag: " + text)
+    if name.startswith("no-"):
+        negated = name[3:]
+        if not negated:
+            raise ValueError("not a flag: " + text)
+        return negated, False
+    return name, True""",
+    variant_two="""def read_flag(text):
+    \"\"\"Read a flag and whether it is negated.\"\"\"
+    if text[:2] != "--" or len(text) <= 2:
+        raise ValueError("not a flag: " + text)
+    body = text[2:]
+    prefix, found, rest = body.partition("no-")
+    if found and not prefix:
+        if not rest:
+            raise ValueError("not a flag: " + text)
+        return rest, False
+    return body, True""",
+    variant_three="""def read_flag(text):
+    \"\"\"Read a flag and whether it is negated.\"\"\"
+    if not text.startswith("--"):
+        raise ValueError("not a flag: " + text)
+    name = text[2:]
+    if name.startswith("no-"):
+        return name[3:], False
+    return name, True""",
+    variant_four="""def read_flag(text):
+    \"\"\"Read a flag and whether it is negated.\"\"\"
+    if not text.startswith("--"):
+        raise ValueError("not a flag: " + text)
+    name = text[2:]
+    if name.startswith("no-"):
+        if not name[3:]:
+            raise ValueError("not a flag: " + text)
+        return name[3:], False
+    if name.startswith("no"):
+        return name[2:], False
+    return name, True""",
+    visible_test=_test_module(
+        "negated_flag",
+        "Published contract for reading a flag.",
+        """
+import pytest
+
+
+def test_a_plain_flag_is_true() -> None:
+    assert read_flag("--colour") == ("colour", True)
+
+
+def test_a_negated_flag_is_false() -> None:
+    assert read_flag("--no-colour") == ("colour", False)
+
+
+def test_something_that_is_not_a_flag_is_refused() -> None:
+    with pytest.raises(ValueError):
+        read_flag("colour")
+""",
+        imports="from negated_flag import read_flag\n",
+    ),
+    hidden_test=_test_module(
+        "negated_flag",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_negated_flag_is_false() -> None:
+    assert read_flag("--no-colour") == ("colour", False)
+
+
+def test_a_name_merely_beginning_with_those_letters_is_not_negated() -> None:
+    assert read_flag("--nothing") == ("nothing", True)
+
+
+def test_a_negation_with_no_flag_after_it_is_not_a_flag() -> None:
+    with pytest.raises(ValueError):
+        read_flag("--no-")
+""",
+        imports="from negated_flag import read_flag\n",
+    ),
+)
+
+_G088 = D2TaskSpec(
+    template_id="d7_state.adjust_priority",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-adjust-priority",
+    module="adjust_priority",
+    module_doc="Changing one item's priority without reshuffling everybody who ties with it.",
+    issue=(
+        "reprioritise() is documented to leave items of equal priority in the order they were "
+        "already in, which is the order they queued in. Callers report the whole queue "
+        "reshuffling alphabetically whenever anything changes, and a name the queue does not "
+        "hold being accepted as though it had been changed."
+    ),
+    expected=(
+        "reprioritise(queue, name, priority) takes (name, priority) entries and returns them "
+        "ordered by priority, lowest first, with the named entry's priority changed. Entries "
+        "of equal priority keep the order they were in, and a name the queue does not hold "
+        "raises KeyError."
+    ),
+    baseline_reason=(
+        "it breaks a tie on the entry's name rather than leaving the tie alone, and it changes "
+        "a name it never found without saying so"
+    ),
+    edge_cases=(
+        "entries of equal priority keep the order they were in",
+        "a name the queue does not hold is refused",
+    ),
+    baseline="""def reprioritise(queue, name, priority):
+    \"\"\"Change one entry's priority and reorder the queue.\"\"\"
+    changed = [(item, priority if item == name else value) for item, value in queue]
+    return sorted(changed, key=lambda entry: (entry[1], entry[0]))""",
+    variant_one="""def reprioritise(queue, name, priority):
+    \"\"\"Change one entry's priority and reorder the queue.\"\"\"
+    if all(item != name for item, _ in queue):
+        raise KeyError(name)
+    changed = [(item, priority if item == name else value) for item, value in queue]
+    return sorted(changed, key=lambda entry: entry[1])""",
+    variant_two="""def reprioritise(queue, name, priority):
+    \"\"\"Change one entry's priority and reorder the queue.\"\"\"
+    names = [item for item, _ in queue]
+    if name not in names:
+        raise KeyError(name)
+    changed = []
+    for item, value in queue:
+        changed.append((item, priority) if item == name else (item, value))
+    return sorted(changed, key=lambda entry: entry[1])""",
+    variant_three="""def reprioritise(queue, name, priority):
+    \"\"\"Change one entry's priority and reorder the queue.\"\"\"
+    changed = [(item, priority if item == name else value) for item, value in queue]
+    return sorted(changed, key=lambda entry: entry[1])""",
+    variant_four="""def reprioritise(queue, name, priority):
+    \"\"\"Change one entry's priority and reorder the queue.\"\"\"
+    if all(item != name for item, _ in queue):
+        raise KeyError(name)
+    changed = [(item, priority if item == name else value) for item, value in queue]
+    return sorted(changed, key=lambda entry: (entry[1], entry[0]))""",
+    visible_test=_test_module(
+        "adjust_priority",
+        "Published contract for changing a priority.",
+        """
+def test_a_changed_priority_moves_the_entry() -> None:
+    assert reprioritise([("a", 2), ("b", 1)], "a", 0) == [("a", 0), ("b", 1)]
+
+
+def test_a_queue_of_one_reorders_to_itself() -> None:
+    assert reprioritise([("a", 1)], "a", 5) == [("a", 5)]
+""",
+        imports="from adjust_priority import reprioritise\n",
+    ),
+    hidden_test=_test_module(
+        "adjust_priority",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_changed_priority_moves_the_entry() -> None:
+    assert reprioritise([("a", 2), ("b", 1)], "a", 0) == [("a", 0), ("b", 1)]
+
+
+def test_entries_of_equal_priority_keep_the_order_they_were_in() -> None:
+    assert reprioritise([("b", 1), ("a", 2)], "a", 1) == [("b", 1), ("a", 1)]
+
+
+def test_a_name_the_queue_does_not_hold_is_refused() -> None:
+    with pytest.raises(KeyError):
+        reprioritise([("a", 1)], "z", 0)
+""",
+        imports="from adjust_priority import reprioritise\n",
+    ),
+)
+
 D7_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G001,
     _G002,
@@ -8426,6 +8995,12 @@ D7_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G080,
     _G081,
     _G082,
+    _G083,
+    _G084,
+    _G085,
+    _G086,
+    _G087,
+    _G088,
 )
 
 __all__ = ["D7_CERTIFICATION_SPECS", "D2TaskSpec", "RealityTaskFamily", "_test_module"]
