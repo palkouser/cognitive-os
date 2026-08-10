@@ -3241,6 +3241,932 @@ def test_the_callers_mapping_is_left_alone() -> None:
     ),
 )
 
+_G031 = D2TaskSpec(
+    template_id="d7_boundary.shortlist_ties",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-shortlist-ties",
+    module="shortlist_ties",
+    module_doc="Taking the top of a ranking without cutting a tie in half.",
+    issue=(
+        "shortlist() is documented to keep a tie whole even when that makes the list longer "
+        "than the limit, because cutting between two equal scores decides by nothing. Callers "
+        "report exactly that cut being made, and tied entries coming back in alphabetical order "
+        "rather than the order they were submitted in."
+    ),
+    expected=(
+        "shortlist(scored, limit) takes (name, score) pairs in any order and returns the names "
+        "of the highest scores, highest first, tied names in the order they arrived. A tie "
+        "straddling the cut is kept whole, so the result can be longer than the limit, and a "
+        "limit of zero or less returns nothing."
+    ),
+    baseline_reason=(
+        "it cuts the ranking at the limit whatever lies on either side of the cut, and it "
+        "breaks ties by name instead of leaving them in the order they arrived"
+    ),
+    edge_cases=(
+        "a tie straddling the cut is kept whole",
+        "tied names keep the order they arrived in",
+    ),
+    baseline="""def shortlist(scored, limit):
+    \"\"\"Return the names at the top of the ranking.\"\"\"
+    ranked = sorted(scored, key=lambda entry: (-entry[1], entry[0]))
+    return [name for name, _ in ranked[:limit]]""",
+    variant_one="""def shortlist(scored, limit):
+    \"\"\"Return the names at the top of the ranking.\"\"\"
+    ranked = sorted(scored, key=lambda entry: -entry[1])
+    kept = ranked[:limit]
+    if kept:
+        cut = kept[-1][1]
+        kept = [entry for entry in ranked if entry[1] >= cut]
+    return [name for name, _ in kept]""",
+    variant_two="""def shortlist(scored, limit):
+    \"\"\"Return the names at the top of the ranking.\"\"\"
+    if limit <= 0:
+        return []
+    ranked = sorted(scored, key=lambda entry: -entry[1])
+    scores = [score for _, score in ranked]
+    cut = scores[min(limit, len(scores)) - 1]
+    return [name for name, score in ranked if score >= cut]""",
+    variant_three="""def shortlist(scored, limit):
+    \"\"\"Return the names at the top of the ranking.\"\"\"
+    ranked = sorted(scored, key=lambda entry: (-entry[1], entry[0]))
+    kept = ranked[:limit]
+    if kept:
+        cut = kept[-1][1]
+        kept = [entry for entry in ranked if entry[1] >= cut]
+    return [name for name, _ in kept]""",
+    variant_four="""def shortlist(scored, limit):
+    \"\"\"Return the names at the top of the ranking.\"\"\"
+    ranked = sorted(scored, key=lambda entry: -entry[1])
+    return [name for name, _ in ranked[:limit]]""",
+    visible_test=_test_module(
+        "shortlist_ties",
+        "Published contract for the shortlist.",
+        """
+def test_the_highest_scores_come_first() -> None:
+    assert shortlist([("a", 5), ("b", 9), ("c", 1)], 2) == ["b", "a"]
+
+
+def test_a_limit_of_nothing_shortlists_nobody() -> None:
+    assert shortlist([("a", 5)], 0) == []
+""",
+        imports="from shortlist_ties import shortlist\n",
+    ),
+    hidden_test=_test_module(
+        "shortlist_ties",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_highest_scores_come_first() -> None:
+    assert shortlist([("a", 5), ("b", 9), ("c", 1)], 2) == ["b", "a"]
+
+
+def test_a_tie_straddling_the_cut_is_kept_whole() -> None:
+    assert shortlist([("a", 9), ("b", 5), ("c", 5)], 2) == ["a", "b", "c"]
+
+
+def test_tied_names_keep_the_order_they_arrived_in() -> None:
+    assert shortlist([("b", 5), ("a", 5)], 2) == ["b", "a"]
+""",
+        imports="from shortlist_ties import shortlist\n",
+    ),
+)
+
+_G032 = D2TaskSpec(
+    template_id="d7_numeric.overdraft_fees",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-overdraft-fees",
+    module="overdraft_fees",
+    module_doc="Counting the times a balance fell past what the account is allowed.",
+    issue=(
+        "overdraft_fees() is documented to follow the balance through every movement on the "
+        "account. Callers report being charged for movements they had already covered by paying "
+        "money in, and being charged for landing exactly on the agreed limit rather than past it."
+    ),
+    expected=(
+        "overdraft_fees(balance, amounts, allowance) applies each amount to the balance in "
+        "order, money in as well as money out, and counts one fee for each amount that leaves "
+        "the balance further down than the allowance. A balance sitting exactly on the "
+        "allowance is within it."
+    ),
+    baseline_reason=(
+        "it applies only the amounts that take money out, so paying money in never restores the "
+        "balance, and its comparison charges a fee for landing exactly on the allowance"
+    ),
+    edge_cases=(
+        "money paid in counts towards the balance too",
+        "a balance exactly on the allowance is within it",
+    ),
+    baseline="""def overdraft_fees(balance, amounts, allowance):
+    \"\"\"Count the fees the movements on an account earn.\"\"\"
+    fees = 0
+    running = balance
+    for amount in amounts:
+        if amount < 0:
+            running += amount
+        if running <= -allowance:
+            fees += 1
+    return fees""",
+    variant_one="""def overdraft_fees(balance, amounts, allowance):
+    \"\"\"Count the fees the movements on an account earn.\"\"\"
+    fees = 0
+    running = balance
+    for amount in amounts:
+        running += amount
+        if running < -allowance:
+            fees += 1
+    return fees""",
+    variant_two="""def overdraft_fees(balance, amounts, allowance):
+    \"\"\"Count the fees the movements on an account earn.\"\"\"
+    running = balance
+    breaches = []
+    for amount in amounts:
+        running = running + amount
+        breaches.append(running + allowance < 0)
+    return sum(1 for breached in breaches if breached)""",
+    variant_three="""def overdraft_fees(balance, amounts, allowance):
+    \"\"\"Count the fees the movements on an account earn.\"\"\"
+    fees = 0
+    running = balance
+    for amount in amounts:
+        running += amount
+        if running <= -allowance:
+            fees += 1
+    return fees""",
+    variant_four="""def overdraft_fees(balance, amounts, allowance):
+    \"\"\"Count the fees the movements on an account earn.\"\"\"
+    fees = 0
+    running = balance
+    for amount in amounts:
+        if amount < 0:
+            running += amount
+        if running < -allowance:
+            fees += 1
+    return fees""",
+    visible_test=_test_module(
+        "overdraft_fees",
+        "Published contract for counting overdraft fees.",
+        """
+def test_a_movement_past_the_allowance_earns_a_fee() -> None:
+    assert overdraft_fees(100, [-50, -100], 0) == 1
+
+
+def test_an_account_nobody_touched_earns_nothing() -> None:
+    assert overdraft_fees(100, [], 0) == 0
+""",
+        imports="from overdraft_fees import overdraft_fees\n",
+    ),
+    hidden_test=_test_module(
+        "overdraft_fees",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_movement_past_the_allowance_earns_a_fee() -> None:
+    assert overdraft_fees(100, [-50, -100], 0) == 1
+
+
+def test_money_paid_in_restores_the_balance() -> None:
+    assert overdraft_fees(100, [-150, 100, -10], 20) == 1
+
+
+def test_landing_exactly_on_the_allowance_is_free() -> None:
+    assert overdraft_fees(0, [-20], 20) == 0
+""",
+        imports="from overdraft_fees import overdraft_fees\n",
+    ),
+)
+
+_G033 = D2TaskSpec(
+    template_id="d7_state.beacon_seen",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-beacon-seen",
+    module="beacon_seen",
+    module_doc="Keeping the last time a beacon was heard from, against reports that arrive late.",
+    issue=(
+        "record() is documented to keep the latest sighting of a beacon whatever order the "
+        "reports arrive in. Callers report a report that took a long route home dragging a "
+        "beacon's last sighting backwards, and the first sighting of a beacon never being "
+        "announced as the new beacon it is."
+    ),
+    expected=(
+        "record(seen, beacon, at) returns (seen, is_new): the beacon's time is moved on only "
+        "when `at` is later than the time already recorded, an unseen beacon is recorded at "
+        "`at`, and is_new says whether this was the beacon's first sighting."
+    ),
+    baseline_reason=(
+        "it writes the time in whatever it is, later or earlier than the one already there, and "
+        "it asks whether the beacon is new after it has already recorded it"
+    ),
+    edge_cases=(
+        "a first sighting is reported as new",
+        "a report older than the one recorded does not move the time back",
+    ),
+    baseline="""def record(seen, beacon, at):
+    \"\"\"Record a sighting of a beacon.\"\"\"
+    updated = dict(seen)
+    updated[beacon] = at
+    return updated, beacon not in updated""",
+    variant_one="""def record(seen, beacon, at):
+    \"\"\"Record a sighting of a beacon.\"\"\"
+    first = beacon not in seen
+    updated = dict(seen)
+    if first or at > seen[beacon]:
+        updated[beacon] = at
+    return updated, first""",
+    variant_two="""def record(seen, beacon, at):
+    \"\"\"Record a sighting of a beacon.\"\"\"
+    updated = dict(seen)
+    last = updated.get(beacon)
+    if last is None or at > last:
+        updated[beacon] = at
+    return updated, last is None""",
+    variant_three="""def record(seen, beacon, at):
+    \"\"\"Record a sighting of a beacon.\"\"\"
+    first = beacon not in seen
+    updated = dict(seen)
+    updated[beacon] = at
+    return updated, first""",
+    variant_four="""def record(seen, beacon, at):
+    \"\"\"Record a sighting of a beacon.\"\"\"
+    updated = dict(seen)
+    last = updated.get(beacon)
+    if last is None or at > last:
+        updated[beacon] = at
+    return updated, beacon not in updated""",
+    visible_test=_test_module(
+        "beacon_seen",
+        "Published contract for recording a sighting.",
+        """
+def test_a_later_report_moves_the_time_on() -> None:
+    assert record({"b1": 10}, "b1", 20) == ({"b1": 20}, False)
+
+
+def test_the_other_beacons_are_left_where_they_are() -> None:
+    assert record({"b1": 10, "b2": 5}, "b1", 20)[0] == {"b1": 20, "b2": 5}
+""",
+        imports="from beacon_seen import record\n",
+    ),
+    hidden_test=_test_module(
+        "beacon_seen",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_later_report_moves_the_time_on() -> None:
+    assert record({"b1": 10}, "b1", 20) == ({"b1": 20}, False)
+
+
+def test_a_first_sighting_is_reported_as_new() -> None:
+    assert record({}, "b1", 10) == ({"b1": 10}, True)
+
+
+def test_a_report_from_before_does_not_move_the_time_back() -> None:
+    assert record({"b1": 20}, "b1", 10)[0] == {"b1": 20}
+""",
+        imports="from beacon_seen import record\n",
+    ),
+)
+
+_G034 = D2TaskSpec(
+    template_id="d7_error.halt_on_fatal",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-halt-on-fatal",
+    module="halt_on_fatal",
+    module_doc="Stopping a run at the step that cannot be survived, and only there.",
+    issue=(
+        "run() is documented to stop at a fatal step and to carry on past a warning. Callers "
+        "report a run abandoned at the first warning, and the report coming back without the "
+        "fatal step in it at all - so the record of the run does not say why it stopped."
+    ),
+    expected=(
+        "run(steps) calls each step in turn and returns the statuses they reported, in order. A "
+        "step reporting 'fatal' stops the run and is itself the last status reported; a step "
+        "reporting 'warn' is recorded and the run carries on."
+    ),
+    baseline_reason=(
+        "it stops at any status that is not 'ok', warnings included, and it breaks out of the "
+        "run before recording the status that stopped it"
+    ),
+    edge_cases=(
+        "a warning is recorded and the run carries on",
+        "the fatal status is in the report",
+    ),
+    baseline="""def run(steps):
+    \"\"\"Call each step until one of them cannot be survived.\"\"\"
+    collected = []
+    for step in steps:
+        status = step()
+        if status != "ok":
+            break
+        collected.append(status)
+    return collected""",
+    variant_one="""def run(steps):
+    \"\"\"Call each step until one of them cannot be survived.\"\"\"
+    collected = []
+    for step in steps:
+        status = step()
+        collected.append(status)
+        if status == "fatal":
+            break
+    return collected""",
+    variant_two="""def run(steps):
+    \"\"\"Call each step until one of them cannot be survived.\"\"\"
+    collected = []
+    for step in steps:
+        collected.append(step())
+        if collected[-1] == "fatal":
+            return collected
+    return collected""",
+    variant_three="""def run(steps):
+    \"\"\"Call each step until one of them cannot be survived.\"\"\"
+    collected = []
+    for step in steps:
+        status = step()
+        if status == "fatal":
+            break
+        collected.append(status)
+    return collected""",
+    variant_four="""def run(steps):
+    \"\"\"Call each step until one of them cannot be survived.\"\"\"
+    collected = []
+    for step in steps:
+        status = step()
+        collected.append(status)
+        if status != "ok":
+            break
+    return collected""",
+    visible_test=_test_module(
+        "halt_on_fatal",
+        "Published contract for running the steps.",
+        """
+def test_a_run_nothing_went_wrong_in_reports_every_step() -> None:
+    assert run([lambda: "ok", lambda: "ok"]) == ["ok", "ok"]
+
+
+def test_a_run_with_no_steps_reports_nothing() -> None:
+    assert run([]) == []
+""",
+        imports="from halt_on_fatal import run\n",
+    ),
+    hidden_test=_test_module(
+        "halt_on_fatal",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_run_nothing_went_wrong_in_reports_every_step() -> None:
+    assert run([lambda: "ok", lambda: "ok"]) == ["ok", "ok"]
+
+
+def test_a_warning_does_not_stop_the_run() -> None:
+    assert run([lambda: "warn", lambda: "ok"]) == ["warn", "ok"]
+
+
+def test_the_fatal_step_is_in_the_report() -> None:
+    assert run([lambda: "fatal", lambda: "ok"]) == ["fatal"]
+""",
+        imports="from halt_on_fatal import run\n",
+    ),
+)
+
+_G035 = D2TaskSpec(
+    template_id="d7_boundary.turnstile_occupancy",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-turnstile-occupancy",
+    module="turnstile_occupancy",
+    module_doc="Following how many people are inside, and how many there were at the worst moment.",
+    issue=(
+        "occupancy() is documented to report how full a room was after every turn of the "
+        "turnstile, and how full it ever got. Callers report counts below nobody at all after a "
+        "morning where somebody left by a door the turnstile never saw, and a peak that is "
+        "simply the last count rather than the highest one."
+    ),
+    expected=(
+        "occupancy(events) reads 'in' and 'out' events in order and returns (readings, peak): "
+        "one reading per event of how many are inside afterwards, never below nobody, and the "
+        "highest reading the room ever reached."
+    ),
+    baseline_reason=(
+        "it counts an 'out' event down whether or not there is anybody to count out, and it "
+        "reports the count it finished on as the peak"
+    ),
+    edge_cases=(
+        "the count never falls below nobody at all",
+        "the peak is the highest reading rather than the last",
+    ),
+    baseline="""def occupancy(events):
+    \"\"\"Report how full the room was after each event, and at its fullest.\"\"\"
+    inside = 0
+    readings = []
+    for event in events:
+        inside += 1 if event == "in" else -1
+        readings.append(inside)
+    return readings, inside""",
+    variant_one="""def occupancy(events):
+    \"\"\"Report how full the room was after each event, and at its fullest.\"\"\"
+    inside = 0
+    peak = 0
+    readings = []
+    for event in events:
+        inside += 1 if event == "in" else -1
+        inside = max(inside, 0)
+        readings.append(inside)
+        peak = max(peak, inside)
+    return readings, peak""",
+    variant_two="""def occupancy(events):
+    \"\"\"Report how full the room was after each event, and at its fullest.\"\"\"
+    readings = []
+    inside = 0
+    for event in events:
+        step = 1 if event == "in" else -1
+        inside = inside + step if inside + step > 0 else 0
+        readings.append(inside)
+    return readings, max(readings) if readings else 0""",
+    variant_three="""def occupancy(events):
+    \"\"\"Report how full the room was after each event, and at its fullest.\"\"\"
+    inside = 0
+    readings = []
+    for event in events:
+        inside += 1 if event == "in" else -1
+        inside = max(inside, 0)
+        readings.append(inside)
+    return readings, inside""",
+    variant_four="""def occupancy(events):
+    \"\"\"Report how full the room was after each event, and at its fullest.\"\"\"
+    inside = 0
+    peak = 0
+    readings = []
+    for event in events:
+        inside += 1 if event == "in" else -1
+        readings.append(inside)
+        peak = max(peak, inside)
+    return readings, peak""",
+    visible_test=_test_module(
+        "turnstile_occupancy",
+        "Published contract for following the occupancy.",
+        """
+def test_a_morning_of_arrivals_fills_the_room() -> None:
+    assert occupancy(["in", "in"]) == ([1, 2], 2)
+
+
+def test_a_turnstile_nobody_used_reports_nothing() -> None:
+    assert occupancy([]) == ([], 0)
+""",
+        imports="from turnstile_occupancy import occupancy\n",
+    ),
+    hidden_test=_test_module(
+        "turnstile_occupancy",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_morning_of_arrivals_fills_the_room() -> None:
+    assert occupancy(["in", "in"]) == ([1, 2], 2)
+
+
+def test_the_count_never_falls_below_nobody() -> None:
+    assert occupancy(["out", "in"]) == ([0, 1], 1)
+
+
+def test_the_peak_is_the_highest_reading_not_the_last() -> None:
+    assert occupancy(["in", "in", "out"]) == ([1, 2, 1], 2)
+""",
+        imports="from turnstile_occupancy import occupancy\n",
+    ),
+)
+
+_G036 = D2TaskSpec(
+    template_id="d7_transform.scan_summary",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-scan-summary",
+    module="scan_summary",
+    module_doc="Summarising a day of badge scans into where each badge was last seen.",
+    issue=(
+        "summarise() is documented to report the gate a badge was seen at last, and to list the "
+        "badges in the order the day saw them. Callers report the first gate of the day coming "
+        "back instead of the most recent one, and the badges arriving in alphabetical order, "
+        "which loses who arrived first."
+    ),
+    expected=(
+        "summarise(scans) takes (badge, gate) pairs in the order they happened and returns a "
+        "mapping from badge to (count, gate): how many times the badge was seen and the gate it "
+        "was seen at last. The badges come back in the order they were first seen."
+    ),
+    baseline_reason=(
+        "it keeps the gate it recorded when it first met the badge and never replaces it, and "
+        "it sorts the summary by badge before returning it"
+    ),
+    edge_cases=(
+        "the gate reported is the last one, not the first",
+        "the badges come back in the order they were first seen",
+    ),
+    baseline="""def summarise(scans):
+    \"\"\"Summarise the scans by badge.\"\"\"
+    summary = {}
+    for badge, gate in scans:
+        if badge not in summary:
+            summary[badge] = (0, gate)
+        count, first = summary[badge]
+        summary[badge] = (count + 1, first)
+    return dict(sorted(summary.items()))""",
+    variant_one="""def summarise(scans):
+    \"\"\"Summarise the scans by badge.\"\"\"
+    summary = {}
+    for badge, gate in scans:
+        count = summary[badge][0] if badge in summary else 0
+        summary[badge] = (count + 1, gate)
+    return summary""",
+    variant_two="""def summarise(scans):
+    \"\"\"Summarise the scans by badge.\"\"\"
+    summary = {}
+    for badge, gate in scans:
+        if badge not in summary:
+            summary[badge] = (1, gate)
+        else:
+            summary[badge] = (summary[badge][0] + 1, gate)
+    return summary""",
+    variant_three="""def summarise(scans):
+    \"\"\"Summarise the scans by badge.\"\"\"
+    summary = {}
+    for badge, gate in scans:
+        count = summary[badge][0] if badge in summary else 0
+        summary[badge] = (count + 1, gate)
+    return dict(sorted(summary.items()))""",
+    variant_four="""def summarise(scans):
+    \"\"\"Summarise the scans by badge.\"\"\"
+    summary = {}
+    for badge, gate in scans:
+        if badge not in summary:
+            summary[badge] = (0, gate)
+        count, first = summary[badge]
+        summary[badge] = (count + 1, first)
+    return summary""",
+    visible_test=_test_module(
+        "scan_summary",
+        "Published contract for summarising the scans.",
+        """
+def test_a_single_scan_is_summarised() -> None:
+    assert summarise([("b1", "north")]) == {"b1": (1, "north")}
+
+
+def test_two_scans_at_one_gate_are_counted() -> None:
+    assert summarise([("b1", "north"), ("b1", "north")]) == {"b1": (2, "north")}
+""",
+        imports="from scan_summary import summarise\n",
+    ),
+    hidden_test=_test_module(
+        "scan_summary",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_single_scan_is_summarised() -> None:
+    assert summarise([("b1", "north")]) == {"b1": (1, "north")}
+
+
+def test_the_gate_reported_is_the_last_one() -> None:
+    assert summarise([("b1", "north"), ("b1", "south")]) == {"b1": (2, "south")}
+
+
+def test_the_badges_come_back_in_the_order_first_seen() -> None:
+    assert list(summarise([("z", "north"), ("a", "north")])) == ["z", "a"]
+""",
+        imports="from scan_summary import summarise\n",
+    ),
+)
+
+_G037 = D2TaskSpec(
+    template_id="d7_parsing.berth_window",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-berth-window",
+    module="berth_window",
+    module_doc="Reading the window a berth is booked for, including the one that ends at midnight.",
+    issue=(
+        "parse_window() is documented to accept a window running to the end of the day and to "
+        "refuse one that does not run forwards. Callers report a booking to '24:00' being "
+        "rejected as a bad time, and a window typed the wrong way round being accepted and "
+        "then holding the berth for a negative length of time."
+    ),
+    expected=(
+        "parse_window(text) reads 'HH:MM-HH:MM' and returns (start, end) as minutes past "
+        "midnight. An end of '24:00' is the end of the day, minutes beyond fifty-nine or a time "
+        "past the end of the day raise ValueError, and so does a window whose end does not come "
+        "after its start."
+    ),
+    baseline_reason=(
+        "its hour test stops at twenty-three, so the end of the day is not a time it can read, "
+        "and it never compares the end with the start"
+    ),
+    edge_cases=(
+        "a window ending at the end of the day is read",
+        "a window that does not run forwards is refused",
+    ),
+    baseline="""def parse_window(text):
+    \"\"\"Read a booking window into minutes past midnight.\"\"\"
+    start_text, _, end_text = text.partition("-")
+    times = []
+    for piece in (start_text, end_text):
+        hours, _, minutes = piece.partition(":")
+        if not 0 <= int(hours) <= 23 or not 0 <= int(minutes) <= 59:
+            raise ValueError("not a time: " + piece)
+        times.append(int(hours) * 60 + int(minutes))
+    return times[0], times[1]""",
+    variant_one="""def parse_window(text):
+    \"\"\"Read a booking window into minutes past midnight.\"\"\"
+    start_text, _, end_text = text.partition("-")
+    times = []
+    for piece in (start_text, end_text):
+        hours, _, minutes = piece.partition(":")
+        if not 0 <= int(hours) <= 24 or not 0 <= int(minutes) <= 59:
+            raise ValueError("not a time: " + piece)
+        total = int(hours) * 60 + int(minutes)
+        if total > 24 * 60:
+            raise ValueError("not a time: " + piece)
+        times.append(total)
+    if times[1] <= times[0]:
+        raise ValueError("window does not run forwards: " + text)
+    return times[0], times[1]""",
+    variant_two="""def parse_window(text):
+    \"\"\"Read a booking window into minutes past midnight.\"\"\"
+    start_text, _, end_text = text.partition("-")
+    times = []
+    for piece in (start_text, end_text):
+        hours, _, minutes = piece.partition(":")
+        total = int(hours) * 60 + int(minutes)
+        if not 0 <= int(minutes) < 60 or not 0 <= total <= 24 * 60:
+            raise ValueError("not a time: " + piece)
+        times.append(total)
+    start, end = times
+    if end <= start:
+        raise ValueError("window does not run forwards: " + text)
+    return start, end""",
+    variant_three="""def parse_window(text):
+    \"\"\"Read a booking window into minutes past midnight.\"\"\"
+    start_text, _, end_text = text.partition("-")
+    times = []
+    for piece in (start_text, end_text):
+        hours, _, minutes = piece.partition(":")
+        total = int(hours) * 60 + int(minutes)
+        if not 0 <= int(minutes) < 60 or not 0 <= total <= 24 * 60:
+            raise ValueError("not a time: " + piece)
+        times.append(total)
+    return times[0], times[1]""",
+    variant_four="""def parse_window(text):
+    \"\"\"Read a booking window into minutes past midnight.\"\"\"
+    start_text, _, end_text = text.partition("-")
+    times = []
+    for piece in (start_text, end_text):
+        hours, _, minutes = piece.partition(":")
+        if not 0 <= int(hours) <= 23 or not 0 <= int(minutes) <= 59:
+            raise ValueError("not a time: " + piece)
+        times.append(int(hours) * 60 + int(minutes))
+    if times[1] <= times[0]:
+        raise ValueError("window does not run forwards: " + text)
+    return times[0], times[1]""",
+    visible_test=_test_module(
+        "berth_window",
+        "Published contract for reading a booking window.",
+        """
+import pytest
+
+
+def test_a_window_reads_as_minutes_past_midnight() -> None:
+    assert parse_window("08:00-12:30") == (480, 750)
+
+
+def test_minutes_beyond_the_hour_are_refused() -> None:
+    with pytest.raises(ValueError):
+        parse_window("08:00-12:70")
+""",
+        imports="from berth_window import parse_window\n",
+    ),
+    hidden_test=_test_module(
+        "berth_window",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_window_reads_as_minutes_past_midnight() -> None:
+    assert parse_window("08:00-12:30") == (480, 750)
+
+
+def test_a_window_running_to_the_end_of_the_day_is_read() -> None:
+    assert parse_window("22:00-24:00") == (1320, 1440)
+
+
+def test_a_window_that_does_not_run_forwards_is_refused() -> None:
+    with pytest.raises(ValueError):
+        parse_window("12:00-09:00")
+""",
+        imports="from berth_window import parse_window\n",
+    ),
+)
+
+_G038 = D2TaskSpec(
+    template_id="d7_error.stall_fallback",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-stall-fallback",
+    module="stall_fallback",
+    module_doc="Falling back to the second source, for the one reason that justifies it.",
+    issue=(
+        "read() is documented to fall back only when the first source cannot find the thing. "
+        "Callers report the fallback hiding faults that have nothing to do with a missing "
+        "record, and an answer of 'nothing' from the first source being overridden by the "
+        "second although 'nothing' was the answer."
+    ),
+    expected=(
+        "read(primary, backup) returns what the primary source answers. Only a LookupError from "
+        "the primary sends the question to the backup; any other error is the caller's to see, "
+        "and an empty answer is still the primary's answer."
+    ),
+    baseline_reason=(
+        "it catches every error the primary can raise rather than the one it knows how to "
+        "survive, and it treats an empty answer as no answer at all"
+    ),
+    edge_cases=(
+        "an empty answer is still the primary's answer",
+        "an error that is not a lookup failure reaches the caller",
+    ),
+    baseline="""def read(primary, backup):
+    \"\"\"Read from the primary source, falling back to the backup.\"\"\"
+    try:
+        value = primary()
+    except Exception:
+        return backup()
+    if not value:
+        return backup()
+    return value""",
+    variant_one="""def read(primary, backup):
+    \"\"\"Read from the primary source, falling back to the backup.\"\"\"
+    try:
+        return primary()
+    except LookupError:
+        return backup()""",
+    variant_two="""def read(primary, backup):
+    \"\"\"Read from the primary source, falling back to the backup.\"\"\"
+    answered = False
+    value = None
+    try:
+        value = primary()
+        answered = True
+    except LookupError:
+        answered = False
+    return value if answered else backup()""",
+    variant_three="""def read(primary, backup):
+    \"\"\"Read from the primary source, falling back to the backup.\"\"\"
+    try:
+        value = primary()
+    except LookupError:
+        return backup()
+    if not value:
+        return backup()
+    return value""",
+    variant_four="""def read(primary, backup):
+    \"\"\"Read from the primary source, falling back to the backup.\"\"\"
+    try:
+        return primary()
+    except Exception:
+        return backup()""",
+    visible_test=_test_module(
+        "stall_fallback",
+        "Published contract for reading with a fallback.",
+        """
+def _missing():
+    raise LookupError("no record")
+
+
+def test_the_primary_answer_is_the_answer() -> None:
+    assert read(lambda: "first", lambda: "second") == "first"
+
+
+def test_a_missing_record_goes_to_the_backup() -> None:
+    assert read(_missing, lambda: "second") == "second"
+""",
+        imports="from stall_fallback import read\n",
+    ),
+    hidden_test=_test_module(
+        "stall_fallback",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def _broken():
+    raise ValueError("the source is on fire")
+
+
+def test_the_primary_answer_is_the_answer() -> None:
+    assert read(lambda: "first", lambda: "second") == "first"
+
+
+def test_an_empty_answer_is_still_the_primarys_answer() -> None:
+    assert read(lambda: "", lambda: "second") == ""
+
+
+def test_an_error_that_is_not_a_lookup_failure_reaches_the_caller() -> None:
+    with pytest.raises(ValueError):
+        read(_broken, lambda: "second")
+""",
+        imports="from stall_fallback import read\n",
+    ),
+)
+
+_G039 = D2TaskSpec(
+    template_id="d7_state.crate_move",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-crate-move",
+    module="crate_move",
+    module_doc="Moving an item between crates, so that it is in exactly one of them afterwards.",
+    issue=(
+        "move() is documented to leave an item in the crate it was moved to and nowhere else. "
+        "Callers report stock counts doubling because the item stayed in the crate it came "
+        "from, and an item nobody was holding appearing in a crate out of nowhere."
+    ),
+    expected=(
+        "move(crates, item, target) returns the crates with the item in the target crate and in "
+        "no other. An item already in the target leaves the crates as they were, and an item no "
+        "crate holds raises KeyError."
+    ),
+    baseline_reason=(
+        "it adds the item to the target without taking it out of the crate it was in, and it "
+        "never asks whether any crate was holding it"
+    ),
+    edge_cases=(
+        "the item leaves the crate it came from",
+        "an item no crate holds is refused",
+    ),
+    baseline="""def move(crates, item, target):
+    \"\"\"Move an item into the target crate.\"\"\"
+    moved = {name: list(items) for name, items in crates.items()}
+    moved[target].append(item)
+    return moved""",
+    variant_one="""def move(crates, item, target):
+    \"\"\"Move an item into the target crate.\"\"\"
+    source = None
+    for name, items in crates.items():
+        if item in items:
+            source = name
+            break
+    if source is None:
+        raise KeyError(item)
+    moved = {name: list(items) for name, items in crates.items()}
+    if source != target:
+        moved[source].remove(item)
+        moved[target].append(item)
+    return moved""",
+    variant_two="""def move(crates, item, target):
+    \"\"\"Move an item into the target crate.\"\"\"
+    holders = [name for name, items in crates.items() if item in items]
+    if not holders:
+        raise KeyError(item)
+    moved = {}
+    for name, items in crates.items():
+        moved[name] = [held for held in items if held != item or name == target]
+    if holders[0] != target:
+        moved[target].append(item)
+    return moved""",
+    variant_three="""def move(crates, item, target):
+    \"\"\"Move an item into the target crate.\"\"\"
+    moved = {}
+    for name, items in crates.items():
+        moved[name] = [held for held in items if held != item or name == target]
+    if item not in moved[target]:
+        moved[target].append(item)
+    return moved""",
+    variant_four="""def move(crates, item, target):
+    \"\"\"Move an item into the target crate.\"\"\"
+    if not any(item in items for items in crates.values()):
+        raise KeyError(item)
+    moved = {name: list(items) for name, items in crates.items()}
+    moved[target].append(item)
+    return moved""",
+    visible_test=_test_module(
+        "crate_move",
+        "Published contract for moving an item between crates.",
+        """
+def test_the_item_arrives_in_the_target_crate() -> None:
+    assert move({"a": ["p"], "b": []}, "p", "b")["b"] == ["p"]
+
+
+def test_the_crates_keep_their_names() -> None:
+    assert sorted(move({"a": ["p"], "b": []}, "p", "b")) == ["a", "b"]
+""",
+        imports="from crate_move import move\n",
+    ),
+    hidden_test=_test_module(
+        "crate_move",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_the_item_arrives_in_the_target_crate() -> None:
+    assert move({"a": ["p"], "b": []}, "p", "b")["b"] == ["p"]
+
+
+def test_the_item_leaves_the_crate_it_came_from() -> None:
+    assert move({"a": ["p"], "b": []}, "p", "b") == {"a": [], "b": ["p"]}
+
+
+def test_an_item_no_crate_holds_is_refused() -> None:
+    with pytest.raises(KeyError):
+        move({"a": [], "b": []}, "z", "b")
+""",
+        imports="from crate_move import move\n",
+    ),
+)
+
 D7_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G001,
     _G002,
@@ -3272,6 +4198,15 @@ D7_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G028,
     _G029,
     _G030,
+    _G031,
+    _G032,
+    _G033,
+    _G034,
+    _G035,
+    _G036,
+    _G037,
+    _G038,
+    _G039,
 )
 
 __all__ = ["D7_CERTIFICATION_SPECS", "D2TaskSpec", "RealityTaskFamily", "_test_module"]
