@@ -1,0 +1,450 @@
+{
+ "class_diagnostic": {
+  "channels": [
+   "candidate_source_ast_node_count",
+   "statement_graph_node_count",
+   "statement_graph_edge_count",
+   "statement_graph_path_count",
+   "declared_verifier_capability_count",
+   "missing_value_indicators",
+   "repair_containment_share"
+  ],
+  "containment_rung_alone_first_choice": {
+   "d5_calibration": "0.92",
+   "d6_certification": "0.84"
+  },
+  "diagnostic_admission_simulation": {
+   "admitted": 46,
+   "alpha": "0.20",
+   "changed_against_the_strongest_rung": 36,
+   "coverage": 0.46,
+   "error_upper_bound_95": 0.063049,
+   "errors_admitted": 0,
+   "first_choice_rate_over_admitted": "1",
+   "projected_changed_final_decisions": "46.95652173913043478260869565",
+   "quantile_exists": true,
+   "quantile_rank": 6,
+   "threshold": "1.109629",
+   "wrong_decisions_in_the_conformal_half": 6
+  },
+  "first_choice_rate": {
+   "d5_calibration": "0.94",
+   "d6_certification": "0.84"
+  },
+  "fit_rule": "assemble each candidate's seven relational channels — the six sealed v2 scalars unchanged, then the repair-containment share computed from the group's baseline and candidate sources; collect every within-group accepted-minus-rejected channel difference over the declared fitting groups in sorted group order; fit one linear direction by ridge-regularised logistic regression on the antisymmetric pair set (no intercept, zero start, Newton iterations to convergence); rank a group's candidates by their projection onto the direction with ties broken on the baseline order; the decision's confidence is the projection margin between the top two candidates",
+  "fitted_on": {
+   "groups": 180,
+   "pairs": 720,
+   "pool": "the released 180-group fitting pool, its licensed role",
+   "regularization": "1"
+  },
+  "hypothesis_class": "containment-contrastive-linear-v1",
+  "invariance_of_the_containment_ordering": {
+   "cases_evaluated": 600,
+   "eligible_groups": 100,
+   "ineligible_groups": 0,
+   "ordering_changes": 0
+  },
+  "model_hash": "d80160c4aa795fadd98fb4e6d4f64b7b29a2a3685c537454b8aff95daa124859",
+  "sweep": {
+   "d5_calibration": {
+    "best_anywhere": {
+     "admitted": 85,
+     "coverage": 0.85,
+     "error_upper_bound_95": 0.054596,
+     "errors": 1
+    },
+    "best_at_coverage_floor": {
+     "admitted": 85,
+     "coverage": 0.85,
+     "error_upper_bound_95": 0.054596,
+     "errors": 1
+    },
+    "deepest_error_free_prefix_by_margin": 53
+   },
+   "d6_certification": {
+    "best_anywhere": {
+     "admitted": 46,
+     "coverage": 0.46,
+     "error_upper_bound_95": 0.063049,
+     "errors": 0
+    },
+    "best_at_coverage_floor": {
+     "admitted": 46,
+     "coverage": 0.46,
+     "error_upper_bound_95": 0.063049,
+     "errors": 0
+    },
+    "deepest_error_free_prefix_by_margin": 46
+   }
+  },
+  "weights": {
+   "candidate_source_ast_node_count": "5.74588029611",
+   "declared_verifier_capability_count": "0",
+   "missing_value_indicators": "0",
+   "repair_containment_share": "4.69783887164",
+   "statement_graph_edge_count": "-0.0106118431669",
+   "statement_graph_node_count": "0.0183194680177",
+   "statement_graph_path_count": "-1.40466438772"
+  },
+  "what_this_is_not": "a selection. The simulated bar is discarded; the class must be pre-registered and certified on a fresh corpus these spent decisions cannot stand in for"
+ },
+ "final_or_canary_outcomes_inspected": 0,
+ "final_outcomes_inspected": false,
+ "inputs": {
+  "d5_calibration_campaign_sha256": "d50add4a1188f82db7056f4db2ff89a744019a8576ac0fd105db53697bf90cfe",
+  "d5_calibration_matrix_hash": "106061126df8326128a5fea97b3690f5f02465c16805e6742c09cd5e3e7c7ca4",
+  "d5_feature_seals_sha256": "2f4381ccb21d204a22da686d7f5e3feeb6317030b656e98b7a083370a48696ed",
+  "d5_fit_matrix_hash": "2d86677c44b9cdd76a98a60fa8c12e6f5164d51cf1eb4de11eac663b4105d4c5",
+  "d5_fitting_campaign_sha256": "17f2e838979d569e6b87bcd3297ed734bf15c2b6ff1dcc8153c6d6a732cebc6f",
+  "d5_snapshots_sha256": "3c48eddfa11c3ada6e7578aeafedcd22e8ac5b07a90e348f730a5b6bb872bae7",
+  "d6_certification_campaign_sha256": "4ffcfdebf9ff84443f3f44ba4f873de11c72b2f313fe16e53ce3003c176e8875",
+  "d6_certification_matrix_hash": "747eb9664bbcfd3b0abb0859b74e58ec7fb46b9153bab904094b91cded3dcefc",
+  "d6_directions_sha256": "5ce90a641b205a491e07a3e40a9f2c197671f5adb23c329efcdaf56f86b1e4f4",
+  "d6_feature_seals_sha256": "f49bcb0f8b74edd434272b12be8c55a2a9edfb53d887a0ea0fae89ad08d71385",
+  "d6_snapshots_sha256": "8ec9e614013771ef4560baca9837b7831eb735d7a0d2af9af57884f02cddba5b",
+  "selected_direction_model_hash": "9fd297fb407015374485e8f7ef8fbb557e6f89f7ac3286e2572769fdab937d74"
+ },
+ "integrity_content_hash": "9867b6d5d968ddda39a5a2b732db15f7f829f7430b4d207d3fc29041d89b47f0",
+ "recorded_at": "2026-08-10T12:46:00.644897+00:00",
+ "reported_320_direction": {
+  "d5_calibration_first_choice_rate": "0.91",
+  "d6_certification_first_choice_rate": "0.7",
+  "model_hash": "5b15f4af06a2b08d0d8269b59f47127bf97d610a22c12c645f8fbde9fa0f47cd"
+ },
+ "schema_version": 1,
+ "sprint": "21D7",
+ "stage": "groundwork",
+ "stores_opened_for_writing": 0,
+ "transfer_gap": {
+  "baseline_shift_by_rung": [
+   [
+    "fixed_input_order",
+    "0.00"
+   ],
+   [
+    "deterministic_static_ordering",
+    "0.07"
+   ],
+   [
+    "lexical_similarity",
+    "0.21"
+   ]
+  ],
+  "collapsed_reading": "the learned-minus-baseline difference itself collapses: the direction does not transfer, and no admission rule over it ever will",
+  "content_hash": "af3b9873308a1cc4dfa261a17f12ea9e4f1caec52e272cb3981391baf8743f0b",
+  "corpora": [
+   {
+    "content_hash": "f9965de0d3a97eab707c442c1ed7490d500e776b9e25e93b689da46358381b9e",
+    "corpus": "d5_calibration",
+    "groups": 100,
+    "learned_by_family": [
+     [
+      "boundary_collections",
+      "0.8235294117647058823529411765"
+     ],
+     [
+      "data_transformation",
+      "0.8823529411764705882352941176"
+     ],
+     [
+      "error_handling",
+      "0.75"
+     ],
+     [
+      "numeric_logic",
+      "0.9411764705882352941176470588"
+     ],
+     [
+      "parsing_validation",
+      "0.9411764705882352941176470588"
+     ],
+     [
+      "state_idempotency",
+      "0.9375"
+     ]
+    ],
+    "learned_first_choice_rate": "0.88",
+    "learned_minus_strongest": "0.46",
+    "matrix_hash": "106061126df8326128a5fea97b3690f5f02465c16805e6742c09cd5e3e7c7ca4",
+    "rungs": [
+     {
+      "by_family": [
+       [
+        "boundary_collections",
+        "0.2941176470588235294117647059"
+       ],
+       [
+        "data_transformation",
+        "0.5882352941176470588235294118"
+       ],
+       [
+        "error_handling",
+        "0.375"
+       ],
+       [
+        "numeric_logic",
+        "0.2941176470588235294117647059"
+       ],
+       [
+        "parsing_validation",
+        "0.2941176470588235294117647059"
+       ],
+       [
+        "state_idempotency",
+        "0.6875"
+       ]
+      ],
+      "content_hash": "d3fcd729bc44403ef21be59de62382fbbd7eac5fe1ca83bec6ddc1a94cfc959b",
+      "eligible": true,
+      "first_choice_rate": "0.42",
+      "ineligible_reason": null,
+      "rung": "fixed_input_order"
+     },
+     {
+      "by_family": [
+       [
+        "boundary_collections",
+        "0.05882352941176470588235294118"
+       ],
+       [
+        "data_transformation",
+        "0.1764705882352941176470588235"
+       ],
+       [
+        "error_handling",
+        "0.125"
+       ],
+       [
+        "numeric_logic",
+        "0.1176470588235294117647058824"
+       ],
+       [
+        "parsing_validation",
+        "0.05882352941176470588235294118"
+       ],
+       [
+        "state_idempotency",
+        "0"
+       ]
+      ],
+      "content_hash": "e79b3152116fa64b11a9d2051e52fd555d9cce6c51a76477b76ff4779fd17dc7",
+      "eligible": true,
+      "first_choice_rate": "0.09",
+      "ineligible_reason": null,
+      "rung": "deterministic_static_ordering"
+     },
+     {
+      "by_family": [
+       [
+        "boundary_collections",
+        "0.4705882352941176470588235294"
+       ],
+       [
+        "data_transformation",
+        "0.4117647058823529411764705882"
+       ],
+       [
+        "error_handling",
+        "0.375"
+       ],
+       [
+        "numeric_logic",
+        "0.4705882352941176470588235294"
+       ],
+       [
+        "parsing_validation",
+        "0.4117647058823529411764705882"
+       ],
+       [
+        "state_idempotency",
+        "0.3125"
+       ]
+      ],
+      "content_hash": "9f6be91ec220ae13ed26448007ef95cae4a0994cb2031511f809d0ddf699a588",
+      "eligible": true,
+      "first_choice_rate": "0.41",
+      "ineligible_reason": null,
+      "rung": "lexical_similarity"
+     },
+     {
+      "by_family": [],
+      "content_hash": "50fa4d6dd0208c6d35e9e8679244b90548381943e4ae50c1101bd5dd0e930262",
+      "eligible": false,
+      "first_choice_rate": null,
+      "ineligible_reason": "ineligible on this surface; the released ladder records the reason",
+      "rung": "frozen_minilm_cosine"
+     },
+     {
+      "by_family": [],
+      "content_hash": "463c5388588936e25abd0893bc1bda1e91b651b4065200df8363bc09a23b35ba",
+      "eligible": false,
+      "first_choice_rate": null,
+      "ineligible_reason": "ineligible on this surface; the released ladder records the reason",
+      "rung": "width_20_bounded_graph"
+     }
+    ],
+    "strongest_rung": "fixed_input_order",
+    "strongest_rung_rate": "0.42"
+   },
+   {
+    "content_hash": "1d958b8def68057704e945c7d18ffd9c5a84d3461016794c844246bbc05dc4da",
+    "corpus": "d6_certification",
+    "groups": 100,
+    "learned_by_family": [
+     [
+      "boundary_collections",
+      "0.8235294117647058823529411765"
+     ],
+     [
+      "data_transformation",
+      "0.5882352941176470588235294118"
+     ],
+     [
+      "error_handling",
+      "0.7647058823529411764705882353"
+     ],
+     [
+      "numeric_logic",
+      "0.7058823529411764705882352941"
+     ],
+     [
+      "parsing_validation",
+      "0.875"
+     ],
+     [
+      "state_idempotency",
+      "0.8125"
+     ]
+    ],
+    "learned_first_choice_rate": "0.76",
+    "learned_minus_strongest": "0.14",
+    "matrix_hash": "747eb9664bbcfd3b0abb0859b74e58ec7fb46b9153bab904094b91cded3dcefc",
+    "rungs": [
+     {
+      "by_family": [
+       [
+        "boundary_collections",
+        "0.4705882352941176470588235294"
+       ],
+       [
+        "data_transformation",
+        "0.4705882352941176470588235294"
+       ],
+       [
+        "error_handling",
+        "0.4705882352941176470588235294"
+       ],
+       [
+        "numeric_logic",
+        "0.3529411764705882352941176471"
+       ],
+       [
+        "parsing_validation",
+        "0.4375"
+       ],
+       [
+        "state_idempotency",
+        "0.3125"
+       ]
+      ],
+      "content_hash": "c6fe78de4f391259d853c68cc4062a357afc06bdb834f5dff6448a5983fcc8ed",
+      "eligible": true,
+      "first_choice_rate": "0.42",
+      "ineligible_reason": null,
+      "rung": "fixed_input_order"
+     },
+     {
+      "by_family": [
+       [
+        "boundary_collections",
+        "0.2941176470588235294117647059"
+       ],
+       [
+        "data_transformation",
+        "0.2352941176470588235294117647"
+       ],
+       [
+        "error_handling",
+        "0.1176470588235294117647058824"
+       ],
+       [
+        "numeric_logic",
+        "0.1764705882352941176470588235"
+       ],
+       [
+        "parsing_validation",
+        "0"
+       ],
+       [
+        "state_idempotency",
+        "0.125"
+       ]
+      ],
+      "content_hash": "4f35b8bb92fc30aa3eb85e545acacb7018e09bad0bb64997dbed1fb38deecec9",
+      "eligible": true,
+      "first_choice_rate": "0.16",
+      "ineligible_reason": null,
+      "rung": "deterministic_static_ordering"
+     },
+     {
+      "by_family": [
+       [
+        "boundary_collections",
+        "0.7647058823529411764705882353"
+       ],
+       [
+        "data_transformation",
+        "0.5294117647058823529411764706"
+       ],
+       [
+        "error_handling",
+        "0.6470588235294117647058823529"
+       ],
+       [
+        "numeric_logic",
+        "0.4705882352941176470588235294"
+       ],
+       [
+        "parsing_validation",
+        "0.625"
+       ],
+       [
+        "state_idempotency",
+        "0.6875"
+       ]
+      ],
+      "content_hash": "c2e3b2a87f72a0aa4bf39a0da80533532ae59480fb5aea1397611ca3c7e2f74a",
+      "eligible": true,
+      "first_choice_rate": "0.62",
+      "ineligible_reason": null,
+      "rung": "lexical_similarity"
+     },
+     {
+      "by_family": [],
+      "content_hash": "50fa4d6dd0208c6d35e9e8679244b90548381943e4ae50c1101bd5dd0e930262",
+      "eligible": false,
+      "first_choice_rate": null,
+      "ineligible_reason": "ineligible on this surface; the released ladder records the reason",
+      "rung": "frozen_minilm_cosine"
+     },
+     {
+      "by_family": [],
+      "content_hash": "463c5388588936e25abd0893bc1bda1e91b651b4065200df8363bc09a23b35ba",
+      "eligible": false,
+      "first_choice_rate": null,
+      "ineligible_reason": "ineligible on this surface; the released ladder records the reason",
+      "rung": "width_20_bounded_graph"
+     }
+    ],
+    "strongest_rung": "lexical_similarity",
+    "strongest_rung_rate": "0.62"
+   }
+  ],
+  "difference_shift": "-0.32",
+  "learned_shift": "-0.12",
+  "measured_at": "2026-08-10T12:46:00.644897Z",
+  "revision": 1,
+  "stable_reading": "the learned-minus-baseline difference is stable across corpora and only the absolute rates move: the transfer gap is corpus difficulty and the confidence axis is exhausted"
+ }
+}
