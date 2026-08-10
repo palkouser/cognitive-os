@@ -1586,6 +1586,1822 @@ def test_an_undelivered_message_is_refused() -> None:
     ),
 )
 
+_G021 = D2TaskSpec(
+    template_id="d6_boundary.plateau_spans",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d6-boundary-plateau-spans",
+    module="plateau_spans",
+    module_doc="Reporting the runs of equal consecutive values in a series.",
+    issue=(
+        "plateau_spans() is documented to report every run of equal consecutive values that is "
+        "long enough. Callers report that a run reaching the end of the series is missing, and "
+        "that a run exactly as long as the stated minimum is left out."
+    ),
+    expected=(
+        "plateau_spans(values, minimum) returns one (start, length) pair for every maximal run "
+        "of equal consecutive values whose length is at least minimum, including the run that "
+        "ends the series."
+    ),
+    baseline_reason=(
+        "it emits a run only when the value changes, so the final run is never emitted, and it "
+        "compares the length with a strict greater-than"
+    ),
+    edge_cases=(
+        "the run that reaches the end of the series is reported",
+        "a run exactly as long as the minimum is reported",
+    ),
+    baseline="""def plateau_spans(values, minimum):
+    \"\"\"Return (start, length) for each long enough run of equal values.\"\"\"
+    spans = []
+    start = 0
+    for position in range(1, len(values)):
+        if values[position] != values[start]:
+            if position - start > minimum:
+                spans.append((start, position - start))
+            start = position
+    return spans""",
+    variant_one="""def plateau_spans(values, minimum):
+    \"\"\"Return (start, length) for each long enough run of equal values.\"\"\"
+    spans = []
+    start = 0
+    for position in range(1, len(values) + 1):
+        if position == len(values) or values[position] != values[start]:
+            if position - start >= minimum:
+                spans.append((start, position - start))
+            start = position
+    return spans""",
+    variant_two="""def plateau_spans(values, minimum):
+    \"\"\"Return (start, length) for each long enough run of equal values.\"\"\"
+    runs = []
+    for index, value in enumerate(values):
+        if runs and runs[-1][2] == value:
+            runs[-1][1] += 1
+        else:
+            runs.append([index, 1, value])
+    return [(start, length) for start, length, _value in runs if length >= minimum]""",
+    variant_three="""def plateau_spans(values, minimum):
+    \"\"\"Return (start, length) for each long enough run of equal values.\"\"\"
+    spans = []
+    start = 0
+    for position in range(1, len(values) + 1):
+        if position == len(values) or values[position] != values[start]:
+            if position - start > minimum:
+                spans.append((start, position - start))
+            start = position
+    return spans""",
+    variant_four="""def plateau_spans(values, minimum):
+    \"\"\"Return (start, length) for each long enough run of equal values.\"\"\"
+    spans = []
+    start = 0
+    for position in range(1, len(values)):
+        if values[position] != values[start]:
+            if position - start >= minimum:
+                spans.append((start, position - start))
+            start = position
+    return spans""",
+    visible_test=_test_module(
+        "plateau_spans",
+        "Published contract for reporting runs of equal values.",
+        """
+def test_runs_longer_than_the_minimum_are_reported() -> None:
+    assert plateau_spans([1, 1, 1, 2, 2, 2, 7], 2) == [(0, 3), (3, 3)]
+
+
+def test_a_series_of_one_run_below_the_minimum_reports_nothing() -> None:
+    assert plateau_spans([4, 9], 2) == []
+""",
+        imports="from plateau_spans import plateau_spans\n",
+    ),
+    hidden_test=_test_module(
+        "plateau_spans",
+        "The part of the contract the published tests do not state.",
+        """
+def test_runs_longer_than_the_minimum_are_reported() -> None:
+    assert plateau_spans([1, 1, 1, 2, 2, 2, 7], 2) == [(0, 3), (3, 3)]
+
+
+def test_the_run_reaching_the_end_is_reported() -> None:
+    assert plateau_spans([4, 4, 4, 5, 5, 5], 2) == [(0, 3), (3, 3)]
+
+
+def test_a_run_exactly_as_long_as_the_minimum_is_reported() -> None:
+    assert plateau_spans([8, 8, 9, 9, 9, 1], 2) == [(0, 2), (2, 3)]
+""",
+        imports="from plateau_spans import plateau_spans\n",
+    ),
+)
+
+_G022 = D2TaskSpec(
+    template_id="d6_boundary.anchor_spans",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d6-boundary-anchor-spans",
+    module="anchor_spans",
+    module_doc="Working out how far each anchor reaches before the next one.",
+    issue=(
+        "anchor_spans() is documented to pair each anchor with the distance to the next one. "
+        "Callers report that an anchor sitting at offset zero disappears from the result, and "
+        "that two anchors at the same offset produce a span of length zero instead of one span."
+    ),
+    expected=(
+        "anchor_spans(anchors, total) returns one (offset, span) pair per distinct anchor, in "
+        "order, where the span reaches the next distinct anchor and the last reaches total. An "
+        "anchor at offset zero is an anchor like any other."
+    ),
+    baseline_reason=(
+        "it skips an anchor whose offset is falsy and it does not collapse repeated offsets"
+    ),
+    edge_cases=(
+        "an anchor at offset zero is kept",
+        "repeated offsets collapse into one span",
+    ),
+    baseline="""def anchor_spans(anchors, total):
+    \"\"\"Pair each anchor with the distance to the next one.\"\"\"
+    spans = []
+    for index, offset in enumerate(anchors):
+        if not offset:
+            continue
+        if index + 1 < len(anchors):
+            spans.append((offset, anchors[index + 1] - offset))
+        else:
+            spans.append((offset, total - offset))
+    return spans""",
+    variant_one="""def anchor_spans(anchors, total):
+    \"\"\"Pair each anchor with the distance to the next one.\"\"\"
+    distinct = []
+    for offset in anchors:
+        if not distinct or distinct[-1] != offset:
+            distinct.append(offset)
+    spans = []
+    for index, offset in enumerate(distinct):
+        following = distinct[index + 1] if index + 1 < len(distinct) else total
+        spans.append((offset, following - offset))
+    return spans""",
+    variant_two="""def anchor_spans(anchors, total):
+    \"\"\"Pair each anchor with the distance to the next one.\"\"\"
+    seen = []
+    for offset in anchors:
+        if offset not in seen:
+            seen.append(offset)
+    edges = [*seen, total]
+    return [(edges[index], edges[index + 1] - edges[index]) for index in range(len(seen))]""",
+    variant_three="""def anchor_spans(anchors, total):
+    \"\"\"Pair each anchor with the distance to the next one.\"\"\"
+    spans = []
+    for index, offset in enumerate(anchors):
+        if index + 1 < len(anchors):
+            spans.append((offset, anchors[index + 1] - offset))
+        else:
+            spans.append((offset, total - offset))
+    return spans""",
+    variant_four="""def anchor_spans(anchors, total):
+    \"\"\"Pair each anchor with the distance to the next one.\"\"\"
+    distinct = []
+    for offset in anchors:
+        if not offset:
+            continue
+        if not distinct or distinct[-1] != offset:
+            distinct.append(offset)
+    spans = []
+    for index, offset in enumerate(distinct):
+        following = distinct[index + 1] if index + 1 < len(distinct) else total
+        spans.append((offset, following - offset))
+    return spans""",
+    visible_test=_test_module(
+        "anchor_spans",
+        "Published contract for measuring the reach of each anchor.",
+        """
+def test_each_anchor_reaches_the_next_one() -> None:
+    assert anchor_spans([2, 5], 9) == [(2, 3), (5, 4)]
+
+
+def test_a_single_anchor_reaches_the_total() -> None:
+    assert anchor_spans([3], 8) == [(3, 5)]
+""",
+        imports="from anchor_spans import anchor_spans\n",
+    ),
+    hidden_test=_test_module(
+        "anchor_spans",
+        "The part of the contract the published tests do not state.",
+        """
+def test_each_anchor_reaches_the_next_one() -> None:
+    assert anchor_spans([2, 5], 9) == [(2, 3), (5, 4)]
+
+
+def test_an_anchor_at_offset_zero_is_kept() -> None:
+    assert anchor_spans([0, 4], 8) == [(0, 4), (4, 4)]
+
+
+def test_repeated_offsets_collapse_into_one_span() -> None:
+    assert anchor_spans([1, 1, 6], 9) == [(1, 5), (6, 3)]
+""",
+        imports="from anchor_spans import anchor_spans\n",
+    ),
+)
+
+_G023 = D2TaskSpec(
+    template_id="d6_transform.slab_index",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d6-transform-slab-index",
+    module="slab_index",
+    module_doc="Numbering the fixed-size slabs a run of positions falls into.",
+    issue=(
+        "slab_index() is documented to give each position the number of the slab it belongs to. "
+        "Callers report that a slab size of one puts every position in slab zero, and that the "
+        "positions of a trailing partial slab are numbered as though they were in the one before."
+    ),
+    expected=(
+        "slab_index(count, size) returns one slab number per position: position // size, so a "
+        "size of one numbers every position separately and a trailing partial slab gets a number "
+        "of its own."
+    ),
+    baseline_reason=(
+        "it short-circuits a size of one or less to a single slab and it clamps the number to "
+        "the count of whole slabs"
+    ),
+    edge_cases=(
+        "a slab size of one numbers every position separately",
+        "a trailing partial slab gets a number of its own",
+    ),
+    baseline="""def slab_index(count, size):
+    \"\"\"Return the slab number of each of `count` positions.\"\"\"
+    if size <= 1:
+        return [0] * count
+    highest = count // size - 1
+    return [min(position // size, highest) for position in range(count)]""",
+    variant_one="""def slab_index(count, size):
+    \"\"\"Return the slab number of each of `count` positions.\"\"\"
+    return [position // size for position in range(count)]""",
+    variant_two="""def slab_index(count, size):
+    \"\"\"Return the slab number of each of `count` positions.\"\"\"
+    numbers = []
+    slab = 0
+    filled = 0
+    for _position in range(count):
+        if filled == size:
+            slab += 1
+            filled = 0
+        numbers.append(slab)
+        filled += 1
+    return numbers""",
+    variant_three="""def slab_index(count, size):
+    \"\"\"Return the slab number of each of `count` positions.\"\"\"
+    highest = count // size - 1
+    return [min(position // size, highest) for position in range(count)]""",
+    variant_four="""def slab_index(count, size):
+    \"\"\"Return the slab number of each of `count` positions.\"\"\"
+    if size <= 1:
+        return [0] * count
+    return [position // size for position in range(count)]""",
+    visible_test=_test_module(
+        "slab_index",
+        "Published contract for numbering fixed-size slabs.",
+        """
+def test_whole_slabs_are_numbered_in_order() -> None:
+    assert slab_index(6, 3) == [0, 0, 0, 1, 1, 1]
+
+
+def test_a_single_whole_slab_is_slab_zero() -> None:
+    assert slab_index(2, 2) == [0, 0]
+""",
+        imports="from slab_index import slab_index\n",
+    ),
+    hidden_test=_test_module(
+        "slab_index",
+        "The part of the contract the published tests do not state.",
+        """
+def test_whole_slabs_are_numbered_in_order() -> None:
+    assert slab_index(6, 3) == [0, 0, 0, 1, 1, 1]
+
+
+def test_a_slab_size_of_one_numbers_every_position() -> None:
+    assert slab_index(4, 1) == [0, 1, 2, 3]
+
+
+def test_a_trailing_partial_slab_gets_its_own_number() -> None:
+    assert slab_index(7, 3) == [0, 0, 0, 1, 1, 1, 2]
+""",
+        imports="from slab_index import slab_index\n",
+    ),
+)
+
+_G024 = D2TaskSpec(
+    template_id="d6_transform.stencil_apply",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d6-transform-stencil-apply",
+    module="stencil_apply",
+    module_doc="Selecting items through a stencil of keep-or-drop entries.",
+    issue=(
+        "stencil_apply() is documented to keep the items their stencil marks. Callers report "
+        "that a stencil shorter than the items keeps the uncovered tail anyway, and that a "
+        "stencil written with ones and zeroes keeps nothing at all."
+    ),
+    expected=(
+        "stencil_apply(items, stencil) returns the items whose stencil entry is truthy. Items "
+        "the stencil does not reach are not kept, and any truthy entry keeps its item, not only "
+        "the value True."
+    ),
+    baseline_reason=(
+        "it pads a short stencil with True and it compares each entry with True by identity"
+    ),
+    edge_cases=(
+        "items the stencil does not reach are dropped",
+        "any truthy entry keeps its item",
+    ),
+    baseline="""def stencil_apply(items, stencil):
+    \"\"\"Return the items their stencil marks to keep.\"\"\"
+    padded = list(stencil) + [True] * (len(items) - len(stencil))
+    return [item for item, mark in zip(items, padded) if mark is True]""",
+    variant_one="""def stencil_apply(items, stencil):
+    \"\"\"Return the items their stencil marks to keep.\"\"\"
+    return [item for item, mark in zip(items, stencil) if mark]""",
+    variant_two="""def stencil_apply(items, stencil):
+    \"\"\"Return the items their stencil marks to keep.\"\"\"
+    kept = []
+    for position, item in enumerate(items):
+        if position < len(stencil) and bool(stencil[position]):
+            kept.append(item)
+    return kept""",
+    variant_three="""def stencil_apply(items, stencil):
+    \"\"\"Return the items their stencil marks to keep.\"\"\"
+    return [item for item, mark in zip(items, stencil) if mark is True]""",
+    variant_four="""def stencil_apply(items, stencil):
+    \"\"\"Return the items their stencil marks to keep.\"\"\"
+    padded = list(stencil) + [True] * (len(items) - len(stencil))
+    return [item for item, mark in zip(items, padded) if mark]""",
+    visible_test=_test_module(
+        "stencil_apply",
+        "Published contract for selecting items through a stencil.",
+        """
+def test_marked_items_are_kept() -> None:
+    assert stencil_apply([10, 20, 30], [True, False, True]) == [10, 30]
+
+
+def test_an_all_false_stencil_keeps_nothing() -> None:
+    assert stencil_apply([1, 2], [False, False]) == []
+""",
+        imports="from stencil_apply import stencil_apply\n",
+    ),
+    hidden_test=_test_module(
+        "stencil_apply",
+        "The part of the contract the published tests do not state.",
+        """
+def test_marked_items_are_kept() -> None:
+    assert stencil_apply([10, 20, 30], [True, False, True]) == [10, 30]
+
+
+def test_items_the_stencil_does_not_reach_are_dropped() -> None:
+    assert stencil_apply([10, 20, 30], [True]) == [10]
+
+
+def test_any_truthy_entry_keeps_its_item() -> None:
+    assert stencil_apply([10, 20, 30], [1, 0, "yes"]) == [10, 30]
+""",
+        imports="from stencil_apply import stencil_apply\n",
+    ),
+)
+
+_G025 = D2TaskSpec(
+    template_id="d6_error.embargo_guard",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d6-error-embargo-guard",
+    module="embargo_guard",
+    module_doc="Refusing work that is attempted before its embargo lifts.",
+    issue=(
+        "check_embargo() is documented to refuse work attempted before an embargo lifts. "
+        "Callers report that an attempt exactly at the moment the embargo lifts is refused, and "
+        "that an item with no embargo at all fails with a TypeError instead of being allowed."
+    ),
+    expected=(
+        "check_embargo(now, embargo) raises PermissionError while now is strictly before "
+        "embargo, and returns None otherwise. An embargo of None places no restriction."
+    ),
+    baseline_reason=(
+        "it refuses on a non-strict comparison and it compares against None instead of treating "
+        "a missing embargo as unrestricted"
+    ),
+    edge_cases=(
+        "an attempt exactly when the embargo lifts is allowed",
+        "a missing embargo places no restriction",
+    ),
+    baseline="""def check_embargo(now, embargo):
+    \"\"\"Refuse work attempted before `embargo`.\"\"\"
+    if now <= embargo:
+        raise PermissionError("embargoed")
+    return None""",
+    variant_one="""def check_embargo(now, embargo):
+    \"\"\"Refuse work attempted before `embargo`.\"\"\"
+    if embargo is None:
+        return None
+    if now < embargo:
+        raise PermissionError("embargoed")
+    return None""",
+    variant_two="""def check_embargo(now, embargo):
+    \"\"\"Refuse work attempted before `embargo`.\"\"\"
+    embargoed = embargo is not None and now < embargo
+    if embargoed:
+        raise PermissionError("embargoed")
+    return None""",
+    variant_three="""def check_embargo(now, embargo):
+    \"\"\"Refuse work attempted before `embargo`.\"\"\"
+    if now < embargo:
+        raise PermissionError("embargoed")
+    return None""",
+    variant_four="""def check_embargo(now, embargo):
+    \"\"\"Refuse work attempted before `embargo`.\"\"\"
+    if embargo is None:
+        return None
+    if now <= embargo:
+        raise PermissionError("embargoed")
+    return None""",
+    visible_test=_test_module(
+        "embargo_guard",
+        "Published contract for refusing embargoed work.",
+        """
+import pytest
+
+from embargo_guard import check_embargo
+
+
+def test_an_attempt_after_the_embargo_is_allowed() -> None:
+    assert check_embargo(10, 5) is None
+
+
+def test_an_attempt_before_the_embargo_is_refused() -> None:
+    with pytest.raises(PermissionError):
+        check_embargo(2, 5)
+""",
+    ),
+    hidden_test=_test_module(
+        "embargo_guard",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from embargo_guard import check_embargo
+
+
+def test_an_attempt_after_the_embargo_is_allowed() -> None:
+    assert check_embargo(10, 5) is None
+
+
+def test_an_attempt_exactly_when_the_embargo_lifts_is_allowed() -> None:
+    assert check_embargo(5, 5) is None
+
+
+def test_a_missing_embargo_places_no_restriction() -> None:
+    assert check_embargo(3, None) is None
+""",
+    ),
+)
+
+_G026 = D2TaskSpec(
+    template_id="d6_error.escrow_release",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d6-error-escrow-release",
+    module="escrow_release",
+    module_doc="Releasing a held amount, once, and objecting when there is nothing to release.",
+    issue=(
+        "release() is documented to hand back a held amount and to object when it cannot. "
+        "Callers report that releasing a key nobody holds quietly returns zero, and that "
+        "releasing a hold that was already handed back returns zero as well."
+    ),
+    expected=(
+        "release(holds, key) returns the amount held under key. An unknown key raises KeyError. "
+        "A hold already released, recorded as None, raises RuntimeError."
+    ),
+    baseline_reason=(
+        "it defaults an unknown key to zero and it turns an already-released hold into zero "
+        "instead of objecting"
+    ),
+    edge_cases=(
+        "an unknown key is refused with KeyError",
+        "an already-released hold is refused with RuntimeError",
+    ),
+    baseline="""def release(holds, key):
+    \"\"\"Return the amount held under `key`.\"\"\"
+    amount = holds.get(key, 0)
+    if amount is None:
+        return 0
+    return amount""",
+    variant_one="""def release(holds, key):
+    \"\"\"Return the amount held under `key`.\"\"\"
+    if key not in holds:
+        raise KeyError(key)
+    amount = holds[key]
+    if amount is None:
+        raise RuntimeError("already released")
+    return amount""",
+    variant_two="""def release(holds, key):
+    \"\"\"Return the amount held under `key`.\"\"\"
+    missing = object()
+    amount = holds.get(key, missing)
+    if amount is missing:
+        raise KeyError(key)
+    if amount is None:
+        raise RuntimeError("already released")
+    return amount""",
+    variant_three="""def release(holds, key):
+    \"\"\"Return the amount held under `key`.\"\"\"
+    if key not in holds:
+        raise KeyError(key)
+    amount = holds[key]
+    if amount is None:
+        return 0
+    return amount""",
+    variant_four="""def release(holds, key):
+    \"\"\"Return the amount held under `key`.\"\"\"
+    amount = holds.get(key, 0)
+    if amount is None:
+        raise RuntimeError("already released")
+    return amount""",
+    visible_test=_test_module(
+        "escrow_release",
+        "Published contract for releasing a held amount.",
+        """
+def test_a_held_amount_is_returned() -> None:
+    assert release({"a": 30}, "a") == 30
+
+
+def test_a_zero_hold_is_returned_as_zero() -> None:
+    assert release({"b": 0}, "b") == 0
+""",
+        imports="from escrow_release import release\n",
+    ),
+    hidden_test=_test_module(
+        "escrow_release",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from escrow_release import release
+
+
+def test_a_held_amount_is_returned() -> None:
+    assert release({"a": 30}, "a") == 30
+
+
+def test_an_unknown_key_is_refused() -> None:
+    with pytest.raises(KeyError):
+        release({}, "ghost")
+
+
+def test_an_already_released_hold_is_refused() -> None:
+    with pytest.raises(RuntimeError):
+        release({"a": None}, "a")
+""",
+    ),
+)
+
+_G027 = D2TaskSpec(
+    template_id="d6_numeric.ratchet_value",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d6-numeric-ratchet-value",
+    module="ratchet_value",
+    module_doc="Moving a value that is only ever allowed to climb.",
+    issue=(
+        "ratchet() is documented to keep the higher of the value it holds and the one proposed. "
+        "Callers report that the first proposal is floored at zero when it is negative, and "
+        "that proposing the value it already holds raises instead of leaving it alone."
+    ),
+    expected=(
+        "ratchet(previous, proposed) returns the greater of the two. When previous is None the "
+        "proposal is taken as given, negative or not. A proposal equal to previous returns that "
+        "value unchanged."
+    ),
+    baseline_reason=(
+        "it substitutes zero for a missing previous value and it objects to an equal proposal"
+    ),
+    edge_cases=(
+        "a first proposal is taken as given, even a negative one",
+        "an equal proposal returns the value unchanged",
+    ),
+    baseline="""def ratchet(previous, proposed):
+    \"\"\"Return the higher of the held and the proposed value.\"\"\"
+    if proposed == previous:
+        raise ValueError("no movement")
+    return max(previous or 0, proposed)""",
+    variant_one="""def ratchet(previous, proposed):
+    \"\"\"Return the higher of the held and the proposed value.\"\"\"
+    if previous is None:
+        return proposed
+    return max(previous, proposed)""",
+    variant_two="""def ratchet(previous, proposed):
+    \"\"\"Return the higher of the held and the proposed value.\"\"\"
+    if previous is None or proposed > previous:
+        return proposed
+    return previous""",
+    variant_three="""def ratchet(previous, proposed):
+    \"\"\"Return the higher of the held and the proposed value.\"\"\"
+    if proposed == previous:
+        raise ValueError("no movement")
+    if previous is None:
+        return proposed
+    return max(previous, proposed)""",
+    variant_four="""def ratchet(previous, proposed):
+    \"\"\"Return the higher of the held and the proposed value.\"\"\"
+    return max(previous or 0, proposed)""",
+    visible_test=_test_module(
+        "ratchet_value",
+        "Published contract for a value that only climbs.",
+        """
+def test_a_higher_proposal_is_taken() -> None:
+    assert ratchet(5, 8) == 8
+
+
+def test_a_lower_proposal_is_ignored() -> None:
+    assert ratchet(9, 4) == 9
+""",
+        imports="from ratchet_value import ratchet\n",
+    ),
+    hidden_test=_test_module(
+        "ratchet_value",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_higher_proposal_is_taken() -> None:
+    assert ratchet(5, 8) == 8
+
+
+def test_a_first_proposal_is_taken_as_given() -> None:
+    assert ratchet(None, -3) == -3
+
+
+def test_an_equal_proposal_leaves_the_value_alone() -> None:
+    assert ratchet(4, 4) == 4
+""",
+        imports="from ratchet_value import ratchet\n",
+    ),
+)
+
+_G028 = D2TaskSpec(
+    template_id="d6_numeric.cadence_beats",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d6-numeric-cadence-beats",
+    module="cadence_beats",
+    module_doc="Counting how many evenly spaced beats fall inside a span.",
+    issue=(
+        "beats_within() is documented to count the beats of a cadence that fall inside a span. "
+        "Callers report that a beat landing exactly on the end of the span is not counted, and "
+        "that a cadence of zero fails with a ZeroDivisionError instead of being refused."
+    ),
+    expected=(
+        "beats_within(total, cadence) returns how many multiples of cadence, counting from one, "
+        "are less than or equal to total. A cadence of zero or less raises ValueError."
+    ),
+    baseline_reason=(
+        "it counts against one less than the total and it divides before checking the cadence"
+    ),
+    edge_cases=(
+        "a beat landing exactly on the end of the span is counted",
+        "a cadence of zero is refused with ValueError",
+    ),
+    baseline="""def beats_within(total, cadence):
+    \"\"\"Count the beats of `cadence` that fall inside `total`.\"\"\"
+    return (total - 1) // cadence""",
+    variant_one="""def beats_within(total, cadence):
+    \"\"\"Count the beats of `cadence` that fall inside `total`.\"\"\"
+    if cadence <= 0:
+        raise ValueError("cadence must be positive")
+    return total // cadence""",
+    variant_two="""def beats_within(total, cadence):
+    \"\"\"Count the beats of `cadence` that fall inside `total`.\"\"\"
+    if not cadence > 0:
+        raise ValueError("cadence must be positive")
+    counted = 0
+    beat = cadence
+    while beat <= total:
+        counted += 1
+        beat += cadence
+    return counted""",
+    variant_three="""def beats_within(total, cadence):
+    \"\"\"Count the beats of `cadence` that fall inside `total`.\"\"\"
+    return total // cadence""",
+    variant_four="""def beats_within(total, cadence):
+    \"\"\"Count the beats of `cadence` that fall inside `total`.\"\"\"
+    if cadence <= 0:
+        raise ValueError("cadence must be positive")
+    return (total - 1) // cadence""",
+    visible_test=_test_module(
+        "cadence_beats",
+        "Published contract for counting evenly spaced beats.",
+        """
+def test_beats_inside_the_span_are_counted() -> None:
+    assert beats_within(10, 3) == 3
+
+
+def test_a_span_shorter_than_one_beat_counts_none() -> None:
+    assert beats_within(2, 5) == 0
+""",
+        imports="from cadence_beats import beats_within\n",
+    ),
+    hidden_test=_test_module(
+        "cadence_beats",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from cadence_beats import beats_within
+
+
+def test_beats_inside_the_span_are_counted() -> None:
+    assert beats_within(10, 3) == 3
+
+
+def test_a_beat_landing_on_the_end_is_counted() -> None:
+    assert beats_within(9, 3) == 3
+
+
+def test_a_cadence_of_zero_is_refused() -> None:
+    with pytest.raises(ValueError):
+        beats_within(5, 0)
+""",
+    ),
+)
+
+_G029 = D2TaskSpec(
+    template_id="d6_parsing.nesting_depth",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d6-parsing-nesting-depth",
+    module="nesting_depth",
+    module_doc="Measuring how deeply round brackets nest in a line of text.",
+    issue=(
+        "nesting_depth() is documented to measure how deeply round brackets nest. Callers "
+        "report that a closing bracket with nothing to close is accepted rather than refused, "
+        "and that brackets written inside a quoted run of text are counted as structure."
+    ),
+    expected=(
+        "nesting_depth(text) returns the greatest depth reached by round brackets. A closing "
+        "bracket with no matching opener raises ValueError. Brackets between single quotes are "
+        "text, not structure."
+    ),
+    baseline_reason=(
+        "it lets the depth fall below zero without objecting and it counts brackets inside quotes"
+    ),
+    edge_cases=(
+        "a closing bracket with no opener is refused",
+        "brackets inside quotes are not structure",
+    ),
+    baseline="""def nesting_depth(text):
+    \"\"\"Return the greatest bracket depth reached in `text`.\"\"\"
+    depth = 0
+    deepest = 0
+    for character in text:
+        if character == "(":
+            depth += 1
+            deepest = max(deepest, depth)
+        elif character == ")":
+            depth -= 1
+    return deepest""",
+    variant_one="""def nesting_depth(text):
+    \"\"\"Return the greatest bracket depth reached in `text`.\"\"\"
+    depth = 0
+    deepest = 0
+    quoted = False
+    for character in text:
+        if character == "'":
+            quoted = not quoted
+        elif quoted:
+            continue
+        elif character == "(":
+            depth += 1
+            deepest = max(deepest, depth)
+        elif character == ")":
+            if depth == 0:
+                raise ValueError("unmatched closing bracket")
+            depth -= 1
+    return deepest""",
+    variant_two="""def nesting_depth(text):
+    \"\"\"Return the greatest bracket depth reached in `text`.\"\"\"
+    structural = []
+    quoted = False
+    for character in text:
+        if character == "'":
+            quoted = not quoted
+            continue
+        if not quoted and character in "()":
+            structural.append(character)
+    depth = 0
+    deepest = 0
+    for character in structural:
+        if character == "(":
+            depth += 1
+            deepest = max(deepest, depth)
+        else:
+            if not depth:
+                raise ValueError("unmatched closing bracket")
+            depth -= 1
+    return deepest""",
+    variant_three="""def nesting_depth(text):
+    \"\"\"Return the greatest bracket depth reached in `text`.\"\"\"
+    depth = 0
+    deepest = 0
+    for character in text:
+        if character == "(":
+            depth += 1
+            deepest = max(deepest, depth)
+        elif character == ")":
+            if depth == 0:
+                raise ValueError("unmatched closing bracket")
+            depth -= 1
+    return deepest""",
+    variant_four="""def nesting_depth(text):
+    \"\"\"Return the greatest bracket depth reached in `text`.\"\"\"
+    depth = 0
+    deepest = 0
+    quoted = False
+    for character in text:
+        if character == "'":
+            quoted = not quoted
+        elif quoted:
+            continue
+        elif character == "(":
+            depth += 1
+            deepest = max(deepest, depth)
+        elif character == ")":
+            depth -= 1
+    return deepest""",
+    visible_test=_test_module(
+        "nesting_depth",
+        "Published contract for measuring bracket nesting.",
+        """
+def test_nested_brackets_reach_their_depth() -> None:
+    assert nesting_depth("a(b(c)d)e") == 2
+
+
+def test_text_without_brackets_has_no_depth() -> None:
+    assert nesting_depth("plain") == 0
+""",
+        imports="from nesting_depth import nesting_depth\n",
+    ),
+    hidden_test=_test_module(
+        "nesting_depth",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from nesting_depth import nesting_depth
+
+
+def test_nested_brackets_reach_their_depth() -> None:
+    assert nesting_depth("a(b(c)d)e") == 2
+
+
+def test_a_closing_bracket_with_no_opener_is_refused() -> None:
+    with pytest.raises(ValueError):
+        nesting_depth("a)b")
+
+
+def test_brackets_inside_quotes_are_not_structure() -> None:
+    assert nesting_depth("a('(((')b") == 1
+""",
+    ),
+)
+
+_G030 = D2TaskSpec(
+    template_id="d6_state.watermark_state",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d6-state-watermark-state",
+    module="watermark_state",
+    module_doc="Keeping the high-water mark of the offsets a reader has processed.",
+    issue=(
+        "advance() is documented to keep the highest offset a reader has processed. Callers "
+        "report that a first offset of zero is not counted as processed, and that replaying an "
+        "older offset drags the mark backwards."
+    ),
+    expected=(
+        "advance(state, offset) returns the state with mark set to the highest offset seen and "
+        "applied counting the offsets that advanced it. A reader that has seen nothing has no "
+        "mark, so a first offset of zero advances it. An offset at or below the mark changes "
+        "nothing."
+    ),
+    baseline_reason=(
+        "it treats a missing mark as zero and it assigns the offset to the mark whether or not "
+        "the offset advanced it"
+    ),
+    edge_cases=(
+        "a first offset of zero advances the mark",
+        "replaying an older offset does not drag the mark back",
+    ),
+    baseline="""def advance(state, offset):
+    \"\"\"Record `offset` against the high-water mark in `state`.\"\"\"
+    mark = state.get("mark", 0)
+    applied = state.get("applied", 0)
+    if offset > mark:
+        applied += 1
+    return {"mark": offset, "applied": applied}""",
+    variant_one="""def advance(state, offset):
+    \"\"\"Record `offset` against the high-water mark in `state`.\"\"\"
+    mark = state.get("mark")
+    applied = state.get("applied", 0)
+    if mark is None or offset > mark:
+        return {"mark": offset, "applied": applied + 1}
+    return {"mark": mark, "applied": applied}""",
+    variant_two="""def advance(state, offset):
+    \"\"\"Record `offset` against the high-water mark in `state`.\"\"\"
+    applied = state.get("applied", 0)
+    if "mark" not in state:
+        return {"mark": offset, "applied": applied + 1}
+    mark = state["mark"]
+    advanced = offset > mark
+    return {"mark": max(mark, offset), "applied": applied + (1 if advanced else 0)}""",
+    variant_three="""def advance(state, offset):
+    \"\"\"Record `offset` against the high-water mark in `state`.\"\"\"
+    mark = state.get("mark")
+    applied = state.get("applied", 0)
+    if mark is None or offset > mark:
+        applied += 1
+    return {"mark": offset, "applied": applied}""",
+    variant_four="""def advance(state, offset):
+    \"\"\"Record `offset` against the high-water mark in `state`.\"\"\"
+    mark = state.get("mark", 0)
+    applied = state.get("applied", 0)
+    if offset > mark:
+        return {"mark": offset, "applied": applied + 1}
+    return {"mark": mark, "applied": applied}""",
+    visible_test=_test_module(
+        "watermark_state",
+        "Published contract for a reader's high-water mark.",
+        """
+def test_a_first_offset_advances_the_mark() -> None:
+    assert advance({}, 5) == {"mark": 5, "applied": 1}
+
+
+def test_a_higher_offset_advances_the_mark() -> None:
+    assert advance({"mark": 5, "applied": 1}, 9) == {"mark": 9, "applied": 2}
+""",
+        imports="from watermark_state import advance\n",
+    ),
+    hidden_test=_test_module(
+        "watermark_state",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_first_offset_advances_the_mark() -> None:
+    assert advance({}, 5) == {"mark": 5, "applied": 1}
+
+
+def test_a_first_offset_of_zero_advances_the_mark() -> None:
+    assert advance({}, 0) == {"mark": 0, "applied": 1}
+
+
+def test_replaying_an_older_offset_does_not_drag_the_mark_back() -> None:
+    assert advance({"mark": 7, "applied": 1}, 3) == {"mark": 7, "applied": 1}
+""",
+        imports="from watermark_state import advance\n",
+    ),
+)
+
+_G032 = D2TaskSpec(
+    template_id="d6_parsing.gutter_split",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d6-parsing-gutter-split",
+    module="gutter_split",
+    module_doc="Splitting a column-aligned line where the gutters between fields fall.",
+    issue=(
+        "gutter_split() is documented to break a line at the gutters between its columns. "
+        "Callers report that a field containing a single space is torn in two, and that a line "
+        "of nothing but spaces comes back as one empty field instead of no fields at all."
+    ),
+    expected=(
+        "gutter_split(line) returns the fields of a column-aligned line, splitting only where "
+        "two or more spaces fall together. A single space belongs to its field. A line holding "
+        "nothing but whitespace has no fields."
+    ),
+    baseline_reason=(
+        "it splits on any run of whitespace and it returns the empty string as a field"
+    ),
+    edge_cases=(
+        "a single space belongs to its field",
+        "a line of only whitespace has no fields",
+    ),
+    baseline="""import re
+
+
+def gutter_split(line):
+    \"\"\"Return the fields of a column-aligned line.\"\"\"
+    return re.split(r"\\s+", line.strip())""",
+    variant_one="""import re
+
+
+def gutter_split(line):
+    \"\"\"Return the fields of a column-aligned line.\"\"\"
+    trimmed = line.strip()
+    if not trimmed:
+        return []
+    return re.split(r"\\s{2,}", trimmed)""",
+    variant_two="""def gutter_split(line):
+    \"\"\"Return the fields of a column-aligned line.\"\"\"
+    trimmed = line.strip()
+    if not trimmed:
+        return []
+    fields = []
+    current = ""
+    gap = 0
+    for character in trimmed:
+        if character == " ":
+            gap += 1
+            continue
+        if gap >= 2:
+            fields.append(current)
+            current = ""
+        elif gap == 1:
+            current += " "
+        gap = 0
+        current += character
+    fields.append(current)
+    return fields""",
+    variant_three="""import re
+
+
+def gutter_split(line):
+    \"\"\"Return the fields of a column-aligned line.\"\"\"
+    return re.split(r"\\s{2,}", line.strip())""",
+    variant_four="""import re
+
+
+def gutter_split(line):
+    \"\"\"Return the fields of a column-aligned line.\"\"\"
+    trimmed = line.strip()
+    if not trimmed:
+        return []
+    return re.split(r"\\s+", trimmed)""",
+    visible_test=_test_module(
+        "gutter_split",
+        "Published contract for splitting a column-aligned line.",
+        """
+def test_a_gutter_separates_two_fields() -> None:
+    assert gutter_split("name  age") == ["name", "age"]
+
+
+def test_surrounding_space_is_dropped() -> None:
+    assert gutter_split("  left   right  ") == ["left", "right"]
+""",
+        imports="from gutter_split import gutter_split\n",
+    ),
+    hidden_test=_test_module(
+        "gutter_split",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_gutter_separates_two_fields() -> None:
+    assert gutter_split("name  age") == ["name", "age"]
+
+
+def test_a_single_space_belongs_to_its_field() -> None:
+    assert gutter_split("full name  age") == ["full name", "age"]
+
+
+def test_a_line_of_only_whitespace_has_no_fields() -> None:
+    assert gutter_split("   ") == []
+""",
+        imports="from gutter_split import gutter_split\n",
+    ),
+)
+
+_G033 = D2TaskSpec(
+    template_id="d6_parsing.chord_notes",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d6-parsing-chord-notes",
+    module="chord_notes",
+    module_doc="Reading the root and the quality out of a chord symbol.",
+    issue=(
+        "read_chord() is documented to split a chord symbol into its root and its quality. "
+        "Callers report that a sharpened or flattened root loses its accidental to the quality, "
+        "and that a bare root comes back with an empty quality instead of the major it means."
+    ),
+    expected=(
+        "read_chord(symbol) returns (root, quality). The root is the letter A to G together "
+        "with a following sharp or flat when one is written. A symbol with no quality after the "
+        "root is major. A symbol whose first character is not a letter A to G raises ValueError."
+    ),
+    baseline_reason=(
+        "it takes only the first character as the root and it passes an empty quality through"
+    ),
+    edge_cases=(
+        "an accidental belongs to the root",
+        "a bare root is major",
+    ),
+    baseline="""def read_chord(symbol):
+    \"\"\"Return the (root, quality) of a chord symbol.\"\"\"
+    if not symbol or symbol[0] not in "ABCDEFG":
+        raise ValueError("unknown root")
+    return symbol[0], symbol[1:]""",
+    variant_one="""def read_chord(symbol):
+    \"\"\"Return the (root, quality) of a chord symbol.\"\"\"
+    if not symbol or symbol[0] not in "ABCDEFG":
+        raise ValueError("unknown root")
+    length = 2 if symbol[1:2] in ("#", "b") else 1
+    quality = symbol[length:]
+    return symbol[:length], quality or "maj\"""",
+    variant_two="""def read_chord(symbol):
+    \"\"\"Return the (root, quality) of a chord symbol.\"\"\"
+    if not symbol or symbol[0] not in "ABCDEFG":
+        raise ValueError("unknown root")
+    root = symbol[0]
+    rest = symbol[1:]
+    if rest[:1] in ("#", "b"):
+        root += rest[0]
+        rest = rest[1:]
+    if not rest:
+        rest = "maj"
+    return root, rest""",
+    variant_three="""def read_chord(symbol):
+    \"\"\"Return the (root, quality) of a chord symbol.\"\"\"
+    if not symbol or symbol[0] not in "ABCDEFG":
+        raise ValueError("unknown root")
+    length = 2 if symbol[1:2] in ("#", "b") else 1
+    return symbol[:length], symbol[length:]""",
+    variant_four="""def read_chord(symbol):
+    \"\"\"Return the (root, quality) of a chord symbol.\"\"\"
+    if not symbol or symbol[0] not in "ABCDEFG":
+        raise ValueError("unknown root")
+    return symbol[0], symbol[1:] or "maj\"""",
+    visible_test=_test_module(
+        "chord_notes",
+        "Published contract for reading a chord symbol.",
+        """
+import pytest
+
+from chord_notes import read_chord
+
+
+def test_a_root_and_quality_are_split() -> None:
+    assert read_chord("Cm7") == ("C", "m7")
+
+
+def test_a_symbol_with_no_root_letter_is_refused() -> None:
+    with pytest.raises(ValueError):
+        read_chord("H")
+""",
+    ),
+    hidden_test=_test_module(
+        "chord_notes",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from chord_notes import read_chord
+
+
+def test_a_root_and_quality_are_split() -> None:
+    assert read_chord("Cm7") == ("C", "m7")
+
+
+def test_an_accidental_belongs_to_the_root() -> None:
+    assert read_chord("F#m") == ("F#", "m")
+
+
+def test_a_bare_root_is_major() -> None:
+    assert read_chord("G") == ("G", "maj")
+""",
+    ),
+)
+
+_G034 = D2TaskSpec(
+    template_id="d6_numeric.tier_labels",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d6-numeric-tier-labels",
+    module="tier_labels",
+    module_doc="Placing readings into tiers named by their upper bounds.",
+    issue=(
+        "tier_labels() is documented to place each reading in the first tier whose bound it "
+        "does not exceed. Callers report that a reading sitting exactly on a bound is pushed "
+        "into the next tier, and that bounds handed over out of order tier everything wrongly."
+    ),
+    expected=(
+        "tier_labels(values, bounds) returns the tier of each value: the position of the first "
+        "bound the value does not exceed, counting the bounds in ascending order, or the count "
+        "of bounds when the value exceeds them all. The bounds are inclusive upper limits."
+    ),
+    baseline_reason=(
+        "it compares each bound with a strict less-than and it reads the bounds in the order "
+        "they arrive"
+    ),
+    edge_cases=(
+        "a reading exactly on a bound stays in that tier",
+        "bounds handed over out of order are sorted first",
+    ),
+    baseline="""def tier_labels(values, bounds):
+    \"\"\"Return the tier of each value against `bounds`.\"\"\"
+    tiers = []
+    for value in values:
+        placed = len(bounds)
+        for position, bound in enumerate(bounds):
+            if value < bound:
+                placed = position
+                break
+        tiers.append(placed)
+    return tiers""",
+    variant_one="""def tier_labels(values, bounds):
+    \"\"\"Return the tier of each value against `bounds`.\"\"\"
+    ordered = sorted(bounds)
+    tiers = []
+    for value in values:
+        placed = len(ordered)
+        for position, bound in enumerate(ordered):
+            if value <= bound:
+                placed = position
+                break
+        tiers.append(placed)
+    return tiers""",
+    variant_two="""def tier_labels(values, bounds):
+    \"\"\"Return the tier of each value against `bounds`.\"\"\"
+    ordered = sorted(bounds)
+    return [sum(1 for bound in ordered if value > bound) for value in values]""",
+    variant_three="""def tier_labels(values, bounds):
+    \"\"\"Return the tier of each value against `bounds`.\"\"\"
+    tiers = []
+    for value in values:
+        placed = len(bounds)
+        for position, bound in enumerate(bounds):
+            if value <= bound:
+                placed = position
+                break
+        tiers.append(placed)
+    return tiers""",
+    variant_four="""def tier_labels(values, bounds):
+    \"\"\"Return the tier of each value against `bounds`.\"\"\"
+    ordered = sorted(bounds)
+    tiers = []
+    for value in values:
+        placed = len(ordered)
+        for position, bound in enumerate(ordered):
+            if value < bound:
+                placed = position
+                break
+        tiers.append(placed)
+    return tiers""",
+    visible_test=_test_module(
+        "tier_labels",
+        "Published contract for tiering readings against bounds.",
+        """
+def test_readings_land_in_ascending_tiers() -> None:
+    assert tier_labels([1, 5, 9], [3, 7]) == [0, 1, 2]
+
+
+def test_a_reading_below_every_bound_is_the_first_tier() -> None:
+    assert tier_labels([0], [3, 7]) == [0]
+""",
+        imports="from tier_labels import tier_labels\n",
+    ),
+    hidden_test=_test_module(
+        "tier_labels",
+        "The part of the contract the published tests do not state.",
+        """
+def test_readings_land_in_ascending_tiers() -> None:
+    assert tier_labels([1, 5, 9], [3, 7]) == [0, 1, 2]
+
+
+def test_a_reading_exactly_on_a_bound_stays_in_that_tier() -> None:
+    assert tier_labels([3, 7], [3, 7]) == [0, 1]
+
+
+def test_bounds_out_of_order_are_sorted_first() -> None:
+    assert tier_labels([5], [7, 3]) == [1]
+""",
+        imports="from tier_labels import tier_labels\n",
+    ),
+)
+
+_G035 = D2TaskSpec(
+    template_id="d6_state.vestibule_queue",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d6-state-vestibule-queue",
+    module="vestibule_queue",
+    module_doc="Admitting arrivals to a room and holding the rest in the vestibule.",
+    issue=(
+        "admit() is documented to let an arrival in while there is room and to hold it in the "
+        "vestibule otherwise, never listing anyone twice. Callers report that someone already "
+        "waiting is queued a second time, and that a name differing only in case is treated as "
+        "a stranger."
+    ),
+    expected=(
+        "admit(state, name) returns the state with the arrival inside when the room is below "
+        "capacity and in waiting otherwise. Someone already inside or already waiting is left "
+        "where they are, and names are matched without regard to case."
+    ),
+    baseline_reason=(
+        "it looks for the arrival only among those inside, and it compares names exactly"
+    ),
+    edge_cases=(
+        "someone already waiting is not queued again",
+        "names are matched without regard to case",
+    ),
+    baseline="""def admit(state, name):
+    \"\"\"Admit `name` to the room, or hold it in the vestibule.\"\"\"
+    inside = list(state.get("inside", []))
+    waiting = list(state.get("waiting", []))
+    capacity = state.get("capacity", 0)
+    if name in inside:
+        return {"capacity": capacity, "inside": inside, "waiting": waiting}
+    if len(inside) < capacity:
+        inside.append(name)
+    else:
+        waiting.append(name)
+    return {"capacity": capacity, "inside": inside, "waiting": waiting}""",
+    variant_one="""def admit(state, name):
+    \"\"\"Admit `name` to the room, or hold it in the vestibule.\"\"\"
+    inside = list(state.get("inside", []))
+    waiting = list(state.get("waiting", []))
+    capacity = state.get("capacity", 0)
+    known = {person.lower() for person in inside + waiting}
+    if name.lower() in known:
+        return {"capacity": capacity, "inside": inside, "waiting": waiting}
+    if len(inside) < capacity:
+        inside.append(name)
+    else:
+        waiting.append(name)
+    return {"capacity": capacity, "inside": inside, "waiting": waiting}""",
+    variant_two="""def admit(state, name):
+    \"\"\"Admit `name` to the room, or hold it in the vestibule.\"\"\"
+    inside = list(state.get("inside", []))
+    waiting = list(state.get("waiting", []))
+    capacity = state.get("capacity", 0)
+    result = {"capacity": capacity, "inside": inside, "waiting": waiting}
+    for person in inside + waiting:
+        if person.lower() == name.lower():
+            return result
+    target = "inside" if len(inside) < capacity else "waiting"
+    result[target] = [*result[target], name]
+    return result""",
+    variant_three="""def admit(state, name):
+    \"\"\"Admit `name` to the room, or hold it in the vestibule.\"\"\"
+    inside = list(state.get("inside", []))
+    waiting = list(state.get("waiting", []))
+    capacity = state.get("capacity", 0)
+    if name in inside or name in waiting:
+        return {"capacity": capacity, "inside": inside, "waiting": waiting}
+    if len(inside) < capacity:
+        inside.append(name)
+    else:
+        waiting.append(name)
+    return {"capacity": capacity, "inside": inside, "waiting": waiting}""",
+    variant_four="""def admit(state, name):
+    \"\"\"Admit `name` to the room, or hold it in the vestibule.\"\"\"
+    inside = list(state.get("inside", []))
+    waiting = list(state.get("waiting", []))
+    capacity = state.get("capacity", 0)
+    if name.lower() in {person.lower() for person in inside}:
+        return {"capacity": capacity, "inside": inside, "waiting": waiting}
+    if len(inside) < capacity:
+        inside.append(name)
+    else:
+        waiting.append(name)
+    return {"capacity": capacity, "inside": inside, "waiting": waiting}""",
+    visible_test=_test_module(
+        "vestibule_queue",
+        "Published contract for admitting arrivals to a room.",
+        """
+def test_an_arrival_enters_a_room_with_space() -> None:
+    state = {"capacity": 2, "inside": [], "waiting": []}
+    assert admit(state, "ann")["inside"] == ["ann"]
+
+
+def test_an_arrival_waits_when_the_room_is_full() -> None:
+    state = {"capacity": 1, "inside": ["ann"], "waiting": []}
+    assert admit(state, "bob")["waiting"] == ["bob"]
+""",
+        imports="from vestibule_queue import admit\n",
+    ),
+    hidden_test=_test_module(
+        "vestibule_queue",
+        "The part of the contract the published tests do not state.",
+        """
+def test_an_arrival_enters_a_room_with_space() -> None:
+    state = {"capacity": 2, "inside": [], "waiting": []}
+    assert admit(state, "ann")["inside"] == ["ann"]
+
+
+def test_someone_already_waiting_is_not_queued_again() -> None:
+    state = {"capacity": 0, "inside": [], "waiting": ["bob"]}
+    assert admit(state, "bob")["waiting"] == ["bob"]
+
+
+def test_names_are_matched_without_regard_to_case() -> None:
+    state = {"capacity": 1, "inside": ["ann"], "waiting": []}
+    assert admit(state, "ANN")["waiting"] == []
+""",
+        imports="from vestibule_queue import admit\n",
+    ),
+)
+
+_G036 = D2TaskSpec(
+    template_id="d6_boundary.rungs_between",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d6-boundary-rungs-between",
+    module="rungs_between",
+    module_doc="Placing evenly spaced rungs from one bound to another.",
+    issue=(
+        "rungs_between() is documented to place a given number of evenly spaced rungs from a "
+        "low bound to a high one. Callers report that asking for a single rung fails with a "
+        "ZeroDivisionError, and that a high bound below the low one produces a descending "
+        "ladder instead of being refused."
+    ),
+    expected=(
+        "rungs_between(low, high, count) returns count values from low to high inclusive, "
+        "evenly spaced. A count of one returns just the low bound, and a count of zero returns "
+        "nothing. A high bound below the low one raises ValueError."
+    ),
+    baseline_reason=(
+        "it divides by one less than the count without guarding a count of one, and it never "
+        "checks that the bounds ascend"
+    ),
+    edge_cases=(
+        "a count of one returns just the low bound",
+        "a high bound below the low one is refused",
+    ),
+    baseline="""def rungs_between(low, high, count):
+    \"\"\"Return `count` evenly spaced rungs from `low` to `high`.\"\"\"
+    if count <= 0:
+        return []
+    step = (high - low) // (count - 1)
+    return [low + step * position for position in range(count)]""",
+    variant_one="""def rungs_between(low, high, count):
+    \"\"\"Return `count` evenly spaced rungs from `low` to `high`.\"\"\"
+    if high < low:
+        raise ValueError("the high bound is below the low one")
+    if count <= 0:
+        return []
+    if count == 1:
+        return [low]
+    step = (high - low) // (count - 1)
+    return [low + step * position for position in range(count)]""",
+    variant_two="""def rungs_between(low, high, count):
+    \"\"\"Return `count` evenly spaced rungs from `low` to `high`.\"\"\"
+    if not high >= low:
+        raise ValueError("the high bound is below the low one")
+    rungs = []
+    for position in range(count):
+        gaps = count - 1
+        offset = 0 if gaps == 0 else (high - low) * position // gaps
+        rungs.append(low + offset)
+    return rungs""",
+    variant_three="""def rungs_between(low, high, count):
+    \"\"\"Return `count` evenly spaced rungs from `low` to `high`.\"\"\"
+    if count <= 0:
+        return []
+    if count == 1:
+        return [low]
+    step = (high - low) // (count - 1)
+    return [low + step * position for position in range(count)]""",
+    variant_four="""def rungs_between(low, high, count):
+    \"\"\"Return `count` evenly spaced rungs from `low` to `high`.\"\"\"
+    if high < low:
+        raise ValueError("the high bound is below the low one")
+    if count <= 0:
+        return []
+    step = (high - low) // (count - 1)
+    return [low + step * position for position in range(count)]""",
+    visible_test=_test_module(
+        "rungs_between",
+        "Published contract for placing evenly spaced rungs.",
+        """
+def test_rungs_span_the_bounds() -> None:
+    assert rungs_between(0, 10, 6) == [0, 2, 4, 6, 8, 10]
+
+
+def test_no_rungs_are_placed_for_a_count_of_zero() -> None:
+    assert rungs_between(0, 10, 0) == []
+""",
+        imports="from rungs_between import rungs_between\n",
+    ),
+    hidden_test=_test_module(
+        "rungs_between",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from rungs_between import rungs_between
+
+
+def test_rungs_span_the_bounds() -> None:
+    assert rungs_between(0, 10, 6) == [0, 2, 4, 6, 8, 10]
+
+
+def test_a_count_of_one_returns_the_low_bound() -> None:
+    assert rungs_between(4, 4, 1) == [4]
+
+
+def test_a_high_bound_below_the_low_one_is_refused() -> None:
+    with pytest.raises(ValueError):
+        rungs_between(9, 3, 3)
+""",
+    ),
+)
+
+_G037 = D2TaskSpec(
+    template_id="d6_boundary.ballast_trim",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d6-boundary-ballast-trim",
+    module="ballast_trim",
+    module_doc="Keeping the leading run of a load that a budget can carry.",
+    issue=(
+        "ballast_trim() is documented to keep the longest leading run of a load whose total "
+        "fits a budget. Callers report that a run totalling exactly the budget is cut short, "
+        "and that a negative entry is left out of the running total altogether."
+    ),
+    expected=(
+        "ballast_trim(values, budget) returns the longest leading run of values whose running "
+        "total stays at or below budget. Every value counts toward that total, negative ones "
+        "included."
+    ),
+    baseline_reason=(
+        "it compares the running total with a strict less-than and it adds only positive values "
+        "to it"
+    ),
+    edge_cases=(
+        "a run totalling exactly the budget is kept whole",
+        "a negative value counts toward the running total",
+    ),
+    baseline="""def ballast_trim(values, budget):
+    \"\"\"Return the longest leading run that fits `budget`.\"\"\"
+    kept = []
+    total = 0
+    for value in values:
+        candidate = total + value if value > 0 else total
+        if not candidate < budget:
+            break
+        total = candidate
+        kept.append(value)
+    return kept""",
+    variant_one="""def ballast_trim(values, budget):
+    \"\"\"Return the longest leading run that fits `budget`.\"\"\"
+    kept = []
+    total = 0
+    for value in values:
+        if total + value > budget:
+            break
+        total += value
+        kept.append(value)
+    return kept""",
+    variant_two="""def ballast_trim(values, budget):
+    \"\"\"Return the longest leading run that fits `budget`.\"\"\"
+    total = 0
+    length = 0
+    for value in values:
+        total += value
+        if total > budget:
+            break
+        length += 1
+    return list(values[:length])""",
+    variant_three="""def ballast_trim(values, budget):
+    \"\"\"Return the longest leading run that fits `budget`.\"\"\"
+    kept = []
+    total = 0
+    for value in values:
+        candidate = total + value if value > 0 else total
+        if candidate > budget:
+            break
+        total = candidate
+        kept.append(value)
+    return kept""",
+    variant_four="""def ballast_trim(values, budget):
+    \"\"\"Return the longest leading run that fits `budget`.\"\"\"
+    kept = []
+    total = 0
+    for value in values:
+        candidate = total + value
+        if not candidate < budget:
+            break
+        total = candidate
+        kept.append(value)
+    return kept""",
+    visible_test=_test_module(
+        "ballast_trim",
+        "Published contract for trimming a load to a budget.",
+        """
+def test_the_leading_run_that_fits_is_kept() -> None:
+    assert ballast_trim([2, 3, 9], 6) == [2, 3]
+
+
+def test_a_first_value_over_the_budget_keeps_nothing() -> None:
+    assert ballast_trim([9, 1], 6) == []
+""",
+        imports="from ballast_trim import ballast_trim\n",
+    ),
+    hidden_test=_test_module(
+        "ballast_trim",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_leading_run_that_fits_is_kept() -> None:
+    assert ballast_trim([2, 3, 9], 6) == [2, 3]
+
+
+def test_a_run_totalling_exactly_the_budget_is_kept_whole() -> None:
+    assert ballast_trim([2, 4, 1], 6) == [2, 4]
+
+
+def test_a_negative_value_counts_toward_the_total() -> None:
+    assert ballast_trim([4, -3, 4], 6) == [4, -3, 4]
+""",
+        imports="from ballast_trim import ballast_trim\n",
+    ),
+)
+
+_G038 = D2TaskSpec(
+    template_id="d6_transform.harmonise_units",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d6-transform-harmonise-units",
+    module="harmonise_units",
+    module_doc="Bringing a set of length readings onto one common unit.",
+    issue=(
+        "harmonise() is documented to bring every reading onto millimetres. Callers report that "
+        "a reading carrying a unit nobody recognises passes through untouched, and that a "
+        "reading with no unit at all fails with a KeyError instead of being read as millimetres."
+    ),
+    expected=(
+        "harmonise(readings) returns each reading's value in millimetres, where a metre is a "
+        "thousand and a centimetre is ten. A reading with no unit is already in millimetres. A "
+        "unit outside metres, centimetres and millimetres raises ValueError."
+    ),
+    baseline_reason=(
+        "it falls back to a factor of one for an unknown unit and it reads the unit key directly"
+    ),
+    edge_cases=(
+        "an unrecognised unit is refused",
+        "a reading with no unit is already in millimetres",
+    ),
+    baseline="""FACTORS = {"m": 1000, "cm": 10, "mm": 1}
+
+
+def harmonise(readings):
+    \"\"\"Return every reading in millimetres.\"\"\"
+    return [reading["value"] * FACTORS.get(reading["unit"], 1) for reading in readings]""",
+    variant_one="""FACTORS = {"m": 1000, "cm": 10, "mm": 1}
+
+
+def harmonise(readings):
+    \"\"\"Return every reading in millimetres.\"\"\"
+    harmonised = []
+    for reading in readings:
+        unit = reading.get("unit", "mm")
+        if unit not in FACTORS:
+            raise ValueError(unit)
+        harmonised.append(reading["value"] * FACTORS[unit])
+    return harmonised""",
+    variant_two="""FACTORS = {"m": 1000, "cm": 10, "mm": 1}
+
+
+def _factor(unit):
+    try:
+        return FACTORS[unit]
+    except KeyError:
+        raise ValueError(unit) from None
+
+
+def harmonise(readings):
+    \"\"\"Return every reading in millimetres.\"\"\"
+    return [
+        reading["value"] * _factor(reading.get("unit", "mm")) for reading in readings
+    ]""",
+    variant_three="""FACTORS = {"m": 1000, "cm": 10, "mm": 1}
+
+
+def harmonise(readings):
+    \"\"\"Return every reading in millimetres.\"\"\"
+    harmonised = []
+    for reading in readings:
+        unit = reading["unit"]
+        if unit not in FACTORS:
+            raise ValueError(unit)
+        harmonised.append(reading["value"] * FACTORS[unit])
+    return harmonised""",
+    variant_four="""FACTORS = {"m": 1000, "cm": 10, "mm": 1}
+
+
+def harmonise(readings):
+    \"\"\"Return every reading in millimetres.\"\"\"
+    return [
+        reading["value"] * FACTORS.get(reading.get("unit", "mm"), 1)
+        for reading in readings
+    ]""",
+    visible_test=_test_module(
+        "harmonise_units",
+        "Published contract for bringing readings onto one unit.",
+        """
+def test_readings_are_brought_onto_millimetres() -> None:
+    readings = [{"value": 2, "unit": "m"}, {"value": 5, "unit": "cm"}]
+    assert harmonise(readings) == [2000, 50]
+
+
+def test_millimetres_pass_through_unchanged() -> None:
+    assert harmonise([{"value": 7, "unit": "mm"}]) == [7]
+""",
+        imports="from harmonise_units import harmonise\n",
+    ),
+    hidden_test=_test_module(
+        "harmonise_units",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from harmonise_units import harmonise
+
+
+def test_readings_are_brought_onto_millimetres() -> None:
+    readings = [{"value": 2, "unit": "m"}, {"value": 5, "unit": "cm"}]
+    assert harmonise(readings) == [2000, 50]
+
+
+def test_an_unrecognised_unit_is_refused() -> None:
+    with pytest.raises(ValueError):
+        harmonise([{"value": 1, "unit": "furlong"}])
+
+
+def test_a_reading_with_no_unit_is_millimetres() -> None:
+    assert harmonise([{"value": 7}]) == [7]
+""",
+    ),
+)
+
+_G040 = D2TaskSpec(
+    template_id="d6_numeric.waypoint_legs",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d6-numeric-waypoint-legs",
+    module="waypoint_legs",
+    module_doc="Measuring the legs between consecutive waypoints along a line.",
+    issue=(
+        "waypoint_legs() is documented to measure each leg between consecutive waypoints. "
+        "Callers report that two waypoints at the same place produce no leg at all instead of "
+        "one of length zero, and that walking backwards produces a negative leg."
+    ),
+    expected=(
+        "waypoint_legs(points) returns one leg per consecutive pair, each the distance between "
+        "them and never negative. A pair at the same place is a leg of zero. Fewer than two "
+        "waypoints make no legs."
+    ),
+    baseline_reason=("it drops a pair that does not move and it returns the signed difference"),
+    edge_cases=(
+        "a pair at the same place is a leg of zero",
+        "walking backwards gives a positive leg",
+    ),
+    baseline="""def waypoint_legs(points):
+    \"\"\"Return the leg between each consecutive pair of waypoints.\"\"\"
+    legs = []
+    for position in range(1, len(points)):
+        step = points[position] - points[position - 1]
+        if step:
+            legs.append(step)
+    return legs""",
+    variant_one="""def waypoint_legs(points):
+    \"\"\"Return the leg between each consecutive pair of waypoints.\"\"\"
+    return [
+        abs(points[position] - points[position - 1])
+        for position in range(1, len(points))
+    ]""",
+    variant_two="""def waypoint_legs(points):
+    \"\"\"Return the leg between each consecutive pair of waypoints.\"\"\"
+    legs = []
+    previous = None
+    for point in points:
+        if previous is not None:
+            step = point - previous
+            legs.append(step if step >= 0 else -step)
+        previous = point
+    return legs""",
+    variant_three="""def waypoint_legs(points):
+    \"\"\"Return the leg between each consecutive pair of waypoints.\"\"\"
+    legs = []
+    for position in range(1, len(points)):
+        legs.append(points[position] - points[position - 1])
+    return legs""",
+    variant_four="""def waypoint_legs(points):
+    \"\"\"Return the leg between each consecutive pair of waypoints.\"\"\"
+    legs = []
+    for position in range(1, len(points)):
+        step = abs(points[position] - points[position - 1])
+        if step:
+            legs.append(step)
+    return legs""",
+    visible_test=_test_module(
+        "waypoint_legs",
+        "Published contract for measuring legs between waypoints.",
+        """
+def test_each_consecutive_pair_makes_a_leg() -> None:
+    assert waypoint_legs([0, 3, 7]) == [3, 4]
+
+
+def test_a_single_waypoint_makes_no_legs() -> None:
+    assert waypoint_legs([4]) == []
+""",
+        imports="from waypoint_legs import waypoint_legs\n",
+    ),
+    hidden_test=_test_module(
+        "waypoint_legs",
+        "The part of the contract the published tests do not state.",
+        """
+def test_each_consecutive_pair_makes_a_leg() -> None:
+    assert waypoint_legs([0, 3, 7]) == [3, 4]
+
+
+def test_a_pair_at_the_same_place_is_a_leg_of_zero() -> None:
+    assert waypoint_legs([2, 2, 5]) == [0, 3]
+
+
+def test_walking_backwards_gives_a_positive_leg() -> None:
+    assert waypoint_legs([9, 4]) == [5]
+""",
+        imports="from waypoint_legs import waypoint_legs\n",
+    ),
+)
+
 D6_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G001,
     _G002,
@@ -1602,4 +3418,22 @@ D6_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G015,
     _G018,
     _G020,
+    _G021,
+    _G022,
+    _G023,
+    _G024,
+    _G025,
+    _G026,
+    _G027,
+    _G028,
+    _G029,
+    _G030,
+    _G032,
+    _G033,
+    _G034,
+    _G035,
+    _G036,
+    _G037,
+    _G038,
+    _G040,
 )
