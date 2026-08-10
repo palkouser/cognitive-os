@@ -9,6 +9,9 @@
 - Pre-registration: revision 7, SHA-256
   `4017be51c6e06d6123982d2572a9dcd346bb23decc7d1bcfe2c995ee95c2fc7f`
 - Migration head: `0015`, unchanged. `0016` remains unallocated.
+- Wave commit `80eec47`, pull request **#229** against protected `main`; CI run **`31393808250`**
+  on that exact head, **30 of 30 jobs successful**. The merge is the gate owner's, not the
+  wave's — W0 leaves the branch reviewable rather than merged.
 - Gate L2 does not pass and Sprint 22A remains blocked. W0 measures nothing and closes no
   condition; it establishes the authority every later wave is bound to.
 
