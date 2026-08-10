@@ -5435,6 +5435,1094 @@ def test_the_third_place_is_rounded() -> None:
     ),
 )
 
+_G061 = D2TaskSpec(
+    template_id="d6_boundary.ring_neighbours",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d6-boundary-ring-neighbours",
+    module="ring_neighbours",
+    module_doc="Naming the two places either side of a position on a ring.",
+    issue=(
+        "ring_neighbours() is documented to name the places either side of a position on a "
+        "ring. Callers report that the place before the first one comes back as minus one "
+        "rather than the last place on the ring, and that a ring of no places fails with a "
+        "ZeroDivisionError instead of being refused."
+    ),
+    expected=(
+        "ring_neighbours(count, position) returns the places before and after position on a "
+        "ring of count places, wrapping at both ends. A ring of no places raises ValueError, "
+        "because there is nothing to stand either side of."
+    ),
+    baseline_reason=(
+        "it wraps only the place after, and it divides by the count before checking that there "
+        "is one"
+    ),
+    edge_cases=(
+        "the place before the first one is the last on the ring",
+        "a ring of no places is refused",
+    ),
+    baseline="""def ring_neighbours(count, position):
+    \"\"\"Return the places either side of `position` on a ring of `count`.\"\"\"
+    return position - 1, (position + 1) % count""",
+    variant_one="""def ring_neighbours(count, position):
+    \"\"\"Return the places either side of `position` on a ring of `count`.\"\"\"
+    if count <= 0:
+        raise ValueError("a ring of no places has no neighbours")
+    return (position - 1) % count, (position + 1) % count""",
+    variant_two="""def ring_neighbours(count, position):
+    \"\"\"Return the places either side of `position` on a ring of `count`.\"\"\"
+    if not count > 0:
+        raise ValueError("a ring of no places has no neighbours")
+    before = position - 1 if position else count - 1
+    after = position + 1 if position + 1 < count else 0
+    return before, after""",
+    variant_three="""def ring_neighbours(count, position):
+    \"\"\"Return the places either side of `position` on a ring of `count`.\"\"\"
+    return (position - 1) % count, (position + 1) % count""",
+    variant_four="""def ring_neighbours(count, position):
+    \"\"\"Return the places either side of `position` on a ring of `count`.\"\"\"
+    if count <= 0:
+        raise ValueError("a ring of no places has no neighbours")
+    return position - 1, (position + 1) % count""",
+    visible_test=_test_module(
+        "ring_neighbours",
+        "Published contract for the places either side of a position.",
+        """
+def test_the_middle_of_the_ring_has_plain_neighbours() -> None:
+    assert ring_neighbours(5, 2) == (1, 3)
+
+
+def test_the_place_after_the_last_wraps_to_the_first() -> None:
+    assert ring_neighbours(4, 3) == (2, 0)
+""",
+        imports="from ring_neighbours import ring_neighbours\n",
+    ),
+    hidden_test=_test_module(
+        "ring_neighbours",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from ring_neighbours import ring_neighbours
+
+
+def test_the_middle_of_the_ring_has_plain_neighbours() -> None:
+    assert ring_neighbours(5, 2) == (1, 3)
+
+
+def test_the_place_before_the_first_is_the_last() -> None:
+    assert ring_neighbours(5, 0) == (4, 1)
+
+
+def test_a_ring_of_no_places_is_refused() -> None:
+    with pytest.raises(ValueError):
+        ring_neighbours(0, 0)
+""",
+    ),
+)
+
+_G062 = D2TaskSpec(
+    template_id="d6_boundary.fence_gaps",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d6-boundary-fence-gaps",
+    module="fence_gaps",
+    module_doc="Finding the free stretches a set of taken places leaves behind.",
+    issue=(
+        "fence_gaps() is documented to report the free stretches between the taken places. "
+        "Callers report that a free stretch running to the far end is never reported, and that "
+        "taken places handed over out of order produce nonsense."
+    ),
+    expected=(
+        "fence_gaps(taken, total) returns one (start, length) pair for each run of free places "
+        "below total, including a run that reaches the far end. The taken places may arrive in "
+        "any order."
+    ),
+    baseline_reason=(
+        "it reports a stretch only when it meets the next taken place, so a trailing stretch "
+        "meets nothing, and it walks the taken places in the order they arrive"
+    ),
+    edge_cases=(
+        "a free stretch reaching the far end is reported",
+        "the taken places may arrive in any order",
+    ),
+    baseline="""def fence_gaps(taken, total):
+    \"\"\"Return the free stretches the taken places leave behind.\"\"\"
+    gaps = []
+    start = 0
+    for place in taken:
+        if place > start:
+            gaps.append((start, place - start))
+        start = place + 1
+    return gaps""",
+    variant_one="""def fence_gaps(taken, total):
+    \"\"\"Return the free stretches the taken places leave behind.\"\"\"
+    gaps = []
+    start = 0
+    for place in sorted(taken):
+        if place > start:
+            gaps.append((start, place - start))
+        start = place + 1
+    if start < total:
+        gaps.append((start, total - start))
+    return gaps""",
+    variant_two="""def fence_gaps(taken, total):
+    \"\"\"Return the free stretches the taken places leave behind.\"\"\"
+    busy = set(taken)
+    gaps = []
+    run = 0
+    for place in range(total):
+        if place in busy:
+            if run:
+                gaps.append((place - run, run))
+            run = 0
+        else:
+            run += 1
+    if run:
+        gaps.append((total - run, run))
+    return gaps""",
+    variant_three="""def fence_gaps(taken, total):
+    \"\"\"Return the free stretches the taken places leave behind.\"\"\"
+    gaps = []
+    start = 0
+    for place in taken:
+        if place > start:
+            gaps.append((start, place - start))
+        start = place + 1
+    if start < total:
+        gaps.append((start, total - start))
+    return gaps""",
+    variant_four="""def fence_gaps(taken, total):
+    \"\"\"Return the free stretches the taken places leave behind.\"\"\"
+    gaps = []
+    start = 0
+    for place in sorted(taken):
+        if place > start:
+            gaps.append((start, place - start))
+        start = place + 1
+    return gaps""",
+    visible_test=_test_module(
+        "fence_gaps",
+        "Published contract for the free stretches between taken places.",
+        """
+def test_the_stretches_between_taken_places_are_reported() -> None:
+    assert fence_gaps([1, 3], 4) == [(0, 1), (2, 1)]
+
+
+def test_a_full_fence_leaves_no_stretch() -> None:
+    assert fence_gaps([0, 1], 2) == []
+""",
+        imports="from fence_gaps import fence_gaps\n",
+    ),
+    hidden_test=_test_module(
+        "fence_gaps",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_stretches_between_taken_places_are_reported() -> None:
+    assert fence_gaps([1, 3], 4) == [(0, 1), (2, 1)]
+
+
+def test_a_stretch_reaching_the_far_end_is_reported() -> None:
+    assert fence_gaps([0], 3) == [(1, 2)]
+
+
+def test_the_taken_places_may_arrive_in_any_order() -> None:
+    assert fence_gaps([3, 1], 4) == [(0, 1), (2, 1)]
+""",
+        imports="from fence_gaps import fence_gaps\n",
+    ),
+)
+
+_G063 = D2TaskSpec(
+    template_id="d6_boundary.crest_positions",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d6-boundary-crest-positions",
+    module="crest_positions",
+    module_doc="Finding where a series crests, including at its ends and across its plateaus.",
+    issue=(
+        "crest_positions() is documented to find where a series crests. Callers report that a "
+        "series beginning or ending on its highest reading reports no crest there, and that a "
+        "flat crest spanning two readings is reported twice."
+    ),
+    expected=(
+        "crest_positions(values) returns the positions where the series crests: a reading "
+        "strictly above the one before it and at least the one after. A reading at either end "
+        "crests when it beats its single neighbour, and a flat crest is reported at its first "
+        "position only."
+    ),
+    baseline_reason=(
+        "it looks only between the ends, and it compares the reading before with a "
+        "greater-or-equal, so both halves of a flat crest qualify"
+    ),
+    edge_cases=(
+        "a series cresting at an end reports it",
+        "a flat crest is reported once",
+    ),
+    baseline="""def crest_positions(values):
+    \"\"\"Return the positions where `values` crests.\"\"\"
+    crests = []
+    for position in range(1, len(values) - 1):
+        if values[position] >= values[position - 1] and values[position] >= values[position + 1]:
+            crests.append(position)
+    return crests""",
+    variant_one="""def crest_positions(values):
+    \"\"\"Return the positions where `values` crests.\"\"\"
+    crests = []
+    for position, value in enumerate(values):
+        rises = position == 0 or value > values[position - 1]
+        holds = position == len(values) - 1 or value >= values[position + 1]
+        if rises and holds:
+            crests.append(position)
+    return crests""",
+    variant_two="""def crest_positions(values):
+    \"\"\"Return the positions where `values` crests.\"\"\"
+    crests = []
+    last = len(values) - 1
+    for position in range(len(values)):
+        before = values[position - 1] if position else None
+        after = values[position + 1] if position < last else None
+        if before is not None and not values[position] > before:
+            continue
+        if after is not None and not values[position] >= after:
+            continue
+        crests.append(position)
+    return crests""",
+    variant_three="""def crest_positions(values):
+    \"\"\"Return the positions where `values` crests.\"\"\"
+    crests = []
+    for position, value in enumerate(values):
+        rises = position == 0 or value >= values[position - 1]
+        holds = position == len(values) - 1 or value >= values[position + 1]
+        if rises and holds:
+            crests.append(position)
+    return crests""",
+    variant_four="""def crest_positions(values):
+    \"\"\"Return the positions where `values` crests.\"\"\"
+    crests = []
+    for position in range(1, len(values) - 1):
+        if values[position] > values[position - 1] and values[position] >= values[position + 1]:
+            crests.append(position)
+    return crests""",
+    visible_test=_test_module(
+        "crest_positions",
+        "Published contract for finding where a series crests.",
+        """
+def test_a_crest_between_the_ends_is_found() -> None:
+    assert crest_positions([1, 3, 2]) == [1]
+
+
+def test_a_rising_series_crests_before_it_falls() -> None:
+    assert crest_positions([1, 2, 3, 1]) == [2]
+""",
+        imports="from crest_positions import crest_positions\n",
+    ),
+    hidden_test=_test_module(
+        "crest_positions",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_crest_between_the_ends_is_found() -> None:
+    assert crest_positions([1, 3, 2]) == [1]
+
+
+def test_a_series_cresting_at_an_end_reports_it() -> None:
+    assert crest_positions([5, 1, 2]) == [0, 2]
+
+
+def test_a_flat_crest_is_reported_once() -> None:
+    assert crest_positions([1, 3, 3, 1]) == [1]
+""",
+        imports="from crest_positions import crest_positions\n",
+    ),
+)
+
+_G064 = D2TaskSpec(
+    template_id="d6_transform.dense_rows",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d6-transform-dense-rows",
+    module="dense_rows",
+    module_doc="Laying scattered cells out as full rows, filling what nobody wrote.",
+    issue=(
+        "densify() is documented to lay scattered cells out as full rows. Callers report that a "
+        "cell holding zero comes back as the filler instead of the zero somebody wrote, and "
+        "that a cell naming a column beyond the row's width fails with an IndexError rather "
+        "than being refused."
+    ),
+    expected=(
+        "densify(cells, width, filler) returns one row per row index up to the highest named, "
+        "each of width places, holding the value of every cell written there and the filler "
+        "elsewhere. A value of zero is a value. A column outside the width raises ValueError."
+    ),
+    baseline_reason=(
+        "it writes a cell only when its value is truthy and it indexes the row without checking "
+        "the column against the width"
+    ),
+    edge_cases=(
+        "a cell holding zero is written",
+        "a column outside the width is refused",
+    ),
+    baseline="""def densify(cells, width, filler):
+    \"\"\"Lay scattered cells out as full rows.\"\"\"
+    if not cells:
+        return []
+    height = max(row for row, _column, _value in cells) + 1
+    grid = [[filler] * width for _ in range(height)]
+    for row, column, value in cells:
+        if value:
+            grid[row][column] = value
+    return grid""",
+    variant_one="""def densify(cells, width, filler):
+    \"\"\"Lay scattered cells out as full rows.\"\"\"
+    if not cells:
+        return []
+    height = max(row for row, _column, _value in cells) + 1
+    grid = [[filler] * width for _ in range(height)]
+    for row, column, value in cells:
+        if not 0 <= column < width:
+            raise ValueError(column)
+        grid[row][column] = value
+    return grid""",
+    variant_two="""def densify(cells, width, filler):
+    \"\"\"Lay scattered cells out as full rows.\"\"\"
+    if not cells:
+        return []
+    written = {}
+    for row, column, value in cells:
+        if column < 0 or column >= width:
+            raise ValueError(column)
+        written[(row, column)] = value
+    height = max(row for row, _column in written) + 1
+    return [
+        [written.get((row, column), filler) for column in range(width)]
+        for row in range(height)
+    ]""",
+    variant_three="""def densify(cells, width, filler):
+    \"\"\"Lay scattered cells out as full rows.\"\"\"
+    if not cells:
+        return []
+    height = max(row for row, _column, _value in cells) + 1
+    grid = [[filler] * width for _ in range(height)]
+    for row, column, value in cells:
+        grid[row][column] = value
+    return grid""",
+    variant_four="""def densify(cells, width, filler):
+    \"\"\"Lay scattered cells out as full rows.\"\"\"
+    if not cells:
+        return []
+    height = max(row for row, _column, _value in cells) + 1
+    grid = [[filler] * width for _ in range(height)]
+    for row, column, value in cells:
+        if not 0 <= column < width:
+            raise ValueError(column)
+        if value:
+            grid[row][column] = value
+    return grid""",
+    visible_test=_test_module(
+        "dense_rows",
+        "Published contract for laying scattered cells out as rows.",
+        """
+def test_scattered_cells_become_full_rows() -> None:
+    assert densify([(0, 0, 5), (1, 1, 7)], 2, 0) == [[5, 0], [0, 7]]
+
+
+def test_no_cells_make_no_rows() -> None:
+    assert densify([], 3, 0) == []
+""",
+        imports="from dense_rows import densify\n",
+    ),
+    hidden_test=_test_module(
+        "dense_rows",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from dense_rows import densify
+
+
+def test_scattered_cells_become_full_rows() -> None:
+    assert densify([(0, 0, 5), (1, 1, 7)], 2, 0) == [[5, 0], [0, 7]]
+
+
+def test_a_cell_holding_zero_is_written() -> None:
+    assert densify([(0, 0, 0)], 2, 9) == [[0, 9]]
+
+
+def test_a_column_outside_the_width_is_refused() -> None:
+    with pytest.raises(ValueError):
+        densify([(0, 5, 1)], 2, 0)
+""",
+    ),
+)
+
+_G065 = D2TaskSpec(
+    template_id="d6_transform.bucket_by_prefix",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d6-transform-bucket-by-prefix",
+    module="bucket_by_prefix",
+    module_doc="Gathering names under the opening characters they share.",
+    issue=(
+        "bucket_by_prefix() is documented to gather names under the opening characters they "
+        "share. Callers report that a name shorter than the opening it is bucketed by vanishes "
+        "altogether, and that the buckets come back in whatever order the names arrived."
+    ),
+    expected=(
+        "bucket_by_prefix(names, length) returns (bucket, names) pairs sorted by bucket, where "
+        "the bucket is a name's first length characters. A name shorter than that is bucketed "
+        "under the whole of itself rather than dropped."
+    ),
+    baseline_reason=(
+        "it skips a name too short to fill the opening and it returns the buckets in the order "
+        "they were first seen"
+    ),
+    edge_cases=(
+        "a name shorter than the opening is bucketed under itself",
+        "the buckets come back sorted",
+    ),
+    baseline="""def bucket_by_prefix(names, length):
+    \"\"\"Gather `names` under their first `length` characters.\"\"\"
+    buckets = {}
+    for name in names:
+        if len(name) < length:
+            continue
+        buckets.setdefault(name[:length], []).append(name)
+    return list(buckets.items())""",
+    variant_one="""def bucket_by_prefix(names, length):
+    \"\"\"Gather `names` under their first `length` characters.\"\"\"
+    buckets = {}
+    for name in names:
+        buckets.setdefault(name[:length], []).append(name)
+    return sorted(buckets.items())""",
+    variant_two="""def bucket_by_prefix(names, length):
+    \"\"\"Gather `names` under their first `length` characters.\"\"\"
+    openings = sorted({name[:length] for name in names})
+    return [
+        (opening, [name for name in names if name[:length] == opening])
+        for opening in openings
+    ]""",
+    variant_three="""def bucket_by_prefix(names, length):
+    \"\"\"Gather `names` under their first `length` characters.\"\"\"
+    buckets = {}
+    for name in names:
+        buckets.setdefault(name[:length], []).append(name)
+    return list(buckets.items())""",
+    variant_four="""def bucket_by_prefix(names, length):
+    \"\"\"Gather `names` under their first `length` characters.\"\"\"
+    buckets = {}
+    for name in names:
+        if len(name) < length:
+            continue
+        buckets.setdefault(name[:length], []).append(name)
+    return sorted(buckets.items())""",
+    visible_test=_test_module(
+        "bucket_by_prefix",
+        "Published contract for gathering names by their opening.",
+        """
+def test_names_gather_under_their_opening() -> None:
+    assert bucket_by_prefix(["abc", "abd", "xyz"], 2) == [
+        ("ab", ["abc", "abd"]),
+        ("xy", ["xyz"]),
+    ]
+
+
+def test_one_name_makes_one_bucket() -> None:
+    assert bucket_by_prefix(["hello"], 2) == [("he", ["hello"])]
+""",
+        imports="from bucket_by_prefix import bucket_by_prefix\n",
+    ),
+    hidden_test=_test_module(
+        "bucket_by_prefix",
+        "The part of the contract the published tests do not state.",
+        """
+def test_names_gather_under_their_opening() -> None:
+    assert bucket_by_prefix(["abc", "abd", "xyz"], 2) == [
+        ("ab", ["abc", "abd"]),
+        ("xy", ["xyz"]),
+    ]
+
+
+def test_a_short_name_is_bucketed_under_itself() -> None:
+    assert bucket_by_prefix(["a"], 2) == [("a", ["a"])]
+
+
+def test_the_buckets_come_back_sorted() -> None:
+    assert bucket_by_prefix(["xyz", "abc"], 2) == [("ab", ["abc"]), ("xy", ["xyz"])]
+""",
+        imports="from bucket_by_prefix import bucket_by_prefix\n",
+    ),
+)
+
+_G066 = D2TaskSpec(
+    template_id="d6_transform.signature_columns",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d6-transform-signature-columns",
+    module="signature_columns",
+    module_doc="Telling the columns every row carries from the ones only some rows carry.",
+    issue=(
+        "signature_columns() is documented to tell the columns every row carries from the ones "
+        "only some do. Callers report that a column written as nothing in one row is counted as "
+        "missing from that row, and that a column appearing for the first time in a later row "
+        "is not counted at all."
+    ),
+    expected=(
+        "signature_columns(rows) returns (shared, partial): the columns present in every row, "
+        "and those present in some but not all, each sorted. A column written as None is "
+        "present. A column is looked for in every row, not only the first."
+    ),
+    baseline_reason=(
+        "it takes a column written as None to be absent and it draws the whole set of columns "
+        "from the first row alone"
+    ),
+    edge_cases=(
+        "a column written as nothing is present",
+        "a column appearing first in a later row is counted",
+    ),
+    baseline="""def signature_columns(rows):
+    \"\"\"Return the columns every row carries and the ones only some carry.\"\"\"
+    if not rows:
+        return [], []
+    present = [{name for name, value in row.items() if value is not None} for row in rows]
+    shared = set(present[0])
+    for names in present[1:]:
+        shared &= names
+    everything = set(present[0])
+    return sorted(shared), sorted(everything - shared)""",
+    variant_one="""def signature_columns(rows):
+    \"\"\"Return the columns every row carries and the ones only some carry.\"\"\"
+    if not rows:
+        return [], []
+    present = [set(row) for row in rows]
+    shared = set(present[0])
+    everything = set(present[0])
+    for names in present[1:]:
+        shared &= names
+        everything |= names
+    return sorted(shared), sorted(everything - shared)""",
+    variant_two="""def signature_columns(rows):
+    \"\"\"Return the columns every row carries and the ones only some carry.\"\"\"
+    if not rows:
+        return [], []
+    counted = {}
+    for row in rows:
+        for name in row:
+            counted[name] = counted.get(name, 0) + 1
+    shared = [name for name, seen in counted.items() if seen == len(rows)]
+    partial = [name for name, seen in counted.items() if seen != len(rows)]
+    return sorted(shared), sorted(partial)""",
+    variant_three="""def signature_columns(rows):
+    \"\"\"Return the columns every row carries and the ones only some carry.\"\"\"
+    if not rows:
+        return [], []
+    present = [set(row) for row in rows]
+    shared = set(present[0])
+    for names in present[1:]:
+        shared &= names
+    everything = set(present[0])
+    return sorted(shared), sorted(everything - shared)""",
+    variant_four="""def signature_columns(rows):
+    \"\"\"Return the columns every row carries and the ones only some carry.\"\"\"
+    if not rows:
+        return [], []
+    present = [{name for name, value in row.items() if value is not None} for row in rows]
+    shared = set(present[0])
+    everything = set(present[0])
+    for names in present[1:]:
+        shared &= names
+        everything |= names
+    return sorted(shared), sorted(everything - shared)""",
+    visible_test=_test_module(
+        "signature_columns",
+        "Published contract for telling shared columns from partial ones.",
+        """
+def test_columns_in_every_row_are_shared() -> None:
+    rows = [{"a": 1, "b": 2}, {"a": 3, "b": 4}]
+    assert signature_columns(rows) == (["a", "b"], [])
+
+
+def test_no_rows_carry_no_columns() -> None:
+    assert signature_columns([]) == ([], [])
+""",
+        imports="from signature_columns import signature_columns\n",
+    ),
+    hidden_test=_test_module(
+        "signature_columns",
+        "The part of the contract the published tests do not state.",
+        """
+def test_columns_in_every_row_are_shared() -> None:
+    rows = [{"a": 1, "b": 2}, {"a": 3, "b": 4}]
+    assert signature_columns(rows) == (["a", "b"], [])
+
+
+def test_a_column_written_as_nothing_is_present() -> None:
+    assert signature_columns([{"a": 1}, {"a": None}]) == (["a"], [])
+
+
+def test_a_column_appearing_in_a_later_row_is_counted() -> None:
+    assert signature_columns([{"a": 1}, {"a": 2, "b": 3}]) == (["a"], ["b"])
+""",
+        imports="from signature_columns import signature_columns\n",
+    ),
+)
+
+_G067 = D2TaskSpec(
+    template_id="d6_error.veto_tally",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d6-error-veto-tally",
+    module="veto_tally",
+    module_doc="Deciding a ballot in which one veto outweighs any number of approvals.",
+    issue=(
+        "decide() is documented to decide a ballot where a single veto blocks whatever the "
+        "count. Callers report that a veto is merely counted alongside the objections and can "
+        "be outvoted, and that a ballot nobody voted in comes back rejected rather than "
+        "undecided."
+    ),
+    expected=(
+        "decide(votes) returns 'blocked' when anybody vetoed, whatever else was cast; otherwise "
+        "'carried' when approvals outnumber objections and 'rejected' when they do not. A "
+        "ballot with no votes at all is 'no_decision'. Any other vote raises ValueError."
+    ),
+    baseline_reason=(
+        "it folds a veto in with the objections and counts them, and it lets an empty ballot "
+        "fall through to a rejection"
+    ),
+    edge_cases=(
+        "one veto blocks whatever the count",
+        "a ballot with no votes is undecided",
+    ),
+    baseline="""def decide(votes):
+    \"\"\"Decide a ballot.\"\"\"
+    approvals = 0
+    objections = 0
+    for vote in votes:
+        if vote == "approve":
+            approvals += 1
+        elif vote in ("object", "veto"):
+            objections += 1
+        else:
+            raise ValueError(vote)
+    return "carried" if approvals > objections else "rejected\"""",
+    variant_one="""def decide(votes):
+    \"\"\"Decide a ballot.\"\"\"
+    approvals = 0
+    objections = 0
+    vetoed = False
+    for vote in votes:
+        if vote == "approve":
+            approvals += 1
+        elif vote == "object":
+            objections += 1
+        elif vote == "veto":
+            vetoed = True
+        else:
+            raise ValueError(vote)
+    if vetoed:
+        return "blocked"
+    if not votes:
+        return "no_decision"
+    return "carried" if approvals > objections else "rejected\"""",
+    variant_two="""ALLOWED = ("approve", "object", "veto")
+
+
+def decide(votes):
+    \"\"\"Decide a ballot.\"\"\"
+    for vote in votes:
+        if vote not in ALLOWED:
+            raise ValueError(vote)
+    if not votes:
+        return "no_decision"
+    if "veto" in votes:
+        return "blocked"
+    approvals = sum(1 for vote in votes if vote == "approve")
+    objections = sum(1 for vote in votes if vote == "object")
+    return "carried" if approvals > objections else "rejected\"""",
+    variant_three="""def decide(votes):
+    \"\"\"Decide a ballot.\"\"\"
+    approvals = 0
+    objections = 0
+    vetoed = False
+    for vote in votes:
+        if vote == "approve":
+            approvals += 1
+        elif vote == "object":
+            objections += 1
+        elif vote == "veto":
+            vetoed = True
+        else:
+            raise ValueError(vote)
+    if vetoed:
+        return "blocked"
+    return "carried" if approvals > objections else "rejected\"""",
+    variant_four="""def decide(votes):
+    \"\"\"Decide a ballot.\"\"\"
+    approvals = 0
+    objections = 0
+    for vote in votes:
+        if vote == "approve":
+            approvals += 1
+        elif vote in ("object", "veto"):
+            objections += 1
+        else:
+            raise ValueError(vote)
+    if not votes:
+        return "no_decision"
+    return "carried" if approvals > objections else "rejected\"""",
+    visible_test=_test_module(
+        "veto_tally",
+        "Published contract for deciding a ballot.",
+        """
+import pytest
+
+from veto_tally import decide
+
+
+def test_approvals_outnumbering_objections_carry_it() -> None:
+    assert decide(["approve", "approve", "object"]) == "carried"
+
+
+def test_a_vote_nobody_recognises_is_refused() -> None:
+    with pytest.raises(ValueError):
+        decide(["shrug"])
+""",
+    ),
+    hidden_test=_test_module(
+        "veto_tally",
+        "The part of the contract the published tests do not state.",
+        """
+def test_approvals_outnumbering_objections_carry_it() -> None:
+    assert decide(["approve", "approve", "object"]) == "carried"
+
+
+def test_one_veto_blocks_whatever_the_count() -> None:
+    assert decide(["approve", "approve", "veto"]) == "blocked"
+
+
+def test_a_ballot_with_no_votes_is_undecided() -> None:
+    assert decide([]) == "no_decision"
+""",
+        imports="from veto_tally import decide\n",
+    ),
+)
+
+_G068 = D2TaskSpec(
+    template_id="d6_error.severity_merge",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d6-error-severity-merge",
+    module="severity_merge",
+    module_doc="Combining two verdicts into the graver of the two.",
+    issue=(
+        "merge_severity() is documented to combine two verdicts into the graver one. Callers "
+        "report that a verdict nobody declared is quietly passed over instead of refused, and "
+        "that the graver of two declared verdicts is picked by the alphabet rather than by how "
+        "grave they are."
+    ),
+    expected=(
+        "merge_severity(left, right) returns the graver of the two verdicts, where the order "
+        "runs info, warning, error, fatal. A verdict outside that ladder raises ValueError."
+    ),
+    baseline_reason=(
+        "it drops a verdict it does not recognise and it compares the two as words rather than "
+        "by their place on the ladder"
+    ),
+    edge_cases=(
+        "a verdict outside the ladder is refused",
+        "the graver verdict is chosen by the ladder, not the alphabet",
+    ),
+    baseline="""LADDER = ("info", "warning", "error", "fatal")
+
+
+def merge_severity(left, right):
+    \"\"\"Return the graver of two verdicts.\"\"\"
+    known = [verdict for verdict in (left, right) if verdict in LADDER]
+    if not known:
+        return LADDER[0]
+    return max(known)""",
+    variant_one="""LADDER = ("info", "warning", "error", "fatal")
+
+
+def merge_severity(left, right):
+    \"\"\"Return the graver of two verdicts.\"\"\"
+    for verdict in (left, right):
+        if verdict not in LADDER:
+            raise ValueError(verdict)
+    return max((left, right), key=LADDER.index)""",
+    variant_two="""LADDER = ("info", "warning", "error", "fatal")
+
+
+def merge_severity(left, right):
+    \"\"\"Return the graver of two verdicts.\"\"\"
+    places = []
+    for verdict in (left, right):
+        if verdict not in LADDER:
+            raise ValueError(verdict)
+        places.append(LADDER.index(verdict))
+    return LADDER[max(places)]""",
+    variant_three="""LADDER = ("info", "warning", "error", "fatal")
+
+
+def merge_severity(left, right):
+    \"\"\"Return the graver of two verdicts.\"\"\"
+    for verdict in (left, right):
+        if verdict not in LADDER:
+            raise ValueError(verdict)
+    return max(left, right)""",
+    variant_four="""LADDER = ("info", "warning", "error", "fatal")
+
+
+def merge_severity(left, right):
+    \"\"\"Return the graver of two verdicts.\"\"\"
+    known = [verdict for verdict in (left, right) if verdict in LADDER]
+    if not known:
+        return LADDER[0]
+    return max(known, key=LADDER.index)""",
+    visible_test=_test_module(
+        "severity_merge",
+        "Published contract for combining two verdicts.",
+        """
+def test_a_warning_is_graver_than_information() -> None:
+    assert merge_severity("info", "warning") == "warning"
+
+
+def test_fatal_is_graver_than_an_error() -> None:
+    assert merge_severity("error", "fatal") == "fatal"
+""",
+        imports="from severity_merge import merge_severity\n",
+    ),
+    hidden_test=_test_module(
+        "severity_merge",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from severity_merge import merge_severity
+
+
+def test_a_warning_is_graver_than_information() -> None:
+    assert merge_severity("info", "warning") == "warning"
+
+
+def test_a_verdict_outside_the_ladder_is_refused() -> None:
+    with pytest.raises(ValueError):
+        merge_severity("info", "bogus")
+
+
+def test_the_graver_verdict_is_chosen_by_the_ladder() -> None:
+    assert merge_severity("error", "info") == "error"
+""",
+    ),
+)
+
+_G069 = D2TaskSpec(
+    template_id="d6_numeric.budget_burndown",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d6-numeric-budget-burndown",
+    module="budget_burndown",
+    module_doc="Working out how long a budget lasts at a steady rate of spending.",
+    issue=(
+        "days_left() is documented to say how long a budget lasts at a steady rate. Callers "
+        "report that a rate of nothing brings the call down with a ZeroDivisionError instead of "
+        "saying the budget never runs out, and that a rate below zero hands back a negative "
+        "number of days."
+    ),
+    expected=(
+        "days_left(total, rate) returns how many whole days the budget lasts, rounding a part "
+        "day up because the budget is gone during it. A rate of zero returns None, because the "
+        "budget never runs out. A rate below zero raises ValueError."
+    ),
+    baseline_reason=(
+        "it divides before looking at the rate, so a rate of zero brings it down and a negative "
+        "rate runs the sum backwards"
+    ),
+    edge_cases=(
+        "a rate of zero never runs out",
+        "a rate below zero is refused",
+    ),
+    baseline="""def days_left(total, rate):
+    \"\"\"Return how many days `total` lasts at `rate` a day.\"\"\"
+    return -(-total // rate)""",
+    variant_one="""def days_left(total, rate):
+    \"\"\"Return how many days `total` lasts at `rate` a day.\"\"\"
+    if rate < 0:
+        raise ValueError("a rate below zero spends backwards")
+    if rate == 0:
+        return None
+    return -(-total // rate)""",
+    variant_two="""def days_left(total, rate):
+    \"\"\"Return how many days `total` lasts at `rate` a day.\"\"\"
+    if not rate >= 0:
+        raise ValueError("a rate below zero spends backwards")
+    if not rate:
+        return None
+    days = total // rate
+    if total % rate:
+        days += 1
+    return days""",
+    variant_three="""def days_left(total, rate):
+    \"\"\"Return how many days `total` lasts at `rate` a day.\"\"\"
+    if rate == 0:
+        return None
+    return -(-total // rate)""",
+    variant_four="""def days_left(total, rate):
+    \"\"\"Return how many days `total` lasts at `rate` a day.\"\"\"
+    if rate < 0:
+        raise ValueError("a rate below zero spends backwards")
+    return -(-total // rate)""",
+    visible_test=_test_module(
+        "budget_burndown",
+        "Published contract for how long a budget lasts.",
+        """
+def test_a_part_day_rounds_up() -> None:
+    assert days_left(10, 3) == 4
+
+
+def test_an_exact_number_of_days_is_exact() -> None:
+    assert days_left(9, 3) == 3
+""",
+        imports="from budget_burndown import days_left\n",
+    ),
+    hidden_test=_test_module(
+        "budget_burndown",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from budget_burndown import days_left
+
+
+def test_a_part_day_rounds_up() -> None:
+    assert days_left(10, 3) == 4
+
+
+def test_a_rate_of_zero_never_runs_out() -> None:
+    assert days_left(10, 0) is None
+
+
+def test_a_rate_below_zero_is_refused() -> None:
+    with pytest.raises(ValueError):
+        days_left(10, -2)
+""",
+    ),
+)
+
+_G070 = D2TaskSpec(
+    template_id="d6_numeric.signed_split",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d6-numeric-signed-split",
+    module="signed_split",
+    module_doc="Counting a series into the readings above, below and at zero.",
+    issue=(
+        "signed_split() is documented to count a series into the readings above zero, below "
+        "zero and at it. Callers report that a reading of zero is counted among those above, "
+        "and that a reading that is missing altogether is passed over instead of refused."
+    ),
+    expected=(
+        "signed_split(values) returns (above, below, at_zero). Zero is at zero and belongs in "
+        "neither of the other two. A reading of None raises ValueError, because a missing "
+        "reading has no sign."
+    ),
+    baseline_reason=(
+        "it counts anything not below zero as above it, and it skips a missing reading rather "
+        "than objecting to it"
+    ),
+    edge_cases=(
+        "a reading of zero is counted at zero",
+        "a missing reading is refused",
+    ),
+    baseline="""def signed_split(values):
+    \"\"\"Count `values` into those above, below and at zero.\"\"\"
+    above = 0
+    below = 0
+    at_zero = 0
+    for value in values:
+        if value is None:
+            continue
+        if value >= 0:
+            above += 1
+        else:
+            below += 1
+    return above, below, at_zero""",
+    variant_one="""def signed_split(values):
+    \"\"\"Count `values` into those above, below and at zero.\"\"\"
+    above = 0
+    below = 0
+    at_zero = 0
+    for value in values:
+        if value is None:
+            raise ValueError("a missing reading has no sign")
+        if value > 0:
+            above += 1
+        elif value < 0:
+            below += 1
+        else:
+            at_zero += 1
+    return above, below, at_zero""",
+    variant_two="""def signed_split(values):
+    \"\"\"Count `values` into those above, below and at zero.\"\"\"
+    if any(value is None for value in values):
+        raise ValueError("a missing reading has no sign")
+    above = sum(1 for value in values if value > 0)
+    below = sum(1 for value in values if value < 0)
+    return above, below, len(values) - above - below""",
+    variant_three="""def signed_split(values):
+    \"\"\"Count `values` into those above, below and at zero.\"\"\"
+    above = 0
+    below = 0
+    at_zero = 0
+    for value in values:
+        if value is None:
+            continue
+        if value > 0:
+            above += 1
+        elif value < 0:
+            below += 1
+        else:
+            at_zero += 1
+    return above, below, at_zero""",
+    variant_four="""def signed_split(values):
+    \"\"\"Count `values` into those above, below and at zero.\"\"\"
+    above = 0
+    below = 0
+    at_zero = 0
+    for value in values:
+        if value is None:
+            raise ValueError("a missing reading has no sign")
+        if value >= 0:
+            above += 1
+        else:
+            below += 1
+    return above, below, at_zero""",
+    visible_test=_test_module(
+        "signed_split",
+        "Published contract for counting a series by sign.",
+        """
+def test_readings_are_counted_by_sign() -> None:
+    assert signed_split([1, -2, 3]) == (2, 1, 0)
+
+
+def test_an_empty_series_counts_nothing() -> None:
+    assert signed_split([]) == (0, 0, 0)
+""",
+        imports="from signed_split import signed_split\n",
+    ),
+    hidden_test=_test_module(
+        "signed_split",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from signed_split import signed_split
+
+
+def test_readings_are_counted_by_sign() -> None:
+    assert signed_split([1, -2, 3]) == (2, 1, 0)
+
+
+def test_a_reading_of_zero_is_counted_at_zero() -> None:
+    assert signed_split([0, 1]) == (1, 0, 1)
+
+
+def test_a_missing_reading_is_refused() -> None:
+    with pytest.raises(ValueError):
+        signed_split([1, None])
+""",
+    ),
+)
+
 D6_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G001,
     _G002,
@@ -5488,4 +6576,14 @@ D6_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G058,
     _G059,
     _G060,
+    _G061,
+    _G062,
+    _G063,
+    _G064,
+    _G065,
+    _G066,
+    _G067,
+    _G068,
+    _G069,
+    _G070,
 )
