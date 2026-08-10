@@ -7096,6 +7096,596 @@ def test_an_account_with_money_in_it_is_not_closed() -> None:
     ),
 )
 
+_G070 = D2TaskSpec(
+    template_id="d7_boundary.trim_extremes",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-trim-extremes",
+    module="trim_extremes",
+    module_doc="Dropping one highest and one lowest reading, and only one of each.",
+    issue=(
+        "trim() is documented to drop a single lowest reading and a single highest one. "
+        "Callers report every reading equal to the lowest disappearing at once, which throws "
+        "away most of a run of steady readings, and a series too short to trim failing outright "
+        "instead of trimming to nothing."
+    ),
+    expected=(
+        "trim(values) returns the values with one lowest and one highest removed, the rest in "
+        "the order they arrived. Only the first of a repeated extreme is removed, and a series "
+        "too short to have both trims to nothing."
+    ),
+    baseline_reason=(
+        "it filters out every value equal to either extreme rather than one of each, and it "
+        "asks for the extremes of a series that may have none"
+    ),
+    edge_cases=(
+        "only one copy of a repeated extreme is removed",
+        "a series too short to trim trims to nothing",
+    ),
+    baseline="""def trim(values):
+    \"\"\"Drop one lowest and one highest reading.\"\"\"
+    lowest = min(values)
+    highest = max(values)
+    return [value for value in values if value != lowest and value != highest]""",
+    variant_one="""def trim(values):
+    \"\"\"Drop one lowest and one highest reading.\"\"\"
+    if len(values) < 3:
+        return []
+    kept = list(values)
+    kept.remove(min(kept))
+    kept.remove(max(kept))
+    return kept""",
+    variant_two="""def trim(values):
+    \"\"\"Drop one lowest and one highest reading.\"\"\"
+    if len(values) < 3:
+        return []
+    low = min(values)
+    high = max(values)
+    kept = []
+    dropped_low = False
+    dropped_high = False
+    for value in values:
+        if value == low and not dropped_low:
+            dropped_low = True
+            continue
+        if value == high and not dropped_high:
+            dropped_high = True
+            continue
+        kept.append(value)
+    return kept""",
+    variant_three="""def trim(values):
+    \"\"\"Drop one lowest and one highest reading.\"\"\"
+    kept = list(values)
+    kept.remove(min(kept))
+    kept.remove(max(kept))
+    return kept""",
+    variant_four="""def trim(values):
+    \"\"\"Drop one lowest and one highest reading.\"\"\"
+    if len(values) < 3:
+        return []
+    lowest = min(values)
+    highest = max(values)
+    return [value for value in values if value != lowest and value != highest]""",
+    visible_test=_test_module(
+        "trim_extremes",
+        "Published contract for trimming the extremes.",
+        """
+def test_the_extremes_are_dropped() -> None:
+    assert trim([5, 1, 9, 3]) == [5, 3]
+
+
+def test_three_readings_leave_the_middle_one() -> None:
+    assert trim([1, 2, 3]) == [2]
+""",
+        imports="from trim_extremes import trim\n",
+    ),
+    hidden_test=_test_module(
+        "trim_extremes",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_extremes_are_dropped() -> None:
+    assert trim([5, 1, 9, 3]) == [5, 3]
+
+
+def test_only_one_copy_of_a_repeated_extreme_is_removed() -> None:
+    assert trim([1, 1, 5, 9]) == [1, 5]
+
+
+def test_a_series_too_short_to_trim_trims_to_nothing() -> None:
+    assert trim([]) == []
+""",
+        imports="from trim_extremes import trim\n",
+    ),
+)
+
+_G071 = D2TaskSpec(
+    template_id="d7_numeric.age_on_date",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-age-on-date",
+    module="age_on_date",
+    module_doc="Working out somebody's age on a date, in whole years they have actually had.",
+    issue=(
+        "age() is documented to count the birthdays that have happened, not the years the "
+        "calendar has turned over. Callers report people born in December being a year older "
+        "than they are for most of the year, and a date of birth typed in the future coming "
+        "back as a negative age rather than as the typing mistake it is."
+    ),
+    expected=(
+        "age(born, today) takes (year, month, day) tuples and returns the whole years lived. A "
+        "birthday not yet reached this year counts one less, a birthday falling exactly today "
+        "counts, and a date of birth after today raises ValueError."
+    ),
+    baseline_reason=(
+        "it subtracts one year from the other and never looks at the month and day, and it "
+        "never asks whether the date of birth is in the future"
+    ),
+    edge_cases=(
+        "a birthday not yet reached this year counts one less",
+        "a date of birth in the future is refused",
+    ),
+    baseline="""def age(born, today):
+    \"\"\"Return the whole years lived on a date.\"\"\"
+    return today[0] - born[0]""",
+    variant_one="""def age(born, today):
+    \"\"\"Return the whole years lived on a date.\"\"\"
+    if today < born:
+        raise ValueError("not born yet")
+    years = today[0] - born[0]
+    if (today[1], today[2]) < (born[1], born[2]):
+        years -= 1
+    return years""",
+    variant_two="""def age(born, today):
+    \"\"\"Return the whole years lived on a date.\"\"\"
+    if born > today:
+        raise ValueError("not born yet")
+    years = today[0] - born[0]
+    reached = today[1] > born[1] or (today[1] == born[1] and today[2] >= born[2])
+    return years if reached else years - 1""",
+    variant_three="""def age(born, today):
+    \"\"\"Return the whole years lived on a date.\"\"\"
+    years = today[0] - born[0]
+    if (today[1], today[2]) < (born[1], born[2]):
+        years -= 1
+    return years""",
+    variant_four="""def age(born, today):
+    \"\"\"Return the whole years lived on a date.\"\"\"
+    if today < born:
+        raise ValueError("not born yet")
+    return today[0] - born[0]""",
+    visible_test=_test_module(
+        "age_on_date",
+        "Published contract for the age on a date.",
+        """
+def test_a_birthday_already_past_counts_the_years() -> None:
+    assert age((1990, 3, 4), (2026, 8, 10)) == 36
+
+
+def test_a_birthday_falling_today_counts() -> None:
+    assert age((2000, 1, 1), (2020, 1, 1)) == 20
+""",
+        imports="from age_on_date import age\n",
+    ),
+    hidden_test=_test_module(
+        "age_on_date",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_birthday_already_past_counts_the_years() -> None:
+    assert age((1990, 3, 4), (2026, 8, 10)) == 36
+
+
+def test_a_birthday_not_yet_reached_counts_one_less() -> None:
+    assert age((1990, 12, 1), (2026, 8, 10)) == 35
+
+
+def test_a_date_of_birth_in_the_future_is_refused() -> None:
+    with pytest.raises(ValueError):
+        age((2030, 1, 1), (2026, 8, 10))
+""",
+        imports="from age_on_date import age\n",
+    ),
+)
+
+_G072 = D2TaskSpec(
+    template_id="d7_transform.order_nulls_last",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-order-nulls-last",
+    module="order_nulls_last",
+    module_doc="Ordering rows by a field, with the rows that have no such field at the back.",
+    issue=(
+        "order() is documented to put the rows that do not carry the field at the back, and to "
+        "leave rows that tie in the order they arrived. Callers report rows with the field "
+        "missing sorting to the front as though they held the smallest value, and tied rows "
+        "coming back shuffled by something nobody asked to sort on."
+    ),
+    expected=(
+        "order(rows, field) returns the rows in ascending order of the named field. A row that "
+        "does not carry the field comes after every row that does, and rows whose values are "
+        "equal keep the order they arrived in."
+    ),
+    baseline_reason=(
+        "it reads a missing field as nothing at all, which sorts those rows to the front, and "
+        "it breaks a tie on the rendered row rather than leaving the tie alone"
+    ),
+    edge_cases=(
+        "a row that does not carry the field comes last",
+        "rows with equal values keep the order they arrived in",
+    ),
+    baseline="""def order(rows, field):
+    \"\"\"Order the rows by a field.\"\"\"
+    return sorted(rows, key=lambda row: (row.get(field, 0), str(row)))""",
+    variant_one="""def order(rows, field):
+    \"\"\"Order the rows by a field.\"\"\"
+    carried = [row for row in rows if field in row]
+    missing = [row for row in rows if field not in row]
+    return sorted(carried, key=lambda row: row[field]) + missing""",
+    variant_two="""def order(rows, field):
+    \"\"\"Order the rows by a field.\"\"\"
+    def place(item):
+        index, row = item
+        if field not in row:
+            return (1, 0, index)
+        return (0, row[field], index)
+
+    return [row for _, row in sorted(enumerate(rows), key=place)]""",
+    variant_three="""def order(rows, field):
+    \"\"\"Order the rows by a field.\"\"\"
+    carried = [row for row in rows if field in row]
+    missing = [row for row in rows if field not in row]
+    return sorted(carried, key=lambda row: (row[field], str(row))) + missing""",
+    variant_four="""def order(rows, field):
+    \"\"\"Order the rows by a field.\"\"\"
+    return sorted(rows, key=lambda row: row.get(field, 0))""",
+    visible_test=_test_module(
+        "order_nulls_last",
+        "Published contract for ordering the rows.",
+        """
+def test_rows_are_ordered_by_the_field() -> None:
+    assert order([{"v": 2}, {"v": 1}], "v") == [{"v": 1}, {"v": 2}]
+
+
+def test_no_rows_order_into_no_rows() -> None:
+    assert order([], "v") == []
+""",
+        imports="from order_nulls_last import order\n",
+    ),
+    hidden_test=_test_module(
+        "order_nulls_last",
+        "The part of the contract the published tests do not state.",
+        """
+def test_rows_are_ordered_by_the_field() -> None:
+    assert order([{"v": 2}, {"v": 1}], "v") == [{"v": 1}, {"v": 2}]
+
+
+def test_a_row_without_the_field_comes_last() -> None:
+    assert order([{"v": 2}, {"x": 1}], "v") == [{"v": 2}, {"x": 1}]
+
+
+def test_rows_with_equal_values_keep_their_order() -> None:
+    rows = [{"v": 1, "n": "b"}, {"v": 1, "n": "a"}]
+    assert order(rows, "v") == [{"v": 1, "n": "b"}, {"v": 1, "n": "a"}]
+""",
+        imports="from order_nulls_last import order\n",
+    ),
+)
+
+_G073 = D2TaskSpec(
+    template_id="d7_error.error_mode",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-error-mode",
+    module="error_mode",
+    module_doc="Honouring the mode the caller asked for when an item goes wrong.",
+    issue=(
+        "process() is documented to take a mode saying what to do about an item that fails, and "
+        "to refuse a mode it does not know. Callers report asking it to stop and watching it "
+        "carry on regardless, and a mode typed wrongly being treated as 'skip' so that the "
+        "mistake never surfaces."
+    ),
+    expected=(
+        "process(items, worker, on_error) returns what the worker made of each item. Under "
+        "'skip' an item that fails is left out and the rest are still worked; under 'stop' the "
+        "failure reaches the caller at once. Any other mode raises ValueError before any item "
+        "is worked at all."
+    ),
+    baseline_reason=(
+        "it swallows every failure whatever the mode says, so 'stop' does not stop, and it "
+        "never checks the mode, so an unknown one behaves like 'skip'"
+    ),
+    edge_cases=(
+        "the stop mode stops at the first failure",
+        "a mode nobody defined is refused",
+    ),
+    baseline="""def process(items, worker, on_error):
+    \"\"\"Work each item, doing what the mode says about failures.\"\"\"
+    results = []
+    for item in items:
+        try:
+            results.append(worker(item))
+        except Exception:
+            continue
+    return results""",
+    variant_one="""def process(items, worker, on_error):
+    \"\"\"Work each item, doing what the mode says about failures.\"\"\"
+    if on_error not in ("skip", "stop"):
+        raise ValueError("unknown mode: " + str(on_error))
+    results = []
+    for item in items:
+        try:
+            results.append(worker(item))
+        except Exception:
+            if on_error == "stop":
+                raise
+    return results""",
+    variant_two="""def process(items, worker, on_error):
+    \"\"\"Work each item, doing what the mode says about failures.\"\"\"
+    if on_error == "skip":
+        skipping = True
+    elif on_error == "stop":
+        skipping = False
+    else:
+        raise ValueError("unknown mode: " + str(on_error))
+    results = []
+    for item in items:
+        try:
+            results.append(worker(item))
+        except Exception:
+            if not skipping:
+                raise
+    return results""",
+    variant_three="""def process(items, worker, on_error):
+    \"\"\"Work each item, doing what the mode says about failures.\"\"\"
+    results = []
+    for item in items:
+        try:
+            results.append(worker(item))
+        except Exception:
+            if on_error == "stop":
+                raise
+    return results""",
+    variant_four="""def process(items, worker, on_error):
+    \"\"\"Work each item, doing what the mode says about failures.\"\"\"
+    if on_error not in ("skip", "stop"):
+        raise ValueError("unknown mode: " + str(on_error))
+    results = []
+    for item in items:
+        try:
+            results.append(worker(item))
+        except Exception:
+            continue
+    return results""",
+    visible_test=_test_module(
+        "error_mode",
+        "Published contract for the error mode.",
+        """
+def _double(item):
+    if item == 0:
+        raise ValueError("cannot double nothing")
+    return item * 2
+
+
+def test_every_item_working_gives_every_result() -> None:
+    assert process([1, 2], _double, "skip") == [2, 4]
+
+
+def test_the_skip_mode_leaves_the_failure_out() -> None:
+    assert process([1, 0, 2], _double, "skip") == [2, 4]
+""",
+        imports="from error_mode import process\n",
+    ),
+    hidden_test=_test_module(
+        "error_mode",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def _double(item):
+    if item == 0:
+        raise ValueError("cannot double nothing")
+    return item * 2
+
+
+def test_the_skip_mode_leaves_the_failure_out() -> None:
+    assert process([1, 0, 2], _double, "skip") == [2, 4]
+
+
+def test_the_stop_mode_stops_at_the_first_failure() -> None:
+    with pytest.raises(ValueError):
+        process([1, 0, 2], _double, "stop")
+
+
+def test_a_mode_nobody_defined_is_refused() -> None:
+    with pytest.raises(ValueError):
+        process([1], _double, "carry on")
+""",
+        imports="from error_mode import process\n",
+    ),
+)
+
+_G074 = D2TaskSpec(
+    template_id="d7_parsing.file_extension",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-file-extension",
+    module="file_extension",
+    module_doc="Splitting a file name where the extension actually starts.",
+    issue=(
+        "split_name() is documented to take the extension from the last dot, and to treat a "
+        "name that begins with a dot as a name rather than as a bare extension. Callers report "
+        "'archive.tar.gz' coming back with an extension of 'tar.gz', and a dotfile coming back "
+        "with no name at all."
+    ),
+    expected=(
+        "split_name(name) returns (stem, extension), where the extension is whatever follows "
+        "the last dot, without the dot. A name with no dot has an empty extension, and a name "
+        "whose only dot is the first character is all stem."
+    ),
+    baseline_reason=(
+        "it splits at the first dot rather than the last, and the first dot of a dotfile is the "
+        "one that starts its name"
+    ),
+    edge_cases=(
+        "the extension is whatever follows the last dot",
+        "a name whose only dot begins it is all name",
+    ),
+    baseline="""def split_name(name):
+    \"\"\"Split a file name into its stem and extension.\"\"\"
+    stem, _, extension = name.partition(".")
+    return stem, extension""",
+    variant_one="""def split_name(name):
+    \"\"\"Split a file name into its stem and extension.\"\"\"
+    index = name.rfind(".")
+    if index <= 0:
+        return name, ""
+    return name[:index], name[index + 1 :]""",
+    variant_two="""def split_name(name):
+    \"\"\"Split a file name into its stem and extension.\"\"\"
+    if "." not in name[1:]:
+        return name, ""
+    stem, _, extension = name.rpartition(".")
+    return stem, extension""",
+    variant_three="""def split_name(name):
+    \"\"\"Split a file name into its stem and extension.\"\"\"
+    index = name.rfind(".")
+    if index < 0:
+        return name, ""
+    return name[:index], name[index + 1 :]""",
+    variant_four="""def split_name(name):
+    \"\"\"Split a file name into its stem and extension.\"\"\"
+    if "." not in name[1:]:
+        return name, ""
+    stem, _, extension = name.partition(".")
+    return stem, extension""",
+    visible_test=_test_module(
+        "file_extension",
+        "Published contract for splitting a file name.",
+        """
+def test_a_name_with_one_dot_splits_at_it() -> None:
+    assert split_name("report.txt") == ("report", "txt")
+
+
+def test_a_name_with_no_dot_has_no_extension() -> None:
+    assert split_name("plain") == ("plain", "")
+""",
+        imports="from file_extension import split_name\n",
+    ),
+    hidden_test=_test_module(
+        "file_extension",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_name_with_one_dot_splits_at_it() -> None:
+    assert split_name("report.txt") == ("report", "txt")
+
+
+def test_the_extension_is_whatever_follows_the_last_dot() -> None:
+    assert split_name("archive.tar.gz") == ("archive.tar", "gz")
+
+
+def test_a_name_whose_only_dot_begins_it_is_all_name() -> None:
+    assert split_name(".bashrc") == (".bashrc", "")
+""",
+        imports="from file_extension import split_name\n",
+    ),
+)
+
+_G075 = D2TaskSpec(
+    template_id="d7_state.booking_slots",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-booking-slots",
+    module="booking_slots",
+    module_doc="Booking a slot that nobody else has, and not booking it twice.",
+    issue=(
+        "book() is documented to refuse a slot that runs over one already booked, and to treat "
+        "the same booking sent twice as the one booking it is. Callers report double bookings "
+        "going through, and a retry of a booking that already succeeded showing up as a second "
+        "identical slot."
+    ),
+    expected=(
+        "book(bookings, start, end) returns the bookings with the new slot added, in start "
+        "order. A slot identical to one already booked leaves the bookings as they were, and a "
+        "slot running over an existing one raises ValueError. Slots that merely touch at an end "
+        "do not run over each other."
+    ),
+    baseline_reason=(
+        "it adds whatever it is given, so it never notices a slot running over one already "
+        "there, nor that the slot it is adding is one it already holds"
+    ),
+    edge_cases=(
+        "a slot running over an existing booking is refused",
+        "booking the same slot again changes nothing",
+    ),
+    baseline="""def book(bookings, start, end):
+    \"\"\"Add a booking to the list.\"\"\"
+    return sorted(list(bookings) + [(start, end)])""",
+    variant_one="""def book(bookings, start, end):
+    \"\"\"Add a booking to the list.\"\"\"
+    if (start, end) in bookings:
+        return list(bookings)
+    for other_start, other_end in bookings:
+        if start < other_end and other_start < end:
+            raise ValueError("slot runs over an existing booking")
+    return sorted(list(bookings) + [(start, end)])""",
+    variant_two="""def book(bookings, start, end):
+    \"\"\"Add a booking to the list.\"\"\"
+    held = list(bookings)
+    if (start, end) in held:
+        return held
+    clashes = [pair for pair in held if start < pair[1] and pair[0] < end]
+    if clashes:
+        raise ValueError("slot runs over an existing booking")
+    held.append((start, end))
+    return sorted(held)""",
+    variant_three="""def book(bookings, start, end):
+    \"\"\"Add a booking to the list.\"\"\"
+    for other_start, other_end in bookings:
+        if start < other_end and other_start < end:
+            raise ValueError("slot runs over an existing booking")
+    return sorted(list(bookings) + [(start, end)])""",
+    variant_four="""def book(bookings, start, end):
+    \"\"\"Add a booking to the list.\"\"\"
+    if (start, end) in bookings:
+        return list(bookings)
+    return sorted(list(bookings) + [(start, end)])""",
+    visible_test=_test_module(
+        "booking_slots",
+        "Published contract for booking a slot.",
+        """
+def test_a_free_slot_is_booked() -> None:
+    assert book([(10, 12)], 14, 16) == [(10, 12), (14, 16)]
+
+
+def test_slots_touching_at_an_end_both_stand() -> None:
+    assert book([(10, 12)], 12, 14) == [(10, 12), (12, 14)]
+
+
+def test_the_first_booking_of_the_day_is_booked() -> None:
+    assert book([], 10, 12) == [(10, 12)]
+""",
+        imports="from booking_slots import book\n",
+    ),
+    hidden_test=_test_module(
+        "booking_slots",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_free_slot_is_booked() -> None:
+    assert book([(10, 12)], 14, 16) == [(10, 12), (14, 16)]
+
+
+def test_a_slot_running_over_an_existing_booking_is_refused() -> None:
+    with pytest.raises(ValueError):
+        book([(10, 14)], 12, 16)
+
+
+def test_booking_the_same_slot_again_changes_nothing() -> None:
+    assert book([(10, 12)], 10, 12) == [(10, 12)]
+""",
+        imports="from booking_slots import book\n",
+    ),
+)
+
 D7_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G001,
     _G002,
@@ -7166,6 +7756,12 @@ D7_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G067,
     _G068,
     _G069,
+    _G070,
+    _G071,
+    _G072,
+    _G073,
+    _G074,
+    _G075,
 )
 
 __all__ = ["D7_CERTIFICATION_SPECS", "D2TaskSpec", "RealityTaskFamily", "_test_module"]
