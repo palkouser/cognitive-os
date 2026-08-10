@@ -1,0 +1,165 @@
+{
+ "authority": {
+  "decided_at": "2026-08-10",
+  "decisions": {
+   "condition_24_renewal": "granted, on D6's exact form",
+   "conformal_half_demotion": "granted, on D6's 100 certification decisions",
+   "feature_contract_v3": "granted; frozen in revision 7, not in this record",
+   "ladder_rung": "granted: the containment ordering is seated as a sixth rung"
+  },
+  "instruction": "execute the W0 wave of the attached plan",
+  "reading": "the backlog names all three rulings plus the renewal as W0's business and the instruction to execute W0 under it carries them. The ladder ruling was put to the gate owner as an explicit either/or, with the baseline each side implies, and the answer was to seat the rung \u2014 the side that raises the bar the learned class must clear. Every record here is one edit from withdrawal while no D7 measurement exists, which is the state the chronology below proves",
+  "role": "sprint and gate owner",
+  "shown": [
+   "sprint-21d7-technical-backlog.md \u00a72.1, what is proven infeasible and what is licensed",
+   "sprint-21d7-technical-backlog.md \u00a72.2, the three rulings as drafted",
+   "sprint-21d7-technical-backlog.md \u00a72.2b, both sides of the ladder trade and its cost",
+   "sprint-21d7-technical-backlog.md \u00a73.2, the rank table under each candidate half",
+   "sprint-21d7-technical-backlog.md \u00a74.1, the condition-24 renewal and what it saves"
+  ]
+ },
+ "chronology": {
+  "authority_records_excluded_from_that_list": [
+   "sprint-21d7-authority-isolation-after.json",
+   "sprint-21d7-baseline.json",
+   "sprint-21d7-condition-24-ruling.json",
+   "sprint-21d7-contracts.json",
+   "sprint-21d7-demotion-ruling.json",
+   "sprint-21d7-ladder-ruling.json",
+   "sprint-21d7-pre-registration.json",
+   "sprint-21d7-provisioning.json",
+   "sprint-21d7-reuse-audit.json",
+   "sprint-21d7-transfer-gap.json"
+  ],
+  "d7_artifact_store_entries": 0,
+  "d7_certification_corpus_authored": false,
+  "d7_certification_outcomes": 0,
+  "d7_conformal_bars_derived": 0,
+  "d7_directions_fitted": 0,
+  "d7_measurement_records_present": [],
+  "groundwork_is_not_a_measurement_of_this_sprint": "sprint-21d7-transfer-gap.json is present and read by these rulings. It measures released D5 and D6 bytes, contains no D7 outcome, and its admission simulation is discarded by its own text. \u00a76 of the backlog prices exactly this: the class was found after reading spent evidence, and the fresh certification is read once"
+ },
+ "gate_contract_bytes_modified": 0,
+ "gate_contract_sha256": "9e47bc618fc1eca8b66146eacdf1bd244fced79bb1c91f46f2c6ff4484bfd8a7",
+ "if_refused": "D7 does not run. \u00a73.4 branch 0, stop kind successor_contract_refused: the class question cannot be posed under the frozen gate, because no half is left that may set a bar",
+ "integrity_content_hash": "b72b1cb178d8fc70b2f277c9a1ce84b75c08234fa2235db6b0925b22deef55e2",
+ "items": [
+  "S21D7-010"
+ ],
+ "justification": {
+  "alpha": "0.20",
+  "candidates": {
+   "d5_calibration": {
+    "alpha_0_20_is_a_genuine_quantile": false,
+    "first_choice_rate_under_the_new_class": "0.94",
+    "groups": 100,
+    "rank_table": {
+     "0.05": {
+      "degenerates_to_the_prefix_rule": true,
+      "quantile_exists": false,
+      "rank": 7,
+      "wrong_margins_above_the_bar": 0
+     },
+     "0.10": {
+      "degenerates_to_the_prefix_rule": true,
+      "quantile_exists": false,
+      "rank": 7,
+      "wrong_margins_above_the_bar": 0
+     },
+     "0.15": {
+      "degenerates_to_the_prefix_rule": true,
+      "quantile_exists": true,
+      "rank": 6,
+      "wrong_margins_above_the_bar": 0
+     },
+     "0.20": {
+      "degenerates_to_the_prefix_rule": true,
+      "quantile_exists": true,
+      "rank": 6,
+      "wrong_margins_above_the_bar": 0
+     },
+     "0.25": {
+      "degenerates_to_the_prefix_rule": true,
+      "quantile_exists": true,
+      "rank": 6,
+      "wrong_margins_above_the_bar": 0
+     }
+    },
+    "role_in_its_own_sprint": "D5's calibration half, then D6's bar-setting half",
+    "spent_times_before_d7": 2,
+    "wrong_answered_decisions": 6
+   },
+   "d6_certification": {
+    "alpha_0_20_is_a_genuine_quantile": true,
+    "first_choice_rate_under_the_new_class": "0.84",
+    "groups": 100,
+    "rank_table": {
+     "0.05": {
+      "degenerates_to_the_prefix_rule": true,
+      "quantile_exists": false,
+      "rank": 17,
+      "wrong_margins_above_the_bar": 0
+     },
+     "0.10": {
+      "degenerates_to_the_prefix_rule": true,
+      "quantile_exists": true,
+      "rank": 16,
+      "wrong_margins_above_the_bar": 0
+     },
+     "0.15": {
+      "degenerates_to_the_prefix_rule": false,
+      "quantile_exists": true,
+      "rank": 15,
+      "wrong_margins_above_the_bar": 1
+     },
+     "0.20": {
+      "degenerates_to_the_prefix_rule": false,
+      "quantile_exists": true,
+      "rank": 14,
+      "wrong_margins_above_the_bar": 2
+     },
+     "0.25": {
+      "degenerates_to_the_prefix_rule": false,
+      "quantile_exists": true,
+      "rank": 13,
+      "wrong_margins_above_the_bar": 3
+     }
+    },
+    "role_in_its_own_sprint": "the certified half; its full sweep is published",
+    "spent_times_before_d7": 1,
+    "wrong_answered_decisions": 16
+   }
+  },
+  "read_from": "sprint-21d7-transfer-gap.json",
+  "read_from_sha256": "ee66c6b195207a510054cedf6b3d7aaceff44c32fad8741bebe0d396b9d4b87e",
+  "reading": "at the wrong count D5's twice-spent half carries under this class, the rank at alpha = 0.20 is the whole set: the bar becomes the largest wrong margin, which is the zero-error prefix rule D5 stopped on and carries no conformal content. D6's half is the only candidate at which this alpha is a genuine quantile",
+  "rule": "ceil((1-alpha)*(m+1)) over the wrong answered decisions of the half",
+  "the_in_wave_number_is_not_this_one": "the wrong counts above are implied by the groundwork's diagnostic first-choice rates on spent corpora. The m that sets the bar is whatever W2's sealed re-scoring finds, and the ruling names the half, not the count"
+ },
+ "named_half": {
+  "campaign_sha256": "4ffcfdebf9ff84443f3f44ba4f873de11c72b2f313fe16e53ce3003c176e8875",
+  "feature_seals_sha256": "f49bcb0f8b74edd434272b12be8c55a2a9edfb53d887a0ea0fae89ad08d71385",
+  "half": "d6_certification",
+  "matrix_hash": "747eb9664bbcfd3b0abb0859b74e58ec7fb46b9153bab904094b91cded3dcefc",
+  "re_executed": false,
+  "re_scored_under": "containment-contrastive-linear-v1"
+ },
+ "recorded_at": "2026-08-10T13:29:24Z",
+ "ruling": "D6's 100 certification decisions are demoted to D7's bar-setting half",
+ "schema_version": 1,
+ "sprint": "21D7",
+ "the_rule_in_both_directions": {
+  "binding": "the half is bound by the released certification matrix hash below, and the re-scoring must reproduce that hash from the released bytes before a single margin is read",
+  "may": "set a threshold, once, from margins re-scored out of a sealed campaign",
+  "may_not": "certify coverage, an error rate, a first-choice rate or a candidate; appear in the measured set; or be re-executed under new run identities"
+ },
+ "thresholds_changed": 0,
+ "unchanged_by_this_ruling": [
+  "alpha, the ceiling C, the coverage floor and every other \u00a72.3 sentence",
+  "the gate contract and all 29 conditions",
+  "the released encoder, normaliser, directions and hypothesis class",
+  "the carried final, batch-B and canary roles, which stay unopened"
+ ],
+ "wave": "W0",
+ "why_a_demotion_is_needed_at_all": "\u00a72.3 counts 100 independent decisions in the measured set and the two halves may share no fitted vector, so a sprint that authors 100 fresh groups must take its bar-setting half from spent evidence. D6 applied the same one-step demotion to D5's calibration half; this is that step, one sprint on"
+}

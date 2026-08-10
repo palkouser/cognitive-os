@@ -1,0 +1,118 @@
+{
+ "authority": {
+  "decided_at": "2026-08-10",
+  "decisions": {
+   "condition_24_renewal": "granted, on D6's exact form",
+   "conformal_half_demotion": "granted, on D6's 100 certification decisions",
+   "feature_contract_v3": "granted; frozen in revision 7, not in this record",
+   "ladder_rung": "granted: the containment ordering is seated as a sixth rung"
+  },
+  "instruction": "execute the W0 wave of the attached plan",
+  "reading": "the backlog names all three rulings plus the renewal as W0's business and the instruction to execute W0 under it carries them. The ladder ruling was put to the gate owner as an explicit either/or, with the baseline each side implies, and the answer was to seat the rung \u2014 the side that raises the bar the learned class must clear. Every record here is one edit from withdrawal while no D7 measurement exists, which is the state the chronology below proves",
+  "role": "sprint and gate owner",
+  "shown": [
+   "sprint-21d7-technical-backlog.md \u00a72.1, what is proven infeasible and what is licensed",
+   "sprint-21d7-technical-backlog.md \u00a72.2, the three rulings as drafted",
+   "sprint-21d7-technical-backlog.md \u00a72.2b, both sides of the ladder trade and its cost",
+   "sprint-21d7-technical-backlog.md \u00a73.2, the rank table under each candidate half",
+   "sprint-21d7-technical-backlog.md \u00a74.1, the condition-24 renewal and what it saves"
+  ]
+ },
+ "chronology": {
+  "authority_records_excluded_from_that_list": [
+   "sprint-21d7-authority-isolation-after.json",
+   "sprint-21d7-baseline.json",
+   "sprint-21d7-condition-24-ruling.json",
+   "sprint-21d7-contracts.json",
+   "sprint-21d7-demotion-ruling.json",
+   "sprint-21d7-ladder-ruling.json",
+   "sprint-21d7-pre-registration.json",
+   "sprint-21d7-provisioning.json",
+   "sprint-21d7-reuse-audit.json",
+   "sprint-21d7-transfer-gap.json"
+  ],
+  "d7_artifact_store_entries": 0,
+  "d7_certification_corpus_authored": false,
+  "d7_certification_outcomes": 0,
+  "d7_conformal_bars_derived": 0,
+  "d7_directions_fitted": 0,
+  "d7_measurement_records_present": [],
+  "groundwork_is_not_a_measurement_of_this_sprint": "sprint-21d7-transfer-gap.json is present and read by these rulings. It measures released D5 and D6 bytes, contains no D7 outcome, and its admission simulation is discarded by its own text. \u00a76 of the backlog prices exactly this: the class was found after reading spent evidence, and the fresh certification is read once"
+ },
+ "frozen_five": [
+  "fixed_input_order",
+  "deterministic_static_ordering",
+  "lexical_similarity",
+  "frozen_minilm_cosine",
+  "width_20_bounded_graph"
+ ],
+ "if_refused": "the frozen five stand, \u00a72.3 reads lexical_similarity as the strongest rung on a D6-shaped corpus, and W2 reports the containment rung as an unseated measurement. A legitimate outcome, not a stop",
+ "integrity_content_hash": "e9553eb0ee1016bd7a4a1a34f3be4bfba3c117e71e9ab1c74fdbcb3f6aefa6cb",
+ "items": [
+  "S21D7-011"
+ ],
+ "ladder_after_this_ruling": [
+  "fixed_input_order",
+  "deterministic_static_ordering",
+  "lexical_similarity",
+  "frozen_minilm_cosine",
+  "width_20_bounded_graph",
+  "repair_containment_share"
+ ],
+ "recorded_at": "2026-08-10T13:29:24Z",
+ "ruling": "the containment ordering is seated as a sixth rung on the frozen ladder",
+ "rung": {
+  "kind": "deterministic",
+  "module": "src/cognitive_os/learning/repair_containment.py",
+  "name": "repair_containment_share",
+  "ordering": "descending containment share, ties on the frozen baseline order",
+  "reads_a_label": false,
+  "reads_only": "the baseline module and the four candidate sources, pre-outcome",
+  "why_it_qualifies": "a rung must be deterministic, label-free and computable before the sandbox runs. The containment ordering is all three, and a signal a learned class is allowed to fit is a signal the ladder is allowed to run alone"
+ },
+ "schema_version": 1,
+ "sprint": "21D7",
+ "thresholds_changed": 0,
+ "wave": "W0",
+ "what_it_costs": {
+  "changed_decisions_re_pair": "\u00a72.3's changed-decisions conditions pair against the strongest rung's order, so seating the rung re-pairs them against the containment-first order \u2014 a count the groundwork did not measure. W2 reports both pairings; this ruling fixes that \u00a72.3 reads the seated one",
+  "corpora": {
+   "d5_calibration": {
+    "containment_is_strongest": true,
+    "containment_rung_rate": "0.92",
+    "raises_the_baseline_by": "0.50",
+    "released_rungs": {
+     "deterministic_static_ordering": "0.09",
+     "fixed_input_order": "0.42",
+     "lexical_similarity": "0.41"
+    },
+    "seated_baseline": "0.92",
+    "strongest_released_rate": "0.42",
+    "strongest_released_rung": "fixed_input_order"
+   },
+   "d6_certification": {
+    "containment_is_strongest": true,
+    "containment_rung_rate": "0.84",
+    "raises_the_baseline_by": "0.22",
+    "released_rungs": {
+     "deterministic_static_ordering": "0.16",
+     "fixed_input_order": "0.42",
+     "lexical_similarity": "0.62"
+    },
+    "seated_baseline": "0.84",
+    "strongest_released_rate": "0.62",
+    "strongest_released_rung": "lexical_similarity"
+   }
+  },
+  "diagnostic_headroom": "the simulated first-choice rate over admitted decisions was 1.00, which clears even the seated baseline. That is an upper bound on hope read off spent evidence, not a promise about the fresh corpus",
+  "read_from": "sprint-21d7-transfer-gap.json",
+  "read_from_sha256": "ee66c6b195207a510054cedf6b3d7aaceff44c32fad8741bebe0d396b9d4b87e",
+  "reading": "on both spent corpora the containment rung alone is stronger than every released rung, so seating it replaces the baseline \u00a72.3's first-choice condition reads. The learned class must then outrank its own strongest channel on fresh evidence rather than outrank lexical similarity"
+ },
+ "what_it_does_not_change": [
+  "the five released rungs, their implementations and their eligibility rules",
+  "any released ladder record; D2 through D6 measured the five and stay as they are",
+  "any threshold: the first-choice condition is 'strictly above the strongest rung' either way, and only which rung that is has moved"
+ ],
+ "why_this_is_decided_now": "refusing the rung is legitimate and deciding it after seeing W2's numbers is not. A ladder chosen once the learned rate is known is a baseline chosen to be beaten, which is the one failure a deterministic baseline exists to prevent"
+}
