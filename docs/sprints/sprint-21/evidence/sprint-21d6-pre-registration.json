@@ -1,0 +1,60 @@
+{
+ "amendments": [
+  "sprint-21d6-contracts-amendment-2.json"
+ ],
+ "chronology": {
+  "artifacts_fitted": 0,
+  "bars_derived": 0,
+  "certification_decisions_read": 0,
+  "conformal_margins_read": 0,
+  "final_or_canary_outcomes_inspected": 0,
+  "retrieval_holdout_queries_read": 0
+ },
+ "contract_hashes": {
+  "admission_rule": "7a58d7739bf0dece3b856ecda2870ed309c7ff2d68deb9eae90b741b2d4c9a02",
+  "candidate_cell": "75af307023d7f0d789d1d36b04eecef60335a9835d2f2be4070f7fa9697fe731",
+  "corpus_roles": "e5907a6b2b5d6113ee6ad720267b9fa6e931107aa9d9101ddb5ec637c54d6211",
+  "decision_tree": "0bc61f7d0addcd21b9815305a74c10418c99e68101e4b561a64e56a1e8fd5357",
+  "selection_rule": "e408b1c748861ca7c054a8f6b2e979f7d2dda19b323d384615c4b2a5d482ce31"
+ },
+ "contracts_sha256": "6d1b1e6614ac52a2b2984aa354b452d6ed9a6aa1116fae5ba12d0736401f81ee",
+ "design_inputs_from_released_evidence": {
+  "reading": "alpha and the ceiling are computed from published aggregates and certified on evidence nobody has read. The bar's placement is effectively known in advance; what it buys on unread evidence is not, and that is the only thing D6 certifies",
+  "sprint-21d5-learner-selection.json": [
+   "the risk-coverage sweep, for the infeasibility table in amendment 2",
+   "errors_among_all_answered = 12 at 720 rows, for the alpha floor",
+   "the two model hashes, for the cell choice"
+  ]
+ },
+ "evidence_children_sha256": {
+  "sprint-21d6-baseline.json": "ac71f63aa037790624b80c929a2bbfe5b3a22bb4ebe203deb2602960167748f3",
+  "sprint-21d6-condition-24-ruling.json": "1e2d7c4a18001550cdd8c13400d37711794d04cdf3630ffa4629a3bbbb45d510",
+  "sprint-21d6-contracts-amendment-2.json": "9ba7fc1f516c238d2545f258517fdf96a62bb096c48ce718e207571247dba593",
+  "sprint-21d6-provisioning.json": "159d49cc645ae08cb51cbf6e270c910f9c9500705cfc0cfa11a40bd3bdf0457e",
+  "sprint-21d6-reuse-audit.json": "518dedfdaee8c1e2a3407f18a7efe8441f40001e9a6ffdcc6a66f3ffd728b8af"
+ },
+ "integrity_content_hash": "00935965301db64bb3da4b65b37d09baf56f8b06e9eb0346767ceaa58380e80d",
+ "items": [
+  "S21D6-017"
+ ],
+ "measured_values": 0,
+ "recorded_at": "2026-08-10T05:26:22Z",
+ "revision": 6,
+ "schema_version": 1,
+ "sprint": "21D6",
+ "supersedes": {
+  "for": "Sprint 21D6 only; revision 5 remains the authority for every D5 record",
+  "revision": 5,
+  "sha256": "ed983599bfcdb75993856419de531777d9f4f6cdcce127ead03dcdcddee34b1a"
+ },
+ "wave": "W0",
+ "what_this_publication_forbids": [
+  "re-choosing alpha, the ceiling, the split rule or the admission rule",
+  "refitting either direction, or selecting the 320-row cell",
+  "moving any Gate L2 or D1 threshold other than the clause amendment 2 names",
+  "certifying on the conformal half, or letting one fitted vector reach both halves",
+  "authoring final, batch-B or canary bodies unless a whole role fails its audit",
+  "reading the D6 certification set before it is authored, separated and sealed",
+  "opening a retrieval arm, which would void the condition-24 inheritance"
+ ]
+}

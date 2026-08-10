@@ -1,0 +1,193 @@
+{
+ "access_and_outcome_authority": {
+  "canary_opened": false,
+  "d5_selection_authorises_final_access": false,
+  "d5_selection_stop_hash": "4d45fc00188c00cafd7a95fe4bad8c338150a6d203b2d2c5cf10aa1d413c8ae2",
+  "final_a_opened": false,
+  "final_b_opened": false,
+  "note": "the D2 and D3 stores are empty for the reasons D4-W0-F1 records. D4's and D5's stores each hold a complete campaign, and it is their zero count for protected task identities that carries the claim. `evidence_records` is not required to be zero: D5 legitimately wrote its own campaign's records, and none of them names a protected task",
+  "store_counts": {
+   "cognitive_os_s21d2_test": {
+    "accesses": 0,
+    "evidence_records": 0,
+    "observations_for_protected_roles": 0,
+    "observations_total": 480
+   },
+   "cognitive_os_s21d3_test": {
+    "accesses": 0,
+    "evidence_records": 0,
+    "observations_for_protected_roles": 0,
+    "observations_total": 0
+   },
+   "cognitive_os_s21d4_test": {
+    "accesses": 0,
+    "evidence_records": 0,
+    "observations_for_protected_roles": 0,
+    "observations_total": 1076
+   },
+   "cognitive_os_s21d5_test": {
+    "accesses": 0,
+    "evidence_records": 0,
+    "observations_for_protected_roles": 0,
+    "observations_total": 1136
+   }
+  },
+  "zero_outcomes_predictions_or_receipts": true
+ },
+ "audit_surface": "sealed catalogue, root and access identities only",
+ "carried_roles_agree_across_released_generators": {
+  "canary": {
+   "d4_bundle_digest": "f7eb9589e1fd45086175c1494b93bc8b1ffd720ca0a3200d6949869601fc88fe",
+   "d5_bundle_digest": "f7eb9589e1fd45086175c1494b93bc8b1ffd720ca0a3200d6949869601fc88fe",
+   "identical": true
+  },
+  "final_a": {
+   "d4_bundle_digest": "dcb7427b6f5a1b47078df0b4d694809abdf13b18c3b87618452dcb8c7a8d2469",
+   "d5_bundle_digest": "dcb7427b6f5a1b47078df0b4d694809abdf13b18c3b87618452dcb8c7a8d2469",
+   "identical": true
+  },
+  "final_b": {
+   "d4_bundle_digest": "5dddfa582db27f7cf7e5bc1a1121ff430398bfcbb3883692c77abf14d0ce0193",
+   "d5_bundle_digest": "5dddfa582db27f7cf7e5bc1a1121ff430398bfcbb3883692c77abf14d0ce0193",
+   "identical": true
+  }
+ },
+ "compared_against_the_d5_audit": {
+  "d5_decisions": {
+   "canary": "reuse",
+   "final_a": "reuse",
+   "final_b": "reuse"
+  },
+  "source": "sprint-21d5-reuse-audit.json",
+  "source_sha256": "d7ef009e7eb18269481d5c52b847eba306df3550d58ef1c4a4535bf70732c493"
+ },
+ "eligible_for_reuse": true,
+ "group_disjointness": {
+  "all_pairwise_disjoint": true,
+  "pairs_sharing_a_group": {
+   "canary|final_a": 0,
+   "canary|final_b": 0,
+   "final_a|final_b": 0
+  }
+ },
+ "individual_body_hashes_resolved": 0,
+ "integrity_content_hash": "7b90d535a2acdbb6c699d2ab9dc6a0ebf3f279786abcba8e3689ebfc9be23cd7",
+ "items": [
+  "S21D6-003",
+  "S21D6-004"
+ ],
+ "protected_bodies_resolved": 0,
+ "protected_task_identities": 65,
+ "recorded_at": "2026-08-10T05:26:21Z",
+ "role_transition": {
+  "conformal_half": {
+   "forbidden_in_d6": "any coverage, error-rate or selection claim; W1's authored certification corpus must be disjoint from this digest and S21D6-022 proves it",
+   "groups": 100,
+   "names_digest": "f64c41d55acd6e417ad3ecd2070623b9682ab40c7412a7f7c96380a6bc39539c",
+   "outcomes": 400,
+   "re_executed": false,
+   "read_through": {
+    "calibration_matrix": "106061126df8326128a5fea97b3690f5f02465c16805e6742c09cd5e3e7c7ca4",
+    "direction": "9fd297fb407015374485e8f7ef8fbb557e6f89f7ac3286e2572769fdab937d74",
+    "fitting_rows": 720,
+    "refitted": false
+   },
+   "role": "d5 calibration",
+   "use": "the margins of its wrong answered decisions place the conformal bar, and nothing else. It certifies no coverage, no error rate and no candidate",
+   "wrong_answered_decisions_at_720": 12
+  },
+  "d6_certification_corpus_present": false,
+  "disjointness_check_deferred_to": "S21D6-022, after W1 authors the corpus",
+  "fitting_pool": {
+   "d6_use": "none directly; the direction fitted on it is read out of the sealed matrices and rehashed, and no row of it is re-executed",
+   "groups": 180,
+   "names_digest": "92c3117173a66ce73325b2dfddd62db3dd65bcf1704b0687f74ded4bce0cdb21",
+   "outcomes": 720,
+   "role": "d5 fitting"
+  },
+  "map": {
+   "calibration": {
+    "d6_role": "conformal",
+    "rule": "backlog \u00a74.1: a spent calibration role is licensed for threshold-setting, which is what the conformal half is, and never for certifying; D4's calibration became D5's fitting pool under the same principle"
+   },
+   "canary": {
+    "d6_role": "canary",
+    "rule": "carried unopened; S21D6-004 re-proves eligibility"
+   },
+   "final_a": {
+    "d6_role": "final_a",
+    "rule": "carried unopened; S21D6-004 re-proves eligibility"
+   },
+   "final_b": {
+    "d6_role": "final_b",
+    "rule": "carried unopened; S21D6-004 re-proves eligibility"
+   },
+   "training": {
+    "d6_role": "fitting",
+    "rule": "the D5 fitting pool was never a selection input and stays one; D6 refits nothing and reads it only through the direction it already produced"
+   }
+  },
+  "spent_entirely": {
+   "condition_24": {
+    "authored_groups_saved": 60,
+    "record": "sprint-21d6-condition-24-ruling.json",
+    "record_sha256": "1e2d7c4a18001550cdd8c13400d37711794d04cdf3630ffa4629a3bbbb45d510",
+    "ruling": "inherited from D5's sealed measurement, conditionally"
+   },
+   "d6_role": "none",
+   "disjoint_from_every_catalogue_role": true,
+   "groups": 60,
+   "names_digest": "24392a28783fd1bde19fe2e90eff828be6b7caabfc9675035979da372bedef69",
+   "rule": "the 60-group retrieval pool and its 60 queries were read once by S21D5-046 and are spent; no fitting role exists for a holdout, and D6 authors no replacement because condition 24 is inherited rather than re-measured"
+  },
+  "why_the_halves_cannot_both_come_from_d5": "\u00a72.3 requires 100 independent decisions in the measured set and D5 authored exactly 100. A 50/50 split of them certifies 50, which fails a condition the amendment does not touch, so the certification half is authored fresh"
+ },
+ "roles": {
+  "canary": {
+   "candidate_slots": 20,
+   "catalogue_name": "canary",
+   "decision": "reuse",
+   "group_digest": "f7eb9589e1fd45086175c1494b93bc8b1ffd720ca0a3200d6949869601fc88fe",
+   "groups": 5,
+   "matches_expected_shape": true
+  },
+  "final_a": {
+   "candidate_slots": 120,
+   "catalogue_name": "final_a",
+   "decision": "reuse",
+   "group_digest": "dcb7427b6f5a1b47078df0b4d694809abdf13b18c3b87618452dcb8c7a8d2469",
+   "groups": 30,
+   "matches_expected_shape": true
+  },
+  "final_b": {
+   "candidate_slots": 120,
+   "catalogue_name": "final_b",
+   "decision": "reuse",
+   "group_digest": "5dddfa582db27f7cf7e5bc1a1121ff430398bfcbb3883692c77abf14d0ce0193",
+   "groups": 30,
+   "matches_expected_shape": true
+  }
+ },
+ "schema_version": 1,
+ "sprint": "21D6",
+ "wave": "W0",
+ "whole_role_replacement_contract": {
+  "counts": {
+   "canary": {
+    "candidate_slots": 20,
+    "groups": 5
+   },
+   "final_a": {
+    "candidate_slots": 120,
+    "groups": 30
+   },
+   "final_b": {
+    "candidate_slots": 120,
+    "groups": 30
+   }
+  },
+  "partial_reuse_allowed": false,
+  "procedure": "author the whole affected role at S21D6-020, prove separation at S21D6-022 and seal it at S21D6-023, before any measurement",
+  "trigger": "any role failing shape, disjointness, generator agreement or zero-access"
+ }
+}

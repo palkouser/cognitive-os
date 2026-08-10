@@ -1,0 +1,70 @@
+{
+ "authority": {
+  "decided_at": "2026-08-10",
+  "instruction": "execute W0 of sprint-21d6-technical-backlog.md, applying the lazier alternative",
+  "reading": "the backlog names both decisions as W0's business and the instruction to execute W0 under it carries both; the lazier alternative is named only in \u00a74.2, so that phrase carries the inheritance ruling specifically. Either record is one edit from withdrawal while no D6 measurement exists, which is the state the chronology below proves",
+  "role": "sprint and gate owner",
+  "shown": [
+   "sprint-21d6-technical-backlog.md \u00a72.1, the infeasibility table",
+   "sprint-21d6-technical-backlog.md \u00a72.2, the amendment as drafted",
+   "sprint-21d6-technical-backlog.md \u00a73.2 and \u00a73.3, alpha = 0.20 and C = 0.15",
+   "sprint-21d6-technical-backlog.md \u00a74.2, the condition-24 inheritance and its cost"
+  ]
+ },
+ "condition": 24,
+ "d6_reads_no_retrieval_holdout": true,
+ "gate_l2_condition_24_recorded_as": "met by inheritance, with the source hash bound",
+ "inherited_measurement": {
+  "first_failed_floor": null,
+  "integrity_content_hash": "ccc666c70833d27ca0d51b90ab7a05c99e30e14c4302af47b220b42b82bfe184",
+  "passed": true,
+  "queries": 60,
+  "record": "sprint-21d5-retrieval-decision.json",
+  "record_sha256": "8c8f58fb1f5cff2945ee00943f70c8a75bdaf7ec3115cfd53c85d8ba5372288b",
+  "rule": "one arm reaches Recall@5 >= 0.7 and MRR@10 >= 0.5 on at least 50 unseen-task queries, inside all fixed budgets",
+  "winning_arm": "lexical"
+ },
+ "integrity_content_hash": "ea093455846f80bb9050628e653884710776054bbe01635a13d4c9d04dfb70cf",
+ "items": [
+  "S21D6-011"
+ ],
+ "re_checked_at": "gate close, by recomputing the three identities above from D6's own tree and refusing the inheritance if any hash moved",
+ "recorded_at": "2026-08-10T05:18:04Z",
+ "ruling": "inherited from D5's sealed measurement, conditionally",
+ "schema_version": 1,
+ "sprint": "21D6",
+ "standing_rule": "\u00a72.2: every sprint re-evidences all 29 conditions against its own authorities. Fourteen met in D5 are fourteen met in D5",
+ "the_three_identities_that_void_it": {
+  "comparator": {
+   "chance_baseline": {
+    "mrr_at_10": 0.3317,
+    "recall_at_5": 0.5768
+   },
+   "voided_if": "D6 changes the comparator or the holdout membership"
+  },
+  "retrieval_arms": {
+   "arms_opened_by_d5": {
+    "fusion_variants": 0,
+    "holdout_members_added": 0,
+    "metrics": 0,
+    "weights": 0,
+    "widths": 0
+   },
+   "voided_if": "D6 opens an arm, a fusion variant, a weight, a width or a metric"
+  },
+  "searchable_surface": {
+   "integrity_content_hash": "caf3293baae9cde5625663c160d5cdff186232e0374450e68b68bb5961599736",
+   "record": "sprint-21d5-surface.json",
+   "record_sha256": "d63b64bba65b6572db0d010e6a28dc96c3eba894cf75243bbf625ef6879184f8",
+   "rule": "a source whose identifier terms come up empty falls back to its lowercased AST node-type terms from the same canonical dump, minus bookkeeping nodes",
+   "terms_read_off": "canonical_source_bytes, the released v2 alpha-normaliser"
+  }
+ },
+ "wave": "W0",
+ "what_it_saves": {
+  "authored_retrieval_groups": 60,
+  "qualifying_queries": 50,
+  "waves_shortened": "W1's second half"
+ },
+ "why_conditional_and_not_a_waiver": "the D5 handoff's own caveat is the test: condition 24 does not stay closed for free, because a successor that changes the surface, the arms or the comparator has changed the thing that was measured. D6 changes none of the three by scope, so the measurement still describes D6's system \u2014 but the claim is prospective, so it is recorded as a claim with a falsifier rather than as a fact"
+}

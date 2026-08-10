@@ -1,0 +1,154 @@
+{
+ "amended_sentence": "admission is a split-conformal bar at the pre-registered alpha, and the Clopper-Pearson one-sided 95% upper bound on the error rate among admitted independent calibration decisions is at most the pre-registered ceiling C",
+ "amended_sentence_sha256": "caf875f05db4937d8610c9c25f0c5fe1d4a65dc7f0c00e19e79b4bf705ca352d",
+ "amendment": 2,
+ "amends": {
+  "conditions_affected": [
+   14
+  ],
+  "contract": "gate_l2_section_2_3_admission_clause",
+  "gate_contract_bytes_modified": 0,
+  "gate_contract_sha256": "9e47bc618fc1eca8b66146eacdf1bd244fced79bb1c91f46f2c6ff4484bfd8a7",
+  "thresholds_changed": 1,
+  "why_not_an_in_place_edit": "a sealed contract is not edited after publication. The gate contract hash is unchanged and still reproduces; this record supersedes one clause and names what it replaced, exactly as S21D4-011 handled the derivation step"
+ },
+ "authority": {
+  "decided_at": "2026-08-10",
+  "instruction": "execute W0 of sprint-21d6-technical-backlog.md, applying the lazier alternative",
+  "reading": "the backlog names both decisions as W0's business and the instruction to execute W0 under it carries both; the lazier alternative is named only in \u00a74.2, so that phrase carries the inheritance ruling specifically. Either record is one edit from withdrawal while no D6 measurement exists, which is the state the chronology below proves",
+  "role": "sprint and gate owner",
+  "shown": [
+   "sprint-21d6-technical-backlog.md \u00a72.1, the infeasibility table",
+   "sprint-21d6-technical-backlog.md \u00a72.2, the amendment as drafted",
+   "sprint-21d6-technical-backlog.md \u00a73.2 and \u00a73.3, alpha = 0.20 and C = 0.15",
+   "sprint-21d6-technical-backlog.md \u00a74.2, the condition-24 inheritance and its cost"
+  ]
+ },
+ "backlog": "sprint-21d6-technical-backlog.md",
+ "backlog_sha256": "895d3b5b9016870b278f3af43881749bed4bead2ad69165a2533bd75db6c8170",
+ "chronology": {
+  "d6_artifact_store_entries": 0,
+  "d6_calibration_outcomes": 0,
+  "d6_certification_corpus_authored": false,
+  "d6_conformal_bars_derived": 0,
+  "d6_measurement_records_present": [],
+  "why_this_matters": "pre-registration exists to stop a rule being chosen after its result is known. The alpha below moves the bar off the failed prefix rule and the ceiling above sits where the design expects to land, both computed from D5's published aggregate; neither has met a D6 outcome. The window closes when W1 seals the certification corpus"
+ },
+ "if_refused": "D6 does not run. \u00a73.4 branch 0, stop kind admission_contract_refused: Gate L2 is unclosable with this ranker at these volumes, and the successor question leaves the confidence axis",
+ "integrity_content_hash": "c27630950a7bc651a49fae50d63649008539a2f36345049d22bea1ae5fb90f9b",
+ "items": [
+  "S21D6-010"
+ ],
+ "justification": {
+  "cells": {
+   "320": {
+    "answered_decisions": 100,
+    "best_coverage_at_error_count": {
+     "0": {
+      "admitted_decisions": 26,
+      "changed_decisions": 22,
+      "coverage": "0.26",
+      "first_choice_rate_over_admitted": "1",
+      "threshold": "0.665512"
+     },
+     "1": {
+      "admitted_decisions": 32,
+      "changed_decisions": 25,
+      "coverage": "0.32",
+      "first_choice_rate_over_admitted": "0.96875",
+      "threshold": "0.608476"
+     },
+     "2": {
+      "admitted_decisions": 45,
+      "changed_decisions": 37,
+      "coverage": "0.45",
+      "first_choice_rate_over_admitted": "0.9555555555555555555555555556",
+      "threshold": "0.46683"
+     },
+     "3": {
+      "admitted_decisions": 62,
+      "changed_decisions": 52,
+      "coverage": "0.62",
+      "first_choice_rate_over_admitted": "0.9516129032258064516129032258",
+      "threshold": "0.261427"
+     }
+    },
+    "best_zero_error_coverage": "0.26",
+    "errors_among_all_answered": 9,
+    "model_hash": "5b15f4af06a2b08d0d8269b59f47127bf97d610a22c12c645f8fbde9fa0f47cd",
+    "zero_error_coverage_reaches_the_floor": false
+   },
+   "720": {
+    "answered_decisions": 100,
+    "best_coverage_at_error_count": {
+     "0": {
+      "admitted_decisions": 27,
+      "changed_decisions": 21,
+      "coverage": "0.27",
+      "first_choice_rate_over_admitted": "1",
+      "threshold": "1.07955"
+     },
+     "1": {
+      "admitted_decisions": 58,
+      "changed_decisions": 48,
+      "coverage": "0.58",
+      "first_choice_rate_over_admitted": "0.9827586206896551724137931034",
+      "threshold": "0.448987"
+     },
+     "2": {
+      "admitted_decisions": 67,
+      "changed_decisions": 55,
+      "coverage": "0.67",
+      "first_choice_rate_over_admitted": "0.9701492537313432835820895522",
+      "threshold": "0.374485"
+     },
+     "3": {
+      "admitted_decisions": 73,
+      "changed_decisions": 59,
+      "coverage": "0.73",
+      "first_choice_rate_over_admitted": "0.9589041095890410958904109589",
+      "threshold": "0.271912"
+     }
+    },
+    "best_zero_error_coverage": "0.27",
+    "errors_among_all_answered": 12,
+    "model_hash": "9fd297fb407015374485e8f7ef8fbb557e6f89f7ac3286e2572769fdab937d74",
+    "zero_error_coverage_reaches_the_floor": false
+   }
+  },
+  "floor": "0.40",
+  "infeasible_on_every_cell": true,
+  "read_from": "sprint-21d5-learner-selection.json",
+  "read_from_sha256": "ac6b3015f8ea456bbfc26112a2a638551621c582b7890a66450f19470ef89e73",
+  "reading": "the best coverage any zero-error threshold reaches is 0.27 and 0.26, on two cells at fitting volumes 2.25x apart. The pre-amendment pair is not unmet, it is unsatisfiable by any admission rule over this ranker: the constraint is on where the ranker places its errors, not on how the bar is chosen",
+  "sweep_points_per_cell": 100,
+  "what_the_zero_never_bought": "zero confident errors in 27 admitted decisions bounds the true error rate at 0.105 by the same Clopper-Pearson the amended clause uses. One tolerated error at 720 rows admits 58 and bounds it at 0.079 \u2014 a tighter bound at 2.2x the coverage. The struck sentence was a property of a small sample, not a safety property"
+ },
+ "pre_registered_values": {
+  "alpha": "0.20",
+  "alpha_bounds": "the leak rate P(admitted | the decision is wrong), not the error rate among admitted decisions",
+  "alpha_floor_that_makes_it_meaningful": "2/13 = 0.1538",
+  "ceiling_c": "0.15",
+  "ceiling_is_measured_on": "the certification half, as the Clopper-Pearson one-sided 95% upper bound on the error rate among admitted independent decisions",
+  "what_c_permits_at_the_expected_coverage": "at 58 admitted decisions the bound reads 0.079 at one error, 0.105 at two, 0.128 at three and 0.151 at four, so C admits up to three against an expectation of about 2.4 \u2014 a ceiling the design expects to clear and can fail",
+  "why_that_floor": "the 720-row cell has 12 wrong answered decisions, so the finite-sample rank ceil((1-alpha)*(m+1)) is 12 for every alpha below 2/13 and the bar is then the largest wrong margin \u2014 which is the zero-error prefix rule D5 stopped on. Any alpha that could change the outcome is at least 0.1538; 0.20 is the smallest round value above it"
+ },
+ "recorded_at": "2026-08-10T05:18:04Z",
+ "schema_version": 1,
+ "sprint": "21D6",
+ "struck_sentence": "exactly zero confident errors among admitted independent calibration decisions",
+ "struck_sentence_sha256": "ace73a4dc467d2aed922f15e83257eaeb09fe7c013b5d9ad64416fef984b88b6",
+ "unchanged_by_this_amendment": [
+  "the other seven conditions of \u00a72.3, verbatim",
+  "the 0.40 coverage floor",
+  "the 100-independent-decision minimum",
+  "the 20 projected changed final decisions",
+  "the 250 ms inference budget and 100% first-action preservation",
+  "every Gate L2 condition other than 14, and every Gate D1 condition",
+  "the revision-5 counting rule, the independence census and the denominator",
+  "the Clopper-Pearson bound itself, which both the struck and the amended clause use",
+  "the encoder, the class, both fitted directions and the margin"
+ ],
+ "wave": "W0",
+ "why_the_gate_owner_and_not_the_sprint": "every backlog since D3 declares changing a Gate L2 threshold out of scope for the sprint running under it. D6 is the sprint that would benefit from the change, which is precisely why D6 does not get to make it"
+}
