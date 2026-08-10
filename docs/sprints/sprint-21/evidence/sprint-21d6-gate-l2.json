@@ -25,10 +25,10 @@
  "counts": {
   "carried": 0,
   "failed": 0,
-  "met": 13,
+  "met": 14,
   "met_as_rejection": 0,
   "not_opened": 15,
-  "pending": 1
+  "pending": 0
  },
  "final_outcomes_inspected": false,
  "gate_contract_hash": "9e47bc618fc1eca8b66146eacdf1bd244fced79bb1c91f46f2c6ff4484bfd8a7",
@@ -320,20 +320,21 @@
   },
   {
    "condition": 29,
-   "detail": "the protected merge, its exact-head post-merge main CI, the annotated tag and the remote verification. The gate-close regeneration is what decides this row",
-   "evidence": null,
+   "detail": "PR #227 squash-merged into protected main at 2026-08-10T11:19:04Z, exact-head main CI run 31382974994 30 of 30 success, and the annotated tag sprint-21d6-evidence-baseline object 29debe41f8dbe161 peels to cfd22ab6d3e32367",
+   "evidence": "sprint-21d6-release.json",
+   "evidence_sha256": "a3c0f08ef6859109adcf4f1ab7105d9c084c3069493641930b6fddd6131ce0a7",
    "rule": "protected merge, post-merge exact-head CI, annotated tag, remote read",
-   "state": "pending"
+   "state": "met"
   }
  ],
  "gate_l2_conditions": 29,
- "integrity_content_hash": "19f302ddea36702a165c399863bbd412acb5345df95f37c5d60e1f91abda2dbf",
+ "integrity_content_hash": "65fcff40fa75ca413d0c47c29fc9b5c2793db6be6e0f8ff2c72c35058b738ce6",
  "item": "S21D6-091",
  "no_condition_is_carried_from_d5": true,
  "pre_registration_sha256": "e1e4e1d76e51bb53ea845e3a9b9e0e631903921e8b3887d289048ff7eccd6022",
  "provisional_until": "the protected merge, its exact-head post-merge main CI, and remote tag verification",
  "purpose": "The twenty-nine Gate L2 conditions and Gate D1's three, each decided by the evidence that bears on it. No condition may be asserted; every row names its file and rule, or the stop hash that closed it.",
- "recorded_at": "2026-08-10T10:59:23.286218Z",
+ "recorded_at": "2026-08-10T11:35:47.730806Z",
  "schema_version": 1,
  "sprint": "21D6",
  "stops": {
@@ -349,7 +350,7 @@
   "what": "§2.3's admission clause: 'exactly zero confident errors' struck, replaced by a split-conformal bar at the pre-registered alpha with a Clopper-Pearson 95% upper bound at most C. Every other §2.3 condition and every Gate L2 threshold is unchanged"
  },
  "verdict": "gate_l2_does_not_pass",
- "verdict_reason": "the gate passes only when every applicable condition is met; 15 never opened, 1 awaiting the protected release",
+ "verdict_reason": "the gate passes only when every applicable condition is met; 15 never opened",
  "wave": "W3",
  "what_inherited_is_not": "condition 24 is `met`, not `carried`. A carried condition would be a predecessor's verdict reused; this one is a predecessor's *measurement* whose three voiding identities were recomputed from D6's tree at gate close, under a ruling the gate owner granted in W0 before any D6 measurement existed"
 }

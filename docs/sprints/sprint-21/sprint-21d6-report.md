@@ -9,9 +9,11 @@
 - Gate assessment: [`gate-l2-d6-assessment.md`](gate-l2-d6-assessment.md)
 - Execution log: [`sprint-21d6-execution.md`](sprint-21d6-execution.md)
 - Handoff: [`sprint-21d7-handoff.md`](sprint-21d7-handoff.md)
-- Outcome: **Gate L2 does not pass. Sprint 22A remains blocked.** Thirteen conditions of
-  twenty-nine met, fifteen never opened, zero failed, and condition 29 `pending` until the
-  protected release closes it.
+- Release: `sprint-21d6-evidence-baseline`, tag object
+  `29debe41f8dbe16137c0ae528f0ad4390de8d451`, peeled to
+  `cfd22ab6d3e32367ed5c920a3f3844e590acf8b6`
+- Outcome: **Gate L2 does not pass. Sprint 22A remains blocked.** Fourteen conditions of
+  twenty-nine met, fifteen never opened, zero failed, zero carried.
 
 ---
 
@@ -208,9 +210,8 @@ is no `d6-integrity` report command to run. Both absences are named in the recor
 
 ## 10. Outcome
 
-**Gate L2 does not pass.** Thirteen conditions met, fifteen never opened behind one typed stop,
-zero failed, zero carried from D5, and condition 29 `pending` until the protected release closes
-it — which makes the released total the same fourteen-fifteen split D5 ended on, reached by a
+**Gate L2 does not pass.** Fourteen conditions met, fifteen never opened behind one typed stop,
+zero failed, zero carried from D5. The same fourteen-fifteen split D5 released on, reached by a
 different route and with a materially sharper reason.
 
 Sprint 22A remains blocked. The successor experiment the handoff names is not a third bar and not

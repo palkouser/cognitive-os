@@ -1,0 +1,143 @@
+{
+ "branch_protection_after_release": {
+  "allow_deletions": false,
+  "allow_force_pushes": false,
+  "enforce_admins": true,
+  "required_conversation_resolution": true,
+  "required_pull_request_reviews": null,
+  "required_status_check_contexts": 27,
+  "strict_status_checks": true
+ },
+ "component_state": {
+  "activations": 0,
+  "active_components": 0,
+  "approvals": 0,
+  "artifact_written": false,
+  "learned_components": 0,
+  "note": "S21D6-035 recorded a null under §3.4 step 2; nothing was registered, approved or activated on experience.correction_ranking. Source: sprint-21d6-continuation.json, stop kind 'leak_budget_exceeded', 8 pieces of dependent work bound to one hash"
+ },
+ "d1_conditions_closed_by_inheritance": [
+  15
+ ],
+ "d1_conditions_still_open": [
+  6,
+  7
+ ],
+ "documents": {
+  "assessment": "gate-l2-d5-assessment.md",
+  "execution_log": "sprint-21d6-execution.md",
+  "handoff": "sprint-21d6-handoff.md",
+  "report": "sprint-21d6-report.md"
+ },
+ "final_outcomes_inspected": 0,
+ "findings": [],
+ "gate_l2": "gate_l2_does_not_pass",
+ "gate_l2_counts": {
+  "carried": 0,
+  "failed": 0,
+  "met": 13,
+  "met_as_rejection": 0,
+  "not_opened": 15,
+  "pending": 1
+ },
+ "integrity_content_hash": "1c73ff43d23d2108d7a6a250e23d4291a72364b2b787057c814f897ece7b7db0",
+ "items": [
+  "S21D6-095"
+ ],
+ "migration_head": "0015",
+ "next_available_migration": "0016 (unallocated)",
+ "outcome": "negative; one typed stop and no candidate",
+ "pre_registration_sha256": "e1e4e1d76e51bb53ea845e3a9b9e0e631903921e8b3887d289048ff7eccd6022",
+ "recorded_at": "2026-08-10T11:35:35.175449Z",
+ "release": {
+  "chronology": "#227 merge 2026-08-10T11:19:04Z -> exact-head main CI 31382974994 complete 2026-08-10T11:34:12Z -> annotated tag created 2026-08-10T11:35:27Z, once and after that CI",
+  "exact_head_main_ci": {
+   "completed_at": "2026-08-10T11:34:12Z",
+   "conclusion": "success",
+   "every_job_succeeded": true,
+   "head_sha": "cfd22ab6d3e32367ed5c920a3f3844e590acf8b6",
+   "jobs": "30 of 30 success",
+   "run": 31382974994,
+   "status": "completed"
+  },
+  "implementation_merge_commit": "cfd22ab6d3e32367ed5c920a3f3844e590acf8b6",
+  "implementation_merged_at": "2026-08-10T11:19:04Z",
+  "implementation_pull_request": 227,
+  "merge_method": "squash, no administrator bypass",
+  "message_first_line": "Sprint 21D6 evidence baseline — split-conformal admission, leak_budget_exceeded",
+  "peeled_commit": "cfd22ab6d3e32367ed5c920a3f3844e590acf8b6",
+  "pull_request_head_ci": {
+   "completed_at": "2026-08-10T11:18:13Z",
+   "conclusion": "success",
+   "every_job_succeeded": true,
+   "head_sha": "0297612491b122c01bbb1e09f4ee1c2dcccccbf8",
+   "jobs": "30 of 30 success",
+   "run": 31381783754,
+   "status": "completed"
+  },
+  "remote_main": "cfd22ab6d3e32367ed5c920a3f3844e590acf8b6",
+  "success_tag_exists": false,
+  "success_tag_forbidden_and_not_created": "sprint-21-learning-baseline",
+  "tag": "sprint-21d6-evidence-baseline",
+  "tag_created_at": "2026-08-10T11:35:27Z",
+  "tag_object": "29debe41f8dbe16137c0ae528f0ad4390de8d451",
+  "tag_type": "tag",
+  "tags_on_the_remote": [
+   "refs/tags/sprint-0-baseline",
+   "refs/tags/sprint-1-baseline",
+   "refs/tags/sprint-10-baseline",
+   "refs/tags/sprint-11-baseline",
+   "refs/tags/sprint-12-baseline",
+   "refs/tags/sprint-13-baseline",
+   "refs/tags/sprint-14-baseline",
+   "refs/tags/sprint-15-baseline",
+   "refs/tags/sprint-16-baseline",
+   "refs/tags/sprint-17-baseline",
+   "refs/tags/sprint-18-baseline",
+   "refs/tags/sprint-19-baseline",
+   "refs/tags/sprint-2-baseline",
+   "refs/tags/sprint-20-baseline",
+   "refs/tags/sprint-21-substrate-baseline",
+   "refs/tags/sprint-21c1-evidence-baseline",
+   "refs/tags/sprint-21c2-provider-baseline",
+   "refs/tags/sprint-21c3-reality-baseline",
+   "refs/tags/sprint-21d1-emg-baseline",
+   "refs/tags/sprint-21d2-evidence-baseline",
+   "refs/tags/sprint-21d3-evidence-baseline",
+   "refs/tags/sprint-21d4-evidence-baseline",
+   "refs/tags/sprint-21d5-evidence-baseline",
+   "refs/tags/sprint-21d6-evidence-baseline",
+   "refs/tags/sprint-3-baseline",
+   "refs/tags/sprint-4-baseline",
+   "refs/tags/sprint-5-baseline",
+   "refs/tags/sprint-6-baseline",
+   "refs/tags/sprint-7-baseline",
+   "refs/tags/sprint-8-baseline",
+   "refs/tags/sprint-9-baseline"
+  ]
+ },
+ "retrieval_branch": {
+  "authored_by_d6": 0,
+  "gate_l2_condition_24": "met",
+  "inherited_from": "sprint-21d5-retrieval-decision.json",
+  "note": "D6 ran no retrieval branch. Condition 24 and Gate D1 condition 15 are inherited from D5's sealed measurement under the W0 ruling, and the gate assessment recomputed all three voiding identities at gate close rather than trusting the ruling's sentence",
+  "ruling": "inherited from D5's sealed measurement, conditionally",
+  "ruling_sha256": "1e2d7c4a18001550cdd8c13400d37711794d04cdf3630ffa4629a3bbbb45d510",
+  "winning_arm": "lexical"
+ },
+ "schema_version": 1,
+ "sprint": "21D6",
+ "sprint_22a": "blocked; the handoff targets one bounded successor experiment",
+ "stop_hashes": {
+  "continuation": "981bb130d03a45ba512ee3a758abb48db0d45c4b53a35a99bca79238c76e3fcd",
+  "correction_selection": "648368477dd3a73c900c2a87486964322b4efeecc585048e4fe68146b1e06d56",
+  "correction_stop_kind": "leak_budget_exceeded"
+ },
+ "store_fingerprints_unchanged": {
+  "compared_against": "sprint-21d6-baseline.json",
+  "drifted": [],
+  "stores": 7,
+  "zero_predecessor_writes": true
+ },
+ "wave": "W3"
+}
