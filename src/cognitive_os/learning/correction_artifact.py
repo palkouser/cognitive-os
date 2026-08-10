@@ -36,6 +36,14 @@ from pydantic import Field, model_validator
 from cognitive_os.domain.base import ImmutableContractModel
 from cognitive_os.domain.common import NonEmptyStr, Sha256Hex
 from cognitive_os.domain.learned import LearnedArtifactFormat, LearnedComponentState
+from cognitive_os.learning.containment_contrastive import (
+    FITTED_RELATIONAL_CHANNELS,
+    ContainmentContrastiveModel,
+    ContainmentContrastiveRanker,
+)
+from cognitive_os.learning.containment_contrastive import (
+    HYPOTHESIS_CLASS as CONTAINMENT_HYPOTHESIS_CLASS,
+)
 from cognitive_os.learning.correction_protocol import (
     FITTED_FEATURE_V2_ALLOWLIST,
     FITTED_FEATURE_V2_SCALARS,
@@ -77,7 +85,19 @@ CORRECTION_ARTIFACT_SCHEMA_V3_VERSION = 3
 #: The hypothesis classes this loader can build. A payload naming anything else is refused
 #: before construction: an artifact whose class the reader does not implement is not a model
 #: the reader can be wrong about, it is bytes it cannot read at all.
-IMPLEMENTED_HYPOTHESIS_CLASSES = frozenset({HYPOTHESIS_CLASS})
+#:
+#: Sprint 21D7 adds the second one. The two classes share this schema because they share
+#: everything the schema is about — the canonicaliser, the envelope, the operating point and the
+#: margin the point is taken over — and differ only in which numbers describe a candidate. What
+#: the schema may not do is let one class's channel list validate the other's, so the channel
+#: rule below is keyed by class rather than fixed.
+IMPLEMENTED_HYPOTHESIS_CLASSES = frozenset({HYPOTHESIS_CLASS, CONTAINMENT_HYPOTHESIS_CLASS})
+
+#: The fitted channel list each implemented class is defined over, in fitted order.
+FITTED_CHANNELS_BY_CLASS: dict[str, tuple[str, ...]] = {
+    HYPOTHESIS_CLASS: FITTED_FEATURE_V2_ALLOWLIST,
+    CONTAINMENT_HYPOTHESIS_CLASS: FITTED_RELATIONAL_CHANNELS,
+}
 
 #: A bound, not a target. An exemplar set larger than this is a corpus, and a corpus loaded
 #: into every runtime task is a latency budget nobody agreed to.
@@ -398,12 +418,16 @@ class CorrectionArtifactPayloadV3(ImmutableContractModel):
                 "may not carry its own account of how its threshold was derived"
             )
 
-        if self.feature_channels != FITTED_FEATURE_V2_ALLOWLIST:
-            raise ValueError("the stored channels are not the v2 fitted allowlist in fitted order")
-        if len(self.weights) != len(FITTED_FEATURE_V2_ALLOWLIST):
+        fitted_channels = FITTED_CHANNELS_BY_CLASS[self.hypothesis_class]
+        if self.feature_channels != fitted_channels:
+            raise ValueError(
+                "the stored channels are not the fitted allowlist in fitted order for "
+                f"{self.hypothesis_class!r}"
+            )
+        if len(self.weights) != len(fitted_channels):
             raise ValueError(
                 f"the direction carries {len(self.weights)} weights against "
-                f"{len(FITTED_FEATURE_V2_ALLOWLIST)} fitted channels"
+                f"{len(fitted_channels)} fitted channels"
             )
         if any(not isfinite(weight) for weight in self.weights):
             raise ValueError("a fitted weight must be a finite number")
@@ -616,13 +640,15 @@ def load_correction_ranker_v3(
     contract: CorrectionFeatureContractV2 | None = None,
     media_type: str = CORRECTION_ARTIFACT_MEDIA_TYPE,
     maximum_bytes: int = MAXIMUM_ARTIFACT_BYTES,
-) -> tuple[PairwiseContrastiveRanker, CorrectionArtifactPayloadV3]:
-    """Read verified v3 bytes into a `PairwiseContrastiveRanker`, or refuse before building.
+) -> tuple[PairwiseContrastiveRanker | ContainmentContrastiveRanker, CorrectionArtifactPayloadV3]:
+    """Read verified v3 bytes into the ranker the payload names, or refuse before building.
 
     Exactly as strict as v2 and in the same order: the byte-level refusals, then the schema,
     then every declared identity against what the caller expected and what the frozen feature
-    contract declares. This loader can build one class and no other, which is the property that
-    makes a tampered artifact a refusal or a wrong ranker and never a different kind of thing.
+    contract declares. This loader can build the two classes `IMPLEMENTED_HYPOTHESIS_CLASSES`
+    names and no other, and it refuses a payload whose class and component id disagree — which
+    is what keeps a tampered artifact a refusal or a wrong ranker and never a different kind of
+    thing.
     """
     declared = contract or CorrectionFeatureContractV2()
     document = _document(
@@ -656,10 +682,33 @@ def load_correction_ranker_v3(
             raise CorrectionArtifactError(
                 f"artifact {label} is {found!r}, not the expected {expected!r}"
             )
-    if payload.component_id != PairwiseContrastiveRanker.component_id:
-        raise CorrectionArtifactError("artifact does not describe the correction ranker")
+    # Two classes share this schema, so the reader dispatches on the identity the payload
+    # carries rather than assuming one. The class and the component id have to agree: an
+    # artifact naming one class's component and the other's channels is not a model either
+    # reader can build, and saying so here is cheaper than a confusing failure inside one.
+    expected_component = {
+        HYPOTHESIS_CLASS: PairwiseContrastiveRanker.component_id,
+        CONTAINMENT_HYPOTHESIS_CLASS: ContainmentContrastiveRanker.component_id,
+    }[payload.hypothesis_class]
+    if payload.component_id != expected_component:
+        raise CorrectionArtifactError(
+            f"artifact declares class {payload.hypothesis_class!r} but component "
+            f"{payload.component_id!r}, which belongs to another one"
+        )
 
     try:
+        if payload.hypothesis_class == CONTAINMENT_HYPOTHESIS_CLASS:
+            relational_model = ContainmentContrastiveModel(
+                channel_names=tuple(payload.feature_channels),
+                weights=tuple(payload.weights),
+                regularization=str(payload.regularization),
+                fitted_group_count=payload.fitted_group_count,
+                fitted_pair_count=payload.fitted_pair_count,
+            )
+            return (
+                ContainmentContrastiveRanker(relational_model, margin_floor=payload.margin_floor),
+                payload,
+            )
         model = PairwiseContrastiveModel(
             encoder_version=payload.encoder_version,
             feature_names=tuple(payload.feature_channels),
@@ -701,7 +750,10 @@ def load_correction_ranker_any(
     contract: CorrectionFeatureContractV2 | None = None,
     media_type: str = CORRECTION_ARTIFACT_MEDIA_TYPE,
     maximum_bytes: int = MAXIMUM_ARTIFACT_BYTES,
-) -> tuple[CorrectionKnn | PairwiseContrastiveRanker, AnyCorrectionArtifactPayload]:
+) -> tuple[
+    CorrectionKnn | PairwiseContrastiveRanker | ContainmentContrastiveRanker,
+    AnyCorrectionArtifactPayload,
+]:
     """Route bytes to the one reader their `schema_name` names. Never guesses.
 
     The descriptor is required for v2 and v3 and refused for v1, rather than ignored where it
@@ -762,7 +814,7 @@ def build_payload_v3(
     component_revision: int,
     descriptor_hash: str,
     code_revision: str,
-    ranker: PairwiseContrastiveRanker,
+    ranker: PairwiseContrastiveRanker | ContainmentContrastiveRanker,
     training_dataset_id: UUID,
     calibration_dataset_id: UUID,
     example_manifest_hash: str,
@@ -789,11 +841,17 @@ def build_payload_v3(
     """
     declared = contract or CorrectionFeatureContractV2()
     model = ranker.model
+    # The identity comes off the ranker rather than being named here: a builder that hard-coded
+    # one class's component id would happily wrap the other class's direction in it, and the
+    # loader's identity check would then pass on an artifact describing the wrong model.
+    relational = isinstance(ranker, ContainmentContrastiveRanker)
     return CorrectionArtifactPayloadV3(
-        component_id=PairwiseContrastiveRanker.component_id,
+        component_id=type(ranker).component_id,
         component_revision=component_revision,
-        surface=PairwiseContrastiveRanker.surface,
-        learner_kind="pairwise_contrastive_linear",
+        surface=type(ranker).surface,
+        learner_kind=(
+            "containment_contrastive_linear" if relational else "pairwise_contrastive_linear"
+        ),
         descriptor_hash=descriptor_hash,
         code_revision=code_revision,
         normalizer_version=declared.normalizer_version,
@@ -801,7 +859,9 @@ def build_payload_v3(
         canonical_prefix_hex=declared.canonical_prefix_hex,
         canonical_payload=declared.canonical_payload,
         feature_contract_hash=declared.content_hash,
-        feature_channels=FITTED_FEATURE_V2_ALLOWLIST,
+        feature_channels=(
+            FITTED_RELATIONAL_CHANNELS if relational else FITTED_FEATURE_V2_ALLOWLIST
+        ),
         training_dataset_id=training_dataset_id,
         calibration_dataset_id=calibration_dataset_id,
         example_manifest_hash=example_manifest_hash,
@@ -823,7 +883,7 @@ def build_payload_v3(
         regularization=Decimal(model.regularization),
         fitted_group_count=model.fitted_group_count,
         fitted_pair_count=model.fitted_pair_count,
-        hypothesis_class=HYPOTHESIS_CLASS,
+        hypothesis_class=CONTAINMENT_HYPOTHESIS_CLASS if relational else HYPOTHESIS_CLASS,
         margin_floor=ranker.margin_floor,
         operating_point_hash=operating_point_hash,
         operating_point_derivation_rule=DERIVATION_RULE,
@@ -1084,7 +1144,7 @@ def build_ranker_for_evaluation_v3(
     contract: CorrectionFeatureContractV2 | None = None,
     media_type: str = CORRECTION_ARTIFACT_MEDIA_TYPE,
     maximum_bytes: int = MAXIMUM_ARTIFACT_BYTES,
-) -> tuple[PairwiseContrastiveRanker, CorrectionArtifactPayloadV3]:
+) -> tuple[PairwiseContrastiveRanker | ContainmentContrastiveRanker, CorrectionArtifactPayloadV3]:
     """The v3 door through the same boundary, in the same order: rehash, then read, then check.
 
     A separate function rather than a widened `build_ranker_for_evaluation`, because that one's
