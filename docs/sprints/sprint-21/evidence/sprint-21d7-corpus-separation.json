@@ -1,0 +1,165 @@
+{
+ "accepted": true,
+ "authored_corpus_separation": {
+  "certification_bodies_compared": 2280,
+  "cross_group_collisions_touching_21d7": [],
+  "retrieval_pool_check": {
+   "applicable": false,
+   "condition_24_ruling": "sprint-21d7-condition-24-ruling.json",
+   "condition_24_ruling_sha256": "af2144a33ce1b1422e4a5d6f950ec3ae3001ce741c6290a13408637937a82036",
+   "why": "S21D4-043's pool-against-itself check exists because a sprint that authors a retrieval pool can collide inside it. D6 authors no retrieval pool: condition 24 is inherited from D5's sealed measurement under the ruling bound below, so there is no fresh pool for the check to run over"
+  },
+  "rule": "normalized_structure_hash and token_stream_hash, cross-group pairs, over every released corpus, for the one corpus D6 authors",
+  "separated": true
+ },
+ "certification_corpus": {
+  "complete": false,
+  "groups_authored": 10,
+  "groups_targeted": 100,
+  "reading": "separation is a property of the bodies that exist, so it is checkable before the corpus is finished and has to be rechecked after; an incomplete corpus that separates cleanly is a passing check over fewer groups and never a closed one"
+ },
+ "clone_separation": {
+  "cross_role_near_clone_pairs": 20,
+  "pairs_between_two_carried_roles_predating_d7": [
+   "final_a::d2-errors-budget:baseline|spent_retrieval_d5::d5r-distance-apart:failed|normalized_ast",
+   "final_a::d2-numeric-snap:baseline|spent_retrieval_d5::d5r-round-to-step:repaired|normalized_ast",
+   "final_a::d2-transform-pairs:baseline|spent_retrieval_d5::d5r-reason-text:failed|normalized_ast",
+   "final_b::d2-numeric-rounding:baseline|fitting::d2-errors-divmod:baseline|normalized_ast",
+   "final_b::d2-numeric-rounding:baseline|fitting::d2-errors-divmod:baseline|token_stream",
+   "final_b::d2-parsing-range:baseline|fitting::d2-parsing-coordinate:baseline|normalized_ast",
+   "final_b::d2-parsing-range:baseline|fitting::d2-parsing-coordinate:baseline|token_stream",
+   "final_b::d2-transform-order:variant_four|spent_retrieval_d5::d5r-reorder-fields:failed|normalized_ast",
+   "fitting::boundary-deduplication:incomplete_b|spent_retrieval_d5::d5r-digit-count:failed|normalized_ast",
+   "fitting::d2-errors-type-check:baseline|spent_retrieval_d5::d5r-take-slot:failed|normalized_ast",
+   "fitting::d2-transform-merge-lists:baseline|spent_retrieval_d5::d5r-mark-seen:failed|normalized_ast",
+   "fitting::d3-state-expire-before:variant_four|spent_retrieval_d5::d5r-forget-after:failed|normalized_ast",
+   "fitting::state-settings-merge:incomplete_a|spent_retrieval_d5::d5r-mark-seen:failed|normalized_ast",
+   "spent_calibration_d5::d5-parsing-email-parts:baseline|spent_retrieval_d5::d5r-split-name-pair:repaired|normalized_ast",
+   "spent_calibration_d5::d5-state-config-patch:baseline|spent_retrieval_d5::d5r-merge-defaults:failed|normalized_ast",
+   "spent_calibration_d5::d5-state-reference-count:baseline|spent_retrieval_d5::d5r-release-hold:failed|normalized_ast",
+   "spent_retrieval_d4::d4r-drop-columns:repaired|spent_retrieval_d5::d5r-drop-fields:repaired|normalized_ast",
+   "spent_retrieval_d4::d4r-drop-columns:repaired|spent_retrieval_d5::d5r-drop-fields:repaired|token_stream",
+   "spent_retrieval_d4::d4r-time-left:failed|spent_retrieval_d5::d5r-distance-apart:repaired|normalized_ast",
+   "spent_retrieval_d4::d4r-time-left:failed|spent_retrieval_d5::d5r-distance-apart:repaired|token_stream"
+  ],
+  "pairs_touching_the_role_d7_authored": 0,
+  "reading": "the literal reading of 'clone-disjoint across eight roles' is already false of the carried roles before D6 authored anything: final_b and fitting collide on released D2 groups, and section 4.1 forbids D6 from authoring into either. A rule the inherited roles cannot satisfy is not the operative rule. The operative one is the one the same sealed contract states in its own near_clone_rule field -- cross-group pairs against every released corpus, applied to the authored corpus -- and that is what corpus_d6.py enforces every batch. D5 recorded this finding at S21D5-022 and nothing in D6 changes the bodies it is about"
+ },
+ "group_separation": {
+  "all_pairwise_disjoint": true,
+  "distinct_groups": 575,
+  "groups_total": 575,
+  "pairs_checked": 36,
+  "pairs_sharing_a_group": {},
+  "roles": {
+   "canary": 5,
+   "certification": 10,
+   "conformal": 100,
+   "final_a": 30,
+   "final_b": 30,
+   "fitting": 180,
+   "spent_calibration_d5": 100,
+   "spent_retrieval_d4": 60,
+   "spent_retrieval_d5": 60
+  }
+ },
+ "integrity_content_hash": "bd3861bcfad57cabda08092b3c48fe968380dbe12418ba543e94a263fd3818c1",
+ "items": [
+  "S21D7-022"
+ ],
+ "lineage": {
+  "deferred_obligation_discharged": "S21D7-022, after W1 authors the corpus",
+  "digests_recomputed_from_todays_membership": {
+   "canary": {
+    "digest_over": "group content hashes, as W0 recorded it",
+    "groups": 5,
+    "recomputed_now": "f7eb9589e1fd45086175c1494b93bc8b1ffd720ca0a3200d6949869601fc88fe",
+    "recorded_in_w0": "f7eb9589e1fd45086175c1494b93bc8b1ffd720ca0a3200d6949869601fc88fe",
+    "unchanged": true
+   },
+   "conformal_half": {
+    "recomputed_now": "e75d0e8a3f100441f0a26ef191f70054abd62a81fccb60d7cf5c127bd5bf217f",
+    "recorded_in_w0": "e75d0e8a3f100441f0a26ef191f70054abd62a81fccb60d7cf5c127bd5bf217f",
+    "unchanged": true
+   },
+   "final_a": {
+    "digest_over": "group content hashes, as W0 recorded it",
+    "groups": 30,
+    "recomputed_now": "dcb7427b6f5a1b47078df0b4d694809abdf13b18c3b87618452dcb8c7a8d2469",
+    "recorded_in_w0": "dcb7427b6f5a1b47078df0b4d694809abdf13b18c3b87618452dcb8c7a8d2469",
+    "unchanged": true
+   },
+   "final_b": {
+    "digest_over": "group content hashes, as W0 recorded it",
+    "groups": 30,
+    "recomputed_now": "5dddfa582db27f7cf7e5bc1a1121ff430398bfcbb3883692c77abf14d0ce0193",
+    "recorded_in_w0": "5dddfa582db27f7cf7e5bc1a1121ff430398bfcbb3883692c77abf14d0ce0193",
+    "unchanged": true
+   },
+   "fitting_pool": {
+    "recomputed_now": "92c3117173a66ce73325b2dfddd62db3dd65bcf1704b0687f74ded4bce0cdb21",
+    "recorded_in_w0": "92c3117173a66ce73325b2dfddd62db3dd65bcf1704b0687f74ded4bce0cdb21",
+    "unchanged": true
+   },
+   "spent_entirely": {
+    "recomputed_now": "24392a28783fd1bde19fe2e90eff828be6b7caabfc9675035979da372bedef69",
+    "recorded_in_w0": "24392a28783fd1bde19fe2e90eff828be6b7caabfc9675035979da372bedef69",
+    "unchanged": true
+   }
+  },
+  "every_digest_unchanged": true,
+  "reuse_audit_integrity_content_hash": "8dd2fd1744cb08200af296baaca2eaf7382dbf2454eb29d2e5cc919a9390b57a",
+  "reuse_audit_read": "sprint-21d7-reuse-audit.json"
+ },
+ "recorded_at": "2026-08-10T14:59:28Z",
+ "rights": {
+  "certification_disjoint_from_the_conformal_half": {
+   "certification_groups": 10,
+   "conformal_groups": 100,
+   "disjoint": true,
+   "rule": "the amended selection rule measures 100 independent decisions against a bar the conformal half placed; a group on both sides would be certified against a threshold its own margin helped set",
+   "shared": []
+  },
+  "certification_disjoint_from_the_fitting_pool": {
+   "disjoint": true,
+   "rule": "a certified margin must come from a direction that never saw the group; the fitting pool is where the direction came from",
+   "shared": []
+  },
+  "d7_authored_into_a_protected_role": [],
+  "d7_authored_into_a_spent_retrieval_pool": [],
+  "protected_roles_unread": {
+   "canary": {
+    "bodies_resolved": 0,
+    "decision": "reuse"
+   },
+   "final_a": {
+    "bodies_resolved": 0,
+    "decision": "reuse"
+   },
+   "final_b": {
+    "bodies_resolved": 0,
+    "decision": "reuse"
+   }
+  },
+  "protected_task_identities": 65
+ },
+ "role_membership_read_from": {
+  "canary": "released D5 seal, carried unopened",
+  "certification": "reality_task_specs_d7, authored by S21D7-020",
+  "conformal": "reality_task_specs_d5, D5's calibration corpus, demoted to bar-setting",
+  "final_a": "released D5 seal, carried unopened",
+  "final_b": "released D5 seal, carried unopened",
+  "fitting": "released D5 seal, D4 training plus D4 calibration, unread by D6",
+  "spent_retrieval_d4": "released D4 seal, read once by S21D4-043 and spent",
+  "spent_retrieval_d5": "released D5 seal, read once by S21D5-046 and spent"
+ },
+ "schema_version": 1,
+ "source_separation": {
+  "bodies_byte_identical_across_two_roles": {},
+  "bodies_hashed": 2515,
+  "distinct_body_hashes": 2515,
+  "source_disjoint": true
+ },
+ "sprint": "21D7",
+ "wave": "W1"
+}
