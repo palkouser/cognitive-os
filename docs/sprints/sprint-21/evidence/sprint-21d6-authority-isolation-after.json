@@ -5,8 +5,8 @@
  "d6_authorities": {
   "artifact_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d6",
   "artifact_root_exists": true,
-  "artifact_root_files": 0,
-  "artifact_root_fingerprint_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "artifact_root_files": 249,
+  "artifact_root_fingerprint_sha256": "9b910c7d9556b6307c39e2360b70f472177cdea8237aad3fc367a6d2ed9bc910",
   "backup_root": "/home/palkouser/projekt/cognitive-os-data/backups-s21d6",
   "databases": [
    "cognitive_os_s21d6_test",
@@ -17,7 +17,7 @@
   "outside_every_predecessor_pair": true
  },
  "drifted_stores": {},
- "integrity_content_hash": "05ce1b7de992a8f7aabb5cc03b750a7c397088c35cd910b3010a2d47d2a2467f",
+ "integrity_content_hash": "0a4513ae290f1c791383828548aa53a870825fde4d1e0042f6958f72172fdb0a",
  "items": [
   "S21D6-002"
  ],
@@ -73,7 +73,7 @@
    "path_and_size_fingerprint_sha256": "f058a6e31f8de66726af3fb44fef081daa3be754dc20cb77dc657af71d818a7f"
   }
  },
- "recorded_at": "2026-08-10T05:25:44Z",
+ "recorded_at": "2026-08-10T10:29:19Z",
  "schema_version": 1,
  "sprint": "21D6",
  "wave": "W0",

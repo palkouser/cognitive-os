@@ -692,3 +692,154 @@ final, batch-B or canary body, outcome or manifest was opened — the eight item
 **14 and 16 close against the stop hash rather than a measurement**, exactly as D5's did.
 
 The selection is a null, and it is immutable.
+
+---
+
+# W3 — the negative release
+
+The gate owner ruled after W2: go to the negative release. D6's backlog writes W3 for a *selected*
+candidate — artifact, loader, lifecycle, final A and B, canary, activation — and there is no
+candidate, so what W3 executes is the release a stop still has to make. D4 and D5 both did the
+same thing at the same point.
+
+## S21D6-036: the typed continuation, and the successor sentence read rather than written
+
+The stop is typed once and everything that depended on a candidate is listed, because "nothing
+else was opened" is a claim about absence and a list is what makes absence checkable. Eight
+pieces of W3 work and **fifteen Gate L2 conditions** are recorded as not opened, bound to one
+stop hash: **`981bb130d03a45ba512ee3a758abb48db0d45c4b53a35a99bca79238c76e3fcd`**.
+
+The successor sentence is **read out of `sprint-21d6-contracts.json`**, which W0 sealed with
+`measured_values: 0`. Typing an ending means the measurement selects one of four sentences written
+before it; a successor composed afterwards would be the measurement arguing for its own follow-up.
+
+The W3 deliverables are named by the words the backlog's wave table uses rather than by item
+numbers. D6's backlog never allocated item IDs below the W3 wave row, and putting identifiers in
+the evidence that no plan ever carried would be worse than naming the work.
+
+## The finding that changed three records
+
+W2 closed with the sweep reported and never asked of it the one question §2.1 had asked of the
+*pre-amendment* pair: **is the pair reachable at all?**
+
+It is not. Across the 100 reported thresholds on the selectable cell and the 100 on the reported
+one, coverage ≥ 0.40 and CP-95 ≤ 0.15 are satisfied at **zero points**:
+
+| | 720 (selectable) | 320 (reported) |
+|---|---|---|
+| sweep points | 100 | 100 |
+| points satisfying both | **0** | **0** |
+| best CP-95 at or above the 0.40 floor | **0.241298** | 0.263698 |
+| best coverage anywhere under the 0.15 ceiling | none | none |
+| deepest error-free prefix by margin | 6 | 5 |
+
+No threshold at any coverage reaches the ceiling. A tighter α moves the bar along that same curve.
+So **§3.4's step-2 sentence — "a tighter alpha needs more than 12 wrong decisions in the conformal
+half, which is a volume question" — has a premise this evidence contradicts**, and a successor
+sized against it would author a hundred groups to reproduce this result.
+
+Computing it searches nothing: every point was already published and none is selectable. What is
+computed is the *absence* of a satisfying point, which is a property of the curve rather than a
+threshold anybody could adopt.
+
+Three records changed, and none of them by replacing the typed ending:
+
+- `sprint-21d6-learner-selection.json` gained a `joint_feasibility` block per cell, and the step-2
+  reading now names the infeasibility instead of the volume sentence when the curve rules it out;
+- `sprint-21d6-continuation.json` carries the sealed successor sentence **unchanged**, with
+  `successor_sentence_qualified_by_the_measurement` beside it stating what the sweep shows;
+- the handoff names a different successor experiment, and says why the sealed one is not it.
+
+This is the same discipline W2 applied to step 2's leak wording: the pre-written sentence stays,
+and what the measurement found is recorded next to it.
+
+## S21D6-091: the twenty-nine, and the two rows that are D6's own shape
+
+Every condition is a row naming the file and the rule that decided it. The script has no branch
+that writes `met` without a document behind it, and the verdict is computed from the counts.
+
+**Condition 8 has no D6 fitting partition to count.** D6 executes one partition and refits nothing,
+so the fitting floor is met by D5's sealed 720-row pool over 180 groups, read through S21D6-023's
+proof that the pool D6 names is byte-for-byte the released one. The row reports both halves and
+says which store each came from; a row that counted only the certification half would report half
+a condition as if it were all of it.
+
+**Condition 24 is inherited, and the inheritance is re-checked rather than trusted.** The W0
+ruling voids itself if D6 changed the searchable surface, opened a retrieval arm or moved the
+comparator, and its own `re_checked_at` clause puts the check at gate close. The row recomputes
+all three identities from D6's tree — `sprint-21d5-surface.json` by bytes and by seal,
+`sprint-21d5-retrieval-decision.json` by bytes and by seal, and D6's own
+`retrieval_groups_authored: 0` — and refuses the inheritance if any moved. None moved. Gate D1
+condition 15 reads the row condition 24 just decided rather than reaching its own verdict, so the
+two cannot disagree about one measurement.
+
+The condition is recorded `met`, **not `carried`**: a carried condition would be a predecessor's
+verdict reused; this is a predecessor's measurement whose voiding identities were recomputed here.
+
+## S21D6-086: the release matrix, and what it does not claim
+
+Thirty-six rows: twenty-three commands, five negatives that must refuse for their declared
+reason, and eight decided from committed evidence. **36 of 36 passed, 0 skipped, 0 structural findings.**
+
+Three of D5's thirty-two rows are gone and a fourth never existed, and the record names all four
+in `not_carried_from_d5` rather than leaving a reader to count. D5 ran a W7 that provisioned,
+backed up, restarted, restored and damaged a store, and recorded three matrix rows from that
+evidence; D6's backlog allocates no operations wave, so there is no evidence for those rows to
+read and inventing one would be a release check about a wave nobody ran. The fourth is a
+`learned.py d6-integrity` report, which does not exist because the backlog is explicit that D6
+runs code that already exists.
+
+What stands in their place is D6's own: `pre_registration_d6 --check`, `sealed_manifests_d6
+--check`, the hundred-group corpus validator, the three predecessor integrity reports still green
+over their own evidence, and one negative row this sprint is the first that needed —
+
+```
+campaign_refuses_the_d5_store → refusing to run against s21d5; D6 writes only to its own pair
+```
+
+**W1's most serious finding, executed rather than described.** D6 reads its numeric envelope,
+both directions and its whole conformal half out of D5's store, and the guard that keeps it from
+*writing* there is one function with one list. The row proves `s21d5` is on that list. A second
+negative row proves the inconsistent development pair is refused too.
+
+## W3 findings
+
+The matrix found two defects on its first run, both in this wave's own code, and both are the
+kind that only execution reveals.
+
+**The structural check named D5's negative rows.** `_structural_findings` asserts that a required
+set of refusals is present, and the set was inherited verbatim: it named `d4_store_refused`, a row
+D6 does not run, and did not name either of D6's two campaign refusals. The first execution
+reported `negative rows missing: ['d4_store_refused']` — the check catching its own derivation.
+Fixed to D6's five, and the comment now says why the list is asserted rather than computed from
+`ROWS`: **a required set derived from the rows present can never notice a row that is absent.**
+
+**The secrets scan failed on two regenerated records.** `sprint-21d6-learner-selection.json` and
+`sprint-21d6-authority-isolation-after.json` are tracked and both were rewritten this wave, so
+their high-entropy strings moved and no longer matched the baseline. Merged surgically — the
+hazard W1 recorded stands, `detect-secrets scan --baseline F P` rewrites F in place restricted to
+P — and the seventeen replaced entries are the two files' own stale lines, with no file dropped:
+451 → 455.
+
+Neither was a finding about the release. Both were findings about this wave, which is what a
+release matrix is for.
+
+## W3 validation
+
+- `ruff check` and `ruff format --check` under `ruff.cognitive-os.toml`, over `src tests scripts
+  infra` — the CI scope, not a subset;
+- the release matrix: **36 of 36 rows passed, 0 skipped, 0 structural findings**;
+- the gate assessment refuses to run unless the continuation record's closed set and its own map
+  agree, and they do: fifteen conditions, one stop hash;
+- condition 24's three voiding identities recomputed from D6's tree and unmoved;
+- the measured store still holds **404 learned observations**, and seven predecessor stores
+  re-fingerprinted after the wave show zero drift and zero writes.
+
+## What W3 has not done
+
+No artifact was bound, no component registered, promoted, shadowed, canaried or activated. No
+final, batch-B or canary body, outcome or manifest was opened — the eight items in
+`dependent_not_opened` are all still closed, for the fourth sprint running. Nothing was written to
+the measured store or to any predecessor store.
+
+**Gate L2 does not pass, and Sprint 22A stays blocked.**

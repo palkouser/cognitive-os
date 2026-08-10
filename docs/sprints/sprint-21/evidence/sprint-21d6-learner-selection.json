@@ -2,7 +2,7 @@
  "amendment_2_sha256": "9ba7fc1f516c238d2545f258517fdf96a62bb096c48ce718e207571247dba593",
  "baseline": {
   "first_choice_rate": "0.62",
-  "ladder_hash": "5175ccf486b2f5f1cd85ffa78ab77869551628281ad813a133a52cf83590a36d",
+  "ladder_hash": "8f38a3a20fe237c3b0225f117755db0a17468e2da21c651ae65b512800745d00",
   "measured_on": "the same 100 certification decisions the direction is measured on",
   "record": "sprint-21d6-baseline-ladder.json",
   "rungs": [
@@ -101,7 +101,7 @@
     },
     "coverage": "0.16",
     "derivation_hash": "77529624d03e0a8f07525a18523734ea305d26792f1724d85c97b0d2a3244a84",
-    "derived_at": "2026-08-10T10:08:50.797534+00:00",
+    "derived_at": "2026-08-10T10:34:25.818066+00:00",
     "error_upper_bound_95": "0.343825",
     "errors_admitted": 2,
     "observed_error_rate": "0.125",
@@ -124,6 +124,17 @@
     "clopper_pearson_95_upper_bound_above_0.15",
     "clean_coverage_below_0.40"
    ],
+   "joint_feasibility": {
+    "best_bound_at_or_above_the_coverage_floor": "0.263698",
+    "best_coverage_under_the_ceiling": "0",
+    "ceiling_c": "0.15",
+    "coverage_floor": "0.40",
+    "not_selectable": "reported because §2.3 requires every point on the record. A point that satisfies the pair is not a candidate: the bar is derived once from the conformal half, and a threshold picked off the certification curve is fitted to the set it certifies",
+    "pair_is_reachable_at_any_threshold": false,
+    "points_satisfying_both": 0,
+    "reading": "no threshold on this curve satisfies the amended §2.3 pair, so the bar's placement is not what the cell failed on. A different alpha moves the bar along this same curve and every point on it misses",
+    "sweep_points": 100
+   },
    "leak": {
     "alpha_leak_budget": "0.20",
     "realised_leak_rate": "0.06666666666666666666666666667",
@@ -133,7 +144,7 @@
     "wrong_answered_decisions": 30,
     "wrong_answered_decisions_admitted": 2
    },
-   "maximum_inference_ms": "0.02675",
+   "maximum_inference_ms": "0.03525",
    "model_hash": "5b15f4af06a2b08d0d8269b59f47127bf97d610a22c12c645f8fbde9fa0f47cd",
    "nominal_decisions": 100,
    "observed_error_rate_over_admitted": "0.125",
@@ -198,7 +209,7 @@
     },
     "coverage": "0.4",
     "derivation_hash": "6b03d7e4dc01628488349cab932c7deae870386306cfb503d7da7b57965e9c1a",
-    "derived_at": "2026-08-10T10:08:50.831785+00:00",
+    "derived_at": "2026-08-10T10:34:25.852943+00:00",
     "error_upper_bound_95": "0.274745",
     "errors_admitted": 6,
     "observed_error_rate": "0.15",
@@ -220,6 +231,17 @@
    "ineligible_reasons": [
     "clopper_pearson_95_upper_bound_above_0.15"
    ],
+   "joint_feasibility": {
+    "best_bound_at_or_above_the_coverage_floor": "0.241298",
+    "best_coverage_under_the_ceiling": "0",
+    "ceiling_c": "0.15",
+    "coverage_floor": "0.40",
+    "not_selectable": "reported because §2.3 requires every point on the record. A point that satisfies the pair is not a candidate: the bar is derived once from the conformal half, and a threshold picked off the certification curve is fitted to the set it certifies",
+    "pair_is_reachable_at_any_threshold": false,
+    "points_satisfying_both": 0,
+    "reading": "no threshold on this curve satisfies the amended §2.3 pair, so the bar's placement is not what the cell failed on. A different alpha moves the bar along this same curve and every point on it misses",
+    "sweep_points": 100
+   },
    "leak": {
     "alpha_leak_budget": "0.20",
     "realised_leak_rate": "0.25",
@@ -229,7 +251,7 @@
     "wrong_answered_decisions": 24,
     "wrong_answered_decisions_admitted": 6
    },
-   "maximum_inference_ms": "0.029",
+   "maximum_inference_ms": "0.02725",
    "model_hash": "9fd297fb407015374485e8f7ef8fbb557e6f89f7ac3286e2572769fdab937d74",
    "nominal_decisions": 100,
    "observed_error_rate_over_admitted": "0.15",
@@ -249,7 +271,7 @@
  "decision_tree": {
   "amendment_refused": false,
   "endings_are_four_different_sprints": true,
-  "reading": "step 2: coverage is 0.4, at or above the floor, and the Clopper-Pearson 95% upper bound on the error rate among admitted decisions is 0.274745, above the pre-registered ceiling 0.15. The realised leak is 0.25, itself above the 0.20 budget: 6 of 24 wrong decisions cleared the bar. §3.4's step 2 is worded for a bar that held its guarantee and missed the ceiling anyway; this one missed both, which is the shape §6 named as the exchangeability symptom rather than a defect in the rule. It is recorded here rather than smoothed into the typed ending. A tighter alpha needs more than 12 wrong decisions in the conformal half, which is a corpus-volume question and the first measured reason this programme would have to author more",
+  "reading": "step 2: coverage is 0.4, at or above the floor, and the Clopper-Pearson 95% upper bound on the error rate among admitted decisions is 0.274745, above the pre-registered ceiling 0.15. The realised leak is 0.25, itself above the 0.20 budget: 6 of 24 wrong decisions cleared the bar. §3.4's step 2 is worded for a bar that held its guarantee and missed the ceiling anyway; this one missed both, which is the shape §6 named as the exchangeability symptom rather than a defect in the rule. It is recorded here rather than smoothed into the typed ending. And no threshold on this cell's 100-point curve satisfies the amended pair at all: the best Clopper-Pearson bound anywhere at or above the 0.40 coverage floor is 0.241298, and no point of any coverage reaches the 0.15 ceiling. A tighter alpha moves the bar along this same curve, so §3.4's step-2 sentence -- more wrong decisions in the conformal half -- is not what this cell failed on. What binds is the ranker's error rate on this corpus, which is a hypothesis-class question rather than a volume one. Recorded here because §2.1 drew exactly this distinction for the pre-amendment pair, and 'infeasible' and 'unmet' size two different successors",
   "section": "3.4",
   "stop": "leak_budget_exceeded",
   "why_step_0_did_not_fire": "the gate owner granted amendment 2 in W0, before any D6 measurement existed; the record carries `measured_values: 0` and the chronology proving it"
@@ -289,13 +311,13 @@
   "why_one_cell_is_selectable_and_two_are_reported": "revision 6 pre-registers one class, one lambda, one direction and one alpha, so there is nothing to search over -- which is the property that makes a single derivation meaningful. The 320 direction is re-scored and reported because §2.3 requires every cell and sweep point on the record, and it may not be selected however it lands"
  },
  "hypothesis_class": "pairwise-contrastive-linear-v1",
- "integrity_content_hash": "198985816aae2eb31dab8853f3b0bf2f6a63f2abdd793e7971d934254b2cf2b9",
+ "integrity_content_hash": "648368477dd3a73c900c2a87486964322b4efeecc585048e4fe68146b1e06d56",
  "invariance_regression_sha256": "44faa8842c68b46e8a63e92705b364a93b5d7ee14cbb71e5eaf711e5a557b095",
  "items": [
   "S21D6-035"
  ],
  "pre_registration_sha256": "e1e4e1d76e51bb53ea845e3a9b9e0e631903921e8b3887d289048ff7eccd6022",
- "recorded_at": "2026-08-10T10:08:50Z",
+ "recorded_at": "2026-08-10T10:34:25Z",
  "risk_coverage_curve": {
   "320": {
    "answered_decisions": 100,
@@ -2573,7 +2595,7 @@
   ],
   "immutable": true,
   "outcome": "null",
-  "reading": "step 2: coverage is 0.4, at or above the floor, and the Clopper-Pearson 95% upper bound on the error rate among admitted decisions is 0.274745, above the pre-registered ceiling 0.15. The realised leak is 0.25, itself above the 0.20 budget: 6 of 24 wrong decisions cleared the bar. §3.4's step 2 is worded for a bar that held its guarantee and missed the ceiling anyway; this one missed both, which is the shape §6 named as the exchangeability symptom rather than a defect in the rule. It is recorded here rather than smoothed into the typed ending. A tighter alpha needs more than 12 wrong decisions in the conformal half, which is a corpus-volume question and the first measured reason this programme would have to author more",
+  "reading": "step 2: coverage is 0.4, at or above the floor, and the Clopper-Pearson 95% upper bound on the error rate among admitted decisions is 0.274745, above the pre-registered ceiling 0.15. The realised leak is 0.25, itself above the 0.20 budget: 6 of 24 wrong decisions cleared the bar. §3.4's step 2 is worded for a bar that held its guarantee and missed the ceiling anyway; this one missed both, which is the shape §6 named as the exchangeability symptom rather than a defect in the rule. It is recorded here rather than smoothed into the typed ending. And no threshold on this cell's 100-point curve satisfies the amended pair at all: the best Clopper-Pearson bound anywhere at or above the 0.40 coverage floor is 0.241298, and no point of any coverage reaches the 0.15 ceiling. A tighter alpha moves the bar along this same curve, so §3.4's step-2 sentence -- more wrong decisions in the conformal half -- is not what this cell failed on. What binds is the ranker's error rate on this corpus, which is a hypothesis-class question rather than a volume one. Recorded here because §2.1 drew exactly this distinction for the pre-amendment pair, and 'infeasible' and 'unmet' size two different successors",
   "stop_kind": "leak_budget_exceeded",
   "why_a_null_and_not_a_weaker_candidate": "the amended §2.3's conditions are the selection rule, not a preference. A cell that fails one is not a worse candidate, it is not a candidate"
  },

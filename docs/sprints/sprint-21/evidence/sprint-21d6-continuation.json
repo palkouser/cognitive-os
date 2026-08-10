@@ -1,0 +1,180 @@
+{
+ "bound_hashes": {
+  "sprint-21d6-baseline-ladder.json": "be987cdd56688b60fa255d44f1d4c0594b79bec49d88b458fd1360ace095c3aa",
+  "sprint-21d6-conformal-point.json": "ebbc1b920b9555957a841fda3549b51a4ef4199ce7828ad7d6eb5bd431e20187",
+  "sprint-21d6-contracts-amendment-2.json": "9ba7fc1f516c238d2545f258517fdf96a62bb096c48ce718e207571247dba593",
+  "sprint-21d6-contracts.json": "6d1b1e6614ac52a2b2984aa354b452d6ed9a6aa1116fae5ba12d0736401f81ee",
+  "sprint-21d6-directions.json": "5ce90a641b205a491e07a3e40a9f2c197671f5adb23c329efcdaf56f86b1e4f4",
+  "sprint-21d6-invariance-regression.json": "44faa8842c68b46e8a63e92705b364a93b5d7ee14cbb71e5eaf711e5a557b095",
+  "sprint-21d6-learner-selection.json": "13bf161848f0a57acedac3b295b987460e383491297774ef85f19cc141f4e01b",
+  "sprint-21d6-pre-registration.json": "e1e4e1d76e51bb53ea845e3a9b9e0e631903921e8b3887d289048ff7eccd6022",
+  "sprint-21d6-snapshots.json": "8ec9e614013771ef4560baca9837b7831eb735d7a0d2af9af57884f02cddba5b"
+ },
+ "decision": {
+  "kind": "stop",
+  "opens": [],
+  "reason": "step 2: coverage is 0.4, at or above the floor, and the Clopper-Pearson 95% upper bound on the error rate among admitted decisions is 0.274745, above the pre-registered ceiling 0.15. The realised leak is 0.25, itself above the 0.20 budget: 6 of 24 wrong decisions cleared the bar. §3.4's step 2 is worded for a bar that held its guarantee and missed the ceiling anyway; this one missed both, which is the shape §6 named as the exchangeability symptom rather than a defect in the rule. It is recorded here rather than smoothed into the typed ending. And no threshold on this cell's 100-point curve satisfies the amended pair at all: the best Clopper-Pearson bound anywhere at or above the 0.40 coverage floor is 0.241298, and no point of any coverage reaches the 0.15 ceiling. A tighter alpha moves the bar along this same curve, so §3.4's step-2 sentence -- more wrong decisions in the conformal half -- is not what this cell failed on. What binds is the ranker's error rate on this corpus, which is a hypothesis-class question rather than a volume one. Recorded here because §2.1 drew exactly this distinction for the pre-amendment pair, and 'infeasible' and 'unmet' size two different successors",
+  "stop_kind": "leak_budget_exceeded"
+ },
+ "final_or_canary_outcomes_inspected": 0,
+ "immutable": true,
+ "integrity_content_hash": "d6f57f6711e73639bcc1f3bea1accc3f190d6abaf9a4a8cc88279328f2b1bd79",
+ "items": [
+  "S21D6-036"
+ ],
+ "measured": {
+  "alpha": "0.20",
+  "baseline_first_choice_rate": "0.62",
+  "ceiling_c": "0.15",
+  "conformal_coverage": {
+   "320": "0.16",
+   "720": "0.4"
+  },
+  "error_upper_bound_95": {
+   "320": "0.343825",
+   "720": "0.274745"
+  },
+  "errors_admitted": {
+   "320": 2,
+   "720": 6
+  },
+  "first_choice_rate_over_all_answered": {
+   "320": "0.7",
+   "720": "0.76"
+  },
+  "independent_decisions": 100,
+  "ineligibility_counts": {
+   "clean_coverage_below_0.40": 1,
+   "clopper_pearson_95_upper_bound_above_0.15": 2
+  },
+  "realised_leak_rate": {
+   "320": "0.06666666666666666666666666667",
+   "720": "0.25"
+  },
+  "strongest_deterministic_rung": "lexical_similarity",
+  "the_one_failing_condition_on_the_selectable_cell": [
+   "clopper_pearson_95_upper_bound_above_0.15"
+  ],
+  "what_the_zero_error_prefix_rule_would_have_admitted": {
+   "320": 5,
+   "720": 6
+  }
+ },
+ "measurements_opened": 0,
+ "not_cancelled_by_this_stop": {
+  "gate_l2_condition_24": {
+   "record": "sprint-21d6-condition-24-ruling.json",
+   "sha256": "1e2d7c4a18001550cdd8c13400d37711794d04cdf3630ffa4629a3bbbb45d510",
+   "why": "the ruling inherits D5's sealed retrieval measurement for any sprint that changes neither the surface, the arms nor the comparator. The correction stop touches none of the three, so it cannot void it -- and the gate assessment re-checks the three identities rather than trusting this sentence"
+  },
+  "operations_release_and_gate_close": {
+   "why": "a negative release is a complete release, not an abandoned one. The evidence baseline is protected and verified from the remote exactly as a passing release would be"
+  }
+ },
+ "not_opened": {
+  "count": 8,
+  "gate_d1_conditions": [
+   6,
+   7
+  ],
+  "gate_l2_conditions": [
+   10,
+   11,
+   13,
+   14,
+   15,
+   16,
+   18,
+   19,
+   20,
+   21,
+   22,
+   23,
+   25,
+   26,
+   27
+  ],
+  "why_a_list_and_not_a_sentence": "absence is what a list makes checkable. A later record that opens one of these has to remove it from a named set rather than reinterpret a phrase",
+  "work": [
+   {
+    "wave": "W3",
+    "why": "no candidate names a bar to bind; S21D6-035 selected none",
+    "work": "the v3 artifact bound to the conformal point"
+   },
+   {
+    "wave": "W3",
+    "why": "there is no real artifact; S21D6-035 selected none",
+    "work": "loader, resolver and sequencer against a real artifact"
+   },
+   {
+    "wave": "W3",
+    "why": "the 30 final_a groups stay sealed and unopened; S21D6-035 selected none",
+    "work": "final batch A on the carried role"
+   },
+   {
+    "wave": "W3",
+    "why": "the 30 final_b groups stay sealed and unopened; S21D6-035 selected none",
+    "work": "final batch B on the carried role"
+   },
+   {
+    "wave": "W3",
+    "why": "nothing was promoted; S21D6-035 selected none",
+    "work": "promotion assessment and the metamorphic submanifest"
+   },
+   {
+    "wave": "W3",
+    "why": "nothing was registered; S21D6-035 selected none",
+    "work": "shadow mode on a registered component"
+   },
+   {
+    "wave": "W3",
+    "why": "the 5 canary groups stay sealed; S21D6-035 selected none",
+    "work": "the canary manifest, its approval and the kill switch"
+   },
+   {
+    "wave": "W3",
+    "why": "there is nothing to activate or roll back; S21D6-035 selected none",
+    "work": "activation and the deliberate rollback"
+   }
+  ]
+ },
+ "pre_registration_sha256": "e1e4e1d76e51bb53ea845e3a9b9e0e631903921e8b3887d289048ff7eccd6022",
+ "recorded_at": "2026-08-10T10:34:54Z",
+ "schema_version": 1,
+ "sprint": "21D6",
+ "stop_hash": "981bb130d03a45ba512ee3a758abb48db0d45c4b53a35a99bca79238c76e3fcd",
+ "successor_experiment": "coverage at least 0.40 and the bound above the ceiling; the bar held its leak guarantee and admitted precision missed. A tighter alpha needs more than 12 wrong decisions in the conformal half, which is a volume question and the first measured reason this programme would have to author more",
+ "successor_sentence_qualified_by_the_measurement": {
+  "reading": "no threshold on either published curve satisfies the amended pair, so a tighter alpha moves the bar along a curve every point of which misses. On this evidence the binding constraint is the ranker's error rate on a fresh corpus, not the volume of the conformal half. §2.1 drew exactly this distinction for the pre-amendment pair, and 'infeasible' and 'unmet' size two different successors",
+  "the_sealed_sentence_assumes": "that a tighter alpha would have cleared the ceiling, so that the binding constraint is the number of wrong decisions available in the conformal half",
+  "what_the_sweep_shows": {
+   "320": {
+    "best_bound_at_or_above_the_coverage_floor": "0.263698",
+    "best_coverage_under_the_ceiling": "0",
+    "pair_is_reachable_at_any_threshold": false,
+    "sweep_points": 100
+   },
+   "720": {
+    "best_bound_at_or_above_the_coverage_floor": "0.241298",
+    "best_coverage_under_the_ceiling": "0",
+    "pair_is_reachable_at_any_threshold": false,
+    "sweep_points": 100
+   }
+  },
+  "what_this_does_not_do": "it does not change the typed ending, choose a threshold, or author a successor. Every point it reads is already published and none is selectable"
+ },
+ "successor_sentence_read_from": {
+  "record": "sprint-21d6-contracts.json",
+  "sha256": "6d1b1e6614ac52a2b2984aa354b452d6ed9a6aa1116fae5ba12d0736401f81ee",
+  "why": "§3.4's endings were written in W0 with measured_values: 0. Typing an ending means the measurement selects one of them; a successor sentence composed after the result would be the measurement arguing for its own follow-up"
+ },
+ "wave": "W2",
+ "what_this_decision_does_not_authorise": [
+  "reading any D6 final, promotion or canary outcome",
+  "re-deriving the conformal bar, re-choosing alpha, C or the selectable cell",
+  "lowering the 0.40 coverage floor, the 0.15 ceiling or any other §2.3 threshold",
+  "refitting either direction or re-choosing the hypothesis class",
+  "a second split of the calibration evidence or a second alpha",
+  "claiming Gate L2 passes, or unblocking Sprint 22A"
+ ]
+}

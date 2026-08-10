@@ -1081,6 +1081,64 @@ def _sweep(
     return points
 
 
+def _joint_feasibility(sweep: list[dict[str, Any]]) -> dict[str, Any]:
+    """Whether the amended §2.3 pair is reachable *anywhere* on this cell's curve.
+
+    §2.1 priced the pre-amendment pair and found it infeasible rather than merely unmet, and
+    that distinction is the whole argument for amendment 2. The same question has to be asked of
+    the amended pair, or the record reports a bar that missed without saying whether any bar
+    could have cleared it -- and a successor sprint would then be sized against the wrong
+    constraint.
+
+    This searches nothing. Every point here is already reported and none of them is selectable;
+    what is computed is the *absence* of a satisfying point, which is a property of the curve
+    rather than a threshold anybody could adopt.
+    """
+    satisfying = [
+        point
+        for point in sweep
+        if Decimal(point["coverage"]) >= MINIMUM_CLEAN_COVERAGE
+        and Decimal(point["error_upper_bound_95"]) <= CEILING_C
+    ]
+    under_the_ceiling = [
+        Decimal(point["coverage"])
+        for point in sweep
+        if Decimal(point["error_upper_bound_95"]) <= CEILING_C
+    ]
+    at_the_floor = [
+        Decimal(point["error_upper_bound_95"])
+        for point in sweep
+        if Decimal(point["coverage"]) >= MINIMUM_CLEAN_COVERAGE
+    ]
+    return {
+        "sweep_points": len(sweep),
+        "points_satisfying_both": len(satisfying),
+        "pair_is_reachable_at_any_threshold": bool(satisfying),
+        "best_coverage_under_the_ceiling": str(max(under_the_ceiling))
+        if under_the_ceiling
+        else "0",
+        "best_bound_at_or_above_the_coverage_floor": (
+            str(min(at_the_floor)) if at_the_floor else None
+        ),
+        "coverage_floor": str(MINIMUM_CLEAN_COVERAGE),
+        "ceiling_c": str(CEILING_C),
+        "reading": (
+            "no threshold on this curve satisfies the amended §2.3 pair, so the bar's placement "
+            "is not what the cell failed on. A different alpha moves the bar along this same "
+            "curve and every point on it misses"
+            if not satisfying
+            else f"{len(satisfying)} reported points satisfy the pair; the derived bar is not "
+            "among them, and none of them is selectable -- choosing one would be the threshold "
+            "search the pre-registration forbids"
+        ),
+        "not_selectable": (
+            "reported because §2.3 requires every point on the record. A point that satisfies "
+            "the pair is not a candidate: the bar is derived once from the conformal half, and a "
+            "threshold picked off the certification curve is fitted to the set it certifies"
+        ),
+    }
+
+
 def _classify(cell: dict[str, Any], *, eligible: bool) -> tuple[str | None, str]:
     """§3.4's tree, evaluated on the selectable cell only. The record must not guess."""
     if eligible:
@@ -1124,14 +1182,34 @@ def _classify(cell: dict[str, Any], *, eligible: bool) -> tuple[str | None, str]
             "than a defect in the rule. It is recorded here rather than smoothed into the "
             "typed ending"
         )
+        feasibility = cell["joint_feasibility"]
+        volume = (
+            ". A tighter alpha needs more than 12 wrong decisions in the conformal half, which "
+            "is a corpus-volume question and the first measured reason this programme would have "
+            "to author more"
+        )
+        # The sealed step-2 sentence points the successor at conformal-half volume, on the
+        # premise that a tighter alpha would have cleared the ceiling. The sweep can say whether
+        # that premise holds on this evidence, and where it does not, the record says so rather
+        # than handing a successor sprint a target the curve rules out.
+        unreachable = (
+            f". And no threshold on this cell's {feasibility['sweep_points']}-point curve "
+            f"satisfies the amended pair at all: the best Clopper-Pearson bound anywhere at or "
+            f"above the 0.40 coverage floor is "
+            f"{feasibility['best_bound_at_or_above_the_coverage_floor']}, and no point of any "
+            f"coverage reaches the {CEILING_C} ceiling. A tighter alpha moves the bar along this "
+            "same curve, so §3.4's step-2 sentence -- more wrong decisions in the conformal half "
+            "-- is not what this cell failed on. What binds is the ranker's error rate on this "
+            "corpus, which is a hypothesis-class question rather than a volume one. Recorded "
+            "here because §2.1 drew exactly this distinction for the pre-amendment pair, and "
+            "'infeasible' and 'unmet' size two different successors"
+        )
         return STOP_LEAK_BUDGET_EXCEEDED, (
             f"step 2: coverage is {coverage}, at or above the floor, and the Clopper-Pearson 95% "
             f"upper bound on the error rate among admitted decisions is "
             f"{cell['error_upper_bound_95']}, above the pre-registered ceiling {CEILING_C}. "
             + (held if leak["within_the_leak_budget"] else missed)
-            + ". A tighter alpha needs more than 12 wrong decisions in the conformal half, which "
-            "is a corpus-volume question and the first measured reason this programme would have "
-            "to author more"
+            + (volume if feasibility["pair_is_reachable_at_any_threshold"] else unreachable)
         )
     return STOP_LEAK_BUDGET_EXCEEDED, (
         "coverage and the bound both hold and a different §2.3 condition failed; the failing "
@@ -1234,6 +1312,7 @@ async def _stage_select(output: Path) -> int:
             derivation=derivation,
         )
         cell["model_hash"] = model.content_hash()
+        cell["joint_feasibility"] = _joint_feasibility(sweep)
         cell["ineligible_reasons"] = _satisfies_section_2_3(
             cell, first_action_preserved=first_action_preserved, sweep_points=len(sweep)
         )
@@ -1431,6 +1510,12 @@ async def _stage_select(output: Path) -> int:
                 },
                 "realised_leak_rate": {
                     str(cell["volume_rows"]): cell["leak"]["realised_leak_rate"] for cell in cells
+                },
+                "amended_pair_reachable_at_any_threshold": {
+                    str(cell["volume_rows"]): cell["joint_feasibility"][
+                        "pair_is_reachable_at_any_threshold"
+                    ]
+                    for cell in cells
                 },
                 "error_upper_bound_95": {
                     str(cell["volume_rows"]): cell["error_upper_bound_95"] for cell in cells
