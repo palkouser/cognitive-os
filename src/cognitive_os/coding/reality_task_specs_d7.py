@@ -4167,6 +4167,1172 @@ def test_an_item_no_crate_holds_is_refused() -> None:
     ),
 )
 
+_G040 = D2TaskSpec(
+    template_id="d7_numeric.fresh_average",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-fresh-average",
+    module="fresh_average",
+    module_doc="Averaging the readings that are still worth reading.",
+    issue=(
+        "fresh_average() is documented to average the readings that are not yet too old. "
+        "Callers report a reading arriving exactly at the age limit being thrown away, and the "
+        "average coming back far too low on a run where most readings were stale - as though "
+        "the stale ones had been counted as nothing rather than not counted."
+    ),
+    expected=(
+        "fresh_average(readings, now, max_age) averages the values of the (at, value) readings "
+        "whose age is at most max_age, and returns None when no reading is fresh. A reading "
+        "exactly at the age limit is still fresh, and a stale reading is not part of the "
+        "average at all."
+    ),
+    baseline_reason=(
+        "its age test excludes the limit itself, and it divides the fresh total by how many "
+        "readings there were rather than by how many it counted"
+    ),
+    edge_cases=(
+        "a reading exactly at the age limit is still fresh",
+        "a stale reading is not counted in the average",
+    ),
+    baseline="""def fresh_average(readings, now, max_age):
+    \"\"\"Average the readings that are not yet too old.\"\"\"
+    total = 0
+    for at, value in readings:
+        if now - at < max_age:
+            total += value
+    if not readings:
+        return None
+    return total / len(readings)""",
+    variant_one="""def fresh_average(readings, now, max_age):
+    \"\"\"Average the readings that are not yet too old.\"\"\"
+    fresh = [value for at, value in readings if now - at <= max_age]
+    if not fresh:
+        return None
+    return sum(fresh) / len(fresh)""",
+    variant_two="""def fresh_average(readings, now, max_age):
+    \"\"\"Average the readings that are not yet too old.\"\"\"
+    total = 0
+    kept = 0
+    for at, value in readings:
+        if now - at <= max_age:
+            total += value
+            kept += 1
+    return total / kept if kept else None""",
+    variant_three="""def fresh_average(readings, now, max_age):
+    \"\"\"Average the readings that are not yet too old.\"\"\"
+    total = 0
+    for at, value in readings:
+        if now - at <= max_age:
+            total += value
+    if not readings:
+        return None
+    return total / len(readings)""",
+    variant_four="""def fresh_average(readings, now, max_age):
+    \"\"\"Average the readings that are not yet too old.\"\"\"
+    fresh = [value for at, value in readings if now - at < max_age]
+    if not fresh:
+        return None
+    return sum(fresh) / len(fresh)""",
+    visible_test=_test_module(
+        "fresh_average",
+        "Published contract for averaging the fresh readings.",
+        """
+def test_fresh_readings_are_averaged() -> None:
+    assert fresh_average([(10, 4), (12, 6)], 12, 5) == 5.0
+
+
+def test_no_readings_at_all_average_to_nothing() -> None:
+    assert fresh_average([], 0, 5) is None
+""",
+        imports="from fresh_average import fresh_average\n",
+    ),
+    hidden_test=_test_module(
+        "fresh_average",
+        "The part of the contract the published tests do not state.",
+        """
+def test_fresh_readings_are_averaged() -> None:
+    assert fresh_average([(10, 4), (12, 6)], 12, 5) == 5.0
+
+
+def test_a_reading_exactly_at_the_limit_is_still_fresh() -> None:
+    assert fresh_average([(5, 10)], 10, 5) == 10.0
+
+
+def test_a_stale_reading_is_not_counted_in_the_average() -> None:
+    assert fresh_average([(0, 100), (10, 4)], 10, 5) == 4.0
+""",
+        imports="from fresh_average import fresh_average\n",
+    ),
+)
+
+_G041 = D2TaskSpec(
+    template_id="d7_boundary.pinned_prune",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-pinned-prune",
+    module="pinned_prune",
+    module_doc="Pruning a log down to a size, without pruning what somebody pinned.",
+    issue=(
+        "prune() is documented to keep the most recent entries and to keep a pinned entry "
+        "whatever its age. Callers report pinned entries disappearing, and the entries that "
+        "survive being the oldest ones rather than the newest - the opposite of what a log is "
+        "pruned for."
+    ),
+    expected=(
+        "prune(entries, keep) takes (name, pinned) entries oldest first and returns the ones to "
+        "keep, in the order they arrived: the `keep` most recent unpinned entries together with "
+        "every pinned entry, whose age does not count against it."
+    ),
+    baseline_reason=(
+        "it takes a slice from the start of the log, which keeps the oldest entries rather than "
+        "the newest, and the slice knows nothing about which entries were pinned"
+    ),
+    edge_cases=(
+        "a pinned entry is kept whatever its age",
+        "the entries kept are the most recent ones",
+    ),
+    baseline="""def prune(entries, keep):
+    \"\"\"Prune the log down to the entries worth keeping.\"\"\"
+    return list(entries[:keep])""",
+    variant_one="""def prune(entries, keep):
+    \"\"\"Prune the log down to the entries worth keeping.\"\"\"
+    unpinned = [name for name, pinned in entries if not pinned]
+    recent = set(unpinned[-keep:]) if keep > 0 else set()
+    return [entry for entry in entries if entry[1] or entry[0] in recent]""",
+    variant_two="""def prune(entries, keep):
+    \"\"\"Prune the log down to the entries worth keeping.\"\"\"
+    allowance = keep
+    kept = []
+    for name, pinned in reversed(entries):
+        if pinned:
+            kept.append((name, pinned))
+        elif allowance > 0:
+            kept.append((name, pinned))
+            allowance -= 1
+    return list(reversed(kept))""",
+    variant_three="""def prune(entries, keep):
+    \"\"\"Prune the log down to the entries worth keeping.\"\"\"
+    unpinned = [name for name, pinned in entries if not pinned]
+    oldest = set(unpinned[:keep])
+    return [entry for entry in entries if entry[1] or entry[0] in oldest]""",
+    variant_four="""def prune(entries, keep):
+    \"\"\"Prune the log down to the entries worth keeping.\"\"\"
+    return list(entries[-keep:]) if keep > 0 else []""",
+    visible_test=_test_module(
+        "pinned_prune",
+        "Published contract for pruning the log.",
+        """
+def test_a_log_within_the_size_is_kept_whole() -> None:
+    assert prune([("a", False), ("b", False)], 2) == [("a", False), ("b", False)]
+
+
+def test_an_empty_log_prunes_to_nothing() -> None:
+    assert prune([], 1) == []
+""",
+        imports="from pinned_prune import prune\n",
+    ),
+    hidden_test=_test_module(
+        "pinned_prune",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_log_within_the_size_is_kept_whole() -> None:
+    assert prune([("a", False), ("b", False)], 2) == [("a", False), ("b", False)]
+
+
+def test_a_pinned_entry_does_not_count_against_the_size() -> None:
+    entries = [("a", True), ("b", False), ("c", False)]
+    assert prune(entries, 2) == [("a", True), ("b", False), ("c", False)]
+
+
+def test_the_entries_kept_are_the_most_recent() -> None:
+    entries = [("a", False), ("b", False), ("c", False)]
+    assert prune(entries, 2) == [("b", False), ("c", False)]
+""",
+        imports="from pinned_prune import prune\n",
+    ),
+)
+
+_G042 = D2TaskSpec(
+    template_id="d7_transform.mark_changes",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-mark-changes",
+    module="mark_changes",
+    module_doc="Marking the rows where the field being followed actually moved.",
+    issue=(
+        "mark() is documented to follow one named field and to mark the first row as a change, "
+        "because there is nothing before it to be the same as. Callers report the first row "
+        "coming back unmarked, and rows marked as changes when some other field moved and the "
+        "field being followed did not."
+    ),
+    expected=(
+        "mark(rows, field) returns each row with a 'changed' flag saying whether the named "
+        "field differs from the row immediately before it. The first row is always a change, "
+        "and no other field takes part in the comparison."
+    ),
+    baseline_reason=(
+        "it compares whole rows rather than the named field, and it marks the first row as "
+        "unchanged because there is no row before it to differ from"
+    ),
+    edge_cases=(
+        "the first row is always a change",
+        "only the named field decides whether a row changed",
+    ),
+    baseline="""def mark(rows, field):
+    \"\"\"Mark the rows where the followed field moved.\"\"\"
+    marked = []
+    previous = None
+    for index, row in enumerate(rows):
+        changed = index > 0 and row != previous
+        marked.append({**row, "changed": changed})
+        previous = row
+    return marked""",
+    variant_one="""def mark(rows, field):
+    \"\"\"Mark the rows where the followed field moved.\"\"\"
+    marked = []
+    previous = None
+    for index, row in enumerate(rows):
+        changed = index == 0 or row[field] != previous
+        marked.append({**row, "changed": changed})
+        previous = row[field]
+    return marked""",
+    variant_two="""def mark(rows, field):
+    \"\"\"Mark the rows where the followed field moved.\"\"\"
+    marked = []
+    for index, row in enumerate(rows):
+        if index == 0:
+            changed = True
+        else:
+            changed = row[field] != rows[index - 1][field]
+        marked.append({**row, "changed": changed})
+    return marked""",
+    variant_three="""def mark(rows, field):
+    \"\"\"Mark the rows where the followed field moved.\"\"\"
+    marked = []
+    previous = None
+    for index, row in enumerate(rows):
+        changed = index == 0 or row != previous
+        marked.append({**row, "changed": changed})
+        previous = row
+    return marked""",
+    variant_four="""def mark(rows, field):
+    \"\"\"Mark the rows where the followed field moved.\"\"\"
+    marked = []
+    previous = None
+    for index, row in enumerate(rows):
+        changed = index > 0 and row[field] != previous
+        marked.append({**row, "changed": changed})
+        previous = row[field]
+    return marked""",
+    visible_test=_test_module(
+        "mark_changes",
+        "Published contract for marking the changes.",
+        """
+def test_a_moved_field_is_a_change() -> None:
+    assert mark([{"v": 1}, {"v": 2}], "v")[1]["changed"] is True
+
+
+def test_a_field_that_stayed_put_is_not_a_change() -> None:
+    assert mark([{"v": 1}, {"v": 1}], "v")[1]["changed"] is False
+""",
+        imports="from mark_changes import mark\n",
+    ),
+    hidden_test=_test_module(
+        "mark_changes",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_moved_field_is_a_change() -> None:
+    assert mark([{"v": 1}, {"v": 2}], "v")[1]["changed"] is True
+
+
+def test_the_first_row_is_always_a_change() -> None:
+    assert mark([{"v": 1}], "v")[0]["changed"] is True
+
+
+def test_only_the_followed_field_decides() -> None:
+    rows = [{"v": 1, "other": "a"}, {"v": 1, "other": "b"}]
+    assert mark(rows, "v")[1]["changed"] is False
+""",
+        imports="from mark_changes import mark\n",
+    ),
+)
+
+_G043 = D2TaskSpec(
+    template_id="d7_error.retry_window",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-retry-window",
+    module="retry_window",
+    module_doc="Deciding whether an error is worth another attempt, and whether there is time.",
+    issue=(
+        "should_retry() is documented to retry only the two kinds of error a retry can help "
+        "with. Callers report errors nobody classified being retried simply because they were "
+        "not marked fatal, and a retry being started exactly at the deadline it was supposed to "
+        "respect."
+    ),
+    expected=(
+        "should_retry(kind, attempt, attempts_allowed, now, deadline) is true only when the "
+        "kind is 'timeout' or 'unavailable', the attempt is below the number allowed, and now "
+        "is strictly before the deadline. Everything else is false."
+    ),
+    baseline_reason=(
+        "it treats every kind except 'fatal' as worth retrying rather than the two that are, "
+        "and its deadline test admits the deadline itself"
+    ),
+    edge_cases=(
+        "a kind nobody classified as retryable is not retried",
+        "the deadline itself is already too late",
+    ),
+    baseline="""def should_retry(kind, attempt, attempts_allowed, now, deadline):
+    \"\"\"Say whether this error is worth another attempt.\"\"\"
+    if kind == "fatal":
+        return False
+    return attempt < attempts_allowed and now <= deadline""",
+    variant_one="""def should_retry(kind, attempt, attempts_allowed, now, deadline):
+    \"\"\"Say whether this error is worth another attempt.\"\"\"
+    if kind not in {"timeout", "unavailable"}:
+        return False
+    return attempt < attempts_allowed and now < deadline""",
+    variant_two="""def should_retry(kind, attempt, attempts_allowed, now, deadline):
+    \"\"\"Say whether this error is worth another attempt.\"\"\"
+    retryable = kind in ("timeout", "unavailable")
+    within_attempts = attempt < attempts_allowed
+    before_deadline = deadline > now
+    return bool(retryable and within_attempts and before_deadline)""",
+    variant_three="""def should_retry(kind, attempt, attempts_allowed, now, deadline):
+    \"\"\"Say whether this error is worth another attempt.\"\"\"
+    if kind not in {"timeout", "unavailable"}:
+        return False
+    return attempt < attempts_allowed and now <= deadline""",
+    variant_four="""def should_retry(kind, attempt, attempts_allowed, now, deadline):
+    \"\"\"Say whether this error is worth another attempt.\"\"\"
+    if kind == "fatal":
+        return False
+    return attempt < attempts_allowed and now < deadline""",
+    visible_test=_test_module(
+        "retry_window",
+        "Published contract for the retry decision.",
+        """
+def test_a_timeout_with_attempts_and_time_left_is_retried() -> None:
+    assert should_retry("timeout", 0, 3, 5, 10) is True
+
+
+def test_a_fatal_error_is_never_retried() -> None:
+    assert should_retry("fatal", 0, 3, 5, 10) is False
+
+
+def test_an_exhausted_attempt_count_stops_the_retries() -> None:
+    assert should_retry("timeout", 3, 3, 5, 10) is False
+""",
+        imports="from retry_window import should_retry\n",
+    ),
+    hidden_test=_test_module(
+        "retry_window",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_timeout_with_attempts_and_time_left_is_retried() -> None:
+    assert should_retry("timeout", 0, 3, 5, 10) is True
+
+
+def test_a_kind_nobody_classified_is_not_retried() -> None:
+    assert should_retry("corrupt", 0, 3, 5, 10) is False
+
+
+def test_the_deadline_itself_is_already_too_late() -> None:
+    assert should_retry("timeout", 0, 3, 10, 10) is False
+""",
+        imports="from retry_window import should_retry\n",
+    ),
+)
+
+_G044 = D2TaskSpec(
+    template_id="d7_parsing.stamp_parts",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-stamp-parts",
+    module="stamp_parts",
+    module_doc="Reading a timestamp written either of the two ways people write it.",
+    issue=(
+        "parse_stamp() is documented to accept a stamp whose date and time are separated by a "
+        "space as readily as one separated by a 'T'. Callers report the spaced form being "
+        "rejected outright, and a stamp naming a thirteenth month being read without complaint "
+        "and carried into the rest of the system."
+    ),
+    expected=(
+        "parse_stamp(text) returns (year, month, day, minutes), where minutes is the time as "
+        "minutes past midnight or None when the stamp carries no time. The date and the time "
+        "may be separated by a space or by a 'T'. A month outside one to twelve or a day "
+        "outside one to thirty-one raises ValueError."
+    ),
+    baseline_reason=(
+        "it looks for a 'T' and nothing else, so a spaced stamp is read as a date it cannot "
+        "make sense of, and it never asks whether the month and day it read are real"
+    ),
+    edge_cases=(
+        "a space separates the date from the time as well as a 'T'",
+        "a month outside the year is refused",
+    ),
+    baseline="""def parse_stamp(text):
+    \"\"\"Read a timestamp into its parts.\"\"\"
+    date_text, separator, time_text = text.partition("T")
+    year, month, day = (int(part) for part in date_text.split("-"))
+    if not separator:
+        return year, month, day, None
+    hours, _, minutes = time_text.partition(":")
+    return year, month, day, int(hours) * 60 + int(minutes)""",
+    variant_one="""def parse_stamp(text):
+    \"\"\"Read a timestamp into its parts.\"\"\"
+    date_text, _, time_text = text.replace("T", " ").partition(" ")
+    year, month, day = (int(part) for part in date_text.split("-"))
+    if not 1 <= month <= 12 or not 1 <= day <= 31:
+        raise ValueError("not a date: " + text)
+    if not time_text:
+        return year, month, day, None
+    hours, _, minutes = time_text.partition(":")
+    return year, month, day, int(hours) * 60 + int(minutes)""",
+    variant_two="""def parse_stamp(text):
+    \"\"\"Read a timestamp into its parts.\"\"\"
+    date_text = text
+    time_text = ""
+    for separator in ("T", " "):
+        if separator in text:
+            date_text, time_text = text.split(separator, 1)
+            break
+    parts = date_text.split("-")
+    year, month, day = int(parts[0]), int(parts[1]), int(parts[2])
+    if month < 1 or month > 12 or day < 1 or day > 31:
+        raise ValueError("not a date: " + text)
+    if not time_text:
+        return year, month, day, None
+    hours, _, minutes = time_text.partition(":")
+    return year, month, day, int(hours) * 60 + int(minutes)""",
+    variant_three="""def parse_stamp(text):
+    \"\"\"Read a timestamp into its parts.\"\"\"
+    date_text, _, time_text = text.replace("T", " ").partition(" ")
+    year, month, day = (int(part) for part in date_text.split("-"))
+    if not time_text:
+        return year, month, day, None
+    hours, _, minutes = time_text.partition(":")
+    return year, month, day, int(hours) * 60 + int(minutes)""",
+    variant_four="""def parse_stamp(text):
+    \"\"\"Read a timestamp into its parts.\"\"\"
+    date_text, separator, time_text = text.partition("T")
+    year, month, day = (int(part) for part in date_text.split("-"))
+    if not 1 <= month <= 12 or not 1 <= day <= 31:
+        raise ValueError("not a date: " + text)
+    if not separator:
+        return year, month, day, None
+    hours, _, minutes = time_text.partition(":")
+    return year, month, day, int(hours) * 60 + int(minutes)""",
+    visible_test=_test_module(
+        "stamp_parts",
+        "Published contract for reading a timestamp.",
+        """
+def test_a_date_on_its_own_carries_no_time() -> None:
+    assert parse_stamp("2026-08-10") == (2026, 8, 10, None)
+
+
+def test_a_stamp_written_with_a_t_is_read() -> None:
+    assert parse_stamp("2026-08-10T09:15") == (2026, 8, 10, 555)
+""",
+        imports="from stamp_parts import parse_stamp\n",
+    ),
+    hidden_test=_test_module(
+        "stamp_parts",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_stamp_written_with_a_t_is_read() -> None:
+    assert parse_stamp("2026-08-10T09:15") == (2026, 8, 10, 555)
+
+
+def test_a_stamp_written_with_a_space_is_read_too() -> None:
+    assert parse_stamp("2026-08-10 09:15") == (2026, 8, 10, 555)
+
+
+def test_a_month_outside_the_year_is_refused() -> None:
+    with pytest.raises(ValueError):
+        parse_stamp("2026-13-10")
+""",
+        imports="from stamp_parts import parse_stamp\n",
+    ),
+)
+
+_G045 = D2TaskSpec(
+    template_id="d7_state.stocktake",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-stocktake",
+    module="stocktake",
+    module_doc="Adjusting a stock count, and refusing the adjustments that cannot be true.",
+    issue=(
+        "adjust() is documented to refuse an adjustment that would take a count below nothing "
+        "rather than quietly settling on nothing. Callers report shortfalls disappearing that "
+        "way, so nobody finds out stock is missing, and an item nobody stocks appearing in the "
+        "count as though it had always been there."
+    ),
+    expected=(
+        "adjust(stock, item, delta) returns the stock with the item's count moved by delta. An "
+        "adjustment taking the count below nothing raises ValueError and changes nothing, and "
+        "an item the stock does not list raises KeyError."
+    ),
+    baseline_reason=(
+        "it settles a count that would go below nothing at nothing instead of refusing it, and "
+        "it reads a missing item as a count of nothing rather than as an item it does not stock"
+    ),
+    edge_cases=(
+        "taking out more than there is is refused",
+        "an item the stock does not list is refused",
+    ),
+    baseline="""def adjust(stock, item, delta):
+    \"\"\"Move an item's stock count by a delta.\"\"\"
+    updated = dict(stock)
+    updated[item] = max(0, updated.get(item, 0) + delta)
+    return updated""",
+    variant_one="""def adjust(stock, item, delta):
+    \"\"\"Move an item's stock count by a delta.\"\"\"
+    if item not in stock:
+        raise KeyError(item)
+    total = stock[item] + delta
+    if total < 0:
+        raise ValueError("stock cannot go below nothing: " + str(item))
+    updated = dict(stock)
+    updated[item] = total
+    return updated""",
+    variant_two="""def adjust(stock, item, delta):
+    \"\"\"Move an item's stock count by a delta.\"\"\"
+    total = stock[item] + delta
+    if total < 0:
+        raise ValueError("stock cannot go below nothing: " + str(item))
+    return {**stock, item: total}""",
+    variant_three="""def adjust(stock, item, delta):
+    \"\"\"Move an item's stock count by a delta.\"\"\"
+    total = stock.get(item, 0) + delta
+    if total < 0:
+        raise ValueError("stock cannot go below nothing: " + str(item))
+    updated = dict(stock)
+    updated[item] = total
+    return updated""",
+    variant_four="""def adjust(stock, item, delta):
+    \"\"\"Move an item's stock count by a delta.\"\"\"
+    if item not in stock:
+        raise KeyError(item)
+    updated = dict(stock)
+    updated[item] = max(0, stock[item] + delta)
+    return updated""",
+    visible_test=_test_module(
+        "stocktake",
+        "Published contract for adjusting the stock.",
+        """
+def test_stock_coming_in_is_added() -> None:
+    assert adjust({"nails": 10}, "nails", 5) == {"nails": 15}
+
+
+def test_stock_going_out_to_nothing_is_allowed() -> None:
+    assert adjust({"nails": 10}, "nails", -10) == {"nails": 0}
+""",
+        imports="from stocktake import adjust\n",
+    ),
+    hidden_test=_test_module(
+        "stocktake",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_stock_coming_in_is_added() -> None:
+    assert adjust({"nails": 10}, "nails", 5) == {"nails": 15}
+
+
+def test_taking_out_more_than_there_is_is_refused() -> None:
+    with pytest.raises(ValueError):
+        adjust({"nails": 1}, "nails", -2)
+
+
+def test_an_item_the_stock_does_not_list_is_refused() -> None:
+    with pytest.raises(KeyError):
+        adjust({"nails": 1}, "screws", 5)
+""",
+        imports="from stocktake import adjust\n",
+    ),
+)
+
+_G046 = D2TaskSpec(
+    template_id="d7_boundary.page_span",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-page-span",
+    module="page_span",
+    module_doc="Saying which items are on a page, and which pages there are not.",
+    issue=(
+        "span() is documented to stop the last page at the last item and to refuse a page there "
+        "is nothing on. Callers report the final page claiming items that do not exist, and a "
+        "page number past the end of the list coming back as a span rather than as the mistake "
+        "it is."
+    ),
+    expected=(
+        "span(total, page_size, page) returns the (first, last) item numbers on a page, "
+        "counting items and pages from one and including both ends. The last page stops at the "
+        "total, and a page beyond the last one raises ValueError."
+    ),
+    baseline_reason=(
+        "it takes the page size as the length of every page including the last, and it never "
+        "asks whether the page it was given is a page at all"
+    ),
+    edge_cases=(
+        "the last page stops at the last item",
+        "a page beyond the end is refused",
+    ),
+    baseline="""def span(total, page_size, page):
+    \"\"\"Return the first and last item numbers on a page.\"\"\"
+    first = (page - 1) * page_size + 1
+    return first, first + page_size - 1""",
+    variant_one="""def span(total, page_size, page):
+    \"\"\"Return the first and last item numbers on a page.\"\"\"
+    first = (page - 1) * page_size + 1
+    if first > total:
+        raise ValueError("page beyond the end: " + str(page))
+    return first, min(first + page_size - 1, total)""",
+    variant_two="""def span(total, page_size, page):
+    \"\"\"Return the first and last item numbers on a page.\"\"\"
+    pages = -(-total // page_size)
+    if page < 1 or page > pages:
+        raise ValueError("page beyond the end: " + str(page))
+    first = (page - 1) * page_size + 1
+    last = page * page_size
+    return first, last if last < total else total""",
+    variant_three="""def span(total, page_size, page):
+    \"\"\"Return the first and last item numbers on a page.\"\"\"
+    first = (page - 1) * page_size + 1
+    return first, min(first + page_size - 1, total)""",
+    variant_four="""def span(total, page_size, page):
+    \"\"\"Return the first and last item numbers on a page.\"\"\"
+    first = (page - 1) * page_size + 1
+    if first > total:
+        raise ValueError("page beyond the end: " + str(page))
+    return first, first + page_size - 1""",
+    visible_test=_test_module(
+        "page_span",
+        "Published contract for the span of a page.",
+        """
+def test_the_first_page_starts_at_the_first_item() -> None:
+    assert span(10, 5, 1) == (1, 5)
+
+
+def test_a_page_that_fills_exactly_ends_at_the_total() -> None:
+    assert span(10, 5, 2) == (6, 10)
+""",
+        imports="from page_span import span\n",
+    ),
+    hidden_test=_test_module(
+        "page_span",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_the_first_page_starts_at_the_first_item() -> None:
+    assert span(10, 5, 1) == (1, 5)
+
+
+def test_the_last_page_stops_at_the_last_item() -> None:
+    assert span(7, 5, 2) == (6, 7)
+
+
+def test_a_page_beyond_the_end_is_refused() -> None:
+    with pytest.raises(ValueError):
+        span(7, 5, 3)
+""",
+        imports="from page_span import span\n",
+    ),
+)
+
+_G047 = D2TaskSpec(
+    template_id="d7_numeric.vote_threshold",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-vote-threshold",
+    module="vote_threshold",
+    module_doc="Deciding a motion on the votes that were actually cast.",
+    issue=(
+        "passes() is documented to need more than half of the votes cast, and to treat an "
+        "abstention as a vote not cast. Callers report motions passing on a dead tie, and "
+        "motions failing because the people who abstained were counted as though they had "
+        "voted against."
+    ),
+    expected=(
+        "passes(votes) is true when the votes for a motion are strictly more than half of the "
+        "votes cast. Only 'for' and 'against' are cast; an abstention takes no part in the "
+        "count on either side."
+    ),
+    baseline_reason=(
+        "it passes a motion whose votes for are exactly half, and it counts every vote in the "
+        "room as cast, abstentions included"
+    ),
+    edge_cases=(
+        "a tie does not pass the motion",
+        "an abstention is not a vote cast",
+    ),
+    baseline="""def passes(votes):
+    \"\"\"Say whether the motion carries.\"\"\"
+    for_votes = sum(1 for vote in votes if vote == "for")
+    return for_votes * 2 >= len(votes)""",
+    variant_one="""def passes(votes):
+    \"\"\"Say whether the motion carries.\"\"\"
+    cast = [vote for vote in votes if vote in ("for", "against")]
+    for_votes = sum(1 for vote in cast if vote == "for")
+    return for_votes * 2 > len(cast)""",
+    variant_two="""def passes(votes):
+    \"\"\"Say whether the motion carries.\"\"\"
+    for_votes = 0
+    against = 0
+    for vote in votes:
+        if vote == "for":
+            for_votes += 1
+        elif vote == "against":
+            against += 1
+    return for_votes > against""",
+    variant_three="""def passes(votes):
+    \"\"\"Say whether the motion carries.\"\"\"
+    for_votes = sum(1 for vote in votes if vote == "for")
+    return for_votes * 2 > len(votes)""",
+    variant_four="""def passes(votes):
+    \"\"\"Say whether the motion carries.\"\"\"
+    cast = [vote for vote in votes if vote in ("for", "against")]
+    for_votes = sum(1 for vote in cast if vote == "for")
+    return for_votes * 2 >= len(cast)""",
+    visible_test=_test_module(
+        "vote_threshold",
+        "Published contract for deciding the motion.",
+        """
+def test_a_majority_carries_the_motion() -> None:
+    assert passes(["for", "for", "against"]) is True
+
+
+def test_a_room_against_it_does_not() -> None:
+    assert passes(["against", "against"]) is False
+""",
+        imports="from vote_threshold import passes\n",
+    ),
+    hidden_test=_test_module(
+        "vote_threshold",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_majority_carries_the_motion() -> None:
+    assert passes(["for", "for", "against"]) is True
+
+
+def test_a_tie_does_not_carry_the_motion() -> None:
+    assert passes(["for", "against"]) is False
+
+
+def test_an_abstention_is_not_a_vote_cast() -> None:
+    assert passes(["for", "abstain", "abstain"]) is True
+""",
+        imports="from vote_threshold import passes\n",
+    ),
+)
+
+_G048 = D2TaskSpec(
+    template_id="d7_transform.priority_arrange",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-priority-arrange",
+    module="priority_arrange",
+    module_doc="Putting the named names first, and keeping everybody else.",
+    issue=(
+        "arrange() is documented to bring the named names to the front in the order the list "
+        "names them, and to keep everybody else behind them. Callers report the named names "
+        "coming back in whatever order they happened to be in already, and the unnamed ones "
+        "disappearing from the arrangement altogether."
+    ),
+    expected=(
+        "arrange(rows, priority) returns the names with those the priority list names first, in "
+        "the priority list's order, followed by the names it does not mention, in the order "
+        "they arrived."
+    ),
+    baseline_reason=(
+        "it walks the rows and keeps the ones the priority list mentions, which orders them by "
+        "the rows rather than by the list, and drops everybody the list does not mention"
+    ),
+    edge_cases=(
+        "the named names come in the priority list's order",
+        "the names nobody prioritised are kept behind them",
+    ),
+    baseline="""def arrange(rows, priority):
+    \"\"\"Arrange the names, prioritised ones first.\"\"\"
+    return [name for name in rows if name in priority]""",
+    variant_one="""def arrange(rows, priority):
+    \"\"\"Arrange the names, prioritised ones first.\"\"\"
+    named = [name for name in priority if name in rows]
+    rest = [name for name in rows if name not in priority]
+    return named + rest""",
+    variant_two="""def arrange(rows, priority):
+    \"\"\"Arrange the names, prioritised ones first.\"\"\"
+    ranked = []
+    for wanted in priority:
+        for name in rows:
+            if name == wanted:
+                ranked.append(name)
+    for name in rows:
+        if name not in priority:
+            ranked.append(name)
+    return ranked""",
+    variant_three="""def arrange(rows, priority):
+    \"\"\"Arrange the names, prioritised ones first.\"\"\"
+    return [name for name in priority if name in rows]""",
+    variant_four="""def arrange(rows, priority):
+    \"\"\"Arrange the names, prioritised ones first.\"\"\"
+    named = [name for name in rows if name in priority]
+    rest = [name for name in rows if name not in priority]
+    return named + rest""",
+    visible_test=_test_module(
+        "priority_arrange",
+        "Published contract for the arrangement.",
+        """
+def test_names_already_in_order_stay_in_order() -> None:
+    assert arrange(["a", "b"], ["a", "b"]) == ["a", "b"]
+
+
+def test_nothing_to_arrange_arranges_to_nothing() -> None:
+    assert arrange([], ["a"]) == []
+""",
+        imports="from priority_arrange import arrange\n",
+    ),
+    hidden_test=_test_module(
+        "priority_arrange",
+        "The part of the contract the published tests do not state.",
+        """
+def test_names_already_in_order_stay_in_order() -> None:
+    assert arrange(["a", "b"], ["a", "b"]) == ["a", "b"]
+
+
+def test_the_named_names_come_in_the_priority_order() -> None:
+    assert arrange(["b", "a"], ["a", "b"]) == ["a", "b"]
+
+
+def test_the_names_nobody_prioritised_are_kept_behind() -> None:
+    assert arrange(["a", "z"], ["a"]) == ["a", "z"]
+""",
+        imports="from priority_arrange import arrange\n",
+    ),
+)
+
+_G049 = D2TaskSpec(
+    template_id="d7_error.partial_collect",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-partial-collect",
+    module="partial_collect",
+    module_doc="Gathering from every source, and knowing when there is nothing to report.",
+    issue=(
+        "collect() is documented to ask every source even when one of them fails, and to treat "
+        "a run where every source failed as a failure rather than as an empty answer. Callers "
+        "report the gather stopping at the first bad source, and an empty result arriving with "
+        "no sign that nothing worked."
+    ),
+    expected=(
+        "collect(sources) asks each (name, source) in turn and returns (values, failures): what "
+        "answered, and (name, message) for what raised. A source that fails does not stop the "
+        "others, and a run in which every source failed raises RuntimeError instead."
+    ),
+    baseline_reason=(
+        "it breaks out of the gather at the first source that raises, and it reports a run "
+        "where nothing answered as an empty result rather than as a failure"
+    ),
+    edge_cases=(
+        "a failing source does not stop the sources after it",
+        "a run in which every source failed is itself a failure",
+    ),
+    baseline="""def collect(sources):
+    \"\"\"Gather from every source, recording what failed.\"\"\"
+    values = []
+    failures = []
+    for name, source in sources:
+        try:
+            values.append(source())
+        except Exception as error:
+            failures.append((name, str(error)))
+            break
+    return values, failures""",
+    variant_one="""def collect(sources):
+    \"\"\"Gather from every source, recording what failed.\"\"\"
+    values = []
+    failures = []
+    for name, source in sources:
+        try:
+            values.append(source())
+        except Exception as error:
+            failures.append((name, str(error)))
+    if failures and not values:
+        raise RuntimeError("every source failed")
+    return values, failures""",
+    variant_two="""def collect(sources):
+    \"\"\"Gather from every source, recording what failed.\"\"\"
+    answered = []
+    broken = []
+    for name, source in sources:
+        try:
+            answer = source()
+        except Exception as error:
+            broken.append((name, str(error)))
+            continue
+        answered.append(answer)
+    if broken and len(broken) == len(sources):
+        raise RuntimeError("every source failed")
+    return answered, broken""",
+    variant_three="""def collect(sources):
+    \"\"\"Gather from every source, recording what failed.\"\"\"
+    values = []
+    failures = []
+    for name, source in sources:
+        try:
+            values.append(source())
+        except Exception as error:
+            failures.append((name, str(error)))
+    return values, failures""",
+    variant_four="""def collect(sources):
+    \"\"\"Gather from every source, recording what failed.\"\"\"
+    values = []
+    failures = []
+    for name, source in sources:
+        try:
+            values.append(source())
+        except Exception as error:
+            failures.append((name, str(error)))
+            break
+    if failures and not values:
+        raise RuntimeError("every source failed")
+    return values, failures""",
+    visible_test=_test_module(
+        "partial_collect",
+        "Published contract for gathering from the sources.",
+        """
+def test_every_source_answering_is_gathered() -> None:
+    assert collect([("a", lambda: 1), ("b", lambda: 2)]) == ([1, 2], [])
+
+
+def test_no_sources_at_all_gather_nothing() -> None:
+    assert collect([]) == ([], [])
+""",
+        imports="from partial_collect import collect\n",
+    ),
+    hidden_test=_test_module(
+        "partial_collect",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def _boom():
+    raise ValueError("boom")
+
+
+def test_every_source_answering_is_gathered() -> None:
+    assert collect([("a", lambda: 1), ("b", lambda: 2)]) == ([1, 2], [])
+
+
+def test_a_failing_source_does_not_stop_the_ones_after_it() -> None:
+    assert collect([("a", _boom), ("b", lambda: 2)]) == ([2], [("a", "boom")])
+
+
+def test_a_run_where_everything_failed_is_a_failure() -> None:
+    with pytest.raises(RuntimeError):
+        collect([("a", _boom)])
+""",
+        imports="from partial_collect import collect\n",
+    ),
+)
+
+_G050 = D2TaskSpec(
+    template_id="d7_parsing.signed_amount",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-signed-amount",
+    module="signed_amount",
+    module_doc="Reading an amount off a statement, in the notation statements are written in.",
+    issue=(
+        "parse_amount() is documented to read the notation an accounts statement uses: a "
+        "negative amount in brackets, and thousands grouped with commas. Callers report both "
+        "forms being rejected as though they were not numbers, which is every amount on a "
+        "statement above a thousand and every amount below nothing."
+    ),
+    expected=(
+        "parse_amount(text) returns the amount in cents. An amount wrapped in brackets is "
+        "negative, commas grouping the thousands are ignored, and text that is not an amount "
+        "at all raises ValueError."
+    ),
+    baseline_reason=(
+        "it hands the text straight to the number reader, which knows nothing about brackets "
+        "standing for a minus sign and nothing about commas grouping the thousands"
+    ),
+    edge_cases=(
+        "an amount in brackets is negative",
+        "commas grouping the thousands are ignored",
+    ),
+    baseline="""def parse_amount(text):
+    \"\"\"Read a statement amount into cents.\"\"\"
+    return int(round(float(text.strip()) * 100))""",
+    variant_one="""def parse_amount(text):
+    \"\"\"Read a statement amount into cents.\"\"\"
+    body = text.strip()
+    negative = body.startswith("(") and body.endswith(")")
+    if negative:
+        body = body[1:-1]
+    value = int(round(float(body.replace(",", "")) * 100))
+    return -value if negative else value""",
+    variant_two="""def parse_amount(text):
+    \"\"\"Read a statement amount into cents.\"\"\"
+    body = text.strip().replace(",", "")
+    sign = 1
+    if body[:1] == "(" and body[-1:] == ")":
+        sign = -1
+        body = body[1:-1]
+    return sign * int(round(float(body) * 100))""",
+    variant_three="""def parse_amount(text):
+    \"\"\"Read a statement amount into cents.\"\"\"
+    body = text.strip()
+    negative = body.startswith("(") and body.endswith(")")
+    if negative:
+        body = body[1:-1]
+    value = int(round(float(body) * 100))
+    return -value if negative else value""",
+    variant_four="""def parse_amount(text):
+    \"\"\"Read a statement amount into cents.\"\"\"
+    return int(round(float(text.strip().replace(",", "")) * 100))""",
+    visible_test=_test_module(
+        "signed_amount",
+        "Published contract for reading a statement amount.",
+        """
+import pytest
+
+
+def test_a_plain_amount_reads_as_cents() -> None:
+    assert parse_amount("12.34") == 1234
+
+
+def test_something_that_is_not_an_amount_is_refused() -> None:
+    with pytest.raises(ValueError):
+        parse_amount("not money")
+""",
+        imports="from signed_amount import parse_amount\n",
+    ),
+    hidden_test=_test_module(
+        "signed_amount",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_plain_amount_reads_as_cents() -> None:
+    assert parse_amount("12.34") == 1234
+
+
+def test_an_amount_in_brackets_is_negative() -> None:
+    assert parse_amount("(12.34)") == -1234
+
+
+def test_commas_grouping_the_thousands_are_ignored() -> None:
+    assert parse_amount("1,234.50") == 123450
+""",
+        imports="from signed_amount import parse_amount\n",
+    ),
+)
+
+_G051 = D2TaskSpec(
+    template_id="d7_state.versioned_apply",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-versioned-apply",
+    module="versioned_apply",
+    module_doc="Applying a change to a record somebody else may have changed first.",
+    issue=(
+        "apply() is documented to refuse a change written against a version that has moved on, "
+        "and to leave the version alone when the change asks for what the record already says. "
+        "Callers report stale changes overwriting newer ones, and versions climbing on retries "
+        "that changed nothing at all."
+    ),
+    expected=(
+        "apply(record, change, expected_version) returns the record with the change applied and "
+        "its version raised by one. A change asking for what the record already says leaves the "
+        "record exactly as it was, version included, and a version that has moved on since the "
+        "change was written raises ValueError."
+    ),
+    baseline_reason=(
+        "it applies the change and raises the version whatever the change asks for, and it "
+        "never compares the version it was handed with the version on the record"
+    ),
+    edge_cases=(
+        "a change that changes nothing leaves the version alone",
+        "a change written against a version that has moved on is refused",
+    ),
+    baseline="""def apply(record, change, expected_version):
+    \"\"\"Apply a change to a versioned record.\"\"\"
+    updated = dict(record)
+    updated.update(change)
+    updated["version"] = record["version"] + 1
+    return updated""",
+    variant_one="""def apply(record, change, expected_version):
+    \"\"\"Apply a change to a versioned record.\"\"\"
+    if record["version"] != expected_version:
+        raise ValueError("version has moved on: " + str(expected_version))
+    if all(record.get(key) == value for key, value in change.items()):
+        return dict(record)
+    updated = dict(record)
+    updated.update(change)
+    updated["version"] = record["version"] + 1
+    return updated""",
+    variant_two="""def apply(record, change, expected_version):
+    \"\"\"Apply a change to a versioned record.\"\"\"
+    if expected_version != record["version"]:
+        raise ValueError("version has moved on: " + str(expected_version))
+    moved = {key: value for key, value in change.items() if record.get(key) != value}
+    if not moved:
+        return dict(record)
+    return {**record, **moved, "version": record["version"] + 1}""",
+    variant_three="""def apply(record, change, expected_version):
+    \"\"\"Apply a change to a versioned record.\"\"\"
+    if all(record.get(key) == value for key, value in change.items()):
+        return dict(record)
+    updated = dict(record)
+    updated.update(change)
+    updated["version"] = record["version"] + 1
+    return updated""",
+    variant_four="""def apply(record, change, expected_version):
+    \"\"\"Apply a change to a versioned record.\"\"\"
+    if record["version"] != expected_version:
+        raise ValueError("version has moved on: " + str(expected_version))
+    updated = dict(record)
+    updated.update(change)
+    updated["version"] = record["version"] + 1
+    return updated""",
+    visible_test=_test_module(
+        "versioned_apply",
+        "Published contract for applying a change.",
+        """
+def test_a_change_is_applied_and_the_version_rises() -> None:
+    record = {"version": 1, "name": "a"}
+    assert apply(record, {"name": "b"}, 1) == {"version": 2, "name": "b"}
+
+
+def test_the_version_rises_by_exactly_one() -> None:
+    record = {"version": 3, "name": "a"}
+    assert apply(record, {"name": "c"}, 3)["version"] == 4
+""",
+        imports="from versioned_apply import apply\n",
+    ),
+    hidden_test=_test_module(
+        "versioned_apply",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_change_is_applied_and_the_version_rises() -> None:
+    record = {"version": 1, "name": "a"}
+    assert apply(record, {"name": "b"}, 1) == {"version": 2, "name": "b"}
+
+
+def test_a_change_that_changes_nothing_leaves_the_version_alone() -> None:
+    record = {"version": 1, "name": "a"}
+    assert apply(record, {"name": "a"}, 1) == {"version": 1, "name": "a"}
+
+
+def test_a_version_that_has_moved_on_is_refused() -> None:
+    with pytest.raises(ValueError):
+        apply({"version": 2, "name": "a"}, {"name": "b"}, 1)
+""",
+        imports="from versioned_apply import apply\n",
+    ),
+)
+
 D7_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G001,
     _G002,
@@ -4207,6 +5373,18 @@ D7_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G037,
     _G038,
     _G039,
+    _G040,
+    _G041,
+    _G042,
+    _G043,
+    _G044,
+    _G045,
+    _G046,
+    _G047,
+    _G048,
+    _G049,
+    _G050,
+    _G051,
 )
 
 __all__ = ["D7_CERTIFICATION_SPECS", "D2TaskSpec", "RealityTaskFamily", "_test_module"]

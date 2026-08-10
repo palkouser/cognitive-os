@@ -1,7 +1,7 @@
 {
  "accepted": true,
  "authored_corpus_separation": {
-  "certification_bodies_compared": 2425,
+  "certification_bodies_compared": 2485,
   "cross_group_collisions_touching_21d7": [],
   "retrieval_pool_check": {
    "applicable": false,
@@ -14,7 +14,7 @@
  },
  "certification_corpus": {
   "complete": false,
-  "groups_authored": 39,
+  "groups_authored": 51,
   "groups_targeted": 100,
   "reading": "separation is a property of the bodies that exist, so it is checkable before the corpus is finished and has to be rechecked after; an incomplete corpus that separates cleanly is a passing check over fewer groups and never a closed one"
  },
@@ -47,13 +47,13 @@
  },
  "group_separation": {
   "all_pairwise_disjoint": true,
-  "distinct_groups": 604,
-  "groups_total": 604,
+  "distinct_groups": 616,
+  "groups_total": 616,
   "pairs_checked": 36,
   "pairs_sharing_a_group": {},
   "roles": {
    "canary": 5,
-   "certification": 39,
+   "certification": 51,
    "conformal": 100,
    "final_a": 30,
    "final_b": 30,
@@ -63,7 +63,7 @@
    "spent_retrieval_d5": 60
   }
  },
- "integrity_content_hash": "e11f825d9c88f23be8c116717c43e8f2ba9138135c0ec7143923aa7f8853cbd2",
+ "integrity_content_hash": "d04a8931e1b2b15dbe8ae9e209e9ca0ea121e85967ed6ff4df5d3daf35cfba9e",
  "items": [
   "S21D7-022"
  ],
@@ -111,10 +111,10 @@
   "reuse_audit_integrity_content_hash": "8dd2fd1744cb08200af296baaca2eaf7382dbf2454eb29d2e5cc919a9390b57a",
   "reuse_audit_read": "sprint-21d7-reuse-audit.json"
  },
- "recorded_at": "2026-08-10T16:10:22Z",
+ "recorded_at": "2026-08-10T16:19:25Z",
  "rights": {
   "certification_disjoint_from_the_conformal_half": {
-   "certification_groups": 39,
+   "certification_groups": 51,
    "conformal_groups": 100,
    "disjoint": true,
    "rule": "the amended selection rule measures 100 independent decisions against a bar the conformal half placed; a group on both sides would be certified against a threshold its own margin helped set",
@@ -156,8 +156,8 @@
  "schema_version": 1,
  "source_separation": {
   "bodies_byte_identical_across_two_roles": {},
-  "bodies_hashed": 2660,
-  "distinct_body_hashes": 2660,
+  "bodies_hashed": 2720,
+  "distinct_body_hashes": 2720,
   "source_disjoint": true
  },
  "sprint": "21D7",
