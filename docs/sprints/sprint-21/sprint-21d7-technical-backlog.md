@@ -19,6 +19,15 @@
 - Migration head: `0015`. D7 allocates none; `0016` stays unallocated unless W3's activation
   path turns out to need a store, which would be a defect finding, not a plan item.
 - Outcome tags: success `sprint-21-learning-baseline`; negative `sprint-21d7-evidence-baseline`.
+- **Status after execution began:** W0 and W1 are closed — see the
+  [execution log](sprint-21d7-execution.md). All three §2.2 rulings were granted (the
+  containment rung is **seated**), revision 7 is published, the corpus is complete at 100
+  groups and the measured campaign has run. **W2 must open on the sealed pre-flight record
+  §5.3 describes** ([`sprint-21d7-w2-preflight.json`](evidence/sprint-21d7-w2-preflight.json)):
+  it discloses two facts the W1 bytes decide — a frozen disjointness sentence the v3
+  representation falsifies by aliasing, and a measured design estimate of **zero** changed
+  decisions among top-margin decisions under the seated pairing — both of which need a
+  gate-owner reading fixed before any fresh decision is scored.
 
 **This backlog is shaped like D6's with one inversion: D6 varied the admission rule over a
 sealed direction, D7 varies the class under a sealed admission rule.** The bar machinery, the
@@ -320,7 +329,7 @@ checkable.
 |---|---|---|
 | **W0** | Test and merge the groundwork: unit tests for the three new modules (fit determinism against the groundwork's sealed model hash, the 600-case invariance golden, CP-bound reproduction, transfer-record round-trip), mypy/ruff/CI, protected-main PR. Verify the D6 release from live handles; fingerprint every predecessor store; audit the carried roles unopened. Obtain the three §2.2 rulings and the condition-24 renewal; publish revision 7 with `measured_values: 0` | 1, 2, 3, 4 |
 | **W1** | Vertical slice first (§5.1). Then author and execute the 100-group / 400-outcome certification corpus in D7's own isolated store pair under new run identities; hidden-verifier labels; v2 seals plus v3 relational assembly (§4.2); surface scans; nine-role separation proof | 5, 6, 7, 8, 9 |
-| **W2** | Fit the v3 direction once on the released 720-row pool, seal it, reproduce it across a process restart; seal the §4 transfer-gap record as W-stage evidence; measure the ladder on the fresh corpus (five or six rungs per the ruling, both changed-decision pairings reported); re-score the demoted half, derive the conformal bar **once**, reproduce it across restart; score the certification cell; report every sweep point; run the invariance regression; evaluate the amended §2.3; select or stop | 12, 17 |
+| **W2** | **Step 0, before any fresh decision is scored:** act on the sealed pre-flight (§5.3) — obtain the disjointness-reading clarification, the baseline-reading clarification, and the gate owner's knowing decision on the seated pairing's measured zero-changed estimate. Then: fit the v3 direction once on the released 720-row pool, seal it, reproduce it across a process restart (it must reproduce `d80160c4aa795fad…`); seal the §4 transfer-gap record as W-stage evidence; run the v3 relational separation scan (`relational_scans.py`) beside the released v2 scans and seal both; measure the seated six-rung ladder on the fresh corpus, both changed-decision pairings reported; re-score the demoted half, derive the conformal bar **once**, reproduce it across restart; score the certification cell; report every sweep point; run the invariance regression; evaluate the amended §2.3; select or stop | 12, 17 |
 | **W3** | Only on a pass: v3 artifact bound to the new conformal point; loader, resolver, sequencer against the real artifact; **open the carried roles** — final A and B, 120 outcomes each over 30 groups; paired bootstrap; safety and retention; promotion metamorphic inside the admission budget; shadow; canary manifest, human approval, kill switch; activation, restart survival, deliberate rollback | 10, 11, 13–16, 18–23, 25–27 |
 | **W4** | Full release matrix; protected release, exact-head CI, annotated tag, remote verification; gate assessment (`scripts/gate_assessment_d7.py`, counts-derived verdict, stop-hash-bound rows on a stop); Gate D1 6, 7 from final surface evidence and 15 by the renewed inheritance; report and handoff | 28, 29 |
 
@@ -349,6 +358,45 @@ primitives (the D6 W1 lesson). Expect withdrawals; the allowance is priced in §
 The groundwork's sealed model hash is the cross-check; a W2 fit that does not reproduce it
 bit-for-bit on the same pool is a stop-worthy defect in the environment, not a number to
 shrug at (BLAS variance was the W2-D9 lesson — hashes are compared, fits are not repeated).
+The pre-flight has already reproduced it once on this environment.
+
+### 5.3 The W2 pre-flight — two facts the W1 bytes decide, disclosed before the bar
+
+Between W1 and W2, the sealed bytes were read for two questions the plan had left to W2 to
+answer implicitly, and both answers arrived early enough to matter. The record is
+[`sprint-21d7-w2-preflight.json`](evidence/sprint-21d7-w2-preflight.json), produced by
+`scripts/w2_preflight_d7.py` in the demotion ruling's own discipline — recomputation from
+sealed bytes, `d7_certification_decisions_scored: 0`, the D7 campaign record never opened,
+no bar derived, nothing on the fresh corpus scored or ladder-measured.
+
+**Fact one — the frozen disjointness sentence is false at the level the class lives, and
+clean at the level it leaks.** `corpus_roles` froze "no fitted vector may appear in both
+halves" — a sentence written for the 390-channel representation, where distinct sources
+never collide. The v3 representation is seven numbers, and seven numbers alias: **eleven
+relational vectors appear in both the certification half and the demoted bar-setting half**
+(13 certification groups touched; 23 more alias against the fitting pool). The two
+properties the sentence exists for both hold across every half pair — **zero shared
+decision signatures, zero shared canonical sources** — and the independent-decision count
+is exactly 100 per half. `relational_scans.py` is the scan that separates the two readings
+permanently; W2 runs it beside the v2 scans and seals it. What W2 needs from the gate owner
+first: a clarification binding the sentence to the leakage properties, with aliasing
+reported — a reading of a frozen sentence, not a threshold change, and it must predate the
+first scored decision or the wave's own record would carry a claim its bytes falsify.
+
+**Fact two — under the seated pairing, the measured design estimate of changed decisions is
+zero.** On both spent corpora the fitted class agrees with the containment rung on **every
+decision in its top-margin range** (top-40/46/50 alike; disagreements — 14 and 11 of 100 —
+all sit at low margins). The §2.3 conditions that read the changed count against the seated
+ladder's strongest rung are therefore on course to fail regardless of the admission numbers,
+and the baseline condition splits into two readings exactly here: admitted-rate against the
+rung's *whole-corpus* rate can pass on numbers where admitted-rate against the rung's rate
+*on the admitted subset* cannot, because agreement makes the latter two identical. D6's cell
+never had to distinguish them; this cell will. The pre-flight asks the gate owner for two
+decisions before W2 scores anything: **fix the baseline condition's reading**, and **decide
+the seated pairing's consequence knowingly** — proceed to a probable
+`baseline_not_beaten` negative that would close the class question with a sealed record, or
+supersede the ladder ruling while the chronology still proves no fresh decision has been
+read. Both are legitimate; the pre-flight record deliberately argues for neither.
 
 ---
 
@@ -373,6 +421,23 @@ structure the authoring contract froze. A future corpus contract that varies can
 or repair completeness dissolves the signal by design — acceptable inside Sprint 21's frozen
 contract, and stated here so 22A's domain expansion prices it rather than inheriting it as an
 assumption.
+
+**The class and its baseline are the same signal at admissible margins.** §5.3's fact two,
+stated as the risk it is: the fitted direction is dominated by the AST scalar and the
+containment share, so where its margin is large it reproduces the containment-first order
+exactly. Under the seated ladder the learned component's admissible value-add over its own
+strongest channel is measured at zero on both spent corpora. If that holds on the fresh
+corpus, the honest finding is that the class question resolved into a *deterministic*
+discovery — the rung, not the direction, is the product — and Gate L2's "useful learned
+activation" does not close over it. The pre-flight puts that choice in front of the gate
+owner while it is still a design decision rather than a post-hoc reading.
+
+**Representational aliasing is a property of every seven-channel corpus.** The v3 code will
+alias within and across any two corpora of this size; the pre-flight counts it (11 across
+the operative halves, 14 groups with a within-group alias whose worst case is a permanent
+zero margin). The leakage-level properties are what the scans must keep proving; the
+aliasing counts bound reachable coverage from above and belong in every W2+ record rather
+than in a reviewer's post-hoc discovery.
 
 ---
 

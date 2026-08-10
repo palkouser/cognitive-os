@@ -1,0 +1,241 @@
+{
+ "d7_certification_campaign_opened": false,
+ "d7_certification_decisions_scored": 0,
+ "final_outcomes_inspected": false,
+ "inputs": {
+  "d5_feature_seals_sha256": "2f4381ccb21d204a22da686d7f5e3feeb6317030b656e98b7a083370a48696ed",
+  "d6_feature_seals_sha256": "f49bcb0f8b74edd434272b12be8c55a2a9edfb53d887a0ea0fae89ad08d71385",
+  "d7_contracts_sha256": "777dc392ee03929667786c9997533a8cfe44360982e19c16490a20ef8e84c95b",
+  "d7_feature_seals_sha256": "bb6028e753598b583e8c7054024a1f2c01e6873a448ce10f37d866c7f0b2eed4",
+  "d7_ladder_ruling_sha256": "0648bdd0540997038deaa964dd858ce7ad8bff18b10a4f3f61f32dd55b4ba3ac",
+  "model_hash_reproduced": "d80160c4aa795fadd98fb4e6d4f64b7b29a2a3685c537454b8aff95daa124859"
+ },
+ "integrity_content_hash": "fcaa423d4d0ba81afcdfb917e887af675d25f639f1c8af8973ea6e8122425f2c",
+ "operating_points_derived": 0,
+ "recorded_at": "2026-08-10T18:07:30.406128+00:00",
+ "relational_separation": {
+  "frozen_sentence": "no fitted vector may appear in both halves; S21D7-022 proves it",
+  "scan": {
+   "aliasing_reading": "an aliased vector is two different canonical sources encoding identically in a seven-channel code; it shares no decision, no group and no bytes across the halves, and a certified decision's margin is computed from its own group's four vectors whatever any other task's candidate encoded to",
+   "clean": true,
+   "content_hash": "99b1d6a47ea7c8ffa33470047b1ddeb6d4995f3ff6a92463b231a9c886552161",
+   "halves": [
+    {
+     "candidate_vectors": 720,
+     "content_hash": "3501b0933b7f53dd5e78f259998f2827a39f7b790096a12b301b52c2f6791791",
+     "distinct_vectors": 679,
+     "groups": 180,
+     "groups_with_within_group_aliasing": [
+      "boundary-windowing",
+      "d3-boundary-head-within",
+      "d3-state-expire-before",
+      "d4-boundary-window-sums",
+      "d4-errors-abort-reason",
+      "d4-errors-rate-limited",
+      "d4-errors-status-band",
+      "d4-errors-unwrap-result",
+      "d4-numeric-fee-for",
+      "d4-parsing-word-tokens",
+      "d4-state-record-heartbeat",
+      "d4-transform-merge-sorted"
+     ],
+     "half": "d5_fitting_pool",
+     "independent_decision_signatures": 180
+    },
+    {
+     "candidate_vectors": 400,
+     "content_hash": "b944cc50ca9dea3adcfd4fdbf9be3b0cd1d37a3b20ab63b7ffef29212d57d8ec",
+     "distinct_vectors": 389,
+     "groups": 100,
+     "groups_with_within_group_aliasing": [
+      "d6-boundary-crest-positions",
+      "d6-boundary-extreme-positions",
+      "d6-boundary-first-gap",
+      "d6-boundary-nearest-below",
+      "d6-error-deadline-guard",
+      "d6-error-guard-chain",
+      "d6-parsing-gutter-split",
+      "d6-parsing-iso-week",
+      "d6-parsing-quantity-phrase"
+     ],
+     "half": "d6_demoted_bar_setting",
+     "independent_decision_signatures": 100
+    },
+    {
+     "candidate_vectors": 400,
+     "content_hash": "030200d117c3c491d20e9821733f6ddc69fa5433f7a39d90860200dec4392dba",
+     "distinct_vectors": 377,
+     "groups": 100,
+     "groups_with_within_group_aliasing": [
+      "d7-boundary-cooldown-filter",
+      "d7-boundary-queue-positions",
+      "d7-error-budget-level",
+      "d7-error-dead-letter",
+      "d7-error-halt-on-fatal",
+      "d7-error-two-step-confirm",
+      "d7-numeric-backoff-wait",
+      "d7-numeric-discount-ladder",
+      "d7-numeric-fresh-average",
+      "d7-numeric-vote-threshold",
+      "d7-parsing-file-extension",
+      "d7-state-read-up-to",
+      "d7-transform-mark-changes",
+      "d7-transform-priority-arrange"
+     ],
+     "half": "d7_certification",
+     "independent_decision_signatures": 100
+    }
+   ],
+   "pairs": [
+    {
+     "aliased_vectors": 15,
+     "content_hash": "f380d6dce97a12c03dc99632267b25e12bde6ad0eb3d34ac094a99108eed9618",
+     "first_half": "d5_fitting_pool",
+     "first_half_groups_touched_by_aliasing": [
+      "d2-boundary-adjacent-dedupe",
+      "d2-errors-range-guard",
+      "d2-numeric-digit-root",
+      "d3-boundary-head-within",
+      "d4-errors-lookup-path",
+      "d4-errors-matches-known",
+      "d4-errors-rate-limited",
+      "d4-errors-unwrap-result",
+      "d4-parsing-column-label",
+      "d4-parsing-semver",
+      "d4-state-advance-offset",
+      "d4-transform-merge-sorted",
+      "numeric-clamping",
+      "parsing-booleans",
+      "parsing-key-values",
+      "state-checkpoint-history"
+     ],
+     "second_half": "d6_demoted_bar_setting",
+     "shared_canonical_sources": 0,
+     "shared_decision_signatures": 0
+    },
+    {
+     "aliased_vectors": 23,
+     "content_hash": "047cffa85db8b296faf9c9ce67d7d415e5688cd8fe9101962f2b4dec931e26de",
+     "first_half": "d5_fitting_pool",
+     "first_half_groups_touched_by_aliasing": [
+      "d2-errors-divmod",
+      "d2-numeric-digit-root",
+      "d2-parsing-path",
+      "d2-state-session-close",
+      "d2-transform-chunk-mapping",
+      "d2-transform-index",
+      "d2-transform-merge-lists",
+      "d2-transform-record-dedupe",
+      "d3-parsing-signed",
+      "d4-boundary-trim-both-ends",
+      "d4-boundary-window-sums",
+      "d4-errors-group-by-prefix",
+      "d4-errors-rate-limited",
+      "d4-numeric-fee-for",
+      "d4-parsing-column-label",
+      "d4-parsing-truth-word",
+      "d4-state-record-heartbeat",
+      "d4-state-undo-last",
+      "d4-transform-compact-record",
+      "d4-transform-join-on-key",
+      "numeric-averages",
+      "numeric-clamping",
+      "numeric-percentages",
+      "parsing-booleans",
+      "parsing-header-names",
+      "parsing-key-values"
+     ],
+     "second_half": "d7_certification",
+     "shared_canonical_sources": 0,
+     "shared_decision_signatures": 0
+    },
+    {
+     "aliased_vectors": 11,
+     "content_hash": "70824aebb9b91f0c9610f772c7b6c2926deb49f3eadb4458da957576cb972e2a",
+     "first_half": "d6_demoted_bar_setting",
+     "first_half_groups_touched_by_aliasing": [
+      "d6-error-escrow-release",
+      "d6-error-objection-codes",
+      "d6-error-reconcile-totals",
+      "d6-error-settle-conflicts",
+      "d6-numeric-ratchet-value",
+      "d6-state-draft-publishing",
+      "d6-state-watermark-state",
+      "d6-transform-accumulate-by-key",
+      "d6-transform-slab-index",
+      "d6-transform-stencil-apply"
+     ],
+     "second_half": "d7_certification",
+     "shared_canonical_sources": 0,
+     "shared_decision_signatures": 0
+    }
+   ],
+   "revision": 1
+  },
+  "what_the_scan_decides": "both leakage properties hold across every half pair — zero shared decision signatures, zero shared canonical sources — and the literal sentence is false at the v3 level by aliasing alone. The gate owner binds the sentence's reading to the leakage properties before W2 seals a record over these halves; without that, the wave would carry a frozen claim its own bytes falsify"
+ },
+ "schema_version": 1,
+ "seated_pairing": {
+  "corpora": [
+   {
+    "agreement_with_the_containment_rung": 86,
+    "by_descending_margin": {
+     "40": {
+      "changed": 0,
+      "class_first_choice": 40,
+      "rung_first_choice_on_the_same_decisions": 40
+     },
+     "46": {
+      "changed": 0,
+      "class_first_choice": 46,
+      "rung_first_choice_on_the_same_decisions": 46
+     },
+     "50": {
+      "changed": 0,
+      "class_first_choice": 50,
+      "rung_first_choice_on_the_same_decisions": 50
+     }
+    },
+    "changed_whole_corpus": 14,
+    "corpus": "d5_calibration_spent",
+    "decisions": 100
+   },
+   {
+    "agreement_with_the_containment_rung": 89,
+    "by_descending_margin": {
+     "40": {
+      "changed": 0,
+      "class_first_choice": 40,
+      "rung_first_choice_on_the_same_decisions": 40
+     },
+     "46": {
+      "changed": 0,
+      "class_first_choice": 46,
+      "rung_first_choice_on_the_same_decisions": 46
+     },
+     "50": {
+      "changed": 0,
+      "class_first_choice": 49,
+      "rung_first_choice_on_the_same_decisions": 49
+     }
+    },
+    "changed_whole_corpus": 11,
+    "corpus": "d6_certification_spent_now_bar_setting",
+    "decisions": 100
+   }
+  ],
+  "measured_on": "the two spent published corpora and nothing else",
+  "ruling": "sprint-21d7-ladder-ruling.json",
+  "the_reading_divergence": "the baseline condition — 'clean first-choice rate over admitted decisions strictly above the strongest deterministic baseline on the same decisions' — has two readings that D6's cell never separated, because its baseline was weak everywhere: admitted-rate against the rung's whole-corpus rate can pass on exactly the numbers where admitted-rate against the rung's rate on the admitted subset cannot, since agreement makes the latter two identical. The estimate above lands the sprint precisely in the scenario where the readings diverge, so the reading must be fixed before any fresh decision is scored",
+  "what_the_estimate_says": "the fitted class agrees with the containment rung on every decision in its top-margin range on both spent corpora, so the design estimate for changed-decisions-among-admitted under the seated pairing is zero, against a floor that needs at least a third of the admitted set. Under the seated ladder the §2.3 conditions that read that count are on course to fail whatever the admission numbers do"
+ },
+ "sprint": "21D7",
+ "stage": "w2_preflight",
+ "stores_opened_for_writing": 0,
+ "what_this_record_asks": [
+  "bind the corpus_roles disjointness sentence to the two leakage properties, with aliasing reported (a clarification of a frozen sentence's reading, not a threshold change)",
+  "fix the baseline condition's reading before W2 scores anything",
+  "decide the seated pairing's consequence knowingly: proceed to a probable typed negative that would close the class question, or supersede the ladder ruling while d7_certification_decisions_scored is provably zero — both legitimate, neither decidable by this record"
+ ],
+ "what_this_record_is_not": "a measurement of the certification half, a bar, a selection input, or an argument for either answer. Design input, recomputed from sealed bytes, in the discipline the demotion ruling set"
+}
