@@ -6523,6 +6523,1101 @@ def test_a_missing_reading_is_refused() -> None:
     ),
 )
 
+_G071 = D2TaskSpec(
+    template_id="d6_boundary.extreme_positions",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d6-boundary-extreme-positions",
+    module="extreme_positions",
+    module_doc="Naming where a series reaches its lowest and its highest.",
+    issue=(
+        "extreme_positions() is documented to name where a series reaches its lowest and its "
+        "highest reading. Callers report that when a reading is tied the last of them is named "
+        "rather than the first, and that an empty series fails with an IndexError instead of "
+        "being refused."
+    ),
+    expected=(
+        "extreme_positions(values) returns the position of the lowest reading and that of the "
+        "highest, taking the first of any tie. An empty series raises ValueError, because there "
+        "is no position to name."
+    ),
+    baseline_reason=(
+        "it takes a later reading that merely equals the standing one, and it reads the first "
+        "value before checking that there is one"
+    ),
+    edge_cases=(
+        "a tie names the first of the tied positions",
+        "an empty series is refused",
+    ),
+    baseline="""def extreme_positions(values):
+    \"\"\"Return the positions of the lowest and highest readings.\"\"\"
+    lowest = 0
+    highest = 0
+    smallest = values[0]
+    largest = values[0]
+    for position, value in enumerate(values):
+        if value <= smallest:
+            smallest = value
+            lowest = position
+        if value >= largest:
+            largest = value
+            highest = position
+    return lowest, highest""",
+    variant_one="""def extreme_positions(values):
+    \"\"\"Return the positions of the lowest and highest readings.\"\"\"
+    if not values:
+        raise ValueError("an empty series has no extremes")
+    lowest = 0
+    highest = 0
+    for position, value in enumerate(values):
+        if value < values[lowest]:
+            lowest = position
+        if value > values[highest]:
+            highest = position
+    return lowest, highest""",
+    variant_two="""def extreme_positions(values):
+    \"\"\"Return the positions of the lowest and highest readings.\"\"\"
+    if len(values) == 0:
+        raise ValueError("an empty series has no extremes")
+    return values.index(min(values)), values.index(max(values))""",
+    variant_three="""def extreme_positions(values):
+    \"\"\"Return the positions of the lowest and highest readings.\"\"\"
+    lowest = 0
+    highest = 0
+    smallest = values[0]
+    largest = values[0]
+    for position, value in enumerate(values):
+        if value < smallest:
+            smallest = value
+            lowest = position
+        if value > largest:
+            largest = value
+            highest = position
+    return lowest, highest""",
+    variant_four="""def extreme_positions(values):
+    \"\"\"Return the positions of the lowest and highest readings.\"\"\"
+    if not values:
+        raise ValueError("an empty series has no extremes")
+    lowest = 0
+    highest = 0
+    for position, value in enumerate(values):
+        if value <= values[lowest]:
+            lowest = position
+        if value >= values[highest]:
+            highest = position
+    return lowest, highest""",
+    visible_test=_test_module(
+        "extreme_positions",
+        "Published contract for naming where a series reaches its extremes.",
+        """
+def test_the_lowest_and_highest_are_named() -> None:
+    assert extreme_positions([3, 1, 4, 2]) == (1, 2)
+
+
+def test_a_single_reading_is_both() -> None:
+    assert extreme_positions([5]) == (0, 0)
+""",
+        imports="from extreme_positions import extreme_positions\n",
+    ),
+    hidden_test=_test_module(
+        "extreme_positions",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from extreme_positions import extreme_positions
+
+
+def test_the_lowest_and_highest_are_named() -> None:
+    assert extreme_positions([3, 1, 4, 2]) == (1, 2)
+
+
+def test_a_tie_names_the_first_of_the_tied_positions() -> None:
+    assert extreme_positions([1, 3, 1]) == (0, 1)
+
+
+def test_an_empty_series_is_refused() -> None:
+    with pytest.raises(ValueError):
+        extreme_positions([])
+""",
+    ),
+)
+
+_G072 = D2TaskSpec(
+    template_id="d6_boundary.first_repeat_span",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d6-boundary-first-repeat-span",
+    module="first_repeat_span",
+    module_doc="Finding how far apart the first reading that comes round again lies.",
+    issue=(
+        "first_repeat_span() is documented to find the first reading that comes round again and "
+        "to name where it does. Callers report that it names the last time that reading appears "
+        "rather than the first time it comes back, and that a series with nothing repeated comes "
+        "back as a pair of nothings instead of nothing at all."
+    ),
+    expected=(
+        "first_repeat_span(values) returns (first, next) for the earliest reading that appears "
+        "again, where next is the first position it comes back at. A series in which nothing "
+        "repeats returns None."
+    ),
+    baseline_reason=(
+        "it takes the last of the later appearances and it returns a pair of nothings when there "
+        "is no repeat at all"
+    ),
+    edge_cases=(
+        "the span reaches the first return, not the last",
+        "a series with no repeat returns nothing",
+    ),
+    baseline="""def first_repeat_span(values):
+    \"\"\"Return where the first repeated reading first comes back.\"\"\"
+    for position, value in enumerate(values):
+        later = [other for other in range(position + 1, len(values)) if values[other] == value]
+        if later:
+            return position, later[-1]
+    return None, None""",
+    variant_one="""def first_repeat_span(values):
+    \"\"\"Return where the first repeated reading first comes back.\"\"\"
+    for position, value in enumerate(values):
+        for other in range(position + 1, len(values)):
+            if values[other] == value:
+                return position, other
+    return None""",
+    variant_two="""def first_repeat_span(values):
+    \"\"\"Return where the first repeated reading first comes back.\"\"\"
+    spans = []
+    for position, value in enumerate(values):
+        later = [other for other in range(position + 1, len(values)) if values[other] == value]
+        if later:
+            spans.append((position, later[0]))
+    return spans[0] if spans else None""",
+    variant_three="""def first_repeat_span(values):
+    \"\"\"Return where the first repeated reading first comes back.\"\"\"
+    for position, value in enumerate(values):
+        later = [other for other in range(position + 1, len(values)) if values[other] == value]
+        if later:
+            return position, later[0]
+    return None, None""",
+    variant_four="""def first_repeat_span(values):
+    \"\"\"Return where the first repeated reading first comes back.\"\"\"
+    for position, value in enumerate(values):
+        later = [other for other in range(position + 1, len(values)) if values[other] == value]
+        if later:
+            return position, later[-1]
+    return None""",
+    visible_test=_test_module(
+        "first_repeat_span",
+        "Published contract for finding the first reading that comes round again.",
+        """
+def test_the_first_repeat_is_spanned() -> None:
+    assert first_repeat_span([1, 2, 1, 3]) == (0, 2)
+
+
+def test_two_of_a_kind_side_by_side_span_one_step() -> None:
+    assert first_repeat_span([5, 5]) == (0, 1)
+""",
+        imports="from first_repeat_span import first_repeat_span\n",
+    ),
+    hidden_test=_test_module(
+        "first_repeat_span",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_first_repeat_is_spanned() -> None:
+    assert first_repeat_span([1, 2, 1, 3]) == (0, 2)
+
+
+def test_the_span_reaches_the_first_return_not_the_last() -> None:
+    assert first_repeat_span([1, 2, 1, 3, 1]) == (0, 2)
+
+
+def test_a_series_with_no_repeat_returns_nothing() -> None:
+    assert first_repeat_span([1, 2, 3]) is None
+""",
+        imports="from first_repeat_span import first_repeat_span\n",
+    ),
+)
+
+_G073 = D2TaskSpec(
+    template_id="d6_transform.roster_pairs",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d6-transform-roster-pairs",
+    module="roster_pairs",
+    module_doc="Pairing everybody on a roster with whoever follows them, round the loop.",
+    issue=(
+        "roster_pairs() is documented to pair everybody with whoever follows them, the last "
+        "wrapping round to the first. Callers report that a roster naming somebody twice is "
+        "paired up regardless, and that a roster of one comes back empty instead of pairing "
+        "that person with themselves."
+    ),
+    expected=(
+        "roster_pairs(names) returns one (person, follower) pair per name, the last wrapping "
+        "round to the first. A roster of one pairs that person with themselves. A roster naming "
+        "somebody twice raises ValueError. An empty roster makes no pairs."
+    ),
+    baseline_reason=(
+        "it never checks for a repeated name and it gives up on a roster shorter than two"
+    ),
+    edge_cases=(
+        "a roster naming somebody twice is refused",
+        "a roster of one pairs that person with themselves",
+    ),
+    baseline="""def roster_pairs(names):
+    \"\"\"Pair everybody with whoever follows them, round the loop.\"\"\"
+    if len(names) < 2:
+        return []
+    return [(names[at], names[(at + 1) % len(names)]) for at in range(len(names))]""",
+    variant_one="""def roster_pairs(names):
+    \"\"\"Pair everybody with whoever follows them, round the loop.\"\"\"
+    if len(set(names)) != len(names):
+        raise ValueError("a roster names everybody once")
+    if not names:
+        return []
+    return [(names[at], names[(at + 1) % len(names)]) for at in range(len(names))]""",
+    variant_two="""def roster_pairs(names):
+    \"\"\"Pair everybody with whoever follows them, round the loop.\"\"\"
+    seen = []
+    for name in names:
+        if name in seen:
+            raise ValueError("a roster names everybody once")
+        seen.append(name)
+    pairs = []
+    for at, name in enumerate(names):
+        follower = names[at + 1] if at + 1 < len(names) else names[0]
+        pairs.append((name, follower))
+    return pairs""",
+    variant_three="""def roster_pairs(names):
+    \"\"\"Pair everybody with whoever follows them, round the loop.\"\"\"
+    if len(set(names)) != len(names):
+        raise ValueError("a roster names everybody once")
+    if len(names) < 2:
+        return []
+    return [(names[at], names[(at + 1) % len(names)]) for at in range(len(names))]""",
+    variant_four="""def roster_pairs(names):
+    \"\"\"Pair everybody with whoever follows them, round the loop.\"\"\"
+    if not names:
+        return []
+    return [(names[at], names[(at + 1) % len(names)]) for at in range(len(names))]""",
+    visible_test=_test_module(
+        "roster_pairs",
+        "Published contract for pairing a roster round the loop.",
+        """
+def test_everybody_is_paired_with_their_follower() -> None:
+    assert roster_pairs(["a", "b", "c"]) == [("a", "b"), ("b", "c"), ("c", "a")]
+
+
+def test_two_people_are_paired_both_ways() -> None:
+    assert roster_pairs(["a", "b"]) == [("a", "b"), ("b", "a")]
+""",
+        imports="from roster_pairs import roster_pairs\n",
+    ),
+    hidden_test=_test_module(
+        "roster_pairs",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from roster_pairs import roster_pairs
+
+
+def test_everybody_is_paired_with_their_follower() -> None:
+    assert roster_pairs(["a", "b", "c"]) == [("a", "b"), ("b", "c"), ("c", "a")]
+
+
+def test_a_roster_naming_somebody_twice_is_refused() -> None:
+    with pytest.raises(ValueError):
+        roster_pairs(["a", "b", "a"])
+
+
+def test_a_roster_of_one_pairs_that_person_with_themselves() -> None:
+    assert roster_pairs(["a"]) == [("a", "a")]
+""",
+    ),
+)
+
+_G074 = D2TaskSpec(
+    template_id="d6_transform.accumulate_by_key",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d6-transform-accumulate-by-key",
+    module="accumulate_by_key",
+    module_doc="Gathering values under their keys and saying which keys came round twice.",
+    issue=(
+        "accumulate() is documented to gather values under their keys and to say which keys "
+        "arrived more than once. Callers report that the list of repeated keys is always empty, "
+        "and that a value of nothing is dropped rather than gathered."
+    ),
+    expected=(
+        "accumulate(pairs) returns the values gathered under each key in the order they arrived, "
+        "together with the sorted keys that arrived more than once. A value of None is a value "
+        "and is gathered like any other."
+    ),
+    baseline_reason=(
+        "it never works out which keys repeated and it skips a pair whose value is None"
+    ),
+    edge_cases=(
+        "the keys that arrived more than once are reported",
+        "a value of nothing is gathered",
+    ),
+    baseline="""def accumulate(pairs):
+    \"\"\"Gather values under their keys, and name the keys that repeated.\"\"\"
+    gathered = {}
+    for key, value in pairs:
+        if value is None:
+            continue
+        gathered.setdefault(key, []).append(value)
+    return gathered, []""",
+    variant_one="""def accumulate(pairs):
+    \"\"\"Gather values under their keys, and name the keys that repeated.\"\"\"
+    gathered = {}
+    for key, value in pairs:
+        gathered.setdefault(key, []).append(value)
+    repeated = sorted(key for key, values in gathered.items() if len(values) > 1)
+    return gathered, repeated""",
+    variant_two="""def accumulate(pairs):
+    \"\"\"Gather values under their keys, and name the keys that repeated.\"\"\"
+    gathered = {}
+    repeated = set()
+    for key, value in pairs:
+        if key in gathered:
+            repeated.add(key)
+        else:
+            gathered[key] = []
+        gathered[key].append(value)
+    return gathered, sorted(repeated)""",
+    variant_three="""def accumulate(pairs):
+    \"\"\"Gather values under their keys, and name the keys that repeated.\"\"\"
+    gathered = {}
+    for key, value in pairs:
+        if value is None:
+            continue
+        gathered.setdefault(key, []).append(value)
+    repeated = sorted(key for key, values in gathered.items() if len(values) > 1)
+    return gathered, repeated""",
+    variant_four="""def accumulate(pairs):
+    \"\"\"Gather values under their keys, and name the keys that repeated.\"\"\"
+    gathered = {}
+    for key, value in pairs:
+        gathered.setdefault(key, []).append(value)
+    return gathered, []""",
+    visible_test=_test_module(
+        "accumulate_by_key",
+        "Published contract for gathering values under their keys.",
+        """
+def test_values_gather_under_their_keys() -> None:
+    assert accumulate([("a", 1), ("b", 2)]) == ({"a": [1], "b": [2]}, [])
+
+
+def test_no_pairs_gather_nothing() -> None:
+    assert accumulate([]) == ({}, [])
+""",
+        imports="from accumulate_by_key import accumulate\n",
+    ),
+    hidden_test=_test_module(
+        "accumulate_by_key",
+        "The part of the contract the published tests do not state.",
+        """
+def test_values_gather_under_their_keys() -> None:
+    assert accumulate([("a", 1), ("b", 2)]) == ({"a": [1], "b": [2]}, [])
+
+
+def test_the_keys_that_arrived_twice_are_reported() -> None:
+    assert accumulate([("a", 1), ("a", 2)]) == ({"a": [1, 2]}, ["a"])
+
+
+def test_a_value_of_nothing_is_gathered() -> None:
+    assert accumulate([("a", None)]) == ({"a": [None]}, [])
+""",
+        imports="from accumulate_by_key import accumulate\n",
+    ),
+)
+
+_G075 = D2TaskSpec(
+    template_id="d6_error.permit_window",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d6-error-permit-window",
+    module="permit_window",
+    module_doc="Allowing work only inside the windows somebody declared for it.",
+    issue=(
+        "permit() is documented to allow work only inside the declared windows. Callers report "
+        "that work attempted at the very instant a window closes is refused although the window "
+        "is meant to include it, and that a window declared back to front is quietly ignored "
+        "instead of being called out."
+    ),
+    expected=(
+        "permit(now, windows) returns None when now falls inside any window, both ends "
+        "included, and raises PermissionError when it falls outside them all. A window whose "
+        "end precedes its start raises ValueError, because nobody can have meant it."
+    ),
+    baseline_reason=(
+        "it treats the closing instant as outside the window, and it steps over a window "
+        "declared back to front"
+    ),
+    edge_cases=(
+        "the instant a window closes is inside it",
+        "a window declared back to front is refused",
+    ),
+    baseline="""def permit(now, windows):
+    \"\"\"Allow work only inside the declared windows.\"\"\"
+    for start, end in windows:
+        if start > end:
+            continue
+        if start <= now < end:
+            return None
+    raise PermissionError("outside every window")""",
+    variant_one="""def permit(now, windows):
+    \"\"\"Allow work only inside the declared windows.\"\"\"
+    for start, end in windows:
+        if start > end:
+            raise ValueError("a window cannot end before it starts")
+    for start, end in windows:
+        if start <= now <= end:
+            return None
+    raise PermissionError("outside every window")""",
+    variant_two="""def permit(now, windows):
+    \"\"\"Allow work only inside the declared windows.\"\"\"
+    inside = False
+    for start, end in windows:
+        if end < start:
+            raise ValueError("a window cannot end before it starts")
+        if start <= now <= end:
+            inside = True
+    if not inside:
+        raise PermissionError("outside every window")
+    return None""",
+    variant_three="""def permit(now, windows):
+    \"\"\"Allow work only inside the declared windows.\"\"\"
+    for start, end in windows:
+        if start > end:
+            continue
+        if start <= now <= end:
+            return None
+    raise PermissionError("outside every window")""",
+    variant_four="""def permit(now, windows):
+    \"\"\"Allow work only inside the declared windows.\"\"\"
+    for start, end in windows:
+        if start > end:
+            raise ValueError("a window cannot end before it starts")
+    for start, end in windows:
+        if start <= now < end:
+            return None
+    raise PermissionError("outside every window")""",
+    visible_test=_test_module(
+        "permit_window",
+        "Published contract for allowing work inside declared windows.",
+        """
+import pytest
+
+from permit_window import permit
+
+
+def test_work_inside_a_window_is_allowed() -> None:
+    assert permit(5, [(1, 9)]) is None
+
+
+def test_work_outside_every_window_is_refused() -> None:
+    with pytest.raises(PermissionError):
+        permit(20, [(1, 9)])
+""",
+    ),
+    hidden_test=_test_module(
+        "permit_window",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from permit_window import permit
+
+
+def test_work_inside_a_window_is_allowed() -> None:
+    assert permit(5, [(1, 9)]) is None
+
+
+def test_the_instant_a_window_closes_is_inside_it() -> None:
+    assert permit(9, [(1, 9)]) is None
+
+
+def test_a_window_declared_back_to_front_is_refused() -> None:
+    with pytest.raises(ValueError):
+        permit(5, [(9, 1)])
+""",
+    ),
+)
+
+_G076 = D2TaskSpec(
+    template_id="d6_error.tolerate_upto",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d6-error-tolerate-upto",
+    module="tolerate_upto",
+    module_doc="Letting a batch through while no more than so many of it failed.",
+    issue=(
+        "tolerate() is documented to let a batch through while no more than a stated number of "
+        "it failed. Callers report that a batch failing exactly that many times is turned away, "
+        "and that an allowance below zero is accepted as though it were none."
+    ),
+    expected=(
+        "tolerate(outcomes, allowed) returns the values of the outcomes that succeeded, so long "
+        "as no more than allowed of them failed. More failures than that raise RuntimeError. An "
+        "allowance below zero raises ValueError."
+    ),
+    baseline_reason=(
+        "it turns the batch away once the failures reach the allowance rather than pass it, and "
+        "it never looks at whether the allowance makes sense"
+    ),
+    edge_cases=(
+        "a batch failing exactly the allowance is let through",
+        "an allowance below zero is refused",
+    ),
+    baseline="""def tolerate(outcomes, allowed):
+    \"\"\"Return the successes while no more than `allowed` failed.\"\"\"
+    failures = [outcome for outcome in outcomes if not outcome["ok"]]
+    if len(failures) >= allowed:
+        raise RuntimeError(f"{len(failures)} failed")
+    return [outcome["value"] for outcome in outcomes if outcome["ok"]]""",
+    variant_one="""def tolerate(outcomes, allowed):
+    \"\"\"Return the successes while no more than `allowed` failed.\"\"\"
+    if allowed < 0:
+        raise ValueError("an allowance below zero allows nothing")
+    failures = [outcome for outcome in outcomes if not outcome["ok"]]
+    if len(failures) > allowed:
+        raise RuntimeError(f"{len(failures)} failed")
+    return [outcome["value"] for outcome in outcomes if outcome["ok"]]""",
+    variant_two="""def tolerate(outcomes, allowed):
+    \"\"\"Return the successes while no more than `allowed` failed.\"\"\"
+    if not allowed >= 0:
+        raise ValueError("an allowance below zero allows nothing")
+    kept = []
+    failed = 0
+    for outcome in outcomes:
+        if outcome["ok"]:
+            kept.append(outcome["value"])
+        else:
+            failed += 1
+    if failed > allowed:
+        raise RuntimeError(f"{failed} failed")
+    return kept""",
+    variant_three="""def tolerate(outcomes, allowed):
+    \"\"\"Return the successes while no more than `allowed` failed.\"\"\"
+    failures = [outcome for outcome in outcomes if not outcome["ok"]]
+    if len(failures) > allowed:
+        raise RuntimeError(f"{len(failures)} failed")
+    return [outcome["value"] for outcome in outcomes if outcome["ok"]]""",
+    variant_four="""def tolerate(outcomes, allowed):
+    \"\"\"Return the successes while no more than `allowed` failed.\"\"\"
+    if allowed < 0:
+        raise ValueError("an allowance below zero allows nothing")
+    failures = [outcome for outcome in outcomes if not outcome["ok"]]
+    if len(failures) >= allowed:
+        raise RuntimeError(f"{len(failures)} failed")
+    return [outcome["value"] for outcome in outcomes if outcome["ok"]]""",
+    visible_test=_test_module(
+        "tolerate_upto",
+        "Published contract for letting a batch through despite some failures.",
+        """
+import pytest
+
+from tolerate_upto import tolerate
+
+
+def test_a_batch_below_the_allowance_is_let_through() -> None:
+    outcomes = [
+        {"ok": True, "value": 1},
+        {"ok": True, "value": 2},
+        {"ok": False, "value": None},
+    ]
+    assert tolerate(outcomes, 2) == [1, 2]
+
+
+def test_a_batch_beyond_the_allowance_is_turned_away() -> None:
+    outcomes = [{"ok": False, "value": None}, {"ok": False, "value": None}]
+    with pytest.raises(RuntimeError):
+        tolerate(outcomes, 1)
+""",
+    ),
+    hidden_test=_test_module(
+        "tolerate_upto",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from tolerate_upto import tolerate
+
+
+def test_a_batch_below_the_allowance_is_let_through() -> None:
+    outcomes = [
+        {"ok": True, "value": 1},
+        {"ok": True, "value": 2},
+        {"ok": False, "value": None},
+    ]
+    assert tolerate(outcomes, 2) == [1, 2]
+
+
+def test_a_batch_failing_exactly_the_allowance_is_let_through() -> None:
+    outcomes = [
+        {"ok": True, "value": 1},
+        {"ok": False, "value": None},
+        {"ok": False, "value": None},
+    ]
+    assert tolerate(outcomes, 2) == [1]
+
+
+def test_an_allowance_below_zero_is_refused() -> None:
+    with pytest.raises(ValueError):
+        tolerate([{"ok": True, "value": 1}], -1)
+""",
+    ),
+)
+
+_G077 = D2TaskSpec(
+    template_id="d6_numeric.mixed_fraction",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d6-numeric-mixed-fraction",
+    module="mixed_fraction",
+    module_doc="Writing an improper fraction as a whole part and what is left over.",
+    issue=(
+        "mixed_fraction() is documented to write an improper fraction as a whole part and the "
+        "fraction left over. Callers report that the leftover fraction is handed back "
+        "unreduced, and that a denominator of nothing brings the call down with a "
+        "ZeroDivisionError instead of being refused."
+    ),
+    expected=(
+        "mixed_fraction(numerator, denominator) returns (whole, leftover_numerator, "
+        "leftover_denominator) with the leftover fraction in its lowest terms and a leftover of "
+        "nothing written as zero over one. A denominator of zero raises ValueError."
+    ),
+    baseline_reason=(
+        "it hands the leftover back over the original denominator and it divides before "
+        "checking that the denominator is one it can divide by"
+    ),
+    edge_cases=(
+        "the leftover fraction comes back in its lowest terms",
+        "a denominator of zero is refused",
+    ),
+    baseline="""from math import gcd
+
+
+def mixed_fraction(numerator, denominator):
+    \"\"\"Write an improper fraction as a whole part and a leftover.\"\"\"
+    whole = numerator // denominator
+    rest = numerator - whole * denominator
+    if rest == 0:
+        return whole, 0, 1
+    return whole, rest, denominator""",
+    variant_one="""from math import gcd
+
+
+def mixed_fraction(numerator, denominator):
+    \"\"\"Write an improper fraction as a whole part and a leftover.\"\"\"
+    if denominator == 0:
+        raise ValueError("a fraction over nothing is not a fraction")
+    whole = numerator // denominator
+    rest = numerator - whole * denominator
+    if rest == 0:
+        return whole, 0, 1
+    shared = gcd(rest, denominator)
+    return whole, rest // shared, denominator // shared""",
+    variant_two="""from math import gcd
+
+
+def mixed_fraction(numerator, denominator):
+    \"\"\"Write an improper fraction as a whole part and a leftover.\"\"\"
+    if not denominator:
+        raise ValueError("a fraction over nothing is not a fraction")
+    whole, rest = divmod(numerator, denominator)
+    if not rest:
+        return whole, 0, 1
+    shared = gcd(abs(rest), abs(denominator))
+    return whole, rest // shared, denominator // shared""",
+    variant_three="""from math import gcd
+
+
+def mixed_fraction(numerator, denominator):
+    \"\"\"Write an improper fraction as a whole part and a leftover.\"\"\"
+    whole = numerator // denominator
+    rest = numerator - whole * denominator
+    if rest == 0:
+        return whole, 0, 1
+    shared = gcd(rest, denominator)
+    return whole, rest // shared, denominator // shared""",
+    variant_four="""from math import gcd
+
+
+def mixed_fraction(numerator, denominator):
+    \"\"\"Write an improper fraction as a whole part and a leftover.\"\"\"
+    if denominator == 0:
+        raise ValueError("a fraction over nothing is not a fraction")
+    whole = numerator // denominator
+    rest = numerator - whole * denominator
+    if rest == 0:
+        return whole, 0, 1
+    return whole, rest, denominator""",
+    visible_test=_test_module(
+        "mixed_fraction",
+        "Published contract for writing an improper fraction.",
+        """
+def test_an_improper_fraction_splits_into_a_whole_and_a_leftover() -> None:
+    assert mixed_fraction(7, 2) == (3, 1, 2)
+
+
+def test_a_fraction_that_divides_exactly_leaves_nothing() -> None:
+    assert mixed_fraction(6, 3) == (2, 0, 1)
+""",
+        imports="from mixed_fraction import mixed_fraction\n",
+    ),
+    hidden_test=_test_module(
+        "mixed_fraction",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from mixed_fraction import mixed_fraction
+
+
+def test_an_improper_fraction_splits_into_a_whole_and_a_leftover() -> None:
+    assert mixed_fraction(7, 2) == (3, 1, 2)
+
+
+def test_the_leftover_comes_back_in_its_lowest_terms() -> None:
+    assert mixed_fraction(6, 4) == (1, 1, 2)
+
+
+def test_a_denominator_of_zero_is_refused() -> None:
+    with pytest.raises(ValueError):
+        mixed_fraction(1, 0)
+""",
+    ),
+)
+
+_G078 = D2TaskSpec(
+    template_id="d6_numeric.clamp_delta",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d6-numeric-clamp-delta",
+    module="clamp_delta",
+    module_doc="Letting a reading move only so far in one step, whichever way it moves.",
+    issue=(
+        "clamp_delta() is documented to let a reading move only so far in a single step. "
+        "Callers report that a reading falling a long way is let through in full while a rising "
+        "one is held back, and that a limit of nothing lets the reading move anywhere at all."
+    ),
+    expected=(
+        "clamp_delta(previous, proposed, limit) returns the proposed reading when it is within "
+        "limit of the previous one, and otherwise the previous one moved by limit toward it. "
+        "The limit binds a fall as tightly as a rise, and a limit of zero pins the reading."
+    ),
+    baseline_reason=(
+        "it compares only the rise against the limit, and it reads a limit of zero as no limit "
+        "at all"
+    ),
+    edge_cases=(
+        "a fall is held to the limit as tightly as a rise",
+        "a limit of zero pins the reading",
+    ),
+    baseline="""def clamp_delta(previous, proposed, limit):
+    \"\"\"Let the reading move at most `limit` from `previous`.\"\"\"
+    if not limit:
+        return proposed
+    if proposed - previous > limit:
+        return previous + limit
+    return proposed""",
+    variant_one="""def clamp_delta(previous, proposed, limit):
+    \"\"\"Let the reading move at most `limit` from `previous`.\"\"\"
+    if proposed - previous > limit:
+        return previous + limit
+    if previous - proposed > limit:
+        return previous - limit
+    return proposed""",
+    variant_two="""def clamp_delta(previous, proposed, limit):
+    \"\"\"Let the reading move at most `limit` from `previous`.\"\"\"
+    move = proposed - previous
+    if move > limit:
+        move = limit
+    elif move < -limit:
+        move = -limit
+    return previous + move""",
+    variant_three="""def clamp_delta(previous, proposed, limit):
+    \"\"\"Let the reading move at most `limit` from `previous`.\"\"\"
+    if not limit:
+        return proposed
+    if proposed - previous > limit:
+        return previous + limit
+    if previous - proposed > limit:
+        return previous - limit
+    return proposed""",
+    variant_four="""def clamp_delta(previous, proposed, limit):
+    \"\"\"Let the reading move at most `limit` from `previous`.\"\"\"
+    if proposed - previous > limit:
+        return previous + limit
+    return proposed""",
+    visible_test=_test_module(
+        "clamp_delta",
+        "Published contract for limiting how far a reading moves.",
+        """
+def test_a_rise_beyond_the_limit_is_held_back() -> None:
+    assert clamp_delta(10, 14, 2) == 12
+
+
+def test_a_move_within_the_limit_is_let_through() -> None:
+    assert clamp_delta(10, 11, 2) == 11
+""",
+        imports="from clamp_delta import clamp_delta\n",
+    ),
+    hidden_test=_test_module(
+        "clamp_delta",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_rise_beyond_the_limit_is_held_back() -> None:
+    assert clamp_delta(10, 14, 2) == 12
+
+
+def test_a_fall_is_held_as_tightly_as_a_rise() -> None:
+    assert clamp_delta(10, 4, 2) == 8
+
+
+def test_a_limit_of_zero_pins_the_reading() -> None:
+    assert clamp_delta(10, 14, 0) == 10
+""",
+        imports="from clamp_delta import clamp_delta\n",
+    ),
+)
+
+_G079 = D2TaskSpec(
+    template_id="d6_parsing.key_path",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d6-parsing-key-path",
+    module="key_path",
+    module_doc="Reading a path of names and subscripts into the steps it names.",
+    issue=(
+        "key_path() is documented to read a path of names and subscripts into its steps. "
+        "Callers report that a subscript comes back as the characters between the brackets "
+        "rather than the number it is, and that a subscript nobody closed is read as though the "
+        "bracket had been there."
+    ),
+    expected=(
+        "key_path(text) returns the steps a path names, each name as itself and each subscript "
+        "as the whole number between the brackets. A bracket nobody closed raises ValueError."
+    ),
+    baseline_reason=(
+        "it appends the characters between the brackets without reading them as a number, and "
+        "it splits on the closing bracket without noticing that there was not one"
+    ),
+    edge_cases=(
+        "a subscript comes back as a number",
+        "a bracket nobody closed is refused",
+    ),
+    baseline="""def key_path(text):
+    \"\"\"Return the steps a path of names and subscripts names.\"\"\"
+    steps = []
+    for chunk in text.split("."):
+        while "[" in chunk:
+            head, _, rest = chunk.partition("[")
+            subscript, _, chunk = rest.partition("]")
+            if head:
+                steps.append(head)
+            steps.append(subscript)
+        if chunk:
+            steps.append(chunk)
+    return steps""",
+    variant_one="""def key_path(text):
+    \"\"\"Return the steps a path of names and subscripts names.\"\"\"
+    steps = []
+    for chunk in text.split("."):
+        while "[" in chunk:
+            head, _, rest = chunk.partition("[")
+            subscript, closed, chunk = rest.partition("]")
+            if not closed:
+                raise ValueError(text)
+            if head:
+                steps.append(head)
+            steps.append(int(subscript))
+        if chunk:
+            steps.append(chunk)
+    return steps""",
+    variant_two="""def key_path(text):
+    \"\"\"Return the steps a path of names and subscripts names.\"\"\"
+    if text.count("[") != text.count("]"):
+        raise ValueError(text)
+    steps = []
+    for chunk in text.split("."):
+        name, _, remainder = chunk.partition("[")
+        if name:
+            steps.append(name)
+        while remainder:
+            subscript, _, remainder = remainder.partition("]")
+            steps.append(int(subscript))
+            remainder = remainder.lstrip("[")
+    return steps""",
+    variant_three="""def key_path(text):
+    \"\"\"Return the steps a path of names and subscripts names.\"\"\"
+    steps = []
+    for chunk in text.split("."):
+        while "[" in chunk:
+            head, _, rest = chunk.partition("[")
+            subscript, _, chunk = rest.partition("]")
+            if head:
+                steps.append(head)
+            steps.append(int(subscript))
+        if chunk:
+            steps.append(chunk)
+    return steps""",
+    variant_four="""def key_path(text):
+    \"\"\"Return the steps a path of names and subscripts names.\"\"\"
+    steps = []
+    for chunk in text.split("."):
+        while "[" in chunk:
+            head, _, rest = chunk.partition("[")
+            subscript, closed, chunk = rest.partition("]")
+            if not closed:
+                raise ValueError(text)
+            if head:
+                steps.append(head)
+            steps.append(subscript)
+        if chunk:
+            steps.append(chunk)
+    return steps""",
+    visible_test=_test_module(
+        "key_path",
+        "Published contract for reading a path of names and subscripts.",
+        """
+def test_a_path_of_names_reads_as_its_names() -> None:
+    assert key_path("a.b") == ["a", "b"]
+
+
+def test_a_single_name_is_one_step() -> None:
+    assert key_path("only") == ["only"]
+""",
+        imports="from key_path import key_path\n",
+    ),
+    hidden_test=_test_module(
+        "key_path",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from key_path import key_path
+
+
+def test_a_path_of_names_reads_as_its_names() -> None:
+    assert key_path("a.b") == ["a", "b"]
+
+
+def test_a_subscript_comes_back_as_a_number() -> None:
+    assert key_path("a[2]") == ["a", 2]
+
+
+def test_a_bracket_nobody_closed_is_refused() -> None:
+    with pytest.raises(ValueError):
+        key_path("a[2")
+""",
+    ),
+)
+
+_G080 = D2TaskSpec(
+    template_id="d6_state.budget_hold",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d6-state-budget-hold",
+    module="budget_hold",
+    module_doc="Placing a hold against a budget, once per hold.",
+    issue=(
+        "place_hold() is documented to place a hold against a budget, once per hold. Callers "
+        "report that placing the same hold a second time takes the money twice, and that a hold "
+        "for exactly what is left is turned away although it fits."
+    ),
+    expected=(
+        "place_hold(state, key, amount) returns the state with the hold recorded and the "
+        "remaining budget reduced. A hold already recorded under that key changes nothing. A "
+        "hold for more than remains raises ValueError; a hold for exactly what remains fits."
+    ),
+    baseline_reason=(
+        "it records the hold without looking whether that key already holds, and it turns away "
+        "a hold that merely equals what is left"
+    ),
+    edge_cases=(
+        "placing the same hold again changes nothing",
+        "a hold for exactly what remains fits",
+    ),
+    baseline="""def place_hold(state, key, amount):
+    \"\"\"Place a hold of `amount` under `key`.\"\"\"
+    holds = dict(state["holds"])
+    remaining = state["remaining"]
+    if amount >= remaining:
+        raise ValueError("beyond the budget")
+    holds[key] = amount
+    return {"remaining": remaining - amount, "holds": holds}""",
+    variant_one="""def place_hold(state, key, amount):
+    \"\"\"Place a hold of `amount` under `key`.\"\"\"
+    holds = dict(state["holds"])
+    remaining = state["remaining"]
+    if key in holds:
+        return {"remaining": remaining, "holds": holds}
+    if amount > remaining:
+        raise ValueError("beyond the budget")
+    holds[key] = amount
+    return {"remaining": remaining - amount, "holds": holds}""",
+    variant_two="""def place_hold(state, key, amount):
+    \"\"\"Place a hold of `amount` under `key`.\"\"\"
+    holds = dict(state["holds"])
+    remaining = state["remaining"]
+    already = key in holds
+    if not already and amount > remaining:
+        raise ValueError("beyond the budget")
+    if already:
+        return {"remaining": remaining, "holds": holds}
+    return {"remaining": remaining - amount, "holds": {**holds, key: amount}}""",
+    variant_three="""def place_hold(state, key, amount):
+    \"\"\"Place a hold of `amount` under `key`.\"\"\"
+    holds = dict(state["holds"])
+    remaining = state["remaining"]
+    if key in holds:
+        return {"remaining": remaining, "holds": holds}
+    if amount >= remaining:
+        raise ValueError("beyond the budget")
+    holds[key] = amount
+    return {"remaining": remaining - amount, "holds": holds}""",
+    variant_four="""def place_hold(state, key, amount):
+    \"\"\"Place a hold of `amount` under `key`.\"\"\"
+    holds = dict(state["holds"])
+    remaining = state["remaining"]
+    if amount > remaining:
+        raise ValueError("beyond the budget")
+    holds[key] = amount
+    return {"remaining": remaining - amount, "holds": holds}""",
+    visible_test=_test_module(
+        "budget_hold",
+        "Published contract for placing a hold against a budget.",
+        """
+import pytest
+
+from budget_hold import place_hold
+
+
+def test_a_hold_takes_its_amount_from_the_budget() -> None:
+    state = {"remaining": 10, "holds": {}}
+    assert place_hold(state, "h1", 3) == {"remaining": 7, "holds": {"h1": 3}}
+
+
+def test_a_hold_beyond_the_budget_is_refused() -> None:
+    with pytest.raises(ValueError):
+        place_hold({"remaining": 10, "holds": {}}, "h2", 11)
+""",
+    ),
+    hidden_test=_test_module(
+        "budget_hold",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_hold_takes_its_amount_from_the_budget() -> None:
+    state = {"remaining": 10, "holds": {}}
+    assert place_hold(state, "h1", 3) == {"remaining": 7, "holds": {"h1": 3}}
+
+
+def test_placing_the_same_hold_again_changes_nothing() -> None:
+    state = {"remaining": 7, "holds": {"h1": 3}}
+    assert place_hold(state, "h1", 3) == {"remaining": 7, "holds": {"h1": 3}}
+
+
+def test_a_hold_for_exactly_what_remains_fits() -> None:
+    state = {"remaining": 5, "holds": {}}
+    assert place_hold(state, "h2", 5) == {"remaining": 0, "holds": {"h2": 5}}
+""",
+        imports="from budget_hold import place_hold\n",
+    ),
+)
+
 D6_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G001,
     _G002,
@@ -6586,4 +7681,14 @@ D6_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G068,
     _G069,
     _G070,
+    _G071,
+    _G072,
+    _G073,
+    _G074,
+    _G075,
+    _G076,
+    _G077,
+    _G078,
+    _G079,
+    _G080,
 )
