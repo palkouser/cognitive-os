@@ -150,10 +150,11 @@ gate, not that the gate is too high.
 
 ## 6. State handed over
 
-- Branch `sprint-21d6-groundwork`; release tag `sprint-21d6-evidence-baseline`.
-- **Gate L2: 14 met, 15 not opened, 0 failed** once the protected release closes condition 29;
-  13 met and 1 pending at the moment this was written. Exactly where D5 left it, on a different
-  stop.
+- Released on `main` at `cfd22ab6d3e32367ed5c920a3f3844e590acf8b6` (PR `#227`, squash-merged
+  into protected main, exact-head CI 30 of 30); tag `sprint-21d6-evidence-baseline`, object
+  `29debe41f8dbe16137c0ae528f0ad4390de8d451`.
+- **Gate L2: 14 met, 15 not opened, 0 failed, 0 carried.** Exactly where D5 left it, on a
+  different stop.
 - **Gate D1: 6 and 7 closed by the stop; 15 closed** by inheritance from D5's sealed retrieval
   measurement, with all three voiding identities recomputed at gate close and unmoved.
 - **Sprint 22A remains blocked.**

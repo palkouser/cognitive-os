@@ -843,3 +843,47 @@ final, batch-B or canary body, outcome or manifest was opened — the eight item
 the measured store or to any predecessor store.
 
 **Gate L2 does not pass, and Sprint 22A stays blocked.**
+
+## S21D6-095: the release, and the order it had to happen in
+
+A negative release is a complete release. The chronology is the evidence, and it is enforced by
+the order the commands were run rather than described afterwards:
+
+| step | handle |
+|---|---|
+| PR `#227` CI | run `31381783754`, **30 of 30 success** |
+| squash-merge into protected `main` | **`cfd22ab6d3e32367ed5c920a3f3844e590acf8b6`**, 2026-08-10T11:19:04Z, `enforce_admins` on, 27 required contexts, no administrator bypass |
+| exact-head `main` CI | run `31382974994`, **30 of 30 success**, complete 11:34:12Z |
+| annotated tag, once and after that CI | `sprint-21d6-evidence-baseline`, object `29debe41f8dbe16137c0ae528f0ad4390de8d451`, peeling to the merge commit |
+
+`scripts/release_d6.py` reads every one of those handles back from the remote and **creates
+nothing** — a record that could produce the state it describes would be a record of itself. It
+refuses a tag whose peel disagrees with the merge commit, refuses a run that did not succeed on
+every job, and checks `sprint-21-learning-baseline` for **absence** rather than assuming it.
+**Zero findings.**
+
+One thing changed against D5's script, and it is a defect its shape invites: D5 carried its PR
+number as a module constant, which is correct once the release has happened and wrong every
+moment before it. `--pull-request` is required here, so a run against the wrong release fails at
+the remote instead of describing one release with another's handles.
+
+## Gate close
+
+With condition 29 decided from the remote handles, the assessment regenerates to its final shape:
+
+| state | conditions |
+|---|---:|
+| `met` | **14** |
+| `not_opened` | **15** |
+| `failed` | 0 |
+| `carried` | 0 |
+| `pending` | 0 |
+| `met_as_rejection` | 0 |
+
+**The same fourteen-fifteen split D5 released on**, reached by a different route. D5's fifteen
+closed behind `selective_margin_bound`; D6's close behind `leak_budget_exceeded`. A different stop
+with the same dependents closes the same set — and the set is not the assessment's to choose: the
+script reads it out of the continuation record and refuses to run if the two disagree.
+
+**Gate L2 does not pass. Sprint 22A remains blocked.** The success tag
+`sprint-21-learning-baseline` was not created, and its absence is verified rather than assumed.

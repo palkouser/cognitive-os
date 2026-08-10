@@ -7,9 +7,11 @@
   `799190c06497f22edd6ec6c1eb690c511ce23bb7`, peeled to
   `53cd7579096537cd1cef0e060335ad1c98088285`
 - Migration head: `0015`, unchanged. `0016` remains unallocated.
-- Revision: 6 — **provisional**. Condition 29 is `pending` until the protected merge, its exact-head
-  post-merge `main` CI and remote tag verification; the gate-close regeneration is what decides
-  it, exactly as D5's did.
+- Revision: 6 — **final**. Condition 29 closed on the protected squash-merge of `#227`, its exact-head
+  post-merge `main` CI run `31382974994` (30 of 30 success on
+  `cfd22ab6d3e32367ed5c920a3f3844e590acf8b6`), and remote verification of the annotated tag
+  `sprint-21d6-evidence-baseline`, object `29debe41f8dbe16137c0ae528f0ad4390de8d451`, peeled to
+  `cfd22ab6d3e32367ed5c920a3f3844e590acf8b6`.
 - Frozen gate contract: `9e47bc618fc1eca8b66146eacdf1bd244fced79bb1c91f46f2c6ff4484bfd8a7`,
   29 conditions. **One clause amended** — §2.3's admission clause, by
   [`sprint-21d6-contracts-amendment-2.json`](evidence/sprint-21d6-contracts-amendment-2.json),
@@ -31,10 +33,10 @@ Sprints 21D2 through 21D5 and stay exactly as they were written.
 
 | State | Conditions |
 |---|---:|
-| `met` | 13 |
+| `met` | 14 |
 | `met_as_rejection` | **0** |
 | `not_opened` | 15 |
-| `pending` | 1 |
+| `pending` | 0 |
 | `failed` | **0** |
 | `carried` | **0** |
 
@@ -129,7 +131,7 @@ verdict, so the two cannot disagree about one measurement.
 | 26 | `not_opened` | `sprint-21d6-learner-selection.json` | would have measured activation, loading, disable, restoration and rollback surviving restart on a real one |
 | 27 | `not_opened` | `sprint-21d6-learner-selection.json` | would have measured an exact human approval over the existing fields, with no self-approval |
 | 28 | `met` | `sprint-21d6-verification-matrix.json` | 36 of 36 release-matrix rows passed, 0 skipped, 0 structural findings |
-| 29 | `pending` | `—` | the protected merge, its exact-head post-merge main CI, the annotated tag and the remote verification. The gate-close regeneration is what decides this row |
+| 29 | `met` | `sprint-21d6-release.json` | PR #227 squash-merged into protected main at 2026-08-10T11:19:04Z, exact-head main CI run 31382974994 30 of 30 success, and the annotated tag sprint-21d6-evidence-baseline object 29debe41f8dbe161 peels to cfd22ab6d3e32367 |
 
 | Gate D1 | State | Closure rule | Detail |
 |---:|---|---|---|
