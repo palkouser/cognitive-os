@@ -7618,6 +7618,984 @@ def test_a_hold_for_exactly_what_remains_fits() -> None:
     ),
 )
 
+_G081 = D2TaskSpec(
+    template_id="d6_boundary.nearest_below",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d6-boundary-nearest-below",
+    module="nearest_below",
+    module_doc="Finding the highest reading that still sits under a ceiling.",
+    issue=(
+        "nearest_below() is documented to find the highest reading that does not pass a "
+        "ceiling. Callers report that when two readings tie for highest the earlier one is "
+        "named rather than the later, and that a series with nothing under the ceiling names "
+        "the first reading instead of nothing."
+    ),
+    expected=(
+        "nearest_below(values, ceiling) returns the position of the highest reading at or "
+        "below the ceiling, taking the last of any tie. When no reading qualifies it returns "
+        "None."
+    ),
+    baseline_reason=(
+        "it keeps the first of two equal readings and it starts from position zero, which it "
+        "then returns when nothing ever qualified"
+    ),
+    edge_cases=(
+        "a tie names the later of the tied positions",
+        "a series with nothing under the ceiling names nothing",
+    ),
+    baseline="""def nearest_below(values, ceiling):
+    \"\"\"Return where the highest reading under `ceiling` sits.\"\"\"
+    best = 0
+    highest = None
+    for position, value in enumerate(values):
+        if value <= ceiling and (highest is None or value > highest):
+            highest = value
+            best = position
+    return best""",
+    variant_one="""def nearest_below(values, ceiling):
+    \"\"\"Return where the highest reading under `ceiling` sits.\"\"\"
+    best = None
+    highest = None
+    for position, value in enumerate(values):
+        if value <= ceiling and (highest is None or value >= highest):
+            highest = value
+            best = position
+    return best""",
+    variant_two="""def nearest_below(values, ceiling):
+    \"\"\"Return where the highest reading under `ceiling` sits.\"\"\"
+    qualifying = [
+        position for position, value in enumerate(values) if value <= ceiling
+    ]
+    if not qualifying:
+        return None
+    top = max(values[position] for position in qualifying)
+    return max(position for position in qualifying if values[position] == top)""",
+    variant_three="""def nearest_below(values, ceiling):
+    \"\"\"Return where the highest reading under `ceiling` sits.\"\"\"
+    best = 0
+    highest = None
+    for position, value in enumerate(values):
+        if value <= ceiling and (highest is None or value >= highest):
+            highest = value
+            best = position
+    return best""",
+    variant_four="""def nearest_below(values, ceiling):
+    \"\"\"Return where the highest reading under `ceiling` sits.\"\"\"
+    best = None
+    highest = None
+    for position, value in enumerate(values):
+        if value <= ceiling and (highest is None or value > highest):
+            highest = value
+            best = position
+    return best""",
+    visible_test=_test_module(
+        "nearest_below",
+        "Published contract for the highest reading under a ceiling.",
+        """
+def test_the_highest_reading_under_the_ceiling_is_named() -> None:
+    assert nearest_below([1, 5, 9], 6) == 1
+
+
+def test_a_reading_on_the_ceiling_qualifies() -> None:
+    assert nearest_below([1, 6, 9], 6) == 1
+""",
+        imports="from nearest_below import nearest_below\n",
+    ),
+    hidden_test=_test_module(
+        "nearest_below",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_highest_reading_under_the_ceiling_is_named() -> None:
+    assert nearest_below([1, 5, 9], 6) == 1
+
+
+def test_a_tie_names_the_later_position() -> None:
+    assert nearest_below([3, 3, 1], 4) == 1
+
+
+def test_nothing_under_the_ceiling_names_nothing() -> None:
+    assert nearest_below([7, 8], 2) is None
+""",
+        imports="from nearest_below import nearest_below\n",
+    ),
+)
+
+_G082 = D2TaskSpec(
+    template_id="d6_boundary.interleave_ends",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d6-boundary-interleave-ends",
+    module="interleave_ends",
+    module_doc="Reading a series from both ends towards the middle.",
+    issue=(
+        "interleave_ends() is documented to read a series from both ends towards the middle. "
+        "Callers report that a series with a reading in the exact middle reads that one twice, "
+        "and that the series they passed in comes back empty afterwards."
+    ),
+    expected=(
+        "interleave_ends(values) returns the first reading, then the last, then the second, "
+        "then the second from last, and so on. A reading in the exact middle appears once. The "
+        "series handed in is left as it was."
+    ),
+    baseline_reason=(
+        "its two ends meet on the middle reading and take it twice, and it empties the caller's "
+        "series as it reads"
+    ),
+    edge_cases=(
+        "a middle reading appears once",
+        "the series handed in is left as it was",
+    ),
+    baseline="""def interleave_ends(values):
+    \"\"\"Read `values` from both ends towards the middle.\"\"\"
+    read = []
+    while values:
+        read.append(values.pop(0))
+        if values:
+            read.append(values.pop())
+        else:
+            read.append(read[-1])
+    return read""",
+    variant_one="""def interleave_ends(values):
+    \"\"\"Read `values` from both ends towards the middle.\"\"\"
+    read = []
+    left = 0
+    right = len(values) - 1
+    while left <= right:
+        read.append(values[left])
+        if left != right:
+            read.append(values[right])
+        left += 1
+        right -= 1
+    return read""",
+    variant_two="""def interleave_ends(values):
+    \"\"\"Read `values` from both ends towards the middle.\"\"\"
+    remaining = list(values)
+    read = []
+    while remaining:
+        read.append(remaining.pop(0))
+        if remaining:
+            read.append(remaining.pop())
+    return read""",
+    variant_three="""def interleave_ends(values):
+    \"\"\"Read `values` from both ends towards the middle.\"\"\"
+    read = []
+    while values:
+        read.append(values.pop(0))
+        if values:
+            read.append(values.pop())
+    return read""",
+    variant_four="""def interleave_ends(values):
+    \"\"\"Read `values` from both ends towards the middle.\"\"\"
+    remaining = list(values)
+    read = []
+    while remaining:
+        read.append(remaining.pop(0))
+        if remaining:
+            read.append(remaining.pop())
+        else:
+            read.append(read[-1])
+    return read""",
+    visible_test=_test_module(
+        "interleave_ends",
+        "Published contract for reading a series from both ends.",
+        """
+def test_an_even_series_reads_from_both_ends() -> None:
+    assert interleave_ends([1, 2, 3, 4]) == [1, 4, 2, 3]
+
+
+def test_two_readings_read_in_order() -> None:
+    assert interleave_ends([1, 2]) == [1, 2]
+""",
+        imports="from interleave_ends import interleave_ends\n",
+    ),
+    hidden_test=_test_module(
+        "interleave_ends",
+        "The part of the contract the published tests do not state.",
+        """
+def test_an_even_series_reads_from_both_ends() -> None:
+    assert interleave_ends([1, 2, 3, 4]) == [1, 4, 2, 3]
+
+
+def test_a_middle_reading_appears_once() -> None:
+    assert interleave_ends([1, 2, 3]) == [1, 3, 2]
+
+
+def test_the_series_handed_in_is_left_as_it_was() -> None:
+    values = [1, 2]
+    interleave_ends(values)
+    assert values == [1, 2]
+""",
+        imports="from interleave_ends import interleave_ends\n",
+    ),
+)
+
+_G083 = D2TaskSpec(
+    template_id="d6_transform.explode_counts",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d6-transform-explode-counts",
+    module="explode_counts",
+    module_doc="Turning a tally back into the run of names it counted.",
+    issue=(
+        "explode() is documented to turn a tally back into the names it counted. Callers report "
+        "that a name tallied zero times still appears once, and that a tally below zero is "
+        "passed over in silence instead of being called out."
+    ),
+    expected=(
+        "explode(tally) returns each name repeated as many times as it was tallied, the names "
+        "in sorted order. A name tallied zero times appears not at all. A tally below zero "
+        "raises ValueError."
+    ),
+    baseline_reason=(
+        "it repeats every name at least once and it never looks at whether a tally makes sense"
+    ),
+    edge_cases=(
+        "a name tallied zero times appears not at all",
+        "a tally below zero is refused",
+    ),
+    baseline="""def explode(tally):
+    \"\"\"Turn a tally back into the names it counted.\"\"\"
+    names = []
+    for name in sorted(tally):
+        names.extend([name] * max(1, tally[name]))
+    return names""",
+    variant_one="""def explode(tally):
+    \"\"\"Turn a tally back into the names it counted.\"\"\"
+    names = []
+    for name in sorted(tally):
+        count = tally[name]
+        if count < 0:
+            raise ValueError(name)
+        names.extend([name] * count)
+    return names""",
+    variant_two="""def explode(tally):
+    \"\"\"Turn a tally back into the names it counted.\"\"\"
+    for name, count in tally.items():
+        if count < 0:
+            raise ValueError(name)
+    return [name for name in sorted(tally) for _ in range(tally[name])]""",
+    variant_three="""def explode(tally):
+    \"\"\"Turn a tally back into the names it counted.\"\"\"
+    names = []
+    for name in sorted(tally):
+        names.extend([name] * tally[name])
+    return names""",
+    variant_four="""def explode(tally):
+    \"\"\"Turn a tally back into the names it counted.\"\"\"
+    names = []
+    for name in sorted(tally):
+        count = tally[name]
+        if count < 0:
+            raise ValueError(name)
+        names.extend([name] * max(1, count))
+    return names""",
+    visible_test=_test_module(
+        "explode_counts",
+        "Published contract for turning a tally back into names.",
+        """
+def test_a_tally_explodes_into_its_names() -> None:
+    assert explode({"a": 2, "b": 1}) == ["a", "a", "b"]
+
+
+def test_an_empty_tally_explodes_into_nothing() -> None:
+    assert explode({}) == []
+""",
+        imports="from explode_counts import explode\n",
+    ),
+    hidden_test=_test_module(
+        "explode_counts",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from explode_counts import explode
+
+
+def test_a_tally_explodes_into_its_names() -> None:
+    assert explode({"a": 2, "b": 1}) == ["a", "a", "b"]
+
+
+def test_a_name_tallied_zero_times_appears_not_at_all() -> None:
+    assert explode({"a": 0, "b": 1}) == ["b"]
+
+
+def test_a_tally_below_zero_is_refused() -> None:
+    with pytest.raises(ValueError):
+        explode({"a": -1})
+""",
+    ),
+)
+
+_G085 = D2TaskSpec(
+    template_id="d6_error.demote_on_repeat",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d6-error-demote-on-repeat",
+    module="demote_on_repeat",
+    module_doc="Quietening a complaint that keeps coming back.",
+    issue=(
+        "record() is documented to quieten a complaint the more often it comes back: an error "
+        "the first time, a warning the second, and nothing at all after that. Callers report "
+        "that the third time still comes back as a warning, and that a complaint nobody "
+        "declared is accepted as a new one instead of being refused."
+    ),
+    expected=(
+        "record(seen, code) returns the level to report and the updated tally. The first "
+        "sighting is 'error', the second 'warning', and every one after that 'suppressed'. A "
+        "code the tally does not declare raises KeyError."
+    ),
+    baseline_reason=(
+        "it demotes past the second sighting one step too late, and it starts a tally for a "
+        "code nobody declared"
+    ),
+    edge_cases=(
+        "the third sighting is suppressed",
+        "a code nobody declared is refused",
+    ),
+    baseline="""def record(seen, code):
+    \"\"\"Return the level to report for `code`, and the updated tally.\"\"\"
+    tally = dict(seen)
+    count = tally.get(code, 0) + 1
+    tally[code] = count
+    if count == 1:
+        return "error", tally
+    if count <= 3:
+        return "warning", tally
+    return "suppressed", tally""",
+    variant_one="""def record(seen, code):
+    \"\"\"Return the level to report for `code`, and the updated tally.\"\"\"
+    if code not in seen:
+        raise KeyError(code)
+    tally = dict(seen)
+    count = tally[code] + 1
+    tally[code] = count
+    if count == 1:
+        return "error", tally
+    if count == 2:
+        return "warning", tally
+    return "suppressed", tally""",
+    variant_two="""LEVELS = ("error", "warning")
+
+
+def record(seen, code):
+    \"\"\"Return the level to report for `code`, and the updated tally.\"\"\"
+    if code not in seen:
+        raise KeyError(code)
+    tally = dict(seen)
+    tally[code] = seen[code] + 1
+    place = tally[code] - 1
+    return (LEVELS[place] if place < len(LEVELS) else "suppressed"), tally""",
+    variant_three="""def record(seen, code):
+    \"\"\"Return the level to report for `code`, and the updated tally.\"\"\"
+    tally = dict(seen)
+    count = tally.get(code, 0) + 1
+    tally[code] = count
+    if count == 1:
+        return "error", tally
+    if count == 2:
+        return "warning", tally
+    return "suppressed", tally""",
+    variant_four="""def record(seen, code):
+    \"\"\"Return the level to report for `code`, and the updated tally.\"\"\"
+    if code not in seen:
+        raise KeyError(code)
+    tally = dict(seen)
+    count = tally[code] + 1
+    tally[code] = count
+    if count == 1:
+        return "error", tally
+    if count <= 3:
+        return "warning", tally
+    return "suppressed", tally""",
+    visible_test=_test_module(
+        "demote_on_repeat",
+        "Published contract for quietening a repeated complaint.",
+        """
+def test_the_first_sighting_is_an_error() -> None:
+    assert record({"a": 0}, "a") == ("error", {"a": 1})
+
+
+def test_the_second_sighting_is_a_warning() -> None:
+    assert record({"a": 1}, "a") == ("warning", {"a": 2})
+""",
+        imports="from demote_on_repeat import record\n",
+    ),
+    hidden_test=_test_module(
+        "demote_on_repeat",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from demote_on_repeat import record
+
+
+def test_the_first_sighting_is_an_error() -> None:
+    assert record({"a": 0}, "a") == ("error", {"a": 1})
+
+
+def test_the_third_sighting_is_suppressed() -> None:
+    assert record({"a": 2}, "a") == ("suppressed", {"a": 3})
+
+
+def test_a_code_nobody_declared_is_refused() -> None:
+    with pytest.raises(KeyError):
+        record({}, "z")
+""",
+    ),
+)
+
+_G086 = D2TaskSpec(
+    template_id="d6_error.error_ratio_gate",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d6-error-ratio-gate",
+    module="error_ratio_gate",
+    module_doc="Letting a run continue while the share that failed stays under a ceiling.",
+    issue=(
+        "check_ratio() is documented to let a run continue while the share that failed stays "
+        "under a ceiling. Callers report that a run in which nothing was attempted brings the "
+        "call down with a ZeroDivisionError, and that a count of failures larger than the "
+        "attempts is taken at face value."
+    ),
+    expected=(
+        "check_ratio(attempted, failed, ceiling) returns None while the share that failed is at "
+        "or below the ceiling, and raises RuntimeError above it. Nothing attempted is nothing "
+        "failed and passes. More failures than attempts raises ValueError."
+    ),
+    baseline_reason=(
+        "it divides before asking whether anything was attempted, and it never checks the "
+        "failures against the attempts"
+    ),
+    edge_cases=(
+        "nothing attempted passes",
+        "more failures than attempts is refused",
+    ),
+    baseline="""def check_ratio(attempted, failed, ceiling):
+    \"\"\"Let the run continue while the failed share stays under `ceiling`.\"\"\"
+    share = failed / attempted
+    if share > ceiling:
+        raise RuntimeError(f"{share} failed")
+    return None""",
+    variant_one="""def check_ratio(attempted, failed, ceiling):
+    \"\"\"Let the run continue while the failed share stays under `ceiling`.\"\"\"
+    if failed > attempted:
+        raise ValueError("more failures than attempts")
+    if attempted == 0:
+        return None
+    share = failed / attempted
+    if share > ceiling:
+        raise RuntimeError(f"{share} failed")
+    return None""",
+    variant_two="""def check_ratio(attempted, failed, ceiling):
+    \"\"\"Let the run continue while the failed share stays under `ceiling`.\"\"\"
+    if failed > attempted:
+        raise ValueError("more failures than attempts")
+    if not attempted:
+        return None
+    if failed > ceiling * attempted:
+        raise RuntimeError(f"{failed} of {attempted} failed")
+    return None""",
+    variant_three="""def check_ratio(attempted, failed, ceiling):
+    \"\"\"Let the run continue while the failed share stays under `ceiling`.\"\"\"
+    if attempted == 0:
+        return None
+    share = failed / attempted
+    if share > ceiling:
+        raise RuntimeError(f"{share} failed")
+    return None""",
+    variant_four="""def check_ratio(attempted, failed, ceiling):
+    \"\"\"Let the run continue while the failed share stays under `ceiling`.\"\"\"
+    if failed > attempted:
+        raise ValueError("more failures than attempts")
+    share = failed / attempted
+    if share > ceiling:
+        raise RuntimeError(f"{share} failed")
+    return None""",
+    visible_test=_test_module(
+        "error_ratio_gate",
+        "Published contract for gating a run on its failure share.",
+        """
+import pytest
+
+from error_ratio_gate import check_ratio
+
+
+def test_a_share_under_the_ceiling_passes() -> None:
+    assert check_ratio(10, 2, 0.5) is None
+
+
+def test_a_share_above_the_ceiling_stops_the_run() -> None:
+    with pytest.raises(RuntimeError):
+        check_ratio(10, 8, 0.5)
+""",
+    ),
+    hidden_test=_test_module(
+        "error_ratio_gate",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from error_ratio_gate import check_ratio
+
+
+def test_a_share_under_the_ceiling_passes() -> None:
+    assert check_ratio(10, 2, 0.5) is None
+
+
+def test_nothing_attempted_passes() -> None:
+    assert check_ratio(0, 0, 0.5) is None
+
+
+def test_more_failures_than_attempts_is_refused() -> None:
+    with pytest.raises(ValueError):
+        check_ratio(5, 7, 0.5)
+""",
+    ),
+)
+
+_G087 = D2TaskSpec(
+    template_id="d6_numeric.digit_positions",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d6-numeric-digit-positions",
+    module="digit_positions",
+    module_doc="Saying where a digit stands in a number, counting from the units.",
+    issue=(
+        "digit_positions() is documented to say where a digit stands, counting from the units "
+        "upwards. Callers report that the positions come back counted from the other end, and "
+        "that a number below zero is measured as though its sign were a digit."
+    ),
+    expected=(
+        "digit_positions(number, digit) returns the places the digit occupies, where the units "
+        "are place zero, the tens place one and so on, in ascending order. A number below zero "
+        "raises ValueError."
+    ),
+    baseline_reason=(
+        "it reads the number from its most significant end and it never looks at the sign"
+    ),
+    edge_cases=(
+        "the units are place zero",
+        "a number below zero is refused",
+    ),
+    baseline="""def digit_positions(number, digit):
+    \"\"\"Return the places `digit` occupies in `number`.\"\"\"
+    written = str(number)
+    wanted = str(digit)
+    return [place for place, character in enumerate(written) if character == wanted]""",
+    variant_one="""def digit_positions(number, digit):
+    \"\"\"Return the places `digit` occupies in `number`.\"\"\"
+    if number < 0:
+        raise ValueError("a number below zero has no places")
+    written = str(number)[::-1]
+    wanted = str(digit)
+    return [place for place, character in enumerate(written) if character == wanted]""",
+    variant_two="""def digit_positions(number, digit):
+    \"\"\"Return the places `digit` occupies in `number`.\"\"\"
+    if not number >= 0:
+        raise ValueError("a number below zero has no places")
+    places = []
+    place = 0
+    remaining = number
+    while True:
+        if remaining % 10 == digit:
+            places.append(place)
+        remaining //= 10
+        place += 1
+        if not remaining:
+            break
+    return places""",
+    variant_three="""def digit_positions(number, digit):
+    \"\"\"Return the places `digit` occupies in `number`.\"\"\"
+    written = str(number)[::-1]
+    wanted = str(digit)
+    return [place for place, character in enumerate(written) if character == wanted]""",
+    variant_four="""def digit_positions(number, digit):
+    \"\"\"Return the places `digit` occupies in `number`.\"\"\"
+    if number < 0:
+        raise ValueError("a number below zero has no places")
+    written = str(number)
+    wanted = str(digit)
+    return [place for place, character in enumerate(written) if character == wanted]""",
+    visible_test=_test_module(
+        "digit_positions",
+        "Published contract for where a digit stands in a number.",
+        """
+def test_a_digit_appearing_once_has_one_place() -> None:
+    assert digit_positions(7, 7) == [0]
+
+
+def test_a_digit_that_does_not_appear_has_no_place() -> None:
+    assert digit_positions(1234, 9) == []
+""",
+        imports="from digit_positions import digit_positions\n",
+    ),
+    hidden_test=_test_module(
+        "digit_positions",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from digit_positions import digit_positions
+
+
+def test_a_digit_appearing_once_has_one_place() -> None:
+    assert digit_positions(7, 7) == [0]
+
+
+def test_the_units_are_place_zero() -> None:
+    assert digit_positions(1213, 1) == [1, 3]
+
+
+def test_a_number_below_zero_is_refused() -> None:
+    with pytest.raises(ValueError):
+        digit_positions(-11, 1)
+""",
+    ),
+)
+
+_G088 = D2TaskSpec(
+    template_id="d6_numeric.base_digits",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d6-numeric-base-digits",
+    module="base_digits",
+    module_doc="Writing a whole number out in a base of its own.",
+    issue=(
+        "base_digits() is documented to write a whole number out in a given base. Callers "
+        "report that zero comes back as no digits at all rather than the single zero it is, "
+        "and that a number below zero comes back empty instead of being refused."
+    ),
+    expected=(
+        "base_digits(number, base) returns the digits of the number in that base, the most "
+        "significant first. Zero is the single digit zero. A number below zero raises "
+        "ValueError."
+    ),
+    baseline_reason=(
+        "its loop runs only while something is left, which is never for zero, and it treats a "
+        "number below zero as though nothing were left either"
+    ),
+    edge_cases=(
+        "zero is the single digit zero",
+        "a number below zero is refused",
+    ),
+    baseline="""def base_digits(number, base):
+    \"\"\"Write `number` out in `base`, most significant digit first.\"\"\"
+    digits = []
+    remaining = number
+    while remaining > 0:
+        digits.append(remaining % base)
+        remaining //= base
+    return digits[::-1]""",
+    variant_one="""def base_digits(number, base):
+    \"\"\"Write `number` out in `base`, most significant digit first.\"\"\"
+    if number < 0:
+        raise ValueError("a number below zero has no digits")
+    if number == 0:
+        return [0]
+    digits = []
+    remaining = number
+    while remaining > 0:
+        digits.append(remaining % base)
+        remaining //= base
+    return digits[::-1]""",
+    variant_two="""def base_digits(number, base):
+    \"\"\"Write `number` out in `base`, most significant digit first.\"\"\"
+    if not number >= 0:
+        raise ValueError("a number below zero has no digits")
+    digits = [number % base]
+    remaining = number // base
+    while remaining:
+        digits.append(remaining % base)
+        remaining //= base
+    return list(reversed(digits))""",
+    variant_three="""def base_digits(number, base):
+    \"\"\"Write `number` out in `base`, most significant digit first.\"\"\"
+    if number == 0:
+        return [0]
+    digits = []
+    remaining = number
+    while remaining > 0:
+        digits.append(remaining % base)
+        remaining //= base
+    return digits[::-1]""",
+    variant_four="""def base_digits(number, base):
+    \"\"\"Write `number` out in `base`, most significant digit first.\"\"\"
+    if number < 0:
+        raise ValueError("a number below zero has no digits")
+    digits = []
+    remaining = number
+    while remaining > 0:
+        digits.append(remaining % base)
+        remaining //= base
+    return digits[::-1]""",
+    visible_test=_test_module(
+        "base_digits",
+        "Published contract for writing a number out in a base.",
+        """
+def test_a_number_writes_out_in_binary() -> None:
+    assert base_digits(13, 2) == [1, 1, 0, 1]
+
+
+def test_a_number_writes_out_in_base_seven() -> None:
+    assert base_digits(50, 7) == [1, 0, 1]
+""",
+        imports="from base_digits import base_digits\n",
+    ),
+    hidden_test=_test_module(
+        "base_digits",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from base_digits import base_digits
+
+
+def test_a_number_writes_out_in_binary() -> None:
+    assert base_digits(13, 2) == [1, 1, 0, 1]
+
+
+def test_zero_is_the_single_digit_zero() -> None:
+    assert base_digits(0, 2) == [0]
+
+
+def test_a_number_below_zero_is_refused() -> None:
+    with pytest.raises(ValueError):
+        base_digits(-5, 2)
+""",
+    ),
+)
+
+_G089 = D2TaskSpec(
+    template_id="d6_parsing.signature_line",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d6-parsing-signature-line",
+    module="signature_line",
+    module_doc="Reading a written signature into its name, its parameters and what it returns.",
+    issue=(
+        "read_signature() is documented to read a written signature into its parts. Callers "
+        "report that a signature taking no parameters comes back with one nameless parameter, "
+        "and that a signature saying nothing about what it returns comes back with an empty "
+        "return rather than none at all."
+    ),
+    expected=(
+        "read_signature(text) returns (name, parameters, returns). A signature taking no "
+        "parameters has an empty list of them. A signature with no arrow says nothing about "
+        "what it returns, so returns is None. A line of another shape raises ValueError."
+    ),
+    baseline_reason=(
+        "it splits the empty parameter list on the comma and keeps the one empty piece, and it "
+        "hands back the empty string when there is no arrow"
+    ),
+    edge_cases=(
+        "a signature taking no parameters has none",
+        "a signature with no arrow returns nothing",
+    ),
+    baseline="""def read_signature(text):
+    \"\"\"Return the (name, parameters, returns) a signature line names.\"\"\"
+    head, arrow, tail = text.partition("->")
+    head = head.strip()
+    if "(" not in head or not head.endswith(")"):
+        raise ValueError(text)
+    name, _, rest = head.partition("(")
+    inside = rest[:-1]
+    parameters = [part.strip() for part in inside.split(",")]
+    return name.strip(), parameters, tail.strip()""",
+    variant_one="""def read_signature(text):
+    \"\"\"Return the (name, parameters, returns) a signature line names.\"\"\"
+    head, arrow, tail = text.partition("->")
+    head = head.strip()
+    if "(" not in head or not head.endswith(")"):
+        raise ValueError(text)
+    name, _, rest = head.partition("(")
+    inside = rest[:-1].strip()
+    parameters = [part.strip() for part in inside.split(",")] if inside else []
+    return name.strip(), parameters, tail.strip() if arrow else None""",
+    variant_two="""def read_signature(text):
+    \"\"\"Return the (name, parameters, returns) a signature line names.\"\"\"
+    head, arrow, tail = text.partition("->")
+    head = head.strip()
+    opening = head.find("(")
+    if opening == -1 or not head.endswith(")"):
+        raise ValueError(text)
+    inside = head[opening + 1 : -1].strip()
+    parameters = []
+    if inside:
+        parameters = [part.strip() for part in inside.split(",")]
+    returns = tail.strip() if arrow else None
+    return head[:opening].strip(), parameters, returns""",
+    variant_three="""def read_signature(text):
+    \"\"\"Return the (name, parameters, returns) a signature line names.\"\"\"
+    head, arrow, tail = text.partition("->")
+    head = head.strip()
+    if "(" not in head or not head.endswith(")"):
+        raise ValueError(text)
+    name, _, rest = head.partition("(")
+    inside = rest[:-1].strip()
+    parameters = [part.strip() for part in inside.split(",")] if inside else []
+    return name.strip(), parameters, tail.strip()""",
+    variant_four="""def read_signature(text):
+    \"\"\"Return the (name, parameters, returns) a signature line names.\"\"\"
+    head, arrow, tail = text.partition("->")
+    head = head.strip()
+    if "(" not in head or not head.endswith(")"):
+        raise ValueError(text)
+    name, _, rest = head.partition("(")
+    inside = rest[:-1]
+    parameters = [part.strip() for part in inside.split(",")]
+    return name.strip(), parameters, tail.strip() if arrow else None""",
+    visible_test=_test_module(
+        "signature_line",
+        "Published contract for reading a written signature.",
+        """
+import pytest
+
+from signature_line import read_signature
+
+
+def test_a_signature_reads_into_its_parts() -> None:
+    assert read_signature("f(a, b) -> c") == ("f", ["a", "b"], "c")
+
+
+def test_a_line_of_another_shape_is_refused() -> None:
+    with pytest.raises(ValueError):
+        read_signature("not a signature")
+""",
+    ),
+    hidden_test=_test_module(
+        "signature_line",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_signature_reads_into_its_parts() -> None:
+    assert read_signature("f(a, b) -> c") == ("f", ["a", "b"], "c")
+
+
+def test_a_signature_taking_no_parameters_has_none() -> None:
+    assert read_signature("f() -> c") == ("f", [], "c")
+
+
+def test_a_signature_with_no_arrow_returns_nothing() -> None:
+    assert read_signature("f(a)") == ("f", ["a"], None)
+""",
+        imports="from signature_line import read_signature\n",
+    ),
+)
+
+_G090 = D2TaskSpec(
+    template_id="d6_state.pause_resume",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d6-state-pause-resume",
+    module="pause_resume",
+    module_doc="Pausing and resuming a worker without losing count of why it stopped.",
+    issue=(
+        "apply() is documented to pause and resume a worker. Callers report that pausing a "
+        "worker already paused counts as another pause, and that resuming a worker nobody "
+        "paused is accepted in silence."
+    ),
+    expected=(
+        "apply(state, action) returns the state after a pause or a resume. Pausing a worker "
+        "already paused changes nothing at all, count included. Resuming a worker nobody paused "
+        "raises RuntimeError. Any other action raises ValueError."
+    ),
+    baseline_reason=(
+        "it counts a pause whether or not the worker was already paused, and it resumes without "
+        "asking whether there was anything to resume"
+    ),
+    edge_cases=(
+        "pausing a worker already paused changes nothing",
+        "resuming a worker nobody paused is refused",
+    ),
+    baseline="""def apply(state, action):
+    \"\"\"Pause or resume the worker described by `state`.\"\"\"
+    if action == "pause":
+        return {"paused": True, "pauses": state["pauses"] + 1}
+    if action == "resume":
+        return {"paused": False, "pauses": state["pauses"]}
+    raise ValueError(action)""",
+    variant_one="""def apply(state, action):
+    \"\"\"Pause or resume the worker described by `state`.\"\"\"
+    if action == "pause":
+        if state["paused"]:
+            return {"paused": True, "pauses": state["pauses"]}
+        return {"paused": True, "pauses": state["pauses"] + 1}
+    if action == "resume":
+        if not state["paused"]:
+            raise RuntimeError("nothing to resume")
+        return {"paused": False, "pauses": state["pauses"]}
+    raise ValueError(action)""",
+    variant_two="""def apply(state, action):
+    \"\"\"Pause or resume the worker described by `state`.\"\"\"
+    paused = state["paused"]
+    pauses = state["pauses"]
+    if action == "pause":
+        return {"paused": True, "pauses": pauses if paused else pauses + 1}
+    if action == "resume":
+        if not paused:
+            raise RuntimeError("nothing to resume")
+        return {"paused": False, "pauses": pauses}
+    raise ValueError(action)""",
+    variant_three="""def apply(state, action):
+    \"\"\"Pause or resume the worker described by `state`.\"\"\"
+    if action == "pause":
+        if state["paused"]:
+            return {"paused": True, "pauses": state["pauses"]}
+        return {"paused": True, "pauses": state["pauses"] + 1}
+    if action == "resume":
+        return {"paused": False, "pauses": state["pauses"]}
+    raise ValueError(action)""",
+    variant_four="""def apply(state, action):
+    \"\"\"Pause or resume the worker described by `state`.\"\"\"
+    if action == "pause":
+        return {"paused": True, "pauses": state["pauses"] + 1}
+    if action == "resume":
+        if not state["paused"]:
+            raise RuntimeError("nothing to resume")
+        return {"paused": False, "pauses": state["pauses"]}
+    raise ValueError(action)""",
+    visible_test=_test_module(
+        "pause_resume",
+        "Published contract for pausing and resuming a worker.",
+        """
+import pytest
+
+from pause_resume import apply
+
+
+def test_a_running_worker_pauses() -> None:
+    assert apply({"paused": False, "pauses": 0}, "pause") == {
+        "paused": True,
+        "pauses": 1,
+    }
+
+
+def test_an_action_nobody_recognises_is_refused() -> None:
+    with pytest.raises(ValueError):
+        apply({"paused": False, "pauses": 0}, "shrug")
+""",
+    ),
+    hidden_test=_test_module(
+        "pause_resume",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from pause_resume import apply
+
+
+def test_a_running_worker_pauses() -> None:
+    assert apply({"paused": False, "pauses": 0}, "pause") == {
+        "paused": True,
+        "pauses": 1,
+    }
+
+
+def test_pausing_a_paused_worker_changes_nothing() -> None:
+    assert apply({"paused": True, "pauses": 1}, "pause") == {
+        "paused": True,
+        "pauses": 1,
+    }
+
+
+def test_resuming_a_worker_nobody_paused_is_refused() -> None:
+    with pytest.raises(RuntimeError):
+        apply({"paused": False, "pauses": 0}, "resume")
+""",
+    ),
+)
+
 D6_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G001,
     _G002,
@@ -7691,4 +8669,13 @@ D6_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G078,
     _G079,
     _G080,
+    _G081,
+    _G082,
+    _G083,
+    _G085,
+    _G086,
+    _G087,
+    _G088,
+    _G089,
+    _G090,
 )
