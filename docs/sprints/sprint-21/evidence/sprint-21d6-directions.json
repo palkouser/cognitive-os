@@ -1,0 +1,69 @@
+{
+ "certification_decisions_scored": 0,
+ "conformal_margins_read": 0,
+ "contracts_sha256": "6d1b1e6614ac52a2b2984aa354b452d6ed9a6aa1116fae5ba12d0736401f81ee",
+ "d5_direction_fit_sha256": "fa822052d8fea9148b78ba1f9d1e1198f36beaefbaadc16a136cd0d01e86eb2c",
+ "d5_store_opened_for_writing": false,
+ "directions": [
+  {
+   "byte_length_matches": true,
+   "d5_artifact_id": "fd67abfc-f79b-49ff-bb51-b1ccd406faf1",
+   "d5_published_model_hash": "5b15f4af06a2b08d0d8269b59f47127bf97d610a22c12c645f8fbde9fa0f47cd",
+   "d5_published_stored_bytes": 27099,
+   "encoder_version": "correction-ranking-v2",
+   "fitted_group_count": 80,
+   "fitted_pair_count": 320,
+   "largest_absolute_weight": "3.42547",
+   "median_absolute_weight": "0.207676",
+   "model_hash": "5b15f4af06a2b08d0d8269b59f47127bf97d610a22c12c645f8fbde9fa0f47cd",
+   "regularization": "1",
+   "rehashes_to_the_published_direction": true,
+   "resolved_content_address": "ea31fdeda8be69b2c0ae495e9d479cf5d77e2632789878bfcb49abb23ddab375",
+   "selectable": false,
+   "stored_bytes": 27099,
+   "volume_groups": 80,
+   "volume_rows": 320,
+   "weights": 390
+  },
+  {
+   "byte_length_matches": true,
+   "d5_artifact_id": "237a8bf5-bcc1-475d-a18c-08b171954083",
+   "d5_published_model_hash": "9fd297fb407015374485e8f7ef8fbb557e6f89f7ac3286e2572769fdab937d74",
+   "d5_published_stored_bytes": 27040,
+   "encoder_version": "correction-ranking-v2",
+   "fitted_group_count": 180,
+   "fitted_pair_count": 720,
+   "largest_absolute_weight": "6.35684",
+   "median_absolute_weight": "0.273668",
+   "model_hash": "9fd297fb407015374485e8f7ef8fbb557e6f89f7ac3286e2572769fdab937d74",
+   "regularization": "1",
+   "rehashes_to_the_published_direction": true,
+   "resolved_content_address": "48ee0fcbb98a6837832ce81c361b0d7a3cdd352e65598a9f11c3472793c341ea",
+   "selectable": true,
+   "stored_bytes": 27040,
+   "volume_groups": 180,
+   "volume_rows": 720,
+   "weights": 390
+  }
+ ],
+ "final_outcomes_inspected": false,
+ "fitted_here": false,
+ "fitting_rows_opened": 0,
+ "how_they_were_resolved": "by the content hash D5 published, out of D5's content-addressed artifact store on disk, read-only. D6 does not open D5's database, so the artifact id is carried as provenance and the lookup runs over the file names that are content addresses; each resolved file is checked to hash to its own name as well",
+ "hypothesis_class": "pairwise-contrastive-linear-v1",
+ "integrity_content_hash": "33923373d110e4c3fdfcd94ef88c4068b2a6cb1e2e06c9ee7e7ae7f2cf8e6517",
+ "items": [
+  "S21D6-032"
+ ],
+ "pre_registration_sha256": "e1e4e1d76e51bb53ea845e3a9b9e0e631903921e8b3887d289048ff7eccd6022",
+ "recorded_at": "2026-08-10T10:06:08Z",
+ "refitted": false,
+ "reported_but_not_selectable": [
+  320
+ ],
+ "schema_version": 1,
+ "selectable_cell": 720,
+ "sprint": "21D6",
+ "wave": "W2",
+ "why_no_fit_stage_exists": "D5's typed stop licenses one successor experiment: a different confidence construction over the same ranker. Refitting the direction would confound the one thing this sprint varies, so the stage that fitted in D5 resolves in D6 and the record says `fitted_here: false` where D5's said `fit_rule`"
+}

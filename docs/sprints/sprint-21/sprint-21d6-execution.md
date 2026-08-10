@@ -502,3 +502,193 @@ verified at zero entries lost; and everything must be linted with `--config ruff
 No coverage, no error rate and no bar. The conformal point is derived once, at S21D6-034, from the
 sealed conformal half, and nothing in this wave has read a certification margin. **Gate L2 stands
 exactly where D5 left it.**
+
+---
+
+# W2 — the bar, derived once, and what it admitted
+
+The wave the sprint exists for. Five items, five records, and the ending is typed:
+**`leak_budget_exceeded`**, §3.4 step 2. No candidate was selected, and the null is immutable.
+
+## S21D6-031: the invariance sample, measured on D6's own bodies
+
+The one §2.3 condition the W1 plan did not carry an item for. It is not inheritable: §2.3 reads
+first-action preservation against the decisions the selection is certified on, and those are the
+certification half's. D5's sample is a property of D5's bodies.
+
+The corpus already declared it — `INVARIANCE_TRANSFORM_SEED = 21068303`, forty cases over twenty
+of the hundred certification groups, sealed at S21D6-023 as
+`invariance_independent_decisions: 0`. This item executes that claim:
+
+| measured | result |
+|---|---|
+| candidate vectors compared | **160**, every one identical to its clean counterpart |
+| verifier label changes | **0** |
+| first-action changes | **0** |
+| semantic mutation control | 4 of 4 changed the canonical representation |
+| stops | none |
+
+So the forty transformed decisions repeat twenty clean ones and add none — the number the seal
+carried, now executed rather than asserted. The transformed candidates ran under plain pytest in a
+scratch directory; `entered_any_dataset` is false.
+
+## S21D6-032: where D5 fitted, D6 resolves
+
+The stage that fitted two directions in D5 loads them in D6. Both come out of D5's
+content-addressed artifact store **on disk, read-only** — D6 does not open D5's database, so the
+artifact id is carried as provenance and the lookup runs over the file names that *are* content
+addresses, each checked to hash to its own name.
+
+| direction | published hash | resolved | bytes |
+|---|---|---|---|
+| 720 rows, 180 groups, 720 pairs | `9fd297fb40701537…` | rehashes exactly | 27,040 = D5's record |
+| 320 rows, 80 groups, 320 pairs | `5b15f4af06a2b08d…` | rehashes exactly | 27,099 = D5's record |
+
+`fitted_here: false`, `fitting_rows_opened: 0`. This is the claim that separates D6 from every
+predecessor, and it fails loudly rather than falling back to a fit.
+
+## S21D6-033: the baseline is stronger here than it was in D5
+
+The deterministic ladder on the hundred certification decisions, no direction loaded. Five rungs
+declared, three eligible, and the two ineligible ones recorded with their reasons so the
+comparison cannot be read as narrowed to a rung the learner happens to beat.
+
+| rung | eligible | first choice |
+|---|---|---|
+| `lexical_similarity` | yes | **0.62 — the strongest** |
+| `fixed_input_order` | yes | 0.42 |
+| `deterministic_static_ordering` | yes | 0.16 |
+| `frozen_minilm_cosine` | no | the channel it orders by is not in the v2 representation |
+| `width_20_bounded_graph` | no | four candidates make a twenty-wide shortlist the whole pool |
+
+**D5's corpus put `fixed_input_order` on top at 0.42; D6's puts `lexical_similarity` on top at
+0.62.** The bar the learner has to clear is twenty points higher on this corpus than on the one
+the direction was fitted against, and it was measured before any margin was read.
+
+## S21D6-034: the bar, derived once
+
+The conformal half is D5's hundred spent calibration decisions, rebuilt from its released bytes
+and never re-executed; the certification half is D6's own four hundred outcomes. The
+`calibration_source_hash` binds **both halves by identity**, so a swapped certification half
+changes the derivation hash even if its aggregates happened to coincide.
+
+The reconstruction is checked before the bar is read off it:
+
+| direction | wrong answered in the conformal half | D5 published | rank at α = 0.20 | wrong margins left above the bar | threshold |
+|---|---|---|---|---|---|
+| 720 | **12** | 12 | 11 | 1 | `0.448554` |
+| 320 | **9** | 9 | 8 | 1 | `0.599892` |
+
+Both reproduce D5's published counts exactly. That check is not decoration: §3.2 computed the
+α floor from the 720 entry, so a different count would mean the α argument had been made about a
+different distribution than the one the bar is read off. The stage refuses rather than proceeding.
+
+Derivation hashes `6b03d7e4dc016284…` (720) and `77529624d03e0a8f…` (320).
+
+## S21D6-035: one condition failed, and it is the one the amendment introduced
+
+A separate process. It reloads both directions and both sealed derivations, re-scores, and passes
+each point back to `derive_conformal_point` as `previous`; a different bar would raise
+`ConformalPointError` rather than be written. **Both reproduced**, across three separate runs of
+this stage.
+
+The pre-registered cell, at 720 rows:
+
+| the amended §2.3 | required | measured | |
+|---|---|---|---|
+| independent clean decisions | ≥ 100 | **100** | met |
+| clean coverage | ≥ 0.40 | **0.40** | met, exactly at the floor |
+| projected changed final decisions | ≥ 20 | **39.0** | met |
+| first choice over admitted vs. baseline | strictly above | **0.85 vs 0.62** | met |
+| changed clean decisions | ≥ 1 | **26** | met |
+| first-action preservation | 100% | **100%** | met |
+| every cell and sweep point reported | — | 2 cells, **200 sweep points** | met |
+| maximum inference | ≤ 250 ms | **0.023 ms** | met |
+| **CP-95 upper bound among admitted** | **≤ 0.15** | **0.274745** | **failed** |
+
+Forty admitted of a hundred, six of them wrong. Eight conditions hold and the ninth — the one
+amendment 2 wrote into the contract — misses by a factor of 1.8.
+
+The reported cell, at 320 rows: coverage 0.16, 16 admitted, 2 wrong, CP-95 0.343825. It fails
+coverage as well as the ceiling, and it was never selectable.
+
+### The finding the record would have hidden
+
+§3.4's step 2 is worded as *"the bar held its leak guarantee and the admitted precision still
+missed."* The first draft of this stage wrote that sentence out as a constant. **It was never
+measured.** Fixed inside the wave: every cell now carries the realised leak — the share of that
+half's wrong answered decisions that cleared the bar, which is exactly what α bounds — and the
+ending reads it instead of asserting it.
+
+| direction | wrong answered on the certification half | cleared the bar | realised leak | α |
+|---|---|---|---|---|
+| 720 | 24 | 6 | **0.25** | 0.20 |
+| 320 | 30 | 2 | 0.067 | 0.20 |
+
+So on the selectable cell the bar missed **both** its leak budget and the ceiling. The typed
+ending is still step 2 — it is the nearest one §3.4 provides and no ending may be invented after
+the measurement — but the record says in as many words that step 2's premise did not hold here.
+
+### What the numbers say, read together
+
+Three independent readings point the same way, and §6 named the shape in advance:
+
+- the direction scores **0.76** first choice over all answered here, against **0.88** on D5's own
+  calibration set;
+- the strongest deterministic baseline is **0.62** here against **0.42** there;
+- coverage came out **0.40** against the design's expected **0.58**, and the realised leak
+  **0.25** against a 0.20 budget.
+
+That is the exchangeability risk §6 said the evidence could not retire, showing up as a
+measurement rather than as an argument. The two halves come from one authoring contract and one
+generator, which made exchangeability plausible; it did not make it true.
+
+**And the rule D6 replaced does not rescue it.** The zero-error prefix on this corpus admits
+**6 of 100** at 720 rows and 5 at 320 — coverage 0.06, against the 0.27 it reached on D5's own
+set. Split conformal at α = 0.20 admitted 40 where the prefix rule admitted 6. The successor
+construction worked; the corpus is harder than the one the direction was fitted on.
+
+## W2 evidence
+
+| record | item | integrity |
+|---|---|---|
+| `sprint-21d6-invariance-regression.json` | S21D6-031 | `58aecf706c3e5f3a…` |
+| `sprint-21d6-directions.json` | S21D6-032 | `33923373d110e4c3…` |
+| `sprint-21d6-baseline-ladder.json` | S21D6-033 | `9c87b2392445d165…` |
+| `sprint-21d6-conformal-point.json` | S21D6-034 | `5b6765455439bd62…` |
+| `sprint-21d6-learner-selection.json` | S21D6-035 | `198985816aae2eb3…` |
+
+## W2 findings
+
+**The typed ending asserted a guarantee nobody measured.** §3.4 step 2's wording was carried into
+the classifier as a constant, and the realised leak — the one quantity α actually bounds — was
+absent from the record. It is now measured on both cells, and on the selectable one it exceeded
+the budget, which is the finding the constant would have concealed.
+
+**§2.3's invariance condition had no item.** The W1 plan's condition list ran 5–9 and W2's ran
+12/14/17; the first-action condition belongs to neither and would have been evaluated against a
+predecessor's sample. S21D6-031 measures it on D6's own bodies.
+
+**The store guard and the conformal rebuild are imported, not copied.** W1's most serious defect
+was one forbidden-store list of three that stopped at `s21d4`. This wave adds no fourth copy:
+`_isolated_pair` and `_conformal_matrix` are imported from `reality_campaign_d6`, with the reason
+in a comment above the import.
+
+## W2 validation
+
+- `ruff check` and `ruff format --check` under `ruff.cognitive-os.toml`;
+- `tests/cognitive_os/learning` and `tests/cognitive_os/coding`: **1,897 passed**;
+- the conformal reconstruction check fired as a guard and passed on both directions: 12 and 9
+  wrong answered decisions, reproducing D5's published counts;
+- the single-derivation rule executed across a process restart, three times, both directions;
+- the measured store still holds **404 learned observations** — the count W1 closed on. W2 wrote
+  nothing to it, and nothing to any predecessor store.
+
+## What W2 has not done
+
+No artifact was bound, no component registered, promoted, shadowed, canaried or activated. No
+final, batch-B or canary body, outcome or manifest was opened — the eight items in
+`dependent_not_opened` are all still closed. Gate L2 conditions 12 and 17 now have their evidence;
+**14 and 16 close against the stop hash rather than a measurement**, exactly as D5's did.
+
+The selection is a null, and it is immutable.

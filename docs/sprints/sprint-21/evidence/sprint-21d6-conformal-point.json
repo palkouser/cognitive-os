@@ -1,0 +1,269 @@
+{
+ "alpha": "0.20",
+ "alpha_rechosen": false,
+ "amendment_2_sha256": "9ba7fc1f516c238d2545f258517fdf96a62bb096c48ce718e207571247dba593",
+ "certification_campaign_sha256": "4ffcfdebf9ff84443f3f44ba4f873de11c72b2f313fe16e53ce3003c176e8875",
+ "contracts_sha256": "6d1b1e6614ac52a2b2984aa354b452d6ed9a6aa1116fae5ba12d0736401f81ee",
+ "derivation_reading": "split conformal replaces the zero-error prefix: the bar is a quantile of the wrong decisions' margin distribution rather than the position of the single highest-scoring error, so coverage degrades smoothly with alpha instead of being hostage to one point; what it buys costs the zero — the record states an error budget and a bound, never a claimed zero rate. Alpha bounds the leak rate P(admitted | the decision is wrong), not the error rate among admitted decisions: the bar is a quantile of the margins of errors, so a fresh error clears it with probability at most alpha. The second quantity is the one §2.3 cares about, it is roughly the first times the error rate over the coverage, and it is measured on the certification half rather than guaranteed here — errors_admitted counts it and error_upper_bound_95 bounds it. Both readings hold only if the two halves are exchangeable, which is a claim about how the corpus was authored and not something this module can check",
+ "derivation_rule": "score every independent clean calibration decision with the sealed pairwise-contrastive margin; split the calibration groups into a conformal half and a certification half with no shared fitted vector; take the margins of the answered decisions the ranker got wrong in the conformal half, sort them ascending, and set the threshold to the ceil((1-alpha)*(m+1))-th smallest of the m wrong margins; admit the certification decisions scoring strictly above it; report coverage over independent certification decisions, the errors among admitted decisions, and the Clopper-Pearson one-sided 95% upper bound on the true error rate among admitted decisions",
+ "derivations": [
+  {
+   "certification_answered_decisions": 100,
+   "conformal_half": {
+    "answered_decisions": 100,
+    "d5_published_wrong_answered": 9,
+    "quantile_rank": 8,
+    "reproduces_d5_s_published_count": true,
+    "what_this_check_is_for": "§3.2 computed the alpha floor from D5's published wrong-decision count. If the rebuilt half yielded another count, the alpha argument would have been made about a different distribution than the one the bar is read off",
+    "wrong_answered_decisions": 9,
+    "wrong_margins": [
+     "0.053322",
+     "0.081291",
+     "0.087571",
+     "0.10345",
+     "0.199638",
+     "0.260322",
+     "0.466184",
+     "0.599892",
+     "0.651587"
+    ],
+    "wrong_margins_left_above_the_bar": 1
+   },
+   "maximum_inference_ms_per_candidate": "0.0255",
+   "model_hash": "5b15f4af06a2b08d0d8269b59f47127bf97d610a22c12c645f8fbde9fa0f47cd",
+   "point": {
+    "admitted_decisions": 16,
+    "alpha": "0.20",
+    "calibration_source_hash": "1e64e404c8ebfaf9735c928625fc056e6b63e67952f154879dce91cb610fdad2",
+    "canonical": {
+     "admitted_decisions": 16,
+     "alpha": "0.20",
+     "calibration_source_hash": "1e64e404c8ebfaf9735c928625fc056e6b63e67952f154879dce91cb610fdad2",
+     "certification_census": {
+      "content_hash": "7ac5cc937f688cd7dba7c56578a917237a60c75189a622556f4ee25f37e334ec",
+      "independence_rule": "two counted decisions are the same decision when their fitted feature vectors are equal; independence is equality of the fitted vector, not of the task, the seed or the transform",
+      "independent_decisions": 100,
+      "nominal_decisions": 100,
+      "rate_denominator": "independent_decisions",
+      "replicated_decisions": 0,
+      "revision": 4
+     },
+     "conformal_census": {
+      "content_hash": "7ac5cc937f688cd7dba7c56578a917237a60c75189a622556f4ee25f37e334ec",
+      "independence_rule": "two counted decisions are the same decision when their fitted feature vectors are equal; independence is equality of the fitted vector, not of the task, the seed or the transform",
+      "independent_decisions": 100,
+      "nominal_decisions": 100,
+      "rate_denominator": "independent_decisions",
+      "replicated_decisions": 0,
+      "revision": 4
+     },
+     "content_hash": "c246168169772ff20ebdfd2ebb37888f1cacecd5a4b7328bb670b79f29af1ffd",
+     "coverage": "0.16",
+     "derivation_hash": "77529624d03e0a8f07525a18523734ea305d26792f1724d85c97b0d2a3244a84",
+     "derivation_reading": "split conformal replaces the zero-error prefix: the bar is a quantile of the wrong decisions' margin distribution rather than the position of the single highest-scoring error, so coverage degrades smoothly with alpha instead of being hostage to one point; what it buys costs the zero — the record states an error budget and a bound, never a claimed zero rate. Alpha bounds the leak rate P(admitted | the decision is wrong), not the error rate among admitted decisions: the bar is a quantile of the margins of errors, so a fresh error clears it with probability at most alpha. The second quantity is the one §2.3 cares about, it is roughly the first times the error rate over the coverage, and it is measured on the certification half rather than guaranteed here — errors_admitted counts it and error_upper_bound_95 bounds it. Both readings hold only if the two halves are exchangeable, which is a claim about how the corpus was authored and not something this module can check",
+     "derivation_rule": "score every independent clean calibration decision with the sealed pairwise-contrastive margin; split the calibration groups into a conformal half and a certification half with no shared fitted vector; take the margins of the answered decisions the ranker got wrong in the conformal half, sort them ascending, and set the threshold to the ceil((1-alpha)*(m+1))-th smallest of the m wrong margins; admit the certification decisions scoring strictly above it; report coverage over independent certification decisions, the errors among admitted decisions, and the Clopper-Pearson one-sided 95% upper bound on the true error rate among admitted decisions",
+     "derived_at": "2026-08-10T10:06:36.141842Z",
+     "error_upper_bound_95": "0.343825",
+     "errors_admitted": 2,
+     "observed_error_rate": "0.125",
+     "preregistration_hash": "e1e4e1d76e51bb53ea845e3a9b9e0e631903921e8b3887d289048ff7eccd6022",
+     "quantile_exists": true,
+     "quantile_rank": 8,
+     "rate_denominator": "independent_decisions",
+     "revision": 5,
+     "split": "calibration",
+     "threshold": "0.599892",
+     "wrong_decisions_in_conformal_split": 9
+    },
+    "certification_census": {
+     "independence_rule": "two counted decisions are the same decision when their fitted feature vectors are equal; independence is equality of the fitted vector, not of the task, the seed or the transform",
+     "independent_decisions": 100,
+     "nominal_decisions": 100,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 0,
+     "revision": 4
+    },
+    "conformal_census": {
+     "independence_rule": "two counted decisions are the same decision when their fitted feature vectors are equal; independence is equality of the fitted vector, not of the task, the seed or the transform",
+     "independent_decisions": 100,
+     "nominal_decisions": 100,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 0,
+     "revision": 4
+    },
+    "coverage": "0.16",
+    "derivation_hash": "77529624d03e0a8f07525a18523734ea305d26792f1724d85c97b0d2a3244a84",
+    "derived_at": "2026-08-10T10:06:36.141842+00:00",
+    "error_upper_bound_95": "0.343825",
+    "errors_admitted": 2,
+    "observed_error_rate": "0.125",
+    "preregistration_hash": "e1e4e1d76e51bb53ea845e3a9b9e0e631903921e8b3887d289048ff7eccd6022",
+    "quantile_exists": true,
+    "quantile_rank": 8,
+    "split": "calibration",
+    "threshold": "0.599892",
+    "wrong_decisions_in_conformal_split": 9
+   },
+   "selectable": false,
+   "volume_rows": 320
+  },
+  {
+   "certification_answered_decisions": 100,
+   "conformal_half": {
+    "answered_decisions": 100,
+    "d5_published_wrong_answered": 12,
+    "quantile_rank": 11,
+    "reproduces_d5_s_published_count": true,
+    "what_this_check_is_for": "§3.2 computed the alpha floor from D5's published wrong-decision count. If the rebuilt half yielded another count, the alpha argument would have been made about a different distribution than the one the bar is read off",
+    "wrong_answered_decisions": 12,
+    "wrong_margins": [
+     "0.007397",
+     "0.015222",
+     "0.024925",
+     "0.048536",
+     "0.063795",
+     "0.087326",
+     "0.19371",
+     "0.197887",
+     "0.239599",
+     "0.367557",
+     "0.448554",
+     "1.071794"
+    ],
+    "wrong_margins_left_above_the_bar": 1
+   },
+   "maximum_inference_ms_per_candidate": "0.0285",
+   "model_hash": "9fd297fb407015374485e8f7ef8fbb557e6f89f7ac3286e2572769fdab937d74",
+   "point": {
+    "admitted_decisions": 40,
+    "alpha": "0.20",
+    "calibration_source_hash": "1e64e404c8ebfaf9735c928625fc056e6b63e67952f154879dce91cb610fdad2",
+    "canonical": {
+     "admitted_decisions": 40,
+     "alpha": "0.20",
+     "calibration_source_hash": "1e64e404c8ebfaf9735c928625fc056e6b63e67952f154879dce91cb610fdad2",
+     "certification_census": {
+      "content_hash": "7ac5cc937f688cd7dba7c56578a917237a60c75189a622556f4ee25f37e334ec",
+      "independence_rule": "two counted decisions are the same decision when their fitted feature vectors are equal; independence is equality of the fitted vector, not of the task, the seed or the transform",
+      "independent_decisions": 100,
+      "nominal_decisions": 100,
+      "rate_denominator": "independent_decisions",
+      "replicated_decisions": 0,
+      "revision": 4
+     },
+     "conformal_census": {
+      "content_hash": "7ac5cc937f688cd7dba7c56578a917237a60c75189a622556f4ee25f37e334ec",
+      "independence_rule": "two counted decisions are the same decision when their fitted feature vectors are equal; independence is equality of the fitted vector, not of the task, the seed or the transform",
+      "independent_decisions": 100,
+      "nominal_decisions": 100,
+      "rate_denominator": "independent_decisions",
+      "replicated_decisions": 0,
+      "revision": 4
+     },
+     "content_hash": "00ee57ed14acb9f8b40966faeacf9dedec8cc1b9f17e64fe182501ac491fd2a1",
+     "coverage": "0.4",
+     "derivation_hash": "6b03d7e4dc01628488349cab932c7deae870386306cfb503d7da7b57965e9c1a",
+     "derivation_reading": "split conformal replaces the zero-error prefix: the bar is a quantile of the wrong decisions' margin distribution rather than the position of the single highest-scoring error, so coverage degrades smoothly with alpha instead of being hostage to one point; what it buys costs the zero — the record states an error budget and a bound, never a claimed zero rate. Alpha bounds the leak rate P(admitted | the decision is wrong), not the error rate among admitted decisions: the bar is a quantile of the margins of errors, so a fresh error clears it with probability at most alpha. The second quantity is the one §2.3 cares about, it is roughly the first times the error rate over the coverage, and it is measured on the certification half rather than guaranteed here — errors_admitted counts it and error_upper_bound_95 bounds it. Both readings hold only if the two halves are exchangeable, which is a claim about how the corpus was authored and not something this module can check",
+     "derivation_rule": "score every independent clean calibration decision with the sealed pairwise-contrastive margin; split the calibration groups into a conformal half and a certification half with no shared fitted vector; take the margins of the answered decisions the ranker got wrong in the conformal half, sort them ascending, and set the threshold to the ceil((1-alpha)*(m+1))-th smallest of the m wrong margins; admit the certification decisions scoring strictly above it; report coverage over independent certification decisions, the errors among admitted decisions, and the Clopper-Pearson one-sided 95% upper bound on the true error rate among admitted decisions",
+     "derived_at": "2026-08-10T10:06:36.160709Z",
+     "error_upper_bound_95": "0.274745",
+     "errors_admitted": 6,
+     "observed_error_rate": "0.15",
+     "preregistration_hash": "e1e4e1d76e51bb53ea845e3a9b9e0e631903921e8b3887d289048ff7eccd6022",
+     "quantile_exists": true,
+     "quantile_rank": 11,
+     "rate_denominator": "independent_decisions",
+     "revision": 5,
+     "split": "calibration",
+     "threshold": "0.448554",
+     "wrong_decisions_in_conformal_split": 12
+    },
+    "certification_census": {
+     "independence_rule": "two counted decisions are the same decision when their fitted feature vectors are equal; independence is equality of the fitted vector, not of the task, the seed or the transform",
+     "independent_decisions": 100,
+     "nominal_decisions": 100,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 0,
+     "revision": 4
+    },
+    "conformal_census": {
+     "independence_rule": "two counted decisions are the same decision when their fitted feature vectors are equal; independence is equality of the fitted vector, not of the task, the seed or the transform",
+     "independent_decisions": 100,
+     "nominal_decisions": 100,
+     "rate_denominator": "independent_decisions",
+     "replicated_decisions": 0,
+     "revision": 4
+    },
+    "coverage": "0.4",
+    "derivation_hash": "6b03d7e4dc01628488349cab932c7deae870386306cfb503d7da7b57965e9c1a",
+    "derived_at": "2026-08-10T10:06:36.160709+00:00",
+    "error_upper_bound_95": "0.274745",
+    "errors_admitted": 6,
+    "observed_error_rate": "0.15",
+    "preregistration_hash": "e1e4e1d76e51bb53ea845e3a9b9e0e631903921e8b3887d289048ff7eccd6022",
+    "quantile_exists": true,
+    "quantile_rank": 11,
+    "split": "calibration",
+    "threshold": "0.448554",
+    "wrong_decisions_in_conformal_split": 12
+   },
+   "selectable": true,
+   "volume_rows": 720
+  }
+ ],
+ "directions_sha256": "5ce90a641b205a491e07a3e40a9f2c197671f5adb23c329efcdaf56f86b1e4f4",
+ "final_outcomes_inspected": false,
+ "halves": {
+  "calibration_source_hash": "1e64e404c8ebfaf9735c928625fc056e6b63e67952f154879dce91cb610fdad2",
+  "certification": {
+   "groups": 100,
+   "independent_decisions": 100,
+   "matrix_hash": "747eb9664bbcfd3b0abb0859b74e58ec7fb46b9153bab904094b91cded3dcefc",
+   "role": "d6's own, freshly authored and executed in W1",
+   "rows": 400
+  },
+  "conformal": {
+   "chronology_is_inherited_not_recomputed": {
+    "d5_certified": true,
+    "reading": "the chronology scan's verdict over this half is not independent evidence; the claim it would test was certified in the bound D5 record above",
+    "why": "D5's per-row outcome times live in D5's database, which D6 does not open. They reach no scan but the chronology one, so both timestamps here are D5's seal time"
+   },
+   "d5_published_matrix_hash": "106061126df8326128a5fea97b3690f5f02465c16805e6742c09cd5e3e7c7ca4",
+   "groups": 100,
+   "identical_to_the_published_matrix": true,
+   "matrix_hash": "106061126df8326128a5fea97b3690f5f02465c16805e6742c09cd5e3e7c7ca4",
+   "re_executed": false,
+   "rebuilt_from": {
+    "calibration_campaign_sha256": "d50add4a1188f82db7056f4db2ff89a744019a8576ac0fd105db53697bf90cfe",
+    "d5_snapshots_sha256": "3c48eddfa11c3ada6e7578aeafedcd22e8ac5b07a90e348f730a5b6bb872bae7",
+    "feature_seal_hash": "211de7dc53b1fd70179729d0adfb5a16f1f114092e145a7ecccda332ca43e0aa",
+    "labels": "sprint-21d5-calibration-campaign.json",
+    "vectors": "D5's sealed calibration feature record set, read-only from its store"
+   },
+   "role": "d5 calibration, carried into the bar-setting role",
+   "rows": 400,
+   "what_the_hash_proves": "canonical_line serialises the scaled values, the embedding and the label and nothing else, so an equal hash means every vector and every label came back intact"
+  },
+  "share_no_fitted_vector": true,
+  "share_no_group": true,
+  "what_the_source_hash_binds": "both halves by identity: sha256 over the conformal and certification matrix hashes. The bar's value is a function of the conformal half alone, but the derivation this hash seals is a measurement over the pair"
+ },
+ "integrity_content_hash": "5b6765455439bd628b9b91f8912d5112af4203bbdbf90cbab9838ec194b1f176",
+ "items": [
+  "S21D6-034"
+ ],
+ "margin_floor_at_measurement": "0",
+ "pre_registration_sha256": "e1e4e1d76e51bb53ea845e3a9b9e0e631903921e8b3887d289048ff7eccd6022",
+ "recorded_at": "2026-08-10T10:06:36Z",
+ "schema_version": 1,
+ "single_derivation": {
+  "derived_here": 2,
+  "enforced_across_restart_by": "S21D6-035, a separate process, which reloads these derivations and passes each back to derive_conformal_point as `previous`; a different bar raises ConformalPointError there rather than being written here",
+  "one_per_direction": true,
+  "why_two_derivations_are_not_two_bars": "the rule is one bar per (direction, calibration source) pair. Two directions are two rankers, so each derives its own bar once; neither is a second attempt at the other's, and only the 720 one is selectable"
+ },
+ "snapshots_sha256": "8ec9e614013771ef4560baca9837b7831eb735d7a0d2af9af57884f02cddba5b",
+ "split": "calibration",
+ "sprint": "21D6",
+ "wave": "W2"
+}
