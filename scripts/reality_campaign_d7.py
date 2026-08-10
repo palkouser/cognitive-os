@@ -1887,7 +1887,7 @@ async def _stage_snapshot(output: Path) -> int:
                 "rebuilt_identically": all(bool(item["rebuilt_identically"]) for item in reports),
                 "conformal_rows": report.fit_rows,
                 "certification_rows": report.calibration_rows,
-                "conformal_matrix_is_d5s_published_one": conformal_provenance[
+                "conformal_matrix_is_d6s_published_one": conformal_provenance[
                     "identical_to_the_published_matrix"
                 ],
                 "fitted_dimensions": channels,

@@ -1,0 +1,596 @@
+{
+ "artifact": {
+  "artifact_bytes": 3903,
+  "artifact_hash": "07c672dbddcc0fad49456df77fc46faa73dbd96833fd27c9fb907d9a7f85039f",
+  "artifact_id": "b0b8ab32-be60-4a3a-9426-c2a0a760cc86",
+  "backup_and_restore": {
+   "backup_path_sha256": "07c672dbddcc0fad49456df77fc46faa73dbd96833fd27c9fb907d9a7f85039f",
+   "event_store_backup_and_restore_belongs_to": "S21D6-082, the isolated recovery item",
+   "restored_bytes_are_the_stored_bytes": true,
+   "restored_payload_reproduced": true,
+   "restored_ranking_reproduced": true,
+   "scope": "the artifact this slice produced, not the event store"
+  },
+  "declared_limitations": [
+   "fitted on one group's four candidates, which is a wiring proof and not a model",
+   "the direction is fitted on the same group it then ranks",
+   "the conformal and certification halves are two decisions each, far below any regime in which a conformal bar means what it says"
+  ],
+  "feature_channels": 7,
+  "hypothesis_class": "containment-contrastive-linear-v1",
+  "margin_floor": "2.021517",
+  "operating_point_bound_is": "the pre-registered-alpha point",
+  "operating_point_hash": "df4dbc0319f973f260745b8aefb919704640ef52616d44f6c0307b8a43feb243",
+  "refusals": [
+   {
+    "action": "reload an artifact the capability does not name",
+    "error": "CorrectionArtifactError: artifact bytes hash to 773692786a3f58e6e7e6ee241ef4394d9345787185a9e63deea5e104f3d0819b, not the 07c672dbddcc0fad49456df77fc46faa73dbd96833fd27c9fb907d9a7f85039f this capability authorises",
+    "refused": "true"
+   },
+   {
+    "action": "reload truncated artifact bytes the capability does name",
+    "error": "CorrectionArtifactError: artifact bytes are not JSON",
+    "refused": "true"
+   },
+   {
+    "action": "reload oversized artifact bytes the capability does name",
+    "error": "CorrectionArtifactError: artifact is 67108880 bytes, above the 67108864-byte bound",
+    "refused": "true"
+   }
+  ],
+  "reload_reproduced_the_payload": true,
+  "reload_reproduced_the_ranking": true,
+  "schema_name": "correction-ranking-artifact-v3",
+  "store_returned_the_bytes_written": true,
+  "weights": 7
+ },
+ "campaign_id": "a9762928-c649-515a-8d20-cd0608207cb1",
+ "capabilities": {
+  "canary_capability_present": false,
+  "final_capability_present": false,
+  "refusals": [
+   {
+    "action": "derive a conformal bar from the final A split",
+    "error": "ConformalPointError: the conformal bar is derived from the calibration split only; 'final_a' is final, promotion or metamorphic evidence",
+    "refused": "true"
+   },
+   {
+    "action": "derive a conformal bar from the final B split",
+    "error": "ConformalPointError: the conformal bar is derived from the calibration split only; 'final_b' is final, promotion or metamorphic evidence",
+    "refused": "true"
+   },
+   {
+    "action": "derive a conformal bar from the retrieval split",
+    "error": "ConformalPointError: the conformal bar is derived from the calibration split only; 'retrieval' is final, promotion or metamorphic evidence",
+    "refused": "true"
+   },
+   {
+    "action": "derive a second bar at another alpha from the same calibration source",
+    "error": "ConformalPointError: a second, different conformal bar was derived from the same calibration split; the sealed derivation is df4dbc0319f973f260745b8aefb919704640ef52616d44f6c0307b8a43feb243, this one is 392a57b13dfda5482a5954b581238bdebc0393fcea66220971710f6b22c2eb0e",
+    "refused": "true"
+   },
+   {
+    "action": "place the bar with the half that is measured against it",
+    "error": "ConformalPointError: 4 fitted vectors appear in both halves; a decision that helped place the threshold cannot also be certified against it",
+    "refused": "true"
+   },
+   {
+    "action": "certify a bar against an empty certification half",
+    "error": "ConformalPointError: a bar certified against zero independent decisions certifies nothing; the certification half must not be empty",
+    "refused": "true"
+   },
+   {
+    "action": "bound an error rate over zero admitted decisions",
+    "error": "ValueError: a bound over zero admitted decisions bounds nothing",
+    "refused": "true"
+   },
+   {
+    "action": "open the direct evaluation boundary for a final read on an approved component",
+    "error": "CorrectionArtifactError: the direct evaluation boundary is closed in active: an approved component is read through the runtime resolver",
+    "refused": "true"
+   },
+   {
+    "action": "seal the fixture's features again with an outcome already in hand",
+    "error": "ValueError: v2 feature records must be sealed strictly before every outcome",
+    "refused": "true"
+   }
+  ],
+  "retrieval_capability_present": false
+ },
+ "code_revision": "a05d024aa72f81f70c22e8090c78e5b394092f173a7d536cdf5fc7fffd4fc818",
+ "dataset": {
+  "dataset_id": "d8c1dae4-7b41-59e2-9f49-1adb2f6aec09",
+  "every_scan_ran": 11,
+  "example_manifest_hash": "f31ea5aba00bb088dbc3e8a6ea659a69783a34719b74149e4ad5777d9cad32ab",
+  "fitted_columns": 390,
+  "fitted_matrix_hash": "7c3719d96237d8e2459efa25c985326f1ab5a847eb730c1fa00386eb725206ec",
+  "fitted_rows": 4,
+  "identity_revision": 3,
+  "latest_seal_selection": false,
+  "observation_count": 4,
+  "provenance_counts": {
+   "self_play": 4
+  },
+  "real_governed_runs": 0,
+  "rebuilt_identically": true,
+  "scan_report_hash": "4d3dc3f00a138bd2febd98bd7811f39c4f5dccf17a266b6460e1664f6b5934f4",
+  "scans": [
+   {
+    "detail": "390 columns, all on the correction-ranking-v2 allowlist",
+    "name": "no_forbidden_field_reaches_the_matrix",
+    "passed": true
+   },
+   {
+    "detail": "all 390 fitted dimensions are finite and in range",
+    "name": "every_fitted_dimension_is_finite_and_in_range",
+    "passed": true
+   },
+   {
+    "detail": "all 390 fitted dimensions are finite and in range",
+    "name": "every_fitted_dimension_is_finite_and_in_range",
+    "passed": true
+   },
+   {
+    "detail": "all 8 rows use correction-ranking-v2",
+    "name": "every_row_has_one_encoder_identity",
+    "passed": true
+   },
+   {
+    "detail": "8 rows were sealed before the verifier ran",
+    "name": "every_feature_record_precedes_its_outcome",
+    "passed": true
+   },
+   {
+    "detail": "4 row(s) are duplicated or do not reproduce their seal",
+    "name": "every_row_resolves_to_one_pre_outcome_source_chain",
+    "passed": false
+   },
+   {
+    "detail": "1 group(s) appear in both splits",
+    "name": "no_group_crosses_the_split",
+    "passed": false
+   },
+   {
+    "detail": "4 distinct feature signatures, none labelled both ways",
+    "name": "no_identical_row_carries_two_labels",
+    "passed": true
+   },
+   {
+    "detail": "4 pair(s) at or above 0.999",
+    "name": "no_near_duplicate_crosses_the_split",
+    "passed": false
+   },
+   {
+    "detail": "128 column(s) separate the labels perfectly",
+    "name": "no_column_derives_the_label",
+    "passed": false
+   },
+   {
+    "detail": "128 column(s) separate the labels perfectly",
+    "name": "no_column_derives_the_label",
+    "passed": false
+   }
+  ],
+  "scans_that_did_not_pass": [
+   "every_row_resolves_to_one_pre_outcome_source_chain",
+   "no_group_crosses_the_split",
+   "no_near_duplicate_crosses_the_split",
+   "no_column_derives_the_label",
+   "no_column_derives_the_label"
+  ],
+  "selection_partition_digest": "53a861a153643f8f3e32be5147dc0322d7e8f7ac52305b3d80638f3ee82fb2de",
+  "split_manifest_hash": "96dd8887e00dc4ff66b61bcd618d1270728eea5d6b96bc3a3b7a6c36bbede5d2",
+  "store_wide_selection": false,
+  "usage_rights_verified": true,
+  "why_those_scans_cannot_pass_here": {
+   "cause": "the slice has one matrix, so it is scanned against itself. Every cross-split scan is therefore comparing a row with a copy of itself, and every one of them is answering a question the slice is not in a position to ask",
+   "identical_to_the_d5_slice": true,
+   "where_it_is_asked_for_real": "S21D7-030 scans D5's conformal matrix against D6's certification matrix, which are disjoint corpora with disjoint authorship. A red row there is a finding; here it is arithmetic"
+  }
+ },
+ "embedding_model_id": "sentence-transformers/all-MiniLM-L6-v2",
+ "embedding_tree_digest": "98eb3ae4df320d0b721902aabef795cafb36c3a516f036e92e2b046f55ef4229",
+ "execution": {
+  "accepted_candidates": 2,
+  "attempted": 4,
+  "baseline_is_expected_to_fail_hidden": true,
+  "baseline_passed_hidden_verification": false,
+  "baselines_executed": 1,
+  "candidates_executed": 4,
+  "code_revision": "a05d024aa72f81f70c22e8090c78e5b394092f173a7d536cdf5fc7fffd4fc818",
+  "containers_started": 5,
+  "encoder_version": "correction-ranking-v2",
+  "every_feature_record_precedes_its_outcome": true,
+  "feature_seal_artifact_id": "f50ee982-33e3-4507-98ad-17e6b10d0ccc",
+  "feature_seal_hash": "2519429e89d4e71638bec17a98d9815e03ecc4d5dd17a880119a61a1172af009",
+  "feature_seal_reserialises_identically": true,
+  "features_sealed_at": "2026-08-10T15:34:19.311101+00:00",
+  "first_outcome_at": "2026-08-10T15:34:20.827694+00:00",
+  "intentionally_unattempted": 0,
+  "mode": "label_all",
+  "normalizer_version": "cogos-python-alpha-normalizer-v2",
+  "observations_carry_the_sealing_partition": true,
+  "observations_projected": 4,
+  "receipt_manifest_hash": "43c199a7f31b17db0d57c0e86839c736120456426f2a7f8963407dbd642b45c1",
+  "runs_replayed_from_the_receipt": 0,
+  "sandbox_image": "cognitive-os-sandbox:sprint-5",
+  "sandboxed": true,
+  "stop_reason": "all_candidates_labelled",
+  "task_run_ids": [
+   "3b7f05ba-7e07-4777-ae1f-9af59208758f",
+   "3b888984-4ef4-4719-8c0f-0c67d626c16c",
+   "b2c52697-b722-4650-a853-dcdf5bcdc37b",
+   "d3abd6e6-a580-420b-9b42-d93f835fb8bd",
+   "e9459a4d-473b-47a6-83db-1e2f7f4d47e1"
+  ],
+  "verifier_decided_every_label": true
+ },
+ "final_outcomes_inspected": false,
+ "fixture_manifest_hash": "33aa30ecc0a9eb8de902b68b3f37664f755d884c0c8b295e7782847d10f8c0ec",
+ "integrity_content_hash": "669386692731f73ab276d50359d50aa46e8c42a46cd888fb18c9fabbd94b805e",
+ "items": [
+  "S21D7-024"
+ ],
+ "package": {
+  "base_repository_manifest_hash": "97dd6c275dabe93d5e57db1c3ba71234d500d67ed9b2542f2ec29d282661c1f4",
+  "bundle_artifact_id": "d8efb14f-c2da-418b-a446-ecbacf616c25",
+  "bundle_hash": "04aac7d44691b2bfc067d88265a5750ca88df066664e4cb70ad1f85927422dbf",
+  "candidate_slots": 4,
+  "control_material_manifest_hash": "297ddbf802d0deece59b82dde9e171e803b6412dd0f21ce60daf9a80868865d8",
+  "hidden_suite_is_not_the_visible_suite": true,
+  "hidden_verifier_bundle_hash": "04aac7d44691b2bfc067d88265a5750ca88df066664e4cb70ad1f85927422dbf",
+  "licence_identifier": "Apache-2.0",
+  "rights_evidence_hash": "d150beadc5024dcd4d7524a62d718d3b3c6ef22a8781e0c3a56b285dc9bddf29",
+  "rights_verified": true,
+  "source_identity": "cognitive-os:generated:d5_fixture.render_duration",
+  "task_id": "212da7f1-0693-56f9-923c-322b136c12ec",
+  "task_manifest_hash": "d8b03719be656ef547f988fed90f29017425265d80aa67f043c26797184c5492",
+  "visible_files": 3
+ },
+ "pre_registration_sha256": "984a21f012cddb1e2a2b5608e36debbc7769351c5363be940e9fab7e19505496",
+ "ranking": {
+  "abstained": true,
+  "admission": {
+   "at_the_pre_registered_alpha": {
+    "admitted_decisions": 0,
+    "alpha": "0.20",
+    "certification_independent_decisions": 2,
+    "conformal_independent_decisions": 2,
+    "coverage": null,
+    "derivation_hash": "df4dbc0319f973f260745b8aefb919704640ef52616d44f6c0307b8a43feb243",
+    "error_upper_bound_95": null,
+    "errors_admitted": 0,
+    "observed_error_rate": null,
+    "quantile_exists": false,
+    "quantile_rank": 1,
+    "split": "calibration",
+    "threshold": null,
+    "wrong_decisions_in_conformal_split": 0
+   },
+   "certification_half": 2,
+   "conformal_half": 2,
+   "derivation_reading": "split conformal replaces the zero-error prefix: the bar is a quantile of the wrong decisions' margin distribution rather than the position of the single highest-scoring error, so coverage degrades smoothly with alpha instead of being hostage to one point; what it buys costs the zero — the record states an error budget and a bound, never a claimed zero rate. Alpha bounds the leak rate P(admitted | the decision is wrong), not the error rate among admitted decisions: the bar is a quantile of the margins of errors, so a fresh error clears it with probability at most alpha. The second quantity is the one §2.3 cares about, it is roughly the first times the error rate over the coverage, and it is measured on the certification half rather than guaranteed here — errors_admitted counts it and error_upper_bound_95 bounds it. Both readings hold only if the two halves are exchangeable, which is a claim about how the corpus was authored and not something this module can check",
+   "derivation_rule": "score every independent clean calibration decision with the sealed pairwise-contrastive margin; split the calibration groups into a conformal half and a certification half with no shared fitted vector; take the margins of the answered decisions the ranker got wrong in the conformal half, sort them ascending, and set the threshold to the ceil((1-alpha)*(m+1))-th smallest of the m wrong margins; admit the certification decisions scoring strictly above it; report coverage over independent certification decisions, the errors among admitted decisions, and the Clopper-Pearson one-sided 95% upper bound on the true error rate among admitted decisions",
+   "fixture_bar_for_the_artifact_binding": {
+    "alpha": null,
+    "why_none": "the conformal half produced 0 wrong margins, so no alpha yields a quantile: with no wrong decision there is no wrong-margin distribution to take one from"
+   },
+   "folds": [
+    {
+     "first_choice_accepted": true,
+     "fitted": true,
+     "held_out": "7852fe5c-2a34-5880-94a5-0e7fc1ce2ec9",
+     "margin": "0.62525"
+    },
+    {
+     "first_choice_accepted": true,
+     "fitted": true,
+     "held_out": "c2dd604c-e596-5ff1-8dbb-f5a112c3a19e",
+     "margin": "1.021517"
+    },
+    {
+     "first_choice_accepted": true,
+     "fitted": true,
+     "held_out": "e807bfce-f623-5a7a-ba22-7331cc3430de",
+     "margin": "0.539062"
+    },
+    {
+     "first_choice_accepted": true,
+     "fitted": true,
+     "held_out": "eee26c61-8225-5972-b246-485a4afa8bd4",
+     "margin": "0.709189"
+    }
+   ],
+   "halves_share_no_fitted_vector": true,
+   "is_the_d6_operating_point": false,
+   "margin_floor_admits": "nothing; no quantile exists and a component without a bar must abstain",
+   "margin_floor_the_ranking_ran_at": "2.021517",
+   "preregistration_sha256": "984a21f012cddb1e2a2b5608e36debbc7769351c5363be940e9fab7e19505496",
+   "reproduced_after_a_second_derivation": true,
+   "rule": "split conformal, S21D6's one change to the map from a ranked group to a decision",
+   "scored_decisions": [
+    {
+     "answered": true,
+     "correct": true,
+     "decision_id": "7852fe5c-2a34-5880-94a5-0e7fc1ce2ec9",
+     "score": "0.62525"
+    },
+    {
+     "answered": true,
+     "correct": true,
+     "decision_id": "c2dd604c-e596-5ff1-8dbb-f5a112c3a19e",
+     "score": "1.021517"
+    },
+    {
+     "answered": true,
+     "correct": true,
+     "decision_id": "e807bfce-f623-5a7a-ba22-7331cc3430de",
+     "score": "0.539062"
+    },
+    {
+     "answered": true,
+     "correct": true,
+     "decision_id": "eee26c61-8225-5972-b246-485a4afa8bd4",
+     "score": "0.709189"
+    }
+   ],
+   "split_rule": "alternating fold positions, stated before the margins were read; the conformal half places the bar and the certification half is measured against it",
+   "why": "D6's bar is derived once, at S21D7-034, from the sealed conformal half of 400 outcomes. This one is the fixture's, and it exists to show that admission runs at a derived bar rather than at a constant somebody typed",
+   "why_the_pre_registered_alpha_cannot_produce_a_quantile_here": {
+    "arithmetic": "the conformal half holds 2 decisions, so at most that many wrong margins; it held 0. The finite-sample rank ceil((1-0.20)*(m+1)) is 1, which exceeds them, so the quantile does not exist",
+    "this_is_the_rule_working": "the module records the rank it computed precisely so a reader can see why no bar exists rather than only that none does. A four-candidate group cannot support a 0.20 bar at any m, which is a fact about the fixture and not a finding about the corpus",
+    "what_the_predecessor_did_with_the_same_data": "S21D5-024's zero-error prefix rule saw four clean decisions, took the every_answered_decision_was_correct branch, admitted everything and ran the ranking at a floor of zero. The conformal rule admits nothing instead. That difference on identical fixture data is the sprint's change, executed"
+   }
+  },
+  "baseline_first_choice": "7852fe5c-2a34-5880-94a5-0e7fc1ce2ec9",
+  "confidence": "0",
+  "confidence_quantity": "the projection margin between the top two candidates",
+  "direction": {
+   "fitted_group_count": 1,
+   "fitted_on_the_group_it_ranks": true,
+   "fitted_pair_count": 4,
+   "model_hash": "6d4962138a48bc2e7dbf6f9ade2e35f76eadc0c39d04881d4f6bb1a7be808eb4",
+   "regularization": "1",
+   "weights": 7,
+   "why_that_is_said_rather_than_hidden": "one group cannot both fit and evaluate a direction honestly. The slice proves the wiring -- that a direction is fitted, sealed, stored, reloaded and ranked with -- and D6 fits none at all: S21D7-034 reads the sealed 720 direction"
+  },
+  "fell_back_to_the_baseline_order": true,
+  "first_choice": "7852fe5c-2a34-5880-94a5-0e7fc1ce2ec9",
+  "hypothesis_class": "containment-contrastive-linear-v1",
+  "order_equals_baseline": true,
+  "prediction_accepted_nothing": true,
+  "reason": "below_margin_floor",
+  "relational_assembly": {
+   "baseline_source_sha256": "2d1afb643fb5373fc8506d9c4fe2bd4c5179697a19332d3d9dd2a3d24ba5f4a6",
+   "candidates": [
+    {
+     "accepted": true,
+     "candidate_id": "7852fe5c-2a34-5880-94a5-0e7fc1ce2ec9",
+     "channels": [
+      [
+       "candidate_source_ast_node_count",
+       0.48148148148148145
+      ],
+      [
+       "statement_graph_node_count",
+       0.16666666666666666
+      ],
+      [
+       "statement_graph_edge_count",
+       0.1111111111111111
+      ],
+      [
+       "statement_graph_path_count",
+       1.0
+      ],
+      [
+       "declared_verifier_capability_count",
+       0.0
+      ],
+      [
+       "missing_value_indicators",
+       0.0
+      ],
+      [
+       "repair_containment_share",
+       0.0
+      ]
+     ]
+    },
+    {
+     "accepted": true,
+     "candidate_id": "c2dd604c-e596-5ff1-8dbb-f5a112c3a19e",
+     "channels": [
+      [
+       "candidate_source_ast_node_count",
+       1.0
+      ],
+      [
+       "statement_graph_node_count",
+       1.0
+      ],
+      [
+       "statement_graph_edge_count",
+       1.0
+      ],
+      [
+       "statement_graph_path_count",
+       0.0
+      ],
+      [
+       "declared_verifier_capability_count",
+       0.0
+      ],
+      [
+       "missing_value_indicators",
+       0.0
+      ],
+      [
+       "repair_containment_share",
+       0.5
+      ]
+     ]
+    },
+    {
+     "accepted": false,
+     "candidate_id": "e807bfce-f623-5a7a-ba22-7331cc3430de",
+     "channels": [
+      [
+       "candidate_source_ast_node_count",
+       0.7407407407407407
+      ],
+      [
+       "statement_graph_node_count",
+       0.6666666666666666
+      ],
+      [
+       "statement_graph_edge_count",
+       0.6666666666666666
+      ],
+      [
+       "statement_graph_path_count",
+       0.0
+      ],
+      [
+       "declared_verifier_capability_count",
+       0.0
+      ],
+      [
+       "missing_value_indicators",
+       0.0
+      ],
+      [
+       "repair_containment_share",
+       0.25925925925925924
+      ]
+     ]
+    },
+    {
+     "accepted": false,
+     "candidate_id": "eee26c61-8225-5972-b246-485a4afa8bd4",
+     "channels": [
+      [
+       "candidate_source_ast_node_count",
+       0.0
+      ],
+      [
+       "statement_graph_node_count",
+       0.0
+      ],
+      [
+       "statement_graph_edge_count",
+       0.0
+      ],
+      [
+       "statement_graph_path_count",
+       0.0
+      ],
+      [
+       "declared_verifier_capability_count",
+       0.0
+      ],
+      [
+       "missing_value_indicators",
+       0.0
+      ],
+      [
+       "repair_containment_share",
+       0.037037037037037035
+      ]
+     ]
+    }
+   ],
+   "channels": [
+    "candidate_source_ast_node_count",
+    "statement_graph_node_count",
+    "statement_graph_edge_count",
+    "statement_graph_path_count",
+    "declared_verifier_capability_count",
+    "missing_value_indicators",
+    "repair_containment_share"
+   ],
+   "containment_ordering_alone": [
+    "c2dd604c-e596-5ff1-8dbb-f5a112c3a19e",
+    "e807bfce-f623-5a7a-ba22-7331cc3430de",
+    "eee26c61-8225-5972-b246-485a4afa8bd4",
+    "7852fe5c-2a34-5880-94a5-0e7fc1ce2ec9"
+   ],
+   "derived_channel": "repair_containment_share",
+   "distinct_relational_vectors": 4,
+   "embedding_read_by_any_channel": false,
+   "feature_contract": "CorrectionFeatureContractV3",
+   "pure_deletion_group": {
+    "every_share_is_zero": true,
+    "ordering_is_the_frozen_baseline_order": true,
+    "reversed_baseline_order_is_honoured_too": true,
+    "why_this_is_not_a_failure": "the share is a relation over the lines a repair adds, so a group that adds none has no containment to measure. §6 of the backlog prices this: the signal degrades to a consensus prior rather than failing, and the tie-break is the caller's frozen order everywhere in this programme"
+   },
+   "refusals": [
+    {
+     "action": "assemble a relational vector from drifted scalar names",
+     "error": "CorrectionEncodingError: a relational vector is assembled from the exact six sealed v2 scalars",
+     "refused": "true"
+    },
+    {
+     "action": "assemble a relational vector from a single candidate",
+     "error": "ValueError: a containment share needs at least two candidates to relate",
+     "refused": "true"
+    }
+   ],
+   "scalars_read_from": "the sealed v2 record, by name",
+   "share_by_candidate": {
+    "7852fe5c-2a34-5880-94a5-0e7fc1ce2ec9": 0.0,
+    "c2dd604c-e596-5ff1-8dbb-f5a112c3a19e": 0.5,
+    "e807bfce-f623-5a7a-ba22-7331cc3430de": 0.25925925925925924,
+    "eee26c61-8225-5972-b246-485a4afa8bd4": 0.037037037037037035
+   },
+   "shares_inside_the_unit_interval": true
+  }
+ },
+ "recorded_at": "2026-08-10T15:34:23Z",
+ "restart": {
+  "conformal_bar_reproduced_across_the_restart": true,
+  "containers_started_on_the_replay": 0,
+  "dataset_record_reproduced": true,
+  "example_manifest_reproduced": true,
+  "feature_seal_hash_reproduced": true,
+  "fresh_services_over_the_same_durable_authorities": true,
+  "note": "the first pass started five containers and the second started none; both counts are in this record because either one alone reads as the other",
+  "receipt_effective_remainder": [],
+  "receipt_is_resumable": true,
+  "replayed_outcomes_are_the_recorded_ones": true,
+  "run_identities_resolved_from_the_receipt": 5,
+  "runs_replayed": 5,
+  "split_manifest_reproduced": true,
+  "stored_seal_time_preserved": true,
+  "task_manifest_hash_reproduced": true
+ },
+ "role_boundary": {
+  "authored_by": "S21D5-024, as D5's fixture; outside every D7 role and re-run under D7 identities in D7's own store",
+  "canary_members_spent": 0,
+  "certification_cases_spent": 0,
+  "certification_groups_at_that_seal": 10,
+  "checked_against_seal": "4fd749d8ebc034d90c26b71b903d1578f6e0a4937b178179a2c84a2870a7a819",
+  "conformal_cases_spent": 0,
+  "final_members_spent": 0,
+  "in_any_scored_role": false,
+  "repository_group": "d5-fixture-render-duration",
+  "roles_checked": [
+   "calibration",
+   "canary",
+   "conformal",
+   "final_a",
+   "final_b",
+   "spent_calibration_d5",
+   "training"
+  ],
+  "roles_containing_this_group": [],
+  "seal_was_provisional": true,
+  "template_id": "d5_fixture.render_duration",
+  "why": "Section 6.1 requires the slice to spend nothing, so the group is checked against the sealed manifest rather than declared outside it"
+ },
+ "schema_version": 1,
+ "sealed_manifests_sha256": "205f33fe93f25611f1cc8a586d2f35174d006b8aa78b996dd5b464017ee556df",
+ "sprint": "21D7",
+ "wave": "W1"
+}
