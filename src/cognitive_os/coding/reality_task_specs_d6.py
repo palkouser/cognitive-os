@@ -4366,6 +4366,1075 @@ def test_promoting_somebody_who_was_never_a_candidate_is_refused() -> None:
     ),
 )
 
+_G051 = D2TaskSpec(
+    template_id="d6_parsing.citation_key",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d6-parsing-citation-key",
+    module="citation_key",
+    module_doc="Reading a citation key into the surname, the year and the disambiguating letter.",
+    issue=(
+        "read_key() is documented to read a citation key into a surname, a year and the letter "
+        "that tells two papers of the same year apart. Callers report that a key with no such "
+        "letter comes back carrying an empty string instead of nothing at all, and that a "
+        "surname with a capital inside it is refused."
+    ),
+    expected=(
+        "read_key(key) returns (surname, year, letter), where letter is None when the key names "
+        "no disambiguating letter. A surname may carry capitals anywhere in it. A key of any "
+        "other shape raises ValueError."
+    ),
+    baseline_reason=(
+        "it hands the empty match through as the letter and its pattern allows a capital only "
+        "at the front of the surname"
+    ),
+    edge_cases=(
+        "a key with no disambiguating letter carries None",
+        "a surname may carry a capital inside it",
+    ),
+    baseline="""import re
+
+PATTERN = re.compile(r"^([A-Z][a-z]+)(\\d{4})([a-z]?)$")
+
+
+def read_key(key):
+    \"\"\"Return the (surname, year, letter) a citation key names.\"\"\"
+    found = PATTERN.match(key)
+    if not found:
+        raise ValueError(key)
+    return found.group(1), int(found.group(2)), found.group(3)""",
+    variant_one="""import re
+
+PATTERN = re.compile(r"^([A-Za-z]+)(\\d{4})([a-z]?)$")
+
+
+def read_key(key):
+    \"\"\"Return the (surname, year, letter) a citation key names.\"\"\"
+    found = PATTERN.match(key)
+    if not found:
+        raise ValueError(key)
+    return found.group(1), int(found.group(2)), found.group(3) or None""",
+    variant_two="""import re
+
+PATTERN = re.compile(r"^([A-Za-z]+)(\\d{4})([a-z]?)$")
+
+
+def read_key(key):
+    \"\"\"Return the (surname, year, letter) a citation key names.\"\"\"
+    found = PATTERN.match(key)
+    if found is None:
+        raise ValueError(key)
+    surname, year, letter = found.groups()
+    return surname, int(year), letter if letter else None""",
+    variant_three="""import re
+
+PATTERN = re.compile(r"^([A-Z][a-z]+)(\\d{4})([a-z]?)$")
+
+
+def read_key(key):
+    \"\"\"Return the (surname, year, letter) a citation key names.\"\"\"
+    found = PATTERN.match(key)
+    if not found:
+        raise ValueError(key)
+    return found.group(1), int(found.group(2)), found.group(3) or None""",
+    variant_four="""import re
+
+PATTERN = re.compile(r"^([A-Za-z]+)(\\d{4})([a-z]?)$")
+
+
+def read_key(key):
+    \"\"\"Return the (surname, year, letter) a citation key names.\"\"\"
+    found = PATTERN.match(key)
+    if not found:
+        raise ValueError(key)
+    return found.group(1), int(found.group(2)), found.group(3)""",
+    visible_test=_test_module(
+        "citation_key",
+        "Published contract for reading a citation key.",
+        """
+import pytest
+
+from citation_key import read_key
+
+
+def test_a_key_with_a_letter_is_read() -> None:
+    assert read_key("Smith2019a") == ("Smith", 2019, "a")
+
+
+def test_a_key_of_another_shape_is_refused() -> None:
+    with pytest.raises(ValueError):
+        read_key("no-year-here")
+""",
+    ),
+    hidden_test=_test_module(
+        "citation_key",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from citation_key import read_key
+
+
+def test_a_key_with_a_letter_is_read() -> None:
+    assert read_key("Smith2019a") == ("Smith", 2019, "a")
+
+
+def test_a_key_with_no_letter_carries_none() -> None:
+    assert read_key("Smith2019") == ("Smith", 2019, None)
+
+
+def test_a_surname_may_carry_a_capital_inside_it() -> None:
+    assert read_key("McKay2019a") == ("McKay", 2019, "a")
+""",
+    ),
+)
+
+_G052 = D2TaskSpec(
+    template_id="d6_parsing.flag_cluster",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d6-parsing-flag-cluster",
+    module="flag_cluster",
+    module_doc="Pulling a bundle of single-letter switches apart into the switches it stands for.",
+    issue=(
+        "expand_cluster() is documented to pull a bundle of single-letter switches apart. "
+        "Callers report that a long switch written with two dashes is torn into letters as "
+        "though it were a bundle, and that a lone dash with no letters after it comes back as "
+        "an empty list instead of being refused."
+    ),
+    expected=(
+        "expand_cluster(argument) returns the switches a bundle stands for, each with its own "
+        "dash. A switch written with two dashes stands for itself and is returned whole. A lone "
+        "dash names no switch and raises ValueError."
+    ),
+    baseline_reason=(
+        "it strips the dashes before looking at how many there were, and it returns nothing at "
+        "all for a lone dash"
+    ),
+    edge_cases=(
+        "a switch written with two dashes is returned whole",
+        "a lone dash is refused",
+    ),
+    baseline="""def expand_cluster(argument):
+    \"\"\"Return the switches a bundle of letters stands for.\"\"\"
+    letters = argument.lstrip("-")
+    return [f"-{letter}" for letter in letters]""",
+    variant_one="""def expand_cluster(argument):
+    \"\"\"Return the switches a bundle of letters stands for.\"\"\"
+    if argument.startswith("--"):
+        return [argument]
+    letters = argument.lstrip("-")
+    if not letters:
+        raise ValueError(argument)
+    return [f"-{letter}" for letter in letters]""",
+    variant_two="""def expand_cluster(argument):
+    \"\"\"Return the switches a bundle of letters stands for.\"\"\"
+    dashes = len(argument) - len(argument.lstrip("-"))
+    body = argument[dashes:]
+    if dashes >= 2:
+        return [argument]
+    if not body:
+        raise ValueError(argument)
+    return ["-" + letter for letter in body]""",
+    variant_three="""def expand_cluster(argument):
+    \"\"\"Return the switches a bundle of letters stands for.\"\"\"
+    if argument.startswith("--"):
+        return [argument]
+    letters = argument.lstrip("-")
+    return [f"-{letter}" for letter in letters]""",
+    variant_four="""def expand_cluster(argument):
+    \"\"\"Return the switches a bundle of letters stands for.\"\"\"
+    letters = argument.lstrip("-")
+    if not letters:
+        raise ValueError(argument)
+    return [f"-{letter}" for letter in letters]""",
+    visible_test=_test_module(
+        "flag_cluster",
+        "Published contract for expanding a bundle of switches.",
+        """
+def test_a_bundle_stands_for_its_switches() -> None:
+    assert expand_cluster("-abc") == ["-a", "-b", "-c"]
+
+
+def test_a_single_switch_stands_for_itself() -> None:
+    assert expand_cluster("-v") == ["-v"]
+""",
+        imports="from flag_cluster import expand_cluster\n",
+    ),
+    hidden_test=_test_module(
+        "flag_cluster",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from flag_cluster import expand_cluster
+
+
+def test_a_bundle_stands_for_its_switches() -> None:
+    assert expand_cluster("-abc") == ["-a", "-b", "-c"]
+
+
+def test_a_two_dash_switch_is_returned_whole() -> None:
+    assert expand_cluster("--name") == ["--name"]
+
+
+def test_a_lone_dash_is_refused() -> None:
+    with pytest.raises(ValueError):
+        expand_cluster("-")
+""",
+    ),
+)
+
+_G053 = D2TaskSpec(
+    template_id="d6_parsing.iso_week",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d6-parsing-iso-week",
+    module="iso_week",
+    module_doc="Reading a week-numbered date into its year, week and weekday.",
+    issue=(
+        "read_week() is documented to read a week-numbered date. Callers report that a date "
+        "naming no weekday comes back with nothing where the weekday should be, instead of the "
+        "Monday it means, and that a week number no year has is accepted without complaint."
+    ),
+    expected=(
+        "read_week(text) returns (year, week, weekday) from a date written as a year, the "
+        "letter W, a two-digit week and optionally a weekday. A date naming no weekday means "
+        "Monday, which is day one. A week outside one to fifty-three raises ValueError, and so "
+        "does any other shape."
+    ),
+    baseline_reason=(
+        "it passes the absent weekday through as nothing and it never checks the week against "
+        "the year's fifty-three"
+    ),
+    edge_cases=(
+        "a date naming no weekday means Monday",
+        "a week outside one to fifty-three is refused",
+    ),
+    baseline="""import re
+
+PATTERN = re.compile(r"^(\\d{4})-W(\\d{2})(?:-(\\d))?$")
+
+
+def read_week(text):
+    \"\"\"Return the (year, week, weekday) a week-numbered date names.\"\"\"
+    found = PATTERN.match(text)
+    if not found:
+        raise ValueError(text)
+    weekday = found.group(3)
+    return int(found.group(1)), int(found.group(2)), int(weekday) if weekday else None""",
+    variant_one="""import re
+
+PATTERN = re.compile(r"^(\\d{4})-W(\\d{2})(?:-(\\d))?$")
+
+
+def read_week(text):
+    \"\"\"Return the (year, week, weekday) a week-numbered date names.\"\"\"
+    found = PATTERN.match(text)
+    if not found:
+        raise ValueError(text)
+    week = int(found.group(2))
+    if not 1 <= week <= 53:
+        raise ValueError(text)
+    weekday = found.group(3)
+    return int(found.group(1)), week, int(weekday) if weekday else 1""",
+    variant_two="""import re
+
+PATTERN = re.compile(r"^(\\d{4})-W(\\d{2})(?:-(\\d))?$")
+
+
+def read_week(text):
+    \"\"\"Return the (year, week, weekday) a week-numbered date names.\"\"\"
+    found = PATTERN.match(text)
+    if found is None:
+        raise ValueError(text)
+    year, week, weekday = found.groups()
+    numbered = int(week)
+    if numbered < 1 or numbered > 53:
+        raise ValueError(text)
+    return int(year), numbered, int(weekday) if weekday is not None else 1""",
+    variant_three="""import re
+
+PATTERN = re.compile(r"^(\\d{4})-W(\\d{2})(?:-(\\d))?$")
+
+
+def read_week(text):
+    \"\"\"Return the (year, week, weekday) a week-numbered date names.\"\"\"
+    found = PATTERN.match(text)
+    if not found:
+        raise ValueError(text)
+    weekday = found.group(3)
+    return int(found.group(1)), int(found.group(2)), int(weekday) if weekday else 1""",
+    variant_four="""import re
+
+PATTERN = re.compile(r"^(\\d{4})-W(\\d{2})(?:-(\\d))?$")
+
+
+def read_week(text):
+    \"\"\"Return the (year, week, weekday) a week-numbered date names.\"\"\"
+    found = PATTERN.match(text)
+    if not found:
+        raise ValueError(text)
+    week = int(found.group(2))
+    if not 1 <= week <= 53:
+        raise ValueError(text)
+    weekday = found.group(3)
+    return int(found.group(1)), week, int(weekday) if weekday else None""",
+    visible_test=_test_module(
+        "iso_week",
+        "Published contract for reading a week-numbered date.",
+        """
+import pytest
+
+from iso_week import read_week
+
+
+def test_a_full_week_date_is_read() -> None:
+    assert read_week("2026-W07-3") == (2026, 7, 3)
+
+
+def test_a_date_of_another_shape_is_refused() -> None:
+    with pytest.raises(ValueError):
+        read_week("2026-02-14")
+""",
+    ),
+    hidden_test=_test_module(
+        "iso_week",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from iso_week import read_week
+
+
+def test_a_full_week_date_is_read() -> None:
+    assert read_week("2026-W07-3") == (2026, 7, 3)
+
+
+def test_a_date_naming_no_weekday_means_monday() -> None:
+    assert read_week("2026-W07") == (2026, 7, 1)
+
+
+def test_a_week_beyond_fifty_three_is_refused() -> None:
+    with pytest.raises(ValueError):
+        read_week("2026-W60-1")
+""",
+    ),
+)
+
+_G054 = D2TaskSpec(
+    template_id="d6_parsing.phone_extension",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d6-parsing-phone-extension",
+    module="phone_extension",
+    module_doc="Separating a dialling number from the extension written after it.",
+    issue=(
+        "split_extension() is documented to separate a number from the extension written after "
+        "it. Callers report that a number written with spaces in it keeps them, and that an "
+        "extension introduced by a hash is not recognised as an extension at all."
+    ),
+    expected=(
+        "split_extension(text) returns (number, extension) with the number's spaces removed and "
+        "the extension as written, or None when there is none. Either a lower-case x or a hash "
+        "introduces the extension."
+    ),
+    baseline_reason=(
+        "it removes only the space either side of the split and it looks for the letter x alone"
+    ),
+    edge_cases=(
+        "the number's internal spaces are removed",
+        "a hash introduces an extension too",
+    ),
+    baseline="""def split_extension(text):
+    \"\"\"Return the (number, extension) a dialling string names.\"\"\"
+    number, marker, extension = text.partition("x")
+    if not marker:
+        return text.strip(), None
+    return number.strip(), extension.strip()""",
+    variant_one="""def split_extension(text):
+    \"\"\"Return the (number, extension) a dialling string names.\"\"\"
+    for marker in ("x", "#"):
+        number, found, extension = text.partition(marker)
+        if found:
+            return number.replace(" ", ""), extension.strip()
+    return text.replace(" ", ""), None""",
+    variant_two="""def split_extension(text):
+    \"\"\"Return the (number, extension) a dialling string names.\"\"\"
+    position = len(text)
+    for marker in ("x", "#"):
+        found = text.find(marker)
+        if found != -1:
+            position = min(position, found)
+    number = text[:position].replace(" ", "")
+    if position == len(text):
+        return number, None
+    return number, text[position + 1 :].strip()""",
+    variant_three="""def split_extension(text):
+    \"\"\"Return the (number, extension) a dialling string names.\"\"\"
+    number, marker, extension = text.partition("x")
+    if not marker:
+        return text.replace(" ", ""), None
+    return number.replace(" ", ""), extension.strip()""",
+    variant_four="""def split_extension(text):
+    \"\"\"Return the (number, extension) a dialling string names.\"\"\"
+    for marker in ("x", "#"):
+        number, found, extension = text.partition(marker)
+        if found:
+            return number.strip(), extension.strip()
+    return text.strip(), None""",
+    visible_test=_test_module(
+        "phone_extension",
+        "Published contract for separating a number from its extension.",
+        """
+def test_an_extension_is_separated() -> None:
+    assert split_extension("02079460018x231") == ("02079460018", "231")
+
+
+def test_a_number_with_no_extension_carries_none() -> None:
+    assert split_extension("02079460018") == ("02079460018", None)
+""",
+        imports="from phone_extension import split_extension\n",
+    ),
+    hidden_test=_test_module(
+        "phone_extension",
+        "The part of the contract the published tests do not state.",
+        """
+def test_an_extension_is_separated() -> None:
+    assert split_extension("02079460018x231") == ("02079460018", "231")
+
+
+def test_the_numbers_internal_spaces_are_removed() -> None:
+    assert split_extension("020 7946 0018 x231") == ("02079460018", "231")
+
+
+def test_a_hash_introduces_an_extension_too() -> None:
+    assert split_extension("02079460018#231") == ("02079460018", "231")
+""",
+        imports="from phone_extension import split_extension\n",
+    ),
+)
+
+_G055 = D2TaskSpec(
+    template_id="d6_state.sequence_gate",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d6-state-sequence-gate",
+    module="sequence_gate",
+    module_doc="Delivering numbered messages in order, holding the ones that arrive early.",
+    issue=(
+        "receive() is documented to deliver numbered messages in order and to hold early "
+        "arrivals until their turn. Callers report that a message already delivered is put in "
+        "the holding area a second time, and that the messages waiting there are not delivered "
+        "when the one they were waiting for finally arrives."
+    ),
+    expected=(
+        "receive(state, number) delivers the message when it is the one expected next, then "
+        "delivers whatever was waiting for it, in order. A message already delivered is ignored. "
+        "A message arriving early waits."
+    ),
+    baseline_reason=(
+        "it holds anything that is not the expected number, delivered or not, and it never "
+        "looks in the holding area after a delivery"
+    ),
+    edge_cases=(
+        "a message already delivered is ignored",
+        "the messages waiting are delivered when their turn comes",
+    ),
+    baseline="""def receive(state, number):
+    \"\"\"Deliver `number` if it is next, otherwise hold it.\"\"\"
+    expected = state["next"]
+    delivered = list(state["delivered"])
+    waiting = list(state["waiting"])
+    if number == expected:
+        delivered.append(number)
+        expected += 1
+    else:
+        waiting.append(number)
+    return {"next": expected, "delivered": delivered, "waiting": sorted(waiting)}""",
+    variant_one="""def receive(state, number):
+    \"\"\"Deliver `number` if it is next, otherwise hold it.\"\"\"
+    expected = state["next"]
+    delivered = list(state["delivered"])
+    waiting = list(state["waiting"])
+    if number < expected:
+        return {"next": expected, "delivered": delivered, "waiting": sorted(waiting)}
+    if number > expected:
+        waiting.append(number)
+        return {"next": expected, "delivered": delivered, "waiting": sorted(waiting)}
+    delivered.append(number)
+    expected += 1
+    while expected in waiting:
+        waiting.remove(expected)
+        delivered.append(expected)
+        expected += 1
+    return {"next": expected, "delivered": delivered, "waiting": sorted(waiting)}""",
+    variant_two="""def receive(state, number):
+    \"\"\"Deliver `number` if it is next, otherwise hold it.\"\"\"
+    expected = state["next"]
+    delivered = list(state["delivered"])
+    waiting = set(state["waiting"])
+    if number >= expected:
+        waiting.add(number)
+    while expected in waiting:
+        waiting.discard(expected)
+        delivered.append(expected)
+        expected += 1
+    return {"next": expected, "delivered": delivered, "waiting": sorted(waiting)}""",
+    variant_three="""def receive(state, number):
+    \"\"\"Deliver `number` if it is next, otherwise hold it.\"\"\"
+    expected = state["next"]
+    delivered = list(state["delivered"])
+    waiting = list(state["waiting"])
+    if number < expected:
+        return {"next": expected, "delivered": delivered, "waiting": sorted(waiting)}
+    if number == expected:
+        delivered.append(number)
+        expected += 1
+    else:
+        waiting.append(number)
+    return {"next": expected, "delivered": delivered, "waiting": sorted(waiting)}""",
+    variant_four="""def receive(state, number):
+    \"\"\"Deliver `number` if it is next, otherwise hold it.\"\"\"
+    expected = state["next"]
+    delivered = list(state["delivered"])
+    waiting = list(state["waiting"])
+    if number == expected:
+        delivered.append(number)
+        expected += 1
+        while expected in waiting:
+            waiting.remove(expected)
+            delivered.append(expected)
+            expected += 1
+    else:
+        waiting.append(number)
+    return {"next": expected, "delivered": delivered, "waiting": sorted(waiting)}""",
+    visible_test=_test_module(
+        "sequence_gate",
+        "Published contract for delivering numbered messages in order.",
+        """
+def test_the_expected_message_is_delivered() -> None:
+    state = {"next": 1, "delivered": [], "waiting": []}
+    assert receive(state, 1) == {"next": 2, "delivered": [1], "waiting": []}
+
+
+def test_an_early_message_waits() -> None:
+    state = {"next": 1, "delivered": [], "waiting": []}
+    assert receive(state, 3) == {"next": 1, "delivered": [], "waiting": [3]}
+""",
+        imports="from sequence_gate import receive\n",
+    ),
+    hidden_test=_test_module(
+        "sequence_gate",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_expected_message_is_delivered() -> None:
+    state = {"next": 1, "delivered": [], "waiting": []}
+    assert receive(state, 1) == {"next": 2, "delivered": [1], "waiting": []}
+
+
+def test_a_message_already_delivered_is_ignored() -> None:
+    state = {"next": 3, "delivered": [1, 2], "waiting": []}
+    assert receive(state, 2) == {"next": 3, "delivered": [1, 2], "waiting": []}
+
+
+def test_the_waiting_messages_are_delivered_when_their_turn_comes() -> None:
+    state = {"next": 1, "delivered": [], "waiting": [2]}
+    assert receive(state, 1) == {"next": 3, "delivered": [1, 2], "waiting": []}
+""",
+        imports="from sequence_gate import receive\n",
+    ),
+)
+
+_G056 = D2TaskSpec(
+    template_id="d6_state.session_pin",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d6-state-session-pin",
+    module="session_pin",
+    module_doc="Pinning a session to the first device that claims it.",
+    issue=(
+        "claim() is documented to pin a session to the first device that claims it and to "
+        "refuse any other. Callers report that the device already holding the session is "
+        "refused when it claims again, and that a session nobody has claimed yet refuses "
+        "everybody."
+    ),
+    expected=(
+        "claim(session, device) returns the session pinned to device. A session pinned to None "
+        "is unclaimed and accepts any device. The device already holding it may claim it again, "
+        "which changes nothing. Any other device raises RuntimeError."
+    ),
+    baseline_reason=(
+        "it refuses whenever the pin differs from the claimant without asking whether the pin "
+        "is the claimant already or whether there is a pin at all"
+    ),
+    edge_cases=(
+        "the device already holding the session may claim it again",
+        "an unclaimed session accepts any device",
+    ),
+    baseline="""def claim(session, device):
+    \"\"\"Pin `session` to `device`, or refuse.\"\"\"
+    if session["pinned"] != device:
+        raise RuntimeError("pinned elsewhere")
+    return {"pinned": device}""",
+    variant_one="""def claim(session, device):
+    \"\"\"Pin `session` to `device`, or refuse.\"\"\"
+    pinned = session["pinned"]
+    if pinned is None or pinned == device:
+        return {"pinned": device}
+    raise RuntimeError("pinned elsewhere")""",
+    variant_two="""def claim(session, device):
+    \"\"\"Pin `session` to `device`, or refuse.\"\"\"
+    pinned = session["pinned"]
+    held_by_another = pinned is not None and pinned != device
+    if held_by_another:
+        raise RuntimeError("pinned elsewhere")
+    return {"pinned": device}""",
+    variant_three="""def claim(session, device):
+    \"\"\"Pin `session` to `device`, or refuse.\"\"\"
+    pinned = session["pinned"]
+    if pinned == device:
+        return {"pinned": device}
+    raise RuntimeError("pinned elsewhere")""",
+    variant_four="""def claim(session, device):
+    \"\"\"Pin `session` to `device`, or refuse.\"\"\"
+    pinned = session["pinned"]
+    if pinned is None:
+        return {"pinned": device}
+    if pinned != device:
+        raise RuntimeError("pinned elsewhere")
+    raise RuntimeError("pinned elsewhere")""",
+    visible_test=_test_module(
+        "session_pin",
+        "Published contract for pinning a session to a device.",
+        """
+import pytest
+
+from session_pin import claim
+
+
+def test_another_device_is_refused() -> None:
+    with pytest.raises(RuntimeError):
+        claim({"pinned": "d1"}, "d2")
+
+
+def test_a_third_device_is_refused_too() -> None:
+    with pytest.raises(RuntimeError):
+        claim({"pinned": "d1"}, "d3")
+""",
+    ),
+    hidden_test=_test_module(
+        "session_pin",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from session_pin import claim
+
+
+def test_another_device_is_refused() -> None:
+    with pytest.raises(RuntimeError):
+        claim({"pinned": "d1"}, "d2")
+
+
+def test_the_holding_device_may_claim_again() -> None:
+    assert claim({"pinned": "d1"}, "d1") == {"pinned": "d1"}
+
+
+def test_an_unclaimed_session_accepts_any_device() -> None:
+    assert claim({"pinned": None}, "d1") == {"pinned": "d1"}
+""",
+    ),
+)
+
+_G057 = D2TaskSpec(
+    template_id="d6_state.warm_pool",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d6-state-warm-pool",
+    module="warm_pool",
+    module_doc="Returning a worker to a warm pool that holds only so many.",
+    issue=(
+        "return_worker() is documented to put a worker back in the warm pool unless the pool is "
+        "full. Callers report that a worker already in the pool is put in a second time, and "
+        "that returning a worker to a full pool turns the oldest one out instead of letting the "
+        "newcomer go."
+    ),
+    expected=(
+        "return_worker(pool, worker) returns the pool with the worker added at the end. A "
+        "worker already in the pool changes nothing. When the pool already holds its cap, the "
+        "returning worker is let go and the pool is left as it was."
+    ),
+    baseline_reason=(
+        "it appends without looking whether the worker is there and it drops the front of the "
+        "pool to make room"
+    ),
+    edge_cases=(
+        "a worker already in the pool is not added twice",
+        "a full pool lets the newcomer go rather than the oldest",
+    ),
+    baseline="""def return_worker(pool, worker):
+    \"\"\"Put `worker` back in the warm pool.\"\"\"
+    cap = pool["cap"]
+    warm = [*pool["warm"], worker]
+    while len(warm) > cap:
+        warm.pop(0)
+    return {"cap": cap, "warm": warm}""",
+    variant_one="""def return_worker(pool, worker):
+    \"\"\"Put `worker` back in the warm pool.\"\"\"
+    cap = pool["cap"]
+    warm = list(pool["warm"])
+    if worker in warm or len(warm) >= cap:
+        return {"cap": cap, "warm": warm}
+    warm.append(worker)
+    return {"cap": cap, "warm": warm}""",
+    variant_two="""def return_worker(pool, worker):
+    \"\"\"Put `worker` back in the warm pool.\"\"\"
+    cap = pool["cap"]
+    warm = list(pool["warm"])
+    room = len(warm) < cap
+    fresh = worker not in warm
+    if room and fresh:
+        warm = [*warm, worker]
+    return {"cap": cap, "warm": warm}""",
+    variant_three="""def return_worker(pool, worker):
+    \"\"\"Put `worker` back in the warm pool.\"\"\"
+    cap = pool["cap"]
+    warm = list(pool["warm"])
+    if worker in warm:
+        return {"cap": cap, "warm": warm}
+    warm.append(worker)
+    while len(warm) > cap:
+        warm.pop(0)
+    return {"cap": cap, "warm": warm}""",
+    variant_four="""def return_worker(pool, worker):
+    \"\"\"Put `worker` back in the warm pool.\"\"\"
+    cap = pool["cap"]
+    warm = list(pool["warm"])
+    if len(warm) >= cap:
+        return {"cap": cap, "warm": warm}
+    warm.append(worker)
+    return {"cap": cap, "warm": warm}""",
+    visible_test=_test_module(
+        "warm_pool",
+        "Published contract for returning a worker to the warm pool.",
+        """
+def test_a_worker_goes_back_into_a_pool_with_room() -> None:
+    assert return_worker({"cap": 3, "warm": ["a"]}, "b") == {"cap": 3, "warm": ["a", "b"]}
+
+
+def test_the_first_worker_starts_the_pool() -> None:
+    assert return_worker({"cap": 2, "warm": []}, "a") == {"cap": 2, "warm": ["a"]}
+""",
+        imports="from warm_pool import return_worker\n",
+    ),
+    hidden_test=_test_module(
+        "warm_pool",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_worker_goes_back_into_a_pool_with_room() -> None:
+    assert return_worker({"cap": 3, "warm": ["a"]}, "b") == {"cap": 3, "warm": ["a", "b"]}
+
+
+def test_a_worker_already_pooled_is_not_added_twice() -> None:
+    assert return_worker({"cap": 3, "warm": ["a"]}, "a") == {"cap": 3, "warm": ["a"]}
+
+
+def test_a_full_pool_lets_the_newcomer_go() -> None:
+    assert return_worker({"cap": 2, "warm": ["a", "b"]}, "c") == {
+        "cap": 2,
+        "warm": ["a", "b"],
+    }
+""",
+        imports="from warm_pool import return_worker\n",
+    ),
+)
+
+_G058 = D2TaskSpec(
+    template_id="d6_state.first_writer",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d6-state-first-writer",
+    module="first_writer",
+    module_doc="Letting the first writer of a field win, and objecting to the second.",
+    issue=(
+        "write_once() is documented to let the first writer of a field win. Callers report that "
+        "writing the very same value a second time is treated as a conflict, and that a field "
+        "someone deliberately wrote as nothing is treated as though nobody had written it."
+    ),
+    expected=(
+        "write_once(record, field, value) returns the record with the field written. Writing "
+        "the same value again changes nothing. Writing a different value over one already there "
+        "raises RuntimeError. A field written as None was written."
+    ),
+    baseline_reason=(
+        "it objects to any second write, and it decides a field is unwritten when its value is None"
+    ),
+    edge_cases=(
+        "writing the same value again changes nothing",
+        "a field written as None counts as written",
+    ),
+    baseline="""def write_once(record, field, value):
+    \"\"\"Write `field` if nobody has written it.\"\"\"
+    written = dict(record)
+    if written.get(field) is not None:
+        raise RuntimeError(field)
+    written[field] = value
+    return written""",
+    variant_one="""def write_once(record, field, value):
+    \"\"\"Write `field` if nobody has written it.\"\"\"
+    written = dict(record)
+    if field in written:
+        if written[field] != value:
+            raise RuntimeError(field)
+        return written
+    written[field] = value
+    return written""",
+    variant_two="""def write_once(record, field, value):
+    \"\"\"Write `field` if nobody has written it.\"\"\"
+    written = dict(record)
+    already = field in written
+    if already and written[field] != value:
+        raise RuntimeError(field)
+    written[field] = value
+    return written""",
+    variant_three="""def write_once(record, field, value):
+    \"\"\"Write `field` if nobody has written it.\"\"\"
+    written = dict(record)
+    if written.get(field) is not None and written[field] != value:
+        raise RuntimeError(field)
+    written[field] = value
+    return written""",
+    variant_four="""def write_once(record, field, value):
+    \"\"\"Write `field` if nobody has written it.\"\"\"
+    written = dict(record)
+    if field in written:
+        raise RuntimeError(field)
+    written[field] = value
+    return written""",
+    visible_test=_test_module(
+        "first_writer",
+        "Published contract for letting the first writer win.",
+        """
+import pytest
+
+from first_writer import write_once
+
+
+def test_the_first_writer_wins() -> None:
+    assert write_once({}, "a", 1) == {"a": 1}
+
+
+def test_a_second_writer_with_another_value_is_refused() -> None:
+    with pytest.raises(RuntimeError):
+        write_once({"a": 1}, "a", 2)
+""",
+    ),
+    hidden_test=_test_module(
+        "first_writer",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from first_writer import write_once
+
+
+def test_the_first_writer_wins() -> None:
+    assert write_once({}, "a", 1) == {"a": 1}
+
+
+def test_writing_the_same_value_again_changes_nothing() -> None:
+    assert write_once({"a": 1}, "a", 1) == {"a": 1}
+
+
+def test_a_field_written_as_nothing_counts_as_written() -> None:
+    with pytest.raises(RuntimeError):
+        write_once({"a": None}, "a", 5)
+""",
+    ),
+)
+
+_G059 = D2TaskSpec(
+    template_id="d6_boundary.outer_fence",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d6-boundary-outer-fence",
+    module="outer_fence",
+    module_doc="Taking the outermost values at each end of a series.",
+    issue=(
+        "outer_fence() is documented to take a given number of values from each end of a "
+        "series. Callers report that a series too short for both ends returns some of its "
+        "values twice, and that asking for none of them returns all of them."
+    ),
+    expected=(
+        "outer_fence(values, count) returns the first count values followed by the last count, "
+        "with no value appearing twice when the two ends meet or overlap. A count of zero "
+        "returns nothing."
+    ),
+    baseline_reason=(
+        "it concatenates the two slices without noticing that they overlap, and its slice from "
+        "the end returns the whole series when the count is zero"
+    ),
+    edge_cases=(
+        "the ends do not repeat a value when they overlap",
+        "a count of zero returns nothing",
+    ),
+    baseline="""def outer_fence(values, count):
+    \"\"\"Return the outermost `count` values at each end.\"\"\"
+    return list(values[:count]) + list(values[-count:])""",
+    variant_one="""def outer_fence(values, count):
+    \"\"\"Return the outermost `count` values at each end.\"\"\"
+    if count <= 0:
+        return []
+    if count * 2 >= len(values):
+        return list(values)
+    return list(values[:count]) + list(values[len(values) - count :])""",
+    variant_two="""def outer_fence(values, count):
+    \"\"\"Return the outermost `count` values at each end.\"\"\"
+    total = len(values)
+    wanted = set()
+    for position in range(total):
+        if position < count or position >= total - count:
+            wanted.add(position)
+    return [values[position] for position in sorted(wanted)]""",
+    variant_three="""def outer_fence(values, count):
+    \"\"\"Return the outermost `count` values at each end.\"\"\"
+    if count * 2 >= len(values):
+        return list(values)
+    return list(values[:count]) + list(values[-count:])""",
+    variant_four="""def outer_fence(values, count):
+    \"\"\"Return the outermost `count` values at each end.\"\"\"
+    if count <= 0:
+        return []
+    return list(values[:count]) + list(values[-count:])""",
+    visible_test=_test_module(
+        "outer_fence",
+        "Published contract for taking the outermost values.",
+        """
+def test_both_ends_are_taken() -> None:
+    assert outer_fence([1, 2, 3, 4, 5], 2) == [1, 2, 4, 5]
+
+
+def test_one_from_each_end_is_taken() -> None:
+    assert outer_fence([1, 2, 3, 4], 1) == [1, 4]
+""",
+        imports="from outer_fence import outer_fence\n",
+    ),
+    hidden_test=_test_module(
+        "outer_fence",
+        "The part of the contract the published tests do not state.",
+        """
+def test_both_ends_are_taken() -> None:
+    assert outer_fence([1, 2, 3, 4, 5], 2) == [1, 2, 4, 5]
+
+
+def test_overlapping_ends_repeat_no_value() -> None:
+    assert outer_fence([1, 2, 3], 2) == [1, 2, 3]
+
+
+def test_a_count_of_zero_returns_nothing() -> None:
+    assert outer_fence([1, 2, 3], 0) == []
+""",
+        imports="from outer_fence import outer_fence\n",
+    ),
+)
+
+_G060 = D2TaskSpec(
+    template_id="d6_numeric.harmonic_mean",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d6-numeric-harmonic-mean",
+    module="harmonic_mean",
+    module_doc="Averaging rates the way rates have to be averaged.",
+    issue=(
+        "harmonic_mean() is documented to average a series of rates and report it to three "
+        "places. Callers report that a rate of zero brings the whole call down with a "
+        "ZeroDivisionError instead of being refused, and that the third place is cut off rather "
+        "than rounded."
+    ),
+    expected=(
+        "harmonic_mean(values) returns the count divided by the sum of the reciprocals, rounded "
+        "to three places. A value of zero raises ValueError, because a rate of zero has no "
+        "reciprocal. An empty series raises ValueError too."
+    ),
+    baseline_reason=(
+        "it takes the reciprocals before checking for a zero, and it cuts the result at three "
+        "places instead of rounding it"
+    ),
+    edge_cases=(
+        "a value of zero is refused",
+        "the third place is rounded, not cut off",
+    ),
+    baseline="""def harmonic_mean(values):
+    \"\"\"Return the harmonic mean of `values`, to three places.\"\"\"
+    if not values:
+        raise ValueError("an empty series has no mean")
+    total = sum(1 / value for value in values)
+    return int(len(values) / total * 1000) / 1000""",
+    variant_one="""def harmonic_mean(values):
+    \"\"\"Return the harmonic mean of `values`, to three places.\"\"\"
+    if not values:
+        raise ValueError("an empty series has no mean")
+    if any(value == 0 for value in values):
+        raise ValueError("a rate of zero has no reciprocal")
+    total = sum(1 / value for value in values)
+    return round(len(values) / total, 3)""",
+    variant_two="""def harmonic_mean(values):
+    \"\"\"Return the harmonic mean of `values`, to three places.\"\"\"
+    if not values:
+        raise ValueError("an empty series has no mean")
+    total = 0.0
+    for value in values:
+        if not value:
+            raise ValueError("a rate of zero has no reciprocal")
+        total += 1 / value
+    return round(len(values) / total, 3)""",
+    variant_three="""def harmonic_mean(values):
+    \"\"\"Return the harmonic mean of `values`, to three places.\"\"\"
+    if not values:
+        raise ValueError("an empty series has no mean")
+    if any(value == 0 for value in values):
+        raise ValueError("a rate of zero has no reciprocal")
+    total = sum(1 / value for value in values)
+    return int(len(values) / total * 1000) / 1000""",
+    variant_four="""def harmonic_mean(values):
+    \"\"\"Return the harmonic mean of `values`, to three places.\"\"\"
+    if not values:
+        raise ValueError("an empty series has no mean")
+    total = sum(1 / value for value in values)
+    return round(len(values) / total, 3)""",
+    visible_test=_test_module(
+        "harmonic_mean",
+        "Published contract for averaging rates.",
+        """
+import pytest
+
+from harmonic_mean import harmonic_mean
+
+
+def test_rates_average_harmonically() -> None:
+    assert harmonic_mean([1, 2, 4]) == 1.714
+
+
+def test_an_empty_series_is_refused() -> None:
+    with pytest.raises(ValueError):
+        harmonic_mean([])
+""",
+    ),
+    hidden_test=_test_module(
+        "harmonic_mean",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+from harmonic_mean import harmonic_mean
+
+
+def test_rates_average_harmonically() -> None:
+    assert harmonic_mean([1, 2, 4]) == 1.714
+
+
+def test_a_rate_of_zero_is_refused() -> None:
+    with pytest.raises(ValueError):
+        harmonic_mean([1, 0])
+
+
+def test_the_third_place_is_rounded() -> None:
+    assert harmonic_mean([1, 2, 5]) == 1.765
+""",
+    ),
+)
+
 D6_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G001,
     _G002,
@@ -4409,4 +5478,14 @@ D6_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
     _G047,
     _G049,
     _G050,
+    _G051,
+    _G052,
+    _G053,
+    _G054,
+    _G055,
+    _G056,
+    _G057,
+    _G058,
+    _G059,
+    _G060,
 )
