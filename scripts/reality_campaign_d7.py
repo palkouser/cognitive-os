@@ -49,6 +49,19 @@ behaves exactly as W1 ran it.
         --stage execute --partition final_a
     UV_CACHE_DIR=.cache/uv uv run python scripts/reality_campaign_d7.py --role final \
         --stage execute --partition final_b
+
+`--role canary` is W3's second one, and it exists for condition 25 rather than for a measurement.
+The canary role is the five groups the runtime routes to a newly activated component, and the
+condition asks that every learned-first correction on that subset runs the hidden verifier. That
+is only checkable if the subset actually executes, so this role seals and runs it under the same
+label-all mechanism every other role uses, and `scripts/lifecycle_d7.py` reads the outcomes back
+to derive what the sequencer did. It refuses without the same `1_select` pass the final roles
+need: five groups reserved for an activation must not be spent by a sprint that has none.
+
+    UV_CACHE_DIR=.cache/uv uv run python scripts/reality_campaign_d7.py --role canary \
+        --model /home/palkouser/projekt/cognitive-os-data/models/all-MiniLM-L6-v2
+    UV_CACHE_DIR=.cache/uv uv run python scripts/reality_campaign_d7.py --role canary \
+        --stage execute --partition canary
 """
 
 from __future__ import annotations
@@ -189,6 +202,7 @@ CAMPAIGN_RECORD = {
     CorrectionPartition.CALIBRATION: EVIDENCE / "sprint-21d7-certification-campaign.json",
     CorrectionPartition.FINAL_A: EVIDENCE / "sprint-21d7-final-a-campaign.json",
     CorrectionPartition.FINAL_B: EVIDENCE / "sprint-21d7-final-b-campaign.json",
+    CorrectionPartition.CANARY: EVIDENCE / "sprint-21d7-canary-campaign.json",
 }
 
 #: W3 only, and only after a pass through §2.3. The final roles have been carried unopened for
@@ -201,6 +215,19 @@ _FINAL_ORDER: tuple[CorrectionPartition, ...] = (
     CorrectionPartition.FINAL_A,
     CorrectionPartition.FINAL_B,
 )
+
+#: W3's other opening switch. The canary role is not a measurement half: it is the subset the
+#: runtime routes to a component that has just been activated, and condition 25 asks that every
+#: learned-first correction on it runs the hidden verifier. A subset that never executes cannot
+#: answer that, so this role seals and runs the five groups under the same label-all mechanism,
+#: into a record of its own. Gated on the same `1_select` pass the final roles are gated on.
+CANARY_SEAL_RECORD = EVIDENCE / "sprint-21d7-canary-feature-seals.json"
+_CANARY_ORDER: tuple[CorrectionPartition, ...] = (CorrectionPartition.CANARY,)
+
+#: The roles that spend a carried, once-openable partition, and are therefore refused unless the
+#: selection ends `1_select`.
+GATED_ROLES = frozenset({"final", "canary"})
+
 ROLES: dict[str, tuple[tuple[CorrectionPartition, ...], Path]] = {}
 
 SNAPSHOT_RECORD = EVIDENCE / "sprint-21d7-snapshots.json"
@@ -209,9 +236,9 @@ VERTICAL_SLICE = EVIDENCE / "sprint-21d7-vertical-slice.json"
 ACTOR = "reality-campaign-d7"
 AUTHORITY = "S21D7-026"
 
-#: The partitions the default role opens, in the order it opens them. Canary stays closed at
-#: every role and no package is resolved for it; final A and B stay closed unless `--role final`
-#: is given, which W3 gives once and only after a pass through the amended §2.3.
+#: The partitions the default role opens, in the order it opens them. Canary stays closed unless
+#: `--role canary` is given and final A and B stay closed unless `--role final` is; W3 gives each
+#: once, and only after a pass through the amended §2.3.
 #: One partition. D6 refits nothing, so there is no fitting campaign to run: the direction was
 #: fitted on D5's pool and sealed, and re-executing that pool would produce new outcomes for a
 #: model that cannot move.
@@ -221,6 +248,7 @@ ROLES.update(
     {
         "certification": (_ORDER, SEAL_RECORD),
         "final": (_FINAL_ORDER, FINAL_SEAL_RECORD),
+        "canary": (_CANARY_ORDER, CANARY_SEAL_RECORD),
     }
 )
 
@@ -1966,7 +1994,8 @@ def main() -> int:
         "--role",
         choices=sorted(ROLES),
         default="certification",
-        help="which roles this run opens; `final` is W3 only and refuses without a pass",
+        help="which roles this run opens; `final` and `canary` are W3 only and refuse "
+        "without a pass through §2.3",
     )
     parser.add_argument(
         "--partition",
@@ -1982,7 +2011,7 @@ def main() -> int:
     )
     arguments = parser.parse_args()
     order, seal_record = ROLES[arguments.role]
-    if arguments.role == "final":
+    if arguments.role in GATED_ROLES:
         # The carried roles open once, and only for a candidate §2.3 made eligible. Checked
         # here rather than in the caller: a flag that opens 60 unopened groups should not be
         # one typo away from spending them on a stopped sprint.

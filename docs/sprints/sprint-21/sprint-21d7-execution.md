@@ -2,14 +2,16 @@
 
 - Branch: `sprint-21d7-groundwork`
 - Backlog: [Sprint 21D7 Technical Backlog](sprint-21d7-technical-backlog.md)
-- **Status: W2 closed, ending `1_select`.** S21D7-000 through S21D7-005, S21D7-010 through
-  S21D7-019, S21D7-020 through S21D7-024 and S21D7-025 through S21D7-034 are done. The class
-  `containment-contrastive-linear-v1` met **every** amended §2.3 condition on the fresh 100-group
-  certification corpus: coverage 0.59, Clopper-Pearson bound 0.126207 against the 0.15 ceiling,
-  0.9492 first choice over admitted against a 0.61 baseline, 46.78 projected changed final
-  decisions, 100% first-action preservation. **No threshold moved in any wave.** W2 decides
-  eligibility only — it promotes nothing and closes no gate condition. **W0 detail follows
-  first**, then W1, then W2.
+- **Status: W3 closed. The artifact is activated on the canary subset.** S21D7-000 through
+  S21D7-005, S21D7-010 through S21D7-019, S21D7-020 through S21D7-024, S21D7-025 through
+  S21D7-034 and S21D7-035 through S21D7-039 are done. W2 ended `1_select` with every amended
+  §2.3 condition met; W3 stored the direction as bytes, opened the two carried final roles and
+  measured **+0.383 absolute** over the strongest rung on 60 groups, and drove a real governed
+  activation across four processes and two database restarts. Conditions **25, 26 and 27** — which
+  have read `not_opened` in every gate assessment since D2 — are open and met. **No threshold
+  moved in any wave.** **W0 detail follows first**, then W1, W2, W3.
+- **One finding in W3**, and it is the wave's: the carried final roles could not be encoded at all.
+  See W3-F1.
 - **W0 closed.** S21D7-000 through S21D7-005 and S21D7-010 through S21D7-019 are done.
   The three governance rulings W0 exists to obtain were all taken and the condition-24
   inheritance was renewed. Revision 7 is published with `measured_values: 0`, and **no threshold
@@ -634,3 +636,257 @@ exactly three fields — two wall clocks and that stopwatch — and still compar
   database was opened.
 - It did **not** promote anything. `1_select` is eligibility under §2.3; binding the artifact,
   running the lifecycle and closing Gate L2 are later steps with records of their own.
+
+---
+
+# W3 closed — the artifact, the final evidence, and a governed activation
+
+Three commits, eleven sealed records, **one finding**, and the three conditions that have read
+`not_opened` in every gate assessment since D2 are open and met. W3 is the wave that turns
+`1_select` into something that ran: the direction W2 fitted is stored as bytes, bound to a
+lineage, measured on 60 groups carried unopened for five sprints, and then activated on five
+groups under an approval that names it exactly — and switched off again to prove it can be.
+
+**No threshold moved in W3 either.** α = 0.20, C = 0.15 and the 0.40 coverage floor are still
+D6's; D7 amends nothing in any wave.
+
+## The artifact — conditions 11 and 22
+
+`scripts/artifact_d7.py` stores the fitted direction as a v3 correction-ranking artifact:
+**4354 bytes**, seven relational channels, model hash `d80160c4…`, artifact hash `afbdb7c0…`.
+Its lineage names D5's 180-group fitting pool as the training dataset and the demoted D6
+certification half as the calibration dataset, under S21D7-010.
+
+The condition that matters is 22, and it is deliberately not a structural check. **Loading is not
+the test; ranking is.** The stored bytes are re-read, rehashed, rebuilt through
+`build_ranker_for_evaluation_v3` under a lineage capability, and then made to re-rank all **100**
+certification groups: every first choice and every margin reproduced, **0 decisions disagreeing**.
+An artifact that loads but ranks differently passes every hash check ever written, and it is the
+exact failure this condition exists to catch.
+
+**Seven refusals executed**, not asserted: edited weights, a capability naming another artifact
+hash, a wrong descriptor, a wrong revision, a class the loader does not implement, bytes past the
+size ceiling, and a purpose the lineage does not authorise. Each one raised.
+
+## The runtime — condition 23
+
+`scripts/runtime_d7.py` drives the resolver to **all 18** `RuntimeHealthReason` values against the
+real artifact's own identities. Two words in the condition do the work.
+
+*Real.* The resolver is pure and never opens a store, so a record could reach all eighteen codes
+with a fabricated availability struct and prove nothing. Every case here is derived from the
+artifact loaded out of D7's store: its component id, surface, revision, byte count and artifact
+id. A case that needs a wrong value derives it from the right one.
+
+*Immediate.* For **each of the 17 fallback codes** the deterministic ordering is computed over all
+100 certification groups and compared against the released strongest rung's — and all 17 agree
+with it and with each other, group for group. Only `active` differs, on **74 of 100** decisions,
+which is the model doing something rather than reproducing the baseline expensively.
+
+## W3-F1 — the carried final roles could not be encoded
+
+The seal stage stopped on the first final body it tried to canonicalise:
+
+```
+SourceNormalizationError: reflection-unsafe binding through hasattr()
+```
+
+**Four authored bodies** predate the source canonicaliser's reflection ban — three bind a name
+through `hasattr()`, one uses an assignment expression the frozen grammar does not cover. They
+were authored in D2. Five sprints since then recomputed the carried catalogue digests, found them
+unchanged, and recorded the roles as carried intact.
+
+They *were* intact. The finding, stated plainly: **a digest recomputed unchanged proves the bytes
+did not move, not that anything can use them.** No sprint ran a final body through the
+canonicaliser, because opening the roles is what W3 does.
+
+Neither rule was relaxed. The reflection ban exists because the invariance sample renames every
+identifier, and a body that reaches a name reflectively survives the rename with different
+behaviour. `sprint-21d7-final-role-audit.json` (S21D7-038) is the audit that should have run in
+D3: it puts every body of all three carried roles through the canonicaliser, finds two roles
+failing, and exercises §3.5's own exception — final bodies may be authored when a whole role fails
+its audit. It was sealed with `bodies_authored_by_this_record: 0` and
+`replacement_bodies_existing_when_this_was_sealed: 0`, and the chronology block is the proof of
+that order: an authorisation written after the replacements exist is a description of what
+someone already did.
+
+**Four replacement groups** were then authored in `reality_task_specs_d7_final.py` and substituted
+positionally, keeping the frozen **30 groups / 120 outcomes** per final role. The canary role
+passed its audit whole and was carried untouched. The two final catalogue hashes are now D7's;
+every later record binds the new ones.
+
+The hazard the audit record refuses to hide: the replacements were chosen by an author who had
+already seen the selection's numbers. Not the bodies themselves — the class never sees them before
+execution and the labels come from the hidden verifier — but the choice of what to author, and a
+final batch is meant to be the least contaminated evidence in the sprint.
+
+`tests/cognitive_os/coding/test_reality_d7_final_replacements.py` adds 8 tests, written over the
+**roles** rather than over the replacements, so the next carried body is covered too. The first of
+them is the check five sprints of unchanged digests did not amount to.
+
+## The final roles, opened once — condition 10
+
+`--role final` seals and executes into records of its own, and refuses to start unless the
+selection record says `1_select`. Two campaigns, **30 groups and 120 outcomes each**.
+
+## The final evidence — conditions 13, 14, 15, 16 and 21
+
+| | |
+|---|---|
+| learned first choice | **52 / 60 = 0.8667** |
+| strongest rung on the final set (`fixed_input_order`) | 29 / 60 = 0.4833 |
+| **absolute gain** | **+0.3833** (floor 0.05) |
+| **relative error reduction** | **0.7419** (floor 0.20) |
+| **changed decisions** | **45** (floor 20) |
+| final A / final B direction | **+0.300** / **+0.467** |
+| paired group bootstrap, 10 000 resamples | **[0.233333, 0.533333]**, excludes zero |
+| shadow: would have changed / did change | **45 / 0** |
+
+The baseline is **re-derived per batch** rather than carried: these are D2's groups, not the
+certification half's, and `fixed_input_order` came out strongest on both. The bootstrap resamples
+**groups**, not decisions — the two orderings answer the same groups, so the per-group difference
+is the quantity with a distribution, and resampling decisions independently would break the
+pairing that makes the comparison sharp.
+
+Condition 21 records both numbers deliberately. A shadow record showing only that nothing changed
+would be satisfied by a component that was never evaluated at all.
+
+## Safety, retention, metamorphic — conditions 18, 19 and 20
+
+- **18:** 240 candidates scanned across five construct classes; **0 of the 45 changed decisions**
+  move from a clean candidate to one carrying a named construct. Measured as *movement*: a corpus
+  total would pass on a corpus where the model reliably picks the single dangerous candidate.
+- **19:** no task family lost a point; worst domain loss **0**, aggregate loss **0**, with losses
+  only — a family that gains does not offset a family that loses.
+- **20:** **120 nominal / 60 independent** promotion decisions, every transformation repeating its
+  source decision, **80 admitted, 0 errors**, Clopper-Pearson bound **0.036754** against C = 0.15.
+
+## The canary role, executed — and what condition 25 needed it for
+
+Condition 25 asks that every learned-first correction runs the verifier. That is only checkable if
+learned-first corrections actually run, so `--role canary` was added to the campaign — gated on
+the same `1_select` pass the final roles are gated on — and the five canary groups were sealed and
+executed in the sandbox: **20 candidate runs, 10 accepted by the hidden suite, 0 baselines
+passing**.
+
+## The governed activation — conditions 25, 26 and 27
+
+`scripts/lifecycle_d7.py` runs the whole lifecycle against the measured store as **four separate
+processes** with the database container restarted between them. A lifecycle that only ever runs
+inside the function that created it passes every check that never restarts anything, which is the
+failure condition 26 names.
+
+```
+register → lineage → shadow → verify → approve → activate
+  ↓ restart
+observe: active, artifact loads, five groups routed
+  ↓
+kill switch: disabled, deterministic on the very next call
+  ↓ restart
+restore: disabled survived; rollback returns to the exact prior activation
+```
+
+The ledger holds **six revisions** for one component, replay matches the projection, the hash
+chain verifies and health is green.
+
+### Condition 27 — the approval, and three refusals
+
+The approval names the exact assessment hash `e964dc5d…`, component revision 3 and lineage
+`4509e1be…`; the service compares every one of them against durable state before the transition.
+The approving identity is a human operator and is **not** the actor that carries the activation
+out. **Three refusals executed:**
+
+| attempt | refused by |
+|---|---|
+| approve the activation with a `model` identity | the contract, at construction |
+| activate under a human approval naming another assessment | `evidence_mismatch: ['promotion_assessment_hash']` |
+| activate as an actor never granted activation authority | the activation-authority check |
+
+The record states the hazard rather than arguing it away: the approving identity is the human who
+ordered the wave, and the hand that carried it out was an agent acting under that instruction. The
+separation the condition asks for is the one it gets — the authority is neither a model nor a
+provider identity, and it is not the actor in the receipt — but nobody should read the row as an
+operator who reviewed the payload byte by byte independently of the process that produced it.
+
+The promotion payload behind it is not shape-only: **all 20 D3 gates** are bound by hash to the D7
+record that measured them, and `evaluate_d3_promotion` returns eligible against bindings the
+caller supplies rather than fetches. The legacy assessment carries D7's real ladder — pooled over
+both final batches — and the contract pins `baseline_metric` to its strongest non-learned rung, so
+the comparison cannot be made against a rung chosen afterwards.
+
+### Condition 25 — hash-bound, verified, and immediately reversible
+
+- **Hash-bound.** The routing manifest hash **is** the canary catalogue's own content hash. A
+  group outside the subset resolves `group_not_routed`; a manifest hash that moved resolves
+  `routing_manifest_mismatch`. Neither permits the learned ordering.
+- **Verifier mandatory.** Five corrections proposed, **five verifier labels read**, **zero**
+  accepted without one. The model orders candidates; every candidate the sequencer reaches carries
+  a label produced by a container run.
+- **Kill switch immediate.** One call after the disable the resolver answers `lifecycle_not_active`
+  on all five groups with the learned path permitted **nowhere**, in 0.026 s and with **zero**
+  artifact loads on the fallback path. The disabled row is handed to the resolver rather than
+  filtered out first: "this surface has no component" is a different fact from "the component it
+  has was switched off", and the second is the one an operator needs at three in the morning.
+
+What the canary actually did, on the five routed groups: the learned ordering reached an accepted
+candidate in **5 attempts**, the released rung in **9**. The learned first choice was accepted
+**5 / 5**; the rung's first choice **1 / 5**.
+
+### Condition 26 — what survived
+
+| | |
+|---|---|
+| processes | **4**, distinct pids |
+| database restarts | **2**, container `compose-postgres-1` |
+| after restart 1 | `active`, revision 4, surface held, activation receipt unchanged |
+| artifact after restart | reloaded, rehashed, model hash matches the sealed one |
+| after restart 2 | `disabled` survived; rollback restored `active` |
+| rollback target | the original activation receipt, reusing the same approval |
+| replay | 6 revisions, projection matches, hash chain verified, health green |
+
+## W3 evidence index
+
+| record | integrity hash (16) |
+|---|---|
+| `sprint-21d7-artifact.json` | `b38e3f60a13c4c8f` |
+| `sprint-21d7-runtime.json` | `d4882a2481d31095` |
+| `sprint-21d7-final-role-audit.json` | `067809d5b945e36b` |
+| `sprint-21d7-final-feature-seals.json` | `a10d87fc651f0fdf` |
+| `sprint-21d7-final-a-campaign.json` | `22ba61e58ac18c3e` |
+| `sprint-21d7-final-b-campaign.json` | `fb00fb7c027715a7` |
+| `sprint-21d7-final-evidence.json` | `a8aa099a5d32f9a0` |
+| `sprint-21d7-promotion.json` | `fde811401cb85dab` |
+| `sprint-21d7-canary-feature-seals.json` | `4211799b249c09a7` |
+| `sprint-21d7-canary-campaign.json` | `9ac83cf3e14259e9` |
+| `sprint-21d7-lifecycle.json` | `155fc87f4bcef558` |
+
+## W3 validation
+
+- `scripts/artifact_d7.py`, `scripts/runtime_d7.py`, `scripts/final_role_audit_d7.py`,
+  `scripts/final_evidence_d7.py`, `scripts/promotion_d7.py` and `scripts/lifecycle_d7.py` all
+  run clean; every record they write carries its own `integrity_content_hash`.
+- The stored artifact rehashes to `afbdb7c0…` and rebuilds to model hash `d80160c4…` in three
+  separate processes — the artifact stage, the runtime stage and twice inside the lifecycle,
+  once on each side of a database restart.
+- All 18 runtime reason codes reached; 17 fallbacks agree with the released rung on all 100
+  certification groups.
+- The lifecycle ledger replays: 6 revisions, projection matches, hash chain verified, health
+  green, 0 integrity failures.
+- ruff and ruff format over `scripts/`, `src/`, `tests/` — clean, 1155 files. mypy over
+  `src/cognitive_os` — 632 files, no issues.
+- **4090 tests passed, 217 skipped.**
+
+## What W3 did not do
+
+- It did **not** enter the bounded steady-state configuration. That configuration is sealed and
+  bounded at 400 tasks, and the sprint stops at the canary; the record says so rather than letting
+  an unentered configuration read as an operating one.
+- It did **not** exercise the rollback *refusal* path — a disable that followed a failed canary
+  may not be restored. That half is D4's S21D4-075 on the isolated fixture; re-proving it here
+  would have meant ending the sprint with the component disabled and unrestorable.
+- It **truncated, erased and nominated for erasure nothing**. Every write to the measured store is
+  an append-only ledger row, an evidence row or an artifact; the store that holds the campaign was
+  never nominated under `COGOS_TRUNCATABLE_DATABASE`.
+- It moved **no threshold**, in this wave or any other.
+- It did **not** close Gate L2. The gate assessment is a step of its own, and the conditions this
+  wave opened are reported there against the same sealed hashes.
