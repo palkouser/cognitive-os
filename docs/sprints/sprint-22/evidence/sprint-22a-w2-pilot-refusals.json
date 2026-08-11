@@ -1,0 +1,54 @@
+{
+ "cases": [
+  {
+   "case": "re-registering the same identity",
+   "diagnostics": [
+    "identity: 'engineering.mechanics' revision 1 is already registered; a duplicate key is refused rather than replacing its predecessor",
+    "problem_types: already registered: mechanics.statics-equilibrium (owned by 'engineering.mechanics'), mechanics.moment-balance (owned by 'engineering.mechanics'), mechanics.uniform-motion (owned by 'engineering.mechanics')"
+   ],
+   "entries_unchanged": true,
+   "refused": true
+  },
+  {
+   "case": "impersonating a released domain id",
+   "diagnostics": [
+    "domain_id: 'physics' is a released domain; a released domain is derived through the adapter and its revisions are a governance path, not a package",
+    "problem_types: already registered: mechanics.statics-equilibrium (owned by 'engineering.mechanics'), mechanics.moment-balance (owned by 'engineering.mechanics'), mechanics.uniform-motion (owned by 'engineering.mechanics')"
+   ],
+   "entries_unchanged": true,
+   "refused": true
+  },
+  {
+   "case": "claiming a problem type no kernel implements",
+   "diagnostics": [
+    "kernels: no installed kernel for ['mechanics.compressible-flow']; a descriptor may not claim a solver surface that no code implements"
+   ],
+   "entries_unchanged": true,
+   "refused": true
+  },
+  {
+   "case": "taking a problem type another domain already owns",
+   "diagnostics": [
+    "problem_types: already registered: mechanics.statics-equilibrium (owned by 'engineering.mechanics'), mechanics.moment-balance (owned by 'engineering.mechanics'), mechanics.uniform-motion (owned by 'engineering.mechanics')"
+   ],
+   "entries_unchanged": true,
+   "refused": true
+  },
+  {
+   "case": "registering a namespace with no problem types",
+   "diagnostics": [
+    "problem_types: a descriptor with no problem types is a namespace, and a namespace has nothing to register in a problem-type registry"
+   ],
+   "entries_unchanged": true,
+   "refused": true
+  }
+ ],
+ "entries_after": 31,
+ "entries_unchanged_overall": true,
+ "every_case_refused": true,
+ "nothing_registered_halfway": true,
+ "phase": "refusals",
+ "process": 75910,
+ "recorded_at": "2026-08-11T17:26:12Z",
+ "released_snapshot_unchanged": true
+}

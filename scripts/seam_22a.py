@@ -110,10 +110,16 @@ def _coupling() -> dict[str, Any]:
 def _compat() -> dict[str, Any]:
     sealed = _load(SURVEY)["released_domains_as_descriptors"]
     derived = {item.domain_id: item for item in released_domain_descriptors()}
+    # S22A-030 re-binds this claim from `snapshot_hash` to `released_snapshot_hash`. The
+    # value is unchanged — the two agree in any process that admitted no descriptor domain —
+    # but only the released-scope function still means "the four released domains resolve
+    # identically" once a pilot is registered, and W2 registers one.
     return {
-        "registry_snapshot_hash": registry.snapshot_hash(),
+        "registry_snapshot_hash": registry.released_snapshot_hash(),
         "registry_snapshot_hash_sealed": sealed["registry_snapshot_hash"],
-        "registry_snapshot_unchanged": registry.snapshot_hash() == sealed["registry_snapshot_hash"],
+        "registry_snapshot_unchanged": (
+            registry.released_snapshot_hash() == sealed["registry_snapshot_hash"]
+        ),
         "descriptors": {
             domain_id: {
                 "content_hash": derived[domain_id].content_hash,

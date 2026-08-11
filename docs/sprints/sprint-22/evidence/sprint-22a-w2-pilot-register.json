@@ -1,0 +1,27 @@
+{
+ "artifact_id": "b7e163fc-243d-468c-9472-35441e9239c7",
+ "concepts": [
+  "mechanics.force_balance",
+  "mechanics.moment_of_force",
+  "mechanics.rigid_body"
+ ],
+ "descriptor_content_hash": "1209693adf86a36402bb53d65a72a2e649b660e41a3536559adb30d9be9374af",
+ "domain_id": "engineering.mechanics",
+ "event_id": "d81513f6-3e9e-4515-bdd9-944cf8542ddd",
+ "lifecycle": "pilot",
+ "media_type": "application/vnd.cogos.domain-package+json",
+ "package_bytes": 1598,
+ "package_file": "docs/sprints/sprint-22/packages/engineering.mechanics.v1.json",
+ "package_sha256": "b6b22690731b29ad634691576be55202e8c6d4a311f1c8b9502e4482634014a6",
+ "phase": "register",
+ "problem_types": [
+  "mechanics.statics-equilibrium",
+  "mechanics.moment-balance",
+  "mechanics.uniform-motion"
+ ],
+ "recorded_at": "2026-08-11T17:24:57Z",
+ "revision": 1,
+ "stream_id": "22a00000-0000-4000-8000-000000000001",
+ "stream_version": 2,
+ "went_through_the_boundary": true
+}

@@ -1,0 +1,54 @@
+{
+ "every_shared_concept_visible_from_physics": true,
+ "owners": {
+  "mechanics.force_balance": "engineering.mechanics",
+  "mechanics.moment_of_force": "engineering.mechanics",
+  "mechanics.rigid_body": "engineering.mechanics"
+ },
+ "phase": "views",
+ "physics_owns_none_of_them": true,
+ "process": 75645,
+ "recorded_at": "2026-08-11T17:25:50Z",
+ "same_content_hash_in_both_views": true,
+ "shared_concepts": [
+  "mechanics.force_balance",
+  "mechanics.moment_of_force"
+ ],
+ "stored_once": "the concept lives in exactly one package artifact, the owner's; the second view is a projection over the same bytes and never a copy",
+ "views": {
+  "engineering.mechanics": [
+   {
+    "concept_id": "mechanics.force_balance",
+    "content_hash": "550e2fe3c653ccdd49fc443fdd979e72d34262cebdf09aa60516d44d38b2e727",
+    "exposure": "owned",
+    "owner": "engineering.mechanics"
+   },
+   {
+    "concept_id": "mechanics.moment_of_force",
+    "content_hash": "3a7334947c776b03ca420da0d374babdb02a34389f2c3331b2a6e86b0d244bd5",
+    "exposure": "owned",
+    "owner": "engineering.mechanics"
+   },
+   {
+    "concept_id": "mechanics.rigid_body",
+    "content_hash": "718df79c3897854ddc5ba43d6571582d715b86b50ee3f33c3b0f31d8c8400df9",
+    "exposure": "owned",
+    "owner": "engineering.mechanics"
+   }
+  ],
+  "physics": [
+   {
+    "concept_id": "mechanics.force_balance",
+    "content_hash": "550e2fe3c653ccdd49fc443fdd979e72d34262cebdf09aa60516d44d38b2e727",
+    "exposure": "shared",
+    "owner": "engineering.mechanics"
+   },
+   {
+    "concept_id": "mechanics.moment_of_force",
+    "content_hash": "3a7334947c776b03ca420da0d374babdb02a34389f2c3331b2a6e86b0d244bd5",
+    "exposure": "shared",
+    "owner": "engineering.mechanics"
+   }
+  ]
+ }
+}

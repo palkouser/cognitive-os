@@ -8,7 +8,7 @@ never fall through to an unbounded path.
 
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from decimal import Decimal
 from fractions import Fraction
@@ -18,6 +18,7 @@ from cognitive_os.domain.descriptors import (
     RELEASED_DOMAIN_CAPABILITIES,
     RELEASED_DOMAIN_IDS,
     DomainCapabilityRequirements,
+    DomainDescriptorV1,
 )
 from cognitive_os.domain.domains import (
     AnswerType,
@@ -37,7 +38,16 @@ type CheckFn = Callable[[dict[str, Any], solvers.Candidate, ResourceBudget], sol
 @dataclass(frozen=True, slots=True)
 class ProblemTypeEntry:
     problem_type: str
-    domain: DomainKind
+    #: The general identity, always present: a stable string domain id. For the four
+    #: released domains it is the enum value verbatim, which is why moving the snapshot
+    #: onto it changed no hash. For a descriptor-registered domain it is the only identity
+    #: there is, and `domain` below is `None`.
+    domain_id: str
+    #: The released adapter's closed vocabulary (§2.3), or `None` for a domain that exists
+    #: only as a descriptor. It is deliberately not widened to `DomainKind | str`: the enum
+    #: means "one of the four released domains", and a nullable field says that plainly
+    #: where a union would quietly invite `isinstance` branches back in.
+    domain: DomainKind | None
     answer_type: AnswerType
     solver: SolverFn
     checker: CheckFn
@@ -86,19 +96,53 @@ def entries() -> tuple[ProblemTypeEntry, ...]:
     return tuple(_ENTRIES[key] for key in sorted(_ENTRIES))
 
 
-def snapshot_hash() -> str:
+def _hash_over(items: tuple[ProblemTypeEntry, ...]) -> str:
     from hashlib import sha256
 
     payload = "|".join(
-        f"{item.problem_type}:{item.domain.value}:{item.answer_type.value}:"
+        f"{item.problem_type}:{item.domain_id}:{item.answer_type.value}:"
         f"{','.join(item.required_verifiers)}:{','.join(item.skills)}:{','.join(item.strategies)}"
-        for item in entries()
+        for item in items
     )
     return sha256(payload.encode()).hexdigest()
 
 
+def snapshot_hash() -> str:
+    """A fingerprint of the whole resolution surface, pilots included.
+
+    **A registry that gained a domain is allowed to say so** (Sprint 22A W2 decision
+    S22A-030). A fingerprint that deliberately omitted part of the table would let two
+    different resolution surfaces share one hash, which is the failure this hash exists to
+    make impossible. The claim "the four released domains resolve identically" is a
+    different, narrower claim, and it has its own function below.
+    """
+    return _hash_over(entries())
+
+
+def released_snapshot_hash() -> str:
+    """The four released domains' resolution surface, which no registration can move.
+
+    This is what Sprint 22A's sealed backward-compatibility contract actually asserts, and
+    it reproduces the sealed value byte-identically however many descriptor-registered
+    domains a process has admitted. Registering a pilot must be unable to change it; if it
+    ever does, a released domain changed, and that is the whole point of the check.
+    """
+    return _hash_over(tuple(item for item in entries() if item.domain is not None))
+
+
 def problem_types(domain: DomainKind) -> tuple[str, ...]:
     return tuple(item.problem_type for item in entries() if item.domain is domain)
+
+
+def problem_types_for(domain_id: str) -> tuple[str, ...]:
+    """The same question by string id, so a caller need not know whether a domain is an
+    enum member. The released four answer identically through either door."""
+    return tuple(item.problem_type for item in entries() if item.domain_id == domain_id)
+
+
+def domain_ids() -> tuple[str, ...]:
+    """Every domain the registry currently resolves, released and descriptor-registered."""
+    return tuple(sorted({item.domain_id for item in entries()}))
 
 
 _DEFAULT_BUDGET = ResourceBudget()
@@ -108,7 +152,11 @@ _MATH = (
     ("long-division", AnswerType.EXACT, solvers.solve_long_division),
     ("fraction-arithmetic", AnswerType.EXACT, solvers.solve_exact_expression),
     ("rational-arithmetic", AnswerType.EXACT, solvers.solve_exact_expression),
-    ("algebraic-simplification", AnswerType.SYMBOLIC, solvers.solve_algebraic_simplification),
+    (
+        "algebraic-simplification",
+        AnswerType.SYMBOLIC,
+        solvers.solve_algebraic_simplification,
+    ),
     ("linear-equation", AnswerType.EXACT, solvers.solve_linear_equation),
     ("polynomial-equation", AnswerType.STRUCTURED, solvers.solve_quadratic_equation),
     ("symbolic-equivalence", AnswerType.BOOLEAN, solvers.solve_symbolic_equivalence),
@@ -180,6 +228,7 @@ def _register_domain(
         register(
             ProblemTypeEntry(
                 problem_type=problem_type,
+                domain_id=RELEASED_DOMAIN_IDS[domain],
                 domain=domain,
                 answer_type=answer_type,
                 solver=solver,
@@ -200,16 +249,138 @@ _register_domain(DomainKind.LOGIC, _LOGIC)
 _register_domain(DomainKind.CODING, _CODING)
 
 
+# --------------------------------------------------------------------------
+# Descriptor-registered domains (Sprint 22A W2, §3.1)
+# --------------------------------------------------------------------------
+#
+# A descriptor is data and a kernel is code, and this is the one place they meet. The
+# descriptor says which problem types a domain claims; the caller supplies the installed
+# kernels by importing the module that defines them. Registration is therefore the join,
+# and it fails closed when the two disagree: a domain that claims a problem type nobody
+# implements does not half-register, it is refused with the names listed.
+#
+# Nothing here registers at import time. A process that never registered a descriptor
+# resolves exactly the released twenty-eight entries, which is why `released_snapshot_hash`
+# and `snapshot_hash` agree in a default process and are allowed to differ in one that
+# admitted a pilot.
+
+
+@dataclass(frozen=True, slots=True)
+class DomainKernel:
+    """One installed deterministic implementation pair, named by its problem type.
+
+    Solver and checker stay two separate routes for a descriptor-registered domain exactly
+    as they are for a released one: the checker recomputes rather than reading the solver's
+    answer, so a pilot cannot accept itself any more than the released four can.
+    """
+
+    answer_type: AnswerType
+    solver: SolverFn
+    checker: CheckFn
+    checker_only_inputs: tuple[str, ...] = ()
+
+
+class DescriptorDomainError(ValueError):
+    """A descriptor could not be admitted to the problem-type registry. `diagnostics`
+    carries one finding per line, the same report shape the package boundary returns."""
+
+    def __init__(self, diagnostics: tuple[str, ...]) -> None:
+        super().__init__("; ".join(diagnostics))
+        self.diagnostics = diagnostics
+
+
+#: (`domain_id`, `revision`) of every descriptor admitted in this process, in order.
+_DESCRIPTOR_DOMAINS: dict[tuple[str, int], tuple[str, ...]] = {}
+
+
+def registered_descriptor_domains() -> tuple[tuple[str, int], ...]:
+    return tuple(_DESCRIPTOR_DOMAINS)
+
+
+def register_descriptor_domain(
+    descriptor: DomainDescriptorV1,
+    kernels: Mapping[str, DomainKernel],
+) -> tuple[ProblemTypeEntry, ...]:
+    """Admit one validated descriptor's problem types to the released resolution table.
+
+    Every refusal is decided before a single entry is written. A domain that registered
+    two of its three problem types and then hit a collision would leave the registry in a
+    state no descriptor describes — the W1-F2 lesson in a different table — so the checks
+    below run first and the writes happen only once all of them pass.
+    """
+    diagnostics: list[str] = []
+    domain_id = descriptor.domain_id
+
+    if domain_id in set(RELEASED_DOMAIN_IDS.values()):
+        diagnostics.append(
+            f"domain_id: {domain_id!r} is a released domain; a released domain is derived "
+            "through the adapter and its revisions are a governance path, not a package"
+        )
+    if not descriptor.problem_types:
+        diagnostics.append(
+            "problem_types: a descriptor with no problem types is a namespace, and a "
+            "namespace has nothing to register in a problem-type registry"
+        )
+    if (domain_id, descriptor.revision) in _DESCRIPTOR_DOMAINS:
+        diagnostics.append(
+            f"identity: {domain_id!r} revision {descriptor.revision} is already registered; "
+            "a duplicate key is refused rather than replacing its predecessor"
+        )
+
+    missing = tuple(name for name in descriptor.problem_types if name not in kernels)
+    if missing:
+        diagnostics.append(
+            f"kernels: no installed kernel for {sorted(missing)}; a descriptor may not "
+            "claim a solver surface that no code implements"
+        )
+    taken = tuple(name for name in descriptor.problem_types if name in _ENTRIES)
+    if taken:
+        owners = ", ".join(f"{name} (owned by {_ENTRIES[name].domain_id!r})" for name in taken)
+        diagnostics.append(f"problem_types: already registered: {owners}")
+
+    if diagnostics:
+        raise DescriptorDomainError(tuple(diagnostics))
+
+    admitted = []
+    for name in descriptor.problem_types:
+        kernel = kernels[name]
+        entry = ProblemTypeEntry(
+            problem_type=name,
+            domain_id=domain_id,
+            domain=None,
+            answer_type=kernel.answer_type,
+            solver=kernel.solver,
+            checker=kernel.checker,
+            required_verifiers=descriptor.capabilities.verifier_capabilities,
+            required_tools=descriptor.capabilities.tool_capabilities,
+            skills=descriptor.capabilities.skills,
+            strategies=descriptor.capabilities.strategies,
+            budget=_DEFAULT_BUDGET,
+            checker_only_inputs=kernel.checker_only_inputs,
+        )
+        register(entry)
+        admitted.append(entry)
+    _DESCRIPTOR_DOMAINS[(domain_id, descriptor.revision)] = descriptor.problem_types
+    return tuple(admitted)
+
+
 def exact_decimal(value: Fraction) -> Decimal:
     return Decimal(value.numerator) / Decimal(value.denominator)
 
 
 __all__ = [
+    "DescriptorDomainError",
+    "DomainKernel",
     "ProblemTypeEntry",
     "UnsupportedProblemType",
     "VerificationDisposition",
+    "domain_ids",
     "entries",
     "problem_types",
+    "problem_types_for",
+    "register_descriptor_domain",
+    "registered_descriptor_domains",
+    "released_snapshot_hash",
     "resolve",
     "snapshot_hash",
 ]

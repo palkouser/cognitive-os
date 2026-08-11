@@ -111,7 +111,11 @@ def test_the_derived_descriptors_still_match_the_released_registry() -> None:
     from cognitive_os.domains import registry
 
     derived = _sealed()["released_domains_as_descriptors"]
-    assert derived["registry_snapshot_hash"] == registry.snapshot_hash()
+    # `released_snapshot_hash`, not `snapshot_hash`: S22A-030 split the two, and only the
+    # released-scope one still means what the survey sealed once a pilot can be registered.
+    # A test session that admitted a descriptor domain earlier would otherwise fail here on
+    # test ordering rather than on a released change.
+    assert derived["registry_snapshot_hash"] == registry.released_snapshot_hash()
     assert set(derived["descriptors"]) == {"coding", "logic", "mathematics", "physics"}
 
 

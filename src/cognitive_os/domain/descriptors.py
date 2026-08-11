@@ -42,6 +42,8 @@ from __future__ import annotations
 
 import json
 import re
+from collections.abc import Iterable
+from dataclasses import dataclass
 from enum import StrEnum
 
 from pydantic import Field, model_validator
@@ -362,3 +364,85 @@ def released_domain_descriptors() -> tuple[DomainDescriptorV1, ...]:
             )
         )
     return tuple(descriptors)
+
+
+class ConceptExposure(StrEnum):
+    """How a domain comes to see a concept: it declared it, or another domain shared it in."""
+
+    OWNED = "owned"
+    SHARED = "shared"
+
+
+@dataclass(frozen=True, slots=True)
+class ConceptView:
+    """One concept as one domain sees it, with the domain that actually holds it named.
+
+    The view carries the concept itself rather than a copy of its fields, so both sides of
+    a shared concept compare equal and hash identically. That is the whole cross-domain
+    claim in one line: two governed views, one stored item.
+    """
+
+    concept: DomainConcept
+    owner_domain_id: str
+    exposure: ConceptExposure
+
+    @property
+    def concept_id(self) -> str:
+        return self.concept.concept_id
+
+    @property
+    def content_hash(self) -> str:
+        return self.concept.content_hash
+
+
+def concept_owners(descriptors: Iterable[DomainDescriptorV1]) -> dict[str, str]:
+    """`concept_id -> owning domain id`, refusing any concept two domains both claim.
+
+    A concept with two owners is a concept stored twice, which is the silo this sprint
+    exists to prevent. It is refused here rather than resolved by a rule, because every
+    resolution rule ("first wins", "highest revision wins") silently picks a winner and the
+    caller never learns the two descriptions disagreed.
+    """
+    owners: dict[str, str] = {}
+    for descriptor in descriptors:
+        for concept in descriptor.concepts:
+            existing = owners.get(concept.concept_id)
+            if existing is not None and existing != descriptor.domain_id:
+                raise DomainPackageError(
+                    (
+                        f"concept {concept.concept_id!r} is declared by both {existing!r} and "
+                        f"{descriptor.domain_id!r}; a cross-domain concept is stored once by "
+                        "one owner and shared, never declared twice",
+                    )
+                )
+            owners[concept.concept_id] = descriptor.domain_id
+    return owners
+
+
+def concept_views(
+    descriptors: Iterable[DomainDescriptorV1],
+) -> dict[str, tuple[ConceptView, ...]]:
+    """Every domain's governed view of the concepts it can see, owned and shared alike.
+
+    This is the exit criterion's "stored once, exposed through multiple governed views" as
+    a function: a shared concept appears in the owner's view as `OWNED` and in each target's
+    view as `SHARED`, and it is the *same* `DomainConcept` in both — one item, two views.
+    A domain that is named only as a share target still gets a view, which is what makes
+    the released `physics` able to see a pilot's concepts without knowing the pilot exists.
+    """
+    catalogue = tuple(descriptors)
+    concept_owners(catalogue)
+    views: dict[str, list[ConceptView]] = {item.domain_id: [] for item in catalogue}
+    for descriptor in catalogue:
+        for concept in descriptor.concepts:
+            views[descriptor.domain_id].append(
+                ConceptView(concept, descriptor.domain_id, ConceptExposure.OWNED)
+            )
+            for target in concept.shared_with:
+                views.setdefault(target, []).append(
+                    ConceptView(concept, descriptor.domain_id, ConceptExposure.SHARED)
+                )
+    return {
+        domain_id: tuple(sorted(items, key=lambda view: view.concept_id))
+        for domain_id, items in sorted(views.items())
+    }

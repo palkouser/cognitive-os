@@ -107,7 +107,11 @@ def _derived_descriptors() -> dict[str, Any]:
         }
     return {
         "descriptors": descriptors,
-        "registry_snapshot_hash": registry.snapshot_hash(),
+        # `released_snapshot_hash`, not `snapshot_hash`: this block is about the four
+        # released domains, and S22A-030 split the two so that a process which admitted a
+        # descriptor domain still reproduces this record exactly. The value is unchanged —
+        # the two agree wherever nothing was registered — but only this one keeps agreeing.
+        "registry_snapshot_hash": registry.released_snapshot_hash(),
         "reading": (
             "derived from the released problem-type registry at the snapshot hash above; "
             "a wave that changes any content hash here has changed released behaviour"

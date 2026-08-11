@@ -183,10 +183,27 @@ class TestAccumulatedStatisticsBreakTies:
 
 class TestPermittedSetsAreCoherent:
     def test_every_problem_type_offers_a_real_choice(self) -> None:
-        """If a permitted set had one entry, selection would be decorative."""
+        """A permitted set of exactly one is decorative selection; none is no selection.
+
+        The released four each declare two skills and two strategies, and that is the
+        guarantee this test was written for. Sprint 22A adds a third case: a
+        descriptor-registered domain may declare **no** permitted set at all, because it
+        solves through the deterministic tool path and never reaches skill selection.
+        Inventing two names to satisfy a count would be exactly the false-capability
+        failure ADR 0085 and §3.4 both warn about.
+
+        What must never exist, for any domain, is a set of exactly one — it looks like a
+        choice in every record it appears in, and is not one.
+        """
         entries = list(problem_registry._ENTRIES.values())
         assert entries
-        assert all(len(entry.skills) >= 2 for entry in entries)
+        assert all(len(entry.skills) != 1 for entry in entries)
+        assert all(len(entry.strategies) != 1 for entry in entries)
+
+        released = [entry for entry in entries if entry.domain is not None]
+        assert len(released) == 28
+        assert all(len(entry.skills) >= 2 for entry in released)
+        assert all(len(entry.strategies) >= 2 for entry in released)
 
     def test_each_permitted_skill_is_a_registered_seed_skill(self) -> None:
         """A permitted set is authority, so every name in it has to resolve.

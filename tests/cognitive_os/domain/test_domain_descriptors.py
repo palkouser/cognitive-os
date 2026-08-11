@@ -335,7 +335,9 @@ def test_the_adapter_is_derived_from_the_registry_rather_than_transcribed() -> N
 
     for descriptor in released_domain_descriptors():
         entries = [
-            entry for entry in registry.entries() if entry.domain.value == descriptor.domain_id
+            entry
+            for entry in registry.entries()
+            if entry.domain is not None and entry.domain.value == descriptor.domain_id
         ]
         assert entries, descriptor.domain_id
         assert set(descriptor.problem_types) == {entry.problem_type for entry in entries}

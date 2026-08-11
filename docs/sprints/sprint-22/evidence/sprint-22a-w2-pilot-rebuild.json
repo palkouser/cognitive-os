@@ -1,0 +1,31 @@
+{
+ "domain_ids_after": [
+  "coding",
+  "engineering.mechanics",
+  "logic",
+  "mathematics",
+  "physics"
+ ],
+ "every_problem_type_resolves": true,
+ "phase": "rebuild",
+ "pilot_content_hash": "1209693adf86a36402bb53d65a72a2e649b660e41a3536559adb30d9be9374af",
+ "pilot_rebuilt": true,
+ "problem_types_resolved": {
+  "mechanics.moment-balance": "engineering.mechanics",
+  "mechanics.statics-equilibrium": "engineering.mechanics",
+  "mechanics.uniform-motion": "engineering.mechanics"
+ },
+ "process": 74949,
+ "reading": "S22A-030: the released snapshot is what the sealed compat contract asserts and no registration may move it; the whole-registry snapshot changed because the registry really did gain a domain",
+ "recorded_at": "2026-08-11T17:25:01Z",
+ "registrations_replayed": 2,
+ "registry_entries_after": 31,
+ "registry_entries_before": 28,
+ "released_snapshot_after": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119",
+ "released_snapshot_before": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119",
+ "released_snapshot_unchanged": true,
+ "resolved_to_the_pilot": true,
+ "whole_snapshot_after": "a3ff778df37ae6a098760a10439066d8f29a8f8b9e599711e4177bc871cfbd7e",
+ "whole_snapshot_before": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119",
+ "whole_snapshot_changed": true
+}
