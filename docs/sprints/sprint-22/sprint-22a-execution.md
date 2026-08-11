@@ -7,6 +7,8 @@
   unchanged, four of four compat hashes unchanged, 208 replay cases green. The `DomainKind`
   coupling fell **57 → 52**. Three findings, two of them found by running the vertical slice
   rather than reviewing it, all fixed inside the wave. **W0 detail follows first**, then W1.
+- W1 wave commit `a0e2f9f`; CI run **`31513679325`** on that exact head, **30 of 30 jobs
+  successful**.
 - **W0 closed.** S22A-000 through S22A-005, S22A-010 and S22A-011, and S22A-013 through
   S22A-019 are done. The groundwork is tested and merged-ready, both §2.2 governance decisions
   are on the record, and revision 1 is published with `measured_values: 0`. **No threshold
@@ -61,6 +63,8 @@ released domain re-binds a record instead of editing a literal (W4-F1).
 
 The survey reproduction check compares every measured field and deliberately excludes
 `recorded_at` and the seal over it, so it cannot fail because a clock moved (W2-F1/F2).
+*(W1-F3 narrowed this: comparing **every** field also asserted that the source tree never
+changes, which made W1's own seam a failure. The sentence stands as what W0 did.)*
 
 ### S22A-000 and S22A-002 — the starting point, read from the authority that owns it
 
