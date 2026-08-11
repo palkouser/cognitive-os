@@ -1,0 +1,72 @@
+{
+ "amendments": [
+  "sprint-21d6-contracts-amendment-2.json"
+ ],
+ "amendments_made_by_this_sprint": 0,
+ "chronology": {
+  "artifacts_fitted": 0,
+  "bar_setting_margins_read": 0,
+  "bars_derived": 0,
+  "certification_decisions_read": 0,
+  "directions_fitted": 0,
+  "final_or_canary_outcomes_inspected": 0,
+  "retrieval_holdout_queries_read": 0
+ },
+ "contract_hashes": {
+  "admission_rule": "d9156d3131ceecb42b08909c71de6fd497c96e9206ccefaf2c79936975ca89e6",
+  "candidate_cell": "129e620840dab8b8f3e8e1898ac5e2e27fc99ddb73c30f37b86b71426b43d9fc",
+  "corpus_roles": "c32ddf3330569a9ca8e318cc3284c2d0b6a70e2957c9d7175b8a07cbbb45b82b",
+  "decision_tree": "20315e2bb205d0af82998f4351770004da1df5ee59df456a8e7a42618cc60607",
+  "feature_contract_v3": "147d2be990435f230e282a9e63eecd7f3d577c859572ca674c0b417acf77edae",
+  "selection_rule": "3593126d0240c9f27ae7fb763439b68bb07e9d1ca2e49e47c92558e0cbc83709"
+ },
+ "contracts_sha256": "777dc392ee03929667786c9997533a8cfe44360982e19c16490a20ef8e84c95b",
+ "design_inputs_from_released_and_groundwork_evidence": {
+  "reading": "every threshold this class must clear was frozen before the class existed, and the diagnostic that motivated it is sealed and cited rather than repeated. The 46-with-zero-errors observation is an upper bound on hope, exactly as D5's 0.32-below-the-floor was a lower one. The fresh certification is read once",
+  "sprint-21d6-learner-selection.json": [
+   "the published sweep showing the amended pair unreachable for the released class"
+  ],
+  "sprint-21d7-transfer-gap.json": [
+   "the §4 collapse, which licenses the class question at all",
+   "the diagnostic first-choice rates, for the demotion ruling's rank table",
+   "the containment rung's rates, for the ladder ruling's cost",
+   "the 46-admitted diagnostic, for the ceiling table's expected coverage",
+   "the sealed model hash W2 must reproduce"
+  ]
+ },
+ "evidence_children_sha256": {
+  "sprint-21d7-baseline.json": "b8fe663d6d8884884ce8f10c084e1b35502ede62764236dd1928e7e9d4bf1e7d",
+  "sprint-21d7-condition-24-ruling.json": "af2144a33ce1b1422e4a5d6f950ec3ae3001ce741c6290a13408637937a82036",
+  "sprint-21d7-demotion-ruling.json": "2cc8de528331a7072df1203afe7dc771eae9dffd906d2ab970da0c93064dd87c",
+  "sprint-21d7-ladder-ruling.json": "0648bdd0540997038deaa964dd858ce7ad8bff18b10a4f3f61f32dd55b4ba3ac",
+  "sprint-21d7-provisioning.json": "c23f5a117bc7b48438e6b70120dbbdea4e42fda6f43e9ce801e72b094cc6977f",
+  "sprint-21d7-reuse-audit.json": "b63708754ca49e065905cc59e2865400f46d210999c1c076558fc1881a1cb8b6",
+  "sprint-21d7-transfer-gap.json": "ee66c6b195207a510054cedf6b3d7aaceff44c32fad8741bebe0d396b9d4b87e"
+ },
+ "integrity_content_hash": "4017be51c6e06d6123982d2572a9dcd346bb23decc7d1bcfe2c995ee95c2fc7f",
+ "items": [
+  "S21D7-019"
+ ],
+ "measured_values": 0,
+ "recorded_at": "2026-08-10T13:29:27Z",
+ "revision": 7,
+ "schema_version": 1,
+ "sprint": "21D7",
+ "supersedes": {
+  "for": "Sprint 21D7 only; revision 6 remains the authority for every D6 record",
+  "revision": 6,
+  "sha256": "e1e4e1d76e51bb53ea845e3a9b9e0e631903921e8b3887d289048ff7eccd6022"
+ },
+ "wave": "W0",
+ "what_this_publication_forbids": [
+  "re-choosing the class, the channel allowlist, alpha, the ceiling or any floor",
+  "a second fitted class, a second lambda, a second alpha or a volume ladder",
+  "refitting the direction after W2 seals it, or deriving the bar twice",
+  "certifying on the demoted half, or letting one fitted vector reach both halves",
+  "re-pairing the halves after W0, or re-deciding the ladder after W2 measures it",
+  "any source-to-requirement channel, under any name",
+  "authoring final, batch-B or canary bodies unless a whole role fails its audit",
+  "reading the D7 certification set before it is authored, separated and sealed",
+  "opening a retrieval arm, which would void the condition-24 inheritance"
+ ]
+}

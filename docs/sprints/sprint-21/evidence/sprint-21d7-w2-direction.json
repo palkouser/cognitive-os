@@ -1,0 +1,61 @@
+{
+ "certification_decisions_scored_by_this_record": 0,
+ "final_or_canary_outcomes_inspected": 0,
+ "final_outcomes_inspected": false,
+ "fit": {
+  "channels": [
+   "candidate_source_ast_node_count",
+   "statement_graph_node_count",
+   "statement_graph_edge_count",
+   "statement_graph_path_count",
+   "declared_verifier_capability_count",
+   "missing_value_indicators",
+   "repair_containment_share"
+  ],
+  "fit_rule": "assemble each candidate's seven relational channels \u2014 the six sealed v2 scalars unchanged, then the repair-containment share computed from the group's baseline and candidate sources; collect every within-group accepted-minus-rejected channel difference over the declared fitting groups in sorted group order; fit one linear direction by ridge-regularised logistic regression on the antisymmetric pair set (no intercept, zero start, Newton iterations to convergence); rank a group's candidates by their projection onto the direction with ties broken on the baseline order; the decision's confidence is the projection margin between the top two candidates",
+  "groups": 180,
+  "hypothesis_class": "containment-contrastive-linear-v1",
+  "margin_floor": "0",
+  "model_hash": "d80160c4aa795fadd98fb4e6d4f64b7b29a2a3685c537454b8aff95daa124859",
+  "pairs": 720,
+  "pool": "the released 180-group D5 fitting pool, its licensed role",
+  "regularization": "1",
+  "weights": {
+   "candidate_source_ast_node_count": "5.74588029611",
+   "declared_verifier_capability_count": "0",
+   "missing_value_indicators": "0",
+   "repair_containment_share": "4.69783887164",
+   "statement_graph_edge_count": "-0.0106118431669",
+   "statement_graph_node_count": "0.0183194680177",
+   "statement_graph_path_count": "-1.40466438772"
+  }
+ },
+ "fit_pool_shape": {
+  "candidate_vectors": 720,
+  "groups": 180
+ },
+ "fits_performed_in_this_wave": 1,
+ "inputs": {
+  "d5_feature_seals_sha256": "2f4381ccb21d204a22da686d7f5e3feeb6317030b656e98b7a083370a48696ed",
+  "d5_fitting_campaign_sha256": "17f2e838979d569e6b87bcd3297ed734bf15c2b6ff1dcc8153c6d6a732cebc6f",
+  "d7_contracts_sha256": "777dc392ee03929667786c9997533a8cfe44360982e19c16490a20ef8e84c95b",
+  "store": "artifacts-s21d5"
+ },
+ "integrity_content_hash": "0790e1f68d64e551b86917b6293ff74ba7b6b99b597d2edd06341eee1c0a1c25",
+ "items": [
+  "S21D7-029"
+ ],
+ "reproduction": {
+  "across_a_process_restart": "this record carries no timestamp, so a second process deriving it must produce these bytes exactly; `--check` is that second process",
+  "expected_model_hash": "d80160c4aa795fadd98fb4e6d4f64b7b29a2a3685c537454b8aff95daa124859",
+  "frozen_by": "revision 7, \u00a7candidate_cell, model_hash_to_reproduce",
+  "on_failure": "stop. A direction that does not reproduce means W2's margins would be computed by an environment the pre-registration was not written against",
+  "reproduced": true
+ },
+ "schema_version": 1,
+ "sprint": "21D7",
+ "stage": "direction",
+ "stores_opened_for_writing": 0,
+ "wave": "W2",
+ "what_this_record_is_not": "a score. No decision of the certification half is ranked here, no bar is derived and no margin is read; the direction is fitted on the fitting pool alone"
+}

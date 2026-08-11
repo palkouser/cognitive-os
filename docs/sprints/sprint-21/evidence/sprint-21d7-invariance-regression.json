@@ -1,0 +1,149 @@
+{
+ "certification_campaign_sha256": "32ffeafe34155f08a7be0754b60128b43f07aaf2cc283445bce8a3c5c9e9078a",
+ "chronology": {
+  "bounds_fitted_on": "nothing here; the campaign's own bounds are read from a seal",
+  "every_transformed_seal_precedes_its_execution": true,
+  "features_sealed_at": "2026-08-11T05:10:49.937629+00:00",
+  "first_transformed_execution_at": "2026-08-11T05:10:57.225552+00:00"
+ },
+ "d7_feature_seals_sha256": "bb6028e753598b583e8c7054024a1f2c01e6873a448ce10f37d866c7f0b2eed4",
+ "encoder": {
+  "bounds_from": "the D7 certification feature seal, which stores them",
+  "clean_bodies_re_encoded": 160,
+  "embedding": {
+   "computed": false,
+   "supplied": "a zero vector of 384 channels",
+   "why": "no v3 channel reads an embedding. Supplying zeros keeps the v2 assembler's contract without making any number here depend on a model, and retires D4's W2-D9 batch-composition finding for this record: there is no batch"
+  },
+  "mismatches": 0,
+  "rebuild_check": "every one of the clean bodies re-encodes to its sealed values before any transformed body is read",
+  "version": "correction-ranking-v2"
+ },
+ "entered_any_dataset": false,
+ "final_or_canary_access": 0,
+ "final_outcomes_inspected": false,
+ "first_action": {
+  "cases_compared": 40,
+  "changed": [],
+  "changes": 0,
+  "preservation": "100%",
+  "ranker_dependent_form": {
+   "how": "the wave's fitted direction ranks the clean group and the transformed group and the two first choices are compared. D6 could only compare the head of the baseline order and argue this followed; the class dropped the embedding, so here it is run",
+   "margin_floor": "0",
+   "measured_here": true,
+   "model_hash": "d80160c4aa795fadd98fb4e6d4f64b7b29a2a3685c537454b8aff95daa124859",
+   "tie_break": "the baseline order, frozen by the catalogue"
+  }
+ },
+ "fitted": false,
+ "independence": {
+  "candidate_vectors_compared": 160,
+  "canonical_sources_unchanged": 160,
+  "changed": [],
+  "channels": [
+   "candidate_source_ast_node_count",
+   "statement_graph_node_count",
+   "statement_graph_edge_count",
+   "statement_graph_path_count",
+   "declared_verifier_capability_count",
+   "missing_value_indicators",
+   "repair_containment_share"
+  ],
+  "containment_share_unchanged": 160,
+  "independent_decisions": 0,
+  "reading": "160 transformed candidate vectors, every one identical to its clean counterpart on all seven channels, so the 40 transformed decisions repeat 20 clean ones and add none",
+  "relational_vectors_changed": 0,
+  "relational_vectors_unchanged": 160,
+  "scalars_unchanged": 160,
+  "transformed_decisions": 40
+ },
+ "integrity_content_hash": "90a2c637194569939b5babc8dffb80fa64c1afbf75136162a6ffeab86fb10ca9",
+ "items": [
+  "S21D7-033"
+ ],
+ "pre_registration_sha256": "984a21f012cddb1e2a2b5608e36debbc7769351c5363be940e9fab7e19505496",
+ "purpose": "execute the claim the D7 corpus seal makes about its own certification bodies: a transformation repeats its source group's relational vector, so it adds no independent decision and cannot move the first action",
+ "recorded_at": "2026-08-11T05:10:58Z",
+ "schema_version": 1,
+ "sealed_manifests_sha256": "e7a3ab02da9da9e2571a0f5cd0eb4779ac0a4cba4aa691e0ee38244704e2f4b3",
+ "semantic_mutation_control": {
+  "all_changed_the_canonical_representation": true,
+  "distinct_canonical_hashes": 5,
+  "mutations": [
+   {
+    "canonical_hash": "bcc7ee37809d5152de7d89180658c5fb2f17342e6b1d4ee3fe6e7eabd861766c",
+    "canonical_hash_changed": true,
+    "mutation": "comparison_flipped"
+   },
+   {
+    "canonical_hash": "c2cbddb47096f9d4b920df27349c96dc8eeee4eeb9b6ce5852dad3d951c0b6fd",
+    "canonical_hash_changed": true,
+    "mutation": "bound_swapped"
+   },
+   {
+    "canonical_hash": "bb5c0b8e8849b9fe2a92e26ee82be3121dddf598169942ebadacb5eb2787540f",
+    "canonical_hash_changed": true,
+    "mutation": "branch_removed"
+   },
+   {
+    "canonical_hash": "6d3f1d81afc2431410b4be7f49edf5aa8650fa4debc8b3196e6d552543d57dcf",
+    "canonical_hash_changed": true,
+    "mutation": "constant_introduced"
+   }
+  ],
+  "probe_canonical_hash": "22b55ee22f0dbeb40f27815e4aa0f6ddd3762f90db5e9c43d740244f51a1eb37",
+  "why": "the invariance result says a rename does not move the canonical bytes. This says a changed meaning does. Without it, a canonicaliser that mapped every program to one value would satisfy the first claim completely"
+ },
+ "snapshots_sha256": "ac11a5ac139f146b785fbc952f97c57ae57dea4642b41a9dfbeb8141364f145f",
+ "sprint": "21D7",
+ "stops": [],
+ "submanifest": {
+  "applicable_cases": 40,
+  "cases_by_name": {
+   "identifier_rename_a": 20,
+   "issue_rewrite_a": 20
+  },
+  "fitted": false,
+  "generator_code_hash": "bd8e2f0419c5766f2bd494d2c041f9041e268fc531e0775348698a270e79c397",
+  "hard_coded_oracle_hash": "619dd385a0bf6035a1cbc7155a05b83ffc028bd64e61be7c450bef4182fd952c",
+  "hash": "908e920b92de13fe3543e951ec8cd7f64f9737b16c9b484ae286b9d46a5486ab",
+  "nominal_cases": 40,
+  "not_applicable": [],
+  "sample_groups_named": [
+   "d7-boundary-bracketing-span",
+   "d7-boundary-cap-each-group",
+   "d7-boundary-cooldown-filter",
+   "d7-boundary-cycle-take",
+   "d7-error-admit-order",
+   "d7-error-budget-level",
+   "d7-error-dead-letter",
+   "d7-numeric-age-on-date",
+   "d7-numeric-backoff-wait",
+   "d7-numeric-batch-price",
+   "d7-parsing-berth-window",
+   "d7-parsing-checkbox-mark",
+   "d7-parsing-coupon-value",
+   "d7-state-adjust-priority",
+   "d7-state-allocate-number",
+   "d7-state-basket-lines",
+   "d7-transform-apply-defaults",
+   "d7-transform-condense-ranges",
+   "d7-transform-digest-line",
+   "d7-transform-drop-constant-columns"
+  ],
+  "sample_is_drawn_from": "the D7 certification catalogue — twenty of the hundred groups authored in W1, so the property is measured on the corpus the selection is certified on",
+  "sample_matches_the_seal": true,
+  "source_groups": 20,
+  "stage": "calibration_invariance"
+ },
+ "verifier": {
+  "accepted": 80,
+  "candidate_outcomes_executed": 160,
+  "changed": [],
+  "governed_runs": 0,
+  "how": "plain pytest in a scratch directory. A precheck that wrote governed outcomes would put transformed rows in the store the clean campaign owns",
+  "label_changes": 0
+ },
+ "w2_direction_sha256": "7307b946a463c65915cbbbe80afe7f8f509ebf00cf2c16bad6481fabd06ffdbf",
+ "wave": "W2"
+}

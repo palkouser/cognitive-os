@@ -1,0 +1,247 @@
+{
+ "changed_by_this_revision": {
+  "bar_setting_half": {
+   "authorised_by": "sprint-21d7-demotion-ruling.json",
+   "from": "the demoted D5 calibration half",
+   "to": "the demoted D6 certification half"
+  },
+  "baseline_ladder": {
+   "authorised_by": "sprint-21d7-ladder-ruling.json",
+   "direction": "raises the baseline the learned class must beat",
+   "from": "5 rungs",
+   "to": "6 rungs"
+  },
+  "hypothesis_class": {
+   "from": "pairwise-contrastive-linear-v1 over 390 channels",
+   "licensed_by": "the §4 transfer measurement's collapse, by the D7 handoff's own decision rule; sprint-21d7-transfer-gap.json",
+   "to": "containment-contrastive-linear-v1 over 7 channels"
+  }
+ },
+ "contracts": {
+  "admission_rule": {
+   "alpha": "0.20",
+   "alpha_bounds": "the leak rate P(admitted | the decision is wrong), not the error rate among admitted decisions",
+   "alpha_floor_below_which_the_bar_is_the_failed_rule": "0.117647",
+   "alpha_floor_exact": "2/17",
+   "alpha_is_carried_not_re_chosen": "the value comes from amendment 2 and is not re-derived here. What changed is the half it is taken from, not the leak budget",
+   "alpha_may_be_rechosen": false,
+   "authorised_by": "sprint-21d6-contracts-amendment-2.json, carried unchanged",
+   "bar_setting_half": "the demoted D6 certification half, per S21D7-010",
+   "content_hash": "d9156d3131ceecb42b08909c71de6fd497c96e9206ccefaf2c79936975ca89e6",
+   "derivation_reading": "split conformal replaces the zero-error prefix: the bar is a quantile of the wrong decisions' margin distribution rather than the position of the single highest-scoring error, so coverage degrades smoothly with alpha instead of being hostage to one point; what it buys costs the zero — the record states an error budget and a bound, never a claimed zero rate. Alpha bounds the leak rate P(admitted | the decision is wrong), not the error rate among admitted decisions: the bar is a quantile of the margins of errors, so a fresh error clears it with probability at most alpha. The second quantity is the one §2.3 cares about, it is roughly the first times the error rate over the coverage, and it is measured on the certification half rather than guaranteed here — errors_admitted counts it and error_upper_bound_95 bounds it. Both readings hold only if the two halves are exchangeable, which is a claim about how the corpus was authored and not something this module can check",
+   "derivation_rule": "score every independent clean calibration decision with the sealed pairwise-contrastive margin; split the calibration groups into a conformal half and a certification half with no shared fitted vector; take the margins of the answered decisions the ranker got wrong in the conformal half, sort them ascending, and set the threshold to the ceil((1-alpha)*(m+1))-th smallest of the m wrong margins; admit the certification decisions scoring strictly above it; report coverage over independent certification decisions, the errors among admitted decisions, and the Clopper-Pearson one-sided 95% upper bound on the true error rate among admitted decisions",
+   "item": "S21D7-015",
+   "module": "src/cognitive_os/learning/conformal_operating_point.py",
+   "name": "split-conformal-margin-v1",
+   "rank_at_this_alpha": 14,
+   "single_derivation": "one bar, derived once from the demoted half; a second derivation that does not reproduce the first is refused across a process restart by the `previous=` rule, alpha included in the derivation hash",
+   "why_that_floor": "the rank reaches the whole set — and the bar becomes the largest wrong margin, which is the zero-error prefix rule D5 stopped on — for every alpha strictly below 2/(m+1). The decimal above is that bound rounded down, so it is a value at which the rule still degenerates rather than one just past it",
+   "wrong_decisions_are_a_design_estimate": "implied by the groundwork's diagnostic rate on the spent D6 corpus; the in-wave m is whatever the sealed re-scoring finds",
+   "wrong_decisions_in_the_bar_setting_half": 16,
+   "wrong_margins_left_above_the_bar": 2
+  },
+  "candidate_cell": {
+   "cells": 1,
+   "content_hash": "129e620840dab8b8f3e8e1898ac5e2e27fc99ddb73c30f37b86b71426b43d9fc",
+   "fit_rule": "assemble each candidate's seven relational channels — the six sealed v2 scalars unchanged, then the repair-containment share computed from the group's baseline and candidate sources; collect every within-group accepted-minus-rejected channel difference over the declared fitting groups in sorted group order; fit one linear direction by ridge-regularised logistic regression on the antisymmetric pair set (no intercept, zero start, Newton iterations to convergence); rank a group's candidates by their projection onto the direction with ties broken on the baseline order; the decision's confidence is the projection margin between the top two candidates",
+   "fitted_channels": 7,
+   "fitted_on": "the released 180-group / 720-row pool, its licensed fitting role",
+   "fitted_once": true,
+   "hypothesis_class": "containment-contrastive-linear-v1",
+   "inference_budget_ms": 250,
+   "item": "S21D7-014",
+   "lambda": "1",
+   "margin_floor": "0",
+   "model_hash_to_reproduce": "d80160c4aa795fadd98fb4e6d4f64b7b29a2a3685c537454b8aff95daa124859",
+   "module": "src/cognitive_os/learning/containment_contrastive.py",
+   "released_directions_not_re_scored": [
+    "9fd297fb407015374485e8f7ef8fbb557e6f89f7ac3286e2572769fdab937d74",
+    "5b15f4af06a2b08d0d8269b59f47127bf97d610a22c12c645f8fbde9fa0f47cd"
+   ],
+   "reproduction_rule": "W2 fits the direction, seals it by content hash and reproduces it across a process restart. A fit that does not reproduce the hash above on the same pool is a determinism defect in the environment and a stop, not a number to shrug at: hashes are compared, fits are not repeated",
+   "tie_break": "the baseline order",
+   "volume_ladder": null,
+   "why_no_volume_ladder": "D5 answered volume — coverage moved one point across a 2.25x span — and nothing since has reopened it. Two selectable cells would be a search",
+   "why_not": "they are a different class over 390 channels, their sweep is published, and re-reporting them would be motion without information"
+  },
+  "corpus_roles": {
+   "bar_setting_half": {
+    "audited_in": "sprint-21d7-reuse-audit.json",
+    "re_executed": false,
+    "re_scored_under": "containment-contrastive-linear-v1",
+    "ruling": "sprint-21d7-demotion-ruling.json",
+    "source": "the 100 spent D6 certification groups, 400 outcomes",
+    "use": "places the bar and certifies nothing"
+   },
+   "carried_roles": {
+    "audited": "sprint-21d7-reuse-audit.json, decision reuse, zero bodies opened",
+    "canary": 5,
+    "final_a": 30,
+    "final_b": 30
+   },
+   "certification_half": {
+    "authored_by": "S21D7-020, freshly, in W1",
+    "groups": 100,
+    "outcomes": 400,
+    "read_before_the_bar_exists": false
+   },
+   "content_hash": "c32ddf3330569a9ca8e318cc3284c2d0b6a70e2957c9d7175b8a07cbbb45b82b",
+   "disjointness": "no fitted vector may appear in both halves; S21D7-022 proves it",
+   "fitting_pool": {
+    "groups": 180,
+    "rows": 720,
+    "use": "the one fit this sprint performs"
+   },
+   "invariance_sample": {
+    "groups": 20,
+    "transformed_decisions": 40
+   },
+   "item": "S21D7-016",
+   "promotion_submanifest": {
+    "independent": 60,
+    "nominal": 120
+   },
+   "retrieval": {
+    "authored": 0,
+    "condition_24": "inherited under sprint-21d7-condition-24-ruling.json"
+   },
+   "why_not_a_50_50_split_of_d6": "§2.3 requires 100 independent decisions in the measured set; a 50/50 split certifies 50 and fails a condition no ruling touches"
+  },
+  "decision_tree": {
+   "content_hash": "20315e2bb205d0af82998f4351770004da1df5ee59df456a8e7a42618cc60607",
+   "endings": {
+    "0_successor_contract_refused": "a §2.2 ruling is refused; the class question cannot be posed under the frozen gate and the record states which ruling and why",
+    "1_select": "all nine conditions hold; bind the v3 artifact to the new conformal point, run the lifecycle, close the gate, unblock Sprint 22A",
+    "2_leak_budget_exceeded": "coverage at least the floor and the bound above the ceiling. Read against the sealed transfer record: the class transferred on two spent corpora and failed on unread evidence, which is the exchangeability symptom — the successor question is authoring-run drift, not another class, and the sealed per-family rates say where",
+    "3_margin_coverage_bound": "coverage below the floor at this alpha; the class ranks but its margin does not concentrate errors on unread evidence. The containment rung's own result decides whether the signal or the fit is what failed",
+    "4_baseline_not_beaten": "first choice over admitted not above the seated ladder's strongest rung. Reachable only because S21D7-011 seated the containment rung: the fitted class could not outrank its own strongest channel, which would itself be the finding that the other six channels add nothing",
+    "5_invariance_violated": "any first-action flip on the invariance sample. The containment share cannot move under the six cases by construction, so a flip indicts the scalar half or the assembly, not the signal"
+   },
+   "endings_are_six_different_sprints": true,
+   "evaluated_on": "the fresh certification set only, once",
+   "item": "S21D7-018",
+   "no_ending_may_be_chosen_after_the_measurement": true
+  },
+  "feature_contract_v3": {
+   "allowlist": [
+    "candidate_source_ast_node_count",
+    "statement_graph_node_count",
+    "statement_graph_edge_count",
+    "statement_graph_path_count",
+    "declared_verifier_capability_count",
+    "missing_value_indicators",
+    "repair_containment_share"
+   ],
+   "channel_rules": {
+    "admissible": "within-group source-to-source relations: both sides move together under the frozen rename cases, so the relation is invariant",
+    "banned": "source-to-requirement relations, under any name. The six cases rename every source with one map and rewrite the issue text, so one side of that relation moves alone — the v1 query_to_candidate_cosine lesson, which v2 removed and v3 does not reintroduce"
+   },
+   "channels": 7,
+   "content_hash": "147d2be990435f230e282a9e63eecd7f3d577c859572ca674c0b417acf77edae",
+   "derived_half": {
+    "availability": "pre_outcome; the baseline module and the candidate sources",
+    "channel": "repair_containment_share",
+    "definition": "the mean, over the other candidates whose repair adds at least one line, of the fraction of that candidate's baseline-added lines this candidate also carries",
+    "envelope": null,
+    "module": "src/cognitive_os/learning/repair_containment.py",
+    "why_no_envelope": "the share is in [0, 1] by construction, so a clip-and-scale fitted on training rows would add a corpus-dependent parameter to a channel that has none. Two corpora are comparable on it without sharing anything"
+   },
+   "embedding": {
+    "channels": 384,
+    "computed_and_sealed": true,
+    "read_by_any_v3_channel": false,
+    "why_both": "the v2 record stays complete because the surface scans and the independence census read it; the §4 measurement located the non-transferring part in exactly these 384 channels, so no v3 channel reads one. The seal must make both facts checkable"
+   },
+   "encoder_unchanged": "cogos-python-alpha-normalizer-v2",
+   "item": "S21D7-013",
+   "name": "CorrectionFeatureContractV3",
+   "representation": "relational, seven channels, assembled per group",
+   "scalar_half": {
+    "channels": [
+     "candidate_source_ast_node_count",
+     "statement_graph_node_count",
+     "statement_graph_edge_count",
+     "statement_graph_path_count",
+     "declared_verifier_capability_count",
+     "missing_value_indicators"
+    ],
+    "normalisation": "D5's inherited clip-and-scale bounds, unchanged",
+    "re_encoded": false,
+    "source": "the sealed v2 feature records, read by name and unchanged"
+   },
+   "supersedes_for_fitting_only": "492c90a5df420de9d1662d17155ac8b28713e69bbd4bbe56208415d6ca076362"
+  },
+  "selection_rule": {
+   "a_cell_failing_one_condition_is_not_a_candidate": true,
+   "bound_at_the_expected_coverage": {
+    "0": 0.063049,
+    "1": 0.099024,
+    "2": 0.130612,
+    "3": 0.160022,
+    "4": 0.188042
+   },
+   "ceiling_c": "0.15",
+   "conditions": [
+    "at least 100 independent clean ranking decisions in the certification set",
+    "admission by the split-conformal bar at alpha, and a Clopper-Pearson one-sided 95% upper bound at most 0.15 on the error rate among admitted independent decisions",
+    "clean coverage at least 0.40",
+    "at least 20 projected changed decisions over the 60 final groups",
+    "clean first-choice rate over admitted decisions strictly above the strongest deterministic baseline on the same decisions",
+    "at least one changed clean decision",
+    "100% first-action preservation on the invariance-regression sample",
+    "every cell and sweep point reported, filtered and abstaining ones included",
+    "maximum inference within the 250 ms budget"
+   ],
+   "content_hash": "3593126d0240c9f27ae7fb763439b68bb07e9d1ca2e49e47c92558e0cbc83709",
+   "coverage_floor": "0.40",
+   "expected_admitted": 46,
+   "item": "S21D7-017",
+   "ladder": {
+    "changed_decisions_pair_against": "the seated ladder's strongest rung; W2 reports both pairings and §2.3 reads the seated one",
+    "rungs": [
+     "fixed_input_order",
+     "deterministic_static_ordering",
+     "lexical_similarity",
+     "frozen_minilm_cosine",
+     "width_20_bounded_graph",
+     "repair_containment_share"
+    ],
+    "seated_by": "sprint-21d7-ladder-ruling.json",
+    "strongest_rung_is_derived_not_named": true
+   },
+   "section": "§2.3 as amended by amendment 2, unchanged by D7",
+   "thresholds_changed_by_this_revision": 0
+  }
+ },
+ "integrity_content_hash": "466dee87eadef30bfc2c3a68d3c4ccd9198b0fc0e17b0ea7dcb54b07be5c85ef",
+ "items": [
+  "S21D7-013",
+  "S21D7-014",
+  "S21D7-015",
+  "S21D7-016",
+  "S21D7-017",
+  "S21D7-018"
+ ],
+ "measured_values": 0,
+ "recorded_at": "2026-08-10T13:29:27Z",
+ "revision": 7,
+ "schema_version": 1,
+ "sprint": "21D7",
+ "thresholds_changed": {
+  "amendments_made_by_d7": 0,
+  "count": 0
+ },
+ "unchanged_from_d6": {
+  "admission_rule": "split-conformal-margin-v1",
+  "alpha": "0.20",
+  "ceiling_c": "0.15",
+  "counting_rule": "revision 5, the independence census and the independent denominator",
+  "coverage_floor": "0.40",
+  "encoder": "correction-ranking-v2, unchanged; the v2 records are read, not re-made",
+  "gate_conditions": 29,
+  "gate_contract": "9e47bc618fc1eca8b66146eacdf1bd244fced79bb1c91f46f2c6ff4484bfd8a7",
+  "normaliser": "cogos-python-alpha-normalizer-v2",
+  "note": "D7 changes no threshold, no admission rule, no alpha and no ceiling. It changes the hypothesis class under them, and seats one deterministic rung on the ladder that class must beat"
+ },
+ "wave": "W0"
+}

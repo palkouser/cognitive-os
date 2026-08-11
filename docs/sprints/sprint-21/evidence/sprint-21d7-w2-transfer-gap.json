@@ -1,0 +1,65 @@
+{
+ "decision": "collapsed",
+ "final_or_canary_outcomes_inspected": 0,
+ "final_outcomes_inspected": false,
+ "groundwork_record": {
+  "file": "sprint-21d7-transfer-gap.json",
+  "file_sha256": "ee66c6b195207a510054cedf6b3d7aaceff44c32fad8741bebe0d396b9d4b87e",
+  "integrity_content_hash": "9867b6d5d968ddda39a5a2b732db15f7f829f7430b4d207d3fc29041d89b47f0",
+  "transfer_gap_content_hash": "af3b9873308a1cc4dfa261a17f12ea9e4f1caec52e272cb3981391baf8743f0b"
+ },
+ "integrity_content_hash": "ed6c621d7c4e72f8e8f6bc987d067c36941cd511e6cf76ea91ded7e15dacae68",
+ "items": [
+  "S21D7-030"
+ ],
+ "measures": "nothing new. This record raises the groundwork's \u00a74 measurement to W-stage evidence and binds it by hash, because it is the measurement that licenses the class question W2 certifies",
+ "quantities": {
+  "baseline_shift_by_rung": [
+   [
+    "fixed_input_order",
+    "0.00"
+   ],
+   [
+    "deterministic_static_ordering",
+    "0.07"
+   ],
+   [
+    "lexical_similarity",
+    "0.21"
+   ]
+  ],
+  "collapsed_reading": "the learned-minus-baseline difference itself collapses: the direction does not transfer, and no admission rule over it ever will",
+  "corpora": [
+   {
+    "corpus": "d5_calibration",
+    "groups": 100,
+    "learned_first_choice_rate": "0.88",
+    "strongest_rung": "fixed_input_order",
+    "strongest_rung_rate": "0.42"
+   },
+   {
+    "corpus": "d6_certification",
+    "groups": 100,
+    "learned_first_choice_rate": "0.76",
+    "strongest_rung": "lexical_similarity",
+    "strongest_rung_rate": "0.62"
+   }
+  ],
+  "difference_shift": "-0.32",
+  "learned_shift": "-0.12",
+  "stable_reading_not_taken": "the learned-minus-baseline difference is stable across corpora and only the absolute rates move: the transfer gap is corpus difficulty and the confidence axis is exhausted"
+ },
+ "schema_version": 1,
+ "sprint": "21D7",
+ "stage": "transfer_gap",
+ "stores_opened_for_writing": 0,
+ "the_successor_it_licenses": {
+  "certified_on": "a fresh 100-group corpus the class has never seen",
+  "diagnosed_in_the_groundwork_record": true,
+  "hypothesis_class": "containment-contrastive-linear-v1",
+  "model_hash": "d80160c4aa795fadd98fb4e6d4f64b7b29a2a3685c537454b8aff95daa124859"
+ },
+ "wave": "W2",
+ "what_collapsed": "learned-minus-strongest fell from +0.46 to +0.14 while fixed_input_order held at 0.42 on both corpora: the sealed 390-channel direction carried the authoring run, not the task, so no admission rule over it would have transferred either",
+ "what_this_record_is_not": "a re-decision. The groundwork's stop stands as taken; nothing here re-opens it, and the diagnostic bar it simulated was discarded there and is not read here"
+}

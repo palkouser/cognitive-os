@@ -62,6 +62,8 @@ from .reality_task_specs_d3 import D3_TASK_SPECS
 from .reality_task_specs_d4 import D4_CALIBRATION_SPECS
 from .reality_task_specs_d5 import D5_CALIBRATION_SPECS
 from .reality_task_specs_d6 import D6_CERTIFICATION_SPECS
+from .reality_task_specs_d7 import D7_CERTIFICATION_SPECS
+from .reality_task_specs_d7_final import D7_FINAL_REPLACEMENT_SPECS
 
 #: Fixed forever: it is what makes a regenerated task the same task.
 REALITY_TASK_NAMESPACE = UUID("6f2a1c94-8d3b-5e17-a4c0-2b9d7e5f83a1")
@@ -318,10 +320,22 @@ _D6_TEMPLATES: dict[str, TaskTemplate] = {
     spec.template_id: _expand_d2(spec) for spec in D6_CERTIFICATION_SPECS
 }
 
+#: D7's fresh certification groups, on the same D2 shape and through the same expander.
+_D7_TEMPLATES: dict[str, TaskTemplate] = {
+    spec.template_id: _expand_d2(spec) for spec in D7_CERTIFICATION_SPECS
+}
+
+#: The four replacements S21D7-038 authorised for the two carried final roles. A separate
+#: registry from the certification one because they belong to different roles and a reader
+#: should not have to work out which of the hundred-and-four is which.
+_D7_FINAL_TEMPLATES: dict[str, TaskTemplate] = {
+    spec.template_id: _expand_d2(spec) for spec in D7_FINAL_REPLACEMENT_SPECS
+}
+
 #: Every corpus under one lookup, because the runner, the candidate builder and the retrieval
-#: plane address a task by ID and should not have to know which sprint authored it. The eight
+#: plane address a task by ID and should not have to know which sprint authored it. The nine
 #: are still separate registries above: `available_templates()` is C3's campaign surface and
-#: must not silently grow by five hundred and ninety-seven tasks.
+#: must not silently grow by six hundred and ninety-seven tasks.
 _ALL_TEMPLATES: dict[str, TaskTemplate] = {
     **_TEMPLATES,
     **_D2_TEMPLATES,
@@ -332,6 +346,8 @@ _ALL_TEMPLATES: dict[str, TaskTemplate] = {
     **_D5_TEMPLATES,
     **_D5_RETRIEVAL_TEMPLATES,
     **_D6_TEMPLATES,
+    **_D7_TEMPLATES,
+    **_D7_FINAL_TEMPLATES,
 }
 
 _REGISTERED = (
@@ -344,6 +360,8 @@ _REGISTERED = (
     + len(_D5_TEMPLATES)
     + len(_D5_RETRIEVAL_TEMPLATES)
     + len(_D6_TEMPLATES)
+    + len(_D7_TEMPLATES)
+    + len(_D7_FINAL_TEMPLATES)
 )
 if len(_ALL_TEMPLATES) != _REGISTERED:  # pragma: no cover - import guard
     raise RuntimeError(

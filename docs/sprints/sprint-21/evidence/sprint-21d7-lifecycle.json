@@ -1,0 +1,565 @@
+{
+ "activation": {
+  "action": "activation",
+  "approval_hash": "cb25f295875f5768f6a8e80eb5d13ae050115f4a3e1593d47987c6668d75b1b4",
+  "component_revision": 4,
+  "lineage_id": "4509e1be-89e4-5d6c-b655-47061d2b1c9a",
+  "previous_receipt_id": null,
+  "promotion_assessment_hash": "e964dc5d7efc0b67c4f400daf7bb6584cb12b8f6cd117bd99ee417780d2f6ee0",
+  "receipt_id": "31550a17-e9ae-5658-b067-9c8d494502cc"
+ },
+ "all_conditions_met": true,
+ "canary": {
+  "configuration_hash": "937bdc7c1848fdddf7134abf06d28bf1710afd0cf946d9f11eedc30975529f51",
+  "kill_switch_enabled": true,
+  "maximum_tasks": 20,
+  "routed_groups": [
+   "d2-boundary-edge-trim",
+   "d2-errors-wrapping",
+   "d2-numeric-weighted-mean",
+   "d2-parsing-title",
+   "d2-state-toggle"
+  ],
+  "routing_manifest_hash": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7",
+  "sequence_mode": "stop_on_first_accepted",
+  "steady_state_hash": "716ae073034e9a3aa6bc51dbe018cf2b7f3e8761c90db7e8356106648ad1f555",
+  "transition_hash": "8437a9ec518cfac4c025c99c8918465c2eb44afe24c4fe09715859f4d20d1546"
+ },
+ "component": {
+  "artifact_id": "0790849c-2225-413e-9452-c14d85ef9df5",
+  "baseline_metric": "0.4833333333333333333333333333",
+  "candidate_metric": "0.8666666666666666666666666667",
+  "component_id": "learned.containment.correction_ranking",
+  "descriptor_hash": "b9f515b180871acaddf610ac712dac430a3a63fbcac23d82a178acf2b781a85d",
+  "descriptor_version": "21d7.1",
+  "gates_bound_to_a_d7_record": 20,
+  "invariance_covers_artifact_unavailable": true,
+  "invariance_identical": true,
+  "ladder_rungs": [
+   "deterministic_static_ordering",
+   "fixed_input_order",
+   "lexical_similarity",
+   "containment-contrastive-linear-v1"
+  ],
+  "lineage_id": "4509e1be-89e4-5d6c-b655-47061d2b1c9a",
+  "promotion_assessment_hash": "e964dc5d7efc0b67c4f400daf7bb6584cb12b8f6cd117bd99ee417780d2f6ee0",
+  "promotion_payload_hash": "d32d2b6d04ffc7563ee3ba691b5571c3abf051709d0cc749c5b62af5d114a49a",
+  "surface": "experience.correction_ranking"
+ },
+ "condition_detail": {
+  "25": {
+   "asks": "the fail-closed runtime hash-binds the canary subset, every learned-first correction runs the verifier, and the kill switch returns immediately to the deterministic ordering",
+   "hash_bound": {
+    "a_group_outside_the_subset": "group_not_routed",
+    "a_manifest_hash_that_moved": "routing_manifest_mismatch",
+    "is_the_canary_catalogues_own_hash": true,
+    "learned_permitted_in_either_case": false,
+    "routed_groups": 5,
+    "routing_manifest_hash": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7"
+   },
+   "kill_switch": {
+    "artifact_loads_on_the_fallback_path": 0,
+    "learned_permitted_after": 0,
+    "reason_one_call_after_the_disable": [
+     "lifecycle_not_active"
+    ],
+    "seconds": 0.026449
+   },
+   "met": true,
+   "verifier_mandatory": {
+    "accepted_without_a_verifier_label": 0,
+    "corrections_proposed": 5,
+    "labels_came_from": "the hidden pytest suite, executed in the sandbox by the canary campaign. The model never labels its own choice: it orders candidates, and every candidate the sequencer reaches carries a label produced by a container run",
+    "verifier_labels_read": 5
+   }
+  },
+  "26": {
+   "activation_survived": {
+    "receipt_still_the_activation": true,
+    "revision": 4,
+    "state": "active",
+    "surface_holder": "learned.containment.correction_ranking"
+   },
+   "artifact_loaded_after_the_restart": true,
+   "asks": "activation, active projection, artifact loading, disable, fallback, restoration and rollback evidence survive a process restart",
+   "database_restarts": [
+    {
+     "before_phase": [
+      "activate"
+     ],
+     "container": "compose-postgres-1",
+     "restarted": true,
+     "seconds_to_accept_connections": 1.369
+    },
+    {
+     "before_phase": [
+      "activate",
+      "kill",
+      "observe"
+     ],
+     "container": "compose-postgres-1",
+     "restarted": true,
+     "seconds_to_accept_connections": 1.4
+    }
+   ],
+   "disable_survived": true,
+   "ledger": {
+    "hash_chain_verified": true,
+    "health_failures": [],
+    "health_healthy": true,
+    "projection_matches": true,
+    "replay_components": 1,
+    "replay_revisions": 6,
+    "revisions": [
+     {
+      "actor": "s21d7-activation-operator",
+      "authority": "S21D7-039",
+      "revision": 1,
+      "state_after": "registered",
+      "state_before": null
+     },
+     {
+      "actor": "s21d7-activation-operator",
+      "authority": "S21D7-039",
+      "revision": 2,
+      "state_after": "shadow",
+      "state_before": "registered"
+     },
+     {
+      "actor": "s21d7-activation-operator",
+      "authority": "S21D7-039",
+      "revision": 3,
+      "state_after": "verified",
+      "state_before": "shadow"
+     },
+     {
+      "actor": "s21d7-activation-operator",
+      "authority": "S21D7-039",
+      "revision": 4,
+      "state_after": "active",
+      "state_before": "verified"
+     },
+     {
+      "actor": "s21d7-activation-operator",
+      "authority": "S21D7-039",
+      "revision": 5,
+      "state_after": "disabled",
+      "state_before": "active"
+     },
+     {
+      "actor": "s21d7-activation-operator",
+      "authority": "S21D7-039",
+      "revision": 6,
+      "state_after": "active",
+      "state_before": "disabled"
+     }
+    ]
+   },
+   "met": true,
+   "processes": 4,
+   "rollback": {
+    "restored_state": "active",
+    "reuses_the_same_approval": true,
+    "targets_the_original_activation": true
+   }
+  },
+  "27": {
+   "approver": "palkouser (sprint 21D7 gate owner)",
+   "approver_kind": "human_operator",
+   "asks": "a human operator approves the exact promotion assessment, component revision and artifact lineage, and no model or provider identity approves or reviews itself",
+   "met": true,
+   "names_the_exact": {
+    "artifact_lineage_id": "4509e1be-89e4-5d6c-b655-47061d2b1c9a",
+    "component_revision": 3,
+    "matches_the_recorded_assessment": true,
+    "matches_the_recorded_lineage": true,
+    "promotion_assessment_hash": "e964dc5d7efc0b67c4f400daf7bb6584cb12b8f6cd117bd99ee417780d2f6ee0"
+   },
+   "self_approval": {
+    "approver_is_the_activating_actor": false,
+    "approver_is_the_component": false,
+    "refusals": [
+     {
+      "attempt": "approve the activation with a model identity",
+      "error": "ValidationError: 1 validation error for LearnedActivationApproval\n  Value error, a model or provider identity cannot approve an activation: a component that can approve itself is not governed [type=value_error, input_value={'approval_id': UUID('831...=datetime.timezone.utc)}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+      "refused": true
+     },
+     {
+      "attempt": "activate under a human approval naming another assessment",
+      "error": "LearnedRepositoryError: evidence_mismatch: the approval does not authorise this exact activation: ['promotion_assessment_hash']",
+      "refused": true
+     },
+     {
+      "attempt": "activate as an actor that was never granted activation authority",
+      "error": "LearnedRepositoryError: evidence_mismatch: 'some-other-operator' is not authorised to activate learned components; runtime activation is disabled unless an authorised caller invokes it",
+      "refused": true
+     }
+    ]
+   },
+   "the_hazard_this_record_will_not_hide": "the approving identity is the human who ordered the wave, and the hand that carried the activation out was an agent acting under that instruction. The separation the condition asks for is the one it gets — the approving authority is not a model or provider identity, and it is not the actor named in the receipt — but nobody should read this row as an operator who reviewed the payload byte by byte independently of the process that produced it",
+   "what_the_approval_rests_on": "the gate owner's standing instruction to execute wave W3 of sprint 21D7, given after the W2 selection ended 1_select and after the final-evidence and promotion records were reported to them. The approval below names the exact assessment hash, component revision and lineage id those records produced; it authorises no other bytes"
+  }
+ },
+ "conditions": {
+  "25": true,
+  "26": true,
+  "27": true
+ },
+ "deterministic_fallback": {
+  "not_the_rung_the_benefit_was_measured_against": "the benefit gate compares against fixed_input_order, which is the strongest rung on the final batches rather than on the certification half. The two differ, and the harder of the two is the one the gain is claimed over; reading this fallback name as the promotion baseline would understate it",
+  "rung": "lexical_similarity",
+  "why_this_rung": "it is the strongest non-learned rung on the released W2 ladder, which is what the runtime falls back to with no learned component at all, and what S21D7-037 compared all seventeen fallback codes against"
+ },
+ "final_state": {
+  "reading": "the sprint ends with the component active on the five canary groups and on nothing else. The bounded steady state is sealed and was not entered",
+  "state": "active"
+ },
+ "inputs": {
+  "artifact_sha256": "ad2c7681b839c21e1dc696f315ba62cf55a4f1d08b92fe19386d7e4c3be13169",
+  "canary_campaign_sha256": "c96ddd687c2c942b1199792380cf46222835736942c051d7e0c81cf281cde795",
+  "canary_feature_seals_sha256": "1eba891acef6c4feb8ff6b64752032513cb9870cc35f9d3d56c663916cb03717",
+  "final_evidence_sha256": "ed50ff6f9eeb83490532682ce4a6943c47fe7a360dc50a7b0bdfe5a24485ee90",
+  "promotion_sha256": "6e8ef709ad60df7020da86250086e9b685f9baedb4927878a2d6ce20bfe891f2",
+  "runtime_sha256": "62912d4c5cec94b9be75d7fcdb383bec08ffbd225fdbd7a935d4e6f14f7fbae0"
+ },
+ "integrity_content_hash": "155fc87f4bcef558a224e3138019d01ad2227d290b87736bdf3a251075b85e46",
+ "items": [
+  "S21D7-039"
+ ],
+ "phases": {
+  "activate": {
+   "activation": {
+    "action": "activation",
+    "approval_hash": "cb25f295875f5768f6a8e80eb5d13ae050115f4a3e1593d47987c6668d75b1b4",
+    "component_revision": 4,
+    "lineage_id": "4509e1be-89e4-5d6c-b655-47061d2b1c9a",
+    "previous_receipt_id": null,
+    "promotion_assessment_hash": "e964dc5d7efc0b67c4f400daf7bb6584cb12b8f6cd117bd99ee417780d2f6ee0",
+    "receipt_id": "31550a17-e9ae-5658-b067-9c8d494502cc"
+   },
+   "approval": {
+    "approval_hash": "cb25f295875f5768f6a8e80eb5d13ae050115f4a3e1593d47987c6668d75b1b4",
+    "approval_id": "643e6cde-8ac8-5a5b-8462-a39349acb73c",
+    "approver": "palkouser (sprint 21D7 gate owner)",
+    "approver_is_the_activating_actor": false,
+    "approver_kind": "human_operator",
+    "component_revision": 3,
+    "names_assessment": "e964dc5d7efc0b67c4f400daf7bb6584cb12b8f6cd117bd99ee417780d2f6ee0",
+    "names_lineage": "4509e1be-89e4-5d6c-b655-47061d2b1c9a",
+    "rests_on": "the gate owner's standing instruction to execute wave W3 of sprint 21D7, given after the W2 selection ended 1_select and after the final-evidence and promotion records were reported to them. The approval below names the exact assessment hash, component revision and lineage id those records produced; it authorises no other bytes"
+   },
+   "artifact_bytes": 4354,
+   "artifact_id": "0790849c-2225-413e-9452-c14d85ef9df5",
+   "baseline_metric": "0.4833333333333333333333333333",
+   "canary": {
+    "configuration_hash": "937bdc7c1848fdddf7134abf06d28bf1710afd0cf946d9f11eedc30975529f51",
+    "kill_switch_enabled": true,
+    "maximum_tasks": 20,
+    "routed_groups": [
+     "d2-boundary-edge-trim",
+     "d2-errors-wrapping",
+     "d2-numeric-weighted-mean",
+     "d2-parsing-title",
+     "d2-state-toggle"
+    ],
+    "routing_manifest_hash": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7",
+    "sequence_mode": "stop_on_first_accepted",
+    "steady_state_hash": "716ae073034e9a3aa6bc51dbe018cf2b7f3e8761c90db7e8356106648ad1f555",
+    "transition_hash": "8437a9ec518cfac4c025c99c8918465c2eb44afe24c4fe09715859f4d20d1546"
+   },
+   "candidate_metric": "0.8666666666666666666666666667",
+   "component_id": "learned.containment.correction_ranking",
+   "descriptor_hash": "b9f515b180871acaddf610ac712dac430a3a63fbcac23d82a178acf2b781a85d",
+   "descriptor_version": "21d7.1",
+   "gates": 20,
+   "invariance_covers_artifact_unavailable": true,
+   "invariance_identical": true,
+   "ladder_rungs": [
+    "deterministic_static_ordering",
+    "fixed_input_order",
+    "lexical_similarity",
+    "containment-contrastive-linear-v1"
+   ],
+   "lineage_declared_hash": "afbdb7c05c73aec8b1a46dd9b20cd8f2f8915819b29a1ea3b364ad8acbb48edb",
+   "lineage_id": "4509e1be-89e4-5d6c-b655-47061d2b1c9a",
+   "lineage_observed_hash": "afbdb7c05c73aec8b1a46dd9b20cd8f2f8915819b29a1ea3b364ad8acbb48edb",
+   "phase": "activate",
+   "process_id": 167176,
+   "promotion_assessment_hash": "e964dc5d7efc0b67c4f400daf7bb6584cb12b8f6cd117bd99ee417780d2f6ee0",
+   "promotion_payload_artifact_id": "6d7e2f51-04a0-4e9d-8ac1-937e839c0d02",
+   "promotion_payload_hash": "d32d2b6d04ffc7563ee3ba691b5571c3abf051709d0cc749c5b62af5d114a49a",
+   "refusals": [
+    {
+     "attempt": "approve the activation with a model identity",
+     "error": "ValidationError: 1 validation error for LearnedActivationApproval\n  Value error, a model or provider identity cannot approve an activation: a component that can approve itself is not governed [type=value_error, input_value={'approval_id': UUID('831...=datetime.timezone.utc)}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+     "refused": true
+    },
+    {
+     "attempt": "activate under a human approval naming another assessment",
+     "error": "LearnedRepositoryError: evidence_mismatch: the approval does not authorise this exact activation: ['promotion_assessment_hash']",
+     "refused": true
+    },
+    {
+     "attempt": "activate as an actor that was never granted activation authority",
+     "error": "LearnedRepositoryError: evidence_mismatch: 'some-other-operator' is not authorised to activate learned components; runtime activation is disabled unless an authorised caller invokes it",
+     "refused": true
+    }
+   ],
+   "revision": 4,
+   "state": "active",
+   "surface": "experience.correction_ranking"
+  },
+  "kill": {
+   "after": {
+    "fallback_ordering_is_the_released_rung": true,
+    "groups_ordered_by_the_rung": 5,
+    "learned_permitted": 0,
+    "reasons": [
+     "lifecycle_not_active"
+    ],
+    "rung": "lexical_similarity",
+    "state": "disabled"
+   },
+   "before": {
+    "learned_permitted": 5,
+    "reasons": [
+     "active"
+    ],
+    "state": "active"
+   },
+   "immediacy": {
+    "artifact_loads_on_the_fallback_path": 0,
+    "reading": "the fallback ordering is a pure function of the four candidates and the frozen slot order. Nothing is loaded, retried or awaited between the disable and the first deterministic answer: the resolver refuses the learned path before an artifact is consulted at all",
+    "seconds_from_kill_switch_to_deterministic_answer": 0.026449,
+    "store_reads_on_the_ordering_itself": 0
+   },
+   "phase": "kill",
+   "process_id": 168438,
+   "receipt": {
+    "action": "disable",
+    "component_revision": 5,
+    "previous_receipt_id": "31550a17-e9ae-5658-b067-9c8d494502cc",
+    "receipt_id": "5a681d92-88ed-58c0-a212-73e94dfa7e3f",
+    "rollback_permitted": true
+   }
+  },
+  "observe": {
+   "activation_receipt_still_named": "31550a17-e9ae-5658-b067-9c8d494502cc",
+   "artifact": {
+    "bytes": 4354,
+    "loaded_after_restart": true,
+    "model_hash": "d80160c4aa795fadd98fb4e6d4f64b7b29a2a3685c537454b8aff95daa124859",
+    "model_hash_matches_the_sealed_one": true,
+    "rehashed": "afbdb7c05c73aec8b1a46dd9b20cd8f2f8915819b29a1ea3b364ad8acbb48edb"
+   },
+   "fail_closed": {
+    "moved_manifest_learned_permitted": false,
+    "moved_manifest_reason": "routing_manifest_mismatch",
+    "unrouted_group_learned_permitted": false,
+    "unrouted_group_reason": "group_not_routed"
+   },
+   "phase": "observe",
+   "process_id": 168235,
+   "revision_after_restart": 4,
+   "routed": {
+    "groups": [
+     "d2-boundary-edge-trim",
+     "d2-errors-wrapping",
+     "d2-numeric-weighted-mean",
+     "d2-parsing-title",
+     "d2-state-toggle"
+    ],
+    "learned_permitted": 5,
+    "manifest_hash": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7",
+    "manifest_hash_is_the_catalogues_own": true,
+    "reasons": [
+     "active"
+    ]
+   },
+   "sequencer": {
+    "corrections_proposed": 5,
+    "deterministic_attempts": 9,
+    "deterministic_first_choice_accepted": 1,
+    "every_proposal_was_verified": true,
+    "groups": 5,
+    "groups_the_learned_ordering_moved": 4,
+    "groups_with_no_accepted_candidate": 0,
+    "learned_attempts": 5,
+    "learned_first_choice_accepted": 5,
+    "mode": "stop_on_first_accepted",
+    "proposals_accepted_without_a_verifier_label": 0,
+    "traces": {
+     "d2-boundary-edge-trim": {
+      "deterministic": {
+       "accepted": "8710c1e5-b7e1-5565-b306-4e756e4f6fd1",
+       "attempts": 2,
+       "resolved": true
+      },
+      "deterministic_first": "ccd6437c-e9b5-531a-a0d1-357a85c2ab72",
+      "deterministic_first_accepted": false,
+      "learned": {
+       "accepted": "8710c1e5-b7e1-5565-b306-4e756e4f6fd1",
+       "attempts": 1,
+       "resolved": true
+      },
+      "learned_first": "8710c1e5-b7e1-5565-b306-4e756e4f6fd1",
+      "learned_first_accepted": true
+     },
+     "d2-errors-wrapping": {
+      "deterministic": {
+       "accepted": "39b3f8f5-b637-546c-be05-4f0382f15c76",
+       "attempts": 2,
+       "resolved": true
+      },
+      "deterministic_first": "24380eed-6c22-5935-ab73-c5294503984a",
+      "deterministic_first_accepted": false,
+      "learned": {
+       "accepted": "39b3f8f5-b637-546c-be05-4f0382f15c76",
+       "attempts": 1,
+       "resolved": true
+      },
+      "learned_first": "39b3f8f5-b637-546c-be05-4f0382f15c76",
+      "learned_first_accepted": true
+     },
+     "d2-numeric-weighted-mean": {
+      "deterministic": {
+       "accepted": "a12157bf-6e4a-5ed7-858d-40d6d7c71999",
+       "attempts": 1,
+       "resolved": true
+      },
+      "deterministic_first": "a12157bf-6e4a-5ed7-858d-40d6d7c71999",
+      "deterministic_first_accepted": true,
+      "learned": {
+       "accepted": "a12157bf-6e4a-5ed7-858d-40d6d7c71999",
+       "attempts": 1,
+       "resolved": true
+      },
+      "learned_first": "a12157bf-6e4a-5ed7-858d-40d6d7c71999",
+      "learned_first_accepted": true
+     },
+     "d2-parsing-title": {
+      "deterministic": {
+       "accepted": "87fe943b-3a76-5325-8163-b27b328c335d",
+       "attempts": 2,
+       "resolved": true
+      },
+      "deterministic_first": "767e6311-1d13-569b-bca1-373a8a9317f2",
+      "deterministic_first_accepted": false,
+      "learned": {
+       "accepted": "ec1046ae-ec21-51ec-9fd4-f2f803cdd8a3",
+       "attempts": 1,
+       "resolved": true
+      },
+      "learned_first": "ec1046ae-ec21-51ec-9fd4-f2f803cdd8a3",
+      "learned_first_accepted": true
+     },
+     "d2-state-toggle": {
+      "deterministic": {
+       "accepted": "87ac4dba-d8b8-5ea5-9604-271ddbfceaae",
+       "attempts": 2,
+       "resolved": true
+      },
+      "deterministic_first": "daed80b6-ce33-5efe-a0be-60e58043d8d6",
+      "deterministic_first_accepted": false,
+      "learned": {
+       "accepted": "0bdc3a3a-3e36-57a4-a965-e3ac131f569c",
+       "attempts": 1,
+       "resolved": true
+      },
+      "learned_first": "0bdc3a3a-3e36-57a4-a965-e3ac131f569c",
+      "learned_first_accepted": true
+     }
+    },
+    "verifier_labels_read": 5
+   },
+   "state_after_restart": "active",
+   "surface_holder_after_restart": "learned.containment.correction_ranking"
+  },
+  "restore": {
+   "disabled_survived_the_restart": true,
+   "learned_permitted_after_rollback": 5,
+   "learned_permitted_before_rollback": 0,
+   "ledger": {
+    "hash_chain_verified": true,
+    "health_failures": [],
+    "health_healthy": true,
+    "projection_matches": true,
+    "replay_components": 1,
+    "replay_revisions": 6,
+    "revisions": [
+     {
+      "actor": "s21d7-activation-operator",
+      "authority": "S21D7-039",
+      "revision": 1,
+      "state_after": "registered",
+      "state_before": null
+     },
+     {
+      "actor": "s21d7-activation-operator",
+      "authority": "S21D7-039",
+      "revision": 2,
+      "state_after": "shadow",
+      "state_before": "registered"
+     },
+     {
+      "actor": "s21d7-activation-operator",
+      "authority": "S21D7-039",
+      "revision": 3,
+      "state_after": "verified",
+      "state_before": "shadow"
+     },
+     {
+      "actor": "s21d7-activation-operator",
+      "authority": "S21D7-039",
+      "revision": 4,
+      "state_after": "active",
+      "state_before": "verified"
+     },
+     {
+      "actor": "s21d7-activation-operator",
+      "authority": "S21D7-039",
+      "revision": 5,
+      "state_after": "disabled",
+      "state_before": "active"
+     },
+     {
+      "actor": "s21d7-activation-operator",
+      "authority": "S21D7-039",
+      "revision": 6,
+      "state_after": "active",
+      "state_before": "disabled"
+     }
+    ]
+   },
+   "phase": "restore",
+   "process_id": 168724,
+   "reasons_after_rollback": [
+    "active"
+   ],
+   "reasons_before_rollback": [
+    "lifecycle_not_active"
+   ],
+   "rollback": {
+    "action": "rollback",
+    "approval_hash": "cb25f295875f5768f6a8e80eb5d13ae050115f4a3e1593d47987c6668d75b1b4",
+    "component_revision": 6,
+    "disable_it_reversed": "5a681d92-88ed-58c0-a212-73e94dfa7e3f",
+    "receipt_id": "875bf78d-5a3c-5ef5-bd93-585ef7f3d550",
+    "reuses_the_same_approval": true,
+    "target_receipt_id": "31550a17-e9ae-5658-b067-9c8d494502cc",
+    "targets_the_original_activation": true
+   },
+   "state_after_rollback": "active",
+   "state_before_rollback": "disabled"
+  }
+ },
+ "schema_version": 1,
+ "sprint": "21D7",
+ "wave": "W3",
+ "what_this_record_did_not_do": [
+  "enter the bounded steady-state configuration; it is sealed, bounded and unused",
+  "exercise the rollback *refusal* path, where a disable that followed a failed canary may not be restored. That half is D4's S21D4-075 on the isolated fixture, and re-proving it here would have meant ending the sprint with the component disabled and unrestorable",
+  "truncate, erase or nominate for erasure any part of the measured store"
+ ],
+ "what_this_record_is_not": "a claim that the system learns. It is a claim that one artifact, measured on evidence opened once, was activated under an approval that names it exactly, routes five groups, survives a restart, and stops the moment it is told to"
+}

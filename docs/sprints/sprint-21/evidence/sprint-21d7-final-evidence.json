@@ -1,0 +1,951 @@
+{
+ "all_conditions_met": true,
+ "artifact": {
+  "artifact_hash": "afbdb7c05c73aec8b1a46dd9b20cd8f2f8915819b29a1ea3b364ad8acbb48edb",
+  "model_hash": "d80160c4aa795fadd98fb4e6d4f64b7b29a2a3685c537454b8aff95daa124859",
+  "purpose": "final",
+  "rebuilt_through_the_evaluation_boundary": true,
+  "why_not_a_re_fit": "a gain measured with a freshly fitted direction would be a claim about the fitting code. These numbers are the promoted bytes'"
+ },
+ "batches": {
+  "final_a": {
+   "batch": "final_a",
+   "campaign_sha256": "a9236328a83524cc434ed09ee7aa97c2b736c209e2b8736e68a926b3d357d9b2",
+   "feature_seal_hash": "dfdec6752a5f7580442d14308af15b71c07f1e1eec11351e54525c7fdf4cd8d0",
+   "groups": 30,
+   "matrix_hash": "6936f7cc64c5a4c1c3aa0a1321ec90b3517991df1f48dc06afe4570da8508822",
+   "outcomes": 120,
+   "rungs": [
+    {
+     "content_hash": "06452975d2053eaa2b5c94d41703f8dfc0dcbddf0e32195988367a8a36c441cf",
+     "eligible": true,
+     "first_choice_rate": "0.5666666666666666666666666667",
+     "groups_scored": 30,
+     "ineligible_reason": null,
+     "kind": "deterministic",
+     "name": "fixed_input_order"
+    },
+    {
+     "content_hash": "90dc963562e1aa822784f543d3f934e6c371dc24855b9e605449bab5b627eb30",
+     "eligible": true,
+     "first_choice_rate": "0.2666666666666666666666666667",
+     "groups_scored": 30,
+     "ineligible_reason": null,
+     "kind": "deterministic",
+     "name": "deterministic_static_ordering"
+    },
+    {
+     "content_hash": "0b0d215c61f1f017083286750f9b4a0e298487d45ecdde2063ace2a19e056c3d",
+     "eligible": true,
+     "first_choice_rate": "0.4666666666666666666666666667",
+     "groups_scored": 30,
+     "ineligible_reason": null,
+     "kind": "deterministic",
+     "name": "lexical_similarity"
+    },
+    {
+     "content_hash": "47a35131cfffb583748d6f98977c18f4e3a60452e1af9cb7b4f50d94f58e9094",
+     "eligible": false,
+     "first_choice_rate": null,
+     "groups_scored": 0,
+     "ineligible_reason": "correction-ranking-v2 removes query_to_candidate_cosine from the fitted representation, so the channel this rung orders by does not exist under it",
+     "kind": "deterministic",
+     "name": "frozen_minilm_cosine"
+    },
+    {
+     "content_hash": "55033d5f696f5eca99a798cc685381896091ef1d15311ef5ddf95364c7cf57f1",
+     "eligible": false,
+     "first_choice_rate": null,
+     "groups_scored": 0,
+     "ineligible_reason": "a correction-ranking task presents exactly four candidates, so a twenty-wide shortlist is the entire pool and the rung reduces to its own tie-break; it meets no resource contract it does not already trivially satisfy",
+     "kind": "deterministic",
+     "name": "width_20_bounded_graph"
+    }
+   ],
+   "strongest_rung": "fixed_input_order",
+   "strongest_rung_rate": "0.5666666666666666666666666667"
+  },
+  "final_b": {
+   "batch": "final_b",
+   "campaign_sha256": "3b749b578d8bb36f453340b7317a32e81f887262dbc248b9491faae3c5cbc607",
+   "feature_seal_hash": "9e05407ce6cd4710969f64821878173dabf4cb6fc11469eb2747bb458cf38f77",
+   "groups": 30,
+   "matrix_hash": "5ad47b5af105411e63f5ec63387572abdadbedb6475b302bf23d0b3a370aab70",
+   "outcomes": 120,
+   "rungs": [
+    {
+     "content_hash": "d838ec0070af75bc99a1f20ea58a2e7e072971b13a9d04ebfe134a81e41b19b1",
+     "eligible": true,
+     "first_choice_rate": "0.4",
+     "groups_scored": 30,
+     "ineligible_reason": null,
+     "kind": "deterministic",
+     "name": "fixed_input_order"
+    },
+    {
+     "content_hash": "3fd70330f169b6a8331b02ee8118a2b69a0470ec92efd3ef7dd66fb8977da56c",
+     "eligible": true,
+     "first_choice_rate": "0.1666666666666666666666666667",
+     "groups_scored": 30,
+     "ineligible_reason": null,
+     "kind": "deterministic",
+     "name": "deterministic_static_ordering"
+    },
+    {
+     "content_hash": "6a76704366a5eeeb0406e08405f53ae6898a5f5861642db665e219f85057efda",
+     "eligible": true,
+     "first_choice_rate": "0.3666666666666666666666666667",
+     "groups_scored": 30,
+     "ineligible_reason": null,
+     "kind": "deterministic",
+     "name": "lexical_similarity"
+    },
+    {
+     "content_hash": "47a35131cfffb583748d6f98977c18f4e3a60452e1af9cb7b4f50d94f58e9094",
+     "eligible": false,
+     "first_choice_rate": null,
+     "groups_scored": 0,
+     "ineligible_reason": "correction-ranking-v2 removes query_to_candidate_cosine from the fitted representation, so the channel this rung orders by does not exist under it",
+     "kind": "deterministic",
+     "name": "frozen_minilm_cosine"
+    },
+    {
+     "content_hash": "55033d5f696f5eca99a798cc685381896091ef1d15311ef5ddf95364c7cf57f1",
+     "eligible": false,
+     "first_choice_rate": null,
+     "groups_scored": 0,
+     "ineligible_reason": "a correction-ranking task presents exactly four candidates, so a twenty-wide shortlist is the entire pool and the rung reduces to its own tie-break; it meets no resource contract it does not already trivially satisfy",
+     "kind": "deterministic",
+     "name": "width_20_bounded_graph"
+    }
+   ],
+   "strongest_rung": "fixed_input_order",
+   "strongest_rung_rate": "0.4"
+  }
+ },
+ "bootstrap": {
+  "final_a": {
+   "groups_where_only_the_baseline_answer_is_right": 3,
+   "groups_where_only_the_learned_answer_is_right": 12,
+   "interval_excludes_zero": true,
+   "observed_difference": "0.300000",
+   "paired": true,
+   "percentile_interval_95": [
+    "0.066667",
+    "0.533333"
+   ],
+   "resamples": 10000,
+   "seed": 21070039,
+   "unit": "group",
+   "why_groups_and_not_decisions": "the two orderings answer the same groups, so the quantity with a distribution is the per-group difference; resampling decisions independently would break the pairing that makes the comparison sharp"
+  },
+  "final_b": {
+   "groups_where_only_the_baseline_answer_is_right": 1,
+   "groups_where_only_the_learned_answer_is_right": 15,
+   "interval_excludes_zero": true,
+   "observed_difference": "0.466667",
+   "paired": true,
+   "percentile_interval_95": [
+    "0.266667",
+    "0.666667"
+   ],
+   "resamples": 10000,
+   "seed": 21070039,
+   "unit": "group",
+   "why_groups_and_not_decisions": "the two orderings answer the same groups, so the quantity with a distribution is the per-group difference; resampling decisions independently would break the pairing that makes the comparison sharp"
+  },
+  "pooled": {
+   "groups_where_only_the_baseline_answer_is_right": 4,
+   "groups_where_only_the_learned_answer_is_right": 27,
+   "interval_excludes_zero": true,
+   "observed_difference": "0.383333",
+   "paired": true,
+   "percentile_interval_95": [
+    "0.233333",
+    "0.533333"
+   ],
+   "resamples": 10000,
+   "seed": 21070039,
+   "unit": "group",
+   "why_groups_and_not_decisions": "the two orderings answer the same groups, so the quantity with a distribution is the per-group difference; resampling decisions independently would break the pairing that makes the comparison sharp"
+  }
+ },
+ "canary_outcomes_inspected": 0,
+ "conditions": {
+  "13": {
+   "asks": "at least 20 final group decisions differing from the strongest baseline",
+   "floor": 20,
+   "measured": 45,
+   "met": true
+  },
+  "14": {
+   "absolute_points": "0.3833333333333333333333333334",
+   "asks": "at least 5 absolute points or 20% relative error reduction",
+   "met": true,
+   "relative_error_reduction": "0.7419354838709677419354838710",
+   "which_arm": "absolute"
+  },
+  "15": {
+   "asks": "the paired group bootstrap over the final batches",
+   "excludes_zero": true,
+   "met": true,
+   "pooled_interval": [
+    "0.233333",
+    "0.533333"
+   ],
+   "reported": [
+    "final_a",
+    "final_b",
+    "pooled"
+   ]
+  },
+  "16": {
+   "asks": "a positive learned-minus-baseline direction in both final batches",
+   "final_a": "0.3000000000000000000000000000",
+   "final_b": "0.4666666666666666666666666667",
+   "met": true
+  },
+  "21": {
+   "asks": "shadow mode changing zero executed decisions against final evidence",
+   "executed_decisions_changed": 0,
+   "met": true
+  }
+ },
+ "conformal_bars_derived": 0,
+ "decisions": [
+  {
+   "batch": "final_a",
+   "changed": false,
+   "family": "boundary_collections",
+   "group": "d2-boundary-first-gap",
+   "learned_correct": true,
+   "learned_first": "9ac456da-f7d9-5801-bdec-e0e755175f11",
+   "margin": "0.464344",
+   "rung_correct": true,
+   "rung_first": "9ac456da-f7d9-5801-bdec-e0e755175f11"
+  },
+  {
+   "batch": "final_a",
+   "changed": true,
+   "family": "boundary_collections",
+   "group": "d2-boundary-interleave",
+   "learned_correct": true,
+   "learned_first": "2cc000ac-9d59-55a8-892b-dadd4237f366",
+   "margin": "0.7776",
+   "rung_correct": true,
+   "rung_first": "98ee5ce7-08f8-5183-8d2b-78a7f77f0af7"
+  },
+  {
+   "batch": "final_a",
+   "changed": true,
+   "family": "boundary_collections",
+   "group": "d2-boundary-peak-position",
+   "learned_correct": true,
+   "learned_first": "cb8e8659-9203-58a4-924c-70d2b6627fbe",
+   "margin": "1.952666",
+   "rung_correct": false,
+   "rung_first": "5cf49640-e24f-56bc-b3c1-7ca53aad7023"
+  },
+  {
+   "batch": "final_a",
+   "changed": false,
+   "family": "boundary_collections",
+   "group": "d2-boundary-sorted-insert",
+   "learned_correct": true,
+   "learned_first": "fcd66993-644f-5197-b749-1be6ea3be7ca",
+   "margin": "1.606477",
+   "rung_correct": true,
+   "rung_first": "fcd66993-644f-5197-b749-1be6ea3be7ca"
+  },
+  {
+   "batch": "final_a",
+   "changed": true,
+   "family": "error_handling",
+   "group": "d2-errors-budget",
+   "learned_correct": true,
+   "learned_first": "fc8c2bba-b5eb-5fcf-9cf9-ea4a44cb2388",
+   "margin": "1.891793",
+   "rung_correct": false,
+   "rung_first": "a1c3b119-ee9b-5197-90bd-b379c292f7ae"
+  },
+  {
+   "batch": "final_a",
+   "changed": true,
+   "family": "error_handling",
+   "group": "d2-errors-exit-codes",
+   "learned_correct": false,
+   "learned_first": "8b0e0e31-d272-503c-87e9-e1c1ed91363f",
+   "margin": "0.228529",
+   "rung_correct": true,
+   "rung_first": "ecc936a5-b0e3-5e09-9b4b-bde8c57838b4"
+  },
+  {
+   "batch": "final_a",
+   "changed": true,
+   "family": "error_handling",
+   "group": "d2-errors-first-present",
+   "learned_correct": true,
+   "learned_first": "95664772-d659-57ea-8d2c-b0b8df32266a",
+   "margin": "2.055096",
+   "rung_correct": true,
+   "rung_first": "8676e19b-1480-5418-a29d-06272eb4ebd9"
+  },
+  {
+   "batch": "final_a",
+   "changed": true,
+   "family": "error_handling",
+   "group": "d2-errors-guarded-int",
+   "learned_correct": true,
+   "learned_first": "4c5b0b6f-56d5-5ae8-afbd-9ae52efe84af",
+   "margin": "0.195882",
+   "rung_correct": false,
+   "rung_first": "388a1deb-9d5e-53f7-a004-7051cf4a1d09"
+  },
+  {
+   "batch": "final_a",
+   "changed": true,
+   "family": "error_handling",
+   "group": "d2-errors-pluck",
+   "learned_correct": true,
+   "learned_first": "226c2dc9-7135-59c9-ab24-ed9f151d196a",
+   "margin": "0.555321",
+   "rung_correct": false,
+   "rung_first": "6d8959d5-8662-5b10-8c96-3f846a48c01c"
+  },
+  {
+   "batch": "final_a",
+   "changed": true,
+   "family": "numeric_logic",
+   "group": "d2-numeric-change",
+   "learned_correct": true,
+   "learned_first": "81a59caa-3f87-590b-b61a-ade4bc012a70",
+   "margin": "1.989987",
+   "rung_correct": false,
+   "rung_first": "92e43863-bbe2-5d5f-855b-2dfdaab87cce"
+  },
+  {
+   "batch": "final_a",
+   "changed": true,
+   "family": "numeric_logic",
+   "group": "d2-numeric-interpolation",
+   "learned_correct": true,
+   "learned_first": "bc033e4c-7791-5f4a-9686-7735ee6acba9",
+   "margin": "2.577937",
+   "rung_correct": true,
+   "rung_first": "45f4823e-29e8-5820-895a-a88f3847ee02"
+  },
+  {
+   "batch": "final_a",
+   "changed": true,
+   "family": "numeric_logic",
+   "group": "d2-numeric-median",
+   "learned_correct": true,
+   "learned_first": "0752cae0-f71b-531e-bf08-6b65ac19a8fa",
+   "margin": "2.414979",
+   "rung_correct": true,
+   "rung_first": "875e792a-e0d2-5f03-bbb2-4195ed3ad73b"
+  },
+  {
+   "batch": "final_a",
+   "changed": true,
+   "family": "numeric_logic",
+   "group": "d2-numeric-moving-average",
+   "learned_correct": true,
+   "learned_first": "b5cdf992-a08e-519c-a1ee-63e352a9399f",
+   "margin": "1.314299",
+   "rung_correct": false,
+   "rung_first": "af8609f2-47db-50d2-9d42-ba43d7c608fe"
+  },
+  {
+   "batch": "final_a",
+   "changed": false,
+   "family": "numeric_logic",
+   "group": "d2-numeric-snap",
+   "learned_correct": true,
+   "learned_first": "ab483110-9981-5f6f-bb96-b86d050e2819",
+   "margin": "1.552226",
+   "rung_correct": true,
+   "rung_first": "ab483110-9981-5f6f-bb96-b86d050e2819"
+  },
+  {
+   "batch": "final_a",
+   "changed": true,
+   "family": "parsing_validation",
+   "group": "d2-parsing-durations",
+   "learned_correct": true,
+   "learned_first": "d16b18cd-64da-5c78-b5c2-171ed2dacac3",
+   "margin": "2.517921",
+   "rung_correct": false,
+   "rung_first": "61176250-9bcc-5ad0-bc4f-60041a93e3f6"
+  },
+  {
+   "batch": "final_a",
+   "changed": false,
+   "family": "parsing_validation",
+   "group": "d2-parsing-int-list",
+   "learned_correct": true,
+   "learned_first": "4b79e02d-2b00-5310-ac3d-bb01f3c09847",
+   "margin": "2.273632",
+   "rung_correct": true,
+   "rung_first": "4b79e02d-2b00-5310-ac3d-bb01f3c09847"
+  },
+  {
+   "batch": "final_a",
+   "changed": true,
+   "family": "parsing_validation",
+   "group": "d2-parsing-percent",
+   "learned_correct": false,
+   "learned_first": "8c92a18c-5fe8-59e4-ab26-433248b23eac",
+   "margin": "0.130588",
+   "rung_correct": true,
+   "rung_first": "f96992b3-d315-5717-bb8d-73769c484160"
+  },
+  {
+   "batch": "final_a",
+   "changed": true,
+   "family": "parsing_validation",
+   "group": "d2-parsing-query",
+   "learned_correct": false,
+   "learned_first": "4f6b19e6-55f9-556b-aacf-73d834a7a166",
+   "margin": "0.060454",
+   "rung_correct": false,
+   "rung_first": "2f0958db-6f11-56b2-afbd-f3239de286db"
+  },
+  {
+   "batch": "final_a",
+   "changed": true,
+   "family": "state_idempotency",
+   "group": "d2-state-counter-merge",
+   "learned_correct": true,
+   "learned_first": "33f1fdc7-ac58-5d3b-8dd7-952c37c369a1",
+   "margin": "0.880914",
+   "rung_correct": false,
+   "rung_first": "88fdf11c-33b1-51d5-9343-16ab56040a48"
+  },
+  {
+   "batch": "final_a",
+   "changed": true,
+   "family": "state_idempotency",
+   "group": "d2-state-lease",
+   "learned_correct": true,
+   "learned_first": "8a082ed4-b47e-52b8-be3e-c93a100475fa",
+   "margin": "0.848453",
+   "rung_correct": false,
+   "rung_first": "9f757069-9afd-5c5a-ae62-e53164b3a5d4"
+  },
+  {
+   "batch": "final_a",
+   "changed": true,
+   "family": "state_idempotency",
+   "group": "d2-state-promote",
+   "learned_correct": true,
+   "learned_first": "cb435586-13b7-567a-9f1b-43ad7889a99b",
+   "margin": "1.939429",
+   "rung_correct": false,
+   "rung_first": "8d842fe4-e4a3-594f-93a0-489916eb35ee"
+  },
+  {
+   "batch": "final_a",
+   "changed": false,
+   "family": "state_idempotency",
+   "group": "d2-state-seen",
+   "learned_correct": true,
+   "learned_first": "8583fc41-a356-56d9-91b2-22a068e84b47",
+   "margin": "0.020845",
+   "rung_correct": true,
+   "rung_first": "8583fc41-a356-56d9-91b2-22a068e84b47"
+  },
+  {
+   "batch": "final_a",
+   "changed": true,
+   "family": "state_idempotency",
+   "group": "d2-state-unique-queue",
+   "learned_correct": true,
+   "learned_first": "c9b6a5e6-2a3e-5fbb-a497-a100e055ab12",
+   "margin": "0.331632",
+   "rung_correct": false,
+   "rung_first": "ea8afb6b-b6a4-5e4d-b7ce-77e87a3b936c"
+  },
+  {
+   "batch": "final_a",
+   "changed": true,
+   "family": "data_transformation",
+   "group": "d2-transform-pairs",
+   "learned_correct": true,
+   "learned_first": "63f6cd16-9b10-5aaa-886e-3d6b34f5ab26",
+   "margin": "2.350146",
+   "rung_correct": true,
+   "rung_first": "6527cdc7-3a71-5655-9eb0-9cd630b5caf5"
+  },
+  {
+   "batch": "final_a",
+   "changed": false,
+   "family": "data_transformation",
+   "group": "d2-transform-pivot",
+   "learned_correct": true,
+   "learned_first": "3e41fd29-c341-5eb2-8d62-48d5bae68b2b",
+   "margin": "0.065294",
+   "rung_correct": true,
+   "rung_first": "3e41fd29-c341-5eb2-8d62-48d5bae68b2b"
+  },
+  {
+   "batch": "final_a",
+   "changed": true,
+   "family": "data_transformation",
+   "group": "d2-transform-ranking",
+   "learned_correct": false,
+   "learned_first": "ca5da6e3-0525-5510-b67a-8875d8bc18af",
+   "margin": "0.137229",
+   "rung_correct": true,
+   "rung_first": "c8e5fc1c-33eb-5961-88c2-95b45ee1a5f5"
+  },
+  {
+   "batch": "final_a",
+   "changed": false,
+   "family": "data_transformation",
+   "group": "d2-transform-rollup",
+   "learned_correct": true,
+   "learned_first": "9d88d6b8-95cc-56c5-924e-073b75c8d56b",
+   "margin": "0.018574",
+   "rung_correct": true,
+   "rung_first": "9d88d6b8-95cc-56c5-924e-073b75c8d56b"
+  },
+  {
+   "batch": "final_a",
+   "changed": true,
+   "family": "boundary_collections",
+   "group": "d7f-boundary-ferry-runs",
+   "learned_correct": true,
+   "learned_first": "af3f1f90-47ba-5b20-9157-8f5499334d5a",
+   "margin": "1.235811",
+   "rung_correct": true,
+   "rung_first": "843e5c5d-f9cb-5762-a3d0-d2d939eca8a4"
+  },
+  {
+   "batch": "final_a",
+   "changed": true,
+   "family": "parsing_validation",
+   "group": "d7f-parsing-mailbox-address",
+   "learned_correct": true,
+   "learned_first": "d943dec5-6cca-5acf-a70a-090d9e9dc23e",
+   "margin": "0.260274",
+   "rung_correct": false,
+   "rung_first": "dd32b538-6aa4-5259-82b6-f3bfb09f084f"
+  },
+  {
+   "batch": "final_a",
+   "changed": false,
+   "family": "data_transformation",
+   "group": "d7f-transform-pledge-totals",
+   "learned_correct": true,
+   "learned_first": "44869d96-59e3-5da1-889a-75d8ac708156",
+   "margin": "2.116543",
+   "rung_correct": true,
+   "rung_first": "44869d96-59e3-5da1-889a-75d8ac708156"
+  },
+  {
+   "batch": "final_b",
+   "changed": true,
+   "family": "boundary_collections",
+   "group": "d2-boundary-even-split",
+   "learned_correct": true,
+   "learned_first": "596d4050-688b-574b-8106-ea6dac368a05",
+   "margin": "1.788762",
+   "rung_correct": false,
+   "rung_first": "ed3b482a-c2c3-5479-893d-25f91e428975"
+  },
+  {
+   "batch": "final_b",
+   "changed": true,
+   "family": "boundary_collections",
+   "group": "d2-boundary-longest-run",
+   "learned_correct": false,
+   "learned_first": "186056f0-036e-5c2e-a627-1e4aa8c45665",
+   "margin": "0.224046",
+   "rung_correct": false,
+   "rung_first": "a83abd90-0685-5045-a745-fb63688fe268"
+  },
+  {
+   "batch": "final_b",
+   "changed": true,
+   "family": "boundary_collections",
+   "group": "d2-boundary-neighbourhood",
+   "learned_correct": true,
+   "learned_first": "5f112357-43c5-5639-81df-f67a0a5ad750",
+   "margin": "1.957686",
+   "rung_correct": true,
+   "rung_first": "c7979245-f2b5-52e3-9b39-6c18f97b1297"
+  },
+  {
+   "batch": "final_b",
+   "changed": false,
+   "family": "boundary_collections",
+   "group": "d2-boundary-padding",
+   "learned_correct": true,
+   "learned_first": "29f3feb4-caa2-5327-91e1-0f98ea6fb719",
+   "margin": "1.631426",
+   "rung_correct": true,
+   "rung_first": "29f3feb4-caa2-5327-91e1-0f98ea6fb719"
+  },
+  {
+   "batch": "final_b",
+   "changed": false,
+   "family": "boundary_collections",
+   "group": "d2-boundary-rotation",
+   "learned_correct": true,
+   "learned_first": "cf8c4aae-b1eb-5abf-968c-18ae37897ae7",
+   "margin": "2.474507",
+   "rung_correct": true,
+   "rung_first": "cf8c4aae-b1eb-5abf-968c-18ae37897ae7"
+  },
+  {
+   "batch": "final_b",
+   "changed": true,
+   "family": "error_handling",
+   "group": "d2-errors-abort",
+   "learned_correct": true,
+   "learned_first": "229f8816-485c-532f-9fb8-ba9be414eb73",
+   "margin": "1.370088",
+   "rung_correct": false,
+   "rung_first": "2826b3af-fe5c-51fe-9dc4-940070575164"
+  },
+  {
+   "batch": "final_b",
+   "changed": false,
+   "family": "error_handling",
+   "group": "d2-errors-bounds-report",
+   "learned_correct": true,
+   "learned_first": "a04d777e-a8fc-52d0-85c9-596dce469644",
+   "margin": "0.055292",
+   "rung_correct": true,
+   "rung_first": "a04d777e-a8fc-52d0-85c9-596dce469644"
+  },
+  {
+   "batch": "final_b",
+   "changed": true,
+   "family": "error_handling",
+   "group": "d2-errors-required-keys",
+   "learned_correct": false,
+   "learned_first": "4021b3d1-56bc-581c-8706-bfa87f1829b8",
+   "margin": "0.097941",
+   "rung_correct": false,
+   "rung_first": "9e12613d-b7de-52b6-8197-b8b584ad5039"
+  },
+  {
+   "batch": "final_b",
+   "changed": false,
+   "family": "error_handling",
+   "group": "d2-errors-retry",
+   "learned_correct": true,
+   "learned_first": "95f2486b-d006-59f4-8ba3-768e152966c6",
+   "margin": "1.773767",
+   "rung_correct": true,
+   "rung_first": "95f2486b-d006-59f4-8ba3-768e152966c6"
+  },
+  {
+   "batch": "final_b",
+   "changed": true,
+   "family": "error_handling",
+   "group": "d2-errors-safe-index",
+   "learned_correct": true,
+   "learned_first": "441905c4-1a0a-5d66-ad08-48188354ae23",
+   "margin": "1.083233",
+   "rung_correct": false,
+   "rung_first": "9a1c45b6-212f-5969-b3f1-326f623a2797"
+  },
+  {
+   "batch": "final_b",
+   "changed": true,
+   "family": "numeric_logic",
+   "group": "d2-numeric-progress",
+   "learned_correct": true,
+   "learned_first": "711a0a5c-f403-52a1-89c3-f062cd2bc28c",
+   "margin": "2.251164",
+   "rung_correct": false,
+   "rung_first": "06e8c933-fb74-5f56-8fa8-5c2935f61359"
+  },
+  {
+   "batch": "final_b",
+   "changed": false,
+   "family": "numeric_logic",
+   "group": "d2-numeric-ratios",
+   "learned_correct": true,
+   "learned_first": "9d317d0a-22d3-5fdf-8467-7442612536e2",
+   "margin": "0.587017",
+   "rung_correct": true,
+   "rung_first": "9d317d0a-22d3-5fdf-8467-7442612536e2"
+  },
+  {
+   "batch": "final_b",
+   "changed": true,
+   "family": "numeric_logic",
+   "group": "d2-numeric-rounding",
+   "learned_correct": true,
+   "learned_first": "d55c4430-b11f-5f00-a306-349e3b3aad57",
+   "margin": "1.330801",
+   "rung_correct": true,
+   "rung_first": "71a51d81-3092-5263-9f54-4eb701d66da2"
+  },
+  {
+   "batch": "final_b",
+   "changed": true,
+   "family": "numeric_logic",
+   "group": "d2-numeric-running-total",
+   "learned_correct": true,
+   "learned_first": "33382415-2c06-50e7-b6b7-dc646a4ab40f",
+   "margin": "0.587091",
+   "rung_correct": false,
+   "rung_first": "eae98d65-253e-5fc1-b552-b951edc8f268"
+  },
+  {
+   "batch": "final_b",
+   "changed": true,
+   "family": "numeric_logic",
+   "group": "d2-numeric-unit-scale",
+   "learned_correct": true,
+   "learned_first": "3ce1eac4-fbfc-5d1a-9477-4ce03d17bc24",
+   "margin": "1.664746",
+   "rung_correct": false,
+   "rung_first": "0fe12734-ddb8-5105-9a0c-512583716a34"
+  },
+  {
+   "batch": "final_b",
+   "changed": true,
+   "family": "parsing_validation",
+   "group": "d2-parsing-clock",
+   "learned_correct": true,
+   "learned_first": "18d9b11c-de3b-5014-b5c4-f3cc163b4167",
+   "margin": "1.475177",
+   "rung_correct": false,
+   "rung_first": "6641e834-63d0-5369-994f-838871f0e1cd"
+  },
+  {
+   "batch": "final_b",
+   "changed": true,
+   "family": "parsing_validation",
+   "group": "d2-parsing-comment",
+   "learned_correct": true,
+   "learned_first": "e065bfbe-a637-5d0d-b0c0-0277e7a6c979",
+   "margin": "0.685588",
+   "rung_correct": false,
+   "rung_first": "a4cb9062-6788-50b0-888d-6955858ffad5"
+  },
+  {
+   "batch": "final_b",
+   "changed": true,
+   "family": "parsing_validation",
+   "group": "d2-parsing-prefixes",
+   "learned_correct": false,
+   "learned_first": "01b4e821-0aec-54fe-ad42-c6fbce2d36f2",
+   "margin": "0.293638",
+   "rung_correct": true,
+   "rung_first": "37104a50-837a-5877-bba0-96b45ccae493"
+  },
+  {
+   "batch": "final_b",
+   "changed": true,
+   "family": "parsing_validation",
+   "group": "d2-parsing-range",
+   "learned_correct": true,
+   "learned_first": "eb65b919-8278-59e5-9ee9-e881277f2cd2",
+   "margin": "2.145727",
+   "rung_correct": false,
+   "rung_first": "d2697762-975c-5180-99eb-4febe0732811"
+  },
+  {
+   "batch": "final_b",
+   "changed": true,
+   "family": "parsing_validation",
+   "group": "d2-parsing-size",
+   "learned_correct": true,
+   "learned_first": "a5d1c8ef-3439-5678-be50-5961b7d2acca",
+   "margin": "0.168558",
+   "rung_correct": true,
+   "rung_first": "4c0d095a-1e53-5ce1-b058-3811951db322"
+  },
+  {
+   "batch": "final_b",
+   "changed": true,
+   "family": "state_idempotency",
+   "group": "d2-state-attempts",
+   "learned_correct": true,
+   "learned_first": "8da3070b-5b0a-5753-96a9-5a6beb184e91",
+   "margin": "2.348919",
+   "rung_correct": false,
+   "rung_first": "af0f91ae-df2a-5e50-8368-43d962caf5fd"
+  },
+  {
+   "batch": "final_b",
+   "changed": true,
+   "family": "state_idempotency",
+   "group": "d2-state-ownership",
+   "learned_correct": true,
+   "learned_first": "03352e11-2489-5c09-bea6-5a714114b84d",
+   "margin": "0.815435",
+   "rung_correct": false,
+   "rung_first": "7849db5c-44a1-55ef-bf7b-6f56c1f280b2"
+  },
+  {
+   "batch": "final_b",
+   "changed": true,
+   "family": "state_idempotency",
+   "group": "d2-state-reset",
+   "learned_correct": true,
+   "learned_first": "4cf18f2a-86a5-5a8f-8eb6-e2bb9ae57500",
+   "margin": "0.336472",
+   "rung_correct": true,
+   "rung_first": "07e5aa18-5879-5a83-aa26-1b2b29712130"
+  },
+  {
+   "batch": "final_b",
+   "changed": false,
+   "family": "state_idempotency",
+   "group": "d2-state-retire",
+   "learned_correct": true,
+   "learned_first": "47c0895e-778f-5b1c-85dc-aad342b38dee",
+   "margin": "0.195833",
+   "rung_correct": true,
+   "rung_first": "47c0895e-778f-5b1c-85dc-aad342b38dee"
+  },
+  {
+   "batch": "final_b",
+   "changed": true,
+   "family": "state_idempotency",
+   "group": "d2-state-slot-release",
+   "learned_correct": false,
+   "learned_first": "548f4a3a-6a15-5fda-80a5-809b44974963",
+   "margin": "0.195882",
+   "rung_correct": false,
+   "rung_first": "45520b4f-be18-52d1-a4d0-c8401f938c2b"
+  },
+  {
+   "batch": "final_b",
+   "changed": false,
+   "family": "data_transformation",
+   "group": "d2-transform-order",
+   "learned_correct": true,
+   "learned_first": "9a942f88-87f5-522f-8d9f-702b2032bdc4",
+   "margin": "0.661994",
+   "rung_correct": true,
+   "rung_first": "9a942f88-87f5-522f-8d9f-702b2032bdc4"
+  },
+  {
+   "batch": "final_b",
+   "changed": true,
+   "family": "data_transformation",
+   "group": "d2-transform-split-mapping",
+   "learned_correct": true,
+   "learned_first": "d19945ec-7895-5375-a5e0-88e79cd47897",
+   "margin": "0.195882",
+   "rung_correct": false,
+   "rung_first": "859903aa-be19-5b2c-a3c0-ea30ca48c7e4"
+  },
+  {
+   "batch": "final_b",
+   "changed": true,
+   "family": "data_transformation",
+   "group": "d2-transform-transpose",
+   "learned_correct": true,
+   "learned_first": "e8dda1b8-7586-5098-878c-2b423a9dd9f3",
+   "margin": "2.610676",
+   "rung_correct": false,
+   "rung_first": "e59728d8-3377-5708-be70-c191036c7c7b"
+  },
+  {
+   "batch": "final_b",
+   "changed": true,
+   "family": "data_transformation",
+   "group": "d2-transform-zip-records",
+   "learned_correct": true,
+   "learned_first": "d4408e7f-9c15-53cc-953c-7afc9ae20e14",
+   "margin": "1.310991",
+   "rung_correct": false,
+   "rung_first": "70fbe944-d68a-5ac8-8f0a-dd6c57242a5d"
+  },
+  {
+   "batch": "final_b",
+   "changed": true,
+   "family": "data_transformation",
+   "group": "d7f-transform-tariff-steps",
+   "learned_correct": true,
+   "learned_first": "a9bb9be2-1007-5b85-851a-abab878eafd3",
+   "margin": "1.879136",
+   "rung_correct": false,
+   "rung_first": "2dd33f01-1764-55e7-9fc4-5ae153d85ed7"
+  }
+ ],
+ "directions_fitted": 0,
+ "final_or_canary_outcomes_inspected": 240,
+ "final_outcomes_inspected": true,
+ "inputs": {
+  "artifact_sha256": "ad2c7681b839c21e1dc696f315ba62cf55a4f1d08b92fe19386d7e4c3be13169",
+  "final_a_campaign_sha256": "a9236328a83524cc434ed09ee7aa97c2b736c209e2b8736e68a926b3d357d9b2",
+  "final_b_campaign_sha256": "3b749b578d8bb36f453340b7317a32e81f887262dbc248b9491faae3c5cbc607",
+  "final_feature_seals_sha256": "1a4a3e0bc923be0ade0e6a51680402098f6ba4ce4df09600874067e72876e880",
+  "final_role_audit_sha256": "2f8fc276f4a998036a11ddabd3b3d21217e8dc35c2083e903a44da0c1ae01e9e",
+  "learner_selection_sha256": "bb6ef046b38b1a2d52c8ec746ddf815c616414ad967af4cf3a7df5ba4f829192"
+ },
+ "integrity_content_hash": "a8aa099a5d32f9a0e6169cabcce4446387cd056cc77a88afb45a213181dac88f",
+ "items": [
+  "S21D7-039"
+ ],
+ "overall": {
+  "absolute_points_gained": "0.3833333333333333333333333334",
+  "baseline_error_rate": "0.5166666666666666666666666667",
+  "baseline_first_choice": 29,
+  "baseline_first_choice_rate": "0.4833333333333333333333333333",
+  "changed_decisions": 45,
+  "decisions": 60,
+  "direction_is_positive": true,
+  "learned_error_rate": "0.1333333333333333333333333333",
+  "learned_first_choice": 52,
+  "learned_first_choice_rate": "0.8666666666666666666666666667",
+  "relative_error_reduction": "0.7419354838709677419354838710"
+ },
+ "per_batch": {
+  "final_a": {
+   "absolute_points_gained": "0.3000000000000000000000000000",
+   "baseline_error_rate": "0.4333333333333333333333333333",
+   "baseline_first_choice": 17,
+   "baseline_first_choice_rate": "0.5666666666666666666666666667",
+   "changed_decisions": 22,
+   "decisions": 30,
+   "direction_is_positive": true,
+   "learned_error_rate": "0.1333333333333333333333333333",
+   "learned_first_choice": 26,
+   "learned_first_choice_rate": "0.8666666666666666666666666667",
+   "relative_error_reduction": "0.6923076923076923076923076924"
+  },
+  "final_b": {
+   "absolute_points_gained": "0.4666666666666666666666666667",
+   "baseline_error_rate": "0.6",
+   "baseline_first_choice": 12,
+   "baseline_first_choice_rate": "0.4",
+   "changed_decisions": 23,
+   "decisions": 30,
+   "direction_is_positive": true,
+   "learned_error_rate": "0.1333333333333333333333333333",
+   "learned_first_choice": 26,
+   "learned_first_choice_rate": "0.8666666666666666666666666667",
+   "relative_error_reduction": "0.7777777777777777777777777778"
+  }
+ },
+ "schema_version": 1,
+ "shadow": {
+  "decisions": 60,
+  "decisions_the_learned_ordering_would_have_changed": 45,
+  "executed_decisions_changed": 0,
+  "learned_ordering_permitted_anywhere": false,
+  "lifecycle_state": "shadow",
+  "reading": "the learned ordering was computed for all 60 final groups and would have moved 45 of them. The runtime executed none of that: with the ledger row in shadow the resolver refuses the learned path before any ordering is consulted, so what ran is the deterministic rung on every group",
+  "resolver_reasons": [
+   "lifecycle_not_active"
+  ],
+  "why_this_is_the_claim": "shadow is a statement about what executed, not about what was computed. A record showing only that nothing changed would be satisfied by a component that was never evaluated at all, so both numbers are here"
+ },
+ "sprint": "21D7",
+ "stores_opened_for_writing": 0,
+ "wave": "W3",
+ "what_this_record_is_not": "a second selection. The candidate was selected under §2.3 on the certification half and bound before any final manifest was opened; these numbers confirm or refute it on unread evidence and cannot re-choose it",
+ "why_final_outcomes_are_read_here": "this is the record that opens them. Condition 11 required the artifact to be selected first and S21D7-035 sealed it before the final roles were touched; from here the final evidence is spent"
+}

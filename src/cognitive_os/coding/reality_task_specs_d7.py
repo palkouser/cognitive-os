@@ -1,0 +1,10242 @@
+"""The Sprint 21D7 certification corpus: fresh four-candidate groups.
+
+D7 needs a hundred *independent* certification decisions, and independence means distinct fitted
+feature vectors, so the only route to a hundred is to author a hundred. This module is that
+authoring. It is the certification half; D6's hundred certification groups are the demoted
+bar-setting half that places the bar, and S21D7-022 proves the two share no group, no clone and
+no body.
+
+The spec shape is `D2TaskSpec`, unchanged, for the reason D4, D5 and D6 all gave: the catalogue,
+the template registry and the campaign already agree about it.
+
+Every group obeys the authoring contract D2 froze and D4, D5 and D6 re-proved:
+
+- the **baseline** passes the visible suite and fails the hidden one;
+- **variant one** and **variant two** repair the contract by materially different routes and
+  pass both suites;
+- **variant three** fixes the first declared edge case only and **variant four** the second
+  only, so both pass the visible suite and fail the hidden one.
+
+Three failure modes account for every authoring defect the predecessors found, and all three are
+invisible without executing:
+
+1. *The two hidden tests probe one defect wearing two descriptions.* Then no partial fix repairs
+   exactly one, and variants three and four both pass hidden. Every edge-case pair here is chosen
+   so that a fix for one leaves the other untouched, and `scripts/corpus_d7.py` is what decides
+   whether the choice held.
+2. *The baseline is broken so badly it fails its own visible suite.* The defect has to be
+   peripheral enough that the ordinary case still works, and every visible case has to be one
+   both readings agree on — D6's `digit_positions` is the lesson.
+3. *A near-clone collision at the level of the task, not the code.* Rewriting a variant cannot
+   repair that — the group is withdrawn and a different one authored. With 626 released groups
+   the obvious small-function repair space is heavily occupied, so every module name here was
+   checked against the released corpus **before** its bodies were written, and the pre-check
+   cannot see saturation: a task whose core step is a saturated primitive collides however it is
+   written.
+
+Two constraints come from elsewhere in the sprint. The invariance sample renames identifiers, so
+every body binds its names locally and none reaches a name through `getattr`, `globals()` or any
+other reflective route, which `correction_source.py` refuses outright. And no group here may be
+read before the conformal bar exists: revision 7 forbids it, and the campaign is what enforces
+the order.
+
+**One constraint is new in D7, and it is the class's own.** The containment share this sprint
+fits reads the *added lines* of each candidate against the baseline, so the two-complete
+two-partial anatomy has to hold at the level of the lines a repair adds, not only at the level of
+what it returns. A variant that repairs by rewriting the whole function body, rather than by
+adding a guard the partial repairs also add, carries a repair no partial repair can be contained
+in. That is legitimate — the share degrades to a consensus prior rather than failing, and §6 of
+the backlog says so — but a corpus made entirely of whole-body rewrites would measure the class
+on an anatomy the authoring contract does not promise. The variants here repair in place where
+the contract permits it, which is what D2 froze and what every predecessor corpus already does.
+"""
+
+from __future__ import annotations
+
+from cognitive_os.domain.reality import RealityTaskFamily
+
+from .reality_task_specs import _test_module
+from .reality_task_specs_d2 import D2TaskSpec
+
+# ------------------------------------------------------------------ boundary and collections
+
+_G001 = D2TaskSpec(
+    template_id="d7_boundary.lane_loads",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-lane-loads",
+    module="lane_loads",
+    module_doc="Spreading work across lanes that are not equally busy.",
+    issue=(
+        "assign() is documented to hand each weight to the lane carrying the least so far. "
+        "Callers report that one heavy weight followed by light ones leaves the busy lane just "
+        "as busy, and that a lane which happens to receive nothing disappears from the answer "
+        "instead of coming back empty."
+    ),
+    expected=(
+        "assign(weights, lanes) returns one list per lane, in lane order, holding the weights "
+        "that lane received in arrival order. Each weight goes to the lane with the smallest "
+        "load so far, with a tie going to the lowest-numbered lane, and every lane is present "
+        "even when it received nothing."
+    ),
+    baseline_reason=(
+        "it hands out lanes by arrival position rather than by load, and it builds the answer "
+        "only from the lanes it happened to touch"
+    ),
+    edge_cases=(
+        "a heavy weight sends the following ones to the other lane",
+        "a lane that receives nothing is still present, and empty",
+    ),
+    baseline='''def assign(weights, lanes):
+    """Spread `weights` across `lanes`."""
+    filled = {}
+    for position, weight in enumerate(weights):
+        lane = position % lanes
+        filled.setdefault(lane, []).append(weight)
+    return [filled[lane] for lane in sorted(filled)]''',
+    variant_one='''def assign(weights, lanes):
+    """Spread `weights` across `lanes`."""
+    filled = [[] for _ in range(lanes)]
+    loads = [0] * lanes
+    for weight in weights:
+        lane = loads.index(min(loads))
+        filled[lane].append(weight)
+        loads[lane] += weight
+    return filled''',
+    variant_two='''def assign(weights, lanes):
+    """Spread `weights` across `lanes`."""
+    filled = [[] for _ in range(lanes)]
+    for weight in weights:
+        chosen = 0
+        for lane in range(1, lanes):
+            if sum(filled[lane]) < sum(filled[chosen]):
+                chosen = lane
+        filled[chosen].append(weight)
+    return filled''',
+    variant_three='''def assign(weights, lanes):
+    """Spread `weights` across `lanes`."""
+    filled = {}
+    loads = [0] * lanes
+    for weight in weights:
+        lane = loads.index(min(loads))
+        filled.setdefault(lane, []).append(weight)
+        loads[lane] += weight
+    return [filled[lane] for lane in sorted(filled)]''',
+    variant_four='''def assign(weights, lanes):
+    """Spread `weights` across `lanes`."""
+    filled = [[] for _ in range(lanes)]
+    rounds = -(-len(weights) // lanes) if lanes else 0
+    taken = 0
+    for _ in range(rounds):
+        for lane in range(lanes):
+            if taken < len(weights):
+                filled[lane].append(weights[taken])
+                taken += 1
+    return filled''',
+    visible_test=_test_module(
+        "lane_loads",
+        "Published contract for spreading work across lanes.",
+        """
+def test_equal_weights_land_one_per_lane() -> None:
+    assert assign([2, 2], 2) == [[2], [2]]
+
+
+def test_a_single_lane_takes_everything() -> None:
+    assert assign([5, 1], 1) == [[5, 1]]
+""",
+        imports="from lane_loads import assign\n",
+    ),
+    hidden_test=_test_module(
+        "lane_loads",
+        "The part of the contract the published tests do not state.",
+        """
+def test_equal_weights_land_one_per_lane() -> None:
+    assert assign([2, 2], 2) == [[2], [2]]
+
+
+def test_a_heavy_weight_sends_the_rest_to_the_other_lane() -> None:
+    assert assign([5, 1, 1], 2) == [[5], [1, 1]]
+
+
+def test_a_lane_that_receives_nothing_comes_back_empty() -> None:
+    assert assign([4], 3) == [[4], [], []]
+""",
+        imports="from lane_loads import assign\n",
+    ),
+)
+
+_G002 = D2TaskSpec(
+    template_id="d7_boundary.escort_pairs",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-escort-pairs",
+    module="escort_pairs",
+    module_doc="Giving every guest an escort when there are fewer escorts than guests.",
+    issue=(
+        "pair_up() is documented to reuse the escorts from the beginning once they have all "
+        "been given out. Callers report that the last escort is handed the whole remainder of "
+        "the queue instead, and that a party with no escorts at all fails outright rather than "
+        "reporting that nobody is escorting."
+    ),
+    expected=(
+        "pair_up(guests, escorts) returns one (guest, escort) pair per guest in order. Escorts "
+        "are handed out in order and reused from the beginning once exhausted; with no escorts "
+        "at all every guest is paired with None."
+    ),
+    baseline_reason=(
+        "past the end of the escort list it repeats the last escort, and it reads that last "
+        "escort without checking that there is one"
+    ),
+    edge_cases=(
+        "escorts are reused from the beginning once exhausted",
+        "with no escorts every guest is paired with None",
+    ),
+    baseline='''def pair_up(guests, escorts):
+    """Pair every guest with an escort."""
+    pairs = []
+    for position, guest in enumerate(guests):
+        if position < len(escorts):
+            escort = escorts[position]
+        else:
+            escort = escorts[-1]
+        pairs.append((guest, escort))
+    return pairs''',
+    variant_one='''def pair_up(guests, escorts):
+    """Pair every guest with an escort."""
+    pairs = []
+    for position, guest in enumerate(guests):
+        if escorts:
+            escort = escorts[position % len(escorts)]
+        else:
+            escort = None
+        pairs.append((guest, escort))
+    return pairs''',
+    variant_two='''def pair_up(guests, escorts):
+    """Pair every guest with an escort."""
+    if not escorts:
+        return [(guest, None) for guest in guests]
+    pairs = []
+    cursor = 0
+    for guest in guests:
+        pairs.append((guest, escorts[cursor]))
+        cursor += 1
+        if cursor == len(escorts):
+            cursor = 0
+    return pairs''',
+    variant_three='''def pair_up(guests, escorts):
+    """Pair every guest with an escort."""
+    pairs = []
+    for position, guest in enumerate(guests):
+        escort = escorts[position % len(escorts)]
+        pairs.append((guest, escort))
+    return pairs''',
+    variant_four='''def pair_up(guests, escorts):
+    """Pair every guest with an escort."""
+    pairs = []
+    for position, guest in enumerate(guests):
+        if not escorts:
+            escort = None
+        elif position < len(escorts):
+            escort = escorts[position]
+        else:
+            escort = escorts[-1]
+        pairs.append((guest, escort))
+    return pairs''',
+    visible_test=_test_module(
+        "escort_pairs",
+        "Published contract for handing out escorts.",
+        """
+def test_one_escort_each_when_the_counts_agree() -> None:
+    assert pair_up(["ann", "bo"], ["x", "y"]) == [("ann", "x"), ("bo", "y")]
+
+
+def test_no_guests_need_no_escorts() -> None:
+    assert pair_up([], ["x"]) == []
+""",
+        imports="from escort_pairs import pair_up\n",
+    ),
+    hidden_test=_test_module(
+        "escort_pairs",
+        "The part of the contract the published tests do not state.",
+        """
+def test_one_escort_each_when_the_counts_agree() -> None:
+    assert pair_up(["ann", "bo"], ["x", "y"]) == [("ann", "x"), ("bo", "y")]
+
+
+def test_escorts_are_reused_from_the_beginning() -> None:
+    assert pair_up(["ann", "bo", "cy"], ["x", "y"]) == [("ann", "x"), ("bo", "y"), ("cy", "x")]
+
+
+def test_no_escorts_at_all_pairs_every_guest_with_none() -> None:
+    assert pair_up(["ann"], []) == [("ann", None)]
+""",
+        imports="from escort_pairs import pair_up\n",
+    ),
+)
+
+_G003 = D2TaskSpec(
+    template_id="d7_boundary.seat_rows",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-seat-rows",
+    module="seat_rows",
+    module_doc="Seating parties into rows without splitting a party.",
+    issue=(
+        "seat() is documented to keep every party together and to give a party too large for a "
+        "row a row of its own. Callers report that a party which exactly fills the remaining "
+        "seats is pushed to the next row anyway, and that a party larger than the row vanishes "
+        "from the seating plan."
+    ),
+    expected=(
+        "seat(sizes, width) returns the rows in order, each a list of the party sizes seated in "
+        "it. A party is seated in the current row while it fits, exactly filling the row "
+        "included, and starts a new row otherwise. A party larger than the width gets a row of "
+        "its own."
+    ),
+    baseline_reason=(
+        "it tests the remaining seats with a strict comparison, so an exact fit starts a new "
+        "row, and it skips any party wider than a row instead of giving it one"
+    ),
+    edge_cases=(
+        "a party that exactly fills the remaining seats stays in the row",
+        "a party larger than a row gets a row of its own",
+    ),
+    baseline='''def seat(sizes, width):
+    """Seat parties of the given sizes into rows `width` wide."""
+    rows = []
+    row = []
+    used = 0
+    for size in sizes:
+        if size > width:
+            continue
+        if used + size < width:
+            row.append(size)
+            used += size
+        else:
+            if row:
+                rows.append(row)
+            row = [size]
+            used = size
+    if row:
+        rows.append(row)
+    return rows''',
+    variant_one='''def seat(sizes, width):
+    """Seat parties of the given sizes into rows `width` wide."""
+    rows = []
+    row = []
+    used = 0
+    for size in sizes:
+        if row and used + size > width:
+            rows.append(row)
+            row = []
+            used = 0
+        row.append(size)
+        used += size
+    if row:
+        rows.append(row)
+    return rows''',
+    variant_two='''def seat(sizes, width):
+    """Seat parties of the given sizes into rows `width` wide."""
+    rows = []
+    for size in sizes:
+        if rows and sum(rows[-1]) + size <= width:
+            rows[-1].append(size)
+        else:
+            rows.append([size])
+    return rows''',
+    variant_three='''def seat(sizes, width):
+    """Seat parties of the given sizes into rows `width` wide."""
+    rows = []
+    row = []
+    used = 0
+    for size in sizes:
+        if size > width:
+            continue
+        if used + size <= width:
+            row.append(size)
+            used += size
+        else:
+            if row:
+                rows.append(row)
+            row = [size]
+            used = size
+    if row:
+        rows.append(row)
+    return rows''',
+    variant_four='''def seat(sizes, width):
+    """Seat parties of the given sizes into rows `width` wide."""
+    rows = []
+    row = []
+    used = 0
+    for size in sizes:
+        if size > width:
+            if row:
+                rows.append(row)
+                row = []
+                used = 0
+            rows.append([size])
+            continue
+        if used + size < width:
+            row.append(size)
+            used += size
+        else:
+            if row:
+                rows.append(row)
+            row = [size]
+            used = size
+    if row:
+        rows.append(row)
+    return rows''',
+    visible_test=_test_module(
+        "seat_rows",
+        "Published contract for seating parties into rows.",
+        """
+def test_parties_that_all_fit_share_one_row() -> None:
+    assert seat([2, 3], 10) == [[2, 3]]
+
+
+def test_no_parties_need_no_rows() -> None:
+    assert seat([], 10) == []
+""",
+        imports="from seat_rows import seat\n",
+    ),
+    hidden_test=_test_module(
+        "seat_rows",
+        "The part of the contract the published tests do not state.",
+        """
+def test_parties_that_all_fit_share_one_row() -> None:
+    assert seat([2, 3], 10) == [[2, 3]]
+
+
+def test_a_party_that_exactly_fills_the_row_stays_in_it() -> None:
+    assert seat([6, 4, 3], 10) == [[6, 4], [3]]
+
+
+def test_a_party_larger_than_the_row_gets_its_own() -> None:
+    assert seat([12, 3], 10) == [[12], [3]]
+""",
+        imports="from seat_rows import seat\n",
+    ),
+)
+
+# ------------------------------------------------------------------ data transformation
+
+_G004 = D2TaskSpec(
+    template_id="d7_transform.stripe_rows",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-stripe-rows",
+    module="stripe_rows",
+    module_doc="Colouring the rows of a listing, headings excepted.",
+    issue=(
+        "stripe() is documented to give the body rows the shade colours in turn and to leave a "
+        "heading out of that turn-taking. Callers report that a heading still consumes a shade, "
+        "so the stripes restart out of step after one, and that a listing longer than the shade "
+        "list fails instead of starting the shades again."
+    ),
+    expected=(
+        "stripe(labels, shades) returns one colour per label. A label beginning with '#' is a "
+        "heading and takes the colour 'head' without consuming a shade. Every other label takes "
+        "the next shade, and the shades are reused from the beginning once exhausted."
+    ),
+    baseline_reason=(
+        "it advances the shade cursor for a heading as well as for a body row, and it indexes "
+        "the shade list with that cursor without folding it back to the start"
+    ),
+    edge_cases=(
+        "a heading does not consume a shade",
+        "the shades are reused from the beginning once exhausted",
+    ),
+    baseline='''def stripe(labels, shades):
+    """Return the colour of every label."""
+    painted = []
+    cursor = 0
+    for label in labels:
+        if label.startswith("#"):
+            painted.append("head")
+            cursor += 1
+        else:
+            painted.append(shades[cursor])
+            cursor += 1
+    return painted''',
+    variant_one='''def stripe(labels, shades):
+    """Return the colour of every label."""
+    painted = []
+    cursor = 0
+    for label in labels:
+        if label.startswith("#"):
+            painted.append("head")
+        else:
+            painted.append(shades[cursor % len(shades)])
+            cursor += 1
+    return painted''',
+    variant_two='''def stripe(labels, shades):
+    """Return the colour of every label."""
+    body = [label for label in labels if not label.startswith("#")]
+    order = {}
+    for position, label in enumerate(body):
+        order[position] = shades[position % len(shades)]
+    painted = []
+    seen = 0
+    for label in labels:
+        if label.startswith("#"):
+            painted.append("head")
+        else:
+            painted.append(order[seen])
+            seen += 1
+    return painted''',
+    variant_three='''def stripe(labels, shades):
+    """Return the colour of every label."""
+    painted = []
+    cursor = 0
+    for label in labels:
+        if label.startswith("#"):
+            painted.append("head")
+        else:
+            painted.append(shades[cursor])
+            cursor += 1
+    return painted''',
+    variant_four='''def stripe(labels, shades):
+    """Return the colour of every label."""
+    painted = []
+    cursor = 0
+    for label in labels:
+        if label.startswith("#"):
+            painted.append("head")
+            cursor += 1
+        else:
+            painted.append(shades[cursor % len(shades)])
+            cursor += 1
+    return painted''',
+    visible_test=_test_module(
+        "stripe_rows",
+        "Published contract for colouring a listing.",
+        """
+def test_body_rows_take_the_shades_in_turn() -> None:
+    assert stripe(["a", "b"], ["pale", "dark"]) == ["pale", "dark"]
+
+
+def test_a_heading_takes_the_heading_colour() -> None:
+    assert stripe(["#totals"], ["pale"]) == ["head"]
+""",
+        imports="from stripe_rows import stripe\n",
+    ),
+    hidden_test=_test_module(
+        "stripe_rows",
+        "The part of the contract the published tests do not state.",
+        """
+def test_body_rows_take_the_shades_in_turn() -> None:
+    assert stripe(["a", "b"], ["pale", "dark"]) == ["pale", "dark"]
+
+
+def test_a_heading_does_not_consume_a_shade() -> None:
+    assert stripe(["#totals", "a"], ["pale", "dark"]) == ["head", "pale"]
+
+
+def test_the_shades_start_again_once_exhausted() -> None:
+    assert stripe(["a", "b", "c"], ["pale", "dark"]) == ["pale", "dark", "pale"]
+""",
+        imports="from stripe_rows import stripe\n",
+    ),
+)
+
+
+_G005 = D2TaskSpec(
+    template_id="d7_transform.retitle_duplicates",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-retitle-duplicates",
+    module="retitle_duplicates",
+    module_doc="Giving repeated titles a number so a listing reads unambiguously.",
+    issue=(
+        "retitle() is documented to number repeats of the same title, comparing titles without "
+        "regard to case. Callers report that a title repeated in a different case is left "
+        "unnumbered, and that the numbering runs on across unrelated titles so the second title "
+        "to repeat starts at three."
+    ),
+    expected=(
+        "retitle(titles) returns the titles in order with the first appearance of each left as "
+        "it is and every later appearance suffixed ' (2)', ' (3)' and so on. Titles that differ "
+        "only in case are the same title, and the numbering restarts for each distinct title."
+    ),
+    baseline_reason=(
+        "it keys the tally by the title exactly as written, so a change of case looks like a new "
+        "title, and it counts every retitling with one running total instead of one per title"
+    ),
+    edge_cases=(
+        "titles differing only in case are the same title",
+        "the numbering restarts for each distinct title",
+    ),
+    baseline="""def retitle(titles):
+    \"\"\"Number the repeats among `titles`.\"\"\"
+    seen = set()
+    used = 1
+    out = []
+    for title in titles:
+        if title in seen:
+            used += 1
+            out.append(title + " (" + str(used) + ")")
+        else:
+            seen.add(title)
+            out.append(title)
+    return out""",
+    variant_one="""def retitle(titles):
+    \"\"\"Number the repeats among `titles`.\"\"\"
+    counts = {}
+    out = []
+    for title in titles:
+        key = title.lower()
+        counts[key] = counts.get(key, 0) + 1
+        if counts[key] == 1:
+            out.append(title)
+        else:
+            out.append(title + " (" + str(counts[key]) + ")")
+    return out""",
+    variant_two="""def retitle(titles):
+    \"\"\"Number the repeats among `titles`.\"\"\"
+    out = []
+    for position, title in enumerate(titles):
+        earlier = 0
+        for previous in titles[:position]:
+            if previous.lower() == title.lower():
+                earlier += 1
+        if earlier:
+            out.append(title + " (" + str(earlier + 1) + ")")
+        else:
+            out.append(title)
+    return out""",
+    variant_three="""def retitle(titles):
+    \"\"\"Number the repeats among `titles`.\"\"\"
+    seen = set()
+    used = 1
+    out = []
+    for title in titles:
+        key = title.lower()
+        if key in seen:
+            used += 1
+            out.append(title + " (" + str(used) + ")")
+        else:
+            seen.add(key)
+            out.append(title)
+    return out""",
+    variant_four="""def retitle(titles):
+    \"\"\"Number the repeats among `titles`.\"\"\"
+    counts = {}
+    out = []
+    for title in titles:
+        counts[title] = counts.get(title, 0) + 1
+        if counts[title] == 1:
+            out.append(title)
+        else:
+            out.append(title + " (" + str(counts[title]) + ")")
+    return out""",
+    visible_test=_test_module(
+        "retitle_duplicates",
+        "Published contract for numbering repeated titles.",
+        """
+def test_a_repeat_takes_the_second_number() -> None:
+    assert retitle(["Notes", "Notes"]) == ["Notes", "Notes (2)"]
+
+
+def test_distinct_titles_are_left_alone() -> None:
+    assert retitle(["Notes", "Plan"]) == ["Notes", "Plan"]
+""",
+        imports="from retitle_duplicates import retitle\n",
+    ),
+    hidden_test=_test_module(
+        "retitle_duplicates",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_repeat_takes_the_second_number() -> None:
+    assert retitle(["Notes", "Notes"]) == ["Notes", "Notes (2)"]
+
+
+def test_a_change_of_case_is_the_same_title() -> None:
+    assert retitle(["Notes", "notes"]) == ["Notes", "notes (2)"]
+
+
+def test_the_numbering_restarts_for_each_title() -> None:
+    assert retitle(["Notes", "Notes", "Plan", "Plan"]) == [
+        "Notes",
+        "Notes (2)",
+        "Plan",
+        "Plan (2)",
+    ]
+""",
+        imports="from retitle_duplicates import retitle\n",
+    ),
+)
+
+# ------------------------------------------------------------------ error handling
+
+_G006 = D2TaskSpec(
+    template_id="d7_error.error_context",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-error-context",
+    module="error_context",
+    module_doc="Describing a failure in the words of the step that hit it.",
+    issue=(
+        "describe() is documented to name the kind of failure when the failure carries no "
+        "message of its own, and to follow the chain to whatever caused it. Callers report "
+        "log lines ending in a bare colon, and causes that never appear at all."
+    ),
+    expected=(
+        "describe(error, context) returns 'context: message', where message is the error's own "
+        "text or, when that text is empty, the name of the error's kind. When the error was "
+        "raised from a cause, ' <- ' and the cause's message, under the same empty-text rule, "
+        "are appended."
+    ),
+    baseline_reason=(
+        "it interpolates the error's text without asking whether there is any, and it never "
+        "looks at the cause the error was raised from"
+    ),
+    edge_cases=(
+        "an error with no text is described by the name of its kind",
+        "the cause an error was raised from is appended",
+    ),
+    baseline="""def describe(error, context):
+    \"\"\"Describe `error` under `context`.\"\"\"
+    return context + ": " + str(error)""",
+    variant_one="""def describe(error, context):
+    \"\"\"Describe `error` under `context`.\"\"\"
+    message = str(error) or type(error).__name__
+    cause = error.__cause__
+    if cause is not None:
+        message = message + " <- " + (str(cause) or type(cause).__name__)
+    return context + ": " + message""",
+    variant_two="""def describe(error, context):
+    \"\"\"Describe `error` under `context`.\"\"\"
+    parts = []
+    current = error
+    while current is not None:
+        text = str(current)
+        if not text:
+            text = type(current).__name__
+        parts.append(text)
+        current = current.__cause__
+    return context + ": " + " <- ".join(parts)""",
+    variant_three="""def describe(error, context):
+    \"\"\"Describe `error` under `context`.\"\"\"
+    message = str(error)
+    if not message:
+        message = type(error).__name__
+    return context + ": " + message""",
+    variant_four="""def describe(error, context):
+    \"\"\"Describe `error` under `context`.\"\"\"
+    message = str(error)
+    cause = error.__cause__
+    if cause is not None:
+        message = message + " <- " + str(cause)
+    return context + ": " + message""",
+    visible_test=_test_module(
+        "error_context",
+        "Published contract for describing a failure.",
+        """
+def test_the_context_and_the_message_are_joined() -> None:
+    assert describe(ValueError("bad row"), "import") == "import: bad row"
+
+
+def test_a_plain_failure_needs_no_chain() -> None:
+    assert describe(RuntimeError("stalled"), "run") == "run: stalled"
+""",
+        imports="from error_context import describe\n",
+    ),
+    hidden_test=_test_module(
+        "error_context",
+        "The part of the contract the published tests do not state.",
+        """
+def _raised_from_a_cause():
+    try:
+        try:
+            raise RuntimeError("disk full")
+        except RuntimeError as cause:
+            raise ValueError("bad row") from cause
+    except ValueError as error:
+        return error
+
+
+def test_the_context_and_the_message_are_joined() -> None:
+    assert describe(ValueError("bad row"), "import") == "import: bad row"
+
+
+def test_an_error_with_no_text_is_named_by_its_kind() -> None:
+    assert describe(ValueError(), "import") == "import: ValueError"
+
+
+def test_the_cause_is_appended() -> None:
+    assert describe(_raised_from_a_cause(), "import") == "import: bad row <- disk full"
+""",
+        imports="from error_context import describe\n",
+    ),
+)
+
+# ------------------------------------------------------------------ numeric logic
+
+_G007 = D2TaskSpec(
+    template_id="d7_numeric.scale_to_peak",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-scale-to-peak",
+    module="scale_to_peak",
+    module_doc="Bringing a series up to a chosen peak without changing its shape.",
+    issue=(
+        "scale() is documented to leave an all-zero series alone and to refuse a negative "
+        "ceiling. Callers report a division-by-zero crash on a series that is entirely zero, "
+        "and a negative ceiling silently turning the whole series upside down."
+    ),
+    expected=(
+        "scale(values, ceiling) multiplies every value by the one factor that brings the largest "
+        "of them to `ceiling`. A series whose largest value is zero is returned unchanged, and a "
+        "ceiling below zero raises ValueError. The series is never empty."
+    ),
+    baseline_reason=(
+        "it divides by the largest value without checking that it is not zero, and it accepts "
+        "any ceiling it is given"
+    ),
+    edge_cases=(
+        "an all-zero series is returned unchanged",
+        "a ceiling below zero raises ValueError",
+    ),
+    baseline="""def scale(values, ceiling):
+    \"\"\"Scale `values` so the largest reaches `ceiling`.\"\"\"
+    peak = max(values)
+    factor = ceiling / peak
+    return [value * factor for value in values]""",
+    variant_one="""def scale(values, ceiling):
+    \"\"\"Scale `values` so the largest reaches `ceiling`.\"\"\"
+    if ceiling < 0:
+        raise ValueError("a ceiling below zero cannot be reached by scaling")
+    peak = max(values)
+    if peak == 0:
+        return list(values)
+    factor = ceiling / peak
+    return [value * factor for value in values]""",
+    variant_two="""def scale(values, ceiling):
+    \"\"\"Scale `values` so the largest reaches `ceiling`.\"\"\"
+    if ceiling < 0:
+        raise ValueError("a ceiling below zero cannot be reached by scaling")
+    peak = max(values)
+    scaled = []
+    for value in values:
+        if peak:
+            scaled.append(value * ceiling / peak)
+        else:
+            scaled.append(value)
+    return scaled""",
+    variant_three="""def scale(values, ceiling):
+    \"\"\"Scale `values` so the largest reaches `ceiling`.\"\"\"
+    peak = max(values)
+    if peak == 0:
+        return list(values)
+    factor = ceiling / peak
+    return [value * factor for value in values]""",
+    variant_four="""def scale(values, ceiling):
+    \"\"\"Scale `values` so the largest reaches `ceiling`.\"\"\"
+    if ceiling < 0:
+        raise ValueError("a ceiling below zero cannot be reached by scaling")
+    peak = max(values)
+    factor = ceiling / peak
+    return [value * factor for value in values]""",
+    visible_test=_test_module(
+        "scale_to_peak",
+        "Published contract for scaling a series to a peak.",
+        """
+def test_the_largest_value_reaches_the_ceiling() -> None:
+    assert scale([1, 2, 4], 8) == [2, 4, 8]
+
+
+def test_a_series_already_at_the_ceiling_is_unchanged() -> None:
+    assert scale([5], 5) == [5]
+""",
+        imports="from scale_to_peak import scale\n",
+    ),
+    hidden_test=_test_module(
+        "scale_to_peak",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_the_largest_value_reaches_the_ceiling() -> None:
+    assert scale([1, 2, 4], 8) == [2, 4, 8]
+
+
+def test_an_all_zero_series_is_returned_unchanged() -> None:
+    assert scale([0, 0], 5) == [0, 0]
+
+
+def test_a_ceiling_below_zero_is_refused() -> None:
+    with pytest.raises(ValueError):
+        scale([1, 2], -3)
+""",
+        imports="from scale_to_peak import scale\n",
+    ),
+)
+
+_G008 = D2TaskSpec(
+    template_id="d7_numeric.pace_per_unit",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-pace-per-unit",
+    module="pace_per_unit",
+    module_doc="Turning a finishing time into a pace per unit of distance.",
+    issue=(
+        "pace() is documented to report whole seconds, rounding a half upwards, and to report "
+        "nothing at all for a distance of zero. Callers report a crash on a zero distance and a "
+        "pace that is always a second fast when the division does not come out even."
+    ),
+    expected=(
+        "pace(seconds, distance) returns the seconds per unit of distance as a whole number, "
+        "rounding to the nearest with a half going up. A distance of zero returns None."
+    ),
+    baseline_reason=(
+        "it divides without checking the distance, and it converts the result with a truncation "
+        "that always rounds towards zero"
+    ),
+    edge_cases=(
+        "a distance of zero returns None",
+        "a half second rounds upwards",
+    ),
+    baseline="""def pace(seconds, distance):
+    \"\"\"Return the whole seconds per unit of distance.\"\"\"
+    return int(seconds / distance)""",
+    variant_one="""def pace(seconds, distance):
+    \"\"\"Return the whole seconds per unit of distance.\"\"\"
+    if distance == 0:
+        return None
+    return int(seconds / distance + 0.5)""",
+    variant_two="""def pace(seconds, distance):
+    \"\"\"Return the whole seconds per unit of distance.\"\"\"
+    if not distance:
+        return None
+    whole = seconds // distance
+    remainder = seconds - whole * distance
+    if remainder * 2 >= distance:
+        whole += 1
+    return int(whole)""",
+    variant_three="""def pace(seconds, distance):
+    \"\"\"Return the whole seconds per unit of distance.\"\"\"
+    if distance == 0:
+        return None
+    return int(seconds / distance)""",
+    variant_four="""def pace(seconds, distance):
+    \"\"\"Return the whole seconds per unit of distance.\"\"\"
+    return int(seconds / distance + 0.5)""",
+    visible_test=_test_module(
+        "pace_per_unit",
+        "Published contract for reporting a pace.",
+        """
+def test_an_even_division_is_the_pace() -> None:
+    assert pace(600, 5) == 120
+
+
+def test_a_single_unit_is_the_whole_time() -> None:
+    assert pace(93, 1) == 93
+""",
+        imports="from pace_per_unit import pace\n",
+    ),
+    hidden_test=_test_module(
+        "pace_per_unit",
+        "The part of the contract the published tests do not state.",
+        """
+def test_an_even_division_is_the_pace() -> None:
+    assert pace(600, 5) == 120
+
+
+def test_a_distance_of_zero_has_no_pace() -> None:
+    assert pace(600, 0) is None
+
+
+def test_a_half_second_rounds_upwards() -> None:
+    assert pace(11, 2) == 6
+""",
+        imports="from pace_per_unit import pace\n",
+    ),
+)
+
+# ------------------------------------------------------------------ parsing and validation
+
+_G009 = D2TaskSpec(
+    template_id="d7_parsing.seat_code",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-seat-code",
+    module="seat_code",
+    module_doc="Reading a seat code into the row and the seat within it.",
+    issue=(
+        "parse_seat() is documented to report the seat letter in upper case and to refuse a "
+        "code that does not end in a letter. Callers report lower-case codes coming back "
+        "unchanged, so the same seat compares unequal to itself, and codes like '12' parsing "
+        "happily into row 1 seat '2'."
+    ),
+    expected=(
+        "parse_seat(code) returns (row, letter) for a code of digits followed by one letter: "
+        "the row as an integer and the letter in upper case. A code whose last character is not "
+        "a letter raises ValueError."
+    ),
+    baseline_reason=(
+        "it passes the last character through as written, and it never checks that the last "
+        "character is a letter before treating everything before it as the row"
+    ),
+    edge_cases=(
+        "the seat letter comes back in upper case",
+        "a code not ending in a letter raises ValueError",
+    ),
+    baseline="""def parse_seat(code):
+    \"\"\"Split a seat code into its row and its letter.\"\"\"
+    return int(code[:-1]), code[-1]""",
+    variant_one="""def parse_seat(code):
+    \"\"\"Split a seat code into its row and its letter.\"\"\"
+    letter = code[-1:]
+    if not letter.isalpha():
+        raise ValueError("a seat code ends in a letter")
+    return int(code[:-1]), letter.upper()""",
+    variant_two="""def parse_seat(code):
+    \"\"\"Split a seat code into its row and its letter.\"\"\"
+    digits = ""
+    letter = ""
+    for character in code:
+        if character.isdigit() and not letter:
+            digits += character
+        else:
+            letter += character
+    if len(letter) != 1 or not letter.isalpha():
+        raise ValueError("a seat code ends in a letter")
+    return int(digits), letter.upper()""",
+    variant_three="""def parse_seat(code):
+    \"\"\"Split a seat code into its row and its letter.\"\"\"
+    return int(code[:-1]), code[-1].upper()""",
+    variant_four="""def parse_seat(code):
+    \"\"\"Split a seat code into its row and its letter.\"\"\"
+    letter = code[-1:]
+    if not letter.isalpha():
+        raise ValueError("a seat code ends in a letter")
+    return int(code[:-1]), letter""",
+    visible_test=_test_module(
+        "seat_code",
+        "Published contract for reading a seat code.",
+        """
+def test_a_code_splits_into_the_row_and_the_letter() -> None:
+    assert parse_seat("12B") == (12, "B")
+
+
+def test_a_single_digit_row_reads_the_same_way() -> None:
+    assert parse_seat("7C") == (7, "C")
+""",
+        imports="from seat_code import parse_seat\n",
+    ),
+    hidden_test=_test_module(
+        "seat_code",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_code_splits_into_the_row_and_the_letter() -> None:
+    assert parse_seat("12B") == (12, "B")
+
+
+def test_the_letter_comes_back_in_upper_case() -> None:
+    assert parse_seat("12b") == (12, "B")
+
+
+def test_a_code_without_a_letter_is_refused() -> None:
+    with pytest.raises(ValueError):
+        parse_seat("12")
+""",
+        imports="from seat_code import parse_seat\n",
+    ),
+)
+
+# ------------------------------------------------------------------ state and idempotency
+
+_G010 = D2TaskSpec(
+    template_id="d7_state.standby_promotion",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-standby-promotion",
+    module="standby_promotion",
+    module_doc="Promoting a standby when the node in charge drops out.",
+    issue=(
+        "promote() is documented to promote a standby only when the node that failed was the "
+        "one in charge, and to promote exactly one. Callers report a standby taking charge "
+        "after an unrelated node failed, and two standbys both believing they are in charge."
+    ),
+    expected=(
+        "promote(nodes, failed) returns the (name, role) pairs in order with the failed node's "
+        "role set to 'failed'. When the failed node held the role 'primary', the first standby "
+        "in order becomes 'primary' and every other role is unchanged; when it did not, no "
+        "promotion happens at all."
+    ),
+    baseline_reason=(
+        "it promotes a standby whoever failed, and it promotes every standby it passes rather "
+        "than the first one"
+    ),
+    edge_cases=(
+        "a failure that is not the primary promotes nobody",
+        "only the first standby is promoted",
+    ),
+    baseline="""def promote(nodes, failed):
+    \"\"\"Promote a standby when the node in charge drops out.\"\"\"
+    promoted = []
+    for name, role in nodes:
+        if name == failed:
+            promoted.append((name, "failed"))
+        elif role == "standby":
+            promoted.append((name, "primary"))
+        else:
+            promoted.append((name, role))
+    return promoted""",
+    variant_one="""def promote(nodes, failed):
+    \"\"\"Promote a standby when the node in charge drops out.\"\"\"
+    lost_the_primary = False
+    for name, role in nodes:
+        if name == failed and role == "primary":
+            lost_the_primary = True
+    promoted = []
+    taken = False
+    for name, role in nodes:
+        if name == failed:
+            promoted.append((name, "failed"))
+        elif lost_the_primary and role == "standby" and not taken:
+            promoted.append((name, "primary"))
+            taken = True
+        else:
+            promoted.append((name, role))
+    return promoted""",
+    variant_two="""def promote(nodes, failed):
+    \"\"\"Promote a standby when the node in charge drops out.\"\"\"
+    roles = dict(nodes)
+    successor = None
+    if roles.get(failed) == "primary":
+        for name, role in nodes:
+            if role == "standby" and successor is None:
+                successor = name
+    out = []
+    for name, role in nodes:
+        if name == failed:
+            out.append((name, "failed"))
+        elif name == successor:
+            out.append((name, "primary"))
+        else:
+            out.append((name, role))
+    return out""",
+    variant_three="""def promote(nodes, failed):
+    \"\"\"Promote a standby when the node in charge drops out.\"\"\"
+    lost_the_primary = False
+    for name, role in nodes:
+        if name == failed and role == "primary":
+            lost_the_primary = True
+    promoted = []
+    for name, role in nodes:
+        if name == failed:
+            promoted.append((name, "failed"))
+        elif lost_the_primary and role == "standby":
+            promoted.append((name, "primary"))
+        else:
+            promoted.append((name, role))
+    return promoted""",
+    variant_four="""def promote(nodes, failed):
+    \"\"\"Promote a standby when the node in charge drops out.\"\"\"
+    promoted = []
+    taken = False
+    for name, role in nodes:
+        if name == failed:
+            promoted.append((name, "failed"))
+        elif role == "standby" and not taken:
+            promoted.append((name, "primary"))
+            taken = True
+        else:
+            promoted.append((name, role))
+    return promoted""",
+    visible_test=_test_module(
+        "standby_promotion",
+        "Published contract for promoting a standby.",
+        """
+def test_the_first_standby_takes_over_from_a_failed_primary() -> None:
+    assert promote([("a", "primary"), ("b", "standby")], "a") == [
+        ("a", "failed"),
+        ("b", "primary"),
+    ]
+
+
+def test_a_lone_primary_that_fails_leaves_nobody_in_charge() -> None:
+    assert promote([("a", "primary")], "a") == [("a", "failed")]
+""",
+        imports="from standby_promotion import promote\n",
+    ),
+    hidden_test=_test_module(
+        "standby_promotion",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_first_standby_takes_over_from_a_failed_primary() -> None:
+    assert promote([("a", "primary"), ("b", "standby")], "a") == [
+        ("a", "failed"),
+        ("b", "primary"),
+    ]
+
+
+def test_a_failure_that_is_not_the_primary_promotes_nobody() -> None:
+    assert promote([("a", "primary"), ("b", "standby"), ("c", "standby")], "b") == [
+        ("a", "primary"),
+        ("b", "failed"),
+        ("c", "standby"),
+    ]
+
+
+def test_only_the_first_standby_is_promoted() -> None:
+    assert promote([("a", "primary"), ("b", "standby"), ("c", "standby")], "a") == [
+        ("a", "failed"),
+        ("b", "primary"),
+        ("c", "standby"),
+    ]
+""",
+        imports="from standby_promotion import promote\n",
+    ),
+)
+
+
+_G011 = D2TaskSpec(
+    template_id="d7_boundary.queue_positions",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-queue-positions",
+    module="queue_positions",
+    module_doc="Telling callers where they stand in a queue.",
+    issue=(
+        "positions() is documented to report the earliest place an id holds and to report "
+        "nothing for an id that is not queued at all. Callers report that somebody who joined "
+        "twice is told the later place, and that asking about an id that has already been "
+        "served fails outright instead of answering."
+    ),
+    expected=(
+        "positions(queue, wanted) returns one place per wanted id, in the order asked, counting "
+        "from one. An id appearing more than once takes its earliest place, and an id that is "
+        "not in the queue gets None."
+    ),
+    baseline_reason=(
+        "it overwrites each id's place as it walks the queue, so the last one wins, and it "
+        "looks the place up in a way that has no answer for an id that never appeared"
+    ),
+    edge_cases=(
+        "an id queued twice takes its earliest place",
+        "an id that is not queued gets None",
+    ),
+    baseline="""def positions(queue, wanted):
+    \"\"\"Report where each wanted id stands in `queue`.\"\"\"
+    places = {}
+    for index, item in enumerate(queue):
+        places[item] = index + 1
+    return [places[item] for item in wanted]""",
+    variant_one="""def positions(queue, wanted):
+    \"\"\"Report where each wanted id stands in `queue`.\"\"\"
+    places = {}
+    for index, item in enumerate(queue):
+        places.setdefault(item, index + 1)
+    return [places.get(item) for item in wanted]""",
+    variant_two="""def positions(queue, wanted):
+    \"\"\"Report where each wanted id stands in `queue`.\"\"\"
+    out = []
+    for item in wanted:
+        place = None
+        for index, queued in enumerate(queue):
+            if queued == item:
+                place = index + 1
+                break
+        out.append(place)
+    return out""",
+    variant_three="""def positions(queue, wanted):
+    \"\"\"Report where each wanted id stands in `queue`.\"\"\"
+    places = {}
+    for index, item in enumerate(queue):
+        places.setdefault(item, index + 1)
+    return [places[item] for item in wanted]""",
+    variant_four="""def positions(queue, wanted):
+    \"\"\"Report where each wanted id stands in `queue`.\"\"\"
+    places = {}
+    for index, item in enumerate(queue):
+        places[item] = index + 1
+    return [places.get(item) for item in wanted]""",
+    visible_test=_test_module(
+        "queue_positions",
+        "Published contract for reporting a place in the queue.",
+        """
+def test_a_place_counts_from_one() -> None:
+    assert positions(["ann", "bo"], ["bo"]) == [2]
+
+
+def test_the_head_of_the_queue_is_first() -> None:
+    assert positions(["ann"], ["ann"]) == [1]
+""",
+        imports="from queue_positions import positions\n",
+    ),
+    hidden_test=_test_module(
+        "queue_positions",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_place_counts_from_one() -> None:
+    assert positions(["ann", "bo"], ["bo"]) == [2]
+
+
+def test_an_id_queued_twice_takes_its_earliest_place() -> None:
+    assert positions(["ann", "bo", "ann"], ["ann"]) == [1]
+
+
+def test_an_id_that_is_not_queued_has_no_place() -> None:
+    assert positions(["ann"], ["zoe"]) == [None]
+""",
+        imports="from queue_positions import positions\n",
+    ),
+)
+
+_G012 = D2TaskSpec(
+    template_id="d7_transform.mask_fields",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-mask-fields",
+    module="mask_fields",
+    module_doc="Hiding named fields before a record is shown to anybody.",
+    issue=(
+        "mask() is documented to hide exactly the fields it is given. Callers report that a "
+        "field whose name merely begins with a named one is hidden as well, so 'token_kind' "
+        "disappears along with 'token', and that a record which never carried the field comes "
+        "back carrying it with a masked value."
+    ),
+    expected=(
+        "mask(rows, fields) returns the rows in order, each with the value of every named field "
+        "replaced by '***'. Field names match exactly, never as a prefix, and a row that does "
+        "not carry a named field is returned unchanged."
+    ),
+    baseline_reason=(
+        "it compares field names with a prefix test, and it fills in every named field it did "
+        "not find rather than leaving the row alone"
+    ),
+    edge_cases=(
+        "a field whose name merely begins with a named one is left alone",
+        "a row without the named field is returned unchanged",
+    ),
+    baseline="""def mask(rows, fields):
+    \"\"\"Hide the named fields in every row.\"\"\"
+    hidden = []
+    for row in rows:
+        shown = dict(row)
+        for name in list(shown):
+            for field in fields:
+                if name.startswith(field):
+                    shown[name] = "***"
+        for field in fields:
+            shown.setdefault(field, "***")
+        hidden.append(shown)
+    return hidden""",
+    variant_one="""def mask(rows, fields):
+    \"\"\"Hide the named fields in every row.\"\"\"
+    hidden = []
+    for row in rows:
+        shown = dict(row)
+        for field in fields:
+            if field in shown:
+                shown[field] = "***"
+        hidden.append(shown)
+    return hidden""",
+    variant_two="""def mask(rows, fields):
+    \"\"\"Hide the named fields in every row.\"\"\"
+    wanted = set(fields)
+    return [
+        {name: ("***" if name in wanted else value) for name, value in row.items()}
+        for row in rows
+    ]""",
+    variant_three="""def mask(rows, fields):
+    \"\"\"Hide the named fields in every row.\"\"\"
+    hidden = []
+    for row in rows:
+        shown = dict(row)
+        for name in list(shown):
+            for field in fields:
+                if name == field:
+                    shown[name] = "***"
+        for field in fields:
+            shown.setdefault(field, "***")
+        hidden.append(shown)
+    return hidden""",
+    variant_four="""def mask(rows, fields):
+    \"\"\"Hide the named fields in every row.\"\"\"
+    hidden = []
+    for row in rows:
+        shown = dict(row)
+        for name in list(shown):
+            for field in fields:
+                if name.startswith(field):
+                    shown[name] = "***"
+        hidden.append(shown)
+    return hidden""",
+    visible_test=_test_module(
+        "mask_fields",
+        "Published contract for hiding named fields.",
+        """
+def test_a_named_field_is_hidden() -> None:
+    assert mask([{"token": "abc"}], ["token"]) == [{"token": "***"}]
+
+
+def test_naming_no_fields_changes_nothing() -> None:
+    assert mask([{"name": "ann"}], []) == [{"name": "ann"}]
+""",
+        imports="from mask_fields import mask\n",
+    ),
+    hidden_test=_test_module(
+        "mask_fields",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_named_field_is_hidden() -> None:
+    assert mask([{"token": "abc"}], ["token"]) == [{"token": "***"}]
+
+
+def test_a_field_that_merely_begins_with_a_named_one_is_left_alone() -> None:
+    assert mask([{"token_kind": "bearer"}], ["token"]) == [{"token_kind": "bearer"}]
+
+
+def test_a_row_without_the_field_is_returned_unchanged() -> None:
+    assert mask([{"name": "ann"}], ["token"]) == [{"name": "ann"}]
+""",
+        imports="from mask_fields import mask\n",
+    ),
+)
+
+_G013 = D2TaskSpec(
+    template_id="d7_error.dead_letter",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-dead-letter",
+    module="dead_letter",
+    module_doc="Setting aside the messages that have been tried too often.",
+    issue=(
+        "route() is documented to set a message aside once its attempts have reached the "
+        "limit. Callers report that a message sitting exactly on the limit is retried forever, "
+        "and that a message which has never been attempted fails the routing outright instead "
+        "of being treated as fresh."
+    ),
+    expected=(
+        "route(messages, limit) takes (id, attempts) pairs and returns (live, dead): an id "
+        "whose attempts have reached the limit is dead, and one below it is live, both in "
+        "arrival order. Attempts recorded as None count as none at all."
+    ),
+    baseline_reason=(
+        "it compares the attempts with a strict test, so the limit itself is never reached, and "
+        "it compares without asking whether any attempts were recorded"
+    ),
+    edge_cases=(
+        "a message whose attempts have reached the limit is set aside",
+        "attempts recorded as None count as none at all",
+    ),
+    baseline="""def route(messages, limit):
+    \"\"\"Split messages into the live ones and the ones tried too often.\"\"\"
+    live = []
+    dead = []
+    for identifier, attempts in messages:
+        if attempts > limit:
+            dead.append(identifier)
+        else:
+            live.append(identifier)
+    return live, dead""",
+    variant_one="""def route(messages, limit):
+    \"\"\"Split messages into the live ones and the ones tried too often.\"\"\"
+    live = []
+    dead = []
+    for identifier, attempts in messages:
+        tried = attempts or 0
+        if tried >= limit:
+            dead.append(identifier)
+        else:
+            live.append(identifier)
+    return live, dead""",
+    variant_two="""def route(messages, limit):
+    \"\"\"Split messages into the live ones and the ones tried too often.\"\"\"
+    counted = [
+        (identifier, 0 if attempts is None else attempts) for identifier, attempts in messages
+    ]
+    live = [identifier for identifier, tried in counted if tried < limit]
+    dead = [identifier for identifier, tried in counted if tried >= limit]
+    return live, dead""",
+    variant_three="""def route(messages, limit):
+    \"\"\"Split messages into the live ones and the ones tried too often.\"\"\"
+    live = []
+    dead = []
+    for identifier, attempts in messages:
+        if attempts >= limit:
+            dead.append(identifier)
+        else:
+            live.append(identifier)
+    return live, dead""",
+    variant_four="""def route(messages, limit):
+    \"\"\"Split messages into the live ones and the ones tried too often.\"\"\"
+    live = []
+    dead = []
+    for identifier, attempts in messages:
+        tried = attempts or 0
+        if tried > limit:
+            dead.append(identifier)
+        else:
+            live.append(identifier)
+    return live, dead""",
+    visible_test=_test_module(
+        "dead_letter",
+        "Published contract for setting messages aside.",
+        """
+def test_a_fresh_message_stays_live() -> None:
+    assert route([("a", 0)], 3) == (["a"], [])
+
+
+def test_a_message_well_past_the_limit_is_set_aside() -> None:
+    assert route([("b", 5)], 3) == ([], ["b"])
+""",
+        imports="from dead_letter import route\n",
+    ),
+    hidden_test=_test_module(
+        "dead_letter",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_fresh_message_stays_live() -> None:
+    assert route([("a", 0)], 3) == (["a"], [])
+
+
+def test_a_message_that_has_reached_the_limit_is_set_aside() -> None:
+    assert route([("a", 3)], 3) == ([], ["a"])
+
+
+def test_attempts_recorded_as_none_count_as_none_at_all() -> None:
+    assert route([("a", None)], 3) == (["a"], [])
+""",
+        imports="from dead_letter import route\n",
+    ),
+)
+
+_G014 = D2TaskSpec(
+    template_id="d7_error.escalate_unacked",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-escalate-unacked",
+    module="escalate_unacked",
+    module_doc="Escalating the alerts nobody has picked up.",
+    issue=(
+        "escalate() is documented to escalate only what nobody has acknowledged, and to name "
+        "each alert once. Callers report being paged about alerts they had already taken, and "
+        "receiving the same alert twice when it was reported more than once while waiting."
+    ),
+    expected=(
+        "escalate(alerts, patience) takes (id, waited, acknowledged) triples and returns the "
+        "ids to escalate, in the order they first appear: those that have waited at least "
+        "`patience` and have not been acknowledged, each named once."
+    ),
+    baseline_reason=(
+        "it never looks at whether the alert was acknowledged, and it appends without asking "
+        "whether that alert is already on the list"
+    ),
+    edge_cases=(
+        "an acknowledged alert is never escalated",
+        "an alert reported twice is escalated once",
+    ),
+    baseline="""def escalate(alerts, patience):
+    \"\"\"Return the alerts that should be escalated.\"\"\"
+    out = []
+    for identifier, waited, acknowledged in alerts:
+        if waited < patience:
+            continue
+        out.append(identifier)
+    return out""",
+    variant_one="""def escalate(alerts, patience):
+    \"\"\"Return the alerts that should be escalated.\"\"\"
+    out = []
+    for identifier, waited, acknowledged in alerts:
+        if waited < patience or acknowledged:
+            continue
+        if identifier not in out:
+            out.append(identifier)
+    return out""",
+    variant_two="""def escalate(alerts, patience):
+    \"\"\"Return the alerts that should be escalated.\"\"\"
+    waiting = [
+        identifier
+        for identifier, waited, acknowledged in alerts
+        if waited >= patience and not acknowledged
+    ]
+    seen = set()
+    out = []
+    for identifier in waiting:
+        if identifier not in seen:
+            seen.add(identifier)
+            out.append(identifier)
+    return out""",
+    variant_three="""def escalate(alerts, patience):
+    \"\"\"Return the alerts that should be escalated.\"\"\"
+    out = []
+    for identifier, waited, acknowledged in alerts:
+        if waited < patience or acknowledged:
+            continue
+        out.append(identifier)
+    return out""",
+    variant_four="""def escalate(alerts, patience):
+    \"\"\"Return the alerts that should be escalated.\"\"\"
+    out = []
+    for identifier, waited, acknowledged in alerts:
+        if waited < patience:
+            continue
+        if identifier not in out:
+            out.append(identifier)
+    return out""",
+    visible_test=_test_module(
+        "escalate_unacked",
+        "Published contract for escalating alerts.",
+        """
+def test_a_long_wait_is_escalated() -> None:
+    assert escalate([("a", 5, False)], 3) == ["a"]
+
+
+def test_a_short_wait_is_left_alone() -> None:
+    assert escalate([("b", 1, False)], 3) == []
+""",
+        imports="from escalate_unacked import escalate\n",
+    ),
+    hidden_test=_test_module(
+        "escalate_unacked",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_long_wait_is_escalated() -> None:
+    assert escalate([("a", 5, False)], 3) == ["a"]
+
+
+def test_an_acknowledged_alert_is_never_escalated() -> None:
+    assert escalate([("a", 5, True)], 3) == []
+
+
+def test_an_alert_reported_twice_is_escalated_once() -> None:
+    assert escalate([("a", 5, False), ("a", 6, False)], 3) == ["a"]
+""",
+        imports="from escalate_unacked import escalate\n",
+    ),
+)
+
+_G015 = D2TaskSpec(
+    template_id="d7_numeric.overtime_pay",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-overtime-pay",
+    module="overtime_pay",
+    module_doc="Paying the hours beyond a threshold at the higher rate.",
+    issue=(
+        "pay() is documented to pay the plain rate up to the threshold and half as much again "
+        "beyond it. Callers report short weeks being underpaid, as though the unworked hours "
+        "were deducted, and a negative number of hours producing a negative wage instead of "
+        "being refused."
+    ),
+    expected=(
+        "pay(hours, rate, threshold) returns the wage rounded to two decimals: every hour up to "
+        "the threshold at `rate`, and every hour beyond it at one and a half times `rate`. "
+        "Hours below zero raise ValueError."
+    ),
+    baseline_reason=(
+        "it adds the overtime supplement without flooring the overtime at zero, so a short "
+        "week subtracts one instead, and it never checks that the hours are not negative"
+    ),
+    edge_cases=(
+        "hours below the threshold are paid at the plain rate",
+        "hours below zero raise ValueError",
+    ),
+    baseline="""def pay(hours, rate, threshold):
+    \"\"\"Return the wage for `hours` worked.\"\"\"
+    overtime = hours - threshold
+    return round(hours * rate + overtime * rate * 0.5, 2)""",
+    variant_one="""def pay(hours, rate, threshold):
+    \"\"\"Return the wage for `hours` worked.\"\"\"
+    if hours < 0:
+        raise ValueError("hours worked cannot be negative")
+    overtime = max(hours - threshold, 0)
+    return round(hours * rate + overtime * rate * 0.5, 2)""",
+    variant_two="""def pay(hours, rate, threshold):
+    \"\"\"Return the wage for `hours` worked.\"\"\"
+    if hours < 0:
+        raise ValueError("hours worked cannot be negative")
+    if hours <= threshold:
+        return round(hours * rate, 2)
+    plain = threshold * rate
+    extra = (hours - threshold) * rate * 1.5
+    return round(plain + extra, 2)""",
+    variant_three="""def pay(hours, rate, threshold):
+    \"\"\"Return the wage for `hours` worked.\"\"\"
+    overtime = max(hours - threshold, 0)
+    return round(hours * rate + overtime * rate * 0.5, 2)""",
+    variant_four="""def pay(hours, rate, threshold):
+    \"\"\"Return the wage for `hours` worked.\"\"\"
+    if hours < 0:
+        raise ValueError("hours worked cannot be negative")
+    overtime = hours - threshold
+    return round(hours * rate + overtime * rate * 0.5, 2)""",
+    visible_test=_test_module(
+        "overtime_pay",
+        "Published contract for paying a week's hours.",
+        """
+def test_a_full_week_is_paid_at_the_plain_rate() -> None:
+    assert pay(40, 10, 40) == 400.0
+
+
+def test_hours_beyond_the_threshold_are_paid_higher() -> None:
+    assert pay(45, 10, 40) == 475.0
+""",
+        imports="from overtime_pay import pay\n",
+    ),
+    hidden_test=_test_module(
+        "overtime_pay",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_hours_beyond_the_threshold_are_paid_higher() -> None:
+    assert pay(45, 10, 40) == 475.0
+
+
+def test_a_short_week_is_paid_at_the_plain_rate() -> None:
+    assert pay(30, 10, 40) == 300.0
+
+
+def test_negative_hours_are_refused() -> None:
+    with pytest.raises(ValueError):
+        pay(-1, 10, 40)
+""",
+        imports="from overtime_pay import pay\n",
+    ),
+)
+
+_G016 = D2TaskSpec(
+    template_id="d7_parsing.hashtag_list",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-hashtag-list",
+    module="hashtag_list",
+    module_doc="Reading the tags out of a message body.",
+    issue=(
+        "tags() is documented to report each distinct tag once, folded to lower case, without "
+        "whatever punctuation followed it. Callers report the same tag listed twice when it was "
+        "written in different cases, and tags coming back with a trailing comma or full stop "
+        "attached."
+    ),
+    expected=(
+        "tags(text) returns the tags of a message, each without its leading '#', folded to "
+        "lower case, in order of first appearance and without repeats. Punctuation following a "
+        "tag is not part of it, and a bare '#' is not a tag."
+    ),
+    baseline_reason=(
+        "it takes the word after the hash exactly as written, so case distinguishes two "
+        "spellings of one tag, and it never trims the punctuation that follows"
+    ),
+    edge_cases=(
+        "tags differing only in case are one tag",
+        "punctuation following a tag is not part of it",
+    ),
+    baseline="""def tags(text):
+    \"\"\"Return the tags of a message.\"\"\"
+    found = []
+    for word in text.split():
+        if word.startswith("#") and len(word) > 1:
+            tag = word[1:]
+            if tag not in found:
+                found.append(tag)
+    return found""",
+    variant_one="""def tags(text):
+    \"\"\"Return the tags of a message.\"\"\"
+    found = []
+    for word in text.split():
+        if word.startswith("#") and len(word) > 1:
+            tag = word[1:].strip(".,;:!?").lower()
+            if tag and tag not in found:
+                found.append(tag)
+    return found""",
+    variant_two="""def tags(text):
+    \"\"\"Return the tags of a message.\"\"\"
+    found = []
+    seen = set()
+    for word in text.split():
+        if not word.startswith("#"):
+            continue
+        letters = ""
+        for character in word[1:]:
+            if character.isalnum() or character == "_":
+                letters += character
+            else:
+                break
+        tag = letters.lower()
+        if tag and tag not in seen:
+            seen.add(tag)
+            found.append(tag)
+    return found""",
+    variant_three="""def tags(text):
+    \"\"\"Return the tags of a message.\"\"\"
+    found = []
+    for word in text.split():
+        if word.startswith("#") and len(word) > 1:
+            tag = word[1:].lower()
+            if tag not in found:
+                found.append(tag)
+    return found""",
+    variant_four="""def tags(text):
+    \"\"\"Return the tags of a message.\"\"\"
+    found = []
+    for word in text.split():
+        if word.startswith("#") and len(word) > 1:
+            tag = word[1:].strip(".,;:!?")
+            if tag and tag not in found:
+                found.append(tag)
+    return found""",
+    visible_test=_test_module(
+        "hashtag_list",
+        "Published contract for reading tags out of a message.",
+        """
+def test_a_tag_loses_its_hash() -> None:
+    assert tags("hello #run today") == ["run"]
+
+
+def test_a_message_without_tags_has_none() -> None:
+    assert tags("no tags here") == []
+""",
+        imports="from hashtag_list import tags\n",
+    ),
+    hidden_test=_test_module(
+        "hashtag_list",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_tag_loses_its_hash() -> None:
+    assert tags("hello #run today") == ["run"]
+
+
+def test_two_spellings_of_one_tag_are_one_tag() -> None:
+    assert tags("#Run and #run") == ["run"]
+
+
+def test_punctuation_after_a_tag_is_not_part_of_it() -> None:
+    assert tags("#run, then #swim.") == ["run", "swim"]
+""",
+        imports="from hashtag_list import tags\n",
+    ),
+)
+
+_G017 = D2TaskSpec(
+    template_id="d7_state.maintenance_window",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-maintenance-window",
+    module="maintenance_window",
+    module_doc="Opening and closing a maintenance window without losing when it started.",
+    issue=(
+        "window() is documented to leave an open window alone when it is opened again, and to "
+        "refuse a close that matches no open window. Callers report the start time being reset "
+        "by a repeated open, so the window looks shorter than it was, and stray closes "
+        "recording a window that began at nothing."
+    ),
+    expected=(
+        "window(state, event, at) returns the state after the event. 'enter' records the start "
+        "unless one is already recorded, in which case the state is unchanged; 'leave' appends "
+        "(start, at) to the history and clears the start. A 'leave' with no window open raises "
+        "ValueError."
+    ),
+    baseline_reason=(
+        "it writes the start time on every open, and it closes whatever it finds without "
+        "checking that a window was open"
+    ),
+    edge_cases=(
+        "opening an already-open window keeps the original start",
+        "closing with no window open raises ValueError",
+    ),
+    baseline="""def window(state, event, at):
+    \"\"\"Apply a maintenance-window event to `state`.\"\"\"
+    updated = dict(state)
+    history = list(updated.get("history", []))
+    if event == "enter":
+        updated["started_at"] = at
+        updated["history"] = history
+        return updated
+    history.append((updated.get("started_at"), at))
+    updated["started_at"] = None
+    updated["history"] = history
+    return updated""",
+    variant_one="""def window(state, event, at):
+    \"\"\"Apply a maintenance-window event to `state`.\"\"\"
+    updated = dict(state)
+    history = list(updated.get("history", []))
+    started = updated.get("started_at")
+    if event == "enter":
+        if started is None:
+            updated["started_at"] = at
+        updated["history"] = history
+        return updated
+    if started is None:
+        raise ValueError("no maintenance window is open")
+    history.append((started, at))
+    updated["started_at"] = None
+    updated["history"] = history
+    return updated""",
+    variant_two="""def window(state, event, at):
+    \"\"\"Apply a maintenance-window event to `state`.\"\"\"
+    started = state.get("started_at")
+    history = list(state.get("history", []))
+    if event == "enter":
+        opened = at if started is None else started
+        return {"started_at": opened, "history": history}
+    if not started:
+        raise ValueError("no maintenance window is open")
+    return {"started_at": None, "history": [*history, (started, at)]}""",
+    variant_three="""def window(state, event, at):
+    \"\"\"Apply a maintenance-window event to `state`.\"\"\"
+    updated = dict(state)
+    history = list(updated.get("history", []))
+    started = updated.get("started_at")
+    if event == "enter":
+        if started is None:
+            updated["started_at"] = at
+        updated["history"] = history
+        return updated
+    history.append((started, at))
+    updated["started_at"] = None
+    updated["history"] = history
+    return updated""",
+    variant_four="""def window(state, event, at):
+    \"\"\"Apply a maintenance-window event to `state`.\"\"\"
+    updated = dict(state)
+    history = list(updated.get("history", []))
+    started = updated.get("started_at")
+    if event == "enter":
+        updated["started_at"] = at
+        updated["history"] = history
+        return updated
+    if started is None:
+        raise ValueError("no maintenance window is open")
+    history.append((started, at))
+    updated["started_at"] = None
+    updated["history"] = history
+    return updated""",
+    visible_test=_test_module(
+        "maintenance_window",
+        "Published contract for opening and closing a maintenance window.",
+        """
+def test_opening_records_the_start() -> None:
+    assert window({}, "enter", 1) == {"started_at": 1, "history": []}
+
+
+def test_closing_records_the_window() -> None:
+    opened = window({}, "enter", 1)
+    assert window(opened, "leave", 4) == {"started_at": None, "history": [(1, 4)]}
+""",
+        imports="from maintenance_window import window\n",
+    ),
+    hidden_test=_test_module(
+        "maintenance_window",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_opening_records_the_start() -> None:
+    assert window({}, "enter", 1) == {"started_at": 1, "history": []}
+
+
+def test_opening_an_open_window_keeps_the_original_start() -> None:
+    opened = window({}, "enter", 1)
+    assert window(opened, "enter", 5)["started_at"] == 1
+
+
+def test_closing_with_nothing_open_is_refused() -> None:
+    with pytest.raises(ValueError):
+        window({}, "leave", 5)
+""",
+        imports="from maintenance_window import window\n",
+    ),
+)
+
+
+_G018 = D2TaskSpec(
+    template_id="d7_numeric.receipt_total",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-receipt-total",
+    module="receipt_total",
+    module_doc="Totalling a receipt so the tax lands on the whole of it.",
+    issue=(
+        "total() is documented to add the lines up first and tax the sum. Callers report totals "
+        "a penny or two out against the same receipt totalled by hand, and a line entered with "
+        "a negative quantity quietly reducing the bill instead of being refused."
+    ),
+    expected=(
+        "total(lines, tax_rate) takes (quantity, price) pairs and returns the amount due, "
+        "rounded to two decimals once at the end: the sum of quantity times price, plus that "
+        "sum times the rate. A negative quantity raises ValueError."
+    ),
+    baseline_reason=(
+        "it rounds each line as it goes, so the roundings accumulate, and it adds every line up "
+        "without checking the quantity"
+    ),
+    edge_cases=(
+        "the rounding happens once, on the total, not on each line",
+        "a negative quantity raises ValueError",
+    ),
+    baseline="""def total(lines, tax_rate):
+    \"\"\"Return the amount due for a receipt.\"\"\"
+    running = 0.0
+    for quantity, price in lines:
+        running += round(quantity * price, 2)
+    return round(running + round(running * tax_rate, 2), 2)""",
+    variant_one="""def total(lines, tax_rate):
+    \"\"\"Return the amount due for a receipt.\"\"\"
+    running = 0.0
+    for quantity, price in lines:
+        if quantity < 0:
+            raise ValueError("a receipt line cannot carry a negative quantity")
+        running += quantity * price
+    return round(running * (1 + tax_rate), 2)""",
+    variant_two="""def total(lines, tax_rate):
+    \"\"\"Return the amount due for a receipt.\"\"\"
+    quantities = [quantity for quantity, _ in lines]
+    if any(quantity < 0 for quantity in quantities):
+        raise ValueError("a receipt line cannot carry a negative quantity")
+    subtotal = sum(quantity * price for quantity, price in lines)
+    return round(subtotal + subtotal * tax_rate, 2)""",
+    variant_three="""def total(lines, tax_rate):
+    \"\"\"Return the amount due for a receipt.\"\"\"
+    running = 0.0
+    for quantity, price in lines:
+        running += quantity * price
+    return round(running * (1 + tax_rate), 2)""",
+    variant_four="""def total(lines, tax_rate):
+    \"\"\"Return the amount due for a receipt.\"\"\"
+    running = 0.0
+    for quantity, price in lines:
+        if quantity < 0:
+            raise ValueError("a receipt line cannot carry a negative quantity")
+        running += round(quantity * price, 2)
+    return round(running + round(running * tax_rate, 2), 2)""",
+    visible_test=_test_module(
+        "receipt_total",
+        "Published contract for totalling a receipt.",
+        """
+def test_one_round_line_totals_exactly() -> None:
+    assert total([(2, 10.0)], 0.1) == 22.0
+
+
+def test_an_empty_receipt_is_free() -> None:
+    assert total([], 0.2) == 0.0
+""",
+        imports="from receipt_total import total\n",
+    ),
+    hidden_test=_test_module(
+        "receipt_total",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_one_round_line_totals_exactly() -> None:
+    assert total([(2, 10.0)], 0.1) == 22.0
+
+
+def test_the_rounding_happens_once_on_the_total() -> None:
+    assert total([(1, 0.005), (1, 0.005)], 0.0) == 0.01
+
+
+def test_a_negative_quantity_is_refused() -> None:
+    with pytest.raises(ValueError):
+        total([(-1, 10.0)], 0.1)
+""",
+        imports="from receipt_total import total\n",
+    ),
+)
+
+_G019 = D2TaskSpec(
+    template_id="d7_numeric.net_from_gross",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-net-from-gross",
+    module="net_from_gross",
+    module_doc="Taking the tax back out of a price that already includes it.",
+    issue=(
+        "net_of() is documented to divide the tax back out of an inclusive price. Callers "
+        "report it subtracting the rate from the gross instead, which is only right when the "
+        "rate is zero, and a rate of exactly minus one hundred percent producing a division by "
+        "zero rather than a refusal."
+    ),
+    expected=(
+        "net_of(gross, rate) returns the amount before tax, rounded to two decimals: the gross "
+        "divided by one plus the rate. A rate of -1 or below raises ValueError, because no "
+        "inclusive price can be recovered from it."
+    ),
+    baseline_reason=(
+        "it multiplies the gross by one minus the rate, which is a different quantity, and it "
+        "never checks the rate before using it"
+    ),
+    edge_cases=(
+        "the tax is divided out rather than subtracted",
+        "a rate of -1 or below raises ValueError",
+    ),
+    baseline="""def net_of(gross, rate):
+    \"\"\"Return the amount before tax.\"\"\"
+    return round(gross * (1 - rate), 2)""",
+    variant_one="""def net_of(gross, rate):
+    \"\"\"Return the amount before tax.\"\"\"
+    if rate <= -1:
+        raise ValueError("no inclusive price can be recovered at this rate")
+    return round(gross / (1 + rate), 2)""",
+    variant_two="""def net_of(gross, rate):
+    \"\"\"Return the amount before tax.\"\"\"
+    divisor = 1 + rate
+    if divisor <= 0:
+        raise ValueError("no inclusive price can be recovered at this rate")
+    net = gross / divisor
+    return round(net, 2)""",
+    variant_three="""def net_of(gross, rate):
+    \"\"\"Return the amount before tax.\"\"\"
+    return round(gross / (1 + rate), 2)""",
+    variant_four="""def net_of(gross, rate):
+    \"\"\"Return the amount before tax.\"\"\"
+    if rate <= -1:
+        raise ValueError("no inclusive price can be recovered at this rate")
+    return round(gross * (1 - rate), 2)""",
+    visible_test=_test_module(
+        "net_from_gross",
+        "Published contract for removing tax from an inclusive price.",
+        """
+def test_a_rate_of_nothing_leaves_the_price_alone() -> None:
+    assert net_of(100.0, 0.0) == 100.0
+
+
+def test_the_net_is_below_the_gross() -> None:
+    assert net_of(110.0, 0.1) < 110.0
+""",
+        imports="from net_from_gross import net_of\n",
+    ),
+    hidden_test=_test_module(
+        "net_from_gross",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_rate_of_nothing_leaves_the_price_alone() -> None:
+    assert net_of(100.0, 0.0) == 100.0
+
+
+def test_the_tax_is_divided_out_rather_than_subtracted() -> None:
+    assert net_of(110.0, 0.1) == 100.0
+
+
+def test_a_rate_that_cannot_be_undone_is_refused() -> None:
+    with pytest.raises(ValueError):
+        net_of(100.0, -1)
+""",
+        imports="from net_from_gross import net_of\n",
+    ),
+)
+
+_G020 = D2TaskSpec(
+    template_id="d7_state.refund_once",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-refund-once",
+    module="refund_once",
+    module_doc="Refunding an order without refunding it twice.",
+    issue=(
+        "refund() is documented to pay a refund once per order and to refuse more than the "
+        "order was worth. Callers report a retried request paying out a second time, and a "
+        "refund larger than the order itself being accepted because only the running total was "
+        "checked."
+    ),
+    expected=(
+        "refund(state, order, amount) returns the state with the refund recorded under the "
+        "order. An order already refunded is returned unchanged, whatever amount is asked for, "
+        "and an amount above *that order's* value raises ValueError -- refunds paid on other "
+        "orders do not reduce what this one may be refunded. `state` maps an order to its value "
+        "and carries the refunds already paid."
+    ),
+    baseline_reason=(
+        "it records the refund without asking whether one is already recorded, and it compares "
+        "the amount against what is left across every order rather than against this order's "
+        "own value, so an unrelated refund shrinks this one"
+    ),
+    edge_cases=(
+        "an order already refunded is returned unchanged",
+        "a refund paid on another order does not shrink this one",
+    ),
+    baseline="""def refund(state, order, amount):
+    \"\"\"Record a refund against `order`.\"\"\"
+    values = state["values"]
+    refunds = dict(state["refunds"])
+    if amount > values[order] - sum(refunds.values()):
+        raise ValueError("the refund is larger than what is left")
+    refunds[order] = amount
+    return {"values": values, "refunds": refunds}""",
+    variant_one="""def refund(state, order, amount):
+    \"\"\"Record a refund against `order`.\"\"\"
+    values = state["values"]
+    refunds = dict(state["refunds"])
+    if order in refunds:
+        return {"values": values, "refunds": refunds}
+    if amount > values[order]:
+        raise ValueError("the refund is larger than the order")
+    refunds[order] = amount
+    return {"values": values, "refunds": refunds}""",
+    variant_two="""def refund(state, order, amount):
+    \"\"\"Record a refund against `order`.\"\"\"
+    values = state["values"]
+    refunds = state["refunds"]
+    already = refunds.get(order)
+    if already is not None:
+        return {"values": values, "refunds": dict(refunds)}
+    if values[order] < amount:
+        raise ValueError("the refund is larger than the order")
+    return {"values": values, "refunds": {**refunds, order: amount}}""",
+    variant_three="""def refund(state, order, amount):
+    \"\"\"Record a refund against `order`.\"\"\"
+    values = state["values"]
+    refunds = dict(state["refunds"])
+    if order in refunds:
+        return {"values": values, "refunds": refunds}
+    if amount > values[order] - sum(refunds.values()):
+        raise ValueError("the refund is larger than what is left")
+    refunds[order] = amount
+    return {"values": values, "refunds": refunds}""",
+    variant_four="""def refund(state, order, amount):
+    \"\"\"Record a refund against `order`.\"\"\"
+    values = state["values"]
+    refunds = dict(state["refunds"])
+    if amount > values[order]:
+        raise ValueError("the refund is larger than the order")
+    refunds[order] = amount
+    return {"values": values, "refunds": refunds}""",
+    visible_test=_test_module(
+        "refund_once",
+        "Published contract for refunding an order.",
+        """
+def test_a_refund_is_recorded() -> None:
+    state = {"values": {"a": 10}, "refunds": {}}
+    assert refund(state, "a", 4) == {"values": {"a": 10}, "refunds": {"a": 4}}
+
+
+def test_a_refund_larger_than_the_order_is_refused() -> None:
+    state = {"values": {"a": 10}, "refunds": {}}
+    with pytest.raises(ValueError):
+        refund(state, "a", 11)
+""",
+        imports="import pytest\n\nfrom refund_once import refund\n",
+    ),
+    hidden_test=_test_module(
+        "refund_once",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_refund_is_recorded() -> None:
+    state = {"values": {"a": 10}, "refunds": {}}
+    assert refund(state, "a", 4) == {"values": {"a": 10}, "refunds": {"a": 4}}
+
+
+def test_an_order_already_refunded_is_returned_unchanged() -> None:
+    state = {"values": {"a": 10}, "refunds": {"a": 4}}
+    assert refund(state, "a", 9)["refunds"] == {"a": 4}
+
+
+def test_another_orders_refund_does_not_shrink_this_one() -> None:
+    state = {"values": {"a": 10, "b": 8}, "refunds": {"b": 6}}
+    assert refund(state, "a", 9)["refunds"] == {"b": 6, "a": 9}
+""",
+        imports="from refund_once import refund\n",
+    ),
+)
+
+_G021 = D2TaskSpec(
+    template_id="d7_parsing.plate_format",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-plate-format",
+    module="plate_format",
+    module_doc="Reading a vehicle plate into its parts, however it was typed.",
+    issue=(
+        "split_plate() is documented to accept a plate however it was spaced and to insist on "
+        "the shape itself. Callers report plates typed with a space in the middle being "
+        "rejected, and plates whose letter block is the wrong length being accepted as long as "
+        "the total length came out right."
+    ),
+    expected=(
+        "split_plate(text) returns (letters, digits) for a plate of exactly three letters "
+        "followed by exactly three digits. Spaces anywhere are ignored and the letters come "
+        "back in upper case. Anything else raises ValueError."
+    ),
+    baseline_reason=(
+        "it splits at a fixed offset without removing the spaces first, and it checks only the "
+        "overall length rather than the two blocks"
+    ),
+    edge_cases=(
+        "spaces anywhere in the plate are ignored",
+        "a plate whose blocks are the wrong shape raises ValueError",
+    ),
+    baseline="""def split_plate(text):
+    \"\"\"Split a plate into its letters and its digits.\"\"\"
+    if len(text) != 6:
+        raise ValueError("a plate is three letters and three digits")
+    return text[:3].upper(), text[3:]""",
+    variant_one="""def split_plate(text):
+    \"\"\"Split a plate into its letters and its digits.\"\"\"
+    packed = text.replace(" ", "")
+    letters = packed[:3]
+    digits = packed[3:]
+    if len(packed) != 6 or not letters.isalpha() or not digits.isdigit():
+        raise ValueError("a plate is three letters and three digits")
+    return letters.upper(), digits""",
+    variant_two="""def split_plate(text):
+    \"\"\"Split a plate into its letters and its digits.\"\"\"
+    packed = "".join(character for character in text if character != " ")
+    letters = "".join(character for character in packed if character.isalpha())
+    digits = "".join(character for character in packed if character.isdigit())
+    if len(letters) != 3 or len(digits) != 3 or letters + digits != packed:
+        raise ValueError("a plate is three letters and three digits")
+    return letters.upper(), digits""",
+    variant_three="""def split_plate(text):
+    \"\"\"Split a plate into its letters and its digits.\"\"\"
+    packed = text.replace(" ", "")
+    if len(packed) != 6:
+        raise ValueError("a plate is three letters and three digits")
+    return packed[:3].upper(), packed[3:]""",
+    variant_four="""def split_plate(text):
+    \"\"\"Split a plate into its letters and its digits.\"\"\"
+    letters = text[:3]
+    digits = text[3:]
+    if len(text) != 6 or not letters.isalpha() or not digits.isdigit():
+        raise ValueError("a plate is three letters and three digits")
+    return letters.upper(), digits""",
+    visible_test=_test_module(
+        "plate_format",
+        "Published contract for reading a vehicle plate.",
+        """
+def test_a_plain_plate_splits_into_its_blocks() -> None:
+    assert split_plate("ABC123") == ("ABC", "123")
+
+
+def test_the_letters_come_back_in_upper_case() -> None:
+    assert split_plate("abc123") == ("ABC", "123")
+""",
+        imports="from plate_format import split_plate\n",
+    ),
+    hidden_test=_test_module(
+        "plate_format",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_plain_plate_splits_into_its_blocks() -> None:
+    assert split_plate("ABC123") == ("ABC", "123")
+
+
+def test_spaces_in_the_plate_are_ignored() -> None:
+    assert split_plate("ABC 123") == ("ABC", "123")
+
+
+def test_blocks_of_the_wrong_shape_are_refused() -> None:
+    with pytest.raises(ValueError):
+        split_plate("AB1123")
+""",
+        imports="from plate_format import split_plate\n",
+    ),
+)
+
+_G022 = D2TaskSpec(
+    template_id="d7_transform.milestone_progress",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-milestone-progress",
+    module="milestone_progress",
+    module_doc="Reporting how far a plan has got, milestone by milestone.",
+    issue=(
+        "progress() is documented to weigh each milestone by its size and to report a plan with "
+        "nothing in it as nothing done. Callers report a plan of one large and one tiny "
+        "milestone reading fifty percent when only the tiny one is finished, and an empty plan "
+        "failing outright instead of reporting zero."
+    ),
+    expected=(
+        "progress(milestones) takes (size, done) pairs and returns the share of the total size "
+        "that is finished, as a percentage rounded to one decimal. A plan with no milestones, "
+        "or one whose sizes add to zero, reports 0.0."
+    ),
+    baseline_reason=(
+        "it counts milestones rather than weighing them by size, and it divides by the count "
+        "without checking that there is one"
+    ),
+    edge_cases=(
+        "milestones are weighed by their size, not counted",
+        "a plan with nothing in it reports zero",
+    ),
+    baseline="""def progress(milestones):
+    \"\"\"Return the percentage of the plan that is finished.\"\"\"
+    done = sum(1 for _size, finished in milestones if finished)
+    return round(100.0 * done / len(milestones), 1)""",
+    variant_one="""def progress(milestones):
+    \"\"\"Return the percentage of the plan that is finished.\"\"\"
+    total = sum(size for size, _finished in milestones)
+    if total == 0:
+        return 0.0
+    done = sum(size for size, finished in milestones if finished)
+    return round(100.0 * done / total, 1)""",
+    variant_two="""def progress(milestones):
+    \"\"\"Return the percentage of the plan that is finished.\"\"\"
+    total = 0
+    done = 0
+    for size, finished in milestones:
+        total += size
+        if finished:
+            done += size
+    if not total:
+        return 0.0
+    return round(100.0 * done / total, 1)""",
+    variant_three="""def progress(milestones):
+    \"\"\"Return the percentage of the plan that is finished.\"\"\"
+    total = sum(size for size, _finished in milestones)
+    done = sum(size for size, finished in milestones if finished)
+    return round(100.0 * done / total, 1)""",
+    variant_four="""def progress(milestones):
+    \"\"\"Return the percentage of the plan that is finished.\"\"\"
+    if not milestones:
+        return 0.0
+    done = sum(1 for _size, finished in milestones if finished)
+    return round(100.0 * done / len(milestones), 1)""",
+    visible_test=_test_module(
+        "milestone_progress",
+        "Published contract for reporting progress through a plan.",
+        """
+def test_equal_milestones_split_the_plan_evenly() -> None:
+    assert progress([(1, True), (1, False)]) == 50.0
+
+
+def test_a_finished_plan_is_complete() -> None:
+    assert progress([(3, True)]) == 100.0
+""",
+        imports="from milestone_progress import progress\n",
+    ),
+    hidden_test=_test_module(
+        "milestone_progress",
+        "The part of the contract the published tests do not state.",
+        """
+def test_equal_milestones_split_the_plan_evenly() -> None:
+    assert progress([(1, True), (1, False)]) == 50.0
+
+
+def test_milestones_are_weighed_by_their_size() -> None:
+    assert progress([(9, False), (1, True)]) == 10.0
+
+
+def test_a_plan_with_nothing_in_it_reports_zero() -> None:
+    assert progress([]) == 0.0
+""",
+        imports="from milestone_progress import progress\n",
+    ),
+)
+
+_G023 = D2TaskSpec(
+    template_id="d7_boundary.rota_swap",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-rota-swap",
+    module="rota_swap",
+    module_doc="Swapping two shifts on a rota without disturbing the rest of it.",
+    issue=(
+        "swap() is documented to exchange the two named shifts and to leave a rota that does "
+        "not hold both of them exactly as it was. Callers report the whole rota coming back "
+        "reordered when only two entries should have moved, and a swap naming a shift nobody "
+        "is on silently moving somebody else."
+    ),
+    expected=(
+        "swap(rota, first, second) returns the rota with the entries at the two named shifts "
+        "exchanged, every other entry in its place. A rota that does not hold both shifts is "
+        "returned unchanged, and swapping a shift with itself changes nothing."
+    ),
+    baseline_reason=(
+        "it rebuilds the rota in sorted order rather than in place, and it looks the shifts up "
+        "without checking that both are on the rota"
+    ),
+    edge_cases=(
+        "every other entry keeps its place",
+        "a rota missing one of the shifts is returned unchanged",
+    ),
+    baseline="""def swap(rota, first, second):
+    \"\"\"Exchange the entries at two shifts.\"\"\"
+    entries = dict(rota)
+    held = entries.get(first)
+    entries[first] = entries.get(second)
+    entries[second] = held
+    return dict(sorted(entries.items()))""",
+    variant_one="""def swap(rota, first, second):
+    \"\"\"Exchange the entries at two shifts.\"\"\"
+    if first not in rota or second not in rota:
+        return dict(rota)
+    entries = dict(rota)
+    entries[first], entries[second] = entries[second], entries[first]
+    return entries""",
+    variant_two="""def swap(rota, first, second):
+    \"\"\"Exchange the entries at two shifts.\"\"\"
+    if not (first in rota and second in rota):
+        return {shift: person for shift, person in rota.items()}
+    swapped = {}
+    for shift, person in rota.items():
+        if shift == first:
+            swapped[shift] = rota[second]
+        elif shift == second:
+            swapped[shift] = rota[first]
+        else:
+            swapped[shift] = person
+    return swapped""",
+    variant_three="""def swap(rota, first, second):
+    \"\"\"Exchange the entries at two shifts.\"\"\"
+    entries = dict(rota)
+    held = entries.get(first)
+    entries[first] = entries.get(second)
+    entries[second] = held
+    return entries""",
+    variant_four="""def swap(rota, first, second):
+    \"\"\"Exchange the entries at two shifts.\"\"\"
+    if first not in rota or second not in rota:
+        return dict(sorted(rota.items()))
+    entries = dict(rota)
+    entries[first], entries[second] = entries[second], entries[first]
+    return dict(sorted(entries.items()))""",
+    visible_test=_test_module(
+        "rota_swap",
+        "Published contract for swapping two shifts.",
+        """
+def test_two_shifts_exchange_their_people() -> None:
+    assert swap({"mon": "ann", "tue": "bo"}, "mon", "tue") == {"mon": "bo", "tue": "ann"}
+
+
+def test_swapping_a_shift_with_itself_changes_nothing() -> None:
+    assert swap({"mon": "ann"}, "mon", "mon") == {"mon": "ann"}
+""",
+        imports="from rota_swap import swap\n",
+    ),
+    hidden_test=_test_module(
+        "rota_swap",
+        "The part of the contract the published tests do not state.",
+        """
+def test_two_shifts_exchange_their_people() -> None:
+    assert swap({"mon": "ann", "tue": "bo"}, "mon", "tue") == {"mon": "bo", "tue": "ann"}
+
+
+def test_every_other_entry_keeps_its_place() -> None:
+    rota = {"tue": "bo", "mon": "ann", "wed": "cy"}
+    assert list(swap(rota, "mon", "wed")) == ["tue", "mon", "wed"]
+
+
+def test_a_rota_missing_a_shift_is_returned_unchanged() -> None:
+    assert swap({"mon": "ann"}, "mon", "sun") == {"mon": "ann"}
+""",
+        imports="from rota_swap import swap\n",
+    ),
+)
+
+_G024 = D2TaskSpec(
+    template_id="d7_error.invoice_lookup",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-invoice-lookup",
+    module="invoice_lookup",
+    module_doc="Finding an invoice, and saying which of the two things went wrong.",
+    issue=(
+        "find_invoice() is documented to tell a number nobody has apart from a number that is "
+        "not an invoice number at all. Callers report both arriving as the same error, so a "
+        "retry cannot tell a typo from an invoice that has not been raised yet, and a badly "
+        "formed number that somehow reached the ledger is handed back instead of refused."
+    ),
+    expected=(
+        "find_invoice(invoices, number) returns the invoice recorded under the number. A number "
+        "that is not well formed - anything that is not 'INV-' followed by something - raises "
+        "ValueError whether or not the ledger holds it, and a well formed number the ledger "
+        "does not hold raises LookupError."
+    ),
+    baseline_reason=(
+        "it looks the number up before asking whether the number is well formed, and it reports "
+        "a number nobody has with the error reserved for a malformed one"
+    ),
+    edge_cases=(
+        "a malformed number recorded in the ledger is refused rather than returned",
+        "a well formed number nobody has raises LookupError",
+    ),
+    baseline="""def find_invoice(invoices, number):
+    \"\"\"Return the invoice recorded under a number.\"\"\"
+    if number in invoices:
+        return invoices[number]
+    if not number.startswith("INV-") or not number[4:]:
+        raise ValueError("malformed invoice number: " + number)
+    raise ValueError("no invoice on file: " + number)""",
+    variant_one="""def find_invoice(invoices, number):
+    \"\"\"Return the invoice recorded under a number.\"\"\"
+    if not number.startswith("INV-") or not number[4:]:
+        raise ValueError("malformed invoice number: " + number)
+    if number not in invoices:
+        raise LookupError("no invoice on file: " + number)
+    return invoices[number]""",
+    variant_two="""def find_invoice(invoices, number):
+    \"\"\"Return the invoice recorded under a number.\"\"\"
+    prefix, _, tail = number.partition("-")
+    if prefix != "INV" or not tail:
+        raise ValueError("malformed invoice number: " + number)
+    try:
+        return invoices[number]
+    except KeyError as missing:
+        raise LookupError("no invoice on file: " + number) from missing""",
+    variant_three="""def find_invoice(invoices, number):
+    \"\"\"Return the invoice recorded under a number.\"\"\"
+    if not number.startswith("INV-") or not number[4:]:
+        raise ValueError("malformed invoice number: " + number)
+    if number in invoices:
+        return invoices[number]
+    raise ValueError("no invoice on file: " + number)""",
+    variant_four="""def find_invoice(invoices, number):
+    \"\"\"Return the invoice recorded under a number.\"\"\"
+    if number in invoices:
+        return invoices[number]
+    if not number.startswith("INV-") or not number[4:]:
+        raise ValueError("malformed invoice number: " + number)
+    raise LookupError("no invoice on file: " + number)""",
+    visible_test=_test_module(
+        "invoice_lookup",
+        "Published contract for looking an invoice up.",
+        """
+import pytest
+
+
+def test_a_recorded_invoice_comes_back() -> None:
+    assert find_invoice({"INV-1": {"total": 10}}, "INV-1") == {"total": 10}
+
+
+def test_a_number_that_is_not_an_invoice_number_is_refused() -> None:
+    with pytest.raises(ValueError):
+        find_invoice({"INV-1": {"total": 10}}, "2024-11")
+""",
+        imports="from invoice_lookup import find_invoice\n",
+    ),
+    hidden_test=_test_module(
+        "invoice_lookup",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_recorded_invoice_comes_back() -> None:
+    assert find_invoice({"INV-1": {"total": 10}}, "INV-1") == {"total": 10}
+
+
+def test_a_malformed_number_in_the_ledger_is_still_refused() -> None:
+    with pytest.raises(ValueError):
+        find_invoice({"2024-11": {"total": 10}}, "2024-11")
+
+
+def test_a_well_formed_number_nobody_has_is_a_lookup_failure() -> None:
+    with pytest.raises(LookupError):
+        find_invoice({"INV-1": {"total": 10}}, "INV-2")
+""",
+        imports="from invoice_lookup import find_invoice\n",
+    ),
+)
+
+_G025 = D2TaskSpec(
+    template_id="d7_error.password_policy",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-password-policy",
+    module="password_policy",
+    module_doc="Reporting everything wrong with a password rather than the first thing.",
+    issue=(
+        "check() is documented to report every rule a password breaks, so somebody fixing one "
+        "does not come straight back with the next. Callers report being told one thing at a "
+        "time, and a password of exactly the stated minimum length being called too short."
+    ),
+    expected=(
+        "check(password) returns the names of every rule the password breaks, in the order "
+        "too_short, no_digit, no_upper, and an empty result when it breaks none. A password of "
+        "exactly eight characters is long enough."
+    ),
+    baseline_reason=(
+        "it returns at the first rule that fails instead of collecting them, and its length "
+        "test refuses the minimum length itself"
+    ),
+    edge_cases=(
+        "every broken rule is reported, not only the first",
+        "a password of exactly the minimum length is long enough",
+    ),
+    baseline="""def check(password):
+    \"\"\"Report the rules a password breaks.\"\"\"
+    if len(password) <= 8:
+        return ("too_short",)
+    if not any(character.isdigit() for character in password):
+        return ("no_digit",)
+    if not any(character.isupper() for character in password):
+        return ("no_upper",)
+    return ()""",
+    variant_one="""def check(password):
+    \"\"\"Report the rules a password breaks.\"\"\"
+    broken = []
+    if len(password) < 8:
+        broken.append("too_short")
+    if not any(character.isdigit() for character in password):
+        broken.append("no_digit")
+    if not any(character.isupper() for character in password):
+        broken.append("no_upper")
+    return tuple(broken)""",
+    variant_two="""def check(password):
+    \"\"\"Report the rules a password breaks.\"\"\"
+    rules = (
+        ("too_short", lambda text: len(text) >= 8),
+        ("no_digit", lambda text: any(character.isdigit() for character in text)),
+        ("no_upper", lambda text: any(character.isupper() for character in text)),
+    )
+    return tuple(name for name, holds in rules if not holds(password))""",
+    variant_three="""def check(password):
+    \"\"\"Report the rules a password breaks.\"\"\"
+    broken = []
+    if len(password) <= 8:
+        broken.append("too_short")
+    if not any(character.isdigit() for character in password):
+        broken.append("no_digit")
+    if not any(character.isupper() for character in password):
+        broken.append("no_upper")
+    return tuple(broken)""",
+    variant_four="""def check(password):
+    \"\"\"Report the rules a password breaks.\"\"\"
+    if len(password) < 8:
+        return ("too_short",)
+    if not any(character.isdigit() for character in password):
+        return ("no_digit",)
+    if not any(character.isupper() for character in password):
+        return ("no_upper",)
+    return ()""",
+    visible_test=_test_module(
+        "password_policy",
+        "Published contract for the password rules.",
+        """
+def test_a_password_missing_a_digit_is_reported() -> None:
+    assert check("longenoughA") == ("no_digit",)
+
+
+def test_a_password_breaking_nothing_reports_nothing() -> None:
+    assert check("longenoughA1") == ()
+""",
+        imports="from password_policy import check\n",
+    ),
+    hidden_test=_test_module(
+        "password_policy",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_password_missing_a_digit_is_reported() -> None:
+    assert check("longenoughA") == ("no_digit",)
+
+
+def test_every_broken_rule_is_reported() -> None:
+    assert check("abcdefghi") == ("no_digit", "no_upper")
+
+
+def test_exactly_the_minimum_length_is_long_enough() -> None:
+    assert check("Abcdefg1") == ()
+""",
+        imports="from password_policy import check\n",
+    ),
+)
+
+# ------------------------------------------------------------------ data transformation
+
+_G026 = D2TaskSpec(
+    template_id="d7_transform.enrich_rows",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-enrich-rows",
+    module="enrich_rows",
+    module_doc="Attaching a label to every row, including the rows nobody labelled.",
+    issue=(
+        "enrich() is documented to return one row out for every row in, in the order they "
+        "arrived. Callers report rows disappearing from the result when the label table does "
+        "not mention them, and the rows that survive coming back in the table's order rather "
+        "than their own."
+    ),
+    expected=(
+        "enrich(rows, labels) returns one new row per row, in the order the rows arrived, each "
+        "carrying its own fields together with a 'label' taken from the table under the row's "
+        "'id'. A row the table does not mention is labelled 'unknown'."
+    ),
+    baseline_reason=(
+        "it walks the label table and looks for rows inside it, so a row nobody labelled is "
+        "never reached at all and the rows that are reached come back in the table's order"
+    ),
+    edge_cases=(
+        "a row the table does not mention is labelled unknown",
+        "the rows come back in their own order",
+    ),
+    baseline="""def enrich(rows, labels):
+    \"\"\"Attach a label to every row.\"\"\"
+    enriched = []
+    for identifier, label in labels.items():
+        for row in rows:
+            if row["id"] == identifier:
+                enriched.append({**row, "label": label})
+    return enriched""",
+    variant_one="""def enrich(rows, labels):
+    \"\"\"Attach a label to every row.\"\"\"
+    return [{**row, "label": labels.get(row["id"], "unknown")} for row in rows]""",
+    variant_two="""def enrich(rows, labels):
+    \"\"\"Attach a label to every row.\"\"\"
+    enriched = []
+    for row in rows:
+        labelled = dict(row)
+        if row["id"] in labels:
+            labelled["label"] = labels[row["id"]]
+        else:
+            labelled["label"] = "unknown"
+        enriched.append(labelled)
+    return enriched""",
+    variant_three="""def enrich(rows, labels):
+    \"\"\"Attach a label to every row.\"\"\"
+    enriched = []
+    for row in rows:
+        for identifier, label in labels.items():
+            if row["id"] == identifier:
+                enriched.append({**row, "label": label})
+    return enriched""",
+    variant_four="""def enrich(rows, labels):
+    \"\"\"Attach a label to every row.\"\"\"
+    enriched = []
+    for identifier, label in labels.items():
+        for row in rows:
+            if row["id"] == identifier:
+                enriched.append({**row, "label": label})
+    for row in rows:
+        if row["id"] not in labels:
+            enriched.append({**row, "label": "unknown"})
+    return enriched""",
+    visible_test=_test_module(
+        "enrich_rows",
+        "Published contract for labelling rows.",
+        """
+def test_every_labelled_row_carries_its_label() -> None:
+    assert enrich([{"id": 1}, {"id": 2}], {1: "a", 2: "b"}) == [
+        {"id": 1, "label": "a"},
+        {"id": 2, "label": "b"},
+    ]
+
+
+def test_a_rows_own_fields_are_kept() -> None:
+    assert enrich([{"id": 7, "name": "x"}], {7: "seven"}) == [
+        {"id": 7, "name": "x", "label": "seven"}
+    ]
+""",
+        imports="from enrich_rows import enrich\n",
+    ),
+    hidden_test=_test_module(
+        "enrich_rows",
+        "The part of the contract the published tests do not state.",
+        """
+def test_every_labelled_row_carries_its_label() -> None:
+    assert enrich([{"id": 1}, {"id": 2}], {1: "a", 2: "b"}) == [
+        {"id": 1, "label": "a"},
+        {"id": 2, "label": "b"},
+    ]
+
+
+def test_a_row_the_table_does_not_mention_is_labelled_unknown() -> None:
+    assert enrich([{"id": 1}, {"id": 9}], {1: "a"}) == [
+        {"id": 1, "label": "a"},
+        {"id": 9, "label": "unknown"},
+    ]
+
+
+def test_the_rows_come_back_in_their_own_order() -> None:
+    assert enrich([{"id": 2}, {"id": 1}], {1: "a", 2: "b"}) == [
+        {"id": 2, "label": "b"},
+        {"id": 1, "label": "a"},
+    ]
+""",
+        imports="from enrich_rows import enrich\n",
+    ),
+)
+
+_G027 = D2TaskSpec(
+    template_id="d7_transform.apply_defaults",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-apply-defaults",
+    module="apply_defaults",
+    module_doc="Filling in the settings nobody chose, and only those.",
+    issue=(
+        "apply() is documented to fill in what the settings do not say and to leave what they "
+        "do say alone. Callers report a setting deliberately turned off coming back on, and the "
+        "mapping they passed in coming back changed under them."
+    ),
+    expected=(
+        "apply(settings, defaults) returns the settings with every default the settings do not "
+        "hold filled in. A setting the settings hold is kept whatever its value, including zero "
+        "or an empty string, and the caller's mappings are left as they were."
+    ),
+    baseline_reason=(
+        "it decides a setting is missing by asking whether its value is falsy, and it writes the "
+        "defaults into the caller's own mapping"
+    ),
+    edge_cases=(
+        "a setting held with a falsy value is a choice, not a gap",
+        "the caller's settings are not modified",
+    ),
+    baseline="""def apply(settings, defaults):
+    \"\"\"Fill in the settings that were not chosen.\"\"\"
+    for key, value in defaults.items():
+        if not settings.get(key):
+            settings[key] = value
+    return settings""",
+    variant_one="""def apply(settings, defaults):
+    \"\"\"Fill in the settings that were not chosen.\"\"\"
+    filled = dict(settings)
+    for key, value in defaults.items():
+        if key not in filled:
+            filled[key] = value
+    return filled""",
+    variant_two="""def apply(settings, defaults):
+    \"\"\"Fill in the settings that were not chosen.\"\"\"
+    filled = dict(settings)
+    for key in defaults:
+        filled.setdefault(key, defaults[key])
+    return filled""",
+    variant_three="""def apply(settings, defaults):
+    \"\"\"Fill in the settings that were not chosen.\"\"\"
+    for key, value in defaults.items():
+        if key not in settings:
+            settings[key] = value
+    return settings""",
+    variant_four="""def apply(settings, defaults):
+    \"\"\"Fill in the settings that were not chosen.\"\"\"
+    filled = dict(settings)
+    for key, value in defaults.items():
+        if not filled.get(key):
+            filled[key] = value
+    return filled""",
+    visible_test=_test_module(
+        "apply_defaults",
+        "Published contract for filling in defaults.",
+        """
+def test_a_setting_nobody_chose_is_filled_in() -> None:
+    assert apply({"a": 1}, {"b": 2}) == {"a": 1, "b": 2}
+
+
+def test_a_setting_that_was_chosen_is_kept() -> None:
+    assert apply({"a": 1}, {"a": 9}) == {"a": 1}
+""",
+        imports="from apply_defaults import apply\n",
+    ),
+    hidden_test=_test_module(
+        "apply_defaults",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_setting_nobody_chose_is_filled_in() -> None:
+    assert apply({"a": 1}, {"b": 2}) == {"a": 1, "b": 2}
+
+
+def test_a_setting_turned_off_stays_off() -> None:
+    assert apply({"retries": 0}, {"retries": 3}) == {"retries": 0}
+
+
+def test_the_callers_settings_are_left_alone() -> None:
+    settings = {"a": 1}
+    apply(settings, {"b": 2})
+    assert settings == {"a": 1}
+""",
+        imports="from apply_defaults import apply\n",
+    ),
+)
+
+# ------------------------------------------------------------------ parsing and validation
+
+_G028 = D2TaskSpec(
+    template_id="d7_parsing.coupon_value",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-coupon-value",
+    module="coupon_value",
+    module_doc="Reading a coupon into what it takes off and how it takes it.",
+    issue=(
+        "parse_coupon() is documented to ignore the spaces people type around a coupon and to "
+        "refuse a percentage larger than the whole. Callers report a coupon pasted with spaces "
+        "being rejected outright, and a coupon of '120%' being accepted and then taking more "
+        "off an order than the order is worth."
+    ),
+    expected=(
+        "parse_coupon(text) returns (code, kind, amount) for a coupon written as a code, a "
+        "colon and an amount. An amount ending in '%' is of kind 'percent' and any other is "
+        "'fixed'. Spaces around either part are ignored, a percent above one hundred raises "
+        "ValueError, and so does a text with no colon in it."
+    ),
+    baseline_reason=(
+        "it reads the two parts exactly as they were typed, spaces and all, and it converts a "
+        "percentage without ever asking how large it is"
+    ),
+    edge_cases=(
+        "spaces around the code and the amount are ignored",
+        "a percent above the whole is refused",
+    ),
+    baseline="""def parse_coupon(text):
+    \"\"\"Read a coupon into its code, its kind and its amount.\"\"\"
+    code, separator, amount = text.partition(":")
+    if not separator:
+        raise ValueError("not a coupon: " + text)
+    if amount.endswith("%"):
+        return code, "percent", int(amount[:-1])
+    return code, "fixed", int(amount)""",
+    variant_one="""def parse_coupon(text):
+    \"\"\"Read a coupon into its code, its kind and its amount.\"\"\"
+    code, separator, amount = text.partition(":")
+    if not separator:
+        raise ValueError("not a coupon: " + text)
+    code = code.strip()
+    amount = amount.strip()
+    if amount.endswith("%"):
+        percent = int(amount[:-1])
+        if percent > 100:
+            raise ValueError("percent above the whole: " + text)
+        return code, "percent", percent
+    return code, "fixed", int(amount)""",
+    variant_two="""def parse_coupon(text):
+    \"\"\"Read a coupon into its code, its kind and its amount.\"\"\"
+    if ":" not in text:
+        raise ValueError("not a coupon: " + text)
+    head, _, tail = text.partition(":")
+    amount = tail.strip()
+    kind = "percent" if amount[-1:] == "%" else "fixed"
+    value = int(amount.rstrip("%"))
+    if kind == "percent" and value > 100:
+        raise ValueError("percent above the whole: " + text)
+    return head.strip(), kind, value""",
+    variant_three="""def parse_coupon(text):
+    \"\"\"Read a coupon into its code, its kind and its amount.\"\"\"
+    code, separator, amount = text.partition(":")
+    if not separator:
+        raise ValueError("not a coupon: " + text)
+    code = code.strip()
+    amount = amount.strip()
+    if amount.endswith("%"):
+        return code, "percent", int(amount[:-1])
+    return code, "fixed", int(amount)""",
+    variant_four="""def parse_coupon(text):
+    \"\"\"Read a coupon into its code, its kind and its amount.\"\"\"
+    code, separator, amount = text.partition(":")
+    if not separator:
+        raise ValueError("not a coupon: " + text)
+    if amount.endswith("%"):
+        percent = int(amount[:-1])
+        if percent > 100:
+            raise ValueError("percent above the whole: " + text)
+        return code, "percent", percent
+    return code, "fixed", int(amount)""",
+    visible_test=_test_module(
+        "coupon_value",
+        "Published contract for reading a coupon.",
+        """
+import pytest
+
+
+def test_a_fixed_coupon_reads_as_its_amount() -> None:
+    assert parse_coupon("SAVE:250") == ("SAVE", "fixed", 250)
+
+
+def test_a_percentage_coupon_reads_as_a_percent() -> None:
+    assert parse_coupon("SAVE:20%") == ("SAVE", "percent", 20)
+
+
+def test_a_text_with_no_colon_is_refused() -> None:
+    with pytest.raises(ValueError):
+        parse_coupon("SAVE20")
+""",
+        imports="from coupon_value import parse_coupon\n",
+    ),
+    hidden_test=_test_module(
+        "coupon_value",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_percentage_coupon_reads_as_a_percent() -> None:
+    assert parse_coupon("SAVE:20%") == ("SAVE", "percent", 20)
+
+
+def test_the_spaces_people_type_are_ignored() -> None:
+    assert parse_coupon(" SAVE : 20% ") == ("SAVE", "percent", 20)
+
+
+def test_a_percent_above_the_whole_is_refused() -> None:
+    with pytest.raises(ValueError):
+        parse_coupon("SAVE:120%")
+""",
+        imports="from coupon_value import parse_coupon\n",
+    ),
+)
+
+_G029 = D2TaskSpec(
+    template_id="d7_parsing.money_code",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-money-code",
+    module="money_code",
+    module_doc="Reading an amount and the currency it is in, when the currency may be assumed.",
+    issue=(
+        "parse_money() is documented to assume the house currency when a figure is written "
+        "without one, and to read a code whatever case it was typed in. Callers report bare "
+        "figures being rejected as though they had a bad currency code, and the same code "
+        "arriving as two different currencies depending on how somebody typed it."
+    ),
+    expected=(
+        "parse_money(text) returns (cents, code): the amount in cents and the three-letter "
+        "currency code in upper case. A figure written with no code at all is in 'EUR', and a "
+        "code that is not three letters raises ValueError."
+    ),
+    baseline_reason=(
+        "it checks the code before asking whether there was one, so a bare figure fails the "
+        "check with an empty code, and it returns the code exactly as it was typed"
+    ),
+    edge_cases=(
+        "an amount written with no code is in the house currency",
+        "a code typed in lower case is the same code",
+    ),
+    baseline="""def parse_money(text):
+    \"\"\"Read an amount and its currency code.\"\"\"
+    amount, _, code = text.partition(" ")
+    cents = int(round(float(amount) * 100))
+    if len(code) != 3 or not code.isalpha():
+        raise ValueError("not a currency code: " + code)
+    return cents, code""",
+    variant_one="""def parse_money(text):
+    \"\"\"Read an amount and its currency code.\"\"\"
+    amount, _, code = text.partition(" ")
+    cents = int(round(float(amount) * 100))
+    if not code:
+        return cents, "EUR"
+    if len(code) != 3 or not code.isalpha():
+        raise ValueError("not a currency code: " + code)
+    return cents, code.upper()""",
+    variant_two="""def parse_money(text):
+    \"\"\"Read an amount and its currency code.\"\"\"
+    parts = text.split(" ")
+    cents = int(round(float(parts[0]) * 100))
+    code = parts[1].upper() if len(parts) > 1 else "EUR"
+    if len(code) != 3 or not code.isalpha():
+        raise ValueError("not a currency code: " + code)
+    return cents, code""",
+    variant_three="""def parse_money(text):
+    \"\"\"Read an amount and its currency code.\"\"\"
+    amount, _, code = text.partition(" ")
+    cents = int(round(float(amount) * 100))
+    if not code:
+        return cents, "EUR"
+    if len(code) != 3 or not code.isalpha():
+        raise ValueError("not a currency code: " + code)
+    return cents, code""",
+    variant_four="""def parse_money(text):
+    \"\"\"Read an amount and its currency code.\"\"\"
+    amount, _, code = text.partition(" ")
+    cents = int(round(float(amount) * 100))
+    if len(code) != 3 or not code.isalpha():
+        raise ValueError("not a currency code: " + code)
+    return cents, code.upper()""",
+    visible_test=_test_module(
+        "money_code",
+        "Published contract for reading an amount and its currency.",
+        """
+import pytest
+
+
+def test_an_amount_with_a_code_reads_as_both() -> None:
+    assert parse_money("12.50 EUR") == (1250, "EUR")
+
+
+def test_another_currency_reads_the_same_way() -> None:
+    assert parse_money("1.00 USD") == (100, "USD")
+
+
+def test_something_that_is_not_a_code_is_refused() -> None:
+    with pytest.raises(ValueError):
+        parse_money("1.00 EURO")
+""",
+        imports="from money_code import parse_money\n",
+    ),
+    hidden_test=_test_module(
+        "money_code",
+        "The part of the contract the published tests do not state.",
+        """
+def test_an_amount_with_a_code_reads_as_both() -> None:
+    assert parse_money("12.50 EUR") == (1250, "EUR")
+
+
+def test_an_amount_with_no_code_is_in_the_house_currency() -> None:
+    assert parse_money("12.50") == (1250, "EUR")
+
+
+def test_a_code_typed_in_lower_case_is_the_same_code() -> None:
+    assert parse_money("12.50 usd") == (1250, "USD")
+""",
+        imports="from money_code import parse_money\n",
+    ),
+)
+
+_G030 = D2TaskSpec(
+    template_id="d7_state.seat_checkout",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-seat-checkout",
+    module="seat_checkout",
+    module_doc="Taking a seat, once, and refusing somebody else's.",
+    issue=(
+        "checkout() is documented to be safe to send twice: the same holder taking the same "
+        "seat again is not an error. Callers report the retry of a request that already "
+        "succeeded being refused, and a seat somebody else holds being taken from them."
+    ),
+    expected=(
+        "checkout(seats, seat, holder) returns the seats with the seat held by the holder. The "
+        "same holder taking a seat they already hold changes nothing, a seat somebody else "
+        "holds raises ValueError, and the caller's mapping is left as it was."
+    ),
+    baseline_reason=(
+        "it writes the holder in without asking who is already there, and it writes into the "
+        "caller's own mapping"
+    ),
+    edge_cases=(
+        "a seat somebody else holds is refused",
+        "the caller's mapping is not modified",
+    ),
+    baseline="""def checkout(seats, seat, holder):
+    \"\"\"Record a seat as held by a holder.\"\"\"
+    seats[seat] = holder
+    return seats""",
+    variant_one="""def checkout(seats, seat, holder):
+    \"\"\"Record a seat as held by a holder.\"\"\"
+    held = seats.get(seat)
+    if held is not None and held != holder:
+        raise ValueError("seat already held: " + str(seat))
+    taken = dict(seats)
+    taken[seat] = holder
+    return taken""",
+    variant_two="""def checkout(seats, seat, holder):
+    \"\"\"Record a seat as held by a holder.\"\"\"
+    if seat in seats and seats[seat] != holder:
+        raise ValueError("seat already held: " + str(seat))
+    return {**seats, seat: holder}""",
+    variant_three="""def checkout(seats, seat, holder):
+    \"\"\"Record a seat as held by a holder.\"\"\"
+    held = seats.get(seat)
+    if held is not None and held != holder:
+        raise ValueError("seat already held: " + str(seat))
+    seats[seat] = holder
+    return seats""",
+    variant_four="""def checkout(seats, seat, holder):
+    \"\"\"Record a seat as held by a holder.\"\"\"
+    taken = {other: who for other, who in seats.items() if other != seat}
+    taken[seat] = holder
+    return taken""",
+    visible_test=_test_module(
+        "seat_checkout",
+        "Published contract for taking a seat.",
+        """
+def test_a_free_seat_is_taken() -> None:
+    assert checkout({}, "12B", "ann") == {"12B": "ann"}
+
+
+def test_taking_a_seat_twice_changes_nothing() -> None:
+    assert checkout({"12B": "ann"}, "12B", "ann") == {"12B": "ann"}
+""",
+        imports="from seat_checkout import checkout\n",
+    ),
+    hidden_test=_test_module(
+        "seat_checkout",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_free_seat_is_taken() -> None:
+    assert checkout({}, "12B", "ann") == {"12B": "ann"}
+
+
+def test_a_seat_somebody_else_holds_is_refused() -> None:
+    with pytest.raises(ValueError):
+        checkout({"12B": "ann"}, "12B", "bo")
+
+
+def test_the_callers_mapping_is_left_alone() -> None:
+    seats = {"1A": "cy"}
+    checkout(seats, "12B", "ann")
+    assert seats == {"1A": "cy"}
+""",
+        imports="from seat_checkout import checkout\n",
+    ),
+)
+
+_G031 = D2TaskSpec(
+    template_id="d7_boundary.shortlist_ties",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-shortlist-ties",
+    module="shortlist_ties",
+    module_doc="Taking the top of a ranking without cutting a tie in half.",
+    issue=(
+        "shortlist() is documented to keep a tie whole even when that makes the list longer "
+        "than the limit, because cutting between two equal scores decides by nothing. Callers "
+        "report exactly that cut being made, and tied entries coming back in alphabetical order "
+        "rather than the order they were submitted in."
+    ),
+    expected=(
+        "shortlist(scored, limit) takes (name, score) pairs in any order and returns the names "
+        "of the highest scores, highest first, tied names in the order they arrived. A tie "
+        "straddling the cut is kept whole, so the result can be longer than the limit, and a "
+        "limit of zero or less returns nothing."
+    ),
+    baseline_reason=(
+        "it cuts the ranking at the limit whatever lies on either side of the cut, and it "
+        "breaks ties by name instead of leaving them in the order they arrived"
+    ),
+    edge_cases=(
+        "a tie straddling the cut is kept whole",
+        "tied names keep the order they arrived in",
+    ),
+    baseline="""def shortlist(scored, limit):
+    \"\"\"Return the names at the top of the ranking.\"\"\"
+    ranked = sorted(scored, key=lambda entry: (-entry[1], entry[0]))
+    return [name for name, _ in ranked[:limit]]""",
+    variant_one="""def shortlist(scored, limit):
+    \"\"\"Return the names at the top of the ranking.\"\"\"
+    ranked = sorted(scored, key=lambda entry: -entry[1])
+    kept = ranked[:limit]
+    if kept:
+        cut = kept[-1][1]
+        kept = [entry for entry in ranked if entry[1] >= cut]
+    return [name for name, _ in kept]""",
+    variant_two="""def shortlist(scored, limit):
+    \"\"\"Return the names at the top of the ranking.\"\"\"
+    if limit <= 0:
+        return []
+    ranked = sorted(scored, key=lambda entry: -entry[1])
+    scores = [score for _, score in ranked]
+    cut = scores[min(limit, len(scores)) - 1]
+    return [name for name, score in ranked if score >= cut]""",
+    variant_three="""def shortlist(scored, limit):
+    \"\"\"Return the names at the top of the ranking.\"\"\"
+    ranked = sorted(scored, key=lambda entry: (-entry[1], entry[0]))
+    kept = ranked[:limit]
+    if kept:
+        cut = kept[-1][1]
+        kept = [entry for entry in ranked if entry[1] >= cut]
+    return [name for name, _ in kept]""",
+    variant_four="""def shortlist(scored, limit):
+    \"\"\"Return the names at the top of the ranking.\"\"\"
+    ranked = sorted(scored, key=lambda entry: -entry[1])
+    return [name for name, _ in ranked[:limit]]""",
+    visible_test=_test_module(
+        "shortlist_ties",
+        "Published contract for the shortlist.",
+        """
+def test_the_highest_scores_come_first() -> None:
+    assert shortlist([("a", 5), ("b", 9), ("c", 1)], 2) == ["b", "a"]
+
+
+def test_a_limit_of_nothing_shortlists_nobody() -> None:
+    assert shortlist([("a", 5)], 0) == []
+""",
+        imports="from shortlist_ties import shortlist\n",
+    ),
+    hidden_test=_test_module(
+        "shortlist_ties",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_highest_scores_come_first() -> None:
+    assert shortlist([("a", 5), ("b", 9), ("c", 1)], 2) == ["b", "a"]
+
+
+def test_a_tie_straddling_the_cut_is_kept_whole() -> None:
+    assert shortlist([("a", 9), ("b", 5), ("c", 5)], 2) == ["a", "b", "c"]
+
+
+def test_tied_names_keep_the_order_they_arrived_in() -> None:
+    assert shortlist([("b", 5), ("a", 5)], 2) == ["b", "a"]
+""",
+        imports="from shortlist_ties import shortlist\n",
+    ),
+)
+
+_G032 = D2TaskSpec(
+    template_id="d7_numeric.overdraft_fees",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-overdraft-fees",
+    module="overdraft_fees",
+    module_doc="Counting the times a balance fell past what the account is allowed.",
+    issue=(
+        "overdraft_fees() is documented to follow the balance through every movement on the "
+        "account. Callers report being charged for movements they had already covered by paying "
+        "money in, and being charged for landing exactly on the agreed limit rather than past it."
+    ),
+    expected=(
+        "overdraft_fees(balance, amounts, allowance) applies each amount to the balance in "
+        "order, money in as well as money out, and counts one fee for each amount that leaves "
+        "the balance further down than the allowance. A balance sitting exactly on the "
+        "allowance is within it."
+    ),
+    baseline_reason=(
+        "it applies only the amounts that take money out, so paying money in never restores the "
+        "balance, and its comparison charges a fee for landing exactly on the allowance"
+    ),
+    edge_cases=(
+        "money paid in counts towards the balance too",
+        "a balance exactly on the allowance is within it",
+    ),
+    baseline="""def overdraft_fees(balance, amounts, allowance):
+    \"\"\"Count the fees the movements on an account earn.\"\"\"
+    fees = 0
+    running = balance
+    for amount in amounts:
+        if amount < 0:
+            running += amount
+        if running <= -allowance:
+            fees += 1
+    return fees""",
+    variant_one="""def overdraft_fees(balance, amounts, allowance):
+    \"\"\"Count the fees the movements on an account earn.\"\"\"
+    fees = 0
+    running = balance
+    for amount in amounts:
+        running += amount
+        if running < -allowance:
+            fees += 1
+    return fees""",
+    variant_two="""def overdraft_fees(balance, amounts, allowance):
+    \"\"\"Count the fees the movements on an account earn.\"\"\"
+    running = balance
+    breaches = []
+    for amount in amounts:
+        running = running + amount
+        breaches.append(running + allowance < 0)
+    return sum(1 for breached in breaches if breached)""",
+    variant_three="""def overdraft_fees(balance, amounts, allowance):
+    \"\"\"Count the fees the movements on an account earn.\"\"\"
+    fees = 0
+    running = balance
+    for amount in amounts:
+        running += amount
+        if running <= -allowance:
+            fees += 1
+    return fees""",
+    variant_four="""def overdraft_fees(balance, amounts, allowance):
+    \"\"\"Count the fees the movements on an account earn.\"\"\"
+    fees = 0
+    running = balance
+    for amount in amounts:
+        if amount < 0:
+            running += amount
+        if running < -allowance:
+            fees += 1
+    return fees""",
+    visible_test=_test_module(
+        "overdraft_fees",
+        "Published contract for counting overdraft fees.",
+        """
+def test_a_movement_past_the_allowance_earns_a_fee() -> None:
+    assert overdraft_fees(100, [-50, -100], 0) == 1
+
+
+def test_an_account_nobody_touched_earns_nothing() -> None:
+    assert overdraft_fees(100, [], 0) == 0
+""",
+        imports="from overdraft_fees import overdraft_fees\n",
+    ),
+    hidden_test=_test_module(
+        "overdraft_fees",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_movement_past_the_allowance_earns_a_fee() -> None:
+    assert overdraft_fees(100, [-50, -100], 0) == 1
+
+
+def test_money_paid_in_restores_the_balance() -> None:
+    assert overdraft_fees(100, [-150, 100, -10], 20) == 1
+
+
+def test_landing_exactly_on_the_allowance_is_free() -> None:
+    assert overdraft_fees(0, [-20], 20) == 0
+""",
+        imports="from overdraft_fees import overdraft_fees\n",
+    ),
+)
+
+_G033 = D2TaskSpec(
+    template_id="d7_state.beacon_seen",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-beacon-seen",
+    module="beacon_seen",
+    module_doc="Keeping the last time a beacon was heard from, against reports that arrive late.",
+    issue=(
+        "record() is documented to keep the latest sighting of a beacon whatever order the "
+        "reports arrive in. Callers report a report that took a long route home dragging a "
+        "beacon's last sighting backwards, and the first sighting of a beacon never being "
+        "announced as the new beacon it is."
+    ),
+    expected=(
+        "record(seen, beacon, at) returns (seen, is_new): the beacon's time is moved on only "
+        "when `at` is later than the time already recorded, an unseen beacon is recorded at "
+        "`at`, and is_new says whether this was the beacon's first sighting."
+    ),
+    baseline_reason=(
+        "it writes the time in whatever it is, later or earlier than the one already there, and "
+        "it asks whether the beacon is new after it has already recorded it"
+    ),
+    edge_cases=(
+        "a first sighting is reported as new",
+        "a report older than the one recorded does not move the time back",
+    ),
+    baseline="""def record(seen, beacon, at):
+    \"\"\"Record a sighting of a beacon.\"\"\"
+    updated = dict(seen)
+    updated[beacon] = at
+    return updated, beacon not in updated""",
+    variant_one="""def record(seen, beacon, at):
+    \"\"\"Record a sighting of a beacon.\"\"\"
+    first = beacon not in seen
+    updated = dict(seen)
+    if first or at > seen[beacon]:
+        updated[beacon] = at
+    return updated, first""",
+    variant_two="""def record(seen, beacon, at):
+    \"\"\"Record a sighting of a beacon.\"\"\"
+    updated = dict(seen)
+    last = updated.get(beacon)
+    if last is None or at > last:
+        updated[beacon] = at
+    return updated, last is None""",
+    variant_three="""def record(seen, beacon, at):
+    \"\"\"Record a sighting of a beacon.\"\"\"
+    first = beacon not in seen
+    updated = dict(seen)
+    updated[beacon] = at
+    return updated, first""",
+    variant_four="""def record(seen, beacon, at):
+    \"\"\"Record a sighting of a beacon.\"\"\"
+    updated = dict(seen)
+    last = updated.get(beacon)
+    if last is None or at > last:
+        updated[beacon] = at
+    return updated, beacon not in updated""",
+    visible_test=_test_module(
+        "beacon_seen",
+        "Published contract for recording a sighting.",
+        """
+def test_a_later_report_moves_the_time_on() -> None:
+    assert record({"b1": 10}, "b1", 20) == ({"b1": 20}, False)
+
+
+def test_the_other_beacons_are_left_where_they_are() -> None:
+    assert record({"b1": 10, "b2": 5}, "b1", 20)[0] == {"b1": 20, "b2": 5}
+""",
+        imports="from beacon_seen import record\n",
+    ),
+    hidden_test=_test_module(
+        "beacon_seen",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_later_report_moves_the_time_on() -> None:
+    assert record({"b1": 10}, "b1", 20) == ({"b1": 20}, False)
+
+
+def test_a_first_sighting_is_reported_as_new() -> None:
+    assert record({}, "b1", 10) == ({"b1": 10}, True)
+
+
+def test_a_report_from_before_does_not_move_the_time_back() -> None:
+    assert record({"b1": 20}, "b1", 10)[0] == {"b1": 20}
+""",
+        imports="from beacon_seen import record\n",
+    ),
+)
+
+_G034 = D2TaskSpec(
+    template_id="d7_error.halt_on_fatal",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-halt-on-fatal",
+    module="halt_on_fatal",
+    module_doc="Stopping a run at the step that cannot be survived, and only there.",
+    issue=(
+        "run() is documented to stop at a fatal step and to carry on past a warning. Callers "
+        "report a run abandoned at the first warning, and the report coming back without the "
+        "fatal step in it at all - so the record of the run does not say why it stopped."
+    ),
+    expected=(
+        "run(steps) calls each step in turn and returns the statuses they reported, in order. A "
+        "step reporting 'fatal' stops the run and is itself the last status reported; a step "
+        "reporting 'warn' is recorded and the run carries on."
+    ),
+    baseline_reason=(
+        "it stops at any status that is not 'ok', warnings included, and it breaks out of the "
+        "run before recording the status that stopped it"
+    ),
+    edge_cases=(
+        "a warning is recorded and the run carries on",
+        "the fatal status is in the report",
+    ),
+    baseline="""def run(steps):
+    \"\"\"Call each step until one of them cannot be survived.\"\"\"
+    collected = []
+    for step in steps:
+        status = step()
+        if status != "ok":
+            break
+        collected.append(status)
+    return collected""",
+    variant_one="""def run(steps):
+    \"\"\"Call each step until one of them cannot be survived.\"\"\"
+    collected = []
+    for step in steps:
+        status = step()
+        collected.append(status)
+        if status == "fatal":
+            break
+    return collected""",
+    variant_two="""def run(steps):
+    \"\"\"Call each step until one of them cannot be survived.\"\"\"
+    collected = []
+    for step in steps:
+        collected.append(step())
+        if collected[-1] == "fatal":
+            return collected
+    return collected""",
+    variant_three="""def run(steps):
+    \"\"\"Call each step until one of them cannot be survived.\"\"\"
+    collected = []
+    for step in steps:
+        status = step()
+        if status == "fatal":
+            break
+        collected.append(status)
+    return collected""",
+    variant_four="""def run(steps):
+    \"\"\"Call each step until one of them cannot be survived.\"\"\"
+    collected = []
+    for step in steps:
+        status = step()
+        collected.append(status)
+        if status != "ok":
+            break
+    return collected""",
+    visible_test=_test_module(
+        "halt_on_fatal",
+        "Published contract for running the steps.",
+        """
+def test_a_run_nothing_went_wrong_in_reports_every_step() -> None:
+    assert run([lambda: "ok", lambda: "ok"]) == ["ok", "ok"]
+
+
+def test_a_run_with_no_steps_reports_nothing() -> None:
+    assert run([]) == []
+""",
+        imports="from halt_on_fatal import run\n",
+    ),
+    hidden_test=_test_module(
+        "halt_on_fatal",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_run_nothing_went_wrong_in_reports_every_step() -> None:
+    assert run([lambda: "ok", lambda: "ok"]) == ["ok", "ok"]
+
+
+def test_a_warning_does_not_stop_the_run() -> None:
+    assert run([lambda: "warn", lambda: "ok"]) == ["warn", "ok"]
+
+
+def test_the_fatal_step_is_in_the_report() -> None:
+    assert run([lambda: "fatal", lambda: "ok"]) == ["fatal"]
+""",
+        imports="from halt_on_fatal import run\n",
+    ),
+)
+
+_G035 = D2TaskSpec(
+    template_id="d7_boundary.turnstile_occupancy",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-turnstile-occupancy",
+    module="turnstile_occupancy",
+    module_doc="Following how many people are inside, and how many there were at the worst moment.",
+    issue=(
+        "occupancy() is documented to report how full a room was after every turn of the "
+        "turnstile, and how full it ever got. Callers report counts below nobody at all after a "
+        "morning where somebody left by a door the turnstile never saw, and a peak that is "
+        "simply the last count rather than the highest one."
+    ),
+    expected=(
+        "occupancy(events) reads 'in' and 'out' events in order and returns (readings, peak): "
+        "one reading per event of how many are inside afterwards, never below nobody, and the "
+        "highest reading the room ever reached."
+    ),
+    baseline_reason=(
+        "it counts an 'out' event down whether or not there is anybody to count out, and it "
+        "reports the count it finished on as the peak"
+    ),
+    edge_cases=(
+        "the count never falls below nobody at all",
+        "the peak is the highest reading rather than the last",
+    ),
+    baseline="""def occupancy(events):
+    \"\"\"Report how full the room was after each event, and at its fullest.\"\"\"
+    inside = 0
+    readings = []
+    for event in events:
+        inside += 1 if event == "in" else -1
+        readings.append(inside)
+    return readings, inside""",
+    variant_one="""def occupancy(events):
+    \"\"\"Report how full the room was after each event, and at its fullest.\"\"\"
+    inside = 0
+    peak = 0
+    readings = []
+    for event in events:
+        inside += 1 if event == "in" else -1
+        inside = max(inside, 0)
+        readings.append(inside)
+        peak = max(peak, inside)
+    return readings, peak""",
+    variant_two="""def occupancy(events):
+    \"\"\"Report how full the room was after each event, and at its fullest.\"\"\"
+    readings = []
+    inside = 0
+    for event in events:
+        step = 1 if event == "in" else -1
+        inside = inside + step if inside + step > 0 else 0
+        readings.append(inside)
+    return readings, max(readings) if readings else 0""",
+    variant_three="""def occupancy(events):
+    \"\"\"Report how full the room was after each event, and at its fullest.\"\"\"
+    inside = 0
+    readings = []
+    for event in events:
+        inside += 1 if event == "in" else -1
+        inside = max(inside, 0)
+        readings.append(inside)
+    return readings, inside""",
+    variant_four="""def occupancy(events):
+    \"\"\"Report how full the room was after each event, and at its fullest.\"\"\"
+    inside = 0
+    peak = 0
+    readings = []
+    for event in events:
+        inside += 1 if event == "in" else -1
+        readings.append(inside)
+        peak = max(peak, inside)
+    return readings, peak""",
+    visible_test=_test_module(
+        "turnstile_occupancy",
+        "Published contract for following the occupancy.",
+        """
+def test_a_morning_of_arrivals_fills_the_room() -> None:
+    assert occupancy(["in", "in"]) == ([1, 2], 2)
+
+
+def test_a_turnstile_nobody_used_reports_nothing() -> None:
+    assert occupancy([]) == ([], 0)
+""",
+        imports="from turnstile_occupancy import occupancy\n",
+    ),
+    hidden_test=_test_module(
+        "turnstile_occupancy",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_morning_of_arrivals_fills_the_room() -> None:
+    assert occupancy(["in", "in"]) == ([1, 2], 2)
+
+
+def test_the_count_never_falls_below_nobody() -> None:
+    assert occupancy(["out", "in"]) == ([0, 1], 1)
+
+
+def test_the_peak_is_the_highest_reading_not_the_last() -> None:
+    assert occupancy(["in", "in", "out"]) == ([1, 2, 1], 2)
+""",
+        imports="from turnstile_occupancy import occupancy\n",
+    ),
+)
+
+_G036 = D2TaskSpec(
+    template_id="d7_transform.scan_summary",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-scan-summary",
+    module="scan_summary",
+    module_doc="Summarising a day of badge scans into where each badge was last seen.",
+    issue=(
+        "summarise() is documented to report the gate a badge was seen at last, and to list the "
+        "badges in the order the day saw them. Callers report the first gate of the day coming "
+        "back instead of the most recent one, and the badges arriving in alphabetical order, "
+        "which loses who arrived first."
+    ),
+    expected=(
+        "summarise(scans) takes (badge, gate) pairs in the order they happened and returns a "
+        "mapping from badge to (count, gate): how many times the badge was seen and the gate it "
+        "was seen at last. The badges come back in the order they were first seen."
+    ),
+    baseline_reason=(
+        "it keeps the gate it recorded when it first met the badge and never replaces it, and "
+        "it sorts the summary by badge before returning it"
+    ),
+    edge_cases=(
+        "the gate reported is the last one, not the first",
+        "the badges come back in the order they were first seen",
+    ),
+    baseline="""def summarise(scans):
+    \"\"\"Summarise the scans by badge.\"\"\"
+    summary = {}
+    for badge, gate in scans:
+        if badge not in summary:
+            summary[badge] = (0, gate)
+        count, first = summary[badge]
+        summary[badge] = (count + 1, first)
+    return dict(sorted(summary.items()))""",
+    variant_one="""def summarise(scans):
+    \"\"\"Summarise the scans by badge.\"\"\"
+    summary = {}
+    for badge, gate in scans:
+        count = summary[badge][0] if badge in summary else 0
+        summary[badge] = (count + 1, gate)
+    return summary""",
+    variant_two="""def summarise(scans):
+    \"\"\"Summarise the scans by badge.\"\"\"
+    summary = {}
+    for badge, gate in scans:
+        if badge not in summary:
+            summary[badge] = (1, gate)
+        else:
+            summary[badge] = (summary[badge][0] + 1, gate)
+    return summary""",
+    variant_three="""def summarise(scans):
+    \"\"\"Summarise the scans by badge.\"\"\"
+    summary = {}
+    for badge, gate in scans:
+        count = summary[badge][0] if badge in summary else 0
+        summary[badge] = (count + 1, gate)
+    return dict(sorted(summary.items()))""",
+    variant_four="""def summarise(scans):
+    \"\"\"Summarise the scans by badge.\"\"\"
+    summary = {}
+    for badge, gate in scans:
+        if badge not in summary:
+            summary[badge] = (0, gate)
+        count, first = summary[badge]
+        summary[badge] = (count + 1, first)
+    return summary""",
+    visible_test=_test_module(
+        "scan_summary",
+        "Published contract for summarising the scans.",
+        """
+def test_a_single_scan_is_summarised() -> None:
+    assert summarise([("b1", "north")]) == {"b1": (1, "north")}
+
+
+def test_two_scans_at_one_gate_are_counted() -> None:
+    assert summarise([("b1", "north"), ("b1", "north")]) == {"b1": (2, "north")}
+""",
+        imports="from scan_summary import summarise\n",
+    ),
+    hidden_test=_test_module(
+        "scan_summary",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_single_scan_is_summarised() -> None:
+    assert summarise([("b1", "north")]) == {"b1": (1, "north")}
+
+
+def test_the_gate_reported_is_the_last_one() -> None:
+    assert summarise([("b1", "north"), ("b1", "south")]) == {"b1": (2, "south")}
+
+
+def test_the_badges_come_back_in_the_order_first_seen() -> None:
+    assert list(summarise([("z", "north"), ("a", "north")])) == ["z", "a"]
+""",
+        imports="from scan_summary import summarise\n",
+    ),
+)
+
+_G037 = D2TaskSpec(
+    template_id="d7_parsing.berth_window",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-berth-window",
+    module="berth_window",
+    module_doc="Reading the window a berth is booked for, including the one that ends at midnight.",
+    issue=(
+        "parse_window() is documented to accept a window running to the end of the day and to "
+        "refuse one that does not run forwards. Callers report a booking to '24:00' being "
+        "rejected as a bad time, and a window typed the wrong way round being accepted and "
+        "then holding the berth for a negative length of time."
+    ),
+    expected=(
+        "parse_window(text) reads 'HH:MM-HH:MM' and returns (start, end) as minutes past "
+        "midnight. An end of '24:00' is the end of the day, minutes beyond fifty-nine or a time "
+        "past the end of the day raise ValueError, and so does a window whose end does not come "
+        "after its start."
+    ),
+    baseline_reason=(
+        "its hour test stops at twenty-three, so the end of the day is not a time it can read, "
+        "and it never compares the end with the start"
+    ),
+    edge_cases=(
+        "a window ending at the end of the day is read",
+        "a window that does not run forwards is refused",
+    ),
+    baseline="""def parse_window(text):
+    \"\"\"Read a booking window into minutes past midnight.\"\"\"
+    start_text, _, end_text = text.partition("-")
+    times = []
+    for piece in (start_text, end_text):
+        hours, _, minutes = piece.partition(":")
+        if not 0 <= int(hours) <= 23 or not 0 <= int(minutes) <= 59:
+            raise ValueError("not a time: " + piece)
+        times.append(int(hours) * 60 + int(minutes))
+    return times[0], times[1]""",
+    variant_one="""def parse_window(text):
+    \"\"\"Read a booking window into minutes past midnight.\"\"\"
+    start_text, _, end_text = text.partition("-")
+    times = []
+    for piece in (start_text, end_text):
+        hours, _, minutes = piece.partition(":")
+        if not 0 <= int(hours) <= 24 or not 0 <= int(minutes) <= 59:
+            raise ValueError("not a time: " + piece)
+        total = int(hours) * 60 + int(minutes)
+        if total > 24 * 60:
+            raise ValueError("not a time: " + piece)
+        times.append(total)
+    if times[1] <= times[0]:
+        raise ValueError("window does not run forwards: " + text)
+    return times[0], times[1]""",
+    variant_two="""def parse_window(text):
+    \"\"\"Read a booking window into minutes past midnight.\"\"\"
+    start_text, _, end_text = text.partition("-")
+    times = []
+    for piece in (start_text, end_text):
+        hours, _, minutes = piece.partition(":")
+        total = int(hours) * 60 + int(minutes)
+        if not 0 <= int(minutes) < 60 or not 0 <= total <= 24 * 60:
+            raise ValueError("not a time: " + piece)
+        times.append(total)
+    start, end = times
+    if end <= start:
+        raise ValueError("window does not run forwards: " + text)
+    return start, end""",
+    variant_three="""def parse_window(text):
+    \"\"\"Read a booking window into minutes past midnight.\"\"\"
+    start_text, _, end_text = text.partition("-")
+    times = []
+    for piece in (start_text, end_text):
+        hours, _, minutes = piece.partition(":")
+        total = int(hours) * 60 + int(minutes)
+        if not 0 <= int(minutes) < 60 or not 0 <= total <= 24 * 60:
+            raise ValueError("not a time: " + piece)
+        times.append(total)
+    return times[0], times[1]""",
+    variant_four="""def parse_window(text):
+    \"\"\"Read a booking window into minutes past midnight.\"\"\"
+    start_text, _, end_text = text.partition("-")
+    times = []
+    for piece in (start_text, end_text):
+        hours, _, minutes = piece.partition(":")
+        if not 0 <= int(hours) <= 23 or not 0 <= int(minutes) <= 59:
+            raise ValueError("not a time: " + piece)
+        times.append(int(hours) * 60 + int(minutes))
+    if times[1] <= times[0]:
+        raise ValueError("window does not run forwards: " + text)
+    return times[0], times[1]""",
+    visible_test=_test_module(
+        "berth_window",
+        "Published contract for reading a booking window.",
+        """
+import pytest
+
+
+def test_a_window_reads_as_minutes_past_midnight() -> None:
+    assert parse_window("08:00-12:30") == (480, 750)
+
+
+def test_minutes_beyond_the_hour_are_refused() -> None:
+    with pytest.raises(ValueError):
+        parse_window("08:00-12:70")
+""",
+        imports="from berth_window import parse_window\n",
+    ),
+    hidden_test=_test_module(
+        "berth_window",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_window_reads_as_minutes_past_midnight() -> None:
+    assert parse_window("08:00-12:30") == (480, 750)
+
+
+def test_a_window_running_to_the_end_of_the_day_is_read() -> None:
+    assert parse_window("22:00-24:00") == (1320, 1440)
+
+
+def test_a_window_that_does_not_run_forwards_is_refused() -> None:
+    with pytest.raises(ValueError):
+        parse_window("12:00-09:00")
+""",
+        imports="from berth_window import parse_window\n",
+    ),
+)
+
+_G038 = D2TaskSpec(
+    template_id="d7_error.required_fields",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-required-fields",
+    module="required_fields",
+    module_doc="Naming every field a payload is missing, in one go.",
+    issue=(
+        "check() is documented to name every required field a payload does not carry, so a "
+        "caller fixing one does not come straight back missing the next. Callers report being "
+        "told about one field at a time, and a field they deliberately sent empty being "
+        "reported as though they had not sent it at all."
+    ),
+    expected=(
+        "check(payload, required) raises ValueError naming every required field the payload "
+        "does not carry, sorted, in one message. A field the payload carries is present "
+        "whatever its value, an empty one included, and a payload missing nothing raises "
+        "nothing."
+    ),
+    baseline_reason=(
+        "it raises at the first field it finds missing, so the message names one field of "
+        "however many, and it decides presence by the value rather than by the field being there"
+    ),
+    edge_cases=(
+        "every missing field is named at once",
+        "a field carried but empty is present",
+    ),
+    baseline="""def check(payload, required):
+    \"\"\"Refuse a payload that is missing required fields.\"\"\"
+    for field in required:
+        if not payload.get(field):
+            raise ValueError("missing: " + field)""",
+    variant_one="""def check(payload, required):
+    \"\"\"Refuse a payload that is missing required fields.\"\"\"
+    missing = sorted(field for field in required if field not in payload)
+    if missing:
+        raise ValueError("missing: " + ", ".join(missing))""",
+    variant_two="""def check(payload, required):
+    \"\"\"Refuse a payload that is missing required fields.\"\"\"
+    missing = []
+    for field in required:
+        if field not in payload:
+            missing.append(field)
+    if missing:
+        raise ValueError("missing: " + ", ".join(sorted(missing)))""",
+    variant_three="""def check(payload, required):
+    \"\"\"Refuse a payload that is missing required fields.\"\"\"
+    missing = sorted(field for field in required if not payload.get(field))
+    if missing:
+        raise ValueError("missing: " + ", ".join(missing))""",
+    variant_four="""def check(payload, required):
+    \"\"\"Refuse a payload that is missing required fields.\"\"\"
+    for field in required:
+        if field not in payload:
+            raise ValueError("missing: " + field)""",
+    visible_test=_test_module(
+        "required_fields",
+        "Published contract for the required fields.",
+        """
+import pytest
+
+
+def test_a_payload_missing_nothing_is_accepted() -> None:
+    assert check({"a": 1, "b": 2}, ["a", "b"]) is None
+
+
+def test_a_payload_missing_a_field_is_refused() -> None:
+    with pytest.raises(ValueError):
+        check({"a": 1}, ["a", "b"])
+""",
+        imports="from required_fields import check\n",
+    ),
+    hidden_test=_test_module(
+        "required_fields",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_payload_missing_nothing_is_accepted() -> None:
+    assert check({"a": 1, "b": 2}, ["a", "b"]) is None
+
+
+def test_every_missing_field_is_named_at_once() -> None:
+    with pytest.raises(ValueError, match="b, c"):
+        check({"a": 1}, ["c", "b"])
+
+
+def test_a_field_carried_but_empty_is_present() -> None:
+    assert check({"a": ""}, ["a"]) is None
+""",
+        imports="from required_fields import check\n",
+    ),
+)
+
+_G039 = D2TaskSpec(
+    template_id="d7_state.crate_move",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-crate-move",
+    module="crate_move",
+    module_doc="Moving an item between crates, so that it is in exactly one of them afterwards.",
+    issue=(
+        "move() is documented to leave an item in the crate it was moved to and nowhere else. "
+        "Callers report stock counts doubling because the item stayed in the crate it came "
+        "from, and an item nobody was holding appearing in a crate out of nowhere."
+    ),
+    expected=(
+        "move(crates, item, target) returns the crates with the item in the target crate and in "
+        "no other. An item already in the target leaves the crates as they were, and an item no "
+        "crate holds raises KeyError."
+    ),
+    baseline_reason=(
+        "it adds the item to the target without taking it out of the crate it was in, and it "
+        "never asks whether any crate was holding it"
+    ),
+    edge_cases=(
+        "the item leaves the crate it came from",
+        "an item no crate holds is refused",
+    ),
+    baseline="""def move(crates, item, target):
+    \"\"\"Move an item into the target crate.\"\"\"
+    moved = {name: list(items) for name, items in crates.items()}
+    moved[target].append(item)
+    return moved""",
+    variant_one="""def move(crates, item, target):
+    \"\"\"Move an item into the target crate.\"\"\"
+    source = None
+    for name, items in crates.items():
+        if item in items:
+            source = name
+            break
+    if source is None:
+        raise KeyError(item)
+    moved = {name: list(items) for name, items in crates.items()}
+    if source != target:
+        moved[source].remove(item)
+        moved[target].append(item)
+    return moved""",
+    variant_two="""def move(crates, item, target):
+    \"\"\"Move an item into the target crate.\"\"\"
+    holders = [name for name, items in crates.items() if item in items]
+    if not holders:
+        raise KeyError(item)
+    moved = {}
+    for name, items in crates.items():
+        moved[name] = [held for held in items if held != item or name == target]
+    if holders[0] != target:
+        moved[target].append(item)
+    return moved""",
+    variant_three="""def move(crates, item, target):
+    \"\"\"Move an item into the target crate.\"\"\"
+    moved = {}
+    for name, items in crates.items():
+        moved[name] = [held for held in items if held != item or name == target]
+    if item not in moved[target]:
+        moved[target].append(item)
+    return moved""",
+    variant_four="""def move(crates, item, target):
+    \"\"\"Move an item into the target crate.\"\"\"
+    if not any(item in items for items in crates.values()):
+        raise KeyError(item)
+    moved = {name: list(items) for name, items in crates.items()}
+    moved[target].append(item)
+    return moved""",
+    visible_test=_test_module(
+        "crate_move",
+        "Published contract for moving an item between crates.",
+        """
+def test_the_item_arrives_in_the_target_crate() -> None:
+    assert move({"a": ["p"], "b": []}, "p", "b")["b"] == ["p"]
+
+
+def test_the_crates_keep_their_names() -> None:
+    assert sorted(move({"a": ["p"], "b": []}, "p", "b")) == ["a", "b"]
+""",
+        imports="from crate_move import move\n",
+    ),
+    hidden_test=_test_module(
+        "crate_move",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_the_item_arrives_in_the_target_crate() -> None:
+    assert move({"a": ["p"], "b": []}, "p", "b")["b"] == ["p"]
+
+
+def test_the_item_leaves_the_crate_it_came_from() -> None:
+    assert move({"a": ["p"], "b": []}, "p", "b") == {"a": [], "b": ["p"]}
+
+
+def test_an_item_no_crate_holds_is_refused() -> None:
+    with pytest.raises(KeyError):
+        move({"a": [], "b": []}, "z", "b")
+""",
+        imports="from crate_move import move\n",
+    ),
+)
+
+_G040 = D2TaskSpec(
+    template_id="d7_numeric.fresh_average",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-fresh-average",
+    module="fresh_average",
+    module_doc="Averaging the readings that are still worth reading.",
+    issue=(
+        "fresh_average() is documented to average the readings that are not yet too old. "
+        "Callers report a reading arriving exactly at the age limit being thrown away, and the "
+        "average coming back far too low on a run where most readings were stale - as though "
+        "the stale ones had been counted as nothing rather than not counted."
+    ),
+    expected=(
+        "fresh_average(readings, now, max_age) averages the values of the (at, value) readings "
+        "whose age is at most max_age, and returns None when no reading is fresh. A reading "
+        "exactly at the age limit is still fresh, and a stale reading is not part of the "
+        "average at all."
+    ),
+    baseline_reason=(
+        "its age test excludes the limit itself, and it divides the fresh total by how many "
+        "readings there were rather than by how many it counted"
+    ),
+    edge_cases=(
+        "a reading exactly at the age limit is still fresh",
+        "a stale reading is not counted in the average",
+    ),
+    baseline="""def fresh_average(readings, now, max_age):
+    \"\"\"Average the readings that are not yet too old.\"\"\"
+    total = 0
+    for at, value in readings:
+        if now - at < max_age:
+            total += value
+    if not readings:
+        return None
+    return total / len(readings)""",
+    variant_one="""def fresh_average(readings, now, max_age):
+    \"\"\"Average the readings that are not yet too old.\"\"\"
+    fresh = [value for at, value in readings if now - at <= max_age]
+    if not fresh:
+        return None
+    return sum(fresh) / len(fresh)""",
+    variant_two="""def fresh_average(readings, now, max_age):
+    \"\"\"Average the readings that are not yet too old.\"\"\"
+    total = 0
+    kept = 0
+    for at, value in readings:
+        if now - at <= max_age:
+            total += value
+            kept += 1
+    return total / kept if kept else None""",
+    variant_three="""def fresh_average(readings, now, max_age):
+    \"\"\"Average the readings that are not yet too old.\"\"\"
+    total = 0
+    for at, value in readings:
+        if now - at <= max_age:
+            total += value
+    if not readings:
+        return None
+    return total / len(readings)""",
+    variant_four="""def fresh_average(readings, now, max_age):
+    \"\"\"Average the readings that are not yet too old.\"\"\"
+    fresh = [value for at, value in readings if now - at < max_age]
+    if not fresh:
+        return None
+    return sum(fresh) / len(fresh)""",
+    visible_test=_test_module(
+        "fresh_average",
+        "Published contract for averaging the fresh readings.",
+        """
+def test_fresh_readings_are_averaged() -> None:
+    assert fresh_average([(10, 4), (12, 6)], 12, 5) == 5.0
+
+
+def test_no_readings_at_all_average_to_nothing() -> None:
+    assert fresh_average([], 0, 5) is None
+""",
+        imports="from fresh_average import fresh_average\n",
+    ),
+    hidden_test=_test_module(
+        "fresh_average",
+        "The part of the contract the published tests do not state.",
+        """
+def test_fresh_readings_are_averaged() -> None:
+    assert fresh_average([(10, 4), (12, 6)], 12, 5) == 5.0
+
+
+def test_a_reading_exactly_at_the_limit_is_still_fresh() -> None:
+    assert fresh_average([(5, 10)], 10, 5) == 10.0
+
+
+def test_a_stale_reading_is_not_counted_in_the_average() -> None:
+    assert fresh_average([(0, 100), (10, 4)], 10, 5) == 4.0
+""",
+        imports="from fresh_average import fresh_average\n",
+    ),
+)
+
+_G041 = D2TaskSpec(
+    template_id="d7_boundary.pinned_prune",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-pinned-prune",
+    module="pinned_prune",
+    module_doc="Pruning a log down to a size, without pruning what somebody pinned.",
+    issue=(
+        "prune() is documented to keep the most recent entries and to keep a pinned entry "
+        "whatever its age. Callers report pinned entries disappearing, and the entries that "
+        "survive being the oldest ones rather than the newest - the opposite of what a log is "
+        "pruned for."
+    ),
+    expected=(
+        "prune(entries, keep) takes (name, pinned) entries oldest first and returns the ones to "
+        "keep, in the order they arrived: the `keep` most recent unpinned entries together with "
+        "every pinned entry, whose age does not count against it."
+    ),
+    baseline_reason=(
+        "it takes a slice from the start of the log, which keeps the oldest entries rather than "
+        "the newest, and the slice knows nothing about which entries were pinned"
+    ),
+    edge_cases=(
+        "a pinned entry is kept whatever its age",
+        "the entries kept are the most recent ones",
+    ),
+    baseline="""def prune(entries, keep):
+    \"\"\"Prune the log down to the entries worth keeping.\"\"\"
+    return list(entries[:keep])""",
+    variant_one="""def prune(entries, keep):
+    \"\"\"Prune the log down to the entries worth keeping.\"\"\"
+    unpinned = [name for name, pinned in entries if not pinned]
+    recent = set(unpinned[-keep:]) if keep > 0 else set()
+    return [entry for entry in entries if entry[1] or entry[0] in recent]""",
+    variant_two="""def prune(entries, keep):
+    \"\"\"Prune the log down to the entries worth keeping.\"\"\"
+    allowance = keep
+    kept = []
+    for name, pinned in reversed(entries):
+        if pinned:
+            kept.append((name, pinned))
+        elif allowance > 0:
+            kept.append((name, pinned))
+            allowance -= 1
+    return list(reversed(kept))""",
+    variant_three="""def prune(entries, keep):
+    \"\"\"Prune the log down to the entries worth keeping.\"\"\"
+    unpinned = [name for name, pinned in entries if not pinned]
+    oldest = set(unpinned[:keep])
+    return [entry for entry in entries if entry[1] or entry[0] in oldest]""",
+    variant_four="""def prune(entries, keep):
+    \"\"\"Prune the log down to the entries worth keeping.\"\"\"
+    return list(entries[-keep:]) if keep > 0 else []""",
+    visible_test=_test_module(
+        "pinned_prune",
+        "Published contract for pruning the log.",
+        """
+def test_a_log_within_the_size_is_kept_whole() -> None:
+    assert prune([("a", False), ("b", False)], 2) == [("a", False), ("b", False)]
+
+
+def test_an_empty_log_prunes_to_nothing() -> None:
+    assert prune([], 1) == []
+""",
+        imports="from pinned_prune import prune\n",
+    ),
+    hidden_test=_test_module(
+        "pinned_prune",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_log_within_the_size_is_kept_whole() -> None:
+    assert prune([("a", False), ("b", False)], 2) == [("a", False), ("b", False)]
+
+
+def test_a_pinned_entry_does_not_count_against_the_size() -> None:
+    entries = [("a", True), ("b", False), ("c", False)]
+    assert prune(entries, 2) == [("a", True), ("b", False), ("c", False)]
+
+
+def test_the_entries_kept_are_the_most_recent() -> None:
+    entries = [("a", False), ("b", False), ("c", False)]
+    assert prune(entries, 2) == [("b", False), ("c", False)]
+""",
+        imports="from pinned_prune import prune\n",
+    ),
+)
+
+_G042 = D2TaskSpec(
+    template_id="d7_transform.mark_changes",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-mark-changes",
+    module="mark_changes",
+    module_doc="Marking the rows where the field being followed actually moved.",
+    issue=(
+        "mark() is documented to follow one named field and to mark the first row as a change, "
+        "because there is nothing before it to be the same as. Callers report the first row "
+        "coming back unmarked, and rows marked as changes when some other field moved and the "
+        "field being followed did not."
+    ),
+    expected=(
+        "mark(rows, field) returns each row with a 'changed' flag saying whether the named "
+        "field differs from the row immediately before it. The first row is always a change, "
+        "and no other field takes part in the comparison."
+    ),
+    baseline_reason=(
+        "it compares whole rows rather than the named field, and it marks the first row as "
+        "unchanged because there is no row before it to differ from"
+    ),
+    edge_cases=(
+        "the first row is always a change",
+        "only the named field decides whether a row changed",
+    ),
+    baseline="""def mark(rows, field):
+    \"\"\"Mark the rows where the followed field moved.\"\"\"
+    marked = []
+    previous = None
+    for index, row in enumerate(rows):
+        changed = index > 0 and row != previous
+        marked.append({**row, "changed": changed})
+        previous = row
+    return marked""",
+    variant_one="""def mark(rows, field):
+    \"\"\"Mark the rows where the followed field moved.\"\"\"
+    marked = []
+    previous = None
+    for index, row in enumerate(rows):
+        changed = index == 0 or row[field] != previous
+        marked.append({**row, "changed": changed})
+        previous = row[field]
+    return marked""",
+    variant_two="""def mark(rows, field):
+    \"\"\"Mark the rows where the followed field moved.\"\"\"
+    marked = []
+    for index, row in enumerate(rows):
+        if index == 0:
+            changed = True
+        else:
+            changed = row[field] != rows[index - 1][field]
+        marked.append({**row, "changed": changed})
+    return marked""",
+    variant_three="""def mark(rows, field):
+    \"\"\"Mark the rows where the followed field moved.\"\"\"
+    marked = []
+    previous = None
+    for index, row in enumerate(rows):
+        changed = index == 0 or row != previous
+        marked.append({**row, "changed": changed})
+        previous = row
+    return marked""",
+    variant_four="""def mark(rows, field):
+    \"\"\"Mark the rows where the followed field moved.\"\"\"
+    marked = []
+    previous = None
+    for index, row in enumerate(rows):
+        changed = index > 0 and row[field] != previous
+        marked.append({**row, "changed": changed})
+        previous = row[field]
+    return marked""",
+    visible_test=_test_module(
+        "mark_changes",
+        "Published contract for marking the changes.",
+        """
+def test_a_moved_field_is_a_change() -> None:
+    assert mark([{"v": 1}, {"v": 2}], "v")[1]["changed"] is True
+
+
+def test_a_field_that_stayed_put_is_not_a_change() -> None:
+    assert mark([{"v": 1}, {"v": 1}], "v")[1]["changed"] is False
+""",
+        imports="from mark_changes import mark\n",
+    ),
+    hidden_test=_test_module(
+        "mark_changes",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_moved_field_is_a_change() -> None:
+    assert mark([{"v": 1}, {"v": 2}], "v")[1]["changed"] is True
+
+
+def test_the_first_row_is_always_a_change() -> None:
+    assert mark([{"v": 1}], "v")[0]["changed"] is True
+
+
+def test_only_the_followed_field_decides() -> None:
+    rows = [{"v": 1, "other": "a"}, {"v": 1, "other": "b"}]
+    assert mark(rows, "v")[1]["changed"] is False
+""",
+        imports="from mark_changes import mark\n",
+    ),
+)
+
+_G043 = D2TaskSpec(
+    template_id="d7_error.retry_window",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-retry-window",
+    module="retry_window",
+    module_doc="Deciding whether an error is worth another attempt, and whether there is time.",
+    issue=(
+        "should_retry() is documented to retry only the two kinds of error a retry can help "
+        "with. Callers report errors nobody classified being retried simply because they were "
+        "not marked fatal, and a retry being started exactly at the deadline it was supposed to "
+        "respect."
+    ),
+    expected=(
+        "should_retry(kind, attempt, attempts_allowed, now, deadline) is true only when the "
+        "kind is 'timeout' or 'unavailable', the attempt is below the number allowed, and now "
+        "is strictly before the deadline. Everything else is false."
+    ),
+    baseline_reason=(
+        "it treats every kind except 'fatal' as worth retrying rather than the two that are, "
+        "and its deadline test admits the deadline itself"
+    ),
+    edge_cases=(
+        "a kind nobody classified as retryable is not retried",
+        "the deadline itself is already too late",
+    ),
+    baseline="""def should_retry(kind, attempt, attempts_allowed, now, deadline):
+    \"\"\"Say whether this error is worth another attempt.\"\"\"
+    if kind == "fatal":
+        return False
+    return attempt < attempts_allowed and now <= deadline""",
+    variant_one="""def should_retry(kind, attempt, attempts_allowed, now, deadline):
+    \"\"\"Say whether this error is worth another attempt.\"\"\"
+    if kind not in {"timeout", "unavailable"}:
+        return False
+    return attempt < attempts_allowed and now < deadline""",
+    variant_two="""def should_retry(kind, attempt, attempts_allowed, now, deadline):
+    \"\"\"Say whether this error is worth another attempt.\"\"\"
+    retryable = kind in ("timeout", "unavailable")
+    within_attempts = attempt < attempts_allowed
+    before_deadline = deadline > now
+    return bool(retryable and within_attempts and before_deadline)""",
+    variant_three="""def should_retry(kind, attempt, attempts_allowed, now, deadline):
+    \"\"\"Say whether this error is worth another attempt.\"\"\"
+    if kind not in {"timeout", "unavailable"}:
+        return False
+    return attempt < attempts_allowed and now <= deadline""",
+    variant_four="""def should_retry(kind, attempt, attempts_allowed, now, deadline):
+    \"\"\"Say whether this error is worth another attempt.\"\"\"
+    if kind == "fatal":
+        return False
+    return attempt < attempts_allowed and now < deadline""",
+    visible_test=_test_module(
+        "retry_window",
+        "Published contract for the retry decision.",
+        """
+def test_a_timeout_with_attempts_and_time_left_is_retried() -> None:
+    assert should_retry("timeout", 0, 3, 5, 10) is True
+
+
+def test_a_fatal_error_is_never_retried() -> None:
+    assert should_retry("fatal", 0, 3, 5, 10) is False
+
+
+def test_an_exhausted_attempt_count_stops_the_retries() -> None:
+    assert should_retry("timeout", 3, 3, 5, 10) is False
+""",
+        imports="from retry_window import should_retry\n",
+    ),
+    hidden_test=_test_module(
+        "retry_window",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_timeout_with_attempts_and_time_left_is_retried() -> None:
+    assert should_retry("timeout", 0, 3, 5, 10) is True
+
+
+def test_a_kind_nobody_classified_is_not_retried() -> None:
+    assert should_retry("corrupt", 0, 3, 5, 10) is False
+
+
+def test_the_deadline_itself_is_already_too_late() -> None:
+    assert should_retry("timeout", 0, 3, 10, 10) is False
+""",
+        imports="from retry_window import should_retry\n",
+    ),
+)
+
+_G044 = D2TaskSpec(
+    template_id="d7_parsing.stamp_parts",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-stamp-parts",
+    module="stamp_parts",
+    module_doc="Reading a timestamp written either of the two ways people write it.",
+    issue=(
+        "parse_stamp() is documented to accept a stamp whose date and time are separated by a "
+        "space as readily as one separated by a 'T'. Callers report the spaced form being "
+        "rejected outright, and a stamp naming a thirteenth month being read without complaint "
+        "and carried into the rest of the system."
+    ),
+    expected=(
+        "parse_stamp(text) returns (year, month, day, minutes), where minutes is the time as "
+        "minutes past midnight or None when the stamp carries no time. The date and the time "
+        "may be separated by a space or by a 'T'. A month outside one to twelve or a day "
+        "outside one to thirty-one raises ValueError."
+    ),
+    baseline_reason=(
+        "it looks for a 'T' and nothing else, so a spaced stamp is read as a date it cannot "
+        "make sense of, and it never asks whether the month and day it read are real"
+    ),
+    edge_cases=(
+        "a space separates the date from the time as well as a 'T'",
+        "a month outside the year is refused",
+    ),
+    baseline="""def parse_stamp(text):
+    \"\"\"Read a timestamp into its parts.\"\"\"
+    date_text, separator, time_text = text.partition("T")
+    year, month, day = (int(part) for part in date_text.split("-"))
+    if not separator:
+        return year, month, day, None
+    hours, _, minutes = time_text.partition(":")
+    return year, month, day, int(hours) * 60 + int(minutes)""",
+    variant_one="""def parse_stamp(text):
+    \"\"\"Read a timestamp into its parts.\"\"\"
+    date_text, _, time_text = text.replace("T", " ").partition(" ")
+    year, month, day = (int(part) for part in date_text.split("-"))
+    if not 1 <= month <= 12 or not 1 <= day <= 31:
+        raise ValueError("not a date: " + text)
+    if not time_text:
+        return year, month, day, None
+    hours, _, minutes = time_text.partition(":")
+    return year, month, day, int(hours) * 60 + int(minutes)""",
+    variant_two="""def parse_stamp(text):
+    \"\"\"Read a timestamp into its parts.\"\"\"
+    date_text = text
+    time_text = ""
+    for separator in ("T", " "):
+        if separator in text:
+            date_text, time_text = text.split(separator, 1)
+            break
+    parts = date_text.split("-")
+    year, month, day = int(parts[0]), int(parts[1]), int(parts[2])
+    if month < 1 or month > 12 or day < 1 or day > 31:
+        raise ValueError("not a date: " + text)
+    if not time_text:
+        return year, month, day, None
+    hours, _, minutes = time_text.partition(":")
+    return year, month, day, int(hours) * 60 + int(minutes)""",
+    variant_three="""def parse_stamp(text):
+    \"\"\"Read a timestamp into its parts.\"\"\"
+    date_text, _, time_text = text.replace("T", " ").partition(" ")
+    year, month, day = (int(part) for part in date_text.split("-"))
+    if not time_text:
+        return year, month, day, None
+    hours, _, minutes = time_text.partition(":")
+    return year, month, day, int(hours) * 60 + int(minutes)""",
+    variant_four="""def parse_stamp(text):
+    \"\"\"Read a timestamp into its parts.\"\"\"
+    date_text, separator, time_text = text.partition("T")
+    year, month, day = (int(part) for part in date_text.split("-"))
+    if not 1 <= month <= 12 or not 1 <= day <= 31:
+        raise ValueError("not a date: " + text)
+    if not separator:
+        return year, month, day, None
+    hours, _, minutes = time_text.partition(":")
+    return year, month, day, int(hours) * 60 + int(minutes)""",
+    visible_test=_test_module(
+        "stamp_parts",
+        "Published contract for reading a timestamp.",
+        """
+def test_a_date_on_its_own_carries_no_time() -> None:
+    assert parse_stamp("2026-08-10") == (2026, 8, 10, None)
+
+
+def test_a_stamp_written_with_a_t_is_read() -> None:
+    assert parse_stamp("2026-08-10T09:15") == (2026, 8, 10, 555)
+""",
+        imports="from stamp_parts import parse_stamp\n",
+    ),
+    hidden_test=_test_module(
+        "stamp_parts",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_stamp_written_with_a_t_is_read() -> None:
+    assert parse_stamp("2026-08-10T09:15") == (2026, 8, 10, 555)
+
+
+def test_a_stamp_written_with_a_space_is_read_too() -> None:
+    assert parse_stamp("2026-08-10 09:15") == (2026, 8, 10, 555)
+
+
+def test_a_month_outside_the_year_is_refused() -> None:
+    with pytest.raises(ValueError):
+        parse_stamp("2026-13-10")
+""",
+        imports="from stamp_parts import parse_stamp\n",
+    ),
+)
+
+_G045 = D2TaskSpec(
+    template_id="d7_state.stocktake",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-stocktake",
+    module="stocktake",
+    module_doc="Adjusting a stock count, and refusing the adjustments that cannot be true.",
+    issue=(
+        "adjust() is documented to refuse an adjustment that would take a count below nothing "
+        "rather than quietly settling on nothing. Callers report shortfalls disappearing that "
+        "way, so nobody finds out stock is missing, and an item nobody stocks appearing in the "
+        "count as though it had always been there."
+    ),
+    expected=(
+        "adjust(stock, item, delta) returns the stock with the item's count moved by delta. An "
+        "adjustment taking the count below nothing raises ValueError and changes nothing, and "
+        "an item the stock does not list raises KeyError."
+    ),
+    baseline_reason=(
+        "it settles a count that would go below nothing at nothing instead of refusing it, and "
+        "it reads a missing item as a count of nothing rather than as an item it does not stock"
+    ),
+    edge_cases=(
+        "taking out more than there is is refused",
+        "an item the stock does not list is refused",
+    ),
+    baseline="""def adjust(stock, item, delta):
+    \"\"\"Move an item's stock count by a delta.\"\"\"
+    updated = dict(stock)
+    updated[item] = max(0, updated.get(item, 0) + delta)
+    return updated""",
+    variant_one="""def adjust(stock, item, delta):
+    \"\"\"Move an item's stock count by a delta.\"\"\"
+    if item not in stock:
+        raise KeyError(item)
+    total = stock[item] + delta
+    if total < 0:
+        raise ValueError("stock cannot go below nothing: " + str(item))
+    updated = dict(stock)
+    updated[item] = total
+    return updated""",
+    variant_two="""def adjust(stock, item, delta):
+    \"\"\"Move an item's stock count by a delta.\"\"\"
+    total = stock[item] + delta
+    if total < 0:
+        raise ValueError("stock cannot go below nothing: " + str(item))
+    return {**stock, item: total}""",
+    variant_three="""def adjust(stock, item, delta):
+    \"\"\"Move an item's stock count by a delta.\"\"\"
+    total = stock.get(item, 0) + delta
+    if total < 0:
+        raise ValueError("stock cannot go below nothing: " + str(item))
+    updated = dict(stock)
+    updated[item] = total
+    return updated""",
+    variant_four="""def adjust(stock, item, delta):
+    \"\"\"Move an item's stock count by a delta.\"\"\"
+    if item not in stock:
+        raise KeyError(item)
+    updated = dict(stock)
+    updated[item] = max(0, stock[item] + delta)
+    return updated""",
+    visible_test=_test_module(
+        "stocktake",
+        "Published contract for adjusting the stock.",
+        """
+def test_stock_coming_in_is_added() -> None:
+    assert adjust({"nails": 10}, "nails", 5) == {"nails": 15}
+
+
+def test_stock_going_out_to_nothing_is_allowed() -> None:
+    assert adjust({"nails": 10}, "nails", -10) == {"nails": 0}
+""",
+        imports="from stocktake import adjust\n",
+    ),
+    hidden_test=_test_module(
+        "stocktake",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_stock_coming_in_is_added() -> None:
+    assert adjust({"nails": 10}, "nails", 5) == {"nails": 15}
+
+
+def test_taking_out_more_than_there_is_is_refused() -> None:
+    with pytest.raises(ValueError):
+        adjust({"nails": 1}, "nails", -2)
+
+
+def test_an_item_the_stock_does_not_list_is_refused() -> None:
+    with pytest.raises(KeyError):
+        adjust({"nails": 1}, "screws", 5)
+""",
+        imports="from stocktake import adjust\n",
+    ),
+)
+
+_G046 = D2TaskSpec(
+    template_id="d7_boundary.page_span",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-page-span",
+    module="page_span",
+    module_doc="Saying which items are on a page, and which pages there are not.",
+    issue=(
+        "span() is documented to stop the last page at the last item and to refuse a page there "
+        "is nothing on. Callers report the final page claiming items that do not exist, and a "
+        "page number past the end of the list coming back as a span rather than as the mistake "
+        "it is."
+    ),
+    expected=(
+        "span(total, page_size, page) returns the (first, last) item numbers on a page, "
+        "counting items and pages from one and including both ends. The last page stops at the "
+        "total, and a page beyond the last one raises ValueError."
+    ),
+    baseline_reason=(
+        "it takes the page size as the length of every page including the last, and it never "
+        "asks whether the page it was given is a page at all"
+    ),
+    edge_cases=(
+        "the last page stops at the last item",
+        "a page beyond the end is refused",
+    ),
+    baseline="""def span(total, page_size, page):
+    \"\"\"Return the first and last item numbers on a page.\"\"\"
+    first = (page - 1) * page_size + 1
+    return first, first + page_size - 1""",
+    variant_one="""def span(total, page_size, page):
+    \"\"\"Return the first and last item numbers on a page.\"\"\"
+    first = (page - 1) * page_size + 1
+    if first > total:
+        raise ValueError("page beyond the end: " + str(page))
+    return first, min(first + page_size - 1, total)""",
+    variant_two="""def span(total, page_size, page):
+    \"\"\"Return the first and last item numbers on a page.\"\"\"
+    pages = -(-total // page_size)
+    if page < 1 or page > pages:
+        raise ValueError("page beyond the end: " + str(page))
+    first = (page - 1) * page_size + 1
+    last = page * page_size
+    return first, last if last < total else total""",
+    variant_three="""def span(total, page_size, page):
+    \"\"\"Return the first and last item numbers on a page.\"\"\"
+    first = (page - 1) * page_size + 1
+    return first, min(first + page_size - 1, total)""",
+    variant_four="""def span(total, page_size, page):
+    \"\"\"Return the first and last item numbers on a page.\"\"\"
+    first = (page - 1) * page_size + 1
+    if first > total:
+        raise ValueError("page beyond the end: " + str(page))
+    return first, first + page_size - 1""",
+    visible_test=_test_module(
+        "page_span",
+        "Published contract for the span of a page.",
+        """
+def test_the_first_page_starts_at_the_first_item() -> None:
+    assert span(10, 5, 1) == (1, 5)
+
+
+def test_a_page_that_fills_exactly_ends_at_the_total() -> None:
+    assert span(10, 5, 2) == (6, 10)
+""",
+        imports="from page_span import span\n",
+    ),
+    hidden_test=_test_module(
+        "page_span",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_the_first_page_starts_at_the_first_item() -> None:
+    assert span(10, 5, 1) == (1, 5)
+
+
+def test_the_last_page_stops_at_the_last_item() -> None:
+    assert span(7, 5, 2) == (6, 7)
+
+
+def test_a_page_beyond_the_end_is_refused() -> None:
+    with pytest.raises(ValueError):
+        span(7, 5, 3)
+""",
+        imports="from page_span import span\n",
+    ),
+)
+
+_G047 = D2TaskSpec(
+    template_id="d7_numeric.vote_threshold",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-vote-threshold",
+    module="vote_threshold",
+    module_doc="Deciding a motion on the votes that were actually cast.",
+    issue=(
+        "passes() is documented to need more than half of the votes cast, and to treat an "
+        "abstention as a vote not cast. Callers report motions passing on a dead tie, and "
+        "motions failing because the people who abstained were counted as though they had "
+        "voted against."
+    ),
+    expected=(
+        "passes(votes) is true when the votes for a motion are strictly more than half of the "
+        "votes cast. Only 'for' and 'against' are cast; an abstention takes no part in the "
+        "count on either side."
+    ),
+    baseline_reason=(
+        "it passes a motion whose votes for are exactly half, and it counts every vote in the "
+        "room as cast, abstentions included"
+    ),
+    edge_cases=(
+        "a tie does not pass the motion",
+        "an abstention is not a vote cast",
+    ),
+    baseline="""def passes(votes):
+    \"\"\"Say whether the motion carries.\"\"\"
+    for_votes = sum(1 for vote in votes if vote == "for")
+    return for_votes * 2 >= len(votes)""",
+    variant_one="""def passes(votes):
+    \"\"\"Say whether the motion carries.\"\"\"
+    cast = [vote for vote in votes if vote in ("for", "against")]
+    for_votes = sum(1 for vote in cast if vote == "for")
+    return for_votes * 2 > len(cast)""",
+    variant_two="""def passes(votes):
+    \"\"\"Say whether the motion carries.\"\"\"
+    for_votes = 0
+    against = 0
+    for vote in votes:
+        if vote == "for":
+            for_votes += 1
+        elif vote == "against":
+            against += 1
+    return for_votes > against""",
+    variant_three="""def passes(votes):
+    \"\"\"Say whether the motion carries.\"\"\"
+    for_votes = sum(1 for vote in votes if vote == "for")
+    return for_votes * 2 > len(votes)""",
+    variant_four="""def passes(votes):
+    \"\"\"Say whether the motion carries.\"\"\"
+    cast = [vote for vote in votes if vote in ("for", "against")]
+    for_votes = sum(1 for vote in cast if vote == "for")
+    return for_votes * 2 >= len(cast)""",
+    visible_test=_test_module(
+        "vote_threshold",
+        "Published contract for deciding the motion.",
+        """
+def test_a_majority_carries_the_motion() -> None:
+    assert passes(["for", "for", "against"]) is True
+
+
+def test_a_room_against_it_does_not() -> None:
+    assert passes(["against", "against"]) is False
+""",
+        imports="from vote_threshold import passes\n",
+    ),
+    hidden_test=_test_module(
+        "vote_threshold",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_majority_carries_the_motion() -> None:
+    assert passes(["for", "for", "against"]) is True
+
+
+def test_a_tie_does_not_carry_the_motion() -> None:
+    assert passes(["for", "against"]) is False
+
+
+def test_an_abstention_is_not_a_vote_cast() -> None:
+    assert passes(["for", "abstain", "abstain"]) is True
+""",
+        imports="from vote_threshold import passes\n",
+    ),
+)
+
+_G048 = D2TaskSpec(
+    template_id="d7_transform.priority_arrange",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-priority-arrange",
+    module="priority_arrange",
+    module_doc="Putting the named names first, and keeping everybody else.",
+    issue=(
+        "arrange() is documented to bring the named names to the front in the order the list "
+        "names them, and to keep everybody else behind them. Callers report the named names "
+        "coming back in whatever order they happened to be in already, and the unnamed ones "
+        "disappearing from the arrangement altogether."
+    ),
+    expected=(
+        "arrange(rows, priority) returns the names with those the priority list names first, in "
+        "the priority list's order, followed by the names it does not mention, in the order "
+        "they arrived."
+    ),
+    baseline_reason=(
+        "it walks the rows and keeps the ones the priority list mentions, which orders them by "
+        "the rows rather than by the list, and drops everybody the list does not mention"
+    ),
+    edge_cases=(
+        "the named names come in the priority list's order",
+        "the names nobody prioritised are kept behind them",
+    ),
+    baseline="""def arrange(rows, priority):
+    \"\"\"Arrange the names, prioritised ones first.\"\"\"
+    return [name for name in rows if name in priority]""",
+    variant_one="""def arrange(rows, priority):
+    \"\"\"Arrange the names, prioritised ones first.\"\"\"
+    named = [name for name in priority if name in rows]
+    rest = [name for name in rows if name not in priority]
+    return named + rest""",
+    variant_two="""def arrange(rows, priority):
+    \"\"\"Arrange the names, prioritised ones first.\"\"\"
+    ranked = []
+    for wanted in priority:
+        for name in rows:
+            if name == wanted:
+                ranked.append(name)
+    for name in rows:
+        if name not in priority:
+            ranked.append(name)
+    return ranked""",
+    variant_three="""def arrange(rows, priority):
+    \"\"\"Arrange the names, prioritised ones first.\"\"\"
+    return [name for name in priority if name in rows]""",
+    variant_four="""def arrange(rows, priority):
+    \"\"\"Arrange the names, prioritised ones first.\"\"\"
+    named = [name for name in rows if name in priority]
+    rest = [name for name in rows if name not in priority]
+    return named + rest""",
+    visible_test=_test_module(
+        "priority_arrange",
+        "Published contract for the arrangement.",
+        """
+def test_names_already_in_order_stay_in_order() -> None:
+    assert arrange(["a", "b"], ["a", "b"]) == ["a", "b"]
+
+
+def test_nothing_to_arrange_arranges_to_nothing() -> None:
+    assert arrange([], ["a"]) == []
+""",
+        imports="from priority_arrange import arrange\n",
+    ),
+    hidden_test=_test_module(
+        "priority_arrange",
+        "The part of the contract the published tests do not state.",
+        """
+def test_names_already_in_order_stay_in_order() -> None:
+    assert arrange(["a", "b"], ["a", "b"]) == ["a", "b"]
+
+
+def test_the_named_names_come_in_the_priority_order() -> None:
+    assert arrange(["b", "a"], ["a", "b"]) == ["a", "b"]
+
+
+def test_the_names_nobody_prioritised_are_kept_behind() -> None:
+    assert arrange(["a", "z"], ["a"]) == ["a", "z"]
+""",
+        imports="from priority_arrange import arrange\n",
+    ),
+)
+
+_G049 = D2TaskSpec(
+    template_id="d7_error.partial_collect",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-partial-collect",
+    module="partial_collect",
+    module_doc="Gathering from every source, and knowing when there is nothing to report.",
+    issue=(
+        "collect() is documented to ask every source even when one of them fails, and to treat "
+        "a run where every source failed as a failure rather than as an empty answer. Callers "
+        "report the gather stopping at the first bad source, and an empty result arriving with "
+        "no sign that nothing worked."
+    ),
+    expected=(
+        "collect(sources) asks each (name, source) in turn and returns (values, failures): what "
+        "answered, and (name, message) for what raised. A source that fails does not stop the "
+        "others, and a run in which every source failed raises RuntimeError instead."
+    ),
+    baseline_reason=(
+        "it breaks out of the gather at the first source that raises, and it reports a run "
+        "where nothing answered as an empty result rather than as a failure"
+    ),
+    edge_cases=(
+        "a failing source does not stop the sources after it",
+        "a run in which every source failed is itself a failure",
+    ),
+    baseline="""def collect(sources):
+    \"\"\"Gather from every source, recording what failed.\"\"\"
+    values = []
+    failures = []
+    for name, source in sources:
+        try:
+            values.append(source())
+        except Exception as error:
+            failures.append((name, str(error)))
+            break
+    return values, failures""",
+    variant_one="""def collect(sources):
+    \"\"\"Gather from every source, recording what failed.\"\"\"
+    values = []
+    failures = []
+    for name, source in sources:
+        try:
+            values.append(source())
+        except Exception as error:
+            failures.append((name, str(error)))
+    if failures and not values:
+        raise RuntimeError("every source failed")
+    return values, failures""",
+    variant_two="""def collect(sources):
+    \"\"\"Gather from every source, recording what failed.\"\"\"
+    answered = []
+    broken = []
+    for name, source in sources:
+        try:
+            answer = source()
+        except Exception as error:
+            broken.append((name, str(error)))
+            continue
+        answered.append(answer)
+    if broken and len(broken) == len(sources):
+        raise RuntimeError("every source failed")
+    return answered, broken""",
+    variant_three="""def collect(sources):
+    \"\"\"Gather from every source, recording what failed.\"\"\"
+    values = []
+    failures = []
+    for name, source in sources:
+        try:
+            values.append(source())
+        except Exception as error:
+            failures.append((name, str(error)))
+    return values, failures""",
+    variant_four="""def collect(sources):
+    \"\"\"Gather from every source, recording what failed.\"\"\"
+    values = []
+    failures = []
+    for name, source in sources:
+        try:
+            values.append(source())
+        except Exception as error:
+            failures.append((name, str(error)))
+            break
+    if failures and not values:
+        raise RuntimeError("every source failed")
+    return values, failures""",
+    visible_test=_test_module(
+        "partial_collect",
+        "Published contract for gathering from the sources.",
+        """
+def test_every_source_answering_is_gathered() -> None:
+    assert collect([("a", lambda: 1), ("b", lambda: 2)]) == ([1, 2], [])
+
+
+def test_no_sources_at_all_gather_nothing() -> None:
+    assert collect([]) == ([], [])
+""",
+        imports="from partial_collect import collect\n",
+    ),
+    hidden_test=_test_module(
+        "partial_collect",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def _boom():
+    raise ValueError("boom")
+
+
+def test_every_source_answering_is_gathered() -> None:
+    assert collect([("a", lambda: 1), ("b", lambda: 2)]) == ([1, 2], [])
+
+
+def test_a_failing_source_does_not_stop_the_ones_after_it() -> None:
+    assert collect([("a", _boom), ("b", lambda: 2)]) == ([2], [("a", "boom")])
+
+
+def test_a_run_where_everything_failed_is_a_failure() -> None:
+    with pytest.raises(RuntimeError):
+        collect([("a", _boom)])
+""",
+        imports="from partial_collect import collect\n",
+    ),
+)
+
+_G050 = D2TaskSpec(
+    template_id="d7_parsing.signed_amount",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-signed-amount",
+    module="signed_amount",
+    module_doc="Reading an amount off a statement, in the notation statements are written in.",
+    issue=(
+        "parse_amount() is documented to read the notation an accounts statement uses: a "
+        "negative amount in brackets, and thousands grouped with commas. Callers report both "
+        "forms being rejected as though they were not numbers, which is every amount on a "
+        "statement above a thousand and every amount below nothing."
+    ),
+    expected=(
+        "parse_amount(text) returns the amount in cents. An amount wrapped in brackets is "
+        "negative, commas grouping the thousands are ignored, and text that is not an amount "
+        "at all raises ValueError."
+    ),
+    baseline_reason=(
+        "it hands the text straight to the number reader, which knows nothing about brackets "
+        "standing for a minus sign and nothing about commas grouping the thousands"
+    ),
+    edge_cases=(
+        "an amount in brackets is negative",
+        "commas grouping the thousands are ignored",
+    ),
+    baseline="""def parse_amount(text):
+    \"\"\"Read a statement amount into cents.\"\"\"
+    return int(round(float(text.strip()) * 100))""",
+    variant_one="""def parse_amount(text):
+    \"\"\"Read a statement amount into cents.\"\"\"
+    body = text.strip()
+    negative = body.startswith("(") and body.endswith(")")
+    if negative:
+        body = body[1:-1]
+    value = int(round(float(body.replace(",", "")) * 100))
+    return -value if negative else value""",
+    variant_two="""def parse_amount(text):
+    \"\"\"Read a statement amount into cents.\"\"\"
+    body = text.strip().replace(",", "")
+    sign = 1
+    if body[:1] == "(" and body[-1:] == ")":
+        sign = -1
+        body = body[1:-1]
+    return sign * int(round(float(body) * 100))""",
+    variant_three="""def parse_amount(text):
+    \"\"\"Read a statement amount into cents.\"\"\"
+    body = text.strip()
+    negative = body.startswith("(") and body.endswith(")")
+    if negative:
+        body = body[1:-1]
+    value = int(round(float(body) * 100))
+    return -value if negative else value""",
+    variant_four="""def parse_amount(text):
+    \"\"\"Read a statement amount into cents.\"\"\"
+    return int(round(float(text.strip().replace(",", "")) * 100))""",
+    visible_test=_test_module(
+        "signed_amount",
+        "Published contract for reading a statement amount.",
+        """
+import pytest
+
+
+def test_a_plain_amount_reads_as_cents() -> None:
+    assert parse_amount("12.34") == 1234
+
+
+def test_something_that_is_not_an_amount_is_refused() -> None:
+    with pytest.raises(ValueError):
+        parse_amount("not money")
+""",
+        imports="from signed_amount import parse_amount\n",
+    ),
+    hidden_test=_test_module(
+        "signed_amount",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_plain_amount_reads_as_cents() -> None:
+    assert parse_amount("12.34") == 1234
+
+
+def test_an_amount_in_brackets_is_negative() -> None:
+    assert parse_amount("(12.34)") == -1234
+
+
+def test_commas_grouping_the_thousands_are_ignored() -> None:
+    assert parse_amount("1,234.50") == 123450
+""",
+        imports="from signed_amount import parse_amount\n",
+    ),
+)
+
+_G051 = D2TaskSpec(
+    template_id="d7_state.versioned_apply",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-versioned-apply",
+    module="versioned_apply",
+    module_doc="Applying a change to a record somebody else may have changed first.",
+    issue=(
+        "apply() is documented to refuse a change written against a version that has moved on, "
+        "and to leave the version alone when the change asks for what the record already says. "
+        "Callers report stale changes overwriting newer ones, and versions climbing on retries "
+        "that changed nothing at all."
+    ),
+    expected=(
+        "apply(record, change, expected_version) returns the record with the change applied and "
+        "its version raised by one. A change asking for what the record already says leaves the "
+        "record exactly as it was, version included, and a version that has moved on since the "
+        "change was written raises ValueError."
+    ),
+    baseline_reason=(
+        "it applies the change and raises the version whatever the change asks for, and it "
+        "never compares the version it was handed with the version on the record"
+    ),
+    edge_cases=(
+        "a change that changes nothing leaves the version alone",
+        "a change written against a version that has moved on is refused",
+    ),
+    baseline="""def apply(record, change, expected_version):
+    \"\"\"Apply a change to a versioned record.\"\"\"
+    updated = dict(record)
+    updated.update(change)
+    updated["version"] = record["version"] + 1
+    return updated""",
+    variant_one="""def apply(record, change, expected_version):
+    \"\"\"Apply a change to a versioned record.\"\"\"
+    if record["version"] != expected_version:
+        raise ValueError("version has moved on: " + str(expected_version))
+    if all(record.get(key) == value for key, value in change.items()):
+        return dict(record)
+    updated = dict(record)
+    updated.update(change)
+    updated["version"] = record["version"] + 1
+    return updated""",
+    variant_two="""def apply(record, change, expected_version):
+    \"\"\"Apply a change to a versioned record.\"\"\"
+    if expected_version != record["version"]:
+        raise ValueError("version has moved on: " + str(expected_version))
+    moved = {key: value for key, value in change.items() if record.get(key) != value}
+    if not moved:
+        return dict(record)
+    return {**record, **moved, "version": record["version"] + 1}""",
+    variant_three="""def apply(record, change, expected_version):
+    \"\"\"Apply a change to a versioned record.\"\"\"
+    if all(record.get(key) == value for key, value in change.items()):
+        return dict(record)
+    updated = dict(record)
+    updated.update(change)
+    updated["version"] = record["version"] + 1
+    return updated""",
+    variant_four="""def apply(record, change, expected_version):
+    \"\"\"Apply a change to a versioned record.\"\"\"
+    if record["version"] != expected_version:
+        raise ValueError("version has moved on: " + str(expected_version))
+    updated = dict(record)
+    updated.update(change)
+    updated["version"] = record["version"] + 1
+    return updated""",
+    visible_test=_test_module(
+        "versioned_apply",
+        "Published contract for applying a change.",
+        """
+def test_a_change_is_applied_and_the_version_rises() -> None:
+    record = {"version": 1, "name": "a"}
+    assert apply(record, {"name": "b"}, 1) == {"version": 2, "name": "b"}
+
+
+def test_the_version_rises_by_exactly_one() -> None:
+    record = {"version": 3, "name": "a"}
+    assert apply(record, {"name": "c"}, 3)["version"] == 4
+""",
+        imports="from versioned_apply import apply\n",
+    ),
+    hidden_test=_test_module(
+        "versioned_apply",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_change_is_applied_and_the_version_rises() -> None:
+    record = {"version": 1, "name": "a"}
+    assert apply(record, {"name": "b"}, 1) == {"version": 2, "name": "b"}
+
+
+def test_a_change_that_changes_nothing_leaves_the_version_alone() -> None:
+    record = {"version": 1, "name": "a"}
+    assert apply(record, {"name": "a"}, 1) == {"version": 1, "name": "a"}
+
+
+def test_a_version_that_has_moved_on_is_refused() -> None:
+    with pytest.raises(ValueError):
+        apply({"version": 2, "name": "a"}, {"name": "b"}, 1)
+""",
+        imports="from versioned_apply import apply\n",
+    ),
+)
+
+_G052 = D2TaskSpec(
+    template_id="d7_boundary.top_and_tail",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-top-and-tail",
+    module="top_and_tail",
+    module_doc="Taking the first few and the last few, without taking anything twice.",
+    issue=(
+        "edges() is documented to return two ends that do not share an item, and to return "
+        "nothing at all when nothing was asked for. Callers report items appearing at both ends "
+        "of a short list, and asking for no items at either end returning the whole list as the "
+        "tail."
+    ),
+    expected=(
+        "edges(items, k) returns (head, tail): the first k items and the last k items, with no "
+        "item in both. When there are fewer than twice k items the tail keeps only what the "
+        "head did not take, and a k of zero returns two empty lists."
+    ),
+    baseline_reason=(
+        "it slices both ends off the whole list, which overlaps in the middle of a short one, "
+        "and a slice of the last zero items is the whole list rather than none of it"
+    ),
+    edge_cases=(
+        "a short list does not put an item in both ends",
+        "asking for no items at either end gives none",
+    ),
+    baseline="""def edges(items, k):
+    \"\"\"Return the first k and the last k items.\"\"\"
+    return list(items[:k]), list(items[-k:])""",
+    variant_one="""def edges(items, k):
+    \"\"\"Return the first k and the last k items.\"\"\"
+    head = list(items[:k])
+    if k <= 0:
+        return head, []
+    return head, list(items[len(head) :][-k:])""",
+    variant_two="""def edges(items, k):
+    \"\"\"Return the first k and the last k items.\"\"\"
+    if k <= 0:
+        return [], []
+    head = list(items[:k])
+    rest = list(items[k:])
+    return head, rest[-k:] if len(rest) > k else rest""",
+    variant_three="""def edges(items, k):
+    \"\"\"Return the first k and the last k items.\"\"\"
+    head = list(items[:k])
+    return head, list(items[len(head) :][-k:])""",
+    variant_four="""def edges(items, k):
+    \"\"\"Return the first k and the last k items.\"\"\"
+    if k <= 0:
+        return [], []
+    return list(items[:k]), list(items[-k:])""",
+    visible_test=_test_module(
+        "top_and_tail",
+        "Published contract for taking both ends.",
+        """
+def test_a_long_list_gives_two_ends() -> None:
+    assert edges([1, 2, 3, 4, 5], 2) == ([1, 2], [4, 5])
+
+
+def test_an_empty_list_has_no_ends() -> None:
+    assert edges([], 1) == ([], [])
+""",
+        imports="from top_and_tail import edges\n",
+    ),
+    hidden_test=_test_module(
+        "top_and_tail",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_long_list_gives_two_ends() -> None:
+    assert edges([1, 2, 3, 4, 5], 2) == ([1, 2], [4, 5])
+
+
+def test_a_short_list_does_not_put_an_item_in_both_ends() -> None:
+    assert edges([1, 2, 3], 2) == ([1, 2], [3])
+
+
+def test_asking_for_no_items_at_either_end_gives_none() -> None:
+    assert edges([1, 2, 3], 0) == ([], [])
+""",
+        imports="from top_and_tail import edges\n",
+    ),
+)
+
+_G053 = D2TaskSpec(
+    template_id="d7_numeric.worst_drawdown",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-worst-drawdown",
+    module="worst_drawdown",
+    module_doc="Measuring the worst fall a series took from wherever it had climbed to.",
+    issue=(
+        "drawdown() is documented to measure every fall from the highest point reached before "
+        "it, and to report the worst of them. Callers report falls being measured from where "
+        "the series started rather than from where it had climbed to, and the answer being "
+        "whatever the final fall happened to be rather than the worst one."
+    ),
+    expected=(
+        "drawdown(values) returns the largest fall from a peak to a later value, where the peak "
+        "is the highest value seen up to that point. A series that only climbs has a drawdown "
+        "of zero, and so does an empty one."
+    ),
+    baseline_reason=(
+        "it measures every fall from the first value rather than from the running peak, and it "
+        "keeps the last fall it measured rather than the largest"
+    ),
+    edge_cases=(
+        "the fall is measured from the running peak",
+        "the largest fall is reported, not the last",
+    ),
+    baseline="""def drawdown(values):
+    \"\"\"Return the worst fall from a peak.\"\"\"
+    if not values:
+        return 0
+    fall = 0
+    for value in values:
+        fall = values[0] - value
+    return fall""",
+    variant_one="""def drawdown(values):
+    \"\"\"Return the worst fall from a peak.\"\"\"
+    peak = None
+    worst = 0
+    for value in values:
+        if peak is None or value > peak:
+            peak = value
+        worst = max(worst, peak - value)
+    return worst""",
+    variant_two="""def drawdown(values):
+    \"\"\"Return the worst fall from a peak.\"\"\"
+    falls = [0]
+    peak = None
+    for value in values:
+        peak = value if peak is None or value > peak else peak
+        falls.append(peak - value)
+    return max(falls)""",
+    variant_three="""def drawdown(values):
+    \"\"\"Return the worst fall from a peak.\"\"\"
+    peak = None
+    fall = 0
+    for value in values:
+        if peak is None or value > peak:
+            peak = value
+        fall = peak - value
+    return fall""",
+    variant_four="""def drawdown(values):
+    \"\"\"Return the worst fall from a peak.\"\"\"
+    if not values:
+        return 0
+    return max([0] + [values[0] - value for value in values])""",
+    visible_test=_test_module(
+        "worst_drawdown",
+        "Published contract for the worst drawdown.",
+        """
+def test_a_falling_series_reports_its_fall() -> None:
+    assert drawdown([10, 8, 5]) == 5
+
+
+def test_an_empty_series_has_no_drawdown() -> None:
+    assert drawdown([]) == 0
+""",
+        imports="from worst_drawdown import drawdown\n",
+    ),
+    hidden_test=_test_module(
+        "worst_drawdown",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_falling_series_reports_its_fall() -> None:
+    assert drawdown([10, 8, 5]) == 5
+
+
+def test_the_fall_is_measured_from_the_running_peak() -> None:
+    assert drawdown([10, 5, 20, 12]) == 8
+
+
+def test_the_largest_fall_is_reported_not_the_last() -> None:
+    assert drawdown([10, 4, 9]) == 6
+""",
+        imports="from worst_drawdown import drawdown\n",
+    ),
+)
+
+_G054 = D2TaskSpec(
+    template_id="d7_transform.widen_triples",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-widen-triples",
+    module="widen_triples",
+    module_doc="Gathering (entity, field, value) triples back into records.",
+    issue=(
+        "widen() is documented to let a later triple correct an earlier one, and to treat a "
+        "triple carrying no value as saying nothing rather than as saying nothing was there. "
+        "Callers report corrections being ignored in favour of the first value seen, and fields "
+        "appearing on records with a value of None that nobody ever recorded."
+    ),
+    expected=(
+        "widen(triples) returns one record per entity, keyed by entity, holding the fields the "
+        "triples name. A field named more than once takes the value of the last triple, and a "
+        "triple whose value is None records nothing at all, leaving the field absent."
+    ),
+    baseline_reason=(
+        "it writes each field only if the record does not already hold it, so the first value "
+        "wins, and it writes a value of None in as though it were a value"
+    ),
+    edge_cases=(
+        "a field named twice takes the later value",
+        "a triple carrying no value records nothing",
+    ),
+    baseline="""def widen(triples):
+    \"\"\"Gather the triples into a record per entity.\"\"\"
+    records = {}
+    for entity, field, value in triples:
+        record = records.setdefault(entity, {})
+        record.setdefault(field, value)
+    return records""",
+    variant_one="""def widen(triples):
+    \"\"\"Gather the triples into a record per entity.\"\"\"
+    records = {}
+    for entity, field, value in triples:
+        record = records.setdefault(entity, {})
+        if value is not None:
+            record[field] = value
+    return records""",
+    variant_two="""def widen(triples):
+    \"\"\"Gather the triples into a record per entity.\"\"\"
+    records = {}
+    for entity, field, value in triples:
+        if entity not in records:
+            records[entity] = {}
+        if value is None:
+            continue
+        records[entity][field] = value
+    return records""",
+    variant_three="""def widen(triples):
+    \"\"\"Gather the triples into a record per entity.\"\"\"
+    records = {}
+    for entity, field, value in triples:
+        record = records.setdefault(entity, {})
+        record[field] = value
+    return records""",
+    variant_four="""def widen(triples):
+    \"\"\"Gather the triples into a record per entity.\"\"\"
+    records = {}
+    for entity, field, value in triples:
+        record = records.setdefault(entity, {})
+        if value is not None:
+            record.setdefault(field, value)
+    return records""",
+    visible_test=_test_module(
+        "widen_triples",
+        "Published contract for gathering the triples.",
+        """
+def test_the_fields_of_an_entity_gather_into_one_record() -> None:
+    assert widen([("e1", "a", 1), ("e1", "b", 2)]) == {"e1": {"a": 1, "b": 2}}
+
+
+def test_no_triples_gather_into_no_records() -> None:
+    assert widen([]) == {}
+""",
+        imports="from widen_triples import widen\n",
+    ),
+    hidden_test=_test_module(
+        "widen_triples",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_fields_of_an_entity_gather_into_one_record() -> None:
+    assert widen([("e1", "a", 1), ("e1", "b", 2)]) == {"e1": {"a": 1, "b": 2}}
+
+
+def test_a_field_named_twice_takes_the_later_value() -> None:
+    assert widen([("e1", "a", 1), ("e1", "a", 2)]) == {"e1": {"a": 2}}
+
+
+def test_a_triple_carrying_no_value_records_nothing() -> None:
+    assert widen([("e1", "a", None)]) == {"e1": {}}
+""",
+        imports="from widen_triples import widen\n",
+    ),
+)
+
+_G055 = D2TaskSpec(
+    template_id="d7_error.timeout_budget",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-timeout-budget",
+    module="timeout_budget",
+    module_doc="Handing out the next call's timeout from a budget that is running out.",
+    issue=(
+        "next_timeout() is documented to hand out no more time than the budget has left, and to "
+        "refuse once the budget is gone. Callers report the last call being given the full "
+        "per-call timeout with two seconds left in the budget, and a budget spent to the last "
+        "second handing out a timeout of nothing instead of refusing."
+    ),
+    expected=(
+        "next_timeout(total, spent, per_call) returns the timeout for the next call: the "
+        "per-call timeout, or what is left of the budget when that is less. A budget with "
+        "nothing left, spent exactly or spent past, raises TimeoutError."
+    ),
+    baseline_reason=(
+        "it hands out the per-call timeout without looking at what is left, and its exhaustion "
+        "test only fires once the budget has been overspent"
+    ),
+    edge_cases=(
+        "the last call gets only what the budget has left",
+        "a budget spent exactly is spent",
+    ),
+    baseline="""def next_timeout(total, spent, per_call):
+    \"\"\"Return the timeout the next call may have.\"\"\"
+    if spent > total:
+        raise TimeoutError("budget spent")
+    return per_call""",
+    variant_one="""def next_timeout(total, spent, per_call):
+    \"\"\"Return the timeout the next call may have.\"\"\"
+    remaining = total - spent
+    if remaining <= 0:
+        raise TimeoutError("budget spent")
+    return min(per_call, remaining)""",
+    variant_two="""def next_timeout(total, spent, per_call):
+    \"\"\"Return the timeout the next call may have.\"\"\"
+    remaining = total - spent
+    if not remaining > 0:
+        raise TimeoutError("budget spent")
+    return remaining if remaining < per_call else per_call""",
+    variant_three="""def next_timeout(total, spent, per_call):
+    \"\"\"Return the timeout the next call may have.\"\"\"
+    if spent > total:
+        raise TimeoutError("budget spent")
+    return min(per_call, total - spent)""",
+    variant_four="""def next_timeout(total, spent, per_call):
+    \"\"\"Return the timeout the next call may have.\"\"\"
+    if spent >= total:
+        raise TimeoutError("budget spent")
+    return per_call""",
+    visible_test=_test_module(
+        "timeout_budget",
+        "Published contract for the next call's timeout.",
+        """
+import pytest
+
+
+def test_a_budget_with_room_hands_out_the_per_call_timeout() -> None:
+    assert next_timeout(100, 10, 5) == 5
+
+
+def test_a_budget_spent_past_its_total_is_refused() -> None:
+    with pytest.raises(TimeoutError):
+        next_timeout(100, 200, 5)
+""",
+        imports="from timeout_budget import next_timeout\n",
+    ),
+    hidden_test=_test_module(
+        "timeout_budget",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_budget_with_room_hands_out_the_per_call_timeout() -> None:
+    assert next_timeout(100, 10, 5) == 5
+
+
+def test_the_last_call_gets_only_what_is_left() -> None:
+    assert next_timeout(100, 98, 5) == 2
+
+
+def test_a_budget_spent_exactly_is_spent() -> None:
+    with pytest.raises(TimeoutError):
+        next_timeout(100, 100, 5)
+""",
+        imports="from timeout_budget import next_timeout\n",
+    ),
+)
+
+_G056 = D2TaskSpec(
+    template_id="d7_parsing.size_suffix",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-size-suffix",
+    module="size_suffix",
+    module_doc="Reading a size back out of the shorthand people write it in.",
+    issue=(
+        "parse_size() is documented to read the shorthand a person types, which is a number "
+        "that may have a fraction and a suffix they may have typed in either case. Callers "
+        "report '1.5k' being rejected outright and '2K' along with it, which between them are "
+        "most of the sizes anybody actually types."
+    ),
+    expected=(
+        "parse_size(text) returns the size in bytes. A trailing 'k', 'm' or 'g', written in "
+        "either case, multiplies by a thousand, a million or a milliard, the number before it "
+        "may carry a fraction, and the result is a whole number of bytes rounded down. Text "
+        "that is not a size raises ValueError."
+    ),
+    baseline_reason=(
+        "it reads the number before the suffix as a whole number, so a fraction is not a size "
+        "it can read, and it recognises the suffix only in the case it happens to be written in"
+    ),
+    edge_cases=(
+        "a size carrying a fraction is read",
+        "the suffix may be written in either case",
+    ),
+    baseline="""def parse_size(text):
+    \"\"\"Read a size in shorthand into bytes.\"\"\"
+    suffixes = {"k": 1000, "m": 1000000, "g": 1000000000}
+    tail = text[-1:]
+    if tail in suffixes:
+        return int(text[:-1]) * suffixes[tail]
+    return int(text)""",
+    variant_one="""def parse_size(text):
+    \"\"\"Read a size in shorthand into bytes.\"\"\"
+    suffixes = {"k": 1000, "m": 1000000, "g": 1000000000}
+    tail = text[-1:].lower()
+    if tail in suffixes:
+        return int(float(text[:-1]) * suffixes[tail])
+    return int(float(text))""",
+    variant_two="""def parse_size(text):
+    \"\"\"Read a size in shorthand into bytes.\"\"\"
+    scale = 1
+    body = text
+    for suffix, factor in (("k", 1000), ("m", 1000000), ("g", 1000000000)):
+        if body.lower().endswith(suffix):
+            scale = factor
+            body = body[:-1]
+            break
+    return int(float(body) * scale)""",
+    variant_three="""def parse_size(text):
+    \"\"\"Read a size in shorthand into bytes.\"\"\"
+    suffixes = {"k": 1000, "m": 1000000, "g": 1000000000}
+    tail = text[-1:]
+    if tail in suffixes:
+        return int(float(text[:-1]) * suffixes[tail])
+    return int(float(text))""",
+    variant_four="""def parse_size(text):
+    \"\"\"Read a size in shorthand into bytes.\"\"\"
+    suffixes = {"k": 1000, "m": 1000000, "g": 1000000000}
+    tail = text[-1:].lower()
+    if tail in suffixes:
+        return int(text[:-1]) * suffixes[tail]
+    return int(text)""",
+    visible_test=_test_module(
+        "size_suffix",
+        "Published contract for reading a size.",
+        """
+import pytest
+
+
+def test_a_size_with_a_suffix_is_multiplied_out() -> None:
+    assert parse_size("2k") == 2000
+
+
+def test_a_size_with_no_suffix_is_itself() -> None:
+    assert parse_size("512") == 512
+
+
+def test_something_that_is_not_a_size_is_refused() -> None:
+    with pytest.raises(ValueError):
+        parse_size("big")
+""",
+        imports="from size_suffix import parse_size\n",
+    ),
+    hidden_test=_test_module(
+        "size_suffix",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_size_with_a_suffix_is_multiplied_out() -> None:
+    assert parse_size("2k") == 2000
+
+
+def test_a_size_carrying_a_fraction_is_read() -> None:
+    assert parse_size("1.5k") == 1500
+
+
+def test_the_suffix_may_be_written_in_either_case() -> None:
+    assert parse_size("2K") == 2000
+""",
+        imports="from size_suffix import parse_size\n",
+    ),
+)
+
+_G057 = D2TaskSpec(
+    template_id="d7_state.basket_lines",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-basket-lines",
+    module="basket_lines",
+    module_doc="Adding to a basket so that one item is one line.",
+    issue=(
+        "add() is documented to put an item the basket already holds onto the line it is "
+        "already on. Callers report the same item appearing on two lines after a retry, and a "
+        "line for an item added in a quantity of nothing appearing in the basket at all."
+    ),
+    expected=(
+        "add(basket, item, quantity) returns the basket with the quantity added to the item's "
+        "line, or a new line at the end when the basket does not hold the item yet. A quantity "
+        "of nothing or less leaves the basket exactly as it was."
+    ),
+    baseline_reason=(
+        "it appends a line for every call rather than looking for the line the item is already "
+        "on, and it appends one whatever quantity it was given"
+    ),
+    edge_cases=(
+        "an item already in the basket gains quantity rather than a line",
+        "adding nothing leaves the basket alone",
+    ),
+    baseline="""def add(basket, item, quantity):
+    \"\"\"Add a quantity of an item to the basket.\"\"\"
+    return list(basket) + [(item, quantity)]""",
+    variant_one="""def add(basket, item, quantity):
+    \"\"\"Add a quantity of an item to the basket.\"\"\"
+    if quantity <= 0:
+        return list(basket)
+    lines = []
+    found = False
+    for name, held in basket:
+        if name == item:
+            lines.append((name, held + quantity))
+            found = True
+        else:
+            lines.append((name, held))
+    if not found:
+        lines.append((item, quantity))
+    return lines""",
+    variant_two="""def add(basket, item, quantity):
+    \"\"\"Add a quantity of an item to the basket.\"\"\"
+    if not quantity > 0:
+        return list(basket)
+    names = [name for name, _ in basket]
+    if item not in names:
+        return list(basket) + [(item, quantity)]
+    return [(name, held + quantity if name == item else held) for name, held in basket]""",
+    variant_three="""def add(basket, item, quantity):
+    \"\"\"Add a quantity of an item to the basket.\"\"\"
+    lines = []
+    found = False
+    for name, held in basket:
+        if name == item:
+            lines.append((name, held + quantity))
+            found = True
+        else:
+            lines.append((name, held))
+    if not found:
+        lines.append((item, quantity))
+    return lines""",
+    variant_four="""def add(basket, item, quantity):
+    \"\"\"Add a quantity of an item to the basket.\"\"\"
+    if quantity <= 0:
+        return list(basket)
+    return list(basket) + [(item, quantity)]""",
+    visible_test=_test_module(
+        "basket_lines",
+        "Published contract for adding to the basket.",
+        """
+def test_an_item_the_basket_does_not_hold_gets_a_line() -> None:
+    assert add([], "apple", 2) == [("apple", 2)]
+
+
+def test_a_new_line_goes_at_the_end() -> None:
+    assert add([("pear", 1)], "apple", 2) == [("pear", 1), ("apple", 2)]
+""",
+        imports="from basket_lines import add\n",
+    ),
+    hidden_test=_test_module(
+        "basket_lines",
+        "The part of the contract the published tests do not state.",
+        """
+def test_an_item_the_basket_does_not_hold_gets_a_line() -> None:
+    assert add([], "apple", 2) == [("apple", 2)]
+
+
+def test_an_item_already_in_the_basket_gains_quantity() -> None:
+    assert add([("apple", 1)], "apple", 2) == [("apple", 3)]
+
+
+def test_adding_nothing_leaves_the_basket_alone() -> None:
+    assert add([("apple", 1)], "pear", 0) == [("apple", 1)]
+""",
+        imports="from basket_lines import add\n",
+    ),
+)
+
+_G058 = D2TaskSpec(
+    template_id="d7_boundary.cap_each_group",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-cap-each-group",
+    module="cap_each_group",
+    module_doc="Holding each group to a limit without disturbing the order they arrived in.",
+    issue=(
+        "cap_each() is documented to keep the earliest entries of each group and to hand them "
+        "back in the order they arrived. Callers report the latest entries surviving instead of "
+        "the earliest, and the result coming back gathered group by group, which loses the "
+        "arrival order the rest of the pipeline depends on."
+    ),
+    expected=(
+        "cap_each(items, cap) takes (group, name) pairs and returns those to keep: at most cap "
+        "from each group, the earliest ones, in the order they arrived."
+    ),
+    baseline_reason=(
+        "it keeps a rolling tail of each group, so the latest survive rather than the earliest, "
+        "and it rebuilds the result group by group rather than in arrival order"
+    ),
+    edge_cases=(
+        "the earliest entries in each group are the ones kept",
+        "the entries come back in the order they arrived",
+    ),
+    baseline="""def cap_each(items, cap):
+    \"\"\"Keep at most cap entries from each group.\"\"\"
+    kept = {}
+    for group, name in items:
+        kept.setdefault(group, [])
+        kept[group].append((group, name))
+        kept[group] = kept[group][-cap:]
+    result = []
+    for group in kept:
+        result.extend(kept[group])
+    return result""",
+    variant_one="""def cap_each(items, cap):
+    \"\"\"Keep at most cap entries from each group.\"\"\"
+    counts = {}
+    result = []
+    for group, name in items:
+        seen = counts.get(group, 0)
+        if seen < cap:
+            result.append((group, name))
+            counts[group] = seen + 1
+    return result""",
+    variant_two="""def cap_each(items, cap):
+    \"\"\"Keep at most cap entries from each group.\"\"\"
+    kept = []
+    for index, entry in enumerate(items):
+        earlier = sum(1 for other, _ in items[:index] if other == entry[0])
+        if earlier < cap:
+            kept.append(entry)
+    return kept""",
+    variant_three="""def cap_each(items, cap):
+    \"\"\"Keep at most cap entries from each group.\"\"\"
+    kept = {}
+    for group, name in items:
+        kept.setdefault(group, [])
+        if len(kept[group]) < cap:
+            kept[group].append((group, name))
+    result = []
+    for group in kept:
+        result.extend(kept[group])
+    return result""",
+    variant_four="""def cap_each(items, cap):
+    \"\"\"Keep at most cap entries from each group.\"\"\"
+    totals = {}
+    for group, _ in items:
+        totals[group] = totals.get(group, 0) + 1
+    surplus = {group: max(0, total - cap) for group, total in totals.items()}
+    kept = []
+    for group, name in items:
+        if surplus.get(group, 0) > 0:
+            surplus[group] -= 1
+            continue
+        kept.append((group, name))
+    return kept""",
+    visible_test=_test_module(
+        "cap_each_group",
+        "Published contract for capping each group.",
+        """
+def test_a_group_within_the_cap_is_kept_whole() -> None:
+    assert cap_each([("a", 1), ("a", 2)], 2) == [("a", 1), ("a", 2)]
+
+
+def test_each_group_is_capped_on_its_own() -> None:
+    assert cap_each([("a", 1), ("b", 2)], 1) == [("a", 1), ("b", 2)]
+""",
+        imports="from cap_each_group import cap_each\n",
+    ),
+    hidden_test=_test_module(
+        "cap_each_group",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_group_within_the_cap_is_kept_whole() -> None:
+    assert cap_each([("a", 1), ("a", 2)], 2) == [("a", 1), ("a", 2)]
+
+
+def test_the_earliest_entries_in_a_group_are_the_ones_kept() -> None:
+    assert cap_each([("a", 1), ("a", 2)], 1) == [("a", 1)]
+
+
+def test_the_entries_come_back_in_the_order_they_arrived() -> None:
+    items = [("a", 1), ("b", 2), ("a", 3)]
+    assert cap_each(items, 2) == [("a", 1), ("b", 2), ("a", 3)]
+""",
+        imports="from cap_each_group import cap_each\n",
+    ),
+)
+
+_G059 = D2TaskSpec(
+    template_id="d7_numeric.zone_fare",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-zone-fare",
+    module="zone_fare",
+    module_doc="Charging for the zone boundaries a journey crosses, not for the zones it is in.",
+    issue=(
+        "fare() is documented to charge for boundaries crossed, so a journey that stays inside "
+        "one zone crosses none. Callers report being charged a boundary for going nowhere, and "
+        "a journey back the way they came coming out cheaper than the journey out - sometimes "
+        "cheaper than the base fare."
+    ),
+    expected=(
+        "fare(from_zone, to_zone, base, per_zone) returns the base fare plus per_zone for each "
+        "zone boundary the journey crosses. A journey that begins and ends in the same zone "
+        "crosses none, and a journey costs the same in either direction."
+    ),
+    baseline_reason=(
+        "it charges a boundary for a journey that stays put, and it counts the boundaries by "
+        "subtracting one zone from the other, which runs negative in one direction"
+    ),
+    edge_cases=(
+        "a journey inside one zone crosses no boundary",
+        "a journey costs the same in either direction",
+    ),
+    baseline="""def fare(from_zone, to_zone, base, per_zone):
+    \"\"\"Return the fare for a journey between two zones.\"\"\"
+    crossings = to_zone - from_zone
+    if crossings == 0:
+        crossings = 1
+    return base + crossings * per_zone""",
+    variant_one="""def fare(from_zone, to_zone, base, per_zone):
+    \"\"\"Return the fare for a journey between two zones.\"\"\"
+    return base + abs(to_zone - from_zone) * per_zone""",
+    variant_two="""def fare(from_zone, to_zone, base, per_zone):
+    \"\"\"Return the fare for a journey between two zones.\"\"\"
+    low, high = sorted((from_zone, to_zone))
+    return base + (high - low) * per_zone""",
+    variant_three="""def fare(from_zone, to_zone, base, per_zone):
+    \"\"\"Return the fare for a journey between two zones.\"\"\"
+    return base + (to_zone - from_zone) * per_zone""",
+    variant_four="""def fare(from_zone, to_zone, base, per_zone):
+    \"\"\"Return the fare for a journey between two zones.\"\"\"
+    crossings = abs(to_zone - from_zone)
+    if crossings == 0:
+        crossings = 1
+    return base + crossings * per_zone""",
+    visible_test=_test_module(
+        "zone_fare",
+        "Published contract for the zone fare.",
+        """
+def test_two_boundaries_cost_two_boundaries() -> None:
+    assert fare(1, 3, 100, 20) == 140
+
+
+def test_three_boundaries_cost_three() -> None:
+    assert fare(2, 5, 50, 10) == 80
+""",
+        imports="from zone_fare import fare\n",
+    ),
+    hidden_test=_test_module(
+        "zone_fare",
+        "The part of the contract the published tests do not state.",
+        """
+def test_two_boundaries_cost_two_boundaries() -> None:
+    assert fare(1, 3, 100, 20) == 140
+
+
+def test_a_journey_inside_one_zone_crosses_nothing() -> None:
+    assert fare(2, 2, 100, 20) == 100
+
+
+def test_a_journey_costs_the_same_in_either_direction() -> None:
+    assert fare(3, 1, 100, 20) == 140
+""",
+        imports="from zone_fare import fare\n",
+    ),
+)
+
+_G060 = D2TaskSpec(
+    template_id="d7_transform.nest_flat_keys",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-nest-flat-keys",
+    module="nest_flat_keys",
+    module_doc="Growing a flat mapping back into the shape its keys describe.",
+    issue=(
+        "nest() is documented to grow a key to whatever depth its separators describe, and to "
+        "refuse a mapping in which one key is both a value and a branch. Callers report keys "
+        "growing exactly one level deep and no further, and a mapping holding both 'a' and "
+        "'a.b' failing somewhere far away rather than being refused here."
+    ),
+    expected=(
+        "nest(flat, separator) returns the nested mapping the flat keys describe, splitting at "
+        "every separator to any depth. A mapping in which one key would be both a value and a "
+        "branch raises ValueError."
+    ),
+    baseline_reason=(
+        "it splits each key at the first separator only, so anything deeper stays flat inside "
+        "the branch, and it never asks what it is about to write over"
+    ),
+    edge_cases=(
+        "a key nests to whatever depth it describes",
+        "a key that is both a value and a branch is refused",
+    ),
+    baseline="""def nest(flat, separator):
+    \"\"\"Grow a flat mapping into the shape its keys describe.\"\"\"
+    nested = {}
+    for key, value in flat.items():
+        head, found, tail = key.partition(separator)
+        if not found:
+            nested[head] = value
+        else:
+            nested.setdefault(head, {})[tail] = value
+    return nested""",
+    variant_one="""def nest(flat, separator):
+    \"\"\"Grow a flat mapping into the shape its keys describe.\"\"\"
+    nested = {}
+    for key, value in flat.items():
+        parts = key.split(separator)
+        branch = nested
+        for part in parts[:-1]:
+            if part not in branch:
+                branch[part] = {}
+            if not isinstance(branch[part], dict):
+                raise ValueError("key is both a value and a branch: " + key)
+            branch = branch[part]
+        if isinstance(branch.get(parts[-1]), dict):
+            raise ValueError("key is both a value and a branch: " + key)
+        branch[parts[-1]] = value
+    return nested""",
+    variant_two="""def nest(flat, separator):
+    \"\"\"Grow a flat mapping into the shape its keys describe.\"\"\"
+    nested = {}
+    for key, value in flat.items():
+        parts = key.split(separator)
+        branch = nested
+        for part in parts[:-1]:
+            existing = branch.get(part)
+            if existing is not None and not isinstance(existing, dict):
+                raise ValueError("key is both a value and a branch: " + key)
+            branch = branch.setdefault(part, {})
+        last = branch.get(parts[-1])
+        if isinstance(last, dict):
+            raise ValueError("key is both a value and a branch: " + key)
+        branch[parts[-1]] = value
+    return nested""",
+    variant_three="""def nest(flat, separator):
+    \"\"\"Grow a flat mapping into the shape its keys describe.\"\"\"
+    nested = {}
+    for key, value in flat.items():
+        parts = key.split(separator)
+        branch = nested
+        for part in parts[:-1]:
+            branch = branch.setdefault(part, {})
+        branch[parts[-1]] = value
+    return nested""",
+    variant_four="""def nest(flat, separator):
+    \"\"\"Grow a flat mapping into the shape its keys describe.\"\"\"
+    nested = {}
+    for key, value in flat.items():
+        head, found, tail = key.partition(separator)
+        if not found:
+            if isinstance(nested.get(head), dict):
+                raise ValueError("key is both a value and a branch: " + key)
+            nested[head] = value
+        else:
+            if head in nested and not isinstance(nested[head], dict):
+                raise ValueError("key is both a value and a branch: " + key)
+            nested.setdefault(head, {})[tail] = value
+    return nested""",
+    visible_test=_test_module(
+        "nest_flat_keys",
+        "Published contract for growing the mapping.",
+        """
+def test_a_key_with_one_separator_nests_one_level() -> None:
+    assert nest({"a": 1, "b.c": 2}, ".") == {"a": 1, "b": {"c": 2}}
+
+
+def test_an_empty_mapping_nests_into_nothing() -> None:
+    assert nest({}, ".") == {}
+""",
+        imports="from nest_flat_keys import nest\n",
+    ),
+    hidden_test=_test_module(
+        "nest_flat_keys",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_key_with_one_separator_nests_one_level() -> None:
+    assert nest({"a": 1, "b.c": 2}, ".") == {"a": 1, "b": {"c": 2}}
+
+
+def test_a_key_nests_to_whatever_depth_it_describes() -> None:
+    assert nest({"a.b.c": 1}, ".") == {"a": {"b": {"c": 1}}}
+
+
+def test_a_key_that_is_both_a_value_and_a_branch_is_refused() -> None:
+    with pytest.raises(ValueError):
+        nest({"a": 1, "a.b": 2}, ".")
+""",
+        imports="from nest_flat_keys import nest\n",
+    ),
+)
+
+_G061 = D2TaskSpec(
+    template_id="d7_error.budget_level",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-budget-level",
+    module="budget_level",
+    module_doc="Deciding whether a failure rate is worth waking somebody for.",
+    issue=(
+        "level() is documented to page only for a rate genuinely over budget, and only when "
+        "there were enough attempts for the rate to mean anything. Callers report being paged "
+        "for a run sitting exactly on its budget, and for a run of three attempts where one "
+        "went wrong."
+    ),
+    expected=(
+        "level(failures, total, budget) returns 'ok' when the failure rate is at or under the "
+        "budget, 'page' when it is over the budget and there were at least ten attempts, and "
+        "'warn' when it is over the budget on a run too short to be sure. No attempts at all "
+        "is 'ok'."
+    ),
+    baseline_reason=(
+        "its comparison pages a run sitting exactly on its budget, and it knows only two "
+        "answers, so a run far too short to mean anything pages as readily as a long one"
+    ),
+    edge_cases=(
+        "a run exactly on its budget is not over it",
+        "a run too short to be sure warns rather than pages",
+    ),
+    baseline="""def level(failures, total, budget):
+    \"\"\"Say what a failure rate is worth.\"\"\"
+    if total == 0:
+        return "ok"
+    verdict = "page" if failures / total >= budget else "ok"
+    return verdict""",
+    variant_one="""def level(failures, total, budget):
+    \"\"\"Say what a failure rate is worth.\"\"\"
+    if total == 0:
+        return "ok"
+    if failures / total <= budget:
+        return "ok"
+    verdict = "page" if total >= 10 else "warn"
+    return verdict""",
+    variant_two="""def level(failures, total, budget):
+    \"\"\"Say what a failure rate is worth.\"\"\"
+    if not total:
+        return "ok"
+    rate = failures / total
+    if rate <= budget:
+        verdict = "ok"
+    elif total < 10:
+        verdict = "warn"
+    else:
+        verdict = "page"
+    return verdict""",
+    variant_three="""def level(failures, total, budget):
+    \"\"\"Say what a failure rate is worth.\"\"\"
+    if total == 0:
+        return "ok"
+    verdict = "page" if failures / total > budget else "ok"
+    return verdict""",
+    variant_four="""def level(failures, total, budget):
+    \"\"\"Say what a failure rate is worth.\"\"\"
+    if total == 0:
+        return "ok"
+    if failures / total < budget:
+        return "ok"
+    verdict = "page" if total >= 10 else "warn"
+    return verdict""",
+    visible_test=_test_module(
+        "budget_level",
+        "Published contract for the failure level.",
+        """
+def test_a_long_run_over_its_budget_pages() -> None:
+    assert level(5, 20, 0.1) == "page"
+
+
+def test_a_run_under_its_budget_is_fine() -> None:
+    assert level(1, 20, 0.5) == "ok"
+""",
+        imports="from budget_level import level\n",
+    ),
+    hidden_test=_test_module(
+        "budget_level",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_long_run_over_its_budget_pages() -> None:
+    assert level(5, 20, 0.1) == "page"
+
+
+def test_a_run_exactly_on_its_budget_is_not_over_it() -> None:
+    assert level(2, 20, 0.1) == "ok"
+
+
+def test_a_run_too_short_to_be_sure_warns() -> None:
+    assert level(2, 4, 0.1) == "warn"
+""",
+        imports="from budget_level import level\n",
+    ),
+)
+
+_G062 = D2TaskSpec(
+    template_id="d7_parsing.written_list",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-written-list",
+    module="written_list",
+    module_doc="Reading a list back out of the way a person wrote it.",
+    issue=(
+        "read_list() is documented to read a list as somebody typed it, which means the last "
+        "item is often introduced by 'and' and somebody usually leaves a stray comma. Callers "
+        "report two items arriving glued together as one, and an empty item arriving between "
+        "two real ones."
+    ),
+    expected=(
+        "read_list(text) returns the items of a written list. Items are separated by commas, "
+        "and the last one may be introduced by ' and ' instead. Each item is trimmed of the "
+        "spaces around it, and an item that is empty is dropped."
+    ),
+    baseline_reason=(
+        "it splits on commas alone, so an item introduced by 'and' stays glued to the one "
+        "before it, and it keeps whatever a stray comma leaves behind"
+    ),
+    edge_cases=(
+        "the last item may be introduced by 'and'",
+        "an empty item is dropped",
+    ),
+    baseline="""def read_list(text):
+    \"\"\"Read the items of a written list.\"\"\"
+    items = []
+    for part in text.split(","):
+        items.append(part.strip())
+    return items""",
+    variant_one="""def read_list(text):
+    \"\"\"Read the items of a written list.\"\"\"
+    items = []
+    for part in text.split(","):
+        for piece in part.split(" and "):
+            name = piece.strip()
+            if name:
+                items.append(name)
+    return items""",
+    variant_two="""def read_list(text):
+    \"\"\"Read the items of a written list.\"\"\"
+    flattened = text.replace(" and ", ",")
+    return [item.strip() for item in flattened.split(",") if item.strip()]""",
+    variant_three="""def read_list(text):
+    \"\"\"Read the items of a written list.\"\"\"
+    items = []
+    for part in text.split(","):
+        for piece in part.split(" and "):
+            items.append(piece.strip())
+    return items""",
+    variant_four="""def read_list(text):
+    \"\"\"Read the items of a written list.\"\"\"
+    return [item.strip() for item in text.split(",") if item.strip()]""",
+    visible_test=_test_module(
+        "written_list",
+        "Published contract for reading a written list.",
+        """
+def test_a_comma_separated_list_reads_as_its_items() -> None:
+    assert read_list("a, b, c") == ["a", "b", "c"]
+
+
+def test_a_list_of_one_reads_as_one_item() -> None:
+    assert read_list("a") == ["a"]
+""",
+        imports="from written_list import read_list\n",
+    ),
+    hidden_test=_test_module(
+        "written_list",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_comma_separated_list_reads_as_its_items() -> None:
+    assert read_list("a, b, c") == ["a", "b", "c"]
+
+
+def test_the_last_item_may_be_introduced_by_and() -> None:
+    assert read_list("a, b and c") == ["a", "b", "c"]
+
+
+def test_an_empty_item_is_dropped() -> None:
+    assert read_list("a, , b") == ["a", "b"]
+""",
+        imports="from written_list import read_list\n",
+    ),
+)
+
+_G063 = D2TaskSpec(
+    template_id="d7_state.shift_handover",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-shift-handover",
+    module="shift_handover",
+    module_doc="Handing the open work to the next shift, and only the open work.",
+    issue=(
+        "handover() is documented to move the open tasks of one shift to another and to leave "
+        "the closed ones where they are. Callers report finished work being handed on as though "
+        "it were still open, and a handover to the shift that already holds the work reporting "
+        "that it moved."
+    ),
+    expected=(
+        "handover(tasks, from_shift, to_shift) returns (tasks, moved): every open task owned by "
+        "from_shift is now owned by to_shift and counted as moved. A closed task keeps its "
+        "owner, and a handover to the shift that already owns the work moves nothing."
+    ),
+    baseline_reason=(
+        "it moves every task the shift owns without asking whether the task is still open, and "
+        "it counts a handover to the same shift as a move like any other"
+    ),
+    edge_cases=(
+        "a closed task keeps its owner",
+        "a handover to the same shift moves nothing",
+    ),
+    baseline="""def handover(tasks, from_shift, to_shift):
+    \"\"\"Hand the open tasks of one shift to another.\"\"\"
+    moved = 0
+    updated = []
+    for task in tasks:
+        if task["owner"] == from_shift:
+            updated.append({**task, "owner": to_shift})
+            moved += 1
+        else:
+            updated.append(dict(task))
+    return updated, moved""",
+    variant_one="""def handover(tasks, from_shift, to_shift):
+    \"\"\"Hand the open tasks of one shift to another.\"\"\"
+    if from_shift == to_shift:
+        return [dict(task) for task in tasks], 0
+    moved = 0
+    updated = []
+    for task in tasks:
+        if task["owner"] == from_shift and task["state"] == "open":
+            updated.append({**task, "owner": to_shift})
+            moved += 1
+        else:
+            updated.append(dict(task))
+    return updated, moved""",
+    variant_two="""def handover(tasks, from_shift, to_shift):
+    \"\"\"Hand the open tasks of one shift to another.\"\"\"
+    moving = [
+        task
+        for task in tasks
+        if task["owner"] == from_shift and task["state"] == "open" and from_shift != to_shift
+    ]
+    updated = [
+        {**task, "owner": to_shift} if task in moving else dict(task) for task in tasks
+    ]
+    return updated, len(moving)""",
+    variant_three="""def handover(tasks, from_shift, to_shift):
+    \"\"\"Hand the open tasks of one shift to another.\"\"\"
+    moved = 0
+    updated = []
+    for task in tasks:
+        if task["owner"] == from_shift and task["state"] == "open":
+            updated.append({**task, "owner": to_shift})
+            moved += 1
+        else:
+            updated.append(dict(task))
+    return updated, moved""",
+    variant_four="""def handover(tasks, from_shift, to_shift):
+    \"\"\"Hand the open tasks of one shift to another.\"\"\"
+    if from_shift == to_shift:
+        return [dict(task) for task in tasks], 0
+    moved = 0
+    updated = []
+    for task in tasks:
+        if task["owner"] == from_shift:
+            updated.append({**task, "owner": to_shift})
+            moved += 1
+        else:
+            updated.append(dict(task))
+    return updated, moved""",
+    visible_test=_test_module(
+        "shift_handover",
+        "Published contract for the handover.",
+        """
+def test_an_open_task_moves_to_the_next_shift() -> None:
+    tasks = [{"owner": "a", "state": "open"}]
+    assert handover(tasks, "a", "b") == ([{"owner": "b", "state": "open"}], 1)
+
+
+def test_another_shifts_task_stays_where_it_is() -> None:
+    tasks = [{"owner": "c", "state": "open"}]
+    assert handover(tasks, "a", "b") == ([{"owner": "c", "state": "open"}], 0)
+""",
+        imports="from shift_handover import handover\n",
+    ),
+    hidden_test=_test_module(
+        "shift_handover",
+        "The part of the contract the published tests do not state.",
+        """
+def test_an_open_task_moves_to_the_next_shift() -> None:
+    tasks = [{"owner": "a", "state": "open"}]
+    assert handover(tasks, "a", "b") == ([{"owner": "b", "state": "open"}], 1)
+
+
+def test_a_closed_task_keeps_its_owner() -> None:
+    tasks = [{"owner": "a", "state": "closed"}]
+    assert handover(tasks, "a", "b") == ([{"owner": "a", "state": "closed"}], 0)
+
+
+def test_a_handover_to_the_same_shift_moves_nothing() -> None:
+    tasks = [{"owner": "a", "state": "open"}]
+    assert handover(tasks, "a", "a") == ([{"owner": "a", "state": "open"}], 0)
+""",
+        imports="from shift_handover import handover\n",
+    ),
+)
+
+_G064 = D2TaskSpec(
+    template_id="d7_boundary.pair_ends",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-pair-ends",
+    module="pair_ends",
+    module_doc="Pairing the smallest with the largest, and saying what was left over.",
+    issue=(
+        "pair_ends() is documented to pair from the two ends inwards, so that the heaviest goes "
+        "with the lightest. Callers report neighbouring values being paired instead, which is "
+        "the opposite of balanced, and an odd value simply vanishing rather than being handed "
+        "back as the one nobody could be paired with."
+    ),
+    expected=(
+        "pair_ends(values) sorts the values and returns (pairs, leftover): the smallest paired "
+        "with the largest, the next smallest with the next largest, and so on inwards. An odd "
+        "count leaves the middle value over; an even count leaves None."
+    ),
+    baseline_reason=(
+        "it walks the sorted values two at a time, which pairs each with its neighbour rather "
+        "than with its opposite end, and it reports no leftover whatever it was given"
+    ),
+    edge_cases=(
+        "the smallest is paired with the largest",
+        "an odd value is handed back as the leftover",
+    ),
+    baseline="""def pair_ends(values):
+    \"\"\"Pair the values from both ends inwards.\"\"\"
+    ordered = sorted(values)
+    pairs = []
+    for index in range(0, len(ordered) - 1, 2):
+        pairs.append((ordered[index], ordered[index + 1]))
+    return pairs, None""",
+    variant_one="""def pair_ends(values):
+    \"\"\"Pair the values from both ends inwards.\"\"\"
+    ordered = sorted(values)
+    pairs = []
+    low = 0
+    high = len(ordered) - 1
+    while low < high:
+        pairs.append((ordered[low], ordered[high]))
+        low += 1
+        high -= 1
+    return pairs, ordered[low] if low == high else None""",
+    variant_two="""def pair_ends(values):
+    \"\"\"Pair the values from both ends inwards.\"\"\"
+    ordered = sorted(values)
+    count = len(ordered) // 2
+    pairs = [(ordered[index], ordered[-1 - index]) for index in range(count)]
+    leftover = ordered[count] if len(ordered) % 2 else None
+    return pairs, leftover""",
+    variant_three="""def pair_ends(values):
+    \"\"\"Pair the values from both ends inwards.\"\"\"
+    ordered = sorted(values)
+    pairs = []
+    low = 0
+    high = len(ordered) - 1
+    while low < high:
+        pairs.append((ordered[low], ordered[high]))
+        low += 1
+        high -= 1
+    return pairs, None""",
+    variant_four="""def pair_ends(values):
+    \"\"\"Pair the values from both ends inwards.\"\"\"
+    ordered = sorted(values)
+    pairs = []
+    for index in range(0, len(ordered) - 1, 2):
+        pairs.append((ordered[index], ordered[index + 1]))
+    leftover = ordered[-1] if len(ordered) % 2 else None
+    return pairs, leftover""",
+    visible_test=_test_module(
+        "pair_ends",
+        "Published contract for pairing from the ends.",
+        """
+def test_two_values_make_one_pair() -> None:
+    assert pair_ends([1, 9]) == ([(1, 9)], None)
+
+
+def test_nothing_pairs_into_nothing() -> None:
+    assert pair_ends([]) == ([], None)
+""",
+        imports="from pair_ends import pair_ends\n",
+    ),
+    hidden_test=_test_module(
+        "pair_ends",
+        "The part of the contract the published tests do not state.",
+        """
+def test_two_values_make_one_pair() -> None:
+    assert pair_ends([1, 9]) == ([(1, 9)], None)
+
+
+def test_the_smallest_is_paired_with_the_largest() -> None:
+    assert pair_ends([1, 2, 8, 9]) == ([(1, 9), (2, 8)], None)
+
+
+def test_an_odd_value_is_handed_back_as_the_leftover() -> None:
+    assert pair_ends([7]) == ([], 7)
+""",
+        imports="from pair_ends import pair_ends\n",
+    ),
+)
+
+_G065 = D2TaskSpec(
+    template_id="d7_numeric.worked_minutes",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-worked-minutes",
+    module="worked_minutes",
+    module_doc="Counting the paid minutes of a shift, including the ones after midnight.",
+    issue=(
+        "worked() is documented to count a shift that runs past midnight and to deduct the "
+        "unpaid break from a shift long enough to earn one. Callers on nights report negative "
+        "shifts, and callers on a shift exactly the length that earns a break report being paid "
+        "for the break as well."
+    ),
+    expected=(
+        "worked(start, end, break_minutes, break_after) returns the paid minutes of a shift "
+        "given in minutes past midnight. An end before the start means the shift ran past "
+        "midnight and the span wraps by a day. A shift at least break_after long has the unpaid "
+        "break deducted, and a shift exactly that long is long enough."
+    ),
+    baseline_reason=(
+        "it subtracts the start from the end without noticing a shift that ran past midnight, "
+        "and its length test excludes the very length that earns the break"
+    ),
+    edge_cases=(
+        "a shift running past midnight wraps into the next day",
+        "a shift exactly long enough earns the break",
+    ),
+    baseline="""def worked(start, end, break_minutes, break_after):
+    \"\"\"Return the paid minutes of a shift.\"\"\"
+    span = end - start
+    if span > break_after:
+        return span - break_minutes
+    return span""",
+    variant_one="""def worked(start, end, break_minutes, break_after):
+    \"\"\"Return the paid minutes of a shift.\"\"\"
+    span = end - start
+    if span < 0:
+        span += 24 * 60
+    if span >= break_after:
+        return span - break_minutes
+    return span""",
+    variant_two="""def worked(start, end, break_minutes, break_after):
+    \"\"\"Return the paid minutes of a shift.\"\"\"
+    span = (end - start) % (24 * 60)
+    return span if span < break_after else span - break_minutes""",
+    variant_three="""def worked(start, end, break_minutes, break_after):
+    \"\"\"Return the paid minutes of a shift.\"\"\"
+    span = end - start
+    if span < 0:
+        span += 24 * 60
+    if span > break_after:
+        return span - break_minutes
+    return span""",
+    variant_four="""def worked(start, end, break_minutes, break_after):
+    \"\"\"Return the paid minutes of a shift.\"\"\"
+    span = end - start
+    if span >= break_after:
+        return span - break_minutes
+    return span""",
+    visible_test=_test_module(
+        "worked_minutes",
+        "Published contract for the paid minutes of a shift.",
+        """
+def test_a_long_shift_has_its_break_deducted() -> None:
+    assert worked(540, 1020, 30, 360) == 450
+
+
+def test_a_short_shift_earns_no_break() -> None:
+    assert worked(540, 600, 30, 360) == 60
+""",
+        imports="from worked_minutes import worked\n",
+    ),
+    hidden_test=_test_module(
+        "worked_minutes",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_long_shift_has_its_break_deducted() -> None:
+    assert worked(540, 1020, 30, 360) == 450
+
+
+def test_a_shift_running_past_midnight_wraps() -> None:
+    assert worked(1320, 300, 30, 360) == 390
+
+
+def test_a_shift_exactly_long_enough_earns_the_break() -> None:
+    assert worked(540, 900, 30, 360) == 330
+""",
+        imports="from worked_minutes import worked\n",
+    ),
+)
+
+_G066 = D2TaskSpec(
+    template_id="d7_transform.fold_key_case",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-fold-key-case",
+    module="fold_key_case",
+    module_doc="Adding up counts filed under the same name typed two different ways.",
+    issue=(
+        "fold() is documented to add together the counts filed under names that differ only in "
+        "case, and to keep the spelling the name was first written in. Callers report every "
+        "name coming back flattened to lower case, which is nobody's spelling, and names whose "
+        "counts add up to nothing still taking up a line in the report."
+    ),
+    expected=(
+        "fold(counts) returns the counts with names that differ only in case added together, "
+        "each name in the spelling it first appeared in. A name whose counts add up to nothing "
+        "is dropped."
+    ),
+    baseline_reason=(
+        "it files everything under the lower-cased name, which is the name it then reports, and "
+        "it reports a name whose total came to nothing like any other"
+    ),
+    edge_cases=(
+        "a name keeps the spelling it first appeared in",
+        "a name that totals nothing is dropped",
+    ),
+    baseline="""def fold(counts):
+    \"\"\"Add up the counts of names differing only in case.\"\"\"
+    merged = {}
+    for key, count in counts.items():
+        lowered = key.lower()
+        merged[lowered] = merged.get(lowered, 0) + count
+    return merged""",
+    variant_one="""def fold(counts):
+    \"\"\"Add up the counts of names differing only in case.\"\"\"
+    totals = {}
+    spelling = {}
+    for key, count in counts.items():
+        lowered = key.lower()
+        if lowered not in spelling:
+            spelling[lowered] = key
+        totals[lowered] = totals.get(lowered, 0) + count
+    return {spelling[lowered]: total for lowered, total in totals.items() if total}""",
+    variant_two="""def fold(counts):
+    \"\"\"Add up the counts of names differing only in case.\"\"\"
+    merged = {}
+    for key, count in counts.items():
+        lowered = key.lower()
+        for seen in merged:
+            if seen.lower() == lowered:
+                merged[seen] += count
+                break
+        else:
+            merged[key] = count
+    return {name: total for name, total in merged.items() if total != 0}""",
+    variant_three="""def fold(counts):
+    \"\"\"Add up the counts of names differing only in case.\"\"\"
+    totals = {}
+    spelling = {}
+    for key, count in counts.items():
+        lowered = key.lower()
+        if lowered not in spelling:
+            spelling[lowered] = key
+        totals[lowered] = totals.get(lowered, 0) + count
+    return {spelling[lowered]: total for lowered, total in totals.items()}""",
+    variant_four="""def fold(counts):
+    \"\"\"Add up the counts of names differing only in case.\"\"\"
+    merged = {}
+    for key, count in counts.items():
+        lowered = key.lower()
+        merged[lowered] = merged.get(lowered, 0) + count
+    return {name: total for name, total in merged.items() if total}""",
+    visible_test=_test_module(
+        "fold_key_case",
+        "Published contract for folding the counts.",
+        """
+def test_names_that_do_not_clash_are_left_as_they_are() -> None:
+    assert fold({"a": 1, "b": 2}) == {"a": 1, "b": 2}
+
+
+def test_no_counts_fold_into_no_counts() -> None:
+    assert fold({}) == {}
+""",
+        imports="from fold_key_case import fold\n",
+    ),
+    hidden_test=_test_module(
+        "fold_key_case",
+        "The part of the contract the published tests do not state.",
+        """
+def test_names_that_do_not_clash_are_left_as_they_are() -> None:
+    assert fold({"a": 1, "b": 2}) == {"a": 1, "b": 2}
+
+
+def test_a_name_keeps_the_spelling_it_first_appeared_in() -> None:
+    assert fold({"Apple": 1, "apple": 2}) == {"Apple": 3}
+
+
+def test_a_name_that_totals_nothing_is_dropped() -> None:
+    assert fold({"a": 0}) == {}
+""",
+        imports="from fold_key_case import fold\n",
+    ),
+)
+
+_G067 = D2TaskSpec(
+    template_id="d7_error.redact_secrets",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-redact-secrets",
+    module="redact_secrets",
+    module_doc="Taking the secrets out of a message before anybody else reads it.",
+    issue=(
+        "redact() is documented to take out every occurrence of a secret, and to ignore a "
+        "secret that is empty because an empty secret is in every message everywhere. Callers "
+        "report the second mention of a token surviving into the log, and an empty entry in the "
+        "secrets list turning a message into stars."
+    ),
+    expected=(
+        "redact(message, secrets) returns the message with every occurrence of every secret "
+        "replaced by '***'. A secret that is empty is ignored, because it matches everywhere "
+        "and hides nothing."
+    ),
+    baseline_reason=(
+        "it replaces one occurrence of each secret rather than all of them, and it hands an "
+        "empty secret to the replacement like any other"
+    ),
+    edge_cases=(
+        "every occurrence of a secret is taken out",
+        "an empty secret takes nothing out",
+    ),
+    baseline="""def redact(message, secrets):
+    \"\"\"Take the secrets out of a message.\"\"\"
+    for secret in secrets:
+        message = message.replace(secret, "***", 1)
+    return message""",
+    variant_one="""def redact(message, secrets):
+    \"\"\"Take the secrets out of a message.\"\"\"
+    for secret in secrets:
+        if secret:
+            message = message.replace(secret, "***")
+    return message""",
+    variant_two="""def redact(message, secrets):
+    \"\"\"Take the secrets out of a message.\"\"\"
+    cleaned = message
+    for secret in secrets:
+        if not secret:
+            continue
+        cleaned = "***".join(cleaned.split(secret))
+    return cleaned""",
+    variant_three="""def redact(message, secrets):
+    \"\"\"Take the secrets out of a message.\"\"\"
+    for secret in secrets:
+        message = message.replace(secret, "***")
+    return message""",
+    variant_four="""def redact(message, secrets):
+    \"\"\"Take the secrets out of a message.\"\"\"
+    for secret in secrets:
+        if secret:
+            message = message.replace(secret, "***", 1)
+    return message""",
+    visible_test=_test_module(
+        "redact_secrets",
+        "Published contract for redacting a message.",
+        """
+def test_a_secret_is_taken_out() -> None:
+    assert redact("token abc123 here", ["abc123"]) == "token *** here"
+
+
+def test_a_message_with_no_secrets_is_left_alone() -> None:
+    assert redact("nothing to hide", []) == "nothing to hide"
+""",
+        imports="from redact_secrets import redact\n",
+    ),
+    hidden_test=_test_module(
+        "redact_secrets",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_secret_is_taken_out() -> None:
+    assert redact("token abc123 here", ["abc123"]) == "token *** here"
+
+
+def test_every_occurrence_of_a_secret_is_taken_out() -> None:
+    assert redact("abc and abc", ["abc"]) == "*** and ***"
+
+
+def test_an_empty_secret_takes_nothing_out() -> None:
+    assert redact("abc", [""]) == "abc"
+""",
+        imports="from redact_secrets import redact\n",
+    ),
+)
+
+_G068 = D2TaskSpec(
+    template_id="d7_parsing.twelve_hour_clock",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-twelve-hour-clock",
+    module="twelve_hour_clock",
+    module_doc="Reading the clock people write, in which twelve comes before one.",
+    issue=(
+        "to_minutes() is documented to read a time written on the twelve hour clock, where the "
+        "twelve hour is the one before the one hour rather than after the eleven. Callers "
+        "report half past midnight reading as half past noon, and a time typed in capitals "
+        "reading twelve hours early."
+    ),
+    expected=(
+        "to_minutes(text) reads a time such as '7:05 pm' and returns minutes past midnight. "
+        "Twelve at night is the start of the day and twelve at midday is halfway through it, "
+        "and the suffix may be written in any case."
+    ),
+    baseline_reason=(
+        "it adds twelve hours to an afternoon time without folding the twelve hour down to "
+        "nothing first, and it recognises the suffix only in lower case"
+    ),
+    edge_cases=(
+        "twelve at night is the start of the day",
+        "the suffix may be written in any case",
+    ),
+    baseline="""def to_minutes(text):
+    \"\"\"Read a twelve hour time into minutes past midnight.\"\"\"
+    body, _, suffix = text.partition(" ")
+    hours, _, minutes = body.partition(":")
+    total = int(hours) * 60 + int(minutes)
+    if suffix == "pm":
+        total += 12 * 60
+    return total""",
+    variant_one="""def to_minutes(text):
+    \"\"\"Read a twelve hour time into minutes past midnight.\"\"\"
+    body, _, suffix = text.partition(" ")
+    hours, _, minutes = body.partition(":")
+    hour = int(hours) % 12
+    if suffix.lower() == "pm":
+        hour += 12
+    return hour * 60 + int(minutes)""",
+    variant_two="""def to_minutes(text):
+    \"\"\"Read a twelve hour time into minutes past midnight.\"\"\"
+    body, _, suffix = text.partition(" ")
+    hours, _, minutes = body.partition(":")
+    total = (int(hours) % 12) * 60 + int(minutes)
+    return total + 720 if suffix.upper() == "PM" else total""",
+    variant_three="""def to_minutes(text):
+    \"\"\"Read a twelve hour time into minutes past midnight.\"\"\"
+    body, _, suffix = text.partition(" ")
+    hours, _, minutes = body.partition(":")
+    hour = int(hours) % 12
+    if suffix == "pm":
+        hour += 12
+    return hour * 60 + int(minutes)""",
+    variant_four="""def to_minutes(text):
+    \"\"\"Read a twelve hour time into minutes past midnight.\"\"\"
+    body, _, suffix = text.partition(" ")
+    hours, _, minutes = body.partition(":")
+    total = int(hours) * 60 + int(minutes)
+    if suffix.lower() == "pm":
+        total += 12 * 60
+    return total""",
+    visible_test=_test_module(
+        "twelve_hour_clock",
+        "Published contract for the twelve hour clock.",
+        """
+def test_a_morning_time_reads_as_itself() -> None:
+    assert to_minutes("7:05 am") == 425
+
+
+def test_an_afternoon_time_reads_twelve_hours_later() -> None:
+    assert to_minutes("7:05 pm") == 1145
+""",
+        imports="from twelve_hour_clock import to_minutes\n",
+    ),
+    hidden_test=_test_module(
+        "twelve_hour_clock",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_morning_time_reads_as_itself() -> None:
+    assert to_minutes("7:05 am") == 425
+
+
+def test_twelve_at_night_is_the_start_of_the_day() -> None:
+    assert to_minutes("12:30 am") == 30
+
+
+def test_the_suffix_may_be_written_in_any_case() -> None:
+    assert to_minutes("7:05 PM") == 1145
+""",
+        imports="from twelve_hour_clock import to_minutes\n",
+    ),
+)
+
+_G069 = D2TaskSpec(
+    template_id="d7_state.close_account",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-close-account",
+    module="close_account",
+    module_doc="Closing an account, which is safe to ask for twice and not safe with money in it.",
+    issue=(
+        "close() is documented to be safe to send twice and to refuse an account that still has "
+        "money in it. Callers report the retry of a closure that already succeeded failing, and "
+        "accounts being closed with a balance still sitting in them, which loses the money "
+        "rather than returning it."
+    ),
+    expected=(
+        "close(accounts, name) returns the accounts with the named one closed. An account that "
+        "is already closed leaves the accounts as they were, an account whose balance is not "
+        "empty raises ValueError, and an account nobody holds raises KeyError."
+    ),
+    baseline_reason=(
+        "it treats an account that is already closed as an error rather than as a closure that "
+        "has already happened, and it closes an account without looking at its balance"
+    ),
+    edge_cases=(
+        "closing an account that is already closed changes nothing",
+        "an account with money in it is not closed",
+    ),
+    baseline="""def close(accounts, name):
+    \"\"\"Close an account.\"\"\"
+    account = accounts[name]
+    if account["state"] == "closed":
+        raise ValueError("already closed: " + str(name))
+    updated = dict(accounts)
+    updated[name] = {**account, "state": "closed"}
+    return updated""",
+    variant_one="""def close(accounts, name):
+    \"\"\"Close an account.\"\"\"
+    account = accounts[name]
+    if account["state"] == "closed":
+        return dict(accounts)
+    if account["balance"] != 0:
+        raise ValueError("balance is not empty: " + str(name))
+    updated = dict(accounts)
+    updated[name] = {**account, "state": "closed"}
+    return updated""",
+    variant_two="""def close(accounts, name):
+    \"\"\"Close an account.\"\"\"
+    account = accounts[name]
+    if account["state"] != "closed" and account["balance"]:
+        raise ValueError("balance is not empty: " + str(name))
+    closed = {**account, "state": "closed"}
+    return {key: closed if key == name else value for key, value in accounts.items()}""",
+    variant_three="""def close(accounts, name):
+    \"\"\"Close an account.\"\"\"
+    account = accounts[name]
+    if account["state"] == "closed":
+        return dict(accounts)
+    updated = dict(accounts)
+    updated[name] = {**account, "state": "closed"}
+    return updated""",
+    variant_four="""def close(accounts, name):
+    \"\"\"Close an account.\"\"\"
+    account = accounts[name]
+    if account["state"] == "closed":
+        raise ValueError("already closed: " + str(name))
+    if account["balance"] != 0:
+        raise ValueError("balance is not empty: " + str(name))
+    updated = dict(accounts)
+    updated[name] = {**account, "state": "closed"}
+    return updated""",
+    visible_test=_test_module(
+        "close_account",
+        "Published contract for closing an account.",
+        """
+import pytest
+
+
+def test_an_empty_open_account_closes() -> None:
+    accounts = {"a": {"state": "open", "balance": 0}}
+    assert close(accounts, "a") == {"a": {"state": "closed", "balance": 0}}
+
+
+def test_an_account_nobody_holds_is_refused() -> None:
+    with pytest.raises(KeyError):
+        close({"a": {"state": "open", "balance": 0}}, "b")
+""",
+        imports="from close_account import close\n",
+    ),
+    hidden_test=_test_module(
+        "close_account",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_an_empty_open_account_closes() -> None:
+    accounts = {"a": {"state": "open", "balance": 0}}
+    assert close(accounts, "a") == {"a": {"state": "closed", "balance": 0}}
+
+
+def test_closing_an_account_already_closed_changes_nothing() -> None:
+    accounts = {"a": {"state": "closed", "balance": 0}}
+    assert close(accounts, "a") == {"a": {"state": "closed", "balance": 0}}
+
+
+def test_an_account_with_money_in_it_is_not_closed() -> None:
+    with pytest.raises(ValueError):
+        close({"a": {"state": "open", "balance": 5}}, "a")
+""",
+        imports="from close_account import close\n",
+    ),
+)
+
+_G070 = D2TaskSpec(
+    template_id="d7_boundary.trim_extremes",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-trim-extremes",
+    module="trim_extremes",
+    module_doc="Dropping one highest and one lowest reading, and only one of each.",
+    issue=(
+        "trim() is documented to drop a single lowest reading and a single highest one. "
+        "Callers report every reading equal to the lowest disappearing at once, which throws "
+        "away most of a run of steady readings, and a series too short to trim failing outright "
+        "instead of trimming to nothing."
+    ),
+    expected=(
+        "trim(values) returns the values with one lowest and one highest removed, the rest in "
+        "the order they arrived. Only the first of a repeated extreme is removed, and a series "
+        "too short to have both trims to nothing."
+    ),
+    baseline_reason=(
+        "it filters out every value equal to either extreme rather than one of each, and it "
+        "asks for the extremes of a series that may have none"
+    ),
+    edge_cases=(
+        "only one copy of a repeated extreme is removed",
+        "a series too short to trim trims to nothing",
+    ),
+    baseline="""def trim(values):
+    \"\"\"Drop one lowest and one highest reading.\"\"\"
+    lowest = min(values)
+    highest = max(values)
+    return [value for value in values if value != lowest and value != highest]""",
+    variant_one="""def trim(values):
+    \"\"\"Drop one lowest and one highest reading.\"\"\"
+    if len(values) < 3:
+        return []
+    kept = list(values)
+    kept.remove(min(kept))
+    kept.remove(max(kept))
+    return kept""",
+    variant_two="""def trim(values):
+    \"\"\"Drop one lowest and one highest reading.\"\"\"
+    if len(values) < 3:
+        return []
+    low = min(values)
+    high = max(values)
+    kept = []
+    dropped_low = False
+    dropped_high = False
+    for value in values:
+        if value == low and not dropped_low:
+            dropped_low = True
+            continue
+        if value == high and not dropped_high:
+            dropped_high = True
+            continue
+        kept.append(value)
+    return kept""",
+    variant_three="""def trim(values):
+    \"\"\"Drop one lowest and one highest reading.\"\"\"
+    kept = list(values)
+    kept.remove(min(kept))
+    kept.remove(max(kept))
+    return kept""",
+    variant_four="""def trim(values):
+    \"\"\"Drop one lowest and one highest reading.\"\"\"
+    if len(values) < 3:
+        return []
+    lowest = min(values)
+    highest = max(values)
+    return [value for value in values if value != lowest and value != highest]""",
+    visible_test=_test_module(
+        "trim_extremes",
+        "Published contract for trimming the extremes.",
+        """
+def test_the_extremes_are_dropped() -> None:
+    assert trim([5, 1, 9, 3]) == [5, 3]
+
+
+def test_three_readings_leave_the_middle_one() -> None:
+    assert trim([1, 2, 3]) == [2]
+""",
+        imports="from trim_extremes import trim\n",
+    ),
+    hidden_test=_test_module(
+        "trim_extremes",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_extremes_are_dropped() -> None:
+    assert trim([5, 1, 9, 3]) == [5, 3]
+
+
+def test_only_one_copy_of_a_repeated_extreme_is_removed() -> None:
+    assert trim([1, 1, 5, 9]) == [1, 5]
+
+
+def test_a_series_too_short_to_trim_trims_to_nothing() -> None:
+    assert trim([]) == []
+""",
+        imports="from trim_extremes import trim\n",
+    ),
+)
+
+_G071 = D2TaskSpec(
+    template_id="d7_numeric.age_on_date",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-age-on-date",
+    module="age_on_date",
+    module_doc="Working out somebody's age on a date, in whole years they have actually had.",
+    issue=(
+        "age() is documented to count the birthdays that have happened, not the years the "
+        "calendar has turned over. Callers report people born in December being a year older "
+        "than they are for most of the year, and a date of birth typed in the future coming "
+        "back as a negative age rather than as the typing mistake it is."
+    ),
+    expected=(
+        "age(born, today) takes (year, month, day) tuples and returns the whole years lived. A "
+        "birthday not yet reached this year counts one less, a birthday falling exactly today "
+        "counts, and a date of birth after today raises ValueError."
+    ),
+    baseline_reason=(
+        "it subtracts one year from the other and never looks at the month and day, and it "
+        "never asks whether the date of birth is in the future"
+    ),
+    edge_cases=(
+        "a birthday not yet reached this year counts one less",
+        "a date of birth in the future is refused",
+    ),
+    baseline="""def age(born, today):
+    \"\"\"Return the whole years lived on a date.\"\"\"
+    return today[0] - born[0]""",
+    variant_one="""def age(born, today):
+    \"\"\"Return the whole years lived on a date.\"\"\"
+    if today < born:
+        raise ValueError("not born yet")
+    years = today[0] - born[0]
+    if (today[1], today[2]) < (born[1], born[2]):
+        years -= 1
+    return years""",
+    variant_two="""def age(born, today):
+    \"\"\"Return the whole years lived on a date.\"\"\"
+    if born > today:
+        raise ValueError("not born yet")
+    years = today[0] - born[0]
+    reached = today[1] > born[1] or (today[1] == born[1] and today[2] >= born[2])
+    return years if reached else years - 1""",
+    variant_three="""def age(born, today):
+    \"\"\"Return the whole years lived on a date.\"\"\"
+    years = today[0] - born[0]
+    if (today[1], today[2]) < (born[1], born[2]):
+        years -= 1
+    return years""",
+    variant_four="""def age(born, today):
+    \"\"\"Return the whole years lived on a date.\"\"\"
+    if today < born:
+        raise ValueError("not born yet")
+    return today[0] - born[0]""",
+    visible_test=_test_module(
+        "age_on_date",
+        "Published contract for the age on a date.",
+        """
+def test_a_birthday_already_past_counts_the_years() -> None:
+    assert age((1990, 3, 4), (2026, 8, 10)) == 36
+
+
+def test_a_birthday_falling_today_counts() -> None:
+    assert age((2000, 1, 1), (2020, 1, 1)) == 20
+""",
+        imports="from age_on_date import age\n",
+    ),
+    hidden_test=_test_module(
+        "age_on_date",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_birthday_already_past_counts_the_years() -> None:
+    assert age((1990, 3, 4), (2026, 8, 10)) == 36
+
+
+def test_a_birthday_not_yet_reached_counts_one_less() -> None:
+    assert age((1990, 12, 1), (2026, 8, 10)) == 35
+
+
+def test_a_date_of_birth_in_the_future_is_refused() -> None:
+    with pytest.raises(ValueError):
+        age((2030, 1, 1), (2026, 8, 10))
+""",
+        imports="from age_on_date import age\n",
+    ),
+)
+
+_G072 = D2TaskSpec(
+    template_id="d7_transform.order_nulls_last",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-order-nulls-last",
+    module="order_nulls_last",
+    module_doc="Ordering rows by a field, with the rows that have no such field at the back.",
+    issue=(
+        "order() is documented to put the rows that do not carry the field at the back, and to "
+        "leave rows that tie in the order they arrived. Callers report rows with the field "
+        "missing sorting to the front as though they held the smallest value, and tied rows "
+        "coming back shuffled by something nobody asked to sort on."
+    ),
+    expected=(
+        "order(rows, field) returns the rows in ascending order of the named field. A row that "
+        "does not carry the field comes after every row that does, and rows whose values are "
+        "equal keep the order they arrived in."
+    ),
+    baseline_reason=(
+        "it reads a missing field as nothing at all, which sorts those rows to the front, and "
+        "it breaks a tie on the rendered row rather than leaving the tie alone"
+    ),
+    edge_cases=(
+        "a row that does not carry the field comes last",
+        "rows with equal values keep the order they arrived in",
+    ),
+    baseline="""def order(rows, field):
+    \"\"\"Order the rows by a field.\"\"\"
+    return sorted(rows, key=lambda row: (row.get(field, 0), str(row)))""",
+    variant_one="""def order(rows, field):
+    \"\"\"Order the rows by a field.\"\"\"
+    carried = [row for row in rows if field in row]
+    missing = [row for row in rows if field not in row]
+    return sorted(carried, key=lambda row: row[field]) + missing""",
+    variant_two="""def order(rows, field):
+    \"\"\"Order the rows by a field.\"\"\"
+    def place(item):
+        index, row = item
+        if field not in row:
+            return (1, 0, index)
+        return (0, row[field], index)
+
+    return [row for _, row in sorted(enumerate(rows), key=place)]""",
+    variant_three="""def order(rows, field):
+    \"\"\"Order the rows by a field.\"\"\"
+    carried = [row for row in rows if field in row]
+    missing = [row for row in rows if field not in row]
+    return sorted(carried, key=lambda row: (row[field], str(row))) + missing""",
+    variant_four="""def order(rows, field):
+    \"\"\"Order the rows by a field.\"\"\"
+    return sorted(rows, key=lambda row: row.get(field, 0))""",
+    visible_test=_test_module(
+        "order_nulls_last",
+        "Published contract for ordering the rows.",
+        """
+def test_rows_are_ordered_by_the_field() -> None:
+    assert order([{"v": 2}, {"v": 1}], "v") == [{"v": 1}, {"v": 2}]
+
+
+def test_no_rows_order_into_no_rows() -> None:
+    assert order([], "v") == []
+""",
+        imports="from order_nulls_last import order\n",
+    ),
+    hidden_test=_test_module(
+        "order_nulls_last",
+        "The part of the contract the published tests do not state.",
+        """
+def test_rows_are_ordered_by_the_field() -> None:
+    assert order([{"v": 2}, {"v": 1}], "v") == [{"v": 1}, {"v": 2}]
+
+
+def test_a_row_without_the_field_comes_last() -> None:
+    assert order([{"v": 2}, {"x": 1}], "v") == [{"v": 2}, {"x": 1}]
+
+
+def test_rows_with_equal_values_keep_their_order() -> None:
+    rows = [{"v": 1, "n": "b"}, {"v": 1, "n": "a"}]
+    assert order(rows, "v") == [{"v": 1, "n": "b"}, {"v": 1, "n": "a"}]
+""",
+        imports="from order_nulls_last import order\n",
+    ),
+)
+
+_G073 = D2TaskSpec(
+    template_id="d7_error.error_mode",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-error-mode",
+    module="error_mode",
+    module_doc="Honouring the mode the caller asked for when an item goes wrong.",
+    issue=(
+        "process() is documented to take a mode saying what to do about an item that fails, and "
+        "to refuse a mode it does not know. Callers report asking it to stop and watching it "
+        "carry on regardless, and a mode typed wrongly being treated as 'skip' so that the "
+        "mistake never surfaces."
+    ),
+    expected=(
+        "process(items, worker, on_error) returns what the worker made of each item. Under "
+        "'skip' an item that fails is left out and the rest are still worked; under 'stop' the "
+        "failure reaches the caller at once. Any other mode raises ValueError before any item "
+        "is worked at all."
+    ),
+    baseline_reason=(
+        "it swallows every failure whatever the mode says, so 'stop' does not stop, and it "
+        "never checks the mode, so an unknown one behaves like 'skip'"
+    ),
+    edge_cases=(
+        "the stop mode stops at the first failure",
+        "a mode nobody defined is refused",
+    ),
+    baseline="""def process(items, worker, on_error):
+    \"\"\"Work each item, doing what the mode says about failures.\"\"\"
+    results = []
+    for item in items:
+        try:
+            results.append(worker(item))
+        except Exception:
+            continue
+    return results""",
+    variant_one="""def process(items, worker, on_error):
+    \"\"\"Work each item, doing what the mode says about failures.\"\"\"
+    if on_error not in ("skip", "stop"):
+        raise ValueError("unknown mode: " + str(on_error))
+    results = []
+    for item in items:
+        try:
+            results.append(worker(item))
+        except Exception:
+            if on_error == "stop":
+                raise
+    return results""",
+    variant_two="""def process(items, worker, on_error):
+    \"\"\"Work each item, doing what the mode says about failures.\"\"\"
+    if on_error == "skip":
+        skipping = True
+    elif on_error == "stop":
+        skipping = False
+    else:
+        raise ValueError("unknown mode: " + str(on_error))
+    results = []
+    for item in items:
+        try:
+            results.append(worker(item))
+        except Exception:
+            if not skipping:
+                raise
+    return results""",
+    variant_three="""def process(items, worker, on_error):
+    \"\"\"Work each item, doing what the mode says about failures.\"\"\"
+    results = []
+    for item in items:
+        try:
+            results.append(worker(item))
+        except Exception:
+            if on_error == "stop":
+                raise
+    return results""",
+    variant_four="""def process(items, worker, on_error):
+    \"\"\"Work each item, doing what the mode says about failures.\"\"\"
+    if on_error not in ("skip", "stop"):
+        raise ValueError("unknown mode: " + str(on_error))
+    results = []
+    for item in items:
+        try:
+            results.append(worker(item))
+        except Exception:
+            continue
+    return results""",
+    visible_test=_test_module(
+        "error_mode",
+        "Published contract for the error mode.",
+        """
+def _double(item):
+    if item == 0:
+        raise ValueError("cannot double nothing")
+    return item * 2
+
+
+def test_every_item_working_gives_every_result() -> None:
+    assert process([1, 2], _double, "skip") == [2, 4]
+
+
+def test_the_skip_mode_leaves_the_failure_out() -> None:
+    assert process([1, 0, 2], _double, "skip") == [2, 4]
+""",
+        imports="from error_mode import process\n",
+    ),
+    hidden_test=_test_module(
+        "error_mode",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def _double(item):
+    if item == 0:
+        raise ValueError("cannot double nothing")
+    return item * 2
+
+
+def test_the_skip_mode_leaves_the_failure_out() -> None:
+    assert process([1, 0, 2], _double, "skip") == [2, 4]
+
+
+def test_the_stop_mode_stops_at_the_first_failure() -> None:
+    with pytest.raises(ValueError):
+        process([1, 0, 2], _double, "stop")
+
+
+def test_a_mode_nobody_defined_is_refused() -> None:
+    with pytest.raises(ValueError):
+        process([1], _double, "carry on")
+""",
+        imports="from error_mode import process\n",
+    ),
+)
+
+_G074 = D2TaskSpec(
+    template_id="d7_parsing.file_extension",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-file-extension",
+    module="file_extension",
+    module_doc="Splitting a file name where the extension actually starts.",
+    issue=(
+        "split_name() is documented to take the extension from the last dot, and to treat a "
+        "name that begins with a dot as a name rather than as a bare extension. Callers report "
+        "'archive.tar.gz' coming back with an extension of 'tar.gz', and a dotfile coming back "
+        "with no name at all."
+    ),
+    expected=(
+        "split_name(name) returns (stem, extension), where the extension is whatever follows "
+        "the last dot, without the dot. A name with no dot has an empty extension, and a name "
+        "whose only dot is the first character is all stem."
+    ),
+    baseline_reason=(
+        "it splits at the first dot rather than the last, and the first dot of a dotfile is the "
+        "one that starts its name"
+    ),
+    edge_cases=(
+        "the extension is whatever follows the last dot",
+        "a name whose only dot begins it is all name",
+    ),
+    baseline="""def split_name(name):
+    \"\"\"Split a file name into its stem and extension.\"\"\"
+    stem, _, extension = name.partition(".")
+    return stem, extension""",
+    variant_one="""def split_name(name):
+    \"\"\"Split a file name into its stem and extension.\"\"\"
+    index = name.rfind(".")
+    if index <= 0:
+        return name, ""
+    return name[:index], name[index + 1 :]""",
+    variant_two="""def split_name(name):
+    \"\"\"Split a file name into its stem and extension.\"\"\"
+    if "." not in name[1:]:
+        return name, ""
+    stem, _, extension = name.rpartition(".")
+    return stem, extension""",
+    variant_three="""def split_name(name):
+    \"\"\"Split a file name into its stem and extension.\"\"\"
+    index = name.rfind(".")
+    if index < 0:
+        return name, ""
+    return name[:index], name[index + 1 :]""",
+    variant_four="""def split_name(name):
+    \"\"\"Split a file name into its stem and extension.\"\"\"
+    if "." not in name[1:]:
+        return name, ""
+    stem, _, extension = name.partition(".")
+    return stem, extension""",
+    visible_test=_test_module(
+        "file_extension",
+        "Published contract for splitting a file name.",
+        """
+def test_a_name_with_one_dot_splits_at_it() -> None:
+    assert split_name("report.txt") == ("report", "txt")
+
+
+def test_a_name_with_no_dot_has_no_extension() -> None:
+    assert split_name("plain") == ("plain", "")
+""",
+        imports="from file_extension import split_name\n",
+    ),
+    hidden_test=_test_module(
+        "file_extension",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_name_with_one_dot_splits_at_it() -> None:
+    assert split_name("report.txt") == ("report", "txt")
+
+
+def test_the_extension_is_whatever_follows_the_last_dot() -> None:
+    assert split_name("archive.tar.gz") == ("archive.tar", "gz")
+
+
+def test_a_name_whose_only_dot_begins_it_is_all_name() -> None:
+    assert split_name(".bashrc") == (".bashrc", "")
+""",
+        imports="from file_extension import split_name\n",
+    ),
+)
+
+_G075 = D2TaskSpec(
+    template_id="d7_state.booking_slots",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-booking-slots",
+    module="booking_slots",
+    module_doc="Booking a slot that nobody else has, and not booking it twice.",
+    issue=(
+        "book() is documented to refuse a slot that runs over one already booked, and to treat "
+        "the same booking sent twice as the one booking it is. Callers report double bookings "
+        "going through, and a retry of a booking that already succeeded showing up as a second "
+        "identical slot."
+    ),
+    expected=(
+        "book(bookings, start, end) returns the bookings with the new slot added, in start "
+        "order. A slot identical to one already booked leaves the bookings as they were, and a "
+        "slot running over an existing one raises ValueError. Slots that merely touch at an end "
+        "do not run over each other."
+    ),
+    baseline_reason=(
+        "it adds whatever it is given, so it never notices a slot running over one already "
+        "there, nor that the slot it is adding is one it already holds"
+    ),
+    edge_cases=(
+        "a slot running over an existing booking is refused",
+        "booking the same slot again changes nothing",
+    ),
+    baseline="""def book(bookings, start, end):
+    \"\"\"Add a booking to the list.\"\"\"
+    return sorted(list(bookings) + [(start, end)])""",
+    variant_one="""def book(bookings, start, end):
+    \"\"\"Add a booking to the list.\"\"\"
+    if (start, end) in bookings:
+        return list(bookings)
+    for other_start, other_end in bookings:
+        if start < other_end and other_start < end:
+            raise ValueError("slot runs over an existing booking")
+    return sorted(list(bookings) + [(start, end)])""",
+    variant_two="""def book(bookings, start, end):
+    \"\"\"Add a booking to the list.\"\"\"
+    held = list(bookings)
+    if (start, end) in held:
+        return held
+    clashes = [pair for pair in held if start < pair[1] and pair[0] < end]
+    if clashes:
+        raise ValueError("slot runs over an existing booking")
+    held.append((start, end))
+    return sorted(held)""",
+    variant_three="""def book(bookings, start, end):
+    \"\"\"Add a booking to the list.\"\"\"
+    for other_start, other_end in bookings:
+        if start < other_end and other_start < end:
+            raise ValueError("slot runs over an existing booking")
+    return sorted(list(bookings) + [(start, end)])""",
+    variant_four="""def book(bookings, start, end):
+    \"\"\"Add a booking to the list.\"\"\"
+    if (start, end) in bookings:
+        return list(bookings)
+    return sorted(list(bookings) + [(start, end)])""",
+    visible_test=_test_module(
+        "booking_slots",
+        "Published contract for booking a slot.",
+        """
+def test_a_free_slot_is_booked() -> None:
+    assert book([(10, 12)], 14, 16) == [(10, 12), (14, 16)]
+
+
+def test_slots_touching_at_an_end_both_stand() -> None:
+    assert book([(10, 12)], 12, 14) == [(10, 12), (12, 14)]
+
+
+def test_the_first_booking_of_the_day_is_booked() -> None:
+    assert book([], 10, 12) == [(10, 12)]
+""",
+        imports="from booking_slots import book\n",
+    ),
+    hidden_test=_test_module(
+        "booking_slots",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_free_slot_is_booked() -> None:
+    assert book([(10, 12)], 14, 16) == [(10, 12), (14, 16)]
+
+
+def test_a_slot_running_over_an_existing_booking_is_refused() -> None:
+    with pytest.raises(ValueError):
+        book([(10, 14)], 12, 16)
+
+
+def test_booking_the_same_slot_again_changes_nothing() -> None:
+    assert book([(10, 12)], 10, 12) == [(10, 12)]
+""",
+        imports="from booking_slots import book\n",
+    ),
+)
+
+_G076 = D2TaskSpec(
+    template_id="d7_boundary.nth_occurrence",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-nth-occurrence",
+    module="nth_occurrence",
+    module_doc="Finding where something appears for the nth time, and saying when it does not.",
+    issue=(
+        "nth_index() is documented to answer with no position at all when the value does not "
+        "appear as many times as asked. Callers report getting the position of the last "
+        "appearance instead, which reads as a match and is not one, and asking for the "
+        "zeroth appearance being answered rather than refused."
+    ),
+    expected=(
+        "nth_index(items, wanted, n) returns the position of the nth appearance of the value, "
+        "counting appearances from one. A value appearing fewer than n times has no position "
+        "and returns None, and an n below one raises ValueError."
+    ),
+    baseline_reason=(
+        "it keeps the last appearance it saw and hands that back when it runs out, rather than "
+        "admitting there was no nth one, and it never asks whether n counts from one"
+    ),
+    edge_cases=(
+        "too few appearances is no position at all",
+        "an appearance below the first is refused",
+    ),
+    baseline="""def nth_index(items, wanted, n):
+    \"\"\"Return where a value appears for the nth time.\"\"\"
+    found = None
+    seen = 0
+    for position, item in enumerate(items):
+        if item == wanted:
+            seen += 1
+            found = position
+            if seen == n:
+                return position
+    return found""",
+    variant_one="""def nth_index(items, wanted, n):
+    \"\"\"Return where a value appears for the nth time.\"\"\"
+    if n < 1:
+        raise ValueError("appearances are counted from one")
+    seen = 0
+    for position, item in enumerate(items):
+        if item == wanted:
+            seen += 1
+            if seen == n:
+                return position
+    return None""",
+    variant_two="""def nth_index(items, wanted, n):
+    \"\"\"Return where a value appears for the nth time.\"\"\"
+    if not n >= 1:
+        raise ValueError("appearances are counted from one")
+    places = [position for position, item in enumerate(items) if item == wanted]
+    return places[n - 1] if len(places) >= n else None""",
+    variant_three="""def nth_index(items, wanted, n):
+    \"\"\"Return where a value appears for the nth time.\"\"\"
+    places = [position for position, item in enumerate(items) if item == wanted]
+    return places[n - 1] if len(places) >= n else None""",
+    variant_four="""def nth_index(items, wanted, n):
+    \"\"\"Return where a value appears for the nth time.\"\"\"
+    if n < 1:
+        raise ValueError("appearances are counted from one")
+    found = None
+    seen = 0
+    for position, item in enumerate(items):
+        if item == wanted:
+            seen += 1
+            found = position
+            if seen == n:
+                return position
+    return found""",
+    visible_test=_test_module(
+        "nth_occurrence",
+        "Published contract for finding the nth appearance.",
+        """
+def test_the_second_appearance_is_found() -> None:
+    assert nth_index(["a", "b", "a"], "a", 2) == 2
+
+
+def test_the_first_appearance_is_found() -> None:
+    assert nth_index(["a"], "a", 1) == 0
+""",
+        imports="from nth_occurrence import nth_index\n",
+    ),
+    hidden_test=_test_module(
+        "nth_occurrence",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_the_second_appearance_is_found() -> None:
+    assert nth_index(["a", "b", "a"], "a", 2) == 2
+
+
+def test_too_few_appearances_is_no_position_at_all() -> None:
+    assert nth_index(["a", "b"], "a", 2) is None
+
+
+def test_an_appearance_below_the_first_is_refused() -> None:
+    with pytest.raises(ValueError):
+        nth_index(["a"], "a", 0)
+""",
+        imports="from nth_occurrence import nth_index\n",
+    ),
+)
+
+_G077 = D2TaskSpec(
+    template_id="d7_numeric.fuel_stops",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-fuel-stops",
+    module="fuel_stops",
+    module_doc="Counting the refuelling stops a journey needs, starting with a full tank.",
+    issue=(
+        "stops() is documented to count the stops rather than the tankfuls, so a journey of "
+        "exactly two tanks needs one stop and not two. Callers report being sent to a filling "
+        "station standing at their destination, and a tank of zero taking the whole calculation "
+        "down rather than being refused."
+    ),
+    expected=(
+        "stops(distance, tank) returns how many refuelling stops a journey needs when it starts "
+        "with a full tank. A journey within one tank needs none, and a journey of exactly a "
+        "whole number of tanks needs one stop fewer than tanks. A tank of nothing raises "
+        "ValueError."
+    ),
+    baseline_reason=(
+        "it divides the distance by the tank, which counts a stop at the destination of a "
+        "journey that comes out exactly, and it divides before asking whether the tank holds "
+        "anything"
+    ),
+    edge_cases=(
+        "a journey of exactly whole tanks needs one stop fewer",
+        "a tank that holds nothing is refused",
+    ),
+    baseline="""def stops(distance, tank):
+    \"\"\"Count the refuelling stops a journey needs.\"\"\"
+    return distance // tank""",
+    variant_one="""def stops(distance, tank):
+    \"\"\"Count the refuelling stops a journey needs.\"\"\"
+    if tank <= 0:
+        raise ValueError("a tank must hold something")
+    if distance <= tank:
+        return 0
+    return -(-distance // tank) - 1""",
+    variant_two="""def stops(distance, tank):
+    \"\"\"Count the refuelling stops a journey needs.\"\"\"
+    if not tank > 0:
+        raise ValueError("a tank must hold something")
+    travelled = tank
+    count = 0
+    while travelled < distance:
+        travelled += tank
+        count += 1
+    return count""",
+    variant_three="""def stops(distance, tank):
+    \"\"\"Count the refuelling stops a journey needs.\"\"\"
+    if distance <= tank:
+        return 0
+    return -(-distance // tank) - 1""",
+    variant_four="""def stops(distance, tank):
+    \"\"\"Count the refuelling stops a journey needs.\"\"\"
+    if not tank > 0:
+        raise ValueError("a tank must hold something")
+    tankfuls = distance // tank
+    return tankfuls""",
+    visible_test=_test_module(
+        "fuel_stops",
+        "Published contract for counting the stops.",
+        """
+def test_a_journey_past_one_tank_needs_a_stop() -> None:
+    assert stops(150, 100) == 1
+
+
+def test_a_journey_within_one_tank_needs_none() -> None:
+    assert stops(50, 100) == 0
+""",
+        imports="from fuel_stops import stops\n",
+    ),
+    hidden_test=_test_module(
+        "fuel_stops",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_journey_past_one_tank_needs_a_stop() -> None:
+    assert stops(150, 100) == 1
+
+
+def test_a_journey_of_exactly_whole_tanks_needs_one_fewer() -> None:
+    assert stops(200, 100) == 1
+
+
+def test_a_tank_that_holds_nothing_is_refused() -> None:
+    with pytest.raises(ValueError):
+        stops(100, 0)
+""",
+        imports="from fuel_stops import stops\n",
+    ),
+)
+
+_G078 = D2TaskSpec(
+    template_id="d7_numeric.discount_ladder",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-discount-ladder",
+    module="discount_ladder",
+    module_doc="Giving the best discount a spend reaches, and only that one.",
+    issue=(
+        "discount() is documented to give the discount of the highest band a spend reaches, not "
+        "the discounts of every band it has passed. Callers report a large order collecting "
+        "every band at once and coming out nearly free, and an order landing exactly on a band "
+        "being told it has not reached it."
+    ),
+    expected=(
+        "discount(spend, bands) takes (threshold, percent) bands in any order and returns the "
+        "percent of the highest threshold the spend reaches. A spend exactly at a threshold "
+        "reaches it, and a spend reaching no band gets nothing off."
+    ),
+    baseline_reason=(
+        "it adds up the percent of every band the spend has passed rather than taking the best "
+        "one, and its comparison does not count a spend landing exactly on a threshold"
+    ),
+    edge_cases=(
+        "only the best band applies, not every band passed",
+        "a spend exactly at a threshold reaches it",
+    ),
+    baseline="""def discount(spend, bands):
+    \"\"\"Return the percent off a spend earns.\"\"\"
+    total = 0
+    for threshold, percent in bands:
+        if spend > threshold:
+            total += percent
+    return total""",
+    variant_one="""def discount(spend, bands):
+    \"\"\"Return the percent off a spend earns.\"\"\"
+    best = 0
+    reached = None
+    for threshold, percent in bands:
+        if spend >= threshold and (reached is None or threshold > reached):
+            reached = threshold
+            best = percent
+    return best""",
+    variant_two="""def discount(spend, bands):
+    \"\"\"Return the percent off a spend earns.\"\"\"
+    applicable = [(threshold, percent) for threshold, percent in bands if threshold <= spend]
+    if not applicable:
+        return 0
+    return max(applicable)[1]""",
+    variant_three="""def discount(spend, bands):
+    \"\"\"Return the percent off a spend earns.\"\"\"
+    applicable = [(threshold, percent) for threshold, percent in bands if threshold < spend]
+    if not applicable:
+        return 0
+    return max(applicable)[1]""",
+    variant_four="""def discount(spend, bands):
+    \"\"\"Return the percent off a spend earns.\"\"\"
+    total = 0
+    for threshold, percent in bands:
+        if spend >= threshold:
+            total += percent
+    return total""",
+    visible_test=_test_module(
+        "discount_ladder",
+        "Published contract for the discount ladder.",
+        """
+def test_a_spend_past_one_band_earns_that_band() -> None:
+    assert discount(150, [(100, 10), (500, 20)]) == 10
+
+
+def test_a_spend_reaching_no_band_earns_nothing() -> None:
+    assert discount(50, [(100, 10)]) == 0
+""",
+        imports="from discount_ladder import discount\n",
+    ),
+    hidden_test=_test_module(
+        "discount_ladder",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_spend_past_one_band_earns_that_band() -> None:
+    assert discount(150, [(100, 10), (500, 20)]) == 10
+
+
+def test_only_the_best_band_applies() -> None:
+    assert discount(600, [(100, 10), (500, 20)]) == 20
+
+
+def test_a_spend_exactly_at_a_threshold_reaches_it() -> None:
+    assert discount(100, [(100, 10)]) == 10
+""",
+        imports="from discount_ladder import discount\n",
+    ),
+)
+
+_G079 = D2TaskSpec(
+    template_id="d7_transform.join_on_key",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-join-on-key",
+    module="join_on_key",
+    module_doc="Joining two lists of rows on a key, once per match.",
+    issue=(
+        "join() is documented to produce one row per matching pair and to leave out a row that "
+        "matches nothing. Callers report a row matching two rows on the other side producing "
+        "one result rather than two, so half the matches vanish, and rows matching nothing "
+        "coming through half-filled as though they had matched."
+    ),
+    expected=(
+        "join(left, right, key) returns one merged mapping per matching pair, in the order of "
+        "the left rows. A left row matching several right rows makes one result per match, a "
+        "left row matching none makes none, and the left row's own fields win a clash."
+    ),
+    baseline_reason=(
+        "it files the right rows under their key one at a time, so only the last row of a "
+        "repeated key survives, and it merges a row that matched nothing with nothing at all"
+    ),
+    edge_cases=(
+        "a left row matching twice makes two results",
+        "a left row matching nothing is left out",
+    ),
+    baseline="""def join(left, right, key):
+    \"\"\"Join two lists of rows on a key.\"\"\"
+    index = {row[key]: row for row in right}
+    joined = []
+    for row in left:
+        other = index.get(row[key])
+        joined.append({**(other or {}), **row})
+    return joined""",
+    variant_one="""def join(left, right, key):
+    \"\"\"Join two lists of rows on a key.\"\"\"
+    joined = []
+    for row in left:
+        for other in right:
+            if other[key] == row[key]:
+                joined.append({**other, **row})
+    return joined""",
+    variant_two="""def join(left, right, key):
+    \"\"\"Join two lists of rows on a key.\"\"\"
+    index = {}
+    for other in right:
+        index.setdefault(other[key], []).append(other)
+    joined = []
+    for row in left:
+        for other in index.get(row[key], []):
+            merged = dict(other)
+            merged.update(row)
+            joined.append(merged)
+    return joined""",
+    variant_three="""def join(left, right, key):
+    \"\"\"Join two lists of rows on a key.\"\"\"
+    joined = []
+    for row in left:
+        matches = [other for other in right if other[key] == row[key]]
+        if not matches:
+            joined.append(dict(row))
+        for other in matches:
+            joined.append({**other, **row})
+    return joined""",
+    variant_four="""def join(left, right, key):
+    \"\"\"Join two lists of rows on a key.\"\"\"
+    index = {other[key]: other for other in right}
+    joined = []
+    for row in left:
+        if row[key] in index:
+            joined.append({**index[row[key]], **row})
+    return joined""",
+    visible_test=_test_module(
+        "join_on_key",
+        "Published contract for joining on a key.",
+        """
+def test_a_matching_pair_merges() -> None:
+    assert join([{"id": 1, "a": 1}], [{"id": 1, "b": 2}], "id") == [{"id": 1, "a": 1, "b": 2}]
+
+
+def test_nothing_on_the_left_joins_to_nothing() -> None:
+    assert join([], [{"id": 1}], "id") == []
+""",
+        imports="from join_on_key import join\n",
+    ),
+    hidden_test=_test_module(
+        "join_on_key",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_matching_pair_merges() -> None:
+    assert join([{"id": 1, "a": 1}], [{"id": 1, "b": 2}], "id") == [{"id": 1, "a": 1, "b": 2}]
+
+
+def test_a_left_row_matching_twice_makes_two_results() -> None:
+    right = [{"id": 1, "b": 2}, {"id": 1, "b": 3}]
+    assert join([{"id": 1, "a": 1}], right, "id") == [
+        {"id": 1, "a": 1, "b": 2},
+        {"id": 1, "a": 1, "b": 3},
+    ]
+
+
+def test_a_left_row_matching_nothing_is_left_out() -> None:
+    assert join([{"id": 9, "a": 1}], [{"id": 1, "b": 2}], "id") == []
+""",
+        imports="from join_on_key import join\n",
+    ),
+)
+
+_G080 = D2TaskSpec(
+    template_id="d7_error.admit_order",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-admit-order",
+    module="admit_order",
+    module_doc="Asking the cheap question first, and answering with a plain yes or no.",
+    issue=(
+        "admit() is documented to run the expensive check only when the cheap one has already "
+        "passed, which is the whole reason there are two of them. Callers report the expensive "
+        "check running on requests the cheap one had already turned away, and the answer coming "
+        "back as whatever a check happened to return rather than as a yes or a no."
+    ),
+    expected=(
+        "admit(request, cheap, expensive) returns True when both checks pass and False "
+        "otherwise. The expensive check is not called at all when the cheap one fails, and the "
+        "answer is always a plain True or False whatever the checks themselves returned."
+    ),
+    baseline_reason=(
+        "it calls both checks before combining them, so the expensive one runs whatever the "
+        "cheap one said, and it hands back the value the last check returned"
+    ),
+    edge_cases=(
+        "the expensive check is not run when the cheap one fails",
+        "the answer is a plain yes or no",
+    ),
+    baseline="""def admit(request, cheap, expensive):
+    \"\"\"Say whether a request is admitted.\"\"\"
+    first = cheap(request)
+    second = expensive(request)
+    return first and second""",
+    variant_one="""def admit(request, cheap, expensive):
+    \"\"\"Say whether a request is admitted.\"\"\"
+    if not cheap(request):
+        return False
+    return bool(expensive(request))""",
+    variant_two="""def admit(request, cheap, expensive):
+    \"\"\"Say whether a request is admitted.\"\"\"
+    return bool(cheap(request)) and bool(expensive(request))""",
+    variant_three="""def admit(request, cheap, expensive):
+    \"\"\"Say whether a request is admitted.\"\"\"
+    return cheap(request) and expensive(request)""",
+    variant_four="""def admit(request, cheap, expensive):
+    \"\"\"Say whether a request is admitted.\"\"\"
+    first = bool(cheap(request))
+    second = bool(expensive(request))
+    return first and second""",
+    visible_test=_test_module(
+        "admit_order",
+        "Published contract for admitting a request.",
+        """
+def test_both_checks_passing_admits() -> None:
+    assert admit("r", lambda request: True, lambda request: True) is True
+
+
+def test_the_expensive_check_can_turn_it_away() -> None:
+    assert admit("r", lambda request: True, lambda request: False) is False
+""",
+        imports="from admit_order import admit\n",
+    ),
+    hidden_test=_test_module(
+        "admit_order",
+        "The part of the contract the published tests do not state.",
+        """
+def test_both_checks_passing_admits() -> None:
+    assert admit("r", lambda request: True, lambda request: True) is True
+
+
+def test_the_expensive_check_is_not_run_when_the_cheap_one_fails() -> None:
+    called = []
+
+    def expensive(request):
+        called.append(request)
+        return True
+
+    assert admit("r", lambda request: False, expensive) is False
+    assert called == []
+
+
+def test_the_answer_is_a_plain_yes_or_no() -> None:
+    assert admit("r", lambda request: 1, lambda request: 2) is True
+""",
+        imports="from admit_order import admit\n",
+    ),
+)
+
+_G081 = D2TaskSpec(
+    template_id="d7_parsing.two_digit_year",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-two-digit-year",
+    module="two_digit_year",
+    module_doc="Deciding which century a year written with two digits belongs to.",
+    issue=(
+        "expand_year() is documented to put a two-digit year at or below the pivot in this "
+        "century and one above it in the last, and to leave a year already written in full "
+        "alone. Callers report the pivot year itself landing in the wrong century, and "
+        "four-digit years coming back nineteen hundred years too late."
+    ),
+    expected=(
+        "expand_year(text) returns the four-digit year. A two-digit year at or below sixty "
+        "eight is in the two thousands and one above it is in the nineteen hundreds. A year "
+        "already written with four digits is returned as it is, and anything else raises "
+        "ValueError."
+    ),
+    baseline_reason=(
+        "its pivot test excludes the pivot year itself, and it adds a century to whatever it is "
+        "given without asking how many digits were written"
+    ),
+    edge_cases=(
+        "the pivot year itself is in this century",
+        "a year already written in full is left alone",
+    ),
+    baseline="""def expand_year(text):
+    \"\"\"Expand a two-digit year into a four-digit one.\"\"\"
+    value = int(text)
+    if value < 68:
+        return 2000 + value
+    return 1900 + value""",
+    variant_one="""def expand_year(text):
+    \"\"\"Expand a two-digit year into a four-digit one.\"\"\"
+    if not text.isdigit() or len(text) not in (2, 4):
+        raise ValueError("not a year: " + text)
+    value = int(text)
+    if len(text) == 4:
+        return value
+    return 2000 + value if value <= 68 else 1900 + value""",
+    variant_two="""def expand_year(text):
+    \"\"\"Expand a two-digit year into a four-digit one.\"\"\"
+    if not text.isdigit():
+        raise ValueError("not a year: " + text)
+    if len(text) == 4:
+        return int(text)
+    if len(text) != 2:
+        raise ValueError("not a year: " + text)
+    value = int(text)
+    return 1900 + value if value > 68 else 2000 + value""",
+    variant_three="""def expand_year(text):
+    \"\"\"Expand a two-digit year into a four-digit one.\"\"\"
+    value = int(text)
+    if value <= 68:
+        return 2000 + value
+    return 1900 + value""",
+    variant_four="""def expand_year(text):
+    \"\"\"Expand a two-digit year into a four-digit one.\"\"\"
+    if not text.isdigit():
+        raise ValueError("not a year: " + text)
+    value = int(text)
+    if len(text) == 4:
+        return value
+    if value < 68:
+        return 2000 + value
+    return 1900 + value""",
+    visible_test=_test_module(
+        "two_digit_year",
+        "Published contract for expanding a two-digit year.",
+        """
+def test_a_year_below_the_pivot_is_in_this_century() -> None:
+    assert expand_year("26") == 2026
+
+
+def test_a_year_above_the_pivot_is_in_the_last() -> None:
+    assert expand_year("85") == 1985
+""",
+        imports="from two_digit_year import expand_year\n",
+    ),
+    hidden_test=_test_module(
+        "two_digit_year",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_year_below_the_pivot_is_in_this_century() -> None:
+    assert expand_year("26") == 2026
+
+
+def test_the_pivot_year_itself_is_in_this_century() -> None:
+    assert expand_year("68") == 2068
+
+
+def test_a_year_already_written_in_full_is_left_alone() -> None:
+    assert expand_year("1999") == 1999
+""",
+        imports="from two_digit_year import expand_year\n",
+    ),
+)
+
+_G082 = D2TaskSpec(
+    template_id="d7_state.read_up_to",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-read-up-to",
+    module="read_up_to",
+    module_doc="Marking everything up to a point as read, and nothing beyond it.",
+    issue=(
+        "read_up_to() is documented to mark the messages up to and including the cutoff, and to "
+        "leave the ones beyond it exactly as they were. Callers report the message they named "
+        "staying unread, and messages further down the list that they had already read coming "
+        "back unread again."
+    ),
+    expected=(
+        "read_up_to(messages, cutoff) takes (id, read) pairs in ascending id order and returns "
+        "them with every message whose id is at most the cutoff marked read. A message beyond "
+        "the cutoff keeps the state it had, read or not."
+    ),
+    baseline_reason=(
+        "its comparison stops one short of the cutoff, and it writes a fresh flag onto every "
+        "message rather than only onto the ones it is marking"
+    ),
+    edge_cases=(
+        "the message named by the cutoff is read too",
+        "a message beyond the cutoff keeps the state it had",
+    ),
+    baseline="""def read_up_to(messages, cutoff):
+    \"\"\"Mark the messages up to the cutoff as read.\"\"\"
+    return [(identifier, identifier < cutoff) for identifier, read in messages]""",
+    variant_one="""def read_up_to(messages, cutoff):
+    \"\"\"Mark the messages up to the cutoff as read.\"\"\"
+    return [(identifier, read or identifier <= cutoff) for identifier, read in messages]""",
+    variant_two="""def read_up_to(messages, cutoff):
+    \"\"\"Mark the messages up to the cutoff as read.\"\"\"
+    marked = []
+    for identifier, read in messages:
+        marked.append((identifier, True if identifier <= cutoff else read))
+    return marked""",
+    variant_three="""def read_up_to(messages, cutoff):
+    \"\"\"Mark the messages up to the cutoff as read.\"\"\"
+    return [(identifier, identifier <= cutoff) for identifier, read in messages]""",
+    variant_four="""def read_up_to(messages, cutoff):
+    \"\"\"Mark the messages up to the cutoff as read.\"\"\"
+    return [(identifier, read or identifier < cutoff) for identifier, read in messages]""",
+    visible_test=_test_module(
+        "read_up_to",
+        "Published contract for marking messages read.",
+        """
+def test_messages_before_the_cutoff_are_read() -> None:
+    assert read_up_to([(1, False), (5, False)], 3) == [(1, True), (5, False)]
+
+
+def test_no_messages_mark_nothing() -> None:
+    assert read_up_to([], 3) == []
+""",
+        imports="from read_up_to import read_up_to\n",
+    ),
+    hidden_test=_test_module(
+        "read_up_to",
+        "The part of the contract the published tests do not state.",
+        """
+def test_messages_before_the_cutoff_are_read() -> None:
+    assert read_up_to([(1, False), (5, False)], 3) == [(1, True), (5, False)]
+
+
+def test_the_message_named_by_the_cutoff_is_read_too() -> None:
+    assert read_up_to([(1, False), (3, False)], 3) == [(1, True), (3, True)]
+
+
+def test_a_message_beyond_the_cutoff_keeps_the_state_it_had() -> None:
+    assert read_up_to([(9, True)], 3) == [(9, True)]
+""",
+        imports="from read_up_to import read_up_to\n",
+    ),
+)
+
+_G083 = D2TaskSpec(
+    template_id="d7_boundary.bracketing_span",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-bracketing-span",
+    module="bracketing_span",
+    module_doc="Finding which span of marks a point falls in, and saying when it falls in none.",
+    issue=(
+        "span_for() is documented to give a point landing exactly on a mark to the span that "
+        "starts there. Callers report such a point being given to the span that ends there "
+        "instead, which puts every boundary reading in the wrong bucket, and a point outside "
+        "the marks altogether coming back as nothing rather than being refused."
+    ),
+    expected=(
+        "span_for(marks, point) takes ascending marks and returns the (start, end) pair "
+        "bracketing the point. A point exactly on a mark belongs to the span that starts there, "
+        "and a point before the first mark or at or after the last raises ValueError."
+    ),
+    baseline_reason=(
+        "its comparison closes each span at its end rather than at its start, and it answers "
+        "with nothing at all for a point no span holds"
+    ),
+    edge_cases=(
+        "a point exactly on a mark starts the next span",
+        "a point outside the marks is refused",
+    ),
+    baseline="""def span_for(marks, point):
+    \"\"\"Return the span of marks bracketing a point.\"\"\"
+    for index in range(len(marks) - 1):
+        if marks[index] < point <= marks[index + 1]:
+            return marks[index], marks[index + 1]
+    return None""",
+    variant_one="""def span_for(marks, point):
+    \"\"\"Return the span of marks bracketing a point.\"\"\"
+    for index in range(len(marks) - 1):
+        if marks[index] <= point < marks[index + 1]:
+            return marks[index], marks[index + 1]
+    raise ValueError("point is outside the marks: " + str(point))""",
+    variant_two="""def span_for(marks, point):
+    \"\"\"Return the span of marks bracketing a point.\"\"\"
+    for start, end in zip(marks, marks[1:]):
+        if start <= point < end:
+            return start, end
+    raise ValueError("point is outside the marks: " + str(point))""",
+    variant_three="""def span_for(marks, point):
+    \"\"\"Return the span of marks bracketing a point.\"\"\"
+    for index in range(len(marks) - 1):
+        if marks[index] <= point < marks[index + 1]:
+            return marks[index], marks[index + 1]
+    return None""",
+    variant_four="""def span_for(marks, point):
+    \"\"\"Return the span of marks bracketing a point.\"\"\"
+    for index in range(len(marks) - 1):
+        if marks[index] < point <= marks[index + 1]:
+            return marks[index], marks[index + 1]
+    raise ValueError("point is outside the marks: " + str(point))""",
+    visible_test=_test_module(
+        "bracketing_span",
+        "Published contract for the bracketing span.",
+        """
+def test_a_point_inside_a_span_finds_it() -> None:
+    assert span_for([0, 10, 20], 5) == (0, 10)
+
+
+def test_a_point_in_the_second_span_finds_that() -> None:
+    assert span_for([0, 10, 20], 15) == (10, 20)
+""",
+        imports="from bracketing_span import span_for\n",
+    ),
+    hidden_test=_test_module(
+        "bracketing_span",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_point_inside_a_span_finds_it() -> None:
+    assert span_for([0, 10, 20], 5) == (0, 10)
+
+
+def test_a_point_exactly_on_a_mark_starts_the_next_span() -> None:
+    assert span_for([0, 10, 20], 10) == (10, 20)
+
+
+def test_a_point_outside_the_marks_is_refused() -> None:
+    with pytest.raises(ValueError):
+        span_for([0, 10], 50)
+""",
+        imports="from bracketing_span import span_for\n",
+    ),
+)
+
+_G084 = D2TaskSpec(
+    template_id="d7_numeric.volumetric_weight",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-volumetric-weight",
+    module="volumetric_weight",
+    module_doc="Charging a parcel for its size when its size costs more than its weight.",
+    issue=(
+        "chargeable() is documented to round the volumetric weight up, because a part of a "
+        "kilogram of space is a kilogram of space nobody else can use. Callers report parcels "
+        "being charged a kilogram light, and a divisor of zero taking the whole calculation "
+        "down rather than being refused."
+    ),
+    expected=(
+        "chargeable(actual, length, width, height, divisor) returns the greater of the actual "
+        "weight and the volumetric weight, where the volumetric weight is the volume divided by "
+        "the divisor and rounded up. A divisor of nothing or less raises ValueError."
+    ),
+    baseline_reason=(
+        "its division rounds down, which undercharges every parcel that does not divide "
+        "exactly, and it divides before asking whether the divisor divides anything"
+    ),
+    edge_cases=(
+        "the volumetric weight is rounded up",
+        "a divisor of nothing is refused",
+    ),
+    baseline="""def chargeable(actual, length, width, height, divisor):
+    \"\"\"Return the weight a parcel is charged for.\"\"\"
+    volumetric = (length * width * height) // divisor
+    return max(actual, volumetric)""",
+    variant_one="""def chargeable(actual, length, width, height, divisor):
+    \"\"\"Return the weight a parcel is charged for.\"\"\"
+    if divisor <= 0:
+        raise ValueError("a divisor must be more than nothing")
+    volumetric = -(-(length * width * height) // divisor)
+    return max(actual, volumetric)""",
+    variant_two="""def chargeable(actual, length, width, height, divisor):
+    \"\"\"Return the weight a parcel is charged for.\"\"\"
+    if not divisor > 0:
+        raise ValueError("a divisor must be more than nothing")
+    volume = length * width * height
+    volumetric = volume // divisor
+    if volume % divisor:
+        volumetric += 1
+    return volumetric if volumetric > actual else actual""",
+    variant_three="""def chargeable(actual, length, width, height, divisor):
+    \"\"\"Return the weight a parcel is charged for.\"\"\"
+    volumetric = -(-(length * width * height) // divisor)
+    return max(actual, volumetric)""",
+    variant_four="""def chargeable(actual, length, width, height, divisor):
+    \"\"\"Return the weight a parcel is charged for.\"\"\"
+    if divisor <= 0:
+        raise ValueError("a divisor must be more than nothing")
+    volumetric = (length * width * height) // divisor
+    return max(actual, volumetric)""",
+    visible_test=_test_module(
+        "volumetric_weight",
+        "Published contract for the chargeable weight.",
+        """
+def test_a_volume_dividing_exactly_is_the_volumetric_weight() -> None:
+    assert chargeable(2, 10, 10, 10, 500) == 2
+
+
+def test_a_heavy_parcel_is_charged_for_its_weight() -> None:
+    assert chargeable(9, 10, 10, 10, 500) == 9
+""",
+        imports="from volumetric_weight import chargeable\n",
+    ),
+    hidden_test=_test_module(
+        "volumetric_weight",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_heavy_parcel_is_charged_for_its_weight() -> None:
+    assert chargeable(9, 10, 10, 10, 500) == 9
+
+
+def test_the_volumetric_weight_is_rounded_up() -> None:
+    assert chargeable(1, 10, 10, 10, 300) == 4
+
+
+def test_a_divisor_of_nothing_is_refused() -> None:
+    with pytest.raises(ValueError):
+        chargeable(1, 1, 1, 1, 0)
+""",
+        imports="from volumetric_weight import chargeable\n",
+    ),
+)
+
+_G085 = D2TaskSpec(
+    template_id="d7_numeric.backoff_wait",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-backoff-wait",
+    module="backoff_wait",
+    module_doc="Working out how long to wait before an attempt, and how long is long enough.",
+    issue=(
+        "wait_for() is documented to double the wait with each attempt already made, and never "
+        "to go past the cap. Callers report the wait growing by a fixed step rather than "
+        "doubling, which never backs off far enough, and no cap being applied when it finally "
+        "does grow."
+    ),
+    expected=(
+        "wait_for(attempt, base, cap) returns how long to wait before an attempt, counting "
+        "attempts already made from nothing. The wait is the base doubled once per attempt "
+        "made, and never more than the cap."
+    ),
+    baseline_reason=(
+        "it multiplies the base by the attempt count rather than doubling it, and it hands back "
+        "whatever that comes to without looking at the cap"
+    ),
+    edge_cases=(
+        "each attempt doubles the wait",
+        "the wait never passes the cap",
+    ),
+    baseline="""def wait_for(attempt, base, cap):
+    \"\"\"Return the wait before an attempt.\"\"\"
+    return base * (attempt + 1)""",
+    variant_one="""def wait_for(attempt, base, cap):
+    \"\"\"Return the wait before an attempt.\"\"\"
+    return min(base * (2**attempt), cap)""",
+    variant_two="""def wait_for(attempt, base, cap):
+    \"\"\"Return the wait before an attempt.\"\"\"
+    wait = base
+    for _ in range(attempt):
+        wait = wait * 2
+    return wait if wait < cap else cap""",
+    variant_three="""def wait_for(attempt, base, cap):
+    \"\"\"Return the wait before an attempt.\"\"\"
+    return base * (2**attempt)""",
+    variant_four="""def wait_for(attempt, base, cap):
+    \"\"\"Return the wait before an attempt.\"\"\"
+    return min(base * (attempt + 1), cap)""",
+    visible_test=_test_module(
+        "backoff_wait",
+        "Published contract for the backoff wait.",
+        """
+def test_the_first_attempt_waits_the_base() -> None:
+    assert wait_for(0, 100, 10000) == 100
+
+
+def test_the_second_attempt_waits_twice_the_base() -> None:
+    assert wait_for(1, 100, 10000) == 200
+""",
+        imports="from backoff_wait import wait_for\n",
+    ),
+    hidden_test=_test_module(
+        "backoff_wait",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_first_attempt_waits_the_base() -> None:
+    assert wait_for(0, 100, 10000) == 100
+
+
+def test_each_attempt_doubles_the_wait() -> None:
+    assert wait_for(3, 100, 10000) == 800
+
+
+def test_the_wait_never_passes_the_cap() -> None:
+    assert wait_for(5, 100, 300) == 300
+""",
+        imports="from backoff_wait import wait_for\n",
+    ),
+)
+
+_G086 = D2TaskSpec(
+    template_id="d7_error.two_step_confirm",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-two-step-confirm",
+    module="two_step_confirm",
+    module_doc="Telling a wrong confirmation apart from one that simply took too long.",
+    issue=(
+        "confirm() is documented to raise different errors for a confirmation that does not "
+        "match and one that has expired, because one means try again and the other means start "
+        "again. Callers report both arriving as the same error, and a confirmation used at the "
+        "very moment it expires being accepted."
+    ),
+    expected=(
+        "confirm(pending, token, now) returns True when the token matches and the confirmation "
+        "has not expired. A token that does not match raises ValueError; a matching token used "
+        "at or after the moment it expires raises TimeoutError."
+    ),
+    baseline_reason=(
+        "it tests the token and the expiry in one condition, so both come back as the same "
+        "error, and its expiry test lets the expiring moment itself through"
+    ),
+    edge_cases=(
+        "an expired confirmation is not a mismatch",
+        "the moment it expires it has expired",
+    ),
+    baseline="""def confirm(pending, token, now):
+    \"\"\"Confirm a pending action.\"\"\"
+    if pending["token"] != token or now > pending["expires"]:
+        raise ValueError("cannot confirm")
+    return True""",
+    variant_one="""def confirm(pending, token, now):
+    \"\"\"Confirm a pending action.\"\"\"
+    if pending["token"] != token:
+        raise ValueError("the confirmation does not match")
+    if now >= pending["expires"]:
+        raise TimeoutError("the confirmation has expired")
+    return True""",
+    variant_two="""def confirm(pending, token, now):
+    \"\"\"Confirm a pending action.\"\"\"
+    matches = pending["token"] == token
+    if not matches:
+        raise ValueError("the confirmation does not match")
+    if not now < pending["expires"]:
+        raise TimeoutError("the confirmation has expired")
+    return True""",
+    variant_three="""def confirm(pending, token, now):
+    \"\"\"Confirm a pending action.\"\"\"
+    if pending["token"] != token:
+        raise ValueError("the confirmation does not match")
+    if now > pending["expires"]:
+        raise TimeoutError("the confirmation has expired")
+    return True""",
+    variant_four="""def confirm(pending, token, now):
+    \"\"\"Confirm a pending action.\"\"\"
+    if pending["token"] != token or now >= pending["expires"]:
+        raise ValueError("cannot confirm")
+    return True""",
+    visible_test=_test_module(
+        "two_step_confirm",
+        "Published contract for confirming an action.",
+        """
+import pytest
+
+
+def test_a_matching_confirmation_in_time_is_accepted() -> None:
+    assert confirm({"token": "abc", "expires": 100}, "abc", 50) is True
+
+
+def test_a_confirmation_that_does_not_match_is_refused() -> None:
+    with pytest.raises(ValueError):
+        confirm({"token": "abc", "expires": 100}, "xyz", 50)
+""",
+        imports="from two_step_confirm import confirm\n",
+    ),
+    hidden_test=_test_module(
+        "two_step_confirm",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_matching_confirmation_in_time_is_accepted() -> None:
+    assert confirm({"token": "abc", "expires": 100}, "abc", 50) is True
+
+
+def test_an_expired_confirmation_is_not_a_mismatch() -> None:
+    with pytest.raises(TimeoutError):
+        confirm({"token": "abc", "expires": 100}, "abc", 150)
+
+
+def test_the_moment_it_expires_it_has_expired() -> None:
+    with pytest.raises((ValueError, TimeoutError)):
+        confirm({"token": "abc", "expires": 100}, "abc", 100)
+""",
+        imports="from two_step_confirm import confirm\n",
+    ),
+)
+
+_G087 = D2TaskSpec(
+    template_id="d7_parsing.negated_flag",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-negated-flag",
+    module="negated_flag",
+    module_doc="Reading a flag and its negation, without negating flags nobody negated.",
+    issue=(
+        "read_flag() is documented to read '--no-' as a negation and to leave alone a flag "
+        "whose name merely starts with those two letters. Callers report '--nothing' arriving "
+        "as a negated '--thing', and a bare '--no-' with no flag after it being accepted as a "
+        "negation of nothing at all."
+    ),
+    expected=(
+        "read_flag(text) returns (name, value) for a flag written as '--name', which is true, "
+        "or '--no-name', which is false. The negation is only the prefix 'no-' followed by a "
+        "name; a flag whose name merely begins with those letters is not negated, and text "
+        "that is not a flag raises ValueError."
+    ),
+    baseline_reason=(
+        "after failing to find the prefix with its dash it falls back to the two letters on "
+        "their own, and it accepts a negation with no flag left after the prefix"
+    ),
+    edge_cases=(
+        "a name merely beginning with those letters is not a negation",
+        "a negation with no flag after it is not a flag",
+    ),
+    baseline="""def read_flag(text):
+    \"\"\"Read a flag and whether it is negated.\"\"\"
+    if not text.startswith("--"):
+        raise ValueError("not a flag: " + text)
+    name = text[2:]
+    if name.startswith("no-"):
+        return name[3:], False
+    if name.startswith("no"):
+        return name[2:], False
+    return name, True""",
+    variant_one="""def read_flag(text):
+    \"\"\"Read a flag and whether it is negated.\"\"\"
+    if not text.startswith("--"):
+        raise ValueError("not a flag: " + text)
+    name = text[2:]
+    if not name:
+        raise ValueError("not a flag: " + text)
+    if name.startswith("no-"):
+        negated = name[3:]
+        if not negated:
+            raise ValueError("not a flag: " + text)
+        return negated, False
+    return name, True""",
+    variant_two="""def read_flag(text):
+    \"\"\"Read a flag and whether it is negated.\"\"\"
+    if text[:2] != "--" or len(text) <= 2:
+        raise ValueError("not a flag: " + text)
+    body = text[2:]
+    prefix, found, rest = body.partition("no-")
+    if found and not prefix:
+        if not rest:
+            raise ValueError("not a flag: " + text)
+        return rest, False
+    return body, True""",
+    variant_three="""def read_flag(text):
+    \"\"\"Read a flag and whether it is negated.\"\"\"
+    if not text.startswith("--"):
+        raise ValueError("not a flag: " + text)
+    name = text[2:]
+    if name.startswith("no-"):
+        return name[3:], False
+    return name, True""",
+    variant_four="""def read_flag(text):
+    \"\"\"Read a flag and whether it is negated.\"\"\"
+    if not text.startswith("--"):
+        raise ValueError("not a flag: " + text)
+    name = text[2:]
+    if name.startswith("no-"):
+        if not name[3:]:
+            raise ValueError("not a flag: " + text)
+        return name[3:], False
+    if name.startswith("no"):
+        return name[2:], False
+    return name, True""",
+    visible_test=_test_module(
+        "negated_flag",
+        "Published contract for reading a flag.",
+        """
+import pytest
+
+
+def test_a_plain_flag_is_true() -> None:
+    assert read_flag("--colour") == ("colour", True)
+
+
+def test_a_negated_flag_is_false() -> None:
+    assert read_flag("--no-colour") == ("colour", False)
+
+
+def test_something_that_is_not_a_flag_is_refused() -> None:
+    with pytest.raises(ValueError):
+        read_flag("colour")
+""",
+        imports="from negated_flag import read_flag\n",
+    ),
+    hidden_test=_test_module(
+        "negated_flag",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_negated_flag_is_false() -> None:
+    assert read_flag("--no-colour") == ("colour", False)
+
+
+def test_a_name_merely_beginning_with_those_letters_is_not_negated() -> None:
+    assert read_flag("--nothing") == ("nothing", True)
+
+
+def test_a_negation_with_no_flag_after_it_is_not_a_flag() -> None:
+    with pytest.raises(ValueError):
+        read_flag("--no-")
+""",
+        imports="from negated_flag import read_flag\n",
+    ),
+)
+
+_G088 = D2TaskSpec(
+    template_id="d7_state.adjust_priority",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-adjust-priority",
+    module="adjust_priority",
+    module_doc="Changing one item's priority without reshuffling everybody who ties with it.",
+    issue=(
+        "reprioritise() is documented to leave items of equal priority in the order they were "
+        "already in, which is the order they queued in. Callers report the whole queue "
+        "reshuffling alphabetically whenever anything changes, and a name the queue does not "
+        "hold being accepted as though it had been changed."
+    ),
+    expected=(
+        "reprioritise(queue, name, priority) takes (name, priority) entries and returns them "
+        "ordered by priority, lowest first, with the named entry's priority changed. Entries "
+        "of equal priority keep the order they were in, and a name the queue does not hold "
+        "raises KeyError."
+    ),
+    baseline_reason=(
+        "it breaks a tie on the entry's name rather than leaving the tie alone, and it changes "
+        "a name it never found without saying so"
+    ),
+    edge_cases=(
+        "entries of equal priority keep the order they were in",
+        "a name the queue does not hold is refused",
+    ),
+    baseline="""def reprioritise(queue, name, priority):
+    \"\"\"Change one entry's priority and reorder the queue.\"\"\"
+    changed = [(item, priority if item == name else value) for item, value in queue]
+    return sorted(changed, key=lambda entry: (entry[1], entry[0]))""",
+    variant_one="""def reprioritise(queue, name, priority):
+    \"\"\"Change one entry's priority and reorder the queue.\"\"\"
+    if all(item != name for item, _ in queue):
+        raise KeyError(name)
+    changed = [(item, priority if item == name else value) for item, value in queue]
+    return sorted(changed, key=lambda entry: entry[1])""",
+    variant_two="""def reprioritise(queue, name, priority):
+    \"\"\"Change one entry's priority and reorder the queue.\"\"\"
+    names = [item for item, _ in queue]
+    if name not in names:
+        raise KeyError(name)
+    changed = []
+    for item, value in queue:
+        changed.append((item, priority) if item == name else (item, value))
+    return sorted(changed, key=lambda entry: entry[1])""",
+    variant_three="""def reprioritise(queue, name, priority):
+    \"\"\"Change one entry's priority and reorder the queue.\"\"\"
+    changed = [(item, priority if item == name else value) for item, value in queue]
+    return sorted(changed, key=lambda entry: entry[1])""",
+    variant_four="""def reprioritise(queue, name, priority):
+    \"\"\"Change one entry's priority and reorder the queue.\"\"\"
+    if all(item != name for item, _ in queue):
+        raise KeyError(name)
+    changed = [(item, priority if item == name else value) for item, value in queue]
+    return sorted(changed, key=lambda entry: (entry[1], entry[0]))""",
+    visible_test=_test_module(
+        "adjust_priority",
+        "Published contract for changing a priority.",
+        """
+def test_a_changed_priority_moves_the_entry() -> None:
+    assert reprioritise([("a", 2), ("b", 1)], "a", 0) == [("a", 0), ("b", 1)]
+
+
+def test_a_queue_of_one_reorders_to_itself() -> None:
+    assert reprioritise([("a", 1)], "a", 5) == [("a", 5)]
+""",
+        imports="from adjust_priority import reprioritise\n",
+    ),
+    hidden_test=_test_module(
+        "adjust_priority",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_changed_priority_moves_the_entry() -> None:
+    assert reprioritise([("a", 2), ("b", 1)], "a", 0) == [("a", 0), ("b", 1)]
+
+
+def test_entries_of_equal_priority_keep_the_order_they_were_in() -> None:
+    assert reprioritise([("b", 1), ("a", 2)], "a", 1) == [("b", 1), ("a", 1)]
+
+
+def test_a_name_the_queue_does_not_hold_is_refused() -> None:
+    with pytest.raises(KeyError):
+        reprioritise([("a", 1)], "z", 0)
+""",
+        imports="from adjust_priority import reprioritise\n",
+    ),
+)
+
+_G089 = D2TaskSpec(
+    template_id="d7_boundary.cycle_take",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-cycle-take",
+    module="cycle_take",
+    module_doc="Dealing out items round and round a list, and refusing what cannot be dealt.",
+    issue=(
+        "take_cycling() is documented to refuse a deal it cannot make: there is nothing to deal "
+        "from an empty list, and there is no such thing as dealing fewer than none. Callers "
+        "report the first arriving as a division by zero from somewhere inside, and the second "
+        "quietly returning nothing as though it had been asked for nothing."
+    ),
+    expected=(
+        "take_cycling(items, count) returns that many items taken from the start, wrapping "
+        "round to the beginning as often as needed. A count of none gives nothing, a count "
+        "below none raises ValueError, and taking anything at all from an empty list raises "
+        "ValueError."
+    ),
+    baseline_reason=(
+        "it wraps by dividing by the length, which is a division by nothing when the list is "
+        "empty, and it counts up to a negative count by never starting at all"
+    ),
+    edge_cases=(
+        "taking anything from an empty list is refused",
+        "taking fewer than none is refused",
+    ),
+    baseline="""def take_cycling(items, count):
+    \"\"\"Take that many items, wrapping round the list.\"\"\"
+    taken = []
+    for index in range(count):
+        taken.append(items[index % len(items)])
+    return taken""",
+    variant_one="""def take_cycling(items, count):
+    \"\"\"Take that many items, wrapping round the list.\"\"\"
+    if count < 0:
+        raise ValueError("cannot take fewer than none")
+    if not items and count:
+        raise ValueError("nothing to take")
+    return [items[index % len(items)] for index in range(count)]""",
+    variant_two="""def take_cycling(items, count):
+    \"\"\"Take that many items, wrapping round the list.\"\"\"
+    if not count >= 0:
+        raise ValueError("cannot take fewer than none")
+    taken = []
+    position = 0
+    while len(taken) < count:
+        if not items:
+            raise ValueError("nothing to take")
+        taken.append(items[position])
+        position = (position + 1) % len(items)
+    return taken""",
+    variant_three="""def take_cycling(items, count):
+    \"\"\"Take that many items, wrapping round the list.\"\"\"
+    if not items and count:
+        raise ValueError("nothing to take")
+    return [items[index % len(items)] for index in range(count)]""",
+    variant_four="""def take_cycling(items, count):
+    \"\"\"Take that many items, wrapping round the list.\"\"\"
+    if count < 0:
+        raise ValueError("cannot take fewer than none")
+    taken = []
+    for index in range(count):
+        taken.append(items[index % len(items)])
+    return taken""",
+    visible_test=_test_module(
+        "cycle_take",
+        "Published contract for dealing round a list.",
+        """
+def test_dealing_wraps_round_the_list() -> None:
+    assert take_cycling(["a", "b"], 5) == ["a", "b", "a", "b", "a"]
+
+
+def test_dealing_none_deals_nothing() -> None:
+    assert take_cycling(["a"], 0) == []
+""",
+        imports="from cycle_take import take_cycling\n",
+    ),
+    hidden_test=_test_module(
+        "cycle_take",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_dealing_wraps_round_the_list() -> None:
+    assert take_cycling(["a", "b"], 5) == ["a", "b", "a", "b", "a"]
+
+
+def test_taking_anything_from_an_empty_list_is_refused() -> None:
+    with pytest.raises(ValueError):
+        take_cycling([], 3)
+
+
+def test_taking_fewer_than_none_is_refused() -> None:
+    with pytest.raises(ValueError):
+        take_cycling(["a"], -1)
+""",
+        imports="from cycle_take import take_cycling\n",
+    ),
+)
+
+_G090 = D2TaskSpec(
+    template_id="d7_boundary.cooldown_filter",
+    family=RealityTaskFamily.BOUNDARY_COLLECTIONS,
+    repository_group="d7-boundary-cooldown-filter",
+    module="cooldown_filter",
+    module_doc="Thinning a stream of events so that no two kept ones sit too close together.",
+    issue=(
+        "thin() is documented to measure the gap from the last event it kept, not from the last "
+        "event it saw. Callers report a burst of events thinning to a single one because each "
+        "event kept resetting a clock it was never kept by, and an event landing exactly on the "
+        "cooldown being dropped."
+    ),
+    expected=(
+        "thin(events, cooldown) takes event times in order and returns the ones to keep: the "
+        "first, and then any event at least the cooldown after the last event kept. An event "
+        "exactly at the cooldown is far enough away."
+    ),
+    baseline_reason=(
+        "it measures each gap from the previous event whether or not that event was kept, and "
+        "its comparison drops an event landing exactly on the cooldown"
+    ),
+    edge_cases=(
+        "the gap is measured from the last event kept",
+        "an event exactly at the cooldown is kept",
+    ),
+    baseline="""def thin(events, cooldown):
+    \"\"\"Keep the events that are far enough apart.\"\"\"
+    kept = []
+    previous = None
+    for at in events:
+        if previous is None or at - previous > cooldown:
+            kept.append(at)
+        previous = at
+    return kept""",
+    variant_one="""def thin(events, cooldown):
+    \"\"\"Keep the events that are far enough apart.\"\"\"
+    kept = []
+    last = None
+    for at in events:
+        if last is None or at - last >= cooldown:
+            kept.append(at)
+            last = at
+    return kept""",
+    variant_two="""def thin(events, cooldown):
+    \"\"\"Keep the events that are far enough apart.\"\"\"
+    kept = []
+    for at in events:
+        if not kept or at - kept[-1] >= cooldown:
+            kept.append(at)
+    return kept""",
+    variant_three="""def thin(events, cooldown):
+    \"\"\"Keep the events that are far enough apart.\"\"\"
+    kept = []
+    for at in events:
+        if not kept or at - kept[-1] > cooldown:
+            kept.append(at)
+    return kept""",
+    variant_four="""def thin(events, cooldown):
+    \"\"\"Keep the events that are far enough apart.\"\"\"
+    kept = []
+    previous = None
+    for at in events:
+        if previous is None or at - previous >= cooldown:
+            kept.append(at)
+        previous = at
+    return kept""",
+    visible_test=_test_module(
+        "cooldown_filter",
+        "Published contract for thinning the events.",
+        """
+def test_events_far_apart_are_all_kept() -> None:
+    assert thin([0, 100, 200], 50) == [0, 100, 200]
+
+
+def test_no_events_thin_to_nothing() -> None:
+    assert thin([], 50) == []
+""",
+        imports="from cooldown_filter import thin\n",
+    ),
+    hidden_test=_test_module(
+        "cooldown_filter",
+        "The part of the contract the published tests do not state.",
+        """
+def test_events_far_apart_are_all_kept() -> None:
+    assert thin([0, 100, 200], 50) == [0, 100, 200]
+
+
+def test_the_gap_is_measured_from_the_last_event_kept() -> None:
+    assert thin([0, 30, 60], 50) == [0, 60]
+
+
+def test_an_event_exactly_at_the_cooldown_is_kept() -> None:
+    assert thin([0, 50], 50) == [0, 50]
+""",
+        imports="from cooldown_filter import thin\n",
+    ),
+)
+
+_G091 = D2TaskSpec(
+    template_id="d7_transform.drop_constant_columns",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-drop-constant-columns",
+    module="drop_constant_columns",
+    module_doc="Dropping the fields that say the same thing on every row.",
+    issue=(
+        "drop_constant() is documented to drop a field only when every row carries it and every "
+        "row agrees. Callers report fields disappearing that some rows never carried at all, "
+        "because a field nobody filled in reads the same as a field filled in with nothing, and "
+        "a table with no rows in it failing outright."
+    ),
+    expected=(
+        "drop_constant(rows) returns the rows with every constant field removed. A field is "
+        "constant when every row carries it and all its values are equal; a field some row does "
+        "not carry is not constant. No rows at all return no rows."
+    ),
+    baseline_reason=(
+        "it reads a field a row does not carry as a value of nothing, which makes it agree with "
+        "a row that carries nothing, and it reads the fields off a first row that may not exist"
+    ),
+    edge_cases=(
+        "a field some row does not carry is not constant",
+        "no rows drop into no rows",
+    ),
+    baseline="""def drop_constant(rows):
+    \"\"\"Drop the fields that are the same on every row.\"\"\"
+    constant = []
+    for field in rows[0]:
+        values = [row.get(field) for row in rows]
+        if len(set(values)) == 1:
+            constant.append(field)
+    return [
+        {name: value for name, value in row.items() if name not in constant} for row in rows
+    ]""",
+    variant_one="""def drop_constant(rows):
+    \"\"\"Drop the fields that are the same on every row.\"\"\"
+    if not rows:
+        return []
+    constant = []
+    for field in rows[0]:
+        if all(field in row for row in rows) and len({row[field] for row in rows}) == 1:
+            constant.append(field)
+    return [
+        {name: value for name, value in row.items() if name not in constant} for row in rows
+    ]""",
+    variant_two="""def drop_constant(rows):
+    \"\"\"Drop the fields that are the same on every row.\"\"\"
+    if len(rows) == 0:
+        return []
+    constant = set()
+    for field in list(rows[0]):
+        carried = [row[field] for row in rows if field in row]
+        if len(carried) == len(rows) and len(set(carried)) == 1:
+            constant.add(field)
+    return [
+        {name: value for name, value in row.items() if name not in constant} for row in rows
+    ]""",
+    variant_three="""def drop_constant(rows):
+    \"\"\"Drop the fields that are the same on every row.\"\"\"
+    constant = []
+    for field in rows[0]:
+        if all(field in row for row in rows) and len({row[field] for row in rows}) == 1:
+            constant.append(field)
+    return [
+        {name: value for name, value in row.items() if name not in constant} for row in rows
+    ]""",
+    variant_four="""def drop_constant(rows):
+    \"\"\"Drop the fields that are the same on every row.\"\"\"
+    if not rows:
+        return []
+    constant = []
+    for field in rows[0]:
+        values = [row.get(field) for row in rows]
+        if len(set(values)) == 1:
+            constant.append(field)
+    return [
+        {name: value for name, value in row.items() if name not in constant} for row in rows
+    ]""",
+    visible_test=_test_module(
+        "drop_constant_columns",
+        "Published contract for dropping constant fields.",
+        """
+def test_a_field_the_same_on_every_row_is_dropped() -> None:
+    rows = [{"a": 1, "b": 1}, {"a": 1, "b": 2}]
+    assert drop_constant(rows) == [{"b": 1}, {"b": 2}]
+
+
+def test_a_single_row_is_constant_in_everything() -> None:
+    assert drop_constant([{"a": 1}]) == [{}]
+""",
+        imports="from drop_constant_columns import drop_constant\n",
+    ),
+    hidden_test=_test_module(
+        "drop_constant_columns",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_field_the_same_on_every_row_is_dropped() -> None:
+    rows = [{"a": 1, "b": 1}, {"a": 1, "b": 2}]
+    assert drop_constant(rows) == [{"b": 1}, {"b": 2}]
+
+
+def test_a_field_some_row_does_not_carry_is_not_constant() -> None:
+    rows = [{"a": None, "b": 1}, {"b": 1}]
+    assert drop_constant(rows) == [{"a": None}, {}]
+
+
+def test_no_rows_drop_into_no_rows() -> None:
+    assert drop_constant([]) == []
+""",
+        imports="from drop_constant_columns import drop_constant\n",
+    ),
+)
+
+_G092 = D2TaskSpec(
+    template_id="d7_transform.condense_ranges",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-condense-ranges",
+    module="condense_ranges",
+    module_doc="Writing a list of numbers the short way, the way a person would.",
+    issue=(
+        "condense() is documented to write a run of one as the number on its own, and to read "
+        "the numbers in order whatever order they arrived in. Callers report single numbers "
+        "coming out as a span from themselves to themselves, and an unsorted list coming out as "
+        "a string of nonsense spans."
+    ),
+    expected=(
+        "condense(numbers) returns the short notation: runs of consecutive numbers written "
+        "'start-end', a run of one written as the number alone, runs joined by commas. The "
+        "numbers may arrive in any order and are read in ascending order."
+    ),
+    baseline_reason=(
+        "it writes every run as a span whether or not the run has two ends, and it walks the "
+        "numbers in the order it was handed them"
+    ),
+    edge_cases=(
+        "a run of one is written as the number alone",
+        "the numbers may arrive in any order",
+    ),
+    baseline="""def condense(numbers):
+    \"\"\"Write the numbers in the short notation.\"\"\"
+    parts = []
+    start = None
+    previous = None
+    for number in numbers:
+        if start is None:
+            start = number
+        elif number != previous + 1:
+            parts.append(str(start) + "-" + str(previous))
+            start = number
+        previous = number
+    if start is not None:
+        parts.append(str(start) + "-" + str(previous))
+    return ",".join(parts)""",
+    variant_one="""def condense(numbers):
+    \"\"\"Write the numbers in the short notation.\"\"\"
+    parts = []
+    start = None
+    previous = None
+    for number in sorted(numbers):
+        if start is None:
+            start = number
+        elif number != previous + 1:
+            parts.append(str(start) if start == previous else str(start) + "-" + str(previous))
+            start = number
+        previous = number
+    if start is not None:
+        parts.append(str(start) if start == previous else str(start) + "-" + str(previous))
+    return ",".join(parts)""",
+    variant_two="""def condense(numbers):
+    \"\"\"Write the numbers in the short notation.\"\"\"
+    runs = []
+    for number in sorted(numbers):
+        if runs and number == runs[-1][1] + 1:
+            runs[-1][1] = number
+        else:
+            runs.append([number, number])
+    written = []
+    for start, end in runs:
+        written.append(str(start) if start == end else str(start) + "-" + str(end))
+    return ",".join(written)""",
+    variant_three="""def condense(numbers):
+    \"\"\"Write the numbers in the short notation.\"\"\"
+    parts = []
+    start = None
+    previous = None
+    for number in numbers:
+        if start is None:
+            start = number
+        elif number != previous + 1:
+            parts.append(str(start) if start == previous else str(start) + "-" + str(previous))
+            start = number
+        previous = number
+    if start is not None:
+        parts.append(str(start) if start == previous else str(start) + "-" + str(previous))
+    return ",".join(parts)""",
+    variant_four="""def condense(numbers):
+    \"\"\"Write the numbers in the short notation.\"\"\"
+    parts = []
+    start = None
+    previous = None
+    for number in sorted(numbers):
+        if start is None:
+            start = number
+        elif number != previous + 1:
+            parts.append(str(start) + "-" + str(previous))
+            start = number
+        previous = number
+    if start is not None:
+        parts.append(str(start) + "-" + str(previous))
+    return ",".join(parts)""",
+    visible_test=_test_module(
+        "condense_ranges",
+        "Published contract for the short notation.",
+        """
+def test_runs_are_written_as_spans() -> None:
+    assert condense([1, 2, 3, 7, 8]) == "1-3,7-8"
+
+
+def test_no_numbers_write_as_nothing() -> None:
+    assert condense([]) == ""
+""",
+        imports="from condense_ranges import condense\n",
+    ),
+    hidden_test=_test_module(
+        "condense_ranges",
+        "The part of the contract the published tests do not state.",
+        """
+def test_runs_are_written_as_spans() -> None:
+    assert condense([1, 2, 3, 7, 8]) == "1-3,7-8"
+
+
+def test_a_run_of_one_is_written_as_the_number_alone() -> None:
+    assert condense([1, 2, 5]) == "1-2,5"
+
+
+def test_the_numbers_may_arrive_in_any_order() -> None:
+    assert condense([3, 1, 2]) == "1-3"
+""",
+        imports="from condense_ranges import condense\n",
+    ),
+)
+
+_G093 = D2TaskSpec(
+    template_id="d7_numeric.batch_price",
+    family=RealityTaskFamily.NUMERIC_LOGIC,
+    repository_group="d7-numeric-batch-price",
+    module="batch_price",
+    module_doc="Charging for a leftover the cheaper of the two ways it can be charged.",
+    issue=(
+        "price() is documented to charge a leftover as a whole batch when a whole batch costs "
+        "less than the loose units would. Callers report being charged more for nineteen than "
+        "for twenty, which is the arithmetic saying what nobody would say, and a batch size of "
+        "nothing taking the calculation down rather than being refused."
+    ),
+    expected=(
+        "price(units, batch_size, batch_price, unit_price) returns the cheapest price: the "
+        "whole batches at the batch price, and the leftover charged either as loose units or as "
+        "one more batch, whichever costs less. A batch size of nothing raises ValueError."
+    ),
+    baseline_reason=(
+        "it always charges the leftover as loose units, however much cheaper a whole batch "
+        "would be, and it divides by the batch size before asking what the batch size is"
+    ),
+    edge_cases=(
+        "a leftover is charged as a batch when that costs less",
+        "a batch that holds nothing is refused",
+    ),
+    baseline="""def price(units, batch_size, batch_price, unit_price):
+    \"\"\"Return the cheapest price for that many units.\"\"\"
+    batches = units // batch_size
+    leftover = units % batch_size
+    return batches * batch_price + leftover * unit_price""",
+    variant_one="""def price(units, batch_size, batch_price, unit_price):
+    \"\"\"Return the cheapest price for that many units.\"\"\"
+    if batch_size <= 0:
+        raise ValueError("a batch must hold something")
+    batches = units // batch_size
+    leftover = units % batch_size
+    loose = leftover * unit_price
+    return batches * batch_price + (min(loose, batch_price) if leftover else 0)""",
+    variant_two="""def price(units, batch_size, batch_price, unit_price):
+    \"\"\"Return the cheapest price for that many units.\"\"\"
+    if not batch_size > 0:
+        raise ValueError("a batch must hold something")
+    whole = units // batch_size
+    rest = units - whole * batch_size
+    loose = rest * unit_price
+    if rest and batch_price < loose:
+        loose = batch_price
+    return whole * batch_price + loose""",
+    variant_three="""def price(units, batch_size, batch_price, unit_price):
+    \"\"\"Return the cheapest price for that many units.\"\"\"
+    batches = units // batch_size
+    leftover = units % batch_size
+    loose = leftover * unit_price
+    return batches * batch_price + (min(loose, batch_price) if leftover else 0)""",
+    variant_four="""def price(units, batch_size, batch_price, unit_price):
+    \"\"\"Return the cheapest price for that many units.\"\"\"
+    if batch_size <= 0:
+        raise ValueError("a batch must hold something")
+    batches = units // batch_size
+    leftover = units % batch_size
+    return batches * batch_price + leftover * unit_price""",
+    visible_test=_test_module(
+        "batch_price",
+        "Published contract for pricing a batch order.",
+        """
+def test_a_leftover_cheaper_loose_is_charged_loose() -> None:
+    assert price(12, 10, 100, 5) == 110
+
+
+def test_whole_batches_cost_the_batch_price() -> None:
+    assert price(20, 10, 100, 5) == 200
+""",
+        imports="from batch_price import price\n",
+    ),
+    hidden_test=_test_module(
+        "batch_price",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_leftover_cheaper_loose_is_charged_loose() -> None:
+    assert price(12, 10, 100, 5) == 110
+
+
+def test_a_leftover_is_charged_as_a_batch_when_that_costs_less() -> None:
+    assert price(19, 10, 100, 20) == 200
+
+
+def test_a_batch_that_holds_nothing_is_refused() -> None:
+    with pytest.raises(ValueError):
+        price(5, 0, 100, 5)
+""",
+        imports="from batch_price import price\n",
+    ),
+)
+
+_G094 = D2TaskSpec(
+    template_id="d7_error.handler_dispatch",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-handler-dispatch",
+    module="handler_dispatch",
+    module_doc="Sending an event to its handler, and to the default when it has none.",
+    issue=(
+        "handle() is documented to send an event of a kind nobody registered to the default "
+        "handler, and to treat a handler's answer of nothing as the answer it is. Callers "
+        "report an unregistered kind coming back as a lookup failure from somewhere inside, and "
+        "a handler that deliberately answers nothing having the default answer over the top."
+    ),
+    expected=(
+        "handle(event, handlers, default) calls the handler registered for the event's kind and "
+        "returns what it answered, nothing included. An event of a kind nobody registered goes "
+        "to the default handler instead."
+    ),
+    baseline_reason=(
+        "it looks the handler up by subscript, which fails outright for a kind nobody "
+        "registered, and it reads an answer of nothing as no answer and calls the default over "
+        "the top of it"
+    ),
+    edge_cases=(
+        "a kind nobody registered goes to the default",
+        "a handler answering nothing has answered",
+    ),
+    baseline="""def handle(event, handlers, default):
+    \"\"\"Send an event to its handler.\"\"\"
+    result = handlers[event["kind"]](event)
+    if result is None:
+        return default(event)
+    return result""",
+    variant_one="""def handle(event, handlers, default):
+    \"\"\"Send an event to its handler.\"\"\"
+    handler = handlers.get(event["kind"], default)
+    return handler(event)""",
+    variant_two="""def handle(event, handlers, default):
+    \"\"\"Send an event to its handler.\"\"\"
+    kind = event["kind"]
+    if kind in handlers:
+        return handlers[kind](event)
+    return default(event)""",
+    variant_three="""def handle(event, handlers, default):
+    \"\"\"Send an event to its handler.\"\"\"
+    handler = handlers.get(event["kind"])
+    if handler is None:
+        return default(event)
+    result = handler(event)
+    return default(event) if result is None else result""",
+    variant_four="""def handle(event, handlers, default):
+    \"\"\"Send an event to its handler.\"\"\"
+    return handlers[event["kind"]](event)""",
+    visible_test=_test_module(
+        "handler_dispatch",
+        "Published contract for dispatching an event.",
+        """
+def test_a_registered_kind_goes_to_its_handler() -> None:
+    handlers = {"a": lambda event: "A"}
+    assert handle({"kind": "a"}, handlers, lambda event: "D") == "A"
+
+
+def test_each_kind_goes_to_its_own_handler() -> None:
+    handlers = {"a": lambda event: "A", "b": lambda event: "B"}
+    assert handle({"kind": "b"}, handlers, lambda event: "D") == "B"
+""",
+        imports="from handler_dispatch import handle\n",
+    ),
+    hidden_test=_test_module(
+        "handler_dispatch",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_registered_kind_goes_to_its_handler() -> None:
+    handlers = {"a": lambda event: "A"}
+    assert handle({"kind": "a"}, handlers, lambda event: "D") == "A"
+
+
+def test_a_kind_nobody_registered_goes_to_the_default() -> None:
+    handlers = {"a": lambda event: "A"}
+    assert handle({"kind": "z"}, handlers, lambda event: "D") == "D"
+
+
+def test_a_handler_answering_nothing_has_answered() -> None:
+    handlers = {"a": lambda event: None}
+    assert handle({"kind": "a"}, handlers, lambda event: "D") is None
+""",
+        imports="from handler_dispatch import handle\n",
+    ),
+)
+
+_G095 = D2TaskSpec(
+    template_id="d7_transform.digest_line",
+    family=RealityTaskFamily.DATA_TRANSFORMATION,
+    repository_group="d7-transform-digest-line",
+    module="digest_line",
+    module_doc="Writing a record out as one line, with a mark where a field is missing.",
+    issue=(
+        "digest() is documented to write a dash where the record does not carry a field, and to "
+        "trim the spaces around the values it does carry. Callers report the whole digest "
+        "failing on the first record with a field missing, and values arriving padded with the "
+        "spaces they were stored with, which no two records agree on."
+    ),
+    expected=(
+        "digest(record, fields) returns the named fields joined by a vertical bar, in the order "
+        "they were named. A field the record does not carry is written as a dash, and every "
+        "value is trimmed of the spaces around it."
+    ),
+    baseline_reason=(
+        "it reads each field by subscript, which fails outright for one the record does not "
+        "carry, and it writes each value exactly as it was stored"
+    ),
+    edge_cases=(
+        "a field the record does not carry is written as a dash",
+        "the values are trimmed of the spaces around them",
+    ),
+    baseline="""def digest(record, fields):
+    \"\"\"Write a record out as one line.\"\"\"
+    return "|".join(str(record[field]) for field in fields)""",
+    variant_one="""def digest(record, fields):
+    \"\"\"Write a record out as one line.\"\"\"
+    parts = []
+    for field in fields:
+        if field in record:
+            parts.append(str(record[field]).strip())
+        else:
+            parts.append("-")
+    return "|".join(parts)""",
+    variant_two="""def digest(record, fields):
+    \"\"\"Write a record out as one line.\"\"\"
+    return "|".join(
+        str(record[field]).strip() if field in record else "-" for field in fields
+    )""",
+    variant_three="""def digest(record, fields):
+    \"\"\"Write a record out as one line.\"\"\"
+    parts = []
+    for field in fields:
+        if field in record:
+            parts.append(str(record[field]))
+        else:
+            parts.append("-")
+    return "|".join(parts)""",
+    variant_four="""def digest(record, fields):
+    \"\"\"Write a record out as one line.\"\"\"
+    return "|".join(str(record[field]).strip() for field in fields)""",
+    visible_test=_test_module(
+        "digest_line",
+        "Published contract for the digest line.",
+        """
+def test_the_named_fields_are_joined() -> None:
+    assert digest({"a": "x", "b": "y"}, ["a", "b"]) == "x|y"
+
+
+def test_no_fields_digest_to_nothing() -> None:
+    assert digest({}, []) == ""
+""",
+        imports="from digest_line import digest\n",
+    ),
+    hidden_test=_test_module(
+        "digest_line",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_named_fields_are_joined() -> None:
+    assert digest({"a": "x", "b": "y"}, ["a", "b"]) == "x|y"
+
+
+def test_a_field_the_record_does_not_carry_is_a_dash() -> None:
+    assert digest({"a": "x"}, ["a", "z"]) == "x|-"
+
+
+def test_the_values_are_trimmed() -> None:
+    assert digest({"a": " x "}, ["a"]) == "x"
+""",
+        imports="from digest_line import digest\n",
+    ),
+)
+
+_G096 = D2TaskSpec(
+    template_id="d7_error.guard_depth",
+    family=RealityTaskFamily.ERROR_HANDLING,
+    repository_group="d7-error-guard-depth",
+    module="guard_depth",
+    module_doc="Measuring how deep a structure nests, and refusing one that nests too deep.",
+    issue=(
+        "depth_of() is documented to allow a structure exactly as deep as the limit and to "
+        "count an empty list as the list it is. Callers report structures at the stated limit "
+        "being refused, so the limit is one shallower than it says, and an empty list at the "
+        "bottom coming back as though it were not there at all."
+    ),
+    expected=(
+        "depth_of(value, limit) returns how deeply a value nests, counting the outermost list "
+        "as one. A value that is not a list has a depth of nothing, an empty list is still a "
+        "list, and a structure deeper than the limit raises RecursionError."
+    ),
+    baseline_reason=(
+        "it stops descending at an empty list rather than counting it, and its limit test fires "
+        "at the limit itself rather than past it"
+    ),
+    edge_cases=(
+        "an empty list is still a list",
+        "a structure exactly at the limit is deep enough",
+    ),
+    baseline="""def depth_of(value, limit):
+    \"\"\"Return how deeply a value nests.\"\"\"
+    depth = 0
+    while isinstance(value, list) and value:
+        depth += 1
+        if depth >= limit:
+            raise RecursionError("too deep")
+        value = value[0]
+    return depth""",
+    variant_one="""def depth_of(value, limit):
+    \"\"\"Return how deeply a value nests.\"\"\"
+    depth = 0
+    while isinstance(value, list):
+        depth += 1
+        if depth > limit:
+            raise RecursionError("too deep")
+        value = value[0] if value else None
+    return depth""",
+    variant_two="""def depth_of(value, limit):
+    \"\"\"Return how deeply a value nests.\"\"\"
+    depth = 0
+    current = value
+    while isinstance(current, list):
+        depth = depth + 1
+        if depth > limit:
+            raise RecursionError("too deep")
+        current = current[0] if len(current) else None
+    return depth""",
+    variant_three="""def depth_of(value, limit):
+    \"\"\"Return how deeply a value nests.\"\"\"
+    depth = 0
+    while isinstance(value, list):
+        depth += 1
+        if depth >= limit:
+            raise RecursionError("too deep")
+        value = value[0] if value else None
+    return depth""",
+    variant_four="""def depth_of(value, limit):
+    \"\"\"Return how deeply a value nests.\"\"\"
+    depth = 0
+    while isinstance(value, list) and value:
+        depth += 1
+        if depth > limit:
+            raise RecursionError("too deep")
+        value = value[0]
+    return depth""",
+    visible_test=_test_module(
+        "guard_depth",
+        "Published contract for measuring the depth.",
+        """
+def test_a_nested_list_is_two_deep() -> None:
+    assert depth_of([[1]], 5) == 2
+
+
+def test_something_that_is_not_a_list_has_no_depth() -> None:
+    assert depth_of(1, 5) == 0
+""",
+        imports="from guard_depth import depth_of\n",
+    ),
+    hidden_test=_test_module(
+        "guard_depth",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_nested_list_is_two_deep() -> None:
+    assert depth_of([[1]], 5) == 2
+
+
+def test_an_empty_list_is_still_a_list() -> None:
+    assert depth_of([], 5) == 1
+
+
+def test_a_structure_exactly_at_the_limit_is_deep_enough() -> None:
+    assert depth_of([[1]], 2) == 2
+""",
+        imports="from guard_depth import depth_of\n",
+    ),
+)
+
+_G097 = D2TaskSpec(
+    template_id="d7_parsing.checkbox_mark",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-checkbox-mark",
+    module="checkbox_mark",
+    module_doc="Reading a tick box, however the person who ticked it wrote the tick.",
+    issue=(
+        "read_box() is documented to read a tick written in either case and to ignore the "
+        "spaces around the box. Callers report a box ticked with a capital being refused as not "
+        "a box at all, and a box indented in a list failing for the indentation."
+    ),
+    expected=(
+        "read_box(text) returns True for a ticked box and False for an empty one. The tick may "
+        "be written in either case, the spaces around the box are ignored, and anything that is "
+        "not a box raises ValueError."
+    ),
+    baseline_reason=(
+        "it compares the text with the two spellings it knows, which are the lower-case tick "
+        "and nothing else, and it compares the text exactly as it arrived"
+    ),
+    edge_cases=(
+        "a tick written in either case is a tick",
+        "the spaces around the box are ignored",
+    ),
+    baseline="""def read_box(text):
+    \"\"\"Read a tick box.\"\"\"
+    if text == "[x]":
+        return True
+    if text == "[ ]":
+        return False
+    raise ValueError("not a checkbox: " + text)""",
+    variant_one="""def read_box(text):
+    \"\"\"Read a tick box.\"\"\"
+    body = text.strip()
+    if body in ("[x]", "[X]"):
+        return True
+    if body == "[ ]":
+        return False
+    raise ValueError("not a checkbox: " + text)""",
+    variant_two="""def read_box(text):
+    \"\"\"Read a tick box.\"\"\"
+    body = text.strip()
+    if len(body) != 3 or body[0] != "[" or body[2] != "]":
+        raise ValueError("not a checkbox: " + text)
+    mark = body[1]
+    if mark.lower() == "x":
+        return True
+    if mark == " ":
+        return False
+    raise ValueError("not a checkbox: " + text)""",
+    variant_three="""def read_box(text):
+    \"\"\"Read a tick box.\"\"\"
+    if text in ("[x]", "[X]"):
+        return True
+    if text == "[ ]":
+        return False
+    raise ValueError("not a checkbox: " + text)""",
+    variant_four="""def read_box(text):
+    \"\"\"Read a tick box.\"\"\"
+    body = text.strip()
+    if body == "[x]":
+        return True
+    if body == "[ ]":
+        return False
+    raise ValueError("not a checkbox: " + text)""",
+    visible_test=_test_module(
+        "checkbox_mark",
+        "Published contract for reading a tick box.",
+        """
+import pytest
+
+
+def test_a_ticked_box_is_ticked() -> None:
+    assert read_box("[x]") is True
+
+
+def test_an_empty_box_is_not() -> None:
+    assert read_box("[ ]") is False
+
+
+def test_something_that_is_not_a_box_is_refused() -> None:
+    with pytest.raises(ValueError):
+        read_box("x")
+""",
+        imports="from checkbox_mark import read_box\n",
+    ),
+    hidden_test=_test_module(
+        "checkbox_mark",
+        "The part of the contract the published tests do not state.",
+        """
+def test_a_ticked_box_is_ticked() -> None:
+    assert read_box("[x]") is True
+
+
+def test_a_tick_written_in_either_case_is_a_tick() -> None:
+    assert read_box("[X]") is True
+
+
+def test_the_spaces_around_the_box_are_ignored() -> None:
+    assert read_box("  [x] ") is True
+""",
+        imports="from checkbox_mark import read_box\n",
+    ),
+)
+
+_G098 = D2TaskSpec(
+    template_id="d7_parsing.open_range",
+    family=RealityTaskFamily.PARSING_VALIDATION,
+    repository_group="d7-parsing-open-range",
+    module="open_range",
+    module_doc="Reading a range that may be open at either end, but not at both.",
+    issue=(
+        "read_range() is documented to read an end nobody wrote as open rather than as zero, "
+        "and to refuse a range with no ends at all. Callers report '10-' selecting everything "
+        "from ten down to nothing instead of everything from ten upwards, and a bare dash being "
+        "read as the range from nothing to nothing."
+    ),
+    expected=(
+        "read_range(text) returns (low, high) for a range written with a dash between its ends. "
+        "An end nobody wrote is None, meaning open. A text with no dash raises ValueError, and "
+        "so does a dash with no end written on either side of it."
+    ),
+    baseline_reason=(
+        "it reads a missing end as a zero, which is a number rather than an absence, and a "
+        "range with both ends missing then reads as a range from zero to zero"
+    ),
+    edge_cases=(
+        "an end nobody wrote is open, not zero",
+        "a dash with no ends at all is not a range",
+    ),
+    baseline="""def read_range(text):
+    \"\"\"Read a range that may be open at either end.\"\"\"
+    low, found, high = text.partition("-")
+    if not found:
+        raise ValueError("not a range: " + text)
+    return int(low) if low else 0, int(high) if high else 0""",
+    variant_one="""def read_range(text):
+    \"\"\"Read a range that may be open at either end.\"\"\"
+    low, found, high = text.partition("-")
+    if not found or (not low and not high):
+        raise ValueError("not a range: " + text)
+    return (int(low) if low else None, int(high) if high else None)""",
+    variant_two="""def read_range(text):
+    \"\"\"Read a range that may be open at either end.\"\"\"
+    if "-" not in text:
+        raise ValueError("not a range: " + text)
+    low, _, high = text.partition("-")
+    if low == "" and high == "":
+        raise ValueError("not a range: " + text)
+    start = None if low == "" else int(low)
+    end = None if high == "" else int(high)
+    return start, end""",
+    variant_three="""def read_range(text):
+    \"\"\"Read a range that may be open at either end.\"\"\"
+    low, found, high = text.partition("-")
+    if not found:
+        raise ValueError("not a range: " + text)
+    return (int(low) if low else None, int(high) if high else None)""",
+    variant_four="""def read_range(text):
+    \"\"\"Read a range that may be open at either end.\"\"\"
+    low, found, high = text.partition("-")
+    if not found or (not low and not high):
+        raise ValueError("not a range: " + text)
+    return int(low) if low else 0, int(high) if high else 0""",
+    visible_test=_test_module(
+        "open_range",
+        "Published contract for reading a range.",
+        """
+import pytest
+
+
+def test_a_range_with_both_ends_reads_as_both() -> None:
+    assert read_range("10-20") == (10, 20)
+
+
+def test_a_text_with_no_dash_is_refused() -> None:
+    with pytest.raises(ValueError):
+        read_range("10")
+""",
+        imports="from open_range import read_range\n",
+    ),
+    hidden_test=_test_module(
+        "open_range",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_range_with_both_ends_reads_as_both() -> None:
+    assert read_range("10-20") == (10, 20)
+
+
+def test_an_end_nobody_wrote_is_open() -> None:
+    assert read_range("10-") == (10, None)
+
+
+def test_a_dash_with_no_ends_at_all_is_not_a_range() -> None:
+    with pytest.raises(ValueError):
+        read_range("-")
+""",
+        imports="from open_range import read_range\n",
+    ),
+)
+
+_G099 = D2TaskSpec(
+    template_id="d7_state.allocate_number",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-allocate-number",
+    module="allocate_number",
+    module_doc="Handing out the lowest free number, and the same one on a second ask.",
+    issue=(
+        "allocate() is documented to hand out the lowest number nobody holds, so a number given "
+        "back becomes available again, and to hand a holder who already has one the number they "
+        "already have. Callers report numbers climbing for ever with gaps never reused, and a "
+        "retry handing the same holder a second number."
+    ),
+    expected=(
+        "allocate(allocations, holder) returns (allocations, number). A holder who already "
+        "holds a number keeps it and the allocations do not change. Otherwise the holder is "
+        "given the lowest number from one upwards that nobody holds."
+    ),
+    baseline_reason=(
+        "it takes one past the highest number ever given out, which never reuses a number "
+        "handed back, and it does so without asking whether this holder already has one"
+    ),
+    edge_cases=(
+        "the lowest free number is the one handed out",
+        "a holder who already has a number keeps it",
+    ),
+    baseline="""def allocate(allocations, holder):
+    \"\"\"Hand out a number to a holder.\"\"\"
+    number = max(allocations.values(), default=0) + 1
+    updated = dict(allocations)
+    updated[holder] = number
+    return updated, number""",
+    variant_one="""def allocate(allocations, holder):
+    \"\"\"Hand out a number to a holder.\"\"\"
+    if holder in allocations:
+        return dict(allocations), allocations[holder]
+    taken = set(allocations.values())
+    number = 1
+    while number in taken:
+        number += 1
+    updated = dict(allocations)
+    updated[holder] = number
+    return updated, number""",
+    variant_two="""def allocate(allocations, holder):
+    \"\"\"Hand out a number to a holder.\"\"\"
+    held = allocations.get(holder)
+    if held is not None:
+        return dict(allocations), held
+    number = 1
+    for value in sorted(allocations.values()):
+        if value == number:
+            number += 1
+    updated = dict(allocations)
+    updated[holder] = number
+    return updated, number""",
+    variant_three="""def allocate(allocations, holder):
+    \"\"\"Hand out a number to a holder.\"\"\"
+    taken = set(allocations.values())
+    number = 1
+    while number in taken:
+        number += 1
+    updated = dict(allocations)
+    updated[holder] = number
+    return updated, number""",
+    variant_four="""def allocate(allocations, holder):
+    \"\"\"Hand out a number to a holder.\"\"\"
+    if holder in allocations:
+        return dict(allocations), allocations[holder]
+    number = max(allocations.values(), default=0) + 1
+    updated = dict(allocations)
+    updated[holder] = number
+    return updated, number""",
+    visible_test=_test_module(
+        "allocate_number",
+        "Published contract for handing out a number.",
+        """
+def test_the_first_holder_gets_the_first_number() -> None:
+    assert allocate({}, "a") == ({"a": 1}, 1)
+
+
+def test_the_next_holder_gets_the_next_number() -> None:
+    assert allocate({"a": 1}, "b") == ({"a": 1, "b": 2}, 2)
+""",
+        imports="from allocate_number import allocate\n",
+    ),
+    hidden_test=_test_module(
+        "allocate_number",
+        "The part of the contract the published tests do not state.",
+        """
+def test_the_first_holder_gets_the_first_number() -> None:
+    assert allocate({}, "a") == ({"a": 1}, 1)
+
+
+def test_the_lowest_free_number_is_the_one_handed_out() -> None:
+    assert allocate({"a": 2}, "b") == ({"a": 2, "b": 1}, 1)
+
+
+def test_a_holder_who_already_has_a_number_keeps_it() -> None:
+    assert allocate({"a": 1}, "a") == ({"a": 1}, 1)
+""",
+        imports="from allocate_number import allocate\n",
+    ),
+)
+
+_G100 = D2TaskSpec(
+    template_id="d7_state.replace_member",
+    family=RealityTaskFamily.STATE_IDEMPOTENCY,
+    repository_group="d7-state-replace-member",
+    module="replace_member",
+    module_doc="Swapping one member of a list for another, in the place the first one held.",
+    issue=(
+        "replace() is documented to refuse an incoming member the list already holds, and to "
+        "say plainly when the outgoing member is not on the list at all. Callers report lists "
+        "ending up with the same member twice, and the missing-member case arriving as the same "
+        "error as every other bad argument."
+    ),
+    expected=(
+        "replace(members, outgoing, incoming) returns the members with the outgoing one "
+        "replaced by the incoming one, in the place the outgoing one held. Replacing a member "
+        "with itself changes nothing, an incoming member the list already holds raises "
+        "ValueError, and an outgoing member the list does not hold raises KeyError."
+    ),
+    baseline_reason=(
+        "it never asks whether the incoming member is already on the list, and it finds the "
+        "outgoing one with a search whose own failure is not the failure this contract names"
+    ),
+    edge_cases=(
+        "an incoming member the list already holds is refused",
+        "an outgoing member the list does not hold is refused",
+    ),
+    baseline="""def replace(members, outgoing, incoming):
+    \"\"\"Swap one member for another.\"\"\"
+    index = members.index(outgoing)
+    updated = list(members)
+    updated[index] = incoming
+    return updated""",
+    variant_one="""def replace(members, outgoing, incoming):
+    \"\"\"Swap one member for another.\"\"\"
+    if outgoing not in members:
+        raise KeyError(outgoing)
+    if incoming != outgoing and incoming in members:
+        raise ValueError("already a member: " + str(incoming))
+    updated = list(members)
+    updated[members.index(outgoing)] = incoming
+    return updated""",
+    variant_two="""def replace(members, outgoing, incoming):
+    \"\"\"Swap one member for another.\"\"\"
+    if outgoing not in members:
+        raise KeyError(outgoing)
+    if incoming in members and incoming != outgoing:
+        raise ValueError("already a member: " + str(incoming))
+    return [incoming if member == outgoing else member for member in members]""",
+    variant_three="""def replace(members, outgoing, incoming):
+    \"\"\"Swap one member for another.\"\"\"
+    if incoming != outgoing and incoming in members:
+        raise ValueError("already a member: " + str(incoming))
+    index = members.index(outgoing)
+    updated = list(members)
+    updated[index] = incoming
+    return updated""",
+    variant_four="""def replace(members, outgoing, incoming):
+    \"\"\"Swap one member for another.\"\"\"
+    if outgoing not in members:
+        raise KeyError(outgoing)
+    updated = list(members)
+    updated[members.index(outgoing)] = incoming
+    return updated""",
+    visible_test=_test_module(
+        "replace_member",
+        "Published contract for replacing a member.",
+        """
+def test_a_member_is_replaced_in_place() -> None:
+    assert replace(["a", "b"], "a", "c") == ["c", "b"]
+
+
+def test_replacing_a_member_with_itself_changes_nothing() -> None:
+    assert replace(["a"], "a", "a") == ["a"]
+""",
+        imports="from replace_member import replace\n",
+    ),
+    hidden_test=_test_module(
+        "replace_member",
+        "The part of the contract the published tests do not state.",
+        """
+import pytest
+
+
+def test_a_member_is_replaced_in_place() -> None:
+    assert replace(["a", "b"], "a", "c") == ["c", "b"]
+
+
+def test_an_incoming_member_already_held_is_refused() -> None:
+    with pytest.raises(ValueError):
+        replace(["a", "b"], "a", "b")
+
+
+def test_an_outgoing_member_not_held_is_refused() -> None:
+    with pytest.raises(KeyError):
+        replace(["a"], "z", "c")
+""",
+        imports="from replace_member import replace\n",
+    ),
+)
+
+D7_CERTIFICATION_SPECS: tuple[D2TaskSpec, ...] = (
+    _G001,
+    _G002,
+    _G003,
+    _G004,
+    _G005,
+    _G006,
+    _G007,
+    _G008,
+    _G009,
+    _G010,
+    _G011,
+    _G012,
+    _G013,
+    _G014,
+    _G015,
+    _G016,
+    _G017,
+    _G018,
+    _G019,
+    _G020,
+    _G021,
+    _G022,
+    _G023,
+    _G024,
+    _G025,
+    _G026,
+    _G027,
+    _G028,
+    _G029,
+    _G030,
+    _G031,
+    _G032,
+    _G033,
+    _G034,
+    _G035,
+    _G036,
+    _G037,
+    _G038,
+    _G039,
+    _G040,
+    _G041,
+    _G042,
+    _G043,
+    _G044,
+    _G045,
+    _G046,
+    _G047,
+    _G048,
+    _G049,
+    _G050,
+    _G051,
+    _G052,
+    _G053,
+    _G054,
+    _G055,
+    _G056,
+    _G057,
+    _G058,
+    _G059,
+    _G060,
+    _G061,
+    _G062,
+    _G063,
+    _G064,
+    _G065,
+    _G066,
+    _G067,
+    _G068,
+    _G069,
+    _G070,
+    _G071,
+    _G072,
+    _G073,
+    _G074,
+    _G075,
+    _G076,
+    _G077,
+    _G078,
+    _G079,
+    _G080,
+    _G081,
+    _G082,
+    _G083,
+    _G084,
+    _G085,
+    _G086,
+    _G087,
+    _G088,
+    _G089,
+    _G090,
+    _G091,
+    _G092,
+    _G093,
+    _G094,
+    _G095,
+    _G096,
+    _G097,
+    _G098,
+    _G099,
+    _G100,
+)
+
+__all__ = ["D7_CERTIFICATION_SPECS", "D2TaskSpec", "RealityTaskFamily", "_test_module"]

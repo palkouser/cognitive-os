@@ -1,0 +1,75 @@
+{
+ "chronology": {
+  "d7_certification_campaign_opened_by_an_authority_record": false,
+  "d7_certification_decisions_scored": 0,
+  "d7_conformal_bars_derived": 0,
+  "d7_directions_fitted_in_wave": 0,
+  "d7_final_or_canary_outcomes_inspected": false,
+  "d7_ladder_measurements_on_the_fresh_corpus": 0,
+  "other_records_present": [
+   "sprint-21d7-certification-campaign.json",
+   "sprint-21d7-feature-seals.json",
+   "sprint-21d7-snapshots.json",
+   "sprint-21d7-vertical-slice.json"
+  ],
+  "the_ladder_rulings_own_test": "S21D7-011: refusing the rung is legitimate and deciding it after seeing W2's numbers is not. The counters above are what make this the former",
+  "w1_measurement_records_present": [
+   "sprint-21d7-vertical-slice.json",
+   "sprint-21d7-feature-seals.json",
+   "sprint-21d7-certification-campaign.json",
+   "sprint-21d7-snapshots.json"
+  ],
+  "why_w1_records_do_not_close_the_window": "W1 measured the corpus: which bodies pass which suite, what the seven channels of each candidate are, and that the roles are separated. It scored no decision, derived no bar and read no margin. A ruling chosen to suit W1's numbers could only be a ruling about the corpus, and none of the three below is"
+ },
+ "contract_hashes": {
+  "admission_rule": "d9156d3131ceecb42b08909c71de6fd497c96e9206ccefaf2c79936975ca89e6",
+  "candidate_cell": "129e620840dab8b8f3e8e1898ac5e2e27fc99ddb73c30f37b86b71426b43d9fc",
+  "corpus_roles": "c32ddf3330569a9ca8e318cc3284c2d0b6a70e2957c9d7175b8a07cbbb45b82b",
+  "decision_tree": "20315e2bb205d0af82998f4351770004da1df5ee59df456a8e7a42618cc60607",
+  "feature_contract_v3": "147d2be990435f230e282a9e63eecd7f3d577c859572ca674c0b417acf77edae",
+  "selection_rule": "3593126d0240c9f27ae7fb763439b68bb07e9d1ca2e49e47c92558e0cbc83709"
+ },
+ "contracts_sha256": "777dc392ee03929667786c9997533a8cfe44360982e19c16490a20ef8e84c95b",
+ "evidence_children_sha256": {
+  "sprint-21d7-baseline-reading.json": "2323dbc19d391b59d78c3eab0777fd8827ae73d5fdf7fb926aef81afa2a32f6f",
+  "sprint-21d7-baseline.json": "b8fe663d6d8884884ce8f10c084e1b35502ede62764236dd1928e7e9d4bf1e7d",
+  "sprint-21d7-condition-24-ruling.json": "af2144a33ce1b1422e4a5d6f950ec3ae3001ce741c6290a13408637937a82036",
+  "sprint-21d7-demotion-ruling.json": "2cc8de528331a7072df1203afe7dc771eae9dffd906d2ab970da0c93064dd87c",
+  "sprint-21d7-disjointness-clarification.json": "9f8410a0cce03ad424007c3b396d645bff38c2466a762da1477ae45c54d963ce",
+  "sprint-21d7-ladder-ruling.json": "0648bdd0540997038deaa964dd858ce7ad8bff18b10a4f3f61f32dd55b4ba3ac",
+  "sprint-21d7-ladder-supersession.json": "1f42f706e5bcc73583b51c14f44b888132751362e4507b60f01ff618b439d963",
+  "sprint-21d7-provisioning.json": "c23f5a117bc7b48438e6b70120dbbdea4e42fda6f43e9ce801e72b094cc6977f",
+  "sprint-21d7-reuse-audit.json": "b63708754ca49e065905cc59e2865400f46d210999c1c076558fc1881a1cb8b6",
+  "sprint-21d7-transfer-gap.json": "ee66c6b195207a510054cedf6b3d7aaceff44c32fad8741bebe0d396b9d4b87e",
+  "sprint-21d7-w2-preflight.json": "90fae17d8ce23372e2882340bba2fe50dcb53ee709a001976b00c2470393673b"
+ },
+ "integrity_content_hash": "e14ce34293ed6852a85424eec2f168f4ee9118736ece25f5041c811a12901b54",
+ "items": [
+  "S21D7-028"
+ ],
+ "measured_values": 0,
+ "revision": 8,
+ "schema_version": 1,
+ "sprint": "21D7",
+ "supersedes": {
+  "file_sha256": "984a21f012cddb1e2a2b5608e36debbc7769351c5363be940e9fab7e19505496",
+  "for": "Sprint 21D7 W2 onward. Revision 7 remains the authority for every record W0 and W1 sealed, and its children's hashes are unchanged by this revision",
+  "integrity_content_hash": "4017be51c6e06d6123982d2572a9dcd346bb23decc7d1bcfe2c995ee95c2fc7f",
+  "record": "sprint-21d7-pre-registration.json",
+  "revision": 7
+ },
+ "the_window_this_revision_claims": "revision 8 is published before the first fresh decision is scored and says so in numbers rather than in prose. Every counter that would make one of its three rulings a choice made to suit a result is zero, and the two that are not zero \u2014 W1's corpus and campaign records \u2014 measure the corpus rather than any decision",
+ "wave": "W2",
+ "what_changed_from_revision_7": [
+  "the ladder \u00a72.3 reads: the frozen five, not the seated six (S21D7-027)",
+  "the baseline condition's reading: whole-corpus rate (S21D7-026)",
+  "the disjointness sentence's binding: the two leakage properties (S21D7-025)"
+ ],
+ "what_did_not_change": [
+  "every threshold: alpha 0.20, C 0.15, coverage floor 0.40",
+  "the candidate cell, the admission rule, the decision tree and the selection rule",
+  "CorrectionFeatureContractV3 and the seven-channel allowlist",
+  "the sealed model hash W2 must reproduce",
+  "the corpus, its seal and its nine-role separation"
+ ]
+}

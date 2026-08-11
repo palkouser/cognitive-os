@@ -1,0 +1,433 @@
+{
+ "active_path": {
+  "decisions": 100,
+  "decisions_differing_from_the_rung": 74,
+  "ordering_is_the_artifacts_own": true,
+  "reading": "the only path that may differ from the deterministic one does: the model changes the first action on 74 of 100 decisions. A learned path that never differed would be an expensive way to reproduce the baseline",
+  "reason": "active"
+ },
+ "artifact": {
+  "artifact_bytes": 4354,
+  "artifact_hash": "afbdb7c05c73aec8b1a46dd9b20cd8f2f8915819b29a1ea3b364ad8acbb48edb",
+  "artifact_id": "0790849c-2225-413e-9452-c14d85ef9df5",
+  "model_hash": "d80160c4aa795fadd98fb4e6d4f64b7b29a2a3685c537454b8aff95daa124859",
+  "model_hash_matches_the_sealed_one": true,
+  "read_from": "artifacts-s21d7-measured",
+  "rebuilt_class": "ContainmentContrastiveRanker",
+  "rehashed_before_use": true,
+  "why_a_real_artifact_matters_here": "the resolver is pure and never opens a store, so a record could reach every code with a fabricated availability struct. Every case below is driven from this artifact's own component id, surface, revision, byte count and id"
+ },
+ "cases": [
+  {
+   "component_id": "learned.containment.correction_ranking",
+   "decisions_ordered": 100,
+   "detail": "",
+   "health": {
+    "active": true,
+    "component_id": "learned.containment.correction_ranking",
+    "detail": "",
+    "reason": "active",
+    "revision": 1,
+    "routed_group_count": 1,
+    "surface": "experience.correction_ranking"
+   },
+   "learned_ordering_permitted": true,
+   "ordering_equals_the_released_rung": false,
+   "reason": "active",
+   "revision": 1,
+   "uses_deterministic_fallback": false
+  },
+  {
+   "component_id": null,
+   "decisions_ordered": 100,
+   "detail": "",
+   "health": {
+    "active": false,
+    "component_id": null,
+    "detail": "",
+    "reason": "persistence_disabled",
+    "revision": null,
+    "routed_group_count": 1,
+    "surface": "experience.correction_ranking"
+   },
+   "learned_ordering_permitted": false,
+   "ordering_equals_the_released_rung": true,
+   "reason": "persistence_disabled",
+   "revision": null,
+   "uses_deterministic_fallback": true
+  },
+  {
+   "component_id": null,
+   "decisions_ordered": 100,
+   "detail": "",
+   "health": {
+    "active": false,
+    "component_id": null,
+    "detail": "",
+    "reason": "activation_disabled",
+    "revision": null,
+    "routed_group_count": 1,
+    "surface": "experience.correction_ranking"
+   },
+   "learned_ordering_permitted": false,
+   "ordering_equals_the_released_rung": true,
+   "reason": "activation_disabled",
+   "revision": null,
+   "uses_deterministic_fallback": true
+  },
+  {
+   "component_id": null,
+   "decisions_ordered": 100,
+   "detail": "",
+   "health": {
+    "active": false,
+    "component_id": null,
+    "detail": "",
+    "reason": "no_active_revision",
+    "revision": null,
+    "routed_group_count": 1,
+    "surface": "experience.correction_ranking"
+   },
+   "learned_ordering_permitted": false,
+   "ordering_equals_the_released_rung": true,
+   "reason": "no_active_revision",
+   "revision": null,
+   "uses_deterministic_fallback": true
+  },
+  {
+   "component_id": null,
+   "decisions_ordered": 100,
+   "detail": "2 active revisions on experience.correction_ranking",
+   "health": {
+    "active": false,
+    "component_id": null,
+    "detail": "2 active revisions on experience.correction_ranking",
+    "reason": "multiple_active_revisions",
+    "revision": null,
+    "routed_group_count": 1,
+    "surface": "experience.correction_ranking"
+   },
+   "learned_ordering_permitted": false,
+   "ordering_equals_the_released_rung": true,
+   "reason": "multiple_active_revisions",
+   "revision": null,
+   "uses_deterministic_fallback": true
+  },
+  {
+   "component_id": "learned.containment.correction_ranking",
+   "decisions_ordered": 100,
+   "detail": "",
+   "health": {
+    "active": false,
+    "component_id": "learned.containment.correction_ranking",
+    "detail": "",
+    "reason": "component_not_allowlisted",
+    "revision": null,
+    "routed_group_count": 1,
+    "surface": "experience.correction_ranking"
+   },
+   "learned_ordering_permitted": false,
+   "ordering_equals_the_released_rung": true,
+   "reason": "component_not_allowlisted",
+   "revision": null,
+   "uses_deterministic_fallback": true
+  },
+  {
+   "component_id": "learned.containment.correction_ranking",
+   "decisions_ordered": 100,
+   "detail": "the ledger has it disabled",
+   "health": {
+    "active": false,
+    "component_id": "learned.containment.correction_ranking",
+    "detail": "the ledger has it disabled",
+    "reason": "lifecycle_not_active",
+    "revision": null,
+    "routed_group_count": 1,
+    "surface": "experience.correction_ranking"
+   },
+   "learned_ordering_permitted": false,
+   "ordering_equals_the_released_rung": true,
+   "reason": "lifecycle_not_active",
+   "revision": null,
+   "uses_deterministic_fallback": true
+  },
+  {
+   "component_id": "learned.containment.correction_ranking",
+   "decisions_ordered": 100,
+   "detail": "the active revision carries no approval",
+   "health": {
+    "active": false,
+    "component_id": "learned.containment.correction_ranking",
+    "detail": "the active revision carries no approval",
+    "reason": "component_not_approved",
+    "revision": null,
+    "routed_group_count": 1,
+    "surface": "experience.correction_ranking"
+   },
+   "learned_ordering_permitted": false,
+   "ordering_equals_the_released_rung": true,
+   "reason": "component_not_approved",
+   "revision": null,
+   "uses_deterministic_fallback": true
+  },
+  {
+   "component_id": "learned.containment.correction_ranking",
+   "decisions_ordered": 100,
+   "detail": "",
+   "health": {
+    "active": false,
+    "component_id": "learned.containment.correction_ranking",
+    "detail": "",
+    "reason": "configuration_hash_mismatch",
+    "revision": null,
+    "routed_group_count": 1,
+    "surface": "experience.correction_ranking"
+   },
+   "learned_ordering_permitted": false,
+   "ordering_equals_the_released_rung": true,
+   "reason": "configuration_hash_mismatch",
+   "revision": null,
+   "uses_deterministic_fallback": true
+  },
+  {
+   "component_id": "learned.containment.correction_ranking",
+   "decisions_ordered": 100,
+   "detail": "",
+   "health": {
+    "active": false,
+    "component_id": "learned.containment.correction_ranking",
+    "detail": "",
+    "reason": "group_not_routed",
+    "revision": null,
+    "routed_group_count": 1,
+    "surface": "experience.correction_ranking"
+   },
+   "learned_ordering_permitted": false,
+   "ordering_equals_the_released_rung": true,
+   "reason": "group_not_routed",
+   "revision": null,
+   "uses_deterministic_fallback": true
+  },
+  {
+   "component_id": "learned.containment.correction_ranking",
+   "decisions_ordered": 100,
+   "detail": "",
+   "health": {
+    "active": false,
+    "component_id": "learned.containment.correction_ranking",
+    "detail": "",
+    "reason": "routing_manifest_mismatch",
+    "revision": null,
+    "routed_group_count": 1,
+    "surface": "experience.correction_ranking"
+   },
+   "learned_ordering_permitted": false,
+   "ordering_equals_the_released_rung": true,
+   "reason": "routing_manifest_mismatch",
+   "revision": null,
+   "uses_deterministic_fallback": true
+  },
+  {
+   "component_id": "learned.containment.correction_ranking",
+   "decisions_ordered": 100,
+   "detail": "",
+   "health": {
+    "active": false,
+    "component_id": "learned.containment.correction_ranking",
+    "detail": "",
+    "reason": "artifact_missing",
+    "revision": null,
+    "routed_group_count": 1,
+    "surface": "experience.correction_ranking"
+   },
+   "learned_ordering_permitted": false,
+   "ordering_equals_the_released_rung": true,
+   "reason": "artifact_missing",
+   "revision": null,
+   "uses_deterministic_fallback": true
+  },
+  {
+   "component_id": "learned.containment.correction_ranking",
+   "decisions_ordered": 100,
+   "detail": "67108865 bytes above 67108864",
+   "health": {
+    "active": false,
+    "component_id": "learned.containment.correction_ranking",
+    "detail": "67108865 bytes above 67108864",
+    "reason": "artifact_oversized",
+    "revision": null,
+    "routed_group_count": 1,
+    "surface": "experience.correction_ranking"
+   },
+   "learned_ordering_permitted": false,
+   "ordering_equals_the_released_rung": true,
+   "reason": "artifact_oversized",
+   "revision": null,
+   "uses_deterministic_fallback": true
+  },
+  {
+   "component_id": "learned.containment.correction_ranking",
+   "decisions_ordered": 100,
+   "detail": "",
+   "health": {
+    "active": false,
+    "component_id": "learned.containment.correction_ranking",
+    "detail": "",
+    "reason": "artifact_corrupt",
+    "revision": null,
+    "routed_group_count": 1,
+    "surface": "experience.correction_ranking"
+   },
+   "learned_ordering_permitted": false,
+   "ordering_equals_the_released_rung": true,
+   "reason": "artifact_corrupt",
+   "revision": null,
+   "uses_deterministic_fallback": true
+  },
+  {
+   "component_id": "learned.containment.correction_ranking",
+   "decisions_ordered": 100,
+   "detail": "",
+   "health": {
+    "active": false,
+    "component_id": "learned.containment.correction_ranking",
+    "detail": "",
+    "reason": "artifact_unverified",
+    "revision": null,
+    "routed_group_count": 1,
+    "surface": "experience.correction_ranking"
+   },
+   "learned_ordering_permitted": false,
+   "ordering_equals_the_released_rung": true,
+   "reason": "artifact_unverified",
+   "revision": null,
+   "uses_deterministic_fallback": true
+  },
+  {
+   "component_id": "learned.containment.correction_ranking",
+   "decisions_ordered": 100,
+   "detail": "descriptor 2 against active 1",
+   "health": {
+    "active": false,
+    "component_id": "learned.containment.correction_ranking",
+    "detail": "descriptor 2 against active 1",
+    "reason": "descriptor_revision_mismatch",
+    "revision": null,
+    "routed_group_count": 1,
+    "surface": "experience.correction_ranking"
+   },
+   "learned_ordering_permitted": false,
+   "ordering_equals_the_released_rung": true,
+   "reason": "descriptor_revision_mismatch",
+   "revision": null,
+   "uses_deterministic_fallback": true
+  },
+  {
+   "component_id": "learned.containment.correction_ranking",
+   "decisions_ordered": 100,
+   "detail": "",
+   "health": {
+    "active": false,
+    "component_id": "learned.containment.correction_ranking",
+    "detail": "",
+    "reason": "embedding_unavailable",
+    "revision": null,
+    "routed_group_count": 1,
+    "surface": "experience.correction_ranking"
+   },
+   "learned_ordering_permitted": false,
+   "ordering_equals_the_released_rung": true,
+   "reason": "embedding_unavailable",
+   "revision": null,
+   "uses_deterministic_fallback": true
+  },
+  {
+   "component_id": "learned.containment.correction_ranking",
+   "decisions_ordered": 100,
+   "detail": "the local model is not the one the artifact was fitted against",
+   "health": {
+    "active": false,
+    "component_id": "learned.containment.correction_ranking",
+    "detail": "the local model is not the one the artifact was fitted against",
+    "reason": "embedding_identity_mismatch",
+    "revision": null,
+    "routed_group_count": 1,
+    "surface": "experience.correction_ranking"
+   },
+   "learned_ordering_permitted": false,
+   "ordering_equals_the_released_rung": true,
+   "reason": "embedding_identity_mismatch",
+   "revision": null,
+   "uses_deterministic_fallback": true
+  }
+ ],
+ "deterministic_fallback": {
+  "decisions": 100,
+  "every_fallback_produced_the_rung_ordering": true,
+  "fallbacks_disagreeing": [],
+  "immediate": "the ordering is a pure function of the four candidates and the frozen slot order; no model is loaded, no store is read and no network call is made on any fallback path, so the fallback is the first thing that happens rather than what happens after something else fails",
+  "rung": "lexical_similarity",
+  "why_all_100_and_not_a_sample": "a fallback that agrees with the rung on a sample and diverges elsewhere is the failure this condition exists to catch"
+ },
+ "final_or_canary_outcomes_inspected": 0,
+ "final_outcomes_inspected": false,
+ "inputs": {
+  "artifact_record_sha256": "ad2c7681b839c21e1dc696f315ba62cf55a4f1d08b92fe19386d7e4c3be13169",
+  "d7_feature_seals_sha256": "bb6028e753598b583e8c7054024a1f2c01e6873a448ce10f37d866c7f0b2eed4",
+  "w2_ladder_sha256": "7386fdb957c10c7f137c46c0d6d7d4355fbf35119cc1f94f9e61c3a2494384aa"
+ },
+ "integrity_content_hash": "d4882a2481d31095a27971af92f6f2882e42d5b61db05e159b61ddebadb3049f",
+ "items": [
+  "S21D7-037"
+ ],
+ "reason_codes": {
+  "active_codes": 1,
+  "declared": [
+   "active",
+   "persistence_disabled",
+   "activation_disabled",
+   "no_active_revision",
+   "component_not_allowlisted",
+   "multiple_active_revisions",
+   "group_not_routed",
+   "routing_manifest_mismatch",
+   "artifact_missing",
+   "artifact_unverified",
+   "descriptor_revision_mismatch",
+   "embedding_unavailable",
+   "embedding_identity_mismatch",
+   "lifecycle_not_active",
+   "component_not_approved",
+   "configuration_hash_mismatch",
+   "artifact_corrupt",
+   "artifact_oversized"
+  ],
+  "every_code_reached": true,
+  "fallback_codes": 17,
+  "reached": [
+   "activation_disabled",
+   "active",
+   "artifact_corrupt",
+   "artifact_missing",
+   "artifact_oversized",
+   "artifact_unverified",
+   "component_not_allowlisted",
+   "component_not_approved",
+   "configuration_hash_mismatch",
+   "descriptor_revision_mismatch",
+   "embedding_identity_mismatch",
+   "embedding_unavailable",
+   "group_not_routed",
+   "lifecycle_not_active",
+   "multiple_active_revisions",
+   "no_active_revision",
+   "persistence_disabled",
+   "routing_manifest_mismatch"
+  ]
+ },
+ "schema_version": 1,
+ "sprint": "21D7",
+ "stores_opened_for_writing": 0,
+ "wave": "W3",
+ "what_this_record_is_not": "an activation. Nothing here writes a ledger row, approves a component or routes a group; the resolver is driven with inputs and its answers are recorded"
+}

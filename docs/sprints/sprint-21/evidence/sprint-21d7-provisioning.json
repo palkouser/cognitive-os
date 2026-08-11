@@ -1,0 +1,72 @@
+{
+ "commands": [
+  "docker exec compose-postgres-1 psql -U cogos_owner -d cognitive_os_s21d7_integration_test -tAc select count(*) from information_schema.tables where table_schema='cognitive_os'",
+  "docker exec compose-postgres-1 psql -U cogos_owner -d cognitive_os_s21d7_integration_test -tAc select to_regclass('public.alembic_version') is not null",
+  "docker exec compose-postgres-1 psql -U cogos_owner -d cognitive_os_s21d7_restore_test -tAc select count(*) from information_schema.tables where table_schema='cognitive_os'",
+  "docker exec compose-postgres-1 psql -U cogos_owner -d cognitive_os_s21d7_restore_test -tAc select to_regclass('public.alembic_version') is not null",
+  "docker exec compose-postgres-1 psql -U cogos_owner -d cognitive_os_s21d7_test -tAc select count(*) from information_schema.tables where table_schema='cognitive_os'",
+  "docker exec compose-postgres-1 psql -U cogos_owner -d cognitive_os_s21d7_test -tAc select to_regclass('public.alembic_version') is not null",
+  "docker exec compose-postgres-1 psql -U cogos_owner -d cognitive_os_s21d7_test -tAc select version_num from public.alembic_version limit 1"
+ ],
+ "databases": {
+  "cognitive_os_s21d7_integration_test": {
+   "alembic_head": "unmigrated",
+   "cognitive_os_tables": 0,
+   "exists": true,
+   "role": "migrated by its own flow, not by W0"
+  },
+  "cognitive_os_s21d7_restore_test": {
+   "alembic_head": "unmigrated",
+   "cognitive_os_tables": 0,
+   "exists": true,
+   "role": "migrated by its own flow, not by W0"
+  },
+  "cognitive_os_s21d7_test": {
+   "alembic_head": "0015",
+   "cognitive_os_tables": 114,
+   "exists": true,
+   "role": "evidence store"
+  }
+ },
+ "environment_file": ".env.s21d7.local",
+ "evidence_database": "cognitive_os_s21d7_test",
+ "evidence_database_at_repository_head": true,
+ "findings": [],
+ "guards": {
+  "evidence_database_prefix": "cognitive_os_s21d7",
+  "prefix_guard": "postgres_provision_evidence.sh refuses any database outside the prefix",
+  "s21d5_w0_f1_not_repeated": "D5's finding was a migration that reached the development database first because the loader re-read a stale file; D7 provisions with the env file passed explicitly and verifies the head on the prefixed database and on every predecessor store before recording it",
+  "shared_loader": "scripts/postgres_common.sh re-reads its own file and overrides exported variables by design, so every D7 shell invocation passes COGOS_POSTGRES_ENV_FILE=$PWD/.env.s21d7.local rather than exporting",
+  "truncatable_database_nominated": null,
+  "truncation_fence": "COGOS_TRUNCATABLE_DATABASE is unset, so every truncating path declines; a nomination naming any database other than the connected one is refused loudly"
+ },
+ "integrity_content_hash": "fc572bb24bfb6a237c6e3f7f1af834d40492c9cb86e9e5b61204049c7bf55919",
+ "items": [
+  "S21D7-001"
+ ],
+ "migration": {
+  "alembic_check": "no new upgrade operations detected",
+  "next_available": "0016 (unallocated)",
+  "planned_d7_migration": null,
+  "repository_head": "0015"
+ },
+ "phase": "provisioned",
+ "recorded_at": "2026-08-10T13:28:17Z",
+ "roots": {
+  "artifact_root": {
+   "exists": true,
+   "files": 0,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d7",
+   "path_and_size_fingerprint_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "backup_root": {
+   "exists": true,
+   "files": 0,
+   "path": "/home/palkouser/projekt/cognitive-os-data/backups-s21d7",
+   "path_and_size_fingerprint_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+ },
+ "schema_version": 1,
+ "sprint": "21D7",
+ "wave": "W0"
+}

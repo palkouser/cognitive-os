@@ -1,0 +1,47 @@
+{
+ "chronology": {
+  "d7_certification_campaign_opened_by_an_authority_record": false,
+  "d7_certification_decisions_scored": 0,
+  "d7_conformal_bars_derived": 0,
+  "d7_directions_fitted_in_wave": 0,
+  "d7_final_or_canary_outcomes_inspected": false,
+  "d7_ladder_measurements_on_the_fresh_corpus": 0,
+  "other_records_present": [
+   "sprint-21d7-certification-campaign.json",
+   "sprint-21d7-feature-seals.json",
+   "sprint-21d7-snapshots.json",
+   "sprint-21d7-vertical-slice.json"
+  ],
+  "the_ladder_rulings_own_test": "S21D7-011: refusing the rung is legitimate and deciding it after seeing W2's numbers is not. The counters above are what make this the former",
+  "w1_measurement_records_present": [
+   "sprint-21d7-vertical-slice.json",
+   "sprint-21d7-feature-seals.json",
+   "sprint-21d7-certification-campaign.json",
+   "sprint-21d7-snapshots.json"
+  ],
+  "why_w1_records_do_not_close_the_window": "W1 measured the corpus: which bodies pass which suite, what the seven channels of each candidate are, and that the roles are separated. It scored no decision, derived no bar and read no margin. A ruling chosen to suit W1's numbers could only be a ruling about the corpus, and none of the three below is"
+ },
+ "integrity_content_hash": "2323dbc19d391b59d78c3eab0777fd8827ae73d5fdf7fb926aef81afa2a32f6f",
+ "items": [
+  "S21D7-026"
+ ],
+ "ruling": "the baseline condition compares the admitted clean first-choice rate with the strongest deterministic rung's rate over the whole corpus",
+ "schema_version": 1,
+ "sprint": "21D7",
+ "the_condition": "clean first-choice rate over admitted decisions strictly above the strongest deterministic baseline on the same decisions",
+ "the_two_readings": {
+  "admitted_subset": "the rung's rate recomputed on exactly the admitted decisions, which no released record reports and which collapses onto the class's own rate wherever the two agree on what they admit",
+  "whole_corpus": "the rung's rate over all 100 certification decisions, which is the rate every released ladder record reports and the one D2 through D6 were measured against"
+ },
+ "thresholds_changed": 0,
+ "wave": "W2",
+ "what_it_costs": "the whole-corpus reading is the weaker of the two on any cell where admission correlates with the rung being right, which is every cell a sane class produces. It is recorded here, before the numbers, so that a pass under it is read as what it is: strictly above the published baseline rate, not above the rung's rate on the decisions the class chose to take",
+ "what_it_does_not_change": [
+  "the condition's text, which is unchanged and unamended",
+  "any threshold; 'strictly above' is strictly above under either reading",
+  "which rung is the strongest, which is measured on the fresh corpus and not assumed"
+ ],
+ "which_binds": "whole_corpus",
+ "why_it_had_to_be_fixed_first": "the baseline condition \u2014 'clean first-choice rate over admitted decisions strictly above the strongest deterministic baseline on the same decisions' \u2014 has two readings that D6's cell never separated, because its baseline was weak everywhere: admitted-rate against the rung's whole-corpus rate can pass on exactly the numbers where admitted-rate against the rung's rate on the admitted subset cannot, since agreement makes the latter two identical. The estimate above lands the sprint precisely in the scenario where the readings diverge, so the reading must be fixed before any fresh decision is scored",
+ "why_this_reading": "the released ladder rate is the number every predecessor was measured against, so reading it keeps this cell comparable with D2 through D6. The subset reading is not merely stricter: where a class admits the decisions a rung already gets right, it is unsatisfiable by construction, and a condition that cannot be met by any class is a condition that measures nothing"
+}

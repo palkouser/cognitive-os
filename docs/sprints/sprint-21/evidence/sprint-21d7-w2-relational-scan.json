@@ -1,0 +1,262 @@
+{
+ "aliasing": {
+  "by_pair": {
+   "d5_fitting_pool|d6_demoted_bar_setting": 15,
+   "d5_fitting_pool|d7_certification": 23,
+   "d6_demoted_bar_setting|d7_certification": 11
+  },
+  "reported_as": "the upper bound on reachable coverage, never as a pass. An aliased vector is two different canonical sources encoding identically in a low-entropy code; it shares no decision, no group and no bytes, and a certified decision's margin is computed from its own group's four vectors regardless"
+ },
+ "clarification": {
+  "integrity_content_hash": "9f8410a0cce03ad424007c3b396d645bff38c2466a762da1477ae45c54d963ce",
+  "item": "S21D7-025",
+  "reading": "the sentence is bound to the two leakage properties it exists to prevent: no shared decision signature and no shared canonical source across any half pair"
+ },
+ "final_or_canary_outcomes_inspected": 0,
+ "final_outcomes_inspected": false,
+ "frozen_sentence": "no fitted vector may appear in both halves; S21D7-022 proves it",
+ "inputs": {
+  "d5_feature_seals_sha256": "2f4381ccb21d204a22da686d7f5e3feeb6317030b656e98b7a083370a48696ed",
+  "d6_feature_seals_sha256": "f49bcb0f8b74edd434272b12be8c55a2a9edfb53d887a0ea0fae89ad08d71385",
+  "d7_disjointness_clarification_sha256": "79137c9aa4837f1b3a64af11f22307ccff5a7f07cf9dffd17b98affb3c20b0b7",
+  "d7_feature_seals_sha256": "bb6028e753598b583e8c7054024a1f2c01e6873a448ce10f37d866c7f0b2eed4",
+  "d7_snapshots_sha256": "ac11a5ac139f146b785fbc952f97c57ae57dea4642b41a9dfbeb8141364f145f"
+ },
+ "integrity_content_hash": "31eda3cdc815bda41901da2c321d80e874ce23d643591db7084049e516cd43fe",
+ "items": [
+  "S21D7-031"
+ ],
+ "leakage_properties": {
+  "clean": true,
+  "shared_canonical_sources": 0,
+  "shared_decision_signatures": 0
+ },
+ "released_v2_scans": {
+  "all_passed": true,
+  "count": 11,
+  "failed": [],
+  "level": "the 390-channel v2 representation, 800 rows, one encoder identity",
+  "results": [
+   {
+    "detail": "390 columns, all on the correction-ranking-v2 allowlist",
+    "name": "no_forbidden_field_reaches_the_matrix",
+    "passed": true
+   },
+   {
+    "detail": "all 390 fitted dimensions are finite and in range",
+    "name": "every_fitted_dimension_is_finite_and_in_range",
+    "passed": true
+   },
+   {
+    "detail": "all 390 fitted dimensions are finite and in range",
+    "name": "every_fitted_dimension_is_finite_and_in_range",
+    "passed": true
+   },
+   {
+    "detail": "all 800 rows use correction-ranking-v2",
+    "name": "every_row_has_one_encoder_identity",
+    "passed": true
+   },
+   {
+    "detail": "800 rows were sealed before the verifier ran",
+    "name": "every_feature_record_precedes_its_outcome",
+    "passed": true
+   },
+   {
+    "detail": "800 rows, each reproducing the feature hash its seal recorded",
+    "name": "every_row_resolves_to_one_pre_outcome_source_chain",
+    "passed": true
+   },
+   {
+    "detail": "100 fit groups and 100 calibration groups share none",
+    "name": "no_group_crosses_the_split",
+    "passed": true
+   },
+   {
+    "detail": "800 distinct feature signatures, none labelled both ways",
+    "name": "no_identical_row_carries_two_labels",
+    "passed": true
+   },
+   {
+    "detail": "highest cross-split similarity 0.989324 against a floor of 0.999",
+    "name": "no_near_duplicate_crosses_the_split",
+    "passed": true
+   },
+   {
+    "detail": "no column of 390 separates the labels without exception",
+    "name": "no_column_derives_the_label",
+    "passed": true
+   },
+   {
+    "detail": "no column of 390 separates the labels without exception",
+    "name": "no_column_derives_the_label",
+    "passed": true
+   }
+  ],
+  "sealed_in": "sprint-21d7-snapshots.json",
+  "why_they_are_not_enough_alone": "they prove separation where the v2 representation lives. The class W2 certifies reads seven numbers, and a scan of 390 channels cannot see what seven numbers collide on"
+ },
+ "schema_version": 1,
+ "sprint": "21D7",
+ "stage": "separation_scan",
+ "stores_opened_for_writing": 0,
+ "v3_relational_scan": {
+  "aliasing_reading": "an aliased vector is two different canonical sources encoding identically in a seven-channel code; it shares no decision, no group and no bytes across the halves, and a certified decision's margin is computed from its own group's four vectors whatever any other task's candidate encoded to",
+  "clean": true,
+  "content_hash": "99b1d6a47ea7c8ffa33470047b1ddeb6d4995f3ff6a92463b231a9c886552161",
+  "halves": [
+   {
+    "candidate_vectors": 720,
+    "content_hash": "3501b0933b7f53dd5e78f259998f2827a39f7b790096a12b301b52c2f6791791",
+    "distinct_vectors": 679,
+    "groups": 180,
+    "groups_with_within_group_aliasing": [
+     "boundary-windowing",
+     "d3-boundary-head-within",
+     "d3-state-expire-before",
+     "d4-boundary-window-sums",
+     "d4-errors-abort-reason",
+     "d4-errors-rate-limited",
+     "d4-errors-status-band",
+     "d4-errors-unwrap-result",
+     "d4-numeric-fee-for",
+     "d4-parsing-word-tokens",
+     "d4-state-record-heartbeat",
+     "d4-transform-merge-sorted"
+    ],
+    "half": "d5_fitting_pool",
+    "independent_decision_signatures": 180
+   },
+   {
+    "candidate_vectors": 400,
+    "content_hash": "b944cc50ca9dea3adcfd4fdbf9be3b0cd1d37a3b20ab63b7ffef29212d57d8ec",
+    "distinct_vectors": 389,
+    "groups": 100,
+    "groups_with_within_group_aliasing": [
+     "d6-boundary-crest-positions",
+     "d6-boundary-extreme-positions",
+     "d6-boundary-first-gap",
+     "d6-boundary-nearest-below",
+     "d6-error-deadline-guard",
+     "d6-error-guard-chain",
+     "d6-parsing-gutter-split",
+     "d6-parsing-iso-week",
+     "d6-parsing-quantity-phrase"
+    ],
+    "half": "d6_demoted_bar_setting",
+    "independent_decision_signatures": 100
+   },
+   {
+    "candidate_vectors": 400,
+    "content_hash": "030200d117c3c491d20e9821733f6ddc69fa5433f7a39d90860200dec4392dba",
+    "distinct_vectors": 377,
+    "groups": 100,
+    "groups_with_within_group_aliasing": [
+     "d7-boundary-cooldown-filter",
+     "d7-boundary-queue-positions",
+     "d7-error-budget-level",
+     "d7-error-dead-letter",
+     "d7-error-halt-on-fatal",
+     "d7-error-two-step-confirm",
+     "d7-numeric-backoff-wait",
+     "d7-numeric-discount-ladder",
+     "d7-numeric-fresh-average",
+     "d7-numeric-vote-threshold",
+     "d7-parsing-file-extension",
+     "d7-state-read-up-to",
+     "d7-transform-mark-changes",
+     "d7-transform-priority-arrange"
+    ],
+    "half": "d7_certification",
+    "independent_decision_signatures": 100
+   }
+  ],
+  "pairs": [
+   {
+    "aliased_vectors": 15,
+    "content_hash": "f380d6dce97a12c03dc99632267b25e12bde6ad0eb3d34ac094a99108eed9618",
+    "first_half": "d5_fitting_pool",
+    "first_half_groups_touched_by_aliasing": [
+     "d2-boundary-adjacent-dedupe",
+     "d2-errors-range-guard",
+     "d2-numeric-digit-root",
+     "d3-boundary-head-within",
+     "d4-errors-lookup-path",
+     "d4-errors-matches-known",
+     "d4-errors-rate-limited",
+     "d4-errors-unwrap-result",
+     "d4-parsing-column-label",
+     "d4-parsing-semver",
+     "d4-state-advance-offset",
+     "d4-transform-merge-sorted",
+     "numeric-clamping",
+     "parsing-booleans",
+     "parsing-key-values",
+     "state-checkpoint-history"
+    ],
+    "second_half": "d6_demoted_bar_setting",
+    "shared_canonical_sources": 0,
+    "shared_decision_signatures": 0
+   },
+   {
+    "aliased_vectors": 23,
+    "content_hash": "047cffa85db8b296faf9c9ce67d7d415e5688cd8fe9101962f2b4dec931e26de",
+    "first_half": "d5_fitting_pool",
+    "first_half_groups_touched_by_aliasing": [
+     "d2-errors-divmod",
+     "d2-numeric-digit-root",
+     "d2-parsing-path",
+     "d2-state-session-close",
+     "d2-transform-chunk-mapping",
+     "d2-transform-index",
+     "d2-transform-merge-lists",
+     "d2-transform-record-dedupe",
+     "d3-parsing-signed",
+     "d4-boundary-trim-both-ends",
+     "d4-boundary-window-sums",
+     "d4-errors-group-by-prefix",
+     "d4-errors-rate-limited",
+     "d4-numeric-fee-for",
+     "d4-parsing-column-label",
+     "d4-parsing-truth-word",
+     "d4-state-record-heartbeat",
+     "d4-state-undo-last",
+     "d4-transform-compact-record",
+     "d4-transform-join-on-key",
+     "numeric-averages",
+     "numeric-clamping",
+     "numeric-percentages",
+     "parsing-booleans",
+     "parsing-header-names",
+     "parsing-key-values"
+    ],
+    "second_half": "d7_certification",
+    "shared_canonical_sources": 0,
+    "shared_decision_signatures": 0
+   },
+   {
+    "aliased_vectors": 11,
+    "content_hash": "70824aebb9b91f0c9610f772c7b6c2926deb49f3eadb4458da957576cb972e2a",
+    "first_half": "d6_demoted_bar_setting",
+    "first_half_groups_touched_by_aliasing": [
+     "d6-error-escrow-release",
+     "d6-error-objection-codes",
+     "d6-error-reconcile-totals",
+     "d6-error-settle-conflicts",
+     "d6-numeric-ratchet-value",
+     "d6-state-draft-publishing",
+     "d6-state-watermark-state",
+     "d6-transform-accumulate-by-key",
+     "d6-transform-slab-index",
+     "d6-transform-stencil-apply"
+    ],
+    "second_half": "d7_certification",
+    "shared_canonical_sources": 0,
+    "shared_decision_signatures": 0
+   }
+  ],
+  "revision": 1
+ },
+ "wave": "W2",
+ "what_this_record_is_not": "a label-bearing measurement. The scan reads sealed vectors and canonical source hashes only \u2014 no outcome, no label, no margin, no ordering \u2014 which is what makes it safe over an unscored certification half"
+}

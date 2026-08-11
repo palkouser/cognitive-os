@@ -1,0 +1,105 @@
+{
+ "chronology": {
+  "d7_certification_campaign_opened_by_an_authority_record": false,
+  "d7_certification_decisions_scored": 0,
+  "d7_conformal_bars_derived": 0,
+  "d7_directions_fitted_in_wave": 0,
+  "d7_final_or_canary_outcomes_inspected": false,
+  "d7_ladder_measurements_on_the_fresh_corpus": 0,
+  "other_records_present": [
+   "sprint-21d7-certification-campaign.json",
+   "sprint-21d7-feature-seals.json",
+   "sprint-21d7-snapshots.json",
+   "sprint-21d7-vertical-slice.json"
+  ],
+  "the_ladder_rulings_own_test": "S21D7-011: refusing the rung is legitimate and deciding it after seeing W2's numbers is not. The counters above are what make this the former",
+  "w1_measurement_records_present": [
+   "sprint-21d7-vertical-slice.json",
+   "sprint-21d7-feature-seals.json",
+   "sprint-21d7-certification-campaign.json",
+   "sprint-21d7-snapshots.json"
+  ],
+  "why_w1_records_do_not_close_the_window": "W1 measured the corpus: which bodies pass which suite, what the seven channels of each candidate are, and that the roles are separated. It scored no decision, derived no bar and read no margin. A ruling chosen to suit W1's numbers could only be a ruling about the corpus, and none of the three below is"
+ },
+ "if_refused": "the sentence stands literally, the seven-channel corpus fails its own disjointness clause on aliasing alone, and D7 stops at \u00a73.4 with a sealed record. A legitimate outcome; it closes the class question on a property no half actually violates",
+ "integrity_content_hash": "9f8410a0cce03ad424007c3b396d645bff38c2466a762da1477ae45c54d963ce",
+ "items": [
+  "S21D7-025"
+ ],
+ "measured": {
+  "candidate_vectors": {
+   "d5_fitting_pool": 720,
+   "d6_demoted_bar_setting": 400,
+   "d7_certification": 400
+  },
+  "clean_under_the_bound_reading": true,
+  "distinct_vectors": {
+   "d5_fitting_pool": 679,
+   "d6_demoted_bar_setting": 389,
+   "d7_certification": 377
+  },
+  "independent_decision_signatures": {
+   "d5_fitting_pool": 180,
+   "d6_demoted_bar_setting": 100,
+   "d7_certification": 100
+  },
+  "pairs": [
+   {
+    "aliased_vectors": 15,
+    "halves": [
+     "d5_fitting_pool",
+     "d6_demoted_bar_setting"
+    ],
+    "shared_canonical_sources": 0,
+    "shared_decision_signatures": 0
+   },
+   {
+    "aliased_vectors": 23,
+    "halves": [
+     "d5_fitting_pool",
+     "d7_certification"
+    ],
+    "shared_canonical_sources": 0,
+    "shared_decision_signatures": 0
+   },
+   {
+    "aliased_vectors": 11,
+    "halves": [
+     "d6_demoted_bar_setting",
+     "d7_certification"
+    ],
+    "shared_canonical_sources": 0,
+    "shared_decision_signatures": 0
+   }
+  ],
+  "scan": "relational_scans.py",
+  "scan_content_hash": "99b1d6a47ea7c8ffa33470047b1ddeb6d4995f3ff6a92463b231a9c886552161",
+  "scan_revision": 1
+ },
+ "ruling": "the corpus_roles disjointness sentence binds to the two leakage properties it exists for, and seven-channel aliasing is reported rather than fatal",
+ "schema_version": 1,
+ "sprint": "21D7",
+ "the_contract_it_lives_in": {
+  "contract_hash": "c32ddf3330569a9ca8e318cc3284c2d0b6a70e2957c9d7175b8a07cbbb45b82b",
+  "disjointness_clause": "no fitted vector may appear in both halves; S21D7-022 proves it",
+  "name": "corpus_roles",
+  "text_unchanged": true
+ },
+ "the_frozen_sentence": "no fitted vector may appear in both halves; S21D7-022 proves it",
+ "the_reading_this_rejects": "that an aliased vector is shared evidence. It is not: it is two different canonical sources encoding identically in a seven-channel code. It shares no decision, no group and no bytes across the halves, and a certified decision's margin is computed from its own group's four vectors whatever any other task's candidate encoded to",
+ "thresholds_changed": 0,
+ "wave": "W2",
+ "what_binds_from_here": [
+  "zero shared decision signatures across every half pair",
+  "zero shared canonical sources across every half pair",
+  "each half's independent decision count equal to its group count"
+ ],
+ "what_is_reported_rather_than_refused": "the count of relational vectors appearing in more than one half, per pair, in every W2 and later record that scores or admits a decision. Aliasing bounds reachable coverage from above and belongs in the record for that reason",
+ "what_it_does_not_change": [
+  "any threshold: alpha stays 0.20, C stays 0.15, the coverage floor stays 0.40",
+  "the corpus_roles contract text or its hash",
+  "the nine-role separation proof, which is about groups and holds unchanged",
+  "any released record; D2 through D6 fitted 390 channels and do not alias"
+ ],
+ "why_the_sentence_needed_reading": "it was written for the 390-channel representation, where two distinct canonical sources do not encode to the same vector. The class this sprint fits is seven numbers, and seven numbers alias. Read literally the sentence is false of a corpus that leaks nothing; read as its purpose it is true of exactly the corpora that leak nothing. Neither reading is a threshold, and the difference between them is the whole question"
+}

@@ -1,0 +1,221 @@
+{
+ "contracts_sha256": "777dc392ee03929667786c9997533a8cfe44360982e19c16490a20ef8e84c95b",
+ "decision": {
+  "conditions_evaluated": 9,
+  "ending": "1_select",
+  "ending_sentence": "all nine conditions hold; bind the v3 artifact to the new conformal point, run the lifecycle, close the gate, unblock Sprint 22A",
+  "failed_conditions": [],
+  "outcome": "candidate",
+  "sentence_read_from": {
+   "path": "contracts.decision_tree.endings",
+   "record": "sprint-21d7-contracts.json",
+   "sealed_with_measured_values": 0,
+   "why": "the six endings were written in W0 with measured_values: 0, so the measurement selects one rather than authoring one. A successor sentence composed after the result would be the measurement arguing for its own follow-up"
+  },
+  "thresholds_changed_by_this_sprint": {
+   "amendments_made_by_d7": 0,
+   "count": 0
+  }
+ },
+ "delivered": {
+  "count": 15,
+  "records_missing": [],
+  "work": [
+   {
+    "record": "sprint-21d7-artifact.json",
+    "record_exists": true,
+    "record_sha256": "ad2c7681b839c21e1dc696f315ba62cf55a4f1d08b92fe19386d7e4c3be13169",
+    "work": "v3 artifact bound to the new conformal point",
+    "written_after_this_record": false
+   },
+   {
+    "record": "sprint-21d7-runtime.json",
+    "record_exists": true,
+    "record_sha256": "62912d4c5cec94b9be75d7fcdb383bec08ffbd225fdbd7a935d4e6f14f7fbae0",
+    "work": "loader, resolver and sequencer against the real artifact",
+    "written_after_this_record": false
+   },
+   {
+    "record": "sprint-21d7-final-a-campaign.json",
+    "record_exists": true,
+    "record_sha256": "a9236328a83524cc434ed09ee7aa97c2b736c209e2b8736e68a926b3d357d9b2",
+    "work": "the carried final roles opened — final A",
+    "written_after_this_record": false
+   },
+   {
+    "record": "sprint-21d7-final-b-campaign.json",
+    "record_exists": true,
+    "record_sha256": "3b749b578d8bb36f453340b7317a32e81f887262dbc248b9491faae3c5cbc607",
+    "work": "the carried final roles opened — final B",
+    "written_after_this_record": false
+   },
+   {
+    "record": "sprint-21d7-final-evidence.json",
+    "record_exists": true,
+    "record_sha256": "ed50ff6f9eeb83490532682ce4a6943c47fe7a360dc50a7b0bdfe5a24485ee90",
+    "work": "final-evidence gain and per-batch direction",
+    "written_after_this_record": false
+   },
+   {
+    "record": "sprint-21d7-final-evidence.json",
+    "record_exists": true,
+    "record_sha256": "ed50ff6f9eeb83490532682ce4a6943c47fe7a360dc50a7b0bdfe5a24485ee90",
+    "work": "paired group bootstrap",
+    "written_after_this_record": false
+   },
+   {
+    "record": "sprint-21d7-final-evidence.json",
+    "record_exists": true,
+    "record_sha256": "ed50ff6f9eeb83490532682ce4a6943c47fe7a360dc50a7b0bdfe5a24485ee90",
+    "work": "shadow mode against final evidence",
+    "written_after_this_record": false
+   },
+   {
+    "record": "sprint-21d7-promotion.json",
+    "record_exists": true,
+    "record_sha256": "6e8ef709ad60df7020da86250086e9b685f9baedb4927878a2d6ce20bfe891f2",
+    "work": "safety and retention",
+    "written_after_this_record": false
+   },
+   {
+    "record": "sprint-21d7-promotion.json",
+    "record_exists": true,
+    "record_sha256": "6e8ef709ad60df7020da86250086e9b685f9baedb4927878a2d6ce20bfe891f2",
+    "work": "promotion metamorphic inside the admission budget",
+    "written_after_this_record": false
+   },
+   {
+    "record": "sprint-21d7-canary-campaign.json",
+    "record_exists": true,
+    "record_sha256": "c96ddd687c2c942b1199792380cf46222835736942c051d7e0c81cf281cde795",
+    "work": "the canary subset executed",
+    "written_after_this_record": false
+   },
+   {
+    "record": "sprint-21d7-lifecycle.json",
+    "record_exists": true,
+    "record_sha256": "0c923c19d91b6327d58c890f63fc47b686307f0ff684558a567e8f9d591bea10",
+    "work": "hash-bound canary manifest, verifier mandatory, kill switch",
+    "written_after_this_record": false
+   },
+   {
+    "record": "sprint-21d7-lifecycle.json",
+    "record_exists": true,
+    "record_sha256": "0c923c19d91b6327d58c890f63fc47b686307f0ff684558a567e8f9d591bea10",
+    "work": "exact human approval with no self-approval",
+    "written_after_this_record": false
+   },
+   {
+    "record": "sprint-21d7-lifecycle.json",
+    "record_exists": true,
+    "record_sha256": "0c923c19d91b6327d58c890f63fc47b686307f0ff684558a567e8f9d591bea10",
+    "work": "activation, restart survival and deliberate rollback",
+    "written_after_this_record": false
+   },
+   {
+    "record": "sprint-21d7-verification-matrix.json",
+    "record_exists": true,
+    "record_sha256": "9c5af170517e2c3640ac4e438318b95700c1d2dfb3b3ceaad784101ef8f46e03",
+    "work": "the release matrix",
+    "written_after_this_record": false
+   },
+   {
+    "record": "sprint-21d7-gate-l2.json",
+    "record_exists": true,
+    "record_sha256": null,
+    "why_unhashed": "it reads this record's closed set and binds these bytes; hashing it here would make each run invalidate the other's binding",
+    "work": "the gate assessment",
+    "written_after_this_record": true
+   }
+  ]
+ },
+ "integrity_content_hash": "db4d6dd0cff2a0d21ac6554686467369456359bc605916c493600523594f46d1",
+ "items": [
+  "S21D7-042"
+ ],
+ "not_opened": {
+  "conditions_a_stop_would_have_closed": [
+   10,
+   11,
+   13,
+   14,
+   15,
+   16,
+   18,
+   19,
+   20,
+   21,
+   22,
+   23,
+   25,
+   26,
+   27
+  ],
+  "count": 0,
+  "gate_l2_conditions": [],
+  "why_the_list_is_here_and_empty": "D3 through D6 each closed between fifteen and nineteen Gate L2 conditions against a stop hash. The same list is printed here so that a reader comparing this record with its predecessors sees an empty set rather than an absent section — an omitted map is not the same claim as an empty one",
+  "work": []
+ },
+ "pre_registration_sha256": "984a21f012cddb1e2a2b5608e36debbc7769351c5363be940e9fab7e19505496",
+ "recorded_at": "2026-08-11T08:34:13Z",
+ "risks_the_evidence_did_not_retire": [
+  {
+   "risk": "the class was found after reading D6's published evidence",
+   "state": "not retired. The controls held — the construction is licensed by the corpus contract, every threshold it cleared was frozen before it existed, and the fresh certification was read once — but a class chosen after looking at spent corpora stays a selection effect, and one passing sprint does not measure it away"
+  },
+  {
+   "risk": "exchangeability, one pairing over",
+   "state": "not retired, and now load-bearing in production: the bar admitting 0.59 of the certification half was placed on D6's demoted groups. A successor corpus with a different family profile moves coverage without moving a single threshold"
+  },
+  {
+   "risk": "the anatomy is load-bearing",
+   "state": "not retired. The containment signal reads the two-complete-two-partial structure the authoring contract froze; a corpus contract that varies candidate count or repair completeness dissolves the signal by design. 22A's domain expansion has to price this rather than inherit it"
+  },
+  {
+   "risk": "the class and its baseline are the same signal at admissible margins",
+   "state": "MEASURED, and it decided the sprint. Under the seated containment rung only 5 of 59 admitted decisions differ from the containment ordering — 5.085 projected against a floor of 20 — so the pass exists because S21D7-027 unseated that rung at W2 step 0, before anything was scored. The honest reading is that the deterministic rung is most of the value and the fitted direction is the remainder"
+  },
+  {
+   "risk": "representational aliasing is a property of every seven-channel corpus",
+   "state": "not retired, and bounded rather than removed: the aliasing counts cap reachable coverage from above on any corpus of this size, and the leakage-level properties are what the scans keep proving"
+  }
+ ],
+ "schema_version": 1,
+ "selection_sha256": "bb6ef046b38b1a2d52c8ec746ddf815c616414ad967af4cf3a7df5ba4f829192",
+ "sprint": "21D7",
+ "wave": "W4",
+ "what_sprint_22a_inherits": {
+  "a_live_selection_surface": {
+   "component": "learned.containment.correction_ranking",
+   "record": "sprint-21d7-lifecycle.json",
+   "record_sha256": "0c923c19d91b6327d58c890f63fc47b686307f0ff684558a567e8f9d591bea10",
+   "state": "active on the canary subset, five routed groups",
+   "surface": "experience.correction_ranking"
+  },
+  "a_transfer_record": {
+   "record": "sprint-21d7-w2-transfer-gap.json",
+   "says": "why this class and not the last: the 384 embedding channels carried the authoring run rather than the task, which is what collapsed D6's direction across corpora and what dropping them fixed"
+  },
+  "an_admission_rule_with_a_stated_error_budget": {
+   "alpha": "0.20",
+   "ceiling_c": "0.15",
+   "coverage_floor": "0.40",
+   "measured_bound": "0.126207",
+   "measured_coverage": "0.59",
+   "rule": "split-conformal-margin-v1",
+   "what_it_is_not": "a zero. The budget is a bound on the error rate among admitted decisions, and 41 of 100 certification decisions were abstentions by design"
+  },
+  "an_inherited_retrieval_condition": {
+   "inherited_from": "sprint-21d5-retrieval-decision.json",
+   "note": "renewed for D7 and re-checked at gate close. It is not renewable indefinitely by this record; a successor that touches the surface, the arms or the comparator owes a fresh holdout",
+   "ruling": "inherited from D5's sealed measurement, conditionally, renewed for D7",
+   "voids_if": [
+    "comparator",
+    "retrieval_arms",
+    "searchable_surface"
+   ],
+   "winning_arm": "lexical"
+  }
+ },
+ "what_this_record_is_not": "a gate verdict. The gate assessment computes one from counts over the same evidence, and this record is an input to it rather than a summary of it"
+}

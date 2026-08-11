@@ -1,0 +1,241 @@
+{
+ "code_revision": "b6cfc1f0612eebd8429b0439e29de9a811438cf4b0e1d799733a1fbee94e98ce",
+ "containers_started": 0,
+ "corpus_seal_hash": "4df87c037bcffdc940c73a80a2ce98a04229836525094c44b735cd54899f33fe",
+ "counts": {
+  "candidate_slots_by_partition": {
+   "canary": 20
+  },
+  "family_distribution": {
+   "boundary_collections": 1,
+   "error_handling": 1,
+   "numeric_logic": 1,
+   "parsing_validation": 1,
+   "state_idempotency": 1
+  },
+  "feature_records_sealed": 20,
+  "partitions_opened": [
+   "canary"
+  ],
+  "reading": "the two carried final roles, opened once by W3 under S21D7-038 with the 20 candidate slots they hold between them. The canary role stays closed and no certification row is re-sealed",
+  "slots_not_sealed_by_this_run": {
+   "canary": 20,
+   "certification": 400,
+   "conformal": 400,
+   "final": 240,
+   "fitting": 720
+  }
+ },
+ "feature_contract_hash": "492c90a5df420de9d1662d17155ac8b28713e69bbd4bbe56208415d6ca076362",
+ "final_outcomes_inspected": false,
+ "integrity_content_hash": "4211799b249c09a744250426c6b307fcbb8dafe66664dc0dc38f69ec56c29366",
+ "items": [
+  "S21D7-025"
+ ],
+ "learned_observations_written": 0,
+ "partitions": [
+  {
+   "bounds": {
+    "fitted_by": "sprint 21D5, on its 720 fitting rows",
+    "fitted_here": false,
+    "lower": {
+     "candidate_source_ast_node_count": 15.0,
+     "declared_verifier_capability_count": 2.0,
+     "missing_value_indicators": 0.0,
+     "statement_graph_edge_count": 4.0,
+     "statement_graph_node_count": 4.0,
+     "statement_graph_path_count": 2.0
+    },
+    "source_artifact_id": "94f0279e-e5e8-4777-88c0-d4f1835ef298",
+    "source_feature_seal_hash": "182adf2e1ca1805531f3ba317753cfe79f516c3adb72516a6b41dd37ae2135f4",
+    "source_record": "sprint-21d5-feature-seals.json",
+    "upper": {
+     "candidate_source_ast_node_count": 191.0,
+     "declared_verifier_capability_count": 2.0,
+     "missing_value_indicators": 0.0,
+     "statement_graph_edge_count": 45.0,
+     "statement_graph_node_count": 31.0,
+     "statement_graph_path_count": 8.0
+    },
+    "why": "the conformal bar is placed by margins from D5's sealed calibration matrix and applied to margins encoded here; two sets of margins are comparable only under one clip-and-scale envelope"
+   },
+   "bundle_artifacts": {
+    "d2_boundary.trim_edges": "d8ddcef4-74f4-48d9-b43b-fecafddf932b",
+    "d2_errors.wrap_error": "5352d386-ee67-4d6b-9fec-724369c88364",
+    "d2_numeric.weighted_mean": "9736ddf8-3204-4bff-9b00-6b398bb03154",
+    "d2_parsing.titlecase_words": "030fadcb-3a79-4672-b32b-0cf8229243b3",
+    "d2_state.toggle_flag": "dee158fc-d890-43d3-96e7-2bb99b63ad2e"
+   },
+   "campaign_id": "dbbc8e32-e293-5464-9329-2553486c187f",
+   "campaign_manifest_hash": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7",
+   "chronology": {
+    "campaign_stream_version_before_the_seal": 0,
+    "containers_started_by_this_command": 0,
+    "outcomes_present_at_seal_time": false,
+    "reading": "the seal precedes the first container because no container has run: the campaign stream is empty and this command starts none",
+    "sealed_at": "2026-08-11T06:27:27.464592+00:00"
+   },
+   "code_revision": "b6cfc1f0612eebd8429b0439e29de9a811438cf4b0e1d799733a1fbee94e98ce",
+   "embedding_model_id": "sentence-transformers/all-MiniLM-L6-v2",
+   "embedding_tree_digest": "98eb3ae4df320d0b721902aabef795cafb36c3a516f036e92e2b046f55ef4229",
+   "encoder_version": "correction-ranking-v2",
+   "envelope": {
+    "channels_are_the_frozen_allowlist_in_order": true,
+    "distinct_canonical_source_hashes": 20,
+    "distinct_feature_vector_hashes": 20,
+    "embedding_dimension": 384,
+    "envelope_binds": [
+     "candidate_id",
+     "task_id",
+     "repository_group",
+     "partition",
+     "canonical_source_hash",
+     "feature_vector_hash",
+     "feature_contract_hash",
+     "embedding_tree_digest",
+     "code_revision"
+    ],
+    "every_record_carries_the_same_six_scalars_in_order": true,
+    "fitted_channels": 390,
+    "records": 20,
+    "scalar_channels": [
+     "candidate_source_ast_node_count",
+     "statement_graph_node_count",
+     "statement_graph_edge_count",
+     "statement_graph_path_count",
+     "declared_verifier_capability_count",
+     "missing_value_indicators"
+    ]
+   },
+   "feature_contract_hash": "492c90a5df420de9d1662d17155ac8b28713e69bbd4bbe56208415d6ca076362",
+   "feature_records": 20,
+   "feature_seal_artifact_id": "11fd5665-1310-40f2-97c1-a3b69686aae5",
+   "feature_seal_hash": "273bfb6f6cfa3c3df24ab43443c3c031a2728425f8228c6830f7081831abe40b",
+   "groups": 5,
+   "member_hashes": [
+    "04dd8939416cf512ee9c077c79cff149e26436a2102d846f313588739ea8191e",
+    "0bd1c2e9157dbc44e06fe567dc20d05c78556653564a02dd3d4c4656f2280f9a",
+    "10e22df3415f520790c854aff89ae859d45d2de589df330e2e04d13e9ff23920",
+    "4691181cf64d7f9b1a6fa96bcf4d101ba292437589902c51e2fe00c56ec6669d",
+    "48b45bb851c220c0beb4d265b98fc0cbd38499aa4333c980d6eade1e132afb95",
+    "4bc22214aec4fb4548ca8f135d0c32c217dafc4494b8cdfea88fbb0c9bf79216",
+    "4e0b55030976a542af91bbfb8e150dfea0cc3daff41b2792ddf42f4abe042706",
+    "4f0c92e9b764db112956c5189a9c937ac384c1918194f601b768b2794a489941",
+    "55c16ed9e45e0ce8c9b64ec1c3e83750bc64d1b5d236337cb52d4b62a5c30669",
+    "61dd856923b35a175702997e127cf00df448cffb39f703dab9b41f3d850181d5",
+    "6c77a8fc6e7223e34963123f0b9526cfc621ff7411c69569965d83f550e167bc",
+    "713a4e8e78d059a2a6c62a86c733b49a98cb6fa4822916b96c4ffdd65c462e94",
+    "9f7401f088aecd8fb3512dc9d7f78056523c2b9b0a84f30cc1fd26caa7f45ac5",
+    "a591a76434e736693caa7b282f451d2428b8f10a422839c13275a811b88190b2",
+    "b1dd9bfb9ca0cec1376ce7844c80a2a180d8ca05527f16dfcd552a57b37edbc3",
+    "bd539558f4a5592397c11b27a3631190e5d856717c774a9bf047e26fa49c158c",
+    "bf175e2b2afbfc8ece1127d01bec1b57b2d95441e019225e6265e6da1969fb0d",
+    "e0e95730b63f7376128c974d7e42b76b2dc0c5705982aa1f7cbd16e571b8c135",
+    "e73da1f3d6d9e5d5d1cf39051333252c1926ee164aed6dd9b51c3c6f2d6b8561",
+    "fa5189ccd2464d3137bb28f87709d933d7af5c332fb9c52e444f4cd4e84837be"
+   ],
+   "normalizer_version": "cogos-python-alpha-normalizer-v2",
+   "partition": "canary",
+   "reencodes_identically_from_source_alone": true,
+   "relational_assembly": {
+    "allowlist": [
+     "candidate_source_ast_node_count",
+     "statement_graph_node_count",
+     "statement_graph_edge_count",
+     "statement_graph_path_count",
+     "declared_verifier_capability_count",
+     "missing_value_indicators",
+     "repair_containment_share"
+    ],
+    "artifact_id": "5a94ff40-78e8-42ad-ad9a-7dddd69e6e36",
+    "chronology": {
+     "containers_started_by_this_command": 0,
+     "outcomes_present_at_assembly_time": false,
+     "reading": "the assembly reads the baseline module and the four candidate sources, all published to the solver before the sandbox runs, and no verifier has judged anything yet"
+    },
+    "content_hash": "d1718ce699cea1c9009e32197faae73a89f0473e54c7507567fd5c8f521fed78",
+    "counts": {
+     "candidates": 20,
+     "distinct_relational_vectors": 20,
+     "groups": 5,
+     "groups_where_every_share_is_zero": 0,
+     "shares_outside_the_unit_interval": 0
+    },
+    "embedding_read_by_any_v3_channel": false,
+    "feature_contract": "CorrectionFeatureContractV3"
+   },
+   "reserialises_identically": true,
+   "stored_seal_time_preserved": true,
+   "task_manifest_hashes": {
+    "d2_boundary.trim_edges": "44602c2bb4ab76c3087f4728043e86ec9c10a05dac9141c346ee651b13dfec37",
+    "d2_errors.wrap_error": "e6ee4714c7715f02887d16fdd33d66f6d367af51d7b23e18049c276cfd69553d",
+    "d2_numeric.weighted_mean": "1dfcf42c8f1d5a22f452da728cdeb18cbcaf494ba8ec7d46ea99074530a93f25",
+    "d2_parsing.titlecase_words": "e2d6604ae044e2cf612af50bcd9c956620a5b15295ced1ea4c3500589f36e826",
+    "d2_state.toggle_flag": "efa8e5e2e31f5d6ede823d11c75dbdc7eb48a7c26c34bacf746de47335396440"
+   }
+  }
+ ],
+ "pre_registration_sha256": "984a21f012cddb1e2a2b5608e36debbc7769351c5363be940e9fab7e19505496",
+ "provisional": false,
+ "recorded_at": "2026-08-11T06:27:27Z",
+ "refusals": [
+  {
+   "action": "seal canary again with an outcome already in hand",
+   "error": "ValueError: v2 feature records must be sealed strictly before every outcome",
+   "refused": "true"
+  },
+  {
+   "action": "assemble a relational vector from drifted scalar names",
+   "error": "CorrectionEncodingError: a relational vector is assembled from the exact six sealed v2 scalars",
+   "refused": "true"
+  }
+ ],
+ "relational_contract": {
+  "assembled_beside_the_v2_seal": true,
+  "channels": 7,
+  "frozen_in": "sprint-21d7-contracts.json, revision 7, S21D7-013",
+  "name": "CorrectionFeatureContractV3",
+  "reading": "the v2 seal is unchanged and complete; the assembly is a second, narrower record over the same candidates, and the fit in W2 reads only that one"
+ },
+ "run_identities": {
+  "candidate_identities_shared_with_d5": [
+   "0bdc3a3a-3e36-57a4-a965-e3ac131f569c",
+   "24380eed-6c22-5935-ab73-c5294503984a",
+   "36993429-5357-55c4-88fd-6991f22e81c9",
+   "39b3f8f5-b637-546c-be05-4f0382f15c76",
+   "617263b0-18ca-593a-81c0-24bc9dbc491a",
+   "767e6311-1d13-569b-bca1-373a8a9317f2",
+   "8132b35b-6bec-5a2a-b107-8ca31c10b2b9",
+   "8710c1e5-b7e1-5565-b306-4e756e4f6fd1",
+   "87ac4dba-d8b8-5ea5-9604-271ddbfceaae",
+   "87fe943b-3a76-5325-8163-b27b328c335d",
+   "a12157bf-6e4a-5ed7-858d-40d6d7c71999",
+   "a976f433-2ff1-5f04-9b7c-9f5973da0300",
+   "b6ff4369-c9fb-5c5d-9572-874f1b1b3193",
+   "b77d578e-ed97-5624-aee1-d1312bea4414",
+   "ccd6437c-e9b5-531a-a0d1-357a85c2ab72",
+   "daed80b6-ce33-5efe-a0be-60e58043d8d6",
+   "eb17b655-e432-58a1-960a-9f6b388655c4",
+   "ec1046ae-ec21-51ec-9fd4-f2f803cdd8a3",
+   "ed0b8194-e882-590a-b7bd-61e31ed2422a",
+   "fdd13776-abd8-5d62-9415-8d5d28ff19ce"
+  ],
+  "d6_candidate_identities": 20,
+  "distinct": false,
+  "groups_carried_by_body_from_d4": 5,
+  "reading": "the same 180 task packages under 720 identities that have never been run; a shared identity would let a D4 row be mistaken for a D5 one on resume",
+  "task_identities_shared_with_d5": [
+   "034003cb-a619-51ea-9cb5-03fc1e78f37f",
+   "838a674a-0d8f-5080-a583-209d5a02524a",
+   "a61ecb0b-3c57-5feb-80a5-92baf9afe85e",
+   "c2b6d1b4-165f-5de2-8d05-ab5fcf838ea3",
+   "df9fbb2b-2796-5927-8491-ce49f592b8aa"
+  ]
+ },
+ "schema_version": 1,
+ "sealed_manifests_sha256": "e7a3ab02da9da9e2571a0f5cd0eb4779ac0a4cba4aa691e0ee38244704e2f4b3",
+ "separation_sha256": "9bfcd04b3c845b97c8d0bc65d212fcd404949333898df381be72edd5286b04d8",
+ "sprint": "21D7",
+ "wave": "W1",
+ "why_no_observation": "sealing is not measuring. An observation exists once a verifier has judged a candidate, and no candidate has run"
+}
