@@ -88,6 +88,10 @@ def _read(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+#: Set by `--check` to the chronology the rulings were sealed with. See `_chronology`.
+_SEALED_CHRONOLOGY: dict[str, Any] | None = None
+
+
 def _chronology() -> dict[str, Any]:
     """The window these rulings had to be inside.
 
@@ -95,12 +99,30 @@ def _chronology() -> dict[str, Any]:
     fresh certification half has been *scored*, no bar has been derived, no direction has been
     fitted in this wave, and the fresh corpus has not been ladder-measured. Each is read out of
     the pre-flight's own sealed fields rather than asserted here.
+
+    `_SEALED_CHRONOLOGY` is what makes `--check` still mean something once the window closed. The
+    block describes a moment; W2's own records were written after it, so re-globbing the
+    evidence directory later reports a *different* moment and the comparison would fail on the
+    passage of time rather than on drift. Under `--check` the file listing is taken from the
+    sealed record and every counter is re-read from the pre-flight, so what is verified is the
+    claim — nothing was scored, derived, fitted or measured before these rulings — rather than
+    which files happen to exist today.
     """
     preflight = _read(PREFLIGHT)
-    others = sorted(
-        path.name
-        for path in EVIDENCE.glob("sprint-21d7-*.json")
-        if path.name not in AUTHORITY_RECORDS
+    frozen = _SEALED_CHRONOLOGY
+    others = (
+        list(frozen["other_records_present"])
+        if frozen is not None
+        else sorted(
+            path.name
+            for path in EVIDENCE.glob("sprint-21d7-*.json")
+            if path.name not in AUTHORITY_RECORDS
+        )
+    )
+    present = (
+        list(frozen["w1_measurement_records_present"])
+        if frozen is not None
+        else [name for name in W1_MEASUREMENT_RECORDS if (EVIDENCE / name).exists()]
     )
     return {
         "d7_certification_decisions_scored": preflight["d7_certification_decisions_scored"],
@@ -111,9 +133,7 @@ def _chronology() -> dict[str, Any]:
         "d7_final_or_canary_outcomes_inspected": preflight["final_outcomes_inspected"],
         "d7_directions_fitted_in_wave": 0,
         "d7_ladder_measurements_on_the_fresh_corpus": 0,
-        "w1_measurement_records_present": [
-            name for name in W1_MEASUREMENT_RECORDS if (EVIDENCE / name).exists()
-        ],
+        "w1_measurement_records_present": present,
         "other_records_present": others,
         "why_w1_records_do_not_close_the_window": (
             "W1 measured the corpus: which bodies pass which suite, what the seven channels of "
@@ -409,6 +429,15 @@ def main() -> None:
     parser.add_argument("--check", action="store_true", help="re-derive and compare, write nothing")
     arguments = parser.parse_args()
     write = not arguments.check
+
+    if arguments.check:
+        # The window these rulings were taken in has since closed: W2's own measurement records
+        # exist now and did not then. Re-globbing would compare two different moments, so the
+        # listing is taken from the sealed record and every *claim* is still re-derived.
+        global _SEALED_CHRONOLOGY
+        _SEALED_CHRONOLOGY = _read(EVIDENCE / "sprint-21d7-disjointness-clarification.json")[
+            "chronology"
+        ]
 
     plan = [
         ("sprint-21d7-disjointness-clarification.json", _disjointness_clarification()),

@@ -1,0 +1,161 @@
+{
+ "authority": {
+  "integrity_content_hash": "1f42f706e5bcc73583b51c14f44b888132751362e4507b60f01ff618b439d963",
+  "item": "S21D7-027",
+  "reading": "the containment rung is not seated. The ladder below is the five released rungs; the containment ordering is measured beside them and sets no baseline"
+ },
+ "changed_decision_pairings": {
+  "against_the_containment_ordering": {
+   "by_descending_class_margin": {
+    "100": {
+     "changed": 26,
+     "class_first_choice": 83,
+     "comparator_first_choice_on_the_same_decisions": 82
+    },
+    "40": {
+     "changed": 0,
+     "class_first_choice": 39,
+     "comparator_first_choice_on_the_same_decisions": 39
+    },
+    "46": {
+     "changed": 1,
+     "class_first_choice": 45,
+     "comparator_first_choice_on_the_same_decisions": 45
+    },
+    "50": {
+     "changed": 1,
+     "class_first_choice": 49,
+     "comparator_first_choice_on_the_same_decisions": 49
+    }
+   },
+   "changed_whole_corpus": 26,
+   "comparator": "repair_containment_ordering (unseated)",
+   "comparator_rate": "0.82"
+  },
+  "against_the_strongest_released_rung": {
+   "by_descending_class_margin": {
+    "100": {
+     "changed": 74,
+     "class_first_choice": 83,
+     "comparator_first_choice_on_the_same_decisions": 61
+    },
+    "40": {
+     "changed": 32,
+     "class_first_choice": 39,
+     "comparator_first_choice_on_the_same_decisions": 27
+    },
+    "46": {
+     "changed": 38,
+     "class_first_choice": 45,
+     "comparator_first_choice_on_the_same_decisions": 30
+    },
+    "50": {
+     "changed": 39,
+     "class_first_choice": 49,
+     "comparator_first_choice_on_the_same_decisions": 33
+    }
+   },
+   "changed_whole_corpus": 74,
+   "comparator": "lexical_similarity",
+   "comparator_rate": "0.61"
+  }
+ },
+ "class": {
+  "decisions": 100,
+  "first_choice_rate_whole_corpus": "0.83",
+  "hypothesis_class": "containment-contrastive-linear-v1",
+  "margin_floor": "0",
+  "model_hash": "d80160c4aa795fadd98fb4e6d4f64b7b29a2a3685c537454b8aff95daa124859"
+ },
+ "conformal_bars_derived_by_this_record": 0,
+ "containment_ordering_unseated": {
+  "first_choice_rate": "0.82",
+  "groups_scored": 100,
+  "seated": false,
+  "sets_the_baseline": false,
+  "why_it_is_here": "S21D7-027 unseated it and asked for it to be reported anyway: a rung that would have been the baseline is worth knowing the rate of, and a number reported outside the ladder cannot win the comparison it is not in"
+ },
+ "directions_fitted_by_this_record": 0,
+ "final_or_canary_outcomes_inspected": 0,
+ "final_outcomes_inspected": false,
+ "inputs": {
+  "certification_matrix_hash": "1a0f9e6511e2d1a659a973c38e6e9cfbc1a6adbdabc46deab2668e7368a2c26b",
+  "d7_certification_campaign_sha256": "32ffeafe34155f08a7be0754b60128b43f07aaf2cc283445bce8a3c5c9e9078a",
+  "d7_feature_seals_sha256": "bb6028e753598b583e8c7054024a1f2c01e6873a448ce10f37d866c7f0b2eed4",
+  "d7_snapshots_sha256": "ac11a5ac139f146b785fbc952f97c57ae57dea4642b41a9dfbeb8141364f145f",
+  "d7_w2_direction_sha256": "7307b946a463c65915cbbbe80afe7f8f509ebf00cf2c16bad6481fabd06ffdbf",
+  "model_hash": "d80160c4aa795fadd98fb4e6d4f64b7b29a2a3685c537454b8aff95daa124859",
+  "published_certification_matrix_hash": "1a0f9e6511e2d1a659a973c38e6e9cfbc1a6adbdabc46deab2668e7368a2c26b"
+ },
+ "integrity_content_hash": "c301dddb117ecc496477906947ca05b5345560f3625d81d71733f907c1d00ef1",
+ "items": [
+  "S21D7-032"
+ ],
+ "released_rungs": {
+  "created_at_is_the_seal_time": "the ladder is a function of sealed bytes; stamping it with a clock would make the restart check vacuous",
+  "declared": [
+   "fixed_input_order",
+   "deterministic_static_ordering",
+   "lexical_similarity",
+   "frozen_minilm_cosine",
+   "width_20_bounded_graph"
+  ],
+  "groups": 100,
+  "rungs": [
+   {
+    "content_hash": "14ca380030cfd28e1776ef0bbda8278244c0ed9cb0816ce9b1b9acd163142adb",
+    "eligible": true,
+    "first_choice_rate": "0.47",
+    "groups_scored": 100,
+    "ineligible_reason": null,
+    "kind": "deterministic",
+    "name": "fixed_input_order"
+   },
+   {
+    "content_hash": "5e8f9915697c59324efb7c1e85c1fdd3668befbe420af2b4d6e1a80588e69653",
+    "eligible": true,
+    "first_choice_rate": "0.13",
+    "groups_scored": 100,
+    "ineligible_reason": null,
+    "kind": "deterministic",
+    "name": "deterministic_static_ordering"
+   },
+   {
+    "content_hash": "b3f97fea3ae0e1f6c70eed42c51a0765c83b7bd2270447155a336b142d53a83e",
+    "eligible": true,
+    "first_choice_rate": "0.61",
+    "groups_scored": 100,
+    "ineligible_reason": null,
+    "kind": "deterministic",
+    "name": "lexical_similarity"
+   },
+   {
+    "content_hash": "47a35131cfffb583748d6f98977c18f4e3a60452e1af9cb7b4f50d94f58e9094",
+    "eligible": false,
+    "first_choice_rate": null,
+    "groups_scored": 0,
+    "ineligible_reason": "correction-ranking-v2 removes query_to_candidate_cosine from the fitted representation, so the channel this rung orders by does not exist under it",
+    "kind": "deterministic",
+    "name": "frozen_minilm_cosine"
+   },
+   {
+    "content_hash": "55033d5f696f5eca99a798cc685381896091ef1d15311ef5ddf95364c7cf57f1",
+    "eligible": false,
+    "first_choice_rate": null,
+    "groups_scored": 0,
+    "ineligible_reason": "a correction-ranking task presents exactly four candidates, so a twenty-wide shortlist is the entire pool and the rung reduces to its own tie-break; it meets no resource contract it does not already trivially satisfy",
+    "kind": "deterministic",
+    "name": "width_20_bounded_graph"
+   }
+  ],
+  "scored": 3,
+  "strongest_non_learned_name": "lexical_similarity",
+  "strongest_non_learned_rate": "0.61"
+ },
+ "schema_version": 1,
+ "sprint": "21D7",
+ "stage": "ladder",
+ "stores_opened_for_writing": 0,
+ "wave": "W2",
+ "what_this_record_is_not": "an admitted-set measurement. No bar exists when this runs, so every count above is over the whole corpus or over a depth of the class's own margin ordering; the admitted counts belong to the certification record that derives the bar"
+}

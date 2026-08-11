@@ -1,0 +1,1110 @@
+{
+ "bar_setting_half": {
+  "answered_decisions": 100,
+  "certifies": "nothing",
+  "first_choice_rate": "0.84",
+  "groups": 100,
+  "quantile_rank_at_alpha": 14,
+  "source": "the demoted D6 certification half, per S21D7-010",
+  "wrong_answered_decisions": 16
+ },
+ "bars_derived": 1,
+ "cell": {
+  "admitted_decisions": 59,
+  "alpha": "0.20",
+  "answered_decisions": 100,
+  "baseline_first_choice_rate": "0.61",
+  "baseline_reading": "whole_corpus, per S21D7-026",
+  "baseline_rung": "lexical_similarity",
+  "beats_the_baseline": true,
+  "ceiling_c": "0.15",
+  "cells": 1,
+  "changed_decisions": 46,
+  "coverage": "0.59",
+  "coverage_denominator": "independent_decisions",
+  "error_upper_bound_95": "0.126207",
+  "errors_admitted": 3,
+  "filtered_no_changed_decision": false,
+  "first_choice_rate_over_admitted": "0.9491525423728813559322033898",
+  "fully_abstaining": false,
+  "hypothesis_class": "containment-contrastive-linear-v1",
+  "independent_decisions": 100,
+  "leak": {
+   "alpha_leak_budget": "0.20",
+   "realised_leak_rate": "0.1764705882352941176470588235",
+   "what_it_is": "P(admitted | the decision is wrong), measured on the certification half. This is the quantity alpha bounds; the error rate among admitted decisions is a different number and is what the amended \u00a72.3 reads",
+   "within_the_leak_budget": true,
+   "wrong_answered_decisions": 17,
+   "wrong_answered_decisions_admitted": 3
+  },
+  "maximum_inference_ms": "0.023",
+  "nominal_decisions": 100,
+  "observed_error_rate_over_admitted": "0.05084745762711864406779661017",
+  "operating_point": "split_conformal",
+  "projected_changed_final_decisions": "46.780",
+  "threshold": "0.489867",
+  "within_inference_budget": true,
+  "within_the_ceiling": true
+ },
+ "conformal_point": {
+  "admitted_decisions": 59,
+  "alpha": "0.20",
+  "calibration_source_hash": "747eb9664bbcfd3b0abb0859b74e58ec7fb46b9153bab904094b91cded3dcefc",
+  "certification_census": {
+   "independence_rule": "two counted decisions are the same decision when their fitted feature vectors are equal; independence is equality of the fitted vector, not of the task, the seed or the transform",
+   "independent_decisions": 100,
+   "nominal_decisions": 100,
+   "rate_denominator": "independent_decisions",
+   "replicated_decisions": 0,
+   "revision": 4
+  },
+  "conformal_census": {
+   "independence_rule": "two counted decisions are the same decision when their fitted feature vectors are equal; independence is equality of the fitted vector, not of the task, the seed or the transform",
+   "independent_decisions": 100,
+   "nominal_decisions": 100,
+   "rate_denominator": "independent_decisions",
+   "replicated_decisions": 0,
+   "revision": 4
+  },
+  "coverage": "0.59",
+  "derivation_hash": "04b34f7e0c94ffa25fd6119c92bb3279d0f673e7e2fa5418e14e7fed87d8c4c5",
+  "derived_at": "2026-08-11T05:11:43.036651+00:00",
+  "derived_once": "the derivation hash excludes the wall clock, so a second process re-deriving it either reproduces this value or the bar moved",
+  "error_upper_bound_95": "0.126207",
+  "errors_admitted": 3,
+  "observed_error_rate": "0.05084745762711864406779661017",
+  "preregistration_hash": "05dfff5aedf7b8c6d9821c18ab66cd58056b13ecee685b4f7430cc53af72d086",
+  "quantile_exists": true,
+  "quantile_rank": 14,
+  "split": "calibration",
+  "threshold": "0.489867",
+  "wrong_decisions_in_conformal_split": 16
+ },
+ "directions_fitted": 0,
+ "ending": {
+  "endings_are_six_different_sprints": true,
+  "name": "1_select",
+  "no_ending_may_be_chosen_after_the_measurement": true,
+  "reading": "every amended \u00a72.3 condition holds on the one pre-registered cell: at least 100 independent clean decisions, admission by the split-conformal bar at alpha with a Clopper-Pearson 95% upper bound at or below 0.15, coverage at least 0.40, at least 20 projected changed final decisions, a first-choice rate strictly above the strongest released rung's whole-corpus rate, at least one changed decision, 100% first-action preservation, every sweep point reported and inference inside the 250 ms budget. Selection proceeds"
+ },
+ "final_or_canary_outcomes_inspected": 0,
+ "final_outcomes_inspected": false,
+ "inputs": {
+  "bar_setting_matrix_hash": "747eb9664bbcfd3b0abb0859b74e58ec7fb46b9153bab904094b91cded3dcefc",
+  "certification_matrix_hash": "1a0f9e6511e2d1a659a973c38e6e9cfbc1a6adbdabc46deab2668e7368a2c26b",
+  "d5_feature_seals_sha256": "2f4381ccb21d204a22da686d7f5e3feeb6317030b656e98b7a083370a48696ed",
+  "d6_certification_campaign_sha256": "4ffcfdebf9ff84443f3f44ba4f873de11c72b2f313fe16e53ce3003c176e8875",
+  "d6_feature_seals_sha256": "f49bcb0f8b74edd434272b12be8c55a2a9edfb53d887a0ea0fae89ad08d71385",
+  "d7_certification_campaign_sha256": "32ffeafe34155f08a7be0754b60128b43f07aaf2cc283445bce8a3c5c9e9078a",
+  "d7_contracts_sha256": "777dc392ee03929667786c9997533a8cfe44360982e19c16490a20ef8e84c95b",
+  "d7_feature_seals_sha256": "bb6028e753598b583e8c7054024a1f2c01e6873a448ce10f37d866c7f0b2eed4",
+  "d7_pre_registration_r8_sha256": "05dfff5aedf7b8c6d9821c18ab66cd58056b13ecee685b4f7430cc53af72d086",
+  "invariance_regression_sha256": "8a18d349327c49f44909ace1117f3bb67193e53013d1c86a4a2d718adb9cb6c5",
+  "model_hash": "d80160c4aa795fadd98fb4e6d4f64b7b29a2a3685c537454b8aff95daa124859",
+  "w2_direction_sha256": "7307b946a463c65915cbbbe80afe7f8f509ebf00cf2c16bad6481fabd06ffdbf",
+  "w2_ladder_sha256": "7386fdb957c10c7f137c46c0d6d7d4355fbf35119cc1f94f9e61c3a2494384aa",
+  "w2_relational_scan_sha256": "22deedc49ab97cbedf92ebe6c6b481e1f7a6834c07b8b121eeae5c6ba30c4558"
+ },
+ "integrity_content_hash": "63fd43dab720c57ec314c1d13bdd8a228802becdf104574be192bcacb18bfb7d",
+ "invariance": {
+  "cases": 40,
+  "first_action_changes": 0,
+  "integrity_content_hash": "90a2c637194569939b5babc8dffb80fa64c1afbf75136162a6ffeab86fb10ca9",
+  "preserved": true,
+  "record": "sprint-21d7-invariance-regression.json"
+ },
+ "items": [
+  "S21D7-034"
+ ],
+ "per_family": {
+  "boundary_collections": {
+   "admitted": 15,
+   "changed": 12,
+   "correct": 14,
+   "decisions": 17
+  },
+  "data_transformation": {
+   "admitted": 6,
+   "changed": 6,
+   "correct": 10,
+   "decisions": 17
+  },
+  "error_handling": {
+   "admitted": 9,
+   "changed": 6,
+   "correct": 14,
+   "decisions": 17
+  },
+  "numeric_logic": {
+   "admitted": 9,
+   "changed": 8,
+   "correct": 15,
+   "decisions": 17
+  },
+  "parsing_validation": {
+   "admitted": 8,
+   "changed": 6,
+   "correct": 15,
+   "decisions": 16
+  },
+  "state_idempotency": {
+   "admitted": 12,
+   "changed": 8,
+   "correct": 15,
+   "decisions": 16
+  }
+ },
+ "recorded_at": "2026-08-11T05:11:43Z",
+ "rulings_this_record_is_evaluated_under": {
+  "S21D7-025": "9f8410a0cce03ad424007c3b396d645bff38c2466a762da1477ae45c54d963ce",
+  "S21D7-026": "2323dbc19d391b59d78c3eab0777fd8827ae73d5fdf7fb926aef81afa2a32f6f",
+  "S21D7-027": "1f42f706e5bcc73583b51c14f44b888132751362e4507b60f01ff618b439d963"
+ },
+ "schema_version": 1,
+ "section_2_3": {
+  "baseline_reading": "whole_corpus, per S21D7-026",
+  "changed_decisions_pair_against": "lexical_similarity",
+  "conditions": 9,
+  "eligible": true,
+  "failed_conditions": [],
+  "readings_reported_beside_the_binding_one": {
+   "admitted_subset_reading_not_taken": {
+    "class_would_still_beat_it": true,
+    "comparator": "lexical_similarity",
+    "rate_on_the_admitted_decisions": "0.6271186440677966101694915254",
+    "why_it_is_here": "S21D7-026 took the whole-corpus reading and recorded that it is the weaker of the two. This is the number it did not take, reported so the pass is read as what it is rather than as the stronger claim"
+   },
+   "binding_reading": "whole_corpus, per S21D7-026",
+   "seated_pairing_not_in_force": {
+    "changed_decisions_against_it": 5,
+    "comparator": "repair_containment_ordering, unseated by S21D7-027",
+    "projected_changed_final_decisions": "5.085",
+    "rate_on_the_admitted_decisions": "0.9830508474576271186440677966",
+    "whole_corpus_rate": "0.82",
+    "why_it_is_here": "the ruling that unseated this rung is the one that moved the baseline, and a record whose pass depends on a ruling has to publish what the other branch would have said. These two flags are that, and neither is a condition",
+    "would_have_met_the_baseline_condition": true,
+    "would_have_met_the_changed_decision_floor": false
+   }
+  }
+ },
+ "sprint": "21D7",
+ "stage": "selection",
+ "stores_opened_for_writing": 0,
+ "sweep": {
+  "curve": [
+   {
+    "admitted_decisions": 1,
+    "changed_decisions": 1,
+    "coverage": "0.01",
+    "error_upper_bound_95": "0.95",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "2.512395"
+   },
+   {
+    "admitted_decisions": 2,
+    "changed_decisions": 2,
+    "coverage": "0.02",
+    "error_upper_bound_95": "0.776393",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "2.414399"
+   },
+   {
+    "admitted_decisions": 3,
+    "changed_decisions": 3,
+    "coverage": "0.03",
+    "error_upper_bound_95": "0.631597",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "2.408981"
+   },
+   {
+    "admitted_decisions": 4,
+    "changed_decisions": 4,
+    "coverage": "0.04",
+    "error_upper_bound_95": "0.527129",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "2.381566"
+   },
+   {
+    "admitted_decisions": 5,
+    "changed_decisions": 4,
+    "coverage": "0.05",
+    "error_upper_bound_95": "0.45072",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "2.348919"
+   },
+   {
+    "admitted_decisions": 6,
+    "changed_decisions": 5,
+    "coverage": "0.06",
+    "error_upper_bound_95": "0.393038",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "2.344806"
+   },
+   {
+    "admitted_decisions": 7,
+    "changed_decisions": 6,
+    "coverage": "0.07",
+    "error_upper_bound_95": "0.348164",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "2.315814"
+   },
+   {
+    "admitted_decisions": 8,
+    "changed_decisions": 7,
+    "coverage": "0.08",
+    "error_upper_bound_95": "0.312344",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "2.311111"
+   },
+   {
+    "admitted_decisions": 9,
+    "changed_decisions": 8,
+    "coverage": "0.09",
+    "error_upper_bound_95": "0.283129",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "2.251417"
+   },
+   {
+    "admitted_decisions": 10,
+    "changed_decisions": 9,
+    "coverage": "0.1",
+    "error_upper_bound_95": "0.258866",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "2.24952"
+   },
+   {
+    "admitted_decisions": 11,
+    "changed_decisions": 10,
+    "coverage": "0.11",
+    "error_upper_bound_95": "0.238404",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "2.21317"
+   },
+   {
+    "admitted_decisions": 12,
+    "changed_decisions": 10,
+    "coverage": "0.12",
+    "error_upper_bound_95": "0.220922",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "2.186635"
+   },
+   {
+    "admitted_decisions": 14,
+    "changed_decisions": 11,
+    "coverage": "0.14",
+    "error_upper_bound_95": "0.192636",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "2.18587"
+   },
+   {
+    "admitted_decisions": 15,
+    "changed_decisions": 11,
+    "coverage": "0.15",
+    "error_upper_bound_95": "0.181036",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "2.088275"
+   },
+   {
+    "admitted_decisions": 16,
+    "changed_decisions": 12,
+    "coverage": "0.16",
+    "error_upper_bound_95": "0.17075",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "2.087928"
+   },
+   {
+    "admitted_decisions": 17,
+    "changed_decisions": 13,
+    "coverage": "0.17",
+    "error_upper_bound_95": "0.161566",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "2.055374"
+   },
+   {
+    "admitted_decisions": 18,
+    "changed_decisions": 14,
+    "coverage": "0.18",
+    "error_upper_bound_95": "0.153318",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "1.892046"
+   },
+   {
+    "admitted_decisions": 19,
+    "changed_decisions": 15,
+    "coverage": "0.19",
+    "error_upper_bound_95": "0.145869",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "1.887409"
+   },
+   {
+    "admitted_decisions": 20,
+    "changed_decisions": 15,
+    "coverage": "0.2",
+    "error_upper_bound_95": "0.139108",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "1.878629"
+   },
+   {
+    "admitted_decisions": 21,
+    "changed_decisions": 16,
+    "coverage": "0.21",
+    "error_upper_bound_95": "0.132946",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "1.827537"
+   },
+   {
+    "admitted_decisions": 22,
+    "changed_decisions": 17,
+    "coverage": "0.22",
+    "error_upper_bound_95": "0.127305",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "1.826937"
+   },
+   {
+    "admitted_decisions": 23,
+    "changed_decisions": 17,
+    "coverage": "0.23",
+    "error_upper_bound_95": "0.122123",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "1.801232"
+   },
+   {
+    "admitted_decisions": 24,
+    "changed_decisions": 18,
+    "coverage": "0.24",
+    "error_upper_bound_95": "0.117346",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "1.762107"
+   },
+   {
+    "admitted_decisions": 25,
+    "changed_decisions": 19,
+    "coverage": "0.25",
+    "error_upper_bound_95": "0.112928",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "1.728184"
+   },
+   {
+    "admitted_decisions": 26,
+    "changed_decisions": 19,
+    "coverage": "0.26",
+    "error_upper_bound_95": "0.10883",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "1.631747"
+   },
+   {
+    "admitted_decisions": 27,
+    "changed_decisions": 20,
+    "coverage": "0.27",
+    "error_upper_bound_95": "0.105019",
+    "errors_admitted": 0,
+    "first_choice_rate_over_admitted": "1",
+    "selectable": false,
+    "threshold": "1.608639"
+   },
+   {
+    "admitted_decisions": 28,
+    "changed_decisions": 21,
+    "coverage": "0.28",
+    "error_upper_bound_95": "0.158507",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.9642857142857142857142857143",
+    "selectable": false,
+    "threshold": "1.567009"
+   },
+   {
+    "admitted_decisions": 29,
+    "changed_decisions": 22,
+    "coverage": "0.29",
+    "error_upper_bound_95": "0.153392",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.9655172413793103448275862069",
+    "selectable": false,
+    "threshold": "1.533806"
+   },
+   {
+    "admitted_decisions": 30,
+    "changed_decisions": 23,
+    "coverage": "0.3",
+    "error_upper_bound_95": "0.148596",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.9666666666666666666666666667",
+    "selectable": false,
+    "threshold": "1.473001"
+   },
+   {
+    "admitted_decisions": 31,
+    "changed_decisions": 24,
+    "coverage": "0.31",
+    "error_upper_bound_95": "0.14409",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.9677419354838709677419354839",
+    "selectable": false,
+    "threshold": "1.441955"
+   },
+   {
+    "admitted_decisions": 32,
+    "changed_decisions": 25,
+    "coverage": "0.32",
+    "error_upper_bound_95": "0.139849",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.96875",
+    "selectable": false,
+    "threshold": "1.435358"
+   },
+   {
+    "admitted_decisions": 33,
+    "changed_decisions": 26,
+    "coverage": "0.33",
+    "error_upper_bound_95": "0.135851",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.9696969696969696969696969697",
+    "selectable": false,
+    "threshold": "1.430189"
+   },
+   {
+    "admitted_decisions": 34,
+    "changed_decisions": 27,
+    "coverage": "0.34",
+    "error_upper_bound_95": "0.132074",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.9705882352941176470588235294",
+    "selectable": false,
+    "threshold": "1.429609"
+   },
+   {
+    "admitted_decisions": 35,
+    "changed_decisions": 28,
+    "coverage": "0.35",
+    "error_upper_bound_95": "0.128501",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.9714285714285714285714285714",
+    "selectable": false,
+    "threshold": "1.337232"
+   },
+   {
+    "admitted_decisions": 36,
+    "changed_decisions": 29,
+    "coverage": "0.36",
+    "error_upper_bound_95": "0.125116",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.9722222222222222222222222222",
+    "selectable": false,
+    "threshold": "1.290982"
+   },
+   {
+    "admitted_decisions": 37,
+    "changed_decisions": 30,
+    "coverage": "0.37",
+    "error_upper_bound_95": "0.121905",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.9729729729729729729729729730",
+    "selectable": false,
+    "threshold": "1.261359"
+   },
+   {
+    "admitted_decisions": 38,
+    "changed_decisions": 31,
+    "coverage": "0.38",
+    "error_upper_bound_95": "0.118854",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.9736842105263157894736842105",
+    "selectable": false,
+    "threshold": "1.253402"
+   },
+   {
+    "admitted_decisions": 39,
+    "changed_decisions": 32,
+    "coverage": "0.39",
+    "error_upper_bound_95": "0.115952",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.9743589743589743589743589744",
+    "selectable": false,
+    "threshold": "1.227053"
+   },
+   {
+    "admitted_decisions": 40,
+    "changed_decisions": 32,
+    "coverage": "0.4",
+    "error_upper_bound_95": "0.113188",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.975",
+    "selectable": false,
+    "threshold": "1.214712"
+   },
+   {
+    "admitted_decisions": 41,
+    "changed_decisions": 33,
+    "coverage": "0.41",
+    "error_upper_bound_95": "0.110553",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.9756097560975609756097560976",
+    "selectable": false,
+    "threshold": "1.182882"
+   },
+   {
+    "admitted_decisions": 42,
+    "changed_decisions": 34,
+    "coverage": "0.42",
+    "error_upper_bound_95": "0.108038",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.9761904761904761904761904762",
+    "selectable": false,
+    "threshold": "1.17446"
+   },
+   {
+    "admitted_decisions": 43,
+    "changed_decisions": 35,
+    "coverage": "0.43",
+    "error_upper_bound_95": "0.105634",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.9767441860465116279069767442",
+    "selectable": false,
+    "threshold": "1.16835"
+   },
+   {
+    "admitted_decisions": 44,
+    "changed_decisions": 36,
+    "coverage": "0.44",
+    "error_upper_bound_95": "0.103335",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.9772727272727272727272727273",
+    "selectable": false,
+    "threshold": "1.145447"
+   },
+   {
+    "admitted_decisions": 45,
+    "changed_decisions": 37,
+    "coverage": "0.45",
+    "error_upper_bound_95": "0.101134",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.9777777777777777777777777778",
+    "selectable": false,
+    "threshold": "1.124022"
+   },
+   {
+    "admitted_decisions": 46,
+    "changed_decisions": 38,
+    "coverage": "0.46",
+    "error_upper_bound_95": "0.099024",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.9782608695652173913043478261",
+    "selectable": false,
+    "threshold": "1.102977"
+   },
+   {
+    "admitted_decisions": 47,
+    "changed_decisions": 38,
+    "coverage": "0.47",
+    "error_upper_bound_95": "0.097001",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.9787234042553191489361702128",
+    "selectable": false,
+    "threshold": "1.085805"
+   },
+   {
+    "admitted_decisions": 48,
+    "changed_decisions": 38,
+    "coverage": "0.48",
+    "error_upper_bound_95": "0.095059",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.9791666666666666666666666667",
+    "selectable": false,
+    "threshold": "1.041564"
+   },
+   {
+    "admitted_decisions": 49,
+    "changed_decisions": 39,
+    "coverage": "0.49",
+    "error_upper_bound_95": "0.093192",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.9795918367346938775510204082",
+    "selectable": false,
+    "threshold": "0.997875"
+   },
+   {
+    "admitted_decisions": 50,
+    "changed_decisions": 39,
+    "coverage": "0.5",
+    "error_upper_bound_95": "0.091398",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.98",
+    "selectable": false,
+    "threshold": "0.84673"
+   },
+   {
+    "admitted_decisions": 51,
+    "changed_decisions": 40,
+    "coverage": "0.51",
+    "error_upper_bound_95": "0.089672",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.9803921568627450980392156863",
+    "selectable": false,
+    "threshold": "0.835145"
+   },
+   {
+    "admitted_decisions": 52,
+    "changed_decisions": 41,
+    "coverage": "0.52",
+    "error_upper_bound_95": "0.088009",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.9807692307692307692307692308",
+    "selectable": false,
+    "threshold": "0.79584"
+   },
+   {
+    "admitted_decisions": 53,
+    "changed_decisions": 42,
+    "coverage": "0.53",
+    "error_upper_bound_95": "0.086407",
+    "errors_admitted": 1,
+    "first_choice_rate_over_admitted": "0.9811320754716981132075471698",
+    "selectable": false,
+    "threshold": "0.762708"
+   },
+   {
+    "admitted_decisions": 54,
+    "changed_decisions": 43,
+    "coverage": "0.54",
+    "error_upper_bound_95": "0.112037",
+    "errors_admitted": 2,
+    "first_choice_rate_over_admitted": "0.9629629629629629629629629630",
+    "selectable": false,
+    "threshold": "0.684196"
+   },
+   {
+    "admitted_decisions": 55,
+    "changed_decisions": 43,
+    "coverage": "0.55",
+    "error_upper_bound_95": "0.110079",
+    "errors_admitted": 2,
+    "first_choice_rate_over_admitted": "0.9636363636363636363636363636",
+    "selectable": false,
+    "threshold": "0.653312"
+   },
+   {
+    "admitted_decisions": 56,
+    "changed_decisions": 44,
+    "coverage": "0.56",
+    "error_upper_bound_95": "0.108189",
+    "errors_admitted": 2,
+    "first_choice_rate_over_admitted": "0.9642857142857142857142857143",
+    "selectable": false,
+    "threshold": "0.648118"
+   },
+   {
+    "admitted_decisions": 57,
+    "changed_decisions": 45,
+    "coverage": "0.57",
+    "error_upper_bound_95": "0.106363",
+    "errors_admitted": 2,
+    "first_choice_rate_over_admitted": "0.9649122807017543859649122807",
+    "selectable": false,
+    "threshold": "0.630657"
+   },
+   {
+    "admitted_decisions": 58,
+    "changed_decisions": 46,
+    "coverage": "0.58",
+    "error_upper_bound_95": "0.104597",
+    "errors_admitted": 2,
+    "first_choice_rate_over_admitted": "0.9655172413793103448275862069",
+    "selectable": false,
+    "threshold": "0.613814"
+   },
+   {
+    "admitted_decisions": 59,
+    "changed_decisions": 46,
+    "coverage": "0.59",
+    "error_upper_bound_95": "0.126207",
+    "errors_admitted": 3,
+    "first_choice_rate_over_admitted": "0.9491525423728813559322033898",
+    "selectable": false,
+    "threshold": "0.522514"
+   },
+   {
+    "admitted_decisions": 60,
+    "changed_decisions": 47,
+    "coverage": "0.6",
+    "error_upper_bound_95": "0.124187",
+    "errors_admitted": 3,
+    "first_choice_rate_over_admitted": "0.95",
+    "selectable": false,
+    "threshold": "0.476166"
+   },
+   {
+    "admitted_decisions": 61,
+    "changed_decisions": 48,
+    "coverage": "0.61",
+    "error_upper_bound_95": "0.122231",
+    "errors_admitted": 3,
+    "first_choice_rate_over_admitted": "0.9508196721311475409836065574",
+    "selectable": false,
+    "threshold": "0.451848"
+   },
+   {
+    "admitted_decisions": 62,
+    "changed_decisions": 49,
+    "coverage": "0.62",
+    "error_upper_bound_95": "0.120336",
+    "errors_admitted": 3,
+    "first_choice_rate_over_admitted": "0.9516129032258064516129032258",
+    "selectable": false,
+    "threshold": "0.438245"
+   },
+   {
+    "admitted_decisions": 63,
+    "changed_decisions": 50,
+    "coverage": "0.63",
+    "error_upper_bound_95": "0.118499",
+    "errors_admitted": 3,
+    "first_choice_rate_over_admitted": "0.9523809523809523809523809524",
+    "selectable": false,
+    "threshold": "0.419133"
+   },
+   {
+    "admitted_decisions": 64,
+    "changed_decisions": 51,
+    "coverage": "0.64",
+    "error_upper_bound_95": "0.116717",
+    "errors_admitted": 3,
+    "first_choice_rate_over_admitted": "0.953125",
+    "selectable": false,
+    "threshold": "0.366153"
+   },
+   {
+    "admitted_decisions": 65,
+    "changed_decisions": 52,
+    "coverage": "0.65",
+    "error_upper_bound_95": "0.114987",
+    "errors_admitted": 3,
+    "first_choice_rate_over_admitted": "0.9538461538461538461538461538",
+    "selectable": false,
+    "threshold": "0.359439"
+   },
+   {
+    "admitted_decisions": 66,
+    "changed_decisions": 53,
+    "coverage": "0.66",
+    "error_upper_bound_95": "0.113308",
+    "errors_admitted": 3,
+    "first_choice_rate_over_admitted": "0.9545454545454545454545454545",
+    "selectable": false,
+    "threshold": "0.359118"
+   },
+   {
+    "admitted_decisions": 67,
+    "changed_decisions": 54,
+    "coverage": "0.67",
+    "error_upper_bound_95": "0.111678",
+    "errors_admitted": 3,
+    "first_choice_rate_over_admitted": "0.9552238805970149253731343284",
+    "selectable": false,
+    "threshold": "0.354277"
+   },
+   {
+    "admitted_decisions": 68,
+    "changed_decisions": 55,
+    "coverage": "0.68",
+    "error_upper_bound_95": "0.110093",
+    "errors_admitted": 3,
+    "first_choice_rate_over_admitted": "0.9558823529411764705882352941",
+    "selectable": false,
+    "threshold": "0.34836"
+   },
+   {
+    "admitted_decisions": 69,
+    "changed_decisions": 56,
+    "coverage": "0.69",
+    "error_upper_bound_95": "0.127765",
+    "errors_admitted": 4,
+    "first_choice_rate_over_admitted": "0.9420289855072463768115942029",
+    "selectable": false,
+    "threshold": "0.326792"
+   },
+   {
+    "admitted_decisions": 70,
+    "changed_decisions": 56,
+    "coverage": "0.7",
+    "error_upper_bound_95": "0.126008",
+    "errors_admitted": 4,
+    "first_choice_rate_over_admitted": "0.9428571428571428571428571429",
+    "selectable": false,
+    "threshold": "0.271475"
+   },
+   {
+    "admitted_decisions": 71,
+    "changed_decisions": 57,
+    "coverage": "0.71",
+    "error_upper_bound_95": "0.124299",
+    "errors_admitted": 4,
+    "first_choice_rate_over_admitted": "0.9436619718309859154929577465",
+    "selectable": false,
+    "threshold": "0.263796"
+   },
+   {
+    "admitted_decisions": 72,
+    "changed_decisions": 57,
+    "coverage": "0.72",
+    "error_upper_bound_95": "0.122635",
+    "errors_admitted": 4,
+    "first_choice_rate_over_admitted": "0.9444444444444444444444444444",
+    "selectable": false,
+    "threshold": "0.238731"
+   },
+   {
+    "admitted_decisions": 73,
+    "changed_decisions": 58,
+    "coverage": "0.73",
+    "error_upper_bound_95": "0.13863",
+    "errors_admitted": 5,
+    "first_choice_rate_over_admitted": "0.9315068493150684931506849315",
+    "selectable": false,
+    "threshold": "0.228529"
+   },
+   {
+    "admitted_decisions": 74,
+    "changed_decisions": 58,
+    "coverage": "0.74",
+    "error_upper_bound_95": "0.136827",
+    "errors_admitted": 5,
+    "first_choice_rate_over_admitted": "0.9324324324324324324324324324",
+    "selectable": false,
+    "threshold": "0.1988"
+   },
+   {
+    "admitted_decisions": 75,
+    "changed_decisions": 59,
+    "coverage": "0.75",
+    "error_upper_bound_95": "0.151797",
+    "errors_admitted": 6,
+    "first_choice_rate_over_admitted": "0.92",
+    "selectable": false,
+    "threshold": "0.196302"
+   },
+   {
+    "admitted_decisions": 76,
+    "changed_decisions": 59,
+    "coverage": "0.76",
+    "error_upper_bound_95": "0.149878",
+    "errors_admitted": 6,
+    "first_choice_rate_over_admitted": "0.9210526315789473684210526316",
+    "selectable": false,
+    "threshold": "0.19616"
+   },
+   {
+    "admitted_decisions": 77,
+    "changed_decisions": 60,
+    "coverage": "0.77",
+    "error_upper_bound_95": "0.148007",
+    "errors_admitted": 6,
+    "first_choice_rate_over_admitted": "0.9220779220779220779220779221",
+    "selectable": false,
+    "threshold": "0.195882"
+   },
+   {
+    "admitted_decisions": 78,
+    "changed_decisions": 61,
+    "coverage": "0.78",
+    "error_upper_bound_95": "0.146183",
+    "errors_admitted": 6,
+    "first_choice_rate_over_admitted": "0.9230769230769230769230769231",
+    "selectable": false,
+    "threshold": "0.168236"
+   },
+   {
+    "admitted_decisions": 79,
+    "changed_decisions": 62,
+    "coverage": "0.79",
+    "error_upper_bound_95": "0.144402",
+    "errors_admitted": 6,
+    "first_choice_rate_over_admitted": "0.9240506329113924050632911392",
+    "selectable": false,
+    "threshold": "0.163581"
+   },
+   {
+    "admitted_decisions": 80,
+    "changed_decisions": 63,
+    "coverage": "0.8",
+    "error_upper_bound_95": "0.158072",
+    "errors_admitted": 7,
+    "first_choice_rate_over_admitted": "0.9125",
+    "selectable": false,
+    "threshold": "0.163396"
+   },
+   {
+    "admitted_decisions": 81,
+    "changed_decisions": 64,
+    "coverage": "0.81",
+    "error_upper_bound_95": "0.156197",
+    "errors_admitted": 7,
+    "first_choice_rate_over_admitted": "0.9135802469135802469135802469",
+    "selectable": false,
+    "threshold": "0.163235"
+   },
+   {
+    "admitted_decisions": 82,
+    "changed_decisions": 65,
+    "coverage": "0.82",
+    "error_upper_bound_95": "0.154365",
+    "errors_admitted": 7,
+    "first_choice_rate_over_admitted": "0.9146341463414634146341463415",
+    "selectable": false,
+    "threshold": "0.158395"
+   },
+   {
+    "admitted_decisions": 83,
+    "changed_decisions": 65,
+    "coverage": "0.83",
+    "error_upper_bound_95": "0.167195",
+    "errors_admitted": 8,
+    "first_choice_rate_over_admitted": "0.9036144578313253012048192771",
+    "selectable": false,
+    "threshold": "0.158332"
+   },
+   {
+    "admitted_decisions": 86,
+    "changed_decisions": 68,
+    "coverage": "0.86",
+    "error_upper_bound_95": "0.175513",
+    "errors_admitted": 9,
+    "first_choice_rate_over_admitted": "0.8953488372093023255813953488",
+    "selectable": false,
+    "threshold": "0.097941"
+   },
+   {
+    "admitted_decisions": 87,
+    "changed_decisions": 68,
+    "coverage": "0.87",
+    "error_upper_bound_95": "0.173576",
+    "errors_admitted": 9,
+    "first_choice_rate_over_admitted": "0.8965517241379310344827586207",
+    "selectable": false,
+    "threshold": "0.097521"
+   },
+   {
+    "admitted_decisions": 88,
+    "changed_decisions": 69,
+    "coverage": "0.88",
+    "error_upper_bound_95": "0.185127",
+    "errors_admitted": 10,
+    "first_choice_rate_over_admitted": "0.8863636363636363636363636364",
+    "selectable": false,
+    "threshold": "0.078357"
+   },
+   {
+    "admitted_decisions": 89,
+    "changed_decisions": 69,
+    "coverage": "0.89",
+    "error_upper_bound_95": "0.183132",
+    "errors_admitted": 10,
+    "first_choice_rate_over_admitted": "0.8876404494382022471910112360",
+    "selectable": false,
+    "threshold": "0.065294"
+   },
+   {
+    "admitted_decisions": 90,
+    "changed_decisions": 69,
+    "coverage": "0.9",
+    "error_upper_bound_95": "0.181179",
+    "errors_admitted": 10,
+    "first_choice_rate_over_admitted": "0.8888888888888888888888888889",
+    "selectable": false,
+    "threshold": "0.059092"
+   },
+   {
+    "admitted_decisions": 91,
+    "changed_decisions": 70,
+    "coverage": "0.91",
+    "error_upper_bound_95": "0.179267",
+    "errors_admitted": 10,
+    "first_choice_rate_over_admitted": "0.8901098901098901098901098901",
+    "selectable": false,
+    "threshold": "0.03821"
+   },
+   {
+    "admitted_decisions": 92,
+    "changed_decisions": 71,
+    "coverage": "0.92",
+    "error_upper_bound_95": "0.190141",
+    "errors_admitted": 11,
+    "first_choice_rate_over_admitted": "0.8804347826086956521739130435",
+    "selectable": false,
+    "threshold": "0.037809"
+   },
+   {
+    "admitted_decisions": 100,
+    "changed_decisions": 74,
+    "coverage": "1",
+    "error_upper_bound_95": "0.244017",
+    "errors_admitted": 17,
+    "first_choice_rate_over_admitted": "0.83",
+    "selectable": false,
+    "threshold": "0.0"
+   }
+  ],
+  "every_point_reported": true,
+  "feasibility": {
+   "best_bound_at_or_above_the_coverage_floor": "0.086407",
+   "pair_is_reachable_at_any_threshold": true,
+   "points_at_or_above_the_coverage_floor": 52,
+   "reachable_points": 39,
+   "sweep_points": 90,
+   "what_this_separates": "'unmet at this bar' from 'infeasible on this corpus'. A tighter alpha moves the bar along this same curve, so a pair no point satisfies is not a volume question"
+  },
+  "points": 90,
+  "selectable_points": 0
+ },
+ "wave": "W2",
+ "what_this_record_is_not": "a promotion. Selection eligibility is what \u00a72.3 decides; binding the artifact, running the lifecycle and closing the gate are later steps with their own records"
+}

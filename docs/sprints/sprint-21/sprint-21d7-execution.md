@@ -2,9 +2,14 @@
 
 - Branch: `sprint-21d7-groundwork`
 - Backlog: [Sprint 21D7 Technical Backlog](sprint-21d7-technical-backlog.md)
-- **Status: W1 closed.** S21D7-000 through S21D7-005, S21D7-010 through S21D7-019 and
-  S21D7-020 through S21D7-024 are done. The certification corpus is complete at 100 groups and
-  sealed non-provisionally; the measured campaign has run. **W0 detail follows first.**
+- **Status: W2 closed, ending `1_select`.** S21D7-000 through S21D7-005, S21D7-010 through
+  S21D7-019, S21D7-020 through S21D7-024 and S21D7-025 through S21D7-034 are done. The class
+  `containment-contrastive-linear-v1` met **every** amended §2.3 condition on the fresh 100-group
+  certification corpus: coverage 0.59, Clopper-Pearson bound 0.126207 against the 0.15 ceiling,
+  0.9492 first choice over admitted against a 0.61 baseline, 46.78 projected changed final
+  decisions, 100% first-action preservation. **No threshold moved in any wave.** W2 decides
+  eligibility only — it promotes nothing and closes no gate condition. **W0 detail follows
+  first**, then W1, then W2.
 - **W0 closed.** S21D7-000 through S21D7-005 and S21D7-010 through S21D7-019 are done.
   The three governance rulings W0 exists to obtain were all taken and the condition-24
   inheritance was renewed. Revision 7 is published with `measured_values: 0`, and **no threshold
@@ -425,3 +430,207 @@ fingerprints.
 - It wrote **nothing** to any predecessor store. D5's and D6's stores were read for the envelope
   and the bar-setting half's bytes, by artifact identity, read-only.
 - It authored **no retrieval groups**: the retrieval pool is inherited whole.
+
+---
+
+## W2 outcome — three rulings before the first score, one bar, and `1_select`
+
+Five scripts, ten sealed records, **one measurement**. The wave that D5, D6 and D7's own
+groundwork were building toward ends at §3.4's **step 1**: every amended §2.3 condition holds on
+the one pre-registered cell. What follows states the numbers, and — because a pass is easier to
+publish than to read — states beside them exactly which rulings the pass depended on and what
+the other branch of each would have said.
+
+### Step 0 — the three rulings, taken before anything was scored
+
+`scripts/w2_rulings_d7.py`. The W2 pre-flight had put two readings and one reversal to the gate
+owner; all three were answered before a single certification decision was ranked. The chronology
+block that licenses them reports what had to be zero and was:
+
+```
+d7_certification_decisions_scored             0
+d7_conformal_bars_derived                     0
+d7_directions_fitted_in_wave                  0
+d7_ladder_measurements_on_the_fresh_corpus    0
+```
+
+W1's four measurement records are **named** in that block rather than excluded from it. They
+measure the corpus — which bodies pass which suite, what seven channels each candidate has —
+and score no decision, so a ruling chosen to suit them could only be a ruling about the corpus,
+and none of the three is.
+
+| item | ruling | thresholds moved |
+|---|---|---|
+| **S21D7-025** | the frozen disjointness sentence binds to its two leakage properties: zero shared decision signatures, zero shared canonical sources. Aliasing is reported as the coverage ceiling, never as a pass | 0 |
+| **S21D7-026** | the baseline condition reads the strongest rung's **whole-corpus** rate, the rate every released ladder record publishes | 0 |
+| **S21D7-027** | **S21D7-011 superseded** — the containment rung is *unseated*; the frozen five stand and the containment ordering is reported beside them as an unseated measurement | 0 |
+| **S21D7-028** | revision **8**, in its own file so revision 7's children hashes stay valid, `measured_values: 0` | 0 |
+
+The superseded ruling is **not rewritten**. It stays sealed exactly as W0 left it, hash included,
+inside revision 7's children; the supersession references it by `file_sha256`. A superseded
+ruling that is edited is a ruling nobody can audit.
+
+### The one fit — `d80160c4…` reproduced
+
+`scripts/w2_direction_d7.py`. `containment-contrastive-linear-v1` fitted **once**, on the
+released 180-group / 720-pair D5 fitting pool, λ = 1, margin floor 0. The model hash is
+`d80160c4aa795fadd98fb4e6d4f64b7b29a2a3685c537454b8aff95daa124859` — the value revision 7 froze
+before the class had been fitted in this sprint. A second process re-derives the record byte for
+byte; **no record written by this wave's fit carries a timestamp**, precisely so that the restart
+check cannot pass vacuously.
+
+The §4 transfer gap is re-sealed as W-stage evidence in the same run, bound to the groundwork
+bytes by file hash rather than pointed at: it is the measurement that licenses the class question
+at all, and the direction it diagnosed is the direction fitted here.
+
+### The scan, at the level the class reads
+
+`sprint-21d7-w2-relational-scan.json` carries **both** levels beside each other. W1's eleven
+released scans prove separation over the 390-channel v2 representation; they cannot see what
+seven numbers collide on. At the v3 level, across all three half pairs:
+
+| pair | shared decision signatures | shared canonical sources | aliased vectors |
+|---|---|---|---|
+| fitting pool ↔ demoted bar-setting | 0 | 0 | 15 |
+| fitting pool ↔ certification | 0 | 0 | 23 |
+| demoted bar-setting ↔ certification | 0 | 0 | 11 |
+
+Zero on both leakage properties, on every pair. The aliasing counts are published as the ceiling
+on reachable coverage, which is what S21D7-025 bound them to.
+
+### The ladder on the fresh corpus — five rungs, one unseated measurement
+
+`scripts/w2_ladder_d7.py`. The five released rungs, of which three are eligible on this surface
+for the reasons the released implementations state in their own words:
+
+| rung | eligible | first-choice rate |
+|---|---|---|
+| `fixed_input_order` | yes | 0.47 |
+| `deterministic_static_ordering` | yes | 0.13 |
+| **`lexical_similarity`** | yes | **0.61** ← strongest |
+| `frozen_minilm_cosine` | no — no columns under the v2 encoder | — |
+| `width_20_bounded_graph` | no — twenty wide over four candidates is the whole pool | — |
+| *`repair_containment_share`* | **unseated** | *0.82, reported, sets no baseline* |
+
+The class's own whole-corpus first-choice rate on this corpus is **0.83**. Both changed-decision
+pairings are reported: **74** decisions differ from the strongest released rung over the whole
+corpus, **26** from the containment ordering.
+
+### The bar, derived once
+
+`scripts/learner_selection_d7.py`. The demoted D6 certification half — the bar-setting half under
+S21D7-010 — re-scored under the class: **0.84** first-choice, **16** wrong answered decisions,
+quantile rank **14** at α = 0.20, exactly the arithmetic the demotion ruling published before the
+half was re-scored. The bar is `0.489867`, derivation hash
+`04b34f7e0c94ffa25fd6119c92bb3279d0f673e7e2fa5418e14e7fed87d8c4c5`, and it reproduces across a
+process restart.
+
+A decision's identity is its four **relational** vectors in slot order, per S21D7-025. The
+derivation refuses two halves sharing one and refuses a half containing a replica; neither
+refusal fired.
+
+### The certification cell
+
+| quantity | value | condition |
+|---|---|---|
+| independent clean decisions | **100** | ≥ 100 ✓ |
+| answered | 100 | — |
+| admitted | **59** | — |
+| clean coverage | **0.59** | ≥ 0.40 ✓ |
+| errors admitted | **3** | — |
+| Clopper-Pearson 95% upper bound | **0.126207** | ≤ 0.15 ✓ |
+| first choice over admitted | **0.9492** | > 0.61 ✓ |
+| changed decisions | **46** | ≥ 1 ✓ |
+| projected changed final decisions | **46.780** | ≥ 20 ✓ |
+| first-action preservation | **100%**, 0 flips of 40 | 100% ✓ |
+| sweep points reported | **90**, none selectable | all ✓ |
+| maximum inference | 0.023 ms | ≤ 250 ms ✓ |
+
+The realised leak is **3 of 17** wrong decisions clearing the bar — 0.176 against the 0.20 budget
+— so the bar held the guarantee α actually makes, and the ceiling the amended §2.3 reads was met
+separately. Of the 90 sweep points, 52 sit at or above the coverage floor and **39** satisfy the
+amended pair, best bound `0.086407`: the pair is reachable on this corpus and not only at the
+derived bar.
+
+**Ending: `1_select`.** No condition failed.
+
+### What the pass depended on — both rulings, priced
+
+A pass whose margin comes from a ruling has to publish what the other branch would have said, so
+the selection record carries both, neither as a condition:
+
+- **S21D7-026 was not load-bearing.** Recomputed on exactly the 59 admitted decisions,
+  `lexical_similarity` scores **0.627** against the class's 0.949. The condition passes under the
+  reading the ruling *declined* as well as the one it took.
+- **S21D7-027 was load-bearing, on the condition the pre-flight predicted.** Against the
+  containment ordering the class's admitted rate 0.949 still clears 0.82 — but only **5** of the
+  59 admitted decisions differ from it, projecting **5.085** changed final decisions against a
+  floor of 20. Under the seated pairing this cell fails `§2.3` on the changed-decision condition.
+  The pre-flight measured that consequence on the two spent corpora *before* the ruling was
+  taken, which is the whole reason the ruling was legitimate to take.
+
+### The invariance regression, measured rather than implied
+
+`scripts/invariance_regression_d7.py`. 40 cases over 20 certification groups, 160 candidate
+vectors: **0** relational vectors changed, **0** verifier label changes, **0** first-action flips,
+and all four seeded semantic mutations changed the canonical representation.
+
+Three things this run does that D6's could not, all because the class dropped the embedding:
+the encoder is rebuilt from the **campaign's own sealed bounds** and proved by re-encoding all 80
+clean bodies against their sealed values before anything transformed is read; **no embedding is
+computed at all**, which retires D4's W2-D9 batch-composition finding for this record; and the
+first action is compared under the fitted direction directly rather than argued from premises.
+
+### W2 findings
+
+**W2-F1 — a `--check` that expires.** `w2_rulings_d7.py --check` re-globbed the evidence
+directory to rebuild the chronology block. That block describes a *moment*, and W2's own
+measurement records did not exist at it — so from the first record this wave wrote, the check
+compared two different moments and failed on the passage of time rather than on drift. Fixed
+in-wave: under `--check` the file listing is taken from the sealed record and every *claim* is
+still re-derived from the pre-flight. A verification tool that can only pass once is not one.
+
+**W2-F2 — a stopwatch in a reproducibility check.** The cell reports `maximum_inference_ms`,
+measured live, so the selection record could never reproduce byte for byte. `--check` now ignores
+exactly three fields — two wall clocks and that stopwatch — and still compares
+`within_inference_budget`, so a run that breached the 250 ms budget fails the comparison.
+
+### W2 evidence index
+
+| record | integrity hash (16) |
+|---|---|
+| `sprint-21d7-disjointness-clarification.json` | `9f8410a0cce03ad4` |
+| `sprint-21d7-baseline-reading.json` | `2323dbc19d391b59` |
+| `sprint-21d7-ladder-supersession.json` | `1f42f706e5bcc735` |
+| `sprint-21d7-pre-registration-r8.json` | `e14ce34293ed6852` |
+| `sprint-21d7-w2-direction.json` | `0790e1f68d64e551` |
+| `sprint-21d7-w2-transfer-gap.json` | `ed6c621d7c4e72f8` |
+| `sprint-21d7-w2-relational-scan.json` | `31eda3cdc815bda4` |
+| `sprint-21d7-w2-ladder.json` | `c301dddb117ecc49` |
+| `sprint-21d7-invariance-regression.json` | `90a2c63719456993` |
+| `sprint-21d7-learner-selection.json` | `63fd43dab720c57e` |
+
+## W2 validation
+
+- `scripts/w2_rulings_d7.py --check`, `scripts/w2_direction_d7.py --check`,
+  `scripts/w2_ladder_d7.py --check`, `scripts/learner_selection_d7.py --check` — all reproduce;
+  the last run twice in two fresh processes.
+- The direction reproduces `d80160c4…`; the bar reproduces derivation hash `04b34f7e…`.
+- Both rebuilt matrices equal their published hashes: `747eb966…` (bar-setting), `1a0f9e65…`
+  (certification).
+- ruff, ruff format over `scripts/`, `src/`, `tests/` — clean. mypy over `src/cognitive_os` —
+  631 files, no issues.
+- **4082 tests passed, 217 skipped.**
+
+## What W2 did not do
+
+- It fitted **one** direction and derived **one** bar. No second cell, no second alpha, no volume
+  ladder, and no threshold chosen off the 90-point sweep — every point is reported and none is
+  selectable.
+- It moved **no threshold**. α = 0.20, C = 0.15 and the 0.40 coverage floor are D6's, carried
+  unchanged; D7 makes zero amendments across all three waves.
+- It opened **no final, batch-B or canary body** and inspected **no** such outcome.
+- It wrote to **no** store. Three artifact stores were read by content address, read-only, and no
+  database was opened.
+- It did **not** promote anything. `1_select` is eligibility under §2.3; binding the artifact,
+  running the lifecycle and closing Gate L2 are later steps with records of their own.
