@@ -14,6 +14,9 @@
   passes 29 of 29; Gate D1 conditions 6, 7 and 15 are closed. 22A's dependency is discharged.
 - Migration head: `0015`, unchanged. `0016` remains unallocated and is a **refusal**, not a
   plan item.
+- Wave commit `82cad8b`, pull request **#231** against protected `main`; CI run
+  **`31485332864`** on that exact head, **30 of 30 jobs successful**. The merge is the gate
+  owner's, not the wave's — W0 leaves the branch reviewable rather than merged.
 - **Three findings, two of them defects in the groundwork this wave was written to test, and
   both fixed inside the wave.** See W0 findings.
 - W0 measures nothing and registers nothing. It establishes the authority every later wave is
