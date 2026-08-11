@@ -13,8 +13,9 @@ D7 asked the question that record licensed: **drop them.** Seven relational chan
 v2 scalars and the repair-containment share, the same fit rule, the same α, the same ceiling, the
 same coverage floor.
 
-It passes. **Gate L2 passes, and Sprint 22A is unblocked** — subject to the protected release,
-which is the one thing this sprint cannot do to itself.
+It passes. **Gate L2 passes at 29 of 29, and Sprint 22A is unblocked.** The release is on the
+remote: `#229` squash-merged into protected `main` as `3f5d7379…`, exact-head CI 30 of 30, and
+the annotated tag `sprint-21-learning-baseline` created after it and never moved.
 
 And the most useful sentence in this handoff is not that one. It is this:
 
@@ -147,8 +148,8 @@ condition that names all three is sealed and unexercised.
 | `sprint-21d7-promotion.json` | `fde811401cb85dab…` |
 | `sprint-21d7-lifecycle.json` | `155fc87f4bcef558…` |
 | `sprint-21d7-continuation.json` | ending `1_select`, 15 delivered, 0 not opened |
-| `sprint-21d7-gate-l2.json` | regenerated at gate close |
-| `sprint-21d7-release.json` | the remote-derived release handles |
+| `sprint-21d7-gate-l2.json` | `5b83cd4bcfa1cce9…`, 29 met, verdict `gate_l2_passes` |
+| `sprint-21d7-release.json` | `582aa77732308731…`, zero findings, tag `3025082526cef6d9…` |
 
 The per-wave evidence indexes in [`sprint-21d7-execution.md`](sprint-21d7-execution.md) carry both
 hashes for every record; this table names only the ones a successor's pre-registration has to
