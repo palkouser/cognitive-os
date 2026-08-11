@@ -203,13 +203,30 @@ def _findings(report: dict[str, Any]) -> list[str]:
     if not report["branch_protection_after_release"]["enforce_admins"]:
         findings.append("branch protection no longer enforces administrators")
     # The tag names the outcome, and this script only knows how to record one of them. §8.2's
-    # success tag is what D7 carries; if the assessment does not read as a pass, the release
-    # being recorded is not the release this script describes, and saying so is better than
-    # writing it down. D6 enforced this in the opposite direction for the same reason.
-    if report["gate_l2"] != "gate_l2_passes":
+    # success tag is what D7 carries, so a gate that is not on course to pass is a finding.
+    #
+    # "On course" rather than "passing", and the distinction is the ordering: condition 29 *is*
+    # this release, so the gate cannot read a pass until this record exists, and this record
+    # cannot be written if it demands one. The check that survives that is the one that means
+    # something anyway — **every condition this record does not create is met**. If 29 is the
+    # only row left, the gate-close regeneration closes it and nothing else moves.
+    counts = report["gate_l2_counts"]
+    outstanding = {
+        name: counts[name]
+        for name in ("failed", "not_opened", "met_as_rejection")
+        if counts.get(name)
+    }
+    if outstanding:
         findings.append(
-            f"the gate assessment reads {report['gate_l2']!r} and the tag created is the success "
-            f"tag {TAG}; a stopped release is a different record with a different tag"
+            f"the gate assessment carries {outstanding} and the tag created is the success tag "
+            f"{TAG}; a stopped release is a different record with a different tag"
+        )
+    pending = [row["condition"] for row in report["gate_l2_rows"] if row["state"] == "pending"]
+    if report["gate_l2"] != "gate_l2_passes" and pending != [29]:
+        findings.append(
+            f"the gate assessment reads {report['gate_l2']!r} with pending rows {pending}; only "
+            "condition 29 may be outstanding when this record is written, because condition 29 "
+            "is this record"
         )
     for condition, state in report["gate_d1"].items():
         if state != "closed":
@@ -259,6 +276,14 @@ def main() -> int:
         "outcome": "positive; one candidate selected, bound, promoted and activated",
         "gate_l2": gate["verdict"],
         "gate_l2_counts": gate["counts"],
+        "gate_l2_rows": [
+            {"condition": row["condition"], "state": row["state"]} for row in gate["gate_l2"]
+        ],
+        "gate_l2_read_before_the_close": (
+            "condition 29 is this release, so the assessment read here is the one written before "
+            "it existed. What this record checks is that every other condition is met; the "
+            "gate-close regeneration then reads these bytes and closes 29 against them"
+        ),
         "gate_d1": {row["condition"]: row["state"] for row in gate["gate_d1"]},
         "d1_conditions_closed_from_final_surface_evidence": [6, 7],
         "d1_conditions_closed_by_inheritance": [15],

@@ -2,10 +2,13 @@
 
 - Branch: `sprint-21d7-groundwork`
 - Backlog: [Sprint 21D7 Technical Backlog](sprint-21d7-technical-backlog.md)
-- **Status: W4 closed. Gate L2 reads 28 met, 1 pending, 0 failed, 0 not opened.** The pending
-  row is condition 29 — the protected merge, its exact-head CI and the annotated tag — which is
-  the gate owner's to close. Gate D1's conditions 6, 7 and 15 are all closed. **`not_opened` is
-  zero for the first time in the D-series.**
+- **Status: SPRINT CLOSED. Gate L2 passes at 29 of 29 — 0 pending, 0 failed, 0 not opened.**
+  Gate D1's conditions 6, 7 and 15 are all closed. **`not_opened` is zero for the first time in
+  the D-series.** Sprint 22A is unblocked.
+- Release: `#229` squash-merged into protected `main` at `2026-08-11T09:09:57Z`, commit
+  `3f5d7379caf85290da45885e22138506211bee2e`; exact-head post-merge CI run `31476479587`,
+  **30 of 30 jobs successful**; annotated tag **`sprint-21-learning-baseline`**, object
+  `3025082526cef6d97fe87cc24bd63cab0252e6a2`, created after that CI and never moved.
 - **Status: W3 closed. The artifact is activated on the canary subset.** S21D7-000 through
   S21D7-005, S21D7-010 through S21D7-019, S21D7-020 through S21D7-024, S21D7-025 through
   S21D7-034 and S21D7-035 through S21D7-039 are done. W2 ended `1_select` with every amended
@@ -26,8 +29,10 @@
 - Wave commit `80eec47`, pull request **#229** against protected `main`; CI run **`31393808250`**
   on that exact head, **30 of 30 jobs successful**. The merge is the gate owner's, not the
   wave's — W0 leaves the branch reviewable rather than merged.
-- Gate L2 does not pass and Sprint 22A remains blocked. W0 measures nothing and closes no
-  condition; it establishes the authority every later wave is bound to.
+- **At W0**, Gate L2 did not pass and Sprint 22A remained blocked. W0 measures nothing and closes
+  no condition; it establishes the authority every later wave is bound to. The status line at the
+  top of this log is the sprint's; this bullet and the ones above it are W0's, and the wave
+  sections below each keep the state they were written in.
 
 ---
 
@@ -1034,13 +1039,41 @@ the containment rung before anything could be scored.
   installation, both benchmark replays — all green inside the matrix.
 - **4090 tests passed, 217 skipped**, run as a matrix row rather than beside it.
 
+## The release — condition 29
+
+`#229` squash-merged into protected `main` by the gate owner at `2026-08-11T09:09:57Z`, no
+administrator bypass, commit `3f5d7379caf85290da45885e22138506211bee2e`. Exact-head post-merge
+`main` CI run **`31476479587`**, **30 of 30 jobs successful**, completed `09:25:34Z`. The
+annotated tag **`sprint-21-learning-baseline`** created at `09:26:38Z` — after that CI, once, and
+never moved — object `3025082526cef6d97fe87cc24bd63cab0252e6a2`, peeling to the release commit.
+
+`scripts/release_d7.py` reads every one of those handles back from GitHub rather than from this
+log, and recorded **zero findings**. It creates nothing: no merge, no tag, no push. A record that
+could produce the state it describes would be a record of itself.
+
+**The ordering condition 29 forced, and the check that survives it.** Condition 29 *is* the
+release, so the gate cannot read a pass until the release record exists — and the first version of
+the release script refused to be written for a gate that did not already read one. That is a
+deadlock, and it showed up as a finding on the first run rather than as a design note. The honest
+form of the check replaced it: **every condition the release does not itself create must be met,
+and 29 must be the only row outstanding.** The release was then written against a 28-met
+assessment, the gate was regenerated against the release, and both records say which side of that
+ordering they were written on.
+
+Gate close: **29 met, 0 pending, 0 failed, 0 not opened, 0 carried. `gate_l2_passes`.**
+
+| record | integrity hash (16) |
+|---|---|
+| `sprint-21d7-release.json` | `582aa77732308731` |
+| `sprint-21d7-gate-l2.json` (regenerated) | `5b83cd4bcfa1cce9` |
+
 ## What W4 did not do
 
-- It did **not** close condition 29. The protected merge is the gate owner's, and the release
-  record is written from the remote afterwards.
-- It did **not** create the tag. `sprint-21-learning-baseline` is created once, after the
-  exact-head post-merge CI, and `scripts/release_d7.py` only reads it — a record that could
-  produce the state it describes would be a record of itself.
-- It did **not** round 28-of-29 up to a pass. The verdict is computed from the counts, and one
-  `pending` row means `gate_l2_does_not_pass` until the release exists.
+- It did **not** create the tag on its own authority. The merge was the gate owner's, and the tag
+  was created once, on the exact commit that CI passed on, after that CI.
+- It did **not** round 28-of-29 up to a pass at any point. The verdict is computed from the
+  counts; while condition 29 was `pending` the assessment read `gate_l2_does_not_pass`, and the
+  document that quoted it said so.
+- It did **not** enter the bounded steady state, retire any §6 risk, or make the activated
+  component a default. It routes five groups.
 - It moved **no threshold**. Five waves, zero amendments.

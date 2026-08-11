@@ -1,12 +1,14 @@
 # Sprint 21D7 report — The Containment Contrastive Class
 
-- Branch: `sprint-21d7-groundwork`, pull request **#229** against protected `main`
+- Branch: `sprint-21d7-groundwork`, squash-merged as **#229** into protected `main` at
+  `2026-08-11T09:09:57Z`, commit `3f5d7379caf85290da45885e22138506211bee2e`
+- Release tag: **`sprint-21-learning-baseline`**, object `3025082526cef6d9…`, created after
+  the exact-head post-merge CI run `31476479587` (30 of 30 success) and never moved
 - Predecessor: Sprint 21D6, tag `sprint-21d6-evidence-baseline`, object
   `29debe41f8dbe16137c0ae528f0ad4390de8d451`
 - Pre-registration: **revision 7**, published in W0 with `measured_values: 0`
 - Migration head: `0015`, unchanged. `0016` remains unallocated
-- Gate L2: **28 met, 1 pending, 0 failed, 0 not opened**. The pending row is condition 29, the
-  protected release
+- Gate L2: **29 met, 0 pending, 0 failed, 0 not opened — the gate passes**
 - Gate D1: conditions **6, 7 and 15 all closed**
 - Thresholds moved by this sprint: **0**, in every wave
 
@@ -122,15 +124,23 @@ What it is **not**: the bounded steady-state configuration is sealed and was nev
 canary→steady transition was not taken, and no surface outside the five routed groups consults the
 component.
 
-## 6. What remains
+## 6. The release, and what remains
 
-**Condition 29.** The protected squash-merge of #229, its exact-head post-merge `main` CI, the
-annotated tag `sprint-21-learning-baseline` created after that CI, and the remote verification of
-all of it. The merge is the gate owner's. Until it happens the gate assessment reads
-`gate_l2_does_not_pass` on one `pending` row, computed from the counts — which is what a
-counts-derived verdict is for.
+**Condition 29 closed on the remote, not on prose.** `#229` squash-merged into protected `main`
+by the gate owner at `2026-08-11T09:09:57Z` with no administrator bypass; exact-head post-merge
+`main` CI run `31476479587`, 30 of 30 jobs successful, completed `09:25:34Z`; the annotated tag
+`sprint-21-learning-baseline` created at `09:26:38Z` — **after** that CI, once, never moved —
+object `3025082526cef6d9…` peeling to the release commit. `scripts/release_d7.py` read every one
+of those handles back from GitHub and recorded **zero findings**.
 
-**Sprint 22A** is unblocked by the evidence and gated on that release.
+One thing that ordering forced, and both records say so: condition 29 *is* the release, so the
+gate cannot read a pass until the release record exists, and the release record refuses to be
+written for a gate that is not on course to pass. The check that survives that is the honest
+form — every condition the release does not itself create must be met, and 29 must be the only
+row outstanding.
+
+**Nothing remains.** Gate L2 passes at 29 of 29, Gate D1's three are closed, and **Sprint 22A is
+unblocked**.
 
 ---
 

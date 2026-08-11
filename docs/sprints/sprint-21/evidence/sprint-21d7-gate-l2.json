@@ -10,10 +10,10 @@
  "counts": {
   "carried": 0,
   "failed": 0,
-  "met": 28,
+  "met": 29,
   "met_as_rejection": 0,
   "not_opened": 0,
-  "pending": 1
+  "pending": 0
  },
  "final_outcomes_inspected": true,
  "final_outcomes_were_opened_by": "S21D7-035 and S21D7-036 in W3, after the artifact was sealed against a selection that ended 1_select. This record reads them; it did not open them",
@@ -294,29 +294,30 @@
   },
   {
    "condition": 29,
-   "detail": "the protected merge, its exact-head post-merge main CI, the annotated tag and the remote verification. The gate-close regeneration is what decides this row",
-   "evidence": null,
+   "detail": "PR #229 squash-merged into protected main at 2026-08-11T09:09:57Z, exact-head main CI run 31476479587 30 of 30 success, and the annotated tag sprint-21-learning-baseline object 3025082526cef6d9 peels to 3f5d7379caf85290",
+   "evidence": "sprint-21d7-release.json",
+   "evidence_sha256": "49367982b18cde316466ddc4d9679c4b870a9fbea328acb5ce371517dd10877b",
    "rule": "protected merge, post-merge exact-head CI, annotated tag, remote read",
-   "state": "pending"
+   "state": "met"
   }
  ],
  "gate_l2_conditions": 29,
- "integrity_content_hash": "f456f97618e70580fe0403b25126b78c8ce910b12f079db3b5a47fc0aed9a783",
+ "integrity_content_hash": "5b83cd4bcfa1cce91e4333ece26f093f995f4eeb4f5b788a897b2cf329e2939b",
  "item": "S21D7-041",
  "no_condition_is_carried_from_d6": true,
  "no_condition_was_closed_by_a_stop": true,
  "pre_registration_sha256": "984a21f012cddb1e2a2b5608e36debbc7769351c5363be940e9fab7e19505496",
  "provisional_until": "the protected merge, its exact-head post-merge main CI, and remote tag verification",
  "purpose": "The twenty-nine Gate L2 conditions and Gate D1's three, each decided by the evidence that bears on it. No condition may be asserted; every row names its file and rule, or the stop hash that closed it.",
- "recorded_at": "2026-08-11T08:34:41.568980Z",
+ "recorded_at": "2026-08-11T09:27:47.342798Z",
  "schema_version": 1,
  "sprint": "21D7",
  "thresholds_changed_by_this_sprint": {
   "amendments_made_by_d7": 0,
   "count": 0
  },
- "verdict": "gate_l2_does_not_pass",
- "verdict_reason": "the gate passes only when every applicable condition is met; 1 awaiting the protected release",
+ "verdict": "gate_l2_passes",
+ "verdict_reason": "all 29 applicable conditions are met",
  "wave": "W4",
  "what_inherited_is_not": "condition 24 is `met`, not `carried`. A carried condition would be a predecessor's verdict reused; this one is a predecessor's *measurement* whose three voiding identities were recomputed from D7's tree at gate close, under a ruling the gate owner renewed in W0 before any D7 measurement existed"
 }

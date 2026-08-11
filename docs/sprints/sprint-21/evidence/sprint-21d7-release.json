@@ -1,0 +1,279 @@
+{
+ "branch_protection_after_release": {
+  "allow_deletions": false,
+  "allow_force_pushes": false,
+  "enforce_admins": true,
+  "required_conversation_resolution": true,
+  "required_pull_request_reviews": null,
+  "required_status_check_contexts": 27,
+  "strict_status_checks": true
+ },
+ "component_state": {
+  "activations": 1,
+  "active_components": 1,
+  "approvals": 1,
+  "artifact_id": "0790849c-2225-413e-9452-c14d85ef9df5",
+  "artifact_written": true,
+  "component_id": "learned.containment.correction_ranking",
+  "hash_chain_verified": true,
+  "kill_switch_exercised": true,
+  "learned_components": 1,
+  "ledger_revisions": 6,
+  "note": "S21D7-039 registered, verified, approved and activated one component on experience.correction_ranking, routing 5 canary groups and nothing else. It was disabled by kill switch and restored by rollback inside the same wave, across two database restarts and four processes. Source: sprint-21d7-lifecycle.json, continuation ending '1_select' with 15 deliverables opened and 0 closed",
+  "projection_matches": true,
+  "rollbacks": 1,
+  "routed_groups": 5,
+  "surface": "experience.correction_ranking",
+  "what_active_is_not": "a shipped default. The bounded steady-state configuration is sealed and was not entered, and no surface outside the five routed groups consults the component"
+ },
+ "d1_conditions_closed_by_inheritance": [
+  15
+ ],
+ "d1_conditions_closed_from_final_surface_evidence": [
+  6,
+  7
+ ],
+ "decision_hashes": {
+  "continuation": "db4d6dd0cff2a0d21ac6554686467369456359bc605916c493600523594f46d1",
+  "correction_selection": "63fd43dab720c57ec314c1d13bdd8a228802becdf104574be192bcacb18bfb7d",
+  "ending": "1_select",
+  "no_stop_hash": "there is no stop to bind. D3 through D6 each released against one; this record names the selection and the continuation instead, and the gate assessment closes zero conditions against a stop"
+ },
+ "documents": {
+  "assessment": "gate-l2-d7-assessment.md",
+  "execution_log": "sprint-21d7-execution.md",
+  "handoff": "sprint-21d7-handoff.md",
+  "report": "sprint-21d7-report.md"
+ },
+ "final_outcomes_inspected": 0,
+ "findings": [],
+ "gate_d1": {
+  "6": "closed",
+  "7": "closed",
+  "15": "closed"
+ },
+ "gate_l2": "gate_l2_does_not_pass",
+ "gate_l2_counts": {
+  "carried": 0,
+  "failed": 0,
+  "met": 28,
+  "met_as_rejection": 0,
+  "not_opened": 0,
+  "pending": 1
+ },
+ "gate_l2_read_before_the_close": "condition 29 is this release, so the assessment read here is the one written before it existed. What this record checks is that every other condition is met; the gate-close regeneration then reads these bytes and closes 29 against them",
+ "gate_l2_rows": [
+  {
+   "condition": 1,
+   "state": "met"
+  },
+  {
+   "condition": 2,
+   "state": "met"
+  },
+  {
+   "condition": 3,
+   "state": "met"
+  },
+  {
+   "condition": 4,
+   "state": "met"
+  },
+  {
+   "condition": 5,
+   "state": "met"
+  },
+  {
+   "condition": 6,
+   "state": "met"
+  },
+  {
+   "condition": 7,
+   "state": "met"
+  },
+  {
+   "condition": 8,
+   "state": "met"
+  },
+  {
+   "condition": 9,
+   "state": "met"
+  },
+  {
+   "condition": 10,
+   "state": "met"
+  },
+  {
+   "condition": 11,
+   "state": "met"
+  },
+  {
+   "condition": 12,
+   "state": "met"
+  },
+  {
+   "condition": 13,
+   "state": "met"
+  },
+  {
+   "condition": 14,
+   "state": "met"
+  },
+  {
+   "condition": 15,
+   "state": "met"
+  },
+  {
+   "condition": 16,
+   "state": "met"
+  },
+  {
+   "condition": 17,
+   "state": "met"
+  },
+  {
+   "condition": 18,
+   "state": "met"
+  },
+  {
+   "condition": 19,
+   "state": "met"
+  },
+  {
+   "condition": 20,
+   "state": "met"
+  },
+  {
+   "condition": 21,
+   "state": "met"
+  },
+  {
+   "condition": 22,
+   "state": "met"
+  },
+  {
+   "condition": 23,
+   "state": "met"
+  },
+  {
+   "condition": 24,
+   "state": "met"
+  },
+  {
+   "condition": 25,
+   "state": "met"
+  },
+  {
+   "condition": 26,
+   "state": "met"
+  },
+  {
+   "condition": 27,
+   "state": "met"
+  },
+  {
+   "condition": 28,
+   "state": "met"
+  },
+  {
+   "condition": 29,
+   "state": "pending"
+  }
+ ],
+ "integrity_content_hash": "582aa77732308731cd765838539de406d8bf6c8a592ae43a5f241b8fe862e95e",
+ "items": [
+  "S21D7-043"
+ ],
+ "migration_head": "0015",
+ "next_available_migration": "0016 (unallocated)",
+ "outcome": "positive; one candidate selected, bound, promoted and activated",
+ "pre_registration_sha256": "984a21f012cddb1e2a2b5608e36debbc7769351c5363be940e9fab7e19505496",
+ "recorded_at": "2026-08-11T09:27:37.029500Z",
+ "release": {
+  "chronology": "#229 merge 2026-08-11T09:09:57Z -> exact-head main CI 31476479587 complete 2026-08-11T09:25:34Z -> annotated tag created 2026-08-11T09:26:38Z, once and after that CI",
+  "exact_head_main_ci": {
+   "completed_at": "2026-08-11T09:25:34Z",
+   "conclusion": "success",
+   "every_job_succeeded": true,
+   "head_sha": "3f5d7379caf85290da45885e22138506211bee2e",
+   "jobs": "30 of 30 success",
+   "run": 31476479587,
+   "status": "completed"
+  },
+  "implementation_merge_commit": "3f5d7379caf85290da45885e22138506211bee2e",
+  "implementation_merged_at": "2026-08-11T09:09:57Z",
+  "implementation_pull_request": 229,
+  "merge_method": "squash, no administrator bypass",
+  "message_first_line": "Sprint 21 learning baseline — the containment contrastive class, activated",
+  "peeled_commit": "3f5d7379caf85290da45885e22138506211bee2e",
+  "pull_request_head_ci": {
+   "completed_at": "2026-08-11T08:51:49Z",
+   "conclusion": "success",
+   "every_job_succeeded": true,
+   "head_sha": "cad4492d767eeda2553eca330a29521f2b00bd03",
+   "jobs": "30 of 30 success",
+   "run": 31474120586,
+   "status": "completed"
+  },
+  "remote_main": "3f5d7379caf85290da45885e22138506211bee2e",
+  "stop_tag_exists": false,
+  "stop_tag_forbidden_and_not_created": "sprint-21d7-evidence-baseline",
+  "tag": "sprint-21-learning-baseline",
+  "tag_created_at": "2026-08-11T09:26:38Z",
+  "tag_object": "3025082526cef6d97fe87cc24bd63cab0252e6a2",
+  "tag_type": "tag",
+  "tags_on_the_remote": [
+   "refs/tags/sprint-0-baseline",
+   "refs/tags/sprint-1-baseline",
+   "refs/tags/sprint-10-baseline",
+   "refs/tags/sprint-11-baseline",
+   "refs/tags/sprint-12-baseline",
+   "refs/tags/sprint-13-baseline",
+   "refs/tags/sprint-14-baseline",
+   "refs/tags/sprint-15-baseline",
+   "refs/tags/sprint-16-baseline",
+   "refs/tags/sprint-17-baseline",
+   "refs/tags/sprint-18-baseline",
+   "refs/tags/sprint-19-baseline",
+   "refs/tags/sprint-2-baseline",
+   "refs/tags/sprint-20-baseline",
+   "refs/tags/sprint-21-learning-baseline",
+   "refs/tags/sprint-21-substrate-baseline",
+   "refs/tags/sprint-21c1-evidence-baseline",
+   "refs/tags/sprint-21c2-provider-baseline",
+   "refs/tags/sprint-21c3-reality-baseline",
+   "refs/tags/sprint-21d1-emg-baseline",
+   "refs/tags/sprint-21d2-evidence-baseline",
+   "refs/tags/sprint-21d3-evidence-baseline",
+   "refs/tags/sprint-21d4-evidence-baseline",
+   "refs/tags/sprint-21d5-evidence-baseline",
+   "refs/tags/sprint-21d6-evidence-baseline",
+   "refs/tags/sprint-3-baseline",
+   "refs/tags/sprint-4-baseline",
+   "refs/tags/sprint-5-baseline",
+   "refs/tags/sprint-6-baseline",
+   "refs/tags/sprint-7-baseline",
+   "refs/tags/sprint-8-baseline",
+   "refs/tags/sprint-9-baseline"
+  ]
+ },
+ "retrieval_branch": {
+  "authored_by_d7": 0,
+  "gate_l2_condition_24": "met",
+  "inherited_from": "sprint-21d5-retrieval-decision.json",
+  "note": "D7 ran no retrieval branch. Condition 24 and Gate D1 condition 15 are inherited from D5's sealed measurement under the W0 ruling, and the gate assessment recomputed all three voiding identities at gate close rather than trusting the ruling's sentence",
+  "ruling": "inherited from D5's sealed measurement, conditionally, renewed for D7",
+  "ruling_sha256": "af2144a33ce1b1422e4a5d6f950ec3ae3001ce741c6290a13408637937a82036",
+  "winning_arm": "lexical"
+ },
+ "schema_version": 1,
+ "sprint": "21D7",
+ "sprint_22a": "unblocked; the handoff names what it inherits and what it must re-earn",
+ "store_fingerprints_unchanged": {
+  "compared_against": "sprint-21d7-baseline.json",
+  "drifted": [],
+  "stores": 9,
+  "zero_predecessor_writes": true
+ },
+ "wave": "W4"
+}
