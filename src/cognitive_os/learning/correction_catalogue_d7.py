@@ -44,6 +44,11 @@ from pydantic import Field, model_validator
 
 from cognitive_os.coding.reality_task_specs_d2 import module_source
 from cognitive_os.coding.reality_task_specs_d7 import D7_CERTIFICATION_SPECS
+from cognitive_os.coding.reality_task_specs_d7_final import (
+    D7_FINAL_A_REPLACEMENTS,
+    D7_FINAL_B_REPLACEMENTS,
+    D7_FINAL_WITHDRAWN,
+)
 from cognitive_os.domain.common import Sha256Hex
 from cognitive_os.domain.experience import HashedExperienceContract
 from cognitive_os.learning import transformations_d3
@@ -53,6 +58,7 @@ from cognitive_os.learning.correction_catalogue import (
     CorpusEntry,
     SealedPartitionCatalogue,
     _family_interleaved,
+    assign_groups,
     build_catalogue,
 )
 from cognitive_os.learning.correction_catalogue_d4 import (
@@ -117,6 +123,51 @@ def d7_certification_entries() -> tuple[CorpusEntry, ...]:
             for spec in D7_CERTIFICATION_SPECS
         )
     )
+
+
+#: The replacements each failing final role takes, in the order its withdrawn groups are named.
+_FINAL_REPLACEMENTS = {
+    CorrectionPartition.FINAL_A: D7_FINAL_A_REPLACEMENTS,
+    CorrectionPartition.FINAL_B: D7_FINAL_B_REPLACEMENTS,
+}
+
+
+def build_d7_final_catalogue(partition: CorrectionPartition) -> SealedPartitionCatalogue:
+    """One carried final role with its unencodable groups replaced, under S21D7-038.
+
+    The substitution is positional: each withdrawn group's entry is replaced in place, so the
+    role keeps its size, its family interleaving and its seed, and only the four bodies that
+    could not be canonicalised change. Everything else about the role is D2's, untouched.
+
+    This is the one place D7 departs from carrying the final roles verbatim, and it departs
+    because the audit found they could not be run at all. The catalogue hash changes here and
+    every later record binds the new one; `sprint-21d7-final-role-audit.json` is what says why.
+    """
+    replacements = list(_FINAL_REPLACEMENTS[partition])
+    withdrawn = list(D7_FINAL_WITHDRAWN[partition.value])
+    if len(replacements) != len(withdrawn):
+        raise ValueError(
+            f"{partition.value} withdraws {len(withdrawn)} groups and offers "
+            f"{len(replacements)} replacements; a role must keep its size"
+        )
+    entries = list(assign_groups()[partition])
+    by_group = {entry.repository_group: index for index, entry in enumerate(entries)}
+    missing = [name for name in withdrawn if name not in by_group]
+    if missing:
+        raise ValueError(f"{partition.value} does not contain {missing}; the audit named them")
+    for name, spec in zip(withdrawn, replacements, strict=True):
+        entries[by_group[name]] = CorpusEntry(
+            template_id=spec.template_id,
+            repository_group=spec.repository_group,
+            family=spec.family.value,
+            variants=spec.variants,
+            hidden_verifier_source=spec.hidden_test,
+            inherited=False,
+            module=spec.module,
+            module_doc=spec.module_doc,
+            imports=spec.imports,
+        )
+    return build_catalogue(partition, entries)
 
 
 def build_d7_certification_catalogue(*, provisional: bool = False) -> SealedPartitionCatalogue:
@@ -274,7 +325,16 @@ class D7CorpusBundle:
 def seal_d7_corpus(*, provisional: bool = False) -> D7CorpusBundle:
     """Seal every D7 role. Deterministic: same corpora and seeds, same hashes."""
     d6 = seal_d6_corpus()
-    carried = {partition: d6.catalogues[partition] for partition in CARRIED_ROLES}
+    # The canary role passes its audit whole and is carried exactly as D6 sealed it. The two
+    # final roles do not, so D7 takes them repaired — see S21D7-038 and `build_d7_final_catalogue`.
+    carried = {
+        partition: (
+            build_d7_final_catalogue(partition)
+            if partition in _FINAL_REPLACEMENTS
+            else d6.catalogues[partition]
+        )
+        for partition in CARRIED_ROLES
+    }
     certification = build_d7_certification_catalogue(provisional=provisional)
     catalogues = {
         CorrectionPartition.TRAINING: build_d5_fitting_catalogue(),

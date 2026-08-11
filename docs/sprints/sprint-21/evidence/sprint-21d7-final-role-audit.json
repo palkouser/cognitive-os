@@ -1,0 +1,137 @@
+{
+ "authorisation": {
+  "granted": true,
+  "granted_for": [
+   "final_a",
+   "final_b"
+  ],
+  "rule": "§3.5 forbids authoring final, batch-B or canary bodies 'unless a whole role fails its audit'. This record is that audit, and two roles fail it",
+  "scope": "replacement groups for the affected groups only, authored under the unchanged D4 authoring contract, in D7's own template range",
+  "the_hazard_this_record_will_not_hide": "the replacements are authored by an author who has already seen the selection's numbers. That is not the case for the bodies themselves — the class never sees them before execution and the labels come from the hidden verifier — but it is true of the choice of what to author, and a final batch is supposed to be the least contaminated evidence in the sprint. It is recorded here rather than argued away"
+ },
+ "bodies_authored_by_this_record": 0,
+ "catalogues_resealed_by_this_record": 0,
+ "chronology": {
+  "audit_precedes_the_authorisation": true,
+  "authorisation_precedes_any_replacement_body": true,
+  "final_outcomes_read_when_this_was_sealed": 0,
+  "replacement_bodies_existing_when_this_was_sealed": 0,
+  "why_the_order_matters": "an authorisation written after the replacements exist is a description of what someone already did. The counters above are what make this the other thing"
+ },
+ "final_or_canary_outcomes_inspected": 0,
+ "final_outcomes_inspected": false,
+ "finding": {
+  "discovered_by": "the W3 seal stage, on its first attempt to encode final A. Not by a checker written to find it: the campaign simply refused to seal",
+  "id": "W3-F1",
+  "statement": "the carried final roles cannot be encoded under the frozen feature contract. Four authored bodies use constructs the source canonicaliser refuses: three bind a name through hasattr() and one uses an assignment expression the frozen grammar does not cover",
+  "when_the_ban_arrived": "after D2 authored these bodies. The reflection ban exists because the invariance sample renames every identifier, and a body that reaches a name reflectively survives the rename with different behaviour — so the rule is not being relaxed to fit the bodies",
+  "why_five_sprints_missed_it": "every sprint from D3 recomputed the carried catalogue digests, found them unchanged and recorded the roles as carried intact. They were intact. A digest proves the bytes did not move; it says nothing about whether anything can read them, and no sprint ran a body of these roles through the canonicaliser because opening the roles is what W3 does"
+ },
+ "inputs": {
+  "artifact_sha256": "ad2c7681b839c21e1dc696f315ba62cf55a4f1d08b92fe19386d7e4c3be13169",
+  "learner_selection_sha256": "bb6ef046b38b1a2d52c8ec746ddf815c616414ad967af4cf3a7df5ba4f829192",
+  "reuse_audit_sha256": "b63708754ca49e065905cc59e2865400f46d210999c1c076558fc1881a1cb8b6",
+  "sealed_manifests_sha256": "e7a3ab02da9da9e2571a0f5cd0eb4779ac0a4cba4aa691e0ee38244704e2f4b3"
+ },
+ "integrity_content_hash": "067809d5b945e36b04fe7ddfc18a7974dc6a23df7315a7bc30bdcd23049154b3",
+ "items": [
+  "S21D7-038"
+ ],
+ "roles": {
+  "canary": {
+   "affected_groups": [],
+   "bodies_refused": 0,
+   "candidate_slots": 20,
+   "catalogue_hash": "027f2d78500a14b393cf527d09c80961094097d6436cafce5b370340bdd639e7",
+   "encodable_groups": 5,
+   "failures": [],
+   "groups": 5,
+   "groups_affected": 0,
+   "role_is_executable_as_sealed": true
+  },
+  "final_a": {
+   "affected_groups": [
+    "d2-boundary-flatten",
+    "d2-parsing-flags",
+    "d2-transform-pluck"
+   ],
+   "bodies_refused": 3,
+   "candidate_slots": 120,
+   "catalogue_hash": "69d5eedcaeccdfdcc183b050c89c3e4b49b709474a35511620c39f6f0292fb46",
+   "encodable_groups": 27,
+   "failures": [
+    {
+     "body": "recipe_alpha",
+     "error": "SourceNormalizationError: reflection-unsafe binding through hasattr()",
+     "group": "d2-boundary-flatten",
+     "template_id": "d2_boundary.flatten_once"
+    },
+    {
+     "body": "recipe_gamma",
+     "error": "SourceNormalizationError: unsupported syntax: assignment expression",
+     "group": "d2-parsing-flags",
+     "template_id": "d2_parsing.parse_flags"
+    },
+    {
+     "body": "recipe_alpha",
+     "error": "SourceNormalizationError: reflection-unsafe binding through hasattr()",
+     "group": "d2-transform-pluck",
+     "template_id": "d2_transform.pluck"
+    }
+   ],
+   "groups": 30,
+   "groups_affected": 3,
+   "role_is_executable_as_sealed": false
+  },
+  "final_b": {
+   "affected_groups": [
+    "d2-transform-stringify"
+   ],
+   "bodies_refused": 1,
+   "candidate_slots": 120,
+   "catalogue_hash": "06a0c2f6641e4bf330d2fd29a9fab54b636c77d689917976133bafc92bf22a33",
+   "encodable_groups": 29,
+   "failures": [
+    {
+     "body": "recipe_alpha",
+     "error": "SourceNormalizationError: reflection-unsafe binding through hasattr()",
+     "group": "d2-transform-stringify",
+     "template_id": "d2_transform.stringify_values"
+    }
+   ],
+   "groups": 30,
+   "groups_affected": 1,
+   "role_is_executable_as_sealed": false
+  }
+ },
+ "roles_failing_their_audit": [
+  "final_a",
+  "final_b"
+ ],
+ "schema_version": 1,
+ "sprint": "21D7",
+ "stores_opened_for_writing": 0,
+ "wave": "W3",
+ "what_it_costs_to_repair": {
+  "catalogue_hashes_that_change": [
+   {
+    "role": "final_a",
+    "sealed_hash_before": "69d5eedcaeccdfdcc183b050c89c3e4b49b709474a35511620c39f6f0292fb46"
+   },
+   {
+    "role": "final_b",
+    "sealed_hash_before": "06a0c2f6641e4bf330d2fd29a9fab54b636c77d689917976133bafc92bf22a33"
+   }
+  ],
+  "frozen_counts_preserved": "30 groups and 120 outcomes per final role",
+  "replacement_groups_needed": 4,
+  "what_does_not_change": [
+   "the canary role, which passes its audit whole and is carried untouched",
+   "the feature contract, the canonicaliser and the reflection ban",
+   "the frozen 30/120 counts, which the repair exists to keep",
+   "any threshold; this is a corpus repair and moves no number in §2.3"
+  ],
+  "what_ends_here": "the 'carried unopened and unchanged for five sprints' reading of the final roles. D2 through D6's records stay true about their own bytes; from this record forward the two final catalogues are D7's, and every later record must bind the new hashes rather than the inherited ones"
+ },
+ "what_this_record_is_not": "a relaxation. Nothing here changes the canonicaliser, the contract or a count; the bodies that fail are replaced, not the rule that fails them"
+}

@@ -1,0 +1,131 @@
+{
+ "artifact": {
+  "artifact_bytes": 4354,
+  "artifact_hash": "afbdb7c05c73aec8b1a46dd9b20cd8f2f8915819b29a1ea3b364ad8acbb48edb",
+  "artifact_id": "0790849c-2225-413e-9452-c14d85ef9df5",
+  "channels": [
+   "candidate_source_ast_node_count",
+   "statement_graph_node_count",
+   "statement_graph_edge_count",
+   "statement_graph_path_count",
+   "declared_verifier_capability_count",
+   "missing_value_indicators",
+   "repair_containment_share"
+  ],
+  "code_revision": "4dcf136070687d2d6fa105b09d8ff57d8a947c1bdc029087ed5c85f376e99c02",
+  "component_id": "learned.containment.correction_ranking",
+  "component_revision": 1,
+  "declared_limitations": [
+   "the direction is fitted on D5's 180-group pool, whose licensed role is fitting; it has never been fitted on the corpus it is certified against",
+   "the conformal bar is placed by the demoted D6 certification half and is a marginal guarantee: it holds in expectation over exchangeable halves, not on any one sample",
+   "the admitted error budget is a bound, not a zero: the certification cell admitted 59 decisions with 3 errors and a 95% upper bound of 0.126207",
+   "coverage is 0.59 on the certification half; the 41 decisions below the bar are abstentions by design and carry no claim",
+   "seven relational channels only. The 384 embedding channels are sealed for the v2 record's completeness and read by nothing in this artifact"
+  ],
+  "descriptor_hash": "63c69dc43e2892ae03cbd0d9ff59919bd3fd0c086c409f15868c1361dee112c9",
+  "feature_channels": 7,
+  "hypothesis_class": "containment-contrastive-linear-v1",
+  "learner_kind": "containment_contrastive_linear",
+  "margin_floor": "0",
+  "maximum_inference_ms": 250,
+  "media_type": "application/vnd.cognitive-os.correction-ranker+json",
+  "model_hash": "d80160c4aa795fadd98fb4e6d4f64b7b29a2a3685c537454b8aff95daa124859",
+  "schema": "correction-ranking-artifact-v3",
+  "size_reading": "4354 bytes for a seven-channel direction. The released v2 shape carries one 390-channel vector per fitting row; this carries seven weights and the lineage that says what they were fitted on",
+  "surface": "experience.correction_ranking"
+ },
+ "boundary": {
+  "decisions_disagreeing": 0,
+  "decisions_re_ranked": 100,
+  "every_first_choice_and_margin_reproduced": true,
+  "reloaded_model_hash": "d80160c4aa795fadd98fb4e6d4f64b7b29a2a3685c537454b8aff95daa124859",
+  "reloaded_model_hash_matches": true,
+  "reloaded_payload_matches": true,
+  "reloaded_through": "build_ranker_for_evaluation_v3 under a lineage capability",
+  "stored_bytes_are_the_built_bytes": true,
+  "why_re_ranking_and_not_only_loading": "an artifact that loads but ranks differently passes every structural check and is the exact failure the boundary exists to catch, so all 100 first choices and all 100 margins are compared rather than the model hash alone"
+ },
+ "conformal_bars_derived": 0,
+ "directions_fitted": 0,
+ "every_refusal_refused": true,
+ "final_manifests_opened": 0,
+ "final_or_canary_outcomes_inspected": 0,
+ "final_outcomes_inspected": false,
+ "inputs": {
+  "d7_feature_seals_sha256": "bb6028e753598b583e8c7054024a1f2c01e6873a448ce10f37d866c7f0b2eed4",
+  "d7_snapshots_sha256": "ac11a5ac139f146b785fbc952f97c57ae57dea4642b41a9dfbeb8141364f145f",
+  "learner_selection_sha256": "bb6ef046b38b1a2d52c8ec746ddf815c616414ad967af4cf3a7df5ba4f829192",
+  "pre_registration_r8_sha256": "05dfff5aedf7b8c6d9821c18ab66cd58056b13ecee685b4f7430cc53af72d086",
+  "w2_direction_sha256": "7307b946a463c65915cbbbe80afe7f8f509ebf00cf2c16bad6481fabd06ffdbf"
+ },
+ "integrity_content_hash": "b38e3f60a13c4c8fc321ca277ba9ad8c09494d07b41f520c0f573d016f083617",
+ "items": [
+  "S21D7-035",
+  "S21D7-036"
+ ],
+ "lineage": {
+  "calibration_certificate_hash": "747eb9664bbcfd3b0abb0859b74e58ec7fb46b9153bab904094b91cded3dcefc",
+  "calibration_dataset_id": "a5112033-2f11-5885-b60a-bc1a3bd84faf",
+  "calibration_dataset_is": "the demoted D6 certification half, per S21D7-010",
+  "embedding_revision": "98eb3ae4df320d0b721902aabef795cafb36c3a516f036e92e2b046f55ef4229",
+  "example_manifest_hash": "b89dbeff900571333549b55f24e2a13429f5feca4ade50344fa47294329538a9",
+  "feature_schema_hash": "492c90a5df420de9d1662d17155ac8b28713e69bbd4bbe56208415d6ca076362",
+  "numeric_bounds_from": "D5's released training seal, carried unchanged",
+  "operating_point_alpha": "0.20",
+  "operating_point_hash": "04b34f7e0c94ffa25fd6119c92bb3279d0f673e7e2fa5418e14e7fed87d8c4c5",
+  "operating_point_threshold": "0.489867",
+  "selection_manifest_hash": "63fd43dab720c57ec314c1d13bdd8a228802becdf104574be192bcacb18bfb7d",
+  "split_manifest_hash": "e4f45bb2fc72aa8fa61eb8165d9b1f46fb8e3a7c70781537ff877c11d6036fa0",
+  "training_dataset_id": "f2489d5f-0a5b-5598-8dad-3615809d3922",
+  "training_dataset_is": "D5's 180-group fitting pool, its licensed role",
+  "why_the_fresh_half_is_not_in_the_lineage": "the artifact was fitted on one pool and calibrated on another; the fresh certification half is what it was measured against, and naming it as training or calibration lineage would misdescribe how it was made"
+ },
+ "refusals": [
+  {
+   "action": "load a direction whose weights were edited after storage",
+   "error": "CorrectionArtifactError: artifact bytes hash to e7771221ee40dfc615d3a49d823c2deefc4a8ec7853c0ee47ff4d0cffabeceda, not the afbdb7c05c73aec8b1a46dd9b20cd8f2f8915819b29a1ea3b364ad8acbb48edb this capability authorises",
+   "refused": "true"
+  },
+  {
+   "action": "load the artifact under a capability naming another artifact hash",
+   "error": "CorrectionArtifactError: artifact bytes hash to afbdb7c05c73aec8b1a46dd9b20cd8f2f8915819b29a1ea3b364ad8acbb48edb, not the b689d048c691ecb41faac2794e8d2ead69afa42a2d06aad26af3002de6217bde this capability authorises",
+   "refused": "true"
+  },
+  {
+   "action": "load the artifact under a capability naming another descriptor",
+   "error": "CorrectionArtifactError: artifact descriptor is '63c69dc43e2892ae03cbd0d9ff59919bd3fd0c086c409f15868c1361dee112c9', not the expected '22f718a377fefd56ca446edc3133bf9d6f319bf7730a194222888a13f7e6ce10'",
+   "refused": "true"
+  },
+  {
+   "action": "load the artifact under a capability naming another component revision",
+   "error": "CorrectionArtifactError: artifact revision is 1, not the expected 2",
+   "refused": "true"
+  },
+  {
+   "action": "load the artifact under a capability naming another training dataset",
+   "error": "CorrectionArtifactError: artifact training dataset is UUID('f2489d5f-0a5b-5598-8dad-3615809d3922'), not the expected UUID('a5112033-2f11-5885-b60a-bc1a3bd84faf')",
+   "refused": "true"
+  },
+  {
+   "action": "load a payload naming a class the loader does not implement",
+   "error": "CorrectionArtifactError: artifact bytes hash to bf65c2d8b0886b5d719b94ec4905d928eda69aae435d7285a951aa8d6dea590e, not the afbdb7c05c73aec8b1a46dd9b20cd8f2f8915819b29a1ea3b364ad8acbb48edb this capability authorises",
+   "refused": "true"
+  },
+  {
+   "action": "load bytes past the artifact size ceiling",
+   "error": "CorrectionArtifactError: artifact bytes hash to a3268402d53333493cfc376cf725963eb603ded609903deb036f2198c0066fe1, not the afbdb7c05c73aec8b1a46dd9b20cd8f2f8915819b29a1ea3b364ad8acbb48edb this capability authorises",
+   "refused": "true"
+  }
+ ],
+ "schema_version": 1,
+ "selected_because": {
+  "ending": "1_select",
+  "failed_conditions": [],
+  "integrity_content_hash": "63fd43dab720c57ec314c1d13bdd8a228802becdf104574be192bcacb18bfb7d",
+  "record": "sprint-21d7-learner-selection.json",
+  "selection_precedes_final_access": "no final or canary manifest has been opened when this runs; the counters above are the claim and the campaign records are where it is checkable"
+ },
+ "sprint": "21D7",
+ "wave": "W3",
+ "what_this_record_is_not": "an activation. The artifact is registered and readable; promoting, shadowing, canarying and activating it are later steps with records of their own"
+}

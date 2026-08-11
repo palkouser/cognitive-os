@@ -34,6 +34,21 @@ is not measuring.
 `--provisional` seals and executes an unfinished corpus so the chain can be exercised before the
 hundredth group exists. Every record it writes carries the flag, and a provisional record may
 never reach a gate row.
+
+`--role final` is W3's, added when the selection passed. It seals and executes the two carried
+final roles — 30 groups and 120 outcomes each, unopened for five sprints — into records of their
+own, so W1's certification seal is never rewritten. It refuses to start unless
+`sprint-21d7-learner-selection.json` ends `1_select`, because a flag that spends sixty carried
+groups should not be one typo away from spending them on a stopped sprint. The default role
+behaves exactly as W1 ran it.
+
+    set -a && . ./.env.s21d7.measured.local && set +a
+    UV_CACHE_DIR=.cache/uv uv run python scripts/reality_campaign_d7.py --role final \
+        --model /home/palkouser/projekt/cognitive-os-data/models/all-MiniLM-L6-v2
+    UV_CACHE_DIR=.cache/uv uv run python scripts/reality_campaign_d7.py --role final \
+        --stage execute --partition final_a
+    UV_CACHE_DIR=.cache/uv uv run python scripts/reality_campaign_d7.py --role final \
+        --stage execute --partition final_b
 """
 
 from __future__ import annotations
@@ -172,7 +187,21 @@ FEATURE_SET_MEDIA_TYPE = "application/json"
 #: second would overwrite the first campaign's.
 CAMPAIGN_RECORD = {
     CorrectionPartition.CALIBRATION: EVIDENCE / "sprint-21d7-certification-campaign.json",
+    CorrectionPartition.FINAL_A: EVIDENCE / "sprint-21d7-final-a-campaign.json",
+    CorrectionPartition.FINAL_B: EVIDENCE / "sprint-21d7-final-b-campaign.json",
 }
+
+#: W3 only, and only after a pass through §2.3. The final roles have been carried unopened for
+#: five sprints; `--role final` is the one switch that opens them, it seals into a record of its
+#: own so W1's seal is never rewritten, and it refuses to run unless the selection record says
+#: `1_select`. The default role is `certification`, whose behaviour is exactly W1's.
+FINAL_SEAL_RECORD = EVIDENCE / "sprint-21d7-final-feature-seals.json"
+LEARNER_SELECTION = EVIDENCE / "sprint-21d7-learner-selection.json"
+_FINAL_ORDER: tuple[CorrectionPartition, ...] = (
+    CorrectionPartition.FINAL_A,
+    CorrectionPartition.FINAL_B,
+)
+ROLES: dict[str, tuple[tuple[CorrectionPartition, ...], Path]] = {}
 
 SNAPSHOT_RECORD = EVIDENCE / "sprint-21d7-snapshots.json"
 VERTICAL_SLICE = EVIDENCE / "sprint-21d7-vertical-slice.json"
@@ -180,12 +209,20 @@ VERTICAL_SLICE = EVIDENCE / "sprint-21d7-vertical-slice.json"
 ACTOR = "reality-campaign-d7"
 AUTHORITY = "S21D7-026"
 
-#: The only two partitions this command may open, in the order it opens them. Final A, final B
-#: and canary stay closed, and no package is resolved for them.
+#: The partitions the default role opens, in the order it opens them. Canary stays closed at
+#: every role and no package is resolved for it; final A and B stay closed unless `--role final`
+#: is given, which W3 gives once and only after a pass through the amended §2.3.
 #: One partition. D6 refits nothing, so there is no fitting campaign to run: the direction was
 #: fitted on D5's pool and sealed, and re-executing that pool would produce new outcomes for a
 #: model that cannot move.
 _ORDER: tuple[CorrectionPartition, ...] = (CorrectionPartition.CALIBRATION,)
+
+ROLES.update(
+    {
+        "certification": (_ORDER, SEAL_RECORD),
+        "final": (_FINAL_ORDER, FINAL_SEAL_RECORD),
+    }
+)
 
 LIMITS = SandboxLimits(
     timeout_seconds=120,
@@ -743,7 +780,12 @@ def _refusal(action: str, call: Any) -> dict[str, str]:
 
 
 async def _stage_seal(
-    output: Path, model: Path, limit: int | None, *, provisional: bool = False
+    output: Path,
+    model: Path,
+    limit: int | None,
+    *,
+    provisional: bool = False,
+    order: tuple[CorrectionPartition, ...] = _ORDER,
 ) -> int:
     database_url, artifact_root = _isolated_pair()
 
@@ -770,9 +812,9 @@ async def _stage_seal(
         embed, model_digest = _embedding_provider(model)
 
         partitions = {
-            name: _Partition(name, bundle.catalogues[name].groups[:limit]) for name in _ORDER
+            name: _Partition(name, bundle.catalogues[name].groups[:limit]) for name in order
         }
-        for name in _ORDER:
+        for name in order:
             partitions[name].manifest_hash = bundle.catalogues[name].content_hash
 
         # Before anything is sealed: the campaign streams these partitions would write to
@@ -782,7 +824,7 @@ async def _stage_seal(
         # as "not looked up"; zero reads as "looked up and empty", which is the claim.
         stream_versions_before = {
             name: (await events.get_stream_version(partitions[name].campaign_id)) or 0
-            for name in _ORDER
+            for name in order
         }
         if any(stream_versions_before.values()):
             raise SystemExit(
@@ -795,7 +837,7 @@ async def _stage_seal(
         reports: list[dict[str, Any]] = []
         refusals: list[dict[str, str]] = []
         with tempfile.TemporaryDirectory(prefix="cogos-d7-seal-") as scratch:
-            for name in _ORDER:
+            for name in order:
                 partition = partitions[name]
                 await _encode(partition, runner=runner, embed=embed, scratch=Path(scratch))
                 # Loaded, never fitted. See the header: the bar is placed by D5's margins and
@@ -969,21 +1011,31 @@ async def _stage_seal(
             "corpus_seal_hash": bundle.seal.content_hash,
             "counts": {
                 "feature_records_sealed": total,
-                "partitions_opened": [name.value for name in _ORDER],
-                "certification_candidate_slots": len(
-                    partitions[CorrectionPartition.CALIBRATION].pending
-                ),
+                "partitions_opened": [name.value for name in order],
+                "candidate_slots_by_partition": {
+                    name.value: len(partitions[name].pending) for name in order
+                },
                 "reading": (
-                    "one partition, not D5's two. The certification half holds the "
-                    f"{total} candidate slots this wave executes, and it is the only role D6 "
-                    "opens: the fitting pool is read through a sealed direction rather than run, "
-                    "the conformal half through a sealed matrix, and no final or canary partition "
-                    "is touched -- sealing one's features here would be the first step of "
-                    "opening it"
+                    "the certification half holds the candidate slots W1 executes and is the "
+                    "only role that wave opens: the fitting pool is read through a sealed "
+                    "direction rather than run, the conformal half through a sealed matrix, and "
+                    "no final or canary partition is touched -- sealing one's features would be "
+                    "the first step of opening it. W3's `--role final` is the one run that does "
+                    "open them, after a pass, and it seals into a record of its own"
+                )
+                if CorrectionPartition.CALIBRATION in order
+                else (
+                    f"the two carried final roles, opened once by W3 under S21D7-038 with the "
+                    f"{total} candidate slots they hold between them. The canary role stays "
+                    "closed and no certification row is re-sealed"
                 ),
-                "fitting_slots_not_sealed": 720,
-                "conformal_slots_not_sealed": 400,
-                "final_and_canary_slots_not_sealed": 260,
+                "slots_not_sealed_by_this_run": {
+                    "fitting": 720,
+                    "conformal": 400,
+                    "canary": 20,
+                    "final": 0 if CorrectionPartition.FINAL_A in order else 240,
+                    "certification": 0 if CorrectionPartition.CALIBRATION in order else 400,
+                },
                 "family_distribution": dict(sorted(families.items())),
             },
             "run_identities": identity,
@@ -1119,11 +1171,12 @@ async def _stage_execute(
     limit: int | None,
     *,
     provisional: bool = False,
+    seal_record: Path = SEAL_RECORD,
 ) -> int:
     """Run one partition under `label_all`, project role-bound, then replay off the receipt."""
     database_url, artifact_root = _isolated_pair()
 
-    sealed = json.loads(SEAL_RECORD.read_text(encoding="utf-8"))
+    sealed = json.loads(seal_record.read_text(encoding="utf-8"))
     row = next(item for item in sealed["partitions"] if item["partition"] == partition.value)
     catalogue = seal_d7_corpus(provisional=provisional).catalogues[partition]
     groups = catalogue.groups[: limit or len(catalogue.groups)]
@@ -1332,7 +1385,7 @@ async def _stage_execute(
             "provisional": provisional,
             "recorded_at": utc_now().strftime("%Y-%m-%dT%H:%M:%SZ"),
             "pre_registration_sha256": _digest(PRE_REGISTRATION.read_bytes()),
-            "feature_seals_sha256": _digest(SEAL_RECORD.read_bytes()),
+            "feature_seals_sha256": _digest(seal_record.read_bytes()),
             "sealed_manifests_sha256": _digest(SEALED_MANIFESTS.read_bytes()),
             "final_outcomes_inspected": False,
             "partition": partition.value,
@@ -1910,7 +1963,15 @@ def main() -> int:
     parser.add_argument("--stage", choices=("seal", "execute", "snapshot"), default="seal")
     parser.add_argument("--model", type=Path)
     parser.add_argument(
-        "--partition", choices=[name.value for name in _ORDER], default="calibration"
+        "--role",
+        choices=sorted(ROLES),
+        default="certification",
+        help="which roles this run opens; `final` is W3 only and refuses without a pass",
+    )
+    parser.add_argument(
+        "--partition",
+        choices=sorted({name.value for order, _ in ROLES.values() for name in order}),
+        default=None,
     )
     parser.add_argument("--groups", type=int, default=None, help="smoke-test limit")
     parser.add_argument("--output", type=Path)
@@ -1920,6 +1981,20 @@ def main() -> int:
         help="run against an unfinished corpus; every record written says so",
     )
     arguments = parser.parse_args()
+    order, seal_record = ROLES[arguments.role]
+    if arguments.role == "final":
+        # The carried roles open once, and only for a candidate §2.3 made eligible. Checked
+        # here rather than in the caller: a flag that opens 60 unopened groups should not be
+        # one typo away from spending them on a stopped sprint.
+        selection = json.loads(LEARNER_SELECTION.read_text(encoding="utf-8"))
+        if selection["ending"]["name"] != "1_select":
+            raise SystemExit(
+                f"the selection record ends {selection['ending']['name']!r}; the final roles "
+                "are opened only by a pass through the amended §2.3"
+            )
+    partition_name = arguments.partition or order[0].value
+    if CorrectionPartition(partition_name) not in order:
+        raise SystemExit(f"--partition {partition_name} is not part of the {arguments.role} role")
 
     # S21D4-037's first invocation fell through to the execute stage and ran a campaign twice,
     # because `snapshot` was an argparse choice with no branch behind it. Dispatched first here.
@@ -1927,7 +2002,7 @@ def main() -> int:
         return asyncio.run(_stage_snapshot(arguments.output or SNAPSHOT_RECORD))
 
     if arguments.stage == "execute":
-        partition = CorrectionPartition(arguments.partition)
+        partition = CorrectionPartition(partition_name)
         if arguments.groups is not None and arguments.output is None:
             raise SystemExit("--groups writes a partial record; give it an --output of its own")
         return asyncio.run(
@@ -1936,6 +2011,7 @@ def main() -> int:
                 partition,
                 arguments.groups,
                 provisional=arguments.provisional,
+                seal_record=seal_record,
             )
         )
 
@@ -1945,10 +2021,11 @@ def main() -> int:
         raise SystemExit("--groups writes a partial record; give it an --output of its own")
     return asyncio.run(
         _stage_seal(
-            arguments.output or SEAL_RECORD,
+            arguments.output or seal_record,
             arguments.model,
             arguments.groups,
             provisional=arguments.provisional,
+            order=order,
         )
     )
 
