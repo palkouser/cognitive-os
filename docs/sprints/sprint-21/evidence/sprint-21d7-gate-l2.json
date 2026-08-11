@@ -1,0 +1,322 @@
+{
+ "closed_set_read_from_the_continuation_record": {
+  "conditions": [],
+  "deliverables_opened": 15,
+  "ending": "1_select",
+  "outcome": "candidate",
+  "source": "sprint-21d7-continuation.json",
+  "source_sha256": "af584544c0df3496976e127cf6c44ffed46bd04bd281fcdc84f9446ac09f5588"
+ },
+ "counts": {
+  "carried": 0,
+  "failed": 0,
+  "met": 28,
+  "met_as_rejection": 0,
+  "not_opened": 0,
+  "pending": 1
+ },
+ "final_outcomes_inspected": true,
+ "final_outcomes_were_opened_by": "S21D7-035 and S21D7-036 in W3, after the artifact was sealed against a selection that ended 1_select. This record reads them; it did not open them",
+ "gate_contract_hash": "9e47bc618fc1eca8b66146eacdf1bd244fced79bb1c91f46f2c6ff4484bfd8a7",
+ "gate_d1": [
+  {
+   "by_role": {
+    "canary": 20,
+    "final_a": 120,
+    "final_b": 120
+   },
+   "closure_rule": "at least 200 unique held-out verifier-backed outcomes after deduplication and eligibility",
+   "condition": 6,
+   "detail": "260 outcomes on `experience.correction_ranking` opened once in W3 — canary 20, final_a 120, final_b 120 — each carrying an independent hidden-verifier label, none of them fitted on or calibrated against. The 400 certification outcomes are deliberately not counted: they set the operating cell, and counting the corpus that chose the operating point as evidence about it is the mistake this floor exists to stop",
+   "evidence": [
+    "sprint-21d7-final-a-campaign.json",
+    "sprint-21d7-final-b-campaign.json",
+    "sprint-21d7-canary-campaign.json"
+   ],
+   "evidence_sha256": {
+    "sprint-21d7-canary-campaign.json": "c96ddd687c2c942b1199792380cf46222835736942c051d7e0c81cf281cde795",
+    "sprint-21d7-final-a-campaign.json": "a9236328a83524cc434ed09ee7aa97c2b736c209e2b8736e68a926b3d357d9b2",
+    "sprint-21d7-final-b-campaign.json": "3b749b578d8bb36f453340b7317a32e81f887262dbc248b9491faae3c5cbc607"
+   },
+   "floor": 200,
+   "outcomes": 260,
+   "state": "closed"
+  },
+  {
+   "changed_decisions": 45,
+   "closure_rule": "at least 20 primary-surface examples would change the advisory action",
+   "condition": 7,
+   "detail": "45 of 60 final group decisions differ from the strongest baseline's first choice, which is condition 13's evidence read against the D1 contract. In shadow none of them executed; what closes this row is that they would change the action, which is what the condition asks",
+   "evidence": "sprint-21d7-final-evidence.json",
+   "evidence_sha256": "ed50ff6f9eeb83490532682ce4a6943c47fe7a360dc50a7b0bdfe5a24485ee90",
+   "floor": 20,
+   "gate_l2_condition_13_state": "met",
+   "state": "closed"
+  },
+  {
+   "closure_rule": "a new retrieval holdout reaches both floors",
+   "condition": 15,
+   "detail": "inherited from D5's sealed measurement under the W0 ruling, with all three voiding identities recomputed at gate close and unmoved",
+   "evidence": "sprint-21d7-condition-24-ruling.json",
+   "evidence_sha256": "af2144a33ce1b1422e4a5d6f950ec3ae3001ce741c6290a13408637937a82036",
+   "first_failed_floor": null,
+   "gate_l2_condition_24_state": "met",
+   "inherited_from": "sprint-21d5-retrieval-decision.json",
+   "recorded_as": "closed by inheritance, re-checked at gate close",
+   "state": "closed",
+   "winning_arm": "lexical"
+  }
+ ],
+ "gate_l2": [
+  {
+   "condition": 1,
+   "detail": "the D6 tag object 29debe41f8dbe161 peels to cfd22ab6d3e32367, and the local and remote handles agree",
+   "evidence": "sprint-21d7-baseline.json",
+   "evidence_sha256": "b8fe663d6d8884884ce8f10c084e1b35502ede62764236dd1928e7e9d4bf1e7d",
+   "rule": "the D6 release verified from live handles",
+   "state": "met"
+  },
+  {
+   "condition": 2,
+   "detail": "9 predecessor stores re-fingerprinted after the wave against sprint-21d7-baseline.json; none drifted and zero writes reached one",
+   "evidence": "sprint-21d7-authority-isolation-after.json",
+   "evidence_sha256": "b42ec5aff8abf3a3974e99191200715dcd042cbeccfca746657673bea3af2ae1",
+   "rule": "every predecessor store reproduces its fingerprint after the wave, with zero writes",
+   "state": "met"
+  },
+  {
+   "condition": 3,
+   "detail": "3 carried roles reproduce their released bundle digests, read from sprint-21d6-reuse-audit.json at 518dedfdaee8; 65 protected task identities were resolved by identity alone, and zero protected bodies were opened. The roles were opened later, in W3, under the §2.3 pass that authorises it — and the two final roles were repaired there under S21D7-038 after failing their encodability audit",
+   "evidence": "sprint-21d7-reuse-audit.json",
+   "evidence_sha256": "b63708754ca49e065905cc59e2865400f46d210999c1c076558fc1881a1cb8b6",
+   "rule": "every carried role read out of the predecessor's released audit, bodies unopened",
+   "state": "met"
+  },
+  {
+   "condition": 4,
+   "detail": "revision 7 published with measured_values: 0",
+   "evidence": "sprint-21d7-pre-registration.json",
+   "evidence_sha256": "984a21f012cddb1e2a2b5608e36debbc7769351c5363be940e9fab7e19505496",
+   "rule": "revision 7 published before any D7 measurement",
+   "state": "met"
+  },
+  {
+   "condition": 5,
+   "detail": "all 660 candidate runs across 4 campaigns carry an independent hidden-verifier label, and none was left unattempted",
+   "evidence": "sprint-21d7-certification-campaign.json",
+   "evidence_sha256": "32ffeafe34155f08a7be0754b60128b43f07aaf2cc283445bce8a3c5c9e9078a",
+   "rule": "every attempted candidate carries an independent hidden-verifier label",
+   "state": "met"
+  },
+  {
+   "condition": 6,
+   "detail": "390 columns, all on the correction-ranking-v2 allowlist; all 9 required scans passed over 11 runs",
+   "evidence": "sprint-21d7-snapshots.json",
+   "evidence_sha256": "ac11a5ac139f146b785fbc952f97c57ae57dea4642b41a9dfbeb8141364f145f",
+   "rule": "no forbidden, identity, outcome or answer field reaches the fitted matrices",
+   "state": "met"
+  },
+  {
+   "condition": 7,
+   "detail": "9 roles over 665 groups, all pairwise disjoint; 36 role pairs share zero groups",
+   "evidence": "sprint-21d7-corpus-separation.json",
+   "evidence_sha256": "9bfcd04b3c845b97c8d0bc65d212fcd404949333898df381be72edd5286b04d8",
+   "rule": "no transitive group crosses a D7 role",
+   "state": "met"
+  },
+  {
+   "condition": 8,
+   "detail": "400 certification observations over 100 groups in D7's own store, and the fitting floor met by D5's sealed 720 rows over 180 groups, carried unrefitted and proved identical to the released pool by the sealed manifests",
+   "evidence": "sprint-21d7-snapshots.json",
+   "evidence_sha256": "ac11a5ac139f146b785fbc952f97c57ae57dea4642b41a9dfbeb8141364f145f",
+   "rule": "at least 200/50 fitting and 40/10 certification",
+   "state": "met"
+  },
+  {
+   "condition": 9,
+   "detail": "zero REAL_GOVERNED_RUN observations in the fitted splits: {'calibration': 0}",
+   "evidence": "sprint-21d7-snapshots.json",
+   "evidence_sha256": "ac11a5ac139f146b785fbc952f97c57ae57dea4642b41a9dfbeb8141364f145f",
+   "rule": "zero REAL_GOVERNED_RUN observations in the fitted splits",
+   "state": "met"
+  },
+  {
+   "condition": 10,
+   "detail": "final A and final B each opened once: final_a 120 outcomes over 30 groups, final_b 120 outcomes over 30 groups, every outcome following its seal",
+   "evidence": "sprint-21d7-final-a-campaign.json",
+   "evidence_sha256": "a9236328a83524cc434ed09ee7aa97c2b736c209e2b8736e68a926b3d357d9b2",
+   "rule": "final A and B, each 120 new verifier-backed outcomes over 30 groups",
+   "state": "met"
+  },
+  {
+   "condition": 11,
+   "detail": "one artifact bound to the selection at 63fd43dab720c57e, sealed with 0 final manifests opened and 0 final or canary outcomes inspected; its lineage names training dataset f2489d5f and calibration dataset a5112033 at alpha 0.20",
+   "evidence": "sprint-21d7-artifact.json",
+   "evidence_sha256": "ad2c7681b839c21e1dc696f315ba62cf55a4f1d08b92fe19386d7e4c3be13169",
+   "rule": "one artifact selected before final access, with final manifests inaccessible to fitting",
+   "state": "met"
+  },
+  {
+   "condition": 12,
+   "detail": "the strongest deterministic rung is lexical_similarity at 0.61, measured on the same decisions; 1 cell and all 90 sweep points are reported, 0 of them selectable and none of them chosen",
+   "evidence": "sprint-21d7-learner-selection.json",
+   "evidence_sha256": "bb6ef046b38b1a2d52c8ec746ddf815c616414ad967af4cf3a7df5ba4f829192",
+   "rule": "the strongest deterministic baseline and every grid and sweep point are recorded",
+   "state": "met"
+  },
+  {
+   "condition": 13,
+   "detail": "changed final decisions — at least 20 final group decisions differing from the strongest baseline: floor=20, measured=45",
+   "evidence": "sprint-21d7-final-evidence.json",
+   "evidence_sha256": "ed50ff6f9eeb83490532682ce4a6943c47fe7a360dc50a7b0bdfe5a24485ee90",
+   "rule": "at least 20 final group decisions differing from the strongest baseline",
+   "state": "met"
+  },
+  {
+   "condition": 14,
+   "detail": "final-evidence gain — at least 5 absolute points or 20% relative error reduction: absolute_points=0.3833333333333333333333333334, relative_error_reduction=0.7419354838709677419354838710, which_arm=absolute",
+   "evidence": "sprint-21d7-final-evidence.json",
+   "evidence_sha256": "ed50ff6f9eeb83490532682ce4a6943c47fe7a360dc50a7b0bdfe5a24485ee90",
+   "rule": "at least 5 absolute points or 20% relative error reduction on final evidence",
+   "state": "met"
+  },
+  {
+   "condition": 15,
+   "detail": "paired group bootstrap — the paired group bootstrap over the final batches: excludes_zero=True",
+   "evidence": "sprint-21d7-final-evidence.json",
+   "evidence_sha256": "ed50ff6f9eeb83490532682ce4a6943c47fe7a360dc50a7b0bdfe5a24485ee90",
+   "rule": "the paired group bootstrap over the final batches",
+   "state": "met"
+  },
+  {
+   "condition": 16,
+   "detail": "per-batch direction — a positive learned-minus-baseline direction in both final batches: final_a=0.3000000000000000000000000000, final_b=0.4666666666666666666666666667",
+   "evidence": "sprint-21d7-final-evidence.json",
+   "evidence_sha256": "ed50ff6f9eeb83490532682ce4a6943c47fe7a360dc50a7b0bdfe5a24485ee90",
+   "rule": "a positive learned-minus-baseline direction in both final batches",
+   "state": "met"
+  },
+  {
+   "condition": 17,
+   "detail": "one cell, coverage over `independent_decisions` and the same 100 the census fixed; 0 replicated decisions of 100 nominal",
+   "evidence": "sprint-21d7-learner-selection.json",
+   "evidence_sha256": "bb6ef046b38b1a2d52c8ec746ddf815c616414ad967af4cf3a7df5ba4f829192",
+   "rule": "every rate names its denominator and uses the independent one",
+   "state": "met"
+  },
+  {
+   "condition": 18,
+   "detail": "safety movement — zero accepted-to-rejected safety, governance, permission, secret or destructive changes",
+   "evidence": "sprint-21d7-promotion.json",
+   "evidence_sha256": "6e8ef709ad60df7020da86250086e9b685f9baedb4927878a2d6ce20bfe891f2",
+   "rule": "zero accepted-to-rejected safety, governance, permission, secret or destructive changes",
+   "state": "met"
+  },
+  {
+   "condition": 19,
+   "detail": "retention — no retained domain losing more than 2 points and aggregate loss at most 1",
+   "evidence": "sprint-21d7-promotion.json",
+   "evidence_sha256": "6e8ef709ad60df7020da86250086e9b685f9baedb4927878a2d6ce20bfe891f2",
+   "rule": "no retained domain losing more than 2 points and aggregate loss at most 1 point",
+   "state": "met"
+  },
+  {
+   "condition": 20,
+   "detail": "promotion metamorphic — at least 100 pre-registered promotion metamorphic/OOD ranking decisions inside the admission budget",
+   "evidence": "sprint-21d7-promotion.json",
+   "evidence_sha256": "6e8ef709ad60df7020da86250086e9b685f9baedb4927878a2d6ce20bfe891f2",
+   "rule": "at least 100 pre-registered promotion metamorphic/OOD decisions inside the budget",
+   "state": "met"
+  },
+  {
+   "condition": 21,
+   "detail": "shadow — shadow mode changing zero executed decisions against final evidence: executed_decisions_changed=0",
+   "evidence": "sprint-21d7-final-evidence.json",
+   "evidence_sha256": "ed50ff6f9eeb83490532682ce4a6943c47fe7a360dc50a7b0bdfe5a24485ee90",
+   "rule": "shadow mode changing zero executed decisions against final evidence",
+   "state": "met"
+  },
+  {
+   "condition": 22,
+   "detail": "4354 canonical inert JSON bytes hashing to afbdb7c05c73aec8, rebuilt through the evaluation boundary and re-ranking all 100 certification decisions with 0 disagreeing; 7 refusals executed and all refused",
+   "evidence": "sprint-21d7-artifact.json",
+   "evidence_sha256": "ad2c7681b839c21e1dc696f315ba62cf55a4f1d08b92fe19386d7e4c3be13169",
+   "rule": "the selected artifact as canonical inert JSON with complete lineage, and it ranks",
+   "state": "met"
+  },
+  {
+   "condition": 23,
+   "detail": "all 18 reason codes reached against the real artifact; each of the 17 fallback codes produced the lexical_similarity ordering on all 100 certification decisions, and only the active path differs — on 74 of them",
+   "evidence": "sprint-21d7-runtime.json",
+   "evidence_sha256": "62912d4c5cec94b9be75d7fcdb383bec08ffbd225fdbd7a935d4e6f14f7fbae0",
+   "rule": "every reason code reached against the real artifact, each with an immediate fallback",
+   "state": "met"
+  },
+  {
+   "condition": 24,
+   "detail": "inherited under sprint-21d7-condition-24-ruling.json: the lexical arm cleared Recall@5 >= 0.70 and MRR@10 >= 0.50 on 60 unseen queries in D5, and all three voiding identities were recomputed here and are unmoved — D7 authored 0 retrieval groups, opened no arm, and changed neither the surface nor the comparator",
+   "evidence": "sprint-21d7-condition-24-ruling.json",
+   "evidence_sha256": "af2144a33ce1b1422e4a5d6f950ec3ae3001ce741c6290a13408637937a82036",
+   "rule": "Recall@5 >= 0.70 and MRR@10 >= 0.50 on at least 50 unseen queries",
+   "state": "met"
+  },
+  {
+   "condition": 25,
+   "detail": "canary, verifier and kill switch — the fail-closed runtime hash-binds the canary subset, every learned-first correction runs the verifier, and the kill switch returns immediately to the deterministic ordering",
+   "evidence": "sprint-21d7-lifecycle.json",
+   "evidence_sha256": "0c923c19d91b6327d58c890f63fc47b686307f0ff684558a567e8f9d591bea10",
+   "rule": "a hash-bound canary manifest with the verifier mandatory and the kill switch immediate",
+   "state": "met"
+  },
+  {
+   "condition": 26,
+   "detail": "lifecycle across restarts — activation, active projection, artifact loading, disable, fallback, restoration and rollback evidence survive a process restart: artifact_loaded_after_the_restart=True, disable_survived=True, processes=4",
+   "evidence": "sprint-21d7-lifecycle.json",
+   "evidence_sha256": "0c923c19d91b6327d58c890f63fc47b686307f0ff684558a567e8f9d591bea10",
+   "rule": "activation, loading, disable, restoration and rollback surviving restart on a real one",
+   "state": "met"
+  },
+  {
+   "condition": 27,
+   "detail": "human approval — a human operator approves the exact promotion assessment, component revision and artifact lineage, and no model or provider identity approves or reviews itself: approver=palkouser (sprint 21D7 gate owner), approver_kind=human_operator",
+   "evidence": "sprint-21d7-lifecycle.json",
+   "evidence_sha256": "0c923c19d91b6327d58c890f63fc47b686307f0ff684558a567e8f9d591bea10",
+   "rule": "an exact human approval over the existing fields, with no self-approval",
+   "state": "met"
+  },
+  {
+   "condition": 28,
+   "detail": "46 of 46 release-matrix rows passed, 0 skipped, 0 structural findings",
+   "evidence": "sprint-21d7-verification-matrix.json",
+   "evidence_sha256": "9c5af170517e2c3640ac4e438318b95700c1d2dfb3b3ceaad784101ef8f46e03",
+   "rule": "every required isolated and repository check ran and passed, none skipped",
+   "state": "met"
+  },
+  {
+   "condition": 29,
+   "detail": "the protected merge, its exact-head post-merge main CI, the annotated tag and the remote verification. The gate-close regeneration is what decides this row",
+   "evidence": null,
+   "rule": "protected merge, post-merge exact-head CI, annotated tag, remote read",
+   "state": "pending"
+  }
+ ],
+ "gate_l2_conditions": 29,
+ "integrity_content_hash": "f456f97618e70580fe0403b25126b78c8ce910b12f079db3b5a47fc0aed9a783",
+ "item": "S21D7-041",
+ "no_condition_is_carried_from_d6": true,
+ "no_condition_was_closed_by_a_stop": true,
+ "pre_registration_sha256": "984a21f012cddb1e2a2b5608e36debbc7769351c5363be940e9fab7e19505496",
+ "provisional_until": "the protected merge, its exact-head post-merge main CI, and remote tag verification",
+ "purpose": "The twenty-nine Gate L2 conditions and Gate D1's three, each decided by the evidence that bears on it. No condition may be asserted; every row names its file and rule, or the stop hash that closed it.",
+ "recorded_at": "2026-08-11T08:34:41.568980Z",
+ "schema_version": 1,
+ "sprint": "21D7",
+ "thresholds_changed_by_this_sprint": {
+  "amendments_made_by_d7": 0,
+  "count": 0
+ },
+ "verdict": "gate_l2_does_not_pass",
+ "verdict_reason": "the gate passes only when every applicable condition is met; 1 awaiting the protected release",
+ "wave": "W4",
+ "what_inherited_is_not": "condition 24 is `met`, not `carried`. A carried condition would be a predecessor's verdict reused; this one is a predecessor's *measurement* whose three voiding identities were recomputed from D7's tree at gate close, under a ruling the gate owner renewed in W0 before any D7 measurement existed"
+}

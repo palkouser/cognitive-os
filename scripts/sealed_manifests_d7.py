@@ -101,6 +101,46 @@ def _released() -> dict[str, Any]:
     return json.loads(D6_SEALED.read_text())["catalogues"]
 
 
+#: W4-F1. Where an *authorised* change to a carried role is recorded. Absent until one exists.
+REBINDING = EVIDENCE / "sprint-21d7-protected-role-rebinding.json"
+
+
+def _rebinding() -> dict[str, Any] | None:
+    """The record that says which carried roles were authorised to move, or None. W4-F1.
+
+    This exists so the drift stop below can distinguish two things it originally could not: a
+    carried role that changed because somebody edited it, and one that changed because the gate
+    owner authorised a repair after the role failed its encodability audit. The first must still
+    stop the seal. The second is S21D7-038, and by W4 it is a fact about this sprint rather than
+    a possibility.
+
+    Deliberately not a way to make the stop go away: the rebinding record has to name the role,
+    and it has to have found the repaired catalogue hash in the bytes the W3 campaign actually
+    executed against. A rebinding with findings covers nothing.
+    """
+    if not REBINDING.is_file():
+        return None
+    record = json.loads(REBINDING.read_text(encoding="utf-8"))
+    return {
+        "record": REBINDING.name,
+        "record_sha256": _sha256(REBINDING.read_bytes()),
+        "integrity_content_hash": record["integrity_content_hash"],
+        "roles_moved": record["roles_moved"],
+        "roles_moved_without_authorisation": record["roles_moved_without_authorisation"],
+        "clean": record["clean"],
+    }
+
+
+def _uncovered_drift(protected: dict[str, Any]) -> list[str]:
+    """Roles that moved and that no clean rebinding record accounts for. W4-F1."""
+    drifted = sorted(name for name, row in protected["roles"].items() if not row["identical"])
+    rebinding = protected["rebinding"]
+    if rebinding is None or not rebinding["clean"]:
+        return drifted
+    covered = set(rebinding["roles_moved"]) - set(rebinding["roles_moved_without_authorisation"])
+    return sorted(set(drifted) - covered)
+
+
 def _protected_role_proof(bundle: D7CorpusBundle) -> dict[str, Any]:
     """Compare the three carried hashes against the bytes D6 released, role by role."""
     released = _released()
@@ -120,6 +160,7 @@ def _protected_role_proof(bundle: D7CorpusBundle) -> dict[str, Any]:
     return {
         "roles": rows,
         "all_identical": all(row["identical"] for row in rows.values()),
+        "rebinding": _rebinding(),
         "d6_evidence": D6_SEALED.name,
         "d6_evidence_sha256": _sha256(D6_SEALED.read_bytes()),
         "d6_seal_hash": bundle.d6_seal_hash,
@@ -487,7 +528,9 @@ def _evidence(recorded_at: str, *, provisional: bool) -> tuple[dict[str, Any], l
     }
 
     stops: list[str] = []
-    if not protected["all_identical"]:
+    # W4-F1: a role that moved stops the seal unless a clean rebinding record names it as
+    # authorised. The canary is never named by one, so it still stops on any change at all.
+    if _uncovered_drift(protected):
         stops.append("sealed_manifests_protected_role_drift")
     if not fitting["membership"]["identical"]:
         stops.append("sealed_manifests_fitting_membership_drift")

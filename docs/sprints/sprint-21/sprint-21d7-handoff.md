@@ -1,166 +1,155 @@
-# Sprint 21D7 handoff — what a leak budget exceeded requires next
+# Sprint 21D7 handoff — a passing gate, and what most of the value turned out to be
 
-Sprint 21D3 asked whether Sprint 21D2's invariance defect was representational or a capacity
-residual and answered capacity. Sprint 21D4 asked whether a frozen k-NN could be made
-**selective** and answered no, with zero-error coverage of exactly zero in all 144 cells. Sprint
-21D5 asked whether a confidence built out of **within-group contrast** separates the errors, and
-answered half of it: the direction ranks — 0.88 first choice against a 0.42 baseline — and the
-zero-error prefix rule certified 0.27 of it against a 0.40 floor.
+Sprint 21D3 asked whether D2's invariance defect was representational or a capacity residual and
+answered capacity. D4 asked whether the frozen k-NN could be made **selective** and answered no,
+with zero-error coverage of exactly zero in all 144 cells. D5 asked whether a **within-group
+contrastive margin** separates the errors and answered yes, but certified only 0.26–0.27 against a
+floor of 0.40. D6 asked whether **split conformal** over that same margin certifies enough of it,
+and the answer was a typed stop: the bound came out at 0.2747 against a ceiling of 0.15, and the
+sealed transfer record said why — the 384 embedding channels carried the *authoring run*, not the
+task.
 
-Sprint 21D6 asked the question that stop licensed, and only that one: **is the prefix rule the
-thing that was broken?** It varied the admission rule and nothing else — same encoder, same
-alpha-normaliser, same 390 channels, same `pairwise-contrastive-linear-v1` class, same two sealed
-directions, same margin floor, same corpus contract — and replaced the prefix with a
-split-conformal bar at a pre-registered α = 0.20 under a gate-owner amendment that traded "exactly
-zero confident errors" for a Clopper–Pearson ceiling of C = 0.15.
+D7 asked the question that record licensed: **drop them.** Seven relational channels, six sealed
+v2 scalars and the repair-containment share, the same fit rule, the same α, the same ceiling, the
+same coverage floor.
 
-**The prefix rule was broken, and fixing it was not enough.**
+It passes. **Gate L2 passes, and Sprint 22A is unblocked** — subject to the protected release,
+which is the one thing this sprint cannot do to itself.
 
----
+And the most useful sentence in this handoff is not that one. It is this:
 
-## 1. What was measured, on evidence nobody had read
+> **The deterministic containment rung is most of the value, and the fitted direction is the
+> remainder.** Under the seated ladder, only 5 of 59 admitted decisions differ from the ordering
+> the containment channel produces on its own — 5.085 projected changed final decisions against a
+> floor of 20. The sprint passes because S21D7-027 unseated that rung at W2 step 0, before
+> anything was scored, on the gate owner's explicit decision with both branches priced.
 
-One hundred freshly authored certification groups, 400 outcomes, executed in an isolated store.
-The bar was derived once from D5's hundred spent calibration decisions — rebuilt read-only from
-D5's released bytes, reproducing its published matrix hash exactly — and reproduced across a
-process restart.
-
-| | D5, prefix rule, its own corpus | D6, conformal bar, a fresh corpus |
-|---|---|---|
-| admitted of 100 | 27 | **40** |
-| errors admitted | 0 | 6 |
-| CP-95 upper bound | 0.105 | **0.2747** |
-| first choice over all answered | 0.88 | **0.76** |
-| strongest deterministic baseline | 0.42 | **0.62** |
-
-Eight of the nine amended §2.3 conditions hold. The ninth — the ceiling the amendment introduced —
-misses by a factor of 1.8. Typed ending: **`leak_budget_exceeded`**, §3.4 step 2, stop hash
-`981bb130d03a45ba…`.
-
-**The rule itself worked.** On this same corpus the zero-error prefix admits **6 of 100**. Split
-conformal admitted 40. The successor construction D5's stop asked for did exactly what it was
-supposed to do, and the gate still does not close.
+A successor that reads the +0.383 and skips that paragraph will inherit the wrong model of what
+was built.
 
 ---
 
-## 2. The finding that decides what comes next
+## 1. The ending is typed, and the type is the instruction
 
-§3.4 step 2 was written in W0, before any measurement, and it sizes the successor as a volume
-problem: *"a tighter alpha needs more than 12 wrong decisions in the conformal half, which is a
-volume question and the first measured reason this programme would have to author more."*
+§3.4 published six endings in W0 with `measured_values: 0`. D7 landed on **ending 1,
+`1_select`**, and the sealed sentence is what it means:
 
-**The published sweep contradicts its premise.** Over the 100 reported thresholds on the
-selectable cell — and the 100 on the reported one — the amended pair is satisfied at
-**zero points**:
+> all nine conditions hold; bind the v3 artifact to the new conformal point, run the lifecycle,
+> close the gate, unblock Sprint 22A
 
-- no threshold at any coverage brings the Clopper–Pearson bound to 0.15 or below;
-- the best bound available anywhere at or above the 0.40 coverage floor is **0.241298**;
-- the deepest error-free prefix by margin is **6 decisions**, so even a bar admitting nothing but
-  correct answers carries a bound near 0.39 on this corpus.
+— `sprint-21d7-contracts.json`, `contracts.decision_tree.endings`.
 
-A tighter α moves the bar along that same curve. Every point on it misses. **This is §2.1's
-infeasibility argument again, one level down: the amended pair is not merely unmet on this
-evidence, it is unreachable — and "infeasible" and "unmet" size two different successors.**
+All four of those were done, in W3, and `sprint-21d7-continuation.json` names the fifteen
+deliverables with the record that closed each. The same record prints the fifteen Gate L2
+conditions a stop would have closed **as an empty set**, deliberately: D3 through D6 each bound
+between fifteen and nineteen conditions to a stop hash, and an omitted map is not the same claim
+as an empty one.
 
-The binding constraint is not where the bar sits. It is the ranker's error rate on a corpus it
-was not fitted against.
+## 2. What was measured, in the order it matters
 
----
+| | |
+|---|---|
+| final first choice, 60 groups opened once | **52 / 60 = 0.8667** |
+| strongest rung on the same groups (`fixed_input_order`) | 29 / 60 = 0.4833 |
+| absolute gain / relative error reduction | **+0.3833** / **0.7419** |
+| changed decisions | **45** (floor 20) |
+| paired group bootstrap, 10 000 resamples | **[0.233, 0.533]**, excludes zero |
+| per-batch direction | final A **+0.300**, final B **+0.467** |
+| certification cell: coverage / CP bound | 0.59 / **0.126207** against C = 0.15 |
+| safety movement / retention loss | **0** / **0** |
+| promotion metamorphic | 120 nominal, 60 independent, 80 admitted, **0 errors**, bound 0.0368 |
+| canary: learned vs rung attempts to an accepted candidate | **5** vs **9** |
 
-## 3. Exchangeability, named in advance and then measured
+**No threshold moved in any wave.** α = 0.20, C = 0.15 and the 0.40 coverage floor are D6's,
+carried unchanged; D7 made zero amendments across W0, W1, W2, W3 and W4.
 
-§6 said the conformal guarantee needs D5's calibration groups and D6's certification groups to be
-exchangeable, that a shared authoring contract makes this plausible rather than proven, and that
-**a coverage far from the design's 0.58 is the symptom that would falsify it.**
+## 3. The three findings a successor should read before its own W1
 
-Four readings agree, and none of them was available before W2:
+**W3-F1 — a digest recomputed unchanged proves the bytes did not move, not that anything can use
+them.** The two final roles had been carried "intact" for five sprints. They were intact. They
+were also unencodable: four D2-authored bodies predate the source canonicaliser's reflection ban,
+and nobody had ever run a final body through the canonicaliser, because opening the roles is what
+W3 does. The repair was audit-first — `sprint-21d7-final-role-audit.json` sealed with
+`bodies_authored_by_this_record: 0` — and the test that catches the next one is written over the
+**roles**, not over the replacements.
 
-1. coverage came out **0.40** against a design expectation of 0.58;
-2. the realised leak — the share of the certification half's wrong answered decisions that cleared
-   the bar, which is the quantity α bounds — is **0.25 against a 0.20 budget**;
-3. the direction scores **0.76** first choice here against **0.88** on D5's own calibration set;
-4. the strongest deterministic rung is **`lexical_similarity` at 0.62** here, where D5's corpus put
-   `fixed_input_order` on top at 0.42.
+**W4-F1 — a validator can outlive the claim it enforces.** The W1 seal asserts that all three
+carried roles are byte-identical to D6's. W3's authorised repair made that false for two of them,
+and the release matrix is where it surfaced, because that is the only place the sprint's own
+validators run. Fixed by rebinding rather than by editing: `sprint-21d7-protected-role-rebinding
+.json` names the moved roles, proves each new hash is the one its W3 campaign actually executed
+against, and leaves the W1 seal's bytes alone — the same discipline S21D7-027 used when it
+superseded S21D7-011.
 
-The last one is the sharpest, because it is measured with no model at all. **D6's corpus is a
-different distribution from D5's, and it is a harder one for this ranker and an easier one for a
-lexical baseline.** Both corpora came out of the same authoring contract, the same generator and
-the same six families; four withdrawn groups and a saturation heuristic are the only authoring
-differences on record.
+**W2-F1 and W2-F2 — reproduction checks that fail on the passage of time prove nothing.** A
+`--check` that re-globs a directory to rebuild a chronology block expires the moment the wave
+writes its next record; a live stopwatch inside a record makes byte-for-byte restart reproduction
+impossible. Both were fixed by making the check compare what is claimed rather than what the
+clock said.
 
-That is not a defect in the corpus. It is the finding: **the programme has been measuring transfer
-without knowing it.** D4 fitted and certified inside one corpus. D5 fitted on D4's spent evidence
-and certified on its own fresh corpus. D6 placed a bar on D5's evidence and certified on its own.
-Each step read a number that was partly a property of the ranker and partly a property of the gap
-between two authoring runs, and until now nothing separated the two.
+## 4. What Sprint 22A inherits, and what it must not assume
 
----
+**Inherits, usable without re-deriving:**
 
-## 4. The one successor experiment
+- a **live selection surface**: `experience.correction_ranking`, component
+  `learned.containment.correction_ranking`, active on five canary groups, with a ledger that
+  replays, a hash chain that verifies and a kill switch that has been exercised;
+- an **admission rule with a stated error budget**: split-conformal at α = 0.20 with a
+  Clopper–Pearson 95% upper bound at or below C = 0.15, measured at 0.126207 with coverage 0.59;
+- the **transfer record** that says why this class and not the last, and the per-family rates
+  underneath it;
+- the seven-channel v3 contract, its encoder, the artifact format, the loader, the resolver with
+  all eighteen reason codes exercised, and a promotion payload whose twenty gates are each bound
+  by hash to the record that measured them;
+- the retrieval condition, inherited under a ruling re-checked at gate close.
 
-**Measure the transfer gap directly, before varying anything else.**
+**Must not assume:**
 
-Score D6's 100 certification decisions and D5's 100 calibration decisions with the *same* sealed
-720 direction — which D6 has already done, and the two numbers are 0.76 and 0.88 — and then ask
-the question neither sprint asked: **how much of that 12-point drop is the direction, and how much
-is the corpus?** The deterministic ladder answers it with no model in it at all. `lexical_similarity`
-at 0.62 against 0.42 says the two corpora differ by 20 points on a rung that never saw a fitted
-weight, which is more than the whole learned-minus-baseline margin D5 reported.
-
-A concrete, minimal shape:
-
-- **one measurement, no fitting**: the released ladder over both corpora, every rung, both
-  directions, reported per family;
-- **the pre-registered quantity**: per-rung first-choice rate on each corpus, and the
-  learned-minus-baseline difference on each. If the difference is stable across corpora and only
-  the absolute rates move, the transfer gap is corpus difficulty and the confidence axis is
-  genuinely exhausted. If the difference itself collapses, the direction does not transfer, and no
-  admission rule over it ever will;
-- **the decision it feeds**: whether Gate L2's §2.3 can be closed by *any* construction over
-  `pairwise-contrastive-linear-v1`, which is the question three sprints have now approached from
-  three sides without asking directly.
-
-It costs no authoring, no fitting and no new contract. Every input is released and sealed.
+- **that the learned component is where the value is.** See the paragraph at the top. The
+  containment ordering is a deterministic, label-free, pre-sandbox computation, and on the
+  admitted subset the fitted direction adds five decisions to it. If 22A wants the cheap win, the
+  rung is the product;
+- **that the coverage transfers.** The bar was placed on D6's demoted certification groups.
+  Exchangeability is now load-bearing in production: a corpus with a different family profile
+  moves coverage without moving a threshold;
+- **that the anatomy is free.** The containment signal reads the two-complete-two-partial
+  structure the authoring contract froze. A domain expansion that varies candidate count or
+  repair completeness dissolves the signal by design;
+- **that "active" means shipped.** It routes five groups. The bounded steady-state configuration
+  is sealed and was never entered, and the canary→steady transition was not taken;
+- **that a carried role is usable because its digest is unchanged.** W3-F1. Run the thing you
+  intend to run, on the bytes you intend to run it on, before you plan around them;
+- **that any Gate L2 condition is inherited.** §2.2 has held for four sprints: each re-evidences
+  all of them against its own authorities.
 
 ## 5. What this handoff refuses
 
-**A third confidence construction.** The axis has been varied twice — zero-error prefix, then
-split conformal — and the sweep says the second one's failure is not about where the bar sits. A
-third bar over the same margin is a sprint whose result is already on the record.
+**Not a third hypothesis class.** The class question resolved. Reopening it before the corpus
+question is answered would be searching the axis that just stopped moving.
 
-**A larger corpus, on the strength of step 2's sentence.** The sentence was written before the
-sweep existed and its premise does not hold: more wrong decisions in the conformal half buy a
-tighter α, and every α lands on a curve that misses. Authoring 100 more groups to move a bar along
-it would be the most expensive way to reproduce this result.
+**Not a larger corpus, yet.** The aliasing counts bound reachable coverage from above on any
+seven-channel corpus of this size. Author more groups only against a measured slope.
 
-**A third hypothesis class, yet.** D4 landed on `hypothesis_class_bound` and D5's diagnostic
-narrowed it; picking a third class now, before the transfer gap is measured, risks attributing a
-corpus difference to a model family. §4's measurement is what tells the difference — and if it
-says the direction does not transfer, *then* the class question is the right one and it will be
-much better posed.
-
-**Any relaxation of §2.3.** The gate owner has amended it once, on an infeasibility argument
-supported by a published table. §2.1's table priced the pre-amendment pair; §2 of this document
-prices the amended one. **Neither is an argument for a second amendment** — two relaxations in two
-sprints is a gate that follows the measurement rather than binding it. If the amended pair is
-also infeasible against this ranker, the honest reading is that this ranker does not clear this
-gate, not that the gate is too high.
+**Not a steady-state promotion by default.** Entering the bounded steady state is a decision with
+its own evidence — canary tasks, safety regressions, verifier disagreements — and the transition
+condition that names all three is sealed and unexercised.
 
 ---
 
-## 6. State handed over
+## Evidence handles
 
-- Released on `main` at `cfd22ab6d3e32367ed5c920a3f3844e590acf8b6` (PR `#227`, squash-merged
-  into protected main, exact-head CI 30 of 30); tag `sprint-21d6-evidence-baseline`, object
-  `29debe41f8dbe16137c0ae528f0ad4390de8d451`.
-- **Gate L2: 14 met, 15 not opened, 0 failed, 0 carried.** Exactly where D5 left it, on a
-  different stop.
-- **Gate D1: 6 and 7 closed by the stop; 15 closed** by inheritance from D5's sealed retrieval
-  measurement, with all three voiding identities recomputed at gate close and unmoved.
-- **Sprint 22A remains blocked.**
-- Spent: D5's 100 calibration groups (now also spent as a bar-setting half) and D6's 100
-  certification groups. Both are published in full, including every sweep point, so neither can
-  serve as a holdout again.
-- **Unopened, for the fourth sprint running:** `final_a` (30), `final_b` (30), `canary` (5). Zero
-  bodies resolved, digests recomputed unchanged. They are still the only unread evidence this
-  programme has, and §4's measurement does not touch them.
+| Record | Seal (`integrity_content_hash`) |
+|---|---|
+| `sprint-21d7-pre-registration.json` | revision 7, `measured_values: 0` |
+| `sprint-21d7-learner-selection.json` | `63fd43dab720c57e…`, ending `1_select` |
+| `sprint-21d7-artifact.json` | `b38e3f60a13c4c8f…` |
+| `sprint-21d7-final-evidence.json` | `a8aa099a5d32f9a0…` |
+| `sprint-21d7-promotion.json` | `fde811401cb85dab…` |
+| `sprint-21d7-lifecycle.json` | `155fc87f4bcef558…` |
+| `sprint-21d7-continuation.json` | ending `1_select`, 15 delivered, 0 not opened |
+| `sprint-21d7-gate-l2.json` | regenerated at gate close |
+| `sprint-21d7-release.json` | the remote-derived release handles |
+
+The per-wave evidence indexes in [`sprint-21d7-execution.md`](sprint-21d7-execution.md) carry both
+hashes for every record; this table names only the ones a successor's pre-registration has to
+bind.

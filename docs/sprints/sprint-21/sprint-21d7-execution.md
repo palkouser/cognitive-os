@@ -2,6 +2,10 @@
 
 - Branch: `sprint-21d7-groundwork`
 - Backlog: [Sprint 21D7 Technical Backlog](sprint-21d7-technical-backlog.md)
+- **Status: W4 closed. Gate L2 reads 28 met, 1 pending, 0 failed, 0 not opened.** The pending
+  row is condition 29 — the protected merge, its exact-head CI and the annotated tag — which is
+  the gate owner's to close. Gate D1's conditions 6, 7 and 15 are all closed. **`not_opened` is
+  zero for the first time in the D-series.**
 - **Status: W3 closed. The artifact is activated on the canary subset.** S21D7-000 through
   S21D7-005, S21D7-010 through S21D7-019, S21D7-020 through S21D7-024, S21D7-025 through
   S21D7-034 and S21D7-035 through S21D7-039 are done. W2 ended `1_select` with every amended
@@ -893,3 +897,150 @@ candidate in **5 attempts**, the released rung in **9**. The learned first choic
 - It moved **no threshold**, in this wave or any other.
 - It did **not** close Gate L2. The gate assessment is a step of its own, and the conditions this
   wave opened are reported there against the same sealed hashes.
+
+---
+
+# W4 — the release matrix, the gate, and one validator that outlived its claim
+
+Four scripts, four sealed records, **one finding**, and a gate assessment that reads **28 met, 1
+pending, 0 failed, 0 not opened**. The pending row is condition 29, which the protected release
+closes and which this wave cannot close for itself.
+
+## The release matrix — condition 28
+
+`scripts/verification_matrix_d7.py` runs **46 rows** and records what each actually did: the
+command, the expected answer, the exit status, the wall-clock cost and the SHA-256 of the combined
+output. Three rules make it a matrix rather than a list — negative rows must fail *for their
+declared reason*, nothing is silently skipped, and the record checks itself where it is written
+rather than in a test that would read the previous run's copy.
+
+What D7 carries that D6 did not:
+
+- **six `--check` validators instead of two.** Four of D7's records carry no timestamp by
+  construction, so `--check` in a fresh process *is* the restart-reproduction proof rather than a
+  report about one. A release that did not run them would be taking W2's word for its own
+  arithmetic.
+- **twelve rows recorded from committed evidence**, eight of them about things D6 never reached:
+  an artifact that re-ranks, a resolver that reaches every code, two final batches, a promotion
+  payload, a live activation.
+- **six negative rows**, up from five. `campaign_refuses_the_d6_store` joins
+  `campaign_refuses_the_d5_store` because D7 reads D5's numeric bounds *and* D6's whole conformal
+  half out of their stores, and the guard that stops it writing there is one function with one
+  list.
+- **one row that reads a zero.** `proposals_accepted_without_a_verifier_label` must be exactly
+  `0`, named as an expected value rather than left to truthiness — a zero is falsy, and a row
+  decided by truthiness there would report a failure as a pass.
+
+**46 of 46 passed, 0 skipped, 0 structural findings.**
+
+## W4-F1 — the W1 seal still claimed three carried roles D7 no longer has
+
+The matrix's first run came back **45 of 46**, failing on `sealed_manifests`:
+
+```
+sealed_manifests_d7.py --check  →  stops: ["sealed_manifests_protected_role_drift"]
+```
+
+The stop is **correct**. W1 sealed the claim that all three carried roles are byte-identical to
+D6's released catalogues, and W3's authorised repair made that false for two of them — final A
+`69d5eedc…` → `38be7b0a…`, final B `06a0c2f6…` → `7dd02a38…`. What is stale is not the world; it
+is the rule. Nothing had yet told the validator that the change was authorised.
+
+**Why it surfaced here and not in W3.** The validator runs in the release matrix and nowhere
+else. W3 had no reason to re-run a W1 seal check, and the repair it performed was recorded in the
+audit rather than in the seal. A release matrix that skipped its own sprint's validators would
+have shipped the contradiction.
+
+The fix is a **rebinding, not an edit**. `sprint-21d7-protected-role-rebinding.json` (S21D7-044)
+supersedes one sentence of the W1 seal and leaves its bytes exactly as they are — the same
+discipline S21D7-027 used when it superseded S21D7-011, and for the same two reasons: a sealed
+record edited to agree with a later decision stops being evidence of what was known when it was
+written, and every W2 and W3 record that binds `sealed_manifests_sha256` would break.
+
+What the rebinding is willing to be wrong about:
+
+| check | result |
+|---|---|
+| the **canary** role is still byte-identical to D6's | ✅ `027f2d78…` unchanged |
+| every moved role is named in S21D7-038's grant | ✅ `final_a`, `final_b` |
+| each audit's `sealed_hash_before` equals D6's released hash | ✅ the audit was about these bytes |
+| each new hash is the one its W3 campaign **executed against** | ✅ in both the feature seal and the campaign record |
+| the frozen counts survive | ✅ 30 groups / 120 slots per final role |
+
+The stop was then narrowed rather than removed: a role that moves still stops the seal unless a
+**clean** rebinding record names it. Proved by deleting the rebinding record and re-running —
+`sealed_manifests_protected_role_drift` came straight back.
+
+## The gate assessment — 28 met, 1 pending
+
+`scripts/gate_assessment_d7.py` decides every one of the twenty-nine conditions from the evidence
+that bears on it. It has no branch that writes `met` without a document behind it, no default that
+upgrades a missing file, and the verdict is computed from the counts rather than stated.
+
+**`not_opened` is zero, and that is the sprint.** D3 closed fifteen conditions behind a typed
+stop, D4 sixteen, D5 sixteen, D6 nineteen. D7 closes none. The continuation record prints that
+set as the empty list it now is — an omitted map is not the same claim as an empty one — and the
+gate script refuses to run if the two records disagree about it.
+
+Two rows are D7's own shape:
+
+- **condition 3** is a W0 audit about roles W3 later opened. The row says so instead of printing
+  the W0 sentence unqualified, because a reader arriving from the W3 section has just been told
+  the roles were opened;
+- **condition 5** checks all four campaigns, not the first. D6 had one campaign; D7 has four, and
+  a row that checked only certification would leave the 260 outcomes the gate actually turns on
+  unexamined. **660 candidate runs, every one carrying an independent hidden-verifier label.**
+
+## Gate D1 — all three closed
+
+| | | |
+|---|---|---|
+| **6** | 260 held-out verifier-backed outcomes against a floor of 200 | final A 120, final B 120, canary 20 |
+| **7** | 45 of 60 final decisions change the advisory action, floor 20 | condition 13's evidence read against the D1 contract |
+| **15** | inherited, re-checked at gate close | reads condition 24's verdict rather than reaching its own |
+
+Condition 6 **does not count the 400 certification outcomes**, deliberately. They set the
+operating cell, and counting the corpus that chose the operating point as evidence about it is
+the mistake the floor exists to stop. 260 clears 200 without them.
+
+## The continuation — the pass branch, typed
+
+`sprint-21d7-continuation.json` types §3.4's ending `1_select` and reads its successor sentence
+**out of the sealed contracts record** rather than composing one: the six endings were written in
+W0 with `measured_values: 0`, and a successor sentence written after the result would be the
+measurement arguing for its own follow-up.
+
+Fifteen deliverables named with the record that closed each; **zero** not opened. The five §6
+risks are carried forward verbatim, and the fourth is marked **MEASURED** — the class and its own
+strongest channel are the same signal at admissible margins, which is why S21D7-027 had to unseat
+the containment rung before anything could be scored.
+
+## W4 evidence index
+
+| record | integrity hash (16) |
+|---|---|
+| `sprint-21d7-verification-matrix.json` | `41aff1958383f1df` |
+| `sprint-21d7-protected-role-rebinding.json` | `22159a3efd30d607` |
+| `sprint-21d7-continuation.json` | `db4d6dd0cff2a0d2` |
+| `sprint-21d7-gate-l2.json` | `f456f97618e70580` |
+
+## W4 validation
+
+- 46 of 46 matrix rows passed, 0 skipped, 0 structural findings.
+- `sealed_manifests_d7.py --check` clean, and proved to still stop when the rebinding record is
+  removed.
+- ruff and ruff format over `scripts/`, `src/`, `tests/`, `infra/` — clean. mypy over
+  `src/cognitive_os` — no issues. bandit, pip-audit, schema export, wheel and editable
+  installation, both benchmark replays — all green inside the matrix.
+- **4090 tests passed, 217 skipped**, run as a matrix row rather than beside it.
+
+## What W4 did not do
+
+- It did **not** close condition 29. The protected merge is the gate owner's, and the release
+  record is written from the remote afterwards.
+- It did **not** create the tag. `sprint-21-learning-baseline` is created once, after the
+  exact-head post-merge CI, and `scripts/release_d7.py` only reads it — a record that could
+  produce the state it describes would be a record of itself.
+- It did **not** round 28-of-29 up to a pass. The verdict is computed from the counts, and one
+  `pending` row means `gate_l2_does_not_pass` until the release exists.
+- It moved **no threshold**. Five waves, zero amendments.
