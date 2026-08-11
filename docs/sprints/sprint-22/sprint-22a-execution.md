@@ -8,6 +8,8 @@
   head `0015`, no enum member, `DomainKind` coupling still **52**, 208 replay cases green. Three
   findings and one named stop, all inside the wave — two of the three surfaced only when the
   whole suite ran with a pilot registered. **W0 and W1 detail follow first.**
+- W2 wave commit `420e2a5`; CI run **`31519582456`** on that exact head, **30 of 30 jobs
+  successful**.
 - **W1 closed.** The registry seam exists, descriptors persist and rebuild without a storage
   schema, and the four released domains are byte-identical in behaviour: `snapshot_hash()`
   unchanged, four of four compat hashes unchanged, 208 replay cases green. The `DomainKind`
@@ -713,7 +715,7 @@ not be rewritten even to add a field. It is necessarily the one the first run wr
 | `bandit -r src/cognitive_os` | 0 issues |
 | `python -m cognitive_os.schemas.export --check` | passed, no new contract |
 | `scripts/check_repository_language.sh` | passed |
-| `pytest tests/cognitive_os -q` | see the CI handle below; the two W2 modules and every module they touch pass locally (110) |
+| `pytest tests/cognitive_os -q` | **4070 passed, 107 skipped** |
 | `scripts/pilot_22a.py --check` | released snapshot unchanged **with the pilot registered**, 4 compat hashes, 5 bound phase records, coupling within ceiling |
 | `scripts/decisions_22a_w2.py --check` | one hash moves, the other cannot — re-measured in a clean process |
 | `scripts/seam_22a.py --check` | still passes after the re-binding |
