@@ -875,6 +875,9 @@ candidate in **5 attempts**, the released rung in **9**. The learned first choic
 - ruff and ruff format over `scripts/`, `src/`, `tests/` — clean, 1155 files. mypy over
   `src/cognitive_os` — 632 files, no issues.
 - **4090 tests passed, 217 skipped.**
+- Wave commits `d3a5aef`, `8c4b51f` and `34b9be8` on `sprint-21d7-groundwork`, pull request
+  **#229** against protected `main`; CI run **`31466617491`** on head `34b9be8`, **30 of 30
+  jobs successful**. The merge is the gate owner's, not the wave's.
 
 ## What W3 did not do
 
