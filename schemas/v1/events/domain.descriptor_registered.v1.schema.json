@@ -1,0 +1,70 @@
+{
+  "$id": "https://cognitive-os.local/schemas/v1/events/domain.descriptor_registered.v1.schema.json",
+  "additionalProperties": false,
+  "description": "One governed domain registration, as metadata over bytes held in the Artifact Store.\n\nSprint 22A stores domains without a storage schema: the package bytes are a\ncontent-addressed artifact and *this* event is the index that finds them again. The\nevent names the artifact rather than the artifact naming the event, so the bytes can be\nwritten first and a crash between the two writes leaves a harmless orphan blob instead\nof a registration whose package never arrived (Sprint 22A W1-F2).\n\nThe two hashes are what make a rebuild safe to trust — `package_sha256` binds the bytes\nand `descriptor_content_hash` binds what those bytes mean, so a descriptor whose stored\nbytes no longer reproduce the hash this event recorded is refused rather than loaded.",
+  "properties": {
+    "actor": {
+      "minLength": 1,
+      "title": "Actor",
+      "type": "string"
+    },
+    "artifact_id": {
+      "format": "uuid",
+      "title": "Artifact Id",
+      "type": "string"
+    },
+    "authority": {
+      "minLength": 1,
+      "title": "Authority",
+      "type": "string"
+    },
+    "descriptor_content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Descriptor Content Hash",
+      "type": "string"
+    },
+    "domain_id": {
+      "minLength": 1,
+      "title": "Domain Id",
+      "type": "string"
+    },
+    "lifecycle": {
+      "minLength": 1,
+      "title": "Lifecycle",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "package_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Package Sha256",
+      "type": "string"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "revision": {
+      "title": "Revision",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "domain_id",
+    "revision",
+    "lifecycle",
+    "artifact_id",
+    "descriptor_content_hash",
+    "package_sha256",
+    "actor",
+    "authority",
+    "reason",
+    "occurred_at"
+  ],
+  "title": "DomainDescriptorRegistered",
+  "type": "object"
+}

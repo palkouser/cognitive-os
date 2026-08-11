@@ -267,6 +267,56 @@ def validate_domain_package(payload: bytes) -> DomainDescriptorV1:
 #: resolves to the descriptor of the same name without a migration.
 RELEASED_DOMAIN_IDS: dict[DomainKind, str] = {kind: kind.value for kind in DomainKind}
 
+#: **The seam** (Sprint 22A W1, §3.1). The four released domains' capability requirements, as
+#: descriptor data keyed by string id rather than by enum member. This is where the
+#: `_DOMAIN_METADATA` and `_REQUIRED_TOOLS` tables lived until W1 moved them: the registry now
+#: reads them from here through `released_domain_descriptors()`, so a domain's capabilities are
+#: data about a domain rather than a branch on a Python enum.
+#:
+#: Moving a released table is only safe if the move is provably lossless, and it is: the four
+#: derived descriptors still hash to the values Sprint 22A's groundwork sealed before anything
+#: moved, and the registry's own snapshot hash is unchanged. The comments below are the ones
+#: the registry tables carried, kept with the data they explain rather than left behind.
+RELEASED_DOMAIN_CAPABILITIES: dict[str, DomainCapabilityRequirements] = {
+    DomainKind.MATHEMATICS.value: DomainCapabilityRequirements(
+        verifier_capabilities=("mathematics.exact_arithmetic", "mathematics.numeric"),
+        tool_capabilities=("mathematics.kernel",),
+        skills=("exact-arithmetic-decomposition", "cross-domain-result-review"),
+        strategies=("decompose-compute-verify", "two-independent-methods"),
+    ),
+    DomainKind.PHYSICS.value: DomainCapabilityRequirements(
+        verifier_capabilities=("physics.dimension", "physics.quantity"),
+        tool_capabilities=("physics.kernel",),
+        skills=("unit-aware-physics-calculation", "dimensional-analysis-review"),
+        strategies=("units-first-physics-modelling", "assumption-mismatch-detection"),
+    ),
+    DomainKind.LOGIC.value: DomainCapabilityRequirements(
+        verifier_capabilities=("logic.truth_table", "logic.counterexample"),
+        tool_capabilities=("logic.kernel",),
+        skills=("logic-formalization", "constraint-solving"),
+        strategies=("hypothesis-constraint-solver-counterexample", "two-independent-methods"),
+    ),
+    DomainKind.CODING.value: DomainCapabilityRequirements(
+        # The check capabilities name what the in-process checker actually does: compare
+        # the candidate against the case's golden reference, and confirm that every
+        # declared edit landed. Deliberately NOT `coding.pytest` — that capability means
+        # sandboxed pytest execution everywhere else in the system
+        # (`verification/coding/commands.py`), and a check that never ran pytest must not
+        # borrow its name. See ADR 0085.
+        verifier_capabilities=("coding.golden_equality", "coding.required_checks"),
+        # Coding declares two tools: `coding.pytest` is what a real repair of these tasks
+        # needs and what the permitted skills match their tool precondition against, while
+        # `coding.kernel` is the deterministic in-process solve the Sprint 21C.1 baseline
+        # actually performs and cites.
+        tool_capabilities=("coding.pytest", "coding.kernel"),
+        # Two permitted skills (the python-repair and focused-tests families) keep
+        # selection tight and the ADR 0084 statistic-binding story uniform.
+        skills=("verification-driven-python-repair", "focused-test-execution"),
+        # Registered strategies only — both already declare exactly these two skills.
+        strategies=("python-bug-fix", "verification-driven-repair"),
+    ),
+}
+
 
 def released_domain_descriptors() -> tuple[DomainDescriptorV1, ...]:
     """The four released domains as descriptors, derived from the released registry.

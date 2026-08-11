@@ -14,6 +14,11 @@ from decimal import Decimal
 from fractions import Fraction
 from typing import Any
 
+from cognitive_os.domain.descriptors import (
+    RELEASED_DOMAIN_CAPABILITIES,
+    RELEASED_DOMAIN_IDS,
+    DomainCapabilityRequirements,
+)
 from cognitive_os.domain.domains import (
     AnswerType,
     DomainKind,
@@ -141,52 +146,20 @@ _CODING = (
     ("test-selection", AnswerType.STRUCTURED, solvers.solve_test_selection),
 )
 
-_DOMAIN_METADATA: dict[DomainKind, tuple[tuple[str, ...], tuple[str, ...], tuple[str, ...]]] = {
-    DomainKind.MATHEMATICS: (
-        ("mathematics.exact_arithmetic", "mathematics.numeric"),
-        ("exact-arithmetic-decomposition", "cross-domain-result-review"),
-        ("decompose-compute-verify", "two-independent-methods"),
-    ),
-    DomainKind.PHYSICS: (
-        ("physics.dimension", "physics.quantity"),
-        ("unit-aware-physics-calculation", "dimensional-analysis-review"),
-        ("units-first-physics-modelling", "assumption-mismatch-detection"),
-    ),
-    DomainKind.LOGIC: (
-        ("logic.truth_table", "logic.counterexample"),
-        ("logic-formalization", "constraint-solving"),
-        ("hypothesis-constraint-solver-counterexample", "two-independent-methods"),
-    ),
-    DomainKind.CODING: (
-        # The check capabilities name what the in-process checker actually does:
-        # compare the candidate against the case's golden reference, and confirm
-        # that every declared edit landed. Deliberately NOT `coding.pytest` —
-        # that capability means sandboxed pytest execution everywhere else in
-        # the system (`verification/coding/commands.py`), and a check that never
-        # ran pytest must not borrow its name. See ADR 0085.
-        ("coding.golden_equality", "coding.required_checks"),
-        # Two permitted skills (the python-repair and focused-tests families)
-        # keep selection tight and the ADR 0084 statistic-binding story uniform.
-        ("verification-driven-python-repair", "focused-test-execution"),
-        # Registered strategies only — both already declare exactly these two
-        # skills in `strategies/`.
-        ("python-bug-fix", "verification-driven-repair"),
-    ),
-}
+#: **The seam** (Sprint 22A W1, §3.1). The per-domain capability tables that used to live
+#: here are now descriptor data in `domain/descriptors.py`, keyed by string domain id, and the
+#: registry reads them through the adapter. Two things follow, and both are the point of the
+#: sprint: a domain's capabilities are data rather than a branch on an enum, and a domain that
+#: is not an enum member can carry exactly the same metadata by the same route.
+#:
+#: The move is provably lossless rather than merely careful — `snapshot_hash()` and the four
+#: derived descriptor content hashes are unchanged against the record sealed before it.
 
 
-#: The tool capabilities a problem type in this domain needs in order to run.
-#: Solvers cite one of these in `tool_evidence` as `<capability>:<operation>`.
-#: Coding declares two: `coding.pytest` is what a real repair of these tasks
-#: needs and what the permitted skills match their tool precondition against,
-#: while `coding.kernel` is the deterministic in-process solve the Sprint 21C.1
-#: baseline actually performs and cites.
-_REQUIRED_TOOLS: dict[DomainKind, tuple[str, ...]] = {
-    DomainKind.MATHEMATICS: ("mathematics.kernel",),
-    DomainKind.PHYSICS: ("physics.kernel",),
-    DomainKind.LOGIC: ("logic.kernel",),
-    DomainKind.CODING: ("coding.pytest", "coding.kernel"),
-}
+def _capabilities(domain: DomainKind) -> DomainCapabilityRequirements:
+    """The released capabilities for one domain, by string id, through the adapter."""
+    return RELEASED_DOMAIN_CAPABILITIES[RELEASED_DOMAIN_IDS[domain]]
+
 
 #: Formal-input keys withheld from the solver, per problem type. Only the coding
 #: domain needs them: its cases carry the golden answer so the checker has an
@@ -202,7 +175,7 @@ def _register_domain(
     domain: DomainKind,
     specification: tuple[tuple[str, AnswerType, SolverFn], ...],
 ) -> None:
-    verifiers, skills, strategies = _DOMAIN_METADATA[domain]
+    capabilities = _capabilities(domain)
     for problem_type, answer_type, solver in specification:
         register(
             ProblemTypeEntry(
@@ -211,10 +184,10 @@ def _register_domain(
                 answer_type=answer_type,
                 solver=solver,
                 checker=solvers.CHECKERS[problem_type],
-                required_verifiers=verifiers,
-                required_tools=_REQUIRED_TOOLS[domain],
-                skills=skills,
-                strategies=strategies,
+                required_verifiers=capabilities.verifier_capabilities,
+                required_tools=capabilities.tool_capabilities,
+                skills=capabilities.skills,
+                strategies=capabilities.strategies,
                 budget=_DEFAULT_BUDGET,
                 checker_only_inputs=_CHECKER_ONLY_INPUTS.get(problem_type, ()),
             )

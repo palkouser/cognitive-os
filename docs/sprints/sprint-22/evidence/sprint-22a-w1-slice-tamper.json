@@ -1,0 +1,10 @@
+{
+ "bytes_changed": 1,
+ "diagnosis": "refusing 'slice.fixture' revision 1: its stored package failed the artifact store's integrity check, so the bytes on disk are not the bytes that were registered (artifact blob failed verification: sha256/d2/d27677531eeeb0cc67ba321028cd55eb57164df3b7e562f48dfd3d0ba07b7d52)",
+ "named_the_domain": true,
+ "phase": "tamper",
+ "recorded_at": "2026-08-11T16:31:19Z",
+ "refused": true,
+ "restored_and_rebuilt": 1,
+ "still_parses_as_a_package": true
+}

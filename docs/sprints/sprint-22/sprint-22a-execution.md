@@ -2,6 +2,11 @@
 
 - Branch: `sprint-22a-groundwork`
 - Backlog: [Sprint 22A Technical Backlog](sprint-22a-technical-backlog.md)
+- **W1 closed.** The registry seam exists, descriptors persist and rebuild without a storage
+  schema, and the four released domains are byte-identical in behaviour: `snapshot_hash()`
+  unchanged, four of four compat hashes unchanged, 208 replay cases green. The `DomainKind`
+  coupling fell **57 → 52**. Three findings, two of them found by running the vertical slice
+  rather than reviewing it, all fixed inside the wave. **W0 detail follows first**, then W1.
 - **W0 closed.** S22A-000 through S22A-005, S22A-010 and S22A-011, and S22A-013 through
   S22A-019 are done. The groundwork is tested and merged-ready, both §2.2 governance decisions
   are on the record, and revision 1 is published with `measured_values: 0`. **No threshold
@@ -266,3 +271,204 @@ W1 inherits three fences and one open question:
 
 The stop W0 considers most likely is still the one the backlog named — a pilot whose honest
 verification floor cannot be met by deterministic kernels — and it belongs to W3, not to W1.
+
+---
+
+## W1 outcome — the seam built, the slice run across processes, three findings
+
+S22A-020 through S22A-024 are done. The registry seam exists, descriptors persist and rebuild
+without a storage schema, and the four released domains cannot tell: **the registry snapshot
+hash and all four compatibility hashes are unchanged**, and the `DomainKind` coupling went
+**down** rather than up. Migration head stays `0015`; `0016` was never approached.
+
+**The vertical slice was built first and it paid for itself twice**, which is exactly what §4.1
+predicted: two of this wave's three findings came out of running the chain rather than
+reviewing it, and one of them changed the storage design before any pilot depends on it.
+
+### S22A-020 — 22A's own store, provisioned
+
+W0 recorded that it provisioned nothing because the store was W1's item. Three databases under
+the `cognitive_os_s22a` prefix, migrated to head **`0015`**, `alembic check` reporting **no new
+upgrade operations detected**; `artifacts-s22a` and `backups-s22a` created. `.env.s22a.local`
+is derived from `.env.s21d7.local` by substituting the sprint slug — 13 substitutions, no other
+edit, verified by diffing both files with the slug masked. Every invocation passed
+`COGOS_POSTGRES_ENV_FILE` explicitly, and the D7 and D6 heads were re-read afterwards
+(`0015`, untouched). **S21D5-W0-F1 not repeated.**
+
+### S22A-021 — storage without a schema
+
+`src/cognitive_os/domains/descriptor_store.py`. A registration is two released things and no
+new one: the package bytes are a **content-addressed artifact**, and one
+**`domain.descriptor_registered` event** names it. That event is the index — the reason no
+table is needed — and it carries the two hashes a rebuild checks against: the package bytes
+and the descriptor those bytes mean.
+
+| | |
+|---|---|
+| new tables | **0** |
+| migrations allocated | **0** |
+| new event types | 1 (`domain.descriptor_registered`, the catalog's 215th) |
+| media type | `application/vnd.cogos.domain-package+json` |
+| registry stream | `22a00000-0000-4000-8000-000000000001`, fixed rather than configured |
+
+The stream id is fixed on purpose: a registry whose location is a setting can be pointed at an
+empty stream, and a registry that silently rebuilds from nothing is worse than one that fails.
+
+### S22A-022 — the registry seam
+
+`_DOMAIN_METADATA` and `_REQUIRED_TOOLS` are gone from `domains/registry.py`. The four released
+domains' capabilities are now descriptor data in `domain/descriptors.py`
+(`RELEASED_DOMAIN_CAPABILITIES`), **keyed by string domain id**, and the registry reads them
+through the adapter. A domain's capabilities are data about a domain rather than a branch on a
+Python enum — which is the whole sprint in one table move.
+
+| Claim | Result |
+|---|---|
+| `registry.snapshot_hash()` | `00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119`, **unchanged** |
+| four derived descriptor content hashes | **4 of 4 unchanged** against the sealed survey |
+| registry entries | 28, unchanged |
+| `DomainKind` references in `src/cognitive_os` | **57 → 52**, nine modules still |
+| core controller changed | no |
+| storage schema changed | no |
+
+### S22A-023 — the vertical slice, in four processes
+
+[`sprint-22a-w1-slice-*.json`](evidence/). `store` writes and exits; `rebuild` starts cold and
+knows nothing but the database and the artifact root.
+
+| Phase | Result |
+|---|---|
+| `store` | `slice.fixture` revision 1 registered; descriptor `3bf4a108…`, package `d2767753…` |
+| `rebuild` | **a different process** replays 1 registration and rebuilds the descriptor to the same content hash, with its shared concept intact |
+| `tamper` | one byte changed in the stored blob — the package **still parses and still validates** — and the rebuild **refuses**, naming the domain; the byte is restored and the rebuild succeeds again |
+| `refusals` | re-registration refused; a package impersonating `coding` refused; **registrations after: 1**, so neither refusal wrote anything |
+
+The fixture is `slice.fixture`, deliberately not one of the two frozen pilot ids: spending a
+pre-registered id on a plumbing rehearsal would be spending the thing the freeze protects.
+
+### S22A-024 — replay
+
+Global and per-domain replay, run against this exact tree:
+
+| Manifest | Mode | Cases | Pass rate |
+|---|---|---:|---:|
+| `sprint20-domain-ci` | domain-pilot | 24 | 1.0 |
+| `sprint20-domain-seed` | domain-pilot | 120 | 1.0 |
+| `sprint21c1-learned-ci` | learned-replay | 16 | 1.0 |
+| `sprint21c1-learned-seed` | learned-replay | 48 | 1.0 |
+
+**208 cases, all green.** The learned manifests matter as much as the domain ones here: the
+correction surface is what W1 must leave *exactly* alone, and replaying it is the evidence
+rather than the intention.
+
+---
+
+## W1 evidence index
+
+| Record | SHA-256 | Items |
+|---|---|---|
+| `sprint-22a-w1-seam.json` | `3005355e0b9fd5d2…` | S22A-021 … S22A-024 |
+| `sprint-22a-w1-slice-store.json` | `37385168ae05a3a5…` | S22A-023 |
+| `sprint-22a-w1-slice-rebuild.json` | `b7d4cf9f5cc0f804…` | S22A-023 |
+| `sprint-22a-w1-slice-tamper.json` | `9080d02c6c0e457f…` | S22A-023 |
+| `sprint-22a-w1-slice-refusals.json` | `d2cd9c9682b6da9c…` | S22A-023 |
+
+Seam record integrity `cdb70a979d7a92a6…`; it carries the published pre-registration's SHA-256
+and passes `pre_registration_22a.py --check-chronology`.
+
+New modules: `src/cognitive_os/domains/descriptor_store.py`, one payload in
+`events/domain_events.py`, `scripts/domain_slice_22a.py`, `scripts/seam_22a.py`. New tests:
+`tests/cognitive_os/domains/test_descriptor_store.py` (14) and
+`tests/cognitive_os/domain/test_sprint_22a_w1_evidence.py` (5).
+
+---
+
+## W1 findings
+
+### W1-F1 — the tamper refusal named a storage key, not a domain
+
+The first tamper run refused, which was the good news, and refused with
+`ArtifactIntegrityError: artifact blob failed verification: sha256/d2/d276…`, which was the
+finding. The released content-addressed filesystem verifies blobs on read and fires **before**
+the descriptor-store's own hash comparison, so the check written to be the safety net is not
+where a tampered package is actually caught — and the released error names a storage key that
+tells an operator nothing about which domain will not load at startup.
+
+**Fixed inside the wave.** The rebuild translates the released error into a refusal naming the
+domain and revision, and the redundant comparison is kept for the case the blob check *cannot*
+see: a registration indexing an artifact that is not the package it recorded, where every blob
+is individually valid and only the index is wrong. Both paths have tests.
+
+### W1-F2 — the write order could poison the whole registry
+
+The first design appended the registration event and then stored the bytes, because
+`artifacts.source_event_id` is a released foreign key and that ordering is what it wants. A
+registration is two writes to two stores with nothing making them atomic, so a crash between
+them would have left an event whose package never arrived — and since a rebuild must refuse
+what it cannot verify, that **one** stranded write would refuse every other domain at startup.
+A registry where an interrupted upload takes the platform's domains down is not a registry.
+
+**Fixed inside the wave, by inverting the design rather than adding a repair path.** The bytes
+are written first and the *event names the artifact*, so the strandable half is an orphan blob
+— inert, and something the released store already knows how to enumerate. The inversion also
+deleted a protocol and a parameter: the rebuild no longer needs the artifact repository at all.
+The slice is what surfaced this; a review would have seen a working chain.
+
+### W1-F3 — W0's own fence failed the sprint for making progress
+
+The coupling recount seated in W0 asserted **equality** with the sealed 9/57, while the
+contract it enforces — the pre-registration's `coupling_may_grow: false` and §3.5's "must not
+grow" — is a **ceiling**. The seam removed five `DomainKind` references, and W0's test called
+that a failure. The same over-claim sat in the survey reproduction test, which compared every
+measured field and so quietly asserted that the source tree never changes.
+
+**Fixed inside the wave**, and the fix is a line worth keeping: the half of the sealed survey
+that is a *contract* — the four descriptor hashes, the snapshot hash, the boundary's refusals —
+still reproduces exactly and forever, while the half that is a *measurement of the tree at W0*
+is fenced as a ceiling. A test that cannot tell those apart will eventually be edited to make
+it pass, which is the failure mode worth avoiding.
+
+---
+
+## W1 validation
+
+| Gate | Result |
+|---|---|
+| `ruff check` / `ruff format --check` over `src tests scripts infra` | passed; 1187 files formatted |
+| `mypy src/cognitive_os` | success, 634 source files |
+| `bandit -r src/cognitive_os` | 0 issues |
+| `python -m cognitive_os.schemas.export --check` | passed, after exporting the 215th event schema |
+| `scripts/check_repository_language.sh` | passed |
+| `pytest -q` (whole repository) | **4170 passed, 217 skipped** |
+| `scripts/seam_22a.py --check` | snapshot unchanged, 4 compat hashes, 4 slice records, coupling within ceiling |
+| `scripts/pre_registration_22a.py --check-chronology` | the W1 record carries the published pre-registration hash |
+| four replay manifests | 208 cases, pass rate 1.0 |
+
+Two released guards fired on the new event type and were answered rather than muted: the event
+catalog's explicit count (214 → 215) and the exported schema manifest, which now carries
+`domain.descriptor_registered.v1`.
+
+## What W1 did not do
+
+- **registered no pilot.** `engineering.mechanics` and `science.chemistry` are still only ids
+  in a frozen pre-registration; W2 and W3 author them;
+- **added no migration, table or controller branch**, and did not approach `0016`;
+- **touched nothing that learns.** The correction component still routes its five canary
+  groups, and its replays are green as a check rather than as a change;
+- **did not widen the descriptor schema.** The frozen schema hash still reproduces from the
+  live module.
+
+## What W2 needs, and what would stop it
+
+W2 authors the mechanics pilot and registers it through the same door the slice used. It
+inherits a fence, a shape and one open question:
+
+- the **coupling ceiling**, now at 52 with the sealed 57 as its bar, enforced in CI;
+- the **registration shape** the slice proved: bytes first, event names the artifact, rebuild
+  re-validates and refuses;
+- and the open question W1 did not have to answer: **whether registering a pilot changes
+  `registry.snapshot_hash()`**. It does not today because nothing registers into `_ENTRIES` at
+  import time, but a pilot whose problem types resolve through the released path will, and that
+  hash is bound into released semantic-memory records. W2's first decision is whether the
+  snapshot is scoped per domain or whether a registry that gained a domain is allowed to say
+  so — and it is a decision to take deliberately, not to discover from a failing test.

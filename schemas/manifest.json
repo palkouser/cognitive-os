@@ -306,6 +306,11 @@
       "schema_version": 1
     },
     {
+      "event_type": "domain.descriptor_registered",
+      "file": "v1/events/domain.descriptor_registered.v1.schema.json",
+      "schema_version": 1
+    },
+    {
       "event_type": "domain.pilot_started",
       "file": "v1/events/domain.pilot_started.v1.schema.json",
       "schema_version": 1
@@ -2482,6 +2487,11 @@
       "file": "v1/events/domain.case_started.v1.schema.json",
       "model": "DomainCaseStarted",
       "sha256": "10ddd173110e6f7bed7f8afc2845995bf41cca8c5163542d01c63c2769791a27"
+    },
+    {
+      "file": "v1/events/domain.descriptor_registered.v1.schema.json",
+      "model": "DomainDescriptorRegistered",
+      "sha256": "f1d3722fbb66918a07008d85c47c75767346d5a53d5e04660119cd4c658f1012"
     },
     {
       "file": "v1/events/domain.pilot_started.v1.schema.json",

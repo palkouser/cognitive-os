@@ -1,0 +1,16 @@
+{
+ "cases": {
+  "re_registration": {
+   "diagnosis": "refusing to re-register 'slice.fixture' revision 1: it is already registered at content hash 3bf4a1082928473ca4a3a0c534d6b7936402a5d1004445a8741b21271c2ad8c8. A registry that replaces a duplicate key loses the thing it replaced",
+   "refused": true
+  },
+  "released_domain_impersonation": {
+   "diagnosis": "refusing to register 'coding': it is a released domain, and a released domain's revisions are a governance path rather than a package upload",
+   "refused": true
+  }
+ },
+ "every_case_refused": true,
+ "phase": "refusals",
+ "recorded_at": "2026-08-11T16:31:20Z",
+ "registrations_after": 1
+}

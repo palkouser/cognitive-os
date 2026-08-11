@@ -4,18 +4,19 @@
 claim — "without changing the core controller or storage schema" — is diffed against. Three
 things have to be true of it, and each is worth more than the prose that introduces it:
 
-*It reproduces.* Re-running the script recomputes every measured field identically. Only
-`recorded_at` and the seal over it may differ, so this check does not fail on the passage of
-time (W2-F1/F2: a reproduction check that fails because a clock moved proves nothing).
+*The half of it that is a contract reproduces exactly.* The four derived descriptor hashes,
+the registry snapshot hash and the package boundary's refusals are what "the released domains
+are unchanged" means, and they must recompute identically forever. `recorded_at` and the seal
+over it may differ, so this check does not fail on the passage of time (W2-F1/F2: a
+reproduction check that fails because a clock moved proves nothing).
 
 *Its seal is over its own content.* The integrity hash is recomputed here from the record's
 own body rather than trusted.
 
-*Its numbers are the fence, not decoration.* The 9 modules and 57 references are the
-coupling W1 must show reaching the adapter boundary and stopping, and §3.5 makes the recount
-a regression: registering two pilot domains must add **zero** new `DomainKind` references.
-This test is where that recount lives from W0 onward, so the fence exists before the wave
-that has to stay inside it.
+*Its coupling numbers are a ceiling, not a target.* 9 modules and 57 references measured the
+tree at W0; §3.5 makes the recount a regression in one direction only — a wave may drive the
+count down, as W1's seam did, and may never push it up. W1-F3: this test originally demanded
+equality, which made the sprint's own progress a failure.
 """
 
 from __future__ import annotations
@@ -64,22 +65,39 @@ def test_the_seal_is_over_the_records_own_content() -> None:
     assert survey_script._digest(survey_script._canonical(body)) == record["integrity_content_hash"]
 
 
-def test_the_survey_reproduces_every_measured_field(tmp_path: Path) -> None:
-    """Only the timestamp and the seal over it may move between runs."""
+def test_the_compat_contract_still_reproduces(tmp_path: Path) -> None:
+    """The half of the survey that is a *contract* must reproduce exactly, forever.
+
+    W1-F3. This test used to compare every measured field, which quietly asserted that the
+    source tree never changes — so the W1 seam, which legitimately *removed* five enum
+    references, failed it. The sealed record is a starting state, and only some of it is a
+    promise: the four derived descriptor hashes, the registry snapshot hash and the package
+    boundary's refusals are the backward-compatibility contract and reproduce exactly; the
+    coupling count is a measurement of the tree at W0 and is fenced below, not frozen here.
+    """
     output = tmp_path / "sprint-22a-domain-survey.json"
     assert survey_script._run(output) == 0
     fresh = json.loads(output.read_text(encoding="utf-8"))
+    sealed = _sealed()
 
-    assert _measured_only(fresh) == _measured_only(_sealed())
-    assert fresh["recorded_at"] >= _sealed()["recorded_at"]
+    assert fresh["released_domains_as_descriptors"] == sealed["released_domains_as_descriptors"]
+    assert fresh["package_boundary"]["every_refusal_refused"] is True
+    assert set(fresh["package_boundary"]["refusals"]) == set(sealed["package_boundary"]["refusals"])
+    assert fresh["predecessor"] == sealed["predecessor"]
+    assert fresh["recorded_at"] >= sealed["recorded_at"]
 
 
 def test_the_enum_coupling_has_not_grown() -> None:
-    """§3.5's silo regression, seated in W0 so W2 and W3 inherit a fence rather than a claim."""
+    """§3.5's silo regression, seated in W0 so W2 and W3 inherit a fence rather than a claim.
+
+    A ceiling, not a target: the pre-registration froze `coupling_may_grow: false`, and the
+    seam is expected to push the count *down*. A wave that adds a `DomainKind` branch to make
+    a pilot register fails here, which is the whole purpose.
+    """
     coupling = survey_script._enum_coupling()
-    assert coupling["module_count"] == SEALED_MODULE_COUNT
-    assert coupling["reference_count"] == SEALED_REFERENCE_COUNT
-    assert coupling == _sealed()["enum_coupling"]
+    assert coupling["module_count"] <= SEALED_MODULE_COUNT
+    assert coupling["reference_count"] <= SEALED_REFERENCE_COUNT
+    assert all(name.startswith("src/cognitive_os/") for name in coupling["modules"])
 
 
 def test_the_coupling_is_counted_over_the_released_source_tree_only() -> None:

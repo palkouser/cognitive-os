@@ -1,0 +1,162 @@
+{
+ "backward_compatibility": {
+  "descriptors": {
+   "coding": {
+    "content_hash": "3c1d2ea892acb2a4e551ad50ee83c065d28c68b290c3830bf83ff3e36114871c",
+    "sealed": "3c1d2ea892acb2a4e551ad50ee83c065d28c68b290c3830bf83ff3e36114871c",
+    "unchanged": true
+   },
+   "logic": {
+    "content_hash": "3e714bd9f3808d1c0ebc80ab746de0618d49811e028354c69b32a719438d0a06",
+    "sealed": "3e714bd9f3808d1c0ebc80ab746de0618d49811e028354c69b32a719438d0a06",
+    "unchanged": true
+   },
+   "mathematics": {
+    "content_hash": "2cb1f3513849aef6cc9c9b2688340bf8f409a2f09d60050f12155f4e6ae1a8c9",
+    "sealed": "2cb1f3513849aef6cc9c9b2688340bf8f409a2f09d60050f12155f4e6ae1a8c9",
+    "unchanged": true
+   },
+   "physics": {
+    "content_hash": "5f8560b3e845fc071f8bb69becae6923d88abd4e501fe51033368744d6dbd704",
+    "sealed": "5f8560b3e845fc071f8bb69becae6923d88abd4e501fe51033368744d6dbd704",
+    "unchanged": true
+   }
+  },
+  "read_from": "sprint-22a-domain-survey.json",
+  "read_from_sha256": "5b6be6a4c4554d5c2be5324cc4ff63f157a11252e9fe05d3cc0a6ae996ed077c",
+  "registry_entries": 28,
+  "registry_snapshot_hash": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119",
+  "registry_snapshot_hash_sealed": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119",
+  "registry_snapshot_unchanged": true
+ },
+ "enum_coupling": {
+  "at_w0": {
+   "modules": 9,
+   "references": 57
+  },
+  "at_w1": {
+   "modules": 9,
+   "references": 52
+  },
+  "grew": false,
+  "modules_now": {
+   "src/cognitive_os/benchmarks/domain_adapter.py": 4,
+   "src/cognitive_os/domain/descriptors.py": 7,
+   "src/cognitive_os/domain/domains.py": 7,
+   "src/cognitive_os/domains/context.py": 2,
+   "src/cognitive_os/domains/controller.py": 10,
+   "src/cognitive_os/domains/fixtures.py": 1,
+   "src/cognitive_os/domains/registry.py": 8,
+   "src/cognitive_os/domains/skill_execution.py": 5,
+   "src/cognitive_os/domains/transfer.py": 8
+  },
+  "reading": "the seam removed the two DomainKind-keyed metadata tables from domains/registry.py and replaced them with one adapter lookup. The count is a ceiling the sprint may drive down and may never push up",
+  "references_removed": 5
+ },
+ "every_released_claim_holds": true,
+ "integrity_content_hash": "cdb70a979d7a92a6fb2c906dea928b4c151f867d4a9bba9358816faadb88bb7a",
+ "items": [
+  "S22A-021",
+  "S22A-022",
+  "S22A-023",
+  "S22A-024"
+ ],
+ "pre_registration_sha256": "dc40727db85be1cebef88220fc74624af0bfd6f84204979ce3914072a75bbafb",
+ "recorded_at": "2026-08-11T16:32:17Z",
+ "replay_cases": 208,
+ "replays": {
+  "sprint20-domain-ci": {
+   "cases": 24,
+   "mode": "domain-pilot",
+   "pass_rate": 1.0
+  },
+  "sprint20-domain-seed": {
+   "cases": 120,
+   "mode": "domain-pilot",
+   "pass_rate": 1.0
+  },
+  "sprint21c1-learned-ci": {
+   "cases": 16,
+   "mode": "learned-replay",
+   "pass_rate": 1.0
+  },
+  "sprint21c1-learned-seed": {
+   "cases": 48,
+   "mode": "learned-replay",
+   "pass_rate": 1.0
+  }
+ },
+ "schema_version": 1,
+ "seam": {
+  "core_controller_changed": false,
+  "migration_head": "0015",
+  "migrations_allocated_by_w1": 0,
+  "moved": {
+   "from": "domains/registry.py `_DOMAIN_METADATA` and `_REQUIRED_TOOLS`",
+   "read_through": "released_domain_descriptors() and registry._capabilities()",
+   "to": "domain/descriptors.py `RELEASED_DOMAIN_CAPABILITIES`, keyed by string id"
+  },
+  "released_domains_keyed_by_string_id": [
+   "coding",
+   "logic",
+   "mathematics",
+   "physics"
+  ],
+  "storage_route": {
+   "bytes": "content-addressed artifact, media type application/vnd.cogos.domain-package+json",
+   "index": "one domain.descriptor_registered event per registration",
+   "new_tables": 0,
+   "stream_id": "22a00000-0000-4000-8000-000000000001",
+   "write_order": "bytes first, then the event that names them (W1-F2)"
+  },
+  "storage_schema_changed": false
+ },
+ "sprint": "22A",
+ "vertical_slice": {
+  "fixture_domain_id": "slice.fixture",
+  "fixture_is_not_a_pilot": true,
+  "phases": {
+   "rebuild": {
+    "record": "sprint-22a-w1-slice-rebuild.json",
+    "sha256": "b7d4cf9f5cc0f804bf634edf861dab879ff744a1ff6e7dbee3705872eb985958",
+    "summary": {
+     "descriptors_rebuilt": 1,
+     "fixture_rebuilt": true,
+     "registrations_replayed": 1
+    }
+   },
+   "refusals": {
+    "record": "sprint-22a-w1-slice-refusals.json",
+    "sha256": "d2cd9c9682b6da9c9496c0cc5f5d690dd6a64b30bfa773606bbd06633f34ff12",
+    "summary": {
+     "every_case_refused": true,
+     "registrations_after": 1
+    }
+   },
+   "store": {
+    "record": "sprint-22a-w1-slice-store.json",
+    "sha256": "37385168ae05a3a5095297c7237728b0624ba3d1f8a028706506730b605f56a1",
+    "summary": {
+     "stream_version": 1
+    }
+   },
+   "tamper": {
+    "record": "sprint-22a-w1-slice-tamper.json",
+    "sha256": "9080d02c6c0e457fbdb6b66b66e721d15a59eb94fc1116e7597d4a6473cae7e0",
+    "summary": {
+     "named_the_domain": true,
+     "refused": true,
+     "still_parses_as_a_package": true
+    }
+   }
+  },
+  "separate_processes": true,
+  "why": "store writes and exits; rebuild starts cold. Run in one process the chain would prove nothing and would look exactly like proof (the D7 lifecycle lesson)"
+ },
+ "wave": "W1",
+ "what_w1_did_not_do": [
+  "register either pilot domain — that is W2 and W3",
+  "add a migration, a table or a controller branch",
+  "touch the learned correction component or its five routed canary groups"
+ ]
+}
