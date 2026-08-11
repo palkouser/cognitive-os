@@ -171,6 +171,12 @@ class DomainDescriptorV1(HashedExperienceContract):
         concept_ids = [concept.concept_id for concept in self.concepts]
         if len(set(concept_ids)) != len(concept_ids):
             raise ValueError("concept ids must be unique within a descriptor")
+        for concept in self.concepts:
+            if len(set(concept.shared_with)) != len(concept.shared_with):
+                raise ValueError(
+                    f"concept {concept.concept_id!r} names a domain twice in `shared_with`; a "
+                    "membership counted twice is a cross-domain view that disagrees with itself"
+                )
         known = {self.domain_id, *(self.related_domain_ids)}
         if self.parent_domain_id:
             known.add(self.parent_domain_id)
@@ -213,6 +219,12 @@ def validate_domain_package(payload: bytes) -> DomainDescriptorV1:
     validation, and every pydantic finding is flattened into the diagnostics — the
     closed-world field policy (`extra="forbid"`) comes from the contract base, so an
     unknown field is a refusal, not a warning.
+
+    **A package may claim `pilot` and nothing else.** Every other lifecycle state is reached
+    by a governed promotion with evidence behind it, so a package that arrives already
+    claiming `active` is claiming the promotion as well as the domain. The released four are
+    `active` and are built as contracts by the adapter, never parsed from a package, so the
+    rule costs them nothing.
     """
     if len(payload) > DOMAIN_PACKAGE_MAX_BYTES:
         raise DomainPackageError(
@@ -228,7 +240,7 @@ def validate_domain_package(payload: bytes) -> DomainDescriptorV1:
     if not isinstance(raw, dict):
         raise DomainPackageError(("a descriptor package is a JSON object",))
     try:
-        return DomainDescriptorV1.model_validate(raw)
+        descriptor = DomainDescriptorV1.model_validate(raw)
     except ValueError as error:
         findings = getattr(error, "errors", None)
         if callable(findings):
@@ -239,6 +251,15 @@ def validate_domain_package(payload: bytes) -> DomainDescriptorV1:
         else:
             diagnostics = (str(error),)
         raise DomainPackageError(diagnostics) from error
+    if descriptor.lifecycle is not DomainLifecycleState.PILOT:
+        raise DomainPackageError(
+            (
+                f"lifecycle: a package may claim {DomainLifecycleState.PILOT.value!r} and "
+                f"nothing else; {descriptor.lifecycle.value!r} is reached by a governed "
+                "promotion with evidence, not by declaring it in the package",
+            )
+        )
+    return descriptor
 
 
 #: The released enum member each derived descriptor stands for, and the id it takes. The

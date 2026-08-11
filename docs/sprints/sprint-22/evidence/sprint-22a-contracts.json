@@ -1,0 +1,181 @@
+{
+ "contracts": {
+  "backward_compatibility": {
+   "a_changed_hash_is_a_changed_released_behaviour": true,
+   "an_authorised_change_re_binds_rather_than_edits": "W4-F1: a validator can outlive the claim it enforces. If a wave is authorised to change a released domain, it re-binds this contract in a new record naming what changed and why; it does not edit the hash here",
+   "claim": "the four released domains resolve identically after the seam exists; their derived descriptors and the registry snapshot are unchanged",
+   "compat_hashes": {
+    "coding": "3c1d2ea892acb2a4e551ad50ee83c065d28c68b290c3830bf83ff3e36114871c",
+    "logic": "3e714bd9f3808d1c0ebc80ab746de0618d49811e028354c69b32a719438d0a06",
+    "mathematics": "2cb1f3513849aef6cc9c9b2688340bf8f409a2f09d60050f12155f4e6ae1a8c9",
+    "physics": "5f8560b3e845fc071f8bb69becae6923d88abd4e501fe51033368744d6dbd704"
+   },
+   "content_hash": "aad2b883f4a8bfbab996019c02fa24679c7d701af6aad6ddf6ceb10333bce025",
+   "item": "S22A-016",
+   "read_from": "sprint-22a-domain-survey.json",
+   "read_from_sha256": "5b6be6a4c4554d5c2be5324cc4ff63f157a11252e9fe05d3cc0a6ae996ed077c",
+   "registry_snapshot_hash": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119",
+   "what_these_hashes_cannot_prove": "that no caller depended on DomainKind in a way the §2.3 reading breaks. The W1 replay over the whole released surface is the strongest available evidence, and W3-F1 says to run it rather than reason about it"
+  },
+  "descriptor_schema_v1": {
+   "closed_world": "unknown fields are refused, and every cross-reference — parent, related domain, shared concept, transfer target — must resolve inside the package's own declared world",
+   "content_hash": "a8c2f6a273f298df9a3e918dfb3e68fa6c89ace5d28d8a2f7eb827611aee04a5",
+   "fields": [
+    "capabilities",
+    "concepts",
+    "content_hash",
+    "corpora",
+    "display_name",
+    "domain_id",
+    "lifecycle",
+    "parent_domain_id",
+    "problem_types",
+    "provenance",
+    "related_domain_ids",
+    "revision",
+    "schema_version",
+    "transfer_links"
+   ],
+   "id_grammar": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$",
+   "id_max_length": 64,
+   "identity": [
+    "domain_id",
+    "revision"
+   ],
+   "item": "S22A-013",
+   "json_schema_sha256": "d34d4e0b89accb74b7e4fae6826863d64239a97de60d1c4a6492a44d9798087f",
+   "lifecycle_states": [
+    "pilot",
+    "active",
+    "deprecated",
+    "retired"
+   ],
+   "may_be_widened_by_a_wave": false,
+   "module": "src/cognitive_os/domain/descriptors.py",
+   "module_note": "the bytes as W0 merges them, which are not the bytes the baseline fingerprinted: W0-F2 and W0-F4 were fixed inside the wave, after the baseline was taken and before this publication. A baseline that moved to match would not be a baseline",
+   "module_sha256": "5e39ff688b52246df14a9eda8bdbd401e8a48751f44beb7f2e54f12c9dcd25e0",
+   "name": "DomainDescriptorV1",
+   "package_max_bytes": 65536,
+   "package_may_claim_lifecycle": [
+    "pilot"
+   ],
+   "re_registration_rule": "the registry refuses re-registration of an existing (domain_id, revision) rather than replacing it. W1-F2's lesson: a duplicate key that silently replaces its predecessor is the failure mode of every registry",
+   "schema_version": 1,
+   "supersession_rule": "a changed domain is a new revision with the old one intact; revision supersession is a governance path, never a package upload",
+   "why_frozen_now": "a schema a pilot may widen is not a boundary. Both pilots register through this exact contract or they are the finding",
+   "why_only_pilot": "every other state is reached by a governed promotion with evidence behind it, so a package arriving as `active` claims the promotion as well as the domain. W0-F2: the module documented this rule and enforced it nowhere"
+  },
+  "enum_reading": {
+   "content_hash": "e50bad883d849dc25f56a3236cac6fe7a2c2cbf8d8874719aad8508555dd6d4d",
+   "coupling_at_publication": {
+    "counted_from": "the AST of src/cognitive_os, sealed in the survey record",
+    "modules": 9,
+    "references": 57
+   },
+   "coupling_may_grow": false,
+   "in_scope_for_the_seam": [
+    "the per-domain metadata tables in domains/registry.py",
+    "the adapter boundary in domain/descriptors.py"
+   ],
+   "item": "S22A-014",
+   "new_domains_exist_only_as_descriptors": true,
+   "new_enum_member_may_be_added": false,
+   "out_of_scope": "every other DomainKind reference. 57 references invite a refactor crusade; the exit needs the released four unchanged and the pilots possible, and nothing else",
+   "reading": "DomainKind survives as the adapter's closed vocabulary for the four released domains, and everything general moves behind the descriptor boundary",
+   "released_ids_are_the_enum_values_verbatim": {
+    "coding": "coding",
+    "logic": "logic",
+    "mathematics": "mathematics",
+    "physics": "physics"
+   },
+   "section": "§2.3, the one reading W0 freezes",
+   "silo_regression": "registering both pilots adds zero new branches on DomainKind; the AST count is recomputed in W3 and must not have grown",
+   "the_fence_is_a_finding_not_an_exception": "the day a fifth domain needs what only the enum's members get, that is a finding belonging to a successor sprint's contract, not a quiet exception",
+   "why_verbatim": "so every stored record that says 'coding' today resolves to the descriptor of the same name without a migration"
+  },
+  "exit_and_decision_tree": {
+   "content_hash": "90ee9483402987053b985c361ea415a8f06e85e26556a74f09ee79b9e80a0f31",
+   "endings": {
+    "1_pass": "all four criteria hold on executed evidence; annotated tag sprint-22a-domain-baseline after exact-head CI, never moved",
+    "2_verification_floor_not_met": "a pilot's honest verification floor cannot be met by deterministic kernels. A typed negative under sprint-22a-evidence-baseline; this is a finding about the boundary between 22A and 22C, not a reason to lower the floor",
+    "3_storage_schema_reached_for": "a wave finds itself allocating migration 0016. Stop and surface: the exit criterion has been left, and no wave may take that decision",
+    "4_released_behaviour_moved": "a compat hash, the registry snapshot hash or the released replay changes. Stop: the four released domains must not be able to tell the seam exists",
+    "5_silo": "the pilots register but the coupling count grows, or a cross-domain item is stored twice. The registry is a silo generator wearing a descriptor schema, and the negative says so"
+   },
+   "exit_criteria": [
+    "both new domains register without changing the core controller or the storage schema",
+    "cross-domain items are stored once and exposed through multiple governed views",
+    "global and per-domain replay remain green",
+    "invalid domain packages fail closed"
+   ],
+   "item": "S22A-018",
+   "no_ending_may_be_chosen_after_the_evidence": true,
+   "the_gate_is_the_sprints_own_exit": "no Gate L2 or D1 threshold, no amendment, no migration, no new learner. The exit criteria were frozen in the execution sprint allocation",
+   "two_pilots_prove_extensibility_not_generality": "both lean on unit-carrying deterministic verification, the substrate the released physics domain built. A domain whose verification is not reducible to deterministic kernels is the 22C question and is deliberately not attempted here"
+  },
+  "pilot_domains": {
+   "a_candidate_that_cannot_be_verified_is_recorded_as_excluded": true,
+   "chosen_before_any_registration_exists": true,
+   "content_hash": "2749f6dea0ba90c4fa89719582fc4ccbf38096647c9b81d2ad56f45724c525e1",
+   "domain_ids": [
+    "engineering.mechanics",
+    "science.chemistry"
+   ],
+   "honesty_floor": "a problem type enters a pilot only if a deterministic kernel can judge it. A domain whose verifier cannot actually verify is a silo wearing a lifecycle field",
+   "item": "S22A-015",
+   "lifecycle": "pilot",
+   "may_be_substituted_after_a_failure": false,
+   "planned_surfaces": {
+    "engineering.mechanics": "statics equilibrium and uniform-motion/force-balance checks — unit-carrying computations the released physics.dimension and physics.quantity verifiers already judge",
+    "science.chemistry": "stoichiometric mass balance and molar-quantity conversion — exact arithmetic over declared atomic masses with unit dimensions, judged by the existing quantity/dimension verifiers plus one new capability name whose verifier is a deterministic kernel, not a model"
+   },
+   "revision": 1,
+   "shared_concepts": "declared into physics; multi-domain membership is stored once and exposed through both governed views, never copied into a second domain",
+   "the_w3_record_must_show_a_failure": "a chemistry candidate failing verification for a real reason, not only candidates passing — a verifier that has never failed is a hope",
+   "why_not": "answering 'does a domain register?' by choosing an easier domain after seeing the answer measures the chooser, not the registry"
+  },
+  "storage_without_a_schema": {
+   "0016_is_a_refusal": "the exit criterion forbids a storage-schema change, so a wave that finds itself allocating a migration has left the sprint's own contract; that is a stop to surface, not a plan item",
+   "content_hash": "b4c5efdb2268a3ff86e74bbd025ed6bce1c1db15386695c53f2c5773a5fbd985",
+   "core_controller_changed": false,
+   "item": "S22A-017",
+   "migration_head": "0015",
+   "planned_22a_migration": null,
+   "rule": "descriptors are HashedExperienceContracts: they persist as content-addressed artifacts and evidence records through the released artifact service, exactly as every Sprint 21 sealed object did",
+   "startup_rebuild": "the registry's loaded state is rebuilt from artifact bytes at startup and refuses a descriptor whose stored hash does not match its content",
+   "the_seam_the_slice_must_cross": "separate processes, because the startup rebuild is the one place 'storage without a schema' can silently become 'state in memory' — D7's lifecycle lesson: separate processes or it proved nothing"
+  }
+ },
+ "inherited_unchanged": {
+  "execution_contract": "sections 0.1 through 0.4 of the Sprint 21D4 technical backlog, incorporated by reference: the meaning of done, the wave discipline, the evidence-record shape, and the rule that a wave's defects are fixed inside the wave",
+  "gate_d1": "conditions 6, 7 and 15 closed by D7; untouched here",
+  "gate_l2": "passes at 29 of 29; 22A opens no condition and closes none",
+  "learning_surface": "the live correction component keeps routing its five canary groups; 22A replays that surface and changes nothing in it",
+  "migration_head": "0015"
+ },
+ "integrity_content_hash": "fe579caa439ed558fc04ca30511cbe4f7601468087c7721f19de3fd9a4fb3e3d",
+ "items": [
+  "S22A-013",
+  "S22A-014",
+  "S22A-015",
+  "S22A-016",
+  "S22A-017",
+  "S22A-018"
+ ],
+ "measured_values": 0,
+ "recorded_at": "2026-08-11T10:56:54Z",
+ "revision": 1,
+ "schema_version": 1,
+ "sprint": "22A",
+ "thresholds_changed": {
+  "amendments_made_by_22a": 0,
+  "count": 0
+ },
+ "wave": "W0",
+ "what_this_revision_freezes": [
+  "the descriptor schema v1 and its package boundary",
+  "the §2.3 enum reading",
+  "the two pilot domain ids",
+  "the four backward-compatibility hashes and the registry snapshot hash"
+ ]
+}

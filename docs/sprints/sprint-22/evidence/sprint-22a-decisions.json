@@ -1,0 +1,98 @@
+{
+ "authority": {
+  "instruction": "execute the W0 wave of the attached plan",
+  "reading": "the backlog names both §2.2 decisions as W0's business and the instruction to execute W0 under it carries them. The rung either/or was put to the gate owner explicitly, with both branches priced out of the sealed D7 evidence rather than described, and the answer was to defer it under its own record",
+  "role": "sprint and gate owner",
+  "shown": [
+   "sprint-22a-technical-backlog.md §2.2a, the either/or and why it is not free",
+   "sprint-22a-technical-backlog.md §2.2b, the steady-state door",
+   "sprint-21d7-ladder-ruling.json, the per-corpus rung prices",
+   "sprint-21d7-runtime.json, the released fallback and its seventeen codes"
+  ]
+ },
+ "decisions": {
+  "rung_as_product": {
+   "blocks_no_item_in_this_plan": true,
+   "content_hash": "0dcf03d63a5f3b5b9cbc15099795fb44d52eaccc9fde028a26f38f2b334a449e",
+   "decision": "deferred to its own governed record; not taken by 22A, not refused",
+   "gate_condition_touched_if_taken": 23,
+   "item": "S22A-010",
+   "prices": {
+    "fallback_codes": 17,
+    "fallback_decisions_exercised": 100,
+    "fallback_is_immediate": "the ordering is a pure function of the four candidates and the frozen slot order; no model is loaded, no store is read and no network call is made on any fallback path, so the fallback is the first thing that happens rather than what happens after something else fails",
+    "per_corpus": {
+     "d5_calibration": {
+      "containment_rung_rate": "0.92",
+      "released_fallback_rate": "0.41",
+      "strongest_released_rate": "0.42",
+      "strongest_released_rung": "fixed_input_order"
+     },
+     "d6_certification": {
+      "containment_rung_rate": "0.84",
+      "released_fallback_rate": "0.62",
+      "strongest_released_rate": "0.62",
+      "strongest_released_rung": "lexical_similarity"
+     }
+    },
+    "read_from": {
+     "sprint-21d7-ladder-ruling.json": "0648bdd0540997038deaa964dd858ce7ad8bff18b10a4f3f61f32dd55b4ba3ac",
+     "sprint-21d7-runtime.json": "62912d4c5cec94b9be75d7fcdb383bec08ffbd225fdbd7a935d4e6f14f7fbae0"
+    },
+    "released_runtime_fallback_rung": "lexical_similarity"
+   },
+   "question": "does 22A make the deterministic containment ordering the released runtime's deterministic advisory, in place of the lexical ordering?",
+   "released_runtime_changed_by_this_decision": false,
+   "successor_may_take_it": "any sprint may take it under its own record, with condition 23 re-evidenced and the fallback swap replayed. Deferral is not a refusal and does not expire",
+   "thresholds_changed": 0,
+   "what_deferral_buys": "22A's exit criteria are about domain registration and say nothing about the correction surface. Taking the swap here would add a released-runtime change, a re-evidenced gate condition and a second replay bill to a sprint whose longest item is already replay",
+   "what_deferral_costs": "the sealed margin stays unbanked: on the D6 pool the containment ordering first-choices 0.84 where the released fallback reaches 0.62, and on the D5 pool 0.92 against 0.41. The number is not lost, it is unspent",
+   "why_it_is_not_free": "the released runtime's deterministic fallback is gate evidence. Gate L2 condition 23 is closed on a record that names the lexical ordering and reports every fallback code reached, so changing the advisory re-opens that condition and needs its own evidence trail — it is a governed change to a released surface, or it is not done at all",
+   "why_the_question_exists": "the containment ordering is deterministic, label-free and computable before the sandbox runs, and it outranks the released fallback on both sealed pools. The D7 handoff named it the cheap win"
+  },
+  "steady_state_door": {
+   "canary_groups_routed": 5,
+   "canary_routing_changed_by_22a": false,
+   "content_hash": "ef761770dc716da74be8f0003c9a58c7173455990047b2ae20f58fc19be589cd",
+   "current_state": "learned.containment.correction_ranking is active on experience.correction_ranking, bounded to five canary groups; the bounded steady-state configuration is sealed and was never entered",
+   "decision": "no; the door stays closed and this is a decision, not a default",
+   "item": "S22A-011",
+   "question": "does 22A promote the learned correction component out of its bounded canary configuration into the sealed steady state?",
+   "the_named_key": "the sealed canary→steady transition condition — canary tasks, safety regressions, verifier disagreements — remains the only way through, and taking it is the gate owner's separate governed decision",
+   "thresholds_changed": 0,
+   "why_not_here": "22A varies nothing that learns. A domain expansion that varies candidate count or repair completeness dissolves the containment signal by design, so a promotion decided beside a domain expansion would be decided on evidence about a different population"
+  }
+ },
+ "gate_state_read": {
+  "counts": {
+   "carried": 0,
+   "failed": 0,
+   "met": 29,
+   "met_as_rejection": 0,
+   "not_opened": 0,
+   "pending": 0
+  },
+  "gate_l2": "gate_l2_passes",
+  "source_sha256": "f4d72a1c1bb885bb3848aded6013c3bcae8d8cb4727f211cc354f1c9c0aa49f3"
+ },
+ "integrity_content_hash": "7eebcc9c90538fc17ab480e691ff8d20801da0712228a85b665981a6a6a26641",
+ "items": [
+  "S22A-010",
+  "S22A-011"
+ ],
+ "measured_values": 0,
+ "recorded_at": "2026-08-11T10:41:59Z",
+ "schema_version": 1,
+ "sprint": "22A",
+ "thresholds_changed": {
+  "amendments_made_by_22a": 0,
+  "count": 0
+ },
+ "wave": "W0",
+ "what_these_decisions_do_not_change": [
+  "the conformal bar, the admitted set, the routed groups or any §2.3 threshold",
+  "the released ladder, its six rungs or any released ladder record",
+  "the released runtime's deterministic fallback path or its reason codes",
+  "any Gate L2 or Gate D1 condition, all of which stay exactly as D7 closed them"
+ ]
+}
