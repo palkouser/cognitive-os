@@ -1,0 +1,111 @@
+{
+ "chronology": {
+  "d7_certification_campaign_opened_by_an_authority_record": false,
+  "d7_certification_decisions_scored": 0,
+  "d7_conformal_bars_derived": 0,
+  "d7_directions_fitted_in_wave": 0,
+  "d7_final_or_canary_outcomes_inspected": false,
+  "d7_ladder_measurements_on_the_fresh_corpus": 0,
+  "other_records_present": [
+   "sprint-21d7-certification-campaign.json",
+   "sprint-21d7-feature-seals.json",
+   "sprint-21d7-snapshots.json",
+   "sprint-21d7-vertical-slice.json"
+  ],
+  "the_ladder_rulings_own_test": "S21D7-011: refusing the rung is legitimate and deciding it after seeing W2's numbers is not. The counters above are what make this the former",
+  "w1_measurement_records_present": [
+   "sprint-21d7-vertical-slice.json",
+   "sprint-21d7-feature-seals.json",
+   "sprint-21d7-certification-campaign.json",
+   "sprint-21d7-snapshots.json"
+  ],
+  "why_w1_records_do_not_close_the_window": "W1 measured the corpus: which bodies pass which suite, what the seven channels of each candidate are, and that the roles are separated. It scored no decision, derived no bar and read no margin. A ruling chosen to suit W1's numbers could only be a ruling about the corpus, and none of the three below is"
+ },
+ "integrity_content_hash": "1f42f706e5bcc73583b51c14f44b888132751362e4507b60f01ff618b439d963",
+ "items": [
+  "S21D7-027"
+ ],
+ "ladder_after_this_ruling": [
+  "fixed_input_order",
+  "deterministic_static_ordering",
+  "lexical_similarity",
+  "frozen_minilm_cosine",
+  "width_20_bounded_graph"
+ ],
+ "ruling": "S21D7-011 is superseded: the containment ordering is not seated on the ladder, the frozen five stand, and W2 reports the containment rung as an unseated measurement",
+ "schema_version": 1,
+ "sprint": "21D7",
+ "supersedes": {
+  "file_sha256": "0648bdd0540997038deaa964dd858ce7ad8bff18b10a4f3f61f32dd55b4ba3ac",
+  "integrity_content_hash": "e9553eb0ee1016bd7a4a1a34f3be4bfba3c117e71e9ab1c74fdbcb3f6aefa6cb",
+  "items": [
+   "S21D7-011"
+  ],
+  "record": "sprint-21d7-ladder-ruling.json",
+  "the_record_is_not_rewritten": "S21D7-011 stays exactly as it was sealed, including its hash in revision 7's children. A superseded ruling that is edited is a ruling nobody can audit"
+ },
+ "the_branch_this_takes": "the frozen five stand, \u00a72.3 reads lexical_similarity as the strongest rung on a D6-shaped corpus, and W2 reports the containment rung as an unseated measurement. A legitimate outcome, not a stop",
+ "thresholds_changed": 0,
+ "wave": "W2",
+ "what_it_costs": "the baseline \u00a72.3 reads falls from the containment rate to the strongest released rate \u2014 0.84 to 0.62 on a D6-shaped corpus by the superseded ruling's own figures. This is the easier side, and taking it after the pre-flight measured the seated side's consequence is exactly the sequence the original ruling warned about. What makes it legitimate is the chronology: the consequence was measured on the two spent corpora, no fresh decision has been scored, and this record predates the first one. What it costs in the report is that D7's baseline is the released one and no claim may be made against the containment ordering as a baseline",
+ "what_it_does_not_change": [
+  "the five released rungs, their implementations and their eligibility rules",
+  "any released ladder record; D2 through D6 measured the five and stay as they are",
+  "any threshold: the first-choice condition is 'strictly above the strongest rung' either way, and only which rung that is has moved",
+  "the containment share itself, which the class still fits as one of its seven channels; unseating the rung is about the deterministic baseline, not the feature"
+ ],
+ "what_the_measurement_said": {
+  "corpora": [
+   {
+    "agreement_with_the_containment_rung": 86,
+    "by_descending_margin": {
+     "40": {
+      "changed": 0,
+      "class_first_choice": 40,
+      "rung_first_choice_on_the_same_decisions": 40
+     },
+     "46": {
+      "changed": 0,
+      "class_first_choice": 46,
+      "rung_first_choice_on_the_same_decisions": 46
+     },
+     "50": {
+      "changed": 0,
+      "class_first_choice": 50,
+      "rung_first_choice_on_the_same_decisions": 50
+     }
+    },
+    "changed_whole_corpus": 14,
+    "corpus": "d5_calibration_spent",
+    "decisions": 100
+   },
+   {
+    "agreement_with_the_containment_rung": 89,
+    "by_descending_margin": {
+     "40": {
+      "changed": 0,
+      "class_first_choice": 40,
+      "rung_first_choice_on_the_same_decisions": 40
+     },
+     "46": {
+      "changed": 0,
+      "class_first_choice": 46,
+      "rung_first_choice_on_the_same_decisions": 46
+     },
+     "50": {
+      "changed": 0,
+      "class_first_choice": 49,
+      "rung_first_choice_on_the_same_decisions": 49
+     }
+    },
+    "changed_whole_corpus": 11,
+    "corpus": "d6_certification_spent_now_bar_setting",
+    "decisions": 100
+   }
+  ],
+  "measured_on": "the two spent published corpora and nothing else",
+  "reading": "under the seated pairing the fitted class agrees with the containment rung on every decision in its top-margin range on both spent corpora, so the design estimate for changed-decisions-among-admitted is zero against a floor needing at least a third of the admitted set"
+ },
+ "what_w2_still_measures": "all five released rungs on the fresh corpus, and the containment ordering beside them as an unseated measurement. \u00a72.3 reads whichever released rung is strongest there; the ladder ruling's own figures make that lexical_similarity on a D6-shaped corpus and fixed_input_order on a D5-shaped one, and the fresh corpus decides for itself",
+ "why_this_is_decided_now_and_could_not_be_later": "refusing the rung is legitimate and deciding it after seeing W2's numbers is not. A ladder chosen once the learned rate is known is a baseline chosen to be beaten, which is the one failure a deterministic baseline exists to prevent"
+}
