@@ -25,6 +25,8 @@ whose record `test_sprint_22b_w0_evidence.py` binds.
 from __future__ import annotations
 
 import importlib.util
+import time
+from itertools import islice
 from pathlib import Path
 from typing import Any
 
@@ -58,6 +60,54 @@ def test_corpus_rows_are_reproducible() -> None:
     second = module.corpus_rows("clustered", 32)
     assert first == second
     assert len(first) == 32
+
+
+def test_the_stream_and_the_addressed_rows_are_the_same_corpus() -> None:
+    """W1-F1's fix, asserted: one draw order, two entry points, no way to disagree.
+
+    The batched loader streams and the tests address by offset. If those could diverge, a
+    million-row corpus would not be the corpus its own reproduction check describes.
+    """
+    module = _module()
+    streamed = list(islice(module.corpus_stream("clustered"), 400))
+    assert streamed == module.corpus_rows("clustered", 400)
+    assert streamed[350:] == module.corpus_rows("clustered", 50, offset=350)
+
+
+def test_the_stream_costs_the_same_per_row_wherever_it_is() -> None:
+    """W1-F1: the old loader re-drew every prior row, which made a 10^6 load quadratic.
+
+    This asserts the shape of the cost rather than a wall-clock number: pulling the second
+    thousand rows from a live stream must not cost meaningfully more than the first, because
+    at 10^6 the difference between those two was 46 hours and 6 minutes.
+    """
+    module = _module()
+    stream = module.corpus_stream("clustered")
+    first = time.perf_counter()
+    list(islice(stream, 1_000))
+    first = time.perf_counter() - first
+    second = time.perf_counter()
+    list(islice(stream, 1_000))
+    second = time.perf_counter() - second
+    assert second < first * 3
+
+
+def test_each_dataset_gets_its_own_corpus_table() -> None:
+    """W1-F3: one shared table meant the second 10^6 corpus dropped the first."""
+    module = _module()
+    names = {dataset: module.corpus_table(dataset) for dataset in module.DATASETS}
+    assert len(set(names.values())) == len(names)
+    assert all(name.startswith(module.CORPUS_TABLE) for name in names.values())
+
+
+def test_the_artifact_source_is_outside_the_frozen_recipes() -> None:
+    """W1-D1: where the bytes are copied from is not part of what a restore must reproduce."""
+    module = _module()
+    assert "source_path" not in module.LIVE_LEARNED_ARTIFACT
+    assert module.LIVE_LEARNED_ARTIFACT_SOURCE["path"].endswith(
+        module.LIVE_LEARNED_ARTIFACT["artifact_hash"]
+    )
+    assert "live_learned_artifact_source" not in module.RECIPES
 
 
 def test_corpus_rows_are_stable_across_batch_boundaries() -> None:

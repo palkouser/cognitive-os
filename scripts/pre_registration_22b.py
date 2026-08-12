@@ -30,7 +30,9 @@ import argparse
 import hashlib
 import importlib.util
 import json
+import subprocess
 import sys
+import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -44,6 +46,25 @@ OUTPUTS = {
     "contracts": EVIDENCE / "sprint-22b-contracts.json",
     "pre_registration": EVIDENCE / "sprint-22b-pre-registration.json",
 }
+
+#: W1-F2. Revision 1 pinned `scale_22b.py`'s **bytes**, which made every defect fix in a
+#: driver a contract violation — and W1's first act was a defect fix the sprint could not
+#: proceed without. The thing that must not move is the *corpus and the readings*, not the
+#: implementation that produces them.
+#:
+#: The pin is not loosened and the pre-registration is never edited. Instead a driver change
+#: must be **re-bound** through this record, which re-derives the pinned implementation from
+#: git history and *executes* both implementations to prove they draw the same rows. A change
+#: that alters a drawn row, or the recipes hash, or the shape enumeration, cannot be re-bound
+#: at all — it is a finding, and the sprint stops on it.
+REBIND = EVIDENCE / "sprint-22b-driver-rebind.json"
+
+#: How much of the corpus the identity proof draws from each implementation, per dataset. The
+#: draw order is a single RNG stream, so a divergence anywhere shows up at the first row after
+#: it; the offset window catches a change that only affects addressing.
+REBIND_SAMPLE_ROWS = 1_500
+REBIND_OFFSET = 1_400
+REBIND_OFFSET_ROWS = 100
 
 #: The W0 authority records this publication rests on. Each establishes authority or proves a
 #: driver runs; none decides an exit criterion.
@@ -423,6 +444,232 @@ def _write() -> None:
     )
 
 
+def _module_from_source(source: str, name: str) -> Any:
+    """Load a driver implementation from source text, with its repository root preserved.
+
+    The module resolves `REPO` from its own `__file__`, so a historical copy written to a
+    scratch directory would fail to import the released generators it composes over. The root
+    is pinned to this repository instead, which is the whole point: both implementations must
+    draw from the *same* released harness.
+    """
+    scratch = Path(tempfile.mkdtemp(prefix="scale22b-rebind-")) / f"{name}.py"
+    scratch.write_text(
+        source.replace(
+            "REPO = Path(__file__).resolve().parent.parent", f"REPO = Path({str(REPO)!r})"
+        ),
+        encoding="utf-8",
+    )
+    spec = importlib.util.spec_from_file_location(name, scratch)
+    if spec is None or spec.loader is None:
+        raise SystemExit(f"could not load driver implementation {name}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _pinned_source(pinned_hash: str) -> tuple[str, str]:
+    """The exact bytes revision 1 pinned, found in history rather than reconstructed."""
+    commits = subprocess.run(
+        ["git", "log", "--format=%H", "--", "scripts/scale_22b.py"],
+        cwd=REPO,
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout.split()
+    for commit in commits:
+        blob = subprocess.run(
+            ["git", "show", f"{commit}:scripts/scale_22b.py"],
+            cwd=REPO,
+            capture_output=True,
+            check=True,
+        ).stdout
+        if _sha256(blob) == pinned_hash:
+            return blob.decode("utf-8"), commit
+    raise SystemExit(
+        "the implementation revision 1 pinned is not in this repository's history, so the "
+        "corpus it drew cannot be reproduced and no re-binding is possible"
+    )
+
+
+def _identity_proof() -> dict[str, Any]:
+    """Execute both implementations and compare what they draw. Recomputed, never asserted."""
+    pre = _load(OUTPUTS["pre_registration"])
+    pinned_hash = pre["drivers_module_sha256"]
+    current_hash = _sha256(DRIVERS.read_bytes())
+    source, commit = _pinned_source(pinned_hash)
+
+    pinned = _module_from_source(source, "scale_22b_pinned")
+    current = _module_from_source(DRIVERS.read_text(encoding="utf-8"), "scale_22b_current")
+
+    datasets: dict[str, Any] = {}
+    for dataset in sorted(pinned.DATASETS):
+        head_before = pinned.corpus_rows(dataset, REBIND_SAMPLE_ROWS)
+        head_after = current.corpus_rows(dataset, REBIND_SAMPLE_ROWS)
+        window_before = pinned.corpus_rows(dataset, REBIND_OFFSET_ROWS, offset=REBIND_OFFSET)
+        window_after = current.corpus_rows(dataset, REBIND_OFFSET_ROWS, offset=REBIND_OFFSET)
+        datasets[dataset] = {
+            "rows_compared": REBIND_SAMPLE_ROWS + REBIND_OFFSET_ROWS,
+            "head_identical": head_before == head_after,
+            "offset_window_identical": window_before == window_after,
+            "addressing_agrees_with_stream": head_after[REBIND_OFFSET:] == window_after,
+            "rows_sha256_before": _sha256(_canonical(head_before + window_before)),
+            "rows_sha256_after": _sha256(_canonical(head_after + window_after)),
+        }
+
+    return {
+        "from_sha256": pinned_hash,
+        "from_commit": commit,
+        "to_sha256": current_hash,
+        "datasets": datasets,
+        "corpus_identical": all(
+            entry["head_identical"]
+            and entry["offset_window_identical"]
+            and entry["rows_sha256_before"] == entry["rows_sha256_after"]
+            for entry in datasets.values()
+        ),
+        "recipes_hash_before": pinned.recipes_hash(),
+        "recipes_hash_after": current.recipes_hash(),
+        "recipes_unchanged": pinned.recipes_hash() == current.recipes_hash(),
+        "query_shapes_before": sorted(pinned.QUERY_SHAPES),
+        "query_shapes_after": sorted(current.QUERY_SHAPES),
+        "shapes_unchanged": sorted(pinned.QUERY_SHAPES) == sorted(current.QUERY_SHAPES),
+    }
+
+
+def _rebind(reason: str) -> None:
+    proof = _identity_proof()
+    if not (proof["corpus_identical"] and proof["recipes_unchanged"] and proof["shapes_unchanged"]):
+        raise SystemExit(
+            "this driver change alters the corpus, the recipes or the measured shapes. It "
+            "cannot be re-bound: that is a finding, and the sprint stops on it rather than "
+            "re-pointing its own authority at a different experiment"
+        )
+    record = {
+        "schema_version": 1,
+        "sprint": "22B",
+        "wave": "W1",
+        "items": ["S22B-020"],
+        "recorded_at": datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+        "pre_registration_sha256": _sha256(OUTPUTS["pre_registration"].read_bytes()),
+        "reason": reason,
+        "proof": proof,
+        "what_this_is_not": (
+            "not an amendment. No reading moved, no threshold moved and the pre-registration "
+            "is not edited: revision 1 still pins the implementation it pinned. This record "
+            "carries the executed proof that the implementation now in the tree draws the same "
+            "corpus, so the pin follows the defect fix instead of forbidding it"
+        ),
+        "what_cannot_be_re_bound": (
+            "a change that alters a drawn row, the recipes hash or the seven measured shapes. "
+            "The proof is executed on every --check, so this record cannot outlive its truth"
+        ),
+    }
+    record["integrity_content_hash"] = _sha256(_canonical(record))
+    REBIND.write_text(
+        json.dumps(record, indent=1, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+    print(
+        json.dumps(
+            {
+                "output": REBIND.name,
+                "from_sha256": proof["from_sha256"][:16],
+                "from_commit": proof["from_commit"][:12],
+                "to_sha256": proof["to_sha256"][:16],
+                "corpus_identical": proof["corpus_identical"],
+                "recipes_unchanged": proof["recipes_unchanged"],
+                "shapes_unchanged": proof["shapes_unchanged"],
+                "rows_compared": sum(
+                    entry["rows_compared"] for entry in proof["datasets"].values()
+                ),
+            },
+            indent=1,
+            sort_keys=True,
+        )
+    )
+
+
+def _drivers_are_bound(pre: dict[str, Any]) -> dict[str, Any]:
+    """The module pin, satisfied directly or through a re-binding whose proof still executes."""
+    current = _sha256(DRIVERS.read_bytes())
+    if current == pre["drivers_module_sha256"]:
+        return {"bound": "directly", "sha256": current}
+    if not REBIND.exists():
+        raise SystemExit(
+            "scripts/scale_22b.py changed after the pre-registration was published, and no "
+            "re-binding record justifies it"
+        )
+    record = _load(REBIND)
+    _verify_seal(REBIND, record)
+    if record["pre_registration_sha256"] != _sha256(OUTPUTS["pre_registration"].read_bytes()):
+        raise SystemExit("the re-binding record does not belong to this pre-registration")
+    if record["proof"]["from_sha256"] != pre["drivers_module_sha256"]:
+        raise SystemExit("the re-binding record starts from a different implementation")
+    if record["proof"]["to_sha256"] != current:
+        raise SystemExit(
+            "scripts/scale_22b.py has changed again since it was re-bound; re-run --rebind"
+        )
+    # Executed, not read back: the record's own claim is recomputed here, so a re-binding
+    # cannot outlive the identity it asserts (22A W4-F2).
+    proof = _identity_proof()
+    if not (proof["corpus_identical"] and proof["recipes_unchanged"] and proof["shapes_unchanged"]):
+        raise SystemExit("the re-binding record's identity proof no longer reproduces")
+    return {
+        "bound": "through a re-binding",
+        "sha256": current,
+        "from_sha256": record["proof"]["from_sha256"],
+        "reason": record["reason"],
+        "proof_recomputed": True,
+    }
+
+
+HOST_CHANGE = EVIDENCE / "sprint-22b-host-change.json"
+
+
+def _host_is_bound(pre: dict[str, Any]) -> dict[str, Any]:
+    """The declared host, either the one revision 1 bound or a sealed successor to it.
+
+    W1-F5 forced this. A driver re-binding can prove nothing changed; a host change cannot —
+    the machine really is different, and pretending otherwise would be the exact dishonesty
+    §1.4 and §4 exist to prevent. So the successor is admitted only through a sealed record
+    that names both hosts, the invariant groups that differ, and what the delta can and cannot
+    affect. Every number measured afterwards binds the successor, and the chain says so.
+    """
+    original = _load(EVIDENCE / "sprint-22b-reference-host.json")
+    if original["invariants_hash"] == pre["reference_host_invariants_hash"] and not (
+        HOST_CHANGE.exists()
+    ):
+        return {"host_id": original["host_id"], "bound": "as published"}
+    if not HOST_CHANGE.exists():
+        raise SystemExit(
+            "the reference-host record no longer matches the one 22B bound, and no host-change "
+            "record justifies it"
+        )
+    change = _load(HOST_CHANGE)
+    _verify_seal(HOST_CHANGE, change)
+    if change["from_invariants_hash"] != pre["reference_host_invariants_hash"]:
+        raise SystemExit("the host-change record starts from a host 22B never bound")
+    if change["from_invariants_hash"] != original["invariants_hash"]:
+        raise SystemExit("the superseded host record has been edited rather than superseded")
+    successor = _load(EVIDENCE / "sprint-22b-reference-host-2.json")
+    _verify_seal(EVIDENCE / "sprint-22b-reference-host-2.json", successor)
+    if successor["invariants_hash"] != change["to_invariants_hash"]:
+        raise SystemExit("the successor host record does not match the sealed change")
+    if _sha256(_canonical(successor["invariants"])) != successor["invariants_hash"]:
+        raise SystemExit("the successor host's invariants hash does not reproduce")
+    if not change["postgres_settings_unchanged"]:
+        raise SystemExit(
+            "the host change moved a sealed PostgreSQL setting. §2.3 forbids tuning a "
+            "pre-registered configuration, and a host change is not a licence to do it"
+        )
+    return {
+        "host_id": successor["host_id"],
+        "bound": "through a sealed host change",
+        "from_host_id": change["from_host_id"],
+        "invariant_groups_changed": change["invariant_groups_changed"],
+        "reason": change["reason"],
+    }
+
+
 def _verify_seal(path: Path, document: dict[str, Any]) -> None:
     body = {key: value for key, value in document.items() if key != "integrity_content_hash"}
     if _sha256(_canonical(body)) != document.get("integrity_content_hash"):
@@ -454,8 +701,7 @@ def _check() -> None:
             "protocol, a filter selectivity or the graph configuration changed after "
             "publication"
         )
-    if _sha256(DRIVERS.read_bytes()) != pre["drivers_module_sha256"]:
-        raise SystemExit("scripts/scale_22b.py changed after the pre-registration was published")
+    binding = _drivers_are_bound(pre)
 
     contracts = documents["contracts"]["contracts"]
     if contracts["exit_criteria"]["criteria"] != EXIT_CRITERIA:
@@ -472,9 +718,7 @@ def _check() -> None:
     if contracts["filter_selectivity"]["predicate"] != drivers.FILTER_PREDICATE:
         raise SystemExit("the filtered-ANN predicate or its selectivity has changed")
 
-    host = _load(EVIDENCE / "sprint-22b-reference-host.json")
-    if host["invariants_hash"] != pre["reference_host_invariants_hash"]:
-        raise SystemExit("the reference-host record no longer matches the one 22B bound")
+    host = _host_is_bound(pre)
 
     if any(pre["chronology"].values()) or pre["measured_values"]:
         raise SystemExit("the pre-registration contains measured values")
@@ -492,7 +736,8 @@ def _check() -> None:
                 "exit_criteria_verified": len(EXIT_CRITERIA),
                 "query_shapes_verified": documents["contracts"]["query_shape_count"],
                 "recipes_hash_reproduces": True,
-                "reference_host_unchanged": True,
+                "drivers_module": binding,
+                "reference_host": host,
                 "pre_registration_sha256": _sha256(OUTPUTS["pre_registration"].read_bytes()),
                 "measured_values_before_publication": 0,
                 "thresholds_changed": 0,
@@ -532,15 +777,22 @@ def _check_chronology(later: tuple[Path, ...]) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
+    parser.add_argument(
+        "--rebind",
+        metavar="REASON",
+        help="re-bind the driver module pin after a defect fix, with an executed identity proof",
+    )
     parser.add_argument("--check-chronology", action="store_true")
     parser.add_argument("--later", nargs="*", default=[])
     arguments = parser.parse_args()
 
+    if arguments.rebind:
+        _rebind(arguments.rebind)
     if arguments.check:
         _check()
     if arguments.check_chronology:
         _check_chronology(tuple(Path(item) for item in arguments.later))
-    if not arguments.check and not arguments.check_chronology:
+    if not arguments.check and not arguments.check_chronology and not arguments.rebind:
         _write()
     return 0
 

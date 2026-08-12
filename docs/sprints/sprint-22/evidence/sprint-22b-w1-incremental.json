@@ -1,0 +1,13 @@
+{
+ "dataset": "clustered",
+ "index_present_during_insert": true,
+ "reads_an_exit_criterion": false,
+ "recipes_hash": "c99ef5e513816fe8db96c350a6283b3251858643e19816259a00fa7f973fb125",
+ "rows_after": 1010000,
+ "rows_before": 1000000,
+ "rows_inserted": 10000,
+ "rows_per_second": 26.1,
+ "seconds": 383.333,
+ "table": "memory_scale_22b_corpus_clustered",
+ "why": "the bulk load builds the index afterwards; a live system does not. This is the price of keeping a 10^6 HNSW index current, reported beside the load rate it should be compared against"
+}

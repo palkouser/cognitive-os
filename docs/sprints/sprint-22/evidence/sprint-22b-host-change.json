@@ -1,0 +1,29 @@
+{
+ "cpu_unchanged": true,
+ "every_22b_measurement_binds": "cogos-reference-host-2",
+ "from_host_id": "cogos-reference-host-1",
+ "from_invariants_hash": "811cbbb88af5767727595ce774e6d7757290ff91ec3d3c83d4fe27c1a1979c71",
+ "integrity_content_hash": "eae7673fde50c55f17bc68a415a221f48d22bc62e2037bc34a7f94cfa3bdb93f",
+ "invariant_groups_changed": [
+  "container"
+ ],
+ "items": [
+  "S22B-021"
+ ],
+ "memory_unchanged": true,
+ "postgres_settings_unchanged": true,
+ "reason": "W1-F5: Docker's default 64 MB /dev/shm cannot hold the dynamic shared memory a parallel HNSW build over 10^6 x 768 vectors allocates; the build died with DiskFullError on a host with 860 GB free. Raised to 2 GB in infra/compose/postgres.yml, and the host re-sealed under a new id rather than the sealed record being edited",
+ "recorded_at": "2026-08-12T10:41:13Z",
+ "schema_version": 1,
+ "shm_size_bytes_after": 2147483648,
+ "shm_size_bytes_before": null,
+ "shm_size_bytes_before_note": "null because host 1's record predates the field: W0 did not know shared memory was load-bearing, which is exactly why the ceiling went unmeasured until a 10^6 build hit it. The value in force at that time was Docker's default, 67108864 bytes, named by the failure itself — `could not resize shared memory segment to 63999488 bytes` against a 64 MB /dev/shm. It is reported here as the observed value at failure, not back-dated into host 1's sealed record",
+ "sprint": "22B",
+ "storage_unchanged": true,
+ "the_10_5_comparison": "the sealed 10^5 envelope was measured on host 1, under the 64 MB ceiling. Every 10^6 number in this sprint is measured on host 2, and the comparison between them carries this record. Neither number is wrong; they are numbers about two machines that differ in one declared way",
+ "to_host_id": "cogos-reference-host-2",
+ "to_invariants_hash": "1c3ab197e32ca498fe95fed3a9c9cc614d8b20917e21b331808634d0108ef5db",
+ "wave": "W1",
+ "what_this_can_affect": "it decides whether a parallel HNSW build over 10^6 vectors can allocate its dynamic shared memory at all, and it lifts a 64 MB ceiling that parallel *query* workers shared. The second half is why this is a host change rather than a footnote: a latency measured with more shared memory available is not measured on the machine host 1 described",
+ "what_this_cannot_affect": "recall. recall@10 is a property of the index and the probes, and no amount of shared memory changes which neighbours the graph finds"
+}

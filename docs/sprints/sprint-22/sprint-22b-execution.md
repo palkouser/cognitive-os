@@ -8,6 +8,13 @@
   scale, and revision 1 is published with `measured_values: 0`. **No threshold moved, no
   migration was allocated, and no released module changed** — the whole wave is new scripts,
   new tests and new evidence.
+- **W1 closed.** Both 10^6 datasets exist on the declared host, the storage report is sealed,
+  and the **governed-ingest exit criterion is met — 139.35 items/s over 50 000 items**, flat
+  across all ten deciles against a floor of 100. The restore round trip passes all four §2.2e
+  checks at a million rows, including the artifact leg that W0 could only show failing. The
+  whole suite runs green against the million-row store. **Six findings and two decisions**, all
+  handled inside the wave; the sharpest is that the host W0 declared could not build the index
+  the sprint's exits are defined over. **W0 detail follows first.**
 - Wave commit `613b546`, pull request **#233** against protected `main`; CI run
   **`31581697125`** on that exact head, **30 of 30 jobs successful**. The merge is the gate
   owner's, not the wave's — W0 leaves the branch reviewable rather than merged.
@@ -27,6 +34,261 @@
   bound to, and freezes every reading that could bend once numbers exist. Gate L2 and Gate D1
   are untouched: 22B opens no condition and closes none. W2-A1 and W3-A1 are carried forward by
   name, unresolved on purpose.
+
+---
+
+## W1 outcome — two million-item corpora, and the first exit criterion decided
+
+### The storage report, and what the 10^5 envelope predicted
+
+| | clustered 10^6 | uniform 10^6 | clustered 10^5 | uniform 10^5 |
+|---|---:|---:|---:|---:|
+| bulk load | 574.5 s (1740.8/s) | 558.4 s (1790.8/s) | 57.8 s | 56.5 s |
+| index build | **2081.4 s** | **3656.2 s** | 209.7 s | 437.9 s |
+| index size | 3.81 GiB | 3.81 GiB | 0.38 GiB | 0.38 GiB |
+| database | 7.86 GiB | 15.63 GiB (both) | — | — |
+
+**The build scaled linearly, and §1.2's arithmetic was pessimistic.** Ten times the rows cost
+9.93× the clustered build and 8.35× the uniform one; index size is exactly 10×. The backlog
+warned that "naive scaling puts a 10^6 build at over an hour" and budgeted the waves around it
+— clustered came in at 35 minutes, uniform at 61. Uniform stays roughly twice as expensive as
+clustered at both scales, which is the same adversarial geometry that collapses its recall
+showing up in construction cost.
+
+Disk: 22 GB used of 916, 848 GB free. Nothing here reads an exit criterion (§2.2c).
+
+### The governed-ingest exit — met, and flat
+
+**139.35 items/s sustained over 50 000 items**, against a floor of 100. Slowest decile
+**135.88/s**, fastest 140.54/s.
+
+| decile | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| items/s | 135.9 | 139.3 | 140.3 | 139.6 | 139.9 | 140.3 | 140.5 | 139.6 | 140.2 | 138.1 |
+
+§3.2 named this the wave's blind number: "Governed ingest has never been measured… If the first
+decile comes in far under, the honest moves are already ordered." They were not needed. The
+rate is not merely above the floor, it is **flat** — the first decile is the slowest and the
+tenth is within 2% of it, so the path does not fade as the store grows past fifty thousand
+governed records. This is the real path: a memory record, its provenance, its event and its
+revision, per item — not the bulk load, which reads no exit.
+
+**One of the five exit criteria is decided. It is met.**
+
+### Incremental insert — the number that should worry 22C
+
+Inserting into the corpus **after** its index exists costs **26.1 rows/s**, against 1740.8/s
+for the same rows loaded before the index was built. That is a **67× penalty** for keeping a
+million-item HNSW index current on the declared host, where the 3.81 GiB index cannot sit in
+128 MB of shared buffers and every insert pays random I/O into it.
+
+Set beside the governed-ingest number, it is the more interesting result: **governed ingest
+produces items 5.3× faster than the ANN index absorbs them** (139.4/s against 26.1/s). Nothing
+in 22B's exits reads this, and it is not a miss — but a deployment that ingests continuously
+and expects its ANN index to stay current cannot have both on this host. 22C's acquisition
+campaign is where that becomes a budget line rather than an observation.
+
+---
+
+## W1 findings — six defects and two decisions, before the first envelope
+
+W1's first act was the vertical slice §3.1 demands, and it earned its place immediately: the
+slice **did not finish twice in ten minutes** at 10^4, which is how the wave learned that two
+of its drivers were unusable at scale. Neither would have been visible by reading them.
+
+### W1-F1 — the batched corpus loader was quadratic
+
+`corpus_rows(dataset, count, offset=…)` re-seeded and re-drew every prior row on each call, and
+`create_corpus` called it once per batch. Measured at **0.33 ms per drawn row**, a 10^6 load in
+batches of 1000 would have drawn 5.0×10⁸ rows — **about 46 hours per dataset**, against roughly
+six minutes streamed.
+
+The fix makes `corpus_stream` the single definition of the draw order and has `corpus_rows`
+address into it, so a batch loader and a test cannot disagree about what row `i` is. **The rows
+are unchanged**: a single `random.Random` consumed sequentially yields exactly the sequence the
+discard loop reproduced, proved by executing both implementations (below).
+
+### W1-F2 — revision 1 pinned the implementation, not the experiment
+
+The pre-registration pinned `scale_22b.py`'s **bytes**, which made every driver defect fix a
+contract violation — and W1's first act was a fix the sprint could not proceed without. What
+must not move is the corpus and the readings, not the code that produces them.
+
+The pin is **not loosened and the pre-registration is not edited**. A driver change is admitted
+only through `sprint-22b-driver-rebind.json`, which re-derives the pinned implementation from
+git history and *executes both* to prove they draw the same rows. A change that alters a drawn
+row, the recipes hash or the seven shapes cannot be re-bound at all — it is a finding and the
+sprint stops on it. The proof is re-executed on every `--check`, so a re-binding cannot outlive
+the identity it asserts.
+
+### W1-F3 — one corpus table meant the second dataset destroyed the first
+
+`create_corpus` dropped and recreated a single shared table, so building the uniform 10^6 would
+have deleted the clustered one. W2 measures 500 probes per mode **per dataset**; both must
+exist at once, and rebuilding the other between waves would cost a second multi-hour build and
+make the two envelopes measurements of different machine states. Each dataset now gets its own
+table, named from the same frozen prefix so the recipes hash does not move.
+
+### W1-F4 — the concurrency driver deadlocked against its own readers
+
+`reindex_with_readers` is the driver that proves concurrent reads survive a reindex. It hung
+forever. A SQLAlchemy connection begins a transaction on its first statement and holds it until
+the block exits, so three readers looping inside `engine.connect()` held an `AccessShareLock`
+for their whole lifetime; `REINDEX INDEX CONCURRENTLY` waits for exactly those transactions,
+and they ended only after the reindex returned. Observed directly in `pg_stat_activity`: the
+reindex backend in `Lock/virtualxid`, all three readers `active`.
+
+**It passed at W0's 200 rows** because the reindex finished before the readers opened their
+first transaction — a race the driver won once and would have lost for hours at 10^6. Readers
+now run in `AUTOCOMMIT`, which is also the more honest measurement: a real concurrent reader is
+a stream of short queries, not one transaction held open across a maintenance operation. After
+the fix, 2.09 s and 8073 reader queries at p95 0.945 ms.
+
+### W1-F5 — the declared reference host could not build a 10^6 index
+
+With the loaders fixed, the 10^6 clustered corpus **loaded successfully — 1,000,000 rows** —
+and the HNSW build then died:
+
+```
+asyncpg.exceptions.DiskFullError: could not resize shared memory segment
+"/PostgreSQL.524334300" to 63999488 bytes: No space left on device
+```
+
+on a host with **860 GB of free disk**. The message names a disk that is not the problem.
+PostgreSQL allocates parallel workers' dynamic shared memory in the container's `/dev/shm`,
+which was Docker's default **64 MB**. No corpus below roughly 10^5 rows reaches that ceiling,
+which is why every sprint until this one ran under a limit nobody had measured — including the
+sealed 10^5 envelope.
+
+This is the sharpest kind of finding a scale sprint can produce: **the declared host, as W0
+sealed it, cannot take the sprint's central measurement.**
+
+### W1-F6 — the incremental-insert driver mutated the corpus the recall exit reads
+
+The incremental measurement appends rows, and it was run against **`clustered`** — the one
+dataset an exit criterion reads. It left the recall corpus at 1 010 000 rows, and a recall
+number measured over that is a number about a corpus nobody pre-registered.
+
+Deleting the appended rows would not have been enough: the HNSW graph would still carry their
+traces, so the index W2 measures would not be the index whose build was sealed. The repair is
+therefore delete, `VACUUM ANALYZE`, and a full `REINDEX`, and its cost is recorded rather than
+absorbed. The driver's `rows_before`/`rows_after` fields exist so this is visible in the record
+instead of inferable from a row count nobody printed.
+
+The lesson generalises past this sprint: **a driver that mutates a corpus must not be pointed
+at the corpus an exit reads**, and the ones that do should say so in their own name.
+
+### W1-D1 — the §2.2e artifact leg was unreachable in 22B's own store
+
+§2.2e requires the restored store to resolve `learned.containment.correction_ranking`'s
+artifact and load its bytes. That artifact is registered in `cognitive_os_s21d7_measured` and
+nowhere else, so against 22B's fresh store the leg passed vacuously — W0's slice already
+reported `resolved: false` and flagged it.
+
+**Decision, taken with the gate owner:** register the *same bytes* in 22B's store through the
+released `ArtifactService.put_file`, the content-addressed path — the store computes the hash
+itself, so this is a genuine registration and not a hand-written ledger row, and re-registering
+identical bytes in a second store is what content addressing is for. D7's learned **lineage** —
+component revisions, activation history, evidence records — is deliberately **not** copied:
+§2.3 puts learners out of scope and a lineage cannot move without a real activation run or
+fabricated provenance. The checklist therefore verifies that a restore reproduces the
+artifact's pointer and its loadable bytes, which is what D7 W3-F1 asked for, and says plainly
+that it does not verify the learned component's governance chain.
+
+### W1-D2 — the host was superseded, not edited
+
+**Decision, taken with the gate owner:** raise the container's `/dev/shm` to 2 GB in
+`infra/compose/postgres.yml` and re-seal the reference host under a **new host id**, exactly as
+`host_record_22b.py` already prescribed — "re-seal under a new host id and say so, never edit
+this record".
+
+`sprint-22b-reference-host.json` stays byte-identical as host 1.
+`sprint-22b-reference-host-2.json` is the successor, and `sprint-22b-host-change.json` seals
+the delta. The only invariant group that differs is `container`; **CPU, memory, storage and
+every sealed PostgreSQL setting are unchanged**, and the pre-registration's host check refuses
+a successor whose PostgreSQL settings moved — a host change is not a licence to tune.
+
+The record states what the delta can and cannot affect. It **cannot** affect recall: recall@10
+is a property of the index and the probes, and no quantity of shared memory changes which
+neighbours the graph finds. It **can** affect latency, because it lifts a 64 MB ceiling that
+parallel query workers shared — which is precisely why this is a host change and not a
+footnote. The sealed 10^5 envelope was measured on host 1; every 10^6 number is measured on
+host 2, and the comparison between them carries this record.
+
+### The restore round trip, at a million rows
+
+All four §2.2e items are met against the restored store, and the artifact leg is no longer
+vacuous:
+
+| Check | Source | Restored | Verdict |
+|---|---:|---:|---|
+| row counts (events / items / revisions / artifacts) | 50 040 / 50 040 / 50 040 / 1 | identical | met |
+| active view, **queried** | 50 040 | 50 040 | met |
+| learned artifact pointer resolved | — | `sha256/af/afbdb7c0…` | met |
+| artifact bytes **loaded from the restored archive** | — | 4354 bytes, hash matches | met |
+
+The bytes are loaded out of the restored `*-artifacts.tar.zst`, not out of the live artifact
+root — a restore that quietly reads the source's bytes has verified nothing (D7 W3-F1).
+
+**Restore is dominated by index construction, and W3 must budget for it.** `pg_restore`
+rebuilds both HNSW indexes, so the round trip cost roughly two hours of machine time against a
+4.4 GB dump: the backup itself was minutes, and the restore was the clustered build plus the
+uniform build over again. §3.2's instruction to budget the waves by machine-hours is right, and
+this is the number it applies to.
+
+### The whole suite against the million-row store
+
+**4315 passed, 206 skipped, 0 failed** with both 10^6 corpora and 50 040 governed records in
+place — 22A W2-F3's rule discharged.
+
+The first run had **three failures, and all three were 22B's own W0 tests**, not released
+assertions: two encoded a host record that W1 legitimately superseded, and one asserted the
+driver hash literally rather than through the re-binding chain that W1-F2 introduced. No
+released assertion failed at a million rows. That is the honest reading of W2-F3 here — 22A's
+lesson was that released code can assume the world cannot grow, and this time it did not.
+
+The three tests were repaired rather than deleted, and are stronger for it: the host tests now
+verify **both** declared hosts and assert that they differ only where the change record says,
+and the driver test now fails a change that arrives *without* a re-binding, which the literal
+comparison could not distinguish from a change that arrives with one.
+
+---
+
+## W1 evidence index
+
+| Record | SHA-256 |
+|---|---|
+| `sprint-22b-w1-slice-1e4.json` | `1b3cd99ddc46c210…` |
+| `sprint-22b-w1-corpus-clustered.json` | `91208b10960bd70f…` |
+| `sprint-22b-w1-corpus-uniform.json` | `b46d94238eb42476…` |
+| `sprint-22b-w1-corpus-repair.json` | `879ead9af4671bc8…` |
+| `sprint-22b-w1-governed-ingest.json` | `8db868ffd1964253…` |
+| `sprint-22b-w1-incremental.json` | `a48c08f8a9b85585…` |
+| `sprint-22b-w1-learned-artifact.json` | `f842044ba5a57f33…` |
+| `sprint-22b-w1-restore-checklist.json` | `cb5ecaba5f7454aa…` |
+| `sprint-22b-reference-host-2.json` | `dd958540290a4a1e…` |
+| `sprint-22b-host-change.json` | `f17e7bda4ebf02d7…` |
+| `sprint-22b-driver-rebind.json` | `14ce26fb6bf1250f…` |
+
+## W1 validation
+
+`ruff check` and `ruff format --check` over `src tests scripts infra`: clean.
+`mypy src/cognitive_os`: no issues in 637 files. `export_contract_schemas.sh --check` and
+`check_repository_language.sh`: passed. `pre_registration_22b.py --check` and
+`host_record_22b.py --check`: **each run twice, identical output both times** (22A W4-F3), with
+the driver pin satisfied *through a re-binding whose proof is re-executed on every run* and the
+host bound *through a sealed change record*. Full suite against the million-row store: **4315
+passed, 206 skipped**.
+
+## What W2 inherits
+
+Two 10^6 corpora on one host, each exactly a million rows with a cleanly built 3.81 GiB index,
+in separate tables so neither wave destroys the other. A declared host — **host 2** — that can
+actually build them, with the change from host 1 sealed and every 22B number binding the
+successor. Drivers that have each run at scale rather than at fixture size. And one of the five
+exit criteria already decided in the affirmative, with the two hardest still ahead: recall@10
+on the clustered million, and the graph-assisted 500 ms that §3.2 calls the sprint's hardest
+number and schedules first.
 
 ---
 

@@ -124,29 +124,54 @@ def _host_module() -> Any:
     return module
 
 
-def test_the_reference_host_check_recognises_the_sealed_host() -> None:
-    """The same invariants must pass, or the drift test below would prove nothing."""
+@pytest.mark.parametrize("host_id", ["cogos-reference-host-1", "cogos-reference-host-2"])
+def test_the_reference_host_check_recognises_each_sealed_host(host_id: str) -> None:
+    """Both declared hosts verify against their own record, or the drift probe proves nothing.
+
+    W1-F5 produced a second host. Host 1 stays exactly as W0 sealed it and must still verify,
+    because the superseded record is evidence about the machine the 10^5 comparison was taken
+    on — superseding it is not the same as retiring it.
+    """
     module = _host_module()
-    sealed = _load(HOST)["invariants"]
+    sealed = _load(module.HOSTS[host_id])["invariants"]
     module._invariants = lambda _url: sealed
     module._store_url = lambda: "postgresql://unused"
-    module._check()
+    module._check(host_id)
 
 
-def test_the_reference_host_check_can_notice_a_change() -> None:
+@pytest.mark.parametrize("host_id", ["cogos-reference-host-1", "cogos-reference-host-2"])
+def test_the_reference_host_check_can_notice_a_change(host_id: str) -> None:
     """22A W4-F2, probed rather than asserted: hand it a different host and it must refuse.
 
     The comparison is driven directly rather than through a subprocess, so the probe runs
     everywhere the suite runs — including CI, which has no 22B store to measure.
     """
     module = _host_module()
-    drifted = json.loads(json.dumps(_load(HOST)["invariants"]))
+    drifted = json.loads(json.dumps(_load(module.HOSTS[host_id])["invariants"]))
     drifted["cpu"]["logical_cpus"] += 1
     module._invariants = lambda _url: drifted
     module._store_url = lambda: "postgresql://unused"
     with pytest.raises(SystemExit) as raised:
-        module._check()
+        module._check(host_id)
     assert "drifted" in str(raised.value)
+
+
+def test_the_two_hosts_differ_only_where_the_change_record_says() -> None:
+    """W1-D2: a host change is admissible only if it is exactly the change it declares."""
+    module = _host_module()
+    change = _load(EVIDENCE / "sprint-22b-host-change.json")
+    before = _load(module.HOSTS[change["from_host_id"]])
+    after = _load(module.HOSTS[change["to_host_id"]])
+    differing = sorted(
+        key
+        for key in set(before["invariants"]) | set(after["invariants"])
+        if before["invariants"].get(key) != after["invariants"].get(key)
+    )
+    assert differing == change["invariant_groups_changed"] == ["container"]
+    assert change["postgres_settings_unchanged"] is True
+    assert change["cpu_unchanged"] and change["memory_unchanged"] and change["storage_unchanged"]
+    # Host 1's record is superseded, never edited: its seal must still reproduce.
+    assert _sha256(_canonical(before["invariants"])) == change["from_invariants_hash"]
 
 
 def test_the_pre_registration_measures_nothing() -> None:
@@ -160,9 +185,26 @@ def test_the_pre_registration_measures_nothing() -> None:
 
 
 def test_the_pre_registration_binds_the_drivers_it_freezes() -> None:
+    """The driver pin holds directly, or through a re-binding that proves the corpus is the same.
+
+    W1-F2: revision 1 pinned the implementation's bytes, which made a defect fix a contract
+    violation. The pin was not loosened — a change is admitted only by
+    `sprint-22b-driver-rebind.json`, whose proof is executed on every `--check`. This asserts
+    the chain rather than the literal, so a driver that changed *without* a re-binding still
+    fails here.
+    """
     pre = _load(PRE_REGISTRATION)
-    drivers = REPOSITORY / "scripts/scale_22b.py"
-    assert pre["drivers_module_sha256"] == _sha256(drivers.read_bytes())
+    current = _sha256((REPOSITORY / "scripts/scale_22b.py").read_bytes())
+    rebind_path = EVIDENCE / "sprint-22b-driver-rebind.json"
+    if current != pre["drivers_module_sha256"]:
+        assert rebind_path.is_file(), "the drivers changed with no re-binding to justify it"
+        rebind = _load(rebind_path)
+        proof = rebind["proof"]
+        assert proof["from_sha256"] == pre["drivers_module_sha256"]
+        assert proof["to_sha256"] == current
+        assert proof["corpus_identical"] and proof["recipes_unchanged"]
+        assert proof["shapes_unchanged"]
+        assert rebind["pre_registration_sha256"] == _sha256(PRE_REGISTRATION.read_bytes())
     for name, expected in pre["evidence_children_sha256"].items():
         assert _sha256((EVIDENCE / name).read_bytes()) == expected, name
 

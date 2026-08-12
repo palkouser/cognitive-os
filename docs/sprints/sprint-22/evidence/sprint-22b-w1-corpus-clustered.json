@@ -1,0 +1,31 @@
+{
+ "bulk_load": {
+  "dataset": "clustered",
+  "dimension": 768,
+  "limitation": "bulk engine load outside the governed write path: this is engine capacity, not governed ingestion throughput (§2.2c)",
+  "load_seconds": 574.454,
+  "reads_an_exit_criterion": false,
+  "rows": 1000000,
+  "rows_per_second": 1740.8,
+  "table": "memory_scale_22b_corpus_clustered"
+ },
+ "corpus_rows": 1000000,
+ "dataset": "clustered",
+ "index": {
+  "build_seconds": 2081.399,
+  "index": "memory_scale_22b_corpus_clustered_hnsw_768",
+  "size_bytes": 4096008192
+ },
+ "reads_an_exit_criterion": false,
+ "recipes_hash": "c99ef5e513816fe8db96c350a6283b3251858643e19816259a00fa7f973fb125",
+ "storage": {
+  "data_root_free_bytes": 918305456128,
+  "database_bytes": 8438961855,
+  "host_memory_available_kib": 28714416,
+  "host_memory_total_kib": 48199296,
+  "index_bytes": 4096008192,
+  "rows": 1000000,
+  "table_total_bytes": 8347787264
+ },
+ "why_no_exit": "§2.2c: the bulk engine load is engine capacity and reads no exit. The retrieval envelope over this corpus is W2's, and the governed-ingest exit reads a different path entirely"
+}

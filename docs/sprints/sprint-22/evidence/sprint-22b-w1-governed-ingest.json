@@ -1,0 +1,74 @@
+{
+ "exit_threshold_items_per_second": 100,
+ "first_item_index": 1000,
+ "items": 50000,
+ "items_per_second": 139.35,
+ "path": "governed: MemoryService.create -> repository + provenance + event + revision",
+ "per_decile": [
+  {
+   "decile": 1,
+   "items": 5000,
+   "items_per_second": 135.88,
+   "seconds": 36.798
+  },
+  {
+   "decile": 2,
+   "items": 5000,
+   "items_per_second": 139.31,
+   "seconds": 35.892
+  },
+  {
+   "decile": 3,
+   "items": 5000,
+   "items_per_second": 140.32,
+   "seconds": 35.633
+  },
+  {
+   "decile": 4,
+   "items": 5000,
+   "items_per_second": 139.63,
+   "seconds": 35.808
+  },
+  {
+   "decile": 5,
+   "items": 5000,
+   "items_per_second": 139.9,
+   "seconds": 35.739
+  },
+  {
+   "decile": 6,
+   "items": 5000,
+   "items_per_second": 140.25,
+   "seconds": 35.652
+  },
+  {
+   "decile": 7,
+   "items": 5000,
+   "items_per_second": 140.54,
+   "seconds": 35.578
+  },
+  {
+   "decile": 8,
+   "items": 5000,
+   "items_per_second": 139.61,
+   "seconds": 35.814
+  },
+  {
+   "decile": 9,
+   "items": 5000,
+   "items_per_second": 140.15,
+   "seconds": 35.677
+  },
+  {
+   "decile": 10,
+   "items": 5000,
+   "items_per_second": 138.1,
+   "seconds": 36.205
+  }
+ ],
+ "reads_the_ingest_exit": true,
+ "recipes_hash": "c99ef5e513816fe8db96c350a6283b3251858643e19816259a00fa7f973fb125",
+ "seconds": 358.797,
+ "slowest_decile_items_per_second": 135.88,
+ "why_per_decile": "a sustained rate that fades is a different result from a sustained rate that holds, and a single average hides which one happened"
+}

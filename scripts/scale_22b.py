@@ -41,10 +41,14 @@ import importlib.util
 import json
 import os
 import random
+import shutil
 import statistics
-from collections.abc import Callable, Sequence
+import subprocess
+from collections.abc import Callable, Iterator, Sequence
 from datetime import UTC, datetime, timedelta
+from itertools import islice
 from pathlib import Path
+from tempfile import mkdtemp as _mkdtemp
 from time import perf_counter
 from typing import Any
 from uuid import NAMESPACE_URL, UUID, uuid4, uuid5
@@ -84,10 +88,22 @@ from cognitive_os.memory.retrieval import MemoryRetrievalService
 
 REPO = Path(__file__).resolve().parent.parent
 EVIDENCE = REPO / "docs/sprints/sprint-22/evidence"
+DATA_ROOT = Path("/home/palkouser/projekt/cognitive-os-data")
 
 #: 22B's own corpus table. Named after the released harness's scratch table and kept separate
 #: from it, so a 22B run can never be mistaken for — or overwrite — a baseline run.
 CORPUS_TABLE = "memory_scale_22b_corpus"
+
+
+def corpus_table(dataset: str) -> str:
+    """One table per dataset.
+
+    W1-F3: a single shared table meant the second 10^6 corpus dropped the first. W2 measures
+    500 probes per mode *per dataset*, so both have to exist at once; rebuilding the other
+    corpus between waves would cost a second multi-hour HNSW build and would silently make the
+    two envelopes measurements of different machine states.
+    """
+    return f"{CORPUS_TABLE}_{dataset}"
 
 
 def _released_generators() -> tuple[Callable[..., str], Callable[..., str]]:
@@ -305,6 +321,18 @@ LIVE_LEARNED_ARTIFACT = {
     "verified_by": "resolving the pointer in the restored store and loading the bytes",
 }
 
+#: Where W1 copies the live learned artifact's bytes from (W1-D1). Deliberately **not** part
+#: of RECIPES: §2.2e freezes what a restore must reproduce, not which store the bytes were
+#: first registered in, and widening a frozen contract to carry an operational detail would
+#: move the recipes hash for no reading at all.
+LIVE_LEARNED_ARTIFACT_SOURCE = {
+    "path": (
+        "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d7-measured/sha256/af/"
+        "afbdb7c05c73aec8b1a46dd9b20cd8f2f8915819b29a1ea3b364ad8acbb48edb"
+    ),
+    "store": "cognitive_os_s21d7_measured",
+}
+
 RECIPES: dict[str, Any] = {
     "datasets": DATASETS,
     "probe_protocol": PROBE_PROTOCOL,
@@ -331,41 +359,46 @@ def recipes_hash() -> str:
 # --------------------------------------------------------------------------------------
 
 
-def corpus_rows(dataset: str, count: int, *, offset: int = 0) -> list[tuple[str, str, str, str]]:
-    """Deterministic corpus rows: (vector literal, scope_id, status, memory_type).
+def corpus_stream(dataset: str) -> Iterator[tuple[str, str, str, str]]:
+    """The corpus, drawn once, in order, for as long as the caller keeps pulling.
 
-    The metadata is derived from the row index rather than drawn, so the frozen selectivity is
-    a property of the recipe and not of a random seed. `offset` exists so W1 can generate a
-    million rows in batches without holding them all in memory, and the row at index i is the
-    same row whatever batch it arrived in.
+    This is *the* definition of the draw order. `corpus_rows` addresses into it and
+    `create_corpus` streams it, so there is one implementation of what row `i` is and no way
+    for a batch loader and a test to disagree about the corpus.
+
+    W1-F1: the previous shape re-seeded and re-drew `offset` rows on every call, which made a
+    batched load quadratic. Measured at 0.33 ms per drawn row, a 10^6 load in batches of 1000
+    would have drawn 5.0e8 rows — **about 46 hours per dataset** — against roughly six minutes
+    streamed. The rows are unchanged: a single `random.Random` consumed sequentially yields
+    exactly the sequence the discard loop was reproducing, and a test asserts the two agree.
     """
     recipe = DATASETS[dataset]
     vector_literal, clustered_literal = _released_generators()
     dimension = int(recipe["dimension"])
     clusters = int(recipe["clusters"])
     spread = float(recipe["cluster_spread"])
+    scopes = int(FILTER_PREDICATE["scopes_in_corpus"])
 
     rnd = random.Random(recipe["corpus_seed"])
     centres = [[rnd.gauss(0.0, 1.0) for _ in range(dimension)] for _ in range(clusters)]
-    # Draw and discard the offset rows so row i is stable across batch boundaries.
-    for _ in range(offset):
-        (
-            clustered_literal(rnd, dimension, centres, spread)
-            if centres
-            else vector_literal(rnd, dimension)
-        )
 
-    scopes = int(FILTER_PREDICATE["scopes_in_corpus"])
-    rows = []
-    for index in range(offset, offset + count):
+    index = 0
+    while True:
         literal = (
             clustered_literal(rnd, dimension, centres, spread)
             if centres
             else vector_literal(rnd, dimension)
         )
+        # Metadata is derived from the row index rather than drawn, so the frozen selectivity
+        # is a property of the recipe and not of a random seed.
         status = MemoryStatus.VERIFIED.value if index % 4 else MemoryStatus.SUPERSEDED.value
-        rows.append((literal, f"scope-{index % scopes:02d}", status, MemoryType.EPISODE.value))
-    return rows
+        yield literal, f"scope-{index % scopes:02d}", status, MemoryType.EPISODE.value
+        index += 1
+
+
+def corpus_rows(dataset: str, count: int, *, offset: int = 0) -> list[tuple[str, str, str, str]]:
+    """Rows `offset` through `offset + count` of the corpus, addressed into the stream."""
+    return list(islice(corpus_stream(dataset), offset, offset + count))
 
 
 def corpus_centres(dataset: str) -> list[list[float]]:
@@ -397,11 +430,12 @@ def probe_literals(dataset: str, count: int) -> list[str]:
 async def create_corpus(engine: Any, dataset: str, count: int, *, batch: int = 1_000) -> dict:
     """Bulk engine load. §2.2c: measured and reported as engine capacity, read by no exit."""
     dimension = int(DATASETS[dataset]["dimension"])
+    table = corpus_table(dataset)
     async with engine.begin() as connection:
-        await connection.execute(text(f"DROP TABLE IF EXISTS cognitive_os.{CORPUS_TABLE}"))
+        await connection.execute(text(f"DROP TABLE IF EXISTS cognitive_os.{table}"))
         await connection.execute(
             text(
-                f"CREATE TABLE cognitive_os.{CORPUS_TABLE} ("
+                f"CREATE TABLE cognitive_os.{table} ("
                 "row_id bigserial PRIMARY KEY, dimension int NOT NULL, "
                 "scope_id text NOT NULL, status text NOT NULL, memory_type text NOT NULL, "
                 "embedding vector NOT NULL)"
@@ -409,17 +443,17 @@ async def create_corpus(engine: Any, dataset: str, count: int, *, batch: int = 1
         )
     started = perf_counter()
     loaded = 0
+    stream = corpus_stream(dataset)
     while loaded < count:
         size = min(batch, count - loaded)
-        rows = corpus_rows(dataset, size, offset=loaded)
         values = ",".join(
             f"({dimension}, '{scope}', '{status}', '{kind}', '{literal}')"
-            for literal, scope, status, kind in rows
+            for literal, scope, status, kind in islice(stream, size)
         )
         async with engine.begin() as connection:
             await connection.execute(
                 text(
-                    f"INSERT INTO cognitive_os.{CORPUS_TABLE} "
+                    f"INSERT INTO cognitive_os.{table} "
                     f"(dimension, scope_id, status, memory_type, embedding) VALUES {values}"
                 )
             )
@@ -427,6 +461,7 @@ async def create_corpus(engine: Any, dataset: str, count: int, *, batch: int = 1
     elapsed = perf_counter() - started
     return {
         "dataset": dataset,
+        "table": table,
         "rows": loaded,
         "dimension": dimension,
         "load_seconds": round(elapsed, 3),
@@ -441,17 +476,18 @@ async def create_corpus(engine: Any, dataset: str, count: int, *, batch: int = 1
 
 async def build_corpus_index(engine: Any, dataset: str) -> dict:
     dimension = int(DATASETS[dataset]["dimension"])
-    name = f"{CORPUS_TABLE}_hnsw_{dimension}"
+    table = corpus_table(dataset)
+    name = f"{table}_hnsw_{dimension}"
     started = perf_counter()
     async with engine.begin() as connection:
         await connection.execute(
             text(
-                f"CREATE INDEX {name} ON cognitive_os.{CORPUS_TABLE} "
+                f"CREATE INDEX {name} ON cognitive_os.{table} "
                 f"USING hnsw ((embedding::vector({dimension})) vector_cosine_ops) "
                 f"WHERE dimension = {dimension}"
             )
         )
-        await connection.execute(text(f"ANALYZE cognitive_os.{CORPUS_TABLE}"))
+        await connection.execute(text(f"ANALYZE cognitive_os.{table}"))
     elapsed = perf_counter() - started
     async with engine.connect() as connection:
         size = int(
@@ -532,7 +568,7 @@ async def probe_corpus(
             if not exact:
                 await connection.execute(text(f"SET LOCAL hnsw.ef_search = {ef_search}"))
             statement = text(
-                f"SELECT row_id FROM cognitive_os.{CORPUS_TABLE} {where} "
+                f"SELECT row_id FROM cognitive_os.{corpus_table(dataset)} {where} "
                 f"ORDER BY {order.format(probe=literal)} LIMIT {candidate_limit}"
             )
             started = perf_counter()
@@ -594,7 +630,7 @@ async def recall_at(
                 (
                     await connection.execute(
                         text(
-                            f"SELECT row_id FROM cognitive_os.{CORPUS_TABLE} "
+                            f"SELECT row_id FROM cognitive_os.{corpus_table(dataset)} "
                             f"WHERE dimension = {dimension} "
                             f"ORDER BY embedding <=> '{literal}'::vector LIMIT {k}"
                         )
@@ -606,7 +642,7 @@ async def recall_at(
                 (
                     await connection.execute(
                         text(
-                            f"SELECT row_id FROM cognitive_os.{CORPUS_TABLE} "
+                            f"SELECT row_id FROM cognitive_os.{corpus_table(dataset)} "
                             f"WHERE dimension = {dimension} "
                             f"ORDER BY (embedding::vector({dimension})) <=> '{literal}'::vector "
                             f"LIMIT {k}"
@@ -668,7 +704,7 @@ def _write_request(index: int) -> MemoryWriteRequest:
     )
 
 
-async def governed_ingest(engine: Any, items: int, *, deciles: int = 10) -> dict:
+async def governed_ingest(engine: Any, items: int, *, deciles: int = 10, start: int = 0) -> dict:
     """The >= 100 items/s exit, through the real governed path.
 
     Every item is a real memory record with provenance, an event and a revision — the path
@@ -686,12 +722,16 @@ async def governed_ingest(engine: Any, items: int, *, deciles: int = 10) -> dict
         event_service=MemoryEventService(PostgresEventStore(engine, build_default_event_catalog())),
     )
 
+    # W1: `start` exists because the memory ids are deterministic and the event store is
+    # append-only. The fixture-scale runs already wrote items 0..39, and the measured run must
+    # neither collide with them nor delete them — an evidence store that a wave may erase to
+    # make its own measurement fit is not an evidence store.
     bucket = max(items // deciles, 1)
     rates: list[dict[str, Any]] = []
     started = perf_counter()
     bucket_started = started
     written = 0
-    for index in range(items):
+    for index in range(start, start + items):
         await service.create(_write_request(index))
         written += 1
         if written % bucket == 0 or written == items:
@@ -710,6 +750,7 @@ async def governed_ingest(engine: Any, items: int, *, deciles: int = 10) -> dict
     per_second = round(written / total, 2) if total else None
     return {
         "path": "governed: MemoryService.create -> repository + provenance + event + revision",
+        "first_item_index": start,
         "items": written,
         "seconds": round(total, 3),
         "items_per_second": per_second,
@@ -996,22 +1037,40 @@ async def table_bloat(engine: Any, table: str = CORPUS_TABLE) -> dict:
     }
 
 
-async def reindex_with_readers(engine: Any, index: str, *, readers: int, seconds: float) -> dict:
+async def reindex_with_readers(
+    engine: Any, index: str, *, readers: int, seconds: float, table: str = CORPUS_TABLE
+) -> dict:
     """Reindex concurrently while readers probe, and measure what the readers saw.
 
     A reindex that is only timed proves the reindex finished. §3's W3 asks what concurrent
     reads did *during* it, so the readers are measured and their latencies reported beside the
     reindex duration.
+
+    **W1-F4: the readers must not hold open transactions, or this driver deadlocks against
+    itself.** A SQLAlchemy connection begins a transaction on its first statement and holds it
+    until the block exits, so three readers looping inside `engine.connect()` kept an
+    `AccessShareLock` open for their whole lifetime. `REINDEX INDEX CONCURRENTLY` waits for
+    exactly those transactions to end, and they end only when `stop` is set — which happens
+    only after the reindex returns. Observed directly: the reindex backend sat in
+    `Lock/virtualxid` while all three readers stayed `active`.
+
+    It passed at W0's 200 rows because the reindex finished before the readers opened their
+    first transaction — a race the driver won once and would have lost for hours at 10^6. The
+    readers now run in `AUTOCOMMIT`, so each probe commits as it completes and the reindex has
+    something to finish waiting for. That is also the more honest measurement: a real
+    concurrent reader is a stream of short queries, not one transaction held open for the
+    duration of a maintenance operation.
     """
     stop = asyncio.Event()
 
     async def reader(worker: int) -> list[float]:
         latencies: list[float] = []
         async with engine.connect() as connection:
+            await connection.execution_options(isolation_level="AUTOCOMMIT")
             while not stop.is_set():
                 started = perf_counter()
                 await connection.execute(
-                    text(f"SELECT count(*) FROM cognitive_os.{CORPUS_TABLE} WHERE scope_id = :s"),
+                    text(f"SELECT count(*) FROM cognitive_os.{table} WHERE scope_id = :s"),
                     {"s": f"scope-{worker % int(FILTER_PREDICATE['scopes_in_corpus']):02d}"},
                 )
                 latencies.append((perf_counter() - started) * 1_000)
@@ -1047,6 +1106,67 @@ async def reindex_with_readers(engine: Any, index: str, *, readers: int, seconds
 # --------------------------------------------------------------------------------------
 # Restore: verified by querying, never by comparing hashes alone.
 # --------------------------------------------------------------------------------------
+
+
+async def seed_learned_artifact(engine: Any) -> dict:
+    """Put the live learned artifact's bytes into 22B's own store, through the released path.
+
+    W1-D1. §2.2e requires the *restored* store to resolve
+    `learned.containment.correction_ranking`'s artifact and load its bytes. That artifact is
+    registered in `cognitive_os_s21d7_measured` and nowhere else, so against 22B's fresh store
+    the checklist's artifact leg passed vacuously — W0's slice reported `resolved: false` and
+    flagged it.
+
+    The fix registers the **same bytes** here through `ArtifactService.put_file`, the released
+    content-addressed path: the store computes the hash itself, so this is a genuine
+    registration rather than a hand-written ledger row, and the content hash is the identity —
+    re-registering identical bytes in a second store is what content addressing is for.
+
+    What is deliberately **not** copied is D7's learned *lineage*: component revisions,
+    activation history and evidence records stay where they were produced. §2.3 puts learners
+    out of 22B's scope, and a lineage cannot be moved without either a real activation run or
+    fabricated provenance. So the checklist verifies that a restore reproduces the artifact's
+    pointer and its loadable bytes — which is what D7 W3-F1 asked for — and says plainly that
+    it does not verify the learned component's governance chain.
+    """
+    from cognitive_os.infrastructure.artifacts.filesystem import ContentAddressedFilesystem
+    from cognitive_os.infrastructure.artifacts.service import ArtifactService
+    from cognitive_os.infrastructure.postgres.artifact_repository import (
+        PostgresArtifactRepository,
+    )
+
+    source = Path(LIVE_LEARNED_ARTIFACT_SOURCE["path"])
+    if not source.is_file():
+        raise SystemExit(
+            f"the live learned artifact is not at {source}. 22B does not synthesise it: "
+            "without the released bytes the §2.2e artifact leg cannot be made reachable"
+        )
+    root = Path(os.environ.get("COGOS_ARTIFACT_ROOT", ""))
+    if not root.is_dir():
+        raise SystemExit("COGOS_ARTIFACT_ROOT must point at 22B's artifact root")
+
+    service = ArtifactService(ContentAddressedFilesystem(root), PostgresArtifactRepository(engine))
+    reference = await service.put_file(source, media_type="application/octet-stream")
+    loaded = await service.get_bytes(reference.artifact_id)
+    return {
+        "component": LIVE_LEARNED_ARTIFACT["component"],
+        "source_path": str(source),
+        "source_store": LIVE_LEARNED_ARTIFACT_SOURCE["store"],
+        "artifact_id": str(reference.artifact_id),
+        "content_hash": reference.content_hash,
+        "storage_key": reference.storage_key,
+        "size_bytes": reference.size_bytes,
+        "matches_expected_hash": reference.content_hash == LIVE_LEARNED_ARTIFACT["artifact_hash"],
+        "bytes_load_back": len(loaded) == reference.size_bytes,
+        "registered_through": "released ArtifactService.put_file, content-addressed",
+        "learned_lineage_copied": False,
+        "why_not": (
+            "component revisions, activation history and evidence records are D7's and stay "
+            "there; §2.3 puts learners out of 22B's scope. The restore checklist therefore "
+            "verifies the artifact pointer and its loadable bytes, not the learned "
+            "component's governance chain"
+        ),
+    }
 
 
 async def restore_query_checklist(restore_url: str) -> dict:
@@ -1163,14 +1283,16 @@ async def _slice(items: int, dataset: str) -> dict:
             ),
         )
         temporal = await temporal_query(engine, as_of=datetime.now(UTC) + timedelta(seconds=1))
-        bloat_before = await table_bloat(engine)
+        bloat_before = await table_bloat(engine, corpus_table(dataset))
         async with engine.begin() as connection:
             await connection.execute(
-                text(f"DELETE FROM cognitive_os.{CORPUS_TABLE} WHERE row_id % 5 = 0")
+                text(f"DELETE FROM cognitive_os.{corpus_table(dataset)} WHERE row_id % 5 = 0")
             )
-            await connection.execute(text(f"ANALYZE cognitive_os.{CORPUS_TABLE}"))
-        bloat_after = await table_bloat(engine)
-        reindex = await reindex_with_readers(engine, index["index"], readers=3, seconds=0.2)
+            await connection.execute(text(f"ANALYZE cognitive_os.{corpus_table(dataset)}"))
+        bloat_after = await table_bloat(engine, corpus_table(dataset))
+        reindex = await reindex_with_readers(
+            engine, index["index"], readers=3, seconds=0.2, table=corpus_table(dataset)
+        )
     finally:
         await engine.dispose()
 
@@ -1210,10 +1332,312 @@ async def _slice(items: int, dataset: str) -> dict:
     }
 
 
+async def incremental_insert(engine: Any, dataset: str, rows: int, *, batch: int = 100) -> dict:
+    """Insert into a corpus that already carries its HNSW index, and price the difference.
+
+    W1 owes this because the bulk load builds the index *afterwards*, which is the cheap order
+    and not the one a running system uses. Every insert into an indexed table also inserts into
+    the graph, and the gap between the two rates is what an operator actually pays for keeping
+    a million-item index live. The rows continue the frozen stream past the corpus, so they are
+    the recipe's own rows rather than fresh arbitrary vectors.
+    """
+    table = corpus_table(dataset)
+    dimension = int(DATASETS[dataset]["dimension"])
+    async with engine.connect() as connection:
+        before = int(
+            await connection.scalar(text(f"SELECT count(*) FROM cognitive_os.{table}")) or 0
+        )
+    stream = islice(corpus_stream(dataset), before, before + rows)
+    started = perf_counter()
+    written = 0
+    while written < rows:
+        values = ",".join(
+            f"({dimension}, '{scope}', '{status}', '{kind}', '{literal}')"
+            for literal, scope, status, kind in islice(stream, min(batch, rows - written))
+        )
+        if not values:
+            break
+        async with engine.begin() as connection:
+            await connection.execute(
+                text(
+                    f"INSERT INTO cognitive_os.{table} "
+                    f"(dimension, scope_id, status, memory_type, embedding) VALUES {values}"
+                )
+            )
+        written += min(batch, rows - written)
+    elapsed = perf_counter() - started
+    async with engine.connect() as connection:
+        after = int(
+            await connection.scalar(text(f"SELECT count(*) FROM cognitive_os.{table}")) or 0
+        )
+    return {
+        "dataset": dataset,
+        "table": table,
+        "rows_before": before,
+        "rows_inserted": written,
+        "rows_after": after,
+        "seconds": round(elapsed, 3),
+        "rows_per_second": round(written / elapsed, 1) if elapsed else None,
+        "index_present_during_insert": True,
+        "reads_an_exit_criterion": False,
+        "why": (
+            "the bulk load builds the index afterwards; a live system does not. This is the "
+            "price of keeping a 10^6 HNSW index current, reported beside the load rate it "
+            "should be compared against"
+        ),
+    }
+
+
+async def restore_corpus_to_pre_registered_size(
+    engine: Any, dataset: str, rows: int = 1_000_000
+) -> dict:
+    """Return a corpus to exactly the pre-registered row count, with a clean index.
+
+    W1-F6. The incremental-insert measurement appends to the corpus, and it was run against
+    `clustered` — the one dataset an exit criterion reads. That left the recall corpus at
+    1 010 000 rows, which is not the million the pre-registration names, and a recall number
+    measured over it would be a number about a corpus nobody registered.
+
+    Deleting the appended rows is not enough on its own: the HNSW graph would still carry their
+    traces, so the index W2 measures would not be the index whose build was sealed. The rebuild
+    is therefore part of the repair, and its duration is recorded so the cost of the mistake is
+    visible rather than absorbed.
+    """
+    table = corpus_table(dataset)
+    index = f"{table}_hnsw_{int(DATASETS[dataset]['dimension'])}"
+    async with engine.connect() as connection:
+        before = int(
+            await connection.scalar(text(f"SELECT count(*) FROM cognitive_os.{table}")) or 0
+        )
+    started = perf_counter()
+    async with engine.begin() as connection:
+        await connection.execute(
+            text(f"DELETE FROM cognitive_os.{table} WHERE row_id > :rows"), {"rows": rows}
+        )
+    async with engine.connect() as connection:
+        await connection.execution_options(isolation_level="AUTOCOMMIT")
+        await connection.execute(text(f"VACUUM ANALYZE cognitive_os.{table}"))
+        rebuild_started = perf_counter()
+        await connection.execute(text(f"REINDEX INDEX cognitive_os.{index}"))
+        rebuild_seconds = perf_counter() - rebuild_started
+    async with engine.connect() as connection:
+        after = int(
+            await connection.scalar(text(f"SELECT count(*) FROM cognitive_os.{table}")) or 0
+        )
+        index_bytes = int(
+            await connection.scalar(
+                text("SELECT pg_relation_size(CAST(:name AS regclass))"),
+                {"name": f"cognitive_os.{index}"},
+            )
+            or 0
+        )
+    return {
+        "dataset": dataset,
+        "table": table,
+        "rows_before": before,
+        "rows_after": after,
+        "pre_registered_rows": rows,
+        "restored": after == rows,
+        "total_seconds": round(perf_counter() - started, 3),
+        "index_rebuild_seconds": round(rebuild_seconds, 3),
+        "index_bytes_after": index_bytes,
+        "why": (
+            "W1-F6: the incremental-insert driver was run against the dataset the recall exit "
+            "reads. The corpus is returned to the pre-registered million and the index rebuilt, "
+            "so W2 measures the corpus that was registered rather than the one W1 left behind"
+        ),
+    }
+
+
+async def storage_report(engine: Any, dataset: str, index: str) -> dict:
+    """What the corpus costs on disk and in the server, sealed beside its build time."""
+    table = corpus_table(dataset)
+    async with engine.connect() as connection:
+        rows = int(await connection.scalar(text(f"SELECT count(*) FROM cognitive_os.{table}")) or 0)
+        table_bytes = int(
+            await connection.scalar(
+                text("SELECT pg_total_relation_size(CAST(:name AS regclass))"),
+                {"name": f"cognitive_os.{table}"},
+            )
+            or 0
+        )
+        index_bytes = int(
+            await connection.scalar(
+                text("SELECT pg_relation_size(CAST(:name AS regclass))"),
+                {"name": f"cognitive_os.{index}"},
+            )
+            or 0
+        )
+        database_bytes = int(
+            await connection.scalar(text("SELECT pg_database_size(current_database())")) or 0
+        )
+    usage = shutil.disk_usage(DATA_ROOT)
+    memory = {
+        key: int(value.split()[0])
+        for key, _, value in (
+            line.partition(":") for line in Path("/proc/meminfo").read_text().splitlines()
+        )
+        if key in {"MemTotal", "MemAvailable"}
+    }
+    return {
+        "rows": rows,
+        "table_total_bytes": table_bytes,
+        "index_bytes": index_bytes,
+        "database_bytes": database_bytes,
+        "data_root_free_bytes": usage.free,
+        "host_memory_total_kib": memory.get("MemTotal"),
+        "host_memory_available_kib": memory.get("MemAvailable"),
+    }
+
+
+async def _restore_corpus(dataset: str, rows: int) -> dict:
+    url = os.environ.get("COGOS_DATABASE_ADMIN_URL")
+    if not url:
+        raise SystemExit("COGOS_DATABASE_ADMIN_URL is required")
+    engine = create_postgres_engine(
+        url, pool_size=2, max_overflow=0, command_timeout_seconds=21_600
+    )
+    try:
+        record = await restore_corpus_to_pre_registered_size(engine, dataset, rows)
+    finally:
+        await engine.dispose()
+    record["recipes_hash"] = recipes_hash()
+    return record
+
+
+async def _incremental(dataset: str, rows: int) -> dict:
+    url = os.environ.get("COGOS_DATABASE_ADMIN_URL")
+    if not url:
+        raise SystemExit("COGOS_DATABASE_ADMIN_URL is required")
+    engine = create_postgres_engine(url, pool_size=2, max_overflow=0, command_timeout_seconds=3600)
+    try:
+        record = await incremental_insert(engine, dataset, rows)
+    finally:
+        await engine.dispose()
+    record["recipes_hash"] = recipes_hash()
+    return record
+
+
+async def _ingest(items: int, start: int) -> dict:
+    url = os.environ.get("COGOS_DATABASE_ADMIN_URL")
+    if not url:
+        raise SystemExit("COGOS_DATABASE_ADMIN_URL is required")
+    engine = create_postgres_engine(url, pool_size=2, max_overflow=0, command_timeout_seconds=3600)
+    try:
+        record = await governed_ingest(engine, items, start=start)
+    finally:
+        await engine.dispose()
+    record["recipes_hash"] = recipes_hash()
+    return record
+
+
+async def _restore_check() -> dict:
+    """§2.2e end to end: source against restored, queried, with the artifact bytes loaded.
+
+    The artifact is loaded out of the **restored archive** rather than the live artifact root,
+    because a restore that quietly reads the source's bytes has verified nothing (D7 W3-F1).
+    """
+    source_url = os.environ.get("COGOS_DATABASE_ADMIN_URL")
+    if not source_url:
+        raise SystemExit("COGOS_DATABASE_ADMIN_URL is required")
+    restore_url = source_url.replace("cognitive_os_s22b_test", "cognitive_os_s22b_restore_test")
+    source = await restore_query_checklist(source_url)
+    restored = await restore_query_checklist(restore_url)
+
+    backups = Path(os.environ.get("COGOS_BACKUP_ROOT", "")) / "artifacts"
+    archives = sorted(backups.glob("*-artifacts.tar.zst"))
+    if not archives:
+        raise SystemExit("no restored artifact archive to load bytes from")
+    root = Path(_mkdtemp(prefix="s22b-restore-artifacts-"))
+    subprocess.run(["bash", "-c", f"zstd -q -dc {archives[-1]} | tar -xf - -C {root}"], check=True)
+    loaded = load_restored_artifact(
+        root, restored["learned_artifact_storage_key"] or "", restored["learned_artifact_hash"]
+    )
+    checks = {
+        "row_counts_identical": source["row_counts"] == restored["row_counts"],
+        "active_view_identical": source["active_view_rows"] == restored["active_view_rows"],
+        "artifact_pointer_resolved": bool(restored["learned_artifact_pointer_resolved"]),
+        "artifact_bytes_loaded_and_match": bool(loaded.get("matches_expected")),
+    }
+    return {
+        "checklist": list(RESTORE_CHECKLIST),
+        "source": source,
+        "restored": restored,
+        "artifact_loaded_from_restored_archive": loaded,
+        "archive": archives[-1].name,
+        "checks": checks,
+        "all_four_met": all(checks.values()),
+        "verified_by_query_not_by_digest": True,
+        "recipes_hash": recipes_hash(),
+    }
+
+
+async def _seed() -> dict:
+    url = os.environ.get("COGOS_DATABASE_ADMIN_URL")
+    if not url:
+        raise SystemExit("COGOS_DATABASE_ADMIN_URL is required")
+    engine = create_postgres_engine(url, pool_size=2, max_overflow=0)
+    try:
+        return await seed_learned_artifact(engine)
+    finally:
+        await engine.dispose()
+
+
+async def _corpus(dataset: str, rows: int, batch: int, timeout: float) -> dict:
+    """Build one dataset's corpus at full scale and seal what it cost.
+
+    Separate from `--slice` because this is the measurement: load seconds, build seconds,
+    index size and disk are the storage report W1 owes, and they are only meaningful if
+    nothing else is running on the reference host while they are taken.
+    """
+    url = os.environ.get("COGOS_DATABASE_ADMIN_URL")
+    if not url:
+        raise SystemExit("COGOS_DATABASE_ADMIN_URL is required: the corpus creates a table")
+    engine = create_postgres_engine(
+        url, pool_size=2, max_overflow=0, command_timeout_seconds=timeout
+    )
+    try:
+        load = await create_corpus(engine, dataset, rows, batch=batch)
+        index = await build_corpus_index(engine, dataset)
+        storage = await storage_report(engine, dataset, index["index"])
+    finally:
+        await engine.dispose()
+    return {
+        "dataset": dataset,
+        "corpus_rows": rows,
+        "bulk_load": load,
+        "index": index,
+        "storage": storage,
+        "recipes_hash": recipes_hash(),
+        "reads_an_exit_criterion": False,
+        "why_no_exit": (
+            "§2.2c: the bulk engine load is engine capacity and reads no exit. The retrieval "
+            "envelope over this corpus is W2's, and the governed-ingest exit reads a different "
+            "path entirely"
+        ),
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--recipes", action="store_true", help="print the frozen recipes")
     parser.add_argument("--slice", action="store_true", help="run every driver at fixture scale")
+    parser.add_argument("--corpus", action="store_true", help="build one dataset at full scale")
+    parser.add_argument("--ingest", action="store_true", help="the governed-ingest exit run")
+    parser.add_argument("--incremental", action="store_true", help="insert into the built index")
+    parser.add_argument("--restore-corpus", action="store_true", help="W1-F6 repair")
+    parser.add_argument("--restore-check", action="store_true", help="the §2.2e checklist")
+    parser.add_argument("--incremental-rows", type=int, default=10_000)
+    parser.add_argument("--ingest-items", type=int, default=50_000)
+    parser.add_argument("--ingest-start", type=int, default=1_000)
+    parser.add_argument(
+        "--seed-artifact",
+        action="store_true",
+        help="register the live learned artifact's bytes in 22B's store (W1-D1)",
+    )
+    parser.add_argument("--rows", type=int, default=1_000_000)
+    parser.add_argument("--batch", type=int, default=1_000)
+    parser.add_argument("--command-timeout", type=float, default=21_600.0)
     parser.add_argument("--items", type=int, default=200)
     parser.add_argument("--dataset", choices=sorted(DATASETS), default="clustered")
     parser.add_argument("--output", type=Path)
@@ -1221,11 +1645,25 @@ def main() -> int:
 
     if arguments.recipes:
         payload: dict[str, Any] = {"recipes": RECIPES, "recipes_hash": recipes_hash()}
+    elif arguments.restore_check:
+        payload = asyncio.run(_restore_check())
+    elif arguments.restore_corpus:
+        payload = asyncio.run(_restore_corpus(arguments.dataset, arguments.rows))
+    elif arguments.incremental:
+        payload = asyncio.run(_incremental(arguments.dataset, arguments.incremental_rows))
+    elif arguments.ingest:
+        payload = asyncio.run(_ingest(arguments.ingest_items, arguments.ingest_start))
+    elif arguments.seed_artifact:
+        payload = asyncio.run(_seed())
+    elif arguments.corpus:
+        payload = asyncio.run(
+            _corpus(arguments.dataset, arguments.rows, arguments.batch, arguments.command_timeout)
+        )
     elif arguments.slice:
         payload = asyncio.run(_slice(arguments.items, arguments.dataset))
         payload["recipes_hash"] = recipes_hash()
     else:
-        parser.error("choose --recipes or --slice")
+        parser.error("choose --recipes, --slice, --corpus, --ingest or --seed-artifact")
 
     encoded = json.dumps(payload, indent=1, sort_keys=True, ensure_ascii=False) + "\n"
     if arguments.output:

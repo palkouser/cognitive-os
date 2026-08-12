@@ -47,6 +47,17 @@ REPO = Path(__file__).resolve().parent.parent
 EVIDENCE = REPO / "docs/sprints/sprint-22/evidence"
 OUTPUT = EVIDENCE / "sprint-22b-reference-host.json"
 
+#: W1-F5. The declared host changed mid-sprint, and the rule this script already stated is the
+#: one it now follows: re-seal under a new host id and say so, never edit the sealed record.
+#: Host 1 stays exactly as W0 published it; host 2 is a second file, and the change between
+#: them is itself a sealed record naming the delta and what it can and cannot affect.
+HOSTS = {
+    "cogos-reference-host-1": OUTPUT,
+    "cogos-reference-host-2": EVIDENCE / "sprint-22b-reference-host-2.json",
+}
+CURRENT_HOST = "cogos-reference-host-2"
+HOST_CHANGE = EVIDENCE / "sprint-22b-host-change.json"
+
 #: The server settings that decide how a 10^6 index build and a warm probe behave. Sealed as
 #: invariants: 22B measures the host it declares, and does not tune its way to an exit.
 SEALED_SETTINGS = (
@@ -184,8 +195,12 @@ def _container(url: str) -> dict[str, Any]:
     name = os.environ.get("COGOS_POSTGRES_TOOL_CONTAINER")
     if not name or not shutil.which("docker"):
         return {"name": name, "available": False}
-    image, configured = _run(
-        "docker", "inspect", name, "--format", "{{.Image}}|{{.Config.Image}}"
+    image, configured, shm = _run(
+        "docker",
+        "inspect",
+        name,
+        "--format",
+        "{{.Image}}|{{.Config.Image}}|{{.HostConfig.ShmSize}}",
     ).split("|")
     data_directory = _psql(url, "SHOW data_directory")
     return {
@@ -193,6 +208,11 @@ def _container(url: str) -> dict[str, Any]:
         "available": True,
         "image_reference": configured,
         "image_digest": image,
+        # W1-F5: an invariant because it decides whether a 10^6 index can be built at all.
+        # PostgreSQL puts parallel workers' dynamic shared memory in the container's /dev/shm,
+        # and Docker's 64 MB default is below what a parallel HNSW build over a million
+        # 768-dimensional vectors asks for.
+        "shm_size_bytes": int(shm),
         "data_directory_in_container": data_directory,
     }
 
@@ -228,7 +248,7 @@ def _observations() -> dict[str, Any]:
     }
 
 
-def _record() -> dict[str, Any]:
+def _record(host_id: str) -> dict[str, Any]:
     url = _store_url()
     invariants = _invariants(url)
     record: dict[str, Any] = {
@@ -236,7 +256,7 @@ def _record() -> dict[str, Any]:
         "sprint": "22B",
         "wave": "W0",
         "items": ["S22B-002"],
-        "host_id": "cogos-reference-host-1",
+        "host_id": host_id,
         "role": (
             "the declared reference host of §1.4: the CPU-first, GPU-free developer machine "
             "the D1 gate already declared. Every 22B latency and throughput number is a claim "
@@ -260,16 +280,17 @@ def _record() -> dict[str, Any]:
     return record
 
 
-def _write() -> None:
-    record = _record()
-    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT.write_text(
+def _write(host_id: str) -> None:
+    record = _record(host_id)
+    output = HOSTS[host_id]
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(
         json.dumps(record, indent=1, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8"
     )
     print(
         json.dumps(
             {
-                "output": OUTPUT.name,
+                "output": output.name,
                 "host_id": record["host_id"],
                 "cpu": record["invariants"]["cpu"]["model"],
                 "logical_cpus": record["invariants"]["cpu"]["logical_cpus"],
@@ -286,9 +307,9 @@ def _write() -> None:
     )
 
 
-def _check() -> None:
+def _check(host_id: str) -> None:
     """Is this still the declared host? Recomputed, never read back as a literal (W4-F2)."""
-    sealed = json.loads(OUTPUT.read_text(encoding="utf-8"))
+    sealed = json.loads(HOSTS[host_id].read_text(encoding="utf-8"))
     body = {key: value for key, value in sealed.items() if key != "integrity_content_hash"}
     if _sha256(_canonical(body)) != sealed["integrity_content_hash"]:
         raise SystemExit("the reference-host record's seal does not match its content")
@@ -324,14 +345,100 @@ def _check() -> None:
     )
 
 
+def _supersede(reason: str) -> None:
+    """Seal the delta between two declared hosts, so no number silently changes machine."""
+    before = json.loads(HOSTS["cogos-reference-host-1"].read_text(encoding="utf-8"))
+    after = json.loads(HOSTS["cogos-reference-host-2"].read_text(encoding="utf-8"))
+    changed = sorted(
+        key
+        for key in set(before["invariants"]) | set(after["invariants"])
+        if before["invariants"].get(key) != after["invariants"].get(key)
+    )
+    record = {
+        "schema_version": 1,
+        "sprint": "22B",
+        "wave": "W1",
+        "items": ["S22B-021"],
+        "recorded_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "from_host_id": before["host_id"],
+        "from_invariants_hash": before["invariants_hash"],
+        "to_host_id": after["host_id"],
+        "to_invariants_hash": after["invariants_hash"],
+        "reason": reason,
+        "invariant_groups_changed": changed,
+        "shm_size_bytes_before": before["invariants"]["container"].get("shm_size_bytes"),
+        "shm_size_bytes_after": after["invariants"]["container"].get("shm_size_bytes"),
+        "shm_size_bytes_before_note": (
+            "null because host 1's record predates the field: W0 did not know shared memory "
+            "was load-bearing, which is exactly why the ceiling went unmeasured until a 10^6 "
+            "build hit it. The value in force at that time was Docker's default, 67108864 "
+            "bytes, named by the failure itself — `could not resize shared memory segment to "
+            "63999488 bytes` against a 64 MB /dev/shm. It is reported here as the observed "
+            "value at failure, not back-dated into host 1's sealed record"
+        ),
+        "postgres_settings_unchanged": (
+            before["invariants"]["postgres"]["settings"]
+            == after["invariants"]["postgres"]["settings"]
+        ),
+        "cpu_unchanged": before["invariants"]["cpu"] == after["invariants"]["cpu"],
+        "memory_unchanged": before["invariants"]["memory"] == after["invariants"]["memory"],
+        "storage_unchanged": (
+            before["invariants"]["storage_postgres_data"]
+            == after["invariants"]["storage_postgres_data"]
+        ),
+        "what_this_can_affect": (
+            "it decides whether a parallel HNSW build over 10^6 vectors can allocate its "
+            "dynamic shared memory at all, and it lifts a 64 MB ceiling that parallel *query* "
+            "workers shared. The second half is why this is a host change rather than a "
+            "footnote: a latency measured with more shared memory available is not measured on "
+            "the machine host 1 described"
+        ),
+        "what_this_cannot_affect": (
+            "recall. recall@10 is a property of the index and the probes, and no amount of "
+            "shared memory changes which neighbours the graph finds"
+        ),
+        "the_10_5_comparison": (
+            "the sealed 10^5 envelope was measured on host 1, under the 64 MB ceiling. Every "
+            "10^6 number in this sprint is measured on host 2, and the comparison between them "
+            "carries this record. Neither number is wrong; they are numbers about two machines "
+            "that differ in one declared way"
+        ),
+        "every_22b_measurement_binds": after["host_id"],
+    }
+    record["integrity_content_hash"] = _sha256(_canonical(record))
+    HOST_CHANGE.write_text(
+        json.dumps(record, indent=1, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+    print(
+        json.dumps(
+            {
+                "output": HOST_CHANGE.name,
+                "from": record["from_host_id"],
+                "to": record["to_host_id"],
+                "invariant_groups_changed": changed,
+                "shm_before": record["shm_size_bytes_before"],
+                "shm_after": record["shm_size_bytes_after"],
+                "postgres_settings_unchanged": record["postgres_settings_unchanged"],
+                "cpu_unchanged": record["cpu_unchanged"],
+            },
+            indent=1,
+            sort_keys=True,
+        )
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
+    parser.add_argument("--host-id", default=CURRENT_HOST, choices=sorted(HOSTS))
+    parser.add_argument("--supersede", metavar="REASON", help="seal the delta between two hosts")
     arguments = parser.parse_args()
-    if arguments.check:
-        _check()
+    if arguments.supersede:
+        _supersede(arguments.supersede)
+    elif arguments.check:
+        _check(arguments.host_id)
     else:
-        _write()
+        _write(arguments.host_id)
     return 0
 
 
