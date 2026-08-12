@@ -1,0 +1,87 @@
+{
+ "core_controller_changed": false,
+ "every_task_accepted": true,
+ "every_wrong_answer_refused": true,
+ "judged_by": "domains.checker, through the released VerificationService",
+ "phase": "solve",
+ "pilot": "science.chemistry",
+ "problem_types": 2,
+ "process": 23262,
+ "recorded_at": "2026-08-12T04:46:07Z",
+ "results": {
+  "chemistry.mass-balance": {
+   "accepted": true,
+   "answer": {
+    "balanced": true,
+    "product_elements": {
+     "C": 1,
+     "H": 4,
+     "O": 4
+    },
+    "product_mass": "80",
+    "reactant_elements": {
+     "C": 1,
+     "H": 4,
+     "O": 4
+    },
+    "reactant_mass": "80",
+    "unbalanced_elements": []
+   },
+   "domain_id": "science.chemistry",
+   "required_capabilities": [
+    "physics.dimension",
+    "physics.quantity",
+    "chemistry.stoichiometry"
+   ],
+   "statement": "Does CH4 + 2 O2 -> CO2 + 2 H2O balance, and what are the masses?",
+   "tool_plane_events": [
+    "tool_call.requested",
+    "tool_call.authorized",
+    "tool_call.started",
+    "tool_call.completed",
+    "verifier.started",
+    "verifier.completed"
+   ],
+   "tool_status": "completed",
+   "units": "g/mol",
+   "verifier_status": "passed",
+   "wrong_answer": {
+    "accepted": false,
+    "detail": "the net atom count leaves ['H', 'O'] unbalanced; candidate claimed balanced=True",
+    "judged_against_a_different_case": true,
+    "verifier_status": "failed",
+    "why": "an unbalanced equation declared balanced"
+   }
+  },
+  "chemistry.molar-conversion": {
+   "accepted": true,
+   "answer": "2",
+   "domain_id": "science.chemistry",
+   "required_capabilities": [
+    "physics.dimension",
+    "physics.quantity",
+    "chemistry.stoichiometry"
+   ],
+   "statement": "How many moles of water are there in a 36 g sample?",
+   "tool_plane_events": [
+    "tool_call.requested",
+    "tool_call.authorized",
+    "tool_call.started",
+    "tool_call.completed",
+    "verifier.started",
+    "verifier.completed"
+   ],
+   "tool_status": "completed",
+   "units": "mol",
+   "verifier_status": "passed",
+   "wrong_answer": {
+    "accepted": false,
+    "detail": "the claimed amount times the molar mass returns 81/2 g against the given 36 g",
+    "judged_against_a_different_case": false,
+    "verifier_status": "failed",
+    "why": "the molar mass of water read as 16 rather than 18"
+   }
+  }
+ },
+ "solved_through": "domains.solve, under the real Tool Plane policy and audit"
+}

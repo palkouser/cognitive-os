@@ -15,7 +15,10 @@ def test_default_catalog_is_explicit_and_complete() -> None:
     # campaign sequence receipt is the 214th: it existed from W2 but was declared below
     # `CODING_EVENT_MODELS`, so the catalog never registered it and the Event Store refused it
     # as an unsupported contract (W4-F1). This count is what would have caught that in W2.
-    assert len(catalog.list_event_types()) == 214
+    # Sprint 22A's W1 adds the 215th: `domain.descriptor_registered`, the index that lets a
+    # domain be stored as bytes plus an event rather than as a table (S22A-021).
+    assert len(catalog.list_event_types()) == 215
+    assert catalog.get_payload_model("domain.descriptor_registered", 1) is not None
     assert catalog.get_payload_model("task.created", 1) is TaskCreated
 
 

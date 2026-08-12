@@ -1,0 +1,70 @@
+{
+ "schema_version": 1,
+ "domain_id": "engineering.mechanics",
+ "revision": 1,
+ "display_name": "Engineering Mechanics",
+ "lifecycle": "pilot",
+ "related_domain_ids": [
+  "physics"
+ ],
+ "problem_types": [
+  "mechanics.statics-equilibrium",
+  "mechanics.moment-balance",
+  "mechanics.uniform-motion"
+ ],
+ "concepts": [
+  {
+   "concept_id": "mechanics.force_balance",
+   "description": "The vector sum of the forces on a body at rest vanishes.",
+   "shared_with": [
+    "physics"
+   ]
+  },
+  {
+   "concept_id": "mechanics.moment_of_force",
+   "description": "The turning effect of a force about a point, as the cross product of the lever arm and the force.",
+   "shared_with": [
+    "physics"
+   ]
+  },
+  {
+   "concept_id": "mechanics.rigid_body",
+   "description": "An idealised body whose internal distances do not change under load.",
+   "shared_with": []
+  }
+ ],
+ "capabilities": {
+  "verifier_capabilities": [
+   "physics.dimension",
+   "physics.quantity"
+  ],
+  "tool_capabilities": [
+   "physics.kernel"
+  ],
+  "skills": [],
+  "strategies": [],
+  "units": [
+   "N",
+   "m",
+   "s",
+   "N*m",
+   "m/s"
+  ]
+ },
+ "corpora": [],
+ "transfer_links": [
+  {
+   "target_domain_id": "physics",
+   "direction": "from_physics_to_mechanics",
+   "evidence_hash": null
+  }
+ ],
+ "provenance": {
+  "source": "cognitive-os/sprint-22a-mechanics-pilot",
+  "revision": "1",
+  "licence": "Apache-2.0",
+  "redistributable": true,
+  "contamination_notes": "Authored for Sprint 22A as the first descriptor-registered domain; not derived from any public benchmark set.",
+  "effective_date": "2026-08-11T00:00:00Z"
+ }
+}

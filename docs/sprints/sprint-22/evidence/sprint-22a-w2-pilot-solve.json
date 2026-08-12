@@ -1,0 +1,104 @@
+{
+ "core_controller_changed": false,
+ "every_task_accepted": true,
+ "every_wrong_answer_refused": true,
+ "judged_by": "domains.checker, through the released VerificationService",
+ "phase": "solve",
+ "problem_types": 3,
+ "process": 75550,
+ "recorded_at": "2026-08-11T17:25:46Z",
+ "results": {
+  "mechanics.moment-balance": {
+   "accepted": true,
+   "answer": "-100",
+   "domain_id": "engineering.mechanics",
+   "required_capabilities": [
+    "physics.dimension",
+    "physics.quantity"
+   ],
+   "statement": "A 50 N load hangs 2 m from a pinned support; what is the moment?",
+   "tool_plane_events": [
+    "tool_call.requested",
+    "tool_call.authorized",
+    "tool_call.started",
+    "tool_call.completed",
+    "verifier.started",
+    "verifier.completed"
+   ],
+   "tool_status": "completed",
+   "units": "N*m",
+   "verifier_status": "passed",
+   "wrong_answer": {
+    "accepted": false,
+    "detail": "transporting the origin moment -100 to the pivot gives -100; candidate stated 100",
+    "verifier_status": "failed",
+    "why": "the sign of the lever arm reversed"
+   }
+  },
+  "mechanics.statics-equilibrium": {
+   "accepted": true,
+   "answer": {
+    "equilibrium": true,
+    "force_count": 3,
+    "forces_summed": [
+     "load",
+     "cable_a",
+     "cable_b"
+    ],
+    "resultant_x": "0",
+    "resultant_y": "0"
+   },
+   "domain_id": "engineering.mechanics",
+   "required_capabilities": [
+    "physics.dimension",
+    "physics.quantity"
+   ],
+   "statement": "Three cables and a load meet at a joint; is the joint in equilibrium?",
+   "tool_plane_events": [
+    "tool_call.requested",
+    "tool_call.authorized",
+    "tool_call.started",
+    "tool_call.completed",
+    "verifier.started",
+    "verifier.completed"
+   ],
+   "tool_status": "completed",
+   "units": "N",
+   "verifier_status": "passed",
+   "wrong_answer": {
+    "accepted": false,
+    "detail": "the declared forces are ['load', 'cable_a', 'cable_b']; the derivation accounts for ['load', 'cable_a']",
+    "verifier_status": "failed",
+    "why": "a dropped force that still sums to a plausible resultant"
+   }
+  },
+  "mechanics.uniform-motion": {
+   "accepted": true,
+   "answer": "300",
+   "domain_id": "engineering.mechanics",
+   "required_capabilities": [
+    "physics.dimension",
+    "physics.quantity"
+   ],
+   "statement": "A trolley moves at a constant 25 m/s for 12 s; how far does it travel?",
+   "tool_plane_events": [
+    "tool_call.requested",
+    "tool_call.authorized",
+    "tool_call.started",
+    "tool_call.completed",
+    "verifier.started",
+    "verifier.completed"
+   ],
+   "tool_status": "completed",
+   "units": "m",
+   "verifier_status": "passed",
+   "wrong_answer": {
+    "accepted": false,
+    "detail": "the displacement must carry the requested length unit 'm'; candidate reported 'km'",
+    "verifier_status": "failed",
+    "why": "the right number in the wrong unit"
+   }
+  }
+ },
+ "solved_through": "domains.solve, under the real Tool Plane policy and audit"
+}

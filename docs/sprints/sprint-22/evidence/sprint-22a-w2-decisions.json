@@ -1,0 +1,184 @@
+{
+ "authority": "sprint-22a pre-registration revision 1, backward_compatibility contract",
+ "decisions": {
+  "registry_snapshot_scope": {
+   "branches_priced": {
+    "let_the_registry_say_it_gained_a_domain": {
+     "cost": "the sealed compat claim needs a function that means exactly it, which is `released_snapshot_hash`. Twelve lines, one re-binding, no released value moved",
+     "taken": true
+    },
+    "scope_the_hash_so_nothing_moves": {
+     "cost": "one hash for two surfaces. A process holding a pilot and a process holding none would report the same fingerprint, and any later record binding that hash would be unfalsifiable",
+     "taken": false
+    }
+   },
+   "content_hash": "3cfa4c23e7d73603eab4259efa663a198663da206bcbac561a3984209c693280",
+   "decision": "both, and they are two different questions wearing one name. snapshot_hash() covers the whole resolution surface and therefore changes when the registry gains a domain; released_snapshot_hash() covers exactly the four released domains and no registration can move it. The sealed compat value re-binds to the second, which is the claim it always made",
+   "item": "S22A-030",
+   "measured": {
+    "domain_ids_after": [
+     "coding",
+     "engineering.mechanics",
+     "logic",
+     "mathematics",
+     "physics"
+    ],
+    "entries_after": 31,
+    "released_after": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119",
+    "released_before": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119",
+    "whole_after": "a3ff778df37ae6a098760a10439066d8f29a8f8b9e599711e4177bc871cfbd7e",
+    "whole_before": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119"
+   },
+   "premise_corrected": {
+    "domains_registry_snapshot_hash_callers_in_src": {},
+    "every_snapshot_hash_call_site_in_src": {
+     "src/cognitive_os/benchmarks/semantic_adapter.py": [
+      "registry.snapshot_hash (line 311)"
+     ],
+     "src/cognitive_os/benchmarks/skill_adapter.py": [
+      "evaluators.snapshot_hash (line 43)",
+      "registry.snapshot_hash (line 42)"
+     ],
+     "src/cognitive_os/benchmarks/strategy_adapter.py": [
+      "problems.snapshot_hash (line 82)",
+      "registry.snapshot_hash (line 82)",
+      "targets.snapshot_hash (line 82)"
+     ],
+     "src/cognitive_os/context/persistence.py": [
+      "persisted_bundle.source_snapshot.snapshot_hash (line 72)"
+     ],
+     "src/cognitive_os/domain/context.py": [
+      "self.snapshot_hash (line 330)"
+     ],
+     "src/cognitive_os/domain/proposals.py": [
+      "self.snapshot_hash (line 209)",
+      "self.snapshot_hash (line 216)"
+     ],
+     "src/cognitive_os/domain/semantic_memory.py": [
+      "self.snapshot_hash (line 509)",
+      "self.snapshot_hash (line 882)"
+     ],
+     "src/cognitive_os/domain/strategies.py": [
+      "self.snapshot_hash (line 942)",
+      "self.snapshot_hash (line 986)"
+     ],
+     "src/cognitive_os/domains/skill_runner.py": [
+      "skill_registry.snapshot_hash (line 109)",
+      "skill_registry.snapshot_hash (line 218)"
+     ],
+     "src/cognitive_os/infrastructure/proposals/postgres/health.py": [
+      "registry.snapshot_hash (line 148)"
+     ],
+     "src/cognitive_os/infrastructure/proposals/postgres/repository.py": [
+      "snapshot.snapshot_hash (line 128)",
+      "snapshot.snapshot_hash (line 132)"
+     ],
+     "src/cognitive_os/infrastructure/semantic_memory/postgres/repository.py": [
+      "revision.snapshot_hash (line 978)"
+     ],
+     "src/cognitive_os/infrastructure/weakness/postgres/tables.py": [
+      "weakness_clusters.c.snapshot_hash (line 199)"
+     ],
+     "src/cognitive_os/proposals/service.py": [
+      "approved.source_snapshot.snapshot_hash (line 1268)",
+      "approved.source_snapshot.snapshot_hash (line 1281)",
+      "revision.source_snapshot.snapshot_hash (line 1176)",
+      "revision.source_snapshot.snapshot_hash (line 1197)",
+      "revision.source_snapshot.snapshot_hash (line 1323)",
+      "revision.source_snapshot.snapshot_hash (line 1381)",
+      "self.registry.snapshot_hash (line 1073)",
+      "source.snapshot_hash (line 1015)",
+      "source.snapshot_hash (line 1045)",
+      "source.snapshot_hash (line 1058)",
+      "source.snapshot_hash (line 1072)",
+      "source.snapshot_hash (line 430)",
+      "source.snapshot_hash (line 602)",
+      "source.snapshot_hash (line 698)",
+      "source.snapshot_hash (line 969)"
+     ],
+     "src/cognitive_os/semantic_memory/compilation.py": [
+      "self._registry.snapshot_hash (line 102)"
+     ],
+     "src/cognitive_os/semantic_memory/extraction.py": [
+      "registry.snapshot_hash (line 205)"
+     ],
+     "src/cognitive_os/semantic_memory/fixtures.py": [
+      "registry.snapshot_hash (line 54)"
+     ],
+     "src/cognitive_os/semantic_memory/lifecycle.py": [
+      "event.snapshot_hash (line 173)",
+      "first.snapshot_hash (line 161)"
+     ],
+     "src/cognitive_os/semantic_memory/provider_extraction.py": [
+      "self._registry.snapshot_hash (line 153)"
+     ],
+     "src/cognitive_os/semantic_memory/repository.py": [
+      "revision.snapshot_hash (line 355)",
+      "revisions[-1].snapshot_hash (line 355)"
+     ],
+     "src/cognitive_os/semantic_memory/service.py": [
+      "persisted.snapshot_hash (line 885)",
+      "previous.snapshot_hash (line 855)",
+      "rendered.snapshot_hash (line 855)",
+      "stored.snapshot_hash (line 898)"
+     ],
+     "src/cognitive_os/strategies/engine.py": [
+      "statistics.snapshot_hash (line 521)"
+     ],
+     "src/cognitive_os/verification/context/invariants.py": [
+      "bundle.source_snapshot.snapshot_hash (line 81)",
+      "request.source_snapshot.snapshot_hash (line 83)",
+      "trace.source_snapshot.snapshot_hash (line 82)"
+     ],
+     "src/cognitive_os/weakness/service.py": [
+      "self.extractor_registry.snapshot_hash (line 887)",
+      "self.failure_codes.snapshot_hash (line 888)",
+      "self.source_registry.snapshot_hash (line 886)"
+     ]
+    },
+    "finding": "W2-F1",
+    "how_this_was_counted": "AST attribute access named `snapshot_hash` with the receiver expression kept, restricted to modules that import the domain registry, and then to the receiver `registry` — the module alias this registry is used through. Several registries publish a method of this name and only the receiver tells them apart: `skill_registry.snapshot_hash` in domains/skill_runner.py is the Skill Engine's, not this one",
+    "modules_importing_the_domain_registry": [
+     "src/cognitive_os/benchmarks/domain_adapter.py",
+     "src/cognitive_os/domain/descriptors.py",
+     "src/cognitive_os/domains/fixtures.py",
+     "src/cognitive_os/domains/mechanics.py",
+     "src/cognitive_os/domains/service.py",
+     "src/cognitive_os/domains/skill_execution.py",
+     "src/cognitive_os/domains/skill_runner.py",
+     "src/cognitive_os/learning/replacement.py",
+     "src/cognitive_os/tools/domains.py",
+     "src/cognitive_os/verification/domains.py"
+    ],
+    "the_handoff_said": "registering a pilot would change a hash 'bound into released semantic-memory records'",
+    "what_is_true": "the snapshot_hash() in semantic-memory records is the PredicateRegistry's, a different registry with a method of the same name. domains.registry.snapshot_hash() has no production caller at all",
+    "why_the_decision_still_matters": "the constraint is the sprint's own sealed compat contract and the CI check that enforces it, not a released runtime binding. A pilot registered in a test session would have failed that check by test ordering alone"
+   },
+   "question": "may registering a descriptor domain change registry.snapshot_hash(), or does the snapshot become per-domain scoped?",
+   "re_binding": {
+    "reproduced_by": "cognitive_os.domains.registry.released_snapshot_hash",
+    "reproduces": true,
+    "rule": "W4-F1: an authorised change re-binds rather than edits. The W0 contract's `registry_snapshot_hash` value is unchanged here; what changed is the function that reproduces it, from snapshot_hash() to released_snapshot_hash()",
+    "sealed_in": "sprint-22a-contracts.json",
+    "sealed_in_sha256": "7698e205220ee236616a72ab656cc565b5862e7044c3ea45ae372a8bc6427cf0",
+    "sealed_value": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119"
+   },
+   "reasoning": "a fingerprint that omits part of the table it fingerprints lets two different resolution surfaces share one hash. That is the failure the hash exists to prevent, so scoping the released claim is right and scoping the general hash is not",
+   "what_this_decision_does_not_change": [
+    "no released domain, problem type, verifier capability or stored record",
+    "no threshold, no gate condition, no migration",
+    "the four sealed compat hashes, which are re-derived unchanged"
+   ]
+  }
+ },
+ "integrity_content_hash": "facaafbe78ed6476ba775e8f233e2dc45e9d9c4b45bdbee089d27d4433e6aa40",
+ "items": [
+  "S22A-030"
+ ],
+ "measured_values": 0,
+ "recorded_at": "2026-08-11T17:29:33Z",
+ "schema_version": 1,
+ "sprint": "22A",
+ "thresholds_changed": 0,
+ "wave": "W2"
+}

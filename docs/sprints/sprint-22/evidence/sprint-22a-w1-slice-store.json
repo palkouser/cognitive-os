@@ -1,0 +1,13 @@
+{
+ "artifact_id": "56adf5b5-baca-459a-9c78-fe0ffbcc2329",
+ "descriptor_content_hash": "3bf4a1082928473ca4a3a0c534d6b7936402a5d1004445a8741b21271c2ad8c8",
+ "domain_id": "slice.fixture",
+ "event_id": "54913ddb-1491-4a18-a718-8a90c2f6ade8",
+ "media_type": "application/vnd.cogos.domain-package+json",
+ "package_sha256": "d27677531eeeb0cc67ba321028cd55eb57164df3b7e562f48dfd3d0ba07b7d52",
+ "phase": "store",
+ "recorded_at": "2026-08-11T16:31:17Z",
+ "revision": 1,
+ "stream_id": "22a00000-0000-4000-8000-000000000001",
+ "stream_version": 1
+}

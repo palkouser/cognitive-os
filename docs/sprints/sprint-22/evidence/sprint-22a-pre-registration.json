@@ -1,0 +1,58 @@
+{
+ "chronology": {
+  "descriptors_persisted": 0,
+  "domains_registered": 0,
+  "migrations_allocated": 0,
+  "pilot_packages_authored": 0,
+  "problem_types_solved": 0,
+  "registry_seams_built": 0,
+  "replays_claimed": 0
+ },
+ "contract_hashes": {
+  "backward_compatibility": "aad2b883f4a8bfbab996019c02fa24679c7d701af6aad6ddf6ceb10333bce025",
+  "descriptor_schema_v1": "a8c2f6a273f298df9a3e918dfb3e68fa6c89ace5d28d8a2f7eb827611aee04a5",
+  "enum_reading": "e50bad883d849dc25f56a3236cac6fe7a2c2cbf8d8874719aad8508555dd6d4d",
+  "exit_and_decision_tree": "90ee9483402987053b985c361ea415a8f06e85e26556a74f09ee79b9e80a0f31",
+  "pilot_domains": "2749f6dea0ba90c4fa89719582fc4ccbf38096647c9b81d2ad56f45724c525e1",
+  "storage_without_a_schema": "b4c5efdb2268a3ff86e74bbd025ed6bce1c1db15386695c53f2c5773a5fbd985"
+ },
+ "contracts_sha256": "7698e205220ee236616a72ab656cc565b5862e7044c3ea45ae372a8bc6427cf0",
+ "evidence_children_sha256": {
+  "sprint-22a-baseline.json": "18f27686f342da906249a9cc964c27da8e67ffeb05b7fa9a03240f424be5c0f7",
+  "sprint-22a-decisions.json": "e012567f36061100a70c77fad3e9daf7af3a57b0d0b7ea692ec081391aa67fc4",
+  "sprint-22a-domain-survey.json": "5b6be6a4c4554d5c2be5324cc4ff63f157a11252e9fe05d3cc0a6ae996ed077c"
+ },
+ "integrity_content_hash": "660aeaa9152c2349042a43d5064d8221aba6d272cdf2f6c8f3cda17d97b53da5",
+ "items": [
+  "S22A-019"
+ ],
+ "measured_values": 0,
+ "outcome_tags": {
+  "pass": "sprint-22a-domain-baseline",
+  "stop": "sprint-22a-evidence-baseline"
+ },
+ "predecessor": {
+  "commit": "3f5d7379caf85290da45885e22138506211bee2e",
+  "tag": "sprint-21-learning-baseline",
+  "verified_live_in": "sprint-22a-baseline.json"
+ },
+ "recorded_at": "2026-08-11T10:56:54Z",
+ "revision": 1,
+ "schema_version": 1,
+ "sprint": "22A",
+ "supersedes": null,
+ "wave": "W0",
+ "what_this_publication_forbids": [
+  "widening the descriptor schema, its grammar or its package ceiling to admit a pilot",
+  "substituting either pilot domain id after a registration has been attempted",
+  "adding a DomainKind member, or growing the sealed coupling count",
+  "allocating migration 0016, or any other storage-schema change",
+  "editing a compatibility hash rather than re-binding it in a new record",
+  "registering a domain by any path other than validate_domain_package",
+  "re-registering an existing (domain_id, revision) as a replacement",
+  "extending the learned component to a new domain, or promoting it to steady state",
+  "moving the conformal bar, the admitted set or the routed canary groups",
+  "declaring replay green from a digest rather than from an executed run"
+ ],
+ "why_revision_1": "22A is the first sprint of the 22 series and inherits no pre-registration. The D-series revisions belong to the learning gate and are not carried here"
+}

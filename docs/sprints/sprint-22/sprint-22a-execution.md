@@ -1,0 +1,1205 @@
+# Sprint 22A execution log
+
+- Branch: `sprint-22a-groundwork`
+- Backlog: [Sprint 22A Technical Backlog](sprint-22a-technical-backlog.md)
+- **W4 closed, and the sprint's four exit criteria are met — 4 of 4.** The verification matrix
+  ran every pre-release check once; the criteria are decided in
+  [`sprint-22a-exit-criteria.json`](evidence/sprint-22a-exit-criteria.json), measured where they
+  can be measured and bound by hash where they cannot. Eleven controller modules and fifteen
+  migration files are byte-identical to the branch point, six manifests replay 248 cases green,
+  and three findings — a released domain this sprint never replayed, an exit criterion that was a
+  literal, and a release command that could not be run twice — were fixed inside the wave. The **release is the gate owner's**: #231 is not merged,
+  and the tag `sprint-22a-domain-baseline` is created after exact-head post-merge CI, never by a
+  wave. See [the report](sprint-22a-report.md) and [the handoff](sprint-22a-handoff.md). **W0
+  through W3 detail follow first.**
+- W4 wave commit `7e52ab0`; CI run **`31570485680`** on that exact head, **30 of 30 jobs
+  successful**.
+- **W3 closed.** `science.chemistry` revision 1 is registered and solving alongside the
+  mechanics pilot: two pilots, five problem types, four concepts shared into `physics` from two
+  owners. The rejection suite refuses **ten cases across four layers**, and §3.5's silo
+  regression is closed — two domains added **zero** `DomainKind` branches. Migration head
+  `0015`, 208 replay cases green. One finding and two advisories. **W0, W1 and W2 detail
+  follow first.**
+- W3 wave commit `5fb4e7a`; CI run **`31566069951`** on that exact head, **30 of 30 jobs
+  successful**.
+- **W2 closed.** `engineering.mechanics` revision 1 is registered from a committed package,
+  rebuilt in a separate process, and solving and verifying end to end through the released Tool
+  Plane and the released checker. Two shared concepts, one owner, two governed views. Migration
+  head `0015`, no enum member, `DomainKind` coupling still **52**, 208 replay cases green. Three
+  findings and one named stop, all inside the wave — two of the three surfaced only when the
+  whole suite ran with a pilot registered. **W0 and W1 detail follow first.**
+- W2 wave commit `420e2a5`; CI run **`31519582456`** on that exact head, **30 of 30 jobs
+  successful**.
+- **W1 closed.** The registry seam exists, descriptors persist and rebuild without a storage
+  schema, and the four released domains are byte-identical in behaviour: `snapshot_hash()`
+  unchanged, four of four compat hashes unchanged, 208 replay cases green. The `DomainKind`
+  coupling fell **57 → 52**. Three findings, two of them found by running the vertical slice
+  rather than reviewing it, all fixed inside the wave. **W0 detail follows first**, then W1.
+- W1 wave commit `a0e2f9f`; CI run **`31513679325`** on that exact head, **30 of 30 jobs
+  successful**.
+- **W0 closed.** S22A-000 through S22A-005, S22A-010 and S22A-011, and S22A-013 through
+  S22A-019 are done. The groundwork is tested and merged-ready, both §2.2 governance decisions
+  are on the record, and revision 1 is published with `measured_values: 0`. **No threshold
+  moved, no migration was allocated, and no released domain changed.**
+- Pre-registration: revision 1, SHA-256
+  `dc40727db85be1cebef88220fc74624af0bfd6f84204979ce3914072a75bbafb`
+- Predecessor: `sprint-21-learning-baseline`, verified live — annotated tag object
+  `3025082526cef6d9…`, peeling to `3f5d7379caf85290da45885e22138506211bee2e`; post-merge
+  exact-head CI run `31476479587` re-read from the API, **30 of 30 successful**. Gate L2
+  passes 29 of 29; Gate D1 conditions 6, 7 and 15 are closed. 22A's dependency is discharged.
+- Migration head: `0015`, unchanged. `0016` remains unallocated and is a **refusal**, not a
+  plan item.
+- Wave commit `82cad8b`, pull request **#231** against protected `main`; CI run
+  **`31485332864`** on that exact head, **30 of 30 jobs successful**. The merge is the gate
+  owner's, not the wave's — W0 leaves the branch reviewable rather than merged.
+- **Three findings, two of them defects in the groundwork this wave was written to test, and
+  both fixed inside the wave.** See W0 findings.
+- W0 measures nothing and registers nothing. It establishes the authority every later wave is
+  bound to. Gate L2 and Gate D1 are untouched: 22A opens no condition and closes none.
+
+---
+
+## W0 outcome — the groundwork executed, two decisions taken, one revision frozen
+
+Three scripts, five sealed records (four written here plus the carried groundwork survey),
+three test modules, **three findings** and one advisory that constrains W3.
+
+Unlike every D-series W0, this wave had no threshold in front of it and asked the gate owner
+for no amendment. What it asked for instead was a **decision it was forbidden to drift into**
+— whether 22A takes the D7 handoff's cheap win — and the answer was to defer it under its own
+record rather than to fold a released-runtime change into a sprint about domain registration.
+
+### S22A-005 — the groundwork, executed rather than read
+
+The backlog's §1.2 was explicit that `descriptors.py` and `domain_survey_22a.py` were
+"written and verified, **not yet merged and not yet tested**". Three test modules now exist
+and CI runs them:
+
+| Module | Tests | What it holds |
+|---|---:|---|
+| `tests/cognitive_os/domain/test_domain_descriptors.py` | 43 | the id grammar, closed-world validation, the package boundary, the released adapter |
+| `tests/cognitive_os/domain/test_domain_survey_22a.py` | 7 | the sealed survey reproduces; the 9/57 coupling fence |
+| `tests/cognitive_os/domain/test_sprint_22a_w0_evidence.py` | 16 | the four W0 seals, and both `--check` validators |
+
+Two properties in that table are worth naming because they are the sprint's fences rather
+than its tests. The **coupling recount** (9 modules, 57 references, counted from the AST of
+`src/cognitive_os`) now runs on every CI job, so §3.5's silo regression exists from W0 rather
+than from W3 — a wave that adds a `DomainKind` branch fails before it can claim a pilot
+registered without one. And the **compatibility hashes** are asserted against the sealed
+survey record, never against constants typed into a test, so an authorised change to a
+released domain re-binds a record instead of editing a literal (W4-F1).
+
+The survey reproduction check compares every measured field and deliberately excludes
+`recorded_at` and the seal over it, so it cannot fail because a clock moved (W2-F1/F2).
+*(W1-F3 narrowed this: comparing **every** field also asserted that the source tree never
+changes, which made W1's own seam a failure. The sentence stands as what W0 did.)*
+
+### S22A-000 and S22A-002 — the starting point, read from the authority that owns it
+
+[`sprint-22a-baseline.json`](evidence/sprint-22a-baseline.json), integrity
+`86ac7a4924005ef3…`.
+
+| Fact | Result |
+|---|---|
+| `sprint-21-learning-baseline` resolves remotely as an annotated tag | yes, object `3025082526cef6d9…` peeling to `3f5d7379caf85290…` |
+| local and remote tag handles agree | yes |
+| branch descends from current `origin/main` | yes, one commit ahead |
+| both 22A outcome tags | **absent**, checked rather than assumed |
+| D7 exact-head CI run `31476479587` | re-read from the API, **30 of 30 successful** |
+| branch protection | administrators enforced, 27 required checks, strict, no force pushes, no deletions |
+| migration head | `0015` |
+| **eleven** predecessor artifact roots | fingerprinted; the nine with a live released expectation match it |
+| stores written to by W0 | **none** — W0 provisions nothing, because 22A's own store is W1's item |
+
+The two D7 roots are the wave's first finding, below.
+
+### S22A-010 and S22A-011 — the two §2.2 decisions, priced by recomputation
+
+[`sprint-22a-decisions.json`](evidence/sprint-22a-decisions.json), integrity
+`7eebcc9c90538fc1…`. **Thresholds changed: 0. Measured values: 0.**
+
+**(a) The rung as product — deferred under its own record, not refused.** The either/or was
+put to the gate owner with both branches priced out of D7's sealed evidence rather than
+described, and the prices are recomputed from
+[`sprint-21d7-ladder-ruling.json`](../sprint-21/evidence/sprint-21d7-ladder-ruling.json) and
+[`sprint-21d7-runtime.json`](../sprint-21/evidence/sprint-21d7-runtime.json) at write time, so
+a record that drifts from the evidence it cites fails its own `--check`:
+
+| pool | containment ordering | released fallback (`lexical_similarity`) | strongest released rung |
+|---|---:|---:|---|
+| D5 calibration | **0.92** | 0.41 | `fixed_input_order`, 0.42 |
+| D6 certification | **0.84** | 0.62 | `lexical_similarity`, 0.62 |
+
+What made this a decision rather than a free win: the released runtime's deterministic
+fallback is **gate evidence**. Condition 23 is closed on a record that names the lexical
+ordering and reports all seventeen fallback codes reached, so swapping the advisory re-opens
+that condition and needs its own evidence trail and its own replay. 22A's four exit criteria
+say nothing about the correction surface. The margin is not lost, it is **unspent**, and any
+successor may take it under its own record.
+
+**(b) The steady-state door stays closed**, recorded as a decision rather than left as a
+default. The component keeps routing its five canary groups; the sealed canary→steady
+transition condition remains the named key, and taking it is a separate governed decision.
+
+### S22A-013 through S22A-019 — revision 1
+
+[`sprint-22a-contracts.json`](evidence/sprint-22a-contracts.json), integrity
+`fe579caa439ed558…`, and
+[`sprint-22a-pre-registration.json`](evidence/sprint-22a-pre-registration.json), integrity
+`660aeaa9152c2349…`.
+
+The D-series pre-registered learners. 22A fits nothing, so revision 1 freezes **a vocabulary
+and a refusal**:
+
+| Contract | Item | Hash | What it freezes |
+|---|---|---|---|
+| `descriptor_schema_v1` | S22A-013 | `a8c2f6a273f298df` | the schema (`d34d4e0b89accb74…`), the grammar, the 64 KiB ceiling, the pilot-only claim rule, and that identity is (`domain_id`, `revision`) |
+| `enum_reading` | S22A-014 | `e50bad883d849dc2` | §2.3: the enum survives as the adapter's closed vocabulary; no new member; the coupling may not grow |
+| `pilot_domains` | S22A-015 | `2749f6dea0ba90c4` | `engineering.mechanics` and `science.chemistry`, and that neither may be substituted after a failure |
+| `backward_compatibility` | S22A-016 | `aad2b883f4a8bfba` | the four compat hashes and the registry snapshot hash, read from the sealed survey |
+| `storage_without_a_schema` | S22A-017 | `b4c5efdb2268a3ff` | head `0015`, `0016` as a refusal, and the startup-rebuild hash check |
+| `exit_and_decision_tree` | S22A-018 | `90ee948340298705` | the four exit criteria as the gate, and five endings that may not be chosen after the evidence |
+
+Freezing the pilot ids is the one that would be easy to skip and expensive to lose: answering
+"does a domain register?" by choosing an easier domain after seeing how the first one went
+measures the chooser, not the registry.
+
+The publication's `--check` re-derives the descriptor schema hash **from the live module**, so
+a wave that widens the contract to admit a pilot fails the check rather than the review.
+
+---
+
+## W0 evidence index
+
+| Record | SHA-256 | Integrity | Items |
+|---|---|---|---|
+| `sprint-22a-domain-survey.json` (carried) | `5b6be6a4c4554d5c…` | `298233818691b90d…` | groundwork |
+| `sprint-22a-baseline.json` | `18f27686f342da90…` | `86ac7a4924005ef3…` | S22A-000, S22A-002 |
+| `sprint-22a-decisions.json` | `e012567f36061100…` | `7eebcc9c90538fc1…` | S22A-010, S22A-011 |
+| `sprint-22a-contracts.json` | `7698e205220ee236…` | `fe579caa439ed558…` | S22A-013 … S22A-018 |
+| `sprint-22a-pre-registration.json` | `dc40727db85be1ce…` | `660aeaa9152c2349…` | S22A-019 |
+
+Scripts, none of them released: `baseline_22a.py`, `decisions_22a.py`,
+`pre_registration_22a.py`. The `*_d2` through `*_d7` families stay exactly as they are.
+
+`src/cognitive_os/domain/descriptors.py` as W0 merges it: `5e39ff688b52246d…`. It is **not**
+the module the baseline fingerprinted — W0-F2 and W0-F3 were fixed after the baseline was
+taken and before the publication, and the contract record says so rather than letting the
+baseline move to match.
+
+---
+
+## W0 findings
+
+### W0-F1 — the only released fingerprint of D7's own store describes a state D7 left behind
+
+`sprint-21d7-authority-isolation-after.json` was written in **D7's W0**, at
+`2026-08-10T13:31Z`, and fingerprints `artifacts-s21d7` as empty because at that moment it
+was. D7's W1 through W3 then wrote **173 files** into it and no later record re-took the
+fingerprint. `artifacts-s21d7-measured` — the store D7's measured campaign actually lives in,
+**2511 files** — was never named by any released record at all.
+
+So the two roots holding the bytes behind a released, tagged sprint were under no freeze. This
+is the third consecutive sprint to find it: D6 found it as `artifacts-s21d6-measured`, D7
+found it again, and each time the successor froze it.
+
+**Handled, not patched.** 22A freezes both as first observations and names the stale
+expectation explicitly rather than editing D7's sealed record to agree (W4-F1: an authorised
+change re-binds, it does not edit). The nine roots with a live expectation all match it, and
+`unexplained_drift` is empty. The recurrence is a standing weakness in the freeze discipline —
+**the after-phase fingerprint is taken before the sprint's own waves run** — and the fix
+belongs to whichever sprint next writes an isolation-after record, which is 22A's W4.
+
+### W0-F2 — a package could claim `active`, which is a promotion it did not earn
+
+`DomainLifecycleState`'s own docstring says *"`PILOT` is the only state a fresh package may
+claim; promotion beyond it is a governance decision with evidence"*. Nothing enforced it. A
+hostile package declaring `"lifecycle": "active"` validated cleanly through
+`validate_domain_package`, arriving with the promotion as well as the domain — through exactly
+the door §3.5's rejection suite and both pilots use.
+
+**Fixed inside the wave.** The boundary now refuses any lifecycle but `pilot`, with a
+diagnosis. The released four are unaffected and the rule costs them nothing: the adapter
+builds them as contracts directly and never parses them from a package. A pleasant
+consequence, now a test: **a released domain's descriptor, serialised and offered at the
+package door, is refused** — the lifecycle is the one thing an impersonating package cannot
+bring with it.
+
+### W0-F3 — `shared_with` admitted the same domain twice
+
+Concept ids, related domain ids and problem types were all deduplicated; the sharing list was
+not. A concept naming `physics` twice is a cross-domain view that disagrees with itself about
+how many domains expose an item — precisely the count W2's "stored once, exposed through
+multiple governed views" claim rests on.
+
+**Fixed inside the wave**, in the same validator, with a test.
+
+### W0-A1 — the package boundary accepts a released domain id, and must
+
+A package claiming `domain_id: "coding"` at revision 1 validates. This is **correct at this
+layer** and is recorded so W3 does not discover it as a surprise: the boundary parses bytes
+into a contract and has no business knowing what is registered. The impersonation refusal
+§3.5 requires — *revision supersession is a governance path, not a package upload* — belongs
+to the **registry**, at registration, alongside the re-registration refusal. W3's rejection
+suite must exercise it there. W0-F2's fix raises the price of the attempt but does not close
+it: a package may still impersonate a released id **as a pilot**.
+
+---
+
+## W0 validation
+
+Every gate below was run on the exact tree this wave commits.
+
+| Gate | Result |
+|---|---|
+| `ruff check --config ruff.cognitive-os.toml src tests scripts infra` | all checks passed |
+| `ruff format --check` over the same paths | 1184 files already formatted |
+| `mypy src/cognitive_os` | success, no issues in 633 source files |
+| `bandit -r src/cognitive_os` | 0 issues at every severity |
+| `python -m cognitive_os.schemas.export --check` | contract schema check passed |
+| `scripts/check_repository_language.sh` | passed |
+| `pytest -q` (whole repository) | **4156 passed, 217 skipped** |
+| `scripts/decisions_22a.py --check` | 2 decisions verified, 2 priced D7 records verified |
+| `scripts/pre_registration_22a.py --check` | 6 contracts, 3 W0 children, 4 compat hashes, schema unchanged |
+| `detect-secrets-hook --baseline .secrets.baseline` | clean; the baseline was regenerated for the hash-dense evidence |
+
+The `--check` validators are not left to run by hand: `test_sprint_22a_w0_evidence.py` invokes
+both, so every wave of this sprint executes them without choosing to.
+
+---
+
+## What W0 did not do
+
+- **registered no domain, authored no pilot package and built no seam.** `descriptors.py`
+  still registers nothing at runtime and routes nothing; the registry seam is W1;
+- **provisioned no store and allocated no migration.** Head stays `0015`;
+- **touched no released domain.** The four compat hashes and the registry snapshot hash are
+  the ones the groundwork sealed;
+- **touched nothing that learns.** The live correction component keeps routing its five canary
+  groups, the conformal bar and admitted set are where D7 left them, and the deterministic
+  fallback is still `lexical_similarity` — by decision, now, rather than by default;
+- **opened and closed no gate condition.** Gate L2 stays at 29 of 29 on D7's evidence.
+
+## What W1 needs, and what would stop it
+
+W1 builds the registry seam and artifact-backed storage, and its first act is the **vertical
+slice** of §4.1: one fixture descriptor through package bytes → boundary → artifact store →
+**process restart** → registry rebuild → problem-type resolution → a tampered-byte refusal.
+The restart is not decoration; it is the one place "storage without a schema" can silently
+become "state in memory", and D7's lifecycle lesson was that separate processes are the only
+proof.
+
+W1 inherits three fences and one open question:
+
+- the **compat hashes and the registry snapshot hash** — the released four must not be able to
+  tell the seam exists, and the assertion names the sealed record rather than a literal;
+- the **coupling recount**, already running in CI, which fails if the seam grows a
+  `DomainKind` branch instead of removing one;
+- the **`0016` refusal** — a wave that finds itself allocating a migration has left the
+  sprint's contract and stops rather than proceeds;
+- and W0-A1: where the impersonation and re-registration refusals live. W1 builds the registry
+  that will have to hold them, so it should seat them there rather than leave them to W3 to
+  discover.
+
+The stop W0 considers most likely is still the one the backlog named — a pilot whose honest
+verification floor cannot be met by deterministic kernels — and it belongs to W3, not to W1.
+
+---
+
+## W1 outcome — the seam built, the slice run across processes, three findings
+
+S22A-020 through S22A-024 are done. The registry seam exists, descriptors persist and rebuild
+without a storage schema, and the four released domains cannot tell: **the registry snapshot
+hash and all four compatibility hashes are unchanged**, and the `DomainKind` coupling went
+**down** rather than up. Migration head stays `0015`; `0016` was never approached.
+
+**The vertical slice was built first and it paid for itself twice**, which is exactly what §4.1
+predicted: two of this wave's three findings came out of running the chain rather than
+reviewing it, and one of them changed the storage design before any pilot depends on it.
+
+### S22A-020 — 22A's own store, provisioned
+
+W0 recorded that it provisioned nothing because the store was W1's item. Three databases under
+the `cognitive_os_s22a` prefix, migrated to head **`0015`**, `alembic check` reporting **no new
+upgrade operations detected**; `artifacts-s22a` and `backups-s22a` created. `.env.s22a.local`
+is derived from `.env.s21d7.local` by substituting the sprint slug — 13 substitutions, no other
+edit, verified by diffing both files with the slug masked. Every invocation passed
+`COGOS_POSTGRES_ENV_FILE` explicitly, and the D7 and D6 heads were re-read afterwards
+(`0015`, untouched). **S21D5-W0-F1 not repeated.**
+
+### S22A-021 — storage without a schema
+
+`src/cognitive_os/domains/descriptor_store.py`. A registration is two released things and no
+new one: the package bytes are a **content-addressed artifact**, and one
+**`domain.descriptor_registered` event** names it. That event is the index — the reason no
+table is needed — and it carries the two hashes a rebuild checks against: the package bytes
+and the descriptor those bytes mean.
+
+| | |
+|---|---|
+| new tables | **0** |
+| migrations allocated | **0** |
+| new event types | 1 (`domain.descriptor_registered`, the catalog's 215th) |
+| media type | `application/vnd.cogos.domain-package+json` |
+| registry stream | `22a00000-0000-4000-8000-000000000001`, fixed rather than configured |
+
+The stream id is fixed on purpose: a registry whose location is a setting can be pointed at an
+empty stream, and a registry that silently rebuilds from nothing is worse than one that fails.
+
+### S22A-022 — the registry seam
+
+`_DOMAIN_METADATA` and `_REQUIRED_TOOLS` are gone from `domains/registry.py`. The four released
+domains' capabilities are now descriptor data in `domain/descriptors.py`
+(`RELEASED_DOMAIN_CAPABILITIES`), **keyed by string domain id**, and the registry reads them
+through the adapter. A domain's capabilities are data about a domain rather than a branch on a
+Python enum — which is the whole sprint in one table move.
+
+| Claim | Result |
+|---|---|
+| `registry.snapshot_hash()` | `00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119`, **unchanged** |
+| four derived descriptor content hashes | **4 of 4 unchanged** against the sealed survey |
+| registry entries | 28, unchanged |
+| `DomainKind` references in `src/cognitive_os` | **57 → 52**, nine modules still |
+| core controller changed | no |
+| storage schema changed | no |
+
+### S22A-023 — the vertical slice, in four processes
+
+[`sprint-22a-w1-slice-*.json`](evidence/). `store` writes and exits; `rebuild` starts cold and
+knows nothing but the database and the artifact root.
+
+| Phase | Result |
+|---|---|
+| `store` | `slice.fixture` revision 1 registered; descriptor `3bf4a108…`, package `d2767753…` |
+| `rebuild` | **a different process** replays 1 registration and rebuilds the descriptor to the same content hash, with its shared concept intact |
+| `tamper` | one byte changed in the stored blob — the package **still parses and still validates** — and the rebuild **refuses**, naming the domain; the byte is restored and the rebuild succeeds again |
+| `refusals` | re-registration refused; a package impersonating `coding` refused; **registrations after: 1**, so neither refusal wrote anything |
+
+The fixture is `slice.fixture`, deliberately not one of the two frozen pilot ids: spending a
+pre-registered id on a plumbing rehearsal would be spending the thing the freeze protects.
+
+### S22A-024 — replay
+
+Global and per-domain replay, run against this exact tree:
+
+| Manifest | Mode | Cases | Pass rate |
+|---|---|---:|---:|
+| `sprint20-domain-ci` | domain-pilot | 24 | 1.0 |
+| `sprint20-domain-seed` | domain-pilot | 120 | 1.0 |
+| `sprint21c1-learned-ci` | learned-replay | 16 | 1.0 |
+| `sprint21c1-learned-seed` | learned-replay | 48 | 1.0 |
+
+**208 cases, all green.** The learned manifests matter as much as the domain ones here: the
+correction surface is what W1 must leave *exactly* alone, and replaying it is the evidence
+rather than the intention.
+
+---
+
+## W1 evidence index
+
+| Record | SHA-256 | Items |
+|---|---|---|
+| `sprint-22a-w1-seam.json` | `3005355e0b9fd5d2…` | S22A-021 … S22A-024 |
+| `sprint-22a-w1-slice-store.json` | `37385168ae05a3a5…` | S22A-023 |
+| `sprint-22a-w1-slice-rebuild.json` | `b7d4cf9f5cc0f804…` | S22A-023 |
+| `sprint-22a-w1-slice-tamper.json` | `9080d02c6c0e457f…` | S22A-023 |
+| `sprint-22a-w1-slice-refusals.json` | `d2cd9c9682b6da9c…` | S22A-023 |
+
+Seam record integrity `cdb70a979d7a92a6…`; it carries the published pre-registration's SHA-256
+and passes `pre_registration_22a.py --check-chronology`.
+
+New modules: `src/cognitive_os/domains/descriptor_store.py`, one payload in
+`events/domain_events.py`, `scripts/domain_slice_22a.py`, `scripts/seam_22a.py`. New tests:
+`tests/cognitive_os/domains/test_descriptor_store.py` (14) and
+`tests/cognitive_os/domain/test_sprint_22a_w1_evidence.py` (5).
+
+---
+
+## W1 findings
+
+### W1-F1 — the tamper refusal named a storage key, not a domain
+
+The first tamper run refused, which was the good news, and refused with
+`ArtifactIntegrityError: artifact blob failed verification: sha256/d2/d276…`, which was the
+finding. The released content-addressed filesystem verifies blobs on read and fires **before**
+the descriptor-store's own hash comparison, so the check written to be the safety net is not
+where a tampered package is actually caught — and the released error names a storage key that
+tells an operator nothing about which domain will not load at startup.
+
+**Fixed inside the wave.** The rebuild translates the released error into a refusal naming the
+domain and revision, and the redundant comparison is kept for the case the blob check *cannot*
+see: a registration indexing an artifact that is not the package it recorded, where every blob
+is individually valid and only the index is wrong. Both paths have tests.
+
+### W1-F2 — the write order could poison the whole registry
+
+The first design appended the registration event and then stored the bytes, because
+`artifacts.source_event_id` is a released foreign key and that ordering is what it wants. A
+registration is two writes to two stores with nothing making them atomic, so a crash between
+them would have left an event whose package never arrived — and since a rebuild must refuse
+what it cannot verify, that **one** stranded write would refuse every other domain at startup.
+A registry where an interrupted upload takes the platform's domains down is not a registry.
+
+**Fixed inside the wave, by inverting the design rather than adding a repair path.** The bytes
+are written first and the *event names the artifact*, so the strandable half is an orphan blob
+— inert, and something the released store already knows how to enumerate. The inversion also
+deleted a protocol and a parameter: the rebuild no longer needs the artifact repository at all.
+The slice is what surfaced this; a review would have seen a working chain.
+
+### W1-F3 — W0's own fence failed the sprint for making progress
+
+The coupling recount seated in W0 asserted **equality** with the sealed 9/57, while the
+contract it enforces — the pre-registration's `coupling_may_grow: false` and §3.5's "must not
+grow" — is a **ceiling**. The seam removed five `DomainKind` references, and W0's test called
+that a failure. The same over-claim sat in the survey reproduction test, which compared every
+measured field and so quietly asserted that the source tree never changes.
+
+**Fixed inside the wave**, and the fix is a line worth keeping: the half of the sealed survey
+that is a *contract* — the four descriptor hashes, the snapshot hash, the boundary's refusals —
+still reproduces exactly and forever, while the half that is a *measurement of the tree at W0*
+is fenced as a ceiling. A test that cannot tell those apart will eventually be edited to make
+it pass, which is the failure mode worth avoiding.
+
+---
+
+## W1 validation
+
+| Gate | Result |
+|---|---|
+| `ruff check` / `ruff format --check` over `src tests scripts infra` | passed; 1187 files formatted |
+| `mypy src/cognitive_os` | success, 634 source files |
+| `bandit -r src/cognitive_os` | 0 issues |
+| `python -m cognitive_os.schemas.export --check` | passed, after exporting the 215th event schema |
+| `scripts/check_repository_language.sh` | passed |
+| `pytest -q` (whole repository) | **4170 passed, 217 skipped** |
+| `scripts/seam_22a.py --check` | snapshot unchanged, 4 compat hashes, 4 slice records, coupling within ceiling |
+| `scripts/pre_registration_22a.py --check-chronology` | the W1 record carries the published pre-registration hash |
+| four replay manifests | 208 cases, pass rate 1.0 |
+
+Two released guards fired on the new event type and were answered rather than muted: the event
+catalog's explicit count (214 → 215) and the exported schema manifest, which now carries
+`domain.descriptor_registered.v1`.
+
+## What W1 did not do
+
+- **registered no pilot.** `engineering.mechanics` and `science.chemistry` are still only ids
+  in a frozen pre-registration; W2 and W3 author them;
+- **added no migration, table or controller branch**, and did not approach `0016`;
+- **touched nothing that learns.** The correction component still routes its five canary
+  groups, and its replays are green as a check rather than as a change;
+- **did not widen the descriptor schema.** The frozen schema hash still reproduces from the
+  live module.
+
+## What W2 needs, and what would stop it
+
+W2 authors the mechanics pilot and registers it through the same door the slice used. It
+inherits a fence, a shape and one open question:
+
+- the **coupling ceiling**, now at 52 with the sealed 57 as its bar, enforced in CI;
+- the **registration shape** the slice proved: bytes first, event names the artifact, rebuild
+  re-validates and refuses;
+- and the open question W1 did not have to answer: **whether registering a pilot changes
+  `registry.snapshot_hash()`**. It does not today because nothing registers into `_ENTRIES` at
+  import time, but a pilot whose problem types resolve through the released path will, and that
+  hash is bound into released semantic-memory records. W2's first decision is whether the
+  snapshot is scoped per domain or whether a registry that gained a domain is allowed to say
+  so — and it is a decision to take deliberately, not to discover from a failing test.
+  *(W2-F1: the second half of that sentence is wrong. The hash in semantic-memory records
+  belongs to the `PredicateRegistry`; this one has no production caller. The decision was still
+  worth taking, for a different reason. The sentence stands as what W1 handed forward.)*
+
+---
+
+## W2 outcome — the first domain that arrived as data, and a premise that was wrong
+
+S22A-030 through S22A-036 are done. `engineering.mechanics` revision 1 exists as a committed
+package, went through the same fail-closed door a hostile package would knock on, persisted as
+a content-addressed artifact, **rebuilt in a different process**, resolved through the released
+problem-type table, and had all three of its problem types **solved by the released
+`domains.solve` tool and judged by the released `domains.checker` verifier**. Its two shared
+concepts are visible from `physics` as the *same objects*, stored once. Migration head stays
+`0015`; the enum gained nothing; the `DomainKind` coupling stayed at **52**.
+
+**The decision W1 handed forward arrived with a false premise, and correcting it changed the
+answer's shape rather than its substance** (W2-F1). The wave's other two findings came from the
+same place, one wave later: two released assertions had quietly assumed the registry could
+never grow, and only a full-suite run with a pilot registered could say so.
+
+### S22A-030 — the snapshot question, taken rather than discovered
+
+The W1 handoff asked whether registering a pilot may move `registry.snapshot_hash()`, and said
+that hash was "bound into released semantic-memory records". **It is not.** The
+`snapshot_hash()` those records carry belongs to the `PredicateRegistry`, a different registry
+whose method has the same name; counted from the AST, restricted to modules that import the
+domain registry and then to the receiver `registry`, **`domains.registry.snapshot_hash()` has
+no production caller at all**. The one near-miss — `skill_registry.snapshot_hash` in
+`domains/skill_runner.py` — is the Skill Engine's.
+
+That does not dissolve the question, it relocates it: the binding is 22A's own sealed
+backward-compatibility contract and the CI check enforcing it, so a pilot registered anywhere
+in a pytest session would have failed that check **by test ordering**.
+
+The decision: **both, because they are two questions wearing one name.**
+
+| Function | Covers | Behaviour when a pilot registers |
+|---|---|---|
+| `snapshot_hash()` | the whole resolution surface | changes, because the registry really did gain a domain |
+| `released_snapshot_hash()` | exactly the four released domains | cannot change; reproduces `00187f2b…` byte-identically |
+
+A fingerprint that omits part of the table it fingerprints would let two different resolution
+surfaces share one hash — the exact failure the hash exists to prevent. So the general hash
+stays general, and the sealed compat value **re-binds** to the function that always meant it
+(W4-F1: an authorised change re-binds, it does not edit). The sealed value is unchanged;
+`seam_22a.py`, the W0 survey test and the new W2 checks all read it through
+`released_snapshot_hash` now.
+
+### S22A-031 — the registry admits a domain that is not an enum member
+
+`ProblemTypeEntry` gained `domain_id: str` — always present, the enum value verbatim for the
+released four — and `domain` became `DomainKind | None`. Deliberately nullable rather than
+`DomainKind | str`: the enum means *one of the four released domains*, and a nullable field
+says so where a union would quietly invite `isinstance` branches back in. Moving the snapshot
+payload onto `domain_id` changed no byte, because for the released four the two agree.
+
+`register_descriptor_domain(descriptor, kernels)` is the one place a descriptor (data) meets a
+kernel (code). **Every refusal is decided before a single entry is written** — a domain that
+registered two of three problem types and then hit a collision would leave the registry in a
+state no descriptor describes, which is W1-F2 in a different table.
+
+### S22A-032 — three kernels, and three checkers that do not repeat them
+
+| Problem type | Answer | The checker's independent route |
+|---|---|---|
+| `mechanics.statics-equilibrium` | structured | resultant re-derived by splitting on sign, **plus an audit of which forces were summed** |
+| `mechanics.moment-balance` | quantity, `N*m` | the moment about the **origin**, transported to the pivot by the shift identity |
+| `mechanics.uniform-motion` | quantity, `m` | the relation **inverted**: displacement ÷ duration must return the given speed |
+
+The moment checker is the one worth the pilot: it never recomputes the solver's sum, so a lever
+arm subtracted the wrong way round survives only if the same error is made twice in two
+different formulae. The equilibrium audit is the other: three forces summing to zero and *two*
+of them summing to zero is a case no re-summation distinguishes.
+
+All arithmetic is exact `Fraction`; floats are refused rather than rounded. Both declared
+capabilities are exercised on every task, so the released checker's "a declared verifier that
+never ran is a missing verifier" rule has nothing to fire on.
+
+### S22A-033 and S22A-034 — the package, and the chain in five processes
+
+The package is a **committed file**, not a literal in a script: a descriptor package is bytes
+that arrive from outside, and generating them in the registering process would test a
+serialiser rather than a door.
+
+| Phase | What a separate process established |
+|---|---|
+| `register` | 1598 bytes through `validate_domain_package`, artifact + one `domain.descriptor_registered` event, stream version 2 |
+| `rebuild` | cold start rebuilds the descriptor to the same content hash; entries 28 → 31; released snapshot unchanged, whole snapshot changed |
+| `solve` | three tasks accepted, three fabricated answers refused, full `tool_call.*` + `verifier.*` trail on each |
+| `views` | both shared concepts visible from `physics` at identical content hashes, owned by neither |
+| `refusals` | five hostile registrations refused, **entries unchanged after every one** |
+
+The five refusals: re-registering the same identity; impersonating `physics`; claiming a
+problem type no kernel implements; taking a problem type another domain owns; registering a
+namespace with no problem types. The impersonation case is worth reading twice — the
+*descriptor contract* already blocks most of that shape, because a package claiming `physics`
+cannot keep mechanics' relations, shared concepts or transfer link without pointing all three
+at itself. Stripping them is what makes the attempt reach the registry door at all.
+
+### S22A-035 — one item, two governed views
+
+`concept_views()` returns each domain's view of what it can see, and a shared concept appears
+in the owner's view as `owned` and in each target's as `shared` — carrying **the same
+`DomainConcept` object**, so the content hashes match by construction rather than by copying.
+`concept_owners()` refuses any concept two domains both declare: a concept with two owners is a
+concept stored twice, which is the silo itself, and every resolution rule ("first wins",
+"highest revision wins") silently picks a winner the caller never hears about.
+
+`mechanics.rigid_body` is declared and shared with nobody, and is visible from nowhere else —
+the negative half of the same claim.
+
+### S22A-036 — replay
+
+| Manifest | Mode | Cases | Pass rate |
+|---|---|---:|---:|
+| `sprint20-domain-ci` | domain-pilot | 24 | 1.0 |
+| `sprint20-domain-seed` | domain-pilot | 120 | 1.0 |
+| `sprint21c1-learned-ci` | learned-replay | 16 | 1.0 |
+| `sprint21c1-learned-seed` | learned-replay | 48 | 1.0 |
+
+**208 cases, all green**, unchanged from W1. The learned manifests are the ones that matter
+most here: a wave that added a domain must leave the correction surface exactly alone.
+
+## W2 evidence index
+
+| Record | SHA-256 | Items |
+|---|---|---|
+| `sprint-22a-w2-decisions.json` | `ef47d9fc04f681cd…` | S22A-030 |
+| `sprint-22a-w2-pilot.json` | `0aa6390cf0eb9605…` | S22A-031 … S22A-036 |
+| `sprint-22a-w2-pilot-register.json` | `d0f20dfff559413b…` | S22A-033 |
+| `sprint-22a-w2-pilot-rebuild.json` | `4bff401054e7efa9…` | S22A-034 |
+| `sprint-22a-w2-pilot-solve.json` | `a99f88a16a1a8339…` | S22A-034 |
+| `sprint-22a-w2-pilot-views.json` | `47b953de56d7374a…` | S22A-035 |
+| `sprint-22a-w2-pilot-refusals.json` | `abaf8c6aa890d96f…` | S22A-034 |
+
+New modules: `src/cognitive_os/domains/mechanics.py`,
+`src/cognitive_os/domains/descriptor_runner.py`, `concept_views`/`concept_owners` in
+`domain/descriptors.py`, `register_descriptor_domain` in `domains/registry.py`. New package:
+`docs/sprints/sprint-22/packages/engineering.mechanics.v1.json`. New scripts:
+`scripts/mechanics_pilot_22a.py`, `scripts/pilot_22a.py`, `scripts/decisions_22a_w2.py`. New
+tests: `tests/cognitive_os/domains/test_mechanics_pilot.py` (34) and
+`tests/cognitive_os/domain/test_sprint_22a_w2_evidence.py` (8).
+
+---
+
+## W2 findings
+
+### W2-F1 — the question W2 inherited named the wrong registry
+
+W1's handoff said `registry.snapshot_hash()` was "bound into released semantic-memory records",
+which made the decision look like a released-compatibility problem. It is not: those records
+carry the **`PredicateRegistry`'s** hash, and the domain registry's has no production caller.
+Four registries in this codebase publish a method called `snapshot_hash`, and only the receiver
+expression tells them apart — `skill_registry.snapshot_hash` in `domains/skill_runner.py` is a
+fifth near-miss that a grep would have counted.
+
+**Fixed by counting instead of asserting.** The decision record derives the caller set from the
+AST: attribute accesses named `snapshot_hash`, restricted to modules that import the domain
+registry, then to the receiver `registry`. The result is empty, and the record carries the
+whole call-site list so a reader can check the reasoning rather than the conclusion.
+
+The decision did not become unnecessary — the binding is 22A's own sealed contract, which a
+test session could have broken by ordering alone — but it stopped being a released-behaviour
+question and became a naming question, and the answer is cheaper for it.
+
+### W2-F2 — three checks whose failure message described the passing case
+
+The first `solve` run refused all three fabricated answers, correctly, and one of them reported
+*"the displacement is reported in `'m'`, which reduces to a length"* — as the reason it
+**failed**. The candidate had reported `km`. The detail strings had been written for the case
+where the check passes, so a refusal read like a pass with a puzzling verdict attached.
+
+**Fixed in three checks** by writing every detail as expectation *and* observation, so one
+string reads correctly either way. The equilibrium audit now says which forces were declared
+and which were accounted for; the unit checks name what was required and what arrived. A
+verifier whose refusals cannot be read is a verifier whose refusals will be argued with.
+
+### W2-F3 — two released assertions assumed the registry could never grow
+
+Both of these passed in every process W2 ran by hand and failed only in the **whole suite**,
+where the pilot is registered by an earlier module. They are the same defect twice: an
+assertion written when "every entry belongs to one of four domains" was a fact about the world
+rather than a claim about the released four.
+
+**The survey script was the third re-binding site, and it was missed.** S22A-030 moved
+`seam_22a.py` and the W0 survey *test* onto `released_snapshot_hash`, but
+`domain_survey_22a.py` itself still wrote `snapshot_hash()` into the
+`released_domains_as_descriptors` block — a block that is *about* the released four.
+Regenerating the survey in a process holding a pilot produced `a3ff778d…` where the sealed
+record says `00187f2b…`, and `test_the_compat_contract_still_reproduces` caught it. The sealed
+value never moved; the function that reproduces it did, in one place out of three.
+
+**The permitted-set floor said "at least two" where it meant "never exactly one".**
+`test_every_problem_type_offers_a_real_choice` requires every entry to declare two or more
+skills, so that governed selection is a real choice rather than decorative. The mechanics pilot
+declares none: it solves through the deterministic tool path and never reaches skill selection,
+and inventing two skill names to satisfy a count is precisely the false-capability failure
+ADR 0085 and §3.4 both warn about.
+
+The invariant was narrowed to what it guards — **no permitted set of exactly one, for any
+domain** — with the released four still held to two or more by an explicit 28-entry assertion.
+The strategies half, which the test never checked at all, was added on both sides; Sprint 21C.1
+shipped two invented strategy names once because only skills were checked.
+
+### W2-A1 — the persisted pilot-run store has a three-domain allowlist in its schema
+
+Not a defect introduced here, and deliberately **not fixed**: `domain_pilot_runs` carries
+`CHECK (domain IN ('mathematics', 'physics', 'logic'))`, and `record_domain_pilot_run` raises
+`unknown domain` for anything else. It has never known about `coding`, which was released in
+Sprint 21C.1. It has no production caller — only the Postgres integration test.
+
+This is the sprint's own thesis written into DDL: a silo in the storage schema. Widening it is
+a migration, and **the exit criterion makes `0016` a refusal**, so W2 surfaces it as the stop
+the backlog said to surface rather than quietly allocating one. It also means a
+descriptor-registered domain's runs cannot be *persisted* through that store today. Nothing in
+22A's exit depends on it, and W4 inherits it as a named item for 22B.
+
+The event store's own privileges confirmed the shape while this was being checked: the
+application role has no `DELETE` on `cognitive_os.events`, so the `register` phase record could
+not be rewritten even to add a field. It is necessarily the one the first run wrote.
+
+## W2 validation
+
+| Gate | Result |
+|---|---|
+| `ruff check` / `ruff format --check` over `src tests scripts infra` | passed |
+| `mypy src/cognitive_os` | success |
+| `bandit -r src/cognitive_os` | 0 issues |
+| `python -m cognitive_os.schemas.export --check` | passed, no new contract |
+| `scripts/check_repository_language.sh` | passed |
+| `pytest tests/cognitive_os -q` | **4070 passed, 107 skipped** |
+| `scripts/pilot_22a.py --check` | released snapshot unchanged **with the pilot registered**, 4 compat hashes, 5 bound phase records, coupling within ceiling |
+| `scripts/decisions_22a_w2.py --check` | one hash moves, the other cannot — re-measured in a clean process |
+| `scripts/seam_22a.py --check` | still passes after the re-binding |
+| four replay manifests | 208 cases, pass rate 1.0 |
+
+No released guard fired: W2 added no event type, no contract and no schema.
+
+## What W2 did not do
+
+- **registered no second domain.** `science.chemistry` is still only an id in a frozen
+  pre-registration; W3 authors it together with the rejection suite;
+- **added no migration, table, enum member or controller branch**, and did not approach `0016`;
+- **did not reach the Cognitive Controller's state machine.** `run_case_controlled` takes a
+  `DomainBenchmarkCase` whose `domain` is a `DomainKind`, and the controller maps that enum
+  through two per-domain tables. Reaching it means widening a released contract and adding core
+  branching — the exact thing the exit forbids — so the pilot runs through the two governed
+  components that are open to it, and the boundary is named rather than crossed;
+- **promoted nothing.** The pilot is `lifecycle: pilot`, and it is the only lifecycle a package
+  may claim;
+- **touched nothing that learns.**
+
+## What W3 needs, and what would stop it
+
+W3 authors `science.chemistry` and the rejection suite, and inherits a door that has already
+been knocked on:
+
+- the **registration shape**: bytes first, event names the artifact, rebuild re-validates, and
+  five refusal cases already sealed with "entries unchanged" after each;
+- the **kernel contract**: a descriptor may not claim a problem type no code implements, which
+  is the mechanism §3.4's honesty constraint needs. A chemistry problem type whose verifier
+  cannot verify does not become a silo — it fails to register, by name;
+- the **coupling fence** at 52, unchanged by a whole new domain, which is the strongest
+  available evidence that §3.5's silo regression will hold for the second one too;
+- and the boundary W2 named: **the pilots have no persisted-run path.** W3 should not spend the
+  wave building one, and should record the same stop rather than re-discovering it.
+
+§4.2's chemistry risk is the live one: the W3 record must show a chemistry candidate *failing*
+verification for a real reason, not only passing. W2's three refused answers are the template —
+each is the specific mistake its checker's independent route exists to catch.
+
+---
+
+## W3 outcome — the second domain, and the fences it was built to test
+
+S22A-040 through S22A-045 are done. `science.chemistry` revision 1 registers through the same
+door the mechanics pilot used, rebuilds cold, and has both its problem types **solved by the
+released `domains.solve` tool and judged by the released `domains.checker` verifier**. Both
+pilots now share concepts into `physics`, which sees four concepts from two domains and owns
+none of them. The rejection suite refuses **ten cases across four layers**. Migration head
+stays `0015`; the enum gained nothing; the `DomainKind` coupling is still **52**.
+
+**§3.5's silo regression is closed rather than promised.** Two domains registered, **zero**
+`DomainKind` references added — because a descriptor-registered domain has no enum member to
+branch on. That number is the sprint's thesis as an integer.
+
+### S22A-040 — two kernels, and what was left out
+
+§3.4 bounds the pilot to what a deterministic kernel can judge, and the atomic masses come
+**from the case**, never from a table this module invented — a constant nobody verified is
+exactly the false authority the constraint exists to prevent.
+
+| Problem type | Answer | The checker's independent route |
+|---|---|---|
+| `chemistry.mass-balance` | structured, `g/mol` | the **net** atom count across the whole equation, plus both side masses re-derived from the formulas |
+| `chemistry.molar-conversion` | quantity, `mol` | the relation **inverted**: amount × molar mass must return the sample mass |
+
+**The one new capability name is a kernel, not a label.** `chemistry.stoichiometry` counts
+atoms and compares integers; that is the whole of §3.4's requirement, and the test asserts it
+is not a released verifier's name being borrowed.
+
+**What was considered and left out**, on the record rather than dropped:
+`chemistry.reaction-prediction` and `chemistry.equilibrium-constant`. Both need empirical
+thermochemical data, so no kernel here can judge an answer, and a problem type whose verifier
+cannot verify does not belong in a pilot. Both names and both reasons live in the module and
+in the sealed record.
+
+**The formula grammar is deliberately small** — element symbols with optional counts, no
+parentheses, no hydrates, no charges. `Ca(OH)2` is a refusal here, not a silent
+`{Ca:1, O:1, H:2}`. Guessing at a formula would be a wrong answer wearing a right one's shape.
+
+### S22A-041 — the chain, again, in five processes
+
+| Phase | What a separate process established |
+|---|---|
+| `register` | 1593 bytes through `validate_domain_package`, artifact + event, stream version **3** |
+| `rebuild` | cold start rebuilds the descriptor to the same content hash; entries 28 → 33 |
+| `solve` | both tasks accepted, both fabricated answers refused, full `tool_call.*` + `verifier.*` trail |
+| `views` | four shared concepts visible from `physics`, from **two** owners, at identical content hashes |
+| `rejections` | ten hostile cases refused, entries unchanged after every one |
+
+**The mass-balance wrong answer is the harder shape** §4.2 asks for. It is not malformed: it
+is the *correct* answer to the balanced equation, submitted against an equation with one water
+missing. Nothing about it looks suspicious, and only recomputation catches it — the checker
+reports *"the net atom count leaves `['H', 'O']` unbalanced; candidate claimed
+balanced=True"*. The molar-conversion wrong answer is a molar mass of 16 read for water's 18,
+caught by multiplying back: 40.5 g against the given 36.
+
+The phase script was generalised rather than copied: `scripts/mechanics_pilot_22a.py` is now
+`scripts/pilot_chain_22a.py` with a `--pilot` argument. A second three-hundred-line near-copy
+would have been two chains to keep in step, and W4 needs one that runs both.
+
+### S22A-042 — a share the target never agreed to
+
+§3.5's third case had nowhere to live before this wave. A single package's validator can only
+check that a share resolves inside *its own* declared world, so a package may name any related
+domain it likes; whether that domain agrees is a question about the whole catalogue, and
+`validate_shared_concepts` now asks it.
+
+Two rules, and the asymmetry between them is deliberate:
+
+- the target must be a domain the catalogue **knows**. A concept shared into a domain that
+  exists nowhere is stored once and exposed to nobody, which is a silo with extra steps;
+- a **pilot** target must declare the sharing domain as parent or related — two pilots cannot
+  enrol each other unilaterally. A **released** domain is open by construction: the four are
+  derived from the problem-type registry rather than authored, and there is nowhere for them
+  to declare anything back. Requiring reciprocity of them would forbid every share a pilot
+  could usefully make, including the four this sprint depends on.
+
+### S22A-043 — the rejection suite, by the layer that refused
+
+| Layer | Cases | What it means |
+|---|---:|---|
+| package boundary | 6 | the six W0 sealed, **executed** out of the survey script that sealed them rather than retyped as literals (the D7 standing rule: run the thing you intend to rely on) |
+| registry door | 1 | a released id at a new revision — supersession is a governance path, not a package upload |
+| catalogue | 2 | a share into a domain that never declared it back, and one into a domain that exists nowhere |
+| resolution | 1 | capabilities naming a verifier that never runs — `missing_required_verifier`, the code §3.5 names |
+
+**The layer is part of the claim.** A package the boundary refuses never reaches a store; one
+the registry door refuses never reaches a solver; one the catalogue refuses never reaches a
+view. A case that moved to a later layer than this record names would be a regression even if
+it still ended in a refusal, and the record binds each case to its layer so that shows up.
+
+### S22A-044 and S22A-045 — the silo regression and replay
+
+| | W0 | W1 | W2 | W3 |
+|---|---:|---:|---:|---:|
+| `DomainKind` references | 57 | 52 | 52 | **52** |
+| modules | 9 | 9 | 9 | 9 |
+
+Measured with both pilots registered, which is the state no earlier wave could produce.
+
+Replay: `sprint20-domain-ci` (24), `sprint20-domain-seed` (120), `sprint21c1-learned-ci` (16),
+`sprint21c1-learned-seed` (48) — **208 cases, all green**, unchanged since W1.
+
+## W3 evidence index
+
+| Record | SHA-256 | Items |
+|---|---|---|
+| `sprint-22a-w3-pilot.json` | `0cb04a542ebc5d4d…` | S22A-040 … S22A-045 |
+| `sprint-22a-w3-pilot-register.json` | `66961bdac72be113…` | S22A-041 |
+| `sprint-22a-w3-pilot-rebuild.json` | `6798d4021b87ca7e…` | S22A-041 |
+| `sprint-22a-w3-pilot-solve.json` | `59cc063edd81d8cf…` | S22A-041 |
+| `sprint-22a-w3-pilot-views.json` | `d09cb04e9873fe05…` | S22A-042 |
+| `sprint-22a-w3-pilot-rejections.json` | `cf9362ffb61271d9…` | S22A-043 |
+
+New modules: `src/cognitive_os/domains/chemistry.py`, `validate_shared_concepts` in
+`domain/descriptors.py`, a `required_capabilities` parameter on `descriptor_runner`. New
+package: `docs/sprints/sprint-22/packages/science.chemistry.v1.json` (`b25b60f835872ed9…`).
+New script: `scripts/chemistry_22a.py`; renamed: `mechanics_pilot_22a.py` →
+`pilot_chain_22a.py`. New tests: `tests/cognitive_os/domains/test_chemistry_pilot.py` (30) and
+`tests/cognitive_os/domain/test_sprint_22a_w3_evidence.py` (10).
+
+---
+
+## W3 findings
+
+### W3-F1 — the runner could not express the requirement the released checker enforces
+
+§3.5 asks for a case where *a package whose capabilities name no registered verifier is
+refused at resolution with `MISSING_REQUIRED_VERIFIER`*. The released checker already
+implements exactly that: a capability listed in a plan's `required_capabilities` that no check
+exercised is reported as a missing verifier rather than passed over.
+
+**It could not be reached.** `run_descriptor_case` built its verification request from the
+registry entry alone, so the only capabilities it could ever require were the ones the entry
+already declared — and those are, by construction, the ones the checker emits. The refusal
+path existed and had no caller, which meant the suite could only have *described* it.
+
+Fixed by mirroring the released `run_case_controlled`, which has carried a
+`required_capabilities` parameter since the governed path was built for exactly this reason: a
+selected skill revision declares the verifier it claims to run, and a declared-but-unrun
+verifier must block acceptance. The suite now adds `chemistry.spectroscopy` to a real task and
+records the refusal, and a test asserts the honest direction too — every capability the
+chemistry package declares is exercised by every one of its problem types.
+
+### W3-A1 — reciprocity cannot be asked of a released domain, and that asymmetry is load-bearing
+
+Not a defect, and recorded because it looks like one. `validate_shared_concepts` requires a
+**pilot** to have declared the sharing domain before a concept may be shared into it, but
+exempts the released four. That is not leniency: released descriptors are *derived* from the
+problem-type registry by the adapter, so `related_domain_ids` is empty for all four and always
+will be while §2.3's reading holds. Requiring reciprocity of them would forbid every share
+both pilots make.
+
+The consequence a later sprint inherits: a released domain cannot refuse a view. If that
+becomes a governance question — and it is a reasonable one — the answer is a declared relation
+on the released side, which means the adapter gaining data it does not have today. 22B's
+call, named here rather than discovered there.
+
+### W3-A2 — a capability name is data, and no static check can make it honest
+
+Recorded because the obvious fix is wrong, and someone will propose it. Nothing at
+registration time can know which capabilities a checker will emit: a descriptor is data, a
+checker is code, and the only authority on what it produces is running it. A static
+declaration on `DomainKernel` listing its checker's capabilities would look like a fence and
+be a second copy of the truth, free to drift from the code it describes — and it would move a
+real refusal to a layer that only agrees with itself.
+
+So the gap stays open by design and is closed at resolution, where the released checker
+already stands, and the suite **executes** that path rather than asserting it (the D7
+standing rule: a digest recomputed unchanged proves the bytes did not move, not that anything
+can use them).
+
+## W3 validation
+
+| Gate | Result |
+|---|---|
+| `ruff check` / `ruff format --check` over `src tests scripts infra` | passed |
+| `mypy src/cognitive_os` | success, 637 source files |
+| `bandit -r src/cognitive_os` | 0 issues |
+| `python -m cognitive_os.schemas.export --check` | passed, no new contract |
+| `scripts/check_repository_language.sh` | passed |
+| `pytest tests/cognitive_os -q` | **4109 passed, 107 skipped** |
+| `scripts/chemistry_22a.py --check` | released snapshot unchanged **with both pilots registered**, 4 compat hashes, 5 bound phase records, 10 rejection cases, coupling within ceiling |
+| `scripts/pilot_22a.py --check` | W2's record still checks |
+| `scripts/seam_22a.py --check` | W1's record still checks |
+| four replay manifests | 208 cases, pass rate 1.0 |
+
+No released guard fired: W3 added no event type, no contract and no schema.
+
+## What W3 did not do
+
+- **added no migration, table, enum member or controller branch**, and did not approach `0016`;
+- **gave neither pilot a persisted-run path.** W2-A1's stop still stands: `domain_pilot_runs`
+  carries a three-domain allowlist in a CHECK constraint, widening it is a migration, and the
+  exit criterion makes `0016` a refusal;
+- **promoted nothing.** Both pilots are `lifecycle: pilot`, the only lifecycle a package may
+  claim;
+- **touched nothing that learns.**
+
+## What W4 needs, and what would stop it
+
+W4 is the release wave: full verification matrix, global and per-domain replay as the gated
+claim, the sprint report against the four exit criteria, protected release with exact-head CI,
+the annotated tag `sprint-22a-domain-baseline`, and the handoff naming what 22B inherits.
+
+Three of the four exit criteria already have evidence and need re-running rather than
+building:
+
+- **both new domains register without changing the core controller or storage schema** —
+  W2 and W3's records, migration head `0015`, coupling flat at 52;
+- **cross-domain items stored once, exposed through multiple governed views** — four concepts,
+  two owners, one `physics` view, identical content hashes;
+- **invalid domain packages fail closed** — ten cases, four layers, entries unchanged after
+  every one.
+
+The fourth, **replay green**, is a wall-clock item and §4.2 says to schedule it early rather
+than at the end.
+
+Two things W4 must carry forward rather than resolve quietly: **W2-A1**, the schema-level
+three-domain allowlist that never learned about `coding` either, and **W3-A1**, the released
+four's inability to refuse a view. Both are 22B's, and both belong in the handoff by name.
+
+---
+
+## W4 outcome — the release wave, and the two claims that were sentences
+
+W4 built almost nothing. It ran what four waves had produced, decided the sprint's four exit
+criteria against the evidence, and wrote the report and the handoff. Two of the things it ran
+were not previously being run at all, and both are findings rather than footnotes: the coding
+domain had never been replayed by this sprint, and the exit criterion about the core controller
+had been a literal `false` in both waves that claimed it. A third finding came from running the
+wave's own release command a second time.
+
+**All four exit criteria are met.** The verdict is computed from booleans in
+[`sprint-22a-exit-criteria.json`](evidence/sprint-22a-exit-criteria.json) — counts live in a
+separate block on purpose, because a release decided on `!= 0` is a release decided by
+truthiness.
+
+### S22A-050 — the verification matrix
+
+`scripts/verification_matrix_22a.py` runs every check expected before release once, records its
+actual exit status, the SHA-256 of its output and what it cost, and refuses if any row failed,
+any row was skipped, or the record fails its own structural checks.
+
+The three D-series rules are carried unchanged: a negative row is a finding when it succeeds,
+nothing is silently skipped, and the record checks itself where it is written rather than in a
+test module — because the matrix runs the whole suite as one of its own rows, and a test reading
+this record during that run would be reading the previous one.
+
+Three things are 22A's rather than inherited:
+
+- **seven `--check` validators, one of which replays.** `exit_criteria_22a.py --check` executes
+  all six benchmark manifests as part of its own check, so replay is a measured row by way of
+  that row. There are deliberately no separate replay rows: the same six manifests run twice in
+  one matrix would report one fact as two;
+- **a chronology row over the whole sprint.** Every record carrying the pre-registration's hash
+  must postdate it, asked of all four at once. `_structural_findings` then globs the evidence
+  directory for records carrying that field and fails if one of them is not on the list — so a
+  fifth record cannot quietly become a record nothing checks;
+- **two negative rows, not six.** 22A's refusals are package-level and all of them need the
+  store to prove nothing was written, so they are recorded from the sealed rejection suite. The
+  two command-level negatives are the ones that hold without a store: the pilot chain refusing
+  to guess a store (S21D5-W0-F1), and the released smoke fence refusing a database that is not a
+  test database — which is what stands between this matrix's own full-suite row and
+  `cognitive_os_s22a_*`.
+
+### S22A-051 — the four exit criteria, measured where they can be measured
+
+Every claim in the record says whether it was **measured** in that process or **recorded** from a
+sealed wave record whose bytes it binds. The split is not cosmetic: a registration the store will
+not accept twice cannot be re-run by a validator, and pretending otherwise would make the
+strongest claims the least checked.
+
+| Criterion | Verdict | Decided by |
+|---|---|---|
+| registers without changing the core controller or the storage schema | **met** | measured |
+| cross-domain items stored once, exposed through multiple governed views | **met** | recorded |
+| global and per-domain replay green | **met** | measured |
+| invalid domain packages fail closed | **met** | recorded |
+
+**The frozen-file comparison is the wave's own contribution.** Eleven controller modules and
+fifteen migration files are compared byte for byte against `c5119cc`, the commit the branch left,
+and the *set* is sealed alongside the contents — a twelfth controller module or a sixteenth
+migration is a refusal rather than an invisible widening. At `--check` there is no git: the
+sealed per-file hash *is* the predecessor's hash, so re-hashing the working tree asks the same
+question in a shallow checkout with no history to ask git about.
+
+**One thing did change, and the record says so rather than leaving it to be discovered.** 22A
+added the event contract `domain.descriptor_registered` and the events module that emits it. An
+event type is a contract over a stream the released store already has: no table, no column, no
+enum member — which is what the criterion forbids.
+
+**And the views claim got smaller and truer.** The first draft counted the concepts the pilots
+*own* — six — as concepts shared. Four are shared; two are kept. The check now compares the
+target's view against the sharing declaration, so what makes the exposure governed is that the
+two undeclared concepts are absent from it.
+
+### S22A-052 — replay, and the domain nobody replayed
+
+| Manifest | Mode | Covers | Cases | Pass rate |
+|---|---|---|---:|---:|
+| `sprint20-domain-ci` | domain-pilot | logic, mathematics, physics | 24 | 1.0 |
+| `sprint20-domain-seed` | domain-pilot | logic, mathematics, physics | 120 | 1.0 |
+| `sprint22-coding-ci` | domain-pilot | **coding** | 15 | 1.0 |
+| `sprint22-coding-seed` | domain-pilot | **coding** | 25 | 1.0 |
+| `sprint21c1-learned-ci` | learned-replay | the correction surface | 16 | 1.0 |
+| `sprint21c1-learned-seed` | learned-replay | the correction surface | 48 | 1.0 |
+
+**248 cases, all green**, executed by the check rather than carried as numbers. §4.2 named the
+replay bill as the sprint's longest wall-clock item and said to schedule it early; it was the
+first thing W4 ran, which is how W4-F1 was found with the whole wave still ahead of it rather
+than at its end.
+
+### S22A-053 — the release, and the line a wave may not cross
+
+`scripts/release_22a.py --pull-request 231` reads every release handle back from GitHub and from
+the local repository — the merge commit and its timestamp, both CI runs with their conclusions
+and job counts, the annotated tag object and the commit it peels to, and the branch protection
+state — and **creates nothing**. No merge, no tag, no push.
+
+Run today it refuses, and the refusal is the honest state: *pull request #231 is not merged, so
+there is no release to record.* `main` is protected, the merge is the gate owner's decision, and
+the tag `sprint-22a-domain-baseline` is created once, on the commit the exact-head post-merge CI
+passed on, after that CI, and never moved. A wave that tagged its own branch would be describing
+a release it had granted itself.
+
+## W4 evidence index
+
+| Record | SHA-256 | Items |
+|---|---|---|
+| `sprint-22a-exit-criteria.json` | `d314121f2180f92a…` | S22A-050 … S22A-052 |
+| `sprint-22a-verification-matrix.json` | `d07100ae6579f95d…` | S22A-050 |
+| `sprint-22a-release.json` | not written; the release has not happened | S22A-053 |
+
+**39 rows, 39 passed, 0 skipped, 0 structural findings.** 25 commands and 14 rows recorded from
+committed evidence; both negative rows refused for the reason they name.
+
+New scripts: `scripts/exit_criteria_22a.py`, `scripts/verification_matrix_22a.py`,
+`scripts/release_22a.py`. New tests: `tests/cognitive_os/domain/test_sprint_22a_w4_evidence.py`
+(8). New documents: [`sprint-22a-report.md`](sprint-22a-report.md),
+[`sprint-22a-handoff.md`](sprint-22a-handoff.md).
+
+## W4 findings
+
+### W4-F1 — "per-domain replay" covered three of the four released domains, for three waves
+
+Every wave from W1 onward ran four manifests and called the result global and per-domain replay
+across the four released domains. The four are `sprint20-domain-{ci,seed}` — logic, mathematics
+and physics — and `sprint21c1-learned-{ci,seed}`, which replay the correction surface 22A must
+leave alone. The **coding** domain's cases are in `sprint22-coding-{ci,seed}`, named for a
+different sprint, and no 22A wave ran them.
+
+That is not a naming accident with no consequence. `sprint22-coding-ci` carries a governance case
+called `domain_kind_coding_registered`, which asserts the exact reading §2.3 froze: that
+`DomainKind` remains the closed vocabulary of the released four and `CODING` is one of them. The
+sprint that moved domain identity out of that enum was not running the case that checks the enum
+still holds for its fourth member.
+
+Fixed inside the wave, and fixed so it stays fixed: the replay set is six manifests, each
+carrying what it covers, and `every_released_domain_replayed` is a boolean in the record with a
+test that asserts the four by name. A successor that shrinks the set fails a test rather than
+writing a smaller number.
+
+### W4-F2 — the sprint's first exit criterion was a constant in both waves that claimed it
+
+`core_controller_changed: false` and `storage_schema_changed: false` are literals in W2's and
+W3's sealers. Both were true. Neither was a check: editing the controller would not have moved
+them, and the record would have kept saying the criterion held.
+
+This is D7's W4-F1 — *a validator can outlive the claim it enforces* — in its cheapest possible
+form, a validator that never enforced anything at all. W4 replaces it with a measurement against
+the branch point over a sealed file set, and the probes that matter are the negative ones: an
+appended comment in `src/cognitive_os/domains/controller.py` makes the check say *"no longer the
+predecessor's bytes"*, and an empty `0016_probe.py` makes it say *"the storage_schema file set
+moved"*. A claim about what did not change has to be able to notice a change.
+
+### W4-F3 — the release command's own self-check was not idempotent
+
+`_structural_findings` globs the evidence directory for records carrying the pre-registration's
+hash and fails if one of them is not on the chronology row's list. The matrix's own record
+carries that hash — and is written *after* every row has run, including the row that would check
+it. So the first run was clean, and the second failed on a file the first had created.
+
+D5 met this shape by putting a matrix's structural checks in a test module, and D7 moved them
+into the command to fix it. It came back through a different door: not a test reading the record,
+but the record's own check reading the record. **A release command that is not idempotent is a
+defect in the command**, and the whole point of the rule is that the second run is the one that
+tells you. The fix is one exclusion — this record, and only this record — with the reason
+attached, and the third run is clean.
+
+The two findings above are about claims that were never checked; this one is about a check that
+could not be run twice — the same failure at different distances from the evidence.
+
+## W4 validation
+
+| Gate | Result |
+|---|---|
+| verification matrix | **39 rows, 39 passed, 0 skipped, 0 structural findings** |
+| `ruff check` / `ruff format --check`, `mypy`, `bandit` | passed, inside the matrix |
+| `pytest -q --timeout=600` (whole repository) | passed, as the matrix's `full_suite` row |
+| `pytest tests/cognitive_os -q` | **4117 passed, 107 skipped** |
+| `python -m cognitive_os.schemas.export --check` | passed, no new contract |
+| `detect-secrets-hook`, `pip-audit`, `uv build`, wheel and editable installation | passed |
+| `domain_smoke_test.py`, `domain.py health` | passed — the released four still solve and still govern |
+| seven 22A validators under `--check` | passed, including the chronology row over all four records |
+| `exit_criteria_22a.py --check` | 4 of 4 met, 11 controller modules and 15 migration files verified, 6 manifests replayed |
+| both negative rows | refused, each for the reason it names |
+| `release_22a.py --pull-request 231` | refuses: the pull request is not merged, so there is no release to record |
+
+## What W4 did not do
+
+- **it did not merge anything.** `main` is protected, #231 is the gate owner's to merge, and a
+  wave that merged its own branch would be granting itself a release;
+- **it did not create the tag.** The tag is created once, on the post-merge commit, after that
+  commit's CI, and never moved;
+- **it did not resolve W2-A1 or W3-A1.** Both travel to 22B by name, in the handoff and in the
+  release record's `carried_forward_by_name`;
+- **it did not widen a released contract, allocate a migration, or touch anything that learns.**
+
+## What Sprint 22B inherits
+
+[`sprint-22a-handoff.md`](sprint-22a-handoff.md) is the authority. In one line: a registry
+keyed by string domain id that a scale test can enumerate, a fail-closed boundary with ordered
+refusals, storage without a schema, the descriptor spine 22C's campaign manifests will bind to,
+and two worked pilots as templates — and, explicitly not inherited, any way for a descriptor
+domain to be run and recorded like a released one.

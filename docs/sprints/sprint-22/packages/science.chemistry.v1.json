@@ -1,0 +1,68 @@
+{
+ "schema_version": 1,
+ "domain_id": "science.chemistry",
+ "revision": 1,
+ "display_name": "Chemistry",
+ "lifecycle": "pilot",
+ "related_domain_ids": [
+  "physics"
+ ],
+ "problem_types": [
+  "chemistry.mass-balance",
+  "chemistry.molar-conversion"
+ ],
+ "concepts": [
+  {
+   "concept_id": "chemistry.molar_mass",
+   "description": "The mass of one mole of a substance, summed from the atomic masses its formula names.",
+   "shared_with": [
+    "physics"
+   ]
+  },
+  {
+   "concept_id": "chemistry.conservation_of_mass",
+   "description": "The total mass of the reactants equals the total mass of the products.",
+   "shared_with": [
+    "physics"
+   ]
+  },
+  {
+   "concept_id": "chemistry.stoichiometric_coefficient",
+   "description": "The whole-number multiplier that balances a species in a reaction equation.",
+   "shared_with": []
+  }
+ ],
+ "capabilities": {
+  "verifier_capabilities": [
+   "physics.dimension",
+   "physics.quantity",
+   "chemistry.stoichiometry"
+  ],
+  "tool_capabilities": [
+   "chemistry.kernel"
+  ],
+  "skills": [],
+  "strategies": [],
+  "units": [
+   "g",
+   "mol",
+   "g/mol"
+  ]
+ },
+ "corpora": [],
+ "transfer_links": [
+  {
+   "target_domain_id": "physics",
+   "direction": "from_physics_to_chemistry",
+   "evidence_hash": null
+  }
+ ],
+ "provenance": {
+  "source": "cognitive-os/sprint-22a-chemistry-pilot",
+  "revision": "1",
+  "licence": "Apache-2.0",
+  "redistributable": true,
+  "contamination_notes": "Authored for Sprint 22A as the second descriptor-registered domain; not derived from any public benchmark set.",
+  "effective_date": "2026-08-11T00:00:00Z"
+ }
+}

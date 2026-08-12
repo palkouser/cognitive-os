@@ -1,0 +1,276 @@
+{
+ "backward_compatibility": {
+  "decision": "S22A-030, recorded in sprint-22a-w2-decisions.json",
+  "decision_sha256": "ef47d9fc04f681cd2e859468f6f22c6c2cda12148efb78574abbb1e721f5787b",
+  "descriptors": {
+   "coding": {
+    "content_hash": "3c1d2ea892acb2a4e551ad50ee83c065d28c68b290c3830bf83ff3e36114871c",
+    "sealed": "3c1d2ea892acb2a4e551ad50ee83c065d28c68b290c3830bf83ff3e36114871c",
+    "unchanged": true
+   },
+   "logic": {
+    "content_hash": "3e714bd9f3808d1c0ebc80ab746de0618d49811e028354c69b32a719438d0a06",
+    "sealed": "3e714bd9f3808d1c0ebc80ab746de0618d49811e028354c69b32a719438d0a06",
+    "unchanged": true
+   },
+   "mathematics": {
+    "content_hash": "2cb1f3513849aef6cc9c9b2688340bf8f409a2f09d60050f12155f4e6ae1a8c9",
+    "sealed": "2cb1f3513849aef6cc9c9b2688340bf8f409a2f09d60050f12155f4e6ae1a8c9",
+    "unchanged": true
+   },
+   "physics": {
+    "content_hash": "5f8560b3e845fc071f8bb69becae6923d88abd4e501fe51033368744d6dbd704",
+    "sealed": "5f8560b3e845fc071f8bb69becae6923d88abd4e501fe51033368744d6dbd704",
+    "unchanged": true
+   }
+  },
+  "measured_with_the_pilot_registered": true,
+  "pilot_entries": 2,
+  "read_from": "sprint-22a-domain-survey.json",
+  "read_from_sha256": "5b6be6a4c4554d5c2be5324cc4ff63f157a11252e9fe05d3cc0a6ae996ed077c",
+  "released_entries": 28,
+  "released_snapshot_hash": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119",
+  "released_snapshot_hash_sealed": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119",
+  "released_snapshot_unchanged": true,
+  "whole_registry_snapshot_differs": true,
+  "whole_registry_snapshot_hash": "33cddfef4016d7c87c33e3bcc62854db1acd39a7e8dae3e3fe0e876ad4c2d23d"
+ },
+ "boundaries": {
+  "core_controller_changed": false,
+  "migration_head": "0015",
+  "migrations_allocated_by_w3": 0,
+  "new_enum_members": 0,
+  "new_tables": 0,
+  "not_reached": {
+   "handed_to": "W4's verification matrix, and 22B if it is to be built",
+   "what": "the Cognitive Controller's own state machine",
+   "why": "`run_case_controlled` takes a DomainBenchmarkCase whose `domain` is a DomainKind, and the controller maps that enum through two per-domain tables. Reaching it would mean widening a released contract and adding core branching, which is what the exit criterion forbids"
+  },
+  "storage_schema_changed": false
+ },
+ "chain": {
+  "phases": {
+   "rebuild": {
+    "process": 23195,
+    "record": "sprint-22a-w3-pilot-rebuild.json",
+    "sha256": "6798d4021b87ca7ebb2f00bdbb41b99ad8ed590299b464d989fd751d9d4e5626",
+    "summary": {
+     "every_problem_type_resolves": true,
+     "pilot_rebuilt": true,
+     "registry_entries_after": 33,
+     "released_snapshot_unchanged": true,
+     "whole_snapshot_changed": true
+    }
+   },
+   "register": {
+    "process": 23079,
+    "record": "sprint-22a-w3-pilot-register.json",
+    "sha256": "66961bdac72be113300072193d44c117eb027f6dcbb49abd83798f480cb6a397",
+    "summary": {
+     "stream_version": 3,
+     "went_through_the_boundary": true
+    }
+   },
+   "rejections": {
+    "process": 23419,
+    "record": "sprint-22a-w3-pilot-rejections.json",
+    "sha256": "cf9362ffb61271d9f8d967cc446268bdc9ce74859685042def5dc32f5b656c02",
+    "summary": {
+     "entries_unchanged_overall": true,
+     "every_case_refused": true,
+     "nothing_registered_halfway": true,
+     "released_snapshot_unchanged": true
+    }
+   },
+   "solve": {
+    "process": 23262,
+    "record": "sprint-22a-w3-pilot-solve.json",
+    "sha256": "59cc063edd81d8cfe675555a543489caa648177fa637b3feb1f192d2426b000d",
+    "summary": {
+     "every_task_accepted": true,
+     "every_wrong_answer_refused": true
+    }
+   },
+   "views": {
+    "process": 23352,
+    "record": "sprint-22a-w3-pilot-views.json",
+    "sha256": "d09cb04e9873fe05a024d359b6960a792dfbf489ac76401b5b97eb8c86267b7c",
+    "summary": {
+     "every_shared_concept_visible_from_physics": true,
+     "physics_owns_none_of_them": true,
+     "physics_sees_two_pilots": true,
+     "same_content_hash_in_both_views": true
+    }
+   }
+  },
+  "processes_observed": [
+   23079,
+   23195,
+   23262,
+   23352,
+   23419
+  ],
+  "separate_processes": true,
+  "why": "register writes and exits; every later phase starts cold. A pilot that registered only inside the process that authored it would look exactly like a pilot that registered (the D7 lifecycle lesson, and W1's slice discipline)"
+ },
+ "every_released_claim_holds": true,
+ "integrity_content_hash": "19994e342023e88e34078fc15d5fb9a8c7449b403a8ca53f512399376c0835c9",
+ "items": [
+  "S22A-040",
+  "S22A-041",
+  "S22A-042",
+  "S22A-043",
+  "S22A-044",
+  "S22A-045"
+ ],
+ "pilots": {
+  "excluded_because": "§3.4: a problem type that cannot be deterministically verified is out of the pilot and recorded as such, rather than admitted with a verifier that is a name",
+  "excluded_candidates": {
+   "chemistry.equilibrium-constant": "an equilibrium constant is measured, not derived from a formula; a kernel could only restate a number the case already carried",
+   "chemistry.reaction-prediction": "predicting the products of an arbitrary reaction needs empirical thermochemistry; no deterministic kernel here can judge an answer, so a verifier would be a name"
+  },
+  "physics_owns_none_of_them": true,
+  "physics_sees_both_pilots": true,
+  "pilot_count": 2,
+  "problem_types_total": 5,
+  "registered": {
+   "engineering.mechanics": {
+    "descriptor_content_hash": "1209693adf86a36402bb53d65a72a2e649b660e41a3536559adb30d9be9374af",
+    "lifecycle": "pilot",
+    "problem_types": [
+     "mechanics.statics-equilibrium",
+     "mechanics.moment-balance",
+     "mechanics.uniform-motion"
+    ],
+    "resolves_to_itself": true,
+    "revision": 1,
+    "verifier_capabilities": [
+     "physics.dimension",
+     "physics.quantity"
+    ]
+   },
+   "science.chemistry": {
+    "descriptor_content_hash": "1c4daeff2b7dd40dff9fe95f02ffd5d35c6539deee75a3ad43214b5662f4c887",
+    "lifecycle": "pilot",
+    "problem_types": [
+     "chemistry.mass-balance",
+     "chemistry.molar-conversion"
+    ],
+    "resolves_to_itself": true,
+    "revision": 1,
+    "verifier_capabilities": [
+     "physics.dimension",
+     "physics.quantity",
+     "chemistry.stoichiometry"
+    ]
+   }
+  },
+  "shared_into_physics": {
+   "chemistry.conservation_of_mass": "science.chemistry",
+   "chemistry.molar_mass": "science.chemistry",
+   "mechanics.force_balance": "engineering.mechanics",
+   "mechanics.moment_of_force": "engineering.mechanics"
+  },
+  "the_new_capability": {
+   "name": "chemistry.stoichiometry",
+   "why_it_is_not_a_borrowed_name": "the check counts atoms and compares integers; it is a deterministic kernel, not a model, a lookup or a heuristic (§3.4)"
+  }
+ },
+ "pre_registration_sha256": "dc40727db85be1cebef88220fc74624af0bfd6f84204979ce3914072a75bbafb",
+ "recorded_at": "2026-08-12T04:47:40Z",
+ "rejection_suite": {
+  "by_layer": {
+   "catalogue": [
+    "sharing a concept into a domain that exists nowhere",
+    "sharing a concept into a pilot that never declared it back"
+   ],
+   "package boundary": [
+    "boundary: bad_id_grammar",
+    "boundary: not_an_object",
+    "boundary: not_json",
+    "boundary: oversize",
+    "boundary: unknown_field",
+    "boundary: unresolvable_shared_concept"
+   ],
+   "registry door": [
+    "impersonating a released domain at a new revision"
+   ],
+   "resolution": [
+    "capabilities naming a verifier that never runs"
+   ]
+  },
+  "case_count": 10,
+  "every_case_refused": true,
+  "nothing_registered_halfway": true,
+  "sealed_cases_executed": [
+   "bad_id_grammar",
+   "not_an_object",
+   "not_json",
+   "oversize",
+   "unknown_field",
+   "unresolvable_shared_concept"
+  ],
+  "the_layer_is_part_of_the_claim": "a package the boundary refuses never reaches a store; one the registry door refuses never reaches a solver; one the catalogue refuses never reaches a view. A case that moves to a later layer than this record names is a regression",
+  "the_three_this_sprint_owed": {
+   "capabilities_naming_a_verifier_that_never_runs": "resolution",
+   "released_id_at_a_new_revision": "registry door",
+   "shared_into_a_domain_that_never_declared_it_back": "catalogue"
+  }
+ },
+ "replay_cases": 208,
+ "replays": {
+  "sprint20-domain-ci": {
+   "cases": 24,
+   "mode": "domain-pilot",
+   "pass_rate": 1.0
+  },
+  "sprint20-domain-seed": {
+   "cases": 120,
+   "mode": "domain-pilot",
+   "pass_rate": 1.0
+  },
+  "sprint21c1-learned-ci": {
+   "cases": 16,
+   "mode": "learned-replay",
+   "pass_rate": 1.0
+  },
+  "sprint21c1-learned-seed": {
+   "cases": 48,
+   "mode": "learned-replay",
+   "pass_rate": 1.0
+  }
+ },
+ "schema_version": 1,
+ "silo_regression": {
+  "added_by_both_pilots": 0,
+  "at_w0": {
+   "modules": 9,
+   "references": 57
+  },
+  "at_w1": {
+   "modules": 9,
+   "references": 52
+  },
+  "at_w2": {
+   "modules": 9,
+   "references": 52
+  },
+  "at_w3": {
+   "modules": 9,
+   "references": 52
+  },
+  "grew": false,
+  "measured_with_both_pilots_registered": true,
+  "read_from_w2": "sprint-22a-w2-pilot.json",
+  "read_from_w2_sha256": "0aa6390cf0eb9605238f032cdf4aa1fa56d10623a31e0c8e4a0c3ff82d49fa6a",
+  "reading": "§3.5's silo regression, closed: registering two domains added zero DomainKind references, because a descriptor-registered domain has no enum member to branch on. The count is a ceiling the sprint may drive down and may never push up"
+ },
+ "sprint": "22A",
+ "wave": "W3",
+ "what_w3_did_not_do": [
+  "add a migration, a table, an enum member or a controller branch",
+  "give either pilot a persisted-run path — W2-A1's stop still stands",
+  "promote either pilot beyond `lifecycle: pilot`",
+  "touch the learned correction component or its five routed canary groups"
+ ]
+}

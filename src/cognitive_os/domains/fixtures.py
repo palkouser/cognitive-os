@@ -99,6 +99,15 @@ def build_case(
     checker, so a case can only pass if two independent routes agree.
     """
     entry = resolve(problem_type)
+    if entry.domain is None:
+        # `DomainBenchmarkCase` and `DomainProblem` carry `DomainKind`, so this builder can
+        # only speak for the four released domains. A descriptor-registered domain is not a
+        # missing feature here, it is a different shape (Sprint 22A W2): refusing by name
+        # beats constructing a case whose `domain` field would fail validation one frame later.
+        raise ValueError(
+            f"problem type {problem_type!r} belongs to descriptor-registered domain "
+            f"{entry.domain_id!r}; benchmark fixtures are built for the released domains"
+        )
     resource_budget = budget or entry.budget
     problem_id = uuid5(NAMESPACE_URL, f"domain-problem:{case_id}")
     # `knowns` is the human/agent-readable statement of what is given. Inputs the

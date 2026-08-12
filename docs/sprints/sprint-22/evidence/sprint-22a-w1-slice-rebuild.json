@@ -1,0 +1,21 @@
+{
+ "descriptors_rebuilt": 1,
+ "fixture_content_hash": "3bf4a1082928473ca4a3a0c534d6b7936402a5d1004445a8741b21271c2ad8c8",
+ "fixture_problem_types": [
+  "slice-dimension-check"
+ ],
+ "fixture_rebuilt": true,
+ "fixture_shared_concepts": [
+  {
+   "concept_id": "slice_quantity",
+   "shared_with": [
+    "physics"
+   ]
+  }
+ ],
+ "phase": "rebuild",
+ "process": 33725,
+ "rebuilt_from": "artifact bytes, re-validated through the package boundary",
+ "recorded_at": "2026-08-11T16:31:18Z",
+ "registrations_replayed": 1
+}

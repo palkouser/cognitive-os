@@ -10,8 +10,9 @@ def test_schema_manifest_hashes_match_files() -> None:
     manifest = json.loads((root / "manifest.json").read_text())
     assert manifest["schema_set_version"] == 1
     # Kept in step with `tests/cognitive_os/events/test_catalog.py`: 207 before Sprint
-    # 21C1, plus its five learned events, plus Sprint 21D2's campaign sequence receipt.
-    assert len(manifest["event_types"]) == 214
+    # 21C1, plus its five learned events, plus Sprint 21D2's campaign sequence receipt,
+    # plus Sprint 22A's `domain.descriptor_registered`.
+    assert len(manifest["event_types"]) == 215
     for item in manifest["models"]:
         assert sha256((root / item["file"]).read_bytes()).hexdigest() == item["sha256"]
 

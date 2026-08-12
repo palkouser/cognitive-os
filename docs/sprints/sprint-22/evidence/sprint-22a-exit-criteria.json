@@ -1,0 +1,479 @@
+{
+ "criteria": {
+  "cross_domain_items_stored_once_and_exposed_through_governed_views": {
+   "checks": {
+    "an_undeclared_concept_stays_private": true,
+    "every_shared_concept_visible_from_the_target": true,
+    "more_than_one_owner": true,
+    "same_content_hash_in_both_views": true,
+    "target_owns_none_of_them": true,
+    "target_sees_both_pilots": true
+   },
+   "counts": {
+    "concepts_owned": 6,
+    "concepts_shared": 4,
+    "owners": 2
+   },
+   "decided_by": "recorded",
+   "statement": "cross-domain items are stored once and exposed through multiple governed views",
+   "why_recorded": "the views are computed over a catalogue built from registrations that live in 22A's store; the processes that read them were W2's and W3's, and their records are bound here by hash"
+  },
+  "global_and_per_domain_replay_green": {
+   "checks": {
+    "every_manifest_green": true,
+    "every_released_domain_replayed": true
+   },
+   "counts": {
+    "cases": 248,
+    "manifests": 6
+   },
+   "decided_by": "measured",
+   "released_domains_replayed": [
+    "coding",
+    "logic",
+    "mathematics",
+    "physics"
+   ],
+   "statement": "global and per-domain replay remain green"
+  },
+  "invalid_domain_packages_fail_closed": {
+   "checks": {
+    "entries_unchanged_overall": true,
+    "every_case_refused": true,
+    "nothing_registered_halfway": true,
+    "refused_at_more_than_one_layer": true
+   },
+   "counts": {
+    "cases": 10,
+    "layers": 4
+   },
+   "decided_by": "recorded",
+   "layers": [
+    "catalogue",
+    "package boundary",
+    "registry door",
+    "resolution"
+   ],
+   "statement": "invalid domain packages fail closed",
+   "why_recorded": "a refusal is only evidence if the thing it refused could otherwise have reached a store, so the suite runs against 22A's store; W3's record is bound here, together with W1's slice refusals and its tampered-byte case"
+  },
+  "registers_without_changing_the_core_controller_or_storage_schema": {
+   "checks": {
+    "core_controller_byte_identical": true,
+    "migration_head_is_still_0015": true,
+    "migrations_byte_identical": true,
+    "no_domainkind_branch_added": true,
+    "released_snapshot_unchanged": true,
+    "two_pilots_registered": true
+   },
+   "counts": {
+    "added_by_two_pilots": 0,
+    "controller_modules_checked": 11,
+    "domainkind_references": 52,
+    "migration_files": 15
+   },
+   "decided_by": "measured",
+   "statement": "both new domains register without changing the core controller or the storage schema",
+   "what_did_change_and_why_it_is_not_the_schema": "one new event contract, domain.descriptor_registered, and the events module that emits it. An event type is a contract over a stream the released store already has; it allocates no table, no column and no enum member, which is what the criterion forbids"
+  }
+ },
+ "enum_coupling": {
+  "added_by_two_pilots": 0,
+  "at_w0": {
+   "modules": 9,
+   "references": 57
+  },
+  "at_w3": {
+   "modules": 9,
+   "references": 52
+  },
+  "at_w4": {
+   "modules": 9,
+   "references": 52
+  },
+  "grew_since_w0": false,
+  "grew_since_w3": false
+ },
+ "fail_closed": {
+  "bound": [
+   {
+    "record": "sprint-22a-w3-pilot-rejections.json",
+    "sha256": "cf9362ffb61271d9f8d967cc446268bdc9ce74859685042def5dc32f5b656c02",
+    "values": {
+     "entries_unchanged_overall": true,
+     "every_case_refused": true,
+     "nothing_registered_halfway": true
+    }
+   },
+   {
+    "record": "sprint-22a-w1-slice-refusals.json",
+    "sha256": "d2cd9c9682b6da9c9496c0cc5f5d690dd6a64b30bfa773606bbd06633f34ff12",
+    "values": {
+     "every_case_refused": true,
+     "registrations_after": 1
+    }
+   },
+   {
+    "record": "sprint-22a-w1-slice-tamper.json",
+    "sha256": "9080d02c6c0e457fbdb6b66b66e721d15a59eb94fc1116e7597d4a6473cae7e0",
+    "values": {
+     "named_the_domain": true,
+     "refused": true,
+     "still_parses_as_a_package": true
+    }
+   }
+  ],
+  "case_count": 10,
+  "entries_unchanged_overall": true,
+  "every_case_refused": true,
+  "layers": [
+   "catalogue",
+   "package boundary",
+   "registry door",
+   "resolution"
+  ],
+  "nothing_registered_halfway": true,
+  "sealed_cases_executed": [
+   "bad_id_grammar",
+   "not_an_object",
+   "not_json",
+   "oversize",
+   "unknown_field",
+   "unresolvable_shared_concept"
+  ]
+ },
+ "governed_views": {
+  "bound": [
+   {
+    "record": "sprint-22a-w2-pilot-views.json",
+    "sha256": "47b953de56d7374a6b8576d8d0a1838da62f2ad5e44a1891ce4a487473b28e9e",
+    "values": {
+     "every_shared_concept_visible_from_physics": true,
+     "same_content_hash_in_both_views": true
+    }
+   },
+   {
+    "record": "sprint-22a-w3-pilot-views.json",
+    "sha256": "d09cb04e9873fe05a024d359b6960a792dfbf489ac76401b5b97eb8c86267b7c",
+    "values": {
+     "every_shared_concept_visible_from_physics": true,
+     "physics_owns_none_of_them": true,
+     "physics_sees_two_pilots": true
+    }
+   }
+  ],
+  "concept_count": 4,
+  "concepts_kept_private": [
+   "chemistry.stoichiometric_coefficient",
+   "mechanics.rigid_body"
+  ],
+  "concepts_owned_by_the_pilots": 6,
+  "every_shared_concept_visible_from_the_target": true,
+  "owner_count": 2,
+  "physics_owns_none_of_them": true,
+  "physics_sees_two_pilots": true,
+  "same_content_hash_in_both_views": true,
+  "shared_concepts": [
+   "chemistry.conservation_of_mass",
+   "chemistry.molar_mass",
+   "mechanics.force_balance",
+   "mechanics.moment_of_force"
+  ],
+  "stored_once": "the concept lives in exactly one package artifact, the owner's; the second view is a projection over the same bytes and never a copy",
+  "target_view": [
+   "chemistry.conservation_of_mass",
+   "chemistry.molar_mass",
+   "mechanics.force_balance",
+   "mechanics.moment_of_force"
+  ],
+  "target_view_is_exactly_the_shared_set": true
+ },
+ "integrity_content_hash": "7d204e244b1edb03308bdd32fc9fbdc03c22be9a4bc597b88597d970b82037fe",
+ "items": [
+  "S22A-050",
+  "S22A-051",
+  "S22A-052"
+ ],
+ "outcome": "pass",
+ "outcome_tag": "sprint-22a-domain-baseline",
+ "pilots": {
+  "bound": [
+   {
+    "record": "sprint-22a-w2-pilot.json",
+    "sha256": "0aa6390cf0eb9605238f032cdf4aa1fa56d10623a31e0c8e4a0c3ff82d49fa6a",
+    "values": {
+     "every_released_claim_holds": true
+    }
+   },
+   {
+    "record": "sprint-22a-w3-pilot.json",
+    "sha256": "0cb04a542ebc5d4deb353c99328d37e7fe2ddebff7f9ea77f4e4cddbcfeb1192",
+    "values": {
+     "every_released_claim_holds": true
+    }
+   }
+  ],
+  "every_one_is_a_pilot": true,
+  "every_one_resolves_to_itself": true,
+  "pilot_count": 2,
+  "problem_types_total": 5,
+  "registered": [
+   "engineering.mechanics",
+   "science.chemistry"
+  ]
+ },
+ "pre_registration_sha256": "dc40727db85be1cebef88220fc74624af0bfd6f84204979ce3914072a75bbafb",
+ "predecessor_commit": "c5119cc3291a3c651f99e6c873f9f230746628c1",
+ "predecessor_read_from": {
+  "record": "sprint-22a-baseline.json",
+  "sha256": "18f27686f342da906249a9cc964c27da8e67ffeb05b7fa9a03240f424be5c0f7"
+ },
+ "recorded_at": "2026-08-12T05:56:00Z",
+ "released_behaviour": {
+  "descriptor_count": 4,
+  "descriptor_hashes_unchanged": 4,
+  "pilots_registered": [
+   "engineering.mechanics",
+   "science.chemistry"
+  ],
+  "released_entries": 28,
+  "released_snapshot_hash": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119",
+  "released_snapshot_unchanged": true,
+  "whole_registry_snapshot_differs": true
+ },
+ "replay": {
+  "cases": 248,
+  "every_manifest_green": true,
+  "every_released_domain_replayed": true,
+  "executed_here": "each manifest is run as a subprocess by this script, in both --write and --check. Every one is credential-free by construction, which is what makes executing them cheaper than carrying their numbers forward",
+  "manifest_count": 6,
+  "manifests": {
+   "sprint20-domain-ci": {
+    "cases": 24,
+    "covers": [
+     "logic",
+     "mathematics",
+     "physics"
+    ],
+    "exit_status": 0,
+    "green": true,
+    "manifest_hash_reported": "2523f85c805043539911db063f4ea34eba565d55a016ffb9c31401ddec08a832",
+    "manifest_sha256": "df1ab63d0c3b21ff83ae9f1017de01e09fbef251e08d110581e80ebc22225c5d",
+    "mode": "domain-pilot",
+    "pass_rate": 1.0,
+    "status": "completed"
+   },
+   "sprint20-domain-seed": {
+    "cases": 120,
+    "covers": [
+     "logic",
+     "mathematics",
+     "physics"
+    ],
+    "exit_status": 0,
+    "green": true,
+    "manifest_hash_reported": "9994ad6632467dce2f6d5e130ded5df0b6583128422a61fcf6f0df942fafdde6",
+    "manifest_sha256": "0769043a4c45c70d27975e814a7fd2ba22abe84228f44cc1b8cb16ff9af1a9a6",
+    "mode": "domain-pilot",
+    "pass_rate": 1.0,
+    "status": "completed"
+   },
+   "sprint21c1-learned-ci": {
+    "cases": 16,
+    "covers": [
+     "the correction surface 22A must not touch"
+    ],
+    "exit_status": 0,
+    "green": true,
+    "manifest_hash_reported": "cdb13900cecc94811397b761f15338e0d2a0a01e0b9dde45485b467b4e388961",
+    "manifest_sha256": "a9d42209222c5cfa9b39145d024c3c6b31b2af7059869eebe90395c17b08c8c9",
+    "mode": "learned-replay",
+    "pass_rate": 1.0,
+    "status": "completed"
+   },
+   "sprint21c1-learned-seed": {
+    "cases": 48,
+    "covers": [
+     "the correction surface 22A must not touch"
+    ],
+    "exit_status": 0,
+    "green": true,
+    "manifest_hash_reported": "3f42c6576b0ec39c2a59f6f90300d8d34b7fd6cab655d2f68638db08ef85724d",
+    "manifest_sha256": "605084b231eae6261c232a0db00b1d287eabf2a2c8d3296e5430d05b1025887f",
+    "mode": "learned-replay",
+    "pass_rate": 1.0,
+    "status": "completed"
+   },
+   "sprint22-coding-ci": {
+    "cases": 15,
+    "covers": [
+     "coding"
+    ],
+    "exit_status": 0,
+    "green": true,
+    "manifest_hash_reported": "295b20f4f88e5c74308d1ad5d53564194124ce41094f44cff138818ae2c04f2d",
+    "manifest_sha256": "6a4923dd949030859ae95d52667c672bbe1552f275ce3ddb609c23493dc1bdfc",
+    "mode": "domain-pilot",
+    "pass_rate": 1.0,
+    "status": "completed"
+   },
+   "sprint22-coding-seed": {
+    "cases": 25,
+    "covers": [
+     "coding"
+    ],
+    "exit_status": 0,
+    "green": true,
+    "manifest_hash_reported": "16034ae90aceeffb08498f87aa7fca286b821c374cb37ad63a08c9960dbcfc72",
+    "manifest_sha256": "60a28d737564d6a5e5b05fdd13a30e45f3a41ef118cb2639edb4e832453189c1",
+    "mode": "domain-pilot",
+    "pass_rate": 1.0,
+    "status": "completed"
+   }
+  },
+  "released_domains_replayed": [
+   "coding",
+   "logic",
+   "mathematics",
+   "physics"
+  ]
+ },
+ "schema_version": 1,
+ "sprint": "22A",
+ "tag_not_created_here": "this script decides the criteria; it creates no tag, no merge and no push. The tag is created once, on the commit exact-head CI passed on, after that CI",
+ "unchanged_since_the_predecessor": {
+  "core_controller": {
+   "every_file_identical_to_the_predecessor": true,
+   "file_count": 11,
+   "files": {
+    "src/cognitive_os/application/ports/controller.py": {
+     "predecessor_sha256": "ad8a7c1c5c44973e22b3a66950ce31caa129f7e313baf5c73b1173a8018a5e29",
+     "sha256": "ad8a7c1c5c44973e22b3a66950ce31caa129f7e313baf5c73b1173a8018a5e29"
+    },
+    "src/cognitive_os/application/services/cognitive_controller.py": {
+     "predecessor_sha256": "0dd2f5711dce8503215da12174610f95dd0a66996196c9b07c99b935f00b51db",
+     "sha256": "0dd2f5711dce8503215da12174610f95dd0a66996196c9b07c99b935f00b51db"
+    },
+    "src/cognitive_os/application/services/controller_action_execution.py": {
+     "predecessor_sha256": "ff3945de13d701bb888b392fb68cdd1b506c9e355f3249054247cc56fdc70eba",
+     "sha256": "ff3945de13d701bb888b392fb68cdd1b506c9e355f3249054247cc56fdc70eba"
+    },
+    "src/cognitive_os/application/services/controller_recovery.py": {
+     "predecessor_sha256": "dfb628f6575bad446befe391ae86187dd2348ff507633d7aef90fb17a42d814e",
+     "sha256": "dfb628f6575bad446befe391ae86187dd2348ff507633d7aef90fb17a42d814e"
+    },
+    "src/cognitive_os/application/services/controller_verification.py": {
+     "predecessor_sha256": "bc8a7f9493b1f47c8a05062d5dfd944d89f028f9633e6e738eea4b91798df20a",
+     "sha256": "bc8a7f9493b1f47c8a05062d5dfd944d89f028f9633e6e738eea4b91798df20a"
+    },
+    "src/cognitive_os/coding/controller.py": {
+     "predecessor_sha256": "9cff42a7b56ba979020a03e056b4791721fa6c39a55bc765765a8f3a3aeff460",
+     "sha256": "9cff42a7b56ba979020a03e056b4791721fa6c39a55bc765765a8f3a3aeff460"
+    },
+    "src/cognitive_os/config/controller_config.py": {
+     "predecessor_sha256": "79b7fc43e2e62e1c493ffbd4506d0578119d4335197389f7194aee7d638d3ab6",
+     "sha256": "79b7fc43e2e62e1c493ffbd4506d0578119d4335197389f7194aee7d638d3ab6"
+    },
+    "src/cognitive_os/domain/controller.py": {
+     "predecessor_sha256": "4ac7b47086dd1c2414bd276923d743819e6f9cef707624a5e4f7a08bc532a4ba",
+     "sha256": "4ac7b47086dd1c2414bd276923d743819e6f9cef707624a5e4f7a08bc532a4ba"
+    },
+    "src/cognitive_os/domains/controller.py": {
+     "predecessor_sha256": "ca255b055a64f956ff0c1625735bc0d88898f38053f178a85e9388bb5dd33d19",
+     "sha256": "ca255b055a64f956ff0c1625735bc0d88898f38053f178a85e9388bb5dd33d19"
+    },
+    "src/cognitive_os/events/controller_event_service.py": {
+     "predecessor_sha256": "3325abdd402a94a73e3af0ff36caa5fdb8cf023efab39895ef3bdc66169aa57f",
+     "sha256": "3325abdd402a94a73e3af0ff36caa5fdb8cf023efab39895ef3bdc66169aa57f"
+    },
+    "src/cognitive_os/events/controller_events.py": {
+     "predecessor_sha256": "779be4200c70faf55e341b501025bb56332db9be6e46a9886c8fd04fdc5f2611",
+     "sha256": "779be4200c70faf55e341b501025bb56332db9be6e46a9886c8fd04fdc5f2611"
+    }
+   }
+  },
+  "storage_schema": {
+   "every_file_identical_to_the_predecessor": true,
+   "file_count": 15,
+   "files": {
+    "infra/postgres/alembic/versions/0001_create_event_and_artifact_store.py": {
+     "predecessor_sha256": "47ff1e23701a4373d5193da5efbc750a938ae8cd72fe14d20013389eacb6202e",
+     "sha256": "47ff1e23701a4373d5193da5efbc750a938ae8cd72fe14d20013389eacb6202e"
+    },
+    "infra/postgres/alembic/versions/0002_create_governed_memory_plane.py": {
+     "predecessor_sha256": "35a8dc38131ac6d1e8b8189d8e4d582136108688adb5caa914d2b5e1b51f1a68",
+     "sha256": "35a8dc38131ac6d1e8b8189d8e4d582136108688adb5caa914d2b5e1b51f1a68"
+    },
+    "infra/postgres/alembic/versions/0003_create_temporal_semantic_memory.py": {
+     "predecessor_sha256": "b311ebc282042f20a4b6b2f54895c9c3c0581d3f1523dc24863d6454bc813dc5",
+     "sha256": "b311ebc282042f20a4b6b2f54895c9c3c0581d3f1523dc24863d6454bc813dc5"
+    },
+    "infra/postgres/alembic/versions/0004_create_skill_engine.py": {
+     "predecessor_sha256": "b0690c0439c69b0a8aec96a6d62abf93406f52d25bb33f6d8d0f7feec71a49fa",
+     "sha256": "b0690c0439c69b0a8aec96a6d62abf93406f52d25bb33f6d8d0f7feec71a49fa"
+    },
+    "infra/postgres/alembic/versions/0005_create_strategy_evolution_graph.py": {
+     "predecessor_sha256": "c03bdd1d2b70f4433afb76ff664ef1d2cc90741957fcde36aecaa81fa55534b9",
+     "sha256": "c03bdd1d2b70f4433afb76ff664ef1d2cc90741957fcde36aecaa81fa55534b9"
+    },
+    "infra/postgres/alembic/versions/0006_create_experience_compiler.py": {
+     "predecessor_sha256": "1d5aa27cef48309866fecfe1bc91554a82ac94ec3c131cd4cb2655fdb0242b85",
+     "sha256": "1d5aa27cef48309866fecfe1bc91554a82ac94ec3c131cd4cb2655fdb0242b85"
+    },
+    "infra/postgres/alembic/versions/0007_create_corpus_factory.py": {
+     "predecessor_sha256": "909595206fb3abc24704047913e54c3f8faf66f2ccf5df67005ef48b3e039aa1",
+     "sha256": "909595206fb3abc24704047913e54c3f8faf66f2ccf5df67005ef48b3e039aa1"
+    },
+    "infra/postgres/alembic/versions/0008_create_model_capability_routing.py": {
+     "predecessor_sha256": "a04e166136447d36960ca61cf91d91786c6a9ddd2aa86b35855dc581ea2a2906",
+     "sha256": "a04e166136447d36960ca61cf91d91786c6a9ddd2aa86b35855dc581ea2a2906"
+    },
+    "infra/postgres/alembic/versions/0009_create_weakness_mining.py": {
+     "predecessor_sha256": "1785f2fdd41ac1789ef3c3c2b2949a032a4127808da1816d95cc2af19f8a6f8e",
+     "sha256": "1785f2fdd41ac1789ef3c3c2b2949a032a4127808da1816d95cc2af19f8a6f8e"
+    },
+    "infra/postgres/alembic/versions/0010_create_harness_proposals.py": {
+     "predecessor_sha256": "1605a2bdb3ed386f7c01454a5736f2b3e2451355c6b4fd9c22a875959993d038",
+     "sha256": "1605a2bdb3ed386f7c01454a5736f2b3e2451355c6b4fd9c22a875959993d038"
+    },
+    "infra/postgres/alembic/versions/0011_create_controlled_changes.py": {
+     "predecessor_sha256": "ffdd6d5e0e77ad64d985270de0bce6d834aae215d1476a3e68e811f44114194f",
+     "sha256": "ffdd6d5e0e77ad64d985270de0bce6d834aae215d1476a3e68e811f44114194f"
+    },
+    "infra/postgres/alembic/versions/0012_create_domain_pilots.py": {
+     "predecessor_sha256": "869d5c5c70897c4b2e2bf1239a3437ce3ab85219b58e7777d696298ede520a09",
+     "sha256": "869d5c5c70897c4b2e2bf1239a3437ce3ab85219b58e7777d696298ede520a09"
+    },
+    "infra/postgres/alembic/versions/0013_create_approximate_vector_indexes.py": {
+     "predecessor_sha256": "7299f8d84e813a416d730e6c932202039a8464a7954e0dbcd912fce5e9decedc",
+     "sha256": "7299f8d84e813a416d730e6c932202039a8464a7954e0dbcd912fce5e9decedc"
+    },
+    "infra/postgres/alembic/versions/0014_create_learned_evidence_store.py": {
+     "predecessor_sha256": "7527f9d6f4b3a565369420d5db4f8f6b20b6c69415aab4b8ac2a3d86ce098d9b",
+     "sha256": "7527f9d6f4b3a565369420d5db4f8f6b20b6c69415aab4b8ac2a3d86ce098d9b"
+    },
+    "infra/postgres/alembic/versions/0015_create_provider_output_governance.py": {
+     "predecessor_sha256": "f793936c5ba14590ad3a09e4958736e6bb7bd244444863358b4ea84decc679f7",
+     "sha256": "f793936c5ba14590ad3a09e4958736e6bb7bd244444863358b4ea84decc679f7"
+    }
+   }
+  }
+ },
+ "verdicts": {
+  "all_four_met": true,
+  "by_criterion": {
+   "cross_domain_items_stored_once_and_exposed_through_governed_views": true,
+   "global_and_per_domain_replay_green": true,
+   "invalid_domain_packages_fail_closed": true,
+   "registers_without_changing_the_core_controller_or_storage_schema": true
+  },
+  "met": 4,
+  "of": 4
+ },
+ "wave": "W4",
+ "what_a_pass_here_does_not_mean": [
+  "the Cognitive Controller's own state machine was reached: it was not, and W2's record names the released contract that would have to widen first",
+  "a pilot has a persisted-run path: W2-A1's three-domain CHECK constraint still stands, and widening it is the migration this sprint forbids",
+  "two pilots make the registry general: both lean on unit-carrying deterministic verification, which is the substrate the released physics domain built"
+ ]
+}

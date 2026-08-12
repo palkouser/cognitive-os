@@ -1,0 +1,140 @@
+{
+ "enum_coupling": {
+  "definition": "src/cognitive_os/domain/domains.py",
+  "module_count": 9,
+  "modules": {
+   "src/cognitive_os/benchmarks/domain_adapter.py": 4,
+   "src/cognitive_os/domain/descriptors.py": 3,
+   "src/cognitive_os/domain/domains.py": 7,
+   "src/cognitive_os/domains/context.py": 2,
+   "src/cognitive_os/domains/controller.py": 10,
+   "src/cognitive_os/domains/fixtures.py": 1,
+   "src/cognitive_os/domains/registry.py": 17,
+   "src/cognitive_os/domains/skill_execution.py": 5,
+   "src/cognitive_os/domains/transfer.py": 8
+  },
+  "reference_count": 57
+ },
+ "integrity_content_hash": "298233818691b90d87ca986f203012b23d0aae465ca0d184ce41a520d698a90e",
+ "package_boundary": {
+  "accepted_content_hash": "0165d6a901d51ad04e02f49e9b63daf49e2f6d2af62adb3185f4209a2cf40013",
+  "every_refusal_refused": true,
+  "refusals": {
+   "bad_id_grammar": [
+    "<root>: Value error, domain id 'Mechanics!' does not match the grammar '^[a-z][a-z0-9_]*(\\\\.[a-z][a-z0-9_]*)*$' within 64 characters"
+   ],
+   "not_an_object": [
+    "a descriptor package is a JSON object"
+   ],
+   "not_json": [
+    "package is not UTF-8 JSON: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte"
+   ],
+   "oversize": [
+    "package is 65537 bytes against a ceiling of 65536; a descriptor is metadata, not a corpus"
+   ],
+   "unknown_field": [
+    "controller_branch: Extra inputs are not permitted"
+   ],
+   "unresolvable_shared_concept": [
+    "<root>: Value error, concept 'rigid_body' is shared with 'chemistry', which the descriptor does not declare as parent or related; a shared concept must resolve inside the package's own declared world"
+   ]
+  },
+  "valid_pilot_shape_accepted": true
+ },
+ "predecessor": {
+  "commit": "3f5d7379caf85290da45885e22138506211bee2e",
+  "tag": "sprint-21-learning-baseline"
+ },
+ "recorded_at": "2026-08-11T10:25:25.199345+00:00",
+ "released_domains_as_descriptors": {
+  "descriptors": {
+   "coding": {
+    "content_hash": "3c1d2ea892acb2a4e551ad50ee83c065d28c68b290c3830bf83ff3e36114871c",
+    "problem_types": [
+     "assertion-repair",
+     "pytest-repair",
+     "test-selection"
+    ],
+    "revision": 1,
+    "tool_capabilities": [
+     "coding.kernel",
+     "coding.pytest"
+    ],
+    "verifier_capabilities": [
+     "coding.golden_equality",
+     "coding.required_checks"
+    ]
+   },
+   "logic": {
+    "content_hash": "3e714bd9f3808d1c0ebc80ab746de0618d49811e028354c69b32a719438d0a06",
+    "problem_types": [
+     "competing-hypotheses",
+     "consistency-check",
+     "constraint-satisfaction",
+     "counterexample-search",
+     "satisfiability",
+     "sequence-induction",
+     "truth-table",
+     "validity-check"
+    ],
+    "revision": 1,
+    "tool_capabilities": [
+     "logic.kernel"
+    ],
+    "verifier_capabilities": [
+     "logic.counterexample",
+     "logic.truth_table"
+    ]
+   },
+   "mathematics": {
+    "content_hash": "2cb1f3513849aef6cc9c9b2688340bf8f409a2f09d60050f12155f4e6ae1a8c9",
+    "problem_types": [
+     "algebraic-simplification",
+     "exact-versus-approximate",
+     "fraction-arithmetic",
+     "linear-equation",
+     "long-division",
+     "long-multiplication",
+     "polynomial-equation",
+     "rational-arithmetic",
+     "symbolic-equivalence"
+    ],
+    "revision": 1,
+    "tool_capabilities": [
+     "mathematics.kernel"
+    ],
+    "verifier_capabilities": [
+     "mathematics.exact_arithmetic",
+     "mathematics.numeric"
+    ]
+   },
+   "physics": {
+    "content_hash": "5f8560b3e845fc071f8bb69becae6923d88abd4e501fe51033368744d6dbd704",
+    "problem_types": [
+     "conservation-check",
+     "dimensional-analysis",
+     "limiting-case",
+     "model-selection",
+     "order-of-magnitude",
+     "quantity-calculation",
+     "significant-figures",
+     "unit-conversion"
+    ],
+    "revision": 1,
+    "tool_capabilities": [
+     "physics.kernel"
+    ],
+    "verifier_capabilities": [
+     "physics.dimension",
+     "physics.quantity"
+    ]
+   }
+  },
+  "reading": "derived from the released problem-type registry at the snapshot hash above; a wave that changes any content hash here has changed released behaviour",
+  "registry_snapshot_hash": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119"
+ },
+ "schema_version": 1,
+ "sprint": "22A",
+ "stage": "groundwork",
+ "what_this_record_is_not": "a registration, a pilot package, or a change to any released domain. The fixture package proves the boundary's shape and is not the mechanics pilot; the pilots are authored under 22A's own plan"
+}
