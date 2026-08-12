@@ -15,7 +15,9 @@
   whole suite runs green against the million-row store. **Six findings and two decisions**, all
   handled inside the wave; the sharpest is that the host W0 declared could not build the index
   the sprint's exits are defined over. **W0 detail follows first.**
-- Wave commit `613b546`, pull request **#233** against protected `main`; CI run
+- W1 wave commit `f29aafb`; CI run **`31614344537`** on that exact head, **30 of 30 jobs
+  successful**.
+- W0 wave commit `613b546`, pull request **#233** against protected `main`; CI run
   **`31581697125`** on that exact head, **30 of 30 jobs successful**. The merge is the gate
   owner's, not the wave's — W0 leaves the branch reviewable rather than merged.
 - Pre-registration: revision 1, SHA-256
