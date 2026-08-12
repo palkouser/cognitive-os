@@ -1,0 +1,27 @@
+{
+ "artifact_id": "049c89e8-eea5-47a1-a5a8-75263a14c66d",
+ "concepts": [
+  "chemistry.molar_mass",
+  "chemistry.conservation_of_mass",
+  "chemistry.stoichiometric_coefficient"
+ ],
+ "descriptor_content_hash": "1c4daeff2b7dd40dff9fe95f02ffd5d35c6539deee75a3ad43214b5662f4c887",
+ "domain_id": "science.chemistry",
+ "event_id": "e9c4e524-db29-4065-ae3a-4f6cd6f8baca",
+ "lifecycle": "pilot",
+ "media_type": "application/vnd.cogos.domain-package+json",
+ "package_bytes": 1593,
+ "package_file": "docs/sprints/sprint-22/packages/science.chemistry.v1.json",
+ "package_sha256": "b25b60f835872ed9173e02cac86db315c45a5577045710342243f15318b6781c",
+ "phase": "register",
+ "problem_types": [
+  "chemistry.mass-balance",
+  "chemistry.molar-conversion"
+ ],
+ "process": 23079,
+ "recorded_at": "2026-08-12T04:45:55Z",
+ "revision": 1,
+ "stream_id": "22a00000-0000-4000-8000-000000000001",
+ "stream_version": 3,
+ "went_through_the_boundary": true
+}

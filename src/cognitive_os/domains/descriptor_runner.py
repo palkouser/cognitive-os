@@ -94,6 +94,7 @@ async def run_descriptor_case(
     formal_inputs: dict[str, Any],
     *,
     candidate_override: dict[str, Any] | None = None,
+    required_capabilities: tuple[str, ...] = (),
     store: MemoryEventStore | None = None,
 ) -> DescriptorRun:
     """Solve one registered task through the Tool Plane and judge it with the verifier.
@@ -101,6 +102,11 @@ async def run_descriptor_case(
     `candidate_override` submits an answer the solver did not produce. The tool call, the
     verification request and the acceptance rule are identical either way, which is what
     makes a fabricated answer detectable here rather than trusted.
+
+    `required_capabilities` adds capabilities the caller requires on top of the entry's own,
+    mirroring the released `run_case_controlled`. A declared capability the checker never
+    exercises must block acceptance rather than pass unnoticed, and this is how a descriptor
+    that names a verifier nothing runs is caught (§3.5).
     """
     if store is None:
         store = MemoryEventStore()
@@ -165,7 +171,9 @@ async def run_descriptor_case(
             # Every capability the entry requires must actually be exercised. A declared
             # verifier that never ran is a missing verifier, not a pass — the released
             # checker enforces that, and a pilot is held to it from its first run.
-            "required_capabilities": list(entry.required_verifiers),
+            "required_capabilities": list(
+                dict.fromkeys((*entry.required_verifiers, *required_capabilities))
+            ),
         },
         requested_at=utc_now(),
         correlation_id=invocation.correlation_id,

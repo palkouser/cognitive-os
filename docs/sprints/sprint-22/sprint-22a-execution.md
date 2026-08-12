@@ -2,6 +2,12 @@
 
 - Branch: `sprint-22a-groundwork`
 - Backlog: [Sprint 22A Technical Backlog](sprint-22a-technical-backlog.md)
+- **W3 closed.** `science.chemistry` revision 1 is registered and solving alongside the
+  mechanics pilot: two pilots, five problem types, four concepts shared into `physics` from two
+  owners. The rejection suite refuses **ten cases across four layers**, and §3.5's silo
+  regression is closed — two domains added **zero** `DomainKind` branches. Migration head
+  `0015`, 208 replay cases green. One finding and two advisories. **W0, W1 and W2 detail
+  follow first.**
 - **W2 closed.** `engineering.mechanics` revision 1 is registered from a committed package,
   rebuilt in a separate process, and solving and verifying end to end through the released Tool
   Plane and the released checker. Two shared concepts, one owner, two governed views. Migration
@@ -755,3 +761,226 @@ been knocked on:
 §4.2's chemistry risk is the live one: the W3 record must show a chemistry candidate *failing*
 verification for a real reason, not only passing. W2's three refused answers are the template —
 each is the specific mistake its checker's independent route exists to catch.
+
+---
+
+## W3 outcome — the second domain, and the fences it was built to test
+
+S22A-040 through S22A-045 are done. `science.chemistry` revision 1 registers through the same
+door the mechanics pilot used, rebuilds cold, and has both its problem types **solved by the
+released `domains.solve` tool and judged by the released `domains.checker` verifier**. Both
+pilots now share concepts into `physics`, which sees four concepts from two domains and owns
+none of them. The rejection suite refuses **ten cases across four layers**. Migration head
+stays `0015`; the enum gained nothing; the `DomainKind` coupling is still **52**.
+
+**§3.5's silo regression is closed rather than promised.** Two domains registered, **zero**
+`DomainKind` references added — because a descriptor-registered domain has no enum member to
+branch on. That number is the sprint's thesis as an integer.
+
+### S22A-040 — two kernels, and what was left out
+
+§3.4 bounds the pilot to what a deterministic kernel can judge, and the atomic masses come
+**from the case**, never from a table this module invented — a constant nobody verified is
+exactly the false authority the constraint exists to prevent.
+
+| Problem type | Answer | The checker's independent route |
+|---|---|---|
+| `chemistry.mass-balance` | structured, `g/mol` | the **net** atom count across the whole equation, plus both side masses re-derived from the formulas |
+| `chemistry.molar-conversion` | quantity, `mol` | the relation **inverted**: amount × molar mass must return the sample mass |
+
+**The one new capability name is a kernel, not a label.** `chemistry.stoichiometry` counts
+atoms and compares integers; that is the whole of §3.4's requirement, and the test asserts it
+is not a released verifier's name being borrowed.
+
+**What was considered and left out**, on the record rather than dropped:
+`chemistry.reaction-prediction` and `chemistry.equilibrium-constant`. Both need empirical
+thermochemical data, so no kernel here can judge an answer, and a problem type whose verifier
+cannot verify does not belong in a pilot. Both names and both reasons live in the module and
+in the sealed record.
+
+**The formula grammar is deliberately small** — element symbols with optional counts, no
+parentheses, no hydrates, no charges. `Ca(OH)2` is a refusal here, not a silent
+`{Ca:1, O:1, H:2}`. Guessing at a formula would be a wrong answer wearing a right one's shape.
+
+### S22A-041 — the chain, again, in five processes
+
+| Phase | What a separate process established |
+|---|---|
+| `register` | 1593 bytes through `validate_domain_package`, artifact + event, stream version **3** |
+| `rebuild` | cold start rebuilds the descriptor to the same content hash; entries 28 → 33 |
+| `solve` | both tasks accepted, both fabricated answers refused, full `tool_call.*` + `verifier.*` trail |
+| `views` | four shared concepts visible from `physics`, from **two** owners, at identical content hashes |
+| `rejections` | ten hostile cases refused, entries unchanged after every one |
+
+**The mass-balance wrong answer is the harder shape** §4.2 asks for. It is not malformed: it
+is the *correct* answer to the balanced equation, submitted against an equation with one water
+missing. Nothing about it looks suspicious, and only recomputation catches it — the checker
+reports *"the net atom count leaves `['H', 'O']` unbalanced; candidate claimed
+balanced=True"*. The molar-conversion wrong answer is a molar mass of 16 read for water's 18,
+caught by multiplying back: 40.5 g against the given 36.
+
+The phase script was generalised rather than copied: `scripts/mechanics_pilot_22a.py` is now
+`scripts/pilot_chain_22a.py` with a `--pilot` argument. A second three-hundred-line near-copy
+would have been two chains to keep in step, and W4 needs one that runs both.
+
+### S22A-042 — a share the target never agreed to
+
+§3.5's third case had nowhere to live before this wave. A single package's validator can only
+check that a share resolves inside *its own* declared world, so a package may name any related
+domain it likes; whether that domain agrees is a question about the whole catalogue, and
+`validate_shared_concepts` now asks it.
+
+Two rules, and the asymmetry between them is deliberate:
+
+- the target must be a domain the catalogue **knows**. A concept shared into a domain that
+  exists nowhere is stored once and exposed to nobody, which is a silo with extra steps;
+- a **pilot** target must declare the sharing domain as parent or related — two pilots cannot
+  enrol each other unilaterally. A **released** domain is open by construction: the four are
+  derived from the problem-type registry rather than authored, and there is nowhere for them
+  to declare anything back. Requiring reciprocity of them would forbid every share a pilot
+  could usefully make, including the four this sprint depends on.
+
+### S22A-043 — the rejection suite, by the layer that refused
+
+| Layer | Cases | What it means |
+|---|---:|---|
+| package boundary | 6 | the six W0 sealed, **executed** out of the survey script that sealed them rather than retyped as literals (the D7 standing rule: run the thing you intend to rely on) |
+| registry door | 1 | a released id at a new revision — supersession is a governance path, not a package upload |
+| catalogue | 2 | a share into a domain that never declared it back, and one into a domain that exists nowhere |
+| resolution | 1 | capabilities naming a verifier that never runs — `missing_required_verifier`, the code §3.5 names |
+
+**The layer is part of the claim.** A package the boundary refuses never reaches a store; one
+the registry door refuses never reaches a solver; one the catalogue refuses never reaches a
+view. A case that moved to a later layer than this record names would be a regression even if
+it still ended in a refusal, and the record binds each case to its layer so that shows up.
+
+### S22A-044 and S22A-045 — the silo regression and replay
+
+| | W0 | W1 | W2 | W3 |
+|---|---:|---:|---:|---:|
+| `DomainKind` references | 57 | 52 | 52 | **52** |
+| modules | 9 | 9 | 9 | 9 |
+
+Measured with both pilots registered, which is the state no earlier wave could produce.
+
+Replay: `sprint20-domain-ci` (24), `sprint20-domain-seed` (120), `sprint21c1-learned-ci` (16),
+`sprint21c1-learned-seed` (48) — **208 cases, all green**, unchanged since W1.
+
+## W3 evidence index
+
+| Record | SHA-256 | Items |
+|---|---|---|
+| `sprint-22a-w3-pilot.json` | `0cb04a542ebc5d4d…` | S22A-040 … S22A-045 |
+| `sprint-22a-w3-pilot-register.json` | `66961bdac72be113…` | S22A-041 |
+| `sprint-22a-w3-pilot-rebuild.json` | `6798d4021b87ca7e…` | S22A-041 |
+| `sprint-22a-w3-pilot-solve.json` | `59cc063edd81d8cf…` | S22A-041 |
+| `sprint-22a-w3-pilot-views.json` | `d09cb04e9873fe05…` | S22A-042 |
+| `sprint-22a-w3-pilot-rejections.json` | `cf9362ffb61271d9…` | S22A-043 |
+
+New modules: `src/cognitive_os/domains/chemistry.py`, `validate_shared_concepts` in
+`domain/descriptors.py`, a `required_capabilities` parameter on `descriptor_runner`. New
+package: `docs/sprints/sprint-22/packages/science.chemistry.v1.json` (`b25b60f835872ed9…`).
+New script: `scripts/chemistry_22a.py`; renamed: `mechanics_pilot_22a.py` →
+`pilot_chain_22a.py`. New tests: `tests/cognitive_os/domains/test_chemistry_pilot.py` (30) and
+`tests/cognitive_os/domain/test_sprint_22a_w3_evidence.py` (10).
+
+---
+
+## W3 findings
+
+### W3-F1 — the runner could not express the requirement the released checker enforces
+
+§3.5 asks for a case where *a package whose capabilities name no registered verifier is
+refused at resolution with `MISSING_REQUIRED_VERIFIER`*. The released checker already
+implements exactly that: a capability listed in a plan's `required_capabilities` that no check
+exercised is reported as a missing verifier rather than passed over.
+
+**It could not be reached.** `run_descriptor_case` built its verification request from the
+registry entry alone, so the only capabilities it could ever require were the ones the entry
+already declared — and those are, by construction, the ones the checker emits. The refusal
+path existed and had no caller, which meant the suite could only have *described* it.
+
+Fixed by mirroring the released `run_case_controlled`, which has carried a
+`required_capabilities` parameter since the governed path was built for exactly this reason: a
+selected skill revision declares the verifier it claims to run, and a declared-but-unrun
+verifier must block acceptance. The suite now adds `chemistry.spectroscopy` to a real task and
+records the refusal, and a test asserts the honest direction too — every capability the
+chemistry package declares is exercised by every one of its problem types.
+
+### W3-A1 — reciprocity cannot be asked of a released domain, and that asymmetry is load-bearing
+
+Not a defect, and recorded because it looks like one. `validate_shared_concepts` requires a
+**pilot** to have declared the sharing domain before a concept may be shared into it, but
+exempts the released four. That is not leniency: released descriptors are *derived* from the
+problem-type registry by the adapter, so `related_domain_ids` is empty for all four and always
+will be while §2.3's reading holds. Requiring reciprocity of them would forbid every share
+both pilots make.
+
+The consequence a later sprint inherits: a released domain cannot refuse a view. If that
+becomes a governance question — and it is a reasonable one — the answer is a declared relation
+on the released side, which means the adapter gaining data it does not have today. 22B's
+call, named here rather than discovered there.
+
+### W3-A2 — a capability name is data, and no static check can make it honest
+
+Recorded because the obvious fix is wrong, and someone will propose it. Nothing at
+registration time can know which capabilities a checker will emit: a descriptor is data, a
+checker is code, and the only authority on what it produces is running it. A static
+declaration on `DomainKernel` listing its checker's capabilities would look like a fence and
+be a second copy of the truth, free to drift from the code it describes — and it would move a
+real refusal to a layer that only agrees with itself.
+
+So the gap stays open by design and is closed at resolution, where the released checker
+already stands, and the suite **executes** that path rather than asserting it (the D7
+standing rule: a digest recomputed unchanged proves the bytes did not move, not that anything
+can use them).
+
+## W3 validation
+
+| Gate | Result |
+|---|---|
+| `ruff check` / `ruff format --check` over `src tests scripts infra` | passed |
+| `mypy src/cognitive_os` | success, 637 source files |
+| `bandit -r src/cognitive_os` | 0 issues |
+| `python -m cognitive_os.schemas.export --check` | passed, no new contract |
+| `scripts/check_repository_language.sh` | passed |
+| `pytest tests/cognitive_os -q` | **4109 passed, 107 skipped** |
+| `scripts/chemistry_22a.py --check` | released snapshot unchanged **with both pilots registered**, 4 compat hashes, 5 bound phase records, 10 rejection cases, coupling within ceiling |
+| `scripts/pilot_22a.py --check` | W2's record still checks |
+| `scripts/seam_22a.py --check` | W1's record still checks |
+| four replay manifests | 208 cases, pass rate 1.0 |
+
+No released guard fired: W3 added no event type, no contract and no schema.
+
+## What W3 did not do
+
+- **added no migration, table, enum member or controller branch**, and did not approach `0016`;
+- **gave neither pilot a persisted-run path.** W2-A1's stop still stands: `domain_pilot_runs`
+  carries a three-domain allowlist in a CHECK constraint, widening it is a migration, and the
+  exit criterion makes `0016` a refusal;
+- **promoted nothing.** Both pilots are `lifecycle: pilot`, the only lifecycle a package may
+  claim;
+- **touched nothing that learns.**
+
+## What W4 needs, and what would stop it
+
+W4 is the release wave: full verification matrix, global and per-domain replay as the gated
+claim, the sprint report against the four exit criteria, protected release with exact-head CI,
+the annotated tag `sprint-22a-domain-baseline`, and the handoff naming what 22B inherits.
+
+Three of the four exit criteria already have evidence and need re-running rather than
+building:
+
+- **both new domains register without changing the core controller or storage schema** —
+  W2 and W3's records, migration head `0015`, coupling flat at 52;
+- **cross-domain items stored once, exposed through multiple governed views** — four concepts,
+  two owners, one `physics` view, identical content hashes;
+- **invalid domain packages fail closed** — ten cases, four layers, entries unchanged after
+  every one.
+
+The fourth, **replay green**, is a wall-clock item and §4.2 says to schedule it early rather
+than at the end.
+
+Two things W4 must carry forward rather than resolve quietly: **W2-A1**, the schema-level
+three-domain allowlist that never learned about `coding` either, and **W3-A1**, the released
+four's inability to refuse a view. Both are 22B's, and both belong in the handoff by name.

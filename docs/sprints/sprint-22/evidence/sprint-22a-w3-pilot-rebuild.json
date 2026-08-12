@@ -1,0 +1,32 @@
+{
+ "domain_ids_after": [
+  "coding",
+  "engineering.mechanics",
+  "logic",
+  "mathematics",
+  "physics",
+  "science.chemistry"
+ ],
+ "every_problem_type_resolves": true,
+ "phase": "rebuild",
+ "pilot": "science.chemistry",
+ "pilot_content_hash": "1c4daeff2b7dd40dff9fe95f02ffd5d35c6539deee75a3ad43214b5662f4c887",
+ "pilot_rebuilt": true,
+ "problem_types_resolved": {
+  "chemistry.mass-balance": "science.chemistry",
+  "chemistry.molar-conversion": "science.chemistry"
+ },
+ "process": 23195,
+ "reading": "S22A-030: the released snapshot is what the sealed compat contract asserts and no registration may move it; the whole-registry snapshot changed because the registry really did gain a domain",
+ "recorded_at": "2026-08-12T04:46:02Z",
+ "registrations_replayed": 3,
+ "registry_entries_after": 33,
+ "registry_entries_before": 28,
+ "released_snapshot_after": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119",
+ "released_snapshot_before": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119",
+ "released_snapshot_unchanged": true,
+ "resolved_to_the_pilot": true,
+ "whole_snapshot_after": "33cddfef4016d7c87c33e3bcc62854db1acd39a7e8dae3e3fe0e876ad4c2d23d",
+ "whole_snapshot_before": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119",
+ "whole_snapshot_changed": true
+}

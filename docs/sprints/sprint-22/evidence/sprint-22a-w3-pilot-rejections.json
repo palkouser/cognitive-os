@@ -1,0 +1,122 @@
+{
+ "case_count": 10,
+ "cases": [
+  {
+   "case": "boundary: oversize",
+   "diagnostics": [
+    "package is 65537 bytes against a ceiling of 65536; a descriptor is metadata, not a corpus"
+   ],
+   "entries_unchanged": true,
+   "layer": "package boundary",
+   "refused": true
+  },
+  {
+   "case": "boundary: not_json",
+   "diagnostics": [
+    "package is not UTF-8 JSON: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte"
+   ],
+   "entries_unchanged": true,
+   "layer": "package boundary",
+   "refused": true
+  },
+  {
+   "case": "boundary: not_an_object",
+   "diagnostics": [
+    "a descriptor package is a JSON object"
+   ],
+   "entries_unchanged": true,
+   "layer": "package boundary",
+   "refused": true
+  },
+  {
+   "case": "boundary: unknown_field",
+   "diagnostics": [
+    "controller_branch: Extra inputs are not permitted"
+   ],
+   "entries_unchanged": true,
+   "layer": "package boundary",
+   "refused": true
+  },
+  {
+   "case": "boundary: bad_id_grammar",
+   "diagnostics": [
+    "<root>: Value error, domain id 'Mechanics!' does not match the grammar '^[a-z][a-z0-9_]*(\\\\.[a-z][a-z0-9_]*)*$' within 64 characters"
+   ],
+   "entries_unchanged": true,
+   "layer": "package boundary",
+   "refused": true
+  },
+  {
+   "case": "boundary: unresolvable_shared_concept",
+   "diagnostics": [
+    "<root>: Value error, concept 'rigid_body' is shared with 'chemistry', which the descriptor does not declare as parent or related; a shared concept must resolve inside the package's own declared world"
+   ],
+   "entries_unchanged": true,
+   "layer": "package boundary",
+   "refused": true
+  },
+  {
+   "case": "impersonating a released domain at a new revision",
+   "diagnostics": [
+    "domain_id: 'physics' is a released domain; a released domain is derived through the adapter and its revisions are a governance path, not a package",
+    "problem_types: already registered: chemistry.mass-balance (owned by 'science.chemistry'), chemistry.molar-conversion (owned by 'science.chemistry')"
+   ],
+   "entries_unchanged": true,
+   "layer": "registry door",
+   "refused": true
+  },
+  {
+   "case": "sharing a concept into a pilot that never declared it back",
+   "diagnostics": [
+    "concept 'materials.lattice' is shared into 'engineering.mechanics', which does not declare 'science.materials' as parent or related; a pilot does not enrol another pilot's view without its consent"
+   ],
+   "entries_unchanged": true,
+   "layer": "catalogue",
+   "refused": true
+  },
+  {
+   "case": "sharing a concept into a domain that exists nowhere",
+   "diagnostics": [
+    "concept 'materials.lattice' is shared into 'science.astronomy', which no registered or released domain answers to; a view into a domain that does not exist is not a view"
+   ],
+   "entries_unchanged": true,
+   "layer": "catalogue",
+   "refused": true
+  },
+  {
+   "case": "capabilities naming a verifier that never runs",
+   "diagnostics": [
+    "required verifier did not run: ['chemistry.spectroscopy']"
+   ],
+   "entries_unchanged": true,
+   "layer": "resolution",
+   "refused": true
+  }
+ ],
+ "entries_after": 33,
+ "entries_unchanged_overall": true,
+ "every_case_refused": true,
+ "layers": [
+  "catalogue",
+  "package boundary",
+  "registry door",
+  "resolution"
+ ],
+ "nothing_registered_halfway": true,
+ "phase": "rejections",
+ "pilots": [
+  "engineering.mechanics",
+  "science.chemistry"
+ ],
+ "process": 23419,
+ "recorded_at": "2026-08-12T04:46:16Z",
+ "released_snapshot_unchanged": true,
+ "sealed_cases_executed": [
+  "bad_id_grammar",
+  "not_an_object",
+  "not_json",
+  "oversize",
+  "unknown_field",
+  "unresolvable_shared_concept"
+ ]
+}

@@ -419,6 +419,52 @@ def concept_owners(descriptors: Iterable[DomainDescriptorV1]) -> dict[str, str]:
     return owners
 
 
+def validate_shared_concepts(descriptors: Iterable[DomainDescriptorV1]) -> None:
+    """Refuse a share into a domain that never declared it back (Sprint 22A §3.5).
+
+    A single package's validator can only check that a share resolves inside *its own*
+    declared world, which is why a package may name any related domain it likes. Whether
+    that domain agrees is a question about the whole catalogue, and it is asked here.
+
+    Two rules, and the asymmetry between them is deliberate:
+
+    - the target must be a domain the catalogue actually knows. A concept shared into a
+      domain that exists nowhere is stored once and exposed to nobody, which is a silo with
+      extra steps;
+    - a **pilot** target must declare the sharing domain as parent or related. Two pilots
+      cannot enrol each other unilaterally. A **released** domain is open by construction:
+      the released four are the shared substrate every pilot builds on, they are derived
+      from the problem-type registry rather than authored, and there is nowhere for them to
+      declare anything back. Requiring reciprocity of them would forbid every share a pilot
+      could usefully make.
+    """
+    catalogue = tuple(descriptors)
+    known = {item.domain_id: item for item in catalogue}
+    for descriptor in catalogue:
+        for concept in descriptor.concepts:
+            for target in concept.shared_with:
+                other = known.get(target)
+                if other is None:
+                    raise DomainPackageError(
+                        (
+                            f"concept {concept.concept_id!r} is shared into {target!r}, which "
+                            "no registered or released domain answers to; a view into a "
+                            "domain that does not exist is not a view",
+                        )
+                    )
+                if other.lifecycle is DomainLifecycleState.PILOT and descriptor.domain_id not in {
+                    other.parent_domain_id,
+                    *other.related_domain_ids,
+                }:
+                    raise DomainPackageError(
+                        (
+                            f"concept {concept.concept_id!r} is shared into {target!r}, which "
+                            f"does not declare {descriptor.domain_id!r} as parent or related; "
+                            "a pilot does not enrol another pilot's view without its consent",
+                        )
+                    )
+
+
 def concept_views(
     descriptors: Iterable[DomainDescriptorV1],
 ) -> dict[str, tuple[ConceptView, ...]]:
@@ -432,6 +478,7 @@ def concept_views(
     """
     catalogue = tuple(descriptors)
     concept_owners(catalogue)
+    validate_shared_concepts(catalogue)
     views: dict[str, list[ConceptView]] = {item.domain_id: [] for item in catalogue}
     for descriptor in catalogue:
         for concept in descriptor.concepts:
