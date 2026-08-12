@@ -1,0 +1,90 @@
+{
+ "branch_protection_after_release": {
+  "allow_deletions": false,
+  "allow_force_pushes": false,
+  "enforce_admins": true,
+  "required_conversation_resolution": true,
+  "required_pull_request_reviews": null,
+  "required_status_check_contexts": 27,
+  "strict_status_checks": true
+ },
+ "carried_forward_by_name": {
+  "W2-A1": "domain_pilot_runs has a three-domain CHECK constraint in its schema",
+  "W3-A1": "a released domain cannot refuse a view, because it declares no relations"
+ },
+ "exit_criteria": {
+  "all_four_met": true,
+  "by_criterion": {
+   "cross_domain_items_stored_once_and_exposed_through_governed_views": true,
+   "global_and_per_domain_replay_green": true,
+   "invalid_domain_packages_fail_closed": true,
+   "registers_without_changing_the_core_controller_or_storage_schema": true
+  },
+  "met": 4,
+  "of": 4,
+  "outcome": "pass",
+  "record": "sprint-22a-exit-criteria.json",
+  "record_sha256": "d314121f2180f92aa861334c4cd170bf38c74ab33400da2253c844c8eab6aa1e"
+ },
+ "findings": [],
+ "integrity_content_hash": "c0385bb1b4162caa256f20ead543e25a7f7e752605638c57ba99559f664b9f4d",
+ "items": [
+  "S22A-053"
+ ],
+ "migration_head": "0015",
+ "next_available_migration": "0016 (unallocated)",
+ "outcome": "positive; two pilot domains registered as data, the released four unchanged",
+ "pre_registration_sha256": "dc40727db85be1cebef88220fc74624af0bfd6f84204979ce3914072a75bbafb",
+ "recorded_at": "2026-08-12T07:41:24.114909Z",
+ "release": {
+  "created_by_this_script": "nothing. This record reads handles; it does not make them",
+  "exact_head_main_ci": {
+   "completed_at": "2026-08-12T07:39:42Z",
+   "conclusion": "success",
+   "every_job_succeeded": true,
+   "head_sha": "291482448114ffed95a975c2b6a0d2be47a6a092",
+   "jobs": "30 of 30 success",
+   "run": 31573794611,
+   "status": "completed"
+  },
+  "implementation_merge_commit": "291482448114ffed95a975c2b6a0d2be47a6a092",
+  "implementation_merged_at": "2026-08-12T07:23:49Z",
+  "implementation_pull_request": 231,
+  "merge_method": "squash, no administrator bypass",
+  "merged_by": "palkouser",
+  "message_first_line": "Sprint 22A: the data-driven domain registry",
+  "peeled_commit": "291482448114ffed95a975c2b6a0d2be47a6a092",
+  "pull_request_head_ci": {
+   "completed_at": "2026-08-12T07:09:08Z",
+   "conclusion": "success",
+   "every_job_succeeded": true,
+   "head_sha": "e56fff02bb4ba65f0470063cd301f24b2e838ee1",
+   "jobs": "30 of 30 success",
+   "run": 31571681752,
+   "status": "completed"
+  },
+  "remote_main": "291482448114ffed95a975c2b6a0d2be47a6a092",
+  "stop_tag_exists": false,
+  "stop_tag_forbidden_and_not_created": "sprint-22a-evidence-baseline",
+  "tag": "sprint-22a-domain-baseline",
+  "tag_created_at": "2026-08-12T07:41:12Z",
+  "tag_object": "58b1a0fa3b4f83de6ff9a3fd5d4023cc747b5276",
+  "tag_type": "tag"
+ },
+ "schema_version": 1,
+ "sprint": "22A",
+ "sprint_22b": "unblocked; the handoff names what it inherits and what it must not assume",
+ "verification_matrix": {
+  "failed_rows": [],
+  "record_sha256": "d07100ae6579f95d7ac9616ecfe68c2ae70c482d23b879ac1dfdae6376893fbb",
+  "skipped_rows": [],
+  "structural_findings": [],
+  "totals": {
+   "failed": 0,
+   "passed": 39,
+   "rows": 39,
+   "skipped": 0
+  }
+ },
+ "wave": "W4"
+}

@@ -1,8 +1,9 @@
 # Sprint 22A handoff — a registry that reads its domains, and the enum that outlived it
 
-- Predecessor for Sprint 22B: this sprint, branch `sprint-22a-groundwork`, PR **#231**,
-  outcome tag **`sprint-22a-domain-baseline`** (created on the post-merge commit, after
-  exact-head CI — see [the report](sprint-22a-report.md) §6)
+- Predecessor for Sprint 22B: this sprint, squash-merged as **#231** into `main` at
+  `291482448114ffed95a975c2b6a0d2be47a6a092`, outcome tag **`sprint-22a-domain-baseline`**,
+  object `58b1a0fa3b4f83de6ff9a3fd5d4023cc747b5276`, created after the exact-head post-merge CI
+  run `31573794611` (30 of 30) and never moved
 - Exit criteria: **4 of 4 met**, in
   [`sprint-22a-exit-criteria.json`](evidence/sprint-22a-exit-criteria.json)
 - Migration head: `0015`. Sprint 22A allocated none, and `0016` is still unallocated
@@ -128,7 +129,7 @@ surface above rather than against the pilots.
 | `sprint-22a-w3-pilot.json` | `19994e342023e88e…` |
 | `sprint-22a-exit-criteria.json` | 4 of 4 met, outcome `pass` |
 | `sprint-22a-verification-matrix.json` | 0 failed, 0 skipped, 0 structural findings |
-| `sprint-22a-release.json` | written by `scripts/release_22a.py` from live handles |
+| `sprint-22a-release.json` | `58dc96811be7fa92…`, **zero findings**, tag `58b1a0fa3b4f83de…` |
 
 The per-wave evidence indexes in [`sprint-22a-execution.md`](sprint-22a-execution.md) carry the
 hash of every record, including the phase records this table does not name.

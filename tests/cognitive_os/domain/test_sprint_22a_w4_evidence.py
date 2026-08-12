@@ -1,9 +1,11 @@
 """S22A-W4: the release wave's claims, checked by the suite the release wave runs.
 
-`sprint-22a-exit-criteria.json` is where the sprint's four exit criteria are decided, and it
-is the record the tag will be created against. These tests re-derive it rather than read it:
-`_check()` recomputes the frozen-file comparison, the coupling census, the released registry
-hashes and all six benchmark replays in this process.
+`sprint-22a-exit-criteria.json` is where the sprint's four exit criteria are decided, and it is
+the record `sprint-22a-domain-baseline` was created against. These tests re-derive it rather
+than read it: `_check()` recomputes the frozen-file comparison, the coupling census, the
+released registry hashes and all six benchmark replays in this process. The release record is
+checked offline against the bytes it binds — the handles themselves were read from the remote
+once, by the command that wrote them.
 
 **No test here reads `sprint-22a-verification-matrix.json`, on purpose.** The matrix runs this
 suite as one of its own rows, so a test asserting over the matrix record would be reading the
@@ -14,6 +16,7 @@ reaches the exit status instead of the next run.
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import json
 from pathlib import Path
@@ -22,6 +25,7 @@ from typing import Any
 REPOSITORY = Path(__file__).resolve().parents[3]
 EVIDENCE = REPOSITORY / "docs/sprints/sprint-22/evidence"
 RECORD = EVIDENCE / "sprint-22a-exit-criteria.json"
+RELEASE = EVIDENCE / "sprint-22a-release.json"
 
 
 def _load_script(name: str) -> Any:
@@ -96,6 +100,42 @@ def test_the_recorded_criteria_bind_the_records_they_were_read_from() -> None:
         for item in bound:
             assert (EVIDENCE / item["record"]).is_file()
             assert len(item["sha256"]) == 64
+
+
+def test_the_release_record_is_consistent_with_itself_and_the_evidence_it_binds() -> None:
+    """Checked offline, on the committed bytes: no network, no gh, no assumption of one.
+
+    The release record was written from live handles once. What survives it is this: the tag
+    peels to the commit `main` actually holds, the stop tag does not exist, nothing failed,
+    and the two records it binds are still the bytes it bound.
+    """
+    release = json.loads(RELEASE.read_text(encoding="utf-8"))
+    body = {key: value for key, value in release.items() if key != "integrity_content_hash"}
+    canonical = json.dumps(body, indent=1, sort_keys=True, ensure_ascii=False, default=str)
+    assert (
+        hashlib.sha256(canonical.encode("utf-8")).hexdigest() == (release["integrity_content_hash"])
+    )
+
+    assert release["findings"] == []
+    published = release["release"]
+    assert published["peeled_commit"] == published["implementation_merge_commit"]
+    assert published["remote_main"] == published["implementation_merge_commit"]
+    assert published["tag"] == "sprint-22a-domain-baseline"
+    assert published["tag_type"] == "tag"
+    assert published["stop_tag_exists"] is False
+    for name in ("pull_request_head_ci", "exact_head_main_ci"):
+        assert published[name]["every_job_succeeded"] is True
+
+    for name, key in (
+        ("sprint-22a-exit-criteria.json", "exit_criteria"),
+        ("sprint-22a-verification-matrix.json", "verification_matrix"),
+    ):
+        digest = hashlib.sha256((EVIDENCE / name).read_bytes()).hexdigest()
+        assert release[key]["record_sha256"] == digest
+    assert release["exit_criteria"]["all_four_met"] is True
+    assert release["verification_matrix"]["failed_rows"] == []
+    assert release["verification_matrix"]["structural_findings"] == []
+    assert set(release["carried_forward_by_name"]) == {"W2-A1", "W3-A1"}
 
 
 def test_the_pass_names_what_it_does_not_mean() -> None:

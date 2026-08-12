@@ -2,16 +2,21 @@
 
 - Branch: `sprint-22a-groundwork`
 - Backlog: [Sprint 22A Technical Backlog](sprint-22a-technical-backlog.md)
+- **Sprint 22A is released.** `#231` squash-merged into protected `main` as
+  `291482448114ffed95a975c2b6a0d2be47a6a092`; exact-head post-merge CI run **`31573794611`**,
+  30 of 30; annotated tag **`sprint-22a-domain-baseline`**, object `58b1a0fa3b4f83de…`, created
+  after that CI and never moved. `release_22a.py` recorded **zero findings**. See
+  [the release](#the-release).
 - **W4 closed, and the sprint's four exit criteria are met — 4 of 4.** The verification matrix
   ran every pre-release check once; the criteria are decided in
   [`sprint-22a-exit-criteria.json`](evidence/sprint-22a-exit-criteria.json), measured where they
   can be measured and bound by hash where they cannot. Eleven controller modules and fifteen
   migration files are byte-identical to the branch point, six manifests replay 248 cases green,
   and three findings — a released domain this sprint never replayed, an exit criterion that was a
-  literal, and a release command that could not be run twice — were fixed inside the wave. The **release is the gate owner's**: #231 is not merged,
-  and the tag `sprint-22a-domain-baseline` is created after exact-head post-merge CI, never by a
-  wave. See [the report](sprint-22a-report.md) and [the handoff](sprint-22a-handoff.md). **W0
-  through W3 detail follow first.**
+  literal, and a release command that could not be run twice — were fixed inside the wave. The
+  merge was the gate owner's and the tag followed that commit's own CI, never the branch's. See
+  [the report](sprint-22a-report.md) and [the handoff](sprint-22a-handoff.md). **W0 through W3
+  detail follow first.**
 - W4 wave commit `7e52ab0`; CI run **`31570485680`** on that exact head, **30 of 30 jobs
   successful**.
 - **W3 closed.** `science.chemistry` revision 1 is registered and solving alongside the
@@ -1097,11 +1102,14 @@ the local repository — the merge commit and its timestamp, both CI runs with t
 and job counts, the annotated tag object and the commit it peels to, and the branch protection
 state — and **creates nothing**. No merge, no tag, no push.
 
-Run today it refuses, and the refusal is the honest state: *pull request #231 is not merged, so
-there is no release to record.* `main` is protected, the merge is the gate owner's decision, and
-the tag `sprint-22a-domain-baseline` is created once, on the commit the exact-head post-merge CI
-passed on, after that CI, and never moved. A wave that tagged its own branch would be describing
-a release it had granted itself.
+Written before the merge, it refused, and the refusal was the honest state at the time: *pull
+request #231 is not merged, so there is no release to record.* `main` is protected, the merge is
+the gate owner's decision, and the tag `sprint-22a-domain-baseline` is created once, on the
+commit the exact-head post-merge CI passed on, after that CI, and never moved. A wave that tagged
+its own branch would be describing a release it had granted itself.
+
+The release happened in that order, and the record is under [the release](#the-release):
+**zero findings**.
 
 ## W4 evidence index
 
@@ -1109,7 +1117,7 @@ a release it had granted itself.
 |---|---|---|
 | `sprint-22a-exit-criteria.json` | `d314121f2180f92a…` | S22A-050 … S22A-052 |
 | `sprint-22a-verification-matrix.json` | `d07100ae6579f95d…` | S22A-050 |
-| `sprint-22a-release.json` | not written; the release has not happened | S22A-053 |
+| `sprint-22a-release.json` | `58dc96811be7fa92…` | S22A-053 |
 
 **39 rows, 39 passed, 0 skipped, 0 structural findings.** 25 commands and 14 rows recorded from
 committed evidence; both negative rows refused for the reason they name.
@@ -1184,14 +1192,15 @@ could not be run twice — the same failure at different distances from the evid
 | seven 22A validators under `--check` | passed, including the chronology row over all four records |
 | `exit_criteria_22a.py --check` | 4 of 4 met, 11 controller modules and 15 migration files verified, 6 manifests replayed |
 | both negative rows | refused, each for the reason it names |
-| `release_22a.py --pull-request 231` | refuses: the pull request is not merged, so there is no release to record |
+| `release_22a.py --pull-request 231` | before the merge: refuses, no release to record. After it: **zero findings** |
 
 ## What W4 did not do
 
-- **it did not merge anything.** `main` is protected, #231 is the gate owner's to merge, and a
-  wave that merged its own branch would be granting itself a release;
-- **it did not create the tag.** The tag is created once, on the post-merge commit, after that
-  commit's CI, and never moved;
+- **it did not merge on its own authority.** `main` is protected and #231 was the gate owner's to
+  merge; the wave closed with the branch reviewable and the merge came afterwards, on the gate
+  owner's instruction;
+- **it did not tag its own branch.** The tag went on the post-merge commit, after that commit's
+  own CI, once, and has not moved;
 - **it did not resolve W2-A1 or W3-A1.** Both travel to 22B by name, in the handoff and in the
   release record's `carried_forward_by_name`;
 - **it did not widen a released contract, allocate a migration, or touch anything that learns.**
@@ -1203,3 +1212,44 @@ keyed by string domain id that a scale test can enumerate, a fail-closed boundar
 refusals, storage without a schema, the descriptor spine 22C's campaign manifests will bind to,
 and two worked pilots as templates — and, explicitly not inherited, any way for a descriptor
 domain to be run and recorded like a released one.
+
+---
+
+## The release
+
+`#231` squash-merged into protected `main` at `2026-08-12T07:23:49Z` by the gate owner, **no
+administrator bypass**, commit `291482448114ffed95a975c2b6a0d2be47a6a092`. Pull-request head CI
+run **`31571681752`** on `e56fff0`, 30 of 30 success. Exact-head post-merge `main` CI run
+**`31573794611`**, **30 of 30 jobs successful**, completed `07:39:42Z`. The annotated tag
+**`sprint-22a-domain-baseline`** created at `07:41:12Z` — after that CI, once, and never moved —
+object `58b1a0fa3b4f83de6ff9a3fd5d4023cc747b5276`, peeling to the release commit.
+
+`scripts/release_22a.py --pull-request 231` read every one of those handles back from GitHub and
+from the local repository and recorded **zero findings**: the tag peels to the merge commit,
+`origin/main` *is* the merge commit, both CI runs succeeded on every job, the stop tag does not
+exist, branch protection still enforces administrators over 27 required contexts, the migration
+head is still `0015`, and the exit-criteria record it binds reads four of four. It created
+nothing.
+
+**Why the tag could not be created earlier, in one sentence.** The commit that passed CI on the
+branch is not the commit `main` acquired: a squash makes a new object with a new tree hash, and
+its CI is a different run. So the sequence is merge → exact-head run → tag, and the window in
+between is a release that exists and is untagged rather than a tag placed on faith.
+
+| Record | SHA-256 | Result |
+|---|---|---|
+| `sprint-22a-release.json` | `58dc96811be7fa92…` | zero findings, tag `58b1a0fa3b4f83de…` |
+
+## Sprint 22A — closed
+
+| | |
+|---|---|
+| Waves | W0 … W4, **all closed** |
+| Exit criteria | **4 of 4 met** |
+| Findings / advisories | **13 / 4**, every finding fixed inside its own wave |
+| Release | `2914824`, tag `sprint-22a-domain-baseline`, CI `31573794611` 30/30 |
+| Migration head | `0015`, unchanged; `0016` still unallocated |
+| Thresholds moved | **0** |
+
+The successor's authority is [`sprint-22a-handoff.md`](sprint-22a-handoff.md), and the two things
+it must not resolve quietly are **W2-A1** and **W3-A1**.

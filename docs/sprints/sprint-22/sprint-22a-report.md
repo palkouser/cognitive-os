@@ -1,7 +1,9 @@
 # Sprint 22A report — The Data-Driven Domain Registry
 
-- Branch: `sprint-22a-groundwork`, pull request **#231** against protected `main`. The merge is
-  the gate owner's decision, not a wave's; see §6
+- Branch: `sprint-22a-groundwork`, squash-merged as **#231** into protected `main` at
+  `2026-08-12T07:23:49Z`, commit `291482448114ffed95a975c2b6a0d2be47a6a092`
+- Release tag: **`sprint-22a-domain-baseline`**, object `58b1a0fa3b4f83de…`, created after the
+  exact-head post-merge CI run `31573794611` (30 of 30 success) and never moved
 - Predecessor: Sprint 21D7, tag `sprint-21-learning-baseline`, object `3025082526cef6d9…`,
   peeling to `3f5d7379caf85290da45885e22138506211bee2e`; branch point `c5119cc`
 - Pre-registration: **revision 1**, published in W0 with `measured_values: 0`, SHA-256
@@ -11,7 +13,8 @@
 - Migration head: `0015`, unchanged. `0016` remains unallocated, and the exit criterion makes
   it a refusal
 - Exit criteria: **4 of 4 met**, decided in
-  [`sprint-22a-exit-criteria.json`](evidence/sprint-22a-exit-criteria.json)
+  [`sprint-22a-exit-criteria.json`](evidence/sprint-22a-exit-criteria.json); release recorded in
+  [`sprint-22a-release.json`](evidence/sprint-22a-release.json) with **zero findings**
 - Thresholds moved by this sprint: **0**, in every wave
 
 ---
@@ -153,16 +156,28 @@ a file the first had created. D5 hit the same shape by putting these checks in a
 D7 moved them into the command; it arrived here by a different door. A release command that is
 not idempotent is a defect in the command, and the fix is one exclusion with the reason attached.
 
-## 6. The release, and what remains
+## 6. The release
 
-The wave is complete and the branch is reviewable. What W4 did **not** do is merge it: `main` is
-protected, PR #231 is `MERGEABLE` and `BLOCKED` pending the gate owner, and the annotated tag
-**`sprint-22a-domain-baseline`** is created once, on the commit exact-head post-merge CI passes
-on, after that CI, and never moved. `scripts/release_22a.py --pull-request 231` reads every one
-of those handles back from GitHub and from the local repository — the merge commit and its
-timestamp, both CI runs with their conclusions and job counts, the tag object and the commit it
-peels to, and the branch protection state — and creates nothing. A record that could produce the
-state it describes would be a record of itself.
+`#231` squash-merged into protected `main` at `2026-08-12T07:23:49Z`, no administrator bypass,
+commit `291482448114ffed95a975c2b6a0d2be47a6a092`. Pull-request head CI run **`31571681752`**,
+30 of 30 success; exact-head post-merge `main` CI run **`31573794611`**, **30 of 30 jobs
+successful**, completed `07:39:42Z`. The annotated tag **`sprint-22a-domain-baseline`** created
+at `07:41:12Z` — after that CI, once, and never moved — object
+`58b1a0fa3b4f83de6ff9a3fd5d4023cc747b5276`, peeling to the release commit. Branch protection
+after the release is unchanged: administrators enforced, 27 required contexts, strict, no force
+pushes, no deletions.
+
+`scripts/release_22a.py` reads every one of those handles back from GitHub and from the local
+repository rather than from this report, and recorded **zero findings**. It creates nothing: no
+merge, no tag, no push. A record that could produce the state it describes would be a record of
+itself.
+
+**The ordering the tag rule forces.** The tag is not a label on the branch that passed CI; it is
+a label on the commit `main` acquired when that branch was squashed, and that commit's own CI is
+a different run over a different tree. Between the two there is a window in which the release
+exists and is untagged, and the only honest way through it is forward: merge, wait for the
+exact-head run, then tag once. `sprint-22a-evidence-baseline`, the tag a stop would have carried,
+does not exist and the release record checks for its absence.
 
 Two stops travel to Sprint 22B by name rather than being closed by a green record:
 
