@@ -2,6 +2,16 @@
 
 - Branch: `sprint-22a-groundwork`
 - Backlog: [Sprint 22A Technical Backlog](sprint-22a-technical-backlog.md)
+- **W4 closed, and the sprint's four exit criteria are met — 4 of 4.** The verification matrix
+  ran every pre-release check once; the criteria are decided in
+  [`sprint-22a-exit-criteria.json`](evidence/sprint-22a-exit-criteria.json), measured where they
+  can be measured and bound by hash where they cannot. Eleven controller modules and fifteen
+  migration files are byte-identical to the branch point, six manifests replay 248 cases green,
+  and three findings — a released domain this sprint never replayed, an exit criterion that was a
+  literal, and a release command that could not be run twice — were fixed inside the wave. The **release is the gate owner's**: #231 is not merged,
+  and the tag `sprint-22a-domain-baseline` is created after exact-head post-merge CI, never by a
+  wave. See [the report](sprint-22a-report.md) and [the handoff](sprint-22a-handoff.md). **W0
+  through W3 detail follow first.**
 - **W3 closed.** `science.chemistry` revision 1 is registered and solving alongside the
   mechanics pilot: two pilots, five problem types, four concepts shared into `physics` from two
   owners. The rejection suite refuses **ten cases across four layers**, and §3.5's silo
@@ -986,3 +996,207 @@ than at the end.
 Two things W4 must carry forward rather than resolve quietly: **W2-A1**, the schema-level
 three-domain allowlist that never learned about `coding` either, and **W3-A1**, the released
 four's inability to refuse a view. Both are 22B's, and both belong in the handoff by name.
+
+---
+
+## W4 outcome — the release wave, and the two claims that were sentences
+
+W4 built almost nothing. It ran what four waves had produced, decided the sprint's four exit
+criteria against the evidence, and wrote the report and the handoff. Two of the things it ran
+were not previously being run at all, and both are findings rather than footnotes: the coding
+domain had never been replayed by this sprint, and the exit criterion about the core controller
+had been a literal `false` in both waves that claimed it.
+
+**All four exit criteria are met.** The verdict is computed from booleans in
+[`sprint-22a-exit-criteria.json`](evidence/sprint-22a-exit-criteria.json) — counts live in a
+separate block on purpose, because a release decided on `!= 0` is a release decided by
+truthiness.
+
+### S22A-050 — the verification matrix
+
+`scripts/verification_matrix_22a.py` runs every check expected before release once, records its
+actual exit status, the SHA-256 of its output and what it cost, and refuses if any row failed,
+any row was skipped, or the record fails its own structural checks.
+
+The three D-series rules are carried unchanged: a negative row is a finding when it succeeds,
+nothing is silently skipped, and the record checks itself where it is written rather than in a
+test module — because the matrix runs the whole suite as one of its own rows, and a test reading
+this record during that run would be reading the previous one.
+
+Three things are 22A's rather than inherited:
+
+- **seven `--check` validators, one of which replays.** `exit_criteria_22a.py --check` executes
+  all six benchmark manifests as part of its own check, so replay is a measured row by way of
+  that row. There are deliberately no separate replay rows: the same six manifests run twice in
+  one matrix would report one fact as two;
+- **a chronology row over the whole sprint.** Every record carrying the pre-registration's hash
+  must postdate it, asked of all four at once. `_structural_findings` then globs the evidence
+  directory for records carrying that field and fails if one of them is not on the list — so a
+  fifth record cannot quietly become a record nothing checks;
+- **two negative rows, not six.** 22A's refusals are package-level and all of them need the
+  store to prove nothing was written, so they are recorded from the sealed rejection suite. The
+  two command-level negatives are the ones that hold without a store: the pilot chain refusing
+  to guess a store (S21D5-W0-F1), and the released smoke fence refusing a database that is not a
+  test database — which is what stands between this matrix's own full-suite row and
+  `cognitive_os_s22a_*`.
+
+### S22A-051 — the four exit criteria, measured where they can be measured
+
+Every claim in the record says whether it was **measured** in that process or **recorded** from a
+sealed wave record whose bytes it binds. The split is not cosmetic: a registration the store will
+not accept twice cannot be re-run by a validator, and pretending otherwise would make the
+strongest claims the least checked.
+
+| Criterion | Verdict | Decided by |
+|---|---|---|
+| registers without changing the core controller or the storage schema | **met** | measured |
+| cross-domain items stored once, exposed through multiple governed views | **met** | recorded |
+| global and per-domain replay green | **met** | measured |
+| invalid domain packages fail closed | **met** | recorded |
+
+**The frozen-file comparison is the wave's own contribution.** Eleven controller modules and
+fifteen migration files are compared byte for byte against `c5119cc`, the commit the branch left,
+and the *set* is sealed alongside the contents — a twelfth controller module or a sixteenth
+migration is a refusal rather than an invisible widening. At `--check` there is no git: the
+sealed per-file hash *is* the predecessor's hash, so re-hashing the working tree asks the same
+question in a shallow checkout with no history to ask git about.
+
+**One thing did change, and the record says so rather than leaving it to be discovered.** 22A
+added the event contract `domain.descriptor_registered` and the events module that emits it. An
+event type is a contract over a stream the released store already has: no table, no column, no
+enum member — which is what the criterion forbids.
+
+**And the views claim got smaller and truer.** The first draft counted the concepts the pilots
+*own* — six — as concepts shared. Four are shared; two are kept. The check now compares the
+target's view against the sharing declaration, so what makes the exposure governed is that the
+two undeclared concepts are absent from it.
+
+### S22A-052 — replay, and the domain nobody replayed
+
+| Manifest | Mode | Covers | Cases | Pass rate |
+|---|---|---|---:|---:|
+| `sprint20-domain-ci` | domain-pilot | logic, mathematics, physics | 24 | 1.0 |
+| `sprint20-domain-seed` | domain-pilot | logic, mathematics, physics | 120 | 1.0 |
+| `sprint22-coding-ci` | domain-pilot | **coding** | 15 | 1.0 |
+| `sprint22-coding-seed` | domain-pilot | **coding** | 25 | 1.0 |
+| `sprint21c1-learned-ci` | learned-replay | the correction surface | 16 | 1.0 |
+| `sprint21c1-learned-seed` | learned-replay | the correction surface | 48 | 1.0 |
+
+**248 cases, all green**, executed by the check rather than carried as numbers. §4.2 named the
+replay bill as the sprint's longest wall-clock item and said to schedule it early; it was the
+first thing W4 ran, which is how W4-F1 was found with the whole wave still ahead of it rather
+than at its end.
+
+### S22A-053 — the release, and the line a wave may not cross
+
+`scripts/release_22a.py --pull-request 231` reads every release handle back from GitHub and from
+the local repository — the merge commit and its timestamp, both CI runs with their conclusions
+and job counts, the annotated tag object and the commit it peels to, and the branch protection
+state — and **creates nothing**. No merge, no tag, no push.
+
+Run today it refuses, and the refusal is the honest state: *pull request #231 is not merged, so
+there is no release to record.* `main` is protected, the merge is the gate owner's decision, and
+the tag `sprint-22a-domain-baseline` is created once, on the commit the exact-head post-merge CI
+passed on, after that CI, and never moved. A wave that tagged its own branch would be describing
+a release it had granted itself.
+
+## W4 evidence index
+
+| Record | SHA-256 | Items |
+|---|---|---|
+| `sprint-22a-exit-criteria.json` | `d314121f2180f92a…` | S22A-050 … S22A-052 |
+| `sprint-22a-verification-matrix.json` | `d07100ae6579f95d…` | S22A-050 |
+| `sprint-22a-release.json` | not written; the release has not happened | S22A-053 |
+
+**39 rows, 39 passed, 0 skipped, 0 structural findings.** 25 commands and 14 rows recorded from
+committed evidence; both negative rows refused for the reason they name.
+
+New scripts: `scripts/exit_criteria_22a.py`, `scripts/verification_matrix_22a.py`,
+`scripts/release_22a.py`. New tests: `tests/cognitive_os/domain/test_sprint_22a_w4_evidence.py`
+(8). New documents: [`sprint-22a-report.md`](sprint-22a-report.md),
+[`sprint-22a-handoff.md`](sprint-22a-handoff.md).
+
+## W4 findings
+
+### W4-F1 — "per-domain replay" covered three of the four released domains, for three waves
+
+Every wave from W1 onward ran four manifests and called the result global and per-domain replay
+across the four released domains. The four are `sprint20-domain-{ci,seed}` — logic, mathematics
+and physics — and `sprint21c1-learned-{ci,seed}`, which replay the correction surface 22A must
+leave alone. The **coding** domain's cases are in `sprint22-coding-{ci,seed}`, named for a
+different sprint, and no 22A wave ran them.
+
+That is not a naming accident with no consequence. `sprint22-coding-ci` carries a governance case
+called `domain_kind_coding_registered`, which asserts the exact reading §2.3 froze: that
+`DomainKind` remains the closed vocabulary of the released four and `CODING` is one of them. The
+sprint that moved domain identity out of that enum was not running the case that checks the enum
+still holds for its fourth member.
+
+Fixed inside the wave, and fixed so it stays fixed: the replay set is six manifests, each
+carrying what it covers, and `every_released_domain_replayed` is a boolean in the record with a
+test that asserts the four by name. A successor that shrinks the set fails a test rather than
+writing a smaller number.
+
+### W4-F2 — the sprint's first exit criterion was a constant in both waves that claimed it
+
+`core_controller_changed: false` and `storage_schema_changed: false` are literals in W2's and
+W3's sealers. Both were true. Neither was a check: editing the controller would not have moved
+them, and the record would have kept saying the criterion held.
+
+This is D7's W4-F1 — *a validator can outlive the claim it enforces* — in its cheapest possible
+form, a validator that never enforced anything at all. W4 replaces it with a measurement against
+the branch point over a sealed file set, and the probes that matter are the negative ones: an
+appended comment in `src/cognitive_os/domains/controller.py` makes the check say *"no longer the
+predecessor's bytes"*, and an empty `0016_probe.py` makes it say *"the storage_schema file set
+moved"*. A claim about what did not change has to be able to notice a change.
+
+### W4-F3 — the release command's own self-check was not idempotent
+
+`_structural_findings` globs the evidence directory for records carrying the pre-registration's
+hash and fails if one of them is not on the chronology row's list. The matrix's own record
+carries that hash — and is written *after* every row has run, including the row that would check
+it. So the first run was clean, and the second failed on a file the first had created.
+
+D5 met this shape by putting a matrix's structural checks in a test module, and D7 moved them
+into the command to fix it. It came back through a different door: not a test reading the record,
+but the record's own check reading the record. **A release command that is not idempotent is a
+defect in the command**, and the whole point of the rule is that the second run is the one that
+tells you. The fix is one exclusion — this record, and only this record — with the reason
+attached, and the third run is clean.
+
+The two findings above are about claims that were never checked; this one is about a check that
+could not be run twice. Both are the same failure at different distances from the evidence.
+
+## W4 validation
+
+| Gate | Result |
+|---|---|
+| verification matrix | **39 rows, 39 passed, 0 skipped, 0 structural findings** |
+| `ruff check` / `ruff format --check`, `mypy`, `bandit` | passed, inside the matrix |
+| `pytest -q --timeout=600` (whole repository) | passed, as the matrix's `full_suite` row |
+| `pytest tests/cognitive_os -q` | **4117 passed, 107 skipped** |
+| `python -m cognitive_os.schemas.export --check` | passed, no new contract |
+| `detect-secrets-hook`, `pip-audit`, `uv build`, wheel and editable installation | passed |
+| `domain_smoke_test.py`, `domain.py health` | passed — the released four still solve and still govern |
+| seven 22A validators under `--check` | passed, including the chronology row over all four records |
+| `exit_criteria_22a.py --check` | 4 of 4 met, 11 controller modules and 15 migration files verified, 6 manifests replayed |
+| both negative rows | refused, each for the reason it names |
+| `release_22a.py --pull-request 231` | refuses: the pull request is not merged, so there is no release to record |
+
+## What W4 did not do
+
+- **it did not merge anything.** `main` is protected, #231 is the gate owner's to merge, and a
+  wave that merged its own branch would be granting itself a release;
+- **it did not create the tag.** The tag is created once, on the post-merge commit, after that
+  commit's CI, and never moved;
+- **it did not resolve W2-A1 or W3-A1.** Both travel to 22B by name, in the handoff and in the
+  release record's `carried_forward_by_name`;
+- **it did not widen a released contract, allocate a migration, or touch anything that learns.**
+
+## What Sprint 22B inherits
+
+[`sprint-22a-handoff.md`](sprint-22a-handoff.md) is the authority. In one line: a registry
+keyed by string domain id that a scale test can enumerate, a fail-closed boundary with ordered
+refusals, storage without a schema, the descriptor spine 22C's campaign manifests will bind to,
+and two worked pilots as templates — and, explicitly not inherited, any way for a descriptor
+domain to be run and recorded like a released one.
