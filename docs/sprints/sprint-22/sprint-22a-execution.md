@@ -12,6 +12,8 @@
   and the tag `sprint-22a-domain-baseline` is created after exact-head post-merge CI, never by a
   wave. See [the report](sprint-22a-report.md) and [the handoff](sprint-22a-handoff.md). **W0
   through W3 detail follow first.**
+- W4 wave commit `7e52ab0`; CI run **`31570485680`** on that exact head, **30 of 30 jobs
+  successful**.
 - **W3 closed.** `science.chemistry` revision 1 is registered and solving alongside the
   mechanics pilot: two pilots, five problem types, four concepts shared into `physics` from two
   owners. The rejection suite refuses **ten cases across four layers**, and §3.5's silo
@@ -1005,7 +1007,8 @@ W4 built almost nothing. It ran what four waves had produced, decided the sprint
 criteria against the evidence, and wrote the report and the handoff. Two of the things it ran
 were not previously being run at all, and both are findings rather than footnotes: the coding
 domain had never been replayed by this sprint, and the exit criterion about the core controller
-had been a literal `false` in both waves that claimed it.
+had been a literal `false` in both waves that claimed it. A third finding came from running the
+wave's own release command a second time.
 
 **All four exit criteria are met.** The verdict is computed from booleans in
 [`sprint-22a-exit-criteria.json`](evidence/sprint-22a-exit-criteria.json) — counts live in a
@@ -1165,7 +1168,7 @@ tells you. The fix is one exclusion — this record, and only this record — wi
 attached, and the third run is clean.
 
 The two findings above are about claims that were never checked; this one is about a check that
-could not be run twice. Both are the same failure at different distances from the evidence.
+could not be run twice — the same failure at different distances from the evidence.
 
 ## W4 validation
 
