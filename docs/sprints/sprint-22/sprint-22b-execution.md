@@ -8,6 +8,9 @@
   scale, and revision 1 is published with `measured_values: 0`. **No threshold moved, no
   migration was allocated, and no released module changed** — the whole wave is new scripts,
   new tests and new evidence.
+- Wave commit `613b546`, pull request **#233** against protected `main`; CI run
+  **`31581697125`** on that exact head, **30 of 30 jobs successful**. The merge is the gate
+  owner's, not the wave's — W0 leaves the branch reviewable rather than merged.
 - Pre-registration: revision 1, SHA-256
   `1e0022094ac62dc29e1372fdd93ca060cf558773cddfb9e391373148d9d0dd73`
 - Predecessor: `sprint-22a-domain-baseline`, verified live — annotated tag object
