@@ -8,6 +8,8 @@
   regression is closed — two domains added **zero** `DomainKind` branches. Migration head
   `0015`, 208 replay cases green. One finding and two advisories. **W0, W1 and W2 detail
   follow first.**
+- W3 wave commit `5fb4e7a`; CI run **`31566069951`** on that exact head, **30 of 30 jobs
+  successful**.
 - **W2 closed.** `engineering.mechanics` revision 1 is registered from a committed package,
   rebuilt in a separate process, and solving and verifying end to end through the released Tool
   Plane and the released checker. Two shared concepts, one owner, two governed views. Migration
