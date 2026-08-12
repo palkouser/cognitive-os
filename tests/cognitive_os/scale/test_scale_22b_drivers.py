@@ -1,0 +1,172 @@
+"""S22B-W0: the 22B measurement drivers are deterministic, enumerated and able to fail.
+
+Sprint 22B's drivers are not features, so they are not tested like features. What matters
+about a measurement driver is narrower and harder:
+
+*It draws the same corpus twice.* A dataset recipe that is reproducible only in prose cannot
+be pre-registered. The generators are the released ANN harness's own, so this also asserts
+that 22B's corpus is drawn by the function that drew the sealed 10^5 one — the comparison the
+whole sprint rests on.
+
+*It is stable across batch boundaries.* W1 generates a million rows in batches, and row `i`
+has to be the same row whichever batch produced it, or the corpus depends on a chunk size.
+
+*Its coverage words are counted.* W2 says "seven retrieval shapes"; this asserts the seven by
+name (22A W4-F1). The pre-registration's own enumeration check is what caught W0-F8, where
+this list had eight entries and was missing the shape the hardest exit reads.
+
+*Its frozen parameters are the plan's.* Shortlist 20 and a 250 ms per-pair budget are §2.2d,
+not preferences, and the recall floor reads the clustered dataset and nothing else.
+
+No test here touches a database. The database-facing drivers are exercised by the W0 slice,
+whose record `test_sprint_22b_w0_evidence.py` binds.
+"""
+
+from __future__ import annotations
+
+import importlib.util
+from pathlib import Path
+from typing import Any
+
+REPOSITORY = Path(__file__).resolve().parents[3]
+DRIVERS = REPOSITORY / "scripts/scale_22b.py"
+
+#: The seven shapes W2's row names, written out here rather than derived from the module, so
+#: this is a comparison against the plan and not the module agreeing with itself.
+W2_SHAPES = {
+    "ann",
+    "bounded_graph_assisted",
+    "exact_vector",
+    "filtered_ann",
+    "hybrid",
+    "stale_item",
+    "temporal",
+}
+
+
+def _module() -> Any:
+    spec = importlib.util.spec_from_file_location("scale_22b_under_test", DRIVERS)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_corpus_rows_are_reproducible() -> None:
+    module = _module()
+    first = module.corpus_rows("clustered", 32)
+    second = module.corpus_rows("clustered", 32)
+    assert first == second
+    assert len(first) == 32
+
+
+def test_corpus_rows_are_stable_across_batch_boundaries() -> None:
+    """Row `i` is the same row whether it arrived in one batch or three.
+
+    W1 loads a million rows in batches. If the row depended on the batch size, the corpus
+    would depend on how the loader was invoked and the recipe would not be a recipe.
+    """
+    module = _module()
+    whole = module.corpus_rows("clustered", 24)
+    pieces = (
+        module.corpus_rows("clustered", 8, offset=0)
+        + module.corpus_rows("clustered", 8, offset=8)
+        + module.corpus_rows("clustered", 8, offset=16)
+    )
+    assert whole == pieces
+
+
+def test_both_datasets_draw_different_geometries() -> None:
+    module = _module()
+    clustered = module.corpus_rows("clustered", 8)
+    uniform = module.corpus_rows("uniform", 8)
+    assert [row[0] for row in clustered] != [row[0] for row in uniform]
+    assert module.corpus_centres("clustered") and not module.corpus_centres("uniform")
+
+
+def test_probes_are_reproducible_and_reuse_the_corpus_centres() -> None:
+    module = _module()
+    assert module.probe_literals("clustered", 16) == module.probe_literals("clustered", 16)
+    # A uniform probe against a clustered corpus lands in empty space, so the probe recipe
+    # must be drawn from the corpus distribution rather than from a convenient one.
+    assert module.probe_literals("clustered", 4) != module.probe_literals("uniform", 4)
+
+
+def test_the_corpus_metadata_matches_the_frozen_selectivity() -> None:
+    """Ten scopes, one selected: the frozen tenth of the corpus the 300 ms exit reads."""
+    module = _module()
+    rows = module.corpus_rows("clustered", 1_000)
+    scopes = {row[1] for row in rows}
+    assert len(scopes) == module.FILTER_PREDICATE["scopes_in_corpus"] == 10
+    selected = [row for row in rows if row[1] == "scope-00"]
+    assert abs(len(selected) / len(rows) - module.FILTER_PREDICATE["target_selectivity"]) < 0.01
+
+
+def test_w2_drives_exactly_seven_shapes() -> None:
+    """22A W4-F1: count what a coverage word covers, do not read it."""
+    module = _module()
+    assert set(module.QUERY_SHAPES) == W2_SHAPES
+    assert len(module.QUERY_SHAPES) == 7
+
+
+def test_supporting_modes_are_named_rather_than_hidden() -> None:
+    """The released modes the drivers use that are not envelope rows are still enumerated."""
+    module = _module()
+    assert set(module.SUPPORTING_MODES) == {"metadata", "text"}
+    used_by = {shape for entry in module.SUPPORTING_MODES.values() for shape in entry["used_by"]}
+    assert used_by <= W2_SHAPES
+
+
+def test_only_the_clustered_dataset_reads_the_recall_exit() -> None:
+    """§2.2a, frozen: the uniform dataset is the adversarial bound and closes nothing."""
+    module = _module()
+    reading = {name: recipe["reads_the_recall_exit"] for name, recipe in module.DATASETS.items()}
+    assert reading == {"clustered": True, "uniform": False}
+
+
+def test_the_bounded_graph_configuration_is_the_plan_s() -> None:
+    """§2.2d's parameters, asserted against the plan rather than against the module."""
+    module = _module()
+    limits = module.BOUNDED_GRAPH_LIMITS
+    assert limits.vector_shortlist == 20
+    assert limits.per_pair_ged_timeout_ms == 250
+    assert limits.returned_results == 10
+    assert limits.path_depth <= 32
+    configuration = module.bounded_graph_configuration()
+    assert configuration["exit_ms"] == 500
+    assert configuration["only_prior_measurement_ms"] == 1788.9
+    assert configuration["may_be_tuned_after_a_number_exists"] is False
+
+
+def test_the_probe_protocol_is_ten_times_the_1e5_envelope() -> None:
+    module = _module()
+    assert module.PROBE_PROTOCOL["measured_probes"] == 500
+    assert module.PROBE_PROTOCOL["warmup_probes"] == 100
+
+
+def test_the_recipes_hash_is_a_function_of_the_recipes() -> None:
+    """A hash that does not move when a recipe moves would bind nothing."""
+    module = _module()
+    before = module.recipes_hash()
+    assert before == module.recipes_hash()
+    original = module.DATASETS["clustered"]["cluster_spread"]
+    module.DATASETS["clustered"]["cluster_spread"] = original + 0.01
+    module.RECIPES["datasets"] = module.DATASETS
+    try:
+        assert module.recipes_hash() != before
+    finally:
+        module.DATASETS["clustered"]["cluster_spread"] = original
+
+
+def test_the_temporal_shape_declares_that_it_leaves_the_governed_path() -> None:
+    """W0-F2, kept visible: the one shape that is not a released MemoryQuery says so."""
+    module = _module()
+    temporal = module.QUERY_SHAPES["temporal"]
+    assert "include_historical" in temporal["composition"]
+    assert temporal["reads_an_exit"] is False
+
+
+def test_the_restore_checklist_names_the_live_learned_artifact() -> None:
+    module = _module()
+    assert len(module.RESTORE_CHECKLIST) == 4
+    assert module.LIVE_LEARNED_ARTIFACT["artifact_hash"].startswith("afbdb7c0")

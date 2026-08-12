@@ -1,0 +1,86 @@
+{
+ "capacity_headroom_note": "a 10^6 x 768 corpus is roughly 3 GB of vectors before an index, and the sealed 10^5 index was 410 MB. W1 seals the real numbers; this is the sanity floor a wave would trip on before it started",
+ "gpu_free": "no accelerator is declared or used. §2.3 puts GPU acceleration out of scope, so the envelope is a CPU envelope by construction rather than by omission",
+ "host_id": "cogos-reference-host-1",
+ "integrity_content_hash": "615539d50ab0a0d153ae135481ade97ac7aad5bd942b3aae88159f6ace229464",
+ "invariants": {
+  "container": {
+   "available": true,
+   "data_directory_in_container": "/var/lib/postgresql/18/docker",
+   "image_digest": "sha256:42e7f6b4e1eceb02ff14e3e6bc6108bbe259abbe83879dc1845d0da1ddeb555d",
+   "image_reference": "pgvector/pgvector:0.8.2-pg18-bookworm",
+   "name": "compose-postgres-1"
+  },
+  "cpu": {
+   "architecture": "x86_64",
+   "cores_per_socket": 8,
+   "logical_cpus": 16,
+   "max_mhz": "4665,8350",
+   "model": "AMD Ryzen 7 5700X 8-Core Processor",
+   "sockets": 1,
+   "threads_per_core": 2
+  },
+  "kernel_release": "7.0.0-29-generic",
+  "memory": {
+   "swap_total_kib": 8388604,
+   "total_kib": 48199296
+  },
+  "platform": "Linux-7.0.0-29-generic-x86_64-with-glibc2.43",
+  "postgres": {
+   "extensions": {
+    "plpgsql": "1.0",
+    "vector": "0.8.2"
+   },
+   "server_version": "18.4 (Debian 18.4-1.pgdg12+1)",
+   "settings": {
+    "effective_cache_size": "524288 8kB",
+    "maintenance_work_mem": "65536 kB",
+    "max_connections": "100",
+    "max_parallel_maintenance_workers": "2",
+    "max_parallel_workers": "8",
+    "max_parallel_workers_per_gather": "2",
+    "max_worker_processes": "8",
+    "shared_buffers": "16384 8kB",
+    "work_mem": "4096 kB"
+   },
+   "settings_are_sealed_as_invariants": "shared_buffers 128 MB and maintenance_work_mem 64 MB are close to the packaged defaults and will cost wall-clock on a 10^6 HNSW build. They stay: the 10^5 envelope 22B extends was measured under them, and §2.3 forbids tuning a pre-registered configuration once a number exists. A build that is slow here is a measured property of the declared host, reported as one",
+   "version_string": "PostgreSQL 18.4 (Debian 18.4-1.pgdg12+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit"
+  },
+  "python_version": "3.12.13",
+  "storage_data_root": {
+   "device": "/dev/nvme1n1p1",
+   "disk": "nvme1n1",
+   "disk_model": "WDC WDS100T2B0C-00PXH0",
+   "filesystem": "ext4",
+   "path": "/home/palkouser/projekt/cognitive-os-data",
+   "rotational": false
+  },
+  "storage_postgres_data": {
+   "device": "/dev/nvme1n1p1",
+   "disk": "nvme1n1",
+   "disk_model": "WDC WDS100T2B0C-00PXH0",
+   "filesystem": "ext4",
+   "path": "/home/palkouser/projekt/cognitive-os-data/postgres/dev",
+   "rotational": false
+  }
+ },
+ "invariants_hash": "811cbbb88af5767727595ce774e6d7757290ff91ec3d3c83d4fe27c1a1979c71",
+ "items": [
+  "S22B-002"
+ ],
+ "observations": {
+  "data_root_free_bytes": 927980470272,
+  "data_root_total_bytes": 983348297728,
+  "load_average": [
+   0.89990234375,
+   0.40478515625,
+   0.28564453125
+  ],
+  "recorded_at": "2026-08-12T08:40:43Z",
+  "why_not_invariant": "free disk falls as the sprint writes a million rows and the load average moves every second. A same-host check that failed on either would fail because the sprint ran, which proves nothing (W2-F1/F2)"
+ },
+ "role": "the declared reference host of §1.4: the CPU-first, GPU-free developer machine the D1 gate already declared. Every 22B latency and throughput number is a claim about this machine and binds this record's hash. A number measured anywhere else is reported with its own host record and closes nothing",
+ "schema_version": 1,
+ "sprint": "22B",
+ "wave": "W0"
+}
