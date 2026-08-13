@@ -29,6 +29,8 @@
   called the sprint's hardest. **Four of the five exits are now decided and met.** Three
   findings, all in the measurement machinery, all fixed inside the wave; the sharpest is that
   the filtered-ANN exit is met by a query the planner answers without the index.
+- W3 wave commit `259a4b6`; CI run **`31699871439`** on that exact head, **30 of 30 jobs
+  successful**.
 - W2 wave commit `a1a251b`; CI run **`31673420297`** on that exact head, **30 of 30 jobs
   successful**.
 - W1 wave commit `f29aafb`; CI run **`31614344537`** on that exact head, **30 of 30 jobs
