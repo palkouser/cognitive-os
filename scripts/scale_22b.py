@@ -44,6 +44,7 @@ import random
 import shutil
 import statistics
 import subprocess
+import sys
 from collections.abc import Callable, Iterator, Sequence
 from datetime import UTC, datetime, timedelta
 from itertools import islice
@@ -891,6 +892,378 @@ async def governed_ingest(engine: Any, items: int, *, deciles: int = 10, start: 
     }
 
 
+# --------------------------------------------------------------------------------------
+# W3: mutation at scale, through the released lifecycle service.
+# --------------------------------------------------------------------------------------
+
+
+def _lifecycle(engine: Any) -> Any:
+    """The released governed lifecycle path, with its event service attached.
+
+    `MemoryService` is the gateway for *creating* memories and exposes no transition at all;
+    `MemoryLifecycleService` is the released one that promotes, supersedes, retracts and
+    expires, and appends the matching released event for each. W3 composes over it rather than
+    writing statuses, so every mutation in this wave leaves a revision, a provenance carry-over
+    and an event behind — which is what makes the restore checklist worth running.
+    """
+    from cognitive_os.memory.lifecycle import MemoryLifecycleService
+
+    return MemoryLifecycleService(
+        PostgresMemoryRepository(engine),
+        event_service=MemoryEventService(PostgresEventStore(engine, build_default_event_catalog())),
+    )
+
+
+def _ingest_memory_id(index: int) -> UUID:
+    """The id `_write_request` derived for item `index`.
+
+    The mutation waves address the store by recomputing ids rather than by selecting rows, for
+    the same reason the corpus is a seeded stream: a wave that picks its victims with a query
+    would mutate a different set on every run, and a re-run is how this programme checks itself.
+    """
+    return uuid5(NAMESPACE_URL, f"sprint-22b-ingest:{index}")
+
+
+def _promotion_evidence(index: int) -> Any:
+    """The two source types `MemoryLifecycleService.promote` refuses to proceed without.
+
+    Released rule, not a 22B one: promotion requires accepted authoritative trajectory
+    evidence — an acceptance decision *and* a coding trajectory — and a non-provider actor.
+    W3 satisfies it by composition rather than by widening the rule.
+    """
+    return MemoryProvenanceBundle(
+        sources=tuple(
+            MemorySourceRef(
+                identity=MemorySourceIdentity(
+                    source_type=source_type,
+                    source_id=uuid5(NAMESPACE_URL, f"sprint-22b-w3-{source_type.value}:{index}"),
+                ),
+                source_hash=hashlib.sha256(
+                    f"sprint-22b-w3:{source_type.value}:{index}".encode()
+                ).hexdigest(),
+                relationship="mutation_wave_evidence",
+            )
+            for source_type in (
+                MemorySourceType.ACCEPTANCE_DECISION,
+                MemorySourceType.CODING_TRAJECTORY,
+            )
+        )
+    )
+
+
+#: The actor every W3 transition is attributed to. An operator, because the released promotion
+#: path refuses a provider — an authority a provider does not have is not one a driver may lend
+#: it to make a wave run.
+W3_ACTOR = MemoryCreator(creator_type=MemoryCreatorType.OPERATOR, creator_id="sprint-22b-w3")
+
+
+async def active_view(engine: Any) -> dict:
+    """The active view, queried two ways that must agree.
+
+    §2.2e asks for the active view *queried, not counted*, and W3 is the wave where the
+    distinction earns its keep. `memory_items.status` is maintained by the released
+    `advance_memory_item`; the released reader joins each item to the revision its
+    `current_revision` names. After ten thousand transitions those two can only still agree if
+    every transition advanced both halves — so the driver asks both and reports whether they
+    do, instead of asking the cheaper one and trusting it.
+    """
+    active = [MemoryStatus.CANDIDATE.value, MemoryStatus.VERIFIED.value]
+    async with engine.connect() as connection:
+        by_item = int(
+            await connection.scalar(
+                text(
+                    "SELECT count(*) FROM cognitive_os.memory_items WHERE status = ANY(:statuses)"
+                ),
+                {"statuses": active},
+            )
+            or 0
+        )
+        by_revision = int(
+            await connection.scalar(
+                text(
+                    "SELECT count(*) FROM cognitive_os.memory_items i "
+                    "JOIN cognitive_os.memory_revisions r ON r.memory_id = i.memory_id "
+                    "AND r.revision = i.current_revision "
+                    "WHERE r.status = ANY(:statuses)"
+                ),
+                {"statuses": active},
+            )
+            or 0
+        )
+        by_status = {
+            status: int(count)
+            for status, count in (
+                await connection.execute(
+                    text("SELECT status, count(*) FROM cognitive_os.memory_items GROUP BY status")
+                )
+            ).all()
+        }
+        revisions = int(
+            await connection.scalar(text("SELECT count(*) FROM cognitive_os.memory_revisions")) or 0
+        )
+        events = int(await connection.scalar(text("SELECT count(*) FROM cognitive_os.events")) or 0)
+    return {
+        "active_rows_by_item_status": by_item,
+        "active_rows_by_current_revision_join": by_revision,
+        "the_two_readings_agree": by_item == by_revision,
+        "items_by_status": by_status,
+        "revisions": revisions,
+        "events": events,
+        "queried_not_counted": True,
+    }
+
+
+async def mutation_wave(
+    engine: Any, kind: str, *, count: int, start: int, successor_offset: int = 1
+) -> dict:
+    """One supersession or tombstone wave, item by item, through the released service.
+
+    **A supersession costs two transitions, and that is the released lifecycle's rule.** A
+    candidate may not go straight to superseded: `can_transition_memory` allows candidate ->
+    verified and verified -> superseded, so every superseded item is promoted first, with the
+    evidence the released promotion path demands. The wave therefore writes two revisions and
+    two events per item, and reports both counts rather than one.
+
+    A tombstone is one transition: candidate -> retracted is legal directly.
+    """
+    from cognitive_os.domain.memory import (
+        MemoryPromotionRequest,
+        MemoryRetractionRequest,
+        MemorySupersessionRequest,
+        MemoryTransitionReason,
+    )
+
+    service = _lifecycle(engine)
+    started = perf_counter()
+    transitions = 0
+    promoted = 0
+    mutated: list[str] = []
+    failures: list[dict[str, Any]] = []
+
+    for index in range(start, start + count):
+        memory_id = _ingest_memory_id(index)
+        try:
+            if kind == "supersession":
+                await service.promote(
+                    MemoryPromotionRequest(
+                        request_id=uuid5(NAMESPACE_URL, f"sprint-22b-w3-promote:{index}"),
+                        memory_id=memory_id,
+                        expected_revision=1,
+                        evidence=_promotion_evidence(index),
+                        actor=W3_ACTOR,
+                    )
+                )
+                promoted += 1
+                transitions += 1
+                await service.supersede(
+                    MemorySupersessionRequest(
+                        request_id=uuid5(NAMESPACE_URL, f"sprint-22b-w3-supersede:{index}"),
+                        memory_id=memory_id,
+                        successor_memory_id=_ingest_memory_id(index + successor_offset),
+                        expected_revision=2,
+                        actor=W3_ACTOR,
+                    )
+                )
+                transitions += 1
+            else:
+                await service.retract(
+                    MemoryRetractionRequest(
+                        request_id=uuid5(NAMESPACE_URL, f"sprint-22b-w3-retract:{index}"),
+                        memory_id=memory_id,
+                        expected_revision=1,
+                        actor=W3_ACTOR,
+                        reason=MemoryTransitionReason.POLICY_RETRACTION,
+                    )
+                )
+                transitions += 1
+            mutated.append(str(memory_id))
+        except Exception as error:  # a refused transition is a result, not a crash
+            failures.append({"index": index, "error": f"{type(error).__name__}: {error}"})
+
+    elapsed = perf_counter() - started
+    return {
+        "wave": kind,
+        "path": "governed: MemoryLifecycleService -> revision + provenance carry-over + event",
+        "first_index": start,
+        "items_requested": count,
+        "items_mutated": len(mutated),
+        "promotions": promoted,
+        "transitions": transitions,
+        "seconds": round(elapsed, 3),
+        "transitions_per_second": round(transitions / elapsed, 2) if elapsed else None,
+        "failures": failures[:20],
+        "failure_count": len(failures),
+        "reads_an_exit_criterion": False,
+        "why_two_transitions": (
+            "candidate -> superseded is not a legal released transition; candidate -> verified "
+            "-> superseded is. The promotion carries the acceptance-decision and "
+            "coding-trajectory evidence the released path requires"
+        )
+        if kind == "supersession"
+        else "candidate -> retracted is legal directly, so a tombstone is one transition",
+    }
+
+
+async def _governed_item_count(url: str) -> int:
+    engine = create_postgres_engine(url, pool_size=1, max_overflow=0)
+    try:
+        async with engine.connect() as connection:
+            return int(
+                await connection.scalar(text("SELECT count(*) FROM cognitive_os.memory_items")) or 0
+            )
+    finally:
+        await engine.dispose()
+
+
+async def crash_mid_ingest(*, items: int, start: int, kill_after: int) -> dict:
+    """Kill the database mid-ingest, once, on purpose, and ask what survived.
+
+    **The writer is not what gets killed — the database is.** Killing the client would test
+    whether a Python process can be restarted, which nobody doubts. `docker kill` sends SIGKILL
+    to PostgreSQL, so the server dies without a checkpoint and comes back through crash
+    recovery, which is the failure a scale sprint owes a measurement of.
+
+    What is checked afterwards is deliberately narrow and deliberately unflattering:
+
+    *Did any item lose its revision?* Both are written in one transaction, so this must be zero
+    and the check exists to prove the transaction is real rather than assumed.
+
+    *Did any item lose its event?* This one is **not** guaranteed by construction.
+    `MemoryService.create` commits the record and then appends the event in a *separate*
+    transaction, so a crash in the window between them leaves a governed item with no
+    `memory.item_created` event. The driver counts them instead of hoping.
+
+    *Can the ingest resume?* The same range is re-run afterwards. The idempotency key makes a
+    re-created item return the existing one, so a resumed range must not duplicate anything.
+    """
+    url = os.environ.get("COGOS_DATABASE_ADMIN_URL")
+    container = os.environ.get("COGOS_POSTGRES_TOOL_CONTAINER")
+    if not url or not container:
+        raise SystemExit("COGOS_DATABASE_ADMIN_URL and COGOS_POSTGRES_TOOL_CONTAINER are required")
+    psql_url = url.replace("postgresql+asyncpg", "postgresql")
+
+    before = await _governed_item_count(url)
+    writer = subprocess.Popen(  # fixed argv, no shell
+        [
+            sys.executable,
+            str(REPO / "scripts/scale_22b.py"),
+            "--ingest",
+            "--ingest-items",
+            str(items),
+            "--ingest-start",
+            str(start),
+        ],
+        cwd=str(REPO),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+
+    killed_at_count: int | None = None
+    kill_started = perf_counter()
+    try:
+        while perf_counter() - kill_started < 300:
+            written = await _governed_item_count(url) - before
+            if written >= kill_after:
+                killed_at_count = written
+                break
+            if writer.poll() is not None:
+                break
+        if killed_at_count is None:
+            writer.kill()
+            raise SystemExit(
+                "the ingest never reached the kill threshold; the crash was not taken and "
+                "nothing here would be a recovery measurement"
+            )
+        subprocess.run(["docker", "kill", container], check=True, capture_output=True)
+        killed_wall = perf_counter()
+        writer_stdout, writer_stderr = writer.communicate(timeout=120)
+    finally:
+        if writer.poll() is None:
+            writer.kill()
+
+    # `check=False`, and the readiness poll below is what actually decides. The compose service
+    # declares `restart: unless-stopped`, so Docker has usually restarted the container before
+    # this line runs — which is not a flaw in the test but the thing being tested: a deployed
+    # operator gets exactly that policy, and the recovery time measured here includes it.
+    subprocess.run(["docker", "start", container], check=False, capture_output=True)
+    ready = False
+    while perf_counter() - killed_wall < 180:
+        probe = subprocess.run(  # fixed argv, no shell
+            ["psql", psql_url, "-Atqc", "SELECT 1"], capture_output=True, text=True, check=False
+        )
+        if probe.returncode == 0 and probe.stdout.strip() == "1":
+            ready = True
+            break
+    if not ready:
+        raise SystemExit(f"{container} did not come back within 180s of being killed")
+    recovery_seconds = perf_counter() - killed_wall
+
+    engine = create_postgres_engine(url, pool_size=2, max_overflow=0)
+    try:
+        async with engine.connect() as connection:
+            after = int(
+                await connection.scalar(text("SELECT count(*) FROM cognitive_os.memory_items")) or 0
+            )
+            orphan_items = int(
+                await connection.scalar(
+                    text(
+                        "SELECT count(*) FROM cognitive_os.memory_items i "
+                        "LEFT JOIN cognitive_os.memory_revisions r "
+                        "ON r.memory_id = i.memory_id AND r.revision = i.current_revision "
+                        "WHERE r.memory_id IS NULL"
+                    )
+                )
+                or 0
+            )
+            eventless_items = int(
+                await connection.scalar(
+                    text(
+                        "SELECT count(*) FROM cognitive_os.memory_items i "
+                        "WHERE NOT EXISTS (SELECT 1 FROM cognitive_os.events e "
+                        "WHERE e.stream_id = i.memory_id)"
+                    )
+                )
+                or 0
+            )
+    finally:
+        await engine.dispose()
+
+    resumed = await _ingest(items, start)
+    resumed_count = await _governed_item_count(url)
+
+    return {
+        "what_was_killed": f"the PostgreSQL container {container}, with SIGKILL, mid-ingest",
+        "why_the_database_and_not_the_writer": (
+            "killing the client tests whether a process can be restarted; killing the server "
+            "without a checkpoint tests crash recovery, which is what W3 owes"
+        ),
+        "items_before": before,
+        "items_written_before_the_kill": killed_at_count,
+        "items_after_recovery": after,
+        "writer_exit_code": writer.returncode,
+        "writer_stderr_tail": (writer_stderr or "").strip().splitlines()[-3:],
+        "writer_stdout_bytes": len(writer_stdout or ""),
+        "database_recovered": True,
+        "recovery_seconds": round(recovery_seconds, 3),
+        "items_missing_their_current_revision": orphan_items,
+        "items_missing_an_event": eventless_items,
+        "resumed_items": resumed["items"],
+        "items_after_resume": resumed_count,
+        # The resume re-runs the whole range, so the store must end at exactly what a clean run
+        # would have produced: the idempotency key turns every re-created item into a lookup,
+        # and any other outcome is a duplicate this check exists to catch.
+        "resume_duplicated_nothing": resumed_count == before + items,
+        "expected_items_after_resume": before + items,
+        "reads_an_exit_criterion": False,
+        "why_no_exit": (
+            "no exit criterion reads a crash. This measures what the governed write path leaves "
+            "behind when the server dies mid-run, so the restore checklist is verified against a "
+            "store that has actually survived one"
+        ),
+    }
+
+
 async def governed_embed(engine: Any, items: int, *, dimension: int = 64) -> dict:
     """Embed governed items, measured separately from the ingest rate.
 
@@ -1376,13 +1749,27 @@ async def table_bloat(engine: Any, table: str = CORPUS_TABLE) -> dict:
 
 
 async def reindex_with_readers(
-    engine: Any, index: str, *, readers: int, seconds: float, table: str = CORPUS_TABLE
+    engine: Any,
+    index: str,
+    *,
+    readers: int,
+    seconds: float,
+    table: str = CORPUS_TABLE,
+    dataset: str | None = None,
 ) -> dict:
     """Reindex concurrently while readers probe, and measure what the readers saw.
 
     A reindex that is only timed proves the reindex finished. §3's W3 asks what concurrent
     reads did *during* it, so the readers are measured and their latencies reported beside the
     reindex duration.
+
+    **W3-F2: the readers have to read through the index being rebuilt.** They used to run
+    `SELECT count(*) ... WHERE scope_id = :s`, which is a reader in the sense that it reads —
+    and useless here, because a counting scan never touches the HNSW graph and so cannot show
+    whether approximate retrieval survives its own index being rebuilt. Measured that way the
+    first time, 408 065 reader queries came back at a p95 of 52.3 ms and answered a question
+    nobody asked. When `dataset` is given the readers now run the ANN probe the index exists to
+    serve, and the record says which reader produced the numbers.
 
     **W1-F4: the readers must not hold open transactions, or this driver deadlocks against
     itself.** A SQLAlchemy connection begins a transaction on its first statement and holds it
@@ -1400,17 +1787,40 @@ async def reindex_with_readers(
     duration of a maintenance operation.
     """
     stop = asyncio.Event()
+    dimension = int(DATASETS[dataset]["dimension"]) if dataset else None
+    # Drawn once, outside the loop: a probe drawn per iteration would put the generator's cost
+    # inside the latency the readers are supposed to be reporting.
+    probes = probe_literals(dataset, 64) if dataset else []
+    reader_query = (
+        f"ANN top-10 through {index}, ef_search 1000 — the shape the index exists to serve"
+        if dataset
+        else f"SELECT count(*) FROM {table} WHERE scope_id = :s — a scan that never touches "
+        "the index being rebuilt (W3-F2)"
+    )
 
     async def reader(worker: int) -> list[float]:
         latencies: list[float] = []
         async with engine.connect() as connection:
             await connection.execution_options(isolation_level="AUTOCOMMIT")
+            probe_index = worker
             while not stop.is_set():
                 started = perf_counter()
-                await connection.execute(
-                    text(f"SELECT count(*) FROM cognitive_os.{table} WHERE scope_id = :s"),
-                    {"s": f"scope-{worker % int(FILTER_PREDICATE['scopes_in_corpus']):02d}"},
-                )
+                if dataset:
+                    await connection.execute(text("SET hnsw.ef_search = 1000"))
+                    await connection.execute(
+                        text(
+                            f"SELECT row_id FROM cognitive_os.{table} "
+                            f"WHERE dimension = {dimension} ORDER BY "
+                            f"(embedding::vector({dimension})) <=> "
+                            f"'{probes[probe_index % len(probes)]}'::vector LIMIT 10"
+                        )
+                    )
+                    probe_index += 1
+                else:
+                    await connection.execute(
+                        text(f"SELECT count(*) FROM cognitive_os.{table} WHERE scope_id = :s"),
+                        {"s": f"scope-{worker % int(FILTER_PREDICATE['scopes_in_corpus']):02d}"},
+                    )
                 latencies.append((perf_counter() - started) * 1_000)
         return latencies
 
@@ -1437,6 +1847,8 @@ async def reindex_with_readers(
         "concurrent_readers": readers,
         "reader_queries": len(latencies),
         "reader_latency": _percentiles(latencies) if latencies else None,
+        "reader_query": reader_query,
+        "readers_read_through_the_index": dataset is not None,
         "readers_saw_an_error": False,
     }
 
@@ -2130,6 +2542,132 @@ async def _envelope(
     }
 
 
+async def _mutate(supersessions: int, tombstones: int, start: int) -> dict:
+    """W3's mutation waves, with the active view queried before and after each one.
+
+    The two waves address disjoint ranges of the governed store on purpose. A tombstone wave
+    that overlapped the supersession wave would meet items whose status had already moved, and
+    the refusals would be the released transition table doing its job — a correct outcome that
+    tells nobody anything about mutation at scale.
+
+    Neither wave touches a corpus table. W1-F6's lesson, applied before rather than after: the
+    clustered corpus is what the recall exit reads, and a wave that mutates what an exit reads
+    invalidates the exit rather than measuring anything.
+    """
+    url = os.environ.get("COGOS_DATABASE_ADMIN_URL")
+    if not url:
+        raise SystemExit("COGOS_DATABASE_ADMIN_URL is required")
+    engine = create_postgres_engine(url, pool_size=2, max_overflow=0, command_timeout_seconds=3_600)
+    try:
+        before = await active_view(engine)
+        supersession = await mutation_wave(engine, "supersession", count=supersessions, start=start)
+        after_supersessions = await active_view(engine)
+        tombstone = await mutation_wave(
+            engine, "tombstone", count=tombstones, start=start + supersessions
+        )
+        after_tombstones = await active_view(engine)
+    finally:
+        await engine.dispose()
+
+    expected = (
+        before["active_rows_by_item_status"]
+        - supersession["items_mutated"]
+        - tombstone["items_mutated"]
+    )
+    return {
+        "waves": [supersession, tombstone],
+        "active_view": {
+            "before": before,
+            "after_supersessions": after_supersessions,
+            "after_tombstones": after_tombstones,
+        },
+        "expected_active_rows_after": expected,
+        "active_rows_after": after_tombstones["active_rows_by_item_status"],
+        "active_view_matches_the_mutations": (
+            after_tombstones["active_rows_by_item_status"] == expected
+        ),
+        "both_readings_agree_throughout": all(
+            view["the_two_readings_agree"]
+            for view in (before, after_supersessions, after_tombstones)
+        ),
+        "corpus_tables_untouched": True,
+        "recipes_hash": recipes_hash(),
+    }
+
+
+async def _crash(items: int, start: int, kill_after: int) -> dict:
+    record = await crash_mid_ingest(items=items, start=start, kill_after=kill_after)
+    record["recipes_hash"] = recipes_hash()
+    return record
+
+
+async def _bloat_reindex(dataset: str, readers: int, seconds: float, mutate: int = 0) -> dict:
+    """Bloat measured exactly, then a reindex with concurrent readers measured throughout.
+
+    The corpus this runs against is **uniform** by default — the dataset no exit criterion
+    reads. A `REINDEX` rebuilds the HNSW graph, and rebuilding the index the recall exit was
+    measured over would replace the measured object with a differently-built one. That is
+    W1-F6's rule stated ahead of the mistake rather than after it.
+
+    The governed tables are measured too, because that is where W3's ten thousand transitions
+    actually left dead tuples: an append-only revision table grows, and the item table is
+    updated in place once per transition.
+    """
+    url = os.environ.get("COGOS_DATABASE_ADMIN_URL")
+    if not url:
+        raise SystemExit("COGOS_DATABASE_ADMIN_URL is required")
+    engine = create_postgres_engine(
+        url, pool_size=8, max_overflow=0, command_timeout_seconds=21_600
+    )
+    table = corpus_table(dataset)
+    index = f"{table}_hnsw_{int(DATASETS[dataset]['dimension'])}"
+    try:
+        # W3-F3: bloat has to be measured while it exists. The first run measured the governed
+        # tables ninety minutes after the mutation waves — long enough for autovacuum to have
+        # cleaned every dead tuple — and reported 0.00% everywhere, which is a true statement
+        # about a vacuumed store and no statement at all about mutation at scale. When `mutate`
+        # is given, a wave runs here and the very next thing that happens is the measurement.
+        mutation = (
+            await mutation_wave(engine, "supersession", count=mutate, start=11_000)
+            if mutate
+            else None
+        )
+        governed_before = {
+            name: await table_bloat(engine, name)
+            for name in ("memory_items", "memory_revisions", "memory_sources")
+        }
+        corpus_before = await table_bloat(engine, table)
+        reindex = await reindex_with_readers(
+            engine, index, readers=readers, seconds=seconds, table=table, dataset=dataset
+        )
+        corpus_after = await table_bloat(engine, table)
+        async with engine.connect() as connection:
+            await connection.execution_options(isolation_level="AUTOCOMMIT")
+            await connection.execute(text("VACUUM ANALYZE cognitive_os.memory_items"))
+        governed_after = {
+            name: await table_bloat(engine, name)
+            for name in ("memory_items", "memory_revisions", "memory_sources")
+        }
+    finally:
+        await engine.dispose()
+    return {
+        "dataset": dataset,
+        "reads_an_exit_criterion": False,
+        "why_this_dataset": (
+            "uniform reads no exit criterion, and a reindex rebuilds the HNSW graph the "
+            "clustered recall number was measured over"
+        ),
+        "mutation_wave_immediately_before": mutation,
+        "bloat_measured_before_autovacuum_could_run": mutate > 0,
+        "governed_tables_before": governed_before,
+        "governed_tables_after_vacuum": governed_after,
+        "corpus_before": corpus_before,
+        "corpus_after": corpus_after,
+        "reindex_with_readers": reindex,
+        "recipes_hash": recipes_hash(),
+    }
+
+
 async def _recall(dataset: str, probes: int) -> dict:
     """The recall exit's own run: an exact scan per probe, never sampled (§4).
 
@@ -2166,6 +2704,25 @@ def main() -> int:
     parser.add_argument("--incremental", action="store_true", help="insert into the built index")
     parser.add_argument("--restore-corpus", action="store_true", help="W1-F6 repair")
     parser.add_argument("--restore-check", action="store_true", help="the §2.2e checklist")
+    parser.add_argument("--mutate", action="store_true", help="the W3 supersession/tombstone waves")
+    parser.add_argument("--crash", action="store_true", help="kill the database mid-ingest, once")
+    parser.add_argument(
+        "--bloat-reindex", action="store_true", help="bloat, then reindex under load"
+    )
+    parser.add_argument("--supersessions", type=int, default=5_000)
+    parser.add_argument("--tombstones", type=int, default=5_000)
+    parser.add_argument("--mutate-start", type=int, default=1_000)
+    parser.add_argument("--crash-items", type=int, default=5_000)
+    parser.add_argument("--crash-start", type=int, default=60_000)
+    parser.add_argument("--crash-after", type=int, default=500)
+    parser.add_argument("--readers", type=int, default=3)
+    parser.add_argument(
+        "--mutate-before-bloat",
+        type=int,
+        default=0,
+        help="run a supersession wave immediately before measuring bloat (W3-F3)",
+    )
+    parser.add_argument("--reader-seconds", type=float, default=5.0)
     parser.add_argument("--envelope", action="store_true", help="the W2 retrieval envelope")
     parser.add_argument("--recall", action="store_true", help="recall@10 against an exact scan")
     parser.add_argument(
@@ -2195,6 +2752,23 @@ def main() -> int:
 
     if arguments.recipes:
         payload: dict[str, Any] = {"recipes": RECIPES, "recipes_hash": recipes_hash()}
+    elif arguments.mutate:
+        payload = asyncio.run(
+            _mutate(arguments.supersessions, arguments.tombstones, arguments.mutate_start)
+        )
+    elif arguments.crash:
+        payload = asyncio.run(
+            _crash(arguments.crash_items, arguments.crash_start, arguments.crash_after)
+        )
+    elif arguments.bloat_reindex:
+        payload = asyncio.run(
+            _bloat_reindex(
+                arguments.dataset,
+                arguments.readers,
+                arguments.reader_seconds,
+                arguments.mutate_before_bloat,
+            )
+        )
     elif arguments.envelope:
         payload = asyncio.run(
             _envelope(

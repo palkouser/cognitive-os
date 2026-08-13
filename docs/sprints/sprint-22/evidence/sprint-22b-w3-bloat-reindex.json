@@ -1,0 +1,129 @@
+{
+ "bloat_measured_before_autovacuum_could_run": true,
+ "corpus_after": {
+  "dead_tuple_percent": 0.0,
+  "dead_tuples": 0,
+  "free_percent": 1.03,
+  "heap_length_bytes": 87154688,
+  "live_tuples": 1000000,
+  "present": true,
+  "source": "pgstattuple, an exact heap scan",
+  "table": "memory_scale_22b_corpus_uniform",
+  "total_relation_size_bytes": 8347787264
+ },
+ "corpus_before": {
+  "dead_tuple_percent": 0.0,
+  "dead_tuples": 0,
+  "free_percent": 1.03,
+  "heap_length_bytes": 87154688,
+  "live_tuples": 1000000,
+  "present": true,
+  "source": "pgstattuple, an exact heap scan",
+  "table": "memory_scale_22b_corpus_uniform",
+  "total_relation_size_bytes": 8347787264
+ },
+ "dataset": "uniform",
+ "governed_tables_after_vacuum": {
+  "memory_items": {
+   "dead_tuple_percent": 0.0,
+   "dead_tuples": 0,
+   "free_percent": 2.41,
+   "heap_length_bytes": 13500416,
+   "live_tuples": 55240,
+   "present": true,
+   "source": "pgstattuple, an exact heap scan",
+   "table": "memory_items",
+   "total_relation_size_bytes": 30613504
+  },
+  "memory_revisions": {
+   "dead_tuple_percent": 0.0,
+   "dead_tuples": 0,
+   "free_percent": 3.54,
+   "heap_length_bytes": 54788096,
+   "live_tuples": 80249,
+   "present": true,
+   "source": "pgstattuple, an exact heap scan",
+   "table": "memory_revisions",
+   "total_relation_size_bytes": 69582848
+  },
+  "memory_sources": {
+   "dead_tuple_percent": 0.0,
+   "dead_tuples": 0,
+   "free_percent": 1.33,
+   "heap_length_bytes": 21676032,
+   "live_tuples": 120261,
+   "present": true,
+   "source": "pgstattuple, an exact heap scan",
+   "table": "memory_sources",
+   "total_relation_size_bytes": 47562752
+  }
+ },
+ "governed_tables_before": {
+  "memory_items": {
+   "dead_tuple_percent": 0.13,
+   "dead_tuples": 79,
+   "free_percent": 2.27,
+   "heap_length_bytes": 13500416,
+   "live_tuples": 55240,
+   "present": true,
+   "source": "pgstattuple, an exact heap scan",
+   "table": "memory_items",
+   "total_relation_size_bytes": 30613504
+  },
+  "memory_revisions": {
+   "dead_tuple_percent": 0.0,
+   "dead_tuples": 0,
+   "free_percent": 3.54,
+   "heap_length_bytes": 54788096,
+   "live_tuples": 80249,
+   "present": true,
+   "source": "pgstattuple, an exact heap scan",
+   "table": "memory_revisions",
+   "total_relation_size_bytes": 69582848
+  },
+  "memory_sources": {
+   "dead_tuple_percent": 0.0,
+   "dead_tuples": 0,
+   "free_percent": 1.33,
+   "heap_length_bytes": 21676032,
+   "live_tuples": 120261,
+   "present": true,
+   "source": "pgstattuple, an exact heap scan",
+   "table": "memory_sources",
+   "total_relation_size_bytes": 47562752
+  }
+ },
+ "mutation_wave_immediately_before": {
+  "failure_count": 0,
+  "failures": [],
+  "first_index": 11000,
+  "items_mutated": 5000,
+  "items_requested": 5000,
+  "path": "governed: MemoryLifecycleService -> revision + provenance carry-over + event",
+  "promotions": 5000,
+  "reads_an_exit_criterion": false,
+  "seconds": 84.421,
+  "transitions": 10000,
+  "transitions_per_second": 118.45,
+  "wave": "supersession",
+  "why_two_transitions": "candidate -> superseded is not a legal released transition; candidate -> verified -> superseded is. The promotion carries the acceptance-decision and coding-trajectory evidence the released path requires"
+ },
+ "reads_an_exit_criterion": false,
+ "recipes_hash": "c99ef5e513816fe8db96c350a6283b3251858643e19816259a00fa7f973fb125",
+ "reindex_with_readers": {
+  "concurrent_readers": 3,
+  "index": "memory_scale_22b_corpus_uniform_hnsw_768",
+  "reader_latency": {
+   "max_ms": 518.655,
+   "p50_ms": 240.778,
+   "p95_ms": 266.258,
+   "probes": 50517
+  },
+  "reader_queries": 50517,
+  "reader_query": "ANN top-10 through memory_scale_22b_corpus_uniform_hnsw_768, ef_search 1000 — the shape the index exists to serve",
+  "readers_read_through_the_index": true,
+  "readers_saw_an_error": false,
+  "reindex_seconds": 4017.666
+ },
+ "why_this_dataset": "uniform reads no exit criterion, and a reindex rebuilds the HNSW graph the clustered recall number was measured over"
+}

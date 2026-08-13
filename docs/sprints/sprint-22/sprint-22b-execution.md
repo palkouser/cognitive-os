@@ -15,6 +15,13 @@
   whole suite runs green against the million-row store. **Six findings and two decisions**, all
   handled inside the wave; the sharpest is that the host W0 declared could not build the index
   the sprint's exits are defined over. **W0 detail follows first.**
+- **W3 closed. All five exit criteria are decided and met.** Twenty-five thousand governed
+  transitions through the released lifecycle service, the active view queried two ways that
+  agreed at every checkpoint, a deliberate SIGKILL of the database mid-ingest with a 4.42 s
+  recovery, a 67-minute reindex with three ANN readers running throughout, and a backup and
+  restore of the mutated store that **reproduces all four §2.2e items**. Five findings, four in
+  the wave's own apparatus and one in the released write path: a crash can leave a governed item
+  outside its own event stream, and a resume does not repair it.
 - **W2 closed.** The retrieval envelope is measured on both million-row corpora — seven shapes,
   warm and cold, **7 000 measured probes across fourteen cells** — and **all three exit criteria
   W2 decides are met**: recall@10 **0.9636** against 0.95, warm filtered ANN p95 **156.7 ms**
@@ -45,6 +52,234 @@
   bound to, and freezes every reading that could bend once numbers exist. Gate L2 and Gate D1
   are untouched: 22B opens no condition and closes none. W2-A1 and W3-A1 are carried forward by
   name, unresolved on purpose.
+
+---
+
+## W3 outcome — mutation, a deliberate crash, and the last exit criterion
+
+**All five exit criteria are now decided and met.** W3 owed one of them — that a restore
+reproduces everything — and it is met against a store that was mutated fifteen thousand times,
+killed mid-ingest with SIGKILL, resumed, mutated another ten thousand times and reindexed under
+load before the backup was taken. A restore verified against a quiet store would have been the
+easier measurement and a weaker one.
+
+### The mutation waves
+
+| Wave | Items | Transitions | Rate | Failures |
+|---|---:|---:|---:|---:|
+| supersession | 5 000 | 10 000 | 118.3/s | 0 |
+| tombstone | 5 000 | 5 000 | 134.4/s | 0 |
+| supersession (before the bloat reading) | 5 000 | 10 000 | 118.5/s | 0 |
+
+Every transition went through the released `MemoryLifecycleService`, so each left a revision, a
+provenance carry-over and its matching released event: **25 000 transitions produced 25 000
+revisions and 25 000 events**, counted before and after.
+
+**A supersession costs two transitions, and that is the released system refusing to be
+short-cut.** `can_transition_memory` does not allow candidate → superseded. It allows candidate
+→ verified → superseded, and the promotion in the middle is guarded: `MemoryLifecycleService.
+promote` refuses without both an acceptance decision *and* a coding trajectory in the evidence
+bundle, and refuses a provider actor outright. W3 satisfied the rule by composition rather than
+widening it, which is why the supersession wave writes two revisions per item.
+
+### The active view, queried two ways that had to agree
+
+§2.2e asks for the active view *queried, not counted*, and W3 is where that distinction earns
+its keep. Every checkpoint asks two independent questions — the item's own `status` column,
+maintained by the released `advance_memory_item`, and the status on the revision that item's
+`current_revision` names — and they agreed at all three checkpoints:
+
+| Checkpoint | Active rows | Two readings agree |
+|---|---:|---|
+| before | 50 234 | yes |
+| after 5 000 supersessions | 45 234 | yes |
+| after 5 000 tombstones | 40 234 | yes |
+
+The arithmetic closes exactly: each wave moved the view by precisely the number of items it
+mutated. One reading would have been a hope; two that agree after fifteen thousand transitions
+are evidence that every transition advanced both halves of the record.
+
+### The deliberate crash, and the one thing it left behind
+
+The **database** was killed, not the writer — `docker kill` sends SIGKILL to PostgreSQL, so the
+server dies without a checkpoint and returns through crash recovery. Killing the client would
+have tested whether a Python process can be restarted, which nobody doubts.
+
+| | |
+|---|---|
+| killed after | 502 governed items |
+| writer outcome | died, exit 1, `ConnectionDoesNotExistError` |
+| database recovery | **4.42 s**, including Docker's `restart: unless-stopped` policy |
+| items missing their current revision | **0** |
+| items missing their creation event | **1** |
+| resume | 5 000 items re-run, **duplicated nothing** |
+
+**Zero orphaned revisions is the transaction doing its job.** The record and its first revision
+are written in one transaction, and the crash proves that rather than leaving it assumed.
+
+**One item outside its own event stream is a finding, and it is a released one.**
+`MemoryService.create` commits the memory record and *then* appends the `memory.item_created`
+event in a **separate** transaction. An unclean stop inside that window leaves a governed item
+with a record, a revision, and no event — and item `61505` landed in it. The resume does not
+repair it: the idempotency key turns a re-created item into a lookup that returns the existing
+record and never reaches the event append, so the gap is permanent. One in 506 writes, at one
+crash. See [W3-F1](#w3-f1--a-crash-can-leave-a-governed-item-outside-its-own-event-stream).
+
+The released `PostgresMemoryHealthService` **does** detect it — `missing_creation_events: 1` —
+and classifies it as a **warning**.
+
+### Bloat, and a reindex with readers that actually read
+
+| | |
+|---|---:|
+| reindex, `REINDEX INDEX CONCURRENTLY` at 10^6 | **4 017.7 s** (67 min) |
+| concurrent ANN readers | 3, running for the whole rebuild |
+| reader probes | **50 517** |
+| reader p50 / p95 / max | 240.8 / **266.3** / 518.7 ms |
+| W2 warm baseline, same shape and dataset | 186.5 ms p95 |
+
+**Approximate retrieval survives its own index being rebuilt, at a 43 % p95 penalty.** That is
+the number W3 owed, and the first version of this measurement could not have produced it — see
+[W3-F2](#w3-f2--the-concurrent-readers-were-not-reading-through-the-index).
+
+Bloat, measured immediately after a mutation wave rather than after autovacuum had had an hour
+and a half ([W3-F3](#w3-f3--bloat-measured-late-is-a-measurement-of-autovacuum)):
+
+| Table | Dead tuples | Dead % | After `VACUUM` |
+|---|---:|---:|---:|
+| `memory_items` | 79 | 0.13 % | 0 |
+| `memory_revisions` | 0 | 0.00 % | 0 |
+| `memory_sources` | 0 | 0.00 % | 0 |
+
+**Only the item table can bloat**, because it is the only one updated in place; revisions and
+sources are insert-only. And 79 dead tuples immediately after 10 000 updates says autovacuum
+kept pace *during* the wave. At this mutation rate bloat does not accumulate — which is a
+result, not an absence of one, and it is only trustworthy because the same driver measured
+13.1 % dead tuples at fixture scale in W0.
+
+### The restore round trip, on the mutated store — the fifth exit criterion
+
+| Check | Source | Restored | Verdict |
+|---|---:|---:|---|
+| row counts (events / items / revisions / artifacts) | 80 251 / 55 240 / 80 249 / 67 | identical | **met** |
+| active view, **queried** | 40 234 | 40 234 | **met** |
+| learned artifact pointer resolved | — | `sha256/af/afbdb7c0…` | **met** |
+| artifact bytes **loaded from the restored archive** | — | 4 354 bytes, hash matches | **met** |
+
+The released verifier independently confirmed **17 artifact files** out of the restored archive.
+The bytes are loaded from the restored `*-artifacts.tar.zst`, never from the live artifact root
+— D7 W3-F1, applied to the one artifact that is actually live.
+
+**`restore reproduces everything` is met. With W1's governed ingest and W2's three latency and
+recall numbers, that is five of five.**
+
+---
+
+## W3 findings — five, and only one of them is in the released system
+
+### W3-F1 — a crash can leave a governed item outside its own event stream
+
+Described above. What makes it a finding rather than a note is the combination: the window is
+real, the repair path does not close it, and the health check that notices calls it a warning.
+Nothing here is fixed by 22B — §2.3 forbids changing released behaviour mid-measurement, and a
+write path edited during the wave that measures it would leave evidence produced by two
+different systems. It is handed to 22C with its exact reproduction: kill the server between the
+record commit and the event append.
+
+### W3-F2 — the concurrent readers were not reading through the index
+
+The first reindex-under-load run measured **408 065 reader queries at a p95 of 52.3 ms** and
+answered nothing. The readers ran `SELECT count(*) … WHERE scope_id = :s` — a counting scan that
+never touches the HNSW graph, so it could not show whether approximate retrieval survives its
+own index being rebuilt, which is the only thing the measurement is for. The driver was
+inherited from W0, where a 200-row slice made every reader look equivalent.
+
+Fixed and re-run: the readers now issue the ANN top-10 the index exists to serve, and the answer
+changed completely — p95 **266.3 ms** against a 186.5 ms warm baseline. The cost of the fix was
+67 minutes of machine time; the cost of not fixing it would have been a number in the release
+that meant nothing.
+
+### W3-F3 — bloat measured late is a measurement of autovacuum
+
+The first run measured the governed tables ninety minutes after the mutation waves — after the
+crash run and the reindex — and reported **0.00 % dead tuples everywhere**. True, and useless:
+autovacuum had had an hour and a half. The driver now runs a mutation wave and measures bloat as
+the very next thing it does, in the same process, and the reading became 79 dead tuples on
+`memory_items` and zero on the append-only tables. A measurement whose timing is wrong is not a
+small error; it is a different measurement wearing the right label.
+
+### W3-F4 — W2's envelope bound a record that later waves rewrite
+
+`envelope_22b.py` bound `sprint-22b-driver-rebind.json` by hash. That record is **rewritten
+every time a wave re-binds its drivers**, so W3's two re-bindings made the sealed W2 summary
+stop reproducing from its own sources — `--check` failed with nothing whatsoever wrong with any
+measurement.
+
+The binding was also redundant: what a re-binding asserts is not a file's bytes but an executed
+proof that the current driver draws the same corpus, and `pre_registration_22b.py --check`
+re-executes that proof on every run. The binding was removed and W2's record regenerated. **No
+measured value changed** — the coverage matrix, the fourteen cells, the seven thousand probes
+and all three exit readings are identical — and the W2 section's stated content hash is updated
+accordingly. The lesson is narrow and worth keeping: a summary may bind only what cannot move
+underneath it.
+
+### W3-F5 — the backup script was invoked without its environment file, and wrote into the wrong archive
+
+`scripts/backup_event_store.sh` calls `load_postgres_environment`, which re-sources
+`$COGOS_POSTGRES_ENV_FILE` (default `.env.postgres.local`) with `set -a` — **over** whatever the
+caller already exported. Invoked without `COGOS_POSTGRES_ENV_FILE=.env.s22b.local`, it therefore
+used the *development* `COGOS_ARTIFACT_ROOT` and `COGOS_BACKUP_ROOT` while dumping the 22B
+database, whose URL that file does not define.
+
+The failure was loud — the artifact verifier refused, because 22B's blobs are not under the
+development artifact root — but it had already written a **6.14 GB dump of the 22B store into
+the development archive**, with no manifest beside it. That is worse than a wasted run:
+`restore_event_store.sh` selects the newest manifest-adjacent archive it finds, so a later
+development restore had a real chance of quietly restoring a measurement store. The stray dump
+and its artifact tar were removed and the development archive is back to its previous contents;
+the wave's backup was re-run with the environment file named, and the console line changed from
+`cognitive_os_dev` to `cognitive_os_s22b_test`. **This one was an invocation error, not a defect
+in the released script** — the script did exactly what its contract says.
+
+---
+
+## W3 evidence index
+
+| Record | SHA-256 |
+|---|---|
+| `sprint-22b-w3-mutations.json` | `ef93d83f537ea650…` |
+| `sprint-22b-w3-crash.json` | `301ce478280409d6…` |
+| `sprint-22b-w3-bloat-reindex.json` | `170cabaea7c976b4…` |
+| `sprint-22b-w3-restore-checklist.json` | `e504a61450627073…` |
+
+The driver re-binding for W3 is `sprint-22b-driver-rebind.json`, from `c295892ec5bd6d62…` to
+`4e21d2556b444fa2…` — two re-bindings this wave, one for the mutation and crash drivers and one
+for W3-F2 and W3-F3's fixes, each with its executed proof that the corpus, the recipes hash and
+the seven shapes are unchanged. **The recipes hash has not moved since W0.**
+
+## W3 validation
+
+`ruff check` and `ruff format --check` over `src tests scripts infra`: clean.
+`mypy src/cognitive_os`: no issues in 637 source files. `python -m cognitive_os.schemas.export
+--check` and `check_repository_language.sh`: passed. `pre_registration_22b.py --check`,
+`host_record_22b.py --check` and `envelope_22b.py --check`: **each run twice, identical output
+both times** (22A W4-F3). Full suite against the mutated million-row store: **4 359 passed, 206
+skipped** — 19 more tests than W2, none of them a released assertion that had to change.
+
+**The released memory health check reports the store as unhealthy, and both reasons are
+expected.** `undeclared_approximate_indexes: 3` at severity *error* — 22B's three corpus HNSW
+indexes are measurement scaffolding that no released declaration knows about — and
+`missing_creation_events: 1` at severity *warning*, which is W3-F1. Neither is a regression, and
+both are named here so W4 does not have to rediscover them at release time.
+
+## What W4 inherits
+
+**Five of five exit criteria decided and met**, each on sealed evidence under the frozen
+readings. A store that has been mutated, crashed, resumed, reindexed and restored — and a
+*restored* copy of it in `cognitive_os_s22b_restore_test`, which is exactly what W4 needs to
+re-measure the three latency exits against, because a restore that changes the envelope is a
+finding. The clustered corpus is still untouched by every mutation wave, so the recall number
+W4 reports is a number about the corpus that was registered.
 
 ---
 
@@ -270,7 +505,11 @@ derives each exit reading from one named field of one named record, and carries 
 limitation its sources sealed rather than paraphrasing them. Its `--check` rebuilds the whole
 document from those sources and refuses any difference, and a test feeds it a tampered copy to
 prove the refusal is real. Sealed content hash
-`73313c4ddf148ae38fc025a1c4332a730922ef09b1c6ce13cba476af9c1e5ec7`.
+`43f29e4fde779d7be3de6705fe3a5a29ecbfaea3467c34354382a64ba50500d7` — **regenerated in W3 under
+[W3-F4](#w3-f4--w2s-envelope-bound-a-record-that-later-waves-rewrite)**, which removed a binding
+to a record later waves rewrite. No measured value changed: the fourteen cells, the seven
+thousand probes and all three exit readings are identical, and the earlier hash
+`73313c4ddf148ae3…` differs from this one by exactly one absent field.
 
 The driver re-binding for W2 is `sprint-22b-driver-rebind.json`, from `c295892ec5bd6d62…` to
 `a1d03d081bc1accd…`: the W2 drivers are new measurement code, and the executed proof shows

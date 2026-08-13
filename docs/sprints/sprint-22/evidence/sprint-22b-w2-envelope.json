@@ -1,6 +1,5 @@
 {
  "binds": {
-  "driver_rebind_sha256": "f8d67149fdc8c05420caff8959cf97d11270af4d9428b606cc59ae3e53382ae8",
   "host_id": "cogos-reference-host-2",
   "host_integrity_content_hash": "f76616eb309941832a3fc8e8e3fa7a737f95cfbbe89eb7a817d9676061b146bb",
   "recipes_hash": "c99ef5e513816fe8db96c350a6283b3251858643e19816259a00fa7f973fb125",
@@ -224,7 +223,7 @@
  },
  "exits_decided_by_w2": 3,
  "exits_met": 3,
- "integrity_content_hash": "73313c4ddf148ae38fc025a1c4332a730922ef09b1c6ce13cba476af9c1e5ec7",
+ "integrity_content_hash": "43f29e4fde779d7be3de6705fe3a5a29ecbfaea3467c34354382a64ba50500d7",
  "items": [
   "S22B-030",
   "S22B-031",
@@ -292,7 +291,7 @@
    "recall_at_k": 0.0854
   }
  },
- "recorded_at": "2026-08-13T05:56:12Z",
+ "recorded_at": "2026-08-13T12:18:39Z",
  "schema_version": 1,
  "sprint": "22B",
  "supporting_modes_driven": {

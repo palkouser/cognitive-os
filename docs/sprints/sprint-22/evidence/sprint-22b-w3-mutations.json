@@ -1,0 +1,81 @@
+{
+ "active_rows_after": 40234,
+ "active_view": {
+  "after_supersessions": {
+   "active_rows_by_current_revision_join": 45234,
+   "active_rows_by_item_status": 45234,
+   "events": 60252,
+   "items_by_status": {
+    "candidate": 45234,
+    "retracted": 3,
+    "superseded": 5003
+   },
+   "queried_not_counted": true,
+   "revisions": 60249,
+   "the_two_readings_agree": true
+  },
+  "after_tombstones": {
+   "active_rows_by_current_revision_join": 40234,
+   "active_rows_by_item_status": 40234,
+   "events": 65252,
+   "items_by_status": {
+    "candidate": 40234,
+    "retracted": 5003,
+    "superseded": 5003
+   },
+   "queried_not_counted": true,
+   "revisions": 65249,
+   "the_two_readings_agree": true
+  },
+  "before": {
+   "active_rows_by_current_revision_join": 50234,
+   "active_rows_by_item_status": 50234,
+   "events": 50252,
+   "items_by_status": {
+    "candidate": 50234,
+    "retracted": 3,
+    "superseded": 3
+   },
+   "queried_not_counted": true,
+   "revisions": 50249,
+   "the_two_readings_agree": true
+  }
+ },
+ "active_view_matches_the_mutations": true,
+ "both_readings_agree_throughout": true,
+ "corpus_tables_untouched": true,
+ "expected_active_rows_after": 40234,
+ "recipes_hash": "c99ef5e513816fe8db96c350a6283b3251858643e19816259a00fa7f973fb125",
+ "waves": [
+  {
+   "failure_count": 0,
+   "failures": [],
+   "first_index": 1000,
+   "items_mutated": 5000,
+   "items_requested": 5000,
+   "path": "governed: MemoryLifecycleService -> revision + provenance carry-over + event",
+   "promotions": 5000,
+   "reads_an_exit_criterion": false,
+   "seconds": 84.526,
+   "transitions": 10000,
+   "transitions_per_second": 118.31,
+   "wave": "supersession",
+   "why_two_transitions": "candidate -> superseded is not a legal released transition; candidate -> verified -> superseded is. The promotion carries the acceptance-decision and coding-trajectory evidence the released path requires"
+  },
+  {
+   "failure_count": 0,
+   "failures": [],
+   "first_index": 6000,
+   "items_mutated": 5000,
+   "items_requested": 5000,
+   "path": "governed: MemoryLifecycleService -> revision + provenance carry-over + event",
+   "promotions": 0,
+   "reads_an_exit_criterion": false,
+   "seconds": 37.201,
+   "transitions": 5000,
+   "transitions_per_second": 134.41,
+   "wave": "tombstone",
+   "why_two_transitions": "candidate -> retracted is legal directly, so a tombstone is one transition"
+  }
+ ]
+}

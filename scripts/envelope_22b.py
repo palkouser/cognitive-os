@@ -51,7 +51,17 @@ SOURCES = {
 
 PRE_REGISTRATION = EVIDENCE / "sprint-22b-pre-registration.json"
 HOST = EVIDENCE / "sprint-22b-reference-host-2.json"
-REBIND = EVIDENCE / "sprint-22b-driver-rebind.json"
+
+#: W3-F4. This used to bind `sprint-22b-driver-rebind.json` by hash, and that was wrong in a way
+#: only a later wave could reveal: the re-binding record is **rewritten every time a wave fixes
+#: a driver**, so W3's two re-bindings made W2's sealed summary stop reproducing from its own
+#: sources — a `--check` failure with nothing whatsoever wrong with the measurements.
+#:
+#: The binding was also redundant. What the re-binding asserts is not a file's bytes but an
+#: executed proof that the current driver draws the same corpus, and `pre_registration_22b.py
+#: --check` re-executes that proof on every run rather than trusting any stored hash. A summary
+#: should bind what cannot move underneath it: the recipes, the publication, the host, and the
+#: four measurement records it is assembled from. All four are still bound below.
 
 #: The three exits W2 decides, each as a path into one measurement record. The other two are
 #: W1's (governed ingest, met) and W3's (restore reproduces), and W4 reads all five together.
@@ -281,7 +291,6 @@ def _assemble() -> dict[str, Any]:
         "pre_registration_sha256": _sha256(PRE_REGISTRATION.read_bytes()),
         "binds": {
             "recipes_hash": drivers.recipes_hash(),
-            "driver_rebind_sha256": _sha256(REBIND.read_bytes()),
             "host_id": _load(HOST)["host_id"],
             "host_integrity_content_hash": _load(HOST)["integrity_content_hash"],
             "sources": {

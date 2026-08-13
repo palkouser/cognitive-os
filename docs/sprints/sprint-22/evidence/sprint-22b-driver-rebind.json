@@ -1,5 +1,5 @@
 {
- "integrity_content_hash": "beaebbf00d96b70ebbfea7433f9a66fcbe14262a74b63e1521014e9477e402ed",
+ "integrity_content_hash": "c372a70e1a826079bc952376f2804a74cc73d4730a806d808cc9f99f02a62445",
  "items": [
   "S22B-020"
  ],
@@ -48,13 +48,13 @@
   "recipes_hash_before": "c99ef5e513816fe8db96c350a6283b3251858643e19816259a00fa7f973fb125",
   "recipes_unchanged": true,
   "shapes_unchanged": true,
-  "to_sha256": "a1d03d081bc1accd6e564d375dadee0875637a52a6b26e33e6fb530e5bb3af91"
+  "to_sha256": "4e21d2556b444fa2455757d8a1fc89fbcbb987be31faa077803a83b4e1370ed3"
  },
- "reason": "W2: the retrieval envelope's own drivers — the warm/cold restart protocol of §2.2b, the governed-shape probe series, the bounded graph-assisted arm of §2.2d, the server-memory reading sealed beside every latency, and W2-F1/W2-F2's fixes. No drawn row, recipe or measured shape changed",
- "recorded_at": "2026-08-13T04:57:01Z",
+ "reason": "W3-F2 and W3-F3: the reindex readers now probe through the index being rebuilt rather than counting rows beside it, and a mutation wave runs immediately before the bloat measurement so autovacuum cannot empty it first. No drawn row, recipe or measured shape changed",
+ "recorded_at": "2026-08-13T09:02:28Z",
  "schema_version": 1,
  "sprint": "22B",
- "wave": "W2",
+ "wave": "W3",
  "what_cannot_be_re_bound": "a change that alters a drawn row, the recipes hash or the seven measured shapes. The proof is executed on every --check, so this record cannot outlive its truth",
  "what_this_is_not": "not an amendment. No reading moved, no threshold moved and the pre-registration is not edited: revision 1 still pins the implementation it pinned. This record carries the executed proof that the implementation now in the tree draws the same corpus, so the pin follows the defect fix instead of forbidding it"
 }
