@@ -1,0 +1,12 @@
+{
+ "dataset": "clustered",
+ "ground_truth": "exact scan per probe, never sampled",
+ "k": 10,
+ "meets_exit": true,
+ "probes": 500,
+ "reads_the_recall_exit": true,
+ "recall_at_k": 0.9636,
+ "recipes_hash": "c99ef5e513816fe8db96c350a6283b3251858643e19816259a00fa7f973fb125",
+ "seconds": 614.967,
+ "threshold": 0.95
+}

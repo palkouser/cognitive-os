@@ -536,7 +536,7 @@ def _identity_proof() -> dict[str, Any]:
     }
 
 
-def _rebind(reason: str) -> None:
+def _rebind(reason: str, wave: str = "W2") -> None:
     proof = _identity_proof()
     if not (proof["corpus_identical"] and proof["recipes_unchanged"] and proof["shapes_unchanged"]):
         raise SystemExit(
@@ -547,7 +547,7 @@ def _rebind(reason: str) -> None:
     record = {
         "schema_version": 1,
         "sprint": "22B",
-        "wave": "W1",
+        "wave": wave,
         "items": ["S22B-020"],
         "recorded_at": datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
         "pre_registration_sha256": _sha256(OUTPUTS["pre_registration"].read_bytes()),
@@ -782,12 +782,13 @@ def main() -> int:
         metavar="REASON",
         help="re-bind the driver module pin after a defect fix, with an executed identity proof",
     )
+    parser.add_argument("--wave", default="W2", help="the wave a --rebind is recorded under")
     parser.add_argument("--check-chronology", action="store_true")
     parser.add_argument("--later", nargs="*", default=[])
     arguments = parser.parse_args()
 
     if arguments.rebind:
-        _rebind(arguments.rebind)
+        _rebind(arguments.rebind, arguments.wave)
     if arguments.check:
         _check()
     if arguments.check_chronology:

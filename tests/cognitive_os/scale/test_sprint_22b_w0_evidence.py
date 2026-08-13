@@ -293,3 +293,44 @@ def test_embedding_writes_are_measured_outside_the_ingest_rate() -> None:
     record = _load(SLICE)
     assert record["governed_embed"]["reads_an_exit_criterion"] is False
     assert record["governed_ingest"]["path"].endswith("provenance + event + revision")
+
+
+@pytest.mark.parametrize("host_id", ["cogos-reference-host-1", "cogos-reference-host-2"])
+def test_a_reboot_sized_memory_drift_is_tolerated_and_reported(host_id: str) -> None:
+    """W2-F3: `MemTotal` moves by kilobytes across a boot, and that is not a different machine.
+
+    The host rebooted between W1 and W2 and came back four kilobytes short of what both records
+    sealed. An exact-equality check called that a host change; the answer was to fix the
+    comparator and leave both sealed records byte-identical.
+    """
+    module = _host_module()
+    drifted = json.loads(json.dumps(_load(module.HOSTS[host_id])["invariants"]))
+    drifted["memory"]["total_kib"] -= 4
+    module._invariants = lambda _url: drifted
+    module._store_url = lambda: "postgresql://unused"
+    module._check(host_id)
+
+
+@pytest.mark.parametrize("host_id", ["cogos-reference-host-1", "cogos-reference-host-2"])
+def test_the_memory_tolerance_still_notices_a_real_memory_change(host_id: str) -> None:
+    """The other half of W2-F3, and the half that matters: a tolerance must still refuse.
+
+    A removed DIMM or a resized machine moves gigabytes. If the allowance that absorbs a page
+    of kernel bookkeeping also absorbed that, the check would have stopped checking.
+    """
+    module = _host_module()
+    drifted = json.loads(json.dumps(_load(module.HOSTS[host_id])["invariants"]))
+    drifted["memory"]["total_kib"] -= 4 * 1024 * 1024
+    module._invariants = lambda _url: drifted
+    module._store_url = lambda: "postgresql://unused"
+    with pytest.raises(SystemExit) as raised:
+        module._check(host_id)
+    assert "drifted" in str(raised.value)
+
+
+def test_the_memory_tolerance_is_small_enough_to_be_a_tolerance() -> None:
+    """A tolerance nobody bounded is a disabled check wearing a number."""
+    module = _host_module()
+    sealed = _load(module.HOSTS["cogos-reference-host-2"])["invariants"]["memory"]["total_kib"]
+    assert module.MEMORY_TOLERANCE_KIB == 1024
+    assert sealed / 10_000 > module.MEMORY_TOLERANCE_KIB

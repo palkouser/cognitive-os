@@ -532,11 +532,19 @@ async def probe_corpus(
     result_limit: int = 10,
     candidate_limit: int = 1_000,
     ef_search: int = 1_000,
+    force_index: bool = False,
 ) -> dict:
     """Drive one vector shape over the corpus table, warm, with the cold probe kept.
 
     The caller restarts PostgreSQL before this runs; the first probe here is therefore the
     cold one and is reported separately from the warm distribution, never averaged into it.
+
+    `force_index` sets `enable_seqscan = off` for the statement. It is **never** used for a
+    number an exit reads — W2-F2 found that the planner declines the HNSW index for the frozen
+    filtered predicate at 10^6, and a shape whose measurement had to be forced into the index
+    would be a claim about a plan nobody's query will get. The forced pass runs beside the
+    pre-registered one as a diagnostic, so the gap between what the planner chose and what the
+    substrate can do is a measured number rather than an opinion.
     """
     recipe = DATASETS[dataset]
     dimension = int(recipe["dimension"])
@@ -567,6 +575,8 @@ async def probe_corpus(
         for index, literal in enumerate(literals):
             if not exact:
                 await connection.execute(text(f"SET LOCAL hnsw.ef_search = {ef_search}"))
+            if force_index:
+                await connection.execute(text("SET LOCAL enable_seqscan = off"))
             statement = text(
                 f"SELECT row_id FROM cognitive_os.{corpus_table(dataset)} {where} "
                 f"ORDER BY {order.format(probe=literal)} LIMIT {candidate_limit}"
@@ -603,6 +613,7 @@ async def probe_corpus(
         "cold_first_probe_ms": cold_ms,
         "warmup_probes_discarded": warmup,
         "index_scan_confirmed": plan_confirmed,
+        "sequential_scan_disabled": force_index,
         **_percentiles(latencies),
     }
     if plan_confirmed is False:
@@ -660,6 +671,119 @@ async def recall_at(
         "ground_truth": "exact scan per probe, never sampled",
         "reads_the_recall_exit": bool(DATASETS[dataset]["reads_the_recall_exit"]),
     }
+
+
+def restart_postgres(*, timeout: float = 120.0) -> dict:
+    """§2.2b's first step, taken literally: the database process is replaced, not hinted at.
+
+    "restart_is_a_real_restart" is the pre-registered wording, and the D7 lifecycle rule behind
+    it is that a separate process is the only thing that proves a cache was not carried. So this
+    restarts the container `.env.s22b.local` names and waits for the server to answer again,
+    reusing the released `learned_restart_smoke.sh` shape rather than inventing a second one.
+
+    **What it does not drop**, and the record says so: the *host page cache*. A container
+    restart empties PostgreSQL's shared buffers, not Linux's. "Cold" in this envelope therefore
+    means cold-server, and on a host whose shared_buffers is a fraction of the index it is the
+    page cache that decides a warm number. Naming that is the difference between a limitation
+    and a surprise.
+    """
+    container = os.environ.get("COGOS_POSTGRES_TOOL_CONTAINER")
+    if not container:
+        raise SystemExit(
+            "COGOS_POSTGRES_TOOL_CONTAINER is required: §2.2b's warm protocol restarts the "
+            "database rather than issuing a cache hint, and the container is never guessed"
+        )
+    url = (os.environ.get("COGOS_DATABASE_ADMIN_URL") or "").replace(
+        "postgresql+asyncpg", "postgresql"
+    )
+    if not url:
+        raise SystemExit("COGOS_DATABASE_ADMIN_URL is required")
+    started = perf_counter()
+    subprocess.run(["docker", "restart", container], check=True, capture_output=True)
+    ready = False
+    while perf_counter() - started < timeout:
+        probe = subprocess.run(
+            ["psql", url, "-Atqc", "SELECT 1"], capture_output=True, text=True, check=False
+        )
+        if probe.returncode == 0 and probe.stdout.strip() == "1":
+            ready = True
+            break
+    if not ready:
+        raise SystemExit(f"{container} did not answer within {timeout}s of its restart")
+    return {
+        "container": container,
+        "restarted": True,
+        "ready_after_seconds": round(perf_counter() - started, 3),
+        "shared_buffers_start_empty": True,
+        "host_page_cache_dropped": False,
+        "limitation": (
+            "a container restart empties PostgreSQL's shared buffers, not the host page cache, "
+            "so cold here means cold-server rather than cold-storage"
+        ),
+    }
+
+
+async def governed_probe_series(
+    engine: Any, shape: str, *, probes: int, warmup: int, dataset: str
+) -> dict:
+    """500 measured probes of one governed shape, with the cold probe kept apart.
+
+    The three shapes here answer over the governed memory store rather than over a corpus
+    table, so they do not vary with the dataset — and the record says that in a field rather
+    than letting a reader infer it from two identical-looking numbers. They are still measured
+    once per dataset, because §2.2b's protocol is per dataset and a shape measured under only
+    one restart would be the one shape whose warm state nobody re-established.
+    """
+    from cognitive_os.infrastructure.embeddings import DeterministicEmbeddingProvider
+
+    provider = DeterministicEmbeddingProvider(dimension=64)
+    vector = MemoryVectorQuery(
+        provider_id=provider.identity.provider_id,
+        model_id=provider.identity.model_id,
+        dimension=64,
+        vector=tuple(await provider.embed_query("governed ingest probe item 1")),
+    )
+    as_of = datetime.now(UTC) + timedelta(seconds=1)
+
+    async def one() -> dict:
+        if shape == "hybrid":
+            return await hybrid_query(engine, text_query="governed ingest probe", vector=vector)
+        if shape == "temporal":
+            return await temporal_query(engine, as_of=as_of)
+        return await governed_query(engine, shape)
+
+    latencies: list[float] = []
+    cold_ms: float | None = None
+    last: dict = {}
+    for index in range(warmup + probes + 1):
+        started = perf_counter()
+        last = await one()
+        elapsed = (perf_counter() - started) * 1_000
+        if index == 0:
+            cold_ms = round(elapsed, 3)
+            continue
+        if index <= warmup:
+            continue
+        latencies.append(elapsed)
+
+    record = {
+        "dataset": dataset,
+        "shape": shape,
+        "varies_with_the_dataset": False,
+        "why": (
+            "this shape reads the governed memory store, which both datasets share; the corpus "
+            "table it does not touch is what the 10^6 rows are in"
+        ),
+        "cold_first_probe_ms": cold_ms,
+        "warmup_probes_discarded": warmup,
+        **_percentiles(latencies),
+        "reads_an_exit": False,
+        "last_result": last,
+    }
+    if shape == "temporal":
+        record["limitation"] = last.get("limitation")
+        record["through_the_governed_path"] = False
+    return record
 
 
 # --------------------------------------------------------------------------------------
@@ -982,6 +1106,220 @@ def bounded_graph_configuration() -> dict:
         "query_budget_seconds": BOUNDED_GRAPH_LIMITS.query_budget_seconds,
         "returned_results": BOUNDED_GRAPH_LIMITS.returned_results,
         **BOUNDED_GRAPH_READING,
+    }
+
+
+#: Where the graph half's candidates come from. Deliberately **not** part of RECIPES, on the
+#: same reasoning as `LIVE_LEARNED_ARTIFACT_SOURCE`: §2.2d freezes the bounded *configuration*,
+#: and which released graph set the pairs are read out of is an operational pointer, not a
+#: reading. Widening a frozen contract to carry one would move the recipes hash for no reading
+#: at all.
+#:
+#: It is the D1 set on purpose. 1 788.9 ms is the only graph-arm latency this programme has ever
+#: measured, and 500 ms is a claim about the same arm; measuring a different pair corpus would
+#: leave the comparison to prose. §2.3 forbids 22B authoring a corpus, so the graphs are the
+#: released ones and the scale enters through the shortlist, which is exactly where §2.2d puts
+#: it: "ANN shortlist first, budgeted graph expansion second".
+BOUNDED_GRAPH_POOL = {
+    "root": "docs/sprints/sprint-21/evidence/sprint-21d1-emg-root.json",
+    "artifact_root": str(DATA_ROOT / "artifacts-s21d1"),
+    "graph_set_id": "sprint-21d1-emg-root",
+    "pairs": 80,
+    "arm_source": "cognitive_os.experience.graph_retrieval.bounded_ged, released",
+}
+
+
+def _graph_pool() -> tuple[Any, Any]:
+    """The released D1 pair corpus and its candidates, or a refusal.
+
+    `load_evidence` resolves every pair's bytes out of the artifact store and reports what it
+    could not resolve. A pool that is not intact is refused rather than measured short: a graph
+    p95 over a silently smaller pool is a faster number about a different arm.
+    """
+    from cognitive_os.experience import graph_retrieval
+    from cognitive_os.experience.graph_store import load_evidence
+
+    evidence = load_evidence(
+        REPO / BOUNDED_GRAPH_POOL["root"], Path(BOUNDED_GRAPH_POOL["artifact_root"])
+    )
+    if not evidence.intact or len(evidence.pairs) != BOUNDED_GRAPH_POOL["pairs"]:
+        raise SystemExit(
+            f"the D1 graph set resolved {len(evidence.pairs)} of "
+            f"{BOUNDED_GRAPH_POOL['pairs']} pairs (intact={evidence.intact})"
+        )
+    return evidence.pairs, graph_retrieval.candidates_from(evidence.pairs)
+
+
+def _graph_embedder(model: Path) -> Any:
+    """The frozen local MiniLM, or a refusal — never the hashing provider.
+
+    `build_embedding_provider` is the released factory whose one rule is that it raises rather
+    than substituting. Reached through it rather than around it, because a graph number
+    produced by a hashing vector would carry the model's name over an arm that never ran.
+    """
+    from cognitive_os.config.memory_config import EmbeddingProviderConfiguration
+    from cognitive_os.infrastructure.embeddings import build_embedding_provider, minilm
+
+    manifest = minilm.read_manifest(model)
+    if manifest is None:
+        raise SystemExit(f"no usable local embedding model at {model}")
+    provider = build_embedding_provider(
+        EmbeddingProviderConfiguration(
+            provider_type="sentence_transformers",
+            model_id=minilm.MODEL_ID,
+            dimension=minilm.DIMENSION,
+            local_model_path=model,
+            local_model_digest=manifest["tree_digest"],
+        )
+    )
+    return provider, str(manifest["tree_digest"])
+
+
+async def bounded_graph_probes(
+    engine: Any,
+    dataset: str,
+    *,
+    probes: int,
+    warmup: int,
+    model: Path,
+    ef_search: int = 1_000,
+) -> dict:
+    """The §2.2d shape end to end: an ANN shortlist at 10^6, then the released bounded GED arm.
+
+    **What the two legs are.** The shortlist is a real ANN query against this dataset's
+    million-row corpus, cut to the frozen `vector_shortlist` of 20 — that is where the scale
+    enters. The expansion is `graph_retrieval.bounded_ged` under the frozen limits, over the
+    pairs those twenty rows name. The exit reads the sum, because the sum is the shape.
+
+    **The join between them is synthetic, and the record says so.** 22B authors no experience
+    corpus (§2.3), so a corpus row is associated with a released D1 pair by `row_id % 80`. The
+    association is deterministic and carries no information about either side, which is what
+    makes it honest: it decides *which* twenty graphs get expanded, never how good they are.
+    The number this produces is therefore a latency measurement and never a quality one, and no
+    22B exit reads graph quality — D1's usefulness floor is Gate D1's, still open, untouched.
+
+    **Cutoffs are reported beside the p95**, as `BOUNDED_GRAPH_READING.the_cutoff_trap`
+    requires: a budget cutoff returns a shorter list faster, so a recipe that cuts off more
+    looks quicker while answering less, and a p95 met with a rising cutoff count is a miss.
+    """
+    from cognitive_os.domain.experience_graph import ExperienceGraphQuery
+    from cognitive_os.experience import graph_retrieval
+
+    pairs, candidates = _graph_pool()
+    embed, model_digest = _graph_embedder(model)
+    by_pair_id = {pair.pair_id: pair for pair in pairs}
+    shortlist_width = int(BOUNDED_GRAPH_LIMITS.vector_shortlist)
+    dimension = int(DATASETS[dataset]["dimension"])
+    literals = probe_literals(dataset, warmup + probes + 1)
+    token = run_token()
+    # The pool's texts are embedded once and shared, exactly as the released benchmark does it:
+    # S21D3 measured re-embedding the pool per query as ~936 ms of the arm's 940 ms median, so a
+    # per-query re-embed would measure the cache's absence rather than the arm. The warmup
+    # probes fill it, which is part of what "warm" means for this shape.
+    cache: dict[str, tuple[float, ...]] = {}
+
+    totals: list[float] = []
+    shortlists: list[float] = []
+    expansions: list[float] = []
+    cold: dict[str, float] | None = None
+    cutoffs = timeouts = returned = 0
+    pool_sizes: set[int] = set()
+
+    async with engine.connect() as connection:
+        for index, literal in enumerate(literals):
+            started = perf_counter()
+            await connection.execute(text(f"SET LOCAL hnsw.ef_search = {ef_search}"))
+            rows = tuple(
+                (
+                    await connection.execute(
+                        text(
+                            f"SELECT row_id FROM cognitive_os.{corpus_table(dataset)} "
+                            f"WHERE dimension = {dimension} "
+                            f"ORDER BY (embedding::vector({dimension})) <=> '{literal}'::vector "
+                            f"LIMIT {shortlist_width}"
+                        )
+                    )
+                ).scalars()
+            )
+            shortlist_ms = (perf_counter() - started) * 1_000
+
+            shortlisted = list(dict.fromkeys(pairs[row_id % len(pairs)].pair_id for row_id in rows))
+            head = by_pair_id[shortlisted[0]]
+            query = ExperienceGraphQuery(
+                query_id=f"sprint-22b-graph:{dataset}:{index}:{token}",
+                query_text=head.failed.search_text(),
+                domain=head.domain,
+                task_signature=head.task_signature,
+                excluded_groups=(head.group,),
+            )
+            # Group exclusion before the arm, never inside it — the released pool discipline.
+            # The query's own pair leaves the pool, which is why a shortlist of twenty expands
+            # nineteen or fewer and why the record reports the sizes it actually saw.
+            pool = graph_retrieval.eligible_pool(
+                tuple(c for c in candidates if c.pair_id in set(shortlisted)), query
+            )
+            pool_sizes.add(len(pool))
+            expansion_started = perf_counter()
+            result = await graph_retrieval.bounded_ged(
+                query,
+                pool,
+                head.failed,
+                limits=BOUNDED_GRAPH_LIMITS,
+                embed=embed,
+                cache=cache,
+            )
+            expansion_ms = (perf_counter() - expansion_started) * 1_000
+            total_ms = (perf_counter() - started) * 1_000
+
+            if index == 0:
+                cold = {
+                    "total_ms": round(total_ms, 3),
+                    "ann_shortlist_ms": round(shortlist_ms, 3),
+                    "graph_expansion_ms": round(expansion_ms, 3),
+                }
+                continue
+            if index <= warmup:
+                continue
+            totals.append(total_ms)
+            shortlists.append(shortlist_ms)
+            expansions.append(expansion_ms)
+            cutoffs += result.budget_cutoffs
+            timeouts += result.timed_out
+            returned += len(result.entries)
+
+    percentiles = _percentiles(totals)
+    return {
+        "dataset": dataset,
+        "shape": "bounded_graph_assisted",
+        "arm": graph_retrieval.BOUNDED_GED,
+        "configuration": bounded_graph_configuration(),
+        "pool": {
+            **BOUNDED_GRAPH_POOL,
+            "shortlist_width": shortlist_width,
+            "expanded_pool_sizes": sorted(pool_sizes),
+            "join": "row_id % 80, deterministic and information-free",
+        },
+        "embedding_model_digest": model_digest,
+        "embedding_cache_shared_across_probes": True,
+        "cold_first_probe": cold,
+        "warmup_probes_discarded": warmup,
+        **percentiles,
+        "ann_shortlist_leg": _percentiles(shortlists),
+        "graph_expansion_leg": _percentiles(expansions),
+        "budget_cutoffs": cutoffs,
+        "per_pair_timeouts": timeouts,
+        "mean_results_returned": round(returned / len(totals), 3) if totals else None,
+        "reads_an_exit": "p95 <= 500 ms",
+        "exit_threshold_ms": BOUNDED_GRAPH_READING["exit_ms"],
+        "meets_exit": percentiles["p95_ms"] <= float(BOUNDED_GRAPH_READING["exit_ms"]),
+        "prior_measurement_ms": BOUNDED_GRAPH_READING["only_prior_measurement_ms"],
+        "limitation": (
+            "the graph half expands the released D1 pairs, joined to this corpus by row_id % "
+            "80: §2.3 forbids 22B authoring a corpus, so the 10^6 scale enters through the ANN "
+            "shortlist leg and the expansion leg's cost is a property of the released 80-pair "
+            "set. A latency measurement of the released arm, never a quality one"
+        ),
+        "measures_quality": False,
     }
 
 
@@ -1618,6 +1956,207 @@ async def _corpus(dataset: str, rows: int, batch: int, timeout: float) -> dict:
     }
 
 
+#: The seven shapes in the order W2 measures them. §3.2: "Schedule it first inside W2, because
+#: if it misses, the remaining waves proceed unchanged toward an honest partial."
+ENVELOPE_ORDER = (
+    "bounded_graph_assisted",
+    "ann",
+    "filtered_ann",
+    "exact_vector",
+    "hybrid",
+    "temporal",
+    "stale_item",
+)
+
+CORPUS_SHAPES = ("exact_vector", "ann", "filtered_ann")
+GOVERNED_SHAPES = ("hybrid", "temporal", "stale_item")
+
+
+async def server_memory_reading(engine: Any, dataset: str) -> dict:
+    """What this host can hold, beside what it is being asked to hold.
+
+    Every latency in this envelope is a claim about the declared reference host (§1.4), and the
+    part of that host which decides an ANN latency is not the disk — it is how much of a
+    3.8 GiB index the server can keep resident. The reference host runs the released compose
+    file's PostgreSQL defaults, so `shared_buffers` is 128 MB against an index thirty times
+    that. This block is that arithmetic, sealed beside the numbers it explains.
+
+    It is a *reading*, not a knob 22B turns. Raising `shared_buffers` after a latency exists
+    would be tuning a configuration against an exit, which §2.3's last bullet forbids by name,
+    and the host record seals PostgreSQL's settings precisely so that a quiet change to them
+    cannot pass as the same host.
+    """
+    index = f"{corpus_table(dataset)}_hnsw_{int(DATASETS[dataset]['dimension'])}"
+    async with engine.connect() as connection:
+        # W2-F1: this rendered `setting + unit` with no separator, and PostgreSQL's unit for
+        # `shared_buffers` is itself "8kB" — so 16384 blocks of 8 kB came out as the string
+        # "163848kB", a number that reads as 160 MB, is actually 128 MB, and is wrong either
+        # way. A settings block whose whole job is to state a constraint has to state it in
+        # units a reader can check, so the separator is explicit and the bytes are computed
+        # below rather than parsed back out of this string.
+        settings = {
+            name: f"{setting} {unit}" if unit else str(setting)
+            for name, setting, unit in (
+                await connection.execute(
+                    text(
+                        "SELECT name, setting, unit FROM pg_settings WHERE name IN "
+                        "('shared_buffers','effective_cache_size','work_mem',"
+                        "'maintenance_work_mem','max_parallel_workers',"
+                        "'max_parallel_workers_per_gather','random_page_cost')"
+                    )
+                )
+            ).all()
+        }
+        shared_buffers_bytes = int(
+            await connection.scalar(
+                text("SELECT setting::bigint * 8192 FROM pg_settings WHERE name='shared_buffers'")
+            )
+            or 0
+        )
+        index_bytes = int(
+            await connection.scalar(
+                text("SELECT pg_relation_size(CAST(:name AS regclass))"),
+                {"name": f"cognitive_os.{index}"},
+            )
+            or 0
+        )
+        table_bytes = int(
+            await connection.scalar(
+                text("SELECT pg_total_relation_size(CAST(:name AS regclass))"),
+                {"name": f"cognitive_os.{corpus_table(dataset)}"},
+            )
+            or 0
+        )
+    memory = {
+        key: int(value.split()[0])
+        for key, _, value in (
+            line.partition(":") for line in Path("/proc/meminfo").read_text().splitlines()
+        )
+        if key in {"MemTotal", "MemAvailable"}
+    }
+    return {
+        "settings": settings,
+        "shared_buffers_bytes": shared_buffers_bytes,
+        "index_bytes": index_bytes,
+        "table_total_bytes": table_bytes,
+        "index_over_shared_buffers": (
+            round(index_bytes / shared_buffers_bytes, 1) if shared_buffers_bytes else None
+        ),
+        "host_memory_total_kib": memory.get("MemTotal"),
+        "host_memory_available_kib": memory.get("MemAvailable"),
+        "index_fits_in_host_memory": index_bytes < int(memory.get("MemTotal", 0)) * 1024,
+        "reading": (
+            "the index does not fit in the server's buffer pool and does fit in host memory, so "
+            "a warm number here is served by the Linux page cache rather than by shared_buffers"
+        ),
+        "not_tuned_by_22b": True,
+        "why_not_tuned": (
+            "§2.3 forbids tuning a pre-registered configuration after its first measured number "
+            "exists, and the sealed host record makes a PostgreSQL settings change a host "
+            "supersession rather than an adjustment"
+        ),
+    }
+
+
+async def _envelope(
+    dataset: str, *, shapes: tuple[str, ...], probes: int, warmup: int, model: Path | None
+) -> dict:
+    """One restart, then the named shapes over one dataset, at the pre-registered probe counts.
+
+    The restart is per invocation and not per shape: §2.2b defines warm as "index built,
+    PostgreSQL restarted, then 100 discarded warmup probes, then the measured probes", and each
+    shape runs its own warmup after the restart. Restarting between shapes would also be
+    defensible; restarting *never* would not, which is the one thing this refuses to do.
+    """
+    url = os.environ.get("COGOS_DATABASE_ADMIN_URL")
+    if not url:
+        raise SystemExit("COGOS_DATABASE_ADMIN_URL is required")
+    unknown = tuple(shape for shape in shapes if shape not in QUERY_SHAPES)
+    if unknown:
+        raise SystemExit(f"not a pre-registered shape: {', '.join(unknown)}")
+    if "bounded_graph_assisted" in shapes and model is None:
+        raise SystemExit("--model is required for the bounded graph-assisted shape")
+
+    restart = restart_postgres()
+    engine = create_postgres_engine(url, pool_size=2, max_overflow=0, command_timeout_seconds=7_200)
+    measured: dict[str, Any] = {}
+    diagnostics: dict[str, Any] = {}
+    try:
+        memory = await server_memory_reading(engine, dataset)
+        for shape in ENVELOPE_ORDER:
+            if shape not in shapes:
+                continue
+            if shape in CORPUS_SHAPES:
+                measured[shape] = await probe_corpus(
+                    engine, dataset, shape=shape, probes=probes, warmup=warmup
+                )
+                if shape == "filtered_ann":
+                    # W2-F2. Beside the pre-registered number, never instead of it.
+                    diagnostics["filtered_ann_index_forced"] = await probe_corpus(
+                        engine,
+                        dataset,
+                        shape=shape,
+                        probes=probes,
+                        warmup=warmup,
+                        force_index=True,
+                    )
+            elif shape in GOVERNED_SHAPES:
+                measured[shape] = await governed_probe_series(
+                    engine, shape, probes=probes, warmup=warmup, dataset=dataset
+                )
+            else:
+                assert model is not None
+                measured[shape] = await bounded_graph_probes(
+                    engine, dataset, probes=probes, warmup=warmup, model=model
+                )
+    finally:
+        await engine.dispose()
+
+    return {
+        "dataset": dataset,
+        "corpus_rows": 1_000_000,
+        "protocol": PROBE_PROTOCOL,
+        "restart": restart,
+        "server_memory": memory,
+        "shapes_measured": sorted(measured),
+        "shapes_measured_count": len(measured),
+        "shapes_in_the_pre_registration": sorted(QUERY_SHAPES),
+        "measured": measured,
+        "diagnostics": diagnostics,
+        "diagnostics_read_no_exit": True,
+        "probes_per_shape": probes,
+        "warmup_per_shape": warmup,
+        "recipes_hash": recipes_hash(),
+    }
+
+
+async def _recall(dataset: str, probes: int) -> dict:
+    """The recall exit's own run: an exact scan per probe, never sampled (§4).
+
+    Separate from `--envelope` because it is the sprint's most expensive measurement and the one
+    a rerun must be able to reach without re-measuring six shapes to get to it.
+    """
+    url = os.environ.get("COGOS_DATABASE_ADMIN_URL")
+    if not url:
+        raise SystemExit("COGOS_DATABASE_ADMIN_URL is required")
+    engine = create_postgres_engine(url, pool_size=2, max_overflow=0, command_timeout_seconds=7_200)
+    started = perf_counter()
+    try:
+        record = await recall_at(engine, dataset, probes=probes)
+    finally:
+        await engine.dispose()
+    threshold = 0.95
+    record["threshold"] = threshold
+    record["meets_exit"] = (
+        bool(DATASETS[dataset]["reads_the_recall_exit"])
+        and record["recall_at_k"] is not None
+        and record["recall_at_k"] >= threshold
+    )
+    record["seconds"] = round(perf_counter() - started, 3)
+    record["recipes_hash"] = recipes_hash()
+    return record
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--recipes", action="store_true", help="print the frozen recipes")
@@ -1627,6 +2166,17 @@ def main() -> int:
     parser.add_argument("--incremental", action="store_true", help="insert into the built index")
     parser.add_argument("--restore-corpus", action="store_true", help="W1-F6 repair")
     parser.add_argument("--restore-check", action="store_true", help="the §2.2e checklist")
+    parser.add_argument("--envelope", action="store_true", help="the W2 retrieval envelope")
+    parser.add_argument("--recall", action="store_true", help="recall@10 against an exact scan")
+    parser.add_argument(
+        "--shape",
+        action="append",
+        choices=sorted(QUERY_SHAPES),
+        help="restrict --envelope to one shape; repeatable, defaults to all seven",
+    )
+    parser.add_argument("--probes", type=int, default=PROBE_PROTOCOL["measured_probes"])
+    parser.add_argument("--warmup", type=int, default=PROBE_PROTOCOL["warmup_probes"])
+    parser.add_argument("--model", type=Path, help="the frozen local MiniLM the graph arm needs")
     parser.add_argument("--incremental-rows", type=int, default=10_000)
     parser.add_argument("--ingest-items", type=int, default=50_000)
     parser.add_argument("--ingest-start", type=int, default=1_000)
@@ -1645,6 +2195,18 @@ def main() -> int:
 
     if arguments.recipes:
         payload: dict[str, Any] = {"recipes": RECIPES, "recipes_hash": recipes_hash()}
+    elif arguments.envelope:
+        payload = asyncio.run(
+            _envelope(
+                arguments.dataset,
+                shapes=tuple(arguments.shape or sorted(QUERY_SHAPES)),
+                probes=arguments.probes,
+                warmup=arguments.warmup,
+                model=arguments.model,
+            )
+        )
+    elif arguments.recall:
+        payload = asyncio.run(_recall(arguments.dataset, arguments.probes))
     elif arguments.restore_check:
         payload = asyncio.run(_restore_check())
     elif arguments.restore_corpus:
@@ -1663,7 +2225,9 @@ def main() -> int:
         payload = asyncio.run(_slice(arguments.items, arguments.dataset))
         payload["recipes_hash"] = recipes_hash()
     else:
-        parser.error("choose --recipes, --slice, --corpus, --ingest or --seed-artifact")
+        parser.error(
+            "choose --recipes, --slice, --corpus, --ingest, --envelope, --recall or --seed-artifact"
+        )
 
     encoded = json.dumps(payload, indent=1, sort_keys=True, ensure_ascii=False) + "\n"
     if arguments.output:

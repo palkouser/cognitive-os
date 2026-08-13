@@ -307,6 +307,34 @@ def _write(host_id: str) -> None:
     )
 
 
+#: W2-F3. `MemTotal` is not bit-stable across a reboot: it is physical RAM minus whatever the
+#: kernel reserved on that boot, so it moves by a page or two for reasons that have nothing to
+#: do with the machine. Measured here: the host rebooted between W1 and W2 and came back with
+#: 48 199 292 kB against the 48 199 296 kB both host records sealed — **four kilobytes**, on a
+#: 46 GiB machine.
+#:
+#: An exact-equality check on that quantity cannot tell a reboot from a hardware change, and
+#: the two demand opposite responses: one is nothing, the other invalidates every number in the
+#: sprint. Left as it was, the check would have forced a host supersession that falsely said W1
+#: and W2 ran on different machines — devaluing the one supersession that was real (W1-F5).
+#:
+#: So the *comparator* is fixed and the *record* is not touched: both host files stay
+#: byte-identical, `invariants_hash` still reproduces over the sealed values, and the exact
+#: measured number is still printed. One mebibyte is the line: 256x the observed drift, and
+#: three orders of magnitude below the smallest change that could be a real one — a removed
+#: DIMM or a resized machine moves gigabytes, never kilobytes.
+MEMORY_TOLERANCE_KIB = 1024
+
+
+def _memory_within_tolerance(measured: Any, sealed: Any) -> bool:
+    """True when two memory readings differ only by kernel bookkeeping (W2-F3)."""
+    if not isinstance(measured, dict) or not isinstance(sealed, dict):
+        return False
+    if set(measured) != set(sealed):
+        return False
+    return all(abs(int(measured[key]) - int(sealed[key])) <= MEMORY_TOLERANCE_KIB for key in sealed)
+
+
 def _check(host_id: str) -> None:
     """Is this still the declared host? Recomputed, never read back as a literal (W4-F2)."""
     sealed = json.loads(HOSTS[host_id].read_text(encoding="utf-8"))
@@ -319,6 +347,10 @@ def _check(host_id: str) -> None:
         key
         for key in set(measured) | set(sealed["invariants"])
         if measured.get(key) != sealed["invariants"].get(key)
+        and not (
+            key == "memory"
+            and _memory_within_tolerance(measured.get(key), sealed["invariants"].get(key))
+        )
     )
     if differences:
         raise SystemExit(
@@ -327,9 +359,19 @@ def _check(host_id: str) -> None:
             + ". A measurement taken here is a measurement on a different machine; re-seal "
             "under a new host id and say so, never edit this record"
         )
-    if _sha256(_canonical(measured)) != sealed["invariants_hash"]:
+    # The hash is the record's own consistency: it must reproduce over the values that were
+    # sealed. It is deliberately *not* recomputed over the live reading — that comparison is
+    # the difference check above, which is the one that carries W2-F3's tolerance. Hashing the
+    # live values here would re-impose exact equality through the back door and reintroduce
+    # the defect one line below its fix.
+    if _sha256(_canonical(sealed["invariants"])) != sealed["invariants_hash"]:
         raise SystemExit("the invariants hash does not reproduce")
 
+    tolerated = {
+        key: {"sealed": sealed["invariants"][key], "measured": measured[key]}
+        for key in sealed["invariants"]
+        if key in measured and measured[key] != sealed["invariants"][key]
+    }
     print(
         json.dumps(
             {
@@ -338,6 +380,10 @@ def _check(host_id: str) -> None:
                 "invariants_hash": sealed["invariants_hash"],
                 "same_host": True,
                 "recomputed": True,
+                # Never silent: a tolerated difference is printed with both values, so the
+                # allowance is auditable rather than a check that quietly stopped checking.
+                "tolerated_differences": tolerated,
+                "memory_tolerance_kib": MEMORY_TOLERANCE_KIB,
             },
             indent=1,
             sort_keys=True,

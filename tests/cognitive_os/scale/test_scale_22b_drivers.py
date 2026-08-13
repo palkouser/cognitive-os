@@ -25,10 +25,14 @@ whose record `test_sprint_22b_w0_evidence.py` binds.
 from __future__ import annotations
 
 import importlib.util
+import json
+import os
 import time
 from itertools import islice
 from pathlib import Path
 from typing import Any
+
+import pytest
 
 REPOSITORY = Path(__file__).resolve().parents[3]
 DRIVERS = REPOSITORY / "scripts/scale_22b.py"
@@ -44,6 +48,10 @@ W2_SHAPES = {
     "stale_item",
     "temporal",
 }
+
+
+def _canonical(value: Any) -> bytes:
+    return json.dumps(value, indent=1, sort_keys=True, ensure_ascii=False).encode("utf-8")
 
 
 def _module() -> Any:
@@ -220,3 +228,40 @@ def test_the_restore_checklist_names_the_live_learned_artifact() -> None:
     module = _module()
     assert len(module.RESTORE_CHECKLIST) == 4
     assert module.LIVE_LEARNED_ARTIFACT["artifact_hash"].startswith("afbdb7c0")
+
+
+def test_the_envelope_order_covers_every_shape_and_schedules_the_graph_first() -> None:
+    """§3.2: "Schedule it first inside W2." An ordering is a schedule, so it is asserted."""
+    module = _module()
+    assert set(module.ENVELOPE_ORDER) == W2_SHAPES
+    assert len(module.ENVELOPE_ORDER) == len(W2_SHAPES)
+    assert module.ENVELOPE_ORDER[0] == "bounded_graph_assisted"
+    assert (
+        set(module.CORPUS_SHAPES) | set(module.GOVERNED_SHAPES) | {"bounded_graph_assisted"}
+        == W2_SHAPES
+    )
+
+
+def test_the_graph_pool_is_outside_the_frozen_recipes() -> None:
+    """The same rule `LIVE_LEARNED_ARTIFACT_SOURCE` follows: a pointer is not a reading.
+
+    §2.2d freezes the bounded configuration. Which released graph set the pairs are read out
+    of is an operational detail, and putting it in `RECIPES` would move the recipes hash the
+    pre-registration binds without any reading having changed.
+    """
+    module = _module()
+    assert module.BOUNDED_GRAPH_POOL["pairs"] == 80
+    assert "d1" in module.BOUNDED_GRAPH_POOL["graph_set_id"]
+    serialised = _canonical(module.RECIPES)
+    assert b"BOUNDED_GRAPH_POOL" not in serialised
+    assert module.BOUNDED_GRAPH_POOL["artifact_root"].encode() not in serialised
+
+
+def test_the_warm_protocol_refuses_to_guess_the_container() -> None:
+    """§2.2b's restart is a real restart, and the thing it restarts is never inferred."""
+    module = _module()
+    for name in ("COGOS_POSTGRES_TOOL_CONTAINER", "COGOS_DATABASE_ADMIN_URL"):
+        os.environ.pop(name, None)
+    with pytest.raises(SystemExit) as raised:
+        module.restart_postgres()
+    assert "COGOS_POSTGRES_TOOL_CONTAINER" in str(raised.value)

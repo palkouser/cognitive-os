@@ -15,6 +15,13 @@
   whole suite runs green against the million-row store. **Six findings and two decisions**, all
   handled inside the wave; the sharpest is that the host W0 declared could not build the index
   the sprint's exits are defined over. **W0 detail follows first.**
+- **W2 closed.** The retrieval envelope is measured on both million-row corpora — seven shapes,
+  warm and cold, **7 000 measured probes across fourteen cells** — and **all three exit criteria
+  W2 decides are met**: recall@10 **0.9636** against 0.95, warm filtered ANN p95 **156.7 ms**
+  against 300, and the bounded graph-assisted p95 **234.4 ms** against 500, the number §3.2
+  called the sprint's hardest. **Four of the five exits are now decided and met.** Three
+  findings, all in the measurement machinery, all fixed inside the wave; the sharpest is that
+  the filtered-ANN exit is met by a query the planner answers without the index.
 - W1 wave commit `f29aafb`; CI run **`31614344537`** on that exact head, **30 of 30 jobs
   successful**.
 - W0 wave commit `613b546`, pull request **#233** against protected `main`; CI run
@@ -36,6 +43,258 @@
   bound to, and freezes every reading that could bend once numbers exist. Gate L2 and Gate D1
   are untouched: 22B opens no condition and closes none. W2-A1 and W3-A1 are carried forward by
   name, unresolved on purpose.
+
+---
+
+## W2 outcome — the retrieval envelope, and the sprint's hardest number
+
+Seven shapes, two datasets, **fourteen measured cells at five hundred probes each — 7 000
+measured probes**, every one of them after a real database restart and its own hundred
+discarded warmups. **All three exit criteria W2 decides are met.** With W1's governed-ingest
+number, **four of the five exits are now decided and met**; only W3's restore checklist at
+scale remains.
+
+### The three exits W2 decides
+
+| Exit | Threshold | Measured | Decided by | Verdict |
+|---|---|---|---|---|
+| recall@10, clustered 10^6 | ≥ 0.95 | **0.9636** | clustered, 500 probes | **met** |
+| warm filtered ANN p95 | ≤ 300 ms | **156.7 ms** | clustered (worse of two) | **met** |
+| bounded graph-assisted p95 | ≤ 500 ms | **234.4 ms** | uniform (worse of two) | **met** |
+
+**The two latency exits are read on the worse of the two datasets, and that is a reading this
+wave had to make.** §2.2a froze a dataset for the recall floor and only for the recall floor —
+the allocation states the two latency numbers without naming a dataset, and W0 did not add one.
+That left a choice still open after the numbers existed, which is exactly the situation §2.2
+exists to prevent. The record takes the worse reading, reports both, and says why: an exit met
+by picking the friendlier dataset afterwards would be met by choosing what it reads.
+
+### The envelope, warm and cold
+
+Warm is the pre-registered protocol: index built, PostgreSQL restarted, 100 discarded probes,
+then 500 measured. Cold is the first probe after the restart, never averaged into the warm
+distribution.
+
+| clustered 10^6 | warm p50 | warm p95 | warm max | cold |
+|---|---:|---:|---:|---:|
+| exact_vector | 1201.8 ms | 1243.5 ms | 1345.8 ms | 1230.2 ms |
+| ann | 40.7 ms | 44.2 ms | 56.7 ms | 55.3 ms |
+| filtered_ann | 151.3 ms | **156.7 ms** | 165.0 ms | 157.0 ms |
+| hybrid | 87.5 ms | 92.1 ms | 290.4 ms | 103.3 ms |
+| temporal | 22.5 ms | 25.5 ms | 30.7 ms | 23.3 ms |
+| stale_item | 1.4 ms | 1.5 ms | 1.6 ms | 2.9 ms |
+| bounded_graph_assisted | 74.7 ms | **158.4 ms** | 259.2 ms | 479.1 ms |
+
+| uniform 10^6 | warm p50 | warm p95 | warm max | cold |
+|---|---:|---:|---:|---:|
+| exact_vector | 1202.3 ms | 1220.9 ms | 1258.4 ms | 2612.6 ms |
+| ann | 155.6 ms | 186.5 ms | 195.4 ms | 232.9 ms |
+| filtered_ann | 149.8 ms | 153.8 ms | 159.9 ms | 663.5 ms |
+| hybrid | 88.5 ms | 92.7 ms | 295.8 ms | 107.4 ms |
+| temporal | 23.3 ms | 28.0 ms | 31.4 ms | 26.7 ms |
+| stale_item | 1.4 ms | 1.5 ms | 1.8 ms | 2.8 ms |
+| bounded_graph_assisted | 149.7 ms | 234.4 ms | 406.4 ms | **4201.5 ms** |
+
+**The largest number in this wave is a cold one, and no exit reads it.** The uniform graph
+shape's first probe after a restart took 4.2 seconds, of which **3 761.9 ms was the ANN
+shortlist leg** — the first touch of a 3.81 GiB index whose pages are in neither the buffer
+pool nor the page cache. §2.2b defines the exits on the warm protocol, so this closes nothing
+and misses nothing. It is still the number an operator restarting under load would meet first,
+and it belongs in 22C's budget rather than in a footnote.
+
+**Three shapes do not vary with the dataset and say so on their own records.** `hybrid`,
+`temporal` and `stale_item` answer over the governed memory store, which both datasets share;
+the corpus tables the million rows live in are not what they read. They were still measured
+once per dataset, because the protocol is per dataset and a shape measured under only one
+restart would be the one shape whose warm state nobody re-established.
+
+### The graph-assisted number, against the only prior measurement
+
+§3.2 called this the sprint's hardest number: 500 ms against a lineage whose only measured
+value was **1 788.9 ms**, at a fraction of the scale. It came in at **158.4 ms clustered and
+234.4 ms uniform — 7.6× to 11.3× faster than D1, at ten times the corpus**, with **zero budget
+cutoffs and zero per-pair timeouts on either dataset**.
+
+That zero is the number that makes the p95 mean something. `BOUNDED_GRAPH_READING`'s
+`the_cutoff_trap` names the failure in advance: a budget cutoff returns a shorter list faster,
+so a recipe that cuts off more looks quicker while answering less, and D1 reached 1 788.9 ms
+with sixty queries cut off. 22B cut off none, returned a full ten results on every probe, and
+the two legs are reported separately — shortlist p95 57.9 ms clustered / 117.0 ms uniform,
+expansion p95 120.1 ms / 123.3 ms.
+
+**The speedup is inherited, not achieved.** Two released changes did it, and neither was made
+by this sprint: S21D4-041 replaced the per-pair wall clock with `GED_ITERATION_BUDGET`, whose
+first distance arrives in ~4.5 ms, and S21D3 made the candidate embedding cache the caller's,
+having measured pool re-embedding as roughly 936 ms of the arm's 940 ms median. 22B measured
+the arm as it now exists and tuned nothing: the sealed `limits_hash` on both measured records
+is the pre-registration's, byte for byte.
+
+**What this number is and is not.** It is a latency measurement of the released arm at the
+frozen configuration. The graph half expands the released 80-pair D1 set, joined to the corpus
+by `row_id % 80` — §2.3 forbids 22B authoring a corpus, so the 10^6 scale enters through the
+shortlist leg and the expansion leg's cost is a property of the released set. **It measures no
+quality at all**, and Gate D1's usefulness floor is untouched and still open.
+
+### Recall at a million, and what the 10^5 record does not say
+
+**0.9636 against a 0.95 floor, on 500 probes with an exact-scan ground truth per probe.** Met,
+with 1.4 points of headroom — the thinnest margin of the four exits decided so far.
+
+The 10^5 envelope recorded 0.992 on the same generator, and the temptation is to read a decay
+from 0.992 to 0.9636 caused by ten times the rows. **That comparison confounds two changes**:
+the corpus grew tenfold *and* the metric tightened from recall@20 to recall@10. A smaller `k`
+is strictly harder — the ground-truth set is half the size and each miss costs ten points
+instead of five. The honest statement is that recall@10 at 10^6 is 0.9636 and clears the floor;
+how much of the distance from 0.992 belongs to the corpus and how much to `k` is not decided by
+this evidence, and 22B does not pretend otherwise.
+
+The uniform dataset came in at **0.0854**, against 0.496 at 10^5. It is adversarial by
+construction, it reads no exit, and it is reported in full — the same discipline the D-series
+applied to non-selectable cells. Independent gaussians in 768 dimensions have no neighbourhood
+structure for an ANN graph to find, and at ten times the corpus there is ten times as much
+nothing to search.
+
+### How the envelope scaled
+
+| | 10^5 (sealed 2026-07-25) | 10^6 (this wave) | factor |
+|---|---:|---:|---:|
+| exact scan p95, clustered | 329.3 ms | 1243.5 ms | 3.78× |
+| exact scan p95, uniform | 328.8 ms | 1220.9 ms | 3.71× |
+| ANN p95, clustered | 16.5 ms | 44.2 ms | 2.68× |
+| ANN p95, uniform | 88.0 ms | 186.5 ms | 2.12× |
+
+**Ten times the rows cost under four times the exact scan and under three times the ANN.** The
+exact scan is sublinear because it parallelises across workers; the ANN is sublinear because
+HNSW's search cost grows with the logarithm of the corpus, which is the property the index is
+chosen for and the first time this programme has measured it holding at 10^6.
+
+### The host constraint every number carries
+
+Every latency above is a property of the declared reference host, and the part of that host
+which decides an ANN latency is not its disk — it is how much of a 3.81 GiB index the server
+can hold. **The reference host runs the released compose file's PostgreSQL defaults:
+`shared_buffers` is 128 MB, so the index is 30.5× the buffer pool.** It does fit in the host's
+46 GiB of RAM, which is why the warm numbers are what they are: they are served by the Linux
+page cache, not by PostgreSQL's. Every W2 envelope record seals that arithmetic beside the
+numbers it explains.
+
+**22B does not raise it, and the reason is not timidity.** W0 sealed the PostgreSQL memory
+settings into the host *invariants* precisely so this could not be quietly adjusted: the sealed
+10^5 envelope this sprint extends was measured under these settings, so raising them would buy
+better numbers at the cost of the only comparison the sprint has. §2.3 forbids tuning a
+pre-registered configuration after its first measured number exists, and the host record makes
+a settings change a **supersession**, not an adjustment. The constraint is recorded as a
+measured reading, the full contract was executed under it, and every exit was met anyway. What
+this host cannot tell anyone is what the envelope looks like on a machine sized for the index —
+that is 23's portability question, and §4's "one host is one host" already says so.
+
+---
+
+## W2 findings — three defects, every one in the measurement machinery
+
+Not one of them was in the released system. All three were in the apparatus this wave built or
+inherited, which is what the vertical-slice discipline predicts and what a measurement sprint
+should expect to find.
+
+### W2-F1 — the settings block reported 128 MB as "163848kB"
+
+The server-memory reading rendered `setting + unit` with no separator, and PostgreSQL's unit
+for `shared_buffers` is itself `8kB`. Sixteen thousand three hundred and eighty-four blocks of
+eight kilobytes came out as the string `163848kB`: a number that reads as 160 MB, is actually
+128 MB, and is wrong either way. A block whose entire job is to state a constraint has to state
+it in units a reader can check, so the separator is explicit and the byte count is computed
+from `pg_settings` rather than parsed back out of the string. Caught in the first smoke run,
+before any measured number existed.
+
+### W2-F2 — the planner declines the HNSW index for the frozen filtered predicate
+
+**The filtered-ANN exit is met at 156.7 ms, and the query that met it never touched the ANN
+index.** `probe_corpus` reads the plan back rather than trusting it — W0 built it that way —
+and `index_scan_confirmed` came back **false on both datasets** while `ann` came back true.
+PostgreSQL answers the frozen predicate with a parallel sequential scan.
+
+The planner is not obviously wrong and it is not obviously right. Forced onto the index with
+`enable_seqscan = off`, the same statement runs warm at **38.7 ms clustered and 108.9 ms
+uniform** — 4.0× and 1.4× faster than the plan it chose. The cost model's excuse is structural:
+pgvector's HNSW scan applies the filter *after* ordering, so the planner prices a filtered
+top-k as a long ordered walk and declines it, and on the uniform geometry — where the ANN has
+to work hardest — its choice is nearly as good as the index path anyway.
+
+The response is the one §2.3 leaves available and no other. The exit reads the pre-registered
+query exactly as frozen, planner's choice included, because a number that had to be forced onto
+a plan is a claim about a plan nobody's query will get. **A second pass runs beside it, labelled
+a diagnostic, reading no exit**, so the gap between what the planner chose and what the
+substrate can do is a measured number instead of an opinion. And the limitation travels on the
+record: at 10^6 with a 10 % pre-filter, "filtered ANN" on this substrate is a filtered scan.
+That is a finding for 22C's index strategy, not a reason to re-freeze the predicate.
+
+### W2-F3 — the host check called a four-kilobyte reboot a different machine
+
+`host_record_22b.py --check` refused: `the host has drifted … memory`. The machine had rebooted
+at 06:41, and `MemTotal` came back **48 199 292 kB against the 48 199 296 kB both host records
+sealed — four kilobytes**, on a 46 GiB bare-metal host. `MemTotal` is physical RAM minus
+whatever the kernel reserved on that boot; it is not bit-stable across one.
+
+An exact-equality check on that quantity cannot tell a reboot from a hardware change, and the
+two demand opposite responses. Left alone, it would have forced a **third host record** whose
+change log said "memory" and meant nothing — falsely asserting that W1 and W2 ran on different
+machines, and devaluing the one supersession that was real. Superseding was the wrong answer
+here for exactly the reason it was the right answer in W1-F5: **W1-F5 changed the machine's
+behaviour; a reboot did not.**
+
+So the *comparator* was fixed and the *record* was not touched. Both host files remain
+byte-identical, `invariants_hash` still reproduces over the sealed values, and the check now
+allows **one mebibyte** on the memory group — 256× the observed drift, three orders of
+magnitude below a removed DIMM or a resized machine. A tolerated difference is **printed with
+both values on every run**, so the allowance is auditable rather than a check that quietly
+stopped checking, and two tests hold the line: one asserts a four-kilobyte drift passes, the
+other that a four-gibibyte drift still fails.
+
+---
+
+## W2 evidence index
+
+| Record | SHA-256 |
+|---|---|
+| `sprint-22b-w2-envelope.json` | `ac2cb734317cccaf…` |
+| `sprint-22b-w2-envelope-clustered.json` | `ae81e6288305cd1d…` |
+| `sprint-22b-w2-envelope-uniform.json` | `469f395346d09f54…` |
+| `sprint-22b-w2-recall-clustered.json` | `fe178fe5be4e1080…` |
+| `sprint-22b-w2-recall-uniform.json` | `664167c85c97c013…` |
+
+`sprint-22b-w2-envelope.json` is assembled, never measured: `scripts/envelope_22b.py` reads the
+four measurement records, counts the coverage matrix against the pre-registered shape list,
+derives each exit reading from one named field of one named record, and carries every
+limitation its sources sealed rather than paraphrasing them. Its `--check` rebuilds the whole
+document from those sources and refuses any difference, and a test feeds it a tampered copy to
+prove the refusal is real. Sealed content hash
+`73313c4ddf148ae38fc025a1c4332a730922ef09b1c6ce13cba476af9c1e5ec7`.
+
+The driver re-binding for W2 is `sprint-22b-driver-rebind.json`, from `c295892ec5bd6d62…` to
+`a1d03d081bc1accd…`: the W2 drivers are new measurement code, and the executed proof shows
+3 200 drawn rows identical across both implementations, `recipes_hash` unchanged at
+`c99ef5e5…`, and the seven shapes unchanged. **The recipes hash has not moved since W0.**
+
+## W2 validation
+
+`ruff check` and `ruff format --check` with `ruff.cognitive-os.toml` over `src tests scripts
+infra`: clean. `mypy src/cognitive_os`: no issues in 637 source files. `bandit -r
+src/cognitive_os`: no new findings. `python -m cognitive_os.schemas.export --check` and
+`check_repository_language.sh`: passed. `pre_registration_22b.py --check`,
+`host_record_22b.py --check` and `envelope_22b.py --check`: **each run twice, identical output
+both times** (22A W4-F3). `pre_registration_22b.py --check-chronology` accepts the W2 envelope
+and the re-binding: both carry the publication's SHA-256 and both postdate it. Full suite
+against the million-row store: **4 340 passed, 206 skipped** — 25 more tests than W1, none of
+them a released assertion that had to change.
+
+## What W3 inherits
+
+A measured envelope for all seven shapes on both million-row corpora, with the cold numbers
+recorded beside the warm ones — which is what makes W4's post-restore re-measurement a
+regression test rather than a fresh measurement. **Four of five exit criteria decided and met.**
+Two corpora untouched by this wave: W2 only read them, so W3 begins on exactly the store W1
+sealed and W2 measured. And three open questions it does not have to answer but should carry:
+the filtered shape's plan choice, the 4.2-second cold ANN, and a recall margin of 1.4 points.
 
 ---
 
