@@ -391,6 +391,10 @@ because the workflow triggers only on pushes to `main` and on pull requests, so 
 receives no CI at all until one is open — which is why every sprint since 22A carries a PR
 number, and why a wave that only pushed would have reported "green" against nothing.
 
+Recording that handle moved the wave head, so the head this wave closes on has its own run:
+[`31825973602`](https://github.com/palkouser/cognitive-os/actions/runs/31825973602), head
+`04c4e8b180d5299cd22dcda609e67a8d026e5763`, **30 of 30 successful**, clean working tree.
+
 ---
 
 ## What W1 inherits
