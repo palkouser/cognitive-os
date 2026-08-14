@@ -2384,6 +2384,18 @@ CORPUS_SHAPES = ("exact_vector", "ann", "filtered_ann")
 GOVERNED_SHAPES = ("hybrid", "temporal", "stale_item")
 
 
+async def _database_name(engine: Any) -> str:
+    """Which store this record is about.
+
+    W4 re-measures the whole envelope against the *restored* database to find out whether a
+    restore changes it. Both runs use the same drivers, the same recipes and the same host, so
+    without this field the two records differ only in their numbers — and a reader comparing
+    them would have to take on trust which one came from where. The driver asks the server.
+    """
+    async with engine.connect() as connection:
+        return str(await connection.scalar(text("SELECT current_database()")) or "")
+
+
 async def server_memory_reading(engine: Any, dataset: str) -> dict:
     """What this host can hold, beside what it is being asked to hold.
 
@@ -2494,6 +2506,7 @@ async def _envelope(
     measured: dict[str, Any] = {}
     diagnostics: dict[str, Any] = {}
     try:
+        database = await _database_name(engine)
         memory = await server_memory_reading(engine, dataset)
         for shape in ENVELOPE_ORDER:
             if shape not in shapes:
@@ -2526,6 +2539,7 @@ async def _envelope(
 
     return {
         "dataset": dataset,
+        "database": database,
         "corpus_rows": 1_000_000,
         "protocol": PROBE_PROTOCOL,
         "restart": restart,
@@ -2680,7 +2694,9 @@ async def _recall(dataset: str, probes: int) -> dict:
     engine = create_postgres_engine(url, pool_size=2, max_overflow=0, command_timeout_seconds=7_200)
     started = perf_counter()
     try:
+        database = await _database_name(engine)
         record = await recall_at(engine, dataset, probes=probes)
+        record["database"] = database
     finally:
         await engine.dispose()
     threshold = 0.95

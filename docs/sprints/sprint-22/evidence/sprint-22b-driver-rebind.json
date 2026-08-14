@@ -1,5 +1,5 @@
 {
- "integrity_content_hash": "c372a70e1a826079bc952376f2804a74cc73d4730a806d808cc9f99f02a62445",
+ "integrity_content_hash": "b36ac917e7145ee4975a4fff4b4e060b843476b231f60d0741d4752e02ce32dc",
  "items": [
   "S22B-020"
  ],
@@ -48,13 +48,13 @@
   "recipes_hash_before": "c99ef5e513816fe8db96c350a6283b3251858643e19816259a00fa7f973fb125",
   "recipes_unchanged": true,
   "shapes_unchanged": true,
-  "to_sha256": "4e21d2556b444fa2455757d8a1fc89fbcbb987be31faa077803a83b4e1370ed3"
+  "to_sha256": "a406c33a6b6a9ff21daf8d07ddc31fd657e09712ca880ef0264319b5eccfe387"
  },
- "reason": "W3-F2 and W3-F3: the reindex readers now probe through the index being rebuilt rather than counting rows beside it, and a mutation wave runs immediately before the bloat measurement so autovacuum cannot empty it first. No drawn row, recipe or measured shape changed",
- "recorded_at": "2026-08-13T09:02:28Z",
+ "reason": "W4: every envelope and recall record now names the database it measured, because W4 re-measures the whole envelope against the restored store and two records that differ only in their numbers cannot be told apart by a reader. No drawn row, recipe or measured shape changed",
+ "recorded_at": "2026-08-14T04:47:46Z",
  "schema_version": 1,
  "sprint": "22B",
- "wave": "W3",
+ "wave": "W4",
  "what_cannot_be_re_bound": "a change that alters a drawn row, the recipes hash or the seven measured shapes. The proof is executed on every --check, so this record cannot outlive its truth",
  "what_this_is_not": "not an amendment. No reading moved, no threshold moved and the pre-registration is not edited: revision 1 still pins the implementation it pinned. This record carries the executed proof that the implementation now in the tree draws the same corpus, so the pin follows the defect fix instead of forbidding it"
 }

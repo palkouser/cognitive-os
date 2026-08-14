@@ -2,6 +2,15 @@
 
 - Branch: `sprint-22b-groundwork`
 - Backlog: [Sprint 22B Technical Backlog](sprint-22b-technical-backlog.md)
+- **W4 closed. The sprint is closed, and all five exit criteria are met** — governed ingest
+  **139.35 items/s**, recall@10 **0.9636**, warm filtered ANN p95 **156.7 ms**, bounded
+  graph-assisted p95 **234.4 ms**, and a restore that reproduces all four §2.2e items at a
+  million rows. `sprint-22b-exit-criteria.json` reads all five from their sealed records and
+  reports `all_met: true`, `outcome: "pass"`, `thresholds_moved_by_22b: 0`. **One finding**, and
+  it is in PostgreSQL rather than in us: `pg_restore` rebuilds the HNSW index, and the rebuilt
+  graph is measurably worse on clustered data — ANN 163 % slower and recall **0.9410, below the
+  0.95 floor** — while being indistinguishable on uniform data. The wave's own first reading of
+  that finding was wrong and is recorded as W4-A1.
 - **W0 closed.** S22B-000 through S22B-004 and S22B-010 through S22B-016 are done. The
   authority is read from the sources that own it, 22B's store pair exists at head `0015`, the
   reference host is sealed, every §1.3 driver is built and has been run end to end at fixture
@@ -54,6 +63,239 @@
   bound to, and freezes every reading that could bend once numbers exist. Gate L2 and Gate D1
   are untouched: 22B opens no condition and closes none. W2-A1 and W3-A1 are carried forward by
   name, unresolved on purpose.
+
+---
+
+## W4 outcome — five criteria read once, and a restore that rebuilds your index
+
+W4 measures almost nothing new. It reads the five exit criteria together for the first time,
+against the records that decided them, and it makes the one comparison §3 reserves for the
+release wave: **the same envelope, re-measured on the restored store.** That comparison came back
+a finding, and then the finding turned out to be about something narrower — and more useful —
+than it first appeared.
+
+### The five, read once
+
+| Criterion | Threshold | Measured | Wave | Met |
+|---|---|---:|---|---|
+| governed ingest | ≥ 100 items/s | **139.35** | W1 | **yes** |
+| recall@10 | ≥ 0.95 | **0.9636** | W2 | **yes** |
+| warm filtered ANN p95 | ≤ 300 ms | **156.7** | W2 | **yes** |
+| bounded graph-assisted p95 | ≤ 500 ms | **234.4** | W2 | **yes** |
+| restore reproduces §2.2e | all four | **all four** | W3 | **yes** |
+
+`sprint-22b-exit-criteria.json` is not a summary written by hand. Every value is traced to one
+field of one sealed record, the thresholds are read from the frozen contracts rather than
+restated, and `--check` rebuilds the document from its sources and refuses any difference.
+**`criteria_met: 5`, `all_met: true`, `outcome: "pass"`, `thresholds_moved_by_22b: 0`.** A test
+pushes the ingest number below its floor in a copy and requires the rebuilt record to come back
+`typed negative`, because a release record that can only print `pass` has verified nothing.
+
+### The restored envelope, and the finding that changed shape
+
+The restored store's envelope is not the source store's:
+
+| Shape | Source (W2) | Restored | Δ |
+|---|---:|---:|---:|
+| `ann`, clustered | 44.177 | **115.754** | **+162 %** |
+| `stale_item` | 1.481 | 56.413 | +3 709 % |
+| `temporal` | 25.463 | 47.301 | +85.8 % |
+| `hybrid` | 92.055 | 114.847 | +24.8 % |
+| `filtered_ann` | 156.727 | 155.339 | −0.9 % |
+| `bounded_graph_assisted` | 158.370 | 161.627 | +2.1 % |
+| `exact_vector` | 1243.536 | 1225.985 | −1.4 % |
+
+and recall@10 on the clustered corpus falls **0.9636 → 0.9410, below the 0.95 floor**.
+
+The obvious reading is *the restore changed the envelope*. It is wrong for three of the four
+shapes that moved, and a release that printed it would have been this sprint's most confident
+error. **Two things happened between W2's envelope and W4's, not one.** W3 put twenty-five
+thousand governed transitions through the store before it was ever backed up. Three of the seven
+shapes read the **governed store rather than the corpus** — they carry
+`varies_with_the_dataset: false`, and their deltas are the same on both corpora to within a
+millisecond, which is the signature of a shape that does not care how many corpus rows exist.
+
+The tell was already in the sealed record. `stale_item` reports its last result, and in W2 it
+returned **zero rows**: nothing in the store was superseded, retracted or expired yet, so the
+query was a 1.5 ms lookup that found nothing. On the restored store it returns twenty. A shape
+that starts finding rows gets slower for a reason that has nothing to do with a restore.
+
+### Splitting the difference where it actually falls
+
+So every shape was measured a third time — on the **source** store, now, with both stores
+present — and the W2 → W4 difference split at that point. `sprint-22b-w4-attribution.json`:
+
+| Shape | W2 source | Source now | Restored | W3 did | The restore did | Attributed to |
+|---|---:|---:|---:|---:|---:|---|
+| `ann` | 44.177 | 44.000 | 115.754 | −0.18 | **+71.75** | **restore** |
+| `hybrid` | 92.055 | 150.409 | 114.847 | **+58.35** | **−35.56** | both |
+| `stale_item` | 1.481 | 91.848 | 56.413 | **+90.37** | **−35.44** | both |
+| `temporal` | 25.463 | 48.742 | 47.301 | **+23.28** | −1.44 | W3's mutations |
+| `filtered_ann` | 156.727 | 152.310 | 155.339 | −4.42 | +3.03 | neither |
+| `bounded_graph_assisted` | 158.370 | 155.603 | 161.627 | −2.77 | +6.02 | neither |
+| `exact_vector` | 1243.536 | 1198.386 | 1225.985 | −45.15 | +27.60 | neither |
+
+A difference counts as material only if it clears **both** bars — 2 ms absolute and 5 % relative
+— so a 1.5 ms shape cannot be reported as a 200 % regression and a 4 ms move on a 1 200 ms shape
+cannot be reported as a change at all. All seven shapes are attributed; the assembler refuses to
+produce a record while any shape is unmeasured, because an attribution that explains six numbers
+and skips one is worse than none.
+
+**The restore owns exactly one shape.** And on the three governed shapes the restored store is
+*faster* than the current source store, because a restore also compacts what mutation left
+behind — W3's 79 dead tuples on `memory_items` are not in the restored copy.
+
+### What the restore actually does, and why it matters
+
+Both halves of the real finding are properties of one object: the clustered corpus's HNSW index,
+which `pg_restore` **rebuilds** rather than copies.
+
+| Reading | Source (W2) | Source, re-measured now | Restored |
+|---|---:|---:|---:|
+| clustered recall@10 | 0.9636 | **0.9636** | **0.9410** |
+| clustered `ann` p95 | 44.177 ms | 44.000 ms | 115.754 ms |
+| uniform recall@10 | 0.0854 | 0.0862 | 0.0892 |
+
+The control is what makes this a finding rather than a suspicion. The source store's clustered
+recall came back **bit-identical to W2's sealed 0.9636** with both 4 GiB stores present on a host
+whose buffer pool is 128 MB — so the drop is not drift, not the probe set, and not two stores
+sharing one page cache. It is the graph. The index is the same size to the byte (4 096 008 192),
+`index_scan_confirmed` is true on both, and the restored store was autoanalyzed; what differs is
+the order the rows arrived in when the graph was built.
+
+Uniform is the counter-case that keeps the claim narrow. Its index was rebuilt twice — once by
+W3's `REINDEX CONCURRENTLY` inside the source store, once by the restore — and it barely moved
+(0.0854 → 0.0862 → 0.0892) while its `ann` p95 did not move at all (186.494 → 185.878). **A
+rebuild costs you nothing on uniformly distributed vectors and costs you your recall floor on
+clustered ones.** That is the operational sentence 22C needs: disaster recovery restores your
+data and your event stream exactly, and does not restore your retrieval quality.
+
+**This control is post hoc**, designed after the restored numbers existed — the situation §2.3 is
+right to be suspicious of. Two things keep it honest. It reads **no exit criterion**: all five
+are decided on W1's, W2's and W3's sealed measurements, which it cannot reach, and the record
+says so in `reads_an_exit_criterion: false` and `pre_registered: false`. And it was reported
+whichever way it came out. It came out against the wave's own first reading.
+
+### The line the release has to hold
+
+§2.2e defines what a restore must reproduce — exact row counts, artifact hashes, the queried
+active view, the live learned artifact's bytes — and W3 met every item of it at a million rows.
+The retrieval envelope is **not** on that checklist. Re-measuring it is a separate W4 deliverable
+whose deviation §3 calls a finding.
+
+So one document carries both: **`all_met: true`** over the five criteria, and
+**`post_restore_all_still_met: false`** beside it. Reporting the finding as a sixth exit miss
+would be as dishonest as hiding it, and two tests pin the split — one requiring the finding to be
+recorded, one requiring it not to have leaked into the verdict.
+
+## W4 findings — one, and it is in PostgreSQL rather than in us
+
+### W4-F1 — a restored HNSW index is a different index
+
+Described above. What makes it a finding rather than a note is that nothing warns you: the
+restore verifier passes all four §2.2e checks, the row counts are exact, the index reports the
+same byte size, the planner still chooses it, and recall has silently dropped below the floor the
+sprint is defined by. There is no released signal for "your index was rebuilt worse". Handed to
+22C with its reproduction: restore the clustered corpus and measure recall@10 against exact-scan
+ground truth.
+
+It is **not** fixed here. §2.3 forbids tuning after a number exists, and the fix is a tuning
+question — `maintenance_work_mem` during the restore, or `REINDEX` with a raised
+`hnsw.ef_construction` afterwards. Both would change a measured number inside the wave that
+measured it.
+
+### W4-A1 — the wave's first reading of its own finding was wrong
+
+Not a defect in the system; a defect in the reading, caught inside the wave and recorded because
+the next wave will be tempted the same way. Two changes separated one sealed measurement from
+another, and the difference was attributed entirely to the more interesting one. The rule that
+would have caught it earlier is already in the records that were being read: a shape carrying
+`varies_with_the_dataset: false` is not a statement about the corpus, and `last_result.results`
+going from 0 to 20 is not a latency regression. **When two things changed between two
+measurements, measure the middle.**
+
+## W4 evidence index
+
+| Record | SHA-256 |
+|---|---|
+| `sprint-22b-exit-criteria.json` | `7279f8e00776d45f…` |
+| `sprint-22b-w4-attribution.json` | `5f8d4b9b3699b57b…` |
+| `sprint-22b-w4-restored-envelope-clustered.json` | `5c335e37d2bece66…` |
+| `sprint-22b-w4-restored-envelope-uniform.json` | `42e7ef70088a160e…` |
+| `sprint-22b-w4-restored-recall-clustered.json` | `0bc0b4bce3c01917…` |
+| `sprint-22b-w4-restored-recall-uniform.json` | `7a5363b9f2752409…` |
+| `sprint-22b-w4-source-envelope-clustered.json` | `5eb16143cdc64bae…` |
+| `sprint-22b-w4-source-envelope-clustered-graph-and-exact.json` | `ad6998bb16a37ecd…` |
+| `sprint-22b-w4-source-recall-clustered.json` | `8adbd5e53c10eb05…` |
+| `sprint-22b-w4-source-recall-uniform.json` | `dab8267ce8338acd…` |
+
+The two source-control envelope records are two files because the driver was run twice — five
+shapes, then the two that need the frozen MiniLM — and the assembler unions them, refusing an
+overlap. Neither was merged into a hand-written file: every number still sits in the record the
+driver actually wrote. **The recipes hash has not moved since W0**
+(`c99ef5e513816fe8…`), across all four waves.
+
+## W4 validation
+
+`ruff check` and `ruff format --check --config ruff.cognitive-os.toml` over
+`src tests scripts infra`: clean. `mypy src/cognitive_os`: no issues in 637 source files.
+`python -m cognitive_os.schemas.export --check` and `check_repository_language.sh`: passed.
+
+**All five sealers run twice with identical output** (22A W4-F3): `pre_registration_22b --check`
+(8 contracts verified), `host_record_22b --check` (9 invariants, `invariants_hash`
+`1c3ab197e32ca498…`), `envelope_22b --check` (14 of 14 cells), `exit_criteria_22b --check`
+(5 of 5, `all_met: true`), `attribution_22b --check` (`shapes_attributed_to_the_restore: ["ann"]`).
+
+Full suite against the million-row store: **4 373 passed, 206 skipped** in 4 min 27 s — 14 more
+tests than W3, all of them W4's, and no released assertion had to change in any of the four
+waves.
+
+The released memory health check still reports `undeclared_approximate_indexes: 3` (error, 22B's
+own corpus HNSW indexes) and `missing_creation_events: 1` (warning, W3-F1). Both were named at
+W3's close as expected at release, and both are exactly what W4 found.
+
+## The sprint, closed
+
+| Wave | What it decided | Findings |
+|---|---|---|
+| W0 | the authority, the host, the drivers, six frozen readings | 8 + 1 decision |
+| W1 | two 10^6 corpora; **governed ingest 139.35/s** | 6 + 2 decisions |
+| W2 | the envelope; **recall 0.9636, filtered ANN 156.7 ms, graph 234.4 ms** | 3 |
+| W3 | mutation, crash, reindex, bloat; **restore reproduces §2.2e** | 5 |
+| W4 | all five read once; the restored envelope | 1 + 1 |
+
+**Five of five exit criteria met. Twenty-three findings, three decisions and two carried
+observations across four waves, every finding handled inside the wave that found it** — except W3-F1, left unfixed on purpose because
+§2.3 forbids changing released behaviour mid-measurement. No threshold moved, no migration was
+allocated, `0016` remains a refusal, and the recipes hash is the one W0 wrote.
+
+## What 22C inherits
+
+**A restored index is not the index you backed up.** W4-F1 is the handoff that matters: recovery
+reproduces every byte §2.2e names and silently costs you recall on clustered corpora. 22C owns
+the fix — `maintenance_work_mem` during restore, or a post-restore `REINDEX` with a raised
+`hnsw.ef_construction` — and owns proving it with the measurement W4 leaves behind. **22B
+deliberately did not tune it**, so the number 22C improves is a measured one.
+
+**W3-F1, unrepaired by design.** `MemoryService.create` commits the record and appends the event
+in two transactions; a crash between them leaves a governed item outside its own event stream,
+and the idempotency key means a resume never repairs it. One write in 506. The released health
+check calls it a warning. Its reproduction is exact and its fix is a released-code change, which
+is why it is 22C's and not 22B's.
+
+**The cold number nobody's exit reads.** Uniform graph-assisted cold is **4 201 ms**, of which
+3 761.9 ms is the first ANN touch of a cold 3.81 GiB index. Every exit in 22B is a warm number on
+a host whose buffer pool is 128 MB — **30.5× smaller than the index** — so every warm number in
+this sprint is served by the Linux page cache. That is recorded in the host invariants precisely
+so it cannot be quietly raised later, and it is a budget line for 22C, not a defect.
+
+**Two carried by name, still unresolved on purpose:** W2-A1 and W3-A1, inherited from 22A and
+untouched by 22B. Gate L2 and Gate D1 are unchanged — 22B opened no condition and closed none.
+
+**And one habit worth keeping.** W4's first reading of its own finding was wrong for three of
+four shapes, and what caught it was re-measuring the middle rather than arguing about the ends.
+When two things changed between two measurements, the third measurement is cheaper than the
+argument.
 
 ---
 
