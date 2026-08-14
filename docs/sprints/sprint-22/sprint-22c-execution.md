@@ -384,6 +384,13 @@ W4-F3): `campaign_22c.py --check`, `rights_22c.py --check`, `holdout_22c.py --ch
 `pre_registration_22c.py --check` all reproduced on both runs, the last only after W0-F6 was
 fixed.
 
+**Exact-head CI: run [`31824921436`](https://github.com/palkouser/cognitive-os/actions/runs/31824921436),
+head `e09857ab02b39fd35de2c572f1adb78dc5bfbfad`, 30 of 30 successful**, on
+[PR #234](https://github.com/palkouser/cognitive-os/pull/234). The pull request exists
+because the workflow triggers only on pushes to `main` and on pull requests, so a wave branch
+receives no CI at all until one is open — which is why every sprint since 22A carries a PR
+number, and why a wave that only pushed would have reported "green" against nothing.
+
 ---
 
 ## What W1 inherits
