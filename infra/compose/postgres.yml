@@ -11,6 +11,13 @@ services:
       POSTGRES_INITDB_ARGS: "--encoding=UTF8 --data-checksums"
       PGTZ: UTC
     command: ["postgres", "-c", "timezone=UTC"]
+    # Sprint 22B W1-F5. Docker's default /dev/shm is 64 MB, and PostgreSQL allocates parallel
+    # workers' dynamic shared memory there. A parallel HNSW build over 10^6 x 768 vectors asks
+    # for a ~61 MB segment and dies with `DiskFullError: could not resize shared memory
+    # segment`, on a host with 860 GB of free disk — the message names a disk that is not the
+    # problem. No corpus below about 10^5 rows reaches this, which is why every sprint until
+    # now ran into a ceiling nobody had measured.
+    shm_size: 2gb
     volumes:
       - "${COGOS_POSTGRES_DATA}:/var/lib/postgresql/18/docker"
     healthcheck:

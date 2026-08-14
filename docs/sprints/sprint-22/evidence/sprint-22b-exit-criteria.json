@@ -1,0 +1,124 @@
+{
+ "all_met": true,
+ "attributed_by": "sprint-22b-w4-attribution.json",
+ "contracts_sha256": "ece220ad0f0dbba497797c2089d08a2e5a9ae75d0ec0b2f088bfea94d904fcaa",
+ "criteria": {
+  "bounded_graph_assisted_p95_ms": {
+   "comparison": "<=",
+   "measured": 234.427,
+   "met": true,
+   "read_from": "sprint-22b-w2-envelope.json#exit_readings.bounded_graph_assisted_p95_ms.measured",
+   "threshold": 500,
+   "wave": "W2"
+  },
+  "governed_ingest_items_per_second": {
+   "comparison": ">=",
+   "measured": 139.35,
+   "met": true,
+   "read_from": "sprint-22b-w1-governed-ingest.json#items_per_second",
+   "threshold": 100,
+   "wave": "W1"
+  },
+  "recall_at_10": {
+   "comparison": ">=",
+   "measured": 0.9636,
+   "met": true,
+   "read_from": "sprint-22b-w2-envelope.json#exit_readings.recall_at_10.measured",
+   "threshold": 0.95,
+   "wave": "W2"
+  },
+  "restore_reproduces": {
+   "comparison": "all of",
+   "measured": true,
+   "met": true,
+   "read_from": "sprint-22b-w3-restore-checklist.json#all_four_met",
+   "threshold": "exact counts, hashes, active views and learned artifact pointers",
+   "wave": "W3"
+  },
+  "warm_filtered_ann_p95_ms": {
+   "comparison": "<=",
+   "measured": 156.727,
+   "met": true,
+   "read_from": "sprint-22b-w2-envelope.json#exit_readings.warm_filtered_ann_p95_ms.measured",
+   "threshold": 300,
+   "wave": "W2"
+  }
+ },
+ "criteria_met": 5,
+ "criteria_total": 5,
+ "integrity_content_hash": "9aaaef9db326fc764bc18e7542e99ba09736e91693a76774ff9ed7b2c533a0a1",
+ "items": [
+  "S22B-040",
+  "S22B-041"
+ ],
+ "outcome": "pass",
+ "post_restore": {
+  "bounded_graph_assisted_p95_ms": {
+   "comparison": "<=",
+   "delta": -0.355,
+   "delta_percent": -0.15,
+   "measured_on": [
+    "cognitive_os_s22b_restore_test"
+   ],
+   "restored": 234.072,
+   "restored_per_dataset": {
+    "clustered": 161.627,
+    "uniform": 234.072
+   },
+   "restored_still_meets_the_threshold": true,
+   "source": 234.427,
+   "threshold": 500
+  },
+  "recall_at_10": {
+   "comparison": ">=",
+   "delta": -0.0226,
+   "delta_percent": -2.35,
+   "measured_on": [
+    "cognitive_os_s22b_restore_test"
+   ],
+   "restored": 0.941,
+   "restored_per_dataset": {
+    "clustered": 0.941
+   },
+   "restored_still_meets_the_threshold": false,
+   "source": 0.9636,
+   "threshold": 0.95
+  },
+  "warm_filtered_ann_p95_ms": {
+   "comparison": "<=",
+   "delta": -1.388,
+   "delta_percent": -0.89,
+   "measured_on": [
+    "cognitive_os_s22b_restore_test"
+   ],
+   "restored": 155.339,
+   "restored_per_dataset": {
+    "clustered": 155.339,
+    "uniform": 152.206
+   },
+   "restored_still_meets_the_threshold": true,
+   "source": 156.727,
+   "threshold": 300
+  }
+ },
+ "post_restore_all_still_met": false,
+ "pre_registration_sha256": "1e0022094ac62dc29e1372fdd93ca060cf558773cddfb9e391373148d9d0dd73",
+ "recorded_at": "2026-08-14T12:54:38Z",
+ "restored_sources_sha256": {
+  "sprint-22b-w4-restored-envelope-clustered.json": "5c335e37d2bece6688c831ad61cc3a92e60f308468bea6872f8d79f2eb9d820d",
+  "sprint-22b-w4-restored-envelope-uniform.json": "42e7ef70088a160e77d663e234317d9714daf149f21f5cbb240a6b7a181c2986",
+  "sprint-22b-w4-restored-recall-clustered.json": "0bc0b4bce3c01917260185e8d80d0140e367463fec65d6e3f8658b128b1e8ff5"
+ },
+ "schema_version": 1,
+ "sources_sha256": {
+  "bounded_graph_assisted_p95_ms": "12cf1a9903f1db00b79074a62e1dfeb613b9eeb70a83dd98af0b55d9ae43437c",
+  "governed_ingest_items_per_second": "8db868ffd19642538343c2f3c4c6b8d3c9ebe72f0d6af0188de2eea42db90594",
+  "recall_at_10": "12cf1a9903f1db00b79074a62e1dfeb613b9eeb70a83dd98af0b55d9ae43437c",
+  "restore_reproduces": "e504a61450627073fd43870fd7673674b8ed9e1301545ffca4332d15dc9a6b1f",
+  "warm_filtered_ann_p95_ms": "12cf1a9903f1db00b79074a62e1dfeb613b9eeb70a83dd98af0b55d9ae43437c"
+ },
+ "sprint": "22B",
+ "thresholds_moved_by_22b": 0,
+ "wave": "W4",
+ "what_a_restored_miss_would_mean": "§3's W4 row: a restore that changes the envelope is a finding. The restored numbers are reported beside the source ones whatever they say, and a restored value that missed its threshold would be reported as a finding about the restore rather than quietly averaged with the number that met it"
+}

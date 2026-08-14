@@ -1,0 +1,162 @@
+{
+ "corpus_rows": 1000000,
+ "database": "cognitive_os_s22b_test",
+ "dataset": "clustered",
+ "diagnostics": {},
+ "diagnostics_read_no_exit": true,
+ "measured": {
+  "bounded_graph_assisted": {
+   "ann_shortlist_leg": {
+    "max_ms": 52.027,
+    "p50_ms": 33.739,
+    "p95_ms": 38.345,
+    "probes": 500
+   },
+   "arm": "minilm_shortlist_plus_bounded_ged",
+   "budget_cutoffs": 0,
+   "cold_first_probe": {
+    "ann_shortlist_ms": 65.077,
+    "graph_expansion_ms": 396.246,
+    "total_ms": 461.476
+   },
+   "configuration": {
+    "arm": "minilm shortlist, then bounded graph edit distance",
+    "exit_ms": 500,
+    "limits": {
+     "content_hash": "ea93a0481299068097664f5f9e1d6f251a0816da3300606d9bf1ca2310331212",
+     "cross_task_similarity_neighbors": 3,
+     "edges_per_graph": 128,
+     "nodes_per_graph": 64,
+     "path_depth": 8,
+     "per_pair_ged_timeout_ms": 250,
+     "query_budget_seconds": 2,
+     "returned_results": 10,
+     "vector_shortlist": 20
+    },
+    "limits_hash": "039e96e0184e7552b418cf758569ceeda02be16c38c5918cabd1e42e43bf44cf",
+    "may_be_tuned_after_a_number_exists": false,
+    "only_prior_measurement_ms": 1788.9,
+    "per_pair_timeout_ms": 250,
+    "prior_measurement_source": "sprint-21d1-w5a-retrieval.json, arm minilm_shortlist_plus_bounded_ged",
+    "query_budget_seconds": 2,
+    "returned_results": 10,
+    "shape": "ANN shortlist first, budgeted graph expansion second",
+    "shortlist_width": 20,
+    "the_cutoff_trap": "D1 reached 1788.9 ms with 60 queries cut off at its 2 s budget. A budget cutoff returns a short list fast, so a recipe that cuts off more looks quicker while answering less. Every 22B graph record reports its cutoff count beside its p95, and a p95 met with a rising cutoff count is a miss reported as one",
+    "tighter_by": "3.6x, at 10x the scale",
+    "walk_depth_cap": 8
+   },
+   "dataset": "clustered",
+   "embedding_cache_shared_across_probes": true,
+   "embedding_model_digest": "98eb3ae4df320d0b721902aabef795cafb36c3a516f036e92e2b046f55ef4229",
+   "exit_threshold_ms": 500,
+   "graph_expansion_leg": {
+    "max_ms": 316.716,
+    "p50_ms": 38.643,
+    "p95_ms": 120.887,
+    "probes": 500
+   },
+   "limitation": "the graph half expands the released D1 pairs, joined to this corpus by row_id % 80: §2.3 forbids 22B authoring a corpus, so the 10^6 scale enters through the ANN shortlist leg and the expansion leg's cost is a property of the released 80-pair set. A latency measurement of the released arm, never a quality one",
+   "max_ms": 350.25,
+   "mean_results_returned": 10.0,
+   "measures_quality": false,
+   "meets_exit": true,
+   "p50_ms": 73.458,
+   "p95_ms": 155.603,
+   "per_pair_timeouts": 0,
+   "pool": {
+    "arm_source": "cognitive_os.experience.graph_retrieval.bounded_ged, released",
+    "artifact_root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d1",
+    "expanded_pool_sizes": [
+     12,
+     13,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19
+    ],
+    "graph_set_id": "sprint-21d1-emg-root",
+    "join": "row_id % 80, deterministic and information-free",
+    "pairs": 80,
+    "root": "docs/sprints/sprint-21/evidence/sprint-21d1-emg-root.json",
+    "shortlist_width": 20
+   },
+   "prior_measurement_ms": 1788.9,
+   "probes": 500,
+   "reads_an_exit": "p95 <= 500 ms",
+   "shape": "bounded_graph_assisted",
+   "warmup_probes_discarded": 100
+  },
+  "exact_vector": {
+   "candidate_limit": 1000,
+   "cold_first_probe_ms": 1222.217,
+   "dataset": "clustered",
+   "ef_search": null,
+   "index_scan_confirmed": null,
+   "max_ms": 1247.413,
+   "p50_ms": 1183.646,
+   "p95_ms": 1198.386,
+   "probes": 500,
+   "result_limit": 10,
+   "sequential_scan_disabled": false,
+   "shape": "exact_vector",
+   "warmup_probes_discarded": 100
+  }
+ },
+ "probes_per_shape": 500,
+ "protocol": {
+  "cold_definition": "the first probe after the restart, before any warmup probe",
+  "measured_probes": 500,
+  "restart_is_a_real_restart": "the database process is restarted, not a cache hint issued. D7 lifecycle: separate processes or it proved nothing",
+  "warm_definition": "index built, PostgreSQL restarted, then 100 discarded warmup probes, then the measured probes",
+  "warmup_probes": 100,
+  "why_500": "the 10^5 envelope measured 50, and a p95 over 50 probes is decided by its three worst readings. 500 makes the 95th percentile a measurement rather than an anecdote"
+ },
+ "recipes_hash": "c99ef5e513816fe8db96c350a6283b3251858643e19816259a00fa7f973fb125",
+ "restart": {
+  "container": "compose-postgres-1",
+  "host_page_cache_dropped": false,
+  "limitation": "a container restart empties PostgreSQL's shared buffers, not the host page cache, so cold here means cold-server rather than cold-storage",
+  "ready_after_seconds": 0.53,
+  "restarted": true,
+  "shared_buffers_start_empty": true
+ },
+ "server_memory": {
+  "host_memory_available_kib": 42648040,
+  "host_memory_total_kib": 48199296,
+  "index_bytes": 4096008192,
+  "index_fits_in_host_memory": true,
+  "index_over_shared_buffers": 30.5,
+  "not_tuned_by_22b": true,
+  "reading": "the index does not fit in the server's buffer pool and does fit in host memory, so a warm number here is served by the Linux page cache rather than by shared_buffers",
+  "settings": {
+   "effective_cache_size": "524288 8kB",
+   "maintenance_work_mem": "65536 kB",
+   "max_parallel_workers": "8",
+   "max_parallel_workers_per_gather": "2",
+   "random_page_cost": "4",
+   "shared_buffers": "16384 8kB",
+   "work_mem": "4096 kB"
+  },
+  "shared_buffers_bytes": 134217728,
+  "table_total_bytes": 8390311936,
+  "why_not_tuned": "§2.3 forbids tuning a pre-registered configuration after its first measured number exists, and the sealed host record makes a PostgreSQL settings change a host supersession rather than an adjustment"
+ },
+ "shapes_in_the_pre_registration": [
+  "ann",
+  "bounded_graph_assisted",
+  "exact_vector",
+  "filtered_ann",
+  "hybrid",
+  "stale_item",
+  "temporal"
+ ],
+ "shapes_measured": [
+  "bounded_graph_assisted",
+  "exact_vector"
+ ],
+ "shapes_measured_count": 2,
+ "warmup_per_shape": 100
+}

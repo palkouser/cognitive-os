@@ -1,0 +1,14 @@
+{
+ "artifact_id": "cfdf73e6-5b2d-4a74-be41-72464ad5baab",
+ "bytes_load_back": true,
+ "component": "learned.containment.correction_ranking",
+ "content_hash": "afbdb7c05c73aec8b1a46dd9b20cd8f2f8915819b29a1ea3b364ad8acbb48edb",
+ "learned_lineage_copied": false,
+ "matches_expected_hash": true,
+ "registered_through": "released ArtifactService.put_file, content-addressed",
+ "size_bytes": 4354,
+ "source_path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d7-measured/sha256/af/afbdb7c05c73aec8b1a46dd9b20cd8f2f8915819b29a1ea3b364ad8acbb48edb",
+ "source_store": "cognitive_os_s21d7_measured",
+ "storage_key": "sha256/af/afbdb7c05c73aec8b1a46dd9b20cd8f2f8915819b29a1ea3b364ad8acbb48edb",
+ "why_not": "component revisions, activation history and evidence records are D7's and stay there; §2.3 puts learners out of 22B's scope. The restore checklist therefore verifies the artifact pointer and its loadable bytes, not the learned component's governance chain"
+}

@@ -1,0 +1,60 @@
+{
+ "integrity_content_hash": "b36ac917e7145ee4975a4fff4b4e060b843476b231f60d0741d4752e02ce32dc",
+ "items": [
+  "S22B-020"
+ ],
+ "pre_registration_sha256": "1e0022094ac62dc29e1372fdd93ca060cf558773cddfb9e391373148d9d0dd73",
+ "proof": {
+  "corpus_identical": true,
+  "datasets": {
+   "clustered": {
+    "addressing_agrees_with_stream": true,
+    "head_identical": true,
+    "offset_window_identical": true,
+    "rows_compared": 1600,
+    "rows_sha256_after": "2d8f2b970cf69b26e2186a1044510e1683fc60d2cdcf6a6515d50998906a933f",
+    "rows_sha256_before": "2d8f2b970cf69b26e2186a1044510e1683fc60d2cdcf6a6515d50998906a933f"
+   },
+   "uniform": {
+    "addressing_agrees_with_stream": true,
+    "head_identical": true,
+    "offset_window_identical": true,
+    "rows_compared": 1600,
+    "rows_sha256_after": "53802ca4e22215d0140086959ff395a13d3773a841eb21b6bb435614a86e1c40",
+    "rows_sha256_before": "53802ca4e22215d0140086959ff395a13d3773a841eb21b6bb435614a86e1c40"
+   }
+  },
+  "from_commit": "613b546eac598867a77e32d40e9c0af2d79faadb",
+  "from_sha256": "c295892ec5bd6d62a31894f8b7aa76551401997e31c463baef03a1293ea979a4",
+  "query_shapes_after": [
+   "ann",
+   "bounded_graph_assisted",
+   "exact_vector",
+   "filtered_ann",
+   "hybrid",
+   "stale_item",
+   "temporal"
+  ],
+  "query_shapes_before": [
+   "ann",
+   "bounded_graph_assisted",
+   "exact_vector",
+   "filtered_ann",
+   "hybrid",
+   "stale_item",
+   "temporal"
+  ],
+  "recipes_hash_after": "c99ef5e513816fe8db96c350a6283b3251858643e19816259a00fa7f973fb125",
+  "recipes_hash_before": "c99ef5e513816fe8db96c350a6283b3251858643e19816259a00fa7f973fb125",
+  "recipes_unchanged": true,
+  "shapes_unchanged": true,
+  "to_sha256": "a406c33a6b6a9ff21daf8d07ddc31fd657e09712ca880ef0264319b5eccfe387"
+ },
+ "reason": "W4: every envelope and recall record now names the database it measured, because W4 re-measures the whole envelope against the restored store and two records that differ only in their numbers cannot be told apart by a reader. No drawn row, recipe or measured shape changed",
+ "recorded_at": "2026-08-14T04:47:46Z",
+ "schema_version": 1,
+ "sprint": "22B",
+ "wave": "W4",
+ "what_cannot_be_re_bound": "a change that alters a drawn row, the recipes hash or the seven measured shapes. The proof is executed on every --check, so this record cannot outlive its truth",
+ "what_this_is_not": "not an amendment. No reading moved, no threshold moved and the pre-registration is not edited: revision 1 still pins the implementation it pinned. This record carries the executed proof that the implementation now in the tree draws the same corpus, so the pin follows the defect fix instead of forbidding it"
+}

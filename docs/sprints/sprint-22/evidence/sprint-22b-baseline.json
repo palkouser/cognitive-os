@@ -1,0 +1,301 @@
+{
+ "branch": {
+  "commits_ahead_at_baseline": 1,
+  "descends_from_current_origin_main": true,
+  "local_head": "ef2cee5e261c357087a6849d9aae8114538d4dad",
+  "merge_base_with_origin_main": "7b10ca3301ff560d7966f063dbd782dcd8bfa5ff",
+  "name": "sprint-22b-groundwork",
+  "note": "the backlog commit rides ahead of main on this branch, so the plan the wave executes travels with the wave that executes it",
+  "origin_main": "7b10ca3301ff560d7966f063dbd782dcd8bfa5ff"
+ },
+ "ci_runs": [
+  {
+   "branch": "main",
+   "conclusion": "success",
+   "event": "push",
+   "head_sha": "291482448114ffed95a975c2b6a0d2be47a6a092",
+   "jobs": 30,
+   "jobs_successful": 30,
+   "label": "22a post-merge main, exact head",
+   "run_id": 31573794611
+  }
+ ],
+ "commands": [
+  "gh api repos/palkouser/cognitive-os/actions/runs/31573794611",
+  "gh api repos/palkouser/cognitive-os/actions/runs/31573794611/jobs?per_page=100",
+  "gh api repos/palkouser/cognitive-os/branches/main/protection",
+  "git cat-file -t 58b1a0fa3b4f83de6ff9a3fd5d4023cc747b5276",
+  "git ls-remote origin refs/heads/main",
+  "git ls-remote origin refs/tags/sprint-22a-domain-baseline*",
+  "git ls-remote origin refs/tags/sprint-22b-evidence-baseline",
+  "git ls-remote origin refs/tags/sprint-22b-scale-baseline",
+  "git merge-base HEAD origin/main",
+  "git rev-list --count origin/main..HEAD",
+  "git rev-parse HEAD",
+  "git rev-parse sprint-22a-domain-baseline",
+  "git rev-parse sprint-22a-domain-baseline^{}"
+ ],
+ "first_observations": [
+  "sprint_22a"
+ ],
+ "integrity_content_hash": "12b8166a51387a6acdf82316dfe22a01ce371f4c1de237e32b00ec402067a5e9",
+ "items": [
+  "S22B-000",
+  "S22B-001"
+ ],
+ "main_protection": {
+  "allow_deletions": false,
+  "allow_force_pushes": false,
+  "enforce_admins": true,
+  "queried_json_sha256": "80197b683484a7ede84c4a4554851a4ec43c10a5fe209ceae6410882976d2b88",
+  "required_context_count": 27,
+  "required_contexts": [
+   "benchmark-regression",
+   "build",
+   "coding-agent",
+   "cognitive-controller",
+   "context-builder-core",
+   "controlled-changes-core",
+   "corpus-factory-core",
+   "cross-domain-pilot-core",
+   "experience-compiler-core",
+   "harness-proposals-core",
+   "inspect-adapter",
+   "memory-plane-core",
+   "migration",
+   "model-routing-core",
+   "optional-boundary",
+   "postgres-integration",
+   "provider-offline",
+   "quality",
+   "sandbox",
+   "security",
+   "semantic-memory-core",
+   "skill-engine-core",
+   "strategy-engine-core",
+   "test",
+   "tool-plane",
+   "verifier-domains",
+   "weakness-mining-core"
+  ],
+  "required_conversation_resolution": true,
+  "required_pull_request_reviews": null,
+  "strict": true
+ },
+ "migration": {
+  "0016_is_a_refusal": "every scoped mutation 22B drives — supersession, tombstone, bloat, reindex — lives in the released schema. A wave that finds itself needing a migration has found a finding, not a plan item",
+  "migration_files": 15,
+  "next_available": "0016 (unallocated)",
+  "planned_22b_migration": null,
+  "repository_head": "0015"
+ },
+ "outcome_tags_absent": {
+  "sprint-22b-evidence-baseline": true,
+  "sprint-22b-scale-baseline": true
+ },
+ "phase": "before",
+ "predecessor_artifact_stores": {
+  "development": {
+   "expectation_is_stale": null,
+   "expected_files": 5,
+   "expected_from": "sprint-22a-baseline.json",
+   "files": 5,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts",
+   "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf"
+  },
+  "sprint_21c3": {
+   "expectation_is_stale": null,
+   "expected_files": 8503,
+   "expected_from": "sprint-22a-baseline.json",
+   "files": 8503,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21c3",
+   "path_and_size_fingerprint_sha256": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593"
+  },
+  "sprint_21d1": {
+   "expectation_is_stale": null,
+   "expected_files": 83,
+   "expected_from": "sprint-22a-baseline.json",
+   "files": 83,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d1",
+   "path_and_size_fingerprint_sha256": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f"
+  },
+  "sprint_21d2": {
+   "expectation_is_stale": null,
+   "expected_files": 1511,
+   "expected_from": "sprint-22a-baseline.json",
+   "files": 1511,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d2",
+   "path_and_size_fingerprint_sha256": "39417f1a03f6824cfe6f9c4b7e6bd5a3cd34da8329fb95cff0a35595899438aa"
+  },
+  "sprint_21d3": {
+   "expectation_is_stale": null,
+   "expected_files": 2096,
+   "expected_from": "sprint-22a-baseline.json",
+   "files": 2096,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d3",
+   "path_and_size_fingerprint_sha256": "fcb0a044810b375f2933d4a3cf22c7448bfada9c90e104566a92125b08dcd0d3"
+  },
+  "sprint_21d4": {
+   "expectation_is_stale": null,
+   "expected_files": 4006,
+   "expected_from": "sprint-22a-baseline.json",
+   "files": 4006,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d4",
+   "path_and_size_fingerprint_sha256": "3d09732ef59c8e9a36ceabc9619d6a139a7f48437ab0d67e07931720c75f7b47"
+  },
+  "sprint_21d5": {
+   "expectation_is_stale": null,
+   "expected_files": 4695,
+   "expected_from": "sprint-22a-baseline.json",
+   "files": 4695,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d5",
+   "path_and_size_fingerprint_sha256": "f058a6e31f8de66726af3fb44fef081daa3be754dc20cb77dc657af71d818a7f"
+  },
+  "sprint_21d6": {
+   "expectation_is_stale": null,
+   "expected_files": 249,
+   "expected_from": "sprint-22a-baseline.json",
+   "files": 249,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d6",
+   "path_and_size_fingerprint_sha256": "9b910c7d9556b6307c39e2360b70f472177cdea8237aad3fc367a6d2ed9bc910"
+  },
+  "sprint_21d6_measured": {
+   "expectation_is_stale": null,
+   "expected_files": 1522,
+   "expected_from": "sprint-22a-baseline.json",
+   "files": 1522,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d6-measured",
+   "path_and_size_fingerprint_sha256": "088d8213565ce3b46f1bcad8f28d03c69f618ebbe471c7f2c5046ff566f54f75"
+  },
+  "sprint_21d7": {
+   "expectation_is_stale": null,
+   "expected_files": 173,
+   "expected_from": "sprint-22a-baseline.json",
+   "files": 173,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d7",
+   "path_and_size_fingerprint_sha256": "1920aa20676f44925fe7872ed2d5ba66013dac96d9798b203703d0b91c8cca0b"
+  },
+  "sprint_21d7_measured": {
+   "expectation_is_stale": null,
+   "expected_files": 2511,
+   "expected_from": "sprint-22a-baseline.json",
+   "files": 2511,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d7-measured",
+   "path_and_size_fingerprint_sha256": "d406f57bd618ade3a633eed71c9695e30653713dc4fc6d381270213d92f33d59"
+  },
+  "sprint_22a": {
+   "expectation_is_stale": "sprint-22a-baseline.json carries no expectation for this root at all — 22A's baseline listed the eleven roots it must not write to, and its own root was not yet one of them. 22B freezes the post-release state as a first observation",
+   "expected_files": null,
+   "expected_from": "first observation at the 22B baseline; no released expectation exists",
+   "files": 3,
+   "matches_expected": null,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s22a",
+   "path_and_size_fingerprint_sha256": "0ffdb3c767e37fa16d1250c155a1748f8d31c1db4389139a03ce1f068f55586d"
+  }
+ },
+ "predecessor_exit_state": {
+  "carried_forward_by_name": {
+   "W2-A1": "domain_pilot_runs has a three-domain CHECK constraint in its schema",
+   "W3-A1": "a released domain cannot refuse a view, because it declares no relations"
+  },
+  "exit_criteria_met": null,
+  "exit_criteria_source_sha256": "d314121f2180f92aa861334c4cd170bf38c74ab33400da2253c844c8eab6aa1e",
+  "outcome": "positive; two pilot domains registered as data, the released four unchanged",
+  "release_findings": 0,
+  "source": "sprint-22a-release.json",
+  "source_sha256": "58dc96811be7fa92fd81608affa8b74acff9b8ad0b64571eaeb208d565e68657",
+  "sprint_22b_status_per_predecessor": "unblocked; the handoff names what it inherits and what it must not assume",
+  "why_carried_not_resolved": "22B's objective touches neither. W2-A1 needs a migration and 22B allocates none; nothing in this sprint persists a pilot run. Both stay named in the handoff chain until a sprint whose objective touches them"
+ },
+ "predecessor_release": {
+  "local_and_remote_agree": true,
+  "local_peeled_commit": "291482448114ffed95a975c2b6a0d2be47a6a092",
+  "local_tag_object": "58b1a0fa3b4f83de6ff9a3fd5d4023cc747b5276",
+  "pull_requests": [
+   231,
+   232
+  ],
+  "remote": "https://github.com/palkouser/cognitive-os",
+  "remote_peeled_commit": "291482448114ffed95a975c2b6a0d2be47a6a092",
+  "remote_tag_object": "58b1a0fa3b4f83de6ff9a3fd5d4023cc747b5276",
+  "tag": "sprint-22a-domain-baseline",
+  "tag_type": "tag"
+ },
+ "predecessor_stores_match_expectation": true,
+ "prior_art": {
+  "envelope_1e5_clustered": {
+   "ann_p95_ms": 16.526,
+   "ann_recall_at_result_limit": 0.992,
+   "corpus_vector_count": 100000,
+   "ef_search": 1000,
+   "embedding_dimension": 768,
+   "exact_scan_p95_ms": 329.281,
+   "index_build_seconds": 209.689,
+   "index_size_bytes": 409608192,
+   "limitations": [
+    "synthetic vectors loaded outside the governed write path: this measures the retrieval engine, not governed ingestion throughput",
+    "corpus drawn from 64 gaussian clusters with spread 0.35, which approximates the neighbourhood structure real embeddings have"
+   ],
+   "path": "docs/sprints/sprint-21/envelope_1e5_clustered.json",
+   "queries_measured": 50,
+   "read_by_an_exit_criterion": true,
+   "result_limit": 20,
+   "sha256": "37ddf18e6e793e6e38e3cc84d328e60e64e8e77c995c7a37b8c124901c96b08e",
+   "why": "§2.2a: the recall floor is met or missed here, on the geometry real embeddings have. Whether the headroom at 10^5 survives 10x the size is the sprint's question"
+  },
+  "envelope_1e5_uniform": {
+   "ann_p95_ms": 87.965,
+   "ann_recall_at_result_limit": 0.496,
+   "corpus_vector_count": 100000,
+   "ef_search": 1000,
+   "embedding_dimension": 768,
+   "exact_scan_p95_ms": 328.846,
+   "index_build_seconds": 437.917,
+   "index_size_bytes": 409608192,
+   "limitations": [
+    "synthetic gaussian vectors loaded outside the governed write path: this measures the retrieval engine, not governed ingestion throughput"
+   ],
+   "path": "docs/sprints/sprint-21/envelope_1e5.json",
+   "queries_measured": 50,
+   "read_by_an_exit_criterion": false,
+   "result_limit": 20,
+   "sha256": "cf5c550a28040ce611586f21c2197b9fa6049032cf7ff722db26f6e0ca2c8e5d",
+   "why": "independent gaussians in 768 dimensions have no cluster structure, so recall collapses on them by construction. §2.2a freezes this dataset as the adversarial bound: measured and reported in full, read by nothing"
+  },
+  "graph_arm_d1_w5a": {
+   "arm": "minilm_shortlist_plus_bounded_ged",
+   "budget_cutoffs": 60,
+   "budget_ms": 2000,
+   "max_ms": 1793.2,
+   "p50_ms": 24.7,
+   "p95_ms": 1788.9,
+   "path": "docs/sprints/sprint-21/evidence/sprint-21d1-w5a-retrieval.json",
+   "per_pair_ged_timeouts": 0,
+   "read_by_an_exit_criterion": false,
+   "sha256": "4fb18de852f299a1aa630d5d8237efd638179353d93ba2b1d4ee14e343619fb4",
+   "why": "this is the lineage the 500 ms exit is measured against, not a threshold. §2.2d's exit is 3.6x tighter than the only graph-arm latency ever measured, at 10x the scale — and that 1788.9 ms was itself reached with 60 queries cut off at the 2 s budget, which the frozen recipe must not repeat silently"
+  }
+ },
+ "read_policy": "fresh local and remote reads; no remote mutation",
+ "recorded_at": "2026-08-12T08:38:01Z",
+ "schema_version": 1,
+ "sprint": "22B",
+ "stale_expectations": {
+  "sprint_22a": "sprint-22a-baseline.json carries no expectation for this root at all — 22A's baseline listed the eleven roots it must not write to, and its own root was not yet one of them. 22B freezes the post-release state as a first observation"
+ },
+ "stores_written_to_before_this_record": [],
+ "unexplained_drift": [],
+ "wave": "W0",
+ "why_this_record_precedes_provisioning": "22B's own pair is provisioned by this same wave, after this record exists. A baseline taken after the store it describes was created would be describing the sprint's own work"
+}

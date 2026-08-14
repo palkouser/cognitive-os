@@ -1,0 +1,252 @@
+{
+ "contracts": {
+  "bounded_graph_configuration": {
+   "configuration": {
+    "arm": "minilm shortlist, then bounded graph edit distance",
+    "exit_ms": 500,
+    "limits": {
+     "content_hash": "ea93a0481299068097664f5f9e1d6f251a0816da3300606d9bf1ca2310331212",
+     "cross_task_similarity_neighbors": 3,
+     "edges_per_graph": 128,
+     "nodes_per_graph": 64,
+     "path_depth": 8,
+     "per_pair_ged_timeout_ms": 250,
+     "query_budget_seconds": 2,
+     "returned_results": 10,
+     "vector_shortlist": 20
+    },
+    "limits_hash": "039e96e0184e7552b418cf758569ceeda02be16c38c5918cabd1e42e43bf44cf",
+    "may_be_tuned_after_a_number_exists": false,
+    "only_prior_measurement_ms": 1788.9,
+    "per_pair_timeout_ms": 250,
+    "prior_measurement_source": "sprint-21d1-w5a-retrieval.json, arm minilm_shortlist_plus_bounded_ged",
+    "query_budget_seconds": 2,
+    "returned_results": 10,
+    "shape": "ANN shortlist first, budgeted graph expansion second",
+    "shortlist_width": 20,
+    "the_cutoff_trap": "D1 reached 1788.9 ms with 60 queries cut off at its 2 s budget. A budget cutoff returns a short list fast, so a recipe that cuts off more looks quicker while answering less. Every 22B graph record reports its cutoff count beside its p95, and a p95 met with a rising cutoff count is a miss reported as one",
+    "tighter_by": "3.6x, at 10x the scale",
+    "walk_depth_cap": 8
+   },
+   "content_hash": "23260c9cd6cf605eedd30f567b1c265c7eb0be36e5a2f02f1c1a27a3a15ff094",
+   "cutoffs_are_reported_beside_every_p95": true,
+   "every_field_is_a_released_limit": "the configuration is a GraphResourceLimits instance; 22B introduces no new knob, it fixes released ones",
+   "item": "S22B-014",
+   "limits_hash": "039e96e0184e7552b418cf758569ceeda02be16c38c5918cabd1e42e43bf44cf",
+   "may_be_tuned_after_a_number_exists": false,
+   "on_a_miss": "report the miss and the measured slope. Tuning the recipe against the exit and calling the tuning a configuration is the failure this contract exists to make visible",
+   "section": "§2.2d — what bounded graph-assisted is"
+  },
+  "dataset_recipes": {
+   "content_hash": "252eb465383531884bdc5d243a481d6960f1353cb7f245a2f15e69bfadaeb6a6",
+   "generators_are_the_released_harness": "both datasets are drawn by scripts/memory_ann_baseline.py's own generators, the ones that sealed the 10^5 envelope on 2026-07-25. A 10^6 recall number is comparable to that record only if the same function drew both corpora, so the geometry is reused rather than re-implemented",
+   "item": "S22B-011",
+   "prior_art_1e5": {
+    "bound_by": "sprint-22b-baseline.json, which binds both envelope files",
+    "clustered_recall": 0.992,
+    "uniform_recall": 0.496
+   },
+   "recall_exit_reads": "clustered",
+   "recipes": {
+    "clustered": {
+     "cluster_spread": 0.35,
+     "clusters": 64,
+     "corpus_seed": 20250321,
+     "dimension": 768,
+     "generator": "scripts/memory_ann_baseline.py::_clustered_literal",
+     "probe_seed": 777,
+     "reads_the_recall_exit": true,
+     "why": "the geometry real embeddings have. The sealed 10^5 run reached recall 0.992 here; whether that survives 10x the corpus is the sprint's question"
+    },
+    "uniform": {
+     "cluster_spread": 0.35,
+     "clusters": 0,
+     "corpus_seed": 20250321,
+     "dimension": 768,
+     "generator": "scripts/memory_ann_baseline.py::_vector_literal",
+     "probe_seed": 777,
+     "reads_the_recall_exit": false,
+     "why": "independent gaussians in 768 dimensions have no neighbourhood structure, so ANN recall collapses on them by construction: 0.496 at 10^5 is a property of the geometry, not of the index. Reported in full, read by nothing"
+    }
+   },
+   "section": "§2.2a — which dataset the recall floor reads",
+   "uniform_reads_no_exit": true,
+   "why_frozen_now": "after the numbers exist, choosing which dataset the floor reads would be a result rather than a reading"
+  },
+  "exit_criteria": {
+   "content_hash": "f6e7282d0eb5d230c934fa64d624848db36039102d0243cb4b36acf2513dd1e3",
+   "criteria": {
+    "bounded_graph_assisted_p95_ms": {
+     "at_items": 1000000,
+     "comparison": "<=",
+     "threshold": 500
+    },
+    "governed_ingest_items_per_second": {
+     "comparison": ">=",
+     "path": "governed write path on the declared reference host",
+     "threshold": 100
+    },
+    "recall_at_10": {
+     "at_items": 1000000,
+     "comparison": ">=",
+     "dataset": "clustered",
+     "threshold": 0.95
+    },
+    "restore_reproduces": {
+     "comparison": "all of",
+     "threshold": "exact counts, hashes, active views and learned artifact pointers"
+    },
+    "warm_filtered_ann_p95_ms": {
+     "at_items": 1000000,
+     "comparison": "<=",
+     "threshold": 300
+    }
+   },
+   "item": "S22B-010",
+   "may_be_moved_by_a_wave": false,
+   "moved_by_22b": 0,
+   "partial_outcome_is_typed": "four of five met is a typed negative with a measured slope under sprint-22b-evidence-baseline, not a failure to have tried and not a pass",
+   "source": "the execution sprint allocation, verbatim",
+   "why_frozen_now": "four of the five are single numbers, and a single number is the easiest thing in a measurement sprint to soften once it is missed"
+  },
+  "filter_selectivity": {
+   "content_hash": "0629c411e9792be9f7c3c69b7860d973b7092f22b9b0092ecc4d72b9cf7a0a4a",
+   "decided_by": "the wave, under §2.3's last bullet; no threshold moved",
+   "item": "S22B-015",
+   "may_be_changed_after_a_number_exists": false,
+   "predicate": {
+    "applied_as": "a pre-filter in the same statement as the ANN order-by, one query",
+    "memory_type": "episode",
+    "predicate": "scope_id = :scope AND status = ANY(:statuses) AND memory_type = :type",
+    "scopes_in_corpus": 10,
+    "statuses": [
+     "candidate",
+     "verified"
+    ],
+    "target_selectivity": 0.1,
+    "why_frozen": "a filtered-ANN latency is a function of how much the filter removes. Ten scopes, one selected, is a tenth of the corpus and is fixed before any probe runs. §2.3's last bullet forbids tuning a pre-registered configuration once a number exists, and a selectivity is a configuration"
+   },
+   "section": "a sixth reading the plan did not enumerate — W0-D1",
+   "why_this_is_here": "§2.2 froze the five readings that could bend, and the filtered-ANN exit turned out to rest on a sixth: a metadata predicate has a selectivity, and 300 ms is a function of how much the filter removes. Choosing it after the numbers exist would meet the exit by filtering to a friendlier slice. W0 freezes it under the same rule as the other five rather than leaving it to whichever wave first needs it"
+  },
+  "probe_protocol": {
+   "cold_is_recorded_beside_every_warm_number": true,
+   "content_hash": "c49eaa5e5415448b055010a0abcabfbb1a5a0ee80dd432588fe04ec69265175f",
+   "item": "S22B-012",
+   "may_be_reduced_by_a_wave": false,
+   "measured_probes": 500,
+   "protocol": {
+    "cold_definition": "the first probe after the restart, before any warmup probe",
+    "measured_probes": 500,
+    "restart_is_a_real_restart": "the database process is restarted, not a cache hint issued. D7 lifecycle: separate processes or it proved nothing",
+    "warm_definition": "index built, PostgreSQL restarted, then 100 discarded warmup probes, then the measured probes",
+    "warmup_probes": 100,
+    "why_500": "the 10^5 envelope measured 50, and a p95 over 50 probes is decided by its three worst readings. 500 makes the 95th percentile a measurement rather than an anecdote"
+   },
+   "section": "§2.2b — what warm means",
+   "warmup_probes": 100,
+   "why_frozen_now": "'warm' is the single most elastic word available to a sprint that misses a latency exit, and 500 probes cost wall-clock that a pressed wave would otherwise be tempted to save"
+  },
+  "reference_host": {
+   "a_number_measured_elsewhere_closes_nothing": true,
+   "content_hash": "0dc0f9d80760457474662323ef6f39a5069009cdd011071511cb040cb8a80fab",
+   "cpu": "AMD Ryzen 7 5700X 8-Core Processor",
+   "host_id": "cogos-reference-host-1",
+   "invariants_hash": "811cbbb88af5767727595ce774e6d7757290ff91ec3d3c83d4fe27c1a1979c71",
+   "item": "S22B-002",
+   "logical_cpus": 16,
+   "memory_total_kib": 48199296,
+   "pgvector_version": "0.8.2",
+   "postgres_settings_are_sealed": true,
+   "postgres_version": "18.4 (Debian 18.4-1.pgdg12+1)",
+   "section": "§1.4 — the reference host, declared once",
+   "storage_device": "/dev/nvme1n1p1",
+   "why_settings_are_not_tuned": "the 10^5 envelope 22B extends was measured under these settings. Raising maintenance_work_mem would buy a faster build at the price of the only comparison the sprint has"
+  },
+  "restore_checklist": {
+   "checklist": [
+    "exact row counts per table",
+    "content hashes of the artifact store",
+    "the active view after supersessions and tombstones, queried rather than counted",
+    "the live learned artifact pointer resolved and its bytes loaded"
+   ],
+   "content_hash": "58f8915f091a064450053652502f8248e648610e41ed2e7bcf6a0043de5e5ac2",
+   "item": "S22B-016",
+   "live_learned_artifact": {
+    "artifact_hash": "afbdb7c05c73aec8b1a46dd9b20cd8f2f8915819b29a1ea3b364ad8acbb48edb",
+    "component": "learned.containment.correction_ranking",
+    "surface": "experience.correction_ranking",
+    "verified_by": "resolving the pointer in the restored store and loading the bytes"
+   },
+   "section": "§2.2e — what restore must reproduce",
+   "the_checklist_can_fail": "demonstrated in W0: run against a store that never held the artifact, the pointer does not resolve and the checklist says so rather than passing vacuously (22A W4-F2)",
+   "verified_by_query_not_by_digest": "D7 W3-F1: a digest proves bytes, not usability. The active view is queried, and the learned artifact's bytes are loaded"
+  },
+  "throughput_reading": {
+   "bulk_engine_load_reads_an_exit": false,
+   "content_hash": "15bfc64c8ac76a2cdf4d5cf18d0aca3e969071c569da7e8367f9dab1c2871f8b",
+   "embedding_writes_are_inside_the_ingest_loop": false,
+   "ingest_exit_reads": "the governed write path: a real memory record with provenance, an event and a revision, per item",
+   "item": "S22B-013",
+   "reported_per_decile": true,
+   "section": "§2.2c — which path each throughput claim measures",
+   "sustained_over_at_least": 50000,
+   "the_forbidden_move": "relabelling the bulk engine load as ingest. It is the one move §3.2 forbids by name, and the gap between the two numbers is the finding",
+   "why_embeddings_are_separate": "W0-F6: the hybrid recipe needs embedded items, and the obvious fix — embedding inside the ingest loop — would change what the frozen ingest reading measures. Embedding is its own measured step, read by no exit"
+  }
+ },
+ "drivers_module": "scripts/scale_22b.py",
+ "drivers_module_sha256": "c295892ec5bd6d62a31894f8b7aa76551401997e31c463baef03a1293ea979a4",
+ "inherited_unchanged": {
+  "0016": "a refusal, not a plan item",
+  "carried_forward_by_name": [
+   "W2-A1",
+   "W3-A1"
+  ],
+  "execution_contract": "sections 0.1 through 0.4 of the Sprint 21D4 technical backlog, incorporated by reference, plus the six standing rules §0 graduates from 22A and D7",
+  "learning_surface": "the live correction component keeps routing its canary groups; 22B drives no learner and touches no canary routing",
+  "migration_head": "0015"
+ },
+ "integrity_content_hash": "09abfdbee535dade7f3e15cd6119d47ca557f04b054f2f5da4f6d2dfb6b85ea2",
+ "items": [
+  "S22B-010",
+  "S22B-011",
+  "S22B-012",
+  "S22B-013",
+  "S22B-014",
+  "S22B-015",
+  "S22B-016"
+ ],
+ "measured_values": 0,
+ "query_shape_count": 7,
+ "query_shapes_covered": [
+  "ann",
+  "bounded_graph_assisted",
+  "exact_vector",
+  "filtered_ann",
+  "hybrid",
+  "stale_item",
+  "temporal"
+ ],
+ "recipes_hash": "c99ef5e513816fe8db96c350a6283b3251858643e19816259a00fa7f973fb125",
+ "recorded_at": "2026-08-12T08:56:28Z",
+ "revision": 1,
+ "schema_version": 1,
+ "sprint": "22B",
+ "thresholds_changed": {
+  "amendments_made_by_22b": 0,
+  "count": 0
+ },
+ "wave": "W0",
+ "what_this_revision_freezes": [
+  "the five exit numbers, verbatim",
+  "both dataset recipes, their generators and their seeds",
+  "the warm/cold probe protocol and the probe counts",
+  "which path each throughput claim measures",
+  "the bounded graph-assisted configuration",
+  "the filtered-ANN predicate and its selectivity",
+  "the restore checklist and the live learned artifact it must load",
+  "the declared reference host"
+ ],
+ "why_the_shapes_are_enumerated": "22A W4-F1: a claim about coverage has to name the things covered. W2 says 'seven retrieval shapes'; this list is the seven, and a test asserts the enumeration"
+}

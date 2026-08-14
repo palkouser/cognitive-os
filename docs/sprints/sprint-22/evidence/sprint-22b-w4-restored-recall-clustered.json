@@ -1,0 +1,13 @@
+{
+ "database": "cognitive_os_s22b_restore_test",
+ "dataset": "clustered",
+ "ground_truth": "exact scan per probe, never sampled",
+ "k": 10,
+ "meets_exit": false,
+ "probes": 500,
+ "reads_the_recall_exit": true,
+ "recall_at_k": 0.941,
+ "recipes_hash": "c99ef5e513816fe8db96c350a6283b3251858643e19816259a00fa7f973fb125",
+ "seconds": 613.6,
+ "threshold": 0.95
+}

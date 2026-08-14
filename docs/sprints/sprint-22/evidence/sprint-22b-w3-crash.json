@@ -1,0 +1,25 @@
+{
+ "database_recovered": true,
+ "expected_items_after_resume": 55240,
+ "items_after_recovery": 50746,
+ "items_after_resume": 55240,
+ "items_before": 50240,
+ "items_missing_an_event": 1,
+ "items_missing_their_current_revision": 0,
+ "items_written_before_the_kill": 502,
+ "reads_an_exit_criterion": false,
+ "recipes_hash": "c99ef5e513816fe8db96c350a6283b3251858643e19816259a00fa7f973fb125",
+ "recovery_seconds": 4.42,
+ "resume_duplicated_nothing": true,
+ "resumed_items": 5000,
+ "what_was_killed": "the PostgreSQL container compose-postgres-1, with SIGKILL, mid-ingest",
+ "why_no_exit": "no exit criterion reads a crash. This measures what the governed write path leaves behind when the server dies mid-run, so the restore checklist is verified against a store that has actually survived one",
+ "why_the_database_and_not_the_writer": "killing the client tests whether a process can be restarted; killing the server without a checkpoint tests crash recovery, which is what W3 owes",
+ "writer_exit_code": 1,
+ "writer_stderr_tail": [
+  "  File \"/home/palkouser/projekt/cognitive-os/src/cognitive_os/infrastructure/memory/postgres/repository.py\", line 221, in create_memory",
+  "    raise MemoryIntegrityError(\"PostgreSQL memory creation failed\") from error",
+  "cognitive_os.memory.errors.MemoryIntegrityError: PostgreSQL memory creation failed"
+ ],
+ "writer_stdout_bytes": 0
+}

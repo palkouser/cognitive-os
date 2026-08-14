@@ -1,0 +1,13 @@
+{
+ "dataset": "clustered",
+ "index_bytes_after": 4096008192,
+ "index_rebuild_seconds": 2173.705,
+ "pre_registered_rows": 1000000,
+ "recipes_hash": "c99ef5e513816fe8db96c350a6283b3251858643e19816259a00fa7f973fb125",
+ "restored": true,
+ "rows_after": 1000000,
+ "rows_before": 1010000,
+ "table": "memory_scale_22b_corpus_clustered",
+ "total_seconds": 2174.31,
+ "why": "W1-F6: the incremental-insert driver was run against the dataset the recall exit reads. The corpus is returned to the pre-registered million and the index rebuilt, so W2 measures the corpus that was registered rather than the one W1 left behind"
+}

@@ -1,0 +1,67 @@
+{
+ "chronology": {
+  "backups_taken": 0,
+  "corpus_rows_at_10_6": 0,
+  "envelopes_sealed": 0,
+  "exit_criteria_decided": 0,
+  "governed_items_ingested_at_scale": 0,
+  "migrations_allocated": 0,
+  "restores_verified": 0,
+  "thresholds_moved": 0
+ },
+ "contract_hashes": {
+  "bounded_graph_configuration": "23260c9cd6cf605eedd30f567b1c265c7eb0be36e5a2f02f1c1a27a3a15ff094",
+  "dataset_recipes": "252eb465383531884bdc5d243a481d6960f1353cb7f245a2f15e69bfadaeb6a6",
+  "exit_criteria": "f6e7282d0eb5d230c934fa64d624848db36039102d0243cb4b36acf2513dd1e3",
+  "filter_selectivity": "0629c411e9792be9f7c3c69b7860d973b7092f22b9b0092ecc4d72b9cf7a0a4a",
+  "probe_protocol": "c49eaa5e5415448b055010a0abcabfbb1a5a0ee80dd432588fe04ec69265175f",
+  "reference_host": "0dc0f9d80760457474662323ef6f39a5069009cdd011071511cb040cb8a80fab",
+  "restore_checklist": "58f8915f091a064450053652502f8248e648610e41ed2e7bcf6a0043de5e5ac2",
+  "throughput_reading": "15bfc64c8ac76a2cdf4d5cf18d0aca3e969071c569da7e8367f9dab1c2871f8b"
+ },
+ "contracts_sha256": "ece220ad0f0dbba497797c2089d08a2e5a9ae75d0ec0b2f088bfea94d904fcaa",
+ "drivers_module_sha256": "c295892ec5bd6d62a31894f8b7aa76551401997e31c463baef03a1293ea979a4",
+ "evidence_children_sha256": {
+  "sprint-22b-baseline.json": "ba5cc63236e8e2bfc2f53b1f83dff08c4a8f1f306f6e150ba7da64f371cd32c4",
+  "sprint-22b-reference-host.json": "0f05d2ce6ebf3aaa84e2c57ce6cee5751b4bbd67d4f7c552b319c06611e13fac",
+  "sprint-22b-w0-slice.json": "b26ba5b6ede595f01934945658f07778677d9ddfc873d3b25266c642f3dc2c9e"
+ },
+ "integrity_content_hash": "eb59a2504678a8d09a76186884696d535789dc2da6746163705f5e4ed2600a1b",
+ "items": [
+  "S22B-016"
+ ],
+ "measured_values": 0,
+ "outcome_tags": {
+  "pass": "sprint-22b-scale-baseline",
+  "stop": "sprint-22b-evidence-baseline"
+ },
+ "predecessor": {
+  "commit": "291482448114ffed95a975c2b6a0d2be47a6a092",
+  "tag": "sprint-22a-domain-baseline",
+  "verified_live_in": "sprint-22b-baseline.json"
+ },
+ "recipes_hash": "c99ef5e513816fe8db96c350a6283b3251858643e19816259a00fa7f973fb125",
+ "recorded_at": "2026-08-12T08:56:28Z",
+ "reference_host_invariants_hash": "811cbbb88af5767727595ce774e6d7757290ff91ec3d3c83d4fe27c1a1979c71",
+ "revision": 1,
+ "schema_version": 1,
+ "sprint": "22B",
+ "supersedes": null,
+ "wave": "W0",
+ "what_this_publication_forbids": [
+  "moving any of the five exit numbers, in either direction",
+  "reading the recall floor on the uniform dataset, or on any dataset but clustered",
+  "reducing the probe count, or calling a measurement warm without the restart",
+  "relabelling the bulk engine load as governed ingest",
+  "folding embedding writes into the governed-ingest loop",
+  "tuning the bounded graph configuration after its first measured number exists",
+  "changing the filtered-ANN predicate or its selectivity after a number exists",
+  "verifying a restore by comparing hashes instead of querying and loading",
+  "allocating migration 0016, or any other storage-schema change",
+  "shrinking the dataset to make a wave fit inside a timeout",
+  "swapping the released HNSW substrate for another index type mid-measurement",
+  "claiming W2-A1 or W3-A1 resolved by walking past them"
+ ],
+ "why_revision_1": "22B inherits 22A's execution contract but not its pre-registration: a vocabulary and a refusal are not readings, and nothing in 22A's revision 1 constrains a measurement",
+ "why_the_w0_slice_is_not_a_measured_value": "sprint-22b-w0-slice.json runs every driver over a few hundred rows to prove they compose and can fail. Every 22B exit is a claim at 10^6 items, so no number in that record is one of the five, and the record says so in its own body"
+}

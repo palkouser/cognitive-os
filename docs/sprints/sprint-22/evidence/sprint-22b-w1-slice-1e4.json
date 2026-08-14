@@ -1,0 +1,260 @@
+{
+ "bloat_after": {
+  "dead_tuple_percent": 18.37,
+  "dead_tuples": 2000,
+  "free_percent": 1.59,
+  "heap_length_bytes": 876544,
+  "live_tuples": 8000,
+  "present": true,
+  "source": "pgstattuple, an exact heap scan",
+  "table": "memory_scale_22b_corpus_clustered",
+  "total_relation_size_bytes": 83574784
+ },
+ "bloat_before": {
+  "dead_tuple_percent": 0.0,
+  "dead_tuples": 0,
+  "free_percent": 1.59,
+  "heap_length_bytes": 876544,
+  "live_tuples": 10000,
+  "present": true,
+  "source": "pgstattuple, an exact heap scan",
+  "table": "memory_scale_22b_corpus_clustered",
+  "total_relation_size_bytes": 83574784
+ },
+ "bounded_graph_configuration": {
+  "arm": "minilm shortlist, then bounded graph edit distance",
+  "exit_ms": 500,
+  "limits": {
+   "content_hash": "ea93a0481299068097664f5f9e1d6f251a0816da3300606d9bf1ca2310331212",
+   "cross_task_similarity_neighbors": 3,
+   "edges_per_graph": 128,
+   "nodes_per_graph": 64,
+   "path_depth": 8,
+   "per_pair_ged_timeout_ms": 250,
+   "query_budget_seconds": 2,
+   "returned_results": 10,
+   "vector_shortlist": 20
+  },
+  "limits_hash": "039e96e0184e7552b418cf758569ceeda02be16c38c5918cabd1e42e43bf44cf",
+  "may_be_tuned_after_a_number_exists": false,
+  "only_prior_measurement_ms": 1788.9,
+  "per_pair_timeout_ms": 250,
+  "prior_measurement_source": "sprint-21d1-w5a-retrieval.json, arm minilm_shortlist_plus_bounded_ged",
+  "query_budget_seconds": 2,
+  "returned_results": 10,
+  "shape": "ANN shortlist first, budgeted graph expansion second",
+  "shortlist_width": 20,
+  "the_cutoff_trap": "D1 reached 1788.9 ms with 60 queries cut off at its 2 s budget. A budget cutoff returns a short list fast, so a recipe that cuts off more looks quicker while answering less. Every 22B graph record reports its cutoff count beside its p95, and a p95 met with a rising cutoff count is a miss reported as one",
+  "tighter_by": "3.6x, at 10x the scale",
+  "walk_depth_cap": 8
+ },
+ "bulk_load": {
+  "dataset": "clustered",
+  "dimension": 768,
+  "limitation": "bulk engine load outside the governed write path: this is engine capacity, not governed ingestion throughput (§2.2c)",
+  "load_seconds": 5.995,
+  "reads_an_exit_criterion": false,
+  "rows": 10000,
+  "rows_per_second": 1668.1,
+  "table": "memory_scale_22b_corpus_clustered"
+ },
+ "corpus_rows": 10000,
+ "dataset": "clustered",
+ "decides_no_exit_criterion": true,
+ "governed_embed": {
+  "dimension": 64,
+  "embedded": 40,
+  "items_per_second": 258.19,
+  "model_id": "sha256-token-hashing-v1",
+  "provider_id": "deterministic-test",
+  "reads_an_exit_criterion": false,
+  "seconds": 0.155,
+  "why_separate": "§2.2c froze the ingest exit as the governed record path. Folding an embedding write into that loop would change what the frozen reading measures"
+ },
+ "governed_ingest": {
+  "exit_threshold_items_per_second": 100,
+  "items": 40,
+  "items_per_second": 243.98,
+  "path": "governed: MemoryService.create -> repository + provenance + event + revision",
+  "per_decile": [
+   {
+    "decile": 1,
+    "items": 10,
+    "items_per_second": 224.2,
+    "seconds": 0.045
+   },
+   {
+    "decile": 2,
+    "items": 10,
+    "items_per_second": 249.97,
+    "seconds": 0.04
+   },
+   {
+    "decile": 3,
+    "items": 10,
+    "items_per_second": 260.46,
+    "seconds": 0.038
+   },
+   {
+    "decile": 4,
+    "items": 10,
+    "items_per_second": 244.27,
+    "seconds": 0.041
+   }
+  ],
+  "reads_the_ingest_exit": true,
+  "seconds": 0.164,
+  "slowest_decile_items_per_second": 224.2,
+  "why_per_decile": "a sustained rate that fades is a different result from a sustained rate that holds, and a single average hides which one happened"
+ },
+ "governed_queries": {
+  "metadata": {
+   "elapsed_ms": 36.53,
+   "mode": "metadata",
+   "results": 20,
+   "shape": "metadata",
+   "statuses": [
+    "candidate",
+    "verified"
+   ],
+   "through_the_governed_path": true
+  },
+  "stale_item": {
+   "elapsed_ms": 2.144,
+   "mode": "metadata",
+   "results": 0,
+   "shape": "stale_item",
+   "statuses": [
+    "superseded",
+    "retracted",
+    "expired"
+   ],
+   "through_the_governed_path": true
+  },
+  "text": {
+   "elapsed_ms": 32.228,
+   "mode": "text",
+   "results": 20,
+   "shape": "text",
+   "statuses": [
+    "candidate",
+    "verified"
+   ],
+   "through_the_governed_path": true
+  }
+ },
+ "hybrid": {
+  "composition": "two released MemoryQuery executions, reciprocal-rank fused",
+  "elapsed_ms": 59.862,
+  "fused_results": 22,
+  "rrf_k": 60,
+  "rrf_k_source": "cognitive_os.context.ranking.ranking_profile -> context-rrf-v1",
+  "shape": "hybrid",
+  "text_results": 20,
+  "through_the_governed_path": true,
+  "vector_results": 20
+ },
+ "index": {
+  "build_seconds": 1.717,
+  "index": "memory_scale_22b_corpus_clustered_hnsw_768",
+  "size_bytes": 40968192
+ },
+ "recall": {
+  "dataset": "clustered",
+  "ground_truth": "exact scan per probe, never sampled",
+  "k": 10,
+  "probes": 8,
+  "reads_the_recall_exit": true,
+  "recall_at_k": 1.0
+ },
+ "recipes_hash": "c99ef5e513816fe8db96c350a6283b3251858643e19816259a00fa7f973fb125",
+ "reindex_with_readers": {
+  "concurrent_readers": 3,
+  "index": "memory_scale_22b_corpus_clustered_hnsw_768",
+  "reader_latency": {
+   "max_ms": 3.269,
+   "p50_ms": 0.728,
+   "p95_ms": 0.898,
+   "probes": 5783
+  },
+  "reader_queries": 5783,
+  "readers_saw_an_error": false,
+  "reindex_seconds": 1.437
+ },
+ "restore_checklist_shape": {
+  "active_view_rows": 40,
+  "active_view_was_queried": true,
+  "checklist": [
+   "exact row counts per table",
+   "content hashes of the artifact store",
+   "the active view after supersessions and tombstones, queried rather than counted",
+   "the live learned artifact pointer resolved and its bytes loaded"
+  ],
+  "learned_artifact_hash": "afbdb7c05c73aec8b1a46dd9b20cd8f2f8915819b29a1ea3b364ad8acbb48edb",
+  "learned_artifact_pointer_resolved": false,
+  "learned_artifact_size_bytes": null,
+  "learned_artifact_storage_key": null,
+  "row_counts": {
+   "artifacts": 0,
+   "events": 40,
+   "memory_items": 40,
+   "memory_revisions": 40
+  }
+ },
+ "scale": "fixture",
+ "temporal": {
+  "active_rows": 40,
+  "as_of": "2026-08-12T10:18:00.810756Z",
+  "elapsed_ms": 1.527,
+  "limitation": "raw SQL over memory_revisions.created_at: the released MemoryQuery has no as-of predicate and MemoryMetadataFilter.include_historical is read by no released code, so this shape records no access audit (W0-F2)",
+  "shape": "temporal",
+  "through_the_governed_path": false
+ },
+ "vector_probes": {
+  "ann": {
+   "candidate_limit": 10,
+   "cold_first_probe_ms": 25.291,
+   "dataset": "clustered",
+   "ef_search": 1000,
+   "index_scan_confirmed": false,
+   "limitation": "the planner declined the index at this corpus size and scanned exhaustively, so these are not approximate-retrieval numbers",
+   "max_ms": 23.349,
+   "p50_ms": 22.573,
+   "p95_ms": 23.265,
+   "probes": 8,
+   "result_limit": 10,
+   "shape": "ann",
+   "warmup_probes_discarded": 2
+  },
+  "exact_vector": {
+   "candidate_limit": 10,
+   "cold_first_probe_ms": 23.135,
+   "dataset": "clustered",
+   "ef_search": null,
+   "index_scan_confirmed": null,
+   "max_ms": 24.323,
+   "p50_ms": 21.888,
+   "p95_ms": 23.65,
+   "probes": 8,
+   "result_limit": 10,
+   "shape": "exact_vector",
+   "warmup_probes_discarded": 2
+  },
+  "filtered_ann": {
+   "candidate_limit": 10,
+   "cold_first_probe_ms": 3.173,
+   "dataset": "clustered",
+   "ef_search": 1000,
+   "index_scan_confirmed": false,
+   "limitation": "the planner declined the index at this corpus size and scanned exhaustively, so these are not approximate-retrieval numbers",
+   "max_ms": 2.545,
+   "p50_ms": 2.375,
+   "p95_ms": 2.544,
+   "probes": 8,
+   "result_limit": 10,
+   "shape": "filtered_ann",
+   "warmup_probes_discarded": 2
+  }
+ },
+ "why_this_is_not_a_measurement": "every 22B exit is a claim at 10^6 items, and this record is a few hundred rows run to prove the drivers compose and can fail. The `reads_an_exit` flags below describe which shape a driver serves at full scale, never that this run decided anything. Publishing the pre-registration after this slice is therefore not publishing it after the numbers: no number here is one of the five"
+}

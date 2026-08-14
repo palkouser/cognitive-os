@@ -1,0 +1,184 @@
+{
+ "dataset": "clustered",
+ "finding": "the restore changes exactly one thing in the envelope: the clustered corpus HNSW graph, which pg_restore rebuilds. Approximate retrieval over it is 163 % slower and its recall@10 falls from 0.9636 to 0.9410, below the 0.95 floor. Every other shape that looked slower on the restored store was slowed by W3's mutations instead, and on those the restored store is *faster* than the mutated source, because a restore also compacts what mutation left behind",
+ "integrity_content_hash": "81fe417edc30959ea635b1e7b64135989277b639e06f84f8cda01664bc9b7221",
+ "items": [
+  "S22B-042"
+ ],
+ "materiality": {
+  "absolute_ms": 2.0,
+  "relative_fraction": 0.05,
+  "rule": "a difference is material only if it clears both bars"
+ },
+ "pre_registered": false,
+ "reads_an_exit_criterion": false,
+ "recall": {
+  "clustered": {
+   "read_from": {
+    "restored": "sprint-22b-w4-restored-recall-clustered.json",
+    "source_now": "sprint-22b-w4-source-recall-clustered.json",
+    "w2_source": "sprint-22b-w2-recall-clustered.json"
+   },
+   "restore_effect": -0.0226,
+   "restored": 0.941,
+   "source_is_unchanged_since_w2": true,
+   "source_now": 0.9636,
+   "w2_source": 0.9636,
+   "w3_effect": 0.0
+  },
+  "uniform": {
+   "read_from": {
+    "restored": "sprint-22b-w4-restored-recall-uniform.json",
+    "source_now": "sprint-22b-w4-source-recall-uniform.json",
+    "w2_source": "sprint-22b-w2-recall-uniform.json"
+   },
+   "restore_effect": 0.003,
+   "restored": 0.0892,
+   "source_is_unchanged_since_w2": false,
+   "source_now": 0.0862,
+   "w2_source": 0.0854,
+   "w3_effect": 0.0008
+  }
+ },
+ "recorded_at": "2026-08-14T09:53:26Z",
+ "schema_version": 1,
+ "shapes": {
+  "ann": {
+   "attributed_to": "restore",
+   "reads_the_governed_store_not_the_corpus": false,
+   "restore_effect_is_material": true,
+   "restore_effect_ms": 71.754,
+   "restored_p95_ms": 115.754,
+   "rows_returned": {
+    "restored": null,
+    "source_now": null,
+    "w2_source": null
+   },
+   "source_now_p95_ms": 44.0,
+   "w2_source_p95_ms": 44.177,
+   "w3_effect_is_material": false,
+   "w3_effect_ms": -0.177
+  },
+  "bounded_graph_assisted": {
+   "attributed_to": "neither",
+   "reads_the_governed_store_not_the_corpus": false,
+   "restore_effect_is_material": false,
+   "restore_effect_ms": 6.024,
+   "restored_p95_ms": 161.627,
+   "rows_returned": {
+    "restored": null,
+    "source_now": null,
+    "w2_source": null
+   },
+   "source_now_p95_ms": 155.603,
+   "w2_source_p95_ms": 158.37,
+   "w3_effect_is_material": false,
+   "w3_effect_ms": -2.767
+  },
+  "exact_vector": {
+   "attributed_to": "neither",
+   "reads_the_governed_store_not_the_corpus": false,
+   "restore_effect_is_material": false,
+   "restore_effect_ms": 27.599,
+   "restored_p95_ms": 1225.985,
+   "rows_returned": {
+    "restored": null,
+    "source_now": null,
+    "w2_source": null
+   },
+   "source_now_p95_ms": 1198.386,
+   "w2_source_p95_ms": 1243.536,
+   "w3_effect_is_material": false,
+   "w3_effect_ms": -45.15
+  },
+  "filtered_ann": {
+   "attributed_to": "neither",
+   "reads_the_governed_store_not_the_corpus": false,
+   "restore_effect_is_material": false,
+   "restore_effect_ms": 3.029,
+   "restored_p95_ms": 155.339,
+   "rows_returned": {
+    "restored": null,
+    "source_now": null,
+    "w2_source": null
+   },
+   "source_now_p95_ms": 152.31,
+   "w2_source_p95_ms": 156.727,
+   "w3_effect_is_material": false,
+   "w3_effect_ms": -4.417
+  },
+  "hybrid": {
+   "attributed_to": "both",
+   "reads_the_governed_store_not_the_corpus": true,
+   "restore_effect_is_material": true,
+   "restore_effect_ms": -35.562,
+   "restored_p95_ms": 114.847,
+   "rows_returned": {
+    "restored": null,
+    "source_now": null,
+    "w2_source": null
+   },
+   "source_now_p95_ms": 150.409,
+   "w2_source_p95_ms": 92.055,
+   "w3_effect_is_material": true,
+   "w3_effect_ms": 58.354
+  },
+  "stale_item": {
+   "attributed_to": "both",
+   "reads_the_governed_store_not_the_corpus": true,
+   "restore_effect_is_material": true,
+   "restore_effect_ms": -35.435,
+   "restored_p95_ms": 56.413,
+   "rows_returned": {
+    "restored": 20,
+    "source_now": 20,
+    "w2_source": 0
+   },
+   "source_now_p95_ms": 91.848,
+   "w2_source_p95_ms": 1.481,
+   "w3_effect_is_material": true,
+   "w3_effect_ms": 90.367
+  },
+  "temporal": {
+   "attributed_to": "w3_mutations",
+   "reads_the_governed_store_not_the_corpus": true,
+   "restore_effect_is_material": false,
+   "restore_effect_ms": -1.441,
+   "restored_p95_ms": 47.301,
+   "rows_returned": {
+    "restored": null,
+    "source_now": null,
+    "w2_source": null
+   },
+   "source_now_p95_ms": 48.742,
+   "w2_source_p95_ms": 25.463,
+   "w3_effect_is_material": true,
+   "w3_effect_ms": 23.279
+  }
+ },
+ "shapes_attributed_to_the_restore": [
+  "ann"
+ ],
+ "shapes_attributed_to_w3_mutations": [
+  "hybrid",
+  "stale_item",
+  "temporal"
+ ],
+ "sources_sha256": {
+  "sprint-22b-w2-envelope-clustered.json": "ae81e6288305cd1daf848f6ff6ce34bf5e3872dbf05fcf7141212331d741fb49",
+  "sprint-22b-w2-recall-clustered.json": "fe178fe5be4e108008e4f71ca958fe8270daf69bd8a6a156bde1de3a1b66a309",
+  "sprint-22b-w2-recall-uniform.json": "664167c85c97c013e4cd06380925ff20850de311ace700a590fa081595c94282",
+  "sprint-22b-w4-restored-envelope-clustered.json": "5c335e37d2bece6688c831ad61cc3a92e60f308468bea6872f8d79f2eb9d820d",
+  "sprint-22b-w4-restored-recall-clustered.json": "0bc0b4bce3c01917260185e8d80d0140e367463fec65d6e3f8658b128b1e8ff5",
+  "sprint-22b-w4-restored-recall-uniform.json": "7a5363b9f27524099922905d131adce2d2d85fbe61786c494fe9cd923dbed2a5",
+  "sprint-22b-w4-source-envelope-clustered-graph-and-exact.json": "ad6998bb16a37ecd0fefc2c18474c20fb08374a055ad0a012c9b415246fb519d",
+  "sprint-22b-w4-source-envelope-clustered.json": "5eb16143cdc64bae98d3241d9ed5ba538e40379e848087bfb1ce3adc84952b36",
+  "sprint-22b-w4-source-recall-clustered.json": "8adbd5e53c10eb0504ff4bd11880e9da30cb7017efdcc88bff80b0d56fc73039",
+  "sprint-22b-w4-source-recall-uniform.json": "dab8267ce8338acd99ee89b99700abb6aacd9ea3505131e037c55139321947cf"
+ },
+ "sprint": "22B",
+ "wave": "W4",
+ "what_the_first_reading_got_wrong": "that the restore had changed the whole envelope. Three of the seven shapes read the governed store rather than the corpus, and W3 is what changed it: stale_item returned zero rows in W2 and twenty afterwards",
+ "why_clustered": "the clustered corpus is the one the recall exit is defined over and the one every mutation wave left alone, so a change in it is a change in the index rather than in the rows",
+ "why_it_is_post_hoc": "the control was designed after the restored numbers existed. It decides nothing: all five exit criteria are read from W2's and W1's and W3's sealed measurements, which this record cannot reach. It changes what the wave's finding is *about*"
+}

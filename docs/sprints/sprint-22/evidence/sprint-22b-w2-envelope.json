@@ -1,0 +1,314 @@
+{
+ "binds": {
+  "host_id": "cogos-reference-host-2",
+  "host_integrity_content_hash": "f76616eb309941832a3fc8e8e3fa7a737f95cfbbe89eb7a817d9676061b146bb",
+  "recipes_hash": "c99ef5e513816fe8db96c350a6283b3251858643e19816259a00fa7f973fb125",
+  "sources": {
+   "envelope": {
+    "clustered": "ae81e6288305cd1daf848f6ff6ce34bf5e3872dbf05fcf7141212331d741fb49",
+    "uniform": "469f395346d09f54b7051dc77293d6d6d011951556879e49f715b76ad3bbfc56"
+   },
+   "recall": {
+    "clustered": "fe178fe5be4e108008e4f71ca958fe8270daf69bd8a6a156bde1de3a1b66a309",
+    "uniform": "664167c85c97c013e4cd06380925ff20850de311ace700a590fa081595c94282"
+   }
+  }
+ },
+ "coverage": {
+  "cells_measured": 14,
+  "cells_required": 14,
+  "complete": true,
+  "datasets_covered": [
+   "clustered",
+   "uniform"
+  ],
+  "datasets_covered_count": 2,
+  "matrix": {
+   "clustered": {
+    "ann": 500,
+    "bounded_graph_assisted": 500,
+    "exact_vector": 500,
+    "filtered_ann": 500,
+    "hybrid": 500,
+    "stale_item": 500,
+    "temporal": 500
+   },
+   "uniform": {
+    "ann": 500,
+    "bounded_graph_assisted": 500,
+    "exact_vector": 500,
+    "filtered_ann": 500,
+    "hybrid": 500,
+    "stale_item": 500,
+    "temporal": 500
+   }
+  },
+  "measured_probes_total": 7000,
+  "missing_cells": [],
+  "probes_per_cell": 500,
+  "shapes_pre_registered": [
+   "ann",
+   "bounded_graph_assisted",
+   "exact_vector",
+   "filtered_ann",
+   "hybrid",
+   "stale_item",
+   "temporal"
+  ],
+  "shapes_pre_registered_count": 7,
+  "warmup_per_cell": 100,
+  "what_the_count_covers": "one measured cell is one shape driven over one dataset at the pre-registered probe count, after a restart and its own warmup. 22A W4-F1: the number is here so the word 'every' has something behind it"
+ },
+ "diagnostics_read_no_exit": true,
+ "envelope": {
+  "clustered": {
+   "ann": {
+    "cold_first_probe_ms": 55.26,
+    "probes": 500,
+    "reads_an_exit": false,
+    "warm_max_ms": 56.691,
+    "warm_p50_ms": 40.709,
+    "warm_p95_ms": 44.177
+   },
+   "bounded_graph_assisted": {
+    "cold_first_probe_ms": 479.143,
+    "probes": 500,
+    "reads_an_exit": "p95 <= 500 ms",
+    "warm_max_ms": 259.162,
+    "warm_p50_ms": 74.746,
+    "warm_p95_ms": 158.37
+   },
+   "exact_vector": {
+    "cold_first_probe_ms": 1230.204,
+    "probes": 500,
+    "reads_an_exit": false,
+    "warm_max_ms": 1345.801,
+    "warm_p50_ms": 1201.771,
+    "warm_p95_ms": 1243.536
+   },
+   "filtered_ann": {
+    "cold_first_probe_ms": 157.04,
+    "probes": 500,
+    "reads_an_exit": false,
+    "warm_max_ms": 164.987,
+    "warm_p50_ms": 151.268,
+    "warm_p95_ms": 156.727
+   },
+   "hybrid": {
+    "cold_first_probe_ms": 103.334,
+    "probes": 500,
+    "reads_an_exit": false,
+    "warm_max_ms": 290.389,
+    "warm_p50_ms": 87.505,
+    "warm_p95_ms": 92.055
+   },
+   "stale_item": {
+    "cold_first_probe_ms": 2.918,
+    "probes": 500,
+    "reads_an_exit": false,
+    "warm_max_ms": 1.637,
+    "warm_p50_ms": 1.354,
+    "warm_p95_ms": 1.481
+   },
+   "temporal": {
+    "cold_first_probe_ms": 23.251,
+    "probes": 500,
+    "reads_an_exit": false,
+    "warm_max_ms": 30.743,
+    "warm_p50_ms": 22.513,
+    "warm_p95_ms": 25.463
+   }
+  },
+  "uniform": {
+   "ann": {
+    "cold_first_probe_ms": 232.85,
+    "probes": 500,
+    "reads_an_exit": false,
+    "warm_max_ms": 195.374,
+    "warm_p50_ms": 155.626,
+    "warm_p95_ms": 186.494
+   },
+   "bounded_graph_assisted": {
+    "cold_first_probe_ms": 4201.486,
+    "probes": 500,
+    "reads_an_exit": "p95 <= 500 ms",
+    "warm_max_ms": 406.445,
+    "warm_p50_ms": 149.731,
+    "warm_p95_ms": 234.427
+   },
+   "exact_vector": {
+    "cold_first_probe_ms": 2612.594,
+    "probes": 500,
+    "reads_an_exit": false,
+    "warm_max_ms": 1258.439,
+    "warm_p50_ms": 1202.256,
+    "warm_p95_ms": 1220.878
+   },
+   "filtered_ann": {
+    "cold_first_probe_ms": 663.45,
+    "probes": 500,
+    "reads_an_exit": false,
+    "warm_max_ms": 159.866,
+    "warm_p50_ms": 149.814,
+    "warm_p95_ms": 153.814
+   },
+   "hybrid": {
+    "cold_first_probe_ms": 107.429,
+    "probes": 500,
+    "reads_an_exit": false,
+    "warm_max_ms": 295.778,
+    "warm_p50_ms": 88.477,
+    "warm_p95_ms": 92.719
+   },
+   "stale_item": {
+    "cold_first_probe_ms": 2.759,
+    "probes": 500,
+    "reads_an_exit": false,
+    "warm_max_ms": 1.815,
+    "warm_p50_ms": 1.393,
+    "warm_p95_ms": 1.519
+   },
+   "temporal": {
+    "cold_first_probe_ms": 26.701,
+    "probes": 500,
+    "reads_an_exit": false,
+    "warm_max_ms": 31.444,
+    "warm_p50_ms": 23.304,
+    "warm_p95_ms": 27.993
+   }
+  }
+ },
+ "exit_readings": {
+  "bounded_graph_assisted_p95_ms": {
+   "comparison": "<=",
+   "dataset": "worst_of_both",
+   "decided_by_dataset": "uniform",
+   "measured": 234.427,
+   "met": true,
+   "per_dataset": {
+    "clustered": 158.37,
+    "uniform": 234.427
+   },
+   "read_from": "sprint-22b-w2-envelope-uniform.json#measured.bounded_graph_assisted.p95_ms",
+   "threshold": 500,
+   "why_this_dataset": "no reading fixed a dataset for the latency exits, so the worse of the two decides and both are reported"
+  },
+  "recall_at_10": {
+   "comparison": ">=",
+   "dataset": "clustered",
+   "decided_by_dataset": "clustered",
+   "measured": 0.9636,
+   "met": true,
+   "per_dataset": {
+    "clustered": 0.9636
+   },
+   "read_from": "sprint-22b-w2-recall-clustered.json#recall_at_k",
+   "threshold": 0.95,
+   "why_this_dataset": "§2.2a froze it: the clustered geometry, and no other"
+  },
+  "warm_filtered_ann_p95_ms": {
+   "comparison": "<=",
+   "dataset": "worst_of_both",
+   "decided_by_dataset": "clustered",
+   "measured": 156.727,
+   "met": true,
+   "per_dataset": {
+    "clustered": 156.727,
+    "uniform": 153.814
+   },
+   "read_from": "sprint-22b-w2-envelope-clustered.json#measured.filtered_ann.p95_ms",
+   "threshold": 300,
+   "why_this_dataset": "no reading fixed a dataset for the latency exits, so the worse of the two decides and both are reported"
+  }
+ },
+ "exits_decided_by_w2": 3,
+ "exits_met": 3,
+ "integrity_content_hash": "43f29e4fde779d7be3de6705fe3a5a29ecbfaea3467c34354382a64ba50500d7",
+ "items": [
+  "S22B-030",
+  "S22B-031",
+  "S22B-032"
+ ],
+ "limitations": [
+  {
+   "limitation": "a container restart empties PostgreSQL's shared buffers, not the host page cache, so cold here means cold-server rather than cold-storage",
+   "where": "clustered/restart"
+  },
+  {
+   "index_over_shared_buffers": 30.5,
+   "limitation": "the index does not fit in the server's buffer pool and does fit in host memory, so a warm number here is served by the Linux page cache rather than by shared_buffers",
+   "where": "clustered/server_memory"
+  },
+  {
+   "limitation": "the graph half expands the released D1 pairs, joined to this corpus by row_id % 80: §2.3 forbids 22B authoring a corpus, so the 10^6 scale enters through the ANN shortlist leg and the expansion leg's cost is a property of the released 80-pair set. A latency measurement of the released arm, never a quality one",
+   "where": "clustered/bounded_graph_assisted"
+  },
+  {
+   "limitation": "the planner declined the index at this corpus size and scanned exhaustively, so these are not approximate-retrieval numbers",
+   "where": "clustered/filtered_ann"
+  },
+  {
+   "limitation": "raw SQL over memory_revisions.created_at: the released MemoryQuery has no as-of predicate and MemoryMetadataFilter.include_historical is read by no released code, so this shape records no access audit (W0-F2)",
+   "where": "clustered/temporal"
+  },
+  {
+   "limitation": "a container restart empties PostgreSQL's shared buffers, not the host page cache, so cold here means cold-server rather than cold-storage",
+   "where": "uniform/restart"
+  },
+  {
+   "index_over_shared_buffers": 30.5,
+   "limitation": "the index does not fit in the server's buffer pool and does fit in host memory, so a warm number here is served by the Linux page cache rather than by shared_buffers",
+   "where": "uniform/server_memory"
+  },
+  {
+   "limitation": "the graph half expands the released D1 pairs, joined to this corpus by row_id % 80: §2.3 forbids 22B authoring a corpus, so the 10^6 scale enters through the ANN shortlist leg and the expansion leg's cost is a property of the released 80-pair set. A latency measurement of the released arm, never a quality one",
+   "where": "uniform/bounded_graph_assisted"
+  },
+  {
+   "limitation": "the planner declined the index at this corpus size and scanned exhaustively, so these are not approximate-retrieval numbers",
+   "where": "uniform/filtered_ann"
+  },
+  {
+   "limitation": "raw SQL over memory_revisions.created_at: the released MemoryQuery has no as-of predicate and MemoryMetadataFilter.include_historical is read by no released code, so this shape records no access audit (W0-F2)",
+   "where": "uniform/temporal"
+  }
+ ],
+ "one_host": "every number here is a property of the declared reference host and of its PostgreSQL memory settings, which 22B seals and does not tune (§1.4, §2.3)",
+ "pre_registration_sha256": "1e0022094ac62dc29e1372fdd93ca060cf558773cddfb9e391373148d9d0dd73",
+ "recall": {
+  "clustered": {
+   "ground_truth": "exact scan per probe, never sampled",
+   "k": 10,
+   "probes": 500,
+   "reads_the_recall_exit": true,
+   "recall_at_k": 0.9636
+  },
+  "uniform": {
+   "ground_truth": "exact scan per probe, never sampled",
+   "k": 10,
+   "probes": 500,
+   "reads_the_recall_exit": false,
+   "recall_at_k": 0.0854
+  }
+ },
+ "recorded_at": "2026-08-13T12:18:39Z",
+ "schema_version": 1,
+ "sprint": "22B",
+ "supporting_modes_driven": {
+  "metadata": {
+   "an_envelope_row": false,
+   "driven_by": [
+    "stale_item"
+   ],
+   "mode": "metadata"
+  },
+  "text": {
+   "an_envelope_row": false,
+   "driven_by": [
+    "hybrid"
+   ],
+   "mode": "text"
+  }
+ },
+ "wave": "W2"
+}

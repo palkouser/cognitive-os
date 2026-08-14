@@ -1,0 +1,64 @@
+{
+ "all_four_met": true,
+ "archive": "20260812T134121Z-artifacts.tar.zst",
+ "artifact_loaded_from_restored_archive": {
+  "bytes": 4354,
+  "content_hash": "afbdb7c05c73aec8b1a46dd9b20cd8f2f8915819b29a1ea3b364ad8acbb48edb",
+  "loaded": true,
+  "matches_expected": true
+ },
+ "checklist": [
+  "exact row counts per table",
+  "content hashes of the artifact store",
+  "the active view after supersessions and tombstones, queried rather than counted",
+  "the live learned artifact pointer resolved and its bytes loaded"
+ ],
+ "checks": {
+  "active_view_identical": true,
+  "artifact_bytes_loaded_and_match": true,
+  "artifact_pointer_resolved": true,
+  "row_counts_identical": true
+ },
+ "recipes_hash": "c99ef5e513816fe8db96c350a6283b3251858643e19816259a00fa7f973fb125",
+ "restored": {
+  "active_view_rows": 50040,
+  "active_view_was_queried": true,
+  "checklist": [
+   "exact row counts per table",
+   "content hashes of the artifact store",
+   "the active view after supersessions and tombstones, queried rather than counted",
+   "the live learned artifact pointer resolved and its bytes loaded"
+  ],
+  "learned_artifact_hash": "afbdb7c05c73aec8b1a46dd9b20cd8f2f8915819b29a1ea3b364ad8acbb48edb",
+  "learned_artifact_pointer_resolved": true,
+  "learned_artifact_size_bytes": 4354,
+  "learned_artifact_storage_key": "sha256/af/afbdb7c05c73aec8b1a46dd9b20cd8f2f8915819b29a1ea3b364ad8acbb48edb",
+  "row_counts": {
+   "artifacts": 1,
+   "events": 50040,
+   "memory_items": 50040,
+   "memory_revisions": 50040
+  }
+ },
+ "source": {
+  "active_view_rows": 50040,
+  "active_view_was_queried": true,
+  "checklist": [
+   "exact row counts per table",
+   "content hashes of the artifact store",
+   "the active view after supersessions and tombstones, queried rather than counted",
+   "the live learned artifact pointer resolved and its bytes loaded"
+  ],
+  "learned_artifact_hash": "afbdb7c05c73aec8b1a46dd9b20cd8f2f8915819b29a1ea3b364ad8acbb48edb",
+  "learned_artifact_pointer_resolved": true,
+  "learned_artifact_size_bytes": 4354,
+  "learned_artifact_storage_key": "sha256/af/afbdb7c05c73aec8b1a46dd9b20cd8f2f8915819b29a1ea3b364ad8acbb48edb",
+  "row_counts": {
+   "artifacts": 1,
+   "events": 50040,
+   "memory_items": 50040,
+   "memory_revisions": 50040
+  }
+ },
+ "verified_by_query_not_by_digest": true
+}

@@ -1,0 +1,12 @@
+{
+ "dataset": "uniform",
+ "ground_truth": "exact scan per probe, never sampled",
+ "k": 10,
+ "meets_exit": false,
+ "probes": 500,
+ "reads_the_recall_exit": false,
+ "recall_at_k": 0.0854,
+ "recipes_hash": "c99ef5e513816fe8db96c350a6283b3251858643e19816259a00fa7f973fb125",
+ "seconds": 653.411,
+ "threshold": 0.95
+}
