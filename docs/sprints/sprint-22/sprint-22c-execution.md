@@ -10,7 +10,7 @@ Waves are recorded newest first.
 
 ## W0 outcome — the authority, the gate that blocks, the drivers, and the freezes
 
-Five scripts, one new contract module, six sealed records, two test modules with **53
+Five scripts, one new contract module, six sealed records, two test modules with **54
 tests**, **six findings**, one decision and one carried observation.
 
 22B's W0 had five thresholds in front of it and asked the gate owner for nothing. 22C's has
@@ -179,7 +179,7 @@ proof §4 describes and nothing more — the record says so in its own limitatio
 | Module | Tests | What it holds |
 |---|---:|---|
 | `tests/cognitive_os/campaign/test_campaign_22c_drivers.py` | 23 | stage-order refusal, the four rights refusals, holdout separation, the two cross-check legs, the refusal-as-data guard, replay enumeration |
-| `tests/cognitive_os/campaign/test_sprint_22c_w0_evidence.py` | 30 | the six seals, the live release verification, both bound repairs, `measured_values: 0`, the plant's record, the citation walk |
+| `tests/cognitive_os/campaign/test_sprint_22c_w0_evidence.py` | 31 | the six seals, the live release verification, both bound repairs, `measured_values: 0`, the plant's record, the citation walk |
 
 Four properties in that table are fences rather than tests. The **import fence** asserts that
 `campaign_22c.py` contains no reference to `holdout_22c` at all, so a wave that reaches for a
