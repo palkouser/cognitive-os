@@ -1,0 +1,315 @@
+{
+ "branch": {
+  "commits_ahead_at_baseline": 1,
+  "descends_from_current_origin_main": true,
+  "local_head": "c335a7d1a74bf60264d3f4451672d96738b6a194",
+  "merge_base_with_origin_main": "dc4006116ff2cfac3f7e581253dd5f549ba3ce52",
+  "name": "sprint-22c-groundwork",
+  "note": "the backlog commit rides ahead of main on this branch, so the plan the wave executes travels with the wave that executes it",
+  "origin_main": "dc4006116ff2cfac3f7e581253dd5f549ba3ce52"
+ },
+ "campaign_budget_lines": {
+  "governed_ingest_items_per_second": {
+   "items_per_second": 139.35,
+   "path": "docs/sprints/sprint-22/evidence/sprint-22b-w1-governed-ingest.json",
+   "sha256": "8db868ffd19642538343c2f3c4c6b8d3c9ebe72f0d6af0188de2eea42db90594"
+  },
+  "incremental_insert_rows_per_second": {
+   "path": "docs/sprints/sprint-22/evidence/sprint-22b-w1-incremental.json",
+   "rows_per_second": 26.1,
+   "sha256": "a48c08f8a9b855850b6ee6a6dd794d03f7093039a675cbcb1db30b2013573476"
+  },
+  "why_no_campaign_budget_is_threatened": "one chapter across three cycles is thousands of items, not millions. These are sealed budget lines a campaign reads rather than rediscovers, and the wave that grows past fixture scale prices against them"
+ },
+ "ci_runs": [
+  {
+   "branch": "main",
+   "conclusion": "success",
+   "event": "push",
+   "head_sha": "dc4006116ff2cfac3f7e581253dd5f549ba3ce52",
+   "jobs": 30,
+   "jobs_successful": 30,
+   "label": "22b post-merge main, exact head",
+   "run_id": 31804585618
+  }
+ ],
+ "commands": [
+  "gh api repos/palkouser/cognitive-os/actions/runs/31804585618",
+  "gh api repos/palkouser/cognitive-os/actions/runs/31804585618/jobs?per_page=100",
+  "gh api repos/palkouser/cognitive-os/branches/main/protection",
+  "git cat-file -t 084d561ddc3def7a359863222451041e9cc23f5e",
+  "git ls-remote origin refs/heads/main",
+  "git ls-remote origin refs/tags/sprint-22b-scale-baseline*",
+  "git ls-remote origin refs/tags/sprint-22c-acquisition-baseline",
+  "git ls-remote origin refs/tags/sprint-22c-evidence-baseline",
+  "git merge-base HEAD origin/main",
+  "git rev-list --count origin/main..HEAD",
+  "git rev-parse HEAD",
+  "git rev-parse sprint-22b-scale-baseline",
+  "git rev-parse sprint-22b-scale-baseline^{}"
+ ],
+ "first_observations": [
+  "sprint_22b",
+  "sprint_22b_backups"
+ ],
+ "inherited_repairs": {
+  "w3_f1_missing_creation_event": {
+   "defect": "MemoryService.create commits the record and appends memory.item_created in two transactions; a crash between them leaves a governed item permanently outside its own event stream, because the idempotency key turns the resume into a lookup that never reaches the event append",
+   "items_missing_an_event": 1,
+   "items_written_before_the_kill": 502,
+   "path": "docs/sprints/sprint-22/evidence/sprint-22b-w3-crash.json",
+   "resume_duplicated_nothing": true,
+   "sha256": "301ce478280409d6c8c91ca30b0812ff66f509e0c3f20ffc86932ae65a6870e8",
+   "target": "items_missing_an_event == 0 after the same crash, re-run by W1",
+   "what_was_killed": "the PostgreSQL container compose-postgres-1, with SIGKILL, mid-ingest",
+   "why_22c_owns_it": "22C's exits depend on the event stream being the truth: replay, quarantine and supersession are all read out of it. 22B was forbidden to change released behaviour mid-measurement; 22C repairs it before the first campaign number exists"
+  },
+  "w4_f1_restored_index_recall": {
+   "defect": "pg_restore rebuilds HNSW indexes rather than copying them, and the rebuilt graph drops clustered recall below the floor with no released signal that anything degraded",
+   "ground_truth": "exact scan per probe, never sampled",
+   "meets_exit_before_repair": false,
+   "probes": 500,
+   "restored_path": "docs/sprints/sprint-22/evidence/sprint-22b-w4-restored-recall-clustered.json",
+   "restored_recall_at_10": 0.941,
+   "restored_sha256": "0bc0b4bce3c01917260185e8d80d0140e367463fec65d6e3f8658b128b1e8ff5",
+   "source_path": "docs/sprints/sprint-22/evidence/sprint-22b-w4-source-recall-clustered.json",
+   "source_recall_at_10": 0.9636,
+   "source_sha256": "8adbd5e53c10eb0504ff4bd11880e9da30cb7017efdcc88bff80b0d56fc73039",
+   "target": "restored clustered recall@10 back over 0.95, measured the way 22B measured it — restore the clustered corpus, apply the pre-registered procedure, exact-scan ground truth per probe",
+   "threshold": 0.95,
+   "why_22c_owns_it": "22B deliberately left it untuned so the number 22C improves is a measured one, not a number chosen after seeing it"
+  }
+ },
+ "integrity_content_hash": "6ddd1e8950d7a923161e21adac521d84b87ca1a8a4b80b90959fdc40ebcd6a9f",
+ "items": [
+  "S22C-000",
+  "S22C-001"
+ ],
+ "main_protection": {
+  "allow_deletions": false,
+  "allow_force_pushes": false,
+  "enforce_admins": true,
+  "queried_json_sha256": "80197b683484a7ede84c4a4554851a4ec43c10a5fe209ceae6410882976d2b88",
+  "required_context_count": 27,
+  "required_contexts": [
+   "benchmark-regression",
+   "build",
+   "coding-agent",
+   "cognitive-controller",
+   "context-builder-core",
+   "controlled-changes-core",
+   "corpus-factory-core",
+   "cross-domain-pilot-core",
+   "experience-compiler-core",
+   "harness-proposals-core",
+   "inspect-adapter",
+   "memory-plane-core",
+   "migration",
+   "model-routing-core",
+   "optional-boundary",
+   "postgres-integration",
+   "provider-offline",
+   "quality",
+   "sandbox",
+   "security",
+   "semantic-memory-core",
+   "skill-engine-core",
+   "strategy-engine-core",
+   "test",
+   "tool-plane",
+   "verifier-domains",
+   "weakness-mining-core"
+  ],
+  "required_conversation_resolution": true,
+  "required_pull_request_reviews": null,
+  "strict": true
+ },
+ "migration": {
+  "0016_is_a_refusal": "the campaign pipeline is composition over released storage — memory provenance bundles, semantic claims, corpus lineage, content-addressed artifacts. A wave that finds itself needing a migration has found a finding, not a plan item",
+  "migration_files": 15,
+  "next_available": "0016 (unallocated)",
+  "planned_22c_migration": null,
+  "repository_head": "0015",
+  "the_one_candidate_exception": "§1.4: widening the `domain_pilot_runs` CHECK constraint so a pilot-domain evaluation run has a persisted path (22A W2-A1). A gate-owner decision taken in W0 or not at all; the plan's frozen default takes it in neither direction by running the holdout through `domains.solve`/`domains.checker` and sealing outcomes as 22C evidence records"
+ },
+ "outcome_tags_absent": {
+  "sprint-22c-acquisition-baseline": true,
+  "sprint-22c-evidence-baseline": true
+ },
+ "phase": "before",
+ "predecessor_artifact_stores": {
+  "development": {
+   "expectation_is_stale": null,
+   "expected_files": 5,
+   "expected_from": "sprint-22b-baseline.json",
+   "files": 5,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts",
+   "path_and_size_fingerprint_sha256": "7e85d9a69d1db2f07c3772fcba26d50c5bb31ca558f81930da07a5feb1982dcf"
+  },
+  "sprint_21c3": {
+   "expectation_is_stale": null,
+   "expected_files": 8503,
+   "expected_from": "sprint-22b-baseline.json",
+   "files": 8503,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21c3",
+   "path_and_size_fingerprint_sha256": "7d19e3c8e45455296520eb8b6edf524d2454d6f5e07a432b751939eb23dfe593"
+  },
+  "sprint_21d1": {
+   "expectation_is_stale": null,
+   "expected_files": 83,
+   "expected_from": "sprint-22b-baseline.json",
+   "files": 83,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d1",
+   "path_and_size_fingerprint_sha256": "f7b14ac7a66508c5ad41f8f310a02544d1dc8e1d513dcc5bbdab82106cfbf30f"
+  },
+  "sprint_21d2": {
+   "expectation_is_stale": null,
+   "expected_files": 1511,
+   "expected_from": "sprint-22b-baseline.json",
+   "files": 1511,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d2",
+   "path_and_size_fingerprint_sha256": "39417f1a03f6824cfe6f9c4b7e6bd5a3cd34da8329fb95cff0a35595899438aa"
+  },
+  "sprint_21d3": {
+   "expectation_is_stale": null,
+   "expected_files": 2096,
+   "expected_from": "sprint-22b-baseline.json",
+   "files": 2096,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d3",
+   "path_and_size_fingerprint_sha256": "fcb0a044810b375f2933d4a3cf22c7448bfada9c90e104566a92125b08dcd0d3"
+  },
+  "sprint_21d4": {
+   "expectation_is_stale": null,
+   "expected_files": 4006,
+   "expected_from": "sprint-22b-baseline.json",
+   "files": 4006,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d4",
+   "path_and_size_fingerprint_sha256": "3d09732ef59c8e9a36ceabc9619d6a139a7f48437ab0d67e07931720c75f7b47"
+  },
+  "sprint_21d5": {
+   "expectation_is_stale": null,
+   "expected_files": 4695,
+   "expected_from": "sprint-22b-baseline.json",
+   "files": 4695,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d5",
+   "path_and_size_fingerprint_sha256": "f058a6e31f8de66726af3fb44fef081daa3be754dc20cb77dc657af71d818a7f"
+  },
+  "sprint_21d6": {
+   "expectation_is_stale": null,
+   "expected_files": 249,
+   "expected_from": "sprint-22b-baseline.json",
+   "files": 249,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d6",
+   "path_and_size_fingerprint_sha256": "9b910c7d9556b6307c39e2360b70f472177cdea8237aad3fc367a6d2ed9bc910"
+  },
+  "sprint_21d6_measured": {
+   "expectation_is_stale": null,
+   "expected_files": 1522,
+   "expected_from": "sprint-22b-baseline.json",
+   "files": 1522,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d6-measured",
+   "path_and_size_fingerprint_sha256": "088d8213565ce3b46f1bcad8f28d03c69f618ebbe471c7f2c5046ff566f54f75"
+  },
+  "sprint_21d7": {
+   "expectation_is_stale": null,
+   "expected_files": 173,
+   "expected_from": "sprint-22b-baseline.json",
+   "files": 173,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d7",
+   "path_and_size_fingerprint_sha256": "1920aa20676f44925fe7872ed2d5ba66013dac96d9798b203703d0b91c8cca0b"
+  },
+  "sprint_21d7_measured": {
+   "expectation_is_stale": null,
+   "expected_files": 2511,
+   "expected_from": "sprint-22b-baseline.json",
+   "files": 2511,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s21d7-measured",
+   "path_and_size_fingerprint_sha256": "d406f57bd618ade3a633eed71c9695e30653713dc4fc6d381270213d92f33d59"
+  },
+  "sprint_22a": {
+   "expectation_is_stale": null,
+   "expected_files": 3,
+   "expected_from": "sprint-22b-baseline.json",
+   "files": 3,
+   "matches_expected": true,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s22a",
+   "path_and_size_fingerprint_sha256": "0ffdb3c767e37fa16d1250c155a1748f8d31c1db4389139a03ce1f068f55586d"
+  },
+  "sprint_22b": {
+   "expectation_is_stale": "sprint-22b-baseline.json carries no expectation for this root — 22B's baseline listed the twelve roots it must not write to, and its own was not yet one of them. 22C freezes the post-release state as a first observation",
+   "expected_files": null,
+   "expected_from": "first observation at the 22C baseline; no released expectation exists",
+   "files": 17,
+   "matches_expected": null,
+   "path": "/home/palkouser/projekt/cognitive-os-data/artifacts-s22b",
+   "path_and_size_fingerprint_sha256": "75ede3c2c131f51bfae800e1e576038523b13180b8ff0f044cc4780ee9afa569"
+  },
+  "sprint_22b_backups": {
+   "expectation_is_stale": "the backup root 22B created for its restore round trip, never fingerprinted by a released record. First observation at the 22C baseline",
+   "expected_files": null,
+   "expected_from": "first observation at the 22C baseline; no released expectation exists",
+   "files": 15,
+   "matches_expected": null,
+   "path": "/home/palkouser/projekt/cognitive-os-data/backups-s22b",
+   "path_and_size_fingerprint_sha256": "ac91294c370a1804e66a0bd07067d9ef992d8dd87e000ab5c89d0ff40119698b"
+  }
+ },
+ "predecessor_exit_state": {
+  "all_met": true,
+  "carried_forward_by_name": [
+   "22A W2-A1",
+   "22A W3-A1",
+   "22B W2-F2"
+  ],
+  "criteria_met": 5,
+  "criteria_total": 5,
+  "handed_to_22c_for_repair": [
+   "22B W3-F1",
+   "22B W4-F1"
+  ],
+  "outcome": "pass",
+  "post_restore_all_still_met": false,
+  "source": "sprint-22b-exit-criteria.json",
+  "source_sha256": "7279f8e00776d45f9d10adad30b17a9748bd34cec4355fd15056aefdadd03f49",
+  "thresholds_moved_by_22b": 0,
+  "why_carried_not_resolved": "W2-A1 needs a migration and §1.4 freezes a default that does not take one; W3-A1 (a released domain cannot refuse a view) is untouched by any campaign work; 22B W2-F2 is a filtered-ANN planner choice at 10^6, four orders of magnitude above campaign scale"
+ },
+ "predecessor_release": {
+  "local_and_remote_agree": true,
+  "local_peeled_commit": "dc4006116ff2cfac3f7e581253dd5f549ba3ce52",
+  "local_tag_object": "084d561ddc3def7a359863222451041e9cc23f5e",
+  "peels_to_current_origin_main": true,
+  "pull_requests": [
+   233
+  ],
+  "remote": "https://github.com/palkouser/cognitive-os",
+  "remote_peeled_commit": "dc4006116ff2cfac3f7e581253dd5f549ba3ce52",
+  "remote_tag_object": "084d561ddc3def7a359863222451041e9cc23f5e",
+  "tag": "sprint-22b-scale-baseline",
+  "tag_type": "tag"
+ },
+ "predecessor_stores_match_expectation": true,
+ "read_policy": "fresh local and remote reads; no remote mutation",
+ "recorded_at": "2026-08-14T16:54:06Z",
+ "schema_version": 1,
+ "sprint": "22C",
+ "stale_expectations": {
+  "sprint_22b": "sprint-22b-baseline.json carries no expectation for this root — 22B's baseline listed the twelve roots it must not write to, and its own was not yet one of them. 22C freezes the post-release state as a first observation",
+  "sprint_22b_backups": "the backup root 22B created for its restore round trip, never fingerprinted by a released record. First observation at the 22C baseline"
+ },
+ "stores_written_to_before_this_record": [],
+ "unexplained_drift": [],
+ "wave": "W0",
+ "why_this_record_precedes_provisioning": "22C's own pair is provisioned by this same wave, after this record exists. A baseline taken after the store it describes was created would be describing the sprint's own work"
+}

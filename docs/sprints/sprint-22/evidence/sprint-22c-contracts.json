@@ -1,0 +1,185 @@
+{
+ "S22C-010": {
+  "contract": "the five exit criteria, verbatim from the execution sprint allocation",
+  "count": 5,
+  "criteria": [
+   "every cycle replays all retained domains",
+   "a planted harmful update is quarantined",
+   "a valid new revision supersedes the active view without deleting history",
+   "source citations and hashes survive every derivative",
+   "at least one retained artifact improves a held-out verified task"
+  ],
+  "moved_by_22c": 0,
+  "source": "docs/sprints/sprint-22/execution-sprint-allocation.md"
+ },
+ "S22C-011": {
+  "a_cycle_is": "one full pass of the nine §9.1 stages under one sealed manifest, in order",
+  "a_domain_with_no_retained_cases": "is reported with cases: 0 rather than omitted, because 'all retained domains' is an enumeration the record must be able to be wrong about (22A W4-F1)",
+  "a_skipped_stage_is_not_a_cycle": true,
+  "all_retained_domains_enumerated_from": "registry.domain_ids()",
+  "cycle_count_counts": "completed nine-stage passes",
+  "domains_enumerated_at_freeze": [
+   "coding",
+   "logic",
+   "mathematics",
+   "physics"
+  ],
+  "enforced_by": "campaign_22c.CycleRunner.enter, against CAMPAIGN_STAGES",
+  "forgetting_is": "a measured delta across cycles, never an alert that fired",
+  "minimum_cycles": 3,
+  "per_domain_rates_recorded_every_cycle": true,
+  "reading": "(a) what a cycle is, and what 'replays all retained domains' reads",
+  "replay_executes": true,
+  "stage_enumeration": [
+   "register_source",
+   "extract",
+   "normalize",
+   "cross_check",
+   "quarantine",
+   "compile",
+   "evaluate",
+   "promote",
+   "observe"
+  ],
+  "stages": 9,
+  "why_execute": "D7 W3-F1 — a digest proves bytes, not usability; a hash comparison replays nothing"
+ },
+ "S22C-012": {
+  "detection_of_unplanted_errors": "reported when it happens; the exit reads the plant",
+  "enters_through": "the same intake path as genuine content",
+  "plant_content_hash": "24da0165a9ed8e13b3af71abbd08b8f2f5f4cff93facf5308348a4f39bb14973",
+  "plant_segment_id": "chemistry-mass-balance-planted",
+  "quarantined_means": [
+   "reaches a quarantine state with a named reason from the released CorpusQuarantineReason vocabulary",
+   "never reaches an active state",
+   "appears in the cycle's quarantine report",
+   "stays quarantined through every later cycle's replay"
+  ],
+  "reading": "(b) what the planted harmful update is, and what 'quarantined' means",
+  "sealed_in_w0_before_any_cycle": true,
+  "the_plant_is_not_malformed": "it states a plausible stoichiometric conclusion with one coefficient altered, so nothing about its shape distinguishes it from genuine content",
+  "why_not_a_special_door": "a plant fed to a special door proves the special door"
+ },
+ "S22C-013": {
+  "case_count": 4,
+  "case_hashes": [
+   "af2829f9f656bd45560090f79aef36ae064be30ff16501ce518e9e95f5414e77",
+   "69d381eed754bc0538f80258379e942b4865f77bab0df70321ad00e1451a7340",
+   "a31ee43aabbf6de29bf692cae9fcb2b56c4ad9a6951d3f3aac3c2bcb279ec783",
+   "e1f92efeb2c844c5aad62953cff993d6a1915f05cdf81a08e738308817caf907"
+  ],
+  "comparison": "verified success on the holdout with the retained artifact active versus without it — same tasks, same seeds, same checker, both arms measured in 22C",
+  "frozen_in_w0_before_any_source_byte": true,
+  "holdout_id": "s22c-acquisition-holdout-v1",
+  "holdout_never_used_as_curriculum": true,
+  "measured_values": 0,
+  "on_failure": "the sprint reports the measured gap as a typed negative; it does not go looking for a friendlier task after the fact",
+  "reading": "(c) what 'improves a held-out verified task' reads",
+  "seeds": [
+   22031,
+   22032,
+   22033,
+   22034
+  ],
+  "separated_by": [
+   "module",
+   "store",
+   "hash"
+  ],
+  "source_leakage_check_runs_before_the_comparison_is_read": true,
+  "store_url_env": "COGOS_HOLDOUT_DATABASE_URL",
+  "success_definition": "the case is accepted by domains.checker with every capability the registry entry requires actually exercised, and the answer equals the case's expected answer",
+  "verifier_id": "domains.checker"
+ },
+ "S22C-014": {
+  "derivatives_enumerated": [
+   "claim",
+   "concept",
+   "example",
+   "problem",
+   "procedure",
+   "skill",
+   "test"
+  ],
+  "enumeration_counted_from": "the store, per 22A W4-F1",
+  "hops": [
+   "promoted memory record -> list_sources(memory_id, revision)",
+   "artifact id and hash -> artifact bytes loaded and rehashed",
+   "canonical content hash -> corpus item",
+   "corpus item -> source manifest",
+   "source manifest -> the registered source's own file hashes"
+  ],
+  "not_verified_by": "asserting the provenance field is non-empty",
+  "reading": "(d) what 'citations survive every derivative' means",
+  "sampling_forbidden": true,
+  "verified_by": "walking the chain backward from every promoted artifact and loading the cited source bytes",
+  "why": "a citation check that samples has verified the sample"
+ },
+ "S22C-015": {
+  "history_surviving_means": "the superseded revision is still loadable with its citations intact, and the event stream contains the full transition sequence",
+  "lifecycle": "candidate -> verified -> superseded, through the released path",
+  "reading": "(e) what 'supersedes without deleting history' reads",
+  "row_deletion_anywhere_in_the_path": "a finding",
+  "verified_two_ways_that_must_agree": [
+   "the active view queried",
+   "the supersession chain walked"
+  ]
+ },
+ "S22C-016": {
+  "campaign_predicate": "domain.worked_example",
+  "class": "cognitive_os.domain.campaigns.CampaignManifestV1",
+  "contract": "the campaign manifest contract",
+  "fields": [
+   "rights",
+   "domain_ids",
+   "goals",
+   "budget",
+   "providers",
+   "curriculum",
+   "holdouts",
+   "stop_conditions",
+   "declared_uses"
+  ],
+  "fixture_manifest_content_hash": "3e027771585c89fd868daf859ec160060eae43354801256bc54230db91c52cbc",
+  "frozen_before_the_campaigns_first_cycle": true,
+  "holdout_disjointness_is_a_validator": true,
+  "one_sealed_object_per_campaign": true,
+  "rights_are_a_gate_not_a_field": "CampaignSourceRights cannot hold an unconcluded review, and a manifest cannot declare a use its clearance does not permit",
+  "schema_version": 1
+ },
+ "S22C-017": {
+  "22a_w2_a1": "stays carried by name",
+  "22a_w3_a1": "untouched by any campaign work, stays carried by name",
+  "contract": "the §1.4 decision, taken in W0 or never",
+  "decision": "the plan's frozen default is taken; no migration is allocated",
+  "holdout_evaluation_path": "domains.solve and domains.checker, resolving by problem type",
+  "migration_0016": "remains a refusal",
+  "outcomes_sealed_as": "22C evidence records, not domain_pilot_runs rows",
+  "why_now_or_never": "a persistence path that appeared between cycle 1 and cycle 3 would make the cycles measurements of different systems"
+ },
+ "S22C-018": {
+  "contract": "the fixture-scale source and the recipes, hashed from the module",
+  "pins_the_readings_not_the_drivers_bytes": "22B W1-F2: the thing that must not move is the source and the readings, not the implementation that produces them",
+  "recipes_hash": "aad5c298bad6231799d3a2b590237d3586782eaed0a95a9b0026f37c204689cc",
+  "segments": 6,
+  "source_content_hash": "56cde7ae9556ee7d241b73530ad037c1040faed445d58bf08531c7e25250e6bd"
+ },
+ "integrity_content_hash": "d8c78d01e37c45029ac73f81ce55796b126458eb1dffff367a8a927f86a191a4",
+ "items": [
+  "S22C-010",
+  "S22C-011",
+  "S22C-012",
+  "S22C-013",
+  "S22C-014",
+  "S22C-015",
+  "S22C-016",
+  "S22C-017",
+  "S22C-018"
+ ],
+ "recorded_at": "2026-08-14T17:21:10Z",
+ "revision": 1,
+ "schema_version": 1,
+ "sprint": "22C",
+ "substance_hash": "632b276a92f110080c0612cc31907c5d4a5a4caa29e3d3bb58cae6879fc9c272",
+ "wave": "W0"
+}

@@ -1,0 +1,65 @@
+{
+ "amendments_made_by_22c": 0,
+ "arm_mechanism_probe": {
+  "arm_a_artifact_inactive": {
+   "accepted": false,
+   "message": "ToolPlaneError: invalid_derivation: atomic_masses: the case must declare the atomic masses it relies on",
+   "refused_before_solving": true,
+   "verifier_status": "not_reached"
+  },
+  "arm_b_answer_is_the_expected_one": true,
+  "arm_b_artifact_active": {
+   "accepted": true,
+   "answer": "3",
+   "refused_before_solving": false,
+   "units": "mol",
+   "verifier_status": "passed"
+  },
+  "arms_are_mechanically_different": true,
+  "measures_no_exit_criterion": true,
+  "probe_case_is_in_the_holdout": false,
+  "problem_type": "chemistry.molar-conversion",
+  "why_a_probe": "§2.2c keeps the holdout unread until W3, so the mechanism is proved on a case of the same shape that the holdout does not contain",
+  "withheld_key": "atomic_masses"
+ },
+ "blocked_on": {
+  "source_rights_clearance": "see sprint-22c-rights-gate.json; blocks W1, not W0"
+ },
+ "chronology": {
+  "a planted harmful update is quarantined": 0,
+  "a valid new revision supersedes the active view without deleting history": 0,
+  "at least one retained artifact improves a held-out verified task": 0,
+  "every cycle replays all retained domains": 0,
+  "source citations and hashes survive every derivative": 0
+ },
+ "contracts_sha256": "b343c0db131441a8b60ae0359e910611d82b949bdff7f1d8219ef6c8cd0857fd",
+ "contracts_substance_hash": "632b276a92f110080c0612cc31907c5d4a5a4caa29e3d3bb58cae6879fc9c272",
+ "exit_criteria": [
+  "every cycle replays all retained domains",
+  "a planted harmful update is quarantined",
+  "a valid new revision supersedes the active view without deleting history",
+  "source citations and hashes survive every derivative",
+  "at least one retained artifact improves a held-out verified task"
+ ],
+ "integrity_content_hash": "26b4199442cb211dc6b147c7bdf45530225cc55b38ac6802244e17b4683bab4c",
+ "measured_values": 0,
+ "out_of_scope": [
+  "any learner refit, conformal machinery, corpus authoring for Gate L2, or touch on the canary routing",
+  "promotion of either pilot domain past lifecycle: pilot",
+  "domains whose honest verification floor cannot be met by deterministic kernels",
+  "local English capability, model selection, adapter work — 22D's",
+  "self-improvement proposals — 22E's",
+  "resolving W3-A1, or any schema change beyond the single §1.4 decision",
+  "tuning any pre-registered configuration after its first measured number exists"
+ ],
+ "published_before": "the first campaign cycle",
+ "recipes_hash": "aad5c298bad6231799d3a2b590237d3586782eaed0a95a9b0026f37c204689cc",
+ "recorded_at": "2026-08-14T17:21:10Z",
+ "revision": 1,
+ "schema_version": 1,
+ "sprint": "22C",
+ "thresholds_changed": 0,
+ "wave": "W0",
+ "why_structurally_zero": "22C's plan contains no gate-owner amendment path. The five exit sentences are the allocation's, verbatim, and §2.3 forbids tuning any pre-registered configuration after its first measured number exists",
+ "why_zero": "the W0 slice runs against a fixture chapter authored in this repository and decides no exit criterion; every 22C exit is a claim about the real rights-cleared source across three cycles"
+}

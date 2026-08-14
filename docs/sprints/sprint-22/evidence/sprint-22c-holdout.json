@@ -1,0 +1,142 @@
+{
+ "arms": {
+  "arm_a_artifact_inactive": "the case is run exactly as frozen, with its gap. The pilot kernel refuses an incomplete case by design, so the case fails",
+  "arm_b_artifact_active": "the same case with the withheld fact restored from a retained artifact. The kernel solves and the released domains.checker verifies the answer independently — a wrong value from a wrong artifact still fails",
+  "both_arms_measured_in_22c": true,
+  "comparison": "verified success on the holdout with the retained artifact active versus without it — same tasks, same seeds, same checker",
+  "what_it_does_not_license": "§4: an existence proof, not a learning rate. Nothing about how fast the system learns, what a chapter is worth, or whether cycle 4 would help"
+ },
+ "case_count": 4,
+ "case_hashes": [
+  "af2829f9f656bd45560090f79aef36ae064be30ff16501ce518e9e95f5414e77",
+  "69d381eed754bc0538f80258379e942b4865f77bab0df70321ad00e1451a7340",
+  "a31ee43aabbf6de29bf692cae9fcb2b56c4ad9a6951d3f3aac3c2bcb279ec783",
+  "e1f92efeb2c844c5aad62953cff993d6a1915f05cdf81a08e738308817caf907"
+ ],
+ "cases": [
+  {
+   "case_id": "holdout-molar-conversion-water",
+   "content_hash": "af2829f9f656bd45560090f79aef36ae064be30ff16501ce518e9e95f5414e77",
+   "domain_id": "science.chemistry",
+   "expected_answer": {
+    "exact_value": "5",
+    "units": "mol"
+   },
+   "formal_inputs": {
+    "formula": "H2O",
+    "mass": {
+     "magnitude": 90,
+     "unit": "g"
+    },
+    "molar_mass_unit": "g/mol"
+   },
+   "problem_type": "chemistry.molar-conversion",
+   "withheld_description": "the atomic masses of hydrogen and oxygen",
+   "withheld_key": "atomic_masses"
+  },
+  {
+   "case_id": "holdout-molar-conversion-methane",
+   "content_hash": "69d381eed754bc0538f80258379e942b4865f77bab0df70321ad00e1451a7340",
+   "domain_id": "science.chemistry",
+   "expected_answer": {
+    "exact_value": "4",
+    "units": "mol"
+   },
+   "formal_inputs": {
+    "formula": "CH4",
+    "mass": {
+     "magnitude": 64,
+     "unit": "g"
+    },
+    "molar_mass_unit": "g/mol"
+   },
+   "problem_type": "chemistry.molar-conversion",
+   "withheld_description": "the atomic masses of carbon and hydrogen",
+   "withheld_key": "atomic_masses"
+  },
+  {
+   "case_id": "holdout-mass-balance-ammonia",
+   "content_hash": "a31ee43aabbf6de29bf692cae9fcb2b56c4ad9a6951d3f3aac3c2bcb279ec783",
+   "domain_id": "science.chemistry",
+   "expected_answer": {
+    "structured": {
+     "balanced": true
+    }
+   },
+   "formal_inputs": {
+    "products": [
+     {
+      "coefficient": 2,
+      "formula": "NH3"
+     }
+    ],
+    "reactants": [
+     {
+      "coefficient": 1,
+      "formula": "N2"
+     },
+     {
+      "coefficient": 3,
+      "formula": "H2"
+     }
+    ]
+   },
+   "problem_type": "chemistry.mass-balance",
+   "withheld_description": "the atomic masses of nitrogen and hydrogen",
+   "withheld_key": "atomic_masses"
+  },
+  {
+   "case_id": "holdout-uniform-motion-kilometres",
+   "content_hash": "e1f92efeb2c844c5aad62953cff993d6a1915f05cdf81a08e738308817caf907",
+   "domain_id": "engineering.mechanics",
+   "expected_answer": {
+    "exact_value": "3000",
+    "units": "m"
+   },
+   "formal_inputs": {
+    "result_unit": "m",
+    "time": {
+     "magnitude": 200,
+     "unit": "s"
+    }
+   },
+   "problem_type": "mechanics.uniform-motion",
+   "withheld_description": "the constant speed the passage states for the body",
+   "withheld_key": "speed"
+  }
+ ],
+ "domains_covered": [
+  "engineering.mechanics",
+  "science.chemistry"
+ ],
+ "frozen_before_any_source_byte_was_extracted": true,
+ "holdout_id": "s22c-acquisition-holdout-v1",
+ "integrity_content_hash": "e9dd8fbf8961c9ccbe576c7e80cae807804f2396c56708e574ded520a8ab7b3a",
+ "items": [
+  "S22C-013"
+ ],
+ "limitations": [
+  "one holdout, four cases, two pilot domains — §4's 'improvement on one holdout is not a learning rate' applies in full",
+  "every case verifies deterministically, so this says nothing about domains whose honest verification floor needs proof tools or graded judgment",
+  "the withheld facts are declared inputs rather than reasoning steps: the exit reads whether acquired knowledge makes an unsolvable task solvable, not whether it makes a solvable task better"
+ ],
+ "measured_values": 0,
+ "schema_version": 1,
+ "seeds": [
+  22031,
+  22032,
+  22033,
+  22034
+ ],
+ "separation": {
+  "by_hash": "CampaignManifestV1 refuses to seal if any holdout case hash also appears in the curriculum",
+  "by_module": "campaign_22c.py imports nothing from holdout_22c.py; a test asserts it, so a wave that reaches for a holdout case as curriculum breaks the suite",
+  "by_store": "read through COGOS_HOLDOUT_DATABASE_URL — a database whose name is not derivable from the campaign's own connection string",
+  "standing_rule": "22B W1-F6"
+ },
+ "sprint": "22C",
+ "store_url_env": "COGOS_HOLDOUT_DATABASE_URL",
+ "success_definition": "the case is accepted by domains.checker with every capability the registry entry requires actually exercised, and the answer equals the case's expected answer",
+ "verifier_id": "domains.checker",
+ "wave": "W0"
+}
