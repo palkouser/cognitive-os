@@ -1,0 +1,71 @@
+{
+ "amendments_made_by_22c": 0,
+ "frozen_before": "the first REINDEX of the restored clustered index, and before the crash reproduction is re-run",
+ "integrity_content_hash": "8488e6c929ae4e6787284f98042cdc74a27c833bd484715471b08fc77ecca49f",
+ "items": [
+  "S22C-030"
+ ],
+ "recorded_at": "2026-08-15T06:44:48Z",
+ "schema_version": 1,
+ "sprint": "22C",
+ "w3_f1": {
+  "a_run_that_proves_nothing": "a crash that lands outside the window leaves zero orphans after recovery. Such a run satisfies 'zero after the resume' without the repair having run at all, so the driver records window_opened and the reading is refused when it is false",
+  "crash_attempts_budget": 4,
+  "inherited_from": "22B W3-F1",
+  "reads": "items_missing_an_event, counted twice: after crash recovery, where the window is expected to still be open, and after the resume, where the repair must have closed every orphan the run produced",
+  "repair": "MemoryEventService.ensure_item_created — the create asks the event stream whether the record has its creation event, instead of asking the repository whether the record existed a moment ago",
+  "repair_source_hash": "85d1abb062b70372e3aefca87d6b6d4bc15ed41c4f79bf5f831101995db1cc0d",
+  "sealed_orphans_after_the_crash": 1,
+  "sealed_writes_before_the_kill": 502
+ },
+ "w4_f1": {
+  "floor": 0.95,
+  "inherited_from": "22B W4-F1",
+  "procedure": {
+   "applies_to": "any store restored from a pg_dump archive containing HNSW indexes",
+   "fallback_if_the_hypothesis_is_wrong": {
+    "sql": "SET hnsw.ef_construction = 200",
+    "why": "a denser candidate list at build time, the other lever §1.1 names. It is a fallback and not the first move because it changes the index's parameters, while raising the memory budget only lets the same parameters be honoured"
+   },
+   "falsifier": "if the rebuild runs entirely in memory and clustered recall@10 still reads below 0.95, the hypothesis is wrong and this record says so. The fallback below is then the second lever, reported as its own measurement and never as a replacement",
+   "hypothesis": "the restored index reads below the floor because it was rebuilt under the server's default maintenance_work_mem of 64 MB against an index of 3906 MB, so pg_restore's rebuild took pgvector's two-phase path. The source index was built by the same code under the same setting, so the two-phase path alone is not the whole story: the phases split at a different point because pg_restore loads rows in the archive's order rather than the original insert order, and which tuples land in the in-memory phase decides the graph both phases inherit",
+   "precondition": "before the index is touched, the restored store is re-measured unchanged and must reproduce 22B's sealed 0.9410 exactly. The reading is deterministic given the same index and the same probe seed, so any other value means the store or the reading moved since 22B sealed it, and the comparison this repair rests on is void",
+   "steps": [
+    {
+     "order": 1,
+     "sql": "SET maintenance_work_mem = '12GB'",
+     "why": "the lever §1.1 names. pgvector builds an HNSW graph in memory and falls back to a two-phase on-disk build the moment the graph outgrows maintenance_work_mem; the second phase inserts the remaining tuples one at a time into a graph it can no longer see whole, and the result is a worse graph with no error and no warning at the SQL level"
+    },
+    {
+     "order": 2,
+     "sql": "SET max_parallel_maintenance_workers = 4",
+     "why": "rebuild wall-clock only; it does not change the graph's quality"
+    },
+    {
+     "order": 3,
+     "sql": "REINDEX INDEX cognitive_os.{index}",
+     "why": "rebuild the graph under the raised budget, in place, without dropping it"
+    },
+    {
+     "order": 4,
+     "sql": "ANALYZE cognitive_os.{table}",
+     "why": "the planner's statistics are rebuilt with the index, never assumed"
+    }
+   ],
+   "success_reads": "clustered recall@10 over 500 probes, exact-scan ground truth per probe, hnsw.ef_search = 1000, at or above 0.95",
+   "what_this_does_not_claim": "that the repaired index is the one 22B built at the source. It is not: it is a third graph, built under a budget neither earlier build had. The claim is only that a restored store can be returned above the floor by a procedure fixed in advance"
+  },
+  "procedure_hash": "f9cc68d5b767a50e1012bee5a198e11947fc04a568d2e41c3f7962e5e066a3b2",
+  "reading": {
+   "driver": "scale_22b.recall_at, imported and not reimplemented",
+   "ground_truth": "exact scan per probe, never sampled",
+   "k": 10,
+   "probe_seed": 777,
+   "probes": 500
+  },
+  "sealed_restored_recall": 0.941,
+  "sealed_source_recall": 0.9636,
+  "store": "cognitive_os_s22b_restore_test"
+ },
+ "wave": "W1"
+}

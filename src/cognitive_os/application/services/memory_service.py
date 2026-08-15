@@ -12,7 +12,6 @@ from cognitive_os.domain.memory import (
     MemoryWriteRequest,
 )
 from cognitive_os.events.memory_event_service import MemoryEventService
-from cognitive_os.events.memory_events import MemoryItemCreated
 from cognitive_os.memory.errors import MemoryPolicyDeniedError
 from cognitive_os.memory.governance import MemoryWritePolicyEvaluator
 
@@ -44,13 +43,25 @@ class MemoryService:
             raise MemoryPolicyDeniedError(decision.reason_codes)
         if dry_run:
             return decision, None
-        existing = await self._repository.get_current(request.memory_id)
-        created = await self._repository.create_memory(request)
-        if existing is None and self._event_service is not None:
-            await self._event_service.append(
-                memory_id=request.memory_id,
-                payload=MemoryItemCreated(record=created[0], revision=created[1]),
-                expected_version=0,
+        record, revision = await self._repository.create_memory(request)
+        if self._event_service is not None:
+            await self._event_service.ensure_item_created(
+                record=record,
+                revision=await self._creation_revision(record, revision),
                 correlation_id=request.request_id,
             )
-        return decision, created
+        return decision, (record, revision)
+
+    async def _creation_revision(
+        self, record: MemoryRecord, revision: MemoryRevision
+    ) -> MemoryRevision:
+        """The revision a `memory.item_created` event describes: the first one.
+
+        On the ordinary path the create returns revision 1 and this is the identity. On the
+        repair path it returns whatever the record is at now, and an event announcing the
+        creation must not carry a revision the creation did not have.
+        """
+        if revision.revision == 1:
+            return revision
+        first = await self._repository.get_revision(record.memory_id, 1)
+        return first or revision

@@ -1,0 +1,28 @@
+{
+ "database": "cognitive_os_s22b_restore_test",
+ "held": true,
+ "index_bytes": 4096008192,
+ "integrity_content_hash": "d03bac866ccf674bb6bb87ac66f13ad7cea789d89ae71d395d781846a9188c13",
+ "items": [
+  "S22C-032"
+ ],
+ "measures": "22B's restored clustered index, unchanged, before any repair",
+ "recall": {
+  "dataset": "clustered",
+  "ground_truth": "exact scan per probe, never sampled",
+  "k": 10,
+  "probes": 500,
+  "reads_the_recall_exit": true,
+  "recall_at_k": 0.941
+ },
+ "recorded_at": "2026-08-15T07:13:09Z",
+ "remeasured_restored_recall": 0.941,
+ "rows": 1000000,
+ "schema_version": 1,
+ "sealed_restored_recall": 0.941,
+ "seconds": 685.106,
+ "sprint": "22C",
+ "wave": "W1",
+ "why_it_must_hold": "before the index is touched, the restored store is re-measured unchanged and must reproduce 22B's sealed 0.9410 exactly. The reading is deterministic given the same index and the same probe seed, so any other value means the store or the reading moved since 22B sealed it, and the comparison this repair rests on is void",
+ "why_this_is_its_own_record": "it is a reading of a state that the next statement destroys. Held in a variable it would have been lost with revision 1's failed rebuild (W1-F4), and the forty minutes with it"
+}

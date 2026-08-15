@@ -1,0 +1,63 @@
+{
+ "attempts": 2,
+ "attempts_budget": 4,
+ "integrity_content_hash": "e102f38f0fa682517a6c297b65c43a11af05330783d0037e60acbc29d7d48dc3",
+ "items": [
+  "S22C-031"
+ ],
+ "items_missing_an_event_after_recovery": 1,
+ "items_missing_an_event_after_resume": 0,
+ "limitations": [
+  "the window is not closed. An item whose range is never re-run keeps its orphan, and this measurement only shows that a resume repairs one",
+  "a repaired creation event is stamped when the repair ran. The event stream regains the item; it does not regain the moment the item was written"
+ ],
+ "reading_is_refused": null,
+ "reads_an_exit_criterion": false,
+ "recorded_at": "2026-08-15T06:46:38Z",
+ "repair_closed_every_orphan": true,
+ "repairs": "22B W3-F1",
+ "reproduction": "22B W3's crash: SIGKILL to the PostgreSQL container, mid-ingest",
+ "runs": [
+  {
+   "attempt": 1,
+   "eventless_after_recovery": 0,
+   "eventless_after_resume": 0,
+   "eventless_before": 0,
+   "expected_items_after_resume": 5001,
+   "ingest_start": 60000,
+   "items_after_recovery": 508,
+   "items_after_resume": 5001,
+   "items_before": 1,
+   "items_written_before_the_kill": 504,
+   "recovery_seconds": 4.412,
+   "resume_duplicated_nothing": true,
+   "resumed_items": 5000,
+   "window_opened": false
+  },
+  {
+   "attempt": 2,
+   "eventless_after_recovery": 1,
+   "eventless_after_resume": 0,
+   "eventless_before": 0,
+   "expected_items_after_resume": 10001,
+   "ingest_start": 65000,
+   "items_after_recovery": 5509,
+   "items_after_resume": 10001,
+   "items_before": 5001,
+   "items_written_before_the_kill": 504,
+   "recovery_seconds": 4.56,
+   "resume_duplicated_nothing": true,
+   "resumed_items": 5000,
+   "window_opened": true
+  }
+ ],
+ "schema_version": 1,
+ "sprint": "22C",
+ "wave": "W1",
+ "what_22b_measured": {
+  "and_never_again": "22B resumed the range immediately afterwards and did not re-count. Under the released code the count would not have moved, which is the defect",
+  "items_missing_an_event": 1,
+  "measured_when": "after crash recovery, before the resume"
+ },
+ "window_opened": true
+}

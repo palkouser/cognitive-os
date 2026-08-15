@@ -8,7 +8,253 @@ Waves are recorded newest first.
 
 ---
 
-## W1 in progress — the gate opened, and the licence that was not what it said
+## W1 outcome — both inherited repairs proven, and a licence policy that refuses the sprint's own sources
+
+Two drivers, one released-code repair, seven sealed records, two new test modules. The two
+repairs 22B handed over by name are **both proven against 22B's own reproductions**, and the
+real source's first segment travelled all nine stages — where it was **refused by the
+released Corpus Factory**, which does not recognise CC BY 4.0. That refusal is W1's headline
+and W2's blocking dependency.
+
+| Item | What it owed | Outcome |
+|---|---|---|
+| **S22C-031** — 22B W3-F1 | zero governed items outside their event stream after the same crash | **met.** 1 orphan after recovery, **0 after the resume** |
+| **S22C-032** — 22B W4-F1 | clustered recall back over the 0.95 floor after a restore | **met.** 0.9410 → **0.9676** |
+| **S22C-033** — the vertical slice | the real source's first segment through all nine stages | **ran, and was refused.** Nine stages in order; the platform quarantined the passage on its licence |
+
+### S22C-031 — the resume now repairs, and the window is still open
+
+**22B W3-F1.** `MemoryService.create` wrote the record in one transaction and appended
+`memory.item_created` in another, and decided whether to append by asking whether the memory
+existed *before* the write. Both halves are wrong. The window is real — 22B killed the
+database mid-ingest and one write in 502 came back with a row and no event — and the
+pre-check made the orphan **permanent**, because the resume that re-runs a crashed range
+finds the row through its idempotency key, concludes the item is not new, and never reaches
+the append. The recovery procedure was what made the damage last.
+
+The repair asks the stream instead of the record. `MemoryEventService.ensure_item_created`
+looks for the record's creation event and appends it if it is absent, whether this call
+created the record or found it, so the resume repairs. Round-trip count is unchanged: the
+`get_current` probe that existed only to decide the append is replaced by a
+`get_stream_version` probe that asks the question actually in doubt.
+
+Proven twice, because the crash alone is not a proof. The crash is a race, and a re-run that
+misses the window reports zero orphans and means nothing — so the driver records
+`window_opened` and **refuses to read a run where it is false**. Attempt 1 missed; attempt 2
+landed, with 504 writes before the SIGKILL, 4.56 s of crash recovery, **1 item outside its
+event stream after recovery and 0 after the resume**, and the same range resumed without
+duplicating anything. Beside it, a deterministic proof: an orphan written directly through
+the repository — exactly the state a crash leaves — repaired by one resume and not
+duplicated by a second.
+
+**What is not fixed, said twice in the record.** The window is not closed. An item whose
+range is never re-run keeps its orphan, and a repaired event is stamped when the repair ran,
+not when the record was written. Closing it needs the record and the event in one
+transaction, which needs a transactional boundary `MemoryRepositoryPort` and `EventStorePort`
+do not share, and §1.4 froze `0016` as a refusal. It is named as owed, not counted as done.
+
+### S22C-032 — the restored index, back over the floor
+
+**22B W4-F1.** `pg_restore` rebuilds HNSW indexes rather than copying them, and the rebuilt
+graph read **0.9410** against a 0.95 floor with no released signal that anything had
+degraded. The procedure was pre-registered before the first REINDEX, with the mechanism as a
+hypothesis and its falsifier named — a procedure chosen after seeing which knob moved the
+number is a knob, not a procedure.
+
+**The precondition first, and sealed on its own.** Before anything was rebuilt, 22B's
+restored store was re-measured unchanged: 500 probes, exact-scan ground truth per probe,
+**0.9410 — identical to the sealed value**, in 685 s. The reading is deterministic given the
+same index and probe seed, so any other value would have meant the store moved since 22B
+sealed it and the comparison this repair rests on was void. It held, and the record exists
+independently of what happened next (W1-F4).
+
+**The hypothesis.** The server's default `maintenance_work_mem` is **64 MB** against an index
+of **3 906 MB**, so `pg_restore`'s rebuild took pgvector's two-phase on-disk path: the second
+phase inserts the remaining tuples one at a time into a graph it can no longer see whole, and
+the result is a worse graph with no error and no warning at the SQL level. The source index
+was built by the same code under the same setting, so the two-phase path alone is not the
+whole story — the phases split at a different point, because `pg_restore` loads rows in the
+archive's order rather than the original insert order, and which tuples land in the in-memory
+phase decides the graph both phases inherit.
+
+**The result.** A serial rebuild at 12 GB took **658.8 s** and the same 500 probes then read
+**0.9676** — over the floor, **+0.0266** on the restored index, and **+0.004** even against
+22B's own source index. The hypothesis held and the pre-registered fallback
+(`hnsw.ef_construction = 200`) was **not** used.
+
+What this does not claim: that the repaired index is the one 22B built at the source. It is
+not — it is a third graph, built under a budget neither earlier build had. The claim is only
+that a restored store can be returned above the floor by a procedure fixed in advance. And
+the rebuild is not free: an operator restoring a governed store pays eleven minutes per index
+before that store's recall is trustworthy.
+
+### S22C-033 — the real source, refused on its licence
+
+`Physics_-_WEB.pdf`, CC BY 4.0, content hash re-verified against S22C-020 before the file was
+opened. One worked example from §2.2 Speed and Velocity — *"Layla jogs with an average
+velocity of 2.4 m/s east. What is her displacement after 46 seconds?"* — pages 79–80, located
+by the passage's own opening and closing words rather than by typed offsets, into
+`engineering.mechanics`. Chemistry is a separate campaign and no artifact here touches it.
+
+`run_cycle` is the only entry point and the fixture chapter is now its *default argument*
+rather than a separate path, so the real source travelled the same nine functions W0's
+fixture did. **What one real passage found, that six authored ones could not:**
+
+- **The passage crosses a page boundary.** `pdftotext` puts the folio numbers `67` and `68`,
+  a form feed and the running head `2 • Motion in One Dimension` in the **middle** of the
+  worked example, at offsets 178, 183 and 187. They are kept in the registered bytes: a
+  campaign that cleans its sources cannot afterwards prove what it read.
+- **The arithmetic is an image.** Under `Solution` the text layer carries `2.2` — an equation
+  number — and nothing else. This class of source states results and hides derivations, so
+  the cross-check's second leg is the only thing between the campaign and a number nobody
+  checked.
+- **The passage asserts its answer at two precisions**, "about 110 m east" and "a calculator
+  shows the answer as 110.4 m". Which one an extraction takes decides accept or quarantine,
+  so the rule is fixed for the campaign: the exact value when the passage states one.
+
+The kernel verified the physics and the checker accepted the derivation. Then the platform
+refused the content — see W1-F5 and W1-F6. Both verdicts are kept in the record, because
+"the evidence accepted it" and "the platform refused it" are different facts and W2 needs
+both.
+
+### W1 findings
+
+#### W1-F3 — the cross-check compared a number with a notation
+
+The mechanics kernel answers in exact rationals and renders them with `str(Fraction)`, so
+2.4 m/s for 46 s comes back as `552/5`. The textbook writes `110.4 m`. `assertion_agrees`
+compared them as **strings** and would have quarantined a correct passage for spelling its
+answer differently. Every asserted value in the fixture chapter happened to be an integer,
+which is exactly why the fixture could not find this.
+
+The comparison now reads numbers where both sides are numbers. It is deliberately **not** a
+tolerance: `Fraction('110.4') == Fraction('552/5')` is exact equality, so the passage's own
+rounded "about 110 m" still disagrees with the kernel and is still refused. Widening this
+into a significant-figures tolerance would be tuning the check until the source passed.
+
+A guard was needed twice. Excluding booleans from the numeric path is not enough, because
+Python's `True == 1` is true on the fallback path — so a plant asserting `balanced: True`
+against a kernel that computed the number `1` would have agreed. A boolean is a verdict, and
+a verdict is not a magnitude. The W0 slice record is **byte-identical** after the fix, which
+is the evidence that the plant is still caught and the five genuine segments still pass.
+
+#### W1-F4 — the pre-registered procedure could not be executed, and was amended in public
+
+Revision 1 of the reindex procedure raised `maintenance_work_mem` to 12 GB **and** kept
+`max_parallel_maintenance_workers = 4`. A parallel HNSW build puts its shared graph in
+dynamic shared memory, which PostgreSQL allocates from `/dev/shm` — capped at 2 GB by the
+container, a limit 22B itself raised from Docker's 64 MB default in its own W1-F5, sized for
+the build 22B ran. So the procedure asked a 2 GB filesystem for 12 GB and died with
+`DiskFullError … No space left on device` on a host with 821 GB free. The two settings are
+safe apart and incompatible together, and neither one's documentation says so. It failed
+**after** the precondition measurement and **before** any index was touched, so 22B's
+restored index was left exactly as sealed.
+
+Revision 2's record calls that measurement "40-minute", which was the estimate held when it
+was sealed; revision 2's own precondition then measured **685 s**. The estimate is left
+standing rather than corrected, for the same reason revision 1 is: the record says what was
+believed when it was written, and the measurement that refined it is in the record beside it.
+
+Revision 1 is **not edited**. It stays sealed in `sprint-22c-repair-plan.json` as published,
+because a pre-registration that is rewritten after it fails is not a pre-registration.
+Revision 2 is a record of its own, names revision 1 by hash, quotes the error, and sets
+`max_parallel_maintenance_workers = 0` — a serial build takes its memory from the backend's
+own heap, so the raised budget is honoured without touching `/dev/shm` and the procedure runs
+on a default container instead of requiring an infrastructure change. Revision 1's claim that
+parallel workers were "rebuild wall-clock only" was too confident and is **withdrawn** in
+revision 2: an HNSW build is order-dependent and a serial build is a different graph. What is
+unchanged is the hypothesis under test, which is about the memory budget, and the reading.
+
+The operational half: the precondition costs eleven minutes and the rebuild that follows it
+can fail. It is now **sealed into its own record the moment it is read**, before anything is
+put at risk — revision 1's failure threw away a measurement that had already succeeded and
+told nobody.
+
+#### W1-F5 — the campaign promoted an item the Corpus Factory had refused
+
+`stage_quarantine` consulted the cross-check and nothing else, so an item the released
+`CorpusFactory` had already routed to **quarantine at stage 1** sailed through it, compiled,
+and was promoted. The fixture chapter is Apache-2.0, which the factory approves, so at
+fixture scale the two decisions always agreed and the seam was invisible — the exact seam
+§3.1 predicted, found by the first real passage.
+
+A campaign may be stricter than the Corpus Factory. It may never be more permissive: the
+factory owns licence, sensitivity and routing, and an acquisition pipeline that overrides it
+has taken an authority §1.2 does not give it. The stage now refuses on either ground and the
+record keeps them apart. W0's slice record is byte-identical after the fix, which is the
+evidence that the fixture never depended on the bug.
+
+#### W1-F6 — the released licence policy has no vocabulary for open content, and this blocks W2
+
+`corpus.factory.APPROVED_LICENSES` is `{Apache-2.0, MIT, BSD-3-Clause, CC0-1.0}` — a
+**software**-licence allowlist. No Creative Commons content licence except CC0 is in it, so
+`CC-BY-4.0` classifies as `UNKNOWN`, routes to `QUARANTINED` with `license-review-required`,
+and stays there. That is the entire class §1.3 names as this sprint's natural candidates.
+There is no released path to present a **completed** licence review — and one exists, sealed,
+with a named authority and the licence page hashed (S22C-020). The factory has no way to be
+told.
+
+Its second half: `CorpusConfiguration` offers `unknown_license_action` and five siblings, and
+`CorpusFactory._route` **hard-codes the same outcomes instead of reading them**. Six settings
+that describe behaviour nothing consults. Today they happen to agree, so nothing is wrong and
+nothing is honest either: an operator setting `unknown_license_action = "reject"` gets a
+quarantine and no warning.
+
+**This blocks cycle 1 for both campaigns**, and the wave surfaces it rather than absorbing
+it — §1.2 is explicit that a primitive needing more than composition is a finding to surface.
+Widening a platform-wide licence allowlist so this wave's slice turns green is the move this
+programme refuses. The decision is the gate owner's (§1.3), and **the obvious fix has a
+consequence the plan did not anticipate**:
+
+| Resolution | Consequence |
+|---|---|
+| Add the CC BY family to `APPROVED_LICENSES` | **This would deny the chemistry campaign, not merely quarantine it.** A `RESTRICTED` licence routes to `CorpusRouteStatus.DENIED`, and CC BY-NC-SA is restricted by any honest reading of NonCommercial. Approving CC BY while classifying CC BY-NC-SA restricted ends the two-campaign plan chosen in W1-D1 |
+| Give the factory a path to accept a completed licence review | A released feature rather than a policy edit, and the one that matches what actually happened: the review exists and is sealed; the factory cannot hear it |
+
+### W1 evidence index
+
+| Record | Item | Integrity |
+|---|---|---|
+| [`sprint-22c-repair-plan.json`](evidence/sprint-22c-repair-plan.json) | S22C-030 rev 1 — the procedure that could not run, kept | `8488e6c929ae4e67…` |
+| [`sprint-22c-repair-plan-r2.json`](evidence/sprint-22c-repair-plan-r2.json) | S22C-030 rev 2 — supersedes rev 1 by hash | `20ad115d49a091e2…` |
+| [`sprint-22c-w1-event-repair.json`](evidence/sprint-22c-w1-event-repair.json) | S22C-031 — the planted orphan, repaired by one resume | `07c79a3d6a4a0a31…` |
+| [`sprint-22c-w1-crash.json`](evidence/sprint-22c-w1-crash.json) | S22C-031 — 22B's crash re-run: 1 → 0 | `e102f38f0fa68251…` |
+| [`sprint-22c-w1-restore-precondition.json`](evidence/sprint-22c-w1-restore-precondition.json) | S22C-032 — 22B's 0.9410, independently re-read | `d03bac866ccf674b…` |
+| [`sprint-22c-w1-restore-reindex.json`](evidence/sprint-22c-w1-restore-reindex.json) | S22C-032 — the procedure applied, the floor re-read | `67c832f93060b6c5…` |
+| [`sprint-22c-w1-slice.json`](evidence/sprint-22c-w1-slice.json) | S22C-033 — the real source through nine stages | `850c56b33c5709f1…` |
+
+Drivers: [`scripts/repairs_22c.py`](../../../scripts/repairs_22c.py) and
+[`scripts/slice_22c.py`](../../../scripts/slice_22c.py). Released change:
+`MemoryEventService.ensure_item_created` and `MemoryService.create`, bound into the
+pre-registration by `repair_source_hash` so a drift in either fails `--check`.
+
+### W1 validation
+
+`ruff check` and `ruff format --check` over `src tests scripts infra`, `mypy src/cognitive_os`
+(638 files), `bandit -r src/cognitive_os` (0 issues at every confidence), contract schema
+export `--check`, and the repository language policy — all clean. Whole suite:
+**4 317 passed, 107 skipped**. Two new test modules — 8 tests pinning the write-path repair
+over the ports with no database, and 29 reading the W1 records — and `campaign_22c.py --check`
+still rebuilds `sprint-22c-w0-slice.json` **byte-for-byte** after three driver changes, which
+is the evidence that W1-F3 and W1-F5 corrected behaviour the fixture never relied on.
+
+### What W2 inherits
+
+**Unblocked:** the repaired governed write path, in released code, under every campaign write
+from here on. The restore procedure, pre-registered, executed and read.
+
+**Blocked:** cycle 1, on W1-F6, awaiting the gate owner's decision on how the released Corpus
+Factory should treat open content licences. Both cleared sources are affected; neither
+campaign can move a passage out of quarantine until it is resolved. The wave surfaces it with
+the two candidate resolutions and the consequence that makes the obvious one wrong.
+
+**Carried by name, unchanged:** W2-A1, W3-A1, 22B W2-F2, W0-A1 (four of six enumerated
+domains retain no evaluation cases). **Newly owed:** the crash window itself, which the
+resume repairs but does not close.
+
+---
+
+## W1 groundwork — the gate opened, and the licence that was not what it said
 
 **S22C-020.** [`sprint-22c-source-rights.json`](evidence/sprint-22c-source-rights.json),
 integrity `0069209ccadca52b…`. Driver:

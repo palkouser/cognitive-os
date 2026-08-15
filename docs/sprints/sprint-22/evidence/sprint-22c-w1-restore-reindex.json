@@ -1,0 +1,79 @@
+{
+ "comparison": {
+  "against_the_source": 0.004,
+  "recovered_by": 0.0266,
+  "repaired_restored_recall": 0.9676,
+  "sealed_restored_recall": 0.941,
+  "sealed_source_recall": 0.9636
+ },
+ "database": "cognitive_os_s22b_restore_test",
+ "hypothesis_held": true,
+ "index": "memory_scale_22b_corpus_clustered_hnsw_768",
+ "integrity_content_hash": "67c832f93060b6c5d0c0f3e0453e5cb5d3f9ef0d9a99fca046433ca72ac2a42e",
+ "items": [
+  "S22C-032"
+ ],
+ "limitations": [
+  "one store, one dataset, one restore. The procedure is proven on the measurement 22B left behind and on nothing else",
+  "the rebuild is not free: its wall-clock is recorded above and an operator restoring a governed store pays it before the store's recall is trustworthy"
+ ],
+ "precondition": {
+  "held": true,
+  "remeasured_before_the_rebuild": 0.941,
+  "sealed_restored_recall": 0.941,
+  "seconds": 685.106,
+  "why": "before the index is touched, the restored store is re-measured unchanged and must reproduce 22B's sealed 0.9410 exactly. The reading is deterministic given the same index and the same probe seed, so any other value means the store or the reading moved since 22B sealed it, and the comparison this repair rests on is void"
+ },
+ "procedure_hash": "8db5aef45f1f32007a806890bd705c43dafe4406147422da6d48b08067e51da1",
+ "procedure_was_frozen_first": true,
+ "reads_an_exit_criterion": false,
+ "rebuild": {
+  "index_bytes_after": 4096008192,
+  "index_bytes_before": 4096008192,
+  "seconds": 658.818,
+  "steps": [
+   {
+    "order": 1,
+    "seconds": 0.0,
+    "sql": "SET maintenance_work_mem = '12GB'"
+   },
+   {
+    "order": 2,
+    "seconds": 0.0,
+    "sql": "SET max_parallel_maintenance_workers = 0"
+   },
+   {
+    "order": 3,
+    "seconds": 658.485,
+    "sql": "REINDEX INDEX cognitive_os.memory_scale_22b_corpus_clustered_hnsw_768"
+   },
+   {
+    "order": 4,
+    "seconds": 0.331,
+    "sql": "ANALYZE cognitive_os.memory_scale_22b_corpus_clustered"
+   }
+  ]
+ },
+ "recall": {
+  "dataset": "clustered",
+  "floor": 0.95,
+  "ground_truth": "exact scan per probe, never sampled",
+  "k": 10,
+  "meets_floor": true,
+  "probes": 500,
+  "reads_the_recall_exit": true,
+  "recall_at_k": 0.9676,
+  "seconds": 610.992
+ },
+ "recorded_at": "2026-08-15T07:34:19Z",
+ "repairs": "22B W4-F1",
+ "rows": 1000000,
+ "schema_version": 1,
+ "server_default_maintenance_work_mem": "64MB",
+ "sprint": "22C",
+ "table": "memory_scale_22b_corpus_clustered",
+ "used_the_fallback": false,
+ "wave": "W1",
+ "what_this_does_not_claim": "that the repaired index is the one 22B built at the source. It is not: it is a third graph, built under a budget neither earlier build had. The claim is only that a restored store can be returned above the floor by a procedure fixed in advance",
+ "why_no_exit": "22C's five exits are about acquisition. This is 22B's floor, repaired, and it is read by the definition of done's inherited-repair clause"
+}

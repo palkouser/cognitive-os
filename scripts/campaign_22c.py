@@ -42,6 +42,7 @@ import hashlib
 import json
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from fractions import Fraction
 from pathlib import Path
 from typing import Any
 from uuid import NAMESPACE_URL, UUID, uuid5
@@ -67,6 +68,7 @@ from cognitive_os.domain.campaigns import (
 )
 from cognitive_os.domain.corpus import (
     CorpusFactoryRequest,
+    CorpusItemStatus,
     CorpusQuarantineReason,
     CorpusSourceType,
     CorpusUsageRight,
@@ -227,9 +229,17 @@ class Segment:
     #: plant enters.
     expected_accepted: bool
     quarantine_reason: CorpusQuarantineReason | None = None
+    #: **W1.** The bytes to register, when they are not this driver's own prose. The fixture
+    #: chapter is authored here, so wrapping it in a heading is honest: the markdown *is* the
+    #: document. A passage lifted out of a real PDF is registered exactly as it was
+    #: extracted, because the citation walk has to arrive at the source's bytes and not at a
+    #: rendering of them.
+    verbatim: str | None = None
 
     @property
     def markdown(self) -> str:
+        if self.verbatim is not None:
+            return self.verbatim
         return f"## {self.segment_id}\n\n{self.prose}\n"
 
     @property
@@ -412,6 +422,30 @@ def fixture_source_hash() -> str:
     return _sha256("".join(segment.markdown for segment in all_segments()).encode("utf-8"))
 
 
+@dataclass(frozen=True, slots=True)
+class SourceSpec:
+    """Which document a cycle is registering, and what its bytes are called.
+
+    **W1.** W0 ran one cycle and hard-coded the fixture's identity into stage 1, which was
+    honest while there was one source and becomes a lie the moment there are two. The
+    campaign's source is a property of the cycle, so it lives on the cycle's state: the
+    rights gate reads `content_hash` from here, and a cycle cannot register bytes whose hash
+    its clearance was not issued against.
+    """
+
+    identity: str
+    revision: str
+    content_hash: str
+    media_type: str = "text/markdown"
+    file_suffix: str = ".md"
+
+
+def fixture_source_spec() -> SourceSpec:
+    return SourceSpec(
+        identity="s22c:fixture-chapter", revision="1", content_hash=fixture_source_hash()
+    )
+
+
 # ---------------------------------------------------------------------------
 # The rights gate
 # ---------------------------------------------------------------------------
@@ -530,6 +564,11 @@ class CycleState:
     """Everything one cycle accumulates, and the ledger of which stages actually ran."""
 
     manifest: CampaignManifestV1
+    #: What this cycle is processing, and out of which document. W0 read both from module
+    #: globals; W1 needs a second source and a single segment out of it, so both are the
+    #: cycle's own rather than the driver's.
+    segments: tuple[Segment, ...] = field(default_factory=all_segments)
+    source: SourceSpec = field(default_factory=fixture_source_spec)
     stages_completed: list[str] = field(default_factory=list)
     corpus_items: dict[str, Any] = field(default_factory=dict)
     proposals: dict[str, dict[str, Any]] = field(default_factory=dict)
@@ -718,18 +757,18 @@ async def stage_register_source(
 ) -> None:
     """Rights first, then the released Corpus Factory. Nothing reads a byte before the gate."""
     runner.enter(CampaignStage.REGISTER_SOURCE)
-    rights_gate(state.manifest.rights, fixture_source_hash())
+    rights_gate(state.manifest.rights, state.source.content_hash)
 
-    segments = all_segments()
+    segments = state.segments
     source = _build_source(
         CorpusSourceType.DOCUMENT,
-        "s22c:fixture-chapter",
-        "1",
+        state.source.identity,
+        state.source.revision,
         [
             SourceMaterial(
-                f"{segment.segment_id}.md",
+                f"{segment.segment_id}{state.source.file_suffix}",
                 segment.markdown.encode("utf-8"),
-                "text/markdown",
+                state.source.media_type,
                 "utf-8",
             )
             for segment in segments
@@ -760,7 +799,7 @@ async def stage_register_source(
                 content
                 for content in result.normalized
                 if any(
-                    entry.relative_path == f"{segment.segment_id}.md"
+                    entry.relative_path == f"{segment.segment_id}{state.source.file_suffix}"
                     for entry in content.source_file_refs
                 )
             ),
@@ -805,7 +844,7 @@ async def stage_extract(runner: CycleRunner, composition: Composition, state: Cy
     runner.enter(CampaignStage.EXTRACT)
     if state.manifest.providers:
         raise RuntimeError("the slice manifest declares no providers; a live call is a finding")
-    for segment in all_segments():
+    for segment in state.segments:
         item = state.corpus_items[segment.segment_id]
         request_hash = _sha256(
             _canonical(
@@ -891,7 +930,7 @@ async def stage_normalize(runner: CycleRunner, composition: Composition, state: 
     """
     runner.enter(CampaignStage.NORMALIZE)
     composition.predicates.require(CAMPAIGN_PREDICATE_ID)
-    for segment in all_segments():
+    for segment in state.segments:
         item = state.corpus_items[segment.segment_id]
         span = await grounding_span(composition, item)
         root = f"slice:{segment.segment_id}"
@@ -996,6 +1035,38 @@ async def attempt_case(
     )
 
 
+def _values_agree(expected: Any, actual: Any) -> bool:
+    """One asserted value against one computed value, compared as numbers where both are.
+
+    **W1-F3, and the first thing the real source found.** The mechanics kernel answers in
+    exact rationals and renders them with `str(Fraction)`, so `2.4 m/s` for `46 s` comes back
+    as `'552/5'`. The textbook writes `110.4 m`. Those are the same number, and a string
+    comparison quarantines a correct passage for spelling it differently. Every asserted
+    value in the fixture chapter happened to be an integer, which is exactly why the fixture
+    could not find this.
+
+    This is a comparison of numbers rather than of notations, and it is deliberately *not* a
+    tolerance: `Fraction('110.4') == Fraction('552/5')` is exact equality, so a passage whose
+    stated answer is rounded — this one also says "about 110 m east" — still disagrees with
+    the kernel and is still quarantined. Widening that into a significant-figures tolerance
+    would be tuning the check until the source passed, which is the move this programme
+    exists to refuse.
+
+    Booleans agree only with booleans. Excluding them from the numeric path is not enough:
+    Python's own `True == 1` is true, so a plant asserting `balanced: True` against a kernel
+    that computed the number `1` would agree on the fallback path instead. A boolean is a
+    verdict, and a verdict is not a magnitude.
+    """
+    if isinstance(expected, bool) or isinstance(actual, bool):
+        return type(expected) is type(actual) and expected == actual
+    if isinstance(expected, int | str) and isinstance(actual, int | str):
+        try:
+            return Fraction(expected) == Fraction(actual)
+        except (ValueError, ZeroDivisionError):
+            return expected == actual
+    return bool(expected == actual)
+
+
 def assertion_agrees(asserted: dict[str, Any], candidate: dict[str, Any]) -> tuple[bool, str]:
     """Does the kernel's answer reproduce what the passage claimed?
 
@@ -1007,12 +1078,12 @@ def assertion_agrees(asserted: dict[str, Any], candidate: dict[str, Any]) -> tup
         actual = candidate.get(key)
         if isinstance(expected, dict):
             for inner, value in expected.items():
-                if not isinstance(actual, dict) or actual.get(inner) != value:
+                if not isinstance(actual, dict) or not _values_agree(value, actual.get(inner)):
                     return False, (
                         f"the source asserts {key}.{inner}={value!r}; the kernel computed "
                         f"{None if not isinstance(actual, dict) else actual.get(inner)!r}"
                     )
-        elif actual != expected:
+        elif not _values_agree(expected, actual):
             return False, (f"the source asserts {key}={expected!r}; the kernel computed {actual!r}")
     return True, ""
 
@@ -1037,7 +1108,7 @@ async def stage_cross_check(
     apart so a future failure says which one refused.
     """
     runner.enter(CampaignStage.CROSS_CHECK)
-    for segment in all_segments():
+    for segment in state.segments:
         run = await attempt_case(
             segment.problem_type, segment.formal_inputs, store=composition.events
         )
@@ -1062,6 +1133,13 @@ async def stage_cross_check(
 
 # --- stage 5 -----------------------------------------------------------------
 
+#: The two item states that mean the Corpus Factory has refused this content. Named as a set
+#: rather than as "not the happy one", so a status the factory adds later does not silently
+#: become a refusal here (W1-F5).
+REFUSED_BY_THE_FACTORY = frozenset(
+    {CorpusItemStatus.QUARANTINED.value, CorpusItemStatus.REJECTED.value}
+)
+
 
 async def stage_quarantine(
     runner: CycleRunner, composition: Composition, state: CycleState
@@ -1078,10 +1156,28 @@ async def stage_quarantine(
     here and enforced by the two stages that follow: a quarantined segment is never
     committed as a claim and never compiled as a memory record, so "never reaches an active
     state" holds at the store rather than only in the ledger.
+
+    **W1-F5, and the seam §3.1 predicted.** This stage used to consult the cross-check and
+    nothing else, so an item the *Corpus Factory* had already routed to quarantine at stage 1
+    sailed through it, compiled, and was promoted. The fixture chapter is Apache-2.0, which
+    the released factory approves, so at fixture scale the two decisions always agreed and
+    the seam was invisible. The real source is CC BY 4.0, which the factory does not
+    recognise, and the first real passage was promoted over a refusal the platform had
+    already issued.
+
+    A campaign may be stricter than the Corpus Factory. It may never be more permissive: the
+    factory owns licence, sensitivity and routing, and an acquisition pipeline that overrides
+    it has taken an authority §1.2 does not give it. So both refusals count, and the record
+    keeps them apart, because "quarantined by the platform" and "quarantined by the evidence"
+    are different facts about a passage.
     """
     runner.enter(CampaignStage.QUARANTINE)
     del composition
-    for segment in all_segments():
+    for segment in state.segments:
+        item = state.corpus_items[segment.segment_id]
+        if item["status"] in REFUSED_BY_THE_FACTORY:
+            state.quarantined[segment.segment_id] = CorpusQuarantineReason.UNCLEAR_LICENSE.value
+            continue
         if state.cross_checks[segment.segment_id]["accepted"]:
             continue
         reason = segment.quarantine_reason or CorpusQuarantineReason.CONFLICTING_PROVENANCE
@@ -1104,7 +1200,7 @@ async def stage_compile(runner: CycleRunner, composition: Composition, state: Cy
     extraction = SemanticExtractionService(
         composition.semantic, composition.predicates, events=composition.semantic_events
     )
-    for segment in all_segments():
+    for segment in state.segments:
         if segment.segment_id in state.quarantined:
             continue
         item = state.corpus_items[segment.segment_id]
@@ -1170,7 +1266,9 @@ async def stage_compile(runner: CycleRunner, composition: Composition, state: Cy
 # --- stage 7 -----------------------------------------------------------------
 
 
-async def replay_all_domains(store: MemoryEventStore | None = None) -> dict[str, Any]:
+async def replay_all_domains(
+    store: MemoryEventStore | None = None, *, segments: tuple[Segment, ...] | None = None
+) -> dict[str, Any]:
     """Execute every retained domain's retained evaluation cases. §2.2a.
 
     The enumeration is `registry.domain_ids()` — released and pilot alike — and the rate is
@@ -1182,7 +1280,7 @@ async def replay_all_domains(store: MemoryEventStore | None = None) -> dict[str,
     enumeration the record has to be able to be wrong about (22A W4-F1).
     """
     cases: dict[str, list[Segment]] = {}
-    for segment in all_segments():
+    for segment in all_segments() if segments is None else segments:
         if segment.expected_accepted:
             cases.setdefault(segment.domain_id, []).append(segment)
 
@@ -1235,7 +1333,7 @@ def source_leakage_check(state: CycleState) -> dict[str, Any]:
 async def stage_evaluate(runner: CycleRunner, composition: Composition, state: CycleState) -> None:
     """Replay every retained domain, then check for leakage. Before anything is promoted."""
     runner.enter(CampaignStage.EVALUATE)
-    state.replay = await replay_all_domains(composition.events)
+    state.replay = await replay_all_domains(composition.events, segments=state.segments)
     state.replay["source_leakage"] = source_leakage_check(state)
     runner.leave(CampaignStage.EVALUATE)
 
@@ -1261,7 +1359,7 @@ async def stage_promote(runner: CycleRunner, composition: Composition, state: Cy
         clock=lambda: SLICE_TIME,
         id_factory=lambda: next(gate_ids),
     )
-    for segment in all_segments():
+    for segment in state.segments:
         if segment.segment_id in state.quarantined:
             continue
         claim_id = state.claims[segment.segment_id]
@@ -1415,7 +1513,7 @@ async def walk_citations(composition: Composition, state: CycleState) -> dict[st
                 == state.corpus_items["_source_manifest"]["source_manifest_id"],
             }
         )
-        segment = next(item for item in all_segments() if item.segment_id == segment_id)
+        segment = next(item for item in state.segments if item.segment_id == segment_id)
         hops.append(
             {
                 "hop": "source_manifest -> registered_source_bytes",
@@ -1443,10 +1541,24 @@ async def walk_citations(composition: Composition, state: CycleState) -> dict[st
 # ---------------------------------------------------------------------------
 
 
-async def run_cycle(manifest: CampaignManifestV1) -> tuple[CycleState, Composition]:
-    """One complete nine-stage pass. The only way to run a cycle."""
+async def run_cycle(
+    manifest: CampaignManifestV1,
+    *,
+    segments: tuple[Segment, ...] | None = None,
+    source: SourceSpec | None = None,
+) -> tuple[CycleState, Composition]:
+    """One complete nine-stage pass. The only way to run a cycle.
+
+    The fixture chapter is the default and not a special case: a caller that names neither
+    argument gets exactly W0's cycle, and W1's real source travels the same nine functions.
+    A second entry point for "the real one" is how the two would diverge.
+    """
     register_pilots()
-    state = CycleState(manifest=manifest)
+    state = CycleState(
+        manifest=manifest,
+        **({"segments": segments} if segments is not None else {}),
+        **({"source": source} if source is not None else {}),
+    )
     composition = build_composition()
     runner = CycleRunner(state)
     for stage in (

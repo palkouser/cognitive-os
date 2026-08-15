@@ -1,0 +1,24 @@
+{
+ "counterfactual": "the released code appended only when the memory did not exist before the write, so this call would have found the record and returned with the stream still empty. Asserted over the ports in tests/cognitive_os/memory/test_creation_event_repair.py, where the old decision can be reproduced without a second copy of the released service",
+ "creation_events_after_a_second_resume": 1,
+ "creation_events_after_the_planted_crash": 0,
+ "creation_events_after_the_resume": 1,
+ "database": "cognitive_os_s22c_test",
+ "integrity_content_hash": "07c79a3d6a4a0a31e183bd0997e6f62c2ed851c1d141cae360a91e0a75748fa0",
+ "items": [
+  "S22C-031"
+ ],
+ "memory_id": "a473d6ef-b11d-50dd-a244-ea7ef3d176ee",
+ "reads_an_exit_criterion": false,
+ "recorded_at": "2026-08-15T06:44:52Z",
+ "repairs": "22B W3-F1",
+ "resume_is_idempotent": true,
+ "resume_repaired_the_orphan": true,
+ "resume_returned_the_same_record": true,
+ "revisions": 1,
+ "schema_version": 1,
+ "sprint": "22C",
+ "the_state_a_crash_leaves": "a memory_items row written by the repository's own transaction, with no memory.item_created event, because the append is a second transaction",
+ "wave": "W1",
+ "why_no_exit": "no 22C exit reads a crash. This is an inherited repair, and what it owes is 22B's own reproduction returning a different number"
+}
