@@ -144,6 +144,18 @@ ARMS = ("no_memory", "retrieval_only", "external_teacher", "local_model")
 #: The comparison the ten-point margin reads, both sides measured in this sprint.
 MARGIN_COMPARISON = ("local_model", "retrieval_only")
 
+#: **W3's workload, and deliberately not a fifth arm.** §2.2 freezes `arms` as four and the
+#: pre-registration hashes that reading, so the composition §2.2(c) measures the reduction on
+#: is named separately rather than appended. It is scored by *this* runner all the same: a
+#: second runner would be a second set of accounting, and the whole point of the 25 % is that
+#: both sides of it were computed by one definition.
+MIXED_WORKLOAD = "mixed_workload"
+
+#: Who may reach a network at all. The local microbenchmark's no-external-call reading is a
+#: construction (§2.2a), and the construction is this tuple: an arm outside it that records a
+#: provider call fails the run rather than leaving a line in a log someone checks afterwards.
+EXTERNAL_CALLS_PERMITTED = ("external_teacher", MIXED_WORKLOAD)
+
 #: The absolute verified-success floor, and the margin over the retrieval-only arm. The
 #: allocation's numbers, unmoved.
 MINIMUM_LOCAL_SUCCESS_PERCENT = 70.0
@@ -601,7 +613,7 @@ async def run_arm(
     accounting, escalation and the walk; the arm owns only what it answered, which is what
     keeps the four arms comparable.
     """
-    if arm not in ARMS:
+    if arm not in ARMS and arm != MIXED_WORKLOAD:
         raise ValueError(f"unknown arm: {arm}")
     require_benchmark_verifiers()
     accounting = ArmAccounting(arm=arm)
@@ -613,10 +625,10 @@ async def run_arm(
         # the alternative was a second runner, and two runners are two sets of accounting.
         if inspect.isawaitable(outcome):
             outcome = await outcome
-        if outcome.external_provider_calls and arm != "external_teacher":
+        if outcome.external_provider_calls and arm not in EXTERNAL_CALLS_PERMITTED:
             raise ExternalProviderRefused(
-                f"arm {arm!r} recorded an external provider call; only the external_teacher "
-                f"arm may call one (§2.2a)"
+                f"arm {arm!r} recorded an external provider call; only "
+                f"{', '.join(EXTERNAL_CALLS_PERMITTED)} may call one (§2.2a)"
             )
         verified, undecidable = await verify_answer(task, outcome)
         walk = walk_answer_citations(outcome, sources)

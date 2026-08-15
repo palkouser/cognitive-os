@@ -10,6 +10,160 @@ Waves are recorded newest first.
 
 ---
 
+## W3 — the fourth arm, the deployed composition, and four exits read once
+
+W3 owed the `local_model` arm on the frozen hundred, the confidence-based escalation and the
+mixed workload with accounting on both, and the four measured exits read once. It added **no
+instrument**: `run_arm` still owns verification, accounting, escalation and the citation walk,
+the readers still refuse rather than repair, and the retrieval predicate is the one S22D-200
+priced *before* any arm ran. One seam widened in W0's runner — the mixed workload is scored by
+the same runner under a name of its own, because a second runner would have been a second set
+of accounting and the whole point of the 25 % is that both sides came from one definition.
+
+| Item | What it owed | Outcome |
+|---|---|---|
+| **S22D-301** — `local_model` | retrieval-augmented local inference, read once | **66 verified, 4 grounded**, 0 external calls |
+| **S22D-302** — mixed workload | the frozen policy in front of the teacher | **85 verified**, 96 escalations, 96 calls |
+| **S22D-300** — the exits | four measured exits, read once from sealed records | **1 of 4 met — a typed negative** |
+| tests | W3 evidence | **36**, none of them asserting a fact about this machine |
+
+| Workload | verified | abstained | grounded | ungrounded | undecidable | malformed | ext calls | cost units |
+|---|---|---|---|---|---|---|---|---|
+| `local_model` | **66** | 0 | **4** | 26 | 13 | 3 | 0 | 9.00 |
+| `mixed_workload` | **85** | 0 | 4 | 26 | 15 | 9 | 96 | 127.95 |
+| `external_teacher` (W2) | 87 | 0 | 0 | 30 | 12 | 6 | 100 | 120.83 |
+| `no_memory` (W2) | 66 | 0 | 0 | 30 | 13 | 3 | 0 | 8.87 |
+| `retrieval_only` (W2) | 4 | 96 | 4 | 0 | 0 | 0 | 0 | 0.00 |
+
+**Nothing under `src/` was touched.** Three lines moved in W0's runner: a constant naming the
+mixed workload, the arm check that admits it, and the external-call refusal reading a tuple
+instead of one name. `ARMS` is still the four the allocation named and the readings hash still
+matches the pre-registration, so no measured number moved anything frozen.
+
+### The four exits, read once
+
+| Exit | Reading | Met |
+|---|---|---|
+| **(a)** no external LLM during the local microbenchmark | 0 calls in the arm; all four enumerated providers refused; budget `maximum_provider_calls: 0` | **yes** |
+| **(b)** ≥ 70 % and ≥ 10 points over retrieval-only | 66.0 %; margin **62.0** points over 4.0 | **no** — the margin is met and the floor is not |
+| **(c)** ≥ 25 % fewer calls or cost at non-inferior success | calls **−4.0 %**, cost **+5.9 %**, non-inferiority drop 2.0 ≤ 3.0 | **no** — non-inferiority holds, neither reduction does |
+| **(d)** factual output grounded or explicitly uncertain | **26** ungrounded assertions of 30 factual outputs | **no** |
+
+Exit (e) is W4's: §2.2(e) re-reads the prior gates from their sealed records, and §3's wave
+table puts that in the release wave.
+
+### W3-F1 — the escalation policy escalates what the grounding exit never reads
+
+`escalate` was frozen in W0 as three mechanical signals, one of which is the count of grounding
+spans. It says nothing about *output kind* — so the seventy closed-form computations, which have
+no source to rest on and which §2.2(d) explicitly does not read, escalate for lacking a citation
+nobody ever wanted from them. **96 of 100 tasks escalated; 70 of those were arithmetic.**
+
+That single omission is why exit (c) could not pass at any local success rate. A workload that
+escalates all but four tasks pays for the teacher almost in full and adds the local pass on top,
+which is exactly what the numbers say: 4 % fewer calls and 5.9 % *more* accounted cost.
+
+It ran as frozen. §2.3 forbids tuning the escalation threshold after its first measured number
+exists, and the version of this wave that quietly added `and task.output_kind in
+FACTUAL_OUTPUT_KINDS` before running would have produced a 25 % reduction and no evidence. The
+policy is a pre-registered configuration; what it cost is a finding, not a patch.
+
+The repair belongs to whoever writes the next plan, and it is one line: **a policy that reads
+grounding must read the same output enumeration the grounding exit reads.** Until then the
+escalation gate is a *coverage* gate wearing a confidence gate's name.
+
+### W3-F2 — "grounded" as frozen cannot tell support from bytes
+
+§2.2(d) defines grounded as *"the output carries a citation that the released citation walk
+resolves by loading the cited source bytes"*. §3.1 predicted the slice would find that this has
+no executable meaning for generated prose. It does not, and the loophole is bigger than
+predicted: **a runner that stapled the retrieved span onto whatever the model said would satisfy
+that sentence exactly** — the walk loads the bytes, slices the range, hashes it, and reports
+`resolves: true`, for an answer with no relation to the span.
+
+W3 refused that and imposed a stricter rule, `grounded_in`: the citation is attached only where
+the answer carries **the value the source states**, compared as a number, *and* the cited span
+**contains that value**. Two checks, both in bytes, neither of them a model judging a model.
+
+Both halves are asserted as executable evidence rather than described. One test constructs the
+staple — answer `41.9`, citation resolving perfectly onto the bytes that say `12.01` — and shows
+the released walk calling it `grounded`; the next line shows `grounded_in` refusing it. Stricter
+is allowed and looser is not, so nothing here amends the exit; it is recorded so that a later
+reader does not have to discover that the exit could have been passed by stapling.
+
+### W3-F3 — the baseline the margin is measured against does not repeat itself
+
+The mixed workload re-asked the teacher, through the same provider with the same prompts, the
+ninety-six tasks W2 had already asked it. That makes it an **accidental second run of the
+baseline** §2.2(c) reads. It moved: **12 of 96 verdicts changed**, for a net of −2 points.
+
+The non-inferiority margin is **3 absolute points**, and exit (c)'s non-inferiority half is met
+at a drop of **2**. A difference of two points against a baseline whose own re-run moves twelve
+tasks is not distinguishable from the baseline moving. The margin was fixed in W0 before any
+measured number existed, and §2.3 forbids amending it now, so the exit is read exactly as
+frozen and the qualification is recorded beside it rather than folded into it.
+
+The local side of the same comparison is the control, and it is clean: on the ninety-six tasks
+the layer offered nothing for, `local_model`'s prompt is byte-identical to `no_memory`'s, and
+**zero verdicts diverged**. The instability is the external provider's, not the harness's.
+
+Both readings are marked `observation` in the record. Nothing recomputes them and no exit reads
+them (22B S22B-002), and inventing a tolerance for them after the fact would be the same error
+in the other direction.
+
+### W3-F4 — the acquired layer bought grounding, not accuracy
+
+§3.2 named this risk in advance: *"Layer 1 may stay thin even after W1 … the honest response is
+the one 22C modelled: measure it, say so, and let W3's numbers be a typed negative."* Measured:
+
+* `local_model` 66 verified, `no_memory` 66 verified — the layer's contribution to the success
+  exit is **exactly zero points**;
+* all four retrieved facts were answered correctly *and* rested on their spans, moving four
+  outputs from ungrounded assertion to **grounded** — 30 ungrounded down to 26.
+
+The layer did precisely what eight facts can do. Every one of them landed, and eight facts
+against a hundred tasks cannot move a success rate. The subtraction exit (b) reads —
+`local_model` minus `retrieval_only`, 62 points — isolates the *model*; the one that would
+isolate the layer is `local_model` minus `no_memory`, and it is 0.0. Both are in the record,
+because W2-F3 already noted that the allocation reads the first and means something closer to
+the second.
+
+**No model arm has abstained once**, across four measured workloads and four hundred answers.
+The typed abstention is offered in every prompt and the reader recognises it; nothing produces
+it. Exit (d) has two ways to pass and this system has only ever tried one of them.
+
+### What the numbers do not say
+
+The local model was measured on **one** configuration — Qwen3-8B Q6_K, CPU, `--reasoning off`,
+temperature 0, seed 22 — against **one hundred** authored tasks in **one** language over **two**
+cleared textbooks. A 66 is that model on those tasks; it is not "a local model can do 66 %". The
+W2-F2 notation tax is still inside every one of these numbers, and it is worth roughly a dozen
+tasks per model arm.
+
+### Evidence
+
+| File | SHA-256 of the sealed body |
+|---|---|
+| `evidence/sprint-22d-w3-local-model.json` | `5b2ab62914932e09e23e5c16edd06c2a29311abe5736ed73b1b63763e732f832` |
+| `evidence/sprint-22d-w3-mixed-workload.json` | `4dbc8dcbe062124936568af749f8ba73a5df01e3a0cb41c0a6078cc107599513` |
+| `evidence/sprint-22d-w3-exits.json` | `ec1fa4bbfcb7f2e380a8642d0ec3a2d56e461c24db7fdcae696818ca5fa87769` |
+
+### What W4 inherits
+
+A **typed negative with one exit met**, and every number in it produced by an instrument frozen
+before it ran. W4 owes exit (e) — the prior domain, learning and safety gates re-read from their
+sealed records against this head — the five exits read once with `--check` rebuilding the
+document from sources, and the release under the negative-outcome tag
+`sprint-22d-evidence-baseline` rather than `sprint-22d-language-baseline`, because §2.1 fixed
+both names in advance and three of the four measured exits are not met.
+
+It also inherits four repairs that are **not** this sprint's to make: W3-F1's output-kind blind
+spot in the escalation policy, W3-F2's grounding definition, W2-F1's missing union member, and a
+Layer 1 that needs to be two orders of magnitude larger before the ten-point margin means
+anything.
+
+---
+
 ## W2 — three baselines, and a comparator that was priced before it was read
 
 W2 owed the three non-local arms on the frozen hundred, each sealed, with the external arm run
