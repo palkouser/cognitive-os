@@ -277,6 +277,58 @@ class LicenseDeclaration(HashedExperienceContract):
     evidence_refs: tuple[Sha256Hex, ...]
 
 
+class OperatorLicenseClearance(HashedExperienceContract):
+    """A person's decision about what material may be used for, and who answers for it.
+
+    **Sprint 22C W1-D2.** The Corpus Factory used to decide licence status from an allowlist
+    of identifiers, and record the result in a `LicenseDeclaration` whose `declared_by` named
+    an operator. The field said a human had declared it; the allowlist had. That is a design
+    error and not merely a gap: **classifying material and authorising its use is a legal
+    determination, and the legal responsibility is the operator's, so the decision has to be
+    theirs.**
+
+    What the program may do is read a licence if there is one, recognise it if it can, and
+    **advise**. What it may not do is grant use. This contract is where the authority lives:
+    an identifier, the operator's determination, what they permit it to be used for, who
+    they are by name, when they decided, and the bytes they decided about.
+
+    Two invariants, both refusals:
+
+    *A clearance is a decision.* `unknown` and `conflicting` are the absence of one, and a
+    record carrying them would be an operator declining to decide while looking like an
+    operator who had.
+
+    *A clearance covers bytes, not titles.* `source_content_hash` is what the decision was
+    made about, so a clearance cannot drift onto a different edition of the same work.
+
+    Absent a clearance the factory still fails closed — the asymmetry is the point. The
+    program may refuse on its own; it may never permit on its own.
+    """
+
+    identifier: NonEmptyStr
+    status: CorpusLicenseStatus
+    permitted_uses: tuple[CorpusUsageRight, ...] = ()
+    cleared_by: NonEmptyStr
+    cleared_at: UtcDatetime
+    #: The licence text, licence page, or acquisition record the decision rests on.
+    evidence_hash: Sha256Hex
+    #: The bytes this decision covers.
+    source_content_hash: Sha256Hex
+    notes: NonEmptyStr | None = None
+
+    @model_validator(mode="after")
+    def is_a_decision(self) -> OperatorLicenseClearance:
+        undecided = {CorpusLicenseStatus.UNKNOWN, CorpusLicenseStatus.CONFLICTING}
+        if self.status in undecided:
+            raise ValueError(
+                "an operator clearance states a determination; 'unknown' and 'conflicting' "
+                "are the absence of one, and are expressed by having no clearance"
+            )
+        if len(set(self.permitted_uses)) != len(self.permitted_uses):
+            raise ValueError("permitted uses must not repeat")
+        return self
+
+
 class UsageRightAssessment(HashedExperienceContract):
     right: CorpusUsageRight
     allowed: bool | None
@@ -452,6 +504,32 @@ class LicenseClassification(HashedExperienceContract):
     conflicts: tuple[LicenseConflict, ...] = ()
     profile: NonEmptyStr
     created_at: UtcDatetime
+    #: **W1-D2.** What the program would have said on its own, kept beside what was decided.
+    #: When `decided_by` is None nobody cleared this material and `status` is the advice —
+    #: which for anything the platform does not recognise is `unknown`, and quarantines.
+    advisory_status: CorpusLicenseStatus | None = None
+    #: The named authority whose decision `status` carries, when there is one.
+    decided_by: NonEmptyStr | None = None
+    decided_at: UtcDatetime | None = None
+    clearance_evidence_hash: Sha256Hex | None = None
+
+    @property
+    def operator_decided(self) -> bool:
+        return self.decided_by is not None
+
+    @property
+    def operator_departed_from_the_advice(self) -> bool:
+        """Recorded rather than prevented: the operator may overrule, and should be visible.
+
+        An operator clearing material the platform did not recognise is the ordinary case
+        this contract exists for. One clearing material the platform flagged *restricted* is
+        a different thing, and either way the disagreement belongs in the record.
+        """
+        return (
+            self.advisory_status is not None
+            and self.decided_by is not None
+            and self.advisory_status is not self.status
+        )
 
     @model_validator(mode="after")
     def has_each_usage_right_once(self) -> LicenseClassification:
@@ -832,6 +910,9 @@ class CorpusFactoryRequest(HashedExperienceContract):
     scope: NonEmptyStr
     sensitivity: MemorySensitivity
     license_identifiers: tuple[NonEmptyStr, ...] = ()
+    #: **W1-D2.** The operator's determinations for the identifiers above. An identifier with
+    #: no clearance is not cleared: the factory advises, quarantines, and waits for a person.
+    license_clearances: tuple[OperatorLicenseClearance, ...] = ()
     usage_rights: dict[CorpusUsageRight, bool | None]
     requested_destination: CorpusDestinationType | None = None
     split_group_key: NonEmptyStr | None = None

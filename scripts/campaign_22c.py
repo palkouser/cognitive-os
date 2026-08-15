@@ -69,9 +69,11 @@ from cognitive_os.domain.campaigns import (
 from cognitive_os.domain.corpus import (
     CorpusFactoryRequest,
     CorpusItemStatus,
+    CorpusLicenseStatus,
     CorpusQuarantineReason,
     CorpusSourceType,
     CorpusUsageRight,
+    OperatorLicenseClearance,
 )
 from cognitive_os.domain.descriptors import validate_domain_package
 from cognitive_os.domain.memory import (
@@ -477,6 +479,35 @@ def rights_gate(rights: CampaignSourceRights | None, source_content_hash: str) -
         )
 
 
+def operator_clearance(
+    rights: CampaignSourceRights, source_content_hash: str
+) -> OperatorLicenseClearance:
+    """The campaign's sealed clearance, expressed as the Corpus Factory's own contract.
+
+    **W1-D2.** Translated rather than re-decided: every field comes from the
+    `CampaignSourceRights` the rights gate already admitted, so there is exactly one
+    determination about this source and two vocabularies for it. `INTERNAL` is the status a
+    clearance for internal use carries — the operator has decided the material may be used
+    here and has not decided it may be redistributed — and `APPROVED` is reserved for a
+    clearance that permits public release, because that is the only difference the factory's
+    own vocabulary draws between them.
+    """
+    return OperatorLicenseClearance(
+        identifier=rights.license_identifier,
+        status=(
+            CorpusLicenseStatus.APPROVED
+            if CorpusUsageRight.PUBLIC_RELEASE in rights.permitted_uses
+            else CorpusLicenseStatus.INTERNAL
+        ),
+        permitted_uses=tuple(rights.permitted_uses),
+        cleared_by=rights.cleared_by,
+        cleared_at=rights.cleared_at,
+        evidence_hash=rights.evidence_hash,
+        source_content_hash=source_content_hash,
+        notes=rights.notes,
+    )
+
+
 def fixture_rights() -> CampaignSourceRights:
     """The fixture chapter's clearance.
 
@@ -783,6 +814,12 @@ async def stage_register_source(
         scope="project:cognitive-os",
         sensitivity=MemorySensitivity.INTERNAL,
         license_identifiers=(state.manifest.rights.license_identifier,),
+        # **W1-D2.** The campaign's clearance *is* the operator's determination, carried into
+        # the factory rather than left outside it. Before this the factory decided from an
+        # allowlist of identifiers and a sealed human review — naming an authority, hashing
+        # the licence page, covering exact bytes — had no way to be heard. It is the same
+        # record either way; what changed is that the person's decision now governs.
+        license_clearances=(operator_clearance(state.manifest.rights, state.source.content_hash),),
         usage_rights={right: True for right in state.manifest.rights.permitted_uses},
         created_at=SLICE_TIME,
         created_by="sprint-22c-campaign",
@@ -1587,8 +1624,8 @@ async def slice_record() -> dict[str, Any]:
     record: dict[str, Any] = {
         "schema_version": 1,
         "sprint": "22C",
-        "wave": "W0",
-        "items": ["S22C-003"],
+        "wave": "W1",
+        "items": ["S22C-003", "S22C-034"],
         "recorded_at": SLICE_TIME.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "decides_an_exit_criterion": False,
         "why_no_exit": (
@@ -1760,11 +1797,25 @@ async def _write(path: Path) -> int:
     return 0
 
 
+#: **W1-D2.** W0's slice is sealed in `sprint-22c-w0-slice.json` and is not rebuilt here any
+#: more. It records what this pipeline produced under the *previous* licence design, where
+#: the Corpus Factory decided status from an allowlist and the fixture's Apache-2.0 read
+#: `approved`. Under the gate owner's ruling the fixture's own clearance decides, and it
+#: permits internal use, derivative work and benchmark use — not public release — so the
+#: honest status is `internal` and the source manifest hashes differently.
+#:
+#: That is a real change in released behaviour, not a drift, so the W0 record keeps its
+#: seal and this driver seals the re-run beside it. The two together are the evidence that
+#: the ruling changed exactly one thing about the fixture path and nothing else: same six
+#: items, same plant quarantined, same five promoted, same citation chains.
+DEFAULT_SLICE_OUTPUT = EVIDENCE / "sprint-22c-w1-fixture-slice.json"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--slice", action="store_true", help="run the nine stages and seal")
     parser.add_argument("--check", action="store_true", help="rebuild and compare")
-    parser.add_argument("--output", type=Path, default=EVIDENCE / "sprint-22c-w0-slice.json")
+    parser.add_argument("--output", type=Path, default=DEFAULT_SLICE_OUTPUT)
     arguments = parser.parse_args()
     if arguments.check:
         return asyncio.run(_check(arguments.output))

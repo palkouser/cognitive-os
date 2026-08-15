@@ -8,6 +8,76 @@ Waves are recorded newest first.
 
 ---
 
+## W1-D2 — the gate owner's ruling: a program may advise on a licence, and may not decide it
+
+W1-F6 was surfaced as a blocking dependency with two candidate resolutions. The gate owner
+took neither, and named the reason both were wrong:
+
+> The licence review is the result of a design error. Automatic examination, adjudication and
+> acceptance of a licence cannot be the basis of actual use. The program may check the
+> licence, if there is one at all, and may propose a classification and a use — but the
+> material's actual classification and use must be provided by the user (permission), because
+> the legal responsibility is theirs.
+
+That is a sharper diagnosis than the finding. The defect was never the length of
+`APPROVED_LICENSES`. It was that a list of identifiers **was** the determination, while the
+`LicenseDeclaration` it produced carried a `declared_by` naming an operator who had decided
+nothing. The field said a human had declared it; the list had. Lengthening the list would
+have preserved exactly that, and would have taken a legal judgement — is CC BY-NC-SA
+restricted? — inside the program, which is what made the "obvious" fix end the chemistry
+campaign.
+
+**What changed in released code.** `OperatorLicenseClearance` is a new contract in
+`domain/corpus.py`: an identifier, the operator's determination, what they permit it to be
+used for, who they are by name, when they decided, the licence evidence they decided on, and
+the content hash of the bytes it covers. `CorpusFactoryRequest` carries them. The factory's
+lists are renamed `RECOGNISED_PERMISSIVE_LICENSES` / `RECOGNISED_INTERNAL_LICENSES` and
+demoted to advice, published as `LicenseClassification.advisory_status` beside the decision,
+so a reader can always see both — including when they disagree, which for CC BY 4.0 they do.
+
+**The asymmetry is the whole design, and it is pinned by tests.** *The program may refuse on
+its own; it may never permit on its own.* Without a clearance an unrecognised licence still
+quarantines exactly as before — the ruling removed an authority, not a safeguard. Two
+refusals guard the contract: a clearance may not carry `unknown` or `conflicting`, because
+those are the absence of a decision and would let an operator decline to decide while looking
+like one who had; and it names a `source_content_hash`, so a decision cannot drift onto
+another edition. The authority runs both ways: an operator may also mark `restricted`
+something the platform would have recognised.
+
+**W1-F6's second half, also closed.** `CorpusConfiguration` advertised
+`unknown_license_action` and five siblings; `_route` hard-coded the same outcomes and read
+none of them. They are read now, validated at load rather than as a `KeyError` mid-ingest,
+and `allow` is deliberately not a legal value — configuration may choose *how strictly to
+refuse* and may not choose to permit. Fixing that surfaced one more: each check **assigned**
+`status`, so a later one could soften an earlier one, and material an operator had marked
+`restricted` came out merely `quarantined` when a usage right was also missing. Refusals are
+monotone now; every reason is still recorded.
+
+**The current sources are accepted on the gate owner's authorisation.** S22C-020 already was
+the review — a named authority, the licence page hashed, exact bytes — and had no way to be
+heard. It is now carried into the factory as the clearance it always was.
+
+| Record | Then | Now |
+|---|---|---|
+| [`sprint-22c-w1-slice.json`](evidence/sprint-22c-w1-slice.json) | passage quarantined, `license-review-required` | kept, sealed, true about the design it ran under |
+| [`sprint-22c-w1-slice-cleared.json`](evidence/sprint-22c-w1-slice-cleared.json) | — | same bytes, same nine stages, **promoted**, citation chain resolving to loaded source bytes |
+| [`sprint-22c-w0-slice.json`](evidence/sprint-22c-w0-slice.json) | fixture licence read `approved` | kept, sealed, not rebuilt |
+| [`sprint-22c-w1-fixture-slice.json`](evidence/sprint-22c-w1-fixture-slice.json) | — | identical in every substantive field; licence reads **`internal`** |
+
+That last row is the ruling's own audit. The fixture chapter's clearance permits internal
+use, derivative work and benchmark use — **not** public release. The allowlist had been
+overwriting that with `approved` because Apache-2.0 is on it. Now the clearance decides, and
+the record says what the operator actually determined. Five promoted, plant quarantined, nine
+stages, citations resolving: unchanged.
+
+**No record is edited.** Each supersedes its predecessor by name and both keep their seals —
+the same discipline as W1-F1 and W1-F4. `sprint-22c-w1-slice.json` is not wrong; it is what
+this pipeline did when a list was allowed to decide.
+
+**W2 is unblocked.**
+
+---
+
 ## W1 outcome — both inherited repairs proven, and a licence policy that refuses the sprint's own sources
 
 Two drivers, one released-code repair, seven sealed records, two new test modules. The two
@@ -200,8 +270,10 @@ that describe behaviour nothing consults. Today they happen to agree, so nothing
 nothing is honest either: an operator setting `unknown_license_action = "reject"` gets a
 quarantine and no warning.
 
-**This blocks cycle 1 for both campaigns**, and the wave surfaces it rather than absorbing
+**This blocked cycle 1 for both campaigns**, and the wave surfaced it rather than absorbing
 it — §1.2 is explicit that a primitive needing more than composition is a finding to surface.
+**Resolved by W1-D2 above**, which took neither candidate and named the design error behind
+both.
 Widening a platform-wide licence allowlist so this wave's slice turns green is the move this
 programme refuses. The decision is the gate owner's (§1.3), and **the obvious fix has a
 consequence the plan did not anticipate**:
@@ -233,20 +305,21 @@ pre-registration by `repair_source_hash` so a drift in either fails `--check`.
 `ruff check` and `ruff format --check` over `src tests scripts infra`, `mypy src/cognitive_os`
 (638 files), `bandit -r src/cognitive_os` (0 issues at every confidence), contract schema
 export `--check`, and the repository language policy — all clean. Whole suite:
-**4 317 passed, 107 skipped**. Two new test modules — 8 tests pinning the write-path repair
-over the ports with no database, and 29 reading the W1 records — and `campaign_22c.py --check`
-still rebuilds `sprint-22c-w0-slice.json` **byte-for-byte** after three driver changes, which
-is the evidence that W1-F3 and W1-F5 corrected behaviour the fixture never relied on.
+**4 333 passed, 107 skipped**. Three new test modules — 8 tests pinning the write-path repair
+over the ports with no database, 33 reading the W1 records, and 13 pinning W1-D2's licence
+authority in released code. The four contract schemas the ruling changed are re-exported and
+`--check` passes; `LicenseDeclaration`'s is untouched, which is why `SourceManifest` hashes
+are unaffected by the new fields.
 
 ### What W2 inherits
 
 **Unblocked:** the repaired governed write path, in released code, under every campaign write
 from here on. The restore procedure, pre-registered, executed and read.
 
-**Blocked:** cycle 1, on W1-F6, awaiting the gate owner's decision on how the released Corpus
-Factory should treat open content licences. Both cleared sources are affected; neither
-campaign can move a passage out of quarantine until it is resolved. The wave surfaces it with
-the two candidate resolutions and the consequence that makes the obvious one wrong.
+**Unblocked by W1-D2:** cycle 1. The released Corpus Factory now advises on a licence and an
+operator decides it, both cleared sources are carried as `OperatorLicenseClearance`, and the
+real passage travels all nine stages to a promotion whose citation chain resolves to loaded
+source bytes.
 
 **Carried by name, unchanged:** W2-A1, W3-A1, 22B W2-F2, W0-A1 (four of six enumerated
 domains retain no evaluation cases). **Newly owed:** the crash window itself, which the

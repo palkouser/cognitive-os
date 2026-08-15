@@ -44,6 +44,9 @@ CRASH = EVIDENCE / "sprint-22c-w1-crash.json"
 PRECONDITION = EVIDENCE / "sprint-22c-w1-restore-precondition.json"
 REINDEX = EVIDENCE / "sprint-22c-w1-restore-reindex.json"
 SLICE = EVIDENCE / "sprint-22c-w1-slice.json"
+SLICE_CLEARED = EVIDENCE / "sprint-22c-w1-slice-cleared.json"
+W0_SLICE = EVIDENCE / "sprint-22c-w0-slice.json"
+FIXTURE_SLICE = EVIDENCE / "sprint-22c-w1-fixture-slice.json"
 
 W3_CRASH_22B = EVIDENCE / "sprint-22b-w3-crash.json"
 W4_RECALL_22B = EVIDENCE / "sprint-22b-w4-restored-recall-clustered.json"
@@ -72,7 +75,17 @@ def _seal_reproduces(path: Path) -> bool:
 
 
 def test_every_w1_record_is_sealed_over_its_own_content() -> None:
-    for path in (PLAN_R1, PLAN, EVENT_REPAIR, CRASH, PRECONDITION, REINDEX, SLICE):
+    for path in (
+        PLAN_R1,
+        PLAN,
+        EVENT_REPAIR,
+        CRASH,
+        PRECONDITION,
+        REINDEX,
+        SLICE,
+        SLICE_CLEARED,
+        FIXTURE_SLICE,
+    ):
         assert _seal_reproduces(path), path.name
 
 
@@ -355,36 +368,78 @@ def test_a_campaign_may_be_stricter_than_the_factory_and_never_more_permissive()
     assert state.quarantined[first.segment_id] == "unclear_license"
 
 
-def test_the_released_licence_allowlist_still_has_no_open_content_licence() -> None:
-    """W1-F6, pinned at its source.
+def test_the_licence_finding_was_resolved_by_a_ruling_and_not_by_a_longer_list() -> None:
+    """W1-F6 closed by W1-D2. The pin that asserted the defect is replaced by its resolution.
 
-    This asserts that the defect is still there, which is the right shape for a finding
-    surfaced to an owner rather than absorbed: when the gate owner decides, this test fails
-    and the decision has to be recorded rather than slipped in. Delete it with the decision.
+    The earlier version of this test asserted that `APPROVED_LICENSES` still contained no
+    open content licence — the right shape for a finding handed to an owner, and one that had
+    to fail when they decided. They decided the wrong thing was being asked: a program must
+    not classify material and authorise its use, because the legal responsibility for that is
+    a person's. So the list was not lengthened. It stopped deciding.
     """
-    from cognitive_os.corpus.factory import APPROVED_LICENSES
+    from cognitive_os.corpus.factory import RECOGNISED_PERMISSIVE_LICENSES
 
-    assert not any(name.startswith("CC-BY") for name in APPROVED_LICENSES)
-    assert frozenset({"Apache-2.0", "MIT", "BSD-3-Clause", "CC0-1.0"}) == APPROVED_LICENSES
+    assert not any(name.startswith("CC-BY-") for name in RECOGNISED_PERMISSIVE_LICENSES)
+    cleared = _load(SLICE_CLEARED)
+    assert cleared["corpus_item"]["status"] == "routed"
+    decision = cleared["who_decided_this_material_may_be_used"]
+    assert decision["advisory_status"] == "unknown"
+    assert decision["the_platform_did_not_recognise_this_licence"] is True
+    assert decision["operator_status"] == "approved"
+    assert "cannot be delegated to an allowlist" in decision["and_that_is_not_a_refusal"]
 
 
-def test_the_licence_action_configuration_is_read_by_nothing() -> None:
-    """W1-F6's second half: six settings that describe behaviour nothing consults.
+def test_the_same_passage_is_promoted_once_a_person_has_cleared_it() -> None:
+    cleared = _load(SLICE_CLEARED)
+    assert cleared["quarantined"] == []
+    assert cleared["promoted"] == ["physics-uniform-motion-layla"]
+    assert cleared["stages"]["count"] == 9
+    assert cleared["cross_check"]["accepted"] is True
 
-    `CorpusConfiguration` offers `unknown_license_action` and five siblings, and
-    `CorpusFactory._route` hard-codes the same outcomes instead of reading them. Today they
-    agree, so nothing is wrong and nothing is honest either: an operator who set
-    `unknown_license_action = 'reject'` would get a quarantine and no warning.
+
+def test_the_cleared_run_supersedes_the_refused_one_without_editing_it() -> None:
+    """Both records stand: one is true about the design it ran under, one about the ruling."""
+    cleared = _load(SLICE_CLEARED)
+    assert cleared["supersedes"]["record"] == "sprint-22c-w1-slice.json"
+    assert "keeps its seal" in cleared["supersedes"]["which_said"]
+    assert _seal_reproduces(SLICE)
+    assert _load(SLICE)["quarantined"] == ["physics-uniform-motion-layla"]
+    # The passage did not change; only who was allowed to decide about it did.
+    assert cleared["passage"]["passage_sha256"] == _load(SLICE)["passage"]["passage_sha256"]
+    assert "byte-identical source" in cleared["supersedes"]["what_changed_is_not_the_passage"]
+
+
+def test_the_promoted_segment_walks_back_to_the_registered_source_bytes() -> None:
+    citations = _load(SLICE_CLEARED)["citations"]
+    assert citations["all_chains_resolve"] is True
+    assert citations["sampled"] is False
+    assert citations["walk_covers_every_promoted_artifact"] is True
+    hops = citations["per_artifact"]["physics-uniform-motion-layla"]["hops"]
+    assert [hop["hop"] for hop in hops] == [
+        "memory_provenance -> artifact_bytes",
+        "artifact -> corpus_item",
+        "corpus_item -> source_manifest",
+        "source_manifest -> registered_source_bytes",
+    ]
+    loaded = next(hop for hop in hops if hop["hop"] == "memory_provenance -> artifact_bytes")
+    assert loaded["loaded_bytes"] > 0
+    assert loaded["loaded_hash"] == loaded["declared_hash"]
+
+
+def test_the_fixture_path_changed_in_one_way_only() -> None:
+    """The ruling must not have moved anything except who decides.
+
+    W0's slice is sealed under the previous design and is not rebuilt; the re-run beside it
+    is. Every substantive number matches, and the licence status does not — because the
+    fixture's own clearance permits internal use and not public release, which is what it
+    always said and what the allowlist was overwriting.
     """
-    import inspect
-
-    from cognitive_os.config.corpus_config import CorpusConfiguration
-    from cognitive_os.corpus import factory
-
-    actions = [name for name in CorpusConfiguration.model_fields if name.endswith("_action")]
-    assert len(actions) == 6
-    source = inspect.getsource(factory)
-    assert not any(name in source for name in actions)
+    w0, rerun = _load(W0_SLICE), _load(FIXTURE_SLICE)
+    assert _seal_reproduces(W0_SLICE)
+    assert w0["register_source"]["license_status"] == ["approved"]
+    assert rerun["register_source"]["license_status"] == ["internal"]
+    for key in ("stages", "extract", "quarantine", "compile", "evaluate", "promote", "citations"):
+        assert w0[key] == rerun[key], key
 
 
 def test_a_value_that_is_not_a_number_still_compares_exactly() -> None:

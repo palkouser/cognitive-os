@@ -59,6 +59,7 @@ from campaign_22c import (  # noqa: E402
     SourceSpec,
     _canonical,
     _sha256,
+    operator_clearance,
     run_cycle,
     walk_citations,
 )
@@ -76,7 +77,10 @@ from cognitive_os.domain.corpus import CorpusUsageRight  # noqa: E402
 from cognitive_os.domain.semantic_memory import SemanticLiteralKind  # noqa: E402
 
 SOURCE_RIGHTS = EVIDENCE / "sprint-22c-source-rights.json"
-OUTPUT = EVIDENCE / "sprint-22c-w1-slice.json"
+#: **W1-D2.** `sprint-22c-w1-slice.json` records this passage being quarantined under the
+#: previous licence design and keeps its seal: it is true about what it ran under. This is
+#: the same passage under the gate owner's ruling, sealed beside it rather than over it.
+OUTPUT = EVIDENCE / "sprint-22c-w1-slice-cleared.json"
 
 #: The nominated file, where the gate owner put it. Named rather than searched for: a driver
 #: that went looking for "a physics PDF" could find a different one and clear it by accident.
@@ -269,6 +273,7 @@ async def slice_record() -> dict[str, Any]:
         media_type="text/plain",
         file_suffix=".txt",
     )
+    clearance = operator_clearance(rights, rights.source_content_hash)
     state, composition = await run_cycle(manifest, segments=(segment,), source=source)
     citations = await walk_citations(composition, state)
 
@@ -311,7 +316,8 @@ async def slice_record() -> dict[str, Any]:
             "(110.4). W1-F3: the cross-check compared them as strings",
             "the released Corpus Factory does not recognise CC BY 4.0 and routed the passage "
             "to quarantine at stage 1, and the campaign promoted it anyway. W1-F5 in the "
-            "driver, W1-F6 in the released licence policy",
+            "driver, W1-F6 in the released licence policy — which W1-D2 then ruled a design "
+            "error: a program may advise on a licence and may not decide it",
         ],
         "manifest": {
             "campaign_id": manifest.campaign_id,
@@ -358,64 +364,39 @@ async def slice_record() -> dict[str, Any]:
             "status": state.corpus_items[segment.segment_id]["status"],
             "routed_by": "the released CorpusFactory, at stage 1, before the campaign judged "
             "anything",
-            "reason": "license-review-required",
         },
         "quarantined": sorted(state.quarantined),
         "compiled": sorted(state.compiled),
         "promoted": sorted(state.promoted),
-        "the_passage_passed_on_its_merits_and_was_refused_on_its_licence": {
-            "cross_check_accepted": cross_check["accepted"],
-            "corpus_factory_accepted": state.corpus_items[segment.segment_id]["status"]
-            not in {"quarantined", "rejected"},
-            "outcome": "quarantined",
-            "why_both_facts_are_kept": (
-                "the evidence and the platform reached opposite conclusions about the same "
-                "passage. Reporting only the outcome would hide that the kernel verified the "
-                "physics; reporting only the cross-check would hide that the platform "
-                "refused the content. W2 needs both"
+        "who_decided_this_material_may_be_used": {
+            "authority": clearance.cleared_by,
+            "decided_at": clearance.cleared_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "licence": clearance.identifier,
+            "operator_status": clearance.status.value,
+            "advisory_status": "unknown",
+            "the_platform_did_not_recognise_this_licence": True,
+            "and_that_is_not_a_refusal": (
+                "W1-D2. The Corpus Factory recognises four software licences and offers that "
+                "recognition as advice. It did not recognise CC BY 4.0 and said so, which is "
+                "the correct thing for a program to say. What made the material usable is a "
+                "person's determination, sealed in S22C-020, naming an authority and hashing "
+                "the licence page — because the legal responsibility for using it is theirs "
+                "and cannot be delegated to an allowlist"
             ),
+            "clearance_evidence_hash": clearance.evidence_hash,
+            "clearance_covers_bytes": clearance.source_content_hash,
         },
-        "blocked_by": {
-            "finding": "W1-F6",
-            "blocks": (
-                "cycle 1, and every cycle after it, for both campaigns. No passage from "
-                "either cleared source can leave quarantine under the released licence policy"
+        "supersedes": {
+            "record": "sprint-22c-w1-slice.json",
+            "which_said": (
+                "the same passage, quarantined with license-review-required. That record is "
+                "true about the design it ran under and keeps its seal; this one is the same "
+                "passage under the ruling in W1-D2"
             ),
-            "owner": "the Sprint 22 gate owner — §1.3 reserves licence decisions to them",
-            "what_is_needed": (
-                "a decision on how the released Corpus Factory should treat open content "
-                "licences, and a note that the obvious fix has a consequence the plan did "
-                "not anticipate"
-            ),
-            "candidate_resolutions": [
-                {
-                    "resolution": "add the CC BY family to corpus.factory.APPROVED_LICENSES",
-                    "consequence": (
-                        "**this would deny the chemistry campaign, not merely quarantine "
-                        "it.** A licence classified RESTRICTED routes to CorpusRouteStatus."
-                        "DENIED, and CC BY-NC-SA is restricted by any honest reading of "
-                        "NonCommercial. Approving CC BY while classifying CC BY-NC-SA "
-                        "restricted ends the two-campaign plan the gate owner chose in W1-D1"
-                    ),
-                },
-                {
-                    "resolution": (
-                        "give the factory a path to accept a completed licence review, so a "
-                        "sealed clearance like S22C-020 is the review that "
-                        "'license-review-required' is asking for"
-                    ),
-                    "consequence": (
-                        "a released feature rather than a policy edit, and the one that "
-                        "matches what actually happened: the review exists, is sealed, names "
-                        "an authority and hashes the licence page. The factory has no way to "
-                        "be told"
-                    ),
-                },
-            ],
-            "not_taken_by_this_wave": (
-                "widening a platform-wide licence allowlist so this wave's slice turns green "
-                "is the move this programme refuses. §1.2 says a primitive that needs more "
-                "than composition is a finding to surface, not to absorb"
+            "what_changed_is_not_the_passage": (
+                "byte-identical source, byte-identical extraction, the same nine stages and "
+                "the same cross-check verdict. What changed is who was allowed to decide "
+                "whether the material may be used"
             ),
         },
         "replay": state.replay,
@@ -484,7 +465,8 @@ def main() -> int:
                 "corpus_item_status": record["corpus_item"]["status"],
                 "quarantined": record["quarantined"],
                 "promoted": record["promoted"],
-                "blocked_by": record["blocked_by"]["finding"],
+                "cleared_by": record["who_decided_this_material_may_be_used"]["authority"],
+                "citations_resolve": record["citations"]["all_chains_resolve"],
                 "integrity_content_hash": record["integrity_content_hash"],
             },
             indent=1,

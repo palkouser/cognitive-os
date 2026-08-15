@@ -63,6 +63,37 @@ class CorpusConfiguration(ImmutableContractModel):
             )
         return self
 
+    @model_validator(mode="after")
+    def actions_are_refusals(self) -> "CorpusConfiguration":
+        """Every `*_action` names a refusal, and none of them can name a permission.
+
+        **Sprint 22C W1-D2.** These six fields were read by nothing until the Corpus Factory
+        was taught to consult them, and an unvalidated action string would have reached the
+        routing table as a `KeyError` at ingest time — the worst place to discover a typo in
+        a configuration file. Validated here, at load, where a bad value is a refusal to
+        start rather than a failure mid-run.
+
+        `allow` is deliberately not a legal value. Configuration may choose how strictly to
+        refuse material nobody has cleared; it may not choose to permit it. Permission comes
+        from an `OperatorLicenseClearance` and from nowhere else, because the legal
+        responsibility for using material is a person's and cannot be delegated to a file.
+        """
+        permitted = {"quarantine", "reject"}
+        actions = {
+            "unknown_license_action": self.unknown_license_action,
+            "conflicting_license_action": self.conflicting_license_action,
+            "restricted_license_action": self.restricted_license_action,
+            "detected_secret_action": self.detected_secret_action,
+            "integrity_failure_action": self.integrity_failure_action,
+            "ambiguous_route_action": self.ambiguous_route_action,
+        }
+        wrong = {name: value for name, value in actions.items() if value not in permitted}
+        if wrong:
+            raise ValueError(
+                f"corpus actions must be one of {sorted(permitted)}; got {sorted(wrong.items())}"
+            )
+        return self
+
 
 def load_corpus_configuration(path: Path) -> CorpusConfiguration:
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))
