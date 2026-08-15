@@ -10,6 +10,162 @@ Waves are recorded newest first.
 
 ---
 
+## Gate closure — the two blocking dependencies, and the three things that would have let them shut
+
+W0 finished around two gates rather than through them, named an owner on each, and left
+`w2_may_proceed: false`. This is not a wave in the plan; it is the work that turns that flag
+over, and it is recorded because closing a gate honestly turned out to be most of the job.
+
+| Item | What it owed | Outcome |
+|---|---|---|
+| **S22D-003** — model licence | an `OperatorLicenseClearance` over named bytes, decided by the owner | **sealed** — Qwen3-8B-GGUF Q6_K, Apache-2.0, `internal_use` + `benchmark_use` |
+| **S22D-004** — serving runtime | something on this host that serves the cleared weights | **sealed** — `llama-server` b10442, CPU, answered through the released mapping |
+| the licence gate | conclude only on a determination | **GC-F1**, it concluded on a file existing |
+| the runtime gate | conclude only on a runtime that serves | **GC-F2**, it concluded on `PATH` |
+| the first real local call | §1.2's seam, executed | **GC-F3**, the model returned nothing and the mapping was content with it |
+| preflight | re-read, both gates concluded | **`w2_may_proceed: true`**, `invariants_hash` unmoved |
+| tests | gate-closure evidence | **29 passed** |
+
+**Nothing under `src/` was touched.** The clearance is a released contract, the advisory is a
+released list and the wire mapping is a released module; the two gate repairs are in this
+sprint's own driver.
+
+### The search was decided by a requirement, not by a preference
+
+The preflight asks for the licence text **read out of the distribution**, not transcribed from
+a model card (22C W1-D2). Four candidates were examined and **three could not satisfy that at
+all** — not because their licences are restrictive, but because there were no bytes to hash:
+
+| Candidate | Licence tag | `LICENSE` beside the weights |
+|---|---|---|
+| `Qwen/Qwen3-8B-GGUF` | apache-2.0 | **present** |
+| `bartowski/Mistral-7B-Instruct-v0.3-GGUF` | apache-2.0 | absent — and upstream ships none either |
+| `unsloth/Phi-4-mini-instruct-GGUF` | mit | absent — upstream's covers different bytes |
+| `lmstudio-community/Meta-Llama-3.1-8B-Instruct-GGUF` | llama3.1 | absent, upstream `gated: manual`, advice `unknown` |
+
+A repository licence tag is a publisher's assertion in metadata. `source_content_hash` exists
+so a clearance cannot drift onto a different edition of the same work, and a tag is exactly the
+drift it is built to catch.
+
+Two comparisons were then made that a licence identifier does not supply. The archived text was
+diffed against **apache.org's own copy**: the only substantive difference is the appendix
+copyright line filled in as `Copyright 2025 Alibaba Cloud`, which is what the appendix is for.
+No rider, no acceptable-use policy, no field-of-use clause — *"it says Apache License at the
+top"* and *"it is the Apache License"* are different facts and only the second one was
+recorded. And the weight file's SHA-256 was compared against **the publisher's own object id**
+in the distribution tree: a local hash says the file did not change after it landed, and only
+the publisher's id says the file that landed is the file that was published.
+
+The determination itself is the owner's and is recorded as given: `internal_use` and
+`benchmark_use`, **six rights withheld**. That gap is a decision with a consequence — without
+`modification`, `derivative_work` or `model_training` the optional §2.3 adapter is now closed
+by the operator's own grant as well as by the chemistry corpus being NC-SA. Two independent
+reasons, so W4 surplus cannot reopen it by finding spare schedule.
+
+### GC-F1 — a gate that concluded on a file existing
+
+`_model_licence_gate` reported `concluded: True` for any JSON at the clearance path and read
+`cleared_by` and `permitted_uses` off it without asking whether they meant anything. An empty
+object would have flipped `w2_may_proceed` with `cleared_by: null`, and W2 would have served a
+model nobody had cleared while the record said someone had.
+
+`OperatorLicenseClearance` already refuses `unknown` and `conflicting` on its own — a decision
+or nothing — so the repair is to ask the contract rather than the filesystem, plus one rule the
+contract cannot know: a determination that does not permit `internal_use` describes a model
+that may not be served, and a cleared model that cannot run is not a cleared model.
+
+> **Generalisable: the presence of an artefact is not the conclusion of the review that
+> produces it.** Where a released contract already encodes the refusals, validate through it;
+> a gate that reads fields off unvalidated JSON has replaced a decision with a filename.
+
+Testing that repair turned up a stronger property than the repair itself. `OperatorLicenseClearance`
+is a **hashed** experience contract, so widening `permitted_uses` in the sealed record fails on
+the clearance's own digest *before* any rule here looks at the value. The decision belongs to
+the person who made it rather than to whoever last had write access — which is why the two
+cases are now tested apart: a tampered record fails on the hash, and a *coherent* clearance
+carrying an inadequate grant has to be built through the contract to reach the rule it is about.
+
+### GC-F2 — a gate that concluded on `PATH`
+
+`_local_runtime` probed `shutil.which` over four candidate names. Once `llama-server` was
+symlinked onto `PATH` the gate would have said yes, and nothing had answered a request. The
+blocking dependency was never "a binary with this name"; it was *a runtime for the cleared
+weights*, and the two are only the same thing if you never ask the runtime anything.
+
+The gate now reads the sealed S22D-004 record and recomputes its seal, and `PATH` presence is
+kept as a separate, weaker fact. Before the proof existed the preflight was run with the
+symlink already in place and still reported `local_serving_runtime` blocking — which is the
+only reason this repair is known to work rather than believed to.
+
+`llama-server` was chosen over a model manager for an evidential reason rather than an
+aesthetic one: the clearance must name the SHA-256 of the weight file, and a runtime that
+stores weights in its own blob store under its own manifest digest cannot produce that number.
+
+### GC-F3 — the first real local call, and an empty answer nobody would have noticed
+
+§1.2 claims a local model reaches the governed path through the existing `openai_compatible`
+seam. That was a reading of the source until a real server's bytes went through it, and running
+it produced the finding this closure is worth most for. **The cleared model is a hybrid
+reasoning model, and how much of its output budget goes to thinking is a runtime setting that
+no mainstream default pins.** Both settings were run, on the same prompt:
+
+| `--reasoning` | content | `finish_reason` | output tokens |
+|---|---|---|---|
+| `on` | *(empty)* | `length` | **64** |
+| `off` | `ready` | `completed` | **2** |
+
+`map_response` reads `message.content`, found an empty string, and **returned a valid response
+without complaint**. So an answer nobody wrote and an answer the model declined to give arrive
+downstream in the same shape, separated only by a token count nobody was comparing — and the
+frozen escalation policy escalates on invalid answer form while the accounting exit divides
+cost by answers produced. W3 would have escalated every task, charged thirty-two times the
+tokens for output nobody could read, and the record would have called it a capability result.
+
+The repair is to pin the reasoning mode into the runtime harness alongside model, quantization,
+context and sampling, as §1.2 asks. The failing configuration is **kept and re-run**, because a
+pinned flag with no reason attached is one the next person removes.
+
+> **Generalisable: a model that produces nothing is not the same event as a model that produces
+> a wrong answer, and a normalizer that reads one field cannot tell them apart.** Assert on the
+> content, not on the call succeeding.
+
+### Evidence
+
+| File | SHA-256 of the sealed body |
+|---|---|
+| `evidence/sprint-22d-model-rights.json` | `1a844ffb1ecb553ad9f113270507fcc86351194148a6b6acd0b26e5c616f0707` |
+| `evidence/sprint-22d-runtime.json` | `5a7e4d011fe4cdbf216af1b4e306482949d2e66a3fd284111603826a9e25f3d7` |
+| `evidence/sprint-22d-preflight.json` | `3a27dd3b65106d1915dda19ca3b7fd430e2346bfe955b204befe669eea00af16` |
+
+| Bytes named by the records | SHA-256 |
+|---|---|
+| the archived licence text (`evidence/sprint-22d-model-licence.txt`, 11 544 B) | `5de36594c10839788a8c589443a8ef9d8b8d17c65a1b5807206ae037fc36c6bd` |
+| the cleared weight file (`Qwen3-8B-Q6_K.gguf`, 6 725 899 040 B) | `cb042ccd76795a8830d6be6bd4165245847cc68e41797b13bd61aed4c2cfbce6` |
+| `llama-server` b10442 | `4d9d7873bc61c197fb11182e961192d4e2ba0341558b8053814744f01bdddd8d` |
+
+The preflight record's hash moved and W0's did not become wrong: W0 sealed
+`0732e027…` when both gates were open, and a gate closing is a change in the world rather than
+in the declared host. `invariants_hash` is `122bcd40…` in both, which is the check that says so
+— the CPU, the GPU, the platform and the Python version had no business moving because a person
+made a decision (22B S22B-002).
+
+**Recomputable here, observed there.** The licence bytes are archived in this repository, so CI
+recomputes that hash on every run. The weight file is 6.7 GB and the binary is a release
+artefact; both live outside the repository, so their hashes are recomputed where the files exist
+and compared against nothing where they do not. A `--check` that demanded the weights would fail
+everywhere except this host, and a green check that can only be green in one place has stopped
+saying anything.
+
+### What this deliberately did not build
+
+W0-F3 named three missing things and this closes one. The `LocalApiProviderConfig` union member
+and the adapter that constructs it are **released code**, and released code belongs in a wave
+with its own review rather than in a gate closure — so `what_this_does_not_yet_provide` names
+both in the record. W2 inherits them, plus **W1-F3**: the layer is keyed as the source writes
+and asked as the asker speaks, and the alias belongs on the fact.
+
+---
+
 ## W1 — Layer 1 goes from one artifact to eight facts, and a holdout from 0 to 4
 
 The plan gave W1 one job and one deadline: implement §1.5's declarative-fact path against a

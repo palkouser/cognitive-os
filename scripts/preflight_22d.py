@@ -54,9 +54,10 @@ from benchmark_22d import (  # noqa: E402
     refuse_external_providers,
     require_benchmark_verifiers,
 )
+from pydantic import ValidationError  # noqa: E402
 
 from cognitive_os.config.provider_config import ProviderAdapterConfig  # noqa: E402
-from cognitive_os.domain.corpus import CorpusUsageRight  # noqa: E402
+from cognitive_os.domain.corpus import CorpusUsageRight, OperatorLicenseClearance  # noqa: E402
 from cognitive_os.domain.provider import ProviderKind  # noqa: E402
 
 #: The named owner. Every blocking dependency in this record is addressed to this person, and
@@ -66,6 +67,10 @@ GATE_OWNER = "palkouser (Sprint 22 gate owner)"
 #: The evidence file a concluded model-licence review must produce before W2 serves anything.
 #: Its absence is the blocking dependency; its presence is what unblocks the local arm.
 MODEL_CLEARANCE = EVIDENCE / "sprint-22d-model-rights.json"
+
+#: The sealed serving proof. Its absence is the other blocking dependency; its presence is
+#: not enough on its own, which is the point of reading it rather than counting it.
+RUNTIME_PROOF = EVIDENCE / "sprint-22d-runtime.json"
 
 #: 22C's sealed source-rights record, which already answers the adapter-corpus question.
 SOURCE_RIGHTS = EVIDENCE / "sprint-22c-source-rights.json"
@@ -184,6 +189,29 @@ def _cpu_viability() -> dict[str, Any]:
 _RUNTIME_CANDIDATES = ("ollama", "llama-server", "llama-cli", "vllm")
 
 
+def _serving_proved() -> dict[str, Any]:
+    """Whether something on this host has actually served the cleared weights.
+
+    Read from the sealed S22D-004 record rather than re-run: starting an 8 B model is a
+    two-minute act and a preflight is not the place for it. The seal is recomputed, because
+    an unsealed record proves nothing and a gate that trusts one has stopped being a gate.
+    """
+    if not RUNTIME_PROOF.exists():
+        return {"record": None, "sealed": False, "serve_proof_mapped": False}
+    stored = json.loads(RUNTIME_PROOF.read_text(encoding="utf-8"))
+    body = {key: value for key, value in stored.items() if key != "integrity_content_hash"}
+    sealed = _sha256(canonical(body)) == stored.get("integrity_content_hash")
+    proof = stored.get("serve_proof", {})
+    return {
+        "record": RUNTIME_PROOF.name,
+        "sealed": sealed,
+        "serve_proof_mapped": bool(sealed and proof.get("mapped_by_the_released_adapter_seam")),
+        "runtime": stored.get("runtime", {}).get("name"),
+        "release_tag": stored.get("runtime", {}).get("release_tag"),
+        "configuration_of_record": stored.get("configuration_of_record"),
+    }
+
+
 def _local_runtime() -> dict[str, Any]:
     """**W0-F3.** A cleared model still needs something to serve it, and nothing here does.
 
@@ -201,8 +229,17 @@ def _local_runtime() -> dict[str, Any]:
     """
     found = {name: shutil.which(name) for name in _RUNTIME_CANDIDATES}
     kinds = {config.model_fields["kind"].default for config in EXTERNAL_PROVIDER_CONFIGS}
+    proved = _serving_proved()
     return {
         "serving_runtime_installed": any(found.values()),
+        "serving_runtime_proved": proved,
+        # **A binary on PATH is not a serving runtime.** This gate used to conclude on the
+        # first fact alone, which would have unblocked W2 on a file named `llama-server`
+        # that had never answered anything. What the dependency actually asked for was a
+        # runtime *for the cleared weights*, so the gate now wants the sealed S22D-004
+        # proof: the server ran, and the released `openai_compatible` mapping normalized
+        # its answer without a provider-specific branch.
+        "serving_runtime_available": any(found.values()) and proved["serve_proof_mapped"],
         "candidates_probed": list(_RUNTIME_CANDIDATES),
         "candidates_found": sorted(name for name, path in found.items() if path),
         "local_api_is_a_released_provider_kind": ProviderKind.LOCAL_API in set(ProviderKind),
@@ -254,7 +291,11 @@ def _verifier_extras() -> dict[str, Any]:
     try:
         require_benchmark_verifiers()
     except BenchmarkVerifiersUnavailable as error:
-        return {"frozen_verifiers_available": False, "refusal": str(error), "finding": "W0-F1"}
+        return {
+            "frozen_verifiers_available": False,
+            "refusal": str(error),
+            "finding": "W0-F1",
+        }
     return {
         "frozen_verifiers_available": True,
         "required_extras": list(REQUIRED_VERIFIER_EXTRAS),
@@ -277,13 +318,47 @@ def _verifier_extras() -> dict[str, Any]:
 def _model_licence_gate() -> dict[str, Any]:
     """The blocking one. This driver refuses to decide it, and says who must."""
     if MODEL_CLEARANCE.exists():
-        clearance = json.loads(MODEL_CLEARANCE.read_text(encoding="utf-8"))
+        stored = json.loads(MODEL_CLEARANCE.read_text(encoding="utf-8"))
+        # **This branch used to conclude on a file existing, and read two fields off it
+        # without asking whether they meant anything.** An empty object at this path would
+        # have flipped `w2_may_proceed` to true with `cleared_by: null`. The clearance is a
+        # released contract that refuses `unknown` and `conflicting` on its own — a decision
+        # or nothing — so the honest test is whether the contract accepts the record, not
+        # whether the filesystem does.
+        try:
+            clearance = OperatorLicenseClearance.model_validate(stored.get("clearance"))
+        except (ValidationError, TypeError) as error:
+            return {
+                "concluded": False,
+                "owner": GATE_OWNER,
+                "clearance_file": MODEL_CLEARANCE.name,
+                "why_the_artefact_does_not_conclude_the_gate": str(error),
+                "blocks": ["W2 local model", "W3 local-model arm"],
+            }
+        permitted = set(clearance.permitted_uses)
+        if CorpusUsageRight.INTERNAL_USE not in permitted:
+            return {
+                "concluded": False,
+                "owner": GATE_OWNER,
+                "clearance_file": MODEL_CLEARANCE.name,
+                "why_the_artefact_does_not_conclude_the_gate": (
+                    "the determination does not permit internal use, so the weights may not "
+                    "be served at all and a cleared model that cannot run is not a cleared "
+                    "model"
+                ),
+                "blocks": ["W2 local model", "W3 local-model arm"],
+            }
         return {
             "concluded": True,
             "clearance_file": MODEL_CLEARANCE.name,
             "clearance_hash": _sha256(MODEL_CLEARANCE.read_bytes()),
-            "cleared_by": clearance.get("cleared_by"),
-            "permitted_uses": clearance.get("permitted_uses"),
+            "cleared_by": clearance.cleared_by,
+            "permitted_uses": sorted(right.value for right in permitted),
+            "licence_identifier": clearance.identifier,
+            "weights_content_hash": clearance.source_content_hash,
+            "licence_evidence_hash": clearance.evidence_hash,
+            "revalidated_against_the_released_contract": True,
+            "numbers_are_publishable": CorpusUsageRight.BENCHMARK_USE in permitted,
             "blocks": None,
         }
     return {
@@ -303,7 +378,11 @@ def _model_licence_gate() -> dict[str, Any]:
             "read a licence if there is one, recognise it if it can, and advise. It may "
             "refuse on its own; it may never permit on its own"
         ),
-        "blocks": ["W2 local model", "W3 local-model arm", "exits one, two, three and four"],
+        "blocks": [
+            "W2 local model",
+            "W3 local-model arm",
+            "exits one, two, three and four",
+        ],
         "no_substitute_permitted": (
             "§3.2: never substitute a 'temporary' model — a benchmark run on unclear weights "
             "is evidence that cannot be released"
@@ -314,7 +393,11 @@ def _model_licence_gate() -> dict[str, Any]:
 def _adapter_corpus_gate() -> dict[str, Any]:
     """Already answered by 22C, and the answer decides what the adapter option is worth."""
     if not SOURCE_RIGHTS.exists():
-        return {"concluded": False, "owner": GATE_OWNER, "reason": "22C rights record absent"}
+        return {
+            "concluded": False,
+            "owner": GATE_OWNER,
+            "reason": "22C rights record absent",
+        }
     sealed = json.loads(SOURCE_RIGHTS.read_text(encoding="utf-8"))
     sources = [
         {
@@ -417,12 +500,13 @@ def _record() -> dict[str, Any]:
         for item in (
             None if model_gate["concluded"] else {"gate": "model_licence", **model_gate},
             None
-            if record["local_runtime"]["serving_runtime_installed"]
+            if record["local_runtime"]["serving_runtime_available"]
             else {
                 "gate": "local_serving_runtime",
                 "owner": GATE_OWNER,
                 "blocks": ["W2 local model"],
                 "finding": "W0-F3",
+                "installed_but_unproved": record["local_runtime"]["serving_runtime_installed"],
             },
         )
         if item is not None
@@ -479,7 +563,8 @@ def main() -> int:
 
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text(
-        json.dumps(record, indent=1, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8"
+        json.dumps(record, indent=1, sort_keys=True, ensure_ascii=False) + "\n",
+        encoding="utf-8",
     )
     print(
         json.dumps(

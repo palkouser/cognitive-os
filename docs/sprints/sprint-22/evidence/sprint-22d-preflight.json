@@ -38,35 +38,7 @@
   ],
   "why_it_blocks_nothing": "§2.3 puts adapter training outside every exit; this gate exists so the option is priced, not so the schedule waits on it"
  },
- "blocking_dependencies": [
-  {
-   "blocks": [
-    "W2 local model",
-    "W3 local-model arm",
-    "exits one, two, three and four"
-   ],
-   "concluded": false,
-   "gate": "model_licence",
-   "no_substitute_permitted": "§3.2: never substitute a 'temporary' model — a benchmark run on unclear weights is evidence that cannot be released",
-   "owner": "palkouser (Sprint 22 gate owner)",
-   "required_artefact": "sprint-22d-model-rights.json",
-   "required_contract": "cognitive_os.domain.corpus.OperatorLicenseClearance",
-   "what_the_owner_must_decide": [
-    "which model, by name and by the SHA-256 of the weight file W2 will serve",
-    "the SHA-256 of the licence text those weights ship with, read out of the distribution rather than transcribed from a model card (22C W1-D2: never transcribe a nominated licence; hash the bytes)",
-    "which CorpusUsageRight values the operator permits — internal_use at minimum, and benchmark_use for the numbers in this sprint to be publishable"
-   ],
-   "what_this_program_may_do": "read a licence if there is one, recognise it if it can, and advise. It may refuse on its own; it may never permit on its own"
-  },
-  {
-   "blocks": [
-    "W2 local model"
-   ],
-   "finding": "W0-F3",
-   "gate": "local_serving_runtime",
-   "owner": "palkouser (Sprint 22 gate owner)"
-  }
- ],
+ "blocking_dependencies": [],
  "cpu_viability": {
   "configuration_of_record": "cpu",
   "gpu_supports_parameter_efficient_finetuning": true,
@@ -75,7 +47,7 @@
   "threads": 16,
   "why_the_gpu_is_reported_beside_and_never_instead": "the exit asks for CPU viability specifically, so the CPU configuration is the claim and GPU numbers are reported next to it; §3.2 names buying speed with the claim as a schedule risk, and the adapter stays outside every exit (§2.3)"
  },
- "integrity_content_hash": "0732e0278105a895869bc33d5d90fb626e7704f43f32462544fa174c0ee9d111",
+ "integrity_content_hash": "3a27dd3b65106d1915dda19ca3b7fd430e2346bfe955b204befe669eea00af16",
  "invariants": {
   "cpu": {
    "logical_cpus": 16,
@@ -96,7 +68,9 @@
   "S22D-002"
  ],
  "local_runtime": {
-  "candidates_found": [],
+  "candidates_found": [
+   "llama-server"
+  ],
   "candidates_probed": [
    "ollama",
    "llama-server",
@@ -111,7 +85,16 @@
    "cli_agent",
    "network_api"
   ],
-  "serving_runtime_installed": false,
+  "serving_runtime_available": true,
+  "serving_runtime_installed": true,
+  "serving_runtime_proved": {
+   "configuration_of_record": "cpu",
+   "record": "sprint-22d-runtime.json",
+   "release_tag": "b10442",
+   "runtime": "llama-server",
+   "sealed": true,
+   "serve_proof_mapped": true
+  },
   "w2_must_add": [
    "a LocalApiProviderConfig member of the discriminated provider union",
    "an adapter that maps it through providers/openai_compatible.py",
@@ -134,25 +117,23 @@
   "why_asking_about_a_fact_is_authorship": "the prompts and the expected answers are written here; the constants they ask about are stated by the two rights-cleared sources, both of which 22C cleared for benchmark_use. Nothing is copied out of a source into this repository"
  },
  "model_licence_gate": {
-  "blocks": [
-   "W2 local model",
-   "W3 local-model arm",
-   "exits one, two, three and four"
+  "blocks": null,
+  "clearance_file": "sprint-22d-model-rights.json",
+  "clearance_hash": "c51ec171cc5cf94f365cbd04ece22d3a7b542ce857c444814bda38d46cd9d868",
+  "cleared_by": "palkouser (Sprint 22 gate owner)",
+  "concluded": true,
+  "licence_evidence_hash": "5de36594c10839788a8c589443a8ef9d8b8d17c65a1b5807206ae037fc36c6bd",
+  "licence_identifier": "Apache-2.0",
+  "numbers_are_publishable": true,
+  "permitted_uses": [
+   "benchmark_use",
+   "internal_use"
   ],
-  "concluded": false,
-  "no_substitute_permitted": "§3.2: never substitute a 'temporary' model — a benchmark run on unclear weights is evidence that cannot be released",
-  "owner": "palkouser (Sprint 22 gate owner)",
-  "required_artefact": "sprint-22d-model-rights.json",
-  "required_contract": "cognitive_os.domain.corpus.OperatorLicenseClearance",
-  "what_the_owner_must_decide": [
-   "which model, by name and by the SHA-256 of the weight file W2 will serve",
-   "the SHA-256 of the licence text those weights ship with, read out of the distribution rather than transcribed from a model card (22C W1-D2: never transcribe a nominated licence; hash the bytes)",
-   "which CorpusUsageRight values the operator permits — internal_use at minimum, and benchmark_use for the numbers in this sprint to be publishable"
-  ],
-  "what_this_program_may_do": "read a licence if there is one, recognise it if it can, and advise. It may refuse on its own; it may never permit on its own"
+  "revalidated_against_the_released_contract": true,
+  "weights_content_hash": "cb042ccd76795a8830d6be6bd4165245847cc68e41797b13bd61aed4c2cfbce6"
  },
  "observations": {
-  "free_disk_gib_repo": 821,
+  "free_disk_gib_repo": 814,
   "memory_total_kib": 48199296,
   "why_not_invariant": "total memory and free disk are states of the world at W0, not properties of the declared host; `--check` re-reads them and compares them against nothing (22B S22B-002, 22C W1-F1)"
  },
@@ -233,6 +214,6 @@
   "why_it_is_a_finding": "build_builtin_registry registers the physics verifiers as *unavailable* when Pint is absent and list_all() returns them anyway, so a verifier set chosen by reading the registry looks complete while half of it errors; fifty of the hundred would have scored zero as 'undecidable' and the 70 % exit would have read as capability rather than as a missing extra"
  },
  "w0_may_proceed": true,
- "w2_may_proceed": false,
+ "w2_may_proceed": true,
  "why_w0_proceeds_anyway": "§3.1 has the fixture-scale slice run before the real model is touched, so every W0 deliverable except the model itself is reachable while the clearance is outstanding — which is exactly how 22C finished a W0 whose source gate was still open"
 }
