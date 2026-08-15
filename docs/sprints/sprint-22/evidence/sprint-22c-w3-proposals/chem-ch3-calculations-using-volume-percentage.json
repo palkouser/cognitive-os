@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "1dda005d60a27812143b5b07e6cb49df79ed8052a2054dd38b575502ca4b39a3",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "cd53a15c-9880-51ea-9da5-ca5e387e8f82",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Example 3.24 is a volume-percentage solution-concentration calculation: it takes 70%vol of a 355 mL solution volume and multiplies the resulting isopropanol volume by a density (0.785 g/mL) to obtain a mass. That is neither chemistry.molar-conversion (moles from a stated mass and molar mass) nor chemistry.mass-balance (atom/mass conservation in a written equation), so per rule 4 it is not formalisable and must not be bent into the nearest type. The worked example's own result is also not printed \\u2014 the Solution's discussion describes the multiplication but the text layer carries no numeric result for it, so there is nothing readable to assert. The only printed result, \\\"1.5 mol ethanol\\\", answers the Check Your Learning question (12% ethanol by volume, 46.06 g/mol, 0.789 g/mL, 750 mL), a different question from the worked example's givens; per rule 2 it must not be paired with them. Even taken on its own, that Check Your Learning item is also a volume-percentage-plus-density problem (volume \\u2192 mass \\u2192 moles), not a molar conversion from a stated mass, so it too falls outside the registered types. Reported as no_registered_problem_type rather than no_readable_result because the type mismatch is the primary and independent disqualifier.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Rubbing alcohol (isopropanol) is usually sold as a 70%vol aqueous solution. If the density of isopropyl alcohol is 0.785 g/mL, how many grams of isopropyl alcohol are present in a 355 mL bottle of rubbing alcohol?\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "Example 3.24 is a volume-percentage solution-concentration calculation: it takes 70%vol of a 355 mL solution volume and multiplies the resulting isopropanol volume by a density (0.785 g/mL) to obtain a mass. That is neither chemistry.molar-conversion (moles from a stated mass and molar mass) nor chemistry.mass-balance (atom/mass conservation in a written equation), so per rule 4 it is not formalisable and must not be bent into the nearest type. The worked example's own result is also not printed — the Solution's discussion describes the multiplication but the text layer carries no numeric result for it, so there is nothing readable to assert. The only printed result, \"1.5 mol ethanol\", answers the Check Your Learning question (12% ethanol by volume, 46.06 g/mol, 0.789 g/mL, 750 mL), a different question from the worked example's givens; per rule 2 it must not be paired with them. Even taken on its own, that Check Your Learning item is also a volume-percentage-plus-density problem (volume → mass → moles), not a molar conversion from a stated mass, so it too falls outside the registered types. Reported as no_registered_problem_type rather than no_readable_result because the type mismatch is the primary and independent disqualifier.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "Rubbing alcohol (isopropanol) is usually sold as a 70%vol aqueous solution. If the density of isopropyl alcohol is 0.785 g/mL, how many grams of isopropyl alcohol are present in a 355 mL bottle of rubbing alcohol?"
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 952,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 14919.47878800056,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

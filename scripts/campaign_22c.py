@@ -617,6 +617,9 @@ class CycleState:
     #: than synthesized — §3.2's replayable-evidence rule, which a driver that rebuilt the
     #: hashes from the segment would satisfy only in appearance.
     sealed_proposals: dict[str, dict[str, Any]] = field(default_factory=dict)
+    #: **W3.** What earlier cycles of this campaign retained, replayed by this one. Empty for
+    #: cycle 1, which is the only cycle that inherits nothing.
+    inherited_cases: tuple[dict[str, Any], ...] = ()
     stages_completed: list[str] = field(default_factory=list)
     corpus_items: dict[str, Any] = field(default_factory=dict)
     proposals: dict[str, dict[str, Any]] = field(default_factory=dict)
@@ -1363,6 +1366,7 @@ async def replay_all_domains(
     store: MemoryEventStore | None = None,
     *,
     segments: tuple[Segment, ...] | None = None,
+    inherited: tuple[dict[str, Any], ...] = (),
 ) -> dict[str, Any]:
     """Execute every retained domain's retained evaluation cases. §2.2a.
 
@@ -1374,17 +1378,27 @@ async def replay_all_domains(
     `cases: 0` rather than silently omitted, because "all retained domains" is an
     enumeration the record has to be able to be wrong about (22A W4-F1).
     """
-    cases: dict[str, list[Segment]] = {}
+    #: `(problem_type, formal_inputs)`, because a later cycle replays cases it retained in an
+    #: *earlier* one and those are records rather than live segments. W3: this is what makes
+    #: "every cycle replays all retained domains" a growing set instead of a restatement of
+    #: whatever the current cycle happens to hold.
+    cases: dict[str, list[tuple[str, dict[str, Any]]]] = {}
+    for case in inherited:
+        cases.setdefault(case["domain_id"], []).append(
+            (case["problem_type"], case["formal_inputs"])
+        )
     for segment in all_segments() if segments is None else segments:
         if segment.expected_accepted:
-            cases.setdefault(segment.domain_id, []).append(segment)
+            cases.setdefault(segment.domain_id, []).append(
+                (segment.problem_type, segment.formal_inputs)
+            )
 
     per_domain: dict[str, Any] = {}
     for domain_id in registry.domain_ids():
         retained = cases.get(domain_id, [])
         passed = 0
-        for segment in retained:
-            run = await attempt_case(segment.problem_type, segment.formal_inputs, store=store)
+        for problem_type, formal_inputs in retained:
+            run = await attempt_case(problem_type, formal_inputs, store=store)
             passed += int(run.accepted)
         per_domain[domain_id] = {
             "cases": len(retained),
@@ -1428,7 +1442,14 @@ def source_leakage_check(state: CycleState) -> dict[str, Any]:
 async def stage_evaluate(runner: CycleRunner, composition: Composition, state: CycleState) -> None:
     """Replay every retained domain, then check for leakage. Before anything is promoted."""
     runner.enter(CampaignStage.EVALUATE)
-    state.replay = await replay_all_domains(composition.tool_events, segments=state.segments)
+    # This cycle's contribution is what survived quarantine, not what the provider proposed:
+    # a segment the platform or the evidence refused is not retained, and replaying it would
+    # report a rate for knowledge the campaign does not hold.
+    state.replay = await replay_all_domains(
+        composition.tool_events,
+        segments=tuple(item for item in state.segments if item.segment_id in state.compiled),
+        inherited=state.inherited_cases,
+    )
     state.replay["source_leakage"] = source_leakage_check(state)
     runner.leave(CampaignStage.EVALUATE)
 
@@ -1650,8 +1671,15 @@ async def walk_citations(composition: Composition, state: CycleState) -> dict[st
         "promoted_artifacts": len(state.promoted),
         "artifacts_walked": len(walked),
         "walk_covers_every_promoted_artifact": len(walked) == len(state.promoted),
-        "all_chains_resolve": bool(walked)
-        and all(entry["chain_resolves"] for entry in walked.values()),
+        # Vacuously true when a cycle promoted nothing, and flagged as such. "Nothing to
+        # check" and "checked and passed" are different facts, and a record that reported
+        # the first as `false` would read as a broken citation chain instead of an empty one
+        # (W3, where a cycle promoted nothing at all).
+        "all_chains_resolve": all(entry["chain_resolves"] for entry in walked.values()),
+        # Present only when it is true, so the sealed records of cycles that *did* promote
+        # keep the shape they were sealed with. A wave does not reshape history to make room
+        # for a flag about a case history did not have.
+        **({"vacuous_because_nothing_was_promoted": True} if not walked else {}),
         "sampled": False,
         "per_artifact": walked,
     }
@@ -1668,6 +1696,7 @@ async def run_cycle(
     segments: tuple[Segment, ...] | None = None,
     source: SourceSpec | None = None,
     sealed_proposals: dict[str, dict[str, Any]] | None = None,
+    inherited_cases: tuple[dict[str, Any], ...] = (),
     composition: Composition | None = None,
 ) -> tuple[CycleState, Composition]:
     """One complete nine-stage pass. The only way to run a cycle.
@@ -1687,6 +1716,7 @@ async def run_cycle(
         **({"segments": segments} if segments is not None else {}),
         **({"source": source} if source is not None else {}),
         **({"sealed_proposals": sealed_proposals} if sealed_proposals is not None else {}),
+        inherited_cases=inherited_cases,
     )
     composition = composition or build_composition()
     runner = CycleRunner(state)

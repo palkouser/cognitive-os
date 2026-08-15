@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "2fb8cae15a0a7e31f93b63739826c1acff281e6a7f92235e373d6a49d4b68ec8",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "24d68275-eea7-5557-9164-58c7380319d3",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Example 4.16 is a combustion analysis whose task is to derive an empirical formula (\\\"What is the empirical formula of polyethylene?\\\"), concluding \\\"the empirical formula for polyethylene is CH2\\\". Empirical-formula determination is explicitly outside the two registered types, so per rule 4 it is not bent into the nearest one. It is not chemistry.molar-conversion: although the passage says to \\\"calculate the molar amounts of carbon and hydrogen in the sample\\\", no molar amount is printed as a result, no molar mass or atomic mass value appears anywhere in the text layer (the flow chart, the ratio expression and the reaction scheme are images the text layer does not carry), and the sought answer is a formula, not an amount in moles. It is not chemistry.mass-balance either: the passage states outright that \\\"a balanced equation is not necessary for the task at hand\\\", and it prints no coefficients or atomic masses. The Check Your Learning answer \\\"CH\\\" belongs to the polystyrene question, not to the worked example, and is likewise an empirical formula rather than either registered answer shape; it is therefore not carried into `asserted`. No formal_inputs or asserted values are reported because there is no registered problem type to attach them to.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Combustion analysis of a 0.00126-g sample of polyethylene yields 0.00394 g of CO2 and 0.00161 g of H2O; the example asks for the empirical formula of polyethylene and reports CH2.\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "Example 4.16 is a combustion analysis whose task is to derive an empirical formula (\"What is the empirical formula of polyethylene?\"), concluding \"the empirical formula for polyethylene is CH2\". Empirical-formula determination is explicitly outside the two registered types, so per rule 4 it is not bent into the nearest one. It is not chemistry.molar-conversion: although the passage says to \"calculate the molar amounts of carbon and hydrogen in the sample\", no molar amount is printed as a result, no molar mass or atomic mass value appears anywhere in the text layer (the flow chart, the ratio expression and the reaction scheme are images the text layer does not carry), and the sought answer is a formula, not an amount in moles. It is not chemistry.mass-balance either: the passage states outright that \"a balanced equation is not necessary for the task at hand\", and it prints no coefficients or atomic masses. The Check Your Learning answer \"CH\" belongs to the polystyrene question, not to the worked example, and is likewise an empirical formula rather than either registered answer shape; it is therefore not carried into `asserted`. No formal_inputs or asserted values are reported because there is no registered problem type to attach them to.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "Combustion analysis of a 0.00126-g sample of polyethylene yields 0.00394 g of CO2 and 0.00161 g of H2O; the example asks for the empirical formula of polyethylene and reports CH2."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 931,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 14029.030204001174,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

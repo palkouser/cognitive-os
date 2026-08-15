@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "eb5c28cbaed682324774bca4a09b76811037671964c355b3b52f248b8bb5d4eb",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "e6ea70f1-24a5-5f8d-a313-4e16c61c86b0",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"The worked example is a gravimetric analysis ending in a mass-percent concentration. That is neither of the two registered types: it is not an amount in moles from a mass and a molar mass (chemistry.molar-conversion), and it is not a verdict on whether a written equation conserves atoms and mass (chemistry.mass-balance). No balanced equation is printed at all, only the precipitation reaction described in prose. Per rule 4 it must not be bent into the nearest type \\u2014 the intermediate mole steps the solution alludes to are not what the passage asks or answers.\\n\\nTwo further points, recorded but not decisive since rule 4 already settles it. First, the passage as carried by the text layer states no result for its own question: both result lines (\\\"The mass of MgSO4 that would yield the provided precipitate mass is\\\" and \\\"The concentration of MgSO4 in the sample mixture is then calculated to be\\\") are followed by nothing, the equations having been dropped from the text layer. Second, the only printed figure, \\\"23.76%\\\", appears under Answer: for the Check Your Learning question about percent chloride in a 1.1324-g sample producing 1.0881 g of AgCl. That is a different question with different givens and, per rule 2, must not be attached to this example's quantities; it is therefore not quoted in asserted_value_quoted_from_the_passage.\\n\\nNo atomic masses are printed anywhere in the passage.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Example 4.15 (Gravimetric Analysis): a 0.4550-g solid mixture containing MgSO4 is dissolved in water and treated with excess Ba(NO3)2, precipitating 0.6168 g of BaSO4; the example asks for the concentration (mass percent) of MgSO4 in the mixture.\"}",
+  "structured_output": {
+   "statement": "Example 4.15 (Gravimetric Analysis): a 0.4550-g solid mixture containing MgSO4 is dissolved in water and treated with excess Ba(NO3)2, precipitating 0.6168 g of BaSO4; the example asks for the concentration (mass percent) of MgSO4 in the mixture.",
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "problem_type": "",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "The worked example is a gravimetric analysis ending in a mass-percent concentration. That is neither of the two registered types: it is not an amount in moles from a mass and a molar mass (chemistry.molar-conversion), and it is not a verdict on whether a written equation conserves atoms and mass (chemistry.mass-balance). No balanced equation is printed at all, only the precipitation reaction described in prose. Per rule 4 it must not be bent into the nearest type — the intermediate mole steps the solution alludes to are not what the passage asks or answers.\n\nTwo further points, recorded but not decisive since rule 4 already settles it. First, the passage as carried by the text layer states no result for its own question: both result lines (\"The mass of MgSO4 that would yield the provided precipitate mass is\" and \"The concentration of MgSO4 in the sample mixture is then calculated to be\") are followed by nothing, the equations having been dropped from the text layer. Second, the only printed figure, \"23.76%\", appears under Answer: for the Check Your Learning question about percent chloride in a 1.1324-g sample producing 1.0881 g of AgCl. That is a different question with different givens and, per rule 2, must not be attached to this example's quantities; it is therefore not quoted in asserted_value_quoted_from_the_passage.\n\nNo atomic masses are printed anywhere in the passage."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1347,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 17910.178165000616,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

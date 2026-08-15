@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "3b81ad136fb36d45a1822d6bf3334f658e3782d74eea06568b39bb65bd59fdb6",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "7c4bb713-330d-5dff-8657-d8b5e621ff2c",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Direction mismatch with the only candidate type. `chemistry.molar-conversion` derives an amount in moles FROM a mass and a molar mass: its formal_inputs require {\\\"mass\\\": {\\\"magnitude\\\": ..., \\\"unit\\\": \\\"g\\\"}} and its answer shape is {\\\"units\\\": \\\"mol\\\"}. Example 3.4 runs the other way \\u2014 it states the molar amount (9.2 x 10^-4 mol Ar) as the given and asks for the mass in grams (\\\"multiplying the provided amount (mol) by the molar mass (g/mol)\\\"). The passage therefore states no mass to place in `mass`, and its answer is a mass in g, not an amount in mol. Encoding it would mean inverting the passage's given and its result to fit the registered shape, which rule 4 forbids; hence no_registered_problem_type rather than kernel_requires_unstated_input. It is plainly not a mass-balance example either \\u2014 no equation, no reactants or products.\\n\\nTwo further defects, recorded for the campaign but not the operative reason:\\n(a) No molar mass is printed as an exact given. The passage says only \\\"approximately 40 g\\\" and \\\"(~0.04 g)\\\" inside an estimation aside; the periodic-table value for Ar is never stated, and rule 5 bars supplying it from my own knowledge.\\n(b) No readable result for this example. The document's text layer drops the worked equation entirely \\u2014 the line \\\"logic dictates ... multiplying the provided amount (mol) by the molar mass (g/mol):\\\" is followed by nothing, and the only figure given afterwards is the pre-stated estimate \\\"around 0.04 g Ar\\\", which is the expectation the Solution set up in advance, not a computed answer. So even a grams-from-moles kernel would have nothing to check against.\\n\\nThe \\\"Answer: 504.5 g\\\" is the Check Your Learning result for a different question (the mass of 2.561 mol of gold) and must not be paired with this example's argon givens; per rule 2 it is left out. `asserted` and the quote field are empty because no result belonging to the example's own quantities is readable.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Example 3.4, \\\"Deriving Grams from Moles for an Element\\\": a liter of air contains 9.2 x 10^-4 mol argon; find the mass of Ar in a liter of air. The Solution estimates the molar mass of Ar as \\\"approximately 40 g\\\" and states the expected result as \\\"around 0.04 g Ar\\\"; the worked multiplication itself is absent from the document's text layer. A separate Check Your Learning question asks for the mass of 2.561 mol of gold, with \\\"Answer: 504.5 g\\\".\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "Direction mismatch with the only candidate type. `chemistry.molar-conversion` derives an amount in moles FROM a mass and a molar mass: its formal_inputs require {\"mass\": {\"magnitude\": ..., \"unit\": \"g\"}} and its answer shape is {\"units\": \"mol\"}. Example 3.4 runs the other way — it states the molar amount (9.2 x 10^-4 mol Ar) as the given and asks for the mass in grams (\"multiplying the provided amount (mol) by the molar mass (g/mol)\"). The passage therefore states no mass to place in `mass`, and its answer is a mass in g, not an amount in mol. Encoding it would mean inverting the passage's given and its result to fit the registered shape, which rule 4 forbids; hence no_registered_problem_type rather than kernel_requires_unstated_input. It is plainly not a mass-balance example either — no equation, no reactants or products.\n\nTwo further defects, recorded for the campaign but not the operative reason:\n(a) No molar mass is printed as an exact given. The passage says only \"approximately 40 g\" and \"(~0.04 g)\" inside an estimation aside; the periodic-table value for Ar is never stated, and rule 5 bars supplying it from my own knowledge.\n(b) No readable result for this example. The document's text layer drops the worked equation entirely — the line \"logic dictates ... multiplying the provided amount (mol) by the molar mass (g/mol):\" is followed by nothing, and the only figure given afterwards is the pre-stated estimate \"around 0.04 g Ar\", which is the expectation the Solution set up in advance, not a computed answer. So even a grams-from-moles kernel would have nothing to check against.\n\nThe \"Answer: 504.5 g\" is the Check Your Learning result for a different question (the mass of 2.561 mol of gold) and must not be paired with this example's argon givens; per rule 2 it is left out. `asserted` and the quote field are empty because no result belonging to the example's own quantities is readable.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "Example 3.4, \"Deriving Grams from Moles for an Element\": a liter of air contains 9.2 x 10^-4 mol argon; find the mass of Ar in a liter of air. The Solution estimates the molar mass of Ar as \"approximately 40 g\" and states the expected result as \"around 0.04 g Ar\"; the worked multiplication itself is absent from the document's text layer. A separate Check Your Learning question asks for the mass of 2.561 mol of gold, with \"Answer: 504.5 g\"."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1918,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 25246.700810999755,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "5662d804c0f29f86fed951380935f05a9460f8c201d425c6e19c76117261f65a",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "3de07248-457f-5c71-8caf-9be3f8fdf703",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Example 3.9 is a percent-composition calculation: element masses (7.34 g C, 1.85 g H, 2.85 g N) divided by a total sample mass (12.04 g) and converted to percentages, yielding \\\"61.0% C, 15.4% H, and 23.7% N by mass\\\". Neither registered type fits. It is not chemistry.molar-conversion: no molar mass or atomic mass is printed anywhere in the passage, no amount in moles is sought, and the result is a dimensionless percentage, not a quantity in mol. It is not chemistry.mass-balance: there is no chemical equation, no reactants or products, and no coefficients. Bending it into molar-conversion would require inventing atomic masses and reinterpreting a mass ratio as an amount of substance, which rules 1 and 4 forbid. Per rule 4 the correct outcome is refusal, so formal_inputs and asserted are left empty and no value is quoted \\u2014 the Check Your Learning answer (\\\"12.1% C, 16.1% O, 71.79% Cl\\\") belongs to a different question and is likewise not carried.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Analysis of a 12.04-g sample of a liquid compound composed of carbon, hydrogen, and nitrogen showed it to contain 7.34 g C, 1.85 g H, and 2.85 g N. What is the percent composition of this compound?\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "Example 3.9 is a percent-composition calculation: element masses (7.34 g C, 1.85 g H, 2.85 g N) divided by a total sample mass (12.04 g) and converted to percentages, yielding \"61.0% C, 15.4% H, and 23.7% N by mass\". Neither registered type fits. It is not chemistry.molar-conversion: no molar mass or atomic mass is printed anywhere in the passage, no amount in moles is sought, and the result is a dimensionless percentage, not a quantity in mol. It is not chemistry.mass-balance: there is no chemical equation, no reactants or products, and no coefficients. Bending it into molar-conversion would require inventing atomic masses and reinterpreting a mass ratio as an amount of substance, which rules 1 and 4 forbid. Per rule 4 the correct outcome is refusal, so formal_inputs and asserted are left empty and no value is quoted — the Check Your Learning answer (\"12.1% C, 16.1% O, 71.79% Cl\") belongs to a different question and is likewise not carried.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "Analysis of a 12.04-g sample of a liquid compound composed of carbon, hydrogen, and nitrogen showed it to contain 7.34 g C, 1.85 g H, and 2.85 g N. What is the percent composition of this compound?"
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 839,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 12220.887776000382,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

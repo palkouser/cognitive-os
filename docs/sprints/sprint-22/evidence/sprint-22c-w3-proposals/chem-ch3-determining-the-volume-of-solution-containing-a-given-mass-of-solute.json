@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "024cf309ddee59297337907aaa6cb547037c549b55488f9d189400972bdf5648",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "27622b6b-b5c5-5aec-8fa5-8d2e0a2f34e9",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"The worked example asks for a volume of solution from a molarity and a mass of solute \\u2014 a molarity problem. science.chemistry registers only chemistry.molar-conversion (moles from mass and molar mass) and chemistry.mass-balance (atom/mass conservation in a written equation), so this falls outside both and rule 4 applies; it must not be bent into the nearest type.\\n\\nTwo further observations, recorded but not relied upon since the type already fails:\\n\\n1. The example's first step (\\\"use the molar mass to calculate moles of acetic acid from the given mass\\\") does resemble chemistry.molar-conversion, but it is an intermediate step, not the example's question, and formalising it would require inventing the target. The passage prints neither a molar mass for acetic acid nor any atomic masses, so even that sub-step could not be formalised on stated quantities alone.\\n\\n2. The passage carries no readable result for its own question. The three computations are carried in display equations that the document's text layer does not reproduce \\u2014 the lines \\\"First, use the molar mass...\\\", \\\"Then, use the molarity...\\\", and \\\"Combining these two steps into one yields:\\\" are each followed by nothing. The only printed numeric result, \\\"0.370 L\\\", appears after \\\"Answer:\\\" and belongs to the Check Your Learning question (66.0 g KBr in 1.50-M KBr solution), which has different givens from the worked example (75.6 g acetic acid, 0.839 M). Per rule 2 that value must not be paired with the worked example's givens, and it is not asserted here.\\n\\nThe intervening \\\"137 / 138 / 3 \\u2022 Composition of Substances and Solutions\\\" is page furniture separating the Check Your Learning question from its answer.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Example 3.18, \\\"Determining the Volume of Solution Containing a Given Mass of Solute\\\": given that the concentration of acetic acid in white vinegar is 0.839 M, what volume of vinegar contains 75.6 g of acetic acid?\"}",
+  "structured_output": {
+   "statement": "Example 3.18, \"Determining the Volume of Solution Containing a Given Mass of Solute\": given that the concentration of acetic acid in white vinegar is 0.839 M, what volume of vinegar contains 75.6 g of acetic acid?",
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "problem_type": "",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "The worked example asks for a volume of solution from a molarity and a mass of solute — a molarity problem. science.chemistry registers only chemistry.molar-conversion (moles from mass and molar mass) and chemistry.mass-balance (atom/mass conservation in a written equation), so this falls outside both and rule 4 applies; it must not be bent into the nearest type.\n\nTwo further observations, recorded but not relied upon since the type already fails:\n\n1. The example's first step (\"use the molar mass to calculate moles of acetic acid from the given mass\") does resemble chemistry.molar-conversion, but it is an intermediate step, not the example's question, and formalising it would require inventing the target. The passage prints neither a molar mass for acetic acid nor any atomic masses, so even that sub-step could not be formalised on stated quantities alone.\n\n2. The passage carries no readable result for its own question. The three computations are carried in display equations that the document's text layer does not reproduce — the lines \"First, use the molar mass...\", \"Then, use the molarity...\", and \"Combining these two steps into one yields:\" are each followed by nothing. The only printed numeric result, \"0.370 L\", appears after \"Answer:\" and belongs to the Check Your Learning question (66.0 g KBr in 1.50-M KBr solution), which has different givens from the worked example (75.6 g acetic acid, 0.839 M). Per rule 2 that value must not be paired with the worked example's givens, and it is not asserted here.\n\nThe intervening \"137 / 138 / 3 • Composition of Substances and Solutions\" is page furniture separating the Check Your Learning question from its answer."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1025,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 14859.95240199918,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

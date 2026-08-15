@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "8caf96f857b361ed856ee22e6c58f0d0694779f53b4b3b5beea11c920b5f57fa",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "7423e4b7-2a79-5a05-b5ea-819ce2e4d689",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Example 3.20 is a dilution problem: it applies C1V1 = C2V2 to find the volume of a diluted solution (V2 = 0.041 L / 41 mL) from a stock volume and two molar concentrations. Dilution is not one of the two registered types \\u2014 no mass, molar mass, or amount in moles is sought, and no chemical equation is being checked for conservation of atoms and mass. Per rule 4, dilution is explicitly listed among the non-registered kinds and must not be bent into either registered type. The Check Your Learning answer \\\"3.76 L\\\" is likewise a dilution result and belongs to a different question, so it is not carried into `asserted` either; per rule 2 nothing is asserted when the passage is not formalisable. No atomic masses are printed anywhere in the passage.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"What volume of 0.12 M HBr can be prepared from 11 mL (0.011 L) of 0.45 M HBr?\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "Example 3.20 is a dilution problem: it applies C1V1 = C2V2 to find the volume of a diluted solution (V2 = 0.041 L / 41 mL) from a stock volume and two molar concentrations. Dilution is not one of the two registered types — no mass, molar mass, or amount in moles is sought, and no chemical equation is being checked for conservation of atoms and mass. Per rule 4, dilution is explicitly listed among the non-registered kinds and must not be bent into either registered type. The Check Your Learning answer \"3.76 L\" is likewise a dilution result and belongs to a different question, so it is not carried into `asserted` either; per rule 2 nothing is asserted when the passage is not formalisable. No atomic masses are printed anywhere in the passage.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "What volume of 0.12 M HBr can be prepared from 11 mL (0.011 L) of 0.45 M HBr?"
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 782,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 10756.567921000169,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

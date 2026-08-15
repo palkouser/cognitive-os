@@ -47,9 +47,11 @@ sys.path.insert(0, str(REPO / "scripts"))
 
 SOURCE_RIGHTS = EVIDENCE / "sprint-22c-source-rights.json"
 OUTPUT = EVIDENCE / "sprint-22c-w2-chapter.json"
+CHEMISTRY_OUTPUT = EVIDENCE / "sprint-22c-w3-chapter.json"
 
-#: The gate owner's file, named rather than searched for (W1).
+#: The gate owner's files, named rather than searched for (W1).
 SOURCE_PATH = Path.home() / "Letöltések" / "Physics_-_WEB.pdf"
+CHEMISTRY_SOURCE_PATH = Path.home() / "Letöltések" / "chemistry-2e_-_WEB.pdf"
 
 
 @dataclass(frozen=True, slots=True)
@@ -116,10 +118,121 @@ STOP_MARKERS: tuple[str, ...] = (
     "\nKEY TERMS",
 )
 
+#: **W3.** The second cleared source is a different book with a different layout, and
+#: pretending otherwise would have cost a wave. *Chemistry 2e* opens a worked example with
+#: `EXAMPLE 3.1` rather than `WORKED EXAMPLE`, and — unlike the physics text — it closes one
+#: with a `Check Your Learning` question whose `Answer:` is printed in the text layer. That
+#: answer is the only place in either book where a stated result reliably survives extraction,
+#: so the passage must be cut *after* it, not before.
+CHEMISTRY_MARKER = re.compile(r"^EXAMPLE \d+\.\d+\n", re.M)
+
+CHEMISTRY_STOP_MARKERS: tuple[str, ...] = (
+    "\nEXAMPLE ",
+    "\nFIGURE ",
+    "\nLINK TO LEARNING",
+    "\nHOW SCIENCES INTERCONNECT",
+    "\nCHEMISTRY IN EVERYDAY LIFE",
+    "\nPORTRAIT OF A CHEMIST",
+    "\nCHEMISTRY IN CONTEXT",
+    "\nKey Terms",
+    "\nKey Equations",
+    "\nSummary",
+    "\nExercises",
+)
+
+#: Where a chemistry example ends when it has a `Check Your Learning`: one line after the
+#: answer, because that answer is the last thing the example asserts and everything after it
+#: is the next piece of body prose.
+CHEMISTRY_END = re.compile(r"\nAnswer:\n[^\n]+\n")
+
+
+@dataclass(frozen=True, slots=True)
+class SourceProfile:
+    """One cleared book, and how its own layout marks a worked example.
+
+    Two books, two layouts, and the profile is what keeps that from becoming two readers.
+    `id_prefix` is empty for physics and not for chemistry, deliberately: the physics passage
+    identities are already sealed in W2's records and in eighteen sealed provider proposals,
+    and a wave does not rewrite an identity that evidence already names.
+    """
+
+    key: str
+    path: Path
+    marker: re.Pattern[str]
+    #: The marker as a reader sees it on the page. The compiled pattern is an implementation
+    #: detail and does not belong in a record: W2's inventory named `WORKED EXAMPLE`, and a
+    #: refactor that turned a literal into a regex must not rewrite what a sealed record says.
+    marker_text: str
+    stops: tuple[str, ...]
+    end: re.Pattern[str] | None
+    chapters: tuple[ChapterSpec, ...]
+    why_these_chapters: str
+    id_prefix: str = ""
+
+
 #: The running-head shape, `2.2 • Speed and Velocity`. Read out of the pages rather than
 #: transcribed, because a section number typed into a driver is a citation nobody checked.
+#: Both OpenStax books use it, which is the one thing about their layouts that agrees.
 SECTION_HEAD = re.compile(r"^(\d+\.\d+) • (.+)$", re.M)
 CHAPTER_HEAD = re.compile(r"^(\d+) • (.+)$", re.M)
+
+#: The two chemistry chapters S22C-020 names for `science.chemistry`, one per registered
+#: problem type. Folio numbers run fourteen behind the PDF's in this edition.
+CHEMISTRY_CHAPTERS: tuple[ChapterSpec, ...] = (
+    ChapterSpec(
+        3,
+        "Composition of Substances and Solutions",
+        (129, 159),
+        (160, 168),
+        "chemistry.molar-conversion",
+    ),
+    ChapterSpec(
+        4,
+        "Stoichiometry of Chemical Reactions",
+        (169, 205),
+        (206, 218),
+        "chemistry.mass-balance",
+    ),
+)
+
+PHYSICS = SourceProfile(
+    key="physics",
+    path=SOURCE_PATH,
+    marker=re.compile(r"^WORKED EXAMPLE\n", re.M),
+    marker_text="WORKED EXAMPLE",
+    stops=STOP_MARKERS,
+    end=None,
+    chapters=CHAPTERS,
+    why_these_chapters=(
+        "S22C-020 names chapters 2, 4 and 6 of this source for engineering.mechanics, "
+        "one per registered problem type. Cycle 1 takes all three: a cycle that read "
+        "only the kinematics chapter would measure one problem type's coverage and "
+        "report it as the source's yield"
+    ),
+)
+
+CHEMISTRY = SourceProfile(
+    key="chemistry",
+    path=CHEMISTRY_SOURCE_PATH,
+    marker=CHEMISTRY_MARKER,
+    marker_text="EXAMPLE <chapter>.<number>",
+    stops=CHEMISTRY_STOP_MARKERS,
+    end=CHEMISTRY_END,
+    chapters=CHEMISTRY_CHAPTERS,
+    why_these_chapters=(
+        "S22C-020 names chapters 3 and 4 of this source for science.chemistry, one per "
+        "registered problem type: 3 for molar conversion and 4 for mass balance. Cycle 2 "
+        "takes both, for the reason W2-F1 made concrete — a yield read from one chapter is "
+        "a statement about one problem type"
+    ),
+    # Physics passage identities are already sealed in W2's records and in eighteen sealed
+    # provider proposals. A wave does not rewrite an identity that evidence already names, so
+    # the *new* source takes the prefix and the old one keeps its bare ids.
+    id_prefix="chem-",
+)
+
+PROFILES: dict[str, SourceProfile] = {"physics": PHYSICS, "chemistry": CHEMISTRY}
+OUTPUTS: dict[str, Path] = {"physics": OUTPUT, "chemistry": CHEMISTRY_OUTPUT}
 
 
 def _sha256(data: bytes) -> str:
@@ -144,15 +257,16 @@ def page_text(path: Path, first: int, last: int) -> str:
     return result.stdout.decode("utf-8")
 
 
-def passage_id(chapter: ChapterSpec, title: str) -> str:
+def passage_id(profile: SourceProfile, chapter: ChapterSpec, title: str) -> str:
     """A stable identity for a passage, derived from the book's own heading.
 
     Several worked examples differ only by the suffix `, Take Two`, which the slug keeps —
     the book distinguishes them that way and so does the campaign. The chapter number is a
-    prefix because two chapters of one book may reuse a heading.
+    prefix because two chapters of one book may reuse a heading, and the profile's prefix
+    keeps two *books* apart.
     """
     slug = re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")
-    return f"ch{chapter.number}-{slug}"[:96]
+    return f"{profile.id_prefix}ch{chapter.number}-{slug}"[:96]
 
 
 @dataclass(frozen=True, slots=True)
@@ -180,7 +294,7 @@ class Passage:
         return "\nSolution" in self.text
 
 
-def body_pages(path: Path, chapter: ChapterSpec) -> tuple[str, ...]:
+def body_pages(profile: SourceProfile, chapter: ChapterSpec) -> tuple[str, ...]:
     """The chapter body, one entry per page, from a single extraction.
 
     `pdftotext` ends every page with a form feed, so splitting on it recovers the exact page
@@ -189,7 +303,7 @@ def body_pages(path: Path, chapter: ChapterSpec) -> tuple[str, ...]:
     splitting would lose which page a passage starts on.
     """
     first_page, last_page = chapter.body
-    pages = page_text(path, first_page, last_page).split("\f")
+    pages = page_text(profile.path, first_page, last_page).split("\f")
     if pages and not pages[-1]:
         pages.pop()
     expected = last_page - first_page + 1
@@ -220,34 +334,40 @@ def sections_by_page(pages: tuple[str, ...], chapter: ChapterSpec) -> tuple[str,
     return tuple(resolved)
 
 
-def locate_chapter(path: Path, chapter: ChapterSpec) -> tuple[Passage, ...]:
+def locate_chapter(profile: SourceProfile, chapter: ChapterSpec) -> tuple[Passage, ...]:
     """Every worked example in one chapter body, by one rule applied to every page.
 
     The window is two pages wide because a worked example may run over a page break — W1's
     did — and only markers that begin on the window's *first* page are collected, so an
     overlapping window records each passage once.
+
+    **W3.** The cut is the profile's, because the two books end an example differently. The
+    physics text runs to the next structural marker. The chemistry text closes with a
+    `Check Your Learning` whose `Answer:` is the last thing the example asserts and the only
+    stated result that reliably survives extraction, so the cut falls one line after it.
     """
     first_page, _ = chapter.body
-    pages = body_pages(path, chapter)
+    pages = body_pages(profile, chapter)
     sections = sections_by_page(pages, chapter)
     found: dict[str, Passage] = {}
     for index, page in enumerate(pages):
-        if MARKER not in page:
+        if not profile.marker.search(page):
             continue
         following = pages[index + 1] if index + 1 < len(pages) else ""
         window = page + "\f" + following
-        cursor = 0
-        while True:
-            start = window.find(MARKER, cursor)
-            if start == -1 or start >= len(page):
+        for match in profile.marker.finditer(window):
+            if match.start() >= len(page):
                 break
-            cursor = start + 1
-            title = window[start + len(MARKER) :].split("\n", 1)[0].strip()
-            body = window[start + len(MARKER) :]
-            ends = [body.find(stop) for stop in STOP_MARKERS]
-            end = min([value for value in ends if value != -1], default=len(body))
-            text = window[start : start + len(MARKER) + end]
-            identity = passage_id(chapter, title)
+            title = window[match.end() :].split("\n", 1)[0].strip()
+            body = window[match.end() :]
+            ends = [body.find(stop) for stop in profile.stops]
+            cut = min([value for value in ends if value != -1], default=len(body))
+            if profile.end is not None:
+                closing = profile.end.search(body, 0, cut)
+                if closing is not None:
+                    cut = closing.end()
+            text = window[match.start() : match.end() + cut]
+            identity = passage_id(profile, chapter, title)
             if identity in found:
                 continue
             found[identity] = Passage(
@@ -265,18 +385,18 @@ def locate_chapter(path: Path, chapter: ChapterSpec) -> tuple[Passage, ...]:
     return tuple(found.values())
 
 
-def locate_passages(path: Path) -> tuple[Passage, ...]:
+def locate_passages(profile: SourceProfile) -> tuple[Passage, ...]:
     """Every worked example in every chapter the rights record names, in chapter order."""
     located: list[Passage] = []
-    for chapter in CHAPTERS:
-        located.extend(locate_chapter(path, chapter))
+    for chapter in profile.chapters:
+        located.extend(locate_chapter(profile, chapter))
     return tuple(located)
 
 
-def running_heads(path: Path, chapter: ChapterSpec) -> dict[str, Any]:
+def running_heads(profile: SourceProfile, chapter: ChapterSpec) -> dict[str, Any]:
     """What the chapter's own pages say they are, so the page range can be checked."""
-    pages = body_pages(path, chapter)
-    review = page_text(path, *chapter.review)
+    pages = body_pages(profile, chapter)
+    review = page_text(profile.path, *chapter.review)
     chapters = {match.group(1) for match in CHAPTER_HEAD.finditer("\n".join(pages))}
     sections = sorted(set(sections_by_page(pages, chapter)) - {f"{chapter.number} {chapter.title}"})
     return {
@@ -288,31 +408,33 @@ def running_heads(path: Path, chapter: ChapterSpec) -> dict[str, Any]:
         "body_is_one_chapter": chapters == {str(chapter.number)},
         "sections_seen": sections,
         "review_pages_excluded": list(chapter.review),
-        "review_declares_itself_review": "Chapter Review" in review or "Test Prep" in review,
+        "review_declares_itself_review": any(
+            marker in review for marker in ("Chapter Review", "Test Prep", "Exercises")
+        ),
     }
 
 
-def chapter_record() -> dict[str, Any]:
-    if not SOURCE_PATH.exists():
-        raise SystemExit(f"the cleared source is not at {SOURCE_PATH}")
+def chapter_record(profile: SourceProfile = PHYSICS) -> dict[str, Any]:
+    if not profile.path.exists():
+        raise SystemExit(f"the cleared source is not at {profile.path}")
     rights = json.loads(SOURCE_RIGHTS.read_text(encoding="utf-8"))
-    physics = next(item for item in rights["sources"] if item["key"] == "physics")
+    physics = next(item for item in rights["sources"] if item["key"] == profile.key)
 
     # Fail closed before a byte of content is read, exactly as W1 does: the clearance names
     # bytes, and these must be them.
-    file_hash = _sha256(SOURCE_PATH.read_bytes())
+    file_hash = _sha256(profile.path.read_bytes())
     if file_hash != physics["source_content_hash"]:
         raise SystemExit(
-            f"the file at {SOURCE_PATH} hashes {file_hash[:16]}…, the clearance names "
+            f"the file at {profile.path} hashes {file_hash[:16]}…, the clearance names "
             f"{physics['source_content_hash'][:16]}… — this is a different source"
         )
 
-    passages = locate_passages(SOURCE_PATH)
+    passages = locate_passages(profile)
     record: dict[str, Any] = {
         "schema_version": 1,
         "sprint": "22C",
-        "wave": "W2",
-        "items": ["S22C-040"],
+        "wave": "W2" if profile.key == "physics" else "W3",
+        "items": ["S22C-040" if profile.key == "physics" else "S22C-050"],
         "recorded_at": _now(),
         "decides_an_exit_criterion": False,
         "why_no_exit": (
@@ -327,21 +449,17 @@ def chapter_record() -> dict[str, Any]:
             "attribution_required": physics["attribution_required"],
             "domain_id": physics["domain_id"],
         },
-        "chapters": [running_heads(SOURCE_PATH, chapter) for chapter in CHAPTERS],
-        "why_these_chapters": (
-            "S22C-020 names chapters 2, 4 and 6 of this source for engineering.mechanics, "
-            "one per registered problem type. Cycle 1 takes all three: a cycle that read "
-            "only the kinematics chapter would measure one problem type's coverage and "
-            "report it as the source's yield"
-        ),
+        "chapters": [running_heads(profile, chapter) for chapter in profile.chapters],
+        "why_these_chapters": profile.why_these_chapters,
         "why_the_review_is_excluded": (
             "Chapter Review and Test Prep are exercises with no worked solutions, so nothing "
             "in them can be recomputed by a kernel. Counting them would inflate the "
             "denominator of the acquisition yield this campaign publishes"
         ),
         "location_rule": {
-            "marker": MARKER.strip(),
-            "stops": [stop.strip() for stop in STOP_MARKERS],
+            "marker": profile.marker_text,
+            "stops": [stop.strip() for stop in profile.stops],
+            **({"ends_after": profile.end.pattern} if profile.end is not None else {}),
             "window_pages": 2,
             "attributed_to": "the page the marker is on, so an overlapping window collects "
             "each passage once",
@@ -368,11 +486,11 @@ def chapter_record() -> dict[str, Any]:
             for item in passages
         ],
         "counts": {
-            "chapters": len(CHAPTERS),
+            "chapters": len(profile.chapters),
             "worked_examples_in_the_bodies": len(passages),
             "per_chapter": {
                 str(chapter.number): sum(1 for item in passages if item.chapter == chapter.number)
-                for chapter in CHAPTERS
+                for chapter in profile.chapters
             },
             "crossing_a_page_boundary": sum(1 for item in passages if item.crosses_a_page_boundary),
             "with_a_solution_heading": sum(1 for item in passages if item.has_a_solution_heading),
@@ -394,43 +512,46 @@ def chapter_record() -> dict[str, Any]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
-    parser.add_argument("--output", type=Path, default=OUTPUT)
+    parser.add_argument("--source", choices=sorted(PROFILES), default="physics")
+    parser.add_argument("--output", type=Path, default=None)
     arguments = parser.parse_args()
+    profile = PROFILES[arguments.source]
+    output = arguments.output or OUTPUTS[arguments.source]
 
     if arguments.check:
-        stored = json.loads(arguments.output.read_text(encoding="utf-8"))
+        stored = json.loads(output.read_text(encoding="utf-8"))
         body = {key: value for key, value in stored.items() if key != "integrity_content_hash"}
         sealed = _sha256(_canonical(body)) == stored["integrity_content_hash"]
         moving = {"recorded_at", "integrity_content_hash"}
-        rebuilt = chapter_record() if SOURCE_PATH.exists() else None
+        rebuilt = chapter_record(profile) if profile.path.exists() else None
         same = rebuilt is not None and {
             key: value for key, value in stored.items() if key not in moving
         } == {key: value for key, value in rebuilt.items() if key not in moving}
         print(
             json.dumps(
                 {
-                    "path": arguments.output.name,
+                    "path": output.name,
                     "stored_seal_intact": sealed,
-                    "source_available": SOURCE_PATH.exists(),
+                    "source_available": profile.path.exists(),
                     "rebuilt_and_identical": same,
-                    "reproduced": sealed and (same or not SOURCE_PATH.exists()),
+                    "reproduced": sealed and (same or not profile.path.exists()),
                 },
                 indent=1,
                 sort_keys=True,
             )
         )
-        return 0 if sealed and (same or not SOURCE_PATH.exists()) else 1
+        return 0 if sealed and (same or not profile.path.exists()) else 1
 
-    record = chapter_record()
-    arguments.output.parent.mkdir(parents=True, exist_ok=True)
-    arguments.output.write_text(
+    record = chapter_record(profile)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(
         json.dumps(record, indent=1, sort_keys=True, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
     print(
         json.dumps(
             {
-                "output": arguments.output.name,
+                "output": output.name,
                 "worked_examples": record["counts"]["worked_examples_in_the_bodies"],
                 "per_chapter": record["counts"]["per_chapter"],
                 "sections": record["counts"]["sections_contributing"],

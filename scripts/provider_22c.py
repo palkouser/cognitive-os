@@ -155,38 +155,164 @@ REASONS = (
     "other",
 )
 
-EXTRACTION_SCHEMA: dict[str, Any] = {
-    "type": "object",
-    "additionalProperties": False,
-    "required": [
-        "formalisable",
-        "reason",
-        "problem_type",
-        "formal_inputs",
-        "asserted",
-        "asserted_value_quoted_from_the_passage",
-        "statement",
-        "notes",
-    ],
-    "properties": {
-        "formalisable": {"type": "boolean"},
-        "reason": {"type": "string", "enum": ["formalisable", *REASONS]},
-        "problem_type": {
-            "type": "string",
-            "enum": [
-                "",
-                "mechanics.uniform-motion",
-                "mechanics.statics-equilibrium",
-                "mechanics.moment-balance",
-            ],
+#: **W3-D1, and the decision is recorded because it decides what the wave measures.**
+#: `chemistry.mass-balance` demands `atomic_masses` on every case, and a passage that balances
+#: an equation never states them — the verdict does not depend on their values, only on their
+#: presence. Two ways out, and only one of them is honest: let the provider supply "standard"
+#: masses the passage does not contain, which is inventing data to satisfy a kernel and
+#: exactly the move rule 1 exists to refuse; or refuse the passage and *name why*, so a
+#: domain that demands an input its answer does not use becomes a number rather than a fudge.
+#: The wave takes the second, and this reason is what carries it.
+CHEMISTRY_REASONS = (*REASONS, "kernel_requires_unstated_input")
+
+#: The two problem types `science.chemistry` registers. The same discipline as the mechanics
+#: guide: written out, because this text is the contract the provider is held to.
+CHEMISTRY_KERNEL_GUIDE = """\
+science.chemistry registers exactly two problem types.
+
+chemistry.molar-conversion — an amount in moles from a mass and a molar mass.
+  formal_inputs: {"formula": "<formula>",
+                  "atomic_masses": {"<symbol>": <exact>, ...},
+                  "mass": {"magnitude": <exact>, "unit": "g"},
+                  "molar_mass_unit": "g/mol"}
+  answer shape: {"exact_value": "<exact>", "units": "mol"}
+
+chemistry.mass-balance — whether a written equation conserves atoms and mass.
+  formal_inputs: {"reactants": [{"formula": "<formula>", "coefficient": <integer>}, ...],
+                  "products": [{"formula": "<formula>", "coefficient": <integer>}, ...],
+                  "atomic_masses": {"<symbol>": <exact>, ...}}
+  answer shape: {"structured": {"balanced": true|false}}
+
+Every <exact> is an integer or a decimal **string** such as "39.10". Never a JSON float,
+never a rounded value, never scientific notation.
+"""
+
+CHEMISTRY_SYSTEM_INSTRUCTIONS = f"""\
+You formalise one worked example from a chemistry textbook so that a deterministic kernel can
+recompute it. You are not asked whether the chemistry is correct and you must not correct it.
+
+{CHEMISTRY_KERNEL_GUIDE}
+
+Rules.
+1. `formal_inputs` carries only the quantities the passage itself states as *given*. Never
+   the answer, and never a quantity you inferred from the answer. An atomic mass counts as
+   stated only if the passage prints it; "referring to the periodic table" is not a value.
+2. `asserted` carries the result the passage *claims*, in the answer shape above, and only
+   when the passage states that result in words or digits you can read. A chemistry example
+   often prints its result twice — once in the Solution's discussion and once after
+   `Answer:` for the Check Your Learning question. Those are answers to **different**
+   questions: take the one that belongs to the quantities in `formal_inputs`, and never mix
+   a Check Your Learning answer with the worked example's own givens.
+3. Take the value exactly as printed and quote it verbatim in
+   `asserted_value_quoted_from_the_passage`. Never round it and never extend it.
+4. If the passage is not one of the two problem types — a formula mass, a percent
+   composition, an empirical formula, a molarity, a dilution, a limiting reactant, a percent
+   yield, a titration — set `formalisable` to false with reason
+   `no_registered_problem_type`. Do not bend it into the nearest type.
+5. If a registered problem type fits but its `formal_inputs` require a value the passage does
+   not state — most often `atomic_masses` for a balancing example, which the kernel demands
+   and the verdict does not use — set `formalisable` to false with reason
+   `kernel_requires_unstated_input`. Do not supply a standard value from your own knowledge:
+   the campaign is measuring what this source states, not what you know.
+6. If you cannot do rules 1 to 3 honestly, say so. A refusal is a correct answer here and a
+   guess is not.
+
+Return only the JSON object the schema describes.
+"""
+
+
+def extraction_schema(reasons: tuple[str, ...], problem_types: tuple[str, ...]) -> dict[str, Any]:
+    """One frozen answer shape per source.
+
+    Built rather than shared, because the request fingerprint a sealed proposal is keyed on
+    covers the schema: adding chemistry's extra refusal reason to one global schema would
+    have changed every physics request and orphaned eighteen seals.
+    """
+    return {
+        "type": "object",
+        "additionalProperties": False,
+        "required": [
+            "formalisable",
+            "reason",
+            "problem_type",
+            "formal_inputs",
+            "asserted",
+            "asserted_value_quoted_from_the_passage",
+            "statement",
+            "notes",
+        ],
+        "properties": {
+            "formalisable": {"type": "boolean"},
+            "reason": {"type": "string", "enum": ["formalisable", *reasons]},
+            "problem_type": {"type": "string", "enum": ["", *problem_types]},
+            "formal_inputs": {"type": "object", "additionalProperties": True},
+            "asserted": {"type": "object", "additionalProperties": True},
+            "asserted_value_quoted_from_the_passage": {"type": "string"},
+            "statement": {"type": "string"},
+            "notes": {"type": "string"},
         },
-        "formal_inputs": {"type": "object", "additionalProperties": True},
-        "asserted": {"type": "object", "additionalProperties": True},
-        "asserted_value_quoted_from_the_passage": {"type": "string"},
-        "statement": {"type": "string"},
-        "notes": {"type": "string"},
-    },
+    }
+
+
+@dataclass(frozen=True, slots=True)
+class ExtractionProfile:
+    """One source's extraction contract: which domain, which question, which answer shape.
+
+    Frozen per source rather than shared, because the request fingerprint a sealed proposal
+    is keyed on covers all three. Physics keeps its template id and version exactly as W2
+    sealed them; chemistry is a new template, not a new version of the old one, because it
+    asks a different question of a different book.
+    """
+
+    key: str
+    domain_id: str
+    template_id: str
+    template_version: str
+    instructions: str
+    reasons: tuple[str, ...]
+    problem_types: tuple[str, ...]
+
+    @property
+    def schema(self) -> dict[str, Any]:
+        return extraction_schema(self.reasons, self.problem_types)
+
+    @property
+    def template(self) -> str:
+        return f"{self.template_id}@{self.template_version}"
+
+
+PHYSICS_EXTRACTION = ExtractionProfile(
+    key="physics",
+    domain_id="engineering.mechanics",
+    template_id=PROMPT_TEMPLATE_ID,
+    template_version=PROMPT_TEMPLATE_VERSION,
+    instructions=SYSTEM_INSTRUCTIONS,
+    reasons=REASONS,
+    problem_types=(
+        "mechanics.uniform-motion",
+        "mechanics.statics-equilibrium",
+        "mechanics.moment-balance",
+    ),
+)
+
+CHEMISTRY_EXTRACTION = ExtractionProfile(
+    key="chemistry",
+    domain_id="science.chemistry",
+    template_id="s22c-w3-formalise-worked-example",
+    template_version="1",
+    instructions=CHEMISTRY_SYSTEM_INSTRUCTIONS,
+    reasons=CHEMISTRY_REASONS,
+    problem_types=("chemistry.molar-conversion", "chemistry.mass-balance"),
+)
+
+EXTRACTION_PROFILES: dict[str, ExtractionProfile] = {
+    "physics": PHYSICS_EXTRACTION,
+    "chemistry": CHEMISTRY_EXTRACTION,
 }
+
+
+def proposals_directory(profile: ExtractionProfile) -> Path:
+    return PROPOSALS if profile.key == "physics" else EVIDENCE / "sprint-22c-w3-proposals"
 
 
 def _sha256(data: bytes) -> str:
@@ -197,7 +323,7 @@ def _identifier(label: str) -> UUID:
     return uuid5(NAMESPACE, label)
 
 
-def build_request(passage: Passage) -> ModelProviderRequest:
+def build_request(passage: Passage, profile: ExtractionProfile) -> ModelProviderRequest:
     """One request per passage, derived only from the passage. No clock, no counter.
 
     Everything the released `request_fingerprint` hashes is a function of the passage and the
@@ -209,7 +335,7 @@ def build_request(passage: Passage) -> ModelProviderRequest:
         task_run_id=_identifier("task-run:cycle-1"),
         correlation_id=_identifier(f"correlation:{passage.passage_id}"),
         requested_model="claude-code",
-        system_instructions=SYSTEM_INSTRUCTIONS,
+        system_instructions=profile.instructions,
         messages=(
             ProviderMessage(
                 role=ProviderMessageRole.USER,
@@ -222,19 +348,20 @@ def build_request(passage: Passage) -> ModelProviderRequest:
             ),
         ),
         response_format=ResponseFormat.JSON_SCHEMA,
-        response_schema=EXTRACTION_SCHEMA,
+        response_schema=profile.schema,
         temperature=0,
         max_output_tokens=MAXIMUM_OUTPUT_TOKENS,
     )
 
 
-DIRECTIVE = ProviderRetentionDirective(
-    intended_use=ProviderOutputIntendedUse.CORPUS_CANDIDATE,
-    retention_mode=ProviderOutputRetentionMode.NORMALIZED_CONTENT,
-    sensitivity=MemorySensitivity.INTERNAL,
-    prompt_template_id=PROMPT_TEMPLATE_ID,
-    prompt_template_version=PROMPT_TEMPLATE_VERSION,
-)
+def directive_for(profile: ExtractionProfile) -> ProviderRetentionDirective:
+    return ProviderRetentionDirective(
+        intended_use=ProviderOutputIntendedUse.CORPUS_CANDIDATE,
+        retention_mode=ProviderOutputRetentionMode.NORMALIZED_CONTENT,
+        sensitivity=MemorySensitivity.INTERNAL,
+        prompt_template_id=profile.template_id,
+        prompt_template_version=profile.template_version,
+    )
 
 
 def _working_directory() -> Path:
@@ -261,6 +388,7 @@ class Governed:
     retention_mode: str
     rights_decision: str
     provider_output_id: str | None
+    template: str
     answer: dict[str, Any]
     live: bool
 
@@ -275,7 +403,7 @@ class Governed:
             "retention_mode": self.retention_mode,
             "rights_decision": self.rights_decision,
             "receipt": f"provider-output:{self.provider_output_id}",
-            "prompt_template": f"{PROMPT_TEMPLATE_ID}@{PROMPT_TEMPLATE_VERSION}",
+            "prompt_template": self.template,
             "answer": self.answer,
         }
 
@@ -311,26 +439,29 @@ def live_provider() -> ClaudeCodeAdvisoryProvider:
     )
 
 
-def replay_provider() -> ReplayProvider:
-    if not PROPOSALS.exists():
+def replay_provider(profile: ExtractionProfile) -> ReplayProvider:
+    directory = proposals_directory(profile)
+    if not directory.exists():
         raise SystemExit(
-            f"no sealed proposals at {PROPOSALS}. Run scripts/provider_22c.py --live once; "
-            "§1.3 makes that an explicit opt-in"
+            f"no sealed proposals at {directory}. Run scripts/provider_22c.py --live once "
+            f"for {profile.key}; §1.3 makes that an explicit opt-in"
         )
-    return ReplayProvider.from_directory(PROPOSALS)
+    return ReplayProvider.from_directory(directory)
 
 
-async def govern(passage: Passage, provider: Any, *, live: bool) -> Governed:
+async def govern(
+    passage: Passage, provider: Any, profile: ExtractionProfile, *, live: bool
+) -> Governed:
     """One passage through the released governed teacher, live or replayed."""
-    request = build_request(passage)
+    request = build_request(passage, profile)
     rights = RightsDecision(
         decision=UsageRightsDecision.VERIFIED,
         # The gate owner's clearance, by hash. The rights question the governed teacher
         # refuses to answer for itself is answered here by the record that answered it in
         # S22C-020 — the same discipline W1-D2 put into the Corpus Factory.
-        evidence_hash=_clearance_evidence_hash(),
+        evidence_hash=_clearance_evidence_hash(profile.key),
     )
-    receipt = await provider_receipt(provider, request, rights=rights, live=live)
+    receipt = await provider_receipt(provider, request, profile, rights=rights, live=live)
     answer = receipt.execution.response.structured_output
     if not isinstance(answer, dict):
         raise SystemExit(
@@ -349,18 +480,25 @@ async def govern(passage: Passage, provider: Any, *, live: bool) -> Governed:
         provider_output_id=(
             str(receipt.governance.provider_output_id) if receipt.governance else None
         ),
+        template=profile.template,
         answer=answer,
         live=live,
     )
 
 
 async def provider_receipt(
-    provider: Any, request: ModelProviderRequest, *, rights: RightsDecision, live: bool
+    provider: Any,
+    request: ModelProviderRequest,
+    profile: ExtractionProfile,
+    *,
+    rights: RightsDecision,
+    live: bool,
 ) -> Any:
+    del live
     teacher = _teacher(provider)
     return await teacher.execute_with_receipt(
         request,
-        directive=DIRECTIVE,
+        directive=directive_for(profile),
         # The adapter the answer came from, which a replay does not change: the fixture
         # carries a Claude Code answer whether it is being produced or re-read. The receipt's
         # own `provider_id` is what says which of the two happened, and both are sealed.
@@ -372,17 +510,19 @@ async def provider_receipt(
     )
 
 
-def _clearance_evidence_hash() -> str:
+def _clearance_evidence_hash(source_key: str) -> str:
     record = json.loads((EVIDENCE / "sprint-22c-source-rights.json").read_text(encoding="utf-8"))
-    physics = next(item for item in record["sources"] if item["key"] == "physics")
-    return str(physics["evidence_hash"])
+    entry = next(item for item in record["sources"] if item["key"] == source_key)
+    return str(entry["evidence_hash"])
 
 
-def fixture_path(passage_id: str) -> Path:
-    return PROPOSALS / f"{passage_id}.json"
+def fixture_path(profile: ExtractionProfile, passage_id: str) -> Path:
+    return proposals_directory(profile) / f"{passage_id}.json"
 
 
-async def seal_live(passages: tuple[Passage, ...]) -> dict[str, dict[str, Any]]:
+async def seal_live(
+    passages: tuple[Passage, ...], profile: ExtractionProfile
+) -> dict[str, dict[str, Any]]:
     """Call the provider once per passage and seal both halves of the answer."""
     from cognitive_os.providers.replay import request_fingerprint
 
@@ -391,11 +531,11 @@ async def seal_live(passages: tuple[Passage, ...]) -> dict[str, dict[str, Any]]:
     if health.status.value != "available":
         raise SystemExit(f"the live provider is not available: {health.message}")
 
-    PROPOSALS.mkdir(parents=True, exist_ok=True)
+    proposals_directory(profile).mkdir(parents=True, exist_ok=True)
     sealed: dict[str, dict[str, Any]] = {}
     for passage in passages:
-        request = build_request(passage)
-        existing = fixture_path(passage.passage_id)
+        request = build_request(passage, profile)
+        existing = fixture_path(profile, passage.passage_id)
         if existing.exists():
             stored = ReplayFixture.model_validate_json(existing.read_text(encoding="utf-8"))
             if stored.request_fingerprint == request_fingerprint(request):
@@ -410,14 +550,16 @@ async def seal_live(passages: tuple[Passage, ...]) -> dict[str, dict[str, Any]]:
             source_provider=provider.provider_id,
             response=response,
         )
-        fixture_path(passage.passage_id).write_text(
+        fixture_path(profile, passage.passage_id).write_text(
             fixture.model_dump_json(indent=1) + "\n", encoding="utf-8"
         )
         sealed[passage.passage_id] = {}
     return sealed
 
 
-async def proposals(passages: tuple[Passage, ...], *, live: bool) -> dict[str, dict[str, Any]]:
+async def proposals(
+    passages: tuple[Passage, ...], profile: ExtractionProfile, *, live: bool
+) -> dict[str, dict[str, Any]]:
     """The campaign's sealed proposals, one per passage.
 
     A live run seals first and then replays its own seals, so the record a live run writes is
@@ -425,12 +567,12 @@ async def proposals(passages: tuple[Passage, ...], *, live: bool) -> dict[str, d
     first time".
     """
     if live:
-        await seal_live(passages)
-    provider = replay_provider()
+        await seal_live(passages, profile)
+    provider = replay_provider(profile)
     sealed: dict[str, dict[str, Any]] = {}
     for passage in passages:
-        governed = await govern(passage, provider, live=False)
-        stored = json.loads(fixture_path(passage.passage_id).read_text(encoding="utf-8"))
+        governed = await govern(passage, provider, profile, live=False)
+        stored = json.loads(fixture_path(profile, passage.passage_id).read_text(encoding="utf-8"))
         sealed[passage.passage_id] = {
             **governed.as_sealed(),
             "origin_provider_id": stored["source_provider"],
@@ -448,15 +590,19 @@ def main() -> int:
     parser.add_argument(
         "--live", action="store_true", help="call the provider; §1.3's explicit opt-in"
     )
+    parser.add_argument("--source", choices=sorted(EXTRACTION_PROFILES), default="physics")
     arguments = parser.parse_args()
 
-    from chapter_22c import SOURCE_PATH
+    from chapter_22c import PROFILES
 
-    passages = locate_passages(SOURCE_PATH)
-    sealed = asyncio.run(proposals(passages, live=arguments.live))
+    profile = EXTRACTION_PROFILES[arguments.source]
+    passages = locate_passages(PROFILES[arguments.source])
+    sealed = asyncio.run(proposals(passages, profile, live=arguments.live))
     print(
         json.dumps(
             {
+                "source": arguments.source,
+                "template": profile.template,
                 "passages": len(passages),
                 "sealed_proposals": len(sealed),
                 "live_call": arguments.live,

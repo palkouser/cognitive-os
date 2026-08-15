@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "b9edfe1655595ad090125b6945b35a065806b272dd76cc429a2c47d104d4ee6d",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "59732109-333e-561e-85a4-19d7ee1b161b",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Example 4.11 asks for the mass of one reactant (O2) consumed given the mass of another reactant (702 g of C8H18) in a combustion reaction. That is a mass-to-mass reaction-stoichiometry conversion, which needs a balanced equation and a mole-ratio step; it is neither chemistry.molar-conversion (a single mass \\u00f7 molar mass to moles) nor chemistry.mass-balance (a verdict on whether a written equation conserves atoms and mass). Rule 4 applies: do not bend it into the nearest registered type.\\n\\nSupporting observations, none of which change the verdict:\\n- The Solution text carried by this page contains no computed result at all \\u2014 it only refers back to Example 4.10 \\u2014 so there is no worked-example result to read even if a type had fitted.\\n- The only number printed after \\\"Answer:\\\" is 13.22 g, and it belongs to the Check Your Learning question (mass of CO required to react with 25.13 g of Fe2O3), a different question with different givens. Rule 2 forbids pairing it with the worked example's 702 g of C8H18, so `asserted` is left empty and nothing is quoted.\\n- The passage prints no atomic masses and no balanced equation (the Check Your Learning equation itself is missing from the text layer), so the inputs for either registered type would be unavailable regardless.\\nBecause the type mismatch is the primary and sufficient reason, the reason is no_registered_problem_type rather than kernel_requires_unstated_input or no_readable_result.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"EXAMPLE 4.11, Relating Masses of Reactants (Section 4.3 Reaction Stoichiometry, page 192): \\\"What mass of oxygen gas, O2, from the air is consumed in the combustion of 702 g of octane, C8H18, one of the principal components of gasoline?\\\"\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "Example 4.11 asks for the mass of one reactant (O2) consumed given the mass of another reactant (702 g of C8H18) in a combustion reaction. That is a mass-to-mass reaction-stoichiometry conversion, which needs a balanced equation and a mole-ratio step; it is neither chemistry.molar-conversion (a single mass ÷ molar mass to moles) nor chemistry.mass-balance (a verdict on whether a written equation conserves atoms and mass). Rule 4 applies: do not bend it into the nearest registered type.\n\nSupporting observations, none of which change the verdict:\n- The Solution text carried by this page contains no computed result at all — it only refers back to Example 4.10 — so there is no worked-example result to read even if a type had fitted.\n- The only number printed after \"Answer:\" is 13.22 g, and it belongs to the Check Your Learning question (mass of CO required to react with 25.13 g of Fe2O3), a different question with different givens. Rule 2 forbids pairing it with the worked example's 702 g of C8H18, so `asserted` is left empty and nothing is quoted.\n- The passage prints no atomic masses and no balanced equation (the Check Your Learning equation itself is missing from the text layer), so the inputs for either registered type would be unavailable regardless.\nBecause the type mismatch is the primary and sufficient reason, the reason is no_registered_problem_type rather than kernel_requires_unstated_input or no_readable_result.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "EXAMPLE 4.11, Relating Masses of Reactants (Section 4.3 Reaction Stoichiometry, page 192): \"What mass of oxygen gas, O2, from the air is consumed in the combustion of 702 g of octane, C8H18, one of the principal components of gasoline?\""
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1456,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 19901.68634499969,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

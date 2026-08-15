@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "77ac7afda0f96cc383c3b960f89538cd99f7f470e41e074be8d7836fc3bff676",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "518d5f13-3335-5da6-a970-3b6fc44546fd",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Example 3.10 asks for the percent composition of aspirin (C9H8O4) \\u2014 the mass percentage of each constituent element in the compound. Percent composition is not one of the two registered problem types: it is neither an amount in moles from a mass and a molar mass (chemistry.molar-conversion) nor a check that a written equation conserves atoms and mass (chemistry.mass-balance). The passage does print one quantity, the molar mass 180.159 g/mole, but no sample mass is given and no moles are sought, so this cannot be bent into a molar conversion. The text layer also omits the per-element calculation block entirely \\u2014 the line \\\"Note that these percentages sum to equal 100.00% when appropriately rounded\\\" follows an image or table that the extraction dropped \\u2014 so the worked example's own numeric result is not readable in any case. The Check Your Learning answer, \\\"69.9% Fe\\\", belongs to a different question (mass percentage of iron in Fe2O3) and is likewise a percent-composition result; under rule 2 it must not be attached to this example's givens. Reason no_registered_problem_type takes precedence over the unreadable result, since the passage would not be formalisable even if the dropped block were present.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Aspirin is a compound with the molecular formula C9H8O4. What is its percent composition?\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "Example 3.10 asks for the percent composition of aspirin (C9H8O4) — the mass percentage of each constituent element in the compound. Percent composition is not one of the two registered problem types: it is neither an amount in moles from a mass and a molar mass (chemistry.molar-conversion) nor a check that a written equation conserves atoms and mass (chemistry.mass-balance). The passage does print one quantity, the molar mass 180.159 g/mole, but no sample mass is given and no moles are sought, so this cannot be bent into a molar conversion. The text layer also omits the per-element calculation block entirely — the line \"Note that these percentages sum to equal 100.00% when appropriately rounded\" follows an image or table that the extraction dropped — so the worked example's own numeric result is not readable in any case. The Check Your Learning answer, \"69.9% Fe\", belongs to a different question (mass percentage of iron in Fe2O3) and is likewise a percent-composition result; under rule 2 it must not be attached to this example's givens. Reason no_registered_problem_type takes precedence over the unreadable result, since the passage would not be formalisable even if the dropped block were present.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "Aspirin is a compound with the molecular formula C9H8O4. What is its percent composition?"
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 809,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 12396.523829000216,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

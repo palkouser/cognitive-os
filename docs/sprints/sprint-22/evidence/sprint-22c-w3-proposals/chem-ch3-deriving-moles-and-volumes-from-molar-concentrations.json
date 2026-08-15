@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "73d44b4ae29fab91f20c102a86d01363aeef1bc768c94a81834855f2584f7fe5",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "26bc2c6a-b371-53ac-89b6-b956cb4a46da",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Example 3.15 derives moles of sugar from a molar concentration (0.375 M, itself carried over from Example 3.14) and a volume (~10 mL). That is a molarity problem, not a mass/molar-mass conversion and not an equation-balancing verdict, so neither registered type applies; rule 4 forbids bending it into chemistry.molar-conversion. Two further points, recorded but not decisive: the Solution's own numeric result is absent from this text layer (the substituted equation did not survive as text), and the only printed number, \\\"80 mL\\\", is the Answer to the Check Your Learning question \\u2014 a different question (a volume of sweetened tea), so rule 2 forbids asserting it for this example. Both the molarity value 0.375 M and the volume 10 mL are also stated only by reference to Example 3.14 and as an approximation (\\\"~10 mL\\\").\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"EXAMPLE 3.15, Deriving Moles and Volumes from Molar Concentrations (Section 3.3 Molarity, p. 149): \\\"How much sugar (mol) is contained in a modest sip (~10 mL) of the soft drink from Example 3.14?\\\" The Solution rearranges the definition of molarity to isolate moles of sugar and substitutes the molarity derived in Example 3.14, 0.375 M.\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "Example 3.15 derives moles of sugar from a molar concentration (0.375 M, itself carried over from Example 3.14) and a volume (~10 mL). That is a molarity problem, not a mass/molar-mass conversion and not an equation-balancing verdict, so neither registered type applies; rule 4 forbids bending it into chemistry.molar-conversion. Two further points, recorded but not decisive: the Solution's own numeric result is absent from this text layer (the substituted equation did not survive as text), and the only printed number, \"80 mL\", is the Answer to the Check Your Learning question — a different question (a volume of sweetened tea), so rule 2 forbids asserting it for this example. Both the molarity value 0.375 M and the volume 10 mL are also stated only by reference to Example 3.14 and as an approximation (\"~10 mL\").",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "EXAMPLE 3.15, Deriving Moles and Volumes from Molar Concentrations (Section 3.3 Molarity, p. 149): \"How much sugar (mol) is contained in a modest sip (~10 mL) of the soft drink from Example 3.14?\" The Solution rearranges the definition of molarity to isolate moles of sugar and substitutes the molarity derived in Example 3.14, 0.375 M."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 962,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 16198.406248000538,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

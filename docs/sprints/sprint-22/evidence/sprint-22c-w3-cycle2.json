@@ -1,0 +1,784 @@
+{
+ "citations": {
+  "all_chains_resolve": true,
+  "artifacts_walked": 0,
+  "per_artifact": {},
+  "promoted_artifacts": 0,
+  "sampled": false,
+  "vacuous_because_nothing_was_promoted": true,
+  "walk_covers_every_promoted_artifact": true
+ },
+ "compile": {
+  "records": 0
+ },
+ "cross_check": {
+  "accepted": 0,
+  "cases": 25,
+  "per_segment": {
+   "chem-ch3-calculating-molar-concentrations": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "chem-ch3-calculating-molar-concentrations-from-the-mass-of-solute": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "chem-ch3-calculation-of-parts-per-million-and-parts-per-billion-concentrations": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "chem-ch3-calculation-of-percent-by-mass": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "chem-ch3-calculation-of-percent-composition": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "chem-ch3-calculations-using-mass-percentage": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "chem-ch3-calculations-using-volume-percentage": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "chem-ch3-computing-formula-mass-for-an-ionic-compound": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "chem-ch3-computing-molecular-mass-for-a-covalent-compound": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "chem-ch3-deriving-grams-from-moles-for-a-compound": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "chem-ch3-deriving-grams-from-moles-for-an-element": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "chem-ch3-deriving-moles-and-volumes-from-molar-concentrations": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "chem-ch3-deriving-moles-from-grams-for-a-compound": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "science.chemistry",
+    "expected_accepted": false,
+    "message": "ToolPlaneError: invalid_derivation: formula: expected a non-empty chemical formula",
+    "problem_type": "chemistry.molar-conversion",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "chem-ch3-deriving-moles-from-grams-for-an-element": {
+    "accepted": false,
+    "as_expected": false,
+    "asserted": {
+     "exact_value": "0.12",
+     "units": "mol"
+    },
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": true,
+    "domain_id": "science.chemistry",
+    "expected_accepted": true,
+    "message": "the source asserts exact_value='0.12'; the kernel computed '47/391'",
+    "problem_type": "chemistry.molar-conversion",
+    "refused_before_solving": false,
+    "verifier_status": "passed"
+   },
+   "chem-ch3-deriving-number-of-atoms-from-mass-for-an-element": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "chem-ch3-deriving-the-number-of-atoms-and-molecules-from-the-mass-of-a-compound": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "chem-ch3-determination-of-the-molecular-formula-for-nicotine": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "chem-ch3-determining-a-compound-s-empirical-formula-from-the-masses-of-its-elements": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "chem-ch3-determining-an-empirical-formula-from-percent-composition": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "chem-ch3-determining-percent-composition-from-a-molecular-formula": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "chem-ch3-determining-the-concentration-of-a-diluted-solution": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "chem-ch3-determining-the-mass-of-solute-in-a-given-volume-of-solution": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "chem-ch3-determining-the-volume-of-solution-containing-a-given-mass-of-solute": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "chem-ch3-volume-of-a-concentrated-solution-needed-for-dilution": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "chem-ch3-volume-of-a-diluted-solution": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   }
+  },
+  "provider_and_kernel_agreed": false
+ },
+ "cycle": 2,
+ "decides_an_exit_criterion": false,
+ "evaluate": {
+  "all_retained_cases_passed": true,
+  "cases_executed": 1,
+  "cases_passed": 1,
+  "domains_enumerated": 6,
+  "domains_with_retained_cases": 1,
+  "enumeration_source": "registry.domain_ids()",
+  "per_domain": {
+   "coding": {
+    "cases": 0,
+    "passed": 0,
+    "rate": null
+   },
+   "engineering.mechanics": {
+    "cases": 1,
+    "passed": 1,
+    "rate": 1.0
+   },
+   "logic": {
+    "cases": 0,
+    "passed": 0,
+    "rate": null
+   },
+   "mathematics": {
+    "cases": 0,
+    "passed": 0,
+    "rate": null
+   },
+   "physics": {
+    "cases": 0,
+    "passed": 0,
+    "rate": null
+   },
+   "science.chemistry": {
+    "cases": 0,
+    "passed": 0,
+    "rate": null
+   }
+  },
+  "source_leakage": {
+   "curriculum_segments": 25,
+   "holdout_store_env": [
+    "COGOS_HOLDOUT_DATABASE_URL"
+   ],
+   "holdouts": 1,
+   "leakage_detected": false,
+   "overlaps": {}
+  }
+ },
+ "extraction": {
+  "every_answer_came_from_a_sealed_proposal": true,
+  "origin_provider": [
+   "claude-code"
+  ],
+  "prompt_template": "s22c-w3-formalise-worked-example@1",
+  "provider_calls_this_run": 0,
+  "receipts": {
+   "chem-ch3-calculating-molar-concentrations": {
+    "normalized_response_hash": "3b73ce1deb0fe35449df80a7abef727fb8be62973201d278ed54243b71614f6a",
+    "receipt": "provider-output:bbe785de-6e8a-5fde-8143-eda2c1982981",
+    "request_hash": "c8f5bd559dabce668d08d063189727c0b1eb6eaee51802ed345a3ba32c18cb31",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "cbcd16c6957328fbb677fef2a08135a3e7d5118af977a3256c74e6dd943248ed"
+   },
+   "chem-ch3-calculating-molar-concentrations-from-the-mass-of-solute": {
+    "normalized_response_hash": "f2fd5da3f9c769a7f1c041196f7f300478b8184d17625172967f7b381a0f41e9",
+    "receipt": "provider-output:a91ba310-7b71-5268-b41a-da8110191492",
+    "request_hash": "736c161b9054565bcece0edbde4471926bf400c8b592116270d599381fb27971",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "2a1161c3fa8104a4a074116840373233a68b854b14d8a4b7936d55f7f9e806a1"
+   },
+   "chem-ch3-calculation-of-parts-per-million-and-parts-per-billion-concentrations": {
+    "normalized_response_hash": "98ef0b7ce30ec0f10bf0af7818aae4979276823ead18c714cecdfb0f2dd49a97",
+    "receipt": "provider-output:31e81db2-1101-5495-95a9-b02c913f2ece",
+    "request_hash": "7ea0def9581ae415ef68cd111a3505725009eb88ebbd929dee73d8fb2d7bc45b",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "9e15c9ac6c6f0a7da1b66ba47bc5534cf57cef23d4175e535e2698b3276228a2"
+   },
+   "chem-ch3-calculation-of-percent-by-mass": {
+    "normalized_response_hash": "d69ead12998acc0565b1ecbca05c956d80230db37416d4e112dd17a81a684abd",
+    "receipt": "provider-output:0bc49e15-c4ad-5f44-a173-3439cedab83a",
+    "request_hash": "23bc5f6e99c2b0ccf55b46393483c5c3a87b76e2e4626b9942a0e211cdfa11aa",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "943c612a941f08c56f00493f6f4cf4fe3922a0ae86886cc3a4f25e255c5e7fa4"
+   },
+   "chem-ch3-calculation-of-percent-composition": {
+    "normalized_response_hash": "82245c2a58eda52626692a1d5f50ca3ab515e435f9f86baeb455e8676f939ab5",
+    "receipt": "provider-output:3571cbbf-b63f-5340-a2ac-3fe5fad65e15",
+    "request_hash": "9a1b9aabcdefbeac403d747257e8bdbae0705c65ff76221c50384f1e1d1cba45",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "750b3892650061c36742a40e5a39313d999c0bc642d113ec75c6ed3ebc856434"
+   },
+   "chem-ch3-calculations-using-mass-percentage": {
+    "normalized_response_hash": "c85c96b8c7bd3bec5de818b0bc08a387121e7514066c63200e9c37c31000dbe6",
+    "receipt": "provider-output:b353d6c8-f58f-5bab-8da3-87c1420e291e",
+    "request_hash": "0f1a376da93e7c53adbfc4a56ebdc796c594686f56a14053e47102ad29a95f77",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "8198632b7af134147ce09fd8154ea1bb588210b01c7fa77c22debd76442eacde"
+   },
+   "chem-ch3-calculations-using-volume-percentage": {
+    "normalized_response_hash": "a4fdc55fc73fe147a5d15f9fbcb97b0eace5ed275f8c023ae5800cf5179e9c37",
+    "receipt": "provider-output:d4fddcd6-cc2a-5554-8031-dac9395261f2",
+    "request_hash": "605310317033d95da7b8e77ae3cf6f2f7e369327af930097ea355242c7fe4b37",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "40cb88e3e10aa481500e024eeb5b89b082a428e0829e7d1381f4c55b2bacc5d5"
+   },
+   "chem-ch3-computing-formula-mass-for-an-ionic-compound": {
+    "normalized_response_hash": "40ef9ef1c74d9c8c51679707b3e4f92977205e6fbb3b51793ea2bbc55c585f78",
+    "receipt": "provider-output:7f142113-3fac-5f66-8b17-0368a5d21f52",
+    "request_hash": "910d3ac69d1cab88fc04bfc3c7bbefeed1b64c7489c01de5ccce6c97b9d3865b",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "1af045289b6e713177eb32c25e1e1023e8c2f4394936bf4ed13ac8149f440446"
+   },
+   "chem-ch3-computing-molecular-mass-for-a-covalent-compound": {
+    "normalized_response_hash": "8450697d707621f489739b152b1d8e8e83035905f82a53b5c2871fb06cce5f8e",
+    "receipt": "provider-output:4b4e5077-09f4-5930-b88b-3e5123f978f4",
+    "request_hash": "c6fea003f3fcb05ed7d9d20d9fc190fdb375a5a72adf245399c7139d8976047d",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "63870f230fc07df75463b01ac15ffe561c5af25e172d71a941e5b37830691245"
+   },
+   "chem-ch3-deriving-grams-from-moles-for-a-compound": {
+    "normalized_response_hash": "958723d86aec65ecd5f7aef42228c1f61e0b73a939a37593269517d8202b047c",
+    "receipt": "provider-output:7d7d2630-a19d-55aa-9f10-229991329890",
+    "request_hash": "10b74bda01de26fbcf4930b08b57b0380002d7eb5bed0c6166fdc6ec83d03c18",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "4dcfe8b4bf9fd209c613e05b0d759fefe1af97c8951eb140f1b42bd8b09328f1"
+   },
+   "chem-ch3-deriving-grams-from-moles-for-an-element": {
+    "normalized_response_hash": "e60be08ccd42de342db53517ac16ad33a7179b15cf06ae43a7771f161411aecc",
+    "receipt": "provider-output:51c10868-a278-5cbe-a2c4-a58e9ed42ad6",
+    "request_hash": "aed15e60837d56e2836a8eaa4e046aa5bf75e2fe9d6de4a867536177e0cf657a",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "45f5073f40c12dc856c42bcfc21ae64ae97720deb645a310398e99dd6abe5f03"
+   },
+   "chem-ch3-deriving-moles-and-volumes-from-molar-concentrations": {
+    "normalized_response_hash": "5e3b6868b5fab81a17141c2358ca741fbe3c8a4ee4be49098ae7d0d5fe93a8ae",
+    "receipt": "provider-output:24d2ef9e-7770-5a0f-afe2-9633936b306e",
+    "request_hash": "41872ccab2ff87c02ba78ce03abfe6040c0a36d01a79fb66292408de0ab79f2d",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "5bf60ceee43069f9b40c1c89c3cc60993de78c16bc266411f3e620d0d349e7c7"
+   },
+   "chem-ch3-deriving-moles-from-grams-for-a-compound": {
+    "normalized_response_hash": "c702130b46d5863104d23548ccac7a86489e238b4307334b72d4f5e430513e48",
+    "receipt": "provider-output:b738c379-766a-5df4-86c0-33d1b13c0dd2",
+    "request_hash": "66724141ee6adeb2ac2d04edecb0b1ce0b84fefb1b0d790e738c27c6f826ec96",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "7d0edf40f5ceda0e5fec1f196de290224f16ae6108870aa028100dac116b539e"
+   },
+   "chem-ch3-deriving-moles-from-grams-for-an-element": {
+    "normalized_response_hash": "5693d10805c4a15ee727cc0dd829c467010928229e0764fe605815618d84874e",
+    "receipt": "provider-output:72625eb8-eace-5cc8-9071-8f34fa4fb9c7",
+    "request_hash": "d18c5e4fb6b63728140427ffe2aea82169e96ed139c6bd3419cf53610766f56a",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "4e3710baf2ef7ec5fd83298737ad565e87daa0c635d234ca66384e9d32591a01"
+   },
+   "chem-ch3-deriving-number-of-atoms-from-mass-for-an-element": {
+    "normalized_response_hash": "e6c13b76f4908e05e8a8929c0a0bdab61399cbaa8f709c0615c29e86baae6a2d",
+    "receipt": "provider-output:67a2d7c6-1d9e-57c1-b780-f6f4389bec10",
+    "request_hash": "76d6ba98a7bb8a76ed288e4ea8baaf4e659ef3bcf2c29b5e6fd4dc0bb32ccbd7",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "d32805bfedb2ec6c8629b9a6a19886884767b618c91fa75d8f1f4cc3831791af"
+   },
+   "chem-ch3-deriving-the-number-of-atoms-and-molecules-from-the-mass-of-a-compound": {
+    "normalized_response_hash": "d4c4d8c5cf050567e93e0324f5b7ffc39da578f48615d784e324185b6a50b5dd",
+    "receipt": "provider-output:d66da1d6-2cfe-520c-99d2-c0b9aa771ab2",
+    "request_hash": "66cc8072b33e9599014008244219f925f00e4eeaaa225d253d9d6a1b773544dc",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "1e94a760928609aa65e1bf218c9c9468764ed638d352a6f83acb4b3fbbf7be58"
+   },
+   "chem-ch3-determination-of-the-molecular-formula-for-nicotine": {
+    "normalized_response_hash": "3f977aa433dc638fd21f47d8c05cad0de75544576ec4733e3886e83a9d6bed3e",
+    "receipt": "provider-output:3dd884ad-a875-5b1b-a5f3-5cf1e4337600",
+    "request_hash": "a7f3fb135ca84f4fd5fd77c075b39b661f52f2adfc0e5861f32f701c495c53d0",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "fbc42681b0af2da3cc946e4b061782c7face0ed72da4dee47ff2c148437c8e90"
+   },
+   "chem-ch3-determining-a-compound-s-empirical-formula-from-the-masses-of-its-elements": {
+    "normalized_response_hash": "ecd956f52512de4a472b26c0381318c28849a852f7549c90d4bd6485784bcbc8",
+    "receipt": "provider-output:7159a68c-9eab-54e0-9924-a084235dee9a",
+    "request_hash": "d719789543090dc614feb8b775cd01244d086395fa9a303fce57a7b7494bbaeb",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "b0622842bbe0996e9e0caff8a9dd6bd3d1e6de3ff98437750976533389ff3614"
+   },
+   "chem-ch3-determining-an-empirical-formula-from-percent-composition": {
+    "normalized_response_hash": "072046695bf72e9fb864cba3dd32656ceee7b782799d183889d7d2c96bf1436b",
+    "receipt": "provider-output:39811354-5646-5eb5-a471-d1300565b981",
+    "request_hash": "0ab4878fab20ca77b24ecc7b72200ca93837f8c655b937574e14a1ce89c52e2f",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "6538e1817047ee974fb58d450a8797a492d67bdb408dc4a1e02be03bba2bc29b"
+   },
+   "chem-ch3-determining-percent-composition-from-a-molecular-formula": {
+    "normalized_response_hash": "1ff96c3d88d244f8ca5baa432013f1db9456af7efee8dc8d5f0947c0aeef75d0",
+    "receipt": "provider-output:d35674bc-6a4e-5178-8bf2-d68084176b64",
+    "request_hash": "e7a8097efde8f7cccb73a1ba3d3eda97df871192b1686f6bc99331a6b493f4ff",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "79e4dae679109f8800440c069828f783270fa9e2ac7ab9fa7e4c78fd448b0f88"
+   },
+   "chem-ch3-determining-the-concentration-of-a-diluted-solution": {
+    "normalized_response_hash": "7e97245dd598689e4ea6e2619a7f88024740271f264d43b21dbaab2487f2a9c2",
+    "receipt": "provider-output:02ff8b23-78f5-556f-bd67-6ce3ca7611a3",
+    "request_hash": "9176fe1789a8acd08978dd44cbe97cdf6f453ef3fd981d16346745b1e3ff6c2d",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "5056ed999dc71cbac51301d82a3fcb980158b2dc0afb3f9abb2ee4be625bc2b4"
+   },
+   "chem-ch3-determining-the-mass-of-solute-in-a-given-volume-of-solution": {
+    "normalized_response_hash": "a7f9977c5f9bbdec4af5399c6c1fe47a1f8e3d2226bd2b87a1ac5c5ebdbeb70d",
+    "receipt": "provider-output:d228e79f-b3c0-5efc-b612-00a3b5e3da14",
+    "request_hash": "90c4e8845cb4784d29ff3fe08ff3443a8ca83ddfc00e2a35a63a4979b8dd5060",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "d9a57b66f73d1fe934d758d161c91e3bf08fd23702652a1b563cca3b8d7a68df"
+   },
+   "chem-ch3-determining-the-volume-of-solution-containing-a-given-mass-of-solute": {
+    "normalized_response_hash": "800897c50cdfd18211372a9adf2376e3f1eb1b6e46ce9ef21f9dbeb99d41a6f4",
+    "receipt": "provider-output:1632f28c-bb20-5410-a950-82254920b403",
+    "request_hash": "3bb9ced6dbda58d428f190a00abaa02802fc08f131f9ffffdbd5612a0b8d5629",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "4e1edca4f585d44600c036a80e762f0f5defd222200b114ad29b5f6c02d6d418"
+   },
+   "chem-ch3-volume-of-a-concentrated-solution-needed-for-dilution": {
+    "normalized_response_hash": "a5aa25145589fe76bb01c6cbb308a7499bbb094aeb230548ce08d3ce95733c50",
+    "receipt": "provider-output:7b7b3700-33b6-5b13-a6f9-0812fa30534e",
+    "request_hash": "140dcd49d7bf35d26347783b1d4b3f52b2e4db15da502768350c801c3fc19b81",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "5c6c309f122ffd64518b2c2f2568b8cc9b797007ecc91eba5cc1bfedd9c96d17"
+   },
+   "chem-ch3-volume-of-a-diluted-solution": {
+    "normalized_response_hash": "029ceadc7760349bbef27b0eb0ae9c357d9f43f7964f91327a83bde8388354df",
+    "receipt": "provider-output:17144082-5ad2-537f-b568-66563fc185ba",
+    "request_hash": "066f399752610105e943736ed3a8bfd550f79fdfc9f42ba3bc958c788665b853",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "456596e3a7c700b7407e840f8c5e9095e093604ff64af6fe9120ffe0ca0c9bee"
+   }
+  },
+  "replayed_through_the_released_provider_path": true
+ },
+ "inherited_cases": {
+  "count": 1,
+  "from": [
+   "sprint-22c-w2-retained-cases.json"
+  ]
+ },
+ "integrity_content_hash": "719dd161abbfcfb02e0669f3f62904bf5eb0cba08fff6ed5896146e08427b191",
+ "items": [
+  "S22C-052"
+ ],
+ "limitations": [
+  "one cycle of three. The replay exit reads three, and forgetting is a delta across them",
+  "one domain. Chemistry is a separate campaign with its own lineage, and the improvement exit runs against chemistry holdout cases this campaign never sees",
+  "the Tool Plane's solve and verify events are in-memory, so the cross-check and replay legs of this cycle left no durable trace (W2-F2)",
+  "the yield is this source into this domain. It is not a statement about textbooks, and §4's 'one source is one source' applies"
+ ],
+ "manifest": {
+  "campaign_id": "s22c-chemistry",
+  "content_hash": "b1920bbceefa1125ecdcff069614ca02bee9c7495cbd72c7632b8b217d0c7060",
+  "curriculum_segments": 25,
+  "declared_uses": [
+   "internal_use",
+   "derivative_work"
+  ],
+  "domain_ids": [
+   "science.chemistry"
+  ],
+  "holdout_id": "s22c-acquisition-holdout-v1",
+  "holdout_measured_values": 0,
+  "providers": [
+   "claude-code"
+  ],
+  "revision": 1,
+  "rights_content_hash": "e8d48bf0e0c8dde2e14ed73c0f96d54eed172ff2702855dd04de1adfc0f614a7"
+ },
+ "observe": {
+  "count": 8,
+  "event_types": [
+   "memory.item_created",
+   "semantic.claim_belief_changed",
+   "semantic.claim_created",
+   "semantic.claim_promotion_decided",
+   "semantic.extraction_completed",
+   "semantic.observation_recorded",
+   "verifier.completed",
+   "verifier.started"
+  ]
+ },
+ "promote": {
+  "count": 0,
+  "promoted": []
+ },
+ "quarantine": {
+  "count": 25,
+  "quarantined": {
+   "chem-ch3-calculating-molar-concentrations": "unverifiable_provider_data",
+   "chem-ch3-calculating-molar-concentrations-from-the-mass-of-solute": "unverifiable_provider_data",
+   "chem-ch3-calculation-of-parts-per-million-and-parts-per-billion-concentrations": "unverifiable_provider_data",
+   "chem-ch3-calculation-of-percent-by-mass": "unverifiable_provider_data",
+   "chem-ch3-calculation-of-percent-composition": "unverifiable_provider_data",
+   "chem-ch3-calculations-using-mass-percentage": "unverifiable_provider_data",
+   "chem-ch3-calculations-using-volume-percentage": "unverifiable_provider_data",
+   "chem-ch3-computing-formula-mass-for-an-ionic-compound": "unverifiable_provider_data",
+   "chem-ch3-computing-molecular-mass-for-a-covalent-compound": "unverifiable_provider_data",
+   "chem-ch3-deriving-grams-from-moles-for-a-compound": "unverifiable_provider_data",
+   "chem-ch3-deriving-grams-from-moles-for-an-element": "unverifiable_provider_data",
+   "chem-ch3-deriving-moles-and-volumes-from-molar-concentrations": "unverifiable_provider_data",
+   "chem-ch3-deriving-moles-from-grams-for-a-compound": "unverifiable_provider_data",
+   "chem-ch3-deriving-moles-from-grams-for-an-element": "conflicting_provenance",
+   "chem-ch3-deriving-number-of-atoms-from-mass-for-an-element": "unverifiable_provider_data",
+   "chem-ch3-deriving-the-number-of-atoms-and-molecules-from-the-mass-of-a-compound": "unverifiable_provider_data",
+   "chem-ch3-determination-of-the-molecular-formula-for-nicotine": "unverifiable_provider_data",
+   "chem-ch3-determining-a-compound-s-empirical-formula-from-the-masses-of-its-elements": "unverifiable_provider_data",
+   "chem-ch3-determining-an-empirical-formula-from-percent-composition": "unverifiable_provider_data",
+   "chem-ch3-determining-percent-composition-from-a-molecular-formula": "unverifiable_provider_data",
+   "chem-ch3-determining-the-concentration-of-a-diluted-solution": "unverifiable_provider_data",
+   "chem-ch3-determining-the-mass-of-solute-in-a-given-volume-of-solution": "unverifiable_provider_data",
+   "chem-ch3-determining-the-volume-of-solution-containing-a-given-mass-of-solute": "unverifiable_provider_data",
+   "chem-ch3-volume-of-a-concentrated-solution-needed-for-dilution": "unverifiable_provider_data",
+   "chem-ch3-volume-of-a-diluted-solution": "unverifiable_provider_data"
+  }
+ },
+ "recorded_at": "2026-08-15T10:16:50Z",
+ "register_source": {
+  "items": 25,
+  "license_status": [
+   "internal"
+  ],
+  "source_manifest_hash": "39c2ed284166e408e7d167cca424692a9a2a0828d4dd092ca771e765623e4ba2",
+  "source_manifest_id": "aee85bd5-a057-5589-97e7-13715ccf372b"
+ },
+ "retained_cases": {
+  "campaign_id": "s22c-chemistry",
+  "cases": [],
+  "count": 0,
+  "integrity_content_hash": "6c051c6765730f5e5bafed5f7565b6653ad77e63012a7885582bdb52d50c9952",
+  "items": [
+   "S22C-052"
+  ],
+  "manifest_revision": 1,
+  "read_by": "the replay stage of every later cycle (§2.2a); a domain with no retained case is reported with cases: 0 rather than omitted",
+  "schema_version": 1,
+  "sprint": "22C",
+  "wave": "W3"
+ },
+ "schema_version": 1,
+ "sprint": "22C",
+ "stages": {
+  "all_nine_in_order": true,
+  "completed": [
+   "register_source",
+   "extract",
+   "normalize",
+   "cross_check",
+   "quarantine",
+   "compile",
+   "evaluate",
+   "promote",
+   "observe"
+  ],
+  "count": 9,
+  "enumerated": [
+   "register_source",
+   "extract",
+   "normalize",
+   "cross_check",
+   "quarantine",
+   "compile",
+   "evaluate",
+   "promote",
+   "observe"
+  ]
+ },
+ "store": {
+  "artifact_root_is_configured": true,
+  "database": "cognitive_os_s22c_campaign",
+  "kind": "postgresql",
+  "tool_plane_events": "in-memory only — the released descriptor runner takes a MemoryEventStore by type (W2-F2)"
+ },
+ "subject_rule": {
+  "distinct_subjects_under_the_fixture_rule": 1,
+  "distinct_subjects_under_this_rule": 1,
+  "exercised_by_this_cycle": false,
+  "formalised_segments": 1,
+  "rule_used_by_the_w0_fixture": "mechanics:<topic> — the topic is the subject",
+  "rule_used_by_this_cycle": "mechanics:<passage_id> — the worked example is the subject",
+  "segments_that_would_have_collided": 0,
+  "topics_with_more_than_one_worked_example": {},
+  "why_the_rule_changed_anyway": "the campaign predicate is FUNCTIONAL, so two claims on one subject over overlapping validity are a deterministic contradiction by the released detector's own rule. Under the fixture's subject every genuine worked example of a topic would deny promotion to every other one — W0-F3's shape, one layer on. Cycle 1 formalised one segment, so the collision is latent here and the record says so rather than claiming a defect it did not observe"
+ },
+ "supersession": null,
+ "wave": "W3",
+ "why_no_exit": "the exits are read once in W4 from every cycle's records. This is cycle 1 of three, and the replay, supersession and citation exits need all of them",
+ "yield": {
+  "accepted_by_the_kernel": 0,
+  "acquisition_yield": 0.0,
+  "formalised_by_the_provider": 1,
+  "per_chapter": {
+   "3": {
+    "chosen_for": "chemistry.molar-conversion",
+    "formalised_by_the_provider": 1,
+    "promoted": 0,
+    "worked_examples": 25
+   }
+  },
+  "promoted": 0,
+  "quarantined": 25,
+  "refusal_reasons": {
+   "kernel_requires_unstated_input": 1,
+   "no_registered_problem_type": 23
+  },
+  "worked_examples_located": 25
+ }
+}

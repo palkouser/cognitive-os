@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "0153b2489944c768f300ca0deaf632e94d45eeec057eae876e66013621cf7722",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "0db4e450-6a25-5cbf-a099-edc755b93a10",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Example 3.16 asks for the concentration of an acetic acid solution in units of molarity (mol solute per L solution) from 25.2 g of CH3CO2H in a 0.500-L solution. Molarity is not one of the two registered problem types. It is not chemistry.molar-conversion: although a mass of solute is given, the requested quantity is a concentration, and the passage additionally states a solution volume that the molar-conversion kernel has no slot for; treating it as a mole calculation would silently discard the 0.500 L and answer a different question than the one asked. It is plainly not chemistry.mass-balance \\u2014 no equation is written. Per rule 4 this is left unformalised rather than bent into the nearest type. Separately, the excerpt carries only the problem statement plus page furniture (\\\"135\\\", \\\"136\\\", \\\"3 \\u2022 Composition of Substances and Solutions\\\"): no Solution, no Check Your Learning, and no printed result, so there is nothing to assert under rules 2 and 3 in any case. The passage also prints no atomic masses, so even the molar-conversion reading would have failed for want of stated atomic_masses. The registered-type mismatch is the primary and reported reason.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"EXAMPLE 3.16 \\u2014 Calculating Molar Concentrations from the Mass of Solute. Distilled white vinegar (Figure 3.15) is a solution of acetic acid, CH3CO2H, in water. A 0.500-L vinegar solution contains 25.2 g of acetic acid. What is the concentration of the acetic acid solution in units of molarity?\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "Example 3.16 asks for the concentration of an acetic acid solution in units of molarity (mol solute per L solution) from 25.2 g of CH3CO2H in a 0.500-L solution. Molarity is not one of the two registered problem types. It is not chemistry.molar-conversion: although a mass of solute is given, the requested quantity is a concentration, and the passage additionally states a solution volume that the molar-conversion kernel has no slot for; treating it as a mole calculation would silently discard the 0.500 L and answer a different question than the one asked. It is plainly not chemistry.mass-balance — no equation is written. Per rule 4 this is left unformalised rather than bent into the nearest type. Separately, the excerpt carries only the problem statement plus page furniture (\"135\", \"136\", \"3 • Composition of Substances and Solutions\"): no Solution, no Check Your Learning, and no printed result, so there is nothing to assert under rules 2 and 3 in any case. The passage also prints no atomic masses, so even the molar-conversion reading would have failed for want of stated atomic_masses. The registered-type mismatch is the primary and reported reason.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "EXAMPLE 3.16 — Calculating Molar Concentrations from the Mass of Solute. Distilled white vinegar (Figure 3.15) is a solution of acetic acid, CH3CO2H, in water. A 0.500-L vinegar solution contains 25.2 g of acetic acid. What is the concentration of the acetic acid solution in units of molarity?"
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 935,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 13501.71039399902,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

@@ -34,6 +34,7 @@ import asyncio
 import json
 import os
 import sys
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -47,6 +48,7 @@ from campaign_22c import (  # noqa: E402
     ACTOR,
     CAMPAIGN_PREDICATE_ID,
     CAMPAIGN_STAGES,
+    PLANT,
     Composition,
     CycleState,
     Segment,
@@ -59,8 +61,13 @@ from campaign_22c import (  # noqa: E402
     run_cycle,
     walk_citations,
 )
-from chapter_22c import CHAPTERS, SOURCE_PATH, Passage, locate_passages  # noqa: E402
-from provider_22c import PROMPT_TEMPLATE_ID, PROMPT_TEMPLATE_VERSION, proposals  # noqa: E402
+from chapter_22c import (  # noqa: E402
+    PROFILES,
+    SOURCE_PATH,
+    Passage,
+    locate_passages,
+)
+from provider_22c import EXTRACTION_PROFILES, proposals  # noqa: E402
 
 from cognitive_os.application.services.memory_service import MemoryService  # noqa: E402
 from cognitive_os.application.services.verification_service import (  # noqa: E402
@@ -150,11 +157,84 @@ RETAINED = EVIDENCE / "sprint-22c-w2-retained-cases.json"
 SOURCE_RIGHTS = EVIDENCE / "sprint-22c-source-rights.json"
 HOLDOUT = EVIDENCE / "sprint-22c-holdout.json"
 
-CAMPAIGN_ID = "s22c-physics"
-#: Revision 2. Revision 1 is W1's one-segment manifest, sealed in `sprint-22c-w1-slice.json`
-#: and its successor; a changed campaign is a new revision with the old one intact.
-MANIFEST_REVISION = 2
-DOMAIN_ID = "engineering.mechanics"
+
+@dataclass(frozen=True, slots=True)
+class CycleSpec:
+    """One cycle of one campaign: which source, which chapters, which domain.
+
+    **W3.** Cycle 1 was hard-coded to physics, which was honest while there was one campaign
+    and becomes a lie the moment there are two. The cycles run the same nine functions and
+    differ only here — a second driver for "the chemistry one" is how the two would stop
+    being evidence about the same code, which is the mistake W1 already paid for once.
+    """
+
+    cycle: int
+    wave: str
+    source_key: str
+    chapters: tuple[int, ...]
+    domain_id: str
+    campaign_id: str
+    manifest_revision: int
+    #: Whether the sealed W0 plant rides this cycle's intake. §2.2b: it enters through the
+    #: same path as genuine content, in a cycle pre-registered to carry it, and never through
+    #: a door of its own.
+    plant: bool
+    output: Path
+    inherits: tuple[Path, ...] = ()
+
+
+CYCLES: dict[int, CycleSpec] = {
+    1: CycleSpec(
+        cycle=1,
+        wave="W2",
+        source_key="physics",
+        chapters=(2, 4, 6),
+        domain_id="engineering.mechanics",
+        campaign_id="s22c-physics",
+        # Revision 2. Revision 1 is W1's one-segment manifest, sealed in
+        # `sprint-22c-w1-slice.json` and its successor; a changed campaign is a new revision
+        # with the old one intact.
+        manifest_revision=2,
+        plant=False,
+        output=EVIDENCE / "sprint-22c-w2-cycle1.json",
+    ),
+    2: CycleSpec(
+        cycle=2,
+        wave="W3",
+        source_key="chemistry",
+        chapters=(3,),
+        domain_id="science.chemistry",
+        campaign_id="s22c-chemistry",
+        manifest_revision=1,
+        plant=False,
+        output=EVIDENCE / "sprint-22c-w3-cycle2.json",
+        inherits=(EVIDENCE / "sprint-22c-w2-retained-cases.json",),
+    ),
+    3: CycleSpec(
+        cycle=3,
+        wave="W3",
+        source_key="chemistry",
+        chapters=(4,),
+        domain_id="science.chemistry",
+        # The *same* campaign as cycle 2 and the same manifest revision: §1.4's warning
+        # generalises — cycles under one manifest are cycles of one system, and a campaign
+        # that re-sealed itself between cycles would be measuring two.
+        campaign_id="s22c-chemistry",
+        manifest_revision=1,
+        plant=True,
+        output=EVIDENCE / "sprint-22c-w3-cycle3.json",
+        inherits=(
+            EVIDENCE / "sprint-22c-w2-retained-cases.json",
+            EVIDENCE / "sprint-22c-w3-cycle2-retained-cases.json",
+        ),
+    ),
+}
+
+RETAINED_OUTPUTS: dict[int, Path] = {
+    1: EVIDENCE / "sprint-22c-w2-retained-cases.json",
+    2: EVIDENCE / "sprint-22c-w3-cycle2-retained-cases.json",
+    3: EVIDENCE / "sprint-22c-w3-retained-cases.json",
+}
 
 #: One instant for the whole cycle, and the boundary the supersession turns on. A campaign
 #: record whose hashes move with the wall clock cannot be reproduced.
@@ -187,7 +267,7 @@ def _seal_intact(path: Path) -> bool:
 # ---------------------------------------------------------------------------
 
 
-def subject_of(passage_id: str) -> str:
+def subject_of(domain_id: str, passage_id: str) -> str:
     """**W2-A1.** The claim subject is the *worked example*, not the topic.
 
     W0's fixture gave one passage per topic, so `mechanics:uniform-motion` was both, and the
@@ -198,12 +278,12 @@ def subject_of(passage_id: str) -> str:
     assumption the wave changed rather than a defect it observed — `subject_rule` in the
     record counts what the fixture rule would have collided on, which for this cycle is zero.
     """
-    return f"mechanics:{passage_id}"
+    return f"{domain_id.rsplit('.', 1)[-1]}:{passage_id}"
 
 
 def topic_subject_of(problem_type: str) -> str:
     """W0's rule, kept so the collision it would cause can be counted rather than described."""
-    return f"mechanics:{problem_type.removeprefix('mechanics.')}"
+    return problem_type.replace(".", ":", 1)
 
 
 #: **W2-F3.** The released quarantine vocabulary has no reason for "no registered domain can
@@ -214,7 +294,7 @@ def topic_subject_of(problem_type: str) -> str:
 REFUSAL_REASON = CorpusQuarantineReason.UNVERIFIABLE_PROVIDER_DATA
 
 
-def segment_of(passage: Passage, sealed: dict[str, Any]) -> Segment:
+def segment_of(passage: Passage, sealed: dict[str, Any], spec: CycleSpec) -> Segment:
     """One campaign segment: the passage's bytes, and what the provider proposed about them.
 
     `expected_accepted` is **not** an answer key here, and reading it as one would repeat a
@@ -227,12 +307,12 @@ def segment_of(passage: Passage, sealed: dict[str, Any]) -> Segment:
     formalisable = bool(answer.get("formalisable"))
     return Segment(
         segment_id=passage.passage_id,
-        domain_id=DOMAIN_ID,
+        domain_id=spec.domain_id,
         # A passage the provider could not formalise carries no problem type at all rather
         # than a plausible one: the registry then refuses it by name at the cross-check, which
         # puts the refusal on the record instead of dropping the passage from the curriculum.
         problem_type=str(answer.get("problem_type") or ""),
-        subject=subject_of(passage.passage_id),
+        subject=subject_of(spec.domain_id, passage.passage_id),
         predicate_id=CAMPAIGN_PREDICATE_ID,
         literal_kind=SemanticLiteralKind.STRING,
         value=str(answer.get("statement") or passage.title),
@@ -278,10 +358,10 @@ def subject_rule(segments: tuple[Segment, ...]) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 
-def cleared_physics() -> tuple[CampaignSourceRights, dict[str, Any]]:
-    """The physics clearance, rebuilt through the released contract from the sealed record."""
+def cleared_source(spec: CycleSpec) -> tuple[CampaignSourceRights, dict[str, Any]]:
+    """The clearance, rebuilt through the released contract from the sealed record."""
     record = _load(SOURCE_RIGHTS)
-    entry = next(item for item in record["sources"] if item["key"] == "physics")
+    entry = next(item for item in record["sources"] if item["key"] == spec.source_key)
     rights = CampaignSourceRights(
         status=RightsClearanceStatus.CLEARED,
         source_content_hash=entry["source_content_hash"],
@@ -318,13 +398,13 @@ def frozen_holdout() -> CampaignHoldout:
 
 
 def cycle_manifest(
-    rights: CampaignSourceRights, segments: tuple[Segment, ...]
+    rights: CampaignSourceRights, segments: tuple[Segment, ...], spec: CycleSpec
 ) -> CampaignManifestV1:
     return CampaignManifestV1(
-        campaign_id=CAMPAIGN_ID,
-        revision=MANIFEST_REVISION,
+        campaign_id=spec.campaign_id,
+        revision=spec.manifest_revision,
         rights=rights,
-        domain_ids=(DOMAIN_ID,),
+        domain_ids=(spec.domain_id,),
         goals=(
             "acquire every worked example the cleared chapters carry for this domain, and "
             "measure how many of them a governed pipeline can actually verify",
@@ -836,18 +916,18 @@ async def _verify_supersession(
 # ---------------------------------------------------------------------------
 
 
-def retained_cases(state: CycleState) -> dict[str, Any]:
+def retained_cases(state: CycleState, spec: CycleSpec) -> dict[str, Any]:
     """What cycle 1 retains, in the shape a later cycle's replay executes. §2.2a."""
     cases = [
         {
             "case_id": segment_id,
-            "domain_id": DOMAIN_ID,
+            "domain_id": spec.domain_id,
             "problem_type": segment.problem_type,
             "formal_inputs": segment.formal_inputs,
             "asserted": segment.asserted,
             "source_segment_hash": segment.content_hash,
             "claim_id": str(state.claims[segment_id]),
-            "retained_by_cycle": 1,
+            "retained_by_cycle": spec.cycle,
         }
         for segment_id in sorted(state.promoted)
         for segment in [next(item for item in state.segments if item.segment_id == segment_id)]
@@ -855,10 +935,10 @@ def retained_cases(state: CycleState) -> dict[str, Any]:
     record: dict[str, Any] = {
         "schema_version": 1,
         "sprint": "22C",
-        "wave": "W2",
-        "items": ["S22C-041"],
-        "campaign_id": CAMPAIGN_ID,
-        "manifest_revision": MANIFEST_REVISION,
+        "wave": spec.wave,
+        "items": ["S22C-041" if spec.cycle == 1 else f"S22C-05{spec.cycle}"],
+        "campaign_id": spec.campaign_id,
+        "manifest_revision": spec.manifest_revision,
         "cases": cases,
         "count": len(cases),
         "read_by": "the replay stage of every later cycle (§2.2a); a domain with no retained "
@@ -873,30 +953,55 @@ def retained_cases(state: CycleState) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 
+def inherited_cases(spec: CycleSpec) -> tuple[dict[str, Any], ...]:
+    """What earlier cycles of this campaign retained, read from their sealed records."""
+    cases: list[dict[str, Any]] = []
+    for path in spec.inherits:
+        if not path.exists():
+            raise SystemExit(
+                f"cycle {spec.cycle} inherits {path.name}, which does not exist: a cycle "
+                "cannot replay what no earlier cycle sealed"
+            )
+        cases.extend(_load(path)["cases"])
+    return tuple(cases)
+
+
 async def _run(
-    *, composition: Composition | None
+    spec: CycleSpec, *, composition: Composition | None
 ) -> tuple[CycleState, Composition, dict[str, Any]]:
-    passages = locate_passages(SOURCE_PATH)
-    sealed = await proposals(passages, live=False)
-    segments = tuple(segment_of(passage, sealed[passage.passage_id]) for passage in passages)
-    rights, entry = cleared_physics()
-    manifest = cycle_manifest(rights, segments)
+    profile = PROFILES[spec.source_key]
+    extraction = EXTRACTION_PROFILES[spec.source_key]
+    located = locate_passages(profile)
+    passages = tuple(item for item in located if item.chapter in spec.chapters)
+    sealed = await proposals(located, extraction, live=False)
+    sealed = {item.passage_id: sealed[item.passage_id] for item in passages}
+    segments = tuple(segment_of(passage, sealed[passage.passage_id], spec) for passage in passages)
+    if spec.plant:
+        # §2.2b. The plant is appended to the ordinary intake stream and travels the same
+        # nine functions as everything beside it; a fixture that handed it to a stage in its
+        # own list would let that stage tell it apart by which list it arrived in.
+        segments = (*segments, PLANT)
+    rights, entry = cleared_source(spec)
+    manifest = cycle_manifest(rights, segments, spec)
     state, used = await run_cycle(
         manifest,
         segments=segments,
         source=cycle_source(rights, entry),
         sealed_proposals={key: dict(value) for key, value in sealed.items()},
+        inherited_cases=inherited_cases(spec),
         composition=composition,
     )
     return state, used, {"passages": passages, "sealed": sealed, "entry": entry}
 
 
 def _yield_block(
-    state: CycleState, passages: tuple[Passage, ...], sealed: dict[str, Any]
+    state: CycleState, passages: tuple[Passage, ...], sealed: dict[str, Any], spec: CycleSpec
 ) -> dict[str, Any]:
     """The campaign's headline number, per chapter and per refusal reason. W2-F1."""
     by_chapter: dict[str, dict[str, Any]] = {}
-    for chapter in CHAPTERS:
+    for chapter in PROFILES[spec.source_key].chapters:
+        if chapter.number not in spec.chapters:
+            continue
         located = [item for item in passages if item.chapter == chapter.number]
         formalised = [
             item for item in located if sealed[item.passage_id]["answer"].get("formalisable")
@@ -929,7 +1034,7 @@ def _yield_block(
     }
 
 
-async def cycle_record(*, on_postgres: bool) -> dict[str, Any]:
+async def cycle_record(spec: CycleSpec, *, on_postgres: bool) -> dict[str, Any]:
     engine = None
     composition: Composition | None = None
     store: dict[str, Any] = {
@@ -949,10 +1054,15 @@ async def cycle_record(*, on_postgres: bool) -> dict[str, Any]:
             "MemoryEventStore by type (W2-F2)",
         }
     try:
-        state, used, context = await _run(composition=composition)
+        state, used, context = await _run(spec, composition=composition)
         citations = await walk_citations(used, state)
         supersession = (
-            await supersede(used, state, sorted(state.promoted)[0]) if state.promoted else None
+            # The supersession is cycle 1's demonstration and is not repeated: §2.2e asks for
+            # one, run through the released lifecycle, and a cycle that superseded something
+            # every pass would be measuring the driver rather than the lifecycle.
+            await supersede(used, state, sorted(state.promoted)[0])
+            if state.promoted and spec.cycle == 1
+            else None
         )
         events = await observed_event_types(used.events)
     finally:
@@ -965,10 +1075,10 @@ async def cycle_record(*, on_postgres: bool) -> dict[str, Any]:
     record: dict[str, Any] = {
         "schema_version": 1,
         "sprint": "22C",
-        "wave": "W2",
-        "items": ["S22C-041", "S22C-042"],
+        "wave": spec.wave,
+        "items": (["S22C-041", "S22C-042"] if spec.cycle == 1 else [f"S22C-05{spec.cycle}"]),
         "recorded_at": _now(),
-        "cycle": 1,
+        "cycle": spec.cycle,
         "decides_an_exit_criterion": False,
         "why_no_exit": (
             "the exits are read once in W4 from every cycle's records. This is cycle 1 of "
@@ -988,7 +1098,7 @@ async def cycle_record(*, on_postgres: bool) -> dict[str, Any]:
             "curriculum_segments": len(manifest.curriculum.segment_hashes),
         },
         "extraction": {
-            "prompt_template": f"{PROMPT_TEMPLATE_ID}@{PROMPT_TEMPLATE_VERSION}",
+            "prompt_template": EXTRACTION_PROFILES[spec.source_key].template,
             "provider_calls_this_run": 0,
             "every_answer_came_from_a_sealed_proposal": all(
                 item["from_a_sealed_proposal"] for item in state.proposals.values()
@@ -1015,8 +1125,12 @@ async def cycle_record(*, on_postgres: bool) -> dict[str, Any]:
             == [stage.value for stage in CAMPAIGN_STAGES],
         },
         "register_source": state.corpus_items["_source_manifest"],
-        "yield": _yield_block(state, passages, sealed),
+        "yield": _yield_block(state, passages, sealed, spec),
         "subject_rule": subject_rule(state.segments),
+        "inherited_cases": {
+            "from": [path.name for path in spec.inherits],
+            "count": len(state.inherited_cases),
+        },
         "cross_check": {
             "cases": len(state.cross_checks),
             "accepted": sum(1 for item in state.cross_checks.values() if item["accepted"]),
@@ -1035,7 +1149,7 @@ async def cycle_record(*, on_postgres: bool) -> dict[str, Any]:
         "observe": {"event_types": sorted(events), "count": len(events)},
         "citations": citations,
         "supersession": supersession,
-        "retained_cases": retained_cases(state),
+        "retained_cases": retained_cases(state, spec),
         "limitations": [
             "one cycle of three. The replay exit reads three, and forgetting is a delta "
             "across them",
@@ -1081,39 +1195,49 @@ def invariants(record: dict[str, Any]) -> dict[str, Any]:
         key: value for key, value in citations.items() if key != "per_artifact"
     }
     supersession = record["supersession"]
-    projected["supersession"] = {
-        "lifecycle_sequence": supersession["lifecycle"]["candidate_to_verified_to_superseded"],
-        "predecessor_revisions": supersession["lifecycle"]["predecessor_revisions"],
-        "the_two_agree": supersession["verified_two_ways"]["the_two_agree"],
-        "history_survives": supersession["history_survives"],
-        "event_stream": supersession["event_stream"],
-        "temporal_boundary": supersession["the_temporal_boundary"],
-    }
+    # Only cycle 1 demonstrates the supersession (§2.2e asks for one), so a later cycle's
+    # projection carries the absence rather than a shape it never had.
+    projected["supersession"] = (
+        {
+            "lifecycle_sequence": supersession["lifecycle"]["candidate_to_verified_to_superseded"],
+            "predecessor_revisions": supersession["lifecycle"]["predecessor_revisions"],
+            "the_two_agree": supersession["verified_two_ways"]["the_two_agree"],
+            "history_survives": supersession["history_survives"],
+            "event_stream": supersession["event_stream"],
+            "temporal_boundary": supersession["the_temporal_boundary"],
+        }
+        if supersession is not None
+        else None
+    )
     return projected
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--cycle", action="store_true", help="run cycle 1 on the campaign store")
+    parser.add_argument("--cycle", action="store_true", help="run on the campaign store")
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--memory", action="store_true", help="run in memory, for a dry pass")
-    parser.add_argument("--output", type=Path, default=OUTPUT)
+    parser.add_argument("--number", type=int, choices=sorted(CYCLES), default=1)
+    parser.add_argument("--output", type=Path, default=None)
     arguments = parser.parse_args()
+    spec = CYCLES[arguments.number]
+    output = arguments.output or spec.output
 
     if arguments.check:
-        stored = _load(arguments.output)
+        stored = _load(output)
         body = {key: value for key, value in stored.items() if key != "integrity_content_hash"}
         sealed_ok = _sha256(_canonical(body)) == stored["integrity_content_hash"]
-        rebuilt = asyncio.run(cycle_record(on_postgres=False)) if SOURCE_PATH.exists() else None
+        source_present = PROFILES[spec.source_key].path.exists()
+        rebuilt = asyncio.run(cycle_record(spec, on_postgres=False)) if source_present else None
         same = rebuilt is not None and invariants(stored) == invariants(rebuilt)
-        retained_ok = _seal_intact(RETAINED)
+        retained_ok = _seal_intact(RETAINED_OUTPUTS[spec.cycle])
         print(
             json.dumps(
                 {
-                    "path": arguments.output.name,
+                    "path": output.name,
                     "stored_seal_intact": sealed_ok,
                     "retained_cases_seal_intact": retained_ok,
-                    "source_available": SOURCE_PATH.exists(),
+                    "source_available": source_present,
                     # The campaign store's own rows are not rebuilt here: they are an
                     # observation of one run, and a validator that recomputed them would only
                     # prove the record agrees with itself.
@@ -1124,18 +1248,22 @@ def main() -> int:
                 sort_keys=True,
             )
         )
-        return 0 if sealed_ok and retained_ok and (same or not SOURCE_PATH.exists()) else 1
+        return (
+            0
+            if sealed_ok and retained_ok and (same or not PROFILES[spec.source_key].path.exists())
+            else 1
+        )
 
     if not (arguments.cycle or arguments.memory):
         parser.error("choose --cycle, --memory or --check")
-    record = asyncio.run(cycle_record(on_postgres=arguments.cycle))
-    arguments.output.parent.mkdir(parents=True, exist_ok=True)
-    arguments.output.write_text(
+    record = asyncio.run(cycle_record(spec, on_postgres=arguments.cycle))
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(
         json.dumps(record, indent=1, sort_keys=True, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
     if arguments.cycle:
-        RETAINED.write_text(
+        RETAINED_OUTPUTS[spec.cycle].write_text(
             json.dumps(record["retained_cases"], indent=1, sort_keys=True, ensure_ascii=False)
             + "\n",
             encoding="utf-8",
@@ -1143,7 +1271,8 @@ def main() -> int:
     print(
         json.dumps(
             {
-                "output": arguments.output.name,
+                "output": output.name,
+                "cycle": spec.cycle,
                 "store": record["store"]["kind"],
                 "stages": record["stages"]["count"],
                 "yield": record["yield"],

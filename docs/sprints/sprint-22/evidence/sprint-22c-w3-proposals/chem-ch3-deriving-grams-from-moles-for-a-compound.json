@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "6526bb602b82e5eaad04f8236104f2241f7afba41361099a9327557968e2f6b3",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "b7fd8b96-de10-520e-88ad-b5aa9568a358",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"The worked example runs in the opposite direction to the only conversion type registered. chemistry.molar-conversion derives an amount in moles from a mass and a molar mass (answer units \\\"mol\\\"); Example 3.7 derives a mass in grams from a stated molar amount (1.42 10-4 mol of C6H8O6, molar mass 176.124 g/mol), so its answer is in grams and its given is an amount, not a mass. Its formal_inputs slot \\\"mass\\\": {..., \\\"unit\\\": \\\"g\\\"} would have to be filled with the answer, which rule 1 forbids. It is plainly not chemistry.mass-balance either, so reason is no_registered_problem_type rather than kernel_requires_unstated_input.\\n\\nTwo further obstacles, recorded but not decisive. (a) No result is readable for the worked example: the text layer carries \\\"Performing the calculation yields:\\\" followed by page furniture (\\\"123\\\", \\\"124\\\", \\\"3 - Composition of Substances and Solutions\\\") and then \\\"This is consistent with the anticipated result.\\\" The computed mass never appears in digits. The parenthetical \\\"(~0.02 g)\\\" is an explicitly approximate expectation, not the claimed result, and must not be taken as one. (b) The only figure that could be read as an answer, \\\"14.2 g\\\", belongs to the Check Your Learning question about 0.443 mol of hydrazine, N2H4 - different substance, different given - so rule 2 bars pairing it with this example's quantities. Treating that pair on its own would still fail, being the same grams-from-moles direction.\\n\\nAlso note the passage prints no atomic masses; it prints only the composite molar mass 176.124 g/mol and refers to no periodic table values, so atomic_masses could not have been populated honestly even had the direction matched.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Example 3.7 \\\"Deriving Grams from Moles for a Compound\\\": the mass in grams of 1.42 10-4 mol of vitamin C, C6H8O6, whose molar mass is given as 176.124 g/mol.\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "The worked example runs in the opposite direction to the only conversion type registered. chemistry.molar-conversion derives an amount in moles from a mass and a molar mass (answer units \"mol\"); Example 3.7 derives a mass in grams from a stated molar amount (1.42 10-4 mol of C6H8O6, molar mass 176.124 g/mol), so its answer is in grams and its given is an amount, not a mass. Its formal_inputs slot \"mass\": {..., \"unit\": \"g\"} would have to be filled with the answer, which rule 1 forbids. It is plainly not chemistry.mass-balance either, so reason is no_registered_problem_type rather than kernel_requires_unstated_input.\n\nTwo further obstacles, recorded but not decisive. (a) No result is readable for the worked example: the text layer carries \"Performing the calculation yields:\" followed by page furniture (\"123\", \"124\", \"3 - Composition of Substances and Solutions\") and then \"This is consistent with the anticipated result.\" The computed mass never appears in digits. The parenthetical \"(~0.02 g)\" is an explicitly approximate expectation, not the claimed result, and must not be taken as one. (b) The only figure that could be read as an answer, \"14.2 g\", belongs to the Check Your Learning question about 0.443 mol of hydrazine, N2H4 - different substance, different given - so rule 2 bars pairing it with this example's quantities. Treating that pair on its own would still fail, being the same grams-from-moles direction.\n\nAlso note the passage prints no atomic masses; it prints only the composite molar mass 176.124 g/mol and refers to no periodic table values, so atomic_masses could not have been populated honestly even had the direction matched.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "Example 3.7 \"Deriving Grams from Moles for a Compound\": the mass in grams of 1.42 10-4 mol of vitamin C, C6H8O6, whose molar mass is given as 176.124 g/mol."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1958,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 27795.18550300054,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

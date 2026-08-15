@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "3c0a42fc741c666af33604f6a95dea76b9fe7da7091d2b2566172c378d03d610",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "5903f163-5c4b-53a7-972b-68f4b0bbb162",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Example 4.5 \\\"Assigning Oxidation Numbers\\\" asks for oxidation-number assignment to elements in H2S, an ion whose formula the text layer has dropped, and Na2SO4, following the section's numbered guidelines. That is neither a molar conversion (no mass, no molar mass, no amount in moles is sought) nor a mass balance (no chemical equation with reactants, products and coefficients is written, and nothing about conservation of atoms or mass is judged). The Solution states only guideline-derived oxidation numbers (+1 for H, -2 for O, +1 for Na) and the arithmetic that would yield sulfur's oxidation number is carried in display equations the text layer has not preserved. The Check Your Learning \\\"Answer: (a) N, +5; (b) Al, +3; (c) N, -3; (d) P, +5\\\" belongs to a different set of species and is likewise an oxidation-state result, so it cannot supply an asserted value in either registered answer shape. No atomic masses are printed anywhere in the passage. Per rule 4 this is set to no_registered_problem_type rather than bent into mass-balance on the strength of the formulas alone; rule 5 does not apply because no registered type fits in the first place.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Follow the guidelines in this section of the text to assign oxidation numbers to all the elements in the following species: (a) H2S, (b) [ion whose formula is missing from the text layer], (c) Na2SO4.\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "Example 4.5 \"Assigning Oxidation Numbers\" asks for oxidation-number assignment to elements in H2S, an ion whose formula the text layer has dropped, and Na2SO4, following the section's numbered guidelines. That is neither a molar conversion (no mass, no molar mass, no amount in moles is sought) nor a mass balance (no chemical equation with reactants, products and coefficients is written, and nothing about conservation of atoms or mass is judged). The Solution states only guideline-derived oxidation numbers (+1 for H, -2 for O, +1 for Na) and the arithmetic that would yield sulfur's oxidation number is carried in display equations the text layer has not preserved. The Check Your Learning \"Answer: (a) N, +5; (b) Al, +3; (c) N, -3; (d) P, +5\" belongs to a different set of species and is likewise an oxidation-state result, so it cannot supply an asserted value in either registered answer shape. No atomic masses are printed anywhere in the passage. Per rule 4 this is set to no_registered_problem_type rather than bent into mass-balance on the strength of the formulas alone; rule 5 does not apply because no registered type fits in the first place.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "Follow the guidelines in this section of the text to assign oxidation numbers to all the elements in the following species: (a) H2S, (b) [ion whose formula is missing from the text layer], (c) Na2SO4."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 836,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 11965.554506001354,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

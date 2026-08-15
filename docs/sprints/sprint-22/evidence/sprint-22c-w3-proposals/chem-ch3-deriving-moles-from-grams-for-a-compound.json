@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "1319f0833f2d8d690eab9a6923477b22580b45a0e54dff28eeaa98ee62da6fcf",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "1cf64324-a477-54dc-a2e3-af6fb7c1a2ae",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Two independent blockers, either of which is fatal.\\n\\n(1) Unstated kernel input (reason given). The example is a genuine chemistry.molar-conversion: it asks for moles of glycine from a stated mass and the compound's molar mass. The passage states the formula (\\\"C2H5O2N\\\") and the mass (\\\"28.35 g of glycine\\\"), but it prints no atomic masses. The molar-mass derivation is described only in words (\\\"it is computed in the same fashion as its molecular mass... contains 2 moles of carbon, 5 moles of hydrogen, 2 moles of oxygen, and 1 mole of nitrogen\\\") with the actual arithmetic carried in a display equation that the text layer does not carry. The only numeric molar mass present is the approximation \\\"~75 g/mol\\\" inside the estimate sentence, which is neither an atomic-mass table nor an exact stated value, and rule 5 forbids substituting standard atomic weights from my own knowledge. So the required \\\"atomic_masses\\\" map cannot be filled from what this source states.\\n\\n(2) No readable result for this example either. The sentence \\\"Dividing the compound's mass by its molar mass yields:\\\" is followed by a display equation absent from the text layer, so the worked example's own answer never appears in readable digits. The only readable figures are \\\"~0.33 mol\\\", which is explicitly a rough pre-estimate (\\\"the computed result is expected to be a bit greater than one-third of a mole\\\") and not the claimed result, and \\\"0.073 mol\\\", which appears under \\\"Answer:\\\" for the Check Your Learning question about 25 g of sucrose, C12H22O11 \\u2014 a different question with different givens. Rule 2 forbids attaching it to the 28.35 g glycine givens, so `asserted` is left empty and nothing is quoted.\\n\\n`formal_inputs` is left empty rather than partially filled, so no downstream consumer treats an incomplete input set as a runnable case. The stated givens, recorded here only for provenance and not as kernel input, are: formula C2H5O2N, mass 28.35 g.\",\"problem_type\":\"chemistry.molar-conversion\",\"reason\":\"kernel_requires_unstated_input\",\"statement\":\"Example 3.6 (OpenStax Chemistry, Section 3.1, p. 136), \\\"Deriving Moles from Grams for a Compound\\\": how many moles of glycine molecules, molecular formula C2H5O2N, are contained in 28.35 g of glycine?\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "Two independent blockers, either of which is fatal.\n\n(1) Unstated kernel input (reason given). The example is a genuine chemistry.molar-conversion: it asks for moles of glycine from a stated mass and the compound's molar mass. The passage states the formula (\"C2H5O2N\") and the mass (\"28.35 g of glycine\"), but it prints no atomic masses. The molar-mass derivation is described only in words (\"it is computed in the same fashion as its molecular mass... contains 2 moles of carbon, 5 moles of hydrogen, 2 moles of oxygen, and 1 mole of nitrogen\") with the actual arithmetic carried in a display equation that the text layer does not carry. The only numeric molar mass present is the approximation \"~75 g/mol\" inside the estimate sentence, which is neither an atomic-mass table nor an exact stated value, and rule 5 forbids substituting standard atomic weights from my own knowledge. So the required \"atomic_masses\" map cannot be filled from what this source states.\n\n(2) No readable result for this example either. The sentence \"Dividing the compound's mass by its molar mass yields:\" is followed by a display equation absent from the text layer, so the worked example's own answer never appears in readable digits. The only readable figures are \"~0.33 mol\", which is explicitly a rough pre-estimate (\"the computed result is expected to be a bit greater than one-third of a mole\") and not the claimed result, and \"0.073 mol\", which appears under \"Answer:\" for the Check Your Learning question about 25 g of sucrose, C12H22O11 — a different question with different givens. Rule 2 forbids attaching it to the 28.35 g glycine givens, so `asserted` is left empty and nothing is quoted.\n\n`formal_inputs` is left empty rather than partially filled, so no downstream consumer treats an incomplete input set as a runnable case. The stated givens, recorded here only for provenance and not as kernel input, are: formula C2H5O2N, mass 28.35 g.",
+   "problem_type": "chemistry.molar-conversion",
+   "reason": "kernel_requires_unstated_input",
+   "statement": "Example 3.6 (OpenStax Chemistry, Section 3.1, p. 136), \"Deriving Moles from Grams for a Compound\": how many moles of glycine molecules, molecular formula C2H5O2N, are contained in 28.35 g of glycine?"
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 2427,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 32693.365592998816,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

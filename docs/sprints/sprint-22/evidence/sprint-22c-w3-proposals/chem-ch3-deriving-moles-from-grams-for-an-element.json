@@ -1,0 +1,52 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "94c5d66a02e24aa3704519f2c5e989e300596ba17f8d3629f713f43de216e03b",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "60809d5b-eeb6-58ef-9609-178132857df8",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{\"exact_value\":\"0.12\",\"units\":\"mol\"},\"asserted_value_quoted_from_the_passage\":\"0.12 mol K\",\"formal_inputs\":{\"atomic_masses\":{\"K\":\"39.10\"},\"formula\":\"K\",\"mass\":{\"magnitude\":\"4.7\",\"unit\":\"g\"},\"molar_mass_unit\":\"g/mol\"},\"formalisable\":true,\"notes\":\"Worked Example 3.3 asks for an amount in moles from a stated mass and a stated molar mass, which is chemistry.molar-conversion. Both givens are printed in the passage: the mass \\\"4.7 g\\\" of dietary potassium, and the atomic/molar mass of K, which the passage does print as a value (\\\"the atomic mass of K is 39.10 amu, and so its molar mass is 39.10 g/mol\\\") rather than merely referring the reader to the periodic table \\u2014 so rule 5 does not apply. The set-up equation itself did not survive into the document's text layer, but the Solution's discussion restates the result in readable digits: \\\"The calculated magnitude (0.12 mol K)\\\". That is the answer to the worked example's own givens and is what is recorded in asserted, taken exactly as printed and neither rounded nor extended. The trailing \\\"Answer: 0.360 mol\\\" belongs to the Check Your Learning question about 3.24 g of beryllium \\u2014 a different substance and a different mass \\u2014 and is deliberately excluded per rule 2. Page furniture (\\\"Access for free at openstax.org\\\", the running head, the stray quoted unit \\\"mol:\\\") carries no quantities.\",\"problem_type\":\"chemistry.molar-conversion\",\"reason\":\"formalisable\",\"statement\":\"According to nutritional guidelines from the US Department of Agriculture, the estimated average requirement for dietary potassium is 4.7 g. What is the estimated average requirement of potassium in moles?\"}",
+  "structured_output": {
+   "asserted": {
+    "exact_value": "0.12",
+    "units": "mol"
+   },
+   "asserted_value_quoted_from_the_passage": "0.12 mol K",
+   "formal_inputs": {
+    "formula": "K",
+    "atomic_masses": {
+     "K": "39.10"
+    },
+    "mass": {
+     "magnitude": "4.7",
+     "unit": "g"
+    },
+    "molar_mass_unit": "g/mol"
+   },
+   "formalisable": true,
+   "notes": "Worked Example 3.3 asks for an amount in moles from a stated mass and a stated molar mass, which is chemistry.molar-conversion. Both givens are printed in the passage: the mass \"4.7 g\" of dietary potassium, and the atomic/molar mass of K, which the passage does print as a value (\"the atomic mass of K is 39.10 amu, and so its molar mass is 39.10 g/mol\") rather than merely referring the reader to the periodic table — so rule 5 does not apply. The set-up equation itself did not survive into the document's text layer, but the Solution's discussion restates the result in readable digits: \"The calculated magnitude (0.12 mol K)\". That is the answer to the worked example's own givens and is what is recorded in asserted, taken exactly as printed and neither rounded nor extended. The trailing \"Answer: 0.360 mol\" belongs to the Check Your Learning question about 3.24 g of beryllium — a different substance and a different mass — and is deliberately excluded per rule 2. Page furniture (\"Access for free at openstax.org\", the running head, the stray quoted unit \"mol:\") carries no quantities.",
+   "problem_type": "chemistry.molar-conversion",
+   "reason": "formalisable",
+   "statement": "According to nutritional guidelines from the US Department of Agriculture, the estimated average requirement for dietary potassium is 4.7 g. What is the estimated average requirement of potassium in moles?"
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1393,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 18381.66110199927,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

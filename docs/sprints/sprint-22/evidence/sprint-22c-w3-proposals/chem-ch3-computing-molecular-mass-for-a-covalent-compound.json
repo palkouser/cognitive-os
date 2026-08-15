@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "744a840606e7c812e14a5e9a4ec0800bdf74cb0dba833e84c70f200e10669b5a",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "86147b7e-e273-5763-8be7-ab02c2c16149",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"The worked example asks for the molecular (formula) mass in amu of ibuprofen, C13H18O2, from its molecular formula alone. That is a formula-mass computation, which rule 4 names explicitly as outside the two registered types: it is neither a molar conversion (no mass in grams and no molar mass are given, and no amount in moles is sought) nor a mass balance (there is no chemical equation, no reactants or products, no coefficients). Bending it into chemistry.molar-conversion would require inventing a mass and reinterpreting the requested quantity, so it is refused rather than reshaped.\\n\\nTwo further points, recorded but not acted on. First, the passage prints no atomic masses at all, and the Solution's actual arithmetic is missing from the text layer \\u2014 the sentence ends at \\\"is therefore:\\\" with the table or displayed computation not carried through \\u2014 so even the worked example's own numeric result is unreadable here. Second, the only readable result in the passage is \\\"151.16 amu\\\", which appears after \\\"Answer:\\\" and belongs to the Check Your Learning question about acetaminophen, C8H9NO2 \\u2014 a different compound and a different question from the worked example's ibuprofen. Rule 2 forbids pairing that value with the worked example's givens, so it is not asserted, and asserted_value_quoted_from_the_passage is left empty. Had the type been registered, the missing result would independently have blocked the assertion.\\n\\nNo chemistry has been checked or corrected.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"EXAMPLE 3.1, Computing Molecular Mass for a Covalent Compound: ibuprofen, C13H18O2, is a covalent compound and the active ingredient in several popular nonprescription pain medications; the example asks for the molecular mass in amu for this compound, noting that its molecules are composed of 13 carbon atoms, 18 hydrogen atoms, and 2 oxygen atoms.\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "The worked example asks for the molecular (formula) mass in amu of ibuprofen, C13H18O2, from its molecular formula alone. That is a formula-mass computation, which rule 4 names explicitly as outside the two registered types: it is neither a molar conversion (no mass in grams and no molar mass are given, and no amount in moles is sought) nor a mass balance (there is no chemical equation, no reactants or products, no coefficients). Bending it into chemistry.molar-conversion would require inventing a mass and reinterpreting the requested quantity, so it is refused rather than reshaped.\n\nTwo further points, recorded but not acted on. First, the passage prints no atomic masses at all, and the Solution's actual arithmetic is missing from the text layer — the sentence ends at \"is therefore:\" with the table or displayed computation not carried through — so even the worked example's own numeric result is unreadable here. Second, the only readable result in the passage is \"151.16 amu\", which appears after \"Answer:\" and belongs to the Check Your Learning question about acetaminophen, C8H9NO2 — a different compound and a different question from the worked example's ibuprofen. Rule 2 forbids pairing that value with the worked example's givens, so it is not asserted, and asserted_value_quoted_from_the_passage is left empty. Had the type been registered, the missing result would independently have blocked the assertion.\n\nNo chemistry has been checked or corrected.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "EXAMPLE 3.1, Computing Molecular Mass for a Covalent Compound: ibuprofen, C13H18O2, is a covalent compound and the active ingredient in several popular nonprescription pain medications; the example asks for the molecular mass in amu for this compound, noting that its molecules are composed of 13 carbon atoms, 18 hydrogen atoms, and 2 oxygen atoms."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1026,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 14562.325529999725,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

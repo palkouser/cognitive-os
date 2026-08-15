@@ -1,0 +1,727 @@
+{
+ "chapters": [
+  {
+   "body_is_one_chapter": true,
+   "body_pages": [
+    129,
+    159
+   ],
+   "chapter_numbers_seen_in_the_body": [
+    "3"
+   ],
+   "chosen_for": "chemistry.molar-conversion",
+   "number": 3,
+   "review_declares_itself_review": true,
+   "review_pages_excluded": [
+    160,
+    168
+   ],
+   "sections_seen": [
+    "3.1 Formula Mass and the Mole Concept",
+    "3.2 Determining Empirical and Molecular Formulas",
+    "3.3 Molarity",
+    "3.4 Other Units for Solution Concentrations"
+   ],
+   "title": "Composition of Substances and Solutions"
+  },
+  {
+   "body_is_one_chapter": true,
+   "body_pages": [
+    169,
+    205
+   ],
+   "chapter_numbers_seen_in_the_body": [
+    "4"
+   ],
+   "chosen_for": "chemistry.mass-balance",
+   "number": 4,
+   "review_declares_itself_review": true,
+   "review_pages_excluded": [
+    206,
+    218
+   ],
+   "sections_seen": [
+    "4.1 Writing and Balancing Chemical Equations",
+    "4.2 Classifying Chemical Reactions",
+    "4.3 Reaction Stoichiometry",
+    "4.4 Reaction Yields",
+    "4.5 Quantitative Chemical Analysis"
+   ],
+   "title": "Stoichiometry of Chemical Reactions"
+  }
+ ],
+ "counts": {
+  "chapters": 2,
+  "crossing_a_page_boundary": 28,
+  "per_chapter": {
+   "3": 25,
+   "4": 16
+  },
+  "sections_contributing": 10,
+  "with_a_solution_heading": 36,
+  "worked_examples_in_the_bodies": 41
+ },
+ "decides_an_exit_criterion": false,
+ "integrity_content_hash": "9ca302354749722cf4eec6d8dfe4629625b2ba63a9209ed2ae3185b6e2e3cdeb",
+ "items": [
+  "S22C-050"
+ ],
+ "location_rule": {
+  "attributed_to": "the page the marker is on, so an overlapping window collects each passage once",
+  "bytes_are_kept": "page furniture, form feeds and running heads inside a passage are left in the registered bytes. W1: a campaign that cleans its sources cannot afterwards prove what it read",
+  "ends_after": "\\nAnswer:\\n[^\\n]+\\n",
+  "marker": "EXAMPLE <chapter>.<number>",
+  "never": "a character offset typed into a driver; offsets move with pdftotext",
+  "stops": [
+   "EXAMPLE",
+   "FIGURE",
+   "LINK TO LEARNING",
+   "HOW SCIENCES INTERCONNECT",
+   "CHEMISTRY IN EVERYDAY LIFE",
+   "PORTRAIT OF A CHEMIST",
+   "CHEMISTRY IN CONTEXT",
+   "Key Terms",
+   "Key Equations",
+   "Summary",
+   "Exercises"
+  ],
+  "window_pages": 2
+ },
+ "passages": [
+  {
+   "chapter": 3,
+   "characters": 780,
+   "content_hash": "d6ab7e2ee5642966f48ef0d2fe0306ccce38924c4a4d3c02d6abd26b8ec40a2a",
+   "crosses_a_page_boundary": true,
+   "first_page": 130,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch3-computing-molecular-mass-for-a-covalent-compound",
+   "section": "3 Composition of Substances and Solutions",
+   "title": "Computing Molecular Mass for a Covalent Compound",
+   "window": [
+    130,
+    131
+   ]
+  },
+  {
+   "chapter": 3,
+   "characters": 759,
+   "content_hash": "cbe02514625ee82fd2b1cdffc13c6f6087f545d91ffb52fe08bfdcdab434a23f",
+   "crosses_a_page_boundary": false,
+   "first_page": 132,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch3-computing-formula-mass-for-an-ionic-compound",
+   "section": "3.1 Formula Mass and the Mole Concept",
+   "title": "Computing Formula Mass for an Ionic Compound",
+   "window": [
+    132,
+    133
+   ]
+  },
+  {
+   "chapter": 3,
+   "characters": 1271,
+   "content_hash": "2d8ab1dd06198aec24804841b2742751bf99f222eec0cfcf4c691533dfba8ead",
+   "crosses_a_page_boundary": true,
+   "first_page": 134,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch3-deriving-moles-from-grams-for-an-element",
+   "section": "3.1 Formula Mass and the Mole Concept",
+   "title": "Deriving Moles from Grams for an Element",
+   "window": [
+    134,
+    135
+   ]
+  },
+  {
+   "chapter": 3,
+   "characters": 820,
+   "content_hash": "39ff7df393fb9552f194ad75eea7cbe04de5a93d8c5c1403cc6894a3f3c38969",
+   "crosses_a_page_boundary": false,
+   "first_page": 135,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch3-deriving-grams-from-moles-for-an-element",
+   "section": "3.1 Formula Mass and the Mole Concept",
+   "title": "Deriving Grams from Moles for an Element",
+   "window": [
+    135,
+    136
+   ]
+  },
+  {
+   "chapter": 3,
+   "characters": 237,
+   "content_hash": "19adf5b6ffab12383234105f9c245323ed8404f1b25cb52e07157f8c15616d6f",
+   "crosses_a_page_boundary": true,
+   "first_page": 135,
+   "has_a_solution_heading": false,
+   "passage_id": "chem-ch3-deriving-number-of-atoms-from-mass-for-an-element",
+   "section": "3.1 Formula Mass and the Mole Concept",
+   "title": "Deriving Number of Atoms from Mass for an Element",
+   "window": [
+    135,
+    136
+   ]
+  },
+  {
+   "chapter": 3,
+   "characters": 1105,
+   "content_hash": "a58567f2487a2cf731943cf698d8500164793a28f3834d4f78a7c868b0a582cf",
+   "crosses_a_page_boundary": true,
+   "first_page": 136,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch3-deriving-moles-from-grams-for-a-compound",
+   "section": "3.1 Formula Mass and the Mole Concept",
+   "title": "Deriving Moles from Grams for a Compound",
+   "window": [
+    136,
+    137
+   ]
+  },
+  {
+   "chapter": 3,
+   "characters": 850,
+   "content_hash": "6d117faed9adb8796655bacdbe7a573949003d418f350ed496a18f1a7ea7bcf9",
+   "crosses_a_page_boundary": true,
+   "first_page": 137,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch3-deriving-grams-from-moles-for-a-compound",
+   "section": "3.1 Formula Mass and the Mole Concept",
+   "title": "Deriving Grams from Moles for a Compound",
+   "window": [
+    137,
+    138
+   ]
+  },
+  {
+   "chapter": 3,
+   "characters": 886,
+   "content_hash": "b25c7429b02c804f4505afbfd10e920e0aff6069673d24e56c47f961cd22bfff",
+   "crosses_a_page_boundary": false,
+   "first_page": 138,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch3-deriving-the-number-of-atoms-and-molecules-from-the-mass-of-a-compound",
+   "section": "3.1 Formula Mass and the Mole Concept",
+   "title": "Deriving the Number of Atoms and Molecules from the Mass of a Compound",
+   "window": [
+    138,
+    139
+   ]
+  },
+  {
+   "chapter": 3,
+   "characters": 751,
+   "content_hash": "34ae5f7a258949f58056f3ac8dbd02a6983f0a13beb98ef3b1d23a422de1de75",
+   "crosses_a_page_boundary": false,
+   "first_page": 141,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch3-calculation-of-percent-composition",
+   "section": "3.2 Determining Empirical and Molecular Formulas",
+   "title": "Calculation of Percent Composition",
+   "window": [
+    141,
+    142
+   ]
+  },
+  {
+   "chapter": 3,
+   "characters": 708,
+   "content_hash": "4e9805670c8ebee8081a386e5c2014637b6c0737ea751bb78a33c83e74a8b417",
+   "crosses_a_page_boundary": true,
+   "first_page": 141,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch3-determining-percent-composition-from-a-molecular-formula",
+   "section": "3.2 Determining Empirical and Molecular Formulas",
+   "title": "Determining Percent Composition from a Molecular Formula",
+   "window": [
+    141,
+    142
+   ]
+  },
+  {
+   "chapter": 3,
+   "characters": 275,
+   "content_hash": "7dfaacd16b4b20cea992d6c044952a30351a0146536d2505ba472bebe7743ff3",
+   "crosses_a_page_boundary": false,
+   "first_page": 143,
+   "has_a_solution_heading": false,
+   "passage_id": "chem-ch3-determining-a-compound-s-empirical-formula-from-the-masses-of-its-elements",
+   "section": "3.2 Determining Empirical and Molecular Formulas",
+   "title": "Determining a Compound’s Empirical Formula from the Masses of Its Elements",
+   "window": [
+    143,
+    144
+   ]
+  },
+  {
+   "chapter": 3,
+   "characters": 335,
+   "content_hash": "029fa03e73feb6d85f8c2ff7fe4ef528a0c0cc754364b95436a55d6021290b2f",
+   "crosses_a_page_boundary": true,
+   "first_page": 144,
+   "has_a_solution_heading": false,
+   "passage_id": "chem-ch3-determining-an-empirical-formula-from-percent-composition",
+   "section": "3.2 Determining Empirical and Molecular Formulas",
+   "title": "Determining an Empirical Formula from Percent Composition",
+   "window": [
+    144,
+    145
+   ]
+  },
+  {
+   "chapter": 3,
+   "characters": 1545,
+   "content_hash": "389c4aab2b2df32d7edc6e70bcb7cd01914004e88ea5cb882419b52ea7a8b6f0",
+   "crosses_a_page_boundary": true,
+   "first_page": 146,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch3-determination-of-the-molecular-formula-for-nicotine",
+   "section": "3.2 Determining Empirical and Molecular Formulas",
+   "title": "Determination of the Molecular Formula for Nicotine",
+   "window": [
+    146,
+    147
+   ]
+  },
+  {
+   "chapter": 3,
+   "characters": 662,
+   "content_hash": "268eee544ec6122dd20db226fcfa93835a93861560d1413be20abb011035c50e",
+   "crosses_a_page_boundary": true,
+   "first_page": 148,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch3-calculating-molar-concentrations",
+   "section": "3.3 Molarity",
+   "title": "Calculating Molar Concentrations",
+   "window": [
+    148,
+    149
+   ]
+  },
+  {
+   "chapter": 3,
+   "characters": 512,
+   "content_hash": "b408ebd9b7209c21170550e121f2f933b822f5f76869ae80f86b4fc09170cf03",
+   "crosses_a_page_boundary": false,
+   "first_page": 149,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch3-deriving-moles-and-volumes-from-molar-concentrations",
+   "section": "3.3 Molarity",
+   "title": "Deriving Moles and Volumes from Molar Concentrations",
+   "window": [
+    149,
+    150
+   ]
+  },
+  {
+   "chapter": 3,
+   "characters": 348,
+   "content_hash": "f3ffef3f5cb03cd3c8bb4ce8b54cddc818acfdb6625fb69cd808d825af785480",
+   "crosses_a_page_boundary": true,
+   "first_page": 149,
+   "has_a_solution_heading": false,
+   "passage_id": "chem-ch3-calculating-molar-concentrations-from-the-mass-of-solute",
+   "section": "3.3 Molarity",
+   "title": "Calculating Molar Concentrations from the Mass of Solute",
+   "window": [
+    149,
+    150
+   ]
+  },
+  {
+   "chapter": 3,
+   "characters": 554,
+   "content_hash": "88bbc43579aa42573246ed0e51283de07c85c8f73beb273baba8fd2f7730aa13",
+   "crosses_a_page_boundary": true,
+   "first_page": 150,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch3-determining-the-mass-of-solute-in-a-given-volume-of-solution",
+   "section": "3.3 Molarity",
+   "title": "Determining the Mass of Solute in a Given Volume of Solution",
+   "window": [
+    150,
+    151
+   ]
+  },
+  {
+   "chapter": 3,
+   "characters": 636,
+   "content_hash": "c5c9d42a2cd878a5cdf145a49b2778a1354275ad818e8fc30454ca7da00ca923",
+   "crosses_a_page_boundary": true,
+   "first_page": 151,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch3-determining-the-volume-of-solution-containing-a-given-mass-of-solute",
+   "section": "3.3 Molarity",
+   "title": "Determining the Volume of Solution Containing a Given Mass of Solute",
+   "window": [
+    151,
+    152
+   ]
+  },
+  {
+   "chapter": 3,
+   "characters": 1196,
+   "content_hash": "890c1758456f3e956137c19f32b460800529f1376ac18c9d5b7731f16bcf0435",
+   "crosses_a_page_boundary": false,
+   "first_page": 153,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch3-determining-the-concentration-of-a-diluted-solution",
+   "section": "3.3 Molarity",
+   "title": "Determining the Concentration of a Diluted Solution",
+   "window": [
+    153,
+    154
+   ]
+  },
+  {
+   "chapter": 3,
+   "characters": 990,
+   "content_hash": "8de52ed0da3157a00cb65c6931ea75944ddfb158c95da5fc6a85412686817693",
+   "crosses_a_page_boundary": true,
+   "first_page": 153,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch3-volume-of-a-diluted-solution",
+   "section": "3.3 Molarity",
+   "title": "Volume of a Diluted Solution",
+   "window": [
+    153,
+    154
+   ]
+  },
+  {
+   "chapter": 3,
+   "characters": 972,
+   "content_hash": "bddfa33709679546b15d51ba41064611492e3125a68ffa6697a4627f0199e03c",
+   "crosses_a_page_boundary": false,
+   "first_page": 154,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch3-volume-of-a-concentrated-solution-needed-for-dilution",
+   "section": "3.3 Molarity",
+   "title": "Volume of a Concentrated Solution Needed for Dilution",
+   "window": [
+    154,
+    155
+   ]
+  },
+  {
+   "chapter": 3,
+   "characters": 1304,
+   "content_hash": "b568db465a4d01ab82f56324abbb547c12f175e0aacd85a5494809e50c6930e4",
+   "crosses_a_page_boundary": true,
+   "first_page": 155,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch3-calculation-of-percent-by-mass",
+   "section": "3.4 Other Units for Solution Concentrations",
+   "title": "Calculation of Percent by Mass",
+   "window": [
+    155,
+    156
+   ]
+  },
+  {
+   "chapter": 3,
+   "characters": 1250,
+   "content_hash": "11c9c3a9eec38237d1e9d99cf81aca186a6a9cc34a75ac6c4649f086510c215d",
+   "crosses_a_page_boundary": false,
+   "first_page": 156,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch3-calculations-using-mass-percentage",
+   "section": "3.4 Other Units for Solution Concentrations",
+   "title": "Calculations using Mass Percentage",
+   "window": [
+    156,
+    157
+   ]
+  },
+  {
+   "chapter": 3,
+   "characters": 684,
+   "content_hash": "7f20a6322ca833d9c71e335b55b9889e0499483a9350cbb639501ba3a0bae9fc",
+   "crosses_a_page_boundary": false,
+   "first_page": 157,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch3-calculations-using-volume-percentage",
+   "section": "3.4 Other Units for Solution Concentrations",
+   "title": "Calculations using Volume Percentage",
+   "window": [
+    157,
+    158
+   ]
+  },
+  {
+   "chapter": 3,
+   "characters": 1406,
+   "content_hash": "1963c8d035fd2d8923b9db5b2fc71cc9e40488c4d2592f4ecccea8d981a0ec99",
+   "crosses_a_page_boundary": true,
+   "first_page": 158,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch3-calculation-of-parts-per-million-and-parts-per-billion-concentrations",
+   "section": "3.4 Other Units for Solution Concentrations",
+   "title": "Calculation of Parts per Million and Parts per Billion Concentrations",
+   "window": [
+    158,
+    159
+   ]
+  },
+  {
+   "chapter": 4,
+   "characters": 2749,
+   "content_hash": "147ff7e35c8afc88a71639ac9efc7a5e6526e42723dbd530098c887d57ba1476",
+   "crosses_a_page_boundary": true,
+   "first_page": 172,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch4-balancing-chemical-equations",
+   "section": "4.1 Writing and Balancing Chemical Equations",
+   "title": "Balancing Chemical Equations",
+   "window": [
+    172,
+    173
+   ]
+  },
+  {
+   "chapter": 4,
+   "characters": 4138,
+   "content_hash": "b0f5cf5514d12da8221a12965ee7aeb79fda3df703d6112fa16c1b964ffdbb63",
+   "crosses_a_page_boundary": true,
+   "first_page": 175,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch4-ionic-and-molecular-equations",
+   "section": "4.1 Writing and Balancing Chemical Equations",
+   "title": "Ionic and Molecular Equations",
+   "window": [
+    175,
+    176
+   ]
+  },
+  {
+   "chapter": 4,
+   "characters": 1495,
+   "content_hash": "993f3146b6cdb015e69b0caefa672007f1e98ba1490572fbcdf3a8f3b1ab603f",
+   "crosses_a_page_boundary": true,
+   "first_page": 178,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch4-predicting-precipitation-reactions",
+   "section": "4.2 Classifying Chemical Reactions",
+   "title": "Predicting Precipitation Reactions",
+   "window": [
+    178,
+    179
+   ]
+  },
+  {
+   "chapter": 4,
+   "characters": 1156,
+   "content_hash": "c6ce4a919f71404aa5b14f0c4ad3a073a219a971b88ff9c04c4484c7978cfa73",
+   "crosses_a_page_boundary": true,
+   "first_page": 181,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch4-writing-equations-for-acid-base-reactions",
+   "section": "4.2 Classifying Chemical Reactions",
+   "title": "Writing Equations for Acid-Base Reactions",
+   "window": [
+    181,
+    182
+   ]
+  },
+  {
+   "chapter": 4,
+   "characters": 1180,
+   "content_hash": "0c9452cc1e1088fb736ed4da28b3f78c6e3991908e751853abea76be88166ff2",
+   "crosses_a_page_boundary": true,
+   "first_page": 184,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch4-assigning-oxidation-numbers",
+   "section": "4.2 Classifying Chemical Reactions",
+   "title": "Assigning Oxidation Numbers",
+   "window": [
+    184,
+    185
+   ]
+  },
+  {
+   "chapter": 4,
+   "characters": 1935,
+   "content_hash": "37cf10e1b06d8719625514db4b868efd045272f1adcb9457df9b2598ecc9ff6f",
+   "crosses_a_page_boundary": true,
+   "first_page": 186,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch4-describing-redox-reactions",
+   "section": "4.2 Classifying Chemical Reactions",
+   "title": "Describing Redox Reactions",
+   "window": [
+    186,
+    187
+   ]
+  },
+  {
+   "chapter": 4,
+   "characters": 3910,
+   "content_hash": "acdd8673c070ebe7534d61fe96c077ec555562032cba4878f3b31df1149762ab",
+   "crosses_a_page_boundary": true,
+   "first_page": 188,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch4-balancing-redox-reactions-in-acidic-solution",
+   "section": "4.2 Classifying Chemical Reactions",
+   "title": "Balancing Redox Reactions in Acidic Solution",
+   "window": [
+    188,
+    189
+   ]
+  },
+  {
+   "chapter": 4,
+   "characters": 172,
+   "content_hash": "13da6b20558a5488a065e9f2533aa57eb349fd3ac98920051f3ff6f0bfa7eeea",
+   "crosses_a_page_boundary": false,
+   "first_page": 190,
+   "has_a_solution_heading": false,
+   "passage_id": "chem-ch4-moles-of-reactant-required-in-a-reaction",
+   "section": "4.3 Reaction Stoichiometry",
+   "title": "Moles of Reactant Required in a Reaction",
+   "window": [
+    190,
+    191
+   ]
+  },
+  {
+   "chapter": 4,
+   "characters": 750,
+   "content_hash": "dc8f731c83844404ea7c40aea612077e8d594e06d92c80e175b56ca32abe18a3",
+   "crosses_a_page_boundary": false,
+   "first_page": 191,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch4-number-of-product-molecules-generated-by-a-reaction",
+   "section": "4.3 Reaction Stoichiometry",
+   "title": "Number of Product Molecules Generated by a Reaction",
+   "window": [
+    191,
+    192
+   ]
+  },
+  {
+   "chapter": 4,
+   "characters": 890,
+   "content_hash": "710b1decce215dad202eadeb775ebba93deb59d7f39b943414bcd63bfbd8f082",
+   "crosses_a_page_boundary": true,
+   "first_page": 191,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch4-relating-masses-of-reactants-and-products",
+   "section": "4.3 Reaction Stoichiometry",
+   "title": "Relating Masses of Reactants and Products",
+   "window": [
+    191,
+    192
+   ]
+  },
+  {
+   "chapter": 4,
+   "characters": 534,
+   "content_hash": "838284708d08f3453c60dfcf9ddcd69c3b72e4c39934e5d23915973a94923536",
+   "crosses_a_page_boundary": true,
+   "first_page": 192,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch4-relating-masses-of-reactants",
+   "section": "4.3 Reaction Stoichiometry",
+   "title": "Relating Masses of Reactants",
+   "window": [
+    192,
+    193
+   ]
+  },
+  {
+   "chapter": 4,
+   "characters": 1095,
+   "content_hash": "c8ed9aab931f60e5eb2f10262c13a8673873a9ed3e9cf2f52e6276f381d9a0ab",
+   "crosses_a_page_boundary": true,
+   "first_page": 196,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch4-identifying-the-limiting-reactant",
+   "section": "4.4 Reaction Yields",
+   "title": "Identifying the Limiting Reactant",
+   "window": [
+    196,
+    197
+   ]
+  },
+  {
+   "chapter": 4,
+   "characters": 706,
+   "content_hash": "d9ed8b2c51d0253a57a0af869eac424d86152f06c66772f57bdf88a95906d1f7",
+   "crosses_a_page_boundary": true,
+   "first_page": 197,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch4-calculation-of-percent-yield",
+   "section": "4.4 Reaction Yields",
+   "title": "Calculation of Percent Yield",
+   "window": [
+    197,
+    198
+   ]
+  },
+  {
+   "chapter": 4,
+   "characters": 1485,
+   "content_hash": "c28474d4b7a3ee74ca94e3970592275574f975fdceae630bb7c5350022d7b61d",
+   "crosses_a_page_boundary": true,
+   "first_page": 200,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch4-titration-analysis",
+   "section": "4.5 Quantitative Chemical Analysis",
+   "title": "Titration Analysis",
+   "window": [
+    200,
+    201
+   ]
+  },
+  {
+   "chapter": 4,
+   "characters": 924,
+   "content_hash": "c93d5e6e706ba432c2be8343e043ba30437fee5b7d79c83ce1f6f34957d50840",
+   "crosses_a_page_boundary": false,
+   "first_page": 203,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch4-gravimetric-analysis",
+   "section": "4.5 Quantitative Chemical Analysis",
+   "title": "Gravimetric Analysis",
+   "window": [
+    203,
+    204
+   ]
+  },
+  {
+   "chapter": 4,
+   "characters": 1496,
+   "content_hash": "14129df27bfe70bdc94523526fce2fe83a77190b7038b365295b507f35334fa2",
+   "crosses_a_page_boundary": true,
+   "first_page": 204,
+   "has_a_solution_heading": true,
+   "passage_id": "chem-ch4-combustion-analysis",
+   "section": "4.5 Quantitative Chemical Analysis",
+   "title": "Combustion Analysis",
+   "window": [
+    204,
+    205
+   ]
+  }
+ ],
+ "recorded_at": "2026-08-15T09:59:02Z",
+ "schema_version": 1,
+ "source": {
+  "attribution_required": "\"Access for free at openstax.org.\"",
+  "domain_id": "science.chemistry",
+  "file_name": "chemistry-2e_-_WEB.pdf",
+  "license_identifier": "CC-BY-NC-SA-4.0",
+  "source_content_hash": "fd89db1b8a1fee06b8ad3e8982f4f4b34bde4e93654a4ce28b724f8c0efe98d6",
+  "verified_against_the_clearance": true
+ },
+ "sprint": "22C",
+ "wave": "W3",
+ "what_this_record_does_not_decide": [
+  "whether a passage can be formalised — the provider proposes that, and the record of what it proposed is the cycle's",
+  "whether a passage's asserted answer survived into the text layer, which is the question the cross-check answers with the domain's own kernel",
+  "which passages are acquired. A reader that pre-filtered its inventory would answer the yield question before the pipeline ran"
+ ],
+ "why_no_exit": "this is an inventory of what the chapter contains, not a measurement of what the pipeline did with it. Every 22C exit is read from the cycle records",
+ "why_the_review_is_excluded": "Chapter Review and Test Prep are exercises with no worked solutions, so nothing in them can be recomputed by a kernel. Counting them would inflate the denominator of the acquisition yield this campaign publishes",
+ "why_these_chapters": "S22C-020 names chapters 3 and 4 of this source for science.chemistry, one per registered problem type: 3 for molar conversion and 4 for mass balance. Cycle 2 takes both, for the reason W2-F1 made concrete — a yield read from one chapter is a statement about one problem type"
+}

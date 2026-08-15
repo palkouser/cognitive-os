@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "94e1b61f4a960ac7069ee0cd78ae487973325ce162c6cd36f2d176b2bac49cd2",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "f88bea85-49db-575c-b3ed-709dbde38688",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Example 4.13 is titled \\\"Calculation of Percent Yield\\\" and asks \\\"What is the percent yield?\\\" from an actual yield (0.392 g copper) against a theoretical yield computed from 1.274 g of copper sulfate. Percent yield is not one of the two types science.chemistry registers, so rule 4 applies and it must not be bent into either.\\n\\nIt is not chemistry.molar-conversion: although a mass is given, the question asked is a yield ratio, not an amount in moles, and no molar mass or atomic mass is printed anywhere in the text layer.\\n\\nIt is not chemistry.mass-balance: the equation is referred to (\\\"according to the equation:\\\") but the equation itself is a dropped image \\u2014 the text layer carries no formulas or coefficients, so there are no reactants/products to formalise, and no atomic_masses are printed either.\\n\\nTwo further points bearing on rules 2 and 3. The worked example's own numeric result is not readable: both the theoretical-yield calculation and the percent-yield calculation are dropped display equations (\\\"as shown here:\\\" and \\\"the percent yield is calculated to be\\\" are both followed by nothing). The only readable result in the passage is \\\"48.3%\\\", which is the Answer to the Check Your Learning question about CF2Cl2 from 32.9 g of CCl4 \\u2014 a different question with different givens, so under rule 2 it must not be attached to Example 4.13's 1.274 g / 0.392 g. `asserted` is therefore left empty rather than filled from that value. The page furniture (\\\"183\\\", \\\"184\\\", \\\"4 \\u2022 Stoichiometry of Chemical Reactions\\\") carries no quantities.\\n\\nThe primary reason is the unregistered problem type; the missing result and missing equation are recorded here only so the refusal is not mistaken for a text-layer defect that a better scan would fix.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"EXAMPLE 4.13, Calculation of Percent Yield (Section 4.4 Reaction Yields, page 197): upon reaction of 1.274 g of copper sulfate with excess zinc metal, 0.392 g copper metal was obtained according to the given equation; what is the percent yield?\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "Example 4.13 is titled \"Calculation of Percent Yield\" and asks \"What is the percent yield?\" from an actual yield (0.392 g copper) against a theoretical yield computed from 1.274 g of copper sulfate. Percent yield is not one of the two types science.chemistry registers, so rule 4 applies and it must not be bent into either.\n\nIt is not chemistry.molar-conversion: although a mass is given, the question asked is a yield ratio, not an amount in moles, and no molar mass or atomic mass is printed anywhere in the text layer.\n\nIt is not chemistry.mass-balance: the equation is referred to (\"according to the equation:\") but the equation itself is a dropped image — the text layer carries no formulas or coefficients, so there are no reactants/products to formalise, and no atomic_masses are printed either.\n\nTwo further points bearing on rules 2 and 3. The worked example's own numeric result is not readable: both the theoretical-yield calculation and the percent-yield calculation are dropped display equations (\"as shown here:\" and \"the percent yield is calculated to be\" are both followed by nothing). The only readable result in the passage is \"48.3%\", which is the Answer to the Check Your Learning question about CF2Cl2 from 32.9 g of CCl4 — a different question with different givens, so under rule 2 it must not be attached to Example 4.13's 1.274 g / 0.392 g. `asserted` is therefore left empty rather than filled from that value. The page furniture (\"183\", \"184\", \"4 • Stoichiometry of Chemical Reactions\") carries no quantities.\n\nThe primary reason is the unregistered problem type; the missing result and missing equation are recorded here only so the refusal is not mistaken for a text-layer defect that a better scan would fix.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "EXAMPLE 4.13, Calculation of Percent Yield (Section 4.4 Reaction Yields, page 197): upon reaction of 1.274 g of copper sulfate with excess zinc metal, 0.392 g copper metal was obtained according to the given equation; what is the percent yield?"
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1170,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 16793.37516600026,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

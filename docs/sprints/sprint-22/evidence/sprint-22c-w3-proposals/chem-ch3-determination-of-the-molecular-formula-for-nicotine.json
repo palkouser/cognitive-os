@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "802ee38d56dea9b9b332c24ac716d2fc4e61b50712f8a1d1a5c56979d599b012",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "6d17eb26-fcbb-5c37-9095-ae266f16a30b",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Example 3.13 asks for a molecular formula derived from percent composition (74.02% C, 8.710% H, 17.27% N) plus a molar mass obtained from 40.57 g / 0.2500 mol. Its worked chain is: percent composition -> empirical formula (C5H7N) -> empirical formula mass (81.13 amu) -> molar mass -> whole-number multiplier -> molecular formula. That is an empirical/molecular formula determination, which rule 4 lists explicitly as unregistered, so it is set aside rather than bent into a registered type.\\n\\nTwo near-fits were considered and rejected. (a) chemistry.molar-conversion: the passage does contain the pair 40.57 g and 0.2500 mol, but it uses them in the opposite direction \\u2014 dividing mass by amount to obtain a molar mass \\u2014 and the registered type computes an amount in moles from a stated mass and molar mass. No molar mass is given; it is the intermediate result. Formalising it would require taking a quantity from the answer side, which rule 1 forbids. (b) chemistry.mass-balance: no chemical equation appears at all.\\n\\nThe Check Your Learning answer C8H10N4O2 belongs to a different compound and a different question, and per rule 2 is not carried as the worked example's asserted result. The worked example's own final molecular formula is never printed in this text layer \\u2014 the sentence \\\"derive the molecular formula for nicotine from the empirical formula by multiplying each subscript by two:\\\" ends in a colon and the formula that follows was carried in a display element the text layer does not include. So even under a hypothetical registered formula type there would be no readable result for the example's own givens; the primary and sufficient reason remains no_registered_problem_type.\\n\\nNo atomic masses are printed anywhere in the passage; 81.13 amu is an empirical formula mass, not a per-element value.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Nicotine contains 74.02% C, 8.710% H, and 17.27% N. If 40.57 g of nicotine contains 0.2500 mol nicotine, what is the molecular formula?\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "Example 3.13 asks for a molecular formula derived from percent composition (74.02% C, 8.710% H, 17.27% N) plus a molar mass obtained from 40.57 g / 0.2500 mol. Its worked chain is: percent composition -> empirical formula (C5H7N) -> empirical formula mass (81.13 amu) -> molar mass -> whole-number multiplier -> molecular formula. That is an empirical/molecular formula determination, which rule 4 lists explicitly as unregistered, so it is set aside rather than bent into a registered type.\n\nTwo near-fits were considered and rejected. (a) chemistry.molar-conversion: the passage does contain the pair 40.57 g and 0.2500 mol, but it uses them in the opposite direction — dividing mass by amount to obtain a molar mass — and the registered type computes an amount in moles from a stated mass and molar mass. No molar mass is given; it is the intermediate result. Formalising it would require taking a quantity from the answer side, which rule 1 forbids. (b) chemistry.mass-balance: no chemical equation appears at all.\n\nThe Check Your Learning answer C8H10N4O2 belongs to a different compound and a different question, and per rule 2 is not carried as the worked example's asserted result. The worked example's own final molecular formula is never printed in this text layer — the sentence \"derive the molecular formula for nicotine from the empirical formula by multiplying each subscript by two:\" ends in a colon and the formula that follows was carried in a display element the text layer does not include. So even under a hypothetical registered formula type there would be no readable result for the example's own givens; the primary and sufficient reason remains no_registered_problem_type.\n\nNo atomic masses are printed anywhere in the passage; 81.13 amu is an empirical formula mass, not a per-element value.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "Nicotine contains 74.02% C, 8.710% H, and 17.27% N. If 40.57 g of nicotine contains 0.2500 mol nicotine, what is the molecular formula?"
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1144,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 16265.895132000878,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

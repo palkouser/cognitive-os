@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "af72250155ba177e0dff696c7f2260c989c7880ffb9e1b83c1b346d227d3bc93",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "1ab1dd6e-fceb-5f80-9782-26507b6cd72b",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Problem type: this is a whole-atom-balance example, so chemistry.mass-balance is the fitting registered type \\u2014 not a formula mass, percent composition, or any unregistered kind. It is therefore not a rule-4 refusal.\\n\\nBlocking gap (rule 5): the chemistry.mass-balance formal_inputs require atomic_masses, and this passage prints no atomic mass for N or O anywhere \\u2014 not in the prose, not in the atom-count tables (whose cells hold atom counts such as \\\"2 = 2\\\" and \\\"10 = 10\\\", not masses), not in the page furniture. The kernel demands the value even though the balanced/not-balanced verdict never consumes it. Supplying 14.007 and 15.999 from my own knowledge would report what I know rather than what this source states, so I decline; reason kernel_requires_unstated_input.\\n\\nSecondary gap, independent of the above: the equations themselves are images and the document's text layer does not carry them. Every line that would print a formula with its coefficient (\\\"First, write the unbalanced equation.\\\" followed by nothing; the provisional and final ethane equations; the ammonia equation) is empty in the extracted text. The reactant and product formulas and coefficients could only be reconstructed by reading the prose (\\\"molecular nitrogen (N2) and oxygen (O2) ... dinitrogen pentoxide\\\") together with the arithmetic in the tables \\u2014 that is inference, not a stated formal input, and I have not done it.\\n\\nAsserted result left empty. The passage does state the worked example's own verdict in words \\u2014 \\\"The numbers of N and O atoms on either side of the equation are now equal, and so the equation is balanced.\\\" \\u2014 but with formal_inputs unfillable there are no givens for that verdict to attach to, so recording it would produce a claim the kernel cannot recompute. Note also that the Check Your Learning \\\"Answer:\\\" here is an image and is blank in the text layer; there was no risk of mixing it in, and it must not be substituted for the worked example's own result in any case (rule 2). The ammonium nitrate decomposition of Check Your Learning, and the ethane combustion and ammonia synthesis discussed later on the page, are separate problems and not part of this example's givens.\",\"problem_type\":\"chemistry.mass-balance\",\"reason\":\"kernel_requires_unstated_input\",\"statement\":\"EXAMPLE 4.1, Balancing Chemical Equations: \\\"Write a balanced equation for the reaction of molecular nitrogen (N2) and oxygen (O2) to form dinitrogen pentoxide.\\\" The Solution balances by inspection, ending with a coefficient set the tables record as N: 2\\u00d72=4 = 2\\u00d72=4 and O: 5\\u00d72=10 = 2\\u00d75=10, and concludes that the equation is balanced.\"}",
+  "structured_output": {
+   "statement": "EXAMPLE 4.1, Balancing Chemical Equations: \"Write a balanced equation for the reaction of molecular nitrogen (N2) and oxygen (O2) to form dinitrogen pentoxide.\" The Solution balances by inspection, ending with a coefficient set the tables record as N: 2×2=4 = 2×2=4 and O: 5×2=10 = 2×5=10, and concludes that the equation is balanced.",
+   "formalisable": false,
+   "reason": "kernel_requires_unstated_input",
+   "problem_type": "chemistry.mass-balance",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "Problem type: this is a whole-atom-balance example, so chemistry.mass-balance is the fitting registered type — not a formula mass, percent composition, or any unregistered kind. It is therefore not a rule-4 refusal.\n\nBlocking gap (rule 5): the chemistry.mass-balance formal_inputs require atomic_masses, and this passage prints no atomic mass for N or O anywhere — not in the prose, not in the atom-count tables (whose cells hold atom counts such as \"2 = 2\" and \"10 = 10\", not masses), not in the page furniture. The kernel demands the value even though the balanced/not-balanced verdict never consumes it. Supplying 14.007 and 15.999 from my own knowledge would report what I know rather than what this source states, so I decline; reason kernel_requires_unstated_input.\n\nSecondary gap, independent of the above: the equations themselves are images and the document's text layer does not carry them. Every line that would print a formula with its coefficient (\"First, write the unbalanced equation.\" followed by nothing; the provisional and final ethane equations; the ammonia equation) is empty in the extracted text. The reactant and product formulas and coefficients could only be reconstructed by reading the prose (\"molecular nitrogen (N2) and oxygen (O2) ... dinitrogen pentoxide\") together with the arithmetic in the tables — that is inference, not a stated formal input, and I have not done it.\n\nAsserted result left empty. The passage does state the worked example's own verdict in words — \"The numbers of N and O atoms on either side of the equation are now equal, and so the equation is balanced.\" — but with formal_inputs unfillable there are no givens for that verdict to attach to, so recording it would produce a claim the kernel cannot recompute. Note also that the Check Your Learning \"Answer:\" here is an image and is blank in the text layer; there was no risk of mixing it in, and it must not be substituted for the worked example's own result in any case (rule 2). The ammonium nitrate decomposition of Check Your Learning, and the ethane combustion and ammonia synthesis discussed later on the page, are separate problems and not part of this example's givens."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 2365,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 34054.54609100161,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

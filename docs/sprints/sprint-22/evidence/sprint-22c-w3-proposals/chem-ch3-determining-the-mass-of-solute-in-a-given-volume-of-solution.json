@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "e06ab103e3e415e1a00a4633917eb5da885d3925d3e9ce1450a92cc6c87e845e",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "35dcae26-03d2-50c5-bf83-4bcce994e703",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"The example computes a solute mass from a solution volume and a molarity (0.250 L of 5.30 M NaCl). That is a molarity/solution-stoichiometry problem, which rule 4 lists explicitly as outside the two registered types; the molar-conversion kernel takes a mass and a molar mass, not a volume and a concentration, so bending it into that type would require substituting quantities the passage does not present in that role. Two further facts independently block formalisation even if the type were forced: (a) the worked example's own arithmetic and its result are carried only in display equations that the document's text layer does not reproduce \\u2014 after \\\"the amount (mol) of solute is easily computed as demonstrated in Example 3.15:\\\" and \\\"this molar amount is used to derive the mass of NaCl:\\\" nothing readable follows, so no result for the NaCl question can be quoted; (b) the only printed result, \\\"5.55 g CaCl2\\\", is the Answer to the Check Your Learning question about CaCl2 in 250.0 mL of 0.200-M solution, a different question with different givens, and rule 2 forbids pairing it with the worked example's givens. The passage prints one molar mass, 110.98 g/mol, but it belongs to the Check Your Learning item, not to the worked example; no atomic masses are printed anywhere.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"EXAMPLE 3.17 \\u2014 Determining the Mass of Solute in a Given Volume of Solution: \\\"How many grams of NaCl are contained in 0.250 L of a 5.30-M solution?\\\"\"}",
+  "structured_output": {
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "problem_type": "",
+   "statement": "EXAMPLE 3.17 — Determining the Mass of Solute in a Given Volume of Solution: \"How many grams of NaCl are contained in 0.250 L of a 5.30-M solution?\"",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "The example computes a solute mass from a solution volume and a molarity (0.250 L of 5.30 M NaCl). That is a molarity/solution-stoichiometry problem, which rule 4 lists explicitly as outside the two registered types; the molar-conversion kernel takes a mass and a molar mass, not a volume and a concentration, so bending it into that type would require substituting quantities the passage does not present in that role. Two further facts independently block formalisation even if the type were forced: (a) the worked example's own arithmetic and its result are carried only in display equations that the document's text layer does not reproduce — after \"the amount (mol) of solute is easily computed as demonstrated in Example 3.15:\" and \"this molar amount is used to derive the mass of NaCl:\" nothing readable follows, so no result for the NaCl question can be quoted; (b) the only printed result, \"5.55 g CaCl2\", is the Answer to the Check Your Learning question about CaCl2 in 250.0 mL of 0.200-M solution, a different question with different givens, and rule 2 forbids pairing it with the worked example's givens. The passage prints one molar mass, 110.98 g/mol, but it belongs to the Check Your Learning item, not to the worked example; no atomic masses are printed anywhere."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1086,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 15012.427951000063,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

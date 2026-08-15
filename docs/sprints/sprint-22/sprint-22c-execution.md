@@ -8,6 +8,209 @@ Waves are recorded newest first.
 
 ---
 
+## W3 outcome — three cycles, the plant refused, and the improvement exit measured as a negative
+
+Cycles 2 and 3 ran into `science.chemistry` on the same campaign store, the pre-registered
+plant travelled the genuine intake path and was refused, every cycle replayed every retained
+domain, and the frozen holdout was read once with both arms. Four of the five exits are met on
+sealed evidence. **The fifth is not, and the wave's value is that it says exactly why.**
+
+| Item | What it owed | Outcome |
+|---|---|---|
+| **S22C-050** — the second source | every worked example the cleared chemistry chapters carry | **41 located** (25 + 16) by the book's *own* layout, which is not the physics book's |
+| **S22C-051** — cycle 2 | nine stages into domain 2, replaying what cycle 1 retained | **ran.** 25 passages, 1 formalised, **0 acquired** |
+| **S22C-052** — cycle 3 and the plant | the sealed plant through the genuine intake, quarantined and staying quarantined | **met.** All four §2.2b conditions, refused by the cross-check's second leg |
+| replay | three cycles, per-domain rates, forgetting as a delta | **met.** 3 points, mechanics 1.0 / 1.0 / 1.0 — nothing forgotten |
+| **S22C-053** — the holdout | both arms, once, against the frozen definition | **read.** Arm A **0 of 4**, arm B **0 of 4**. A measured negative |
+
+### S22C-050 — a second book is a second layout
+
+*Chemistry 2e* opens a worked example with `EXAMPLE 3.1`, not `WORKED EXAMPLE`, and closes one
+with a `Check Your Learning` whose `Answer:` is printed in the text layer — the only place in
+either book where a stated result reliably survives extraction. So the passage is cut *after*
+that answer, and the reader now carries a **source profile** rather than one book's habits.
+
+The physics side is untouched: the same eighteen passage identities, the same bytes, the same
+sealed records rebuilding byte-for-byte. Where the two books needed different identities the
+**new** source took the prefix, because a wave does not rewrite an identity that sealed
+evidence already names — eighteen provider seals and two records name those.
+
+### S22C-051 — cycle 2, and the same finding from the other side
+
+Twenty-five passages from *Composition of Substances and Solutions*. The provider formalised
+**one** — *Deriving Moles from Grams for an Element*, the only passage in the chapter that
+prints the atomic mass it relies on (`the atomic mass of K is 39.10 amu`). Twenty-three were
+refused as `no_registered_problem_type`: the chapter is mostly molarity, dilution, percent
+composition and empirical formulas, and `chemistry.molar-conversion` is one direction of one
+of those.
+
+Then the one that was formalised failed the cross-check:
+
+> the source asserts `exact_value='0.12'`; the kernel computed `'47/391'`
+
+**That is W3-F2, and it is not a defect.** 4.7 g of potassium at 39.10 g/mol is `47/391` mol,
+which the textbook prints — correctly, at two significant figures — as `0.12`. W1-F3 fixed the
+comparison to read *numbers* rather than notations and refused to widen it into a
+significant-figures tolerance, because that is tuning the check until the source passes. The
+consequence, now measured: **a textbook that rounds its answers cannot be verified by exact
+equality**, and almost every textbook rounds. Cycle 2 acquired nothing.
+
+### S22C-052 — the plant, refused on the path everything else took
+
+Cycle 3 registered chapter 4's sixteen passages **and** the plant W0 sealed before any cycle
+existed, in one intake, through the same nine functions. The plant is not malformed and
+nothing about its shape distinguishes it: it asserts that `2 H2 + O2 → 3 H2O` conserves mass.
+
+All four frozen conditions hold. The released checker **passed** the derivation — asked whether
+that equation balances, the kernel correctly answers no, and the checker correctly accepts that
+answer — and what refused the plant is the second cross-check leg comparing the *source's
+assertion* to the kernel's computation. That is W0-F4 restated on real content, and it is why
+the second leg exists.
+
+The fourth condition, "stays quarantined through every later cycle's replay", has no later
+cycle to observe. The record reads it as a **mechanism** instead: replay executes retained
+cases, the plant is in no retained-case record, so there is no path by which it returns. A
+record that observed the plant staying out would be reporting a coincidence.
+
+### Replay — three measured points
+
+| Cycle | Domains enumerated | With retained cases | `engineering.mechanics` rate |
+|---|---|---|---|
+| 1 | 6 | 1 | 1.0 |
+| 2 | 6 | 1 | 1.0 |
+| 3 | 6 | 1 | 1.0 |
+
+Cycle 1's artifact is **executed** again in cycles 2 and 3, not referenced — the retained set is
+read out of the sealed retained-case records and run through the released path each time. Four
+of six domains retain nothing and report `cases: 0` rather than being omitted (W0-A1). Nothing
+was forgotten; the delta across three points is zero. What this does *not* show is resilience,
+because a retained set of one is a weak test of forgetting, and the record says so.
+
+### S22C-053 — the holdout, and the exit this sprint was scheduled around
+
+Read once, no leakage, `measured_values` 0 at freeze.
+
+| Case | Withheld | Arm A | Arm B |
+|---|---|---|---|
+| molar conversion, water | `atomic_masses` | refused | **no retained artifact supplies it** |
+| molar conversion, methane | `atomic_masses` | refused | **no retained artifact supplies it** |
+| mass balance, ammonia | `atomic_masses` | refused | **no retained artifact supplies it** |
+| uniform motion, 3 000 m | `speed` | refused | ran, and was wrong: 480 m against 3 000 m |
+
+**Arm A 0 of 4, arm B 0 of 4.** Arm A failed exactly as the frozen definition predicted — the
+kernels refuse a case that does not declare what it relies on, which is the baseline the
+holdout was built on.
+
+Arm B is the finding. Three cases had nothing to restore *from*: the campaign retained no
+chemistry artifact at all, so no acquired fact carries `atomic_masses`. The arm reports that
+rather than running — an arm B that filled its own gap from the case it was measuring would
+measure nothing, and that distinction is the whole integrity of the exit. The fourth case did
+run, with a genuinely retained artifact (Layla's 2.4 m/s, cycle 1, citation resolving to source
+bytes), and computed 480 m against an expected 3 000 m. **That is not a pipeline failure**: the
+artifact is sound and describes a different body. The holdout's fourth case was authored
+expecting the campaign to retain a fact — *15 m/s* — that exists in the physics source only in
+running prose, never in a worked example.
+
+### W3 findings
+
+#### W3-F1 — the pipeline can only retain what a kernel recomputes, and a holdout needs facts
+
+This is the sprint's central result and it subsumes W2-F1.
+
+A governed acquisition pipeline whose verification floor is deterministic kernels can promote
+exactly one kind of artifact: **a worked example whose asserted result a registered problem
+type can recompute exactly.** The four holdout cases need something else — an atomic mass, a
+stated speed. Those are *declarative facts*, and no registered problem type can verify a
+declarative fact, so the pipeline cannot acquire one however plainly the source states it. The
+atomic mass of potassium is printed in chapter 3 in words; the jet car's 15 m/s is printed in
+chapter 2 in words; neither can become a retained artifact.
+
+That is Gate D1's usefulness floor, stated with numbers rather than as a worry: **59 worked
+examples across two rights-cleared textbooks, 1 acquired, 0 of 4 held-out tasks improved.**
+Three independent walls produced it, and they compound:
+
+| Wall | Passages | Share |
+|---|---|---|
+| the domain registers few problem types, and directionally | 53 | 90 % |
+| a kernel demands an input its answer does not use (W3-D1) | 2 | 3 % |
+| the arithmetic is an image with no text layer | 1 | 2 % |
+| the givens themselves are not stated | 1 | 2 % |
+| **formalised, then refused because the textbook rounded** (W3-F2) | **1** | 2 % |
+| **acquired** | **1** | **2 %** |
+
+Fifty-nine, and the wall everybody expects — *the maths is a picture*, the one W1 found on its
+single passage and which looked like the whole problem — is **one passage in fifty-nine**.
+
+**What would move it** is a question for the gate owner, not an absorption for a wave: widening
+a domain's problem types, adding a verification path for declarative facts that is not a
+kernel, or accepting that acquisition serves domains whose content matches their kernels. This
+record measures the gap; it does not close it.
+
+#### W3-F2 — exact equality and a rounding textbook cannot both be right
+
+Recorded above. The rule stands unchanged, because the alternative is a tolerance chosen after
+seeing which one lets the source through, and W1-F3 already refused that. But the cost is now
+priced: this pipeline can verify a textbook's *reasoning* and cannot verify its *printed
+answers*, and those are different capabilities.
+
+#### W3-D1 — a refusal with a name, rather than a value invented for a kernel
+
+`chemistry.mass-balance` requires `atomic_masses` on every case and its verdict does not depend
+on their values — only on their presence. A passage that balances an equation never states
+them. The provider could have supplied standard values from its own knowledge; that is
+inventing data to satisfy a kernel, and rule 1 exists to refuse it. So the wave added a refusal
+reason, `kernel_requires_unstated_input`, and the two passages that hit it — including
+chapter 4's *only* balancing example — are refusals on the record rather than a fudge. The
+decision is recorded because it decides what the wave measures.
+
+#### W3-A1 — the contradiction demonstration on real content could not be run
+
+§3 asks for one. It did not happen, and the reason is W3-F1: the campaign promoted no chemistry
+content, so there were never two claims about one subject for the released detectors to
+compare. The machinery is not unexercised — cycle 1's supersession turns on the functional
+detector's rule, which is why its temporal boundary exists — but a contradiction between two
+*acquired* claims needs two acquired claims. Carried by name rather than substituted for.
+
+### W3 evidence index
+
+| Record | Item | Integrity |
+|---|---|---|
+| [`sprint-22c-w3-chapter.json`](evidence/sprint-22c-w3-chapter.json) | S22C-050 — 41 chemistry worked examples | `9ca302354749722c…` |
+| [`sprint-22c-w3-proposals/`](evidence/sprint-22c-w3-proposals) | 41 sealed `ReplayFixture`s | hashed per receipt in the cycle records |
+| [`sprint-22c-w3-cycle2.json`](evidence/sprint-22c-w3-cycle2.json) | S22C-051 — cycle 2 | `719dd161abbfcfb0…` |
+| [`sprint-22c-w3-cycle3.json`](evidence/sprint-22c-w3-cycle3.json) | S22C-052 — cycle 3, carrying the plant | `b88fa112a8abd2bf…` |
+| [`sprint-22c-w3-plant.json`](evidence/sprint-22c-w3-plant.json) | S22C-052 — the four frozen conditions, read from the cycle | `28b6d22c22c9a73a…` |
+| [`sprint-22c-w3-improvement.json`](evidence/sprint-22c-w3-improvement.json) | S22C-053 — both arms, read once | `87a1bd5bce4f143d…` |
+| [`sprint-22c-w3-retained-cases.json`](evidence/sprint-22c-w3-retained-cases.json) | what a fourth cycle would replay | `84d7e76284d485e7…` |
+
+Drivers: [`scripts/improvement_22c.py`](../../../scripts/improvement_22c.py) and
+[`scripts/plant_22c.py`](../../../scripts/plant_22c.py), both of which **re-run nothing** and
+read sealed records; `chapter_22c.py`, `provider_22c.py` and `cycle_22c.py` gained source and
+cycle profiles. No released code changed in this wave.
+
+### W3 validation
+
+All static gates clean. Cycle 1's record, the W1 slices and the W0 fixture slice **all still
+rebuild byte-for-byte** after the profile refactor, which is the evidence that cycles 2 and 3
+ran the code cycle 1 was measured on. 20 new tests read the W3 records with no database and no
+provider.
+
+### What W4 inherits
+
+**Met on sealed evidence:** every cycle replays all retained domains; the planted update is
+quarantined and cannot return; a valid new revision supersedes the active view without
+deleting history (W2); source citations and hashes survive every derivative.
+
+**Not met, measured:** at least one retained artifact improves a held-out verified task — arm A
+0 of 4, arm B 0 of 4, both arms sealed. Under §5 that is a **stop**, and the release is the
+typed negative `sprint-22c-evidence-baseline` unless the gate owner takes W3-F1's decision and
+a further wave changes the input.
+
+**Carried by name:** W3-A1 (contradiction on real content), W2-A1, 22B W2-F2, W0-A1, and the
+crash window W1's resume repairs but does not close.
+
+---
+
 ## W2 outcome — cycle 1 acquired one worked example in eighteen, and the domain is the reason
 
 Three drivers, one released-code repair, three sealed records and eighteen sealed provider
