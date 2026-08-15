@@ -191,8 +191,9 @@ knowledge store is set by how much of a source a *domain* can be held to, and th
 declarative facts that is not a kernel — and it lands in 22D as pre-registered W1 work against a
 **fresh, unread holdout**. It is not a retro-fix of this sprint: 22C's holdout has been read
 once, and changing the acceptance path after reading it would be the one thing the whole
-discipline exists to refuse. The plan is
-[Sprint 22D Technical Backlog](sprint-22d-technical-backlog.md) §1.5.
+discipline exists to refuse. The plan is written — `sprint-22d-technical-backlog.md` §1.5, on
+branch `sprint-22d-backlog` — and travels with 22D's own branch rather than with this release,
+which is why it is named here and not linked.
 
 **Carried by name:** W3-A1 (contradiction on real content), W2-A1 (`domain_pilot_runs` has no
 descriptor-domain path), W2-F3 (the Tool Plane's evidence cannot reach a governed store — which
