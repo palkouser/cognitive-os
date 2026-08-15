@@ -1,0 +1,56 @@
+{
+ "integrity_content_hash": "1b5b1b0f9a480d605bebfed9d0120dae6f26238f7ca43e0fb49bbd94367d2ad3",
+ "items": [
+  "S22D-200"
+ ],
+ "layer_facts": 8,
+ "measured_values": 0,
+ "one_alias_was_added_before_any_arm_ran": {
+  "alias": [
+   "standard acceleration due to gravity",
+   "acceleration due to gravity"
+  ],
+  "finding": "W1-F3",
+  "moved_servable_from": 3,
+  "moved_servable_to": 4,
+  "resolves_to": "g",
+  "why_this_is_a_debt_and_not_a_tuning": "the layer already holds the quantity — the source states g = 9.80 m/s2 at ladder status 'grounded' — and the miss was a vocabulary gap between the source's notation and the microbenchmark's wording. W1-F3 named exactly this and said the alias belongs on the fact. A miss for a plumbing reason reported as a coverage failure is the wrong diagnosis, which is what that finding is for. Nothing in the frozen hundred, the eight facts or the arm's design changed, no measured number existed, and the movement is stated here rather than left to be noticed"
+ },
+ "published_before": "S22D-201, S22D-202 and S22D-203",
+ "recorded_at": "2026-08-15T00:00:00Z",
+ "schema_version": 1,
+ "servable": [
+  {
+   "ladder_status": "grounded",
+   "output_kind": "declarative_fact",
+   "quantity": "stated constant",
+   "subject": "g",
+   "task_id": "s22d-fact-01"
+  },
+  {
+   "ladder_status": "grounded",
+   "output_kind": "declarative_fact",
+   "quantity": "atomic mass",
+   "subject": "K",
+   "task_id": "s22d-fact-03"
+  },
+  {
+   "ladder_status": "corroborated",
+   "output_kind": "declarative_fact",
+   "quantity": "average atomic mass",
+   "subject": "O",
+   "task_id": "s22d-fact-04"
+  },
+  {
+   "ladder_status": "corroborated",
+   "output_kind": "declarative_fact",
+   "quantity": "average atomic mass",
+   "subject": "C",
+   "task_id": "s22d-fact-05"
+  }
+ ],
+ "tasks": 100,
+ "tasks_the_layer_could_serve": 4,
+ "what_this_does_not_license": "re-cutting the hundred, widening the arm, or adding an interpreter to it. §2.3 forbids tuning a pre-registered configuration, and W1-F1's repair was to publish the pricing and read the instrument as frozen — not to reshape it once the shape of the answer was visible",
+ "why_this_record_exists_at_all": "22C W3-F1, carried into this sprint's §0 and already broken once by W0: a verification floor's coverage is priced before the campaign, not after. The retrieval_only arm is the ten-point margin's comparator and it is model-free by design, so its ceiling is decided entirely by what Layer 1 holds — and that ceiling is a fact about the instrument, not a result"
+}

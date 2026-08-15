@@ -10,6 +10,144 @@ Waves are recorded newest first.
 
 ---
 
+## W2 — three baselines, and a comparator that was priced before it was read
+
+W2 owed the three non-local arms on the frozen hundred, each sealed, with the external arm run
+through the governed boundary. The runner did not change: W0 built `run_arm` to own
+verification, accounting, escalation and the citation walk while an arm owns only what it
+answered, so this wave is **three answerers**, not a second runner.
+
+| Item | What it owed | Outcome |
+|---|---|---|
+| **S22D-200** — comparator coverage | the model-free arm's ceiling, priced first | **sealed at 4 of 100**, before any arm ran |
+| **S22D-201** — `external_teacher` | the only network arm in the sprint | **87 verified**, 100 calls, 0 failures |
+| **S22D-202** — `no_memory` | the local model with nothing behind it | **66 verified**, 1 007 output tokens |
+| **S22D-203** — `retrieval_only` | model-free, over W1's eight facts | **4 verified, 4 grounded, 96 abstained** |
+| §2.2(a) | no external call outside one arm | **construction held**, refusal executed in test |
+| tests | W2 evidence, portable | **29**, verified with the weights hidden and `PATH` stripped |
+
+| Arm | verified | abstained | grounded | ungrounded | undecidable | malformed | external calls | output tokens |
+|---|---|---|---|---|---|---|---|---|
+| `external_teacher` | **87** | 0 | 0 | 30 | 12 | 6 | 100 | 41 441 |
+| `no_memory` | **66** | 0 | 0 | 30 | 13 | 3 | 0 | 1 007 |
+| `retrieval_only` | **4** | 96 | 4 | 0 | 0 | 0 | 0 | 0 |
+
+**Nothing under `src/` was touched.** One line moved in W0's runner — awaiting an outcome that
+is awaitable — so an arm reaching an async governed boundary and an arm reading an index can be
+the same kind of thing to one runner. Two runners would have been two sets of accounting.
+
+### W2-F1 — the union member W0-F3 asked for is out of this sprint's scope
+
+W0-F3 said W2 must add "a `LocalApiProviderConfig` member of the discriminated provider union".
+It cannot. `ProviderAdapterConfig` discriminates on `adapter: ProviderAdapterKind`, and that
+enum is not only Python: `provider_output_tables.py` hard-codes its six values into a
+`CheckConstraint`. Widening it is a **schema change**, which §2.3 excludes outright, and §2.1
+separately refuses new released enum members.
+
+Resolved by this sprint's own precedent rather than by preference — W0-F2 found `BenchmarkDomain`
+had no English member and the answer was *declare under an existing member, record the mismatch,
+widen nothing* (22C W2-F4). The local model therefore reaches the released
+`openai_compatible` mapping through this sprint's runner, its calls are counted by W0's
+accounting record, and the missing union member is carried to 22E. The no-external-call
+construction is **stronger** for it, not weaker: still no registrable network adapter.
+
+### W2-F2 — a dozen tasks per arm turn on typography rather than on physics
+
+The registered physics verifiers decide `m/s**2`, `m/s^2`, `kg*m/s` and `N s`. They **error** on
+`m/s²`, `kg·m/s` and `Ω` — the spellings a model actually writes. A probe against the local
+model returned `15 kg·m/s`, `9.8 m/s²`, `6 Ω`: correct physics, unparseable notation. **Fifty of
+the hundred tasks are exposed**, and both model arms lost twelve or thirteen to it.
+
+The damage is not only the lost points. `6 Ω` is also the *wrong* answer, and an undecidable
+verdict hides that in both directions — a wrong answer and a right one arrive at the same
+verdict for a reason neither is about.
+
+**Not repaired, by decision.** A measured number existed by the time it was found, and §2.3
+forbids tuning a pre-registered configuration — the answer-form prompt included — after that
+point. §2.2(b) already requires the undecidable count to be reported, so the repair the sprint
+is allowed is the one it takes: report the count, the cause, and the per-verifier breakdown, so
+the number cannot be read as capability. **W3 must read the seventy per cent floor knowing the
+instrument taxes notation**, and a successor re-freezing the answer-form contract is where the
+real fix belongs.
+
+> **Generalisable, and it is W0-F1 one layer out: a verifier that starts and cannot decide is
+> not evidence about the answer.** Count it, name its cause, and never let it sit in the same
+> column as a verdict.
+
+### W2-F3 — the comparator's ceiling is four, and the ten-point margin barely bites
+
+S22D-200 priced `retrieval_only` **before** it ran: Layer 1 holds eight facts, and exactly four
+of the hundred tasks ask for a quantity it holds. The arm then verified exactly four, all four
+grounded, nothing ungrounded. That is what pricing first buys — the number was read, not
+explained.
+
+But it makes §2.2(b)'s second half nearly vacuous. "At least ten points above retrieval-only"
+is a bar of fourteen per cent when the comparator sits at four, and the **seventy per cent
+absolute floor is the criterion that actually bites**. There is a second reading worth stating:
+comparing `local_model` against a model-free arm isolates the *model*, not the layer — the
+layer's contribution is the distance between `local_model` and `no_memory`, which the plan does
+not read. Both are recorded and **neither is changed**: §2.3 forbids retuning a pre-registered
+configuration, and W1-F1's repair was to publish the pricing and read the instrument as frozen.
+
+**W1-F3's alias debt came due here and was paid before any number existed.** The layer holds
+`g = 9.80 m/s2` at ladder status `grounded`, but the microbenchmark asks for "standard
+acceleration due to gravity" — a third vocabulary after the source's notation and the holdout's
+wording. Without the alias the arm would have missed for a plumbing reason and the record would
+have read as a coverage failure, which W1-F3 exists to prevent. The alias was added **on the
+fact**, the movement it caused is stated in S22D-200 (three servable tasks to four), and every
+W1 seal still rebuilds byte-identically.
+
+### W2-F4 — a retry that could not tell "try again" from "you have no budget left"
+
+The first external arm ran on OpenRouter's strongest free route and produced a record that would
+have been read as a weak teacher: 30 verified, 62 undecidable. It was neither. **68 of 100 tasks
+never got an answer**, 207 of 239 attempts failed, and the cause was not capacity — OpenRouter's
+free tier allows **fifty free-model requests a day**. A hundred-task arm could never have
+completed there. It is arithmetic, not weather.
+
+And the bounded retry made it worse: it treated the daily allowance like a transient failure and
+spent 239 attempts against a limit of fifty. Of the 32 answers that did arrive, **30 were
+correct** — a 94 % teacher, on its way to being recorded as a 30 % one.
+
+Fixed as a distinction rather than as a number: a 404 is capacity and earns another attempt; a
+429 is the allowance and stops the whole arm, because every further attempt spends budget the
+run still needs. The abandoned record is **kept, sealed and renamed**
+(`sprint-22d-w2-external-teacher-abandoned.json`) — a route swapped without the evidence for the
+swap is a route swapped until the number was liked.
+
+The teacher of record is `claude-code`, **one of W0's four frozen external providers**, so the
+enumeration did not widen. It completed 100 tasks in 100 calls with zero failures.
+
+> **Generalisable: an availability failure and a capability result look identical in a score.**
+> Count attempts apart from answers, and let a run refuse rather than finish, because a finished
+> run is the one nobody re-reads.
+
+### What the two model arms say about the grounding exit
+
+Both were offered the typed abstention in the prompt. **Neither used it once in a hundred
+tasks.** Every one of the thirty factual outputs is therefore an ungrounded assertion, in both
+arms. §2.2(d) reads that count being zero, so W2 establishes where W3 starts: **thirty, twice**,
+and only the retrieval arm — which answers from a span or not at all — is at zero today.
+
+### Evidence
+
+| File | SHA-256 of the sealed body |
+|---|---|
+| `evidence/sprint-22d-w2-retrieval-coverage.json` | `1b5b1b0f9a480d605bebfed9d0120dae6f26238f7ca43e0fb49bbd94367d2ad3` |
+| `evidence/sprint-22d-w2-external-teacher.json` | `ccc12b83f8ce11ccebcd6367375bb8f9c56e2d62ce174a3f395479258f924f31` |
+| `evidence/sprint-22d-w2-external-teacher-abandoned.json` | `e08f5e257e16ba10881063c7b289c7ee370a8ac6ec3098ec64a055bed525113c` |
+| `evidence/sprint-22d-w2-no-memory.json` | `749e9a5a312234df517330395c400862e4e0955557493ad8779871805f8e8b15` |
+| `evidence/sprint-22d-w2-retrieval-only.json` | `3ddbdd1cd4d69672521558f3d42722bc61138d7b3e6c5936bce3f91d03ac8806` |
+
+### What W3 inherits
+
+The bar is **87**, so non-inferiority needs 84 and the absolute floor needs 70 — from an arm
+that scored 66 without retrieval. The layer must be worth eighteen points. It inherits W2-F2's
+notation tax on that reading, W2-F1's missing union member, thirty ungrounded assertions to
+drive to zero, and the fact that **no language-model arm has yet abstained even once**.
+
+---
+
 ## Gate closure — the two blocking dependencies, and the four things that would have let them shut
 
 W0 finished around two gates rather than through them, named an owner on each, and left

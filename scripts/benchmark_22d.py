@@ -25,6 +25,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import hashlib
+import inspect
 import json
 import sys
 from collections.abc import Iterable, Mapping, Sequence
@@ -606,6 +607,12 @@ async def run_arm(
     accounting = ArmAccounting(arm=arm)
     for task in tasks:
         outcome = answerer(arm, task)
+        # An arm that reaches a network reaches it through an async governed boundary, and an
+        # arm that reads an index does not. Awaiting only what is awaitable lets both be the
+        # same kind of thing to this runner, which is what keeps the four arms comparable —
+        # the alternative was a second runner, and two runners are two sets of accounting.
+        if inspect.isawaitable(outcome):
+            outcome = await outcome
         if outcome.external_provider_calls and arm != "external_teacher":
             raise ExternalProviderRefused(
                 f"arm {arm!r} recorded an external provider call; only the external_teacher "

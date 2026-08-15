@@ -1,0 +1,839 @@
+{
+ "accounting": {
+  "abstained": 96,
+  "accounted_cost_units": 0.0,
+  "arm": "retrieval_only",
+  "escalated": 96,
+  "external_provider_calls": 0,
+  "grounded": 4,
+  "input_tokens": 0,
+  "local_compute_seconds": 0.0,
+  "local_model_calls": 0,
+  "output_tokens": 0,
+  "per_task": {
+   "s22d-convert-01": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-convert-02": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-convert-03": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-convert-04": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-convert-05": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-convert-06": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-convert-07": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-convert-08": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-convert-09": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-convert-10": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-convert-11": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-convert-12": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-convert-13": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-convert-14": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-convert-15": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-convert-16": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-convert-17": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-convert-18": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-convert-19": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-convert-20": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-derive-01": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-derive-02": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-derive-03": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-derive-04": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-derive-05": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-derive-06": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-derive-07": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-derive-08": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-derive-09": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-derive-10": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-dimension-01": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-dimension-02": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-dimension-03": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-dimension-04": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-dimension-05": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-dimension-06": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-dimension-07": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-dimension-08": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-dimension-09": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-dimension-10": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-fact-01": {
+    "abstained": false,
+    "citations_resolve": true,
+    "disposition": "grounded",
+    "escalated": false,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-fact-02": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-fact-03": {
+    "abstained": false,
+    "citations_resolve": true,
+    "disposition": "grounded",
+    "escalated": false,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-fact-04": {
+    "abstained": false,
+    "citations_resolve": true,
+    "disposition": "grounded",
+    "escalated": false,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-fact-05": {
+    "abstained": false,
+    "citations_resolve": true,
+    "disposition": "grounded",
+    "escalated": false,
+    "undecidable": false,
+    "verified": true
+   },
+   "s22d-fact-06": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-fact-07": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-fact-08": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-fact-09": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-fact-10": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-fact-11": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-fact-12": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-fact-13": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-fact-14": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-fact-15": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-fact-16": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-fact-17": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-fact-18": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-fact-19": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-fact-20": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "typed_abstention",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-01": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-02": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-03": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-04": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-05": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-06": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-07": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-08": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-09": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-10": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-11": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-12": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-13": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-14": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-15": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-16": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-17": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-18": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-19": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-numeric-20": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-quantity-01": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-quantity-02": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-quantity-03": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-quantity-04": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-quantity-05": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-quantity-06": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-quantity-07": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-quantity-08": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-quantity-09": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-quantity-10": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-quantity-11": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-quantity-12": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-quantity-13": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-quantity-14": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-quantity-15": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-quantity-16": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-quantity-17": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-quantity-18": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-quantity-19": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   },
+   "s22d-quantity-20": {
+    "abstained": true,
+    "citations_resolve": false,
+    "disposition": "not_a_factual_output",
+    "escalated": true,
+    "undecidable": false,
+    "verified": false
+   }
+  },
+  "tasks": 100,
+  "undecidable": 0,
+  "ungrounded_assertions": 0,
+  "verified": 4,
+  "verified_percent": 4.0
+ },
+ "answer_form_instructions": {
+  "mathematical_expression": "Reply with a single number on one line and nothing else, for example: 3500",
+  "physical_quantity": "Reply with a magnitude and a unit on one line and nothing else, for example: 3500 N",
+  "structured_value": "Reply with a single word on one line and nothing else, for example: pascal"
+ },
+ "arm": "retrieval_only",
+ "integrity_content_hash": "3ddbdd1cd4d69672521558f3d42722bc61138d7b3e6c5936bce3f91d03ac8806",
+ "items": [
+  "S22D-203"
+ ],
+ "malformed_answers": 0,
+ "malformed_task_ids": [],
+ "measured_values": 100,
+ "nothing_was_repaired": "the readers refuse a malformed answer and record it as it arrived. A reader that extracted a number from a sentence would be scoring itself, and by W3 nobody could separate the model's competence from the leniency of a regular expression",
+ "recorded_at": "2026-08-15T00:00:00Z",
+ "schema_version": 1,
+ "tasks": 100,
+ "why_malformed_is_counted_apart": "'the arm produced no readable answer', 'the verifier could not decide this answer' and 'the verifier could not start' are three different facts. W0-F1 was the third being reported as the second; this keeps the first from joining them"
+}

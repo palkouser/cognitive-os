@@ -1137,6 +1137,16 @@ ELEMENT_ALIASES = {
 
 CONSTANT_ALIASES = {
     "standard gravitational field strength": "g",
+    # **W1-F3, paid rather than re-observed.** W1 named this debt and W2 is where it comes
+    # due: the layer is keyed as the source writes (`g`), was aliased as the holdout asks
+    # ("field strength"), and the microbenchmark asks a third way. The quantity is the same
+    # one — the source states `g = 9.80 m/s2` and the task wants m/s² — so a miss here would
+    # be a plumbing failure reported as a coverage failure, which is the wrong diagnosis and
+    # the exact sentence W1-F3 was written to prevent. Added before any arm ran, and the
+    # movement it causes (three servable tasks to four) is stated in S22D-200 rather than
+    # left for a reader to notice.
+    "standard acceleration due to gravity": "g",
+    "acceleration due to gravity": "g",
     "faraday constant": "F",
 }
 
