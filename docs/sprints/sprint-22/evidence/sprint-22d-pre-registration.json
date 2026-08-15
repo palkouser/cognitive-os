@@ -1,0 +1,319 @@
+{
+ "amendments_made_by_22d": 0,
+ "exit_criteria": [
+  "no large external LLM is called during the local microbenchmark",
+  "local verified success is at least 70% and at least 10 points above retrieval-only",
+  "large-LLM calls or equivalent cost fall at least 25% at non-inferior success",
+  "factual output is grounded or explicitly uncertain",
+  "prior domain, learning, and safety gates remain green"
+ ],
+ "fixture": {
+  "disjoint_from_the_hundred": true,
+  "fixture_is_not_the_hundred": "no fixture task id appears in the microbenchmark manifest, and the slice reads no exit criterion",
+  "fixture_source_hashes": {
+   "s22d-fixture-source-a": "2ba2222147327bc8ba89f4a3a41d5ba5cba65cc716499e15adcd21e0b13d9911",
+   "s22d-fixture-source-b": "98a0338cd5397d43a7825c3399473975d8c5489fbd131b105ca8441c1cedab76"
+  },
+  "fixture_task_count": 10,
+  "fixture_task_hashes": {
+   "s22d-fixture-01": "3d4f666a420e19ba7a8d151d12c7c3d94459f80a17ce3dc025f1f31095568dee",
+   "s22d-fixture-02": "b2381100f9c011d227185331e12ba1ba8970d238ca9ae78d66d00f8ab17d6678",
+   "s22d-fixture-03": "e7b1392680f3537352531f17ba11015164e756536d3568c9b9bef06df9fab9ca",
+   "s22d-fixture-04": "9de5a7c730a23d2b098c2c40dfb6e17db4b64f99b7613cf2e3be1b0b1e7dae2a",
+   "s22d-fixture-05": "8eddb95668065ca7f5f999ceca95027072c67094f27a515110a2db193997ecc9",
+   "s22d-fixture-06": "40fe924a98b4f748a4d3999233e1dbc616417095cdb9756382d11bd3b03acbd0",
+   "s22d-fixture-07": "54d5cd7cc910e66083c8b7f7b9f1d36c85d4ce9db658e7399c22418c87eb4cf8",
+   "s22d-fixture-08": "b45d495c4b16831f1328938095e3ae1c9a075475c5ab57e73269f0344c9adc19",
+   "s22d-fixture-09": "c9e41226bd8a6bdc413b752a51d9421586af7e69720c495159cccd0336cdf405",
+   "s22d-fixture-10": "2a645ba05963372fe2bfa9b9deed1dc67999025e763be03ea7c531255f03c366"
+  }
+ },
+ "holdout": {
+  "case_hashes": {
+   "s22d-h-01": "40ff6806a06ecf6548852dfe202e1b135321bd435467944429b033613b3368b5",
+   "s22d-h-02": "3a1fe72bb1f9404cd4f82b4c9df1b91743153a35cd750a5860b7bc93dcf9255d",
+   "s22d-h-03": "7e4b9575920592f85c83643e30511d4732b8d31c77f43a27383dcecf2e5ee1c1",
+   "s22d-h-04": "a9ea5b5c5fc0d56cd500d97b0742bbb4a1b4c7d6ba051e77df5218b0ed811f76",
+   "s22d-h-05": "1f9c71abbf263fcb80f6380c45e92d9dfd26450ed4a1ec4c70188beae9a451ef",
+   "s22d-h-06": "e9ffc24577a0fcfa5d0ccceb894d826deb68bc7b20116453f0b0ff5454006848",
+   "s22d-h-07": "96f0f30a4b6863f817555c76dcc8da9e07f6674181212b54fdeb8fc412c2b1ea",
+   "s22d-h-08": "4f74f27810075f20632ee9dae6bd630fb76a14081a3219699267d7c5ba5f85a2",
+   "s22d-h-09": "c8d52b78b15e77ba2144d1c17f74b71fcf62942dacccfb9a24e2c658fdcd33f3",
+   "s22d-h-10": "a6682e0bd50108255f9d5740df6c6b43891e3f14757868e2191ae40619a223c8",
+   "s22d-h-11": "7a0bf78a9b4be6e5fbd7d90304699975eb40cb96ba3f0542eac1a10385d1785e",
+   "s22d-h-12": "b52f91302232bdb7a28f998a95bb2c6c76733d9b895ad58604ab58b460d86ee2"
+  },
+  "holdout_id": "sprint-22d-declarative-fact-holdout",
+  "measured_values": 0,
+  "read_once": "at the end of W1, and never before"
+ },
+ "integrity_content_hash": "a878f109de88bed7d0b7ec42eb3fc40d2de3b355eb57d286216cd98fcfdcb20b",
+ "items": [
+  "S22D-010",
+  "S22D-011",
+  "S22D-012",
+  "S22D-013",
+  "S22D-014",
+  "S22D-015",
+  "S22D-016"
+ ],
+ "microbenchmark": {
+  "benchmark_id": "sprint-22d-english-technical-microbenchmark",
+  "factual_output_count": 30,
+  "grounding_sources": [
+   "openstax-chemistry-2e-cc-by-nc-sa-4.0",
+   "openstax-physics-cc-by-4.0"
+  ],
+  "manifest_hash": "0ebd6c2d30d32aafadd3b2816519bffe995471515ebbe73e53538b02fe3c2f99",
+  "measured_values": 0,
+  "never_used_for_selection": "the hundred select no model, prompt, retrieval configuration, escalation threshold or non-inferiority margin; §2.3 forbids tuning any of them after the first measured number exists",
+  "provenance": "every prompt and expected answer authored in-repository for Sprint 22D",
+  "task_count": 100,
+  "task_hashes": {
+   "s22d-convert-01": "2bf8a89a9a1ab073378057893f176696c1633e7dfeb598b74bf968f1ead70edd",
+   "s22d-convert-02": "32bf3a622dbfc4e1284e7c1501e9d36c65816c7e93f550912f87dcdd2e1731f9",
+   "s22d-convert-03": "f070203b367353a7a30bd36bcfe811e256ed6965a030b9150a34922afa63f65c",
+   "s22d-convert-04": "03e6a774d2700fce94285a5c33f33d6ad0f3d99899dd364a867988899f67dfeb",
+   "s22d-convert-05": "8adc6666d523df158c18caca8fa3490d4b900d67981e2a1042af0b286366031f",
+   "s22d-convert-06": "51626d46b8410c7946e4d015c2e8de8cba61b8556f0dba7e177dfbd653a1f283",
+   "s22d-convert-07": "e0e0a496e9144afcc56fb7d87f1f34cd20b207fdbe7bb941271b99620e580fdd",
+   "s22d-convert-08": "5eaac5eacc3759fd71a30e851fc8731b3c87dee4b6b52204d7324cb03b51f9ff",
+   "s22d-convert-09": "911e11f9224149578cd2931e72e86b30f4c95db97de600245f8ed4b9d36702bb",
+   "s22d-convert-10": "d4b383fda3cc728faabec65941d1b2652a2e6545c4f98d8163a491a5ce737aed",
+   "s22d-convert-11": "7475f9ab2b1649acd38ba98853eba915ce5a212c2a98baab9629274b152bae19",
+   "s22d-convert-12": "8506f7713233b2b7bbe16aef03e2bde0e2b95bcfdc3ea3adb1362ffda410d317",
+   "s22d-convert-13": "b3c726dc4385372375217c4f9c94e73cdca09173532d5fbcf064d87359b0778f",
+   "s22d-convert-14": "8d7bd23398521315b59e84410b4e55ca1a5c13ddac2401aab52f5f85d4ff55ba",
+   "s22d-convert-15": "27e2a4b76ec41d9fb3264462234214df5e618374880a6fdc4654a0bb748242c3",
+   "s22d-convert-16": "98e7b4935c47e1bbbbff6cda73a3808e36fa46dc565289efbb119ea106db2491",
+   "s22d-convert-17": "9631ec97bc434bb61a2495df8c8cf9b14b223b4ae5b9e65765dd6da3bee499f5",
+   "s22d-convert-18": "fb3be54abd92e896d7dd63ad0df90042498de9e2af23df66decfe12902f74674",
+   "s22d-convert-19": "425af6beb98feb82536ce3e51316b1fa2b0258c4c78bd97540d3e573ce00348b",
+   "s22d-convert-20": "3a8e3dbde774864268bbef34a78f2898bc2a553f1b9c9d915bf7785cfdd1dc5b",
+   "s22d-derive-01": "9cbf718372212db753c44f7288d860bc2284bfe3b9b4b602e7e5b648d5a30b2c",
+   "s22d-derive-02": "76947008931164370731f51d0b625d73a06d32cfe303726a1cc9a9beb506688b",
+   "s22d-derive-03": "b6c63b6763f8681d4a9cd3ed8afb36665a7392446d82bd9815af82b0eb0ec2d3",
+   "s22d-derive-04": "4d43f5c2f8088fbbe9029d7fe953465acfd401f0b353b057d05c3dfd58910acf",
+   "s22d-derive-05": "b69cd239c1b81bbb644fbff3f6f8777924e64dbc4414cd6030540fc395a81095",
+   "s22d-derive-06": "1bf14bd5aea9d3646cc8dbe20daec19a0605216b6744c4da1ae777e972359a3b",
+   "s22d-derive-07": "69d6727bc0dc366e8677c689aeb26747c300305258b6c980b7b5a6c06f0b7161",
+   "s22d-derive-08": "e3d1c80588c2d68601e4d93ea8606f1beb09e5e6d2d8f31388aea75d72ed6f33",
+   "s22d-derive-09": "ce88a1a74c55b08886ff9b21b73ef967e78a30f8d8730ea98a9eb3f1e9cf26e4",
+   "s22d-derive-10": "8c2eb6e68d177cbe5c04c0e89515f3c44a537b7d76976f6b51469d1f84ed04c8",
+   "s22d-dimension-01": "cbd04ed0d9f21094170d3777e4f6fba2974ebc169020af2e07aafa40038d0142",
+   "s22d-dimension-02": "d505ea7ebdb0e35b82deda6cc2e45bde4105657f0681bdd06018f9400c086d9e",
+   "s22d-dimension-03": "54533082d062764d04bfa9aec42e518d3338470e6dfcad29f632dfc90aaf3f87",
+   "s22d-dimension-04": "11b62b502b0234de47e5c1a5b59606aeaea420138fec999f7d6bd78559f6756d",
+   "s22d-dimension-05": "4e129a6f56c819fa99505c75f4c46ea2078b8aa3dd45983d706cbd2f9fe482e0",
+   "s22d-dimension-06": "9abc242266b9072e68412e787a0dc28be21f4e79d5a0242eae9942a0fe4f97e1",
+   "s22d-dimension-07": "ccba89ed2a06b070a93e8f3df54e61fb85d2577be06c9e838b333a0b45214278",
+   "s22d-dimension-08": "5ec24c086ed501ab366cf5bc5f52ddc62d68ec0c474d0d7ad2b80055c81974c3",
+   "s22d-dimension-09": "36693219dae51aef8d3934a4a9e49b26610e4007b77265f70d9cc3e6c24da01e",
+   "s22d-dimension-10": "dfa9a1c8e2115171f33629c57d246eb8f6b44e5c54b019d09968e2464786f444",
+   "s22d-fact-01": "5a25c7217cdee759d7a3ef02a432bfae3c65c1ddc292c9ce5567ba52508df88e",
+   "s22d-fact-02": "c11ea1ced962b826c6dbe0b02eafe95ed2dbba0f4a96d09ad5d63a0c02dfe563",
+   "s22d-fact-03": "4f006bfc1e4b5baa7716d5e5eb4f7c836c4ac49be10cb74ad626601b862fcb65",
+   "s22d-fact-04": "9ef99584600bd6700c31464e36b105433ef1028331ed3ee49cd2da0c034ebd8c",
+   "s22d-fact-05": "de712a1e2c49505bcfc1a1025a08b326e9614f3ca0529f6b162ef45758cb7fd9",
+   "s22d-fact-06": "0b7f601ed89b1df6cc777de3ba36b5e5cfc842db0c58faad4e5bf09c57d4efc4",
+   "s22d-fact-07": "e5c570916163195afd50a45ec8ada7d7111076a8cd5f67a26e7db44ec78b6ff4",
+   "s22d-fact-08": "20d894140181665498366381a64256ef86c106c71e3500adb14ef3b0581fc99d",
+   "s22d-fact-09": "0fc50de1c468a47724f320114eeec765e85e14d7cedbab6df8ef416ce0cc5645",
+   "s22d-fact-10": "312175f0fca649a659840076f9e7de86179d6d285a95a9fc8caa52006489d9a6",
+   "s22d-fact-11": "4a5d7e9e4c5997b6ae4a5570432bb43673a37036a3ed6e65c5a67edf38d3805b",
+   "s22d-fact-12": "efca9ada02f2c62257d0ff2240693a5dfc588734fcb0cf0cccee45a1f902c8c3",
+   "s22d-fact-13": "adabc1d1499017b1b974324462c27ea33a9e84557492b3ede000b4be54ad12b6",
+   "s22d-fact-14": "25fd7851dc802b7695eb0f8218e91f7ef59953ea8565af442e07140ba096ed0d",
+   "s22d-fact-15": "04295afa3c749b112548fcd5ec51fb44cd0ca20d3d47eecf83969731af0f71fc",
+   "s22d-fact-16": "2c83a816e0bb58e9f37133c406b37363679c6d338868a0ab0cb0d0ffb9378685",
+   "s22d-fact-17": "925dd0fe49795cb043c33cc219bf263c40d0b20a93bc160cc9a4d94c52f44108",
+   "s22d-fact-18": "7b567615b9e90917a6f9a62368bd1dadbf3b00558a2d822e4f096e2f1d370e46",
+   "s22d-fact-19": "be61a845b33d4524ed3b03eb3f29142e27f9c70765aa1cb6c8e73e7ff226518f",
+   "s22d-fact-20": "db3b2b1290e6b72cf320bad2a006260239dfaf3d999ea2ea288f54924fe329c0",
+   "s22d-numeric-01": "95fa45c1866de86ba062219a5b0d39ba6d4889542b9969ef43567770a41a5500",
+   "s22d-numeric-02": "e399037dca5bd3e144dc6118b5da6c45c90ec0e5a6dbe708d65c0dada6950903",
+   "s22d-numeric-03": "784ef6a369b58fe5d5a4af44f0f9419fa75b1fd5c7daa9484b70841ce8d6002d",
+   "s22d-numeric-04": "204836c7712b42fbf085b1dcb0f7b8a85419ae090b06aadf0365e502478305fa",
+   "s22d-numeric-05": "4c047ab80651e7acbeab9e39d7035b834feef45e6520563023e3e4dbae7fd542",
+   "s22d-numeric-06": "b0335dcbffc5dee718af946918871badb953baae57c17130b25931cace1449aa",
+   "s22d-numeric-07": "32946ebc9ac98c9153fa68290547672117b3dde005bcd74f05955b938f72fa8c",
+   "s22d-numeric-08": "ecda7bc963d9529fcc153d0b6ae4ac2ceb0ad925280bd92e2398f25a617789f7",
+   "s22d-numeric-09": "da75cc24bf2e0298bb1224296fa15be412fc1dc2784469ab99683ea93edc76ce",
+   "s22d-numeric-10": "ec303fd1cd5787f70d9ed93377ecb5ae4d62805f1997a45f543a5283a85281b7",
+   "s22d-numeric-11": "c4b0f8a02be263cd4c89bf462e5cea05d05249231ad1f94d7cb64269a07f578f",
+   "s22d-numeric-12": "8a94777396d3c8c13da08b17f94c5cb41aa60b586f1b034a5b3cd6892fa6b690",
+   "s22d-numeric-13": "a6572f81ea1d07b166018963cf3aa14640e0d39de9a7af6db6fbfc1bbfe6bf81",
+   "s22d-numeric-14": "2ef00ced94b61c1d84fff222dd07b2ed421917db18d3357c83e8031d15e9c2b5",
+   "s22d-numeric-15": "e7b01c1c841186f70b3bb35a134b5fa74ef594a10ef31d6e341d416914d01e4c",
+   "s22d-numeric-16": "de067cc294f41747865eb36b1e5169d1a99ba9264c031386e43ebf743d04664c",
+   "s22d-numeric-17": "8830ffc526f115a4839370b6bdaae2f7f14788193701d31b4565c10da748f5c4",
+   "s22d-numeric-18": "d5e87c6088a0da992668a22f6b90c23aa8b9b62e588ec82a04f5d3f67644b875",
+   "s22d-numeric-19": "3e3b967a05e9a65433ae171f75fa19d08ed1f99f43702453aa70d33964c3ae46",
+   "s22d-numeric-20": "f69e2e2d7dd70655a33fd8fc6b4da8b9ab4604f6f6c53697f4c97f6a81b85018",
+   "s22d-quantity-01": "1e63008ceac409c4118bb6603a58aa7a1fc11038a304f4e57458d6010a37fac0",
+   "s22d-quantity-02": "f8b22f738e9bf46aa27e3a604080def1b2fe90773c3cc4aea5bf57d87ac38af0",
+   "s22d-quantity-03": "8bfbf4a4bb4fce51e78af33231cae4647545a1d93064a90c1019961fb59940a2",
+   "s22d-quantity-04": "54fa8ee0280f851045e83e0164efb2207301f99a738aa92c1ac94bf1fafde49b",
+   "s22d-quantity-05": "b312a0c75055bff156f98c83d0a5d910bf03cb41da163389b46115c49e08dde0",
+   "s22d-quantity-06": "25f174dda81b106be75d0692634d3653dc7282a8d31536a77bd654f5b6196f5a",
+   "s22d-quantity-07": "ce9536b3464023cbcfc169eb56e1183809732b3d82ff90788c2b3b81120d1049",
+   "s22d-quantity-08": "c9a6b1b0e82605c4ac1fa49e7c0fccd845939d16f8dc2bee8d915ab6ec737691",
+   "s22d-quantity-09": "a0c8f534911573e1798f118a687e3fdd5540f60a1decfe0fa90d96de36271252",
+   "s22d-quantity-10": "ca68bb8865a846f5664756f18efce836ec7ecc01c40cc4eed393898f39ed31f4",
+   "s22d-quantity-11": "e110112d7e0687f8c6fa06ecc1e4863fa6cec40994893be92251e54bfd4c605c",
+   "s22d-quantity-12": "19dbc8b1457843b654a399d9026a60a80db738397532a21f23db27da6b491953",
+   "s22d-quantity-13": "f96a238fda45b26143f4455a16f525835ee5a75b8ee9bd558d83f1cb4ec60a80",
+   "s22d-quantity-14": "e456610e0ad177ed667733f5cc7ffab6eba374010b519d541955a6e05320361f",
+   "s22d-quantity-15": "ac8df91048a41e5da3dcd29b75f31a5f3a183ec59c3dd122cc48ad8b21b366e6",
+   "s22d-quantity-16": "0ee91199abd85ae92505e45de01f4403a673c474edba208db562874737ada658",
+   "s22d-quantity-17": "0445d1ecf17878836ffb141091262e356f32374191bad6461e4b1a0270fa410c",
+   "s22d-quantity-18": "ef791156e9d82e4602992fc30f20c5875176c6aad4cb9af0cf585df17256e2fe",
+   "s22d-quantity-19": "f66e268e2139c5acc457fde48382b6a2405d959694a114dd6390c8579d8b86e8",
+   "s22d-quantity-20": "0b67f0186858c3c456498cf9c0dce264bd3b9d4a0324958ef0614e2efcf2637f"
+  },
+  "tasks_by_output_kind": {
+   "closed_form_computation": 70,
+   "declarative_fact": 20,
+   "fact_dependent_derivation": 10
+  },
+  "tasks_by_verifier": {
+   "generic.exact": 8,
+   "mathematics.numeric": 42,
+   "physics.dimension": 10,
+   "physics.quantity": 20,
+   "physics.unit_conversion": 20
+  }
+ },
+ "migration_head": {
+  "0016_is": "a refusal by default — a wave that needs a migration has found a finding",
+  "expected_revision": "0015"
+ },
+ "negative_outcome_tag": "sprint-22d-evidence-baseline",
+ "out_of_scope": [
+  "adapter training, unless W4 has surplus and both preflights are sealed",
+  "registering additional problem types in either pilot domain",
+  "any retro-fix, re-read or amendment of 22C's improvement exit or its holdout",
+  "self-improvement proposals, weakness-to-proposal linkage, Gate M",
+  "packaging, installers, operator runbooks",
+  "resolving 22C W2-A1 or W3-A1, or any schema change",
+  "multilingual capability of any kind",
+  "tuning any pre-registered configuration after its first measured number exists"
+ ],
+ "outcome_tag": "sprint-22d-language-baseline",
+ "readings": {
+  "abstention_value": "cogos.abstain.insufficient_grounding.v1",
+  "arms": [
+   "no_memory",
+   "retrieval_only",
+   "external_teacher",
+   "local_model"
+  ],
+  "benchmark_declared_domain": "generic",
+  "benchmark_domain_mismatch": "BenchmarkDomain carries no English or language member; the microbenchmark is declared under GENERIC and the mismatch is carried as W0-F2 rather than resolved by widening a released enum",
+  "benchmark_verifier_ids": [
+   "generic.exact",
+   "mathematics.numeric",
+   "physics.dimension",
+   "physics.quantity",
+   "physics.unit_conversion"
+  ],
+  "configuration_of_record": "cpu",
+  "cost_reduction_quantities": [
+   "external_provider_calls",
+   "accounted_cost_units"
+  ],
+  "cost_units": {
+   "external_call": 1.0,
+   "external_tokens_per_1k": 0.5,
+   "local_compute_per_second": 0.01
+  },
+  "escalation_policy": "escalate(outcome) = outcome.abstained or outcome.grounded_span_count < MINIMUM_GROUNDED_SPANS or not outcome.answer_form_valid",
+  "external_provider_config_classes": [
+   "MiniMaxProviderConfig",
+   "OpenRouterProviderConfig",
+   "ClaudeCodeProviderConfig",
+   "CodexCliProviderConfig"
+  ],
+  "external_provider_enumeration": [
+   "claude-code",
+   "codex-cli",
+   "minimax",
+   "openrouter"
+  ],
+  "factual_output_kinds": [
+   "declarative_fact",
+   "fact_dependent_derivation"
+  ],
+  "grounding_floor": "every factual output resolves to loaded source bytes or abstains",
+  "grounding_ladder": [
+   {
+    "requires": [
+     "a resolvable span into registered source bytes",
+     "promotion through the twelve released semantic verifiers",
+     "at least one kernel-checkable consequence that reproduces a printed result exactly, compared as numbers and never within a tolerance"
+    ],
+    "retrievable": true,
+    "status": "corroborated"
+   },
+   {
+    "requires": [
+     "a resolvable span into registered source bytes",
+     "promotion through the twelve released semantic verifiers"
+    ],
+    "retrievable": true,
+    "status": "grounded",
+    "weaker_because": "no kernel-checkable consequence corroborates it, and the record says so for every retained fact rather than for the layer as a whole"
+   },
+   {
+    "requires": [
+     "nothing — this is the absence of a resolvable span"
+    ],
+    "retrievable": false,
+    "status": "refused"
+   }
+  ],
+  "local_benchmark_budget": {
+   "maximum_artifact_bytes": 67108864,
+   "maximum_cost_units": 0.0,
+   "maximum_elapsed_seconds": 36000.0,
+   "maximum_input_tokens": 0,
+   "maximum_output_tokens": 0,
+   "maximum_provider_calls": 0,
+   "maximum_tool_calls": 0
+  },
+  "local_components_out_of_scope": [
+   "embedding model (local, already resident)",
+   "reranking model (local, already resident)",
+   "the deterministic verifier registry",
+   "the local model under measurement — its calls are counted and are not external calls"
+  ],
+  "margin_comparison": [
+   "local_model",
+   "retrieval_only"
+  ],
+  "minimum_cost_reduction_percent": 25.0,
+  "minimum_grounded_spans": 1,
+  "minimum_local_success_percent": 70.0,
+  "minimum_margin_points": 10.0,
+  "non_factual_output_kinds": [
+   "closed_form_computation"
+  ],
+  "non_inferiority_margin_points": 3.0,
+  "output_dispositions": [
+   "grounded",
+   "typed_abstention",
+   "ungrounded_assertion"
+  ],
+  "permitted_benchmark_provider_kinds": [
+   "local_api",
+   "mock"
+  ],
+  "undecidable_counts_as": "failure for every arm, and the count is reported"
+ },
+ "readings_hash": "9826f1254611a57743af3030a4fdc3b2d72b8054a8434905bf955a5efccc1a5f",
+ "recorded_at": "2026-08-15T00:00:00Z",
+ "revision": 1,
+ "schema_version": 1,
+ "sprint": "22D",
+ "why_amendments_are_structurally_zero": "22D's plan contains no gate-owner amendment path; §2.1 asks nobody for a threshold change, a new released enum member, a learner refit or a retro-fix of 22C's improvement exit"
+}

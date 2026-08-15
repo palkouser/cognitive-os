@@ -1,0 +1,238 @@
+{
+ "adapter_corpus_gate": {
+  "blocks": null,
+  "cleared_by": "palkouser (Sprint 22 gate owner)",
+  "concluded": true,
+  "constraint_recorded_whether_or_not_the_adapter_is_attempted": "one cleared source is CC BY-NC-SA 4.0, so every adaptation inherits noncommercial and ShareAlike; an adapter trained on it is internal-only by construction and could never ship in a released artifact. §1.4 records this now because it decides what the option would be worth, not after W4 has surplus",
+  "model_training_is_cleared": false,
+  "model_training_right_not_granted": false,
+  "noncommercial_sources": [
+   "chemistry"
+  ],
+  "sources": [
+   {
+    "clearance_content_hash": "118e3a76729446a9d92128d6a2c9be546e3c35d704c7e84fbb3b5ab44c97a438",
+    "key": "physics",
+    "license_identifier": "CC-BY-4.0",
+    "permitted_uses": [
+     "benchmark_use",
+     "commercial_use",
+     "derivative_work",
+     "internal_use",
+     "model_training",
+     "modification",
+     "public_release",
+     "redistribution"
+    ]
+   },
+   {
+    "clearance_content_hash": "a95fc515ec82361ee7e825d0a376e18180e4c72d8b6924748e0b5157551eb417",
+    "key": "chemistry",
+    "license_identifier": "CC-BY-NC-SA-4.0",
+    "permitted_uses": [
+     "benchmark_use",
+     "derivative_work",
+     "internal_use"
+    ]
+   }
+  ],
+  "why_it_blocks_nothing": "§2.3 puts adapter training outside every exit; this gate exists so the option is priced, not so the schedule waits on it"
+ },
+ "blocking_dependencies": [
+  {
+   "blocks": [
+    "W2 local model",
+    "W3 local-model arm",
+    "exits one, two, three and four"
+   ],
+   "concluded": false,
+   "gate": "model_licence",
+   "no_substitute_permitted": "§3.2: never substitute a 'temporary' model — a benchmark run on unclear weights is evidence that cannot be released",
+   "owner": "palkouser (Sprint 22 gate owner)",
+   "required_artefact": "sprint-22d-model-rights.json",
+   "required_contract": "cognitive_os.domain.corpus.OperatorLicenseClearance",
+   "what_the_owner_must_decide": [
+    "which model, by name and by the SHA-256 of the weight file W2 will serve",
+    "the SHA-256 of the licence text those weights ship with, read out of the distribution rather than transcribed from a model card (22C W1-D2: never transcribe a nominated licence; hash the bytes)",
+    "which CorpusUsageRight values the operator permits — internal_use at minimum, and benchmark_use for the numbers in this sprint to be publishable"
+   ],
+   "what_this_program_may_do": "read a licence if there is one, recognise it if it can, and advise. It may refuse on its own; it may never permit on its own"
+  },
+  {
+   "blocks": [
+    "W2 local model"
+   ],
+   "finding": "W0-F3",
+   "gate": "local_serving_runtime",
+   "owner": "palkouser (Sprint 22 gate owner)"
+  }
+ ],
+ "cpu_viability": {
+  "configuration_of_record": "cpu",
+  "gpu_supports_parameter_efficient_finetuning": true,
+  "memory_gib": 46.0,
+  "supports_a_7_to_8b_quantized_model_on_cpu": true,
+  "threads": 16,
+  "why_the_gpu_is_reported_beside_and_never_instead": "the exit asks for CPU viability specifically, so the CPU configuration is the claim and GPU numbers are reported next to it; §3.2 names buying speed with the claim as a schedule risk, and the adapter stays outside every exit (§2.3)"
+ },
+ "integrity_content_hash": "0732e0278105a895869bc33d5d90fb626e7704f43f32462544fa174c0ee9d111",
+ "invariants": {
+  "cpu": {
+   "logical_cpus": 16,
+   "model": "AMD Ryzen 7 5700X 8-Core Processor",
+   "physical_cores": 8
+  },
+  "gpu": {
+   "memory_mib": 16303,
+   "name": "NVIDIA GeForce RTX 5070 Ti",
+   "present": true
+  },
+  "platform": "linux",
+  "python": "3.12"
+ },
+ "invariants_hash": "122bcd4066feb3c3c4a4b444548afccbeac5d1b5add77336a1dd318cd83c24cd",
+ "items": [
+  "S22D-001",
+  "S22D-002"
+ ],
+ "local_runtime": {
+  "candidates_found": [],
+  "candidates_probed": [
+   "ollama",
+   "llama-server",
+   "llama-cli",
+   "vllm"
+  ],
+  "finding": "W0-F3",
+  "local_api_configuration_classes": 0,
+  "local_api_is_a_released_provider_kind": true,
+  "openai_compatible_mapping_is_reusable": true,
+  "released_adapter_kinds": [
+   "cli_agent",
+   "network_api"
+  ],
+  "serving_runtime_installed": false,
+  "w2_must_add": [
+   "a LocalApiProviderConfig member of the discriminated provider union",
+   "an adapter that maps it through providers/openai_compatible.py",
+   "a serving runtime on this host for the cleared weights"
+  ]
+ },
+ "microbenchmark_provenance_gate": {
+  "blocks": null,
+  "concluded": true,
+  "distinct_provenances": [
+   "authored in-repository for Sprint 22D"
+  ],
+  "every_task_authored_in_repository": true,
+  "facts_are_grounded_in_cleared_sources": [
+   "openstax-chemistry-2e-cc-by-nc-sa-4.0",
+   "openstax-physics-cc-by-4.0"
+  ],
+  "manifest_hash": "0ebd6c2d30d32aafadd3b2816519bffe995471515ebbe73e53538b02fe3c2f99",
+  "task_count": 100,
+  "why_asking_about_a_fact_is_authorship": "the prompts and the expected answers are written here; the constants they ask about are stated by the two rights-cleared sources, both of which 22C cleared for benchmark_use. Nothing is copied out of a source into this repository"
+ },
+ "model_licence_gate": {
+  "blocks": [
+   "W2 local model",
+   "W3 local-model arm",
+   "exits one, two, three and four"
+  ],
+  "concluded": false,
+  "no_substitute_permitted": "§3.2: never substitute a 'temporary' model — a benchmark run on unclear weights is evidence that cannot be released",
+  "owner": "palkouser (Sprint 22 gate owner)",
+  "required_artefact": "sprint-22d-model-rights.json",
+  "required_contract": "cognitive_os.domain.corpus.OperatorLicenseClearance",
+  "what_the_owner_must_decide": [
+   "which model, by name and by the SHA-256 of the weight file W2 will serve",
+   "the SHA-256 of the licence text those weights ship with, read out of the distribution rather than transcribed from a model card (22C W1-D2: never transcribe a nominated licence; hash the bytes)",
+   "which CorpusUsageRight values the operator permits — internal_use at minimum, and benchmark_use for the numbers in this sprint to be publishable"
+  ],
+  "what_this_program_may_do": "read a licence if there is one, recognise it if it can, and advise. It may refuse on its own; it may never permit on its own"
+ },
+ "observations": {
+  "free_disk_gib_repo": 821,
+  "memory_total_kib": 48199296,
+  "why_not_invariant": "total memory and free disk are states of the world at W0, not properties of the declared host; `--check` re-reads them and compares them against nothing (22B S22B-002, 22C W1-F1)"
+ },
+ "owner": "palkouser (Sprint 22 gate owner)",
+ "predecessor_release_verified": {
+  "exact_head_ci_conclusion": "success",
+  "exact_head_ci_run": "31885260162",
+  "is_ancestor_of_protected_main": true,
+  "peels_to": "5ecb7c9ebd18c73ec78ac012103c9c77b61443f4",
+  "protection": {
+   "enforce_admins": true,
+   "required_checks": 27
+  },
+  "tag": "sprint-22c-evidence-baseline",
+  "tag_object": "22d88878251e6670cb365b76dce925eee6da1c13",
+  "the_plan_said_otherwise": "§0 of the backlog states 22C's release had not happened. It had, between the plan being written and W0 running: the tag, the ancestry and the exact-head run were read back from the remote rather than assumed, and W0's blocking dependency is therefore satisfied rather than waived"
+ },
+ "provider_enumeration": {
+  "derived_from": "config.provider_config.ProviderAdapterConfig discriminated union",
+  "enumeration_matches_the_union": true,
+  "every_external_probe_refused": true,
+  "external_provider_ids_derived": [
+   "claude-code",
+   "codex-cli",
+   "minimax",
+   "openrouter"
+  ],
+  "external_provider_ids_frozen": [
+   "claude-code",
+   "codex-cli",
+   "minimax",
+   "openrouter"
+  ],
+  "out_of_scope_by_name": [
+   "embedding model (local, already resident)",
+   "reranking model (local, already resident)",
+   "the deterministic verifier registry",
+   "the local model under measurement — its calls are counted and are not external calls"
+  ],
+  "refusal_probes": [
+   {
+    "provider_id": "claude-code",
+    "refused": true
+   },
+   {
+    "provider_id": "codex-cli",
+    "refused": true
+   },
+   {
+    "provider_id": "minimax",
+    "refused": true
+   },
+   {
+    "provider_id": "openrouter",
+    "refused": true
+   },
+   {
+    "provider_id": "local-model-under-measurement",
+    "refused": false
+   }
+  ],
+  "the_local_model_is_not_refused": true,
+  "union_members": [
+   "MiniMaxProviderConfig",
+   "OpenRouterProviderConfig",
+   "ClaudeCodeProviderConfig",
+   "CodexCliProviderConfig"
+  ]
+ },
+ "recorded_at": "2026-08-15T00:00:00Z",
+ "schema_version": 1,
+ "verifier_extras": {
+  "finding": "W0-F1",
+  "frozen_verifiers_available": true,
+  "required_extras": [
+   "verification-physics"
+  ],
+  "why_it_is_a_finding": "build_builtin_registry registers the physics verifiers as *unavailable* when Pint is absent and list_all() returns them anyway, so a verifier set chosen by reading the registry looks complete while half of it errors; fifty of the hundred would have scored zero as 'undecidable' and the 70 % exit would have read as capability rather than as a missing extra"
+ },
+ "w0_may_proceed": true,
+ "w2_may_proceed": false,
+ "why_w0_proceeds_anyway": "§3.1 has the fixture-scale slice run before the real model is touched, so every W0 deliverable except the model itself is reachable while the clearance is outstanding — which is exactly how 22C finished a W0 whose source gate was still open"
+}

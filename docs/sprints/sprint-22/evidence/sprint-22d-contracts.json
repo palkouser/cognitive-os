@@ -1,0 +1,227 @@
+{
+ "S22D-010": {
+  "contract": "the five exit criteria, verbatim from the execution sprint allocation",
+  "count": 5,
+  "criteria": [
+   "no large external LLM is called during the local microbenchmark",
+   "local verified success is at least 70% and at least 10 points above retrieval-only",
+   "large-LLM calls or equivalent cost fall at least 25% at non-inferior success",
+   "factual output is grounded or explicitly uncertain",
+   "prior domain, learning, and safety gates remain green"
+  ],
+  "moved_by_22d": 0,
+  "source": "docs/sprints/sprint-22/execution-sprint-allocation.md"
+ },
+ "S22D-011": {
+  "a_call_attempt_is": "an error that fails the run, never a line in a log",
+  "enforced_by": "benchmark_22d.refuse_external_providers raises before a run, and the manifest budget sets maximum_provider_calls to 0",
+  "enumeration_derived_from": "config.provider_config.ProviderAdapterConfig discriminated union, not typed out beside it",
+  "external_providers_enumerated": [
+   "claude-code",
+   "codex-cli",
+   "minimax",
+   "openrouter"
+  ],
+  "out_of_scope_by_name": [
+   "embedding model (local, already resident)",
+   "reranking model (local, already resident)",
+   "the deterministic verifier registry",
+   "the local model under measurement — its calls are counted and are not external calls"
+  ],
+  "read_as": "a construction, never an audit of what happened",
+  "reading": "(a) what 'no large external LLM is called' reads",
+  "the_local_models_own_calls": "counted, and are not external calls"
+ },
+ "S22D-012": {
+  "arms": [
+   "no_memory",
+   "retrieval_only",
+   "external_teacher",
+   "local_model"
+  ],
+  "both_sides_measured_in_this_sprint": true,
+  "declared_domain": "generic",
+  "manifest_hash": "0ebd6c2d30d32aafadd3b2816519bffe995471515ebbe73e53538b02fe3c2f99",
+  "margin_compares": [
+   "local_model",
+   "retrieval_only"
+  ],
+  "measured_values": 0,
+  "minimum_local_success_percent": 70.0,
+  "minimum_margin_points": 10.0,
+  "reading": "(b) what 'local verified success' and the ten-point margin read",
+  "released_vocabulary_mismatch": "BenchmarkDomain carries no English or language member; the microbenchmark is declared under GENERIC and the mismatch is carried as W0-F2 rather than resolved by widening a released enum",
+  "same_tasks_same_seeds_same_verifier_for_every_arm": true,
+  "task_count": 100,
+  "undecidable_counts_as": "failure for every arm, and the count is reported",
+  "verified_means": "a registered verifier from the released builtin registry returns a pass — never a model judging a model",
+  "verifier_ids": [
+   "generic.exact",
+   "mathematics.numeric",
+   "physics.dimension",
+   "physics.quantity",
+   "physics.unit_conversion"
+  ]
+ },
+ "S22D-013": {
+  "baseline_is": "the external-teacher arm on the same hundred tasks, measured in this sprint — never a historical figure from another sprint (22B W4-A1)",
+  "both_reported_separately": "so a reduction cannot be claimed on whichever moved further",
+  "minimum_reduction_percent": 25.0,
+  "non_inferiority_is": "a maximum tolerated absolute drop in verified success",
+  "non_inferiority_margin_points": 3.0,
+  "outside_the_margin_is": "a failed exit, not a trade-off to narrate, however far the cost fell",
+  "quantities": [
+   "external_provider_calls",
+   "accounted_cost_units"
+  ],
+  "reading": "(c) what the 25 % reduction and 'non-inferior' read"
+ },
+ "S22D-014": {
+  "abstention_value": "cogos.abstain.insufficient_grounding.v1",
+  "dispositions": [
+   "grounded",
+   "typed_abstention",
+   "ungrounded_assertion"
+  ],
+  "explicitly_uncertain_means": "the runtime emitted the typed abstention, a value the verifier recognises — never a hedging phrase detected in prose",
+  "factual_output_count": 30,
+  "factual_output_kinds": [
+   "declarative_fact",
+   "fact_dependent_derivation"
+  ],
+  "factual_task_ids": [
+   "s22d-fact-01",
+   "s22d-fact-02",
+   "s22d-fact-03",
+   "s22d-fact-04",
+   "s22d-fact-05",
+   "s22d-fact-06",
+   "s22d-fact-07",
+   "s22d-fact-08",
+   "s22d-fact-09",
+   "s22d-fact-10",
+   "s22d-fact-11",
+   "s22d-fact-12",
+   "s22d-fact-13",
+   "s22d-fact-14",
+   "s22d-fact-15",
+   "s22d-fact-16",
+   "s22d-fact-17",
+   "s22d-fact-18",
+   "s22d-fact-19",
+   "s22d-fact-20",
+   "s22d-derive-01",
+   "s22d-derive-02",
+   "s22d-derive-03",
+   "s22d-derive-04",
+   "s22d-derive-05",
+   "s22d-derive-06",
+   "s22d-derive-07",
+   "s22d-derive-08",
+   "s22d-derive-09",
+   "s22d-derive-10"
+  ],
+  "grounded_means": "the output carries a citation the walk resolves by loading the cited source bytes and hashing the cut span — a digest proves bytes, not usability (D7 W3-F1)",
+  "grounding_floor": "every factual output resolves to loaded source bytes or abstains",
+  "reading": "(d) what 'grounded or explicitly uncertain' reads",
+  "third_case": "an ungrounded confident assertion, counted, and the exit reads zero"
+ },
+ "S22D-015": {
+  "holdout_case_count": 12,
+  "holdout_id": "sprint-22d-declarative-fact-holdout",
+  "holdout_measured_values": 0,
+  "holdout_refusal_reason": "fact_not_in_acquired_layer",
+  "holdout_success_definition": "a case succeeds when the acquired layer supplies the withheld fact at a retrievable ladder status and the registered verifier named on the case returns a pass; a case the layer cannot supply is refused by name and counts as a failure, never as an answer",
+  "kernel_role": "a consistency oracle, not a recomputation: a declarative fact cannot be recomputed but a kernel-checkable consequence can corroborate it, compared as numbers and never within a tolerance (22C W1-F3)",
+  "ladder": [
+   {
+    "requires": [
+     "a resolvable span into registered source bytes",
+     "promotion through the twelve released semantic verifiers",
+     "at least one kernel-checkable consequence that reproduces a printed result exactly, compared as numbers and never within a tolerance"
+    ],
+    "retrievable": true,
+    "status": "corroborated"
+   },
+   {
+    "requires": [
+     "a resolvable span into registered source bytes",
+     "promotion through the twelve released semantic verifiers"
+    ],
+    "retrievable": true,
+    "status": "grounded",
+    "weaker_because": "no kernel-checkable consequence corroborates it, and the record says so for every retained fact rather than for the layer as a whole"
+   },
+   {
+    "requires": [
+     "nothing — this is the absence of a resolvable span"
+    ],
+    "retrievable": false,
+    "status": "refused"
+   }
+  ],
+  "reading": "§1.5's grounding ladder, frozen before any fact is admitted",
+  "why_frozen_now": "a status boundary chosen after seeing which facts fall on which side is the same defect as a tolerance chosen after seeing the answer (22C W1-F3, W3-F2)"
+ },
+ "S22D-016": {
+  "minimum_grounded_spans": 1,
+  "no_self_reported_confidence": "22C W3-D1 — a component that demands an input it does not use is a refusal with a name, and a model's opinion of itself is exactly the value it will always produce; grounding support is counted, never asked for",
+  "not_touched_after": "the first measured number exists (§2.3, and the rule that has held since D2)",
+  "reading": "the escalation policy, as a decision function over runtime quantities",
+  "signals": [
+   "abstained",
+   "grounded_span_count",
+   "answer_form_valid"
+  ],
+  "truth_table": [
+   {
+    "abstained": false,
+    "answer_form_valid": true,
+    "escalates": true,
+    "grounded_spans": 0
+   },
+   {
+    "abstained": false,
+    "answer_form_valid": false,
+    "escalates": true,
+    "grounded_spans": 0
+   },
+   {
+    "abstained": false,
+    "answer_form_valid": true,
+    "escalates": false,
+    "grounded_spans": 1
+   },
+   {
+    "abstained": false,
+    "answer_form_valid": false,
+    "escalates": true,
+    "grounded_spans": 1
+   },
+   {
+    "abstained": true,
+    "answer_form_valid": true,
+    "escalates": true,
+    "grounded_spans": 0
+   },
+   {
+    "abstained": true,
+    "answer_form_valid": false,
+    "escalates": true,
+    "grounded_spans": 0
+   },
+   {
+    "abstained": true,
+    "answer_form_valid": true,
+    "escalates": true,
+    "grounded_spans": 1
+   },
+   {
+    "abstained": true,
+    "answer_form_valid": false,
+    "escalates": true,
+    "grounded_spans": 1
+   }
+  ]
+ }
+}
