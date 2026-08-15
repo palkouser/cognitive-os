@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "b5e9ff1a767f535543dab055d26c5b85c2c9fc3c2513074edc5c95d4022dfbb8",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "4f08c3c3-9599-53d6-acad-58ba16ddf515",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Two independent blockers, either of which alone is disqualifying.\\n\\n(1) Problem type (the reason returned). The passage gives a displacement (304 m north) and a duration (180 s) and asks for the average velocity \\u2014 a quotient in m/s. The only registered kinematic type, mechanics.uniform-motion, runs the other way: its formal_inputs require a given `speed` and `time` and its answer shape is a displacement in \\\"m\\\". The passage states no speed as given; speed is what is sought. Filling `speed` would mean inverting the registered relation, i.e. bending the passage into the nearest type, which rule 4 forbids. It is also not statics-equilibrium or moment-balance.\\n\\n(2) Readable result. Even setting the type aside, the \\\"Solution\\\" section as the text layer carries it consists solely of the string \\\"2.1\\\" \\u2014 an equation number with no value; the numeric result did not survive into the text layer (it is presumably in a figure or equation image). Under rule 2 that is no readable result, so `asserted` cannot be filled honestly and `asserted_value_quoted_from_the_passage` is left empty. The Discussion's remark about two significant figures describes the precision of a result it does not restate, so it supplies no readable value either; inferring \\\"1.7 m/s\\\" from 304/180 would be a computed guess, not a quoted assertion.\\n\\nNothing was placed in formal_inputs: rule 1 permits only stated givens, and while 304 m and 180 s are indeed stated as given, there is no registered type whose input slots they fill, so emitting them would imply a classification that does not hold.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"WORKED EXAMPLE \\u2014 Calculating Average Velocity (Section 2.2 Speed and Velocity, page 79). \\\"A student has a displacement of 304 m north in 180 s. What was the student's average velocity?\\\" Strategy: the displacement is 304 m north and the time is 180 s; the formula for average velocity is applied. Solution: \\\"2.1\\\" (equation number only; no value in the text layer). Discussion: average velocity is a vector so direction must be included; direction may be omitted until the end; 304 m has three significant figures and 180 s only two, so the quotient should have only two significant figures.\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "Two independent blockers, either of which alone is disqualifying.\n\n(1) Problem type (the reason returned). The passage gives a displacement (304 m north) and a duration (180 s) and asks for the average velocity — a quotient in m/s. The only registered kinematic type, mechanics.uniform-motion, runs the other way: its formal_inputs require a given `speed` and `time` and its answer shape is a displacement in \"m\". The passage states no speed as given; speed is what is sought. Filling `speed` would mean inverting the registered relation, i.e. bending the passage into the nearest type, which rule 4 forbids. It is also not statics-equilibrium or moment-balance.\n\n(2) Readable result. Even setting the type aside, the \"Solution\" section as the text layer carries it consists solely of the string \"2.1\" — an equation number with no value; the numeric result did not survive into the text layer (it is presumably in a figure or equation image). Under rule 2 that is no readable result, so `asserted` cannot be filled honestly and `asserted_value_quoted_from_the_passage` is left empty. The Discussion's remark about two significant figures describes the precision of a result it does not restate, so it supplies no readable value either; inferring \"1.7 m/s\" from 304/180 would be a computed guess, not a quoted assertion.\n\nNothing was placed in formal_inputs: rule 1 permits only stated givens, and while 304 m and 180 s are indeed stated as given, there is no registered type whose input slots they fill, so emitting them would imply a classification that does not hold.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "WORKED EXAMPLE — Calculating Average Velocity (Section 2.2 Speed and Velocity, page 79). \"A student has a displacement of 304 m north in 180 s. What was the student's average velocity?\" Strategy: the displacement is 304 m north and the time is 180 s; the formula for average velocity is applied. Solution: \"2.1\" (equation number only; no value in the text layer). Discussion: average velocity is a vector so direction must be included; direction may be omitted until the end; 304 m has three significant figures and 180 s only two, so the quotient should have only two significant figures."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 2102,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 29762.41848800055,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

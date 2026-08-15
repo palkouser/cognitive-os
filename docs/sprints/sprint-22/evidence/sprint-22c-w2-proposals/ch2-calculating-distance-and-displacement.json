@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "24fa477fcbcefc8c544ff341acf245078113bbdfd62d31f9ce98ba5c78069933",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "cc9b66c9-6d11-593d-aa69-3ebaf1c5a9cc",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"The passage composes two signed displacements along one axis (-3 km then +2 km) and reports a total displacement, a path distance (5 km), and a magnitude (1 km). None of the three registered types covers this: there is no speed and no duration anywhere in the passage, so mechanics.uniform-motion does not apply (its formal_inputs require a stated speed and time, and inventing a speed or a time from the given displacements would violate rule 1); there is no body with coplanar forces, so mechanics.statics-equilibrium does not apply; and there is no pivot and no forces, so mechanics.moment-balance does not apply. Per rule 4 this is a distance/displacement composition and must not be bent into the nearest type. A second, independent obstacle is present even if a type had matched: the document's text layer has dropped the inline equations, so the Strategy sentence ends \\\"the sum of the two displacements, and .\\\" with both symbols missing, and Solution (a) reads \\\"The rider's displacement is .\\\" with the value absent (the stray \\\".\\\" after the Discussion-preceding blank line is the orphaned fragment of that sentence). Parts (b) 5 km and (c) 1 km are readable, but (a) \\u2014 the quantity the worked example is named for \\u2014 is not, which would independently trigger rule 2 / no_readable_result. Reported reason is no_registered_problem_type because rule 4 disqualifies the passage before the readability of any asserted value is reached. No formal_inputs or asserted values are emitted: any speed, time, pivot, or force here would be fabricated rather than read from the passage.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"A cyclist rides 3 km west and then turns around and rides 2 km east. (a) What is her displacement? (b) What distance does she ride? (c) What is the magnitude of her displacement?\"}",
+  "structured_output": {
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "problem_type": "",
+   "statement": "A cyclist rides 3 km west and then turns around and rides 2 km east. (a) What is her displacement? (b) What distance does she ride? (c) What is the magnitude of her displacement?",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "The passage composes two signed displacements along one axis (-3 km then +2 km) and reports a total displacement, a path distance (5 km), and a magnitude (1 km). None of the three registered types covers this: there is no speed and no duration anywhere in the passage, so mechanics.uniform-motion does not apply (its formal_inputs require a stated speed and time, and inventing a speed or a time from the given displacements would violate rule 1); there is no body with coplanar forces, so mechanics.statics-equilibrium does not apply; and there is no pivot and no forces, so mechanics.moment-balance does not apply. Per rule 4 this is a distance/displacement composition and must not be bent into the nearest type. A second, independent obstacle is present even if a type had matched: the document's text layer has dropped the inline equations, so the Strategy sentence ends \"the sum of the two displacements, and .\" with both symbols missing, and Solution (a) reads \"The rider's displacement is .\" with the value absent (the stray \".\" after the Discussion-preceding blank line is the orphaned fragment of that sentence). Parts (b) 5 km and (c) 1 km are readable, but (a) — the quantity the worked example is named for — is not, which would independently trigger rule 2 / no_readable_result. Reported reason is no_registered_problem_type because rule 4 disqualifies the passage before the readability of any asserted value is reached. No formal_inputs or asserted values are emitted: any speed, time, pivot, or force here would be fabricated rather than read from the passage."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1250,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 17920.01692100166,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

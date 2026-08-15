@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "8831725561c704b9db54553bc6fec7f97ef0bf5d8092cef1a839b36c0b6a9536",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "bd648204-9604-5572-aa42-f2b06ec2c3af",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"None of the four sub-problems matches a type registered by engineering.mechanics. (a) is an area under a curve \\u2014 a graphical estimate summing rectangle and triangle areas over 0-10 s, 10-20 s, 20-40 s and 40-70 s \\u2014 which rule 4 names explicitly as out of scope; it is not a displacement from one constant or average speed times a duration. (b) is a slope (instantaneous acceleration, \\\"1 m/s2\\\"), also named in rule 4. (c) is a value read off a graph (\\\"240 m/s\\\"), not a computation. (d) is average velocity from a displacement and a time, which inverts mechanics.uniform-motion rather than instantiating it: uniform-motion consumes speed and time and produces a displacement, whereas here displacement (16,325 m) and time (70 s) are consumed to produce a speed. Bending (d) into mechanics.uniform-motion would require treating the passage's own answer as an input, which rule 1 forbids. Independently, (d) would also fail rule 2: the passage stops at the bare instruction \\\"3. Divide\\\" and never states the quotient. The Discussion's \\\"about 191 m/s\\\" and \\\"202.5 m/s\\\" belong to different computations \\u2014 the first 30 s only, and a straight-line approximation of the curve \\u2014 so neither is the asserted result of (d), and neither may be substituted for it. Because no registered problem type applies at all, formal_inputs and asserted are left empty rather than partially filled; nothing here is a rejection of the passage's physics, which is untouched.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Section 2.4 worked example (\\\"Jet Car, Take Two\\\"): from a curved velocity-vs-time graph (Figure 2.19), (a) estimate the displacement as the area under the curve by decomposing it into rectangles and triangles over four intervals, (b) find the instantaneous acceleration at t = 30 s as the slope of a tangent line, (c) read the instantaneous velocity at t = 30 s off the graph, and (d) compute the average velocity as net displacement divided by total time.\"}",
+  "structured_output": {
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "problem_type": "",
+   "statement": "Section 2.4 worked example (\"Jet Car, Take Two\"): from a curved velocity-vs-time graph (Figure 2.19), (a) estimate the displacement as the area under the curve by decomposing it into rectangles and triangles over four intervals, (b) find the instantaneous acceleration at t = 30 s as the slope of a tangent line, (c) read the instantaneous velocity at t = 30 s off the graph, and (d) compute the average velocity as net displacement divided by total time.",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "None of the four sub-problems matches a type registered by engineering.mechanics. (a) is an area under a curve — a graphical estimate summing rectangle and triangle areas over 0-10 s, 10-20 s, 20-40 s and 40-70 s — which rule 4 names explicitly as out of scope; it is not a displacement from one constant or average speed times a duration. (b) is a slope (instantaneous acceleration, \"1 m/s2\"), also named in rule 4. (c) is a value read off a graph (\"240 m/s\"), not a computation. (d) is average velocity from a displacement and a time, which inverts mechanics.uniform-motion rather than instantiating it: uniform-motion consumes speed and time and produces a displacement, whereas here displacement (16,325 m) and time (70 s) are consumed to produce a speed. Bending (d) into mechanics.uniform-motion would require treating the passage's own answer as an input, which rule 1 forbids. Independently, (d) would also fail rule 2: the passage stops at the bare instruction \"3. Divide\" and never states the quotient. The Discussion's \"about 191 m/s\" and \"202.5 m/s\" belong to different computations — the first 30 s only, and a straight-line approximation of the curve — so neither is the asserted result of (d), and neither may be substituted for it. Because no registered problem type applies at all, formal_inputs and asserted are left empty rather than partially filled; nothing here is a rejection of the passage's physics, which is untouched."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1591,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 21136.340267999913,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

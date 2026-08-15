@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "55eaa3985b6dbdb03b271a0924265d0a6c7ae4fb2b7ab3dd14509de328c76878",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "d73f1062-0d0d-5a00-a3a0-a3f135a7870a",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Part (a) is an angle of rotation obtained as a fraction of a full revolution; part (b) is an arc length s = r*theta. Neither is a displacement from a constant speed and a duration, a coplanar force balance, nor a resultant moment about a pivot, so engineering.mechanics registers no matching type. Part (b) is a distance, which rule 4 names explicitly as out of scope: it must not be bent into mechanics.uniform-motion merely because s = r*theta has the same product shape as s = v*t (theta is an angle in radians, not a speed, and there is no duration in the formula). A second, independent obstacle also applies: the document's text layer has dropped every equation and numeric result. \\\"a full revolution ( radians)\\\", \\\"the angle between the hour hand at 12 and at 3 is\\\", \\\"Rearranging the equation 6.4 we get\\\", and \\\"Inserting the known values gives an arc length of\\\" all terminate with the value stripped out, and the equation numbers 6.5 and 6.6 appear stranded among the page furniture. So the passage asserts no result readable from this text layer either, and asserted_value_quoted_from_the_passage is left empty rather than reconstructed. The only quantity the passage states as given in readable digits is the radius, 1.0 m; the 12-to-3 interval and the 1/4 fraction are stated in words. None of these are recorded in formal_inputs, since no registered type consumes them.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"A clock on a clock tower has a radius of 1.0 m. (a) What angle of rotation does the hour hand travel through when it moves from 12 p.m. to 3 p.m.? (b) What is the arc length along the outermost edge of the clock between the hour hand at these two times?\"}",
+  "structured_output": {
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "problem_type": "",
+   "statement": "A clock on a clock tower has a radius of 1.0 m. (a) What angle of rotation does the hour hand travel through when it moves from 12 p.m. to 3 p.m.? (b) What is the arc length along the outermost edge of the clock between the hour hand at these two times?",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "Part (a) is an angle of rotation obtained as a fraction of a full revolution; part (b) is an arc length s = r*theta. Neither is a displacement from a constant speed and a duration, a coplanar force balance, nor a resultant moment about a pivot, so engineering.mechanics registers no matching type. Part (b) is a distance, which rule 4 names explicitly as out of scope: it must not be bent into mechanics.uniform-motion merely because s = r*theta has the same product shape as s = v*t (theta is an angle in radians, not a speed, and there is no duration in the formula). A second, independent obstacle also applies: the document's text layer has dropped every equation and numeric result. \"a full revolution ( radians)\", \"the angle between the hour hand at 12 and at 3 is\", \"Rearranging the equation 6.4 we get\", and \"Inserting the known values gives an arc length of\" all terminate with the value stripped out, and the equation numbers 6.5 and 6.6 appear stranded among the page furniture. So the passage asserts no result readable from this text layer either, and asserted_value_quoted_from_the_passage is left empty rather than reconstructed. The only quantity the passage states as given in readable digits is the radius, 1.0 m; the 12-to-3 interval and the 1/4 fraction are stated in words. None of these are recorded in formal_inputs, since no registered type consumes them."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1409,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 20535.442041998976,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

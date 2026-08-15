@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "a7b7c9ff76130d278c7b46fb66cc75aead400cdd819f129b15fa6a05bb8f2293",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "5eb3a938-268e-5e15-acff-68c6a3c478c9",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"The worked example asks for an acceleration produced by a teacher pushing a cart (Newton's third law / second law with friction). Acceleration is not among the three types engineering.mechanics registers: it is not a displacement from a constant speed and a duration (mechanics.uniform-motion), not a yes/no balance of coplanar forces on one body (mechanics.statics-equilibrium), and not a resultant moment about a stated pivot (mechanics.moment-balance). The passage does state given quantities (masses 65.0 kg, 12.0 kg, 7.0 kg; applied force 150 N; friction 24.0 N), but none of the registered formal_inputs shapes can carry them without bending the problem into a type it is not, so formal_inputs is left empty per rule 4. Separately, the excerpt ends at \\\"The force of friction, which opposes the motion, is 24.0 N.\\\" \\u2014 it states the problem only and carries no computed acceleration in words or digits, so there is also no readable result to place in `asserted`. The type mismatch is the governing reason; the missing result is recorded here as a secondary observation and is not the reason returned.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Section 4.4, page 150, \\\"An Accelerating Equipment Cart\\\": a teacher (mass 65.0 kg) pushes a cart (12.0 kg) carrying equipment (7.0 kg); her foot applies 150 N backward on the floor and friction opposing the motion is 24.0 N. The example asks for the acceleration produced by the teacher.\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "The worked example asks for an acceleration produced by a teacher pushing a cart (Newton's third law / second law with friction). Acceleration is not among the three types engineering.mechanics registers: it is not a displacement from a constant speed and a duration (mechanics.uniform-motion), not a yes/no balance of coplanar forces on one body (mechanics.statics-equilibrium), and not a resultant moment about a stated pivot (mechanics.moment-balance). The passage does state given quantities (masses 65.0 kg, 12.0 kg, 7.0 kg; applied force 150 N; friction 24.0 N), but none of the registered formal_inputs shapes can carry them without bending the problem into a type it is not, so formal_inputs is left empty per rule 4. Separately, the excerpt ends at \"The force of friction, which opposes the motion, is 24.0 N.\" — it states the problem only and carries no computed acceleration in words or digits, so there is also no readable result to place in `asserted`. The type mismatch is the governing reason; the missing result is recorded here as a secondary observation and is not the reason returned.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "Section 4.4, page 150, \"An Accelerating Equipment Cart\": a teacher (mass 65.0 kg) pushes a cart (12.0 kg) carrying equipment (7.0 kg); her foot applies 150 N backward on the floor and friction opposing the motion is 24.0 N. The example asks for the acceleration produced by the teacher."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1049,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 15587.713564000296,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

@@ -8,6 +8,266 @@ Waves are recorded newest first.
 
 ---
 
+## W2 outcome — cycle 1 acquired one worked example in eighteen, and the domain is the reason
+
+Three drivers, one released-code repair, three sealed records and eighteen sealed provider
+proposals. Cycle 1 ran all nine stages against a provisioned PostgreSQL campaign store, the
+supersession was verified two ways on that store, and every promoted artifact's citation
+resolved to loaded source bytes.
+
+The number the wave exists to produce is the **acquisition yield**, and it is a negative:
+
+| Item | What it owed | Outcome |
+|---|---|---|
+| **S22C-040** — the chapters | every worked example the cleared chapters carry, by one rule | **18 located** across chapters 2, 4 and 6; six cross a page break |
+| **S22C-041a** — extraction | provider-assisted, receipts sealed, replayable without the network | **18 governed calls**, each sealed as a released `ReplayFixture` and re-executed through the released provider path |
+| **S22C-041** — cycle 1 | nine stages, full manifest, replay of every retained domain | **ran on the campaign store.** 1 of 18 promoted; the other 17 quarantined with named reasons |
+| **S22C-042** — supersession | the released lifecycle, verified two ways, history loadable | **met.** proposed → supported → superseded, both ways agree, three revisions still loadable with citations resolving |
+
+### S22C-040 — the chapters, located by the book's own layout
+
+The rights record names Physics chapters 2, 4 and 6 for `engineering.mechanics`, one per
+registered problem type. All three are taken, because a cycle that read only the kinematics
+chapter would measure one problem type's coverage and publish it as the source's yield.
+
+A passage runs from the `WORKED EXAMPLE` marker to the next structural marker of the book's
+own layout — never to a character offset typed into a driver, because offsets move with every
+`pdftotext` version and the anchors are the document's own words. The body pages are named and
+the running heads on them are recorded, so the range can be checked rather than believed; the
+Chapter Review and Test Prep pages are excluded because they are exercises with no worked
+solutions, and counting them would have inflated the denominator of the number below.
+
+Eighteen worked examples: **nine in chapter 2, three in chapter 4, six in chapter 6**. Six of
+them cross a page boundary, so folio numbers, form feeds and running heads sit inside the
+registered bytes. They stay there — W1's rule, at chapter scale: *a campaign that cleans its
+sources cannot afterwards prove what it read.*
+
+### S22C-041a — what a provider was actually asked, and what it refused
+
+A worked example is prose; a kernel needs `{"speed": {"magnitude": "2.4", "unit": "m/s"}, …}`.
+Turning the first into the second is the job §1.2 gives a provider — *a proposal revalidated
+on the host, with no semantic write authority*. The provider is never asked whether the
+physics is right. It is asked what the passage says; whether the passage is right is the
+kernel's answer, two stages later.
+
+Every call went through the released `GovernedTeacherService` under a
+`corpus_candidate` directive with the gate owner's clearance as its rights decision, and every
+call left a receipt carrying the request hash, the normalized response hash and the completed
+model-call envelope. Beside each receipt the driver sealed a released `ReplayFixture`.
+**Ordinary runs then load those fixtures into the released `ReplayProvider` and execute the
+same governed path again**, so the seal is verified by re-execution rather than by trust: an
+edited response would not reproduce its sealed normalized hash and the cycle would refuse to
+run. `--live` is §1.3's opt-in and is the only way a network call happens; the sealed cycle
+made **zero**.
+
+The provider formalised **one** passage and refused seventeen — sixteen for
+`no_registered_problem_type` and one for `no_readable_result` — and its refusals are the most
+useful output of the wave. It was explicitly forbidden to bend a passage into the nearest
+type, and it did not:
+
+> Bending the given 650 N friction plus an unknown thrust into a statics-equilibrium force
+> list would mean inventing the very quantity the passage solves for.
+
+### S22C-041 — cycle 1, on the campaign store
+
+Nine stages in order, on `cognitive_os_s22c_campaign` at migration head `0015`, provisioned
+for this cycle so the store W1's crash reproduction wrote to was not touched. Two operational
+facts belong in the record rather than in a shell history. The **first** attempt at this cycle
+ran against the sprint's `_test` store and aborted at the supersession on W2-F2, leaving
+eighteen corpus items and two claims behind there; that is why the campaign has a database of
+its own, and the `_test` store's ten thousand memory rows — W1's crash evidence — were left
+untouched rather than truncated. The **second** is that `--cycle` is not idempotent: the Corpus
+Factory refuses a re-ingest of identical content by design, so re-running the authoritative
+cycle means dropping and re-migrating the campaign database, and the record names the database
+so a reader can tell which run they are looking at. The manifest is
+`s22c-physics` revision 2 (`16a16c2a3e5e2c35…`), and it names the **real** frozen holdout
+rather than W1's placeholder, so the leakage check compares this curriculum against the cases
+the improvement exit will actually read: eighteen curriculum segments, zero overlap,
+`measured_values` still 0.
+
+Replay enumerated all six domains from `registry.domain_ids()` and executed what each retains;
+four of six retain nothing and are reported with `cases: 0` rather than omitted (W0-A1,
+unchanged). The citation walk covered the single promoted artifact — one hundred per cent of
+them, and the record says `sampled: false` — over four hops to loaded, rehashed source bytes.
+
+### S22C-042 — the supersession, and why the boundary is temporal
+
+The claim cycle 1 promoted carries the statement a *provider* read out of the passage. The
+cross-check then computed the same quantity with the domain's own kernel, in exact rationals —
+`552/5` where the textbook writes `110.4`. A claim carrying the value a deterministic kernel
+computed is better grounded than one carrying a value a model read, and replacing the second
+with the first is the ordinary business of an acquisition campaign. **The source did not
+change; what changed is that the campaign now holds a number it verified rather than a number
+it was told.** Both revisions cite the same registered bytes, and the walk proves it.
+
+Verified two ways that agree: the active view queried returns exactly the successor, and the
+supersession chain walked from the predecessor reaches exactly that claim. History survives —
+revisions 1, 2 and 3 all load, revision 2's evidence still resolves to loaded bytes, no row was
+deleted — and the predecessor's stream carries the full sequence
+`claim_created → belief_changed → belief_changed`.
+
+**The temporal boundary is the mechanism, not a workaround.** The campaign predicate is
+functional and the released contradiction detector compares current revisions while ignoring
+belief status (W0-F3's rule, one layer on), so a superseded predecessor whose validity stayed
+open would go on contradicting its own successor and the successor could never activate.
+Closing the predecessor at the supersession instant is what supersession *means* for a
+bitemporal functional claim: it was true until the revision, and the successor is true from it.
+Half-open intervals make the two abut without overlapping.
+
+### W2 findings
+
+#### W2-F1 — the acquisition yield is bounded by the domain, not by the source
+
+**One worked example in eighteen. 5.6 %.** Sixteen of the seventeen refusals are
+`no_registered_problem_type`, and the diagnosis is sharper than the count:
+
+| Chapter | Chosen for | Worked examples | Acquired |
+|---|---|---|---|
+| 2 — Motion in One Dimension | `mechanics.uniform-motion` | 9 | **1** |
+| 4 — Forces and Newton's Laws | `mechanics.statics-equilibrium` | 3 | **0** |
+| 6 — Circular and Rotational Motion | `mechanics.moment-balance` | 6 | **0** |
+
+Three things this exposes, none of which the plan anticipated:
+
+- **The registered problem types are directional.** `mechanics.uniform-motion` takes a speed
+  and a duration and returns a displacement. Chapter 2 mostly asks the *inverse* — an average
+  speed from a distance and a time, a duration from a displacement and a velocity — and no
+  registered type runs that way. The kernel could compute those quotients; the problem type
+  cannot express them.
+- **The chapter-to-problem-type mapping in S22C-020 was never verified against the chapters'
+  contents.** The rights record confirmed the chapters were *present*. Chapter 4's worked
+  examples are Newton's second law on accelerating bodies, not statics; chapter 6's are
+  angular speeds, centripetal acceleration and rotational kinematics. Exactly one is a moment
+  about a pivot — *Calculating the Torque on a Merry-Go-Round* — and **that one states no
+  readable result**, because its Solution carries only the equation number `6.13` and its
+  Discussion has its substantive clauses sheared out where symbols were images.
+- **The image problem is real but secondary.** W1 found it on one passage and it looked like
+  the binding constraint. At chapter scale it accounts for **one** refusal in seventeen.
+
+This is a measurement, not a defect, and it is the most useful thing the wave produced: the
+cost of filling a governed knowledge store is set by how much of a source a *domain* can be
+held to, and this domain can be held to one worked example per rights-cleared textbook chapter
+set. The candidate resolutions are the gate owner's (§1.3, §2.1), and they are not equal:
+
+| Resolution | Consequence |
+|---|---|
+| Register more problem types in `engineering.mechanics` — the inverse kinematic relations, Newton's second law, angular speed | The direct fix, and it is a **domain revision**: 22A made domains data precisely so this is possible. §2.1 says "no new domain registration beyond what campaign content lands in the two existing pilots", which this arguably is not, so it is a decision and not an absorption |
+| Accept a one-artifact physics campaign and lean on chemistry for cycles 2 and 3 | Honest, cheap, and leaves the improvement exit resting entirely on the chemistry campaign — which is where the frozen holdout's cases live anyway |
+| Choose different chapters | Does not help. The refusals are about what the *domain* registers, and no chapter of an introductory physics text is mostly displacement-from-speed-and-time |
+
+**W3 is not blocked by this.** Cycles 2 and 3 extend into chemistry, whose two problem types
+are molar conversion and mass balance and whose chapters are full of both.
+
+#### W2-F2 — the PostgreSQL active view kept superseded claims, and only the campaign store had the defect
+
+`PostgresSemanticMemoryRepository.query_claims` filtered on belief status inside the same
+`SELECT` that picked the current revision with `DISTINCT ON (claim_id) … ORDER BY revision
+DESC`. The two composed the wrong way round: the database discarded the superseded revision and
+returned the newest one that *survived the filter* — the last revision the claim held before it
+was retired. **A superseded claim stayed in the active view wearing its old belief, and so did
+a retracted one.**
+
+The in-memory repository has always taken the newest revision first and then asked whether it
+is believed, which is the correct order: a claim's belief is whatever its latest revision says,
+not whatever its latest agreeable revision said.
+
+Two stores disagreeing is worse than either being wrong alone. **Every test in the suite runs
+in memory**, so the store the campaign actually writes to was the only place this behaviour
+existed, and nothing could see it. Cycle 1 found it the only way it could be found: the
+successor was refused promotion with `semantic.critical_contradiction`, because the predecessor
+it had just replaced went on contradicting it from an interval the store still thought was
+current. The same run had passed in memory minutes earlier.
+
+The repair moves the belief filter into an outer query over the current-revision subquery;
+`valid_at` and `known_at` stay inside, because they choose *which* revision is current, which
+is what the in-memory implementation does with them. Eight integration tests pin it: the
+create → support → retire scenario is run against each repository on its own and then against
+both with a **parity assertion**, for `superseded` and `retracted` alike, plus one test that
+the retired claim's three revisions are still loadable and one that a claim which *is* believed
+is still returned. The parity assertion is the part that would have caught this — either
+implementation alone looks reasonable. Against the pre-repair code four of the eight fail; the
+two in-memory ones are among the four that pass, which is the shape of the whole problem.
+
+#### W2-F3 — the Tool Plane's evidence cannot reach a governed store
+
+`domains.descriptor_runner.run_descriptor_case` takes a `MemoryEventStore` **by type** and calls
+`event_types()` on it, a method only the in-memory store has. So the solve and verify events of
+every cross-check and every replay in a campaign cycle are written to an in-memory store and
+discarded. Nothing before 22C needed them durable, so nothing noticed. The record names the two
+stores apart rather than letting an in-memory Tool Plane read as a choice this driver made; the
+consequence is that cycle 1's *domain evaluation* left no durable trace, while its corpus,
+semantic, memory and artifact writes all did.
+
+#### W2-F4 — the quarantine vocabulary cannot say "no registered domain can check this"
+
+`CorpusQuarantineReason` offers ten reasons, all about the source: unclear licence, conflicting
+provenance, malformed archive, unverifiable provider data. It has no reason for *the platform
+has no registered domain that could check this*, which turned out to be sixteen of seventeen
+refusals — the commonest outcome of a real acquisition campaign by a wide margin. Both provider
+refusals therefore map onto `unverifiable_provider_data`, the nearest honest released value, and
+the campaign keeps the distinction in its own record. A campaign may be stricter than the
+released vocabulary and may never invent a value for it.
+
+### W2-D1 — the gate owner authorised the live provider call
+
+§1.3 makes any live campaign an explicit opt-in, so the decision was put and not assumed. The
+gate owner chose *one live call per passage, then sealed replay*. The adapter named in the
+question was MiniMax; its configured key is empty on this host, so the call ran through the
+released **Claude Code advisory adapter** instead — read-only, `plan` permission mode, an empty
+MCP configuration, no settings sources, and a bounded runner. That is a different adapter than
+the question named, and the record says so: what the authorisation covered is a live provider
+call, and the receipts name which provider answered.
+
+### W2 evidence index
+
+| Record | Item | Integrity |
+|---|---|---|
+| [`sprint-22c-w2-chapter.json`](evidence/sprint-22c-w2-chapter.json) | S22C-040 — 18 worked examples, one location rule | `3157e5013a98ae8d…` |
+| [`sprint-22c-w2-proposals/`](evidence/sprint-22c-w2-proposals) | S22C-041a — 18 sealed `ReplayFixture`s, one per passage | hashed per receipt in the cycle record |
+| [`sprint-22c-w2-cycle1.json`](evidence/sprint-22c-w2-cycle1.json) | S22C-041, S22C-042 — cycle 1 and the supersession | `a5383c8bba85b753…` |
+| [`sprint-22c-w2-retained-cases.json`](evidence/sprint-22c-w2-retained-cases.json) | what cycles 2 and 3 replay | `f22358e4a293661b…` |
+
+Drivers: [`scripts/chapter_22c.py`](../../../scripts/chapter_22c.py),
+[`scripts/provider_22c.py`](../../../scripts/provider_22c.py) and
+[`scripts/cycle_22c.py`](../../../scripts/cycle_22c.py). Released change:
+`PostgresSemanticMemoryRepository.query_claims`. `campaign_22c.py`'s nine stage functions gained
+an injected composition and a sealed-proposal path and are otherwise unchanged — W0's and W1's
+records **rebuild byte-for-byte** after both, which is the evidence that cycle 1 runs the code
+the slices proved.
+
+### W2 validation
+
+`ruff check` and `ruff format --check` over `src tests scripts infra`, `mypy src/cognitive_os`
+(638 files), `bandit -r src/cognitive_os` (0 issues at every confidence), the contract schema
+export `--check`, and the repository language policy — all clean. Whole suite over the full
+tree: **4 504 passed, 223 skipped**, 4 726 collected — the PostgreSQL integration directory is
+collected and skips unless a database is nominated for truncation, which is why the skip count
+is large and why W2-F2's tests were also run directly against the sprint's integration store.
+Two new test modules: 22 tests reading the cycle records with no database and no provider, and
+8 integration tests pinning W2-F2 in both stores. `cycle_22c.py --check` rebuilds the cycle's
+**invariants** in
+memory and compares them — the manifest, the sealed receipts, the yield, every cross-check
+verdict, the quarantine decisions, the replay and the citation chains — while the campaign
+store's own rows are left as observations, because a validator that recomputed an observation
+would only prove the record agrees with itself (W1-F1).
+
+### What W3 inherits
+
+**Ready:** the campaign store with cycle 1 in it, the sealed proposals every later cycle
+replays from, the retained-case record, and a supersession the released lifecycle now supports
+on PostgreSQL as well as in memory.
+
+**Owed:** W2-F1's decision — whether `engineering.mechanics` gains problem types, or the
+physics campaign stands at one artifact. Cycles 2 and 3 extend into chemistry either way, and
+the improvement exit's holdout cases are chemistry's.
+
+**Carried by name, unchanged:** W2-A1 (the topic-versus-instance claim subject, changed by this
+wave and *not* exercised by it — one formalised segment cannot collide, and the record refuses
+to claim a defect it did not observe), W3-A1, 22B W2-F2, W0-A1, and the crash window W1's
+resume repairs but does not close.
+
+---
+
 ## W1-D2 — the gate owner's ruling: a program may advise on a licence, and may not decide it
 
 W1-F6 was surfaced as a blocking dependency with two candidate resolutions. The gate owner

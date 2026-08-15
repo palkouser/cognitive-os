@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "7d0ba712903254c2c47ce26d20df955f7afd5d1ce89ec39f04b9126e2d7cd0fd",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "196880c6-5228-5ea2-ab24-3011d0fd61fb",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"None of the four parts is one of the three registered types. (a) is an area under a curve (rectangle plus triangle read off a velocity-vs-time figure), (b) is a slope/acceleration, (c) is a value read off a graph, (d) is an average velocity in m/s \\u2014 not a displacement from a stated speed and duration. Rule 4 applies and the nearest-type bend is refused explicitly: part (d) could be turned around into \\\"90 m/s for 30 s gives 2,700 m\\\", but 90 m/s is the passage's own result for (d) and 2,700 m is the result of (a), so using either as a given would violate rule 1 (no quantity inferred from the answer). The quantities that would populate a uniform-motion instance are also not stated as given: the 20 m/s, 140 m/s, 30 s and 40 m/s all originate in the figure and appear only inside the solution steps, and the motion the figure shows is not uniform. Because the passage is not a registered problem type, `asserted` is left empty rather than carrying the readable 2,700 m / 90 m/s results. Noted but not reconciled and not corrected, per the brief: the Discussion refers to \\\"100m/s\\\" where the Solution computes 90 m/s.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"OpenStax College Physics, Section 2.4 \\\"Velocity vs. Time Graphs\\\", p. 90, Worked Example \\\"Using Velocity Graph to Calculate Some Stuff: Jet Car\\\". From a velocity-vs-time figure for a jet car: (a) find the displacement over the time shown, (b) calculate the acceleration as the slope of the velocity graph, (c) give the instantaneous velocity at t = 5 s, and (d) calculate the average velocity over the interval. The solution decomposes the area under the line into a rectangle (0 to 20 m/s over 30 s, 600 m) and a triangle (base 30 s, height 140 m/s, 2,100 m) for a net displacement of 2,700 m; takes points (5 s, 40 m/s) and (25 s, 140 m/s) for the slope; reads 40 m/s off the graph at 5 s; and divides 2,700 m / 30 s = 90 m/s.\"}",
+  "structured_output": {
+   "statement": "OpenStax College Physics, Section 2.4 \"Velocity vs. Time Graphs\", p. 90, Worked Example \"Using Velocity Graph to Calculate Some Stuff: Jet Car\". From a velocity-vs-time figure for a jet car: (a) find the displacement over the time shown, (b) calculate the acceleration as the slope of the velocity graph, (c) give the instantaneous velocity at t = 5 s, and (d) calculate the average velocity over the interval. The solution decomposes the area under the line into a rectangle (0 to 20 m/s over 30 s, 600 m) and a triangle (base 30 s, height 140 m/s, 2,100 m) for a net displacement of 2,700 m; takes points (5 s, 40 m/s) and (25 s, 140 m/s) for the slope; reads 40 m/s off the graph at 5 s; and divides 2,700 m / 30 s = 90 m/s.",
+   "problem_type": "",
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "None of the four parts is one of the three registered types. (a) is an area under a curve (rectangle plus triangle read off a velocity-vs-time figure), (b) is a slope/acceleration, (c) is a value read off a graph, (d) is an average velocity in m/s — not a displacement from a stated speed and duration. Rule 4 applies and the nearest-type bend is refused explicitly: part (d) could be turned around into \"90 m/s for 30 s gives 2,700 m\", but 90 m/s is the passage's own result for (d) and 2,700 m is the result of (a), so using either as a given would violate rule 1 (no quantity inferred from the answer). The quantities that would populate a uniform-motion instance are also not stated as given: the 20 m/s, 140 m/s, 30 s and 40 m/s all originate in the figure and appear only inside the solution steps, and the motion the figure shows is not uniform. Because the passage is not a registered problem type, `asserted` is left empty rather than carrying the readable 2,700 m / 90 m/s results. Noted but not reconciled and not corrected, per the brief: the Discussion refers to \"100m/s\" where the Solution computes 90 m/s."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 2062,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 27633.25619600073,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

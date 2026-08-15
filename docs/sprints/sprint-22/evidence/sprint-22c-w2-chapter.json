@@ -1,0 +1,407 @@
+{
+ "chapters": [
+  {
+   "body_is_one_chapter": true,
+   "body_pages": [
+    67,
+    95
+   ],
+   "chapter_numbers_seen_in_the_body": [
+    "2"
+   ],
+   "chosen_for": "mechanics.uniform-motion",
+   "number": 2,
+   "review_declares_itself_review": true,
+   "review_pages_excluded": [
+    96,
+    105
+   ],
+   "sections_seen": [
+    "2.1 Relative Motion, Distance, and Displacement",
+    "2.2 Speed and Velocity",
+    "2.3 Position vs. Time Graphs",
+    "2.4 Velocity vs. Time Graphs"
+   ],
+   "title": "Motion in One Dimension"
+  },
+  {
+   "body_is_one_chapter": true,
+   "body_pages": [
+    133,
+    153
+   ],
+   "chapter_numbers_seen_in_the_body": [
+    "4"
+   ],
+   "chosen_for": "mechanics.statics-equilibrium",
+   "number": 4,
+   "review_declares_itself_review": true,
+   "review_pages_excluded": [
+    154,
+    162
+   ],
+   "sections_seen": [
+    "4.1 Force",
+    "4.2 Newton's First Law of Motion: Inertia",
+    "4.3 Newton's Second Law of Motion",
+    "4.4 Newton's Third Law of Motion"
+   ],
+   "title": "Forces and Newton’s Laws of Motion"
+  },
+  {
+   "body_is_one_chapter": true,
+   "body_pages": [
+    217,
+    239
+   ],
+   "chapter_numbers_seen_in_the_body": [
+    "6"
+   ],
+   "chosen_for": "mechanics.moment-balance",
+   "number": 6,
+   "review_declares_itself_review": true,
+   "review_pages_excluded": [
+    240,
+    246
+   ],
+   "sections_seen": [
+    "6.1 Angle of Rotation and Angular Velocity",
+    "6.2 Uniform Circular Motion",
+    "6.3 Rotational Motion"
+   ],
+   "title": "Circular and Rotational Motion"
+  }
+ ],
+ "counts": {
+  "chapters": 3,
+  "crossing_a_page_boundary": 6,
+  "per_chapter": {
+   "2": 9,
+   "4": 3,
+   "6": 6
+  },
+  "sections_contributing": 9,
+  "with_a_solution_heading": 14,
+  "worked_examples_in_the_bodies": 18
+ },
+ "decides_an_exit_criterion": false,
+ "integrity_content_hash": "3157e5013a98ae8d573c1c7a46a4811bc366ae7838d586ad03fbea711336f0b1",
+ "items": [
+  "S22C-040"
+ ],
+ "location_rule": {
+  "attributed_to": "the page the marker is on, so an overlapping window collects each passage once",
+  "bytes_are_kept": "page furniture, form feeds and running heads inside a passage are left in the registered bytes. W1: a campaign that cleans its sources cannot afterwards prove what it read",
+  "marker": "WORKED EXAMPLE",
+  "never": "a character offset typed into a driver; offsets move with pdftotext",
+  "stops": [
+   "WORKED EXAMPLE",
+   "Practice Problems",
+   "Check Your Understanding",
+   "TIPS FOR SUCCESS",
+   "SNAP LAB",
+   "LINKS TO PHYSICS",
+   "WATCH PHYSICS",
+   "BOUNDLESS PHYSICS",
+   "Virtual Physics",
+   "FUN IN PHYSICS",
+   "WORK IN PHYSICS",
+   "FIGURE",
+   "Section Summary",
+   "KEY TERMS"
+  ],
+  "window_pages": 2
+ },
+ "passages": [
+  {
+   "chapter": 2,
+   "characters": 1033,
+   "content_hash": "4c52273141827f5b9d7edc16afa9d553127098fb724c0bd4dcaea2b73c8a5171",
+   "crosses_a_page_boundary": true,
+   "first_page": 73,
+   "has_a_solution_heading": true,
+   "passage_id": "ch2-calculating-distance-and-displacement",
+   "section": "2.1 Relative Motion, Distance, and Displacement",
+   "title": "Calculating Distance and Displacement",
+   "window": [
+    73,
+    74
+   ]
+  },
+  {
+   "chapter": 2,
+   "characters": 576,
+   "content_hash": "10851456c1d8a489c390deb500b0b0483524616e4ca2ca0f123de5d670ff2332",
+   "crosses_a_page_boundary": false,
+   "first_page": 77,
+   "has_a_solution_heading": true,
+   "passage_id": "ch2-calculating-average-speed",
+   "section": "2.2 Speed and Velocity",
+   "title": "Calculating Average Speed",
+   "window": [
+    77,
+    78
+   ]
+  },
+  {
+   "chapter": 2,
+   "characters": 722,
+   "content_hash": "99010e92a52c7f33702ad832c9cc8e2569459a1f2aa73d353ad27e6dcd2d0032",
+   "crosses_a_page_boundary": false,
+   "first_page": 79,
+   "has_a_solution_heading": true,
+   "passage_id": "ch2-calculating-average-velocity",
+   "section": "2.2 Speed and Velocity",
+   "title": "Calculating Average Velocity",
+   "window": [
+    79,
+    80
+   ]
+  },
+  {
+   "chapter": 2,
+   "characters": 706,
+   "content_hash": "783344c736e34241359f6e07c7806abb69c4e41096a0d79fe6b531193cfadbf3",
+   "crosses_a_page_boundary": true,
+   "first_page": 79,
+   "has_a_solution_heading": true,
+   "passage_id": "ch2-solving-for-displacement-when-average-velocity-and-time-are-known",
+   "section": "2.2 Speed and Velocity",
+   "title": "Solving for Displacement when Average Velocity and Time are Known",
+   "window": [
+    79,
+    80
+   ]
+  },
+  {
+   "chapter": 2,
+   "characters": 665,
+   "content_hash": "de498067046dd54f9b606e8727beb6624beea5b9d58c52579eb7dc1ef154a0b7",
+   "crosses_a_page_boundary": false,
+   "first_page": 80,
+   "has_a_solution_heading": true,
+   "passage_id": "ch2-solving-for-time-when-displacement-and-average-velocity-are-known",
+   "section": "2.2 Speed and Velocity",
+   "title": "Solving for Time when Displacement and Average Velocity are Known",
+   "window": [
+    80,
+    81
+   ]
+  },
+  {
+   "chapter": 2,
+   "characters": 1455,
+   "content_hash": "fae907d548c3d8382ab705cfb3dfc84d3ac83ee7cce6ba6b0546b6dea5ca573d",
+   "crosses_a_page_boundary": false,
+   "first_page": 85,
+   "has_a_solution_heading": true,
+   "passage_id": "ch2-using-position-time-graph-to-calculate-average-velocity-jet-car",
+   "section": "2.3 Position vs. Time Graphs",
+   "title": "Using Position–Time Graph to Calculate Average Velocity: Jet Car",
+   "window": [
+    85,
+    86
+   ]
+  },
+  {
+   "chapter": 2,
+   "characters": 687,
+   "content_hash": "fad305548c1ea8b8fd561b1e616c0c797b0e38eab716860c053fedb3dae7d8c8",
+   "crosses_a_page_boundary": false,
+   "first_page": 86,
+   "has_a_solution_heading": true,
+   "passage_id": "ch2-using-position-time-graph-to-calculate-average-velocity-jet-car-take-two",
+   "section": "2.3 Position vs. Time Graphs",
+   "title": "Using Position–Time Graph to Calculate Average Velocity: Jet Car, Take Two",
+   "window": [
+    86,
+    87
+   ]
+  },
+  {
+   "chapter": 2,
+   "characters": 1767,
+   "content_hash": "fc42aa211a96a8db5f9e84ff75be5db3373d56d2cb53803f0c2de7a793445536",
+   "crosses_a_page_boundary": true,
+   "first_page": 90,
+   "has_a_solution_heading": true,
+   "passage_id": "ch2-using-velocity-graph-to-calculate-some-stuff-jet-car",
+   "section": "2.4 Velocity vs. Time Graphs",
+   "title": "Using Velocity Graph to Calculate Some Stuff: Jet Car",
+   "window": [
+    90,
+    91
+   ]
+  },
+  {
+   "chapter": 2,
+   "characters": 2213,
+   "content_hash": "c63b9e7b5c4df232251f8b99106a3f5a34b30b19c373b8a02a99981f002b27d1",
+   "crosses_a_page_boundary": false,
+   "first_page": 92,
+   "has_a_solution_heading": true,
+   "passage_id": "ch2-using-curvy-velocity-graph-to-calculate-some-stuff-jet-car-take-two",
+   "section": "2.4 Velocity vs. Time Graphs",
+   "title": "Using Curvy Velocity Graph to Calculate Some Stuff: Jet Car, Take Two",
+   "window": [
+    92,
+    93
+   ]
+  },
+  {
+   "chapter": 4,
+   "characters": 254,
+   "content_hash": "05bbe7eb6b2db84aac8d807108e55bd849048b8ecc1e8878f660a7b2040a14ca",
+   "crosses_a_page_boundary": false,
+   "first_page": 143,
+   "has_a_solution_heading": false,
+   "passage_id": "ch4-what-acceleration-can-a-person-produce-when-pushing-a-lawn-mower",
+   "section": "4.3 Newton's Second Law of Motion",
+   "title": "What Acceleration Can a Person Produce when Pushing a Lawn Mower?",
+   "window": [
+    143,
+    144
+   ]
+  },
+  {
+   "chapter": 4,
+   "characters": 563,
+   "content_hash": "e840fbd439d9ad028368e6bd2e3d16c96f48021395e74f3bf37bdaeb9ee0be7a",
+   "crosses_a_page_boundary": false,
+   "first_page": 144,
+   "has_a_solution_heading": false,
+   "passage_id": "ch4-what-rocket-thrust-accelerates-this-sled",
+   "section": "4.3 Newton's Second Law of Motion",
+   "title": "What Rocket Thrust Accelerates This Sled?",
+   "window": [
+    144,
+    145
+   ]
+  },
+  {
+   "chapter": 4,
+   "characters": 458,
+   "content_hash": "38bbcacb634bdf7d9eeff3bfdc2895a5e6325c2e1b5879c4008eb8bb879e6b51",
+   "crosses_a_page_boundary": false,
+   "first_page": 150,
+   "has_a_solution_heading": false,
+   "passage_id": "ch4-an-accelerating-equipment-cart",
+   "section": "4.4 Newton's Third Law of Motion",
+   "title": "An Accelerating Equipment Cart",
+   "window": [
+    150,
+    151
+   ]
+  },
+  {
+   "chapter": 6,
+   "characters": 1311,
+   "content_hash": "2f6e28d9bc848e6ad491fbe291b939a4f934bfbc39481d369c4e8cd81f8f114c",
+   "crosses_a_page_boundary": true,
+   "first_page": 222,
+   "has_a_solution_heading": true,
+   "passage_id": "ch6-angle-of-rotation-at-a-clock-tower",
+   "section": "6.1 Angle of Rotation and Angular Velocity",
+   "title": "Angle of rotation at a Clock Tower",
+   "window": [
+    222,
+    223
+   ]
+  },
+  {
+   "chapter": 6,
+   "characters": 1094,
+   "content_hash": "8a7e147ee78e1f392db9f292734dae18832d3395095000436dda888f76031d68",
+   "crosses_a_page_boundary": false,
+   "first_page": 223,
+   "has_a_solution_heading": true,
+   "passage_id": "ch6-how-fast-does-a-car-tire-spin",
+   "section": "6.1 Angle of Rotation and Angular Velocity",
+   "title": "How Fast Does a Car Tire Spin?",
+   "window": [
+    223,
+    224
+   ]
+  },
+  {
+   "chapter": 6,
+   "characters": 849,
+   "content_hash": "00ff7f2a5b949d7edb34afea6e5ce540abf734123e64d53d545033330ad8261a",
+   "crosses_a_page_boundary": false,
+   "first_page": 229,
+   "has_a_solution_heading": true,
+   "passage_id": "ch6-comparing-centripetal-acceleration-of-a-car-rounding-a-curve-with-acceleration-due-to",
+   "section": "6.2 Uniform Circular Motion",
+   "title": "Comparing Centripetal Acceleration of a Car Rounding a Curve with Acceleration Due to",
+   "window": [
+    229,
+    230
+   ]
+  },
+  {
+   "chapter": 6,
+   "characters": 1984,
+   "content_hash": "2d81e00db7772fb2660243baef0c0db4feb97549fbb0289d3f077ad150c6b496",
+   "crosses_a_page_boundary": true,
+   "first_page": 229,
+   "has_a_solution_heading": false,
+   "passage_id": "ch6-frictional-force-on-car-tires-rounding-a-curve",
+   "section": "6.2 Uniform Circular Motion",
+   "title": "Frictional Force on Car Tires Rounding a Curve",
+   "window": [
+    229,
+    230
+   ]
+  },
+  {
+   "chapter": 6,
+   "characters": 1501,
+   "content_hash": "64f7f62580170223470ef56d5fdc14c00005619e32da15c7e19f3c90b9a8de01",
+   "crosses_a_page_boundary": true,
+   "first_page": 236,
+   "has_a_solution_heading": true,
+   "passage_id": "ch6-calculating-the-time-for-a-fishing-reel-to-stop-spinning",
+   "section": "6.3 Rotational Motion",
+   "title": "Calculating the Time for a Fishing Reel to Stop Spinning",
+   "window": [
+    236,
+    237
+   ]
+  },
+  {
+   "chapter": 6,
+   "characters": 716,
+   "content_hash": "d94a30ba27e841b783f4e3058c005ad94b2b2beff029dc46f745298735bf67ed",
+   "crosses_a_page_boundary": false,
+   "first_page": 237,
+   "has_a_solution_heading": true,
+   "passage_id": "ch6-calculating-the-torque-on-a-merry-go-round",
+   "section": "6.3 Rotational Motion",
+   "title": "Calculating the Torque on a Merry-Go-Round",
+   "window": [
+    237,
+    238
+   ]
+  }
+ ],
+ "recorded_at": "2026-08-15T09:16:47Z",
+ "schema_version": 1,
+ "source": {
+  "attribution_required": "attribute the original: (c)2020 Texas Education Agency (TEA), adapted by OpenStax, licensed CC BY 4.0",
+  "domain_id": "engineering.mechanics",
+  "file_name": "Physics_-_WEB.pdf",
+  "license_identifier": "CC-BY-4.0",
+  "source_content_hash": "a3f75487411ef13d0270c65fc801ceff2b28e6b339afed9b407fe477f7e8453e",
+  "verified_against_the_clearance": true
+ },
+ "sprint": "22C",
+ "wave": "W2",
+ "what_this_record_does_not_decide": [
+  "whether a passage can be formalised — the provider proposes that, and the record of what it proposed is the cycle's",
+  "whether a passage's asserted answer survived into the text layer, which is the question the cross-check answers with the domain's own kernel",
+  "which passages are acquired. A reader that pre-filtered its inventory would answer the yield question before the pipeline ran"
+ ],
+ "why_no_exit": "this is an inventory of what the chapter contains, not a measurement of what the pipeline did with it. Every 22C exit is read from the cycle records",
+ "why_the_review_is_excluded": "Chapter Review and Test Prep are exercises with no worked solutions, so nothing in them can be recomputed by a kernel. Counting them would inflate the denominator of the acquisition yield this campaign publishes",
+ "why_these_chapters": "S22C-020 names chapters 2, 4 and 6 of this source for engineering.mechanics, one per registered problem type. Cycle 1 takes all three: a cycle that read only the kinematics chapter would measure one problem type's coverage and report it as the source's yield"
+}

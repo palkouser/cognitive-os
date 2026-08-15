@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "80d064123209f8462b5855766fe9774164d1bdd969a0ab7fea2cd67d3b51c255",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "9d00c16a-037b-5f2d-8621-4c426ecc6d61",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Primary blocker (rule 4): this is a Newton's-second-law problem \\u2014 solve for an unknown applied force from a stated mass and acceleration on an accelerating (non-equilibrium) body. None of the three registered types covers it. It is not mechanics.uniform-motion (no displacement from a constant speed and duration; the sled is explicitly accelerating). It is not mechanics.statics-equilibrium (the body is not in equilibrium, and the passage gives force magnitudes/descriptions, not fx/fy components for a balance check). It is not mechanics.moment-balance (no pivot, no points of application, no moment). Bending the given 650 N friction plus an unknown thrust into a statics-equilibrium force list would misrepresent the physics and is forbidden by rule 4.\\n\\nTwo independent secondary blockers, recorded but not used as the reason:\\n1. Rule 1 \\u2014 the given quantities are incomplete as carried. The sentence \\\"The sled's initial acceleration is\\\" terminates with no magnitude and no unit; the value is evidently in a figure or an image-only inline expression that the text layer does not carry. Only the mass (2,100 kg), the friction force (650 N), and the rocket count (four) are readable as given.\\n2. Rule 2 \\u2014 the passage asserts no readable result. It says \\\"Calculate the magnitude of force exerted by each rocket, called its thrust, T\\\" and refers to \\\"the four-rocket propulsion system shown below\\\"; no numeric or worded value for T appears in the supplied text. Had the type been registered, this alone would force formalisable=false with reason no_readable_result.\\n\\nNothing has been inferred from an answer, and no value has been supplied for the missing acceleration.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Worked example (Section 4.3, Newton's Second Law, p. 144) asking for the magnitude of the thrust T exerted by each rocket of a four-rocket propulsion system on a rocket sled, given the system mass (2,100 kg), the opposing friction force (650 N), and an initial acceleration whose magnitude is not carried in the text layer. The passage poses the calculation only; it states no result.\"}",
+  "structured_output": {
+   "statement": "Worked example (Section 4.3, Newton's Second Law, p. 144) asking for the magnitude of the thrust T exerted by each rocket of a four-rocket propulsion system on a rocket sled, given the system mass (2,100 kg), the opposing friction force (650 N), and an initial acceleration whose magnitude is not carried in the text layer. The passage poses the calculation only; it states no result.",
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "problem_type": "",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "Primary blocker (rule 4): this is a Newton's-second-law problem — solve for an unknown applied force from a stated mass and acceleration on an accelerating (non-equilibrium) body. None of the three registered types covers it. It is not mechanics.uniform-motion (no displacement from a constant speed and duration; the sled is explicitly accelerating). It is not mechanics.statics-equilibrium (the body is not in equilibrium, and the passage gives force magnitudes/descriptions, not fx/fy components for a balance check). It is not mechanics.moment-balance (no pivot, no points of application, no moment). Bending the given 650 N friction plus an unknown thrust into a statics-equilibrium force list would misrepresent the physics and is forbidden by rule 4.\n\nTwo independent secondary blockers, recorded but not used as the reason:\n1. Rule 1 — the given quantities are incomplete as carried. The sentence \"The sled's initial acceleration is\" terminates with no magnitude and no unit; the value is evidently in a figure or an image-only inline expression that the text layer does not carry. Only the mass (2,100 kg), the friction force (650 N), and the rocket count (four) are readable as given.\n2. Rule 2 — the passage asserts no readable result. It says \"Calculate the magnitude of force exerted by each rocket, called its thrust, T\" and refers to \"the four-rocket propulsion system shown below\"; no numeric or worded value for T appears in the supplied text. Had the type been registered, this alone would force formalisable=false with reason no_readable_result.\n\nNothing has been inferred from an answer, and no value has been supplied for the missing acceleration."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1690,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 24300.82322599992,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

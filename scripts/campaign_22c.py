@@ -47,6 +47,12 @@ from pathlib import Path
 from typing import Any
 from uuid import NAMESPACE_URL, UUID, uuid5
 
+from cognitive_os.application.ports.artifact_store import ArtifactStorePort
+from cognitive_os.application.ports.event_store import EventStorePort
+from cognitive_os.application.ports.memory_repository import MemoryRepositoryPort
+from cognitive_os.application.ports.semantic_memory_repository import (
+    SemanticMemoryRepositoryPort,
+)
 from cognitive_os.application.services.memory_service import MemoryService
 from cognitive_os.application.services.verification_service import VerificationService
 from cognitive_os.config.corpus_config import CorpusConfiguration
@@ -178,10 +184,12 @@ def register_pilots() -> tuple[str, ...]:
 SLICE_TIME = datetime(2026, 8, 14, 12, 0, tzinfo=UTC)
 
 ACTOR = SemanticActor(
-    actor_type=SemanticActorType.APPROVED_INTERNAL_SERVICE, actor_id="sprint-22c-campaign"
+    actor_type=SemanticActorType.APPROVED_INTERNAL_SERVICE,
+    actor_id="sprint-22c-campaign",
 )
 MEMORY_ACTOR = MemoryCreator(
-    creator_type=MemoryCreatorType.APPROVED_INTERNAL_SERVICE, creator_id="sprint-22c-campaign"
+    creator_type=MemoryCreatorType.APPROVED_INTERNAL_SERVICE,
+    creator_id="sprint-22c-campaign",
 )
 
 
@@ -444,7 +452,9 @@ class SourceSpec:
 
 def fixture_source_spec() -> SourceSpec:
     return SourceSpec(
-        identity="s22c:fixture-chapter", revision="1", content_hash=fixture_source_hash()
+        identity="s22c:fixture-chapter",
+        revision="1",
+        content_hash=fixture_source_hash(),
     )
 
 
@@ -600,6 +610,13 @@ class CycleState:
     #: cycle's own rather than the driver's.
     segments: tuple[Segment, ...] = field(default_factory=all_segments)
     source: SourceSpec = field(default_factory=fixture_source_spec)
+    #: **W2.** The provider's sealed answers, one per segment, keyed by segment id. Empty at
+    #: fixture scale, where the proposal is authored beside the passage. When a real campaign
+    #: calls a provider, the receipt, the request hash and the normalized response hash are
+    #: facts about *that call* and cannot be recomputed here, so they are carried in rather
+    #: than synthesized — §3.2's replayable-evidence rule, which a driver that rebuilt the
+    #: hashes from the segment would satisfy only in appearance.
+    sealed_proposals: dict[str, dict[str, Any]] = field(default_factory=dict)
     stages_completed: list[str] = field(default_factory=list)
     corpus_items: dict[str, Any] = field(default_factory=dict)
     proposals: dict[str, dict[str, Any]] = field(default_factory=dict)
@@ -650,15 +667,25 @@ class CycleRunner:
 
 @dataclass(frozen=True, slots=True)
 class Composition:
-    """The released services one cycle runs against, built once."""
+    """The released services one cycle runs against, built once.
 
-    events: MemoryEventStore
+    **W2.** The annotations are the released *ports*, not the in-memory classes, because
+    cycle 1 runs the same nine stage functions against the provisioned 22C PostgreSQL store.
+    `tool_events` is separate and deliberately concrete: the released
+    `domains.descriptor_runner` takes a `MemoryEventStore` by type and calls
+    `event_types()` on it, so the Tool Plane's solve and verify events cannot reach a
+    governed store at all. Naming the two stores apart is what stops that from reading as a
+    choice this driver made — see W2-F2.
+    """
+
+    events: EventStorePort
+    tool_events: MemoryEventStore
     corpus: CorpusFactory
-    artifacts: FixtureArtifactStore
+    artifacts: ArtifactStorePort
     memory: MemoryService
-    memory_repository: InMemoryMemoryRepository
+    memory_repository: MemoryRepositoryPort
     semantic: SemanticMemoryService
-    semantic_repository: InMemorySemanticMemoryRepository
+    semantic_repository: SemanticMemoryRepositoryPort
     source_resolver: TrustedSourceResolver
     semantic_events: SemanticMemoryEventService
     predicates: PredicateRegistry
@@ -681,6 +708,9 @@ def build_composition() -> Composition:
     source_resolver = TrustedSourceResolver(memory_repository, artifacts=artifacts)
     return Composition(
         events=events,
+        # One store wearing both hats at fixture scale, which is honest: nothing is durable
+        # here, so there is no governed store for the Tool Plane to fail to reach.
+        tool_events=events,
         corpus=CorpusFactory(InMemoryCorpusRepository(), artifacts, CorpusConfiguration()),
         artifacts=artifacts,
         memory=MemoryService(
@@ -879,17 +909,31 @@ async def stage_extract(runner: CycleRunner, composition: Composition, state: Cy
     is the same shape a sealed provider proposal has on replay.
     """
     runner.enter(CampaignStage.EXTRACT)
-    if state.manifest.providers:
-        raise RuntimeError("the slice manifest declares no providers; a live call is a finding")
+    if state.manifest.providers and not state.sealed_proposals:
+        raise RuntimeError(
+            "the manifest declares providers but no sealed proposal reached this cycle: a "
+            "cycle that can only be reproduced by re-calling a provider is not replayable "
+            "evidence (§3.2)"
+        )
+    if state.sealed_proposals and not state.manifest.providers:
+        raise RuntimeError(
+            "a sealed provider proposal was presented under a manifest that declares no "
+            "provider: the budget that bounds the call is the manifest's"
+        )
     for segment in state.segments:
         item = state.corpus_items[segment.segment_id]
-        request_hash = _sha256(
-            _canonical(
-                {
-                    "segment": segment.segment_id,
-                    "artifact": item["normalized_artifact_id"],
-                    "schema": "s22c-extraction-v1",
-                }
+        sealed = state.sealed_proposals.get(segment.segment_id)
+        request_hash = (
+            sealed["request_hash"]
+            if sealed
+            else _sha256(
+                _canonical(
+                    {
+                        "segment": segment.segment_id,
+                        "artifact": item["normalized_artifact_id"],
+                        "schema": "s22c-extraction-v1",
+                    }
+                )
             )
         )
         response = {
@@ -928,9 +972,17 @@ async def stage_extract(runner: CycleRunner, composition: Composition, state: Cy
         )
         state.proposals[segment.segment_id] = {
             "request_hash": request_hash,
-            "response_hash": _sha256(_canonical(response)),
-            "receipt": f"sealed-proposal:{segment.segment_id}",
-            "provider_call": False,
+            "response_hash": (
+                sealed["normalized_response_hash"] if sealed else _sha256(_canonical(response))
+            ),
+            "receipt": (sealed["receipt"] if sealed else f"sealed-proposal:{segment.segment_id}"),
+            # Two different questions, and W2 needs them apart. `provider_call` is whether
+            # *this run* went to the network; `from_a_sealed_proposal` is whether the answer
+            # is on disk under a hash. A replay of a live cycle answers False and True, which
+            # is exactly the state §3.2 requires evidence to be reproducible from.
+            "provider_call": bool(sealed and sealed.get("live")),
+            "from_a_sealed_proposal": bool(sealed),
+            "provider_id": sealed["provider_id"] if sealed else None,
             "grounding_resolves_to_loaded_bytes": grounding_resolves,
             "grounding_error": grounding_error,
             "predicate_and_types_admitted_by_the_host": types_admitted,
@@ -977,7 +1029,9 @@ async def stage_normalize(runner: CycleRunner, composition: Composition, state: 
             registry_snapshot_hash=composition.predicates.snapshot_hash(),
             observations=(
                 ObservationProposal(
-                    proposal_id=observation_id, content=segment.prose, source_spans=(span,)
+                    proposal_id=observation_id,
+                    content=segment.prose,
+                    source_spans=(span,),
                 ),
             ),
             claims=(
@@ -988,7 +1042,9 @@ async def stage_normalize(runner: CycleRunner, composition: Composition, state: 
                     ),
                     predicate_id=segment.predicate_id,
                     object=SemanticLiteral(
-                        literal_kind=segment.literal_kind, value=segment.value, unit=segment.unit
+                        literal_kind=segment.literal_kind,
+                        value=segment.value,
+                        unit=segment.unit,
                     ),
                     valid_interval=ClaimTemporalInterval(valid_from=SLICE_TIME),
                     observation_proposal_ids=(observation_id,),
@@ -1147,7 +1203,7 @@ async def stage_cross_check(
     runner.enter(CampaignStage.CROSS_CHECK)
     for segment in state.segments:
         run = await attempt_case(
-            segment.problem_type, segment.formal_inputs, store=composition.events
+            segment.problem_type, segment.formal_inputs, store=composition.tool_events
         )
         agrees, disagreement = (
             assertion_agrees(segment.asserted, run.candidate) if run.accepted else (False, "")
@@ -1304,7 +1360,9 @@ async def stage_compile(runner: CycleRunner, composition: Composition, state: Cy
 
 
 async def replay_all_domains(
-    store: MemoryEventStore | None = None, *, segments: tuple[Segment, ...] | None = None
+    store: MemoryEventStore | None = None,
+    *,
+    segments: tuple[Segment, ...] | None = None,
 ) -> dict[str, Any]:
     """Execute every retained domain's retained evaluation cases. §2.2a.
 
@@ -1370,7 +1428,7 @@ def source_leakage_check(state: CycleState) -> dict[str, Any]:
 async def stage_evaluate(runner: CycleRunner, composition: Composition, state: CycleState) -> None:
     """Replay every retained domain, then check for leakage. Before anything is promoted."""
     runner.enter(CampaignStage.EVALUATE)
-    state.replay = await replay_all_domains(composition.events, segments=state.segments)
+    state.replay = await replay_all_domains(composition.tool_events, segments=state.segments)
     state.replay["source_leakage"] = source_leakage_check(state)
     runner.leave(CampaignStage.EVALUATE)
 
@@ -1421,7 +1479,12 @@ async def stage_promote(runner: CycleRunner, composition: Composition, state: Cy
         )
         evidence_hash = semantic_hash([link.model_dump(mode="json") for link in evidence])
         confidence = aggregate_confidence(
-            extraction=1, source=1, grounding=1, evidence=1, verification=1, consistency=1
+            extraction=1,
+            source=1,
+            grounding=1,
+            evidence=1,
+            verification=1,
+            consistency=1,
         )
         reason = "registered semantic verifier bundle passed on acquired content"
         promoted = ClaimRevision(
@@ -1476,10 +1539,31 @@ async def stage_promote(runner: CycleRunner, composition: Composition, state: Cy
 # --- stage 9 -----------------------------------------------------------------
 
 
+async def observed_event_types(store: EventStorePort) -> tuple[str, ...]:
+    """Which event types this cycle actually wrote, read back out of whichever store it used.
+
+    The in-memory store answers from a list it kept; a governed store has to be *read*, one
+    page at a time, and the paging is not decoration — a cycle that read only the first page
+    would report the event types of its opening stages and call that the record.
+    """
+    types = getattr(store, "event_types", None)
+    if callable(types):
+        return tuple(types())
+    seen: set[str] = set()
+    position = 0
+    while True:
+        page = await store.read_all(after_global_position=position, limit=1000)
+        if not page:
+            break
+        seen.update(event.envelope.event_type for event in page)
+        position = page[-1].global_position
+    return tuple(sorted(seen))
+
+
 async def stage_observe(runner: CycleRunner, composition: Composition, state: CycleState) -> None:
     """Outcomes return to the evidence store. The cycle's own event types are the record."""
     runner.enter(CampaignStage.OBSERVE)
-    state.events = composition.events.event_types()
+    state.events = await observed_event_types(composition.events)
     runner.leave(CampaignStage.OBSERVE)
 
 
@@ -1583,20 +1667,28 @@ async def run_cycle(
     *,
     segments: tuple[Segment, ...] | None = None,
     source: SourceSpec | None = None,
+    sealed_proposals: dict[str, dict[str, Any]] | None = None,
+    composition: Composition | None = None,
 ) -> tuple[CycleState, Composition]:
     """One complete nine-stage pass. The only way to run a cycle.
 
     The fixture chapter is the default and not a special case: a caller that names neither
     argument gets exactly W0's cycle, and W1's real source travels the same nine functions.
     A second entry point for "the real one" is how the two would diverge.
+
+    **W2.** `composition` is injected for the same reason: cycle 1 runs against the
+    provisioned 22C PostgreSQL store, and a driver that reached for a second copy of these
+    nine functions to do it would be measuring different code than the slice proved.
+    In-memory stays the default, so W0's and W1's records rebuild unchanged.
     """
     register_pilots()
     state = CycleState(
         manifest=manifest,
         **({"segments": segments} if segments is not None else {}),
         **({"source": source} if source is not None else {}),
+        **({"sealed_proposals": sealed_proposals} if sealed_proposals is not None else {}),
     )
-    composition = build_composition()
+    composition = composition or build_composition()
     runner = CycleRunner(state)
     for stage in (
         stage_register_source,
@@ -1770,7 +1862,8 @@ async def _write(path: Path) -> int:
     record = await slice_record()
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
-        json.dumps(record, indent=1, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8"
+        json.dumps(record, indent=1, sort_keys=True, ensure_ascii=False) + "\n",
+        encoding="utf-8",
     )
     print(
         json.dumps(

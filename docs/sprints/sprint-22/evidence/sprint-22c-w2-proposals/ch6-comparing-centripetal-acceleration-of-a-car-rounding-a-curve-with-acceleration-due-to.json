@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "6631620528afde8f3e50d5e4ebfd4b064457d5f9019426051724e7b4866a7e60",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "95bdf72c-2476-5365-91da-f594214c2009",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Primary blocker: the quantity computed is a centripetal acceleration (a_c = v^2/r), which rule 4 names explicitly as outside the registry. It is not a uniform-motion displacement, not a coplanar force balance, and not a moment about a pivot. Speed 25.0 m/s and radius 500 m are stated as given, but there is no duration, so bending this into mechanics.uniform-motion would require inventing a quantity the passage never states; the radius is not a travel distance.\\n\\nSecondary, independent blocker: the passage would also fail rule 2. Every computed value sits in a stripped display equation \\u2014 \\\"it is most convenient to use the expression [gap] to find\\\", \\\"into the expression for ac gives [gap]\\\", \\\"we take the ratio [gap]. Therefore, [gap]\\\". The text layer carries no digits for a_c or for the ratio. The only readable numbers besides the givens are g = 9.80 m/s^2 (a reference constant, not this example's result) and the prose \\\"about one tenth the acceleration due to gravity\\\", which is an approximate comparison, not the exact asserted value. So asserted_value_quoted_from_the_passage is left empty rather than filled with a rounded or paraphrased figure.\\n\\nEither blocker alone is sufficient; reason is reported as no_registered_problem_type because the type gate fails before the result gate is reached.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"A car follows a curve of radius 500 m at a speed of 25.0 m/s. The example computes the magnitude of the car's centripetal acceleration from v and r, then compares it with g = 9.80 m/s^2 as a ratio.\"}",
+  "structured_output": {
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "problem_type": "",
+   "statement": "A car follows a curve of radius 500 m at a speed of 25.0 m/s. The example computes the magnitude of the car's centripetal acceleration from v and r, then compares it with g = 9.80 m/s^2 as a ratio.",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "Primary blocker: the quantity computed is a centripetal acceleration (a_c = v^2/r), which rule 4 names explicitly as outside the registry. It is not a uniform-motion displacement, not a coplanar force balance, and not a moment about a pivot. Speed 25.0 m/s and radius 500 m are stated as given, but there is no duration, so bending this into mechanics.uniform-motion would require inventing a quantity the passage never states; the radius is not a travel distance.\n\nSecondary, independent blocker: the passage would also fail rule 2. Every computed value sits in a stripped display equation — \"it is most convenient to use the expression [gap] to find\", \"into the expression for ac gives [gap]\", \"we take the ratio [gap]. Therefore, [gap]\". The text layer carries no digits for a_c or for the ratio. The only readable numbers besides the givens are g = 9.80 m/s^2 (a reference constant, not this example's result) and the prose \"about one tenth the acceleration due to gravity\", which is an approximate comparison, not the exact asserted value. So asserted_value_quoted_from_the_passage is left empty rather than filled with a rounded or paraphrased figure.\n\nEither blocker alone is sufficient; reason is reported as no_registered_problem_type because the type gate fails before the result gate is reached."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1162,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 16300.400381000145,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

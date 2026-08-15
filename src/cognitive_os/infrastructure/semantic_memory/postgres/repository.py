@@ -32,7 +32,10 @@ from cognitive_os.domain.semantic_memory import (
     semantic_hash,
 )
 from cognitive_os.infrastructure.postgres.engine import postgres_transaction
-from cognitive_os.semantic_memory.errors import SemanticConcurrencyError, SemanticIntegrityError
+from cognitive_os.semantic_memory.errors import (
+    SemanticConcurrencyError,
+    SemanticIntegrityError,
+)
 
 from .tables import (
     semantic_accesses,
@@ -762,6 +765,27 @@ class PostgresSemanticMemoryRepository:
         return tuple(revisions)
 
     async def query_claims(self, query: TemporalClaimQuery) -> SemanticQueryResult:
+        """The claims believed now, which means *the current revision, if it is believed*.
+
+        **Sprint 22C W2-F2.** The belief-status filter used to run in the same `SELECT` as the
+        `DISTINCT ON (claim_id) … ORDER BY revision DESC` that picks the current revision, so
+        the two composed the wrong way round: the database discarded the superseded revision
+        and then returned the newest *surviving* one, which is the last revision the claim held
+        before it was retired. A superseded claim therefore stayed in the active view wearing
+        its old belief, and so did a retracted one.
+
+        The in-memory repository has always taken the newest revision first and then asked
+        whether it is believed, and that is the correct order — a claim's belief is whatever
+        its latest revision says, not whatever its latest agreeable revision said. The two
+        stores disagreeing is worse than either being wrong on its own: every test in the
+        suite runs in memory, so the store the campaign actually writes to was the only place
+        this behaviour existed, and a promotion gate that consults the active view reached a
+        different verdict there. Found by Sprint 22C's cycle 1, where a superseded claim went
+        on contradicting its own successor and the successor could never activate.
+
+        `valid_at` and `known_at` stay *inside* the inner query: they choose which revision is
+        current, which is exactly what the in-memory implementation does with them.
+        """
         scopes = tuple(
             and_(
                 semantic_claims.c.scope_type == scope.scope_type.value,
@@ -776,11 +800,6 @@ class PostgresSemanticMemoryRepository:
                 semantic_claims.c.claim_id == semantic_claim_revisions.c.claim_id,
             )
             .where(or_(*scopes))
-            .where(
-                semantic_claim_revisions.c.belief_status.in_(
-                    [item.value for item in query.belief_statuses]
-                )
-            )
         )
         if query.subject_key:
             statement = statement.where(
@@ -800,16 +819,22 @@ class PostgresSemanticMemoryRepository:
                     ),
                 )
             )
-        statement = (
+        current = (
             statement.distinct(semantic_claim_revisions.c.claim_id)
             .order_by(
                 semantic_claim_revisions.c.claim_id,
                 semantic_claim_revisions.c.revision.desc(),
             )
+            .subquery("current_claim_revision")
+        )
+        believed = (
+            select(current)
+            .where(current.c.belief_status.in_([item.value for item in query.belief_statuses]))
+            .order_by(current.c.claim_id, current.c.revision)
             .limit(query.budget.maximum_results)
         )
         async with self._engine.connect() as connection:
-            rows = (await connection.execute(statement)).mappings().all()
+            rows = (await connection.execute(believed)).mappings().all()
         revisions = tuple(_revision_from_row(row) for row in rows)
         snapshot = semantic_hash(
             [f"{item.claim_id}:{item.revision}:{item.content_hash}" for item in revisions]

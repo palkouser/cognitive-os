@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "95dfe11f9a1cd898fc28c69e451d8ffab08f79f00093a996f737058e757b7279",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "189103fe-cead-599d-86ef-e2aa3b9dbf78",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"The worked example asks for an angular speed (\\u03c9 from v and r, \\u03c9 = v/r), which is none of the three registered types: it is not a displacement from speed and duration (mechanics.uniform-motion), not a balance check on coplanar forces (mechanics.statics-equilibrium), and not a resultant moment about a pivot (mechanics.moment-balance). The given quantities v = 15.0 m/s and r = 0.300 m are both stated, but there is no registered type whose formal_inputs they fill: rule 4 forbids bending a radius into a duration or treating v*t as if a radius were a time, so no formalisation is offered. Independently, rule 2 would also have blocked the assertion: the Solution's computation is carried only as the bare equation number \\\"6.7\\\" with no value in the text layer, and the second case ends at \\\"6.8\\\" likewise. The Discussion does mention \\\"50.0/s\\\" and \\\"50.0 s-1\\\", but those appear as a units remark about the cancelled-unit form rather than as the Solution's stated result, and the second tire's angular speed is never given in digits at all. The primary reason recorded is no_registered_problem_type; no_readable_result is a secondary bar that the same passage would also have failed.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Calculate the angular speed of a 0.300 m radius car tire when the car travels at 15.0 m/s (about 54 km/h). (Section 6.1, \\\"How Fast Does a Car Tire Spin?\\\", p. 223.)\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "The worked example asks for an angular speed (ω from v and r, ω = v/r), which is none of the three registered types: it is not a displacement from speed and duration (mechanics.uniform-motion), not a balance check on coplanar forces (mechanics.statics-equilibrium), and not a resultant moment about a pivot (mechanics.moment-balance). The given quantities v = 15.0 m/s and r = 0.300 m are both stated, but there is no registered type whose formal_inputs they fill: rule 4 forbids bending a radius into a duration or treating v*t as if a radius were a time, so no formalisation is offered. Independently, rule 2 would also have blocked the assertion: the Solution's computation is carried only as the bare equation number \"6.7\" with no value in the text layer, and the second case ends at \"6.8\" likewise. The Discussion does mention \"50.0/s\" and \"50.0 s-1\", but those appear as a units remark about the cancelled-unit form rather than as the Solution's stated result, and the second tire's angular speed is never given in digits at all. The primary reason recorded is no_registered_problem_type; no_readable_result is a secondary bar that the same passage would also have failed.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "Calculate the angular speed of a 0.300 m radius car tire when the car travels at 15.0 m/s (about 54 km/h). (Section 6.1, \"How Fast Does a Car Tire Spin?\", p. 223.)"
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1227,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 17529.041193998637,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}
