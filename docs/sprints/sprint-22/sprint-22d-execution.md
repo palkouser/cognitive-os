@@ -10,6 +10,240 @@ Waves are recorded newest first.
 
 ---
 
+## W1 — Layer 1 goes from one artifact to eight facts, and a holdout from 0 to 4
+
+The plan gave W1 one job and one deadline: implement §1.5's declarative-fact path against a
+fresh unread holdout, and **know in week one** whether Layer 1 can be filled at all, because
+exits two and four both rest on it.
+
+| Item | What it owed | Outcome |
+|---|---|---|
+| **S22D-100** — coverage | the verification floor's coverage priced **before** the campaign | **sealed**, 8 candidates and 7 refusals across the five cleared chapters |
+| **S22D-101** — acquisition | grounded span → observation → claim through the twelve released verifiers | **8 of 8 promoted**, Layer 1 **1 → 8** |
+| the ladder | the kernel as consistency oracle, exact comparison | **5 corroborated, 3 grounded** |
+| the seam | `ExtractionDecisionOutcome`, which had no implementation | **15 decisions**, one per candidate *and* per refusal |
+| parity | in-memory against the provisioned store (22C W2-F2) | **layers identical** |
+| **S22D-102** — the holdout | read once, both arms | **arm A 0 / 12, arm B 4 / 12, improvement 4** |
+| gates | ruff, format, mypy, bandit, schema, language | **clean** |
+| tests | W0 and W1 evidence | **42 passed** |
+
+### W1-F1 — the standing rule this sprint carries, broken by the wave that carries it
+
+22C W3-F1 graduated into §0 as a standing rule: *a verification floor decides what can be
+acquired, and its coverage is priced before the campaign, not after — any wave that intends to
+retain content states in advance which floor will verify it and samples the source against that
+floor.* **W0 froze a twelve-case declarative-fact holdout without sampling the cleared sources
+against it.** Nothing in the W0 record prices what chapters 2, 3, 4 and 6 actually state.
+
+The tempting repair is the wrong one. Once the coverage is measured it is obvious which cases
+could be made answerable, and re-cutting the holdout to match would be choosing the questions to
+fit the answers. `measured_values: 0` does not make that honest — no arm had run, but the
+*selection* would have been made against the data. So the holdout stayed exactly as frozen, its
+case hashes are still W0's, and `test_the_holdout_was_not_re_cut_after_the_coverage_was_seen`
+is the assertion that says so.
+
+What W1 did instead was pay the debt in the right order: **price the coverage, publish it, then
+acquire.** `sprint-22d-w1-coverage.json` is `S22D-100` and it precedes `S22D-101` in both
+sequence and evidence.
+
+> Generalisable rule: **when a wave discovers that its own instrument was specified without its
+> coverage priced, publish the pricing and read the instrument anyway.** Re-specifying it is
+> the one move that destroys the reading.
+
+### What the cleared chapters actually hold
+
+| | |
+|---|---|
+| candidates located | **8** — C, H, O, Na, Cl from an element-mass table; K stated in prose; an aspirin molecule; `g` |
+| refusals | **7** — 5 numerals that lost their exponent, 2 subjects that are sentence fragments |
+| chapters yielding nothing | chemistry 4, physics 2, physics 4 |
+
+Three locators, fixed by the books' own layout rather than by the facts wanted — the same rule
+22C's chapter reader follows, and the campaign takes whatever it finds.
+
+**The table header is the whole safety argument.** Chemistry chapter 4 is full of lines shaped
+exactly like an element-mass row — `C` then `1`, `H` then `4` — and they are stoichiometric
+subscripts. A locator keyed on the row shape alone retains *the atomic mass of C is 1*, and
+every verifier downstream agrees with it, because nothing after the locator knows what the
+number was supposed to mean. Gating on the header (`Average Atomic Mass (amu)` beside `Molar
+Mass (g/mol)`) is what keeps chapter 4's yield at zero, and
+`test_the_table_header_keeps_stoichiometric_subscripts_out_of_the_layer` pins it.
+
+### W1-F2 — the refusals are the locator's most useful output
+
+`pdftotext` renders 6.02214076 x 10^23 as `6.02214076 1023`: the multiplication sign and the
+superscript are gone and what is left reads as two numbers. This is 22C's "maths is an image"
+wall in its cheapest form, and the honest response is a **refusal with a name** rather than a
+repair — 22C W3-D1, generalised from a kernel input to a numeral.
+
+Two things had to be fixed inside the wave before that was true rather than merely intended.
+The first locator pass recorded **zero refusals**, because the table row pattern stopped one
+column short of the Atoms/Mole column where the mangled exponent lives, and the stated-quantity
+pattern excluded spaces so *"the molecular mass of chloroform, which is 119.37 amu"* silently
+failed to match. Both are the same defect wearing two faces: **a locator that narrows until the
+awkward cases stop matching hides exactly what a locator that refuses them counts.** An unread
+column is indistinguishable from a column that is not there, and only one of those is a source
+problem worth reporting. Now both reasons fire on real content — 5 and 2 — and 22A W4-F2's rule
+is satisfied by execution rather than by design intent.
+
+**And one defect that only running found.** Reading the Atoms/Mole column made the row pattern
+consume the newline the *next* row starts with; `finditer` cannot overlap, so the table read as
+every other row — three of five, with H and Na simply absent and nothing anywhere saying so.
+The boundary is a lookahead now.
+
+### The path itself, which is composition and not a new pipeline
+
+Every retained fact travels the released route 22C already drove: the Corpus Factory ingests the
+chapter under **22C's own operator clearance**, rebuilt through `CampaignSourceRights` from
+S22C-020 — W1 needs no new rights decision and makes none. A `GroundedSourceSpan` names a byte
+range in the *registered* artifact, and the offsets are **found by locating the excerpt in the
+loaded bytes** rather than carried over from the raw chapter: the Corpus Factory normalizes, and
+a span whose offsets predate normalization cites the wrong bytes. An excerpt that cannot be
+found is refused by name rather than re-grounded onto the whole artifact, because a span that
+silently widens to the entire chapter is a citation that has stopped meaning anything.
+
+What W1 adds to the released stack is exactly two things: one predicate
+(`domain.declarative_fact`, functional and bitemporal, so two different atomic masses for one
+element over overlapping validity is a contradiction the *released* detector reports), and the
+decision record below. It adds **no promotion rule** — all eight facts passed the twelve
+required semantic verifiers through `SemanticPromotionGate` unchanged.
+
+> A released contract's value is not obvious until something reads it: `ClaimPromotionOutcome`
+> has no `promoted` member, and comparing against one refuses every fact the gate accepted while
+> the record cheerfully prints the gate's own `supported` verdict beside the rejection. Compare
+> against the enum, never against the word you expected it to use.
+
+### `ExtractionDecision`, the seam that had no implementation
+
+§1.2 named it as the one genuinely missing step, and this is what it buys: **15 decisions for 8
+candidates and 7 refusals**, each with reason codes and a named decider. Without it, 22C's
+53-of-59 wall is an *absence* — a fact that is not in the store looks exactly like a fact nobody
+looked for. With it, every one of the seven refusals says which rule declined it and why.
+
+### The ladder, and the kernel as consistency oracle
+
+§1.5 frozen in W0: `corroborated`, `grounded`, `refused`. A declarative fact cannot be
+recomputed — there is nothing to derive an atomic mass *from* — but a kernel-checkable
+consequence can corroborate it. The element-mass table prints the consequence in the next
+column, so the released `chemistry.molar-conversion` kernel is fed the **retained** atomic mass
+and asked what one printed molar mass in grams amounts to. It must answer exactly 1 mol,
+compared over `Fraction`, **never within a tolerance** (22C W1-F3).
+
+| Rung | Count | Which |
+|---|---:|---|
+| `corroborated` | **5** | C, H, O, Na, Cl — the table prints their molar mass beside their atomic mass |
+| `grounded` | **3** | K, an aspirin molecule, `g` — stated with no printed consequence in range |
+| `refused` | **7** | the locator refusals |
+
+The three on the weaker rung are not weaker *facts*; they are facts the source states without
+also printing something a kernel can check. The record says which of the two every retained fact
+is, which is exactly what §4 requires it to claim and no more.
+
+### Both stores, compared against each other
+
+22C W2-F2 is a standing rule because its own worst find was a PostgreSQL active view returning
+superseded and retracted claims wearing their old belief — a defect only PostgreSQL had,
+invisible to a suite that ran entirely in memory. So W1 acquires **twice**, in memory and on a
+provisioned `cognitive_os_s22d_campaign` at migration head `0015`, and compares the acquired
+layers rather than the claim identifiers a store assigns. **Identical.** The database has a name
+of its own so 22C's sealed campaign store was never opened, let alone written to.
+
+### S22D-102 — the holdout, read once
+
+| Arm | What it is | Verified |
+|---|---|---:|
+| **A** | the acquired layer as 22C left it — kernel-retained worked examples, no declarative facts | **0 / 12** |
+| **B** | the layer after this wave | **4 / 12** |
+
+**Improvement 4, and it is the first non-zero improvement in this lineage** — 22C measured 0 of
+4 on both arms and released as a typed negative. Neither arm is a different model or a different
+prompt; the only difference is what the store holds, which is the one thing the holdout was
+frozen to measure.
+
+The reading is not circular, and that took care. Each case's expected answer was computed *from*
+the value it withholds, so an arm that compared the layer's value against that withheld value
+would be proving that arithmetic is arithmetic. Arm B instead **derives the answer from whatever
+the layer actually holds** and hands it to the case's own registered verifier. The derivation is
+code added in W1, not case content, so the frozen hashes are byte-identical — asserted by
+`test_the_derivation_table_covers_every_frozen_case_and_moves_no_hash`.
+
+Every one of the eight refusals names the fact it wanted:
+
+| Refused for | Cases |
+|---|---|
+| sulfur | h-01, h-09 |
+| calcium, magnesium, aluminium, iron, copper | h-02, h-04, h-05, h-06, h-07 |
+| the Faraday constant | h-12 |
+
+**That is the coverage record, arriving as a holdout result.** The cleared chapters state the
+masses their own worked examples happen to use; a holdout drawn from the same domain still wants
+facts that live in a periodic table nobody cleared. Which is precisely the number W0 should have
+priced before freezing twelve cases, and W1-F1 is where that is recorded.
+
+### W1-F3 — the layer is keyed as the source writes, and asked as the asker speaks
+
+The acquired layer holds `Cl`, `Na`, `g`. A question asks for "chlorine", "sodium", "standard
+gravitational field strength". Without a resolution step every case misses for a plumbing reason
+and the record reads as a **coverage** failure — the wrong diagnosis entirely, and one that would
+have understated what acquisition achieved.
+
+The retrieval path therefore carries an entity-alias table: the first thirty elements plus the
+two named constants, general and written once. Cutting it to the names this holdout happens to
+ask for would be the questions answering themselves. Carried as a finding because the alias
+belongs in the acquired layer — a fact should know its own synonyms — and putting it in the
+reader is where W2 will find it again.
+
+### Findings
+
+| ID | Finding | Disposition |
+|---|---|---|
+| **W1-F1** | W0 froze the holdout without pricing the cleared sources' coverage, breaking the 22C W3-F1 rule §0 carries | **paid in wave** — coverage published before acquisition; holdout **not** re-cut |
+| **W1-F2** | The first locator pass recorded zero refusals: the row pattern stopped short of the mangled-exponent column and the sentence pattern excluded spaces; then reading that column made the pattern eat the next row's newline | **fixed in wave** — both reasons now fire on real content, lookahead boundary, all five rows read |
+| **W1-F3** | Retrieval needed an entity-alias step the acquired layer does not carry | **carried to W2** — the alias belongs on the fact, not in the reader |
+| **W1-A1** | `ClaimPromotionOutcome` has no `promoted` member; comparing against one refuses every fact the gate accepted | **fixed in wave**, recorded because the failure printed the gate's own passing verdict beside its rejection |
+
+### Evidence index
+
+| Record | Item | SHA-256 |
+|---|---|---|
+| `sprint-22d-w1-coverage.json` | S22D-100 | `ca1364915d1c341c6ab07e1886a8fd37b6bb16bc6485f74fd00d47ed19be591f` |
+| `sprint-22d-w1-acquisition.json` | S22D-101, S22D-102 | `befee46f34d092aab6c26bb8d08cec6b176d948c4255054812828ad91ff79a76` |
+| `sprint-22d-w1-holdout-read.json` | S22D-102 | `d52c33f3c5a2ee9b9d9658869d3d1b5a51445d8889844f10cf6a3d4ff6af3763` |
+
+`--check` on the acquisition record re-runs the **in-memory** half and compares the acquired
+layer and the holdout improvement. The provisioned store is an *observation*, not an invariant:
+re-ingesting identical content is refused by the Corpus Factory by design, exactly as 22C's
+`--cycle` is not idempotent, and 22C W1-F1's split is what keeps the validator from demanding a
+world that cannot be rebuilt.
+
+### What this means for the sprint
+
+Exit two needs the local arm at least ten points above retrieval-only, and exit four needs every
+factual output grounded. Both rest on Layer 1, and Layer 1 is no longer one artifact. **It is
+also not large**: eight facts, of which the frozen hundred's thirty factual tasks can be served
+only where the cleared chapters happen to state the constant. §3.2's named risk — *Layer 1 may
+stay thin even after W1* — is neither retired nor realised; it is now a number, in week one, with
+its diagnosis attached, which is what the plan asked for.
+
+### Validation
+
+`ruff check` and `ruff format --check` over `src tests scripts infra`: clean.
+`mypy src/cognitive_os`: **no issues in 638 source files**. `bandit -r src/cognitive_os`: **0
+issues at every severity**. Schema export `--check` and the repository language check: passed.
+`facts_22d.py --coverage --check`, `--acquire --check`, `holdout_22d.py --check`: all reproduce.
+`tests/cognitive_os/language/`: **42 passed** with the `verification-physics` extra.
+Whole suite: **4 570 passed / 235 skipped** in 4 m 09 s.
+
+The W1 tests that read the cleared PDFs skip where those files are absent — they live outside
+the repository — while every assertion over the *records* they produced runs unconditionally,
+because the records are committed and are what later waves are bound to.
+
+No file under `src/` was touched in W1 either. The declarative-fact path is composition over
+released primitives plus one predicate and one decision record, which is what §1.5 predicted
+when it called the substrate "largely released".
+
+---
+
 ## W0 — the readings frozen, the gates surfaced, and fifty tasks that would have scored zero
 
 W0 measures nothing. It settles what every later number will mean, and it ends with a

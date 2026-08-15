@@ -70,6 +70,10 @@ ARM_B = "acquired layer after the §1.5 declarative-fact path"
 #: language model, since it will always produce something.
 REFUSAL_REASON = "fact_not_in_acquired_layer"
 
+#: Which §1.5 ladder rungs a retrieval may draw on, read off the ladder W0 froze rather than
+#: restated here — a second copy of a frozen boundary is a boundary that can drift.
+LADDER_RETRIEVABLE = tuple(str(rung["status"]) for rung in GROUNDING_LADDER if rung["retrievable"])
+
 SUCCESS_DEFINITION = (
     "a case succeeds when the acquired layer supplies the withheld fact at a retrievable "
     "ladder status and the registered verifier named on the case returns a pass; a case the "
@@ -108,8 +112,26 @@ def _case(
     }
 
 
+#: **What each case needs, and how its answer is derived from it.** Added in W1, and it changes
+#: no case: the frozen dicts and therefore `case_hashes()` are byte-identical, because a
+#: derivation is code and the holdout's content is data.
+#:
+#: Reading the holdout without this would have to compare the layer's value against the value
+#: the case withheld and call that a pass, which is circular — the expected answer was computed
+#: *from* that value. With it, arm B derives the answer from whatever the acquired layer
+#: actually holds and the case's own registered verifier decides it, which is the frozen
+#: success definition read literally.
+#:
+#: Each entry is `(kind, operand, required_facts)`. `required_facts` is the honest part: a
+#: molar mass needs every element in the compound, not only the one the case names as withheld
+#: — which is the second half of W0-F4, and the reason a case can be refused for a fact its own
+#: record never mentions.
+DERIVATIONS: dict[str, tuple[str, float, tuple[tuple[str, int], ...]]] = {}
+
+
 def _moles(case_id: str, mass: float, fact: str, value: float, source: str) -> dict[str, Any]:
     """How many moles are in `mass` grams — the derivation arm A cannot finish."""
+    DERIVATIONS[case_id] = ("moles", mass, ((fact, 1),))
     return _case(
         case_id,
         f"How many moles are in {mass} grams of {fact.split()[-1]} atoms? "
@@ -123,6 +145,7 @@ def _moles(case_id: str, mass: float, fact: str, value: float, source: str) -> d
 
 
 def _mass_of(case_id: str, moles: float, fact: str, value: float, source: str) -> dict[str, Any]:
+    DERIVATIONS[case_id] = ("mass_of", moles, ((fact, 1),))
     return _case(
         case_id,
         f"What is the mass in grams of {moles} moles of {fact.split()[-1]} atoms? "
@@ -136,21 +159,31 @@ def _mass_of(case_id: str, moles: float, fact: str, value: float, source: str) -
 
 
 def _molar_mass(
-    case_id: str, compound: str, terms: tuple[tuple[int, float], ...], source: str
+    case_id: str, compound: str, terms: tuple[tuple[int, str, float], ...], source: str
 ) -> dict[str, Any]:
-    """A molar mass summed from its terms, so the sum cannot disagree with the arithmetic."""
+    """A molar mass summed from its terms, so the sum cannot disagree with the arithmetic.
+
+    Each term names its element, because the derivation needs *every* element in the compound
+    and the case record names only the one it calls withheld. That gap is W0-F4's second half.
+    """
+    DERIVATIONS[case_id] = (
+        "molar_mass",
+        0.0,
+        tuple((element, count) for count, element, _ in terms),
+    )
     return _case(
         case_id,
         f"What is the molar mass of {compound} in grams per mole? Give four significant figures.",
         "relative atomic mass of hydrogen",
         "1.008",
-        sum(count * value for count, value in terms),
+        sum(count * value for count, _element, value in terms),
         "0.002",
         source,
     )
 
 
 def _weight(case_id: str, prompt: str, mass: float, source: str) -> dict[str, Any]:
+    DERIVATIONS[case_id] = ("weight", mass, (("standard gravitational field strength", 1),))
     return _case(
         case_id, prompt, "standard gravitational field strength", "9.8", mass * 9.8, "0.005", source
     )
@@ -172,8 +205,15 @@ HOLDOUT_CASES = (
     # directly. Chlorine and sulfur are already this holdout's own, so these two cases lean on
     # no fact the hundred also uses — which is what §2.3's separation actually requires, and
     # what the disjointness check would not have caught on its own.
-    _molar_mass("s22d-h-08", "hydrogen chloride", ((1, 1.008), (1, 35.45)), CHEMISTRY),
-    _molar_mass("s22d-h-09", "hydrogen sulfide", ((2, 1.008), (1, 32.06)), CHEMISTRY),
+    _molar_mass(
+        "s22d-h-08",
+        "hydrogen chloride",
+        ((1, "hydrogen", 1.008), (1, "chlorine", 35.45)),
+        CHEMISTRY,
+    ),
+    _molar_mass(
+        "s22d-h-09", "hydrogen sulfide", ((2, "hydrogen", 1.008), (1, "sulfur", 32.06)), CHEMISTRY
+    ),
     _weight(
         "s22d-h-10",
         "A body of mass 8 kilograms is in free fall near the Earth's surface. What is the net "
@@ -199,6 +239,10 @@ HOLDOUT_CASES = (
         PHYSICS,
     ),
 )
+
+#: The Faraday case is a bare constant: the fact *is* the answer, so its derivation is the
+#: identity and its required fact is itself.
+DERIVATIONS["s22d-h-12"] = ("identity", 1.0, (("Faraday constant", 1),))
 
 #: **The probe, and it is not a holdout case.** Same shape, different fact, run in W0 so the
 #: two arms are known to be mechanically different before W1 spends a wave discovering it.

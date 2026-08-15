@@ -1,0 +1,227 @@
+{
+ "candidates": [
+  {
+   "candidate_id": "chemistry-ch3-table-c",
+   "chapter": 3,
+   "consequence_unit": "g/mol",
+   "consequence_value": "12.01",
+   "end": 11318,
+   "excerpt_hash": "1b63bd866b643fbcc11ad772d3a92324a61768a6f3c9e5cb0d6af4edd4792240",
+   "locator": "element_mass_table",
+   "quantity": "average atomic mass",
+   "source_key": "chemistry",
+   "start": 11313,
+   "subject": "C",
+   "unit": "amu",
+   "value": "12.01"
+  },
+  {
+   "candidate_id": "chemistry-ch3-table-h",
+   "chapter": 3,
+   "consequence_unit": "g/mol",
+   "consequence_value": "1.008",
+   "end": 11348,
+   "excerpt_hash": "fdf6925c85c5ef94f1310bab42f08ddbe34c04631c4c6466eafacd83b2f4ce87",
+   "locator": "element_mass_table",
+   "quantity": "average atomic mass",
+   "source_key": "chemistry",
+   "start": 11343,
+   "subject": "H",
+   "unit": "amu",
+   "value": "1.008"
+  },
+  {
+   "candidate_id": "chemistry-ch3-table-o",
+   "chapter": 3,
+   "consequence_unit": "g/mol",
+   "consequence_value": "16.00",
+   "end": 11378,
+   "excerpt_hash": "be1019d175511e37e0287e7390b1752fef7212e375167190e68065b881787407",
+   "locator": "element_mass_table",
+   "quantity": "average atomic mass",
+   "source_key": "chemistry",
+   "start": 11373,
+   "subject": "O",
+   "unit": "amu",
+   "value": "16.00"
+  },
+  {
+   "candidate_id": "chemistry-ch3-table-na",
+   "chapter": 3,
+   "consequence_unit": "g/mol",
+   "consequence_value": "22.99",
+   "end": 11409,
+   "excerpt_hash": "eadf5c97cc6602d298b684253b31f42658f600b4cc580f02131be8d0055060c2",
+   "locator": "element_mass_table",
+   "quantity": "average atomic mass",
+   "source_key": "chemistry",
+   "start": 11404,
+   "subject": "Na",
+   "unit": "amu",
+   "value": "22.99"
+  },
+  {
+   "candidate_id": "chemistry-ch3-table-cl",
+   "chapter": 3,
+   "consequence_unit": "g/mol",
+   "consequence_value": "35.45",
+   "end": 11440,
+   "excerpt_hash": "f32fc50fab0b44ced00c461a718383b0e65f6c9957e24fd97acc16fea3e7cb38",
+   "locator": "element_mass_table",
+   "quantity": "average atomic mass",
+   "source_key": "chemistry",
+   "start": 11435,
+   "subject": "Cl",
+   "unit": "amu",
+   "value": "35.45"
+  },
+  {
+   "candidate_id": "chemistry-ch3-stated-average-mass-an-aspirin-molecule",
+   "chapter": 3,
+   "consequence_unit": null,
+   "consequence_value": null,
+   "end": 4112,
+   "excerpt_hash": "87ae1395531125c31d59289c7bef485be3d8e00892f77ce0645522c73a0b8ba9",
+   "locator": "stated_quantity",
+   "quantity": "average mass",
+   "source_key": "chemistry",
+   "start": 4059,
+   "subject": "an aspirin molecule",
+   "unit": "amu",
+   "value": "180.15"
+  },
+  {
+   "candidate_id": "chemistry-ch3-stated-atomic-mass-k",
+   "chapter": 3,
+   "consequence_unit": null,
+   "consequence_value": null,
+   "end": 13297,
+   "excerpt_hash": "3f079b611ecb88d64e35c72d3a33ee4927d5d546309429e76394afd51d101642",
+   "locator": "stated_quantity",
+   "quantity": "atomic mass",
+   "source_key": "chemistry",
+   "start": 13264,
+   "subject": "K",
+   "unit": "amu",
+   "value": "39.10"
+  },
+  {
+   "candidate_id": "physics-ch6-symbol-g",
+   "chapter": 6,
+   "consequence_unit": null,
+   "consequence_value": null,
+   "end": 28815,
+   "excerpt_hash": "1b63a456299ee4d78eb4deaa2bd078571d47d460a3f0a9228abf1267be6bb0bd",
+   "locator": "symbol_constant",
+   "quantity": "stated constant",
+   "source_key": "physics",
+   "start": 28802,
+   "subject": "g",
+   "unit": "m/s2",
+   "value": "9.80"
+  }
+ ],
+ "candidates_by_chapter": {
+  "chemistry-ch3": 7,
+  "physics-ch6": 1
+ },
+ "candidates_by_locator": {
+  "element_mass_table": 5,
+  "stated_quantity": 2,
+  "symbol_constant": 1
+ },
+ "candidates_located": 8,
+ "chapters_chosen_by": "S22C-020, unchanged — W1 needs no new rights decision",
+ "chapters_sampled": [
+  "chemistry-ch3",
+  "chemistry-ch4",
+  "physics-ch2",
+  "physics-ch4",
+  "physics-ch6"
+ ],
+ "integrity_content_hash": "ca1364915d1c341c6ab07e1886a8fd37b6bb16bc6485f74fd00d47ed19be591f",
+ "items": [
+  "S22D-100"
+ ],
+ "locators": [
+  "locate_element_mass_table",
+  "locate_stated_quantity",
+  "locate_symbol_constant"
+ ],
+ "recorded_at": "2026-08-15T00:00:00Z",
+ "refusal_examples": [
+  {
+   "chapter": 3,
+   "locator": "element_mass_table",
+   "raw": "6.022 1023",
+   "reason": "numeral_lost_its_exponent_in_the_text_layer",
+   "source_key": "chemistry"
+  },
+  {
+   "chapter": 3,
+   "locator": "element_mass_table",
+   "raw": "6.022 1023",
+   "reason": "numeral_lost_its_exponent_in_the_text_layer",
+   "source_key": "chemistry"
+  },
+  {
+   "chapter": 3,
+   "locator": "element_mass_table",
+   "raw": "6.022 1023",
+   "reason": "numeral_lost_its_exponent_in_the_text_layer",
+   "source_key": "chemistry"
+  },
+  {
+   "chapter": 3,
+   "locator": "element_mass_table",
+   "raw": "6.022 1023",
+   "reason": "numeral_lost_its_exponent_in_the_text_layer",
+   "source_key": "chemistry"
+  },
+  {
+   "chapter": 3,
+   "locator": "element_mass_table",
+   "raw": "6.022 1023",
+   "reason": "numeral_lost_its_exponent_in_the_text_layer",
+   "source_key": "chemistry"
+  },
+  {
+   "chapter": 3,
+   "locator": "stated_quantity",
+   "raw": "chloroform, which",
+   "reason": "subject_is_a_sentence_fragment_not_an_entity",
+   "source_key": "chemistry"
+  },
+  {
+   "chapter": 3,
+   "locator": "stated_quantity",
+   "raw": "a chloroform molecule, CHCl3,",
+   "reason": "subject_is_a_sentence_fragment_not_an_entity",
+   "source_key": "chemistry"
+  }
+ ],
+ "refusals": 7,
+ "refusals_by_reason": {
+  "numeral_lost_its_exponent_in_the_text_layer": 5,
+  "subject_is_a_sentence_fragment_not_an_entity": 2
+ },
+ "schema_version": 1,
+ "sources_sampled": [
+  "chemistry",
+  "physics"
+ ],
+ "subjects_located": [
+  "C",
+  "Cl",
+  "H",
+  "K",
+  "Na",
+  "O",
+  "an aspirin molecule",
+  "g"
+ ],
+ "the_holdout_is_not_re_cut": "re-cutting an instrument after seeing which facts a source happens to hold is choosing the questions to fit the answers, and measured_values: 0 does not make that honest — the selection would still be made against the data. The holdout stays exactly as frozen and is read once at the end of W1",
+ "what_a_refusal_means_here": "pdftotext renders 6.02214076 x 10^23 as '6.02214076 1023' — the multiplication sign and the superscript are gone and what is left reads as two numbers. This module refuses a numeral it cannot read unambiguously rather than repairing it (22C W3-D1), so the 'maths is an image' wall arrives as a counted refusal instead of a wrong retained fact",
+ "why_the_table_header_is_load_bearing": "chemistry chapter 4 is full of lines shaped exactly like an element-mass row — 'C' then '1', 'H' then '4' — and they are stoichiometric subscripts. A locator keyed on the row shape alone retains 'the atomic mass of C is 1', and every verifier downstream agrees, because nothing after the locator knows what the number was supposed to mean",
+ "why_this_record_exists": "22C W3-F1 is a standing rule in this sprint's §0: a verification floor's coverage is priced before the campaign, not after. W0 froze the twelve-case holdout without sampling the cleared sources against it, which is that rule broken by the wave that carries it. This is the pricing, published before acquisition runs"
+}

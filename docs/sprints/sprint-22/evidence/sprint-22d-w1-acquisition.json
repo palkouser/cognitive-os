@@ -1,0 +1,508 @@
+{
+ "by_ladder_status": {
+  "corroborated": 5,
+  "grounded": 3,
+  "refused": 7
+ },
+ "candidates_located": 8,
+ "decisions": [
+  {
+   "candidate_id": "refused-chemistry-ch3-0",
+   "decision": {
+    "decided_at": "2026-08-15T00:00:00Z",
+    "decided_by": {
+     "actor_id": "sprint-22d-declarative-facts",
+     "actor_type": "approved_internal_service"
+    },
+    "extraction_id": "8ac99fe0-d1b7-517b-8606-13663777341a",
+    "outcome": "rejected",
+    "proposal_hash": "9b01cf359caeaf670e62243fd92440027c17e4ae98dc9566967a6596b35064e2",
+    "reason_codes": [
+     "numeral_lost_its_exponent_in_the_text_layer"
+    ]
+   },
+   "ladder_status": "refused",
+   "locator": "element_mass_table"
+  },
+  {
+   "candidate_id": "refused-chemistry-ch3-1",
+   "decision": {
+    "decided_at": "2026-08-15T00:00:00Z",
+    "decided_by": {
+     "actor_id": "sprint-22d-declarative-facts",
+     "actor_type": "approved_internal_service"
+    },
+    "extraction_id": "74487215-6e6e-5889-b3c4-b9bb6f5f4f30",
+    "outcome": "rejected",
+    "proposal_hash": "9b01cf359caeaf670e62243fd92440027c17e4ae98dc9566967a6596b35064e2",
+    "reason_codes": [
+     "numeral_lost_its_exponent_in_the_text_layer"
+    ]
+   },
+   "ladder_status": "refused",
+   "locator": "element_mass_table"
+  },
+  {
+   "candidate_id": "refused-chemistry-ch3-2",
+   "decision": {
+    "decided_at": "2026-08-15T00:00:00Z",
+    "decided_by": {
+     "actor_id": "sprint-22d-declarative-facts",
+     "actor_type": "approved_internal_service"
+    },
+    "extraction_id": "0f0f6d39-d9d8-510f-93cd-6d819d037516",
+    "outcome": "rejected",
+    "proposal_hash": "9b01cf359caeaf670e62243fd92440027c17e4ae98dc9566967a6596b35064e2",
+    "reason_codes": [
+     "numeral_lost_its_exponent_in_the_text_layer"
+    ]
+   },
+   "ladder_status": "refused",
+   "locator": "element_mass_table"
+  },
+  {
+   "candidate_id": "refused-chemistry-ch3-3",
+   "decision": {
+    "decided_at": "2026-08-15T00:00:00Z",
+    "decided_by": {
+     "actor_id": "sprint-22d-declarative-facts",
+     "actor_type": "approved_internal_service"
+    },
+    "extraction_id": "9be85cb1-01f5-5d38-b730-acc8da1cf04e",
+    "outcome": "rejected",
+    "proposal_hash": "9b01cf359caeaf670e62243fd92440027c17e4ae98dc9566967a6596b35064e2",
+    "reason_codes": [
+     "numeral_lost_its_exponent_in_the_text_layer"
+    ]
+   },
+   "ladder_status": "refused",
+   "locator": "element_mass_table"
+  },
+  {
+   "candidate_id": "refused-chemistry-ch3-4",
+   "decision": {
+    "decided_at": "2026-08-15T00:00:00Z",
+    "decided_by": {
+     "actor_id": "sprint-22d-declarative-facts",
+     "actor_type": "approved_internal_service"
+    },
+    "extraction_id": "4329cd21-5de2-53ef-a8e8-a221cccd1aa6",
+    "outcome": "rejected",
+    "proposal_hash": "9b01cf359caeaf670e62243fd92440027c17e4ae98dc9566967a6596b35064e2",
+    "reason_codes": [
+     "numeral_lost_its_exponent_in_the_text_layer"
+    ]
+   },
+   "ladder_status": "refused",
+   "locator": "element_mass_table"
+  },
+  {
+   "candidate_id": "refused-chemistry-ch3-5",
+   "decision": {
+    "decided_at": "2026-08-15T00:00:00Z",
+    "decided_by": {
+     "actor_id": "sprint-22d-declarative-facts",
+     "actor_type": "approved_internal_service"
+    },
+    "extraction_id": "359d62e6-6e0e-56ed-b776-935ee5b317ac",
+    "outcome": "rejected",
+    "proposal_hash": "96a3d023200ec57392a8cbee3dee9f13984afbcca2c421a041728c3a802d3366",
+    "reason_codes": [
+     "subject_is_a_sentence_fragment_not_an_entity"
+    ]
+   },
+   "ladder_status": "refused",
+   "locator": "stated_quantity"
+  },
+  {
+   "candidate_id": "refused-chemistry-ch3-6",
+   "decision": {
+    "decided_at": "2026-08-15T00:00:00Z",
+    "decided_by": {
+     "actor_id": "sprint-22d-declarative-facts",
+     "actor_type": "approved_internal_service"
+    },
+    "extraction_id": "b0900e3a-863e-5503-9a83-ed9e721bbb07",
+    "outcome": "rejected",
+    "proposal_hash": "9052af84522d3a72eb06dbfb51cf966b29f5837e0e0822a431484aa5a508a48c",
+    "reason_codes": [
+     "subject_is_a_sentence_fragment_not_an_entity"
+    ]
+   },
+   "ladder_status": "refused",
+   "locator": "stated_quantity"
+  },
+  {
+   "candidate_id": "chemistry-ch3-table-c",
+   "decision": {
+    "decided_at": "2026-08-15T00:00:00Z",
+    "decided_by": {
+     "actor_id": "sprint-22d-declarative-facts",
+     "actor_type": "approved_internal_service"
+    },
+    "extraction_id": "03dd2189-d917-54a4-8c16-f21787f4107f",
+    "outcome": "accepted",
+    "proposal_hash": "4ee2a305a27ae2ec4d85300920a4fd26e88404d2d5cd85b294ab3d7a763282a8",
+    "reason_codes": [
+     "promoted_to_corroborated"
+    ]
+   },
+   "ladder_status": "corroborated",
+   "locator": "element_mass_table"
+  },
+  {
+   "candidate_id": "chemistry-ch3-table-h",
+   "decision": {
+    "decided_at": "2026-08-15T00:00:00Z",
+    "decided_by": {
+     "actor_id": "sprint-22d-declarative-facts",
+     "actor_type": "approved_internal_service"
+    },
+    "extraction_id": "2a8c48a4-1b72-5c02-bc58-54f3bc0e7efc",
+    "outcome": "accepted",
+    "proposal_hash": "5bbf2d247456f91be05846d8d107cbf0fa7803be213fd0c17417dac94c625a9e",
+    "reason_codes": [
+     "promoted_to_corroborated"
+    ]
+   },
+   "ladder_status": "corroborated",
+   "locator": "element_mass_table"
+  },
+  {
+   "candidate_id": "chemistry-ch3-table-o",
+   "decision": {
+    "decided_at": "2026-08-15T00:00:00Z",
+    "decided_by": {
+     "actor_id": "sprint-22d-declarative-facts",
+     "actor_type": "approved_internal_service"
+    },
+    "extraction_id": "a1a65556-9bdd-5720-98fb-846dbb6985b5",
+    "outcome": "accepted",
+    "proposal_hash": "a80ca285905a9e0bed5ed9eb8d14518c92cdf763d329de2338ff1de42cfcd7d4",
+    "reason_codes": [
+     "promoted_to_corroborated"
+    ]
+   },
+   "ladder_status": "corroborated",
+   "locator": "element_mass_table"
+  },
+  {
+   "candidate_id": "chemistry-ch3-table-na",
+   "decision": {
+    "decided_at": "2026-08-15T00:00:00Z",
+    "decided_by": {
+     "actor_id": "sprint-22d-declarative-facts",
+     "actor_type": "approved_internal_service"
+    },
+    "extraction_id": "fdbd9f64-ebf4-58d6-b0cd-5bdd7e8aa6c0",
+    "outcome": "accepted",
+    "proposal_hash": "0a74eda8f40b6e337f60ef98cb892434de24d30f3ea3e7014ee6ad3e5d2f8086",
+    "reason_codes": [
+     "promoted_to_corroborated"
+    ]
+   },
+   "ladder_status": "corroborated",
+   "locator": "element_mass_table"
+  },
+  {
+   "candidate_id": "chemistry-ch3-table-cl",
+   "decision": {
+    "decided_at": "2026-08-15T00:00:00Z",
+    "decided_by": {
+     "actor_id": "sprint-22d-declarative-facts",
+     "actor_type": "approved_internal_service"
+    },
+    "extraction_id": "98c9cbec-6bef-573b-9106-539907ec3b71",
+    "outcome": "accepted",
+    "proposal_hash": "b07a941d330d47a8b6e18ea3f63ebe5d26bac5dd188a425f046c8841412d5904",
+    "reason_codes": [
+     "promoted_to_corroborated"
+    ]
+   },
+   "ladder_status": "corroborated",
+   "locator": "element_mass_table"
+  },
+  {
+   "candidate_id": "chemistry-ch3-stated-average-mass-an-aspirin-molecule",
+   "decision": {
+    "decided_at": "2026-08-15T00:00:00Z",
+    "decided_by": {
+     "actor_id": "sprint-22d-declarative-facts",
+     "actor_type": "approved_internal_service"
+    },
+    "extraction_id": "37e2646a-0a39-556b-bd40-e737fca1eff1",
+    "outcome": "accepted",
+    "proposal_hash": "c3780385c6a8331185d9df97798458d6c10447ae4707532147cc52684e258166",
+    "reason_codes": [
+     "promoted_to_grounded"
+    ]
+   },
+   "ladder_status": "grounded",
+   "locator": "stated_quantity"
+  },
+  {
+   "candidate_id": "chemistry-ch3-stated-atomic-mass-k",
+   "decision": {
+    "decided_at": "2026-08-15T00:00:00Z",
+    "decided_by": {
+     "actor_id": "sprint-22d-declarative-facts",
+     "actor_type": "approved_internal_service"
+    },
+    "extraction_id": "a6af882c-d59c-58fc-8f82-4835adcf1c56",
+    "outcome": "accepted",
+    "proposal_hash": "d74b7dbce7152b4d115a08008e0cedc08cd41f793f000b1873bf0bba15e43b92",
+    "reason_codes": [
+     "promoted_to_grounded"
+    ]
+   },
+   "ladder_status": "grounded",
+   "locator": "stated_quantity"
+  },
+  {
+   "candidate_id": "physics-ch6-symbol-g",
+   "decision": {
+    "decided_at": "2026-08-15T00:00:00Z",
+    "decided_by": {
+     "actor_id": "sprint-22d-declarative-facts",
+     "actor_type": "approved_internal_service"
+    },
+    "extraction_id": "c37a9f73-a121-566a-a9da-96e074e69b72",
+    "outcome": "accepted",
+    "proposal_hash": "8d0cf388967b183fa992d2f55d54c296b8b73dbf6631785c40468589207801fd",
+    "reason_codes": [
+     "promoted_to_grounded"
+    ]
+   },
+   "ladder_status": "grounded",
+   "locator": "symbol_constant"
+  }
+ ],
+ "decisions_recorded": 15,
+ "every_candidate_left_a_decision": true,
+ "holdout_read": {
+  "arm_a_verified": 0,
+  "arm_b_verified": 4,
+  "improvement": 4,
+  "read_once": true
+ },
+ "integrity_content_hash": "befee46f34d092aab6c26bb8d08cec6b176d948c4255054812828ad91ff79a76",
+ "items": [
+  "S22D-101",
+  "S22D-102"
+ ],
+ "layer_1_after": 8,
+ "layer_1_before": 1,
+ "layer_1_change": 7,
+ "locator_refusals": 7,
+ "materially_filled": true,
+ "parity": {
+  "compared": "the acquired layer, not the claim identifiers a store assigns",
+  "in_memory_retained": 8,
+  "layers_identical": true,
+  "postgres_retained": 8,
+  "why": "22C W2-F2 is a standing rule — two implementations of one contract are tested against each other, not each against itself. Its own worst find was a PostgreSQL active view returning superseded claims wearing their old belief, invisible to a suite that ran entirely in memory"
+ },
+ "promotion_path": "every retained fact passed the twelve released semantic promotion verifiers through SemanticPromotionGate; this wave added a predicate and a decision record, not a promotion rule",
+ "recorded_at": "2026-08-15T00:00:00Z",
+ "retained": [
+  {
+   "candidate_id": "chemistry-ch3-table-c",
+   "chapter": 3,
+   "claim_id": "281594b0-caa9-5f65-8a35-69a2e9a00a63",
+   "corroboration": {
+    "attempted": true,
+    "compared": "exactly, over Fraction, never within a tolerance (22C W1-F3)",
+    "corroborated": true,
+    "expected_answer": "1 mol",
+    "kernel": "chemistry.molar-conversion",
+    "kernel_answer": "1 mol",
+    "printed_consequence": "12.01 g/mol"
+   },
+   "ladder_status": "corroborated",
+   "license_identifier": "CC-BY-NC-SA-4.0",
+   "quantity": "average atomic mass",
+   "source_key": "chemistry",
+   "span": {
+    "artifact_id": "3e28a3d8-edf7-4631-ba0b-7d9a0f65aacb",
+    "end": 11370,
+    "start": 11365
+   },
+   "subject": "C",
+   "unit": "amu",
+   "value": "12.01"
+  },
+  {
+   "candidate_id": "chemistry-ch3-table-h",
+   "chapter": 3,
+   "claim_id": "2b307f98-141b-544c-a329-525e941b666b",
+   "corroboration": {
+    "attempted": true,
+    "compared": "exactly, over Fraction, never within a tolerance (22C W1-F3)",
+    "corroborated": true,
+    "expected_answer": "1 mol",
+    "kernel": "chemistry.molar-conversion",
+    "kernel_answer": "1 mol",
+    "printed_consequence": "1.008 g/mol"
+   },
+   "ladder_status": "corroborated",
+   "license_identifier": "CC-BY-NC-SA-4.0",
+   "quantity": "average atomic mass",
+   "source_key": "chemistry",
+   "span": {
+    "artifact_id": "3e28a3d8-edf7-4631-ba0b-7d9a0f65aacb",
+    "end": 11400,
+    "start": 11395
+   },
+   "subject": "H",
+   "unit": "amu",
+   "value": "1.008"
+  },
+  {
+   "candidate_id": "chemistry-ch3-table-o",
+   "chapter": 3,
+   "claim_id": "96abc757-e3ad-58ed-b9f7-c4819e2cacfb",
+   "corroboration": {
+    "attempted": true,
+    "compared": "exactly, over Fraction, never within a tolerance (22C W1-F3)",
+    "corroborated": true,
+    "expected_answer": "1 mol",
+    "kernel": "chemistry.molar-conversion",
+    "kernel_answer": "1 mol",
+    "printed_consequence": "16.00 g/mol"
+   },
+   "ladder_status": "corroborated",
+   "license_identifier": "CC-BY-NC-SA-4.0",
+   "quantity": "average atomic mass",
+   "source_key": "chemistry",
+   "span": {
+    "artifact_id": "3e28a3d8-edf7-4631-ba0b-7d9a0f65aacb",
+    "end": 11430,
+    "start": 11425
+   },
+   "subject": "O",
+   "unit": "amu",
+   "value": "16.00"
+  },
+  {
+   "candidate_id": "chemistry-ch3-table-na",
+   "chapter": 3,
+   "claim_id": "ab7b4cf2-9f88-52c8-8b0d-c8ca6bb83fcf",
+   "corroboration": {
+    "attempted": true,
+    "compared": "exactly, over Fraction, never within a tolerance (22C W1-F3)",
+    "corroborated": true,
+    "expected_answer": "1 mol",
+    "kernel": "chemistry.molar-conversion",
+    "kernel_answer": "1 mol",
+    "printed_consequence": "22.99 g/mol"
+   },
+   "ladder_status": "corroborated",
+   "license_identifier": "CC-BY-NC-SA-4.0",
+   "quantity": "average atomic mass",
+   "source_key": "chemistry",
+   "span": {
+    "artifact_id": "3e28a3d8-edf7-4631-ba0b-7d9a0f65aacb",
+    "end": 11461,
+    "start": 11456
+   },
+   "subject": "Na",
+   "unit": "amu",
+   "value": "22.99"
+  },
+  {
+   "candidate_id": "chemistry-ch3-table-cl",
+   "chapter": 3,
+   "claim_id": "4e417427-1f9e-55f7-b3ef-c1c235bcb936",
+   "corroboration": {
+    "attempted": true,
+    "compared": "exactly, over Fraction, never within a tolerance (22C W1-F3)",
+    "corroborated": true,
+    "expected_answer": "1 mol",
+    "kernel": "chemistry.molar-conversion",
+    "kernel_answer": "1 mol",
+    "printed_consequence": "35.45 g/mol"
+   },
+   "ladder_status": "corroborated",
+   "license_identifier": "CC-BY-NC-SA-4.0",
+   "quantity": "average atomic mass",
+   "source_key": "chemistry",
+   "span": {
+    "artifact_id": "3e28a3d8-edf7-4631-ba0b-7d9a0f65aacb",
+    "end": 11492,
+    "start": 11487
+   },
+   "subject": "Cl",
+   "unit": "amu",
+   "value": "35.45"
+  },
+  {
+   "candidate_id": "chemistry-ch3-stated-average-mass-an-aspirin-molecule",
+   "chapter": 3,
+   "claim_id": "b06d4f4b-0ba9-5f09-8308-be05a7695716",
+   "corroboration": {
+    "attempted": false,
+    "reason": "the source prints no kernel-checkable consequence beside this fact"
+   },
+   "ladder_status": "grounded",
+   "license_identifier": "CC-BY-NC-SA-4.0",
+   "quantity": "average mass",
+   "source_key": "chemistry",
+   "span": {
+    "artifact_id": "3e28a3d8-edf7-4631-ba0b-7d9a0f65aacb",
+    "end": 4126,
+    "start": 4073
+   },
+   "subject": "an aspirin molecule",
+   "unit": "amu",
+   "value": "180.15"
+  },
+  {
+   "candidate_id": "chemistry-ch3-stated-atomic-mass-k",
+   "chapter": 3,
+   "claim_id": "9fafdbfd-f0b3-53a0-98a6-da84917d30a5",
+   "corroboration": {
+    "attempted": false,
+    "reason": "the source prints no kernel-checkable consequence beside this fact"
+   },
+   "ladder_status": "grounded",
+   "license_identifier": "CC-BY-NC-SA-4.0",
+   "quantity": "atomic mass",
+   "source_key": "chemistry",
+   "span": {
+    "artifact_id": "3e28a3d8-edf7-4631-ba0b-7d9a0f65aacb",
+    "end": 13365,
+    "start": 13332
+   },
+   "subject": "K",
+   "unit": "amu",
+   "value": "39.10"
+  },
+  {
+   "candidate_id": "physics-ch6-symbol-g",
+   "chapter": 6,
+   "claim_id": "7f1d5822-c8bd-5b1b-a0d0-10c96a41b574",
+   "corroboration": {
+    "attempted": false,
+    "reason": "the source prints no kernel-checkable consequence beside this fact"
+   },
+   "ladder_status": "grounded",
+   "license_identifier": "CC-BY-4.0",
+   "quantity": "stated constant",
+   "source_key": "physics",
+   "span": {
+    "artifact_id": "4a1c4fcf-f418-462c-83d6-3912c504c38d",
+    "end": 28936,
+    "start": 28923
+   },
+   "subject": "g",
+   "unit": "m/s2",
+   "value": "9.80"
+  }
+ ],
+ "schema_version": 1,
+ "store": {
+  "database": "cognitive_os_s22d_campaign",
+  "kind": "postgresql",
+  "migration_head": "0015"
+ }
+}
