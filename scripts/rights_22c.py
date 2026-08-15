@@ -226,6 +226,26 @@ def _record() -> dict[str, Any]:
     return record
 
 
+#: **W1-F1.** This record mixes two kinds of field, and `--check` used to recompute both.
+#:
+#: *Invariants* — the gate probes and the fixture clearance — are deterministic, and a
+#: `--check` that recomputes them is worth having: if the gate stops refusing, the check
+#: fails.
+#:
+#: *Observations* — whether the rights review had concluded, and the blocking dependency
+#: that followed — describe the world at W0. The world then moved, exactly as the plan
+#: intended it to: the gate owner nominated two sources and W1 sealed the clearance. From
+#: that moment a `--check` that re-derived `concluded` from today's filesystem reported the
+#: W0 record as unreproducible, which is false. The record is intact and it is true; it
+#: states what was so at W0.
+#:
+#: This is 22B's own S22B-002 split — invariants recomputed, observations recorded and
+#: compared by nothing — and the same family as its W3-F4: *a summary may bind only what
+#: cannot move underneath it*. Fixing the validator is not editing the evidence, and the W0
+#: record is left byte-for-byte as sealed.
+OBSERVED_AT_W0 = ("source_rights_review", "blocking_dependency")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
@@ -235,12 +255,32 @@ def main() -> int:
     record = _record()
     if arguments.check:
         stored = json.loads(arguments.output.read_text(encoding="utf-8"))
-        moving = {"recorded_at", "integrity_content_hash"}
-        same = {k: v for k, v in stored.items() if k not in moving} == {
+        moving = {"recorded_at", "integrity_content_hash", *OBSERVED_AT_W0}
+        invariants_same = {k: v for k, v in stored.items() if k not in moving} == {
             k: v for k, v in record.items() if k not in moving
         }
-        print(json.dumps({"path": arguments.output.name, "reproduced": same}, indent=1))
-        return 0 if same else 1
+        # And the seal is still over the stored body, observations included — so the fields
+        # this check no longer recomputes are still protected against being edited.
+        body = {k: v for k, v in stored.items() if k != "integrity_content_hash"}
+        sealed = _sha256(_canonical(body)) == stored["integrity_content_hash"]
+        print(
+            json.dumps(
+                {
+                    "path": arguments.output.name,
+                    "reproduced": invariants_same and sealed,
+                    "invariants_recomputed": invariants_same,
+                    "stored_seal_intact": sealed,
+                    "recorded_not_recomputed": list(OBSERVED_AT_W0),
+                    "world_has_moved_since_w0": (
+                        stored["source_rights_review"]["concluded"]
+                        != record["source_rights_review"]["concluded"]
+                    ),
+                },
+                indent=1,
+                sort_keys=True,
+            )
+        )
+        return 0 if invariants_same and sealed else 1
 
     arguments.output.parent.mkdir(parents=True, exist_ok=True)
     arguments.output.write_text(

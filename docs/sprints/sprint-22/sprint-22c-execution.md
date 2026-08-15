@@ -8,6 +8,88 @@ Waves are recorded newest first.
 
 ---
 
+## W1 in progress — the gate opened, and the licence that was not what it said
+
+**S22C-020.** [`sprint-22c-source-rights.json`](evidence/sprint-22c-source-rights.json),
+integrity `0069209ccadca52b…`. Driver:
+[`scripts/source_rights_22c.py`](../../../scripts/source_rights_22c.py).
+
+W0 closed with one thing outstanding and refused to invent its way past it. The gate owner
+has now nominated two sources, and the review is **concluded**:
+
+| Source | Licence | Domain |
+|---|---|---|
+| `Physics_-_WEB.pdf` — OpenStax High School Physics, ©2020 Texas Education Agency | **CC BY 4.0** | `engineering.mechanics` |
+| `chemistry-2e_-_WEB.pdf` — OpenStax Chemistry 2e, ©2026 Rice University | **CC BY-NC-SA 4.0** | `science.chemistry` |
+
+### W1-D1 — the nomination said CC BY; one of the two is not
+
+Both files were nominated as "CC BY, OpenStax-class". The driver does not write a nomination
+down as a fact: it locates the licence statement by searching each PDF's front matter, reads
+that page, and hashes **those bytes** as the clearance's evidence. The physics book is CC BY
+4.0, as nominated. The chemistry book says, in its own words, *"licensed under a Creative
+Commons Attribution **Non-Commercial ShareAlike** 4.0 International License … for
+noncommercial purposes only. Any adaptations must be shared under the same type of licence."*
+
+That is not a paperwork detail. **NonCommercial** bars commercial use of everything derived
+from the chemistry book, and **ShareAlike** propagates to every adaptation — which reaches
+forward into 22D, whose Layer 1 is precisely this acquired-knowledge store. A record that had
+transcribed "CC BY" would have been the most expensive kind of wrong thing available to this
+sprint: a clearance that looks valid, on bytes it does not describe. W0's second gate probe —
+*a clearance issued against different bytes* — was written for exactly this shape, and here
+the shape arrived in real content rather than in a probe.
+
+**The gate owner's decisions, recorded rather than inferred.** Two campaigns, one per source,
+so no artifact ever merges a CC BY lineage with an NC-SA one: the permissive lineage stays
+unencumbered and the ShareAlike lineage stays labelled at every derivative. And the campaign
+is research and internal use, not commercial — so the chemistry source is cleared for
+`internal_use`, `derivative_work` and `benchmark_use` only, with `commercial_use` barred by
+the licence and `public_release` excluded by decision. The physics source is cleared for the
+full vocabulary, because CC BY permits it and needlessly narrowing a permissive licence would
+be a fiction in the other direction.
+
+Both clearances are built **through the released `CampaignSourceRights` contract**, so they
+are validated by the same code the campaign validates them with, and each is then put through
+the gate both ways: it admits the real content hash and refuses a neighbouring one. A
+clearance nobody put through the door is a clearance nobody tested.
+
+### W1-F1 — a `--check` that re-derives a world observation cannot survive the world changing
+
+Sealing the clearance immediately broke `rights_22c.py --check`. That validator rebuilt the
+whole W0 record and compared it, and part of the W0 record is an *observation of the world* —
+whether a rights-review file existed. The moment one did, the check reported W0's record as
+unreproducible, which is false: the record is intact, and it is true, because it states what
+was so at W0.
+
+The W0 record is **not edited**. Editing history so a validator passes is the failure this
+sprint exists to avoid. Instead the validator now splits its fields the way 22B's reference
+host did (S22B-002): *invariants* — the five gate probes and the fixture clearance — are
+recomputed and compared, so a gate that stopped refusing would still fail the check;
+*observations* — `source_rights_review` and `blocking_dependency` — are recorded and compared
+by nothing. The stored seal is verified separately over the full body, observations included,
+so the fields the check no longer recomputes are still protected from being edited. The check
+now also reports `world_has_moved_since_w0: true`, which is the honest thing for it to say.
+
+This is the same family as 22B's W3-F4: *a summary may bind only what cannot move underneath
+it*.
+
+### What this unblocks, and what W1 still owes
+
+The three prerequisites were verified present rather than assumed: 22B's backup dumps
+(6.1 GB full dump under `backups-s22b`), the 22B source store still at 16 GB with its
+clustered corpus, and 821 GB free. `cognitive_os_s22c_restore_test` is provisioned at head
+`0015` and empty.
+
+W1's remaining work is unchanged and now unobstructed: the two inherited repairs
+(22B W3-F1's atomic record-and-event, 22B W4-F1's post-restore reindex), each proven against
+the reproduction bound by hash in the baseline, and then the real source's first segment
+through all nine stages into one domain.
+
+`sprint-22c-source-rights.json` is what `rights_22c.py` reads to decide the review has
+concluded, so the W0 blocking dependency is discharged by a file rather than by an assertion.
+
+---
+
 ## W0 outcome — the authority, the gate that blocks, the drivers, and the freezes
 
 Five scripts, one new contract module, six sealed records, two test modules with **54
