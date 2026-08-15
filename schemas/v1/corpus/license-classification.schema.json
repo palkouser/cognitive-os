@@ -146,10 +146,34 @@
   "$id": "https://cognitive-os.local/schemas/v1/corpus/license-classification.schema.json",
   "additionalProperties": false,
   "properties": {
+    "advisory_status": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CorpusLicenseStatus"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
     "classification_id": {
       "format": "uuid",
       "title": "Classification Id",
       "type": "string"
+    },
+    "clearance_evidence_hash": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Clearance Evidence Hash"
     },
     "conflicts": {
       "default": [],
@@ -173,6 +197,32 @@
       "format": "date-time",
       "title": "Created At",
       "type": "string"
+    },
+    "decided_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Decided At"
+    },
+    "decided_by": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Decided By"
     },
     "declarations": {
       "items": {

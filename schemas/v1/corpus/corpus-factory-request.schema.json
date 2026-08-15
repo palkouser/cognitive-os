@@ -19,6 +19,17 @@
       "title": "CorpusDestinationType",
       "type": "string"
     },
+    "CorpusLicenseStatus": {
+      "enum": [
+        "approved",
+        "internal",
+        "unknown",
+        "conflicting",
+        "restricted"
+      ],
+      "title": "CorpusLicenseStatus",
+      "type": "string"
+    },
     "CorpusSourceType": {
       "enum": [
         "experience_candidate",
@@ -61,6 +72,76 @@
       ],
       "title": "MemorySensitivity",
       "type": "string"
+    },
+    "OperatorLicenseClearance": {
+      "additionalProperties": false,
+      "description": "A person's decision about what material may be used for, and who answers for it.\n\n**Sprint 22C W1-D2.** The Corpus Factory used to decide licence status from an allowlist\nof identifiers, and record the result in a `LicenseDeclaration` whose `declared_by` named\nan operator. The field said a human had declared it; the allowlist had. That is a design\nerror and not merely a gap: **classifying material and authorising its use is a legal\ndetermination, and the legal responsibility is the operator's, so the decision has to be\ntheirs.**\n\nWhat the program may do is read a licence if there is one, recognise it if it can, and\n**advise**. What it may not do is grant use. This contract is where the authority lives:\nan identifier, the operator's determination, what they permit it to be used for, who\nthey are by name, when they decided, and the bytes they decided about.\n\nTwo invariants, both refusals:\n\n*A clearance is a decision.* `unknown` and `conflicting` are the absence of one, and a\nrecord carrying them would be an operator declining to decide while looking like an\noperator who had.\n\n*A clearance covers bytes, not titles.* `source_content_hash` is what the decision was\nmade about, so a clearance cannot drift onto a different edition of the same work.\n\nAbsent a clearance the factory still fails closed — the asymmetry is the point. The\nprogram may refuse on its own; it may never permit on its own.",
+      "properties": {
+        "cleared_at": {
+          "format": "date-time",
+          "title": "Cleared At",
+          "type": "string"
+        },
+        "cleared_by": {
+          "minLength": 1,
+          "title": "Cleared By",
+          "type": "string"
+        },
+        "content_hash": {
+          "default": "",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "evidence_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Evidence Hash",
+          "type": "string"
+        },
+        "identifier": {
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "permitted_uses": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/CorpusUsageRight"
+          },
+          "title": "Permitted Uses",
+          "type": "array"
+        },
+        "source_content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Source Content Hash",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/CorpusLicenseStatus"
+        }
+      },
+      "required": [
+        "identifier",
+        "status",
+        "cleared_by",
+        "cleared_at",
+        "evidence_hash",
+        "source_content_hash"
+      ],
+      "title": "OperatorLicenseClearance",
+      "type": "object"
     }
   },
   "$id": "https://cognitive-os.local/schemas/v1/corpus/corpus-factory-request.schema.json",
@@ -81,6 +162,14 @@
       "minLength": 1,
       "title": "Created By",
       "type": "string"
+    },
+    "license_clearances": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/OperatorLicenseClearance"
+      },
+      "title": "License Clearances",
+      "type": "array"
     },
     "license_identifiers": {
       "default": [],

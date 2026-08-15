@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "369747578e324fff5ced129e01ab7f4b9568a7f89fcfe935058d310a6cb05081",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "35d14a0c-bcbf-5240-9e12-447de3b46e38",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Example 4.8 is a mole-to-mole reaction-stoichiometry conversion: it converts a given amount of one reactant (0.429 mol Al) into the required amount of another reactant (I2) using the balanced equation's coefficient ratio. Neither registered type covers this. chemistry.molar-conversion requires a mass and a molar mass to produce an amount in moles; no mass in grams and no molar mass are given here, and the given quantity is already an amount in moles. chemistry.mass-balance asks whether a written equation conserves atoms and mass; the passage does not ask that, and per rule 4 the example must not be bent into the nearest type. Independently, the equation itself is not carried by the text layer shown (\\\"according to the following equation (see Figure 4.10)\\\" with no equation printed), so no reactant/product formulas or coefficients are readable, and no atomic masses are printed. The excerpt also stops before any Solution or Answer text, so no claimed result is readable; asserted is therefore left empty rather than guessed. The governing reason is still no_registered_problem_type, since no registered type fits the question being asked.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"How many moles of I2 are required to react with 0.429 mol of Al according to the following equation (see Figure 4.10)?\"}",
+  "structured_output": {
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "problem_type": "",
+   "statement": "How many moles of I2 are required to react with 0.429 mol of Al according to the following equation (see Figure 4.10)?",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "Example 4.8 is a mole-to-mole reaction-stoichiometry conversion: it converts a given amount of one reactant (0.429 mol Al) into the required amount of another reactant (I2) using the balanced equation's coefficient ratio. Neither registered type covers this. chemistry.molar-conversion requires a mass and a molar mass to produce an amount in moles; no mass in grams and no molar mass are given here, and the given quantity is already an amount in moles. chemistry.mass-balance asks whether a written equation conserves atoms and mass; the passage does not ask that, and per rule 4 the example must not be bent into the nearest type. Independently, the equation itself is not carried by the text layer shown (\"according to the following equation (see Figure 4.10)\" with no equation printed), so no reactant/product formulas or coefficients are readable, and no atomic masses are printed. The excerpt also stops before any Solution or Answer text, so no claimed result is readable; asserted is therefore left empty rather than guessed. The governing reason is still no_registered_problem_type, since no registered type fits the question being asked."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1077,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 15036.355591000756,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

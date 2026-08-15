@@ -1,0 +1,75 @@
+{
+ "blocking_dependency": {
+  "blocks": "W1 — the real source's registration, and therefore cycles 1 through 3",
+  "does_not_block": "the rest of W0. The fixture-scale slice runs against an in-repository chapter by design (§3.1), so every driver, freeze and test in this wave is complete and none of them touched an uncleared source",
+  "natural_candidates_named_by_the_plan": "openly licensed technical material matching the two pilots — a mechanics text and a chemistry text, or one source both can consume",
+  "owner": "the Sprint 22 gate owner",
+  "required_of_a_concluded_review": [
+   "source_content_hash — the exact bytes cleared, so a clearance cannot drift onto a different edition",
+   "edition",
+   "author",
+   "location",
+   "license_identifier",
+   "permitted_uses — from the released CorpusUsageRight vocabulary, at least internal_use and derivative_work for a campaign that compiles knowledge",
+   "cleared_by — a named authority, not a role",
+   "cleared_at",
+   "evidence_hash — the licence text or acquisition record the clearance rests on"
+  ],
+  "substitution_refused": "§3.2: a campaign run on an unclear source is evidence that cannot be released and work that cannot be kept. This wave registers no substitute source and picks no chapter — §1.3 reserves that choice to the gate owner"
+ },
+ "fixture_clearance": {
+  "clears_nothing_about_the_real_source": true,
+  "content_hash": "780536144d8ccabe4f3108887f6cf59b74d27f41ce504aa5d091f103ce0fe135",
+  "source_content_hash": "56cde7ae9556ee7d241b73530ad037c1040faed445d58bf08531c7e25250e6bd",
+  "why_it_exists": "the fixture chapter is authored in this repository, so its rights are a fact about the repository rather than a review's outcome. It exists so the gate can be exercised at fixture scale, and it is not a substitute source"
+ },
+ "gate_is_executable": {
+  "every_probe_behaved": true,
+  "probes": [
+   {
+    "probe": "no rights record at all",
+    "reason": "no sealed rights record for this source. Sprint 22C W0 blocks on source-rights clearance; see §1.3 and §3.2 of the technical backlog",
+    "refused": true
+   },
+   {
+    "probe": "a clearance issued against different bytes",
+    "reason": "the rights clearance names a different source: cleared 56cde7ae9556ee7d…, presented ee51c2c96c6c7755…",
+    "refused": true
+   },
+   {
+    "probe": "a record carrying an unconcluded review",
+    "reason": "1 validation error for CampaignSourceRights\n  Value error, CampaignSourceRights records a concluded clearance. A review that has not concluded is the absence of this record, not an instance of it carrying status=not_cleared — see Sprint 22C §1.3 [type=value_error, input_value={'status': <RightsClearan...9b934ca495991b7852b855'}, input_type=dict]\n    For further information visit https://errors.pyd",
+    "refused": true
+   },
+   {
+    "probe": "a campaign use the clearance does not permit",
+    "reason": "1 validation error for CampaignManifestV1\n  Value error, campaign declares uses its rights clearance does not permit: ['public_release'] [type=value_error, input_value={'schema_version': 1, 'ca...ed_by': 'sprint-22c-w0'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+    "refused": true
+   },
+   {
+    "probe": "a matching clearance for the fixture chapter",
+    "reason": "admitted, as it must be",
+    "refused": false
+   }
+  ],
+  "probes_run": 5,
+  "refusals": 4,
+  "why_probes": "a gate that has never refused anything is a gate nobody has tested. The four refusals and the one admission are run here so 'W0 blocks on rights' is a demonstrated behaviour rather than a sentence in a plan"
+ },
+ "integrity_content_hash": "85e0b74a865b0da5f2f84a2e9373c4ba1083f6a92d4630ae9e8857fe08c64bfc",
+ "items": [
+  "S22C-002"
+ ],
+ "recorded_at": "2026-08-14T17:20:15Z",
+ "schema_version": 1,
+ "source_rights_review": {
+  "authorised_to_begin_by": "execution-sprint-allocation.md §7: 'Sprint 22C source-rights review may begin during the scale sprint'",
+  "concluded": false,
+  "concluded_by_22b": false,
+  "expected_evidence": "docs/sprints/sprint-22/evidence/sprint-22c-source-rights.json",
+  "read_from": "the repository, not from the plan's expectation",
+  "why_not_concluded_by_22b": "22B's execution record names no rights work; §7 permitted the review to begin, and permission to begin is not a conclusion"
+ },
+ "sprint": "22C",
+ "wave": "W0"
+}

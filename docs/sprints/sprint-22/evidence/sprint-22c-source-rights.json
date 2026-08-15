@@ -1,0 +1,119 @@
+{
+ "all_sources_admitted_by_the_gate": true,
+ "campaign_structure": "two campaigns, one per source",
+ "cleared_at": "2026-08-15T00:00:00Z",
+ "cleared_by": "palkouser (Sprint 22 gate owner)",
+ "commercial_use_decision": "gate owner: research and internal use. The NC-SA source is cleared for internal_use, derivative_work and benchmark_use only",
+ "commercial_use_intended": false,
+ "domains_covered": [
+  "engineering.mechanics",
+  "science.chemistry"
+ ],
+ "gate_refuses_a_neighbouring_hash_for_every_source": true,
+ "integrity_content_hash": "1a38086ed23071c5c45de62797d5155036f8c141f1dd3fab5c580ca26ad266a8",
+ "items": [
+  "S22C-020"
+ ],
+ "limitations": [
+  "two sources is two sources — §4's 'one source is one source' applies twice over, and generality across licences, formats and publishers is not claimed",
+  "the clearance covers the files at the recorded content hashes; a re-download that differs by a byte is a different source and is refused by the gate",
+  "trademark carve-outs are recorded as conditions, not enforced by code: no campaign stage reproduces a logo, but nothing checks that mechanically"
+ ],
+ "recorded_at": "2026-08-15T06:22:36Z",
+ "review_concluded": true,
+ "schema_version": 1,
+ "source_count": 2,
+ "sources": [
+  {
+   "attribution_required": "attribute the original: (c)2020 Texas Education Agency (TEA), adapted by OpenStax, licensed CC BY 4.0",
+   "author": "Paul Peter Urone and Roger Hinrichs (senior contributing authors); OpenStax, Rice University; originally created through a Texas Education Agency initiative",
+   "clearance_content_hash": "118e3a76729446a9d92128d6a2c9be546e3c35d704c7e84fbb3b5ab44c97a438",
+   "conditions": [
+    "attribution required on every derivative",
+    "the OpenStax and Rice University names and logos are trademarks excluded from the licence and are never reproduced by this campaign"
+   ],
+   "domain_id": "engineering.mechanics",
+   "edition": "High School Physics, 2020 original publication year, web PDF",
+   "evidence_hash": "b3aa1ccc15691593fce0a907a40fb1c88e9f549062f2fc8a60590cce4425066a",
+   "evidence_is": "the extracted text of page 4, the licence page",
+   "file_bytes": 57463331,
+   "file_name": "Physics_-_WEB.pdf",
+   "gate_admits_this_source": true,
+   "gate_refuses_a_neighbouring_hash": true,
+   "key": "physics",
+   "license_identifier": "CC-BY-4.0",
+   "license_page": 4,
+   "license_page_found_by": "searching each front-matter page for the statement",
+   "license_statement_quoted_from_the_pdf": "were made to the original material, including updates to art, structure, and other content updates. The original material is available at: https://www.texasgateway.org/book/tea-physics. Textbook content is licensed under a Creative Commons Attribution 4.0 International License (https://creativecommons.org/licenses/by/4.0/) (CC BY 4.0). For questions regarding this licensing, please contact support@openstax.org. Trademarks The OpenStax name, OpenStax logo, OpenStax book covers, OpenStax CNX name, OpenStax CNX logo, OpenStax",
+   "license_url": "https://creativecommons.org/licenses/by/4.0/",
+   "location": "OpenStax, Rice University — https://openstax.org; original material at https://www.texasgateway.org/book/tea-physics",
+   "not_permitted": [],
+   "notes": "clean permissive licence; no downstream encumbrance on derived artifacts",
+   "permitted_uses": [
+    "benchmark_use",
+    "commercial_use",
+    "derivative_work",
+    "internal_use",
+    "model_training",
+    "modification",
+    "public_release",
+    "redistribution"
+   ],
+   "source_content_hash": "a3f75487411ef13d0270c65fc801ceff2b28e6b339afed9b407fe477f7e8453e"
+  },
+  {
+   "attribution_required": "\"Access for free at openstax.org.\"",
+   "author": "Paul Flowers, Klaus Theopold, Richard Langley and William R. Robinson (senior contributing authors); OpenStax, Rice University",
+   "clearance_content_hash": "a95fc515ec82361ee7e825d0a376e18180e4c72d8b6924748e0b5157551eb417",
+   "conditions": [
+    "noncommercial use only — CorpusUsageRight.COMMERCIAL_USE is not cleared",
+    "ShareAlike: any adaptation shared onward must carry CC BY-NC-SA 4.0, so every artifact derived from this source is encumbered and must stay labelled",
+    "public release excluded by gate-owner decision, not by the licence",
+    "the OpenStax, Rice University and Kendall Hunt names and logos are trademarks excluded from the licence and are never reproduced by this campaign"
+   ],
+   "domain_id": "science.chemistry",
+   "edition": "Chemistry 2e, web PDF, (c)2026 Rice University",
+   "evidence_hash": "92c6a220eb2bb8529df9f2b3561372ef5e6172d131d68de65378b18bb513111d",
+   "evidence_is": "the extracted text of page 4, the licence page",
+   "file_bytes": 217794376,
+   "file_name": "chemistry-2e_-_WEB.pdf",
+   "gate_admits_this_source": true,
+   "gate_refuses_a_neighbouring_hash": true,
+   "key": "chemistry",
+   "license_identifier": "CC-BY-NC-SA-4.0",
+   "license_page": 4,
+   "license_page_found_by": "searching each front-matter page for the statement",
+   "license_statement_quoted_from_the_pdf": "Individual print copies and bulk orders can be purchased through our website. ©2026 Rice University. Textbook content produced by OpenStax is licensed under a Creative Commons Attribution Non-Commercial ShareAlike 4.0 International License (CC BY-NC-SA 4.0). Under this license, any user of this textbook or the textbook contents herein can share, remix, and build upon the content for noncommercial purposes only. Any adaptations must be shared under the same type of license. In any case of",
+   "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+   "location": "OpenStax, Rice University — https://openstax.org/details/books/chemistry-2e",
+   "not_permitted": [
+    "commercial_use",
+    "model_training",
+    "modification",
+    "public_release",
+    "redistribution"
+   ],
+   "notes": "nominated as CC BY; the licence page says CC BY-NC-SA 4.0. The record follows the bytes, not the nomination",
+   "permitted_uses": [
+    "benchmark_use",
+    "derivative_work",
+    "internal_use"
+   ],
+   "source_content_hash": "fd89db1b8a1fee06b8ad3e8982f4f4b34bde4e93654a4ce28b724f8c0efe98d6"
+  }
+ ],
+ "sprint": "22C",
+ "supersedes_the_blocking_dependency_in": "sprint-22c-rights-gate.json",
+ "the_nomination_was_corrected_by_the_evidence": {
+  "found": {
+   "chemistry": "CC BY-NC-SA 4.0 — NonCommercial and ShareAlike, not CC BY",
+   "physics": "CC BY 4.0 — as nominated"
+  },
+  "how_it_was_found": "the licence page was located by searching the front matter of each PDF and its text read, rather than the nomination being written down as fact",
+  "nominated_as": "both CC BY, OpenStax-class",
+  "why_it_matters": "NonCommercial bars commercial use of everything derived from the chemistry book and ShareAlike propagates to every adaptation, which reaches forward into 22D, whose Layer 1 is this acquired-knowledge store"
+ },
+ "w0_record_is_not_edited": "the W0 gate record truthfully states that the review had not concluded at W0. It stays exactly as sealed; this record is the conclusion, not a correction",
+ "wave": "W1",
+ "why_two_campaigns": "the two sources carry different licences. One campaign per source means no artifact ever merges a CC BY lineage with a CC BY-NC-SA one, so the permissive lineage stays unencumbered and the ShareAlike lineage stays labelled at every derivative"
+}

@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "91ef830ac2b99c033293017437fe0743e06d667ed04a19226275f55ad828af81",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "3aa825bb-f5d4-511e-a986-5341a6dc10e1",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"The passage is a rotational-kinematics problem: it solves an angular kinematic equation (omega = omega_0 + alpha*t) for the time t at which a reel spinning at 220 rad/s under an angular acceleration of -300 rad/s^2 reaches zero angular velocity. None of the three registered types covers this. It is not mechanics.uniform-motion: that type computes a linear displacement from a constant speed and a duration, whereas here the speed is angular, it is explicitly changing (nonzero angular acceleration), and the unknown is the duration rather than a displacement. It is not statics-equilibrium and not moment-balance: no forces with components, no pivot, and no balance question. Bending it into uniform-motion would require inventing a linear speed from the 4.50 cm reel radius and treating a decelerating motion as constant-speed, which rule 4 forbids.\\n\\nA second, independent obstacle: even within its own type the passage asserts no readable result. The Solution section carries only the equation-number marker \\\"6.12\\\" with no numeric value, and the text layer has dropped the symbols and numbers from the Strategy section (\\\"The magnitude of the initial angular velocity is / rad/s\\\", \\\"The signed magnitude of the angular acceleration is / rad/s2\\\", and the unnamed equation). The Discussion says only that \\\"The time to stop the reel is fairly small\\\" \\u2014 a qualitative statement, not a value. So `asserted` could not be filled honestly either, and `asserted_value_quoted_from_the_passage` is left empty.\\n\\nThe given quantities the passage does state in digits (radius 4.50 cm, 220 rad/s, -300 rad/s^2) are recorded here for the record only; they are not written into `formal_inputs`, since no registered type has a slot for an angular velocity, an angular acceleration, or a reel radius, and rule 1 forbids repurposing them into slots they do not belong in.\\n\\nReported reason is no_registered_problem_type, as that is the prior failure: the type mismatch means there is no answer shape to read a result into in the first place.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Worked example, OpenStax section 6.3 \\\"Rotational Motion\\\", p. 236: \\\"Calculating the Time for a Fishing Reel to Stop Spinning\\\". A fishing reel of radius 4.50 cm spins at an angular velocity of 220 rad/s; a brake creates an angular acceleration of -300 rad/s^2. The example asks how long it takes the reel to come to a stop, and solves a rotational kinematic equation for t. The Solution presents only the equation-number marker \\\"6.12\\\" with no numeric value, and the Strategy text has lost its symbols and numbers in the document's text layer.\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "The passage is a rotational-kinematics problem: it solves an angular kinematic equation (omega = omega_0 + alpha*t) for the time t at which a reel spinning at 220 rad/s under an angular acceleration of -300 rad/s^2 reaches zero angular velocity. None of the three registered types covers this. It is not mechanics.uniform-motion: that type computes a linear displacement from a constant speed and a duration, whereas here the speed is angular, it is explicitly changing (nonzero angular acceleration), and the unknown is the duration rather than a displacement. It is not statics-equilibrium and not moment-balance: no forces with components, no pivot, and no balance question. Bending it into uniform-motion would require inventing a linear speed from the 4.50 cm reel radius and treating a decelerating motion as constant-speed, which rule 4 forbids.\n\nA second, independent obstacle: even within its own type the passage asserts no readable result. The Solution section carries only the equation-number marker \"6.12\" with no numeric value, and the text layer has dropped the symbols and numbers from the Strategy section (\"The magnitude of the initial angular velocity is / rad/s\", \"The signed magnitude of the angular acceleration is / rad/s2\", and the unnamed equation). The Discussion says only that \"The time to stop the reel is fairly small\" — a qualitative statement, not a value. So `asserted` could not be filled honestly either, and `asserted_value_quoted_from_the_passage` is left empty.\n\nThe given quantities the passage does state in digits (radius 4.50 cm, 220 rad/s, -300 rad/s^2) are recorded here for the record only; they are not written into `formal_inputs`, since no registered type has a slot for an angular velocity, an angular acceleration, or a reel radius, and rule 1 forbids repurposing them into slots they do not belong in.\n\nReported reason is no_registered_problem_type, as that is the prior failure: the type mismatch means there is no answer shape to read a result into in the first place.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "Worked example, OpenStax section 6.3 \"Rotational Motion\", p. 236: \"Calculating the Time for a Fishing Reel to Stop Spinning\". A fishing reel of radius 4.50 cm spins at an angular velocity of 220 rad/s; a brake creates an angular acceleration of -300 rad/s^2. The example asks how long it takes the reel to come to a stop, and solves a rotational kinematic equation for t. The Solution presents only the equation-number marker \"6.12\" with no numeric value, and the Strategy text has lost its symbols and numbers in the document's text layer."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1379,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 19419.177619998663,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

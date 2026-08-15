@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "f015bd866fdf698403699ba735ac4ef624ad3b2dfb00968c1127cf063249fee4",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "eb886398-b516-5315-821d-bcc776ba1915",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"The passage asks for an empirical formula derived from percent composition (27.29% C, 72.71% O). Rule 4 lists \\\"an empirical formula\\\" and \\\"a percent composition\\\" explicitly as unregistered types, so this is set to formalisable=false with reason no_registered_problem_type rather than bent into the nearest registered type. It is not chemistry.molar-conversion: no mass in grams and no molar mass are given, and the requested result is a formula, not an amount in moles. It is not chemistry.mass-balance: no chemical equation with reactants, products, and coefficients is written. Independently, the excerpt carries only the problem statement plus page furniture (\\\"Access for free at openstax.org\\\", \\\"3.2 \\u2022 Determining Empirical and Molecular Formulas\\\") \\u2014 no Solution discussion and no \\\"Answer:\\\" line \\u2014 so no asserted result is readable and no atomic masses are printed. asserted and asserted_value_quoted_from_the_passage are therefore left empty rather than filled from outside knowledge.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"EXAMPLE 3.12 \\u2014 Determining an Empirical Formula from Percent Composition: \\\"The bacterial fermentation of grain to produce ethanol forms a gas with a percent composition of 27.29% C and 72.71% O (Figure 3.13). What is the empirical formula for this gas?\\\"\"}",
+  "structured_output": {
+   "statement": "EXAMPLE 3.12 — Determining an Empirical Formula from Percent Composition: \"The bacterial fermentation of grain to produce ethanol forms a gas with a percent composition of 27.29% C and 72.71% O (Figure 3.13). What is the empirical formula for this gas?\"",
+   "problem_type": "",
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "The passage asks for an empirical formula derived from percent composition (27.29% C, 72.71% O). Rule 4 lists \"an empirical formula\" and \"a percent composition\" explicitly as unregistered types, so this is set to formalisable=false with reason no_registered_problem_type rather than bent into the nearest registered type. It is not chemistry.molar-conversion: no mass in grams and no molar mass are given, and the requested result is a formula, not an amount in moles. It is not chemistry.mass-balance: no chemical equation with reactants, products, and coefficients is written. Independently, the excerpt carries only the problem statement plus page furniture (\"Access for free at openstax.org\", \"3.2 • Determining Empirical and Molecular Formulas\") — no Solution discussion and no \"Answer:\" line — so no asserted result is readable and no atomic masses are printed. asserted and asserted_value_quoted_from_the_passage are therefore left empty rather than filled from outside knowledge."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 788,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 11473.546074999831,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

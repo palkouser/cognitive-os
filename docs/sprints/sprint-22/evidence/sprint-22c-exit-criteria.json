@@ -1,0 +1,516 @@
+{
+ "all_met": false,
+ "amendments_made_by_22c": 0,
+ "contracts_sha256": "b343c0db131441a8b60ae0359e910611d82b949bdff7f1d8219ef6c8cd0857fd",
+ "criteria": {
+  "a planted harmful update is quarantined": {
+   "conditions": [
+    {
+     "condition": "all four §2.2b conditions met",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22c-w3-plant.json#all_four_conditions_met"
+    },
+    {
+     "condition": "the plant is the one W0 sealed before any cycle existed",
+     "expected": "24da0165a9ed8e13b3af71abbd08b8f2f5f4cff93facf5308348a4f39bb14973",
+     "holds": true,
+     "measured": "24da0165a9ed8e13b3af71abbd08b8f2f5f4cff93facf5308348a4f39bb14973",
+     "read_from": "sprint-22c-w3-plant.json#the_plant.content_hash"
+    },
+    {
+     "condition": "it entered through the genuine intake path",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22c-w3-plant.json#the_plant.entered_through_the_genuine_intake_path"
+    }
+   ],
+   "conditions_holding": 3,
+   "conditions_total": 3,
+   "criterion": "a planted harmful update is quarantined",
+   "met": true,
+   "reading": "(b) what the planted harmful update is, and what 'quarantined' means"
+  },
+  "a valid new revision supersedes the active view without deleting history": {
+   "conditions": [
+    {
+     "condition": "the released lifecycle was walked, candidate to verified to superseded",
+     "expected": [
+      "proposed",
+      "supported",
+      "superseded"
+     ],
+     "holds": true,
+     "measured": [
+      "proposed",
+      "supported",
+      "superseded"
+     ],
+     "read_from": "sprint-22c-w2-cycle1.json#supersession.lifecycle.candidate_to_verified_to_superseded"
+    },
+    {
+     "condition": "verified two ways that agree: the active view queried, the supersession chain walked",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22c-w2-cycle1.json#supersession.verified_two_ways.the_two_agree"
+    },
+    {
+     "condition": "no row was deleted anywhere in the path",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22c-w2-cycle1.json#supersession.history_survives.no_row_was_deleted"
+    },
+    {
+     "condition": "the superseded revision is still loadable",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22c-w2-cycle1.json#supersession.history_survives.revision_2_loadable"
+    },
+    {
+     "condition": "its citations still resolve to loaded bytes",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22c-w2-cycle1.json#supersession.history_survives.revision_2_citations_still_resolve_to_loaded_bytes"
+    },
+    {
+     "condition": "the event stream contains the full transition sequence",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22c-w2-cycle1.json#supersession.event_stream.full_transition_sequence_present"
+    }
+   ],
+   "conditions_holding": 6,
+   "conditions_total": 6,
+   "criterion": "a valid new revision supersedes the active view without deleting history",
+   "met": true,
+   "reading": "(e) what 'supersedes without deleting history' reads"
+  },
+  "at least one retained artifact improves a held-out verified task": {
+   "conditions": [
+    {
+     "condition": "at least one retained artifact improved a held-out verified task",
+     "expected": true,
+     "holds": false,
+     "measured": false,
+     "read_from": "sprint-22c-w3-improvement.json#comparison.at_least_one_retained_artifact_improved_a_held_out_task"
+    },
+    {
+     "condition": "the holdout was frozen with no measured values",
+     "expected": 0,
+     "holds": true,
+     "measured": 0,
+     "read_from": "sprint-22c-w3-improvement.json#holdout.measured_values_at_freeze"
+    },
+    {
+     "condition": "it was read once",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22c-w3-improvement.json#holdout.read_once"
+    },
+    {
+     "condition": "no leakage between curriculum and holdout",
+     "expected": false,
+     "holds": true,
+     "measured": false,
+     "read_from": "sprint-22c-w3-improvement.json#separation.leakage_detected"
+    },
+    {
+     "condition": "both arms measured in 22C, same tasks, same seeds, same checker",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22c-w3-improvement.json#comparison.same_tasks_same_seeds_same_checker"
+    }
+   ],
+   "conditions_holding": 4,
+   "conditions_total": 5,
+   "criterion": "at least one retained artifact improves a held-out verified task",
+   "met": false,
+   "reading": "(c) what 'improves a held-out verified task' reads"
+  },
+  "every cycle replays all retained domains": {
+   "conditions": [
+    {
+     "condition": "at least the frozen minimum number of completed cycles",
+     "expected": 3,
+     "holds": true,
+     "measured": 3,
+     "read_from": "sprint-22c-contracts.json#S22C-011.minimum_cycles"
+    },
+    {
+     "condition": "cycle 1: all nine stages, in order",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22c-w2-cycle1.json#stages.all_nine_in_order"
+    },
+    {
+     "condition": "cycle 1: the stage enumeration is the frozen one",
+     "expected": [
+      "register_source",
+      "extract",
+      "normalize",
+      "cross_check",
+      "quarantine",
+      "compile",
+      "evaluate",
+      "promote",
+      "observe"
+     ],
+     "holds": true,
+     "measured": [
+      "register_source",
+      "extract",
+      "normalize",
+      "cross_check",
+      "quarantine",
+      "compile",
+      "evaluate",
+      "promote",
+      "observe"
+     ],
+     "read_from": "sprint-22c-w2-cycle1.json#stages.enumerated"
+    },
+    {
+     "condition": "cycle 1: domains enumerated from the frozen source",
+     "expected": "registry.domain_ids()",
+     "holds": true,
+     "measured": "registry.domain_ids()",
+     "read_from": "sprint-22c-w2-cycle1.json#evaluate.enumeration_source"
+    },
+    {
+     "condition": "cycle 1: the enumeration is the freeze snapshot plus exactly the two pilots this campaign registers",
+     "expected": [
+      "coding",
+      "engineering.mechanics",
+      "logic",
+      "mathematics",
+      "physics",
+      "science.chemistry"
+     ],
+     "holds": true,
+     "measured": [
+      "coding",
+      "engineering.mechanics",
+      "logic",
+      "mathematics",
+      "physics",
+      "science.chemistry"
+     ],
+     "read_from": "sprint-22c-w2-cycle1.json#evaluate.per_domain"
+    },
+    {
+     "condition": "cycle 1: every domain reports rates, including those with no cases",
+     "expected": 6,
+     "holds": true,
+     "measured": 6,
+     "read_from": "sprint-22c-w2-cycle1.json#evaluate.domains_enumerated"
+    },
+    {
+     "condition": "cycle 1: every retained case executed and passed",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22c-w2-cycle1.json#evaluate.all_retained_cases_passed"
+    },
+    {
+     "condition": "cycle 2: all nine stages, in order",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22c-w3-cycle2.json#stages.all_nine_in_order"
+    },
+    {
+     "condition": "cycle 2: the stage enumeration is the frozen one",
+     "expected": [
+      "register_source",
+      "extract",
+      "normalize",
+      "cross_check",
+      "quarantine",
+      "compile",
+      "evaluate",
+      "promote",
+      "observe"
+     ],
+     "holds": true,
+     "measured": [
+      "register_source",
+      "extract",
+      "normalize",
+      "cross_check",
+      "quarantine",
+      "compile",
+      "evaluate",
+      "promote",
+      "observe"
+     ],
+     "read_from": "sprint-22c-w3-cycle2.json#stages.enumerated"
+    },
+    {
+     "condition": "cycle 2: domains enumerated from the frozen source",
+     "expected": "registry.domain_ids()",
+     "holds": true,
+     "measured": "registry.domain_ids()",
+     "read_from": "sprint-22c-w3-cycle2.json#evaluate.enumeration_source"
+    },
+    {
+     "condition": "cycle 2: the enumeration is the freeze snapshot plus exactly the two pilots this campaign registers",
+     "expected": [
+      "coding",
+      "engineering.mechanics",
+      "logic",
+      "mathematics",
+      "physics",
+      "science.chemistry"
+     ],
+     "holds": true,
+     "measured": [
+      "coding",
+      "engineering.mechanics",
+      "logic",
+      "mathematics",
+      "physics",
+      "science.chemistry"
+     ],
+     "read_from": "sprint-22c-w3-cycle2.json#evaluate.per_domain"
+    },
+    {
+     "condition": "cycle 2: every domain reports rates, including those with no cases",
+     "expected": 6,
+     "holds": true,
+     "measured": 6,
+     "read_from": "sprint-22c-w3-cycle2.json#evaluate.domains_enumerated"
+    },
+    {
+     "condition": "cycle 2: every retained case executed and passed",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22c-w3-cycle2.json#evaluate.all_retained_cases_passed"
+    },
+    {
+     "condition": "cycle 3: all nine stages, in order",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22c-w3-cycle3.json#stages.all_nine_in_order"
+    },
+    {
+     "condition": "cycle 3: the stage enumeration is the frozen one",
+     "expected": [
+      "register_source",
+      "extract",
+      "normalize",
+      "cross_check",
+      "quarantine",
+      "compile",
+      "evaluate",
+      "promote",
+      "observe"
+     ],
+     "holds": true,
+     "measured": [
+      "register_source",
+      "extract",
+      "normalize",
+      "cross_check",
+      "quarantine",
+      "compile",
+      "evaluate",
+      "promote",
+      "observe"
+     ],
+     "read_from": "sprint-22c-w3-cycle3.json#stages.enumerated"
+    },
+    {
+     "condition": "cycle 3: domains enumerated from the frozen source",
+     "expected": "registry.domain_ids()",
+     "holds": true,
+     "measured": "registry.domain_ids()",
+     "read_from": "sprint-22c-w3-cycle3.json#evaluate.enumeration_source"
+    },
+    {
+     "condition": "cycle 3: the enumeration is the freeze snapshot plus exactly the two pilots this campaign registers",
+     "expected": [
+      "coding",
+      "engineering.mechanics",
+      "logic",
+      "mathematics",
+      "physics",
+      "science.chemistry"
+     ],
+     "holds": true,
+     "measured": [
+      "coding",
+      "engineering.mechanics",
+      "logic",
+      "mathematics",
+      "physics",
+      "science.chemistry"
+     ],
+     "read_from": "sprint-22c-w3-cycle3.json#evaluate.per_domain"
+    },
+    {
+     "condition": "cycle 3: every domain reports rates, including those with no cases",
+     "expected": 6,
+     "holds": true,
+     "measured": 6,
+     "read_from": "sprint-22c-w3-cycle3.json#evaluate.domains_enumerated"
+    },
+    {
+     "condition": "cycle 3: every retained case executed and passed",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22c-w3-cycle3.json#evaluate.all_retained_cases_passed"
+    }
+   ],
+   "conditions_holding": 19,
+   "conditions_total": 19,
+   "criterion": "every cycle replays all retained domains",
+   "met": true,
+   "reading": "(a) what a cycle is, and what 'replays all retained domains' reads"
+  },
+  "source citations and hashes survive every derivative": {
+   "conditions": [
+    {
+     "condition": "cycle 1: every chain walked resolves to loaded source bytes",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22c-w2-cycle1.json#citations.all_chains_resolve"
+    },
+    {
+     "condition": "cycle 1: the walk covers every promoted artifact (1 promoted)",
+     "expected": 1,
+     "holds": true,
+     "measured": 1,
+     "read_from": "sprint-22c-w2-cycle1.json#citations.artifacts_walked"
+    },
+    {
+     "condition": "cycle 1: the walk did not sample (S22C-014 forbids it)",
+     "expected": false,
+     "holds": true,
+     "measured": false,
+     "read_from": "sprint-22c-w2-cycle1.json#citations.sampled"
+    },
+    {
+     "condition": "cycle 2: every chain walked resolves to loaded source bytes",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22c-w3-cycle2.json#citations.all_chains_resolve"
+    },
+    {
+     "condition": "cycle 2: the walk covers every promoted artifact (0 promoted)",
+     "expected": 0,
+     "holds": true,
+     "measured": 0,
+     "read_from": "sprint-22c-w3-cycle2.json#citations.artifacts_walked"
+    },
+    {
+     "condition": "cycle 2: the walk did not sample (S22C-014 forbids it)",
+     "expected": false,
+     "holds": true,
+     "measured": false,
+     "read_from": "sprint-22c-w3-cycle2.json#citations.sampled"
+    },
+    {
+     "condition": "cycle 3: every chain walked resolves to loaded source bytes",
+     "expected": true,
+     "holds": true,
+     "measured": true,
+     "read_from": "sprint-22c-w3-cycle3.json#citations.all_chains_resolve"
+    },
+    {
+     "condition": "cycle 3: the walk covers every promoted artifact (0 promoted)",
+     "expected": 0,
+     "holds": true,
+     "measured": 0,
+     "read_from": "sprint-22c-w3-cycle3.json#citations.artifacts_walked"
+    },
+    {
+     "condition": "cycle 3: the walk did not sample (S22C-014 forbids it)",
+     "expected": false,
+     "holds": true,
+     "measured": false,
+     "read_from": "sprint-22c-w3-cycle3.json#citations.sampled"
+    }
+   ],
+   "conditions_holding": 9,
+   "conditions_total": 9,
+   "criterion": "source citations and hashes survive every derivative",
+   "met": true,
+   "reading": "(d) what 'citations survive every derivative' means"
+  }
+ },
+ "criteria_met": 4,
+ "criteria_total": 5,
+ "cycles_read": {
+  "sprint-22c-w2-cycle1.json": {
+   "cycle": 1,
+   "integrity_content_hash": "a5383c8bba85b7538ea9aca8190ca6f0c65bd8e0adfae740788075ef74054ae1",
+   "promoted": 1,
+   "wave": "W2"
+  },
+  "sprint-22c-w3-cycle2.json": {
+   "cycle": 2,
+   "integrity_content_hash": "719dd161abbfcfb02e0669f3f62904bf5eb0cba08fff6ed5896146e08427b191",
+   "promoted": 0,
+   "wave": "W3"
+  },
+  "sprint-22c-w3-cycle3.json": {
+   "cycle": 3,
+   "integrity_content_hash": "b88fa112a8abd2bff5e9e2ff710dfc6d3906c991e1d41ba7488ce50382ec4f93",
+   "promoted": 0,
+   "wave": "W3"
+  }
+ },
+ "integrity_content_hash": "0f8e85d7b5133cf0fccf5c9817dc617e0ea14e12424fb65f5ea04781d8c7158d",
+ "items": [
+  "S22C-060"
+ ],
+ "no_wave_read_an_exit_before_this_record": {
+  "sprint-22c-w2-cycle1.json": "the exits are read once in W4 from every cycle's records. This is cycle 1 of three, and the replay, supersession and citation exits need all of them",
+  "sprint-22c-w3-cycle2.json": "the exits are read once in W4 from every cycle's records. This is cycle 1 of three, and the replay, supersession and citation exits need all of them",
+  "sprint-22c-w3-cycle3.json": "the exits are read once in W4 from every cycle's records. This is cycle 1 of three, and the replay, supersession and citation exits need all of them"
+ },
+ "outcome": "typed negative",
+ "pre_registration_sha256": "705f5d216843921abbc2dfe9a2fd32fa2971fbcef045e1e8785fe855a01badea",
+ "recorded_at": "2026-08-15T12:09:16Z",
+ "schema_version": 1,
+ "sources_sha256": {
+  "sprint-22c-w2-cycle1.json": "43b101a65ae2aa7305dbd8a2472cdaa71e610fb53189520fc5cf561982ed9328",
+  "sprint-22c-w3-cycle2.json": "40aacd4e3ff6531972afd3c94a348a15e5c75efefdf567d85c7e2fb6822e3fb9",
+  "sprint-22c-w3-cycle3.json": "c33762ca91558c904a751b45c14d9230262ccf690e8623c4f455243194d1f69b",
+  "sprint-22c-w3-improvement.json": "19b2047af45b916de51b522fad94c2f917e29b34cfcd5cdeaaff17325414eae4",
+  "sprint-22c-w3-plant.json": "9fbb2fe545ed84512c312939f359d14e7f4834cce17c145d4311073e553f2da3"
+ },
+ "sprint": "22C",
+ "the_stop": {
+  "after_how_many_cycles": 3,
+  "at_which_wave": "W3",
+  "diagnosis": "W3-F1",
+  "measured_values": {
+   "arm_a_verified_successes": 0,
+   "arm_b_verified_successes": 0,
+   "cases": 4,
+   "improved_cases": 0
+  },
+  "which_exit_failed": [
+   "at least one retained artifact improves a held-out verified task"
+  ],
+  "why_it_is_not_a_pipeline_failure": "the four pipeline exits are met on the same records. Arm A failed exactly as the frozen definition predicted, and three of arm B's four cases had no retained artifact to restore from — the campaign retained one artifact, and a held-out task needs a declarative fact no registered problem type can verify"
+ },
+ "thresholds_moved_by_22c": 0,
+ "wave": "W4"
+}

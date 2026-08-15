@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "7881ffc5f766e0a0db3fd71bf66e1bcef511c2b3dcb4d2eaf554137af519bb07",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "e3a5cfc4-2adf-578f-94d9-da101ad09863",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Example 3.5 asks for a count of copper atoms in 5.00 g of copper wire. That is a mass -> moles -> Avogadro-number-of-atoms derivation; its answer is a number of atoms, which fits neither registered answer shape ({\\\"exact_value\\\", \\\"units\\\": \\\"mol\\\"} or {\\\"structured\\\": {\\\"balanced\\\": ...}}). Bending it into chemistry.molar-conversion would mean silently substituting a different question (moles of Cu) for the one the passage poses, which rule 4 forbids.\\n\\nTwo further blockers, recorded but not used as the reason: (a) the passage as carried contains only the problem statement and page furniture (\\\"121\\\", \\\"122\\\", \\\"3 - Composition of Substances and Solutions\\\") - no Solution, no discussion result, and no \\\"Answer:\\\" line - so there is no result to place in `asserted` and nothing to quote under rule 3; (b) the only quantity the passage states as given is the mass 5.00 g, and no atomic/molar mass for Cu is printed, so even the molar-conversion `formal_inputs` could not be filled without supplying a value from outside the source, which rule 5 forbids.\\n\\nNo value was inferred, rounded, or imported from background knowledge.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"EXAMPLE 3.5, \\\"Deriving Number of Atoms from Mass for an Element\\\": how many copper atoms are in 5.00 g of copper wire?\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "Example 3.5 asks for a count of copper atoms in 5.00 g of copper wire. That is a mass -> moles -> Avogadro-number-of-atoms derivation; its answer is a number of atoms, which fits neither registered answer shape ({\"exact_value\", \"units\": \"mol\"} or {\"structured\": {\"balanced\": ...}}). Bending it into chemistry.molar-conversion would mean silently substituting a different question (moles of Cu) for the one the passage poses, which rule 4 forbids.\n\nTwo further blockers, recorded but not used as the reason: (a) the passage as carried contains only the problem statement and page furniture (\"121\", \"122\", \"3 - Composition of Substances and Solutions\") - no Solution, no discussion result, and no \"Answer:\" line - so there is no result to place in `asserted` and nothing to quote under rule 3; (b) the only quantity the passage states as given is the mass 5.00 g, and no atomic/molar mass for Cu is printed, so even the molar-conversion `formal_inputs` could not be filled without supplying a value from outside the source, which rule 5 forbids.\n\nNo value was inferred, rounded, or imported from background knowledge.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "EXAMPLE 3.5, \"Deriving Number of Atoms from Mass for an Element\": how many copper atoms are in 5.00 g of copper wire?"
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1561,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 22639.988296999945,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

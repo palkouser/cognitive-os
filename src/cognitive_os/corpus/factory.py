@@ -63,6 +63,7 @@ from cognitive_os.domain.corpus import (
     LicenseDeclaration,
     NormalizationProfile,
     NormalizedContent,
+    OperatorLicenseClearance,
     SourceFileEntry,
     SourceManifest,
     UsageRightAssessment,
@@ -89,8 +90,33 @@ from .sources import InspectedSource, SourceMaterial
 SECRET_PATTERN = re.compile(
     r"(?i)(api[_-]?key|password|secret|token|bearer)\s*[:=]\s*['\"]?([A-Za-z0-9._/+\-=]{8,})"
 )
-APPROVED_LICENSES = frozenset({"Apache-2.0", "MIT", "BSD-3-Clause", "CC0-1.0"})
-INTERNAL_LICENSES = frozenset({"LicenseRef-Cognitive-OS-Internal", "LicenseRef-Proprietary"})
+#: **W1-D2. These lists advise; they do not approve.**
+#:
+#: They used to *be* the decision: an identifier in the first list made material usable and
+#: an identifier in neither made it quarantine, with the outcome written into a
+#: `LicenseDeclaration` whose `declared_by` named an operator who had decided nothing. That
+#: is a design error rather than a short list. Classifying material and authorising its use
+#: is a legal determination and the legal responsibility is the operator's, so the
+#: determination has to be theirs; a program may read a licence, recognise it if it can, and
+#: say what it thinks. It may not grant use.
+#:
+#: What they are now: the platform's *recognition* of a handful of identifiers, offered as
+#: `LicenseClassification.advisory_status` and overridden by any
+#: `OperatorLicenseClearance` in the request. Extending them changes advice and nothing else,
+#: which is why they are still short: a longer list would not make more material usable, and
+#: the temptation to lengthen one until a corpus passes is the thing this design removes.
+RECOGNISED_PERMISSIVE_LICENSES = frozenset({"Apache-2.0", "MIT", "BSD-3-Clause", "CC0-1.0"})
+RECOGNISED_INTERNAL_LICENSES = frozenset(
+    {"LicenseRef-Cognitive-OS-Internal", "LicenseRef-Proprietary"}
+)
+
+#: The routing outcomes `CorpusConfiguration`'s `*_action` settings can name. `allow` is
+#: absent on purpose: a configuration file may choose how strictly to refuse, and may not
+#: choose to permit material nobody cleared. Only an `OperatorLicenseClearance` does that.
+_ROUTE_ACTIONS: dict[str, CorpusRouteStatus] = {
+    "quarantine": CorpusRouteStatus.QUARANTINED,
+    "reject": CorpusRouteStatus.DENIED,
+}
 MANDATORY_VERIFIERS = (
     "corpus.source_integrity",
     "corpus.archive_safety",
@@ -714,21 +740,51 @@ class CorpusFactory:
         await self._repository.register_source(manifest)
         return manifest
 
+    def _advisory_status(
+        self, request: CorpusFactoryRequest, identifier: str
+    ) -> CorpusLicenseStatus:
+        """What the platform thinks, on its own, about one identifier. Advice only (W1-D2)."""
+        status = (
+            CorpusLicenseStatus.APPROVED
+            if identifier in RECOGNISED_PERMISSIVE_LICENSES
+            else CorpusLicenseStatus.INTERNAL
+            if identifier in RECOGNISED_INTERNAL_LICENSES
+            else CorpusLicenseStatus.UNKNOWN
+        )
+        # Provider-generated material carries no licence the platform can read, whatever
+        # identifier the request names. The advice is "somebody has to look at this".
+        if request.source_type is CorpusSourceType.PROVIDER_GENERATED_DATASET:
+            return CorpusLicenseStatus.UNKNOWN
+        return status
+
+    def _clearance(
+        self, request: CorpusFactoryRequest, identifier: str
+    ) -> OperatorLicenseClearance | None:
+        return next(
+            (item for item in request.license_clearances if item.identifier == identifier), None
+        )
+
     def _license_declaration(
         self, request: CorpusFactoryRequest, identifier: str, evidence: tuple[str, ...]
     ) -> LicenseDeclaration:
-        status = (
-            CorpusLicenseStatus.APPROVED
-            if identifier in APPROVED_LICENSES
-            else CorpusLicenseStatus.INTERNAL
-            if identifier in INTERNAL_LICENSES
-            else CorpusLicenseStatus.UNKNOWN
-        )
-        if request.source_type is CorpusSourceType.PROVIDER_GENERATED_DATASET:
-            status = CorpusLicenseStatus.UNKNOWN
+        """The declaration carries the operator's determination when there is one.
+
+        **W1-D2.** `declared_by` now names whoever actually decided. With a clearance that is
+        the person who signed it; without one it is the requester, and the status is the
+        platform's advice — which for material it does not recognise is `unknown`, and
+        quarantines. The program refuses on its own and never permits on its own.
+        """
+        clearance = self._clearance(request, identifier)
+        if clearance is not None:
+            return LicenseDeclaration(
+                identifier=identifier,
+                status=clearance.status,
+                declared_by=clearance.cleared_by,
+                evidence_refs=evidence,
+            )
         return LicenseDeclaration(
             identifier=identifier,
-            status=status,
+            status=self._advisory_status(request, identifier),
             declared_by=request.created_by,
             evidence_refs=evidence,
         )
@@ -943,6 +999,22 @@ class CorpusFactory:
             )
             for right in CorpusUsageRight
         )
+        # **W1-D2.** What the platform would have concluded unaided, kept beside what was
+        # decided, so a reader can always see whether a person cleared this material and
+        # whether they agreed with the advice.
+        advisory = (
+            CorpusLicenseStatus.UNKNOWN
+            if not identifiers
+            else CorpusLicenseStatus.CONFLICTING
+            if len(identifiers) > 1
+            else self._advisory_status(request, next(iter(identifiers)))
+        )
+        cleared = [
+            clearance
+            for clearance in (self._clearance(request, item) for item in sorted(identifiers))
+            if clearance is not None
+        ]
+        decider = cleared[0] if len(cleared) == 1 else None
         return LicenseClassification(
             classification_id=_uuid("license", f"{request.request_id}:{index}"),
             corpus_item_id=_uuid(
@@ -955,6 +1027,10 @@ class CorpusFactory:
             conflicts=conflicts,
             profile="sprint15-license-v1",
             created_at=request.created_at,
+            advisory_status=advisory,
+            decided_by=decider.cleared_by if decider else None,
+            decided_at=decider.cleared_at if decider else None,
+            clearance_evidence_hash=decider.evidence_hash if decider else None,
         )
 
     def _sensitivity(
@@ -1141,34 +1217,57 @@ class CorpusFactory:
         rights = {item.right: item.allowed for item in license_result.rights}
         reasons: list[str] = []
         status = CorpusRouteStatus.ALLOWED
-        if license_result.status in {CorpusLicenseStatus.UNKNOWN, CorpusLicenseStatus.CONFLICTING}:
-            status = CorpusRouteStatus.QUARANTINED
-            reasons.append("license-review-required")
+
+        def refuse(outcome: CorpusRouteStatus, reason: str) -> None:
+            """Record a refusal, keeping the strictest one reached so far.
+
+            **W1-D2.** Each check used to *assign* `status`, so a later one could soften an
+            earlier one: material an operator had marked `restricted` — an explicit refusal
+            by the person legally answerable for it — came out `quarantined` if a usage right
+            was also missing, because that check ran afterwards and wrote its own answer.
+            Every reason is still recorded; only the outcome is now monotone. A refusal
+            cannot be undone by a further reason to refuse.
+            """
+            nonlocal status
+            reasons.append(reason)
+            if outcome is CorpusRouteStatus.DENIED or status is CorpusRouteStatus.DENIED:
+                status = CorpusRouteStatus.DENIED
+            else:
+                status = outcome
+
+        # **W1-D2, second half.** These three outcomes were hard-coded while
+        # `CorpusConfiguration` advertised `unknown_license_action`, `conflicting_license_action`
+        # and `restricted_license_action` as settings. Six such fields existed and nothing read
+        # any of them, so the configuration and the code agreed only by coincidence and an
+        # operator who changed one got no warning and no effect. They are read now, and their
+        # defaults are exactly the behaviour that was hard-coded, so nothing moves unless
+        # somebody deliberately moves it — which is the whole point of a setting.
+        if license_result.status is CorpusLicenseStatus.UNKNOWN:
+            refuse(_ROUTE_ACTIONS[self._config.unknown_license_action], "license-review-required")
+        elif license_result.status is CorpusLicenseStatus.CONFLICTING:
+            refuse(
+                _ROUTE_ACTIONS[self._config.conflicting_license_action],
+                "license-review-required",
+            )
         elif license_result.status is CorpusLicenseStatus.RESTRICTED:
-            status = CorpusRouteStatus.DENIED
-            reasons.append("restricted-license")
+            refuse(_ROUTE_ACTIONS[self._config.restricted_license_action], "restricted-license")
         if any(rights.get(right) is not True for right in policy.required_rights):
-            status = (
+            refuse(
                 CorpusRouteStatus.DENIED
                 if destination is CorpusDestinationType.TRAINING_CORPUS
-                else CorpusRouteStatus.QUARANTINED
+                else CorpusRouteStatus.QUARANTINED,
+                "required-usage-right-absent",
             )
-            reasons.append("required-usage-right-absent")
         if sensitivity.secret_findings:
-            status = CorpusRouteStatus.QUARANTINED
-            reasons.append("secret-detected")
+            refuse(_ROUTE_ACTIONS[self._config.detected_secret_action], "secret-detected")
         if destination not in sensitivity.compatible_destinations:
-            status = CorpusRouteStatus.QUARANTINED
-            reasons.append("sensitivity-incompatible")
-        if quality.hard_blockers:
-            status = CorpusRouteStatus.QUARANTINED
-            reasons.extend(quality.hard_blockers)
+            refuse(CorpusRouteStatus.QUARANTINED, "sensitivity-incompatible")
+        for blocker in quality.hard_blockers:
+            refuse(CorpusRouteStatus.QUARANTINED, blocker)
         if quality.score < self._quality_profile.destination_thresholds[destination]:
-            status = CorpusRouteStatus.QUARANTINED
-            reasons.append("quality-below-threshold")
+            refuse(CorpusRouteStatus.QUARANTINED, "quality-below-threshold")
         if content.content_type not in policy.required_content_types:
-            status = CorpusRouteStatus.DENIED
-            reasons.append("unsupported-destination-schema")
+            refuse(CorpusRouteStatus.DENIED, "unsupported-destination-schema")
         item_id = _uuid("item", f"{request.request_id}:{index}:{content.canonical_content_hash}")
         return CorpusRouteDecision(
             route_decision_id=_uuid("route", f"{item_id}:{destination.value}"),

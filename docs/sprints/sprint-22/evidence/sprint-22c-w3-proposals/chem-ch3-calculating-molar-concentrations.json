@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "de234e18a7d77d06e1e491cce52af5102b1e398868ce650a11733a367e5e31b9",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "89ef0db5-265f-5c84-bf3d-7ba78053fab5",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Example 3.14 asks for a molar concentration (molarity) of sucrose from a given molar amount (0.133 mol) and a solution volume (355 mL). Neither registered type covers this: chemistry.molar-conversion computes moles from a mass and a molar mass, and no mass, molar mass or atomic masses appear here; chemistry.mass-balance needs a written equation with reactants and products, and none is given. Bending the volume into a \\\"mass\\\" slot would misrepresent the passage, so no formal_inputs are emitted.\\n\\nThe passage's own Solution text is truncated in this text layer \\u2014 the sentence ends at \\\"the solution volume must be converted from mL to L:\\\" and the displayed computation and its result did not survive into the extracted text, so the worked example states no readable result of its own. The only printed result, \\\"0.05 M\\\", follows Answer: and belongs to the Check Your Learning question (0.01 mol sucrose in 200 mL), a different set of givens; per rule 2 it must not be attached to the worked example's quantities. Both facts point the same way here, but the controlling reason is that molarity is not a registered problem type.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"OpenStax Chemistry, Section 3.3 Molarity, page 148, Example 3.14 \\\"Calculating Molar Concentrations\\\": a 355-mL soft drink sample contains 0.133 mol of sucrose; find the molar concentration of sucrose in the beverage.\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "Example 3.14 asks for a molar concentration (molarity) of sucrose from a given molar amount (0.133 mol) and a solution volume (355 mL). Neither registered type covers this: chemistry.molar-conversion computes moles from a mass and a molar mass, and no mass, molar mass or atomic masses appear here; chemistry.mass-balance needs a written equation with reactants and products, and none is given. Bending the volume into a \"mass\" slot would misrepresent the passage, so no formal_inputs are emitted.\n\nThe passage's own Solution text is truncated in this text layer — the sentence ends at \"the solution volume must be converted from mL to L:\" and the displayed computation and its result did not survive into the extracted text, so the worked example states no readable result of its own. The only printed result, \"0.05 M\", follows Answer: and belongs to the Check Your Learning question (0.01 mol sucrose in 200 mL), a different set of givens; per rule 2 it must not be attached to the worked example's quantities. Both facts point the same way here, but the controlling reason is that molarity is not a registered problem type.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "OpenStax Chemistry, Section 3.3 Molarity, page 148, Example 3.14 \"Calculating Molar Concentrations\": a 355-mL soft drink sample contains 0.133 mol of sucrose; find the molar concentration of sucrose in the beverage."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 870,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 12569.383714999276,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

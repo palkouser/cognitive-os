@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "eb21a930523ffa7741c6eaa41cab65e82bb184169f8d91cc3df4723fb517794e",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "fcfdc737-00c4-5376-8bad-90ddca495f6d",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"The worked example is a dilution calculation (C1V1 = C2V2): given a stock concentration 1.59 M and a diluted volume/concentration 5.00 L / 0.100 M, it solves for the stock volume V1 and reports 0.314 L. Dilution is explicitly excluded by rule 4 and neither registered type fits \\u2014 it is not an amount in moles from a mass and a molar mass (chemistry.molar-conversion: no mass in grams, no molar mass, no atomic masses printed), nor a judgement about whether a written equation conserves atoms and mass (chemistry.mass-balance: no chemical equation with reactants, products and coefficients). Because the example is not formalisable, no asserted result is recorded; note also that the \\\"Answer: 0.261 L\\\" belongs to the Check Your Learning glucose question (0.575 M from 50.00 mL of 3.00 M), a different problem from the worked example's KOH givens, so it must not be attached to this passage in any case.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Example 3.21, \\\"Volume of a Concentrated Solution Needed for Dilution\\\": What volume of 1.59 M KOH is required to prepare 5.00 L of 0.100 M KOH?\"}",
+  "structured_output": {
+   "statement": "Example 3.21, \"Volume of a Concentrated Solution Needed for Dilution\": What volume of 1.59 M KOH is required to prepare 5.00 L of 0.100 M KOH?",
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "problem_type": "",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "The worked example is a dilution calculation (C1V1 = C2V2): given a stock concentration 1.59 M and a diluted volume/concentration 5.00 L / 0.100 M, it solves for the stock volume V1 and reports 0.314 L. Dilution is explicitly excluded by rule 4 and neither registered type fits — it is not an amount in moles from a mass and a molar mass (chemistry.molar-conversion: no mass in grams, no molar mass, no atomic masses printed), nor a judgement about whether a written equation conserves atoms and mass (chemistry.mass-balance: no chemical equation with reactants, products and coefficients). Because the example is not formalisable, no asserted result is recorded; note also that the \"Answer: 0.261 L\" belongs to the Check Your Learning glucose question (0.575 M from 50.00 mL of 3.00 M), a different problem from the worked example's KOH givens, so it must not be attached to this passage in any case."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 798,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 11349.53750600107,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

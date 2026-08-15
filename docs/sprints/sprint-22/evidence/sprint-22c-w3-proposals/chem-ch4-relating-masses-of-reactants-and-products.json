@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "cc7f4d3ec73b11efecc0964d451ad0bca95ad54ba5601636c7281a8581b77ae9",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "5b810ca1-ecab-5e99-986b-b06e47728cf2",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"This is a mass-to-mass reaction stoichiometry problem (given mass of a product, find the required mass of a reactant, via mole ratio from the balanced equation). Neither registered type covers it: chemistry.molar-conversion is a single-substance mass-to-moles conversion with no reaction, and chemistry.mass-balance is a conservation verdict on a written equation. Per rule 4 it must not be bent into either \\u2014 in particular, the 16 g of Mg(OH)2 must not be recast as a molar-conversion input, since the question asked is about NaOH and the answer depends on a stoichiometric factor the registry has no slot for.\\n\\nIndependently, the passage would fail on inputs and on a readable result. The reaction equation is not present in the text layer at all (it is carried as an image; the sentence ends \\\"by the following reaction?\\\" with nothing after it), so no reactants, products or coefficients can be read. No atomic masses are printed anywhere \\u2014 the molar masses used in the flowchart are not in the text layer either, and the flowchart itself is an image. The worked example's own Solution states no numeric result: it describes the method (\\\"we must derive an appropriate stoichiometric factor ... The calculations required are outlined in this flowchart\\\") and stops. The only printed value, \\\"39.0 g\\\", is the Answer to the Check Your Learning question about preparing Ga2O3 from 29.0 g of gallium metal \\u2014 a different question with different givens \\u2014 and rule 2 forbids pairing it with this example's 16 g of Mg(OH)2. asserted is therefore left empty rather than populated from that value.\\n\\nPage furniture (\\\"177\\\", \\\"178\\\", \\\"4 \\u2022 Stoichiometry of Chemical Reactions\\\") was ignored as non-content.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"EXAMPLE 4.10, Relating Masses of Reactants and Products (Section 4.3 Reaction Stoichiometry, p. 191): \\\"What mass of sodium hydroxide, NaOH, would be required to produce 16 g of the antacid milk of magnesia [magnesium hydroxide, Mg(OH)2] by the following reaction?\\\" \\u2014 a mass-to-mass reaction stoichiometry problem, solved via a stoichiometric factor derived from the balanced equation.\"}",
+  "structured_output": {
+   "statement": "EXAMPLE 4.10, Relating Masses of Reactants and Products (Section 4.3 Reaction Stoichiometry, p. 191): \"What mass of sodium hydroxide, NaOH, would be required to produce 16 g of the antacid milk of magnesia [magnesium hydroxide, Mg(OH)2] by the following reaction?\" — a mass-to-mass reaction stoichiometry problem, solved via a stoichiometric factor derived from the balanced equation.",
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "problem_type": "",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "This is a mass-to-mass reaction stoichiometry problem (given mass of a product, find the required mass of a reactant, via mole ratio from the balanced equation). Neither registered type covers it: chemistry.molar-conversion is a single-substance mass-to-moles conversion with no reaction, and chemistry.mass-balance is a conservation verdict on a written equation. Per rule 4 it must not be bent into either — in particular, the 16 g of Mg(OH)2 must not be recast as a molar-conversion input, since the question asked is about NaOH and the answer depends on a stoichiometric factor the registry has no slot for.\n\nIndependently, the passage would fail on inputs and on a readable result. The reaction equation is not present in the text layer at all (it is carried as an image; the sentence ends \"by the following reaction?\" with nothing after it), so no reactants, products or coefficients can be read. No atomic masses are printed anywhere — the molar masses used in the flowchart are not in the text layer either, and the flowchart itself is an image. The worked example's own Solution states no numeric result: it describes the method (\"we must derive an appropriate stoichiometric factor ... The calculations required are outlined in this flowchart\") and stops. The only printed value, \"39.0 g\", is the Answer to the Check Your Learning question about preparing Ga2O3 from 29.0 g of gallium metal — a different question with different givens — and rule 2 forbids pairing it with this example's 16 g of Mg(OH)2. asserted is therefore left empty rather than populated from that value.\n\nPage furniture (\"177\", \"178\", \"4 • Stoichiometry of Chemical Reactions\") was ignored as non-content."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1377,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 18854.01563800042,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

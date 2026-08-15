@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "83a4566109dac24d354c3e021a15d4bb2a5d8bf0d824b274d0a2bb8016110b23",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "04ed3a36-b125-5f95-b2ac-700531e4607c",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"The quantities this example asks for are a molecule count and an atom count obtained by multiplying through Avogadro's number, not an amount in moles. chemistry.molar-conversion answers a mol-valued question; the moles here are only an unstated intermediate, and its answer shape ({\\\"exact_value\\\", \\\"units\\\": \\\"mol\\\"}) cannot carry a count of molecules or of carbon atoms. Bending this into molar-conversion is exactly what rule 4 forbids, so the reason is no_registered_problem_type rather than a shortfall in the inputs.\\n\\nTwo further obstacles, recorded but not used as the reason. First, nothing readable is asserted: the Solution's three results all sit in display equations that this text layer drops, so the passage as carried states no value for molecules, for C atoms, or for the intermediate moles. The only printed number, \\\"9.545\\\", is the Check Your Learning answer for C4H10 in 9.213 g \\u2014 a different compound and a different question \\u2014 and rule 2 forbids attaching it to this example's givens. (It is also a truncated mantissa; its power of ten is likewise absent from the text layer.) Second, even if the mol step were the registered question, chemistry.molar-conversion's formal_inputs demand atomic_masses per symbol, and the passage prints only the composite molar mass 183.18 g/mol \\u2014 no per-element values for C, H, N, O, or S \\u2014 so it would fail rule 5 as well. Under rule 1 the givens this passage does state are the formula C7H5NO3S, the mass 40.0 mg / 0.0400 g, and the molar mass 183.18 g/mol; they are listed here only for the record and are not emitted as formal_inputs, since formal_inputs must stay empty for an unformalisable passage.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Example 3.8 (Section 3.1, p. 138) gives a 40.0-mg (0.0400-g) sample of saccharin, C7H5NO3S, with a stated molar mass of 183.18 g/mol, and asks how many saccharin molecules are in the sample and how many carbon atoms are in that same sample. The Solution describes computing moles first and then multiplying by Avogadro's number, and multiplying by seven for the C atoms; the actual computed values appear only in display equations that the text layer does not carry. The Check Your Learning question asks a different question (molecules and hydrogen atoms in 9.213 g of C4H10) and prints \\\"9.545\\\".\"}",
+  "structured_output": {
+   "statement": "Example 3.8 (Section 3.1, p. 138) gives a 40.0-mg (0.0400-g) sample of saccharin, C7H5NO3S, with a stated molar mass of 183.18 g/mol, and asks how many saccharin molecules are in the sample and how many carbon atoms are in that same sample. The Solution describes computing moles first and then multiplying by Avogadro's number, and multiplying by seven for the C atoms; the actual computed values appear only in display equations that the text layer does not carry. The Check Your Learning question asks a different question (molecules and hydrogen atoms in 9.213 g of C4H10) and prints \"9.545\".",
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "problem_type": "",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "The quantities this example asks for are a molecule count and an atom count obtained by multiplying through Avogadro's number, not an amount in moles. chemistry.molar-conversion answers a mol-valued question; the moles here are only an unstated intermediate, and its answer shape ({\"exact_value\", \"units\": \"mol\"}) cannot carry a count of molecules or of carbon atoms. Bending this into molar-conversion is exactly what rule 4 forbids, so the reason is no_registered_problem_type rather than a shortfall in the inputs.\n\nTwo further obstacles, recorded but not used as the reason. First, nothing readable is asserted: the Solution's three results all sit in display equations that this text layer drops, so the passage as carried states no value for molecules, for C atoms, or for the intermediate moles. The only printed number, \"9.545\", is the Check Your Learning answer for C4H10 in 9.213 g — a different compound and a different question — and rule 2 forbids attaching it to this example's givens. (It is also a truncated mantissa; its power of ten is likewise absent from the text layer.) Second, even if the mol step were the registered question, chemistry.molar-conversion's formal_inputs demand atomic_masses per symbol, and the passage prints only the composite molar mass 183.18 g/mol — no per-element values for C, H, N, O, or S — so it would fail rule 5 as well. Under rule 1 the givens this passage does state are the formula C7H5NO3S, the mass 40.0 mg / 0.0400 g, and the molar mass 183.18 g/mol; they are listed here only for the record and are not emitted as formal_inputs, since formal_inputs must stay empty for an unformalisable passage."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 2101,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 28272.9382739999,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

@@ -1,0 +1,14 @@
+{
+ "campaign_id": "s22c-chemistry",
+ "cases": [],
+ "count": 0,
+ "integrity_content_hash": "84d7e76284d485e722a075244e972fc3294dd75eb8075d15ec223fc00ba658a3",
+ "items": [
+  "S22C-053"
+ ],
+ "manifest_revision": 1,
+ "read_by": "the replay stage of every later cycle (§2.2a); a domain with no retained case is reported with cases: 0 rather than omitted",
+ "schema_version": 1,
+ "sprint": "22C",
+ "wave": "W3"
+}

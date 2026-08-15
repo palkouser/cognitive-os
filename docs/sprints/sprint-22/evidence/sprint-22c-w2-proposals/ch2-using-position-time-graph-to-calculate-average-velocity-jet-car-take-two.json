@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "9abc4d960d8c37e9728df7feea5c4d1a6b0a62c57e7665f337a59409d1260e11",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "094b4704-ffdd-54e4-a383-8d2f983587cc",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"The passage computes a velocity as the slope of a tangent line to a position-time curve (rise/run between two graph-read endpoints). engineering.mechanics registers no slope/derivative type. mechanics.uniform-motion is the nearest registered type but runs the other way \\u2014 it takes a given speed and duration and returns a displacement \\u2014 and forcing this example into it would require treating the sought quantity as an input, so rule 4 applies and the example is left unformalised rather than bent.\\n\\nIndependently, rule 2 would also block it: the passage's solution step 3 says only \\\"Plug these endpoints into the equation to solve for the slope, v.\\\", followed by the bare equation number \\\"2.9\\\". No velocity value appears anywhere in the text layer in words or digits, so there is no readable asserted result either. The reason recorded is no_registered_problem_type because the type check fails first and fails on its own.\\n\\nThe two endpoint pairs (1,300 m at 19 s; 3120 m at 32 s) are stated as given, but they are given as coordinates read off a tangent line, not as any of the input slots the three registered types define, so nothing is carried into formal_inputs.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Calculate the instantaneous velocity of the jet car at t = 25 s by finding the slope of the tangent line at point Q in Figure 2.13; the tangent's endpoints are given as position 1,300 m at time 19 s and position 3120 m at time 32 s.\"}",
+  "structured_output": {
+   "statement": "Calculate the instantaneous velocity of the jet car at t = 25 s by finding the slope of the tangent line at point Q in Figure 2.13; the tangent's endpoints are given as position 1,300 m at time 19 s and position 3120 m at time 32 s.",
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "problem_type": "",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "The passage computes a velocity as the slope of a tangent line to a position-time curve (rise/run between two graph-read endpoints). engineering.mechanics registers no slope/derivative type. mechanics.uniform-motion is the nearest registered type but runs the other way — it takes a given speed and duration and returns a displacement — and forcing this example into it would require treating the sought quantity as an input, so rule 4 applies and the example is left unformalised rather than bent.\n\nIndependently, rule 2 would also block it: the passage's solution step 3 says only \"Plug these endpoints into the equation to solve for the slope, v.\", followed by the bare equation number \"2.9\". No velocity value appears anywhere in the text layer in words or digits, so there is no readable asserted result either. The reason recorded is no_registered_problem_type because the type check fails first and fails on its own.\n\nThe two endpoint pairs (1,300 m at 19 s; 3120 m at 32 s) are stated as given, but they are given as coordinates read off a tangent line, not as any of the input slots the three registered types define, so nothing is carried into formal_inputs."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1155,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 16444.59168800131,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

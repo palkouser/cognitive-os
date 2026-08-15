@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "c8d2311d47a6c8d5a599425dcfc73ab75dcb9ff7e3f945cf73832498e0e9c77e",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "2efcd14e-a30f-5de4-91c4-0046f48b1639",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Rule 4 governs. The computation asked for is the slope of a position-time graph \\u2014 a velocity obtained as \\u0394d/\\u0394t from two graph points. engineering.mechanics registers no slope type. mechanics.uniform-motion runs the other way (it produces a displacement from a given speed and duration); the passage gives no speed as a given and asks for one as the result, so mapping it onto uniform-motion would mean inverting the registered relation and treating the sought quantity as an input. That is bending it into the nearest type, which rule 4 forbids. The two point coordinates are stated as given, but they are graph readings feeding a slope, not a speed-and-time pair.\\n\\nA second, independent blocker also applies. The solution's result lives in equation 2.8, which the text layer carries as a bare equation number with no value \\u2014 the passage asserts no readable velocity in the Solution. The Discussion mentions \\\"900 km/h, or about 560 mi/h\\\", but those are a parenthetical restatement in non-SI units inside commentary, one of them explicitly approximate (\\\"about\\\"), and neither is the m/s figure the worked example computed; the other m/s numbers in the Discussion (27 m/s, 343 m/s, 15 m/s) belong to the highway limit, the land-speed record, and a different subsequent motion, not to this result. So rule 2 would also fail here (no_readable_result) had the type gate passed. Only one reason can be reported; the type gate is the prior one, since the problem could not be recomputed by the kernel even with a readable answer.\\n\\nNote also that the prose says Figure 1.13 while the later Discussion refers to Figure 2.13 for a different graph; this discrepancy is reproduced as the document carries it and is not corrected. No physics has been checked or corrected.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Worked example, Section 2.3 \\\"Position vs. Time Graphs\\\", p. 85: \\\"Find the average velocity of the car whose position is graphed in Figure 1.13.\\\" The strategy given is that the slope of a d-vs-t graph is the average velocity (rise over run); the solution picks the two labelled points (6.4 s, 2000 m) and (0.50 s, 525 m) and substitutes them into equation 2.8.\"}",
+  "structured_output": {
+   "statement": "Worked example, Section 2.3 \"Position vs. Time Graphs\", p. 85: \"Find the average velocity of the car whose position is graphed in Figure 1.13.\" The strategy given is that the slope of a d-vs-t graph is the average velocity (rise over run); the solution picks the two labelled points (6.4 s, 2000 m) and (0.50 s, 525 m) and substitutes them into equation 2.8.",
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "problem_type": "",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "Rule 4 governs. The computation asked for is the slope of a position-time graph — a velocity obtained as Δd/Δt from two graph points. engineering.mechanics registers no slope type. mechanics.uniform-motion runs the other way (it produces a displacement from a given speed and duration); the passage gives no speed as a given and asks for one as the result, so mapping it onto uniform-motion would mean inverting the registered relation and treating the sought quantity as an input. That is bending it into the nearest type, which rule 4 forbids. The two point coordinates are stated as given, but they are graph readings feeding a slope, not a speed-and-time pair.\n\nA second, independent blocker also applies. The solution's result lives in equation 2.8, which the text layer carries as a bare equation number with no value — the passage asserts no readable velocity in the Solution. The Discussion mentions \"900 km/h, or about 560 mi/h\", but those are a parenthetical restatement in non-SI units inside commentary, one of them explicitly approximate (\"about\"), and neither is the m/s figure the worked example computed; the other m/s numbers in the Discussion (27 m/s, 343 m/s, 15 m/s) belong to the highway limit, the land-speed record, and a different subsequent motion, not to this result. So rule 2 would also fail here (no_readable_result) had the type gate passed. Only one reason can be reported; the type gate is the prior one, since the problem could not be recomputed by the kernel even with a readable answer.\n\nNote also that the prose says Figure 1.13 while the later Discussion refers to Figure 2.13 for a different graph; this discrepancy is reproduced as the document carries it and is not corrected. No physics has been checked or corrected."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1497,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 21670.110585999282,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

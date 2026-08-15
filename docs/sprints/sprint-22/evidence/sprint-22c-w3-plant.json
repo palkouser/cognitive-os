@@ -1,0 +1,67 @@
+{
+ "all_four_conditions_met": true,
+ "conditions": {
+  "appears_in_the_cycles_quarantine_report": {
+   "met": true,
+   "quarantined_in_this_cycle": 17
+  },
+  "never_reaches_an_active_state": {
+   "met": true,
+   "promoted_in_this_cycle": [],
+   "states_checked": [
+    "promoted",
+    "compiled"
+   ]
+  },
+  "reaches_a_quarantine_state_with_a_named_released_reason": {
+   "met": true,
+   "reason": "unverifiable_provider_data",
+   "vocabulary": "cognitive_os.domain.corpus.CorpusQuarantineReason"
+  },
+  "stays_quarantined_through_every_later_replay": {
+   "found_in": {},
+   "met": true,
+   "retained_case_records_searched": [
+    "sprint-22c-w2-retained-cases.json",
+    "sprint-22c-w3-cycle2-retained-cases.json",
+    "sprint-22c-w3-retained-cases.json"
+   ],
+   "why_this_is_the_mechanism_and_not_a_coincidence": "replay executes retained cases. The plant is in no retained-case record, so no later cycle can execute it — there is no path by which it returns, which is a stronger reading than observing that it did not"
+  }
+ },
+ "how_it_was_caught": {
+  "assertion_agrees_with_kernel": false,
+  "derivation_accepted_by_domains_checker": true,
+  "message": "the source asserts structured.balanced=True; the kernel computed False",
+  "refused_by": "cross_check.assertion_agrees_with_kernel",
+  "verifier_status": "passed",
+  "why_the_checker_passing_is_not_a_defect": "W0-F4. The checker judges whether the derivation is sound, and the kernel's derivation is impeccable: asked whether 2 H2 + O2 -> 3 H2O balances it correctly answers no. What the plant asserts is that it *does* balance, and only the second cross-check leg compares the source's claim to the kernel's answer"
+ },
+ "integrity_content_hash": "28b6d22c22c9a73a1f52f7043ffe006b1c91f0e2d3adc44d5bb573476f40854c",
+ "items": [
+  "S22C-052"
+ ],
+ "limitations": [
+  "one plant, authored by this repository and sealed before the cycles. It shows that a plausible false assertion is refused by recomputation; it says nothing about an adversary who chooses content the kernels cannot recompute at all",
+  "cycle 3 is the last cycle, so the fourth condition is read as a mechanism rather than as an observation of a later cycle that does not exist"
+ ],
+ "reads_exit_criterion": "a planted harmful update is quarantined",
+ "reads_from": {
+  "cycle_integrity_content_hash": "b88fa112a8abd2bff5e9e2ff710dfc6d3906c991e1d41ba7488ce50382ec4f93",
+  "cycle_record": "sprint-22c-w3-cycle3.json",
+  "frozen_reading": "sprint-22c-contracts.json#S22C-012",
+  "re_runs_nothing": true
+ },
+ "schema_version": 1,
+ "sprint": "22C",
+ "the_plant": {
+  "alongside_genuine_passages": 16,
+  "content_hash": "24da0165a9ed8e13b3af71abbd08b8f2f5f4cff93facf5308348a4f39bb14973",
+  "entered_through_the_genuine_intake_path": true,
+  "injected_in_cycle": 3,
+  "sealed_in_w0_before_any_cycle": true,
+  "segment_id": "chemistry-mass-balance-planted",
+  "why_it_is_not_malformed": "it states a plausible stoichiometric conclusion with one coefficient altered, so nothing about its shape distinguishes it from genuine content"
+ },
+ "wave": "W3"
+}

@@ -1,0 +1,93 @@
+{
+ "amendments_made_by_22c": 0,
+ "frozen_after": "the crash reproduction, which ran under revision 1 and is unaffected by this amendment: the two repairs share a pre-registration record and nothing else",
+ "frozen_before": "the first REINDEX to touch an index. Revision 1's never ran, so no index has been rebuilt under any revision of this procedure at the moment this record is sealed",
+ "integrity_content_hash": "20ad115d49a091e206b379cb7bce41e004f0092363f3cf9d9a1a27f89acf67c5",
+ "items": [
+  "S22C-030"
+ ],
+ "recorded_at": "2026-08-15T07:35:14Z",
+ "revision": 2,
+ "schema_version": 1,
+ "sprint": "22C",
+ "supersedes": {
+  "failed_with": "DiskFullError: could not resize shared memory segment to 12881825280 bytes: No space left on device — on a host with 821 GB free",
+  "prescribed": "SET max_parallel_maintenance_workers = 4",
+  "procedure_hash": "f9cc68d5b767a50e1012bee5a198e11947fc04a568d2e41c3f7962e5e066a3b2",
+  "revision": 1,
+  "sealed_in": "sprint-22c-repair-plan.json",
+  "when_it_failed": "after the 40-minute precondition measurement and before any index was touched, so the restored index was left exactly as 22B sealed it",
+  "why_it_failed": "a parallel HNSW build puts its shared graph in dynamic shared memory, which PostgreSQL allocates from /dev/shm. The container gives /dev/shm 2 GB — a limit 22B raised from Docker's 64 MB default in its own W1-F5, sized for the build 22B ran. Revision 1 raised maintenance_work_mem to 12 GB *and* kept parallel workers, so it asked a 2 GB filesystem for 12 GB. The two settings are safe apart and incompatible together, and nothing in either one's documentation says so"
+ },
+ "w3_f1": {
+  "a_run_that_proves_nothing": "a crash that lands outside the window leaves zero orphans after recovery. Such a run satisfies 'zero after the resume' without the repair having run at all, so the driver records window_opened and the reading is refused when it is false",
+  "crash_attempts_budget": 4,
+  "inherited_from": "22B W3-F1",
+  "reads": "items_missing_an_event, counted twice: after crash recovery, where the window is expected to still be open, and after the resume, where the repair must have closed every orphan the run produced",
+  "repair": "MemoryEventService.ensure_item_created — the create asks the event stream whether the record has its creation event, instead of asking the repository whether the record existed a moment ago",
+  "repair_source_hash": "85d1abb062b70372e3aefca87d6b6d4bc15ed41c4f79bf5f831101995db1cc0d",
+  "sealed_orphans_after_the_crash": 1,
+  "sealed_writes_before_the_kill": 502
+ },
+ "w4_f1": {
+  "floor": 0.95,
+  "inherited_from": "22B W4-F1",
+  "procedure": {
+   "applies_to": "any store restored from a pg_dump archive containing HNSW indexes",
+   "fallback_if_the_hypothesis_is_wrong": {
+    "sql": "SET hnsw.ef_construction = 200",
+    "why": "a denser candidate list at build time, the other lever §1.1 names. It is a fallback and not the first move because it changes the index's parameters, while raising the memory budget only lets the same parameters be honoured"
+   },
+   "falsifier": "if the rebuild runs entirely in memory and clustered recall@10 still reads below 0.95, the hypothesis is wrong and this record says so. The fallback below is then the second lever, reported as its own measurement and never as a replacement",
+   "hypothesis": "the restored index reads below the floor because it was rebuilt under the server's default maintenance_work_mem of 64 MB against an index of 3906 MB, so pg_restore's rebuild took pgvector's two-phase path. The source index was built by the same code under the same setting, so the two-phase path alone is not the whole story: the phases split at a different point because pg_restore loads rows in the archive's order rather than the original insert order, and which tuples land in the in-memory phase decides the graph both phases inherit",
+   "precondition": "before the index is touched, the restored store is re-measured unchanged and must reproduce 22B's sealed 0.9410 exactly. The reading is deterministic given the same index and the same probe seed, so any other value means the store or the reading moved since 22B sealed it, and the comparison this repair rests on is void",
+   "revision": 2,
+   "steps": [
+    {
+     "order": 1,
+     "sql": "SET maintenance_work_mem = '12GB'",
+     "why": "the lever §1.1 names. pgvector builds an HNSW graph in memory and falls back to a two-phase on-disk build the moment the graph outgrows maintenance_work_mem; the second phase inserts the remaining tuples one at a time into a graph it can no longer see whole, and the result is a worse graph with no error and no warning at the SQL level"
+    },
+    {
+     "order": 2,
+     "sql": "SET max_parallel_maintenance_workers = 0",
+     "why": "**revision 2.** A serial build takes its memory from the backend's own heap rather than from dynamic shared memory, so the raised budget is honoured without touching /dev/shm and the procedure runs on a default container instead of requiring an infrastructure change. Revision 1 claimed parallel workers were 'rebuild wall-clock only'; that claim was too confident and is withdrawn — an HNSW build is order-dependent, and a serial build is a different graph from a parallel one. What is unchanged is the hypothesis under test, which is about the memory budget, and the reading, which is recall over the same probes"
+    },
+    {
+     "order": 3,
+     "sql": "REINDEX INDEX cognitive_os.{index}",
+     "why": "rebuild the graph under the raised budget, in place, without dropping it"
+    },
+    {
+     "order": 4,
+     "sql": "ANALYZE cognitive_os.{table}",
+     "why": "the planner's statistics are rebuilt with the index, never assumed"
+    }
+   ],
+   "success_reads": "clustered recall@10 over 500 probes, exact-scan ground truth per probe, hnsw.ef_search = 1000, at or above 0.95",
+   "supersedes": {
+    "failed_with": "DiskFullError: could not resize shared memory segment to 12881825280 bytes: No space left on device — on a host with 821 GB free",
+    "prescribed": "SET max_parallel_maintenance_workers = 4",
+    "procedure_hash": "f9cc68d5b767a50e1012bee5a198e11947fc04a568d2e41c3f7962e5e066a3b2",
+    "revision": 1,
+    "sealed_in": "sprint-22c-repair-plan.json",
+    "when_it_failed": "after the 40-minute precondition measurement and before any index was touched, so the restored index was left exactly as 22B sealed it",
+    "why_it_failed": "a parallel HNSW build puts its shared graph in dynamic shared memory, which PostgreSQL allocates from /dev/shm. The container gives /dev/shm 2 GB — a limit 22B raised from Docker's 64 MB default in its own W1-F5, sized for the build 22B ran. Revision 1 raised maintenance_work_mem to 12 GB *and* kept parallel workers, so it asked a 2 GB filesystem for 12 GB. The two settings are safe apart and incompatible together, and nothing in either one's documentation says so"
+   },
+   "what_this_does_not_claim": "that the repaired index is the one 22B built at the source. It is not: it is a third graph, built under a budget neither earlier build had. The claim is only that a restored store can be returned above the floor by a procedure fixed in advance"
+  },
+  "procedure_hash": "8db5aef45f1f32007a806890bd705c43dafe4406147422da6d48b08067e51da1",
+  "reading": {
+   "driver": "scale_22b.recall_at, imported and not reimplemented",
+   "ground_truth": "exact scan per probe, never sampled",
+   "k": 10,
+   "probe_seed": 777,
+   "probes": 500
+  },
+  "sealed_restored_recall": 0.941,
+  "sealed_source_recall": 0.9636,
+  "store": "cognitive_os_s22b_restore_test"
+ },
+ "wave": "W1",
+ "why_a_second_revision": "revision 1's procedure could not be executed on this host and never touched an index (W1-F4). Revision 1 stays sealed in sprint-22c-repair-plan.json exactly as it was published: a pre-registration that is edited after it fails is not a pre-registration. This is the revision the measurement runs under, it names revision 1 by hash, and both are in the evidence index"
+}

@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "4621e8b24c9158d263b13e2071371784ec9e57ac13a0c63b0b1b1d763c60b41b",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "aec282ce-aea6-5bb8-858e-d1e38fe3616a",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Two independent blockers; either one alone is sufficient.\\n\\n(1) Primary \\u2014 no registered problem type. The passage solves for a duration from a displacement and an average velocity. The only kinematic type engineering.mechanics registers, mechanics.uniform-motion, runs the other direction: its formal_inputs are speed and time and its answer shape is a length in metres. The passage's stated givens are 428 m (a displacement) and 1.7 m/s (an average velocity); there is no stated duration to place in the \\\"time\\\" slot. Filling that slot would mean writing the sought answer into formal_inputs, which rule 1 forbids, and re-labelling the 428 m displacement as the \\\"result\\\" would be bending the passage into the nearest type, which rule 4 forbids. So it is classified as unregistered rather than mis-fitted. Note this is not given_quantities_not_stated: the passage does state its givens plainly and twice (problem line and Strategy); they simply do not map onto any registered input shape.\\n\\n(2) Independent second blocker \\u2014 no readable result. The Solution section of the text layer contains only the string \\\"2.3\\\", an equation/figure number with no value; the numeric work is carried in an image the text layer does not reproduce. The Discussion refers to \\\"scientific notation\\\" and \\\"two significant figures\\\" but states no digits. Under rule 2 that is exactly the \\\"equation number with no value\\\" case, so asserted would have to be empty even if the type had been registered. Nothing was reconstructed from 428 / 1.7, and no value was inferred from the two-significant-figure remark; asserted and asserted_value_quoted_from_the_passage are therefore left empty rather than guessed.\\n\\nNo judgement is offered or implied about the physics, the significant-figure treatment, or the scalar/vector remark in the Discussion.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Phillip walks along a straight path from his house to his school. How long will it take him to get to school if he walks 428 m west with an average velocity of 1.7 m/s west? (OpenStax-style worked example, Section 2.2 Speed and Velocity, p. 80.)\"}",
+  "structured_output": {
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "problem_type": "",
+   "statement": "Phillip walks along a straight path from his house to his school. How long will it take him to get to school if he walks 428 m west with an average velocity of 1.7 m/s west? (OpenStax-style worked example, Section 2.2 Speed and Velocity, p. 80.)",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "Two independent blockers; either one alone is sufficient.\n\n(1) Primary — no registered problem type. The passage solves for a duration from a displacement and an average velocity. The only kinematic type engineering.mechanics registers, mechanics.uniform-motion, runs the other direction: its formal_inputs are speed and time and its answer shape is a length in metres. The passage's stated givens are 428 m (a displacement) and 1.7 m/s (an average velocity); there is no stated duration to place in the \"time\" slot. Filling that slot would mean writing the sought answer into formal_inputs, which rule 1 forbids, and re-labelling the 428 m displacement as the \"result\" would be bending the passage into the nearest type, which rule 4 forbids. So it is classified as unregistered rather than mis-fitted. Note this is not given_quantities_not_stated: the passage does state its givens plainly and twice (problem line and Strategy); they simply do not map onto any registered input shape.\n\n(2) Independent second blocker — no readable result. The Solution section of the text layer contains only the string \"2.3\", an equation/figure number with no value; the numeric work is carried in an image the text layer does not reproduce. The Discussion refers to \"scientific notation\" and \"two significant figures\" but states no digits. Under rule 2 that is exactly the \"equation number with no value\" case, so asserted would have to be empty even if the type had been registered. Nothing was reconstructed from 428 / 1.7, and no value was inferred from the two-significant-figure remark; asserted and asserted_value_quoted_from_the_passage are therefore left empty rather than guessed.\n\nNo judgement is offered or implied about the physics, the significant-figure treatment, or the scalar/vector remark in the Discussion."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 2778,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 39670.84826199971,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

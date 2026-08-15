@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "de3f53d812be109b56ea2dbec9e459507174c0931d1cd45535a81ad5b20ecb78",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "d1c6449d-c824-5ad5-902a-de3e56253ed5",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"The worked example asks for an acceleration from a net external force (51 N) and a mass (240 kg) \\u2014 Newton's second law. engineering.mechanics registers only uniform-motion (displacement from speed and time), statics-equilibrium (do coplanar forces balance), and moment-balance (resultant moment about a pivot). An acceleration is none of these, and per rule 4 it must not be bent into the nearest type: the forces here are a single stated net force on an accelerating body, not a set of coplanar forces to test for balance, and no pivot, positions, speed, or duration are given. Separately, the passage as carried stops at the question (\\\"What is its acceleration?\\\") and states no result in words or digits, so rule 2 could not be satisfied either; the governing reason is nonetheless the absence of a registered problem type. No judgement is offered on the physics or on the stated quantities.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Section 4.3 Newton's Second Law of Motion, page 143, WORKED EXAMPLE \\\"What Acceleration Can a Person Produce when Pushing a Lawn Mower?\\\": a net external force (push minus friction) of 51 N parallel to the ground acts on a lawn mower of mass 240 kg; the example asks for the mower's acceleration.\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "The worked example asks for an acceleration from a net external force (51 N) and a mass (240 kg) — Newton's second law. engineering.mechanics registers only uniform-motion (displacement from speed and time), statics-equilibrium (do coplanar forces balance), and moment-balance (resultant moment about a pivot). An acceleration is none of these, and per rule 4 it must not be bent into the nearest type: the forces here are a single stated net force on an accelerating body, not a set of coplanar forces to test for balance, and no pivot, positions, speed, or duration are given. Separately, the passage as carried stops at the question (\"What is its acceleration?\") and states no result in words or digits, so rule 2 could not be satisfied either; the governing reason is nonetheless the absence of a registered problem type. No judgement is offered on the physics or on the stated quantities.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "Section 4.3 Newton's Second Law of Motion, page 143, WORKED EXAMPLE \"What Acceleration Can a Person Produce when Pushing a Lawn Mower?\": a net external force (push minus friction) of 51 N parallel to the ground acts on a lawn mower of mass 240 kg; the example asks for the mower's acceleration."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 884,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 12308.125267998548,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

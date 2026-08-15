@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "f526ede2d392bce10e519b7d0a9bd021c203623bee5ef974d2b137e6b85c6d1b",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "b3ffb528-8dfe-50df-8a0b-ce8d6971b29d",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Example 3.22 is a percent-by-mass (mass percentage) concentration calculation: it divides a solute mass (3.75 mg = 0.00375 g of glucose) by a solution mass (5.0 g of spinal fluid) to get a dimensionless percentage. That is neither a molar conversion (no molar mass, no amount in moles, no chemical formula whose atomic masses are summed) nor a mass balance (no chemical equation, no reactants/products, no atom conservation verdict). Per rule 4 it must not be bent into either registered type, so no formal_inputs are emitted. Consequently no asserted result is recorded either. Note also that the only computed value printed in the text layer is \\\"14.8%\\\", which belongs to the Check Your Learning question (135 g HCl in 775 g water), not to the worked example's own givens; the worked example's own numeric result is missing from the text layer (only the rough estimate \\\"about 0.1%\\\" / \\\"a bit less than 0.1%\\\" survives, and an estimate is not a claimed result). Even had the type been registered, that combination would have triggered a refusal under rules 2 and 3 rather than a mixing of the two questions.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"A 5.0-g sample of spinal fluid contains 3.75 mg (0.00375 g) of glucose. What is the percent by mass of glucose in spinal fluid?\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "Example 3.22 is a percent-by-mass (mass percentage) concentration calculation: it divides a solute mass (3.75 mg = 0.00375 g of glucose) by a solution mass (5.0 g of spinal fluid) to get a dimensionless percentage. That is neither a molar conversion (no molar mass, no amount in moles, no chemical formula whose atomic masses are summed) nor a mass balance (no chemical equation, no reactants/products, no atom conservation verdict). Per rule 4 it must not be bent into either registered type, so no formal_inputs are emitted. Consequently no asserted result is recorded either. Note also that the only computed value printed in the text layer is \"14.8%\", which belongs to the Check Your Learning question (135 g HCl in 775 g water), not to the worked example's own givens; the worked example's own numeric result is missing from the text layer (only the rough estimate \"about 0.1%\" / \"a bit less than 0.1%\" survives, and an estimate is not a claimed result). Even had the type been registered, that combination would have triggered a refusal under rules 2 and 3 rather than a mixing of the two questions.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "A 5.0-g sample of spinal fluid contains 3.75 mg (0.00375 g) of glucose. What is the percent by mass of glucose in spinal fluid?"
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 859,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 13602.96983400076,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

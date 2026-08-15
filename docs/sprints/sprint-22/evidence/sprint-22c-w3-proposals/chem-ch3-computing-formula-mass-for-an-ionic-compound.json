@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "16df8803babbcaa95a1573ee91acaeb49a3d0d66c01e5d8be6fc2c22963f3068",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "8713aade-52cd-50a5-874a-7acc38740652",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"The worked example computes a formula mass in amu, which is neither chemistry.molar-conversion (no mass in grams and no amount in moles is sought) nor chemistry.mass-balance (no equation, no reactants or products). Per rule 4 a formula mass is explicitly outside the two registered types, so it is not bent into the nearest one. Two further points, recorded but not decisive: the passage's own Solution prints no numeric result at all \\u2014 the text layer breaks off after \\\"is calculated as follows:\\\" and the calculation itself (evidently a table or image) is absent, so there is no readable value for Al2(SO4)3; and the only printed number, \\\"310.18 amu\\\", is the Check Your Learning answer for Ca3(PO4)2, a different question, which rule 2 forbids pairing with the worked example's givens. No atomic masses are printed anywhere in the passage. asserted and asserted_value_quoted_from_the_passage are therefore left empty.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Example 3.2 asks for the formula mass (in amu) of aluminum sulfate, Al2(SO4)3, rewritten as Al2S3O12; the Check Your Learning question asks for the formula mass (amu) of calcium phosphate, Ca3(PO4)2, with the printed answer 310.18 amu.\"}",
+  "structured_output": {
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "problem_type": "",
+   "statement": "Example 3.2 asks for the formula mass (in amu) of aluminum sulfate, Al2(SO4)3, rewritten as Al2S3O12; the Check Your Learning question asks for the formula mass (amu) of calcium phosphate, Ca3(PO4)2, with the printed answer 310.18 amu.",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "The worked example computes a formula mass in amu, which is neither chemistry.molar-conversion (no mass in grams and no amount in moles is sought) nor chemistry.mass-balance (no equation, no reactants or products). Per rule 4 a formula mass is explicitly outside the two registered types, so it is not bent into the nearest one. Two further points, recorded but not decisive: the passage's own Solution prints no numeric result at all — the text layer breaks off after \"is calculated as follows:\" and the calculation itself (evidently a table or image) is absent, so there is no readable value for Al2(SO4)3; and the only printed number, \"310.18 amu\", is the Check Your Learning answer for Ca3(PO4)2, a different question, which rule 2 forbids pairing with the worked example's givens. No atomic masses are printed anywhere in the passage. asserted and asserted_value_quoted_from_the_passage are therefore left empty."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 945,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 13049.513138999828,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

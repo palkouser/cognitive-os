@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "437b0e2570d7f7217a30b7728c357de48026368f9ea2a29b817d2f86381b2514",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "32055ea4-321a-57b4-ae54-b59ca8bea617",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"The task is equation *construction* \\u2014 deriving reactants and products for acid-base (proton-transfer and neutralization) reactions \\u2014 not either registered type. It is not a molar conversion: no mass, no molar mass, no amount in moles appears anywhere. It is not a mass-balance verdict either: chemistry.mass-balance asks whether an already-written equation conserves atoms and mass, and takes reactant/product formulas with coefficients as given inputs; here no equation is stated in the text layer at all. The Solution names only reactants (HOCl and H2O; Ba(OH)2 and HNO3) and describes the products in prose (hydronium H3O+ and hypochlorite OCl\\u2212; water and a barium salt) \\u2014 the actual balanced equations were image/formula content that the text layer did not carry, and part (b)'s discussion breaks off mid-sentence (\\\"transfers its hydrogen ion\\\"). Reconstructing those equations and their coefficients from the prose would be supplying quantities I inferred rather than ones the passage states, which rule 1 forbids; bending this into mass-balance would also violate rule 4. No atomic masses are printed. The Check Your Learning \\\"Answer:\\\" is empty in the text layer, and it belongs to a different question (the net ionic equation for a strong acid plus an ionic hydroxide) in any case, so rule 2 bars using it. Accordingly `asserted` is empty and no verbatim value is quoted. Recorded as no_registered_problem_type rather than kernel_requires_unstated_input, because the mismatch is the problem type itself, not a missing input to an otherwise-fitting type.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Example 4.4 \\\"Writing Equations for Acid-Base Reactions\\\": write balanced chemical equations for (a) the weak acid hydrogen hypochlorite reacting with water and (b) a solution of barium hydroxide neutralized with a solution of nitric acid.\"}",
+  "structured_output": {
+   "statement": "Example 4.4 \"Writing Equations for Acid-Base Reactions\": write balanced chemical equations for (a) the weak acid hydrogen hypochlorite reacting with water and (b) a solution of barium hydroxide neutralized with a solution of nitric acid.",
+   "problem_type": "",
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "The task is equation *construction* — deriving reactants and products for acid-base (proton-transfer and neutralization) reactions — not either registered type. It is not a molar conversion: no mass, no molar mass, no amount in moles appears anywhere. It is not a mass-balance verdict either: chemistry.mass-balance asks whether an already-written equation conserves atoms and mass, and takes reactant/product formulas with coefficients as given inputs; here no equation is stated in the text layer at all. The Solution names only reactants (HOCl and H2O; Ba(OH)2 and HNO3) and describes the products in prose (hydronium H3O+ and hypochlorite OCl−; water and a barium salt) — the actual balanced equations were image/formula content that the text layer did not carry, and part (b)'s discussion breaks off mid-sentence (\"transfers its hydrogen ion\"). Reconstructing those equations and their coefficients from the prose would be supplying quantities I inferred rather than ones the passage states, which rule 1 forbids; bending this into mass-balance would also violate rule 4. No atomic masses are printed. The Check Your Learning \"Answer:\" is empty in the text layer, and it belongs to a different question (the net ionic equation for a strong acid plus an ionic hydroxide) in any case, so rule 2 bars using it. Accordingly `asserted` is empty and no verbatim value is quoted. Recorded as no_registered_problem_type rather than kernel_requires_unstated_input, because the mismatch is the problem type itself, not a missing input to an otherwise-fitting type."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1072,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 14621.053038001264,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

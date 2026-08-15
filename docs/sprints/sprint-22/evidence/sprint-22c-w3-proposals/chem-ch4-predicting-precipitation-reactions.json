@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "b111f859611963b94e0fa221d2625b52a6161f3714f2e39306181e55b40e2727",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "91b7fafe-446f-5e10-8fb3-9c6efb689592",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"This is a solubility/precipitation-prediction example. It applies solubility guidelines to identify insoluble products (BaSO4, AgCl, PbCO3) and asks for net ionic equations; it is neither a molar conversion (no mass, no molar mass, no amount in moles) nor a mass balance (no verdict on atom/mass conservation for a written equation). Rule 4 applies: it must not be bent into chemistry.mass-balance. Additionally, the net ionic equations themselves are absent from the text layer \\u2014 the passage says \\\"the net ionic equation for this reaction ... is\\\" and the equation image carries no readable content \\u2014 so no equation with coefficients could be transcribed even if the type fitted. The only readable result, \\\"sodium sulfate, BaSO4\\\", is the Check Your Learning answer to a different question (which reagent precipitates Ba2+) and is not in either registered answer shape, so under rule 2 it is not carried in `asserted`. No atomic masses are printed anywhere in the passage.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Example 4.3 \\\"Predicting Precipitation Reactions\\\": predict whether mixing reasonably concentrated solutions of (a) potassium sulfate and barium nitrate, (b) lithium chloride and silver acetate, (c) lead (II) nitrate and ammonium carbonate produces a precipitate, and write a balanced net ionic equation where precipitation is expected.\"}",
+  "structured_output": {
+   "statement": "Example 4.3 \"Predicting Precipitation Reactions\": predict whether mixing reasonably concentrated solutions of (a) potassium sulfate and barium nitrate, (b) lithium chloride and silver acetate, (c) lead (II) nitrate and ammonium carbonate produces a precipitate, and write a balanced net ionic equation where precipitation is expected.",
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "problem_type": "",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "This is a solubility/precipitation-prediction example. It applies solubility guidelines to identify insoluble products (BaSO4, AgCl, PbCO3) and asks for net ionic equations; it is neither a molar conversion (no mass, no molar mass, no amount in moles) nor a mass balance (no verdict on atom/mass conservation for a written equation). Rule 4 applies: it must not be bent into chemistry.mass-balance. Additionally, the net ionic equations themselves are absent from the text layer — the passage says \"the net ionic equation for this reaction ... is\" and the equation image carries no readable content — so no equation with coefficients could be transcribed even if the type fitted. The only readable result, \"sodium sulfate, BaSO4\", is the Check Your Learning answer to a different question (which reagent precipitates Ba2+) and is not in either registered answer shape, so under rule 2 it is not carried in `asserted`. No atomic masses are printed anywhere in the passage."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 921,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 13168.496242000401,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

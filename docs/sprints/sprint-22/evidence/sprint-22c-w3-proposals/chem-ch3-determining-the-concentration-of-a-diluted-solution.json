@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "3f3e0bce5e1395493e52e88225bd87d3ca9ea641ac0137f79a3daae4837d48cc",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "33580456-2abc-553b-b636-49e46bfc8d08",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"This is a dilution problem (C1V1 = C2V2), which is neither chemistry.molar-conversion (moles from mass and molar mass) nor chemistry.mass-balance (atom/mass conservation in a written equation). Per rule 4, a dilution is explicitly listed as out of scope and must not be bent into the nearest registered type. Two further observations, recorded but not acted on: (a) the worked example's own numeric result is absent from the text layer \\u2014 the equation displays that would carry C2 = C1V1/V2 and the substituted value did not survive extraction, so only the prose (\\\"a bit less than one-half the stock concentration, 5 M\\\") remains, which is a ballpark comparison and not a readable result; (b) the only printed result on the page, \\\"0.102 M CH3OH\\\", belongs to the Check Your Learning question (25.0 mL of 2.04-M CH3OH diluted to 500.0 mL) and answers a different question from the worked example's givens, so per rule 2 it must not be attached to this example. Since formalisable is false on the prior ground of problem type, asserted and asserted_value_quoted_from_the_passage are left empty rather than filled from either source.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Example 3.19 (Section 3.3 Molarity, p. 153): 0.850 L of a 5.00-M solution of copper nitrate, Cu(NO3)2, is diluted to a volume of 1.80 L by the addition of water; find the molarity of the diluted solution.\"}",
+  "structured_output": {
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "problem_type": "",
+   "statement": "Example 3.19 (Section 3.3 Molarity, p. 153): 0.850 L of a 5.00-M solution of copper nitrate, Cu(NO3)2, is diluted to a volume of 1.80 L by the addition of water; find the molarity of the diluted solution.",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "This is a dilution problem (C1V1 = C2V2), which is neither chemistry.molar-conversion (moles from mass and molar mass) nor chemistry.mass-balance (atom/mass conservation in a written equation). Per rule 4, a dilution is explicitly listed as out of scope and must not be bent into the nearest registered type. Two further observations, recorded but not acted on: (a) the worked example's own numeric result is absent from the text layer — the equation displays that would carry C2 = C1V1/V2 and the substituted value did not survive extraction, so only the prose (\"a bit less than one-half the stock concentration, 5 M\") remains, which is a ballpark comparison and not a readable result; (b) the only printed result on the page, \"0.102 M CH3OH\", belongs to the Check Your Learning question (25.0 mL of 2.04-M CH3OH diluted to 500.0 mL) and answers a different question from the worked example's givens, so per rule 2 it must not be attached to this example. Since formalisable is false on the prior ground of problem type, asserted and asserted_value_quoted_from_the_passage are left empty rather than filled from either source."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 991,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 14078.88618600009,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

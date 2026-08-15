@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "1b250a72250d17054cbe8c739e89420cdcdfff76ba28aa946707a15b1bd203ee",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "bf57fc45-1d19-5df3-a49c-9f0b191cccea",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"The task set by this example is to derive and write three forms of an equation (molecular, complete ionic, net ionic), including identifying spectator ions. That is neither chemistry.molar-conversion (no mass, no molar mass, no amount in moles anywhere in the passage) nor chemistry.mass-balance, whose answer shape is a balanced true/false verdict on an equation already written down. The example never asks or answers whether a given equation conserves atoms and mass; it constructs equations. Bending it into mass-balance would require inventing the reactant/product list and coefficients, which rule 4 forbids.\\n\\nIndependently, the passage as carried by the text layer contains no equation at all: every chemical equation in Example 4.2 (the initial arrangement, the molecular equation with the NaOH coefficient changed to 2, the complete ionic equation, the net ionic equation), the Check Your Learning unbalanced brine-electrolysis equation, and the content after \\\"Answer:\\\" are images, so no formulas, no coefficients and no result are readable. The only chemical species readable as running prose are NaOH, Na2CO3 and Na+(aq), which are mentioned in discussion rather than presented as a complete equation with coefficients. No atomic masses are printed anywhere on the page. Even if the type had matched, both rule 1 (stated givens only) and rule 5 (atomic_masses unstated) would block formalisation; the type mismatch is the primary and sufficient reason. Trailing page furniture (\\\"161\\\", \\\"162\\\", the 4.2 Classifying Chemical Reactions section, Table 4.1 solubility material) belongs to a different section and carries nothing relevant.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"OpenStax Chemistry, Section 4.1, Example 4.2 \\\"Ionic and Molecular Equations\\\" (p. 175/161): carbon dioxide dissolved in aqueous sodium hydroxide reacts to yield aqueous sodium carbonate and liquid water; the reader is asked to write balanced molecular, complete ionic, and net ionic equations for this process.\"}",
+  "structured_output": {
+   "statement": "OpenStax Chemistry, Section 4.1, Example 4.2 \"Ionic and Molecular Equations\" (p. 175/161): carbon dioxide dissolved in aqueous sodium hydroxide reacts to yield aqueous sodium carbonate and liquid water; the reader is asked to write balanced molecular, complete ionic, and net ionic equations for this process.",
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "problem_type": "",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "The task set by this example is to derive and write three forms of an equation (molecular, complete ionic, net ionic), including identifying spectator ions. That is neither chemistry.molar-conversion (no mass, no molar mass, no amount in moles anywhere in the passage) nor chemistry.mass-balance, whose answer shape is a balanced true/false verdict on an equation already written down. The example never asks or answers whether a given equation conserves atoms and mass; it constructs equations. Bending it into mass-balance would require inventing the reactant/product list and coefficients, which rule 4 forbids.\n\nIndependently, the passage as carried by the text layer contains no equation at all: every chemical equation in Example 4.2 (the initial arrangement, the molecular equation with the NaOH coefficient changed to 2, the complete ionic equation, the net ionic equation), the Check Your Learning unbalanced brine-electrolysis equation, and the content after \"Answer:\" are images, so no formulas, no coefficients and no result are readable. The only chemical species readable as running prose are NaOH, Na2CO3 and Na+(aq), which are mentioned in discussion rather than presented as a complete equation with coefficients. No atomic masses are printed anywhere on the page. Even if the type had matched, both rule 1 (stated givens only) and rule 5 (atomic_masses unstated) would block formalisation; the type mismatch is the primary and sufficient reason. Trailing page furniture (\"161\", \"162\", the 4.2 Classifying Chemical Reactions section, Table 4.1 solubility material) belongs to a different section and carries nothing relevant."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1517,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 21428.91745899942,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

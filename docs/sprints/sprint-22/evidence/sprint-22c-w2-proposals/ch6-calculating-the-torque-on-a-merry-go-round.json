@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "dd4ad08f272d0dd30cd65c946bcc0a04a2d2f7d7620a483ff6c62cfca8cd9c1b",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "2df4223c-061c-5a54-8a25-f200e9d0692b",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Rule 2 blocks this one. The Solution section contains nothing but the token \\\"6.13\\\", which is an equation/figure number, not a value: no torque magnitude appears anywhere in the text layer, in words or in digits. The Discussion likewise has its substantive claims sheared out by the extraction (\\\"so that\\\" ... \\\"and\\\" ... \\\". The\\\") \\u2014 those gaps were symbol images, so nothing readable survives there either. There is therefore no asserted result to record, and I will not supply one by computing it, since rule 1 forbids inferring inputs or results and rule 2 forbids asserting a value the passage does not state.\\n\\nType recognition, for the record: this is a moment of a force about the merry-go-round's axis, so mechanics.moment-balance is the right registered type \\u2014 I record it so the refusal is not mistaken for rule 4. Two further frictions would need resolving even if a value were readable. First, the passage gives the force's line of action only qualitatively (\\\"at the edge ... and perpendicular to the radius\\\"); mapping that onto the required x, y, fx, fy quadruple means choosing a coordinate frame the passage never fixes, e.g. pivot (0, 0), point (1.50, 0), fx 0, fy 250. That choice is defensible and is not derived from the answer, but it is mine and not the document's. Second, the pivot itself is named only as the merry-go-round's centre in Figure 6.11, so its coordinates are conventional rather than stated.\\n\\nThe quantities the passage does state as given, had rule 2 been satisfiable: force magnitude \\\"250\\\" N, radius \\\"1.50\\\" m, friction negligible. These are recorded here in prose deliberately and left out of formal_inputs, since formal_inputs is the kernel's input channel and this example is not going to the kernel.\",\"problem_type\":\"mechanics.moment-balance\",\"reason\":\"no_readable_result\",\"statement\":\"Worked example, Section 6.3 Rotational Motion, p. 237: a man pushes a playground merry-go-round with a force of 250 N applied at the edge, perpendicular to the radius of 1.50 m, with friction negligible; the example asks how much torque he produces.\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "Rule 2 blocks this one. The Solution section contains nothing but the token \"6.13\", which is an equation/figure number, not a value: no torque magnitude appears anywhere in the text layer, in words or in digits. The Discussion likewise has its substantive claims sheared out by the extraction (\"so that\" ... \"and\" ... \". The\") — those gaps were symbol images, so nothing readable survives there either. There is therefore no asserted result to record, and I will not supply one by computing it, since rule 1 forbids inferring inputs or results and rule 2 forbids asserting a value the passage does not state.\n\nType recognition, for the record: this is a moment of a force about the merry-go-round's axis, so mechanics.moment-balance is the right registered type — I record it so the refusal is not mistaken for rule 4. Two further frictions would need resolving even if a value were readable. First, the passage gives the force's line of action only qualitatively (\"at the edge ... and perpendicular to the radius\"); mapping that onto the required x, y, fx, fy quadruple means choosing a coordinate frame the passage never fixes, e.g. pivot (0, 0), point (1.50, 0), fx 0, fy 250. That choice is defensible and is not derived from the answer, but it is mine and not the document's. Second, the pivot itself is named only as the merry-go-round's centre in Figure 6.11, so its coordinates are conventional rather than stated.\n\nThe quantities the passage does state as given, had rule 2 been satisfiable: force magnitude \"250\" N, radius \"1.50\" m, friction negligible. These are recorded here in prose deliberately and left out of formal_inputs, since formal_inputs is the kernel's input channel and this example is not going to the kernel.",
+   "problem_type": "mechanics.moment-balance",
+   "reason": "no_readable_result",
+   "statement": "Worked example, Section 6.3 Rotational Motion, p. 237: a man pushes a playground merry-go-round with a force of 250 N applied at the edge, perpendicular to the radius of 1.50 m, with friction negligible; the example asks how much torque he produces."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 2141,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 30692.851883999538,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

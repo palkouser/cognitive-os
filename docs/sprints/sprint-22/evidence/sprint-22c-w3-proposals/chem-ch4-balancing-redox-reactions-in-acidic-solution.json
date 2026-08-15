@@ -1,0 +1,43 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "c42d837de73cc02ada9239eb8a80ce0fd19e2c966559117f9a447a8365bd2cec",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "9746a3a4-83be-542d-8ea6-827d977523f0",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{\"structured\":{\"balanced\":true}},\"asserted_value_quoted_from_the_passage\":\"A final check of atom and charge balance confirms the equation is balanced.\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"The example is a balancing exercise, so chemistry.mass-balance is the nearest registered type and I name it rather than leaving the type blank. It is nevertheless not formalisable, for two independent reasons, and the earlier one decides.\\n\\n(a) Given quantities not stated. Every chemical equation in this example \\u2014 the two half-reactions, their multiplied forms, the summed equation, and the final simplified equation \\u2014 lives in an image that the document's text layer does not carry. What survives is prose about the images (\\\"the chromium half-reaction shows seven O atoms on the left\\\"), plus the check table (Fe 6/6, Cr 2/2, O 7/7, H 14/14, charge 24+/24+). To fill `reactants` and `products` I would have to reconstruct formulas and coefficients from that prose and that table \\u2014 Cr2O7(2-) + 14 H+ + 6 Fe2+ -> 2 Cr3+ + 6 Fe3+ + 7 H2O. That reconstruction is inference from the narration of the answer, not a reading of stated givens, and rule 1 forbids it. Note also that the passage never prints the dichromate formula or the ionic charges as text; the species are named in words only (\\\"dichromate ion\\\", \\\"iron(II)\\\").\\n\\n(b) Kernel requires unstated input. Even granting the equation, `atomic_masses` is mandatory in the mass-balance shape and the passage prints no atomic mass for Fe, Cr, O or H \\u2014 it never invokes masses at all, since the verdict here is reached by counting atoms and charge. Supplying 55.85, 52.00, 16.00, 1.008 from my own knowledge is exactly what rule 5 prohibits. Had (a) not already blocked the example, this alone would give reason `kernel_requires_unstated_input`.\\n\\nOn `asserted`: I report the worked example's own claim, quoted verbatim from the sentence that precedes the check table. It is the example's verdict on its own equation, not a Check Your Learning result \\u2014 the \\\"Answer:\\\" following the Check Your Learning question (the Cl2 / OH- disproportionation) is empty in this text layer, its equation being another missing image, so there was no competing value to confuse it with. The verdict is readable in words even though the equation it judges is not, which is why `asserted` is populated while `formal_inputs` is empty. A kernel cannot check this claim against anything, and it should not be treated as a recomputable pair.\\n\\nThe page furniture (\\\"Access for free at openstax.org\\\", the running head \\\"4.3 \\u2022 Reaction Stoichiometry\\\", the page number 175, and the section 4.3 material that follows the example) belongs to neighbouring content and contributes nothing to this example. The heading given as Section 4.2 page 188 disagrees with the running head and folio in the text layer; I record the discrepancy without resolving it, as it does not affect the verdict.\",\"problem_type\":\"chemistry.mass-balance\",\"reason\":\"given_quantities_not_stated\",\"statement\":\"Example 4.7, \\\"Balancing Redox Reactions in Acidic Solution\\\": write a balanced equation for the reaction between dichromate ion and iron(II) to yield iron(III) and chromium(III) in acidic solution, worked by the half-reaction method and closed with an atom-and-charge check table.\"}",
+  "structured_output": {
+   "asserted": {
+    "structured": {
+     "balanced": true
+    }
+   },
+   "asserted_value_quoted_from_the_passage": "A final check of atom and charge balance confirms the equation is balanced.",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "The example is a balancing exercise, so chemistry.mass-balance is the nearest registered type and I name it rather than leaving the type blank. It is nevertheless not formalisable, for two independent reasons, and the earlier one decides.\n\n(a) Given quantities not stated. Every chemical equation in this example — the two half-reactions, their multiplied forms, the summed equation, and the final simplified equation — lives in an image that the document's text layer does not carry. What survives is prose about the images (\"the chromium half-reaction shows seven O atoms on the left\"), plus the check table (Fe 6/6, Cr 2/2, O 7/7, H 14/14, charge 24+/24+). To fill `reactants` and `products` I would have to reconstruct formulas and coefficients from that prose and that table — Cr2O7(2-) + 14 H+ + 6 Fe2+ -> 2 Cr3+ + 6 Fe3+ + 7 H2O. That reconstruction is inference from the narration of the answer, not a reading of stated givens, and rule 1 forbids it. Note also that the passage never prints the dichromate formula or the ionic charges as text; the species are named in words only (\"dichromate ion\", \"iron(II)\").\n\n(b) Kernel requires unstated input. Even granting the equation, `atomic_masses` is mandatory in the mass-balance shape and the passage prints no atomic mass for Fe, Cr, O or H — it never invokes masses at all, since the verdict here is reached by counting atoms and charge. Supplying 55.85, 52.00, 16.00, 1.008 from my own knowledge is exactly what rule 5 prohibits. Had (a) not already blocked the example, this alone would give reason `kernel_requires_unstated_input`.\n\nOn `asserted`: I report the worked example's own claim, quoted verbatim from the sentence that precedes the check table. It is the example's verdict on its own equation, not a Check Your Learning result — the \"Answer:\" following the Check Your Learning question (the Cl2 / OH- disproportionation) is empty in this text layer, its equation being another missing image, so there was no competing value to confuse it with. The verdict is readable in words even though the equation it judges is not, which is why `asserted` is populated while `formal_inputs` is empty. A kernel cannot check this claim against anything, and it should not be treated as a recomputable pair.\n\nThe page furniture (\"Access for free at openstax.org\", the running head \"4.3 • Reaction Stoichiometry\", the page number 175, and the section 4.3 material that follows the example) belongs to neighbouring content and contributes nothing to this example. The heading given as Section 4.2 page 188 disagrees with the running head and folio in the text layer; I record the discrepancy without resolving it, as it does not affect the verdict.",
+   "problem_type": "chemistry.mass-balance",
+   "reason": "given_quantities_not_stated",
+   "statement": "Example 4.7, \"Balancing Redox Reactions in Acidic Solution\": write a balanced equation for the reaction between dichromate ion and iron(II) to yield iron(III) and chromium(III) in acidic solution, worked by the half-reaction method and closed with an atom-and-charge check table."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 2970,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 40352.42076600116,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

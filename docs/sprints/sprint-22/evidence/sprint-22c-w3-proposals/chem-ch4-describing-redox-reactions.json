@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "ac293a1d2ff26f5b8a18eb836b1230942ad89cc1f119b6de03cbd045a5509f01",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "a795deac-d6b3-5071-8574-318d3f62d871",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"This is a redox classification / oxidation-number example. Its question is whether elements undergo a change in oxidation number, and which species act as oxidant and reductant \\u2014 neither an amount in moles from a mass and molar mass (chemistry.molar-conversion) nor a verdict on whether a written equation conserves atoms and mass (chemistry.mass-balance). Per rule 4 it is not bent into the nearest type: although the passage discusses chemical equations, the claimed results (\\\"This is a redox reaction\\\", \\\"Gallium is oxidized...\\\", \\\"The oxidizing agent is Br2(l)\\\") are not a balanced/unbalanced verdict, so mapping it onto chemistry.mass-balance would substitute a different question for the one the passage answers. Secondary obstacles, noted but not decisive: the five equations (a)\\u2013(e) and the Check Your Learning equation are absent from the text layer \\u2014 the labels \\\"(a)\\\"\\u2013\\\"(e)\\\" appear with no formulae or coefficients \\u2014 so no reactants/products could be read even if a mass-balance reading were attempted, and no atomic masses are printed anywhere in the passage. The \\\"Answer:\\\" text (\\\"Yes, a single-replacement reaction. Sn(s)is the reductant, HCl(g) is the oxidant.\\\") belongs to the Check Your Learning question, not to the worked example, and in any case is not in either registered answer shape; nothing is asserted here.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"EXAMPLE 4.6 \\\"Describing Redox Reactions\\\" (Section 4.2, page 186): identify which of five given equations represent redox reactions, name the reaction type where appropriate, and name the oxidant and reductant for each redox reaction.\"}",
+  "structured_output": {
+   "statement": "EXAMPLE 4.6 \"Describing Redox Reactions\" (Section 4.2, page 186): identify which of five given equations represent redox reactions, name the reaction type where appropriate, and name the oxidant and reductant for each redox reaction.",
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "problem_type": "",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "This is a redox classification / oxidation-number example. Its question is whether elements undergo a change in oxidation number, and which species act as oxidant and reductant — neither an amount in moles from a mass and molar mass (chemistry.molar-conversion) nor a verdict on whether a written equation conserves atoms and mass (chemistry.mass-balance). Per rule 4 it is not bent into the nearest type: although the passage discusses chemical equations, the claimed results (\"This is a redox reaction\", \"Gallium is oxidized...\", \"The oxidizing agent is Br2(l)\") are not a balanced/unbalanced verdict, so mapping it onto chemistry.mass-balance would substitute a different question for the one the passage answers. Secondary obstacles, noted but not decisive: the five equations (a)–(e) and the Check Your Learning equation are absent from the text layer — the labels \"(a)\"–\"(e)\" appear with no formulae or coefficients — so no reactants/products could be read even if a mass-balance reading were attempted, and no atomic masses are printed anywhere in the passage. The \"Answer:\" text (\"Yes, a single-replacement reaction. Sn(s)is the reductant, HCl(g) is the oxidant.\") belongs to the Check Your Learning question, not to the worked example, and in any case is not in either registered answer shape; nothing is asserted here."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 967,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 14187.204883000959,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

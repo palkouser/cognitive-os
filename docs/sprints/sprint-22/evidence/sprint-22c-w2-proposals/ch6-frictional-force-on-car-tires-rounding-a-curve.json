@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "53eea4468063f5e89dc01d4f647fe5065a09aae6d84c6bdefd5df380ececcb35",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "7e07902a-2def-5c3c-bd47-234a973dd6ea",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Two independent blockers, either of which alone is disqualifying.\\n\\n(1) Problem type (the governing reason). The worked example is uniform circular motion: part (a) asks for the centripetal force on a car of mass 900 kg rounding a 600-m-radius curve at 25.0 m/s; part (b) identifies that force with static friction; part (c) asks for a coefficient of static friction. None of these is a displacement from constant speed and duration, a coplanar force balance on one body, or a resultant moment about a pivot. Registering it as mechanics.uniform-motion by pairing the 25.0 m/s with some duration would be exactly the bending rule 4 forbids: there is no duration in the passage, and the quantity sought is a force, not a displacement. mechanics.statics-equilibrium is likewise wrong \\u2014 the car is accelerating centripetally, the passage says so explicitly, and there is no force list with components to test for balance. Reason recorded as no_registered_problem_type.\\n\\n(2) No readable result, independently. Even if a type fitted, the document's text layer has dropped every formula and every computed value: \\\"We know that . Therefore,\\\" is followed by nothing, part (b) states in words only that the friction force equals the centripetal force without giving its magnitude, and part (c) reads \\\"Solving for , we get . Regardless of whether...\\\" with the symbol and the numeric result both absent. The Discussion likewise carries bare \\\"since .\\\" and \\\"equal to when it is at the maximum possible value.\\\" So the passage as carried asserts no result I can read for any of the three parts, and rule 2 would have forced formalisable=false with reason no_readable_result had the type gate not already closed. Recovering a number here would mean computing mv^2/r myself and back-filling it as the passage's claim, which rule 1 and rule 2 both prohibit.\\n\\nConsequently formal_inputs and asserted are left empty. The given quantities (900 kg, 600 m, 25.0 m/s) are stated plainly and are not the problem \\u2014 they simply have no slot in any registered type. Page furniture (\\\"217\\\", \\\"218\\\", \\\"6 \\u2022 Circular and Rotational Motion\\\", \\\"Access for free at openstax.org\\\") and the stray page-229 header versus the 217/218 page numbers in the body are noted but bear on nothing here. No comment is offered or implied on whether the physics is correct.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Worked example, \\\"Frictional Force on Car Tires Rounding a Curve\\\" (Section 6.2 Uniform Circular Motion). A 900 kg car rounds a 600-m-radius curve on horizontal ground at 25.0 m/s. Part (a) calculates the centripetal force on it; part (b) identifies the static friction between tires and road as that centripetal force and asks its magnitude; part (c) asks for the coefficient of static friction on the assumption the car is at the point of slipping, and whether any conclusion about that coefficient survives if the maximum speed is unknown.\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "Two independent blockers, either of which alone is disqualifying.\n\n(1) Problem type (the governing reason). The worked example is uniform circular motion: part (a) asks for the centripetal force on a car of mass 900 kg rounding a 600-m-radius curve at 25.0 m/s; part (b) identifies that force with static friction; part (c) asks for a coefficient of static friction. None of these is a displacement from constant speed and duration, a coplanar force balance on one body, or a resultant moment about a pivot. Registering it as mechanics.uniform-motion by pairing the 25.0 m/s with some duration would be exactly the bending rule 4 forbids: there is no duration in the passage, and the quantity sought is a force, not a displacement. mechanics.statics-equilibrium is likewise wrong — the car is accelerating centripetally, the passage says so explicitly, and there is no force list with components to test for balance. Reason recorded as no_registered_problem_type.\n\n(2) No readable result, independently. Even if a type fitted, the document's text layer has dropped every formula and every computed value: \"We know that . Therefore,\" is followed by nothing, part (b) states in words only that the friction force equals the centripetal force without giving its magnitude, and part (c) reads \"Solving for , we get . Regardless of whether...\" with the symbol and the numeric result both absent. The Discussion likewise carries bare \"since .\" and \"equal to when it is at the maximum possible value.\" So the passage as carried asserts no result I can read for any of the three parts, and rule 2 would have forced formalisable=false with reason no_readable_result had the type gate not already closed. Recovering a number here would mean computing mv^2/r myself and back-filling it as the passage's claim, which rule 1 and rule 2 both prohibit.\n\nConsequently formal_inputs and asserted are left empty. The given quantities (900 kg, 600 m, 25.0 m/s) are stated plainly and are not the problem — they simply have no slot in any registered type. Page furniture (\"217\", \"218\", \"6 • Circular and Rotational Motion\", \"Access for free at openstax.org\") and the stray page-229 header versus the 217/218 page numbers in the body are noted but bear on nothing here. No comment is offered or implied on whether the physics is correct.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "Worked example, \"Frictional Force on Car Tires Rounding a Curve\" (Section 6.2 Uniform Circular Motion). A 900 kg car rounds a 600-m-radius curve on horizontal ground at 25.0 m/s. Part (a) calculates the centripetal force on it; part (b) identifies the static friction between tires and road as that centripetal force and asks its magnitude; part (c) asks for the coefficient of static friction on the assumption the car is at the point of slipping, and whether any conclusion about that coefficient survives if the maximum speed is unknown."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1550,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 21982.688672000222,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

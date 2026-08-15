@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "4d49ff0eaeb1a70afbc3b6ddfa6c89fa2088642fcfbead0f4458b8496efad835",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "f362cbbd-ca63-5c7a-b798-48ff72c90f5e",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Example 4.14 \\\"Titration Analysis\\\" asks for the molarity of an HCl solution from a titration end point (50.00 mL HCl, 35.23 mL of 0.250 M NaOH). This is a titration / solution-concentration problem, not a mass-to-moles molar conversion and not a mass-balance verdict on a written equation, so neither registered problem type applies and it must not be bent into one. Separately, the document's text layer has dropped every displayed equation and calculation: the balanced titration reaction, the \\\"molar amount of HCl is calculated to be\\\", the molarity computation, the millimole-per-millilitre restatement, and the KMnO4 net ionic equation are all absent, as is the Check Your Learning \\\"Answer:\\\" line. So the passage as carried states no readable result for either question \\u2014 no asserted value could be quoted verbatim even if a type had fitted. The primary reason recorded is the type mismatch, which holds independently of the missing text layer.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"The end point in a titration of a 50.00-mL sample of aqueous HCl was reached by addition of 35.23 mL of 0.250 M NaOH titrant. What is the molarity of the HCl?\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "Example 4.14 \"Titration Analysis\" asks for the molarity of an HCl solution from a titration end point (50.00 mL HCl, 35.23 mL of 0.250 M NaOH). This is a titration / solution-concentration problem, not a mass-to-moles molar conversion and not a mass-balance verdict on a written equation, so neither registered problem type applies and it must not be bent into one. Separately, the document's text layer has dropped every displayed equation and calculation: the balanced titration reaction, the \"molar amount of HCl is calculated to be\", the molarity computation, the millimole-per-millilitre restatement, and the KMnO4 net ionic equation are all absent, as is the Check Your Learning \"Answer:\" line. So the passage as carried states no readable result for either question — no asserted value could be quoted verbatim even if a type had fitted. The primary reason recorded is the type mismatch, which holds independently of the missing text layer.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "The end point in a titration of a 50.00-mL sample of aqueous HCl was reached by addition of 35.23 mL of 0.250 M NaOH titrant. What is the molarity of the HCl?"
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 663,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 9786.65780099982,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

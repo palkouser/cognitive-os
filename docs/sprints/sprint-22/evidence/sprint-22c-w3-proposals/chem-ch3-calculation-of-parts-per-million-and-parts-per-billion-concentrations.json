@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "5dfe9aad18167bd6a776aa0106093ca0e8eeda1510842d52b0d379706bc316c4",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "dc2285b2-0e8f-5da2-8318-355a1785fe10",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Example 3.25 is a solution-concentration problem: it converts 15 ppb to ppm and then uses the ppb definition plus an assumed water density (~1.00 g/mL) over a 300 mL volume to obtain a mass of lead in micrograms. Neither part is an amount-in-moles-from-mass-and-molar-mass calculation, and no chemical equation is written, so neither chemistry.molar-conversion nor chemistry.mass-balance applies. Bending it into molar-conversion would require inventing a molar mass for lead, which the passage never prints. Additionally, the document's text layer omits the displayed equations entirely, so the Solution's own numeric results (the ppm value and the microgram mass) are not readable here; the only readable result is the Check Your Learning answer \\\"9.6 ppm, 9600 ppb\\\", which belongs to a different question (a 50.0-g wastewater sample containing 0.48 mg of mercury) and must not be attached to the worked example's givens. The primary reason for refusal is the unregistered problem type; the missing result text is a secondary obstacle.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"According to the EPA, when the concentration of lead in tap water reaches 15 ppb, certain remedial actions must be taken. What is this concentration in ppm? At this concentration, what mass of lead (\\u03bcg) would be contained in a typical glass of water (300 mL)?\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "Example 3.25 is a solution-concentration problem: it converts 15 ppb to ppm and then uses the ppb definition plus an assumed water density (~1.00 g/mL) over a 300 mL volume to obtain a mass of lead in micrograms. Neither part is an amount-in-moles-from-mass-and-molar-mass calculation, and no chemical equation is written, so neither chemistry.molar-conversion nor chemistry.mass-balance applies. Bending it into molar-conversion would require inventing a molar mass for lead, which the passage never prints. Additionally, the document's text layer omits the displayed equations entirely, so the Solution's own numeric results (the ppm value and the microgram mass) are not readable here; the only readable result is the Check Your Learning answer \"9.6 ppm, 9600 ppb\", which belongs to a different question (a 50.0-g wastewater sample containing 0.48 mg of mercury) and must not be attached to the worked example's givens. The primary reason for refusal is the unregistered problem type; the missing result text is a secondary obstacle.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "According to the EPA, when the concentration of lead in tap water reaches 15 ppb, certain remedial actions must be taken. What is this concentration in ppm? At this concentration, what mass of lead (μg) would be contained in a typical glass of water (300 mL)?"
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 848,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 12006.219302000318,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

@@ -1,0 +1,52 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "29a31796fe5b6c902cfd1445e40db4064dd2745905e915889318144b3ed171eb",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "06e0390a-49f8-5b7f-9911-5280654a42d3",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{\"exact_value\":\"110.4\",\"units\":\"m\"},\"asserted_value_quoted_from_the_passage\":\"110.4 m\",\"formal_inputs\":{\"result_unit\":\"m\",\"speed\":{\"magnitude\":\"2.4\",\"unit\":\"m/s\"},\"time\":{\"magnitude\":\"46\",\"unit\":\"s\"}},\"formalisable\":true,\"notes\":\"Given quantities are stated twice in the passage (problem line and Strategy) and agree: average velocity 2.4 m/s east, time interval 46 s. Only these two go into formal_inputs; nothing is back-derived from the answer.\\n\\nThe Solution block itself carries no readable value \\u2014 it is the bare equation reference \\\"2.2\\\", the page's text layer having dropped the worked equation. The readable result comes from the Discussion instead, which states the result at two precisions: \\\"about 110 m east\\\" (two significant figures) and \\\"110.4 m\\\" (calculator value). Per rule 3 the exact one, 110.4, is taken and quoted verbatim; the 110 figure is neither used nor reconciled with it.\\n\\nThe Discussion says the answer was written \\\"using scientific notation\\\", but no scientific-notation form appears anywhere in the text layer, so there is nothing to read there; this does not affect the assertion, which is taken from the digits actually present.\\n\\nDirection (\\\"east\\\") is dropped: the registered mechanics.uniform-motion shape carries scalar magnitudes and a unit only, with no direction or vector field. The passage's use of \\\"average velocity\\\" is mapped to the \\\"speed\\\" slot as the magnitude of an average rate, which is what that slot holds; no claim is made about the vector/scalar distinction in the source.\\n\\nPage furniture (\\\"page 79\\\", the running numbers 67 and 68, the chapter header \\\"2 \\u2022 Motion in One Dimension\\\") is ignored; none of it is a given quantity.\\n\\nNo judgement is offered on whether the physics or the significant-figure treatment is correct.\",\"problem_type\":\"mechanics.uniform-motion\",\"reason\":\"formalisable\",\"statement\":\"Layla jogs with an average velocity of 2.4 m/s east. Find her displacement after a time interval of 46 seconds.\"}",
+  "structured_output": {
+   "asserted": {
+    "exact_value": "110.4",
+    "units": "m"
+   },
+   "asserted_value_quoted_from_the_passage": "110.4 m",
+   "formal_inputs": {
+    "speed": {
+     "magnitude": "2.4",
+     "unit": "m/s"
+    },
+    "time": {
+     "magnitude": "46",
+     "unit": "s"
+    },
+    "result_unit": "m"
+   },
+   "formalisable": true,
+   "notes": "Given quantities are stated twice in the passage (problem line and Strategy) and agree: average velocity 2.4 m/s east, time interval 46 s. Only these two go into formal_inputs; nothing is back-derived from the answer.\n\nThe Solution block itself carries no readable value — it is the bare equation reference \"2.2\", the page's text layer having dropped the worked equation. The readable result comes from the Discussion instead, which states the result at two precisions: \"about 110 m east\" (two significant figures) and \"110.4 m\" (calculator value). Per rule 3 the exact one, 110.4, is taken and quoted verbatim; the 110 figure is neither used nor reconciled with it.\n\nThe Discussion says the answer was written \"using scientific notation\", but no scientific-notation form appears anywhere in the text layer, so there is nothing to read there; this does not affect the assertion, which is taken from the digits actually present.\n\nDirection (\"east\") is dropped: the registered mechanics.uniform-motion shape carries scalar magnitudes and a unit only, with no direction or vector field. The passage's use of \"average velocity\" is mapped to the \"speed\" slot as the magnitude of an average rate, which is what that slot holds; no claim is made about the vector/scalar distinction in the source.\n\nPage furniture (\"page 79\", the running numbers 67 and 68, the chapter header \"2 • Motion in One Dimension\") is ignored; none of it is a given quantity.\n\nNo judgement is offered on whether the physics or the significant-figure treatment is correct.",
+   "problem_type": "mechanics.uniform-motion",
+   "reason": "formalisable",
+   "statement": "Layla jogs with an average velocity of 2.4 m/s east. Find her displacement after a time interval of 46 seconds."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1569,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 21399.376074999964,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

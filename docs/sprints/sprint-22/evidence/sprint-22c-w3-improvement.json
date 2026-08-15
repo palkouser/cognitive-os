@@ -1,0 +1,200 @@
+{
+ "cases": [
+  {
+   "arm_a_artifact_inactive": {
+    "accepted_by_the_checker": false,
+    "answer_equals_the_expected_answer": false,
+    "computed": {},
+    "message": "ToolPlaneError: invalid_derivation: atomic_masses: the case must declare the atomic masses it relies on",
+    "refused_before_solving": true,
+    "verified_success": false,
+    "verifier_status": "not_reached"
+   },
+   "arm_b_artifact_active": {
+    "no_retained_artifact_supplies_it": true,
+    "verified_success": false,
+    "why": "no artifact this campaign retained for science.chemistry carries 'atomic_masses'. The arm is not run rather than run with a value taken from the case itself"
+   },
+   "case_id": "holdout-molar-conversion-water",
+   "content_hash": "af2829f9f656bd45560090f79aef36ae064be30ff16501ce518e9e95f5414e77",
+   "domain_id": "science.chemistry",
+   "expected_answer": {
+    "exact_value": "5",
+    "units": "mol"
+   },
+   "improved": false,
+   "problem_type": "chemistry.molar-conversion",
+   "restored_from": null,
+   "withheld_description": "the atomic masses of hydrogen and oxygen",
+   "withheld_key": "atomic_masses"
+  },
+  {
+   "arm_a_artifact_inactive": {
+    "accepted_by_the_checker": false,
+    "answer_equals_the_expected_answer": false,
+    "computed": {},
+    "message": "ToolPlaneError: invalid_derivation: atomic_masses: the case must declare the atomic masses it relies on",
+    "refused_before_solving": true,
+    "verified_success": false,
+    "verifier_status": "not_reached"
+   },
+   "arm_b_artifact_active": {
+    "no_retained_artifact_supplies_it": true,
+    "verified_success": false,
+    "why": "no artifact this campaign retained for science.chemistry carries 'atomic_masses'. The arm is not run rather than run with a value taken from the case itself"
+   },
+   "case_id": "holdout-molar-conversion-methane",
+   "content_hash": "69d381eed754bc0538f80258379e942b4865f77bab0df70321ad00e1451a7340",
+   "domain_id": "science.chemistry",
+   "expected_answer": {
+    "exact_value": "4",
+    "units": "mol"
+   },
+   "improved": false,
+   "problem_type": "chemistry.molar-conversion",
+   "restored_from": null,
+   "withheld_description": "the atomic masses of carbon and hydrogen",
+   "withheld_key": "atomic_masses"
+  },
+  {
+   "arm_a_artifact_inactive": {
+    "accepted_by_the_checker": false,
+    "answer_equals_the_expected_answer": false,
+    "computed": {},
+    "message": "ToolPlaneError: invalid_derivation: atomic_masses: the case must declare the atomic masses it relies on",
+    "refused_before_solving": true,
+    "verified_success": false,
+    "verifier_status": "not_reached"
+   },
+   "arm_b_artifact_active": {
+    "no_retained_artifact_supplies_it": true,
+    "verified_success": false,
+    "why": "no artifact this campaign retained for science.chemistry carries 'atomic_masses'. The arm is not run rather than run with a value taken from the case itself"
+   },
+   "case_id": "holdout-mass-balance-ammonia",
+   "content_hash": "a31ee43aabbf6de29bf692cae9fcb2b56c4ad9a6951d3f3aac3c2bcb279ec783",
+   "domain_id": "science.chemistry",
+   "expected_answer": {
+    "structured": {
+     "balanced": true
+    }
+   },
+   "improved": false,
+   "problem_type": "chemistry.mass-balance",
+   "restored_from": null,
+   "withheld_description": "the atomic masses of nitrogen and hydrogen",
+   "withheld_key": "atomic_masses"
+  },
+  {
+   "arm_a_artifact_inactive": {
+    "accepted_by_the_checker": false,
+    "answer_equals_the_expected_answer": false,
+    "computed": {},
+    "message": "ToolPlaneError: invalid_derivation: speed: expected an object with magnitude and unit",
+    "refused_before_solving": true,
+    "verified_success": false,
+    "verifier_status": "not_reached"
+   },
+   "arm_b_artifact_active": {
+    "accepted_by_the_checker": true,
+    "answer_equals_the_expected_answer": false,
+    "computed": {
+     "exact_value": "480",
+     "structured": {},
+     "units": "m"
+    },
+    "message": "the source asserts exact_value='3000'; the kernel computed '480'",
+    "no_retained_artifact_supplies_it": false,
+    "refused_before_solving": false,
+    "verified_success": false,
+    "verifier_status": "passed"
+   },
+   "case_id": "holdout-uniform-motion-kilometres",
+   "content_hash": "e1f92efeb2c844c5aad62953cff993d6a1915f05cdf81a08e738308817caf907",
+   "domain_id": "engineering.mechanics",
+   "expected_answer": {
+    "exact_value": "3000",
+    "units": "m"
+   },
+   "improved": false,
+   "problem_type": "mechanics.uniform-motion",
+   "restored_from": {
+    "claim_id": "a9cdd2b8-e0a2-59af-93cf-055e4cee0922",
+    "from_case": "ch2-solving-for-displacement-when-average-velocity-and-time-are-known",
+    "from_cycle": 1,
+    "source_segment_hash": "783344c736e34241359f6e07c7806abb69c4e41096a0d79fe6b531193cfadbf3",
+    "value": {
+     "magnitude": "2.4",
+     "unit": "m/s"
+    }
+   },
+   "withheld_description": "the constant speed the passage states for the body",
+   "withheld_key": "speed"
+  }
+ ],
+ "comparison": {
+  "arm_a_verified_successes": 0,
+  "arm_b_verified_successes": 0,
+  "at_least_one_retained_artifact_improved_a_held_out_task": false,
+  "cases": 4,
+  "improved_cases": 0,
+  "measured_in_22c": true,
+  "same_tasks_same_seeds_same_checker": true
+ },
+ "holdout": {
+  "case_count": 4,
+  "frozen_integrity_content_hash": "e9dd8fbf8961c9ccbe576c7e80cae807804f2396c56708e574ded520a8ab7b3a",
+  "holdout_id": "s22c-acquisition-holdout-v1",
+  "measured_values_at_freeze": 0,
+  "read_once": true,
+  "seeds": [
+   22031,
+   22032,
+   22033,
+   22034
+  ],
+  "success_definition": "the case is accepted by domains.checker with every capability the registry entry requires actually exercised, and the answer equals the case's expected answer",
+  "verifier_id": "domains.checker"
+ },
+ "integrity_content_hash": "87a1bd5bce4f143d3418dff8eb62e4d35ddd8e3f8db7892b1a1ea2bbd1d1125c",
+ "items": [
+  "S22C-053"
+ ],
+ "reads_exit_criterion": "at least one retained artifact improves a held-out verified task",
+ "recorded_at": "2026-08-15T10:18:35Z",
+ "retained_facts_available_to_arm_b": [
+  {
+   "domain_id": "engineering.mechanics",
+   "from_case": "ch2-solving-for-displacement-when-average-velocity-and-time-are-known",
+   "from_cycle": 1,
+   "key": "result_unit"
+  },
+  {
+   "domain_id": "engineering.mechanics",
+   "from_case": "ch2-solving-for-displacement-when-average-velocity-and-time-are-known",
+   "from_cycle": 1,
+   "key": "speed"
+  },
+  {
+   "domain_id": "engineering.mechanics",
+   "from_case": "ch2-solving-for-displacement-when-average-velocity-and-time-are-known",
+   "from_cycle": 1,
+   "key": "time"
+  }
+ ],
+ "schema_version": 1,
+ "separation": {
+  "also_enforced_by": "CampaignManifestV1 refuses to seal a manifest whose curriculum shares a hash with a holdout, so this is the second of two independent checks",
+  "cycle_records_read": {
+   "sprint-22c-w2-cycle1.json": 1,
+   "sprint-22c-w3-cycle2.json": 0,
+   "sprint-22c-w3-cycle3.json": 0
+  },
+  "holdout_cases": 4,
+  "leakage_detected": false,
+  "overlaps": {}
+ },
+ "sprint": "22C",
+ "wave": "W3",
+ "what_this_does_not_license": "§4: an existence proof at most, not a learning rate. Nothing here says how fast the system learns, what a chapter is worth, or whether a fourth cycle would help"
+}

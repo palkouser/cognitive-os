@@ -1501,12 +1501,12 @@
     {
       "file": "v1/corpus/corpus-factory-request.schema.json",
       "model": "CorpusFactoryRequest",
-      "sha256": "8b12f84414f73447f89bdaaf7085164ab4a9ec0531a18125c33ec1f4c3c7b5d8"
+      "sha256": "c49778a8e82ee89623372ef74f13fccb5d0d38a7fbc37c1a0a298fa88139df29"
     },
     {
       "file": "v1/corpus/corpus-factory-result.schema.json",
       "model": "CorpusFactoryResult",
-      "sha256": "0ddab82aaeedb943e98a4f90ff6440991a7f5fe4b24911a4802bb8f91ade3256"
+      "sha256": "0c65c79a426e299c88e9d581274be5da30d9cb66134d62e1c4019febc1b687ea"
     },
     {
       "file": "v1/corpus/corpus-item-verification-subject.schema.json",
@@ -1666,7 +1666,7 @@
     {
       "file": "v1/corpus/license-classification.schema.json",
       "model": "LicenseClassification",
-      "sha256": "5b297001e50a44802081eae1637bed5fddb24b003f9895d868edfdebab313e8e"
+      "sha256": "bee0d74977988b9bf1a59c68aeeb1d369b34032549f36b3890cb097d3f7c2c6c"
     },
     {
       "file": "v1/corpus/license-conflict.schema.json",

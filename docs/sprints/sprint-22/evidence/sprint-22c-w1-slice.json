@@ -1,0 +1,219 @@
+{
+ "blocked_by": {
+  "blocks": "cycle 1, and every cycle after it, for both campaigns. No passage from either cleared source can leave quarantine under the released licence policy",
+  "candidate_resolutions": [
+   {
+    "consequence": "**this would deny the chemistry campaign, not merely quarantine it.** A licence classified RESTRICTED routes to CorpusRouteStatus.DENIED, and CC BY-NC-SA is restricted by any honest reading of NonCommercial. Approving CC BY while classifying CC BY-NC-SA restricted ends the two-campaign plan the gate owner chose in W1-D1",
+    "resolution": "add the CC BY family to corpus.factory.APPROVED_LICENSES"
+   },
+   {
+    "consequence": "a released feature rather than a policy edit, and the one that matches what actually happened: the review exists, is sealed, names an authority and hashes the licence page. The factory has no way to be told",
+    "resolution": "give the factory a path to accept a completed licence review, so a sealed clearance like S22C-020 is the review that 'license-review-required' is asking for"
+   }
+  ],
+  "finding": "W1-F6",
+  "not_taken_by_this_wave": "widening a platform-wide licence allowlist so this wave's slice turns green is the move this programme refuses. §1.2 says a primitive that needs more than composition is a finding to surface, not to absorb",
+  "owner": "the Sprint 22 gate owner — §1.3 reserves licence decisions to them",
+  "what_is_needed": "a decision on how the released Corpus Factory should treat open content licences, and a note that the obvious fix has a consequence the plan did not anticipate"
+ },
+ "citations": {
+  "all_chains_resolve": false,
+  "artifacts_walked": 0,
+  "per_artifact": {},
+  "promoted_artifacts": 0,
+  "sampled": false,
+  "walk_covers_every_promoted_artifact": true
+ },
+ "compiled": [],
+ "corpus_item": {
+  "reason": "license-review-required",
+  "routed_by": "the released CorpusFactory, at stage 1, before the campaign judged anything",
+  "status": "quarantined"
+ },
+ "cross_check": {
+  "accepted": true,
+  "asserted": {
+   "exact_value": "110.4",
+   "units": "m"
+  },
+  "assertion_agrees_with_kernel": true,
+  "derivation_accepted": true,
+  "kernel_exact_value": "552/5",
+  "the_two_are_one_number": "Fraction('110.4') == Fraction('552/5'); the comparison is exact equality and not a tolerance, so the passage's rounded 'about 110 m' would still be refused",
+  "verifier_status": "passed"
+ },
+ "decides_an_exit_criterion": false,
+ "extract": {
+  "host_revalidated": 1,
+  "proposals": 1,
+  "provider_calls": 0
+ },
+ "integrity_content_hash": "850c56b33c5709f1039a56d52a009c9fe5c43c3dcff5960e598d2b420f25122c",
+ "items": [
+  "S22C-033"
+ ],
+ "limitations": [
+  "one passage, one domain, one source. The chapter is not acquired and no campaign number exists yet; W2's cycle 1 is where a corpus begins",
+  "the extraction is host-side and deterministic. §3.3's provider path, with its receipts and sealed proposals, is W2's and is exercised by nothing here",
+  "the passage was located by its own words, which is robust to offsets and not to a re-typeset edition. A new edition is a new source hash and a new clearance"
+ ],
+ "manifest": {
+  "campaign_id": "s22c-physics",
+  "content_hash": "a074608a12f2bbfb333801807cf812436a65231a7d8bed1f20ba9944f691fdbf",
+  "declared_uses": [
+   "internal_use",
+   "derivative_work"
+  ],
+  "domain_ids": [
+   "engineering.mechanics"
+  ],
+  "providers": [],
+  "revision": 1,
+  "rights_content_hash": "9ca1af9cfe07d5d0579f63a3afb1ba34e4f513d8da90630788953b0a1c7fada3"
+ },
+ "passage": {
+  "crosses_a_page_boundary": true,
+  "end": 3241,
+  "located_by": "the passage's own opening and closing words, never a typed offset",
+  "page_furniture_inside_the_passage": [
+   {
+    "offset_in_passage": 178,
+    "text": "67"
+   },
+   {
+    "offset_in_passage": 183,
+    "text": "68"
+   },
+   {
+    "offset_in_passage": 187,
+    "text": "2 • Motion in One Dimension"
+   }
+  ],
+  "page_text_characters": 4566,
+  "page_text_sha256": "4787a4783b19769523c3071efc420075fa417e3b44dabfd7dff8202996390212",
+  "pages": [
+   79,
+   80
+  ],
+  "passage_sha256": "a66c7ea2645a24f15daeee388795b0546d589fcae3fb5a43b347018511f3795a",
+  "start": 2536,
+  "the_arithmetic_is_an_image": true,
+  "what_the_text_layer_carries_under_solution": "the equation number 2.2 and nothing else; the computation is a figure with no text layer, so the derivation cannot be read and only the assertion can"
+ },
+ "promoted": [],
+ "quarantined": [
+  "physics-uniform-motion-layla"
+ ],
+ "recorded_at": "2026-08-15T07:06:07Z",
+ "register_source": {
+  "items": 1,
+  "license_status": [
+   "unknown"
+  ],
+  "source_manifest_hash": "84b225bcc45ab798a4717cf04656f0fcf284267822e0767feb8d57a4860cbaa0",
+  "source_manifest_id": "962c8d59-8841-5099-b829-8e2c40b56e8a"
+ },
+ "replay": {
+  "all_retained_cases_passed": true,
+  "cases_executed": 1,
+  "cases_passed": 1,
+  "domains_enumerated": 6,
+  "domains_with_retained_cases": 1,
+  "enumeration_source": "registry.domain_ids()",
+  "per_domain": {
+   "coding": {
+    "cases": 0,
+    "passed": 0,
+    "rate": null
+   },
+   "engineering.mechanics": {
+    "cases": 1,
+    "passed": 1,
+    "rate": 1.0
+   },
+   "logic": {
+    "cases": 0,
+    "passed": 0,
+    "rate": null
+   },
+   "mathematics": {
+    "cases": 0,
+    "passed": 0,
+    "rate": null
+   },
+   "physics": {
+    "cases": 0,
+    "passed": 0,
+    "rate": null
+   },
+   "science.chemistry": {
+    "cases": 0,
+    "passed": 0,
+    "rate": null
+   }
+  },
+  "source_leakage": {
+   "curriculum_segments": 1,
+   "holdout_store_env": [
+    "COGOS_HOLDOUT_DATABASE_URL"
+   ],
+   "holdouts": 1,
+   "leakage_detected": false,
+   "overlaps": {}
+  }
+ },
+ "schema_version": 1,
+ "source": {
+  "attribution_required": "attribute the original: (c)2020 Texas Education Agency (TEA), adapted by OpenStax, licensed CC BY 4.0",
+  "clearance_content_hash": "9ca1af9cfe07d5d0579f63a3afb1ba34e4f513d8da90630788953b0a1c7fada3",
+  "domain_id": "engineering.mechanics",
+  "file_name": "Physics_-_WEB.pdf",
+  "license_identifier": "CC-BY-4.0",
+  "source_content_hash": "a3f75487411ef13d0270c65fc801ceff2b28e6b339afed9b407fe477f7e8453e",
+  "the_other_campaign_is_not_here": "chemistry is CC BY-NC-SA and runs as its own campaign; no artifact in this record touches it, which is what keeping the two lineages apart means",
+  "verified_against_the_clearance": true
+ },
+ "sprint": "22C",
+ "stages": {
+  "all_nine_in_order": true,
+  "completed": [
+   "register_source",
+   "extract",
+   "normalize",
+   "cross_check",
+   "quarantine",
+   "compile",
+   "evaluate",
+   "promote",
+   "observe"
+  ],
+  "count": 9,
+  "enumerated": [
+   "register_source",
+   "extract",
+   "normalize",
+   "cross_check",
+   "quarantine",
+   "compile",
+   "evaluate",
+   "promote",
+   "observe"
+  ],
+  "same_functions_as_the_w0_slice": "run_cycle is the only entry point, and the fixture chapter is its default argument rather than a separate path"
+ },
+ "the_passage_passed_on_its_merits_and_was_refused_on_its_licence": {
+  "corpus_factory_accepted": false,
+  "cross_check_accepted": true,
+  "outcome": "quarantined",
+  "why_both_facts_are_kept": "the evidence and the platform reached opposite conclusions about the same passage. Reporting only the outcome would hide that the kernel verified the physics; reporting only the cross-check would hide that the platform refused the content. W2 needs both"
+ },
+ "wave": "W1",
+ "what_the_real_source_had_that_the_fixture_did_not": [
+  "the passage crosses a page boundary, so the folio numbers, a form feed and the running head sit inside the registered bytes. They are kept: a campaign that cleans its sources cannot afterwards prove what it read",
+  "the worked example's arithmetic is an image with no text layer, so the source states a result and hides its derivation",
+  "the passage asserts its answer at two precisions — 'about 110 m east' and '110.4 m' — and only the exact one can be held to a deterministic kernel",
+  "the kernel answers in exact rationals (552/5) and the source writes decimals (110.4). W1-F3: the cross-check compared them as strings",
+  "the released Corpus Factory does not recognise CC BY 4.0 and routed the passage to quarantine at stage 1, and the campaign promoted it anyway. W1-F5 in the driver, W1-F6 in the released licence policy"
+ ],
+ "why_no_exit": "every 22C exit is a claim about three cycles over a campaign. This is one segment through one cycle, run before cycle 1 so the seams are found at the cost of one passage rather than at the cost of a campaign (§3.1)"
+}

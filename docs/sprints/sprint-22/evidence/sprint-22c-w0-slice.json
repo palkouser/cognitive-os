@@ -1,0 +1,637 @@
+{
+ "citations": {
+  "all_chains_resolve": true,
+  "artifacts_walked": 5,
+  "per_artifact": {
+   "chemistry-mass-balance": {
+    "chain_resolves": true,
+    "hops": [
+     {
+      "artifact_id": "d2573b2d-78d0-524a-b446-73e079fa16b8",
+      "declared_hash": "b691e69b25e02ba654340bee3747063162c9dae3c5b8033763221f0cae1901ca",
+      "hop": "memory_provenance -> artifact_bytes",
+      "loaded_bytes": 263,
+      "loaded_hash": "b691e69b25e02ba654340bee3747063162c9dae3c5b8033763221f0cae1901ca",
+      "resolves": true
+     },
+     {
+      "canonical_content_hash": "b691e69b25e02ba654340bee3747063162c9dae3c5b8033763221f0cae1901ca",
+      "corpus_item_id": "22fa337e-24e8-5f7b-999c-c9b64629fd79",
+      "hop": "artifact -> corpus_item",
+      "resolves": true
+     },
+     {
+      "hop": "corpus_item -> source_manifest",
+      "resolves": true,
+      "source_manifest_id": "ee5ef699-b69e-5ec3-a504-2f9719e0662d"
+     },
+     {
+      "hop": "source_manifest -> registered_source_bytes",
+      "resolves": true,
+      "segment_content_hash": "b691e69b25e02ba654340bee3747063162c9dae3c5b8033763221f0cae1901ca"
+     }
+    ]
+   },
+   "chemistry-molar-conversion": {
+    "chain_resolves": true,
+    "hops": [
+     {
+      "artifact_id": "a26b8da6-8855-5613-95fa-92c1b5239d68",
+      "declared_hash": "b25fc3a45f2aba796c3fb89b0f67408ca80970e31af012e4b48fb5df0bbd448a",
+      "hop": "memory_provenance -> artifact_bytes",
+      "loaded_bytes": 239,
+      "loaded_hash": "b25fc3a45f2aba796c3fb89b0f67408ca80970e31af012e4b48fb5df0bbd448a",
+      "resolves": true
+     },
+     {
+      "canonical_content_hash": "b25fc3a45f2aba796c3fb89b0f67408ca80970e31af012e4b48fb5df0bbd448a",
+      "corpus_item_id": "a1c39161-178b-5138-bcc8-6887e951b564",
+      "hop": "artifact -> corpus_item",
+      "resolves": true
+     },
+     {
+      "hop": "corpus_item -> source_manifest",
+      "resolves": true,
+      "source_manifest_id": "ee5ef699-b69e-5ec3-a504-2f9719e0662d"
+     },
+     {
+      "hop": "source_manifest -> registered_source_bytes",
+      "resolves": true,
+      "segment_content_hash": "b25fc3a45f2aba796c3fb89b0f67408ca80970e31af012e4b48fb5df0bbd448a"
+     }
+    ]
+   },
+   "mechanics-moment-balance": {
+    "chain_resolves": true,
+    "hops": [
+     {
+      "artifact_id": "5a56b9d7-a0cc-57b0-9319-9081cd24691e",
+      "declared_hash": "6a3585e4f85ede3fcc6bf8acac81f306dea0a19c4bbbf53fb6946b32e9c02cd9",
+      "hop": "memory_provenance -> artifact_bytes",
+      "loaded_bytes": 212,
+      "loaded_hash": "6a3585e4f85ede3fcc6bf8acac81f306dea0a19c4bbbf53fb6946b32e9c02cd9",
+      "resolves": true
+     },
+     {
+      "canonical_content_hash": "6a3585e4f85ede3fcc6bf8acac81f306dea0a19c4bbbf53fb6946b32e9c02cd9",
+      "corpus_item_id": "e1d38125-96f0-515c-8501-1aee779947f5",
+      "hop": "artifact -> corpus_item",
+      "resolves": true
+     },
+     {
+      "hop": "corpus_item -> source_manifest",
+      "resolves": true,
+      "source_manifest_id": "ee5ef699-b69e-5ec3-a504-2f9719e0662d"
+     },
+     {
+      "hop": "source_manifest -> registered_source_bytes",
+      "resolves": true,
+      "segment_content_hash": "6a3585e4f85ede3fcc6bf8acac81f306dea0a19c4bbbf53fb6946b32e9c02cd9"
+     }
+    ]
+   },
+   "mechanics-statics-equilibrium": {
+    "chain_resolves": true,
+    "hops": [
+     {
+      "artifact_id": "c52b8874-0e57-599a-9e88-53ef0ed9a49e",
+      "declared_hash": "e4beb7052e0187a7e99f4e54993bf97e516d090be9daa5ac24390b3d4a610046",
+      "hop": "memory_provenance -> artifact_bytes",
+      "loaded_bytes": 219,
+      "loaded_hash": "e4beb7052e0187a7e99f4e54993bf97e516d090be9daa5ac24390b3d4a610046",
+      "resolves": true
+     },
+     {
+      "canonical_content_hash": "e4beb7052e0187a7e99f4e54993bf97e516d090be9daa5ac24390b3d4a610046",
+      "corpus_item_id": "f9f78b30-4b8e-580e-b2e5-19582f7097c9",
+      "hop": "artifact -> corpus_item",
+      "resolves": true
+     },
+     {
+      "hop": "corpus_item -> source_manifest",
+      "resolves": true,
+      "source_manifest_id": "ee5ef699-b69e-5ec3-a504-2f9719e0662d"
+     },
+     {
+      "hop": "source_manifest -> registered_source_bytes",
+      "resolves": true,
+      "segment_content_hash": "e4beb7052e0187a7e99f4e54993bf97e516d090be9daa5ac24390b3d4a610046"
+     }
+    ]
+   },
+   "mechanics-uniform-motion": {
+    "chain_resolves": true,
+    "hops": [
+     {
+      "artifact_id": "7bad3378-cc4e-5492-be2c-84e10b515524",
+      "declared_hash": "28039a69fa397c461a79b1a1baa847c3017c62c78bbd88064af7df4eb53abeb3",
+      "hop": "memory_provenance -> artifact_bytes",
+      "loaded_bytes": 219,
+      "loaded_hash": "28039a69fa397c461a79b1a1baa847c3017c62c78bbd88064af7df4eb53abeb3",
+      "resolves": true
+     },
+     {
+      "canonical_content_hash": "28039a69fa397c461a79b1a1baa847c3017c62c78bbd88064af7df4eb53abeb3",
+      "corpus_item_id": "f122d2e8-f879-5a47-b98c-020b71fa9cba",
+      "hop": "artifact -> corpus_item",
+      "resolves": true
+     },
+     {
+      "hop": "corpus_item -> source_manifest",
+      "resolves": true,
+      "source_manifest_id": "ee5ef699-b69e-5ec3-a504-2f9719e0662d"
+     },
+     {
+      "hop": "source_manifest -> registered_source_bytes",
+      "resolves": true,
+      "segment_content_hash": "28039a69fa397c461a79b1a1baa847c3017c62c78bbd88064af7df4eb53abeb3"
+     }
+    ]
+   }
+  },
+  "promoted_artifacts": 5,
+  "sampled": false,
+  "walk_covers_every_promoted_artifact": true
+ },
+ "compile": {
+  "records": 5
+ },
+ "cross_check": {
+  "accepted": 5,
+  "cases": 6,
+  "every_outcome_as_expected": true,
+  "per_segment": {
+   "chemistry-mass-balance": {
+    "accepted": true,
+    "as_expected": true,
+    "asserted": {
+     "structured": {
+      "balanced": true
+     }
+    },
+    "assertion_agrees_with_kernel": true,
+    "derivation_accepted": true,
+    "domain_id": "science.chemistry",
+    "expected_accepted": true,
+    "message": "",
+    "problem_type": "chemistry.mass-balance",
+    "refused_before_solving": false,
+    "verifier_status": "passed"
+   },
+   "chemistry-mass-balance-planted": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {
+     "structured": {
+      "balanced": true
+     }
+    },
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": true,
+    "domain_id": "science.chemistry",
+    "expected_accepted": false,
+    "message": "the source asserts structured.balanced=True; the kernel computed False",
+    "problem_type": "chemistry.mass-balance",
+    "refused_before_solving": false,
+    "verifier_status": "passed"
+   },
+   "chemistry-molar-conversion": {
+    "accepted": true,
+    "as_expected": true,
+    "asserted": {
+     "exact_value": "2",
+     "units": "mol"
+    },
+    "assertion_agrees_with_kernel": true,
+    "derivation_accepted": true,
+    "domain_id": "science.chemistry",
+    "expected_accepted": true,
+    "message": "",
+    "problem_type": "chemistry.molar-conversion",
+    "refused_before_solving": false,
+    "verifier_status": "passed"
+   },
+   "mechanics-moment-balance": {
+    "accepted": true,
+    "as_expected": true,
+    "asserted": {
+     "exact_value": "12",
+     "units": "N*m"
+    },
+    "assertion_agrees_with_kernel": true,
+    "derivation_accepted": true,
+    "domain_id": "engineering.mechanics",
+    "expected_accepted": true,
+    "message": "",
+    "problem_type": "mechanics.moment-balance",
+    "refused_before_solving": false,
+    "verifier_status": "passed"
+   },
+   "mechanics-statics-equilibrium": {
+    "accepted": true,
+    "as_expected": true,
+    "asserted": {
+     "structured": {
+      "equilibrium": true
+     }
+    },
+    "assertion_agrees_with_kernel": true,
+    "derivation_accepted": true,
+    "domain_id": "engineering.mechanics",
+    "expected_accepted": true,
+    "message": "",
+    "problem_type": "mechanics.statics-equilibrium",
+    "refused_before_solving": false,
+    "verifier_status": "passed"
+   },
+   "mechanics-uniform-motion": {
+    "accepted": true,
+    "as_expected": true,
+    "asserted": {
+     "exact_value": "20",
+     "units": "m"
+    },
+    "assertion_agrees_with_kernel": true,
+    "derivation_accepted": true,
+    "domain_id": "engineering.mechanics",
+    "expected_accepted": true,
+    "message": "",
+    "problem_type": "mechanics.uniform-motion",
+    "refused_before_solving": false,
+    "verifier_status": "passed"
+   }
+  }
+ },
+ "decides_an_exit_criterion": false,
+ "evaluate": {
+  "all_retained_cases_passed": true,
+  "cases_executed": 5,
+  "cases_passed": 5,
+  "domains_enumerated": 6,
+  "domains_with_retained_cases": 2,
+  "enumeration_source": "registry.domain_ids()",
+  "per_domain": {
+   "coding": {
+    "cases": 0,
+    "passed": 0,
+    "rate": null
+   },
+   "engineering.mechanics": {
+    "cases": 3,
+    "passed": 3,
+    "rate": 1.0
+   },
+   "logic": {
+    "cases": 0,
+    "passed": 0,
+    "rate": null
+   },
+   "mathematics": {
+    "cases": 0,
+    "passed": 0,
+    "rate": null
+   },
+   "physics": {
+    "cases": 0,
+    "passed": 0,
+    "rate": null
+   },
+   "science.chemistry": {
+    "cases": 2,
+    "passed": 2,
+    "rate": 1.0
+   }
+  },
+  "source_leakage": {
+   "curriculum_segments": 6,
+   "holdout_store_env": [
+    "COGOS_HOLDOUT_DATABASE_URL"
+   ],
+   "holdouts": 1,
+   "leakage_detected": false,
+   "overlaps": {}
+  }
+ },
+ "extract": {
+  "grounding_resolves_to_loaded_bytes": 6,
+  "host_revalidated": 6,
+  "proposals": 6,
+  "provider_calls": 0,
+  "replayable_without_the_network": true,
+  "what_revalidation_does_not_check": "whether the asserted value is true — not decidable from text, and the cross-check stage's job"
+ },
+ "integrity_content_hash": "dfee2af1c59faeb13b3888a71476a003a18244b2369a76a947c46ff177bc98c1",
+ "items": [
+  "S22C-003"
+ ],
+ "limitations": [
+  "one cycle, not three: the cycle-count exit is a W2/W3 claim",
+  "the fixture chapter is authored in this repository, so its rights clearance decides nothing about the real source W1 registers",
+  "in-memory repositories, so this run says nothing about PostgreSQL behaviour under the campaign store",
+  "four of the six enumerated domains retain no evaluation cases of their own, so their replay executes nothing — reported as cases: 0 rather than omitted, and carried as W0-A1 for the wave that reads the replay exit"
+ ],
+ "manifest": {
+  "campaign_id": "s22c-w0-slice",
+  "content_hash": "3e027771585c89fd868daf859ec160060eae43354801256bc54230db91c52cbc",
+  "domain_ids": [
+   "engineering.mechanics",
+   "science.chemistry"
+  ],
+  "providers": [],
+  "revision": 1,
+  "rights_content_hash": "780536144d8ccabe4f3108887f6cf59b74d27f41ce504aa5d091f103ce0fe135",
+  "source_content_hash": "56cde7ae9556ee7d241b73530ad037c1040faed445d58bf08531c7e25250e6bd"
+ },
+ "normalize": {
+  "claims": 5
+ },
+ "observe": {
+  "count": 216,
+  "event_types": [
+   "memory.item_created",
+   "memory.item_created",
+   "memory.item_created",
+   "memory.item_created",
+   "memory.item_created",
+   "semantic.claim_belief_changed",
+   "semantic.claim_belief_changed",
+   "semantic.claim_belief_changed",
+   "semantic.claim_belief_changed",
+   "semantic.claim_belief_changed",
+   "semantic.claim_created",
+   "semantic.claim_created",
+   "semantic.claim_created",
+   "semantic.claim_created",
+   "semantic.claim_created",
+   "semantic.claim_promotion_decided",
+   "semantic.claim_promotion_decided",
+   "semantic.claim_promotion_decided",
+   "semantic.claim_promotion_decided",
+   "semantic.claim_promotion_decided",
+   "semantic.extraction_completed",
+   "semantic.extraction_completed",
+   "semantic.extraction_completed",
+   "semantic.extraction_completed",
+   "semantic.extraction_completed",
+   "semantic.observation_recorded",
+   "semantic.observation_recorded",
+   "semantic.observation_recorded",
+   "semantic.observation_recorded",
+   "semantic.observation_recorded",
+   "tool_call.authorized",
+   "tool_call.authorized",
+   "tool_call.authorized",
+   "tool_call.authorized",
+   "tool_call.authorized",
+   "tool_call.authorized",
+   "tool_call.authorized",
+   "tool_call.authorized",
+   "tool_call.authorized",
+   "tool_call.authorized",
+   "tool_call.authorized",
+   "tool_call.completed",
+   "tool_call.completed",
+   "tool_call.completed",
+   "tool_call.completed",
+   "tool_call.completed",
+   "tool_call.completed",
+   "tool_call.completed",
+   "tool_call.completed",
+   "tool_call.completed",
+   "tool_call.completed",
+   "tool_call.completed",
+   "tool_call.requested",
+   "tool_call.requested",
+   "tool_call.requested",
+   "tool_call.requested",
+   "tool_call.requested",
+   "tool_call.requested",
+   "tool_call.requested",
+   "tool_call.requested",
+   "tool_call.requested",
+   "tool_call.requested",
+   "tool_call.requested",
+   "tool_call.started",
+   "tool_call.started",
+   "tool_call.started",
+   "tool_call.started",
+   "tool_call.started",
+   "tool_call.started",
+   "tool_call.started",
+   "tool_call.started",
+   "tool_call.started",
+   "tool_call.started",
+   "tool_call.started",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.completed",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started",
+   "verifier.started"
+  ]
+ },
+ "promote": {
+  "count": 5,
+  "promoted": [
+   "chemistry-mass-balance",
+   "chemistry-molar-conversion",
+   "mechanics-moment-balance",
+   "mechanics-statics-equilibrium",
+   "mechanics-uniform-motion"
+  ]
+ },
+ "quarantine": {
+  "count": 1,
+  "quarantined": {
+   "chemistry-mass-balance-planted": "unverifiable_provider_data"
+  },
+  "the_plant": {
+   "compiled": false,
+   "content_hash": "24da0165a9ed8e13b3af71abbd08b8f2f5f4cff93facf5308348a4f39bb14973",
+   "derivation_accepted_by_domains_checker": true,
+   "entered_through_the_genuine_intake_path": true,
+   "message": "the source asserts structured.balanced=True; the kernel computed False",
+   "quarantined": true,
+   "reached_an_active_state": false,
+   "reason": "unverifiable_provider_data",
+   "refused_by": "cross_check.assertion_agrees_with_kernel",
+   "segment_id": "chemistry-mass-balance-planted",
+   "verifier_status": "passed"
+  }
+ },
+ "recorded_at": "2026-08-14T12:00:00Z",
+ "register_source": {
+  "items": 6,
+  "license_status": [
+   "approved"
+  ],
+  "source_manifest_hash": "c110960ecfd95e098c11988b8b608dcbfd8becc316635c8160a9ae9e122cd15c",
+  "source_manifest_id": "ee5ef699-b69e-5ec3-a504-2f9719e0662d"
+ },
+ "schema_version": 1,
+ "sprint": "22C",
+ "stages": {
+  "all_nine_in_order": true,
+  "completed": [
+   "register_source",
+   "extract",
+   "normalize",
+   "cross_check",
+   "quarantine",
+   "compile",
+   "evaluate",
+   "promote",
+   "observe"
+  ],
+  "count": 9,
+  "enumerated": [
+   "register_source",
+   "extract",
+   "normalize",
+   "cross_check",
+   "quarantine",
+   "compile",
+   "evaluate",
+   "promote",
+   "observe"
+  ]
+ },
+ "wave": "W0",
+ "why_no_exit": "every 22C exit is a claim about the real rights-cleared source across three cycles. This runs one cycle against a fixture chapter authored in-repository, so publishing the pre-registration after it is not publishing it after the numbers"
+}

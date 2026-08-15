@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "d7fcc373ce9294027bd47f932549b3ac4948b4a6f96ab2c736668780279a2f07",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "8e3a1872-8bff-5d58-9236-d49498baefbc",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"This is a mass-percentage / solution-concentration computation (volume \\u2192 mass via density, then mass percent \\u2192 solute mass). It is neither chemistry.molar-conversion (no moles, no molar mass, no atomic masses are involved or printed) nor chemistry.mass-balance (no chemical equation with reactants and products). Per rule 4 it must not be bent into the nearest registered type.\\n\\nTwo further points, recorded but not decisive since rule 4 already disqualifies the passage: (a) the worked example's own numeric result is not readable \\u2014 the text layer carries the set-up sentence and the flowchart/equation caption but not the computed value; the only figure in the Solution's discussion is the rough estimate \\\"about 200 g\\\" (\\\"5 40 = 200 g\\\"), which the passage itself labels an estimate, not the result. (b) \\\"282 mL\\\" after Answer: belongs to the Check Your Learning question (what volume contains 125 g of HCl?), a different question from the worked example's givens, so per rule 2 it must not be attached to those givens.\\n\\nNo atomic masses are printed anywhere in the passage.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Example 3.23 (Section 3.4, p. 156): given a 37.2% (by mass) HCl aqueous solution of density 1.19 g/mL, find the mass of HCl contained in 0.500 L of the solution.\"}",
+  "structured_output": {
+   "statement": "Example 3.23 (Section 3.4, p. 156): given a 37.2% (by mass) HCl aqueous solution of density 1.19 g/mL, find the mass of HCl contained in 0.500 L of the solution.",
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "problem_type": "",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "This is a mass-percentage / solution-concentration computation (volume → mass via density, then mass percent → solute mass). It is neither chemistry.molar-conversion (no moles, no molar mass, no atomic masses are involved or printed) nor chemistry.mass-balance (no chemical equation with reactants and products). Per rule 4 it must not be bent into the nearest registered type.\n\nTwo further points, recorded but not decisive since rule 4 already disqualifies the passage: (a) the worked example's own numeric result is not readable — the text layer carries the set-up sentence and the flowchart/equation caption but not the computed value; the only figure in the Solution's discussion is the rough estimate \"about 200 g\" (\"5 40 = 200 g\"), which the passage itself labels an estimate, not the result. (b) \"282 mL\" after Answer: belongs to the Check Your Learning question (what volume contains 125 g of HCl?), a different question from the worked example's givens, so per rule 2 it must not be attached to those givens.\n\nNo atomic masses are printed anywhere in the passage."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 930,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 13387.304341000345,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

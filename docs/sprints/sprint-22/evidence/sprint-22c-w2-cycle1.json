@@ -1,0 +1,765 @@
+{
+ "citations": {
+  "all_chains_resolve": true,
+  "artifacts_walked": 1,
+  "per_artifact": {
+   "ch2-solving-for-displacement-when-average-velocity-and-time-are-known": {
+    "chain_resolves": true,
+    "hops": [
+     {
+      "artifact_id": "500a8b7c-485f-4856-91d7-a82dfad8a1e6",
+      "declared_hash": "783344c736e34241359f6e07c7806abb69c4e41096a0d79fe6b531193cfadbf3",
+      "hop": "memory_provenance -> artifact_bytes",
+      "loaded_bytes": 708,
+      "loaded_hash": "783344c736e34241359f6e07c7806abb69c4e41096a0d79fe6b531193cfadbf3",
+      "resolves": true
+     },
+     {
+      "canonical_content_hash": "783344c736e34241359f6e07c7806abb69c4e41096a0d79fe6b531193cfadbf3",
+      "corpus_item_id": "b0ae1379-40e5-5ef3-8309-dc1f48f1ee79",
+      "hop": "artifact -> corpus_item",
+      "resolves": true
+     },
+     {
+      "hop": "corpus_item -> source_manifest",
+      "resolves": true,
+      "source_manifest_id": "962c8d59-8841-5099-b829-8e2c40b56e8a"
+     },
+     {
+      "hop": "source_manifest -> registered_source_bytes",
+      "resolves": true,
+      "segment_content_hash": "783344c736e34241359f6e07c7806abb69c4e41096a0d79fe6b531193cfadbf3"
+     }
+    ]
+   }
+  },
+  "promoted_artifacts": 1,
+  "sampled": false,
+  "walk_covers_every_promoted_artifact": true
+ },
+ "compile": {
+  "records": 1
+ },
+ "cross_check": {
+  "accepted": 1,
+  "cases": 18,
+  "per_segment": {
+   "ch2-calculating-average-speed": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "ch2-calculating-average-velocity": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "ch2-calculating-distance-and-displacement": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "ch2-solving-for-displacement-when-average-velocity-and-time-are-known": {
+    "accepted": true,
+    "as_expected": true,
+    "asserted": {
+     "exact_value": "110.4",
+     "units": "m"
+    },
+    "assertion_agrees_with_kernel": true,
+    "derivation_accepted": true,
+    "domain_id": "engineering.mechanics",
+    "expected_accepted": true,
+    "message": "",
+    "problem_type": "mechanics.uniform-motion",
+    "refused_before_solving": false,
+    "verifier_status": "passed"
+   },
+   "ch2-solving-for-time-when-displacement-and-average-velocity-are-known": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "ch2-using-curvy-velocity-graph-to-calculate-some-stuff-jet-car-take-two": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "ch2-using-position-time-graph-to-calculate-average-velocity-jet-car": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "ch2-using-position-time-graph-to-calculate-average-velocity-jet-car-take-two": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "ch2-using-velocity-graph-to-calculate-some-stuff-jet-car": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "ch4-an-accelerating-equipment-cart": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "ch4-what-acceleration-can-a-person-produce-when-pushing-a-lawn-mower": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "ch4-what-rocket-thrust-accelerates-this-sled": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "ch6-angle-of-rotation-at-a-clock-tower": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "ch6-calculating-the-time-for-a-fishing-reel-to-stop-spinning": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "ch6-calculating-the-torque-on-a-merry-go-round": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "engineering.mechanics",
+    "expected_accepted": false,
+    "message": "ToolPlaneError: invalid_derivation: forces: expected a non-empty list of placed forces",
+    "problem_type": "mechanics.moment-balance",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "ch6-comparing-centripetal-acceleration-of-a-car-rounding-a-curve-with-acceleration-due-to": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "ch6-frictional-force-on-car-tires-rounding-a-curve": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   },
+   "ch6-how-fast-does-a-car-tire-spin": {
+    "accepted": false,
+    "as_expected": true,
+    "asserted": {},
+    "assertion_agrees_with_kernel": false,
+    "derivation_accepted": false,
+    "domain_id": "unregistered",
+    "expected_accepted": false,
+    "message": "UnsupportedProblemType: ",
+    "problem_type": "",
+    "refused_before_solving": true,
+    "verifier_status": "not_reached"
+   }
+  },
+  "provider_and_kernel_agreed": true
+ },
+ "cycle": 1,
+ "decides_an_exit_criterion": false,
+ "evaluate": {
+  "all_retained_cases_passed": true,
+  "cases_executed": 1,
+  "cases_passed": 1,
+  "domains_enumerated": 6,
+  "domains_with_retained_cases": 1,
+  "enumeration_source": "registry.domain_ids()",
+  "per_domain": {
+   "coding": {
+    "cases": 0,
+    "passed": 0,
+    "rate": null
+   },
+   "engineering.mechanics": {
+    "cases": 1,
+    "passed": 1,
+    "rate": 1.0
+   },
+   "logic": {
+    "cases": 0,
+    "passed": 0,
+    "rate": null
+   },
+   "mathematics": {
+    "cases": 0,
+    "passed": 0,
+    "rate": null
+   },
+   "physics": {
+    "cases": 0,
+    "passed": 0,
+    "rate": null
+   },
+   "science.chemistry": {
+    "cases": 0,
+    "passed": 0,
+    "rate": null
+   }
+  },
+  "source_leakage": {
+   "curriculum_segments": 18,
+   "holdout_store_env": [
+    "COGOS_HOLDOUT_DATABASE_URL"
+   ],
+   "holdouts": 1,
+   "leakage_detected": false,
+   "overlaps": {}
+  }
+ },
+ "extraction": {
+  "every_answer_came_from_a_sealed_proposal": true,
+  "origin_provider": [
+   "claude-code"
+  ],
+  "prompt_template": "s22c-w2-formalise-worked-example@1",
+  "provider_calls_this_run": 0,
+  "receipts": {
+   "ch2-calculating-average-speed": {
+    "normalized_response_hash": "4bb8fd52cedaed4b37cce831d7663e15ce9fbf048cf73eeada86b819900eabf8",
+    "receipt": "provider-output:fe74580d-bab6-50c1-b4d6-36adb4c36bc8",
+    "request_hash": "fcd19252e62307c6ecb1f47fcfe305e521f88c865e449ac86e162a297c22f67b",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "967550ce0288a7a42dafd87647723f4995bd2d68f13e9b1fdb3efa45d384eb91"
+   },
+   "ch2-calculating-average-velocity": {
+    "normalized_response_hash": "2b7b835be54e870fdffce11ed4817f30cd4c16cbe6c2b478ef03015f950068f9",
+    "receipt": "provider-output:9af9dfa2-026c-56d2-8970-dec557cc6d2c",
+    "request_hash": "c67db8839346b684a5bac5b5baa6700ec81cb2c1e6be491bf7c24d873f850fe9",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "f57030685b8591b9660f00847547114965189c8d29c85b34d98e7808cacc221f"
+   },
+   "ch2-calculating-distance-and-displacement": {
+    "normalized_response_hash": "093dc808ad6120994d3af213b2bf2ff2d3f52fce158608d0525aafd7b756fed1",
+    "receipt": "provider-output:45a8359f-d825-5cc7-8a37-5d54df61a825",
+    "request_hash": "5c016d9db451352a387e9d4657db79e7e6a78b1fda3901872d56107af3e70fb7",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "e83ec83538cf4cbbf5ca988eacbb54e4f0cd1614fc7d979a21715421098bfa7f"
+   },
+   "ch2-solving-for-displacement-when-average-velocity-and-time-are-known": {
+    "normalized_response_hash": "afc93eb6d7c7d7c819688ecd0c6d7e8d07a4f178dfcae3b1673d2fd09103e8e5",
+    "receipt": "provider-output:8f8f6cf7-1156-53ed-ba0d-6a47ab84af06",
+    "request_hash": "0111ae7b0fae97542dc71413d23e6b8091228222e267d018417293a3499fd993",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "28124c9f97ff08ffe00a57e2de1558509405cdaa0e24e8cc46151a6ffedf8a6a"
+   },
+   "ch2-solving-for-time-when-displacement-and-average-velocity-are-known": {
+    "normalized_response_hash": "bbdfe451d78256437bb433df855137a4228dfa505973cf2f822babe86222a54b",
+    "receipt": "provider-output:f142aca6-85c5-5b0b-bd8b-954c2de4b8e3",
+    "request_hash": "16126ccc1c5e76af2984b8dbb53bb5e97e9fe4ddacc60a3317d3f3806c91e0e8",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "c16b771ea588da49d49ae62d64ebe0577e9c5a693974136e259c39fdcaa1b959"
+   },
+   "ch2-using-curvy-velocity-graph-to-calculate-some-stuff-jet-car-take-two": {
+    "normalized_response_hash": "8cc40a2c028a696b0517aa172c44b008838dbf02274aa4c570aca7d7fece5005",
+    "receipt": "provider-output:2518d50e-45ea-5c28-9954-d85f2a30ea90",
+    "request_hash": "ac95ec3491df619fdd08201a69bbfb6e76c38a055c1a34e9904f50c231e468e6",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "974b012971f9ed27ee6bc267dcb13bc8eb69565608c40ea0ca147cf6b5b9c4e0"
+   },
+   "ch2-using-position-time-graph-to-calculate-average-velocity-jet-car": {
+    "normalized_response_hash": "178b661f729b29e016d2de8d27f5ad03840219aa79a6b215537bfc126e7cf04e",
+    "receipt": "provider-output:42126857-2fc5-5616-8038-e22f8050cdf7",
+    "request_hash": "304cb69d4603879f3da81e304829c0e3f322beae56f3160e3ae9929ac06c49a7",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "3afd99189eb169e9e41102df90b707435f39865d2b5844cc1dcba338e52322b3"
+   },
+   "ch2-using-position-time-graph-to-calculate-average-velocity-jet-car-take-two": {
+    "normalized_response_hash": "ad4652985afb8f6e98762dc8b880c2a8d51547582bd1469fdf478e92812b3e62",
+    "receipt": "provider-output:3a31655e-8d88-504e-b951-7795740ced46",
+    "request_hash": "8cb803c2b9c2e35f134bb46e6b3ff9d1b2898700f86937f7ecc2d4758059fc7a",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "02621183d7e3146b1d858f4afbfdfec584036c814db73789fd9749e36bec393b"
+   },
+   "ch2-using-velocity-graph-to-calculate-some-stuff-jet-car": {
+    "normalized_response_hash": "ca2aef0a3767a9517247b1b077d47e068f138db8bd6cf67b099c47ac84638cc6",
+    "receipt": "provider-output:279f06d4-efdd-5999-a8f1-78e0a7682e4d",
+    "request_hash": "4a8188da91550cb7928a53e91c578cf532d29b6ee745c7cedb59442e24e4d2d5",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "c858d9d29f05eff426ccb9331ba84a6399924d02cfb26b6dc455c41d6d2e44cc"
+   },
+   "ch4-an-accelerating-equipment-cart": {
+    "normalized_response_hash": "c69e8e4dd4f693f082bf5016983cdb1403eaee88b2ab39c51fae710ff4082930",
+    "receipt": "provider-output:c7b86f72-64d5-5bcf-b6df-fed18eed648a",
+    "request_hash": "aa1e253c6729555f2e49e7daf9277712aa612ab633394a68b7f38f15ff8ec627",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "6a8705b8905de0fd7ff144cce5013e5c8ac09f5e5b3f23243e19d500e0117873"
+   },
+   "ch4-what-acceleration-can-a-person-produce-when-pushing-a-lawn-mower": {
+    "normalized_response_hash": "903325b8d87bfb6d6bfbb905fe89736bc2bd1cdcf1e60b8acc380a55ddb739ee",
+    "receipt": "provider-output:a292a9eb-4400-504c-92bc-2916e04d8bbb",
+    "request_hash": "d5a6bb095c6a97a630d6145e2b3ebccb5c4a9270e11eb3796bcc5ffd29a6ddaa",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "c082725ae7e0798fde55d1b7b4bc814cefcbb0c4601df59fd162c3159e8df431"
+   },
+   "ch4-what-rocket-thrust-accelerates-this-sled": {
+    "normalized_response_hash": "500fb24c44873c848c9eb1f746cc59171b6d3b2f55b793530d09a6c4a0456378",
+    "receipt": "provider-output:eec25034-6b60-512f-b541-03d9b7243f65",
+    "request_hash": "6f8d1392362b1248684c36acb754697bdcc7f80cce41a5ab9144ddc17f5e6634",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "eee4f087507344256e0b7247df453a2434387f16c25a3c6bfc26f1f55cfbc5a9"
+   },
+   "ch6-angle-of-rotation-at-a-clock-tower": {
+    "normalized_response_hash": "49332afaf1d0242a3526b66b8c1def0b109c879a7afd6b1afdb19a7273845a8a",
+    "receipt": "provider-output:184a6a25-e36b-5249-b920-f13c97f0e523",
+    "request_hash": "35e772117f62df5b509c4670f540c4b953f50d9a0dbbaf5e2a2a1536007e1485",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "1892bbbb582d9db9fcc480faae2773bec77a77dd681a1e20229107fa5a723153"
+   },
+   "ch6-calculating-the-time-for-a-fishing-reel-to-stop-spinning": {
+    "normalized_response_hash": "b34b263cb066f92c68ebeb5b875ef1e81b9bede726cc27234b03990e1cc7115a",
+    "receipt": "provider-output:04977ca7-7e03-541e-95f5-89234cacc388",
+    "request_hash": "33bc5f2f9cf4b6191133d896019028dcb2ea3b578a92f4504cbc7ab9e58f2ea2",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "40f382375eb79da9da1077f4ae6a1f34d5fa809c7c946f641e62321437381565"
+   },
+   "ch6-calculating-the-torque-on-a-merry-go-round": {
+    "normalized_response_hash": "008d145ec607bed116cf5151d69db1106693de4d0b3d5829f95c90f298fc5732",
+    "receipt": "provider-output:61d9bf7e-250f-5b5d-9b8c-9e7cbac4cc19",
+    "request_hash": "6438dc840e3eba1538bd9ef1b6dffd0043281002bb89eed0a7ed85b8daa0a800",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "cb931a84d32e3847943503ee364fa282920d91e4302b4e4b261857e5f781698c"
+   },
+   "ch6-comparing-centripetal-acceleration-of-a-car-rounding-a-curve-with-acceleration-due-to": {
+    "normalized_response_hash": "bd346939c90518b18ddf57be1508fc558f1e46f621bc4ce083ac90045bb47eb6",
+    "receipt": "provider-output:7a19fa0d-d23f-502e-9ffc-5844decdb98b",
+    "request_hash": "7c5d3d3e8f48021f37f19bdf803fbc83e5f9e54fa97c0afe44096c32221d5de7",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "8b711f39f394a7fd0a32fe786f2abfe662d840d4d27d8dfe6564419b27076bf2"
+   },
+   "ch6-frictional-force-on-car-tires-rounding-a-curve": {
+    "normalized_response_hash": "8fd28c4f8ff42adbc0afc1be12b2d6c813251386b0b0f9d1c74af1a960c9a712",
+    "receipt": "provider-output:19c85c9c-fd36-55fa-9358-353d456aa4e0",
+    "request_hash": "d58e67a1173eb1ca11ebc9a42535e314ebd1356eba32db7591c695723706d631",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "9d602e4b17913a9734083c8b5f5457cb5918c62778d7831b1e1b31564e9a9cce"
+   },
+   "ch6-how-fast-does-a-car-tire-spin": {
+    "normalized_response_hash": "28fd82a072f5b670badb4676307fa232c114d57cf34e55061dc14462e05cb7fb",
+    "receipt": "provider-output:cd8da856-b67a-5011-955b-5c49deda1f99",
+    "request_hash": "3b455adaede7f93b01b545993a2d3d879a156a57fbda2b75762d31e902517fa8",
+    "retention_mode": "normalized_content",
+    "rights_decision": "verified",
+    "sealed_fixture_sha256": "444e3c88d09ba8fd6b6c64d454bafac8f865e3acb0c17c645ed392574f066c36"
+   }
+  },
+  "replayed_through_the_released_provider_path": true
+ },
+ "integrity_content_hash": "a5383c8bba85b7538ea9aca8190ca6f0c65bd8e0adfae740788075ef74054ae1",
+ "items": [
+  "S22C-041",
+  "S22C-042"
+ ],
+ "limitations": [
+  "one cycle of three. The replay exit reads three, and forgetting is a delta across them",
+  "one domain. Chemistry is a separate campaign with its own lineage, and the improvement exit runs against chemistry holdout cases this campaign never sees",
+  "the Tool Plane's solve and verify events are in-memory, so the cross-check and replay legs of this cycle left no durable trace (W2-F2)",
+  "the yield is this source into this domain. It is not a statement about textbooks, and §4's 'one source is one source' applies"
+ ],
+ "manifest": {
+  "campaign_id": "s22c-physics",
+  "content_hash": "16a16c2a3e5e2c353a0f4b28c5ae1b541a64b7c0c0a78d64cf3c35b4c519fa41",
+  "curriculum_segments": 18,
+  "declared_uses": [
+   "internal_use",
+   "derivative_work"
+  ],
+  "domain_ids": [
+   "engineering.mechanics"
+  ],
+  "holdout_id": "s22c-acquisition-holdout-v1",
+  "holdout_measured_values": 0,
+  "providers": [
+   "claude-code"
+  ],
+  "revision": 2,
+  "rights_content_hash": "c17105036c50e725f0bc2e4da2c24dffcff68a3dcb7cab93fa0fc7bebce1008f"
+ },
+ "observe": {
+  "count": 8,
+  "event_types": [
+   "memory.item_created",
+   "semantic.claim_belief_changed",
+   "semantic.claim_created",
+   "semantic.claim_promotion_decided",
+   "semantic.extraction_completed",
+   "semantic.observation_recorded",
+   "verifier.completed",
+   "verifier.started"
+  ]
+ },
+ "promote": {
+  "count": 1,
+  "promoted": [
+   "ch2-solving-for-displacement-when-average-velocity-and-time-are-known"
+  ]
+ },
+ "quarantine": {
+  "count": 17,
+  "quarantined": {
+   "ch2-calculating-average-speed": "unverifiable_provider_data",
+   "ch2-calculating-average-velocity": "unverifiable_provider_data",
+   "ch2-calculating-distance-and-displacement": "unverifiable_provider_data",
+   "ch2-solving-for-time-when-displacement-and-average-velocity-are-known": "unverifiable_provider_data",
+   "ch2-using-curvy-velocity-graph-to-calculate-some-stuff-jet-car-take-two": "unverifiable_provider_data",
+   "ch2-using-position-time-graph-to-calculate-average-velocity-jet-car": "unverifiable_provider_data",
+   "ch2-using-position-time-graph-to-calculate-average-velocity-jet-car-take-two": "unverifiable_provider_data",
+   "ch2-using-velocity-graph-to-calculate-some-stuff-jet-car": "unverifiable_provider_data",
+   "ch4-an-accelerating-equipment-cart": "unverifiable_provider_data",
+   "ch4-what-acceleration-can-a-person-produce-when-pushing-a-lawn-mower": "unverifiable_provider_data",
+   "ch4-what-rocket-thrust-accelerates-this-sled": "unverifiable_provider_data",
+   "ch6-angle-of-rotation-at-a-clock-tower": "unverifiable_provider_data",
+   "ch6-calculating-the-time-for-a-fishing-reel-to-stop-spinning": "unverifiable_provider_data",
+   "ch6-calculating-the-torque-on-a-merry-go-round": "unverifiable_provider_data",
+   "ch6-comparing-centripetal-acceleration-of-a-car-rounding-a-curve-with-acceleration-due-to": "unverifiable_provider_data",
+   "ch6-frictional-force-on-car-tires-rounding-a-curve": "unverifiable_provider_data",
+   "ch6-how-fast-does-a-car-tire-spin": "unverifiable_provider_data"
+  }
+ },
+ "recorded_at": "2026-08-15T09:28:27Z",
+ "register_source": {
+  "items": 18,
+  "license_status": [
+   "approved"
+  ],
+  "source_manifest_hash": "ac4674b674ae91db9b5e9243553a6b3541deaabf0e74cd24c0ff80949e5fa6cc",
+  "source_manifest_id": "962c8d59-8841-5099-b829-8e2c40b56e8a"
+ },
+ "retained_cases": {
+  "campaign_id": "s22c-physics",
+  "cases": [
+   {
+    "asserted": {
+     "exact_value": "110.4",
+     "units": "m"
+    },
+    "case_id": "ch2-solving-for-displacement-when-average-velocity-and-time-are-known",
+    "claim_id": "a9cdd2b8-e0a2-59af-93cf-055e4cee0922",
+    "domain_id": "engineering.mechanics",
+    "formal_inputs": {
+     "result_unit": "m",
+     "speed": {
+      "magnitude": "2.4",
+      "unit": "m/s"
+     },
+     "time": {
+      "magnitude": "46",
+      "unit": "s"
+     }
+    },
+    "problem_type": "mechanics.uniform-motion",
+    "retained_by_cycle": 1,
+    "source_segment_hash": "783344c736e34241359f6e07c7806abb69c4e41096a0d79fe6b531193cfadbf3"
+   }
+  ],
+  "count": 1,
+  "integrity_content_hash": "f22358e4a293661b0240806ad277002da814a5808a73a44e146a0b97611475d6",
+  "items": [
+   "S22C-041"
+  ],
+  "manifest_revision": 2,
+  "read_by": "the replay stage of every later cycle (§2.2a); a domain with no retained case is reported with cases: 0 rather than omitted",
+  "schema_version": 1,
+  "sprint": "22C",
+  "wave": "W2"
+ },
+ "schema_version": 1,
+ "sprint": "22C",
+ "stages": {
+  "all_nine_in_order": true,
+  "completed": [
+   "register_source",
+   "extract",
+   "normalize",
+   "cross_check",
+   "quarantine",
+   "compile",
+   "evaluate",
+   "promote",
+   "observe"
+  ],
+  "count": 9,
+  "enumerated": [
+   "register_source",
+   "extract",
+   "normalize",
+   "cross_check",
+   "quarantine",
+   "compile",
+   "evaluate",
+   "promote",
+   "observe"
+  ]
+ },
+ "store": {
+  "artifact_root_is_configured": true,
+  "database": "cognitive_os_s22c_campaign",
+  "kind": "postgresql",
+  "tool_plane_events": "in-memory only — the released descriptor runner takes a MemoryEventStore by type (W2-F2)"
+ },
+ "subject_rule": {
+  "distinct_subjects_under_the_fixture_rule": 1,
+  "distinct_subjects_under_this_rule": 1,
+  "exercised_by_this_cycle": false,
+  "formalised_segments": 1,
+  "rule_used_by_the_w0_fixture": "mechanics:<topic> — the topic is the subject",
+  "rule_used_by_this_cycle": "mechanics:<passage_id> — the worked example is the subject",
+  "segments_that_would_have_collided": 0,
+  "topics_with_more_than_one_worked_example": {},
+  "why_the_rule_changed_anyway": "the campaign predicate is FUNCTIONAL, so two claims on one subject over overlapping validity are a deterministic contradiction by the released detector's own rule. Under the fixture's subject every genuine worked example of a topic would deny promotion to every other one — W0-F3's shape, one layer on. Cycle 1 formalised one segment, so the collision is latent here and the record says so rather than claiming a defect it did not observe"
+ },
+ "supersession": {
+  "event_stream": {
+   "full_transition_sequence_present": true,
+   "predecessor_events": [
+    "semantic.claim_created",
+    "semantic.claim_belief_changed",
+    "semantic.claim_belief_changed"
+   ],
+   "successor_events": [
+    "semantic.claim_created",
+    "semantic.claim_belief_changed"
+   ]
+  },
+  "history_survives": {
+   "no_row_was_deleted": true,
+   "revision_1_loadable": true,
+   "revision_2_citations_still_resolve_to_loaded_bytes": true,
+   "revision_2_evidence_links": 1,
+   "revision_2_loadable": true,
+   "revision_3_loadable": true,
+   "revisions_after": 3
+  },
+  "lifecycle": {
+   "candidate_to_verified_to_superseded": [
+    "proposed",
+    "supported",
+    "superseded"
+   ],
+   "predecessor_belief_status": "superseded",
+   "predecessor_revisions": [
+    1,
+    2,
+    3
+   ],
+   "promotion": {
+    "activated_revision": 2,
+    "decision_id": "397b954b-569c-5df8-8711-2af7f03e4a64",
+    "outcome": "supported",
+    "reason_codes": [
+     "required_verifiers_passed"
+    ]
+   },
+   "successor_belief_status": "supported"
+  },
+  "segment_id": "ch2-solving-for-displacement-when-average-velocity-and-time-are-known",
+  "the_temporal_boundary": {
+   "intervals_are_half_open_so_they_abut_without_overlapping": true,
+   "predecessor_valid_to": "2026-08-15T13:00:00Z",
+   "successor_valid_from": "2026-08-15T13:00:00Z",
+   "why_it_is_required": "the released functional detector compares current revisions and ignores belief status, so a superseded claim whose validity stayed open would contradict its own successor and the successor could never activate"
+  },
+  "verified_two_ways": {
+   "the_two_agree": true,
+   "way_one_active_view_queried": [
+    "5d344d55-857d-5b29-a389-355956e92178"
+   ],
+   "way_two_supersession_chain_walked": [
+    {
+     "relation": "supersedes",
+     "source": "5d344d55-857d-5b29-a389-355956e92178",
+     "target": "a9cdd2b8-e0a2-59af-93cf-055e4cee0922@2"
+    }
+   ]
+  },
+  "what_superseded_what": {
+   "both_cite_the_same_registered_bytes": true,
+   "predecessor_carried": "the statement the provider read out of the passage",
+   "predecessor_claim_id": "a9cdd2b8-e0a2-59af-93cf-055e4cee0922",
+   "predecessor_statement": "Layla jogs with an average velocity of 2.4 m/s east. Find her displacement after a time interval of 46 seconds.",
+   "successor_carries": "the same fact restated with the value the domain's own kernel computed and the released checker verified",
+   "successor_claim_id": "5d344d55-857d-5b29-a389-355956e92178",
+   "successor_statement": "Layla jogs with an average velocity of 2.4 m/s east. Find her displacement after a time interval of 46 seconds. [verified: the registered mechanics.uniform-motion kernel computed 552/5 m and domains.checker returned passed]",
+   "the_source_did_not_change": true
+  }
+ },
+ "wave": "W2",
+ "why_no_exit": "the exits are read once in W4 from every cycle's records. This is cycle 1 of three, and the replay, supersession and citation exits need all of them",
+ "yield": {
+  "accepted_by_the_kernel": 1,
+  "acquisition_yield": 0.055556,
+  "formalised_by_the_provider": 1,
+  "per_chapter": {
+   "2": {
+    "chosen_for": "mechanics.uniform-motion",
+    "formalised_by_the_provider": 1,
+    "promoted": 1,
+    "worked_examples": 9
+   },
+   "4": {
+    "chosen_for": "mechanics.statics-equilibrium",
+    "formalised_by_the_provider": 0,
+    "promoted": 0,
+    "worked_examples": 3
+   },
+   "6": {
+    "chosen_for": "mechanics.moment-balance",
+    "formalised_by_the_provider": 0,
+    "promoted": 0,
+    "worked_examples": 6
+   }
+  },
+  "promoted": 1,
+  "quarantined": 17,
+  "refusal_reasons": {
+   "no_readable_result": 1,
+   "no_registered_problem_type": 16
+  },
+  "worked_examples_located": 18
+ }
+}

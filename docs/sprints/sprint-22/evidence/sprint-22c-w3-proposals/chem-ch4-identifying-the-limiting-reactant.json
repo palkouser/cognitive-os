@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "44912347fdeb2fdede6d45c8c79c6c1710d9adcc13c0f727eefb45ee71d5ddbb",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "70c0e65c-0f82-509e-be2e-c1f3f894986a",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"The question asked is \\\"Which is the limiting reactant when 2.00 g of Si and 1.50 g of N2 react?\\\" \\u2014 a limiting-reactant determination, which rule 4 names explicitly as outside the two registered types. It must not be bent into a neighbouring type: the passage's incidental molar amounts (0.0712 mol Si, 0.0535 mol N2) appear only as intermediate results inside the limiting-reactant argument, are not the question's answer, and the mass\\u2192mole conversions themselves are not printed (the document's text layer has dropped every display equation, including the reaction equation, the ratio computations, and the yield computations). Likewise the reaction equation is absent from the text layer, so no mass-balance formalisation is available either, and no atomic masses are printed anywhere in the passage. The \\\"Answer: O2\\\" belongs to the Check Your Learning question (5.00 g H2 with 10.0 g O2) and is a different question from the worked example's own givens, so it is not carried in `asserted`. Nothing is asserted because the example's own result (\\\"Si is ... the limiting reactant\\\") is not expressible in either registered answer shape.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Example 4.12, \\\"Identifying the Limiting Reactant\\\" (Section 4.4 Reaction Yields, p. 196): given 2.00 g of Si and 1.50 g of N2 reacting to form silicon nitride, determine which reactant is limiting.\"}",
+  "structured_output": {
+   "statement": "Example 4.12, \"Identifying the Limiting Reactant\" (Section 4.4 Reaction Yields, p. 196): given 2.00 g of Si and 1.50 g of N2 reacting to form silicon nitride, determine which reactant is limiting.",
+   "formalisable": false,
+   "reason": "no_registered_problem_type",
+   "problem_type": "",
+   "formal_inputs": {},
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "notes": "The question asked is \"Which is the limiting reactant when 2.00 g of Si and 1.50 g of N2 react?\" — a limiting-reactant determination, which rule 4 names explicitly as outside the two registered types. It must not be bent into a neighbouring type: the passage's incidental molar amounts (0.0712 mol Si, 0.0535 mol N2) appear only as intermediate results inside the limiting-reactant argument, are not the question's answer, and the mass→mole conversions themselves are not printed (the document's text layer has dropped every display equation, including the reaction equation, the ratio computations, and the yield computations). Likewise the reaction equation is absent from the text layer, so no mass-balance formalisation is available either, and no atomic masses are printed anywhere in the passage. The \"Answer: O2\" belongs to the Check Your Learning question (5.00 g H2 with 10.0 g O2) and is a different question from the worked example's own givens, so it is not carried in `asserted`. Nothing is asserted because the example's own result (\"Si is ... the limiting reactant\") is not expressible in either registered answer shape."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 815,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 12090.100466999502,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

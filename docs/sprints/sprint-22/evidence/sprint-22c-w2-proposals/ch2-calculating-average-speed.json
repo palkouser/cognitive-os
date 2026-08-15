@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "146b93ec0bbcd6b15c84280bca9c4d47f1a6da8dc9b29716b7373752bf75611a",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "5b93c699-9df8-5d8a-b82b-992a2a8e8f89",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"The worked example solves for an average speed from a distance (5.2 m) and a time interval (1.8 s). None of the three registered types covers that. mechanics.uniform-motion is the inverse computation \\u2014 it takes a speed and a duration as given and returns a displacement in metres \\u2014 so formalising this passage as uniform-motion would require supplying a speed the passage does not state as given, and the only speed available (\\\"2.9 m/s\\\") is the passage's own answer, which rule 1 forbids as an input. Rule 4 therefore applies and I have not bent it into the nearest type.\\n\\nTwo further observations, recorded but not used as the governing reason:\\n- The \\\"Solution\\\" heading in the text layer carries no body at all: the actual computation is absent from the extracted text (likely an image or equation object). Under rule 2 alone this would already be no_readable_result.\\n- The Discussion does state \\\"2.9 m/s\\\" in readable digits, but it appears only as a check-for-reasonableness comparison, and it is a speed in m/s, which matches none of the three registered answer shapes (m, N*m, or a boolean equilibrium). The estimate \\\"2.5 m/s\\\" in the same sentence is explicitly an estimate, not a stated result, so there is no rule-3 two-precision reconciliation to perform here.\\n\\nIf a mechanics.average-speed type (distance + time -> m/s) is later registered, this passage would be formalisable with speed = 5.2 m over 1.8 s and an asserted value of \\\"2.9\\\", subject to confirming that \\\"2.9 m/s\\\" is the passage's stated result rather than an artefact of the missing Solution block.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"Section 2.2 Speed and Velocity, page 77, Worked Example \\\"Calculating Average Speed\\\": a marble rolls 5.2 m in 1.8 s; the example computes the marble's average speed. Given quantities are the distance 5.2 m and the time interval 1.8 s; the sought quantity is a speed in m/s.\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "The worked example solves for an average speed from a distance (5.2 m) and a time interval (1.8 s). None of the three registered types covers that. mechanics.uniform-motion is the inverse computation — it takes a speed and a duration as given and returns a displacement in metres — so formalising this passage as uniform-motion would require supplying a speed the passage does not state as given, and the only speed available (\"2.9 m/s\") is the passage's own answer, which rule 1 forbids as an input. Rule 4 therefore applies and I have not bent it into the nearest type.\n\nTwo further observations, recorded but not used as the governing reason:\n- The \"Solution\" heading in the text layer carries no body at all: the actual computation is absent from the extracted text (likely an image or equation object). Under rule 2 alone this would already be no_readable_result.\n- The Discussion does state \"2.9 m/s\" in readable digits, but it appears only as a check-for-reasonableness comparison, and it is a speed in m/s, which matches none of the three registered answer shapes (m, N*m, or a boolean equilibrium). The estimate \"2.5 m/s\" in the same sentence is explicitly an estimate, not a stated result, so there is no rule-3 two-precision reconciliation to perform here.\n\nIf a mechanics.average-speed type (distance + time -> m/s) is later registered, this passage would be formalisable with speed = 5.2 m over 1.8 s and an asserted value of \"2.9\", subject to confirming that \"2.9 m/s\" is the passage's stated result rather than an artefact of the missing Solution block.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "Section 2.2 Speed and Velocity, page 77, Worked Example \"Calculating Average Speed\": a marble rolls 5.2 m in 1.8 s; the example computes the marble's average speed. Given quantities are the distance 5.2 m and the time interval 1.8 s; the sought quantity is a speed in m/s."
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 1624,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 23762.195683000755,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

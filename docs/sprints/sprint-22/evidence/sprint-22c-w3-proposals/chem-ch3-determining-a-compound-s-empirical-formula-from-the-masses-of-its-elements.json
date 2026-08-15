@@ -1,0 +1,39 @@
+{
+ "fixture_version": 1,
+ "request_fingerprint": "71ba7ec96871fdd9eba47db68c5db9ecd3aaafba997bf827f8aae027cccca85a",
+ "provider_id": "replay",
+ "source_provider": "claude-code",
+ "response": {
+  "model_call_id": "b6ef271e-b6f4-5354-a071-80f72e8a41b3",
+  "provider_id": "claude-code",
+  "requested_model": "claude-code",
+  "resolved_model": "claude-code",
+  "content": "{\"asserted\":{},\"asserted_value_quoted_from_the_passage\":\"\",\"formal_inputs\":{},\"formalisable\":false,\"notes\":\"Example 3.11 asks for an empirical formula from the masses of the constituent elements (34.97 g Fe, 15.03 g O). Rule 4 lists \\\"an empirical formula\\\" explicitly as outside the two registered types, so it must not be bent into chemistry.molar-conversion (which would require a molar mass and yields an amount in moles, not a formula) or chemistry.mass-balance (there is no written equation). The passage as given also prints no result \\u2014 the Solution text and any Check Your Learning answer are not in the supplied text layer \\u2014 so there is nothing to place in `asserted` even if a type had fitted; the primary and reported reason remains that no registered problem type applies. No atomic masses are printed either.\",\"problem_type\":\"\",\"reason\":\"no_registered_problem_type\",\"statement\":\"A sample of the black mineral hematite (Figure 3.12), an oxide of iron found in many iron ores, contains 34.97 g of iron and 15.03 g of oxygen. What is the empirical formula of hematite?\"}",
+  "structured_output": {
+   "asserted": {},
+   "asserted_value_quoted_from_the_passage": "",
+   "formal_inputs": {},
+   "formalisable": false,
+   "notes": "Example 3.11 asks for an empirical formula from the masses of the constituent elements (34.97 g Fe, 15.03 g O). Rule 4 lists \"an empirical formula\" explicitly as outside the two registered types, so it must not be bent into chemistry.molar-conversion (which would require a molar mass and yields an amount in moles, not a formula) or chemistry.mass-balance (there is no written equation). The passage as given also prints no result — the Solution text and any Check Your Learning answer are not in the supplied text layer — so there is nothing to place in `asserted` even if a type had fitted; the primary and reported reason remains that no registered problem type applies. No atomic masses are printed either.",
+   "problem_type": "",
+   "reason": "no_registered_problem_type",
+   "statement": "A sample of the black mineral hematite (Figure 3.12), an oxide of iron found in many iron ores, contains 34.97 g of iron and 15.03 g of oxygen. What is the empirical formula of hematite?"
+  },
+  "tool_calls": [],
+  "finish_reason": "completed",
+  "usage": {
+   "input_tokens": 2,
+   "output_tokens": 710,
+   "total_tokens": null,
+   "cached_input_tokens": null,
+   "reasoning_tokens": null
+  },
+  "latency_ms": 10316.444935000618,
+  "provider_request_id": null,
+  "warnings": [
+   "cost metadata was reported by Claude Code",
+   "the advisory call used more than one turn"
+  ]
+ },
+ "stream_events": []
+}

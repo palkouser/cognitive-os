@@ -1,0 +1,38 @@
+{
+ "campaign_id": "s22c-physics",
+ "cases": [
+  {
+   "asserted": {
+    "exact_value": "110.4",
+    "units": "m"
+   },
+   "case_id": "ch2-solving-for-displacement-when-average-velocity-and-time-are-known",
+   "claim_id": "a9cdd2b8-e0a2-59af-93cf-055e4cee0922",
+   "domain_id": "engineering.mechanics",
+   "formal_inputs": {
+    "result_unit": "m",
+    "speed": {
+     "magnitude": "2.4",
+     "unit": "m/s"
+    },
+    "time": {
+     "magnitude": "46",
+     "unit": "s"
+    }
+   },
+   "problem_type": "mechanics.uniform-motion",
+   "retained_by_cycle": 1,
+   "source_segment_hash": "783344c736e34241359f6e07c7806abb69c4e41096a0d79fe6b531193cfadbf3"
+  }
+ ],
+ "count": 1,
+ "integrity_content_hash": "f22358e4a293661b0240806ad277002da814a5808a73a44e146a0b97611475d6",
+ "items": [
+  "S22C-041"
+ ],
+ "manifest_revision": 2,
+ "read_by": "the replay stage of every later cycle (§2.2a); a domain with no retained case is reported with cases: 0 rather than omitted",
+ "schema_version": 1,
+ "sprint": "22C",
+ "wave": "W2"
+}
