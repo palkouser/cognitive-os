@@ -36,6 +36,20 @@ answered, so this wave is **three answerers**, not a second runner.
 is awaitable — so an arm reaching an async governed boundary and an arm reading an index can be
 the same kind of thing to one runner. Two runners would have been two sets of accounting.
 
+### A deviation from the plan's ordering, and why it did not cost anything
+
+§3's W2 row says the external arm "runs before the local microbenchmark so that the
+no-external-call construction is never weakened to accommodate it". **It ran third**, because it
+waited on a credential and then on two provider decisions, and the two local arms were reachable
+meanwhile. Recorded rather than glossed: a plan that names an order is owed either compliance or
+a reason.
+
+The reason it cost nothing is that the construction is not an ordering. `run_arm` raises
+`ExternalProviderRefused` the moment a non-external arm reports a provider call, and that refusal
+is executed in a test rather than trusted — so no local arm *could* have been quietly widened to
+accommodate the third one, whenever it ran. Had the construction been an audit of what happened,
+the order would have mattered exactly as much as §3 implies.
+
 ### W2-F1 — the union member W0-F3 asked for is out of this sprint's scope
 
 W0-F3 said W2 must add "a `LocalApiProviderConfig` member of the discriminated provider union".
