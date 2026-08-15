@@ -10,7 +10,7 @@ Waves are recorded newest first.
 
 ---
 
-## Gate closure — the two blocking dependencies, and the three things that would have let them shut
+## Gate closure — the two blocking dependencies, and the four things that would have let them shut
 
 W0 finished around two gates rather than through them, named an owner on each, and left
 `w2_may_proceed: false`. This is not a wave in the plan; it is the work that turns that flag
@@ -24,7 +24,7 @@ over, and it is recorded because closing a gate honestly turned out to be most o
 | the runtime gate | conclude only on a runtime that serves | **GC-F2**, it concluded on `PATH` |
 | the first real local call | §1.2's seam, executed | **GC-F3**, the model returned nothing and the mapping was content with it |
 | preflight | re-read, both gates concluded | **`w2_may_proceed: true`**, `invariants_hash` unmoved |
-| tests | gate-closure evidence | **29 passed** |
+| tests | gate-closure evidence, portable | **30, verified with the weights hidden and `PATH` stripped** |
 
 **Nothing under `src/` was touched.** The clearance is a released contract, the advisory is a
 released list and the wire mapping is a released module; the two gate repairs are in this
@@ -128,6 +128,38 @@ pinned flag with no reason attached is one the next person removes.
 > **Generalisable: a model that produces nothing is not the same event as a model that produces
 > a wrong answer, and a normalizer that reads one field cannot tell them apart.** Assert on the
 > content, not on the call succeeding.
+
+### GC-F4 — three tests that could only be green on one machine
+
+The first CI run on this head failed, and every failure was a test written against *this host*
+rather than against the claim it was supposed to make — in the same change whose driver
+docstring says a check that can only pass in one place has stopped saying anything.
+
+- one asserted `llama-server` is genuinely on `PATH`, which is true here and false everywhere
+  else. Worse than a red build: on any other machine the gate would have refused for the wrong
+  reason and the defect replay would have passed **vacuously**, which is 22A W4-F2 with the
+  colours reversed;
+- one recomputed `invariants_hash` from the running machine and compared it against the sealed
+  record. `invariants_hash` binds the *declared* host, so recomputing it elsewhere asks whether
+  the reader is the writer — a different question, and one that always answers no;
+- one exercised a refusal that sits *behind* the refusal for absent weights, so where the 6.7 GB
+  file is not on disk the driver refused first and for something else.
+
+Repaired as three different things, because they are three different mistakes. `PATH` is now
+**simulated** with a stub so the replay is meaningful on every host; the invariants claim is a
+comparison of two **recorded** values against W0's pinned hash; and the ordering-dependent
+refusal carries the `_NEEDS_WEIGHTS` skip the repository already uses for the cleared sources —
+losing nothing, because the same rule is asserted host-independently against the preflight gate.
+A second gate test was added so the runtime gate is now watched saying **yes** as well as no.
+
+Then the fix was verified the way it should have been written: the suite was re-run with the
+weight file moved aside and `PATH` stripped of the symlink — **28 passed, 2 skipped** — before
+anything was pushed.
+
+> **Generalisable: a test asserting a fact about the machine it runs on is not testing the
+> code.** Simulate the environment the rule reads; pin recorded values rather than recomputing
+> host state; and where an ordering genuinely needs a local artefact, skip explicitly rather
+> than letting an earlier refusal answer for a later one.
 
 ### Evidence
 

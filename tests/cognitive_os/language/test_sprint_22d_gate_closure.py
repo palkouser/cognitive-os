@@ -194,9 +194,15 @@ def test_a_clearance_without_its_evidence_bytes_is_refused(
         build_clearance()
 
 
+@_NEEDS_WEIGHTS
 def test_a_determination_that_permits_nothing_usable_is_refused(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    """Needs the weights, because the refusal it is about comes after the one for their absence.
+
+    The same rule is asserted host-independently against the preflight gate below, so nothing
+    goes unchecked where the 6.7 GB file is not on disk — only this driver-level ordering does.
+    """
     monkeypatch.setitem(DETERMINATION, "permitted_uses", (CorpusUsageRight.BENCHMARK_USE,))
     with pytest.raises(ClearanceRefused, match="internal use"):
         build_clearance()
@@ -297,12 +303,29 @@ def test_an_undecided_determination_cannot_be_constructed_at_all() -> None:
 def test_the_runtime_gate_is_not_satisfied_by_a_binary_on_path(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
-    """The other defect, replayed — and the reason the symlink alone was not the answer."""
+    """The other defect, replayed — and the reason the symlink alone was not the answer.
+
+    `PATH` is *simulated* rather than read. Asserting that `llama-server` is genuinely
+    installed would make this pass only on the host that has it, and everywhere else the
+    gate would refuse for the wrong reason and the replay would prove nothing — a test that
+    is green in one place and vacuous in every other is the shape 22A W4-F2 warns about.
+    """
+    monkeypatch.setattr(preflight_22d.shutil, "which", lambda name: f"/simulated/bin/{name}")
     monkeypatch.setattr(preflight_22d, "RUNTIME_PROOF", tmp_path / "absent.json")
     runtime = preflight_22d._local_runtime()
-    assert runtime["serving_runtime_installed"] is True, "llama-server is genuinely on PATH"
+    assert runtime["serving_runtime_installed"] is True
     assert runtime["serving_runtime_available"] is False
     assert runtime["serving_runtime_proved"]["serve_proof_mapped"] is False
+
+
+def test_the_runtime_gate_is_satisfied_when_the_proof_is_there(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The other half, so the gate is known to say yes as well as no."""
+    monkeypatch.setattr(preflight_22d.shutil, "which", lambda name: f"/simulated/bin/{name}")
+    runtime = preflight_22d._local_runtime()
+    assert runtime["serving_runtime_available"] is True
+    assert runtime["serving_runtime_proved"]["sealed"] is True
 
 
 def test_an_unsealed_serving_proof_does_not_conclude_the_runtime_gate(
@@ -422,14 +445,21 @@ def test_both_blocking_dependencies_are_closed_and_w2_may_proceed() -> None:
     assert record["local_runtime"]["serving_runtime_available"] is True
 
 
+#: What W0 sealed for this host, before either gate closed. Pinned so the claim below is a
+#: comparison of two *recorded* values rather than a recomputation: `invariants_hash` binds the
+#: declared host, and a CI runner is not that host — recomputing it there compares the machine
+#: reading the record against the machine that wrote it, which is a different question and one
+#: that always answers no.
+W0_INVARIANTS_HASH = "122bcd4066feb3c3c4a4b444548afccbeac5d1b5add77336a1dd318cd83c24cd"
+
+
 def test_the_host_invariants_did_not_move_when_the_gates_closed() -> None:
     """Closing a gate is a change in the world, not in the declared host.
 
     22B's S22B-002 split is what makes the reseal honest: `invariants_hash` is over the CPU,
     the GPU, the platform and the Python version, and none of them had any business changing
-    because a person made a decision.
+    because a person made a decision. The preflight record's own hash moved and this one did
+    not, which is the pair of facts that says the reseal recorded a decision and not a host.
     """
     record = _load(PREFLIGHT)
-    assert record["invariants_hash"] == preflight_22d._sha256(
-        canonical(preflight_22d._invariants())
-    )
+    assert record["invariants_hash"] == W0_INVARIANTS_HASH
