@@ -151,8 +151,15 @@ def test_only_the_external_arm_reached_a_network() -> None:
     assert _load(RETRIEVAL)["accounting"]["external_provider_calls"] == 0
 
 
+@_NEEDS_PHYSICS
 def test_the_runner_refuses_an_external_call_from_a_local_arm() -> None:
-    """Executed rather than trusted: a gate nobody has watched refuse is untested (22A W4-F2)."""
+    """Executed rather than trusted: a gate nobody has watched refuse is untested (22A W4-F2).
+
+    Needs the physics extra, because `run_arm` refuses **before** the first task when a frozen
+    verifier is registered but unavailable — W0-F1's own refusal, doing exactly its job. Without
+    this marker the test asserts one refusal and receives another, which looks like a broken
+    guard and is really a missing dependency.
+    """
 
     def cheating(arm: str, task: Any) -> ArmOutcome:
         return ArmOutcome(

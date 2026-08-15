@@ -143,6 +143,23 @@ tasks.** Every one of the thirty factual outputs is therefore an ungrounded asse
 arms. §2.2(d) reads that count being zero, so W2 establishes where W3 starts: **thirty, twice**,
 and only the retrieval arm — which answers from a span or not at all — is at zero today.
 
+### W2-F5 — the same portability lesson, a third variant, and it cost a red CI again
+
+GC-F4 taught that a test asserting a fact about the machine it runs on is not testing the code,
+and the pre-push check that came out of it hid the weights and stripped `PATH`. **It did not
+remove the optional extra.** One W2 test drives `run_arm`, which refuses *before* the first task
+when a frozen verifier is registered but unavailable — W0-F1's own refusal, working exactly as
+designed. In the CI test lane, which installs no `verification-physics`, the test asserted one
+refusal and received another.
+
+The environment is now reproduced rather than approximated: the same `uv sync` line the lane
+uses, with the weights moved aside and `PATH` stripped — **91 passed, 10 skipped**, where the
+approximate simulation had reported 98 and 3. The seven-test difference *was* the bug.
+
+> **Generalisable: a portability check must reproduce the environment, not resemble it.** Host
+> facts, installed binaries and **optional dependencies** are three separate axes, and a
+> simulation that covers two of them is green for the same reason the real thing is red.
+
 ### Evidence
 
 | File | SHA-256 of the sealed body |
