@@ -8,6 +8,200 @@ Waves are recorded newest first.
 
 ---
 
+## W4 outcome — four of five, read once, and a negative that can still be falsified
+
+W4 measures nothing new. It reads the five exit criteria together for the first time — no
+earlier wave read one, and every cycle record says so in its own body — runs the full
+verification matrix, and closes the sprint on the outcome §5 anticipated.
+
+| Item | What it owed | Outcome |
+|---|---|---|
+| **S22C-060** — the five, read once | every criterion traced to one field of one sealed record | **4 of 5 met**, `outcome: "typed negative"` |
+| sealers | every record rebuilt from its sources, twice | **20 rebuilt, 36 reproductions, 27 seals recompute** |
+| verification matrix | ruff, format, mypy, bandit, schema drift | **clean** |
+| whole suite | the full tree, plus PostgreSQL integration on a live store | **4 540 passed / 223 skipped**, and **50 integration tests passed** |
+| handoff | what 22D inherits, priced honestly | **written**, and the 22D plan is already on it |
+
+### S22C-060 — the five criteria, and what "read once" had to mean
+
+| Criterion | Conditions | Met |
+|---|---:|---|
+| every cycle replays all retained domains | 19 of 19 | **yes** |
+| a planted harmful update is quarantined | 3 of 3 | **yes** |
+| a valid new revision supersedes the active view without deleting history | 6 of 6 | **yes** |
+| source citations and hashes survive every derivative | 9 of 9 | **yes** |
+| at least one retained artifact improves a held-out verified task | **4 of 5** | **no** |
+
+**Forty-one conditions, forty hold, and the one that does not is the sprint's result.**
+`sprint-22c-exit-criteria.json` is not a summary written by hand: every condition names the
+record and the dotted field it was read from, the readings come from the frozen contracts
+rather than from the driver, and `--check` rebuilds the document from its sources and refuses
+any difference.
+
+22B could compare a float to a floor. 22C's criteria are structural, so a criterion is met only
+when a *set* of conditions holds, and the record carries the set. A criterion that printed a
+verdict without its conditions would be the driver asserting the sprint agrees with itself.
+
+**Three of the five need every cycle, and are evaluated in each of the three.** That is not
+decoration: a replay criterion read only in cycle 1 would have passed just as happily and
+proved a third as much, so `test_replay_is_evaluated_in_all_three_cycles` asserts the condition
+count is `1 + 3 × 6` rather than trusting the label.
+
+**The enumeration was the wave's one real trap.** S22C-011 froze the enumeration *source*
+(`registry.domain_ids()`) and, beside it, a snapshot of what that source returned in a process
+that had registered nothing: four domains. Every cycle enumerated **six**. A driver that had
+read the snapshot as a count would have failed a met criterion, and one that had ignored the
+snapshot would have checked nothing. The record reads it as it is — the freeze snapshot **plus
+exactly the two pilots this campaign registers, by name** — and the condition holds in all
+three cycles.
+
+### A negative that can still be falsified
+
+22B's release record was pinned by pushing a measured number below its floor in a copy and
+requiring `typed negative` back, because a record that can only print `pass` has verified
+nothing. 22C's outcome is the negative, so the test runs the other way: **the improvement
+verdict is flipped to `true` in a copied evidence tree and the same driver returns `pass`, 5 of
+5, with `the_stop` absent.** Three more inversions — the plant's verdict, a skipped stage in
+cycle 3, a citation walk that missed a promoted artifact — each fail the criterion they belong
+to. Two refusals are pinned as well: a publication that no longer binds its contracts, and a
+missing evidence field, which raises rather than reading as `false`, because an unread
+criterion rendering as a measurement is one edit away from a silent lie.
+
+### The stop, stated the way §5 asks
+
+§5 requires three things by name, and a negative that omits any of them is a mood rather than a
+result:
+
+| §5 asks | The record says |
+|---|---|
+| which exit failed | *at least one retained artifact improves a held-out verified task* |
+| at which cycle | W3, after three completed nine-stage cycles |
+| with which measured values | 4 cases, arm A 0, arm B 0, improved 0 |
+
+with the diagnosis named as **W3-F1** and the reason it is not a pipeline failure carried in
+the record itself: the four pipeline exits are met **on the same records**, arm A failed exactly
+as the frozen definition predicted, and three of arm B's four cases had no retained artifact to
+restore from.
+
+### W4 findings
+
+#### W4-A1 — three cycle records each say they are cycle 1, and correcting it would cost more than it is worth
+
+`why_no_exit` is rendered from a constant in `campaign_22c.py` and reads *"This is cycle 1 of
+three"* in **all three** cycle records. In cycles 2 and 3 that sentence is false.
+
+It is recorded rather than fixed, and the reason is the discipline the sprint has followed since
+W1-F1: the string is explanatory prose that decides nothing — no exit condition reads it, and
+the criteria record traces none of its verdicts through it — while correcting it would change
+the rendered bytes of three sealed records and orphan every seal over them, including the
+byte-for-byte reproduction of cycle 1 that is the evidence cycles 2 and 3 ran the code cycle 1
+was measured on. **A sentence with no load-bearing role is not worth three broken seals**, and
+a wave that rewrote sealed records to improve their prose would have set a much more expensive
+precedent than the one it fixed. The field's *meaning* — that no wave before W4 read an exit —
+is true in all three records and is now asserted from the record itself.
+
+#### W4-A2 — the released integration runner reloads its environment over the caller's
+
+`run_postgres_integration_tests.sh` calls `load_postgres_environment` after the caller has
+exported its own URLs, so exported values are overwritten by the env file's. The truncation
+guard caught it immediately and loudly — *"refusing to TRUNCATE `cognitive_os_integration_test`:
+`COGOS_TRUNCATABLE_DATABASE` names `cognitive_os_s22c_release_test`"* — which is the guard
+working exactly as W6-F2 intended, so this is a usage note rather than a defect: the matrix was
+run by invoking `pytest` directly with the intended store.
+
+### The release matrix ran on a store provisioned for it, not on an evidence store
+
+The integration matrix TRUNCATEs what it connects to. Three of 22C's four stores hold evidence
+that records already observed — the campaign store, the holdout store, and the integration store
+that W1's crash reproduction used, which the conftest's own W6-F2 comment exists to protect. So
+a **fifth** store, `cognitive_os_s22c_release_test`, was provisioned through the released
+`postgres_provision_evidence.sh`, migrated to head `0015`, nominated for truncation by name, and
+used for nothing else.
+
+| Store | Events | Corpus items | After the matrix |
+|---|---:|---:|---|
+| `cognitive_os_s22c_campaign` | 58 | 60 | **untouched** |
+| `cognitive_os_s22c_test` | 10 058 | 18 | **untouched** |
+| `cognitive_os_s22c_release_test` | 1 | 0 | truncated, as intended |
+
+Sixty corpus items is 18 + 25 + 16 + the plant, which is the three cycles' own arithmetic read
+back out of the store that ran them.
+
+### W4 evidence index
+
+| Record | Item | Integrity |
+|---|---|---|
+| [`sprint-22c-exit-criteria.json`](evidence/sprint-22c-exit-criteria.json) | S22C-060 — the five, read once, 41 conditions | `0f8e85d7b5133cf0…` |
+
+Driver: [`scripts/exit_criteria_22c.py`](../../../scripts/exit_criteria_22c.py), which touches
+no database, calls no provider, re-runs no cycle, and writes exactly one file. No released code
+changed in this wave.
+
+### W4 validation
+
+`ruff check` and `ruff format --check` over `src tests scripts infra`, `mypy src/cognitive_os`
+(638 files), `bandit -r src/cognitive_os` (**0 issues at every severity and confidence**), and
+the contract schema export `--check` — all clean. Whole suite over the full tree: **4 540
+passed, 223 skipped**. PostgreSQL integration and controller integration against the release
+store: **50 passed**, including the eight parity tests that pin W2-F2 in both repositories.
+
+Every sealer run twice, the second run the one that counts (22A W4-F3): **eighteen records
+report `reproduced: true`, thirty-six reproductions across the two passes** — the rights gate,
+the source rights, six repair records, the cleared W1 slice, both chapter inventories, all three
+cycles, the holdout, the improvement comparison, the plant, and the criteria record itself —
+plus the frozen contracts and the pre-registration, which their own driver reports separately,
+for **twenty** records rebuilt from their sources.
+
+The remaining seals are verified but deliberately **not** rebuilt: `sprint-22c-w0-slice.json`,
+`sprint-22c-w1-slice.json` and `sprint-22c-w1-fixture-slice.json` ran under the licence design
+W1-D2 superseded, and the ruling's own discipline is that such a record keeps its seal and is
+named by its successor rather than regenerated. Across the whole evidence directory **27 records
+carry an `integrity_content_hash` and all 27 recompute from their own bodies**, which is the
+part that has to be true of a record nobody rebuilds.
+
+16 new tests read the criteria record with no database and no provider.
+
+### What the sprint claims, and what it does not
+
+**Claimed:** a governed acquisition pipeline that runs nine stages in order over
+rights-cleared literature, refuses a plausible false assertion by recomputation, supersedes a
+revision without deleting history, resolves every citation to loaded source bytes, and replays
+every retained domain in every cycle — with two released-code repairs proven against their
+predecessors' own reproductions and two more defects found and fixed inside it.
+
+**Not claimed:** that acquired knowledge is useful yet. That is exit five, it is measured at 0
+of 4, and the sprint releases saying so.
+
+### What 22D inherits
+
+**Met on sealed evidence:** four of the five exit criteria, each traced condition by condition
+in `sprint-22c-exit-criteria.json`.
+
+**Not met, measured:** the improvement exit — arm A 0 of 4, arm B 0 of 4, both arms sealed,
+diagnosed as W3-F1.
+
+**The store, priced honestly.** The acquired-knowledge store is Layer 1 of the local-English
+roadmap and it holds **one artifact**, from 59 worked examples across two rights-cleared
+textbooks. 53 of the 59 were refused because no registered problem type covers the passage; the
+wall everybody expects — the maths is a picture — is one passage. The cost of filling a governed
+knowledge store is set by how much of a source a *domain* can be held to, and that is the number
+22D prices its own exits against.
+
+**The decision, taken.** The gate owner has taken W3-F1's second move — a verification path for
+declarative facts that is not a kernel — and it lands in 22D as pre-registered W1 work against a
+**fresh, unread holdout**. It is not a retro-fix of this sprint: 22C's holdout has been read
+once, and changing the acceptance path after reading it would be the one thing the whole
+discipline exists to refuse. The plan is
+[Sprint 22D Technical Backlog](sprint-22d-technical-backlog.md) §1.5.
+
+**Carried by name:** W3-A1 (contradiction on real content), W2-A1 (`domain_pilot_runs` has no
+descriptor-domain path), W2-F3 (the Tool Plane's evidence cannot reach a governed store — which
+stops being cosmetic in 22D, whose accounting exit needs it), W2-F4 (the quarantine vocabulary
+cannot say *no registered domain can check this*), W4-A1, W4-A2, 22B W2-F2, W0-A1, and the crash
+window W1's resume repairs but does not close.
+
+---
+
 ## W3 outcome — three cycles, the plant refused, and the improvement exit measured as a negative
 
 Cycles 2 and 3 ran into `science.chemistry` on the same campaign store, the pre-registered
