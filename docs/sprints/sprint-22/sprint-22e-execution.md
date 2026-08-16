@@ -1,5 +1,41 @@
 # Sprint 22E Execution Log
 
+## W2 (in progress) — the ledger revision landed; the experience leg and dry runs 2–3 open
+
+W2 opened by paying W1's two named debts in order: the check asymmetry (recorded as
+[W1-F9](#w1-f9--two-drivers-whose-records-only-one-command-line-could-check) and closed with
+both drivers' `--check` reproducing twice and under the CI lane), and **the ledger revision**
+— `sprint-22e-weakness-ledger-2.json`, sealed `b1879172db84a080…`.
+
+The revision mechanism is 22B W1-D2's, because the W0 ledger is a sealed record every later
+wave binds by hash: **superseded, never edited**. The W0 file is byte-identical, revision 2
+binds its predecessor's file hash and seal, carries the five W0 entries by reference with
+their sealed ranks unchanged, and adds two entries whose reproductions are **executed on
+every `--check`** rather than quoted — both are credential-free, so unlike the W1 records this
+one has an empty `recorded_not_recomputed`:
+
+| Entry | Finding | Reproduced, live | Rank |
+|---|---|---|---|
+| **L6** | 22E W1-F5 | request default 120 s independent of the adapter's limit; the cancellation conversion sits below the timeout's owner; `ProviderTimeoutError` retryable, `ProviderCancelledError` **not** | 6 |
+| **L7** | 22E W1-F7 | `merge_provider_draft` returns a revision whose seal is `""`; the released `ProposalCreated` refuses it; the reseal through the contract recovers a 64-hex seal | 7 |
+
+Ranks 6 and 7 follow the W0 rule — neither touches a Gate M condition — and the record states
+that L7's real weight sits outside that rule: it decides whether §2.2(b)'s chain can be walked
+as written, which is the gate owner's W3 question. Seven tests hold the revision, including
+the predecessor's byte-identity and a tampered-reproduction refusal.
+
+**Still owed by W2, named rather than implied:** the Experience Compiler leg for dry run 1
+and for the runs to come (compile *and* query back, both kinds); dry runs 2 and 3 on distinct
+weakness classes, at least one failing its own evaluation honestly; and one rollback executed
+in isolation. **Owed to the gate owner before W3, decisions this wave cannot take:** (1) the
+§2.2(b) walkability ruling W1-F7 forces — either the approved change is the L7 repair, or the
+chain cannot be walked as written and the reading is amended before selection, never after;
+(2) the W3 selection itself, made knowing L1's real price — dry run 1's correct candidate was
+refused at `compatibility` (mypy), so landing L1 must satisfy that gate too, and the ceiling
+is +10 against a floor 4 points away.
+
+---
+
 ## W1 — the loop meets the real repository, and eight findings come back with it
 
 W0's slice was a fixture refusing a fixture and said so in a field of its own. W1 is the first

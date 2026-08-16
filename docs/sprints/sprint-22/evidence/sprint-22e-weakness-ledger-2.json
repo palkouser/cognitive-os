@@ -1,0 +1,112 @@
+{
+ "added_entries": [
+  {
+   "change_surface": "the request timeout default, the cancellation conversion in BoundedCliRunner._communicate, and the retry policy's error-type set",
+   "eligible": true,
+   "entry_id": "L6",
+   "expected_benefit": {
+    "measured": "two live calls lost in W1 before the layers were bisected",
+    "what_a_repair_restores": "honest timeout events and a retry policy that does what it is configured to do"
+   },
+   "finding": "22E W1-F5",
+   "rank": 6,
+   "reproduction": {
+    "cancellation_is_converted_before_the_timeout_handler": false,
+    "cancellation_is_retryable": false,
+    "cli_limit_default_seconds": 120.0,
+    "defaults_are_independent": "the request default is not derived from the adapter's configured limit; W1 observed a configured limit of 300 against the request's 120, and the request expired first",
+    "request_timeout_default_seconds": 120,
+    "the_defect_in_one_sentence": "an expired governed call is recorded as cancelled, fires no timed_out event, and is not retried, because the conversion happens below the layer that owns the timeout",
+    "timeout_is_retryable": true
+   },
+   "risk_class": "low",
+   "summary": "an expired governed provider call is reported as cancelled, records no timeout event, and is silently not retried",
+   "touches_a_gate_m_condition": null,
+   "weakness_class": "provider_boundary"
+  },
+  {
+   "change_surface": "proposals.service.merge_provider_draft's returned revision",
+   "eligible": true,
+   "entry_id": "L7",
+   "expected_benefit": {
+    "measured": "dry run 1's approved revision reads deterministic over a live, host-verified, admitted draft",
+    "what_a_repair_restores": "§2.2(b)'s chain as written — a provider-assisted candidate whose mark survives to the approved revision"
+   },
+   "finding": "22E W1-F7",
+   "rank": 7,
+   "reproduction": {
+    "host_verification_admitted_the_draft": true,
+    "merged_content_hash": "",
+    "merged_seal_is_blank": true,
+    "refusal": "String should match pattern '^[0-9a-f]{64}$'",
+    "released_statement_refuses": true,
+    "reseal_through_the_contract_recovers": true,
+    "the_defect_in_one_sentence": "model_copy(update=...) does not re-run validators, so the only released writer of a provider-assisted revision returns a contract with an empty seal and the next released statement refuses it"
+   },
+   "risk_class": "low",
+   "summary": "the released provider-assisted path raises on its own success path, so the provider_assisted mark cannot survive to an approved revision",
+   "touches_a_gate_m_condition": null,
+   "touches_the_walkability_of_exit_two": true,
+   "weakness_class": "released_seam"
+  }
+ ],
+ "carried_entries": [
+  {
+   "carried_by_reference": true,
+   "eligible": true,
+   "entry_id": "L1",
+   "finding": "22D W2-F2",
+   "rank": 1,
+   "rank_unchanged_because": "the W0 ranks are sealed measurements; a revision repriced silently would be the drift W0-F1 exists to name"
+  },
+  {
+   "carried_by_reference": true,
+   "eligible": true,
+   "entry_id": "L2",
+   "finding": "22D W3-F1",
+   "rank": 2,
+   "rank_unchanged_because": "the W0 ranks are sealed measurements; a revision repriced silently would be the drift W0-F1 exists to name"
+  },
+  {
+   "carried_by_reference": true,
+   "eligible": true,
+   "entry_id": "L3",
+   "finding": "22D abstention observation",
+   "rank": 3,
+   "rank_unchanged_because": "the W0 ranks are sealed measurements; a revision repriced silently would be the drift W0-F1 exists to name"
+  },
+  {
+   "carried_by_reference": true,
+   "eligible": true,
+   "entry_id": "L4",
+   "finding": "22B W3-F1",
+   "rank": 4,
+   "rank_unchanged_because": "the W0 ranks are sealed measurements; a revision repriced silently would be the drift W0-F1 exists to name"
+  },
+  {
+   "carried_by_reference": true,
+   "eligible": false,
+   "entry_id": "L5",
+   "finding": "22D W2-F1",
+   "rank": 5,
+   "rank_unchanged_because": "the W0 ranks are sealed measurements; a revision repriced silently would be the drift W0-F1 exists to name"
+  }
+ ],
+ "integrity_content_hash": "b1879172db84a080e4780d4213edf5c9b1987c41b9d42303296bba8459c10fa2",
+ "items": [
+  "S22E-200"
+ ],
+ "ranking_note": "ranks 6 and 7 follow the W0 rule — measured benefit against the Gate M condition an entry touches, and neither touches one. L7's weight sits outside that rule: it decides whether §2.2(b) can be walked as written, which is the gate owner's W3 question, not this record's ranking",
+ "recorded_at": "2026-08-16T12:00:00Z",
+ "revision": 2,
+ "schema_version": 1,
+ "sprint": "22E",
+ "supersedes": {
+  "file": "sprint-22e-weakness-ledger.json",
+  "file_sha256": "e8bfeb59e77a18c019211a9060ec22863ebce327f179c0af44c4221c77173ae5",
+  "integrity_content_hash": "c51b6d149f2f5657073640e9f2e254faf2cfd84e54dbf3934eac2fcb7118c1d5",
+  "seal_recomputes": true,
+  "superseded_not_edited": "the W0 record is byte-identical and its tests still hold it; this record is revision 2 under its own identity (22B W1-D2 — a host is superseded, never edited)"
+ },
+ "wave": "W2"
+}
