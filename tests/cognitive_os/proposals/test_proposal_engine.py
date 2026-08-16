@@ -185,6 +185,22 @@ class UnsafeProvider:
         )
 
 
+class AdmissibleProvider:
+    async def draft(self, source, *, allowed_source_ids):
+        return ProviderProposalDraft(
+            proposal_type=HarnessProposalType.CONTEXT_PROFILE_CHANGE,
+            summary="Admissible draft",
+            proposed_body="Narrow the context profile to the cited sources.",
+            rationale="the cited evidence supports a bounded profile change",
+            alternative_drafts=(),
+            affected_component_hints=(source.weakness_record.affected_components[0],),
+            validation_rationale="run the registered verifiers on the profile",
+            rollback_rationale="restore the previous profile revision",
+            limitations=("provider draft",),
+            cited_host_source_ref_ids=allowed_source_ids,
+        )
+
+
 class UnavailableProvider:
     async def draft(self, source, *, allowed_source_ids):
         raise OSError("provider unavailable")
@@ -233,6 +249,37 @@ async def test_provider_failure_falls_back_to_deterministic_generation() -> None
     )
     assert revision.generation_mode is ProposalGenerationMode.DETERMINISTIC
     assert (await service.statistics()).provider_fallback_count == 1
+
+
+@pytest.mark.asyncio
+async def test_admitted_provider_draft_becomes_a_sealed_provider_assisted_revision() -> None:
+    """The provider-assisted success path, which had no test until 22E W1-F7.
+
+    Both existing provider tests assert a failure: the unsafe draft must be refused and
+    the unavailable provider must fall back. So every assertion about this path was an
+    assertion about how it fails, and the admitted draft returned a revision whose seal
+    was blank -- `model_copy(update=...)` does not re-run the sealing validator -- which
+    made the next released statement refuse it against `^[0-9a-f]{64}$`.
+    """
+    source = await fixture_proposal_source()
+    service = HarnessProposalService(
+        InMemoryProposalRepository(),
+        source,
+        configuration=ProposalConfiguration(
+            generation=ProposalGenerationConfiguration(provider_assisted_enabled=True)
+        ),
+        provider=AdmissibleProvider(),
+    )
+    revision = await service.create_from_weakness(
+        source.revision.weakness_id,
+        source.revision.revision,
+        HarnessProposalType.CONTEXT_PROFILE_CHANGE,
+        actor="operator",
+        created_at=FIXTURE_TIME,
+        provider_assisted=True,
+    )
+    assert revision.generation_mode is ProposalGenerationMode.PROVIDER_ASSISTED
+    assert revision.content_hash == revision.canonical_hash(exclude={"content_hash"})
 
 
 @pytest.mark.asyncio

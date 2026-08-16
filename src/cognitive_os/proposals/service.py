@@ -676,13 +676,23 @@ def merge_provider_draft(
         *revision.change_specification.allowed_registry_targets,
     }:
         raise ProposalAuthorityError("provider expanded proposal scope")
-    return revision.model_copy(
+    merged = revision.model_copy(
         update={
             "generation_mode": ProposalGenerationMode.PROVIDER_ASSISTED,
             "limitations": tuple(sorted({*revision.limitations, *draft.limitations})),
             "content_hash": "",
         }
     )
+    # Blanking the hash above asks the contract's `seal_content` validator to
+    # recompute it, but `model_copy(update=...)` does not re-run validators, so
+    # the merged revision kept an empty seal and the next released statement
+    # refused it against `^[0-9a-f]{64}$`: the provider-assisted path raised on
+    # its own success path (22E W1-F7). Revalidating is what re-runs them.
+    # Calling `seal_content` directly does not typecheck - a validator is a
+    # descriptor proxy, not a callable - so a caller that blanks a seal has no
+    # typed way to restore it, which is why this belongs inside the function
+    # that blanks it.
+    return type(revision).model_validate(merged.model_dump(exclude={"content_hash"}))
 
 
 def verify_proposal(
