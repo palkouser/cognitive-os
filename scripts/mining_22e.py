@@ -96,6 +96,25 @@ LEDGER_MAPPING: dict[str, dict[str, Any]] = {
         "problem_class": "governed_call_timeout",
         "output_type": "typed_provider_error",
     },
+    # **L7 is the sprint's one approved change, and its taxonomy reading is deliberate.**
+    # `weakness_type` is `UNKNOWN` because the released enumeration has no member for "a host
+    # merge returns a contract the next released statement refuses" — the closest,
+    # `PROVIDER_STRUCTURED_OUTPUT_FAILURE`, would blame the provider for a host defect, and
+    # W1-F4 is this sprint's own lesson about a misattributed diagnosis. The failure code
+    # carries the precise meaning; `UNKNOWN` records that the taxonomy does not.
+    # `component_type` is the CONTROLLER for the same reason: the proposal service is
+    # host-side control, and nothing the provider sent was wrong.
+    "L7": {
+        "weakness_type": WeaknessType.UNKNOWN,
+        "component_type": WeaknessComponentType.CONTROLLER,
+        "failure_code": "merged_provider_revision_returns_an_unsealed_contract",
+        "severity": WeaknessSeverity.HIGH,
+        "confidence": WeaknessConfidenceLevel.VERIFIED,
+        "causal": CausalRelationshipType.OBSERVED_FAILURE,
+        "problem_domain": "proposal_engine",
+        "problem_class": "provider_assisted_generation",
+        "output_type": "harness_proposal_revision",
+    },
 }
 
 
@@ -226,9 +245,10 @@ def _observations(entry_id: str, entry: dict[str, Any]) -> list[tuple[str, Any]]
             for arm, detail in sorted(reproduction["arms"].items())
             if detail["escalated_without_being_a_factual_output"] > 0
         ]
-    if entry_id == "L6":
-        # The revision ledger's reproduction is a flat introspection block: each leg of the
-        # misreport chain is one reproduced observation, and the keys are the block's own.
+    if entry_id in {"L6", "L7"}:
+        # The revision ledger's reproductions are flat introspection blocks: each leg of the
+        # chain is one reproduced observation, and the keys are the block's own. L7 reads the
+        # same way — four legs, each a boolean the ledger's `--check` re-executes.
         return [
             (key, {key: value})
             for key, value in sorted(reproduction.items())
@@ -336,7 +356,10 @@ def build_weakness(entry_id: str) -> dict[str, Any]:
         configuration=WeaknessConfiguration(),
     )
     queue = queue_entry_for(
-        confirmed, impact, queue_policy_hash=_sha256(b"s22e-queue-policy"), created_at=MINING_TIME
+        confirmed,
+        impact,
+        queue_policy_hash=_sha256(b"s22e-queue-policy"),
+        created_at=MINING_TIME,
     )
     if queue is None:
         raise ValueError(f"{entry_id}: the released queue policy does not admit this weakness")
@@ -367,7 +390,10 @@ class LedgerWeaknessProposalSource:
         self.impact = mined["impact"]
 
     def _matches(self, weakness_id: Any, revision: int) -> bool:
-        return (weakness_id, revision) == (self.revision.weakness_id, self.revision.revision)
+        return (weakness_id, revision) == (
+            self.revision.weakness_id,
+            self.revision.revision,
+        )
 
     async def get_exact_weakness_revision(self, weakness_id: Any, revision: int) -> Any:
         return self.revision if self._matches(weakness_id, revision) else None

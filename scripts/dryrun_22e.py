@@ -380,6 +380,59 @@ REPAIR_SPECS: dict[str, dict[str, Any]] = {
             ),
         ),
     },
+    # **L7 — the sprint's one approved change (S22E-201, decision two).**
+    #
+    # Blanking `content_hash` asks the contract's own `seal_content` validator to recompute the
+    # seal; `model_copy(update=...)` does not re-run validators in Pydantic v2, so the merged
+    # revision keeps `""` and the next released statement refuses it. The repair calls the
+    # contract's sealer explicitly on the copy.
+    #
+    # **The narrower repair was tried first, and the type checker refused it — W3-F1.**
+    # `merged.seal_content()` is the obvious minimal fix: the contract's own sealer, called on
+    # the copy. It runs correctly and `compatibility` rejects it, because `seal_content` is
+    # decorated `@model_validator(mode="after")` and is therefore a
+    # `PydanticDescriptorProxy[ModelValidatorDecoratorInfo]` at type level, not a callable:
+    #
+    #     service.py:693: error: "PydanticDescriptorProxy[...]" not callable  [operator]
+    #
+    # That is the deeper cause of W1-F7 rather than a detail of this repair. A caller who
+    # blanks a hashed contract's seal has **no typed way to put it back** — the only sealing
+    # entry point the contract exposes is a validator, and validators are exactly what
+    # `model_copy` skips. So the repair goes through the mechanism that does re-run them:
+    # revalidation, which is what W1's driver did at the caller and what this now moves inside
+    # the released function. It re-runs `validate_revision_chain` too, which is harmless — this
+    # copy updates none of the fields that validator reads.
+    "L7": {
+        "file": "src/cognitive_os/proposals/service.py",
+        "steps": (
+            (
+                "    return revision.model_copy(\n"
+                "        update={\n"
+                '            "generation_mode": ProposalGenerationMode.PROVIDER_ASSISTED,\n'
+                '            "limitations": tuple(sorted({*revision.limitations, *draft.limitations})),\n'  # noqa: E501
+                '            "content_hash": "",\n'
+                "        }\n"
+                "    )",
+                "    merged = revision.model_copy(\n"
+                "        update={\n"
+                '            "generation_mode": ProposalGenerationMode.PROVIDER_ASSISTED,\n'
+                '            "limitations": tuple(sorted({*revision.limitations, *draft.limitations})),\n'  # noqa: E501
+                '            "content_hash": "",\n'
+                "        }\n"
+                "    )\n"
+                "    # Blanking the hash above asks the contract's `seal_content` validator to\n"
+                "    # recompute it, but `model_copy(update=...)` does not re-run validators, so\n"
+                "    # the merged revision kept an empty seal and the next released statement\n"
+                "    # refused it against `^[0-9a-f]{64}$`: the provider-assisted path raised on\n"
+                "    # its own success path (22E W1-F7). Revalidating is what re-runs them.\n"
+                "    # Calling `seal_content` directly does not typecheck - a validator is a\n"
+                "    # descriptor proxy, not a callable - so a caller that blanks a seal has no\n"
+                "    # typed way to restore it, which is why this belongs inside the function\n"
+                "    # that blanks it.\n"
+                '    return type(revision).model_validate(merged.model_dump(exclude={"content_hash"}))',  # noqa: E501
+            ),
+        ),
+    },
 }
 
 #: The file ledger entry L1 actually lives in, and the line that actually rejects the notation.
@@ -489,7 +542,16 @@ def probe_repair(worktree: Path) -> dict[str, Any]:
         "print(json.dumps(out))\n"
     )
     completed = subprocess.run(
-        ["uv", "run", "--all-groups", "--extra", "verification-physics", "python", "-c", program],
+        [
+            "uv",
+            "run",
+            "--all-groups",
+            "--extra",
+            "verification-physics",
+            "python",
+            "-c",
+            program,
+        ],
         cwd=worktree,
         capture_output=True,
         text=True,
@@ -551,7 +613,14 @@ def probe_repair_l6(worktree: Path) -> dict[str, Any]:
 
     source = (worktree / REPAIR_SPECS["L6"]["file"]).read_text(encoding="utf-8")
     completed = subprocess.run(
-        ["uv", "run", "--all-groups", "python", "-c", "import cognitive_os.providers.cli_process"],
+        [
+            "uv",
+            "run",
+            "--all-groups",
+            "python",
+            "-c",
+            "import cognitive_os.providers.cli_process",
+        ],
         cwd=worktree,
         capture_output=True,
         text=True,
@@ -572,7 +641,197 @@ def probe_repair_l6(worktree: Path) -> dict[str, Any]:
     }
 
 
-PROBES = {"L1": probe_repair, "L2": probe_repair_l2, "L6": probe_repair_l6}
+#: The program L7's probe runs *inside the candidate worktree*, where the repair exists.
+#:
+#: It measures the branch no released test has ever measured. `test_proposal_engine.py` has two
+#: provider tests and both are negative — `UnsafeProvider` must be refused, `UnavailableProvider`
+#: must fall back — so every assertion about the provider-assisted path was an assertion about
+#: how it *fails*. The admitted draft had no test, which is why W1-F7 survived release, and it
+#: is why this probe's first two questions are about the success path and the last two are the
+#: refusals that must still refuse.
+_L7_PROBE = """
+import asyncio, json, re
+
+from cognitive_os.config.proposal_config import (
+    ProposalConfiguration,
+    ProposalGenerationConfiguration,
+)
+from cognitive_os.domain.proposals import (
+    HarnessProposalType,
+    ProposalGenerationMode,
+    ProviderProposalDraft,
+)
+from cognitive_os.proposals.fixtures import FIXTURE_TIME, fixture_proposal_source
+from cognitive_os.proposals.repository import InMemoryProposalRepository
+from cognitive_os.proposals.service import (
+    HarnessProposalService,
+    ProposalAuthorityError,
+    merge_provider_draft,
+)
+
+TYPE = HarnessProposalType.CONTEXT_PROFILE_CHANGE
+
+
+def draft_for(source, allowed_source_ids):
+    return ProviderProposalDraft(
+        proposal_type=TYPE,
+        summary="Admissible advisory draft",
+        proposed_body="Narrow the context profile to the cited sources.",
+        rationale="the cited evidence supports a bounded profile change",
+        alternative_drafts=(),
+        affected_component_hints=(source.weakness_record.affected_components[0],),
+        validation_rationale="run the registered verifiers on the narrowed profile",
+        rollback_rationale="restore the previous profile revision",
+        limitations=("provider draft",),
+        cited_host_source_ref_ids=allowed_source_ids,
+    )
+
+
+class AdmissibleProvider:
+    async def draft(self, source, *, allowed_source_ids):
+        return draft_for(source, allowed_source_ids)
+
+
+class UnsafeProvider:
+    async def draft(self, source, *, allowed_source_ids):
+        base = draft_for(source, allowed_source_ids)
+        return base.model_copy(update={"proposed_body": "rm -rf active checkout"})
+
+
+class UnavailableProvider:
+    async def draft(self, source, *, allowed_source_ids):
+        raise OSError("provider unavailable")
+
+
+def service_with(provider, source):
+    return HarnessProposalService(
+        InMemoryProposalRepository(),
+        source,
+        configuration=ProposalConfiguration(
+            generation=ProposalGenerationConfiguration(provider_assisted_enabled=True)
+        ),
+        provider=provider,
+    )
+
+
+async def main():
+    out = {}
+
+    # 1. The merge itself: does the returned revision carry a real seal, and is it the
+    #    contract's own canonical hash rather than any value at all?
+    source = await fixture_proposal_source()
+    plain = HarnessProposalService(InMemoryProposalRepository(), source)
+    generated = await plain.create_from_weakness(
+        source.revision.weakness_id,
+        source.revision.revision,
+        TYPE,
+        actor="operator",
+        created_at=FIXTURE_TIME,
+    )
+    # The snapshot the host froze is on the revision itself; the fixture port does not expose one.
+    snapshot = generated.source_snapshot
+    ids = tuple(str(item) for item in snapshot.source_hashes)
+    merged = merge_provider_draft(generated, draft_for(snapshot, ids), allowed_source_ids=ids)
+    out["merged_seal_is_64_hex"] = bool(re.fullmatch(r"[0-9a-f]{64}", merged.content_hash))
+    out["merged_seal_is_the_canonical_hash"] = (
+        merged.content_hash == merged.canonical_hash(exclude={"content_hash"})
+    )
+    out["merged_seal_differs_from_the_unmerged_one"] = merged.content_hash != generated.content_hash
+    out["merged_type_is_unchanged"] = type(merged) is type(generated)
+
+    # 2. The released one-call path, end to end. This is the statement §2.2(b) needs and the
+    #    one W1-F7 made unreachable: the mark must survive to the revision the caller gets back.
+    source = await fixture_proposal_source()
+    revision = await service_with(AdmissibleProvider(), source).create_from_weakness(
+        source.revision.weakness_id,
+        source.revision.revision,
+        TYPE,
+        actor="operator",
+        created_at=FIXTURE_TIME,
+        provider_assisted=True,
+    )
+    out["released_path_completes"] = True
+    out["mark_survives_to_the_returned_revision"] = (
+        revision.generation_mode is ProposalGenerationMode.PROVIDER_ASSISTED
+    )
+    out["returned_revision_seal_is_64_hex"] = bool(
+        re.fullmatch(r"[0-9a-f]{64}", revision.content_hash)
+    )
+
+    # 3. The refusals that must still refuse. A repair that sealed an inadmissible draft would
+    #    trade a blocked path for an open one, so the negatives are measured beside the positive.
+    source = await fixture_proposal_source()
+    try:
+        await service_with(UnsafeProvider(), source).create_from_weakness(
+            source.revision.weakness_id,
+            source.revision.revision,
+            TYPE,
+            actor="operator",
+            created_at=FIXTURE_TIME,
+            provider_assisted=True,
+        )
+        out["unsafe_draft_still_refused"] = False
+    except ProposalAuthorityError:
+        out["unsafe_draft_still_refused"] = True
+
+    source = await fixture_proposal_source()
+    fallback_service = service_with(UnavailableProvider(), source)
+    fell_back = await fallback_service.create_from_weakness(
+        source.revision.weakness_id,
+        source.revision.revision,
+        TYPE,
+        actor="operator",
+        created_at=FIXTURE_TIME,
+        provider_assisted=True,
+    )
+    out["unavailable_provider_still_falls_back"] = (
+        fell_back.generation_mode is ProposalGenerationMode.DETERMINISTIC
+        and (await fallback_service.statistics()).provider_fallback_count == 1
+    )
+    print(json.dumps(out))
+
+
+asyncio.run(main())
+"""
+
+
+def probe_repair_l7(worktree: Path) -> dict[str, Any]:
+    """Does the repaired merge produce a contract the next released statement accepts?"""
+    import subprocess
+
+    from isolation_22e import gate_environment
+
+    completed = subprocess.run(
+        ["uv", "run", "--all-groups", "python", "-c", _L7_PROBE],
+        cwd=worktree,
+        capture_output=True,
+        text=True,
+        timeout=600,
+        env=gate_environment(),
+    )
+    if completed.returncode != 0:
+        return {
+            "every_probe_holds": False,
+            "probe_failed": completed.stderr.strip().splitlines()[-6:],
+        }
+    verdicts = json.loads(completed.stdout.strip().splitlines()[-1])
+    return {
+        **verdicts,
+        "every_probe_holds": all(verdicts.values()),
+        "why_the_refusal_cases_are_here": (
+            "a repair that sealed an inadmissible draft would trade a blocked path for an "
+            "open one; the unsafe draft and the unavailable provider are measured beside "
+            "the admitted one"
+        ),
+    }
+
+
+PROBES = {
+    "L1": probe_repair,
+    "L2": probe_repair_l2,
+    "L6": probe_repair_l6,
+    "L7": probe_repair_l7,
+}
 
 # ---------------------------------------------------------------------------
 # The lifecycle
@@ -637,9 +896,14 @@ async def run_dry_run(
         ProposalReviewDecision,
         ProposalStatus,
     )
-    from cognitive_os.infrastructure.changes.postgres.repository import PostgresChangeRepository
+    from cognitive_os.infrastructure.changes.postgres.repository import (
+        PostgresChangeRepository,
+    )
     from cognitive_os.proposals.repository import InMemoryProposalRepository
-    from cognitive_os.proposals.service import HarnessProposalService, merge_provider_draft
+    from cognitive_os.proposals.service import (
+        HarnessProposalService,
+        merge_provider_draft,
+    )
 
     database_url = os.environ["COGOS_DATABASE_ADMIN_URL"]
     artifact_root = Path(os.environ["COGOS_ARTIFACT_ROOT"])
@@ -1050,7 +1314,9 @@ def main() -> int:
     parser.add_argument("--entry", default="L1")
     parser.add_argument("--check", action="store_true")
     parser.add_argument(
-        "--label", default=None, help="worktree label; a continuation must not reuse W1's"
+        "--label",
+        default=None,
+        help="worktree label; a continuation must not reuse W1's",
     )
     parser.add_argument("--output", type=Path, default=OUTPUT)
     parser.add_argument("--full-matrix", action="store_true")
@@ -1076,7 +1342,8 @@ def main() -> int:
     )
     arguments.output.parent.mkdir(parents=True, exist_ok=True)
     arguments.output.write_text(
-        json.dumps(record, indent=1, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8"
+        json.dumps(record, indent=1, sort_keys=True, ensure_ascii=False) + "\n",
+        encoding="utf-8",
     )
     print(
         json.dumps(

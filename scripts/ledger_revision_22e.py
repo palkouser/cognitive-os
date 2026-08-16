@@ -274,9 +274,71 @@ async def _record() -> dict[str, Any]:
     return record
 
 
+#: **W3-F1. What a re-executed reproduction is allowed to look like once its repair has landed.**
+#:
+#: W2 chose to re-execute both new reproductions on every `--check` rather than quote them,
+#: because W0-F1's lesson is that a quoted finding's price expires silently when a successor
+#: ships half of it. W3 measured the opposite failure mode on the first run of the loop that
+#: actually repairs something: **a live reproduction cannot survive its own repair.** The moment
+#: L7's repair existed in the candidate worktree, `merged_seal_is_blank` came back `False`, the
+#: sealed record stopped reproducing, and the test guarding it failed inside the candidate's own
+#: evaluation matrix — a governed self-improvement loop breaking its own evidence on its first
+#: success.
+#:
+#: The resolution is not to stop re-executing, and it is not to weaken the comparison. A
+#: difference is accepted **only** when it is exactly the shape of the repair named for that
+#: entry, checked field by field; anything else is still a mismatch. So the check now answers a
+#: two-outcome question — *does the defect still reproduce, or does the repaired behaviour hold
+#: exactly?* — and drift satisfies neither.
+#:
+#: The sealed record is untouched. It is a historical claim about the code at the commit it was
+#: sealed against, and it stays true of that commit; what changes is that the checker can now
+#: say which of the two worlds it is looking at instead of reporting the repair as corruption.
+REPAIRED_SHAPES: dict[str, dict[str, Any]] = {
+    "L7": {
+        "host_verification_admitted_the_draft": True,
+        "merged_seal_is_blank": False,
+        "released_statement_refuses": False,
+        "refusal": "",
+        "reseal_through_the_contract_recovers": True,
+    }
+}
+
+#: The stored side of the same question. Accepting "the repair landed" purely from what the
+#: *current* code does would stop the check from reading the record at all, and a tampered
+#: stored reproduction would sail through in a repaired tree. So the stored entry must still be
+#: a genuine record of the defect before its disappearance can be explained by a repair.
+DEFECT_SHAPES: dict[str, dict[str, Any]] = {
+    "L7": {"merged_seal_is_blank": True, "released_statement_refuses": True}
+}
+
+
+def _closed_by_repair(entry_id: str, stored: dict[str, Any], rebuilt: dict[str, Any]) -> bool:
+    """Did this entry stop reproducing *because its named repair landed*?
+
+    Both sides are checked. The stored reproduction must still be the sealed defect, and the
+    re-executed one must be the declared repaired shape field by field — plus a merged seal that
+    is a real 64-hex hash rather than merely non-blank, because a repair that wrote any string
+    into the seal would satisfy "not blank" and must not satisfy this.
+    """
+    repaired = REPAIRED_SHAPES.get(entry_id)
+    defect = DEFECT_SHAPES.get(entry_id)
+    if repaired is None or defect is None:
+        return False
+    was = stored.get("reproduction", {})
+    if any(was.get(key) != value for key, value in defect.items()):
+        return False
+    now = rebuilt["reproduction"]
+    if any(now.get(key) != value for key, value in repaired.items()):
+        return False
+    merged = now.get("merged_content_hash", "")
+    return isinstance(merged, str) and len(merged) == 64 and set(merged) <= set("0123456789abcdef")
+
+
 def check_record(record: dict[str, Any]) -> dict[str, Any]:
     """Everything here is recomputable: both reproductions are deterministic and free."""
     mismatches: list[str] = []
+    closed_by_repair: list[str] = []
     body = {key: value for key, value in record.items() if key != "integrity_content_hash"}
     if _sha256(canonical(body)) != record.get("integrity_content_hash"):
         mismatches.append("integrity_content_hash")
@@ -291,15 +353,22 @@ def check_record(record: dict[str, Any]) -> dict[str, Any]:
 
     rebuilt = asyncio.run(_added_entries())
     for stored_entry, rebuilt_entry in zip(record["added_entries"], rebuilt, strict=True):
-        if stored_entry != rebuilt_entry:
-            fields = [
-                key for key in rebuilt_entry if stored_entry.get(key) != rebuilt_entry.get(key)
-            ]
-            mismatches.append(f"added_entries.{stored_entry.get('entry_id')}: {fields}")
+        entry_id = str(stored_entry.get("entry_id"))
+        if stored_entry == rebuilt_entry:
+            continue
+        fields = [key for key in rebuilt_entry if stored_entry.get(key) != rebuilt_entry.get(key)]
+        # A difference confined to the reproduction, and shaped exactly like the entry's named
+        # repair, is the repair — not drift. Anything else, including a difference that also
+        # touches the entry's summary or rank, stays a mismatch.
+        if fields == ["reproduction"] and _closed_by_repair(entry_id, stored_entry, rebuilt_entry):
+            closed_by_repair.append(entry_id)
+            continue
+        mismatches.append(f"added_entries.{entry_id}: {fields}")
 
     return {
         "reproduced": not mismatches,
         "mismatches": mismatches,
+        "closed_by_repair": closed_by_repair,
         "recomputed": [
             "integrity_content_hash",
             "supersedes (the predecessor's bytes and seal)",
@@ -307,6 +376,10 @@ def check_record(record: dict[str, Any]) -> dict[str, Any]:
             "added_entries (both reproductions re-executed)",
         ],
         "recorded_not_recomputed": [],
+        "two_outcomes_not_one": (
+            "an entry passes by still reproducing its sealed defect, or by matching the "
+            "repaired shape declared for it field by field; drift satisfies neither (W3-F1)"
+        ),
     }
 
 
