@@ -111,3 +111,49 @@ def test_the_compatibility_gate_reproduces_the_ci_mypy_lane() -> None:
     assert command is not None
     assert "memory-postgres" in command
     assert command.index("--extra") < command.index("memory-postgres")
+
+
+# ---------------------------------------------------------------------------
+# S22E-201 — the two W3 decisions, sealed with the alternatives they rejected
+# ---------------------------------------------------------------------------
+
+DECISIONS = EVIDENCE / "sprint-22e-decisions.json"
+
+
+def _load_decisions() -> dict[str, Any]:
+    return json.loads(DECISIONS.read_text(encoding="utf-8"))
+
+
+def test_the_decision_record_exists_and_its_seal_recomputes() -> None:
+    stored = _load_decisions()
+    body = {key: value for key, value in stored.items() if key != "integrity_content_hash"}
+    assert hashlib.sha256(_canonical(body)).hexdigest() == stored["integrity_content_hash"]
+
+
+def test_the_arithmetic_premise_is_recomputed_from_both_sealed_ledgers() -> None:
+    """The premise the selection rests on is derived, never asserted: the condition-6 and
+    condition-7 entry sets are disjoint, so one approved change cannot flip both."""
+    premise = _load_decisions()["arithmetic_premise"]
+    assert premise["entries_touching_condition_6"] == ["L1"]
+    assert premise["entries_touching_condition_7"] == ["L2"]
+    assert premise["the_sets_are_disjoint"] is True
+    assert premise["gate_m_cannot_fully_close_in_22e"] is True
+
+
+def test_both_decisions_name_what_they_rejected() -> None:
+    stored = _load_decisions()
+    assert stored["decision_one"]["rejected_alternatives"]
+    assert stored["decision_one"]["no_frozen_reading_is_amended"] is True
+    assert stored["decision_two"]["selection"] == "L7"
+    rejected = {item["entry"] for item in stored["decision_two"]["rejected_alternatives"]}
+    assert {"L1", "L2"} <= rejected
+
+
+def test_the_decision_check_reproduces_and_refuses_a_tampered_selection() -> None:
+    from decisions_22e import check_record as check_decisions
+
+    verdict = check_decisions(_load_decisions())
+    assert verdict["reproduced"] is True, verdict["mismatches"]
+    tampered = _load_decisions()
+    tampered["decision_two"]["selection"] = "L1"
+    assert check_decisions(tampered)["reproduced"] is False

@@ -48,15 +48,33 @@ belongs to whichever run next carries the candidate. The command is fixed in the
 with the reason attached, a test asserts the extra is present, and W2's dry runs 2–3 run
 under the corrected gate.
 
-**Still owed by W2, named rather than implied:** the Experience Compiler leg for dry run 1
-and for the runs to come (compile *and* query back, both kinds); dry runs 2 and 3 on distinct
-weakness classes, at least one failing its own evaluation honestly; and one rollback executed
-in isolation. **Owed to the gate owner before W3, decisions this wave cannot take:** (1) the
-§2.2(b) walkability ruling W1-F7 forces — either the approved change is the L7 repair, or the
-chain cannot be walked as written and the reading is amended before selection, never after;
-(2) the W3 selection itself, made knowing L1's real price — dry run 1's correct candidate was
-refused at `compatibility` (mypy), so landing L1 must satisfy that gate too, and the ceiling
-is +10 against a floor 4 points away.
+### S22E-201 — the two W3 decisions, taken and sealed
+
+Both decisions W1 forced were put to the gate owner with the priced ledger, the W2-F1
+correction and a written recommendation in front of them, and taken on 2026-08-16. Sealed in
+`sprint-22e-decisions.json` (`72303b27815306e9…`) with the alternatives they rejected,
+because a reading that does not say what it chose against is a reading nobody can audit.
+
+**Decision one: §2.2(b) is walked by repairing it.** The one approved change **is the L7
+repair**, and the traversal that installs it documents its own exception — the repaired
+behaviour cannot be required of the traversal that installs the repair. No frozen reading is
+amended. **Decision two: the selection is L7.** The premise is recomputed by the record's
+`--check` from both sealed ledgers rather than asserted: condition 6 is touched only by L1,
+condition 7 only by L2, the sets are disjoint, one change may land — **Gate M cannot fully
+close in 22E under any selection**, so the certain typed negative was made worth the most:
+the loop repairs itself, §2.2(b) becomes walkable for every successor, and the successor
+closes conditions 6 and 7 by landing L1 and L2 through the walkable chain, the D-series
+precedent (D5's and D6's negatives made the instrument sound; Gate L2 closed in D7). L1 and
+L2 are rejected with their measured risks attached — L1's ceiling is not a forecast, L2's
+margin sits inside 22D W3-F3's measured baseline noise.
+
+**Still owed by W2, named rather than implied:** the Experience Compiler leg (compile *and*
+query back, both kinds — the failed side is dry run 1; the successful side comes from the
+corrected-gate continuation or dry run 2); dry runs 2 and 3 on distinct weakness classes, at
+least one failing its own evaluation honestly on evidence about the candidate (dry run 1's
+refusal no longer qualifies — W2-F1 reclassified it a false rejection); and one rollback
+executed in isolation. W3 is unblocked: it mines L7 and carries the repair through the full
+chain under decision one's ruling.
 
 ---
 
