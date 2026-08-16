@@ -1,0 +1,76 @@
+{
+ "approved": true,
+ "approved_at": "2026-08-16T00:00:00Z",
+ "approver": "palkouser",
+ "approver_authority": "sprint-22 gate owner",
+ "integrity_content_hash": "04d0dea836663876f9b02892cd6ed0604979a0d7f9e000ff5d1023e19bf6ee58",
+ "items": [
+  "S22E-302"
+ ],
+ "recorded_at": "2026-08-16T00:00:00Z",
+ "schema_version": 1,
+ "sprint": "22E",
+ "the_evidence_it_was_granted_against": {
+  "candidate_test_passed": true,
+  "gate_ids_passed": [
+   "reproducible_build",
+   "focused_target_tests",
+   "historical_regression",
+   "unrelated_domain_regression",
+   "security",
+   "policy",
+   "schema",
+   "compatibility",
+   "dependency_packaging"
+  ],
+  "gates_failed": [],
+  "gates_passed": 9,
+  "gates_ran": 9,
+  "probe_fails_without_it": true,
+  "probe_holds_on_the_repair": true,
+  "wall_clock_seconds": 286.541,
+  "zero_active_state_mutation": true
+ },
+ "the_merge_is_a_separate_act_by": "the gate owner",
+ "wave": "W3",
+ "what_is_approved": {
+  "approved_change_record_hash": "831d3a2df724bd1b8c08f7ddbc8e050905844c13e8761ce814cc01d2101119c3",
+  "changed_files": [
+   "src/cognitive_os/proposals/service.py",
+   "tests/cognitive_os/proposals/test_proposal_engine.py"
+  ],
+  "diff_hash": "64d3e707e8e7418098bd0547a884ae01f924d3b02c9ba36c013a5e874479b5ed",
+  "entry_id": "L7",
+  "finding": "22E W1-F7",
+  "selection_record_hash": "72303b27815306e97dc11c4d73208e19327d34f30209c0e9c971d0595988f128"
+ },
+ "what_it_does_not_permit": [
+  "merge",
+  "tag",
+  "publish",
+  "release",
+  "any second repair in this sprint"
+ ],
+ "what_this_approval_permits": [
+  "a pull request against protected main carrying exactly the files named above"
+ ],
+ "why_this_is_not_a_promotion_review": {
+  "candidate_changed_files": [
+   "src/cognitive_os/proposals/service.py",
+   "tests/cognitive_os/proposals/test_proposal_engine.py"
+  ],
+  "cause": "build_change_specification synthesises `proposal-scope/<type>.py` as the whole allowed scope of every repository_file proposal, prepare_isolation copies it into the manifest, and capture_candidate refuses anything else; changes/demo.py passed the same placeholder back in, so both sides agreed and the seam never opened",
+  "finding": "22E W3-F2",
+  "manifest_allowed_repository_paths": [
+   "proposal-scope/source_code_change.py"
+  ],
+  "not_worked_around": "the real paths were passed and the refusal recorded; substituting the placeholder or passing an empty file list would have been the driver certifying its own scope",
+  "released_refusal": "candidate changed a forbidden path",
+  "what_could_not_be_built": [
+   "ChangeCandidate",
+   "PromotionAssessment",
+   "PromotionReview",
+   "PromotionBundle"
+  ]
+ }
+}

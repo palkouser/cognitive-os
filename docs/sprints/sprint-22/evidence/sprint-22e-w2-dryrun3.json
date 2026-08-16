@@ -1,0 +1,304 @@
+{
+ "draft": {
+  "advisory_fields": [
+   "findings",
+   "recommendations",
+   "risks",
+   "summary",
+   "verification_steps"
+  ],
+  "findings": 1,
+  "generation_mode_after_host_verification": "provider_assisted",
+  "generation_mode_on_the_approved_revision": "deterministic",
+  "host_verification_passed": true,
+  "prompt_bytes": 2361,
+  "provider_assisted_mark_did_not_survive_because": "the released transitions read the current revision from the repository, and only create_from_weakness writes a merged one — the path W1-F7 blocks",
+  "recommendations": 5,
+  "risks": 5,
+  "summary": "The repair makes an expired governed provider call classify as a timeout at the layer that owns the deadline: the request timeout default stops being an independent constant and is derived from the adapter's configured limit, the cancellation conversion in BoundedCliRunner._communicate distinguishes deadline expiry from caller-initiated cancellation and surfaces expiry as the timeout error type, and the retry policy's error-type set is confirmed to cover that timeout type so expired calls are retried and emit a timed_out event instead of disappearing as cancellations.",
+  "verification_steps": 7
+ },
+ "entry_id": "L6",
+ "gates": [
+  {
+   "decided_by": "driver",
+   "gate_id": "target_benchmark",
+   "ran": false
+  },
+  {
+   "decided_by": "driver",
+   "gate_id": "candidate_integrity",
+   "ran": false
+  },
+  {
+   "command": [
+    "uv",
+    "lock",
+    "--check"
+   ],
+   "decided_by": "command",
+   "gate_id": "reproducible_build",
+   "passed": true,
+   "ran": true,
+   "returncode": 0,
+   "seconds": 0.066,
+   "stderr_tail": "Resolved 174 packages in 0.88ms",
+   "stdout_tail": ""
+  },
+  {
+   "command": [
+    "uv",
+    "run",
+    "--all-groups",
+    "--extra",
+    "postgres",
+    "pytest",
+    "tests/cognitive_os/changes",
+    "-q"
+   ],
+   "decided_by": "command",
+   "gate_id": "focused_target_tests",
+   "passed": true,
+   "ran": true,
+   "returncode": 0,
+   "seconds": 4.076,
+   "stderr_tail": "Installed 5 packages in 6ms",
+   "stdout_tail": "................................................................s....... [ 75%]\n.....................ss                                                  [100%]\n92 passed, 3 skipped in 3.11s"
+  },
+  {
+   "command": [
+    "uv",
+    "run",
+    "--all-groups",
+    "--extra",
+    "mcp",
+    "--extra",
+    "memory-postgres",
+    "pytest",
+    "tests/cognitive_os",
+    "-q"
+   ],
+   "decided_by": "command",
+   "gate_id": "historical_regression",
+   "passed": false,
+   "ran": true,
+   "returncode": 1,
+   "seconds": 259.901,
+   "stderr_tail": "Installed 14 packages in 17ms",
+   "stdout_tail": "dError\n=========================== short test summary info ============================\nFAILED tests/cognitive_os/providers/cli/test_bounded_runner.py::TestProcessTreeCleanup::test_cancellation_becomes_a_typed_failure_and_leaves_nothing_running\n1 failed, 4603 passed, 134 skipped in 258.42s (0:04:18)"
+  },
+  {
+   "command": [
+    "uv",
+    "run",
+    "--all-groups",
+    "--extra",
+    "mcp",
+    "pytest",
+    "tests/contract",
+    "-q"
+   ],
+   "decided_by": "command",
+   "gate_id": "unrelated_domain_regression",
+   "passed": true,
+   "ran": true,
+   "returncode": 0,
+   "seconds": 3.852,
+   "stderr_tail": "",
+   "stdout_tail": ".................................................................        [100%]\n65 passed in 3.28s"
+  },
+  {
+   "command": [
+    "uv",
+    "run",
+    "--all-groups",
+    "bandit",
+    "-q",
+    "-r",
+    "src/cognitive_os"
+   ],
+   "decided_by": "command",
+   "gate_id": "security",
+   "passed": true,
+   "ran": true,
+   "returncode": 0,
+   "seconds": 5.064,
+   "stderr_tail": "failed test on file src/cognitive_os/tools/sandbox/lifecycle.py:53\n[tester]\tWARNING\tnosec encountered (B108), but no failed test on file src/cognitive_os/tools/sandbox/lifecycle.py:56\n[tester]\tWARNING\tnosec encountered (B108), but no failed test on file src/cognitive_os/tools/sandbox/lifecycle.py:57",
+   "stdout_tail": ""
+  },
+  {
+   "command": [
+    "bash",
+    "scripts/check_repository_language.sh"
+   ],
+   "decided_by": "command",
+   "gate_id": "policy",
+   "passed": true,
+   "ran": true,
+   "returncode": 0,
+   "seconds": 0.018,
+   "stderr_tail": "",
+   "stdout_tail": "Repository language check passed."
+  },
+  {
+   "decided_by": "driver",
+   "gate_id": "migration",
+   "ran": false
+  },
+  {
+   "command": [
+    "bash",
+    "scripts/export_contract_schemas.sh",
+    "--check"
+   ],
+   "decided_by": "command",
+   "gate_id": "schema",
+   "passed": true,
+   "ran": true,
+   "returncode": 0,
+   "seconds": 1.756,
+   "stderr_tail": "",
+   "stdout_tail": "Contract schema check passed."
+  },
+  {
+   "decided_by": "driver",
+   "gate_id": "backup_restore_rollback",
+   "ran": false
+  },
+  {
+   "decided_by": "driver",
+   "gate_id": "performance_resources",
+   "ran": false
+  },
+  {
+   "decided_by": "driver",
+   "gate_id": "resource_budget",
+   "ran": false
+  },
+  {
+   "command": [
+    "uv",
+    "run",
+    "--all-groups",
+    "--extra",
+    "memory-postgres",
+    "mypy",
+    "src/cognitive_os"
+   ],
+   "decided_by": "command",
+   "gate_id": "compatibility",
+   "passed": true,
+   "ran": true,
+   "returncode": 0,
+   "seconds": 13.173,
+   "stderr_tail": "",
+   "stdout_tail": "mypy.ini: note: unused section(s): [mypy-LightAgent.*], [mypy-alembic.*]\nSuccess: no issues found in 638 source files"
+  },
+  {
+   "command": [
+    "uv",
+    "build",
+    "--out-dir",
+    "/tmp/cogos-s22e-build"
+   ],
+   "decided_by": "command",
+   "gate_id": "dependency_packaging",
+   "passed": true,
+   "ran": true,
+   "returncode": 0,
+   "seconds": 2.157,
+   "stderr_tail": "adding 'cognitive_os-0.1.0.dev1.dist-info/top_level.txt'\nadding 'cognitive_os-0.1.0.dev1.dist-info/RECORD'\nremoving build/bdist.linux-x86_64/wheel\nSuccessfully built /tmp/cogos-s22e-build/cognitive_os-0.1.0.dev1.tar.gz\nSuccessfully built /tmp/cogos-s22e-build/cognitive_os-0.1.0.dev1-py3-none-any.whl",
+   "stdout_tail": ""
+  }
+ ],
+ "gates_not_run_here": [],
+ "integrity_content_hash": "8e5d40f1f76cdb59e212b9c9c27b1c569a7d4fc15e868e3499ee8c73397b751c",
+ "provider": {
+  "adapter": "claude_code",
+  "normalized_response_hash": "26056663f30e5b9ecb59786e35e8d5426d1fb52c53d0f437db2787e49f34f90b",
+  "provider_id": "claude-code",
+  "request_hash": "bd929afb9f97367fcd0c73dda4c892db7ff7f302b50ce24c7ac1a934d7083931",
+  "resolved_model": "claude-code",
+  "retention_mode": "none"
+ },
+ "recorded_at": "2026-08-16T00:00:00Z",
+ "repair": {
+  "after_hash": "c3983b0b8fb67b54cccff133a919aafcc7170ee9077e0a7999fbfbc78aec04d1",
+  "applied_by": "cognitive_os.changes.service.deterministic_replace",
+  "before_hash": "1587dc71f8dfdf342add249784e09d616964644fd426be0d08cfe8b6b60a895f",
+  "bytes_changed": 213,
+  "expected_hash_is_the_baseline": true,
+  "file": "src/cognitive_os/providers/cli_process.py",
+  "finding": "ledger L6",
+  "steps": 1,
+  "the_provider_did_not_write_this": "no released provider configuration in this repository can write a file, and merge_provider_draft refuses a draft carrying a patch; the host applies the change and the provider advised on the proposal"
+ },
+ "repair_probe": {
+  "cancellation_no_longer_converted": true,
+  "every_probe_holds": true,
+  "module_still_imports": true,
+  "timeout_conversion_intact": true
+ },
+ "rollback": null,
+ "stages": [
+  "weakness_mined",
+  "proposal_created",
+  "provider_draft_merged_and_resealed",
+  "proposal_approved_for_experiment",
+  "experiment_requested",
+  "isolation_prepared",
+  "repair_applied",
+  "repair_probed",
+  "candidate_captured_from_the_worktree",
+  "evaluation_run"
+ ],
+ "surface_after": {
+  "active_artifact_namespace_hash": "01564524d511cf3d57b378b454804da758fcf1a76d62bbcbdf5835f7e24b9cad",
+  "active_database_fingerprint": "4478374c536cb4a9aaf441160c6b42799b4747ce1e42e7c37cbbacca7de34a77",
+  "domain_registry_snapshot_hash": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119",
+  "repository_commit": "a983a70cfed08d8bb4b7365a8a35a39110f62bec",
+  "repository_manifest_hash": "fa7388f732189736ff5680b72359f9d9fce121d48cfa4e909bed7a10ea4e6cf1",
+  "repository_status_hash": "eb292945576c6d6d59fee06f24c2480271d5e6b7733b3ae9e390891717ecf6be"
+ },
+ "surface_before": {
+  "active_artifact_namespace_hash": "01564524d511cf3d57b378b454804da758fcf1a76d62bbcbdf5835f7e24b9cad",
+  "active_database_fingerprint": "4478374c536cb4a9aaf441160c6b42799b4747ce1e42e7c37cbbacca7de34a77",
+  "domain_registry_snapshot_hash": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119",
+  "repository_commit": "a983a70cfed08d8bb4b7365a8a35a39110f62bec",
+  "repository_manifest_hash": "fa7388f732189736ff5680b72359f9d9fce121d48cfa4e909bed7a10ea4e6cf1",
+  "repository_status_hash": "eb292945576c6d6d59fee06f24c2480271d5e6b7733b3ae9e390891717ecf6be"
+ },
+ "worktree_capture": {
+  "changed_files": [
+   "src/cognitive_os/providers/cli_process.py"
+  ],
+  "diff_hash": "6da3edfd610f75cf900a5525b298afcc6fbfbdbbaa1690fcfcd80ea7bfd2f4c0",
+  "only_the_allowed_path_changed": true
+ },
+ "zero_active_state_mutation": {
+  "audit_trail_fingerprint_after": "a53ce876e9db17726b8bb26538a0e5fcd8933e0cd53ba9e0544a84e6f84478a9",
+  "audit_trail_fingerprint_before": "4ac125991646f2cad592951e2c8372795efacc8e2cf36fe4deba86c53fe0b8a6",
+  "audit_trail_moved": true,
+  "comparison_is_recomputed": "every member's equality is computed here from the two captures; nothing in this record is an `unchanged: true` literal supplied by the thing being checked (22A W4-F2)",
+  "members_compared": [
+   "repository_commit",
+   "repository_status_hash",
+   "repository_manifest_hash",
+   "active_database_fingerprint",
+   "active_artifact_namespace_hash",
+   "domain_registry_snapshot_hash"
+  ],
+  "mutated_members": [],
+  "per_member_unchanged": {
+   "active_artifact_namespace_hash": true,
+   "active_database_fingerprint": true,
+   "domain_registry_snapshot_hash": true,
+   "repository_commit": true,
+   "repository_manifest_hash": true,
+   "repository_status_hash": true
+  },
+  "surface_hash_after": "16be73aaa1a3f2391041159698f38bef3b7e3872e850b64ec1404f7891ae40c5",
+  "surface_hash_before": "16be73aaa1a3f2391041159698f38bef3b7e3872e850b64ec1404f7891ae40c5",
+  "zero_active_state_mutation": true
+ }
+}

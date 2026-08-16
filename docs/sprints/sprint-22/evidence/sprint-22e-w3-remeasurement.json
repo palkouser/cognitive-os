@@ -1,0 +1,48 @@
+{
+ "integrity_content_hash": "50d21098a5ff8d993c951033f2a0fe7e9f6841b5e80bf41cb66a4eb6fd2a0cf0",
+ "items": [
+  "S22E-301"
+ ],
+ "licence": {
+  "instrument": "the frozen 22D hundred-task instrument, re-run per workload, with the landed repair as the only delta (22B W4-A1: measure the middle)",
+  "pre_registration_hash": "7ab42855ea8d9ab9b12f30f9600ab98f9e90e90df5b3750ba95419d104456bae",
+  "rule": "a 22E re-measurement replaces a predecessor's sealed reading **only if** a released repair affecting that measurement has landed through the governed path first — PR to protected main, merged by the gate owner, green on post-merge exact-head CI",
+  "what_cannot_change_a_verdict": "rereading a sealed number"
+ },
+ "recorded_at": "2026-08-16T00:00:00Z",
+ "resolution": {
+  "because": "the licence is conditional on the landed repair touching a Gate M condition; the ledger records L7 as touching none, and the gate owner's own arithmetic premise names L1 for condition 6 and L2 for condition 7 — disjoint sets, neither of which is what landed",
+  "conditions_still_reading_a_predecessor_seal": [
+   6,
+   7
+  ],
+  "entries_touching_condition_6": [
+   "L1"
+  ],
+  "entries_touching_condition_7": [
+   "L2"
+  ],
+  "instrument_re_run": false,
+  "re_measurement_licensed": false,
+  "the_sets_are_disjoint": true,
+  "what_they_read": "22D's sealed exit-criteria record, unchanged by this sprint"
+ },
+ "schema_version": 1,
+ "sprint": "22E",
+ "the_change_that_landed": {
+  "approved_change_record_hash": "831d3a2df724bd1b8c08f7ddbc8e050905844c13e8761ce814cc01d2101119c3",
+  "entry_id": "L7",
+  "finding": "22E W1-F7",
+  "selected_by": "the Sprint 22 gate owner",
+  "selection_record_hash": "72303b27815306e97dc11c4d73208e19327d34f30209c0e9c971d0595988f128",
+  "touches_a_gate_m_condition": null
+ },
+ "wave": "W3",
+ "what_this_costs_the_sprint": {
+  "gate_m_cannot_fully_close_in_22e": true,
+  "predicted_before_any_candidate_existed": true,
+  "the_selection_was_made_knowing_this": "the arithmetic premise: no selection fully closes Gate M this sprint, so the selection maximises what the certain typed negative is worth",
+  "where": "the gate owner's decision record states it as the arithmetic premise of the selection, and the backlog's §4 states it as a risk the evidence cannot retire"
+ },
+ "why_a_record_exists_for_a_measurement_that_did_not_run": "a re-measurement skipped in silence is indistinguishable later from one that was never owed; §3.2's rule about economised cells is that the reduction is declared"
+}

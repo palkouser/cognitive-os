@@ -1,0 +1,216 @@
+{
+ "integrity_content_hash": "5306343b03e08ac348b0e58c4e63796599fb0ecbd42d6354c853dcb6cb20dc98",
+ "items": [
+  "S22E-202"
+ ],
+ "kind_demonstrated": "failed — both sealed dry-run-1 traversals",
+ "recorded_at": "2026-08-16T18:00:00+00:00",
+ "retrieval": {
+  "answer_read_from_the_store": {
+   "blob_content_hash": "b3655dbe8a3845ba42ae638771ba26c15c7af47bc762c05b8f5b5d8544af4fa2",
+   "top_ranked": "s22e-dryrun-1",
+   "what_failed": true,
+   "what_was_tried": true,
+   "why": true
+  },
+  "arm": "lexical (released)",
+  "both_traversals_outrank_every_distractor": true,
+  "considered": 5,
+  "entries": [
+   {
+    "pair_id": "s22e-dryrun-1",
+    "rank": 1,
+    "score": "0.333333"
+   },
+   {
+    "pair_id": "s22e-dryrun-1-continuation",
+    "rank": 2,
+    "score": "0.333333"
+   },
+   {
+    "pair_id": "fixture-failed-strategy",
+    "rank": 3,
+    "score": "0.200000"
+   },
+   {
+    "pair_id": "fixture-unsafe-tool-request",
+    "rank": 4,
+    "score": "0.125000"
+   },
+   {
+    "pair_id": "fixture-direct-success",
+    "rank": 5,
+    "score": "0.095238"
+   }
+  ],
+  "pool": [
+   "fixture-direct-success",
+   "fixture-failed-strategy",
+   "fixture-unsafe-tool-request",
+   "s22e-dryrun-1",
+   "s22e-dryrun-1-continuation"
+  ],
+  "query_text": "self_improvement provider_execution tool_execution verification failed acceptance tool_result"
+ },
+ "schema_version": 1,
+ "side_store": {
+  "children": [
+   {
+    "blob": "sha256/b3/b3655dbe8a3845ba42ae638771ba26c15c7af47bc762c05b8f5b5d8544af4fa2",
+    "content_hash": "b3655dbe8a3845ba42ae638771ba26c15c7af47bc762c05b8f5b5d8544af4fa2",
+    "read_back_hash_matches": true,
+    "read_back_validates_as_the_contract": true,
+    "side_id": "s22e-dryrun-1-graph",
+    "structural_hash": "3b7477ccd8034f27e738dc34f7c30fd8593ea88229c7f52aed9683ab214cf94f"
+   },
+   {
+    "blob": "sha256/48/4811be7a3ca7cab92f16c3243666f8dbca7abaab979dcc0205f6953c89c19dc1",
+    "content_hash": "4811be7a3ca7cab92f16c3243666f8dbca7abaab979dcc0205f6953c89c19dc1",
+    "read_back_hash_matches": true,
+    "read_back_validates_as_the_contract": true,
+    "side_id": "s22e-dryrun-1-continuation-graph",
+    "structural_hash": "a35a2ecbe627c662bebdcf8aa8db6203d4debf0cb3c409a49e51d290a2208706"
+   }
+  ],
+  "every_side_read_back_and_validated": true,
+  "manifest": "sprint-22e-experience-side-store.json",
+  "manifest_hash": "8450f67dba99593ba80c1dc51b76d6d2f828a86f043d61f8af2c4221d9d07d67"
+ },
+ "sprint": "22E",
+ "successful_kind_owed_by": "W3's approved change, per §2.2(e)'s own sentence; this leg is what W3 feeds",
+ "traversals": {
+  "s22e-dryrun-1": {
+   "compilation_decision": "completed",
+   "graph_hash": "674863fc139aab01ede1b4856e4dedc25a6ad9721795f11b29b787e7180176a1",
+   "graph_nodes": 9,
+   "manifest_hash": "c2c76872b7dffebf46f2730b5f914a93ce41d8e0ecebc1fa9b9a4352516613f2",
+   "record": "sprint-22e-w1-dryrun1.json",
+   "record_sha256": "1063ca07056c5246a72a5311dcec4412175a27048428506dbbe572f8ebb120d0",
+   "refusing_gate": "compatibility",
+   "timeline": [
+    {
+     "event_type": "proposal.mined",
+     "sequence": 1,
+     "status": "completed",
+     "summary": "weakness L1 mined from the sealed ledger; proposal registered"
+    },
+    {
+     "event_type": "provider.proposal",
+     "sequence": 2,
+     "status": "completed",
+     "summary": "live claude-code draft admitted by merge_provider_draft host verification"
+    },
+    {
+     "event_type": "tool.deterministic_replace",
+     "sequence": 3,
+     "status": "completed",
+     "summary": "repair applied to src/cognitive_os/verification/physics/quantities.py: SAFE_UNIT allowlist widened by the written notation characters"
+    },
+    {
+     "event_type": "verifier.completed",
+     "sequence": 4,
+     "status": "completed",
+     "summary": "gate focused_target_tests passed"
+    },
+    {
+     "event_type": "verifier.completed",
+     "sequence": 5,
+     "status": "completed",
+     "summary": "gate security passed"
+    },
+    {
+     "event_type": "verifier.completed",
+     "sequence": 6,
+     "status": "completed",
+     "summary": "gate policy passed"
+    },
+    {
+     "event_type": "verifier.completed",
+     "sequence": 7,
+     "status": "completed",
+     "summary": "gate schema passed"
+    },
+    {
+     "event_type": "verifier.failed",
+     "sequence": 8,
+     "status": "failed",
+     "summary": "gate compatibility failed: import-not-found numpy — the gate environment, not the candidate"
+    },
+    {
+     "event_type": "acceptance.failed",
+     "sequence": 9,
+     "status": "failed",
+     "summary": "candidate refused at compatibility; zero active-state mutation held"
+    }
+   ],
+   "timeline_entries": 9
+  },
+  "s22e-dryrun-1-continuation": {
+   "compilation_decision": "completed",
+   "graph_hash": "44e2d8ac0c0a4e76c5d00432cd60faedf0535f9e585485e21736c7cd2cee98d3",
+   "graph_nodes": 9,
+   "manifest_hash": "7b8fde343beefe58223fd64649d8b8b073e818837828fc3d9a05102bd2ae59d1",
+   "record": "sprint-22e-w2-dryrun1-continuation.json",
+   "record_sha256": "771357a9e86b509de7d85dc15b8f318b6d1ac1d52c357fac27086ae46bd6ca63",
+   "refusing_gate": "focused_target_tests",
+   "timeline": [
+    {
+     "event_type": "proposal.mined",
+     "sequence": 1,
+     "status": "completed",
+     "summary": "weakness L1 mined from the sealed ledger; proposal registered"
+    },
+    {
+     "event_type": "provider.proposal",
+     "sequence": 2,
+     "status": "completed",
+     "summary": "live claude-code draft admitted by merge_provider_draft host verification"
+    },
+    {
+     "event_type": "tool.deterministic_replace",
+     "sequence": 3,
+     "status": "completed",
+     "summary": "repair applied to src/cognitive_os/verification/physics/quantities.py: SAFE_UNIT allowlist widened by the written notation characters"
+    },
+    {
+     "event_type": "verifier.failed",
+     "sequence": 4,
+     "status": "failed",
+     "summary": "gate focused_target_tests failed: the W1-F4 diagnosis test pins the defect the candidate repairs"
+    },
+    {
+     "event_type": "verifier.completed",
+     "sequence": 5,
+     "status": "completed",
+     "summary": "gate security passed"
+    },
+    {
+     "event_type": "verifier.completed",
+     "sequence": 6,
+     "status": "completed",
+     "summary": "gate policy passed"
+    },
+    {
+     "event_type": "verifier.completed",
+     "sequence": 7,
+     "status": "completed",
+     "summary": "gate schema passed"
+    },
+    {
+     "event_type": "verifier.completed",
+     "sequence": 8,
+     "status": "completed",
+     "summary": "gate compatibility passed"
+    },
+    {
+     "event_type": "acceptance.failed",
+     "sequence": 9,
+     "status": "failed",
+     "summary": "candidate refused at focused_target_tests; zero active-state mutation held"
+    }
+   ],
+   "timeline_entries": 9
+  }
+ },
+ "wave": "W2"
+}

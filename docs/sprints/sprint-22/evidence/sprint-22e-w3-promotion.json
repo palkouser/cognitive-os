@@ -1,0 +1,53 @@
+{
+ "authority": {
+  "approval_record_hash": "04d0dea836663876f9b02892cd6ed0604979a0d7f9e000ff5d1023e19bf6ee58",
+  "approved_change_record_hash": "831d3a2df724bd1b8c08f7ddbc8e050905844c13e8761ce814cc01d2101119c3",
+  "approver": "palkouser",
+  "no_provider_merged_anything": "no released provider configuration in this repository can write a file, and the loop's drivers have no merge, tag or push path",
+  "the_merge_was_performed_by": "the gate owner, on explicit instruction"
+ },
+ "integrity_content_hash": "4160b7bcac67e98c7be6b45d569d81eb821ab1254caa33987484bd837b09977b",
+ "items": [
+  "S22E-303"
+ ],
+ "post_merge_ci": {
+  "conclusion": "success",
+  "head_is_the_merge_commit": true,
+  "head_sha": "f4a6305c814164c4ea85175856aa05fa45dc4726",
+  "job_counts": {
+   "success": 30
+  },
+  "run_id": 31955173908,
+  "status": "completed"
+ },
+ "pull_request": {
+  "base": "main",
+  "head": "sprint-22e-approved-change",
+  "merge_commit": "f4a6305c814164c4ea85175856aa05fa45dc4726",
+  "merge_method": "squash",
+  "merged_at": "2026-08-16T15:16:45Z",
+  "number": 237,
+  "state": "MERGED",
+  "title": "Seal the merged provider draft so the provider-assisted path completes"
+ },
+ "recorded_at": "2026-08-16T00:00:00Z",
+ "schema_version": 1,
+ "sprint": "22E",
+ "wave": "W3",
+ "what_landed": {
+  "evaluated_hashes": {
+   "src/cognitive_os/proposals/service.py": "2839d5b164a3946afa8ffc948b2e3f0dd39a3009c3f55922fa1bb4432db8f40d",
+   "tests/cognitive_os/proposals/test_proposal_engine.py": "16dfbd0cd117c6614c9df96998e1c428ad156e0d5f93f2e9095939f1f6939450"
+  },
+  "files": [
+   "src/cognitive_os/proposals/service.py",
+   "tests/cognitive_os/proposals/test_proposal_engine.py"
+  ],
+  "landed_bytes_are_the_evaluated_bytes": true,
+  "landed_hashes": {
+   "src/cognitive_os/proposals/service.py": "2839d5b164a3946afa8ffc948b2e3f0dd39a3009c3f55922fa1bb4432db8f40d",
+   "tests/cognitive_os/proposals/test_proposal_engine.py": "16dfbd0cd117c6614c9df96998e1c428ad156e0d5f93f2e9095939f1f6939450"
+  },
+  "why_this_is_recomputed": "a promotion record that quoted a PR number and a green tick would prove that something merged; this hashes the approved files out of the merged commit and compares them with what the evaluation matrix ran over"
+ }
+}

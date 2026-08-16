@@ -1,0 +1,121 @@
+{
+ "fixture_proposal_to_rejection": {
+  "assessment": {
+   "arrived_through_the_released_mapping": true,
+   "decision": "security_regression",
+   "is_a_rejection": true,
+   "reason": "hard failure: security_regression",
+   "rollback_validation": "failed",
+   "security_result": "failed"
+  },
+  "evaluation": {
+   "failing_gate": "target_benchmark",
+   "failing_gate_code": "security_regression",
+   "gates": 15,
+   "gates_passed": 14,
+   "hard_failure_codes": [
+    "security_regression"
+   ]
+  },
+  "expected_stage_order": [
+   "experiment_requested",
+   "isolation_prepared",
+   "implementation_planned",
+   "candidate_captured",
+   "evaluation_matrix_built",
+   "evaluation_run",
+   "assessed",
+   "promotion_refused"
+  ],
+  "no_stage_skipped": true,
+  "promotion": {
+   "attempted": true,
+   "refusal": "assessment is not eligible for promotion approval",
+   "refusal_is_an_exception_not_a_field": true,
+   "refused": true
+  },
+  "stage_count": 8,
+  "stages_entered_in_order": [
+   "experiment_requested",
+   "isolation_prepared",
+   "implementation_planned",
+   "candidate_captured",
+   "evaluation_matrix_built",
+   "evaluation_run",
+   "assessed",
+   "promotion_refused"
+  ],
+  "this_is_a_fixture": "the candidate's patch hash is a literal and no worktree exists; §1.3's seams between this demo and the real repository are still unmeasured, and §3.1 puts them in W1"
+ },
+ "integrity_content_hash": "a6e665a78d22d7113ac040a7bc020954f31cf623e28b2cd630a0fc8b2ff8d84d",
+ "items": [
+  "S22E-030"
+ ],
+ "reads_an_exit_criterion": false,
+ "recorded_at": "2026-08-16T00:00:00Z",
+ "released_demo": {
+  "assessment_decision": "eligible_for_operator_approval",
+  "assessment_reason": "all mandatory gates passed",
+  "credential_free_and_in_memory": true,
+  "promotion_approved": true,
+  "promotion_approver": "promotion-approver",
+  "separate_actors_enforced": true,
+  "stage_count": 11,
+  "stages": [
+   "assessment",
+   "candidate",
+   "comparison",
+   "evaluation_matrix",
+   "experiment",
+   "implementation_plan",
+   "isolation",
+   "isolation_verifier",
+   "promotion_bundle",
+   "promotion_review",
+   "revision"
+  ]
+ },
+ "schema_version": 1,
+ "sprint": "22E",
+ "surface_after": {
+  "active_artifact_namespace_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "active_database_fingerprint": "86c9bd0cd6d4db8f466fb4b2572d6d05a5b02e3a4cae342466ed5821468b2680",
+  "domain_registry_snapshot_hash": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119",
+  "repository_commit": "729cdf4f35e90ac989d7a75981f8fccb3189f93c",
+  "repository_manifest_hash": "02c8cd289be4586e683be6fc54274730c77fb749798532797c2ed288ca94baa4",
+  "repository_status_hash": "985145df9434b7a5ef5eb9254a52c4059d965566c256dff4d2bb8147a4a4819d"
+ },
+ "surface_before": {
+  "active_artifact_namespace_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "active_database_fingerprint": "86c9bd0cd6d4db8f466fb4b2572d6d05a5b02e3a4cae342466ed5821468b2680",
+  "domain_registry_snapshot_hash": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119",
+  "repository_commit": "729cdf4f35e90ac989d7a75981f8fccb3189f93c",
+  "repository_manifest_hash": "02c8cd289be4586e683be6fc54274730c77fb749798532797c2ed288ca94baa4",
+  "repository_status_hash": "985145df9434b7a5ef5eb9254a52c4059d965566c256dff4d2bb8147a4a4819d"
+ },
+ "wave": "W0",
+ "why_no_exit": "§3.1's slice decides nothing. Exit one wants a *real* rejection — a genuine provider-generated candidate refused at a genuine gate (§2.2a) — and this is a fixture refusing a fixture, which the plan names as explicitly not enough",
+ "zero_active_state_mutation": {
+  "comparison_is_recomputed": "every member's equality is computed here from the two captures; nothing in this record is an `unchanged: true` literal supplied by the thing being checked (22A W4-F2)",
+  "members_compared": [
+   "repository_commit",
+   "repository_status_hash",
+   "repository_manifest_hash",
+   "active_database_fingerprint",
+   "active_artifact_namespace_hash",
+   "domain_registry_snapshot_hash"
+  ],
+  "mutated_members": [],
+  "per_member_unchanged": {
+   "active_artifact_namespace_hash": true,
+   "active_database_fingerprint": true,
+   "domain_registry_snapshot_hash": true,
+   "repository_commit": true,
+   "repository_manifest_hash": true,
+   "repository_status_hash": true
+  },
+  "surface_hash_after": "8d6c951468a8cbd82cf100200ee84c7d4564b14bc190935b458f170c01967d10",
+  "surface_hash_before": "8d6c951468a8cbd82cf100200ee84c7d4564b14bc190935b458f170c01967d10",
+  "zero_active_state_mutation": true
+ }
+}

@@ -1,0 +1,331 @@
+{
+ "eligible_count": 4,
+ "entries": [
+  {
+   "change_surface": "the sealed unit registry's accepted spellings, and the frozen answer-form contract that admits them",
+   "eligible": true,
+   "entry_id": "L1",
+   "expected_benefit": {
+    "ceiling": {
+     "external_teacher": 6,
+     "local_model": 10,
+     "mixed_workload": 6,
+     "no_memory": 10
+    },
+    "crosses_the_floor_at_the_ceiling": true,
+    "floor": 70.0,
+    "is_a_ceiling_not_a_forecast": true,
+    "local_model_verified_at_the_ceiling": 76,
+    "local_model_verified_now": 66,
+    "measured_from": "22D's sealed per-task records, malformed subtracted",
+    "unit": "tasks recovered per model arm"
+   },
+   "finding": "22D W2-F2",
+   "rank": 1,
+   "reproduction": {
+    "every_probe_reproduces": true,
+    "probe_count": 6,
+    "probes": [
+     {
+      "ascii_spelling": {
+       "answer_text": "4700 ohm",
+       "reader_accepted_the_form": true,
+       "undecidable": false,
+       "verified": true
+      },
+      "notation_tax_reproduced": true,
+      "task_id": "s22d-convert-15",
+      "verifier_id": "physics.unit_conversion",
+      "written_spelling": {
+       "answer_text": "4700 Ω",
+       "reader_accepted_the_form": true,
+       "undecidable": true,
+       "verified": false
+      }
+     },
+     {
+      "ascii_spelling": {
+       "answer_text": "1 kg*m/s",
+       "reader_accepted_the_form": true,
+       "undecidable": false,
+       "verified": true
+      },
+      "notation_tax_reproduced": true,
+      "task_id": "s22d-dimension-02",
+      "verifier_id": "physics.dimension",
+      "written_spelling": {
+       "answer_text": "1 kg·m/s",
+       "reader_accepted_the_form": true,
+       "undecidable": true,
+       "verified": false
+      }
+     },
+     {
+      "ascii_spelling": {
+       "answer_text": "1 m/s**2",
+       "reader_accepted_the_form": true,
+       "undecidable": false,
+       "verified": true
+      },
+      "notation_tax_reproduced": true,
+      "task_id": "s22d-dimension-05",
+      "verifier_id": "physics.dimension",
+      "written_spelling": {
+       "answer_text": "1 m/s²",
+       "reader_accepted_the_form": true,
+       "undecidable": true,
+       "verified": false
+      }
+     },
+     {
+      "ascii_spelling": {
+       "answer_text": "1 kg/m**3",
+       "reader_accepted_the_form": true,
+       "undecidable": false,
+       "verified": true
+      },
+      "notation_tax_reproduced": true,
+      "task_id": "s22d-dimension-08",
+      "verifier_id": "physics.dimension",
+      "written_spelling": {
+       "answer_text": "1 kg/m³",
+       "reader_accepted_the_form": true,
+       "undecidable": true,
+       "verified": false
+      }
+     },
+     {
+      "ascii_spelling": {
+       "answer_text": "1 N*m",
+       "reader_accepted_the_form": true,
+       "undecidable": false,
+       "verified": true
+      },
+      "notation_tax_reproduced": true,
+      "task_id": "s22d-dimension-09",
+      "verifier_id": "physics.dimension",
+      "written_spelling": {
+       "answer_text": "1 N·m",
+       "reader_accepted_the_form": true,
+       "undecidable": true,
+       "verified": false
+      }
+     },
+     {
+      "ascii_spelling": {
+       "answer_text": "1 ohm",
+       "reader_accepted_the_form": true,
+       "undecidable": false,
+       "verified": true
+      },
+      "notation_tax_reproduced": true,
+      "task_id": "s22d-dimension-10",
+      "verifier_id": "physics.dimension",
+      "written_spelling": {
+       "answer_text": "1 Ω",
+       "reader_accepted_the_form": true,
+       "undecidable": true,
+       "verified": false
+      }
+     }
+    ],
+    "what_the_probe_shows": "the released reader accepts the spelling a model writes and the sealed unit registry then errors on it, so the answer arrives at 'undecidable' for a reason that is not about the answer (22D W2-F2, W0-F1 one layer out)"
+   },
+   "risk_class": "low",
+   "summary": "the registered physics verifiers error on the unit spellings a model writes",
+   "touches_a_gate_m_condition": 6,
+   "weakness_class": "verifier_instrument"
+  },
+  {
+   "change_surface": "benchmark_22d.escalate, one predicate",
+   "eligible": true,
+   "entry_id": "L2",
+   "expected_benefit": {
+    "measured_from": "22D's sealed per-task records joined to the frozen output kinds",
+    "unit": "needless external escalations removed",
+    "value": {
+     "local_model": 70,
+     "mixed_workload": 70
+    },
+    "why_it_is_not_a_cost_forecast": "removing an escalation removes a teacher call, but the local answer then stands on its own and condition 7 also reads non-inferior success; the two move in opposite directions and only a re-measurement decides"
+   },
+   "finding": "22D W3-F1",
+   "rank": 2,
+   "reproduction": {
+    "arms": {
+     "local_model": {
+      "by_output_kind": {
+       "closed_form_computation": 70
+      },
+      "escalated": 96,
+      "escalated_without_being_a_factual_output": 70,
+      "tasks": 100
+     },
+     "mixed_workload": {
+      "by_output_kind": {
+       "closed_form_computation": 70
+      },
+      "escalated": 96,
+      "escalated_without_being_a_factual_output": 70,
+      "tasks": 100
+     }
+    },
+    "factual_output_kinds": [
+     "declarative_fact",
+     "fact_dependent_derivation"
+    ],
+    "the_defect": "escalate() reads grounded_span_count for every output, but the grounding exit reads only factual outputs; a closed-form computation is escalated for lacking a citation nothing ever asks it for",
+    "why_it_touches_condition_7": "every needless escalation is a call to the external teacher, and condition 7 is read off calls and accounted cost"
+   },
+   "risk_class": "low",
+   "summary": "the escalation policy is blind to output kind and escalates computations for lacking a citation the grounding exit never reads",
+   "touches_a_gate_m_condition": 7,
+   "weakness_class": "policy_decision_function"
+  },
+  {
+   "change_surface": "the answer policy that decides when the released typed abstention is emitted",
+   "eligible": true,
+   "entry_id": "L3",
+   "expected_benefit": {
+    "measured_from": "every sealed arm record, model arms only",
+    "out_of": 400,
+    "unit": "abstentions available where an answer is unsupported",
+    "value": 0,
+    "why_the_benefit_is_unpriced": "an abstention is a failure for the success reading and a pass for the grounding reading; which way condition 6 moves depends on which answers abstain, and no sealed record answers that"
+   },
+   "finding": "22D abstention observation",
+   "rank": 3,
+   "reproduction": {
+    "model_arm_abstentions": 0,
+    "model_arm_answers": 400,
+    "no_model_arm_ever_abstained": true,
+    "per_arm": {
+     "external_teacher": {
+      "abstained": 0,
+      "answers": 100,
+      "is_a_model_arm": true
+     },
+     "local_model": {
+      "abstained": 0,
+      "answers": 100,
+      "is_a_model_arm": true
+     },
+     "mixed_workload": {
+      "abstained": 0,
+      "answers": 100,
+      "is_a_model_arm": true
+     },
+     "no_memory": {
+      "abstained": 0,
+      "answers": 100,
+      "is_a_model_arm": true
+     },
+     "retrieval_only": {
+      "abstained": 96,
+      "answers": 100,
+      "is_a_model_arm": false
+     }
+    },
+    "why_it_is_bounded": "§2.3 forbids rewriting exit (d); the candidate is an answer-policy change that makes the released typed abstention reachable, never a second way to pass",
+    "why_the_denominator_excludes_retrieval_only": "the model-free arm abstained 96 times because it holds almost nothing to answer from; counting it would turn 'no model arm abstained in four hundred answers' into a total that reads as the opposite of the finding"
+   },
+   "risk_class": "moderate",
+   "summary": "no model arm abstained once in four hundred answers, though exit (d) offers explicit uncertainty as a second way to pass",
+   "touches_a_gate_m_condition": null,
+   "weakness_class": "answer_policy"
+  },
+  {
+   "change_surface": "MemoryRepositoryPort and EventStorePort, a shared transactional boundary across two released ports",
+   "eligible": true,
+   "entry_id": "L4",
+   "expected_benefit": {
+    "measured_from": "22C's sealed W1 repair and crash records",
+    "unit": "items missing an event",
+    "value_on_the_reading_the_plan_names": 0,
+    "value_on_the_residual_reading": 1,
+    "why_zero": "zero measurable movement on the reading the plan names, because items_missing_an_event_after_resume is already 0 in 22C's sealed record; the only movement available is on the after-recovery reading, and that costs a two-port refactor"
+   },
+   "finding": "22B W3-F1",
+   "rank": 4,
+   "reproduction": {
+    "finding": "W0-F1",
+    "plan_says": "confirmed still unrepaired in released code, the cleanest low-risk candidate",
+    "released_code_says": {
+     "items_missing_an_event_after_recovery": 1,
+     "items_missing_an_event_after_resume": 0,
+     "released_service": "MemoryEventService.ensure_item_created, asked from MemoryService.create",
+     "repair_closed_every_orphan": true,
+     "resume_is_idempotent": true,
+     "resume_repaired_the_orphan": true,
+     "the_permanence_half_shipped_in_22c": true
+    },
+    "reproduction": "scripts/repairs_22c.py --crash, and --orphan-repair for the deterministic planted orphan; 22C's crash record refuses a run where the window never opened",
+    "the_priced_benefit_is_therefore": "zero measurable movement on the reading the plan names, because items_missing_an_event_after_resume is already 0 in 22C's sealed record; the only movement available is on the after-recovery reading, and that costs a two-port refactor",
+    "touches_a_gate_m_condition": null,
+    "what_is_actually_still_open": "the window: the record and its creation event are still two transactions, so a crash between them still leaves an orphan until something resumes that range",
+    "why_it_is_not_low_risk": "22C names the closure as needing a transactional boundary MemoryRepositoryPort and EventStorePort do not share — two released ports, not one released service; and §1.4 froze 0016 as a refusal, which is why 22C left it owed"
+   },
+   "risk_class": "high",
+   "summary": "the MemoryService.create two-transaction window is still open, but the orphan-permanence half shipped in 22C — the plan's price is stale",
+   "touches_a_gate_m_condition": null,
+   "weakness_class": "transactional_boundary"
+  },
+  {
+   "change_surface": "the provider discriminated union, plus a CheckConstraint and therefore migration 0016",
+   "eligible": false,
+   "entry_id": "L5",
+   "expected_benefit": {
+    "measured_from": "introspection of the released discriminated union",
+    "unit": "configuration classes behind a released provider kind",
+    "value": 0,
+    "why_it_touches_no_condition": "no Gate M condition reads the provider union; spending the one approved change here licenses no re-measurement"
+   },
+   "finding": "22D W2-F1",
+   "ineligible_because": "the W0 gate-owner decision (§2.1) keeps 0016 a refusal, so a repair behind a CheckConstraint may not enter the ranked list",
+   "rank": 5,
+   "reproduction": {
+    "behind_a_check_constraint": true,
+    "eligible_under_the_w0_decision": false,
+    "local_api_configuration_classes": 0,
+    "local_api_is_a_released_provider_kind": true,
+    "released_adapter_kinds": [
+     "cli_agent",
+     "network_api"
+    ],
+    "therefore_behind_migration": "0016",
+    "union_members": [
+     "ClaudeCodeProviderConfig",
+     "CodexCliProviderConfig",
+     "MiniMaxProviderConfig",
+     "OpenRouterProviderConfig"
+    ]
+   },
+   "risk_class": "moderate",
+   "summary": "ProviderKind.LOCAL_API is a released enum member with no configuration class behind it",
+   "touches_a_gate_m_condition": null,
+   "weakness_class": "released_contract_without_implementation"
+  }
+ ],
+ "every_source_record_seal_recomputed_before_it_was_read": true,
+ "integrity_content_hash": "c51b6d149f2f5657073640e9f2e254faf2cfd84e54dbf3934eac2fcb7118c1d5",
+ "items": [
+  "S22E-020"
+ ],
+ "measured_values_are_read_from": [
+  "sprint-22d-w2-external-teacher.json",
+  "sprint-22d-w2-no-memory.json",
+  "sprint-22d-w2-retrieval-only.json",
+  "sprint-22d-w3-local-model.json",
+  "sprint-22d-w3-mixed-workload.json",
+  "sprint-22c-w1-crash.json",
+  "sprint-22c-w1-event-repair.json"
+ ],
+ "one_entry_was_repriced_in_w0": "L4 (22B W3-F1) — W0-F1",
+ "ranking_rule": "eligible before ineligible; then entries that touch a Gate M condition, lowest condition number first; then ascending risk class; then entry id",
+ "recorded_at": "2026-08-16T00:00:00Z",
+ "schema_version": 1,
+ "sprint": "22E",
+ "the_plan_pre_selects_nothing": "§1.4. This file ranks and prices; W3's selection is the gate owner's, and the approval authority is the exit's whole point",
+ "wave": "W0",
+ "zero_zero_sixteen_is_eligible": false
+}
