@@ -146,7 +146,15 @@ def _invariants() -> dict[str, Any]:
 #: Free memory and free disk move every minute of every day. Sealing them as invariants would
 #: make `--check` fail for the reason 22C W1-F1 names — a validator that cannot survive the
 #: world changing, which then tempts somebody to edit history so it passes.
-OBSERVED_AT_W0 = ("observations", "model_licence_gate", "local_runtime")
+#:
+#: **`verifier_extras` joined them in W4, and it is W4-F1.** Whether the optional
+#: `verification-physics` extra is installed is a fact about the *interpreter this command
+#: happens to run under*, not about this host — the field's whole shape changes with it, from a
+#: finding into a refusal. Left as an invariant, `--check` reproduced only when invoked with the
+#: extra and failed under the command line this file documents. Nothing sealed moves: the stored
+#: record is untouched and its hash still recomputes; what changes is which half of it `--check`
+#: rebuilds and which half it re-reads.
+OBSERVED_AT_W0 = ("observations", "model_licence_gate", "local_runtime", "verifier_extras")
 
 
 def _observations() -> dict[str, Any]:

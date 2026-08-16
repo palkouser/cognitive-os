@@ -10,6 +10,181 @@ Waves are recorded newest first.
 
 ---
 
+## W4 outcome — two of five, read once, and a negative with its diagnosis attached
+
+W4 measures nothing. It reads the five exit criteria together for the first time — no earlier
+wave read one as a verdict — re-reads every prior gate from its own sealed record, runs the full
+verification matrix and the whole suite, and closes the sprint on the outcome §5 anticipated.
+
+| Item | What it owed | Outcome |
+|---|---|---|
+| **S22D-400** — the five, read once | every verdict traced to one field of one sealed record | **2 of 5 met**, `outcome: "typed negative"` |
+| §2.2(e) — prior gates | Gate L2, Gate D1, 22A, 22B, 22C re-read at this head | **18 of 18 conditions hold** |
+| sealers | every record rebuilt from its sources, twice | **both passes identical**, one defect found and fixed |
+| verification matrix | ruff, format, mypy, bandit, schema drift, language | **clean** — 638 files, 0 bandit issues |
+| whole suite | the full tree | **4 680 passed / 236 skipped** |
+| handoff | what 22E inherits, priced honestly | **written** |
+
+### The five criteria, read once
+
+| Criterion | Conditions | Met |
+|---|---:|---|
+| **(a)** no large external LLM during the local microbenchmark | 4 of 4 | **yes** |
+| **(b)** ≥ 70 % and ≥ 10 points above retrieval-only | 1 of 2 | no |
+| **(c)** ≥ 25 % fewer calls or cost at non-inferior success | 1 of 3 | no |
+| **(d)** factual output grounded or explicitly uncertain | 0 of 2 | no |
+| **(e)** prior domain, learning and safety gates green | 18 of 18 | **yes** |
+
+Twenty-nine conditions, twenty-four hold, and the five that do not are the sprint's result.
+`sprint-22d-exit-criteria.json` is not a summary written by hand: every condition names the
+record and the dotted field path it was read from, an unresolvable path **raises** rather than
+rendering as `false` — an unread criterion reported as false is one edit from a met criterion —
+and `--check` rebuilds the whole document from its sources, re-deriving the four measured
+readings through `w3_22d.read_exits` so that a hand-edited exits record fails here.
+
+**The tag was not chosen at the end.** W0 froze both names, `sprint-22d-language-baseline` for a
+pass and `sprint-22d-evidence-baseline` for a stop, and the driver selects between them from the
+verdict count. Nobody decided after seeing the numbers which kind of release this was.
+
+### What the stop is required to say
+
+§5 fixes it: *which exit failed, in which wave, with which measured values.* The record assembles
+that list from the failing conditions rather than restating it, so it cannot drift from the
+verdicts above it:
+
+| Exit | Wave | What did not hold | Measured |
+|---|---|---|---|
+| (b) | W3 | the absolute floor | 66.0 % against 70 % — the margin, 62 points over the comparator's 4, holds |
+| (c) | W3, against W2's baseline | calls down ≥ 25 % | −4.0 % |
+| (c) | W3, against W2's baseline | accounted cost down ≥ 25 % | **+5.9 %** — it rose |
+| (d) | W3 | no ungrounded assertion, local arm | 26 of 30 factual outputs |
+| (d) | W3 | no ungrounded assertion, mixed workload | 26 of 30 factual outputs |
+
+Exit (c)'s third condition — inside the pre-registered non-inferiority margin — **holds**, at a
+drop of 2 points against a margin of 3. W3-F3 measured what that is worth: the same teacher
+re-asked the same 96 prompts moved 12 verdicts. The exit is read as frozen and the qualification
+sits beside it.
+
+### §2.2(e) — the gates were re-read, not quoted
+
+The instruction's sharp half is the sentence after it: *a gate that cannot be re-read is red.*
+So each prior record's **own seal is a condition of the exit that reads it**, and a gate whose
+evidence no longer rebuilt its hash would have failed this criterion rather than being cited.
+
+Gate L2 at **29 of 29**, none failed, none pending, none carried. Gate D1 conditions **6, 7 and
+15 still closed**. 22A's four exits by their own named checks rather than by a summary field —
+that record carries no per-criterion `met` — 22B's five, and 22C's four met exits. Eighteen
+conditions, all holding, five sealed records.
+
+### W4-F1 — a sealer that could only reproduce under one command line
+
+Running every `--check` twice found one that did not reproduce: `preflight_22d.py` reported
+`invariants_recomputed: false`. The cause was not the record. `verifier_extras` — whether the
+optional `verification-physics` extra is importable — was classified as an **invariant of this
+host**, and it is nothing of the kind: it is a fact about the interpreter the command happens to
+run under, and the field's whole shape changes with it, from a finding into a refusal.
+
+Left alone, the record reproduced when the check was invoked *with* the extra and failed under
+the command line the file itself documents — and the tempting repair, at the end of a release
+wave, is to re-seal the preflight so it passes. That is exactly the pressure 22C W1-F1 named.
+
+Fixed by classification instead: `verifier_extras` joins the observed-at-W0 set. **Nothing
+sealed moved** — the stored record is byte-identical and its hash still recomputes — what
+changed is which half `--check` rebuilds and which half it re-reads. It now reproduces in both
+environments.
+
+This is the **fourth** variant of one lesson in this sprint. GC-F4 was host facts in tests,
+W2-F5 was an optional dependency in the test lane, and this is an optional dependency in a
+sealer. The axis nobody keeps checking is the one that keeps failing.
+
+### 22C W2-F3 — the accounting's source, named
+
+§5 required that finding repaired **or** the accounting's source named, and §1.1 warned it
+"stops being cosmetic in this sprint". It is named, and the honest answer is that the exit never
+needed the Tool Plane: **no arm executes a tool.** `run_arm` builds one `ArmAccounting` per
+workload from each `ArmOutcome`, every arm record is sealed on its own, and the external half is
+additionally bound by a receipts digest over each governed call's request and normalized
+response hash. A Tool Plane store that discards its events could not have weakened these
+numbers, and repairing it here would have been a schema-adjacent change §2.3 excludes, made for
+a reading nothing in this sprint takes.
+
+### The optional work that was not taken
+
+§2.3 makes adapter training optional and conditional on W4 having surplus. It does not: three of
+the four measured exits are unmet and no exit needs an adapter, so the release wave would have
+been spent producing a number nothing reads. Declined with the reason in the record.
+
+### W4 validation
+
+`ruff check` and `ruff format --check` over `src tests scripts infra` (1 257 files),
+`mypy src/cognitive_os` (**638 source files, no issues**), `bandit -r src/cognitive_os`
+(**0 issues at every severity**), the contract schema export `--check`, and the repository
+language check — all clean. Whole suite with every optional extra installed:
+**4 680 passed, 236 skipped**; in the CI lane's configuration, 4 653 passed and 247 skipped.
+
+Every sealer run twice and the second run is the one that counts (22A W4-F3): the
+pre-registration, the holdout, W2's coverage and arm records, W3's three records, the release
+record and the model runtime all reproduce identically on both passes; the preflight reproduces
+on both after W4-F1. `sprint-22d-exit-criteria.json --check` reports
+`reproduced: true` — stored seal intact **and** rebuilt identical.
+
+16 new tests read the release record with no database, no provider and no model.
+
+### What the sprint claims, and what it does not
+
+**Claimed:** a cleared, hash-pinned local model served through the released OpenAI-compatible
+mapping answers 66 of 100 authored technical-English tasks on CPU with **no network provider
+constructible during the run** — a construction, executed in a test, not an audit; an acquired
+knowledge layer of eight facts, every one of them grounded in loaded source bytes, answers four
+of those tasks with a citation the released walk resolves; and the whole instrument was frozen,
+hashed and published before a single number existed.
+
+**Not claimed:** that the local model is good enough (66 against a floor of 70), that the layer
+is useful yet (0 points of verified movement), that escalation saves anything (cost rose 5.9 %),
+or that factual output is grounded (26 of 30 are not). Each of those is measured, and the sprint
+releases saying so.
+
+### Evidence
+
+| File | SHA-256 of the sealed body |
+|---|---|
+| `evidence/sprint-22d-exit-criteria.json` | `442e6ef6bbf3ae9de5d7661c898609915591d0aa93509e5e27c60c80f1d8fbba` |
+
+### What 22E inherits
+
+**A working local pipeline and four numbers that say what is wrong with it.** The instrument is
+the asset: a frozen hundred, a registered-verifier floor with no model judging a model, a
+runner that owns accounting and refuses an external call by construction, an escalation policy
+as a decision function, and a grounding walk that starts from a generated sentence. All of it
+re-runs from one command per workload.
+
+**Four repairs, none of them this sprint's to make:**
+
+* **W3-F1** — the escalation policy is blind to output kind, so it escalates seventy arithmetic
+  tasks for lacking a citation the grounding exit never wanted. One line, and it is the reason
+  exit (c) could not pass at any local success rate;
+* **W3-F2** — "grounded" as frozen asks only that the walk resolve the cited bytes, which
+  stapling satisfies. W3 ran a stricter rule; the *exit sentence* still needs rewriting;
+* **W2-F2** — the registered physics verifiers error on `m/s²` and `Ω`, which is what a model
+  writes. Worth roughly a dozen tasks per model arm, and it hides whether the answer was right;
+* **W2-F1** — `ProviderKind.LOCAL_API` is still released with no configuration class, because
+  the union discriminates on an enum whose six values are in a database `CheckConstraint`.
+
+**And one thing to stop assuming.** No model arm has abstained **once** across four measured
+workloads and four hundred answers, though every prompt offers the typed value and the reader
+recognises it. Exit (d) has two ways to pass; this system has only ever attempted one.
+
+**Priced honestly, the layer is the bottleneck.** Eight facts serve four of a hundred tasks. The
+ten-point margin over a model-free comparator is not a meaningful test until Layer 1 is two
+orders of magnitude larger, and 22C already measured why it is not: acquisition is bounded by
+what the verifier can recompute, at 59 worked examples to 1 artifact.
+
+**Carried untouched:** 22C W3-A1, 22C W2-A1, 22C W2-F3 (named above rather than repaired),
+22B W2-F2, and the `MemoryService.create` crash window. Migration head `0015`; `0016` is still
+a refusal by default.
+
+---
+
 ## W3 — the fourth arm, the deployed composition, and four exits read once
 
 W3 owed the `local_model` arm on the frozen hundred, the confidence-based escalation and the
