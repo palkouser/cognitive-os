@@ -96,8 +96,19 @@ evidence that a human acted.
 
 **PR [#237](https://github.com/palkouser/cognitive-os/pull/237)** carries exactly the two
 approved files, byte-identical to what the matrix evaluated (verified by hash against the sealed
-record before the commit was made). The merge is the gate owner's separate act and this wave
-does not perform it; the post-merge exact-head CI reading belongs to whichever wave observes it.
+record before the commit was made).
+
+**The landing.** The gate owner instructed the merge explicitly; it went in as a squash at
+`f4a6305` on protected `main`, and the **post-merge exact-head CI is `success`, 30 of 30 jobs**
+(run 31955173908, head `f4a6305`). Sealed in `sprint-22e-w3-promotion.json`
+(`4160b7bcac67e98c…`) under the name and read path W0 pre-registered for Gate M condition 8, so
+W4 resolves that binding against exactly this record.
+
+The one thing that record **recomputes** rather than observes is the thing most worth being
+unable to fake: both approved files are hashed straight out of the merged commit and compared
+with the hashes the evaluation matrix ran over. They match, and `--check` re-derives the
+comparison from git every time. A promotion record that quoted a PR number and a green tick
+would prove only that something merged.
 
 ### The re-measurement, resolved rather than skipped
 

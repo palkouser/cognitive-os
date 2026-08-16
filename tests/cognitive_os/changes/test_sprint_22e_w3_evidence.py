@@ -25,6 +25,7 @@ RECORDS = {
     "change": EVIDENCE / "sprint-22e-w3-approved-change.json",
     "approval": EVIDENCE / "sprint-22e-w3-approval.json",
     "remeasurement": EVIDENCE / "sprint-22e-w3-remeasurement.json",
+    "promotion": EVIDENCE / "sprint-22e-w3-promotion.json",
 }
 
 #: The repair's two files, and nothing else. The candidate that was evaluated and the commit
@@ -265,3 +266,46 @@ def test_the_licence_was_resolved_from_the_ledger_rather_than_assumed() -> None:
         remeasurement["what_this_costs_the_sprint"]["predicted_before_any_candidate_existed"]
         is True
     )
+
+
+# ---------------------------------------------------------------------------
+# The landing: what reached protected main, and that it is what was approved
+# ---------------------------------------------------------------------------
+
+
+def test_the_promotion_record_is_the_one_gate_m_condition_8_was_bound_to() -> None:
+    """W0 pre-registered the file name and the read path; W4 resolves exactly this record."""
+    contracts = json.loads((EVIDENCE / "sprint-22e-contracts.json").read_text(encoding="utf-8"))
+    binding = next(item for item in contracts["S22E-014"]["bindings"] if item["condition"] == 8)
+    assert binding["reads_record"] == "sprint-22e-w3-promotion.json"
+    assert RECORDS["promotion"].name == binding["reads_record"]
+    promotion = _load("promotion")
+    assert promotion["post_merge_ci"]["conclusion"] is not None
+
+
+def test_the_bytes_on_protected_main_are_the_bytes_that_were_evaluated() -> None:
+    """The claim most worth being unable to fake, and it is recomputed rather than quoted."""
+    promotion = _load("promotion")
+    landed = promotion["what_landed"]
+    assert landed["landed_bytes_are_the_evaluated_bytes"] is True
+    assert tuple(landed["files"]) == APPROVED_FILES
+    for path in APPROVED_FILES:
+        assert landed["landed_hashes"][path] == landed["evaluated_hashes"][path]
+    assert landed["evaluated_hashes"] == {
+        item["file"]: item["after_hash"] for item in _load("change")["repair"]["files"]
+    }
+
+
+def test_the_post_merge_ci_ran_at_the_exact_merged_head_and_was_green() -> None:
+    ci = _load("promotion")["post_merge_ci"]
+    assert ci["head_is_the_merge_commit"] is True
+    assert ci["head_sha"] == _load("promotion")["pull_request"]["merge_commit"]
+    assert ci["conclusion"] == "success"
+    assert set(ci["job_counts"]) == {"success"}
+
+
+def test_the_merge_was_a_human_act_and_no_provider_performed_it() -> None:
+    authority = _load("promotion")["authority"]
+    assert authority["approver"] == _load("approval")["approver"]
+    assert authority["approval_record_hash"] == _load("approval")["integrity_content_hash"]
+    assert "gate owner" in authority["the_merge_was_performed_by"]
