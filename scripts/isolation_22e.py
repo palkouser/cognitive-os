@@ -611,14 +611,147 @@ async def _substrate() -> dict[str, Any]:
     return record
 
 
+# ---------------------------------------------------------------------------
+# W1-F9. The check, split the way the sealers split
+# ---------------------------------------------------------------------------
+
+#: **W1-F9.** The four W0 sealers have a `--check`; this script and `dryrun_22e.py` did not,
+#: and the gap was found in review after the wave closed rather than by a run failing. The
+#: record *was* checked — the W1 test file recomputes the seal and twenty further tests read
+#: its fields — but only from one command line, which is the shape 22D W4-F1 exists to name.
+#:
+#: The defensible half of the omission stays defended: a `--check` that re-derived the world
+#: would be a 282-second gate run and a billed provider call, and 22C W1-F1's rule is that a
+#: validator must not need the world to agree the record is intact. So this check recomputes
+#: the **invariants** — the seal, the matrix coverage, the environment declaration, the
+#: arithmetic every summary number owes its own rows, and the zero-mutation comparison from
+#: the two captures the record itself carries — and **re-reads** the observations: wall
+#: clocks, gate verdicts, worktree facts, clone heads. Exactly what the tests already did,
+#: behind a flag, with the split printed so a green can never be read as more than it is.
+
+
+def check_record(record: dict[str, Any]) -> dict[str, Any]:
+    """Recompute what cannot legitimately move; name what is deliberately only re-read."""
+    from surface_22e import compare
+
+    mismatches: list[str] = []
+
+    body = {key: value for key, value in record.items() if key != "integrity_content_hash"}
+    if _sha256(canonical(body)) != record.get("integrity_content_hash"):
+        mismatches.append("integrity_content_hash")
+
+    matrix = record["evaluation_matrix"]
+    matrix_recomputed = False
+    matrix_absent_reason = ""
+    try:
+        from cognitive_os.changes.fixtures import fixture_approved_proposal
+
+        _, proposal = asyncio.run(fixture_approved_proposal())
+        gate_ids = matrix_gate_ids(proposal)
+        assert_the_map_covers_the_matrix(gate_ids)
+        if list(gate_ids) != matrix["execution_order"]:
+            mismatches.append("evaluation_matrix.execution_order")
+        if len(gate_ids) != matrix["gate_count"]:
+            mismatches.append("evaluation_matrix.gate_count")
+        matrix_recomputed = True
+    except ModuleNotFoundError as error:
+        # The lane without the postgres extra cannot rebuild the released matrix; saying so
+        # is the whole point of the split (22D W4-F1 via W0-F2).
+        matrix_absent_reason = f"{type(error).__name__}: {error}"
+
+    gates = matrix["gates"]
+    ran = [item for item in gates if item.get("ran")]
+    arithmetic = {
+        "gates_with_a_command": len(ran),
+        "gates_decided_by_the_driver": len(gates) - len(ran),
+        "gates_passed": sum(1 for item in ran if item.get("passed")),
+        "gates_failed": sum(1 for item in ran if item.get("passed") is False),
+        "measured_wall_clock_seconds": round(sum(item.get("seconds", 0.0) for item in gates), 3),
+    }
+    for field, value in arithmetic.items():
+        if matrix[field] != value:
+            mismatches.append(f"evaluation_matrix.{field}")
+    slowest = max((item for item in ran), key=lambda item: item.get("seconds", 0.0), default=None)
+    if (matrix["slowest_gate"] or {}).get("gate_id") != (slowest or {}).get("gate_id"):
+        mismatches.append("evaluation_matrix.slowest_gate")
+
+    environment = matrix["gate_environment"]
+    if environment["allowlist"] != list(GATE_ENVIRONMENT_ALLOWLIST):
+        mismatches.append("evaluation_matrix.gate_environment.allowlist")
+    if environment["declared_keys"] != sorted(WORKTREE_ENVIRONMENT):
+        mismatches.append("evaluation_matrix.gate_environment.declared_keys")
+
+    untouched = record["worktree_capture_on_an_untouched_tree"]
+    if untouched["empty_diff_hash"] != _sha256(b""):
+        mismatches.append("worktree_capture_on_an_untouched_tree.empty_diff_hash")
+    if untouched["diff_is_empty"] != (untouched["diff_hash"] == _sha256(b"")):
+        mismatches.append("worktree_capture_on_an_untouched_tree.diff_is_empty")
+
+    stored = record["zero_active_state_mutation"]
+    rebuilt = compare(
+        {
+            "values": record["surface_before"],
+            "surface_hash": stored["surface_hash_before"],
+            "audit_trail_fingerprint": stored["audit_trail_fingerprint_before"],
+        },
+        {
+            "values": record["surface_after"],
+            "surface_hash": stored["surface_hash_after"],
+            "audit_trail_fingerprint": stored["audit_trail_fingerprint_after"],
+        },
+    )
+    for field in (
+        "per_member_unchanged",
+        "mutated_members",
+        "zero_active_state_mutation",
+        "audit_trail_moved",
+    ):
+        if rebuilt[field] != stored[field]:
+            mismatches.append(f"zero_active_state_mutation.{field}")
+
+    result: dict[str, Any] = {
+        "reproduced": not mismatches,
+        "mismatches": mismatches,
+        "recomputed": [
+            "integrity_content_hash",
+            *(
+                ["evaluation_matrix.execution_order", "evaluation_matrix.gate_count"]
+                if matrix_recomputed
+                else []
+            ),
+            *sorted(f"evaluation_matrix.{field}" for field in arithmetic),
+            "evaluation_matrix.gate_environment (against the code constants)",
+            "worktree_capture_on_an_untouched_tree.empty_diff_hash",
+            "zero_active_state_mutation (re-derived from the two stored captures)",
+        ],
+        "recorded_not_recomputed": [
+            "worktree facts (a worktree that no longer exists)",
+            "gate verdicts and wall clocks (a 282 s matrix run; 22C W1-F1)",
+            "database_clone and persisted_chain (the store's state at W1)",
+            "the surface captures themselves (the repository has legitimately moved)",
+        ],
+        "finding": "W1-F9",
+    }
+    if not matrix_recomputed:
+        result["recorded_not_recomputed"].insert(0, f"released matrix ({matrix_absent_reason})")
+    return result
+
+
 def main() -> int:
     import argparse
 
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--substrate", action="store_true")
+    parser.add_argument("--check", action="store_true")
     arguments = parser.parse_args()
-    if not arguments.substrate:
-        parser.error("nothing to do; pass --substrate")
+    if not arguments.substrate and not arguments.check:
+        parser.error("nothing to do; pass --substrate or --check")
+
+    if arguments.check:
+        stored = json.loads(OUTPUT.read_text(encoding="utf-8"))
+        verdict = check_record(stored)
+        print(json.dumps(verdict, indent=1, sort_keys=True))
+        return 0 if verdict["reproduced"] else 1
 
     record = asyncio.run(_substrate())
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)

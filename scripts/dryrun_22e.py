@@ -705,13 +705,158 @@ class LiveProviderGenerator:
         return read_draft(self.structured, source)
 
 
+# ---------------------------------------------------------------------------
+# W1-F9. The check, split the way the sealers split
+# ---------------------------------------------------------------------------
+
+
+def check_record(record: dict[str, Any]) -> dict[str, Any]:
+    """Recompute the invariants; re-read the observations; print which was which.
+
+    **W1-F9.** This script sealed a record that twenty tests read and none could rebuild from
+    one flag, and the omission was found in review rather than by a failure. The split is the
+    sealers' (22D W4-F1 via W0-F2): a `--check` here must not re-run a billed provider call or
+    a gate matrix — 22C W1-F1 forbids a validator that needs the world — so the live halves
+    are re-read by name and everything with a derivation is re-derived.
+    """
+    from surface_22e import compare
+
+    mismatches: list[str] = []
+
+    body = {key: value for key, value in record.items() if key != "integrity_content_hash"}
+    if _sha256(canonical(body)) != record.get("integrity_content_hash"):
+        mismatches.append("integrity_content_hash")
+
+    if [item["gate_id"] for item in record["gates"]] != list(DRY_RUN_GATES):
+        mismatches.append("gates (order or membership differs from DRY_RUN_GATES)")
+
+    matrix_recomputed = False
+    matrix_absent_reason = ""
+    try:
+        import asyncio
+
+        from isolation_22e import assert_the_map_covers_the_matrix, matrix_gate_ids
+
+        from cognitive_os.changes.fixtures import fixture_approved_proposal
+
+        _, proposal = asyncio.run(fixture_approved_proposal())
+        gate_ids = matrix_gate_ids(proposal)
+        assert_the_map_covers_the_matrix(gate_ids)
+        if sorted((*DRY_RUN_GATES, *record["gates_not_run_here"])) != sorted(gate_ids):
+            mismatches.append("gates_not_run_here (union does not cover the released matrix)")
+        matrix_recomputed = True
+    except ModuleNotFoundError as error:
+        matrix_absent_reason = f"{type(error).__name__}: {error}"
+
+    repair = record["repair"]
+    if repair["file"] != REPAIR_FILE:
+        mismatches.append("repair.file")
+    replace_recomputed = False
+    replace_absent_reason = ""
+    active = REPO / REPAIR_FILE
+    if active.exists() and _sha256(active.read_bytes()) == repair["before_hash"]:
+        from cognitive_os.changes.service import deterministic_replace
+
+        repaired = deterministic_replace(
+            active.read_bytes(),
+            REPAIR_BEFORE.encode(),
+            REPAIR_AFTER.encode(),
+            repair["before_hash"],
+        )
+        if _sha256(repaired) != repair["after_hash"]:
+            mismatches.append("repair.after_hash")
+        replace_recomputed = True
+    else:
+        # After W3 lands the L1 repair on `main`, the active file legitimately stops matching
+        # the recorded baseline; a check that failed on that would fail on the sprint
+        # succeeding. Named, not silently skipped.
+        replace_absent_reason = "the active tree has moved past the recorded baseline"
+
+    probe = record["repair_probe"]
+    accepted = probe["accepted"]
+    derived = {
+        "written_notation_now_accepted": all(accepted[unit] for unit in ("Ω", "kg·m/s", "m/s²")),
+        "ascii_notation_still_accepted": all(
+            accepted[unit] for unit in ("ohm", "kg*m/s", "m/s**2")
+        ),
+        "injection_still_refused": accepted["; rm -rf /"] is False,
+    }
+    for field, value in derived.items():
+        if probe[field] != value:
+            mismatches.append(f"repair_probe.{field}")
+
+    capture_block = record["worktree_capture"]
+    if capture_block["only_the_allowed_path_changed"] != (
+        set(capture_block["changed_files"]) <= {REPAIR_FILE}
+    ):
+        mismatches.append("worktree_capture.only_the_allowed_path_changed")
+
+    stored = record["zero_active_state_mutation"]
+    rebuilt = compare(
+        {
+            "values": record["surface_before"],
+            "surface_hash": stored["surface_hash_before"],
+            "audit_trail_fingerprint": stored["audit_trail_fingerprint_before"],
+        },
+        {
+            "values": record["surface_after"],
+            "surface_hash": stored["surface_hash_after"],
+            "audit_trail_fingerprint": stored["audit_trail_fingerprint_after"],
+        },
+    )
+    for field in (
+        "per_member_unchanged",
+        "mutated_members",
+        "zero_active_state_mutation",
+        "audit_trail_moved",
+    ):
+        if rebuilt[field] != stored[field]:
+            mismatches.append(f"zero_active_state_mutation.{field}")
+
+    result: dict[str, Any] = {
+        "reproduced": not mismatches,
+        "mismatches": mismatches,
+        "recomputed": [
+            "integrity_content_hash",
+            "gates (membership against DRY_RUN_GATES)",
+            *(["gates_not_run_here (against the released matrix)"] if matrix_recomputed else []),
+            *(
+                ["repair (deterministic_replace re-executed on the baseline bytes)"]
+                if replace_recomputed
+                else []
+            ),
+            "repair_probe verdict booleans (from the probe's own accepted map)",
+            "worktree_capture.only_the_allowed_path_changed",
+            "zero_active_state_mutation (re-derived from the two stored captures)",
+        ],
+        "recorded_not_recomputed": [
+            "provider receipt and draft (a billed live call; 22C W1-F1)",
+            "stage list and gate verdicts and wall clocks (a discarded worktree)",
+            "the surface captures themselves (the repository has legitimately moved)",
+        ],
+        "finding": "W1-F9",
+    }
+    if not matrix_recomputed:
+        result["recorded_not_recomputed"].insert(0, f"released matrix ({matrix_absent_reason})")
+    if not replace_recomputed:
+        result["recorded_not_recomputed"].insert(0, f"repair bytes ({replace_absent_reason})")
+    return result
+
+
 def main() -> int:
     import argparse
     import asyncio
 
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--entry", default="L1")
+    parser.add_argument("--check", action="store_true")
     arguments = parser.parse_args()
+
+    if arguments.check:
+        stored = json.loads(OUTPUT.read_text(encoding="utf-8"))
+        verdict = check_record(stored)
+        print(json.dumps(verdict, indent=1, sort_keys=True))
+        return 0 if verdict["reproduced"] else 1
 
     record = asyncio.run(run_dry_run(arguments.entry))
     record["integrity_content_hash"] = _sha256(

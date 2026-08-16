@@ -168,6 +168,31 @@ the next attempt is refused however the first one ended.
 Repaired in the caller, not the released layer: the released refusal is correct — it protects a
 live experiment — and what was missing is a caller that knows its own previous attempt is dead.
 
+### W1-F9 — two drivers whose records only one command line could check
+
+Found in review after the wave's partial close, not by a run failing, and recorded here before
+W2 begins rather than folded into it silently. The four W0 sealers have a `--check`;
+`isolation_22e.py` and `dryrun_22e.py` did not. Both W1 records *were* checked — the test file
+recomputes each seal and twenty further tests read their fields — but only from one command
+line, which is exactly the shape §0's portability rule (22D W4-F1) exists to name. The omission
+had a defensible half and an indefensible one, and the repair keeps them apart: re-deriving
+either record would be a 282-second matrix run and a **billed** provider call, and 22C W1-F1
+forbids a validator that needs the world — but that is a reason to *split* the check, not to
+omit it.
+
+Closed with the split the sealers already use: each driver's `--check` **recomputes the
+invariants** — the seal, the matrix coverage against the released `build_evaluation_matrix`,
+the environment declaration against the code constants, the arithmetic every summary number
+owes its own rows, the probe's verdict booleans from its own accepted map, and the
+zero-mutation comparison re-derived from the two captures the record itself carries — and
+**re-reads the observations** by name: gate verdicts, wall clocks, worktree facts, clone
+heads, the provider receipt. The output prints `recomputed` and `recorded_not_recomputed` so a
+green can never be read as more than it is. Both checks run twice with identical output
+(22A W4-F3), both reproduce under the main CI lane's configuration as well as the postgres
+one, and five tests hold the closure — including a tampered gate verdict, a planted
+zero-mutation claim and an injection case quietly marked accepted, each of which the check
+must refuse (22A W4-F2).
+
 ### Dry run 1, end to end
 
 Ten stages, in order, none skipped: weakness mined from the sealed ledger → proposal created →

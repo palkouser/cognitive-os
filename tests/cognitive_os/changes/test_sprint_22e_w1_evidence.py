@@ -294,3 +294,66 @@ def test_the_dry_run_declares_the_gates_it_did_not_run() -> None:
     record = _load("dryrun1")
     assert record["gates_not_run_here"]
     assert "historical_regression" in record["gates_not_run_here"]
+
+
+# ---------------------------------------------------------------------------
+# W1-F9 — the check asymmetry, closed
+# ---------------------------------------------------------------------------
+#
+# The four W0 sealers had a `--check`; the two W1 drivers did not, and the gap was found in
+# review after the wave closed — checked by this file, but from one command line, which is the
+# shape 22D W4-F1 names. These tests hold the closure: each check must reproduce over the
+# sealed record, and each must refuse a tampered copy, because a validator that has only ever
+# been shown accepting is a validator nobody has tested (22A W4-F2).
+
+
+def test_the_substrate_check_reproduces_and_names_its_split() -> None:
+    from isolation_22e import check_record
+
+    verdict = check_record(_load("substrate"))
+    assert verdict["reproduced"] is True, verdict["mismatches"]
+    assert verdict["recomputed"] and verdict["recorded_not_recomputed"]
+
+
+def test_the_substrate_check_refuses_a_tampered_verdict() -> None:
+    """A flipped gate verdict must fail the arithmetic the summary owes its own rows."""
+    from isolation_22e import check_record
+
+    tampered = _load("substrate")
+    victim = next(
+        item for item in tampered["evaluation_matrix"]["gates"] if item.get("passed") is True
+    )
+    victim["passed"] = False
+    verdict = check_record(tampered)
+    assert verdict["reproduced"] is False
+    assert any("gates_passed" in item for item in verdict["mismatches"])
+
+
+def test_the_substrate_check_refuses_a_planted_zero_mutation_claim() -> None:
+    """22A W4-F2: the claim is re-derived from the captures, never accepted from the record."""
+    from isolation_22e import check_record
+
+    tampered = _load("substrate")
+    tampered["surface_after"]["repository_commit"] = "0" * 40
+    verdict = check_record(tampered)
+    assert verdict["reproduced"] is False
+    assert any("zero_active_state_mutation" in item for item in verdict["mismatches"])
+
+
+def test_the_dryrun_check_reproduces_and_names_the_billed_call_as_reread() -> None:
+    from dryrun_22e import check_record
+
+    verdict = check_record(_load("dryrun1"))
+    assert verdict["reproduced"] is True, verdict["mismatches"]
+    assert any("billed live call" in item for item in verdict["recorded_not_recomputed"])
+
+
+def test_the_dryrun_check_refuses_a_tampered_probe() -> None:
+    """An injection case quietly marked accepted must fail the derived verdict booleans."""
+    from dryrun_22e import check_record
+
+    tampered = _load("dryrun1")
+    tampered["repair_probe"]["accepted"]["; rm -rf /"] = True
+    verdict = check_record(tampered)
+    assert verdict["reproduced"] is False
+    assert any("injection_still_refused" in item for item in verdict["mismatches"])
