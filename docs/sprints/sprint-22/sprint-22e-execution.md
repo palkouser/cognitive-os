@@ -24,6 +24,30 @@ that L7's real weight sits outside that rule: it decides whether §2.2(b)'s chai
 as written, which is the gate owner's W3 question. Seven tests hold the revision, including
 the predecessor's byte-identity and a tampered-reproduction refusal.
 
+### W2-F1 — the compatibility gate refused every candidate, including an empty one
+
+Found while re-deriving L1's "real price" for the W3 decision brief, by W1-F4's own rule: a
+sealed finding's diagnosis is evidence about what its author saw, and has to be re-derived.
+Dry run 1's `compatibility` failure reads, in the sealed record's own tail,
+`import-not-found: numpy` in two **learning** modules — nothing about the repaired file. Run
+against the *unrepaired* active tree, the gate's exact command fails with the same two errors;
+run with `--extra memory-postgres` — the sync the CI mypy lane actually uses, whose pgvector
+dependency transitively installs numpy — it is clean over all 638 files.
+
+So the gate did not reproduce the lane it claims to reproduce (W1-F3's rule, violated by the
+gate map's own `compatibility` entry), and **dry run 1's rejection was a false rejection in
+W1-F3's class**: real gate, real run, real non-zero exit — and a reason that was not about
+the candidate. The W1 log's sentence "widening a released contract's validation surface is
+something mypy has an opinion about" is wrong and is corrected here rather than edited there;
+the sealed record stays as written, and what it sealed — the command, the exit code, the tail
+naming numpy — is exactly what made this re-derivation possible. W1's exit-one evidence is
+untouched: the zero-mutation claim never depended on *why* the gate refused. What changes is
+the decision input the wave handed W3: **L1's mypy price does not exist.** The repair edits
+one string literal, and the corrected gate is expected clean over it — the definitive re-run
+belongs to whichever run next carries the candidate. The command is fixed in the gate map
+with the reason attached, a test asserts the extra is present, and W2's dry runs 2–3 run
+under the corrected gate.
+
 **Still owed by W2, named rather than implied:** the Experience Compiler leg for dry run 1
 and for the runs to come (compile *and* query back, both kinds); dry runs 2 and 3 on distinct
 weakness classes, at least one failing its own evaluation honestly; and one rollback executed

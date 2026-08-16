@@ -95,3 +95,19 @@ def test_the_check_refuses_a_tampered_reproduction() -> None:
     verdict = check_record(tampered)
     assert verdict["reproduced"] is False
     assert any("L7" in item for item in verdict["mismatches"])
+
+
+def test_the_compatibility_gate_reproduces_the_ci_mypy_lane() -> None:
+    """W2-F1: without `--extra memory-postgres` the gate fails an empty candidate.
+
+    The CI mypy lane syncs `--all-groups --extra memory-postgres`, and that extra
+    transitively installs numpy, which two learning modules import. A compatibility gate
+    without it refuses every candidate for a reason that is about the environment, not the
+    candidate — the false-rejection class W1-F3 names.
+    """
+    from isolation_22e import GATE_COMMANDS
+
+    command = GATE_COMMANDS["compatibility"]
+    assert command is not None
+    assert "memory-postgres" in command
+    assert command.index("--extra") < command.index("memory-postgres")

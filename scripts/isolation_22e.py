@@ -154,7 +154,21 @@ GATE_COMMANDS: dict[str, tuple[str, ...] | None] = {
     "performance_resources": None,
     "backup_restore_rollback": None,
     "resource_budget": None,
-    "compatibility": ("uv", "run", "--all-groups", "mypy", "src/cognitive_os"),
+    # **W2-F1.** `--extra memory-postgres` is load-bearing: the CI mypy lane syncs
+    # `--all-groups --extra memory-postgres`, and that extra transitively installs numpy
+    # (via pgvector), which two learning modules import. Without it this gate fails with
+    # `import-not-found: numpy` on an *empty* candidate — dry run 1's "rejection" was this,
+    # not mypy objecting to the repair. W1-F3's own rule, violated by this map's first
+    # version: the gate must reproduce the lane it claims to reproduce.
+    "compatibility": (
+        "uv",
+        "run",
+        "--all-groups",
+        "--extra",
+        "memory-postgres",
+        "mypy",
+        "src/cognitive_os",
+    ),
 }
 
 
