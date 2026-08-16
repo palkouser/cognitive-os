@@ -1,0 +1,101 @@
+{
+ "ci_run": {
+  "conclusion": "success",
+  "head_sha": "395fe7de5de1848371f45a48c8b199dce96d4986",
+  "run_id": 31957523308,
+  "status": "completed"
+ },
+ "condition_9_families": {
+  "distribution": {
+   "conclusion": "success",
+   "lane": "build"
+  },
+  "migration": {
+   "conclusion": "success",
+   "lane": "migration"
+  },
+  "provider": {
+   "conclusion": "success",
+   "lane": "provider-offline"
+  },
+  "repository_language": {
+   "conclusion": "success",
+   "lane": "quality"
+  },
+  "security": {
+   "conclusion": "success",
+   "lane": "security"
+  }
+ },
+ "every_named_family_has_a_passing_lane": true,
+ "integrity_content_hash": "a47cefbf11417e37c2cc9d4c5dd640ea7b7fe3ea9488c9a713be20c3a54e36c2",
+ "items": [
+  "S22E-401"
+ ],
+ "lane_count": 30,
+ "lanes": {
+  "benchmark-regression": "success",
+  "build": "success",
+  "coding-agent": "success",
+  "cognitive-controller": "success",
+  "context-builder-core": "success",
+  "controlled-changes-core": "success",
+  "corpus-factory-core": "success",
+  "cross-domain-pilot-core": "success",
+  "experience-compiler-core": "success",
+  "experience-graph-core": "success",
+  "harness-proposals-core": "success",
+  "inspect-adapter": "success",
+  "learned-evidence-core": "success",
+  "memory-plane-core": "success",
+  "migration": "success",
+  "model-routing-core": "success",
+  "optional-boundary": "success",
+  "postgres-integration": "success",
+  "provider-offline": "success",
+  "quality": "success",
+  "reality-inputs-core": "success",
+  "sandbox": "success",
+  "security": "success",
+  "semantic-memory-core": "success",
+  "skill-engine-core": "success",
+  "strategy-engine-core": "success",
+  "test": "success",
+  "tool-plane": "success",
+  "verifier-domains": "success",
+  "weakness-mining-core": "success"
+ },
+ "lanes_not_successful": [],
+ "local_matrix": {
+  "driver_decided": [
+   "candidate_integrity",
+   "target_benchmark",
+   "migration",
+   "performance_resources",
+   "backup_restore_rollback",
+   "resource_budget"
+  ],
+  "failed": [],
+  "gate_ids_passed": [
+   "reproducible_build",
+   "focused_target_tests",
+   "historical_regression",
+   "unrelated_domain_regression",
+   "security",
+   "policy",
+   "schema",
+   "dependency_packaging",
+   "compatibility"
+  ],
+  "gates": 15,
+  "passed": 9,
+  "ran": 9,
+  "wall_clock_seconds": 286.688
+ },
+ "recorded_at": "2026-08-16T00:00:00Z",
+ "release_head": "395fe7de5de1848371f45a48c8b199dce96d4986",
+ "schema_version": 1,
+ "sprint": "22E",
+ "two_independent_verdicts": "GitHub's lanes at the release head, and this repository's own fifteen-gate matrix run locally in a clean worktree at the same commit; 22D W4-F1's rule is that nothing is green under one command line",
+ "wave": "W4"
+}

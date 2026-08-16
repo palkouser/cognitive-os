@@ -1,0 +1,198 @@
+{
+ "all_conditions_pass": false,
+ "conditions": [
+  {
+   "condition": 1,
+   "met": true,
+   "reading": "D7's sealed close, the same record 22D's exit (e) reads",
+   "reads": "../../sprint-21/evidence/sprint-21d7-gate-l2.json#counts.met",
+   "sentence": "Gate L2 passes",
+   "source_kind": "predecessor_seal",
+   "value": 29,
+   "value_is_what_w0_expected": true,
+   "w0_expected_value": 29,
+   "w0_expected_verdict": "holds, 29 of 29"
+  },
+  {
+   "condition": 2,
+   "met": true,
+   "reading": "22A's four exits, and the one that is literally 'without core branching'",
+   "reads": "sprint-22a-exit-criteria.json#outcome",
+   "sentence": "Domain Registry v2 adds two domains without core branching",
+   "source_kind": "predecessor_seal",
+   "value": "pass",
+   "value_is_what_w0_expected": true,
+   "w0_expected_value": "pass",
+   "w0_expected_verdict": "holds"
+  },
+  {
+   "condition": 3,
+   "met": true,
+   "reading": "22B's five exits",
+   "reads": "sprint-22b-exit-criteria.json#all_met",
+   "sentence": "the 10^6 capacity, maintenance, backup, and restore envelope passes",
+   "source_kind": "predecessor_seal",
+   "value": true,
+   "value_is_what_w0_expected": true,
+   "w0_expected_value": true,
+   "w0_expected_verdict": "holds, 5 of 5"
+  },
+  {
+   "condition": 4,
+   "met": true,
+   "reading": "22C's replay exit specifically — *not* its outcome, which is a typed negative earned on a different exit (improvement) that condition 4 does not read",
+   "reads": "sprint-22c-exit-criteria.json#criteria.every cycle replays all retained domains",
+   "sentence": "three continual-learning cycles pass cross-domain anti-forgetting",
+   "source_kind": "predecessor_seal",
+   "value": [
+    "conditions",
+    "conditions_holding",
+    "conditions_total",
+    "criterion",
+    "met",
+    "reading"
+   ],
+   "w0_expected_verdict": "holds"
+  },
+  {
+   "condition": 5,
+   "met": true,
+   "reading": "22D's grounded holdout answers",
+   "reads": "sprint-22d-w1-holdout-read.json#arm_b_verified",
+   "sentence": "a rights-cleared source is acquired, verified, learned, and applied end to end",
+   "source_kind": "predecessor_seal",
+   "value": 4,
+   "value_is_what_w0_expected": true,
+   "w0_expected_value": 4,
+   "w0_expected_verdict": "holds, under the W0 gate-owner reading"
+  },
+  {
+   "condition": 6,
+   "met": false,
+   "re_measurement_licensed_by": "a landed repair affecting local verified success (ledger L1)",
+   "reading": "22D exit (b), local verified success against the 70 % floor",
+   "reads": "sprint-22d-exit-criteria.json#criteria[1].met",
+   "sentence": "bounded local English capability passes without a large external LLM",
+   "source_kind": "predecessor_seal",
+   "value": false,
+   "value_is_what_w0_expected": true,
+   "w0_expected_value": false,
+   "w0_expected_verdict": "fails as sealed, 66 against 70"
+  },
+  {
+   "condition": 7,
+   "met": false,
+   "re_measurement_licensed_by": "a landed repair affecting calls or cost (ledger L2)",
+   "reading": "22D exit (c), calls or equivalent cost against the 25 % target",
+   "reads": "sprint-22d-exit-criteria.json#criteria[2].met",
+   "sentence": "large-LLM dependence falls by at least the declared threshold",
+   "source_kind": "predecessor_seal",
+   "value": false,
+   "value_is_what_w0_expected": true,
+   "w0_expected_value": false,
+   "w0_expected_verdict": "fails as sealed, calls -4 %, accounted cost +5.9 %"
+  },
+  {
+   "condition": 8,
+   "met": true,
+   "reading": "this sprint's one approved change, merged and green at its exact head",
+   "reads": "sprint-22e-w3-promotion.json#post_merge_ci.conclusion",
+   "sentence": "one governed self-improvement reaches protected `main`",
+   "source_kind": "this_sprint",
+   "value": "success",
+   "w0_expected_verdict": "22E's to earn"
+  },
+  {
+   "condition": 9,
+   "met": true,
+   "reading": "the CI lanes at the release head, re-read rather than quoted",
+   "reads": "sprint-22e-w4-gates.json#lanes",
+   "sentence": "security, provider, migration, distribution, and repository-language gates pass",
+   "source_kind": "this_sprint",
+   "value": [
+    "benchmark-regression",
+    "build",
+    "coding-agent",
+    "cognitive-controller",
+    "context-builder-core",
+    "controlled-changes-core",
+    "corpus-factory-core",
+    "cross-domain-pilot-core",
+    "experience-compiler-core",
+    "experience-graph-core",
+    "harness-proposals-core",
+    "inspect-adapter",
+    "learned-evidence-core",
+    "memory-plane-core",
+    "migration",
+    "model-routing-core",
+    "optional-boundary",
+    "postgres-integration",
+    "provider-offline",
+    "quality",
+    "reality-inputs-core",
+    "sandbox",
+    "security",
+    "semantic-memory-core",
+    "skill-engine-core",
+    "strategy-engine-core",
+    "test",
+    "tool-plane",
+    "verifier-domains",
+    "weakness-mining-core"
+   ],
+   "w0_expected_verdict": "holds, re-read not quoted"
+  },
+  {
+   "condition": 10,
+   "met": false,
+   "reading": "post-merge main CI, and sprint-22-baseline peeling to the verified protected commit",
+   "reads": "sprint-22e-release.json#tag.peels_to",
+   "sentence": "post-merge `main` CI and the annotated `sprint-22-baseline` tag are verified",
+   "source_kind": "this_sprint",
+   "value": null,
+   "w0_expected_verdict": "22E's to earn"
+  }
+ ],
+ "conditions_failed": [
+  6,
+  7,
+  10
+ ],
+ "conditions_met": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  8,
+  9
+ ],
+ "counts": {
+  "failed": 3,
+  "met": 7,
+  "total": 10
+ },
+ "every_reading_was_frozen_before_any_measurement": true,
+ "gate": "M",
+ "integrity_content_hash": "3dd1bb4f22e9b99683d9e2d7b1ad2989ec43cc6f0356916cfb4f9a71d3a148af",
+ "items": [
+  "S22E-400"
+ ],
+ "read_once": true,
+ "recorded_at": "2026-08-16T00:00:00Z",
+ "schema_version": 1,
+ "sprint": "22E",
+ "wave": "W4",
+ "what_could_have_changed_them": "a released repair affecting the measurement, landed through the governed path, followed by a re-measurement on the frozen instrument — not a rereading",
+ "why_the_failures_are_not_surprises": {
+  "because": "the licence is conditional on the landed repair touching a Gate M condition; the ledger records L7 as touching none, and the gate owner's own arithmetic premise names L1 for condition 6 and L2 for condition 7 — disjoint sets, neither of which is what landed",
+  "conditions": [
+   6,
+   7
+  ],
+  "predicted_in": "the gate owner's decision record, as the arithmetic premise of the selection",
+  "re_measurement_licensed": false,
+  "they_read": "22D's sealed exit record, unchanged by this sprint"
+ }
+}

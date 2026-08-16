@@ -1,0 +1,169 @@
+{
+ "a_negative_is_falsifiable_too": "every criterion names the record and path it read, so a reader can resolve the same path and disagree; the unmet ones name the measured value that failed them",
+ "all_met": false,
+ "counts": {
+  "met": 3,
+  "total": 5,
+  "unmet": 2
+ },
+ "criteria": [
+  {
+   "at_least_one_rejection_was_real": {
+    "provider_id": "claude-code",
+    "record": "sprint-22e-w1-dryrun1.json",
+    "refusing_gate": "compatibility",
+    "why_it_counts": "a live provider-advised candidate refused at a gate that actually ran, not a fixture refusing a fixture"
+   },
+   "criterion": "rejected proposals cause zero active-state mutation",
+   "index": 0,
+   "met": true,
+   "reads": "each record's zero_active_state_mutation, recomputed by surface_22e.compare",
+   "records": [
+    {
+     "members_compared": 6,
+     "mutated_members": [],
+     "record": "sprint-22e-w0-slice.json",
+     "zero_active_state_mutation": true
+    },
+    {
+     "members_compared": 6,
+     "mutated_members": [],
+     "record": "sprint-22e-w1-substrate.json",
+     "zero_active_state_mutation": true
+    },
+    {
+     "members_compared": 6,
+     "mutated_members": [],
+     "record": "sprint-22e-w1-dryrun1.json",
+     "zero_active_state_mutation": true
+    },
+    {
+     "members_compared": 6,
+     "mutated_members": [],
+     "record": "sprint-22e-w2-dryrun1-continuation.json",
+     "zero_active_state_mutation": true
+    },
+    {
+     "members_compared": 6,
+     "mutated_members": [],
+     "record": "sprint-22e-w2-dryrun2.json",
+     "zero_active_state_mutation": true
+    },
+    {
+     "members_compared": 6,
+     "mutated_members": [],
+     "record": "sprint-22e-w2-dryrun3.json",
+     "zero_active_state_mutation": true
+    },
+    {
+     "members_compared": 6,
+     "mutated_members": [],
+     "record": "sprint-22e-w3-approved-change.json",
+     "zero_active_state_mutation": true
+    }
+   ],
+   "traversals_measured": 7
+  },
+  {
+   "approved_by": "palkouser",
+   "criterion": "one approved change reaches protected `main` through PR and post-merge CI",
+   "index": 1,
+   "job_counts": {
+    "success": 30
+   },
+   "landed_bytes_are_the_evaluated_bytes": true,
+   "merge_commit": "f4a6305c814164c4ea85175856aa05fa45dc4726",
+   "met": true,
+   "one_change_only": 2,
+   "post_merge_ci": "success",
+   "pull_request": 237,
+   "reads": "sprint-22e-w3-promotion.json"
+  },
+  {
+   "criterion": "failed and successful experience is retained and retrievable",
+   "failed_kind": {
+    "outranked_every_distractor": true,
+    "record": "sprint-22e-w2-experience.json",
+    "traversals": 2
+   },
+   "index": 2,
+   "met": true,
+   "reads": "sprint-22e-w2-experience.json and sprint-22e-w4-experience.json",
+   "stricter_probe_not_required_by_the_sentence": {
+    "finding": "22E W4-F1 — the first attempt asked for tokens the surface does not emit",
+    "the_two_kinds_are_distinguishable": true
+   },
+   "successful_kind": {
+    "compilation_decision": "completed",
+    "outranks_every_distractor": true,
+    "read_back_validates_as_the_contract": true,
+    "record": "sprint-22e-w4-experience.json"
+   }
+  },
+  {
+   "conditions_failed": [
+    6,
+    7,
+    10
+   ],
+   "counts": {
+    "failed": 3,
+    "met": 7,
+    "total": 10
+   },
+   "criterion": "all Gate M conditions pass",
+   "each_failure": [
+    {
+     "condition": 6,
+     "measured_value": false,
+     "reads": "sprint-22d-exit-criteria.json#criteria[1].met",
+     "sentence": "bounded local English capability passes without a large external LLM",
+     "w0_expected_verdict": "fails as sealed, 66 against 70"
+    },
+    {
+     "condition": 7,
+     "measured_value": false,
+     "reads": "sprint-22d-exit-criteria.json#criteria[2].met",
+     "sentence": "large-LLM dependence falls by at least the declared threshold",
+     "w0_expected_verdict": "fails as sealed, calls -4 %, accounted cost +5.9 %"
+    },
+    {
+     "condition": 10,
+     "measured_value": null,
+     "reads": "sprint-22e-release.json#tag.peels_to",
+     "sentence": "post-merge `main` CI and the annotated `sprint-22-baseline` tag are verified",
+     "w0_expected_verdict": "22E's to earn"
+    }
+   ],
+   "index": 3,
+   "met": false,
+   "reads": "sprint-22e-gate-m.json"
+  },
+  {
+   "criterion": "`sprint-22-baseline` peels to the verified protected commit",
+   "index": 4,
+   "met": false,
+   "negative_tag": {
+    "annotated": true,
+    "created": true,
+    "name": "sprint-22e-evidence-baseline",
+    "peels_to_the_merge_commit": true
+   },
+   "programme_tag": "sprint-22-baseline",
+   "programme_tag_created": false,
+   "programme_tag_peels_to": null,
+   "reads": "sprint-22e-release.json",
+   "why_not": "the programme tag marks a passing Gate M and five met exits; this sprint is a typed negative, and the plan names the negative tag for that case"
+  }
+ ],
+ "integrity_content_hash": "0314a80deb08001a63d69bdc65e34077a3f3c3f96c2486feb4ea804810d64237",
+ "items": [
+  "S22E-404"
+ ],
+ "outcome": "typed_negative",
+ "recorded_at": "2026-08-16T00:00:00Z",
+ "schema_version": 1,
+ "sprint": "22E",
+ "the_sentences_are_verbatim_from": "sprint-22e-pre-registration.json, which took them from the execution sprint allocation; this sprint moved none of them",
+ "wave": "W4"
+}

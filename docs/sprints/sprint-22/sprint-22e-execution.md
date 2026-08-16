@@ -1,5 +1,100 @@
 # Sprint 22E Execution Log
 
+## W4 — Gate M read once, the five exits read once, and a typed negative released
+
+**Outcome: typed negative.** Three of five exits met, Gate M **seven of ten**, released under the
+annotated tag `sprint-22e-evidence-baseline` at `395fe7d`, whose post-merge exact-head CI is
+`success`, 30 of 30 jobs. The programme tag `sprint-22-baseline` was **not** created, and that is
+the plan's own instruction for this case rather than an omission.
+
+### The successful experience, which W2 recorded as owed
+
+W2's sealed record names its own debt in its own field: `kind_demonstrated: "failed"`,
+`successful_kind_owed_by: "W3's approved change"`. Exit (c) asks for both kinds, so the debt was
+real and W4 paid it — the approved change's traversal compiled through the released compiler,
+projected as **accepted**, stored as a side document, read back and validated against the
+contract. Additive rather than a widening of W2's builder, which rebuilds its record on every
+`--check`: teaching it a shape it was never written for would move the bytes of a sealed record
+seven tests hold.
+
+### W4-F1 — a malformed query returns a plausible ranking rather than an error
+
+The first run asked the retrieval for `completed` and `failed`. The released projection emits
+`status=completed` and `status=failed`. **Bare words match nothing**, so both queries scored on
+the shared tokens alone and the two failed traversals tied at exactly `0.333333` for a question
+about success — a result that reads convincingly as "the store cannot tell the kinds apart" and
+was in fact a caller asking for tokens that do not exist. Same family as W1-F6, and the ninth of
+twelve findings this sprint produced that lives in a caller's assumption rather than inside a
+released boundary.
+
+With the surface's own vocabulary the separation is clean:
+
+| Query | s22e-approved-change | s22e-dryrun-1 | s22e-dryrun-1-continuation |
+|---|---|---|---|
+| `status=completed accepted_outcome …` | **1st (0.421)** | 4th (0.318) | 5th (0.318) |
+| `status=failed tool_result …` | 4th (0.286) | **1st (0.381)** | **2nd (0.381)** |
+
+The token inventory of all three graphs is measured into the record rather than assumed, and it
+shows why the mistake was easy: a failed traversal's tokens are nearly a **superset** of a
+successful one's — it contains completed steps too — and only `accepted_outcome` and the absence
+of `status=failed` separate them.
+
+`both_kinds_retained_and_retrievable` is recorded separately from the distinguishability probe.
+The exit's words are "retained and retrievable"; distinguishability is stronger, and a stricter
+probe must never be allowed to quietly redefine the sentence it is testing beside.
+
+### Gate M, seven of ten
+
+Read once, through the pre-registration's own binding table and `resolve_binding` — imported, not
+retyped — with every reading frozen in W0 before a measurement existed. Conditions 1–5 read
+predecessor seals and hold; 8 and 9 are this sprint's and were earned.
+
+| Failed | Reads | Value | Why it could not move |
+|---|---|---|---|
+| **6** | `sprint-22d-exit-criteria.json#criteria[1].met` | `false` | ledger L1 would move it; L1 did not land, and rereading a sealed number is what the licence rule forbids |
+| **7** | `sprint-22d-exit-criteria.json#criteria[2].met` | `false` | ledger L2 would move it; same |
+| **10** | `sprint-22e-release.json#tag.peels_to` | `null` | the programme tag marks a pass, and this is not one |
+
+**None of the three is a surprise, and two were arithmetic.** The gate owner's decision record
+states it as the premise of its own selection: conditions 6 and 7 need two different repairs, one
+may land, so a typed negative on exit four was certain under *every* selection. The question the
+gate owner actually decided was which certain negative was worth the most.
+
+**Condition 10 deserves a reading question, not a repair.** `sprint-22-baseline` is created only
+on a pass and condition 10 requires it to peel, so the condition is structurally unreachable for
+any sprint that fails one of the other nine — it restates the conjunction rather than measuring
+an independent property. That is flagged to 23A's gate owner rather than resolved here.
+
+### The release head's gates, two independent verdicts
+
+GitHub's 30 lanes at `395fe7d`, all `success`, with each of condition 9's five named families
+mapped to the lane that satisfies it — an enumeration a test checks, not a word. Beside it, this
+repository's own fifteen-gate matrix re-run locally in a clean worktree at the same commit: **9
+ran, 9 passed, 286.7 s**. 22D W4-F1's rule is that nothing is green under one command line, and
+the cheapest way to honour it at a release is to have two verdicts that would disagree loudly.
+
+### The five exits
+
+| # | Criterion | Verdict |
+|---|---|---|
+| a | rejected proposals cause zero active-state mutation | **met** — 7 traversals, every surface member recomputed, no mutation, and at least one rejection genuinely live |
+| b | one approved change reaches protected `main` through PR and post-merge CI | **met** — `f4a6305`, 30/30, landed bytes hashed out of the merged commit and equal to the evaluated ones |
+| c | failed and successful experience is retained and retrievable | **met** — W2's failed pair and W4's successful one, both read back through the contract |
+| d | all Gate M conditions pass | **unmet** — 7 of 10 |
+| e | `sprint-22-baseline` peels to the verified protected commit | **unmet** — not created |
+
+Every criterion names the record and path it read, and the two unmet ones name the measured value
+that failed them. 22C's release lesson is that a negative needs the same falsifiability a pass
+does, and the tests hold the negative to exactly that.
+
+### The tag
+
+Annotated, pushed, and placed **after** the squash merge on the merged `main` head — 22C's
+release lesson, and not cosmetic: a squash merge leaves the wave branch a non-ancestor of `main`,
+so a tag on the branch head would point at a commit protected `main` never contains. Verified by
+asking git what it peels to (`395fe7d`), not by asserting it.
+
+
 ## W3 — the one approved change, and the two seams the first real landing opened
 
 W3 spent the sprint's single approved change on **L7**, the entry the gate owner selected in

@@ -1,0 +1,40 @@
+{
+ "integrity_content_hash": "a92429c95d59a0223dc447e21c6efa22bf24b6f542c783168deeb05cdd86e22a",
+ "items": [
+  "S22E-403"
+ ],
+ "negative_tag": {
+  "annotated": true,
+  "created": true,
+  "name": "sprint-22e-evidence-baseline",
+  "peels_to": "395fe7de5de1848371f45a48c8b199dce96d4986",
+  "peels_to_the_merge_commit": true,
+  "placed_after_the_squash_merge": true,
+  "why_that_order": "a squash merge leaves the wave branch a non-ancestor of main, so a tag placed on the branch head would point at a commit protected main never contains (22C's release lesson)"
+ },
+ "outcome": "typed_negative",
+ "recorded_at": "2026-08-16T00:00:00Z",
+ "release": {
+  "merge_commit": "395fe7de5de1848371f45a48c8b199dce96d4986",
+  "merge_method": "squash",
+  "merged_at": "2026-08-16T16:04:04Z",
+  "post_merge_ci": {
+   "conclusion": "success",
+   "head_sha": "395fe7de5de1848371f45a48c8b199dce96d4986",
+   "job_counts": {
+    "success": 30
+   },
+   "run_id": 31957523308
+  },
+  "pull_request": 236
+ },
+ "schema_version": 1,
+ "sprint": "22E",
+ "tag": {
+  "created": false,
+  "name": "sprint-22-baseline",
+  "peels_to": null,
+  "why_not_created": "the programme tag marks a passing Gate M and five met exits; this sprint is a typed negative, and the plan names the negative tag for that case"
+ },
+ "wave": "W4"
+}
