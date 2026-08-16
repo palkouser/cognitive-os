@@ -21,9 +21,12 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Any
+
+import pytest
 
 REPOSITORY = Path(__file__).resolve().parents[3]
 EVIDENCE = REPOSITORY / "docs/sprints/sprint-22/evidence"
@@ -211,3 +214,77 @@ def test_the_dryrun_check_reproduces_over_the_continuation() -> None:
 
     verdict = check_dryrun(_load_continuation())
     assert verdict["reproduced"] is True, verdict["mismatches"]
+
+
+# ---------------------------------------------------------------------------
+# S22E-202 — the experience leg: compiled, stored, and queried back
+# ---------------------------------------------------------------------------
+
+EXPERIENCE = EVIDENCE / "sprint-22e-w2-experience.json"
+SIDE_STORE = EVIDENCE / "sprint-22e-experience-side-store.json"
+
+#: The side blobs live under the campaign artifact root, which CI does not have; the tests
+#: that must read them are gated the way the sqlalchemy-needing tests already are, and the
+#: tests over the sealed record itself run everywhere.
+_NEEDS_ARTIFACT_ROOT = pytest.mark.skipif(
+    not os.environ.get("COGOS_ARTIFACT_ROOT"),
+    reason="the campaign artifact root is absent from this lane",
+)
+
+
+def _load_experience() -> dict[str, Any]:
+    return json.loads(EXPERIENCE.read_text(encoding="utf-8"))
+
+
+def test_the_experience_record_and_side_manifest_exist_and_their_seals_recompute() -> None:
+    for path in (EXPERIENCE, SIDE_STORE):
+        stored = json.loads(path.read_text(encoding="utf-8"))
+        body = {key: value for key, value in stored.items() if key != "integrity_content_hash"}
+        assert hashlib.sha256(_canonical(body)).hexdigest() == stored["integrity_content_hash"]
+
+
+def test_both_failed_traversals_compiled_and_outrank_every_distractor() -> None:
+    stored = _load_experience()
+    assert all(
+        facts["compilation_decision"] == "completed" for facts in stored["traversals"].values()
+    )
+    assert stored["retrieval"]["both_traversals_outrank_every_distractor"] is True
+    assert len(stored["retrieval"]["entries"]) == 5
+
+
+def test_the_answer_is_read_from_the_store_and_answers_all_three_questions() -> None:
+    """§2.2(e): the retrieval's content, read out of the store by the top rank, answers what
+    was tried, what failed, and why."""
+    answer = _load_experience()["retrieval"]["answer_read_from_the_store"]
+    assert answer["what_was_tried"] is True
+    assert answer["what_failed"] is True
+    assert answer["why"] is True
+
+
+def test_the_store_names_sides_not_pairs_and_the_successful_kind_is_w3s() -> None:
+    stored = _load_experience()
+    assert "sides, not pairs" in json.loads(SIDE_STORE.read_text(encoding="utf-8"))["store"]
+    assert "approved change" in stored["successful_kind_owed_by"]
+    assert stored["kind_demonstrated"].startswith("failed")
+
+
+@_NEEDS_ARTIFACT_ROOT
+def test_every_stored_side_blob_verifies_on_disk() -> None:
+    from cognitive_os.experience.graph_store import blob_path
+
+    root = Path(os.environ["COGOS_ARTIFACT_ROOT"])
+    for child in _load_experience()["side_store"]["children"]:
+        raw = blob_path(root, child["content_hash"]).read_bytes()
+        assert hashlib.sha256(raw).hexdigest() == child["content_hash"]
+        assert json.loads(raw)["timeline"], "the stored side must carry the why"
+
+
+@_NEEDS_ARTIFACT_ROOT
+def test_the_experience_check_reproduces_and_refuses_a_tampered_rank() -> None:
+    from experience_22e import check_record as check_experience
+
+    verdict = check_experience(_load_experience())
+    assert verdict["reproduced"] is True, verdict["mismatches"]
+    tampered = _load_experience()
+    tampered["retrieval"]["entries"][0]["rank"] = 5
+    assert check_experience(tampered)["reproduced"] is False

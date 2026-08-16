@@ -98,12 +98,41 @@ reclassified it (a false rejection); *this* refusal is the honest one, and the r
 both under one traversal shape — the same candidate, refused twice, only once for a reason
 that was its own.
 
-**Still owed by W2:** the Experience Compiler leg — compile *and* query back; the failed kind
-is dry run 1's traversal, and §2.2(e) names the successful kind as the approved change's,
-which W3 produces; dry runs 2 and 3 on distinct weakness classes (the honest-failure
-requirement is now met by the continuation, so the remaining two runs owe distinct classes
-and the success-shaped stop at approval-eligible); and one rollback executed in isolation.
-W3 remains unblocked: it mines L7 under decision one's ruling.
+### S22E-202 — the experience leg: compiled, stored, and queried back
+
+W1's unbuilt second half exists and is demonstrated on the **failed kind** — both sealed
+dry-run-1 traversals, which refuse at different gates for different reasons.
+`sprint-22e-w2-experience.json`, sealed; the side store manifest beside it.
+
+The timeline is **derived from the sealed records, never invented** — the record itself, the
+stage stream, the governed receipt, one VERIFIER entry per executed gate with the refusing
+one FAILED, and a failed ACCEPTANCE — and compiled through the released `ExperienceCompiler`
+(both decisions `completed`). Each traversal is projected by the released projection and
+stored **content-addressed under the campaign artifact root** at the released `blob_path`
+shape, as a side document carrying the graph *and* the timeline; the manifest calls them
+**sides, not pairs**, because the successful twin is the approved change's (§2.2(e)'s own
+sentence) and sealing a pair before W3 produces it would seal a pair that does not exist.
+Every side is read back, hash-verified and contract-validated before it is claimed
+(D7 W3-F1).
+
+**The retrieval has distractors and the answer comes from the store.** The pool is the two
+sides plus three released compiler fixtures projected through the same path. The first run
+scored **five identical zeros** — the released projection is structural by the leak
+discipline, so a natural-language question matches nothing — and the recorded query
+therefore speaks the search surface's own language. Both traversals rank 1–2 (0.333) above
+every distractor (0.200, 0.125, 0.095), and the record then reads the top-ranked side's blob
+**out of the store by its content hash** and answers §2.2(e)'s three questions from the
+retrieved bytes: what was tried (the allowlist repair), what failed (refused at a gate), and
+why (the numpy environment / the diagnosis pin) — all three `true`, from the store, not from
+the driver. `--check` recomputes the entire record in a verify mode that writes nothing; six
+tests hold the leg, gated on the artifact root exactly as the sqlalchemy-needing tests
+already are.
+
+**Still owed by W2:** dry runs 2 and 3 on distinct weakness classes (the honest-failure
+requirement is met by the continuation; these owe distinct classes and the success-shaped
+stop at approval-eligible), and one rollback executed in isolation. W3 remains unblocked: it
+mines L7 under decision one's ruling, and the experience leg built here is what its
+successful kind will feed.
 
 ---
 

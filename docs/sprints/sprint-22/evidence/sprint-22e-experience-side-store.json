@@ -1,0 +1,25 @@
+{
+ "artifact_root": "COGOS_ARTIFACT_ROOT",
+ "children": [
+  {
+   "blob": "sha256/b3/b3655dbe8a3845ba42ae638771ba26c15c7af47bc762c05b8f5b5d8544af4fa2",
+   "content_hash": "b3655dbe8a3845ba42ae638771ba26c15c7af47bc762c05b8f5b5d8544af4fa2",
+   "read_back_hash_matches": true,
+   "read_back_validates_as_the_contract": true,
+   "side_id": "s22e-dryrun-1-graph",
+   "structural_hash": "3b7477ccd8034f27e738dc34f7c30fd8593ea88229c7f52aed9683ab214cf94f"
+  },
+  {
+   "blob": "sha256/48/4811be7a3ca7cab92f16c3243666f8dbca7abaab979dcc0205f6953c89c19dc1",
+   "content_hash": "4811be7a3ca7cab92f16c3243666f8dbca7abaab979dcc0205f6953c89c19dc1",
+   "read_back_hash_matches": true,
+   "read_back_validates_as_the_contract": true,
+   "side_id": "s22e-dryrun-1-continuation-graph",
+   "structural_hash": "a35a2ecbe627c662bebdcf8aa8db6203d4debf0cb3c409a49e51d290a2208706"
+  }
+ ],
+ "integrity_content_hash": "8450f67dba99593ba80c1dc51b76d6d2f828a86f043d61f8af2c4221d9d07d67",
+ "recorded_at": "2026-08-16T18:00:00+00:00",
+ "schema_version": 1,
+ "store": "sides, not pairs — the successful twin is the approved change's, produced by W3"
+}
