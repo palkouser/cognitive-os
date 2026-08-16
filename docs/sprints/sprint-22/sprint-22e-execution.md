@@ -1,5 +1,227 @@
 # Sprint 22E Execution Log
 
+## W1 — the loop meets the real repository, and eight findings come back with it
+
+W0's slice was a fixture refusing a fixture and said so in a field of its own. W1 is the first
+time this repository's self-improvement loop has touched its own worktree, its own persisted
+store and a live provider — and what it produced is mostly **findings**, which is exactly what
+§3.1 predicted and priced.
+
+| Item | What it owed | Outcome |
+|---|---|---|
+| **S22E-100** — the substrate | §1.3's four seams against the *real* repository | **measured**, and it found W1-F1 and W1-F3 |
+| **S22E-110** — weakness-to-proposal | a proposal mined from real sealed evidence | **sealed**, L1 → 6 signals, impact **75** |
+| **S22E-120** — dry run 1 | a live provider-assisted candidate carried to a real gate rejection | **ran end to end**, refused at `compatibility` |
+| exit one | rejected proposal → zero active-state mutation | **held**, 0 of 6 members moved, recomputed |
+| experience compiled and queried back | the second half of W1's exit | **not built** — owed, and named as owed |
+| gates | ruff, format, mypy, bandit, schema drift, repository language | **clean** |
+
+### The four seams, measured
+
+| Seam | Result |
+|---|---|
+| worktree vs. branch protection | real `git worktree`, **detached**, **locked**, **outside** the active checkout — all three read back from `git worktree list`, not asserted |
+| clone vs. released grants | separate database at head `0015`; all three released `validate_database_clone` refusals executed and refused |
+| matrix vs. the real suite | **15 of 15** gates mapped to commands that actually run; measured wall clock **293 s**, slowest `historical_regression` at **262 s** |
+| in-memory transition vs. persisted store | `PostgresChangeRepository` drives the released transitions and the content hash survives the round trip |
+
+### W1-F1 — W0's own surface enumeration made exit one unsatisfiable
+
+`ControlledChangeService.request_experiment` — the **first** stage — persists the experiment and
+its revision before any gate can refuse anything. There is no path to a rejection that does not
+first write to the governed store. W0 read §2.2(a)'s "the governed stores" as all 114 tables, so
+**every correct rejection would have reported a mutation**.
+
+The plan's sentence and W0's derivation of it are different things, and it was the derivation
+that was wrong: §2.2(a) enumerates surfaces a bad candidate could *damage*, and the change
+ledger is the audit record that the refusal happened. A rejection that left it untouched would
+be a loop with no evidence.
+
+Repaired as a **split rather than a removal**, and it is strictly more information than before:
+the protected fingerprint excludes exactly the released ledger tables and must not move; the
+audit-trail fingerprint covers exactly those tables, is reported beside it, and a real traversal
+is *required* to move it. One number became two, and nothing became invisible. The table set is
+derived from the released tables module rather than matched on a `change_` prefix, because a
+prefix is a naming convention and this needed to be a fact.
+
+### W1-F2 — a seal computed over the fields the check excludes
+
+The W0 slice's `--check` compared the rebuilt record against the stored one *including*
+`integrity_content_hash`, while excluding the two surface captures the seal is computed over. It
+was therefore green only while nothing wrote to the governed store between two runs — which held
+for exactly as long as W0 lasted, and broke on W1's first write. The stored seal is still
+verified against the stored body; what changed is that the rebuild comparison no longer demands
+a hash of something it deliberately did not rebuild.
+
+### W1-F3 — the gate inherited the operator's shell, and turned refusals into a regression
+
+The first substrate run inherited `os.environ`, so the gates ran with this sprint's
+`COGOS_TEST_DATABASE_URL` pointing at the governed campaign store. That woke 104 PostgreSQL
+integration tests the CI lane skips for want of credentials, and the released suite did exactly
+the right thing — it **refused**:
+
+    Failed: refusing provider-output integration tests against database: cognitive_os_s22e_campaign
+
+**The store was never in danger. The verdict was.** 104 released refusals arrived at the
+evaluation matrix as `historical_regression` *failed*, which is indistinguishable from a
+candidate that broke something. A gate that reports a refusal as a regression rejects good
+candidates for a reason that is not about them.
+
+The matrix now runs in a **declared** environment: an allowlist of nine host variables plus the
+uv cache, built as a fresh dictionary rather than a filtered copy — "we removed the dangerous
+ones" decays every time somebody adds a variable, and "we passed only these" does not.
+
+> Generalisable: **an evaluation gate must reproduce the lane it claims to reproduce.**
+> Inheriting an ambient shell is how it silently stops doing that, and the failure mode is a
+> false rejection rather than a false pass.
+
+### W1-F4 — the notation defect is a regex in this repository, not a limit of Pint
+
+22D W2-F2 reads "the registered physics verifiers ... **error** on `m/s²`, `kg·m/s` and `Ω`",
+and a reader takes that to mean the sealed unit registry cannot parse them. Measured side by
+side:
+
+| Unit | `PhysicalQuantity` contract | Pint |
+|---|---|---|
+| `ohm`, `kg*m/s`, `m/s**2` | accepts | parses |
+| `Ω`, `kg·m/s`, `m/s²` | **refuses** — "unit expression is not allowed" | **parses** |
+
+What refuses them is this repository's own character-class allowlist,
+`SAFE_UNIT = re.compile(r"^[A-Za-z0-9_/*^ .-]{1,128}$")`, in `PhysicalQuantity.safe_unit`. The
+W0 ceiling (+10 on `local_model`) is unchanged; the **diagnosis** changes, and it changes the
+repair from "replace the unit library" to "widen an allowlist by four characters, keeping its
+injection-safety intent". The repair adds `·`, `²`, `³` and `Ω` and nothing else — deliberately
+not `\w` or a Unicode category, because this validator exists to keep a unit expression from
+being an injection surface, and the probe measures that negative case beside the positive ones.
+
+> Generalisable: **a sealed finding's stated cause is evidence about what its author saw, not
+> about what the code does.** The reproduction is inheritable; the diagnosis has to be re-derived.
+
+### W1-F5 — a timeout that reports itself as a cancellation
+
+`ModelProviderRequest.timeout_seconds` defaults to **120** while the claude-code adapter's own
+CLI limit is **300**. So the request expires first, `ModelExecutionService._execute_once` cancels
+`provider.complete`, and `BoundedCliRunner._communicate` catches that cancellation and converts
+it to `ProviderCancelledError` **before** the outer `except TimeoutError` can see it.
+
+Three consequences, each worse than the slow call itself: an expired call reads as one somebody
+cancelled; `events.timed_out` never fires, so the stream records no timeout; and
+`ProviderCancelledError` is not in `retryable_error_types` while `ProviderTimeoutError` is, so
+the retry policy silently stops doing what it was configured to do.
+
+Two live calls were lost to this before a bisection separated the layers — the adapter answers
+in 34 s on its own, and the same call through the governed service "cancelled" every time. The
+caller-side repair is to stop asking for less time than the adapter is allowed to take. The
+released defect is carried to the ledger.
+
+### W1-F6 — the caller and the boundary asked one model for two different objects
+
+`ClaudeCodeAdvisoryProvider.safety_arguments` puts `--json-schema <AdvisoryResult>` on the
+command line unconditionally. A caller that asks for a different shape in its prompt gets
+neither: prose, which arrives at the reader as a malformed answer and would be recorded as a
+provider failure. It is not a provider failure — it is a caller asking for something the
+boundary already forbade, and **nothing in the released code compares the two**.
+
+Related, and mine rather than the code's: the adapter validates the full advisory result into
+`structured_output` and sets `content` to `advisory.summary` alone. Reading `content` gets a
+correct but lossy view — the summary arrives and the findings, recommendations, risks and
+verification steps are silently gone. That cost two more live calls before it was noticed.
+
+### W1-F7 — the released provider-assisted path raises on its own success path
+
+**The wave's most valuable finding**, and the one a fixture could never have produced.
+`merge_provider_draft` ends with
+
+    return revision.model_copy(update={..., "content_hash": ""})
+
+blanking the hash so the contract's `seal_content` validator recomputes it. But
+`model_copy(update=...)` **does not re-run validators** in Pydantic v2, so the merged revision
+keeps `content_hash == ""`, and the very next released statement —
+`ProposalCreated(proposal_content_hash=generated.content_hash)` — refuses it against
+`^[0-9a-f]{64}$`.
+
+So `create_from_weakness(provider_assisted=True)` cannot complete for any draft that passes host
+verification. §1.3 is why nobody had seen it: *no candidate had ever been generated by a real
+provider*. The fixture demo has no provider and the tests have no live model, so the path had
+never run.
+
+**Its second consequence is worse than the first.** The released transitions read the current
+revision back out of the repository, and the only released writer of a *merged* revision is the
+call that cannot complete. So the `provider_assisted` mark cannot survive to an approved
+revision by any caller's route. Dry run 1's draft was live, host-verified and admitted — and the
+approved revision reads `deterministic`. Both halves are recorded, and a test asserts both, so
+no successor can read this dry run as having produced a provider-assisted approved revision.
+
+This driver reseals the merged revision through the contract so the dry run can continue, and
+the record calls that a **workaround rather than a repair**. A released fix belongs on the
+governed path, which is the whole point of the sprint; fixing it here would spend the one
+approved change outside the loop that is supposed to earn it.
+
+### W1-F8 — a governed loop that could not be run twice
+
+`ChangeWorktreeIsolation.prepare` refuses when the experiment's root already exists, and the
+experiment id is a `uuid5` of its label — deterministic on purpose, so a record names the same
+experiment every time. Together they mean **a dry run that fails partway can never be re-run**:
+the released cleanup removes the git worktree but leaves the `<experiment_id>/` directory, and
+the next attempt is refused however the first one ended.
+
+Repaired in the caller, not the released layer: the released refusal is correct — it protects a
+live experiment — and what was missing is a caller that knows its own previous attempt is dead.
+
+### Dry run 1, end to end
+
+Ten stages, in order, none skipped: weakness mined from the sealed ledger → proposal created →
+live provider draft merged through host verification and resealed → approved for experiment →
+experiment requested on the persisted store → isolation prepared → repair applied through
+`deterministic_replace` → repair probed → candidate captured through the released worktree
+capture → evaluation run.
+
+| Gate | Result |
+|---|---|
+| `focused_target_tests` | passed, 3.1 s |
+| `security` | passed, 5.3 s |
+| `policy` | passed, 0.02 s |
+| `schema` | passed, 1.8 s |
+| **`compatibility` (mypy)** | **failed, 12.3 s** |
+
+**The rejection is real and nobody planted it.** The candidate is a correct repair — the probe
+shows written notation accepted, ASCII notation still accepted and an injection string still
+refused — and a released gate refused it anyway, because widening a released contract's
+validation surface is something mypy has an opinion about. That is precisely what a dry run is
+for: the loop reports the repair and the refusal together, and neither cancels the other.
+
+Only the allowed path changed (`src/cognitive_os/verification/physics/quantities.py`), and the
+active surface moved on **none** of its six members.
+
+The audit trail did not move either, and that is worth stating rather than glossing: both
+sealed runs are **re-runs of a deterministic experiment id**, and `request_experiment` is
+idempotent by request signature — it finds the existing experiment and returns it, so a repeat
+writes nothing. W1-F1's split therefore reports `audit_trail_moved: false` on these records and
+is correct to. The claim the split supports is that the trail *can* move and is watched when it
+does, not that every traversal writes; a test that demanded movement would have been a test of
+whether a run happened to be the first one.
+
+### What W1 did not do, and is owed
+
+**Experience compiled and queried back was not built.** It is the second half of W1's exit
+criterion, and D7 W3-F1's rule is that retention without a demonstrated read is a hope. A
+component that was not written cannot be reported as having demonstrated anything, so W1 closes
+as **partial**: the substrate, the mining, the live provider path and the rejection are done and
+sealed; the Experience Compiler leg is owed to W2, which already carries the compile-and-retrieve
+requirement for dry runs 2 and 3.
+
+**W1-F7 is owed to the ledger.** The W0 ledger is a sealed W0 record that every later wave is
+bound to by hash, and re-sealing it in W1 would invalidate the record the tests check. The entry
+is therefore carried here and added in W2, where a ledger revision is a wave's own act rather
+than a retro-edit of a predecessor's seal.
+
+**And W1-F7 changes what W3 is choosing between.** §2.2(b)'s chain names a *provider-assisted
+candidate* for the one approved change. That mark is currently unreachable by any caller, so
+either W3's approved change is the W1-F7 repair, or §2.2(b)'s chain cannot be walked as written.
+That is a gate-owner decision and it is stated here rather than discovered in W3.
+
+---
+
 ## W0 — the readings frozen, the ledger priced, and a candidate that was never what the plan thought
 
 W0 measures nothing about the loop. It settles what every later claim will mean, and it ends

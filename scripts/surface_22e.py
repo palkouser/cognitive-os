@@ -91,6 +91,37 @@ GOVERNED_POINTER_TABLES = (
 ADDITIONAL_SURFACE_MEMBERS = ("domain_registry_snapshot_hash",)
 
 
+def audit_trail_tables() -> frozenset[str]:
+    """**W1-F1.** The controlled-change ledger, which is the loop's *output*, not its subject.
+
+    W0 read §2.2(a)'s "the governed stores" as all 114 tables of the governed store, and that
+    over-read makes exit one unsatisfiable by construction: `ControlledChangeService`'s very
+    first stage, `request_experiment`, persists the experiment and its revision *before any
+    gate can refuse anything*. There is no path to a rejection that does not first write here.
+    A surface counting those rows reports every correct rejection as a mutation.
+
+    So the plan's sentence and W0's derivation of it are different things, and it is the
+    derivation that was wrong. §2.2(a) enumerates the surfaces a bad candidate could *damage* —
+    the working tree, protected `main`, the learned pointer, the artifact roots, the registry.
+    The change ledger is the audit record that the refusal happened; a rejection that left it
+    untouched would be a loop with no evidence, which is the opposite of what the exit wants.
+
+    The repair is a split rather than a removal, and it is strictly more information than
+    before: the protected fingerprint excludes these tables and must not move, the audit-trail
+    fingerprint covers exactly these tables, is reported beside it, and a real traversal is
+    *required* to move it. Nothing became invisible; one number became two.
+
+    The set is derived from the released tables module rather than matched on a `change_`
+    prefix, because a prefix is a naming convention and this needs to be a fact about which
+    tables the controlled-change repository actually writes.
+    """
+    from sqlalchemy import Table
+
+    from cognitive_os.infrastructure.changes.postgres import tables
+
+    return frozenset(value.name for value in vars(tables).values() if isinstance(value, Table))
+
+
 def contract_surface_members() -> tuple[str, ...]:
     """The part of the surface the released contract can carry."""
     return tuple(
@@ -178,11 +209,25 @@ async def _database_fingerprint(url: str) -> dict[str, Any]:
                 counts[name] = int(result.scalar_one())
     finally:
         await engine.dispose()
-    body = "\n".join(f"{name} {count}" for name, count in sorted(counts.items()))
+
+    audit = audit_trail_tables()
+    protected = {name: count for name, count in counts.items() if name not in audit}
+    trail = {name: count for name, count in counts.items() if name in audit}
+
+    def _hash(values: dict[str, int]) -> str:
+        return _sha256(
+            "\n".join(f"{name} {count}" for name, count in sorted(values.items())).encode("utf-8")
+        )
+
     return {
-        "fingerprint": _sha256(body.encode("utf-8")),
+        "fingerprint": _hash(protected),
+        "audit_trail_fingerprint": _hash(trail),
         "tables": len(counts),
+        "protected_tables": len(protected),
+        "audit_trail_tables": sorted(trail),
         "total_rows": sum(counts.values()),
+        "protected_rows": sum(protected.values()),
+        "audit_trail_rows": sum(trail.values()),
         "governed_pointers": {
             name: counts.get(name) for name in GOVERNED_POINTER_TABLES if name in counts
         },
@@ -228,6 +273,10 @@ async def capture(*, database_url: str, artifact_root: Path) -> dict[str, Any]:
             "contract is owed to a successor"
         ),
         "values": values,
+        # W1-F1. Carried at the top level rather than only inside `database`, because
+        # `compare` has to read it and a comparison that had to reach into a sub-object for
+        # half its answer is a comparison that will eventually stop reaching.
+        "audit_trail_fingerprint": database["audit_trail_fingerprint"],
         "database": {key: value for key, value in database.items() if key != "fingerprint"},
         "artifact_root_files": artifact_files,
         "surface_hash": _sha256(
@@ -246,6 +295,7 @@ def compare(before: dict[str, Any], after: dict[str, Any]) -> dict[str, Any]:
     members = active_surface_members()
     per_member = {name: before["values"][name] == after["values"][name] for name in members}
     mutated = sorted(name for name, unchanged in per_member.items() if not unchanged)
+    trail_moved = before.get("audit_trail_fingerprint") != after.get("audit_trail_fingerprint")
     return {
         "members_compared": list(members),
         "per_member_unchanged": per_member,
@@ -253,6 +303,14 @@ def compare(before: dict[str, Any], after: dict[str, Any]) -> dict[str, Any]:
         "zero_active_state_mutation": not mutated,
         "surface_hash_before": before["surface_hash"],
         "surface_hash_after": after["surface_hash"],
+        # W1-F1's other half. The split would be a weakening if it only ever excused the
+        # audit trail; reported this way it is a second question, and for a real governed
+        # traversal the *expected* answer is `true` — a rejection that wrote no record is a
+        # loop nobody can audit. The in-memory W0 slice is the one case where `false` is
+        # correct, and it says which case it is rather than sharing a verdict with the other.
+        "audit_trail_moved": trail_moved,
+        "audit_trail_fingerprint_before": before.get("audit_trail_fingerprint"),
+        "audit_trail_fingerprint_after": after.get("audit_trail_fingerprint"),
         "comparison_is_recomputed": (
             "every member's equality is computed here from the two captures; nothing in this "
             "record is an `unchanged: true` literal supplied by the thing being checked "

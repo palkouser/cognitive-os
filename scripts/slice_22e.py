@@ -317,7 +317,20 @@ def main() -> int:
         # The two surface captures move whenever anything writes to the store or the tree,
         # which is what every later wave does. What must reproduce is the slice's own
         # behaviour and the fact that it mutated nothing *at the time it ran*.
-        moving = {"surface_before", "surface_after", "zero_active_state_mutation"}
+        #
+        # **W1-F2.** `integrity_content_hash` joins them, and it has to: the seal is computed
+        # over the whole record *including* the two moving captures, so a rebuild that
+        # correctly re-reads a moved world can never reproduce it. Left in the comparison,
+        # this `--check` was green only while nothing wrote to the governed store between two
+        # runs — which held for exactly as long as W0 lasted. The stored seal is still
+        # verified, against the stored body, by `sealed` above; that is the question that
+        # matters, and it is a different question from whether the rebuild matches.
+        moving = {
+            "surface_before",
+            "surface_after",
+            "zero_active_state_mutation",
+            "integrity_content_hash",
+        }
         identical = {k: v for k, v in stored.items() if k not in moving} == {
             k: v for k, v in record.items() if k not in moving
         }

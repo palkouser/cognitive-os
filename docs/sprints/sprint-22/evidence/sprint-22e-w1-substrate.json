@@ -1,0 +1,391 @@
+{
+ "artifact_namespace": {
+  "content_hash": "a7d1858cdc8d2060bb6faf23ba0c60e3b4e59a208da6ba173d3b0f55a1fed19b",
+  "inside_the_candidate_root_not_the_active_one": true,
+  "is_not_the_active_artifact_root": true,
+  "namespace": "/home/palkouser/projekt/cognitive-os-data/artifacts-s22e-candidate/c3b7c228-01b5-5818-977a-7d7516debb78",
+  "reusing_a_namespace_is_refused": true,
+  "root": "/home/palkouser/projekt/cognitive-os-data/artifacts-s22e-candidate"
+ },
+ "branch_protection": {
+  "and_the_provider_never_pushes": "§2.2(b) — the provider's authority ends at the proposal; the PR, the merge and the tag are the named user's and the gate owner's",
+  "enforce_admins": true,
+  "protected_branch": "main",
+  "protection_read_from": "sprint-22e-preflight.json#predecessor_release.protection",
+  "required_checks": 27,
+  "the_candidate_cannot_reach_main_because": [
+   "it is on no branch at all, so a push must name a refspec explicitly",
+   "the remote refuses an unchecked push to main regardless of who makes it",
+   "the released capture refuses if the active checkout moved during capture"
+  ],
+  "worktree_is_detached": true,
+  "worktree_is_locked": true,
+  "worktree_is_outside_the_active_checkout": true
+ },
+ "database_clone": {
+  "active_identity": "cognitive_os_s22e_campaign",
+  "clone_identity": "cognitive_os_s22e_clone_test",
+  "clone_is_a_different_database": true,
+  "clone_manifest_hash": "0c9f2caf87cf2ea077341c16e1e4d395b04c0c89b51291d641b1da19b7a51438",
+  "every_refusal_refused": true,
+  "heads_agree": true,
+  "migration_heads": {
+   "cognitive_os_s22e_campaign": "0015",
+   "cognitive_os_s22e_clone_test": "0015"
+  },
+  "not_derivable_from_the_governed_url": "the clone's name is not a transformation of COGOS_DATABASE_URL, so a driver handed only the governed URL cannot reach it by any code path",
+  "released_refusals": {
+   "empty_active_identity": {
+    "reason": "database clone cannot reuse the active database identity",
+    "refused": true
+   },
+   "manifest_carries_a_url": {
+    "reason": "database clone manifest cannot contain a connection URL",
+    "refused": true
+   },
+   "same_identity": {
+    "reason": "database clone cannot reuse the active database identity",
+    "refused": true
+   }
+  }
+ },
+ "evaluation_matrix": {
+  "execution_order": [
+   "target_benchmark",
+   "candidate_integrity",
+   "reproducible_build",
+   "focused_target_tests",
+   "historical_regression",
+   "unrelated_domain_regression",
+   "security",
+   "policy",
+   "migration",
+   "schema",
+   "backup_restore_rollback",
+   "performance_resources",
+   "resource_budget",
+   "compatibility",
+   "dependency_packaging"
+  ],
+  "gate_count": 15,
+  "gate_environment": {
+   "allowlist": [
+    "PATH",
+    "HOME",
+    "LANG",
+    "LC_ALL",
+    "TERM",
+    "TMPDIR",
+    "XDG_CACHE_HOME",
+    "SSL_CERT_FILE",
+    "SSL_CERT_DIR"
+   ],
+   "declared_keys": [
+    "UV_CACHE_DIR"
+   ],
+   "finding": "W1-F3",
+   "inherited_names": [
+    "HOME",
+    "LANG",
+    "PATH",
+    "UV_CACHE_DIR"
+   ],
+   "no_cogos_variable_is_inherited": true
+  },
+  "gates": [
+   {
+    "decided_by": "driver",
+    "gate_id": "target_benchmark",
+    "ran": false
+   },
+   {
+    "decided_by": "driver",
+    "gate_id": "candidate_integrity",
+    "ran": false
+   },
+   {
+    "command": [
+     "uv",
+     "lock",
+     "--check"
+    ],
+    "decided_by": "command",
+    "gate_id": "reproducible_build",
+    "passed": true,
+    "ran": true,
+    "returncode": 0,
+    "seconds": 0.03,
+    "stderr_tail": "Using CPython 3.12.13\nResolved 174 packages in 0.75ms",
+    "stdout_tail": ""
+   },
+   {
+    "command": [
+     "uv",
+     "run",
+     "--all-groups",
+     "--extra",
+     "postgres",
+     "pytest",
+     "tests/cognitive_os/changes",
+     "-q"
+    ],
+    "decided_by": "command",
+    "gate_id": "focused_target_tests",
+    "passed": true,
+    "ran": true,
+    "returncode": 0,
+    "seconds": 4.072,
+    "stderr_tail": "uilding cognitive-os @ file:///home/palkouser/projekt/cognitive-os-data/s22e-worktrees/c3b7c228-01b5-5818-977a-7d7516debb78/worktree\n      Built cognitive-os @ file:///home/palkouser/projekt/cognitive-os-data/s22e-worktrees/c3b7c228-01b5-5818-977a-7d7516debb78/worktree\nInstalled 98 packages in 282ms",
+    "stdout_tail": "..................................................                       [100%]\n50 passed in 2.36s"
+   },
+   {
+    "command": [
+     "uv",
+     "run",
+     "--all-groups",
+     "--extra",
+     "mcp",
+     "--extra",
+     "memory-postgres",
+     "pytest",
+     "tests/cognitive_os",
+     "-q"
+    ],
+    "decided_by": "command",
+    "gate_id": "historical_regression",
+    "passed": true,
+    "ran": true,
+    "returncode": 0,
+    "seconds": 252.9,
+    "stderr_tail": "Installed 14 packages in 20ms",
+    "stdout_tail": "....... [ 96%]\n........................................................................ [ 98%]\ns.............................................................ssss...... [ 99%]\n............                                                             [100%]\n4562 passed, 131 skipped in 251.56s (0:04:11)"
+   },
+   {
+    "command": [
+     "uv",
+     "run",
+     "--all-groups",
+     "--extra",
+     "mcp",
+     "pytest",
+     "tests/contract",
+     "-q"
+    ],
+    "decided_by": "command",
+    "gate_id": "unrelated_domain_regression",
+    "passed": true,
+    "ran": true,
+    "returncode": 0,
+    "seconds": 3.866,
+    "stderr_tail": "",
+    "stdout_tail": ".................................................................        [100%]\n65 passed in 3.35s"
+   },
+   {
+    "command": [
+     "uv",
+     "run",
+     "--all-groups",
+     "bandit",
+     "-q",
+     "-r",
+     "src/cognitive_os"
+    ],
+    "decided_by": "command",
+    "gate_id": "security",
+    "passed": true,
+    "ran": true,
+    "returncode": 0,
+    "seconds": 5.025,
+    "stderr_tail": "failed test on file src/cognitive_os/tools/sandbox/lifecycle.py:53\n[tester]\tWARNING\tnosec encountered (B108), but no failed test on file src/cognitive_os/tools/sandbox/lifecycle.py:56\n[tester]\tWARNING\tnosec encountered (B108), but no failed test on file src/cognitive_os/tools/sandbox/lifecycle.py:57",
+    "stdout_tail": ""
+   },
+   {
+    "command": [
+     "bash",
+     "scripts/check_repository_language.sh"
+    ],
+    "decided_by": "command",
+    "gate_id": "policy",
+    "passed": true,
+    "ran": true,
+    "returncode": 0,
+    "seconds": 0.017,
+    "stderr_tail": "",
+    "stdout_tail": "Repository language check passed."
+   },
+   {
+    "decided_by": "driver",
+    "gate_id": "migration",
+    "ran": false
+   },
+   {
+    "command": [
+     "bash",
+     "scripts/export_contract_schemas.sh",
+     "--check"
+    ],
+    "decided_by": "command",
+    "gate_id": "schema",
+    "passed": true,
+    "ran": true,
+    "returncode": 0,
+    "seconds": 1.724,
+    "stderr_tail": "",
+    "stdout_tail": "Contract schema check passed."
+   },
+   {
+    "decided_by": "driver",
+    "gate_id": "backup_restore_rollback",
+    "ran": false
+   },
+   {
+    "decided_by": "driver",
+    "gate_id": "performance_resources",
+    "ran": false
+   },
+   {
+    "decided_by": "driver",
+    "gate_id": "resource_budget",
+    "ran": false
+   },
+   {
+    "command": [
+     "uv",
+     "run",
+     "--all-groups",
+     "mypy",
+     "src/cognitive_os"
+    ],
+    "decided_by": "command",
+    "gate_id": "compatibility",
+    "passed": true,
+    "ran": true,
+    "returncode": 0,
+    "seconds": 12.862,
+    "stderr_tail": "",
+    "stdout_tail": "mypy.ini: note: unused section(s): [mypy-LightAgent.*], [mypy-alembic.*]\nSuccess: no issues found in 638 source files"
+   },
+   {
+    "command": [
+     "uv",
+     "build",
+     "--out-dir",
+     "/tmp/cogos-s22e-build"
+    ],
+    "decided_by": "command",
+    "gate_id": "dependency_packaging",
+    "passed": true,
+    "ran": true,
+    "returncode": 0,
+    "seconds": 2.069,
+    "stderr_tail": "adding 'cognitive_os-0.1.0.dev1.dist-info/top_level.txt'\nadding 'cognitive_os-0.1.0.dev1.dist-info/RECORD'\nremoving build/bdist.linux-x86_64/wheel\nSuccessfully built /tmp/cogos-s22e-build/cognitive_os-0.1.0.dev1.tar.gz\nSuccessfully built /tmp/cogos-s22e-build/cognitive_os-0.1.0.dev1-py3-none-any.whl",
+    "stdout_tail": ""
+   }
+  ],
+  "gates_decided_by_the_driver": 6,
+  "gates_failed": 0,
+  "gates_passed": 9,
+  "gates_with_a_command": 9,
+  "map_covers_the_matrix": true,
+  "measured_wall_clock_seconds": 282.565,
+  "nothing_was_stubbed": "every gate with a command ran that command in the candidate worktree; a command that could not start is recorded as ran: false and is never a pass (§3.2 — a cell economised away is a quiet reading-change)",
+  "slowest_gate": {
+   "command": [
+    "uv",
+    "run",
+    "--all-groups",
+    "--extra",
+    "mcp",
+    "--extra",
+    "memory-postgres",
+    "pytest",
+    "tests/cognitive_os",
+    "-q"
+   ],
+   "decided_by": "command",
+   "gate_id": "historical_regression",
+   "passed": true,
+   "ran": true,
+   "returncode": 0,
+   "seconds": 252.9,
+   "stderr_tail": "Installed 14 packages in 20ms",
+   "stdout_tail": "....... [ 96%]\n........................................................................ [ 98%]\ns.............................................................ssss...... [ 99%]\n............                                                             [100%]\n4562 passed, 131 skipped in 251.56s (0:04:11)"
+  }
+ },
+ "integrity_content_hash": "f90e58bc66b911d768ee62bfc95c4d471a4f5a2fb5de32248137e41251778336",
+ "items": [
+  "S22E-100"
+ ],
+ "persisted_chain": {
+  "content_hash_survives_the_round_trip": true,
+  "experiment_id": "c0850954-40ed-5f78-b932-76e50cc10b06",
+  "read_back_current_revision": 1,
+  "read_back_exact_revision": 1,
+  "repository": "PostgresChangeRepository",
+  "why_reading_it_back_matters": "a write that returned without raising proves the statement executed, not that the row is the contract it claimed to be (D7 W3-F1)",
+  "written_revision": 1
+ },
+ "reads_an_exit_criterion": false,
+ "recorded_at": "2026-08-16T00:00:00Z",
+ "schema_version": 1,
+ "sprint": "22E",
+ "surface_after": {
+  "active_artifact_namespace_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "active_database_fingerprint": "4478374c536cb4a9aaf441160c6b42799b4747ce1e42e7c37cbbacca7de34a77",
+  "domain_registry_snapshot_hash": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119",
+  "repository_commit": "e9acfe25e740b702e1cabd4862c4188312cf09ea",
+  "repository_manifest_hash": "8a1116335bbbc6d70b8e824320761f6b2eab3c5017e5d420b06c6127a86a1d3c",
+  "repository_status_hash": "5efa32bdbaa81bd12c8418ae168c42f3b9c14afbd9b5408a2645350a155272fa"
+ },
+ "surface_before": {
+  "active_artifact_namespace_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "active_database_fingerprint": "4478374c536cb4a9aaf441160c6b42799b4747ce1e42e7c37cbbacca7de34a77",
+  "domain_registry_snapshot_hash": "00187f2bc6e0015529de8388ea33a1e6287939ca4d393875400bc68320997119",
+  "repository_commit": "e9acfe25e740b702e1cabd4862c4188312cf09ea",
+  "repository_manifest_hash": "8a1116335bbbc6d70b8e824320761f6b2eab3c5017e5d420b06c6127a86a1d3c",
+  "repository_status_hash": "5efa32bdbaa81bd12c8418ae168c42f3b9c14afbd9b5408a2645350a155272fa"
+ },
+ "wave": "W1",
+ "why_no_exit": "this is the substrate, not a proposal. Exit one is read from a rejected *proposal*, and dry run 1 is what produces one",
+ "worktree": {
+  "baseline_commit": "e9acfe25e740b702e1cabd4862c4188312cf09ea",
+  "cleared_a_stale_worktree_first": false,
+  "detached": true,
+  "listing_block": "worktree /home/palkouser/projekt/cognitive-os-data/s22e-worktrees/c3b7c228-01b5-5818-977a-7d7516debb78/worktree\nHEAD e9acfe25e740b702e1cabd4862c4188312cf09ea\ndetached\nlocked controlled-change:c3b7c228-01b5-5818-977a-7d7516debb78",
+  "locked": true,
+  "outside_the_active_checkout": true,
+  "path": "/home/palkouser/projekt/cognitive-os-data/s22e-worktrees/c3b7c228-01b5-5818-977a-7d7516debb78/worktree"
+ },
+ "worktree_capture_on_an_untouched_tree": {
+  "changed_files": [],
+  "diff_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "diff_is_empty": true,
+  "empty_diff_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ "zero_active_state_mutation": {
+  "audit_trail_fingerprint_after": "6fbc15d2e6c59d865677976ae57dfe547e8b14158759063a936238da4adb8bb8",
+  "audit_trail_fingerprint_before": "6fbc15d2e6c59d865677976ae57dfe547e8b14158759063a936238da4adb8bb8",
+  "audit_trail_moved": false,
+  "comparison_is_recomputed": "every member's equality is computed here from the two captures; nothing in this record is an `unchanged: true` literal supplied by the thing being checked (22A W4-F2)",
+  "members_compared": [
+   "repository_commit",
+   "repository_status_hash",
+   "repository_manifest_hash",
+   "active_database_fingerprint",
+   "active_artifact_namespace_hash",
+   "domain_registry_snapshot_hash"
+  ],
+  "mutated_members": [],
+  "per_member_unchanged": {
+   "active_artifact_namespace_hash": true,
+   "active_database_fingerprint": true,
+   "domain_registry_snapshot_hash": true,
+   "repository_commit": true,
+   "repository_manifest_hash": true,
+   "repository_status_hash": true
+  },
+  "surface_hash_after": "7be0a842e4405f956cfdb583ebc2521af4924c51fc9bb2eb20984aa607ad4822",
+  "surface_hash_before": "7be0a842e4405f956cfdb583ebc2521af4924c51fc9bb2eb20984aa607ad4822",
+  "zero_active_state_mutation": true
+ }
+}
